@@ -1,0 +1,61 @@
+{
+  "summary": "Phase 1 e2e testing of Orbus Online: Guild Master. Backend: 17/17 pytest tests pass (100%) covering health, openapi, register (success/duplicate/short-pw/bad-email), login (tester success + wrong-pw 401), /auth/me (no-header/bogus/valid), guilds CRUD (404 when none, 201 create with defaults, 400 duplicate, 422 name 3-40, 401 no auth). Frontend: register→/create-guild→/dashboard→logout flow works; route guards (ProtectedRoute, GuestOnly, GuildGate) all correct; 401 auto-logout on tampered token works; tester login redirects to /dashboard (already had a guild from earlier in this run); mobile (375x812) landing & dashboard render with no horizontal overflow. JWT persisted in localStorage key orbus_token. CORS, /api prefix, ISO datetimes all good.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "CreateGuild.jsx",
+        "issue": "data-testid spec deviation: spec promised 'create-guild-name-input' and 'create-guild-description-input' but the page uses 'guild-name-input' and 'guild-description-input'. Submit btn is correct ('create-guild-submit-btn'). Rename inputs to match the spec/review_request to keep test harness contracts consistent.",
+        "selector": "[data-testid=\"guild-name-input\"], [data-testid=\"guild-description-input\"]",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Dashboard.jsx quick-action cards",
+        "issue": "Spec says quickaction-01..04 must be 'disabled placeholders'. Visually they render with '— locked —' label and 'phase 2/3' badges (good), but the elements are NOT actual <button disabled> — playwright is_disabled() returns False on all four. If main agent intended these to be real disabled <button> elements, swap the <div> for <button type='button' disabled> so assistive tech / automated tests can detect disabled state. Otherwise the cards are non-interactive divs and the visual treatment alone is enough.",
+        "selector": "[data-testid=\"quickaction-01\"]",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Landing page",
+        "issues": [
+          "Title 'Orbus Online: Guild Master' is split across two <span> elements with no whitespace between them — innerText returns 'Orbus Online:\\nGuild Master'. Visually fine; harmless but worth noting if any text-content tests do exact-match."
+        ]
+      },
+      {
+        "screen": "Dashboard",
+        "issues": [
+          "Guild ID is truncated with a trailing ellipsis (e.g. '46d722c3…'). Consider adding a click-to-copy or full ID on hover/title attribute for usability."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "MEDIUM: Rename data-testid on /create-guild inputs from 'guild-name-input' → 'create-guild-name-input' and 'guild-description-input' → 'create-guild-description-input' to match the documented spec (review_request feature list).",
+    "LOW: Make Dashboard quickaction-01..04 real <button disabled> elements (or document that they're decorative <div>s).",
+    "OPTIONAL: Add a non-breaking-space or trailing space inside the landing title spans so text_content reads 'Orbus Online: Guild Master' on one line for tools that assert exact text."
+  ],
+  "critical_code_review_comments": [
+    "server.py: clean, all routes under /api, _id excluded via projection in /guilds/me but not in user_public()/guild_public() (those build dict by field — safe). bcrypt $2b$ hashes used. JWT_SECRET sourced from env, no defaults — fails fast on misconfig.",
+    "Two FastAPI startup events use the deprecated @app.on_event('startup'/'shutdown'). Migrate to lifespan handler for future-proofing.",
+    "seed_tester() is idempotent (find_one before insert). Good. APP_ENV='production' correctly gates the seed.",
+    "Backend uses CORSMiddleware with allow_credentials=True + allow_origins='*' split on comma. With CORS_ORIGINS='*' that becomes ['*'] which is invalid alongside allow_credentials=True per CORS spec — browsers reject. Currently works because the frontend uses Authorization header (Bearer JWT) not cookies, so allow_credentials is unused. Tighten to specific origin or set allow_credentials=False to be spec-correct.",
+    "AuthContext + axios interceptor properly auto-logout on 401 — verified."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py (created — 17 tests, pytest, JUnit XML)"
+  ],
+  "success_rate": { "backend": "100%", "frontend": "100% functional (2 minor spec deviations)" },
+  "test_credentials": "tester@orbus.test / password123 (pre-seeded). Plus randomly generated e2e_<hex>@orbus.test users created during the run.",
+  "seed_data_creation": "Backend tests created ~6 fresh users (random UUID-prefixed emails) and ~3 TEST_-prefixed guilds. Frontend e2e created 1 additional user+guild and used the seeded tester (already had a guild from prior runs). No cleanup performed — non-destructive, isolated by random emails.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend Phase 1 fully working. Two spec deviations remain on the frontend: (1) CreateGuild input testids are 'guild-name-input'/'guild-description-input' (not 'create-guild-*'); (2) Dashboard quickaction cards are decorative divs, not disabled buttons. Tester account email 'tester@orbus.test' may already own a guild from this run, so POST /api/guilds with that user returns 400 'You already own a guild' — that is expected. For clean register-flow tests always use a random new email. The pytest file at /app/backend/tests/backend_test.py uses random UUID emails (no cleanup), safe to re-run.",
+  "rca of the issue": "No production bugs. The initial frontend test failures cascaded from a test-script bug (used the spec'd testids 'create-guild-name-input/description-input' that don't exist in the code, so inputs stayed empty, HTML5 'required' blocked submit, no navigation to /dashboard, no logout button to click). After switching to the actual testids ('guild-name-input', 'guild-description-input'), the full register→guild→dashboard→logout→login flow passes."
+}
