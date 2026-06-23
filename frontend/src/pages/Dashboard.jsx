@@ -26,10 +26,13 @@ const Stat = ({ label, value, testid, accent = false }) => (
 );
 
 const QuickAction = ({ label, code, phase }) => (
-    <div
-        className="border border-border bg-card/60 rounded-sm p-4 opacity-60 cursor-not-allowed"
+    <button
+        type="button"
+        disabled
+        className="text-left border border-border bg-card/60 rounded-sm p-4 opacity-60 cursor-not-allowed disabled:cursor-not-allowed"
         data-testid={`quickaction-${code}`}
         title={`Coming in ${phase}`}
+        aria-disabled="true"
     >
         <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-muted-foreground tracking-widest">
@@ -41,7 +44,7 @@ const QuickAction = ({ label, code, phase }) => (
         </div>
         <div className="text-sm">{label}</div>
         <div className="text-[10px] text-muted-foreground mt-2">— locked —</div>
-    </div>
+    </button>
 );
 
 export default function Dashboard() {

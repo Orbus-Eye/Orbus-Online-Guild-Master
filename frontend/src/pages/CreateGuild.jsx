@@ -80,7 +80,7 @@ export default function CreateGuild() {
                         </Label>
                         <Input
                             id="name"
-                            data-testid="guild-name-input"
+                            data-testid="create-guild-name-input"
                             required
                             minLength={3}
                             maxLength={40}
@@ -97,7 +97,7 @@ export default function CreateGuild() {
                         </Label>
                         <Textarea
                             id="description"
-                            data-testid="guild-description-input"
+                            data-testid="create-guild-description-input"
                             maxLength={300}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
