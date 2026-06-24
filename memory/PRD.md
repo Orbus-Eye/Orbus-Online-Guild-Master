@@ -174,12 +174,28 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - Gate Dragon's Hoard usa `best-three total_power CORRENTE` non "best three di sempre": una gilda che equipaggia e poi disequipaggia perde l'unlock se nuovi recruit hanno power basso. Comportamento documentato; semplice da estendere con `_max_team_power_ever` denormalizzato in Phase 8 se serve.
 - Loot table hardcoded in `server.py` (constant `DUNGEON_LOOT_TABLES`), non in DB. Cambiare le percentuali richiede deploy. Per ora va bene; futuro: collection `dungeon_loot_tables`.
 
-## Next tasks
-1. User-led review Phase 7 (UX + loop progressione completo)
-2. **Phase 8 (opzioni)**:
-   - Tutorial onboarding (5-step modal sul primo login → guida recruit → expedition → equip → tier 2)
-   - Email reale per password reset (Resend/SendGrid) + frontend refresh-token consumption
-   - Equipment crafting/enchant (consumo Common items per upgrade)
-   - Auto-replay expedition (un click "ripeti ultimo run")
-3. Phase 5.5 (refactor `server.py`) idealmente dopo Phase 8 quando gameplay è stabile
-4. Long-term: ranking, market, premium shop, chat, PvP
+## Phase 5.5 — 2026-06-24 (Partial Modular Refactor — Data + Pure Logic)
+Implemented (zero behaviour change, **133/133 pytest PASS** identical baseline):
+- **Created** `/app/backend/app/` package skeleton with 3 submodules:
+  - `app.shared.constants` — single source of truth for JWT/security/gameplay/equipment constants
+  - `app.seeds.seed_data` — declarative CLASS_SEED, TRAIT_SEED, DUNGEON_SEED, ITEM_SEED (pure data, ~150 lines)
+  - `app.expeditions.formulas` — pure functions: `compute_team_power`, `compute_success_chance`, `adventurer_base_power`, `item_equip_power`, `build_equipment_delta`
+  - `app.expeditions.loot_tables` — `DUNGEON_LOOT_TABLES` constant + `roll_loot_for_dungeon(db, dungeon, success)` async helper
+- **server.py shrunk** 2767 → 2541 lines (~226 lines removed of constant/data/formula duplication)
+- `server.py` now imports all gameplay constants, seeds, formulas and the loot table from `app.*` and **no longer redefines them** (single source of truth)
+- `server.py.pre-phase55.bak` retained as rollback safety net
+- OpenAPI paths IDENTICHE pre/post refactor (34 paths totali, zero diff)
+- Frontend NON toccato (zero changes)
+- Tests NON modificati (133 esistenti passano identici)
+
+**Deferred to Phase 5.5b (documented honestly)**:
+- Route handlers (`/api/auth/*`, `/api/guilds/*`, etc.) remain in `server.py` — splitting requires first creating `app/core/{database,security,lifespan}.py` and rewiring all `Depends(get_current_user)` callsites. High risk for a single-session refactor; best done as Phase 5.5b with its own pytest gate.
+- Pydantic schemas remain in `server.py`.
+- Helper functions (inventory/equipment/recruitment snapshots) remain in `server.py` (they share the Motor `db` handle which needs to move to `app/core/database.py` first).
+
+## Next tasks (Phase 8 candidates)
+1. **Replay last run** (best ROI: 1 endpoint + 1 button, big retention win)
+2. **Real email integration** for password reset (Resend/SendGrid) + FE refresh-token consumption
+3. **Onboarding tutorial** 5-step modal on first login
+4. **Phase 5.5b**: complete the route split now that data/formulas are isolated
+5. **`max_team_power_ever`** denormalised field so Dragon's Hoard gate is "sticky"

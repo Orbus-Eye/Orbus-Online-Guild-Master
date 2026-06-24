@@ -53,18 +53,27 @@ OrbusEmail = Annotated[str, BeforeValidator(_normalize_email)]
 MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
 JWT_SECRET = os.environ["JWT_SECRET"]
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRY_DAYS = 7  # TODO Phase 6+: reduce access TTL to ~1h once frontend actively uses refresh endpoint
 APP_ENV = os.environ.get("APP_ENV", "development")
 
 # ─── Phase 5: Security Hardening ──────────────────────────────────────────────
-# JWT_ALGORITHM, JWT_EXPIRY_DAYS, REFRESH_TOKEN_TTL_DAYS, PASSWORD_RESET_TTL_MINUTES,
-# LOGIN_LOCK_* and TESTER_* are imported from app.shared.constants below.
+REFRESH_TOKEN_TTL_DAYS = 30
+PASSWORD_RESET_TTL_MINUTES = 60
+LOGIN_LOCK_MAX_ATTEMPTS = 5
+LOGIN_LOCK_DURATION_MINUTES = 15
+LOGIN_ATTEMPTS_TTL_SECONDS = 86400  # 24h cleanup of stale attempt rows
 PASSWORD_REGEX_LETTER = re.compile(r"[A-Za-z]")
 PASSWORD_REGEX_DIGIT = re.compile(r"\d")
 
+TESTER_EMAIL = "tester@orbus.test"
+TESTER_PASSWORD = "password123"
+TESTER_USERNAME = "tester"
+
 # ─── Phase 2: Adventurers / Recruitment ───────────────────────────────────────
+RECRUITMENT_COST_GOLD = 20
 RECRUITMENT_CANDIDATES_PER_OFFER = 4
 OFFER_TTL_MINUTES = 30
-# RECRUITMENT_COST_GOLD imported below from app.shared.constants
 
 RARITY_WEIGHTS = [("Common", 70), ("Uncommon", 20), ("Rare", 8), ("Epic", 2)]
 RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2}
@@ -80,56 +89,177 @@ LAST_NAMES = [
     "Nightshade", "Brightblade",
 ]
 
-# ─── Phase 5.5 modular split: data + pure formulas live in app/* ──────────────
-from app.shared.constants import (
-    JWT_ALGORITHM,
-    JWT_EXPIRY_DAYS,
-    REFRESH_TOKEN_TTL_DAYS,
-    PASSWORD_RESET_TTL_MINUTES,
-    LOGIN_LOCK_MAX_ATTEMPTS,
-    LOGIN_LOCK_DURATION_MINUTES,
-    LOGIN_ATTEMPTS_TTL_SECONDS,
-    RECRUITMENT_COST_GOLD,
-    SUCCESS_CHANCE_MIN,
-    SUCCESS_CHANCE_MAX,
-    LOOT_DROP_CHANCE_LEGACY as LOOT_DROP_CHANCE,
-    LOOT_RARITIES_LEGACY as LOOT_RARITIES,
-    XP_THRESHOLD_PER_LEVEL,
-    EQUIPMENT_SLOTS,
-    SLOT_TO_ITEM_TYPE,
-    TESTER_EMAIL,
-    TESTER_USERNAME,
-    TESTER_PASSWORD,
-)
-from app.seeds.seed_data import (
-    CLASS_SEED,
-    TRAIT_SEED,
-    DUNGEON_SEED,
-    ITEM_SEED,
-)
-from app.expeditions.loot_tables import DUNGEON_LOOT_TABLES, roll_loot_for_dungeon
-from app.expeditions.formulas import (
-    compute_team_power,
-    compute_success_chance,
-    adventurer_base_power as _adventurer_unit_power,
-    item_equip_power as _item_equip_power,
-    build_equipment_delta as _build_equipment_delta,
-)
+CLASS_SEED = [
+    {"slug": "warrior", "name": "Warrior", "role": "Tank",
+     "description": "A stalwart front-liner who absorbs punishment so others may strike.",
+     "base_strength": 8, "base_agility": 4, "base_intellect": 2,
+     "base_endurance": 9, "base_faith": 2},
+    {"slug": "rogue", "name": "Rogue", "role": "DPS",
+     "description": "A nimble striker who finds the seams between armor plates.",
+     "base_strength": 5, "base_agility": 9, "base_intellect": 3,
+     "base_endurance": 4, "base_faith": 2},
+    {"slug": "mage", "name": "Mage", "role": "DPS",
+     "description": "A scholar of the arcane, frail in body but devastating in spell.",
+     "base_strength": 2, "base_agility": 4, "base_intellect": 10,
+     "base_endurance": 3, "base_faith": 3},
+    {"slug": "priest", "name": "Priest", "role": "Healer",
+     "description": "A devout channeler whose prayers mend wounds and lift spirits.",
+     "base_strength": 2, "base_agility": 3, "base_intellect": 6,
+     "base_endurance": 4, "base_faith": 10},
+    {"slug": "ranger", "name": "Ranger", "role": "DPS",
+     "description": "A keen-eyed scout who strikes from range before the foe closes.",
+     "base_strength": 5, "base_agility": 8, "base_intellect": 4,
+     "base_endurance": 5, "base_faith": 3},
+]
 
-
-
+TRAIT_SEED = [
+    {"name": "Brave", "description": "Steady under pressure; lends raw strength.",
+     "modifier_type": "flat", "affected_stat": "strength",
+     "modifier_value": 1.0, "is_positive": True},
+    {"name": "Quick Learner", "description": "Soaks up experience faster than peers.",
+     "modifier_type": "percent", "affected_stat": "xp_gain",
+     "modifier_value": 10.0, "is_positive": True},
+    {"name": "Frail", "description": "Weaker constitution; tires sooner.",
+     "modifier_type": "flat", "affected_stat": "endurance",
+     "modifier_value": -1.0, "is_positive": False},
+    {"name": "Sharp Eye", "description": "Spots openings others miss.",
+     "modifier_type": "flat", "affected_stat": "agility",
+     "modifier_value": 1.0, "is_positive": True},
+    {"name": "Devout", "description": "Anchored to a higher calling.",
+     "modifier_type": "flat", "affected_stat": "faith",
+     "modifier_value": 1.0, "is_positive": True},
+]
 
 # ─── Phase 3: Dungeons, Items, Expeditions, Inventory ──────────────────────────
-# Constants now live in app/shared/constants.py (single source of truth).
-# Local aliases above (SUCCESS_CHANCE_*, LOOT_DROP_CHANCE, LOOT_RARITIES,
-# XP_THRESHOLD_PER_LEVEL, EQUIPMENT_SLOTS, SLOT_TO_ITEM_TYPE) preserved for
-# backward compatibility with `from server import …` in tests.
+SUCCESS_CHANCE_MIN = 10
+SUCCESS_CHANCE_MAX = 95
+LOOT_DROP_CHANCE = 0.50  # 50% (Goblin Warrens default; per-dungeon override below)
+LOOT_RARITIES = ["Common", "Uncommon"]  # legacy global pool (Goblin Warrens fallback)
+XP_THRESHOLD_PER_LEVEL = 100  # adventurer levels up when xp >= level * 100
 
 # ─── Phase 7: Loot tables per dungeon ─────────────────────────────────────────
-# DUNGEON_LOOT_TABLES now lives in app/expeditions/loot_tables.py.
+# Each entry defines: success-loot probability + rarity weights, plus a
+# small failure consolation (Common-only, never Rare/Epic).
+DUNGEON_LOOT_TABLES = {
+    "goblin-warrens": {
+        "success": {"chance": 0.50, "weights": {"Common": 85, "Uncommon": 15}},
+        "failure": {"chance": 0.00, "weights": {}},
+    },
+    "shadow-crypts": {
+        "success": {"chance": 0.65, "weights": {"Common": 50, "Uncommon": 35, "Rare": 15}},
+        "failure": {"chance": 0.10, "weights": {"Common": 100}},
+    },
+    "dragons-hoard": {
+        "success": {"chance": 0.80, "weights": {"Uncommon": 50, "Rare": 35, "Epic": 15}},
+        "failure": {"chance": 0.05, "weights": {"Common": 100}},
+    },
+}
 
-# DUNGEON_SEED + ITEM_SEED now live in app/seeds/seed_data.py
-# (re-imported in the Phase 5.5 import block above)
+DUNGEON_SEED = [
+    {
+        "slug": "goblin-warrens",
+        "name": "Goblin Warrens",
+        "description": "A damp tunnel network occupied by goblin scavengers and their crude traps.",
+        "difficulty": 1,
+        "required_team_size": 3,
+        "base_duration_seconds": 60,
+        "recommended_power": 45,
+        "base_gold_reward": 35,
+        "base_xp_reward": 25,
+    },
+    {
+        "slug": "shadow-crypts",
+        "name": "Shadow Crypts",
+        "description": "Ancient burial halls where restless spirits guard forgotten relics.",
+        "difficulty": 2,
+        "required_team_size": 3,
+        "base_duration_seconds": 120,
+        "recommended_power": 60,
+        "base_gold_reward": 65,
+        "base_xp_reward": 50,
+    },
+    {
+        "slug": "dragons-hoard",
+        "name": "Dragon's Hoard",
+        "description": "A scorched vault beneath a ruined keep, filled with dragonkin guardians and unstable treasure.",
+        "difficulty": 3,
+        "required_team_size": 3,
+        "base_duration_seconds": 300,
+        "recommended_power": 80,
+        "base_gold_reward": 120,
+        "base_xp_reward": 90,
+    },
+]
+
+ITEM_SEED = [
+    {"slug": "rusted-sword", "name": "Rusted Sword",
+     "description": "A pitted blade that has seen too many summers.",
+     "item_type": "weapon", "rarity": "Common", "power_score": 1,
+     "strength_bonus": 1, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "goblin-dagger", "name": "Goblin Dagger",
+     "description": "Crude, jagged, and surprisingly effective in a back alley.",
+     "item_type": "weapon", "rarity": "Uncommon", "power_score": 2,
+     "strength_bonus": 0, "agility_bonus": 2, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "cracked-staff", "name": "Cracked Staff",
+     "description": "A wizard's staff with a hairline fracture; the focus crystal still hums.",
+     "item_type": "weapon", "rarity": "Common", "power_score": 1,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 1,
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
+    {"slug": "novice-charm", "name": "Novice Charm",
+     "description": "A small wooden pendant carved with a quiet prayer.",
+     "item_type": "accessory", "rarity": "Common", "power_score": 1,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
+    {"slug": "torn-leather-vest", "name": "Torn Leather Vest",
+     "description": "Patched in three places. Still keeps the cold off.",
+     "item_type": "armor", "rarity": "Common", "power_score": 1,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 1, "faith_bonus": 0, "affects_combat": True},
+    # ─── Phase 7: Shadow Crypts (Rare) ──────────────────────────────────────
+    {"slug": "cryptbone-blade", "name": "Cryptbone Blade",
+     "description": "A jagged shortsword carved from a barrow-wight's femur. It hums with old anger.",
+     "item_type": "weapon", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 3, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 1, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "spiritglass-staff", "name": "Spiritglass Staff",
+     "description": "A staff topped with a sliver of soulglass. It whispers at the edge of hearing.",
+     "item_type": "weapon", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 3,
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
+    {"slug": "gravewarden-mail", "name": "Gravewarden Mail",
+     "description": "Rust-pitted but resilient — armor pulled from a tomb-knight that refused to fall twice.",
+     "item_type": "armor", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 4, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "relic-signet", "name": "Relic Signet",
+     "description": "A signet ring inlaid with a smoky relic-shard. Whoever wore it last is not coming back for it.",
+     "item_type": "accessory", "rarity": "Rare", "power_score": 3,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 1,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
+    # ─── Phase 7: Dragon's Hoard (Epic) ─────────────────────────────────────
+    {"slug": "drakefang-greatsword", "name": "Drakefang Greatsword",
+     "description": "A two-hander forged around the fang of a young dragon. The blade smokes when drawn.",
+     "item_type": "weapon", "rarity": "Epic", "power_score": 7,
+     "strength_bonus": 5, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 2, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "embermind-focus", "name": "Embermind Focus",
+     "description": "A wand of dragonbone bound in copper wire. Channels heat like a furnace.",
+     "item_type": "weapon", "rarity": "Epic", "power_score": 7,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 5,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
+    {"slug": "dragonscale-vest", "name": "Dragonscale Vest",
+     "description": "Overlapping scales stitched onto cured leather. Light, hot to the touch, hard as stone.",
+     "item_type": "armor", "rarity": "Epic", "power_score": 6,
+     "strength_bonus": 0, "agility_bonus": 1, "intellect_bonus": 0,
+     "endurance_bonus": 5, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "hoardlords-seal", "name": "Hoardlord's Seal",
+     "description": "A heavy gold amulet shaped like a coiled wyrm. It seems to weigh the wearer down — yet they walk taller.",
+     "item_type": "accessory", "rarity": "Epic", "power_score": 6,
+     "strength_bonus": 2, "agility_bonus": 0, "intellect_bonus": 2,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
+]
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("orbus")
@@ -589,17 +719,32 @@ def validate_item_monetization(item: dict) -> None:
             )
 
 
-def _adventurer_class_unit_power(_unused=None):
-    """Deprecated placeholder kept to avoid IDE confusion. Use the imported
-    `_adventurer_unit_power` from app.expeditions.formulas instead."""
-    raise NotImplementedError("use _adventurer_unit_power from app.expeditions.formulas")
+def _adventurer_unit_power(adv: dict) -> int:
+    return (
+        int(adv["strength"])
+        + int(adv["agility"])
+        + int(adv["intellect"])
+        + int(adv["endurance"])
+        + int(adv["faith"])
+        + int(adv.get("level", 1)) * 2
+    )
 
 
 # ─── Phase 6: Equipment helpers ────────────────────────────────────────────────
-# EQUIPMENT_SLOTS + SLOT_TO_ITEM_TYPE imported from app.shared.constants above.
-# `_item_equip_power`, `_adventurer_unit_power`, `compute_team_power`,
-# `compute_success_chance` and `_build_equipment_delta` imported from
-# app.expeditions.formulas (Phase 5.5).
+EQUIPMENT_SLOTS = ("weapon", "armor", "accessory")
+SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accessory"}
+
+
+def _item_equip_power(item: dict) -> int:
+    """Sum of stat-bonus deltas + power_score for an equipped item."""
+    return (
+        int(item.get("strength_bonus", 0))
+        + int(item.get("agility_bonus", 0))
+        + int(item.get("intellect_bonus", 0))
+        + int(item.get("endurance_bonus", 0))
+        + int(item.get("faith_bonus", 0))
+        + int(item.get("power_score", 0))
+    )
 
 
 def _empty_slot_map() -> dict:
@@ -793,10 +938,91 @@ async def _evaluate_dungeon_gate(dungeon: dict, guild: dict) -> tuple[bool, Opti
 
 
 # ─── Phase 7: Equipment delta + narrative ─────────────────────────────────────
-# Phase 5.5: _build_equipment_delta, compute_team_power and compute_success_chance
-# are imported at the top of this module from app.expeditions.formulas. The
-# inline definitions that previously lived here have been removed to keep a
-# single source of truth.
+def _build_equipment_delta(
+    members_for_power: list[dict],
+    dungeon: dict,
+    final_team_power: int,
+    success_chance_with_eq: int,
+) -> dict:
+    """Return the 5 Phase-7 delta fields (base/equipment/final + with/without
+    success chance + narrative text).
+    """
+    equipment_power_bonus = sum(
+        int(m.get("equipment_power_snapshot", 0)) for m in members_for_power
+    )
+    members_base_only = [
+        {**m, "total_power_snapshot": int(m["total_power_snapshot"]) - int(m.get("equipment_power_snapshot", 0))}
+        for m in members_for_power
+    ]
+    base_team_power = compute_team_power(members_base_only)
+    success_chance_without_eq = compute_success_chance(
+        base_team_power, dungeon["recommended_power"]
+    )
+
+    if equipment_power_bonus == 0:
+        narrative = "No equipment was used on this run."
+    elif success_chance_without_eq == success_chance_with_eq:
+        narrative = (
+            f"Equipment contributed +{equipment_power_bonus} team power. "
+            f"Success chance was already at maximum ({success_chance_with_eq}%)."
+        )
+    else:
+        narrative = (
+            f"Equipment contributed +{equipment_power_bonus} team power, "
+            f"improving success chance from {success_chance_without_eq}% "
+            f"to {success_chance_with_eq}%."
+        )
+    return {
+        "base_team_power": base_team_power,
+        "equipment_power_bonus": equipment_power_bonus,
+        "final_team_power": final_team_power,
+        "success_chance_without_equipment": success_chance_without_eq,
+        "success_chance_with_equipment": success_chance_with_eq,
+        "equipment_delta_text": narrative,
+    }
+
+
+def compute_team_power(members: list) -> int:
+    """members is a list of adventurer dicts (live or snapshot fields ending in _snapshot).
+
+    Phase 6: if a member already carries `total_power_snapshot`, that value is
+    treated as authoritative for the per-member contribution (already includes
+    base + level + equipment). Otherwise the legacy formula (base only) is used.
+    """
+    def get(a, key):
+        return a.get(key, a.get(key + "_snapshot", 0))
+
+    base = 0
+    roles = set()
+    for a in members:
+        if a.get("total_power_snapshot") is not None:
+            base += int(a["total_power_snapshot"])
+        else:
+            base += (
+                int(get(a, "strength"))
+                + int(get(a, "agility"))
+                + int(get(a, "intellect"))
+                + int(get(a, "endurance"))
+                + int(get(a, "faith"))
+                + int(get(a, "level") or 1) * 2
+            )
+        role = a.get("class_role") or a.get("role_snapshot")
+        if role:
+            roles.add(role)
+    if "Tank" in roles:
+        base += 5
+    if "Healer" in roles:
+        base += 5
+    if "DPS" in roles:
+        base += 5
+    if {"Tank", "Healer", "DPS"}.issubset(roles):
+        base += 10
+    return base
+
+
+def compute_success_chance(team_power: int, recommended_power: int) -> int:
+    raw = 50 + (team_power - recommended_power)
+    return max(SUCCESS_CHANCE_MIN, min(SUCCESS_CHANCE_MAX, raw))
 
 
 CLASS_LEVELUP_STAT = {
