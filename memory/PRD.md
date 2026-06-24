@@ -69,6 +69,24 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
   - Status badges: SUCCESS=#22c55e, FAILED=#ef4444, IN PROGRESS=amber; rarity palette continues
 - Testing agent: 100% pass — 11/11 new Phase-3 + 14/14 Phase-2 + 17/17 Phase-1; full frontend e2e + mobile 375×812 verified
 
+### Phase 4 — 2026-06-24
+- Backend
+  - `get_admin_user` dependency (gates `/api/admin/*`); tester promoted to `is_admin=true` on startup when `APP_ENV != "production"` (idempotent)
+  - **16 admin endpoints**: `GET/POST/PATCH /api/admin/{classes,traits,dungeons,items}` + `POST /api/admin/{collection}/{id}/toggle-active` (soft-delete via flag)
+  - **Trait effects at recruitment**: each candidate gets 0/1/2 traits via weighted random (50/35/15%); `_apply_trait_effects` adds `flat` modifiers to the 5 main stats with floor=1; `percent xp_gain` deferred (TODO Phase 5+)
+  - Traits persist as denormalized snapshot on `adventurers.traits`; expedition `team_power` automatically uses them (no expedition-side changes)
+  - Backward-compat: legacy adventurers without `traits` field serialize as `traits: []`
+  - **Monetization invariant rinforzato**: `validate_item_monetization` enforced on both POST and PATCH `/api/admin/items` — `can_be_sold_for_real_money=true` requires `is_cosmetic=true AND NOT affects_combat/economy/ranking`
+  - **Hardening expeditions** audit re-run: cross-guild adventurer 404, duplicate ids 400, busy adventurer 400, cross-guild GET expedition 404 (not 403), idempotency under concurrent fetch
+- Frontend
+  - New page `/admin` with 4 tabs (CLASSES / TRAITS / DUNGEONS / ITEMS) — table on desktop + stacked cards on mobile + shadcn Dialog editor with per-entity forms
+  - Item editor: ticking "Real-money sale" auto-clears `is_cosmetic`/`affects_*` to maintain invariant (UI guard); warning panel shown; backend remains authoritative
+  - Trait badges (green positive / red negative) added to Recruitment cards and Adventurers table+cards; tooltips show "+1 strength" / "-1 endurance" etc
+  - AppHeader: ADMIN nav link visible only when `user.is_admin === true`
+  - Non-admin user navigating to `/admin` → redirect to `/dashboard` with toast "Admin access required"
+  - Mobile audit (390×844): all 6 main routes verified zero horizontal overflow
+- Testing agent: **100% pass — 40/40 Phase-4 + 11/11 Phase-3 + 14/14 Phase-2 + 17/17 Phase-1 = 82/82 backend** + full frontend e2e + mobile responsive
+
 ## Prioritized backlog (next phases)
 
 ### P0 — Phase 4: Admin Panel + Trait Effects + Equip
