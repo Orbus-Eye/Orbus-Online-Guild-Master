@@ -10,10 +10,40 @@ Design notes:
 * `text` fallback is generated alongside `html` for clients that disable HTML.
 * The brand is intentionally text-only ("◆ ORBUS") — no remote assets.
 * `app_url` is the public web URL (frontend), not the API base.
+* Phase 9.3.1 — every user-controlled string is `html.escape()`d before being
+  interpolated into the HTML body. The plaintext fallback strips newlines to
+  avoid header injection. The Pydantic schema also rejects shell/HTML-unsafe
+  characters at register time, so this is defense-in-depth.
 """
 from __future__ import annotations
 
+import html as _html
 from typing import Tuple
+
+
+def _safe_html(value: str) -> str:
+    """HTML-escape a user-controlled string for safe inclusion in `<body>`."""
+    if value is None:
+        return ""
+    return _html.escape(str(value), quote=True)
+
+
+def _safe_text(value: str) -> str:
+    """Strip CR/LF/control chars AND HTML-meta chars (`<>&"'`) from a
+    user-controlled string before putting it into the plaintext body OR the
+    subject header. Prevents header injection in MIME-encoded subjects and
+    keeps subjects safe in mail clients that render markup.
+
+    Phase 9.3.1 — defense in depth: even for accounts predating the strict
+    Pydantic regex, the email rendering pipeline cannot expose unsafe chars.
+    """
+    if value is None:
+        return ""
+    cleaned = "".join(
+        ch for ch in str(value)
+        if 32 <= ord(ch) < 127 and ch not in "<>&\"'"
+    )
+    return cleaned.strip()
 
 # Common inline styles for both templates
 _WRAPPER_CSS = (
@@ -95,10 +125,20 @@ def render_password_reset(lang: str, reset_url: str) -> Tuple[str, str, str]:
 # Welcome (post-registration)
 # ────────────────────────────────────────────────────────────────────────────
 def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, str]:
-    """Render the welcome email for the given locale."""
-    safe_username = (username or "Guild Master").strip() or "Guild Master"
+    """Render the welcome email for the given locale.
+
+    Phase 9.3.1 — username is HTML-escaped for the HTML body and sanitised
+    (CR/LF stripped) for the subject + plaintext to prevent header injection
+    and HTML rendering of attacker-controlled content. The Pydantic schema
+    rejects unsafe patterns at register time as well.
+    """
+    raw_username = (username or "Guild Master").strip() or "Guild Master"
+    safe_username_text = _safe_text(raw_username) or "Guild Master"
+    safe_username_html = _safe_html(safe_username_text)
+    safe_app_url = _safe_text(app_url) or "/"
+    safe_app_url_html = _safe_html(safe_app_url)
     if lang == "it":
-        subject = f"Benvenuto su Orbus, {safe_username}"
+        subject = f"Benvenuto su Orbus, {safe_username_text}"
         intro = "Il tuo account Orbus è pronto. È ora di fondare la tua gilda."
         steps_title = "I tuoi primi quattro passi:"
         steps = [
@@ -110,7 +150,7 @@ def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, st
         cta = "Entra nella dashboard"
         footer = "Orbus Online · Guild Master · email automatica, non rispondere."
     else:
-        subject = f"Welcome to Orbus, {safe_username}"
+        subject = f"Welcome to Orbus, {safe_username_text}"
         intro = "Your Orbus account is ready. Time to found your guild."
         steps_title = "Your first four moves:"
         steps = [
@@ -132,14 +172,14 @@ def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, st
 <body style="{_WRAPPER_CSS}">
   <div style="{_CARD_CSS}">
     <div style="color:#f5a524; letter-spacing:.18em; font-size:11px; margin-bottom:18px;">◆ ORBUS // GUILDMASTER</div>
-    <h1 style="font-size:22px; margin:0 0 16px;">{subject}</h1>
+    <h1 style="font-size:22px; margin:0 0 16px;">{_safe_html(subject)}</h1>
     <p style="line-height:1.6;">{intro}</p>
     <p style="line-height:1.6; color:#aaa; font-size:14px;">{steps_title}</p>
     <ol style="line-height:1.6; padding-left:22px;">{steps_html}</ol>
     <p style="text-align:center; margin:28px 0;">
-      <a href="{app_url}" style="{_BTN_CSS}">{cta} →</a>
+      <a href="{safe_app_url_html}" style="{_BTN_CSS}">{cta} →</a>
     </p>
-    <p style="font-size:12px;"><a href="{app_url}" style="{_LINK_CSS}">{app_url}</a></p>
+    <p style="font-size:12px;"><a href="{safe_app_url_html}" style="{_LINK_CSS}">{safe_app_url_html}</a></p>
     <div style="{_FOOTER_CSS}">— {footer}</div>
   </div>
 </body>
@@ -150,7 +190,7 @@ def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, st
         f"{'=' * len(subject)}\n\n"
         f"{intro}\n\n"
         f"{steps_title}\n{steps_text}\n\n"
-        f"{cta}: {app_url}\n\n"
+        f"{cta}: {safe_app_url}\n\n"
         f"— {footer}\n"
     )
     return subject, html, text

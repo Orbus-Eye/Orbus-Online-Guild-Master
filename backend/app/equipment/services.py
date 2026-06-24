@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import HTTPException
+from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
 
 from app.expeditions.formulas import (
@@ -170,14 +171,31 @@ async def equip_item_service(
     )
     if not inv_row:
         raise HTTPException(status_code=404, detail="Item not in your guild inventory")
-    total_qty = int(inv_row.get("quantity", 0))
-    equipped_qty = await db.equipped_items.count_documents(
-        {"guild_id": guild["id"], "item_id": item_id}
+
+    # Phase 9.3.1 — atomic reservation. Replaces the previous non-atomic
+    # (`total - count`) check that could allow concurrent equips on different
+    # adventurers to duplicate a single-quantity item. We $inc reserved_qty
+    # gated by `reserved_qty < quantity` server-side via `$expr`. `$ifNull`
+    # covers legacy docs predating Phase 9.3.1 where the field is missing.
+    reserved = await db.inventory_items.find_one_and_update(
+        {
+            "guild_id": guild["id"],
+            "item_id": item_id,
+            "$expr": {
+                "$lt": [
+                    {"$ifNull": ["$reserved_qty", 0]},
+                    {"$ifNull": ["$quantity", 0]},
+                ]
+            },
+        },
+        {"$inc": {"reserved_qty": 1}},
+        return_document=ReturnDocument.AFTER,
+        projection={"_id": 0},
     )
-    available = total_qty - equipped_qty
-    if available <= 0:
+    if not reserved:
         raise HTTPException(
-            status_code=400, detail="Not enough copies of this item available"
+            status_code=409,
+            detail="Item not available (already equipped on another adventurer)",
         )
 
     now = utc_now()
@@ -192,6 +210,17 @@ async def equip_item_service(
     try:
         await db.equipped_items.insert_one(new_row)
     except DuplicateKeyError:
+        # Slot was taken between the reservation and the insert. Refund the
+        # atomic reservation so the inventory invariant `reserved <= quantity`
+        # stays exact.
+        await db.inventory_items.update_one(
+            {
+                "guild_id": guild["id"],
+                "item_id": item_id,
+                "reserved_qty": {"$gt": 0},
+            },
+            {"$inc": {"reserved_qty": -1}},
+        )
         raise HTTPException(
             status_code=400, detail="Slot already occupied, unequip first"
         )
@@ -217,11 +246,26 @@ async def unequip_item_service(
             detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
         )
 
-    res = await db.equipped_items.delete_one(
-        {"adventurer_id": adv["id"], "slot": slot, "guild_id": guild["id"]}
+    # Phase 9.3.1 — atomic delete that also returns the freed item_id so we
+    # can release the reservation. We use find_one_and_delete to capture the
+    # row in one round-trip.
+    freed = await db.equipped_items.find_one_and_delete(
+        {"adventurer_id": adv["id"], "slot": slot, "guild_id": guild["id"]},
+        projection={"_id": 0, "item_id": 1},
     )
-    if res.deleted_count == 0:
+    if not freed:
         raise HTTPException(status_code=404, detail=f"No item equipped in slot '{slot}'")
+
+    # Release the inventory reservation. Guard `reserved_qty > 0` keeps the
+    # counter from going negative even if the row is somehow stale.
+    await db.inventory_items.update_one(
+        {
+            "guild_id": guild["id"],
+            "item_id": freed["item_id"],
+            "reserved_qty": {"$gt": 0},
+        },
+        {"$inc": {"reserved_qty": -1}},
+    )
 
     slots, eq_power, _raw = await _load_equipment_for_adventurer(db, adv["id"])
     return _build_equipment_response(adv, slots, eq_power)

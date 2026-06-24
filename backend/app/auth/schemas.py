@@ -31,7 +31,15 @@ OrbusEmail = Annotated[str, BeforeValidator(_normalize_email)]
 
 class RegisterIn(BaseModel):
     email: OrbusEmail
-    username: str = Field(min_length=2, max_length=32)
+    # Phase 9.3.1 — strict username pattern to prevent HTML/header injection
+    # in welcome emails. Allowed: ASCII letters, digits, underscore, hyphen,
+    # space. Length 3-32 (raised from 2 to leave room for sane bot detection).
+    # Existing accounts with non-conforming usernames stay valid (validation
+    # only runs on register).
+    username: str = Field(
+        min_length=3, max_length=32,
+        pattern=r"^[A-Za-z0-9_\- ]+$",
+    )
     # Password is validated in the route handler (HTTP 400) — not via Pydantic (422)
     password: str = Field(max_length=128)
 
