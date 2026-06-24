@@ -180,6 +180,84 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 10 — 2026-06-24 (Content Expansion Pack 1 — BACKEND-ONLY)
+Implemented (zero behavior change a logic/formule/endpoint, **220 passed + 1 skipped** pytest in 217s, OpenAPI **37/37 paths byte-identici**, ZERO frontend touch):
+
+### Content scaling
+| Asset | Before | After | Delta |
+|---|---|---|---|
+| Classes | 5 | **12** | +7 |
+| Traits | 5 | **30** | +25 |
+| Dungeons | 3 | **10** | +7 |
+| Items | 14 | **80** | +66 |
+| Loot tables | 3 | **10** | +7 |
+
+### Classes (+7) — slugs nuovi
+`paladin`, `berserker`, `druid`, `necromancer`, `monk`, `bard`, `assassin`. Stat bias coerenti con role (Paladin Tank+Faith, Berserker raw STR, Druid Healer/DPS, Necromancer INT, Monk AGI/END, Bard Support, Assassin AGI burst). Le **5 originali** (Warrior, Rogue, Mage, Priest, Ranger) sono BYTE-IDENTICHE.
+
+### Traits (+25)
+- 7 stat-buffs (Iron-Willed, Scholar, Lightfoot, Bull-Strong, Blessed, Fast Reader, Veteran's Eye)
+- 5 stat-debuffs (Clumsy, Slow-Witted, Weak-Armed, Faithless, Sickly)
+- 13 flavor traits con `modifier_value: 0.0` (Tavern-Born, Storm-Marked, Sworn Vow, Wanderer, Beast-Friend, Stargazer, Bandit Past, Cursed Coin, Insomniac, Glassmaker's Child, Salt-Tongued, Hollow-Eyed, Twin-Born). Sono narrative-only e non richiedono nuova logic di effect resolution.
+
+### Dungeons (+7) — sparsi su tier
+| Slug | Tier | Duration | Power | Gold | XP |
+|---|---|---|---|---|---|
+| `sewer-nest` | 1 | 45s | 35 | 25 | 18 |
+| `goblin-warrens` *(orig)* | 1 | 60s | 45 | 35 | 25 |
+| `bandit-hideout` | 1 | 75s | 50 | 45 | 30 |
+| `druid-grove` | 2 | 90s | 55 | 55 | 42 |
+| `cursed-mines` | 2 | 120s | 62 | 70 | 52 |
+| `shadow-crypts` *(orig)* | 2 | 120s | 60 | 65 | 50 |
+| `sunken-library` | 2 | 150s | 68 | 80 | 62 |
+| `lich-sanctum` | 3 | 180s | 75 | 100 | 75 |
+| `storm-spire` | 3 | 240s | 88 | 135 | 100 |
+| `dragons-hoard` *(orig)* | 3 | 300s | 80 | 120 | 90 |
+
+I 3 originali sono BYTE-IDENTICI per slug, durata, power, reward, gate.
+
+### Items (+66) — distribuzione rarità
+30 Common / 22 Uncommon / 15 Rare / 13 Epic = 80 totali. 36 weapon / 23 armor / 21 accessory. Power score coerente con rarity (Common=1, Uncommon=2, Rare=3-4, Epic=6-7). Tutti gli item con stats hanno `affects_combat=True` e `can_be_sold_for_real_money=False` (anti-pay-to-win invariant test esplicito).
+
+### Loot tables — summary
+- **Tier 1** (`sewer-nest`, `goblin-warrens`, `bandit-hideout`): SOLO Common/Uncommon. `sewer-nest` 90/10 Common-heavy, `bandit-hideout` 75/25 con 5% failure consolation.
+- **Tier 2** (`druid-grove`, `cursed-mines`, `shadow-crypts`, `sunken-library`): Common/Uncommon/Rare. `sunken-library` ha la più alta Rare chance (20%). I 3 originali (`shadow-crypts`) preservati esattamente.
+- **Tier 3** (`lich-sanctum`, `storm-spire`, `dragons-hoard`): SOLO Uncommon/Rare/Epic (no Common su success). `storm-spire` 75% success rate con 12% Epic. `dragons-hoard` BYTE-IDENTICO al baseline.
+- **Failure invariant**: nessun dungeon può droppare Rare/Epic in failure (enforced sia dai per-dungeon failure weights, sia dal hard-cap defense-in-depth in `roll_loot_for_dungeon`).
+
+### Test (1 file nuovo, 20 PASS)
+`tests/backend_phase10_content_test.py` — 20 test, 5 classi:
+- `TestPhase10SeedCounts` (4): classes≥12, traits≥30, dungeons≥10, items≥80
+- `TestPhase10OriginalsInvariant` (4): goblin-warrens/shadow-crypts/dragons-hoard byte-identici + 5 classi originali presenti
+- `TestPhase10SeedIdempotency` (1): re-run `run_all_seeds(db)` 2x → counts invariati (upsert by slug)
+- `TestPhase10LootTables` (4): tutti i 10 dungeon hanno loot table; T1 solo C/U; T3 no Common in success; failure never Rare/Epic per ALL dungeons
+- `TestPhase10MonetizationInvariant` (2): nessun combat item con `can_be_sold_for_real_money=True`; rarità referenziate da loot tables hanno almeno 1 item
+- `TestPhase10Recruitment` (2): recruitment surface ≥8 classi distinte su 20 fetch batch; `/api/admin/classes` lista ≥12
+- `TestPhase10OpenAPIInvariant` (2): paths==37, `/api/leaderboard/guilds` ancora presente
+- `TestPhase10FailureLootStatistical` (1): 200 trial × 10 dungeon = 2000 statistical failure rolls → zero Rare/Epic leak
+
+### Test esistenti aggiornati (3, per supportare catalog esteso)
+- `tests/backend_phase2_test.py::test_list_classes_no_auth`: `== 5` → `>= 5`; preserva la verifica che le 5 originali hanno stats invariati
+- `tests/backend_phase2_test.py::test_candidates_returns_four_valid`: aggiunto "Support" al `ALLOWED_ROLES`; `class_name` ora accettato come stringa libera (12 classi)
+- `tests/backend_phase56b_smoke_test.py::test_admin_classes_returns_5_with_token`: `== 5` → `>= 5`
+
+### Verifiche
+- pytest **220 passed + 1 skipped** in 217.13s (skip data-dependent gold recruit pre-esistente, non Phase 10)
+- OpenAPI diff pre/post Phase 10: **VUOTO** (DIFF_EXIT=0, 37 → 37 paths invariati)
+- Backend startup log: `Seeded 12 classes and 30 traits` + `Seeded 10 dungeons and 80 items` + `Tester account already exists` + `Orbus backend ready`
+- Seed idempotency: re-run 3× run_all_seeds → counts identici (verificato da test + da reload reali in log)
+- Anti-pay-to-win: 0 leak (`affects_combat=True AND can_be_sold_for_real_money=True` → empty set)
+- Failure-loot invariant: 2000 statistical trials × 10 dungeons → 0 Rare/Epic drop in failure branch
+- RNG: `secrets.SystemRandom()` usato in tutto il codice nuovo (loot_tables, recruitment già pre-Phase 10)
+- Frontend: 0 modifiche, Leaderboard + Dashboard badge + AppHeader RANK nav link preservati
+
+### Bilanciamento — note
+- **Balance risk segnalato**: `sunken-library` (T2 last) ha 20% Rare success chance — più alta dei 15% di shadow-crypts. È intenzionale (premio per la longest T2 duration di 150s), ma se in playtesting risulta troppo generoso, abbassare a 15% o 17%.
+- **`storm-spire`** (T3 mid) ha 75% success vs `dragons-hoard` 80% — leggermente più punitivo per la sua duration più breve (240s vs 300s). Coerente con la formula `success_chance = 50 + (team_power - recommended_power)`.
+- **Recommended_power** progressione: 35 → 45 → 50 → 55 → 60 → 62 → 68 → 75 → 80 → 88. Curva smooth, no gap >8 punti.
+- **Failure consolation gold/xp**: invariato (25% gold + 40% xp del base), nessun rischio over-reward.
+
+
 ## Phase 9.1 — 2026-06-24 (Public Guild Leaderboard + Peak Power Badge — first post-refactor feature)
 Implemented (zero behavior change ai 36 path esistenti, **200/200 pytest PASS** + 15 nuovi test = totale 215 PASS, +1 nuovo path OpenAPI `/api/leaderboard/guilds`):
 

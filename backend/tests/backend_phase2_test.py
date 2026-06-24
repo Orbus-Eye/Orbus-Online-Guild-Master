@@ -64,7 +64,9 @@ class TestAdventurerClasses:
         classes = r.json()["classes"]
         assert isinstance(classes, list)
         active = [c for c in classes if c.get("is_active", True)]
-        assert len(active) == 5
+        # Phase 10: expanded 5 → 12. Test verifies the ORIGINAL 5 are still present
+        # with their original stats; new classes are allowed but not validated here.
+        assert len(active) >= 5
         by_name = {c["name"]: c for c in active}
         for cname, (role, s, a, i, e, f) in EXPECTED_CLASSES.items():
             assert cname in by_name, f"missing class {cname}"
@@ -105,11 +107,14 @@ class TestRecruitmentCandidates:
         body = r.json()
         cands = body["candidates"]
         assert len(cands) == 4
+        # Phase 10: catalog expanded — class_name may be any of the 12 seeded
+        # classes (5 original + 7 new), role may be Tank/DPS/Healer/Support.
+        ALLOWED_ROLES_P10 = {"Tank", "DPS", "Healer", "Support"}
         for c in cands:
             assert isinstance(c["candidate_id"], str) and len(c["candidate_id"]) >= 8
             assert isinstance(c["name"], str) and len(c["name"]) > 0
-            assert c["class_name"] in EXPECTED_CLASSES
-            assert c["class_role"] in {"Tank", "DPS", "Healer"}
+            assert isinstance(c["class_name"], str) and len(c["class_name"]) > 0
+            assert c["class_role"] in ALLOWED_ROLES_P10, c["class_role"]
             assert c["rarity"] in ALLOWED_RARITIES
             assert c["level"] == 1
             assert c["experience"] == 0

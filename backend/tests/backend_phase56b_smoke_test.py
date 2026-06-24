@@ -150,12 +150,13 @@ class TestAdminGating:
         seeded = {"mage", "priest", "ranger", "rogue"}
         missing = seeded - slugs
         assert not missing, f"seeded class slugs missing: {missing}"
-        # Public adventurer-classes endpoint must still return exactly 5 seeded.
+        # Public adventurer-classes endpoint surfaces the seeded classes.
+        # Phase 10: catalog expanded 5 → 12, so we assert ≥5 (original 5 still present).
         r2 = api.get(f"{BASE_URL}/api/adventurer-classes", timeout=10)
         assert r2.status_code == 200
         d2 = r2.json()
         cl2 = d2 if isinstance(d2, list) else d2.get("classes", d2.get("items", []))
-        assert len(cl2) == 5, f"expected 5 seeded classes, got {len(cl2)}"
+        assert len(cl2) >= 5, f"expected ≥5 seeded classes, got {len(cl2)}"
 
     def test_admin_classes_requires_auth(self, api):
         r = api.get(f"{BASE_URL}/api/admin/classes", timeout=10)
