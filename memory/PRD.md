@@ -180,6 +180,30 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5c — 2026-06-24 (Guilds Domain Split — second modular POC after auth)
+Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI paths identical: 36/36 byte-diff vuoto, FE non toccato):
+
+- **Created** `app/guilds/` domain:
+  - `schemas.py` (18 LOC) — `GuildCreateIn` Pydantic model con `field_validator` per name strip+min-length
+  - `services.py` (152 LOC) — 5 funzioni pure con `db` come primo argomento: `guild_public`, `user_guild_or_404`, `create_guild_for_user`, `compute_dashboard_stats`, `utc_now`. Tutte unit-testabili.
+  - `routes.py` (50 LOC) — `APIRouter(prefix="/api/guilds")` con 2 endpoint (`POST` e `GET /me`)
+  - `__init__.py` esporta `router`
+
+- **Migrated endpoints**:
+  - `POST /api/guilds` → ora servito da `app.guilds.routes` (creazione gilda, 400 se ne possiede già una)
+  - `GET /api/guilds/me` → ora servito da `app.guilds.routes` (lazy completion sweep + dashboard projection con 17 campi incl. `max_team_power_ever`)
+
+- **`server.py` trimmed**: 2385 → 2283 linee (−102, −4.3%). Helper auth-domain-style backward-compat shims per `guild_public(doc)` e `_user_guild_or_404(user_id)` (chiamati internamente da altri moduli server.py es. expeditions, recruitment).
+
+- **Pattern verificato per Phase 5.5d/e**:
+  - Lazy `from server import complete_due_expeditions` dentro la route handler risolve la dipendenza circolare quando un dominio estratto deve usare logica ancora dentro server.py — funziona perché l'import avviene a request-time, dopo che server.py è completamente caricato.
+
+- **Test result** (148/148 PASS, ~136s clean run): backend_test (38), backend_phase4_test (~20), backend_phase5_test (~22), backend_phase6_test (~15), backend_phase7_test (~16), backend_phase8_test (15), e tutti gli altri suite intatti. Una flake transient sul primo run (`test_delta_snapshot_immutable_after_completion`) è già noto come race xdist condition documentato in PRD.
+
+- **OpenAPI diff vs pre-Phase-5.5c**: VUOTO (36 → 36 paths, zero modifiche a request/response schemas).
+
+- **FE smoke**: login tester → /dashboard rende identico, "The Iron Lantern" + stats + LAST EXPEDITION empty state. Zero modifiche al codice frontend.
+
 ## Phase 8 — 2026-06-24 (max_team_power_ever + Replay Last Run)
 Implemented (148/148 pytest PASS — 133 baseline + 15 new Phase 8 tests; zero regressions, OpenAPI: +2 paths, zero changes to existing):
 

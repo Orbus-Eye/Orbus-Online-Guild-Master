@@ -266,10 +266,20 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def guild_public(doc: dict) -> dict:  # backward-compat shim
-    from app.guilds.services import guild_public as _gp
-
-    return _gp(doc)
+def guild_public(doc: dict) -> dict:
+    return {
+        "id": doc["id"],
+        "owner_user_id": doc["owner_user_id"],
+        "name": doc["name"],
+        "description": doc.get("description", ""),
+        "level": doc.get("level", 1),
+        "reputation": doc.get("reputation", 0),
+        "gold": doc.get("gold", 100),
+        # Phase 8: peak team_power across all expeditions (sticky for gate)
+        "max_team_power_ever": int(doc.get("max_team_power_ever", 0)),
+        "created_at": doc["created_at"],
+        "updated_at": doc["updated_at"],
+    }
 
 
 def class_public(doc: dict) -> dict:
@@ -453,10 +463,10 @@ def _generate_candidate(klass: dict, guild_id: str, now: datetime,
 
 
 async def _user_guild_or_404(user_id: str) -> dict:
-    # Backward-compat shim: existing call sites in server.py use this 1-arg form.
-    from app.guilds.services import user_guild_or_404
-
-    return await user_guild_or_404(db, user_id)
+    guild = await db.guilds.find_one({"owner_user_id": user_id}, {"_id": 0})
+    if not guild:
+        raise HTTPException(status_code=404, detail="No guild found for this user")
+    return guild
 
 
 # ─── Phase 3 helpers: dungeon/item/expedition/inventory ────────────────────────
@@ -993,10 +1003,17 @@ async def complete_due_expeditions(guild_id: str) -> int:
     return len(due)
 
 
-# Phase 5.5c: Guild Pydantic schema extracted to app/guilds/schemas.
-# Re-imported here so legacy intra-server references continue to work.
-from app.guilds.schemas import GuildCreateIn  # noqa: E402
-from app.guilds.routes import router as guilds_router  # noqa: E402
+class GuildCreateIn(BaseModel):
+    name: str = Field(min_length=3, max_length=40)
+    description: str = Field(default="", max_length=300)
+
+    @field_validator("name")
+    @classmethod
+    def name_not_blank(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 3:
+            raise ValueError("name must be at least 3 characters")
+        return v
 
 
 class RecruitIn(BaseModel):
@@ -1030,11 +1047,96 @@ async def health():
 app.include_router(auth_router)
 
 
-# ─── Endpoints: Guilds (Phase 5.5c) ───────────────────────────────────────────
-# Both `/api/guilds` (POST) and `/api/guilds/me` (GET) are now served by the
-# router defined in `app/guilds/routes.py`. Mounted on `app` because the router
-# already carries its own `/api/guilds` prefix.
-app.include_router(guilds_router)
+# ─── Endpoints: Guilds ─────────────────────────────────────────────────────────
+@api.post("/guilds", status_code=201)
+async def create_guild(payload: GuildCreateIn, current_user: dict = Depends(get_current_user)):
+    existing = await db.guilds.find_one({"owner_user_id": current_user["id"]})
+    if existing:
+        raise HTTPException(status_code=400, detail="You already own a guild")
+
+    now = utc_now()
+    guild_doc = {
+        "id": str(uuid.uuid4()),
+        "owner_user_id": current_user["id"],
+        "name": payload.name.strip(),
+        "description": payload.description.strip(),
+        "level": 1,
+        "reputation": 0,
+        "gold": 100,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    try:
+        await db.guilds.insert_one(guild_doc)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=400, detail="You already own a guild")
+
+    return {"guild": guild_public(guild_doc)}
+
+
+@api.get("/guilds/me")
+async def get_my_guild(current_user: dict = Depends(get_current_user)):
+    guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
+    if not guild:
+        raise HTTPException(status_code=404, detail="No guild found for this user")
+    # Phase-3 lazy completion sweep
+    await complete_due_expeditions(guild["id"])
+    # Re-fetch guild after sweep (gold may have changed)
+    guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
+
+    adv_count = await db.adventurers.count_documents({"guild_id": guild["id"]})
+    active_exp = await db.expeditions.count_documents(
+        {"guild_id": guild["id"], "status": "in_progress"}
+    )
+    last_exp = await db.expeditions.find_one(
+        {"guild_id": guild["id"]},
+        {"_id": 0, "id": 1, "status": 1, "result_summary": 1, "completed_at": 1, "created_at": 1},
+        sort=[("created_at", -1)],
+    )
+    payload = guild_public(guild)
+    payload["adventurer_count"] = adv_count
+    payload["active_expedition_count"] = active_exp
+    payload["last_expedition_id"] = last_exp["id"] if last_exp else None
+    payload["last_expedition_summary"] = last_exp.get("result_summary") if last_exp else None
+
+    # ─── Phase 7: dashboard progression stats ──────────────────────────────
+    total_completed = await db.expeditions.count_documents(
+        {"guild_id": guild["id"], "status": "completed"}
+    )
+    # Highest dungeon completed with a success
+    highest_dungeon_slug = None
+    cursor = db.expeditions.find(
+        {"guild_id": guild["id"], "status": "completed", "result_summary": "Success"},
+        {"_id": 0, "dungeon_id": 1},
+    )
+    success_dungeon_ids = list({row["dungeon_id"] async for row in cursor})
+    if success_dungeon_ids:
+        ranked = (
+            await db.dungeons.find(
+                {"id": {"$in": success_dungeon_ids}}, {"_id": 0, "slug": 1, "difficulty": 1}
+            )
+            .sort("difficulty", -1)
+            .to_list(10)
+        )
+        if ranked:
+            highest_dungeon_slug = ranked[0]["slug"]
+    # Last loot item: find the most recently completed expedition that yielded loot
+    last_loot_item = None
+    last_exp_with_loot = await db.expeditions.find_one(
+        {"guild_id": guild["id"], "status": "completed", "loot_item_ids": {"$ne": []}},
+        {"_id": 0, "loot_item_ids": 1, "completed_at": 1, "created_at": 1},
+        sort=[("completed_at", -1)],
+    )
+    if last_exp_with_loot and last_exp_with_loot.get("loot_item_ids"):
+        last_item_id = last_exp_with_loot["loot_item_ids"][-1]
+        item_doc = await db.items.find_one({"id": last_item_id}, {"_id": 0, "name": 1, "rarity": 1})
+        if item_doc:
+            last_loot_item = {"name": item_doc["name"], "rarity": item_doc.get("rarity", "Common")}
+
+    payload["highest_dungeon_slug"] = highest_dungeon_slug
+    payload["total_expeditions_completed"] = total_completed
+    payload["last_loot_item"] = last_loot_item
+    return {"guild": payload}
 
 
 # ─── Endpoints: Dungeons / Items (read-only catalogs) ──────────────────────────
