@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
+import { useT } from "../i18n/I18nContext";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
@@ -51,6 +52,7 @@ function previewSuccessChance(teamPower, recommended) {
 }
 
 export default function ExpeditionNew() {
+    const { t } = useT();
     const { slug } = useParams();
     const navigate = useNavigate();
     const { refreshGuild } = useAuth();
@@ -69,7 +71,7 @@ export default function ExpeditionNew() {
                 ]);
                 const d = du.data.dungeons.find((x) => x.slug === slug);
                 if (!d) {
-                    toast.error("Dungeon not found");
+                    toast.error(t("expedition_new.toast_dungeon_not_found"));
                     navigate("/dungeons", { replace: true });
                     return;
                 }
@@ -81,7 +83,7 @@ export default function ExpeditionNew() {
                 setLoading(false);
             }
         })();
-    }, [slug, navigate]);
+    }, [slug, navigate, t]);
 
     const requiredSize = dungeon?.required_team_size ?? 3;
 
@@ -139,7 +141,7 @@ export default function ExpeditionNew() {
     if (loading) {
         return (
             <div className="min-h-screen bg-background">
-                <AppHeader subtitle="DISPATCH" />
+                <AppHeader subtitleKey="expedition_new.brand_subtitle" />
                 <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-xs text-muted-foreground">
                     loading<span className="caret-blink" />
                 </main>
@@ -151,7 +153,7 @@ export default function ExpeditionNew() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="DISPATCH" />
+            <AppHeader subtitleKey="expedition_new.brand_subtitle" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <Link to="/dungeons" className="text-xs text-muted-foreground hover:text-foreground" data-testid="back-to-dungeons">
@@ -244,7 +246,7 @@ export default function ExpeditionNew() {
 
                             <div className="border-t border-border pt-3 mt-3 space-y-1.5 text-xs">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">SELECTED</span>
+                                    <span className="text-muted-foreground">{t("expedition_new.selected")}</span>
                                     <span data-testid="selected-count" className="font-medium">
                                         {selected.length}/{requiredSize}
                                     </span>

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
 
 export default function PasswordResetConfirm() {
+    const { t } = useT();
     const [params] = useSearchParams();
     const navigate = useNavigate();
     const [token, setToken] = useState(params.get("token") || "");
@@ -28,7 +30,7 @@ export default function PasswordResetConfirm() {
                 token: token.trim(),
                 new_password: pw,
             });
-            toast.success("Password reset successful. Please log in.");
+            toast.success(t("password_reset_page.toast_reset_success"));
             navigate("/login", { replace: true });
         } catch (err) {
             const msg = formatApiError(err);
@@ -54,7 +56,7 @@ export default function PasswordResetConfirm() {
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: AUTH / SET NEW PASSWORD
                     </div>
-                    <h1 className="text-2xl font-semibold mb-2">Confirm reset</h1>
+                    <h1 className="text-2xl font-semibold mb-2">{t("password_reset_page.confirm_title")}</h1>
                     <p className="text-xs text-muted-foreground mb-6">
                         Paste your reset token and choose a new password (min 8 chars,
                         at least one letter and one digit). Check backend logs for your
@@ -63,7 +65,7 @@ export default function PasswordResetConfirm() {
 
                     <form onSubmit={submit} className="space-y-4" data-testid="pwreset-confirm-form">
                         <div className="space-y-2">
-                            <Label htmlFor="token" className="text-xs text-muted-foreground tracking-wider">RESET TOKEN</Label>
+                            <Label htmlFor="token" className="text-xs text-muted-foreground tracking-wider">{t("password_reset_page.token_label")}</Label>
                             <textarea
                                 id="token"
                                 data-testid="pwreset-token-input"
@@ -77,7 +79,7 @@ export default function PasswordResetConfirm() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="pw" className="text-xs text-muted-foreground tracking-wider">NEW PASSWORD</Label>
+                            <Label htmlFor="pw" className="text-xs text-muted-foreground tracking-wider">{t("password_reset_page.new_password_label")}</Label>
                             <Input
                                 id="pw"
                                 data-testid="pwreset-newpw-input"
@@ -92,7 +94,7 @@ export default function PasswordResetConfirm() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="pw2" className="text-xs text-muted-foreground tracking-wider">CONFIRM NEW PASSWORD</Label>
+                            <Label htmlFor="pw2" className="text-xs text-muted-foreground tracking-wider">{t("password_reset_page.confirm_password_label")}</Label>
                             <Input
                                 id="pw2"
                                 data-testid="pwreset-confirmpw-input"

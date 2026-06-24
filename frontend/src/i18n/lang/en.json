@@ -286,6 +286,106 @@
       "items": "Items"
     }
   },
+  "leaderboard_page": {
+    "rank": "RANK",
+    "guild": "GUILD",
+    "peak_pwr_short": "PEAK PWR",
+    "level_short": "LVL",
+    "reputation_short": "REP",
+    "highest": "HIGHEST",
+    "expeditions_short": "EXP",
+    "brand_subtitle": "LEADERBOARD"
+  },
+  "inventory_table": {
+    "name": "NAME",
+    "rarity": "RARITY",
+    "type": "TYPE",
+    "total": "TOTAL",
+    "equipped": "EQUIPPED",
+    "available": "AVAIL.",
+    "bonuses": "BONUSES",
+    "power": "POWER",
+    "filter_all": "ALL",
+    "filter_weapons": "WEAPONS",
+    "filter_armor": "ARMOR",
+    "filter_accessories": "ACCESSORIES"
+  },
+  "adventurers_table": {
+    "name": "NAME",
+    "class": "CLASS",
+    "role": "ROLE",
+    "rarity": "RARITY",
+    "level": "LVL",
+    "xp": "XP",
+    "power": "POWER",
+    "equip": "EQUIP",
+    "traits": "TRAITS",
+    "status": "STATUS"
+  },
+  "dungeons_card": {
+    "tier": "TIER",
+    "duration": "Duration",
+    "recommended_power": "Recommended power",
+    "required_team": "Required team",
+    "base_reward": "Base reward"
+  },
+  "expedition_new": {
+    "title": "Dispatch a team",
+    "subtitle": "Select adventurers for this expedition. Power and morale matter.",
+    "selected": "SELECTED",
+    "dispatch_btn": "Dispatch",
+    "back_to_dungeons": "← Back to Dungeons",
+    "toast_dispatched": "Expedition dispatched. Returns in {seconds}s.",
+    "toast_dungeon_not_found": "Dungeon not found",
+    "brand_subtitle": "DISPATCH"
+  },
+  "expedition_report_page": {
+    "brand_subtitle": "REPORT",
+    "replay_title": "This run was dispatched via Replay Last Run",
+    "recommended_power": "Recommended power",
+    "base_power": "Base team power",
+    "equipment_bonus": "Equipment bonus",
+    "final_power": "Final team power",
+    "success_no_equip": "Success chance (no equip)",
+    "success_final": "Success chance (final)",
+    "toast_replay_started": "Replay started: {dungeon}"
+  },
+  "create_guild_page": {
+    "name_placeholder": "The Iron Lantern",
+    "desc_placeholder": "A small but ambitious order, headquartered in a coastal trade town.",
+    "toast_founded": "Guild founded.",
+    "title": "Found a guild"
+  },
+  "password_reset_page": {
+    "request_title": "Reset password",
+    "request_body": "Enter your email and we will send you a reset link.",
+    "confirm_title": "Confirm reset",
+    "token_label": "RESET TOKEN",
+    "new_password_label": "NEW PASSWORD",
+    "confirm_password_label": "CONFIRM NEW PASSWORD",
+    "send_link": "Send reset link",
+    "submit_reset": "Reset password",
+    "toast_request_sent": "Request submitted.",
+    "toast_reset_success": "Password reset successful. Please log in.",
+    "passwords_dont_match": "Passwords do not match"
+  },
+  "equipment_extra": {
+    "toast_equipped": "Equipped on {slot}",
+    "toast_unequipped": "Unequipped {slot}",
+    "required_level": "Required level"
+  },
+  "admin_extra": {
+    "h1": "Admin Panel",
+    "toast_created": "Created.",
+    "toast_updated": "Updated.",
+    "toast_deleted": "Deleted.",
+    "toast_admin_required": "Admin access required",
+    "label_description": "DESCRIPTION",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "cancel": "Cancel"
+  },
   "errors": {
     "network": "Network error. Try again.",
     "unauthorized": "Session expired. Please log in again.",

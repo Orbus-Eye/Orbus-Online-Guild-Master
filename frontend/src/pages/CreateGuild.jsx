@@ -30,7 +30,7 @@ export default function CreateGuild() {
         setSubmitting(true);
         try {
             await createGuild(trimmed, description.trim());
-            toast.success("Guild founded.");
+            toast.success(t("create_guild_page.toast_founded"));
             navigate("/dashboard", { replace: true });
         } catch (err) {
             const msg = formatApiError(err);
@@ -63,7 +63,7 @@ export default function CreateGuild() {
                 <div className="text-xs text-amber tracking-widest mb-2">
                     :: STEP 02 / FOUND YOUR GUILD
                 </div>
-                <h1 className="text-3xl font-semibold mb-2">Found a guild</h1>
+                <h1 className="text-3xl font-semibold mb-2">{t("create_guild_page.title")}</h1>
                 <p className="text-sm text-muted-foreground mb-8 max-w-xl">
                     Every Guild Master commands one guild. Choose its banner carefully —
                     you cannot rename it later (until phase 4, at least).
@@ -87,7 +87,7 @@ export default function CreateGuild() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="bg-background border-border rounded-sm h-11 font-mono"
-                            placeholder="The Iron Lantern"
+                            placeholder={t("create_guild_page.name_placeholder")}
                         />
                     </div>
 
@@ -102,7 +102,7 @@ export default function CreateGuild() {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             className="bg-background border-border rounded-sm font-mono min-h-[110px]"
-                            placeholder="A small but ambitious order, headquartered in a coastal trade town."
+                            placeholder={t("create_guild_page.desc_placeholder")}
                         />
                         <div className="text-right text-xs text-muted-foreground">
                             {description.length}/300

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 /* eslint-disable react/jsx-key -- cells returned from renderRow() are wrapped in keyed <td> elements below */
 import { Navigate } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
+import { useT } from "../i18n/I18nContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
@@ -123,7 +124,7 @@ function ClassEditor({ form, set }) {
             <SelectField label="Role" value={form.role} onChange={(v) => set("role", v)} options={["Tank", "DPS", "Healer"]} testid="field-role" />
             <CheckField label="Active" checked={form.is_active ?? true} onChange={(v) => set("is_active", v)} testid="field-active" />
             <div className="sm:col-span-2">
-                <Label className="text-[10px] text-muted-foreground tracking-widest">DESCRIPTION</Label>
+                <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
             <NumField label="Base STR" value={form.base_strength} onChange={(v) => set("base_strength", v)} testid="field-str" min={0} max={15} />
@@ -141,7 +142,7 @@ function TraitEditor({ form, set }) {
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
             <CheckField label="Active" checked={form.is_active ?? true} onChange={(v) => set("is_active", v)} testid="field-active" />
             <div className="sm:col-span-2">
-                <Label className="text-[10px] text-muted-foreground tracking-widest">DESCRIPTION</Label>
+                <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
             <SelectField label="Modifier Type" value={form.modifier_type} onChange={(v) => set("modifier_type", v)} options={["flat", "percent"]} testid="field-modtype" />
@@ -158,7 +159,7 @@ function DungeonEditor({ form, set }) {
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
             <TextField label="Slug" value={form.slug} onChange={(v) => set("slug", v.toLowerCase())} testid="field-slug" required />
             <div className="sm:col-span-2">
-                <Label className="text-[10px] text-muted-foreground tracking-widest">DESCRIPTION</Label>
+                <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
             <NumField label="Difficulty" value={form.difficulty} onChange={(v) => set("difficulty", v)} testid="field-difficulty" min={1} />
@@ -179,7 +180,7 @@ function ItemEditor({ form, set }) {
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
             <TextField label="Slug" value={form.slug} onChange={(v) => set("slug", v.toLowerCase())} testid="field-slug" required />
             <div className="sm:col-span-2">
-                <Label className="text-[10px] text-muted-foreground tracking-widest">DESCRIPTION</Label>
+                <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
             <SelectField label="Type" value={form.item_type} onChange={(v) => set("item_type", v)} options={["weapon", "armor", "accessory", "consumable"]} testid="field-type" />
@@ -324,6 +325,7 @@ const TAB_CONFIG = {
 };
 
 export default function Admin() {
+    const { t } = useT();
     const { user } = useAuth();
     const [tab, setTab] = useState("classes");
     const [rows, setRows] = useState({});
@@ -352,7 +354,7 @@ export default function Admin() {
     }, [user, fetchTab]);
 
     if (user && !user.is_admin) {
-        toast.error("Admin access required");
+        toast.error(t("admin_extra.toast_admin_required"));
         return <Navigate to="/dashboard" replace />;
     }
     if (!user) return null;
@@ -374,10 +376,10 @@ export default function Admin() {
         try {
             if (editing.__new) {
                 await api.post(cfg.endpoint, form);
-                toast.success("Created.");
+                toast.success(t("admin_extra.toast_created"));
             } else {
                 await api.patch(`${cfg.endpoint}/${editing.id}`, form);
-                toast.success("Updated.");
+                toast.success(t("admin_extra.toast_updated"));
             }
             await fetchTab(tab);
             setEditing(null);
@@ -409,7 +411,7 @@ export default function Admin() {
                         <div className="text-xs text-amber tracking-widest mb-2">
                             :: ADMIN CONSOLE
                         </div>
-                        <h1 className="text-3xl font-semibold tracking-tight">Admin Panel</h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{t("admin_extra.h1")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                             Manage game content. Changes are immediate and apply to all guilds.
                         </p>

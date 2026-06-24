@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
+import { useT } from "../i18n/I18nContext";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
@@ -77,6 +78,7 @@ const Cell = ({ label, value, testid, accent = false }) => (
 );
 
 export default function ExpeditionReport() {
+    const { t } = useT();
     const { id } = useParams();
     const navigate = useNavigate();
     const { refreshGuild } = useAuth();
@@ -152,7 +154,7 @@ export default function ExpeditionReport() {
     if (loading) {
         return (
             <div className="min-h-screen bg-background">
-                <AppHeader subtitle="REPORT" />
+                <AppHeader subtitleKey="expedition_report_page.brand_subtitle" />
                 <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 text-xs text-muted-foreground">
                     loading<span className="caret-blink" />
                 </main>
@@ -163,7 +165,7 @@ export default function ExpeditionReport() {
     if (!data || data.notFound || !data.expedition) {
         return (
             <div className="min-h-screen bg-background">
-                <AppHeader subtitle="REPORT" />
+                <AppHeader subtitleKey="expedition_report_page.brand_subtitle" />
                 <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
                     <div className="text-amber text-xs tracking-widest mb-2">:: NOT FOUND</div>
                     <p className="text-sm text-muted-foreground mb-4">
@@ -184,7 +186,7 @@ export default function ExpeditionReport() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="REPORT" />
+            <AppHeader subtitleKey="expedition_report_page.brand_subtitle" />
 
             <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
                 <Link to="/expeditions" className="text-xs text-muted-foreground hover:text-foreground" data-testid="back-to-expeditions">
@@ -209,7 +211,7 @@ export default function ExpeditionReport() {
                             <span
                                 className="inline-block text-[10px] tracking-widest border border-amber/55 text-amber px-2 py-1 rounded-sm"
                                 data-testid="report-replay-badge"
-                                title="This run was dispatched via Replay Last Run"
+                                title={t("expedition_report_page.replay_title")}
                             >
                                 REPLAY
                             </span>
@@ -275,27 +277,27 @@ export default function ExpeditionReport() {
                     <div className="border border-border bg-card rounded-sm p-4 text-sm">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Recommended power</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.recommended_power")}</span>
                                 <span className="font-medium">{e.team_power && e.success_chance != null ? "" : ""}{e.recommended_power ?? "—"}</span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Base team power</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.base_power")}</span>
                                 <span data-testid="analysis-base-power" className="font-medium">{e.base_team_power}</span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Equipment bonus</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.equipment_bonus")}</span>
                                 <span data-testid="analysis-eq-bonus" className="font-medium text-amber">+{e.equipment_power_bonus}</span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Final team power</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.final_power")}</span>
                                 <span data-testid="analysis-final-power" className="font-medium text-[#22c55e]">{e.final_team_power}</span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Success chance (no equip)</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.success_no_equip")}</span>
                                 <span className="font-medium">{e.success_chance_without_equipment}%</span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
-                                <span className="text-muted-foreground text-xs">Success chance (final)</span>
+                                <span className="text-muted-foreground text-xs">{t("expedition_report_page.success_final")}</span>
                                 <span className="font-medium text-[#22c55e]">{e.success_chance_with_equipment}%</span>
                             </div>
                         </div>

@@ -286,6 +286,106 @@
       "items": "Oggetti"
     }
   },
+  "leaderboard_page": {
+    "rank": "POS",
+    "guild": "GILDA",
+    "peak_pwr_short": "PEAK",
+    "level_short": "LV",
+    "reputation_short": "REP",
+    "highest": "PIÙ ALTO",
+    "expeditions_short": "SPED",
+    "brand_subtitle": "CLASSIFICA"
+  },
+  "inventory_table": {
+    "name": "NOME",
+    "rarity": "RARITÀ",
+    "type": "TIPO",
+    "total": "TOT",
+    "equipped": "EQUIP",
+    "available": "DISP",
+    "bonuses": "BONUS",
+    "power": "POTENZA",
+    "filter_all": "TUTTI",
+    "filter_weapons": "ARMI",
+    "filter_armor": "ARMATURE",
+    "filter_accessories": "ACCESSORI"
+  },
+  "adventurers_table": {
+    "name": "NOME",
+    "class": "CLASSE",
+    "role": "RUOLO",
+    "rarity": "RARITÀ",
+    "level": "LV",
+    "xp": "XP",
+    "power": "POTENZA",
+    "equip": "EQUIP",
+    "traits": "TRATTI",
+    "status": "STATO"
+  },
+  "dungeons_card": {
+    "tier": "TIER",
+    "duration": "Durata",
+    "recommended_power": "Potenza raccomandata",
+    "required_team": "Team richiesto",
+    "base_reward": "Ricompensa base"
+  },
+  "expedition_new": {
+    "title": "Manda una squadra",
+    "subtitle": "Seleziona gli avventurieri. Potenza e morale contano.",
+    "selected": "SELEZIONATO",
+    "dispatch_btn": "Invia",
+    "back_to_dungeons": "← Torna ai Dungeon",
+    "toast_dispatched": "Spedizione partita. Torna in {seconds}s.",
+    "toast_dungeon_not_found": "Dungeon non trovato",
+    "brand_subtitle": "INVIO"
+  },
+  "expedition_report_page": {
+    "brand_subtitle": "REPORT",
+    "replay_title": "Questa run è stata avviata via Replay",
+    "recommended_power": "Potenza raccomandata",
+    "base_power": "Potenza base squadra",
+    "equipment_bonus": "Bonus equipaggiamento",
+    "final_power": "Potenza finale squadra",
+    "success_no_equip": "Probabilità (senza equip)",
+    "success_final": "Probabilità (finale)",
+    "toast_replay_started": "Replay avviato: {dungeon}"
+  },
+  "create_guild_page": {
+    "name_placeholder": "La Lanterna di Ferro",
+    "desc_placeholder": "Un piccolo ma ambizioso ordine, con sede in una città portuale.",
+    "toast_founded": "Gilda fondata.",
+    "title": "Fonda una gilda"
+  },
+  "password_reset_page": {
+    "request_title": "Recupera password",
+    "request_body": "Inserisci la tua email e ti invieremo un link di reset.",
+    "confirm_title": "Conferma reset",
+    "token_label": "TOKEN DI RESET",
+    "new_password_label": "NUOVA PASSWORD",
+    "confirm_password_label": "CONFERMA NUOVA PASSWORD",
+    "send_link": "Invia link",
+    "submit_reset": "Reimposta",
+    "toast_request_sent": "Richiesta inviata.",
+    "toast_reset_success": "Password reimpostata. Effettua l'accesso.",
+    "passwords_dont_match": "Le password non corrispondono"
+  },
+  "equipment_extra": {
+    "toast_equipped": "Equipaggiato su {slot}",
+    "toast_unequipped": "Rimosso da {slot}",
+    "required_level": "Livello richiesto"
+  },
+  "admin_extra": {
+    "h1": "Pannello Admin",
+    "toast_created": "Creato.",
+    "toast_updated": "Aggiornato.",
+    "toast_deleted": "Eliminato.",
+    "toast_admin_required": "Richiesto accesso admin",
+    "label_description": "DESCRIZIONE",
+    "save": "Salva",
+    "delete": "Elimina",
+    "add": "Aggiungi",
+    "cancel": "Annulla"
+  },
   "errors": {
     "network": "Errore di rete. Riprova.",
     "unauthorized": "Sessione scaduta. Accedi di nuovo.",

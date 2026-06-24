@@ -89,7 +89,7 @@ export default function AdventurerEquipment() {
         setBusy(true);
         try {
             await api.post(`/adventurers/${advId}/equip`, { item_id: itemId, slot });
-            toast.success(`Equipped on ${slot}`);
+            toast.success(t("equipment_extra.toast_equipped", { slot }));
             await refresh();
         } catch (err) {
             toast.error(formatApiError(err));
@@ -102,7 +102,7 @@ export default function AdventurerEquipment() {
         setBusy(true);
         try {
             await api.post(`/adventurers/${advId}/unequip`, { slot });
-            toast.success(`Unequipped ${slot}`);
+            toast.success(t("equipment_extra.toast_unequipped", { slot }));
             await refresh();
         } catch (err) {
             toast.error(formatApiError(err));

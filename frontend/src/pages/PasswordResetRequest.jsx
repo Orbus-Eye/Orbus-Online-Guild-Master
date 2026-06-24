@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
 
 export default function PasswordResetRequest() {
+    const { t } = useT();
     const [email, setEmail] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [done, setDone] = useState(false);
@@ -17,7 +19,7 @@ export default function PasswordResetRequest() {
         try {
             await api.post("/auth/password-reset/request", { email: email.trim() });
             setDone(true);
-            toast.success("Request submitted.");
+            toast.success(t("password_reset_page.toast_request_sent"));
         } catch (err) {
             toast.error(formatApiError(err));
         } finally {
@@ -40,7 +42,7 @@ export default function PasswordResetRequest() {
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: AUTH / FORGOTTEN PASSWORD
                     </div>
-                    <h1 className="text-2xl font-semibold mb-2">Reset password</h1>
+                    <h1 className="text-2xl font-semibold mb-2">{t("password_reset_page.request_title")}</h1>
                     <p className="text-xs text-muted-foreground mb-6">
                         We will not confirm whether the email is registered. If it is,
                         a reset token will be issued.

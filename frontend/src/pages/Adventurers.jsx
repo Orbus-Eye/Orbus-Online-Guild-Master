@@ -7,6 +7,12 @@ import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { TraitList } from "../components/TraitBadge";
 
+// i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
+// intentionally NOT localized. They follow universal MMO/RPG convention and
+// are kept identical across EN/IT to avoid cognitive overhead for players
+// switching languages. The same applies to ExpeditionNew.jsx and any other
+// place that displays adventurer raw stats.
+
 const RARITY_COLOR = {
     Common: "#9ca3af",
     Uncommon: "#22c55e",

@@ -124,14 +124,14 @@ export default function Inventory() {
                             <table data-testid="inventory-table" className="w-full text-sm min-w-[760px]">
                                 <thead className="bg-secondary/40 text-[10px] text-muted-foreground tracking-widest">
                                     <tr>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">NAME</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">RARITY</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">TYPE</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">TOTAL</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">EQUIPPED</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">AVAIL.</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">BONUSES</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">POWER</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.name")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.rarity")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.type")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.total")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.equipped")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.available")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.bonuses")}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.power")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

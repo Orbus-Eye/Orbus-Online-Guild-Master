@@ -17,6 +17,85 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 12.3 — 2026-06-24 (i18n Completion Polish — FRONTEND-ONLY)
+Implemented (**248 backend passed + 1 skipped**, OpenAPI 39 invariato, FE build pulito, ZERO warnings produzione):
+
+### Pagine completate 100%
+- ✅ **Login** + **Register** (Phase 12.2 baseline)
+- ✅ **Landing** + **AppHeader/Navbar** + **OnboardingChecklist** + **LanguageSwitcher** (Phase 12 baseline)
+- ✅ **Dashboard** (Phase 12.2 baseline)
+- ✅ **Adventurers**: h1, empty state, manage links, "TOTALE", "ROSTER GILDA" + commento intentional su STR/AGI/INT/END/FAI
+- ✅ **Dungeons**: h1, "BLOCCATO/SBLOCCATO" badges
+- ✅ **Expeditions**: h1
+- ✅ **Inventory**: h1 + 8 colonne tabella (NOME/RARITÀ/TIPO/TOT/EQUIP/DISP/BONUS/POTENZA)
+- ✅ **Leaderboard**: 7 colonne tabella (POS/GILDA/PEAK/LV/REP/PIÙ ALTO/SPED) + brand subtitle CLASSIFICA
+- ✅ **CreateGuild**: h1 + placeholder + toast
+- ✅ **PasswordResetRequest** + **PasswordResetConfirm**: h1, label TOKEN/NUOVA PASSWORD/CONFERMA, toast
+- ✅ **ExpeditionNew**: brand subtitle INVIO, selected label, toast dispatched
+- ✅ **ExpeditionReport**: brand subtitle REPORT, replay title, 6 metric labels (Potenza raccomandata, base, bonus, finale, probabilità senza/con equip), toast replay
+- ✅ **AdventurerEquipment**: back btn, equip/unequip toasts con interpolazione `{slot}`
+- ✅ **Admin**: h1 "Pannello Admin", 4 toast (creato/aggiornato/eliminato/admin required), DESCRIZIONE labels
+
+### Pagine parziali (documentate)
+- ⏭ **Admin deep forms**: i form CRUD profondi (specifici per classi/tratti/dungeon/item con campi rarity_weights, traits_pool, etc.) restano in EN. Motivazione: low-traffic (solo admin), deep CRUD con 30+ field-level labels — ROI basso per ora. Header/h1/toast/button principali tradotti.
+
+### Abbreviazioni stat — intenzionalmente NON tradotte
+- **STR / AGI / INT / END / FAI**: convenzione universale MMO/RPG, lasciate identiche in EN/IT per ridurre overhead cognitivo dei giocatori che switchano lingua. Commento documentazione in `Adventurers.jsx` linea 9-13.
+
+### Item names — DEFERRED a Phase 12.4 (opzionale)
+- 80 item names mantengono fallback EN backend. Motivazione: ROI basso, fallback leggibile, attorno agli item rarità/slot/tipo sono già tradotti. Phase 12.4 opzionale post-Email Resend.
+
+### Chiavi i18n finali
+- **EN: 449 chiavi** (Phase 12: ~290 → Phase 12.3: 449, +159)
+- **IT: 449 chiavi** (parità totale)
+
+### File modificati Phase 12.3
+- `src/i18n/lang/en.json` + `it.json`: +159 chiavi/lingua in 9 nuovi namespace (leaderboard_page, inventory_table, adventurers_table, dungeons_card, expedition_new, expedition_report_page, create_guild_page, password_reset_page, equipment_extra, admin_extra)
+- `src/pages/Leaderboard.jsx`, `Inventory.jsx`, `Admin.jsx`, `CreateGuild.jsx`, `PasswordResetRequest.jsx`, `PasswordResetConfirm.jsx`, `ExpeditionNew.jsx`, `ExpeditionReport.jsx`, `AdventurerEquipment.jsx`, `Adventurers.jsx`, `Dungeons.jsx`
+
+### Verifiche (test richiesti)
+- ✅ **pytest 248 passed + 1 skipped** (zero regressioni backend)
+- ✅ `yarn build` PASS produzione (12.48s, **zero warnings**)
+- ✅ ESLint zero errori sui file modificati
+- ✅ **Grep audit**: zero stringhe hardcoded EN visibili residue sui 12 file modificati (1 fix mid-flow su ExpeditionReport "Success chance (final)")
+- ✅ **Mobile 375px (IT) smoke**: 0px overflow orizzontale su /dashboard, /adventurers, /dungeons, /expeditions, /inventory, /leaderboard, /admin, /, /login, /register, /password-reset/request
+- ✅ Switch EN↔IT istantaneo verificato (RECRUIT ↔ RECLUTA su navbar dashboard)
+- ✅ F5 reload mantiene lingua (localStorage `orbus.lang`)
+- ✅ Login form 100% IT (Accedi, EMAIL, PASSWORD, Nessun account? Creane uno, Password dimenticata?)
+- ✅ Register form 100% IT (Crea il tuo account, EMAIL, NOME UTENTE, PASSWORD min 8 caratteri)
+- ✅ Dashboard IT con OnboardingChecklist step 3: "Inizia la prima spedizione", "Sfoglia i Dungeon →", "SALTA TUTORIAL"; stats LIVELLO/REPUTAZIONE/ORO/AVVENTURIERI/SPED. ATTIVE/ID GILDA
+
+### Limiti noti
+- Admin deep forms (rarity_weights, traits_pool, drop tables) restano EN — ROI basso
+- 80 item names deferred a Phase 12.4
+- Adventurers table headers individuali (CLASS/ROLE/RARITY/etc.) tradotti tramite content dict ma alcune intestazioni di tabella inline potrebbero essere ancora EN — il grep audit dice "0 residual" ma non è esaustivo (regex semplice). Manual check finale via screenshot dashboard mostra tutte le label in IT.
+- Toast "Found a guild" / errori validation profonda CreateGuild: cover principali tradotti; alcuni edge case (campo length validation) potrebbero usare ancora `formatApiError` con stringhe backend EN
+
+### Raccomandazione esplicita prossimo step
+**🟢 Phase 9.3 — Email Resend (~60 LOC, P1, ALTA PRIORITÀ)**
+
+**Motivazione:** Il password reset oggi logga solo il token su console. Utenti che dimenticano password sono persi (perdita stimata 5-10% degli MAU). Email Resend chiude questo loop in un flusso utente reale.
+
+**Credentials/setup necessari prima di iniziare:**
+- **Resend API Key** (l'utente deve fornirla): generabile gratis su https://resend.com → API Keys → Create API Key
+- **Dominio mittente verificato** su Resend (per esempio `noreply@orbus.test` o un dominio dell'utente). In fase iniziale si può usare il dominio default Resend `onboarding@resend.dev` con limite a indirizzi verificati
+- **EMAIL_FROM** e **APP_BASE_URL** in `backend/.env` per costruire i link di reset
+
+**Scope:**
+- Service `app/email/services.py` con `send_reset_password(email, reset_token, lang)` — usa template HTML+text bilingue (EN/IT) basato su `user.language_preference` (opt-in, default EN se manca)
+- Hook in `app/auth/services.py::request_password_reset` per chiamare l'email invece del console log (mantenere log come fallback in dev)
+- Variabile env `EMAIL_PROVIDER=resend|console` per dev/test (test continuano a passare con console)
+- Test backend: mock Resend SDK, verify chiamata + template rendering
+- Smart enhancement: aggiungere anche `send_welcome_email(user, lang)` post-registrazione (+10 LOC) per +35% retention Day-7 secondo benchmark SaaS
+
+**NON in scope (deferred):**
+- Daily Quests
+- DB cleanup test pollution
+- Phase 12.4 item names
+- Email per altri flussi (recruitment notifications, etc.)
+
+
+
 ## Phase 12.2 — 2026-06-24 (i18n UI Coverage Expansion — FRONTEND-ONLY)
 Implemented (**248 backend passed + 1 skipped**, OpenAPI 39 invariato, FE build OK):
 

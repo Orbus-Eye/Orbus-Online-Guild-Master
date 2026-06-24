@@ -101,7 +101,7 @@ export default function Leaderboard() {
                         className="flex items-center gap-2 text-xs whitespace-nowrap text-muted-foreground hover:text-foreground"
                     >
                         <span className="text-amber">◆</span>
-                        <span className="tracking-widest">ORBUS // LEADERBOARD</span>
+                        <span className="tracking-widest">{`ORBUS // ${t("leaderboard_page.brand_subtitle")}`}</span>
                     </Link>
                     <div className="flex items-center gap-2 text-xs">
                         <Link
@@ -163,13 +163,13 @@ export default function Leaderboard() {
                     <table className="w-full text-sm">
                         <thead className="bg-secondary/60 text-[10px] tracking-widest text-muted-foreground">
                             <tr>
-                                <th className="px-3 py-2 text-left">RANK</th>
-                                <th className="px-3 py-2 text-left">GUILD</th>
-                                <th className="px-3 py-2 text-right">PEAK PWR</th>
-                                <th className="px-3 py-2 text-right">LVL</th>
-                                <th className="px-3 py-2 text-right">REP</th>
-                                <th className="px-3 py-2 text-left">HIGHEST</th>
-                                <th className="px-3 py-2 text-right">EXP</th>
+                                <th className="px-3 py-2 text-left">{t("leaderboard_page.rank")}</th>
+                                <th className="px-3 py-2 text-left">{t("leaderboard_page.guild")}</th>
+                                <th className="px-3 py-2 text-right">{t("leaderboard_page.peak_pwr_short")}</th>
+                                <th className="px-3 py-2 text-right">{t("leaderboard_page.level_short")}</th>
+                                <th className="px-3 py-2 text-right">{t("leaderboard_page.reputation_short")}</th>
+                                <th className="px-3 py-2 text-left">{t("leaderboard_page.highest")}</th>
+                                <th className="px-3 py-2 text-right">{t("leaderboard_page.expeditions_short")}</th>
                             </tr>
                         </thead>
                         <tbody>
