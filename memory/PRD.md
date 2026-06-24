@@ -101,21 +101,40 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 - Market (player-to-player), gold sinks
 
 ### P2 — Phase 5: Polish
-- Migrate `@app.on_event` → `lifespan`
-- **Split `server.py` into modules** (auth, guilds, recruitment, expeditions, seeds, helpers) — flagged by testing agent
-- Tighten CORS to known origins
-- Password reset, refresh tokens, brute-force protection
+- ~~Migrate `@app.on_event` → `lifespan`~~ ✅ done (Phase 5)
+- **Split `server.py` into modules** (auth, guilds, recruitment, expeditions, seeds, helpers) — deferred to **Phase 5.5**
+- ~~Tighten CORS to known origins~~ ✅ env-gated (Phase 5)
+- ~~Password reset, refresh tokens, brute-force protection~~ ✅ done (Phase 5)
 
 ### P2 — Premium tier
 - `can_be_sold_for_real_money=true` cosmetic-only items (validator already enforces invariant)
 
+## Phase 5 — 2026-06-24 (Security Hardening, scope-reduced)
+Implemented (zero gameplay change, all 82 prior tests still pass + 21 new):
+- FastAPI **`lifespan`** replaces `@app.on_event`
+- **Env-gated CORS**: `APP_ENV=production` requires explicit `CORS_ORIGINS` (no `*`)
+- **Reinforced password rules**: min 8 chars + ≥1 letter + ≥1 digit (regex), enforced on register and password-reset confirm
+- **Login lockout**: collection `login_attempts`, 5 fails → 15-min lock → HTTP 429
+- **Refresh tokens** (multi-device): collection `refresh_tokens`, opaque 256-bit token (SHA-256 hashed at rest), 30-day TTL
+  - `POST /api/auth/refresh` (rotate access token)
+  - `POST /api/auth/logout` (revoke a single refresh token — current device only)
+  - Backward-compat: `access_token` still issued exactly as before
+- **Password reset skeleton** (collection `password_reset_tokens`):
+  - `POST /api/auth/password-reset/request` — always 200, reset link logged to backend console (no email send)
+  - `POST /api/auth/password-reset/confirm` — single-use, 60-min TTL, revokes **all** refresh tokens on success
+- **TTL indexes** on `login_attempts.last_attempt_at` (24h), `refresh_tokens.expires_at` (0s), `password_reset_tokens.expires_at` (0s)
+- **MongoDB indexes audit**: 24+ indexes confirmed present on startup
+- **Admin dependency audit**: all 16 `/api/admin/*` endpoints use `get_admin_user`
+- 21 new pytest tests (`tests/backend_phase5_test.py`) covering all above behaviors
+- TODO: reduce access TTL from 7d → 1h once the React frontend actively uses `/api/auth/refresh`
+
 ## Known limits / debt
-- Lifespan handlers still use deprecated `@app.on_event` (works, but should migrate)
-- CORS `allow_origins='*'` + `allow_credentials=True` is technically invalid; harmless today (frontend uses Authorization header, not cookies). Tighten in Phase 2 once we know the final preview/prod origins.
-- No password reset, no refresh token, no brute-force lockout in Phase 1 (intentional — deferred to a later security pass).
-- Quick-action buttons on dashboard are intentionally `disabled` placeholders for phase-2/3.
+- Frontend still uses only `access_token` (7-day expiry); refresh flow exposed but unused by the React app
+- `server.py` is still monolithic (~2k lines) — modular split planned for Phase 5.5
+- Password-reset uses console logging instead of real email — needs SMTP/email integration (Phase 6+)
+- Quick-action buttons on dashboard remain `disabled` placeholders for phase-2/3 (already replaced where applicable)
 
 ## Next tasks
-1. User-led review of Phase 1
-2. Phase 2 scope confirmation (recruit-cost balance, stat ranges)
-3. Implement Phase 2 endpoints + UI
+1. User-led review of Phase 5
+2. **Phase 5.5**: modular refactor of `server.py` (auth/guilds/recruitment/expeditions/admin/seeds modules)
+3. **Phase 6**: equip items / loadout, then ranking + market

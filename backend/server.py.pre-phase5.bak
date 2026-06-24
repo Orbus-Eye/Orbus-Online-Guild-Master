@@ -9,13 +9,9 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
 import os
-import re
 import uuid
 import random
-import secrets
-import hashlib
 import logging
-from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -54,17 +50,8 @@ MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
 JWT_SECRET = os.environ["JWT_SECRET"]
 JWT_ALGORITHM = "HS256"
-JWT_EXPIRY_DAYS = 7  # TODO Phase 6+: reduce access TTL to ~1h once frontend actively uses refresh endpoint
+JWT_EXPIRY_DAYS = 7
 APP_ENV = os.environ.get("APP_ENV", "development")
-
-# ─── Phase 5: Security Hardening ──────────────────────────────────────────────
-REFRESH_TOKEN_TTL_DAYS = 30
-PASSWORD_RESET_TTL_MINUTES = 60
-LOGIN_LOCK_MAX_ATTEMPTS = 5
-LOGIN_LOCK_DURATION_MINUTES = 15
-LOGIN_ATTEMPTS_TTL_SECONDS = 86400  # 24h cleanup of stale attempt rows
-PASSWORD_REGEX_LETTER = re.compile(r"[A-Za-z]")
-PASSWORD_REGEX_DIGIT = re.compile(r"\d")
 
 TESTER_EMAIL = "tester@orbus.test"
 TESTER_PASSWORD = "password123"
@@ -186,48 +173,12 @@ logger = logging.getLogger("orbus")
 mongo_client = AsyncIOMotorClient(MONGO_URL)
 db = mongo_client[DB_NAME]
 
-
-# ─── Phase 5: CORS env-gated config ───────────────────────────────────────────
-def _resolve_cors_origins() -> list[str]:
-    """In production, CORS_ORIGINS must be set explicitly (no '*').
-    In dev/preview, defaults to ['*'] for convenience.
-    """
-    raw = os.environ.get("CORS_ORIGINS", "").strip()
-    if APP_ENV == "production":
-        if not raw or raw == "*":
-            raise RuntimeError(
-                "APP_ENV=production requires CORS_ORIGINS to be set explicitly "
-                "(comma-separated, no '*')."
-            )
-        origins = [o.strip() for o in raw.split(",") if o.strip()]
-        if "*" in origins:
-            raise RuntimeError("CORS_ORIGINS cannot contain '*' when APP_ENV=production.")
-        return origins
-    if not raw:
-        return ["*"]
-    return [o.strip() for o in raw.split(",") if o.strip()]
-
-
-# ─── Phase 5: Lifespan (replaces deprecated on_event) ─────────────────────────
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Names resolved at runtime; helper functions are defined further below.
-    await ensure_indexes()
-    await seed_classes_and_traits()
-    await seed_dungeons_and_items()
-    await seed_tester()
-    logger.info("Orbus backend ready (env=%s)", APP_ENV)
-    yield
-    mongo_client.close()
-
-
 # ─── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Orbus Online: Guild Master",
     openapi_url="/api/openapi.json",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
-    lifespan=lifespan,
 )
 
 api = APIRouter(prefix="/api")
@@ -830,155 +781,16 @@ async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict
     return current_user
 
 
-# ─── Phase 5: Auth security helpers ────────────────────────────────────────────
-def _hash_token(token: str) -> str:
-    """SHA-256 hex digest. Used for opaque refresh/reset tokens at rest."""
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
-
-
-def _new_opaque_token() -> str:
-    """URL-safe 256-bit opaque token."""
-    return secrets.token_urlsafe(32)
-
-
-async def _check_login_lock(email: str) -> None:
-    """Raise HTTP 429 if email is currently locked out."""
-    row = await db.login_attempts.find_one({"email": email})
-    if not row:
-        return
-    locked_until = row.get("locked_until")
-    if locked_until and isinstance(locked_until, datetime):
-        if locked_until.tzinfo is None:
-            locked_until = locked_until.replace(tzinfo=timezone.utc)
-        if locked_until > utc_now():
-            remaining = int((locked_until - utc_now()).total_seconds())
-            raise HTTPException(
-                status_code=429,
-                detail=f"Too many failed login attempts. Try again in {remaining} seconds.",
-            )
-
-
-async def _record_login_failure(email: str) -> None:
-    now = utc_now()
-    row = await db.login_attempts.find_one_and_update(
-        {"email": email},
-        {
-            "$inc": {"failed_count": 1},
-            "$set": {"last_attempt_at": now},
-            "$setOnInsert": {"email": email, "created_at": now},
-        },
-        upsert=True,
-        return_document=ReturnDocument.AFTER,
-    )
-    if row.get("failed_count", 0) >= LOGIN_LOCK_MAX_ATTEMPTS:
-        lock_until = now + timedelta(minutes=LOGIN_LOCK_DURATION_MINUTES)
-        await db.login_attempts.update_one(
-            {"email": email},
-            {"$set": {"locked_until": lock_until, "last_attempt_at": now}},
-        )
-
-
-async def _reset_login_attempts(email: str) -> None:
-    await db.login_attempts.delete_one({"email": email})
-
-
-async def _create_refresh_token(user_id: str) -> str:
-    """Issue a new opaque refresh token and persist its hash."""
-    token = _new_opaque_token()
-    now = utc_now()
-    await db.refresh_tokens.insert_one({
-        "id": str(uuid.uuid4()),
-        "user_id": user_id,
-        "token_hash": _hash_token(token),
-        "created_at": now,
-        "expires_at": now + timedelta(days=REFRESH_TOKEN_TTL_DAYS),
-        "revoked": False,
-    })
-    return token
-
-
-async def _consume_refresh_token(token: str) -> dict:
-    """Validate a refresh token. Returns the user doc or raises 401."""
-    row = await db.refresh_tokens.find_one({"token_hash": _hash_token(token)})
-    if not row or row.get("revoked"):
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-    expires_at = row.get("expires_at")
-    if expires_at and isinstance(expires_at, datetime):
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        if expires_at <= utc_now():
-            raise HTTPException(status_code=401, detail="Refresh token expired")
-    user = await db.users.find_one({"id": row["user_id"]}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
-async def _revoke_refresh_token(token: str) -> bool:
-    res = await db.refresh_tokens.update_one(
-        {"token_hash": _hash_token(token)},
-        {"$set": {"revoked": True, "revoked_at": utc_now()}},
-    )
-    return res.modified_count > 0
-
-
-async def _revoke_all_refresh_tokens(user_id: str) -> int:
-    res = await db.refresh_tokens.update_many(
-        {"user_id": user_id, "revoked": False},
-        {"$set": {"revoked": True, "revoked_at": utc_now()}},
-    )
-    return res.modified_count
-
-
 # ─── Pydantic Schemas ──────────────────────────────────────────────────────────
 class RegisterIn(BaseModel):
     email: OrbusEmail
     username: str = Field(min_length=2, max_length=32)
     password: str = Field(min_length=8, max_length=128)
 
-    @field_validator("password")
-    @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 8:
-            raise ValueError("password must be at least 8 characters")
-        if not PASSWORD_REGEX_LETTER.search(v):
-            raise ValueError("password must contain at least one letter")
-        if not PASSWORD_REGEX_DIGIT.search(v):
-            raise ValueError("password must contain at least one digit")
-        return v
-
 
 class LoginIn(BaseModel):
     email: OrbusEmail
     password: str = Field(min_length=1, max_length=128)
-
-
-class RefreshIn(BaseModel):
-    refresh_token: str = Field(min_length=8, max_length=256)
-
-
-class LogoutIn(BaseModel):
-    refresh_token: str = Field(min_length=8, max_length=256)
-
-
-class PasswordResetRequestIn(BaseModel):
-    email: OrbusEmail
-
-
-class PasswordResetConfirmIn(BaseModel):
-    token: str = Field(min_length=8, max_length=256)
-    new_password: str = Field(min_length=8, max_length=128)
-
-    @field_validator("new_password")
-    @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 8:
-            raise ValueError("password must be at least 8 characters")
-        if not PASSWORD_REGEX_LETTER.search(v):
-            raise ValueError("password must contain at least one letter")
-        if not PASSWORD_REGEX_DIGIT.search(v):
-            raise ValueError("password must contain at least one digit")
-        return v
 
 
 class GuildCreateIn(BaseModel):
@@ -1036,112 +848,22 @@ async def register(payload: RegisterIn):
         raise HTTPException(status_code=409, detail="Email already registered")
 
     token = create_access_token(user_id)
-    refresh = await _create_refresh_token(user_id)
-    return {
-        "access_token": token,
-        "refresh_token": refresh,
-        "token_type": "bearer",
-        "user": user_public(user_doc),
-    }
+    return {"access_token": token, "token_type": "bearer", "user": user_public(user_doc)}
 
 
 @api.post("/auth/login")
 async def login(payload: LoginIn):
     email = payload.email.lower().strip()
-    await _check_login_lock(email)
     user = await db.users.find_one({"email": email})
     if not user or not verify_password(payload.password, user["password_hash"]):
-        await _record_login_failure(email)
         raise HTTPException(status_code=401, detail="Invalid email or password")
-    await _reset_login_attempts(email)
     token = create_access_token(user["id"])
-    refresh = await _create_refresh_token(user["id"])
-    return {
-        "access_token": token,
-        "refresh_token": refresh,
-        "token_type": "bearer",
-        "user": user_public(user),
-    }
+    return {"access_token": token, "token_type": "bearer", "user": user_public(user)}
 
 
 @api.get("/auth/me")
 async def me(current_user: dict = Depends(get_current_user)):
     return {"user": user_public(current_user)}
-
-
-# ─── Endpoints: Auth (Phase 5 refresh / logout / password-reset) ──────────────
-@api.post("/auth/refresh")
-async def refresh_token_endpoint(payload: RefreshIn):
-    user = await _consume_refresh_token(payload.refresh_token)
-    new_access = create_access_token(user["id"])
-    return {
-        "access_token": new_access,
-        "token_type": "bearer",
-        "user": user_public(user),
-    }
-
-
-@api.post("/auth/logout")
-async def logout(payload: LogoutIn):
-    revoked = await _revoke_refresh_token(payload.refresh_token)
-    return {"revoked": revoked}
-
-
-@api.post("/auth/password-reset/request")
-async def password_reset_request(payload: PasswordResetRequestIn):
-    """Always returns 200 to avoid email enumeration. Logs link to console."""
-    email = payload.email.lower().strip()
-    user = await db.users.find_one({"email": email})
-    if user:
-        token = _new_opaque_token()
-        now = utc_now()
-        await db.password_reset_tokens.insert_one({
-            "id": str(uuid.uuid4()),
-            "user_id": user["id"],
-            "token_hash": _hash_token(token),
-            "created_at": now,
-            "expires_at": now + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES),
-            "used": False,
-        })
-        logger.info(
-            "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
-            email, token, PASSWORD_RESET_TTL_MINUTES,
-        )
-    return {"status": "ok"}
-
-
-@api.post("/auth/password-reset/confirm")
-async def password_reset_confirm(payload: PasswordResetConfirmIn):
-    row = await db.password_reset_tokens.find_one({"token_hash": _hash_token(payload.token)})
-    if not row or row.get("used"):
-        raise HTTPException(status_code=400, detail="Invalid or already-used reset token")
-    expires_at = row.get("expires_at")
-    if expires_at and isinstance(expires_at, datetime):
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        if expires_at <= utc_now():
-            raise HTTPException(status_code=400, detail="Reset token expired")
-
-    user = await db.users.find_one({"id": row["user_id"]})
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid reset token")
-
-    now = utc_now()
-    await db.users.update_one(
-        {"id": user["id"]},
-        {"$set": {
-            "password_hash": hash_password(payload.new_password),
-            "updated_at": now.isoformat(),
-        }},
-    )
-    await db.password_reset_tokens.update_one(
-        {"id": row["id"]},
-        {"$set": {"used": True, "used_at": now}},
-    )
-    # Security best-practice: revoke all existing refresh tokens for this user
-    await _revoke_all_refresh_tokens(user["id"])
-    await _reset_login_attempts(user["email"])
-    return {"status": "ok"}
 
 
 # ─── Endpoints: Guilds ─────────────────────────────────────────────────────────
@@ -1855,7 +1577,7 @@ app.include_router(api)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_resolve_cors_origins(),
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1916,37 +1638,6 @@ async def ensure_indexes():
     )
     await db.inventory_items.create_index(
         [("guild_id", ASCENDING), ("item_id", ASCENDING)], unique=True, name="inv_guild_item_unique"
-    )
-    # Phase 5: security collections with TTL
-    await db.login_attempts.create_index(
-        [("email", ASCENDING)], unique=True, name="login_attempts_email_unique"
-    )
-    await db.login_attempts.create_index(
-        [("last_attempt_at", ASCENDING)],
-        expireAfterSeconds=LOGIN_ATTEMPTS_TTL_SECONDS,
-        name="login_attempts_ttl",
-    )
-    await db.refresh_tokens.create_index(
-        [("token_hash", ASCENDING)], unique=True, name="refresh_tokens_hash_unique"
-    )
-    await db.refresh_tokens.create_index(
-        [("user_id", ASCENDING)], name="refresh_tokens_user_idx"
-    )
-    await db.refresh_tokens.create_index(
-        [("expires_at", ASCENDING)],
-        expireAfterSeconds=0,
-        name="refresh_tokens_ttl",
-    )
-    await db.password_reset_tokens.create_index(
-        [("token_hash", ASCENDING)], unique=True, name="password_reset_hash_unique"
-    )
-    await db.password_reset_tokens.create_index(
-        [("user_id", ASCENDING)], name="password_reset_user_idx"
-    )
-    await db.password_reset_tokens.create_index(
-        [("expires_at", ASCENDING)],
-        expireAfterSeconds=0,
-        name="password_reset_ttl",
     )
 
 
@@ -2103,5 +1794,15 @@ async def seed_tester():
     logger.info("Seeded tester account: %s (is_admin=True)", TESTER_EMAIL)
 
 
-# Phase 5: startup/shutdown is now handled by the `lifespan` context manager
-# defined near the top of this module (see `lifespan(app)`).
+@app.on_event("startup")
+async def on_startup():
+    await ensure_indexes()
+    await seed_classes_and_traits()
+    await seed_dungeons_and_items()
+    await seed_tester()
+    logger.info("Orbus backend ready (env=%s)", APP_ENV)
+
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    mongo_client.close()
