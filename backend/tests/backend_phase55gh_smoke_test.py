@@ -87,7 +87,7 @@ def test_openapi_37_paths():
     assert r.status_code == 200
     paths = r.json().get("paths", {})
     # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
-    assert len(paths) == 39, f"expected 39, got {len(paths)}"
+    assert len(paths) == 40, f"expected 40, got {len(paths)}"
 
 
 # ---------- 3: tester admin ----------

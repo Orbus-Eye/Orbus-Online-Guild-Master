@@ -300,7 +300,7 @@ class TestOpenAPIInvariant:
     def test_openapi_paths_unchanged_at_39(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 39, f"expected 39 (Phase 9.3 adds no endpoint), got {len(paths)}"
+        assert len(paths) == 40, f"expected 40 (Phase 13 added trait-preview), got {len(paths)}"
         # The reset endpoints still exist with the same paths
         assert "/api/auth/password-reset/request" in paths
         assert "/api/auth/password-reset/confirm" in paths

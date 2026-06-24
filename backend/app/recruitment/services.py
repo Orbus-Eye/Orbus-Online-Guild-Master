@@ -167,12 +167,15 @@ def _pick_random_traits(traits_pool: list) -> list:
 
 
 def _apply_trait_effects(stats: dict, traits: list) -> dict:
-    affected = ("strength", "agility", "intellect", "endurance", "faith")
-    for t in traits:
-        if t.get("modifier_type") == "flat" and t.get("affected_stat") in affected:
-            key = t["affected_stat"]
-            stats[key] = max(1, int(stats[key]) + int(t.get("modifier_value", 0)))
-    return stats
+    """Phase 13: deprecated no-op kept for backward import-compat.
+
+    Pre-Phase-13 this baked flat trait modifiers into the rolled stat
+    dict at offer-generation time. Phase 13 made traits dynamic
+    (resolved at power-calc / expedition time), so this helper is now
+    a pass-through. Kept exported because external tests/imports may
+    reference it.
+    """
+    return dict(stats)
 
 
 def _generate_candidate(
@@ -191,7 +194,9 @@ def _generate_candidate(
         "faith": _roll_stat(klass["base_faith"], bonus),
     }
     traits = _pick_random_traits(traits_pool or [])
-    stats = _apply_trait_effects(stats, traits)
+    # Phase 13: traits are no longer baked into stats at recruitment.
+    # They are now resolved dynamically (power calc, expedition, preview).
+    # `_apply_trait_effects` is now a no-op kept for import-compat.
     return {
         "id": str(uuid.uuid4()),
         "guild_id": guild_id,

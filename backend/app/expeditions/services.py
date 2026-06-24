@@ -21,9 +21,11 @@ from pymongo import ReturnDocument
 
 from app.expeditions.formulas import (
     adventurer_base_power as _adventurer_unit_power,
+    adventurer_effective_power as _adventurer_effective_power,
     build_equipment_delta as _build_equipment_delta,
     compute_success_chance,
     compute_team_power,
+    sum_xp_percent,
 )
 from app.expeditions.loot_tables import roll_loot_for_dungeon
 from app.equipment.services import (
@@ -62,6 +64,8 @@ def member_public(m: dict) -> dict:
         # Phase 6 — equipment at the moment of departure (immutable snapshot)
         "equipment_snapshot": m.get("equipment_snapshot", []),
         "equipment_power_snapshot": int(m.get("equipment_power_snapshot", 0)),
+        # Phase 13 — traits at dispatch (immutable snapshot for determinism)
+        "traits_snapshot": m.get("traits_snapshot", []),
         "total_power_snapshot": int(
             m.get("total_power_snapshot")
             if m.get("total_power_snapshot") is not None
@@ -260,14 +264,19 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         {"$inc": {"gold": gold_reward}, "$set": {"updated_at": now.isoformat()}},
     )
 
-    # Apply XP + free adventurers, with level-up loop
+    # Apply XP + free adventurers, with level-up loop.
+    # Phase 13 — XP per member is scaled by the member's traits_snapshot
+    # xp_gain percent modifiers (additive stacking, then applied once).
     for m in members:
         adv = await db.adventurers.find_one(
             {"id": m["adventurer_id"], "guild_id": claimed["guild_id"]}, {"_id": 0}
         )
         if not adv:
             continue
-        adv["experience"] = int(adv.get("experience", 0)) + int(xp_per_member)
+        traits_snap = m.get("traits_snapshot") or []
+        xp_pct = sum_xp_percent(traits_snap)
+        member_xp = int(round(int(xp_per_member) * (1.0 + xp_pct / 100.0)))
+        adv["experience"] = int(adv.get("experience", 0)) + member_xp
         adv = _resolve_levelup(adv)
         adv["is_available"] = True
         adv["updated_at"] = now.isoformat()
@@ -460,12 +469,18 @@ async def _dispatch_expedition(
         members_live.append(adv)
 
     # Phase 6: load equipment for each member; snapshot is frozen at departure.
+    # Phase 13: also snapshot the active traits so completion can resolve
+    # xp_gain modifiers deterministically even if the trait pool changes.
     members_for_power: list[dict] = []
     equipment_by_adv: dict[str, dict] = {}
+    traits_by_adv: dict[str, list] = {}
     for adv in members_live:
         slots, eq_power, raw = await _load_equipment_for_adventurer(db, adv["id"])
         snapshot = [_item_summary_for_snapshot(r["row"], r["item"]) for r in raw]
-        base = _adventurer_unit_power(adv)
+        # Phase 13 — use effective (trait-modified) power as base
+        base = _adventurer_effective_power(adv)
+        traits_snapshot = list(adv.get("traits") or [])
+        traits_by_adv[adv["id"]] = traits_snapshot
         equipment_by_adv[adv["id"]] = {
             "equipment_snapshot": snapshot,
             "equipment_power_snapshot": eq_power,
@@ -528,7 +543,7 @@ async def _dispatch_expedition(
             {
                 "equipment_snapshot": [],
                 "equipment_power_snapshot": 0,
-                "total_power_snapshot": _adventurer_unit_power(adv),
+                "total_power_snapshot": _adventurer_effective_power(adv),
             },
         )
         m = {
@@ -547,6 +562,8 @@ async def _dispatch_expedition(
             "equipment_snapshot": eq["equipment_snapshot"],
             "equipment_power_snapshot": int(eq["equipment_power_snapshot"]),
             "total_power_snapshot": int(eq["total_power_snapshot"]),
+            # Phase 13 — trait snapshot for deterministic resolution
+            "traits_snapshot": traits_by_adv.get(adv["id"], []),
         }
         members_docs.append(m)
     if members_docs:

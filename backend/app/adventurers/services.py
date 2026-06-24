@@ -1,5 +1,14 @@
 """Adventurers + classes + traits services (Phase 5.5d)."""
-from app.expeditions.formulas import adventurer_base_power as _adventurer_unit_power
+from fastapi import HTTPException
+
+from app.expeditions.formulas import (
+    TRAIT_AFFECTABLE_STATS,
+    TRAIT_XP_STAT,
+    adventurer_base_power as _adventurer_unit_power,
+    adventurer_effective_power as _adventurer_effective_power,
+    apply_trait_modifiers,
+    sum_xp_percent,
+)
 
 
 def class_public(doc: dict) -> dict:
@@ -88,9 +97,65 @@ async def list_adventurers_for_guild(db, guild_id: str) -> list[dict]:
     return out
 
 
+async def trait_preview_for_adventurer(db, guild_id: str, adventurer_id: str) -> dict:
+    """Phase 13 — read-only preview of trait effects on stats / power.
+
+    Returns base (no-trait) and effective (trait-applied) stats and power,
+    plus a per-trait delta summary. Ownership is enforced; adventurers
+    that don't belong to the caller's guild yield 404 (no leak).
+    """
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
+    )
+    if not adv:
+        raise HTTPException(status_code=404, detail="Adventurer not found")
+    traits = adv.get("traits") or []
+    base_stats = {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS}
+    effective_stats = apply_trait_modifiers(base_stats, traits) if traits else dict(base_stats)
+    base_power = _adventurer_unit_power(adv)
+    effective_power = _adventurer_effective_power(adv)
+    xp_pct = sum_xp_percent(traits)
+    applied = []
+    for t in traits:
+        affected = t.get("affected_stat")
+        mtype = t.get("modifier_type")
+        val = t.get("modifier_value", 0) or 0
+        if affected in TRAIT_AFFECTABLE_STATS and mtype == "flat":
+            sign = "+" if val >= 0 else ""
+            delta = f"{sign}{int(val)} {affected}"
+        elif affected in TRAIT_AFFECTABLE_STATS and mtype == "percent":
+            sign = "+" if val >= 0 else ""
+            delta = f"{sign}{val}% {affected}"
+        elif affected == TRAIT_XP_STAT and mtype == "percent":
+            sign = "+" if val >= 0 else ""
+            delta = f"{sign}{val}% xp_gain"
+        else:
+            delta = "no effect"
+        applied.append({
+            "id": t.get("id"),
+            "name": t.get("name"),
+            "modifier_type": mtype,
+            "affected_stat": affected,
+            "modifier_value": val,
+            "is_positive": t.get("is_positive", True),
+            "delta_summary": delta,
+        })
+    return {
+        "adventurer_id": adv["id"],
+        "base_stats": base_stats,
+        "effective_stats": effective_stats,
+        "applied_traits": applied,
+        "base_power": base_power,
+        "effective_power": effective_power,
+        "power_delta": effective_power - base_power,
+        "xp_gain_percent": xp_pct,
+    }
+
+
 __all__ = [
     "class_public",
     "trait_public",
     "adventurer_public",
     "list_adventurers_for_guild",
+    "trait_preview_for_adventurer",
 ]

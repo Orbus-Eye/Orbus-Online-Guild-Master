@@ -299,7 +299,7 @@ class TestPhase10OpenAPIInvariant:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # Phase 9.1 added 1 path → 37. Phase 11.2 adds POST /api/recruitment/refresh → 38.
-        assert len(paths) == 39, f"expected 39, got {len(paths)}"
+        assert len(paths) == 40, f"expected 40, got {len(paths)}"
 
     def test_leaderboard_still_present(self):
         r = requests.get(

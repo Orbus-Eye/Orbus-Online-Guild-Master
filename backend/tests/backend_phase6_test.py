@@ -394,6 +394,16 @@ class TestExpeditionEquipmentImpact:
         # team: sum(total_power_snapshot of members) + role bonuses.
         adv_get = requests.get(f"{API}/adventurers", headers=u2["headers"], timeout=15).json()["adventurers"]
         team = [a for a in adv_get if a["id"] in ids2]
+        # Phase 13: account for trait flat deltas on the five primary stats.
+        # Percent stat modifiers are not present in the current seed, so a
+        # simple additive correction suffices here.
+        trait_delta = 0
+        for a in team:
+            for t in a.get("traits", []) or []:
+                if (t.get("modifier_type") == "flat"
+                        and t.get("affected_stat") in (
+                            "strength", "agility", "intellect", "endurance", "faith")):
+                    trait_delta += int(t.get("modifier_value", 0) or 0)
         expected_base_sum = sum(
             a["strength"] + a["agility"] + a["intellect"]
             + a["endurance"] + a["faith"] + a["level"] * 2
@@ -405,10 +415,10 @@ class TestExpeditionEquipmentImpact:
         if "Healer" in roles: bonus += 5
         if "DPS" in roles: bonus += 5
         if {"Tank", "Healer", "DPS"}.issubset(roles): bonus += 10
-        expected_team_power = expected_base_sum + eq_power_sum + bonus
+        expected_team_power = expected_base_sum + trait_delta + eq_power_sum + bonus
         assert equipped_tp == expected_team_power, (
             f"team_power={equipped_tp} expected={expected_team_power} "
-            f"(base={expected_base_sum} eq={eq_power_sum} bonus={bonus})"
+            f"(base={expected_base_sum} traits={trait_delta} eq={eq_power_sum} bonus={bonus})"
         )
 
     def test_snapshot_is_immutable_after_start(self):

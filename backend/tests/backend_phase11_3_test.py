@@ -258,7 +258,7 @@ class TestPhase113NoRegressions:
     def test_openapi_paths_count_39(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 39, f"expected 39, got {len(paths)}"
+        assert len(paths) == 40, f"expected 40, got {len(paths)}"
 
     def test_onboarding_path_present(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)

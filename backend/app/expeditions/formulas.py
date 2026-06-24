@@ -12,8 +12,56 @@ from app.shared.constants import (
 )
 
 
+# Phase 13 — primary stats whose values are modifiable by traits.
+TRAIT_AFFECTABLE_STATS = ("strength", "agility", "intellect", "endurance", "faith")
+TRAIT_XP_STAT = "xp_gain"
+
+
+def apply_trait_modifiers(stats: dict, traits: list) -> dict:
+    """Apply trait modifiers to a stat dict, returning a new dict.
+
+    Stacking policy (Phase 13):
+      * flat:    additive sum (Σ modifier_value)
+      * percent: additive sum on percent (1 + Σpct/100) applied once
+    Clamp: each effective stat ≥ 0, then round() to int.
+    Only TRAIT_AFFECTABLE_STATS are touched here; `xp_gain` is resolved
+    at expedition completion (see services).
+    """
+    out = {s: float(stats.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS}
+    flat_delta = {s: 0.0 for s in TRAIT_AFFECTABLE_STATS}
+    pct_delta = {s: 0.0 for s in TRAIT_AFFECTABLE_STATS}
+    for t in traits or []:
+        affected = t.get("affected_stat")
+        if affected not in TRAIT_AFFECTABLE_STATS:
+            continue
+        mtype = t.get("modifier_type")
+        val = float(t.get("modifier_value", 0) or 0)
+        if mtype == "flat":
+            flat_delta[affected] += val
+        elif mtype == "percent":
+            pct_delta[affected] += val
+    result = {}
+    for s in TRAIT_AFFECTABLE_STATS:
+        eff = (out[s] + flat_delta[s]) * (1.0 + pct_delta[s] / 100.0)
+        result[s] = max(0, int(round(eff)))
+    return result
+
+
+def sum_xp_percent(traits: list) -> float:
+    """Sum of percent modifiers targeting xp_gain (additive stacking)."""
+    total = 0.0
+    for t in traits or []:
+        if t.get("affected_stat") == TRAIT_XP_STAT and t.get("modifier_type") == "percent":
+            total += float(t.get("modifier_value", 0) or 0)
+    return total
+
+
 def adventurer_base_power(adv: dict) -> int:
-    """Base power of an adventurer (no equipment, no composition bonus)."""
+    """Raw power of an adventurer (no traits, no equipment, no composition).
+
+    Phase 13: this remains the pre-trait power. Use
+    `adventurer_effective_power` for trait-aware power.
+    """
     return (
         int(adv["strength"])
         + int(adv["agility"])
@@ -22,6 +70,21 @@ def adventurer_base_power(adv: dict) -> int:
         + int(adv["faith"])
         + int(adv.get("level", 1)) * 2
     )
+
+
+def adventurer_effective_power(adv: dict) -> int:
+    """Phase 13: trait-aware base power (no equipment, no composition).
+
+    Falls back to raw stats when adv has no traits.
+    """
+    traits = adv.get("traits") or []
+    if not traits:
+        return adventurer_base_power(adv)
+    eff = apply_trait_modifiers(
+        {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS},
+        traits,
+    )
+    return sum(eff.values()) + int(adv.get("level", 1)) * 2
 
 
 def item_equip_power(item: dict) -> int:

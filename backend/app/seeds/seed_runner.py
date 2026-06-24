@@ -187,16 +187,60 @@ async def seed_tester(db) -> None:
     logger.info("Seeded tester account: %s (is_admin=True)", TESTER_EMAIL)
 
 
+async def unbake_legacy_traits(db) -> None:
+    """Phase 13: one-time migration that strips flat trait baking from
+    legacy adventurers and persists a `phase13_unbaked` marker.
+
+    Pre-Phase 13, recruitment baked flat trait modifiers directly into
+    the adventurer's stat fields. From Phase 13 traits are resolved
+    dynamically, so the stored stats must represent the pre-trait
+    rolled values. Existing adventurers are unbaked exactly once:
+    for each flat trait targeting str/agi/int/end/fai we subtract
+    `modifier_value` from the stored stat, clamp to ≥ 1 (matches the
+    pre-Phase-13 invariant), and set `phase13_unbaked=true`.
+
+    Idempotent via the marker flag; safe to call on every startup.
+    """
+    cursor = db.adventurers.find(
+        {"phase13_unbaked": {"$ne": True}}, {"_id": 0}
+    )
+    affected = ("strength", "agility", "intellect", "endurance", "faith")
+    n_updated = 0
+    async for adv in cursor:
+        traits = adv.get("traits") or []
+        if not traits:
+            await db.adventurers.update_one(
+                {"id": adv["id"]}, {"$set": {"phase13_unbaked": True}}
+            )
+            continue
+        deltas = {s: 0 for s in affected}
+        for t in traits:
+            if t.get("modifier_type") == "flat" and t.get("affected_stat") in affected:
+                deltas[t["affected_stat"]] += int(t.get("modifier_value", 0) or 0)
+        new_stats = {}
+        for s in affected:
+            new_stats[s] = max(1, int(adv.get(s, 0)) - deltas[s])
+        await db.adventurers.update_one(
+            {"id": adv["id"]},
+            {"$set": {**new_stats, "phase13_unbaked": True}},
+        )
+        n_updated += 1
+    if n_updated:
+        logger.info("Phase 13: unbaked legacy traits on %d adventurers", n_updated)
+
+
 async def run_all_seeds(db) -> None:
     """Orchestrator: run all seeds in order."""
     await seed_classes_and_traits(db)
     await seed_dungeons_and_items(db)
     await seed_tester(db)
+    await unbake_legacy_traits(db)
 
 
 __all__ = [
     "seed_classes_and_traits",
     "seed_dungeons_and_items",
     "seed_tester",
+    "unbake_legacy_traits",
     "run_all_seeds",
 ]

@@ -159,10 +159,16 @@ class TestExpeditionLifecycle:
         advs0 = requests.get(f"{API}/adventurers", headers=h, timeout=15).json()["adventurers"]
         xp_by_id = {a["id"]: a["experience"] for a in advs0}
 
-        # Compute expected team_power
+        # Compute expected team_power (Phase 13: include trait flat deltas)
         members = [a for a in advs0 if a["id"] in u["adv_ids"]]
         expected_power = sum(a["strength"]+a["agility"]+a["intellect"]+a["endurance"]+a["faith"]+a["level"]*2
                              for a in members)
+        for a in members:
+            for t in a.get("traits", []) or []:
+                if (t.get("modifier_type") == "flat"
+                        and t.get("affected_stat") in (
+                            "strength", "agility", "intellect", "endurance", "faith")):
+                    expected_power += int(t.get("modifier_value", 0) or 0)
         roles = {a["class_role"] for a in members}
         if "Tank" in roles: expected_power += 5
         if "Healer" in roles: expected_power += 5
