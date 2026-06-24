@@ -1,4 +1,4 @@
-"""Items domain (Phase 5.5c.2)."""
-from app.items.routes import router
+"""Items domain (Phase 5.5c.2).
 
-__all__ = ["router"]
+Package-level `__init__.py` intentionally empty — see `app/equipment/__init__.py`.
+"""

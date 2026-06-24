@@ -1,4 +1,4 @@
-"""Guilds domain (Phase 5.5c)."""
-from app.guilds.routes import router
+"""Guilds domain (Phase 5.5c).
 
-__all__ = ["router"]
+Package-level `__init__.py` intentionally empty — see `app/equipment/__init__.py`.
+"""

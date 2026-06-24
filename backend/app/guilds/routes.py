@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends
 
 from app.core.database import db
 from app.core.security import get_current_user
+from app.expeditions.services import complete_due_expeditions
 from app.guilds.schemas import GuildCreateIn
 from app.guilds.services import (
     compute_dashboard_stats,
@@ -33,11 +34,9 @@ async def create_guild(
 @router.get("/me")
 async def get_my_guild(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
-    # Phase-3 lazy completion sweep. Imported lazily to avoid a circular import
-    # with `server.py` (which itself imports this router during startup).
-    from server import complete_due_expeditions
-
-    await complete_due_expeditions(guild["id"])
+    # Phase 5.5e: lazy completion sweep (formerly imported lazily from server.py
+    # to break a circular dep; now imported eagerly from `app.expeditions.services`).
+    await complete_due_expeditions(db, guild["id"])
     # Re-fetch guild after sweep (gold/level may have changed)
     guild = await user_guild_or_404(db, current_user["id"])
 

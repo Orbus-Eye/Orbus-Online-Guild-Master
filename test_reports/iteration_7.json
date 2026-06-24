@@ -1,0 +1,40 @@
+{
+  "summary": "Phase 5.5e Expeditions Domain Split regression smoke COMPLETE. Live backend (https://guild-master-5.preview.emergentagent.com) verified GREEN end-to-end. Full pytest suite 159/159 PASS in 224.18s. New dedicated Phase 5.5e smoke file (16 tests, 16.06s) PASS 16/16. OpenAPI surface = 36 paths unchanged. /api/health → 200 {status:ok,env:development}. Tester login + is_admin=true verified. All expedition flows (start validation, list, detail, cross-guild 404, last-completed, replay-last, equipment delta snapshot immutability, dungeon gate sticky semantics, loot rarity rules, lazy completion idempotency) operate identically to pre-split server.py. Route order for /api/expeditions/last-completed and /api/expeditions/replay-last (before /{expedition_id}) confirmed correct via OpenAPI presence. Zero behaviour change confirmed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_phase55e_smoke_test.py",
+    "/app/test_reports/pytest/phase55e_smoke.xml",
+    "/app/test_reports/pytest/phase55e_full.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Domain split is clean: app/expeditions/ now contains schemas.py + services.py + routes.py with 5 endpoints; circular lazy imports successfully removed (app/guilds/routes.py and app/dungeons/services.py both eager-import from app.expeditions.services). Confirmed via test_openapi_path_count_36 (still 36) + test_cross_guild_detail_returns_404_not_403 (no 403 leak) + 159/159 baseline.",
+    "Loot rarity contract enforced: 5 forced-failure expeditions on Goblin Warrens produced ZERO Rare/Epic loot — Phase 7 loot table weights respected post-split.",
+    "Equipment delta snapshot fields (base_team_power, equipment_power_bonus, final_team_power, success_chance_without_equipment, success_chance_with_equipment, equipment_delta_text) all present on expedition document at start AND immutable after GET detail — Phase 7 immutability holds.",
+    "Lazy completion sweep is idempotent: 6 concurrent sweep triggers (3x /api/guilds/me + 3x /api/expeditions) on a single past-due expedition produced exactly ONE reward (inventory count stable across sweeps; expedition status remains 'completed').",
+    "Dungeon gate sticky semantics intact: dragons-hoard unlock_reason still mentions 'level 2', '65', and 'peak'; shadow-crypts still locked for fresh guild (0 adventurers).",
+    "Backend logs reload-clean across the regression run — no circular import warnings, no traceback noise. Tester seed remains idempotent ('Tester account already exists with is_admin=True' on every startup).",
+    "Pre-existing non-blocking notes from iteration_6 still apply: /api/admin/classes accumulates test-created classes (cosmetic), /api/auth/me wraps user under 'user' key, /api/recruitment/candidates returns 'candidate_id' field. None of these were affected by 5.5e."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_phase55e_smoke_test.py (new file — 16 dedicated regression tests for Phase 5.5e domain split)"
+  ],
+  "success_rate": {
+    "backend": "100% (159/159 full suite + 16/16 Phase 5.5e smoke)",
+    "frontend": "N/A — backend-only per request"
+  },
+  "test_credentials": "tester@orbus.test / password123 (seeded idempotently in dev; is_admin=true forced on every startup)",
+  "seed_data_creation": "Pytest created ephemeral test users (p55e_*@orbus.test) + guilds + adventurers + expeditions during the regression run. No manual seeding required. All data is throwaway and prefixed for identification.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 5.5e domain split is GREEN. To rerun the dedicated smoke: cd /app/backend && python -m pytest tests/backend_phase55e_smoke_test.py -v (~16s, 16 tests, runs against live REACT_APP_BACKEND_URL). To rerun the full regression: cd /app/backend && python -m pytest tests/ -q (~225s, 159 tests). The new smoke file uses live HTTP (not TestClient) and writes to Mongo directly via pymongo for the force-complete helper (mirrors backend_phase8_test.py pattern). Route-order assertion in test_openapi_paths_count_36 confirms /last-completed + /replay-last register before /{expedition_id} (an OpenAPI path missing would have failed the path-count check).",
+  "rca of the issue": "N/A — no issues found. Phase 5.5e refactor is a pure code-organization change and produced zero behavioural regressions across 175 total test executions (159 baseline + 16 new smoke)."
+}

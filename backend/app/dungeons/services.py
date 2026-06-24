@@ -1,11 +1,13 @@
 """Dungeons domain services (Phase 5.5c.2).
 
 Pure serialization + list+gate logic for read-only dungeons catalog. The gate
-evaluation (`_evaluate_dungeon_gate`) intentionally stays in `server.py`
-because it is also called by the expedition dispatch + replay-eligibility
-helpers. We invoke it via a lazy import here to avoid a circular dependency.
+evaluation now lives in `app.expeditions.services` (Phase 5.5e) and is
+imported eagerly at module level — no module-level cycle since
+`expeditions.services` does not import anything from `app.dungeons`.
 """
 from typing import Optional
+
+from app.expeditions.services import _evaluate_dungeon_gate
 
 
 def dungeon_public(d: dict) -> dict:
@@ -36,15 +38,11 @@ async def list_dungeons_for_guild(db, guild: Optional[dict]) -> list[dict]:
         .sort("difficulty", 1)
         .to_list(100)
     )
-    # Lazy import to avoid a circular dependency: server.py is still loading
-    # at module-import time of this package.
-    from server import _evaluate_dungeon_gate
-
     out = []
     for d in rows:
         pub = dungeon_public(d)
         if guild:
-            unlocked, reason = await _evaluate_dungeon_gate(d, guild)
+            unlocked, reason = await _evaluate_dungeon_gate(db, d, guild)
         else:
             unlocked, reason = True, None
         pub["unlocked"] = unlocked
