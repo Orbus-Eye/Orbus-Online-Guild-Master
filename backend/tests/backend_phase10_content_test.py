@@ -236,20 +236,36 @@ class TestPhase10MonetizationInvariant:
 
 class TestPhase10Recruitment:
     def test_recruitment_can_roll_any_of_12_classes(self, tester_token, db):
-        """Sample 200 candidates and verify we see at least 8 distinct
-        classes (statistically near-certain across 12 classes × 200 rolls).
-        With 200 rolls and 12 uniform classes, P(see < 8 classes) is
-        cryptographically improbable; we use 8 to keep the test stable
-        even with non-uniform recruitment weights."""
+        """Sample many candidates and verify we see at least 8 distinct classes.
+
+        Phase 11.2: GET /candidates is now read-only, so we register multiple
+        fresh users (each gets their own roster seed) to accumulate variety
+        without exhausting the daily refresh limit.
+        """
+        import uuid as _uuid
         seen_class_slugs = set()
-        for _ in range(20):  # 20 batches × ~4 cards = ~80 rolls, enough for variety
-            r = requests.get(
-                f"{BASE_URL}/api/recruitment/candidates",
-                headers={"Authorization": f"Bearer {tester_token}"},
+        for batch in range(25):  # 25 fresh users × 4 cards = 100 rolls
+            tag = f"p10cls_{_uuid.uuid4().hex[:8]}"
+            email = f"{tag}@orbus.test"
+            r = requests.post(
+                f"{BASE_URL}/api/auth/register",
+                json={"email": email, "username": tag, "password": "Test12345!"},
                 timeout=15,
             )
-            assert r.status_code == 200, r.text
-            data = r.json()
+            assert r.status_code in (200, 201), r.text
+            tok = r.json()["access_token"]
+            h = {"Authorization": f"Bearer {tok}"}
+            requests.post(
+                f"{BASE_URL}/api/guilds",
+                json={"name": f"G_{tag}", "description": ""},
+                headers=h, timeout=15,
+            )
+            cr = requests.get(
+                f"{BASE_URL}/api/recruitment/candidates",
+                headers=h, timeout=15,
+            )
+            assert cr.status_code == 200, cr.text
+            data = cr.json()
             candidates = data if isinstance(data, list) else data.get("candidates", [])
             for c in candidates:
                 slug = c.get("class_slug") or c.get("class_name", "").lower()
@@ -282,8 +298,8 @@ class TestPhase10OpenAPIInvariant:
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # Phase 9.1 added 1 path → 37. Phase 10 adds ZERO endpoints.
-        assert len(paths) == 37, f"expected 37, got {len(paths)}"
+        # Phase 9.1 added 1 path → 37. Phase 11.2 adds POST /api/recruitment/refresh → 38.
+        assert len(paths) == 38, f"expected 38, got {len(paths)}"
 
     def test_leaderboard_still_present(self):
         r = requests.get(

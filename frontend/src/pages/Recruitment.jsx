@@ -114,7 +114,9 @@ const Skeleton = () => (
 export default function Recruitment() {
     const { guild, refreshGuild } = useAuth();
     const [candidates, setCandidates] = useState(null);
+    const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [recruiting, setRecruiting] = useState(null);
 
     const fetchCandidates = useCallback(async () => {
@@ -122,12 +124,40 @@ export default function Recruitment() {
         try {
             const { data } = await api.get("/recruitment/candidates");
             setCandidates(data.candidates);
+            setMeta({
+                refreshes_remaining_today: data.refreshes_remaining_today,
+                next_refresh_cost_gold: data.next_refresh_cost_gold,
+                can_refresh: data.can_refresh,
+            });
         } catch (err) {
             toast.error(formatApiError(err));
         } finally {
             setLoading(false);
         }
     }, []);
+
+    const doRefresh = useCallback(async () => {
+        setRefreshing(true);
+        try {
+            const { data } = await api.post("/recruitment/refresh");
+            setCandidates(data.candidates);
+            setMeta({
+                refreshes_remaining_today: data.refreshes_remaining_today,
+                next_refresh_cost_gold: data.next_refresh_cost_gold,
+                can_refresh: data.can_refresh,
+            });
+            if (data.refresh_cost_paid > 0) {
+                toast.success(`Roster refreshed (-${data.refresh_cost_paid}g)`);
+            } else {
+                toast.success("Roster refreshed (free).");
+            }
+            await refreshGuild();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setRefreshing(false);
+        }
+    }, [refreshGuild]);
 
     useEffect(() => {
         fetchCandidates();
@@ -188,15 +218,36 @@ export default function Recruitment() {
                                 {gold}
                             </div>
                         </div>
-                        <Button
-                            data-testid="refresh-candidates-btn"
-                            onClick={fetchCandidates}
-                            disabled={loading}
-                            variant="outline"
-                            className="h-10 rounded-sm bg-transparent border-border hover:bg-secondary text-xs"
-                        >
-                            {loading ? "loading…" : "↻ Refresh"}
-                        </Button>
+                        <div className="flex flex-col items-end gap-1">
+                            <Button
+                                data-testid="refresh-candidates-btn"
+                                onClick={doRefresh}
+                                disabled={refreshing || loading || !(meta?.can_refresh ?? true)}
+                                variant="outline"
+                                className="h-10 rounded-sm bg-transparent border-border hover:bg-secondary text-xs"
+                                title={
+                                    meta && meta.next_refresh_cost_gold > 0
+                                        ? `Next refresh costs ${meta.next_refresh_cost_gold}g`
+                                        : "Free refresh available"
+                                }
+                            >
+                                {refreshing
+                                    ? "refreshing…"
+                                    : meta && meta.next_refresh_cost_gold > 0
+                                    ? `↻ Refresh (${meta.next_refresh_cost_gold}g)`
+                                    : "↻ Refresh"}
+                            </Button>
+                            {meta && (
+                                <div
+                                    className="text-[10px] tracking-widest text-muted-foreground"
+                                    data-testid="refresh-counter"
+                                >
+                                    {meta.refreshes_remaining_today > 0
+                                        ? `${meta.refreshes_remaining_today} free left today`
+                                        : `next: ${meta.next_refresh_cost_gold}g`}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -247,11 +298,16 @@ export default function Recruitment() {
                             ones to the hall.
                         </p>
                         <Button
-                            onClick={fetchCandidates}
+                            onClick={doRefresh}
+                            disabled={refreshing || !(meta?.can_refresh ?? true)}
                             data-testid="refresh-empty-btn"
                             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
                         >
-                            ↻ Refresh candidates
+                            {refreshing
+                                ? "refreshing…"
+                                : meta && meta.next_refresh_cost_gold > 0
+                                ? `↻ Refresh (${meta.next_refresh_cost_gold}g)`
+                                : "↻ Refresh candidates"}
                         </Button>
                     </div>
                 )}

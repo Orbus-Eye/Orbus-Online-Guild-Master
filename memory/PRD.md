@@ -17,6 +17,51 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 11.2 — 2026-06-24 (Soft Gates + Recruitment Refresh Limit)
+Implemented (235/235 pytest PASS + 1 skipped, OpenAPI 37→38 paths +1):
+
+### Part A — Data-driven soft gates on all 10 dungeons
+- New module `app/dungeons/gates.py` (`evaluate_data_driven_gate`) consumes optional `gate` dict on dungeon seed docs. Schema: `min_adventurers` (AND), `min_max_team_power_ever` (AND), `min_guild_level_or_peak` (OR pair for T3), `min_total_expeditions_completed` (AND).
+- Originals (`goblin-warrens`, `shadow-crypts`, `dragons-hoard`) keep their hard-coded Phase-7/8 gate logic in `app/expeditions/services._evaluate_dungeon_gate` — BYTE-IDENTICAL behaviour.
+- Phase-10 dungeons now carry per-slug gates in `seeds/seed_data.py`:
+  - T1 `sewer-nest`/`bandit-hideout`: `min_adventurers: 3`
+  - T2 `druid-grove`: `min_adventurers: 3 AND max_team_power_ever ≥ 45`
+  - T2 `cursed-mines`: `min_adventurers: 3 AND max_team_power_ever ≥ 50`
+  - T2 `sunken-library`: `min_adventurers: 3 AND max_team_power_ever ≥ 55`
+  - T3 `lich-sanctum`: `min_adventurers: 3 AND (guild_level ≥ 2 OR peak ≥ 60)`
+  - T3 `storm-spire`: `min_adventurers: 3 AND (guild_level ≥ 2 OR peak ≥ 65)`
+- Server-side enforcement on dispatch (`POST /api/expeditions` → 403) and replay (`POST /api/expeditions/replay-last`).
+- Response `GET /api/dungeons` includes `locked: bool` + textual `unlock_reason` (e.g. "Requires 3 adventurers, you have 0").
+
+### Part B — Recruitment refresh limit
+- `app/recruitment/services.py` adds `_refresh_state(guild) → (total, paid, window_start, needs_reset)` with lazy UTC day rollover.
+- `FREE_REFRESHES_PER_DAY = 3`, `PAID_REFRESH_PRICES = [10, 20, 30]` (cap 30g).
+- **New endpoint** `POST /api/recruitment/refresh` — atomic CAS via `find_one_and_update` (guards counter+window+gold). Returns 402 on insufficient gold (no negative debit), 409 on concurrent race.
+- **Semantics change** `GET /api/recruitment/candidates` is now READ-ONLY (returns persisted offer or seeds the first one without consuming a refresh).
+- Guild doc fields: `recruitment_refresh_count_today`, `recruitment_paid_refresh_count_today`, `recruitment_refresh_window_start_utc` (ISO string).
+- All responses include: `refreshes_remaining_today`, `next_refresh_cost_gold`, `next_refresh_reset_at`, `can_refresh`, `free_refreshes_per_day`.
+
+### Frontend (`Recruitment.jsx`)
+- Refresh button shows remaining-free counter or `↻ Refresh (10g)` when paid kicks in; disabled when `can_refresh=false`.
+- Toast: free → "Roster refreshed (free)" / paid → "Roster refreshed (-10g)".
+- Gold counter refreshes via `refreshGuild()` after each POST.
+
+### Tests
+- New file `tests/backend_phase11_2_test.py` (15 tests, all PASS):
+  - 6 gates: fresh-guild T2/T3 locked + reason, dispatch 403, T2 unlock on peak 50, dragons-hoard sticky invariant, shadow-crypts gate unchanged, goblin-warrens always unlocked
+  - 9 refresh: 3 free for new guild, GET doesn't consume, 3 free then 10g, 10/20/30 cap, 402 on insufficient gold, daily reset simulated, cross-guild isolation, recruit-after-refresh, no negative gold
+- Updated 4 OpenAPI count tests: 37 → 38 paths
+- Updated `backend_phase2_test::test_candidates_replaces_prior_offer` to use POST /refresh
+- Updated `backend_phase10_test::test_recruitment_can_roll_any_of_12_classes` to register multiple fresh users (each gets own seed roster)
+
+### Verifications
+- pytest **235 passed + 1 skipped** in 249s
+- OpenAPI: 37 → 38 paths (only `+POST /api/recruitment/refresh`)
+- Phase 7/8 originals BYTE-IDENTICAL (goblin/shadow/dragons gates unchanged)
+- Backend smoke: zero startup errors, hot reload clean
+- RNG: `secrets.SystemRandom()` throughout (anti pay-to-win: gold only, no real money)
+
+
 ### Phase 1 — 2026-06-23
 - Backend FastAPI app with `/api` router
   - `GET /api/health`, `GET /api/openapi.json`, `GET /api/docs`

@@ -126,11 +126,13 @@ class TestRecruitmentCandidates:
             assert c["cost_gold"] == 20
 
     def test_candidates_replaces_prior_offer(self, user_with_guild):
+        # Phase 11.2: GET is now read-only; POST /refresh forces a new roll.
         h = user_with_guild["headers"]
         r1 = requests.get(f"{API}/recruitment/candidates", headers=h, timeout=15)
         old_id = r1.json()["candidates"][0]["candidate_id"]
-        # New offer
-        r2 = requests.get(f"{API}/recruitment/candidates", headers=h, timeout=15)
+        # POST /refresh replaces the offer (free, fresh user has 3/day)
+        r2 = requests.post(f"{API}/recruitment/refresh", headers=h, timeout=15)
+        assert r2.status_code == 200, r2.text
         new_ids = {c["candidate_id"] for c in r2.json()["candidates"]}
         assert old_id not in new_ids
         # Old id should now return 404 on recruit

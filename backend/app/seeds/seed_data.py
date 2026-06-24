@@ -198,6 +198,9 @@ DUNGEON_SEED = [
         "base_xp_reward": 90,
     },
     # ─── Phase 10: +7 new dungeons (2 T1, 3 T2, 2 T3) ────────────────────────
+    # Phase 11.2: each new dungeon carries a `gate` dict consumed by
+    # `app.dungeons.gates.evaluate_data_driven_gate`. The 3 originals keep
+    # their hard-coded Phase-7/8 gate logic in `app.expeditions.services`.
     # Tier 1 — beginner-friendly (45-75s, recommended_power 30-50)
     {
         "slug": "sewer-nest",
@@ -209,6 +212,7 @@ DUNGEON_SEED = [
         "recommended_power": 35,
         "base_gold_reward": 25,
         "base_xp_reward": 18,
+        "gate": {"min_adventurers": 3},
     },
     {
         "slug": "bandit-hideout",
@@ -220,6 +224,7 @@ DUNGEON_SEED = [
         "recommended_power": 50,
         "base_gold_reward": 45,
         "base_xp_reward": 30,
+        "gate": {"min_adventurers": 3},
     },
     # Tier 2 — mid-game (90-150s, recommended_power 55-70)
     {
@@ -232,6 +237,7 @@ DUNGEON_SEED = [
         "recommended_power": 55,
         "base_gold_reward": 55,
         "base_xp_reward": 42,
+        "gate": {"min_adventurers": 3, "min_max_team_power_ever": 45},
     },
     {
         "slug": "cursed-mines",
@@ -243,6 +249,7 @@ DUNGEON_SEED = [
         "recommended_power": 62,
         "base_gold_reward": 70,
         "base_xp_reward": 52,
+        "gate": {"min_adventurers": 3, "min_max_team_power_ever": 50},
     },
     {
         "slug": "sunken-library",
@@ -254,6 +261,7 @@ DUNGEON_SEED = [
         "recommended_power": 68,
         "base_gold_reward": 80,
         "base_xp_reward": 62,
+        "gate": {"min_adventurers": 3, "min_max_team_power_ever": 55},
     },
     # Tier 3 — end-game (180-300s, recommended_power 75-95)
     {
@@ -266,6 +274,7 @@ DUNGEON_SEED = [
         "recommended_power": 75,
         "base_gold_reward": 100,
         "base_xp_reward": 75,
+        "gate": {"min_adventurers": 3, "min_guild_level_or_peak": [2, 60]},
     },
     {
         "slug": "storm-spire",
@@ -277,6 +286,7 @@ DUNGEON_SEED = [
         "recommended_power": 88,
         "base_gold_reward": 135,
         "base_xp_reward": 100,
+        "gate": {"min_adventurers": 3, "min_guild_level_or_peak": [2, 65]},
     },
 ]
 

@@ -95,6 +95,8 @@ async def seed_dungeons_and_items(db) -> None:
                     "recommended_power": d["recommended_power"],
                     "base_gold_reward": d["base_gold_reward"],
                     "base_xp_reward": d["base_xp_reward"],
+                    # Phase 11.2: data-driven gate dict (optional)
+                    "gate": d.get("gate") or {},
                     "is_active": True,
                     "updated_at": now,
                 },

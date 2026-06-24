@@ -128,10 +128,11 @@ async def _evaluate_dungeon_gate(
 ) -> tuple[bool, Optional[str]]:
     """Returns (unlocked, unlock_reason). Reason is None when unlocked.
 
-    - Goblin Warrens: always unlocked.
-    - Shadow Crypts: guild.level >= 1 AND adventurer_count >= 3.
+    - Goblin Warrens: always unlocked (Phase 7 invariant).
+    - Shadow Crypts: guild.level >= 1 AND adventurer_count >= 3 (Phase 7 invariant).
     - Dragon's Hoard: guild.level >= 2 OR peak_team_power_ever >= 65
       OR best-3 current team total_power >= 65 (Phase 8 sticky semantics).
+    - All other dungeons: data-driven via `dungeon.gate` dict (Phase 11.2).
     """
     slug = dungeon.get("slug")
     if slug == "shadow-crypts":
@@ -161,7 +162,13 @@ async def _evaluate_dungeon_gate(
             False,
             "Requires guild level 2, team power \u2265 65, or peak team power ever \u2265 65",
         )
-    return True, None
+    # Phase 11.2: Goblin Warrens always unlocked; all other Phase-10 dungeons
+    # delegate to the data-driven evaluator using their seed `gate` dict.
+    if slug == "goblin-warrens":
+        return True, None
+    from app.dungeons.gates import evaluate_data_driven_gate
+
+    return await evaluate_data_driven_gate(db, dungeon, guild)
 
 
 # ─── Level-up resolver ────────────────────────────────────────────────────────
