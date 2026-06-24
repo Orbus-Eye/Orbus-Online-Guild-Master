@@ -4,6 +4,7 @@ import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
+import { TraitList } from "../components/TraitBadge";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -49,6 +50,7 @@ const HEAD = [
     ["INT", "int"],
     ["END", "end"],
     ["FAI", "fai"],
+    ["Traits", "traits"],
     ["Status", "status"],
 ];
 
@@ -179,6 +181,9 @@ export default function Adventurers() {
                                             <td className="px-3 py-2">{a.intellect}</td>
                                             <td className="px-3 py-2">{a.endurance}</td>
                                             <td className="px-3 py-2">{a.faith}</td>
+                                            <td className="px-3 py-2 min-w-[160px]">
+                                                <TraitList traits={a.traits} />
+                                            </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 <StatusBadge available={a.is_available} />
                                             </td>
@@ -238,6 +243,14 @@ export default function Adventurers() {
                                             <span>{a.faith}</span>
                                         </div>
                                     </div>
+                                    {a.traits && a.traits.length > 0 && (
+                                        <div className="mt-3 pt-3 border-t border-border/60">
+                                            <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
+                                                TRAITS
+                                            </div>
+                                            <TraitList traits={a.traits} />
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

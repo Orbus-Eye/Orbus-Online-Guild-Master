@@ -292,6 +292,7 @@ def adventurer_public(doc: dict) -> dict:
         "stamina": doc.get("stamina", 100),
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
+        "traits": doc.get("traits", []),
         "created_at": doc["created_at"],
         "updated_at": doc.get("updated_at", doc["created_at"]),
     }
@@ -314,6 +315,7 @@ def candidate_public(doc: dict) -> dict:
         "faith": doc["faith"],
         "stamina": doc["stamina"],
         "morale": doc["morale"],
+        "traits": doc.get("traits", []),
         "cost": RECRUITMENT_COST_GOLD,
         "cost_gold": RECRUITMENT_COST_GOLD,
     }
@@ -341,9 +343,59 @@ def _roll_stat(base: int, rarity_bonus: int) -> int:
     return max(1, base + random.randint(-1, 2) + rarity_bonus)
 
 
-def _generate_candidate(klass: dict, guild_id: str, now: datetime) -> dict:
+def _pick_random_traits(traits_pool: list) -> list:
+    """Pick 0–2 distinct traits with weighted distribution: 50%/35%/15%."""
+    if not traits_pool:
+        return []
+    r = random.random()
+    if r < 0.50:
+        count = 0
+    elif r < 0.85:
+        count = 1
+    else:
+        count = 2
+    count = min(count, len(traits_pool))
+    if count == 0:
+        return []
+    chosen = random.sample(traits_pool, count)
+    return [
+        {
+            "id": t["id"],
+            "name": t["name"],
+            "description": t.get("description", ""),
+            "modifier_type": t["modifier_type"],
+            "affected_stat": t["affected_stat"],
+            "modifier_value": t["modifier_value"],
+            "is_positive": t["is_positive"],
+        }
+        for t in chosen
+    ]
+
+
+def _apply_trait_effects(stats: dict, traits: list) -> dict:
+    """Apply 'flat' modifiers on the 5 main stats; floor at 1.
+    Phase 5+ TODO: apply percent xp_gain modifier in expedition reward calc."""
+    affected = ("strength", "agility", "intellect", "endurance", "faith")
+    for t in traits:
+        if t.get("modifier_type") == "flat" and t.get("affected_stat") in affected:
+            key = t["affected_stat"]
+            stats[key] = max(1, int(stats[key]) + int(t.get("modifier_value", 0)))
+    return stats
+
+
+def _generate_candidate(klass: dict, guild_id: str, now: datetime,
+                        traits_pool: list | None = None) -> dict:
     rarity = _weighted_choice(RARITY_WEIGHTS)
     bonus = RARITY_BONUS[rarity]
+    stats = {
+        "strength": _roll_stat(klass["base_strength"], bonus),
+        "agility": _roll_stat(klass["base_agility"], bonus),
+        "intellect": _roll_stat(klass["base_intellect"], bonus),
+        "endurance": _roll_stat(klass["base_endurance"], bonus),
+        "faith": _roll_stat(klass["base_faith"], bonus),
+    }
+    traits = _pick_random_traits(traits_pool or [])
+    stats = _apply_trait_effects(stats, traits)
     return {
         "id": str(uuid.uuid4()),
         "guild_id": guild_id,
@@ -354,13 +406,10 @@ def _generate_candidate(klass: dict, guild_id: str, now: datetime) -> dict:
         "rarity": rarity,
         "level": 1,
         "experience": 0,
-        "strength": _roll_stat(klass["base_strength"], bonus),
-        "agility": _roll_stat(klass["base_agility"], bonus),
-        "intellect": _roll_stat(klass["base_intellect"], bonus),
-        "endurance": _roll_stat(klass["base_endurance"], bonus),
-        "faith": _roll_stat(klass["base_faith"], bonus),
+        **stats,
         "stamina": 100,
         "morale": 100,
+        "traits": traits,
         "created_at": now.isoformat(),
         "expires_at": (now + timedelta(minutes=OFFER_TTL_MINUTES)).isoformat(),
     }
@@ -726,6 +775,12 @@ async def get_current_user(
     return user
 
 
+async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict:
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+
 # ─── Pydantic Schemas ──────────────────────────────────────────────────────────
 class RegisterIn(BaseModel):
     email: OrbusEmail
@@ -1063,9 +1118,13 @@ async def get_recruitment_candidates(current_user: dict = Depends(get_current_us
     # Replace prior offers for this guild
     await db.recruitment_offers.delete_many({"guild_id": guild["id"]})
 
+    traits_pool = await db.adventurer_traits.find(
+        {"is_active": True}, {"_id": 0}
+    ).to_list(100)
+
     now = utc_now()
     candidates = [
-        _generate_candidate(random.choice(classes), guild["id"], now)
+        _generate_candidate(random.choice(classes), guild["id"], now, traits_pool)
         for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER)
     ]
     await db.recruitment_offers.insert_many([dict(c) for c in candidates])
@@ -1140,6 +1199,7 @@ async def recruit_adventurer(
         "faith": offer["faith"],
         "stamina": offer["stamina"],
         "morale": offer["morale"],
+        "traits": offer.get("traits", []),
         "is_available": True,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
@@ -1162,6 +1222,354 @@ async def list_adventurers(current_user: dict = Depends(get_current_user)):
         .to_list(500)
     )
     return {"adventurers": [adventurer_public(r) for r in rows]}
+
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+# ADMIN PANEL — all endpoints under /api/admin/* protected by get_admin_user
+# ════════════════════════════════════════════════════════════════════════════════
+
+def _slug_ok(s: str) -> bool:
+    import re
+    return bool(re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", s or ""))
+
+
+def _strip_db_fields(d: dict) -> dict:
+    return {k: v for k, v in d.items() if k != "_id"}
+
+
+# ─── Admin: Classes ────────────────────────────────────────────────────────────
+@api.get("/admin/classes")
+async def admin_list_classes(_: dict = Depends(get_admin_user)):
+    rows = await db.adventurer_classes.find({}, {"_id": 0}).sort("name", ASCENDING).to_list(200)
+    return {"classes": [class_public(r) for r in rows]}
+
+
+@api.post("/admin/classes", status_code=201)
+async def admin_create_class(payload: dict, _: dict = Depends(get_admin_user)):
+    required = ["name", "slug", "role", "base_strength", "base_agility",
+                "base_intellect", "base_endurance", "base_faith"]
+    for k in required:
+        if k not in payload:
+            raise HTTPException(400, f"Missing field: {k}")
+    if not _slug_ok(payload["slug"]):
+        raise HTTPException(400, "slug must be kebab-case (a-z, 0-9, hyphens)")
+    if payload["role"] not in ("Tank", "DPS", "Healer"):
+        raise HTTPException(400, "role must be one of Tank/DPS/Healer")
+    now = utc_now()
+    doc = {
+        "id": str(uuid.uuid4()),
+        "name": payload["name"].strip(),
+        "slug": payload["slug"].strip(),
+        "role": payload["role"],
+        "description": payload.get("description", "").strip(),
+        "base_strength": int(payload["base_strength"]),
+        "base_agility": int(payload["base_agility"]),
+        "base_intellect": int(payload["base_intellect"]),
+        "base_endurance": int(payload["base_endurance"]),
+        "base_faith": int(payload["base_faith"]),
+        "is_active": bool(payload.get("is_active", True)),
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    try:
+        await db.adventurer_classes.insert_one(doc)
+    except DuplicateKeyError:
+        raise HTTPException(409, "A class with this slug already exists")
+    return {"class": class_public(doc)}
+
+
+@api.patch("/admin/classes/{class_id}")
+async def admin_update_class(class_id: str, payload: dict, _: dict = Depends(get_admin_user)):
+    existing = await db.adventurer_classes.find_one({"id": class_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Class not found")
+    updates = {}
+    for k in ("name", "description"):
+        if k in payload:
+            updates[k] = str(payload[k]).strip()
+    for k in ("base_strength", "base_agility", "base_intellect",
+              "base_endurance", "base_faith"):
+        if k in payload:
+            updates[k] = int(payload[k])
+    if "role" in payload:
+        if payload["role"] not in ("Tank", "DPS", "Healer"):
+            raise HTTPException(400, "role must be one of Tank/DPS/Healer")
+        updates["role"] = payload["role"]
+    if "is_active" in payload:
+        updates["is_active"] = bool(payload["is_active"])
+    if updates:
+        updates["updated_at"] = utc_now().isoformat()
+        await db.adventurer_classes.update_one({"id": class_id}, {"$set": updates})
+    updated = await db.adventurer_classes.find_one({"id": class_id}, {"_id": 0})
+    return {"class": class_public(updated)}
+
+
+@api.post("/admin/classes/{class_id}/toggle-active")
+async def admin_toggle_class(class_id: str, _: dict = Depends(get_admin_user)):
+    existing = await db.adventurer_classes.find_one({"id": class_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Class not found")
+    new_active = not existing.get("is_active", True)
+    await db.adventurer_classes.update_one(
+        {"id": class_id},
+        {"$set": {"is_active": new_active, "updated_at": utc_now().isoformat()}},
+    )
+    updated = await db.adventurer_classes.find_one({"id": class_id}, {"_id": 0})
+    return {"class": class_public(updated)}
+
+
+# ─── Admin: Traits ─────────────────────────────────────────────────────────────
+VALID_AFFECTED_STAT = ("strength", "agility", "intellect", "endurance", "faith", "xp_gain")
+
+
+@api.get("/admin/traits")
+async def admin_list_traits(_: dict = Depends(get_admin_user)):
+    rows = await db.adventurer_traits.find({}, {"_id": 0}).sort("name", ASCENDING).to_list(200)
+    return {"traits": [trait_public(r) for r in rows]}
+
+
+@api.post("/admin/traits", status_code=201)
+async def admin_create_trait(payload: dict, _: dict = Depends(get_admin_user)):
+    for k in ("name", "modifier_type", "affected_stat", "modifier_value"):
+        if k not in payload:
+            raise HTTPException(400, f"Missing field: {k}")
+    if payload["modifier_type"] not in ("flat", "percent"):
+        raise HTTPException(400, "modifier_type must be flat|percent")
+    if payload["affected_stat"] not in VALID_AFFECTED_STAT:
+        raise HTTPException(400, f"affected_stat must be one of {VALID_AFFECTED_STAT}")
+    now = utc_now()
+    doc = {
+        "id": str(uuid.uuid4()),
+        "name": payload["name"].strip(),
+        "description": payload.get("description", "").strip(),
+        "modifier_type": payload["modifier_type"],
+        "affected_stat": payload["affected_stat"],
+        "modifier_value": float(payload["modifier_value"]),
+        "is_positive": bool(payload.get("is_positive", True)),
+        "is_active": bool(payload.get("is_active", True)),
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    try:
+        await db.adventurer_traits.insert_one(doc)
+    except DuplicateKeyError:
+        raise HTTPException(409, "A trait with this name already exists")
+    return {"trait": trait_public(doc)}
+
+
+@api.patch("/admin/traits/{trait_id}")
+async def admin_update_trait(trait_id: str, payload: dict, _: dict = Depends(get_admin_user)):
+    existing = await db.adventurer_traits.find_one({"id": trait_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Trait not found")
+    updates = {}
+    for k in ("name", "description"):
+        if k in payload:
+            updates[k] = str(payload[k]).strip()
+    if "modifier_type" in payload:
+        if payload["modifier_type"] not in ("flat", "percent"):
+            raise HTTPException(400, "modifier_type must be flat|percent")
+        updates["modifier_type"] = payload["modifier_type"]
+    if "affected_stat" in payload:
+        if payload["affected_stat"] not in VALID_AFFECTED_STAT:
+            raise HTTPException(400, f"affected_stat must be one of {VALID_AFFECTED_STAT}")
+        updates["affected_stat"] = payload["affected_stat"]
+    if "modifier_value" in payload:
+        updates["modifier_value"] = float(payload["modifier_value"])
+    if "is_positive" in payload:
+        updates["is_positive"] = bool(payload["is_positive"])
+    if "is_active" in payload:
+        updates["is_active"] = bool(payload["is_active"])
+    if updates:
+        updates["updated_at"] = utc_now().isoformat()
+        await db.adventurer_traits.update_one({"id": trait_id}, {"$set": updates})
+    updated = await db.adventurer_traits.find_one({"id": trait_id}, {"_id": 0})
+    return {"trait": trait_public(updated)}
+
+
+@api.post("/admin/traits/{trait_id}/toggle-active")
+async def admin_toggle_trait(trait_id: str, _: dict = Depends(get_admin_user)):
+    existing = await db.adventurer_traits.find_one({"id": trait_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Trait not found")
+    new_active = not existing.get("is_active", True)
+    await db.adventurer_traits.update_one(
+        {"id": trait_id},
+        {"$set": {"is_active": new_active, "updated_at": utc_now().isoformat()}},
+    )
+    updated = await db.adventurer_traits.find_one({"id": trait_id}, {"_id": 0})
+    return {"trait": trait_public(updated)}
+
+
+# ─── Admin: Dungeons ───────────────────────────────────────────────────────────
+@api.get("/admin/dungeons")
+async def admin_list_dungeons(_: dict = Depends(get_admin_user)):
+    rows = await db.dungeons.find({}, {"_id": 0}).sort("difficulty", 1).to_list(200)
+    return {"dungeons": [dungeon_public(r) for r in rows]}
+
+
+@api.post("/admin/dungeons", status_code=201)
+async def admin_create_dungeon(payload: dict, _: dict = Depends(get_admin_user)):
+    required = ["name", "slug", "difficulty", "required_team_size",
+                "base_duration_seconds", "recommended_power",
+                "base_gold_reward", "base_xp_reward"]
+    for k in required:
+        if k not in payload:
+            raise HTTPException(400, f"Missing field: {k}")
+    if not _slug_ok(payload["slug"]):
+        raise HTTPException(400, "slug must be kebab-case")
+    now = utc_now()
+    doc = {
+        "id": str(uuid.uuid4()),
+        "name": payload["name"].strip(),
+        "slug": payload["slug"].strip(),
+        "description": payload.get("description", "").strip(),
+        "difficulty": int(payload["difficulty"]),
+        "required_team_size": int(payload["required_team_size"]),
+        "base_duration_seconds": int(payload["base_duration_seconds"]),
+        "recommended_power": int(payload["recommended_power"]),
+        "base_gold_reward": int(payload["base_gold_reward"]),
+        "base_xp_reward": int(payload["base_xp_reward"]),
+        "is_active": bool(payload.get("is_active", True)),
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    try:
+        await db.dungeons.insert_one(doc)
+    except DuplicateKeyError:
+        raise HTTPException(409, "A dungeon with this slug already exists")
+    return {"dungeon": dungeon_public(doc)}
+
+
+@api.patch("/admin/dungeons/{dungeon_id}")
+async def admin_update_dungeon(dungeon_id: str, payload: dict, _: dict = Depends(get_admin_user)):
+    existing = await db.dungeons.find_one({"id": dungeon_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Dungeon not found")
+    updates = {}
+    for k in ("name", "description"):
+        if k in payload:
+            updates[k] = str(payload[k]).strip()
+    for k in ("difficulty", "required_team_size", "base_duration_seconds",
+              "recommended_power", "base_gold_reward", "base_xp_reward"):
+        if k in payload:
+            updates[k] = int(payload[k])
+    if "is_active" in payload:
+        updates["is_active"] = bool(payload["is_active"])
+    if updates:
+        updates["updated_at"] = utc_now().isoformat()
+        await db.dungeons.update_one({"id": dungeon_id}, {"$set": updates})
+    updated = await db.dungeons.find_one({"id": dungeon_id}, {"_id": 0})
+    return {"dungeon": dungeon_public(updated)}
+
+
+@api.post("/admin/dungeons/{dungeon_id}/toggle-active")
+async def admin_toggle_dungeon(dungeon_id: str, _: dict = Depends(get_admin_user)):
+    existing = await db.dungeons.find_one({"id": dungeon_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Dungeon not found")
+    new_active = not existing.get("is_active", True)
+    await db.dungeons.update_one(
+        {"id": dungeon_id},
+        {"$set": {"is_active": new_active, "updated_at": utc_now().isoformat()}},
+    )
+    updated = await db.dungeons.find_one({"id": dungeon_id}, {"_id": 0})
+    return {"dungeon": dungeon_public(updated)}
+
+
+# ─── Admin: Items ──────────────────────────────────────────────────────────────
+VALID_ITEM_TYPES = ("weapon", "armor", "accessory", "consumable")
+VALID_RARITIES = ("Common", "Uncommon", "Rare", "Epic")
+
+
+def _build_item_doc(payload: dict, existing: Optional[dict] = None) -> dict:
+    base = dict(existing) if existing else {
+        "id": str(uuid.uuid4()),
+        "level_required": 1,
+        "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+        "endurance_bonus": 0, "faith_bonus": 0,
+        "is_tradeable": True, "is_cosmetic": False,
+        "affects_combat": True, "affects_economy": False, "affects_ranking": False,
+        "can_be_sold_for_gold": True, "can_be_sold_for_real_money": False,
+        "is_active": True,
+    }
+    # Apply patch fields
+    for k in ("name", "slug", "description", "item_type", "rarity"):
+        if k in payload:
+            base[k] = str(payload[k]).strip()
+    for k in ("level_required", "power_score", "strength_bonus", "agility_bonus",
+              "intellect_bonus", "endurance_bonus", "faith_bonus"):
+        if k in payload:
+            base[k] = int(payload[k])
+    for k in ("is_tradeable", "is_cosmetic", "affects_combat", "affects_economy",
+              "affects_ranking", "can_be_sold_for_gold",
+              "can_be_sold_for_real_money", "is_active"):
+        if k in payload:
+            base[k] = bool(payload[k])
+    return base
+
+
+@api.get("/admin/items")
+async def admin_list_items(_: dict = Depends(get_admin_user)):
+    rows = await db.items.find({}, {"_id": 0}).sort("name", 1).to_list(500)
+    return {"items": [item_public(r) for r in rows]}
+
+
+@api.post("/admin/items", status_code=201)
+async def admin_create_item(payload: dict, _: dict = Depends(get_admin_user)):
+    required = ["name", "slug", "item_type", "rarity", "power_score"]
+    for k in required:
+        if k not in payload:
+            raise HTTPException(400, f"Missing field: {k}")
+    if not _slug_ok(payload["slug"]):
+        raise HTTPException(400, "slug must be kebab-case")
+    if payload["item_type"] not in VALID_ITEM_TYPES:
+        raise HTTPException(400, f"item_type must be one of {VALID_ITEM_TYPES}")
+    if payload["rarity"] not in VALID_RARITIES:
+        raise HTTPException(400, f"rarity must be one of {VALID_RARITIES}")
+    doc = _build_item_doc(payload)
+    now = utc_now()
+    doc["created_at"] = now.isoformat()
+    doc["updated_at"] = now.isoformat()
+    validate_item_monetization(doc)
+    try:
+        await db.items.insert_one(doc)
+    except DuplicateKeyError:
+        raise HTTPException(409, "An item with this slug already exists")
+    return {"item": item_public(doc)}
+
+
+@api.patch("/admin/items/{item_id}")
+async def admin_update_item(item_id: str, payload: dict, _: dict = Depends(get_admin_user)):
+    existing = await db.items.find_one({"id": item_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Item not found")
+    if "item_type" in payload and payload["item_type"] not in VALID_ITEM_TYPES:
+        raise HTTPException(400, f"item_type must be one of {VALID_ITEM_TYPES}")
+    if "rarity" in payload and payload["rarity"] not in VALID_RARITIES:
+        raise HTTPException(400, f"rarity must be one of {VALID_RARITIES}")
+    merged = _build_item_doc(payload, existing=existing)
+    merged["updated_at"] = utc_now().isoformat()
+    validate_item_monetization(merged)
+    await db.items.update_one({"id": item_id}, {"$set": _strip_db_fields(merged)})
+    updated = await db.items.find_one({"id": item_id}, {"_id": 0})
+    return {"item": item_public(updated)}
+
+
+@api.post("/admin/items/{item_id}/toggle-active")
+async def admin_toggle_item(item_id: str, _: dict = Depends(get_admin_user)):
+    existing = await db.items.find_one({"id": item_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Item not found")
+    new_active = not existing.get("is_active", True)
+    await db.items.update_one(
+        {"id": item_id},
+        {"$set": {"is_active": new_active, "updated_at": utc_now().isoformat()}},
+    )
+    updated = await db.items.find_one({"id": item_id}, {"_id": 0})
+    return {"item": item_public(updated)}
+
 
 
 # ─── Wire router ───────────────────────────────────────────────────────────────
@@ -1359,23 +1767,31 @@ async def seed_tester():
     if APP_ENV == "production":
         logger.info("APP_ENV=production → skipping tester seed")
         return
+    now = utc_now()
     existing = await db.users.find_one({"email": TESTER_EMAIL})
     if existing:
-        logger.info("Tester account already exists, skipping seed")
+        # Idempotent: ensure tester is admin in non-prod, even if user pre-existed
+        if not existing.get("is_admin"):
+            await db.users.update_one(
+                {"email": TESTER_EMAIL},
+                {"$set": {"is_admin": True, "updated_at": now.isoformat()}},
+            )
+            logger.info("Promoted existing tester to is_admin=True")
+        else:
+            logger.info("Tester account already exists with is_admin=True")
         return
-    now = utc_now()
     await db.users.insert_one(
         {
             "id": str(uuid.uuid4()),
             "email": TESTER_EMAIL,
             "username": TESTER_USERNAME,
             "password_hash": hash_password(TESTER_PASSWORD),
-            "is_admin": False,
+            "is_admin": True,
             "created_at": now.isoformat(),
             "updated_at": now.isoformat(),
         }
     )
-    logger.info("Seeded tester account: %s", TESTER_EMAIL)
+    logger.info("Seeded tester account: %s (is_admin=True)", TESTER_EMAIL)
 
 
 @app.on_event("startup")

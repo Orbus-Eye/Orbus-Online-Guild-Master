@@ -15,6 +15,7 @@ import ExpeditionNew from "@/pages/ExpeditionNew";
 import Expeditions from "@/pages/Expeditions";
 import ExpeditionReport from "@/pages/ExpeditionReport";
 import Inventory from "@/pages/Inventory";
+import Admin from "@/pages/Admin";
 
 function App() {
     return (
@@ -108,6 +109,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Inventory />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin"
+                            element={
+                                <ProtectedRoute>
+                                    <Admin />
                                 </ProtectedRoute>
                             }
                         />

@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { TraitList } from "../components/TraitBadge";
 
 const RARITY_STYLE = {
     Common: { color: "#9ca3af", label: "Common" },
@@ -72,6 +73,13 @@ const CandidateCard = ({ candidate, canAfford, onRecruit, busy }) => (
             <StatRow label="INT" value={candidate.intellect} />
             <StatRow label="END" value={candidate.endurance} />
             <StatRow label="FAI" value={candidate.faith} />
+        </div>
+
+        <div className="mb-4">
+            <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
+                TRAITS
+            </div>
+            <TraitList traits={candidate.traits} testid={`candidate-traits-${candidate.candidate_id}`} />
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-2">
