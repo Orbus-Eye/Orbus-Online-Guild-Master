@@ -29,6 +29,22 @@ LOOT_RARITIES_LEGACY = ["Common", "Uncommon"]
 # Adventurer progression
 XP_THRESHOLD_PER_LEVEL = 100
 
+# Recruitment generation (Phase 2)
+RECRUITMENT_CANDIDATES_PER_OFFER = 4
+OFFER_TTL_MINUTES = 30
+RARITY_WEIGHTS = [("Common", 70), ("Uncommon", 20), ("Rare", 8), ("Epic", 2)]
+RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2}
+FIRST_NAMES = [
+    "Aldric", "Brenna", "Cassian", "Dorin", "Elara", "Faelan", "Gwyn",
+    "Hadrian", "Iona", "Joren", "Kael", "Lyra", "Mira", "Nyx", "Oren",
+    "Perrin", "Quill", "Rhea", "Soren", "Talia", "Ulric", "Vera", "Wren",
+    "Yara", "Zane",
+]
+LAST_NAMES = [
+    "the Bold", "Stoneheart", "Ashwood", "Stormwind", "Ironfoot",
+    "Nightshade", "Brightblade",
+]
+
 # Equipment slots (Phase 6)
 EQUIPMENT_SLOTS = ("weapon", "armor", "accessory")
 SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accessory"}

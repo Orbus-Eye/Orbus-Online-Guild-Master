@@ -69,9 +69,23 @@ PASSWORD_REGEX_LETTER = re.compile(r"[A-Za-z]")
 PASSWORD_REGEX_DIGIT = re.compile(r"\d")
 
 # ─── Phase 2: Adventurers / Recruitment ───────────────────────────────────────
-# RECRUITMENT_CANDIDATES_PER_OFFER, OFFER_TTL_MINUTES, RARITY_WEIGHTS,
-# RARITY_BONUS, FIRST_NAMES, LAST_NAMES, RECRUITMENT_COST_GOLD are imported
-# from `app.shared.constants` below (Phase 5.5c.3 consolidation).
+RECRUITMENT_CANDIDATES_PER_OFFER = 4
+OFFER_TTL_MINUTES = 30
+# RECRUITMENT_COST_GOLD imported below from app.shared.constants
+
+RARITY_WEIGHTS = [("Common", 70), ("Uncommon", 20), ("Rare", 8), ("Epic", 2)]
+RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2}
+
+FIRST_NAMES = [
+    "Aldric", "Brenna", "Cassian", "Dorin", "Elara", "Faelan", "Gwyn",
+    "Hadrian", "Iona", "Joren", "Kael", "Lyra", "Mira", "Nyx", "Oren",
+    "Perrin", "Quill", "Rhea", "Soren", "Talia", "Ulric", "Vera", "Wren",
+    "Yara", "Zane",
+]
+LAST_NAMES = [
+    "the Bold", "Stoneheart", "Ashwood", "Stormwind", "Ironfoot",
+    "Nightshade", "Brightblade",
+]
 
 # ─── Phase 5.5 modular split: data + pure formulas live in app/* ──────────────
 from app.shared.constants import (
@@ -83,12 +97,6 @@ from app.shared.constants import (
     LOGIN_LOCK_DURATION_MINUTES,
     LOGIN_ATTEMPTS_TTL_SECONDS,
     RECRUITMENT_COST_GOLD,
-    RECRUITMENT_CANDIDATES_PER_OFFER,
-    OFFER_TTL_MINUTES,
-    RARITY_WEIGHTS,
-    RARITY_BONUS,
-    FIRST_NAMES,
-    LAST_NAMES,
     SUCCESS_CHANCE_MIN,
     SUCCESS_CHANCE_MAX,
     LOOT_DROP_CHANCE_LEGACY as LOOT_DROP_CHANCE,
@@ -327,23 +335,121 @@ def adventurer_public(doc: dict) -> dict:
     }
 
 
-def candidate_public(doc: dict) -> dict:  # Phase 5.5c.3 backward-compat shim
-    from app.recruitment.services import candidate_public as _cp
+def candidate_public(doc: dict) -> dict:
+    return {
+        "candidate_id": doc["id"],
+        "name": doc["name"],
+        "adventurer_class_id": doc["adventurer_class_id"],
+        "class_name": doc["class_name"],
+        "class_role": doc["class_role"],
+        "rarity": doc["rarity"],
+        "level": doc["level"],
+        "experience": doc["experience"],
+        "strength": doc["strength"],
+        "agility": doc["agility"],
+        "intellect": doc["intellect"],
+        "endurance": doc["endurance"],
+        "faith": doc["faith"],
+        "stamina": doc["stamina"],
+        "morale": doc["morale"],
+        "traits": doc.get("traits", []),
+        "cost": RECRUITMENT_COST_GOLD,
+        "cost_gold": RECRUITMENT_COST_GOLD,
+    }
 
-    return _cp(doc)
+
+def _weighted_choice(choices):
+    total = sum(w for _, w in choices)
+    r = _rng.uniform(0, total)
+    upto = 0
+    for value, weight in choices:
+        upto += weight
+        if upto >= r:
+            return value
+    return choices[-1][0]
 
 
-# Phase 5.5c.3: candidate generation RNG helpers extracted to
-# `app.recruitment.services`. Re-imported as module-level aliases for any
-# legacy internal references (e.g. potential future admin tooling).
-from app.recruitment.services import (  # noqa: E402
-    _weighted_choice,
-    _generate_name,
-    _roll_stat,
-    _pick_random_traits,
-    _apply_trait_effects,
-    _generate_candidate,
-)
+def _generate_name() -> str:
+    first = _rng.choice(FIRST_NAMES)
+    if _rng.random() < 0.6:
+        return f"{first} {_rng.choice(LAST_NAMES)}"
+    return first
+
+
+def _roll_stat(base: int, rarity_bonus: int) -> int:
+    return max(1, base + _rng.randint(-1, 2) + rarity_bonus)
+
+
+def _pick_random_traits(traits_pool: list) -> list:
+    """Pick 0–2 distinct traits with weighted distribution: 50%/35%/15%."""
+    if not traits_pool:
+        return []
+    r = _rng.random()
+    if r < 0.50:
+        count = 0
+    elif r < 0.85:
+        count = 1
+    else:
+        count = 2
+    count = min(count, len(traits_pool))
+    if count == 0:
+        return []
+    chosen = _rng.sample(traits_pool, count)
+    return [
+        {
+            "id": t["id"],
+            "name": t["name"],
+            "description": t.get("description", ""),
+            "modifier_type": t["modifier_type"],
+            "affected_stat": t["affected_stat"],
+            "modifier_value": t["modifier_value"],
+            "is_positive": t["is_positive"],
+        }
+        for t in chosen
+    ]
+
+
+def _apply_trait_effects(stats: dict, traits: list) -> dict:
+    """Apply 'flat' modifiers on the 5 main stats; floor at 1.
+    Phase 5+ TODO: apply percent xp_gain modifier in expedition reward calc."""
+    affected = ("strength", "agility", "intellect", "endurance", "faith")
+    for t in traits:
+        if t.get("modifier_type") == "flat" and t.get("affected_stat") in affected:
+            key = t["affected_stat"]
+            stats[key] = max(1, int(stats[key]) + int(t.get("modifier_value", 0)))
+    return stats
+
+
+def _generate_candidate(klass: dict, guild_id: str, now: datetime,
+                        traits_pool: list | None = None) -> dict:
+    rarity = _weighted_choice(RARITY_WEIGHTS)
+    bonus = RARITY_BONUS[rarity]
+    stats = {
+        "strength": _roll_stat(klass["base_strength"], bonus),
+        "agility": _roll_stat(klass["base_agility"], bonus),
+        "intellect": _roll_stat(klass["base_intellect"], bonus),
+        "endurance": _roll_stat(klass["base_endurance"], bonus),
+        "faith": _roll_stat(klass["base_faith"], bonus),
+    }
+    traits = _pick_random_traits(traits_pool or [])
+    stats = _apply_trait_effects(stats, traits)
+    return {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild_id,
+        "name": _generate_name(),
+        "adventurer_class_id": klass["id"],
+        "class_name": klass["name"],
+        "class_role": klass["role"],
+        "rarity": rarity,
+        "level": 1,
+        "experience": 0,
+        **stats,
+        "stamina": 100,
+        "morale": 100,
+        "traits": traits,
+        "created_at": now.isoformat(),
+        "expires_at": (now + timedelta(minutes=OFFER_TTL_MINUTES)).isoformat(),
+    }
 
 
 async def _user_guild_or_404(user_id: str) -> dict:
@@ -845,9 +951,8 @@ from app.guilds.schemas import GuildCreateIn  # noqa: E402
 from app.guilds.routes import router as guilds_router  # noqa: E402
 
 
-# Phase 5.5c.3: Recruitment schema + routes extracted to app/recruitment/.
-from app.recruitment.schemas import RecruitIn  # noqa: E402
-from app.recruitment.routes import router as recruitment_router  # noqa: E402
+class RecruitIn(BaseModel):
+    candidate_id: str = Field(min_length=8, max_length=64)
 
 
 class ExpeditionStartIn(BaseModel):
@@ -1230,10 +1335,111 @@ async def list_classes():
 
 
 # ─── Endpoints: Recruitment ────────────────────────────────────────────────────
-# ─── Endpoints: Recruitment (Phase 5.5c.3) ────────────────────────────────────
-# Both `/api/recruitment/candidates` (GET) and `/api/recruitment/recruit`
-# (POST) are now served by `app/recruitment/routes.py`.
-app.include_router(recruitment_router)
+@api.get("/recruitment/candidates")
+async def get_recruitment_candidates(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+
+    classes = await db.adventurer_classes.find(
+        {"is_active": True}, {"_id": 0}
+    ).to_list(100)
+    if not classes:
+        raise HTTPException(status_code=500, detail="No adventurer classes seeded")
+
+    # Replace prior offers for this guild
+    await db.recruitment_offers.delete_many({"guild_id": guild["id"]})
+
+    traits_pool = await db.adventurer_traits.find(
+        {"is_active": True}, {"_id": 0}
+    ).to_list(100)
+
+    now = utc_now()
+    candidates = [
+        _generate_candidate(_rng.choice(classes), guild["id"], now, traits_pool)
+        for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER)
+    ]
+    await db.recruitment_offers.insert_many([dict(c) for c in candidates])
+
+    return {
+        "candidates": [candidate_public(c) for c in candidates],
+        "guild_gold": guild.get("gold", 0),
+        "cost_gold": RECRUITMENT_COST_GOLD,
+        "expires_in_minutes": OFFER_TTL_MINUTES,
+    }
+
+
+@api.post("/recruitment/recruit", status_code=201)
+async def recruit_adventurer(
+    payload: RecruitIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+
+    # Step 1: atomically claim the offer (delete) — owner-scoped lookup
+    offer = await db.recruitment_offers.find_one_and_delete(
+        {"id": payload.candidate_id, "guild_id": guild["id"]},
+        projection={"_id": 0},
+    )
+    if not offer:
+        raise HTTPException(
+            status_code=404, detail="Candidate not found or already recruited"
+        )
+
+    # Expiry check (applicative — supports envs without TTL background pass yet)
+    try:
+        exp = datetime.fromisoformat(offer["expires_at"])
+    except Exception:
+        exp = utc_now() + timedelta(minutes=1)
+    if exp < utc_now():
+        raise HTTPException(status_code=404, detail="Candidate offer has expired")
+
+    # Step 2: atomically decrement gold with affordability check
+    now = utc_now()
+    updated_guild = await db.guilds.find_one_and_update(
+        {"id": guild["id"], "gold": {"$gte": RECRUITMENT_COST_GOLD}},
+        {
+            "$inc": {"gold": -RECRUITMENT_COST_GOLD},
+            "$set": {"updated_at": now.isoformat()},
+        },
+        projection={"_id": 0},
+        return_document=ReturnDocument.AFTER,
+    )
+    if not updated_guild:
+        # Refund offer (best-effort) so user can retry once they have gold
+        offer_to_restore = {k: v for k, v in offer.items() if k != "_id"}
+        try:
+            await db.recruitment_offers.insert_one(offer_to_restore)
+        except Exception:
+            pass
+        raise HTTPException(status_code=400, detail="Insufficient gold")
+
+    # Step 3: create the adventurer from offer-saved stats (NOT client-provided)
+    adventurer_doc = {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild["id"],
+        "name": offer["name"],
+        "adventurer_class_id": offer["adventurer_class_id"],
+        "class_name": offer["class_name"],
+        "class_role": offer["class_role"],
+        "rarity": offer["rarity"],
+        "level": offer["level"],
+        "experience": offer["experience"],
+        "strength": offer["strength"],
+        "agility": offer["agility"],
+        "intellect": offer["intellect"],
+        "endurance": offer["endurance"],
+        "faith": offer["faith"],
+        "stamina": offer["stamina"],
+        "morale": offer["morale"],
+        "traits": offer.get("traits", []),
+        "is_available": True,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    await db.adventurers.insert_one(adventurer_doc)
+
+    return {
+        "adventurer": adventurer_public(adventurer_doc),
+        "guild": {"gold": updated_guild["gold"]},
+    }
 
 
 # ─── Endpoints: Adventurers ────────────────────────────────────────────────────

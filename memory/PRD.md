@@ -180,6 +180,46 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5c.3 — 2026-06-24 (Recruitment Domain Split)
+Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
+
+- **Created** `app/recruitment/` (4 file, 326 LOC):
+  - `schemas.py` (9 LOC) — `RecruitIn` Pydantic
+  - `services.py` (272 LOC) — `candidate_public` serializer, RNG helpers (`_weighted_choice`, `_generate_name`, `_roll_stat`, `_pick_random_traits`, `_apply_trait_effects`, `_generate_candidate`), 2 service ops (`generate_candidates_for_guild`, `recruit_from_offer`)
+  - `routes.py` (41 LOC) — `APIRouter(prefix="/api/recruitment")` con 2 endpoint
+  - `__init__.py` — esporta router
+
+- **Migrated endpoints** (2/2):
+  - `GET /api/recruitment/candidates` → ora servito da `app.recruitment.routes` (4 candidati, RNG via `secrets.SystemRandom`, weighted rarity distribution, 0/1/2 trait roll, expires 30min)
+  - `POST /api/recruitment/recruit` → ora servito da `app.recruitment.routes` (atomic 2-step claim + conditional gold decrement con `$gte` filter + best-effort refund su race, stats da offer NON ricalcolate, 20g cost)
+
+- **Migrated helpers**: tutti i 7 helper recruitment in `app.recruitment.services`. Re-export shim in server.py per `candidate_public` (con backward-compat lazy import).
+
+- **Constants consolidation**: spostati `RECRUITMENT_CANDIDATES_PER_OFFER=4`, `OFFER_TTL_MINUTES=30`, `RARITY_WEIGHTS=[(Common,70),(Uncommon,20),(Rare,8),(Epic,2)]`, `RARITY_BONUS={Common:0,Uncommon:0,Rare:1,Epic:2}`, `FIRST_NAMES` (25 nomi), `LAST_NAMES` (7 cognomi) da server.py a `app.shared.constants`. **Valori byte-identici al baseline** — verificato via smoke test (`/recruitment/candidates`: 4 candidati, cost=20, expires_in_minutes=30).
+
+- **`server.py` trimmed**: 2204 → **1998 linee** (−206, −9.3%). **PRIMA VOLTA SOTTO 2000 LOC** dal Phase 5.5a iniziale. Trend cumulato dall'inizio del refactor:
+  - Phase 5.5b (auth): 2541 → 2241 (−300)
+  - Phase 8 + max_team_power: 2241 → 2385 (+144, feature)
+  - Phase 5.5c (guilds): 2385 → 2283 (−102)
+  - Phase 5.5c.2 (dungeons+items+inventory): 2283 → 2204 (−79)
+  - Phase 5.5c.3 (recruitment): 2204 → **1998** (−206)
+  - **Netto refactor totale: −543 linee (−21.4%) da `server.py.pre-phase55b.bak`**
+
+- **Test result** (148/148 PASS, 199s clean run):
+  - `tests/backend_phase2_test.py` (recruitment happy path, insufficient gold, double-recruit 404, stat-forging prevention, cross-user) — PASS
+  - `tests/backend_phase4_test.py` (trait effects con floor 1) — PASS
+  - `tests/backend_phase7_test.py` (recruitment cost 20 invariant check) — PASS
+
+- **OpenAPI diff vs pre-Phase-5.5c.3**: VUOTO (36 → 36 paths). Verifica curl smoke: `cost=20`, `cost_gold=20`, `expires_in_minutes=30`, 4 candidati, traits generati.
+
+- **FE smoke**: log mostra recruitment endpoint funzionanti durante session multi-utente concorrente (3 utenti hanno usato `/api/recruitment/recruit` con success durante il restart sequence — zero regressioni real-world).
+
+- **Workaround/lazy import aggiunti**:
+  - `app/recruitment/routes.py::recruit_adventurer` → `from server import adventurer_public` (Phase 5.5c.3 residual, sparirà quando `adventurer_public` migrerà in `app/adventurers/`)
+  - Mantenuti i precedenti: `complete_due_expeditions` (guilds), `_evaluate_dungeon_gate` (dungeons)
+
+- **Bug evitato durante migrazione**: nel primo draft di `app/shared/constants.py` ho inserito **valori sbagliati** per `OFFER_TTL_MINUTES` (10 vs 30 reale) e `RARITY_WEIGHTS`/`RARITY_BONUS`. Catturato durante il consolidation step prima di rimuovere i duplicati in server.py. Distribuzioni di rarità preservate byte-identical → test probabilistici loot continuano a PASS.
+
 ## Phase 5.5c.2 — 2026-06-24 (Dungeons + Items + Inventory Catalog Split)
 Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
 
