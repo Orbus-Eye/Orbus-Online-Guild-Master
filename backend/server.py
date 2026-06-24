@@ -275,6 +275,8 @@ def guild_public(doc: dict) -> dict:
         "level": doc.get("level", 1),
         "reputation": doc.get("reputation", 0),
         "gold": doc.get("gold", 100),
+        # Phase 8: peak team_power across all expeditions (sticky for gate)
+        "max_team_power_ever": int(doc.get("max_team_power_ever", 0)),
         "created_at": doc["created_at"],
         "updated_at": doc["updated_at"],
     }
@@ -592,6 +594,8 @@ def expedition_public(e: dict) -> dict:
         "gold_reward": e.get("gold_reward", 0),
         "xp_reward": e.get("xp_reward", 0),
         "loot_item_ids": e.get("loot_item_ids", []),
+        # Phase 8: marks the run as a "Replay Last Run" dispatch (UI label).
+        "is_replay": bool(e.get("is_replay", False)),
         "created_at": e["created_at"],
         "updated_at": e.get("updated_at", e["created_at"]),
     }
@@ -810,6 +814,11 @@ async def _evaluate_dungeon_gate(dungeon: dict, guild: dict) -> tuple[bool, Opti
     if slug == "dragons-hoard":
         if int(guild.get("level", 1)) >= 2:
             return True, None
+        # Phase 8: peak team_power ever is "sticky" — once a guild has dispatched
+        # a team with power >= 65, the dungeon stays unlocked even if they later
+        # disequip or lose adventurers.
+        if int(guild.get("max_team_power_ever", 0)) >= 65:
+            return True, None
         advs = await db.adventurers.find(
             {"guild_id": guild["id"]}, {"_id": 0}
         ).to_list(200)
@@ -823,7 +832,7 @@ async def _evaluate_dungeon_gate(dungeon: dict, guild: dict) -> tuple[bool, Opti
             best3 = sum(powers[:3])
             if best3 >= 65:
                 return True, None
-        return False, "Requires guild level 2 or team power \u2265 65"
+        return False, "Requires guild level 2, team power \u2265 65, or peak team power ever \u2265 65"
     return True, None
 
 
@@ -1162,9 +1171,30 @@ async def start_expedition(
     payload: ExpeditionStartIn, current_user: dict = Depends(get_current_user)
 ):
     guild = await _user_guild_or_404(current_user["id"])
+    return await _dispatch_expedition(
+        guild=guild,
+        dungeon_id=payload.dungeon_id,
+        adventurer_ids=payload.adventurer_ids,
+        is_replay=False,
+    )
 
+
+async def _dispatch_expedition(
+    *,
+    guild: dict,
+    dungeon_id: str,
+    adventurer_ids: list[str],
+    is_replay: bool = False,
+) -> dict:
+    """Shared logic between `POST /api/expeditions` and `POST /api/expeditions/replay-last`.
+
+    Reads adventurer + equipment state at dispatch time, snapshots them on the
+    new expedition document, locks the adventurers (is_available=False), and
+    bumps the guild's `max_team_power_ever` (Phase 8 sticky-gate field) via an
+    atomic `$max` Mongo operator.
+    """
     dungeon = await db.dungeons.find_one(
-        {"id": payload.dungeon_id, "is_active": True}, {"_id": 0}
+        {"id": dungeon_id, "is_active": True}, {"_id": 0}
     )
     if not dungeon:
         raise HTTPException(status_code=404, detail="Dungeon not found")
@@ -1177,7 +1207,7 @@ async def start_expedition(
         )
 
     # Validate team composition
-    ids = payload.adventurer_ids
+    ids = adventurer_ids
     if len(set(ids)) != len(ids):
         raise HTTPException(status_code=400, detail="Duplicate adventurer in team")
     if len(ids) != dungeon["required_team_size"]:
@@ -1253,6 +1283,8 @@ async def start_expedition(
         "gold_reward": 0,
         "xp_reward": 0,
         "loot_item_ids": [],
+        # Phase 8: mark replay expeditions so the FE can label them differently.
+        "is_replay": bool(is_replay),
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }
@@ -1292,10 +1324,115 @@ async def start_expedition(
         {"$set": {"is_available": False, "updated_at": now.isoformat()}},
     )
 
+    # Phase 8: sticky peak team_power. `$max` is atomic and idempotent.
+    await db.guilds.update_one(
+        {"id": guild["id"]},
+        {
+            "$max": {"max_team_power_ever": int(delta["final_team_power"])},
+            "$set": {"updated_at": now.isoformat()},
+        },
+    )
+
     return {
         "expedition": expedition_public(exp_doc),
         "members": [member_public(m) for m in members_docs],
     }
+
+
+# ─── Phase 8: Replay Last Run ─────────────────────────────────────────────────
+async def _check_replay_eligibility(
+    guild: dict, last_exp: dict
+) -> tuple[bool, Optional[str], list[str], Optional[dict]]:
+    """Return (can_replay, reason, adventurer_ids, dungeon).
+
+    If `can_replay` is False, `reason` contains a user-facing message and the
+    other tuple slots may still be populated for diagnostics.
+    """
+    # Resolve dungeon (must still be active and unlocked for the guild)
+    dungeon = await db.dungeons.find_one(
+        {"id": last_exp["dungeon_id"]}, {"_id": 0}
+    )
+    if not dungeon or not dungeon.get("is_active", True):
+        return False, "Dungeon is no longer available", [], None
+    unlocked, unlock_reason = await _evaluate_dungeon_gate(dungeon, guild)
+    if not unlocked:
+        return False, f"Dungeon locked: {unlock_reason}", [], dungeon
+
+    # Resolve member adventurer_ids from the immutable expedition_members log
+    members = await db.expedition_members.find(
+        {"expedition_id": last_exp["id"]}, {"_id": 0, "adventurer_id": 1, "name_snapshot": 1}
+    ).to_list(50)
+    if not members:
+        return False, "Original expedition has no member records", [], dungeon
+    if len(members) != int(dungeon.get("required_team_size", len(members))):
+        return False, "Team size mismatch with dungeon requirements", [], dungeon
+
+    adv_ids = [m["adventurer_id"] for m in members]
+
+    # Verify each adventurer still exists in the guild and is available
+    for m in members:
+        adv = await db.adventurers.find_one(
+            {"id": m["adventurer_id"], "guild_id": guild["id"]}, {"_id": 0}
+        )
+        if not adv:
+            return False, f"Adventurer {m['name_snapshot']} is no longer in your guild", adv_ids, dungeon
+        if not adv.get("is_available", True):
+            return False, f"Adventurer {adv['name']} is currently in another expedition", adv_ids, dungeon
+
+    return True, None, adv_ids, dungeon
+
+
+async def _find_last_completed_expedition(guild_id: str) -> Optional[dict]:
+    """Return the most recently completed (or failed) expedition for a guild,
+    or None if none exist. Triggers a lazy completion sweep first.
+    """
+    await complete_due_expeditions(guild_id)
+    return await db.expeditions.find_one(
+        {
+            "guild_id": guild_id,
+            "status": "completed",
+            "result_summary": {"$in": ["Success", "Failed"]},
+        },
+        {"_id": 0},
+        sort=[("completed_at", -1)],
+    )
+
+
+@api.get("/expeditions/last-completed")
+async def get_last_completed_expedition(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    last_exp = await _find_last_completed_expedition(guild["id"])
+    if not last_exp:
+        raise HTTPException(status_code=404, detail="No completed expedition yet")
+
+    can_replay, reason, adv_ids, _dungeon = await _check_replay_eligibility(guild, last_exp)
+    return {
+        "expedition": expedition_public(last_exp),
+        "adventurer_ids": adv_ids,
+        "can_replay": can_replay,
+        "cannot_replay_reason": reason,
+    }
+
+
+@api.post("/expeditions/replay-last", status_code=201)
+async def replay_last_expedition(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    last_exp = await _find_last_completed_expedition(guild["id"])
+    if not last_exp:
+        raise HTTPException(status_code=404, detail="No completed expedition yet")
+
+    can_replay, reason, adv_ids, _dungeon = await _check_replay_eligibility(guild, last_exp)
+    if not can_replay:
+        # Locked dungeon → 403; any other replay blocker → 400.
+        status = 403 if reason and reason.startswith("Dungeon locked") else 400
+        raise HTTPException(status_code=status, detail=reason or "Cannot replay")
+
+    return await _dispatch_expedition(
+        guild=guild,
+        dungeon_id=last_exp["dungeon_id"],
+        adventurer_ids=adv_ids,
+        is_replay=True,
+    )
 
 
 @api.get("/expeditions")

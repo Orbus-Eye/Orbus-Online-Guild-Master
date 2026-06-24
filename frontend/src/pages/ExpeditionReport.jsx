@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
@@ -78,9 +78,12 @@ const Cell = ({ label, value, testid, accent = false }) => (
 
 export default function ExpeditionReport() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { refreshGuild } = useAuth();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [replayInfo, setReplayInfo] = useState(null); // {can_replay, cannot_replay_reason, expeditionId} | null
+    const [replayBusy, setReplayBusy] = useState(false);
     const pollRef = useRef(null);
 
     const fetchOne = useCallback(async () => {
@@ -95,6 +98,40 @@ export default function ExpeditionReport() {
         }
     }, [id]);
 
+    const fetchReplayEligibility = useCallback(async () => {
+        try {
+            const { data: lc } = await api.get("/expeditions/last-completed");
+            // Only show the replay action when this report IS the last-completed run
+            if (lc?.expedition?.id === id) {
+                setReplayInfo({
+                    can_replay: !!lc.can_replay,
+                    cannot_replay_reason: lc.cannot_replay_reason,
+                    expeditionId: id,
+                });
+            } else {
+                setReplayInfo(null);
+            }
+        } catch {
+            setReplayInfo(null);
+        }
+    }, [id]);
+
+    const handleReplay = async () => {
+        if (replayBusy) return;
+        setReplayBusy(true);
+        try {
+            const { data } = await api.post("/expeditions/replay-last");
+            toast.success(`Replay started: ${data.expedition.dungeon_name}`);
+            await refreshGuild();
+            navigate(`/expeditions/${data.expedition.id}`);
+        } catch (err) {
+            toast.error(formatApiError(err));
+            fetchReplayEligibility();
+        } finally {
+            setReplayBusy(false);
+        }
+    };
+
     useEffect(() => {
         fetchOne();
     }, [fetchOne]);
@@ -106,9 +143,11 @@ export default function ExpeditionReport() {
             pollRef.current = setInterval(fetchOne, 5000);
         } else if (data?.expedition?.status === "completed") {
             refreshGuild();
+            // Phase 8: check whether this report is the last-completed → show replay
+            fetchReplayEligibility();
         }
         return () => clearInterval(pollRef.current);
-    }, [data?.expedition?.status, fetchOne, refreshGuild]);
+    }, [data?.expedition?.status, fetchOne, refreshGuild, fetchReplayEligibility]);
 
     if (loading) {
         return (
@@ -164,7 +203,37 @@ export default function ExpeditionReport() {
                             {isDone ? `completed ${formatDate(e.completed_at)}` : `started ${formatDate(e.started_at)}`}
                         </div>
                     </div>
-                    <SummaryBadge summary={e.result_summary} status={e.status} />
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <SummaryBadge summary={e.result_summary} status={e.status} />
+                        {e.is_replay && (
+                            <span
+                                className="inline-block text-[10px] tracking-widest border border-amber/55 text-amber px-2 py-1 rounded-sm"
+                                data-testid="report-replay-badge"
+                                title="This run was dispatched via Replay Last Run"
+                            >
+                                REPLAY
+                            </span>
+                        )}
+                        {isDone && replayInfo && (
+                            <div
+                                title={
+                                    replayInfo.can_replay
+                                        ? "Dispatch the same team again"
+                                        : replayInfo.cannot_replay_reason || "Cannot replay"
+                                }
+                            >
+                                <Button
+                                    type="button"
+                                    onClick={handleReplay}
+                                    disabled={!replayInfo.can_replay || replayBusy}
+                                    data-testid="report-replay-this-run-btn"
+                                    className="bg-amber text-amber-foreground hover:bg-amber/90 rounded-sm font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {replayBusy ? "Starting…" : "Replay This Run"}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">

@@ -180,6 +180,33 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 8 — 2026-06-24 (max_team_power_ever + Replay Last Run)
+Implemented (148/148 pytest PASS — 133 baseline + 15 new Phase 8 tests; zero regressions, OpenAPI: +2 paths, zero changes to existing):
+
+**A. Sticky-peak gate fix (`max_team_power_ever`)**
+- New denormalised field on `guilds`: `max_team_power_ever: int` (default 0 via `.get()` fallback — no migration needed for existing docs)
+- Updated atomically via Mongo `$max` operator inside `_dispatch_expedition()` (shared by both `POST /api/expeditions` and `POST /api/expeditions/replay-last`)
+- Dragon's Hoard gate now unlocks via: `guild.level >= 2 OR current_best_three >= 65 OR max_team_power_ever >= 65`
+- New `unlock_reason` string: "Requires guild level 2, team power ≥ 65, or peak team power ever ≥ 65"
+- Exposed in `GET /api/guilds/me` payload as `max_team_power_ever`
+
+**B. Replay Last Run feature**
+- New endpoints:
+  - `GET /api/expeditions/last-completed` → 200 `{expedition, adventurer_ids, can_replay, cannot_replay_reason}` or 404 if no completed run
+  - `POST /api/expeditions/replay-last` → 201 with new expedition (status=`in_progress`, `is_replay=true`), or 400/403/404 with explicit `detail`
+- Server-side eligibility checks (`_check_replay_eligibility`): dungeon still active + gate unlocked for CURRENT guild, all 3 original adventurers still in guild and `is_available=True`, team size matches dungeon requirement
+- Replay re-uses `_dispatch_expedition()` helper → same locks, same `$max` bump, same equipment-delta calculation. Equipment snapshot is FRESH from current state, not from original run.
+- New `expedition.is_replay: bool` field surfaces a "REPLAY" badge in the UI
+- Frontend:
+  - `Dashboard.jsx`: new "LAST EXPEDITION" card under stats with result badge + "Replay Last Run" amber button. Disabled with tooltip when `can_replay=false`. Empty state with link to /dungeons when no run exists.
+  - `ExpeditionReport.jsx`: "Replay This Run" button + "REPLAY" badge in the report header (only when this report is the current last-completed). Reuses the same backend endpoint.
+
+**Tests added** (`tests/backend_phase8_test.py`, 15 cases):
+1-6. max_team_power_ever: default 0, set after first run, never decreases ($max), unlocks Dragon's Hoard via peak, lock message mentions all 3 criteria, updates also via replay
+7-15. Replay: 404 for fresh guild (both endpoints), correct shape after first run, happy path, recomputes power with current equipment, blocked when adventurer locked/removed, 400/403 when dungeon deactivated, original run untouched after replay
+
+**Files modified**: `backend/server.py` (+182 / −2 net: helper extraction + 2 new endpoints + guild_public + gate update + expedition_public), `backend/tests/backend_phase8_test.py` (new, 332 lines), `frontend/src/pages/Dashboard.jsx` (+115 / −24), `frontend/src/pages/ExpeditionReport.jsx` (+72 / −5), `memory/PRD.md`
+
 ## Phase 5.6 — 2026-06-24 (Code Quality Quick-Wins, scope ridotto)
 Implemented (zero behaviour change, **133/133 pytest PASS**, OpenAPI paths identical):
 - **Secure RNG**: `random.{uniform,choice,choices,random,randint,sample}` sostituito con `secrets.SystemRandom()` in `server.py` (17 call sites) e `app/expeditions/loot_tables.py` (5 call sites). Distribuzioni/range invariati — solo la sorgente di entropia è aggiornata. Tutti i test probabilistici (loot table, Shadow Crypts failure-never-rare, ecc.) passano identici.

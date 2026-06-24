@@ -1,6 +1,10 @@
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
+import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import { Button } from "../components/ui/button";
 
 const formatDate = (iso) => {
     if (!iso) return "—";
@@ -9,6 +13,24 @@ const formatDate = (iso) => {
         return d.toISOString().replace("T", " ").slice(0, 19) + " UTC";
     } catch {
         return iso;
+    }
+};
+
+const formatRelative = (iso) => {
+    if (!iso) return "";
+    try {
+        const t = new Date(iso).getTime();
+        const diff = Math.max(0, Date.now() - t);
+        const s = Math.floor(diff / 1000);
+        if (s < 60) return `${s}s ago`;
+        const m = Math.floor(s / 60);
+        if (m < 60) return `${m}m ago`;
+        const h = Math.floor(m / 60);
+        if (h < 24) return `${h}h ago`;
+        const d = Math.floor(h / 24);
+        return `${d}d ago`;
+    } catch {
+        return "";
     }
 };
 
@@ -66,7 +88,47 @@ const LockedAction = ({ label, code, phase }) => (
 );
 
 export default function Dashboard() {
-    const { user, guild } = useAuth();
+    const { user, guild, refreshGuild } = useAuth();
+    const navigate = useNavigate();
+    const [lastRun, setLastRun] = useState(null); // {expedition, can_replay, cannot_replay_reason} | null
+    const [lastRunStatus, setLastRunStatus] = useState("loading"); // loading | none | ready
+    const [replayBusy, setReplayBusy] = useState(false);
+
+    const fetchLast = useCallback(async () => {
+        try {
+            const { data } = await api.get("/expeditions/last-completed");
+            setLastRun(data);
+            setLastRunStatus("ready");
+        } catch (err) {
+            if (err?.response?.status === 404) {
+                setLastRunStatus("none");
+            } else {
+                setLastRunStatus("none");
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchLast();
+    }, [fetchLast]);
+
+    const handleReplay = async () => {
+        if (replayBusy) return;
+        setReplayBusy(true);
+        try {
+            const { data } = await api.post("/expeditions/replay-last");
+            toast.success(`Replay started: ${data.expedition.dungeon_name}`);
+            await refreshGuild();
+            navigate(`/expeditions/${data.expedition.id}`);
+        } catch (err) {
+            toast.error(formatApiError(err));
+            // Refresh eligibility (state may have changed server-side)
+            fetchLast();
+        } finally {
+            setReplayBusy(false);
+        }
+    };
+
     if (!guild) return null;
     const advCount = guild.adventurer_count ?? 0;
 
@@ -183,32 +245,114 @@ export default function Dashboard() {
                     />
                 </section>
 
-                {guild.last_expedition_id && (
-                    <section className="mb-8">
-                        <Link
-                            to={`/expeditions/${guild.last_expedition_id}`}
-                            data-testid="last-expedition-link"
-                            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground border border-border bg-card rounded-sm px-3 py-2"
+                {/* Phase 8: Last Expedition replay card */}
+                <section className="mb-8" data-testid="last-expedition-section">
+                    <div className="text-xs text-amber tracking-widest mb-3">
+                        :: LAST EXPEDITION
+                    </div>
+                    {lastRunStatus === "loading" && (
+                        <div
+                            className="border border-border bg-card rounded-sm p-4 text-xs text-muted-foreground"
+                            data-testid="last-expedition-loading"
                         >
-                            <span className="text-amber">::</span>
+                            loading<span className="caret-blink" />
+                        </div>
+                    )}
+                    {lastRunStatus === "none" && (
+                        <div
+                            className="border border-border bg-card rounded-sm p-4 text-xs text-muted-foreground flex items-center justify-between gap-4 flex-wrap"
+                            data-testid="last-expedition-empty"
+                        >
                             <span>
-                                last expedition:{" "}
-                                <span
-                                    className={
-                                        guild.last_expedition_summary === "Success"
-                                            ? "text-[#22c55e]"
-                                            : guild.last_expedition_summary === "Failed"
-                                              ? "text-[#ef4444]"
-                                              : "text-amber"
+                                No expeditions yet. Visit{" "}
+                                <Link
+                                    to="/dungeons"
+                                    className="text-amber hover:underline"
+                                >
+                                    Dungeons
+                                </Link>{" "}
+                                to start one.
+                            </span>
+                        </div>
+                    )}
+                    {lastRunStatus === "ready" && lastRun?.expedition && (
+                        <div
+                            className="border border-border bg-card rounded-sm p-4"
+                            data-testid="last-expedition-card"
+                        >
+                            <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
+                                <div>
+                                    <div
+                                        className="text-sm font-semibold"
+                                        data-testid="last-expedition-dungeon-name"
+                                    >
+                                        {lastRun.expedition.dungeon_name}
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground mt-1">
+                                        {formatRelative(lastRun.expedition.completed_at)}{" "}
+                                        · {formatDate(lastRun.expedition.completed_at)}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {lastRun.expedition.result_summary === "Success" ? (
+                                        <span
+                                            className="inline-block text-[10px] tracking-widest border border-[#22c55e]/55 text-[#22c55e] px-2 py-1 rounded-sm"
+                                            data-testid="last-expedition-result-success"
+                                        >
+                                            SUCCESS
+                                        </span>
+                                    ) : (
+                                        <span
+                                            className="inline-block text-[10px] tracking-widest border border-[#ef4444]/55 text-[#ef4444] px-2 py-1 rounded-sm"
+                                            data-testid="last-expedition-result-failed"
+                                        >
+                                            FAILED
+                                        </span>
+                                    )}
+                                    {lastRun.expedition.is_replay && (
+                                        <span className="inline-block text-[10px] tracking-widest border border-amber/55 text-amber px-2 py-1 rounded-sm">
+                                            REPLAY
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                                <Link
+                                    to={`/expeditions/${lastRun.expedition.id}`}
+                                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+                                    data-testid="last-expedition-view-report"
+                                >
+                                    view full report →
+                                </Link>
+                                <div
+                                    title={
+                                        lastRun.can_replay
+                                            ? "Dispatch the same team to the same dungeon"
+                                            : lastRun.cannot_replay_reason || "Cannot replay"
                                     }
                                 >
-                                    {guild.last_expedition_summary || "in progress"}
-                                </span>
-                            </span>
-                            <span className="text-amber">→</span>
-                        </Link>
-                    </section>
-                )}
+                                    <Button
+                                        type="button"
+                                        onClick={handleReplay}
+                                        disabled={!lastRun.can_replay || replayBusy}
+                                        data-testid="replay-last-run-btn"
+                                        className="bg-amber text-amber-foreground hover:bg-amber/90 rounded-sm font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {replayBusy ? "Starting…" : "Replay Last Run"}
+                                    </Button>
+                                </div>
+                            </div>
+                            {!lastRun.can_replay && lastRun.cannot_replay_reason && (
+                                <div
+                                    className="text-[10px] text-muted-foreground mt-3 italic"
+                                    data-testid="replay-blocked-reason"
+                                >
+                                    ⚠ {lastRun.cannot_replay_reason}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </section>
 
                 <section>
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
