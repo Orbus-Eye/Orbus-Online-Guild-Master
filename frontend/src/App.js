@@ -8,6 +8,8 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import CreateGuild from "@/pages/CreateGuild";
 import Dashboard from "@/pages/Dashboard";
+import Recruitment from "@/pages/Recruitment";
+import Adventurers from "@/pages/Adventurers";
 
 function App() {
     return (
@@ -45,6 +47,22 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Dashboard />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/recruitment"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Recruitment />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/adventurers"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Adventurers />
                                 </ProtectedRoute>
                             }
                         />

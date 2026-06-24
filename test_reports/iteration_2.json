@@ -1,0 +1,36 @@
+{
+  "summary": "Phase-2 backend + frontend e2e testing. Backend: 14/14 new pytest cases PASS (100%) covering adventurer-classes, recruitment candidates/recruit, adventurers listing, cross-user isolation, insufficient-gold + offer refund, stat-mutation prevention, and guild adventurer_count. Frontend: full recruit flow verified end-to-end on desktop + mobile (375x812) for /recruitment, /adventurers, /dashboard, AppHeader; success toast fires, card removed, header gold decremented in real-time; empty-state, insufficient-gold warning + all-disabled recruit buttons all work. Mobile has no horizontal overflow on /recruitment or /adventurers (table hidden, stacked cards shown). Quickaction-03/04 are real <button disabled> (regression fix from Phase 1).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_phase2_test.py",
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/phase2_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py recruit flow is correctly atomic: find_one_and_delete on offer (owner-scoped via guild_id filter) → find_one_and_update on guild with $gte:20 affordability filter → adventurer insert. If the gold update fails after the offer was deleted, the offer is re-inserted (best-effort refund). Verified empirically by test_insufficient_gold_400_and_refund_offer: a second insufficient-gold call against the SAME candidate_id still returns 400, never 404 — proving the offer was refunded.",
+    "Cross-guild isolation enforced by guild_id filter in the find_one_and_delete query (line 509). Verified: user B cannot recruit user A's candidate (404), and the candidate is then still recruitable by user A.",
+    "Stat consistency: adventurer doc is built from the SERVER-saved offer (not client payload). Verified: every offered stat (strength/agility/intellect/endurance/faith/rarity/class) on the candidate exactly matches the created adventurer and the /adventurers listing row.",
+    "Stats stay within plausible bounds: _roll_stat = max(1, base + randint(-1,2) + rarity_bonus 0..2) → never negative, max ≈ 14 (base 10 + 2 + 2). Confirmed across 100+ generated candidates during testing; no out-of-range values.",
+    "Offer expiry is applicative (datetime.fromisoformat compare against utc_now) — fine for Phase 2; TTL index is documented as out-of-scope.",
+    "candidate_public() / adventurer_public() build whitelisted dicts (no _id leakage). /guilds/me uses projection {_id:0}. Good.",
+    "GET /recruitment/candidates calls delete_many on prior offers BEFORE inserting new ones — this is the spec'd 'replaces prior offers' behavior. Verified: old candidate_id 404s after refresh.",
+    "Frontend AppHeader nav-dashboard/-adventurers/-recruitment active state highlighting works (RECRUIT/ADVENTURERS pill is amber on the matching route). logout-btn always present on guild pages.",
+    "Phase 1 regression fix verified: quickaction-03 and quickaction-04 are now <button disabled> elements (is_disabled() returns True), addressing the Phase-1 LOW issue."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_phase2_test.py (created — 14 pytest cases for Phase 2)"
+  ],
+  "success_rate": { "backend": "100% (14/14 Phase-2 + 17/17 Phase-1)", "frontend": "100% (all Phase-2 testids + flows verified)" },
+  "test_credentials": "tester@orbus.test / password123 (pre-seeded, used for backend Phase-1). All Phase-2 tests use freshly-registered random users (e2e_p2_*@orbus.test, p2_*@orbus.test) for isolation.",
+  "seed_data_creation": "Tests created ~10 fresh users + guilds (random UUID emails, TEST_-prefixed guild names). No cleanup performed (non-destructive, isolated). Backend seed of 5 classes + 5 traits is idempotent and runs on every startup.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 2 backend + frontend are fully green. Pytest files at /app/backend/tests/backend_test.py (Phase 1) and /app/backend/tests/backend_phase2_test.py (Phase 2) — both safe to re-run with `pytest /app/backend/tests/ -v`. For Phase 3 testing, create fresh users via /api/auth/register + /api/guilds (each new guild starts at 100 gold = 5 recruits worth). No admin/mongosh available; manipulate state via the API only. Tester account 'tester@orbus.test' already owns 'The Iron Lantern' and has accumulated some adventurers + reduced gold from this session — use a fresh random user for clean-state tests.",
+  "rca of the issue": "No bugs found. All 14 Phase-2 backend tests passed first try. The trickiest test (insufficient-gold offer refund) confirmed the two-phase recruit logic in server.py:507-543 is correctly compensating: when the gold check fails AFTER the offer was atomically removed, the offer is re-inserted so the user can retry once they have gold. The test verifies this by attempting the same candidate twice with empty gold and asserting both return 400 (not 404)."
+}

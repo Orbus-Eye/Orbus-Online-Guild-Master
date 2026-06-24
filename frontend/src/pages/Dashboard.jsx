@@ -1,5 +1,6 @@
-import { Button } from "../components/ui/button";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import AppHeader from "../components/AppHeader";
 
 const formatDate = (iso) => {
     if (!iso) return "—";
@@ -25,14 +26,31 @@ const Stat = ({ label, value, testid, accent = false }) => (
     </div>
 );
 
-const QuickAction = ({ label, code, phase }) => (
+const ActiveAction = ({ to, label, code, testid }) => (
+    <Link
+        to={to}
+        data-testid={testid}
+        className="block border border-border bg-card rounded-sm p-4 hover:bg-secondary/40 transition-colors group"
+    >
+        <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] text-amber tracking-widest">::{code}</span>
+            <span className="text-[10px] text-amber group-hover:translate-x-0.5 transition-transform">
+                →
+            </span>
+        </div>
+        <div className="text-sm">{label}</div>
+        <div className="text-[10px] text-muted-foreground mt-2">— ready —</div>
+    </Link>
+);
+
+const LockedAction = ({ label, code, phase }) => (
     <button
         type="button"
         disabled
-        className="text-left border border-border bg-card/60 rounded-sm p-4 opacity-60 cursor-not-allowed disabled:cursor-not-allowed"
-        data-testid={`quickaction-${code}`}
-        title={`Coming in ${phase}`}
         aria-disabled="true"
+        title={`Coming in ${phase}`}
+        data-testid={`quickaction-${code}`}
+        className="text-left border border-border bg-card/60 rounded-sm p-4 opacity-60 cursor-not-allowed disabled:cursor-not-allowed w-full"
     >
         <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-muted-foreground tracking-widest">
@@ -48,40 +66,15 @@ const QuickAction = ({ label, code, phase }) => (
 );
 
 export default function Dashboard() {
-    const { user, guild, logout } = useAuth();
+    const { user, guild } = useAuth();
     if (!guild) return null;
+    const advCount = guild.adventurer_count ?? 0;
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
-            <header className="border-b border-border">
-                <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-xs">
-                        <span className="text-amber">◆</span>
-                        <span className="text-muted-foreground tracking-widest">
-                            ORBUS // DASHBOARD
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs">
-                        <span
-                            data-testid="header-username"
-                            className="text-muted-foreground"
-                        >
-                            @{user?.username}
-                        </span>
-                        <Button
-                            data-testid="logout-btn"
-                            onClick={logout}
-                            variant="outline"
-                            className="h-8 px-3 rounded-sm border-border bg-transparent hover:bg-secondary text-xs"
-                        >
-                            logout
-                        </Button>
-                    </div>
-                </div>
-            </header>
+            <AppHeader subtitle="DASHBOARD" />
 
-            <main className="max-w-6xl mx-auto px-6 py-10">
-                {/* Guild header */}
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <section className="mb-8">
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: GUILD OVERVIEW
@@ -119,24 +112,18 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                {/* Stats grid */}
-                <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
-                    <Stat
-                        label="LEVEL"
-                        value={guild.level}
-                        testid="stat-level"
-                        accent
-                    />
+                <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
+                    <Stat label="LEVEL" value={guild.level} testid="stat-level" accent />
                     <Stat
                         label="REPUTATION"
                         value={guild.reputation}
                         testid="stat-reputation"
                     />
+                    <Stat label="GOLD" value={guild.gold} testid="stat-gold" accent />
                     <Stat
-                        label="GOLD"
-                        value={guild.gold}
-                        testid="stat-gold"
-                        accent
+                        label="ADVENTURERS"
+                        value={advCount}
+                        testid="stat-adventurer-count"
                     />
                     <Stat
                         label="GUILD ID"
@@ -149,20 +136,28 @@ export default function Dashboard() {
                     />
                 </section>
 
-                {/* Quick actions */}
                 <section>
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
                         :: QUICK ACTIONS
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <QuickAction code="01" label="Recruit adventurers" phase="phase 2" />
-                        <QuickAction code="02" label="Adventurers" phase="phase 2" />
-                        <QuickAction code="03" label="Dungeons" phase="phase 3" />
-                        <QuickAction code="04" label="Inventory" phase="phase 3" />
+                        <ActiveAction
+                            to="/recruitment"
+                            label="Recruit adventurers"
+                            code="01"
+                            testid="quickaction-01"
+                        />
+                        <ActiveAction
+                            to="/adventurers"
+                            label="View adventurers"
+                            code="02"
+                            testid="quickaction-02"
+                        />
+                        <LockedAction label="Dungeons" code="03" phase="phase 3" />
+                        <LockedAction label="Inventory" code="04" phase="phase 3" />
                     </div>
                 </section>
 
-                {/* System log */}
                 <section className="mt-10">
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
                         :: SYSTEM LOG
@@ -174,11 +169,11 @@ export default function Dashboard() {
                         </div>
                         <div>
                             <span className="text-amber">$</span> guild{" "}
-                            <span className="text-foreground">{guild.name}</span> ready —
-                            level {guild.level}, gold {guild.gold}
+                            <span className="text-foreground">{guild.name}</span> — level{" "}
+                            {guild.level}, gold {guild.gold}, adventurers {advCount}
                         </div>
                         <div>
-                            <span className="text-amber">$</span> phase-2 modules pending
+                            <span className="text-amber">$</span> phase-3 modules pending
                             <span className="caret-blink" />
                         </div>
                     </div>
