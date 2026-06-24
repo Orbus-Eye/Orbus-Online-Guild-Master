@@ -1,0 +1,45 @@
+{
+  "summary": "Phase 5.5g + 5.5h Refactor Final Cleanup regression smoke COMPLETE. Live backend (https://guild-master-5.preview.emergentagent.com) verified GREEN end-to-end. Full pytest suite: 174 passed + 1 skipped (data-dependent, non-regression) in 239s. Dedicated Phase 5.5e smoke (16 tests, 12.68s) PASS 16/16. New Phase 5.5g+h targeted smoke (11 tests, 35.8s) PASS 11/11 after 1 test-script fix (wrong field name 'recruitment_cost' → 'cost_gold' / 'cost'; NOT a regression). /api/health → 200 {status:ok,env:development}. OpenAPI surface = 36 paths invariati. Backend startup logs confirmed: 'Seeded 5 classes and 5 traits', 'Seeded 3 dungeons and 13 items', 'Tester account already exists with is_admin=True', 'Orbus backend ready (env=development)'. ZERO IndexOptionsConflict on multiple supervisor reloads observed in logs. Backward-compat shims (`from server import validate_item_monetization, _resolve_levelup`) functional. All 10 review checklist items (health, lifespan logs, indexes idempotent, tester login, expedition lifecycle, dungeon gates, lazy sweep, admin gate, recruitment, shim) PASS. server.py is indeed 34 LOC thin entry point with ZERO business logic. Refactor is BEHAVIOUR-PRESERVING.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_phase55gh_smoke_test.py",
+    "/app/backend/tests/backend_phase55e_smoke_test.py",
+    "/app/test_reports/pytest/phase55gh_full.xml",
+    "/app/test_reports/pytest/phase55gh_smoke.xml",
+    "/app/test_reports/pytest/phase55gh_targeted.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is now a textbook ASGI entrypoint: 34 LOC = load_dotenv + create_app() + 2 backward-compat shims. ZERO business logic. Excellent separation of concerns.",
+    "app/core/app_factory.py centralises FastAPI factory, CORS resolver, /api/health, and 10 router mounts — clean, testable, swappable.",
+    "app/core/lifespan.py uses asynccontextmanager (modern FastAPI 0.95+ pattern, on_event is deprecated). Calls create_all_indexes + run_all_seeds + emits 'Orbus backend ready' on startup.",
+    "app/core/indexes.py creates 33 indexes idempotently — verified by multiple supervisor reloads observed in /var/log/supervisor/backend.err.log with zero IndexOptionsConflict warnings.",
+    "app/seeds/seed_runner.py separates classes/dungeons/tester seeds — each idempotent. Tester is_admin=true is refreshed on every non-prod startup as documented in /app/memory/test_credentials.md.",
+    "Backward-compat shims in server.py are minimal (2 lines, F401 marked) and correctly re-export from canonical locations (app/admin/services + app/expeditions/services). Tests/backend_phase3_test.py still uses these — no breakage.",
+    "Two pre-existing pytest warnings persist (PytestRemovedIn10Warning for class-scoped fixture as instance method in phase4/phase5 tests + python_multipart deprecation in starlette) — neither is a regression nor blocker.",
+    "OpenAPI diff vs pre-refactor: VUOTO (still 36 paths, same shapes). Route order for /api/expeditions/last-completed + /replay-last (before /{expedition_id}) preserved.",
+    "Domain modularization is now COMPLETE: auth, guilds, dungeons, items, expeditions, inventory, recruitment, adventurers, equipment, admin each isolated in app/<domain>/{schemas,services,routes}.py. core/ holds infra (database/security/config/indexes/lifespan/app_factory). seeds/ holds data + runner. shared/ holds constants.",
+    "Loot rarity contract, equipment delta snapshot immutability, dungeon gate sticky semantics, and lazy completion idempotency all carried over unchanged from Phase 5.5e regression (re-verified)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_phase55gh_smoke_test.py (new dedicated 11-test regression smoke for Phase 5.5g+h)"
+  ],
+  "success_rate": {
+    "backend": "100% (174/174 + 16/16 Phase 5.5e smoke + 11/11 Phase 5.5g+h targeted smoke; 1 skipped is data-dependent non-regression)",
+    "frontend": "N/A — backend-only per request"
+  },
+  "test_credentials": "tester@orbus.test / password123 (seeded idempotently in dev; is_admin=true forced on every non-prod startup)",
+  "seed_data_creation": "Pytest created ephemeral test users (p55e_*@orbus.test, p55gh_*@orbus.test) + guilds + adventurers + expeditions during the regression run. Throwaway data, prefixed for identification. Seed runner (classes/dungeons/tester) confirmed idempotent across multiple reloads.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 5.5g+h refactor is GREEN. To rerun: (a) full regression: cd /app/backend && python -m pytest tests/ -q (~239s, 174+1 tests); (b) Phase 5.5g+h targeted smoke: python -m pytest tests/backend_phase55gh_smoke_test.py -q (~36s, 11 tests); (c) Phase 5.5e smoke: python -m pytest tests/backend_phase55e_smoke_test.py -q (~13s, 16 tests). All smoke tests hit live REACT_APP_BACKEND_URL and use pymongo for Mongo state assertions. server.py shim test (test_server_shim_exports) protects backend_phase3_test.py from accidentally losing the back-compat exports. The 1 skipped test in the full suite is `test_recruit_decrements_gold_if_affordable` in backend_phase8_test.py which conditionally skips if tester guild gold < 20 — a data-dependent skip, NOT a regression. OpenAPI path count assertion (36) is the canonical sentinel for accidental route deletion in future refactors.",
+  "rca of the issue": "N/A — no production issues found. The single transient pytest failure (KeyError 'recruitment_cost') was a bug in my new test script (wrong field name) — fixed in place (cost_gold/cost). Not a backend regression. Phase 5.5g+h refactor is purely structural code organisation and produced ZERO behavioural change across 201 total test executions (174 baseline + 16 phase 5.5e + 11 phase 5.5g+h)."
+}
