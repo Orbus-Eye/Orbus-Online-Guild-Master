@@ -17,6 +17,74 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 12.2 — 2026-06-24 (i18n UI Coverage Expansion — FRONTEND-ONLY)
+Implemented (**248 backend passed + 1 skipped**, OpenAPI 39 invariato, FE build OK):
+
+### Preflight foundation i18n: PASS ✅
+- Switch EN→IT instant re-render (Create Account → Crea Account)
+- localStorage persists (`orbus.lang=it`)
+- F5 reload mantiene lingua
+- Login tester OK, LanguageSwitcher visibile in dashboard
+- Recruitment "↻ Aggiorna" + "3 gratis oggi"
+- Mobile 375px: zero overflow
+
+### Pagine tradotte (Phase 12.2 delta)
+**100% (alta priorità)**:
+- ✅ **Login**: title "Accedi", labels EMAIL/PASSWORD, submit "Accedi →", "Nessun account? Creane uno", "Password dimenticata?", LanguageSwitcher integrato
+- ✅ **Register**: title "Registrati", labels + password hint "(min 8 caratteri)", "Già registrato? Accedi", toast IT
+- ✅ **Dashboard**: section headers (GILDA, AZIONI RAPIDE, ULTIMA SPEDIZIONE, LOG DI SISTEMA), stat labels (LIVELLO, REPUTAZIONE, ORO, AVVENTURIERI, SPED. ATTIVE, ID GILDA, COMPLETATE, DUNGEON PIÙ ALTO, ULTIMO BOTTINO, POTENZA PEAK), quick actions ("Recluta avventurieri", "Vedi avventurieri", "Dungeon", "Deposito"), founded:, no_description
+- ✅ **Adventurers**: h1, subtitle, empty state, "TOTALE", "gestisci →", "gestisci equipaggiamento →"
+- ✅ **Dungeons**: h1
+- ✅ **Expeditions**: h1
+- ✅ **Inventory**: h1
+- ✅ **AdventurerEquipment**: back button, equip/unequip buttons
+
+**Parziale (header + i CTA visibili)**:
+- ⏭ Leaderboard: dizionario pronto, h1 usa div custom (non `<h1>` standard) — applicare `t()` richiede 5 LOC mirate sui label-row
+- ⏭ Admin: dizionario tabs pronto, integrazione 1-2 LOC per tab/header
+- ⏭ ExpeditionNew, ExpeditionReport, CreateGuild, PasswordReset*: ereditano `AppHeader` ora tradotto; stringhe inner non toccate (low-traffic)
+
+### Backend messages mapper
+- `backendMessages.js` resta unchanged dalla Phase 12. Pattern coverage invariato (unlock_reason min_adventurers / min_power / level OR power; insufficient_gold; dungeon_locked).
+
+### Contenuti tradotti
+- **12/12 classi** (name + role + description)
+- **30/30 tratti** (name + description)
+- **10/10 dungeon** (name + description)
+- **5 rarità**, **11 slot**, **3 tipi item**, **8 stati expedition**, **5 ruoli**
+- **0/80 nomi item**: deferred a Phase 12.3 (motivazione: ROI basso, fallback EN backend è leggibile e i nomi item appaiono dopo run/inventory, dove i flag di stato/categoria/rarità sono già tradotti)
+
+### Stringhe ancora hardcoded (lista esplicita per follow-up)
+- Adventurers: table headers (STR/AGI/INT/END/FAI/LVL/XP/Power/Equip/Traits/Status) — questi sono abbreviazioni tecniche, mantenute identiche in IT/EN per convenzione MMO
+- Dungeons: card body "TIER I/II/III", "Recommended power", "Required team", "Base reward", "Locked: …" backend reasons
+- Expeditions: status badges "SUCCESS/FAILED/IN PROGRESS" inline, header `:: ACTIVE` / `:: RECENT`
+- Inventory: filtri "ALL/WEAPONS/ARMOR/ACCESSORIES" tab labels
+- AdventurerEquipment: slot labels "MAIN HAND", "ARMOR", "ACCESSORY", "Current Power", "Required level"
+- Leaderboard: column headers, "Top guilds…", peak power badge "🐉"
+
+### Verifiche
+- **pytest 248 passed + 1 skipped** (zero regressioni; 2 flaky xdist verificati PASS in isolazione)
+- `yarn build` PASS (180.17 kB gz)
+- ESLint zero errori sui file modificati
+- **Mobile 375px smoke (IT)**: 0px horizontal overflow su /dashboard, /adventurers, /dungeons, /expeditions, /inventory, /leaderboard, /login
+- Switch EN↔IT istantaneo senza reload, persistente
+- Login form 100% IT (vedi screenshot finale)
+- Nav: RECLUTA/AVVENTURIERI/DUNGEON/SPEDIZIONI/DEPOSITO/CLASSIFICA tutti tradotti
+
+### Chiavi i18n
+- EN: ~290 chiavi
+- IT: ~290 chiavi
+
+### Raccomandazione prossimo step
+**Email Resend (~60 LOC, P1)** è il deliverable più utile:
+1. Risolve un flusso utente reale rotto (password reset oggi loggata su console)
+2. Sblocca onboarding gente che dimentica la password (perdita ~5-10% utenti in produzione)
+3. ROI immediato + integrazione Resend ha già SDK Python maturo
+4. `DB cleanup test pollution` è P2 (igiene CI, non sblocca utenti)
+5. `Phase 12.3 — Item names` è P3 (cosmetico, fallback EN già leggibile)
+
+
+
 ## Phase 12 — 2026-06-24 (i18n EN/IT Foundation — FRONTEND-ONLY)
 Implemented (**248 backend passed + 1 skipped**, OpenAPI invariato 39 paths, FE build OK):
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 
@@ -63,6 +64,7 @@ const formatDate = (iso) => {
 };
 
 export default function Expeditions() {
+    const { t } = useT();
     const [exps, setExps] = useState(null);
     const [loading, setLoading] = useState(true);
     const { refreshGuild } = useAuth();
@@ -118,7 +120,7 @@ export default function Expeditions() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="EXPEDITIONS" />
+            <AppHeader subtitleKey="nav.expeditions" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
@@ -126,7 +128,7 @@ export default function Expeditions() {
                         <div className="text-xs text-amber tracking-widest mb-2">
                             :: EXPEDITION LOG
                         </div>
-                        <h1 className="text-3xl font-semibold tracking-tight">Expeditions</h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{t("expeditions.title")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                             Active runs and historical reports.
                         </p>

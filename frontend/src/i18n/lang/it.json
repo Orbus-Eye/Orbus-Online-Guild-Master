@@ -73,6 +73,8 @@
     "submit_reset": "Reimposta password",
     "submit_send_link": "Invia link di reset",
     "logout": "Esci",
+    "toast_login_success": "Autenticato. Bentornato.",
+    "toast_register_success": "Account creato. È ora di fondare una gilda.",
     "errors": {
       "invalid_credentials": "Email o password non validi",
       "email_taken": "Email già registrata",
@@ -102,9 +104,20 @@
       "active_exp": "SPED. ATTIVE",
       "guild_id": "ID GILDA",
       "peak_power": "POTENZA PEAK",
-      "completed": "COMPLETATE"
+      "completed": "COMPLETATE",
+      "highest": "DUNGEON PIÙ ALTO",
+      "last_loot": "ULTIMO BOTTINO"
     },
     "quick_actions": ":: AZIONI RAPIDE",
+    "last_expedition": ":: ULTIMA SPEDIZIONE",
+    "system_log": ":: LOG DI SISTEMA",
+    "actions": {
+      "recruit": "Recluta avventurieri",
+      "adventurers": "Vedi avventurieri",
+      "dungeons": "Dungeon",
+      "inventory": "Deposito"
+    },
+    "no_description": "nessuna descrizione",
     "recent_reports": ":: REPORT RECENTI",
     "no_recent_reports": "Nessuna spedizione. Inizia la tua prima nei DUNGEON."
   },
@@ -173,6 +186,12 @@
     "subtitle": "Il roster della tua gilda. Clicca un avventuriero per gestire l'equipaggiamento.",
     "count": "{n} avventurieri",
     "no_adventurers": "Nessun avventuriero. Vai in RECLUTA per assumerne.",
+    "no_heroes": ":: NESSUN EROE ANCORA",
+    "guild_roster": ":: ROSTER GILDA",
+    "total": "TOTALE",
+    "manage": "gestisci →",
+    "manage_equipment": "gestisci equipaggiamento →",
+    "goto_recruitment": "Vai a Reclutamento →",
     "available": "Disponibile",
     "in_expedition": "In spedizione",
     "level": "Lv {n}",

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 
 const RARITY_COLOR = {
@@ -42,6 +43,7 @@ function statBonusList(it) {
 }
 
 export default function Inventory() {
+    const { t } = useT();
     const [rows, setRows] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -61,7 +63,7 @@ export default function Inventory() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="VAULT" />
+            <AppHeader subtitleKey="nav.inventory" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
@@ -69,7 +71,7 @@ export default function Inventory() {
                         <div className="text-xs text-amber tracking-widest mb-2">
                             :: GUILD VAULT
                         </div>
-                        <h1 className="text-3xl font-semibold tracking-tight">Inventory</h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{t("inventory.title")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                             Items recovered from dungeon expeditions.
                         </p>

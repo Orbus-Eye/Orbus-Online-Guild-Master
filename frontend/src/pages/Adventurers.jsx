@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { TraitList } from "../components/TraitBadge";
 
@@ -82,22 +83,23 @@ const Empty = () => (
         data-testid="adventurers-empty"
         className="border border-border bg-card rounded-sm p-10 text-center"
     >
-        <div className="text-amber text-xs tracking-widest mb-2">:: NO HEROES YET</div>
+        <div className="text-amber text-xs tracking-widest mb-2">{t("adventurers.no_heroes")}</div>
         <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-            No adventurers yet. Visit Recruitment to hire your first hero.
+            {t("adventurers.no_adventurers")}
         </p>
         <Link to="/recruitment">
             <Button
                 data-testid="goto-recruitment-btn"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
             >
-                Go to Recruitment →
+                {t("adventurers.goto_recruitment")}
             </Button>
         </Link>
     </div>
 );
 
 export default function Adventurers() {
+    const { t } = useT();
     const [rows, setRows] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -117,21 +119,20 @@ export default function Adventurers() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="ROSTER" />
+            <AppHeader subtitleKey="nav.adventurers" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="mb-6">
                     <div className="text-xs text-amber tracking-widest mb-2">
-                        :: GUILD ROSTER
+                        {t("adventurers.guild_roster")}
                     </div>
                     <div className="flex items-end justify-between gap-3 flex-wrap">
                         <div>
                             <h1 className="text-3xl font-semibold tracking-tight">
-                                Adventurers
+                                {t("adventurers.title")}
                             </h1>
                             <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                                Every hero hired by your guild. Stats reflect class base ±
-                                rolled variance.
+                                {t("adventurers.subtitle")}
                             </p>
                         </div>
                         <div className="text-right">
@@ -150,7 +151,7 @@ export default function Adventurers() {
 
                 {loading && (
                     <div className="border border-border bg-card rounded-sm p-6 text-xs text-muted-foreground">
-                        loading roster<span className="caret-blink" />
+                        {t("common.loading")}<span className="caret-blink" />
                     </div>
                 )}
 
@@ -220,7 +221,7 @@ export default function Adventurers() {
                                                     data-testid={`equip-link-${a.id}`}
                                                     className="text-[11px] text-amber hover:underline"
                                                 >
-                                                    manage →
+                                                    {t("adventurers.manage")}
                                                 </Link>
                                             </td>
                                             <td className="px-3 py-2 min-w-[160px]">
@@ -310,7 +311,7 @@ export default function Adventurers() {
                                             data-testid={`equip-link-mobile-${a.id}`}
                                             className="text-[11px] text-amber hover:underline"
                                         >
-                                            manage equipment →
+                                            {t("adventurers.manage_equipment")}
                                         </Link>
                                     </div>
                                 </div>

@@ -5,9 +5,12 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../i18n/I18nContext";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 export default function Register() {
     const { register, formatApiError } = useAuth();
+    const { t } = useT();
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -19,13 +22,13 @@ export default function Register() {
         e.preventDefault();
         setErrorMsg("");
         if (password.length < 8) {
-            setErrorMsg("Password must be at least 8 characters");
+            setErrorMsg(t("auth.errors.weak_password"));
             return;
         }
         setSubmitting(true);
         try {
             await register(email.trim(), username.trim(), password);
-            toast.success("Account created. Time to found a guild.");
+            toast.success(t("auth.toast_register_success"));
             navigate("/create-guild", { replace: true });
         } catch (err) {
             const msg = formatApiError(err);
@@ -39,24 +42,27 @@ export default function Register() {
     return (
         <div className="min-h-screen bg-background flex items-center justify-center px-4 term-grid-bg">
             <div className="w-full max-w-md">
-                <Link
-                    to="/"
-                    className="text-xs text-muted-foreground hover:text-foreground inline-block mb-6"
-                    data-testid="back-home-link"
-                >
-                    ← back
-                </Link>
+                <div className="flex items-center justify-between mb-6">
+                    <Link
+                        to="/"
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                        data-testid="back-home-link"
+                    >
+                        ← {t("common.back")}
+                    </Link>
+                    <LanguageSwitcher />
+                </div>
 
                 <div className="border border-border bg-card rounded-sm p-8">
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: AUTH / NEW-MASTER
                     </div>
-                    <h1 className="text-2xl font-semibold mb-6">Register</h1>
+                    <h1 className="text-2xl font-semibold mb-6">{t("auth.register_title")}</h1>
 
                     <form onSubmit={submit} className="space-y-4" data-testid="register-form">
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-xs text-muted-foreground tracking-wider">
-                                EMAIL
+                                {t("auth.email").toUpperCase()}
                             </Label>
                             <Input
                                 id="email"
@@ -73,7 +79,7 @@ export default function Register() {
 
                         <div className="space-y-2">
                             <Label htmlFor="username" className="text-xs text-muted-foreground tracking-wider">
-                                USERNAME
+                                {t("auth.username").toUpperCase()}
                             </Label>
                             <Input
                                 id="username"
@@ -92,7 +98,8 @@ export default function Register() {
 
                         <div className="space-y-2">
                             <Label htmlFor="password" className="text-xs text-muted-foreground tracking-wider">
-                                PASSWORD <span className="text-muted-foreground">(min 8)</span>
+                                {t("auth.password").toUpperCase()}{" "}
+                                <span className="text-muted-foreground">({t("auth.password_min")})</span>
                             </Label>
                             <Input
                                 id="password"
@@ -123,18 +130,18 @@ export default function Register() {
                             disabled={submitting}
                             className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
                         >
-                            {submitting ? "creating…" : "Create account →"}
+                            {submitting ? t("common.loading") : `${t("auth.submit_register")} →`}
                         </Button>
                     </form>
 
                     <div className="mt-6 text-xs text-muted-foreground">
-                        Already a master?{" "}
+                        {t("auth.have_account")}{" "}
                         <Link
                             to="/login"
                             className="text-amber hover:underline"
                             data-testid="goto-login-link"
                         >
-                            sign in
+                            {t("auth.go_login")}
                         </Link>
                     </div>
                 </div>

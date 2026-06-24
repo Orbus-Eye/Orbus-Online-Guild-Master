@@ -21,9 +21,11 @@ const NavLink = ({ to, label, testid }) => {
     );
 };
 
-export default function AppHeader({ subtitleKey = "nav.brand_subtitle_dashboard" }) {
+export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_dashboard" }) {
     const { user, guild, logout } = useAuth();
     const { t } = useT();
+    // Backward-compat: explicit `subtitle` prop (raw string) wins over i18n key.
+    const subtitleText = subtitle != null ? subtitle : t(subtitleKey);
     return (
         <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
@@ -35,7 +37,7 @@ export default function AppHeader({ subtitleKey = "nav.brand_subtitle_dashboard"
                     >
                         <span className="text-amber">◆</span>
                         <span className="text-muted-foreground tracking-widest hidden sm:inline">
-                            ORBUS // {t(subtitleKey)}
+                            ORBUS // {subtitleText}
                         </span>
                         <span className="text-muted-foreground tracking-widest sm:hidden">
                             ORBUS

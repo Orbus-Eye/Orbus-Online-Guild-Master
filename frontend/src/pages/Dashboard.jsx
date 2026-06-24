@@ -6,6 +6,7 @@ import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import OnboardingChecklist from "../components/OnboardingChecklist";
 import { Button } from "../components/ui/button";
+import { useT } from "../i18n/I18nContext";
 
 const formatDate = (iso) => {
     if (!iso) return "—";
@@ -90,6 +91,7 @@ const LockedAction = ({ label, code, phase }) => (
 
 export default function Dashboard() {
     const { user, guild, refreshGuild } = useAuth();
+    const { t } = useT();
     const navigate = useNavigate();
     const [lastRun, setLastRun] = useState(null); // {expedition, can_replay, cannot_replay_reason} | null
     const [lastRunStatus, setLastRunStatus] = useState("loading"); // loading | none | ready
@@ -135,14 +137,14 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
-            <AppHeader subtitle="DASHBOARD" />
+            <AppHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <OnboardingChecklist />
 
                 <section className="mb-8">
                     <div className="text-xs text-amber tracking-widest mb-2">
-                        :: GUILD OVERVIEW
+                        {t("dashboard.guild_overview")}
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
                         <div>
@@ -161,12 +163,12 @@ export default function Dashboard() {
                                 </p>
                             ) : (
                                 <p className="text-sm text-muted-foreground/60 italic mt-2">
-                                    no description set
+                                    {t("dashboard.no_description")}
                                 </p>
                             )}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                            founded:{" "}
+                            {t("dashboard.founded")}:{" "}
                             <span
                                 data-testid="guild-created-at"
                                 className="text-foreground"
@@ -178,26 +180,26 @@ export default function Dashboard() {
                 </section>
 
                 <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-                    <Stat label="LEVEL" value={guild.level} testid="stat-level" accent />
+                    <Stat label={t("dashboard.stats.level")} value={guild.level} testid="stat-level" accent />
                     <Stat
-                        label="REPUTATION"
+                        label={t("dashboard.stats.reputation")}
                         value={guild.reputation}
                         testid="stat-reputation"
                     />
-                    <Stat label="GOLD" value={guild.gold} testid="stat-gold" accent />
+                    <Stat label={t("dashboard.stats.gold")} value={guild.gold} testid="stat-gold" accent />
                     <Stat
-                        label="ADVENTURERS"
+                        label={t("dashboard.stats.adventurers")}
                         value={advCount}
                         testid="stat-adventurer-count"
                     />
                     <Stat
-                        label="ACTIVE EXP"
+                        label={t("dashboard.stats.active_exp")}
                         value={guild.active_expedition_count ?? 0}
                         testid="stat-active-expeditions"
                         accent
                     />
                     <Stat
-                        label="GUILD ID"
+                        label={t("dashboard.stats.guild_id")}
                         value={
                             <span className="text-xs font-mono break-all">
                                 {guild.id.slice(0, 8)}…
@@ -213,12 +215,12 @@ export default function Dashboard() {
                     data-testid="phase7-progression"
                 >
                     <Stat
-                        label="EXPEDITIONS DONE"
+                        label={t("dashboard.stats.completed")}
                         value={guild.total_expeditions_completed ?? 0}
                         testid="stat-total-completed"
                     />
                     <Stat
-                        label="HIGHEST DUNGEON"
+                        label={t("dashboard.stats.highest")}
                         value={
                             <span className="text-xs font-mono">
                                 {guild.highest_dungeon_slug
@@ -229,7 +231,7 @@ export default function Dashboard() {
                         testid="stat-highest-dungeon"
                     />
                     <Stat
-                        label="LAST LOOT"
+                        label={t("dashboard.stats.last_loot")}
                         value={
                             guild.last_loot_item ? (
                                 <span className="text-xs">
@@ -255,7 +257,7 @@ export default function Dashboard() {
                     >
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] text-amber tracking-widest">
-                                PEAK TEAM POWER
+                                {t("dashboard.stats.peak_power")}
                             </span>
                             <span className="text-[10px] text-amber group-hover:translate-x-0.5 transition-transform">
                                 →
@@ -289,7 +291,7 @@ export default function Dashboard() {
                 {/* Phase 8: Last Expedition replay card */}
                 <section className="mb-8" data-testid="last-expedition-section">
                     <div className="text-xs text-amber tracking-widest mb-3">
-                        :: LAST EXPEDITION
+                        {t("dashboard.last_expedition")}
                     </div>
                     {lastRunStatus === "loading" && (
                         <div
@@ -397,30 +399,30 @@ export default function Dashboard() {
 
                 <section>
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
-                        :: QUICK ACTIONS
+                        {t("dashboard.quick_actions")}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <ActiveAction
                             to="/recruitment"
-                            label="Recruit adventurers"
+                            label={t("dashboard.actions.recruit")}
                             code="01"
                             testid="quickaction-01"
                         />
                         <ActiveAction
                             to="/adventurers"
-                            label="View adventurers"
+                            label={t("dashboard.actions.adventurers")}
                             code="02"
                             testid="quickaction-02"
                         />
                         <ActiveAction
                             to="/dungeons"
-                            label="Dungeons"
+                            label={t("dashboard.actions.dungeons")}
                             code="03"
                             testid="quickaction-03"
                         />
                         <ActiveAction
                             to="/inventory"
-                            label="Inventory"
+                            label={t("dashboard.actions.inventory")}
                             code="04"
                             testid="quickaction-04"
                         />
@@ -429,7 +431,7 @@ export default function Dashboard() {
 
                 <section className="mt-10">
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
-                        :: SYSTEM LOG
+                        {t("dashboard.system_log")}
                     </div>
                     <div className="border border-border bg-card rounded-sm p-4 text-xs text-muted-foreground font-mono space-y-1">
                         <div>

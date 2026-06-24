@@ -401,7 +401,7 @@ export default function Admin() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="ADMIN" />
+            <AppHeader subtitleKey="nav.admin" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 
 const DifficultyBadge = ({ value }) => {
@@ -37,6 +38,7 @@ const Stat = ({ label, value }) => (
 );
 
 export default function Dungeons() {
+    const { t } = useT();
     const [dungeons, setDungeons] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -56,13 +58,13 @@ export default function Dungeons() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="DUNGEONS" />
+            <AppHeader subtitleKey="nav.dungeons" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="text-xs text-amber tracking-widest mb-2">
                     :: ACTIVE EXPEDITIONS CATALOG
                 </div>
-                <h1 className="text-3xl font-semibold tracking-tight">Dungeons</h1>
+                <h1 className="text-3xl font-semibold tracking-tight">{t("dungeons.title")}</h1>
                 <p className="text-sm text-muted-foreground mt-2 max-w-2xl mb-8">
                     Choose a dungeon and dispatch a party. Each run takes time and either
                     rewards your guild or sends them back bruised.
@@ -70,7 +72,7 @@ export default function Dungeons() {
 
                 {loading && (
                     <div className="text-xs text-muted-foreground">
-                        loading dungeons<span className="caret-blink" />
+                        {t("common.loading")}<span className="caret-blink" />
                     </div>
                 )}
 

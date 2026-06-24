@@ -73,6 +73,8 @@
     "submit_reset": "Reset password",
     "submit_send_link": "Send reset link",
     "logout": "Logout",
+    "toast_login_success": "Authenticated. Welcome back.",
+    "toast_register_success": "Account created. Time to found a guild.",
     "errors": {
       "invalid_credentials": "Invalid email or password",
       "email_taken": "Email already registered",
@@ -102,9 +104,20 @@
       "active_exp": "ACTIVE EXP",
       "guild_id": "GUILD ID",
       "peak_power": "PEAK POWER",
-      "completed": "COMPLETED"
+      "completed": "COMPLETED",
+      "highest": "HIGHEST DUNGEON",
+      "last_loot": "LAST LOOT"
     },
     "quick_actions": ":: QUICK ACTIONS",
+    "last_expedition": ":: LAST EXPEDITION",
+    "system_log": ":: SYSTEM LOG",
+    "actions": {
+      "recruit": "Recruit adventurers",
+      "adventurers": "View adventurers",
+      "dungeons": "Dungeons",
+      "inventory": "Inventory"
+    },
+    "no_description": "no description set",
     "recent_reports": ":: RECENT REPORTS",
     "no_recent_reports": "No expeditions yet. Start your first run in DUNGEONS."
   },
@@ -173,6 +186,12 @@
     "subtitle": "Your guild roster. Click an adventurer to manage their equipment.",
     "count": "{n} adventurers",
     "no_adventurers": "You have no adventurers yet. Go to RECRUIT to hire some.",
+    "no_heroes": ":: NO HEROES YET",
+    "guild_roster": ":: GUILD ROSTER",
+    "total": "TOTAL",
+    "manage": "manage →",
+    "manage_equipment": "manage equipment →",
+    "goto_recruitment": "Go to Recruitment →",
     "available": "Available",
     "in_expedition": "In expedition",
     "level": "Lv {n}",

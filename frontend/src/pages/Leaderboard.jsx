@@ -63,6 +63,7 @@ const Skeleton = () => (
 );
 
 export default function Leaderboard() {
+    const { t } = useT();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -125,7 +126,7 @@ export default function Leaderboard() {
                                 data-testid="leaderboard-title"
                                 className="text-3xl sm:text-4xl font-semibold tracking-tight"
                             >
-                                Guild Leaderboard
+                                {t("leaderboard.title")}
                             </h1>
                             <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                                 Ranked by peak team power ever recorded. Tie-break by

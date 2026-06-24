@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 
 const RARITY_COLOR = {
@@ -40,6 +41,7 @@ const SLOT_ORDER = ["weapon", "armor", "accessory"];
 const SLOT_LABEL = { weapon: "WEAPON", armor: "ARMOR", accessory: "ACCESSORY" };
 
 export default function AdventurerEquipment() {
+    const { t } = useT();
     const { id: advId } = useParams();
     const [equipment, setEquipment] = useState(null);
     const [adventurer, setAdventurer] = useState(null);
@@ -111,7 +113,7 @@ export default function AdventurerEquipment() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="EQUIPMENT" />
+            <AppHeader subtitleKey="nav.adventurers" />
 
             <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
                 <Link
