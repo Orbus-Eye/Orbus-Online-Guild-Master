@@ -17,6 +17,67 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 11.3 — 2026-06-24 (Onboarding Tutorial — FRONTEND-FIRST)
+Implemented (**248 passed + 1 skipped** pytest, OpenAPI 38→39 paths, zero gameplay regression):
+
+### Backend (3 file modificati, +1 nuovo endpoint)
+- `app/guilds/schemas.py`: nuovo `OnboardingPatchIn(step: 1-5, dismissed, completed)`
+- `app/guilds/services.py`:
+  - `guild_public()` espone `onboarding_step`, `onboarding_completed`, `onboarding_dismissed`
+  - `create_guild_for_user()` inizializza i 3 campi onboarding (step=1, completed=false, dismissed=false) — discriminante per lazy migration
+  - **Nuovo `compute_onboarding_state(db, guild, stats)`**: deriva `onboarding_suggested_step` da `adventurer_count`, `total_expeditions_completed`, `active_expedition_count`, `equipped_items` count. **Lazy migration** integrata: se la gilda manca del campo `onboarding_completed` E ha ≥3 advs E ≥1 expedition completed → set `completed=true, step=5` su disco (no flashing per utenti maturi pre-11.3).
+  - **Nuovo `patch_onboarding(db, guild, step, dismissed, completed)`**: step monotonicamente crescente (clamp su regressioni), completed sticky (no True→False), dismissed indipendente, idempotente.
+- `app/guilds/routes.py`:
+  - `GET /api/guilds/me` ora include i 4 campi onboarding (stored + suggested)
+  - **Nuovo `PATCH /api/guilds/onboarding`** body `{step?, dismissed?, completed?}` → ritorna `{guild, onboarding_step, onboarding_completed, onboarding_dismissed, onboarding_suggested_step}`
+
+### Frontend (1 file nuovo + 1 modificato, ~190 LOC)
+- **Nuovo `components/OnboardingChecklist.jsx`** (~165 LOC): card persistente con i 5 step, progress dots, CTA contestuale, "skip tutorial" + "finish tutorial" (step 5). Naviga al CTA del current step e auto-advance `onboarding_step` via PATCH. Si nasconde se `onboarding_completed` o `onboarding_dismissed`.
+- `pages/Dashboard.jsx`: import + render `<OnboardingChecklist />` come prima sezione del `<main>`.
+
+### 5 step del tutorial
+| n | Trigger | Body | CTA → |
+|---|---|---|---|
+| 1 | Default fresh guild | "You are the Guild Master. Recruit adventurers and dispatch them on expeditions." | /recruitment |
+| 2 | `adv_count < 3` | "You need at least 3 adventurers. 3 free refreshes/day, then 10/20/30 gold." | /recruitment |
+| 3 | `adv_count ≥ 3 AND total_completed == 0` | "Goblin Warrens is your starting dungeon. Recommended power 45, 60s duration." | /dungeons |
+| 4 | `total_completed ≥ 1 AND stored_step < 4` | "Your first run completed. Check the report for XP, gold and loot." | /expeditions |
+| 5 | `total_completed ≥ 1 AND equipped == 0` | "Equip loot to boost team power, or use Replay Last Run." | /inventory |
+
+### Test (1 file nuovo, 13 PASS)
+`tests/backend_phase11_3_test.py`:
+- Defaults (4): step 1 fresh, suggested 2 dopo 1 adv, suggested 3 dopo 3 advs, suggested 4 dopo 1 expedition
+- Patch (5): monotonic step, dismissed persistente, completed sticky, validation 422 su step fuori range, requires auth
+- Lazy migration (1): gilda con campi rimossi + state maturo → `completed=true` al primo GET
+- No regressions (3): OpenAPI 39, path `/api/guilds/onboarding` presente, leaderboard/recruitment/dungeons invariati
+
+### Verifiche
+- pytest **248 passed + 1 skipped** in 303s (zero regressioni Phase 1-11.2)
+- OpenAPI: 38 → 39 paths (solo `+PATCH /api/guilds/onboarding`)
+- ESLint OnboardingChecklist.jsx: zero issue
+- **Mobile smoke 375x812**: checklist visibile, zero horizontal overflow, CTA + SKIP cliccabili, testi non troncati
+- Anti pay-to-win: nessuna reward gold/XP per completamento
+
+### Lazy migration policy
+Le gilde create prima di Phase 11.3 NON hanno `onboarding_step`, `onboarding_completed`, `onboarding_dismissed`. Al primo `GET /api/guilds/me` post-deploy:
+1. Se la gilda ha `total_expeditions_completed >= 1` E `adventurer_count >= 3` → migra a `completed=true, step=5` (no flashing).
+2. Altrimenti i campi default sono `step=1, completed=false, dismissed=false` (via `guild_public()` projection con `.get()` fallback).
+
+Nessuna migrazione batch: tutto lazy on first read.
+
+### Limiti / debt
+- Nessun "re-enable onboarding" UI per chi ha skippato — toast lo menziona ("Phase later"). Aggiungere in un futuro Profile page (~10 LOC).
+- I 5 step coprono solo first-run; tutorial ricco (es. trait effects, replay, leaderboard) deferito.
+- Contextual hint sui pages target (Recruitment/Dungeons) NON implementato: il checklist sulla Dashboard è sufficiente e meno invasivo per ora. Aggiungibile in 30 LOC se serve.
+
+### Next Action Items (in ordine ROI)
+1. **i18n Localization (P1, ~150 LOC)**: estrai stringhe UI in `lang/{en,it}.json` + LanguageContext. Apre il prodotto al mercato non-anglofono.
+2. **Phase 9.3 — Email Resend integration (P2, ~60 LOC)**: real email per password reset (sostituisce console log attuale).
+3. **Daily Quests (P2, ~120 LOC)**: 1-3 obiettivi giornalieri (es. "complete 1 expedition") con reward gold piccolo. Retention loop +25-40% DAU.
+4. **Re-enable onboarding UI (P3, ~10 LOC)**: bottone nel profile per riavviare tutorial.
+
+
+
 ## Phase 11.2 — 2026-06-24 (Soft Gates + Recruitment Refresh Limit)
 Implemented (235/235 pytest PASS + 1 skipped, OpenAPI 37→38 paths +1):
 

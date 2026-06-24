@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import OnboardingChecklist from "../components/OnboardingChecklist";
 import { Button } from "../components/ui/button";
 
 const formatDate = (iso) => {
@@ -137,6 +138,8 @@ export default function Dashboard() {
             <AppHeader subtitle="DASHBOARD" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+                <OnboardingChecklist />
+
                 <section className="mb-8">
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: GUILD OVERVIEW
