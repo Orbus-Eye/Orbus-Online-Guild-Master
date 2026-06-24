@@ -180,6 +180,64 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5e — 2026-06-24 (Expeditions Domain Split — ultimo grande)
+Implemented (zero behavior change, **159/159 pytest PASS** in 195s, OpenAPI **36/36 paths byte-identici**, no circular import warning, FE non toccato):
+
+- **Created** `app/expeditions/` (5 file, ~600 LOC):
+  - `__init__.py` (8 LOC) — package marker, intentionally empty (no eager route loading)
+  - `schemas.py` (21 LOC) — `ExpeditionCreateIn` (validato 1-10 raw, per-dungeon team-size enforcement nel service) + backward-compat alias `ExpeditionStartIn`
+  - `services.py` (~480 LOC) — orchestration completa: `_dispatch_expedition` (start + replay shared), `_evaluate_dungeon_gate` (sticky soft-progression Phase 7/8), `_complete_one_expedition` (atomic claim, idempotente), `complete_due_expeditions` (lazy sweep), `_find_last_completed_expedition`, `_check_replay_eligibility` (9 variant guards), `_resolve_levelup`, `_build_result_log`, `CLASS_LEVELUP_STAT`, `expedition_public`, `member_public`, e 5 thin route-facing services (`start_expedition`, `list_expeditions`, `get_last_completed`, `replay_last`, `get_expedition`)
+  - `routes.py` (60 LOC) — `APIRouter(prefix="/api/expeditions")` con 5 endpoint. Route order critico: `/last-completed` e `/replay-last` registrati PRIMA del catch-all `/{expedition_id}` (preserva semantica FastAPI)
+
+- **Migrated endpoints** (5/5): `POST /`, `GET /`, `GET /last-completed`, `POST /replay-last`, `GET /{expedition_id}`. Tutti restituiscono shape identica byte-per-byte: stesse 22 chiavi su `expedition_public`, stesse 15 su `member_public`, stesso `{expedition, members, loot_items}` su detail.
+
+- **Migrated helpers** (12): `_dispatch_expedition`, `_evaluate_dungeon_gate`, `_complete_one_expedition`, `complete_due_expeditions`, `_find_last_completed_expedition`, `_check_replay_eligibility`, `_resolve_levelup`, `_build_result_log`, `CLASS_LEVELUP_STAT`, `expedition_public`, `member_public`, `_roll_loot_for_dungeon` (quest'ultimo delegato direttamente a `app.expeditions.loot_tables.roll_loot_for_dungeon`).
+
+- **Lazy imports circolari rimossi** (eliminati a livello modulo):
+  - `app/guilds/routes.py::get_my_guild` — era `from server import complete_due_expeditions` (lazy in funzione) → ora `from app.expeditions.services import complete_due_expeditions` (eager top-level)
+  - `app/dungeons/services.py::list_dungeons_for_guild` — era `from server import _evaluate_dungeon_gate` (lazy in funzione) → ora `from app.expeditions.services import _evaluate_dungeon_gate` (eager top-level)
+
+- **Package `__init__.py` svuotati** (`equipment/`, `guilds/`, `items/`, `expeditions/`): rimossi gli eager `from app.X.routes import router` che creavano cicli quando `expeditions.services` importava `equipment.services`. Server.py continua a importare router via `app.X.routes` direttamente (zero usages package-level — verificato con grep).
+
+- **Cosa resta in server.py** (837 linee — atteso ~600-700, leggermente più alto per via degli shim mantenuti):
+  - Lifespan/ASGI app (FastAPI factory, CORS, middleware)
+  - `ensure_indexes()` + 3 seed helpers (`seed_classes_and_traits`, `seed_dungeons_and_items`, `seed_tester`)
+  - Mount router: `app.include_router({auth,guilds,recruitment,equipment,adventurers,dungeons,items,inventory,admin,expeditions}_router)`
+  - 11 backward-compat shim 1-2 linee (`guild_public`, `class_public`, `trait_public`, `adventurer_public`, `candidate_public`, `dungeon_public`, `item_public`, `inventory_entry_public`, `member_public`, `expedition_public`, `_resolve_levelup`, `validate_item_monetization`)
+  - Equipment helpers Phase 6 (`_empty_slot_map`, `_equipped_slot_entry`, `_item_summary_for_snapshot`, `_load_equipment_for_adventurer`, `_load_equipment_for_guild`, `_count_equipped_for_guild_items`, `_build_equipment_response`) — duplicati di `app/equipment/services.py`, candidati per rimozione in fase successiva
+  - Auth helpers shim 1-line (`_check_login_lock`, `_record_login_failure`, `_reset_login_attempts`, `_create_refresh_token`, `_consume_refresh_token`, `_revoke_refresh_token`, `_revoke_all_refresh_tokens`, `_user_guild_or_404`)
+  - Pre-shim imports + `_resolve_cors_origins()` helper
+
+- **server.py trimmed**: 1465 → **837 linee** (**−628, −42.8%**). Drop singolo più grande dopo Phase 5.5f (Admin, −342).
+
+- **Trend cumulato dall'inizio del refactor**:
+  - pre-5.5b baseline: 2541
+  - 5.5b → 5.5d cumulato: 2541 → 1807 (−734)
+  - 5.5f (admin): 1807 → 1465 (−342)
+  - **5.5e (expeditions): 1465 → 837 (−628)**
+  - **Totale refactor da baseline: −1704 linee (−67.1%)**
+
+- **Verifiche post-refactor**:
+  - pytest 159/159 PASS (148 baseline + 11 smoke Phase 5.6b) in 195.33s, includendo Phase 3 expedition lifecycle, Phase 6 equipment snapshots, Phase 7 dungeon gates + equipment delta + loot tables, Phase 8 max_team_power_ever + 9 replay variants
+  - OpenAPI diff: VUOTO (36 → 36 paths)
+  - `python -c "import server"` → SERVER_IMPORT_OK, **zero circular import warning**
+  - Backend startup logs: `Orbus backend ready (env=development)`, seeds idempotenti, nessun errore
+  - `grep "from server import" app/` → 0 hits (zero lazy/eager imports da server in app)
+
+- **Workaround/lazy import rimasti**:
+  - **In server.py**: backward-compat shim function-level (~12, 1-2 linee ciascuno) — necessari per `tests/backend_phase3_test.py` che importa `validate_item_monetization` e `_resolve_levelup` direttamente da `server`. Funzioni shim che redirectano alla canonical implementation in app/<domain>/services.
+  - **In app/adventurers/services.py**: 2 lazy imports function-level `from app.equipment.services import _empty_slot_map, _load_equipment_for_guild` (pre-esistenti Phase 5.5d, NON introdotti in 5.5e). Candidati per cleanup in Phase 5.5h.
+  - **NESSUN** lazy import circolare con `server.py`. **NESSUN** import a livello funzione introdotto in 5.5e.
+
+### Known intermittent test (out of scope 5.6b, status invariato)
+- pytest-xdist race condition occasionale su `test_shadow_crypts_failure_never_rare` e `test_equip_unequip_cycle` → mitigation: re-run isolato. Long-term: `--dist=loadgroup` con `@pytest.mark.xdist_group`.
+
+### Raccomandazione next step
+- **Phase 5.5g — Seeds + Lifespan migration (P1, ~30 min)**: spostare `seed_classes_and_traits`, `seed_dungeons_and_items`, `seed_tester`, `ensure_indexes`, `lifespan` in `app/seeds/runtime.py` e `app/core/lifespan.py`. Target: server.py < 250 LOC, solo ASGI factory + middleware + router mount.
+- **Phase 5.5h — Equipment helpers dedup (P2, ~15 min)**: rimuovere i duplicati `_load_equipment_for_*` da server.py (sono già canonical in `app.equipment.services`).
+- **Feature gameplay (Phase 9, P3)**: Onboarding Tutorial 3-step (rates retention +3x) / Email Resend per password reset / max_team_power UI badge / Leaderboard guilds per `max_team_power_ever`.
+
+
 ## Phase 5.6b — 2026-06-24 (Stabilization Fixes — zero feature change)
 Implemented (zero behavior change, **148/148 pytest PASS** in 217s, OpenAPI 36/36 paths byte-identici, smoke FE validato):
 
