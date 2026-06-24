@@ -105,7 +105,7 @@ const Skeleton = () => (
         <div className="h-3 w-1/3 bg-secondary rounded-sm mb-6" />
         <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-3 w-full bg-secondary rounded-sm" />
+                <div key={`skel-line-${i}`} className="h-3 w-full bg-secondary rounded-sm" />
             ))}
         </div>
     </div>
@@ -212,7 +212,7 @@ export default function Recruitment() {
                 {loading && !candidates && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         {[...Array(4)].map((_, i) => (
-                            <Skeleton key={i} />
+                            <Skeleton key={`skel-card-${i}`} />
                         ))}
                     </div>
                 )}

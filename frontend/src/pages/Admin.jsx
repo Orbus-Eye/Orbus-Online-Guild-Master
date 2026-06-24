@@ -470,7 +470,7 @@ export default function Admin() {
                                             className="border-b border-border/60 hover:bg-secondary/20"
                                         >
                                             {cfg.renderRow(r).map((cell, i) => (
-                                                <td key={i} className="px-3 py-2 whitespace-nowrap">
+                                                <td key={`${r.id}-${cfg.columns[i] || i}`} className="px-3 py-2 whitespace-nowrap">
                                                     {cell}
                                                 </td>
                                             ))}

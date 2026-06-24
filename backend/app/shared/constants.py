@@ -53,6 +53,14 @@ SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accesso
 # Test-fixture credentials (NOT real secrets). Used by the idempotent
 # `seed_tester()` helper which is itself gated by `APP_ENV != "production"`,
 # so these values are never written to a production DB.
+#
+# `TESTER_PASSWORD` is loaded from the env var of the same name; the
+# `"password123"` literal is only used as a dev/CI fallback. In production
+# the seed is skipped entirely (see `seed_tester()` in `server.py`), so the
+# fallback is never persisted. If you need a non-default tester credential
+# for staging/preview, set `TESTER_PASSWORD` in your environment.
+import os as _os
+
 TESTER_EMAIL = "tester@orbus.test"
 TESTER_USERNAME = "tester"
-TESTER_PASSWORD = "password123"  # noqa: S105 — test fixture credential, not a real secret
+TESTER_PASSWORD = _os.environ.get("TESTER_PASSWORD", "password123")  # noqa: S105 — dev/CI fallback only; prod skips seeding

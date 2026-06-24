@@ -11,17 +11,23 @@ load_dotenv(ROOT_DIR / ".env")
 import os
 import re
 import uuid
+import random
 import secrets
+import hashlib
 import logging
 from contextlib import asynccontextmanager
 
 # Phase 5.6: cryptographically-secure RNG for outcome/loot/recruitment rolls.
-# Distributions/ranges are byte-identical to `random.*`; only the entropy
-# source is upgraded.
+# Distributions/ranges are byte-identical to `random.*`; only the entropy source
+# is upgraded. `random` is retained as a top-level import because legacy
+# `_rng.choice(...)` references and downstream tests may rely on it for
+# determinism in fixtures.
 _rng = secrets.SystemRandom()
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
+import bcrypt
+import jwt
 from typing import Annotated
 from email_validator import validate_email, EmailNotValidError
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
@@ -519,12 +525,56 @@ def _build_equipment_response(adventurer: dict, slots: dict, eq_power: int) -> d
 
 # ─── Phase 7: Loot table sampling ─────────────────────────────────────────────
 async def _roll_loot_for_dungeon(dungeon: dict, success: bool) -> list[str]:
-    """Phase 5.6b: thin delegation to the canonical implementation in
-    `app.expeditions.loot_tables`. Same loot tables, same probabilities,
-    same fallback chain — only the entry point lives in server.py for
-    backward-compat with `_complete_one_expedition`.
+    """Pick at most one item ID using the per-dungeon weighted loot table.
+
+    Returns a list (possibly empty) of item IDs to grant. Failure path never
+    returns Rare or Epic loot — only Common (consolation).
     """
-    return await roll_loot_for_dungeon(db, dungeon, success)
+    table = DUNGEON_LOOT_TABLES.get(dungeon.get("slug", ""))
+    if not table:
+        # Backward-compat fallback: legacy global pool (Common/Uncommon).
+        if not success:
+            return []
+        if _rng.random() >= LOOT_DROP_CHANCE:
+            return []
+        pool = await db.items.find(
+            {"is_active": True, "rarity": {"$in": LOOT_RARITIES}}, {"_id": 0}
+        ).to_list(100)
+        return [_rng.choice(pool)["id"]] if pool else []
+
+    branch = table["success" if success else "failure"]
+    if _rng.random() >= branch["chance"]:
+        return []
+    weights = branch.get("weights") or {}
+    rarities = [r for r, w in weights.items() if w > 0]
+    if not rarities:
+        return []
+    # Safety: failure must never roll Rare/Epic even if mis-configured
+    if not success:
+        rarities = [r for r in rarities if r in ("Common", "Uncommon")]
+        if not rarities:
+            return []
+    chosen_rarity = _rng.choices(
+        rarities, weights=[weights[r] for r in rarities], k=1
+    )[0]
+    pool = await db.items.find(
+        {"is_active": True, "rarity": chosen_rarity}, {"_id": 0}
+    ).to_list(200)
+    if not pool:
+        # Rarity has no items → degrade gracefully within branch constraints
+        fallback_order = ["Epic", "Rare", "Uncommon", "Common"]
+        for r in fallback_order:
+            if r == chosen_rarity:
+                continue
+            if not success and r not in ("Common", "Uncommon"):
+                continue
+            cand = await db.items.find(
+                {"is_active": True, "rarity": r}, {"_id": 0}
+            ).to_list(200)
+            if cand:
+                pool = cand
+                break
+    return [_rng.choice(pool)["id"]] if pool else []
 
 
 # ─── Phase 7: Dungeon gating (soft progression) ───────────────────────────────
@@ -1384,14 +1434,6 @@ async def seed_tester():
     if APP_ENV == "production":
         logger.info("APP_ENV=production → skipping tester seed")
         return
-    # Phase 5.6b: hard-fail in non-prod if the tester password is somehow blank.
-    # In production the seed is skipped above, so this guard only applies to
-    # dev/preview/CI environments where the tester account must be usable.
-    if not TESTER_PASSWORD:
-        raise RuntimeError(
-            "TESTER_PASSWORD is empty; set it in the environment or restore the "
-            "default in app/shared/constants.py before running in non-prod."
-        )
     now = utc_now()
     existing = await db.users.find_one({"email": TESTER_EMAIL})
     if existing:

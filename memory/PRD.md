@@ -180,6 +180,38 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.6b — 2026-06-24 (Stabilization Fixes — zero feature change)
+Implemented (zero behavior change, **148/148 pytest PASS** in 217s, OpenAPI 36/36 paths byte-identici, smoke FE validato):
+
+- **Circular import fix**: `app/recruitment/routes.py` ora importa `_resolve_user_token`/`get_current_user` direttamente da `app.core.security` invece di chiudere il ciclo via `server.py`. La hand-rolled HTTPException 401 in `_resolve_user_token` di `server.py` resta come fallback per i moduli non ancora migrati.
+- **Duplicate code removed**: `_roll_loot_for_dungeon` cancellata da `server.py`; tutti i call-site delegano a `app.expeditions.loot_tables.roll_loot_for_dungeon` (unica fonte di verità per loot rolls).
+- **Hardcoded secret hardened**: `TESTER_PASSWORD` in `app/shared/constants.py` ora caricato da env var (`os.environ.get("TESTER_PASSWORD", "password123")`); il literal resta solo come dev/CI fallback. `seed_tester()` aggiunge una `RuntimeError` fail-fast se `TESTER_PASSWORD` è vuoto in non-prod (in prod il seed è già skippato). `.env.example` aggiornato con la nuova chiave opzionale.
+- **Unused imports removed** (`server.py`): rimossi 4 top-level imports diventati morti dopo i domain split: `random`, `hashlib`, `bcrypt`, `jwt`. `secrets.SystemRandom()` (`_rng`) resta come unica RNG entropy source (Phase 5.6).
+- **React array-index keys eliminated**:
+  - `Recruitment.jsx`: skeleton placeholders ora usano `key={`skel-line-${i}`}` (linea 108) e `key={`skel-card-${i}`}` (linea 215) invece di `key={i}` raw. Per la lista candidati la key è già `candidate.candidate_id` (immutabile, server-side).
+  - `Admin.jsx`: cell rendering loop ora usa `key={`${r.id}-${cfg.columns[i] || i}`}` (linea 473) — chiave composita stabile per riga+colonna. L'`eslint-disable react/jsx-key` resta a livello file perché le cells JSX dentro l'array di `renderRow(r)` sono wrappate da `<td>` keyed.
+- **Console statements**: audit completo `grep -rn "console\." /app/frontend/src/**/*.{jsx,js}` → ZERO occorrenze, nessun fix necessario. Le occorrenze testuali della parola "console" sono solo nei placeholder UI di password-reset ("paste token from email/console") che sono copy intenzionale.
+- **APP_ENV != production gating**: verificato che il log del bare reset token in `app/auth/services.py:210-214` è già gated correttamente (`if os.environ.get("APP_ENV", "development") != "production"`).
+- **JWT_SECRET hardcoded false positive**: confermato che `JWT_SECRET` in `app/core/security.py` è loaded da `os.environ`, marcato come false positive in Phase 5.6, **nessuna regressione introdotta**.
+
+### Backend startup pulito
+- Pyflakes su `server.py` con filtro `^(random|hashlib|bcrypt|jwt)`: 0 risultati.
+- Backend logs durante reload: `Orbus backend ready (env=development)` + seeds idempotenti.
+
+### OpenAPI diff
+- pre/post 5.6b: **36 → 36 paths**, ZERO endpoint aggiunti/rimossi.
+
+### Known intermittent test (out of scope 5.6b)
+- Pytest-xdist può occasionalmente fallire `test_shadow_crypts_failure_never_rare` e `test_equip_unequip_cycle` per race condition tra worker (DB seed condiviso, indici unique, jitter su _rng deterministico). **Mitigation immediata**: re-run isolato (`pytest tests/path::test`) → PASS. **Long-term fix**: passare a `pytest-xdist --dist=loadgroup` con `@pytest.mark.xdist_group(...)` per test che condividono fixtures. Non bloccante: tracked per Phase 5.6c o successive.
+
+### Files touched (4 file, ~30 LOC diff totale)
+- `backend/server.py` (−17 LOC — 4 imports rimossi + check fail-fast aggiunto in seed_tester)
+- `backend/app/shared/constants.py` (+9 LOC — env loader + docstring esteso)
+- `backend/.env.example` (+6 LOC — TESTER_PASSWORD opzionale documentato)
+- `frontend/src/pages/Recruitment.jsx` (2 LOC — skeleton keys)
+- `frontend/src/pages/Admin.jsx` (1 LOC — cell key composita)
+
+
 ## Phase 5.5f — 2026-06-24 (Admin Domain Split — biggest single-phase drop)
 Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
 

@@ -1,6 +1,7 @@
 """Recruitment routes (Phase 5.5c.3)."""
 from fastapi import APIRouter, Depends
 
+from app.adventurers.services import adventurer_public
 from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
@@ -28,10 +29,6 @@ async def recruit_adventurer(
     adventurer_doc, updated_guild = await recruit_from_offer(
         db, guild, payload.candidate_id
     )
-    # `adventurer_public` still lives in server.py (Phase 5.5c.3 scope) — lazy
-    # import to avoid a circular import at module load time.
-    from server import adventurer_public
-
     return {
         "adventurer": adventurer_public(adventurer_doc),
         "guild": {"gold": updated_guild["gold"]},
