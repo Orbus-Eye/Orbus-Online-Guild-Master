@@ -180,6 +180,56 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5f — 2026-06-24 (Admin Domain Split — biggest single-phase drop)
+Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
+
+- **Created** `app/admin/` (4 file, 434 LOC):
+  - `__init__.py` (4 LOC) — esporta router
+  - `schemas.py` (7 LOC) — placeholder (admin usa raw dict payload come prima)
+  - `services.py` (89 LOC) — `validate_item_monetization`, `_slug_ok`, `_strip_db_fields`, `_build_item_doc` (merge helper per create/update), `utc_now`, costanti enum (`VALID_ROLES`, `VALID_AFFECTED_STAT`, `VALID_ITEM_TYPES`, `VALID_RARITIES`)
+  - `routes.py` (334 LOC) — `APIRouter(prefix="/api/admin")` con 16 endpoint protetti da `Depends(get_admin_user)`
+
+- **Migrated endpoints** (16/16):
+  - Classes: `GET /classes`, `POST /classes`, `PATCH /classes/{id}`, `POST /classes/{id}/toggle-active`
+  - Traits: `GET /traits`, `POST /traits`, `PATCH /traits/{id}`, `POST /traits/{id}/toggle-active`
+  - Dungeons: `GET /dungeons`, `POST /dungeons`, `PATCH /dungeons/{id}`, `POST /dungeons/{id}/toggle-active`
+  - Items: `GET /items`, `POST /items`, `PATCH /items/{id}`, `POST /items/{id}/toggle-active`
+
+- **Migrated helpers**: `validate_item_monetization`, `_slug_ok`, `_strip_db_fields` (tutti in `app.admin.services`). server.py mantiene shim no-op per `validate_item_monetization` come pre-import placeholder.
+
+- **Invarianti preservati**:
+  - Admin security: tutti 16 endpoint protetti, 401 senza token, 403 non-admin (verificato curl: `GET /api/admin/items` senza auth → 401, con tester admin → 200 con 72 item)
+  - Monetization invariant: `validate_item_monetization` chiamato su POST + PATCH items, 4 combo forbidden → 400
+  - Soft delete via `toggle-active`, hard delete assente
+  - GET admin list include inactive entries; GET public list (in `/api/dungeons`, `/api/items` già migrati) esclude inactive
+
+- **`server.py` trimmed**: 1807 → **1465 linee** (−342, −18.9%). **Drop singolo più grande del refactor**.
+
+- **Trend cumulato dall'inizio del refactor**:
+  - pre-5.5b baseline: 2541
+  - 5.5b → 5.5d (cumulato): 2541 → 1807 (−734)
+  - **5.5f (admin): 1807 → 1465 (−342)**
+  - **Totale refactor da baseline: −1076 linee (−42.3%)**
+
+- **Test result** (148/148 PASS, 149s clean run): Phase 4 (admin CRUD su tutte e 4 le entità, 16 endpoint con non-admin → 403, monetization 400), Phase 5 (admin gating audit), Phase 6 (items rebalanced), Phase 7 (loot table + monetization), Phase 8 (admin toggle-active dungeon → replay blocked).
+
+- **OpenAPI diff**: VUOTO (36 → 36 paths). Verificato anche tutti i 16 endpoint admin elencati in `/api/openapi.json`.
+
+- **FE smoke**: backend logs durante 5+ minuti di traffico real-world post-migrazione → zero 5xx. Pannello admin React continua a chiamare `/api/admin/*` correttamente.
+
+- **Workaround/lazy import rimasti**: tutti pre-esistenti, NESSUN nuovo lazy import introdotto in Phase 5.5f. Lista invariata:
+  - `app/guilds/routes.py::get_my_guild` → `complete_due_expeditions`
+  - `app/dungeons/services.py::list_dungeons_for_guild` → `_evaluate_dungeon_gate`
+  - `app/recruitment/routes.py::recruit_adventurer` → `adventurer_public`
+  - `app/adventurers/services.py` lazy `_empty_slot_map` + `_load_equipment_for_guild`
+  - Shim 1-linea in server.py: 11 funzioni serializer/helper (Phase 5.5b-d)
+
+- **Cosa resta in server.py (1465 linee, 1 dominio gameplay)**:
+  - **expeditions** (`/api/expeditions/*` 5 endpoint + 7 helper grandi: `_dispatch_expedition`, `_complete_one_expedition`, `_check_replay_eligibility`, `_evaluate_dungeon_gate`, `_resolve_levelup`, `_roll_loot_for_dungeon`, `complete_due_expeditions`, `expedition_public`, `member_public`)
+  - Seeds (`ensure_indexes`, `seed_classes_and_traits`, `seed_dungeons_and_items`, `seed_tester`)
+  - Lifespan + FastAPI app + CORS middleware
+  - 11 backward-compat shim 1-2 linee
+
 ## Phase 5.5d — 2026-06-24 (Adventurers + Classes + Traits + Equipment Split)
 Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
 
