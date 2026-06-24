@@ -67,19 +67,24 @@ def decode_token(token: str) -> dict:
 
 
 # ─── Bearer scheme + deps ────────────────────────────────────────────────────
-bearer_scheme = HTTPBearer(auto_error=True)
+# auto_error=False so missing/empty Authorization headers raise our own HTTP 401
+# (FastAPI's HTTPBearer with auto_error=True would emit 403). This preserves
+# the pre-refactor behavior expected by tests.
+bearer_scheme = HTTPBearer(auto_error=False)
 optional_bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    creds: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
 ) -> dict:
+    if creds is None or not creds.credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
     payload = decode_token(creds.credentials)
     if payload.get("type") != "access":
         raise HTTPException(status_code=401, detail="Invalid token type")
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token payload")
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")

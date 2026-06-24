@@ -1,0 +1,262 @@
+"""Auth services (Phase 5.5b).
+
+Pure business logic for auth endpoints. All functions accept the Motor `db`
+handle and the current UTC time as parameters where relevant, so they remain
+unit-testable without monkey-patching globals. Behavior is byte-identical to
+the previous inline implementation in `server.py`.
+"""
+import hashlib
+import logging
+import secrets
+import uuid
+from datetime import datetime, timedelta, timezone
+
+from fastapi import HTTPException
+from pymongo import ReturnDocument
+from pymongo.errors import DuplicateKeyError
+
+from app.core.security import (
+    create_access_token,
+    hash_password,
+    verify_password,
+)
+from app.shared.constants import (
+    LOGIN_LOCK_DURATION_MINUTES,
+    LOGIN_LOCK_MAX_ATTEMPTS,
+    PASSWORD_RESET_TTL_MINUTES,
+    REFRESH_TOKEN_TTL_DAYS,
+)
+
+logger = logging.getLogger("orbus")
+
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def user_public(doc: dict) -> dict:
+    """Project a Mongo user document to its public JSON shape."""
+    return {
+        "id": doc["id"],
+        "email": doc["email"],
+        "username": doc["username"],
+        "is_admin": doc.get("is_admin", False),
+        "created_at": doc["created_at"],
+    }
+
+
+# ─── Opaque token helpers (refresh + password reset) ─────────────────────────
+def _hash_token(token: str) -> str:
+    """SHA-256 hex digest. Used for opaque refresh/reset tokens at rest."""
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def _new_opaque_token() -> str:
+    """URL-safe 256-bit opaque token."""
+    return secrets.token_urlsafe(32)
+
+
+# ─── Login lockout ───────────────────────────────────────────────────────────
+async def _check_login_lock(db, email: str) -> None:
+    row = await db.login_attempts.find_one({"email": email})
+    if not row:
+        return
+    locked_until = row.get("locked_until")
+    if locked_until and isinstance(locked_until, datetime):
+        if locked_until.tzinfo is None:
+            locked_until = locked_until.replace(tzinfo=timezone.utc)
+        if locked_until > utc_now():
+            remaining = max(1, int((locked_until - utc_now()).total_seconds()))
+            raise HTTPException(
+                status_code=429,
+                detail="Too many failed login attempts. Try again later.",
+                headers={"Retry-After": str(remaining)},
+            )
+
+
+async def _record_login_failure(db, email: str) -> None:
+    now = utc_now()
+    row = await db.login_attempts.find_one_and_update(
+        {"email": email},
+        {
+            "$inc": {"failed_count": 1},
+            "$set": {"last_attempt_at": now},
+            "$setOnInsert": {"email": email, "created_at": now},
+        },
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+    if row.get("failed_count", 0) >= LOGIN_LOCK_MAX_ATTEMPTS:
+        lock_until = now + timedelta(minutes=LOGIN_LOCK_DURATION_MINUTES)
+        await db.login_attempts.update_one(
+            {"email": email},
+            {"$set": {"locked_until": lock_until, "last_attempt_at": now}},
+        )
+
+
+async def _reset_login_attempts(db, email: str) -> None:
+    await db.login_attempts.delete_one({"email": email})
+
+
+# ─── Refresh tokens ──────────────────────────────────────────────────────────
+async def _create_refresh_token(db, user_id: str) -> str:
+    token = _new_opaque_token()
+    now = utc_now()
+    await db.refresh_tokens.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "token_hash": _hash_token(token),
+        "created_at": now,
+        "expires_at": now + timedelta(days=REFRESH_TOKEN_TTL_DAYS),
+        "revoked": False,
+    })
+    return token
+
+
+async def _consume_refresh_token(db, token: str) -> dict:
+    row = await db.refresh_tokens.find_one({"token_hash": _hash_token(token)})
+    if not row or row.get("revoked"):
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    expires_at = row.get("expires_at")
+    if expires_at and isinstance(expires_at, datetime):
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if expires_at <= utc_now():
+            raise HTTPException(status_code=401, detail="Refresh token expired")
+    user = await db.users.find_one({"id": row["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
+
+async def _revoke_refresh_token(db, token: str) -> bool:
+    res = await db.refresh_tokens.update_one(
+        {"token_hash": _hash_token(token)},
+        {"$set": {"revoked": True, "revoked_at": utc_now()}},
+    )
+    return res.modified_count > 0
+
+
+async def _revoke_all_refresh_tokens(db, user_id: str) -> int:
+    res = await db.refresh_tokens.update_many(
+        {"user_id": user_id, "revoked": False},
+        {"$set": {"revoked": True, "revoked_at": utc_now()}},
+    )
+    return res.modified_count
+
+
+# ─── High-level service operations used by routes ────────────────────────────
+async def register_user(db, email: str, username: str, password: str) -> tuple[dict, str, str]:
+    """Insert a new user. Raises 409 on duplicate. Returns (user_doc, access, refresh)."""
+    existing = await db.users.find_one({"email": email})
+    if existing:
+        raise HTTPException(status_code=409, detail="Email already registered")
+
+    now = utc_now()
+    user_id = str(uuid.uuid4())
+    user_doc = {
+        "id": user_id,
+        "email": email,
+        "username": username,
+        "password_hash": hash_password(password),
+        "is_admin": False,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    try:
+        await db.users.insert_one(user_doc)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail="Email already registered")
+
+    access = create_access_token(user_id)
+    refresh = await _create_refresh_token(db, user_id)
+    return user_doc, access, refresh
+
+
+async def authenticate_login(db, email: str, password: str) -> tuple[dict, str, str]:
+    """Login flow with lockout. Returns (user_doc, access, refresh) or raises."""
+    await _check_login_lock(db, email)
+    user = await db.users.find_one({"email": email})
+    if not user or not verify_password(password, user["password_hash"]):
+        await _record_login_failure(db, email)
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    await _reset_login_attempts(db, email)
+    access = create_access_token(user["id"])
+    refresh = await _create_refresh_token(db, user["id"])
+    return user, access, refresh
+
+
+async def request_password_reset(db, email: str) -> None:
+    """Always returns silently — caller must respond with HTTP 200 regardless
+    of whether the email exists, to prevent account enumeration. Logs the
+    reset token to the backend console (placeholder for real email send)."""
+    user = await db.users.find_one({"email": email})
+    if not user:
+        return
+    token = _new_opaque_token()
+    now = utc_now()
+    await db.password_reset_tokens.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "token_hash": _hash_token(token),
+        "created_at": now,
+        "expires_at": now + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES),
+        "used": False,
+    })
+    logger.info(
+        "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
+        email, token, PASSWORD_RESET_TTL_MINUTES,
+    )
+
+
+async def confirm_password_reset(db, token: str, new_password: str) -> None:
+    """Apply a new password using an opaque reset token. Caller must have
+    already validated `new_password` strength. Revokes ALL refresh tokens for
+    the user on success."""
+    row = await db.password_reset_tokens.find_one({"token_hash": _hash_token(token)})
+    if not row or row.get("used"):
+        raise HTTPException(status_code=400, detail="Invalid or already-used reset token")
+    expires_at = row.get("expires_at")
+    if expires_at and isinstance(expires_at, datetime):
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if expires_at <= utc_now():
+            raise HTTPException(status_code=400, detail="Reset token expired")
+
+    user = await db.users.find_one({"id": row["user_id"]})
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid reset token")
+
+    now = utc_now()
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "password_hash": hash_password(new_password),
+            "updated_at": now.isoformat(),
+        }},
+    )
+    await db.password_reset_tokens.update_one(
+        {"id": row["id"]},
+        {"$set": {"used": True, "used_at": now}},
+    )
+    await _revoke_all_refresh_tokens(db, user["id"])
+    await _reset_login_attempts(db, user["email"])
+
+
+__all__ = [
+    "utc_now",
+    "user_public",
+    "_hash_token",
+    "_new_opaque_token",
+    "_check_login_lock",
+    "_record_login_failure",
+    "_reset_login_attempts",
+    "_create_refresh_token",
+    "_consume_refresh_token",
+    "_revoke_refresh_token",
+    "_revoke_all_refresh_tokens",
+    "register_user",
+    "authenticate_login",
+    "request_password_reset",
+    "confirm_password_reset",
+]

@@ -194,8 +194,26 @@ Implemented (zero behaviour change, **133/133 pytest PASS** identical baseline):
 - Helper functions (inventory/equipment/recruitment snapshots) remain in `server.py` (they share the Motor `db` handle which needs to move to `app/core/database.py` first).
 
 ## Next tasks (Phase 8 candidates)
-1. **Replay last run** (best ROI: 1 endpoint + 1 button, big retention win)
-2. **Real email integration** for password reset (Resend/SendGrid) + FE refresh-token consumption
-3. **Onboarding tutorial** 5-step modal on first login
-4. **Phase 5.5b**: complete the route split now that data/formulas are isolated
+1. **Phase 5.5c**: split remaining 8 domains (guilds, adventurers, recruitment, dungeons, inventory, equipment, expeditions, admin) following the auth pattern established in 5.5b
+2. **Replay last run** (best ROI: 1 endpoint + 1 button, big retention win)
+3. **Real email integration** for password reset (Resend/SendGrid) + FE refresh-token consumption
+4. **Onboarding tutorial** 5-step modal on first login
 5. **`max_team_power_ever`** denormalised field so Dragon's Hoard gate is "sticky"
+
+## Phase 5.5b — 2026-06-24 (Auth Domain Migration — POC for modular pattern)
+Implemented (zero behavior change, **133/133 pytest PASS**, OpenAPI paths identical):
+- **Created** `app/core/` scaffolding:
+  - `app.core.config` — env-driven settings (MONGO_URL, DB_NAME, JWT_SECRET, APP_ENV) + `get_cors_origins()` + re-exports of gameplay/security constants from `app.shared.constants`
+  - `app.core.database` — shared Motor `AsyncIOMotorClient` + `db` handle + `close_database()`
+  - `app.core.security` — bcrypt helpers, JWT encode/decode, `validate_password_strength`, `bearer_scheme` (auto_error=False to preserve 401-on-missing-auth), `get_current_user`/`get_admin_user`/`get_optional_user` deps
+- **Created** `app/auth/` domain:
+  - `app.auth.schemas` — 6 Pydantic models (RegisterIn, LoginIn, RefreshIn, LogoutIn, PasswordResetRequestIn, PasswordResetConfirmIn) + `OrbusEmail` lenient type
+  - `app.auth.services` — 14 functions: `register_user`, `authenticate_login`, `request_password_reset`, `confirm_password_reset`, refresh-token lifecycle (`_create/_consume/_revoke/_revoke_all`), login-lockout (`_check/_record/_reset`), opaque-token helpers (`_hash_token`, `_new_opaque_token`), and `user_public` projection. All accept `db` as first arg → unit-testable.
+  - `app.auth.routes` — `APIRouter(prefix="/api/auth")` with all 7 endpoints (`register`, `login`, `me`, `refresh`, `logout`, `password-reset/{request,confirm}`)
+- **server.py** trimmed 2541 → 2241 lines (−300 lines = −11.8%) — all auth helpers, schemas, security deps and 7 route handlers removed; replaced by `from app.core.*`/`from app.auth.*` re-exports + `app.include_router(auth_router)`
+- **Backward-compat shims** in server.py: legacy `_check_login_lock(email)` etc (no `db` arg) still callable for any future code path
+- **`server.py.pre-phase55b.bak`** retained as rollback safety net
+- **OpenAPI paths**: 34/34 identical (zero diff between pre/post refactor)
+- Frontend: zero changes
+- Tests: zero changes (133 existing tests pass)
+

@@ -183,52 +183,80 @@ app = FastAPI(
 )
 
 api = APIRouter(prefix="/api")
-bearer_scheme = HTTPBearer(auto_error=False)
+
+# ─── Phase 5.5b: auth domain extracted to app/auth + app/core ─────────────────
+# Re-imported into server.py for backward-compat: tests and other domains
+# inside this module reference these symbols at the top-level (e.g.
+# `Depends(get_current_user)` on guilds/recruitment/expeditions endpoints).
+from app.core.security import (
+    bearer_scheme,
+    hash_password,
+    verify_password,
+    create_access_token,
+    decode_token,
+    validate_password_strength as _validate_password_strength,
+    PASSWORD_RULES_MESSAGE,
+    get_current_user,
+    get_admin_user,
+    get_optional_user,
+)
+from app.auth.services import (
+    user_public,
+    _hash_token,
+    _new_opaque_token,
+    _check_login_lock as _check_login_lock_with_db,
+    _record_login_failure as _record_login_failure_with_db,
+    _reset_login_attempts as _reset_login_attempts_with_db,
+    _create_refresh_token as _create_refresh_token_with_db,
+    _consume_refresh_token as _consume_refresh_token_with_db,
+    _revoke_refresh_token as _revoke_refresh_token_with_db,
+    _revoke_all_refresh_tokens as _revoke_all_refresh_tokens_with_db,
+)
+from app.auth.schemas import (
+    OrbusEmail as _AuthOrbusEmail,  # noqa: F401 — re-exported below as OrbusEmail
+    RegisterIn,
+    LoginIn,
+    RefreshIn,
+    LogoutIn,
+    PasswordResetRequestIn,
+    PasswordResetConfirmIn,
+)
+from app.auth.routes import router as auth_router
+
+
+# Backward-compat shims so legacy `await _check_login_lock(email)` calls
+# (no `db` arg) keep working if any future code still references them.
+async def _check_login_lock(email: str) -> None:
+    await _check_login_lock_with_db(db, email)
+
+
+async def _record_login_failure(email: str) -> None:
+    await _record_login_failure_with_db(db, email)
+
+
+async def _reset_login_attempts(email: str) -> None:
+    await _reset_login_attempts_with_db(db, email)
+
+
+async def _create_refresh_token(user_id: str) -> str:
+    return await _create_refresh_token_with_db(db, user_id)
+
+
+async def _consume_refresh_token(token: str) -> dict:
+    return await _consume_refresh_token_with_db(db, token)
+
+
+async def _revoke_refresh_token(token: str) -> bool:
+    return await _revoke_refresh_token_with_db(db, token)
+
+
+async def _revoke_all_refresh_tokens(user_id: str) -> int:
+    return await _revoke_all_refresh_tokens_with_db(db, user_id)
 
 
 # ─── Helpers ───────────────────────────────────────────────────────────────────
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
-
-
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-
-
-def verify_password(password: str, hashed: str) -> bool:
-    try:
-        return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
-    except Exception:
-        return False
-
-
-def create_access_token(user_id: str) -> str:
-    payload = {
-        "sub": user_id,
-        "iat": utc_now(),
-        "exp": utc_now() + timedelta(days=JWT_EXPIRY_DAYS),
-        "type": "access",
-    }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-
-
-def decode_token(token: str) -> dict:
-    try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-def user_public(doc: dict) -> dict:
-    return {
-        "id": doc["id"],
-        "email": doc["email"],
-        "username": doc["username"],
-        "is_admin": doc.get("is_admin", False),
-        "created_at": doc["created_at"],
-    }
 
 
 def guild_public(doc: dict) -> dict:
@@ -959,204 +987,6 @@ async def complete_due_expeditions(guild_id: str) -> int:
     return len(due)
 
 
-
-
-async def get_current_user(
-    creds: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
-) -> dict:
-    if creds is None or not creds.credentials:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_token(creds.credentials)
-    if payload.get("type") != "access":
-        raise HTTPException(status_code=401, detail="Invalid token type")
-    user_id = payload.get("sub")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
-    user = await db.users.find_one({"id": user_id}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
-async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict:
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return current_user
-
-
-async def get_optional_user(
-    creds: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
-) -> Optional[dict]:
-    """Soft-auth dependency: returns the current user if a valid bearer token
-    is provided, otherwise None. Never raises."""
-    if creds is None or not creds.credentials:
-        return None
-    try:
-        payload = decode_token(creds.credentials)
-        if payload.get("type") != "access":
-            return None
-        user_id = payload.get("sub")
-        if not user_id:
-            return None
-        return await db.users.find_one({"id": user_id}, {"_id": 0})
-    except HTTPException:
-        return None
-    except Exception:
-        return None
-
-
-# ─── Phase 5: Auth security helpers ────────────────────────────────────────────
-PASSWORD_RULES_MESSAGE = (
-    "Password must be at least 8 characters and contain a letter and a digit"
-)
-
-
-def _validate_password_strength(password: str) -> None:
-    """Raise HTTP 400 if password does not satisfy the Phase-5 policy.
-
-    Rules: min 8 chars + at least one letter + at least one digit.
-    Validation is intentionally performed at the route layer (not in Pydantic),
-    so the API returns HTTP 400 rather than 422.
-    """
-    if (
-        len(password) < 8
-        or not PASSWORD_REGEX_LETTER.search(password)
-        or not PASSWORD_REGEX_DIGIT.search(password)
-    ):
-        raise HTTPException(status_code=400, detail=PASSWORD_RULES_MESSAGE)
-
-
-def _hash_token(token: str) -> str:
-    """SHA-256 hex digest. Used for opaque refresh/reset tokens at rest."""
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
-
-
-def _new_opaque_token() -> str:
-    """URL-safe 256-bit opaque token."""
-    return secrets.token_urlsafe(32)
-
-
-async def _check_login_lock(email: str) -> None:
-    """Raise HTTP 429 (with Retry-After header) if email is currently locked out."""
-    row = await db.login_attempts.find_one({"email": email})
-    if not row:
-        return
-    locked_until = row.get("locked_until")
-    if locked_until and isinstance(locked_until, datetime):
-        if locked_until.tzinfo is None:
-            locked_until = locked_until.replace(tzinfo=timezone.utc)
-        if locked_until > utc_now():
-            remaining = max(1, int((locked_until - utc_now()).total_seconds()))
-            raise HTTPException(
-                status_code=429,
-                detail="Too many failed login attempts. Try again later.",
-                headers={"Retry-After": str(remaining)},
-            )
-
-
-async def _record_login_failure(email: str) -> None:
-    now = utc_now()
-    row = await db.login_attempts.find_one_and_update(
-        {"email": email},
-        {
-            "$inc": {"failed_count": 1},
-            "$set": {"last_attempt_at": now},
-            "$setOnInsert": {"email": email, "created_at": now},
-        },
-        upsert=True,
-        return_document=ReturnDocument.AFTER,
-    )
-    if row.get("failed_count", 0) >= LOGIN_LOCK_MAX_ATTEMPTS:
-        lock_until = now + timedelta(minutes=LOGIN_LOCK_DURATION_MINUTES)
-        await db.login_attempts.update_one(
-            {"email": email},
-            {"$set": {"locked_until": lock_until, "last_attempt_at": now}},
-        )
-
-
-async def _reset_login_attempts(email: str) -> None:
-    await db.login_attempts.delete_one({"email": email})
-
-
-async def _create_refresh_token(user_id: str) -> str:
-    """Issue a new opaque refresh token and persist its hash."""
-    token = _new_opaque_token()
-    now = utc_now()
-    await db.refresh_tokens.insert_one({
-        "id": str(uuid.uuid4()),
-        "user_id": user_id,
-        "token_hash": _hash_token(token),
-        "created_at": now,
-        "expires_at": now + timedelta(days=REFRESH_TOKEN_TTL_DAYS),
-        "revoked": False,
-    })
-    return token
-
-
-async def _consume_refresh_token(token: str) -> dict:
-    """Validate a refresh token. Returns the user doc or raises 401."""
-    row = await db.refresh_tokens.find_one({"token_hash": _hash_token(token)})
-    if not row or row.get("revoked"):
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-    expires_at = row.get("expires_at")
-    if expires_at and isinstance(expires_at, datetime):
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        if expires_at <= utc_now():
-            raise HTTPException(status_code=401, detail="Refresh token expired")
-    user = await db.users.find_one({"id": row["user_id"]}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
-async def _revoke_refresh_token(token: str) -> bool:
-    res = await db.refresh_tokens.update_one(
-        {"token_hash": _hash_token(token)},
-        {"$set": {"revoked": True, "revoked_at": utc_now()}},
-    )
-    return res.modified_count > 0
-
-
-async def _revoke_all_refresh_tokens(user_id: str) -> int:
-    res = await db.refresh_tokens.update_many(
-        {"user_id": user_id, "revoked": False},
-        {"$set": {"revoked": True, "revoked_at": utc_now()}},
-    )
-    return res.modified_count
-
-
-# ─── Pydantic Schemas ──────────────────────────────────────────────────────────
-class RegisterIn(BaseModel):
-    email: OrbusEmail
-    username: str = Field(min_length=2, max_length=32)
-    # Password is validated in the route handler (HTTP 400) — not via Pydantic (422)
-    password: str = Field(max_length=128)
-
-
-class LoginIn(BaseModel):
-    email: OrbusEmail
-    password: str = Field(min_length=1, max_length=128)
-
-
-class RefreshIn(BaseModel):
-    refresh_token: str = Field(min_length=8, max_length=256)
-
-
-class LogoutIn(BaseModel):
-    refresh_token: str = Field(min_length=8, max_length=256)
-
-
-class PasswordResetRequestIn(BaseModel):
-    email: OrbusEmail
-
-
-class PasswordResetConfirmIn(BaseModel):
-    token: str = Field(min_length=8, max_length=256)
-    # new_password is validated in the route handler (HTTP 400) — not via Pydantic (422)
-    new_password: str = Field(max_length=128)
-
-
 class GuildCreateIn(BaseModel):
     name: str = Field(min_length=3, max_length=40)
     description: str = Field(default="", max_length=300)
@@ -1194,141 +1024,11 @@ async def health():
     return {"status": "ok", "env": APP_ENV}
 
 
-# ─── Endpoints: Auth ───────────────────────────────────────────────────────────
-@api.post("/auth/register", status_code=201)
-async def register(payload: RegisterIn):
-    _validate_password_strength(payload.password)
-    email = payload.email.lower().strip()
-    username = payload.username.strip()
-
-    existing = await db.users.find_one({"email": email})
-    if existing:
-        raise HTTPException(status_code=409, detail="Email already registered")
-
-    now = utc_now()
-    user_id = str(uuid.uuid4())
-    user_doc = {
-        "id": user_id,
-        "email": email,
-        "username": username,
-        "password_hash": hash_password(payload.password),
-        "is_admin": False,
-        "created_at": now.isoformat(),
-        "updated_at": now.isoformat(),
-    }
-    try:
-        await db.users.insert_one(user_doc)
-    except DuplicateKeyError:
-        raise HTTPException(status_code=409, detail="Email already registered")
-
-    token = create_access_token(user_id)
-    refresh = await _create_refresh_token(user_id)
-    return {
-        "access_token": token,
-        "refresh_token": refresh,
-        "token_type": "bearer",
-        "user": user_public(user_doc),
-    }
-
-
-@api.post("/auth/login")
-async def login(payload: LoginIn):
-    email = payload.email.lower().strip()
-    await _check_login_lock(email)
-    user = await db.users.find_one({"email": email})
-    if not user or not verify_password(payload.password, user["password_hash"]):
-        await _record_login_failure(email)
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    await _reset_login_attempts(email)
-    token = create_access_token(user["id"])
-    refresh = await _create_refresh_token(user["id"])
-    return {
-        "access_token": token,
-        "refresh_token": refresh,
-        "token_type": "bearer",
-        "user": user_public(user),
-    }
-
-
-@api.get("/auth/me")
-async def me(current_user: dict = Depends(get_current_user)):
-    return {"user": user_public(current_user)}
-
-
-# ─── Endpoints: Auth (Phase 5 refresh / logout / password-reset) ──────────────
-@api.post("/auth/refresh")
-async def refresh_token_endpoint(payload: RefreshIn):
-    user = await _consume_refresh_token(payload.refresh_token)
-    new_access = create_access_token(user["id"])
-    return {
-        "access_token": new_access,
-        "token_type": "bearer",
-        "user": user_public(user),
-    }
-
-
-@api.post("/auth/logout")
-async def logout(payload: LogoutIn):
-    revoked = await _revoke_refresh_token(payload.refresh_token)
-    return {"revoked": revoked}
-
-
-@api.post("/auth/password-reset/request")
-async def password_reset_request(payload: PasswordResetRequestIn):
-    """Always returns 200 to avoid email enumeration. Logs link to console."""
-    email = payload.email.lower().strip()
-    user = await db.users.find_one({"email": email})
-    if user:
-        token = _new_opaque_token()
-        now = utc_now()
-        await db.password_reset_tokens.insert_one({
-            "id": str(uuid.uuid4()),
-            "user_id": user["id"],
-            "token_hash": _hash_token(token),
-            "created_at": now,
-            "expires_at": now + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES),
-            "used": False,
-        })
-        logger.info(
-            "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
-            email, token, PASSWORD_RESET_TTL_MINUTES,
-        )
-    return {"status": "ok"}
-
-
-@api.post("/auth/password-reset/confirm")
-async def password_reset_confirm(payload: PasswordResetConfirmIn):
-    _validate_password_strength(payload.new_password)
-    row = await db.password_reset_tokens.find_one({"token_hash": _hash_token(payload.token)})
-    if not row or row.get("used"):
-        raise HTTPException(status_code=400, detail="Invalid or already-used reset token")
-    expires_at = row.get("expires_at")
-    if expires_at and isinstance(expires_at, datetime):
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        if expires_at <= utc_now():
-            raise HTTPException(status_code=400, detail="Reset token expired")
-
-    user = await db.users.find_one({"id": row["user_id"]})
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid reset token")
-
-    now = utc_now()
-    await db.users.update_one(
-        {"id": user["id"]},
-        {"$set": {
-            "password_hash": hash_password(payload.new_password),
-            "updated_at": now.isoformat(),
-        }},
-    )
-    await db.password_reset_tokens.update_one(
-        {"id": row["id"]},
-        {"$set": {"used": True, "used_at": now}},
-    )
-    # Security best-practice: revoke all existing refresh tokens for this user
-    await _revoke_all_refresh_tokens(user["id"])
-    await _reset_login_attempts(user["email"])
-    return {"status": "ok"}
+# ─── Endpoints: Auth (Phase 5.5b) ─────────────────────────────────────────────
+# All 7 `/api/auth/*` routes are now served by the router defined in
+# `app/auth/routes.py`. We mount it on `app` (not the legacy `api` APIRouter)
+# because the router already carries its own `/api/auth` prefix.
+app.include_router(auth_router)
 
 
 # ─── Endpoints: Guilds ─────────────────────────────────────────────────────────
