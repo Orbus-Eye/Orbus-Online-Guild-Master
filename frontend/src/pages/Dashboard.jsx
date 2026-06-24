@@ -112,7 +112,7 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
+                <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
                     <Stat label="LEVEL" value={guild.level} testid="stat-level" accent />
                     <Stat
                         label="REPUTATION"
@@ -126,6 +126,12 @@ export default function Dashboard() {
                         testid="stat-adventurer-count"
                     />
                     <Stat
+                        label="ACTIVE EXP"
+                        value={guild.active_expedition_count ?? 0}
+                        testid="stat-active-expeditions"
+                        accent
+                    />
+                    <Stat
                         label="GUILD ID"
                         value={
                             <span className="text-xs font-mono break-all">
@@ -135,6 +141,33 @@ export default function Dashboard() {
                         testid="stat-guild-id"
                     />
                 </section>
+
+                {guild.last_expedition_id && (
+                    <section className="mb-8">
+                        <Link
+                            to={`/expeditions/${guild.last_expedition_id}`}
+                            data-testid="last-expedition-link"
+                            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground border border-border bg-card rounded-sm px-3 py-2"
+                        >
+                            <span className="text-amber">::</span>
+                            <span>
+                                last expedition:{" "}
+                                <span
+                                    className={
+                                        guild.last_expedition_summary === "Success"
+                                            ? "text-[#22c55e]"
+                                            : guild.last_expedition_summary === "Failed"
+                                              ? "text-[#ef4444]"
+                                              : "text-amber"
+                                    }
+                                >
+                                    {guild.last_expedition_summary || "in progress"}
+                                </span>
+                            </span>
+                            <span className="text-amber">→</span>
+                        </Link>
+                    </section>
+                )}
 
                 <section>
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
@@ -153,8 +186,18 @@ export default function Dashboard() {
                             code="02"
                             testid="quickaction-02"
                         />
-                        <LockedAction label="Dungeons" code="03" phase="phase 3" />
-                        <LockedAction label="Inventory" code="04" phase="phase 3" />
+                        <ActiveAction
+                            to="/dungeons"
+                            label="Dungeons"
+                            code="03"
+                            testid="quickaction-03"
+                        />
+                        <ActiveAction
+                            to="/inventory"
+                            label="Inventory"
+                            code="04"
+                            testid="quickaction-04"
+                        />
                     </div>
                 </section>
 

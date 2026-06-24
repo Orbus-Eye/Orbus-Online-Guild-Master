@@ -57,6 +57,21 @@ export default function AppHeader({ subtitle = "DASHBOARD" }) {
                                     label="RECRUIT"
                                     testid="nav-recruitment"
                                 />
+                                <NavLink
+                                    to="/dungeons"
+                                    label="DUNGEONS"
+                                    testid="nav-dungeons"
+                                />
+                                <NavLink
+                                    to="/expeditions"
+                                    label="EXPEDITIONS"
+                                    testid="nav-expeditions"
+                                />
+                                <NavLink
+                                    to="/inventory"
+                                    label="VAULT"
+                                    testid="nav-inventory"
+                                />
                             </nav>
                         </>
                     )}

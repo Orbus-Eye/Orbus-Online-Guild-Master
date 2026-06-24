@@ -1,0 +1,36 @@
+{
+  "summary": "Phase-3 backend + frontend end-to-end testing complete. Backend: 11/11 pytest cases PASS (100%) covering dungeon/item seed integrity, team-size + duplicate + cross-guild validation on POST /expeditions, full 60s lifecycle with backend formula verification (team_power & success_chance), lazy completion sweep, success-path rewards (+35 gold, +25 xp), idempotency (gold unchanged on second fetch), loot upsert into inventory, cross-guild expedition 404, item monetization validator (3 cases), and multi-level resolve_levelup (Mage 350 XP → level 3 + intellect +2). Frontend: verified end-to-end on /dungeons → /dungeons/goblin-warrens/start (3 select-adventurer testids found) → /expeditions/{id} report → /expeditions list (countdown + refresh) → /inventory (empty state). Mobile 375x812 confirmed no horizontal overflow on /dungeons, /expeditions, /inventory. All required data-testid attributes present.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_phase3_test.py",
+    "/app/test_reports/pytest/phase3_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is now 1393 lines — approaching the 700-line threshold by 2x. Recommend splitting into modules (auth.py, guilds.py, recruitment.py, expeditions.py, seeds.py, helpers.py) before Phase 4 to keep maintainable.",
+    "_complete_one_expedition uses an atomic find_one_and_update claim via {status:'in_progress'} → {status:'completing'} — correct idempotency design. Concurrent callers correctly short-circuit (`if not claimed: return`). Verified empirically: two sequential GETs after completes_at returned identical gold/xp values.",
+    "Lazy sweep is triggered from THREE endpoints (/guilds/me, /expeditions, /expeditions/{id}) — efficient and consistent.",
+    "validate_item_monetization correctly rejects: real-money + non-cosmetic, real-money + affects_combat, real-money + affects_economy, real-money + affects_ranking. Accepts pure cosmetic. Called inside seed_dungeons_and_items so any future bad seed is rejected at startup.",
+    "_resolve_levelup uses a while-loop and class-keyed stat picker — multi-level XP overflow handled correctly (tested with Mage 350 XP → +2 intellect, level 1→3). Threshold formula uses old_level (`adv['level'] * XP_THRESHOLD_PER_LEVEL`).",
+    "compute_team_power role bonus: +5 each for Tank/Healer/DPS + extra +10 for all-3 roles → max +25 role bonus. Matches spec exactly.",
+    "Cross-guild isolation correctly returns 404 (not 403) on GET /expeditions/{other_user_exp_id}, preventing existence-leak (line 999-1001).",
+    "Inventory upsert uses ($inc quantity + $setOnInsert id+guild+item+acquired_at) with unique (guild_id, item_id) index — guarantees never-duplicate rows on multiple loot drops.",
+    "FastAPI @app.on_event('startup'/'shutdown') is deprecated — recommend migrating to lifespan handler. Non-blocking.",
+    "Frontend report-narrative, report-loot-grid, and report-no-loot only render on completed expeditions (not in_progress). This is correct behavior since result_log is only populated after lazy sweep finalizes."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_phase3_test.py (created — 11 pytest cases for Phase 3)"
+  ],
+  "success_rate": { "backend": "100% (11/11 Phase-3 + 14/14 Phase-2 + 17/17 Phase-1)", "frontend": "100% (all Phase-3 testids + flows verified on desktop & mobile)" },
+  "test_credentials": "Phase-3 tests use freshly registered users (p3_*@orbus.test, p3ui_*@orbus.test, p3ui2_*@orbus.test) for full isolation. Pre-seeded tester@orbus.test / password123 still works.",
+  "seed_data_creation": "Created ~10 fresh users + guilds via /api/auth/register + /api/guilds. Each test guild has 3 recruited adventurers. Backend seed of 1 dungeon (goblin-warrens) + 5 items is idempotent and runs on every startup.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 1+2+3 all green. Pytest at /app/backend/tests/backend_phase3_test.py runs in ~70s (60s wall-clock for the lifecycle test; tests use pytest-xdist for parallelism). Failure-path branch was NOT deterministically observed because recommended_power=45 with 3 lvl-1 adventurers gives ~95% success — the spec's note about this limitation is accepted. To force failure, you'd need to artificially craft a low-power team (e.g., 1-stat adventurers) which the API doesn't currently allow. Loot drops are 50% per success — observed at least one drop across runs. Level-up multi-loop verified via direct call to _resolve_levelup() helper.",
+  "rca of the issue": "No bugs found. Phase 3 backend implementation is correct: atomic expedition claim prevents double-completion, lazy sweep is idempotent, item monetization validator enforces real-money/cosmetic invariant, level-up loop handles multi-level XP overflow, cross-guild isolation uses 404 (not 403) to prevent existence leak."
+}

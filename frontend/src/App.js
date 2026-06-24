@@ -10,6 +10,11 @@ import CreateGuild from "@/pages/CreateGuild";
 import Dashboard from "@/pages/Dashboard";
 import Recruitment from "@/pages/Recruitment";
 import Adventurers from "@/pages/Adventurers";
+import Dungeons from "@/pages/Dungeons";
+import ExpeditionNew from "@/pages/ExpeditionNew";
+import Expeditions from "@/pages/Expeditions";
+import ExpeditionReport from "@/pages/ExpeditionReport";
+import Inventory from "@/pages/Inventory";
 
 function App() {
     return (
@@ -63,6 +68,46 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Adventurers />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/dungeons"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Dungeons />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/dungeons/:slug/start"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ExpeditionNew />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/expeditions"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Expeditions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/expeditions/:id"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ExpeditionReport />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/inventory"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Inventory />
                                 </ProtectedRoute>
                             }
                         />

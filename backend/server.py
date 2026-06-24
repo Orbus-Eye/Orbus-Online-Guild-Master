@@ -117,6 +117,55 @@ TRAIT_SEED = [
      "modifier_value": 1.0, "is_positive": True},
 ]
 
+# ─── Phase 3: Dungeons, Items, Expeditions, Inventory ──────────────────────────
+SUCCESS_CHANCE_MIN = 10
+SUCCESS_CHANCE_MAX = 95
+LOOT_DROP_CHANCE = 0.50  # 50%
+LOOT_RARITIES = ["Common", "Uncommon"]  # MVP: no Rare/Epic loot
+XP_THRESHOLD_PER_LEVEL = 100  # adventurer levels up when xp >= level * 100
+
+DUNGEON_SEED = [
+    {
+        "slug": "goblin-warrens",
+        "name": "Goblin Warrens",
+        "description": "A damp tunnel network occupied by goblin scavengers and their crude traps.",
+        "difficulty": 1,
+        "required_team_size": 3,
+        "base_duration_seconds": 60,
+        "recommended_power": 45,
+        "base_gold_reward": 35,
+        "base_xp_reward": 25,
+    },
+]
+
+ITEM_SEED = [
+    {"slug": "rusted-sword", "name": "Rusted Sword",
+     "description": "A pitted blade that has seen too many summers.",
+     "item_type": "weapon", "rarity": "Common", "power_score": 5,
+     "strength_bonus": 1, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "goblin-dagger", "name": "Goblin Dagger",
+     "description": "Crude, jagged, and surprisingly effective in a back alley.",
+     "item_type": "weapon", "rarity": "Common", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 1, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "cracked-staff", "name": "Cracked Staff",
+     "description": "A wizard's staff with a hairline fracture; the focus crystal still hums.",
+     "item_type": "weapon", "rarity": "Common", "power_score": 5,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 1,
+     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "novice-charm", "name": "Novice Charm",
+     "description": "A small wooden pendant carved with a quiet prayer.",
+     "item_type": "accessory", "rarity": "Uncommon", "power_score": 6,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
+    {"slug": "torn-leather-vest", "name": "Torn Leather Vest",
+     "description": "Patched in three places. Still keeps the cold off.",
+     "item_type": "armor", "rarity": "Common", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 1, "faith_bonus": 0, "affects_combat": True},
+]
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("orbus")
 
@@ -324,6 +373,340 @@ async def _user_guild_or_404(user_id: str) -> dict:
     return guild
 
 
+# ─── Phase 3 helpers: dungeon/item/expedition/inventory ────────────────────────
+def dungeon_public(d: dict) -> dict:
+    return {
+        "id": d["id"],
+        "slug": d["slug"],
+        "name": d["name"],
+        "description": d.get("description", ""),
+        "difficulty": d["difficulty"],
+        "required_team_size": d["required_team_size"],
+        "base_duration_seconds": d["base_duration_seconds"],
+        "recommended_power": d["recommended_power"],
+        "base_gold_reward": d["base_gold_reward"],
+        "base_xp_reward": d["base_xp_reward"],
+        "is_active": d.get("is_active", True),
+    }
+
+
+def item_public(it: dict) -> dict:
+    return {
+        "id": it["id"],
+        "slug": it["slug"],
+        "name": it["name"],
+        "description": it.get("description", ""),
+        "item_type": it["item_type"],
+        "rarity": it["rarity"],
+        "level_required": it.get("level_required", 1),
+        "power_score": it["power_score"],
+        "strength_bonus": it.get("strength_bonus", 0),
+        "agility_bonus": it.get("agility_bonus", 0),
+        "intellect_bonus": it.get("intellect_bonus", 0),
+        "endurance_bonus": it.get("endurance_bonus", 0),
+        "faith_bonus": it.get("faith_bonus", 0),
+        "is_tradeable": it.get("is_tradeable", True),
+        "is_cosmetic": it.get("is_cosmetic", False),
+        "affects_combat": it.get("affects_combat", False),
+        "affects_economy": it.get("affects_economy", False),
+        "affects_ranking": it.get("affects_ranking", False),
+        "can_be_sold_for_gold": it.get("can_be_sold_for_gold", True),
+        "can_be_sold_for_real_money": it.get("can_be_sold_for_real_money", False),
+        "is_active": it.get("is_active", True),
+    }
+
+
+def inventory_entry_public(row: dict, item: Optional[dict]) -> dict:
+    out = {
+        "id": row["id"],
+        "guild_id": row["guild_id"],
+        "item_id": row["item_id"],
+        "quantity": row.get("quantity", 1),
+        "acquired_at": row["acquired_at"],
+    }
+    if item:
+        out["item"] = item_public(item)
+    return out
+
+
+def member_public(m: dict) -> dict:
+    return {
+        "id": m["id"],
+        "expedition_id": m["expedition_id"],
+        "adventurer_id": m["adventurer_id"],
+        "name_snapshot": m["name_snapshot"],
+        "class_name_snapshot": m["class_name_snapshot"],
+        "role_snapshot": m["role_snapshot"],
+        "level_snapshot": m["level_snapshot"],
+        "strength_snapshot": m["strength_snapshot"],
+        "agility_snapshot": m["agility_snapshot"],
+        "intellect_snapshot": m["intellect_snapshot"],
+        "endurance_snapshot": m["endurance_snapshot"],
+        "faith_snapshot": m["faith_snapshot"],
+    }
+
+
+def expedition_public(e: dict) -> dict:
+    out = {
+        "id": e["id"],
+        "guild_id": e["guild_id"],
+        "dungeon_id": e["dungeon_id"],
+        "dungeon_name": e.get("dungeon_name", ""),
+        "status": e["status"],
+        "started_at": e.get("started_at"),
+        "completes_at": e.get("completes_at"),
+        "completed_at": e.get("completed_at"),
+        "team_power": e.get("team_power", 0),
+        "success_chance": e.get("success_chance", 0),
+        "final_score": e.get("final_score"),
+        "result_summary": e.get("result_summary"),
+        "result_log": e.get("result_log"),
+        "gold_reward": e.get("gold_reward", 0),
+        "xp_reward": e.get("xp_reward", 0),
+        "loot_item_ids": e.get("loot_item_ids", []),
+        "created_at": e["created_at"],
+        "updated_at": e.get("updated_at", e["created_at"]),
+    }
+    if out["status"] == "in_progress" and out["completes_at"]:
+        try:
+            ca = datetime.fromisoformat(out["completes_at"])
+            remaining = int((ca - utc_now()).total_seconds())
+            out["seconds_remaining"] = max(0, remaining)
+        except Exception:
+            out["seconds_remaining"] = 0
+    return out
+
+
+def validate_item_monetization(item: dict) -> None:
+    """Reject inconsistent flags: real-money sale only allowed for pure cosmetics."""
+    if item.get("can_be_sold_for_real_money"):
+        if (
+            not item.get("is_cosmetic", False)
+            or item.get("affects_combat", False)
+            or item.get("affects_economy", False)
+            or item.get("affects_ranking", False)
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Invalid item: can_be_sold_for_real_money requires "
+                    "is_cosmetic=true AND affects_combat=false AND "
+                    "affects_economy=false AND affects_ranking=false"
+                ),
+            )
+
+
+def _adventurer_unit_power(adv: dict) -> int:
+    return (
+        int(adv["strength"])
+        + int(adv["agility"])
+        + int(adv["intellect"])
+        + int(adv["endurance"])
+        + int(adv["faith"])
+        + int(adv.get("level", 1)) * 2
+    )
+
+
+def compute_team_power(members: list) -> int:
+    """members is a list of adventurer dicts (live or snapshot fields ending in _snapshot)."""
+    def get(a, key):
+        return a.get(key, a.get(key + "_snapshot", 0))
+
+    base = 0
+    roles = set()
+    for a in members:
+        base += (
+            int(get(a, "strength"))
+            + int(get(a, "agility"))
+            + int(get(a, "intellect"))
+            + int(get(a, "endurance"))
+            + int(get(a, "faith"))
+            + int(get(a, "level") or 1) * 2
+        )
+        role = a.get("class_role") or a.get("role_snapshot")
+        if role:
+            roles.add(role)
+    if "Tank" in roles:
+        base += 5
+    if "Healer" in roles:
+        base += 5
+    if "DPS" in roles:
+        base += 5
+    if {"Tank", "Healer", "DPS"}.issubset(roles):
+        base += 10
+    return base
+
+
+def compute_success_chance(team_power: int, recommended_power: int) -> int:
+    raw = 50 + (team_power - recommended_power)
+    return max(SUCCESS_CHANCE_MIN, min(SUCCESS_CHANCE_MAX, raw))
+
+
+CLASS_LEVELUP_STAT = {
+    "Warrior": lambda: random.choice(["strength", "endurance"]),
+    "Rogue": lambda: "agility",
+    "Mage": lambda: "intellect",
+    "Priest": lambda: "faith",
+    "Ranger": lambda: random.choice(["agility", "strength"]),
+}
+
+
+def _resolve_levelup(adv: dict) -> dict:
+    """Apply level-up loop in-place on a dict. Returns the updated dict."""
+    while adv["experience"] >= adv["level"] * XP_THRESHOLD_PER_LEVEL:
+        threshold = adv["level"] * XP_THRESHOLD_PER_LEVEL
+        adv["experience"] -= threshold
+        adv["level"] += 1
+        picker = CLASS_LEVELUP_STAT.get(adv.get("class_name", ""))
+        stat = picker() if picker else "strength"
+        adv[stat] = adv.get(stat, 0) + 1
+    return adv
+
+
+def _build_result_log(dungeon_name: str, member_names: list, success: bool) -> str:
+    names = ", ".join(member_names) if member_names else "Your party"
+    if success:
+        return (
+            f"Your party of {names} entered the {dungeon_name} at dawn. "
+            f"After hours of careful work, they cleared the main chamber and returned "
+            f"with what they could carry. The expedition was successful."
+        )
+    return (
+        f"Your party pushed too deep into the {dungeon_name}. "
+        f"A hidden ambush split the formation, and the group was forced to retreat. "
+        f"The expedition failed, but the survivors returned with valuable experience."
+    )
+
+
+async def _complete_one_expedition(exp_id: str) -> None:
+    """Atomically claim and finalize a single due expedition. Idempotent."""
+    claimed = await db.expeditions.find_one_and_update(
+        {"id": exp_id, "status": "in_progress"},
+        {"$set": {"status": "completing"}},
+        projection={"_id": 0},
+        return_document=ReturnDocument.AFTER,
+    )
+    if not claimed:
+        return  # already completed by a concurrent caller
+
+    dungeon = await db.dungeons.find_one({"id": claimed["dungeon_id"]}, {"_id": 0})
+    if not dungeon:
+        # Defensive fallback — should never happen
+        await db.expeditions.update_one(
+            {"id": exp_id},
+            {"$set": {"status": "failed", "result_summary": "Failed",
+                      "result_log": "Dungeon data unavailable.",
+                      "completed_at": utc_now().isoformat()}},
+        )
+        return
+
+    members = await db.expedition_members.find(
+        {"expedition_id": exp_id}, {"_id": 0}
+    ).to_list(50)
+
+    final_score = random.randint(1, 100)
+    success = final_score <= claimed["success_chance"]
+    now = utc_now()
+
+    if success:
+        gold_reward = dungeon["base_gold_reward"]
+        xp_per_member = dungeon["base_xp_reward"]
+        loot_ids: list = []
+        if random.random() < LOOT_DROP_CHANCE:
+            pool = await db.items.find(
+                {"is_active": True, "rarity": {"$in": LOOT_RARITIES}}, {"_id": 0}
+            ).to_list(100)
+            if pool:
+                loot_ids = [random.choice(pool)["id"]]
+    else:
+        gold_reward = round(dungeon["base_gold_reward"] * 0.25)
+        xp_per_member = round(dungeon["base_xp_reward"] * 0.4)
+        loot_ids = []
+
+    # Apply rewards to guild gold
+    await db.guilds.update_one(
+        {"id": claimed["guild_id"]},
+        {"$inc": {"gold": gold_reward}, "$set": {"updated_at": now.isoformat()}},
+    )
+
+    # Apply XP + free adventurers, with level-up loop
+    for m in members:
+        adv = await db.adventurers.find_one(
+            {"id": m["adventurer_id"], "guild_id": claimed["guild_id"]}, {"_id": 0}
+        )
+        if not adv:
+            continue
+        adv["experience"] = int(adv.get("experience", 0)) + int(xp_per_member)
+        adv = _resolve_levelup(adv)
+        adv["is_available"] = True
+        adv["updated_at"] = now.isoformat()
+        await db.adventurers.update_one(
+            {"id": m["adventurer_id"]},
+            {"$set": {
+                "experience": adv["experience"],
+                "level": adv["level"],
+                "strength": adv["strength"],
+                "agility": adv["agility"],
+                "intellect": adv["intellect"],
+                "endurance": adv["endurance"],
+                "faith": adv["faith"],
+                "is_available": True,
+                "updated_at": now.isoformat(),
+            }},
+        )
+
+    # Apply loot to inventory (upsert quantity)
+    for item_id in loot_ids:
+        await db.inventory_items.update_one(
+            {"guild_id": claimed["guild_id"], "item_id": item_id},
+            {
+                "$inc": {"quantity": 1},
+                "$setOnInsert": {
+                    "id": str(uuid.uuid4()),
+                    "guild_id": claimed["guild_id"],
+                    "item_id": item_id,
+                    "acquired_at": now.isoformat(),
+                },
+            },
+            upsert=True,
+        )
+
+    member_names = [m["name_snapshot"] for m in members]
+    result_summary = "Success" if success else "Failed"
+    result_log = _build_result_log(dungeon["name"], member_names, success)
+
+    await db.expeditions.update_one(
+        {"id": exp_id},
+        {"$set": {
+            "status": "completed",
+            "completed_at": now.isoformat(),
+            "final_score": final_score,
+            "gold_reward": gold_reward,
+            "xp_reward": xp_per_member,
+            "loot_item_ids": loot_ids,
+            "result_summary": result_summary,
+            "result_log": result_log,
+            "updated_at": now.isoformat(),
+        }},
+    )
+
+
+async def complete_due_expeditions(guild_id: str) -> int:
+    """Lazy sweep: complete any in_progress expedition whose completes_at <= now."""
+    now_iso = utc_now().isoformat()
+    due = await db.expeditions.find(
+        {
+            "guild_id": guild_id,
+            "status": "in_progress",
+            "completes_at": {"$lte": now_iso},
+        },
+        {"_id": 0, "id": 1},
+    ).to_list(100)
+    for d in due:
+        await _complete_one_expedition(d["id"])
+    return len(due)
+
+
 
 
 async def get_current_user(
@@ -370,6 +753,11 @@ class GuildCreateIn(BaseModel):
 
 class RecruitIn(BaseModel):
     candidate_id: str = Field(min_length=8, max_length=64)
+
+
+class ExpeditionStartIn(BaseModel):
+    dungeon_id: str = Field(min_length=8, max_length=64)
+    adventurer_ids: list[str] = Field(min_length=1, max_length=10)
 
 
 # ─── Endpoints: Health ─────────────────────────────────────────────────────────
@@ -455,10 +843,201 @@ async def get_my_guild(current_user: dict = Depends(get_current_user)):
     guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
     if not guild:
         raise HTTPException(status_code=404, detail="No guild found for this user")
+    # Phase-3 lazy completion sweep
+    await complete_due_expeditions(guild["id"])
+    # Re-fetch guild after sweep (gold may have changed)
+    guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
+
     adv_count = await db.adventurers.count_documents({"guild_id": guild["id"]})
+    active_exp = await db.expeditions.count_documents(
+        {"guild_id": guild["id"], "status": "in_progress"}
+    )
+    last_exp = await db.expeditions.find_one(
+        {"guild_id": guild["id"]},
+        {"_id": 0, "id": 1, "status": 1, "result_summary": 1, "completed_at": 1, "created_at": 1},
+        sort=[("created_at", -1)],
+    )
     payload = guild_public(guild)
     payload["adventurer_count"] = adv_count
+    payload["active_expedition_count"] = active_exp
+    payload["last_expedition_id"] = last_exp["id"] if last_exp else None
+    payload["last_expedition_summary"] = last_exp.get("result_summary") if last_exp else None
     return {"guild": payload}
+
+
+# ─── Endpoints: Dungeons / Items (read-only catalogs) ──────────────────────────
+@api.get("/dungeons")
+async def list_dungeons():
+    rows = await db.dungeons.find({"is_active": True}, {"_id": 0}).sort("difficulty", 1).to_list(100)
+    return {"dungeons": [dungeon_public(d) for d in rows]}
+
+
+@api.get("/items")
+async def list_items():
+    rows = await db.items.find({"is_active": True}, {"_id": 0}).sort("name", 1).to_list(500)
+    return {"items": [item_public(i) for i in rows]}
+
+
+# ─── Endpoints: Expeditions ────────────────────────────────────────────────────
+@api.post("/expeditions", status_code=201)
+async def start_expedition(
+    payload: ExpeditionStartIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+
+    dungeon = await db.dungeons.find_one(
+        {"id": payload.dungeon_id, "is_active": True}, {"_id": 0}
+    )
+    if not dungeon:
+        raise HTTPException(status_code=404, detail="Dungeon not found")
+
+    # Validate team composition
+    ids = payload.adventurer_ids
+    if len(set(ids)) != len(ids):
+        raise HTTPException(status_code=400, detail="Duplicate adventurer in team")
+    if len(ids) != dungeon["required_team_size"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"This dungeon requires exactly {dungeon['required_team_size']} adventurers",
+        )
+
+    members_live = []
+    for aid in ids:
+        adv = await db.adventurers.find_one(
+            {"id": aid, "guild_id": guild["id"]}, {"_id": 0}
+        )
+        if not adv:
+            raise HTTPException(status_code=404, detail=f"Adventurer {aid} not found in your guild")
+        if not adv.get("is_available", True):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Adventurer {adv['name']} is not available",
+            )
+        members_live.append(adv)
+
+    team_power = compute_team_power(members_live)
+    success_chance = compute_success_chance(team_power, dungeon["recommended_power"])
+
+    now = utc_now()
+    completes_at = now + timedelta(seconds=dungeon["base_duration_seconds"])
+    exp_id = str(uuid.uuid4())
+    exp_doc = {
+        "id": exp_id,
+        "guild_id": guild["id"],
+        "dungeon_id": dungeon["id"],
+        "dungeon_name": dungeon["name"],
+        "status": "in_progress",
+        "started_at": now.isoformat(),
+        "completes_at": completes_at.isoformat(),
+        "completed_at": None,
+        "team_power": team_power,
+        "success_chance": success_chance,
+        "final_score": None,
+        "result_summary": None,
+        "result_log": None,
+        "gold_reward": 0,
+        "xp_reward": 0,
+        "loot_item_ids": [],
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+    await db.expeditions.insert_one(exp_doc)
+
+    members_docs = []
+    for adv in members_live:
+        m = {
+            "id": str(uuid.uuid4()),
+            "expedition_id": exp_id,
+            "adventurer_id": adv["id"],
+            "name_snapshot": adv["name"],
+            "class_name_snapshot": adv.get("class_name", ""),
+            "role_snapshot": adv.get("class_role", ""),
+            "level_snapshot": adv.get("level", 1),
+            "strength_snapshot": adv["strength"],
+            "agility_snapshot": adv["agility"],
+            "intellect_snapshot": adv["intellect"],
+            "endurance_snapshot": adv["endurance"],
+            "faith_snapshot": adv["faith"],
+        }
+        members_docs.append(m)
+    if members_docs:
+        await db.expedition_members.insert_many([dict(m) for m in members_docs])
+
+    # Lock the adventurers
+    await db.adventurers.update_many(
+        {"id": {"$in": ids}, "guild_id": guild["id"]},
+        {"$set": {"is_available": False, "updated_at": now.isoformat()}},
+    )
+
+    return {
+        "expedition": expedition_public(exp_doc),
+        "members": [member_public(m) for m in members_docs],
+    }
+
+
+@api.get("/expeditions")
+async def list_expeditions(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    await complete_due_expeditions(guild["id"])
+    rows = (
+        await db.expeditions.find({"guild_id": guild["id"]}, {"_id": 0})
+        .sort("created_at", -1)
+        .to_list(200)
+    )
+    return {"expeditions": [expedition_public(e) for e in rows]}
+
+
+@api.get("/expeditions/{expedition_id}")
+async def get_expedition(
+    expedition_id: str, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    await complete_due_expeditions(guild["id"])
+    exp = await db.expeditions.find_one(
+        {"id": expedition_id, "guild_id": guild["id"]}, {"_id": 0}
+    )
+    if not exp:
+        # Don't leak 403 vs 404
+        raise HTTPException(status_code=404, detail="Expedition not found")
+
+    members = await db.expedition_members.find(
+        {"expedition_id": expedition_id}, {"_id": 0}
+    ).to_list(50)
+
+    # Expand loot items
+    loot_ids = exp.get("loot_item_ids", [])
+    loot_items = []
+    if loot_ids:
+        items = await db.items.find({"id": {"$in": loot_ids}}, {"_id": 0}).to_list(50)
+        # preserve order of loot_ids with possible duplicates
+        item_by_id = {it["id"]: it for it in items}
+        for lid in loot_ids:
+            if lid in item_by_id:
+                loot_items.append(item_public(item_by_id[lid]))
+
+    return {
+        "expedition": expedition_public(exp),
+        "members": [member_public(m) for m in members],
+        "loot_items": loot_items,
+    }
+
+
+# ─── Endpoints: Inventory ──────────────────────────────────────────────────────
+@api.get("/inventory")
+async def list_inventory(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    rows = await db.inventory_items.find(
+        {"guild_id": guild["id"]}, {"_id": 0}
+    ).sort("acquired_at", -1).to_list(500)
+    # Resolve item info in a single query
+    item_ids = list({r["item_id"] for r in rows})
+    items_map = {}
+    if item_ids:
+        items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(500)
+        items_map = {it["id"]: it for it in items}
+    return {
+        "inventory": [inventory_entry_public(r, items_map.get(r["item_id"])) for r in rows]
+    }
 
 
 # ─── Endpoints: Adventurer Classes (read-only in Phase 2) ──────────────────────
@@ -628,6 +1207,30 @@ async def ensure_indexes():
     await db.recruitment_offers.create_index(
         [("guild_id", ASCENDING)], name="offers_guild_idx"
     )
+    # Phase 3
+    await db.dungeons.create_index([("slug", ASCENDING)], unique=True, name="dungeons_slug_unique")
+    await db.dungeons.create_index([("id", ASCENDING)], unique=True, name="dungeons_id_unique")
+    await db.items.create_index([("slug", ASCENDING)], unique=True, name="items_slug_unique")
+    await db.items.create_index([("id", ASCENDING)], unique=True, name="items_id_unique")
+    await db.expeditions.create_index([("id", ASCENDING)], unique=True, name="expeditions_id_unique")
+    await db.expeditions.create_index(
+        [("guild_id", ASCENDING), ("status", ASCENDING)], name="expeditions_guild_status_idx"
+    )
+    await db.expeditions.create_index(
+        [("completes_at", ASCENDING)], name="expeditions_completes_at_idx"
+    )
+    await db.expedition_members.create_index(
+        [("id", ASCENDING)], unique=True, name="members_id_unique"
+    )
+    await db.expedition_members.create_index(
+        [("expedition_id", ASCENDING)], name="members_exp_idx"
+    )
+    await db.inventory_items.create_index(
+        [("id", ASCENDING)], unique=True, name="inv_id_unique"
+    )
+    await db.inventory_items.create_index(
+        [("guild_id", ASCENDING), ("item_id", ASCENDING)], unique=True, name="inv_guild_item_unique"
+    )
 
 
 async def seed_classes_and_traits():
@@ -682,6 +1285,76 @@ async def seed_classes_and_traits():
     logger.info("Seeded %d classes and %d traits", len(CLASS_SEED), len(TRAIT_SEED))
 
 
+async def seed_dungeons_and_items():
+    """Idempotent Phase-3 content seed."""
+    now = utc_now()
+    for d in DUNGEON_SEED:
+        await db.dungeons.update_one(
+            {"slug": d["slug"]},
+            {
+                "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now.isoformat()},
+                "$set": {
+                    "slug": d["slug"],
+                    "name": d["name"],
+                    "description": d["description"],
+                    "difficulty": d["difficulty"],
+                    "required_team_size": d["required_team_size"],
+                    "base_duration_seconds": d["base_duration_seconds"],
+                    "recommended_power": d["recommended_power"],
+                    "base_gold_reward": d["base_gold_reward"],
+                    "base_xp_reward": d["base_xp_reward"],
+                    "is_active": True,
+                    "updated_at": now.isoformat(),
+                },
+            },
+            upsert=True,
+        )
+
+    for it in ITEM_SEED:
+        full = {
+            "level_required": 1,
+            "is_tradeable": True,
+            "is_cosmetic": False,
+            "affects_economy": False,
+            "affects_ranking": False,
+            "can_be_sold_for_gold": True,
+            "can_be_sold_for_real_money": False,
+            **it,
+        }
+        validate_item_monetization(full)
+        await db.items.update_one(
+            {"slug": full["slug"]},
+            {
+                "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now.isoformat()},
+                "$set": {
+                    "slug": full["slug"],
+                    "name": full["name"],
+                    "description": full["description"],
+                    "item_type": full["item_type"],
+                    "rarity": full["rarity"],
+                    "level_required": full["level_required"],
+                    "power_score": full["power_score"],
+                    "strength_bonus": full["strength_bonus"],
+                    "agility_bonus": full["agility_bonus"],
+                    "intellect_bonus": full["intellect_bonus"],
+                    "endurance_bonus": full["endurance_bonus"],
+                    "faith_bonus": full["faith_bonus"],
+                    "is_tradeable": full["is_tradeable"],
+                    "is_cosmetic": full["is_cosmetic"],
+                    "affects_combat": full["affects_combat"],
+                    "affects_economy": full["affects_economy"],
+                    "affects_ranking": full["affects_ranking"],
+                    "can_be_sold_for_gold": full["can_be_sold_for_gold"],
+                    "can_be_sold_for_real_money": full["can_be_sold_for_real_money"],
+                    "is_active": True,
+                    "updated_at": now.isoformat(),
+                },
+            },
+            upsert=True,
+        )
+    logger.info("Seeded %d dungeons and %d items", len(DUNGEON_SEED), len(ITEM_SEED))
+
+
 async def seed_tester():
     if APP_ENV == "production":
         logger.info("APP_ENV=production → skipping tester seed")
@@ -709,6 +1382,7 @@ async def seed_tester():
 async def on_startup():
     await ensure_indexes()
     await seed_classes_and_traits()
+    await seed_dungeons_and_items()
     await seed_tester()
     logger.info("Orbus backend ready (env=%s)", APP_ENV)
 
