@@ -128,13 +128,39 @@ Implemented (zero gameplay change, all 82 prior tests still pass + 21 new):
 - 21 new pytest tests (`tests/backend_phase5_test.py`) covering all above behaviors
 - TODO: reduce access TTL from 7d → 1h once the React frontend actively uses `/api/auth/refresh`
 
+## Phase 6 — 2026-06-24 (Equip System + UI Password Reset)
+Implemented (zero gameplay regression, **117/117 pytest PASS**: 103 prior + 14 new):
+- **New collection `equipped_items`** (id, guild_id, adventurer_id, item_id, slot, equipped_at)
+  - Indexes: id UNIQUE, guild_id, adventurer_id, item_id, **compound UNIQUE (adventurer_id, slot)**
+- **3 new endpoints** under `/api/adventurers/{id}/equipment|equip|unequip`
+- **Equipment locked** while an adventurer is in expedition (`is_available=false`) → HTTP 400
+- **`/api/inventory`** extended with `total_quantity` / `equipped_quantity` / `available_quantity` (legacy `quantity` preserved as alias of total)
+- **`/api/adventurers`** extended with `equipment`, `base_power`, `equipment_power`, `total_power`
+- **`expedition_members`** snapshot extended with `equipment_snapshot`, `equipment_power_snapshot`, `total_power_snapshot` (immutable after start)
+- **`team_power` formula** keeps the original shape (sum of per-member power + role bonuses), but each member's per-member contribution is now `total_power_snapshot` (base + equipment) when present. With no equipment the result is identical to Phase 3.
+- **Item seed rebalanced** (idempotent upsert by slug) to give all 5 items meaningful slot/stat semantics:
+  - Rusted Sword: weapon Common +1 STR / pow 1
+  - Goblin Dagger: weapon Uncommon +2 AGI / pow 2
+  - Cracked Staff: weapon Common +1 INT +1 FAI / pow 1
+  - Novice Charm: accessory Common +1 FAI / pow 1
+  - Torn Leather Vest: armor Common +1 END / pow 1
+- **Monetization invariant intact**: all 5 seed items remain `can_be_sold_for_real_money=false`; validator still rejects combat-affecting items with realmoney=True (400)
+- **UI Password Reset**: new public pages `/password-reset/request` and `/password-reset/confirm`, plus a `forgot password?` link on `/login`. Weak-password / bad-token errors render inline + via sonner toast.
+- **Frontend**: `/adventurers` shows Power column + "manage" link; `/inventory` shows total/equipped/available columns + stat bonuses; `/adventurers/:id/equipment` is a full 3-slot equip page; `/expeditions/:id` shows the frozen equipment_snapshot per member.
+- 14 new pytest tests in `tests/backend_phase6_test.py`
+
 ## Known limits / debt
-- Frontend still uses only `access_token` (7-day expiry); refresh flow exposed but unused by the React app
-- `server.py` is still monolithic (~2k lines) — modular split planned for Phase 5.5
-- Password-reset uses console logging instead of real email — needs SMTP/email integration (Phase 6+)
-- Quick-action buttons on dashboard remain `disabled` placeholders for phase-2/3 (already replaced where applicable)
+- Frontend still uses only `access_token` (no automatic refresh) — refresh endpoint exists but the React app does not yet consume it. TODO when refresh adopted: reduce JWT_EXPIRY_DAYS from 7 → 1h.
+- `server.py` is still monolithic (~2.2k lines) — modular split scheduled for Phase 5.5
+- Password-reset uses console logging instead of real email — needs SMTP/email integration (e.g. Resend / SendGrid) for production
+- No class/level restrictions on equip (all weapons fit all weapon slots regardless of class) — by design for Phase 6
+- No item rarity rules on equip (Common adventurer can wear Epic) — by design
 
 ## Next tasks
-1. User-led review of Phase 5
-2. **Phase 5.5**: modular refactor of `server.py` (auth/guilds/recruitment/expeditions/admin/seeds modules)
-3. **Phase 6**: equip items / loadout, then ranking + market
+1. User-led review of Phase 6 UX + gameplay loop with equip-equipped expeditions
+2. **Phase 5.5**: modular refactor of `server.py` (auth/guilds/recruitment/expeditions/equip/admin/seeds modules)
+3. **Phase 7** options (pick one):
+   - Dungeon tier 2 + 3 (Shadow Crypts, Dragon's Hoard) with rarer loot
+   - Equip rerolls / item enchanting via gold sink (gold economy depth)
+   - Real email integration + frontend refresh-token consumption (push security to production-grade)
+4. Future: ranking, market, premium shop, chat, PvP, crafting, alliances
