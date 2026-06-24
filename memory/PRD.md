@@ -149,18 +149,37 @@ Implemented (zero gameplay regression, **117/117 pytest PASS**: 103 prior + 14 n
 - **Frontend**: `/adventurers` shows Power column + "manage" link; `/inventory` shows total/equipped/available columns + stat bonuses; `/adventurers/:id/equipment` is a full 3-slot equip page; `/expeditions/:id` shows the frozen equipment_snapshot per member.
 - 14 new pytest tests in `tests/backend_phase6_test.py`
 
+## Phase 7 — 2026-06-24 (Tier 2/3 Dungeons + Rare/Epic Loot + Equipment Delta)
+Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS: 117 prior + 16 new):
+- **3 dungeons** total: Goblin Warrens (Tier 1, 60s/45/3, invariato), **Shadow Crypts** (Tier 2, 120s/60/3, gold 65/xp 50), **Dragon's Hoard** (Tier 3, 300s/80/3, gold 120/xp 90)
+- **8 new items** (idempotent seeds): 4 Rare (Cryptbone Blade, Spiritglass Staff, Gravewarden Mail, Relic Signet) + 4 Epic (Drakefang Greatsword, Embermind Focus, Dragonscale Vest, Hoardlord's Seal). Tutti `can_be_sold_for_real_money=false`, `affects_combat=true`.
+- **Loot tables per dungeon** (in `DUNGEON_LOOT_TABLES` constant): success-chance + weights per rarità. Failure restituisce SOLO Common (mai Rare/Epic). Goblin Warrens success 50% (Common 85, Uncommon 15); Shadow Crypts success 65% (Common 50, Uncommon 35, Rare 15) + failure 10% Common; Dragon's Hoard success 80% (Uncommon 50, Rare 35, Epic 15) + failure 5% Common.
+- **Progression gate (soft, enforced backend)**: Shadow Crypts richiede `guild.level >= 1 AND adventurer_count >= 3`; Dragon's Hoard richiede `guild.level >= 2 OR best-three total_power >= 65`. `GET /api/dungeons` ritorna `unlocked` + `unlock_reason`. `POST /api/expeditions` → **HTTP 403 "Dungeon locked: ..."** se non sbloccato.
+- **Equipment delta (smart enhancement)**: ogni expedition doc registra all'avvio (immutable):
+  - `base_team_power` (senza equipment, con composition bonus)
+  - `equipment_power_bonus` (somma equipment_power dei membri)
+  - `final_team_power` (= team_power, backward-compat)
+  - `success_chance_without_equipment`, `success_chance_with_equipment`
+  - `equipment_delta_text` — narrativa generata: "No equipment was used on this run." / "Equipment contributed +N team power, improving success chance from X% to Y%." / "Equipment contributed +N team power. Success chance was already at maximum (95%)."
+- **Dashboard stats** su `GET /api/guilds/me`: `highest_dungeon_slug`, `total_expeditions_completed`, `last_loot_item` (computed lazily).
+- **`GET /api/dungeons` ora accetta auth opzionale** (Bearer): retro-compatibile con chiamate non autenticate (Phase 3 test) — quando l'utente è loggato, popola `unlocked` per la sua guild.
+- 16 new pytest tests in `tests/backend_phase7_test.py` (seeds, gates, delta, loot table probabilistico ×60 success-runs per Rare/Epic, dashboard stats).
+- **Frontend**: `/dungeons` mostra tier I/II/III + badge LOCKED + tooltip unlock_reason + CTA disabilitato per dungeon lockati; `/dungeons/:slug/start` mostra EQUIPMENT BONUS + TEAM POWER FINAL + success-chance color-coded (verde >75%, ambra 40-75%, rosso <40%) + warning sobrio "underpowered"; `/expeditions/:id` ha una sezione "Expedition Analysis" con tutti i 5 delta + narrative; `/dashboard` ha 3 mini-cards EXPEDITIONS DONE / HIGHEST DUNGEON / LAST LOOT.
+
 ## Known limits / debt
-- Frontend still uses only `access_token` (no automatic refresh) — refresh endpoint exists but the React app does not yet consume it. TODO when refresh adopted: reduce JWT_EXPIRY_DAYS from 7 → 1h.
-- `server.py` is still monolithic (~2.2k lines) — modular split scheduled for Phase 5.5
-- Password-reset uses console logging instead of real email — needs SMTP/email integration (e.g. Resend / SendGrid) for production
-- No class/level restrictions on equip (all weapons fit all weapon slots regardless of class) — by design for Phase 6
-- No item rarity rules on equip (Common adventurer can wear Epic) — by design
+- Frontend continua a usare solo `access_token` (no refresh) — Phase 8+
+- `server.py` ancora monolitico (~2.7k linee) — Phase 5.5
+- Password-reset via console log — Phase 8 (Resend/SendGrid)
+- Nessun rate-limit visibile a livello di rotta su `POST /api/expeditions` (solo lockout su login) — accettato per ora
+- Gate Dragon's Hoard usa `best-three total_power CORRENTE` non "best three di sempre": una gilda che equipaggia e poi disequipaggia perde l'unlock se nuovi recruit hanno power basso. Comportamento documentato; semplice da estendere con `_max_team_power_ever` denormalizzato in Phase 8 se serve.
+- Loot table hardcoded in `server.py` (constant `DUNGEON_LOOT_TABLES`), non in DB. Cambiare le percentuali richiede deploy. Per ora va bene; futuro: collection `dungeon_loot_tables`.
 
 ## Next tasks
-1. User-led review of Phase 6 UX + gameplay loop with equip-equipped expeditions
-2. **Phase 5.5**: modular refactor of `server.py` (auth/guilds/recruitment/expeditions/equip/admin/seeds modules)
-3. **Phase 7** options (pick one):
-   - Dungeon tier 2 + 3 (Shadow Crypts, Dragon's Hoard) with rarer loot
-   - Equip rerolls / item enchanting via gold sink (gold economy depth)
-   - Real email integration + frontend refresh-token consumption (push security to production-grade)
-4. Future: ranking, market, premium shop, chat, PvP, crafting, alliances
+1. User-led review Phase 7 (UX + loop progressione completo)
+2. **Phase 8 (opzioni)**:
+   - Tutorial onboarding (5-step modal sul primo login → guida recruit → expedition → equip → tier 2)
+   - Email reale per password reset (Resend/SendGrid) + frontend refresh-token consumption
+   - Equipment crafting/enchant (consumo Common items per upgrade)
+   - Auto-replay expedition (un click "ripeti ultimo run")
+3. Phase 5.5 (refactor `server.py`) idealmente dopo Phase 8 quando gameplay è stabile
+4. Long-term: ranking, market, premium shop, chat, PvP

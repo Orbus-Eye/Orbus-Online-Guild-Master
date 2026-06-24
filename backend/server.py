@@ -133,9 +133,27 @@ TRAIT_SEED = [
 # ─── Phase 3: Dungeons, Items, Expeditions, Inventory ──────────────────────────
 SUCCESS_CHANCE_MIN = 10
 SUCCESS_CHANCE_MAX = 95
-LOOT_DROP_CHANCE = 0.50  # 50%
-LOOT_RARITIES = ["Common", "Uncommon"]  # MVP: no Rare/Epic loot
+LOOT_DROP_CHANCE = 0.50  # 50% (Goblin Warrens default; per-dungeon override below)
+LOOT_RARITIES = ["Common", "Uncommon"]  # legacy global pool (Goblin Warrens fallback)
 XP_THRESHOLD_PER_LEVEL = 100  # adventurer levels up when xp >= level * 100
+
+# ─── Phase 7: Loot tables per dungeon ─────────────────────────────────────────
+# Each entry defines: success-loot probability + rarity weights, plus a
+# small failure consolation (Common-only, never Rare/Epic).
+DUNGEON_LOOT_TABLES = {
+    "goblin-warrens": {
+        "success": {"chance": 0.50, "weights": {"Common": 85, "Uncommon": 15}},
+        "failure": {"chance": 0.00, "weights": {}},
+    },
+    "shadow-crypts": {
+        "success": {"chance": 0.65, "weights": {"Common": 50, "Uncommon": 35, "Rare": 15}},
+        "failure": {"chance": 0.10, "weights": {"Common": 100}},
+    },
+    "dragons-hoard": {
+        "success": {"chance": 0.80, "weights": {"Uncommon": 50, "Rare": 35, "Epic": 15}},
+        "failure": {"chance": 0.05, "weights": {"Common": 100}},
+    },
+}
 
 DUNGEON_SEED = [
     {
@@ -148,6 +166,28 @@ DUNGEON_SEED = [
         "recommended_power": 45,
         "base_gold_reward": 35,
         "base_xp_reward": 25,
+    },
+    {
+        "slug": "shadow-crypts",
+        "name": "Shadow Crypts",
+        "description": "Ancient burial halls where restless spirits guard forgotten relics.",
+        "difficulty": 2,
+        "required_team_size": 3,
+        "base_duration_seconds": 120,
+        "recommended_power": 60,
+        "base_gold_reward": 65,
+        "base_xp_reward": 50,
+    },
+    {
+        "slug": "dragons-hoard",
+        "name": "Dragon's Hoard",
+        "description": "A scorched vault beneath a ruined keep, filled with dragonkin guardians and unstable treasure.",
+        "difficulty": 3,
+        "required_team_size": 3,
+        "base_duration_seconds": 300,
+        "recommended_power": 80,
+        "base_gold_reward": 120,
+        "base_xp_reward": 90,
     },
 ]
 
@@ -174,9 +214,51 @@ ITEM_SEED = [
      "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
     {"slug": "torn-leather-vest", "name": "Torn Leather Vest",
      "description": "Patched in three places. Still keeps the cold off.",
-     "item_type": "armor", "rarity": "Common", "power_score": 4,
+     "item_type": "armor", "rarity": "Common", "power_score": 1,
      "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
      "endurance_bonus": 1, "faith_bonus": 0, "affects_combat": True},
+    # ─── Phase 7: Shadow Crypts (Rare) ──────────────────────────────────────
+    {"slug": "cryptbone-blade", "name": "Cryptbone Blade",
+     "description": "A jagged shortsword carved from a barrow-wight's femur. It hums with old anger.",
+     "item_type": "weapon", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 3, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 1, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "spiritglass-staff", "name": "Spiritglass Staff",
+     "description": "A staff topped with a sliver of soulglass. It whispers at the edge of hearing.",
+     "item_type": "weapon", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 3,
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
+    {"slug": "gravewarden-mail", "name": "Gravewarden Mail",
+     "description": "Rust-pitted but resilient — armor pulled from a tomb-knight that refused to fall twice.",
+     "item_type": "armor", "rarity": "Rare", "power_score": 4,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 4, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "relic-signet", "name": "Relic Signet",
+     "description": "A signet ring inlaid with a smoky relic-shard. Whoever wore it last is not coming back for it.",
+     "item_type": "accessory", "rarity": "Rare", "power_score": 3,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 1,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
+    # ─── Phase 7: Dragon's Hoard (Epic) ─────────────────────────────────────
+    {"slug": "drakefang-greatsword", "name": "Drakefang Greatsword",
+     "description": "A two-hander forged around the fang of a young dragon. The blade smokes when drawn.",
+     "item_type": "weapon", "rarity": "Epic", "power_score": 7,
+     "strength_bonus": 5, "agility_bonus": 0, "intellect_bonus": 0,
+     "endurance_bonus": 2, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "embermind-focus", "name": "Embermind Focus",
+     "description": "A wand of dragonbone bound in copper wire. Channels heat like a furnace.",
+     "item_type": "weapon", "rarity": "Epic", "power_score": 7,
+     "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 5,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
+    {"slug": "dragonscale-vest", "name": "Dragonscale Vest",
+     "description": "Overlapping scales stitched onto cured leather. Light, hot to the touch, hard as stone.",
+     "item_type": "armor", "rarity": "Epic", "power_score": 6,
+     "strength_bonus": 0, "agility_bonus": 1, "intellect_bonus": 0,
+     "endurance_bonus": 5, "faith_bonus": 0, "affects_combat": True},
+    {"slug": "hoardlords-seal", "name": "Hoardlord's Seal",
+     "description": "A heavy gold amulet shaped like a coiled wyrm. It seems to weigh the wearer down — yet they walk taller.",
+     "item_type": "accessory", "rarity": "Epic", "power_score": 6,
+     "strength_bonus": 2, "agility_bonus": 0, "intellect_bonus": 2,
+     "endurance_bonus": 0, "faith_bonus": 2, "affects_combat": True},
 ]
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -588,6 +670,17 @@ def expedition_public(e: dict) -> dict:
         "completed_at": e.get("completed_at"),
         "team_power": e.get("team_power", 0),
         "success_chance": e.get("success_chance", 0),
+        # Phase 7: equipment delta snapshot (immutable after start)
+        "base_team_power": e.get("base_team_power", e.get("team_power", 0)),
+        "equipment_power_bonus": int(e.get("equipment_power_bonus", 0)),
+        "final_team_power": e.get("final_team_power", e.get("team_power", 0)),
+        "success_chance_without_equipment": e.get(
+            "success_chance_without_equipment", e.get("success_chance", 0)
+        ),
+        "success_chance_with_equipment": e.get(
+            "success_chance_with_equipment", e.get("success_chance", 0)
+        ),
+        "equipment_delta_text": e.get("equipment_delta_text"),
         "final_score": e.get("final_score"),
         "result_summary": e.get("result_summary"),
         "result_log": e.get("result_log"),
@@ -756,6 +849,139 @@ def _build_equipment_response(adventurer: dict, slots: dict, eq_power: int) -> d
     }
 
 
+# ─── Phase 7: Loot table sampling ─────────────────────────────────────────────
+async def _roll_loot_for_dungeon(dungeon: dict, success: bool) -> list[str]:
+    """Pick at most one item ID using the per-dungeon weighted loot table.
+
+    Returns a list (possibly empty) of item IDs to grant. Failure path never
+    returns Rare or Epic loot — only Common (consolation).
+    """
+    table = DUNGEON_LOOT_TABLES.get(dungeon.get("slug", ""))
+    if not table:
+        # Backward-compat fallback: legacy global pool (Common/Uncommon).
+        if not success:
+            return []
+        if random.random() >= LOOT_DROP_CHANCE:
+            return []
+        pool = await db.items.find(
+            {"is_active": True, "rarity": {"$in": LOOT_RARITIES}}, {"_id": 0}
+        ).to_list(100)
+        return [random.choice(pool)["id"]] if pool else []
+
+    branch = table["success" if success else "failure"]
+    if random.random() >= branch["chance"]:
+        return []
+    weights = branch.get("weights") or {}
+    rarities = [r for r, w in weights.items() if w > 0]
+    if not rarities:
+        return []
+    # Safety: failure must never roll Rare/Epic even if mis-configured
+    if not success:
+        rarities = [r for r in rarities if r in ("Common", "Uncommon")]
+        if not rarities:
+            return []
+    chosen_rarity = random.choices(
+        rarities, weights=[weights[r] for r in rarities], k=1
+    )[0]
+    pool = await db.items.find(
+        {"is_active": True, "rarity": chosen_rarity}, {"_id": 0}
+    ).to_list(200)
+    if not pool:
+        # Rarity has no items → degrade gracefully within branch constraints
+        fallback_order = ["Epic", "Rare", "Uncommon", "Common"]
+        for r in fallback_order:
+            if r == chosen_rarity:
+                continue
+            if not success and r not in ("Common", "Uncommon"):
+                continue
+            cand = await db.items.find(
+                {"is_active": True, "rarity": r}, {"_id": 0}
+            ).to_list(200)
+            if cand:
+                pool = cand
+                break
+    return [random.choice(pool)["id"]] if pool else []
+
+
+# ─── Phase 7: Dungeon gating (soft progression) ───────────────────────────────
+async def _evaluate_dungeon_gate(dungeon: dict, guild: dict) -> tuple[bool, Optional[str]]:
+    """Returns (unlocked, unlock_reason). Reason is None when unlocked.
+
+    - Goblin Warrens: always unlocked
+    - Shadow Crypts: guild.level >= 1 AND adventurer_count >= 3
+    - Dragon's Hoard: guild.level >= 2 OR best 3 adventurer total_power >= 65
+    """
+    slug = dungeon.get("slug")
+    if slug == "shadow-crypts":
+        adv_count = await db.adventurers.count_documents({"guild_id": guild["id"]})
+        if int(guild.get("level", 1)) >= 1 and adv_count >= 3:
+            return True, None
+        return False, "Requires guild level 1 and at least 3 adventurers"
+    if slug == "dragons-hoard":
+        if int(guild.get("level", 1)) >= 2:
+            return True, None
+        advs = await db.adventurers.find(
+            {"guild_id": guild["id"]}, {"_id": 0}
+        ).to_list(200)
+        if advs:
+            eq_map = await _load_equipment_for_guild(guild["id"])
+            powers = []
+            for a in advs:
+                _slots, eq_p = eq_map.get(a["id"], (_empty_slot_map(), 0))
+                powers.append(_adventurer_unit_power(a) + eq_p)
+            powers.sort(reverse=True)
+            best3 = sum(powers[:3])
+            if best3 >= 65:
+                return True, None
+        return False, "Requires guild level 2 or team power \u2265 65"
+    return True, None
+
+
+# ─── Phase 7: Equipment delta + narrative ─────────────────────────────────────
+def _build_equipment_delta(
+    members_for_power: list[dict],
+    dungeon: dict,
+    final_team_power: int,
+    success_chance_with_eq: int,
+) -> dict:
+    """Return the 5 Phase-7 delta fields (base/equipment/final + with/without
+    success chance + narrative text).
+    """
+    equipment_power_bonus = sum(
+        int(m.get("equipment_power_snapshot", 0)) for m in members_for_power
+    )
+    members_base_only = [
+        {**m, "total_power_snapshot": int(m["total_power_snapshot"]) - int(m.get("equipment_power_snapshot", 0))}
+        for m in members_for_power
+    ]
+    base_team_power = compute_team_power(members_base_only)
+    success_chance_without_eq = compute_success_chance(
+        base_team_power, dungeon["recommended_power"]
+    )
+
+    if equipment_power_bonus == 0:
+        narrative = "No equipment was used on this run."
+    elif success_chance_without_eq == success_chance_with_eq:
+        narrative = (
+            f"Equipment contributed +{equipment_power_bonus} team power. "
+            f"Success chance was already at maximum ({success_chance_with_eq}%)."
+        )
+    else:
+        narrative = (
+            f"Equipment contributed +{equipment_power_bonus} team power, "
+            f"improving success chance from {success_chance_without_eq}% "
+            f"to {success_chance_with_eq}%."
+        )
+    return {
+        "base_team_power": base_team_power,
+        "equipment_power_bonus": equipment_power_bonus,
+        "final_team_power": final_team_power,
+        "success_chance_without_equipment": success_chance_without_eq,
+        "success_chance_with_equipment": success_chance_with_eq,
+        "equipment_delta_text": narrative,
+    }
+
+
 def compute_team_power(members: list) -> int:
     """members is a list of adventurer dicts (live or snapshot fields ending in _snapshot).
 
@@ -865,20 +1091,15 @@ async def _complete_one_expedition(exp_id: str) -> None:
     success = final_score <= claimed["success_chance"]
     now = utc_now()
 
+    # Phase 7: weighted, per-dungeon loot table (Common-only on failure)
+    loot_ids = await _roll_loot_for_dungeon(dungeon, success)
+
     if success:
         gold_reward = dungeon["base_gold_reward"]
         xp_per_member = dungeon["base_xp_reward"]
-        loot_ids: list = []
-        if random.random() < LOOT_DROP_CHANCE:
-            pool = await db.items.find(
-                {"is_active": True, "rarity": {"$in": LOOT_RARITIES}}, {"_id": 0}
-            ).to_list(100)
-            if pool:
-                loot_ids = [random.choice(pool)["id"]]
     else:
         gold_reward = round(dungeon["base_gold_reward"] * 0.25)
         xp_per_member = round(dungeon["base_xp_reward"] * 0.4)
-        loot_ids = []
 
     # Apply rewards to guild gold
     await db.guilds.update_one(
@@ -987,6 +1208,27 @@ async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict
     if not current_user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
+
+
+async def get_optional_user(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
+) -> Optional[dict]:
+    """Soft-auth dependency: returns the current user if a valid bearer token
+    is provided, otherwise None. Never raises."""
+    if creds is None or not creds.credentials:
+        return None
+    try:
+        payload = decode_token(creds.credentials)
+        if payload.get("type") != "access":
+            return None
+        user_id = payload.get("sub")
+        if not user_id:
+            return None
+        return await db.users.find_one({"id": user_id}, {"_id": 0})
+    except HTTPException:
+        return None
+    except Exception:
+        return None
 
 
 # ─── Phase 5: Auth security helpers ────────────────────────────────────────────
@@ -1366,14 +1608,65 @@ async def get_my_guild(current_user: dict = Depends(get_current_user)):
     payload["active_expedition_count"] = active_exp
     payload["last_expedition_id"] = last_exp["id"] if last_exp else None
     payload["last_expedition_summary"] = last_exp.get("result_summary") if last_exp else None
+
+    # ─── Phase 7: dashboard progression stats ──────────────────────────────
+    total_completed = await db.expeditions.count_documents(
+        {"guild_id": guild["id"], "status": "completed"}
+    )
+    # Highest dungeon completed with a success
+    highest_dungeon_slug = None
+    cursor = db.expeditions.find(
+        {"guild_id": guild["id"], "status": "completed", "result_summary": "Success"},
+        {"_id": 0, "dungeon_id": 1},
+    )
+    success_dungeon_ids = list({row["dungeon_id"] async for row in cursor})
+    if success_dungeon_ids:
+        ranked = (
+            await db.dungeons.find(
+                {"id": {"$in": success_dungeon_ids}}, {"_id": 0, "slug": 1, "difficulty": 1}
+            )
+            .sort("difficulty", -1)
+            .to_list(10)
+        )
+        if ranked:
+            highest_dungeon_slug = ranked[0]["slug"]
+    # Last loot item: find the most recently completed expedition that yielded loot
+    last_loot_item = None
+    last_exp_with_loot = await db.expeditions.find_one(
+        {"guild_id": guild["id"], "status": "completed", "loot_item_ids": {"$ne": []}},
+        {"_id": 0, "loot_item_ids": 1, "completed_at": 1, "created_at": 1},
+        sort=[("completed_at", -1)],
+    )
+    if last_exp_with_loot and last_exp_with_loot.get("loot_item_ids"):
+        last_item_id = last_exp_with_loot["loot_item_ids"][-1]
+        item_doc = await db.items.find_one({"id": last_item_id}, {"_id": 0, "name": 1, "rarity": 1})
+        if item_doc:
+            last_loot_item = {"name": item_doc["name"], "rarity": item_doc.get("rarity", "Common")}
+
+    payload["highest_dungeon_slug"] = highest_dungeon_slug
+    payload["total_expeditions_completed"] = total_completed
+    payload["last_loot_item"] = last_loot_item
     return {"guild": payload}
 
 
 # ─── Endpoints: Dungeons / Items (read-only catalogs) ──────────────────────────
 @api.get("/dungeons")
-async def list_dungeons():
+async def list_dungeons(current_user: Optional[dict] = Depends(get_optional_user)):
     rows = await db.dungeons.find({"is_active": True}, {"_id": 0}).sort("difficulty", 1).to_list(100)
-    return {"dungeons": [dungeon_public(d) for d in rows]}
+    guild = None
+    if current_user:
+        guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
+    out = []
+    for d in rows:
+        pub = dungeon_public(d)
+        if guild:
+            unlocked, reason = await _evaluate_dungeon_gate(d, guild)
+        else:
+            unlocked, reason = True, None
+        pub["unlocked"] = unlocked
+        pub["unlock_reason"] = reason
+        out.append(pub)
+    return {"dungeons": out}
 
 
 @api.get("/items")
@@ -1394,6 +1687,13 @@ async def start_expedition(
     )
     if not dungeon:
         raise HTTPException(status_code=404, detail="Dungeon not found")
+
+    # Phase 7: enforce soft progression gate
+    unlocked, unlock_reason = await _evaluate_dungeon_gate(dungeon, guild)
+    if not unlocked:
+        raise HTTPException(
+            status_code=403, detail=f"Dungeon locked: {unlock_reason}"
+        )
 
     # Validate team composition
     ids = payload.adventurer_ids
@@ -1434,10 +1734,16 @@ async def start_expedition(
         members_for_power.append({
             **adv,
             "total_power_snapshot": base + eq_power,
+            "equipment_power_snapshot": eq_power,
         })
 
     team_power = compute_team_power(members_for_power)
     success_chance = compute_success_chance(team_power, dungeon["recommended_power"])
+
+    # Phase 7: equipment delta (frozen at start)
+    delta = _build_equipment_delta(
+        members_for_power, dungeon, team_power, success_chance
+    )
 
     now = utc_now()
     completes_at = now + timedelta(seconds=dungeon["base_duration_seconds"])
@@ -1453,6 +1759,13 @@ async def start_expedition(
         "completed_at": None,
         "team_power": team_power,
         "success_chance": success_chance,
+        # Phase 7 delta snapshot
+        "base_team_power": delta["base_team_power"],
+        "equipment_power_bonus": delta["equipment_power_bonus"],
+        "final_team_power": delta["final_team_power"],
+        "success_chance_without_equipment": delta["success_chance_without_equipment"],
+        "success_chance_with_equipment": delta["success_chance_with_equipment"],
+        "equipment_delta_text": delta["equipment_delta_text"],
         "final_score": None,
         "result_summary": None,
         "result_log": None,

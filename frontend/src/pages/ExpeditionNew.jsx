@@ -99,9 +99,17 @@ export default function ExpeditionNew() {
     };
 
     const teamPower = useMemo(() => previewTeamPower(selected), [selected]);
+    const equipmentBonus = useMemo(
+        () => selected.reduce((s, a) => s + (a.equipment_power || 0), 0),
+        [selected],
+    );
     const successChance = useMemo(
         () => (dungeon ? previewSuccessChance(teamPower, dungeon.recommended_power) : 0),
         [teamPower, dungeon],
+    );
+    const underpowered = useMemo(
+        () => Boolean(dungeon && selected.length === requiredSize && teamPower < dungeon.recommended_power),
+        [dungeon, selected.length, requiredSize, teamPower],
     );
 
     const composition = useMemo(() => {
@@ -254,10 +262,19 @@ export default function ExpeditionNew() {
                                     <span>{composition.Healer}</span>
                                 </div>
                                 <div className="flex justify-between pt-2 border-t border-border/60">
-                                    <span className="text-muted-foreground">TEAM POWER</span>
+                                    <span className="text-muted-foreground">EQUIPMENT BONUS</span>
+                                    <span
+                                        data-testid="preview-equipment-bonus"
+                                        className="text-amber font-semibold"
+                                    >
+                                        +{equipmentBonus}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">TEAM POWER (FINAL)</span>
                                     <span
                                         data-testid="preview-team-power"
-                                        className="text-amber font-semibold"
+                                        className="text-[#22c55e] font-semibold"
                                     >
                                         {teamPower}
                                     </span>
@@ -266,12 +283,30 @@ export default function ExpeditionNew() {
                                     <span className="text-muted-foreground">SUCCESS CHANCE</span>
                                     <span
                                         data-testid="preview-success-chance"
-                                        className="text-amber font-semibold"
+                                        className={
+                                            "font-semibold " +
+                                            (selected.length === requiredSize
+                                                ? successChance > 75
+                                                    ? "text-[#22c55e]"
+                                                    : successChance >= 40
+                                                      ? "text-amber"
+                                                      : "text-destructive"
+                                                : "text-muted-foreground")
+                                        }
                                     >
                                         {selected.length === requiredSize ? `${successChance}%` : "—"}
                                     </span>
                                 </div>
                             </div>
+
+                            {underpowered && (
+                                <div
+                                    data-testid="underpowered-warning"
+                                    className="text-[11px] text-amber border border-amber/40 bg-amber/10 px-3 py-2 rounded-sm mt-3"
+                                >
+                                    ⚠ Your team is underpowered for this dungeon (recommended {dungeon.recommended_power}, you have {teamPower}).
+                                </div>
+                            )}
 
                             <Button
                                 onClick={submit}

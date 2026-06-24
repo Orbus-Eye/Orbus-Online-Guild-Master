@@ -110,6 +110,15 @@ def _grant_item(guild_id, item_id, quantity=1):
 
 def _items_by_type():
     rows = requests.get(f"{API}/items", timeout=15).json()["items"]
+    # Filter to canonical seed items + Phase 7 expansions so tests are not
+    # affected by stale admin-test artifacts (cosmetics with zero bonuses).
+    seed_slugs = {
+        "rusted-sword", "goblin-dagger", "cracked-staff",
+        "novice-charm", "torn-leather-vest",
+        "cryptbone-blade", "spiritglass-staff", "gravewarden-mail", "relic-signet",
+        "drakefang-greatsword", "embermind-focus", "dragonscale-vest", "hoardlords-seal",
+    }
+    rows = [i for i in rows if i["slug"] in seed_slugs]
     return {
         "weapon": [i for i in rows if i["item_type"] == "weapon"],
         "armor": [i for i in rows if i["item_type"] == "armor"],

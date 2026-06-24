@@ -142,6 +142,47 @@ export default function Dashboard() {
                     />
                 </section>
 
+                {/* Phase 7: progression mini-cards */}
+                <section
+                    className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8"
+                    data-testid="phase7-progression"
+                >
+                    <Stat
+                        label="EXPEDITIONS DONE"
+                        value={guild.total_expeditions_completed ?? 0}
+                        testid="stat-total-completed"
+                    />
+                    <Stat
+                        label="HIGHEST DUNGEON"
+                        value={
+                            <span className="text-xs font-mono">
+                                {guild.highest_dungeon_slug
+                                    ? guild.highest_dungeon_slug
+                                    : "—"}
+                            </span>
+                        }
+                        testid="stat-highest-dungeon"
+                    />
+                    <Stat
+                        label="LAST LOOT"
+                        value={
+                            guild.last_loot_item ? (
+                                <span className="text-xs">
+                                    {guild.last_loot_item.name}{" "}
+                                    <span className="text-muted-foreground">
+                                        · {guild.last_loot_item.rarity}
+                                    </span>
+                                </span>
+                            ) : (
+                                <span className="text-xs text-muted-foreground">
+                                    None yet
+                                </span>
+                            )
+                        }
+                        testid="stat-last-loot"
+                    />
+                </section>
+
                 {guild.last_expedition_id && (
                     <section className="mb-8">
                         <Link
