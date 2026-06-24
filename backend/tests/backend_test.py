@@ -69,13 +69,13 @@ class TestRegister:
         assert r2.status_code == 409
         assert r2.json()["detail"] == "Email already registered"
 
-    def test_register_short_password_422(self):
+    def test_register_short_password_400(self):
         r = requests.post(
             f"{API}/auth/register",
             json={"email": _rand_email(), "username": "shortpw", "password": "abc"},
             timeout=15,
         )
-        assert r.status_code == 422
+        assert r.status_code == 400
 
     def test_register_invalid_email_422(self):
         r = requests.post(

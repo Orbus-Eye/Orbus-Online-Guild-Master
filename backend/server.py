@@ -831,6 +831,26 @@ async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict
 
 
 # ─── Phase 5: Auth security helpers ────────────────────────────────────────────
+PASSWORD_RULES_MESSAGE = (
+    "Password must be at least 8 characters and contain a letter and a digit"
+)
+
+
+def _validate_password_strength(password: str) -> None:
+    """Raise HTTP 400 if password does not satisfy the Phase-5 policy.
+
+    Rules: min 8 chars + at least one letter + at least one digit.
+    Validation is intentionally performed at the route layer (not in Pydantic),
+    so the API returns HTTP 400 rather than 422.
+    """
+    if (
+        len(password) < 8
+        or not PASSWORD_REGEX_LETTER.search(password)
+        or not PASSWORD_REGEX_DIGIT.search(password)
+    ):
+        raise HTTPException(status_code=400, detail=PASSWORD_RULES_MESSAGE)
+
+
 def _hash_token(token: str) -> str:
     """SHA-256 hex digest. Used for opaque refresh/reset tokens at rest."""
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
@@ -842,7 +862,7 @@ def _new_opaque_token() -> str:
 
 
 async def _check_login_lock(email: str) -> None:
-    """Raise HTTP 429 if email is currently locked out."""
+    """Raise HTTP 429 (with Retry-After header) if email is currently locked out."""
     row = await db.login_attempts.find_one({"email": email})
     if not row:
         return
@@ -851,10 +871,11 @@ async def _check_login_lock(email: str) -> None:
         if locked_until.tzinfo is None:
             locked_until = locked_until.replace(tzinfo=timezone.utc)
         if locked_until > utc_now():
-            remaining = int((locked_until - utc_now()).total_seconds())
+            remaining = max(1, int((locked_until - utc_now()).total_seconds()))
             raise HTTPException(
                 status_code=429,
-                detail=f"Too many failed login attempts. Try again in {remaining} seconds.",
+                detail="Too many failed login attempts. Try again later.",
+                headers={"Retry-After": str(remaining)},
             )
 
 
@@ -934,18 +955,8 @@ async def _revoke_all_refresh_tokens(user_id: str) -> int:
 class RegisterIn(BaseModel):
     email: OrbusEmail
     username: str = Field(min_length=2, max_length=32)
-    password: str = Field(min_length=8, max_length=128)
-
-    @field_validator("password")
-    @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 8:
-            raise ValueError("password must be at least 8 characters")
-        if not PASSWORD_REGEX_LETTER.search(v):
-            raise ValueError("password must contain at least one letter")
-        if not PASSWORD_REGEX_DIGIT.search(v):
-            raise ValueError("password must contain at least one digit")
-        return v
+    # Password is validated in the route handler (HTTP 400) — not via Pydantic (422)
+    password: str = Field(max_length=128)
 
 
 class LoginIn(BaseModel):
@@ -967,18 +978,8 @@ class PasswordResetRequestIn(BaseModel):
 
 class PasswordResetConfirmIn(BaseModel):
     token: str = Field(min_length=8, max_length=256)
-    new_password: str = Field(min_length=8, max_length=128)
-
-    @field_validator("new_password")
-    @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 8:
-            raise ValueError("password must be at least 8 characters")
-        if not PASSWORD_REGEX_LETTER.search(v):
-            raise ValueError("password must contain at least one letter")
-        if not PASSWORD_REGEX_DIGIT.search(v):
-            raise ValueError("password must contain at least one digit")
-        return v
+    # new_password is validated in the route handler (HTTP 400) — not via Pydantic (422)
+    new_password: str = Field(max_length=128)
 
 
 class GuildCreateIn(BaseModel):
@@ -1012,6 +1013,7 @@ async def health():
 # ─── Endpoints: Auth ───────────────────────────────────────────────────────────
 @api.post("/auth/register", status_code=201)
 async def register(payload: RegisterIn):
+    _validate_password_strength(payload.password)
     email = payload.email.lower().strip()
     username = payload.username.strip()
 
@@ -1112,6 +1114,7 @@ async def password_reset_request(payload: PasswordResetRequestIn):
 
 @api.post("/auth/password-reset/confirm")
 async def password_reset_confirm(payload: PasswordResetConfirmIn):
+    _validate_password_strength(payload.new_password)
     row = await db.password_reset_tokens.find_one({"token_hash": _hash_token(payload.token)})
     if not row or row.get("used"):
         raise HTTPException(status_code=400, detail="Invalid or already-used reset token")

@@ -44,19 +44,20 @@ def _register(email=None, password="password123", username=None):
 
 # ─── Password regex ────────────────────────────────────────────────────────────
 class TestPasswordRegex:
-    def test_password_missing_digit_422(self):
+    def test_password_missing_digit_400(self):
         r, _, _ = _register(password="abcdefgh")
-        assert r.status_code == 422, r.text
-        assert "digit" in r.text.lower()
+        assert r.status_code == 400, r.text
+        body = r.json()
+        assert "letter" in body["detail"].lower() and "digit" in body["detail"].lower()
 
-    def test_password_missing_letter_422(self):
+    def test_password_missing_letter_400(self):
         r, _, _ = _register(password="12345678")
-        assert r.status_code == 422, r.text
-        assert "letter" in r.text.lower()
+        assert r.status_code == 400, r.text
+        assert "letter" in r.json()["detail"].lower()
 
-    def test_password_min_length_422(self):
+    def test_password_min_length_400(self):
         r, _, _ = _register(password="a1b2c3")
-        assert r.status_code == 422
+        assert r.status_code == 400
 
     def test_password_valid_letter_digit_201(self):
         r, _, _ = _register(password="abcd1234")
@@ -141,12 +142,17 @@ class TestLoginLockout:
                 timeout=15,
             )
             assert bad.status_code == 401
-        # 6th try (even with correct pw) must be locked
+        # 6th try (even with correct pw) must be locked, with Retry-After header
         locked = requests.post(
             f"{API}/auth/login", json={"email": email, "password": pw}, timeout=15
         )
         assert locked.status_code == 429, locked.text
         assert "too many" in locked.json()["detail"].lower()
+        # RFC 6585 / RFC 7231: Retry-After must be present and be a non-negative integer
+        retry_after = locked.headers.get("Retry-After")
+        assert retry_after is not None, "Retry-After header is required on 429"
+        assert retry_after.isdigit(), f"Retry-After must be integer seconds, got {retry_after!r}"
+        assert int(retry_after) > 0
 
     def test_successful_login_resets_attempts(self):
         r, email, pw = _register()
@@ -260,13 +266,13 @@ class TestPasswordReset:
         )
         assert again.status_code == 400
 
-    def test_reset_confirm_weak_password_422(self):
+    def test_reset_confirm_weak_password_400(self):
         bad = requests.post(
             f"{API}/auth/password-reset/confirm",
             json={"token": "anything", "new_password": "weakpass"},  # no digit
             timeout=15,
         )
-        assert bad.status_code == 422
+        assert bad.status_code == 400
 
 
 # ─── Admin dependency audit ────────────────────────────────────────────────────
