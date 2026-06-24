@@ -102,14 +102,23 @@ export default function Login() {
                         </Button>
                     </form>
 
-                    <div className="mt-6 text-xs text-muted-foreground">
-                        No account?{" "}
+                    <div className="mt-6 text-xs text-muted-foreground flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            No account?{" "}
+                            <Link
+                                to="/register"
+                                className="text-amber hover:underline"
+                                data-testid="goto-register-link"
+                            >
+                                register
+                            </Link>
+                        </div>
                         <Link
-                            to="/register"
-                            className="text-amber hover:underline"
-                            data-testid="goto-register-link"
+                            to="/password-reset/request"
+                            className="text-muted-foreground hover:text-amber hover:underline"
+                            data-testid="forgot-password-link"
                         >
-                            register
+                            forgot password?
                         </Link>
                     </div>
                 </div>

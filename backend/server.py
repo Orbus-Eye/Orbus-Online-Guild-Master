@@ -154,22 +154,22 @@ DUNGEON_SEED = [
 ITEM_SEED = [
     {"slug": "rusted-sword", "name": "Rusted Sword",
      "description": "A pitted blade that has seen too many summers.",
-     "item_type": "weapon", "rarity": "Common", "power_score": 5,
+     "item_type": "weapon", "rarity": "Common", "power_score": 1,
      "strength_bonus": 1, "agility_bonus": 0, "intellect_bonus": 0,
      "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
     {"slug": "goblin-dagger", "name": "Goblin Dagger",
      "description": "Crude, jagged, and surprisingly effective in a back alley.",
-     "item_type": "weapon", "rarity": "Common", "power_score": 4,
-     "strength_bonus": 0, "agility_bonus": 1, "intellect_bonus": 0,
+     "item_type": "weapon", "rarity": "Uncommon", "power_score": 2,
+     "strength_bonus": 0, "agility_bonus": 2, "intellect_bonus": 0,
      "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
     {"slug": "cracked-staff", "name": "Cracked Staff",
      "description": "A wizard's staff with a hairline fracture; the focus crystal still hums.",
-     "item_type": "weapon", "rarity": "Common", "power_score": 5,
+     "item_type": "weapon", "rarity": "Common", "power_score": 1,
      "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 1,
-     "endurance_bonus": 0, "faith_bonus": 0, "affects_combat": True},
+     "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
     {"slug": "novice-charm", "name": "Novice Charm",
      "description": "A small wooden pendant carved with a quiet prayer.",
-     "item_type": "accessory", "rarity": "Uncommon", "power_score": 6,
+     "item_type": "accessory", "rarity": "Common", "power_score": 1,
      "strength_bonus": 0, "agility_bonus": 0, "intellect_bonus": 0,
      "endurance_bonus": 0, "faith_bonus": 1, "affects_combat": True},
     {"slug": "torn-leather-vest", "name": "Torn Leather Vest",
@@ -323,6 +323,11 @@ def trait_public(doc: dict) -> dict:
 
 
 def adventurer_public(doc: dict) -> dict:
+    # Phase 6: equipment fields are injected into `doc` upstream as `_equipment_slots`
+    # and `_equipment_power` when available; otherwise default to empty/no-power.
+    eq_slots = doc.get("_equipment_slots") or _empty_slot_map()
+    eq_power = int(doc.get("_equipment_power", 0))
+    base_power = _adventurer_unit_power(doc)
     return {
         "id": doc["id"],
         "guild_id": doc["guild_id"],
@@ -342,6 +347,10 @@ def adventurer_public(doc: dict) -> dict:
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
         "traits": doc.get("traits", []),
+        "equipment": eq_slots,
+        "base_power": base_power,
+        "equipment_power": eq_power,
+        "total_power": base_power + eq_power,
         "created_at": doc["created_at"],
         "updated_at": doc.get("updated_at", doc["created_at"]),
     }
@@ -514,12 +523,19 @@ def item_public(it: dict) -> dict:
     }
 
 
-def inventory_entry_public(row: dict, item: Optional[dict]) -> dict:
+def inventory_entry_public(row: dict, item: Optional[dict], equipped_count: int = 0) -> dict:
+    total = int(row.get("quantity", 1))
+    equipped = max(0, int(equipped_count))
+    available = max(0, total - equipped)
     out = {
         "id": row["id"],
         "guild_id": row["guild_id"],
         "item_id": row["item_id"],
-        "quantity": row.get("quantity", 1),
+        # Backward-compat: `quantity` keeps the legacy semantics (total owned)
+        "quantity": total,
+        "total_quantity": total,
+        "equipped_quantity": equipped,
+        "available_quantity": available,
         "acquired_at": row["acquired_at"],
     }
     if item:
@@ -541,6 +557,22 @@ def member_public(m: dict) -> dict:
         "intellect_snapshot": m["intellect_snapshot"],
         "endurance_snapshot": m["endurance_snapshot"],
         "faith_snapshot": m["faith_snapshot"],
+        # Phase 6 — equipment at the moment of departure (immutable snapshot)
+        "equipment_snapshot": m.get("equipment_snapshot", []),
+        "equipment_power_snapshot": int(m.get("equipment_power_snapshot", 0)),
+        "total_power_snapshot": int(
+            m.get("total_power_snapshot")
+            if m.get("total_power_snapshot") is not None
+            else (
+                int(m["strength_snapshot"])
+                + int(m["agility_snapshot"])
+                + int(m["intellect_snapshot"])
+                + int(m["endurance_snapshot"])
+                + int(m["faith_snapshot"])
+                + int(m.get("level_snapshot", 1)) * 2
+                + int(m.get("equipment_power_snapshot", 0))
+            )
+        ),
     }
 
 
@@ -605,22 +637,149 @@ def _adventurer_unit_power(adv: dict) -> int:
     )
 
 
+# ─── Phase 6: Equipment helpers ────────────────────────────────────────────────
+EQUIPMENT_SLOTS = ("weapon", "armor", "accessory")
+SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accessory"}
+
+
+def _item_equip_power(item: dict) -> int:
+    """Sum of stat-bonus deltas + power_score for an equipped item."""
+    return (
+        int(item.get("strength_bonus", 0))
+        + int(item.get("agility_bonus", 0))
+        + int(item.get("intellect_bonus", 0))
+        + int(item.get("endurance_bonus", 0))
+        + int(item.get("faith_bonus", 0))
+        + int(item.get("power_score", 0))
+    )
+
+
+def _empty_slot_map() -> dict:
+    return {slot: None for slot in EQUIPMENT_SLOTS}
+
+
+def _equipped_slot_entry(equipped_row: dict, item: dict) -> dict:
+    """Shape returned to clients for a single occupied slot."""
+    return {
+        "equipped_item_id": equipped_row["id"],
+        "item": item_public(item),
+        "slot": equipped_row["slot"],
+    }
+
+
+def _item_summary_for_snapshot(equipped_row: dict, item: dict) -> dict:
+    """Frozen, minimal shape persisted on expedition_members.equipment_snapshot."""
+    return {
+        "slot": equipped_row["slot"],
+        "item_id": item["id"],
+        "item_name": item["name"],
+        "rarity": item.get("rarity", "Common"),
+        "strength_bonus": int(item.get("strength_bonus", 0)),
+        "agility_bonus": int(item.get("agility_bonus", 0)),
+        "intellect_bonus": int(item.get("intellect_bonus", 0)),
+        "endurance_bonus": int(item.get("endurance_bonus", 0)),
+        "faith_bonus": int(item.get("faith_bonus", 0)),
+        "power_score": int(item.get("power_score", 0)),
+    }
+
+
+async def _load_equipment_for_adventurer(adventurer_id: str) -> tuple[dict, int, list[dict]]:
+    """Return (slot_map_for_public_response, equipment_power, raw_equipped_rows_with_item).
+
+    `raw_equipped_rows_with_item` is a list of {row, item} dicts (used for snapshots).
+    """
+    rows = await db.equipped_items.find(
+        {"adventurer_id": adventurer_id}, {"_id": 0}
+    ).to_list(10)
+    slots = _empty_slot_map()
+    eq_power = 0
+    raw: list[dict] = []
+    if not rows:
+        return slots, 0, raw
+    item_ids = list({r["item_id"] for r in rows})
+    items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(50)
+    items_by_id = {i["id"]: i for i in items}
+    for r in rows:
+        item = items_by_id.get(r["item_id"])
+        if not item:
+            continue
+        if r["slot"] in slots:
+            slots[r["slot"]] = _equipped_slot_entry(r, item)
+        eq_power += _item_equip_power(item)
+        raw.append({"row": r, "item": item})
+    return slots, eq_power, raw
+
+
+async def _load_equipment_for_guild(guild_id: str) -> dict[str, tuple[dict, int]]:
+    """Batch-load equipment for all adventurers in a guild. Returns
+    {adventurer_id: (slot_map, equipment_power)}.
+    """
+    rows = await db.equipped_items.find(
+        {"guild_id": guild_id}, {"_id": 0}
+    ).to_list(2000)
+    if not rows:
+        return {}
+    item_ids = list({r["item_id"] for r in rows})
+    items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(500)
+    items_by_id = {i["id"]: i for i in items}
+    by_adv: dict[str, tuple[dict, int]] = {}
+    for r in rows:
+        item = items_by_id.get(r["item_id"])
+        if not item:
+            continue
+        slots, power = by_adv.get(r["adventurer_id"], (_empty_slot_map(), 0))
+        slots[r["slot"]] = _equipped_slot_entry(r, item)
+        by_adv[r["adventurer_id"]] = (slots, power + _item_equip_power(item))
+    return by_adv
+
+
+async def _count_equipped_for_guild_items(guild_id: str) -> dict[str, int]:
+    """Returns {item_id: equipped_count} for the guild."""
+    pipeline = [
+        {"$match": {"guild_id": guild_id}},
+        {"$group": {"_id": "$item_id", "count": {"$sum": 1}}},
+    ]
+    out: dict[str, int] = {}
+    async for row in db.equipped_items.aggregate(pipeline):
+        out[row["_id"]] = int(row["count"])
+    return out
+
+
+def _build_equipment_response(adventurer: dict, slots: dict, eq_power: int) -> dict:
+    base_power = _adventurer_unit_power(adventurer)
+    return {
+        "adventurer_id": adventurer["id"],
+        "slots": slots,
+        "base_power": base_power,
+        "equipment_power": eq_power,
+        "total_power": base_power + eq_power,
+    }
+
+
 def compute_team_power(members: list) -> int:
-    """members is a list of adventurer dicts (live or snapshot fields ending in _snapshot)."""
+    """members is a list of adventurer dicts (live or snapshot fields ending in _snapshot).
+
+    Phase 6: if a member already carries `total_power_snapshot`, that value is
+    treated as authoritative for the per-member contribution (already includes
+    base + level + equipment). Otherwise the legacy formula (base only) is used.
+    """
     def get(a, key):
         return a.get(key, a.get(key + "_snapshot", 0))
 
     base = 0
     roles = set()
     for a in members:
-        base += (
-            int(get(a, "strength"))
-            + int(get(a, "agility"))
-            + int(get(a, "intellect"))
-            + int(get(a, "endurance"))
-            + int(get(a, "faith"))
-            + int(get(a, "level") or 1) * 2
-        )
+        if a.get("total_power_snapshot") is not None:
+            base += int(a["total_power_snapshot"])
+        else:
+            base += (
+                int(get(a, "strength"))
+                + int(get(a, "agility"))
+                + int(get(a, "intellect"))
+                + int(get(a, "endurance"))
+                + int(get(a, "faith"))
+                + int(get(a, "level") or 1) * 2
+            )
         role = a.get("class_role") or a.get("role_snapshot")
         if role:
             roles.add(role)
@@ -1004,6 +1163,15 @@ class ExpeditionStartIn(BaseModel):
     adventurer_ids: list[str] = Field(min_length=1, max_length=10)
 
 
+class EquipIn(BaseModel):
+    item_id: str = Field(min_length=8, max_length=64)
+    slot: str = Field(min_length=3, max_length=20)
+
+
+class UnequipIn(BaseModel):
+    slot: str = Field(min_length=3, max_length=20)
+
+
 # ─── Endpoints: Health ─────────────────────────────────────────────────────────
 @api.get("/health")
 async def health():
@@ -1251,7 +1419,24 @@ async def start_expedition(
             )
         members_live.append(adv)
 
-    team_power = compute_team_power(members_live)
+    # Phase 6: load equipment for each member; snapshot is frozen at departure.
+    members_for_power: list[dict] = []
+    equipment_by_adv: dict[str, dict] = {}
+    for adv in members_live:
+        slots, eq_power, raw = await _load_equipment_for_adventurer(adv["id"])
+        snapshot = [_item_summary_for_snapshot(r["row"], r["item"]) for r in raw]
+        base = _adventurer_unit_power(adv)
+        equipment_by_adv[adv["id"]] = {
+            "equipment_snapshot": snapshot,
+            "equipment_power_snapshot": eq_power,
+            "total_power_snapshot": base + eq_power,
+        }
+        members_for_power.append({
+            **adv,
+            "total_power_snapshot": base + eq_power,
+        })
+
+    team_power = compute_team_power(members_for_power)
     success_chance = compute_success_chance(team_power, dungeon["recommended_power"])
 
     now = utc_now()
@@ -1281,6 +1466,11 @@ async def start_expedition(
 
     members_docs = []
     for adv in members_live:
+        eq = equipment_by_adv.get(adv["id"], {
+            "equipment_snapshot": [],
+            "equipment_power_snapshot": 0,
+            "total_power_snapshot": _adventurer_unit_power(adv),
+        })
         m = {
             "id": str(uuid.uuid4()),
             "expedition_id": exp_id,
@@ -1294,6 +1484,9 @@ async def start_expedition(
             "intellect_snapshot": adv["intellect"],
             "endurance_snapshot": adv["endurance"],
             "faith_snapshot": adv["faith"],
+            "equipment_snapshot": eq["equipment_snapshot"],
+            "equipment_power_snapshot": int(eq["equipment_power_snapshot"]),
+            "total_power_snapshot": int(eq["total_power_snapshot"]),
         }
         members_docs.append(m)
     if members_docs:
@@ -1371,8 +1564,14 @@ async def list_inventory(current_user: dict = Depends(get_current_user)):
     if item_ids:
         items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(500)
         items_map = {it["id"]: it for it in items}
+    equipped_counts = await _count_equipped_for_guild_items(guild["id"])
     return {
-        "inventory": [inventory_entry_public(r, items_map.get(r["item_id"])) for r in rows]
+        "inventory": [
+            inventory_entry_public(
+                r, items_map.get(r["item_id"]), equipped_counts.get(r["item_id"], 0)
+            )
+            for r in rows
+        ]
     }
 
 
@@ -1502,7 +1701,134 @@ async def list_adventurers(current_user: dict = Depends(get_current_user)):
         .sort("created_at", -1)
         .to_list(500)
     )
-    return {"adventurers": [adventurer_public(r) for r in rows]}
+    equip_map = await _load_equipment_for_guild(guild["id"])
+    out = []
+    for r in rows:
+        slots, power = equip_map.get(r["id"], (_empty_slot_map(), 0))
+        r["_equipment_slots"] = slots
+        r["_equipment_power"] = power
+        out.append(adventurer_public(r))
+    return {"adventurers": out}
+
+
+# ─── Endpoints: Equipment (Phase 6) ────────────────────────────────────────────
+async def _adventurer_owned_or_404(adventurer_id: str, guild_id: str) -> dict:
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
+    )
+    if not adv:
+        raise HTTPException(status_code=404, detail="Adventurer not found")
+    return adv
+
+
+@api.get("/adventurers/{adventurer_id}/equipment")
+async def get_adventurer_equipment(
+    adventurer_id: str, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
+
+
+@api.post("/adventurers/{adventurer_id}/equip", status_code=201)
+async def equip_item(
+    adventurer_id: str, payload: EquipIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+
+    if not adv.get("is_available", True):
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot modify equipment of adventurer currently in expedition",
+        )
+
+    slot = payload.slot.strip().lower()
+    if slot not in EQUIPMENT_SLOTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
+        )
+
+    item = await db.items.find_one(
+        {"id": payload.item_id, "is_active": True}, {"_id": 0}
+    )
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    expected_type = SLOT_TO_ITEM_TYPE[slot]
+    if item.get("item_type") != expected_type:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Item type '{item.get('item_type')}' cannot be equipped in slot '{slot}'"
+            ),
+        )
+
+    inv_row = await db.inventory_items.find_one(
+        {"guild_id": guild["id"], "item_id": payload.item_id}, {"_id": 0}
+    )
+    if not inv_row:
+        raise HTTPException(status_code=404, detail="Item not in your guild inventory")
+    total_qty = int(inv_row.get("quantity", 0))
+    equipped_qty = await db.equipped_items.count_documents(
+        {"guild_id": guild["id"], "item_id": payload.item_id}
+    )
+    available = total_qty - equipped_qty
+    if available <= 0:
+        raise HTTPException(
+            status_code=400, detail="Not enough copies of this item available"
+        )
+
+    now = utc_now()
+    new_row = {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild["id"],
+        "adventurer_id": adv["id"],
+        "item_id": payload.item_id,
+        "slot": slot,
+        "equipped_at": now.isoformat(),
+    }
+    try:
+        await db.equipped_items.insert_one(new_row)
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=400, detail="Slot already occupied, unequip first"
+        )
+
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
+
+
+@api.post("/adventurers/{adventurer_id}/unequip")
+async def unequip_item(
+    adventurer_id: str, payload: UnequipIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+
+    if not adv.get("is_available", True):
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot modify equipment of adventurer currently in expedition",
+        )
+
+    slot = payload.slot.strip().lower()
+    if slot not in EQUIPMENT_SLOTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
+        )
+
+    res = await db.equipped_items.delete_one(
+        {"adventurer_id": adv["id"], "slot": slot, "guild_id": guild["id"]}
+    )
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail=f"No item equipped in slot '{slot}'")
+
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
 
 
 
@@ -1919,6 +2245,24 @@ async def ensure_indexes():
     )
     await db.inventory_items.create_index(
         [("guild_id", ASCENDING), ("item_id", ASCENDING)], unique=True, name="inv_guild_item_unique"
+    )
+    # Phase 6: equipped_items
+    await db.equipped_items.create_index(
+        [("id", ASCENDING)], unique=True, name="equipped_id_unique"
+    )
+    await db.equipped_items.create_index(
+        [("guild_id", ASCENDING)], name="equipped_guild_idx"
+    )
+    await db.equipped_items.create_index(
+        [("adventurer_id", ASCENDING)], name="equipped_adv_idx"
+    )
+    await db.equipped_items.create_index(
+        [("item_id", ASCENDING)], name="equipped_item_idx"
+    )
+    await db.equipped_items.create_index(
+        [("adventurer_id", ASCENDING), ("slot", ASCENDING)],
+        unique=True,
+        name="equipped_adv_slot_unique",
     )
     # Phase 5: security collections with TTL
     await db.login_attempts.create_index(

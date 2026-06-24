@@ -16,6 +16,9 @@ import Expeditions from "@/pages/Expeditions";
 import ExpeditionReport from "@/pages/ExpeditionReport";
 import Inventory from "@/pages/Inventory";
 import Admin from "@/pages/Admin";
+import AdventurerEquipment from "@/pages/AdventurerEquipment";
+import PasswordResetRequest from "@/pages/PasswordResetRequest";
+import PasswordResetConfirm from "@/pages/PasswordResetConfirm";
 
 function App() {
     return (
@@ -37,6 +40,22 @@ function App() {
                             element={
                                 <GuestOnly>
                                     <Register />
+                                </GuestOnly>
+                            }
+                        />
+                        <Route
+                            path="/password-reset/request"
+                            element={
+                                <GuestOnly>
+                                    <PasswordResetRequest />
+                                </GuestOnly>
+                            }
+                        />
+                        <Route
+                            path="/password-reset/confirm"
+                            element={
+                                <GuestOnly>
+                                    <PasswordResetConfirm />
                                 </GuestOnly>
                             }
                         />
@@ -69,6 +88,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Adventurers />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/adventurers/:id/equipment"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <AdventurerEquipment />
                                 </ProtectedRoute>
                             }
                         />

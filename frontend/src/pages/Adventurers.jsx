@@ -50,9 +50,32 @@ const HEAD = [
     ["INT", "int"],
     ["END", "end"],
     ["FAI", "fai"],
+    ["Power", "power"],
+    ["Equip", "equip"],
     ["Traits", "traits"],
     ["Status", "status"],
 ];
+
+function statBonusBadge(slot, item) {
+    if (!item) {
+        return (
+            <span
+                className="inline-block text-[9px] tracking-widest text-muted-foreground border border-border/60 px-1 py-0.5 rounded-sm"
+                title={`${slot} empty`}
+            >
+                {slot[0].toUpperCase()}·—
+            </span>
+        );
+    }
+    return (
+        <span
+            className="inline-block text-[9px] tracking-widest text-amber border border-amber/40 px-1 py-0.5 rounded-sm"
+            title={`${slot}: ${item.name}`}
+        >
+            {slot[0].toUpperCase()}·{item.name}
+        </span>
+    );
+}
 
 const Empty = () => (
     <div
@@ -181,6 +204,25 @@ export default function Adventurers() {
                                             <td className="px-3 py-2">{a.intellect}</td>
                                             <td className="px-3 py-2">{a.endurance}</td>
                                             <td className="px-3 py-2">{a.faith}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">
+                                                <span className="text-amber font-medium" data-testid={`adv-power-${a.id}`}>
+                                                    {a.total_power}
+                                                </span>
+                                                {a.equipment_power > 0 && (
+                                                    <span className="text-[10px] text-muted-foreground ml-1">
+                                                        ({a.base_power}+{a.equipment_power})
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-3 py-2 whitespace-nowrap">
+                                                <Link
+                                                    to={`/adventurers/${a.id}/equipment`}
+                                                    data-testid={`equip-link-${a.id}`}
+                                                    className="text-[11px] text-amber hover:underline"
+                                                >
+                                                    manage →
+                                                </Link>
+                                            </td>
                                             <td className="px-3 py-2 min-w-[160px]">
                                                 <TraitList traits={a.traits} />
                                             </td>
@@ -251,6 +293,26 @@ export default function Adventurers() {
                                             <TraitList traits={a.traits} />
                                         </div>
                                     )}
+                                    <div className="mt-3 pt-3 border-t border-border/60">
+                                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
+                                            EQUIPMENT · POWER {a.total_power}
+                                            {a.equipment_power > 0 && (
+                                                <span className="text-amber"> (+{a.equipment_power})</span>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 mb-2">
+                                            {statBonusBadge("weapon", a.equipment?.weapon?.item)}
+                                            {statBonusBadge("armor", a.equipment?.armor?.item)}
+                                            {statBonusBadge("accessory", a.equipment?.accessory?.item)}
+                                        </div>
+                                        <Link
+                                            to={`/adventurers/${a.id}/equipment`}
+                                            data-testid={`equip-link-mobile-${a.id}`}
+                                            className="text-[11px] text-amber hover:underline"
+                                        >
+                                            manage equipment →
+                                        </Link>
+                                    </div>
                                 </div>
                             ))}
                         </div>

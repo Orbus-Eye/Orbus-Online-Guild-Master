@@ -26,12 +26,17 @@ const RarityBadge = ({ rarity }) => (
 );
 
 // Client-side preview matching backend formula (must be kept in sync — but backend is authoritative)
+// Phase 6: uses `total_power` (base + equipment) as authoritative per-member contribution when present.
 function previewTeamPower(team) {
     let total = 0;
     const roles = new Set();
     for (const a of team) {
-        total +=
-            a.strength + a.agility + a.intellect + a.endurance + a.faith + a.level * 2;
+        if (typeof a.total_power === "number") {
+            total += a.total_power;
+        } else {
+            total +=
+                a.strength + a.agility + a.intellect + a.endurance + a.faith + a.level * 2;
+        }
         if (a.class_role) roles.add(a.class_role);
     }
     if (roles.has("Tank")) total += 5;

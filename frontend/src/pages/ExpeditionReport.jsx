@@ -222,6 +222,27 @@ export default function ExpeditionReport() {
                                     <span>END {m.endurance_snapshot}</span>
                                     <span>FAI {m.faith_snapshot}</span>
                                 </div>
+                                {(m.equipment_snapshot?.length > 0 || m.equipment_power_snapshot > 0) && (
+                                    <div
+                                        data-testid={`report-member-equipment-${m.adventurer_id}`}
+                                        className="mt-2 pt-2 border-t border-border/60"
+                                    >
+                                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                                            EQUIPMENT (snapshot) · +{m.equipment_power_snapshot} pow
+                                        </div>
+                                        <div className="flex flex-wrap gap-1">
+                                            {m.equipment_snapshot?.map((eq, idx) => (
+                                                <span
+                                                    key={`${eq.slot}-${idx}`}
+                                                    className="text-[10px] text-amber border border-amber/40 px-1 py-0.5 rounded-sm"
+                                                    title={`${eq.slot} · ${eq.rarity}`}
+                                                >
+                                                    {eq.slot[0].toUpperCase()}·{eq.item_name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 {isDone && (
                                     <div className="text-[11px] text-amber mt-2">
                                         +{e.xp_reward} XP
