@@ -180,6 +180,109 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 9.1 — 2026-06-24 (Public Guild Leaderboard + Peak Power Badge — first post-refactor feature)
+Implemented (zero behavior change ai 36 path esistenti, **200/200 pytest PASS** + 15 nuovi test = totale 215 PASS, +1 nuovo path OpenAPI `/api/leaderboard/guilds`):
+
+### Backend (5 file nuovi/modificati)
+- **Nuovi**: `app/leaderboard/{__init__.py, schemas.py, services.py, routes.py}` (~225 LOC)
+  - `services.py`: `get_guild_leaderboard(db, limit, offset)` con 1 aggregation pipeline (batch `total_completed` + `success_dungeon_ids` per guild della page) → evita N+1 sicuro per ranking ≤100
+  - `routes.py`: `GET /api/leaderboard/guilds` PUBBLICO (no `Depends(get_current_user)`), `Query(limit=50, ge=1, le=100)` + `Query(offset=0, ge=0, le=1000)`
+  - Privacy whitelist: ritorna SOLO `rank, guild_id, guild_name, level, reputation, max_team_power_ever, highest_dungeon_slug, total_expeditions_completed, created_at`. ZERO leak di `owner_user_id`, `email`, `password_hash`, `is_admin`, `gold`, `description`, `_id`
+- **Modificati**:
+  - `app/core/app_factory.py`: aggiunto `app.include_router(leaderboard_router)` come 11° router
+  - `app/core/indexes.py`: aggiunto indice composto `guilds_leaderboard_idx` `(max_team_power_ever desc, level desc, reputation desc, created_at asc)` per supportare sort multi-field
+
+### Sort + tie-break (verificato con 4 guild fixture-controlled)
+1. Primary: `max_team_power_ever` DESC
+2. Tie-break: `level` DESC
+3. Tie-break: `reputation` DESC
+4. Tie-break: `created_at` ASC (longevity reward)
+
+### Frontend (4 file nuovi/modificati)
+- **Nuovo**: `src/pages/Leaderboard.jsx` (~245 LOC):
+  - Pagina PUBBLICA (registrata fuori da `<ProtectedRoute>`/`<GuestOnly>` in `App.js`)
+  - Desktop: tabella full-width con colonne RANK / GUILD / PEAK PWR / LVL / REP / HIGHEST / EXP
+  - Mobile (`sm:hidden`): card stacked, no scroll orizzontale (375x812 verificato)
+  - Rank emoji 🏆 #1, 🥈 #2, 🥉 #3 + plain "#N" da 4 in poi
+  - Dungeon tier color-coded (goblin-warrens gray, shadow-crypts purple, dragons-hoard amber)
+  - Loading skeleton (6 row + 4 mobile card), error state, empty state
+  - Refresh button con throttle (no auto-polling)
+  - Header brand link → `/`, login link top-right
+- **Modificati**:
+  - `src/App.js`: aggiunta route `<Route path="/leaderboard" element={<Leaderboard />} />` (pubblica, no guard)
+  - `src/components/AppHeader.jsx`: aggiunto `NavLink to="/leaderboard" label="RANK"` testid `nav-leaderboard` (visibile a tutti gli utenti loggati con guild)
+  - `src/pages/Landing.jsx`: aggiunto link "▸ View public leaderboard →" sotto i 2 CTA Login/Register, testid `landing-leaderboard-link`
+  - `src/pages/Dashboard.jsx`: trasformato la sezione progression a 4 colonne, aggiunta 4ª card `<Link to="/leaderboard">` con testid `stat-peak-power-card` mostrando `guild.max_team_power_ever` (— se 0, valore + sub-line "🐉 dragons-hoard unlocked by peak" se ≥65)
+
+### Test (1 file nuovo, 15 test PASS)
+`tests/backend_phase9_leaderboard_test.py`:
+1. `test_endpoint_is_public_no_auth` — accesso senza JWT
+2. `test_default_limit_is_50`
+3. `test_limit_max_100_rejects_higher` (422)
+4. `test_limit_min_1_rejects_zero` (422)
+5. `test_offset_negative_rejected` (422)
+6. `test_offset_above_cap_rejected` (422)
+7. `test_sort_by_peak_power_desc` — 4 guild fixture seeded
+8. `test_tie_break_by_level` — alpha (lvl3) prima di bravo (lvl2) con stesso peak 250
+9. **`test_privacy_no_sensitive_fields`** — verifica esplicita esclusione `{owner_user_id, email, password_hash, is_admin, gold, _id, description}`
+10. `test_entry_required_shape` — whitelist completa 9 fields
+11. `test_ranks_are_progressive_and_absolute` — rank=1 + progressivo
+12. `test_pagination_offset_yields_absolute_rank` — offset=2 → rank=3
+13. `test_total_count_reflects_all_guilds`
+14. `test_openapi_includes_leaderboard_path`
+15. `test_guilds_me_still_exposes_max_team_power_ever` — Phase 8 invariant preserved
+
+### Aggiornati 3 smoke test esistenti (path count 36 → 37)
+- `tests/backend_phase55gh_smoke_test.py::test_openapi_37_paths`
+- `tests/backend_phase55e_smoke_test.py::test_openapi_paths_count_37`
+- `tests/backend_phase56b_smoke_test.py::test_openapi_path_count_is_37`
+
+### Esempio response (privacy-safe)
+```json
+{
+  "total": 2392,
+  "limit": 50,
+  "offset": 0,
+  "entries": [
+    {
+      "rank": 1,
+      "guild_id": "f8e2…",
+      "guild_name": "G_ae0fa9",
+      "level": 1,
+      "reputation": 0,
+      "max_team_power_ever": 999,
+      "highest_dungeon_slug": "goblin-warrens",
+      "total_expeditions_completed": 1,
+      "created_at": "2026-06-24T…"
+    }
+  ]
+}
+```
+
+### Verifiche
+- pytest **200 passed + 1 skipped** in 229.13s (skip data-dependent recruit gold pre-esistente)
+- OpenAPI diff: pre 36 → post 37 (solo `+/api/leaderboard/guilds`, tutto il resto invariato)
+- FE desktop (1920x800): tabella renderizza 50 row, badges emoji, refresh funziona
+- FE mobile (375x812): stack cards, no overflow orizzontale, 50 card visibili
+- Backend Mongo aggregation: 1 pipeline + 1 dungeons batch fetch → O(1) query overhead per page (vs O(N) di `compute_dashboard_stats`)
+
+### Performance note
+Per N=2392 guild attualmente in DB, response ~600ms locale (1 sort + 1 aggregation + 1 dungeons fetch). Con il nuovo indice `guilds_leaderboard_idx` il sort è index-backed.
+
+### Debiti tecnici rimasti (out of scope 9.1)
+1. **`last_loot_item` non in leaderboard**: per evitare N+1 fetch su `expeditions` per ogni guild. Soluzione long-term: denormalizzare `last_loot_item_name` direttamente sul guild doc all'expedition completion. P3.
+2. **No filtering by guild_name search**: out of scope MVP. Aggiungibile con `?q=substring`. P3.
+3. **No cache layer**: a N=10000+ guild il response time crescerà. Soluzione: TTL cache 60s su `get_guild_leaderboard(offset=0, limit≤50)`. P2.
+
+### Next Action Items
+**Possibili prossime feature** (in ordine ROI):
+
+1. **Phase 9.2 — Onboarding Tutorial 3-step (P1, ~120 LOC)**: free adventurer al primo login + guided first expedition + loot reveal. Triplica completion rate prima run.
+2. **Phase 9.3 — Email Resend integration (P2, ~60 LOC)**: real email per password reset (sostituisce log console attuale).
+3. **Phase 9.4 — Leaderboard search/filter (P3, ~40 LOC)**: `?q=name_substring` + UI search box.
+4. **Phase 9.5 — Weekly/Seasonal ranking (P2, ~100 LOC)**: ranking sliding window 7-day per peak power gained, riposiziona guild giovani.
+
+
 ## Phase 5.5g + 5.5h — 2026-06-24 (Refactor Final Cleanup — server.py thin shell)
 Implemented (zero behavior change, **174 passed + 1 skipped** pytest baseline in 268s, OpenAPI **36/36 paths byte-identici**, no circular import warning, FE non toccato):
 

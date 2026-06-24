@@ -206,7 +206,7 @@ export default function Dashboard() {
 
                 {/* Phase 7: progression mini-cards */}
                 <section
-                    className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8"
                     data-testid="phase7-progression"
                 >
                     <Stat
@@ -243,6 +243,44 @@ export default function Dashboard() {
                         }
                         testid="stat-last-loot"
                     />
+                    {/* Phase 9.1: Peak Team Power badge → links to public leaderboard */}
+                    <Link
+                        to="/leaderboard"
+                        data-testid="stat-peak-power-card"
+                        className="border border-border bg-card rounded-sm p-4 hover:bg-secondary/40 hover:border-amber/55 transition-colors group block"
+                        title="View public guild leaderboard"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] text-amber tracking-widest">
+                                PEAK TEAM POWER
+                            </span>
+                            <span className="text-[10px] text-amber group-hover:translate-x-0.5 transition-transform">
+                                →
+                            </span>
+                        </div>
+                        <div
+                            className="text-2xl font-semibold text-amber"
+                            data-testid="stat-peak-power"
+                        >
+                            {(guild.max_team_power_ever ?? 0) === 0
+                                ? "—"
+                                : guild.max_team_power_ever}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-2">
+                            {(guild.max_team_power_ever ?? 0) === 0 ? (
+                                "no expedition yet"
+                            ) : (guild.max_team_power_ever ?? 0) >= 65 ? (
+                                <span
+                                    className="text-[#f59e0b]"
+                                    data-testid="peak-power-dragon-unlock"
+                                >
+                                    🐉 dragons-hoard unlocked by peak
+                                </span>
+                            ) : (
+                                "your strongest expedition power"
+                            )}
+                        </div>
+                    </Link>
                 </section>
 
                 {/* Phase 8: Last Expedition replay card */}

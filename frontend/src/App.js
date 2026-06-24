@@ -19,6 +19,7 @@ import Admin from "@/pages/Admin";
 import AdventurerEquipment from "@/pages/AdventurerEquipment";
 import PasswordResetRequest from "@/pages/PasswordResetRequest";
 import PasswordResetConfirm from "@/pages/PasswordResetConfirm";
+import Leaderboard from "@/pages/Leaderboard";
 
 function App() {
     return (
@@ -147,6 +148,7 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AuthProvider>

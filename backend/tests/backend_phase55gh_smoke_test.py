@@ -82,11 +82,12 @@ def test_health_endpoint():
     assert r.json() == {"status": "ok", "env": "development"}
 
 
-def test_openapi_36_paths():
+def test_openapi_37_paths():
     r = requests.get(f"{API}/openapi.json", timeout=10)
     assert r.status_code == 200
     paths = r.json().get("paths", {})
-    assert len(paths) == 36, f"expected 36, got {len(paths)}"
+    # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
+    assert len(paths) == 37, f"expected 37, got {len(paths)}"
 
 
 # ---------- 3: tester admin ----------

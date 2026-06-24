@@ -131,11 +131,12 @@ class TestSurfaceAndAuth:
         assert r.status_code == 200
         assert r.json() == {"status": "ok", "env": "development"}
 
-    def test_openapi_paths_count_36(self):
+    def test_openapi_paths_count_37(self):
         r = requests.get(f"{API}/openapi.json", timeout=10)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        assert len(paths) == 36, f"expected 36 OpenAPI paths, got {len(paths)}"
+        # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
+        assert len(paths) == 37, f"expected 37 OpenAPI paths, got {len(paths)}"
         # Expedition route order: /last-completed + /replay-last must exist
         # before /{expedition_id} (verified by their literal presence as keys)
         assert "/api/expeditions/last-completed" in paths

@@ -52,11 +52,12 @@ class TestHealthAndSurface:
         body = r.json()
         assert body.get("status") == "ok"
 
-    def test_openapi_path_count_is_36(self, api):
+    def test_openapi_path_count_is_37(self, api):
         r = api.get(f"{BASE_URL}/api/openapi.json", timeout=10)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        assert len(paths) == 36, f"Expected 36 OpenAPI paths, got {len(paths)}"
+        # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
+        assert len(paths) == 37, f"Expected 37 OpenAPI paths, got {len(paths)}"
 
 
 # ---------- Auth / tester seed ----------

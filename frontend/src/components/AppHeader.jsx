@@ -72,6 +72,11 @@ export default function AppHeader({ subtitle = "DASHBOARD" }) {
                                     label="VAULT"
                                     testid="nav-inventory"
                                 />
+                                <NavLink
+                                    to="/leaderboard"
+                                    label="RANK"
+                                    testid="nav-leaderboard"
+                                />
                                 {user?.is_admin && (
                                     <NavLink
                                         to="/admin"

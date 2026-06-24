@@ -1,0 +1,153 @@
+"""Leaderboard services (Phase 9.1).
+
+`get_guild_leaderboard(db, limit, offset)` returns a paginated, ranked list
+of guilds sorted by `max_team_power_ever` (then level → reputation →
+created_at). Privacy-preserving: never exposes `owner_user_id`, `email`,
+`is_admin`, `password_hash`, or any other sensitive field — only a fixed
+whitelist via `LeaderboardEntryOut`.
+
+Performance: a single aggregation over `expeditions` covers
+`total_completed` + `success_dungeon_ids` for the whole page, avoiding the
+N+1 query pattern that `compute_dashboard_stats` uses for a single guild.
+"""
+from typing import Optional
+
+from fastapi import HTTPException
+
+
+_MAX_LIMIT = 100
+_MAX_OFFSET = 1000
+
+
+async def get_guild_leaderboard(
+    db, limit: int = 50, offset: int = 0
+) -> dict:
+    """Return a paginated leaderboard. Validates inputs (400 on out-of-range)."""
+    # Strict validation (HTTPException 400 before any DB I/O)
+    if not isinstance(limit, int) or limit < 1 or limit > _MAX_LIMIT:
+        raise HTTPException(
+            status_code=400,
+            detail=f"limit must be an integer in [1, {_MAX_LIMIT}]",
+        )
+    if not isinstance(offset, int) or offset < 0 or offset > _MAX_OFFSET:
+        raise HTTPException(
+            status_code=400,
+            detail=f"offset must be an integer in [0, {_MAX_OFFSET}]",
+        )
+
+    total = await db.guilds.count_documents({})
+
+    # Sort: peak power desc → level desc → reputation desc → created_at asc.
+    # Tie-break by `created_at` ascending means older guilds appear earlier
+    # when all other fields are identical (rewards consistency / longevity).
+    guilds = await (
+        db.guilds.find(
+            {},
+            {
+                "_id": 0,
+                "id": 1,
+                "name": 1,
+                "level": 1,
+                "reputation": 1,
+                "max_team_power_ever": 1,
+                "created_at": 1,
+            },
+        )
+        .sort(
+            [
+                ("max_team_power_ever", -1),
+                ("level", -1),
+                ("reputation", -1),
+                ("created_at", 1),
+            ]
+        )
+        .skip(offset)
+        .limit(limit)
+        .to_list(limit)
+    )
+
+    if not guilds:
+        return {"total": total, "limit": limit, "offset": offset, "entries": []}
+
+    guild_ids = [g["id"] for g in guilds]
+
+    # Single aggregation: per-guild completed count + set of successful dungeon ids.
+    # `$$REMOVE` filters out non-success expeditions from the set without
+    # losing the count (handled by separate $sum).
+    pipeline = [
+        {"$match": {"guild_id": {"$in": guild_ids}, "status": "completed"}},
+        {
+            "$group": {
+                "_id": "$guild_id",
+                "total_completed": {"$sum": 1},
+                "success_dungeon_ids": {
+                    "$addToSet": {
+                        "$cond": [
+                            {"$eq": ["$result_summary", "Success"]},
+                            "$dungeon_id",
+                            "$$REMOVE",
+                        ]
+                    }
+                },
+            }
+        },
+    ]
+    agg_map: dict[str, dict] = {}
+    async for row in db.expeditions.aggregate(pipeline):
+        agg_map[row["_id"]] = row
+
+    # Batch-load any dungeon referenced as a success across the visible page.
+    all_dungeon_ids: set[str] = set()
+    for row in agg_map.values():
+        all_dungeon_ids.update(row.get("success_dungeon_ids", []))
+
+    dungeons_by_id: dict[str, dict] = {}
+    if all_dungeon_ids:
+        async for d in db.dungeons.find(
+            {"id": {"$in": list(all_dungeon_ids)}},
+            {"_id": 0, "id": 1, "slug": 1, "difficulty": 1},
+        ):
+            dungeons_by_id[d["id"]] = d
+
+    def _highest_slug(success_ids: list[str]) -> Optional[str]:
+        ranked = sorted(
+            (
+                dungeons_by_id[did]
+                for did in success_ids
+                if did in dungeons_by_id
+            ),
+            key=lambda d: d.get("difficulty", 0),
+            reverse=True,
+        )
+        return ranked[0]["slug"] if ranked else None
+
+    entries = []
+    for i, g in enumerate(guilds):
+        agg_row = agg_map.get(g["id"], {})
+        entries.append(
+            {
+                "rank": offset + i + 1,
+                "guild_id": g["id"],
+                "guild_name": g["name"],
+                "level": int(g.get("level", 1)),
+                "reputation": int(g.get("reputation", 0)),
+                "max_team_power_ever": int(g.get("max_team_power_ever", 0)),
+                "highest_dungeon_slug": _highest_slug(
+                    agg_row.get("success_dungeon_ids", [])
+                ),
+                "total_expeditions_completed": int(
+                    agg_row.get("total_completed", 0)
+                ),
+                "created_at": g["created_at"],
+            }
+        )
+
+    return {
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "entries": entries,
+    }
+
+
+__all__ = ["get_guild_leaderboard"]

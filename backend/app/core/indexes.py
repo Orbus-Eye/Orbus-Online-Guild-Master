@@ -18,6 +18,19 @@ async def create_all_indexes(db) -> None:
         [("owner_user_id", ASCENDING)], unique=True, name="guilds_owner_unique"
     )
     await db.guilds.create_index([("name", ASCENDING)], name="guilds_name_idx")
+    # Phase 9.1: compound index for public leaderboard sort
+    # (max_team_power_ever desc, level desc, reputation desc, created_at asc)
+    from pymongo import DESCENDING  # local import to keep top-imports tight
+
+    await db.guilds.create_index(
+        [
+            ("max_team_power_ever", DESCENDING),
+            ("level", DESCENDING),
+            ("reputation", DESCENDING),
+            ("created_at", ASCENDING),
+        ],
+        name="guilds_leaderboard_idx",
+    )
 
     # ─── Phase 2: Adventurers / Classes / Traits / Recruitment ────────────────
     await db.adventurer_classes.create_index(

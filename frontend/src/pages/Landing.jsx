@@ -71,6 +71,16 @@ export default function Landing() {
                     )}
                 </div>
 
+                <div className="mt-4">
+                    <Link
+                        to="/leaderboard"
+                        data-testid="landing-leaderboard-link"
+                        className="text-xs text-muted-foreground hover:text-amber tracking-widest underline-offset-4 hover:underline"
+                    >
+                        ▸ View public leaderboard →
+                    </Link>
+                </div>
+
                 <section className="mt-20 grid sm:grid-cols-3 gap-4 text-sm">
                     {[
                         { k: "01", title: "Recruit", desc: "Hire adventurers with unique stats and quirks." },
