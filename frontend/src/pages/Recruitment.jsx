@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { TraitList } from "../components/TraitBadge";
+import { useT } from "../i18n/I18nContext";
 
 const RARITY_STYLE = {
     Common: { color: "#9ca3af", label: "Common" },
@@ -113,6 +114,7 @@ const Skeleton = () => (
 
 export default function Recruitment() {
     const { guild, refreshGuild } = useAuth();
+    const { t } = useT();
     const [candidates, setCandidates] = useState(null);
     const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -147,9 +149,9 @@ export default function Recruitment() {
                 can_refresh: data.can_refresh,
             });
             if (data.refresh_cost_paid > 0) {
-                toast.success(`Roster refreshed (-${data.refresh_cost_paid}g)`);
+                toast.success(t("recruitment.refresh.toast_paid", { cost: data.refresh_cost_paid }));
             } else {
-                toast.success("Roster refreshed (free).");
+                toast.success(t("recruitment.refresh.toast_free"));
             }
             await refreshGuild();
         } catch (err) {
@@ -157,7 +159,7 @@ export default function Recruitment() {
         } finally {
             setRefreshing(false);
         }
-    }, [refreshGuild]);
+    }, [refreshGuild, t]);
 
     useEffect(() => {
         fetchCandidates();
@@ -198,12 +200,10 @@ export default function Recruitment() {
                             :: RECRUITMENT BOARD
                         </div>
                         <h1 className="text-3xl font-semibold tracking-tight">
-                            Recruitment
+                            {t("recruitment.title")}
                         </h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                            Four candidates are passing through the guild hall today. Each
-                            costs <span className="text-amber">{cost} gold</span>. Refresh to
-                            shuffle the roster.
+                            {t("recruitment.subtitle")}
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -232,10 +232,10 @@ export default function Recruitment() {
                                 }
                             >
                                 {refreshing
-                                    ? "refreshing…"
+                                    ? t("common.loading")
                                     : meta && meta.next_refresh_cost_gold > 0
-                                    ? `↻ Refresh (${meta.next_refresh_cost_gold}g)`
-                                    : "↻ Refresh"}
+                                    ? t("recruitment.refresh.cost_label", { cost: meta.next_refresh_cost_gold })
+                                    : `↻ ${t("recruitment.refresh.free_label")}`}
                             </Button>
                             {meta && (
                                 <div
@@ -243,8 +243,8 @@ export default function Recruitment() {
                                     data-testid="refresh-counter"
                                 >
                                     {meta.refreshes_remaining_today > 0
-                                        ? `${meta.refreshes_remaining_today} free left today`
-                                        : `next: ${meta.next_refresh_cost_gold}g`}
+                                        ? t("recruitment.refresh.free_remaining", { n: meta.refreshes_remaining_today })
+                                        : `next: ${meta.next_refresh_cost_gold}${t("common.gold_short")}`}
                                 </div>
                             )}
                         </div>

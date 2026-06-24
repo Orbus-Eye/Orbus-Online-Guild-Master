@@ -1,5 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../i18n/I18nContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const NavLink = ({ to, label, testid }) => {
     const { pathname } = useLocation();
@@ -19,8 +21,9 @@ const NavLink = ({ to, label, testid }) => {
     );
 };
 
-export default function AppHeader({ subtitle = "DASHBOARD" }) {
+export default function AppHeader({ subtitleKey = "nav.brand_subtitle_dashboard" }) {
     const { user, guild, logout } = useAuth();
+    const { t } = useT();
     return (
         <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
@@ -32,7 +35,7 @@ export default function AppHeader({ subtitle = "DASHBOARD" }) {
                     >
                         <span className="text-amber">◆</span>
                         <span className="text-muted-foreground tracking-widest hidden sm:inline">
-                            ORBUS // {subtitle}
+                            ORBUS // {t(subtitleKey)}
                         </span>
                         <span className="text-muted-foreground tracking-widest sm:hidden">
                             ORBUS
@@ -42,60 +45,29 @@ export default function AppHeader({ subtitle = "DASHBOARD" }) {
                         <>
                             <span className="text-border hidden sm:inline">|</span>
                             <nav className="flex items-center gap-1 overflow-x-auto">
-                                <NavLink
-                                    to="/dashboard"
-                                    label="DASH"
-                                    testid="nav-dashboard"
-                                />
-                                <NavLink
-                                    to="/adventurers"
-                                    label="ADVENTURERS"
-                                    testid="nav-adventurers"
-                                />
-                                <NavLink
-                                    to="/recruitment"
-                                    label="RECRUIT"
-                                    testid="nav-recruitment"
-                                />
-                                <NavLink
-                                    to="/dungeons"
-                                    label="DUNGEONS"
-                                    testid="nav-dungeons"
-                                />
-                                <NavLink
-                                    to="/expeditions"
-                                    label="EXPEDITIONS"
-                                    testid="nav-expeditions"
-                                />
-                                <NavLink
-                                    to="/inventory"
-                                    label="VAULT"
-                                    testid="nav-inventory"
-                                />
-                                <NavLink
-                                    to="/leaderboard"
-                                    label="RANK"
-                                    testid="nav-leaderboard"
-                                />
+                                <NavLink to="/dashboard" label={t("nav.dashboard")} testid="nav-dashboard" />
+                                <NavLink to="/adventurers" label={t("nav.adventurers")} testid="nav-adventurers" />
+                                <NavLink to="/recruitment" label={t("nav.recruitment")} testid="nav-recruitment" />
+                                <NavLink to="/dungeons" label={t("nav.dungeons")} testid="nav-dungeons" />
+                                <NavLink to="/expeditions" label={t("nav.expeditions")} testid="nav-expeditions" />
+                                <NavLink to="/inventory" label={t("nav.inventory")} testid="nav-inventory" />
+                                <NavLink to="/leaderboard" label={t("nav.leaderboard")} testid="nav-leaderboard" />
                                 {user?.is_admin && (
-                                    <NavLink
-                                        to="/admin"
-                                        label="ADMIN"
-                                        testid="nav-admin"
-                                    />
+                                    <NavLink to="/admin" label={t("nav.admin")} testid="nav-admin" />
                                 )}
                             </nav>
                         </>
                     )}
                 </div>
                 <div className="flex items-center gap-3 text-xs whitespace-nowrap">
+                    <LanguageSwitcher />
                     {guild && (
                         <span
                             data-testid="header-gold"
                             className="hidden sm:inline text-amber"
-                            title="Guild gold"
+                            title={t("dashboard.stats.gold")}
                         >
-                            {guild.gold}g
+                            {guild.gold}{t("common.gold_short")}
                         </span>
                     )}
                     <span
@@ -109,7 +81,7 @@ export default function AppHeader({ subtitle = "DASHBOARD" }) {
                         data-testid="logout-btn"
                         className="text-muted-foreground hover:text-foreground px-2 py-1 rounded-sm border border-border hover:bg-secondary"
                     >
-                        logout
+                        {t("nav.logout")}
                     </button>
                 </div>
             </div>

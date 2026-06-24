@@ -3,47 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api, formatApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../i18n/I18nContext";
 
-const STEPS = [
-    {
-        n: 1,
-        label: "Welcome to your guild",
-        body: "You are the Guild Master. Recruit adventurers and dispatch them on expeditions.",
-        cta: "Go to Recruitment",
-        to: "/recruitment",
-    },
-    {
-        n: 2,
-        label: "Recruit 3 adventurers",
-        body: "You need at least 3 adventurers to form an expedition team. 3 free refreshes per day, then 10/20/30 gold.",
-        cta: "Open Recruitment",
-        to: "/recruitment",
-    },
-    {
-        n: 3,
-        label: "Start your first expedition",
-        body: "Goblin Warrens is your starting dungeon. Recommended power 45, 60s duration.",
-        cta: "Browse Dungeons",
-        to: "/dungeons",
-    },
-    {
-        n: 4,
-        label: "Read the expedition report",
-        body: "Your first run completed. Check the report for XP, gold and loot.",
-        cta: "View Expeditions",
-        to: "/expeditions",
-    },
-    {
-        n: 5,
-        label: "Equip items or replay",
-        body: "Equip loot to boost team power, or use Replay Last Run to grind the same dungeon.",
-        cta: "Open Inventory",
-        to: "/inventory",
-    },
-];
+// 5 steps — content (label/body/cta) comes from i18n via `onboarding.stepN.*`.
+const STEP_ROUTES = {
+    1: "/recruitment",
+    2: "/recruitment",
+    3: "/dungeons",
+    4: "/expeditions",
+    5: "/inventory",
+};
 
 export default function OnboardingChecklist() {
     const { guild, refreshGuild } = useAuth();
+    const { t } = useT();
     const navigate = useNavigate();
     const [busy, setBusy] = useState(false);
 
@@ -53,7 +26,7 @@ export default function OnboardingChecklist() {
     const stored = guild.onboarding_step || 1;
     const suggested = guild.onboarding_suggested_step || stored;
     const activeStep = Math.max(stored, suggested);
-    const current = STEPS.find((s) => s.n === activeStep) || STEPS[0];
+    const route = STEP_ROUTES[activeStep] || "/recruitment";
 
     const patch = async (body) => {
         if (busy) return null;
@@ -71,21 +44,20 @@ export default function OnboardingChecklist() {
     };
 
     const handleCta = async () => {
-        // Advance stored step to the active one and navigate
         if (activeStep > stored) {
             await patch({ step: activeStep });
         }
-        navigate(current.to);
+        navigate(route);
     };
 
     const handleSkip = async () => {
         await patch({ dismissed: true });
-        toast.success("Onboarding hidden. You can re-enable it from your profile (Phase later).");
+        toast.success(t("onboarding.toast_skipped"));
     };
 
     const handleComplete = async () => {
         await patch({ completed: true });
-        toast.success("Onboarding completed. Good luck, Guild Master.");
+        toast.success(t("onboarding.toast_completed"));
     };
 
     const isFinalStep = activeStep >= 5;
@@ -98,13 +70,13 @@ export default function OnboardingChecklist() {
             <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
                 <div>
                     <div className="text-[10px] text-amber tracking-widest mb-1">
-                        :: ONBOARDING · STEP {activeStep} OF 5
+                        {t("onboarding.header", { step: activeStep })}
                     </div>
                     <div
                         className="text-sm sm:text-base font-semibold"
                         data-testid="onboarding-step-label"
                     >
-                        {current.label}
+                        {t(`onboarding.step${activeStep}.label`)}
                     </div>
                 </div>
                 <button
@@ -114,7 +86,7 @@ export default function OnboardingChecklist() {
                     data-testid="onboarding-skip-btn"
                     className="text-[10px] text-muted-foreground tracking-widest hover:text-foreground transition-colors disabled:opacity-40"
                 >
-                    SKIP TUTORIAL
+                    {t("onboarding.skip")}
                 </button>
             </div>
 
@@ -122,22 +94,21 @@ export default function OnboardingChecklist() {
                 className="text-xs sm:text-sm text-muted-foreground mb-4"
                 data-testid="onboarding-step-body"
             >
-                {current.body}
+                {t(`onboarding.step${activeStep}.body`)}
             </p>
 
-            {/* Progress dots */}
             <div className="flex items-center gap-1.5 mb-4" data-testid="onboarding-progress">
-                {STEPS.map((s) => (
+                {[1, 2, 3, 4, 5].map((n) => (
                     <span
-                        key={s.n}
+                        key={n}
                         className={`h-1.5 flex-1 rounded-sm ${
-                            s.n < activeStep
+                            n < activeStep
                                 ? "bg-amber"
-                                : s.n === activeStep
+                                : n === activeStep
                                 ? "bg-amber/60"
                                 : "bg-border"
                         }`}
-                        data-testid={`onboarding-dot-${s.n}`}
+                        data-testid={`onboarding-dot-${n}`}
                     />
                 ))}
             </div>
@@ -150,7 +121,7 @@ export default function OnboardingChecklist() {
                     data-testid="onboarding-cta-btn"
                     className="inline-flex items-center gap-2 px-3 py-2 rounded-sm bg-amber text-amber-foreground hover:bg-amber/90 text-xs sm:text-sm font-semibold tracking-wide transition-colors disabled:opacity-50"
                 >
-                    {current.cta} →
+                    {t(`onboarding.step${activeStep}.cta`)}
                 </button>
                 {isFinalStep && (
                     <button
@@ -160,7 +131,7 @@ export default function OnboardingChecklist() {
                         data-testid="onboarding-complete-btn"
                         className="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline disabled:opacity-40"
                     >
-                        finish tutorial
+                        {t("onboarding.finish")}
                     </button>
                 )}
             </div>

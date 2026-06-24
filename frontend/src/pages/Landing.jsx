@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../i18n/I18nContext";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 export default function Landing() {
     const { user } = useAuth();
+    const { t } = useT();
+
+    const features = [
+        { k: "01", titleKey: "landing.feature_recruit_title", descKey: "landing.feature_recruit_desc" },
+        { k: "02", titleKey: "landing.feature_dispatch_title", descKey: "landing.feature_dispatch_desc" },
+        { k: "03", titleKey: "landing.feature_grow_title", descKey: "landing.feature_grow_desc" },
+    ];
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
@@ -12,8 +21,11 @@ export default function Landing() {
                     <span className="text-amber">◆</span>
                     <span data-testid="brand-tag">ORBUS // GUILDMASTER</span>
                 </div>
-                <div className="text-xs text-muted-foreground hidden sm:block">
-                    v0.1 · phase-1
+                <div className="flex items-center gap-3">
+                    <LanguageSwitcher />
+                    <div className="text-xs text-muted-foreground hidden sm:block">
+                        v0.12 · i18n
+                    </div>
                 </div>
             </header>
 
@@ -33,9 +45,7 @@ export default function Landing() {
                 </h1>
 
                 <p className="mt-6 max-w-2xl text-base text-muted-foreground leading-relaxed">
-                    A text-based guild management MMO. Recruit adventurers, send them on
-                    dungeon runs, hoard gold, and grow your reputation across the realms.
-                    No graphics. Just numbers, logs, and decisions.
+                    {t("landing.description_1")} {t("landing.description_2")}
                 </p>
 
                 <div className="mt-10 flex flex-col sm:flex-row gap-3">
@@ -45,7 +55,7 @@ export default function Landing() {
                                 data-testid="landing-dashboard-btn"
                                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-6 h-11"
                             >
-                                Enter Dashboard →
+                                {t("landing.cta_dashboard")} →
                             </Button>
                         </Link>
                     ) : (
@@ -55,7 +65,7 @@ export default function Landing() {
                                     data-testid="landing-register-btn"
                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-6 h-11"
                                 >
-                                    Register
+                                    {t("landing.cta_register")}
                                 </Button>
                             </Link>
                             <Link to="/login">
@@ -64,7 +74,7 @@ export default function Landing() {
                                     variant="outline"
                                     className="rounded-sm px-6 h-11 border-border bg-transparent hover:bg-secondary"
                                 >
-                                    Login
+                                    {t("landing.cta_login")}
                                 </Button>
                             </Link>
                         </>
@@ -77,16 +87,12 @@ export default function Landing() {
                         data-testid="landing-leaderboard-link"
                         className="text-xs text-muted-foreground hover:text-amber tracking-widest underline-offset-4 hover:underline"
                     >
-                        ▸ View public leaderboard →
+                        ▸ {t("landing.cta_leaderboard")} →
                     </Link>
                 </div>
 
                 <section className="mt-20 grid sm:grid-cols-3 gap-4 text-sm">
-                    {[
-                        { k: "01", title: "Recruit", desc: "Hire adventurers with unique stats and quirks." },
-                        { k: "02", title: "Dispatch", desc: "Send parties into dungeons. Read the after-action report." },
-                        { k: "03", title: "Grow", desc: "Upgrade your hall, earn reputation, beat rivals." },
-                    ].map((b) => (
+                    {features.map((b) => (
                         <div
                             key={b.k}
                             className="border border-border bg-card p-5 rounded-sm"
@@ -95,10 +101,10 @@ export default function Landing() {
                                 ::{b.k}
                             </div>
                             <div className="text-foreground font-medium mb-1">
-                                {b.title}
+                                {t(b.titleKey)}
                             </div>
                             <div className="text-muted-foreground text-xs leading-relaxed">
-                                {b.desc}
+                                {t(b.descKey)}
                             </div>
                         </div>
                     ))}
@@ -106,7 +112,7 @@ export default function Landing() {
             </main>
 
             <footer className="max-w-5xl mx-auto px-6 py-6 text-xs text-muted-foreground border-t border-border">
-                <span className="text-amber">$</span> orbus --phase 1 --status ready
+                <span className="text-amber">$</span> orbus --phase 12 --status ready
             </footer>
         </div>
     );

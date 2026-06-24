@@ -2,6 +2,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/context/AuthContext";
+import { I18nProvider } from "@/i18n/I18nContext";
 import { ProtectedRoute, GuildGate, GuestOnly } from "@/components/RouteGuards";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -25,7 +26,8 @@ function App() {
     return (
         <div className="App min-h-screen bg-background text-foreground">
             <BrowserRouter>
-                <AuthProvider>
+                <I18nProvider>
+                    <AuthProvider>
                     <Routes>
                         <Route path="/" element={<Landing />} />
                         <Route
@@ -151,7 +153,8 @@ function App() {
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
-                </AuthProvider>
+                    </AuthProvider>
+                </I18nProvider>
             </BrowserRouter>
             <Toaster
                 theme="dark"

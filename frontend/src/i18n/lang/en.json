@@ -1,0 +1,382 @@
+{
+  "lang": {
+    "en": "English",
+    "it": "Italiano",
+    "switch_to_en": "EN",
+    "switch_to_it": "IT"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "empty": "Nothing here yet",
+    "of": "of",
+    "gold": "gold",
+    "gold_short": "g"
+  },
+  "nav": {
+    "dashboard": "DASH",
+    "adventurers": "ADVENTURERS",
+    "recruitment": "RECRUIT",
+    "dungeons": "DUNGEONS",
+    "expeditions": "EXPEDITIONS",
+    "inventory": "VAULT",
+    "leaderboard": "RANK",
+    "admin": "ADMIN",
+    "logout": "logout",
+    "brand_subtitle_dashboard": "DASHBOARD"
+  },
+  "landing": {
+    "title": "Orbus Online: Guild Master",
+    "tagline": "A text-based guild management MMO",
+    "description_1": "Run a guild, recruit adventurers, send them into dangerous dungeons.",
+    "description_2": "No graphics. No sprites. Just numbers, choices, and consequences.",
+    "cta_login": "Login",
+    "cta_register": "Create Account",
+    "cta_leaderboard": "View Leaderboard",
+    "feature_recruit_title": "Recruit",
+    "feature_recruit_desc": "Hire adventurers with unique stats and quirks.",
+    "feature_dispatch_title": "Dispatch",
+    "feature_dispatch_desc": "Send parties into dungeons. Read the after-action report.",
+    "feature_grow_title": "Grow",
+    "feature_grow_desc": "Upgrade your hall, earn reputation, beat rivals.",
+    "cta_dashboard": "Enter Dashboard"
+  },
+  "auth": {
+    "login_title": "Login",
+    "register_title": "Create your account",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "password_min": "min 8 characters",
+    "submit_login": "Login",
+    "submit_register": "Register",
+    "no_account": "No account?",
+    "have_account": "Already registered?",
+    "go_register": "Create one",
+    "go_login": "Sign in",
+    "forgot_password": "Forgot password?",
+    "reset_request_title": "Reset password",
+    "reset_request_body": "Enter your email and we'll send you a reset link.",
+    "reset_confirm_title": "Set new password",
+    "reset_token": "Reset token",
+    "new_password": "New password",
+    "submit_reset": "Reset password",
+    "submit_send_link": "Send reset link",
+    "logout": "Logout",
+    "errors": {
+      "invalid_credentials": "Invalid email or password",
+      "email_taken": "Email already registered",
+      "weak_password": "Password too weak (min 8 chars)"
+    }
+  },
+  "create_guild": {
+    "title": "Found your guild",
+    "subtitle": "Pick a name and a short description. You will be its Guild Master.",
+    "name": "Guild name",
+    "name_hint": "3-40 characters",
+    "description": "Description",
+    "description_hint": "Optional, max 300 characters",
+    "submit": "Found guild"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {username}",
+    "guild_overview": ":: GUILD OVERVIEW",
+    "no_description": "no description set",
+    "founded": "founded",
+    "stats": {
+      "level": "LEVEL",
+      "reputation": "REPUTATION",
+      "gold": "GOLD",
+      "adventurers": "ADVENTURERS",
+      "active_exp": "ACTIVE EXP",
+      "guild_id": "GUILD ID",
+      "peak_power": "PEAK POWER",
+      "completed": "COMPLETED"
+    },
+    "quick_actions": ":: QUICK ACTIONS",
+    "recent_reports": ":: RECENT REPORTS",
+    "no_recent_reports": "No expeditions yet. Start your first run in DUNGEONS."
+  },
+  "onboarding": {
+    "header": ":: ONBOARDING · STEP {step} OF 5",
+    "skip": "SKIP TUTORIAL",
+    "finish": "finish tutorial",
+    "toast_skipped": "Onboarding hidden.",
+    "toast_completed": "Onboarding completed. Good luck, Guild Master.",
+    "step1": {
+      "label": "Welcome to your guild",
+      "body": "You are the Guild Master. Recruit adventurers and dispatch them on expeditions.",
+      "cta": "Go to Recruitment →"
+    },
+    "step2": {
+      "label": "Recruit 3 adventurers",
+      "body": "You need at least 3 adventurers to form an expedition team. 3 free refreshes per day, then 10/20/30 gold.",
+      "cta": "Open Recruitment →"
+    },
+    "step3": {
+      "label": "Start your first expedition",
+      "body": "Goblin Warrens is your starting dungeon. Recommended power 45, 60s duration.",
+      "cta": "Browse Dungeons →"
+    },
+    "step4": {
+      "label": "Read the expedition report",
+      "body": "Your first run completed. Check the report for XP, gold and loot.",
+      "cta": "View Expeditions →"
+    },
+    "step5": {
+      "label": "Equip items or replay",
+      "body": "Equip loot to boost team power, or use Replay Last Run to grind the same dungeon.",
+      "cta": "Open Inventory →"
+    }
+  },
+  "recruitment": {
+    "title": "Recruitment",
+    "subtitle": "Browse the daily roster of candidates and recruit those that fit your strategy.",
+    "current_offer": "CURRENT OFFER",
+    "no_candidates": "No candidates available. Try refreshing the roster.",
+    "candidate": {
+      "level": "lvl",
+      "recruit": "Recruit",
+      "recruited": "Recruited",
+      "class": "Class",
+      "role": "Role",
+      "rarity": "Rarity",
+      "stats": "Stats",
+      "traits": "Traits"
+    },
+    "refresh": {
+      "free_remaining": "{n} free left today",
+      "cost_label": "Refresh ({cost}g)",
+      "free_label": "Refresh",
+      "tooltip": "Resets every day at 00:00 UTC",
+      "toast_free": "Roster refreshed (free).",
+      "toast_paid": "Roster refreshed (-{cost}g).",
+      "toast_no_gold": "Not enough gold: need {need}, have {have}.",
+      "next_reset": "Next reset {at}"
+    },
+    "recruit_cost": "Recruit cost: {cost}g",
+    "toast_recruited": "{name} joined your guild."
+  },
+  "adventurers": {
+    "title": "Adventurers",
+    "subtitle": "Your guild roster. Click an adventurer to manage their equipment.",
+    "count": "{n} adventurers",
+    "no_adventurers": "You have no adventurers yet. Go to RECRUIT to hire some.",
+    "available": "Available",
+    "in_expedition": "In expedition",
+    "level": "Lv {n}",
+    "xp": "XP {current}/{next}",
+    "morale": "Morale",
+    "stamina": "Stamina"
+  },
+  "dungeons": {
+    "title": "Dungeons",
+    "subtitle": "Choose a dungeon and dispatch a team. Locked dungeons display their unlock requirement.",
+    "tier": "Tier {n}",
+    "duration": "Duration",
+    "duration_sec": "{n}s",
+    "recommended_power": "Recommended Power",
+    "rewards_preview": "Rewards Preview",
+    "locked": "LOCKED",
+    "unlocked": "UNLOCKED",
+    "start_button": "Start Expedition →",
+    "locked_button": "Locked",
+    "unlock_reasons": {
+      "min_adventurers": "Requires {n} adventurers, you have {have}",
+      "min_power": "Requires peak team power ≥ {need}, you have {have}",
+      "min_level_or_power": "Requires guild level ≥ {level} OR peak power ≥ {power}",
+      "dragons_hoard": "Defeat tougher dungeons first (sticky gate)",
+      "shadow_crypts": "Requires peak team power ≥ {need}",
+      "generic": "Locked: {reason}"
+    },
+    "no_dungeons": "No dungeons available."
+  },
+  "expeditions": {
+    "title": "Expeditions",
+    "subtitle": "Active runs and your last reports.",
+    "active": "Active",
+    "recent": "Recent",
+    "no_active": "No active expeditions.",
+    "no_recent": "No completed runs yet.",
+    "view_report": "View report",
+    "replay_last": "Replay last run",
+    "team_power": "Team Power",
+    "success_chance": "Success chance",
+    "ends_in": "ends in {time}",
+    "completed_at": "completed {at}",
+    "report": {
+      "title": "Expedition Report",
+      "outcome": "Outcome",
+      "rewards": "Rewards",
+      "loot": "Loot",
+      "xp_gained": "XP gained",
+      "gold_gained": "Gold gained",
+      "no_loot": "No loot dropped this time."
+    }
+  },
+  "inventory": {
+    "title": "Inventory",
+    "subtitle": "Items collected from expeditions. Equip them to adventurers.",
+    "filter_all": "All",
+    "filter_weapon": "Weapons",
+    "filter_armor": "Armor",
+    "filter_accessory": "Accessories",
+    "empty": "Vault is empty. Loot drops from expeditions.",
+    "equipped_on": "Equipped on {name}",
+    "unequipped": "Unequipped",
+    "rarity_label": "Rarity",
+    "type_label": "Type",
+    "slot_label": "Slot"
+  },
+  "equipment": {
+    "title": "Equipment — {name}",
+    "back": "← Back to adventurers",
+    "current_power": "Power",
+    "equip_button": "Equip",
+    "unequip_button": "Unequip",
+    "slot_empty": "empty",
+    "available_items": "Available items",
+    "no_items": "No items available for this slot."
+  },
+  "leaderboard": {
+    "title": "Guild Leaderboard",
+    "subtitle": "Top guilds ranked by Peak Team Power.",
+    "rank": "Rank",
+    "guild": "Guild",
+    "peak_power": "Peak Power",
+    "level": "Level",
+    "no_data": "No guilds on the leaderboard yet."
+  },
+  "admin": {
+    "title": "Admin",
+    "tabs": {
+      "classes": "Classes",
+      "traits": "Traits",
+      "dungeons": "Dungeons",
+      "items": "Items"
+    }
+  },
+  "errors": {
+    "network": "Network error. Try again.",
+    "unauthorized": "Session expired. Please log in again.",
+    "forbidden": "Forbidden",
+    "not_found": "Not found",
+    "validation": "Validation error",
+    "server": "Server error. Try again later.",
+    "insufficient_gold": "Not enough gold: need {need}, have {have}.",
+    "dungeon_locked": "Dungeon locked: {reason}"
+  },
+  "content": {
+    "rarity": {
+      "common": "Common",
+      "uncommon": "Uncommon",
+      "rare": "Rare",
+      "epic": "Epic",
+      "legendary": "Legendary"
+    },
+    "role": {
+      "tank": "Tank",
+      "dps": "DPS",
+      "healer": "Healer",
+      "support": "Support",
+      "scout": "Scout"
+    },
+    "item_type": {
+      "weapon": "Weapon",
+      "armor": "Armor",
+      "accessory": "Accessory"
+    },
+    "slot": {
+      "main_hand": "Main Hand",
+      "off_hand": "Off Hand",
+      "head": "Head",
+      "chest": "Chest",
+      "legs": "Legs",
+      "feet": "Feet",
+      "hands": "Hands",
+      "ring": "Ring",
+      "amulet": "Amulet",
+      "trinket": "Trinket",
+      "accessory": "Accessory"
+    },
+    "expedition_status": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "success": "Success",
+      "partial_success": "Partial Success",
+      "defeat": "Defeat"
+    },
+    "class": {
+      "warrior": { "name": "Warrior", "role": "Tank", "description": "Frontline melee fighter, high endurance." },
+      "rogue": { "name": "Rogue", "role": "DPS", "description": "Agile striker that thrives on initiative." },
+      "mage": { "name": "Mage", "role": "DPS", "description": "Arcane caster with massive burst damage." },
+      "cleric": { "name": "Cleric", "role": "Healer", "description": "Divine support, keeps the party alive." },
+      "ranger": { "name": "Ranger", "role": "DPS", "description": "Skirmisher with ranged advantage." },
+      "paladin": { "name": "Paladin", "role": "Tank", "description": "Holy guardian, balanced offense and defense." },
+      "warlock": { "name": "Warlock", "role": "DPS", "description": "Pact-bound caster trading life for power." },
+      "monk": { "name": "Monk", "role": "DPS", "description": "Disciplined martial artist, evasive." },
+      "druid": { "name": "Druid", "role": "Support", "description": "Nature shapeshifter, flexible kit." },
+      "bard": { "name": "Bard", "role": "Support", "description": "Inspires allies, weakens enemies." },
+      "necromancer": { "name": "Necromancer", "role": "DPS", "description": "Commands the dead, drains foes." },
+      "berserker": { "name": "Berserker", "role": "DPS", "description": "Reckless brawler, high risk / reward." }
+    },
+    "trait": {
+      "brave": { "name": "Brave", "description": "Resists fear effects." },
+      "lucky": { "name": "Lucky", "description": "Better loot rolls." },
+      "tough": { "name": "Tough", "description": "Higher endurance." },
+      "swift": { "name": "Swift", "description": "Higher agility." },
+      "wise": { "name": "Wise", "description": "Higher intellect." },
+      "pious": { "name": "Pious", "description": "Higher faith." },
+      "strong": { "name": "Strong", "description": "Higher strength." },
+      "vigilant": { "name": "Vigilant", "description": "Better ambush avoidance." },
+      "patient": { "name": "Patient", "description": "Lower stamina drain." },
+      "merciless": { "name": "Merciless", "description": "More crit damage." },
+      "cunning": { "name": "Cunning", "description": "More trap detection." },
+      "stalwart": { "name": "Stalwart", "description": "Holds ground vs swarms." },
+      "fearless": { "name": "Fearless", "description": "Ignores morale loss." },
+      "scholar": { "name": "Scholar", "description": "More XP from runs." },
+      "thrifty": { "name": "Thrifty", "description": "Better gold drops." },
+      "graceful": { "name": "Graceful", "description": "Lower miss rate." },
+      "iron_will": { "name": "Iron Will", "description": "Resists charm/fear." },
+      "battle_hardened": { "name": "Battle Hardened", "description": "Less damage taken." },
+      "veteran": { "name": "Veteran", "description": "More starting XP." },
+      "natural_leader": { "name": "Natural Leader", "description": "Boosts party morale." },
+      "loyal": { "name": "Loyal", "description": "Never deserts." },
+      "stoic": { "name": "Stoic", "description": "Less stamina drain in long runs." },
+      "agile": { "name": "Agile", "description": "Higher dodge." },
+      "athletic": { "name": "Athletic", "description": "Higher max stamina." },
+      "perceptive": { "name": "Perceptive", "description": "Spots hidden loot." },
+      "fortunate": { "name": "Fortunate", "description": "Lower crit-failure rate." },
+      "iron_constitution": { "name": "Iron Constitution", "description": "Resists poison/disease." },
+      "tireless": { "name": "Tireless", "description": "Faster stamina recovery." },
+      "berserker_blood": { "name": "Berserker Blood", "description": "More damage when low HP." },
+      "shadow_walker": { "name": "Shadow Walker", "description": "Stealth bonus." }
+    },
+    "dungeon": {
+      "goblin-warrens": { "name": "Goblin Warrens", "description": "A maze of damp tunnels infested with goblin scouts. A safe place to learn." },
+      "sewer-nest": { "name": "Sewer Nest", "description": "Stinking sewer levels overrun by giant rats and slimes." },
+      "bandit-hideout": { "name": "Bandit Hideout", "description": "A camp of human bandits with weapons stolen from caravans." },
+      "druid-grove": { "name": "Druid Grove", "description": "A corrupted sacred grove. Beware nature gone wild." },
+      "cursed-mines": { "name": "Cursed Mines", "description": "Abandoned dwarven mines now haunted by undead miners." },
+      "shadow-crypts": { "name": "Shadow Crypts", "description": "Forgotten tombs guarded by wraiths and bound spirits." },
+      "sunken-library": { "name": "Sunken Library", "description": "A drowned library of forbidden tomes; arcane horrors patrol the aisles." },
+      "lich-sanctum": { "name": "Lich Sanctum", "description": "The throne room of a long-dead archmage. High peril, high reward." },
+      "storm-spire": { "name": "Storm Spire", "description": "A tower perpetually struck by lightning. Air elementals rule the upper floors." },
+      "dragons-hoard": { "name": "Dragon's Hoard", "description": "The lair of an ancient wyrm. Only the strongest dare enter." }
+    }
+  }
+}

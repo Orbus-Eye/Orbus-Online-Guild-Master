@@ -17,6 +17,76 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 12 — 2026-06-24 (i18n EN/IT Foundation — FRONTEND-ONLY)
+Implemented (**248 backend passed + 1 skipped**, OpenAPI invariato 39 paths, FE build OK):
+
+### Architettura i18n (custom, no library, ~150 LOC)
+- `src/i18n/I18nContext.jsx`: Context + Provider + `useT()` hook
+  - Detect browser language: `navigator.language.startsWith("it")` → IT, altrimenti EN
+  - Persistenza `localStorage["orbus.lang"]`
+  - Fallback chain robusto: `lang → en → key string`. **MAI undefined, MAI crash.**
+  - Interpolazione `{param}` regex semplice (10 LOC)
+  - Helper `resolveContent(group, slug, field, fallback)` per class/trait/dungeon
+- `src/i18n/lang/en.json` + `src/i18n/lang/it.json`: dizionari completi, ~260 chiavi/lingua, namespace flat per pagina/componente (es. `recruitment.refresh.cost_label`, `onboarding.step3.body`)
+- `src/i18n/backendMessages.js`: best-effort regex mapper per `unlock_reason` e backend errors (insufficient gold 402, dungeon locked 403). Fallback al testo EN del backend se nessun pattern matcha.
+- `src/components/LanguageSwitcher.jsx`: toggle EN | IT compatto in navbar (~35 LOC)
+
+### File modificati
+- `App.js`: wrap con `<I18nProvider>`
+- `components/AppHeader.jsx`: nav labels + brand subtitle + logout in `t()`, integrato `LanguageSwitcher`
+- `components/OnboardingChecklist.jsx`: tutti gli step (label/body/cta) + header + skip/finish via `t()`
+- `pages/Landing.jsx`: title/tagline/description/CTAs/features via `t()`, integrato `LanguageSwitcher`
+- `pages/Recruitment.jsx`: title/subtitle, refresh button (cost/free), counter "X free left today", toast (paid/free) via `t()`
+
+### Contenuti tradotti
+- ✅ **12/12 classi** (name + role + description)
+- ✅ **30/30 tratti** (name + description)
+- ✅ **10/10 dungeon** (name + description)
+- ✅ **5 rarità** (Common/Uncommon/Rare/Epic/Legendary)
+- ✅ **11 slot** item
+- ✅ **3 tipi** item (weapon/armor/accessory)
+- ✅ **8 stati expedition** (pending/in_progress/completed/failed/cancelled/success/partial_success/defeat)
+- ✅ **5 ruoli** adventurer (tank/dps/healer/support/scout)
+- ⏭ **0/80 nomi item**: NON tradotti in questa fase per ROI (item names sono semantici e per ora poco visibili; fallback EN dal backend è leggibile). Documentato come limite.
+
+### Pagine ad alto-traffico tradotte
+- ✅ Landing (100%)
+- ✅ AppHeader / Navbar (100%)
+- ✅ OnboardingChecklist (100%)
+- ✅ Recruitment (header + refresh + toast — 80%; nomi candidati restano dal backend per ora)
+- ⏭ Dashboard / Login / Register / Adventurers / Dungeons / Expeditions / Inventory / Equipment / Leaderboard / Admin: dizionario completo creato, ma stringhe ancora hardcoded in JSX. Sostituzione futura `t()` su queste pagine è meccanica (~30 LOC ciascuna). **Tutti i contenuti dinamici (class/trait/dungeon/rarità/slot/role) sono già pronti per essere chiamati con `tContent()`.**
+
+### Backend messages strategy
+I messaggi backend restano in EN. Frontend prova a localizzare via regex (`backendMessages.js`) per:
+- `unlock_reason` con pattern "Requires N adventurers / power ≥ X / level ≥ L OR power ≥ P"
+- Errore 402 "Insufficient gold (need X, have Y)"
+- Errore 403 "Dungeon locked: ..."
+Se il pattern non matcha → fallback al testo backend originale (leggibile in EN).
+
+### Verifiche
+- **pytest 248 passed + 1 skipped** (zero regressioni backend, OpenAPI 39 invariato)
+- `yarn build` PASS (production build success, 21.76s)
+- ESLint zero errori sui nuovi file; 0 warning sui modificati
+- **Mobile 375px smoke (IT)**: Landing + Dashboard senza horizontal overflow (0px); CTA "Crea Account / Accedi" leggibili; OnboardingChecklist "Benvenuto nella tua gilda" + "Vai a Reclutamento →" + "SALTA TUTORIAL"; navbar "RECLUTA / AVVENTURI / esci"; gold counter `100o` (suffisso localizzato)
+- **Switch EN↔IT** via navbar funziona istantaneo, senza reload, senza logout; persistenza localStorage verificata
+- **Auto-detect** browser EN/IT funziona al primo accesso (no override)
+- Build prod OK; nessun import circolare
+
+### Limiti noti
+- 80 nomi/descrizioni item non tradotti (fallback EN backend). ROI basso, deferito.
+- 9 pagine secondarie (Dashboard/Login/Register/Adventurers/Dungeons/Expeditions/Inventory/Equipment/Leaderboard/Admin) hanno stringhe ancora hardcoded ma il dizionario è pronto e completo. Sostituzione meccanica deferita.
+- `unlock_reason` mapper è regex-based: alcuni edge case potrebbero ricadere sul testo backend EN. Documentato.
+- Backend errors mappati solo per i 2 casi più comuni (insufficient_gold, dungeon_locked) — gli altri usano lo `status` HTTP per messaggi generici.
+- Per ora non c'è preferenza lingua sul backend (solo localStorage). Aggiungibile in futuro se serve sync multi-device.
+
+### Next Action Items (in ordine ROI)
+1. **Sostituire stringhe hardcoded nelle pagine restanti (P1, ~250 LOC totali)**: traduzione meccanica con `t()` su Dashboard, Login, Register, Adventurers, Dungeons, Expeditions, Inventory, Equipment, Leaderboard, Admin. Dizionario già pronto.
+2. **Phase 9.3 Email Resend (P2, ~60 LOC)**: real email per password reset (sostituisce console log).
+3. **DB cleanup test pollution (P2, ~30 LOC)**: script `pytest --collect-only --fixtures` per pulire utenti test pattern `p\d+_*`, `ob_*`, `ref_*` post-suite. Riduce DB size in CI.
+4. **Daily Quests (P3, ~120 LOC)**: 1-3 obiettivi giornalieri con reward gold piccolo (retention loop).
+
+
+
 ## Phase 11.3 — 2026-06-24 (Onboarding Tutorial — FRONTEND-FIRST)
 Implemented (**248 passed + 1 skipped** pytest, OpenAPI 38→39 paths, zero gameplay regression):
 
