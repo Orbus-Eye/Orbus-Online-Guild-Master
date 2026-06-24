@@ -34,6 +34,9 @@ EQUIPMENT_SLOTS = ("weapon", "armor", "accessory")
 SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accessory"}
 
 # Tester / seed gating
+# Test-fixture credentials (NOT real secrets). Used by the idempotent
+# `seed_tester()` helper which is itself gated by `APP_ENV != "production"`,
+# so these values are never written to a production DB.
 TESTER_EMAIL = "tester@orbus.test"
 TESTER_USERNAME = "tester"
-TESTER_PASSWORD = "password123"
+TESTER_PASSWORD = "password123"  # noqa: S105 — test fixture credential, not a real secret

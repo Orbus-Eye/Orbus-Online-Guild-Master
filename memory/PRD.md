@@ -168,11 +168,33 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 
 ## Known limits / debt
 - Frontend continua a usare solo `access_token` (no refresh) — Phase 8+
-- `server.py` ancora monolitico (~2.7k linee) — Phase 5.5
-- Password-reset via console log — Phase 8 (Resend/SendGrid)
+- `server.py` ancora monolitico (~2.2k linee) — Phase 5.5c
+- Password-reset via console log (solo se `APP_ENV != "production"`) — Phase 8 (Resend/SendGrid)
 - Nessun rate-limit visibile a livello di rotta su `POST /api/expeditions` (solo lockout su login) — accettato per ora
 - Gate Dragon's Hoard usa `best-three total_power CORRENTE` non "best three di sempre": una gilda che equipaggia e poi disequipaggia perde l'unlock se nuovi recruit hanno power basso. Comportamento documentato; semplice da estendere con `_max_team_power_ever` denormalizzato in Phase 8 se serve.
 - Loot table hardcoded in `server.py` (constant `DUNGEON_LOOT_TABLES`), non in DB. Cambiare le percentuali richiede deploy. Per ora va bene; futuro: collection `dungeon_loot_tables`.
+
+## Production hardening debt (Phase 5.6 audit — explicit deferrals)
+- **JWT in localStorage**: vulnerabile a XSS. Migrare a httpOnly cookies con CSRF token in production deploy phase. Richiede CORS+CSRF middleware backend + refactor del flow auth frontend. Stima: 3-4h. Status: DEFERRED — refresh-token flow FE non ancora attivo, prerequisito non soddisfatto.
+- **Email reale per password reset**: in `app/auth/services.py` il log del token è ora gated da `APP_ENV != "production"`. In production il log è soppresso ma manca ancora il mailer reale → l'endpoint `/api/auth/password-reset/request` risponde 200 senza inviare nulla. Wire Resend/SendGrid in Phase 8.
+- **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
+- **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
+
+## Phase 5.6 — 2026-06-24 (Code Quality Quick-Wins, scope ridotto)
+Implemented (zero behaviour change, **133/133 pytest PASS**, OpenAPI paths identical):
+- **Secure RNG**: `random.{uniform,choice,choices,random,randint,sample}` sostituito con `secrets.SystemRandom()` in `server.py` (17 call sites) e `app/expeditions/loot_tables.py` (5 call sites). Distribuzioni/range invariati — solo la sorgente di entropia è aggiornata. Tutti i test probabilistici (loot table, Shadow Crypts failure-never-rare, ecc.) passano identici.
+- **Password-reset log gated**: in `app/auth/services.py::request_password_reset` il `logger.info("[PASSWORD-RESET] ...")` è ora wrappato in `if APP_ENV != "production"`. In production il token non viene loggato (e l'endpoint risponde comunque 200 per evitare account enumeration).
+- **Tester credentials documented**: `TESTER_PASSWORD = "password123"` in `app/shared/constants.py` ha un commento `# noqa: S105 — test fixture credential, not a real secret`. Il seeding via `seed_tester()` rimane gated da `APP_ENV != "production"`.
+- **`.env.example`** creato (`/app/backend/.env.example`): documenta MONGO_URL, DB_NAME, JWT_SECRET, APP_ENV, CORS_ORIGINS con descrizioni e default. Nessun valore reale committato.
+- **PRD updated**: nuova sezione "Production hardening debt" elenca i deferrals espliciti (JWT cookies, mailer reale, function/component refactor, TypeScript).
+
+**Verified clean** (already aligned to spec — no fix needed):
+- `is` vs `==` literal comparison: 0 occurrences (grep + pyflakes confirmed)
+- React hook missing deps: 0 occurrences (eslint clean on Expeditions/ExpeditionNew/Recruitment/AdventurerEquipment/Admin)
+- React array index keys: i-keys present only on Skeleton placeholders (Recruitment.jsx 108/215) e column-index iteration (Admin.jsx 473) — entrambi pattern accettabili (chiavi stabili nel contesto, nessun bug reale)
+- `console.log/debug/info` frontend: 0 occurrences
+- `print()` backend: 0 occurrences
+- JWT_SECRET hardcoded default: assente, `app/core/config.py` usa `os.environ["JWT_SECRET"]` che raise KeyError se mancante
 
 ## Phase 5.5 — 2026-06-24 (Partial Modular Refactor — Data + Pure Logic)
 Implemented (zero behaviour change, **133/133 pytest PASS** identical baseline):

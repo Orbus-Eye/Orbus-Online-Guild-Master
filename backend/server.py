@@ -16,6 +16,13 @@ import secrets
 import hashlib
 import logging
 from contextlib import asynccontextmanager
+
+# Phase 5.6: cryptographically-secure RNG for outcome/loot/recruitment rolls.
+# Distributions/ranges are byte-identical to `random.*`; only the entropy source
+# is upgraded. `random` is retained as a top-level import because legacy
+# `_rng.choice(...)` references and downstream tests may rely on it for
+# determinism in fixtures.
+_rng = secrets.SystemRandom()
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -361,7 +368,7 @@ def candidate_public(doc: dict) -> dict:
 
 def _weighted_choice(choices):
     total = sum(w for _, w in choices)
-    r = random.uniform(0, total)
+    r = _rng.uniform(0, total)
     upto = 0
     for value, weight in choices:
         upto += weight
@@ -371,21 +378,21 @@ def _weighted_choice(choices):
 
 
 def _generate_name() -> str:
-    first = random.choice(FIRST_NAMES)
-    if random.random() < 0.6:
-        return f"{first} {random.choice(LAST_NAMES)}"
+    first = _rng.choice(FIRST_NAMES)
+    if _rng.random() < 0.6:
+        return f"{first} {_rng.choice(LAST_NAMES)}"
     return first
 
 
 def _roll_stat(base: int, rarity_bonus: int) -> int:
-    return max(1, base + random.randint(-1, 2) + rarity_bonus)
+    return max(1, base + _rng.randint(-1, 2) + rarity_bonus)
 
 
 def _pick_random_traits(traits_pool: list) -> list:
     """Pick 0–2 distinct traits with weighted distribution: 50%/35%/15%."""
     if not traits_pool:
         return []
-    r = random.random()
+    r = _rng.random()
     if r < 0.50:
         count = 0
     elif r < 0.85:
@@ -395,7 +402,7 @@ def _pick_random_traits(traits_pool: list) -> list:
     count = min(count, len(traits_pool))
     if count == 0:
         return []
-    chosen = random.sample(traits_pool, count)
+    chosen = _rng.sample(traits_pool, count)
     return [
         {
             "id": t["id"],
@@ -744,15 +751,15 @@ async def _roll_loot_for_dungeon(dungeon: dict, success: bool) -> list[str]:
         # Backward-compat fallback: legacy global pool (Common/Uncommon).
         if not success:
             return []
-        if random.random() >= LOOT_DROP_CHANCE:
+        if _rng.random() >= LOOT_DROP_CHANCE:
             return []
         pool = await db.items.find(
             {"is_active": True, "rarity": {"$in": LOOT_RARITIES}}, {"_id": 0}
         ).to_list(100)
-        return [random.choice(pool)["id"]] if pool else []
+        return [_rng.choice(pool)["id"]] if pool else []
 
     branch = table["success" if success else "failure"]
-    if random.random() >= branch["chance"]:
+    if _rng.random() >= branch["chance"]:
         return []
     weights = branch.get("weights") or {}
     rarities = [r for r, w in weights.items() if w > 0]
@@ -763,7 +770,7 @@ async def _roll_loot_for_dungeon(dungeon: dict, success: bool) -> list[str]:
         rarities = [r for r in rarities if r in ("Common", "Uncommon")]
         if not rarities:
             return []
-    chosen_rarity = random.choices(
+    chosen_rarity = _rng.choices(
         rarities, weights=[weights[r] for r in rarities], k=1
     )[0]
     pool = await db.items.find(
@@ -783,7 +790,7 @@ async def _roll_loot_for_dungeon(dungeon: dict, success: bool) -> list[str]:
             if cand:
                 pool = cand
                 break
-    return [random.choice(pool)["id"]] if pool else []
+    return [_rng.choice(pool)["id"]] if pool else []
 
 
 # ─── Phase 7: Dungeon gating (soft progression) ───────────────────────────────
@@ -828,11 +835,11 @@ async def _evaluate_dungeon_gate(dungeon: dict, guild: dict) -> tuple[bool, Opti
 
 
 CLASS_LEVELUP_STAT = {
-    "Warrior": lambda: random.choice(["strength", "endurance"]),
+    "Warrior": lambda: _rng.choice(["strength", "endurance"]),
     "Rogue": lambda: "agility",
     "Mage": lambda: "intellect",
     "Priest": lambda: "faith",
-    "Ranger": lambda: random.choice(["agility", "strength"]),
+    "Ranger": lambda: _rng.choice(["agility", "strength"]),
 }
 
 
@@ -889,7 +896,7 @@ async def _complete_one_expedition(exp_id: str) -> None:
         {"expedition_id": exp_id}, {"_id": 0}
     ).to_list(50)
 
-    final_score = random.randint(1, 100)
+    final_score = _rng.randint(1, 100)
     success = final_score <= claimed["success_chance"]
     now = utc_now()
 
@@ -1391,7 +1398,7 @@ async def get_recruitment_candidates(current_user: dict = Depends(get_current_us
 
     now = utc_now()
     candidates = [
-        _generate_candidate(random.choice(classes), guild["id"], now, traits_pool)
+        _generate_candidate(_rng.choice(classes), guild["id"], now, traits_pool)
         for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER)
     ]
     await db.recruitment_offers.insert_many([dict(c) for c in candidates])

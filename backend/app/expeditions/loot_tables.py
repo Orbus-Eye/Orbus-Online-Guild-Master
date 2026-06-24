@@ -8,10 +8,14 @@ Behaviour contract (Phase 7):
   Rare/Epic), as a consolation drop with low chance.
 - On *success*, the per-dungeon weights apply.
 """
-import random
+import secrets
 from typing import Optional
 
 from app.shared.constants import LOOT_DROP_CHANCE_LEGACY, LOOT_RARITIES_LEGACY
+
+# Phase 5.6: use cryptographically-secure RNG for loot rolls. The numerical
+# distributions are unchanged — only the entropy source is upgraded.
+_rng = secrets.SystemRandom()
 
 
 DUNGEON_LOOT_TABLES = {
@@ -40,16 +44,16 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
         # Backward-compat fallback: legacy global pool (Common/Uncommon)
         if not success:
             return []
-        if random.random() >= LOOT_DROP_CHANCE_LEGACY:
+        if _rng.random() >= LOOT_DROP_CHANCE_LEGACY:
             return []
         pool = await db.items.find(
             {"is_active": True, "rarity": {"$in": LOOT_RARITIES_LEGACY}},
             {"_id": 0},
         ).to_list(100)
-        return [random.choice(pool)["id"]] if pool else []
+        return [_rng.choice(pool)["id"]] if pool else []
 
     branch = table["success" if success else "failure"]
-    if random.random() >= branch["chance"]:
+    if _rng.random() >= branch["chance"]:
         return []
     weights = branch.get("weights") or {}
     rarities = [r for r, w in weights.items() if w > 0]
@@ -60,7 +64,7 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
         rarities = [r for r in rarities if r in ("Common", "Uncommon")]
         if not rarities:
             return []
-    chosen_rarity = random.choices(
+    chosen_rarity = _rng.choices(
         rarities, weights=[weights[r] for r in rarities], k=1
     )[0]
     pool = await db.items.find(
@@ -79,4 +83,4 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
             if cand:
                 pool = cand
                 break
-    return [random.choice(pool)["id"]] if pool else []
+    return [_rng.choice(pool)["id"]] if pool else []

@@ -7,6 +7,7 @@ the previous inline implementation in `server.py`.
 """
 import hashlib
 import logging
+import os
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -203,10 +204,14 @@ async def request_password_reset(db, email: str) -> None:
         "expires_at": now + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES),
         "used": False,
     })
-    logger.info(
-        "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
-        email, token, PASSWORD_RESET_TTL_MINUTES,
-    )
+    # Phase 5.6: log the bare token only in non-production environments. In
+    # production a real mailer (Resend/SendGrid) MUST be wired up — see PRD
+    # "Production hardening debt".
+    if os.environ.get("APP_ENV", "development") != "production":
+        logger.info(
+            "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
+            email, token, PASSWORD_RESET_TTL_MINUTES,
+        )
 
 
 async def confirm_password_reset(db, token: str, new_password: str) -> None:
