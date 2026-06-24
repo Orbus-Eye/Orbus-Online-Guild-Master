@@ -460,23 +460,66 @@ async def _user_guild_or_404(user_id: str) -> dict:
 
 
 # ─── Phase 3 helpers: dungeon/item/expedition/inventory ────────────────────────
-def dungeon_public(d: dict) -> dict:  # Phase 5.5c.2 backward-compat shim
-    from app.dungeons.services import dungeon_public as _dp
+def dungeon_public(d: dict) -> dict:
+    return {
+        "id": d["id"],
+        "slug": d["slug"],
+        "name": d["name"],
+        "description": d.get("description", ""),
+        "difficulty": d["difficulty"],
+        "required_team_size": d["required_team_size"],
+        "base_duration_seconds": d["base_duration_seconds"],
+        "recommended_power": d["recommended_power"],
+        "base_gold_reward": d["base_gold_reward"],
+        "base_xp_reward": d["base_xp_reward"],
+        "is_active": d.get("is_active", True),
+    }
 
-    return _dp(d)
 
-
-def item_public(it: dict) -> dict:  # Phase 5.5c.2 backward-compat shim
-    from app.items.services import item_public as _ip
-
-    return _ip(it)
+def item_public(it: dict) -> dict:
+    return {
+        "id": it["id"],
+        "slug": it["slug"],
+        "name": it["name"],
+        "description": it.get("description", ""),
+        "item_type": it["item_type"],
+        "rarity": it["rarity"],
+        "level_required": it.get("level_required", 1),
+        "power_score": it["power_score"],
+        "strength_bonus": it.get("strength_bonus", 0),
+        "agility_bonus": it.get("agility_bonus", 0),
+        "intellect_bonus": it.get("intellect_bonus", 0),
+        "endurance_bonus": it.get("endurance_bonus", 0),
+        "faith_bonus": it.get("faith_bonus", 0),
+        "is_tradeable": it.get("is_tradeable", True),
+        "is_cosmetic": it.get("is_cosmetic", False),
+        "affects_combat": it.get("affects_combat", False),
+        "affects_economy": it.get("affects_economy", False),
+        "affects_ranking": it.get("affects_ranking", False),
+        "can_be_sold_for_gold": it.get("can_be_sold_for_gold", True),
+        "can_be_sold_for_real_money": it.get("can_be_sold_for_real_money", False),
+        "is_active": it.get("is_active", True),
+    }
 
 
 def inventory_entry_public(row: dict, item: Optional[dict], equipped_count: int = 0) -> dict:
-    # Phase 5.5c.2 backward-compat shim
-    from app.inventory.services import inventory_entry_public as _iep
-
-    return _iep(row, item, equipped_count)
+    total = int(row.get("quantity", 1))
+    equipped = max(0, int(equipped_count))
+    available = max(0, total - equipped)
+    out = {
+        "id": row["id"],
+        "guild_id": row["guild_id"],
+        "item_id": row["item_id"],
+        # Backward-compat: `quantity` keeps the legacy semantics (total owned)
+        "quantity": total,
+        "total_quantity": total,
+        "equipped_quantity": equipped,
+        "available_quantity": available,
+        "acquired_at": row["acquired_at"],
+    }
+    if item:
+        out["item"] = item_public(item)
+    return out
 
 
 def member_public(m: dict) -> dict:
@@ -668,10 +711,15 @@ async def _load_equipment_for_guild(guild_id: str) -> dict[str, tuple[dict, int]
 
 
 async def _count_equipped_for_guild_items(guild_id: str) -> dict[str, int]:
-    """Backward-compat shim — actual impl in app.inventory.services."""
-    from app.inventory.services import count_equipped_for_guild_items
-
-    return await count_equipped_for_guild_items(db, guild_id)
+    """Returns {item_id: equipped_count} for the guild."""
+    pipeline = [
+        {"$match": {"guild_id": guild_id}},
+        {"$group": {"_id": "$item_id", "count": {"$sum": 1}}},
+    ]
+    out: dict[str, int] = {}
+    async for row in db.equipped_items.aggregate(pipeline):
+        out[row["_id"]] = int(row["count"])
+    return out
 
 
 def _build_equipment_response(adventurer: dict, slots: dict, eq_power: int) -> dict:
@@ -989,15 +1037,30 @@ app.include_router(auth_router)
 app.include_router(guilds_router)
 
 
-# ─── Endpoints: Dungeons / Items (Phase 5.5c.2) ───────────────────────────────
-# Both `/api/dungeons` and `/api/items` read-only catalog routes now served by
-# `app/dungeons/routes.py` and `app/items/routes.py`. Mounted on `app` because
-# the routers already carry their own `/api/<domain>` prefix.
-from app.dungeons.routes import router as dungeons_router  # noqa: E402
-from app.items.routes import router as items_router  # noqa: E402
+# ─── Endpoints: Dungeons / Items (read-only catalogs) ──────────────────────────
+@api.get("/dungeons")
+async def list_dungeons(current_user: Optional[dict] = Depends(get_optional_user)):
+    rows = await db.dungeons.find({"is_active": True}, {"_id": 0}).sort("difficulty", 1).to_list(100)
+    guild = None
+    if current_user:
+        guild = await db.guilds.find_one({"owner_user_id": current_user["id"]}, {"_id": 0})
+    out = []
+    for d in rows:
+        pub = dungeon_public(d)
+        if guild:
+            unlocked, reason = await _evaluate_dungeon_gate(d, guild)
+        else:
+            unlocked, reason = True, None
+        pub["unlocked"] = unlocked
+        pub["unlock_reason"] = reason
+        out.append(pub)
+    return {"dungeons": out}
 
-app.include_router(dungeons_router)
-app.include_router(items_router)
+
+@api.get("/items")
+async def list_items():
+    rows = await db.items.find({"is_active": True}, {"_id": 0}).sort("name", 1).to_list(500)
+    return {"items": [item_public(i) for i in rows]}
 
 
 # ─── Endpoints: Expeditions ────────────────────────────────────────────────────
@@ -1318,11 +1381,27 @@ async def get_expedition(
 
 
 # ─── Endpoints: Inventory ──────────────────────────────────────────────────────
-# ─── Endpoints: Inventory (Phase 5.5c.2) ──────────────────────────────────────
-# `GET /api/inventory` now served by `app/inventory/routes.py`.
-from app.inventory.routes import router as inventory_router  # noqa: E402
-
-app.include_router(inventory_router)
+@api.get("/inventory")
+async def list_inventory(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    rows = await db.inventory_items.find(
+        {"guild_id": guild["id"]}, {"_id": 0}
+    ).sort("acquired_at", -1).to_list(500)
+    # Resolve item info in a single query
+    item_ids = list({r["item_id"] for r in rows})
+    items_map = {}
+    if item_ids:
+        items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(500)
+        items_map = {it["id"]: it for it in items}
+    equipped_counts = await _count_equipped_for_guild_items(guild["id"])
+    return {
+        "inventory": [
+            inventory_entry_public(
+                r, items_map.get(r["item_id"]), equipped_counts.get(r["item_id"], 0)
+            )
+            for r in rows
+        ]
+    }
 
 
 # ─── Endpoints: Adventurer Classes (read-only in Phase 2) ──────────────────────

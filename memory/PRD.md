@@ -180,6 +180,35 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5c.2 — 2026-06-24 (Dungeons + Items + Inventory Catalog Split)
+Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
+
+- **Created** 3 nuovi domini read-mostly (12 file totali):
+  - `app/dungeons/` (4 file, 92 LOC) — `dungeon_public` serializer + `list_dungeons_for_guild(db, guild)` con gate evaluation. Lazy import `_evaluate_dungeon_gate` da server.py.
+  - `app/items/` (4 file, 69 LOC) — `item_public` serializer (con tutti i 17 campi monetization) + `list_active_items(db)`.
+  - `app/inventory/` (4 file, 98 LOC) — `inventory_entry_public` + `count_equipped_for_guild_items(db, guild_id)` + `list_inventory_for_guild(db, guild_id)`. Importa `item_public` da `app.items.services` (clean cross-domain dependency).
+
+- **Migrated endpoints** (3/3):
+  - `GET /api/dungeons` → ora servito da `app.dungeons.routes` (gate evaluation invariata, incluso sticky max_team_power_ever)
+  - `GET /api/items` → ora servito da `app.items.routes`
+  - `GET /api/inventory` → ora servito da `app.inventory.routes` (cross-guild isolation invariata, available_quantity on-the-fly)
+
+- **`server.py` trimmed**: 2283 → 2204 linee (−79, −3.5%). Helper backward-compat shims per `dungeon_public(d)`, `item_public(it)`, `inventory_entry_public(row, item, eq_count)`, `_count_equipped_for_guild_items(guild_id)` — chiamati internamente da admin endpoints, expedition completion, equipment domain.
+
+- **Test result** (148/148 PASS, ~133s clean run): Phase 3 (inventory list + item info), Phase 4 (admin item CRUD), Phase 6 (equipment delta tramite item_public shim), Phase 7 (loot table + monetization invariant), Phase 8 (Dragon's Hoard sticky gate via max_team_power_ever) — tutto verde.
+
+- **OpenAPI diff vs pre-Phase-5.5c.2**: VUOTO (36 → 36 paths). Verificato anche curl smoke:
+  - `GET /api/dungeons`: 4 dungeon, Shadow Crypts locked "Requires guild level 1 and at least 3 adventurers", Dragon's Hoard locked "Requires guild level 2, team power ≥ 65, or peak team power ever ≥ 65" (testo Phase 8 invariato)
+  - `GET /api/items`: 59 item attivi
+  - `GET /api/inventory`: shape `{inventory: [...]}` invariato
+
+- **FE smoke**: `/dungeons` rende 4 card identiche al pre-refactor (badge LOCKED, unlock_reason inline, tutti i campi reward/duration/power preservati).
+
+- **Workaround/lazy import rimasti**:
+  - `app.guilds.routes::get_my_guild` → `from server import complete_due_expeditions` (Phase 5.5c residual, da rimuovere in Phase 5.5d quando expeditions migra)
+  - `app.dungeons.services::list_dungeons_for_guild` → `from server import _evaluate_dungeon_gate` (Phase 5.5c.2, da rimuovere quando `_evaluate_dungeon_gate` migra in `app/dungeons/services` o expeditions; opzione: spostarlo subito in `app/dungeons/services` come funzione pura e fare diventare server.py il consumer, ma servirebbe rifattorare anche `_dispatch_expedition` e `_check_replay_eligibility` che lo chiamano — fuori scope 5.5c.2)
+  - server.py mantiene 4 shim 1-liner: `dungeon_public`, `item_public`, `inventory_entry_public`, `_count_equipped_for_guild_items` per backward-compat con admin CRUD e expedition completion non ancora migrati
+
 ## Phase 5.5c — 2026-06-24 (Guilds Domain Split — second modular POC after auth)
 Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI paths identical: 36/36 byte-diff vuoto, FE non toccato):
 
