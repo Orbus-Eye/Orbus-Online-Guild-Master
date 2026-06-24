@@ -265,6 +265,7 @@ def candidate_public(doc: dict) -> dict:
         "faith": doc["faith"],
         "stamina": doc["stamina"],
         "morale": doc["morale"],
+        "cost": RECRUITMENT_COST_GOLD,
         "cost_gold": RECRUITMENT_COST_GOLD,
     }
 
