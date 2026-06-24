@@ -264,22 +264,67 @@ def guild_public(doc: dict) -> dict:  # backward-compat shim
     return _gp(doc)
 
 
-def class_public(doc: dict) -> dict:  # Phase 5.5d backward-compat shim
-    from app.adventurers.services import class_public as _cp
+def class_public(doc: dict) -> dict:
+    return {
+        "id": doc["id"],
+        "name": doc["name"],
+        "slug": doc["slug"],
+        "role": doc["role"],
+        "description": doc.get("description", ""),
+        "base_strength": doc["base_strength"],
+        "base_agility": doc["base_agility"],
+        "base_intellect": doc["base_intellect"],
+        "base_endurance": doc["base_endurance"],
+        "base_faith": doc["base_faith"],
+        "is_active": doc.get("is_active", True),
+    }
 
-    return _cp(doc)
+
+def trait_public(doc: dict) -> dict:
+    return {
+        "id": doc["id"],
+        "name": doc["name"],
+        "description": doc.get("description", ""),
+        "modifier_type": doc["modifier_type"],
+        "affected_stat": doc["affected_stat"],
+        "modifier_value": doc["modifier_value"],
+        "is_positive": doc["is_positive"],
+        "is_active": doc.get("is_active", True),
+    }
 
 
-def trait_public(doc: dict) -> dict:  # Phase 5.5d backward-compat shim
-    from app.adventurers.services import trait_public as _tp
-
-    return _tp(doc)
-
-
-def adventurer_public(doc: dict) -> dict:  # Phase 5.5d backward-compat shim
-    from app.adventurers.services import adventurer_public as _ap
-
-    return _ap(doc)
+def adventurer_public(doc: dict) -> dict:
+    # Phase 6: equipment fields are injected into `doc` upstream as `_equipment_slots`
+    # and `_equipment_power` when available; otherwise default to empty/no-power.
+    eq_slots = doc.get("_equipment_slots") or _empty_slot_map()
+    eq_power = int(doc.get("_equipment_power", 0))
+    base_power = _adventurer_unit_power(doc)
+    return {
+        "id": doc["id"],
+        "guild_id": doc["guild_id"],
+        "name": doc["name"],
+        "adventurer_class_id": doc["adventurer_class_id"],
+        "class_name": doc.get("class_name"),
+        "class_role": doc.get("class_role"),
+        "rarity": doc.get("rarity", "Common"),
+        "level": doc.get("level", 1),
+        "experience": doc.get("experience", 0),
+        "strength": doc["strength"],
+        "agility": doc["agility"],
+        "intellect": doc["intellect"],
+        "endurance": doc["endurance"],
+        "faith": doc["faith"],
+        "stamina": doc.get("stamina", 100),
+        "morale": doc.get("morale", 100),
+        "is_available": doc.get("is_available", True),
+        "traits": doc.get("traits", []),
+        "equipment": eq_slots,
+        "base_power": base_power,
+        "equipment_power": eq_power,
+        "total_power": base_power + eq_power,
+        "created_at": doc["created_at"],
+        "updated_at": doc.get("updated_at", doc["created_at"]),
+    }
 
 
 def candidate_public(doc: dict) -> dict:  # Phase 5.5c.3 backward-compat shim
@@ -810,11 +855,13 @@ class ExpeditionStartIn(BaseModel):
     adventurer_ids: list[str] = Field(min_length=1, max_length=10)
 
 
-# Phase 5.5d: Equipment schemas + routes extracted to app/equipment/.
-from app.equipment.schemas import EquipIn, UnequipIn  # noqa: E402
-from app.equipment.routes import router as equipment_router  # noqa: E402
-# Phase 5.5d: Adventurers + classes routes extracted to app/adventurers/.
-from app.adventurers.routes import router as adventurers_router  # noqa: E402
+class EquipIn(BaseModel):
+    item_id: str = Field(min_length=8, max_length=64)
+    slot: str = Field(min_length=3, max_length=20)
+
+
+class UnequipIn(BaseModel):
+    slot: str = Field(min_length=3, max_length=20)
 
 
 # ─── Endpoints: Health ─────────────────────────────────────────────────────────
@@ -1174,15 +1221,159 @@ app.include_router(inventory_router)
 
 
 # ─── Endpoints: Adventurer Classes (read-only in Phase 2) ──────────────────────
-# ─── Endpoints: Adventurer Classes + Adventurers + Equipment (Phase 5.5d) ─────
-# `GET /api/adventurer-classes` and `GET /api/adventurers` are served by
-# `app/adventurers/routes.py`. The 3 equipment routes (under prefix
-# `/api/adventurers/{id}/`) are served by `app/equipment/routes.py`.
-# Phase 5.5c.3: recruitment routes (was inadvertently dropped by the 5.5d
-# big-block replacement — restored here, identical mount point).
+@api.get("/adventurer-classes")
+async def list_classes():
+    classes = await db.adventurer_classes.find(
+        {"is_active": True}, {"_id": 0}
+    ).sort("name", ASCENDING).to_list(100)
+    return {"classes": [class_public(c) for c in classes]}
+
+
+# ─── Endpoints: Recruitment ────────────────────────────────────────────────────
+# ─── Endpoints: Recruitment (Phase 5.5c.3) ────────────────────────────────────
+# Both `/api/recruitment/candidates` (GET) and `/api/recruitment/recruit`
+# (POST) are now served by `app/recruitment/routes.py`.
 app.include_router(recruitment_router)
-app.include_router(adventurers_router)
-app.include_router(equipment_router)
+
+
+# ─── Endpoints: Adventurers ────────────────────────────────────────────────────
+@api.get("/adventurers")
+async def list_adventurers(current_user: dict = Depends(get_current_user)):
+    guild = await _user_guild_or_404(current_user["id"])
+    rows = (
+        await db.adventurers.find({"guild_id": guild["id"]}, {"_id": 0})
+        .sort("created_at", -1)
+        .to_list(500)
+    )
+    equip_map = await _load_equipment_for_guild(guild["id"])
+    out = []
+    for r in rows:
+        slots, power = equip_map.get(r["id"], (_empty_slot_map(), 0))
+        r["_equipment_slots"] = slots
+        r["_equipment_power"] = power
+        out.append(adventurer_public(r))
+    return {"adventurers": out}
+
+
+# ─── Endpoints: Equipment (Phase 6) ────────────────────────────────────────────
+async def _adventurer_owned_or_404(adventurer_id: str, guild_id: str) -> dict:
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
+    )
+    if not adv:
+        raise HTTPException(status_code=404, detail="Adventurer not found")
+    return adv
+
+
+@api.get("/adventurers/{adventurer_id}/equipment")
+async def get_adventurer_equipment(
+    adventurer_id: str, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
+
+
+@api.post("/adventurers/{adventurer_id}/equip", status_code=201)
+async def equip_item(
+    adventurer_id: str, payload: EquipIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+
+    if not adv.get("is_available", True):
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot modify equipment of adventurer currently in expedition",
+        )
+
+    slot = payload.slot.strip().lower()
+    if slot not in EQUIPMENT_SLOTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
+        )
+
+    item = await db.items.find_one(
+        {"id": payload.item_id, "is_active": True}, {"_id": 0}
+    )
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    expected_type = SLOT_TO_ITEM_TYPE[slot]
+    if item.get("item_type") != expected_type:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Item type '{item.get('item_type')}' cannot be equipped in slot '{slot}'"
+            ),
+        )
+
+    inv_row = await db.inventory_items.find_one(
+        {"guild_id": guild["id"], "item_id": payload.item_id}, {"_id": 0}
+    )
+    if not inv_row:
+        raise HTTPException(status_code=404, detail="Item not in your guild inventory")
+    total_qty = int(inv_row.get("quantity", 0))
+    equipped_qty = await db.equipped_items.count_documents(
+        {"guild_id": guild["id"], "item_id": payload.item_id}
+    )
+    available = total_qty - equipped_qty
+    if available <= 0:
+        raise HTTPException(
+            status_code=400, detail="Not enough copies of this item available"
+        )
+
+    now = utc_now()
+    new_row = {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild["id"],
+        "adventurer_id": adv["id"],
+        "item_id": payload.item_id,
+        "slot": slot,
+        "equipped_at": now.isoformat(),
+    }
+    try:
+        await db.equipped_items.insert_one(new_row)
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=400, detail="Slot already occupied, unequip first"
+        )
+
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
+
+
+@api.post("/adventurers/{adventurer_id}/unequip")
+async def unequip_item(
+    adventurer_id: str, payload: UnequipIn, current_user: dict = Depends(get_current_user)
+):
+    guild = await _user_guild_or_404(current_user["id"])
+    adv = await _adventurer_owned_or_404(adventurer_id, guild["id"])
+
+    if not adv.get("is_available", True):
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot modify equipment of adventurer currently in expedition",
+        )
+
+    slot = payload.slot.strip().lower()
+    if slot not in EQUIPMENT_SLOTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
+        )
+
+    res = await db.equipped_items.delete_one(
+        {"adventurer_id": adv["id"], "slot": slot, "guild_id": guild["id"]}
+    )
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail=f"No item equipped in slot '{slot}'")
+
+    slots, eq_power, _raw = await _load_equipment_for_adventurer(adv["id"])
+    return _build_equipment_response(adv, slots, eq_power)
+
 
 
 # ════════════════════════════════════════════════════════════════════════════════

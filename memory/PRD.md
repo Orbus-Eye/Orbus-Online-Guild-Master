@@ -180,6 +180,56 @@ Implemented (zero gameplay regression on Goblin Warrens — 133/133 pytest PASS:
 - **Function-level complexity refactor**: `start_expedition`, `_complete_one_expedition`, `recruit_adventurer`, `equip_item`, `ensure_indexes` (server.py) e `Admin.jsx`, `AdventurerEquipment.jsx` (FE) sono ancora monolitici. Splitting deferito a Phase 5.5d (server.py) / 5.5e (FE components).
 - **TypeScript migration**: out of scope MVP. Da rivalutare quando il prodotto supera lo stadio early-MVP.
 
+## Phase 5.5d — 2026-06-24 (Adventurers + Classes + Traits + Equipment Split)
+Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
+
+- **Created** 2 nuovi domini (8 file totali, 441 LOC):
+  - `app/adventurers/` (4 file, 136 LOC) — `class_public`, `trait_public`, `adventurer_public` serializers + `list_adventurers_for_guild(db, guild_id)` con equipment join via lazy import per evitare cycle
+  - `app/equipment/` (4 file, 305 LOC) — `EquipIn`/`UnequipIn` schemas + `_empty_slot_map`, `_equipped_slot_entry`, `_item_summary_for_snapshot`, `_load_equipment_for_adventurer`, `_load_equipment_for_guild`, `_build_equipment_response`, `_adventurer_owned_or_404`, 3 service ops (`get_equipment_for_adventurer`, `equip_item_service`, `unequip_item_service`)
+
+- **Migrated endpoints** (5/5):
+  - `GET /api/adventurer-classes` → `app.adventurers.routes`
+  - `GET /api/adventurers` → `app.adventurers.routes`
+  - `GET /api/adventurers/{id}/equipment` → `app.equipment.routes`
+  - `POST /api/adventurers/{id}/equip` → `app.equipment.routes`
+  - `POST /api/adventurers/{id}/unequip` → `app.equipment.routes`
+
+- **Migrated helpers**: tutti gli 11 helper indicati (equipment load + slot map + snapshot + power + ownership). server.py mantiene shim 1-2 linee per `class_public`, `trait_public`, `adventurer_public` (chiamati da admin CRUD e expedition completion).
+
+- **`server.py` trimmed**: 1998 → **1807 linee** (−191, −9.6%). Trend cumulato refactor:
+  - pre-5.5b baseline: 2541
+  - 5.5b → 5.5c.3: 2541 → 1998 (−543)
+  - **5.5d (adventurers + equipment): 1998 → 1807 (−191)**
+  - **Cumulato refactor totale: −734 linee (−28.9%) da `server.py.pre-phase55b.bak`**
+
+- **Cross-domain dependencies risolte**:
+  - `adventurers.services::list_adventurers_for_guild` → lazy import `_empty_slot_map` + `_load_equipment_for_guild` da `app.equipment.services` (evita cycle)
+  - `equipment.services` importa `_adventurer_unit_power`/`_item_equip_power` (con alias) da `app.expeditions.formulas` — pure functions, no cycle
+  - `equipment.services` importa `item_public` da `app.items.services` (one-way)
+  - Nuovo helper `_adventurer_owned_or_404(db, adventurer_id, guild_id)` vive in `app.equipment.services` (l'unico consumer)
+
+- **Test result** (148/148 PASS, 149s clean run): Phase 2 (adventurers list + cross-user), Phase 4 (trait effects + classes seed), Phase 6 (TUTTI equip tests: happy path, wrong slot, item not owned, cross-guild, double-equip, unequip, no drift, block during expedition, snapshot), Phase 7 (equipment_power calc + expedition snapshot + delta), Phase 8 (replay uses current equipment fresh).
+
+- **OpenAPI diff vs pre-Phase-5.5d**: VUOTO (36 → 36 paths). 
+
+- **Bug catturati e corretti durante migrazione**:
+  1. Big-block search_replace ha rimosso accidentalmente `app.include_router(recruitment_router)` (Phase 5.5c.3) → ripristinato dopo aver osservato OpenAPI diff con `/api/recruitment/*` mancanti
+  2. Big-block ha INTRODOTTO erroneamente un nuovo endpoint `/api/traits` non presente nel baseline (residuo da merge precedente) → rimosso
+
+- **Workaround/lazy import rimasti**:
+  - `app/guilds/routes.py::get_my_guild` → `complete_due_expeditions` (residual)
+  - `app/dungeons/services.py::list_dungeons_for_guild` → `_evaluate_dungeon_gate`
+  - `app/recruitment/routes.py::recruit_adventurer` → `adventurer_public`
+  - `app/adventurers/services.py::list_adventurers_for_guild` → lazy `_empty_slot_map`+`_load_equipment_for_guild` (cycle avoidance interna al refactor)
+  - Shim 1-linea in server.py: `class_public`, `trait_public`, `adventurer_public`, `candidate_public`, `dungeon_public`, `item_public`, `inventory_entry_public`, `guild_public`, `_user_guild_or_404`, `_count_equipped_for_guild_items`
+
+- **Cosa resta in server.py (1807 linee, 2 domini)**:
+  - `expeditions` (`/api/expeditions/*` 5 endpoint + helper `_dispatch_expedition`, `_complete_one_expedition`, `_check_replay_eligibility`, `_evaluate_dungeon_gate`, `_resolve_levelup`, `_roll_loot_for_dungeon`, `complete_due_expeditions`, `expedition_public`, `member_public`)
+  - `admin` (`/api/admin/*` ~30 endpoint CRUD + `validate_item_monetization`, `_slug_ok`, `_strip_db_fields`)
+  - Seeds (`ensure_indexes`, `seed_classes_and_traits`, `seed_dungeons_and_items`, `seed_tester`)
+  - Backward-compat shims (10 funzioni 1-2 linee)
+  - Lifespan + FastAPI app + CORS middleware
+
 ## Phase 5.5c.3 — 2026-06-24 (Recruitment Domain Split)
 Implemented (zero behavior change, **148/148 pytest PASS**, OpenAPI 36/36 paths byte-identici, FE non toccato):
 
