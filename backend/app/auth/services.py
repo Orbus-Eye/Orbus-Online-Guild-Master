@@ -187,10 +187,19 @@ async def authenticate_login(db, email: str, password: str) -> tuple[dict, str, 
     return user, access, refresh
 
 
-async def request_password_reset(db, email: str) -> None:
+async def request_password_reset(db, email: str, *, accept_language: str | None = None) -> None:
     """Always returns silently — caller must respond with HTTP 200 regardless
-    of whether the email exists, to prevent account enumeration. Logs the
-    reset token to the backend console (placeholder for real email send)."""
+    of whether the email exists, to prevent account enumeration.
+
+    Phase 9.3: sends the reset link via the configured EmailProvider. In
+    development (`EMAIL_PROVIDER=console`) the provider logs the message
+    (token still visible in stdout). In production with `EMAIL_PROVIDER=resend`
+    the real email is sent; missing API key triggers NoopProvider which logs
+    an error but never raises (no enumeration).
+    """
+    from app.core.email import detect_locale, get_email_provider
+    from app.core.email_templates import render_password_reset
+
     user = await db.users.find_one({"email": email})
     if not user:
         return
@@ -204,14 +213,49 @@ async def request_password_reset(db, email: str) -> None:
         "expires_at": now + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES),
         "used": False,
     })
-    # Phase 5.6: log the bare token only in non-production environments. In
-    # production a real mailer (Resend/SendGrid) MUST be wired up — see PRD
-    # "Production hardening debt".
-    if os.environ.get("APP_ENV", "development") != "production":
+
+    lang = detect_locale(accept_language)
+    app_base = os.environ.get("APP_BASE_URL", "").rstrip("/")
+    reset_url = f"{app_base}/password-reset/confirm?token={token}" if app_base else token
+
+    provider = get_email_provider()
+    subject, html, text = render_password_reset(lang, reset_url)
+    try:
+        await provider.send(to=email, subject=subject, html=html, text=text)
+    except Exception as exc:  # provider must not crash the request flow
+        logger.error("[PASSWORD-RESET] provider raised: %s", exc)
+
+    # Dev/test belt-and-braces: keep the legacy stdout log only when the
+    # console provider is active (i.e. there is no real email channel).
+    # In production with Resend (or Noop) we MUST NOT print the token.
+    if provider.name == "console":
         logger.info(
             "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
             email, token, PASSWORD_RESET_TTL_MINUTES,
         )
+
+
+async def send_welcome_email_safe(email: str, username: str, *, accept_language: str | None = None) -> bool:
+    """Phase 9.3 — Fire-and-forget welcome email after register().
+
+    NEVER raises: a mailer failure must NOT fail registration. Returns the
+    boolean from the provider so callers can log a metric but should ignore
+    it on the hot path.
+    """
+    from app.core.email import detect_locale, get_email_provider
+    from app.core.email_templates import render_welcome
+
+    if (os.environ.get("SEND_WELCOME_EMAIL", "true").strip().lower() in ("false", "0", "no")):
+        return False
+    lang = detect_locale(accept_language)
+    app_url = (os.environ.get("APP_BASE_URL") or "").rstrip("/") or "/"
+    provider = get_email_provider()
+    subject, html, text = render_welcome(lang, app_url, username)
+    try:
+        return await provider.send(to=email, subject=subject, html=html, text=text)
+    except Exception as exc:
+        logger.warning("[WELCOME-EMAIL] provider raised for %s: %s", email, exc)
+        return False
 
 
 async def confirm_password_reset(db, token: str, new_password: str) -> None:
@@ -263,5 +307,6 @@ __all__ = [
     "register_user",
     "authenticate_login",
     "request_password_reset",
+    "send_welcome_email_safe",
     "confirm_password_reset",
 ]

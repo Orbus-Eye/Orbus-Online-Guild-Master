@@ -4,7 +4,7 @@ Mounted under prefix `/api/auth`. Endpoint paths, payloads and status codes
 are preserved byte-identical with the previous implementation in `server.py`.
 The router pulls all dependencies from `app.core.*` and `app.auth.services`.
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.auth.schemas import (
     LoginIn,
@@ -21,6 +21,7 @@ from app.auth.services import (
     confirm_password_reset,
     register_user,
     request_password_reset,
+    send_welcome_email_safe,
     user_public,
 )
 from app.core.database import db
@@ -35,11 +36,16 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @router.post("/register", status_code=201)
-async def register(payload: RegisterIn):
+async def register(payload: RegisterIn, request: Request):
     validate_password_strength(payload.password)
     email = payload.email.lower().strip()
     username = payload.username.strip()
     user_doc, access, refresh = await register_user(db, email, username, payload.password)
+    # Phase 9.3 — fire-and-forget welcome email. NEVER raises.
+    await send_welcome_email_safe(
+        email, username,
+        accept_language=request.headers.get("accept-language"),
+    )
     return {
         "access_token": access,
         "refresh_token": refresh,
@@ -83,10 +89,13 @@ async def logout(payload: LogoutIn):
 
 
 @router.post("/password-reset/request")
-async def password_reset_request(payload: PasswordResetRequestIn):
+async def password_reset_request(payload: PasswordResetRequestIn, request: Request):
     """Always returns 200 to avoid email enumeration."""
     email = payload.email.lower().strip()
-    await request_password_reset(db, email)
+    await request_password_reset(
+        db, email,
+        accept_language=request.headers.get("accept-language"),
+    )
     return {"status": "ok"}
 
 

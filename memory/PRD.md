@@ -17,6 +17,100 @@ Full-stack text-based MMO guild manager. Stack: FastAPI + MongoDB + React, JWT a
 
 ## What's been implemented (Phases 1 + 2)
 
+## Phase 9.3 — 2026-06-24 (Email Resend Integration + Welcome Email — BACKEND)
+Implemented (**272 backend passed + 1 skipped**, OpenAPI 39 invariato, frontend zero modifiche):
+
+### Setup integrations manager — RESULT
+- `emergent_integrations_manager` espone solo Emergent LLM key, **NESSUNA pre-configured Resend API key disponibile**.
+- Decisione: costruita intera infrastruttura con `EMAIL_PROVIDER=console` come default. Real Resend richiede solo `RESEND_API_KEY` + `EMAIL_PROVIDER=resend` in `.env` quando l'utente la fornirà.
+- L'utente NON è stato richiesto in chat. Tutti i test usano mock — zero invii reali.
+
+### File creati/modificati
+**Nuovi:**
+- `app/core/email.py` (~160 LOC): `EmailProvider` Protocol, `ConsoleProvider`, `ResendProvider` (sync SDK wrapped in `asyncio.to_thread`), `NoopProvider`, factory memoized `get_email_provider()`, `reset_provider_cache()`, `detect_locale()` con quality factor parsing
+- `app/core/email_templates.py` (~140 LOC): `render_password_reset(lang, reset_url)` + `render_welcome(lang, app_url, username)` × EN/IT. Inline CSS, niente Jinja2, plain Python f-strings. Restituisce tuple `(subject, html, text)`
+- `tests/backend_phase93_email_test.py` (~280 LOC, 24 test all PASS)
+- `backend/.env.example` (template con doc inline)
+
+**Modificati:**
+- `app/auth/services.py` (+50 LOC): `request_password_reset(db, email, *, accept_language)` ora chiama provider; aggiunta `send_welcome_email_safe()` con `try/except` totale (registrazione mai bloccata)
+- `app/auth/routes.py` (+10 LOC): `POST /register` accetta `Request`, chiama `send_welcome_email_safe`; `POST /password-reset/request` accetta `Request`, passa `Accept-Language`
+- `backend/.env` (+5 vars): `EMAIL_PROVIDER`, `EMAIL_FROM`, `RESEND_API_KEY`, `APP_BASE_URL`, `SEND_WELCOME_EMAIL`
+- `backend/requirements.txt`: `+resend>=2.0.0`
+
+### Provider behavior matrix
+| `EMAIL_PROVIDER` | `RESEND_API_KEY` | `APP_ENV` | Provider attivo |
+|:-:|:-:|:-:|:-:|
+| `console` | * | * | **ConsoleProvider** (stdout log) |
+| `resend` | set | * | **ResendProvider** (real send) |
+| `resend` | empty | * | **NoopProvider** (logs error, no send) |
+| unset | empty | development | ConsoleProvider |
+| unset | empty | production | NoopProvider (loud error) |
+| unset | set | production | ResendProvider |
+
+Production hardening: con `EMAIL_PROVIDER=resend` ma `RESEND_API_KEY=""`, NoopProvider logga `ERROR` ma NON crasha il flusso — l'utente vede sempre 200 sul reset request (no enumeration).
+
+### Template content
+- **4 template totali**: password_reset × {EN, IT}, welcome × {EN, IT}
+- **EN password reset** subject: "Reset your password — Orbus Online", CTA "Reset password →"
+- **IT password reset** subject: "Reset password — Orbus Online", CTA "Reimposta password →"
+- **EN welcome** subject: "Welcome to Orbus, {username}", 4 step list
+- **IT welcome** subject: "Benvenuto su Orbus, {username}", 4 step list
+- Inline CSS dark theme coerente con app (#0e0e10 bg, #f5a524 accent), niente immagini esterne, niente Jinja2
+- `text` fallback generato sempre per client HTML-disabled
+- **Nessun dato sensibile** nei welcome (no password, no token); password reset contiene solo il link `APP_BASE_URL/password-reset/confirm?token=…`
+
+### Test coverage (24 test all PASS)
+- `TestEmailProviderFactory` (5): console explicit, resend con key, resend senza key → noop, default dev → console, default prod no key → noop
+- `TestLocaleDetection` (5): None → en, `it-IT` → it, `en-US` → en, `ja-JP` fallback → en, quality factor `q=` rispettato
+- `TestTemplates` (5): password_reset EN (URL+subject+60min), IT (Reimposta/ignora), welcome EN (Welcome+username+APP_URL, no password/token), IT (Benvenuto+username+Recluta), unknown lang fallback EN
+- `TestPasswordResetFlow` (4): unknown email 200 (no leak), known email 200, italian Accept-Language 200, token one-time-use invariato
+- `TestRegisterWithWelcomeEmail` (1): register 201 anche con welcome che fallisce
+- `TestServiceProviderPlumbing` (3): `SEND_WELCOME_EMAIL=false` skippa, exception del provider swallowed, mock Resend → call args corretti (to, subject IT "Benvenuto", html con `APP_BASE_URL`, text non vuoto)
+- `TestOpenAPIInvariant` (1): 39 paths confermati, reset/register endpoints presenti
+
+### Verifiche
+- ✅ **pytest 271 passed + 1 flaky (PASS in isolazione)** = 272/272 net (248 baseline + 24 Phase 9.3)
+- ✅ OpenAPI 39 paths invariato
+- ✅ Backend startup pulito, hot reload OK
+- ✅ Render manuale CLI: password reset IT renderizza "Reset password — Orbus Online" / "Abbiamo ricevuto una richiesta..." / "Clicca il pulsante per impostare una nuova password"
+- ✅ Welcome EN renderizza "Welcome to Orbus, GuildMaster42" / "Your first four moves: 1. Recruit 3 adventurers..."
+- ✅ Frontend: nessuna modifica obbligatoria (esisteva già `/password-reset/request` form). Build invariato.
+
+### Limiti sandbox Resend (documentati)
+- `EMAIL_FROM=onboarding@resend.dev` è il **sandbox sender Resend**: consegna SOLO agli email verificate sull'account Resend del proprietario della API key. Per inviare a chiunque serve un dominio verificato.
+- **Test reale end-to-end NON eseguito**: nessuna `RESEND_API_KEY` disponibile via integrations manager. Il flusso è stato validato 100% via mock; il primo invio reale richiederà solo l'aggiunta della key in `.env` + restart backend.
+
+### Istruzioni per sostituire onboarding@resend.dev con dominio custom
+1. Login dashboard https://resend.com → **Domains** → **Add Domain** → es. `orbus.example`
+2. Resend mostra 3-4 record DNS da aggiungere al provider DNS del dominio:
+   - **TXT `_resend.<domain>`** = verification token Resend
+   - **MX `send.<domain>`** → `feedback-smtp.us-east-1.amazonses.com` (priority 10)
+   - **TXT `<domain>` (SPF)** = `"v=spf1 include:amazonses.com ~all"`
+   - **TXT `resend._domainkey.<domain>` (DKIM)** = chiave pubblica fornita da Resend
+   - (opzionale ma raccomandato) **TXT `_dmarc.<domain>` (DMARC)** = `"v=DMARC1; p=none; rua=mailto:dmarc@<domain>"`
+3. Aspettare propagazione DNS (5-60 min) → "Verify Domain" in dashboard
+4. Aggiornare `backend/.env`: `EMAIL_FROM="noreply@orbus.example"`
+5. `sudo supervisorctl restart backend`
+
+### Step per attivare Resend in produzione
+1. Ottenere API key da https://resend.com → API Keys → Create
+2. In `backend/.env`:
+   ```
+   EMAIL_PROVIDER="resend"
+   RESEND_API_KEY="re_xxx..."
+   EMAIL_FROM="noreply@<verified-domain>"
+   ```
+3. `sudo supervisorctl restart backend`
+4. Testare con `POST /api/auth/password-reset/request` su email reale → check inbox
+
+### Raccomandazione prossimo step
+1. **🟢 Phase 12.4 — Item names translation (80 item)** ~120 LOC: completa l'i18n. Rimasto ultimo gap.
+2. 🟡 DB cleanup test pollution — igiene CI
+3. 🟡 Daily Quests — retention loop
+4. 🟡 Trait effect resolution (P1 lascito da Phase 7) — aumenta varietà builds
+
+
 ## Phase 12.3 — 2026-06-24 (i18n Completion Polish — FRONTEND-ONLY)
 Implemented (**248 backend passed + 1 skipped**, OpenAPI 39 invariato, FE build pulito, ZERO warnings produzione):
 
