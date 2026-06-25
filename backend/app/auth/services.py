@@ -225,14 +225,15 @@ async def request_password_reset(db, email: str, *, accept_language: str | None 
     except Exception as exc:  # provider must not crash the request flow
         logger.error("[PASSWORD-RESET] provider raised: %s", exc)
 
-    # Dev/test belt-and-braces: keep the legacy stdout log only when the
-    # console provider is active (i.e. there is no real email channel).
-    # In production with Resend (or Noop) we MUST NOT print the token.
-    if provider.name == "console":
-        logger.info(
-            "[PASSWORD-RESET] email=%s reset_token=%s expires_in=%dmin",
-            email, token, PASSWORD_RESET_TTL_MINUTES,
-        )
+    # Phase 9.3.2 — NEVER log the raw token. We emit only an sha256[:12]
+    # fingerprint, which is enough for log correlation but useless to an
+    # attacker (cannot be replayed into /password-reset/confirm). Applies
+    # uniformly to every provider — `console` mode is no longer a free pass.
+    token_fingerprint = hashlib.sha256(token.encode()).hexdigest()[:12]
+    logger.info(
+        "[PASSWORD-RESET] email=%s provider=%s token_hash=%s expires_in=%dmin",
+        email, provider.name, token_fingerprint, PASSWORD_RESET_TTL_MINUTES,
+    )
 
 
 async def send_welcome_email_safe(email: str, username: str, *, accept_language: str | None = None) -> bool:

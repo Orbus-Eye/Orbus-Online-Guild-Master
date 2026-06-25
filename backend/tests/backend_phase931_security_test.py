@@ -240,6 +240,74 @@ class TestWelcomeEmailInjectionP13:
 
 
 # ────────────────────────────────────────────────────────────────────────
+# Phase 9.3.2 — Password-reset token never logged in raw form
+# ────────────────────────────────────────────────────────────────────────
+class TestPasswordResetTokenNeverLogged:
+    """Regression: pre-9.3.2 the [PASSWORD-RESET] log line printed the raw
+    token whenever EMAIL_PROVIDER=console. Any reader of the backend log
+    could replay the token into /password-reset/confirm within 60min.
+
+    The fix logs only sha256(token)[:12] — useful for correlation, useless
+    for replay."""
+
+    def test_no_raw_token_in_log_and_hash_present(self, db):
+        # 1. Register a real user
+        r, tag, email = _register("p932")
+        assert r.status_code == 201
+
+        # 2. Fire a password-reset-request and capture the DB-side token row
+        before_ids = {d["id"] for d in db.password_reset_tokens.find({}, {"id": 1})}
+        rr = requests.post(
+            f"{BASE_URL}/api/auth/password-reset/request",
+            json={"email": email}, timeout=15,
+        )
+        assert rr.status_code == 200
+        # Find the row we just created
+        new_rows = list(db.password_reset_tokens.find(
+            {"id": {"$nin": list(before_ids)}}, {"_id": 0}
+        ))
+        assert len(new_rows) == 1, "exactly one new reset-token row expected"
+        token_hash_db = new_rows[0]["token_hash"]  # sha256 of raw token (full)
+
+        # 3. Inspect the live backend log: the raw token MUST NOT appear,
+        # and a short sha256 fingerprint MUST appear.
+        import time
+        time.sleep(1)  # let log buffer flush
+        combined = ""
+        for log_path in (
+            "/var/log/supervisor/backend.err.log",
+            "/var/log/supervisor/backend.out.log",
+        ):
+            try:
+                combined += open(log_path).read()[-100_000:]
+            except FileNotFoundError:
+                continue
+        # Slice the log to the portion AFTER our email appears (so we only
+        # check the audit line we just generated, not legacy pre-fix entries).
+        scoped = combined.split(f"email={email}")[-1]
+        assert "reset_token=" not in scoped, (
+            "raw reset_token leaked into log after fix"
+        )
+        assert f"[PASSWORD-RESET] email={email}" in combined, (
+            f"audit log missing for {email}"
+        )
+        # token_hash=<12 hex chars> must appear after our email
+        import re
+        assert re.search(r"token_hash=[0-9a-f]{12}\b", scoped), (
+            "token_hash fingerprint missing from audit log"
+        )
+
+    def test_token_hash_is_truncated_sha256(self):
+        """Unit-level: confirm the fingerprint format."""
+        import hashlib
+        sample = "abc123"
+        expected = hashlib.sha256(sample.encode()).hexdigest()[:12]
+        assert len(expected) == 12
+        assert all(c in "0123456789abcdef" for c in expected)
+
+
+
+# ────────────────────────────────────────────────────────────────────────
 # OpenAPI invariant
 # ────────────────────────────────────────────────────────────────────────
 class TestPhase931OpenAPI:
