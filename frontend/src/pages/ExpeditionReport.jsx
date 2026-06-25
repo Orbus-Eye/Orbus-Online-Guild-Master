@@ -26,6 +26,7 @@ const RarityBadge = ({ rarity }) => (
     </span>
 );
 
+import { translateDungeonName } from "../i18n/contentMap";
 import { formatDateTime as formatDate } from "../utils/dateFormat";
 
 const SummaryBadge = ({ summary, status }) => {
@@ -71,7 +72,7 @@ const Cell = ({ label, value, testid, accent = false }) => (
 );
 
 export default function ExpeditionReport() {
-    const { t, lang } = useT();
+    const { t, tContent, lang } = useT();
     const { id } = useParams();
     const navigate = useNavigate();
     const { refreshGuild } = useAuth();
@@ -116,7 +117,7 @@ export default function ExpeditionReport() {
         setReplayBusy(true);
         try {
             const { data } = await api.post("/expeditions/replay-last");
-            toast.success(`Replay started: ${data.expedition.dungeon_name}`);
+            toast.success(t("expedition_report_page.replay_toast", { name: data.expedition.dungeon_name }));
             await refreshGuild();
             navigate(`/expeditions/${data.expedition.id}`);
         } catch (err) {
@@ -192,7 +193,7 @@ export default function ExpeditionReport() {
                             :: AFTER-ACTION REPORT
                         </div>
                         <h1 data-testid="report-dungeon-name" className="text-3xl font-semibold tracking-tight">
-                            {e.dungeon_name}
+                            {translateDungeonName(tContent, e.dungeon_name, lang)}
                         </h1>
                         <div className="text-xs text-muted-foreground mt-1">
                             {isDone

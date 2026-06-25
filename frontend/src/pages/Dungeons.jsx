@@ -38,7 +38,7 @@ const Stat = ({ label, value }) => (
 );
 
 export default function Dungeons() {
-    const { t } = useT();
+    const { t, tContent } = useT();
     const [dungeons, setDungeons] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -105,7 +105,7 @@ export default function Dungeons() {
                                         </div>
                                     </div>
                                     <p className="text-xs text-muted-foreground mb-4 flex-1">
-                                        {d.description}
+                                        {tContent("dungeon", d.slug, "description", d.description)}
                                     </p>
                                     <div className="mb-4">
                                         <Stat label="Required team" value={`${d.required_team_size} heroes`} />

@@ -379,7 +379,16 @@
     "back_to_dungeons": "← Back to Dungeons",
     "toast_dispatched": "Expedition dispatched. Returns in {seconds}s.",
     "toast_dungeon_not_found": "Dungeon not found",
-    "brand_subtitle": "DISPATCH"
+    "brand_subtitle": "DISPATCH",
+    "section_dispatch_party": ":: DISPATCH PARTY",
+    "section_briefing": ":: BRIEFING",
+    "subtitle_select": "Select exactly {n} adventurers. Mix roles (Tank · DPS · Healer) for bonus team power.",
+    "dungeon_meta": "Difficulty {difficulty} · {seconds}s · recommended power {power}",
+    "equipment_bonus_label": "EQUIPMENT BONUS",
+    "team_power_final_label": "TEAM POWER (FINAL)",
+    "success_chance_label": "SUCCESS CHANCE",
+    "underpowered_warning": "⚠ Your team is underpowered for this dungeon (recommended {recommended}, you have {actual}).",
+    "dispatching_btn": "dispatching…"
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",
@@ -392,7 +401,8 @@
     "success_final": "Success chance (final)",
     "toast_replay_started": "Replay started: {dungeon}",
     "started_at": "started {at}",
-    "completed_at": "completed {at}"
+    "completed_at": "completed {at}",
+    "replay_toast": "Replay started: {name}"
   },
   "create_guild_page": {
     "name_placeholder": "The Iron Lantern",

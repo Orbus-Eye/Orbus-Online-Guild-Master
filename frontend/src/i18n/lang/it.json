@@ -379,7 +379,16 @@
     "back_to_dungeons": "← Torna ai Dungeon",
     "toast_dispatched": "Spedizione partita. Torna in {seconds}s.",
     "toast_dungeon_not_found": "Dungeon non trovato",
-    "brand_subtitle": "INVIO"
+    "brand_subtitle": "INVIO",
+    "section_dispatch_party": ":: INVIO SQUADRA",
+    "section_briefing": ":: BRIEFING",
+    "subtitle_select": "Seleziona esattamente {n} avventurieri. Combina ruoli (Tank · DPS · Healer) per ottenere bonus di potenza.",
+    "dungeon_meta": "Difficoltà {difficulty} · {seconds}s · potenza consigliata {power}",
+    "equipment_bonus_label": "BONUS EQUIPAGGIAMENTO",
+    "team_power_final_label": "POTENZA SQUADRA (FINALE)",
+    "success_chance_label": "PROBABILITÀ DI SUCCESSO",
+    "underpowered_warning": "⚠ Squadra sotto potenziata per questo dungeon (consigliata {recommended}, hai {actual}).",
+    "dispatching_btn": "invio in corso…"
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",
@@ -392,7 +401,8 @@
     "success_final": "Probabilità (finale)",
     "toast_replay_started": "Replay avviato: {dungeon}",
     "started_at": "iniziata {at}",
-    "completed_at": "completata {at}"
+    "completed_at": "completata {at}",
+    "replay_toast": "Replay avviato: {name}"
   },
   "create_guild_page": {
     "name_placeholder": "La Lanterna di Ferro",

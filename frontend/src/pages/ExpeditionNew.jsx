@@ -52,7 +52,7 @@ function previewSuccessChance(teamPower, recommended) {
 }
 
 export default function ExpeditionNew() {
-    const { t } = useT();
+    const { t, tContent } = useT();
     const { slug } = useParams();
     const navigate = useNavigate();
     const { refreshGuild } = useAuth();
@@ -128,7 +128,7 @@ export default function ExpeditionNew() {
                 dungeon_id: dungeon.id,
                 adventurer_ids: selected.map((a) => a.id),
             });
-            toast.success(`Expedition dispatched. Returns in ${dungeon.base_duration_seconds}s.`);
+            toast.success(t("expedition_new.toast_dispatched", { seconds: dungeon.base_duration_seconds }));
             await refreshGuild();
             navigate(`/expeditions/${data.expedition.id}`, { replace: true });
         } catch (err) {
@@ -157,18 +157,16 @@ export default function ExpeditionNew() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <Link to="/dungeons" className="text-xs text-muted-foreground hover:text-foreground" data-testid="back-to-dungeons">
-                    ← back to dungeons
+                    {t("expedition_new.back_to_dungeons")}
                 </Link>
                 <div className="text-xs text-amber tracking-widest mt-4 mb-2">
-                    :: DISPATCH PARTY
+                    {t("expedition_new.section_dispatch_party")}
                 </div>
                 <h1 className="text-3xl font-semibold tracking-tight">
-                    {dungeon.name}
+                    {tContent("dungeon", dungeon.slug, "name", dungeon.name)}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                    Select exactly{" "}
-                    <span className="text-amber">{requiredSize} adventurers</span>. Mix
-                    roles (Tank · DPS · Healer) for bonus team power.
+                    {t("expedition_new.subtitle_select", { n: requiredSize })}
                 </p>
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-8">
@@ -236,12 +234,15 @@ export default function ExpeditionNew() {
                     <aside className="lg:sticky lg:top-20 self-start">
                         <div className="border border-border bg-card rounded-sm p-5">
                             <div className="text-[10px] text-amber tracking-widest mb-2">
-                                :: BRIEFING
+                                {t("expedition_new.section_briefing")}
                             </div>
-                            <div className="text-sm font-medium mb-3">{dungeon.name}</div>
+                            <div className="text-sm font-medium mb-3">{tContent("dungeon", dungeon.slug, "name", dungeon.name)}</div>
                             <div className="text-[11px] text-muted-foreground mb-4">
-                                Difficulty {dungeon.difficulty} · {dungeon.base_duration_seconds}s
-                                · recommended power {dungeon.recommended_power}
+                                {t("expedition_new.dungeon_meta", {
+                                    difficulty: dungeon.difficulty,
+                                    seconds: dungeon.base_duration_seconds,
+                                    power: dungeon.recommended_power,
+                                })}
                             </div>
 
                             <div className="border-t border-border pt-3 mt-3 space-y-1.5 text-xs">
@@ -264,7 +265,7 @@ export default function ExpeditionNew() {
                                     <span>{composition.Healer}</span>
                                 </div>
                                 <div className="flex justify-between pt-2 border-t border-border/60">
-                                    <span className="text-muted-foreground">EQUIPMENT BONUS</span>
+                                    <span className="text-muted-foreground">{t("expedition_new.equipment_bonus_label")}</span>
                                     <span
                                         data-testid="preview-equipment-bonus"
                                         className="text-amber font-semibold"
@@ -273,7 +274,7 @@ export default function ExpeditionNew() {
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">TEAM POWER (FINAL)</span>
+                                    <span className="text-muted-foreground">{t("expedition_new.team_power_final_label")}</span>
                                     <span
                                         data-testid="preview-team-power"
                                         className="text-[#22c55e] font-semibold"
@@ -282,7 +283,7 @@ export default function ExpeditionNew() {
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">SUCCESS CHANCE</span>
+                                    <span className="text-muted-foreground">{t("expedition_new.success_chance_label")}</span>
                                     <span
                                         data-testid="preview-success-chance"
                                         className={
@@ -306,7 +307,7 @@ export default function ExpeditionNew() {
                                     data-testid="underpowered-warning"
                                     className="text-[11px] text-amber border border-amber/40 bg-amber/10 px-3 py-2 rounded-sm mt-3"
                                 >
-                                    ⚠ Your team is underpowered for this dungeon (recommended {dungeon.recommended_power}, you have {teamPower}).
+                                    {t("expedition_new.underpowered_warning", { recommended: dungeon.recommended_power, actual: teamPower })}
                                 </div>
                             )}
 
@@ -317,7 +318,7 @@ export default function ExpeditionNew() {
                                 className="w-full h-10 rounded-sm mt-5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {submitting
-                                    ? "dispatching…"
+                                    ? t("expedition_new.dispatching_btn")
                                     : `Send Expedition (${selected.length}/${requiredSize})`}
                             </Button>
                             <p className="text-[10px] text-muted-foreground mt-2 text-center">

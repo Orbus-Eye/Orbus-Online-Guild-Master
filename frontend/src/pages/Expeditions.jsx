@@ -55,9 +55,10 @@ const formatRemaining = (s) => {
 };
 
 import { formatDateTime as formatDate } from "../utils/dateFormat";
+import { translateDungeonName } from "../i18n/contentMap";
 
 export default function Expeditions() {
-    const { t, lang } = useT();
+    const { t, tContent, lang } = useT();
     const [exps, setExps] = useState(null);
     const [loading, setLoading] = useState(true);
     const { refreshGuild } = useAuth();
@@ -185,7 +186,7 @@ export default function Expeditions() {
                                 >
                                     <div className="flex items-center justify-between gap-3 flex-wrap">
                                         <div className="min-w-0">
-                                            <div className="font-medium">{e.dungeon_name}</div>
+                                            <div className="font-medium">{translateDungeonName(tContent, e.dungeon_name, lang)}</div>
                                             <div className="text-[11px] text-muted-foreground mt-0.5">
                                                 {t("expeditions.started_at", { at: formatDate(e.started_at, lang) })}
                                             </div>
@@ -230,7 +231,7 @@ export default function Expeditions() {
                                             className="border-b border-border/60 hover:bg-secondary/20"
                                         >
                                             <td className="px-3 py-2 font-medium whitespace-nowrap">
-                                                {e.dungeon_name}
+                                                {translateDungeonName(tContent, e.dungeon_name, lang)}
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 <StatusBadge status={e.status} summary={e.result_summary} />
