@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../components/ui/button";
+import { useT } from "../i18n/I18nContext";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "") + "/api";
 

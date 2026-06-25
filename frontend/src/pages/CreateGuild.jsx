@@ -6,9 +6,11 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
+import { useT } from "../i18n/I18nContext";
 
 export default function CreateGuild() {
     const { user, createGuild, logout, formatApiError } = useAuth();
+    const { t } = useT();
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
