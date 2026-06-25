@@ -35,14 +35,22 @@ async def get_guild_leaderboard(
             detail=f"offset must be an integer in [0, {_MAX_OFFSET}]",
         )
 
-    total = await db.guilds.count_documents({})
+    # Phase 14.3 — exclude guilds owned by `is_test_user=True` accounts from
+    # the public leaderboard. The flag is additive (absent ≡ False), so this
+    # is a no-op when no user has been flagged yet.
+    test_owner_ids = await db.users.distinct("id", {"is_test_user": True})
+    base_filter: dict = (
+        {"owner_user_id": {"$nin": test_owner_ids}} if test_owner_ids else {}
+    )
+
+    total = await db.guilds.count_documents(base_filter)
 
     # Sort: peak power desc → level desc → reputation desc → created_at asc.
     # Tie-break by `created_at` ascending means older guilds appear earlier
     # when all other fields are identical (rewards consistency / longevity).
     guilds = await (
         db.guilds.find(
-            {},
+            base_filter,
             {
                 "_id": 0,
                 "id": 1,
