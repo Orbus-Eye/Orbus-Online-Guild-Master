@@ -334,6 +334,13 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         },
     )
 
+    # Phase 14 — daily quest progress (best-effort, non-critical)
+    try:
+        from app.quests.services import increment_quest_progress
+        await increment_quest_progress(db, claimed["guild_id"], "expedition_complete")
+    except Exception:
+        pass
+
 
 async def complete_due_expeditions(db, guild_id: str) -> int:
     """Lazy sweep: complete any in_progress expedition whose completes_at <= now."""

@@ -226,6 +226,12 @@ async def equip_item_service(
         )
 
     slots, eq_power, _raw = await _load_equipment_for_adventurer(db, adv["id"])
+    # Phase 14 — daily quest progress (best-effort)
+    try:
+        from app.quests.services import increment_quest_progress
+        await increment_quest_progress(db, guild["id"], "equip")
+    except Exception:
+        pass
     return _build_equipment_response(adv, slots, eq_power)
 
 

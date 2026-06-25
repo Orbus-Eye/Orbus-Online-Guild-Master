@@ -213,6 +213,20 @@
       "unavailable": "TRAIT DATA UNAVAILABLE"
     }
   },
+  "quests": {
+    "title": "DAILY QUESTS",
+    "reset_in": "Resets in {time}",
+    "loading": "LOADING DAILY QUESTS…",
+    "unavailable": "DAILY QUESTS UNAVAILABLE",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "reward_gold": "gold",
+    "claim_success": "Quest reward claimed: +{gold} gold",
+    "expedition_complete": { "title": "Complete 1 expedition" },
+    "recruit": { "title": "Recruit 1 adventurer" },
+    "equip": { "title": "Equip 1 item" }
+  },
   "dungeons": {
     "title": "Dungeons",
     "subtitle": "Choose a dungeon and dispatch a team. Locked dungeons display their unlock requirement.",

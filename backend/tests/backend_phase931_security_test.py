@@ -247,4 +247,4 @@ class TestPhase931OpenAPI:
         # Phase 13 added one endpoint (/adventurers/{id}/trait-preview)
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 40, f"expected 40, got {len(paths)}"
+        assert len(paths) == 42, f"expected 42, got {len(paths)}"

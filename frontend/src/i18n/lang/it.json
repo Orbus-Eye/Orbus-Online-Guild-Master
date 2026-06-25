@@ -213,6 +213,20 @@
       "unavailable": "DATI TRATTI NON DISPONIBILI"
     }
   },
+  "quests": {
+    "title": "MISSIONI GIORNALIERE",
+    "reset_in": "Reset tra {time}",
+    "loading": "CARICAMENTO MISSIONI…",
+    "unavailable": "MISSIONI NON DISPONIBILI",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "reward_gold": "oro",
+    "claim_success": "Ricompensa missione riscossa: +{gold} oro",
+    "expedition_complete": { "title": "Completa 1 spedizione" },
+    "recruit": { "title": "Recluta 1 avventuriero" },
+    "equip": { "title": "Equipaggia 1 oggetto" }
+  },
   "dungeons": {
     "title": "Dungeon",
     "subtitle": "Scegli un dungeon e invia una squadra. I dungeon bloccati mostrano i requisiti.",

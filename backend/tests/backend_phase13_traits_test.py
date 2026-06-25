@@ -403,5 +403,5 @@ class TestPhase13OpenAPI:
     def test_paths_count_at_40(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 40, f"expected 40, got {len(paths)}: {sorted(paths)}"
+        assert len(paths) == 42, f"expected 42, got {len(paths)}: {sorted(paths)}"
         assert "/api/adventurers/{adventurer_id}/trait-preview" in paths

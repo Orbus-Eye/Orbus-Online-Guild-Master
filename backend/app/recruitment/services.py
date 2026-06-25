@@ -422,6 +422,12 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
         "updated_at": now.isoformat(),
     }
     await db.adventurers.insert_one(adventurer_doc)
+    # Phase 14 — daily quest progress (best-effort)
+    try:
+        from app.quests.services import increment_quest_progress
+        await increment_quest_progress(db, guild["id"], "recruit")
+    except Exception:
+        pass
     return adventurer_doc, updated_guild
 
 

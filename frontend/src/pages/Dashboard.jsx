@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import OnboardingChecklist from "../components/OnboardingChecklist";
+import DailyQuestsCard from "../components/DailyQuestsCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 
@@ -141,6 +142,9 @@ export default function Dashboard() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <OnboardingChecklist />
+                <div className="mb-6">
+                    <DailyQuestsCard />
+                </div>
 
                 <section className="mb-8">
                     <div className="text-xs text-amber tracking-widest mb-2">
