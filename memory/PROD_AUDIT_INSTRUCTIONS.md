@@ -1,5 +1,11 @@
 # Production DB Audit — Manual Instructions
 
+> **ROUND 3.A+B+D update (2026-06-25):** the script now also reports
+> `items_italian_count` (expected: 17), `recipes_count_active` (expected: 5),
+> `audit_log_exists` (bool), `audit_log_last_1h` and
+> `audit_log_event_types_seen`. See the script body below — the new block is
+> appended right before `print(json.dumps(...))`.
+
 **Why this file exists:** the agent (E1) running in the preview pod only
 has access to the **preview MongoDB** (`mongodb://localhost:27017/test_database`).
 The production `orbusonline.net` deployment uses a different MongoDB
@@ -164,6 +170,39 @@ async def main():
                 adv_with_test_traits += 1
                 break
 
+    # ── ROUND 3.A — Italian item catalog ───────────────────────────────
+    italian_slugs = [
+        "iron_shard", "raw_leather", "healing_herb", "arcane_dust", "dull_gem",
+        "iron_sword", "balanced_dagger", "apprentice_staff", "path_bow",
+        "light_cuirass", "reinforced_cloak", "initiate_robe",
+        "chipped_ring", "wanderer_amulet", "minor_sigil",
+        "minor_healing_potion", "travel_ration",
+    ]
+    items_italian_count = await db.items.count_documents(
+        {"slug": {"$in": italian_slugs}, "is_test": {"$ne": True}}
+    )
+
+    # ── ROUND 3.B — Recipes ────────────────────────────────────────────
+    recipes_count_active = await db.recipes.count_documents(
+        {"is_active": True, "is_test": {"$ne": True}}
+    )
+
+    # ── ROUND 3.D — Audit log ──────────────────────────────────────────
+    from datetime import timedelta
+    colls = await db.list_collection_names()
+    audit_log_exists = "audit_log" in colls
+    audit_log_indexes = []
+    audit_log_last_1h = 0
+    audit_log_event_types = []
+    if audit_log_exists:
+        idx = await db.audit_log.index_information()
+        audit_log_indexes = sorted(idx.keys())
+        since_iso = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+        audit_log_last_1h = await db.audit_log.count_documents(
+            {"created_at": {"$gte": since_iso}}
+        )
+        audit_log_event_types = await db.audit_log.distinct("event_type")
+
     report = {
         # users & guilds (existing checks)
         "users_total": len(users),
@@ -186,6 +225,15 @@ async def main():
         "traits_flagged_inactive": inactive_flagged,
         "traits_name_matches_test_pattern": name_matches_test_pattern,
         "adventurers_with_test_pattern_trait": adv_with_test_traits,
+        # ROUND 3.A — Italian item catalog
+        "items_italian_count": items_italian_count,
+        # ROUND 3.B — Recipes
+        "recipes_count_active": recipes_count_active,
+        # ROUND 3.D — Audit log
+        "audit_log_exists": audit_log_exists,
+        "audit_log_indexes": audit_log_indexes,
+        "audit_log_last_1h": audit_log_last_1h,
+        "audit_log_event_types_seen": audit_log_event_types,
     }
     print(json.dumps(report, indent=2, default=str))
     cli.close()
