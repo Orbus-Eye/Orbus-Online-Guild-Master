@@ -6,6 +6,7 @@ import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { TraitList } from "../components/TraitBadge";
+import TraitPreviewWidget from "../components/TraitPreviewWidget";
 
 // i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
 // intentionally NOT localized. They follow universal MMO/RPG convention and
@@ -232,6 +233,12 @@ export default function Adventurers() {
                                             </td>
                                             <td className="px-3 py-2 min-w-[160px]">
                                                 <TraitList traits={a.traits} />
+                                                {a.traits && a.traits.length > 0 && (
+                                                    <TraitPreviewWidget
+                                                        adventurerId={a.id}
+                                                        hasTraits={true}
+                                                    />
+                                                )}
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 <StatusBadge available={a.is_available} />
@@ -298,6 +305,10 @@ export default function Adventurers() {
                                                 TRAITS
                                             </div>
                                             <TraitList traits={a.traits} />
+                                            <TraitPreviewWidget
+                                                adventurerId={a.id}
+                                                hasTraits={true}
+                                            />
                                         </div>
                                     )}
                                     <div className="mt-3 pt-3 border-t border-border/60">

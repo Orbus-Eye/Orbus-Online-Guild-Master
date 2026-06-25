@@ -197,7 +197,21 @@
     "level": "Lv {n}",
     "xp": "XP {current}/{next}",
     "morale": "Morale",
-    "stamina": "Stamina"
+    "stamina": "Stamina",
+    "traits": {
+      "trait_effects": "Effetti tratti",
+      "section_title": "EFFETTI TRATTI",
+      "base_power": "Potenza base:",
+      "effective_power": "Potenza effettiva:",
+      "xp_gain": "Guadagno XP:",
+      "xp_gain_short": "guadagno XP",
+      "active_modifiers": "Modificatori attivi:",
+      "flavor_traits": "Tratti narrativi (nessun effetto):",
+      "no_effects": "Nessun effetto attivo dai tratti.",
+      "no_effect": "nessun effetto",
+      "loading": "CARICAMENTO DATI TRATTI…",
+      "unavailable": "DATI TRATTI NON DISPONIBILI"
+    }
   },
   "dungeons": {
     "title": "Dungeon",
@@ -397,6 +411,13 @@
     "dungeon_locked": "Dungeon bloccato: {reason}"
   },
   "content": {
+    "stat": {
+      "strength": { "name": "forza" },
+      "agility": { "name": "agilità" },
+      "intellect": { "name": "intelletto" },
+      "endurance": { "name": "resistenza" },
+      "faith": { "name": "fede" }
+    },
     "rarity": {
       "common": "Comune",
       "uncommon": "Non comune",
@@ -454,7 +475,23 @@
       "berserker": { "name": "Berserker", "role": "DPS", "description": "Picchiatore folle, alto rischio/ricompensa." }
     },
     "trait": {
-      "brave": { "name": "Coraggioso", "description": "Resiste alla paura." },
+      "brave": { "name": "Coraggioso", "description": "Forza grezza sotto pressione." },
+      "quick_learner": { "name": "Studioso Veloce", "description": "Apprende esperienza più in fretta." },
+      "frail": { "name": "Fragile", "description": "Costituzione debole; si stanca prima." },
+      "sharp_eye": { "name": "Occhio Acuto", "description": "Coglie aperture invisibili agli altri." },
+      "devout": { "name": "Devoto", "description": "Ancorato a una chiamata superiore." },
+      "iron-willed": { "name": "Volere d'Acciaio", "description": "Ostinato di fronte al dolore." },
+      "scholar": { "name": "Erudito", "description": "Una vita tra libri polverosi paga." },
+      "lightfoot": { "name": "Passo Leggero", "description": "Si muove senza far rumore." },
+      "bull-strong": { "name": "Forza di Toro", "description": "Porta il doppio del suo peso senza lamentarsi." },
+      "blessed": { "name": "Benedetto", "description": "Nato sotto una stella gentile." },
+      "fast_reader": { "name": "Lettore Veloce", "description": "Traduce pergamene al volo." },
+      "veteran's_eye": { "name": "Occhio del Veterano", "description": "Ha già visto questa battaglia." },
+      "clumsy": { "name": "Goffo", "description": "Inciampa nei propri piedi." },
+      "slow-witted": { "name": "Tardo di Mente", "description": "Prende la via più lunga." },
+      "weak-armed": { "name": "Braccio Debole", "description": "Non riesce a tendere un arco pesante." },
+      "faithless": { "name": "Senza Fede", "description": "Non ha nulla a cui pregare." },
+      "sickly": { "name": "Cagionevole", "description": "Prende ogni raffreddore." },
       "lucky": { "name": "Fortunato", "description": "Migliori tiri sul bottino." },
       "tough": { "name": "Duro", "description": "Resistenza maggiore." },
       "swift": { "name": "Veloce", "description": "Agilità maggiore." },

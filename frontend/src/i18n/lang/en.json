@@ -197,7 +197,21 @@
     "level": "Lv {n}",
     "xp": "XP {current}/{next}",
     "morale": "Morale",
-    "stamina": "Stamina"
+    "stamina": "Stamina",
+    "traits": {
+      "trait_effects": "Trait effects",
+      "section_title": "TRAIT EFFECTS",
+      "base_power": "Base power:",
+      "effective_power": "Effective power:",
+      "xp_gain": "XP gain:",
+      "xp_gain_short": "XP gain",
+      "active_modifiers": "Active modifiers:",
+      "flavor_traits": "Flavor traits (no effect):",
+      "no_effects": "No active trait effects.",
+      "no_effect": "no effect",
+      "loading": "LOADING TRAIT DATA…",
+      "unavailable": "TRAIT DATA UNAVAILABLE"
+    }
   },
   "dungeons": {
     "title": "Dungeons",
@@ -397,6 +411,13 @@
     "dungeon_locked": "Dungeon locked: {reason}"
   },
   "content": {
+    "stat": {
+      "strength": { "name": "strength" },
+      "agility": { "name": "agility" },
+      "intellect": { "name": "intellect" },
+      "endurance": { "name": "endurance" },
+      "faith": { "name": "faith" }
+    },
     "rarity": {
       "common": "Common",
       "uncommon": "Uncommon",
@@ -454,7 +475,23 @@
       "berserker": { "name": "Berserker", "role": "DPS", "description": "Reckless brawler, high risk / reward." }
     },
     "trait": {
-      "brave": { "name": "Brave", "description": "Resists fear effects." },
+      "brave": { "name": "Brave", "description": "Steady under pressure; lends raw strength." },
+      "quick_learner": { "name": "Quick Learner", "description": "Soaks up experience faster than peers." },
+      "frail": { "name": "Frail", "description": "Weaker constitution; tires sooner." },
+      "sharp_eye": { "name": "Sharp Eye", "description": "Spots openings others miss." },
+      "devout": { "name": "Devout", "description": "Anchored to a higher calling." },
+      "iron-willed": { "name": "Iron-Willed", "description": "Stubborn in the face of pain." },
+      "scholar": { "name": "Scholar", "description": "A lifetime of dusty libraries pays off." },
+      "lightfoot": { "name": "Lightfoot", "description": "Moves without a sound." },
+      "bull-strong": { "name": "Bull-Strong", "description": "Carries twice their weight without complaint." },
+      "blessed": { "name": "Blessed", "description": "Born under a kind star." },
+      "fast_reader": { "name": "Fast Reader", "description": "Translates scrolls on the fly." },
+      "veteran's_eye": { "name": "Veteran's Eye", "description": "Has seen this fight before." },
+      "clumsy": { "name": "Clumsy", "description": "Trips over their own feet." },
+      "slow-witted": { "name": "Slow-Witted", "description": "Takes the long way around." },
+      "weak-armed": { "name": "Weak-Armed", "description": "Cannot draw a heavy bow." },
+      "faithless": { "name": "Faithless", "description": "Has nothing to pray to." },
+      "sickly": { "name": "Sickly", "description": "Catches every cold." },
       "lucky": { "name": "Lucky", "description": "Better loot rolls." },
       "tough": { "name": "Tough", "description": "Higher endurance." },
       "swift": { "name": "Swift", "description": "Higher agility." },

@@ -47,3 +47,9 @@ export function formatApiError(err) {
     if (detail && typeof detail.msg === "string") return detail.msg;
     return String(detail);
 }
+
+// Phase 13.1 — lazy trait preview for an adventurer
+export async function getTraitPreview(adventurerId) {
+    const { data } = await api.get(`/adventurers/${adventurerId}/trait-preview`);
+    return data;
+}
