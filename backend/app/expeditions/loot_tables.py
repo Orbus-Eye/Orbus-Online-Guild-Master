@@ -110,7 +110,7 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
         rarities, weights=[weights[r] for r in rarities], k=1
     )[0]
     pool = await db.items.find(
-        {"is_active": True, "rarity": chosen_rarity}, {"_id": 0}
+        {"is_active": True, "is_test": {"$ne": True}, "rarity": chosen_rarity}, {"_id": 0}
     ).to_list(200)
     if not pool:
         # Degrade to next-lower rarity, still honouring the failure rule
@@ -120,7 +120,7 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
             if not success and r not in ("Common", "Uncommon"):
                 continue
             cand = await db.items.find(
-                {"is_active": True, "rarity": r}, {"_id": 0}
+                {"is_active": True, "is_test": {"$ne": True}, "rarity": r}, {"_id": 0}
             ).to_list(200)
             if cand:
                 pool = cand

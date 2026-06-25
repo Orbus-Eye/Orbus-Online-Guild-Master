@@ -145,6 +145,23 @@ export default function ExpeditionExplainer({ summary, steps, members }) {
                                     </span>
                                 )}
                             </span>
+                            {(summary.loot_found || []).length > 0 && (
+                                <ul className="mt-1 text-[10px] text-muted-foreground space-y-0.5">
+                                    {summary.loot_found.slice(0, 4).map((it, i) => {
+                                        const nm = (lang === "en"
+                                            ? it.display_name_en
+                                            : it.display_name_it) || it.name;
+                                        return (
+                                            <li key={i} data-testid={`report-loot-item-${i}`}>
+                                                · {nm} <span className="opacity-60">({it.rarity})</span>
+                                            </li>
+                                        );
+                                    })}
+                                    {summary.loot_found.length > 4 && (
+                                        <li className="opacity-60">+{summary.loot_found.length - 4}</li>
+                                    )}
+                                </ul>
+                            )}
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] text-muted-foreground tracking-widest">

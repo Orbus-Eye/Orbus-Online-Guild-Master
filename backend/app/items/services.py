@@ -34,9 +34,17 @@ def item_public(it: dict) -> dict:
 
 
 async def list_active_items(db) -> list[dict]:
-    """Return all active items sorted by name. Used by `GET /api/items`."""
+    """Return all active, non-test items sorted by name. Used by `GET /api/items`.
+
+    Phase 14.6 ROUND 3.A: filters `is_test=True` so admin/dev test items
+    never leak to the public catalog. Mirrors the trait anti-leak filter
+    used in adventurers/services.py.
+    """
     rows = (
-        await db.items.find({"is_active": True}, {"_id": 0})
+        await db.items.find(
+            {"is_active": True, "is_test": {"$ne": True}},
+            {"_id": 0},
+        )
         .sort("name", 1)
         .to_list(500)
     )

@@ -21,6 +21,7 @@ import AdventurerEquipment from "@/pages/AdventurerEquipment";
 import PasswordResetRequest from "@/pages/PasswordResetRequest";
 import PasswordResetConfirm from "@/pages/PasswordResetConfirm";
 import Leaderboard from "@/pages/Leaderboard";
+import Crafting from "@/pages/Crafting";
 
 function App() {
     return (
@@ -123,6 +124,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Expeditions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/crafting"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Crafting />
                                 </ProtectedRoute>
                             }
                         />

@@ -36,6 +36,7 @@
     "dungeons": "DUNGEON",
     "expeditions": "SPEDIZIONI",
     "inventory": "DEPOSITO",
+    "crafting": "FORGIA",
     "leaderboard": "CLASSIFICA",
     "admin": "ADMIN",
     "logout": "esci",
@@ -123,7 +124,16 @@
     "manage_on_adventurer": "Gestisci sull'avventuriero →",
     "no_compatible_adventurer": "Nessun avventuriero può usare questo oggetto al momento.",
     "usable_by": "Utilizzabile da {n} avventuriero/i",
-    "not_usable_reason_level": "Richiede livello {n}"
+    "not_usable_reason_level": "Richiede livello {n}",
+    "type_all": "Tutti",
+    "type_weapon": "Armi",
+    "type_armor": "Armature",
+    "type_accessory": "Accessori",
+    "type_consumable": "Consumabili",
+    "type_material": "Materiali",
+    "filter_empty": "Nessun oggetto corrisponde ai filtri selezionati.",
+    "crafting_material": "MATERIALE",
+    "crafting_material_tip": "Usato come ingrediente in una ricetta della Forgia."
   },
   "create_guild": {
     "title": "Fonda la tua gilda",
@@ -445,6 +455,24 @@
     "preview_polarity_positive": "Positivo",
     "preview_polarity_negative": "Negativo",
     "preview_polarity_mixed": "Misto"
+  },
+  "crafting": {
+    "title": "Forgia della Gilda",
+    "subtitle": "Ricette craftabili usando i materiali del deposito.",
+    "empty": "Nessuna ricetta disponibile.",
+    "inputs": "MATERIALI",
+    "output": "OUTPUT",
+    "gold_cost": "Oro",
+    "missing": "mancano",
+    "short": "mancano",
+    "req_guild_level": "Richiede gilda livello {n}",
+    "status_craftable": "CRAFTABILE",
+    "status_missing_materials": "MATERIALI MANCANTI",
+    "status_insufficient_gold": "ORO INSUFFICIENTE",
+    "status_requires_level": "LIVELLO GILDA INSUFFICIENTE",
+    "craft": "Crea",
+    "crafting": "Forgiatura…",
+    "toast_crafted": "Creato"
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",

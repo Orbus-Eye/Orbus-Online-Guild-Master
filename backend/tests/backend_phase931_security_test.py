@@ -316,8 +316,7 @@ class TestPhase931OpenAPI:
     def test_paths_count_unchanged_at_40(self):
         # Phase 13 added one endpoint (/adventurers/{id}/trait-preview) → 42.
         # Phase 14.3 ROUND 1 added /api/expeditions/preview → 43.
-        # Phase 14.4 ROUND 1.5 introduces no new endpoints (frontend-only UX
-        # improvements + i18n keys).
+        # Phase 14.6 ROUND 3.A+3.B added /api/recipes + /api/recipes/{slug}/craft → 45.
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 43, f"expected 43, got {len(paths)}"
+        assert len(paths) == 45, f"expected 45, got {len(paths)}"

@@ -308,10 +308,40 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                     "guild_id": claimed["guild_id"],
                     "item_id": item_id,
                     "acquired_at": now.isoformat(),
+                    "source": "dungeon",
+                    "bind_state": "unbound",
                 },
             },
             upsert=True,
         )
+
+    # Phase 14.7 — persistent audit log (best-effort, non-blocking).
+    try:
+        from app.audit.log import write_audit
+        if gold_reward:
+            await write_audit(
+                db, event_type="gold_credited",
+                actor_guild_id=claimed["guild_id"], gold_delta=gold_reward,
+                source="dungeon", related_entity_id=exp_id,
+                metadata={"dungeon_slug": dungeon.get("slug")},
+            )
+        if loot_ids:
+            items_for_audit = await db.items.find(
+                {"id": {"$in": list(set(loot_ids))}}, {"_id": 0, "id": 1, "slug": 1}
+            ).to_list(50)
+            slug_by_id = {i["id"]: i.get("slug") for i in items_for_audit}
+            for item_id in loot_ids:
+                await write_audit(
+                    db, event_type="loot_awarded",
+                    actor_guild_id=claimed["guild_id"],
+                    item_slug=slug_by_id.get(item_id),
+                    item_template_id=item_id,
+                    quantity=1,
+                    source="dungeon", related_entity_id=exp_id,
+                    metadata={"dungeon_slug": dungeon.get("slug")},
+                )
+    except Exception as _exc:  # noqa: BLE001
+        pass
 
     member_names = [m["name_snapshot"] for m in members]
     result_summary = "Success" if success else "Failed"

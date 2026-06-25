@@ -371,7 +371,13 @@ def build_expedition_report(
         "gold_earned": int(exp.get("gold_reward") or 0),
         "xp_earned": int(exp.get("xp_reward") or 0),
         "loot_found": [
-            {"item_id": it.get("id"), "name": it.get("name"), "rarity": it.get("rarity")}
+            {
+                "item_id": it.get("id"),
+                "name": it.get("name"),
+                "display_name_it": it.get("display_name_it") or it.get("name"),
+                "display_name_en": it.get("display_name_en") or it.get("name"),
+                "rarity": it.get("rarity"),
+            }
             for it in (loot_items or [])
         ],
         "injuries": 0,   # not modelled in current schema

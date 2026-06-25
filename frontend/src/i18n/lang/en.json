@@ -36,6 +36,7 @@
     "dungeons": "DUNGEONS",
     "expeditions": "EXPEDITIONS",
     "inventory": "VAULT",
+    "crafting": "FORGE",
     "leaderboard": "RANK",
     "admin": "ADMIN",
     "logout": "logout",
@@ -123,7 +124,16 @@
     "manage_on_adventurer": "Manage on adventurer →",
     "no_compatible_adventurer": "No adventurer can use this item right now.",
     "usable_by": "Usable by {n} adventurer(s)",
-    "not_usable_reason_level": "Requires level {n}"
+    "not_usable_reason_level": "Requires level {n}",
+    "type_all": "All",
+    "type_weapon": "Weapons",
+    "type_armor": "Armors",
+    "type_accessory": "Accessories",
+    "type_consumable": "Consumables",
+    "type_material": "Materials",
+    "filter_empty": "No items match the selected filters.",
+    "crafting_material": "MATERIAL",
+    "crafting_material_tip": "Used as input in one of the Forge recipes."
   },
   "create_guild": {
     "title": "Found your guild",
@@ -445,6 +455,24 @@
     "preview_polarity_positive": "Positive",
     "preview_polarity_negative": "Negative",
     "preview_polarity_mixed": "Mixed"
+  },
+  "crafting": {
+    "title": "Guild Forge",
+    "subtitle": "Recipes you can craft using materials from your vault.",
+    "empty": "No recipes available.",
+    "inputs": "MATERIALS",
+    "output": "OUTPUT",
+    "gold_cost": "Gold",
+    "missing": "missing",
+    "short": "short",
+    "req_guild_level": "Requires guild level {n}",
+    "status_craftable": "CRAFTABLE",
+    "status_missing_materials": "MISSING MATERIALS",
+    "status_insufficient_gold": "NOT ENOUGH GOLD",
+    "status_requires_level": "GUILD LEVEL TOO LOW",
+    "craft": "Craft",
+    "crafting": "Crafting…",
+    "toast_crafted": "Crafted"
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",

@@ -232,6 +232,19 @@ async def equip_item_service(
         await increment_quest_progress(db, guild["id"], "equip")
     except Exception:
         pass
+    # Phase 14.7 — audit log (best-effort)
+    try:
+        from app.audit.log import write_audit
+        await write_audit(
+            db, event_type="equip_item",
+            actor_guild_id=guild["id"],
+            item_slug=item.get("slug"), item_template_id=item.get("id"),
+            quantity=1, source="equip",
+            related_entity_id=adv["id"],
+            metadata={"slot": slot},
+        )
+    except Exception:
+        pass
     return _build_equipment_response(adv, slots, eq_power)
 
 
@@ -274,6 +287,19 @@ async def unequip_item_service(
     )
 
     slots, eq_power, _raw = await _load_equipment_for_adventurer(db, adv["id"])
+    # Phase 14.7 — audit log (best-effort)
+    try:
+        from app.audit.log import write_audit
+        await write_audit(
+            db, event_type="unequip_item",
+            actor_guild_id=guild["id"],
+            item_template_id=freed["item_id"],
+            quantity=1, source="equip",
+            related_entity_id=adv["id"],
+            metadata={"slot": slot},
+        )
+    except Exception:
+        pass
     return _build_equipment_response(adv, slots, eq_power)
 
 

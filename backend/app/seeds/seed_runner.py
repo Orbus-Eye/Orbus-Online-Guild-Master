@@ -357,6 +357,19 @@ async def run_all_seeds(db) -> None:
     await scrub_test_traits_from_adventurers(db)
     await seed_tester(db)
     await unbake_legacy_traits(db)
+    # Phase 14.6 ROUND 3.A+3.B — Italian item catalog + crafting recipes.
+    from app.seeds.seed_items_it import seed_italian_items
+    from app.seeds.seed_recipes_it import seed_italian_recipes
+    n_items = await seed_italian_items(db)
+    n_recipes = await seed_italian_recipes(db)
+    if n_items or n_recipes:
+        logger.info(
+            "Phase 14.6: seeded %d IT items + %d recipes (idempotent)",
+            n_items, n_recipes,
+        )
+    # Phase 14.7 ROUND 3.D — audit log indexes (no data seed).
+    from app.audit.log import ensure_audit_indexes
+    await ensure_audit_indexes(db)
 
 
 __all__ = [

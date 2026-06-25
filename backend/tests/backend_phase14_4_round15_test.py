@@ -108,11 +108,9 @@ class TestOpenAPIStable:
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # 43 = baseline (40) + trait-preview (1) + dungeon expedition preview (1)
-        # + (legacy quest endpoint counted elsewhere). ROUND 1.5 must not bump
-        # this counter.
-        assert len(paths) == 43, (
-            f"ROUND 1.5 must not change OpenAPI path count, got {len(paths)}"
+        # baseline 43 (ROUND 1) → 45 after ROUND 3.A/B adds /api/recipes endpoints.
+        assert len(paths) == 45, (
+            f"unexpected OpenAPI path count: {len(paths)}"
         )
 
 

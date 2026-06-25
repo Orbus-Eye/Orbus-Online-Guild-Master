@@ -85,20 +85,25 @@ function buildEquippedByMap(adventurers) {
 }
 
 export default function Inventory() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const [rows, setRows] = useState(null);
     const [adventurers, setAdventurers] = useState([]);
+    const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [busyKey, setBusyKey] = useState(null);
+    const [typeFilter, setTypeFilter] = useState("all");  // all|weapon|armor|accessory|consumable|material
+    const [rarityFilter, setRarityFilter] = useState(new Set());
 
     const refresh = async () => {
         try {
-            const [invRes, advRes] = await Promise.all([
+            const [invRes, advRes, recRes] = await Promise.all([
                 api.get("/inventory"),
                 api.get("/adventurers"),
+                api.get(`/recipes?lang=${lang}`).catch(() => ({ data: { recipes: [] } })),
             ]);
             setRows(invRes.data.inventory);
             setAdventurers(advRes.data.adventurers || []);
+            setRecipes(recRes.data.recipes || []);
         } catch (err) {
             toast.error(formatApiError(err));
             setRows([]);
@@ -109,12 +114,50 @@ export default function Inventory() {
 
     useEffect(() => {
         refresh();
-    }, []);
+    }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
     const equippedByMap = useMemo(
         () => buildEquippedByMap(adventurers),
         [adventurers]
     );
+
+    // Phase 14.7 — set of slugs that appear as input in any active recipe.
+    const craftingMaterialSlugs = useMemo(() => {
+        const out = new Set();
+        for (const r of recipes || []) {
+            for (const i of r.inputs || []) {
+                if (i.item_slug) out.add(i.item_slug);
+            }
+        }
+        return out;
+    }, [recipes]);
+
+    // Header summary counts by item_type.
+    const countsByType = useMemo(() => {
+        const c = { weapon: 0, armor: 0, accessory: 0, consumable: 0, material: 0 };
+        for (const r of rows || []) {
+            const t = r.item?.item_type;
+            if (t && c[t] !== undefined) c[t] += r.total_quantity;
+        }
+        return c;
+    }, [rows]);
+
+    const filteredRows = useMemo(() => {
+        return (rows || []).filter((r) => {
+            const it = r.item;
+            if (!it) return false;
+            if (typeFilter !== "all" && it.item_type !== typeFilter) return false;
+            if (rarityFilter.size > 0 && !rarityFilter.has(it.rarity)) return false;
+            return true;
+        });
+    }, [rows, typeFilter, rarityFilter]);
+
+    const toggleRarity = (r) => {
+        const next = new Set(rarityFilter);
+        if (next.has(r)) next.delete(r);
+        else next.add(r);
+        setRarityFilter(next);
+    };
 
     const doEquip = async (advId, itemId, slot, key) => {
         setBusyKey(key);
@@ -192,8 +235,57 @@ export default function Inventory() {
                 )}
 
                 {!loading && rows && rows.length > 0 && (
-                    <div className="space-y-3" data-testid="inventory-cards">
-                        {rows.map((r) => {
+                    <>
+                        {/* Phase 14.7 — Header summary + filters */}
+                        <div className="mb-4 border border-border bg-card rounded-sm p-3" data-testid="inv-header-summary">
+                            <div className="flex flex-wrap gap-3 text-[11px] mb-2">
+                                {["weapon", "armor", "accessory", "consumable", "material"].map((k) => (
+                                    <span key={k} data-testid={`inv-count-${k}`}>
+                                        <span className="text-muted-foreground">{t(`inventory_extra.type_${k}`)}:</span>
+                                        <span className="ml-1 text-amber font-semibold">{countsByType[k] || 0}</span>
+                                    </span>
+                                ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border/60">
+                                {["all", "weapon", "armor", "accessory", "consumable", "material"].map((k) => (
+                                    <button
+                                        key={k}
+                                        data-testid={`inv-filter-type-${k}`}
+                                        onClick={() => setTypeFilter(k)}
+                                        className={`text-[10px] tracking-widest px-2 py-1 rounded-sm border ${
+                                            typeFilter === k
+                                                ? "border-amber text-amber bg-amber/10"
+                                                : "border-border text-muted-foreground hover:border-amber/40"
+                                        }`}
+                                    >
+                                        {t(`inventory_extra.type_${k}`).toUpperCase()}
+                                    </button>
+                                ))}
+                                <span className="border-r border-border/60 mx-1" />
+                                {["Common", "Uncommon", "Rare", "Epic"].map((r) => (
+                                    <button
+                                        key={r}
+                                        data-testid={`inv-filter-rarity-${r}`}
+                                        onClick={() => toggleRarity(r)}
+                                        className={`text-[10px] tracking-widest px-2 py-1 rounded-sm border ${
+                                            rarityFilter.has(r)
+                                                ? "border-amber text-amber bg-amber/10"
+                                                : "border-border text-muted-foreground hover:border-amber/40"
+                                        }`}
+                                    >
+                                        {r.toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-3" data-testid="inventory-cards">
+                            {filteredRows.length === 0 && (
+                                <div className="text-xs text-muted-foreground italic" data-testid="inv-filter-no-results">
+                                    {t("inventory_extra.filter_empty")}
+                                </div>
+                            )}
+                            {filteredRows.map((r) => {
                             const it = r.item;
                             if (!it) return null;
                             const slot = it.item_type; // weapon | armor | accessory
@@ -225,8 +317,21 @@ export default function Inventory() {
                                     <div className="flex items-start justify-between gap-3 flex-wrap">
                                         <div className="min-w-0">
                                             <div className="font-medium truncate flex items-center gap-2 flex-wrap">
-                                                <span data-testid={`inv-name-${r.id}`}>{it.name}</span>
+                                                <span data-testid={`inv-name-${r.id}`}>
+                                                    {(lang === "en"
+                                                        ? it.display_name_en
+                                                        : it.display_name_it) || it.name}
+                                                </span>
                                                 <RarityBadge rarity={it.rarity} />
+                                                {craftingMaterialSlugs.has(it.slug) && (
+                                                    <span
+                                                        data-testid={`inv-craft-mat-badge-${r.id}`}
+                                                        className="inline-block text-[10px] tracking-widest border border-blue-500/40 text-blue-400 px-1.5 py-0.5 rounded-sm"
+                                                        title={t("inventory_extra.crafting_material_tip")}
+                                                    >
+                                                        ⚒ {t("inventory_extra.crafting_material")}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="text-[11px] text-muted-foreground mt-1">
                                                 {slot} · power {it.power_score ?? 0}
@@ -385,7 +490,8 @@ export default function Inventory() {
                                 </div>
                             );
                         })}
-                    </div>
+                        </div>
+                    </>
                 )}
             </main>
         </div>
