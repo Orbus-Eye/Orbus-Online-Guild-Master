@@ -21,6 +21,21 @@ if not logger.handlers:
     logger.addHandler(h)
 
 
+# ── PERMANENT ALLOWLIST (Phase 14.5-hotfix, 2026-06-25) ─────────────────────
+# Single source of truth. ANY cleanup operation that deletes/flags users or
+# guilds MUST honour these sets. The pollution sweep below applies them as a
+# post-filter on every delete_many call.
+ALLOWLIST_EMAILS = frozenset({
+    "mr.gualmini@gmail.com",
+    "gianluca.brandi42@gmail.com",
+    "tester@orbus.test",  # tester sandbox admin (seeded in dev only)
+})
+ALLOWLIST_GUILDS_LOWER = frozenset({
+    "sentiero di efreto",
+    "drakarys",
+})
+
+
 # Whitelist of patterns (regex) treated as test-pollution. Anchored where
 # possible. Each tuple is (collection, field, pattern, description).
 TEST_POLLUTION_PATTERNS = [
@@ -55,18 +70,61 @@ def _is_test_db() -> bool:
     return False
 
 
+def _allowlist_user_ids(db) -> set:
+    """Snapshot user.id values for all allowlisted emails (case-insensitive)."""
+    rows = list(db.users.find(
+        {"email": {"$in": [e for e in ALLOWLIST_EMAILS]}},
+        {"id": 1, "_id": 0},
+    ))
+    return {r["id"] for r in rows if r.get("id")}
+
+
 def _run_pollution_sweep(db) -> dict:
-    """Run all whitelist patterns; return per-collection deletion counts."""
+    """Run all whitelist patterns; return per-collection deletion counts.
+
+    Safety rails (Phase 14.5-hotfix):
+      - Each delete_many gets a $nin filter over ALLOWLIST_EMAILS / lowered
+        guild names so the regex CANNOT match a protected account even if a
+        future pattern accidentally widens the net.
+      - Adventurer/inventory/expedition deletes use guild_id $nin allowlist.
+    """
     deleted: dict[str, int] = {}
+    allow_user_ids = _allowlist_user_ids(db)
+    allow_guild_ids = {
+        g["id"]
+        for g in db.guilds.find(
+            {"$expr": {"$in": [{"$toLower": "$name"}, list(ALLOWLIST_GUILDS_LOWER)]}},
+            {"id": 1, "_id": 0},
+        )
+        if g.get("id")
+    }
     for coll, field, pattern, _desc in TEST_POLLUTION_PATTERNS:
         try:
             rx = re.compile(pattern)
-            res = db[coll].delete_many({field: {"$regex": rx.pattern}})
+            q = {field: {"$regex": rx.pattern}}
+            # Belt-and-suspenders allowlist filter per collection.
+            if coll == "users":
+                q["email"] = {"$regex": rx.pattern, "$nin": list(ALLOWLIST_EMAILS)}
+            elif coll == "guilds":
+                # Exclude guilds whose lowered name is in the allowlist OR
+                # whose owner is allowlisted.
+                q = {
+                    "$and": [
+                        {field: {"$regex": rx.pattern}},
+                        {"$expr": {"$not": {"$in": [{"$toLower": "$name"}, list(ALLOWLIST_GUILDS_LOWER)]}}},
+                        {"owner_user_id": {"$nin": list(allow_user_ids)}},
+                    ]
+                }
+            elif coll in ("adventurers", "expedition_members") and allow_guild_ids:
+                q = {"$and": [{field: {"$regex": rx.pattern}}, {"guild_id": {"$nin": list(allow_guild_ids)}}]}
+            res = db[coll].delete_many(q)
             if res.deleted_count:
                 deleted[f"{coll}.{field}"] = deleted.get(f"{coll}.{field}", 0) + res.deleted_count
         except Exception as exc:  # noqa: BLE001
             logger.warning("cleanup failed on %s.%s: %s", coll, field, exc)
-    # Orphan inventory rows: rows whose item_id no longer exists in items
+    # Orphan inventory rows: rows whose item_id no longer exists in items.
+    # Still safe — even if Drakarys had inventory, this only nukes rows whose
+    # referenced item has already been deleted.
     try:
         item_ids = {d["id"] for d in db.items.find({}, {"id": 1, "_id": 0})}
         if item_ids:
@@ -135,6 +193,8 @@ __all__ = [
     "_run_pollution_sweep",
     "_is_test_db",
     "TEST_POLLUTION_PATTERNS",
+    "ALLOWLIST_EMAILS",
+    "ALLOWLIST_GUILDS_LOWER",
 ]
 
 # ----------------------------------------------------------------------

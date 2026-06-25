@@ -40,6 +40,20 @@ AMBIGUOUS_LIST_PATH = ROOT / "memory" / "db_ambiguous_users.md"
 ALLOWLIST_EMAIL = "mr.gualmini@gmail.com"
 ALLOWLIST_GUILD_NAMES = {"Sentiero di Efreto"}
 
+# ── Permanent allowlist (Phase 14.5-hotfix, 2026-06-25) ─────────────────────
+# Single source of truth for accounts/guilds that NO cleanup, conftest sweep,
+# or denylist operation is ever allowed to touch. Kept as plain sets so
+# callers can do `email.lower() in ALLOWLIST_EMAILS` and
+# `name.lower() in ALLOWLIST_GUILDS_LOWER`.
+ALLOWLIST_EMAILS = {
+    "mr.gualmini@gmail.com",
+    "gianluca.brandi42@gmail.com",
+}
+ALLOWLIST_GUILDS_LOWER = {
+    "sentiero di efreto",
+    "drakarys",
+}
+
 # Denylist patterns (case-insensitive, on .lower() of email)
 _DENY_CONTAINS = (
     "@orbus.test",
@@ -69,6 +83,9 @@ _AMBIG_DOMAINS = ("@x.test", "@test.com", "@test.org")
 
 def classify(email: str) -> str:
     e = (email or "").strip().lower()
+    # Hardcoded permanent allowlist — never touch these emails.
+    if e in ALLOWLIST_EMAILS:
+        return "allowlist"
     if e == ALLOWLIST_EMAIL.lower():
         return "allowlist"
     if any(s in e for s in _DENY_CONTAINS):
