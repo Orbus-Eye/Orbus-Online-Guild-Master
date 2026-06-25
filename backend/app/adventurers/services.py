@@ -1,4 +1,6 @@
-"""Adventurers + classes + traits services (Phase 5.5d)."""
+"""Adventurers + classes + traits services (Phase 5.5d + Phase 14.3-c)."""
+import logging
+import re
 from fastapi import HTTPException
 
 from app.expeditions.formulas import (
@@ -9,6 +11,87 @@ from app.expeditions.formulas import (
     apply_trait_modifiers,
     sum_xp_percent,
 )
+
+
+logger = logging.getLogger("orbus")
+
+# Phase 14.3-c — runtime defense: even if a flagged test trait somehow
+# ends up in `adventurers.traits[]` (e.g. created by a not-yet-restarted
+# test fixture), the serializer must drop it. This regex is the same one
+# used by the seed runner's cleanup pass.
+_TEST_TRAIT_NAME_RE = re.compile(
+    r"^(Test|TEST_|qa_|dev_|pytest_)|_[a-f0-9]{6,}$|^[a-f0-9-]{16,}$",
+    re.IGNORECASE,
+)
+
+
+def _is_test_trait_doc(t: dict) -> bool:
+    if not isinstance(t, dict):
+        return True
+    if t.get("is_test") is True or t.get("is_active") is False:
+        return True
+    return bool(_TEST_TRAIT_NAME_RE.search(t.get("name", "") or ""))
+
+
+def _trait_display_name(t: dict) -> str:
+    """Player-facing label. Prefers display_name → display_name_en → prettified name.
+
+    Logs a warning when display_name is missing (signals an outdated seed).
+    Never returns the raw `code` or `name` if a test pattern matches.
+    """
+    if not isinstance(t, dict):
+        return ""
+    raw_name = (t.get("name") or "")
+    if t.get("display_name"):
+        return t["display_name"]
+    if t.get("display_name_en"):
+        return t["display_name_en"]
+    if raw_name:
+        # Legacy seed traits without an explicit display_name fall back to a
+        # prettified version of `name`. Logged at DEBUG only to avoid spam:
+        # the canonical Italian catalog (Phase 14.3-c) always carries
+        # display_name, so this branch only fires for the old English seed.
+        logger.debug(
+            "trait missing display_name: code=%s name=%s — using prettified fallback",
+            t.get("code"), raw_name,
+        )
+        return raw_name.replace("_", " ").replace("-", " ").strip().title()
+    return ""
+
+
+def _polarity_for(t: dict) -> str:
+    """Derive polarity from explicit field, falling back to legacy is_positive."""
+    p = (t.get("polarity") or "").lower()
+    if p in ("positive", "negative", "mixed"):
+        return p
+    return "positive" if t.get("is_positive", True) else "negative"
+
+
+def trait_public(doc: dict) -> dict:
+    """Player-safe trait projection — never exposes `code`, `is_test` or
+    internal-only flags. Tests and the player-facing UI consume this
+    shape. Returns the empty dict for traits flagged as test/inactive
+    so callers can safely filter via truthy checks.
+    """
+    if not doc or _is_test_trait_doc(doc):
+        return {}
+    return {
+        "id": doc.get("id"),
+        "display_name": _trait_display_name(doc),
+        "description": doc.get("description", "") or "",
+        "rarity": (doc.get("rarity") or "common").lower(),
+        "polarity": _polarity_for(doc),
+    }
+
+
+def trait_public_filtered_list(traits: list) -> list[dict]:
+    """Apply `trait_public` and drop empties (i.e. dropped test traits)."""
+    out = []
+    for t in traits or []:
+        v = trait_public(t)
+        if v:
+            out.append(v)
+    return out
 
 
 def class_public(doc: dict) -> dict:
@@ -23,19 +106,6 @@ def class_public(doc: dict) -> dict:
         "base_intellect": doc["base_intellect"],
         "base_endurance": doc["base_endurance"],
         "base_faith": doc["base_faith"],
-        "is_active": doc.get("is_active", True),
-    }
-
-
-def trait_public(doc: dict) -> dict:
-    return {
-        "id": doc["id"],
-        "name": doc["name"],
-        "description": doc.get("description", ""),
-        "modifier_type": doc["modifier_type"],
-        "affected_stat": doc["affected_stat"],
-        "modifier_value": doc["modifier_value"],
-        "is_positive": doc["is_positive"],
         "is_active": doc.get("is_active", True),
     }
 
@@ -68,7 +138,7 @@ def adventurer_public(doc: dict) -> dict:
         "stamina": doc.get("stamina", 100),
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
-        "traits": doc.get("traits", []),
+        "traits": trait_public_filtered_list(doc.get("traits", [])),
         "equipment": eq_slots,
         "base_power": base_power,
         "equipment_power": eq_power,

@@ -61,6 +61,8 @@ export default function ExpeditionNew() {
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [preview, setPreview] = useState(null);
+    const [previewLoading, setPreviewLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -119,6 +121,34 @@ export default function ExpeditionNew() {
         for (const a of selected) if (c[a.class_role] !== undefined) c[a.class_role]++;
         return c;
     }, [selected]);
+
+    // Phase 14.3-c — backend-authoritative preview (success chance, injury risk,
+    // expected reward, modifiers). Fired only when the team is complete.
+    useEffect(() => {
+        if (!dungeon || selected.length !== requiredSize) {
+            setPreview(null);
+            return;
+        }
+        const ids = selected.map((a) => a.id);
+        let cancelled = false;
+        setPreviewLoading(true);
+        api.post("/expeditions/preview", {
+            dungeon_id: dungeon.id,
+            adventurer_ids: ids,
+        })
+            .then(({ data }) => {
+                if (!cancelled) setPreview(data);
+            })
+            .catch(() => {
+                if (!cancelled) setPreview(null);
+            })
+            .finally(() => {
+                if (!cancelled) setPreviewLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [dungeon, selected, requiredSize]);
 
     const submit = async () => {
         if (!dungeon || selected.length !== requiredSize) return;
@@ -308,6 +338,100 @@ export default function ExpeditionNew() {
                                     className="text-[11px] text-amber border border-amber/40 bg-amber/10 px-3 py-2 rounded-sm mt-3"
                                 >
                                     {t("expedition_new.underpowered_warning", { recommended: dungeon.recommended_power, actual: teamPower })}
+                                </div>
+                            )}
+
+                            {/* Phase 14.3-c — backend-driven preview panel */}
+                            {selected.length === requiredSize && (
+                                <div
+                                    data-testid="dispatch-preview-panel"
+                                    className="mt-4 border-t border-border pt-4"
+                                >
+                                    <div className="text-[10px] text-amber tracking-widest mb-3">
+                                        {t("expedition_new.preview_title")}
+                                    </div>
+                                    {previewLoading && (
+                                        <div className="text-xs text-muted-foreground">
+                                            {t("expedition_new.preview_loading")}
+                                        </div>
+                                    )}
+                                    {!previewLoading && !preview && (
+                                        <div className="text-xs text-muted-foreground italic">
+                                            {t("expedition_new.preview_unavailable")}
+                                        </div>
+                                    )}
+                                    {!previewLoading && preview && (
+                                        <>
+                                            <div className="flex items-center justify-between text-xs mb-2">
+                                                <span className="text-muted-foreground">{t("expedition_new.preview_injury_risk")}</span>
+                                                <span
+                                                    data-testid="preview-injury-risk"
+                                                    className={
+                                                        "px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-wider border " +
+                                                        (preview.injury_risk === "low"
+                                                            ? "text-[#22c55e] border-[#22c55e]/55"
+                                                            : preview.injury_risk === "high"
+                                                              ? "text-destructive border-destructive/55"
+                                                              : "text-amber border-amber/55")
+                                                    }
+                                                >
+                                                    {t(`expedition_new.preview_injury_${preview.injury_risk}`)}
+                                                </span>
+                                            </div>
+
+                                            <div className="text-xs space-y-1 mb-3">
+                                                <div className="text-muted-foreground">{t("expedition_new.preview_expected_loot")}</div>
+                                                <div
+                                                    data-testid="preview-gold-range"
+                                                    className="text-amber"
+                                                >
+                                                    {t("expedition_new.preview_gold_range", {
+                                                        min: preview.expected_reward.gold_range[0],
+                                                        max: preview.expected_reward.gold_range[1],
+                                                    })}
+                                                </div>
+                                                <div data-testid="preview-xp-range">
+                                                    {t("expedition_new.preview_xp_range", {
+                                                        min: preview.expected_reward.xp_range[0],
+                                                        max: preview.expected_reward.xp_range[1],
+                                                    })}
+                                                </div>
+                                                <div className="text-[10px] text-muted-foreground italic">
+                                                    {t(`expedition_new.preview_loot_rarity_${preview.expected_reward.loot_rarity_hint}`)}
+                                                </div>
+                                            </div>
+
+                                            <div className="text-[10px] text-muted-foreground tracking-widest mb-2 mt-3">
+                                                {t("expedition_new.preview_modifiers")}
+                                            </div>
+                                            <div data-testid="preview-modifiers-list" className="flex flex-wrap gap-1.5">
+                                                {preview.modifiers.length === 0 && (
+                                                    <span className="text-[10px] text-muted-foreground italic">
+                                                        {t("expedition_new.preview_no_modifiers")}
+                                                    </span>
+                                                )}
+                                                {preview.modifiers.map((m, idx) => {
+                                                    const color =
+                                                        m.polarity === "negative"
+                                                            ? "#ef4444"
+                                                            : m.polarity === "mixed"
+                                                              ? "#eab308"
+                                                              : "#22c55e";
+                                                    return (
+                                                        <span
+                                                            key={`${m.source}-${m.code}-${idx}`}
+                                                            data-testid={`preview-modifier-${m.code}`}
+                                                            title={m.description}
+                                                            className="inline-flex items-center text-[10px] tracking-wider border px-1.5 py-0.5 rounded-sm"
+                                                            style={{ color, borderColor: color + "55" }}
+                                                        >
+                                                            {m.display_name}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             )}
 

@@ -1,4 +1,4 @@
-"""Seed runner (Phase 5.5g).
+"""Seed runner (Phase 5.5g + Phase 14.3-c).
 
 Three idempotent seeds + orchestrator. The tester seed is gated by APP_ENV
 so it never writes to a production DB. Content seeds (classes/traits,
@@ -6,6 +6,7 @@ dungeons/items) run in all environments to keep the catalog in sync.
 """
 import os
 import logging
+import re
 import uuid
 from datetime import datetime, timezone
 
@@ -17,6 +18,7 @@ from app.seeds.seed_data import (
     DUNGEON_SEED,
     ITEM_SEED,
 )
+from app.seeds.seed_traits_it import ITALIAN_TRAIT_SEED
 from app.shared.constants import (
     TESTER_EMAIL,
     TESTER_USERNAME,
@@ -27,8 +29,125 @@ from app.shared.constants import (
 logger = logging.getLogger("orbus")
 
 
+# Phase 14.3-c — patterns identifying internal/test traits that must never
+# surface to players (anti-leak). Anything matching is flagged
+# is_test=True / is_active=False (additive, reversible).
+_TEST_TRAIT_NAME_RE = re.compile(
+    r"^(Test|TEST_|qa_|dev_|pytest_)|_[a-f0-9]{6,}$|^[a-f0-9-]{16,}$",
+    re.IGNORECASE,
+)
+
+
+def _is_test_trait_name(name: str) -> bool:
+    return bool(name and _TEST_TRAIT_NAME_RE.search(name))
+
+
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+async def seed_italian_traits(db) -> None:
+    """Phase 14.3-c — canonical Italian trait catalog (idempotent by `code`).
+
+    Adds the new fields `code`, `display_name`, `display_name_en`,
+    `description_en`, `rarity`, `polarity` and stamps
+    `is_test=False is_active=True` so these traits are always eligible
+    for recruitment + leaderboard preview.
+    """
+    now = _utc_now_iso()
+    for t in ITALIAN_TRAIT_SEED:
+        await db.adventurer_traits.update_one(
+            {"code": t["code"]},
+            {
+                "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now},
+                "$set": {
+                    "code": t["code"],
+                    # legacy `name` is set to `code` (snake_case) so it
+                    # never collides with the case-sensitive unique index
+                    # holding the old English seed names ("Brave",
+                    # "Lucky", …). Display always goes through `display_name`.
+                    "name": t["code"],
+                    "display_name": t["display_name"],
+                    "display_name_en": t["display_name_en"],
+                    "description": t["description"],
+                    "description_en": t["description_en"],
+                    "rarity": t["rarity"],
+                    "polarity": t["polarity"],
+                    "modifier_type": t["modifier_type"],
+                    "affected_stat": t["affected_stat"],
+                    "modifier_value": t["modifier_value"],
+                    "is_positive": t["is_positive"],
+                    "is_active": True,
+                    "is_test": False,
+                    "updated_at": now,
+                },
+            },
+            upsert=True,
+        )
+    logger.info("Seeded %d Italian traits (Phase 14.3-c)", len(ITALIAN_TRAIT_SEED))
+
+
+async def flag_legacy_test_traits(db) -> None:
+    """Phase 14.3-c — defensively flag any historical Test* / suffix-random
+    trait as `is_test=True, is_active=False` so they never reach the player.
+
+    Idempotent: running a second time matches zero new docs.
+    """
+    cursor = db.adventurer_traits.find(
+        {"$or": [{"is_test": {"$ne": True}}, {"is_active": {"$ne": False}}]},
+        {"_id": 0, "id": 1, "name": 1, "code": 1},
+    )
+    candidates_ids = []
+    async for t in cursor:
+        if t.get("code"):
+            continue  # canonical traits keep their code; skip them entirely
+        if _is_test_trait_name(t.get("name", "")):
+            candidates_ids.append(t["id"])
+    if not candidates_ids:
+        logger.info("Phase 14.3-c: no legacy test traits to flag")
+        return
+    r = await db.adventurer_traits.update_many(
+        {"id": {"$in": candidates_ids}},
+        {"$set": {"is_test": True, "is_active": False,
+                  "updated_at": _utc_now_iso()}},
+    )
+    logger.info(
+        "Phase 14.3-c: flagged %d legacy traits as is_test=True/is_active=False",
+        r.modified_count,
+    )
+
+
+async def scrub_test_traits_from_adventurers(db) -> None:
+    """Phase 14.3-c — remove any test-trait reference still embedded in
+    `adventurers.traits[]` (legacy data baked them in by name).
+
+    Idempotent.
+    """
+    # Build the set of "bad" trait names from the flagged trait collection.
+    bad_names = set()
+    async for t in db.adventurer_traits.find(
+        {"is_test": True}, {"_id": 0, "name": 1, "code": 1}
+    ):
+        if t.get("name"):
+            bad_names.add(t["name"])
+    if not bad_names:
+        return
+
+    affected = 0
+    async for a in db.adventurers.find(
+        {"traits.name": {"$in": list(bad_names)}}, {"_id": 0, "id": 1, "traits": 1}
+    ):
+        clean = [t for t in (a.get("traits") or []) if t.get("name") not in bad_names]
+        if len(clean) != len(a.get("traits") or []):
+            await db.adventurers.update_one(
+                {"id": a["id"]},
+                {"$set": {"traits": clean, "updated_at": _utc_now_iso()}},
+            )
+            affected += 1
+    if affected:
+        logger.info(
+            "Phase 14.3-c: scrubbed test traits from %d adventurers", affected
+        )
 
 
 async def seed_classes_and_traits(db) -> None:
@@ -233,6 +352,9 @@ async def run_all_seeds(db) -> None:
     """Orchestrator: run all seeds in order."""
     await seed_classes_and_traits(db)
     await seed_dungeons_and_items(db)
+    await seed_italian_traits(db)
+    await flag_legacy_test_traits(db)
+    await scrub_test_traits_from_adventurers(db)
     await seed_tester(db)
     await unbake_legacy_traits(db)
 
@@ -240,6 +362,9 @@ async def run_all_seeds(db) -> None:
 __all__ = [
     "seed_classes_and_traits",
     "seed_dungeons_and_items",
+    "seed_italian_traits",
+    "flag_legacy_test_traits",
+    "scrub_test_traits_from_adventurers",
     "seed_tester",
     "unbake_legacy_traits",
     "run_all_seeds",

@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends
 
 from app.core.database import db
 from app.core.security import get_current_user
+from app.expeditions.preview import preview_expedition
+from app.expeditions.preview_schema import ExpeditionPreviewIn
 from app.expeditions.schemas import ExpeditionCreateIn
 from app.expeditions.services import (
     get_expedition as svc_get_expedition,
@@ -29,6 +31,19 @@ async def start_expedition_route(
 ):
     guild = await user_guild_or_404(db, current_user["id"])
     return await start_expedition(db, guild, payload)
+
+
+@router.post("/preview")
+async def preview_expedition_route(
+    payload: ExpeditionPreviewIn,
+    current_user: dict = Depends(get_current_user),
+):
+    """Phase 14.3-c — read-only preview: success chance, injury risk,
+    expected reward, modifiers list. NEVER writes to DB."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await preview_expedition(
+        db, guild, payload.dungeon_id, payload.adventurer_ids
+    )
 
 
 @router.get("/last-completed")

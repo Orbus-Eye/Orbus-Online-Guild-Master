@@ -224,7 +224,7 @@ async def _roll_and_persist_offer(db, guild: dict) -> list[dict]:
     if not classes:
         raise HTTPException(status_code=500, detail="No adventurer classes seeded")
     traits_pool = await db.adventurer_traits.find(
-        {"is_active": True}, {"_id": 0}
+        {"is_active": True, "is_test": {"$ne": True}}, {"_id": 0}
     ).to_list(100)
 
     await db.recruitment_offers.delete_many({"guild_id": guild["id"]})
