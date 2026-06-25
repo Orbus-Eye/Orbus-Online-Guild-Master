@@ -1,0 +1,449 @@
+{
+  "timestamp_utc": "2026-06-25T22:15:56.002641+00:00",
+  "reason": "preview leaderboard residual cleanup (flag is_test_user=True)",
+  "operation": "users.update_many({id \u2208 list}, {$set:{is_test_user:True}})",
+  "reversible_via": "users.update_many({id \u2208 list}, {$unset:{is_test_user:''}})",
+  "count": 13,
+  "users_flagged": [
+    {
+      "user_id": "238394ad-bbcb-4932-b663-03fe702b9992",
+      "email_masked": "r*************6@orbus.test",
+      "guild_name": "G c957bcef76",
+      "guild_id": "4117844b-2766-496b-95ee-fa33f1f24ed9",
+      "max_team_power_ever": 91,
+      "level": 1
+    },
+    {
+      "user_id": "7eb81962-98ea-4fe4-b499-f6ef25200cad",
+      "email_masked": "p************5@orbus.test",
+      "guild_name": "G_p143c_cad6a735",
+      "guild_id": "86c1935b-bfb0-4e64-9b49-b1d2d9df76b9",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "524e13b1-d102-44d1-8c28-6153b4a9ed1d",
+      "email_masked": "r*************9@orbus.test",
+      "guild_name": "G c9d73d8c79",
+      "guild_id": "e1d2f10f-3883-4967-aa73-403900a657e3",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "0ec1ddba-d088-4944-91ec-6879b535b335",
+      "email_masked": "r************c@orbus.test",
+      "guild_name": "G 5473b1450c",
+      "guild_id": "b0284a84-40aa-4372-b921-185a2489cb95",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "5f845daf-7b47-409e-8f07-afb8b9e80d3c",
+      "email_masked": "r*************9@orbus.test",
+      "guild_name": "G 6261e95b69",
+      "guild_id": "eaf921b2-20f1-4d50-a737-05de9a053d39",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "4def833c-4eb8-44c0-8431-6e0bbef9de73",
+      "email_masked": "r************5@orbus.test",
+      "guild_name": "G 80c6cf1cf5",
+      "guild_id": "5ae25360-541c-4635-88d2-2fd6dc0743fe",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "da5ba577-abb0-4cfa-b673-09cc1309f468",
+      "email_masked": "r*************e@orbus.test",
+      "guild_name": "G 63291180de",
+      "guild_id": "4e0c935e-9684-4971-9a73-e6b3aee5accd",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "7c299bfc-ce62-4a72-b655-3f32ca73e657",
+      "email_masked": "r************5@orbus.test",
+      "guild_name": "Guild d7beaefcb5",
+      "guild_id": "5c940ea5-8d8f-4415-a2e8-8b9a277c7c77",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "b3aedf34-8951-4f40-83e6-2ccf664761a7",
+      "email_masked": "r*************c@orbus.test",
+      "guild_name": "G 09e7d75cac",
+      "guild_id": "72da522a-17c3-4754-975d-e67efc859ba5",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "01829331-4ef4-49da-8d8b-4fd140acbb68",
+      "email_masked": "r*************9@orbus.test",
+      "guild_name": "G fe4f4a82b9",
+      "guild_id": "5595a209-d124-444f-b6fa-7eb3c78d31a6",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "22519690-e917-4f26-b7f4-41b27e88527a",
+      "email_masked": "r*************f@orbus.test",
+      "guild_name": "G 933e1533ef",
+      "guild_id": "c40949e5-003a-4b25-9db8-fff9af80e9c1",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "77773525-d638-43e3-a9e6-b319f34c7fc6",
+      "email_masked": "r************f@orbus.test",
+      "guild_name": "Guild 075fa8f14f",
+      "guild_id": "0b02e16e-a99f-4683-98de-a7273afad537",
+      "max_team_power_ever": 0,
+      "level": 1
+    },
+    {
+      "user_id": "48ce3022-b608-48b2-a95b-350381039bd0",
+      "email_masked": "r************a@orbus.test",
+      "guild_name": "Guild 2c0cac9c2a",
+      "guild_id": "447ba4ca-22c3-4e49-aaa3-26929aae12bf",
+      "max_team_power_ever": 0,
+      "level": 1
+    }
+  ],
+  "allowlist_emails_excluded_from_flag": [
+    "gianluca.brandi42@gmail.com",
+    "mr.gualmini@gmail.com",
+    "tester@orbus.test"
+  ],
+  "harambes_lookup_preview": {
+    "guilds_found": 0,
+    "owners": []
+  },
+  "orphan_shadow_flag": {
+    "timestamp_utc": "2026-06-25T22:17:29.027516+00:00",
+    "reason": "orphan-guild leaderboard cleanup (shadow user placeholders)",
+    "method": "insert users with is_test_user=True matching orphan owner_user_id",
+    "reversible_via": "db.users.delete_many({\"password_hash\": \"$ORPHAN_PLACEHOLDER$\"})",
+    "count": 53,
+    "orphan_guilds": [
+      {
+        "guild_id": "90663479-5eac-4881-bb63-d36abf1ef3e0",
+        "guild_name": "G_b34f6c",
+        "owner_user_id": "0abee236-a23f-4b97-97f5-da91a8e34cf4",
+        "peak": 0
+      },
+      {
+        "guild_id": "feacfaf8-6178-4c2e-a8ac-32c8d8e8bbec",
+        "guild_name": "G 460ce4f935",
+        "owner_user_id": "10a2b783-3b36-4e36-a1ef-3922c0718b9f",
+        "peak": 0
+      },
+      {
+        "guild_id": "5f1577ea-7202-4c7f-9eae-50bc46315a37",
+        "guild_name": "G_dbd540",
+        "owner_user_id": "1ab430c9-80dc-4656-bfd9-3d9a39a9434c",
+        "peak": 0
+      },
+      {
+        "guild_id": "62008c2a-6427-4723-a7a7-baf322950134",
+        "guild_name": "Guild 6ac60a1d43",
+        "owner_user_id": "1c4a3d89-dee6-469c-90ca-d7e3039cfde5",
+        "peak": 0
+      },
+      {
+        "guild_id": "65050148-e0d3-4f20-92d8-56f6e3a9ceb4",
+        "guild_name": "G 6843840a22",
+        "owner_user_id": "1d832ecd-4e04-443f-b6d9-9dc957351e2a",
+        "peak": 0
+      },
+      {
+        "guild_id": "51130b04-3d11-4ba1-96bf-fddca5cfe15d",
+        "guild_name": "G 2182005c0d",
+        "owner_user_id": "1f88e72e-56cc-4de2-a38e-2305b41d3dbf",
+        "peak": 0
+      },
+      {
+        "guild_id": "184a5a68-456c-492c-9693-8214b19f8b35",
+        "guild_name": "G_7aa966",
+        "owner_user_id": "2437524d-487e-46d1-8845-580721585a3b",
+        "peak": 0
+      },
+      {
+        "guild_id": "1a877efd-1a6e-408f-b4bd-5d9ad8dba9ef",
+        "guild_name": "G 30ff2b6f66",
+        "owner_user_id": "2a35197a-9f7d-49a8-8c3f-f5833dd7639a",
+        "peak": 0
+      },
+      {
+        "guild_id": "45d49f4c-e5ca-4396-bf9e-f56124679e97",
+        "guild_name": "Guild fad49915b6",
+        "owner_user_id": "37a615be-3eca-453c-9e9f-532882a79d27",
+        "peak": 0
+      },
+      {
+        "guild_id": "5b902dd8-f695-4fb6-be1c-43a1652b5516",
+        "guild_name": "G 5eb6310d42",
+        "owner_user_id": "3b80a3d9-00dc-496c-b6d3-6a6ebb71d5bc",
+        "peak": 0
+      },
+      {
+        "guild_id": "04ec17f1-1652-4cac-8eee-bd07176a8169",
+        "guild_name": "G ecec11f0fa",
+        "owner_user_id": "50feee96-17c5-4425-b4df-94200bd54b6e",
+        "peak": 0
+      },
+      {
+        "guild_id": "0fb91d75-1bc6-46ee-95b5-1c082de97607",
+        "guild_name": "G 7c4e2598db",
+        "owner_user_id": "55b376d6-8b77-408f-8335-d13c5cd097d0",
+        "peak": 0
+      },
+      {
+        "guild_id": "d405eb64-a87b-404e-939f-5ff59ad9f705",
+        "guild_name": "G_6b698f",
+        "owner_user_id": "5b25d9c5-fc75-4675-8e2b-7616f0197be8",
+        "peak": 0
+      },
+      {
+        "guild_id": "e9e11274-818c-4d74-b021-fd52446a005b",
+        "guild_name": "G_ed4adb",
+        "owner_user_id": "5e6ef3ce-113c-4ae6-8885-4714909154bd",
+        "peak": 0
+      },
+      {
+        "guild_id": "6fd4f790-7217-4c66-9959-48b9d9215bd4",
+        "guild_name": "Guild 93984163c6",
+        "owner_user_id": "6371c88f-efa6-4905-be5b-bf3b566e319b",
+        "peak": 0
+      },
+      {
+        "guild_id": "00af6a82-fda5-4448-b07d-6243ce27ac95",
+        "guild_name": "G f8b2133327",
+        "owner_user_id": "675bf92e-c75c-418a-af60-e46851091313",
+        "peak": 86
+      },
+      {
+        "guild_id": "13ef77db-b7f6-4767-9ab8-f13bab6b255e",
+        "guild_name": "G 59779cb6df",
+        "owner_user_id": "6ea3829e-a65c-4073-aa45-ff00b8fa0a28",
+        "peak": 0
+      },
+      {
+        "guild_id": "6d7c7341-d6eb-4fb5-a244-735daf693d8e",
+        "guild_name": "G b76cfac236",
+        "owner_user_id": "7d5c2b86-0eae-4c94-908e-8817fa9a2cf9",
+        "peak": 83
+      },
+      {
+        "guild_id": "3f7d0160-711a-4468-93fa-4845b91919ec",
+        "guild_name": "Guild 29fe491307",
+        "owner_user_id": "7dacb1ff-a793-4c00-bd24-bd74e275947d",
+        "peak": 0
+      },
+      {
+        "guild_id": "04c743ca-956a-45b0-b5d0-6f7af34313be",
+        "guild_name": "Guild ee8180e02c",
+        "owner_user_id": "7db232d5-d957-47ba-9489-5263af5e032b",
+        "peak": 0
+      },
+      {
+        "guild_id": "6e697aac-9c48-4d9e-b53a-30646218f7a9",
+        "guild_name": "G 6085cda0c6",
+        "owner_user_id": "809ee7e7-68e6-41fb-9904-89eba5b29a61",
+        "peak": 105
+      },
+      {
+        "guild_id": "fc1023a8-6375-4f51-b030-ea3dcce9db7f",
+        "guild_name": "G 249c926f63",
+        "owner_user_id": "81933341-276e-40e1-823a-2c1455a3bb38",
+        "peak": 0
+      },
+      {
+        "guild_id": "39f1d2df-0bf6-4166-9ae0-a64a91de14ff",
+        "guild_name": "Guild 782006d943",
+        "owner_user_id": "868b7631-5907-4c93-b5bb-70db15e4e4b9",
+        "peak": 0
+      },
+      {
+        "guild_id": "b8afd800-addc-4823-ad31-d9f3f2cab4eb",
+        "guild_name": "G_98a648",
+        "owner_user_id": "916ccddd-8822-44d2-8e42-17768d56d09c",
+        "peak": 104
+      },
+      {
+        "guild_id": "d9ab369f-29d1-4c52-888a-4e2d12bd14d9",
+        "guild_name": "Guild a30e8e25bf",
+        "owner_user_id": "92a19e66-5f78-4df8-9b17-8873e7467b9b",
+        "peak": 0
+      },
+      {
+        "guild_id": "7e1bc413-ced3-4e05-9fd8-8d65ccbbd2f6",
+        "guild_name": "G ab0d4297b4",
+        "owner_user_id": "938a2da3-7e24-4af2-83d3-b6ec93408e03",
+        "peak": 0
+      },
+      {
+        "guild_id": "0b912f64-e988-46f9-9728-39d81c4e46bb",
+        "guild_name": "G ef8fc4e641",
+        "owner_user_id": "944063b5-d3c2-494d-814c-ba2563f612d2",
+        "peak": 0
+      },
+      {
+        "guild_id": "9076650e-88db-478a-bae8-2cf30e80dcbb",
+        "guild_name": "Guild 7f8c05258b",
+        "owner_user_id": "953480db-d676-47cd-90a9-de45be8df97b",
+        "peak": 0
+      },
+      {
+        "guild_id": "cab43565-c8a8-4b90-93dd-7432cee87bec",
+        "guild_name": "G 0ac707cbd6",
+        "owner_user_id": "965e725a-8ac4-4c6b-8035-782844316138",
+        "peak": 0
+      },
+      {
+        "guild_id": "e312e39c-9c83-45d1-8d80-58c055abc349",
+        "guild_name": "G_06e173",
+        "owner_user_id": "9de5b1fe-4bcd-48c7-b5a0-1a04d880dd5b",
+        "peak": 0
+      },
+      {
+        "guild_id": "3f821566-3bf1-4224-9a83-193cc48c87fb",
+        "guild_name": "Guild 23cc41b7a6",
+        "owner_user_id": "9f04476c-e6e6-425b-9e3d-f5b175ff0d40",
+        "peak": 0
+      },
+      {
+        "guild_id": "39887a13-f77c-45fd-aa6e-15e0bff1ed7a",
+        "guild_name": "G_9b7f43",
+        "owner_user_id": "a15eeba1-9ef6-48f7-a777-17825502ac22",
+        "peak": 0
+      },
+      {
+        "guild_id": "1e2b213f-4196-4ab4-9bb5-4cfb73c4609f",
+        "guild_name": "G 1d1c09f23f",
+        "owner_user_id": "abdab893-c338-4104-a10f-318c0ba47b3a",
+        "peak": 0
+      },
+      {
+        "guild_id": "75a94d3a-b040-430a-8668-99f87b32a727",
+        "guild_name": "Guild 8291f79e93",
+        "owner_user_id": "acee8f8f-ea4f-468d-93c3-dd8629d97735",
+        "peak": 0
+      },
+      {
+        "guild_id": "f16b064a-fd40-4380-8c49-78ba5762f2da",
+        "guild_name": "G_082bc0",
+        "owner_user_id": "adefc31c-4c95-4743-9158-531cf64a7877",
+        "peak": 105
+      },
+      {
+        "guild_id": "98097bba-65a8-4124-a6a5-80d0deed693f",
+        "guild_name": "G 4fb80e0756",
+        "owner_user_id": "afc6592b-fc84-48ab-bbb8-87b8aad4b56a",
+        "peak": 0
+      },
+      {
+        "guild_id": "f16d2b45-7b35-4334-8e67-166e11396838",
+        "guild_name": "G_5be706",
+        "owner_user_id": "b670bbfc-605c-4ec8-9e8f-61bfbce5ab95",
+        "peak": 0
+      },
+      {
+        "guild_id": "58577b5d-c465-4408-890b-5e9d17122208",
+        "guild_name": "Guild 1204f8949e",
+        "owner_user_id": "b800a86c-1db4-4cd3-b48d-6cff91c83b48",
+        "peak": 0
+      },
+      {
+        "guild_id": "7cf61d8a-7eaa-47e1-8415-b1266ed56335",
+        "guild_name": "G_0d1742",
+        "owner_user_id": "b958ee71-6296-47e3-b425-a8149d56ed3d",
+        "peak": 121
+      },
+      {
+        "guild_id": "d7ac7a9f-3e9b-42d5-be57-e28c00b0afc0",
+        "guild_name": "G_819f91",
+        "owner_user_id": "bc0f3884-259f-4b4c-a733-bba4e1ab0335",
+        "peak": 100
+      },
+      {
+        "guild_id": "aad45d19-48de-45e5-a935-009d2d2af6b9",
+        "guild_name": "Guild 38c2aaabbd",
+        "owner_user_id": "bfd6b7be-390c-4d41-90a6-e8d013e94989",
+        "peak": 0
+      },
+      {
+        "guild_id": "d7203785-fad8-44b6-8fe7-0e4ae643eef6",
+        "guild_name": "G 61f0cdd6a8",
+        "owner_user_id": "c354c39a-8b80-40a9-a497-0b01b6e05c13",
+        "peak": 0
+      },
+      {
+        "guild_id": "98ac5b98-3824-40fe-b1cd-0edffcc6e733",
+        "guild_name": "Guild 74ee18bffb",
+        "owner_user_id": "d8532040-0869-49b5-bbae-60f6bad87a7f",
+        "peak": 0
+      },
+      {
+        "guild_id": "c1167d1d-bd24-46fa-bf0d-8fea091716de",
+        "guild_name": "G 9254d4ac8b",
+        "owner_user_id": "dbaf8034-dcab-48ed-80ff-4a1e2a11f68a",
+        "peak": 0
+      },
+      {
+        "guild_id": "0e2999a1-45bd-4d8e-a355-def00b6d40cf",
+        "guild_name": "G 50770e12cc",
+        "owner_user_id": "dcdd9b21-b64e-4ec1-9455-0fd98d424cc1",
+        "peak": 0
+      },
+      {
+        "guild_id": "8090d64d-a684-45b7-b33d-1710c0cb6b29",
+        "guild_name": "Guild fab4c63847",
+        "owner_user_id": "e0af0def-a8b3-4e91-a733-deb76223622a",
+        "peak": 0
+      },
+      {
+        "guild_id": "33509e2e-d2f8-4b5c-b27f-7d5884a7929b",
+        "guild_name": "G ea67aaf0c7",
+        "owner_user_id": "e1ce0105-f541-4a87-bbe0-34421770c90f",
+        "peak": 96
+      },
+      {
+        "guild_id": "3fce8084-1204-460f-894f-18636715730c",
+        "guild_name": "Guild 77f5663c05",
+        "owner_user_id": "e2a8ea0d-0e33-4fff-99ac-8568c7030da4",
+        "peak": 0
+      },
+      {
+        "guild_id": "c2bf72e7-94c7-4333-ac3e-0c3840b573b3",
+        "guild_name": "G_79c048",
+        "owner_user_id": "f3194324-371f-40d2-845b-11bc0e134b8d",
+        "peak": 107
+      },
+      {
+        "guild_id": "018a5958-207e-4be7-a953-8de0abbc3b98",
+        "guild_name": "Guild 034d4a9547",
+        "owner_user_id": "f80f598c-65cf-4f04-a923-000ba4a9e0d9",
+        "peak": 0
+      },
+      {
+        "guild_id": "bed80008-810d-4e65-9b48-1265c44837e9",
+        "guild_name": "Guild b2acf8032a",
+        "owner_user_id": "f8a74be7-5694-4ffb-953f-0b79384cf7c2",
+        "peak": 0
+      },
+      {
+        "guild_id": "8a0b187b-8892-4d93-99e6-49a4757bb37f",
+        "guild_name": "G 8494a2239f",
+        "owner_user_id": "fb33d86e-70ab-469d-96c2-da6f5e6a50c3",
+        "peak": 0
+      },
+      {
+        "guild_id": "3447c855-b3f8-441f-93e7-afe71cfecdd1",
+        "guild_name": "Guild 64d7443543",
+        "owner_user_id": "fd83c55b-c39c-4cfd-adf5-a030ddef0066",
+        "peak": 0
+      }
+    ]
+  }
+}

@@ -48,10 +48,14 @@ ALLOWLIST_GUILD_NAMES = {"Sentiero di Efreto"}
 ALLOWLIST_EMAILS = {
     "mr.gualmini@gmail.com",
     "gianluca.brandi42@gmail.com",
+    # Harambes owner email PENDING (real prod player). Name-based protection
+    # on the guild "harambes" is in place below until the user provides the
+    # email.
 }
 ALLOWLIST_GUILDS_LOWER = {
     "sentiero di efreto",
     "drakarys",
+    "harambes",  # real prod player (owner email pending)
 }
 
 # Denylist patterns (case-insensitive, on .lower() of email)

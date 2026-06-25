@@ -4,7 +4,7 @@ Single source of truth for accounts and guilds that **no automated process**
 (pytest pollution sweep, DB cleanup script, denylist filter, leaderboard
 test-user filter) is allowed to delete, flag, or hide.
 
-Last updated: **2026-06-25** (Phase 14.5-hotfix)
+Last updated: **2026-06-26** (Round 3 post-deploy — Harambes added)
 
 ## Why this exists
 
@@ -37,6 +37,9 @@ ALLOWLIST_EMAILS = {
     "mr.gualmini@gmail.com",          # Gualma — primary author/admin
     "gianluca.brandi42@gmail.com",    # Drakarys owner (real player)
     "tester@orbus.test",              # sandbox admin (dev-only seed)
+    # PENDING: Harambes owner email — guild "harambes" is a real prod player
+    # but the email was not provided yet. Until the user provides it,
+    # protection relies on the name-based check below.
 }
 ```
 
@@ -46,6 +49,7 @@ ALLOWLIST_EMAILS = {
 ALLOWLIST_GUILDS_LOWER = {
     "sentiero di efreto",  # Gualma's guild
     "drakarys",            # Brandi's guild
+    "harambes",            # real prod player (owner email pending)
 }
 ```
 
@@ -81,3 +85,5 @@ flagging code MUST honour both sets.
 | 2026-06-25 18:58 | Phase 14.3 cleanup (3582 orphan guilds, 210 denylist flagged) | Allowlist at that time: 1 entry (mr.gualmini@gmail.com). Drakarys NOT in DB. |
 | 2026-06-25 19:06 | 16 ambiguous users flagged `is_test_user=True` | None of them was gianluca.brandi42 or Drakarys (full dump available). |
 | 2026-06-25 21:06 | Allowlist hardened (this commit) | +gianluca.brandi42@gmail.com, +tester@orbus.test, +Drakarys (guild). Pytest conftest sweep now filters all of them. |
+| 2026-06-26 (Round 3 post-deploy) | +Harambes (guild only, email pending) | Real prod player confirmed by user. Owner email still to be provided; name-based protection active. |
+| 2026-06-26 (Round 3 post-deploy) | Preview leaderboard residual cleanup | 13 leaderboard-visible test users flagged `is_test_user=True`; 53 orphan-owner guilds got a shadow placeholder user (`is_test_user=True`) so the leaderboard filter applies. Reversible via the backup in `db_leaderboard_residual_flag_backup.json`. No hard delete. |
