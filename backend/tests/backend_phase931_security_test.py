@@ -272,14 +272,16 @@ class TestPasswordResetTokenNeverLogged:
         # 3. Inspect the live backend log: the raw token MUST NOT appear,
         # and a short sha256 fingerprint MUST appear.
         import time
-        time.sleep(1)  # let log buffer flush
+        time.sleep(2)  # let log buffer flush (xdist can be busy)
         combined = ""
         for log_path in (
             "/var/log/supervisor/backend.err.log",
             "/var/log/supervisor/backend.out.log",
         ):
             try:
-                combined += open(log_path).read()[-100_000:]
+                # Read whole file — supervisor rotates these regularly
+                # and 1MB is cheap compared to xdist log flood.
+                combined += open(log_path).read()
             except FileNotFoundError:
                 continue
         # Slice the log to the portion AFTER our email appears (so we only
