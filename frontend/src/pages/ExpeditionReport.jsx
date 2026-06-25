@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
+import ExpeditionExplainer from "../components/ExpeditionExplainer";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -175,7 +176,7 @@ export default function ExpeditionReport() {
         );
     }
 
-    const { expedition: e, members, loot_items } = data;
+    const { expedition: e, members, loot_items, report_summary, report_steps } = data;
     const isDone = e.status === "completed";
 
     return (
@@ -263,6 +264,15 @@ export default function ExpeditionReport() {
                             {e.result_log}
                         </blockquote>
                     </section>
+                )}
+
+                {/* Phase 14.5 — Explainability layer */}
+                {isDone && (
+                    <ExpeditionExplainer
+                        summary={report_summary}
+                        steps={report_steps}
+                        members={members}
+                    />
                 )}
 
                 {/* Phase 7: Expedition Analysis (equipment delta) */}

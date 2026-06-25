@@ -678,10 +678,22 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
             if lid in item_by_id:
                 loot_items.append(item_public(item_by_id[lid]))
 
+    # Phase 14.5 (ROUND 2 Fase 3) — explainability layer.
+    # Pure builder, NO DB writes, NO new RNG roll. Legacy/in-progress
+    # expeditions get {report_summary: None, report_steps: None} so the
+    # UI can render its graceful fallback.
+    from app.expeditions.report_builder import build_expedition_report
+    dungeon = await db.dungeons.find_one(
+        {"id": exp["dungeon_id"]}, {"_id": 0}
+    )
+    report = build_expedition_report(exp, members, dungeon, loot_items)
+
     return {
         "expedition": expedition_public(exp),
         "members": [member_public(m) for m in members],
         "loot_items": loot_items,
+        "report_summary": report["report_summary"],
+        "report_steps": report["report_steps"],
     }
 
 
