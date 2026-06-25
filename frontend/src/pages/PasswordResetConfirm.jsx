@@ -5,6 +5,7 @@ import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import PasswordInput from "../components/PasswordInput";
 import { toast } from "sonner";
 
 export default function PasswordResetConfirm() {
@@ -80,31 +81,25 @@ export default function PasswordResetConfirm() {
 
                         <div className="space-y-2">
                             <Label htmlFor="pw" className="text-xs text-muted-foreground tracking-wider">{t("password_reset_page.new_password_label")}</Label>
-                            <Input
+                            <PasswordInput
                                 id="pw"
-                                data-testid="pwreset-newpw-input"
-                                type="password"
+                                testid="pwreset-newpw-input"
                                 required
                                 autoComplete="new-password"
                                 value={pw}
                                 onChange={(e) => setPw(e.target.value)}
-                                className="bg-background border-border rounded-sm h-11 font-mono"
-                                placeholder="••••••••"
                             />
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="pw2" className="text-xs text-muted-foreground tracking-wider">{t("password_reset_page.confirm_password_label")}</Label>
-                            <Input
+                            <PasswordInput
                                 id="pw2"
-                                data-testid="pwreset-confirmpw-input"
-                                type="password"
+                                testid="pwreset-confirmpw-input"
                                 required
                                 autoComplete="new-password"
                                 value={pw2}
                                 onChange={(e) => setPw2(e.target.value)}
-                                className="bg-background border-border rounded-sm h-11 font-mono"
-                                placeholder="••••••••"
                             />
                         </div>
 

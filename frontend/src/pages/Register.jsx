@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import PasswordInput from "../components/PasswordInput";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
@@ -15,6 +16,7 @@ export default function Register() {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
@@ -23,6 +25,10 @@ export default function Register() {
         setErrorMsg("");
         if (password.length < 8) {
             setErrorMsg(t("auth.errors.weak_password"));
+            return;
+        }
+        if (password !== confirmPassword) {
+            setErrorMsg(t("auth.errors.password_mismatch"));
             return;
         }
         setSubmitting(true);
@@ -101,17 +107,30 @@ export default function Register() {
                                 {t("auth.password").toUpperCase()}{" "}
                                 <span className="text-muted-foreground">({t("auth.password_min")})</span>
                             </Label>
-                            <Input
+                            <PasswordInput
                                 id="password"
-                                data-testid="register-password-input"
-                                type="password"
+                                testid="register-password-input"
                                 required
                                 minLength={8}
                                 autoComplete="new-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="bg-background border-border rounded-sm h-11 font-mono"
-                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="confirm_password" className="text-xs text-muted-foreground tracking-wider">
+                                {t("auth.confirm_password").toUpperCase()}
+                            </Label>
+                            <PasswordInput
+                                id="confirm_password"
+                                name="confirm_password"
+                                testid="register-confirm-password-input"
+                                required
+                                minLength={8}
+                                autoComplete="new-password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </div>
 
