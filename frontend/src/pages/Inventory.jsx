@@ -1,4 +1,33 @@
-import { useEffect, useState } from "react";
+// Inventory page — Phase 14.4 (ROUND 1.5).
+//
+// Three improvements over the previous version (task 4 + 5):
+//   1. Item requirements made explicit: shows the minimum level and the slot
+//      the item must occupy. The slot is derived from `item.item_type`
+//      (weapon → weapon, armor → armor, accessory → accessory).
+//   2. Equip status is human-readable: "Available × N",
+//      "Equipped by: <names>", or a combined view when both apply.
+//   3. Contextual actions:
+//        - "Manage on <adv>" link when the item is already equipped (jumps to
+//          the AdventurerEquipment page where Unequip is available).
+//        - Per-eligible-adventurer "Equip" buttons, gated by level / slot
+//          compatibility / adventurer availability.
+//
+// The inventory model is documented as STACKS (multiple copies of the same
+// item share one row; each equip consumes one reservation via
+// `inventory_items.reserved_qty`). The UI surfaces this through
+// `inventory_extra.model_note`.
+//
+// NOTE on backend coupling (ROUND 1.5 audit):
+//   - GET /api/inventory returns aggregate equipped_quantity / available_quantity
+//     but does NOT list which adventurer has each copy. We derive that on the
+//     client by fetching /api/adventurers (which embeds each adventurer's
+//     equipped slots) and indexing by item_id.
+//   - "Replace" is intentionally NOT exposed as a single button: the equipment
+//     API requires unequip → equip (two atomic ops). Surfacing it would
+//     require either a backend swap endpoint (out of ROUND 1.5 scope) or a
+//     two-step UI that risks half-completed swaps. We instead keep "Manage"
+//     which deep-links to the slot-aware UI.
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
@@ -25,12 +54,6 @@ const RarityBadge = ({ rarity }) => (
     </span>
 );
 
-const TypeBadge = ({ t }) => (
-    <span className="inline-block text-[10px] tracking-widest border border-border bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-sm">
-        {t?.toUpperCase()}
-    </span>
-);
-
 function statBonusList(it) {
     if (!it) return "";
     const parts = [];
@@ -42,24 +65,69 @@ function statBonusList(it) {
     return parts.join(" · ");
 }
 
+function buildEquippedByMap(adventurers) {
+    // { item_id: [{ adventurer_id, adventurer_name, slot }] }
+    const out = {};
+    for (const a of adventurers || []) {
+        const eq = a.equipment || {};
+        for (const slot of ["weapon", "armor", "accessory"]) {
+            const it = eq[slot]?.item;
+            if (!it) continue;
+            const list = out[it.id] || (out[it.id] = []);
+            list.push({
+                adventurer_id: a.id,
+                adventurer_name: a.name,
+                slot,
+            });
+        }
+    }
+    return out;
+}
+
 export default function Inventory() {
     const { t } = useT();
     const [rows, setRows] = useState(null);
+    const [adventurers, setAdventurers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [busyKey, setBusyKey] = useState(null);
+
+    const refresh = async () => {
+        try {
+            const [invRes, advRes] = await Promise.all([
+                api.get("/inventory"),
+                api.get("/adventurers"),
+            ]);
+            setRows(invRes.data.inventory);
+            setAdventurers(advRes.data.adventurers || []);
+        } catch (err) {
+            toast.error(formatApiError(err));
+            setRows([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await api.get("/inventory");
-                setRows(data.inventory);
-            } catch (err) {
-                toast.error(formatApiError(err));
-                setRows([]);
-            } finally {
-                setLoading(false);
-            }
-        })();
+        refresh();
     }, []);
+
+    const equippedByMap = useMemo(
+        () => buildEquippedByMap(adventurers),
+        [adventurers]
+    );
+
+    const doEquip = async (advId, itemId, slot, key) => {
+        setBusyKey(key);
+        try {
+            await api.post(`/adventurers/${advId}/equip`, { item_id: itemId, slot });
+            toast.success(t("equipment_extra.toast_equipped", { slot }));
+            await refresh();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setBusyKey(null);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
@@ -74,6 +142,12 @@ export default function Inventory() {
                         <h1 className="text-3xl font-semibold tracking-tight">{t("inventory.title")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                             Items recovered from dungeon expeditions.
+                        </p>
+                        <p
+                            className="text-[11px] text-muted-foreground/80 mt-2 max-w-2xl"
+                            data-testid="inventory-model-note"
+                        >
+                            {t("inventory_extra.model_note")}
                         </p>
                     </div>
                     <div className="text-right">
@@ -118,86 +192,200 @@ export default function Inventory() {
                 )}
 
                 {!loading && rows && rows.length > 0 && (
-                    <>
-                        {/* desktop table */}
-                        <div className="hidden sm:block border border-border rounded-sm overflow-x-auto">
-                            <table data-testid="inventory-table" className="w-full text-sm min-w-[760px]">
-                                <thead className="bg-secondary/40 text-[10px] text-muted-foreground tracking-widest">
-                                    <tr>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.name")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.rarity")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.type")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.total")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.equipped")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.available")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.bonuses")}</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{t("inventory_table.power")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {rows.map((r) => {
-                                        const it = r.item;
-                                        return (
-                                            <tr
-                                                key={r.id}
-                                                data-testid={`inventory-row-${r.id}`}
-                                                className="border-b border-border/60 hover:bg-secondary/20"
-                                            >
-                                                <td className="px-3 py-2 font-medium whitespace-nowrap">{it?.name || "—"}</td>
-                                                <td className="px-3 py-2 whitespace-nowrap"><RarityBadge rarity={it?.rarity} /></td>
-                                                <td className="px-3 py-2 whitespace-nowrap"><TypeBadge t={it?.item_type} /></td>
-                                                <td className="px-3 py-2" data-testid={`inv-total-${r.id}`}>×{r.total_quantity}</td>
-                                                <td className="px-3 py-2 text-muted-foreground" data-testid={`inv-equipped-${r.id}`}>{r.equipped_quantity}</td>
-                                                <td className="px-3 py-2 text-amber" data-testid={`inv-available-${r.id}`}>{r.available_quantity}</td>
-                                                <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">{statBonusList(it) || "—"}</td>
-                                                <td className="px-3 py-2">{it?.power_score ?? 0}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div className="space-y-3" data-testid="inventory-cards">
+                        {rows.map((r) => {
+                            const it = r.item;
+                            if (!it) return null;
+                            const slot = it.item_type; // weapon | armor | accessory
+                            const levelReq = it.level_required || 1;
+                            const equippedBy = equippedByMap[it.id] || [];
 
-                        {/* mobile stacked cards */}
-                        <div className="sm:hidden space-y-3" data-testid="inventory-cards">
-                            {rows.map((r) => {
-                                const it = r.item;
-                                return (
-                                    <div
-                                        key={r.id}
-                                        data-testid={`inventory-card-${r.id}`}
-                                        className="border border-border bg-card rounded-sm p-4"
-                                    >
-                                    <div className="flex items-start justify-between gap-2 mb-2">
+                            // Adventurers who could equip this item:
+                            // - same slot is empty
+                            // - level >= levelReq
+                            // - is_available (not on expedition)
+                            const eligible = adventurers.filter((a) => {
+                                if (!a.is_available) return false;
+                                if ((a.level || 1) < levelReq) return false;
+                                const slotItem = a.equipment?.[slot]?.item;
+                                return !slotItem;
+                            });
+
+                            const usableCount = adventurers.filter(
+                                (a) => (a.level || 1) >= levelReq
+                            ).length;
+                            const hasAvailable = r.available_quantity > 0;
+
+                            return (
+                                <div
+                                    key={r.id}
+                                    data-testid={`inventory-card-${r.id}`}
+                                    className="border border-border bg-card rounded-sm p-4"
+                                >
+                                    <div className="flex items-start justify-between gap-3 flex-wrap">
                                         <div className="min-w-0">
-                                            <div className="font-medium truncate">{it?.name || "—"}</div>
-                                            <div className="text-[11px] text-muted-foreground mt-0.5">
-                                                {it?.item_type} · power {it?.power_score ?? 0}
+                                            <div className="font-medium truncate flex items-center gap-2 flex-wrap">
+                                                <span data-testid={`inv-name-${r.id}`}>{it.name}</span>
+                                                <RarityBadge rarity={it.rarity} />
                                             </div>
-                                            {statBonusList(it) && (
-                                                <div className="text-[11px] text-muted-foreground mt-1">
-                                                    {statBonusList(it)}
-                                                </div>
-                                            )}
+                                            <div className="text-[11px] text-muted-foreground mt-1">
+                                                {slot} · power {it.power_score ?? 0}
+                                                {statBonusList(it) ? ` · ${statBonusList(it)}` : ""}
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-1">
-                                            <RarityBadge rarity={it?.rarity} />
-                                            <span className="text-xs text-amber">×{r.total_quantity}</span>
-                                            <span className="text-[10px] text-muted-foreground">
-                                                {r.equipped_quantity} equipped · {r.available_quantity} avail.
+                                        <div className="text-right">
+                                            <div className="text-[10px] text-muted-foreground tracking-widest">
+                                                ×{r.total_quantity}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                                                {t("inventory_extra.status_partial_equipped", {
+                                                    equipped: r.equipped_quantity,
+                                                    available: r.available_quantity,
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Requirements row */}
+                                    <div
+                                        className="mt-3 pt-3 border-t border-border/60"
+                                        data-testid={`inv-requirements-${r.id}`}
+                                    >
+                                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                                            {t("inventory_extra.requirements_label")}
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 text-[11px]">
+                                            <span
+                                                className="border border-border rounded-sm px-2 py-0.5"
+                                                data-testid={`inv-req-level-${r.id}`}
+                                            >
+                                                {t("inventory_extra.req_level", { n: levelReq })}
+                                            </span>
+                                            <span
+                                                className="border border-border rounded-sm px-2 py-0.5"
+                                                data-testid={`inv-req-slot-${r.id}`}
+                                            >
+                                                {t("inventory_extra.req_slot", { slot: slot?.toUpperCase() || "—" })}
+                                            </span>
+                                            <span
+                                                className="text-muted-foreground italic"
+                                                data-testid={`inv-usable-count-${r.id}`}
+                                            >
+                                                {t("inventory_extra.usable_by", { n: usableCount })}
                                             </span>
                                         </div>
                                     </div>
-                                        {it?.description && (
-                                            <p className="text-[11px] text-muted-foreground mt-2">
-                                                {it.description}
-                                            </p>
+
+                                    {/* Status row */}
+                                    <div
+                                        className="mt-3 pt-3 border-t border-border/60"
+                                        data-testid={`inv-status-${r.id}`}
+                                    >
+                                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                                            {t("inventory_extra.status_label")}
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 text-[11px]">
+                                            {hasAvailable && (
+                                                <span
+                                                    className="border border-[#22c55e]/40 text-[#22c55e] rounded-sm px-2 py-0.5"
+                                                    data-testid={`inv-status-available-${r.id}`}
+                                                >
+                                                    {t("inventory_extra.status_available")} × {r.available_quantity}
+                                                </span>
+                                            )}
+                                            {equippedBy.length > 0 && (
+                                                <span
+                                                    className="border border-amber/40 text-amber rounded-sm px-2 py-0.5"
+                                                    data-testid={`inv-status-equipped-${r.id}`}
+                                                    title={equippedBy
+                                                        .map((e) => `${e.adventurer_name} (${e.slot})`)
+                                                        .join(", ")}
+                                                >
+                                                    {t("inventory_extra.status_equipped_by", {
+                                                        names: equippedBy
+                                                            .map((e) => e.adventurer_name)
+                                                            .join(", "),
+                                                    })}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Actions row */}
+                                    <div
+                                        className="mt-3 pt-3 border-t border-border/60"
+                                        data-testid={`inv-actions-${r.id}`}
+                                    >
+                                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                                            {t("inventory_extra.actions_label")}
+                                        </div>
+
+                                        {/* Manage links for adventurers already wearing this item */}
+                                        {equippedBy.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mb-2">
+                                                {equippedBy.map((e) => (
+                                                    <Link
+                                                        key={`${e.adventurer_id}-${e.slot}`}
+                                                        to={`/adventurers/${e.adventurer_id}/equipment`}
+                                                        data-testid={`inv-manage-${r.id}-${e.adventurer_id}`}
+                                                        className="text-[11px] text-amber hover:underline"
+                                                    >
+                                                        {t("inventory_extra.manage_on_adventurer")} {e.adventurer_name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Equip buttons for eligible adventurers (only if stock available) */}
+                                        {hasAvailable && eligible.length > 0 && (
+                                            <div className="flex flex-wrap gap-2">
+                                                {eligible.slice(0, 6).map((a) => {
+                                                    const key = `${r.id}-${a.id}`;
+                                                    return (
+                                                        <Button
+                                                            key={a.id}
+                                                            data-testid={`inv-equip-${r.id}-${a.id}-btn`}
+                                                            disabled={busyKey === key}
+                                                            onClick={() =>
+                                                                doEquip(a.id, it.id, slot, key)
+                                                            }
+                                                            className="h-7 px-2 text-[11px] bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
+                                                            title={`${t("inventory_extra.status_available")} → ${a.name} (${slot})`}
+                                                        >
+                                                            ▶ {a.name}
+                                                        </Button>
+                                                    );
+                                                })}
+                                                {eligible.length > 6 && (
+                                                    <span className="text-[11px] text-muted-foreground self-center">
+                                                        +{eligible.length - 6}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* No-action explanation */}
+                                        {hasAvailable && eligible.length === 0 && (
+                                            <div
+                                                className="text-[11px] text-muted-foreground italic"
+                                                data-testid={`inv-no-eligible-${r.id}`}
+                                            >
+                                                {usableCount === 0
+                                                    ? t("inventory_extra.not_usable_reason_level", { n: levelReq })
+                                                    : t("inventory_extra.no_compatible_adventurer")}
+                                            </div>
                                         )}
                                     </div>
-                                );
-                            })}
-                        </div>
-                    </>
+
+                                    {it.description && (
+                                        <p className="text-[11px] text-muted-foreground mt-3 pt-3 border-t border-border/60 italic">
+                                            {it.description}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 )}
             </main>
         </div>

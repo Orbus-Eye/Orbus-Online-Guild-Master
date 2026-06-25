@@ -63,6 +63,7 @@
     "email": "Email",
     "username": "Nome utente",
     "password": "Password",
+    "confirm_password": "Conferma password",
     "password_min": "min 8 caratteri",
     "submit_login": "Accedi",
     "submit_register": "Registrati",
@@ -84,8 +85,45 @@
     "errors": {
       "invalid_credentials": "Email o password non validi",
       "email_taken": "Email già registrata",
-      "weak_password": "Password troppo debole (min 8 caratteri)"
+      "weak_password": "Password troppo debole (min 8 caratteri)",
+      "password_mismatch": "Le password non coincidono"
     }
+  },
+  "password_input": {
+    "show_label": "Mostra password",
+    "hide_label": "Nascondi password"
+  },
+  "adventurer_modal": {
+    "header": "SCHEDA AVVENTURIERO",
+    "close": "Chiudi",
+    "level": "Lvl {n}",
+    "experience": "ESPERIENZA",
+    "total_power": "POTERE TOTALE",
+    "condition": "CONDIZIONE",
+    "condition_rested": "riposato",
+    "traits": "TRATTI",
+    "no_traits": "Nessun tratto.",
+    "equipment": "EQUIPAGGIAMENTO",
+    "slot_weapon": "ARMA",
+    "slot_armor": "ARMATURA",
+    "slot_accessory": "ACCESSORIO",
+    "slot_empty": "vuoto",
+    "open_sheet": "Vedi scheda"
+  },
+  "inventory_extra": {
+    "model_note": "Modello inventario: stack (copie multiple dello stesso oggetto, una prenotazione per equip).",
+    "requirements_label": "REQUISITI",
+    "req_level": "Lvl ≥ {n}",
+    "req_slot": "Slot: {slot}",
+    "status_label": "STATO",
+    "status_available": "Disponibile",
+    "status_equipped_by": "Equipaggiato da {names}",
+    "status_partial_equipped": "{equipped} equipaggiati · {available} disponibili",
+    "actions_label": "AZIONI",
+    "manage_on_adventurer": "Gestisci sull'avventuriero →",
+    "no_compatible_adventurer": "Nessun avventuriero può usare questo oggetto al momento.",
+    "usable_by": "Utilizzabile da {n} avventuriero/i",
+    "not_usable_reason_level": "Richiede livello {n}"
   },
   "create_guild": {
     "title": "Fonda la tua gilda",

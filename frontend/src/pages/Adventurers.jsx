@@ -7,6 +7,7 @@ import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { TraitList } from "../components/TraitBadge";
 import TraitPreviewWidget from "../components/TraitPreviewWidget";
+import AdventurerDetailModal from "../components/AdventurerDetailModal";
 
 // i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
 // intentionally NOT localized. They follow universal MMO/RPG convention and
@@ -85,7 +86,7 @@ function statBonusBadge(slot, item) {
     );
 }
 
-const Empty = () => (
+const Empty = ({ t }) => (
     <div
         data-testid="adventurers-empty"
         className="border border-border bg-card rounded-sm p-10 text-center"
@@ -109,6 +110,10 @@ export default function Adventurers() {
     const { t } = useT();
     const [rows, setRows] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selected, setSelected] = useState(null);
+
+    const openSheet = (a) => setSelected(a);
+    const closeSheet = () => setSelected(null);
 
     useEffect(() => {
         (async () => {
@@ -162,7 +167,7 @@ export default function Adventurers() {
                     </div>
                 )}
 
-                {!loading && rows && rows.length === 0 && <Empty />}
+                {!loading && rows && rows.length === 0 && <Empty t={t} />}
 
                 {!loading && rows && rows.length > 0 && (
                     <>
@@ -189,10 +194,22 @@ export default function Adventurers() {
                                         <tr
                                             key={a.id}
                                             data-testid={`adventurer-row-${a.id}`}
-                                            className="border-b border-border/60 hover:bg-secondary/20"
+                                            className="border-b border-border/60 hover:bg-secondary/20 cursor-pointer"
+                                            onClick={() => openSheet(a)}
                                         >
                                             <td className="px-3 py-2 whitespace-nowrap font-medium">
-                                                {a.name}
+                                                <button
+                                                    type="button"
+                                                    data-testid={`adventurer-name-${a.id}`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        openSheet(a);
+                                                    }}
+                                                    className="text-left hover:text-amber focus-visible:outline-none focus-visible:text-amber"
+                                                    title={t("adventurer_modal.open_sheet")}
+                                                >
+                                                    {a.name}
+                                                </button>
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                                                 {a.class_name}
@@ -222,7 +239,7 @@ export default function Adventurers() {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-3 py-2 whitespace-nowrap">
+                                            <td className="px-3 py-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                                 <Link
                                                     to={`/adventurers/${a.id}/equipment`}
                                                     data-testid={`equip-link-${a.id}`}
@@ -231,7 +248,7 @@ export default function Adventurers() {
                                                     {t("adventurers.manage")}
                                                 </Link>
                                             </td>
-                                            <td className="px-3 py-2 min-w-[160px]">
+                                            <td className="px-3 py-2 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
                                                 <TraitList traits={a.traits} />
                                                 {a.traits && a.traits.length > 0 && (
                                                     <TraitPreviewWidget
@@ -255,7 +272,16 @@ export default function Adventurers() {
                                 <div
                                     key={a.id}
                                     data-testid={`adventurer-card-${a.id}`}
-                                    className="border border-border bg-card rounded-sm p-4"
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => openSheet(a)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            openSheet(a);
+                                        }
+                                    }}
+                                    className="border border-border bg-card rounded-sm p-4 cursor-pointer hover:border-amber/40 focus-visible:outline-none focus-visible:border-amber/60"
                                 >
                                     <div className="flex items-start justify-between gap-2 mb-2">
                                         <div className="min-w-0">
@@ -311,7 +337,7 @@ export default function Adventurers() {
                                             />
                                         </div>
                                     )}
-                                    <div className="mt-3 pt-3 border-t border-border/60">
+                                    <div className="mt-3 pt-3 border-t border-border/60" onClick={(e) => e.stopPropagation()}>
                                         <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
                                             EQUIPMENT · POWER {a.total_power}
                                             {a.equipment_power > 0 && (
@@ -337,6 +363,8 @@ export default function Adventurers() {
                     </>
                 )}
             </main>
+
+            <AdventurerDetailModal adventurer={selected} onClose={closeSheet} />
         </div>
     );
 }

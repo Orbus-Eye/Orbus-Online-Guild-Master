@@ -63,6 +63,7 @@
     "email": "Email",
     "username": "Username",
     "password": "Password",
+    "confirm_password": "Confirm password",
     "password_min": "min 8 characters",
     "submit_login": "Login",
     "submit_register": "Register",
@@ -84,8 +85,45 @@
     "errors": {
       "invalid_credentials": "Invalid email or password",
       "email_taken": "Email already registered",
-      "weak_password": "Password too weak (min 8 chars)"
+      "weak_password": "Password too weak (min 8 chars)",
+      "password_mismatch": "Passwords do not match"
     }
+  },
+  "password_input": {
+    "show_label": "Show password",
+    "hide_label": "Hide password"
+  },
+  "adventurer_modal": {
+    "header": "ADVENTURER SHEET",
+    "close": "Close",
+    "level": "Lvl {n}",
+    "experience": "EXPERIENCE",
+    "total_power": "TOTAL POWER",
+    "condition": "CONDITION",
+    "condition_rested": "rested",
+    "traits": "TRAITS",
+    "no_traits": "No traits.",
+    "equipment": "EQUIPMENT",
+    "slot_weapon": "WEAPON",
+    "slot_armor": "ARMOR",
+    "slot_accessory": "ACCESSORY",
+    "slot_empty": "empty",
+    "open_sheet": "View details"
+  },
+  "inventory_extra": {
+    "model_note": "Inventory model: stacks (multiple copies of the same item, one reservation per equip).",
+    "requirements_label": "REQUIREMENTS",
+    "req_level": "Lvl ≥ {n}",
+    "req_slot": "Slot: {slot}",
+    "status_label": "STATUS",
+    "status_available": "Available",
+    "status_equipped_by": "Equipped by {names}",
+    "status_partial_equipped": "{equipped} equipped · {available} available",
+    "actions_label": "ACTIONS",
+    "manage_on_adventurer": "Manage on adventurer →",
+    "no_compatible_adventurer": "No adventurer can use this item right now.",
+    "usable_by": "Usable by {n} adventurer(s)",
+    "not_usable_reason_level": "Requires level {n}"
   },
   "create_guild": {
     "title": "Found your guild",
