@@ -83,13 +83,23 @@ class TestEmailProviderFactory:
         assert isinstance(provider, ResendProvider)
 
     def test_noop_when_resend_no_key(self, monkeypatch):
-        _Console, NoopProvider, _Resend, factory, reset = self._import()
+        """Phase 9.3 (post-SMTP refactor): resend requested without key
+        → dev/test falls back to ConsoleProvider; production falls back
+        to NoopProvider. We pin APP_ENV=production here to exercise the
+        loud-failure branch (the security-critical one)."""
+        ConsoleProvider, NoopProvider, _Resend, factory, reset = self._import()
         monkeypatch.setenv("EMAIL_PROVIDER", "resend")
         monkeypatch.setenv("RESEND_API_KEY", "")
+        monkeypatch.setenv("APP_ENV", "production")
         reset()
         provider = factory()
         assert isinstance(provider, NoopProvider)
         assert provider.name == "noop"
+        # Dev/test variant: safety fallback to Console
+        monkeypatch.setenv("APP_ENV", "development")
+        reset()
+        provider_dev = factory()
+        assert isinstance(provider_dev, ConsoleProvider)
 
     def test_default_dev_is_console(self, monkeypatch):
         ConsoleProvider, _Noop, _Resend, factory, reset = self._import()
