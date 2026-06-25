@@ -26,14 +26,7 @@ const RarityBadge = ({ rarity }) => (
     </span>
 );
 
-const formatDate = (iso) => {
-    if (!iso) return "—";
-    try {
-        return new Date(iso).toISOString().replace("T", " ").slice(0, 19) + " UTC";
-    } catch {
-        return iso;
-    }
-};
+import { formatDateTime as formatDate } from "../utils/dateFormat";
 
 const SummaryBadge = ({ summary, status }) => {
     if (status === "in_progress") {
@@ -78,7 +71,7 @@ const Cell = ({ label, value, testid, accent = false }) => (
 );
 
 export default function ExpeditionReport() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const { id } = useParams();
     const navigate = useNavigate();
     const { refreshGuild } = useAuth();
@@ -202,7 +195,9 @@ export default function ExpeditionReport() {
                             {e.dungeon_name}
                         </h1>
                         <div className="text-xs text-muted-foreground mt-1">
-                            {isDone ? `completed ${formatDate(e.completed_at)}` : `started ${formatDate(e.started_at)}`}
+                            {isDone
+                                ? t("expedition_report_page.completed_at", { at: formatDate(e.completed_at, lang) })
+                                : t("expedition_report_page.started_at", { at: formatDate(e.started_at, lang) })}
                         </div>
                     </div>
                     <div className="flex items-center gap-3 flex-wrap">

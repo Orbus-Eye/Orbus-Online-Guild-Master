@@ -6,14 +6,7 @@ import { useT } from "../i18n/I18nContext";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "") + "/api";
 
-const fmtDate = (iso) => {
-    if (!iso) return "—";
-    try {
-        return new Date(iso).toISOString().slice(0, 10);
-    } catch {
-        return iso;
-    }
-};
+import { formatDateShort as fmtDate } from "../utils/dateFormat";
 
 const RankBadge = ({ rank }) => {
     if (rank === 1)
@@ -64,7 +57,7 @@ const Skeleton = () => (
 );
 
 export default function Leaderboard() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -207,7 +200,7 @@ export default function Leaderboard() {
                                                 {e.guild_name}
                                             </div>
                                             <div className="text-[10px] text-muted-foreground">
-                                                founded {fmtDate(e.created_at)}
+                                                {t("leaderboard.founded_at", { at: fmtDate(e.created_at, lang) })}
                                             </div>
                                         </td>
                                         <td

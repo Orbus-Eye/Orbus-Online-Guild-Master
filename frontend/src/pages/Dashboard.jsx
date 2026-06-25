@@ -8,34 +8,7 @@ import OnboardingChecklist from "../components/OnboardingChecklist";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
-
-const formatDate = (iso) => {
-    if (!iso) return "—";
-    try {
-        const d = new Date(iso);
-        return d.toISOString().replace("T", " ").slice(0, 19) + " UTC";
-    } catch {
-        return iso;
-    }
-};
-
-const formatRelative = (iso) => {
-    if (!iso) return "";
-    try {
-        const t = new Date(iso).getTime();
-        const diff = Math.max(0, Date.now() - t);
-        const s = Math.floor(diff / 1000);
-        if (s < 60) return `${s}s ago`;
-        const m = Math.floor(s / 60);
-        if (m < 60) return `${m}m ago`;
-        const h = Math.floor(m / 60);
-        if (h < 24) return `${h}h ago`;
-        const d = Math.floor(h / 24);
-        return `${d}d ago`;
-    } catch {
-        return "";
-    }
-};
+import { formatDateTime, formatRelative } from "../utils/dateFormat";
 
 const Stat = ({ label, value, testid, accent = false }) => (
     <div className="border border-border bg-card rounded-sm p-4">
@@ -92,7 +65,7 @@ const LockedAction = ({ label, code, phase }) => (
 
 export default function Dashboard() {
     const { user, guild, refreshGuild } = useAuth();
-    const { t } = useT();
+    const { t, lang } = useT();
     const navigate = useNavigate();
     const [lastRun, setLastRun] = useState(null); // {expedition, can_replay, cannot_replay_reason} | null
     const [lastRunStatus, setLastRunStatus] = useState("loading"); // loading | none | ready
@@ -177,7 +150,7 @@ export default function Dashboard() {
                                 data-testid="guild-created-at"
                                 className="text-foreground"
                             >
-                                {formatDate(guild.created_at)}
+                                {formatDateTime(guild.created_at, lang)}
                             </span>
                         </div>
                     </div>
@@ -257,7 +230,7 @@ export default function Dashboard() {
                         to="/leaderboard"
                         data-testid="stat-peak-power-card"
                         className="border border-border bg-card rounded-sm p-4 hover:bg-secondary/40 hover:border-amber/55 transition-colors group block"
-                        title="View public guild leaderboard"
+                        title={t("dashboard.peak_power_tooltip")}
                     >
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] text-amber tracking-widest">
@@ -336,8 +309,8 @@ export default function Dashboard() {
                                         {lastRun.expedition.dungeon_name}
                                     </div>
                                     <div className="text-[10px] text-muted-foreground mt-1">
-                                        {formatRelative(lastRun.expedition.completed_at)}{" "}
-                                        · {formatDate(lastRun.expedition.completed_at)}
+                                        {formatRelative(lastRun.expedition.completed_at, lang, t)}{" "}
+                                        · {formatDateTime(lastRun.expedition.completed_at, lang)}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">

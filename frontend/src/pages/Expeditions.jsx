@@ -54,17 +54,10 @@ const formatRemaining = (s) => {
     return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
 };
 
-const formatDate = (iso) => {
-    if (!iso) return "—";
-    try {
-        return new Date(iso).toISOString().replace("T", " ").slice(0, 19) + " UTC";
-    } catch {
-        return iso;
-    }
-};
+import { formatDateTime as formatDate } from "../utils/dateFormat";
 
 export default function Expeditions() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const [exps, setExps] = useState(null);
     const [loading, setLoading] = useState(true);
     const { refreshGuild } = useAuth();
@@ -194,7 +187,7 @@ export default function Expeditions() {
                                         <div className="min-w-0">
                                             <div className="font-medium">{e.dungeon_name}</div>
                                             <div className="text-[11px] text-muted-foreground mt-0.5">
-                                                started {formatDate(e.started_at)}
+                                                {t("expeditions.started_at", { at: formatDate(e.started_at, lang) })}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
@@ -246,7 +239,7 @@ export default function Expeditions() {
                                                 {e.gold_reward}g
                                             </td>
                                             <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
-                                                {formatDate(e.completed_at)}
+                                                {formatDate(e.completed_at, lang)}
                                             </td>
                                             <td className="px-3 py-2 text-right whitespace-nowrap">
                                                 <Link

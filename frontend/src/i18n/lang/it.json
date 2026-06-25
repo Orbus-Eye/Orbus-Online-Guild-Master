@@ -21,7 +21,13 @@
     "empty": "Niente ancora",
     "of": "di",
     "gold": "oro",
-    "gold_short": "o"
+    "gold_short": "o",
+    "relative": {
+      "s_ago": "{n}s fa",
+      "m_ago": "{n}m fa",
+      "h_ago": "{n}h fa",
+      "d_ago": "{n}g fa"
+    }
   },
   "nav": {
     "dashboard": "DASH",
@@ -117,9 +123,9 @@
       "dungeons": "Dungeon",
       "inventory": "Deposito"
     },
-    "no_description": "nessuna descrizione",
     "recent_reports": ":: REPORT RECENTI",
-    "no_recent_reports": "Nessuna spedizione. Inizia la tua prima nei DUNGEON."
+    "no_recent_reports": "Nessuna spedizione. Inizia la tua prima nei DUNGEON.",
+    "peak_power_tooltip": "Apri la classifica pubblica delle gilde"
   },
   "onboarding": {
     "header": ":: TUTORIAL · STEP {step} DI 5",
@@ -223,9 +229,15 @@
     "locked": "BLOCCATA",
     "reward_gold": "oro",
     "claim_success": "Ricompensa missione riscossa: +{gold} oro",
-    "expedition_complete": { "title": "Completa 1 spedizione" },
-    "recruit": { "title": "Recluta 1 avventuriero" },
-    "equip": { "title": "Equipaggia 1 oggetto" }
+    "expedition_complete": {
+      "title": "Completa 1 spedizione"
+    },
+    "recruit": {
+      "title": "Recluta 1 avventuriero"
+    },
+    "equip": {
+      "title": "Equipaggia 1 oggetto"
+    }
   },
   "dungeons": {
     "title": "Dungeon",
@@ -270,7 +282,8 @@
       "xp_gained": "XP guadagnato",
       "gold_gained": "Oro guadagnato",
       "no_loot": "Nessun bottino questa volta."
-    }
+    },
+    "started_at": "iniziata {at}"
   },
   "inventory": {
     "title": "Deposito",
@@ -303,7 +316,8 @@
     "guild": "Gilda",
     "peak_power": "Potenza Peak",
     "level": "Livello",
-    "no_data": "Nessuna gilda in classifica."
+    "no_data": "Nessuna gilda in classifica.",
+    "founded_at": "fondata il {at}"
   },
   "admin": {
     "title": "Admin",
@@ -376,7 +390,9 @@
     "final_power": "Potenza finale squadra",
     "success_no_equip": "Probabilità (senza equip)",
     "success_final": "Probabilità (finale)",
-    "toast_replay_started": "Replay avviato: {dungeon}"
+    "toast_replay_started": "Replay avviato: {dungeon}",
+    "started_at": "iniziata {at}",
+    "completed_at": "completata {at}"
   },
   "create_guild_page": {
     "name_placeholder": "La Lanterna di Ferro",
@@ -426,11 +442,21 @@
   },
   "content": {
     "stat": {
-      "strength": { "name": "forza" },
-      "agility": { "name": "agilità" },
-      "intellect": { "name": "intelletto" },
-      "endurance": { "name": "resistenza" },
-      "faith": { "name": "fede" }
+      "strength": {
+        "name": "forza"
+      },
+      "agility": {
+        "name": "agilità"
+      },
+      "intellect": {
+        "name": "intelletto"
+      },
+      "endurance": {
+        "name": "resistenza"
+      },
+      "faith": {
+        "name": "fede"
+      }
     },
     "rarity": {
       "common": "Comune",
@@ -475,78 +501,290 @@
       "defeat": "Sconfitta"
     },
     "class": {
-      "warrior": { "name": "Guerriero", "role": "Tank", "description": "Combattente da mischia, alta resistenza." },
-      "rogue": { "name": "Ladro", "role": "DPS", "description": "Sicario agile che vive di iniziativa." },
-      "mage": { "name": "Mago", "role": "DPS", "description": "Lanciatore arcano con danno burst enorme." },
-      "cleric": { "name": "Chierico", "role": "Curatore", "description": "Supporto divino, tiene in vita la squadra." },
-      "ranger": { "name": "Ranger", "role": "DPS", "description": "Schermagliatore con vantaggio a distanza." },
-      "paladin": { "name": "Paladino", "role": "Tank", "description": "Guardia sacra, offesa e difesa bilanciate." },
-      "warlock": { "name": "Stregone", "role": "DPS", "description": "Patto oscuro: scambia vita per potere." },
-      "monk": { "name": "Monaco", "role": "DPS", "description": "Marziale disciplinato, schiva spesso." },
-      "druid": { "name": "Druido", "role": "Supporto", "description": "Mutaforma naturale, kit flessibile." },
-      "bard": { "name": "Bardo", "role": "Supporto", "description": "Ispira alleati, indebolisce nemici." },
-      "necromancer": { "name": "Necromante", "role": "DPS", "description": "Comanda i morti, prosciuga i nemici." },
-      "berserker": { "name": "Berserker", "role": "DPS", "description": "Picchiatore folle, alto rischio/ricompensa." }
+      "warrior": {
+        "name": "Guerriero",
+        "role": "Tank",
+        "description": "Combattente da mischia, alta resistenza."
+      },
+      "rogue": {
+        "name": "Ladro",
+        "role": "DPS",
+        "description": "Sicario agile che vive di iniziativa."
+      },
+      "mage": {
+        "name": "Mago",
+        "role": "DPS",
+        "description": "Lanciatore arcano con danno burst enorme."
+      },
+      "cleric": {
+        "name": "Chierico",
+        "role": "Curatore",
+        "description": "Supporto divino, tiene in vita la squadra."
+      },
+      "ranger": {
+        "name": "Ranger",
+        "role": "DPS",
+        "description": "Schermagliatore con vantaggio a distanza."
+      },
+      "paladin": {
+        "name": "Paladino",
+        "role": "Tank",
+        "description": "Guardia sacra, offesa e difesa bilanciate."
+      },
+      "warlock": {
+        "name": "Stregone",
+        "role": "DPS",
+        "description": "Patto oscuro: scambia vita per potere."
+      },
+      "monk": {
+        "name": "Monaco",
+        "role": "DPS",
+        "description": "Marziale disciplinato, schiva spesso."
+      },
+      "druid": {
+        "name": "Druido",
+        "role": "Supporto",
+        "description": "Mutaforma naturale, kit flessibile."
+      },
+      "bard": {
+        "name": "Bardo",
+        "role": "Supporto",
+        "description": "Ispira alleati, indebolisce nemici."
+      },
+      "necromancer": {
+        "name": "Necromante",
+        "role": "DPS",
+        "description": "Comanda i morti, prosciuga i nemici."
+      },
+      "berserker": {
+        "name": "Berserker",
+        "role": "DPS",
+        "description": "Picchiatore folle, alto rischio/ricompensa."
+      }
     },
     "trait": {
-      "brave": { "name": "Coraggioso", "description": "Forza grezza sotto pressione." },
-      "quick_learner": { "name": "Studioso Veloce", "description": "Apprende esperienza più in fretta." },
-      "frail": { "name": "Fragile", "description": "Costituzione debole; si stanca prima." },
-      "sharp_eye": { "name": "Occhio Acuto", "description": "Coglie aperture invisibili agli altri." },
-      "devout": { "name": "Devoto", "description": "Ancorato a una chiamata superiore." },
-      "iron-willed": { "name": "Volere d'Acciaio", "description": "Ostinato di fronte al dolore." },
-      "scholar": { "name": "Erudito", "description": "Una vita tra libri polverosi paga." },
-      "lightfoot": { "name": "Passo Leggero", "description": "Si muove senza far rumore." },
-      "bull-strong": { "name": "Forza di Toro", "description": "Porta il doppio del suo peso senza lamentarsi." },
-      "blessed": { "name": "Benedetto", "description": "Nato sotto una stella gentile." },
-      "fast_reader": { "name": "Lettore Veloce", "description": "Traduce pergamene al volo." },
-      "veteran's_eye": { "name": "Occhio del Veterano", "description": "Ha già visto questa battaglia." },
-      "clumsy": { "name": "Goffo", "description": "Inciampa nei propri piedi." },
-      "slow-witted": { "name": "Tardo di Mente", "description": "Prende la via più lunga." },
-      "weak-armed": { "name": "Braccio Debole", "description": "Non riesce a tendere un arco pesante." },
-      "faithless": { "name": "Senza Fede", "description": "Non ha nulla a cui pregare." },
-      "sickly": { "name": "Cagionevole", "description": "Prende ogni raffreddore." },
-      "lucky": { "name": "Fortunato", "description": "Migliori tiri sul bottino." },
-      "tough": { "name": "Duro", "description": "Resistenza maggiore." },
-      "swift": { "name": "Veloce", "description": "Agilità maggiore." },
-      "wise": { "name": "Saggio", "description": "Intelletto maggiore." },
-      "pious": { "name": "Pio", "description": "Fede maggiore." },
-      "strong": { "name": "Forte", "description": "Forza maggiore." },
-      "vigilant": { "name": "Vigile", "description": "Meglio contro le imboscate." },
-      "patient": { "name": "Paziente", "description": "Meno stamina consumata." },
-      "merciless": { "name": "Spietato", "description": "Più danno critico." },
-      "cunning": { "name": "Astuto", "description": "Migliore rilevamento trappole." },
-      "stalwart": { "name": "Tenace", "description": "Tiene posizione contro orde." },
-      "fearless": { "name": "Senza paura", "description": "Ignora la perdita di morale." },
-      "scholar": { "name": "Studioso", "description": "Più XP dalle run." },
-      "thrifty": { "name": "Parsimonioso", "description": "Più oro dai drop." },
-      "graceful": { "name": "Aggraziato", "description": "Meno mancati colpi." },
-      "iron_will": { "name": "Volontà di ferro", "description": "Resiste a charm/paura." },
-      "battle_hardened": { "name": "Temprato in battaglia", "description": "Subisce meno danno." },
-      "veteran": { "name": "Veterano", "description": "XP iniziale maggiore." },
-      "natural_leader": { "name": "Leader naturale", "description": "Aumenta morale del party." },
-      "loyal": { "name": "Leale", "description": "Non diserta mai." },
-      "stoic": { "name": "Stoico", "description": "Meno stamina nelle run lunghe." },
-      "agile": { "name": "Agile", "description": "Maggiore schivata." },
-      "athletic": { "name": "Atletico", "description": "Stamina massima maggiore." },
-      "perceptive": { "name": "Percettivo", "description": "Trova bottino nascosto." },
-      "fortunate": { "name": "Baciato dalla sorte", "description": "Meno fallimenti critici." },
-      "iron_constitution": { "name": "Costituzione di ferro", "description": "Resiste a veleno/malattia." },
-      "tireless": { "name": "Instancabile", "description": "Recupera stamina più in fretta." },
-      "berserker_blood": { "name": "Sangue berserker", "description": "Più danno con poca HP." },
-      "shadow_walker": { "name": "Camminaombra", "description": "Bonus furtività." }
+      "brave": {
+        "name": "Coraggioso",
+        "description": "Forza grezza sotto pressione."
+      },
+      "quick_learner": {
+        "name": "Studioso Veloce",
+        "description": "Apprende esperienza più in fretta."
+      },
+      "frail": {
+        "name": "Fragile",
+        "description": "Costituzione debole; si stanca prima."
+      },
+      "sharp_eye": {
+        "name": "Occhio Acuto",
+        "description": "Coglie aperture invisibili agli altri."
+      },
+      "devout": {
+        "name": "Devoto",
+        "description": "Ancorato a una chiamata superiore."
+      },
+      "iron-willed": {
+        "name": "Volere d'Acciaio",
+        "description": "Ostinato di fronte al dolore."
+      },
+      "scholar": {
+        "name": "Studioso",
+        "description": "Più XP dalle run."
+      },
+      "lightfoot": {
+        "name": "Passo Leggero",
+        "description": "Si muove senza far rumore."
+      },
+      "bull-strong": {
+        "name": "Forza di Toro",
+        "description": "Porta il doppio del suo peso senza lamentarsi."
+      },
+      "blessed": {
+        "name": "Benedetto",
+        "description": "Nato sotto una stella gentile."
+      },
+      "fast_reader": {
+        "name": "Lettore Veloce",
+        "description": "Traduce pergamene al volo."
+      },
+      "veteran's_eye": {
+        "name": "Occhio del Veterano",
+        "description": "Ha già visto questa battaglia."
+      },
+      "clumsy": {
+        "name": "Goffo",
+        "description": "Inciampa nei propri piedi."
+      },
+      "slow-witted": {
+        "name": "Tardo di Mente",
+        "description": "Prende la via più lunga."
+      },
+      "weak-armed": {
+        "name": "Braccio Debole",
+        "description": "Non riesce a tendere un arco pesante."
+      },
+      "faithless": {
+        "name": "Senza Fede",
+        "description": "Non ha nulla a cui pregare."
+      },
+      "sickly": {
+        "name": "Cagionevole",
+        "description": "Prende ogni raffreddore."
+      },
+      "lucky": {
+        "name": "Fortunato",
+        "description": "Migliori tiri sul bottino."
+      },
+      "tough": {
+        "name": "Duro",
+        "description": "Resistenza maggiore."
+      },
+      "swift": {
+        "name": "Veloce",
+        "description": "Agilità maggiore."
+      },
+      "wise": {
+        "name": "Saggio",
+        "description": "Intelletto maggiore."
+      },
+      "pious": {
+        "name": "Pio",
+        "description": "Fede maggiore."
+      },
+      "strong": {
+        "name": "Forte",
+        "description": "Forza maggiore."
+      },
+      "vigilant": {
+        "name": "Vigile",
+        "description": "Meglio contro le imboscate."
+      },
+      "patient": {
+        "name": "Paziente",
+        "description": "Meno stamina consumata."
+      },
+      "merciless": {
+        "name": "Spietato",
+        "description": "Più danno critico."
+      },
+      "cunning": {
+        "name": "Astuto",
+        "description": "Migliore rilevamento trappole."
+      },
+      "stalwart": {
+        "name": "Tenace",
+        "description": "Tiene posizione contro orde."
+      },
+      "fearless": {
+        "name": "Senza paura",
+        "description": "Ignora la perdita di morale."
+      },
+      "thrifty": {
+        "name": "Parsimonioso",
+        "description": "Più oro dai drop."
+      },
+      "graceful": {
+        "name": "Aggraziato",
+        "description": "Meno mancati colpi."
+      },
+      "iron_will": {
+        "name": "Volontà di ferro",
+        "description": "Resiste a charm/paura."
+      },
+      "battle_hardened": {
+        "name": "Temprato in battaglia",
+        "description": "Subisce meno danno."
+      },
+      "veteran": {
+        "name": "Veterano",
+        "description": "XP iniziale maggiore."
+      },
+      "natural_leader": {
+        "name": "Leader naturale",
+        "description": "Aumenta morale del party."
+      },
+      "loyal": {
+        "name": "Leale",
+        "description": "Non diserta mai."
+      },
+      "stoic": {
+        "name": "Stoico",
+        "description": "Meno stamina nelle run lunghe."
+      },
+      "agile": {
+        "name": "Agile",
+        "description": "Maggiore schivata."
+      },
+      "athletic": {
+        "name": "Atletico",
+        "description": "Stamina massima maggiore."
+      },
+      "perceptive": {
+        "name": "Percettivo",
+        "description": "Trova bottino nascosto."
+      },
+      "fortunate": {
+        "name": "Baciato dalla sorte",
+        "description": "Meno fallimenti critici."
+      },
+      "iron_constitution": {
+        "name": "Costituzione di ferro",
+        "description": "Resiste a veleno/malattia."
+      },
+      "tireless": {
+        "name": "Instancabile",
+        "description": "Recupera stamina più in fretta."
+      },
+      "berserker_blood": {
+        "name": "Sangue berserker",
+        "description": "Più danno con poca HP."
+      },
+      "shadow_walker": {
+        "name": "Camminaombra",
+        "description": "Bonus furtività."
+      }
     },
     "dungeon": {
-      "goblin-warrens": { "name": "Tane dei Goblin", "description": "Un labirinto di tunnel umidi pieno di goblin scout. Il posto sicuro per imparare." },
-      "sewer-nest": { "name": "Nido di Fogna", "description": "Livelli puzzolenti infestati da ratti giganti e melme." },
-      "bandit-hideout": { "name": "Covo dei Banditi", "description": "Un campo di banditi umani con armi rubate alle carovane." },
-      "druid-grove": { "name": "Bosco dei Druidi", "description": "Un boschetto sacro corrotto. Attenzione alla natura impazzita." },
-      "cursed-mines": { "name": "Miniere Maledette", "description": "Miniere nanesche abbandonate, ora infestate da minatori non morti." },
-      "shadow-crypts": { "name": "Cripte d'Ombra", "description": "Tombe dimenticate sorvegliate da spettri e spiriti vincolati." },
-      "sunken-library": { "name": "Biblioteca Sommersa", "description": "Biblioteca affogata di tomi proibiti; orrori arcani pattugliano i corridoi." },
-      "lich-sanctum": { "name": "Sancta del Lich", "description": "La sala del trono di un arcimago morto da tempo. Pericolo alto, ricompensa alta." },
-      "storm-spire": { "name": "Guglia della Tempesta", "description": "Una torre colpita di continuo da fulmini. Elementali d'aria dominano i piani alti." },
-      "dragons-hoard": { "name": "Tesoro del Drago", "description": "Tana di un'antica wyrm. Solo i più forti osano entrare." }
+      "goblin-warrens": {
+        "name": "Tane dei Goblin",
+        "description": "Un labirinto di tunnel umidi pieno di goblin scout. Il posto sicuro per imparare."
+      },
+      "sewer-nest": {
+        "name": "Nido di Fogna",
+        "description": "Livelli puzzolenti infestati da ratti giganti e melme."
+      },
+      "bandit-hideout": {
+        "name": "Covo dei Banditi",
+        "description": "Un campo di banditi umani con armi rubate alle carovane."
+      },
+      "druid-grove": {
+        "name": "Bosco dei Druidi",
+        "description": "Un boschetto sacro corrotto. Attenzione alla natura impazzita."
+      },
+      "cursed-mines": {
+        "name": "Miniere Maledette",
+        "description": "Miniere nanesche abbandonate, ora infestate da minatori non morti."
+      },
+      "shadow-crypts": {
+        "name": "Cripte d'Ombra",
+        "description": "Tombe dimenticate sorvegliate da spettri e spiriti vincolati."
+      },
+      "sunken-library": {
+        "name": "Biblioteca Sommersa",
+        "description": "Biblioteca affogata di tomi proibiti; orrori arcani pattugliano i corridoi."
+      },
+      "lich-sanctum": {
+        "name": "Sancta del Lich",
+        "description": "La sala del trono di un arcimago morto da tempo. Pericolo alto, ricompensa alta."
+      },
+      "storm-spire": {
+        "name": "Guglia della Tempesta",
+        "description": "Una torre colpita di continuo da fulmini. Elementali d'aria dominano i piani alti."
+      },
+      "dragons-hoard": {
+        "name": "Tesoro del Drago",
+        "description": "Tana di un'antica wyrm. Solo i più forti osano entrare."
+      }
     }
   }
 }

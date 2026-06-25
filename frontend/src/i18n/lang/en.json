@@ -21,7 +21,13 @@
     "empty": "Nothing here yet",
     "of": "of",
     "gold": "gold",
-    "gold_short": "g"
+    "gold_short": "g",
+    "relative": {
+      "s_ago": "{n}s ago",
+      "m_ago": "{n}m ago",
+      "h_ago": "{n}h ago",
+      "d_ago": "{n}d ago"
+    }
   },
   "nav": {
     "dashboard": "DASH",
@@ -117,9 +123,9 @@
       "dungeons": "Dungeons",
       "inventory": "Inventory"
     },
-    "no_description": "no description set",
     "recent_reports": ":: RECENT REPORTS",
-    "no_recent_reports": "No expeditions yet. Start your first run in DUNGEONS."
+    "no_recent_reports": "No expeditions yet. Start your first run in DUNGEONS.",
+    "peak_power_tooltip": "View public guild leaderboard"
   },
   "onboarding": {
     "header": ":: ONBOARDING · STEP {step} OF 5",
@@ -223,9 +229,15 @@
     "locked": "LOCKED",
     "reward_gold": "gold",
     "claim_success": "Quest reward claimed: +{gold} gold",
-    "expedition_complete": { "title": "Complete 1 expedition" },
-    "recruit": { "title": "Recruit 1 adventurer" },
-    "equip": { "title": "Equip 1 item" }
+    "expedition_complete": {
+      "title": "Complete 1 expedition"
+    },
+    "recruit": {
+      "title": "Recruit 1 adventurer"
+    },
+    "equip": {
+      "title": "Equip 1 item"
+    }
   },
   "dungeons": {
     "title": "Dungeons",
@@ -270,7 +282,8 @@
       "xp_gained": "XP gained",
       "gold_gained": "Gold gained",
       "no_loot": "No loot dropped this time."
-    }
+    },
+    "started_at": "started {at}"
   },
   "inventory": {
     "title": "Inventory",
@@ -303,7 +316,8 @@
     "guild": "Guild",
     "peak_power": "Peak Power",
     "level": "Level",
-    "no_data": "No guilds on the leaderboard yet."
+    "no_data": "No guilds on the leaderboard yet.",
+    "founded_at": "founded {at}"
   },
   "admin": {
     "title": "Admin",
@@ -376,7 +390,9 @@
     "final_power": "Final team power",
     "success_no_equip": "Success chance (no equip)",
     "success_final": "Success chance (final)",
-    "toast_replay_started": "Replay started: {dungeon}"
+    "toast_replay_started": "Replay started: {dungeon}",
+    "started_at": "started {at}",
+    "completed_at": "completed {at}"
   },
   "create_guild_page": {
     "name_placeholder": "The Iron Lantern",
@@ -426,11 +442,21 @@
   },
   "content": {
     "stat": {
-      "strength": { "name": "strength" },
-      "agility": { "name": "agility" },
-      "intellect": { "name": "intellect" },
-      "endurance": { "name": "endurance" },
-      "faith": { "name": "faith" }
+      "strength": {
+        "name": "strength"
+      },
+      "agility": {
+        "name": "agility"
+      },
+      "intellect": {
+        "name": "intellect"
+      },
+      "endurance": {
+        "name": "endurance"
+      },
+      "faith": {
+        "name": "faith"
+      }
     },
     "rarity": {
       "common": "Common",
@@ -475,78 +501,290 @@
       "defeat": "Defeat"
     },
     "class": {
-      "warrior": { "name": "Warrior", "role": "Tank", "description": "Frontline melee fighter, high endurance." },
-      "rogue": { "name": "Rogue", "role": "DPS", "description": "Agile striker that thrives on initiative." },
-      "mage": { "name": "Mage", "role": "DPS", "description": "Arcane caster with massive burst damage." },
-      "cleric": { "name": "Cleric", "role": "Healer", "description": "Divine support, keeps the party alive." },
-      "ranger": { "name": "Ranger", "role": "DPS", "description": "Skirmisher with ranged advantage." },
-      "paladin": { "name": "Paladin", "role": "Tank", "description": "Holy guardian, balanced offense and defense." },
-      "warlock": { "name": "Warlock", "role": "DPS", "description": "Pact-bound caster trading life for power." },
-      "monk": { "name": "Monk", "role": "DPS", "description": "Disciplined martial artist, evasive." },
-      "druid": { "name": "Druid", "role": "Support", "description": "Nature shapeshifter, flexible kit." },
-      "bard": { "name": "Bard", "role": "Support", "description": "Inspires allies, weakens enemies." },
-      "necromancer": { "name": "Necromancer", "role": "DPS", "description": "Commands the dead, drains foes." },
-      "berserker": { "name": "Berserker", "role": "DPS", "description": "Reckless brawler, high risk / reward." }
+      "warrior": {
+        "name": "Warrior",
+        "role": "Tank",
+        "description": "Frontline melee fighter, high endurance."
+      },
+      "rogue": {
+        "name": "Rogue",
+        "role": "DPS",
+        "description": "Agile striker that thrives on initiative."
+      },
+      "mage": {
+        "name": "Mage",
+        "role": "DPS",
+        "description": "Arcane caster with massive burst damage."
+      },
+      "cleric": {
+        "name": "Cleric",
+        "role": "Healer",
+        "description": "Divine support, keeps the party alive."
+      },
+      "ranger": {
+        "name": "Ranger",
+        "role": "DPS",
+        "description": "Skirmisher with ranged advantage."
+      },
+      "paladin": {
+        "name": "Paladin",
+        "role": "Tank",
+        "description": "Holy guardian, balanced offense and defense."
+      },
+      "warlock": {
+        "name": "Warlock",
+        "role": "DPS",
+        "description": "Pact-bound caster trading life for power."
+      },
+      "monk": {
+        "name": "Monk",
+        "role": "DPS",
+        "description": "Disciplined martial artist, evasive."
+      },
+      "druid": {
+        "name": "Druid",
+        "role": "Support",
+        "description": "Nature shapeshifter, flexible kit."
+      },
+      "bard": {
+        "name": "Bard",
+        "role": "Support",
+        "description": "Inspires allies, weakens enemies."
+      },
+      "necromancer": {
+        "name": "Necromancer",
+        "role": "DPS",
+        "description": "Commands the dead, drains foes."
+      },
+      "berserker": {
+        "name": "Berserker",
+        "role": "DPS",
+        "description": "Reckless brawler, high risk / reward."
+      }
     },
     "trait": {
-      "brave": { "name": "Brave", "description": "Steady under pressure; lends raw strength." },
-      "quick_learner": { "name": "Quick Learner", "description": "Soaks up experience faster than peers." },
-      "frail": { "name": "Frail", "description": "Weaker constitution; tires sooner." },
-      "sharp_eye": { "name": "Sharp Eye", "description": "Spots openings others miss." },
-      "devout": { "name": "Devout", "description": "Anchored to a higher calling." },
-      "iron-willed": { "name": "Iron-Willed", "description": "Stubborn in the face of pain." },
-      "scholar": { "name": "Scholar", "description": "A lifetime of dusty libraries pays off." },
-      "lightfoot": { "name": "Lightfoot", "description": "Moves without a sound." },
-      "bull-strong": { "name": "Bull-Strong", "description": "Carries twice their weight without complaint." },
-      "blessed": { "name": "Blessed", "description": "Born under a kind star." },
-      "fast_reader": { "name": "Fast Reader", "description": "Translates scrolls on the fly." },
-      "veteran's_eye": { "name": "Veteran's Eye", "description": "Has seen this fight before." },
-      "clumsy": { "name": "Clumsy", "description": "Trips over their own feet." },
-      "slow-witted": { "name": "Slow-Witted", "description": "Takes the long way around." },
-      "weak-armed": { "name": "Weak-Armed", "description": "Cannot draw a heavy bow." },
-      "faithless": { "name": "Faithless", "description": "Has nothing to pray to." },
-      "sickly": { "name": "Sickly", "description": "Catches every cold." },
-      "lucky": { "name": "Lucky", "description": "Better loot rolls." },
-      "tough": { "name": "Tough", "description": "Higher endurance." },
-      "swift": { "name": "Swift", "description": "Higher agility." },
-      "wise": { "name": "Wise", "description": "Higher intellect." },
-      "pious": { "name": "Pious", "description": "Higher faith." },
-      "strong": { "name": "Strong", "description": "Higher strength." },
-      "vigilant": { "name": "Vigilant", "description": "Better ambush avoidance." },
-      "patient": { "name": "Patient", "description": "Lower stamina drain." },
-      "merciless": { "name": "Merciless", "description": "More crit damage." },
-      "cunning": { "name": "Cunning", "description": "More trap detection." },
-      "stalwart": { "name": "Stalwart", "description": "Holds ground vs swarms." },
-      "fearless": { "name": "Fearless", "description": "Ignores morale loss." },
-      "scholar": { "name": "Scholar", "description": "More XP from runs." },
-      "thrifty": { "name": "Thrifty", "description": "Better gold drops." },
-      "graceful": { "name": "Graceful", "description": "Lower miss rate." },
-      "iron_will": { "name": "Iron Will", "description": "Resists charm/fear." },
-      "battle_hardened": { "name": "Battle Hardened", "description": "Less damage taken." },
-      "veteran": { "name": "Veteran", "description": "More starting XP." },
-      "natural_leader": { "name": "Natural Leader", "description": "Boosts party morale." },
-      "loyal": { "name": "Loyal", "description": "Never deserts." },
-      "stoic": { "name": "Stoic", "description": "Less stamina drain in long runs." },
-      "agile": { "name": "Agile", "description": "Higher dodge." },
-      "athletic": { "name": "Athletic", "description": "Higher max stamina." },
-      "perceptive": { "name": "Perceptive", "description": "Spots hidden loot." },
-      "fortunate": { "name": "Fortunate", "description": "Lower crit-failure rate." },
-      "iron_constitution": { "name": "Iron Constitution", "description": "Resists poison/disease." },
-      "tireless": { "name": "Tireless", "description": "Faster stamina recovery." },
-      "berserker_blood": { "name": "Berserker Blood", "description": "More damage when low HP." },
-      "shadow_walker": { "name": "Shadow Walker", "description": "Stealth bonus." }
+      "brave": {
+        "name": "Brave",
+        "description": "Steady under pressure; lends raw strength."
+      },
+      "quick_learner": {
+        "name": "Quick Learner",
+        "description": "Soaks up experience faster than peers."
+      },
+      "frail": {
+        "name": "Frail",
+        "description": "Weaker constitution; tires sooner."
+      },
+      "sharp_eye": {
+        "name": "Sharp Eye",
+        "description": "Spots openings others miss."
+      },
+      "devout": {
+        "name": "Devout",
+        "description": "Anchored to a higher calling."
+      },
+      "iron-willed": {
+        "name": "Iron-Willed",
+        "description": "Stubborn in the face of pain."
+      },
+      "scholar": {
+        "name": "Scholar",
+        "description": "More XP from runs."
+      },
+      "lightfoot": {
+        "name": "Lightfoot",
+        "description": "Moves without a sound."
+      },
+      "bull-strong": {
+        "name": "Bull-Strong",
+        "description": "Carries twice their weight without complaint."
+      },
+      "blessed": {
+        "name": "Blessed",
+        "description": "Born under a kind star."
+      },
+      "fast_reader": {
+        "name": "Fast Reader",
+        "description": "Translates scrolls on the fly."
+      },
+      "veteran's_eye": {
+        "name": "Veteran's Eye",
+        "description": "Has seen this fight before."
+      },
+      "clumsy": {
+        "name": "Clumsy",
+        "description": "Trips over their own feet."
+      },
+      "slow-witted": {
+        "name": "Slow-Witted",
+        "description": "Takes the long way around."
+      },
+      "weak-armed": {
+        "name": "Weak-Armed",
+        "description": "Cannot draw a heavy bow."
+      },
+      "faithless": {
+        "name": "Faithless",
+        "description": "Has nothing to pray to."
+      },
+      "sickly": {
+        "name": "Sickly",
+        "description": "Catches every cold."
+      },
+      "lucky": {
+        "name": "Lucky",
+        "description": "Better loot rolls."
+      },
+      "tough": {
+        "name": "Tough",
+        "description": "Higher endurance."
+      },
+      "swift": {
+        "name": "Swift",
+        "description": "Higher agility."
+      },
+      "wise": {
+        "name": "Wise",
+        "description": "Higher intellect."
+      },
+      "pious": {
+        "name": "Pious",
+        "description": "Higher faith."
+      },
+      "strong": {
+        "name": "Strong",
+        "description": "Higher strength."
+      },
+      "vigilant": {
+        "name": "Vigilant",
+        "description": "Better ambush avoidance."
+      },
+      "patient": {
+        "name": "Patient",
+        "description": "Lower stamina drain."
+      },
+      "merciless": {
+        "name": "Merciless",
+        "description": "More crit damage."
+      },
+      "cunning": {
+        "name": "Cunning",
+        "description": "More trap detection."
+      },
+      "stalwart": {
+        "name": "Stalwart",
+        "description": "Holds ground vs swarms."
+      },
+      "fearless": {
+        "name": "Fearless",
+        "description": "Ignores morale loss."
+      },
+      "thrifty": {
+        "name": "Thrifty",
+        "description": "Better gold drops."
+      },
+      "graceful": {
+        "name": "Graceful",
+        "description": "Lower miss rate."
+      },
+      "iron_will": {
+        "name": "Iron Will",
+        "description": "Resists charm/fear."
+      },
+      "battle_hardened": {
+        "name": "Battle Hardened",
+        "description": "Less damage taken."
+      },
+      "veteran": {
+        "name": "Veteran",
+        "description": "More starting XP."
+      },
+      "natural_leader": {
+        "name": "Natural Leader",
+        "description": "Boosts party morale."
+      },
+      "loyal": {
+        "name": "Loyal",
+        "description": "Never deserts."
+      },
+      "stoic": {
+        "name": "Stoic",
+        "description": "Less stamina drain in long runs."
+      },
+      "agile": {
+        "name": "Agile",
+        "description": "Higher dodge."
+      },
+      "athletic": {
+        "name": "Athletic",
+        "description": "Higher max stamina."
+      },
+      "perceptive": {
+        "name": "Perceptive",
+        "description": "Spots hidden loot."
+      },
+      "fortunate": {
+        "name": "Fortunate",
+        "description": "Lower crit-failure rate."
+      },
+      "iron_constitution": {
+        "name": "Iron Constitution",
+        "description": "Resists poison/disease."
+      },
+      "tireless": {
+        "name": "Tireless",
+        "description": "Faster stamina recovery."
+      },
+      "berserker_blood": {
+        "name": "Berserker Blood",
+        "description": "More damage when low HP."
+      },
+      "shadow_walker": {
+        "name": "Shadow Walker",
+        "description": "Stealth bonus."
+      }
     },
     "dungeon": {
-      "goblin-warrens": { "name": "Goblin Warrens", "description": "A maze of damp tunnels infested with goblin scouts. A safe place to learn." },
-      "sewer-nest": { "name": "Sewer Nest", "description": "Stinking sewer levels overrun by giant rats and slimes." },
-      "bandit-hideout": { "name": "Bandit Hideout", "description": "A camp of human bandits with weapons stolen from caravans." },
-      "druid-grove": { "name": "Druid Grove", "description": "A corrupted sacred grove. Beware nature gone wild." },
-      "cursed-mines": { "name": "Cursed Mines", "description": "Abandoned dwarven mines now haunted by undead miners." },
-      "shadow-crypts": { "name": "Shadow Crypts", "description": "Forgotten tombs guarded by wraiths and bound spirits." },
-      "sunken-library": { "name": "Sunken Library", "description": "A drowned library of forbidden tomes; arcane horrors patrol the aisles." },
-      "lich-sanctum": { "name": "Lich Sanctum", "description": "The throne room of a long-dead archmage. High peril, high reward." },
-      "storm-spire": { "name": "Storm Spire", "description": "A tower perpetually struck by lightning. Air elementals rule the upper floors." },
-      "dragons-hoard": { "name": "Dragon's Hoard", "description": "The lair of an ancient wyrm. Only the strongest dare enter." }
+      "goblin-warrens": {
+        "name": "Goblin Warrens",
+        "description": "A maze of damp tunnels infested with goblin scouts. A safe place to learn."
+      },
+      "sewer-nest": {
+        "name": "Sewer Nest",
+        "description": "Stinking sewer levels overrun by giant rats and slimes."
+      },
+      "bandit-hideout": {
+        "name": "Bandit Hideout",
+        "description": "A camp of human bandits with weapons stolen from caravans."
+      },
+      "druid-grove": {
+        "name": "Druid Grove",
+        "description": "A corrupted sacred grove. Beware nature gone wild."
+      },
+      "cursed-mines": {
+        "name": "Cursed Mines",
+        "description": "Abandoned dwarven mines now haunted by undead miners."
+      },
+      "shadow-crypts": {
+        "name": "Shadow Crypts",
+        "description": "Forgotten tombs guarded by wraiths and bound spirits."
+      },
+      "sunken-library": {
+        "name": "Sunken Library",
+        "description": "A drowned library of forbidden tomes; arcane horrors patrol the aisles."
+      },
+      "lich-sanctum": {
+        "name": "Lich Sanctum",
+        "description": "The throne room of a long-dead archmage. High peril, high reward."
+      },
+      "storm-spire": {
+        "name": "Storm Spire",
+        "description": "A tower perpetually struck by lightning. Air elementals rule the upper floors."
+      },
+      "dragons-hoard": {
+        "name": "Dragon's Hoard",
+        "description": "The lair of an ancient wyrm. Only the strongest dare enter."
+      }
     }
   }
 }
