@@ -33,9 +33,17 @@ production. Use the prod pod or a dedicated workstation.
 Save as `prod_audit.py` next to the prod env file and run with
 `python3 prod_audit.py`. It performs ZERO writes.
 
+**ROUND 1.5 update (2026-06-25)**: the script now also reports
+- count of canonical Italian traits present (expected: 10),
+- count of legacy/test trait docs (`is_test=True` or `is_active=False`),
+- count of adventurer documents that still embed a test-pattern trait name.
+
+These three counters are what we need to decide whether to run
+`db_cleanup_phase14_3.py` on prod or skip it.
+
 ```python
-"""Read-only production DB audit — Orbus Online."""
-import asyncio, json
+"""Read-only production DB audit — Orbus Online (ROUND 1.5)."""
+import asyncio, json, re
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import dotenv_values
 
@@ -51,6 +59,16 @@ _DENY_CONTAINS = (
 _DENY_STARTS = ("smoke", "smoketest", "welcometest", "secrettest",
                 "pytest", "qa-", "dev-")
 _AMBIG_DOMAINS = ("@x.test", "@test.com", "@test.org")
+
+# Phase 14.3-c — same regex used by seed_runner to detect test trait names.
+_TEST_TRAIT_NAME_RE = re.compile(
+    r"^(Test|TEST_|qa_|dev_|pytest_)|_[a-f0-9]{6,}$|^[a-f0-9-]{16,}$",
+    re.IGNORECASE,
+)
+CANONICAL_IT_CODES = {
+    "lucky", "brave", "disciplined", "sharp_eye", "reckless",
+    "fragile", "greedy", "loyal", "clumsy", "inspired",
+}
 
 
 def classify(email: str) -> str:
@@ -108,7 +126,6 @@ async def main():
         .limit(10)
         .to_list(10)
     )
-    # join owner email for classification (read-only)
     by_uid = {u["id"]: u for u in users}
     top10_view = []
     for g in top10:
@@ -121,7 +138,34 @@ async def main():
             "owner_is_test_user": (owner or {}).get("is_test_user", False),
         })
 
+    # ── ROUND 1.5 — trait inventory ────────────────────────────────────
+    traits_all = await db.adventurer_traits.find({}, {"_id": 0}).to_list(None)
+    canonical_it_present = sorted({
+        t.get("code") for t in traits_all
+        if t.get("code") in CANONICAL_IT_CODES
+    })
+    test_flagged = sum(1 for t in traits_all if t.get("is_test"))
+    inactive_flagged = sum(1 for t in traits_all if t.get("is_active") is False)
+    name_matches_test_pattern = sum(
+        1 for t in traits_all
+        if _TEST_TRAIT_NAME_RE.search(t.get("display_name") or t.get("name") or "")
+    )
+
+    # Adventurers that still embed a trait whose display_name/name matches
+    # the test pattern (anti-leak guard from ROUND 1).
+    adv_with_test_traits = 0
+    async for adv in db.adventurers.find(
+        {"traits": {"$exists": True, "$ne": []}},
+        {"id": 1, "traits": 1},
+    ):
+        for tr in adv.get("traits", []):
+            label = (tr.get("display_name") or tr.get("name") or "") if isinstance(tr, dict) else str(tr)
+            if _TEST_TRAIT_NAME_RE.search(label):
+                adv_with_test_traits += 1
+                break
+
     report = {
+        # users & guilds (existing checks)
         "users_total": len(users),
         "users_classified": buckets,
         "users_flagged_is_test_user": flagged,
@@ -132,6 +176,16 @@ async def main():
         "sentiero_present": bool(sentiero),
         "sentiero_peak": (sentiero or {}).get("max_team_power_ever", "?"),
         "leaderboard_top10_with_owner_classification": top10_view,
+        # ROUND 1.5 — trait audit
+        "traits_total": len(traits_all),
+        "traits_canonical_it_present": canonical_it_present,
+        "traits_canonical_it_missing": sorted(
+            CANONICAL_IT_CODES - set(canonical_it_present)
+        ),
+        "traits_flagged_is_test": test_flagged,
+        "traits_flagged_inactive": inactive_flagged,
+        "traits_name_matches_test_pattern": name_matches_test_pattern,
+        "adventurers_with_test_pattern_trait": adv_with_test_traits,
     }
     print(json.dumps(report, indent=2, default=str))
     cli.close()
