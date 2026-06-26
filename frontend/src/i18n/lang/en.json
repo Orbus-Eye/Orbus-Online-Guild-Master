@@ -286,6 +286,14 @@
     },
     "equip": {
       "title": "Equip 1 item"
+    },
+    "weekly": {
+      "run_expeditions_3": "Complete 3 expeditions",
+      "craft_items_2": "Craft 2 items",
+      "market_buy_1": "Buy 1 item on the market",
+      "equip_items_3": "Equip 3 items",
+      "expedition_loot_10": "Collect 10 expedition loot items",
+      "market_listings_1": "Create 1 market listing"
     }
   },
   "dungeons": {
@@ -953,5 +961,38 @@
         "description": "The lair of an ancient wyrm. Only the strongest dare enter."
       }
     }
+  },
+  "streak": {
+    "title": "STREAK",
+    "loading": "LOADING STREAK…",
+    "unavailable": "STREAK UNAVAILABLE",
+    "best": "Best: {n}",
+    "today_done": "Today's login completed",
+    "today_pending": "Complete a quest today to extend the streak",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "claiming": "…",
+    "reward_for_tier": "Tier D{tier}: +{gold} gold + {mats}",
+    "no_mats": "no materials",
+    "no_reward": "Continue your streak to unlock rewards",
+    "claim_success": "Streak reward claimed: +{gold} gold"
+  },
+  "weekly": {
+    "title": "WEEKLY QUESTS",
+    "loading": "LOADING WEEKLY…",
+    "unavailable": "WEEKLY QUESTS UNAVAILABLE",
+    "reset_in": "Reset in {time}",
+    "reward_gold": "gold",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "claim_success": "Weekly reward claimed: +{gold} gold",
+    "run_expeditions_3": "Complete 3 expeditions",
+    "craft_items_2": "Craft 2 items",
+    "market_buy_1": "Buy 1 item on the market",
+    "equip_items_3": "Equip 3 items",
+    "expedition_loot_10": "Collect 10 expedition loot items",
+    "market_listings_1": "Create 1 market listing"
   }
 }

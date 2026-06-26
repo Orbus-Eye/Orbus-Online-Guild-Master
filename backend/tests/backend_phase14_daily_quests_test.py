@@ -330,9 +330,10 @@ class TestResetAndIsolation:
 
 
 class TestOpenAPI:
-    def test_paths_count_is_42(self):
+    def test_paths_count_is_53(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 42, f"expected 42, got {len(paths)}"
+        # Phase 15 + 14.1: +4 endpoints (streak, streak/claim, weekly, weekly/claim)
+        assert len(paths) == 53, f"expected 53, got {len(paths)}"
         assert "/api/quests/today" in paths
         assert "/api/quests/claim/{quest_id}" in paths

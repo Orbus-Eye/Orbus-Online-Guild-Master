@@ -48,6 +48,12 @@ EVENT_TYPES = frozenset({
     "market_listing_created",
     "market_listing_cancelled",
     "market_purchase_completed",
+    # Phase 14.1 + 15 — Retention layer
+    "quest_reward_claimed",
+    "weekly_quest_claimed",
+    "weekly_rotation_generated",
+    "streak_updated",
+    "streak_reward_claimed",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

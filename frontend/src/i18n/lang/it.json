@@ -286,6 +286,14 @@
     },
     "equip": {
       "title": "Equipaggia 1 oggetto"
+    },
+    "weekly": {
+      "run_expeditions_3": "Completa 3 spedizioni",
+      "craft_items_2": "Crea 2 oggetti",
+      "market_buy_1": "Acquista 1 oggetto al market",
+      "equip_items_3": "Equipaggia 3 oggetti",
+      "expedition_loot_10": "Recupera 10 oggetti dalle spedizioni",
+      "market_listings_1": "Crea 1 inserzione al market"
     }
   },
   "dungeons": {
@@ -953,5 +961,38 @@
         "description": "Tana di un'antica wyrm. Solo i più forti osano entrare."
       }
     }
+  },
+  "streak": {
+    "title": "STREAK",
+    "loading": "CARICAMENTO STREAK…",
+    "unavailable": "STREAK NON DISPONIBILE",
+    "best": "Best: {n}",
+    "today_done": "Login di oggi completato",
+    "today_pending": "Completa una missione oggi per estendere la streak",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "claiming": "…",
+    "reward_for_tier": "Tier D{tier}: +{gold} oro + {mats}",
+    "no_mats": "nessun materiale",
+    "no_reward": "Continua la streak per sbloccare ricompense",
+    "claim_success": "Ricompensa streak riscossa: +{gold} oro"
+  },
+  "weekly": {
+    "title": "MISSIONI SETTIMANALI",
+    "loading": "CARICAMENTO SETTIMANALI…",
+    "unavailable": "MISSIONI SETTIMANALI NON DISPONIBILI",
+    "reset_in": "Reset tra {time}",
+    "reward_gold": "oro",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "claim_success": "Ricompensa settimanale riscossa: +{gold} oro",
+    "run_expeditions_3": "Completa 3 spedizioni",
+    "craft_items_2": "Crea 2 oggetti",
+    "market_buy_1": "Acquista 1 oggetto al market",
+    "equip_items_3": "Equipaggia 3 oggetti",
+    "expedition_loot_10": "Recupera 10 oggetti dalle spedizioni",
+    "market_listings_1": "Crea 1 inserzione al market"
   }
 }

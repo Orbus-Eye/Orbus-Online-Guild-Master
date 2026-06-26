@@ -6,6 +6,8 @@ import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import OnboardingChecklist from "../components/OnboardingChecklist";
 import DailyQuestsCard from "../components/DailyQuestsCard";
+import StreakBadge from "../components/StreakBadge";
+import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
@@ -115,8 +117,12 @@ export default function Dashboard() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <OnboardingChecklist />
-                <div className="mb-6">
+                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)]">
                     <DailyQuestsCard />
+                    <StreakBadge />
+                </div>
+                <div className="mb-6">
+                    <WeeklyQuestsCard />
                 </div>
 
                 <section className="mb-8">

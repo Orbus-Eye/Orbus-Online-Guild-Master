@@ -301,7 +301,7 @@ class TestOpenAPIDelta:
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        assert len(paths) == 49, f"expected 49, got {len(paths)}"
+        assert len(paths) == 53, f"expected 53, got {len(paths)}"
         assert "/api/recipes" in paths
         assert "/api/recipes/{recipe_slug}/craft" in paths
 

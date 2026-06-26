@@ -282,6 +282,15 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
     except Exception as exc:  # noqa: BLE001
         logger.warning("audit write failed in craft_recipe: %s", exc)
 
+    # Phase 14.1 — weekly quest progress (best-effort, non-critical)
+    try:
+        from app.quests.services import increment_weekly_progress
+        await increment_weekly_progress(
+            db, guild["id"], "items_crafted", out_qty
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("weekly quest hook failed in craft_recipe: %s", exc)
+
     remaining_gold = int(guild.get("gold", 0)) - gold_cost
     return {
         "success": True,

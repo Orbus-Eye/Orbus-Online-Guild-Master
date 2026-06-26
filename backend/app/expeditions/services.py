@@ -370,6 +370,18 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         await increment_quest_progress(db, claimed["guild_id"], "expedition_complete")
     except Exception:
         pass
+    # Phase 14.1 — weekly quest progress (best-effort)
+    try:
+        from app.quests.services import increment_weekly_progress
+        await increment_weekly_progress(
+            db, claimed["guild_id"], "expeditions_completed", 1
+        )
+        if loot_ids:
+            await increment_weekly_progress(
+                db, claimed["guild_id"], "expedition_loot_items", len(loot_ids)
+            )
+    except Exception:
+        pass
 
 
 async def complete_due_expeditions(db, guild_id: str) -> int:

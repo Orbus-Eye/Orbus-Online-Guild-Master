@@ -329,6 +329,15 @@ async def create_listing(
     except Exception as exc:  # noqa: BLE001
         logger.warning("audit write failed in create_listing: %s", exc)
 
+    # Phase 14.1 — weekly quest progress (best-effort, non-critical)
+    try:
+        from app.quests.services import increment_weekly_progress
+        await increment_weekly_progress(
+            db, guild["id"], "market_listings_created", 1
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("weekly quest hook failed in create_listing: %s", exc)
+
     total_price = int(price_per_unit) * int(quantity)
     fee = total_price * MARKET_FEE_PCT // 100
     return {
@@ -603,6 +612,17 @@ async def buy_listing(
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("audit write failed in buy_listing: %s", exc)
+
+    # Phase 14.1 — weekly quest progress (best-effort, non-critical).
+    # Track market_purchases for the BUYER only (1 quest tick per purchase
+    # event, not per unit, to avoid grindy bot patterns).
+    try:
+        from app.quests.services import increment_weekly_progress
+        await increment_weekly_progress(
+            db, buyer_guild["id"], "market_purchases", 1
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("weekly quest hook failed in buy_listing: %s", exc)
 
     # Fetch buyer's remaining gold for the response
     buyer_after = await db.guilds.find_one(

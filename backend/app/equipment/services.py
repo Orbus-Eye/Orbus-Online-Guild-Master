@@ -232,6 +232,12 @@ async def equip_item_service(
         await increment_quest_progress(db, guild["id"], "equip")
     except Exception:
         pass
+    # Phase 14.1 — weekly quest progress (best-effort)
+    try:
+        from app.quests.services import increment_weekly_progress
+        await increment_weekly_progress(db, guild["id"], "items_equipped", 1)
+    except Exception:
+        pass
     # Phase 14.7 — audit log (best-effort)
     try:
         from app.audit.log import write_audit
