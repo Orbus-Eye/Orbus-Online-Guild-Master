@@ -62,6 +62,11 @@ STREAK_MAX_DAYS = 30  # soft cap — past 30 the counter stops bumping
 # Weekly variety pool — 6 quest definitions, 4 visible per week (ISO rotation).
 # Reward ceiling (binding): each quest 80-180g, total weekly ceiling ≈ 700g.
 # Materials: 1-2 common/uncommon only. NO power gear. NO reputation.
+#
+# 🔒 FIELD NAMING (API contract): the threshold field is `objective_target`
+# (canonical). NEVER rename to `target` — would break frontend
+# WeeklyQuestsCard.jsx, the 22 backend tests, and any external consumer.
+# See /app/memory/SPEC_PHASE15_PHASE14_1.md §1.
 WEEKLY_QUEST_POOL: list[dict] = [
     {
         "slug": "weekly_run_expeditions_3",

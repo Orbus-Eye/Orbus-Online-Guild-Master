@@ -61,3 +61,13 @@ logging, and **no pay-to-win** elements.
 
 ## Test Credentials
 See `/app/memory/test_credentials.md`. Tester: `tester@orbus.test` / `password123`.
+
+## API Contract Pinning
+The full API contract for Phase 15 + Phase 14.1 is locked in
+**`/app/memory/SPEC_PHASE15_PHASE14_1.md`**.
+
+🔒 **Canonical field name**: the weekly quest threshold field is **`objective_target`**
+(NOT `target`). Renaming it would break the frontend (`WeeklyQuestsCard.jsx`), the
+22 backend pytest assertions, and any external API consumer. The naming convention
+`objective_*` is paired with `objective_type` and MUST be preserved for any future
+weekly-quest field.
