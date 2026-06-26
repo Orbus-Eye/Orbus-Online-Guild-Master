@@ -185,7 +185,10 @@ class TestMaxTeamPowerEver:
     def test_dragons_hoard_lock_message_mentions_peak(self):
         """Fresh guild, no recruits, no peak → locked with message that
         references the new peak criterion."""
+        # Updated for Round 5 §I (Phase 17.5) — wipe starter roster so peak
+        # power calc (best-3 sum) stays 0 and the dungeon remains locked.
         u = _register_and_guild()
+        _mongo().adventurers.delete_many({"guild_id": u["guild"]["id"]})
         ds = _dungeons(u["headers"])
         dh = ds["dragons-hoard"]
         assert dh["unlocked"] is False

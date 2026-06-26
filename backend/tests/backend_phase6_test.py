@@ -20,6 +20,10 @@ import requests
 from datetime import datetime, timezone, timedelta
 from pymongo import MongoClient
 
+# Updated for Round 5 §I — pin this suite to a single xdist worker so the
+# trait-modifier + equipment-snapshot calc cannot race with parallel suites.
+pytestmark = pytest.mark.xdist_group(name="round5_serial_legacy")
+
 BASE_URL = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") if os.environ.get("REACT_APP_BACKEND_URL") else None
 if BASE_URL is None:
     with open("/app/frontend/.env") as f:

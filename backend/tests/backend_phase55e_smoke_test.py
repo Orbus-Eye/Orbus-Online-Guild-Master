@@ -340,7 +340,10 @@ class TestEquipmentDeltaSnapshot:
 # ---------- Dungeon gates sticky semantics ----------
 class TestDungeonGates:
     def test_shadow_crypts_locked_for_fresh_guild(self):
+        # Updated for Round 5 §I (Phase 17.5) — wipe starter roster so the
+        # adv_count<3 gate condition is observable on a "fresh" guild.
         u = _register_and_guild()
+        _mongo().adventurers.delete_many({"guild_id": u["guild"]["id"]})
         ds = _dungeons(u["headers"])
         sc = ds["shadow-crypts"]
         # Fresh guild has level=1 OK but adv_count=0 → locked
@@ -349,7 +352,10 @@ class TestDungeonGates:
         assert "3" in reason or "adventurer" in reason
 
     def test_dragons_hoard_locked_for_fresh_guild_message_includes_peak(self):
+        # Updated for Round 5 §I (Phase 17.5) — wipe starter roster so the
+        # best-3 power gate stays unmet on a "fresh" guild.
         u = _register_and_guild()
+        _mongo().adventurers.delete_many({"guild_id": u["guild"]["id"]})
         ds = _dungeons(u["headers"])
         dh = ds["dragons-hoard"]
         assert dh["unlocked"] is False

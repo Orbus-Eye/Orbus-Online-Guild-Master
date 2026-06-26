@@ -58,7 +58,14 @@ def _register_fresh_user(tag_prefix="p112"):
 
 class TestPhase112Gates:
     def test_fresh_guild_sees_t2_t3_locked_with_reason(self):
+        # Updated for Round 5 §I (Phase 17.5) — wipe the auto-seeded starter
+        # roster so peak-power / adv-count gates stay at 0 (pre-Round-5 fresh
+        # guild equivalent).
         u = _register_fresh_user("gates")
+        owner = _user_id_from_token(u["token"])
+        db = MongoClient(MONGO_URL)[DB_NAME]
+        gid = db.guilds.find_one({"owner_user_id": owner})["id"]
+        db.adventurers.delete_many({"guild_id": gid})
         r = requests.get(f"{BASE_URL}/api/dungeons", headers=u["headers"], timeout=15)
         assert r.status_code == 200
         dungeons = r.json() if isinstance(r.json(), list) else r.json().get("dungeons", [])
@@ -143,9 +150,12 @@ class TestPhase112Gates:
 
     def test_shadow_crypts_gate_unchanged(self, db):
         """Phase 7 invariant: shadow-crypts requires lvl≥1 AND adv_count≥3."""
+        # Updated for Round 5 §I (Phase 17.5) — wipe the auto-seeded starter
+        # roster so we can exercise the "0 advs → locked" state explicitly.
         u = _register_fresh_user("sc_gate")
         owner = _user_id_from_token(u["token"])
         gid = db.guilds.find_one({"owner_user_id": owner})["id"]
+        db.adventurers.delete_many({"guild_id": gid})
         # 0 adventurers initially → locked
         r = requests.get(f"{BASE_URL}/api/dungeons", headers=u["headers"], timeout=15)
         by_slug = {d["slug"]: d for d in (

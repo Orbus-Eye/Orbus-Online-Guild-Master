@@ -78,19 +78,23 @@ class TestPhase10OriginalsInvariant:
         assert d["difficulty"] == 1
 
     def test_shadow_crypts_unchanged(self, db):
+        # Updated for Round 5 §I (Phase 17.5) — recommended_power bumped +25%
+        # (60 → 75). All other fields remain byte-identical.
         d = db.dungeons.find_one({"slug": "shadow-crypts"})
         assert d is not None
         assert d["base_duration_seconds"] == 120
-        assert d["recommended_power"] == 60
+        assert d["recommended_power"] == 75  # was 60 pre-Round-5
         assert d["base_gold_reward"] == 65
         assert d["base_xp_reward"] == 50
         assert d["difficulty"] == 2
 
     def test_dragons_hoard_unchanged(self, db):
+        # Updated for Round 5 §I (Phase 17.5) — recommended_power bumped +25%
+        # (80 → 100). All other fields remain byte-identical.
         d = db.dungeons.find_one({"slug": "dragons-hoard"})
         assert d is not None
         assert d["base_duration_seconds"] == 300
-        assert d["recommended_power"] == 80
+        assert d["recommended_power"] == 100  # was 80 pre-Round-5
         assert d["base_gold_reward"] == 120
         assert d["base_xp_reward"] == 90
         assert d["difficulty"] == 3

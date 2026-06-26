@@ -158,7 +158,11 @@ def test_guilds_me_lazy_sweep_idempotent():
 
 # ---------- 7: dungeon gates ----------
 def test_dungeon_gates_sticky():
-    h, _ = _new_user_with_guild()
+    # Updated for Round 5 §I (Phase 17.5) — fresh guilds receive a 5-adv
+    # starter roster via `ensure_starter_roster`. Wipe it to expose the
+    # original sticky gate semantics expected by this smoke test.
+    h, guild = _new_user_with_guild()
+    MongoClient(MONGO_URL)[DB_NAME].adventurers.delete_many({"guild_id": guild["id"]})
     r = requests.get(f"{API}/dungeons", headers=h, timeout=15)
     assert r.status_code == 200
     ds = {d["slug"]: d for d in r.json()["dungeons"]}

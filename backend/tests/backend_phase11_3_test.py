@@ -68,7 +68,14 @@ def _now_iso():
 
 class TestPhase113OnboardingDefaults:
     def test_new_guild_starts_step_1(self):
+        # Updated for Round 5 §I (Phase 17.5) — wipe starter roster so the
+        # onboarding suggested_step stays at 1 (else it advances to 3 because
+        # the 5-adv starter satisfies the recruit-3-advs sub-goal).
         u = _register_fresh_user("ob_new")
+        owner = _owner_id(u["token"])
+        db = MongoClient(MONGO_URL)[DB_NAME]
+        gid = db.guilds.find_one({"owner_user_id": owner})["id"]
+        db.adventurers.delete_many({"guild_id": gid})
         r = requests.get(f"{BASE_URL}/api/guilds/me", headers=u["headers"], timeout=15)
         assert r.status_code == 200
         g = r.json()["guild"]
@@ -78,9 +85,12 @@ class TestPhase113OnboardingDefaults:
         assert g["onboarding_suggested_step"] == 1
 
     def test_suggested_step_2_after_partial_recruit(self, db):
+        # Updated for Round 5 §I (Phase 17.5) — wipe starter roster first,
+        # then inject 1 adventurer (less than 3) to land on suggested_step=2.
         u = _register_fresh_user("ob_step2")
         owner = _owner_id(u["token"])
         gid = db.guilds.find_one({"owner_user_id": owner})["id"]
+        db.adventurers.delete_many({"guild_id": gid})
         # Inject 1 adventurer (less than 3)
         db.adventurers.insert_one({
             "id": str(uuid.uuid4()), "guild_id": gid,

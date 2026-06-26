@@ -1,5 +1,7 @@
 """ROUND 1.5 (Phase 14.4) — backend regression suite.
 
+Updated for Round 5 §I — pinned to a single xdist worker via pytestmark.
+
 These tests guard the invariants that ROUND 1.5 frontend work relies on:
 
   - GET /api/inventory returns the documented shape (stack model + counts).
@@ -18,6 +20,8 @@ import uuid
 
 import pytest
 import requests
+
+pytestmark = pytest.mark.xdist_group(name="round5_serial_legacy")
 
 BASE_URL = os.environ.get("BACKEND_URL", "http://localhost:8001")
 H_JSON = {"Content-Type": "application/json"}

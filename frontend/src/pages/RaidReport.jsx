@@ -41,6 +41,7 @@ export default function RaidReport() {
             toast.error(formatApiError(err));
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { load(); }, [raid_id]);
 
     async function forceComplete() {

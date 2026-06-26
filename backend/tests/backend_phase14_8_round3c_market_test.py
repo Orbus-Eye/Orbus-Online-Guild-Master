@@ -24,6 +24,8 @@ import pytest
 import requests
 from motor.motor_asyncio import AsyncIOMotorClient
 
+pytestmark = pytest.mark.xdist_group(name="round5_serial_legacy")
+
 
 BASE_URL = os.environ.get("BACKEND_URL", "http://localhost:8001")
 def _api(p): return f"{BASE_URL}/api{p}"
@@ -51,7 +53,13 @@ async def _direct_db():
 
 
 def _run(coro):
-    return asyncio.get_event_loop().run_until_complete(coro)
+    # Updated for Round 5 §I — avoid deprecated `asyncio.get_event_loop()` in 3.11
+    # which can return a closed loop after pytest-xdist worker handoffs.
+    loop = asyncio.new_event_loop()
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
 
 
 async def _grant_item(db, guild_id: str, slug: str, qty: int):

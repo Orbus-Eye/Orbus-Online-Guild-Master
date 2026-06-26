@@ -46,6 +46,7 @@ export default function RaidBuilder() {
             toast.error(formatApiError(err));
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { load(); }, [slug]);
 
     const assignedIds = useMemo(() => {

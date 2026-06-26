@@ -23,6 +23,8 @@ import uuid
 
 import pytest
 import requests
+
+pytestmark = pytest.mark.xdist_group(name="round5_serial_legacy")
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.expeditions.report_builder import build_expedition_report
@@ -254,7 +256,12 @@ class TestExpeditionReportHTTP:
             past = (datetime.now(timezone.utc) - timedelta(seconds=10)).isoformat()
             await db.expeditions.update_one({"id": exp_id}, {"$set": {"completes_at": past}})
             cli.close()
-        asyncio.get_event_loop().run_until_complete(_backdate())
+        # Updated for Round 5 §I — use new_event_loop to avoid closed-loop reuse on 3.11.
+        _loop = asyncio.new_event_loop()
+        try:
+            _loop.run_until_complete(_backdate())
+        finally:
+            _loop.close()
         # Poll GET /api/expeditions/{id} until completed
         deadline = time.time() + 10
         body = None

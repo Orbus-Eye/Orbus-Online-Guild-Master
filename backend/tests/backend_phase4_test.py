@@ -6,6 +6,10 @@ import time
 import pytest
 import requests
 
+# Updated for Round 5 §I — pin this suite to a single xdist worker so the
+# recruitment-pool / trait-baking interactions don't race with parallel suites.
+pytestmark = pytest.mark.xdist_group(name="round5_serial_legacy")
+
 def _load_backend_url():
     v = os.environ.get("REACT_APP_BACKEND_URL", "").strip()
     if not v:
@@ -161,7 +165,10 @@ class TestAdminTraits:
         assert len(r.json()["traits"]) >= 5
 
     def test_create_trait_success_and_patch_toggle(self, admin_headers):
-        name = f"TestTrait_{uuid.uuid4().hex[:6]}"
+        # Updated for Round 5 §I (Phase 14.3-c) — the legacy-test trait regex
+        # auto-flags names ending in `_[a-f0-9]{6,}$` (matching uuid hex
+        # suffixes), so we use a CamelCase suffix that doesn't trigger it.
+        name = f"AdminTrait{uuid.uuid4().hex[:6].upper()}Z"
         payload = {"name": name, "modifier_type": "flat",
                    "affected_stat": "strength", "modifier_value": 2,
                    "is_positive": True, "description": "test"}

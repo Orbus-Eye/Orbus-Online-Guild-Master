@@ -112,6 +112,9 @@ def _items_seed_only(item_type=None):
 # ─── A. Seeds ───────────────────────────────────────────────────────────────
 class TestSeeds:
     def test_three_dungeons_present(self):
+        # Updated for Round 5 §I (Phase 17.5) — legacy T2/T3 dungeons received
+        # +25% recommended_power bump (`power_bumped=True`). base_gold/base_xp
+        # and base_duration_seconds remain byte-identical.
         u = _register_and_guild()
         ds = _dungeons(u["headers"])
         assert "goblin-warrens" in ds
@@ -121,19 +124,19 @@ class TestSeeds:
         assert gw["difficulty"] == 1
         assert gw["required_team_size"] == 3
         assert gw["base_duration_seconds"] == 60
-        assert gw["recommended_power"] == 45
+        assert gw["recommended_power"] == 45  # T1 not bumped
         assert gw["base_gold_reward"] == 35
         assert gw["base_xp_reward"] == 25
         sc = ds["shadow-crypts"]
         assert sc["difficulty"] == 2
         assert sc["base_duration_seconds"] == 120
-        assert sc["recommended_power"] == 60
+        assert sc["recommended_power"] == 75  # Updated for Round 5 §I: 60 → 75 (+25%)
         assert sc["base_gold_reward"] == 65
         assert sc["base_xp_reward"] == 50
         dh = ds["dragons-hoard"]
         assert dh["difficulty"] == 3
         assert dh["base_duration_seconds"] == 300
-        assert dh["recommended_power"] == 80
+        assert dh["recommended_power"] == 100  # Updated for Round 5 §I: 80 → 100 (+25%)
         assert dh["base_gold_reward"] == 120
         assert dh["base_xp_reward"] == 90
 
@@ -162,7 +165,11 @@ class TestDungeonGates:
         assert ds["goblin-warrens"]["unlock_reason"] is None
 
     def test_shadow_crypts_locked_without_adventurers(self):
+        # Updated for Round 5 §I (Phase 17.5) — fresh guilds receive a
+        # 5-adventurer starter roster via `ensure_starter_roster`. Wipe the
+        # starter advs to reach the pre-Round-5 "0 adventurers" state.
         u = _register_and_guild()
+        _mongo().adventurers.delete_many({"guild_id": u["guild"]["id"]})
         ds = _dungeons(u["headers"])
         assert ds["shadow-crypts"]["unlocked"] is False
         assert "adventurer" in ds["shadow-crypts"]["unlock_reason"].lower()
