@@ -1,0 +1,20 @@
+{
+  "timestamp_utc": "2026-06-26T07:31:22.087406+00:00",
+  "reason": "preview extended test-fingerprint pattern flagging",
+  "operation": "users.update_many({id \u2208 candidates}, {$set: {is_test_user: True}})",
+  "reversible_via": "users.update_many({id \u2208 candidates}, {$unset: {is_test_user: ''}})",
+  "patterns_added": [
+    "@test\\.",
+    "(^|\\W)test@",
+    "@orbus\\.com$"
+  ],
+  "allowlist_emails_excluded": [
+    "gianluca.brandi42@gmail.com",
+    "mr.gualmini@gmail.com",
+    "tester@orbus.test"
+  ],
+  "count_new_flagged": 0,
+  "count_already_flagged_noop": 6,
+  "users_flagged": [],
+  "affected_leaderboard_guilds": []
+}

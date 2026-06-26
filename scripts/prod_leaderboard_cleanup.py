@@ -127,6 +127,13 @@ TEST_EMAIL_PATTERNS = [
                re.IGNORECASE),
     re.compile(r"^(qa-|dev-|gates_|disp_|unlock_|dh_|sc_|gw_)",
                re.IGNORECASE),
+    # 2026-06-26 extension — user-requested broader test-fingerprint coverage:
+    #   • @test (any TLD: .com, .local, .org, .io, .anything)
+    #   • test@ (any prefix beginning with the word "test", any domain)
+    #   • @orbus.com  (literal — separate from the .test fixture domain)
+    re.compile(r"@test\.", re.IGNORECASE),
+    re.compile(r"(^|\W)test@", re.IGNORECASE),
+    re.compile(r"@orbus\.com$", re.IGNORECASE),
 ]
 # Same for guild names — used only when we MUST classify by name (e.g. when
 # the owner email doesn't match a pattern, like the historic TEST_* guilds).
