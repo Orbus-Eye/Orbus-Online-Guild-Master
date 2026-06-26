@@ -211,25 +211,278 @@ Constraint: index unico `(adventurer_id, slot_type)`.
 
 ---
 
-## F. Domande aperte (da approvare prima di implementare)
+## F. Domande aperte — 🔒 LOCKED (2026-06-26, post user-review)
 
-1. **Tier rarity**: confermare **solo Legendary** (NO Mythic in ROUND 4).
-2. **Refinement input**: solo gold + materiali, OPPURE serve un "item duplicato"
-   come reagente (modello tipo Diablo enhancement)?
-3. **Set bonuses activation**: bonus appaiono solo a piece-count raggiunto
-   (es. 4pz = bonus 2pz + bonus 4pz cumulati)?
-4. **Disenchant output**: materiali RANDOM (più variance) o GARANTITI
-   (più predictable, scelta probabile per fairness)?
-5. **Enchant selection**: random affix dal pool del player, oppure il
-   player sceglie l'enchant da applicare?
-6. **UI**: pagina dedicata **"Forge/Workshop"** nel menu principale, OPPURE
-   estensione dell'Inventory esistente (sub-tab "Forge")?
-7. **Affix re-roll**: feature ROUND 4 o posticipata? (Pro: depth. Contro:
-   complessità + grind).
-8. **Bound-on-equip**: gli item rifinati diventano legati all'adventurer
-   (no transfer dopo equip)? Influisce su trading via marketplace.
+Tutte le 8 domande sono state risolte. Le risposte qui sotto sono **vincolanti**
+per l'implementazione. Qualunque deviazione richiede nuovo go esplicito.
+
+| # | Topic | Decisione locked |
+|---|---|---|
+| Q1 | Tier rarity | **A — Solo Legendary** (drop rate 0.3-0.5% da T4+). NO Mythic in ROUND 4. |
+| Q2 | Refinement input | **C — Oro + materiali + reagenti rari da dungeon**. NO item duplicato come fuel. |
+| Q3 | Set bonuses | **A — Tier-based**. Bonus piccolo a 3/5 pezzi, bonus più forte a 5/5. NO all-or-nothing puro. |
+| Q4 | Disenchant output | **C — Materiale base GARANTITO + bonus random pesato sulla rarità** dell'item. |
+| Q5 | Enchant selection | **B — Scelta giocatore tra 3-5 opzioni dal pool**. NO slot machine pura. |
+| Q6 | UI | **A — Nuova pagina dedicata "Forge / Workshop"**. Separata dal Crafting base. |
+| Q7 | Affix reroll | **A — Sì, attivo**. Costo crescente. Cap/limiti anti-abuso (vedi §E.7). |
+| Q8 | Bound-on-Equip | **A — Item refinato OR enchantato → BoE**. NON vendibile sul mercato. UI deve spiegare il motivo. |
+
+### Implicazioni vincolanti derivate
+
+- **§A.2 Set bonuses** → schema `tiers` ridotto a 2 soglie standard: `pieces_required ∈ {3, 5}`. Tier `3pz` piccolo (es. +3/+4 a una stat), tier `5pz` forte (es. +8/+10 e/o +1 perk passivo non competitive).
+- **§A.3 Refinement** → tabella costi rimane come proposto in §A.3 (gold + iron_shard + arcane_dust + dull_gem). Aggiungere un nuovo reagente raro `dragon_essence` (drop solo da T4+, idempotent seed) per refinement +7 → +10.
+- **§A.5/A.6 Enchant + Affix UX** → endpoint enchant deve restituire 3-5 opzioni casuali pesate per rarità item, lo `apply` accetta il `slug` scelto dal player. Affix reroll: nuovo endpoint `POST /api/inventory/{instance_id}/reroll-affixes`, costo crescente esponenziale (50 → 150 → 400 → 1000 → 2500, hard cap 5 reroll/item).
+- **§A.7 Disenchant** → output struct: `{ materials_guaranteed: [{slug, qty}], materials_bonus: [{slug, qty}] }`. Il guaranteed scala lineare con rarity; il bonus è weighted random.
+- **§Q8 BoE enforcement (CRITICO)**:
+  - `inventory_items.is_bound: bool` (NUOVO campo)
+  - Diventa `True` automaticamente al **primo** refinement OR enchant OR reroll.
+  - `app/market/services.py::create_listing` deve rifiutare con **422** se l'`InventoryItem` ha `is_bound=True`, con messaggio i18n esplicito.
+  - UI inventory: badge `[BOUND]` (i18n "Legato all'oggetto") accanto al nome + tooltip "Item rifinito/incantato: non più vendibile al mercato".
+
+### Vincoli ROUND 4 ribaditi (NON deviare)
+
+- ❌ NO Mythic
+- ❌ NO P2W, NO premium boost
+- ❌ NO item di potere vendibile con denaro reale
+- ❌ NO hard delete (qualsiasi disenchant marca il record con `disenchanted_at`, lo lascia in collection per audit retention)
+- ❌ NO ALLOWLIST changes
+- ❌ NO cleanup leaderboard
+- ❌ NO bonus consorzio
+- ❌ NO modifiche SMTP/P0/branding
+- ✅ Vecchi item ROUND 3 devono restare compatibili (mapping additivo, mai breaking)
+- ✅ Mercato DEVE impedire la vendita di item bound/refined/enchantati (enforcement backend + UI feedback)
+- ✅ Preview prima → smoke test → solo allora redeploy prod con conferma utente
 
 ---
+
+## F-bis. Audit dei file esistenti che ROUND 4 toccherà
+
+> Read-only mapping. NESSUNA modifica al codice prima del GO esplicito.
+
+| File | Impatto | Tipo di intervento previsto |
+|---|---|---|
+| `backend/app/inventory/models.py` (o equivalente schema) | **Alto** | Add `instance_id` (uuid4), `is_bound`, `refinement_level`, `enchants[]`, `affixes[]`, `disenchanted_at` |
+| `backend/app/inventory/services.py` | **Alto** | Migration helper idempotente (vedi §F-ter), backward-compat read |
+| `backend/app/inventory/routes.py` | **Medio** | New endpoints: `/refine`, `/enchant`, `/disenchant`, `/reroll-affixes`, `/enchant-options` |
+| `backend/app/items/models.py` (template) | Medio | Add `slot_type`, `set_id`, `max_refinement`, `enchant_slots`, `affix_pool_tag` |
+| `backend/app/items/services.py` / `routes.py` | Basso | Read-only di nuovi campi (non break) |
+| `backend/app/equipment/services.py` (Phase 14 esistente) | **Alto** | Re-target di `equip_item_service` su `instance_id` invece di `item_id` aggregato; aggiungere `EquippedItem` con uniqueness `(adventurer_id, slot_type)` |
+| `backend/app/adventurers/*` | Medio | `GET /api/adventurers/{id}/equipment` nuova endpoint che include set-bonus calcolati al volo |
+| `backend/app/market/services.py::create_listing` | **Critico** | **Guard BoE**: 422 se `inventory_items.is_bound=True` |
+| `backend/app/market/routes.py` | Basso | Pass-through del 422 (Pydantic exception handler) |
+| `backend/app/audit/log.py` | Basso | Aggiungere event_types: `item_refined`, `item_refine_failed`, `item_enchanted`, `item_disenchanted`, `item_reroll_affix`, `item_equipped_slot`, `item_unequipped_slot` |
+| `backend/app/seeds/seed_items_it.py` | Medio | Aggiungere `dragon_essence` material + ~3-5 item Legendary baseline (idempotent upsert) |
+| `backend/app/seeds/seed_sets.py` (NUOVO) | Nuovo | Idempotent seed di 3-5 set base (es. "Goblin Hunter", "Drake Slayer", "Arcane Adept") |
+| `backend/app/seeds/seed_enchants.py` (NUOVO) | Nuovo | Idempotent seed di ~12-15 enchant base |
+| `backend/app/quests/services.py` | Basso | Hook weekly quest `weekly_refine_items_3` e `weekly_enchant_items_2` (opzionale, ma coerente con Phase 14.1) |
+| `frontend/src/pages/Forge.jsx` (NUOVO) | **Alto** | Nuova pagina dedicata con 4 tab: Refine / Enchant / Reroll / Disenchant |
+| `frontend/src/pages/Inventory.jsx` | Medio | Badge `[BOUND]` + tooltip i18n + bottone "Vai a Forge" |
+| `frontend/src/pages/AdventurerEquipment.jsx` | **Alto** | Nuovo schema 8-10 slot, set bonuses display, set progression UI |
+| `frontend/src/pages/Market.jsx` | Basso | Già OK: mostra 422 dal backend come toast — solo testo i18n da aggiungere |
+| `frontend/src/components/AppHeader.jsx` | XS | NavLink `Forge` |
+| `frontend/src/App.js` | XS | Route `/forge` (ProtectedRoute requireGuild) |
+| `frontend/src/i18n/lang/{it,en}.json` | Basso | Nuove chiavi: `forge.*`, `inventory.bound.*`, `set.*`, `enchant.*`, `affix.*`, `nav.forge` |
+| Test backend `tests/backend_phase17_round4_test.py` (NUOVO) | Nuovo | 25-30 test: migration idempotency, refine atomic, BoE guard, set bonus calc, reroll cap, disenchant output, leaderboard invariance |
+
+**Path count guard test** (3 file esistenti) → update da 61 → ~70 (numero finale fissato al primo deploy preview).
+
+---
+
+## F-ter. Migration plan additivo/idempotente
+
+> Tutto fatto via lifespan idempotent seed/migration. Zero downtime.
+> Tutti gli step sono `update_many` con guard `field: {$exists: False}` —
+> ri-run sicuro N volte.
+
+**Step 0 — Schema migration (eseguita all'avvio backend, una sola volta logicamente)**:
+```python
+# Add instance_id to inventory_items legacy rows (idempotent).
+# Existing row id is reused as instance_id (1:1) — preserves marketplace
+# listings that reference the row id.
+await db.inventory_items.update_many(
+    {"instance_id": {"$exists": False}},
+    [{"$set": {"instance_id": "$id"}}],   # aggregation pipeline update
+)
+# Add default refinement/enchant/affix/is_bound fields
+await db.inventory_items.update_many(
+    {"refinement_level": {"$exists": False}},
+    {"$set": {
+        "refinement_level": 0,
+        "enchants": [],
+        "affixes": [],
+        "is_bound": False,
+        "disenchanted_at": None,
+    }},
+)
+```
+
+**Step 1 — Items template schema** (template `items` collection):
+```python
+await db.items.update_many(
+    {"slot_type": {"$exists": False}},
+    {"$set": {
+        "set_id": None,
+        "max_refinement": 0,
+        "enchant_slots": 0,
+        "affix_pool_tag": None,
+    }},
+)
+# slot_type derivation from legacy `slot` (idempotent map):
+LEGACY_SLOT_MAP = {
+    "weapon":    "weapon_main",
+    "armor":     "chest",
+    "accessory": "amulet",
+}
+for legacy, new in LEGACY_SLOT_MAP.items():
+    await db.items.update_many(
+        {"slot": legacy, "slot_type": {"$in": [None, ""]}},
+        {"$set": {"slot_type": new}},
+    )
+```
+
+**Step 2 — Set/Enchant seed (idempotent upsert by slug)**:
+- `seed_sets.py` → `replace_one({slug}, doc, upsert=True)` per ogni set definito
+- `seed_enchants.py` → idem
+- `seed_items_it.py` esteso → upsert `dragon_essence` material + 3-5 Legendary baseline
+
+**Step 3 — Indices (idempotent via `create_index`)**:
+- `inventory_items.instance_id` UNIQUE
+- `equipped_items.{adventurer_id, slot_type}` UNIQUE composite
+- `item_sets.slug` UNIQUE
+- `enchants.slug` UNIQUE
+
+**Step 4 — Equipment migration** (legacy `adventurer.equipped_items[]` array → new `equipped_items` collection):
+- Per ogni adventurer con `equipped_items[]` non vuoto, upsert nella nuova collection con `slot_type` derivato.
+- Lasciare l'array legacy invariato per N round (backward read fallback in `equipment/services.py`).
+- Rollback safety: l'array legacy resta source-of-truth in caso di problemi.
+
+**Step 5 — Audit log event_types**:
+- Aggiungere ai `EVENT_TYPES` di `audit/log.py` i nuovi 7 tipi (puramente additivo).
+
+### Rollback strategy
+- Step 0/1/2/3 sono additivi → rollback = ignorare i nuovi campi (vecchio codice continua a funzionare).
+- Step 4: la collection nuova `equipped_items` non sostituisce nulla, solo affianca → rollback = leggere dal legacy array. Per N round.
+
+---
+
+## F-quater. UI Mockup testuale — pagina "Forge / Workshop"
+
+> Mobile-first, coerente con il design system esistente (font monospace,
+> tema scuro, accenti amber, `data-testid` ovunque). Frontend page path: `/forge`.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ :: OFFICINA / FORGE                                  Gold 1.2k│
+│ ⚒ Rifinisci · ✨ Incanta · 🔄 Affinanza · 🗡 Smonta            │   (4 tab)
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│ ┌─── Item Selector ──────────────────────────────────┐      │
+│ │  Filtra: [ ●Tutti  ○Rifinibili  ○Incantabili      │      │
+│ │           ○Smontabili ]                            │      │
+│ │  ┌──────────────────────────────────────────┐     │      │
+│ │  │ ▣ Spada di Ferro                  +0 / +5│     │      │
+│ │  │   Common · Weapon · weapon_main          │     │      │
+│ │  │   [Forgia]                               │     │      │
+│ │  ├──────────────────────────────────────────┤     │      │
+│ │  │ ▣ Elmo del Drago Minore          +3 / +7│     │      │
+│ │  │   Rare · Helm · helm  [BOUND]            │     │      │
+│ │  │   Sharp +2 STR · of the Wolf +3 AGI      │     │      │
+│ │  │   [Continua]                             │     │      │
+│ │  └──────────────────────────────────────────┘     │      │
+│ └────────────────────────────────────────────────────┘      │
+│                                                              │
+│ ┌─── Operation Panel (tab Rifinisci) ─────────────────┐     │
+│ │  Selezionato: Spada di Ferro  +0                    │     │
+│ │  Prossimo livello: +1   Success: 100%               │     │
+│ │  Costo: 50 gold + iron_shard ×2                     │     │
+│ │  ⚠ Una volta rifinito, l'oggetto diventa LEGATO     │     │
+│ │     (non sarà più vendibile al mercato).            │     │
+│ │  [ CONFERMA RIFINITURA ]   [ Annulla ]              │     │
+│ └─────────────────────────────────────────────────────┘     │
+│                                                              │
+│ ── Log forge recenti ────                                    │
+│ • 12 min fa: Hai rifinito Asta del Sangue +2 (success)       │
+│ • 1h fa: Hai incantato Amuleto Lunare con "Faith Mantle"    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Tab "Incanta"** (mockup):
+```
+Selezionato: Anello del Boscaiolo  (Rare, 1 enchant slot disponibile)
+3 opzioni sorteggiate per te (scegli 1):
+  ⊙ Of the Wolf      +3 AGI       [Comune]    cost: 80g
+  ⊙ Sharp Edge       +2 STR       [Uncommon]  cost: 120g
+  ⊙ Arcane Spark     +2 INT       [Rare]      cost: 200g
+[ Conferma scelta ]   [ Rigenera opzioni (50g) ]
+⚠ L'oggetto diventerà LEGATO dopo l'incanto.
+```
+
+**Tab "Affinanza" (Reroll)**:
+```
+Selezionato: Elmo del Drago Minore  (2 affix attivi)
+Affix attuali:  Sharp +2 STR · of the Wolf +3 AGI
+Reroll #1/5     Costo: 50g
+[ Reroll ]      ← genera 2 nuovi affix random, conferma prima di salvare
+```
+
+**Tab "Smonta" (Disenchant)**:
+```
+Selezionato: Spada Arrugginita  (Common)
+Smontando otterrai:
+  Garantito: iron_shard ×2
+  Bonus random (peso 30%): arcane_dust ×1
+⚠ L'oggetto verrà distrutto.
+[ CONFERMA SMONTAGGIO ]
+```
+
+**data-testid plan** (estratto):
+- `forge-tab-refine`, `forge-tab-enchant`, `forge-tab-reroll`, `forge-tab-disenchant`
+- `forge-item-{instance_id}` per ogni riga in selector
+- `forge-confirm-refine`, `forge-confirm-enchant`, `forge-confirm-reroll`, `forge-confirm-disenchant`
+- `forge-enchant-option-{slug}` per ogni opzione mostrata
+- `forge-bound-badge-{instance_id}`, `forge-bound-tooltip`
+- `forge-log-{event_id}` per il log eventi
+
+**Inventory.jsx aggiornamenti**:
+- Badge `[BOUND]` (i18n: IT "Legato", EN "Bound") accanto al nome
+- Tooltip al hover: "Oggetto rifinito/incantato — non più vendibile al mercato"
+- Per item bound: il bottone "Vendi al mercato" è disabilitato + tooltip
+- Bottone aggiuntivo "Vai a Forge" per ogni item rifinibile/incantabile
+
+**AdventurerEquipment.jsx aggiornamenti**:
+- Layout slot rinnovato (8-10 slot visivamente raggruppati: armatura sopra, accessori sotto)
+- Pannello "Set bonuses attivi" sotto la lista slot (es. "Goblin Hunter 3/5 — +3 STR")
+- Highlight pezzi della stessa set con un marker colorato
+
+---
+
+## F-quinquies. Plan di esecuzione consigliato (per ROUND 4 kick-off)
+
+Quando arriverà il "GO" esplicito, l'ordine sarà:
+
+1. **Backend foundation** (mezza giornata)
+   - Migration step 0+1+2+3 in lifespan
+   - Add `seeds/seed_sets.py`, `seeds/seed_enchants.py`
+   - Add Pydantic models per Item/Set/Enchant/InventoryItem instance fields
+   - Add audit event_types
+2. **Backend services & routes** (1 giornata)
+   - `inventory/services.py::refine_item`, `enchant_item`, `disenchant_item`, `reroll_affixes`, `get_enchant_options`
+   - `equipment/services.py` refactor su `instance_id` + nuova collection `equipped_items`
+   - **CRITICO**: `market/services.py::create_listing` BoE guard (422 + i18n key)
+3. **Backend tests** (mezza giornata)
+   - 25-30 test in nuovo file `tests/backend_phase17_round4_test.py`
+   - Coverage: migration idempotency, refine atomic CAS, BoE guard, set bonus calc, reroll cap, disenchant output, leaderboard invariance, audit, no-regression Phase 14/15/16
+4. **Frontend** (1-1.5 giornate)
+   - Nuova pagina `/forge` con 4 tab (Refine/Enchant/Reroll/Disenchant)
+   - Update Inventory + AdventurerEquipment + Market 422 toast + NavLink Forge + i18n
+5. **Smoke test preview + frontend testing_agent_v3** (mezza giornata)
+6. **Report finale** + standby per user validation prima di redeploy prod
+
+**Path count atteso**: 61 → **70-72** (+9-11 endpoints). I 3 path-count guard test verranno aggiornati una sola volta a numero finale.
+
+---
+
+
 
 ## G. Stima sforzo
 
