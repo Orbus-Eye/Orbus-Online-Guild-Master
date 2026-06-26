@@ -1039,7 +1039,7 @@
     "intro": "Rifinisci, incanta o smonta i tuoi oggetti. Le operazioni rendono l'oggetto LEGATO (non più vendibile).",
     "tab_refine": "RIFINISCI",
     "tab_enchant": "INCANTA",
-    "tab_reroll": "AFFINANZA",
+    "tab_reroll": "RIASSEGNA",
     "tab_disenchant": "SMONTA",
     "select_item": "SELEZIONA OGGETTO",
     "no_eligible": "Nessun oggetto compatibile",
@@ -1056,7 +1056,7 @@
     "boe_warning": "L'oggetto diventerà LEGATO (non più vendibile al mercato).",
     "confirm_refine": "CONFERMA RIFINITURA",
     "confirm_enchant": "MOSTRA OPZIONI",
-    "confirm_reroll": "CONFERMA REROLL",
+    "confirm_reroll": "CONFERMA RIASSEGNA",
     "confirm_disenchant": "CONFERMA SMONTAGGIO"
   },
   "set": {

@@ -1039,7 +1039,7 @@
     "intro": "Refine, enchant or salvage your items. Operations bind the item (no longer sellable).",
     "tab_refine": "REFINE",
     "tab_enchant": "ENCHANT",
-    "tab_reroll": "REROLL",
+    "tab_reroll": "REASSIGN",
     "tab_disenchant": "SALVAGE",
     "select_item": "SELECT ITEM",
     "no_eligible": "No eligible items",
@@ -1056,7 +1056,7 @@
     "boe_warning": "The item will become BOUND (no longer sellable on the market).",
     "confirm_refine": "CONFIRM REFINE",
     "confirm_enchant": "SHOW OPTIONS",
-    "confirm_reroll": "CONFIRM REROLL",
+    "confirm_reroll": "CONFIRM REASSIGN",
     "confirm_disenchant": "CONFIRM SALVAGE"
   },
   "set": {
