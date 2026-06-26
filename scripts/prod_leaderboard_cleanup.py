@@ -184,6 +184,259 @@ def _looks_like_preview_uri(uri: str) -> bool:
     return any(s in u for s in ("localhost", "127.0.0.1", "/test_database"))
 
 
+# ─── Hard-delete guard ─────────────────────────────────────────────────
+# Anti-foot-gun: enforce at call sites that we never `delete_*` on users
+# or guilds outside the rollback path (which is gated by the
+# shadow-sentinel check). Date-mode in particular MUST NOT delete anything.
+def _assert_no_destructive_op(collection_name: str, op: str) -> None:
+    forbidden_collections = {"users", "guilds"}
+    forbidden_ops = {"delete_one", "delete_many", "drop"}
+    if collection_name in forbidden_collections and op in forbidden_ops:
+        raise RuntimeError(
+            f"REFUSED: destructive op '{op}' on '{collection_name}' is "
+            "disallowed by policy (NO HARD DELETE). "
+            "Use is_test_user=True flagging instead."
+        )
+
+
+# ─── Date-mode (2026-06-26 extension) ──────────────────────────────────
+# Flag-by-date-range audit + apply. Targets guilds whose `created_at`
+# falls in the configured UTC range (default 2026-06-23 to 2026-06-24
+# inclusive). Idempotent: a user already `is_test_user=True` is reported
+# as `ALREADY_FLAGGED` and not re-written. Allowlist (email OR guild name)
+# is honoured. NO HARD DELETE.
+DATE_MODE_START = datetime(2026, 6, 23, 0, 0, 0, tzinfo=timezone.utc)
+DATE_MODE_END = datetime(2026, 6, 25, 0, 0, 0, tzinfo=timezone.utc)
+DATE_MODE_REASON = "date_range_2026-06-23_to_24"
+
+
+def _norm_created_at(value):
+    """`guilds.created_at` may be a string (ISO), a datetime, or missing."""
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    if isinstance(value, str):
+        try:
+            v = value.rstrip("Z")
+            dt = datetime.fromisoformat(v)
+            return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        except ValueError:
+            return None
+    return None
+
+
+async def audit_date_range(db, start: datetime, end: datetime) -> dict:
+    """Read-only date-range audit. Returns per-guild classification."""
+    # `created_at` may be stored as string OR datetime depending on legacy
+    # writers — query both forms with $or for safety.
+    rng_str = {
+        "created_at": {"$gte": start.isoformat(), "$lt": end.isoformat()}
+    }
+    rng_dt = {"created_at": {"$gte": start, "$lt": end}}
+    guilds = await db.guilds.find(
+        {"$or": [rng_str, rng_dt]},
+        {
+            "_id": 0,
+            "id": 1,
+            "name": 1,
+            "owner_user_id": 1,
+            "created_at": 1,
+        },
+    ).sort("created_at", 1).to_list(None)
+
+    owner_ids = list({g["owner_user_id"] for g in guilds if g.get("owner_user_id")})
+    owners = await db.users.find(
+        {"id": {"$in": owner_ids}},
+        {"_id": 0, "id": 1, "email": 1, "is_test_user": 1},
+    ).to_list(None)
+    by_uid = {u["id"]: u for u in owners}
+
+    will_flag: list[dict] = []
+    allowlist_skipped: list[dict] = []
+    already_flagged: list[dict] = []
+    no_owner: list[dict] = []
+
+    for g in guilds:
+        gname_lower = (g.get("name") or "").lower()
+        owner = by_uid.get(g.get("owner_user_id"))
+        created_at_iso = (
+            _norm_created_at(g.get("created_at")).isoformat()
+            if _norm_created_at(g.get("created_at")) else "(unknown)"
+        )
+
+        # No owner doc — surface but never flag (no user_id to write to).
+        if not owner:
+            no_owner.append({
+                "guild": g.get("name"),
+                "guild_id": g.get("id"),
+                "owner_user_id": g.get("owner_user_id"),
+                "created_at": created_at_iso,
+            })
+            continue
+
+        email_lower = (owner.get("email") or "").lower()
+
+        # Allowlist (email OR guild name).
+        if email_lower in ALLOWLIST_EMAILS or gname_lower in ALLOWLIST_GUILDS:
+            allowlist_skipped.append({
+                "guild": g.get("name"),
+                "owner_email_masked": mask_email(owner.get("email") or ""),
+                "created_at": created_at_iso,
+                "reason": "email_in_ALLOWLIST_EMAILS" if email_lower in ALLOWLIST_EMAILS
+                          else "guild_in_ALLOWLIST_GUILDS",
+            })
+            continue
+
+        # Already flagged → idempotency.
+        if owner.get("is_test_user") is True:
+            already_flagged.append({
+                "guild": g.get("name"),
+                "owner_email_masked": mask_email(owner.get("email") or ""),
+                "created_at": created_at_iso,
+            })
+            continue
+
+        will_flag.append({
+            "user_id": owner["id"],
+            "guild": g.get("name"),
+            "guild_id": g.get("id"),
+            "owner_email_masked": mask_email(owner.get("email") or ""),
+            "created_at": created_at_iso,
+        })
+
+    return {
+        "range_start_utc": start.isoformat(),
+        "range_end_utc_exclusive": end.isoformat(),
+        "total_in_range": len(guilds),
+        "n_will_flag": len(will_flag),
+        "n_allowlist_skipped": len(allowlist_skipped),
+        "n_already_flagged": len(already_flagged),
+        "n_no_owner": len(no_owner),
+        "will_flag": will_flag,
+        "allowlist_skipped": allowlist_skipped,
+        "already_flagged": already_flagged,
+        "no_owner": no_owner,
+    }
+
+
+def _print_date_audit(res: dict) -> None:
+    print("\n── DATE-MODE AUDIT (read-only) ──")
+    print(f"range: {res['range_start_utc']} → {res['range_end_utc_exclusive']} (UTC, end-exclusive)")
+    print(f"total_in_range     : {res['total_in_range']}")
+    print(f"  WILL_FLAG        : {res['n_will_flag']}")
+    print(f"  ALLOWLIST_SKIP   : {res['n_allowlist_skipped']}")
+    print(f"  ALREADY_FLAGGED  : {res['n_already_flagged']}")
+    print(f"  NO_OWNER         : {res['n_no_owner']}")
+    if res["will_flag"]:
+        print("\n→ WILL_FLAG (would set is_test_user=True on these owners):")
+        for r in res["will_flag"]:
+            print(f"  • {r['guild']:<32}  owner={r['owner_email_masked']:<30}  created={r['created_at']}")
+    if res["allowlist_skipped"]:
+        print("\n✅ ALLOWLIST_SKIP (never touched):")
+        for r in res["allowlist_skipped"]:
+            print(f"  • {r['guild']:<32}  owner={r['owner_email_masked']:<30}  created={r['created_at']}  via={r['reason']}")
+    if res["already_flagged"]:
+        print("\n⏭  ALREADY_FLAGGED (idempotent skip — no write):")
+        for r in res["already_flagged"]:
+            print(f"  • {r['guild']:<32}  owner={r['owner_email_masked']:<30}  created={r['created_at']}")
+    if res["no_owner"]:
+        print("\n⚠  NO_OWNER (orphan guild without user doc — surfaced, NOT flagged):")
+        for r in res["no_owner"]:
+            print(f"  • {r['guild']:<32}  guild_id={r['guild_id']}  created={r['created_at']}")
+
+
+async def apply_date_range(db, res: dict, backup_path: Path) -> dict:
+    """Idempotent write: $set is_test_user=True on each WILL_FLAG owner +
+    one audit_log row per flagged user. NO HARD DELETE."""
+    now = datetime.now(timezone.utc)
+    will_flag = res["will_flag"]
+
+    backup = {
+        "timestamp_utc": now.isoformat(),
+        "reason": "prod leaderboard cleanup — date-range mode (NO hard delete)",
+        "operation": "users.update_one({id}, {$set:{is_test_user:True, flagged_at, flagged_reason}})",
+        "range_start_utc": res["range_start_utc"],
+        "range_end_utc_exclusive": res["range_end_utc_exclusive"],
+        "allowlist_emails": sorted(ALLOWLIST_EMAILS),
+        "allowlist_guilds": sorted(ALLOWLIST_GUILDS),
+        "no_owner_skipped": res["no_owner"],
+        "allowlist_skipped": res["allowlist_skipped"],
+        "already_flagged_skipped": res["already_flagged"],
+        "users_flagged": will_flag,
+    }
+    backup_path.write_text(json.dumps(backup, indent=2, default=str))
+    print(f"\n[backup] saved → {backup_path}")
+
+    if not will_flag:
+        print("[apply] nothing to flag (idempotent no-op).")
+        return {"flagged": 0, "audit_written": 0}
+
+    # Defence-in-depth: re-check that no ALLOWLIST email leaked into the set.
+    ids = [r["user_id"] for r in will_flag]
+    leaks = await db.users.find(
+        {"id": {"$in": ids}, "email": {"$in": list(ALLOWLIST_EMAILS)}},
+        {"_id": 0, "id": 1, "email": 1},
+    ).to_list(None)
+    if leaks:
+        print(f"⛔ ABORT: allowlist email leaked into flag set: {leaks}")
+        sys.exit(3)
+
+    flagged = 0
+    audit_written = 0
+    for r in will_flag:
+        # Final per-row idempotency guard: if some concurrent run already
+        # flagged this user, skip without write.
+        existing = await db.users.find_one(
+            {"id": r["user_id"]},
+            {"_id": 0, "is_test_user": 1, "email": 1},
+        )
+        if not existing:
+            print(f"  [skip] user_id {r['user_id']} not found (race?)")
+            continue
+        if existing.get("is_test_user") is True:
+            continue
+        if (existing.get("email") or "").lower() in ALLOWLIST_EMAILS:
+            print(f"  ⛔ ABORT: would flag an ALLOWLIST email — {existing['email']}")
+            sys.exit(3)
+        upd = await db.users.update_one(
+            {"id": r["user_id"], "is_test_user": {"$ne": True}},
+            {"$set": {
+                "is_test_user": True,
+                "flagged_at": now.isoformat(),
+                "flagged_reason": DATE_MODE_REASON,
+                "updated_at": now,
+            }},
+        )
+        if upd.modified_count:
+            flagged += 1
+            # Write audit_log row (NO email / NO token in metadata).
+            try:
+                await db.audit_log.insert_one({
+                    "id": f"flag-{r['user_id']}-{int(now.timestamp())}",
+                    "event_type": "user_flagged_test",
+                    "actor_user_id": None,
+                    "actor_guild_id": None,
+                    "metadata": {
+                        "user_id": r["user_id"],
+                        "guild_name": r["guild"],
+                        "guild_id": r["guild_id"],
+                        "created_at": r["created_at"],
+                        "mode": "date_range_v1",
+                        "actor": "cleanup_script",
+                        "range_start_utc": res["range_start_utc"],
+                        "range_end_utc_exclusive": res["range_end_utc_exclusive"],
+                    },
+                    "created_at": now.isoformat(),
+                })
+                audit_written += 1
+            except Exception as exc:  # noqa: BLE001
+                print(f"  [warn] audit_log write failed for {r['user_id']}: {exc}")
+
+    print(f"[flag]  modified={flagged}/{len(will_flag)}  audit_written={audit_written}")
+    return {"flagged": flagged, "audit_written": audit_written}
+
+
 # ─── Core audit ─────────────────────────────────────────────────────────
 async def audit(db) -> dict:
     """Read-only audit. Returns the classification result."""
@@ -461,6 +714,33 @@ async def _main(args: argparse.Namespace) -> None:
             await rollback(db, Path(args.rollback))
             return
 
+        if args.date_mode:
+            # Date-range cleanup (2026-06-23 → 2026-06-24 UTC by default).
+            start = args.date_start or DATE_MODE_START
+            end = args.date_end or DATE_MODE_END
+            if isinstance(start, str):
+                start = datetime.fromisoformat(start.rstrip("Z")).replace(tzinfo=timezone.utc)
+            if isinstance(end, str):
+                end = datetime.fromisoformat(end.rstrip("Z")).replace(tzinfo=timezone.utc)
+            res = await audit_date_range(db, start, end)
+            _print_date_audit(res)
+            if not args.apply:
+                print("\n(dry-run — pass --apply to write. NO writes performed.)")
+                return
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+            backup_path = Path(args.backup_dir) / f"prod_leaderboard_date_mode_backup_{ts}.json"
+            backup_path.parent.mkdir(parents=True, exist_ok=True)
+            await apply_date_range(db, res, backup_path)
+            # Final summary line for log scraping
+            print(
+                f"\n[summary] N_will_flag={res['n_will_flag']}  "
+                f"N_allowlist_skipped={res['n_allowlist_skipped']}  "
+                f"N_already_flagged={res['n_already_flagged']}  "
+                f"N_no_owner={res['n_no_owner']}  "
+                f"N_total_in_range={res['total_in_range']}"
+            )
+            return
+
         result = await audit(db)
         _print_audit(result)
 
@@ -488,6 +768,16 @@ def _cli() -> argparse.Namespace:
                     help="Where to drop the backup JSON (default /tmp).")
     ap.add_argument("--allow-preview", action="store_true",
                     help="Bypass the preview-URI guard (do not use on prod).")
+    ap.add_argument("--date-mode", action="store_true",
+                    help="Run the date-range cleanup (2026-06-23 to 2026-06-24 "
+                         "UTC by default), independent from the legacy "
+                         "pattern-based audit. NO HARD DELETE.")
+    ap.add_argument("--date-start", default=None,
+                    help="Override date-mode start (ISO UTC, inclusive). "
+                         "Default: 2026-06-23T00:00:00+00:00.")
+    ap.add_argument("--date-end", default=None,
+                    help="Override date-mode end (ISO UTC, exclusive). "
+                         "Default: 2026-06-25T00:00:00+00:00.")
     return ap.parse_args()
 
 
