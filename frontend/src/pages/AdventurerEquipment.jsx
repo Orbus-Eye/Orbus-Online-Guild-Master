@@ -46,6 +46,7 @@ export default function AdventurerEquipment() {
     const [equipment, setEquipment] = useState(null);
     const [adventurer, setAdventurer] = useState(null);
     const [inventory, setInventory] = useState([]);
+    const [equipmentDetail, setEquipmentDetail] = useState(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(false);
 
@@ -53,15 +54,17 @@ export default function AdventurerEquipment() {
 
     const refresh = useCallback(async () => {
         try {
-            const [eqRes, advRes, invRes] = await Promise.all([
+            const [eqRes, advRes, invRes, detailRes] = await Promise.all([
                 api.get(`/adventurers/${advId}/equipment`),
                 api.get("/adventurers"),
                 api.get("/inventory"),
+                api.get(`/adventurers/${advId}/equipment-detail`).catch(() => ({ data: null })),
             ]);
             setEquipment(eqRes.data);
             const matchedAdv = advRes.data.adventurers.find((a) => a.id === advId);
             setAdventurer(matchedAdv || null);
             setInventory(invRes.data.inventory || []);
+            setEquipmentDetail(detailRes.data);
         } catch (err) {
             toast.error(formatApiError(err));
         } finally {
@@ -193,6 +196,59 @@ export default function AdventurerEquipment() {
                                 modified until they return.
                             </div>
                         )}
+
+                        {/* ROUND 4 — Set bonuses panel */}
+                        <section
+                            data-testid="set-bonuses-panel"
+                            className="border border-border bg-card rounded-sm mb-6"
+                        >
+                            <div className="px-4 py-3 border-b border-border/60 bg-secondary/30 text-xs tracking-widest text-amber">
+                                :: {t("set.active_bonuses_title")}
+                            </div>
+                            <div className="p-4">
+                                {(!equipmentDetail || (equipmentDetail.active_bonuses || []).length === 0) ? (
+                                    <div
+                                        data-testid="set-bonuses-empty"
+                                        className="text-[11px] text-muted-foreground italic"
+                                    >
+                                        {t("set.no_active_bonuses")}
+                                    </div>
+                                ) : (
+                                    <ul className="space-y-1.5">
+                                        {(equipmentDetail.active_bonuses || []).map((b, idx) => (
+                                            <li
+                                                key={`${b.set_slug}-${b.pieces}-${idx}`}
+                                                data-testid={`set-bonus-${b.set_slug}-${b.pieces}`}
+                                                className="text-[11px] flex items-center gap-2"
+                                            >
+                                                <span className="text-amber">◆</span>
+                                                <span className="text-foreground">{b.set_slug}</span>
+                                                <span className="text-muted-foreground">
+                                                    ({b.pieces}pz)
+                                                </span>
+                                                <span className="text-[#22c55e]">
+                                                    +{b.bonus_value} {b.bonus_stat.toUpperCase()}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                {equipmentDetail && (equipmentDetail.set_progress || []).length > 0 && (
+                                    <div className="mt-3 pt-3 border-t border-border/40 space-y-1">
+                                        {equipmentDetail.set_progress.map((p) => (
+                                            <div
+                                                key={p.set_id}
+                                                data-testid={`set-progress-${p.slug}`}
+                                                className="text-[10px] text-muted-foreground"
+                                            >
+                                                <span className="text-foreground/80">{p.name}:</span>{" "}
+                                                {t("set.progress_label", { owned: p.owned, total: p.total })}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </section>
 
                         {SLOT_ORDER.map((slot) => {
                             const equippedSlot = equipment.slots[slot];

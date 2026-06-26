@@ -42,7 +42,8 @@
     "admin": "ADMIN",
     "logout": "logout",
     "brand_subtitle_dashboard": "DASHBOARD",
-    "consortiums": "Consortiums"
+    "consortiums": "Consortiums",
+    "forge": "FORGE"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -135,7 +136,10 @@
     "type_material": "Materials",
     "filter_empty": "No items match the selected filters.",
     "crafting_material": "MATERIAL",
-    "crafting_material_tip": "Used as input in one of the Forge recipes."
+    "crafting_material_tip": "Used as input in one of the Forge recipes.",
+    "bound_badge": "BOUND",
+    "bound_tooltip": "Refined/enchanted item — no longer sellable on the market.",
+    "goto_forge": "Go to Forge"
   },
   "create_guild": {
     "title": "Found your guild",
@@ -527,7 +531,8 @@
     "locked_qty": "Listed",
     "toast_listed": "Listing published",
     "toast_bought": "Purchased",
-    "toast_cancelled": "Listing cancelled"
+    "toast_cancelled": "Listing cancelled",
+    "error_bound_item": "BOUND item: cannot be sold on the market (it was refined or enchanted)."
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",
@@ -1028,5 +1033,36 @@
     "field_tag": "Tag",
     "field_description": "Description",
     "optional": "optional"
+  },
+  "forge": {
+    "title": "FORGE",
+    "intro": "Refine, enchant or salvage your items. Operations bind the item (no longer sellable).",
+    "tab_refine": "REFINE",
+    "tab_enchant": "ENCHANT",
+    "tab_reroll": "REROLL",
+    "tab_disenchant": "SALVAGE",
+    "select_item": "SELECT ITEM",
+    "no_eligible": "No eligible items",
+    "pick_one": "Pick an item from the list",
+    "operation_panel": "OPERATION PANEL",
+    "refine_hint": "Current level: +{lvl}. Gold and material costs scale with level.",
+    "refine_success": "Refinement succeeded! New level: +{lvl}",
+    "refine_failed": "Refinement failed. Materials consumed (item intact).",
+    "enchant_pick_option": "Pick an enchant from the list",
+    "enchant_applied": "Enchant applied!",
+    "reroll_success": "Affixes rerolled ({n}/5).",
+    "disenchant_success": "Salvaged! Got: {mats}",
+    "disenchant_warning": "⚠ The item will be destroyed and you'll receive materials in return.",
+    "boe_warning": "The item will become BOUND (no longer sellable on the market).",
+    "confirm_refine": "CONFIRM REFINE",
+    "confirm_enchant": "SHOW OPTIONS",
+    "confirm_reroll": "CONFIRM REROLL",
+    "confirm_disenchant": "CONFIRM SALVAGE"
+  },
+  "set": {
+    "active_bonuses_title": "ACTIVE SET BONUSES",
+    "no_active_bonuses": "No active set bonuses. Equip more pieces of the same family to activate bonuses.",
+    "progress_label": "Set progress: {owned}/{total}",
+    "tier_locked": "Locked ({need} pieces required)"
   }
 }

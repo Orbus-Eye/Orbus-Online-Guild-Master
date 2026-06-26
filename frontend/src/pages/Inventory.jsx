@@ -321,8 +321,18 @@ export default function Inventory() {
                                                     {(lang === "en"
                                                         ? it.display_name_en
                                                         : it.display_name_it) || it.name}
+                                                    {r.refinement_level > 0 ? ` +${r.refinement_level}` : ""}
                                                 </span>
                                                 <RarityBadge rarity={it.rarity} />
+                                                {r.is_bound && (
+                                                    <span
+                                                        data-testid={`inv-bound-badge-${r.id}`}
+                                                        className="inline-block text-[10px] tracking-widest border border-amber/60 text-amber px-1.5 py-0.5 rounded-sm"
+                                                        title={t("inventory_extra.bound_tooltip")}
+                                                    >
+                                                        ◆ {t("inventory_extra.bound_badge")}
+                                                    </span>
+                                                )}
                                                 {craftingMaterialSlugs.has(it.slug) && (
                                                     <span
                                                         data-testid={`inv-craft-mat-badge-${r.id}`}
@@ -478,6 +488,20 @@ export default function Inventory() {
                                                 {usableCount === 0
                                                     ? t("inventory_extra.not_usable_reason_level", { n: levelReq })
                                                     : t("inventory_extra.no_compatible_adventurer")}
+                                            </div>
+                                        )}
+
+                                        {/* ROUND 4 — Forge link (refinable / enchantable items) */}
+                                        {(it.item_type === "weapon" || it.item_type === "armor" || it.item_type === "accessory") && (
+                                            <div className="mt-2">
+                                                <Link
+                                                    to="/forge"
+                                                    data-testid={`inv-goto-forge-${r.id}`}
+                                                    className="inline-block text-[11px] text-amber hover:underline"
+                                                    title={t("inventory_extra.bound_tooltip")}
+                                                >
+                                                    ⚒ {t("inventory_extra.goto_forge")}
+                                                </Link>
                                             </div>
                                         )}
                                     </div>

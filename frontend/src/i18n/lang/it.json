@@ -42,7 +42,8 @@
     "admin": "ADMIN",
     "logout": "esci",
     "brand_subtitle_dashboard": "DASHBOARD",
-    "consortiums": "Consorzi"
+    "consortiums": "Consorzi",
+    "forge": "OFFICINA"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -135,7 +136,10 @@
     "type_material": "Materiali",
     "filter_empty": "Nessun oggetto corrisponde ai filtri selezionati.",
     "crafting_material": "MATERIALE",
-    "crafting_material_tip": "Usato come ingrediente in una ricetta della Forgia."
+    "crafting_material_tip": "Usato come ingrediente in una ricetta della Forgia.",
+    "bound_badge": "LEGATO",
+    "bound_tooltip": "Oggetto rifinito/incantato — non più vendibile al mercato.",
+    "goto_forge": "Vai a Officina"
   },
   "create_guild": {
     "title": "Fonda la tua gilda",
@@ -527,7 +531,8 @@
     "locked_qty": "Listati",
     "toast_listed": "Inserzione pubblicata",
     "toast_bought": "Acquistato",
-    "toast_cancelled": "Inserzione cancellata"
+    "toast_cancelled": "Inserzione cancellata",
+    "error_bound_item": "Oggetto LEGATO: non può essere venduto al mercato (è stato rifinito o incantato)."
   },
   "expedition_report_page": {
     "brand_subtitle": "REPORT",
@@ -1028,5 +1033,36 @@
     "field_tag": "Tag",
     "field_description": "Descrizione",
     "optional": "opzionale"
+  },
+  "forge": {
+    "title": "OFFICINA",
+    "intro": "Rifinisci, incanta o smonta i tuoi oggetti. Le operazioni rendono l'oggetto LEGATO (non più vendibile).",
+    "tab_refine": "RIFINISCI",
+    "tab_enchant": "INCANTA",
+    "tab_reroll": "AFFINANZA",
+    "tab_disenchant": "SMONTA",
+    "select_item": "SELEZIONA OGGETTO",
+    "no_eligible": "Nessun oggetto compatibile",
+    "pick_one": "Seleziona un oggetto dalla lista",
+    "operation_panel": "PANNELLO OPERAZIONE",
+    "refine_hint": "Livello attuale: +{lvl}. Costo gold e materiali variano per livello.",
+    "refine_success": "Rifinitura riuscita! Nuovo livello: +{lvl}",
+    "refine_failed": "Rifinitura fallita. Materiali consumati (oggetto intatto).",
+    "enchant_pick_option": "Seleziona un incantesimo dalla lista",
+    "enchant_applied": "Incantesimo applicato!",
+    "reroll_success": "Affissi rigenerati ({n}/5).",
+    "disenchant_success": "Smontato! Ottenuti: {mats}",
+    "disenchant_warning": "⚠ L'oggetto verrà distrutto e tu otterrai materiali in cambio.",
+    "boe_warning": "L'oggetto diventerà LEGATO (non più vendibile al mercato).",
+    "confirm_refine": "CONFERMA RIFINITURA",
+    "confirm_enchant": "MOSTRA OPZIONI",
+    "confirm_reroll": "CONFERMA REROLL",
+    "confirm_disenchant": "CONFERMA SMONTAGGIO"
+  },
+  "set": {
+    "active_bonuses_title": "BONUS SET ATTIVI",
+    "no_active_bonuses": "Nessun bonus set attivo. Equipaggia più pezzi della stessa famiglia per attivare bonus.",
+    "progress_label": "Progresso set: {owned}/{total}",
+    "tier_locked": "Bloccato ({need} pezzi richiesti)"
   }
 }

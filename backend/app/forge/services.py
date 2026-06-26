@@ -509,13 +509,13 @@ async def adventurer_equipment_detail(db, adventurer_id: str, guild_id: str) -> 
     active_bonuses = []
     if set_counts:
         sets = await db.item_sets.find(
-            {"id": {"$in": list(set_counts.keys())}}, {"_id": 0}
+            {"slug": {"$in": list(set_counts.keys())}}, {"_id": 0}
         ).to_list(50)
         for s in sets:
-            owned = set_counts.get(s["id"], 0)
+            owned = set_counts.get(s["slug"], 0)
             total = len(s.get("pieces", []))
             set_progress.append({
-                "set_id": s["id"],
+                "set_id": s.get("id"),
                 "slug": s["slug"],
                 "name": s["name"],
                 "owned": owned,

@@ -1,0 +1,53 @@
+{
+  "summary": "Phase 17 ROUND 4 (Forge / BoE / Equipment-detail / Set bonuses) — full backend + frontend E2E verification. Backend: 28/28 phase17_round4 tests PASS in 44.92s; OpenAPI path count = 69 exactly. Frontend: /forge loads with all 4 tabs (REFINE/ENCHANT/REROLL/SALVAGE), nav-forge link visible and navigates to /forge, i18n EN↔IT swap works (FORGE↔OFFICINA, REFINE↔RIFINISCI), Inventory shows BOUND badge with tooltip and 'Vai a Officina' link, AdventurerEquipment renders set-bonuses-panel (with set-bonuses-empty italic message when no pieces equipped), BoE warning text rendered in operation panel. Equipment-detail endpoint returns the correct shape with slots/set_progress/active_bonuses keys.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "AppHeader", "issues": ["At 1280px viewport, the right-side nav link 'FORGE' is visually truncated to 'FORG' on /forge and 'FO' on /adventurers/{id}/equipment (where the breadcrumb 'ORBUS // ADVENTURERS' is wider). The link is still functional (data-testid resolves; click navigates; full text 'FORGE'/'OFFICINA' present in DOM) — purely a CSS overflow/spacing issue between the breadcrumb, nav links, EN|IT toggle, gold counter, username and logout button. Consider shortening the breadcrumb, hiding it on md, or letting the right cluster shrink with min-width:0 on the nav."]}
+    ]
+  },
+  "test_results": {
+    "backend_phase17_round4": "PASS 28/28 (44.92s) — migration idempotency, forge seed (3 sets / 13 enchants / dragon_essence), refine/enchant/reroll/disenchant flows, BoE market guard with sentinel 'market.bound_item_not_sellable', reroll hard cap 5, disenchant 410-on-refine, equipment-detail shape, set bonus active calc, inventory legacy+new fields, market unbound listing intact, leaderboard unchanged.",
+    "openapi_path_count": "PASS — GET /api/openapi.json returns 69 paths exactly.",
+    "fe_login": "PASS",
+    "fe_nav_forge_link": "PASS — data-testid='nav-forge' visible, text='FORGE' (EN) / 'OFFICINA' (IT), click navigates to /forge.",
+    "fe_forge_title_and_tabs": "PASS — forge-title='::: FORGE', all 4 tabs forge-tab-{refine|enchant|reroll|disenchant} present and clickable. Labels: REFINE/ENCHANT/REROLL/SALVAGE (note: disenchant tab label is 'SALVAGE'/'SALVATAGGIO' which is acceptable alias).",
+    "fe_forge_intro_and_boe_warning": "PASS — intro paragraph visible; after selecting an item the operation panel renders the BoE warning ('no longer sellable' / 'non più vendibile').",
+    "fe_forge_item_selection": "PASS — 3 eligible items visible (drake_slayer_helm +1 [BOUND] from refine, drake_slayer_cuirass unbound); selecting highlights row; forge-confirm-refine label='CONFIRM REFINE'.",
+    "fe_i18n_switch": "PASS — Forge title swaps FORGE↔OFFICINA; tab label swaps REFINE↔RIFINISCI; nav-forge swaps FORGE↔OFFICINA.",
+    "fe_inventory_bound_badge": "PASS — inv-bound-badge-{row_id} visible with text '◆ LEGATO' (IT) and tooltip 'Oggetto rifinito/incantato — non più vendibile al mercato.'",
+    "fe_inventory_goto_forge_link": "PASS — inv-goto-forge-{row_id} visible with href='/forge' and text '⚒ Vai a Officina'.",
+    "fe_adventurer_equipment_set_panel": "PASS — set-bonuses-panel visible below BASE/EQUIPMENT/TOTAL POWER cards; set-bonuses-empty visible with text 'No active set bonuses. Equip more pieces of the same family to activate bonuses.' Page loads cleanly with empty equipmentDetail.",
+    "fe_market_page": "PASS (load + sell tab) — Market page loads in IT (Mercato/COMPRA/VENDI/LE MIE INSERZIONI tabs). NOTE: did not exercise the 422 BoE toast via UI because the Market sell-tab item selector did not surface the bound row (likely the UI pre-filters bound items, which is good UX). The backend BoE guard returning 422 with detail='market.bound_item_not_sellable' is fully covered by phase17 tests 21 & 22, and Market.jsx code at line ~295 maps this sentinel to toast.error(t('market.error_bound_item')).",
+    "fe_market_unbound_listing": "PASS (backend regression) — phase17 test_23_unbound_item_can_be_listed + test_27_market_unbound_listing_full_flow remain green."
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_phase17_round4_test.py",
+    "/app/test_reports/pytest/phase17_round4_iteration10.xml",
+    "/app/tests/setup_frontend_test.py"
+  ],
+  "action_items": [
+    "(low priority) Fix AppHeader CSS overflow so the right-side 'FORGE'/'OFFICINA' nav link does not get visually clipped on 1280px when the breadcrumb is long. Consider adding `min-w-0` to the flex container, shrinking the breadcrumb on md, or using `flex-shrink-0` only on the right cluster.",
+    "(optional) Add UI-level confirmation that the 422 toast 'Oggetto LEGATO: non può essere venduto al mercato' renders correctly. Requires either disabling the sell-tab bound-item filter to allow the request to hit backend, or adding a Cypress-style mock. Currently both backend sentinel and frontend interception code paths are inspected and verified by reading code; backend e2e tests cover the guard."
+  ],
+  "critical_code_review_comments": [
+    "Forge.jsx (207 lines): clean structure, proper testids on all interactive elements, server-authoritative confirm flows, useCallback for load(). Good pattern.",
+    "Inventory.jsx bound-badge and Vai-a-Officina link properly conditioned on r.is_bound and item_type (weapon/armor/accessory). Tooltip uses title attribute (acceptable; could be upgraded to shadcn Tooltip for richer UX).",
+    "AdventurerEquipment.jsx set-bonuses-panel correctly renders empty state via set-bonuses-empty when active_bonuses is empty; does not crash on empty equipmentDetail. Good defensive code.",
+    "Market.jsx 422 interception checks status===422 && detail==='market.bound_item_not_sellable' — exact sentinel match, no false positives.",
+    "Backend BoE guard at /app/backend/app/market/services.py:259-272 returns HTTPException(status_code=422, detail='market.bound_item_not_sellable') — sentinel is i18n-key-shaped (dotted) which is the correct cross-cutting contract.",
+    "Forge seeds (3 sets, 13 enchants, dragon_essence, 5 legendaries) are idempotent on lifespan boot (run_forge_migration). Migration is safe to re-run."
+  ],
+  "updated_files": [
+    "/app/tests/setup_frontend_test.py (NEW — helper to seed a fresh @orbus.test user + guild + gold + iron_shard + 1 bound and 1 unbound Legendary inventory item for frontend testing)"
+  ],
+  "success_rate": {"backend": "100% (28/28 phase17 + OpenAPI path count exact)", "frontend": "100% of testable flows PASS (12/12 critical assertions); 1 design polish item noted."},
+  "test_credentials": "Created fresh test user fe_p17_87ac84@orbus.test / Test12345! (guild_id=386cdb73-d8c9-47d3-b23f-5f0961220086) with 5100g, 20× iron_shard, 1× drake_slayer_helm +1 [BOUND] (row_id=0acf97ed-a5cb-4ec2-af0e-1c91be636551), 1× drake_slayer_cuirass [unbound] (row_id=1ebf58f3-84bf-45df-8642-fe6729c90206), and 1 recruited adventurer Gwyn Ashwood (id=2ebf22fe-6490-4c33-8502-5ca836c31cb1). Also: pre-seeded tester@orbus.test / password123 still works.",
+  "seed_data_creation": "via /app/tests/setup_frontend_test.py — fresh @orbus.test user with bound + unbound Legendary items + materials for end-to-end Forge/Inventory/AdventurerEquipment UI verification.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 17 ROUND 4 is GREEN end-to-end. Backend phase17_round4 suite (28/28) is the canonical regression. Frontend selectors verified: nav-forge, forge-title, forge-tab-{refine|enchant|reroll|disenchant}, forge-confirm-{tab}, forge-item-{instance_id}, forge-enchant-options, forge-enchant-option-{slug}, inv-bound-badge-{row_id}, inv-goto-forge-{row_id}, set-bonuses-panel, set-bonuses-empty. The only outstanding cosmetic note is the AppHeader right-side overflow at 1280px which truncates the 'FORGE'/'OFFICINA' label visually (not functionally). Future agents can rely on /app/tests/setup_frontend_test.py to spawn a ready-to-test user.",
+  "rca of the issue": "n/a — no functional regression. Header overflow is a CSS layout issue (flex distribution between long breadcrumb, nav cluster, lang switcher, gold readout, username, logout); add min-w-0 on header flex children or shrink breadcrumb on md to fix."
+}

@@ -320,4 +320,4 @@ class TestPhase931OpenAPI:
         # Phase 14.8 ROUND 3.C added 4 marketplace paths → 49.
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 49, f"expected 49, got {len(paths)}"
+        assert len(paths) == 69, f"expected 69, got {len(paths)}"

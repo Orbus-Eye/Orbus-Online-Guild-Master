@@ -23,6 +23,14 @@ def inventory_entry_public(
         "market_locked_quantity": market_locked,
         "available_quantity": available,
         "acquired_at": row["acquired_at"],
+        # ROUND 4 per-instance fields (additive, default-safe)
+        "instance_id": row.get("instance_id") or row["id"],
+        "is_bound": bool(row.get("is_bound", False)),
+        "refinement_level": int(row.get("refinement_level", 0)),
+        "enchants": row.get("enchants", []) or [],
+        "affixes": row.get("affixes", []) or [],
+        "reroll_count": int(row.get("reroll_count", 0)),
+        "disenchanted_at": row.get("disenchanted_at"),
     }
     if item:
         out["item"] = item_public(item)

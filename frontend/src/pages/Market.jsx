@@ -293,7 +293,13 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
             await loadInventory();
             await refreshGuild();
         } else {
-            toast.error(body.detail || "Errore");
+            // ROUND 4 — translate the BoE 422 sentinel into a human i18n string.
+            const detail = body.detail;
+            if (r.status === 422 && detail === "market.bound_item_not_sellable") {
+                toast.error(t("market.error_bound_item"));
+            } else {
+                toast.error(detail || "Errore");
+            }
         }
         setSubmitting(false);
     }
