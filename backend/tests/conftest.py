@@ -29,9 +29,8 @@ ALLOWLIST_EMAILS = frozenset({
     "mr.gualmini@gmail.com",
     "gianluca.brandi42@gmail.com",
     "tester@orbus.test",  # tester sandbox admin (seeded in dev only)
-    # Harambes owner email PENDING (real player on prod, owner of guild "Harambes").
-    # Add the email here as soon as the user provides it. Until then,
-    # name-based protection on the guild "harambes" is in place below.
+    "samuelemazzini1994@gmail.com",  # Harambes owner — confirmed 2026-06-26
+    "ginnyo.gear@gmail.com",         # Magmorella — Il Regno di Lanafuoco — confirmed 2026-06-26
 })
 ALLOWLIST_GUILDS_LOWER = frozenset({
     "sentiero di efreto",

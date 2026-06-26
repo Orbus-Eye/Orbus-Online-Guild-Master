@@ -90,9 +90,10 @@ except ImportError as e:
 
 # ─── Permanent allowlist (hardcoded, single source of truth on prod) ───
 ALLOWLIST_EMAILS = {
-    "mr.gualmini@gmail.com",          # Gualma — Sentiero di Efreto
+    "mr.gualmini@gmail.com",          # Gualma — Sentiero di Efreto / The Loremaster
     "gianluca.brandi42@gmail.com",    # Drakarys
-    # "<harambes email pending>",    # add when user provides it
+    "samuelemazzini1994@gmail.com",   # Harambes — confirmed 2026-06-26
+    "ginnyo.gear@gmail.com",          # Magmorella — Il Regno di Lanafuoco — 2026-06-26
     "tester@orbus.test",              # sandbox admin
 }
 ALLOWLIST_GUILDS = {

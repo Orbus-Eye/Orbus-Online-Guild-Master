@@ -34,12 +34,11 @@ in every cleanup surface so that no future operation can touch these accounts.
 
 ```python
 ALLOWLIST_EMAILS = {
-    "mr.gualmini@gmail.com",          # Gualma — primary author/admin
+    "mr.gualmini@gmail.com",          # Gualma — primary author/admin (also owner of "The Loremaster")
     "gianluca.brandi42@gmail.com",    # Drakarys owner (real player)
+    "samuelemazzini1994@gmail.com",   # Harambes owner — confirmed 2026-06-26
+    "ginnyo.gear@gmail.com",          # Magmorella — Il Regno di Lanafuoco — confirmed 2026-06-26
     "tester@orbus.test",              # sandbox admin (dev-only seed)
-    # PENDING: Harambes owner email — guild "harambes" is a real prod player
-    # but the email was not provided yet. Until the user provides it,
-    # protection relies on the name-based check below.
 }
 ```
 
@@ -57,9 +56,18 @@ ALLOWLIST_GUILDS_LOWER = {
 
 ### TODO — email pendenti da richiedere all'utente
 
-- Owner email di `harambes` — protezione attualmente solo name-based
-- Owner email di `il regno di lanafuoco` — protezione attualmente solo name-based
-  Una volta nota, va aggiunta a `ALLOWLIST_EMAILS` in tutti e 3 i file.
+_(all email pending entries cleared on 2026-06-26 — see audit log below)_
+
+### Owner registry (for reference)
+
+| Guild | Owner email | Owner username | Confirmed |
+| --- | --- | --- | --- |
+| Sentiero di Efreto | mr.gualmini@gmail.com | Gualma | 2026-06-25 |
+| The Loremaster | mr.gualmini@gmail.com | Gualma | 2026-06-26 |
+| Drakarys | gianluca.brandi42@gmail.com | — | 2026-06-25 |
+| Harambes | samuelemazzini1994@gmail.com | — | 2026-06-26 |
+| Il Regno di Lanafuoco | ginnyo.gear@gmail.com | Magmorella | 2026-06-26 |
+| The Iron Lantern | _(TEST account)_ | _(forced is_test_user=True via TEST_GUILDS_FORCE)_ | 2026-06-26 |
 
 ## Enforcement points
 
@@ -95,4 +103,5 @@ flagging code MUST honour both sets.
 | 2026-06-25 21:06 | Allowlist hardened (this commit) | +gianluca.brandi42@gmail.com, +tester@orbus.test, +Drakarys (guild). Pytest conftest sweep now filters all of them. |
 | 2026-06-26 (Round 3 post-deploy) | +Harambes (guild only, email pending) | Real prod player confirmed by user. Owner email still to be provided; name-based protection active. |
 | 2026-06-26 08:35 (post unified deploy) | +The Loremaster (allowlist) +Il Regno di Lanafuoco (allowlist) +The Iron Lantern (TEST_GUILDS_FORCE) | User classified the 3 previously-ambiguous prod guilds. Loremaster confirmed = mr.gualmini@gmail.com (already in email allowlist). Lanafuoco = nuovo giocatore reale (email TBD). Iron Lantern = test → forced flag via TEST_GUILDS_FORCE set in prod_leaderboard_cleanup.py. |
+| 2026-06-26 08:45 (post unified deploy) | +samuelemazzini1994@gmail.com (Harambes) +ginnyo.gear@gmail.com (Magmorella / Il Regno di Lanafuoco) | User provided the 2 pending owner emails. All ALLOWLIST_EMAILS pending TODOs closed. Protection is now both email-based AND name-based for Harambes and Il Regno di Lanafuoco. |
 | 2026-06-26 (Round 3 post-deploy) | Preview leaderboard residual cleanup | 13 leaderboard-visible test users flagged `is_test_user=True`; 53 orphan-owner guilds got a shadow placeholder user (`is_test_user=True`) so the leaderboard filter applies. Reversible via the backup in `db_leaderboard_residual_flag_backup.json`. No hard delete. |
