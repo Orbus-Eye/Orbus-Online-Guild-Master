@@ -286,9 +286,9 @@ class TestOpenAPIInvariant:
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # 49 = baseline 43 (ROUND 2 Fase 3) + 2 crafting (3.A/B) + 4 market (3.C).
-        assert len(paths) == 49, (
-            f"ROUND 2 Fase 3 baseline +2 crafting +4 market expected, got {len(paths)}"
+        # 49 = baseline 43 + 2 crafting + 4 market; +4 (Phase 15) + 7 (Phase 16) = 60.
+        assert len(paths) == 60, (
+            f"ROUND 3 baseline +Phase 15 +Phase 16 expected 60, got {len(paths)}"
         )
 
 

@@ -108,8 +108,8 @@ class TestOpenAPIStable:
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # baseline 43 (ROUND 1) → 45 after ROUND 3.A/B → 49 after ROUND 3.C (marketplace).
-        assert len(paths) == 49, (
+        # baseline 43 → 45 (Round 3.A/B) → 49 (Round 3.C market) → 53 (Phase 15) → 60 (Phase 16).
+        assert len(paths) == 60, (
             f"unexpected OpenAPI path count: {len(paths)}"
         )
 
