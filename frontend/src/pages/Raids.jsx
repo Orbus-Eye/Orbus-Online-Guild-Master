@@ -8,7 +8,6 @@ import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 
-
 function CountdownPill({ seconds }) {
     const [remaining, setRemaining] = useState(seconds || 0);
     useEffect(() => {
@@ -32,7 +31,7 @@ function CountdownPill({ seconds }) {
 
 
 export default function Raids() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const [catalog, setCatalog] = useState(null);
     const [history, setHistory] = useState([]);
     const [cooldown, setCooldown] = useState(0);
@@ -78,7 +77,7 @@ export default function Raids() {
                         >
                             <header className="flex items-start justify-between gap-2 mb-2 flex-wrap">
                                 <h2 className="text-sm font-semibold tracking-wider">
-                                    {r.name_it || r.name}
+                                    {t(`raids.catalog.${r.slug}.name`)}
                                 </h2>
                                 <div className="text-[10px] tracking-widest flex items-center gap-2">
                                     <span className="border border-border px-1.5 py-0.5 rounded-sm">T{r.tier}</span>
@@ -94,7 +93,7 @@ export default function Raids() {
                                 </div>
                             </header>
                             <p className="text-[11px] text-muted-foreground italic mb-3">
-                                {r.description_it || r.description}
+                                {t(`raids.catalog.${r.slug}.description`)}
                             </p>
                             <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] mb-2">
                                 <div><dt className="text-muted-foreground">Power</dt><dd>{r.recommended_power_combined}</dd></div>
@@ -109,10 +108,20 @@ export default function Raids() {
                             {r.gate_reason && (
                                 <div className="text-[11px] text-amber italic">
                                     {r.gate_reason === "roster_too_small"
-                                        ? `Servono ${r.min_roster_size} avventurieri (hai ${r.guild_roster_count})`
-                                        : `Picco team_power richiesto: ${r.gate?.min_max_team_power_ever || "?"} (tuo: ${r.guild_max_team_power_ever})`}
+                                        ? t("raids.gate.roster_too_small", { need: r.min_roster_size, have: r.guild_roster_count })
+                                        : t("raids.gate.max_team_power_too_low", { need: r.gate?.min_max_team_power_ever || "?", have: r.guild_max_team_power_ever })}
                                 </div>
                             )}
+                            {/* Phase 18.1 — Builder + last report links */}
+                            <div className="mt-3 flex items-center gap-2 flex-wrap">
+                                <Link
+                                    to={`/raids/build/${r.slug}`}
+                                    data-testid={`raid-builder-link-${r.slug}`}
+                                    className={`text-[11px] tracking-widest border px-3 py-1 rounded-sm ${r.unlocked ? "border-amber/60 text-amber hover:bg-amber/10" : "border-border/40 text-muted-foreground pointer-events-none opacity-50"}`}
+                                >
+                                    ▶ {t("raids.builder.title")}
+                                </Link>
+                            </div>
                         </article>
                     ))}
                 </section>
@@ -120,16 +129,23 @@ export default function Raids() {
                 {/* History */}
                 {history.length > 0 && (
                     <section className="border-t border-border pt-4" data-testid="raids-history-section">
-                        <h3 className="text-xs tracking-widest text-amber mb-2">:: STORIA</h3>
+                        <h3 className="text-xs tracking-widest text-amber mb-2">:: {t("raids.history_title")}</h3>
                         <ul className="space-y-1.5">
                             {history.slice(0, 10).map((r) => (
                                 <li key={r.id} className="text-[11px] flex items-center gap-3 flex-wrap" data-testid={`raid-history-${r.id}`}>
                                     <span className="text-muted-foreground">{r.started_at.slice(0, 10)}</span>
-                                    <span>{r.raid_dungeon_slug}</span>
+                                    <span>{t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
                                     <span className={r.outcome === "victory" ? "text-[#22c55e]" : r.outcome === "partial" ? "text-amber" : "text-destructive"}>
                                         {r.outcome || r.status}
                                     </span>
                                     <span>score {r.raid_score}</span>
+                                    <Link
+                                        to={`/raids/${r.id}/report`}
+                                        className="text-amber hover:underline ml-auto"
+                                        data-testid={`raid-report-link-${r.id}`}
+                                    >
+                                        report →
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

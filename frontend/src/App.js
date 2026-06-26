@@ -26,6 +26,8 @@ import Market from "@/pages/Market";
 import Consortiums from "@/pages/Consortiums";
 import Forge from "@/pages/Forge";
 import Raids from "@/pages/Raids";
+import RaidBuilder from "@/pages/RaidBuilder";
+import RaidReport from "@/pages/RaidReport";
 
 function App() {
     return (
@@ -193,6 +195,22 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Raids />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/raids/build/:slug"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <RaidBuilder />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/raids/:raid_id/report"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <RaidReport />
                                 </ProtectedRoute>
                             }
                         />

@@ -73,6 +73,63 @@ DUNGEON_LOOT_TABLES = {
         "success": {"chance": 0.80, "weights": {"Uncommon": 50, "Rare": 35, "Epic": 15}},
         "failure": {"chance": 0.05, "weights": {"Common": 100}},
     },
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ROUND 5 (Phase 17.5 + 18.1) — 12 new 5p dungeons
+    # T1-5p: Common / Uncommon only (kid-friendly curve)
+    # T2-5p: Common / Uncommon / Rare
+    # T3-5p: Uncommon / Rare / Epic
+    # T4-5p: Common 5% · Uncommon 25% · Rare 35% · Epic 30% · Legendary 5%  (LOCKED §I.3)
+    # ═══════════════════════════════════════════════════════════════════════════
+    "wolf-den-5p": {
+        "success": {"chance": 0.55, "weights": {"Common": 80, "Uncommon": 20}},
+        "failure": {"chance": 0.05, "weights": {"Common": 100}},
+    },
+    "frost-cave-5p": {
+        "success": {"chance": 0.55, "weights": {"Common": 75, "Uncommon": 25}},
+        "failure": {"chance": 0.05, "weights": {"Common": 100}},
+    },
+    "salt-marsh-5p": {
+        "success": {"chance": 0.58, "weights": {"Common": 70, "Uncommon": 30}},
+        "failure": {"chance": 0.05, "weights": {"Common": 100}},
+    },
+    "iron-foundry-5p": {
+        "success": {"chance": 0.65, "weights": {"Common": 45, "Uncommon": 40, "Rare": 15}},
+        "failure": {"chance": 0.08, "weights": {"Common": 100}},
+    },
+    "silent-monastery-5p": {
+        "success": {"chance": 0.65, "weights": {"Common": 40, "Uncommon": 42, "Rare": 18}},
+        "failure": {"chance": 0.08, "weights": {"Common": 100}},
+    },
+    "pirate-fleet-5p": {
+        "success": {"chance": 0.68, "weights": {"Common": 35, "Uncommon": 45, "Rare": 20}},
+        "failure": {"chance": 0.08, "weights": {"Common": 100}},
+    },
+    "obsidian-arena-5p": {
+        "success": {"chance": 0.72, "weights": {"Uncommon": 48, "Rare": 38, "Epic": 14}},
+        "failure": {"chance": 0.05, "weights": {"Uncommon": 100}},
+    },
+    "clockwork-vault-5p": {
+        "success": {"chance": 0.72, "weights": {"Uncommon": 45, "Rare": 40, "Epic": 15}},
+        "failure": {"chance": 0.05, "weights": {"Uncommon": 100}},
+    },
+    "voidspire-5p": {
+        "success": {"chance": 0.75, "weights": {"Uncommon": 40, "Rare": 42, "Epic": 18}},
+        "failure": {"chance": 0.05, "weights": {"Uncommon": 100}},
+    },
+    # T4-5p Elite (Legendary 5% locked by §I.3)
+    "infernal-pit-5p": {
+        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
+    },
+    "celestial-citadel-5p": {
+        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
+    },
+    "world-tree-roots-5p": {
+        "success": {"chance": 0.80, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
+    },
 }
 
 

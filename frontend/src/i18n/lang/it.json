@@ -1080,6 +1080,59 @@
     "duration_label": "Durata",
     "reward_label": "Reward",
     "duration_min_short": "min",
-    "xp_per_adv": "XP/avv"
+    "xp_per_adv": "XP/avv",
+    "catalog": {
+      "broken-bastion-siege": {
+        "name": "Assedio al Bastione Spezzato",
+        "description": "Una fortezza in rovina sotto assedio. Tenete le mura abbastanza da spezzare le macchine d'assedio."
+      },
+      "necropolis-bells": {
+        "name": "Necropoli delle Mille Campane",
+        "description": "Ogni campana rintocca per un re morto. Ogni rintocco evoca spettri. Le campane non smetteranno."
+      },
+      "dragon-vault": {
+        "name": "Volta del Drago Addormentato",
+        "description": "Il drago dorme. Il tesoro è nella sua tana. Non svegliate il drago. Lo sveglierete."
+      }
+    },
+    "gate": {
+      "roster_too_small": "Roster insufficiente: servono {need} avventurieri (hai {have})",
+      "max_team_power_too_low": "Picco team power insufficiente: serve {need} (hai {have})",
+      "cooldown_active": "Raid in cooldown — prossimo disponibile tra {seconds}s",
+      "already_in_progress": "Hai già un raid in corso",
+      "adventurer_busy": "Uno o più avventurieri sono occupati",
+      "duplicate_adventurer": "Un avventuriere appare in più party"
+    },
+    "builder": {
+      "title": "RAID BUILDER",
+      "back_to_raids": "← Torna ai raid",
+      "party_label": "PARTY {n}",
+      "available_advs": "AVVENTURIERI DISPONIBILI",
+      "preview_btn": "ANTEPRIMA",
+      "launch_btn": "LANCIA RAID",
+      "remove": "rimuovi",
+      "summary_power": "Potenza combinata",
+      "summary_success": "Successo combinato",
+      "summary_per_party": "Successo per party",
+      "preview_done": "Anteprima OK — puoi lanciare",
+      "not_enough": "Servono 20 avventurieri unici ({have}/20)",
+      "launched": "Raid lanciato!"
+    },
+    "report": {
+      "title": "REPORT RAID",
+      "outcome_victory": "VITTORIA",
+      "outcome_partial": "PARZIALE",
+      "outcome_wipe": "WIPE",
+      "raid_score": "Raid score",
+      "duration": "Durata",
+      "rewards_label": "REWARDS",
+      "gold_total": "Oro totale",
+      "xp_per_member": "XP per sopravvissuto",
+      "dragon_essence_drop": "Essenza di drago",
+      "no_data": "Raid non ancora completato",
+      "survived": "sopravvissuto",
+      "fainted": "svenuto",
+      "complete_now": "Forza completamento (smoke)"
+    }
   }
 }

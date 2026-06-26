@@ -1080,6 +1080,59 @@
     "duration_label": "Duration",
     "reward_label": "Reward",
     "duration_min_short": "min",
-    "xp_per_adv": "XP/adv"
+    "xp_per_adv": "XP/adv",
+    "catalog": {
+      "broken-bastion-siege": {
+        "name": "Siege of the Broken Bastion",
+        "description": "A ruined keep besieged by a horde. Hold the walls long enough to break the siege engines."
+      },
+      "necropolis-bells": {
+        "name": "Necropolis of a Thousand Bells",
+        "description": "Each bell tolls a dead king. Every chime spawns wraiths. The bells will not stop ringing."
+      },
+      "dragon-vault": {
+        "name": "Vault of the Sleeping Dragon",
+        "description": "The dragon is asleep. The reward is in its hoard. Do not wake the dragon. You will wake the dragon."
+      }
+    },
+    "gate": {
+      "roster_too_small": "Roster too small: need {need} adventurers (have {have})",
+      "max_team_power_too_low": "Max team power too low: need {need} (have {have})",
+      "cooldown_active": "Raid on cooldown — next available in {seconds}s",
+      "already_in_progress": "You already have a raid in progress",
+      "adventurer_busy": "One or more adventurers are busy",
+      "duplicate_adventurer": "An adventurer appears in multiple parties"
+    },
+    "builder": {
+      "title": "RAID BUILDER",
+      "back_to_raids": "← Back to raids",
+      "party_label": "PARTY {n}",
+      "available_advs": "AVAILABLE ADVENTURERS",
+      "preview_btn": "PREVIEW",
+      "launch_btn": "LAUNCH RAID",
+      "remove": "remove",
+      "summary_power": "Combined power",
+      "summary_success": "Combined success",
+      "summary_per_party": "Per-party success",
+      "preview_done": "Preview OK — ready to launch",
+      "not_enough": "Need 20 unique adventurers ({have}/20)",
+      "launched": "Raid launched!"
+    },
+    "report": {
+      "title": "RAID REPORT",
+      "outcome_victory": "VICTORY",
+      "outcome_partial": "PARTIAL",
+      "outcome_wipe": "WIPE",
+      "raid_score": "Raid score",
+      "duration": "Duration",
+      "rewards_label": "REWARDS",
+      "gold_total": "Total gold",
+      "xp_per_member": "XP per survivor",
+      "dragon_essence_drop": "Dragon essence",
+      "no_data": "Raid not yet completed",
+      "survived": "survived",
+      "fainted": "fainted",
+      "complete_now": "Force complete (smoke)"
+    }
   }
 }
