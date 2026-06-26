@@ -187,8 +187,8 @@ class TestOpenAPIStable:
     def test_round3d_does_not_introduce_new_endpoints(self):
         r = requests.get(_api("/openapi.json"), timeout=15)
         paths = r.json().get("paths", {})
-        # Still 45 — no admin audit endpoint in this round.
-        assert len(paths) == 45, f"expected 45, got {len(paths)}"
+        # Still 49 — Round 3.D didn't add public endpoints; Round 3.C added 4.
+        assert len(paths) == 49, f"expected 49, got {len(paths)}"
 
 
 if __name__ == "__main__":  # pragma: no cover

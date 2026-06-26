@@ -10,7 +10,8 @@ def inventory_entry_public(
     """Project an inventory row + (optional) item join to its public shape."""
     total = int(row.get("quantity", 1))
     equipped = max(0, int(equipped_count))
-    available = max(0, total - equipped)
+    market_locked = max(0, int(row.get("market_locked_qty", 0)))
+    available = max(0, total - equipped - market_locked)
     out = {
         "id": row["id"],
         "guild_id": row["guild_id"],
@@ -19,6 +20,7 @@ def inventory_entry_public(
         "quantity": total,
         "total_quantity": total,
         "equipped_quantity": equipped,
+        "market_locked_quantity": market_locked,
         "available_quantity": available,
         "acquired_at": row["acquired_at"],
     }

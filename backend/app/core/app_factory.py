@@ -91,6 +91,7 @@ def create_app() -> FastAPI:
     from app.leaderboard.routes import router as leaderboard_router
     from app.quests.routes import router as quests_router
     from app.crafting.routes import router as crafting_router
+    from app.market.routes import router as market_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -105,6 +106,7 @@ def create_app() -> FastAPI:
     app.include_router(leaderboard_router)
     app.include_router(quests_router)
     app.include_router(crafting_router)
+    app.include_router(market_router)
 
     return app
 

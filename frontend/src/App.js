@@ -22,6 +22,7 @@ import PasswordResetRequest from "@/pages/PasswordResetRequest";
 import PasswordResetConfirm from "@/pages/PasswordResetConfirm";
 import Leaderboard from "@/pages/Leaderboard";
 import Crafting from "@/pages/Crafting";
+import Market from "@/pages/Market";
 
 function App() {
     return (
@@ -132,6 +133,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Crafting />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/market"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Market />
                                 </ProtectedRoute>
                             }
                         />

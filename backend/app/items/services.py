@@ -12,6 +12,8 @@ def item_public(it: dict) -> dict:
         "id": it["id"],
         "slug": it["slug"],
         "name": it["name"],
+        "display_name_it": it.get("display_name_it") or it["name"],
+        "display_name_en": it.get("display_name_en") or it["name"],
         "description": it.get("description", ""),
         "item_type": it["item_type"],
         "rarity": it["rarity"],

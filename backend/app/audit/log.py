@@ -44,6 +44,10 @@ EVENT_TYPES = frozenset({
     "gold_credited",
     "equip_item",
     "unequip_item",
+    # Phase 14.8 (ROUND 3.C) — Marketplace events
+    "market_listing_created",
+    "market_listing_cancelled",
+    "market_purchase_completed",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

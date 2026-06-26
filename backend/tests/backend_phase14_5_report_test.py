@@ -282,13 +282,13 @@ class TestExpeditionReportHTTP:
 
 
 class TestOpenAPIInvariant:
-    def test_path_count_unchanged_at_45(self):
+    def test_path_count_unchanged_at_49(self):
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # 45 = baseline 43 (ROUND 2 Fase 3) + crafting endpoints (2) added in ROUND 3.A/B.
-        assert len(paths) == 45, (
-            f"ROUND 2 Fase 3 baseline +2 crafting endpoints expected, got {len(paths)}"
+        # 49 = baseline 43 (ROUND 2 Fase 3) + 2 crafting (3.A/B) + 4 market (3.C).
+        assert len(paths) == 49, (
+            f"ROUND 2 Fase 3 baseline +2 crafting +4 market expected, got {len(paths)}"
         )
 
 
