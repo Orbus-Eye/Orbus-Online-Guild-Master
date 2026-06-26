@@ -99,11 +99,14 @@ ALLOWLIST_GUILDS = {
     "sentiero di efreto",
     "drakarys",
     "harambes",                       # name-based protection while email pending
+    "the loremaster",                 # CONFIRMED real player (mr.gualmini@gmail.com)
+    "il regno di lanafuoco",          # CONFIRMED real player 2026-06-26 (owner email TBD)
 }
 # Guilds we explicitly DO NOT TOUCH until the user classifies them.
-PENDING_AMBIGUOUS = {
-    "the loremaster",
-    "the iron lantern",
+PENDING_AMBIGUOUS: set[str] = set()  # cleared 2026-06-26 after user classification
+# Confirmed test guilds that must be flagged is_test_user=True on their owner.
+TEST_GUILDS_FORCE = {
+    "the iron lantern",               # CONFIRMED test by user 2026-06-26
 }
 
 # Sentinel password_hash for the shadow placeholder users created for
@@ -215,6 +218,22 @@ async def audit(db) -> dict:
     for g in guilds:
         gn = (g.get("name") or "").lower()
         owner = by_uid.get(g.get("owner_user_id"))
+
+        # 0. Forced-test guild names — flag even when the owner email would
+        #    normally pass an allowlist heuristic. The owner-email allowlist
+        #    is still respected to spare the sandbox tester admin.
+        if gn in TEST_GUILDS_FORCE and owner is not None:
+            email_lower = (owner.get("email") or "").lower()
+            if email_lower not in ALLOWLIST_EMAILS:
+                buckets["test_residual"].append({
+                    "user_id": owner["id"],
+                    "guild_id": g["id"],
+                    "guild": g["name"],
+                    "owner_email_masked": mask_email(owner["email"]),
+                    "peak": g.get("max_team_power_ever", 0),
+                    "reason": "TEST_GUILDS_FORCE",
+                })
+                continue
 
         # 1. Guild name in allowlist → keep (covers Harambes even if email TBD)
         if gn in ALLOWLIST_GUILDS:

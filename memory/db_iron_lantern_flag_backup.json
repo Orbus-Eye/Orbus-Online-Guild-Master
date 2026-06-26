@@ -1,0 +1,6 @@
+{
+  "timestamp_utc": "2026-06-26T08:33:25.313508+00:00",
+  "reason": "flag 'The Iron Lantern' owner(s) as test (user classification 2026-06-26)",
+  "reversible_via": "users.update_many({id \u2208 ids}, {$unset: {is_test_user: ''}})",
+  "users_flagged": []
+}

@@ -37,6 +37,8 @@ ALLOWLIST_GUILDS_LOWER = frozenset({
     "sentiero di efreto",
     "drakarys",
     "harambes",  # real prod player (owner email pending)
+    "the loremaster",  # CONFIRMED real player (mr.gualmini@gmail.com) — 2026-06-26
+    "il regno di lanafuoco",  # CONFIRMED real player — 2026-06-26 (owner email TBD)
 })
 
 

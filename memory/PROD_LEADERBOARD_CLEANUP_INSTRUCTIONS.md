@@ -154,10 +154,11 @@ ALLOWLIST_GUILDS = {
     "sentiero di efreto",
     "drakarys",
     "harambes",          # name-based protection while email pending
+    "the loremaster",    # CONFIRMED real player (mr.gualmini@gmail.com) — 2026-06-26
 }
-PENDING_AMBIGUOUS = {
-    "the loremaster",
-    "the iron lantern",
+PENDING_AMBIGUOUS = set()     # cleared 2026-06-26 — user classified both
+TEST_GUILDS_FORCE = {
+    "the iron lantern",  # CONFIRMED test by user — 2026-06-26
 }
 ```
 

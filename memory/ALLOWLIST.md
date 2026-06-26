@@ -47,11 +47,19 @@ ALLOWLIST_EMAILS = {
 
 ```python
 ALLOWLIST_GUILDS_LOWER = {
-    "sentiero di efreto",  # Gualma's guild
-    "drakarys",            # Brandi's guild
-    "harambes",            # real prod player (owner email pending)
+    "sentiero di efreto",       # Gualma's guild
+    "drakarys",                 # Brandi's guild
+    "harambes",                 # real prod player (owner email pending)
+    "the loremaster",           # CONFIRMED real player (mr.gualmini@gmail.com) — 2026-06-26
+    "il regno di lanafuoco",    # CONFIRMED real player 2026-06-26 (owner email TBD)
 }
 ```
+
+### TODO — email pendenti da richiedere all'utente
+
+- Owner email di `harambes` — protezione attualmente solo name-based
+- Owner email di `il regno di lanafuoco` — protezione attualmente solo name-based
+  Una volta nota, va aggiunta a `ALLOWLIST_EMAILS` in tutti e 3 i file.
 
 ## Enforcement points
 
@@ -86,4 +94,5 @@ flagging code MUST honour both sets.
 | 2026-06-25 19:06 | 16 ambiguous users flagged `is_test_user=True` | None of them was gianluca.brandi42 or Drakarys (full dump available). |
 | 2026-06-25 21:06 | Allowlist hardened (this commit) | +gianluca.brandi42@gmail.com, +tester@orbus.test, +Drakarys (guild). Pytest conftest sweep now filters all of them. |
 | 2026-06-26 (Round 3 post-deploy) | +Harambes (guild only, email pending) | Real prod player confirmed by user. Owner email still to be provided; name-based protection active. |
+| 2026-06-26 08:35 (post unified deploy) | +The Loremaster (allowlist) +Il Regno di Lanafuoco (allowlist) +The Iron Lantern (TEST_GUILDS_FORCE) | User classified the 3 previously-ambiguous prod guilds. Loremaster confirmed = mr.gualmini@gmail.com (already in email allowlist). Lanafuoco = nuovo giocatore reale (email TBD). Iron Lantern = test → forced flag via TEST_GUILDS_FORCE set in prod_leaderboard_cleanup.py. |
 | 2026-06-26 (Round 3 post-deploy) | Preview leaderboard residual cleanup | 13 leaderboard-visible test users flagged `is_test_user=True`; 53 orphan-owner guilds got a shadow placeholder user (`is_test_user=True`) so the leaderboard filter applies. Reversible via the backup in `db_leaderboard_residual_flag_backup.json`. No hard delete. |
