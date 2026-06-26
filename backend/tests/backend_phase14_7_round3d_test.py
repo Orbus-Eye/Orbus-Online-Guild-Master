@@ -188,7 +188,7 @@ class TestOpenAPIStable:
         r = requests.get(_api("/openapi.json"), timeout=15)
         paths = r.json().get("paths", {})
         # Still 49 — Round 3.D didn't add public endpoints; Round 3.C added 4.
-        assert len(paths) == 60, f"expected 60, got {len(paths)}"
+        assert len(paths) == 61, f"expected 61, got {len(paths)}"
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -331,4 +331,36 @@ async def admin_toggle_item(item_id: str, _: dict = Depends(get_admin_user)):
     return {"item": item_public(updated)}
 
 
+# ═════════════════════════════════════════════════════════════════════════
+# Phase 16.1 — Admin Cleanup: flag-test-users
+# ═════════════════════════════════════════════════════════════════════════
+# Aggressive bulk-flag endpoint. Idempotent CAS write, audit-trailed.
+# NO HARD DELETE: every assertion checked at runtime. Designed for prod use
+# behind the admin JWT, called via the bundle (not the standalone script).
+from app.admin.services import flag_test_users_aggressive  # noqa: E402
+from pydantic import BaseModel, Field  # noqa: E402
+
+
+class CleanupFlagPayload(BaseModel):
+    mode: str = Field(pattern="^(dry_run|apply)$")
+    confirm_apply: bool = False
+
+
+@router.post("/cleanup/flag-test-users")
+async def admin_cleanup_flag_test_users(
+    payload: CleanupFlagPayload,
+    current_admin: dict = Depends(get_admin_user),
+):
+    if payload.mode == "apply" and not payload.confirm_apply:
+        raise HTTPException(
+            400,
+            "confirm_apply=true is required for mode=apply (double-gate safety)",
+        )
+    return await flag_test_users_aggressive(
+        db,
+        mode=payload.mode,
+        actor_admin_id=current_admin.get("id"),
+    )
+
+
 __all__ = ["router"]

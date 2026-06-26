@@ -280,13 +280,14 @@ def test_round35_streak_weekly_unchanged():
 # ═════════════════════════════════════════════════════════════════════════
 # 11. OpenAPI path count is 60
 # ═════════════════════════════════════════════════════════════════════════
-def test_openapi_path_count_is_60():
+def test_openapi_path_count_is_61():
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     paths = r.json().get("paths", {})
-    # 53 (ROUND 3.5) + 1 chronicle + 6 consortiums = 60
-    assert len(paths) == 60, f"expected 60, got {len(paths)}: {sorted(paths)}"
+    # 53 (ROUND 3.5) + 1 chronicle + 6 consortiums + 1 admin cleanup = 61
+    assert len(paths) == 61, f"expected 61, got {len(paths)}: {sorted(paths)}"
     assert "/api/chronicle" in paths
     assert "/api/consortiums" in paths
     assert "/api/consortiums/me" in paths
     assert "/api/consortiums/leave" in paths
     assert "/api/consortiums/{consortium_id}/join" in paths
+    assert "/api/admin/cleanup/flag-test-users" in paths
