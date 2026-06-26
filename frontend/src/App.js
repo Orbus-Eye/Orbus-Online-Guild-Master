@@ -24,6 +24,7 @@ import Leaderboard from "@/pages/Leaderboard";
 import Crafting from "@/pages/Crafting";
 import Market from "@/pages/Market";
 import Consortiums from "@/pages/Consortiums";
+import Forge from "@/pages/Forge";
 
 function App() {
     return (
@@ -175,6 +176,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Consortiums />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/forge"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Forge />
                                 </ProtectedRoute>
                             }
                         />

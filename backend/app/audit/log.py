@@ -58,6 +58,12 @@ EVENT_TYPES = frozenset({
     "consortium_created",
     "consortium_joined",
     "consortium_left",
+    # ROUND 4 — Forge
+    "item_refined",
+    "item_refine_failed",
+    "item_enchanted",
+    "item_disenchanted",
+    "item_reroll_affix",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

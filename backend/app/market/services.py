@@ -253,6 +253,24 @@ async def create_listing(
             detail=f"Not enough available quantity (have {available}, want {quantity})",
         )
 
+    # 🔒 ROUND 4 BoE GUARD (Q8 LOCKED): a refined / enchanted / rerolled
+    # inventory row cannot be listed on the marketplace. Reject 422 with a
+    # clear, i18n-friendly detail string.
+    bound_row = await db.inventory_items.find_one(
+        {
+            "guild_id": guild["id"],
+            "item_id": item["id"],
+            "is_bound": True,
+            "disenchanted_at": None,
+        },
+        {"_id": 0, "id": 1, "instance_id": 1},
+    )
+    if bound_row:
+        raise HTTPException(
+            status_code=422,
+            detail="market.bound_item_not_sellable",  # frontend resolves via i18n
+        )
+
     # 1) Conditional lock: atomically increase market_locked_qty as long
     #    as quantity - equipped - market_locked - requested >= 0.
     #    We approximate equipped count once (race window: a parallel
