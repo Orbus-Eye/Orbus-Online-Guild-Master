@@ -89,3 +89,68 @@ The full API contract for Phase 15 + Phase 14.1 is locked in
 22 backend pytest assertions, and any external API consumer. The naming convention
 `objective_*` is paired with `objective_type` and MUST be preserved for any future
 weekly-quest field.
+
+---
+
+## Phase 17 — ROUND 4: Equipment & Loot Advanced (2026-06-26)
+
+### What's implemented (preview only, NOT deployed to prod)
+- ✅ **Forge / Workshop**: 4 operations on per-instance inventory rows.
+  - `POST /api/inventory/{instance_id}/refine` — +1 refinement with locked curve
+    (100% rate at +1 → 8% at +10), cost gold + iron_shard/arcane_dust/dull_gem/dragon_essence.
+  - `POST /api/inventory/{instance_id}/enchant-options` — 3-5 weighted enchant choices
+    by item rarity (Q5 LOCKED: player picks).
+  - `POST /api/inventory/{instance_id}/enchant` — apply chosen enchant.
+  - `POST /api/inventory/{instance_id}/reroll-affixes` — escalating cost
+    50/150/400/1000/2500, HARD CAP 5 per item.
+  - `POST /api/inventory/{instance_id}/disenchant` — guaranteed materials by rarity
+    + weighted random bonus; soft-delete via `disenchanted_at` (audit retention).
+- ✅ **BoE (Bound-on-Equip) market guard** (Q8 LOCKED, CRITICAL):
+  refine / enchant / reroll auto-set `inventory_items.is_bound=True`;
+  `POST /api/market/listings` rejects bound rows with HTTP 422 + detail
+  `market.bound_item_not_sellable`. Frontend resolves via i18n key `market.error_bound_item`.
+- ✅ **Set bonuses & equipment-detail**:
+  - `GET /api/sets`, `GET /api/enchants` (public lists).
+  - `GET /api/adventurers/{id}/equipment-detail` returns slots + set_progress + active_bonuses.
+  - Tier-based bonuses (3/5 pieces — Q3 LOCKED).
+- ✅ **Seeds (idempotent on every boot)**: 3 item sets (drake_slayer / arcane_adept / goblin_hunter),
+  13 enchants (Common→Epic), 1 new material `dragon_essence`, 5 Legendary baseline items.
+- ✅ **Migration additive/idempotent**: all `inventory_items` rows back-filled with
+  `instance_id`, `is_bound=False`, `refinement_level=0`, `enchants=[]`, `affixes=[]`,
+  `reroll_count=0`, `disenchanted_at=None`. All `items` get `slot_type` + `set_id` +
+  `max_refinement` + `enchant_slots` + `affix_pool_tag` defaults.
+- ✅ **Frontend**: new `/forge` page (4 tabs), Inventory BOUND badge + tooltip +
+  "Vai a Officina" link, AdventurerEquipment "BONUS SET ATTIVI" panel, Market i18n
+  toast for 422 BoE, i18n IT+EN keys added.
+- ✅ **Path count**: 61 → **69** (+8 endpoints).
+- ✅ **Tests**: new `backend_phase17_round4_test.py` (28/28 PASS in 44.92s).
+  Cross-suite regression: legacy tests updated to path 69; all 77/77 PASS for
+  Phase 14.x + 16.
+
+### Frontend testids added (canonical)
+`nav-forge`, `forge-title`, `forge-tab-{refine|enchant|reroll|disenchant}`,
+`forge-item-{instance_id}`, `forge-confirm-{tab}`, `forge-enchant-option-{slug}`,
+`forge-enchant-options`, `inv-bound-badge-{row_id}`, `inv-goto-forge-{row_id}`,
+`set-bonuses-panel`, `set-bonus-{slug}-{pieces}`, `set-progress-{slug}`,
+`set-bonuses-empty`.
+
+### Locked decisions ribadite (NON deviare in P18+)
+- ❌ NO Mythic rarity in ROUND 4.
+- ❌ NO item break/destroy on refinement failure.
+- ❌ NO refund of gold on disenchant.
+- ❌ NO ALLOWLIST changes.
+- ❌ NO leaderboard formula tampering (set bonuses are runtime-only, not persisted on `max_team_power_ever`).
+- ❌ NO real-money item purchase.
+- ❌ NO premium boost.
+- ✅ Bound items can NEVER be listed on market (frontend + backend dual enforcement).
+
+### Backlog ROUND 4
+- **P0** — User validation of /forge UI in preview, then redeploy prod with explicit confirm.
+- **P1** — UI Tooltip upgrade from `title=` to shadcn `<Tooltip>` for richer BoE hover.
+- **P2** — Weekly quest hook `weekly_refine_items_3` / `weekly_enchant_items_2`
+  (deferred, optional).
+- **P2** — Affix random-roll on drop generation (currently affixes only appear via reroll
+  on previously-affixed items; baseline drops are not yet affix-tagged in the loot table).
+- **P3** — Mobile app (Expo) parity for Forge.
+- **P3** — Forge log feed (recent operations history on /forge page).
+

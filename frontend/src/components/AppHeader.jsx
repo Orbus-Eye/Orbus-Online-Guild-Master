@@ -29,24 +29,24 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     return (
         <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                     <Link
                         to="/dashboard"
-                        className="flex items-center gap-2 text-xs whitespace-nowrap"
+                        className="flex items-center gap-2 text-xs whitespace-nowrap shrink-0"
                         data-testid="brand-link"
                     >
                         <span className="text-amber">◆</span>
-                        <span className="text-muted-foreground tracking-widest hidden sm:inline">
+                        <span className="text-muted-foreground tracking-widest hidden lg:inline">
                             ORBUS // {subtitleText}
                         </span>
-                        <span className="text-muted-foreground tracking-widest sm:hidden">
+                        <span className="text-muted-foreground tracking-widest lg:hidden">
                             ORBUS
                         </span>
                     </Link>
                     {guild && (
                         <>
-                            <span className="text-border hidden sm:inline">|</span>
-                            <nav className="flex items-center gap-1 overflow-x-auto">
+                            <span className="text-border hidden lg:inline">|</span>
+                            <nav className="flex items-center gap-1 overflow-x-auto min-w-0">
                                 <NavLink to="/dashboard" label={t("nav.dashboard")} testid="nav-dashboard" />
                                 <NavLink to="/adventurers" label={t("nav.adventurers")} testid="nav-adventurers" />
                                 <NavLink to="/recruitment" label={t("nav.recruitment")} testid="nav-recruitment" />
