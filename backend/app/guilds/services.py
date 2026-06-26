@@ -36,6 +36,11 @@ def guild_public(doc: dict) -> dict:
         "onboarding_step": int(doc.get("onboarding_step", 1)),
         "onboarding_completed": bool(doc.get("onboarding_completed", False)),
         "onboarding_dismissed": bool(doc.get("onboarding_dismissed", False)),
+        # ROUND 5 — raid stats (additive, default-safe)
+        "max_raid_score": int(doc.get("max_raid_score", 0)),
+        "last_raid_completed_at": doc.get("last_raid_completed_at"),
+        "raids_completed_count": int(doc.get("raids_completed_count", 0)),
+        "raids_victory_count": int(doc.get("raids_victory_count", 0)),
         "created_at": doc["created_at"],
         "updated_at": doc["updated_at"],
     }

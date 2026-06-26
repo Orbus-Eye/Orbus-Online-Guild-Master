@@ -223,7 +223,7 @@ def test_04_openapi_path_count():
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     assert r.status_code == 200
     paths = list(r.json()["paths"].keys())
-    assert len(paths) == 69, f"expected 69 paths, got {len(paths)}: {sorted(paths)}"
+    assert len(paths) == 75, f"expected 75 paths, got {len(paths)}: {sorted(paths)}"
 
 
 def test_05_sets_and_enchants_public_routes():

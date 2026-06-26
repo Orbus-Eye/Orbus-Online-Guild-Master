@@ -203,7 +203,13 @@ async def seed_dungeons_and_items(db) -> None:
         await db.dungeons.update_one(
             {"slug": d["slug"]},
             {
-                "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now},
+                "$setOnInsert": {
+                    "id": str(uuid.uuid4()),
+                    "created_at": now,
+                    # ROUND 5: rec_power locked at insert; later bumps via
+                    # `seed_round5.bump_legacy_t2_t3_power()` persist (idempotent).
+                    "recommended_power": d["recommended_power"],
+                },
                 "$set": {
                     "slug": d["slug"],
                     "name": d["name"],
@@ -211,7 +217,6 @@ async def seed_dungeons_and_items(db) -> None:
                     "difficulty": d["difficulty"],
                     "required_team_size": d["required_team_size"],
                     "base_duration_seconds": d["base_duration_seconds"],
-                    "recommended_power": d["recommended_power"],
                     "base_gold_reward": d["base_gold_reward"],
                     "base_xp_reward": d["base_xp_reward"],
                     # Phase 11.2: data-driven gate dict (optional)

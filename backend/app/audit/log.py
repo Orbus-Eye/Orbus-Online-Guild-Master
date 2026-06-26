@@ -64,6 +64,11 @@ EVENT_TYPES = frozenset({
     "item_enchanted",
     "item_disenchanted",
     "item_reroll_affix",
+    # ROUND 5 — Phase 17.5 + 18
+    "starter_roster_seeded",
+    "dungeon_power_bumped",
+    "raid_started",
+    "raid_completed",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

@@ -23,6 +23,12 @@ def dungeon_public(d: dict) -> dict:
         "recommended_power": d["recommended_power"],
         "base_gold_reward": d["base_gold_reward"],
         "base_xp_reward": d["base_xp_reward"],
+        # ROUND 5 — additive flags (default-safe for legacy reads)
+        "is_legacy": bool(d.get("is_legacy", False)),
+        "is_5p": bool(d.get("is_5p", False)),
+        "power_bumped": bool(d.get("power_bumped", False)),
+        "tier_label": d.get("tier_label"),
+        "tags": d.get("tags") or [],
         "is_active": d.get("is_active", True),
     }
 

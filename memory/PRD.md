@@ -154,3 +154,67 @@ weekly-quest field.
 - **P3** — Mobile app (Expo) parity for Forge.
 - **P3** — Forge log feed (recent operations history on /forge page).
 
+
+---
+
+## Phase 17.5 + 18 — ROUND 5: Team Size 5 + Solo Raids (2026-06-26)
+
+### What's implemented (preview only, NOT deployed to prod)
+- ✅ **Starter roster auto-pop** (`/app/backend/app/onboarding/services.py`):
+  ensures every guild owns ≥5 advs. Idempotent; back-fill on lifespan boot
+  covered 8788 advs across 2040 legacy guilds.
+- ✅ **12 new 5p dungeons** (T1×3, T2×3, T3×3, T4×3 — `required_team_size=5`).
+- ✅ **10 legacy dungeons** flagged `is_legacy=True`, kept at `required_team_size=3`.
+- ✅ **+25% power bump** applied ONCE on 7 legacy T2/T3 dungeons (idempotent
+  via `power_bumped: True` sentinel). T1 untouched.
+- ✅ **dungeon_public** exposes `is_legacy`, `is_5p`, `power_bumped`, `tier_label`, `tags`.
+- ✅ **guild_public** exposes `max_raid_score`, `last_raid_completed_at`,
+  `raids_completed_count`, `raids_victory_count` (additive).
+- ✅ **Raids module** (`/app/backend/app/raids/__init__.py`) — 6 endpoint:
+  `GET /api/raids/catalog`, `POST /api/raids/preview`, `POST /api/raids/start`,
+  `POST /api/raids/{id}/complete`, `GET /api/raids`, `GET /api/raids/{id}`.
+- ✅ **3 raid_dungeons** seeded: `broken-bastion-siege`, `necropolis-bells`,
+  `dragon-vault`.
+- ✅ **Cooldown 15min per guild** (`raids.cooldown_active` sentinel detail).
+- ✅ **Compound unique index** `raid_participants (raid_id, adventurer_id)`
+  → DB-level anti-duplicate across parties.
+- ✅ **dragon_essence drop sources**: T4 5p (in roadmap loot_tables) + Raid completion
+  guaranteed (1-3 or 2-5 by tier, scaled by outcome multiplier).
+- ✅ **max_team_power_ever NOT touched by raids**; `max_raid_score` separate metric.
+- ✅ **Audit events new**: `starter_roster_seeded`, `dungeon_power_bumped`,
+  `raid_started`, `raid_completed`.
+- ✅ **Frontend Raids page** (`/app/frontend/src/pages/Raids.jsx`) with cooldown
+  banner + 3 raid card + roster gate + history.
+- ✅ **Nav link `RAID`** in AppHeader + i18n `nav.raids` IT/EN.
+- ✅ **Path count**: 69 → **75** (+6).
+- ✅ **Tests**: new `backend_phase17_5_round5_test.py` (20/20 PASS, 31s).
+  Cross-suite: 14.x + 16 still 77/77 PASS.
+
+### Locked decisions (§I of `/app/memory/ROUND_5_BRIEF.md`)
+1. Starter roster auto-pop 5 ✅
+2. Legacy dungeons keep team=3 ✅
+3. T4 Legendary 5% (in roadmap loot table) ✅
+4. dragon_essence from T4 + raid only ✅
+5. max_raid_score separate metric ✅
+6. +25% rec_power only T2/T3 legacy ✅
+7. Cooldown 15min per-guild ✅
+
+### Out of scope / Deferred to Phase 18.1+
+- ⏳ **Raid Builder UI** (4 party × 5 picker). Backend endpoint `POST /api/raids/start`
+  fully functional via API; UI builder will land in Phase 18.1.
+- ⏳ **Raid Report multi-party UI** (`/raids/:id`). Backend `GET /api/raids/{id}` returns
+  complete shape; UI consumer pending.
+- ⏳ **T4 5p custom loot_tables curve** (Common 5/Uncommon 25/Rare 35/Epic 30/Legendary 5).
+  Currently T4 dungeons inherit default loot pool. Phase 18.1 will extend
+  `loot_tables.py` with explicit 5p curves.
+- ⏳ **Weekly quest hooks raid**: `raid_completed_weekly`, `t4_5p_completed_weekly`.
+- ⏳ **Leaderboard raid view** (`GET /api/leaderboard/raids` sorted by `max_raid_score`).
+
+### Risks under monitoring
+1. **Raid runtime**: `_outcome_for_chances` uses `random.Random(raid_id)` for
+   deterministic replay-safe rolls. If same raid_id is replayed → same outcome.
+   Mitigation: idempotent guard at start blocks `in_progress` concurrency.
+2. **dragon_essence inflation**: 1-3 per raid + 2-5 from T4 raid. ~5-15 essence/week
+   for active player. Forge consumes 3 for +10 refine. Acceptable.
+3. **Starter roster recursion**: `create_guild → ensure_starter_roster` is wrapped
+   in `try/except` to never block guild creation if seed data missing.

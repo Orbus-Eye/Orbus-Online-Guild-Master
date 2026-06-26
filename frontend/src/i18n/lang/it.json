@@ -43,7 +43,8 @@
     "logout": "esci",
     "brand_subtitle_dashboard": "DASHBOARD",
     "consortiums": "Consorzi",
-    "forge": "OFFICINA"
+    "forge": "OFFICINA",
+    "raids": "RAID"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -1064,5 +1065,8 @@
     "no_active_bonuses": "Nessun bonus set attivo. Equipaggia più pezzi della stessa famiglia per attivare bonus.",
     "progress_label": "Progresso set: {owned}/{total}",
     "tier_locked": "Bloccato ({need} pezzi richiesti)"
+  },
+  "raids": {
+    "title": "RAID"
   }
 }

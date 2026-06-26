@@ -16,6 +16,7 @@ from app.guilds.services import (
     patch_onboarding,
     user_guild_or_404,
 )
+from app.onboarding.services import ensure_starter_roster
 
 
 router = APIRouter(prefix="/api/guilds", tags=["guilds"])
@@ -28,6 +29,11 @@ async def create_guild(
     guild_doc = await create_guild_for_user(
         db, current_user["id"], payload.name, payload.description
     )
+    # ROUND 5 §I.1 — auto-pop 5 starter adventurers (idempotent).
+    try:
+        await ensure_starter_roster(db, guild_doc["id"], user_id=current_user["id"])
+    except Exception:  # noqa: BLE001
+        pass
     return {"guild": guild_public(guild_doc)}
 
 
