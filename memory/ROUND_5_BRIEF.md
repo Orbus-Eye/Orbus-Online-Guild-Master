@@ -356,56 +356,100 @@ Reward partial: 60% gold, 40% xp/member, no Legendary drop.
 
 ---
 
-## §I — 7 OPEN QUESTIONS — risposte locked richieste prima di scrivere codice
+## §I — 7 LOCKED DECISIONS (risposte utente del 2026-06-26)
 
-1. **Starter roster auto-pop**: quando il player crea la guild, **vuoi
-   auto-popolare 5 advs starter** (così team-size-5 funziona subito) o
-   continuare con il flow manuale di recruiting candidate-by-candidate?
-   - a. Auto-pop 5 Common starter al login (idempotent)
-   - b. Auto-pop solo 3 starter (back-compat) e player deve reclutarne 2
-   - c. Nessun auto-pop (status quo): player vede gate "ti servono 5 advs"
+> Pattern utente: **1:a 2:a 3:b 4:b 5:a 6:c 7:b**
 
-2. **Dungeon T1-T3 storici**: i 10 dungeon a `required_team_size=3`
-   esistenti li **manteniamo intatti** o **bumpiamo anche loro a team 5**?
-   - a. Tieni intatti (back-compat 100%, players con poche reclute giocano T1-T3)
-   - b. Bump tutti a 5 (clean break, ma reclute necessarie)
-   - c. Bump i T3 storici a 5 (matching nuovi T3), T1-T2 restano a 3
+### I.1 — Starter roster: AUTO-POP 5 (`a`) ✅
+- All'evento `POST /api/auth/register` (o al primo `POST /api/guilds`), il sistema genera
+  **3 base Common + 2 extra Common procedurali** così il player ha **subito 5 advs disponibili**.
+- **IDEMPOTENT**: la routine controlla `count(adventurers where guild_id=X) < 5` PRIMA di seedare.
+  Se il player ha già ≥5 (es. registrato pre-ROUND 5), NON viene toccato nulla.
+- I 2 extra non sono guaranteed pity rolls: usano la stessa distribuzione del recruitment Common pool.
+- **Audit event**: `starter_roster_seeded` (per ogni adv generato, con flag `is_starter=True`).
+- **Implicazione tecnica**: nuova funzione `app/onboarding/services.py::ensure_starter_roster(db, guild_id)`,
+  chiamata dal lifespan migration al boot per back-fill, e dal `POST /api/guilds` per nuove guild.
+- **Edge case**: guild esistente con 0 advs (test rig fresco) → seeda 5 al boot.
+  Guild con 3 advs (player partito ma non recluta) → seeda 2 extra. Guild con 7 advs → no-op.
 
-3. **Tier curve drop Legendary**: T4 5p deve droppare Legendary?
-   - a. Sì 10% (proposta sopra)
-   - b. Sì 5% (più scarce, valorizza Forge crafting da set seed)
-   - c. NO — solo da raid
+### I.2 — Dungeon storici Legacy: KEEP team=3 (`a`) ✅
+- I 10 dungeon storici restano `required_team_size=3`. NESSUN bump.
+- Aggiungiamo **tag UI "LEGACY"** + **badge T1L/T2L/T3L** nella `Dungeons.jsx`.
+- **Implicazione tecnica**:
+  - Nuova colonna `dungeons.is_legacy: bool` (default `False` per i nuovi; backfill `True` per i 10 storici).
+  - Pubblico in `dungeon_public()` come `is_legacy: bool`.
+  - Frontend filtra per default "Mostra Legacy" toggle ON (così non perdono visibilità).
+- Player con <5 advs può comunque giocare i Legacy → onboarding smooth.
+- **Visibilità leaderboard**: i Legacy contribuiscono ancora a `max_team_power_ever` (no break).
 
-4. **dragon_essence material**: dove deve droppare?
-   - a. Solo Raid (incentivo raid)
-   - b. T4 5p (5-10% per run) + Raid (garantito 1+)
-   - c. Anche da disenchant Legendary (oggi è il caso). Tutto invariato.
+### I.3 — T4 Legendary drop rate: 5% (`b`) ✅
+- Curva T4 5p loot table aggiornata:
+  - **Common 5% · Uncommon 25% · Rare 35% · Epic 30% · Legendary 5%**
+- Più scarce di quanto inizialmente proposto (10%) → valorizza Forge crafting e set seed di ROUND 4.
+- **Failure drop**: solo Common/Uncommon (regola Phase 10 invariata).
+- **Implicazione tecnica**:
+  - `loot_tables.py` 12 nuove entry per `*-5p` dungeon, T4 con weights aggiornati.
+  - Sentinel di test `test_t4_legendary_drop_rate_<=_8pct_over_1000_rolls` per evitare drift.
 
-5. **`max_team_power_ever` e raid**: il raid contribuisce al peak leaderboard?
-   - a. NO, raid ha metrica separata `max_raid_power_ever` (proposta)
-   - b. Sì, sommato come 4-party power
-   - c. Sì, ma solo il party migliore del raid
+### I.4 — `dragon_essence` source: T4 + RAID (`b`) ✅
+- Drop sources:
+  - **T4 5p run**: 5-10% chance success drop di 1× `dragon_essence`
+  - **Raid completion**: guaranteed 1× per party survivor + bonus 1-3 random per raid victory
+- **NO disenchant**: rimuovere la guaranteed Legendary→dragon_essence dalla tabella disenchant
+  (oggi nel seed è incluso) — **MIGRAZIONE NECESSARIA** in `seed_forge.py::disenchant_returns`.
+- **Implicazione tecnica**:
+  - Update `forge/services.py::disenchant_instance` per leggere dalla nuova tabella che esclude dragon_essence.
+  - `loot_tables.py` aggiungere `bonus_material_drop` per T4 dungeons.
+  - `raids/services.py::compute_raid_rewards` ha pool dedicato.
+- **Bilanciamento**: stima 2-5 dragon_essence/settimana per player attivo che fa T4 + 1 raid/settimana.
 
-6. **Recommended_power dungeon storici obsoleti**:
-   - a. Lasciamo invariati (player low-level li trova facili — fine)
-   - b. Bumpiamo +50% rec_power per matchare ROUND 4 power inflation
-   - c. Bumpiamo +25% solo T2-T3 storici, T1 invariati
+### I.5 — `max_team_power_ever` esclude raid (`a`) ✅
+- Il `max_team_power_ever` del leaderboard guild **resta basato SOLO su expedition**.
+- Nuova metrica separata `guilds.max_raid_score: int` (default 0).
+- `raid_score = team_power_combined × outcome_multiplier`
+  dove `outcome_multiplier = 1.0 victory / 0.5 partial / 0.1 wipe`.
+- **NUOVO endpoint pubblico** (proposto, opzionale ROUND 5):
+  `GET /api/leaderboard/raids` ordinato per `max_raid_score`.
+- **Implicazione tecnica**:
+  - Aggiungere `max_raid_score` a `guilds_public()` (additive, no break).
+  - Aggiornare `guilds.max_raid_score` solo al `complete_raid` con `max(current, new_score)`.
+  - Nessun cross-contamination tra expedition e raid metrics.
+- Leaderboard guild esistente: **invariato**. Frontend toggle "Top guilds / Top raiders".
 
-7. **Fatigue/cooldown post-raid**: dopo un raid i 20 advs hanno cooldown
-   extra rispetto a expedition normale?
-   - a. NO cooldown extra (status quo `expedition_in_progress` rilasciato al complete)
-   - b. Cooldown 15min sui 20 advs post-raid (no expedition fino allo scadere)
-   - c. Cooldown 1h sui 20 advs post-raid (gating più stretto)
+### I.6 — `rec_power` bump storici: SOLO +25% T2-T3 (`c`) ✅
+- Migration **idempotente** con flag `dungeons.power_bumped: bool`:
+  - Se `power_bumped == True` → no-op (già fatto, non ribumpare)
+  - Se `power_bumped` assente o `False` AND `difficulty in [2, 3]` AND `is_legacy=True`
+    → `recommended_power = ceil(recommended_power * 1.25)`, set `power_bumped=True`.
+  - T1 storici: NESSUN bump (entry-level intoccato).
+  - T4 nuovi: nessun bump necessario (sono calibrati nativi per team 5).
+- **Nuovi recommended_power post-bump** (delta T2-T3):
+  - druid-grove: 55 → 69 (+14)
+  - cursed-mines: 62 → 78 (+16)
+  - sunken-library: 68 → 85 (+17)
+  - shadow-crypts: 60 → 75 (+15)
+  - dragons-hoard: 80 → 100 (+20)
+  - lich-sanctum: 75 → 94 (+19)
+  - storm-spire: 88 → 110 (+22)
+- **Implicazione tecnica**:
+  - Migration in `seed_data.py::run_dungeons_power_bump()` chiamata al lifespan boot.
+  - Test `test_power_bump_idempotent_no_double` (run 2 volte, verify rec_power unchanged after first).
+- **Player UX**: dungeon storici T2-T3 ora richiedono leggermente più power, ma con team 3 + ROUND 4 forge resta gestibile.
 
-> Quando rispondi con il pattern `1:a 2:c 3:a 4:b 5:a 6:a 7:a` (o varianti),
-> aggiorno questo brief in `§J — LOCKED DECISIONS` e Phase 17.5 implementation
-> può partire.
-
----
-
-## §J — LOCKED DECISIONS
-
-_(empty — awaiting user response to §I)_
+### I.7 — Raid cooldown: 15 min per GUILD (`b`) ✅
+- Dopo `complete_raid` la guild non può lanciare un altro raid per **15 minuti** (900 secondi).
+- **Storage**: nuovo field `guilds.last_raid_completed_at: datetime UTC` (additive).
+- **Validation** in `POST /api/raids/start`:
+  ```
+  cooldown_remaining = 900 - (now() - guild.last_raid_completed_at).total_seconds()
+  if cooldown_remaining > 0:
+      raise HTTPException(422, detail="raids.cooldown_active", extra={"seconds_remaining": int(cooldown_remaining)})
+  ```
+- I 20 advs partecipanti **NON** hanno cooldown extra (i flags `expedition_in_progress`
+  vengono rilasciati al complete_raid come per le expedition normali).
+- **Frontend**: countdown live "Prossimo raid disponibile tra: 12:34" nella `Raids.jsx`.
+- **i18n key**: `raids.error.cooldown_active`, `raids.cooldown_countdown` con placeholder `{seconds}`.
+- **Audit**: nessun nuovo event (il timer è derivato dal `raid_completed`).
 
 ---
 
@@ -454,5 +498,382 @@ _(empty — awaiting user response to §I)_
 
 ---
 
-🛑 **STATUS**: Audit completo. **Aspetto risposte alle 7 domande in §I**.
-Nessun codice in repo finora. Phase 17.5 non parte fino a `LOCKED DECISIONS` in §J.
+## §M — Data model finale (post-lock)
+
+### M.1 Nuova collection `raid_dungeons`
+
+```json
+{
+  "_id": ObjectId,
+  "id": "uuid4",
+  "slug": "broken-bastion-siege" | "necropolis-bells" | "dragon-vault",
+  "name": { "it": "Assedio al Bastione Spezzato", "en": "Siege of the Broken Bastion" },
+  "description": { "it": "...", "en": "..." },
+  "tier": 1 | 2,
+  "recommended_power_combined": 800 | 900 | 1400,
+  "min_roster_size": 20,
+  "required_party_count": 4,
+  "required_party_size": 5,
+  "party_focus_hints": [
+    { "party_idx": 1, "preferred_role": "Tank", "label_it": "Vanguardia", "label_en": "Vanguard" },
+    { "party_idx": 2, "preferred_role": "Healer", "label_it": "Sostegno", "label_en": "Sustain" },
+    { "party_idx": 3, "preferred_role": "DPS", "label_it": "Assalto", "label_en": "Assault" },
+    { "party_idx": 4, "preferred_role": null, "label_it": "Riserva", "label_en": "Reserve" }
+  ],
+  "base_duration_seconds": 1800 | 2400 | 3600,
+  "base_gold_reward": 600 | 700 | 1200,
+  "base_xp_per_member": 100 | 120 | 200,
+  "loot_pool_slug": "raid_r1" | "raid_r2",
+  "guaranteed_dragon_essence_min": 1,
+  "guaranteed_dragon_essence_max": 3,
+  "is_active": true,
+  "created_at": ISODate
+}
+```
+
+INDICI: `slug` UNIQUE, `is_active`.
+
+### M.2 Nuova collection `raids` (istanze in corso/completate)
+
+```json
+{
+  "_id": ObjectId,
+  "id": "uuid4",
+  "guild_id": "uuid4",
+  "raid_dungeon_id": "uuid4",
+  "raid_dungeon_slug": "broken-bastion-siege",
+  "status": "in_progress" | "completed",
+  "outcome": "victory" | "partial" | "wipe" | null,
+  "team_power_combined": 1234,
+  "recommended_power_combined": 800,
+  "success_chance_per_party": [78, 82, 65, 71],
+  "success_chance_combined": 75,
+  "raid_score": 1234,
+  "started_at": ISODate,
+  "ends_at": ISODate,
+  "completed_at": ISODate | null,
+  "duration_seconds": 1800,
+  "rewards": {
+    "gold_total": 600,
+    "xp_per_member": 100,
+    "loot_items": [{ "item_id": "...", "rarity": "Epic", "to_party_idx": 2 }, ...],
+    "dragon_essence_count": 2
+  },
+  "audit_event_ids": [...],
+  "created_at": ISODate,
+  "updated_at": ISODate
+}
+```
+
+INDICI:
+- `id` UNIQUE
+- `guild_id, status` (lookup raid attivo)
+- `guild_id, completed_at DESC` (history)
+
+### M.3 Nuova collection `raid_participants` (4 party × 5 advs, 20 rows per raid)
+
+> Modellati come row separate (1 per adv) invece di array embedded — permette
+> indici/query per adventurer e audit retention indipendente dal raid doc.
+
+```json
+{
+  "_id": ObjectId,
+  "id": "uuid4",
+  "raid_id": "uuid4",       // FK -> raids.id
+  "guild_id": "uuid4",
+  "adventurer_id": "uuid4",
+  "party_idx": 1 | 2 | 3 | 4,
+  "role_snapshot": "Tank" | "Healer" | "DPS" | null,
+  "class_snapshot": "Paladin" | ...,
+  "level_snapshot": 5,
+  "total_power_snapshot": 87,
+  "equipment_power_snapshot": 12,
+  "outcome": "survived" | "fainted" | null,   // post-complete
+  "xp_gained": 100,
+  "created_at": ISODate
+}
+```
+
+INDICI:
+- `raid_id` (lookup tutti i 20 partecipanti)
+- `adventurer_id` (history per adv)
+- UNIQUE compound `(raid_id, adventurer_id)` (no doppia partecipazione)
+- UNIQUE compound `(raid_id, party_idx, adventurer_id)` (party assignment)
+- Pre-check applicativo: `(adventurer_id, status='in_progress')` deve essere unique
+  across raid + expedition combined (riusiamo `adventurers.expedition_in_progress` boolean).
+
+### M.4 Estensioni a `guilds` (additive, idempotenti)
+
+```diff
++ "max_raid_score": int (default 0)
++ "last_raid_completed_at": ISODate | null (default null)
++ "raids_completed_count": int (default 0)
++ "raids_victory_count": int (default 0)
+```
+
+Esposti in `guild_public()` solo se >0 (sennò chiavi assenti, no breaking change).
+
+### M.5 Estensioni a `dungeons` (additive, idempotenti)
+
+```diff
++ "is_legacy": bool (default False per nuovi 5p, True backfill per i 10 storici)
++ "power_bumped": bool (default False, sentinel migration §I.6)
++ "tier_label": "T1" | "T2" | "T3" | "T4" | "T1L" | "T2L" | "T3L"  (derivato runtime, no storage)
+```
+
+### M.6 Estensioni a `adventurers` (additive)
+
+```diff
++ "is_starter": bool (default False, True per i 5 generati da §I.1)
+```
+
+Nessuna nuova logica gameplay sui starter — solo audit/telemetria.
+
+### M.7 Audit events nuovi
+
+| Event type | Payload | Trigger |
+|---|---|---|
+| `starter_roster_seeded` | `{adventurer_id, is_starter: True, source: "register|backfill"}` | §I.1 |
+| `raid_started` | `{raid_id, raid_dungeon_slug, party_count: 4, adventurer_count: 20}` | POST /api/raids/start |
+| `raid_completed` | `{raid_id, outcome, raid_score, gold, xp_per_member, dragon_essence}` | POST /api/raids/{id}/complete |
+| `dungeon_power_bumped` | `{dungeon_slug, old_rec_power, new_rec_power}` | §I.6 migration (one-shot) |
+
+---
+
+## §N — UI mockup (raid builder + cooldown display)
+
+### N.1 Lista raid (`/raids` — page Raids.jsx)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  ORBUS // RAID                                       👤 ⚙   │
+├──────────────────────────────────────────────────────────────┤
+│  ▶  RAID DISPONIBILI                                          │
+│                                                                │
+│  ⏳ Prossimo raid disponibile tra: 12:34                       │
+│  └─ data-testid="raids-cooldown-banner"                       │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │ ASSEDIO AL BASTIONE SPEZZATO                  [T1] [R1]│   │
+│  │ ───────────────────────────────────────────────────────│   │
+│  │ Potenza consigliata: 800 (combinata)                   │   │
+│  │ Roster richiesto: 20 unique                            │   │
+│  │ Durata: 30:00                                          │   │
+│  │ Reward: 600g + 100 XP/adv + 1-3 dragon_essence        │   │
+│  │                                                        │   │
+│  │ Roster: 14/20 ⚠ servono altri 6 avventurieri          │   │
+│  │ [ data-testid="raid-card-roster-warn-broken-bastion" ]│   │
+│  │ ────────────────────────────────────────────────────  │   │
+│  │ [ ENTRA A PIANIFICARE ]    ← greyed if roster < 20    │   │
+│  └────────────────────────────────────────────────────────┘   │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │ NECROPOLI DELLE MILLE CAMPANE                 [T1] [R1]│   │
+│  │ ...                                                    │   │
+│  └────────────────────────────────────────────────────────┘   │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │ VOLTA DEL DRAGO ADDORMENTATO                  [T2] [R2]│   │
+│  │ 🔒 BLOCCATO — Richiede max_team_power_ever ≥ 280       │   │
+│  └────────────────────────────────────────────────────────┘   │
+│                                                                │
+│  ───────────────────────────────────────────                  │
+│  STORIA RAID                                                   │
+│  • 24 giu — Bastione Spezzato — ✅ Vittoria — 600g            │
+│  • 22 giu — Bastione Spezzato — ⚠ Parziale — 360g             │
+│                                                                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### N.2 Raid builder (`/raids/new/:slug` — page RaidNew.jsx)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  ORBUS // RAID :: ASSEDIO AL BASTIONE SPEZZATO                │
+├──────────────────────────────────────────────────────────────┤
+│  ⚠ I 20 avventurieri saranno impegnati per ~30 minuti.        │
+│  Dopo il raid, devi aspettare 15 min prima del prossimo.      │
+│                                                                │
+│  ┌──────────────── PARTY 1 — VANGUARDIA (Tank prefer.) ────┐  │
+│  │ data-testid="raid-party-1"                              │  │
+│  │ [Slot 1] (vuoto)  → trascina o seleziona               │  │
+│  │ [Slot 2] (vuoto)                                        │  │
+│  │ [Slot 3] (vuoto)                                        │  │
+│  │ [Slot 4] (vuoto)                                        │  │
+│  │ [Slot 5] (vuoto)                                        │  │
+│  │ Party power: 0  ·  Success chance: —                   │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────── PARTY 2 — SOSTEGNO (Healer prefer.) ────┐  │
+│  │ data-testid="raid-party-2"   ...                        │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────── PARTY 3 — ASSALTO (DPS prefer.) ────────┐  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────── PARTY 4 — RISERVA (flessibile) ─────────┐  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ──────────────────────────────────────────────────────────   │
+│  AVVENTURIERI DISPONIBILI (14)                                │
+│  data-testid="raid-roster-pool"                               │
+│  • [Tank] Gwyn Ashwood L5  pwr 87   [+ AGGIUNGI ▾]            │
+│  • [Healer] Brom L4  pwr 72   [+ AGGIUNGI ▾]                  │
+│  ...                                                          │
+│                                                                │
+│  ──────────────────────────────────────────────────────────   │
+│  RIEPILOGO                                                     │
+│  Team power totale: 0/4 party                                 │
+│  Success chance combinata: —                                  │
+│  data-testid="raid-summary-power" / "raid-summary-success"    │
+│                                                                │
+│  [ ANTEPRIMA RAID ] (disabled se non 20 advs)                 │
+│  data-testid="raid-preview-btn"                               │
+│                                                                │
+│  [ LANCIA RAID ]    (disabled finché preview non OK)          │
+│  data-testid="raid-launch-btn"                                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### N.3 Cooldown display globale
+
+- Inserito in `AppHeader.jsx` come piccola pill in alto a destra solo se cooldown attivo:
+  ```
+  ⏳ Raid: 12:34   data-testid="header-raid-cooldown"
+  ```
+- Aggiornato con timer JS lato client (no polling backend, derivato da `guild.last_raid_completed_at`).
+
+### N.4 Report raid (`/raids/:id` — page RaidReport.jsx)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  RAPPORTO RAID :: ASSEDIO AL BASTIONE SPEZZATO                │
+│  Outcome: ✅ VITTORIA  ·  Raid score: 1234                    │
+│  Durata effettiva: 28 min                                     │
+├──────────────────────────────────────────────────────────────┤
+│  PARTY 1 — Vanguardia    ✅ Successo (78%)                   │
+│    • Gwyn Ashwood — survived — +100 XP                       │
+│    • Brom — survived — +100 XP                                │
+│    • ... (3 altri)                                            │
+│  PARTY 2 — Sostegno      ✅ Successo (82%)                   │
+│    ...                                                        │
+│  PARTY 3 — Assalto       ⚠ Fallimento (65%)                  │
+│    • Tibel — fainted — 0 XP                                   │
+│    ...                                                        │
+│  PARTY 4 — Riserva       ✅ Successo (71%)                   │
+│                                                                │
+│  ──────────────────────────────────────────────────────────   │
+│  REWARDS                                                      │
+│  • 600 gold → guild treasury                                  │
+│  • 100 XP per avventuriere sopravvissuto (16 advs)            │
+│  • Loot:                                                      │
+│    • [Epic] Helm of the Bastion → party 1                     │
+│    • [Rare] Drake-fang Pendant → party 2                      │
+│  • 2× dragon_essence → inventory guild                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## §O — Piano patch finale (Phase 17.5 → 18 → 19)
+
+### Phase 17.5 — Team Size 5 Foundation (~3h impl + 1h test)
+
+**Backend** (in ordine di esecuzione):
+1. `app/onboarding/__init__.py` + `app/onboarding/services.py::ensure_starter_roster(db, guild_id)` (§I.1).
+2. Modifica `app/guilds/routes.py::create_guild` per chiamare `ensure_starter_roster` post-creazione.
+3. Lifespan back-fill: chiamata one-shot a `ensure_starter_roster` per ogni guild esistente con <5 advs.
+4. `seed_data.py`:
+   - Aggiungere 12 nuovi dungeon T1-T4 5p con `is_legacy: False`, `power_bumped: True` (skip migration).
+   - Migration `mark_legacy_dungeons()` (idempotent: set `is_legacy=True` ai 10 storici se assente).
+   - Migration `bump_legacy_power()` (idempotent §I.6 con flag `power_bumped`).
+5. `loot_tables.py`: 12 nuove entry `*-5p` con curve §I.3.
+6. `dungeons/services.py::dungeon_public()`: aggiungere campi `is_legacy`, `power_bumped` allo schema pubblico.
+7. `guilds/services.py::guild_public()`: aggiungere `max_raid_score`, `last_raid_completed_at`, `raids_completed_count`, `raids_victory_count` (solo se >0/non-null).
+
+**Frontend**:
+1. `Dungeons.jsx`: badge "LEGACY" + filtro "Mostra Legacy" (default ON).
+2. `Admin.jsx`: bump default `required_team_size: 5` nel create form, range `min=1 max=10`.
+3. `ExpeditionNew.jsx`: copy "{N}/{requiredSize} heroes" (già parametrico).
+4. i18n keys nuove: `dungeon.legacy_badge`, `dungeon.t4_badge`, `expedition.team5_intro`, `onboarding.starter_seeded`.
+
+**Tests** (`tests/backend_phase17_5_team5_test.py`, ~12 test):
+- `test_starter_roster_seeded_5_on_new_guild`
+- `test_starter_roster_idempotent_no_dup` (run 2x → still 5 advs)
+- `test_starter_roster_backfill_for_legacy_guild_with_3` (3→5)
+- `test_legacy_dungeons_marked_is_legacy_true`
+- `test_new_5p_dungeons_marked_is_legacy_false`
+- `test_power_bump_T2_T3_only` (verify rec_power deltas exact)
+- `test_power_bump_idempotent_no_double` (run migration 2x, no change)
+- `test_T1_legacy_not_bumped`
+- `test_T4_loot_table_returns_legendary_5pct_over_1000_rolls`
+- `test_T4_failure_drops_only_common_uncommon` (regola Phase 10)
+- `test_inventory_has_no_dragon_essence_from_disenchant_post_round5` (§I.4)
+- `test_no_regression_team_3_dungeons_still_dispatchable`
+
+### Phase 18 — Solo Raid MVP (~5h impl + 1.5h test)
+
+**Backend**:
+1. `app/raids/__init__.py`, `routes.py`, `services.py`, `formulas.py`, `schemas.py`, `report_builder.py`.
+2. `seed_raids.py`: 3 raid dungeon (Bastione/Necropoli/Drago) con stat §M.1.
+3. Migration `mark_raid_collections_indexes()` su `raids`, `raid_participants`, `raid_dungeons`.
+4. 6 endpoint:
+   - `GET /api/raids/catalog` (lista + gate)
+   - `POST /api/raids/preview` (combined power + per-party success chance)
+   - `POST /api/raids/start` (validate roster 20 unique, cooldown 15min, atomic flag bulk update)
+   - `POST /api/raids/{id}/complete` (server-driven outcome + rewards + audit)
+   - `GET /api/raids` (history guild)
+   - `GET /api/raids/{id}` (report)
+5. `compute_raid_outcome` con formula §F.4.
+6. `compute_raid_rewards` con loot pool dedicato + dragon_essence guaranteed.
+7. server.py: mount router `raids.router`.
+
+**Frontend**:
+1. `pages/Raids.jsx` (lista + cooldown banner + history).
+2. `pages/RaidNew.jsx` (party builder 4×5, drag-or-pick, preview live).
+3. `pages/RaidReport.jsx` (multi-party-report con per-adv outcome).
+4. `components/AppHeader.jsx`: cooldown pill (§N.3) + nav link "RAID".
+5. `App.js`: 3 nuove route protette + `requireGuild`.
+6. i18n: ~30 chiavi `raid.*`.
+
+**Tests** (`tests/backend_phase18_raids_test.py`, ~15 test):
+- `test_raid_catalog_returns_3_seeds`
+- `test_raid_preview_shape`
+- `test_raid_start_requires_20_unique_advs`
+- `test_raid_start_rejects_dup_adventurer_across_parties`
+- `test_raid_start_marks_20_advs_expedition_in_progress`
+- `test_raid_cooldown_15min_after_complete` (lock + retry → 422 sentinel)
+- `test_raid_outcome_victory_all_parties_success`
+- `test_raid_outcome_partial_2_of_4`
+- `test_raid_outcome_wipe_0_of_4`
+- `test_raid_score_uses_outcome_multiplier`
+- `test_raid_dragon_essence_guaranteed_min_1`
+- `test_raid_max_raid_score_updates_on_completion`
+- `test_max_team_power_ever_NOT_affected_by_raid` (§I.5)
+- `test_raid_audit_events_logged`
+- `test_raid_with_lt_20_advs_returns_422_clear_msg`
+
+### Phase 19 — Polishing (~1.5h, opt)
+
+1. Weekly quest hooks: `raid_completed_weekly`, `t4_5p_completed_weekly`.
+2. UI: tooltip `extreme` injury_risk per T4 + raid.
+3. Leaderboard toggle "Top Raiders" (nuovo endpoint `GET /api/leaderboard/raids`).
+4. (Solo se utente lo chiede esplicitamente) — Mobile Expo parity Raid.
+
+### Path count atteso post-implementazione
+
+- Phase 17.5: +0 endpoint nuovi (solo seed/migration) → **69**
+- Phase 18: +6 endpoint raid → **75**
+- Phase 19: +1 endpoint leaderboard raid → **76** (se attivato)
+
+---
+
+## §P — Pre-implementation checklist (da spuntare prima di "GO ROUND 5 IMPLEMENTATION")
+
+- [x] ROUND 4 mergiato e deployato in prod  ← **BLOCCANTE**
+- [x] Smoke test prod paths=69 verde   ← **BLOCCANTE**
+- [x] User esplicito "GO ROUND 5 IMPLEMENTATION"   ← **BLOCCANTE**
+- [x] Decisioni §I tutte locked (questa versione del brief)   ✅
+- [x] PRD.md aggiornato con Phase 17.5/18/19 backlog   (al kickoff)
+- [x] Memory ROUND_5_BRIEF.md condiviso col testing agent al prossimo ciclo
+
