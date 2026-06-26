@@ -38,6 +38,7 @@ ALLOWLIST_GUILDS_LOWER = frozenset({
     "harambes",  # real prod player (owner email pending)
     "the loremaster",  # CONFIRMED real player (mr.gualmini@gmail.com) — 2026-06-26
     "il regno di lanafuoco",  # CONFIRMED real player — 2026-06-26 (owner email TBD)
+    "crociata d'argento",  # CONFIRMED new real tester — 2026-06-26 (owner email TBD, rank 1 prod)
 })
 
 

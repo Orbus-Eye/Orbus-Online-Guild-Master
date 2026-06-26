@@ -158,4 +158,90 @@ async def get_guild_leaderboard(
     }
 
 
-__all__ = ["get_guild_leaderboard"]
+__all__ = ["get_guild_leaderboard", "get_raids_leaderboard"]
+
+
+async def get_raids_leaderboard(
+    db, limit: int = 20, offset: int = 0
+) -> dict:
+    """Phase 19 — Public raid leaderboard ranked by `max_raid_score`.
+
+    Privacy-preserving: filters out `is_test_user=True` owners (same gate as
+    `get_guild_leaderboard`). Returns one row per (guild, raid_dungeon_slug)
+    showing the best raid score for that raid attempt.
+
+    Sort: max_raid_score desc → completed_at asc (older wins on tie).
+    """
+    # Strict validation
+    if not isinstance(limit, int) or limit < 1 or limit > _MAX_LIMIT:
+        raise HTTPException(
+            status_code=400,
+            detail=f"limit must be an integer in [1, {_MAX_LIMIT}]",
+        )
+    if not isinstance(offset, int) or offset < 0 or offset > _MAX_OFFSET:
+        raise HTTPException(
+            status_code=400,
+            detail=f"offset must be an integer in [0, {_MAX_OFFSET}]",
+        )
+
+    # Privacy filter: exclude raids whose guild is owned by a test user.
+    test_owner_ids = await db.users.distinct("id", {"is_test_user": True})
+    test_guild_ids: list[str] = []
+    if test_owner_ids:
+        test_guild_ids = await db.guilds.distinct(
+            "id", {"owner_user_id": {"$in": test_owner_ids}}
+        )
+
+    match: dict = {"status": "completed", "raid_score": {"$gt": 0}}
+    if test_guild_ids:
+        match["guild_id"] = {"$nin": test_guild_ids}
+
+    # Per (guild, raid_dungeon_slug) best raid_score.
+    pipeline = [
+        {"$match": match},
+        {
+            "$group": {
+                "_id": {"guild_id": "$guild_id", "raid_dungeon_slug": "$raid_dungeon_slug"},
+                "max_raid_score": {"$max": "$raid_score"},
+                "best_outcome": {"$first": "$outcome"},
+                "completed_at": {"$max": "$completed_at"},
+            }
+        },
+        {"$sort": {"max_raid_score": -1, "completed_at": 1}},
+    ]
+
+    # Count total distinct (guild, slug) keys
+    all_rows = await db.raids.aggregate(pipeline).to_list(length=None)
+    total = len(all_rows)
+
+    page = all_rows[offset: offset + limit]
+
+    # Resolve guild names in a single query
+    guild_ids = list({r["_id"]["guild_id"] for r in page})
+    name_map: dict[str, str] = {}
+    if guild_ids:
+        async for g in db.guilds.find(
+            {"id": {"$in": guild_ids}},
+            {"_id": 0, "id": 1, "name": 1},
+        ):
+            name_map[g["id"]] = g["name"]
+
+    entries = []
+    for i, r in enumerate(page):
+        gid = r["_id"]["guild_id"]
+        entries.append({
+            "rank": offset + i + 1,
+            "guild_id": gid,
+            "guild_name": name_map.get(gid, "Unknown"),
+            "raid_dungeon_slug": r["_id"]["raid_dungeon_slug"],
+            "max_raid_score": int(r["max_raid_score"]),
+            "outcome": r.get("best_outcome"),
+            "completed_at": r.get("completed_at"),
+        })
+
+    return {
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "entries": entries,
+    }

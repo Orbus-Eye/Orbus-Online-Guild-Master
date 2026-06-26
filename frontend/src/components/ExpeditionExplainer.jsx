@@ -87,7 +87,7 @@ function generateTips(summary, steps, members, t) {
 }
 
 export default function ExpeditionExplainer({ summary, steps, members }) {
-    const { t } = useT();
+    const { t, lang } = useT();
     const hasReport = !!summary && Array.isArray(steps) && steps.length > 0;
 
     if (!hasReport) {

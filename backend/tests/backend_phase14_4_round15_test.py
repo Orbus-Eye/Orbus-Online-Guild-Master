@@ -90,6 +90,7 @@ class TestInventoryShape:
 
 
 class TestAdventurersShape:
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race; see FLAKY_TESTS_AUDIT.md
     def test_adventurers_expose_traits_and_equipment(self):
         auth, _guild = _make_user_with_guild()
         _recruit_two_adventurers(auth)

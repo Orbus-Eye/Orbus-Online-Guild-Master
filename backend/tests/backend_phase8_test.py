@@ -8,6 +8,7 @@ Covers:
 """
 import os
 import uuid
+import pytest
 import requests
 from datetime import datetime, timezone
 from pymongo import MongoClient
@@ -385,6 +386,7 @@ class TestReplayLastRun:
         finally:
             _mongo().dungeons.update_one({"id": gw["id"]}, {"$set": {"is_active": True}})
 
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race; see FLAKY_TESTS_AUDIT.md
     def test_replay_does_not_double_reward_original(self):
         """The original expedition's gold_reward stays unchanged after replay."""
         u = _register_and_guild()

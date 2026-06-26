@@ -527,6 +527,35 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     except Exception:
         pass
 
+    # Phase 19 — weekly quest progress hook (best-effort, never raises).
+    # Only fires when outcome != "wipe". raids_completed always bumps;
+    # raids_t2plus_success additionally requires tier>=2 AND outcome in
+    # {"victory","partial"}. Gated by 20-adv roster (`/api/raids/start` already
+    # enforces `roster_too_small`), so guilds <20 advs cannot trigger this.
+    if outcome != "wipe":
+        try:
+            from app.quests.services import increment_weekly_progress
+            tier = int(rd.get("tier", 1) or 1)
+            await increment_weekly_progress(db, guild["id"], "raids_completed", 1)
+            if tier >= 2 and outcome in ("victory", "partial"):
+                await increment_weekly_progress(db, guild["id"], "raids_t2plus_success", 1)
+            try:
+                await write_audit(
+                    db, event_type="weekly_quest_raid_progressed",
+                    actor_user_id=current_user["id"], actor_guild_id=guild["id"],
+                    source="raids.complete",
+                    related_entity_id=raid_id,
+                    metadata={
+                        "raid_dungeon_slug": raid["raid_dungeon_slug"],
+                        "tier": tier,
+                        "outcome": outcome,
+                    },
+                )
+            except Exception:
+                pass
+        except Exception:
+            pass
+
     return {"raid": raid_public(raid)}
 
 

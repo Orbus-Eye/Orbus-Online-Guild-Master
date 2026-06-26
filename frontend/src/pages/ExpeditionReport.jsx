@@ -351,15 +351,20 @@ export default function ExpeditionReport() {
                                             EQUIPMENT (snapshot) · +{m.equipment_power_snapshot} pow
                                         </div>
                                         <div className="flex flex-wrap gap-1">
-                                            {m.equipment_snapshot?.map((eq, idx) => (
-                                                <span
-                                                    key={`${eq.slot}-${idx}`}
-                                                    className="text-[10px] text-amber border border-amber/40 px-1 py-0.5 rounded-sm"
-                                                    title={`${eq.slot} · ${eq.rarity}`}
-                                                >
-                                                    {eq.slot[0].toUpperCase()}·{eq.item_name}
-                                                </span>
-                                            ))}
+                                            {m.equipment_snapshot?.map((eq, idx) => {
+                                                // Phase 19.1 hotfix — defensive: snapshot may be partial
+                                                const slot = (eq?.slot || "?").toString();
+                                                const slotInitial = slot.charAt(0).toUpperCase() || "?";
+                                                return (
+                                                    <span
+                                                        key={`${slot}-${idx}`}
+                                                        className="text-[10px] text-amber border border-amber/40 px-1 py-0.5 rounded-sm"
+                                                        title={`${slot} · ${eq?.rarity || ""}`}
+                                                    >
+                                                        {slotInitial}·{eq?.item_name || "—"}
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}

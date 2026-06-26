@@ -102,6 +102,7 @@ ALLOWLIST_GUILDS = {
     "harambes",                       # name-based protection while email pending
     "the loremaster",                 # CONFIRMED real player (mr.gualmini@gmail.com)
     "il regno di lanafuoco",          # CONFIRMED real player 2026-06-26 (owner email TBD)
+    "crociata d'argento",             # CONFIRMED new real tester 2026-06-26 (owner email TBD)
 }
 # Guilds we explicitly DO NOT TOUCH until the user classifies them.
 PENDING_AMBIGUOUS: set[str] = set()  # cleared 2026-06-26 after user classification

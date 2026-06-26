@@ -1,0 +1,479 @@
+{
+  "created": "2026-06-26T23:08:40.413333+00:00",
+  "shadow_users_created": [
+    {
+      "shadow_user_id": "05f8e1fa-50dc-4851-a6a9-58c523403ac7",
+      "guild_id": "01a2259f-d301-464f-b093-7530b1ac297f",
+      "guild_name": "P181 a2798",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "923da385-e26d-4643-be92-575dd7b76aa2",
+      "guild_id": "01cd64a7-e97e-49a1-887e-ca221fdf1e41",
+      "guild_name": "R5 1a760",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "23612c57-c85c-46a1-a10e-b4d06ed88ede",
+      "guild_id": "054a1138-02bf-4c94-baba-cc021101c8dc",
+      "guild_name": "R5 a7766",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "7a0d7196-a3ed-4ed7-859f-94da52064441",
+      "guild_id": "063bad69-350f-425f-9d19-014fef551d1d",
+      "guild_name": "P181 3c3ac",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "d0701103-a5f9-43c5-bd7c-7bc7b0b7b4d6",
+      "guild_id": "07c357b7-c9dc-4346-a150-7ee1b1c4e44c",
+      "guild_name": "R5 4ecbf",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "701bdf9a-5730-4b64-a452-e8523ca20672",
+      "guild_id": "0a0e7045-fcb5-4f59-bddf-2c408e7ae053",
+      "guild_name": "R5 8beca",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "39ec0a34-beee-49a9-b985-fd4f89d8b086",
+      "guild_id": "10385c77-2fa2-401c-a439-5aa7e71923c6",
+      "guild_name": "P181 062c9",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "8d624f4b-d9a3-4707-8f8b-4b159e73d15d",
+      "guild_id": "106c845e-3f47-45bd-9854-25a9beca2c9a",
+      "guild_name": "P181 74baa",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "f3c484e9-eca1-42ae-96a4-79128d514b9a",
+      "guild_id": "12e028ec-bcfb-434c-9b26-4dfc35d1309a",
+      "guild_name": "R5 e9286",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "59d7360d-3d22-46c4-ac20-dfec09592871",
+      "guild_id": "1394ec35-9371-4f9f-89fa-e6f40612ee15",
+      "guild_name": "P181 66729",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "b75a3b37-3d74-4f77-8283-50198e82ae21",
+      "guild_id": "1413b7a0-ab30-40c1-a10e-b22f2f90f045",
+      "guild_name": "R5 6822b",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "a059932d-61b2-474a-a665-e5c7ac7db57f",
+      "guild_id": "158fe966-eee8-4527-8e04-20b9ec4022eb",
+      "guild_name": "P181 40cec",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "8820afae-2814-4b8b-b418-c739301e1827",
+      "guild_id": "1750dd14-4c9a-4f4c-a450-76a9aa72b3ef",
+      "guild_name": "R5 81bb3",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "1c12afef-ae46-4ed9-8d33-8d3004d142b9",
+      "guild_id": "17f64744-9921-48bf-95e6-c5df089ae598",
+      "guild_name": "P181 e8dc2",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "a0254a24-fed5-4088-9ad1-b64f793aa88d",
+      "guild_id": "1b6d651f-e870-4aaa-a822-a78f4b5e5658",
+      "guild_name": "P181 4f4af",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "65f4e238-a848-4bcd-b3dc-ce1d1e0d0012",
+      "guild_id": "1dc2a218-1204-4d57-a857-c6463fc59b2d",
+      "guild_name": "P181 2ce78",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "b49d7262-acc3-4209-bd7d-5a08b257bf47",
+      "guild_id": "1e473abe-d431-4e87-bc5c-e673bceff478",
+      "guild_name": "R5 31f93",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "732d66aa-cf0b-4154-a731-e98341fc7c1f",
+      "guild_id": "1e82b15c-774a-431e-bf72-9eb833adc84a",
+      "guild_name": "R5 d64c7",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "05dc9816-56cf-4e4a-bdde-b98cb97beb10",
+      "guild_id": "213d6191-b9d1-4288-bef3-9e2291a78a8e",
+      "guild_name": "R5 38161",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "df15238e-4212-469c-9743-a6dfab9493ca",
+      "guild_id": "233c8ad5-3503-458e-8b09-883a66171581",
+      "guild_name": "R5 3bf47",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "b496e76a-eae1-4c6e-a6cc-ff64ae656f91",
+      "guild_id": "24d8dc5c-41a6-4519-ba37-4e8b1ec72e15",
+      "guild_name": "P181 50903",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "38d8b6f9-afcc-437d-b13c-a6c65577c8c3",
+      "guild_id": "2dd46527-3478-40b5-af8a-df466c7d4d3b",
+      "guild_name": "P181 50901",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "4cbe513f-01db-4429-9e4b-72807214afce",
+      "guild_id": "2f530204-1502-47e6-b07d-c99166c1ec21",
+      "guild_name": "R5 23071",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "38ef107c-fdf2-4a46-a794-d70ca5d9592c",
+      "guild_id": "3b8030bf-8e92-48cf-9065-cd8d837fcee1",
+      "guild_name": "P181 d4f73",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "ae1fc446-32fc-41b8-9746-b63de727aac6",
+      "guild_id": "3e4d76f8-4bb9-495e-ba3b-8912cc7a4cfd",
+      "guild_name": "R5 7ac66",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "40c4ea3d-edae-46b9-ab16-2584465cd6f1",
+      "guild_id": "41b1f6e7-1d1f-4d99-b7d7-949d7682334f",
+      "guild_name": "P181 aa8a5",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "b5c607e3-233d-471b-aa74-29473451f598",
+      "guild_id": "45b7b6bf-8a05-4902-997f-4adcb7b9c27e",
+      "guild_name": "R5 8e18a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "71260445-8775-40cd-9c75-9ffb97cf8fcc",
+      "guild_id": "4723ad91-ef3f-47c1-8d46-3a457e7f9e2b",
+      "guild_name": "P181 6236a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "de1ae082-b564-4c4b-8e52-9da73a2cb2c1",
+      "guild_id": "47af1838-be32-4408-b768-9971893b7cac",
+      "guild_name": "P181 fa139",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "2e3564cb-15b7-4945-bc1d-9640289e6175",
+      "guild_id": "4c4a0967-5d40-490f-8ad4-f6ef21033f03",
+      "guild_name": "P181 4ba15",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "aa9cf94d-79d3-4d6f-9b0f-3a4e263bde51",
+      "guild_id": "4d80cc9f-d137-4b86-9606-e6752f12f765",
+      "guild_name": "P181 9e80a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "38cbd572-0d24-489b-9754-77b32b05529c",
+      "guild_id": "4df99f65-a6d0-4d73-84da-00ef2dd1a9de",
+      "guild_name": "P181 634a0",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "911023c3-aab5-4236-beb1-6fca2e9bb46d",
+      "guild_id": "52e5d849-ed04-46e3-8be3-5c779717acb3",
+      "guild_name": "P181 08c93",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "9ff751bb-b00c-4a94-86f3-717085ed3e0f",
+      "guild_id": "5304658f-9523-486d-ba99-f683d8407261",
+      "guild_name": "R5 d68a7",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "0db2d6ca-a01a-4250-b7ed-b94fe11ee1d5",
+      "guild_id": "55e45fca-ce33-4c44-9192-417f8ccbd8ce",
+      "guild_name": "P181 c6f4a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "6d8125c1-a296-4bb3-9db7-e8a6f47bb1c9",
+      "guild_id": "593ae437-688c-4a36-b159-80b9dcee711e",
+      "guild_name": "P181 2dd71",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "cb72e90b-155e-4cf1-8a1b-a983dcab315e",
+      "guild_id": "5b1537a8-046e-4070-9bb9-cde4037cf2c1",
+      "guild_name": "R5 f42d0",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "4c7a2c6e-782e-40ee-82e0-1d6884dc3a07",
+      "guild_id": "6020354d-2b89-4689-9945-ec1d2a964f8c",
+      "guild_name": "R5 16806",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "9fe45d8b-beca-44f5-903c-1ba3862293c2",
+      "guild_id": "6515e664-b3cd-4122-9467-85d74c23d09f",
+      "guild_name": "R5 1181b",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "36e02cab-1ae7-40af-80bf-21347f4d67a2",
+      "guild_id": "67349257-845b-4b91-b6b3-75f3ba4a6c95",
+      "guild_name": "P181 9334e",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "2024ae16-ecfa-4ec0-bf61-5ed65acf4f5b",
+      "guild_id": "681e0875-aaf1-4580-a8c8-d5237a2700ca",
+      "guild_name": "P181 15a7d",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "24e1f62f-e026-449a-9502-066727b43907",
+      "guild_id": "6a49e8de-ef5b-4d49-b94e-33316114817c",
+      "guild_name": "R5 b61c6",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "034f85ba-8117-4222-a890-c741aa477236",
+      "guild_id": "6b71efe8-3c51-464d-98f8-e004933abf37",
+      "guild_name": "P181 d4396",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "85ada007-a683-4a6f-8921-7056805d41cf",
+      "guild_id": "7040f1bb-1467-4b23-9b3a-28aca9f16af9",
+      "guild_name": "P181 92a71",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "1f8a066b-e92a-43af-b3e6-7a8dce364420",
+      "guild_id": "70e49c04-d1ef-40d6-b159-c452a24e34e2",
+      "guild_name": "P181 1a443",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "6f7b782d-6a67-4c8a-b443-cef72f9e0bd8",
+      "guild_id": "77e49ad1-0283-4ba0-a714-85e6f85d61f1",
+      "guild_name": "P181 e1f53",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "c6305a91-f81c-4771-a07a-c47bd62a5f93",
+      "guild_id": "7d02f4e6-a61b-461f-bdd6-c7c5a648bab5",
+      "guild_name": "P181 94c89",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "e1b731e9-8c12-40b0-b556-f33113af9a15",
+      "guild_id": "84295c5c-27c5-4fe9-9209-fe87616a5880",
+      "guild_name": "R5 0d6d4",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "8650d06e-f6f5-4d48-8f28-1dcf4c52eb7a",
+      "guild_id": "90bdc3a4-42c7-4134-896c-54e1d1946d9a",
+      "guild_name": "P181 05953",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "60ccef96-6d1a-45d8-94d6-87096c781034",
+      "guild_id": "91639fd5-db42-45a6-96b0-1af3b055e087",
+      "guild_name": "P181 25eec",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "09d83e0e-aa64-43ea-81f5-4ea284c0490e",
+      "guild_id": "9384f7d0-f675-4e05-acf1-46ec558633d5",
+      "guild_name": "P181 d4b6a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "c7514836-7659-49a9-8e07-62fda7d5f2c3",
+      "guild_id": "9b46e059-c896-4057-b7bc-7633eede22be",
+      "guild_name": "P181 79c77",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "1d2319c8-30a9-4327-bd9d-d7cadd1937a0",
+      "guild_id": "9eb1ed21-d87a-4ddd-b252-9aa6035be8db",
+      "guild_name": "R5 1699f",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "e43e66c2-3607-4387-a1d1-527fcb6cf1ce",
+      "guild_id": "a66bf63c-76f1-426a-a785-c6ce5db8690b",
+      "guild_name": "R5 80f12",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "37bed8a1-8a37-43d0-ad86-42ae5ab60088",
+      "guild_id": "a6b5f489-a5c2-4968-998a-9ac62dab9a77",
+      "guild_name": "R5 6fa67",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "cc9fc476-efae-4a3f-befe-8262c04afd0d",
+      "guild_id": "a6f7cb09-b27a-485f-bb69-b19088ab2adb",
+      "guild_name": "R5 bd992",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "2a5fe116-3675-4ff4-a524-53138bae320c",
+      "guild_id": "a7f4e639-144b-46dd-943b-cd6f2a2d48a8",
+      "guild_name": "R5 071ca",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "b33cd316-64fc-4930-84b4-db503f3abdf0",
+      "guild_id": "a81df351-3a8c-494f-9bb5-41409e31e5ba",
+      "guild_name": "R5 bc591",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "12270d26-27ea-44b7-a527-989a16fc3d0e",
+      "guild_id": "a9e4e1b3-cf44-4518-9460-640b32464dac",
+      "guild_name": "P181 fe0db",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "9562d793-75be-4f63-afd4-d369bb35cbc5",
+      "guild_id": "b1d9835d-9e86-425f-8c03-d3d9b023d2ee",
+      "guild_name": "R5 4c78f",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "764004ac-7bd1-41cc-bf56-d2155382e876",
+      "guild_id": "b3691cbf-9539-402f-b9f2-88843fdbe4aa",
+      "guild_name": "P181 dcbea",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "65e35f4c-97d7-4ad8-8c70-88b0633418c0",
+      "guild_id": "b77054ab-c423-4ad8-bd98-0c1b5220d290",
+      "guild_name": "R5 989d1",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "1b25ccfb-5221-493e-a2d9-b0ff2e872e2f",
+      "guild_id": "b7ca96e2-f5b0-47ec-82f6-a47ff922f39b",
+      "guild_name": "P181 ba44a",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "de225030-39c1-49be-9daa-2793becc121c",
+      "guild_id": "bdb253d2-eb69-4959-977d-be176e084718",
+      "guild_name": "R5 f3e7c",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "682fb922-7fcd-477f-93b7-44a706fa90e5",
+      "guild_id": "c3662164-19de-476a-aa09-632aa77bc8e7",
+      "guild_name": "R5 88b70",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "8eb07ccf-29f1-4fe1-b3ed-550e47eabac5",
+      "guild_id": "c6053cba-5a98-400e-834b-186a03677550",
+      "guild_name": "P181 2b9cf",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "90fc4977-f0eb-4d5f-a4c8-c724ac7f7cf8",
+      "guild_id": "d208cbf9-b64e-4b46-b858-a6a5e7f2c393",
+      "guild_name": "R5 29331",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "eb24d373-82e1-4934-ac40-6ae36acae707",
+      "guild_id": "d416179b-31bf-4257-8513-1a581dff36b4",
+      "guild_name": "R5 29324",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "a2b0ef01-4c03-4405-9e6b-a0737424deb3",
+      "guild_id": "dcdbf0f3-5fe5-4c64-8a9c-bff1714710dc",
+      "guild_name": "R5 d0c3e",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "6088abfd-3b76-4e9b-8453-1fedb5c133cc",
+      "guild_id": "e4b13ddc-11f9-4abc-9c6d-04ceb01a57f9",
+      "guild_name": "P181 08eaa",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "74cc08e8-e899-4686-91b5-feb20031a369",
+      "guild_id": "e5d2a4e0-9c28-4731-a966-1cb522ce1bec",
+      "guild_name": "R5 3587d",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "2b8ef854-2fb8-416c-84c7-362578f8b724",
+      "guild_id": "e63d4ec4-e0e3-4d0b-8aba-aa3c41da35fe",
+      "guild_name": "R5 d0943",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "bbdd0b80-b95a-4bcc-8e08-d7fc76ba86ca",
+      "guild_id": "eafa3662-83e1-489a-b004-4cbdd3ae6537",
+      "guild_name": "R5 4c1ee",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "613c08e9-8a26-47ac-bbe0-71090c6c041f",
+      "guild_id": "eeb01c18-6e47-4c8e-ad15-c04ce97bf624",
+      "guild_name": "R5 d1763",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "acc8c08c-479f-49ed-b575-fc1a4c1b9ec5",
+      "guild_id": "ef39af3e-41f0-4575-8ae6-b5f2f9f6a9ed",
+      "guild_name": "R5 0d5a6",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "732f572b-0ec0-4e49-abc5-12ff5c568ccc",
+      "guild_id": "f3a481bd-e508-402c-ac81-3642d4084c25",
+      "guild_name": "P181 3db40",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "013ccb80-fa13-426d-884f-57ab74a606ba",
+      "guild_id": "fa9d7f34-cd8b-4cd2-8bbe-e7238bccb1bd",
+      "guild_name": "P181 1a392",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "27d162a8-38d4-4739-a9f8-d72abcd0f56c",
+      "guild_id": "fae5c245-8551-4be8-8066-82bffe145945",
+      "guild_name": "R5 c1ec8",
+      "action": "shadow_created"
+    },
+    {
+      "shadow_user_id": "0addd923-cd9d-4d97-ac35-9d4cddc61800",
+      "guild_id": "fae805b8-f090-40c0-b703-f1f592bb10e9",
+      "guild_name": "P181 c74af",
+      "action": "shadow_created"
+    }
+  ]
+}

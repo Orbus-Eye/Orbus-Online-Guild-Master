@@ -116,6 +116,25 @@ WEEKLY_QUEST_POOL: list[dict] = [
         "reward_gold": 100,
         "reward_materials": [{"slug": "raw_leather", "qty": 1}],
     },
+    # Phase 19 — raid-related weekly quests (NO reputation, NO power gear).
+    # Gated server-side: progress hook will only fire on `complete_raid()`.
+    # If the guild has <20 advs → cannot start a raid → quest stays at 0 (no harm).
+    {
+        "slug": "weekly_raid_complete_1",
+        "display_key": "quests.weekly.raid_complete_1",
+        "objective_type": "raids_completed",
+        "objective_target": 1,
+        "reward_gold": 150,
+        "reward_materials": [{"slug": "dull_gem", "qty": 1}],
+    },
+    {
+        "slug": "weekly_raid_t2plus_success_1",
+        "display_key": "quests.weekly.raid_t2plus_success_1",
+        "objective_type": "raids_t2plus_success",
+        "objective_target": 1,
+        "reward_gold": 200,
+        "reward_materials": [{"slug": "arcane_dust", "qty": 2}],
+    },
 ]
 WEEKLY_ACTIVE_COUNT = 4  # 4 quests visible per week
 

@@ -113,6 +113,7 @@ CLEANUP_ALLOWLIST_GUILDS = frozenset({
     "drakarys",
     "harambes",
     "il regno di lanafuoco",
+    "crociata d'argento",  # CONFIRMED new real tester 2026-06-26 (owner email TBD)
 })
 # Guild names (case-insensitive) that MUST be flagged even if their owner
 # would otherwise fall in the allowlist — confirmed test rigs from user.

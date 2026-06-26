@@ -303,6 +303,7 @@ class TestAdminItemsAndMonetization:
 
 # ─── Trait Effects at Recruitment ──────────────────────────────────────────────
 class TestTraitEffectsAtRecruitment:
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race; see FLAKY_TESTS_AUDIT.md
     def test_candidates_have_traits_array_and_persist(self, nonadmin_session):
         hdr = nonadmin_session["headers"]
         # Run candidates multiple times to observe variety

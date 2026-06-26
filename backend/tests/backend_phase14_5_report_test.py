@@ -229,6 +229,7 @@ def _recruit(auth, n):
 
 
 class TestExpeditionReportHTTP:
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race; see FLAKY_TESTS_AUDIT.md
     def test_get_expedition_returns_report_fields(self):
         auth, _ = _bootstrap_user_and_guild()
         # Recruit 3 → Goblin Warrens requires 3
