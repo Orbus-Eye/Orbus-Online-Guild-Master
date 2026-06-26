@@ -1067,6 +1067,19 @@
     "tier_locked": "Locked ({need} pieces required)"
   },
   "raids": {
-    "title": "RAIDS"
+    "title": "RAIDS",
+    "subtitle": "Single-player 20-adventurer expeditions.",
+    "cooldown_remaining": "Next raid available in",
+    "roster_gate": "Need {n} adventurers (you have {have})",
+    "peak_gate": "Required peak team_power: {n} (yours: {have})",
+    "history_title": "HISTORY",
+    "mvp_note": "Phase 18 MVP — the 4×5 party builder will ship in Phase 18.1.",
+    "locked_badge": "LOCKED",
+    "roster_label": "Roster",
+    "power_label": "Power",
+    "duration_label": "Duration",
+    "reward_label": "Reward",
+    "duration_min_short": "min",
+    "xp_per_adv": "XP/adv"
   }
 }

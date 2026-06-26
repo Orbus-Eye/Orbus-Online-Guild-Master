@@ -32,7 +32,7 @@ function CountdownPill({ seconds }) {
 
 
 export default function Raids() {
-    const t = useT();
+    const { t } = useT();
     const [catalog, setCatalog] = useState(null);
     const [history, setHistory] = useState([]);
     const [cooldown, setCooldown] = useState(0);

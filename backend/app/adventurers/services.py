@@ -138,6 +138,7 @@ def adventurer_public(doc: dict) -> dict:
         "stamina": doc.get("stamina", 100),
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
+        "is_starter": bool(doc.get("is_starter", False)),
         "traits": trait_public_filtered_list(doc.get("traits", [])),
         "equipment": eq_slots,
         "base_power": base_power,

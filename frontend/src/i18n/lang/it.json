@@ -1067,6 +1067,19 @@
     "tier_locked": "Bloccato ({need} pezzi richiesti)"
   },
   "raids": {
-    "title": "RAID"
+    "title": "RAID",
+    "subtitle": "Spedizioni single-player da 20 avventurieri.",
+    "cooldown_remaining": "Prossimo raid disponibile tra",
+    "roster_gate": "Servono {n} avventurieri (hai {have})",
+    "peak_gate": "Picco team_power richiesto: {n} (tuo: {have})",
+    "history_title": "STORIA",
+    "mvp_note": "Phase 18 MVP — il builder party-by-party (4 × 5) sarà rilasciato in Phase 18.1.",
+    "locked_badge": "BLOCCATO",
+    "roster_label": "Roster",
+    "power_label": "Potenza",
+    "duration_label": "Durata",
+    "reward_label": "Reward",
+    "duration_min_short": "min",
+    "xp_per_adv": "XP/avv"
   }
 }
