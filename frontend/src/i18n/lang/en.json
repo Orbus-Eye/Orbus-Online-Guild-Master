@@ -41,7 +41,8 @@
     "leaderboard": "RANK",
     "admin": "ADMIN",
     "logout": "logout",
-    "brand_subtitle_dashboard": "DASHBOARD"
+    "brand_subtitle_dashboard": "DASHBOARD",
+    "consortiums": "Consortiums"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -994,5 +995,38 @@
     "equip_items_3": "Equip 3 items",
     "expedition_loot_10": "Collect 10 expedition loot items",
     "market_listings_1": "Create 1 market listing"
+  },
+  "chronicle": {
+    "title": "SERVER CHRONICLE",
+    "loading": "Loading events…",
+    "error": "Unable to load chronicle",
+    "empty": "No recent activity",
+    "refresh": "REFRESH",
+    "now": "now",
+    "min_ago": "{n} min ago",
+    "hour_ago": "{n}h ago",
+    "day_ago": "{n}d ago"
+  },
+  "consortiums": {
+    "title": "CONSORTIUMS",
+    "intro": "Consortiums are cross-guild social groups. No power bonuses, no competitive rewards — just a meeting point and a shared activity feed.",
+    "create": "CREATE CONSORTIUM",
+    "cancel": "CANCEL",
+    "create_submit": "CREATE",
+    "create_success": "Consortium created",
+    "join": "JOIN",
+    "join_success": "You joined the Consortium",
+    "leave": "LEAVE",
+    "leave_success": "You left the Consortium",
+    "loading": "Loading consortiums…",
+    "empty": "No consortiums yet",
+    "list_title": "ACTIVE CONSORTIUMS",
+    "you_are_in": "YOUR CONSORTIUM",
+    "members": "MEMBERS",
+    "members_label": "members",
+    "field_name": "Name",
+    "field_tag": "Tag",
+    "field_description": "Description",
+    "optional": "optional"
   }
 }

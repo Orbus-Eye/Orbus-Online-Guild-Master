@@ -333,7 +333,7 @@ class TestOpenAPI:
     def test_paths_count_is_53(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        # Phase 15 + 14.1: +4 endpoints (streak, streak/claim, weekly, weekly/claim)
-        assert len(paths) == 53, f"expected 53, got {len(paths)}"
+        # Phase 16: +7 endpoints (chronicle +1, consortiums +6) → 60
+        assert len(paths) == 60, f"expected 60, got {len(paths)}"
         assert "/api/quests/today" in paths
         assert "/api/quests/claim/{quest_id}" in paths

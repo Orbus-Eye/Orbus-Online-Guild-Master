@@ -51,6 +51,24 @@ logging, and **no pay-to-win** elements.
 - ✅ Test suite: 22 backend pytest (ALL PASS), 10 frontend E2E (7 PASS, 1 PARTIAL, 2 deferred).
 - ✅ Regression fix: 3 hardcoded path-count tests updated 49→53.
 
+## Phase 16 (2026-06-26) — Online Feel + Market Fix + Consortiums MVP
+- ✅ **Market route fix**: `Market.jsx` destructured non-existent `{token, loading}` from
+  AuthContext → useEffect always triggered `navigate("/login")` → GuestOnly bounced to
+  `/dashboard`. Replaced with `{user, guild}` (already gated by ProtectedRoute).
+- ✅ **Server Chronicle** (`GET /api/chronicle?limit=&lang=`): public read-only activity
+  feed derived from `audit_log`. Sanitization filters: no email, no user_id/ObjectId,
+  no test guilds (`^Test`, `^G[\s_]<hex>`), no test owners (is_test_user OR
+  `@orbus.test`/`@*.test`/`test@*`/`@test.*`). Whitelist of 6 public event types.
+  Rarity-gated (Uncommon+) for `item_crafted`/`loot_awarded`.
+- ✅ **Consortiums MVP** (`/api/consortiums*`): 6 endpoints. Cross-guild social groups.
+  Constraints: 1 user/1 guild = 1 consortium, name 3-40 unique case-insensitive,
+  no Test* prefix, no forbidden chars (`@<>\/`). Open join, no chat. NO bonus to
+  gold/XP/loot/reputation/ranking. Audit events `consortium_created`, `consortium_joined`,
+  `consortium_left`.
+- ✅ Frontend: `ChronicleCard.jsx`, `Consortiums.jsx`, AppHeader nav link, App.js route.
+- ✅ Test suite Phase 16: 11/11 backend tests PASS. Cross-suite regression: 72/72 PASS.
+- ✅ OpenAPI path count: 53 → 60 (+1 chronicle, +6 consortiums).
+
 ## Backlog
 - **P1** — Frontend test for active streak claim (Test 3) and weekly claim 422 (Test 5)
   — both blocked on simulating a real daily quest completion in browser. Backend

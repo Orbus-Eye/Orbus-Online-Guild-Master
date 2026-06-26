@@ -54,6 +54,10 @@ EVENT_TYPES = frozenset({
     "weekly_rotation_generated",
     "streak_updated",
     "streak_reward_claimed",
+    # Phase 16 — Consortiums
+    "consortium_created",
+    "consortium_joined",
+    "consortium_left",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

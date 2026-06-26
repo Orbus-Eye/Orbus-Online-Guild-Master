@@ -41,7 +41,8 @@
     "leaderboard": "CLASSIFICA",
     "admin": "ADMIN",
     "logout": "esci",
-    "brand_subtitle_dashboard": "DASHBOARD"
+    "brand_subtitle_dashboard": "DASHBOARD",
+    "consortiums": "Consorzi"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -994,5 +995,38 @@
     "equip_items_3": "Equipaggia 3 oggetti",
     "expedition_loot_10": "Recupera 10 oggetti dalle spedizioni",
     "market_listings_1": "Crea 1 inserzione al market"
+  },
+  "chronicle": {
+    "title": "CRONACA DEL SERVER",
+    "loading": "Caricamento eventi…",
+    "error": "Impossibile caricare la cronaca",
+    "empty": "Nessuna attività recente",
+    "refresh": "AGGIORNA",
+    "now": "adesso",
+    "min_ago": "{n} min fa",
+    "hour_ago": "{n}h fa",
+    "day_ago": "{n}g fa"
+  },
+  "consortiums": {
+    "title": "CONSORZI",
+    "intro": "I Consorzi sono gruppi sociali multi-gilda. Niente bonus di potere, niente reward competitive: solo un punto di incontro e una bacheca eventi condivisa.",
+    "create": "CREA CONSORZIO",
+    "cancel": "ANNULLA",
+    "create_submit": "CREA",
+    "create_success": "Consorzio creato",
+    "join": "ENTRA",
+    "join_success": "Sei entrato nel Consorzio",
+    "leave": "ESCI",
+    "leave_success": "Hai lasciato il Consorzio",
+    "loading": "Caricamento Consorzi…",
+    "empty": "Nessun Consorzio ancora creato",
+    "list_title": "CONSORZI ATTIVI",
+    "you_are_in": "IL TUO CONSORZIO",
+    "members": "MEMBRI",
+    "members_label": "membri",
+    "field_name": "Nome",
+    "field_tag": "Tag",
+    "field_description": "Descrizione",
+    "optional": "opzionale"
   }
 }

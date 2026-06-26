@@ -92,6 +92,8 @@ def create_app() -> FastAPI:
     from app.quests.routes import router as quests_router
     from app.crafting.routes import router as crafting_router
     from app.market.routes import router as market_router
+    from app.chronicle.routes import router as chronicle_router
+    from app.consortiums.routes import router as consortiums_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -107,6 +109,8 @@ def create_app() -> FastAPI:
     app.include_router(quests_router)
     app.include_router(crafting_router)
     app.include_router(market_router)
+    app.include_router(chronicle_router)
+    app.include_router(consortiums_router)
 
     return app
 

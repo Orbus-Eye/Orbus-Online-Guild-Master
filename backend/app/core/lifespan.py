@@ -15,6 +15,7 @@ from app.core.indexes import create_all_indexes
 from app.seeds.seed_runner import run_all_seeds
 from app.audit.log import ensure_audit_indexes
 from app.market.services import ensure_market_indexes
+from app.consortiums.services import ensure_consortium_indexes
 
 
 logger = logging.getLogger("orbus")
@@ -25,6 +26,7 @@ async def lifespan(app: FastAPI):
     await create_all_indexes(db)
     await ensure_audit_indexes(db)
     await ensure_market_indexes(db)
+    await ensure_consortium_indexes(db)
     await run_all_seeds(db)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     yield

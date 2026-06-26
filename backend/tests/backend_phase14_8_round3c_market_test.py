@@ -429,7 +429,7 @@ class TestOpenAPIDelta:
     def test_path_count_now_49(self):
         r = requests.get(_api("/openapi.json"), timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 53, f"expected 53, got {len(paths)}"
+        assert len(paths) == 60, f"expected 60, got {len(paths)}"
         for p in ("/api/market/listings",
                   "/api/market/listings/mine",
                   "/api/market/listings/{listing_id}",

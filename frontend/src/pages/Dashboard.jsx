@@ -8,6 +8,7 @@ import OnboardingChecklist from "../components/OnboardingChecklist";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
+import ChronicleCard from "../components/ChronicleCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
@@ -123,6 +124,9 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-6">
                     <WeeklyQuestsCard />
+                </div>
+                <div className="mb-6">
+                    <ChronicleCard limit={15} />
                 </div>
 
                 <section className="mb-8">

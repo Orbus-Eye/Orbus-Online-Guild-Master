@@ -23,6 +23,7 @@ import PasswordResetConfirm from "@/pages/PasswordResetConfirm";
 import Leaderboard from "@/pages/Leaderboard";
 import Crafting from "@/pages/Crafting";
 import Market from "@/pages/Market";
+import Consortiums from "@/pages/Consortiums";
 
 function App() {
     return (
@@ -169,6 +170,14 @@ function App() {
                             }
                         />
                         <Route path="/leaderboard" element={<Leaderboard />} />
+                        <Route
+                            path="/consortiums"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Consortiums />
+                                </ProtectedRoute>
+                            }
+                        />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     </AuthProvider>

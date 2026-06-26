@@ -6,7 +6,6 @@ Three tabs:
   • Mine  → your own listings (active + history)
 */
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import AppHeader from "../components/AppHeader";
@@ -514,18 +513,25 @@ function MineTab({ token, lang, t, refreshGuild }) {
 
 // ─── PAGE ────────────────────────────────────────────────────────────────
 export default function Market() {
-    const { token, guild, loading, refreshGuild } = useAuth();
+    // Bug fix Phase 16: AuthContext exposes {user, guild, refreshGuild}, NOT
+    // {token, loading}. The previous code destructured non-existent fields,
+    // which made the useEffect below always trigger navigate("/login")
+    // (because `token` was undefined → `!token` was true). /login then
+    // GuestOnly-redirected back to /dashboard, producing the observed
+    // "Mercato → Dashboard" symptom.
+    // ProtectedRoute already guards `user` and `guild`, so this component
+    // does not need to re-check them.
+    const { user, guild, refreshGuild } = useAuth();
+    const token = typeof localStorage !== "undefined"
+        ? localStorage.getItem("orbus_token")
+        : null;
     const { t, lang } = useT();
-    const navigate = useNavigate();
     const [tab, setTab] = useState("buy");
     const FEE = 5;
 
-    useEffect(() => {
-        if (!loading && !token) navigate("/login");
-        if (!loading && token && !guild) navigate("/create-guild");
-    }, [loading, token, guild, navigate]);
-
-    if (loading || !guild) return null;
+    // Safety net only — ProtectedRoute is the real auth gate.
+    if (user === undefined || guild === undefined) return null;
+    if (!user || !guild) return null;
 
     return (
         <div className="min-h-screen bg-background text-foreground">
