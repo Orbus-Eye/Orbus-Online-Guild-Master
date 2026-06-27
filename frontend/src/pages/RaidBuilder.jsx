@@ -2,8 +2,8 @@
 // Phase 19.4a — added roster filter panel (search/role/class/rarity/level/PWR
 // /availability/sort). Filters don't break drag/select; assigned advs are
 // always excluded from the pool and the disable-once-full guard is preserved.
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { api, formatApiError } from "../lib/api";
@@ -35,6 +35,9 @@ export default function RaidBuilder() {
     const { t, lang } = useT();
     const { slug } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const squadIdParam = searchParams.get("squad_id") || "";
+    const autoLoadedRef = useRef(false);
     const [raidDungeon, setRaidDungeon] = useState(null);
     const [advs, setAdvs] = useState([]);
     const [parties, setParties] = useState(
@@ -91,6 +94,21 @@ export default function RaidBuilder() {
             toast.success(`Squadra "${sq.name}" caricata`);
         }
     };
+
+    // ROUND 6A.2c — auto-load squad from ?squad_id once raid + squads + advs are ready.
+    useEffect(() => {
+        if (!squadIdParam || autoLoadedRef.current) return;
+        if (!raidDungeon || squads.length === 0 || advs.length === 0) return;
+        const sq = squads.find((s) => s.squad_id === squadIdParam);
+        if (!sq) {
+            autoLoadedRef.current = true;
+            toast.error("Squadra raid non trovata");
+            return;
+        }
+        autoLoadedRef.current = true;
+        loadSquadIntoParties(squadIdParam);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [squadIdParam, raidDungeon, squads, advs]);
 
     async function load() {
         try {

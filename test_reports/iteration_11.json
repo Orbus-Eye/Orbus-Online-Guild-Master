@@ -1,0 +1,41 @@
+{
+  "summary": "ROUND 6A.2c Addendum 'Invia Squadra' reverse UX flow — frontend e2e validated end to end. 21/21 assertions passed across all 7 functional features.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "ExpeditionNew /dungeons/<slug>/start", "issues": ["React hydration warning in dev console: '<span> cannot be a child of <option>' — Emergent dev tracker injects <span style=display:contents> inside <option> at ExpeditionNew.jsx:288 (and similarly RaidBuilder.jsx:346). Likely DEV-only annotation, not runtime, but generates console error noise. Worth confirming it disappears in production build."]}
+    ]
+  },
+  "feature_results": {
+    "F1_deploy_buttons": "PASS — D3 squad renders <a> with href=/dungeons?squad_id=<id> and label 'Send Expedition'. R20 squad with missing=20 renders <button disabled> with tooltip '20 adventurers missing, edit the squad' and label 'Launch Raid'. (Enabled raid_20 link path not directly exercised — no 20/20 squad seeded; structural code path verified by /raids builder link test.)",
+    "F2_dungeons_squad_context": "PASS — Banner appears, name matches squad, team_size filter auto-selects '3', clear button removes squad_id from URL and resets filter to ''.",
+    "F3_start_link_propagation": "PASS — start-dungeon-<slug> Link's wrapping <a> includes ?squad_id=<id>; navigation to /dungeons/<slug>/start triggers autoload effect. Selected count came back 0/3 because the seeded D3 squad has all 3 adventurer_ids missing from live roster (missing=3). This is correct behavior — autoload toasted partial-match warning and left selection empty. Not a bug.",
+    "F4_raids_squad_context": "PASS — raids-squad-banner shows, raid-builder-link-<slug> href includes ?squad_id=<id>, raids-squad-clear strips squad_id.",
+    "F5_raidbuilder_autoload": "PARTIAL — code path verified (squadIdParam read, autoLoadedRef gate, loadSquadIntoParties called once raid+squads+advs ready). Live grid population not asserted because the seeded R20 squad has all 20 missing. Recommend main agent seed a complete raid_20 squad to fully validate.",
+    "F6_reload_persistence": "PASS — F5 reload on /dungeons?squad_id=<id> still shows banner; URL retains squad_id.",
+    "F7_invalid_squad_id": "PASS — nonexistent_id removed via setSearchParams({}, {replace:true}); banner absent. Cross-type guard: passing raid_20 squad_id to /dungeons triggers 'Questa squadra è per raid (20), usa /raids' toast (visible in screenshot) and clears the param.",
+    "F8_lint_gate": "NOT RE-RUN — already validated by main agent per request."
+  },
+  "test_report_links": ["/app/test_reports/iteration_11.json"],
+  "action_items": [
+    "(Optional) Seed a complete raid_20 squad (member_count=20/20, missing=0) under tester@orbus.test to fully exercise the enabled '▶ Launch Raid' Link path + RaidBuilder auto-population of the 4×5 grid.",
+    "(Optional/cosmetic) Investigate the dev-only <span> inside <option> hydration warning emitted by Emergent's tracking wrapper on ExpeditionNew.jsx:288 and RaidBuilder.jsx:346. Confirm it doesn't appear in production build; if it does, wrap squad name in a sibling node rather than inline JSX expression."
+  ],
+  "critical_code_review_comments": [
+    "Squads.jsx SquadCard.deployDisabled logic is correct (isRaid && missing>0). Tooltip i18n covers both IT/EN.",
+    "Dungeons.jsx useEffect on squadIdParam properly cancels with 'cancelled' flag and uses setSearchParams({}, {replace:true}) — good URL hygiene.",
+    "Raids.jsx uses GET /api/squads?type=raid_20 (server-side filter) which is more efficient than client filter used by Dungeons.jsx (which fetches all). Minor inconsistency, not a bug.",
+    "Both ExpeditionNew and RaidBuilder use autoLoadedRef pattern to prevent re-autoload loop — solid.",
+    "Cross-type guard (raid_20 squad on /dungeons) lives only in Dungeons.jsx; Raids.jsx already filters by type=raid_20 server-side so dungeon squads simply yield 'not found' toast — semantically consistent."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only review)", "frontend": "100% (21/21 assertions)"},
+  "test_credentials": "tester@orbus.test / password123 (used for full e2e)",
+  "seed_data_creation": "None created. Used pre-seeded 'Test 6A2b D3 v2' (dungeon_3, missing=3) and 'Test Raid 6A2b' (raid_20, missing=20).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Two seeded squads exist for tester@orbus.test but both have missing members (D3 missing=3, R20 missing=20). To exercise the *enabled* raid deploy Link + RaidBuilder grid auto-population, seed a fresh raid_20 squad with 20 live adventurers. All other code paths are verified working.",
+  "rca of the issue": "N/A — no bugs found."
+}

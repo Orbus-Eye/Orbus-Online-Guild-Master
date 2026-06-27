@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { useT } from "../i18n/I18nContext";
 import { toast } from "sonner";
@@ -55,6 +55,9 @@ export default function ExpeditionNew() {
     const { t, tContent } = useT();
     const { slug } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const squadIdParam = searchParams.get("squad_id") || "";
+    const autoLoadedRef = useRef(false);
     const { refreshGuild } = useAuth();
     const [dungeon, setDungeon] = useState(null);
     const [advs, setAdvs] = useState([]);
@@ -125,6 +128,21 @@ export default function ExpeditionNew() {
             toast.success(`Squadra "${sq.name}" caricata`);
         }
     };
+
+    // ROUND 6A.2c — auto-load squad from ?squad_id once dungeon + squads + advs are ready.
+    useEffect(() => {
+        if (!squadIdParam || autoLoadedRef.current) return;
+        if (!dungeon || squads.length === 0 || advs.length === 0) return;
+        const sq = squads.find((s) => s.squad_id === squadIdParam);
+        if (!sq) {
+            autoLoadedRef.current = true;
+            toast.error("Squadra non trovata o non compatibile con questo dungeon");
+            return;
+        }
+        autoLoadedRef.current = true;
+        loadSquad(squadIdParam);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [squadIdParam, dungeon, squads, advs]);
 
     const toggleSelect = (adv) => {
         setSelected((prev) => {

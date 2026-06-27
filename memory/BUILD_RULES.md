@@ -102,8 +102,34 @@ explicit deploy authorization in the prompt. The user owns the deploy gate.
 
 ---
 
+## R8 — Pre-Deploy Lint Gate
+
+A strict ESLint configuration (`frontend/eslint.config.mjs`) is the
+authoritative quality gate for the React frontend. Before any production
+deploy, the fork MUST run:
+
+```bash
+cd /app/frontend && yarn lint:strict
+```
+
+The command must finish with **0 errors and 0 warnings**. Any non-zero exit
+code blocks the deploy. This rule exists to prevent JSX malformation crashes
+(such as the `Guide.jsx` `</SectionBlock>` regression) and to keep
+production builds free of unused vars, undefined imports, and broken hooks.
+
+Rationale: the previous fork suffered repeated production crashes caused by
+malformed JSX that compiled locally but failed in the production CRA build.
+A strict lint gate, run pre-deploy, catches these statically.
+
+Husky pre-commit automation is intentionally **deferred** (out of scope for
+ROUND 6A.2c). The manual `yarn lint:strict` invocation in the deploy
+checklist is sufficient until a CI runner is added.
+
+---
+
 ## Change log
 
 | Date | Phase | Change | Author |
 |---|---|---|---|
 | 2026-06-27 | 19.3 | Initial policy ledger created. R1-R7 codified. | e1 |
+| 2026-06-27 | 19.x / Round 6A.2c | R8 (Pre-Deploy Lint Gate) added. | e1 |

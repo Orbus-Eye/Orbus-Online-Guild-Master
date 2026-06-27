@@ -15,6 +15,20 @@ const TYPE_META = {
 
 function SquadCard({ squad, lang, onArchive }) {
     const missing = (squad.missing_adventurer_ids || []).length;
+    const isRaid = squad.squad_type === "raid_20";
+    // Round 6A.2c — raid deploy guard: disable if any required adventurer is missing.
+    const deployDisabled = isRaid && missing > 0;
+    const deployHref = isRaid
+        ? `/raids?squad_id=${squad.squad_id}`
+        : `/dungeons?squad_id=${squad.squad_id}`;
+    const deployLabel = isRaid
+        ? lang === "it" ? "▶ Lancia Raid" : "▶ Launch Raid"
+        : lang === "it" ? "▶ Invia in Spedizione" : "▶ Send Expedition";
+    const deployTooltip = deployDisabled
+        ? lang === "it"
+            ? `${missing} avventurieri mancanti, modifica la squadra`
+            : `${missing} adventurers missing, edit the squad`
+        : "";
     return (
         <div
             data-testid={`squad-card-${squad.squad_id}`}
@@ -36,6 +50,27 @@ function SquadCard({ squad, lang, onArchive }) {
                     </span>
                 )}
             </div>
+            {/* Round 6A.2c — Deploy CTA */}
+            {deployDisabled ? (
+                <button
+                    type="button"
+                    disabled
+                    title={deployTooltip}
+                    data-testid={`squad-deploy-btn-${squad.squad_id}`}
+                    className="w-full mb-2 px-3 py-1.5 text-[11px] tracking-widest font-bold bg-amber/30 text-background/60 rounded-sm cursor-not-allowed opacity-60"
+                >
+                    {deployLabel}
+                </button>
+            ) : (
+                <Link
+                    to={deployHref}
+                    data-testid={`squad-deploy-btn-${squad.squad_id}`}
+                    title={deployTooltip}
+                    className="block w-full mb-2 px-3 py-1.5 text-[11px] tracking-widest font-bold bg-amber text-background hover:opacity-90 transition-opacity rounded-sm text-center"
+                >
+                    {deployLabel}
+                </Link>
+            )}
             <div className="flex gap-2">
                 <Link
                     to={`/squads/${squad.squad_id}/edit`}

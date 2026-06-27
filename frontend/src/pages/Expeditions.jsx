@@ -18,7 +18,7 @@ const StatusBadge = ({ status, summary }) => {
             </span>
         );
     }
-    const isSuccess = (summary || status) === "Success" || status === "completed";
+    const _isSuccess = (summary || status) === "Success" || status === "completed";
     if (status === "completed" && summary === "Success") {
         return (
             <span

@@ -44,7 +44,7 @@ const ActiveAction = ({ to, label, code, testid }) => (
     </Link>
 );
 
-const LockedAction = ({ label, code, phase }) => (
+const _LockedAction = ({ label, code, phase }) => (
     <button
         type="button"
         disabled

@@ -24,7 +24,7 @@ export default class ReportErrorBoundary extends React.Component {
     componentDidCatch(error, info) {
         // best-effort log; never crash on logger failure
         try {
-            // eslint-disable-next-line no-console
+             
             console.error("[ReportErrorBoundary]", error, info);
         } catch (_) {
             /* noop */

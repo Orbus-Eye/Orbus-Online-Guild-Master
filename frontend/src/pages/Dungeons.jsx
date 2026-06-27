@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
@@ -56,10 +56,57 @@ const buildQuery = (f) => {
 
 export default function Dungeons() {
     const { t, tContent } = useT();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const squadIdParam = searchParams.get("squad_id") || "";
+    const [activeSquad, setActiveSquad] = useState(null);
+    const [squadLoading, setSquadLoading] = useState(false);
     const [dungeons, setDungeons] = useState(null);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState(EMPTY_FILTERS);
     const [panelOpen, setPanelOpen] = useState(false);
+
+    // ROUND 6A.2c — fetch the saved squad referenced by ?squad_id and lock team_size filter.
+    useEffect(() => {
+        if (!squadIdParam) {
+            setActiveSquad(null);
+            return;
+        }
+        let cancelled = false;
+        setSquadLoading(true);
+        api.get("/squads")
+            .then(({ data }) => {
+                if (cancelled) return;
+                const found = (data.squads || []).find((s) => s.squad_id === squadIdParam);
+                if (!found) {
+                    toast.error("Squadra non trovata o archiviata");
+                    setActiveSquad(null);
+                    setSearchParams({}, { replace: true });
+                    return;
+                }
+                if (found.squad_type === "raid_20") {
+                    toast.error("Questa squadra è per raid (20), usa /raids");
+                    setActiveSquad(null);
+                    setSearchParams({}, { replace: true });
+                    return;
+                }
+                setActiveSquad(found);
+                const size = found.squad_type === "dungeon_3" ? "3" : "5";
+                setFilters((f) => ({ ...f, team_size: size }));
+            })
+            .catch(() => {
+                if (!cancelled) toast.error("Errore caricamento squadra");
+            })
+            .finally(() => { if (!cancelled) setSquadLoading(false); });
+        return () => { cancelled = true; };
+    }, [squadIdParam, setSearchParams]);
+
+    const clearSquadFilter = useCallback(() => {
+        setActiveSquad(null);
+        setFilters((f) => ({ ...f, team_size: "" }));
+        const next = new URLSearchParams(searchParams);
+        next.delete("squad_id");
+        setSearchParams(next, { replace: true });
+    }, [searchParams, setSearchParams]);
 
     const fetchDungeons = useCallback(async (f) => {
         setLoading(true);
@@ -88,6 +135,10 @@ export default function Dungeons() {
     const reset = () => setFilters(EMPTY_FILTERS);
     const setF = (k, v) => setFilters((p) => ({ ...p, [k]: v }));
     const activeCount = Object.values(filters).filter((v) => v !== "").length;
+    const squadStartQuery = useMemo(
+        () => (activeSquad ? `?squad_id=${activeSquad.squad_id}` : ""),
+        [activeSquad],
+    );
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
@@ -102,6 +153,35 @@ export default function Dungeons() {
                     Choose a dungeon and dispatch a party. Each run takes time and either
                     rewards your guild or sends them back bruised.
                 </p>
+
+                {/* ROUND 6A.2c — Squad context banner */}
+                {activeSquad && (
+                    <div
+                        data-testid="dungeons-squad-banner"
+                        className="border border-amber/40 bg-amber/10 rounded-sm px-4 py-3 mb-5 flex items-center justify-between gap-3 flex-wrap"
+                    >
+                        <div className="text-xs text-amber">
+                            <span className="tracking-widest">▶ Stai usando la squadra:</span>{" "}
+                            <strong data-testid="dungeons-squad-banner-name">{activeSquad.name}</strong>{" "}
+                            <span className="text-muted-foreground">
+                                (richiede team da {activeSquad.squad_type === "dungeon_3" ? 3 : 5} avventurieri)
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            data-testid="dungeons-squad-clear"
+                            onClick={clearSquadFilter}
+                            className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1 rounded-sm hover:bg-amber hover:text-background transition-colors"
+                        >
+                            ✕ Annulla filtro
+                        </button>
+                    </div>
+                )}
+                {squadLoading && (
+                    <div className="text-[11px] text-muted-foreground mb-3" data-testid="dungeons-squad-loading">
+                        Caricamento squadra...
+                    </div>
+                )}
 
                 {/* Phase 19.3 — Filter panel (collapsible on mobile) */}
                 <div
@@ -214,7 +294,22 @@ export default function Dungeons() {
                         data-testid="dungeons-empty-state"
                         className="border border-border bg-card rounded-sm p-8 text-center text-sm text-muted-foreground"
                     >
-                        {activeCount > 0 ? (
+                        {activeSquad ? (
+                            <>
+                                Nessun dungeon compatibile con la squadra{" "}
+                                <strong className="text-foreground">{activeSquad.name}</strong>{" "}
+                                (richiede team da {activeSquad.squad_type === "dungeon_3" ? 3 : 5} avventurieri).{" "}
+                                <button
+                                    type="button"
+                                    onClick={clearSquadFilter}
+                                    data-testid="dungeons-empty-clear-squad"
+                                    className="text-amber underline-offset-4 hover:underline"
+                                >
+                                    Annulla filtro
+                                </button>
+                                {" "}per vedere tutti i dungeon.
+                            </>
+                        ) : activeCount > 0 ? (
                             <>
                                 Nessun dungeon corrisponde ai filtri.{" "}
                                 <button
@@ -273,7 +368,7 @@ export default function Dungeons() {
                                             🔒 {d.unlock_reason || "Locked"}
                                         </div>
                                     ) : (
-                                        <Link to={`/dungeons/${d.slug}/start`}>
+                                        <Link to={`/dungeons/${d.slug}/start${squadStartQuery}`}>
                                             <Button
                                                 data-testid={`start-dungeon-${d.slug}`}
                                                 className="w-full h-10 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90"

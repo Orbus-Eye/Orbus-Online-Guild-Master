@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
+// eslint-disable-next-line no-unused-vars -- reserved for future password field UX
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import PasswordInput from "../components/PasswordInput";

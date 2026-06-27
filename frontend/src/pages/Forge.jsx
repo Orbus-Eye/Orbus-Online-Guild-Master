@@ -122,7 +122,8 @@ export default function Forge() {
                             onClick={() => { setTab(tb.key); setSelected(null); setEnchOptions(null); }}
                             className={"text-[10px] tracking-widest px-3 py-2 " +
                                 (tab === tb.key ? "text-amber border-b-2 border-amber" : "text-muted-foreground hover:text-foreground")}
-                        >{t(tb.i18n)}</button>
+                        >{t(tb.i18n)}
+                        </button>
                     ))}
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">

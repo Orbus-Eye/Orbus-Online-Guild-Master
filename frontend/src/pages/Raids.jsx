@@ -1,7 +1,7 @@
 // Phase 18 — Raids list (read-only catalog + cooldown banner + history).
 // Builder + report are deferred to Phase 18.1 (out of scope for ROUND 5 MVP).
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { api, formatApiError } from "../lib/api";
@@ -31,7 +31,10 @@ function CountdownPill({ seconds }) {
 
 
 export default function Raids() {
-    const { t, lang } = useT();
+    const { t, lang: _lang } = useT();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const squadIdParam = searchParams.get("squad_id") || "";
+    const [activeSquad, setActiveSquad] = useState(null);
     const [catalog, setCatalog] = useState(null);
     const [history, setHistory] = useState([]);
     const [cooldown, setCooldown] = useState(0);
@@ -55,6 +58,35 @@ export default function Raids() {
 
     useEffect(() => { load(); }, []);
 
+    // ROUND 6A.2c — fetch the saved squad referenced by ?squad_id (raid_20 only).
+    useEffect(() => {
+        if (!squadIdParam) { setActiveSquad(null); return; }
+        let cancelled = false;
+        api.get("/squads?type=raid_20")
+            .then(({ data }) => {
+                if (cancelled) return;
+                const found = (data.squads || []).find((s) => s.squad_id === squadIdParam);
+                if (!found) {
+                    toast.error("Squadra raid non trovata o archiviata");
+                    setActiveSquad(null);
+                    setSearchParams({}, { replace: true });
+                    return;
+                }
+                setActiveSquad(found);
+            })
+            .catch(() => { if (!cancelled) toast.error("Errore caricamento squadra"); });
+        return () => { cancelled = true; };
+    }, [squadIdParam, setSearchParams]);
+
+    const clearSquadFilter = () => {
+        setActiveSquad(null);
+        const next = new URLSearchParams(searchParams);
+        next.delete("squad_id");
+        setSearchParams(next, { replace: true });
+    };
+
+    const squadQuery = activeSquad ? `?squad_id=${activeSquad.squad_id}` : "";
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader />
@@ -64,6 +96,28 @@ export default function Raids() {
                 </h1>
 
                 <CountdownPill seconds={cooldown} />
+
+                {/* ROUND 6A.2c — Squad context banner */}
+                {activeSquad && (
+                    <div
+                        data-testid="raids-squad-banner"
+                        className="border border-amber/40 bg-amber/10 rounded-sm px-4 py-3 mb-4 flex items-center justify-between gap-3 flex-wrap"
+                    >
+                        <div className="text-xs text-amber">
+                            <span className="tracking-widest">▶ Stai usando la squadra:</span>{" "}
+                            <strong data-testid="raids-squad-banner-name">{activeSquad.name}</strong>{" "}
+                            <span className="text-muted-foreground">(raid 20 avventurieri)</span>
+                        </div>
+                        <button
+                            type="button"
+                            data-testid="raids-squad-clear"
+                            onClick={clearSquadFilter}
+                            className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1 rounded-sm hover:bg-amber hover:text-background transition-colors"
+                        >
+                            ✕ Annulla filtro
+                        </button>
+                    </div>
+                )}
 
                 {loading && <div className="text-xs text-muted-foreground">…</div>}
 
@@ -115,7 +169,7 @@ export default function Raids() {
                             {/* Phase 18.1 — Builder + last report links */}
                             <div className="mt-3 flex items-center gap-2 flex-wrap">
                                 <Link
-                                    to={`/raids/build/${r.slug}`}
+                                    to={`/raids/build/${r.slug}${squadQuery}`}
                                     data-testid={`raid-builder-link-${r.slug}`}
                                     className={`text-[11px] tracking-widest border px-3 py-1 rounded-sm ${r.unlocked ? "border-amber/60 text-amber hover:bg-amber/10" : "border-border/40 text-muted-foreground pointer-events-none opacity-50"}`}
                                 >

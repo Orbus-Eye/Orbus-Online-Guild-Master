@@ -152,7 +152,8 @@ export default function Guide() {
                     </p>
                     <p className="mt-2">
                         <strong>Rinomina</strong>: puoi rinominare ogni avventuriero fino a <strong>2 volte
-                        nella sua vita</strong> (rinomina gratuita, no oro). Dopo 2 rinomine il nome è definitivo.
+                        nella sua vita
+                                                                                            </strong> (rinomina gratuita, no oro). Dopo 2 rinomine il nome è definitivo.
                     </p>
 
                     <h3 className="text-amber mt-5 mb-2 text-[12px] tracking-widest">:: RECLUTAMENTO (ROUND 6A.1)</h3>
