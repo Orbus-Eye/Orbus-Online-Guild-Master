@@ -14,8 +14,13 @@ if BASE_URL is None:
                 break
 
 API = f"{BASE_URL}/api"
-TESTER_EMAIL = "tester@orbus.test"
-TESTER_PASSWORD = "password123"
+# ROUND 6B FASE A — credentials sourced from `tests/.env.test` (gitignored,
+# loaded by `conftest.py` before any test module is imported). No literal
+# fallback so a misconfigured CI fails loudly instead of falling back to a
+# committed string.
+TESTER_EMAIL = os.environ["TEST_USER_EMAIL"]
+TESTER_PASSWORD = os.environ["TEST_USER_PASSWORD"]
+DEFAULT_TEST_PASSWORD = os.environ["TEST_DEFAULT_PASSWORD"]
 
 
 # ─── Health ────────────────────────────────────────────────────────────────────
@@ -41,7 +46,7 @@ def _rand_email():
 class TestRegister:
     def test_register_success(self):
         email = _rand_email()
-        payload = {"email": email.upper(), "username": "tu_" + uuid.uuid4().hex[:6], "password": "password123"}
+        payload = {"email": email.upper(), "username": "tu_" + uuid.uuid4().hex[:6], "password": DEFAULT_TEST_PASSWORD}
         r = requests.post(f"{API}/auth/register", json=payload, timeout=15)
         assert r.status_code == 201, r.text
         body = r.json()
@@ -60,11 +65,11 @@ class TestRegister:
 
     def test_register_duplicate_email_409(self):
         email = _rand_email()
-        payload = {"email": email, "username": "dup_" + uuid.uuid4().hex[:6], "password": "password123"}
+        payload = {"email": email, "username": "dup_" + uuid.uuid4().hex[:6], "password": DEFAULT_TEST_PASSWORD}
         r1 = requests.post(f"{API}/auth/register", json=payload, timeout=15)
         assert r1.status_code == 201
 
-        payload2 = {"email": email, "username": "dup2_" + uuid.uuid4().hex[:6], "password": "password123"}
+        payload2 = {"email": email, "username": "dup2_" + uuid.uuid4().hex[:6], "password": DEFAULT_TEST_PASSWORD}
         r2 = requests.post(f"{API}/auth/register", json=payload2, timeout=15)
         assert r2.status_code == 409
         assert r2.json()["detail"] == "Email already registered"
@@ -80,7 +85,7 @@ class TestRegister:
     def test_register_invalid_email_422(self):
         r = requests.post(
             f"{API}/auth/register",
-            json={"email": "not-an-email", "username": "bademail", "password": "password123"},
+            json={"email": "not-an-email", "username": "bademail", "password": DEFAULT_TEST_PASSWORD},
             timeout=15,
         )
         assert r.status_code == 422
@@ -141,7 +146,7 @@ def fresh_user_token():
     payload = {
         "email": _rand_email(),
         "username": "gu_" + uuid.uuid4().hex[:6],
-        "password": "password123",
+        "password": DEFAULT_TEST_PASSWORD,
     }
     r = requests.post(f"{API}/auth/register", json=payload, timeout=15)
     assert r.status_code == 201

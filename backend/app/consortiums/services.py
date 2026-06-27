@@ -30,7 +30,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
 logger = logging.getLogger("orbus.consortiums")
 
@@ -260,7 +260,7 @@ async def consortium_activity(db, cid: str, *, limit: int = 20, lang: str = "it"
     guild_ids = [m["guild_id"] for m in members]
     if not guild_ids:
         return {"events": []}
-    from app.chronicle.services import list_chronicle, PUBLIC_EVENTS  # lazy import
+    from app.chronicle.services import PUBLIC_EVENTS  # lazy import
     # Reuse the chronicle pipeline but pre-filter to member guilds.
     # Quick implementation: query directly, format minimally.
     from datetime import datetime as _dt, timedelta as _td, timezone as _tz

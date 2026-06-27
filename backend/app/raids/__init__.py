@@ -165,10 +165,14 @@ def _party_power(adv_docs: List[dict]) -> int:
     base = sum(_adv_power(a) for a in adv_docs)
     roles = {a.get("class_role") for a in adv_docs}
     bonus = 0
-    if "Tank" in roles: bonus += 5
-    if "Healer" in roles: bonus += 5
-    if "DPS" in roles: bonus += 5
-    if {"Tank", "Healer", "DPS"}.issubset(roles): bonus += 10
+    if "Tank" in roles:
+        bonus += 5
+    if "Healer" in roles:
+        bonus += 5
+    if "DPS" in roles:
+        bonus += 5
+    if {"Tank", "Healer", "DPS"}.issubset(roles):
+        bonus += 10
     return base + bonus
 
 

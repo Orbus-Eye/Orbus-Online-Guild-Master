@@ -134,7 +134,6 @@ def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, st
     """
     raw_username = (username or "Guild Master").strip() or "Guild Master"
     safe_username_text = _safe_text(raw_username) or "Guild Master"
-    safe_username_html = _safe_html(safe_username_text)
     safe_app_url = _safe_text(app_url) or "/"
     safe_app_url_html = _safe_html(safe_app_url)
     if lang == "it":

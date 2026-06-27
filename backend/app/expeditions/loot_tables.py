@@ -18,7 +18,6 @@ preserve existing behaviour and the `test_shadow_crypts_failure_never_rare`
 invariant.
 """
 import secrets
-from typing import Optional
 
 from app.shared.constants import LOOT_DROP_CHANCE_LEGACY, LOOT_RARITIES_LEGACY
 

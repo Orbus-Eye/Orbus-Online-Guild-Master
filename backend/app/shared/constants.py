@@ -3,6 +3,7 @@
 Behavioural contract: values here must match Phase 5/6/7 spec exactly.
 Re-exported by `server.py` for backward compatibility with the test suite.
 """
+import os as _os
 
 # ─── Auth / security (Phase 5) ────────────────────────────────────────────────
 JWT_ALGORITHM = "HS256"
@@ -74,7 +75,6 @@ SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accesso
 # the seed is skipped entirely (see `seed_tester()` in `server.py`), so the
 # fallback is never persisted. If you need a non-default tester credential
 # for staging/preview, set `TESTER_PASSWORD` in your environment.
-import os as _os
 
 TESTER_EMAIL = "tester@orbus.test"
 TESTER_USERNAME = "tester"

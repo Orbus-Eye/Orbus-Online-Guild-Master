@@ -13,6 +13,12 @@ from pymongo import MongoClient
 # vars the shell happened to export, which on CI defaults to nothing.
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
+# ROUND 6B FASE A — also load `tests/.env.test` so credential-style values
+# the test suite consumes (TEST_USER_PASSWORD, TEST_SMTP_*) live outside the
+# source tree. The file is gitignored; `.env.test.example` is the committed
+# template. Real `.env.test` values OVERRIDE backend/.env on key conflicts.
+load_dotenv(Path(__file__).resolve().parent / ".env.test", override=True)
+
 logger = logging.getLogger("orbus.test.cleanup")
 logger.setLevel(logging.INFO)
 if not logger.handlers:

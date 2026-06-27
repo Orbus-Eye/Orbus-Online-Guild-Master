@@ -13,6 +13,11 @@ import time
 import uuid
 import pytest
 import requests
+from pathlib import Path
+from dotenv import load_dotenv
+
+# ROUND 6B FASE A — load shared test env (gitignored)
+load_dotenv(Path(__file__).resolve().parent / ".env.test", override=False)
 
 BASE_URL = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") if os.environ.get("REACT_APP_BACKEND_URL") else None
 if BASE_URL is None:
@@ -23,35 +28,46 @@ if BASE_URL is None:
                 break
 
 API = f"{BASE_URL}/api"
-TESTER_EMAIL = "tester@orbus.test"
-TESTER_PASSWORD = "password123"
+# ROUND 6B FASE A — credentials sourced from `tests/.env.test`. No literal
+# fallback: a missing key trips a clear KeyError instead of silently using
+# a committed string.
+TESTER_EMAIL = os.environ["TEST_USER_EMAIL"]
+TESTER_PASSWORD = os.environ["TEST_USER_PASSWORD"]
+DEFAULT_TEST_PASSWORD = os.environ["TEST_DEFAULT_PASSWORD"]
+# Two invalid passwords used by the regex tests (kept in env so the
+# literal strings don't appear in source).
+PW_MISSING_DIGIT = os.environ["TEST_PASSWORD_MISSING_DIGIT"]
+PW_MISSING_LETTER = os.environ["TEST_PASSWORD_MISSING_LETTER"]
+# Minimum-policy compliant password used by the positive-path regex test.
+PW_VALID_MINIMAL = os.environ["TEST_PASSWORD_VALID_MINIMAL"]
 
 
 def _rand_email(prefix="p5"):
     return f"{prefix}_{uuid.uuid4().hex[:10]}@orbus.test"
 
 
-def _register(email=None, password="password123", username=None):
+def _register(email=None, password=None, username=None):
     email = email or _rand_email()
     username = username or ("u_" + uuid.uuid4().hex[:6])
+    pw = password if password is not None else DEFAULT_TEST_PASSWORD
     r = requests.post(
         f"{API}/auth/register",
-        json={"email": email, "username": username, "password": password},
+        json={"email": email, "username": username, "password": pw},
         timeout=15,
     )
-    return r, email, password
+    return r, email, pw
 
 
 # ─── Password regex ────────────────────────────────────────────────────────────
 class TestPasswordRegex:
     def test_password_missing_digit_400(self):
-        r, _, _ = _register(password="abcdefgh")
+        r, _, _ = _register(password=PW_MISSING_DIGIT)
         assert r.status_code == 400, r.text
         body = r.json()
         assert "letter" in body["detail"].lower() and "digit" in body["detail"].lower()
 
     def test_password_missing_letter_400(self):
-        r, _, _ = _register(password="12345678")
+        r, _, _ = _register(password=PW_MISSING_LETTER)
         assert r.status_code == 400, r.text
         assert "letter" in r.json()["detail"].lower()
 
@@ -60,7 +76,7 @@ class TestPasswordRegex:
         assert r.status_code == 400
 
     def test_password_valid_letter_digit_201(self):
-        r, _, _ = _register(password="abcd1234")
+        r, _, _ = _register(password=PW_VALID_MINIMAL)
         assert r.status_code == 201, r.text
 
 
@@ -248,7 +264,7 @@ class TestPasswordReset:
         assert cf.status_code == 200, cf.text
 
         # Old password should fail
-        old = requests.post(f"{API}/auth/login", json={"email": email, "password": "password123"}, timeout=15)
+        old = requests.post(f"{API}/auth/login", json={"email": email, "password": DEFAULT_TEST_PASSWORD}, timeout=15)
         assert old.status_code == 401
         # New password should work
         nw = requests.post(f"{API}/auth/login", json={"email": email, "password": "brandnew99"}, timeout=15)

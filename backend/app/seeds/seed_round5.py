@@ -452,7 +452,9 @@ async def backfill_round4_inventory_defaults(db) -> int:
         {"is_bound": None}, {"$set": {"is_bound": False}},
     )
     fixes += res5.modified_count
-    res6 = await db.inventory_items.update_many(
+    # ROUND 6B FASE A — discard binding: this update_many's row count is
+    # not used (the next `_pending` loop counts the real fixes via `fixes`).
+    await db.inventory_items.update_many(
         {"instance_id": None},
         {"$set": {"instance_id": "_pending"}},  # we'll re-assign next
     )

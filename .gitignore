@@ -87,6 +87,9 @@ mobile/.metro-cache/
 .env
 .env.*
 *.env
+# ROUND 6B FASE A — allow committable test env templates (NEVER the real .env.test)
+!.env.test.example
+!**/.env.test.example
 credentials.json
 *.key
 .credentials

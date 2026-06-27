@@ -23,11 +23,19 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+# ROUND 6B FASE A — also load tests/.env.test (gitignored test creds)
+load_dotenv(Path(__file__).resolve().parent / ".env.test", override=False)
 
 BASE_URL = (
     os.environ.get("REACT_APP_BACKEND_URL")
     or os.environ.get("BACKEND_URL", "http://localhost:8001")
 ).rstrip("/")
+
+# ROUND 6B FASE A — pulled from `tests/.env.test` so the literal strings
+# never appear in the source tree. No fallback: a missing key fails fast.
+SMTP_TEST_USERNAME = os.environ["TEST_SMTP_USERNAME"]
+SMTP_TEST_PASSWORD = os.environ["TEST_SMTP_PASSWORD"]
+SMTP_LEAK_SENTINEL = os.environ["TEST_SMTP_LEAK_SENTINEL"]
 
 
 # ---------------------------------------------------------------------------
@@ -38,7 +46,7 @@ class TestSMTPProviderUnit:
         from app.core.email import SMTPProvider
         return SMTPProvider(
             host="smtp.mock.test", port=587,
-            username="bot@example.com", password="super-secret-pw",
+            username=SMTP_TEST_USERNAME, password=SMTP_TEST_PASSWORD,
             from_addr="Orbus <bot@example.com>",
             use_tls=use_tls,
         )
@@ -57,7 +65,7 @@ class TestSMTPProviderUnit:
         assert ok is True
         smtp_cls.assert_called_once_with("smtp.mock.test", 587, timeout=10)
         srv.starttls.assert_called_once()
-        srv.login.assert_called_once_with("bot@example.com", "super-secret-pw")
+        srv.login.assert_called_once_with(SMTP_TEST_USERNAME, SMTP_TEST_PASSWORD)
         srv.send_message.assert_called_once()
 
     def test_use_tls_false_skips_starttls(self):
@@ -87,11 +95,11 @@ class TestSMTPProviderUnit:
         assert any("[EMAIL/smtp] send failed" in r.message for r in caplog.records)
 
     def test_password_never_logged(self, caplog):
-        secret = "P@ssw0rd-NEVER-LOG-ME-xyz"
+        secret = SMTP_LEAK_SENTINEL
         from app.core.email import SMTPProvider
         prov = SMTPProvider(
             host="smtp.mock.test", port=587,
-            username="bot@example.com", password=secret,
+            username=SMTP_TEST_USERNAME, password=secret,
             from_addr="bot@example.com", use_tls=True,
         )
         caplog.set_level(logging.DEBUG)  # capture everything

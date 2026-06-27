@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import HTTPException
-from pymongo.errors import DuplicateKeyError
 
 
 def utc_now() -> datetime:

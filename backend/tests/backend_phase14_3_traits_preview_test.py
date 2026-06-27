@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+load_dotenv(Path(__file__).resolve().parent / ".env.test", override=False)
 
 BASE_URL = (os.environ.get("REACT_APP_BACKEND_URL") or "http://localhost:8001").rstrip("/")
 MONGO_URL = os.environ["MONGO_URL"]
@@ -38,7 +39,8 @@ def player():
     """Register a fresh player with a guild; return (token, headers, guild_id)."""
     tag = f"p143c_{uuid.uuid4().hex[:8]}"
     email = f"{tag}@orbus.test"
-    password = "S3cur3PW!"
+    # ROUND 6B FASE A — sourced from tests/.env.test (gitignored)
+    password = os.environ["TEST_STRONG_PASSWORD"]
 
     r = requests.post(
         f"{BASE_URL}/api/auth/register",

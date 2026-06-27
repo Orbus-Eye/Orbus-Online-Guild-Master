@@ -21,7 +21,6 @@ from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
 from app.territory.services import ensure_guild_structures_doc
 from app.territory.structures import (
-    STRUCTURE_CATALOG,
     dormitory_cap_for_level,
     get_display_name,
 )

@@ -34,7 +34,7 @@ async def run() -> int:
         return 1
     guild = await db.guilds.find_one({"owner_user_id": user["id"]}, {"_id": 0, "id": 1, "name": 1})
     if not guild:
-        print(f"ERROR: tester has no guild", file=sys.stderr)
+        print("ERROR: tester has no guild", file=sys.stderr)
         return 1
 
     current_available = await db.adventurers.count_documents({

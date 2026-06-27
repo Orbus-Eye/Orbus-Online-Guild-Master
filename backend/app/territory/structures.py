@@ -6,8 +6,6 @@ levels reachable only via the historical migration script.
 """
 from __future__ import annotations
 
-from typing import Optional
-
 # 11 structures. `default_unlocked_level=1` for the 3 starter buildings,
 # `0` (locked) for the rest. `max_level=6` standard; dormitories has Lv7
 # reachable ONLY via the migration script (Legacy Wing for top accounts).

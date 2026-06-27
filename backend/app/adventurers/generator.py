@@ -19,7 +19,6 @@ from typing import Optional
 
 from app.audit.log import write_audit
 from app.shared.constants import (
-    RARITY_BONUS,
     RARITY_POSITIVE_TRAIT_MIN,
     RARITY_STAT_MAX_FLOOR,
     RARITY_WEIGHTS,
@@ -127,8 +126,11 @@ async def generate_candidate(
         class_pool / trait_pool: optional pre-filtered pools (perf).
         audit: emit `adventurer_generated` audit log row.
     """
-    # Import lazily to avoid circular dep with recruitment.
-    from app.recruitment.services import _generate_candidate as _legacy_gen, _rng as _module_rng
+    # ROUND 6B FASE A — circular import resolved: pure primitives now live
+    # in `app.adventurers.common`. We pass `forced_rarity` directly so we
+    # no longer need the old `_rec.RARITY_WEIGHTS` monkey-patch trick.
+    from app.adventurers.common import _generate_candidate as _legacy_gen
+    from app.adventurers.common import _rng as _module_rng
 
     now = now or datetime.now(timezone.utc)
     rng = rng or _module_rng
@@ -143,23 +145,18 @@ async def generate_candidate(
     # Rarity is decided HERE so we can run post-roll guards before the
     # base generator returns.
     rarity = _weighted_choice(rng, RARITY_WEIGHTS)
-    # Monkey-shim: the legacy generator pulls rarity from RARITY_WEIGHTS via
-    # its own _rng. To force our chosen rarity, temporarily patch the
-    # weighted list to a single (rarity, 1) entry within this call only.
     klass = rng.choice(classes)
 
-    # Build the candidate via the legacy code path (keeps stat-roll logic
-    # in ONE place — only delta is the rarity decision + guards below).
-    from app.recruitment import services as _rec
-    saved_weights = _rec.RARITY_WEIGHTS
-    saved_bonus = _rec.RARITY_BONUS
-    try:
-        _rec.RARITY_WEIGHTS = [(rarity, 1)]
-        _rec.RARITY_BONUS = {**saved_bonus, rarity: RARITY_BONUS.get(rarity, 0)}
-        candidate = _legacy_gen(klass, guild_id, now, traits_pool=traits)
-    finally:
-        _rec.RARITY_WEIGHTS = saved_weights
-        _rec.RARITY_BONUS = saved_bonus
+    # Build the candidate via the shared generator. `forced_rarity` injects
+    # our pre-decided rarity so stat-roll logic stays in ONE place.
+    candidate = _legacy_gen(
+        klass,
+        guild_id,
+        now,
+        traits_pool=traits,
+        rng=rng,
+        forced_rarity=rarity,
+    )
 
     # Post-roll guards (Legendary/Epic) — applied AFTER stats are rolled.
     candidate = _enforce_legendary_floor(rng, candidate, rarity)

@@ -7,7 +7,6 @@ Phase 11.2 adds a daily refresh limit:
 - GET /candidates returns persisted offer without consuming any refresh
 - POST /refresh forces a new roll, atomically applies limit + cost
 """
-import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -15,17 +14,24 @@ from fastapi import HTTPException
 from pymongo import ReturnDocument
 
 from app.shared.constants import (
-    FIRST_NAMES,
-    LAST_NAMES,
     OFFER_TTL_MINUTES,
-    RARITY_BONUS,
-    RARITY_WEIGHTS,
     RECRUITMENT_CANDIDATES_PER_OFFER,
     RECRUITMENT_COST_GOLD,
 )
 
-
-_rng = secrets.SystemRandom()
+# ROUND 6B FASE A — primitive helpers moved to `app.adventurers.common` to
+# break the circular import with `app.adventurers.generator`. The legacy
+# private names are re-exported here so existing callers (tests, onboarding,
+# scripts) keep working unchanged.
+from app.adventurers.common import (  # noqa: F401  (re-exported)
+    _rng,
+    _weighted_choice,
+    _generate_name,
+    _roll_stat,
+    _pick_random_traits,
+    _apply_trait_effects,
+    _generate_candidate,
+)
 
 
 # Phase 11.2 refresh policy
@@ -181,106 +187,6 @@ async def _hydrate_trait_subdocs(db, candidates: list[dict]) -> None:
                 t["display_name"] = master.get("display_name") or master.get("name") or ""
             if not t.get("display_name_it"):
                 t["display_name_it"] = master.get("display_name_it") or ""
-
-
-def _weighted_choice(choices):
-    total = sum(w for _, w in choices)
-    r = _rng.uniform(0, total)
-    upto = 0
-    for value, weight in choices:
-        upto += weight
-        if upto >= r:
-            return value
-    return choices[-1][0]
-
-
-def _generate_name() -> str:
-    first = _rng.choice(FIRST_NAMES)
-    if _rng.random() < 0.6:
-        return f"{first} {_rng.choice(LAST_NAMES)}"
-    return first
-
-
-def _roll_stat(base: int, rarity_bonus: int) -> int:
-    return max(1, base + _rng.randint(-1, 2) + rarity_bonus)
-
-
-def _pick_random_traits(traits_pool: list) -> list:
-    if not traits_pool:
-        return []
-    r = _rng.random()
-    if r < 0.50:
-        count = 0
-    elif r < 0.85:
-        count = 1
-    else:
-        count = 2
-    count = min(count, len(traits_pool))
-    if count == 0:
-        return []
-    chosen = _rng.sample(traits_pool, count)
-    return [
-        {
-            "id": t["id"],
-            "name": t["name"],
-            "description": t.get("description", ""),
-            "modifier_type": t["modifier_type"],
-            "affected_stat": t["affected_stat"],
-            "modifier_value": t["modifier_value"],
-            "is_positive": t["is_positive"],
-        }
-        for t in chosen
-    ]
-
-
-def _apply_trait_effects(stats: dict, traits: list) -> dict:
-    """Phase 13: deprecated no-op kept for backward import-compat.
-
-    Pre-Phase-13 this baked flat trait modifiers into the rolled stat
-    dict at offer-generation time. Phase 13 made traits dynamic
-    (resolved at power-calc / expedition time), so this helper is now
-    a pass-through. Kept exported because external tests/imports may
-    reference it.
-    """
-    return dict(stats)
-
-
-def _generate_candidate(
-    klass: dict,
-    guild_id: str,
-    now: datetime,
-    traits_pool: list | None = None,
-) -> dict:
-    rarity = _weighted_choice(RARITY_WEIGHTS)
-    bonus = RARITY_BONUS[rarity]
-    stats = {
-        "strength": _roll_stat(klass["base_strength"], bonus),
-        "agility": _roll_stat(klass["base_agility"], bonus),
-        "intellect": _roll_stat(klass["base_intellect"], bonus),
-        "endurance": _roll_stat(klass["base_endurance"], bonus),
-        "faith": _roll_stat(klass["base_faith"], bonus),
-    }
-    traits = _pick_random_traits(traits_pool or [])
-    # Phase 13: traits are no longer baked into stats at recruitment.
-    # They are now resolved dynamically (power calc, expedition, preview).
-    # `_apply_trait_effects` is now a no-op kept for import-compat.
-    return {
-        "id": str(uuid.uuid4()),
-        "guild_id": guild_id,
-        "name": _generate_name(),
-        "adventurer_class_id": klass["id"],
-        "class_name": klass["name"],
-        "class_role": klass["role"],
-        "rarity": rarity,
-        "level": 1,
-        "experience": 0,
-        **stats,
-        "stamina": 100,
-        "morale": 100,
-        "traits": traits,
-        "created_at": now.isoformat(),
-        "expires_at": (now + timedelta(minutes=OFFER_TTL_MINUTES)).isoformat(),
-    }
 
 
 async def _roll_and_persist_offer(db, guild: dict) -> list[dict]:

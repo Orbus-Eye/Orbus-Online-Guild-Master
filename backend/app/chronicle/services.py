@@ -123,7 +123,6 @@ def _format_event(row: dict, guild_name: str, item: dict | None, lang: str) -> d
     md = row.get("metadata") or {}
     item_name = _localized_item_name(item, lang) if item else None
     qty = int(row.get("quantity") or 0)
-    gold = int(row.get("gold_delta") or 0)
     if et == "market_listing_created":
         kind = "market_listed"
         text_it = f"{guild_name} ha messo in vendita {item_name or '?'} ×{qty}"

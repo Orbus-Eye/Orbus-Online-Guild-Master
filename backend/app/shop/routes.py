@@ -2,8 +2,6 @@
 
 All endpoints require JWT bearer.
 """
-from typing import Optional
-
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 

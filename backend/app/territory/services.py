@@ -14,19 +14,16 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 from fastapi import HTTPException
 
-from app.territory.costs import cost_for, UPGRADE_COSTS
+from app.territory.costs import cost_for
 from app.territory.structures import (
     VALID_STRUCTURE_SLUGS,
     default_structures_doc,
     get_prerequisites,
     get_structure_max_level,
-    STRUCTURE_CATALOG,
 )
-from app.territory.unlock_table import UNLOCK_REQUIREMENTS
 
 
 def _utc_now_iso() -> str:
