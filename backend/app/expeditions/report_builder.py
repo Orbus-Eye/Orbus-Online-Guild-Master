@@ -484,8 +484,10 @@ def build_expedition_report(
         ))
 
     # Use exp.id for a deterministic but irrelevant hash check — kept for
-    # potential future ordering tweaks.
-    _ = hashlib.md5((exp.get("id") or "").encode("utf-8")).hexdigest()
+    # potential future ordering tweaks. ROUND 6B FASE C — SHA-256 (was MD5;
+    # value is discarded so the swap is a no-op for behaviour but removes
+    # MD5 from the dependency graph entirely).
+    _ = hashlib.sha256((exp.get("id") or "").encode("utf-8")).hexdigest()
 
     return {"report_summary": summary, "report_steps": steps}
 

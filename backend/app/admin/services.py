@@ -148,23 +148,48 @@ def _assert_no_destructive_op(collection: str, op: str) -> None:
         )
 
 
-async def flag_test_users_aggressive(
-    db,
-    *,
-    mode: str,
-    actor_admin_id: str | None,
-    sample_cap: int = 50,
-) -> dict:
-    """Aggressive bulk flag with CAS guard + audit. Read-only when
-    `mode='dry_run'`. The double-gate (confirm_apply) is enforced at the
-    router layer."""
-    # Defence: this service NEVER calls `delete_*` on users/guilds. The
-    # `_assert_no_destructive_op` helper is exposed for callers that need
-    # to wrap arbitrary code paths; here, the absence of such calls is
-    # the actual guarantee. We intentionally do NOT pre-invoke the helper
-    # with destructive arguments (which would raise unconditionally).
+def _classify_user_for_flag(
+    user: dict,
+    guild: dict | None,
+) -> tuple[str | None, str]:
+    """ROUND 6B FASE C — per-user classification, extracted from
+    `flag_test_users_aggressive`.
 
-    # Load all guilds (need owner email + guild name to classify).
+    Returns (action, reason) where:
+      - action in {"flag", "skip_allowlist", "skip_already"}
+      - reason is the audit-log reason string (only meaningful when
+        action == "flag")
+    """
+    email_lower = (user.get("email") or "").lower().strip()
+    gname_lower = (guild.get("name") or "").lower().strip() if guild else ""
+
+    is_already = user.get("is_test_user") is True
+    in_email_allowlist = email_lower in CLEANUP_ALLOWLIST_EMAILS
+    in_guild_allowlist = bool(gname_lower) and gname_lower in CLEANUP_ALLOWLIST_GUILDS
+    in_force_test = bool(gname_lower) and gname_lower in CLEANUP_TEST_GUILDS_FORCE
+
+    # 0. TEST_GUILDS_FORCE override beats allowlist.
+    if in_force_test:
+        if is_already:
+            return ("skip_already", "")
+        return ("flag", "test_guilds_force")
+    # 1. Allowlist (email OR guild) → keep
+    if in_email_allowlist or in_guild_allowlist:
+        return ("skip_allowlist", "")
+    # 2. Already flagged → idempotent skip
+    if is_already:
+        return ("skip_already", "")
+    # 3. Default: aggressive flag
+    return ("flag", "no_allowlist_match")
+
+
+async def _build_flag_plan(db) -> dict:
+    """ROUND 6B FASE C — read-only phase: scan users+guilds and build the
+    flag-or-skip plan. Pure (modulo DB reads) — no writes happen here.
+
+    Returns a dict with keys: will_flag (list), allowlist_skipped (int),
+    already_flagged (int), test_guilds_force (int), total_users (int).
+    """
     guilds = await db.guilds.find(
         {}, {"_id": 0, "id": 1, "name": 1, "owner_user_id": 1, "created_at": 1},
     ).to_list(None)
@@ -179,69 +204,147 @@ async def flag_test_users_aggressive(
     ).to_list(None)
 
     will_flag: list[dict] = []
-    candidates_sample: list[dict] = []
     allowlist_skipped = 0
     already_flagged = 0
     test_guilds_force_hits = 0
 
     for u in users:
-        email_lower = (u.get("email") or "").lower().strip()
         g = guild_by_owner.get(u.get("id"))
-        gname_lower = (g.get("name") or "").lower().strip() if g else ""
-
-        is_already = u.get("is_test_user") is True
-        in_email_allowlist = email_lower in CLEANUP_ALLOWLIST_EMAILS
-        in_guild_allowlist = bool(gname_lower) and gname_lower in CLEANUP_ALLOWLIST_GUILDS
-        in_force_test = bool(gname_lower) and gname_lower in CLEANUP_TEST_GUILDS_FORCE
-
-        # 0. TEST_GUILDS_FORCE override beats allowlist.
-        if in_force_test:
-            test_guilds_force_hits += 1
-            if is_already:
-                already_flagged += 1
-                continue
+        action, reason = _classify_user_for_flag(u, g)
+        if action == "flag":
+            if reason == "test_guilds_force":
+                test_guilds_force_hits += 1
             will_flag.append({
                 "user_id": u["id"],
                 "email_masked": _mask_email(u.get("email") or ""),
                 "guild": g.get("name") if g else None,
-                "reason": "test_guilds_force",
+                "reason": reason,
                 "created_at": (g.get("created_at") if g else None),
             })
-            continue
-
-        # 1. Allowlist (email OR guild) → keep
-        if in_email_allowlist or in_guild_allowlist:
+        elif action == "skip_allowlist":
             allowlist_skipped += 1
-            continue
-
-        # 2. Already flagged → idempotent skip
-        if is_already:
+        elif action == "skip_already":
             already_flagged += 1
-            continue
 
-        # 3. Default: aggressive flag
-        will_flag.append({
-            "user_id": u["id"],
-            "email_masked": _mask_email(u.get("email") or ""),
-            "guild": g.get("name") if g else None,
-            "reason": "no_allowlist_match",
-            "created_at": (g.get("created_at") if g else None),
-        })
-
-    # Sample for response payload (max sample_cap).
-    candidates_sample = [
-        {k: v for k, v in r.items() if k != "user_id"}
-        for r in will_flag[:sample_cap]
-    ]
-
-    response = {
-        "mode": mode,
-        "total_users": len(users),
-        "will_flag_count": len(will_flag),
+    return {
+        "will_flag": will_flag,
         "allowlist_skipped": allowlist_skipped,
         "already_flagged": already_flagged,
         "test_guilds_force": test_guilds_force_hits,
-        "candidates": candidates_sample,
+        "total_users": len(users),
+    }
+
+
+async def _filter_allowlist_leaks(
+    db,
+    *,
+    will_flag: list[dict],
+) -> tuple[list[dict], int]:
+    """ROUND 6B FASE C — defence-in-depth re-check on the actual write set.
+
+    Returns (filtered_will_flag, leaked_count). Anything whose email is in
+    CLEANUP_ALLOWLIST_EMAILS at apply-time is removed from the write set.
+    """
+    if not will_flag:
+        return ([], 0)
+    ids = [r["user_id"] for r in will_flag]
+    leaks = await db.users.find(
+        {"id": {"$in": ids}, "email": {"$in": list(CLEANUP_ALLOWLIST_EMAILS)}},
+        {"_id": 0, "id": 1, "email": 1},
+    ).to_list(None)
+    if not leaks:
+        return (will_flag, 0)
+    leaked_ids = {r["id"] for r in leaks}
+    filtered = [r for r in will_flag if r["user_id"] not in leaked_ids]
+    return (filtered, len(leaked_ids))
+
+
+async def _emit_flag_audit_batch(
+    db,
+    *,
+    will_flag: list[dict],
+    ids: list[str],
+    now: datetime,
+    mode: str,
+    actor_admin_id: str | None,
+) -> tuple[int, str | None]:
+    """ROUND 6B FASE C — re-query the actually-modified rows and write one
+    audit_log entry per flagged user. Best-effort: on insert failure, both
+    return values are (0, None).
+    """
+    modified = await db.users.find(
+        {
+            "id": {"$in": ids},
+            "is_test_user": True,
+            "flagged_reason": CLEANUP_REASON,
+            "flagged_at": now.isoformat(),
+        },
+        {"_id": 0, "id": 1},
+    ).to_list(None)
+    modified_ids = {m["id"] for m in modified}
+    ts = int(now.timestamp())
+    audit_rows = [
+        {
+            "id": f"flag-api-{r['user_id']}-{ts}",
+            "event_type": _CLEANUP_AUDIT_EVENT,
+            "actor_user_id": actor_admin_id,
+            "actor_guild_id": None,
+            "metadata": {
+                "user_id": r["user_id"],
+                "guild_name": r["guild"],
+                "reason": r["reason"],
+                "mode": mode,
+                "actor_admin_id": actor_admin_id,
+                "ts": now.isoformat(),
+            },
+            "created_at": now.isoformat(),
+        }
+        for r in will_flag
+        if r["user_id"] in modified_ids
+    ]
+    if not audit_rows:
+        return (0, None)
+    try:
+        res = await db.audit_log.insert_many(audit_rows, ordered=False)
+        return (len(res.inserted_ids), audit_rows[0]["id"])
+    except Exception:
+        return (0, None)
+
+
+async def flag_test_users_aggressive(
+    db,
+    *,
+    mode: str,
+    actor_admin_id: str | None,
+    sample_cap: int = 50,
+) -> dict:
+    """Aggressive bulk flag with CAS guard + audit. Read-only when
+    `mode='dry_run'`. The double-gate (confirm_apply) is enforced at the
+    router layer.
+
+    ROUND 6B FASE C — body simplified (CC≈5, was CC≈39) by splitting into
+    `_build_flag_plan`, `_filter_allowlist_leaks` and `_emit_flag_audit_batch`.
+    """
+    # Defence: this service NEVER calls `delete_*` on users/guilds. The
+    # `_assert_no_destructive_op` helper is exposed for callers that need
+    # to wrap arbitrary code paths; here, the absence of such calls is
+    # the actual guarantee. We intentionally do NOT pre-invoke the helper
+    # with destructive arguments (which would raise unconditionally).
+
+    plan = await _build_flag_plan(db)
+    will_flag: list[dict] = plan["will_flag"]
+
+    response: dict = {
+        "mode": mode,
+        "total_users": plan["total_users"],
+        "will_flag_count": len(will_flag),
+        "allowlist_skipped": plan["allowlist_skipped"],
+        "already_flagged": plan["already_flagged"],
+        "test_guilds_force": plan["test_guilds_force"],
+        "candidates": [
+            {k: v for k, v in r.items() if k != "user_id"}
+            for r in will_flag[:sample_cap]
+        ],
     }
 
     if mode == "dry_run":
@@ -254,20 +357,14 @@ async def flag_test_users_aggressive(
     backup_doc_id: str | None = None
 
     if will_flag:
-        # Defence-in-depth re-check on the actual write set.
-        ids = [r["user_id"] for r in will_flag]
-        leaks = await db.users.find(
-            {"id": {"$in": ids}, "email": {"$in": list(CLEANUP_ALLOWLIST_EMAILS)}},
-            {"_id": 0, "id": 1, "email": 1},
-        ).to_list(None)
-        if leaks:
-            # Filter out the offending ids and audit-log the abort decision.
-            leaked_ids = {r["id"] for r in leaks}
-            ids = [i for i in ids if i not in leaked_ids]
-            will_flag = [r for r in will_flag if r["user_id"] not in leaked_ids]
-            response["allowlist_skipped"] += len(leaked_ids)
+        will_flag, leaked_count = await _filter_allowlist_leaks(
+            db, will_flag=will_flag,
+        )
+        if leaked_count:
+            response["allowlist_skipped"] += leaked_count
             response["will_flag_count"] = len(will_flag)
 
+        ids = [r["user_id"] for r in will_flag]
         # Bulk update with CAS guard. CAS = is_test_user != True.
         upd = await db.users.update_many(
             {"id": {"$in": ids}, "is_test_user": {"$ne": True}},
@@ -280,50 +377,15 @@ async def flag_test_users_aggressive(
         )
         applied_count = int(upd.modified_count)
 
-        # Bulk audit-log insert (no email / no token in metadata).
-        # One row per actually-flagged user (no fan-out for already-flagged).
         if applied_count:
-            # Re-query who is now flagged with our reason+timestamp to be
-            # sure we only audit the actually-modified rows.
-            modified = await db.users.find(
-                {
-                    "id": {"$in": ids},
-                    "is_test_user": True,
-                    "flagged_reason": CLEANUP_REASON,
-                    "flagged_at": now.isoformat(),
-                },
-                {"_id": 0, "id": 1},
-            ).to_list(None)
-            modified_ids = {m["id"] for m in modified}
-            audit_rows = []
-            ts = int(now.timestamp())
-            for r in will_flag:
-                if r["user_id"] not in modified_ids:
-                    continue
-                audit_rows.append({
-                    "id": f"flag-api-{r['user_id']}-{ts}",
-                    "event_type": _CLEANUP_AUDIT_EVENT,
-                    "actor_user_id": actor_admin_id,
-                    "actor_guild_id": None,
-                    "metadata": {
-                        "user_id": r["user_id"],
-                        "guild_name": r["guild"],
-                        "reason": r["reason"],
-                        "mode": mode,
-                        "actor_admin_id": actor_admin_id,
-                        "ts": now.isoformat(),
-                    },
-                    "created_at": now.isoformat(),
-                })
-            if audit_rows:
-                try:
-                    res = await db.audit_log.insert_many(audit_rows, ordered=False)
-                    audit_entries_created = len(res.inserted_ids)
-                    # Backup pointer = the first audit_log row id of this
-                    # batch (clients can query by event_type+ts to fetch all).
-                    backup_doc_id = audit_rows[0]["id"]
-                except Exception:
-                    audit_entries_created = 0
+            audit_entries_created, backup_doc_id = await _emit_flag_audit_batch(
+                db,
+                will_flag=will_flag,
+                ids=ids,
+                now=now,
+                mode=mode,
+                actor_admin_id=actor_admin_id,
+            )
 
     response["applied_count"] = applied_count
     response["audit_log_entries_created"] = audit_entries_created

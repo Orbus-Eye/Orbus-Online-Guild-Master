@@ -118,45 +118,86 @@ def _localized_item_name(item: dict, lang: str) -> str:
     return item.get("display_name_it") or item.get("name") or ""
 
 
+# ROUND 6B FASE C — event formatting moved to a declarative table so each
+# new public event becomes a 1-row addition instead of another `elif`
+# branch. `_format_event` is now a thin dispatcher with CC≈3 (was CC≈19).
+#
+# Each entry maps `event_type` → (kind, it_template, en_template). Templates
+# use `{guild}`, `{item}`, `{qty}` placeholders plus any metadata key
+# referenced via `{md.<key>}` (resolved by `_render_template`).
+_EVENT_TEMPLATES: dict[str, tuple[str, str, str]] = {
+    "market_listing_created": (
+        "market_listed",
+        "{guild} ha messo in vendita {item} ×{qty}",
+        "{guild} listed {item} ×{qty} on the market",
+    ),
+    "market_purchase_completed": (
+        "market_bought",
+        "{guild} ha acquistato {item} ×{qty} al mercato",
+        "{guild} bought {item} ×{qty} on the market",
+    ),
+    "item_crafted": (
+        "crafted",
+        "{guild} ha creato {item}",
+        "{guild} crafted {item}",
+    ),
+    "loot_awarded": (
+        "loot",
+        "{guild} ha trovato {item}",
+        "{guild} found {item}",
+    ),
+    "streak_reward_claimed": (
+        "streak_milestone",
+        "{guild} ha raggiunto un traguardo streak (Giorno {md.tier})",
+        "{guild} reached a streak milestone (Day {md.tier})",
+    ),
+    "weekly_quest_claimed": (
+        "weekly_done",
+        "{guild} ha completato una missione settimanale ({md.slug})",
+        "{guild} completed a weekly quest ({md.slug})",
+    ),
+}
+
+
+def _render_template(tpl: str, *, guild: str, item: str, qty: int, md: dict) -> str:
+    """Resolve `{guild}`/`{item}`/`{qty}` and any `{md.<key>}` placeholders."""
+    out = tpl.replace("{guild}", guild).replace("{item}", item).replace("{qty}", str(qty))
+    # Resolve any `{md.<key>}` references — defensively cast to str.
+    while "{md." in out:
+        start = out.index("{md.")
+        end = out.index("}", start)
+        key = out[start + 4:end]
+        out = out[:start] + str(md.get(key, "")) + out[end + 1:]
+    return out
+
+
 def _format_event(row: dict, guild_name: str, item: dict | None, lang: str) -> dict:
+    """Dispatch a chronicle row → public event dict via `_EVENT_TEMPLATES`.
+
+    Returns None if the event_type is not in the public allowlist (defensive,
+    upstream filters should already exclude it).
+    """
     et = row["event_type"]
+    tpl = _EVENT_TEMPLATES.get(et)
+    if tpl is None:  # defensive (already filtered)
+        return None  # type: ignore[return-value]
+
+    kind, tpl_it, tpl_en = tpl
     md = row.get("metadata") or {}
     item_name = _localized_item_name(item, lang) if item else None
     qty = int(row.get("quantity") or 0)
-    if et == "market_listing_created":
-        kind = "market_listed"
-        text_it = f"{guild_name} ha messo in vendita {item_name or '?'} ×{qty}"
-        text_en = f"{guild_name} listed {item_name or '?'} ×{qty} on the market"
-    elif et == "market_purchase_completed":
-        kind = "market_bought"
-        text_it = f"{guild_name} ha acquistato {item_name or '?'} ×{qty} al mercato"
-        text_en = f"{guild_name} bought {item_name or '?'} ×{qty} on the market"
-    elif et == "item_crafted":
-        kind = "crafted"
-        text_it = f"{guild_name} ha creato {item_name or '?'}"
-        text_en = f"{guild_name} crafted {item_name or '?'}"
-    elif et == "loot_awarded":
-        kind = "loot"
-        text_it = f"{guild_name} ha trovato {item_name or '?'}"
-        text_en = f"{guild_name} found {item_name or '?'}"
-    elif et == "streak_reward_claimed":
-        kind = "streak_milestone"
-        tier = int(md.get("tier", 0))
-        text_it = f"{guild_name} ha raggiunto un traguardo streak (Giorno {tier})"
-        text_en = f"{guild_name} reached a streak milestone (Day {tier})"
-    elif et == "weekly_quest_claimed":
-        kind = "weekly_done"
-        slug = md.get("slug", "")
-        text_it = f"{guild_name} ha completato una missione settimanale ({slug})"
-        text_en = f"{guild_name} completed a weekly quest ({slug})"
-    else:  # defensive (already filtered)
-        return None  # type: ignore[return-value]
+    safe_item = item_name or "?"
+
+    text = _render_template(
+        tpl_en if lang == "en" else tpl_it,
+        guild=guild_name, item=safe_item, qty=qty, md=md,
+    )
     return {
         "id": row.get("id"),
         "kind": kind,
         "guild_name": guild_name,
         "item_name": item_name,
-        "text": text_it if lang != "en" else text_en,
+        "text": text,
         "created_at": row.get("created_at"),
     }
 

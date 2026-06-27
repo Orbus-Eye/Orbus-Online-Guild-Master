@@ -106,6 +106,90 @@ def _enforce_legendary_floor(
     return candidate
 
 
+def _ensure_trait_floor(
+    *,
+    rng: random.Random,
+    candidate: dict,
+    traits: list[dict] | None,
+    rarity: str,
+) -> dict:
+    """ROUND 6B FASE C — apply the positive-trait floor for the candidate's
+    rarity.
+
+    Mutates `candidate["traits"]` in place when possible and returns it.
+    If the trait pool is too thin for the required floor, logs a single
+    info line and leaves the candidate untouched (the row is still valid
+    for save — Round 6A explicitly forbids injecting synthetic Test*
+    traits as a fallback).
+    """
+    min_pos = RARITY_POSITIVE_TRAIT_MIN.get(rarity, 0)
+    if min_pos <= 0:
+        return candidate
+
+    positives = [t for t in (traits or []) if t.get("is_positive")]
+    current_pos = _count_positive_traits(candidate.get("traits", []))
+    if current_pos >= min_pos:
+        return candidate
+
+    if len(positives) < min_pos:
+        # Pool insufficient: log once, candidate still valid for save.
+        logger.info(
+            "rarity=%s traits_pool=%d positives=%d < required=%d "
+            "(fallback ok, no Test* injected)",
+            rarity, len(traits or []), len(positives), min_pos,
+        )
+        return candidate
+
+    picked = rng.sample(positives, min_pos)
+    existing_ids = {t["id"] for t in candidate.get("traits", [])}
+    new_traits = [t for t in picked if t["id"] not in existing_ids][:min_pos]
+    candidate["traits"] = (candidate.get("traits") or []) + [
+        {
+            "id": t["id"],
+            "name": t["name"],
+            "description": t.get("description", ""),
+            "modifier_type": t["modifier_type"],
+            "affected_stat": t["affected_stat"],
+            "modifier_value": t["modifier_value"],
+            "is_positive": True,
+        }
+        for t in new_traits
+    ]
+    return candidate
+
+
+async def _emit_generated_audit(
+    db,
+    *,
+    candidate: dict,
+    guild_id: str,
+    rarity: str,
+    klass: dict,
+    audit_source: str,
+) -> None:
+    """Best-effort audit log for a freshly-generated candidate. Failures
+    are swallowed (logged at WARN) so generation is never blocked by the
+    audit pipeline."""
+    try:
+        await write_audit(
+            db,
+            event_type="adventurer_generated",
+            actor_user_id=None,                  # system-generated
+            actor_guild_id=guild_id,
+            related_entity_id=candidate["id"],
+            source=audit_source,
+            metadata={
+                "rarity": rarity,
+                "traits_count": len(candidate.get("traits", [])),
+                "positive_traits_count": _count_positive_traits(candidate.get("traits", [])),
+                "class_slug": klass.get("slug"),
+                "stat_max": _stat_max_value(candidate),
+            },
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("audit emit failed for adv %s: %s", candidate["id"], exc)
+
+
 async def generate_candidate(
     db,
     *,
@@ -129,6 +213,8 @@ async def generate_candidate(
     # ROUND 6B FASE A — circular import resolved: pure primitives now live
     # in `app.adventurers.common`. We pass `forced_rarity` directly so we
     # no longer need the old `_rec.RARITY_WEIGHTS` monkey-patch trick.
+    # ROUND 6B FASE C — body simplified (CC≈3, was CC≈21) by extracting the
+    # trait-floor guard and the audit emit into private helpers.
     from app.adventurers.common import _generate_candidate as _legacy_gen
     from app.adventurers.common import _rng as _module_rng
 
@@ -160,57 +246,19 @@ async def generate_candidate(
 
     # Post-roll guards (Legendary/Epic) — applied AFTER stats are rolled.
     candidate = _enforce_legendary_floor(rng, candidate, rarity)
+    candidate = _ensure_trait_floor(
+        rng=rng, candidate=candidate, traits=traits, rarity=rarity,
+    )
 
-    # Trait floor for high-rarity (best-effort: if pool too small, log).
-    min_pos = RARITY_POSITIVE_TRAIT_MIN.get(rarity, 0)
-    if min_pos > 0:
-        positives = [t for t in (traits or []) if t.get("is_positive")]
-        current_pos = _count_positive_traits(candidate.get("traits", []))
-        if current_pos < min_pos and len(positives) >= min_pos:
-            picked = rng.sample(positives, min_pos)
-            # Avoid duplicates with existing traits
-            existing_ids = {t["id"] for t in candidate.get("traits", [])}
-            new_traits = [t for t in picked if t["id"] not in existing_ids][:min_pos]
-            candidate["traits"] = (candidate.get("traits") or []) + [
-                {
-                    "id": t["id"],
-                    "name": t["name"],
-                    "description": t.get("description", ""),
-                    "modifier_type": t["modifier_type"],
-                    "affected_stat": t["affected_stat"],
-                    "modifier_value": t["modifier_value"],
-                    "is_positive": True,
-                }
-                for t in new_traits
-            ]
-        elif current_pos < min_pos:
-            # Pool insufficient: log once, candidate still valid for save
-            logger.info(
-                "rarity=%s traits_pool=%d positives=%d < required=%d "
-                "(fallback ok, no Test* injected)",
-                rarity, len(traits or []), len(positives), min_pos,
-            )
-
-    # Audit log (best effort; never blocks generation)
     if audit:
-        try:
-            await write_audit(
-                db,
-                event_type="adventurer_generated",
-                actor_user_id=None,                  # system-generated
-                actor_guild_id=guild_id,
-                related_entity_id=candidate["id"],
-                source=audit_source,
-                metadata={
-                    "rarity": rarity,
-                    "traits_count": len(candidate.get("traits", [])),
-                    "positive_traits_count": _count_positive_traits(candidate.get("traits", [])),
-                    "class_slug": klass.get("slug"),
-                    "stat_max": _stat_max_value(candidate),
-                },
-            )
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("audit emit failed for adv %s: %s", candidate["id"], exc)
+        await _emit_generated_audit(
+            db,
+            candidate=candidate,
+            guild_id=guild_id,
+            rarity=rarity,
+            klass=klass,
+            audit_source=audit_source,
+        )
 
     return candidate
 
