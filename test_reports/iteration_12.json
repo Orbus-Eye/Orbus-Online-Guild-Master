@@ -1,0 +1,33 @@
+{
+  "summary": "ROUND 6B.2c bug fix VERIFIED end-to-end. Historical expedition Sewer Nest (301b6f17-...) now exposes adventurer_ids (3 UUIDs) via GET /api/expeditions/{id} fallback-reconstruction from expedition_members snapshot. Frontend ExpeditionReport renders the 'Save as squad' button correctly; clicking deep-links to /squads/new with type=dungeon_3, adventurer_ids and suggested_name; SquadBuilder pre-populates name 'Squadra Sewer Nest' and selects 3 adventurers (Soren, Nyx, Vera the Bold).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "feature_results": {
+    "B1_historic_exp_adventurer_ids": "PASS — GET /api/expeditions/301b6f17-7347-41aa-9536-ebf132c51934 returns adventurer_ids = ['e5e39a4d-...','e3ee8516-...','6feca47e-...'] (3 UUIDs).",
+    "B2_historic_is_victory": "PASS — status=completed, result_summary='Success' (gates the frontend button).",
+    "B3_ids_match_members": "PASS — adventurer_ids set equals the set of expedition_members.adventurer_id values (back-compat fallback works).",
+    "B4_list_endpoint_field_present": "PASS — GET /api/expeditions returns adventurer_ids field (list) on every row.",
+    "F1_button_visible_on_report": "PASS — data-testid 'report-save-as-squad-btn' is visible, label '💾 Save as squad' (EN).",
+    "F2_href_format": "PASS — href = /squads/new?type=dungeon_3&adventurer_ids=e5e39a4d-...,e3ee8516-...,6feca47e-...&suggested_name=Squadra%20Sewer%20Nest.",
+    "F3_navigation_to_squadbuilder": "PASS — click navigates to /squads/new with all query params preserved.",
+    "F4_squad_prepopulation": "PASS — Squad name input pre-filled 'Squadra Sewer Nest'; roster shows 3/3 with Soren, Nyx, Vera the Bold selected; type=Dungeon 3 banner displayed; PWR=83 computed."
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_save_as_squad.py",
+    "/app/test_reports/pytest/iter12_save_as_squad.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend fallback at services.py:727-728 mutates the in-memory exp dict before calling expedition_public — correct & minimal, but be aware adventurer_ids is NOT backfilled in the DB (read-only reconstruction). Acceptable per design (idempotent, no migrations). New runs persist the field directly via exp_doc.adventurer_ids (line 593).",
+    "Frontend condition `(e.adventurer_ids || []).length > 0` is defensive against missing field — good. Type inference '=== 5 ? dungeon_5 : dungeon_3' is correct for current dungeon sizes; if a 4-member dungeon were ever added the fallback would mis-tag it as dungeon_3 — minor future-proofing concern.",
+    "List endpoint GET /api/expeditions also exposes adventurer_ids (because expedition_public() includes it), so a deep-link save-as-squad could even be offered from the expedition list view in a future iteration."
+  ],
+  "updated_files": ["/app/backend/tests/test_save_as_squad.py"],
+  "success_rate": {"backend": "100% (5/5 pytest)", "frontend": "100% (button render + navigation + prepopulation verified)"},
+  "test_credentials": "tester@orbus.test / password123",
+  "seed_data_creation": "None. Reused pre-existing historical expedition 301b6f17-7347-41aa-9536-ebf132c51934 (Sewer Nest victory).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "ROUND 6B.2c save-as-squad CTA fully working on historical victories. Backend fallback in services.py:724-728 reconstructs adventurer_ids on-the-fly. To re-verify, login as tester and GET /api/expeditions/<sewer-nest-id> — adventurer_ids must be a 3-UUID array.",
+  "rca of the issue": "Root cause: expedition documents created before ROUND 6B.2c did not persist `adventurer_ids` in MongoDB; the frontend gates the 'Save as squad' button on `(e.adventurer_ids || []).length > 0`, so historical victories rendered without the button. Fix: (a) new expeditions persist `adventurer_ids` in exp_doc (services.py:593); (b) GET /api/expeditions/{id} reconstructs the field from `expedition_members` snapshot when absent (services.py:727-728). Both layers verified by automated tests."
+}

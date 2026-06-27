@@ -589,6 +589,8 @@ async def _dispatch_expedition(
         "gold_reward": 0,
         "xp_reward": 0,
         "loot_item_ids": [],
+        # ROUND 6B.2c — persist team ids for "Save as squad" deep-link from report.
+        "adventurer_ids": list(adventurer_ids),
         # Phase 8: mark replay expeditions so the FE can label them differently.
         "is_replay": bool(is_replay),
         "created_at": now.isoformat(),
@@ -718,6 +720,12 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
     members = await db.expedition_members.find(
         {"expedition_id": expedition_id}, {"_id": 0}
     ).to_list(50)
+
+    # ROUND 6B.2c — historical fallback: if `adventurer_ids` was not persisted
+    # on the expedition doc (pre-6B.2c records), reconstruct it from the
+    # expedition_members snapshot so the "Save as squad" CTA works retroactively.
+    if not exp.get("adventurer_ids") and members:
+        exp["adventurer_ids"] = [m["adventurer_id"] for m in members if m.get("adventurer_id")]
 
     # Expand loot items, preserving order with possible duplicates
     loot_ids = exp.get("loot_item_ids", [])
