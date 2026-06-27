@@ -238,3 +238,58 @@ curl -s -X POST https://guild-master-5.preview.emergentagent.com/api/auth/login 
 | Frontend | localStorage→httpOnly cookies | 🟡 DEFERRED to Round 11.1 |
 
 **Ready for e1_tester end-to-end validation.**
+
+
+---
+
+## ROUND 6B.3 — Wave 1 Hotfix (Feb 2026)
+
+**Scope**: Fix P0 economy exploit "Territory free purchase" (cost.gold never
+debited, materials never debited) + roll back 93 abuser structures.
+
+### Backend changes
+- `backend/app/territory/services.py` — atomic `$inc` debit for gold and
+  materials, with compensating refund on partial failure (`_atomic_purchase_or_upgrade`).
+  Audit log now reflects real delta.
+- `backend/app/seeds/seed_territory_materials.py` *(new)* — idempotent seed
+  for `lesser_arcane_dust`, `greater_arcane_dust` reagents.
+- `backend/app/scripts/rollback_territory_free_purchases.py` *(new)* —
+  one-shot CLI rollback. Hard safety: `SAFE_ACQUIRED_VIA = {default, purchase, None}`
+  assert, `EXCLUDED_ACQUIRED_VIA = {migration, migration_legacy}` pre-filter,
+  `skipped_other_acquired_via` counter for non-safe non-excluded slugs.
+
+### Frontend changes
+- `frontend/src/pages/Territory.jsx` — disable/busy state hardening (already
+  in earlier 6B.3 wave).
+
+### Tests
+- `backend/tests/backend_round6b3_territory_atomicity_test.py` *(new, 12 tests)* —
+  validates atomic debit, compensating refund, CAS race, audit accuracy.
+- `backend/tests/backend_round6b1_territory_test.py` — 2 pre-existing tests
+  updated to seed `iron_shard` (were written against the buggy backend; now
+  the atomic debit requires the material to exist).
+
+### Rollback execution (apply)
+- 97 actions applied (93 real abusers + 4 r6b3 test artifacts).
+- 2861 migration structures skipped (untouched).
+- 81 affected guilds.
+- 0 hard deletes (all entity counts invariant pre→post).
+- 97 audit rows written with `event_type=guild_structure_rollback_free_purchase`.
+- 97 structures now marked `acquired_via=rolled_back`.
+- Idempotency confirmed: second `--apply` run = 0 actions.
+- Backup file: `/app/memory/territory_free_purchase_rollback_backup_20260627T225420Z.json`
+
+### Verification
+| Layer | Check | Status |
+|-------|-------|--------|
+| Backend | Atomicity test suite (12/12) | ✅ |
+| Backend | Round 6B.1 territory suite (12/12) | ✅ |
+| Backend | Critical suite (90/90) | ✅ |
+| DB | Entity counts pre==post | ✅ (zero hard delete) |
+| DB | Migration structures (2861) untouched | ✅ |
+| DB | `rolled_back` marker count = 97 | ✅ |
+| Tester | Tester guild structures NOT rollbacked | ✅ |
+| Smoke | Compensating refund on partial fail | ✅ (gold delta = 0) |
+| Idempotency | Re-run = 0 actions | ✅ |
+
+**Wave 1 status: DONE. Ready for Wave 1.5 (over-cap roster enforcement).**

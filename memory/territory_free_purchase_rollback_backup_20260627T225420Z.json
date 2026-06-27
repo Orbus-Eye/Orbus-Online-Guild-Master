@@ -1,0 +1,6611 @@
+{
+  "generated_at_utc": "20260627T225420Z",
+  "guilds_count": 81,
+  "guilds": [
+    {
+      "guild_id": "50e4ea68-a371-4868-a249-19847ad381e2",
+      "guild_public_name": "P194b b04ef",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "c975e897-4594-4513-8a5e-9f1da9523aca",
+      "guild_public_name": "P193 4bba5",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "cebdd004-c64c-4386-9249-dac98ac08e58",
+      "guild_public_name": "P193 16c70",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "61907693-63cb-449b-a85b-86e56d6246a2",
+      "guild_public_name": "P194b bf58b",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "b78b8972-9d1b-4d0a-8cc9-82ae90323e79",
+      "guild_public_name": "P193 e5873",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "0474a7d1-9faa-4cc0-bf90-20f99624c791",
+      "guild_public_name": "R6B2A b1852a",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "8df968db-3bf7-4455-89e5-c19898343502",
+      "guild_public_name": "P194b 52f6f",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "de9189ef-62b1-4113-98ee-29068d3ca725",
+      "guild_public_name": "P194b f2de4",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "2835f193-de50-4d4b-b8bf-1e9565603129",
+      "guild_public_name": "P194b 1b1b9",
+      "gold_snapshot": 1004,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "3c54b6cb-fa88-4397-baa7-ad03f962bad1",
+      "guild_public_name": "R6B2A 9bed82",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "fa43879e-c18b-490e-8f3d-c8b01f72bcca",
+      "guild_public_name": "P193 179df",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "7a25e0ec-7a47-4a6d-972c-77bc14fbfe93",
+      "guild_public_name": "P193 5c9c2",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "2016dbf5-a7de-44b1-a3f8-6a64111c400c",
+      "guild_public_name": "P194b d7f77",
+      "gold_snapshot": 1004,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "e9afc5c0-481b-433d-82fa-d55b9f7b3aa0",
+      "guild_public_name": "P194b 5ecd9",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "98ee55a6-b78c-4e7a-8837-b4e8cc408c63",
+      "guild_public_name": "P193 a807d",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "c01786f1-166f-4605-beb8-10f70aad2966",
+      "guild_public_name": "P194b 6ae5b",
+      "gold_snapshot": 1004,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "653cf4d1-6fdf-45cd-88a5-d08651860954",
+      "guild_public_name": "P193 4b999",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "12ba80a1-dcca-47a8-aca3-aaba52a52701",
+      "guild_public_name": "P194b 582b0",
+      "gold_snapshot": 1004,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "3fac156b-ceab-46d7-83eb-7ffc6f064c65",
+      "guild_public_name": "P193 8e8c7",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "209ed963-328f-41ff-a70a-18b88a136e98",
+      "guild_public_name": "P194b e62de",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "08013418-d0fc-4cb8-82d4-43d634a266b1",
+      "guild_public_name": "R6B2A 536536",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "7d009783-305e-4fce-8199-61c75cd7c6ad",
+      "guild_public_name": "R6B2A c69ab8",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "2059093d-6fe3-4e58-a770-f672fa057338",
+      "guild_public_name": "P194b 58b8c",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "0b3025ef-5754-48f6-8d06-d390265f150d",
+      "guild_public_name": "P194b 43536",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "b3394361-203b-48cb-8be6-e10af85f505f",
+      "guild_public_name": "P194b db68e",
+      "gold_snapshot": 1,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "8f0ae467-767e-49bd-a4a3-a9509812bff0",
+      "guild_public_name": "P194b 10c28",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "f700da5b-8149-4299-896b-5a719164e12e",
+      "guild_public_name": "P194b dfcae",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "345fa5e3-c812-44f3-a1e6-6bb998b04322",
+      "guild_public_name": "P193 6f238",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "971f9300-8087-483e-b1a4-993046169a32",
+      "guild_public_name": "R6B2A c41984",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "eccea408-4620-4ea1-b638-cfe8a12409dd",
+      "guild_public_name": "P194b a9ad5",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "add0da89-ed9f-4500-938b-3ffad679dc34",
+      "guild_public_name": "P194b 934b3",
+      "gold_snapshot": 4964,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "a0f57cbb-bed9-42f8-9f2b-d13a34d29c3b",
+      "guild_public_name": "P193 9b076",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "249fee2d-1982-4c43-8ee8-0d7f3842a025",
+      "guild_public_name": "P193 99570",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "7211ec78-0612-41e0-afa6-91bc4324654e",
+      "guild_public_name": "R6B2A 9a64bf",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "5dfd361e-5da7-4fe5-8323-5ff6fabd0bca",
+      "guild_public_name": "P194b 74dc4",
+      "gold_snapshot": 1,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "677e87f3-97dc-411d-9d7e-a065f5e6a967",
+      "guild_public_name": "P194b 53b09",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "03204970-78d4-40d4-8f88-ec2ce4d3168e",
+      "guild_public_name": "R6B2A e75677",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "98b6f467-8c31-4c20-962b-a7f464c94221",
+      "guild_public_name": "P194b 04278",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "76789a86-0702-438d-a682-07608640b521",
+      "guild_public_name": "R6B3 2c2b36",
+      "gold_snapshot": 100000,
+      "structures_snapshot": {
+        "market_stall": {
+          "level": 6,
+          "is_unlocked": true,
+          "purchased_at": "2026-06-27T00:00:00+00:00",
+          "upgraded_at": "2026-06-27T00:00:00+00:00",
+          "acquired_via": "purchase"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "a089916b-e124-47d0-9d59-35715ec94aca",
+      "guild_public_name": "P193 b8f07",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "a0c2a70e-a858-4fb7-bbb5-210b1408837a",
+      "guild_public_name": "R6B3 5c6a64",
+      "gold_snapshot": 100000,
+      "structures_snapshot": {
+        "market_stall": {
+          "level": 6,
+          "is_unlocked": true,
+          "purchased_at": "2026-06-27T00:00:00+00:00",
+          "upgraded_at": "2026-06-27T00:00:00+00:00",
+          "acquired_via": "purchase"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "ae304717-2ecb-4a70-ae7b-a36c3dcc890c",
+      "guild_public_name": "P194b b7cf3",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "59fa12d9-a1d7-4ed2-9d5d-0efc2f6c2adb",
+      "guild_public_name": "R6B2A 292afb",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "58917a99-8446-495e-abae-9d4b51b334cf",
+      "guild_public_name": "P194b b9eac",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "b9b507f5-447d-4533-a3b7-4d13dba134fa",
+      "guild_public_name": "P194b 84ae3",
+      "gold_snapshot": 4982,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "79fb839e-7877-4770-967f-991196b113f9",
+      "guild_public_name": "P194b 9409f",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "225125e9-8942-4ea8-86f0-26d5d74d1187",
+      "guild_public_name": "R6B2A 819801",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "5ab8e46e-78b5-42c5-b17a-ff72d3a6c3bc",
+      "guild_public_name": "P193 b9c01",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "cfd00115-a8e3-4f6d-96e4-a63bb670b6aa",
+      "guild_public_name": "P194b 879ea",
+      "gold_snapshot": 4964,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "d6823e6b-fe24-4198-8e94-9bbdd0594adf",
+      "guild_public_name": "P194b a8426",
+      "gold_snapshot": 4982,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "d43bbf92-7712-4bb6-8152-cb70a0dc47f4",
+      "guild_public_name": "P194b 6e730",
+      "gold_snapshot": 4964,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "3392bdd7-14ab-4b5c-b6a4-cc6adbf1b257",
+      "guild_public_name": "P193 1aba6",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "0bf7411f-9835-4b80-a30e-540e3ee6b1bc",
+      "guild_public_name": "P193 8825b",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "0832f8fc-b4af-4922-a444-9eed99d135f3",
+      "guild_public_name": "P193 fae3c",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "cf11f0e0-028e-44f7-a309-b7529e3e3d13",
+      "guild_public_name": "P194b a3fa7",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "53fc0068-ac17-4be3-8fc7-0650e716544f",
+      "guild_public_name": "R6B3 521f37",
+      "gold_snapshot": 100000,
+      "structures_snapshot": {
+        "market_stall": {
+          "level": 6,
+          "is_unlocked": true,
+          "purchased_at": "2026-06-27T00:00:00+00:00",
+          "upgraded_at": "2026-06-27T00:00:00+00:00",
+          "acquired_via": "purchase"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "b6ad1d8c-70d6-45bc-9cbb-9a1e5ab0c64f",
+      "guild_public_name": "P193 4dfc9",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "a70fba7c-cd68-4417-9e15-ba6f82576d29",
+      "guild_public_name": "P194b a5f60",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "98da8516-5842-4ee6-89e2-87a9f60aaa88",
+      "guild_public_name": "P193 d2625",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "962b0a41-545d-4672-81de-831beaf1e513",
+      "guild_public_name": "P194b 8eab0",
+      "gold_snapshot": 4982,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "2a754338-84f2-4171-93ba-ef89a651afd4",
+      "guild_public_name": "R6B2A c7820a",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "8377da05-cadb-4b5c-843e-c0b889f52cd5",
+      "guild_public_name": "P194b 8172b",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "ece1612d-709a-4aa2-9e02-7eec45606ebd",
+      "guild_public_name": "P194b 36eaa",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "6027570f-01c5-4b8f-a16e-b4b944cd6caa",
+      "guild_public_name": "R6B2A b59e2b",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "6fef9d15-b1cd-46e4-9928-c1b150e5d886",
+      "guild_public_name": "P193 73b58",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "2b0ae910-eb79-42ce-afa7-9bb8d413ca8a",
+      "guild_public_name": "P193 0bda6",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "9c54ce79-0941-4859-a152-9d8f9c64c1ed",
+      "guild_public_name": "P194b b9dff",
+      "gold_snapshot": 1,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "e6e11561-174e-47ce-a260-106b435ed3b1",
+      "guild_public_name": "R6B2A cd5a1f",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "bd42827e-0ab8-481a-8927-efaf445d0a89",
+      "guild_public_name": "P194b 61d8b",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "e31fe979-9ef2-4131-8ba1-7127691dc93a",
+      "guild_public_name": "P194b b69ef",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "3e39491d-0ec3-4d35-9c89-416a2ad20c5d",
+      "guild_public_name": "P194b 41ecf",
+      "gold_snapshot": 1,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "8c0bb64c-1c41-4f6e-93a5-8e3bbf7f5c3c",
+      "guild_public_name": "P194b 08e15",
+      "gold_snapshot": 4964,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "73fda9bc-270c-4f98-a741-795f08a754a8",
+      "guild_public_name": "P194b ee4f7",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "d89ca6d5-7ebf-46e2-a244-42e443af40c3",
+      "guild_public_name": "P193 bf77b",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "341880e6-e8a7-4df5-a9b9-29d572e73eb3",
+      "guild_public_name": "P194b 0a04c",
+      "gold_snapshot": 1000,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "c80160f6-4fc7-4746-a0e7-f68e54513edd",
+      "guild_public_name": "P193 78094",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "b1d29e9f-ba07-4e8f-bccf-094283a78a3e",
+      "guild_public_name": "P193 de9f3",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "9b2ac9dd-b4ef-4268-9f76-f055ea4604c8",
+      "guild_public_name": "P193 ce815",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "80472510-de74-4d9e-aee7-5d26a5cc847c",
+      "guild_public_name": "P194b 2d0d6",
+      "gold_snapshot": 4982,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "a668dc48-dac7-4859-a230-7cd5bcba6f0e",
+      "guild_public_name": "R6B3 8aba8b",
+      "gold_snapshot": 100000,
+      "structures_snapshot": {
+        "market_stall": {
+          "level": 6,
+          "is_unlocked": true,
+          "purchased_at": "2026-06-27T00:00:00+00:00",
+          "upgraded_at": "2026-06-27T00:00:00+00:00",
+          "acquired_via": "purchase"
+        }
+      },
+      "audit_events_snapshot": []
+    },
+    {
+      "guild_id": "20f92465-7ad2-46cd-8298-30cfa376e6cc",
+      "guild_public_name": "P193 04eb7",
+      "gold_snapshot": 100,
+      "structures_snapshot": {
+        "guild_hall": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "dormitories": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "expedition_board": {
+          "level": 1,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "war_room": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "market_stall": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "auction_house": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "workshop": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "forge": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "consortium_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "communication_hall": {
+          "level": 2,
+          "is_unlocked": true,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        },
+        "training_grounds": {
+          "level": 0,
+          "is_unlocked": false,
+          "purchased_at": null,
+          "upgraded_at": null,
+          "acquired_via": "default"
+        }
+      },
+      "audit_events_snapshot": []
+    }
+  ]
+}

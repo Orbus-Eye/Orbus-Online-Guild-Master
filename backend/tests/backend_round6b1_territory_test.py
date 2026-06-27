@@ -55,6 +55,32 @@ def _fresh_user(db, prefix="r6b1"):
     return token, h, g, email
 
 
+def _give_material(db, guild_id, slug, qty):
+    """ROUND 6B.3 regression — atomic-debit needs real material rows. Helper
+    matches the one in `backend_round6b3_territory_atomicity_test.py`."""
+    tpl = db.items.find_one({"slug": slug}, {"id": 1})
+    assert tpl, f"material template '{slug}' not seeded"
+    existing = db.inventory_items.find_one(
+        {"guild_id": guild_id, "item_id": tpl["id"]},
+        {"id": 1, "quantity": 1},
+    )
+    if existing:
+        db.inventory_items.update_one(
+            {"id": existing["id"]},
+            {"$inc": {"quantity": int(qty)}},
+        )
+    else:
+        db.inventory_items.insert_one({
+            "id": str(uuid.uuid4()),
+            "guild_id": guild_id,
+            "item_id": tpl["id"],
+            "instance_id": str(uuid.uuid4()),
+            "quantity": int(qty),
+            "is_bound": True,
+            "acquired_at": "2026-06-27T00:00:00+00:00",
+        })
+
+
 def test_get_territory_lazy_creates_doc(db):
     _, h, g, _ = _fresh_user(db, "r6b1_get")
     r = requests.get(f"{BASE_URL}/api/territory", headers=h, timeout=15)
@@ -145,9 +171,11 @@ def test_upgrade_locked_structure_returns_423(db):
 
 
 def test_upgrade_market_stall_lv1_to_lv2(db):
-    _, h, _, _ = _fresh_user(db, "r6b1_upok")
+    _, h, g, _ = _fresh_user(db, "r6b1_upok")
     requests.post(f"{BASE_URL}/api/territory/purchase",
                   json={"structure_slug": "market_stall"}, headers=h, timeout=15)
+    # ROUND 6B.3 regression — Lv2 needs iron_shard 3 (atomic debit now enforced).
+    _give_material(db, g["id"], "iron_shard", 3)
     r = requests.post(f"{BASE_URL}/api/territory/upgrade",
                       json={"structure_slug": "market_stall"}, headers=h, timeout=15)
     assert r.status_code == 200, r.text
@@ -190,6 +218,9 @@ def test_dormitory_legacy_lv7_cannot_be_user_upgraded(db):
     via the upgrade endpoint — that level is migration-only."""
     _, h, g, _ = _fresh_user(db, "r6b1_legacy")
     db.guilds.update_one({"id": g["id"]}, {"$set": {"gold": 10**9}})
+    # ROUND 6B.3 regression — Lv5 needs iron_shard 8, Lv6 needs iron_shard 16.
+    # Seed plenty so all 5 upgrades succeed with atomic material debit.
+    _give_material(db, g["id"], "iron_shard", 100)
     # Walk dormitories Lv1 → Lv6 via 5 upgrades.
     for i in range(5):
         r = requests.post(f"{BASE_URL}/api/territory/upgrade",
