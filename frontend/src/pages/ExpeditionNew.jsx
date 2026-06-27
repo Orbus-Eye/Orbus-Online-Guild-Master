@@ -130,6 +130,13 @@ export default function ExpeditionNew() {
     };
 
     // ROUND 6A.2c — auto-load squad from ?squad_id once dungeon + squads + advs are ready.
+    // RATIONALE (ROUND 6B FASE B): `loadSquad` is intentionally NOT in the
+    // dep list. The `autoLoadedRef` guard makes this effect strictly
+    // one-shot per mount: adding `loadSquad` (which is recreated every
+    // render) would not change behavior but would clutter the deps. The
+    // listed deps (squadIdParam/dungeon/squads/advs) are the SEMANTIC
+    // triggers — we wait until the data needed to resolve the squad is
+    // present, then fire exactly once.
     useEffect(() => {
         if (!squadIdParam || autoLoadedRef.current) return;
         if (!dungeon || squads.length === 0 || advs.length === 0) return;

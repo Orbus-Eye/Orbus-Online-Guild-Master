@@ -27,7 +27,7 @@
 //     require either a backend swap endpoint (out of ROUND 1.5 scope) or a
 //     two-step UI that risks half-completed swaps. We instead keep "Manage"
 //     which deep-links to the slot-aware UI.
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
@@ -96,7 +96,13 @@ export default function Inventory() {
     const [rarityFilter, setRarityFilter] = useState(new Set());
     const [equipRow, setEquipRow] = useState(null);
 
-    const refresh = async () => {
+    // ROUND 6B FASE B — wrapped in useCallback so its identity is stable
+    // across renders that DON'T change `lang`. This lets the mount/refresh
+    // useEffect below depend on `refresh` directly (instead of `[]` with a
+    // disable directive) AND fixes a latent bug: previously the effect was
+    // mount-only, so toggling the language left stale localized recipe
+    // names on screen until the user navigated away and back.
+    const refresh = useCallback(async () => {
         try {
             const [invRes, advRes, recRes] = await Promise.all([
                 api.get("/inventory"),
@@ -112,11 +118,11 @@ export default function Inventory() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [lang]);
 
     useEffect(() => {
         refresh();
-    }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+    }, [refresh]);
 
     const equippedByMap = useMemo(
         () => buildEquippedByMap(adventurers),

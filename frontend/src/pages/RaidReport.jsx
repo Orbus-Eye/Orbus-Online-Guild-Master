@@ -1,7 +1,7 @@
 // Phase 18.1 — Raid Report multi-party.
 // Shows 4 party outcome cards + rewards + per-participant detail.
 // Includes a "force complete" button (smoke) for testing past-ends-at raids.
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -32,7 +32,9 @@ export default function RaidReport() {
     const [participants, setParticipants] = useState([]);
     const [busy, setBusy] = useState(false);
 
-    async function load() {
+    // ROUND 6B FASE B — wrapped in useCallback so its identity is stable;
+    // the effect below depends on `load` directly (no disable directive).
+    const load = useCallback(async () => {
         try {
             const r = await api.get(`/raids/${raid_id}`);
             setRaid(r.data.raid);
@@ -40,9 +42,8 @@ export default function RaidReport() {
         } catch (err) {
             toast.error(formatApiError(err));
         }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { load(); }, [raid_id]);
+    }, [raid_id]);
+    useEffect(() => { load(); }, [load]);
 
     async function forceComplete() {
         setBusy(true);

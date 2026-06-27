@@ -1,7 +1,7 @@
 // Crafting page — Phase 14.6 (ROUND 3.B).
 // Lists recipes with per-guild eligibility and exposes a one-click craft
 // action. Backend is /api/recipes + POST /api/recipes/{slug}/craft.
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
@@ -40,7 +40,10 @@ export default function Crafting() {
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(null);
 
-    const refresh = async () => {
+    // ROUND 6B FASE B — useCallback so identity is stable and the effect
+    // below can list `refresh` directly (no eslint-disable needed). Reloads
+    // when `lang` changes so recipe names re-localize on the fly.
+    const refresh = useCallback(async () => {
         try {
             const r = await api.get(`/recipes?lang=${lang}`);
             setRecipes(r.data.recipes || []);
@@ -50,11 +53,11 @@ export default function Crafting() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [lang]);
 
     useEffect(() => {
         refresh();
-    }, [lang]);  // eslint-disable-line react-hooks/exhaustive-deps
+    }, [refresh]);
 
     const doCraft = async (slug) => {
         setBusy(slug);

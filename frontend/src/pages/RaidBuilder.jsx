@@ -2,7 +2,7 @@
 // Phase 19.4a — added roster filter panel (search/role/class/rarity/level/PWR
 // /availability/sort). Filters don't break drag/select; assigned advs are
 // always excluded from the pool and the disable-once-full guard is preserved.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -96,6 +96,10 @@ export default function RaidBuilder() {
     };
 
     // ROUND 6A.2c — auto-load squad from ?squad_id once raid + squads + advs are ready.
+    // RATIONALE (ROUND 6B FASE B): `loadSquadIntoParties` is intentionally
+    // NOT in the dep list. The `autoLoadedRef` guard makes this effect
+    // strictly one-shot per mount; the listed deps are the SEMANTIC
+    // readiness signal (raid + squads + advs all hydrated, then fire once).
     useEffect(() => {
         if (!squadIdParam || autoLoadedRef.current) return;
         if (!raidDungeon || squads.length === 0 || advs.length === 0) return;
@@ -110,7 +114,9 @@ export default function RaidBuilder() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [squadIdParam, raidDungeon, squads, advs]);
 
-    async function load() {
+    // ROUND 6B FASE B — wrapped in useCallback so its identity is stable;
+    // the effect below can list `load` directly (no disable directive).
+    const load = useCallback(async () => {
         try {
             const [cat, advR] = await Promise.all([
                 api.get("/raids/catalog"),
@@ -127,9 +133,8 @@ export default function RaidBuilder() {
         } catch (err) {
             toast.error(formatApiError(err));
         }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { load(); }, [slug]);
+    }, [slug, navigate]);
+    useEffect(() => { load(); }, [load]);
 
     const assignedIds = useMemo(() => {
         const s = new Set();
