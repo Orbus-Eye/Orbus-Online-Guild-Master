@@ -43,6 +43,17 @@ def _user(db, hint="p194b", gold=1000):
     db.guilds.update_one({"id": g["id"]}, {"$set": {"gold": gold}})
     # Flag test user so global chat etc. doesn't pollute
     db.users.update_one({"email": f"{tag}@orbus.test"}, {"$set": {"is_test_user": True}})
+    # ROUND 6B.2a — Territory guard: shop/sell needs market_stall Lv2.
+    # Force the lazy doc creation + bump structure level so legacy tests pass.
+    requests.get(f"{BASE_URL}/api/territory", headers=h, timeout=15)
+    db.guild_structures.update_one(
+        {"guild_id": g["id"]},
+        {"$set": {
+            "structures.market_stall.level": 2,
+            "structures.market_stall.is_unlocked": True,
+        }},
+        upsert=True,
+    )
     return {"headers": h, "guild_id": g["id"], "tag": tag, "email": f"{tag}@orbus.test"}
 
 

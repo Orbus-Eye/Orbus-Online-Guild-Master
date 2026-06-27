@@ -19,6 +19,7 @@ from app.shop.services import (
     _next_reset_at,
     _shop_day_key,
 )
+from app.territory.guards import require_unlocked
 
 
 router = APIRouter(prefix="/api/shop", tags=["shop"])
@@ -49,7 +50,7 @@ async def get_daily_offers(current_user: dict = Depends(get_current_user)):
     }
 
 
-@router.post("/buy")
+@router.post("/buy", dependencies=[Depends(require_unlocked("shop.system.buy"))])
 async def post_buy(
     body: BuyBody,
     current_user: dict = Depends(get_current_user),
@@ -61,7 +62,7 @@ async def post_buy(
     )
 
 
-@router.post("/sell")
+@router.post("/sell", dependencies=[Depends(require_unlocked("shop.system.sell"))])
 async def post_sell(
     body: SellBody,
     current_user: dict = Depends(get_current_user),

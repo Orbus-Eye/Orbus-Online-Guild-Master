@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
+from app.territory.guards import require_unlocked
 from app.forge.services import (
     refine_instance,
     enchant_options,
@@ -24,7 +25,7 @@ class EnchantApplyPayload(BaseModel):
     enchant_slug: str
 
 
-@router.post("/inventory/{instance_id}/refine")
+@router.post("/inventory/{instance_id}/refine", dependencies=[Depends(require_unlocked("forge.refine"))])
 async def refine_route(
     instance_id: str,
     current_user: dict = Depends(get_current_user),
@@ -45,7 +46,7 @@ async def enchant_options_route(
     return await enchant_options(db, guild=guild, instance_id=instance_id, n=n)
 
 
-@router.post("/inventory/{instance_id}/enchant")
+@router.post("/inventory/{instance_id}/enchant", dependencies=[Depends(require_unlocked("forge.enchant"))])
 async def enchant_route(
     instance_id: str,
     payload: EnchantApplyPayload,
@@ -58,7 +59,7 @@ async def enchant_route(
     )
 
 
-@router.post("/inventory/{instance_id}/disenchant")
+@router.post("/inventory/{instance_id}/disenchant", dependencies=[Depends(require_unlocked("forge.disenchant"))])
 async def disenchant_route(
     instance_id: str,
     current_user: dict = Depends(get_current_user),
@@ -69,7 +70,7 @@ async def disenchant_route(
     )
 
 
-@router.post("/inventory/{instance_id}/reroll-affixes")
+@router.post("/inventory/{instance_id}/reroll-affixes", dependencies=[Depends(require_unlocked("forge.reroll"))])
 async def reroll_route(
     instance_id: str,
     current_user: dict = Depends(get_current_user),

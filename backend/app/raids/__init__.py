@@ -23,6 +23,8 @@ from datetime import datetime, timedelta, timezone
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.territory.guards import require_unlocked
 from pydantic import BaseModel, Field
 
 from app.core.database import db
@@ -276,7 +278,7 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
     }
 
 
-@router.post("/start", status_code=201)
+@router.post("/start", status_code=201, dependencies=[Depends(require_unlocked("raid.start.t1"))])
 async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
     rd = await _resolve_raid_dungeon(payload.raid_slug)

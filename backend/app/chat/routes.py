@@ -12,6 +12,7 @@ from app.chat.services import (
 )
 from app.core.database import db
 from app.core.security import get_current_user
+from app.territory.guards import require_unlocked
 
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -32,7 +33,7 @@ async def get_global(
     return {"channel_type": "global", "messages": msgs, "count": len(msgs)}
 
 
-@router.post("/global", status_code=201)
+@router.post("/global", status_code=201, dependencies=[Depends(require_unlocked("chat.global"))])
 async def post_global(
     payload: SendMessageIn,
     current_user: dict = Depends(get_current_user),
@@ -70,7 +71,7 @@ async def get_consortium(
     }
 
 
-@router.post("/consortium/{consortium_id}", status_code=201)
+@router.post("/consortium/{consortium_id}", status_code=201, dependencies=[Depends(require_unlocked("chat.consortium"))])
 async def post_consortium(
     consortium_id: str,
     payload: SendMessageIn,

@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
+from app.territory.guards import require_unlocked
 from app.market.services import (
     buy_listing,
     cancel_listing,
@@ -61,7 +62,7 @@ async def get_my_listings(
     return await list_my_listings(db, current_user["id"], lang=lang)
 
 
-@router.post("/listings", status_code=201)
+@router.post("/listings", status_code=201, dependencies=[Depends(require_unlocked("auction.list"))])
 async def post_create_listing(
     body: CreateListingBody,
     lang: str = Query(default="it", pattern=r"^(it|en)$"),
@@ -84,7 +85,7 @@ async def delete_listing(
     return await cancel_listing(db, current_user, guild, listing_id)
 
 
-@router.post("/listings/{listing_id}/buy")
+@router.post("/listings/{listing_id}/buy", dependencies=[Depends(require_unlocked("auction.buy"))])
 async def post_buy_listing(
     listing_id: str,
     body: Optional[BuyListingBody] = None,

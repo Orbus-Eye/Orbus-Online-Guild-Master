@@ -85,6 +85,9 @@ EVENT_TYPES = frozenset({
     "guild_structure_purchased",
     "guild_structure_upgraded",
     "guild_territory_migrated",
+    # ROUND 6B.2a — Cap + Retire
+    "adventurer_cap_reached",
+    "adventurer_retired",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

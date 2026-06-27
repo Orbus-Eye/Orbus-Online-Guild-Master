@@ -1,8 +1,9 @@
-"""Adventurers + classes routes (Phase 5.5d, Phase 19.2 rename)."""
+"""Adventurers + classes routes (Phase 5.5d, Phase 19.2 rename, ROUND 6B.2a retire)."""
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from pymongo import ASCENDING
 
+from app.adventurers.retire import retire_adventurer
 from app.adventurers.services import (
     class_public,
     list_adventurers_for_guild,
@@ -21,6 +22,11 @@ class AdventurerRenameIn(BaseModel):
     name: str = Field(..., min_length=2, max_length=30)
 
 
+class AdventurerRetireIn(BaseModel):
+    reason: str | None = Field(default=None, max_length=200)
+    force_unequip: bool = Field(default=False)
+
+
 @router.get("/api/adventurer-classes")
 async def list_classes():
     classes = (
@@ -32,9 +38,14 @@ async def list_classes():
 
 
 @router.get("/api/adventurers")
-async def list_adventurers(current_user: dict = Depends(get_current_user)):
+async def list_adventurers(
+    include_retired: bool = False,
+    current_user: dict = Depends(get_current_user),
+):
     guild = await user_guild_or_404(db, current_user["id"])
-    return {"adventurers": await list_adventurers_for_guild(db, guild["id"])}
+    return {"adventurers": await list_adventurers_for_guild(
+        db, guild["id"], include_retired=include_retired
+    )}
 
 
 @router.get("/api/adventurers/{adventurer_id}/trait-preview")
@@ -55,6 +66,25 @@ async def patch_adventurer_name(
     """Phase 19.2 — rename adventurer (max 2 lifetime). Free, no gold cost."""
     guild = await user_guild_or_404(db, current_user["id"])
     return await rename_adventurer(db, guild["id"], adventurer_id, payload.name)
+
+
+@router.post("/api/adventurers/{adventurer_id}/retire")
+async def post_adventurer_retire(
+    adventurer_id: str,
+    payload: AdventurerRetireIn,
+    current_user: dict = Depends(get_current_user),
+):
+    """ROUND 6B.2a — soft retire (no hard delete). Frees the roster slot
+    for cap purposes; history records remain intact."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await retire_adventurer(
+        db,
+        guild_id=guild["id"],
+        adventurer_id=adventurer_id,
+        reason=payload.reason,
+        force_unequip=payload.force_unequip,
+        actor_user_id=current_user["id"],
+    )
 
 
 __all__ = ["router"]

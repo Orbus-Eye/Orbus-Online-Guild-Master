@@ -9,6 +9,7 @@ from app.core.database import db
 from app.core.security import get_current_user
 from app.crafting.services import craft_recipe, list_recipes_with_eligibility
 from app.guilds.services import user_guild_or_404
+from app.territory.guards import require_unlocked
 
 
 router = APIRouter(prefix="/api/recipes", tags=["crafting"])
@@ -23,7 +24,7 @@ async def get_recipes(
     return await list_recipes_with_eligibility(db, guild, lang=lang)
 
 
-@router.post("/{recipe_slug}/craft", status_code=200)
+@router.post("/{recipe_slug}/craft", status_code=200, dependencies=[Depends(require_unlocked("workshop.craft.basic"))])
 async def post_craft(
     recipe_slug: str,
     lang: str = Query(default="it", pattern=r"^(it|en)$"),

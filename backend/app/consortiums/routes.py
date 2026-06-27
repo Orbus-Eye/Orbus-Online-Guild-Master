@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.core.database import db
 from app.core.security import get_current_user
+from app.territory.guards import require_unlocked
 from app.consortiums.services import (
     create_consortium,
     list_consortiums,
@@ -30,7 +31,7 @@ async def list_route(limit: int = Query(50, ge=1, le=100)):
     return {"consortiums": rows, "count": len(rows)}
 
 
-@router.post("", status_code=201)
+@router.post("", status_code=201, dependencies=[Depends(require_unlocked("consortium.create"))])
 async def create_route(
     payload: CreateConsortiumPayload,
     current_user: dict = Depends(get_current_user),
@@ -61,7 +62,7 @@ async def detail_route(consortium_id: str):
     return await get_consortium_detail(db, consortium_id)
 
 
-@router.post("/{consortium_id}/join")
+@router.post("/{consortium_id}/join", dependencies=[Depends(require_unlocked("consortium.join"))])
 async def join_route(
     consortium_id: str,
     current_user: dict = Depends(get_current_user),

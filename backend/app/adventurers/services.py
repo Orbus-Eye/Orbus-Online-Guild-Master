@@ -167,6 +167,8 @@ def adventurer_public(doc: dict) -> dict:
         "stamina": doc.get("stamina", 100),
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
+        "is_retired": bool(doc.get("is_retired", False)),
+        "retired_at": doc.get("retired_at"),
         "is_starter": bool(doc.get("is_starter", False)),
         "rename_count": int(doc.get("rename_count", 0)),
         "rename_max": 2,
@@ -181,12 +183,21 @@ def adventurer_public(doc: dict) -> dict:
     }
 
 
-async def list_adventurers_for_guild(db, guild_id: str) -> list[dict]:
-    """Return all adventurers of a guild + equipment join, public-projected."""
+async def list_adventurers_for_guild(
+    db, guild_id: str, *, include_retired: bool = False
+) -> list[dict]:
+    """Return all adventurers of a guild + equipment join, public-projected.
+
+    ROUND 6B.2a — retired adventurers are EXCLUDED by default; pass
+    `include_retired=True` for admin/history views.
+    """
     from app.equipment.services import _empty_slot_map, _load_equipment_for_guild
 
+    query = {"guild_id": guild_id}
+    if not include_retired:
+        query["is_retired"] = {"$ne": True}
     rows = (
-        await db.adventurers.find({"guild_id": guild_id}, {"_id": 0})
+        await db.adventurers.find(query, {"_id": 0})
         .sort("created_at", -1)
         .to_list(500)
     )
