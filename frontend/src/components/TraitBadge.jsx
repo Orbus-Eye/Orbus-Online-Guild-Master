@@ -3,6 +3,7 @@
 // recruitment candidates and the player-facing shape (display_name,
 // polarity, description, rarity) returned by /api/adventurers.
 import { getTraitLabel } from "@/utils/trait";
+import { useT } from "@/i18n/I18nContext";
 
 const POLARITY_COLOR = {
     positive: "#22c55e",
@@ -60,8 +61,13 @@ export const TraitBadge = ({ trait }) => {
 };
 
 export const TraitList = ({ traits, testid }) => {
+    const { t } = useT();
     if (!traits || traits.length === 0) {
-        return <span className="text-[10px] text-muted-foreground italic">no traits</span>;
+        return (
+            <span className="text-[10px] text-muted-foreground italic">
+                {t("adventurer_modal.no_traits", "Nessun tratto.")}
+            </span>
+        );
     }
     return (
         <div data-testid={testid} className="flex flex-wrap gap-1">
