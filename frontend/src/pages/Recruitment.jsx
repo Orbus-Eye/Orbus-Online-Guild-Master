@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import OverCapBanner from "../components/OverCapBanner";
 import { TraitList } from "../components/TraitBadge";
 import { useT } from "../i18n/I18nContext";
 
@@ -213,8 +214,15 @@ export default function Recruitment() {
             fetchTerritoryCap();
         } catch (err) {
             const detail = err?.response?.data?.detail;
-            if (detail?.code === "recruitment.cap_reached") {
-                toast.error(detail.user_message || `Roster pieno (${detail.current}/${detail.cap}). Potenzia i Dormitori.`, {
+            // ROUND 6B.3 Wave 1.5 — over-cap now returns 423 `roster_over_capacity`
+            // (was 422 `recruitment.cap_reached`). The global axios interceptor
+            // already shows a toast with CTA → /roster/manage, so we just need
+            // to refresh the territory cap state here.
+            if (detail?.code === "roster_over_capacity") {
+                fetchTerritoryCap();
+            } else if (detail?.code === "recruitment.cap_reached") {
+                // Back-compat branch (would only trigger if backend rolls back).
+                toast.error(detail.user_message || `Roster pieno (${detail.current}/${detail.cap}).`, {
                     action: {
                         label: "Vai al Territorio",
                         onClick: () => { window.location.href = "/territory"; },
@@ -239,6 +247,7 @@ export default function Recruitment() {
             <AppHeader subtitle="RECRUIT" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+                <OverCapBanner source="recruitment" />
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">

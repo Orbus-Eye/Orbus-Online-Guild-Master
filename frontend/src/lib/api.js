@@ -33,6 +33,9 @@ api.interceptors.response.use(
             onUnauthorized();
         }
         // ROUND 6B.2b — Global 423 Locked handler (feature.locked from territory guards).
+        // ROUND 6B.3 Wave 1.5 — Extended to handle roster_over_capacity and
+        // adventurers.retired_in_set, both of which surface as 423 with a
+        // structured detail.code and a user-friendly user_message.
         if (status === 423) {
             const detail = err?.response?.data?.detail;
             if (detail && detail.code === "feature.locked") {
@@ -43,6 +46,25 @@ api.interceptors.response.use(
                         label: "Vai al Territorio",
                         onClick: () => { window.location.href = "/territory"; },
                     },
+                    duration: 6000,
+                });
+            } else if (detail && detail.code === "roster_over_capacity") {
+                toast.warning(detail.user_message
+                    || `Roster oltre capacità: ${detail.current}/${detail.cap}.`, {
+                    action: {
+                        label: "Gestisci capacità",
+                        onClick: () => { window.location.href = "/roster/manage"; },
+                    },
+                    duration: 7000,
+                });
+            } else if (detail && detail.code === "adventurers.retired_in_set") {
+                toast.error(detail.user_message
+                    || `Selezione include ${detail.count} avventurieri congedati.`, {
+                    duration: 6000,
+                });
+            } else if (detail && detail.code === "equip.target_retired") {
+                toast.error(detail.user_message
+                    || "Non puoi equipaggiare un avventuriero congedato.", {
                     duration: 6000,
                 });
             }

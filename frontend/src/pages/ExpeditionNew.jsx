@@ -4,6 +4,7 @@ import { api, formatApiError } from "../lib/api";
 import { useT } from "../i18n/I18nContext";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import OverCapBanner from "../components/OverCapBanner";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 
@@ -248,6 +249,7 @@ export default function ExpeditionNew() {
             <AppHeader subtitleKey="expedition_new.brand_subtitle" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+                <OverCapBanner source="expedition-new" />
                 <Link to="/dungeons" className="text-xs text-muted-foreground hover:text-foreground" data-testid="back-to-dungeons">
                     {t("expedition_new.back_to_dungeons")}
                 </Link>

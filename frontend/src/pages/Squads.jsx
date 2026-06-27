@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AppHeader from "@/components/AppHeader";
+import OverCapBanner from "@/components/OverCapBanner";
 import { useT } from "@/i18n/I18nContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -184,6 +185,7 @@ export default function Squads() {
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader />
             <main className="max-w-6xl mx-auto px-4 py-8" data-testid="squads-page">
+                <OverCapBanner source="squads" />
                 <div className="mb-8">
                     <h1 className="text-amber text-2xl font-bold tracking-wider mb-2">
                         {lang === "it" ? "SQUADRE PERSONALIZZATE" : "CUSTOM SQUADS"}

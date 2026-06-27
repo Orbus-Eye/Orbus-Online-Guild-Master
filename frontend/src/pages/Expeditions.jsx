@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import OverCapBanner from "../components/OverCapBanner";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
@@ -117,6 +118,7 @@ export default function Expeditions() {
             <AppHeader subtitleKey="nav.expeditions" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+                <OverCapBanner source="expeditions" />
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">

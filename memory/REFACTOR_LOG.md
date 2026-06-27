@@ -293,3 +293,50 @@ debited, materials never debited) + roll back 93 abuser structures.
 | Idempotency | Re-run = 0 actions | ✅ |
 
 **Wave 1 status: DONE. Ready for Wave 1.5 (over-cap roster enforcement).**
+
+---
+
+## ROUND 6B.3 — Wave 1.5 (Feb 2026) — Over-cap roster enforcement
+
+### Scope
+Block destructive write flows when active roster exceeds the
+`dormitories` cap, instead of silently producing inconsistent state.
+
+### Backend
+- New: `app/territory/cap_guard.py` — `assert_not_over_cap` (423
+  `roster_over_capacity`), `assert_adventurers_not_retired` (423
+  `adventurers.retired_in_set`), `over_cap_dep()` FastAPI dependency.
+- Recruit/Expedition/Replay-last/Raid/Squad/Equip now gated.
+- `Adventurer.retired_by` field added (enum string, set to "user" on
+  POST /retire). Legacy retires default to None (back-compat).
+- Audit event `roster_over_capacity_blocked` added to allowlist.
+
+### Frontend
+- New: `components/OverCapBanner.jsx` (reusable, used on 5 pages).
+- New: `pages/RosterManage.jsx` at route `/roster/manage` with sticky
+  cap state, filters (search/role/rarity), 4-criteria sort, multi-select
+  bulk retire and explicit confirm modal.
+- Axios interceptor `lib/api.js` extended to handle 423 codes
+  `roster_over_capacity`, `adventurers.retired_in_set` and
+  `equip.target_retired` with toast + CTA.
+- i18n IT+EN keys for `overcap.*` and `rosterManage.*`.
+
+### Tests
+- New: `tests/backend_round6b3_overcap_enforcement_test.py` (14 passed,
+  1 skipped — equip skip on fresh guild without inventory).
+- Updated: `backend_round6b2a_guards_test.py` — `recruitment.cap_reached`
+  expectation 422 → 423 `roster_over_capacity`.
+- Updated: `backend_round6b1_territory_test.py` — 2 tests reseeded with
+  `iron_shard` (regression from Wave 1 atomicity fix).
+
+### Verification
+| Check | Result |
+|-------|--------|
+| Pytest (61 over-cap + atomicity + territory + guards) | 60 passed, 1 skipped |
+| Pytest full critical suite | 104 passed, 1 skipped |
+| Ruff app/ | All checks passed |
+| Yarn lint:strict | 0 warnings, 0 errors |
+| Smoke: RosterManage live | All 10 data-testid present, mobile responsive, 4/5 over-cap banner verified |
+| Smoke: Bulk retire flow | filter→select→confirm→success toast→state refresh OK |
+
+**Wave 1.5 status: DONE. Ready for Wave 2.**

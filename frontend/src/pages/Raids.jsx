@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import OverCapBanner from "../components/OverCapBanner";
 import { useT } from "../i18n/I18nContext";
 
 function CountdownPill({ seconds }) {
@@ -104,6 +105,7 @@ export default function Raids() {
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader />
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6" data-testid="raids-page">
+                <OverCapBanner source="raids" />
                 <h1 className="text-xs tracking-[0.3em] text-amber mb-4" data-testid="raids-title">
                     :: {t("raids.title", "RAID")}
                 </h1>

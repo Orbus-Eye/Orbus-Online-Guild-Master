@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import AppHeader from "../components/AppHeader";
+import OverCapBanner from "../components/OverCapBanner";
 import { api, formatApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
@@ -219,6 +220,7 @@ export default function Territory() {
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader subtitleKey="nav.brand_subtitle_dashboard" />
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8" data-testid="territory-page">
+                <OverCapBanner source="territory" />
                 <div className="mb-6">
                     <h1 className="text-3xl font-semibold tracking-tight" data-testid="territory-title">
                         {lang === "it" ? "TERRITORIO" : "TERRITORY"}
