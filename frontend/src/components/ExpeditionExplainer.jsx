@@ -4,6 +4,7 @@
 // fields injected by GET /api/expeditions/{id}. Graceful fallback when
 // the fields are null/empty (legacy or in-progress expedition).
 import { useT } from "../i18n/I18nContext";
+import { getTraitLabel } from "@/utils/trait";
 
 const RESULT_COLOR = {
     success: "#22c55e",
@@ -256,7 +257,7 @@ export default function ExpeditionExplainer({ summary, steps, members }) {
                             <PolarityChip
                                 key={`${tr.display_name}-${i}`}
                                 polarity={tr.polarity}
-                                label={tr.display_name}
+                                label={getTraitLabel(tr)}
                                 testid={`report-modifier-${i}`}
                             />
                         ))}

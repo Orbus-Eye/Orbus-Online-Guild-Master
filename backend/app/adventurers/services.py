@@ -67,6 +67,33 @@ def _polarity_for(t: dict) -> str:
     return "positive" if t.get("is_positive", True) else "negative"
 
 
+def trait_admin_public(doc: dict) -> dict:
+    """Admin-safe trait projection — exposes EVERY moderation field so the
+    admin panel can manage even quarantined/disabled traits. NEVER call
+    from player-facing endpoints (use `trait_public` for those)."""
+    if not doc:
+        return {}
+    return {
+        "id": doc.get("id"),
+        "name": doc.get("name") or "",
+        "display_name": _trait_display_name(doc) or doc.get("name") or "",
+        "display_name_it": doc.get("display_name_it") or "",
+        "display_name_en": doc.get("display_name_en") or doc.get("display_name") or "",
+        "slug": doc.get("slug") or "",
+        "description": doc.get("description") or "",
+        "rarity": (doc.get("rarity") or "common").lower(),
+        "polarity": _polarity_for(doc),
+        "is_positive": doc.get("is_positive") if doc.get("is_positive") is not None else True,
+        "is_active": doc.get("is_active") if doc.get("is_active") is not None else True,
+        "is_test": doc.get("is_test") is True,
+        "modifier_type": doc.get("modifier_type") or "",
+        "affected_stat": doc.get("affected_stat") or "",
+        "modifier_value": doc.get("modifier_value"),
+        "created_at": doc.get("created_at") or "",
+        "updated_at": doc.get("updated_at") or "",
+    }
+
+
 def trait_public(doc: dict) -> dict:
     """Player-safe trait projection — never exposes `code`, `is_test` or
     internal-only flags. Tests and the player-facing UI consume this

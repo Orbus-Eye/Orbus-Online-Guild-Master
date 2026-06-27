@@ -268,9 +268,22 @@ const TAB_CONFIG = {
             affected_stat: "strength", modifier_value: 1, is_positive: true,
             is_active: true,
         }),
-        columns: ["Name", "Modifier", "Stat", "Value", "Pos.", "Active"],
+        columns: ["Name", "Modifier", "Stat", "Value", "Pos.", "Status"],
         renderRow: (r) => [
-            r.name,
+            // ROUND 6A.2b — show display_name_it fallback + quarantine badges
+            <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium">{r.display_name_it || r.display_name || r.name || "—"}</span>
+                {r.is_test && (
+                    <span data-testid={`trait-test-badge-${r.id}`} className="text-[9px] px-1.5 py-0.5 border border-yellow-500 text-yellow-500 rounded-sm tracking-widest">
+                        QUARANTINATO
+                    </span>
+                )}
+                {r.is_active === false && !r.is_test && (
+                    <span data-testid={`trait-inactive-badge-${r.id}`} className="text-[9px] px-1.5 py-0.5 border border-neutral-500 text-neutral-400 rounded-sm tracking-widest">
+                        DISATTIVATO
+                    </span>
+                )}
+            </div>,
             r.modifier_type,
             r.affected_stat,
             <span className={r.modifier_value < 0 ? "text-[#ef4444]" : "text-[#22c55e]"}>
@@ -510,10 +523,21 @@ export default function Admin() {
                                     data-testid={`admin-card-${r.id}`}
                                     className="border border-border bg-card rounded-sm p-4"
                                 >
-                                    <div className="flex items-start justify-between gap-2 mb-2">
-                                        <div className="font-medium truncate">{r.name}</div>
+                                <div className="flex items-start justify-between gap-2 mb-2">
+                                    <div className="font-medium truncate">
+                                        {tab === "traits"
+                                            ? (r.display_name_it || r.display_name || r.name)
+                                            : r.name}
+                                    </div>
+                                    <div className="flex gap-1 items-center">
+                                        {tab === "traits" && r.is_test && (
+                                            <span className="text-[9px] px-1.5 py-0.5 border border-yellow-500 text-yellow-500 rounded-sm tracking-widest">
+                                                Q
+                                            </span>
+                                        )}
                                         <ActiveBadge active={r.is_active} />
                                     </div>
+                                </div>
                                     <div className="text-xs text-muted-foreground mb-3">
                                         {r.slug || ""}
                                     </div>

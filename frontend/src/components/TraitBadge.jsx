@@ -2,6 +2,7 @@
 // Supports both legacy traits (name, is_positive, modifier_*) coming from
 // recruitment candidates and the player-facing shape (display_name,
 // polarity, description, rarity) returned by /api/adventurers.
+import { getTraitLabel } from "@/utils/trait";
 
 const POLARITY_COLOR = {
     positive: "#22c55e",
@@ -33,9 +34,7 @@ const derivePolarity = (t) => {
 
 const deriveLabel = (t) => {
     if (!t) return "";
-    // ROUND 6A.2b — prefer human IT display name when present.
-    // Traits generated post-migration carry `display_name_it` in their subdoc.
-    return t.display_name_it || t.display_name || t.name || "";
+    return getTraitLabel(t);
 };
 
 export const TraitBadge = ({ trait }) => {

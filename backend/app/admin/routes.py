@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
 
-from app.adventurers.services import class_public, trait_public
+from app.adventurers.services import class_public, trait_public, trait_admin_public
 from app.admin.services import (
     VALID_AFFECTED_STAT,
     VALID_ITEM_TYPES,
@@ -116,8 +116,8 @@ async def admin_toggle_class(class_id: str, _: dict = Depends(get_admin_user)):
 # ─── Admin: Traits ────────────────────────────────────────────────────────────
 @router.get("/traits")
 async def admin_list_traits(_: dict = Depends(get_admin_user)):
-    rows = await db.adventurer_traits.find({}, {"_id": 0}).sort("name", ASCENDING).to_list(200)
-    return {"traits": [trait_public(r) for r in rows]}
+    rows = await db.adventurer_traits.find({}, {"_id": 0}).sort("name", ASCENDING).to_list(500)
+    return {"traits": [trait_admin_public(r) for r in rows]}
 
 
 @router.post("/traits", status_code=201)

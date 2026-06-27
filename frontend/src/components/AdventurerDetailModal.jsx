@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useT } from "../i18n/I18nContext";
 import { TraitList } from "./TraitBadge";
+import { getTraitLabel } from "@/utils/trait";
 
 const SLOTS = ["weapon", "armor", "accessory"];
 
@@ -183,8 +184,8 @@ export default function AdventurerDetailModal({ adventurer, onClose }) {
                             <TraitList traits={adventurer.traits} testid="adventurer-modal-traits" />
                             <ul className="mt-2 text-[11px] text-muted-foreground space-y-1">
                                 {adventurer.traits.map((tr) => (
-                                    <li key={tr.id || tr.display_name}>
-                                        <span className="text-foreground">{tr.display_name}</span>
+                                    <li key={tr.id || getTraitLabel(tr)}>
+                                        <span className="text-foreground">{getTraitLabel(tr)}</span>
                                         {tr.description ? ` — ${tr.description}` : ""}
                                     </li>
                                 ))}
