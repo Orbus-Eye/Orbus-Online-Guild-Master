@@ -106,6 +106,7 @@ CLEANUP_ALLOWLIST_EMAILS = frozenset({
     "gianluca.brandi42@gmail.com",
     "samuelemazzini1994@gmail.com",
     "ginnyo.gear@gmail.com",
+    "lordcoby87@gmail.com",  # Crociata d'Argento owner — confirmed 2026-06-26
 })
 CLEANUP_ALLOWLIST_GUILDS = frozenset({
     "sentiero di efreto",

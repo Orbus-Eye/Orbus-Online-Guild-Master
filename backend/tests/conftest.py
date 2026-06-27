@@ -31,6 +31,7 @@ ALLOWLIST_EMAILS = frozenset({
     "tester@orbus.test",  # tester sandbox admin (seeded in dev only)
     "samuelemazzini1994@gmail.com",  # Harambes owner — confirmed 2026-06-26
     "ginnyo.gear@gmail.com",         # Magmorella — Il Regno di Lanafuoco — confirmed 2026-06-26
+    "lordcoby87@gmail.com",          # Crociata d'Argento owner — confirmed 2026-06-26
 })
 ALLOWLIST_GUILDS_LOWER = frozenset({
     "sentiero di efreto",

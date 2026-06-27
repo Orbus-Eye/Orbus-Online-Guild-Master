@@ -94,6 +94,7 @@ ALLOWLIST_EMAILS = {
     "gianluca.brandi42@gmail.com",    # Drakarys
     "samuelemazzini1994@gmail.com",   # Harambes — confirmed 2026-06-26
     "ginnyo.gear@gmail.com",          # Magmorella — Il Regno di Lanafuoco — 2026-06-26
+    "lordcoby87@gmail.com",           # Crociata d'Argento — confirmed 2026-06-26
     "tester@orbus.test",              # sandbox admin
 }
 ALLOWLIST_GUILDS = {

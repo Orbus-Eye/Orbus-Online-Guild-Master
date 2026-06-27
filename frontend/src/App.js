@@ -28,6 +28,7 @@ import Forge from "@/pages/Forge";
 import Raids from "@/pages/Raids";
 import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
+import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
     return (
@@ -153,7 +154,12 @@ function App() {
                             path="/expeditions/:id"
                             element={
                                 <ProtectedRoute requireGuild>
-                                    <ExpeditionReport />
+                                    <ReportErrorBoundary
+                                        fallbackTitle="Report unavailable"
+                                        fallbackBody="Some details of this expedition could not be displayed. Your run is safe; please try again or contact support."
+                                    >
+                                        <ExpeditionReport />
+                                    </ReportErrorBoundary>
                                 </ProtectedRoute>
                             }
                         />
@@ -210,7 +216,12 @@ function App() {
                             path="/raids/:raid_id/report"
                             element={
                                 <ProtectedRoute requireGuild>
-                                    <RaidReport />
+                                    <ReportErrorBoundary
+                                        fallbackTitle="Raid report unavailable"
+                                        fallbackBody="Some details of this raid report could not be displayed. Your raid run is safe; please try again or contact support."
+                                    >
+                                        <RaidReport />
+                                    </ReportErrorBoundary>
                                 </ProtectedRoute>
                             }
                         />

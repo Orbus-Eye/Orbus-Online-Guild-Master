@@ -24,13 +24,14 @@ async def list_leaderboard(
 
 @router.get("/raids")
 async def list_raid_leaderboard(
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=100),  # cap intenzionale 100 — privacy + perf
     offset: int = Query(0, ge=0, le=1000),
 ):
     """Phase 19 — Public raid leaderboard ordered by max_raid_score.
 
     Privacy: applies the same `is_test_user=True` filter as `/guilds`.
     Returns one row per (guild, raid_dungeon_slug) showing the best score.
+    `limit ∈ [1, 100]`, `offset ∈ [0, 1000]` — cap intentional for perf.
     """
     return await get_raids_leaderboard(db, limit=limit, offset=offset)
 
