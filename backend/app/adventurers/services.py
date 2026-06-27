@@ -78,6 +78,8 @@ def trait_public(doc: dict) -> dict:
     return {
         "id": doc.get("id"),
         "display_name": _trait_display_name(doc),
+        # ROUND 6A.2b — IT translation; UI prefers this when present.
+        "display_name_it": doc.get("display_name_it") or "",
         "description": doc.get("description", "") or "",
         "rarity": (doc.get("rarity") or "common").lower(),
         "polarity": _polarity_for(doc),

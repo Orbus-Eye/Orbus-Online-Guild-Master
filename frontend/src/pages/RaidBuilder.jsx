@@ -44,6 +44,53 @@ export default function RaidBuilder() {
     const [busy, setBusy] = useState(false);
     const [filters, setFilters] = useState(EMPTY_FILTERS);
     const [panelOpen, setPanelOpen] = useState(false);
+    // ROUND 6A.2b — saved raid_20 squads
+    const [squads, setSquads] = useState([]);
+
+    useEffect(() => {
+        api.get("/squads?type=raid_20")
+            .then(({ data }) => setSquads(data.squads || []))
+            .catch(() => setSquads([]));
+    }, []);
+
+    // Apply a saved raid_20 squad to the 4×5 grid. Uses `raid_parties`
+    // if present, otherwise distributes adventurer_ids sequentially.
+    // Skips ids not in current available roster (toasts a count).
+    const loadSquadIntoParties = (squadId) => {
+        if (!squadId) return;
+        const sq = squads.find((s) => s.squad_id === squadId);
+        if (!sq) return;
+        const byId = new Map(advs.map((a) => [a.id, a]));
+        const next = Array.from({ length: PARTY_COUNT }, () => Array(PARTY_SIZE).fill(null));
+        let missing = 0;
+        if (sq.raid_parties) {
+            const partyKeys = ["party_1", "party_2", "party_3", "party_4"];
+            for (let pi = 0; pi < PARTY_COUNT; pi++) {
+                const ids = sq.raid_parties[partyKeys[pi]] || [];
+                for (let si = 0; si < PARTY_SIZE; si++) {
+                    const aid = ids[si];
+                    if (aid && byId.has(aid)) next[pi][si] = aid;
+                    else if (aid) missing += 1;
+                }
+            }
+        } else {
+            // Fallback: flat distribution 5+5+5+5
+            const flat = sq.adventurer_ids || [];
+            for (let i = 0; i < flat.length && i < 20; i++) {
+                const aid = flat[i];
+                const pi = Math.floor(i / PARTY_SIZE);
+                const si = i % PARTY_SIZE;
+                if (byId.has(aid)) next[pi][si] = aid;
+                else missing += 1;
+            }
+        }
+        setParties(next);
+        if (missing > 0) {
+            toast.warning(`${missing} avventuriere/i della squadra non disponibili. Completa manualmente.`);
+        } else {
+            toast.success(`Squadra "${sq.name}" caricata`);
+        }
+    };
 
     async function load() {
         try {
@@ -248,6 +295,49 @@ export default function RaidBuilder() {
                     <Link to="/raids" className="text-[11px] text-muted-foreground hover:underline" data-testid="builder-back-link">
                         {t("raids.builder.back_to_raids")}
                     </Link>
+                </div>
+
+                {/* ROUND 6A.2b — Carica squadra raid_20 */}
+                <div className="mb-4 border border-neutral-800 rounded-sm p-3 bg-secondary/30">
+                    <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
+                        :: CARICA SQUADRA RAID 20 ({squads.length})
+                    </div>
+                    {squads.length === 0 ? (
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                            <p className="text-[11px] text-muted-foreground italic">
+                                Nessuna squadra raid_20 salvata.
+                            </p>
+                            <Link
+                                to="/squads/new?type=raid_20"
+                                data-testid="raid-create-squad-link"
+                                className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1 hover:bg-amber hover:text-background transition-colors"
+                            >
+                                + Crea squadra ora
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <select
+                                onChange={(e) => loadSquadIntoParties(e.target.value)}
+                                defaultValue=""
+                                data-testid="raid-load-squad"
+                                className="bg-secondary border border-neutral-700 px-3 py-1.5 text-xs focus:border-amber outline-none flex-1 min-w-[200px]"
+                            >
+                                <option value="">— Seleziona squadra raid 20 —</option>
+                                {squads.map((s) => (
+                                    <option key={s.squad_id} value={s.squad_id}>
+                                        {s.name} (PWR {s.total_power}{s.missing_adventurer_ids?.length ? ` · ⚠ ${s.missing_adventurer_ids.length} mancanti` : ""})
+                                    </option>
+                                ))}
+                            </select>
+                            <Link
+                                to="/squads"
+                                className="text-[10px] tracking-widest text-muted-foreground hover:text-foreground"
+                            >
+                                Gestisci →
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* 4 party columns */}

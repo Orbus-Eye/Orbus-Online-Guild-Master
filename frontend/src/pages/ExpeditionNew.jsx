@@ -63,6 +63,8 @@ export default function ExpeditionNew() {
     const [submitting, setSubmitting] = useState(false);
     const [preview, setPreview] = useState(null);
     const [previewLoading, setPreviewLoading] = useState(false);
+    // ROUND 6A.2b — saved squads dropdown
+    const [squads, setSquads] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -88,6 +90,41 @@ export default function ExpeditionNew() {
     }, [slug, navigate, t]);
 
     const requiredSize = dungeon?.required_team_size ?? 3;
+
+    // ROUND 6A.2b — fetch saved squads of the matching size (dungeon_3/dungeon_5).
+    useEffect(() => {
+        if (!dungeon) return;
+        const type = requiredSize === 3 ? "dungeon_3" : requiredSize === 5 ? "dungeon_5" : null;
+        if (!type) return;
+        api.get(`/squads?type=${type}`)
+            .then(({ data }) => setSquads(data.squads || []))
+            .catch(() => setSquads([]));
+    }, [dungeon, requiredSize]);
+
+    // Apply a saved squad → repopulate `selected` with the live adventurer
+    // docs that still belong to the guild AND are currently available.
+    // Missing/unavailable ones are toasted so the user can fill them manually.
+    const loadSquad = (squadId) => {
+        if (!squadId) return;
+        const sq = squads.find((s) => s.squad_id === squadId);
+        if (!sq) return;
+        const byId = new Map(advs.map((a) => [a.id, a]));
+        const next = [];
+        const missing = [];
+        for (const aid of sq.adventurer_ids) {
+            const adv = byId.get(aid);
+            if (adv) next.push(adv);
+            else missing.push(aid);
+        }
+        setSelected(next.slice(0, requiredSize));
+        if (missing.length > 0) {
+            toast.warning(
+                `${missing.length} avventuriere/i della squadra non sono disponibili (impegnati o rimossi). Completa manualmente.`
+            );
+        } else {
+            toast.success(`Squadra "${sq.name}" caricata`);
+        }
+    };
 
     const toggleSelect = (adv) => {
         setSelected((prev) => {
@@ -202,6 +239,48 @@ export default function ExpeditionNew() {
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-8">
                     {/* Roster */}
                     <section>
+                        {/* ROUND 6A.2b — saved squad loader */}
+                        <div className="mb-4 border border-neutral-800 rounded-sm p-3 bg-secondary/30">
+                            <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
+                                :: CARICA SQUADRA SALVATA ({squads.length})
+                            </div>
+                            {squads.length === 0 ? (
+                                <div className="flex items-center justify-between gap-3 flex-wrap">
+                                    <p className="text-[11px] text-muted-foreground italic">
+                                        Nessuna squadra {requiredSize}p salvata.
+                                    </p>
+                                    <Link
+                                        to={`/squads/new?type=${requiredSize === 3 ? "dungeon_3" : "dungeon_5"}`}
+                                        data-testid="exp-create-squad-link"
+                                        className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1 hover:bg-amber hover:text-background transition-colors"
+                                    >
+                                        + Crea squadra ora
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <select
+                                        onChange={(e) => loadSquad(e.target.value)}
+                                        defaultValue=""
+                                        data-testid="expedition-load-squad"
+                                        className="bg-secondary border border-neutral-700 px-3 py-1.5 text-xs focus:border-amber outline-none flex-1 min-w-[200px]"
+                                    >
+                                        <option value="">— Seleziona squadra —</option>
+                                        {squads.map((s) => (
+                                            <option key={s.squad_id} value={s.squad_id}>
+                                                {s.name} (PWR {s.total_power}{s.missing_adventurer_ids?.length ? ` · ⚠ ${s.missing_adventurer_ids.length} mancanti` : ""})
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <Link
+                                        to="/squads"
+                                        className="text-[10px] tracking-widest text-muted-foreground hover:text-foreground"
+                                    >
+                                        Gestisci →
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                         <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
                             :: AVAILABLE ROSTER ({advs.length})
                         </div>

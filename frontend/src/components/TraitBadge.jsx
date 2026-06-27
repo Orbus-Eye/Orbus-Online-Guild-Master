@@ -33,7 +33,9 @@ const derivePolarity = (t) => {
 
 const deriveLabel = (t) => {
     if (!t) return "";
-    return t.display_name || t.name || "";
+    // ROUND 6A.2b — prefer human IT display name when present.
+    // Traits generated post-migration carry `display_name_it` in their subdoc.
+    return t.display_name_it || t.display_name || t.name || "";
 };
 
 export const TraitBadge = ({ trait }) => {
