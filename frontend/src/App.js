@@ -30,6 +30,7 @@ import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
 import Chat from "@/pages/Chat";
+import Auction from "@/pages/Auction";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -149,6 +150,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Market />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/auction"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Auction />
                                 </ProtectedRoute>
                             }
                         />

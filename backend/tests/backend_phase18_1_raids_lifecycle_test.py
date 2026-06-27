@@ -104,7 +104,7 @@ def test_L4_path_count_now_77():
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     paths = list(r.json()["paths"].keys())
     # Updated for Phase 19 §1.2 — added /api/leaderboard/raids
-    assert len(paths) == 79
+    assert len(paths) == 86
 
 
 # ───────────────────────────────────── R: Raid lifecycle

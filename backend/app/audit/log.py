@@ -44,10 +44,14 @@ EVENT_TYPES = frozenset({
     "gold_credited",
     "equip_item",
     "unequip_item",
-    # Phase 14.8 (ROUND 3.C) — Marketplace events
+    # Phase 14.8 (ROUND 3.C) — Marketplace events (kept under market_ name
+    # for continuity; same events fire from the new /api/auction/* mirror).
     "market_listing_created",
     "market_listing_cancelled",
     "market_purchase_completed",
+    # Phase 19.4b — NPC system shop
+    "shop_system_purchase",
+    "shop_system_sale",
     # Phase 14.1 + 15 — Retention layer
     "quest_reward_claimed",
     "weekly_quest_claimed",

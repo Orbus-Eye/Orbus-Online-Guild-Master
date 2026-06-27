@@ -1,598 +1,333 @@
-/* Phase 14.8 (ROUND 3.C) — Marketplace page.
-
-Three tabs:
-  • Buy   → public listings with filters & sort
-  • Sell  → form to list one of your sellable items
-  • Mine  → your own listings (active + history)
-*/
-import { useEffect, useMemo, useState, useCallback } from "react";
+/**
+ * Phase 19.4b — Mercato di Sistema NPC (replaces old player-to-player Market).
+ *
+ * Tab 1: COMPRA → daily offers grid + buy button + countdown reset
+ * Tab 2: VENDI  → inventory dropdown + sell confirm modal
+ *
+ * Server-authoritative pricing/stock. Player-to-player listing UI is now
+ * at `/auction`. Old `/api/market/listings*` calls now 307-redirect to
+ * `/api/auction/*` automatically.
+ */
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
+import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
-import { useAuth } from "../context/AuthContext";
-import { useT } from "../i18n/I18nContext";
+import { Button } from "../components/ui/button";
 
-const API = process.env.REACT_APP_BACKEND_URL + "/api";
+function relativeCountdown(targetIso) {
+    if (!targetIso) return "";
+    const ms = new Date(targetIso).getTime() - Date.now();
+    if (ms <= 0) return "ora";
+    const h = Math.floor(ms / 3_600_000);
+    const m = Math.floor((ms % 3_600_000) / 60_000);
+    return `${h}h ${m}m`;
+}
 
-const RARITY_COLOR = {
-    Common: "text-muted-foreground",
-    Uncommon: "text-emerald-300",
-    Rare: "text-sky-300",
-    Epic: "text-fuchsia-300",
-    Legendary: "text-amber-300",
+const RarityBadge = ({ value }) => {
+    const color = {
+        Common: "#9ca3af",
+        Uncommon: "#22c55e",
+        Rare: "#3b82f6",
+        Epic: "#a855f7",
+        Legendary: "#f59e0b",
+    }[value] || "#9ca3af";
+    return (
+        <span
+            className="inline-block text-[10px] tracking-widest border px-1.5 py-0.5 rounded-sm"
+            style={{ color, borderColor: color + "55" }}
+        >
+            {(value || "common").toUpperCase()}
+        </span>
+    );
 };
 
-const Pill = ({ children, className = "" }) => (
-    <span className={`px-2 py-0.5 text-xs rounded-sm border border-border ${className}`}>
-        {children}
-    </span>
-);
+export default function Market() {
+    const [tab, setTab] = useState("buy"); // buy | sell
+    const [offers, setOffers] = useState([]);
+    const [nextResetAt, setNextResetAt] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [busy, setBusy] = useState(false);
 
-const SectionTitle = ({ children }) => (
-    <h2 className="text-xs tracking-widest text-muted-foreground uppercase mb-3">
-        {children}
-    </h2>
-);
-
-function authedFetch(token, path, init = {}) {
-    return fetch(`${API}${path}`, {
-        ...init,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            ...(init.headers || {}),
-        },
-    });
-}
-
-// ─── BUY TAB ─────────────────────────────────────────────────────────────
-function BuyTab({ token, lang, t, refreshGuild }) {
-    const [listings, setListings] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [filters, setFilters] = useState({
-        item_type: "", rarity: "", level_max: "", price_max: "",
-        name_contains: "", sort_by: "created_at",
-    });
-    const [confirmId, setConfirmId] = useState(null);
-    const [buyQty, setBuyQty] = useState(1);
-
-    const load = useCallback(async () => {
-        setLoading(true);
-        const qs = new URLSearchParams({ lang, sort_by: filters.sort_by, limit: "50" });
-        for (const k of ["item_type", "rarity", "level_max", "price_max", "name_contains"]) {
-            if (filters[k] !== "" && filters[k] != null) qs.set(k, filters[k]);
-        }
-        const r = await fetch(`${API}/market/listings?${qs}`);
-        if (r.ok) {
-            const body = await r.json();
-            setListings(body.listings || []);
-            setTotal(body.total || 0);
-        }
-        setLoading(false);
-    }, [filters, lang]);
-
-    useEffect(() => { load(); }, [load]);
-
-    async function doBuy(listing) {
-        const r = await authedFetch(token, `/market/listings/${listing.id}/buy?lang=${lang}`, {
-            method: "POST",
-            body: JSON.stringify({ quantity: buyQty }),
-        });
-        const body = await r.json().catch(() => ({}));
-        if (r.ok && body.success) {
-            const itemName = body.item_received?.name || listing.item.name;
-            toast.success(`${t("market.toast_bought")}: ${body.item_received?.quantity}× ${itemName} — ${body.gold_spent}g`);
-            setConfirmId(null);
-            setBuyQty(1);
-            await load();
-            await refreshGuild();
-        } else {
-            toast.error(body.detail || "Errore");
-        }
-    }
-
-    return (
-        <div className="space-y-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs"
-                 data-testid="market-buy-filters">
-                <select
-                    data-testid="market-filter-type"
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.item_type}
-                    onChange={(e) => setFilters((f) => ({ ...f, item_type: e.target.value }))}
-                >
-                    <option value="">{t("market.filter_type")}</option>
-                    <option value="weapon">weapon</option>
-                    <option value="armor">armor</option>
-                    <option value="accessory">accessory</option>
-                    <option value="material">material</option>
-                    <option value="consumable">consumable</option>
-                </select>
-                <select
-                    data-testid="market-filter-rarity"
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.rarity}
-                    onChange={(e) => setFilters((f) => ({ ...f, rarity: e.target.value }))}
-                >
-                    <option value="">{t("market.filter_rarity")}</option>
-                    {["Common", "Uncommon", "Rare", "Epic", "Legendary"].map((r) => (
-                        <option key={r} value={r}>{r}</option>
-                    ))}
-                </select>
-                <input
-                    data-testid="market-filter-level"
-                    type="number" min="1" placeholder={t("market.filter_level_max")}
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.level_max}
-                    onChange={(e) => setFilters((f) => ({ ...f, level_max: e.target.value }))}
-                />
-                <input
-                    data-testid="market-filter-price"
-                    type="number" min="0" placeholder={t("market.filter_price_max")}
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.price_max}
-                    onChange={(e) => setFilters((f) => ({ ...f, price_max: e.target.value }))}
-                />
-                <input
-                    data-testid="market-filter-search"
-                    placeholder={t("market.filter_search")}
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.name_contains}
-                    onChange={(e) => setFilters((f) => ({ ...f, name_contains: e.target.value }))}
-                />
-                <select
-                    data-testid="market-filter-sort"
-                    className="bg-secondary border border-border rounded-sm px-2 py-1.5"
-                    value={filters.sort_by}
-                    onChange={(e) => setFilters((f) => ({ ...f, sort_by: e.target.value }))}
-                >
-                    <option value="created_at">{t("market.sort_created_at")}</option>
-                    <option value="price_asc">{t("market.sort_price_asc")}</option>
-                    <option value="price_desc">{t("market.sort_price_desc")}</option>
-                    <option value="level">{t("market.sort_level")}</option>
-                </select>
-            </div>
-
-            {loading && <p className="text-muted-foreground text-xs">…</p>}
-            {!loading && listings.length === 0 && (
-                <p className="text-muted-foreground text-sm" data-testid="market-buy-empty">
-                    {t("market.empty_buy")}
-                </p>
-            )}
-            <div className="text-xs text-muted-foreground">total: {total}</div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {listings.map((l) => (
-                    <div
-                        key={l.id}
-                        data-testid={`market-listing-${l.id}`}
-                        className="border border-border rounded-sm bg-secondary/30 p-4 text-sm flex flex-col gap-2"
-                    >
-                        <div className="flex items-start justify-between gap-2">
-                            <div>
-                                <p className={`font-medium ${RARITY_COLOR[l.item.rarity] || ""}`}>
-                                    {l.item.name}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    {l.item.item_type} · {l.item.rarity} · lvl {l.item.level_required}
-                                </p>
-                            </div>
-                            <Pill>{l.quantity}× — {l.price_per_unit}g</Pill>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                            {t("market.total")}: <span className="text-foreground">{l.total_price}g</span>
-                            {" · "}
-                            {t("market.seller")}: <span className="text-foreground">{l.seller.guild_name}</span>
-                        </div>
-                        {confirmId === l.id ? (
-                            <div className="border border-amber/50 rounded-sm p-2 bg-amber/5 space-y-2">
-                                <p className="text-xs">{t("market.buy_confirm")}</p>
-                                <div className="flex items-center gap-2 text-xs">
-                                    <label>{t("market.buy_quantity")}:</label>
-                                    <input
-                                        type="number" min="1" max={l.quantity}
-                                        value={buyQty}
-                                        onChange={(e) => setBuyQty(parseInt(e.target.value, 10) || 1)}
-                                        className="bg-secondary border border-border rounded-sm px-2 py-1 w-20"
-                                        data-testid={`market-buy-qty-${l.id}`}
-                                    />
-                                    <span className="text-muted-foreground">
-                                        = {(buyQty || 0) * l.price_per_unit}g
-                                    </span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        className="bg-amber/90 text-background px-3 py-1 rounded-sm text-xs"
-                                        onClick={() => doBuy(l)}
-                                        data-testid={`market-buy-confirm-${l.id}`}
-                                    >
-                                        ✓ {t("market.buy_btn")}
-                                    </button>
-                                    <button
-                                        className="border border-border px-3 py-1 rounded-sm text-xs"
-                                        onClick={() => { setConfirmId(null); setBuyQty(1); }}
-                                    >
-                                        ×
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <button
-                                className="border border-amber/60 text-amber px-3 py-1.5 rounded-sm text-xs hover:bg-amber/10"
-                                onClick={() => { setConfirmId(l.id); setBuyQty(l.quantity); }}
-                                data-testid={`market-buy-btn-${l.id}`}
-                            >
-                                {t("market.buy_btn")}
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-// ─── SELL TAB ────────────────────────────────────────────────────────────
-function SellTab({ token, lang, t, fee, refreshGuild }) {
-    const [items, setItems] = useState([]);
-    const [slug, setSlug] = useState("");
-    const [qty, setQty] = useState(1);
-    const [price, setPrice] = useState(10);
-    const [submitting, setSubmitting] = useState(false);
+    // Sell state
+    const [inventory, setInventory] = useState([]);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [sellQty, setSellQty] = useState(1);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [guildGold, setGuildGold] = useState(null);
+
+    const loadOffers = useCallback(async () => {
+        setLoading(true);
+        try {
+            const { data } = await api.get("/shop/daily_offers");
+            setOffers(data.offers || []);
+            setNextResetAt(data.next_reset_at);
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const loadGuild = useCallback(async () => {
+        try {
+            const { data } = await api.get("/guilds/me");
+            setGuildGold(data.guild?.gold ?? null);
+        } catch { /* silent */ }
+    }, []);
 
     const loadInventory = useCallback(async () => {
-        const r = await authedFetch(token, "/inventory");
-        if (!r.ok) return;
-        const data = await r.json();
-        // Phase 19.4a — FIX P0 "Deposito non letto da Vendita":
-        // Backend returns `{inventory: [...]}` (not `items`). The previous
-        // `data.items || []` always returned [] → the sell form looked empty
-        // even when the player owned tradeable, available stacks. Accept
-        // both keys to be forward-compatible with any future shape tweak.
-        const rows = data.inventory || data.items || [];
-        // Filter to items with available > 0 AND tradeable
-        const sellable = rows.filter((it) => {
-            const available = it.available_quantity ?? (
-                (it.total_quantity || it.quantity || 0)
-                - (it.equipped_quantity || 0)
-                - (it.market_locked_quantity || 0)
-            );
-            const tradeable = it.item?.is_tradeable !== false
-                && it.item?.can_be_sold_for_gold !== false;
-            // P19.4a: filter out bound stacks at the source so the user sees
-            // a clear sell-list (BoE rows show in the Inventory page with
-            // their bound badge; they just don't appear here).
-            const notBound = it.is_bound !== true;
-            return available > 0 && tradeable && notBound;
-        });
-        setItems(sellable);
-        if (sellable.length && !slug) setSlug(sellable[0].item?.slug || "");
-    }, [token, slug]);
-
-    useEffect(() => { loadInventory(); }, [loadInventory]);
-
-    const selected = useMemo(
-        () => items.find((it) => it.item?.slug === slug),
-        [items, slug]
-    );
-    const maxQty = selected
-        ? (selected.available_quantity ?? (
-            (selected.total_quantity || selected.quantity || 0)
-            - (selected.equipped_quantity || 0)
-            - (selected.market_locked_quantity || 0)
-          ))
-        : 0;
-    const total = qty * price;
-    const feeAmount = Math.floor((total * fee) / 100);
-    const proceeds = total - feeAmount;
-
-    async function submitListing() {
-        if (!slug || qty < 1 || price < 1) return;
-        setSubmitting(true);
-        const r = await authedFetch(token, `/market/listings?lang=${lang}`, {
-            method: "POST",
-            body: JSON.stringify({ item_slug: slug, quantity: qty, price_per_unit: price }),
-        });
-        const body = await r.json().catch(() => ({}));
-        if (r.ok && body.success) {
-            toast.success(`${t("market.toast_listed")} — ${body.quantity}× @ ${body.price_per_unit}g`);
-            setConfirmOpen(false);
-            setQty(1);
-            await loadInventory();
-            await refreshGuild();
-        } else {
-            // ROUND 4 — translate the BoE 422 sentinel into a human i18n string.
-            const detail = body.detail;
-            if (r.status === 422 && detail === "market.bound_item_not_sellable") {
-                toast.error(t("market.error_bound_item"));
-            } else {
-                toast.error(detail || "Errore");
-            }
+        try {
+            const { data } = await api.get("/inventory");
+            // P19.4a fix carry-over: read `data.inventory` key (NOT `data.items`)
+            const rows = (data.inventory || []).filter((r) => {
+                const tradeable = r.item?.is_tradeable !== false
+                    && r.item?.can_be_sold_for_gold !== false;
+                return r.is_bound !== true
+                    && (r.available_quantity ?? r.quantity ?? 0) > 0
+                    && tradeable;
+            });
+            setInventory(rows);
+        } catch (err) {
+            toast.error(formatApiError(err));
         }
-        setSubmitting(false);
+    }, []);
+
+    useEffect(() => {
+        loadOffers();
+        loadGuild();
+    }, [loadOffers, loadGuild]);
+    useEffect(() => {
+        if (tab === "sell") loadInventory();
+    }, [tab, loadInventory]);
+
+    async function buyOffer(offer) {
+        if (busy) return;
+        setBusy(true);
+        try {
+            const { data } = await api.post("/shop/buy", {
+                offer_id: offer.offer_id, quantity: 1,
+            });
+            toast.success(`Acquistato ${offer.item.name} ×1 (−${data.gold_spent} gold)`);
+            setGuildGold(data.guild_gold);
+            await loadOffers();
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            const status = err?.response?.status;
+            if (status === 402) toast.error("Oro insufficiente.");
+            else if (status === 409) toast.error("Offerta esaurita.");
+            else if (status === 410) toast.error("Offerta scaduta. Aggiorna la pagina.");
+            else if (status === 429) toast.error("Rallenta un attimo.");
+            else if (detail) toast.error(detail);
+            else toast.error(formatApiError(err));
+        } finally {
+            setBusy(false);
+        }
     }
 
-    if (items.length === 0) {
-        return (
-            <p className="text-muted-foreground text-sm" data-testid="market-sell-empty">
-                {t("market.sell_no_items")}
-            </p>
-        );
+    async function confirmSell() {
+        if (!selectedRow || busy) return;
+        setBusy(true);
+        try {
+            const { data } = await api.post("/shop/sell", {
+                instance_id: selectedRow.instance_id || selectedRow.id,
+                quantity: sellQty,
+            });
+            toast.success(`Venduto ${data.item_sold.name} ×${data.quantity} (+${data.gold_earned} gold)`);
+            setGuildGold(data.guild_gold);
+            setConfirmOpen(false);
+            setSelectedRow(null);
+            setSellQty(1);
+            await loadInventory();
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            const status = err?.response?.status;
+            if (status === 409 && detail?.startsWith("shop.sell.")) {
+                const reason = {
+                    "shop.sell.bound": "Oggetto bound — non vendibile.",
+                    "shop.sell.equipped": "Oggetto equipaggiato — rimuovi prima.",
+                    "shop.sell.listed": "Oggetto già in Asta.",
+                    "shop.sell.not_tradeable": "Oggetto non commerciabile.",
+                    "shop.sell.no_stock": "Stock insufficiente.",
+                }[detail] || detail;
+                toast.error(reason);
+            } else if (status === 429) toast.error("Rallenta un attimo.");
+            else toast.error(detail || formatApiError(err));
+        } finally {
+            setBusy(false);
+        }
     }
 
     return (
-        <div className="space-y-4 max-w-xl" data-testid="market-list-form">
-            <div className="space-y-2">
-                <label className="block text-xs tracking-widest text-muted-foreground">
-                    {t("market.sell_select_item")}
-                </label>
-                <select
-                    data-testid="market-sell-item"
-                    className="w-full bg-secondary border border-border rounded-sm px-2 py-2 text-sm"
-                    value={slug}
-                    onChange={(e) => { setSlug(e.target.value); setQty(1); }}
-                >
-                    {items.map((it) => (
-                        <option key={it.item?.slug} value={it.item?.slug}>
-                            {(it.item?.display_name_it || it.item?.display_name_en || it.item?.name)}
-                            {" — "}
-                            {t("market.available_qty")}: {it.available_quantity ?? (it.quantity || 0)}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-                <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
-                        {t("market.sell_quantity")} (max {maxQty})
-                    </label>
-                    <input
-                        type="number" min="1" max={maxQty}
-                        className="w-full bg-secondary border border-border rounded-sm px-2 py-2 text-sm"
-                        value={qty}
-                        onChange={(e) => setQty(Math.max(1, Math.min(maxQty, parseInt(e.target.value, 10) || 1)))}
-                        data-testid="market-sell-qty"
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
-                        {t("market.sell_price_unit")}
-                    </label>
-                    <input
-                        type="number" min="1"
-                        className="w-full bg-secondary border border-border rounded-sm px-2 py-2 text-sm"
-                        value={price}
-                        onChange={(e) => setPrice(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                        data-testid="market-sell-price"
-                    />
-                </div>
-            </div>
-
-            <div className="border border-border rounded-sm bg-secondary/40 p-3 text-sm space-y-1">
-                <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t("market.total")}</span>
-                    <span>{total}g</span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t("market.sell_fee_estimate")} ({fee}%)</span>
-                    <span>-{feeAmount}g</span>
-                </div>
-                <div className="flex justify-between border-t border-border pt-1 mt-1">
-                    <span className="text-amber">{t("market.sell_proceeds")}</span>
-                    <span className="text-amber" data-testid="market-sell-proceeds">{proceeds}g</span>
-                </div>
-            </div>
-
-            {!confirmOpen ? (
-                <button
-                    className="bg-amber text-background px-4 py-2 rounded-sm text-sm disabled:opacity-50"
-                    disabled={!slug || qty < 1 || price < 1}
-                    onClick={() => setConfirmOpen(true)}
-                    data-testid="market-sell-submit"
-                >
-                    {t("market.sell_btn")}
-                </button>
-            ) : (
-                <div className="border border-amber/50 rounded-sm p-3 bg-amber/5 space-y-2">
-                    <p className="text-xs">{t("market.sell_confirm")}</p>
-                    <div className="flex gap-2">
-                        <button
-                            className="bg-amber text-background px-3 py-1.5 rounded-sm text-xs"
-                            onClick={submitListing}
-                            disabled={submitting}
-                            data-testid="market-sell-confirm"
-                        >
-                            ✓ {t("market.sell_btn")}
-                        </button>
-                        <button
-                            className="border border-border px-3 py-1.5 rounded-sm text-xs"
-                            onClick={() => setConfirmOpen(false)}
-                        >
-                            ×
-                        </button>
+        <div className="min-h-screen bg-background text-foreground term-grid-bg">
+            <AppHeader subtitleKey="nav.market" />
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+                <div className="text-xs text-amber tracking-widest mb-2">:: MERCATO DI SISTEMA</div>
+                <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Mercato</h1>
+                        <p className="text-xs text-muted-foreground mt-1 max-w-2xl">
+                            Negozio gestito dal Mastro Mercante. Offerte giornaliere che ruotano alle <strong>04:00 UTC</strong>.
+                            Per vendere a un altro giocatore vai all&apos;<Link to="/auction" className="underline">Asta</Link>.
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-[10px] tracking-widest text-muted-foreground">ORO GILDA</div>
+                        <div className="text-amber text-xl font-medium tabular-nums" data-testid="shop-guild-gold">
+                            {guildGold !== null ? guildGold : "—"}
+                        </div>
                     </div>
                 </div>
-            )}
-        </div>
-    );
-}
 
-// ─── MINE TAB ────────────────────────────────────────────────────────────
-function MineTab({ token, lang, t, refreshGuild }) {
-    const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [confirmCancel, setConfirmCancel] = useState(null);
+                <div className="flex gap-1 mb-4 border-b border-border/60">
+                    <button
+                        type="button"
+                        data-testid="shop-tab-buy"
+                        onClick={() => setTab("buy")}
+                        className={"px-3 py-2 text-xs tracking-widest border-b-2 " + (tab === "buy" ? "border-amber text-amber" : "border-transparent text-muted-foreground")}
+                    >
+                        COMPRA
+                    </button>
+                    <button
+                        type="button"
+                        data-testid="shop-tab-sell"
+                        onClick={() => setTab("sell")}
+                        className={"px-3 py-2 text-xs tracking-widest border-b-2 " + (tab === "sell" ? "border-amber text-amber" : "border-transparent text-muted-foreground")}
+                    >
+                        VENDI AL MERCATO
+                    </button>
+                </div>
 
-    const load = useCallback(async () => {
-        setLoading(true);
-        const r = await authedFetch(token, `/market/listings/mine?lang=${lang}`);
-        if (r.ok) {
-            const body = await r.json();
-            setRows(body.listings || []);
-        }
-        setLoading(false);
-    }, [token, lang]);
+                {tab === "buy" && (
+                    <>
+                        <div className="text-[11px] text-muted-foreground mb-3 flex items-center justify-between">
+                            <span data-testid="shop-daily-offers">Offerte giornaliere ({offers.length})</span>
+                            <span data-testid="shop-countdown">
+                                Reset tra <strong>{relativeCountdown(nextResetAt)}</strong>
+                            </span>
+                        </div>
+                        {loading && <div className="text-xs text-muted-foreground">Caricamento…</div>}
+                        {!loading && offers.length === 0 && (
+                            <div className="border border-border bg-card rounded-sm p-6 text-center text-xs text-muted-foreground">
+                                Nessuna offerta disponibile oggi. Torna alle 04:00 UTC.
+                            </div>
+                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {offers.map((o) => (
+                                <div
+                                    key={o.offer_id}
+                                    data-testid={`shop-offer-card-${o.offer_id}`}
+                                    className="border border-border bg-card rounded-sm p-4 flex flex-col"
+                                >
+                                    <div className="flex items-start justify-between gap-2 mb-2">
+                                        <div className="font-medium text-sm">{o.item.name}</div>
+                                        <RarityBadge value={o.item.rarity} />
+                                    </div>
+                                    <div className="text-[11px] text-muted-foreground mb-3">
+                                        {o.item.item_type} · liv. {o.item.level_required}
+                                    </div>
+                                    <div className="flex items-center justify-between mb-3 text-xs">
+                                        <span>Prezzo: <strong className="text-amber">{o.buy_price} oro</strong></span>
+                                        <span className="text-muted-foreground">stock: {o.stock_remaining}/{o.max_quantity}</span>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        data-testid={`shop-buy-btn-${o.offer_id}`}
+                                        disabled={busy || o.stock_remaining < 1 || (guildGold !== null && guildGold < o.buy_price)}
+                                        onClick={() => buyOffer(o)}
+                                        className="h-8 px-3 text-xs bg-amber text-black hover:bg-amber/80 rounded-sm disabled:opacity-40"
+                                    >
+                                        {o.stock_remaining < 1 ? "Esaurito" :
+                                            (guildGold !== null && guildGold < o.buy_price) ? "Oro insuff." : "▶ Compra ×1"}
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
 
-    useEffect(() => { load(); }, [load]);
-
-    async function cancelListing(id) {
-        const r = await authedFetch(token, `/market/listings/${id}`, { method: "DELETE" });
-        const body = await r.json().catch(() => ({}));
-        if (r.ok && body.success) {
-            toast.success(t("market.toast_cancelled"));
-            setConfirmCancel(null);
-            await load();
-            await refreshGuild();
-        } else {
-            toast.error(body.detail || "Errore");
-        }
-    }
-
-    if (loading) return <p className="text-muted-foreground text-xs">…</p>;
-    if (rows.length === 0) {
-        return (
-            <p className="text-muted-foreground text-sm" data-testid="market-mine-empty">
-                {t("market.empty_mine")}
-            </p>
-        );
-    }
-
-    return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-xs border-collapse" data-testid="market-mine-table">
-                <thead>
-                    <tr className="text-muted-foreground tracking-widest">
-                        <th className="text-left py-2 px-2">item</th>
-                        <th className="text-right py-2 px-2">{t("market.qty")}</th>
-                        <th className="text-right py-2 px-2">{t("market.price_unit")}</th>
-                        <th className="text-right py-2 px-2">{t("market.total")}</th>
-                        <th className="text-left py-2 px-2">status</th>
-                        <th className="text-left py-2 px-2">{t("market.buyer")}</th>
-                        <th className="text-right py-2 px-2"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((l) => (
-                        <tr key={l.id} className="border-t border-border" data-testid={`market-mine-row-${l.id}`}>
-                            <td className="py-2 px-2">
-                                <span className={`${RARITY_COLOR[l.item.rarity] || ""}`}>
-                                    {l.item.name}
-                                </span>
-                                <span className="text-muted-foreground ml-2">
-                                    ({l.item.rarity}, lvl {l.item.level_required})
-                                </span>
-                            </td>
-                            <td className="text-right">{l.quantity}</td>
-                            <td className="text-right">{l.price_per_unit}g</td>
-                            <td className="text-right">{l.total_price}g</td>
-                            <td><Pill>{t(`market.status_${l.status}`)}</Pill></td>
-                            <td className="text-muted-foreground">{l.buyer?.guild_name || "—"}</td>
-                            <td className="text-right">
-                                {l.status === "active" && (
-                                    confirmCancel === l.id ? (
-                                        <span className="inline-flex gap-1">
-                                            <button
-                                                className="border border-rose-500/50 text-rose-300 px-2 py-1 rounded-sm"
-                                                onClick={() => cancelListing(l.id)}
-                                                data-testid={`market-cancel-confirm-${l.id}`}
-                                            >
-                                                ✓
-                                            </button>
-                                            <button
-                                                className="border border-border px-2 py-1 rounded-sm"
-                                                onClick={() => setConfirmCancel(null)}
-                                            >
-                                                ×
-                                            </button>
-                                        </span>
-                                    ) : (
-                                        <button
-                                            className="border border-border px-2 py-1 rounded-sm hover:bg-secondary"
-                                            onClick={() => setConfirmCancel(l.id)}
-                                            data-testid={`market-cancel-btn-${l.id}`}
+                {tab === "sell" && (
+                    <>
+                        <p className="text-[11px] text-muted-foreground mb-3">
+                            Vendi al Mercato di Sistema. Prezzo = 40% del prezzo d&apos;acquisto. Niente trattativa,
+                            niente attesa. Item bound/equipaggiati/in Asta sono esclusi.
+                        </p>
+                        {inventory.length === 0 ? (
+                            <div
+                                data-testid="shop-sell-empty"
+                                className="border border-border bg-card rounded-sm p-6 text-center text-xs text-muted-foreground"
+                            >
+                                Nessun oggetto vendibile nel deposito.
+                            </div>
+                        ) : (
+                            <div className="border border-border bg-card rounded-sm divide-y divide-border/40">
+                                {inventory.map((r) => (
+                                    <div
+                                        key={r.id}
+                                        data-testid={`shop-sell-row-${r.id}`}
+                                        className="flex items-center justify-between gap-3 px-4 py-2 text-xs"
+                                    >
+                                        <div className="flex items-center gap-2 flex-1">
+                                            <RarityBadge value={r.item.rarity} />
+                                            <span className="font-medium">{r.item.name}</span>
+                                            <span className="text-muted-foreground">×{r.available_quantity ?? r.quantity}</span>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            data-testid={`shop-sell-open-${r.id}`}
+                                            onClick={() => { setSelectedRow(r); setSellQty(1); setConfirmOpen(true); }}
+                                            className="h-7 px-3 text-[11px] bg-amber/80 text-black hover:bg-amber rounded-sm"
                                         >
-                                            {t("market.cancel_btn")}
-                                        </button>
-                                    )
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-}
+                                            Vendi
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
 
-// ─── PAGE ────────────────────────────────────────────────────────────────
-export default function Market() {
-    // Bug fix Phase 16: AuthContext exposes {user, guild, refreshGuild}, NOT
-    // {token, loading}. The previous code destructured non-existent fields,
-    // which made the useEffect below always trigger navigate("/login")
-    // (because `token` was undefined → `!token` was true). /login then
-    // GuestOnly-redirected back to /dashboard, producing the observed
-    // "Mercato → Dashboard" symptom.
-    // ProtectedRoute already guards `user` and `guild`, so this component
-    // does not need to re-check them.
-    const { user, guild, refreshGuild } = useAuth();
-    const token = typeof localStorage !== "undefined"
-        ? localStorage.getItem("orbus_token")
-        : null;
-    const { t, lang } = useT();
-    const [tab, setTab] = useState("buy");
-    const FEE = 5;
-
-    // Safety net only — ProtectedRoute is the real auth gate.
-    if (user === undefined || guild === undefined) return null;
-    if (!user || !guild) return null;
-
-    return (
-        <div className="min-h-screen bg-background text-foreground">
-            <AppHeader subtitleKey="nav.brand_subtitle_dashboard" />
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-                <header>
-                    <h1 className="text-3xl font-light tracking-wide">
-                        {t("market.title")}
-                    </h1>
-                    <p className="text-xs text-muted-foreground mt-1">
-                        {t("market.subtitle").replace("{fee}", FEE)}
-                    </p>
-                </header>
-
-                <nav className="flex items-center gap-1 border-b border-border" data-testid="market-tabs">
-                    {[
-                        ["buy", "tab_buy", "market-tab-buy"],
-                        ["sell", "tab_sell", "market-tab-sell"],
-                        ["mine", "tab_mine", "market-tab-mine"],
-                    ].map(([k, key, testid]) => (
-                        <button
-                            key={k}
-                            data-testid={testid}
-                            onClick={() => setTab(k)}
-                            className={`px-3 py-2 text-xs tracking-widest border-b-2 transition-colors ${
-                                tab === k
-                                    ? "border-amber text-amber"
-                                    : "border-transparent text-muted-foreground hover:text-foreground"
-                            }`}
-                        >
-                            {t(`market.${key}`)}
-                        </button>
-                    ))}
-                </nav>
-
-                <section>
-                    <SectionTitle>
-                        {tab === "buy" ? t("market.tab_buy")
-                            : tab === "sell" ? t("market.tab_sell")
-                            : t("market.tab_mine")}
-                    </SectionTitle>
-                    {tab === "buy" && <BuyTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} />}
-                    {tab === "sell" && <SellTab token={token} lang={lang} t={t} fee={FEE} refreshGuild={refreshGuild} />}
-                    {tab === "mine" && <MineTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} />}
-                </section>
+                {/* Sell confirm modal */}
+                {confirmOpen && selectedRow && (
+                    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+                        <div className="bg-card border border-amber rounded-sm max-w-sm w-full p-5" data-testid="shop-sell-confirm">
+                            <div className="text-xs text-amber tracking-widest mb-2">:: CONFERMA VENDITA</div>
+                            <div className="text-sm mb-4">
+                                Vendere <strong>{selectedRow.item.name}</strong> ×<strong>{sellQty}</strong>?
+                            </div>
+                            <div className="flex items-center gap-2 mb-4 text-xs">
+                                <label>Quantità:</label>
+                                <input
+                                    type="number" min="1"
+                                    max={selectedRow.available_quantity ?? selectedRow.quantity ?? 1}
+                                    value={sellQty}
+                                    onChange={(e) => setSellQty(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
+                                    data-testid="shop-sell-qty"
+                                    className="w-20 bg-background border border-border rounded-sm px-2 py-1"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <Button
+                                    type="button"
+                                    onClick={() => { setConfirmOpen(false); setSelectedRow(null); }}
+                                    className="h-8 px-3 text-xs bg-secondary text-foreground hover:bg-secondary/80 rounded-sm"
+                                >
+                                    Annulla
+                                </Button>
+                                <Button
+                                    type="button"
+                                    data-testid="shop-sell-confirm-btn"
+                                    disabled={busy}
+                                    onClick={confirmSell}
+                                    className="h-8 px-3 text-xs bg-amber text-black hover:bg-amber/80 rounded-sm disabled:opacity-50"
+                                >
+                                    Conferma
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );

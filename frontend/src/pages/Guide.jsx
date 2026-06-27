@@ -232,6 +232,40 @@ export default function Guide() {
 
                 <SectionBlock id="market" title="Mercato e Crafting">
                     <p>
+                        Il <strong>Mercato di Sistema</strong> (sezione <code>/market</code>) è il negozio gestito dal Mastro Mercante.
+                        Offre <strong>6 oggetti giornalieri</strong> che ruotano alle <strong>04:00 UTC</strong>.
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li><strong>Compra</strong>: paghi gold, ricevi materiali/consumabili Common/Uncommon. Niente Legendary, niente forge endgame: il Mercato è pensato per coprire i buchi di crafting, non per saltare la progressione.</li>
+                        <li><strong>Vendi</strong>: il Mercato compra ogni oggetto vendibile al <strong>40%</strong> del prezzo d&apos;acquisto (gap anti-exploit). Bound/equipaggiati/in Asta sono rifiutati con un motivo specifico.</li>
+                        <li><strong>Rate limit</strong>: max 10 transazioni / 10s per evitare scraping.</li>
+                        <li><strong>Quantità max</strong>: 99 per transazione.</li>
+                    </ul>
+                    <p className="mt-2">
+                        Il <strong>Crafting</strong> consuma materiali del deposito per produrre oggetti seguendo ricette. Vedi
+                        il tab Crafting (collegato dal deposito) per la lista delle ricette sbloccate.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Vuoi vendere a un altro giocatore? Vai all&apos;<strong>Asta</strong> (sezione successiva).
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="auction" title="Asta (player-to-player)">
+                    <p>
+                        L&apos;<strong>Asta</strong> (sezione <code>/auction</code>) è il marketplace dove le gilde si scambiano oggetti
+                        a <strong>prezzo fisso</strong> (niente bidding per ora).
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li><strong>Compra da giocatori</strong>: cerca per tipo, rarità, prezzo, livello. Vedi solo il nome pubblico della gilda venditrice — mai email o user id.</li>
+                        <li><strong>Vendi all&apos;Asta</strong>: scegli un oggetto vendibile (non bound, non equipaggiato, tradeable), imposta prezzo per unità e quantità. La gilda acquirente paga, tu ricevi gold meno la commissione di sistema.</li>
+                        <li><strong>Le mie inserzioni</strong>: puoi cancellare le tue listing in qualsiasi momento prima dell&apos;acquisto.</li>
+                        <li><strong>Acquisto atomico</strong>: oro debitato, oggetto trasferito, listing rimossa in una sola transazione. Niente duplicazioni, niente perdite.</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Differenze rispetto al Mercato: il Mercato di Sistema è sempre disponibile a prezzo fisso (anti-grind), l&apos;Asta è un marketplace libero tra giocatori. Le vecchie URL <code>/api/market/listings*</code> continuano a funzionare via redirect automatico.
+                    </p>
+                </SectionBlock>
+                    <p>
                         Il <strong>Mercato</strong> ti permette di mettere in vendita oggetti del deposito a prezzo fisso
                         (in gold). Altri giocatori possono acquistarli. Tassa di transazione: 5%.
                     </p>

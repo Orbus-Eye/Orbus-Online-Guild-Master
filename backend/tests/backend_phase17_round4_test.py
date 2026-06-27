@@ -225,7 +225,7 @@ def test_04_openapi_path_count():
     assert r.status_code == 200
     paths = list(r.json()["paths"].keys())
     # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-    assert len(paths) == 79, f"expected 75 paths, got {len(paths)}: {sorted(paths)}"
+    assert len(paths) == 86, f"expected 75 paths, got {len(paths)}: {sorted(paths)}"
 
 
 def test_05_sets_and_enchants_public_routes():
