@@ -66,6 +66,7 @@ export default function Dungeons() {
     const [panelOpen, setPanelOpen] = useState(false);
 
     // ROUND 6A.2c — fetch the saved squad referenced by ?squad_id and lock team_size filter.
+    // ROUND 6A.2c.fix — explicit Italian copy for cross-type guard + invalid id (TEST 2c/2d).
     useEffect(() => {
         if (!squadIdParam) {
             setActiveSquad(null);
@@ -78,13 +79,17 @@ export default function Dungeons() {
                 if (cancelled) return;
                 const found = (data.squads || []).find((s) => s.squad_id === squadIdParam);
                 if (!found) {
-                    toast.error("Squadra non trovata o archiviata");
+                    toast.warning(
+                        "Squadra non trovata. La squadra potrebbe essere stata archiviata.",
+                    );
                     setActiveSquad(null);
                     setSearchParams({}, { replace: true });
                     return;
                 }
                 if (found.squad_type === "raid_20") {
-                    toast.error("Questa squadra è per raid (20), usa /raids");
+                    toast.warning(
+                        "Questa squadra è per raid (20 avventurieri). Vai alla pagina Raid.",
+                    );
                     setActiveSquad(null);
                     setSearchParams({}, { replace: true });
                     return;

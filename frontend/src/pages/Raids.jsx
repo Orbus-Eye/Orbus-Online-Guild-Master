@@ -58,16 +58,29 @@ export default function Raids() {
 
     useEffect(() => { load(); }, []);
 
-    // ROUND 6A.2c — fetch the saved squad referenced by ?squad_id (raid_20 only).
+    // ROUND 6A.2c — fetch the saved squad referenced by ?squad_id.
+    // ROUND 6A.2c.fix — fetch ALL squads (not only raid_20) so we can detect
+    // cross-type IDs and surface an explicit Italian toast, mirroring the
+    // Dungeons.jsx guard.
     useEffect(() => {
         if (!squadIdParam) { setActiveSquad(null); return; }
         let cancelled = false;
-        api.get("/squads?type=raid_20")
+        api.get("/squads")
             .then(({ data }) => {
                 if (cancelled) return;
                 const found = (data.squads || []).find((s) => s.squad_id === squadIdParam);
                 if (!found) {
-                    toast.error("Squadra raid non trovata o archiviata");
+                    toast.warning(
+                        "Squadra non trovata. La squadra potrebbe essere stata archiviata.",
+                    );
+                    setActiveSquad(null);
+                    setSearchParams({}, { replace: true });
+                    return;
+                }
+                if (found.squad_type !== "raid_20") {
+                    toast.warning(
+                        "Questa squadra è per dungeon. Vai alla pagina Dungeon.",
+                    );
                     setActiveSquad(null);
                     setSearchParams({}, { replace: true });
                     return;
