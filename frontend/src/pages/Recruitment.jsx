@@ -177,6 +177,26 @@ export default function Recruitment() {
         fetchCandidates();
     }, [fetchCandidates]);
 
+    const [territoryState, setTerritoryState] = useState(null);
+
+    const fetchTerritoryCap = useCallback(async () => {
+        try {
+            const [terr, advs] = await Promise.all([
+                api.get("/territory"),
+                api.get("/adventurers"),
+            ]);
+            const dormLevel = Number(terr.data?.territory?.structures?.dormitories?.level || 0);
+            const capByLevel = [0, 5, 10, 15, 20, 25, 30, 50];
+            const cap = capByLevel[dormLevel] || 0;
+            const current = (advs.data?.adventurers || []).length;
+            setTerritoryState({ cap, current, dormitory_level: dormLevel, headroom: Math.max(0, cap - current) });
+        } catch {
+            // best-effort; banner just won't show
+        }
+    }, []);
+
+    useEffect(() => { fetchTerritoryCap(); }, [fetchTerritoryCap]);
+
     const handleRecruit = async (candidate) => {
         setRecruiting(candidate.candidate_id);
         try {
@@ -188,10 +208,23 @@ export default function Recruitment() {
             setCandidates((prev) =>
                 prev ? prev.filter((c) => c.candidate_id !== candidate.candidate_id) : prev,
             );
-            // Refresh guild gold + adventurer count
+            // Refresh guild gold + adventurer count + cap state
             await refreshGuild();
+            fetchTerritoryCap();
         } catch (err) {
-            toast.error(formatApiError(err));
+            const detail = err?.response?.data?.detail;
+            if (detail?.code === "recruitment.cap_reached") {
+                toast.error(detail.user_message || `Roster pieno (${detail.current}/${detail.cap}). Potenzia i Dormitori.`, {
+                    action: {
+                        label: "Vai al Territorio",
+                        onClick: () => { window.location.href = "/territory"; },
+                    },
+                    duration: 6000,
+                });
+                fetchTerritoryCap();
+            } else {
+                toast.error(formatApiError(err));
+            }
         } finally {
             setRecruiting(null);
         }
@@ -230,6 +263,39 @@ export default function Recruitment() {
                                 {gold}
                             </div>
                         </div>
+                        {territoryState && (
+                            <div
+                                data-testid="recruitment-roster-banner"
+                                className={`flex-1 sm:max-w-xs px-3 py-2 border rounded-sm text-xs ${
+                                    territoryState.current >= territoryState.cap
+                                        ? "border-red-400/60 bg-red-500/10 text-red-200"
+                                        : "border-border bg-secondary/30 text-muted-foreground"
+                                }`}
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <span className="tracking-widest font-bold text-[10px]">ROSTER</span>
+                                    <span data-testid="recruitment-roster-count">
+                                        <strong className="text-foreground">{territoryState.current}</strong>
+                                        /{territoryState.cap}
+                                    </span>
+                                </div>
+                                <div className="w-full bg-background/50 h-1 rounded-sm mt-1.5 overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all ${territoryState.current >= territoryState.cap ? "bg-red-400" : "bg-amber"}`}
+                                        style={{ width: `${Math.min(100, Math.round((territoryState.current / Math.max(territoryState.cap, 1)) * 100))}%` }}
+                                    />
+                                </div>
+                                {territoryState.current >= territoryState.cap && (
+                                    <a
+                                        href="/territory"
+                                        data-testid="recruitment-cap-cta"
+                                        className="block mt-2 text-[10px] text-amber tracking-widest hover:underline"
+                                    >
+                                        ▶ POTENZIA DORMITORI
+                                    </a>
+                                )}
+                            </div>
+                        )}
                         <div className="flex flex-col items-end gap-1">
                             <Button
                                 data-testid="refresh-candidates-btn"

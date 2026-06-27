@@ -48,7 +48,8 @@
     "auction": "ASTA",
     "chat": "CHAT",
     "guide": "GUIDA",
-    "squads": "SQUADRE"
+    "squads": "SQUADRE",
+    "territory": "TERRITORIO"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -1138,5 +1139,37 @@
       "fainted": "svenuto",
       "complete_now": "Forza completamento (smoke)"
     }
+  },
+  "territory": {
+    "title": "TERRITORIO",
+    "subtitle": "Strutture e progressione gilda",
+    "status": {
+      "locked": "Bloccata",
+      "buyable": "Acquistabile",
+      "upgradable": "Potenziabile",
+      "max": "Livello massimo",
+      "legacy": "Legacy"
+    },
+    "cta": {
+      "buy": "Compra",
+      "upgrade": "Potenzia",
+      "locked_prereq": "Sblocca prima",
+      "max_reached": "Livello massimo"
+    }
+  },
+  "adventurers_retire": {
+    "button": "Congeda",
+    "modal_title": "Congeda avventuriero",
+    "force_unequip_label": "Disequipaggia automaticamente",
+    "reason_placeholder": "Motivo (opzionale)",
+    "confirm": "Conferma",
+    "cancel": "Annulla"
+  },
+  "recruitment_cap": {
+    "label": "Capienza Dormitori",
+    "banner_cta": "Potenzia Dormitori"
+  },
+  "feature_locked": {
+    "cta": "Vai al Territorio"
   }
 }

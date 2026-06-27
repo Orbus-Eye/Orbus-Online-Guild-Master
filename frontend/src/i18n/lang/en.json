@@ -48,7 +48,8 @@
     "auction": "AUCTION",
     "chat": "CHAT",
     "guide": "GUIDE",
-    "squads": "SQUADS"
+    "squads": "SQUADS",
+    "territory": "TERRITORY"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -1138,5 +1139,37 @@
       "fainted": "fainted",
       "complete_now": "Force complete (smoke)"
     }
+  },
+  "territory": {
+    "title": "TERRITORY",
+    "subtitle": "Guild structures & progression",
+    "status": {
+      "locked": "Locked",
+      "buyable": "Available",
+      "upgradable": "Upgradable",
+      "max": "Max level",
+      "legacy": "Legacy"
+    },
+    "cta": {
+      "buy": "Buy",
+      "upgrade": "Upgrade",
+      "locked_prereq": "Unlock first",
+      "max_reached": "Max level"
+    }
+  },
+  "adventurers_retire": {
+    "button": "Retire",
+    "modal_title": "Retire adventurer",
+    "force_unequip_label": "Auto-unequip",
+    "reason_placeholder": "Reason (optional)",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "recruitment_cap": {
+    "label": "Dormitory capacity",
+    "banner_cta": "Upgrade Dormitories"
+  },
+  "feature_locked": {
+    "cta": "Go to Territory"
   }
 }

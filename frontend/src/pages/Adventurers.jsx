@@ -114,13 +114,53 @@ export default function Adventurers() {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
     const [renaming, setRenaming] = useState(null);
+    const [retiring, setRetiring] = useState(null);
+    const [retireBusy, setRetireBusy] = useState(false);
+    const [retireForceUnequip, setRetireForceUnequip] = useState(false);
+    const [retireReason, setRetireReason] = useState("");
 
     const openSheet = (a) => setSelected(a);
     const closeSheet = () => setSelected(null);
     const openRename = (a) => setRenaming(a);
     const closeRename = () => setRenaming(null);
+    const openRetire = (a) => {
+        setRetiring(a);
+        setRetireForceUnequip(false);
+        setRetireReason("");
+    };
+    const closeRetire = () => setRetiring(null);
     const onRenamed = (updated) => {
         setRows((prev) => (prev || []).map((r) => (r.id === updated.id ? updated : r)));
+    };
+    const doRetire = async () => {
+        if (!retiring) return;
+        setRetireBusy(true);
+        try {
+            await api.post(`/adventurers/${retiring.id}/retire`, {
+                reason: retireReason || null,
+                force_unequip: retireForceUnequip,
+            });
+            setRows((prev) => (prev || []).filter((r) => r.id !== retiring.id));
+            toast.success(`${retiring.name} congedato/a`);
+            closeRetire();
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            const code = detail?.code;
+            if (code === "adventurer.in_expedition") {
+                toast.error(detail.user_message || "Avventuriero impegnato in una spedizione/raid attivo.");
+            } else if (code === "adventurer.in_squad") {
+                const squadNames = (detail.squads || []).map((s) => s.name).join(", ");
+                toast.error(`Rimuovi prima dalle squadre: ${squadNames}`);
+            } else if (code === "adventurer.equipped") {
+                toast.error(`${detail.equipped_count} oggetti equipaggiati. Spunta "Disequipaggia e congeda" per procedere.`);
+            } else if (code === "adventurer.already_retired") {
+                toast.warning("Avventuriero già congedato");
+            } else {
+                toast.error(formatApiError(err));
+            }
+        } finally {
+            setRetireBusy(false);
+        }
     };
 
     useEffect(() => {
@@ -270,6 +310,15 @@ export default function Adventurers() {
                                                     >
                                                         ✎ rinomina ({a.renames_remaining ?? 2}/2)
                                                     </button>
+                                                    <button
+                                                        type="button"
+                                                        data-testid={`adventurer-retire-btn-${a.id}`}
+                                                        onClick={() => openRetire(a)}
+                                                        className="text-[11px] text-muted-foreground hover:text-red-400 text-left"
+                                                        title="Congeda l'avventuriero (soft retire)"
+                                                    >
+                                                        ⊘ congeda
+                                                    </button>
                                                 </div>
                                             </td>
                                             <td className="px-3 py-2 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
@@ -390,6 +439,71 @@ export default function Adventurers() {
 
             <AdventurerDetailModal adventurer={selected} onClose={closeSheet} />
             <AdventurerRenameModal adventurer={renaming} onClose={closeRename} onRenamed={onRenamed} />
+            {retiring && (
+                <div
+                    data-testid="adventurer-retire-modal"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+                    onClick={closeRetire}
+                >
+                    <div
+                        className="bg-card border border-border rounded-sm max-w-md w-full p-6"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-base font-bold tracking-widest mb-2" data-testid="adventurer-retire-modal-title">
+                            CONGEDA AVVENTURIERO
+                        </h3>
+                        <div className="text-sm mb-3">
+                            <div className="text-foreground font-bold">{retiring.name}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                                {retiring.class_name} · {retiring.role || retiring.class_role || "—"} · Lv{retiring.level} · PWR {retiring.total_power ?? retiring.power}
+                            </div>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">
+                            Il congedo è soft: lo storico delle spedizioni resta, lo slot del roster viene liberato.
+                            L&apos;avventuriero non sarà più selezionabile.
+                        </p>
+                        <label className="flex items-center gap-2 text-[11px] mb-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                data-testid="adventurer-retire-modal-force-unequip"
+                                checked={retireForceUnequip}
+                                onChange={(e) => setRetireForceUnequip(e.target.checked)}
+                                className="accent-amber"
+                            />
+                            <span>Disequipaggia automaticamente se ha oggetti attivi</span>
+                        </label>
+                        <input
+                            type="text"
+                            data-testid="adventurer-retire-modal-reason"
+                            placeholder="Motivo (opzionale)"
+                            value={retireReason}
+                            onChange={(e) => setRetireReason(e.target.value)}
+                            maxLength={200}
+                            className="w-full mb-4 px-3 py-2 text-xs bg-background border border-border rounded-sm focus:outline-none focus:border-amber"
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={closeRetire}
+                                disabled={retireBusy}
+                                data-testid="adventurer-retire-modal-cancel"
+                                className="flex-1 px-3 py-2 text-[11px] tracking-widest border border-border text-muted-foreground hover:text-foreground transition-colors rounded-sm"
+                            >
+                                ANNULLA
+                            </button>
+                            <button
+                                type="button"
+                                onClick={doRetire}
+                                disabled={retireBusy}
+                                data-testid="adventurer-retire-modal-confirm"
+                                className="flex-1 px-3 py-2 text-[11px] tracking-widest font-bold bg-red-500/80 text-white hover:bg-red-500 transition-colors rounded-sm disabled:opacity-50"
+                            >
+                                {retireBusy ? "..." : "CONFERMA"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

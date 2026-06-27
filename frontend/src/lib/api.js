@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -27,8 +28,24 @@ export const setUnauthorizedHandler = (fn) => {
 api.interceptors.response.use(
     (res) => res,
     (err) => {
-        if (err?.response?.status === 401 && typeof onUnauthorized === "function") {
+        const status = err?.response?.status;
+        if (status === 401 && typeof onUnauthorized === "function") {
             onUnauthorized();
+        }
+        // ROUND 6B.2b — Global 423 Locked handler (feature.locked from territory guards).
+        if (status === 423) {
+            const detail = err?.response?.data?.detail;
+            if (detail && detail.code === "feature.locked") {
+                const msg = detail.user_message
+                    || `Funzione bloccata: richiede ${detail.required_structure_name_it || detail.required_structure} Lv${detail.required_level}`;
+                toast.warning(msg, {
+                    action: {
+                        label: "Vai al Territorio",
+                        onClick: () => { window.location.href = "/territory"; },
+                    },
+                    duration: 6000,
+                });
+            }
         }
         return Promise.reject(err);
     },

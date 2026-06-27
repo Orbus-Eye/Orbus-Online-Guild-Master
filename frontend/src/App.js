@@ -33,6 +33,7 @@ import Chat from "@/pages/Chat";
 import Auction from "@/pages/Auction";
 import Squads from "@/pages/Squads";
 import SquadBuilder from "@/pages/SquadBuilder";
+import Territory from "@/pages/Territory";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -205,6 +206,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <SquadBuilder />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/territory"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Territory />
                                 </ProtectedRoute>
                             }
                         />
