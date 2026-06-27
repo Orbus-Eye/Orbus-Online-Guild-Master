@@ -199,7 +199,8 @@ class TestChatMVP:
     def test_C9_openapi_path_count_now_79(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = list(r.json()["paths"].keys())
-        assert len(paths) == 86, f"expected 79 (77 + 2 chat paths), got {len(paths)}"
+        # ROUND 6A.2a added 2 squads paths (/api/squads, /api/squads/{squad_id}).
+        assert len(paths) == 88, f"expected 88 (86 + 2 squads paths), got {len(paths)}"
         # Sanity: all 4 chat paths present
         for p in [
             "/api/chat/global",

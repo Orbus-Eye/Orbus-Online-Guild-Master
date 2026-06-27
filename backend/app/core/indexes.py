@@ -136,5 +136,23 @@ async def create_all_indexes(db) -> None:
         name="password_reset_ttl",
     )
 
+    # ─── ROUND 6A.2a — Squads ────────────────────────────────────────────────
+    await db.squads.create_index([("id", ASCENDING)], unique=True, name="squads_id_unique")
+    await db.squads.create_index(
+        [("guild_id", ASCENDING), ("squad_type", ASCENDING)],
+        name="squads_guild_type_idx",
+    )
+    await db.squads.create_index(
+        [("owner_user_id", ASCENDING), ("is_archived", ASCENDING)],
+        name="squads_owner_active_idx",
+    )
+    # Case-insensitive name uniqueness per guild (only enforced on non-archived).
+    await db.squads.create_index(
+        [("guild_id", ASCENDING), ("name_lower", ASCENDING)],
+        unique=True,
+        partialFilterExpression={"is_archived": False},
+        name="squads_guild_name_unique_active",
+    )
+
 
 __all__ = ["create_all_indexes"]

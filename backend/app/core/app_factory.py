@@ -99,6 +99,7 @@ def create_app() -> FastAPI:
     from app.chat.routes import router as chat_router
     from app.shop.routes import router as shop_router
     from app.auction.routes import router as auction_router
+    from app.squads.routes import router as squads_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -121,6 +122,7 @@ def create_app() -> FastAPI:
     app.include_router(chat_router)
     app.include_router(shop_router)
     app.include_router(auction_router)
+    app.include_router(squads_router)
 
     return app
 

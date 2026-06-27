@@ -11,14 +11,15 @@ const SECTIONS = [
     { id: "ruoli", label: "3. Avventurieri e ruoli" },
     { id: "dungeon", label: "4. Dungeon / Spedizioni" },
     { id: "raid", label: "5. Raid" },
-    { id: "forge", label: "6. Equipaggiamento e Forge" },
-    { id: "vault", label: "7. Deposito / Inventario" },
-    { id: "market", label: "8. Mercato e Crafting" },
-    { id: "quest", label: "9. Quest e Streak" },
-    { id: "consortium", label: "10. Cronaca e Consorzi" },
-    { id: "chat", label: "11. Chat" },
-    { id: "privacy", label: "12. Privacy & Sicurezza" },
-    { id: "tips", label: "13. Suggerimenti base" },
+    { id: "squadre", label: "6. Squadre Personalizzate" },
+    { id: "forge", label: "7. Equipaggiamento e Forge" },
+    { id: "vault", label: "8. Deposito / Inventario" },
+    { id: "market", label: "9. Mercato e Crafting" },
+    { id: "quest", label: "10. Quest e Streak" },
+    { id: "consortium", label: "11. Cronaca e Consorzi" },
+    { id: "chat", label: "12. Chat" },
+    { id: "privacy", label: "13. Privacy & Sicurezza" },
+    { id: "tips", label: "14. Suggerimenti base" },
 ];
 
 const SectionBlock = ({ id, title, children }) => (
@@ -237,6 +238,50 @@ export default function Guide() {
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Un avventuriero già assegnato a un party scompare automaticamente dal pool: i filtri
                         non rompono mai i party in costruzione.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="squadre" title="Squadre Personalizzate">
+                    <p>
+                        Le <strong>Squadre</strong> sono raggruppamenti di avventurieri salvati per riusarli
+                        all&apos;istante. Sono <strong>pura comodità UX</strong>: nessun bonus al power, nessun
+                        effetto magico. Servono solo a evitare di riselezionare manualmente lo stesso team
+                        ogni volta che lanci una spedizione o un raid.
+                    </p>
+                    <p className="mt-2">Sono di 3 tipi, in base al contenuto:</p>
+                    <ul className="mt-2 space-y-1 text-[12px]">
+                        <li><strong>Dungeon 3</strong> — 3 avventurieri per dungeon a 3 slot</li>
+                        <li><strong>Dungeon 5</strong> — 5 avventurieri per dungeon a 5 slot</li>
+                        <li><strong>Raid 20</strong> — 20 avventurieri organizzati in 4 party da 5</li>
+                    </ul>
+                    <p className="mt-3">
+                        <strong>Come crearle</strong>: vai su <code className="text-amber">/squads</code> →
+                        click <strong>+ Nuova</strong> nella sezione del tipo desiderato. Cerca/filtra gli
+                        avventurieri dal pool a sinistra, clicca per assegnare. Il power totale e gli
+                        eventuali warning composizione (Manca Tank, Manca Healer, Troppi DPS) sono
+                        ricalcolati in tempo reale. Salva quando il counter è pieno (es. 5/5).
+                    </p>
+                    <p className="mt-2">
+                        <strong>Raid 20</strong>: il builder mostra 4 party slot (2×2 grid). Seleziona la party
+                        attiva con il dropdown, poi clicca dal pool. Nessun avventuriero può finire in due
+                        party diverse dello stesso raid.
+                    </p>
+                    <p className="mt-2">
+                        <strong>Modifica / Archivia</strong>: dalla lista, ogni card squadra ha
+                        <em> Modifica</em> e <em>Archivia</em>. L&apos;archiviazione è soft: la squadra non
+                        viene mai eliminata davvero, scompare solo dalla lista attiva. Puoi sempre crearne
+                        una nuova con lo stesso nome dopo aver archiviato.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Limiti: nome 2-32 caratteri, niente HTML. Un avventuriero in spedizione/raid in corso
+                        appare come <em>non disponibile</em> nella card squadra ma resta salvato — quando torna
+                        libero, la squadra è di nuovo utilizzabile com&apos;è.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        <strong>Integrazione con expedition/raid</strong>: in arrivo nel prossimo update
+                        (ROUND 6A.2b) — un selettore &quot;Carica squadra&quot; dentro
+                        <code className="text-amber"> /expeditions/new</code> e
+                        <code className="text-amber"> /raids/builder</code> per popolare il team con un click.
                     </p>
                 </SectionBlock>
 

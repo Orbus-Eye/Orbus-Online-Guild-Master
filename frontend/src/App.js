@@ -31,6 +31,8 @@ import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
 import Chat from "@/pages/Chat";
 import Auction from "@/pages/Auction";
+import Squads from "@/pages/Squads";
+import SquadBuilder from "@/pages/SquadBuilder";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -179,6 +181,30 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Inventory />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/squads"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Squads />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/squads/new"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <SquadBuilder />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/squads/:id/edit"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <SquadBuilder />
                                 </ProtectedRoute>
                             }
                         />

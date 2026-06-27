@@ -47,7 +47,8 @@
     "raids": "RAID",
     "auction": "ASTA",
     "chat": "CHAT",
-    "guide": "GUIDA"
+    "guide": "GUIDA",
+    "squads": "SQUADRE"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
