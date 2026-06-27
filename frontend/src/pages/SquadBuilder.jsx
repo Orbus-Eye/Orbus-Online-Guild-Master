@@ -182,6 +182,36 @@ export default function SquadBuilder() {
 
     const [activeParty, setActiveParty] = useState("party_1");
 
+    // ROUND 6A.2a — derived `canSave` so the Save button mirrors backend
+    // validation exactly. Avoids the confusing 422 round-trip the tester
+    // flagged on partial raid_20 fills.
+    const nameOk = name.trim().length >= 2;
+    const sizeOk = filledCount === meta.size;
+    const partyOk = !isRaid || ["party_1", "party_2", "party_3", "party_4"].every(
+        (p) => parties[p].length === 5,
+    );
+    const canSave = nameOk && sizeOk && partyOk;
+    // Reason hint shown as `title` tooltip on the disabled button.
+    let saveDisabledReason = "";
+    if (!nameOk) {
+        saveDisabledReason = lang === "it"
+            ? "Nome richiesto (min 2 caratteri)"
+            : "Name required (min 2 chars)";
+    } else if (!sizeOk) {
+        const missing = meta.size - filledCount;
+        saveDisabledReason = lang === "it"
+            ? `Mancano ${missing} avventurieri`
+            : `Missing ${missing} adventurers`;
+    } else if (!partyOk) {
+        const wrong = ["party_1", "party_2", "party_3", "party_4"]
+            .map((p, i) => ({ p, i, n: parties[p].length }))
+            .filter((x) => x.n !== 5);
+        const detail = wrong.map((x) => `P${x.i + 1}: ${x.n}/5`).join(", ");
+        saveDisabledReason = lang === "it"
+            ? `Party incomplete (${detail})`
+            : `Incomplete parties (${detail})`;
+    }
+
     const save = async () => {
         if (!name.trim()) {
             toast.error(lang === "it" ? "Nome obbligatorio" : "Name required");
@@ -270,9 +300,14 @@ export default function SquadBuilder() {
                         <button
                             type="button"
                             onClick={save}
-                            disabled={saving}
+                            disabled={saving || !canSave}
+                            title={canSave ? "" : saveDisabledReason}
                             data-testid="squad-save-btn"
-                            className="px-4 py-2 text-xs tracking-widest font-bold bg-amber text-background hover:opacity-90 transition-opacity rounded-sm disabled:opacity-40"
+                            className={`px-4 py-2 text-xs tracking-widest font-bold rounded-sm transition-opacity ${
+                                canSave
+                                    ? "bg-amber text-background hover:opacity-90"
+                                    : "bg-amber/40 text-background/60 cursor-not-allowed opacity-60"
+                            } disabled:opacity-40`}
                         >
                             {saving ? "..." : lang === "it" ? "Salva" : "Save"}
                         </button>
