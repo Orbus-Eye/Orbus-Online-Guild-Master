@@ -185,6 +185,11 @@ async def retire_adventurer(
         "is_available": False,  # also frees the busy-state used by recruit/raid
         "retired_at": now,
         "retirement_reason": (reason or "").strip()[:200] or None,
+        # ROUND 6B.3 Wave 1.5 — track who/what triggered the retire.
+        # Values: "user" (this endpoint), "system" (future automation),
+        # "auto_over_cap" (future bulk cleanup). Legacy retires before
+        # Wave 1.5 stay `None` and are treated as "user" by readers.
+        "retired_by": "user",
         "updated_at": now,
     }
     await db.adventurers.update_one(

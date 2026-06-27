@@ -512,6 +512,7 @@ async def _dispatch_expedition(
         )
 
     members_live = []
+    retired_ids: list[str] = []
     for aid in ids:
         adv = await db.adventurers.find_one(
             {"id": aid, "guild_id": guild["id"]}, {"_id": 0}
@@ -521,12 +522,31 @@ async def _dispatch_expedition(
                 status_code=404,
                 detail=f"Adventurer {aid} not found in your guild",
             )
+        if adv.get("is_retired") is True:
+            retired_ids.append(aid)
+            continue
         if not adv.get("is_available", True):
             raise HTTPException(
                 status_code=400,
                 detail=f"Adventurer {adv['name']} is not available",
             )
         members_live.append(adv)
+    # ROUND 6B.3 Wave 1.5 — explicit retired check (423 with structured detail)
+    if retired_ids:
+        raise HTTPException(
+            status_code=423,
+            detail={
+                "code": "adventurers.retired_in_set",
+                "source": "expedition.dispatch",
+                "retired_adventurer_ids": retired_ids,
+                "count": len(retired_ids),
+                "user_message": (
+                    f"La spedizione include {len(retired_ids)} avventurier"
+                    f"{'i' if len(retired_ids) > 1 else 'o'} congedat"
+                    f"{'i' if len(retired_ids) > 1 else 'o'}. Rimuovili dalla selezione."
+                ),
+            },
+        )
 
     # Phase 6: load equipment for each member; snapshot is frozen at departure.
     # Phase 13: also snapshot the active traits so completion can resolve

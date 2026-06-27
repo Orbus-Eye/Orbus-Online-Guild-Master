@@ -88,6 +88,10 @@ EVENT_TYPES = frozenset({
     # ROUND 6B.2a — Cap + Retire
     "adventurer_cap_reached",
     "adventurer_retired",
+    # ROUND 6B.3 Wave 1 — Territory rollback
+    "guild_structure_rollback_free_purchase",
+    # ROUND 6B.3 Wave 1.5 — Over-cap roster enforcement
+    "roster_over_capacity_blocked",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

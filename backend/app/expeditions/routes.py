@@ -1,4 +1,4 @@
-"""Expedition HTTP routes (Phase 5.5e).
+"""Expedition HTTP routes (Phase 5.5e + ROUND 6B.3 Wave 1.5 over-cap guard).
 
 Route order matters: `/last-completed` and `/replay-last` are registered
 BEFORE the `/{expedition_id}` catch-all so FastAPI doesn't capture the
@@ -19,12 +19,17 @@ from app.expeditions.services import (
     start_expedition,
 )
 from app.guilds.services import user_guild_or_404
+from app.territory.cap_guard import over_cap_dep
 
 
 router = APIRouter(prefix="/api/expeditions", tags=["expeditions"])
 
 
-@router.post("", status_code=201)
+@router.post(
+    "",
+    status_code=201,
+    dependencies=[Depends(over_cap_dep("expedition.create"))],
+)
 async def start_expedition_route(
     payload: ExpeditionCreateIn,
     current_user: dict = Depends(get_current_user),
@@ -39,7 +44,9 @@ async def preview_expedition_route(
     current_user: dict = Depends(get_current_user),
 ):
     """Phase 14.3-c — read-only preview: success chance, injury risk,
-    expected reward, modifiers list. NEVER writes to DB."""
+    expected reward, modifiers list. NEVER writes to DB.
+    Wave 1.5 — intentionally NOT gated by over-cap; the FE shows a warning
+    banner using the cap_state from the dashboard widget."""
     guild = await user_guild_or_404(db, current_user["id"])
     return await preview_expedition(
         db, guild, payload.dungeon_id, payload.adventurer_ids
@@ -52,7 +59,11 @@ async def get_last_completed_route(current_user: dict = Depends(get_current_user
     return await get_last_completed(db, guild)
 
 
-@router.post("/replay-last", status_code=201)
+@router.post(
+    "/replay-last",
+    status_code=201,
+    dependencies=[Depends(over_cap_dep("expedition.replay"))],
+)
 async def replay_last_route(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
     return await replay_last(db, guild)

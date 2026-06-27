@@ -79,7 +79,10 @@ def _set_structure(db, guild_id, slug, level):
 
 # ─── Cap guard ────────────────────────────────────────────────────────────
 
-def test_recruitment_cap_reached_blocks_with_422(db):
+def test_recruitment_cap_reached_blocks_with_423(db):
+    """ROUND 6B.3 Wave 1.5 — recruitment over-cap now returns 423 with
+    code `roster_over_capacity` (was 422 `recruitment.cap_reached`).
+    The semantics are unified across recruit/expedition/raid/squad/equip."""
     h, g = _fresh_user(db, "cap")
     # Force the lazy doc creation
     requests.get(f"{BASE_URL}/api/territory", headers=h, timeout=15)
@@ -90,13 +93,13 @@ def test_recruitment_cap_reached_blocks_with_422(db):
     candidate_id = cand.json()["candidates"][0]["candidate_id"]
     r = requests.post(f"{BASE_URL}/api/recruitment/recruit",
                       json={"candidate_id": candidate_id}, headers=h, timeout=15)
-    assert r.status_code == 422
+    assert r.status_code == 423, r.text
     detail = r.json()["detail"]
-    assert detail["code"] == "recruitment.cap_reached"
+    assert detail["code"] == "roster_over_capacity"
     assert detail["cap"] == 5
     assert detail["current"] >= 5
     assert detail["dormitory_level"] == 1
-    assert "Roster pieno" in detail["user_message"]
+    assert "Roster oltre capacit" in detail["user_message"]
 
 
 # ─── Retire edge cases ────────────────────────────────────────────────────

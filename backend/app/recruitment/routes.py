@@ -1,8 +1,7 @@
 """Recruitment routes (Phase 5.5c.3 + Phase 11.2 refresh limit + ROUND 6B.2a cap)."""
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from app.adventurers.services import adventurer_public
-from app.audit.log import write_audit
 from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
@@ -12,7 +11,7 @@ from app.recruitment.services import (
     recruit_from_offer,
     refresh_candidates_for_guild,
 )
-from app.territory.guards import compute_adventurer_cap_state
+from app.territory.cap_guard import assert_not_over_cap
 
 
 router = APIRouter(prefix="/api/recruitment", tags=["recruitment"])
@@ -40,38 +39,12 @@ async def recruit_adventurer(
     payload: RecruitIn, current_user: dict = Depends(get_current_user)
 ):
     guild = await user_guild_or_404(db, current_user["id"])
-    # ROUND 6B.2a — Dormitories cap guard. Reject BEFORE the offer is consumed.
-    cap_state = await compute_adventurer_cap_state(db, guild["id"])
-    if cap_state["current"] >= cap_state["cap"]:
-        # Audit the event for analytics (cap UX friction signal).
-        try:
-            await write_audit(
-                db,
-                event_type="adventurer_cap_reached",
-                actor_user_id=current_user["id"],
-                actor_guild_id=guild["id"],
-                source="recruitment.recruit",
-                metadata={
-                    "cap": cap_state["cap"],
-                    "current": cap_state["current"],
-                    "dormitory_level": cap_state["dormitory_level"],
-                },
-            )
-        except Exception:
-            pass
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "recruitment.cap_reached",
-                "cap": cap_state["cap"],
-                "current": cap_state["current"],
-                "dormitory_level": cap_state["dormitory_level"],
-                "user_message": (
-                    f"Roster pieno ({cap_state['current']}/{cap_state['cap']}). "
-                    f"Potenzia i Dormitori dal Territorio per ingaggiare nuovi avventurieri."
-                ),
-            },
-        )
+    # ROUND 6B.3 Wave 1.5 — over-cap guard centralised. Returns 423 with
+    # `roster_over_capacity` so the FE banner/interceptor can unify the UX.
+    # `additional=1` because recruit will add 1 to the roster.
+    await assert_not_over_cap(
+        db, guild["id"], source="recruitment.recruit", additional=1,
+    )
     adventurer_doc, updated_guild = await recruit_from_offer(
         db, guild, payload.candidate_id
     )

@@ -24,6 +24,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.territory.cap_guard import over_cap_dep
 from app.territory.guards import require_unlocked
 from pydantic import BaseModel, Field
 
@@ -139,6 +140,23 @@ async def _validate_parties_and_advs(guild: dict, parties: List[PartyIn]) -> Lis
     ).to_list(50)
     if len(adv_docs) != REQUIRED_ROSTER:
         raise HTTPException(status_code=422, detail="raids.adventurers_not_owned_or_missing")
+    # ROUND 6B.3 Wave 1.5 — explicit retired check (423 with structured detail).
+    retired_ids = [a["id"] for a in adv_docs if a.get("is_retired") is True]
+    if retired_ids:
+        raise HTTPException(
+            status_code=423,
+            detail={
+                "code": "adventurers.retired_in_set",
+                "source": "raid.start",
+                "retired_adventurer_ids": retired_ids,
+                "count": len(retired_ids),
+                "user_message": (
+                    f"La selezione include {len(retired_ids)} avventurier"
+                    f"{'i' if len(retired_ids) > 1 else 'o'} congedat"
+                    f"{'i' if len(retired_ids) > 1 else 'o'}. Rimuovili dalla selezione."
+                ),
+            },
+        )
     busy = [a for a in adv_docs if a.get("is_available") is False or a.get("expedition_in_progress")]
     if busy:
         raise HTTPException(status_code=422, detail="raids.adventurer_busy")
@@ -282,7 +300,14 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
     }
 
 
-@router.post("/start", status_code=201, dependencies=[Depends(require_unlocked("raid.start.t1"))])
+@router.post(
+    "/start",
+    status_code=201,
+    dependencies=[
+        Depends(require_unlocked("raid.start.t1")),
+        Depends(over_cap_dep("raid.start")),
+    ],
+)
 async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
     rd = await _resolve_raid_dungeon(payload.raid_slug)

@@ -140,6 +140,22 @@ async def equip_item_service(
     db, guild: dict, adventurer_id: str, item_id: str, slot: str
 ) -> dict:
     adv = await _adventurer_owned_or_404(db, adventurer_id, guild["id"])
+    # ROUND 6B.3 Wave 1.5 — block equip on retired adventurers BEFORE the
+    # generic `is_available` check so the FE gets a structured 423 instead
+    # of a string 400.
+    if adv.get("is_retired") is True:
+        raise HTTPException(
+            status_code=423,
+            detail={
+                "code": "equip.target_retired",
+                "source": "equipment.equip",
+                "adventurer_id": adventurer_id,
+                "user_message": (
+                    "Non puoi equipaggiare un avventuriero congedato. "
+                    "Reintegralo dal supporto oppure scegli un altro avventuriero."
+                ),
+            },
+        )
     if not adv.get("is_available", True):
         raise HTTPException(
             status_code=400,

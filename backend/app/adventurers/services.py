@@ -169,6 +169,11 @@ def adventurer_public(doc: dict) -> dict:
         "is_available": doc.get("is_available", True),
         "is_retired": bool(doc.get("is_retired", False)),
         "retired_at": doc.get("retired_at"),
+        # ROUND 6B.3 Wave 1.5 — None for legacy records (treated as "user"
+        # by readers). New retires set "user"; future automations may set
+        # "system" / "auto_over_cap".
+        "retired_by": doc.get("retired_by"),
+        "retirement_reason": doc.get("retirement_reason"),
         "is_starter": bool(doc.get("is_starter", False)),
         "rename_count": int(doc.get("rename_count", 0)),
         "rename_max": 2,

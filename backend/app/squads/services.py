@@ -112,14 +112,35 @@ async def _validate_adventurers_belong_to_guild(
     db, guild_id: str, adventurer_ids: list[str]
 ):
     cursor = db.adventurers.find(
-        {"guild_id": guild_id, "id": {"$in": adventurer_ids}}, {"_id": 0, "id": 1}
+        {"guild_id": guild_id, "id": {"$in": adventurer_ids}},
+        {"_id": 0, "id": 1, "is_retired": 1},
     )
-    found = {d["id"] async for d in cursor}
+    rows = [d async for d in cursor]
+    found = {d["id"] for d in rows}
     missing = set(adventurer_ids) - found
     if missing:
         raise HTTPException(
             status_code=422,
             detail=f"adventurer_ids.not_in_guild ({len(missing)} ids)",
+        )
+    # ROUND 6B.3 Wave 1.5 — block squads that include retired adventurers.
+    # Without this filter the squad doc would persist a stale id and the
+    # public projection would silently drop the member at read time.
+    retired = [d["id"] for d in rows if d.get("is_retired") is True]
+    if retired:
+        raise HTTPException(
+            status_code=423,
+            detail={
+                "code": "adventurers.retired_in_set",
+                "source": "squad.write",
+                "retired_adventurer_ids": retired,
+                "count": len(retired),
+                "user_message": (
+                    f"La squadra include {len(retired)} avventurier"
+                    f"{'i' if len(retired) > 1 else 'o'} congedat"
+                    f"{'i' if len(retired) > 1 else 'o'}. Rimuovili dalla composizione."
+                ),
+            },
         )
 
 
