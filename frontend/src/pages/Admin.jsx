@@ -117,6 +117,7 @@ const SelectField = ({ label, value, onChange, options, testid }) => (
 
 // ─── Editor configs per entity ────────────────────────────────────────────────
 function ClassEditor({ form, set }) {
+    const { t } = useT();
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
@@ -137,6 +138,7 @@ function ClassEditor({ form, set }) {
 }
 
 function TraitEditor({ form, set }) {
+    const { t } = useT();
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
@@ -154,6 +156,7 @@ function TraitEditor({ form, set }) {
 }
 
 function DungeonEditor({ form, set }) {
+    const { t } = useT();
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <TextField label="Name" value={form.name} onChange={(v) => set("name", v)} testid="field-name" required />
@@ -174,6 +177,7 @@ function DungeonEditor({ form, set }) {
 }
 
 function ItemEditor({ form, set }) {
+    const { t } = useT();
     const realMoney = !!form.can_be_sold_for_real_money;
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -66,6 +66,18 @@ const CandidateCard = ({ candidate, canAfford, onRecruit, busy }) => (
             <span className="text-[10px] text-muted-foreground tracking-widest">
                 LVL {candidate.level}
             </span>
+            {/* ROUND 6A.1 — unified total_power, same amber-bold styling as
+                Adventurers.jsx roster, RaidBuilder and ExpeditionNew so the
+                player compares candidates ↔ roster apples-to-apples. */}
+            {typeof candidate.total_power === "number" && (
+                <span
+                    data-testid={`candidate-power-${candidate.candidate_id}`}
+                    className="ml-auto text-xs text-amber font-bold tracking-widest"
+                    title="Power totale (stats + level + rarity bonus). No equipaggiamento ancora."
+                >
+                    PWR {candidate.total_power}
+                </span>
+            )}
         </div>
 
         <div className="mb-4">

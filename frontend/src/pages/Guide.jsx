@@ -138,7 +138,7 @@ export default function Guide() {
                         <li><RoleMarker role="Tank" withLabel /> — assorbe danni</li>
                         <li><RoleMarker role="Healer" withLabel /> — cura il gruppo</li>
                         <li><RoleMarker role="DPS" withLabel /> — danno principale</li>
-                        <li><RoleMarker role="Ranger" withLabel /> — danno a distanza / utility</li>
+                        <li><RoleMarker role="Support" withLabel /> — utility / buff (es. Bard)</li>
                     </ul>
                     <p className="mt-2">
                         Statistiche: <strong>STR</strong> (forza), <strong>AGI</strong> (agilità),
@@ -152,6 +152,32 @@ export default function Guide() {
                     <p className="mt-2">
                         <strong>Rinomina</strong>: puoi rinominare ogni avventuriero fino a <strong>2 volte
                         nella sua vita</strong> (rinomina gratuita, no oro). Dopo 2 rinomine il nome è definitivo.
+                    </p>
+
+                    <h3 className="text-amber mt-5 mb-2 text-[12px] tracking-widest">:: RECLUTAMENTO (ROUND 6A.1)</h3>
+                    <p>
+                        Il pool di reclutamento mostra <strong>4 candidati</strong> con rarità decisa
+                        server-side al momento della generazione. La distribuzione è fissa e non boostabile:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Common</strong> ≈ 68%</li>
+                        <li><strong>Uncommon</strong> ≈ 24%</li>
+                        <li><strong>Rare</strong> ≈ 7%</li>
+                        <li><strong>Epic</strong> ≈ 0.9% — ≥2 tratti positivi + stat alte</li>
+                        <li><strong>Legendary</strong> ≈ 0.1% — effetto sorpresa: ≥3 tratti positivi + ≥1 stat al massimo (server-enforced)</li>
+                    </ul>
+                    <p className="mt-2">
+                        <strong>Power unificato</strong>: ogni candidato mostra <code className="text-amber">PWR</code> in alto
+                        a destra nella card — è lo stesso valore che vedrai nel roster, raid builder ed
+                        expedition picker dopo il recruit. Confronta direttamente prima di spendere oro.
+                    </p>
+                    <p className="mt-2">
+                        <strong>Refresh</strong>: 3 refresh gratuiti / giorno UTC. Oltre il limite, costo crescente
+                        10g → 20g → 30g (cap). Il refresh NON garantisce Epic/Legendary — è puro reroll del pool.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Importante: nessuna rarità è acquistabile, boostabile o sbloccabile via premium. Il drop
+                        è interamente affidato alla casualità server-side gated da pesi pubblici.
                     </p>
                 </SectionBlock>
 

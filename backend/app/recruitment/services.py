@@ -94,6 +94,12 @@ def refresh_status_payload(guild: dict) -> dict:
 
 
 def candidate_public(doc: dict) -> dict:
+    # ROUND 6A.1 — expose `total_power` in the recruitment payload so the
+    # Recruitment card can show the same unified power value used by the
+    # roster/raid/expedition UIs. Computed from the same `adventurer_base_power`
+    # single-source-of-truth helper (no equipment at candidate stage).
+    from app.expeditions.formulas import adventurer_base_power
+    base_power = adventurer_base_power(doc)
     return {
         "candidate_id": doc["id"],
         "name": doc["name"],
@@ -111,6 +117,9 @@ def candidate_public(doc: dict) -> dict:
         "stamina": doc["stamina"],
         "morale": doc["morale"],
         "traits": doc.get("traits", []),
+        "base_power": base_power,
+        "equipment_power": 0,         # candidates have no equipment yet
+        "total_power": base_power,    # mirror roster shape for UI parity
         "cost": RECRUITMENT_COST_GOLD,
         "cost_gold": RECRUITMENT_COST_GOLD,
     }
@@ -446,6 +455,12 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
         "morale": offer["morale"],
         "traits": offer.get("traits", []),
         "is_available": True,
+        # ROUND 6A.1 — explicit defaults (was relying on `adventurer_public`
+        # to inject these). Now persisted so future code that reads raw
+        # docs (without going through the public projection) gets sane
+        # values without `.get(..., default)` ceremony.
+        "is_starter": False,
+        "rename_count": 0,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }

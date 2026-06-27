@@ -124,8 +124,18 @@ class TestPoolSafety:
 
 
 class TestLegendaryGuards:
+    @pytest.mark.slow
     def test_G3_legendary_satisfies_stat_floor_and_audit_logged(self, async_db, db):
-        """Force a Legendary roll via deterministic seed and verify guards."""
+        """Force a Legendary roll via deterministic seed and verify guards.
+
+        ROUND 6A.1 stringent assertions:
+          - stat_max >= 15 (post-roll floor enforced)
+          - audit row exists with metadata.rarity == "Legendary"
+          - audit row metadata.stat_max >= 15
+          - audit row metadata.positive_traits_count >= 3 IF the safe trait
+            pool has ≥3 positive entries (otherwise: assertion skipped with
+            an explicit note — graceful pool-size fallback by design).
+        """
         from app.adventurers.generator import (
             generate_candidate, new_rng_for_tests, _stat_max_value,
             filter_safe_class_pool, filter_safe_trait_pool,
@@ -135,6 +145,17 @@ class TestLegendaryGuards:
         async def run():
             class_pool = await filter_safe_class_pool(async_db)
             trait_pool = await filter_safe_trait_pool(async_db)
+            # Backward-compat: include legacy adventurer_traits collection
+            # (same merge as recruitment._roll_and_persist_offer)
+            legacy = await async_db.adventurer_traits.find(
+                {"is_active": True, "is_test": {"$ne": True}}, {"_id": 0}
+            ).to_list(200)
+            trait_pool = (trait_pool or []) + [
+                t for t in (legacy or [])
+                if not (t.get("name", "").startswith("Test")
+                        or t.get("slug", "").startswith("test"))
+            ]
+            positive_pool_size = sum(1 for t in trait_pool if t.get("is_positive"))
             # Brute-force search for a Legendary roll within 50k attempts
             # (probability ~0.1% → expected 50 hits in 50k).
             rng = new_rng_for_tests(seed=2026)
@@ -146,10 +167,10 @@ class TestLegendaryGuards:
                     audit=True, audit_source="test_G3",
                 )
                 if c["rarity"] == "Legendary":
-                    return c, gid
-            return None, gid
+                    return c, gid, positive_pool_size
+            return None, gid, positive_pool_size
 
-        leg, gid = loop.run_until_complete(run())
+        leg, gid, positive_pool_size = loop.run_until_complete(run())
         loop.close()
         if leg is None:
             pytest.skip("no Legendary roll in 50k attempts (statistically unlikely; not a regression)")
@@ -161,7 +182,20 @@ class TestLegendaryGuards:
             "metadata.rarity": "Legendary",
         })
         assert audit is not None, "audit row missing for Legendary"
-        assert (audit.get("metadata") or {}).get("stat_max", 0) >= 15
+        meta = audit.get("metadata") or {}
+        assert meta.get("stat_max", 0) >= 15, f"audit stat_max not enforced: {meta}"
+        # ROUND 6A.1 stringent: positive_traits_count must be >= 3 IF the pool
+        # had at least 3 positives. This catches silent regression of the
+        # `RARITY_POSITIVE_TRAIT_MIN` enforcement in the generator.
+        if positive_pool_size >= 3:
+            assert meta.get("positive_traits_count", 0) >= 3, (
+                f"Legendary positive_traits_count guard regressed: "
+                f"meta={meta} positive_pool_size={positive_pool_size}"
+            )
+        else:
+            # Graceful fallback by design — pool too small to enforce.
+            print(f"NOTE: positive trait pool too small ({positive_pool_size}); "
+                  f"skipping ≥3 positives assertion (this is expected by spec).")
 
 
 class TestClassBalance:
