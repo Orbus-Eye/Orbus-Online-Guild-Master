@@ -52,6 +52,8 @@ EVENT_TYPES = frozenset({
     # Phase 19.4b — NPC system shop
     "shop_system_purchase",
     "shop_system_sale",
+    # ROUND 6A.1 — adventurer generation (server-authoritative)
+    "adventurer_generated",
     # Phase 14.1 + 15 — Retention layer
     "quest_reward_claimed",
     "weekly_quest_claimed",

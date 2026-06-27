@@ -107,6 +107,30 @@ export default function Guide() {
 
                 <SectionBlock id="ruoli" title="Avventurieri e ruoli">
                     <p>
+                        Ogni avventuriero ha <strong>classe</strong>, <strong>ruolo</strong>, <strong>rarità</strong>, livello, esperienza,
+                        oltre 7 stat (Forza/Agilità/Intelletto/Resistenza/Stamina/Morale/Fede) ed eventuali tratti.
+                    </p>
+                    <p className="mt-2">
+                        <strong>Rarità (ROUND 6A.1)</strong>: la rarità è decisa server-side al momento della generazione e non è
+                        modificabile. La distribuzione è:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
+                        <li><strong>Common</strong> ≈ 68% — base affidabile</li>
+                        <li><strong>Uncommon</strong> ≈ 24% — bonus stat lievi</li>
+                        <li><strong>Rare</strong> ≈ 7% — +1 a tutte le stat</li>
+                        <li><strong>Epic</strong> ≈ 0.9% — +2 stat + ≥1 stat alta + ≥2 tratti positivi</li>
+                        <li><strong>Legendary</strong> ≈ 0.1% — +3 stat + ≥1 stat al massimo + ≥3 tratti positivi (effetto sorpresa)</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Importante: nessuna rarità è acquistabile o boostabile. Il drop è completamente affidato alla
+                        casualità server-side.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Power totale</strong>: somma di <em>base_power</em> (stat + livello + rarità + tratti) +
+                        <em> equipment_power</em> (oggetti equipaggiati). Lo stesso valore appare ovunque in UI: lista roster,
+                        recruitment cards, expedition team picker, raid builder, equip modal preview.
+                    </p>
+                    <p className="mt-3">
                         Ogni avventuriero ha una classe e un ruolo. I ruoli sono prefissati con un marker ASCII
                         in tutte le liste per leggere a colpo d&apos;occhio:
                     </p>

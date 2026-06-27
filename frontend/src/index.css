@@ -99,6 +99,9 @@ pre {
 .text-amber {
     color: #d4a14a;
 }
+.bg-amber {
+    background-color: #d4a14a;
+}
 .border-amber {
     border-color: #d4a14a;
 }

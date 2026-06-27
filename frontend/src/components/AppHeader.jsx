@@ -10,7 +10,7 @@ const NavLink = ({ to, label, testid }) => {
         <Link
             to={to}
             data-testid={testid}
-            className={`px-3 py-1.5 text-xs tracking-widest rounded-sm transition-colors ${
+            className={`px-3 py-1.5 text-xs tracking-widest font-bold rounded-sm transition-colors ${
                 active
                     ? "text-amber bg-secondary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"

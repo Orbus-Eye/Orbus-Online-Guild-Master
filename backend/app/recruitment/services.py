@@ -217,23 +217,51 @@ def _generate_candidate(
 
 
 async def _roll_and_persist_offer(db, guild: dict) -> list[dict]:
-    """Generate a fresh 4-candidate offer, replacing any prior persisted one."""
-    classes = await db.adventurer_classes.find(
-        {"is_active": True}, {"_id": 0}
-    ).to_list(100)
+    """Generate a fresh 4-candidate offer, replacing any prior persisted one.
+
+    ROUND 6A.1 — delegates to `app.adventurers.generator.generate_candidate`
+    which centralises rarity weighting (incl. Legendary), post-roll guards
+    (≥3 positive traits + ≥1 stat at floor for Legendary), Test* filtering,
+    and audit log emit (`adventurer_generated`).
+    """
+    from app.adventurers.generator import (
+        filter_safe_class_pool,
+        filter_safe_trait_pool,
+        generate_candidate,
+    )
+
+    classes = await filter_safe_class_pool(db)
     if not classes:
         raise HTTPException(status_code=500, detail="No adventurer classes seeded")
-    traits_pool = await db.adventurer_traits.find(
+    traits_pool = await filter_safe_trait_pool(db)
+    # Backward-compat: the previous code also queried `adventurer_traits`
+    # (legacy collection name). Merge both if present.
+    legacy_traits = await db.adventurer_traits.find(
         {"is_active": True, "is_test": {"$ne": True}}, {"_id": 0}
     ).to_list(100)
+    traits_pool = (traits_pool or []) + [
+        t for t in (legacy_traits or [])
+        if not (t.get("name", "").startswith("Test")
+                or t.get("slug", "").startswith("test"))
+    ]
 
     await db.recruitment_offers.delete_many({"guild_id": guild["id"]})
     now = utc_now()
-    candidates = [
-        _generate_candidate(_rng.choice(classes), guild["id"], now, traits_pool)
-        for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER)
-    ]
-    await db.recruitment_offers.insert_many([dict(c) for c in candidates])
+    candidates = []
+    for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER):
+        c = await generate_candidate(
+            db,
+            guild_id=guild["id"],
+            now=now,
+            class_pool=classes,
+            trait_pool=traits_pool,
+            audit_source="recruitment",
+        )
+        # The legacy generator added `expires_at`; the new wrapper preserves
+        # it because we still go through `_generate_candidate`.
+        candidates.append(c)
+    if candidates:
+        await db.recruitment_offers.insert_many([dict(c) for c in candidates])
     return candidates
 
 

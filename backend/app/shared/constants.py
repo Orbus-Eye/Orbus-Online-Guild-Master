@@ -32,8 +32,23 @@ XP_THRESHOLD_PER_LEVEL = 100
 # Recruitment generation (Phase 2)
 RECRUITMENT_CANDIDATES_PER_OFFER = 4
 OFFER_TTL_MINUTES = 30
-RARITY_WEIGHTS = [("Common", 70), ("Uncommon", 20), ("Rare", 8), ("Epic", 2)]
-RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2}
+# Phase 6A.1 — rarity distribution with Legendary as ultra-rare surprise.
+# Numeric weights MUST sum to ~1000 for fine-grained Legendary tail (0.1%).
+# Target distribution: Common 68% / Uncommon 24% / Rare 7% / Epic 0.9% / Legendary 0.1%
+RARITY_WEIGHTS = [
+    ("Common", 680),
+    ("Uncommon", 240),
+    ("Rare", 70),
+    ("Epic", 9),
+    ("Legendary", 1),
+]
+RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2, "Legendary": 3}
+# Stat max threshold used by the Legendary post-roll guard. A Legendary
+# adventurer MUST have at least 1 core stat at or above this floor.
+RARITY_STAT_MAX_FLOOR = {"Legendary": 15, "Epic": 12}
+# Soft minimum positive-trait count required for high-rarity guard. Falls
+# back gracefully when the trait pool is empty (no `Test*` traits ever).
+RARITY_POSITIVE_TRAIT_MIN = {"Legendary": 3, "Epic": 2}
 FIRST_NAMES = [
     "Aldric", "Brenna", "Cassian", "Dorin", "Elara", "Faelan", "Gwyn",
     "Hadrian", "Iona", "Joren", "Kael", "Lyra", "Mira", "Nyx", "Oren",

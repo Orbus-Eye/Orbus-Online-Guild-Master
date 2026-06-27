@@ -61,17 +61,25 @@ function interpolate(str, params) {
 }
 
 /**
- * Resolve a translation key with fallback: active → en → key.
- * Returns the key string itself if no dictionary has it (visible in dev,
- * never crashes UI).
+ * Resolve a translation key with fallback chain.
+ *
+ *   t("nav.foo")                 → "nav.foo" if missing
+ *   t("nav.foo", "FOO")          → "FOO" if key missing (string fallback)
+ *   t("market.subtitle", {fee})  → interpolated string
+ *
+ * Resolution order: active dict → EN fallback dict → string fallback (if
+ * provided) → raw key. NEVER returns undefined and NEVER throws.
  */
-export function resolve(lang, key, params) {
+export function resolve(lang, key, paramsOrFallback) {
+    const isStringFallback = typeof paramsOrFallback === "string";
+    const params = isStringFallback ? undefined : paramsOrFallback;
     const primary = lookup(DICTS[lang], key);
     if (typeof primary === "string") return interpolate(primary, params);
     if (lang !== FALLBACK) {
         const fb = lookup(DICTS[FALLBACK], key);
         if (typeof fb === "string") return interpolate(fb, params);
     }
+    if (isStringFallback) return paramsOrFallback;
     return key;
 }
 

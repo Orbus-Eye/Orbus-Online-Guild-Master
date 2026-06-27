@@ -44,7 +44,10 @@
     "brand_subtitle_dashboard": "DASHBOARD",
     "consortiums": "Consorzi",
     "forge": "OFFICINA",
-    "raids": "RAID"
+    "raids": "RAID",
+    "auction": "ASTA",
+    "chat": "CHAT",
+    "guide": "GUIDA"
   },
   "landing": {
     "title": "Orbus Online: Guild Master",
@@ -519,7 +522,7 @@
     "sell_price_unit": "Prezzo unitario",
     "sell_fee_estimate": "Tassa stimata",
     "sell_proceeds": "Ricevi",
-    "sell_btn": "Listare",
+    "sell_btn": "Vendi",
     "sell_confirm": "Confermi la pubblicazione?",
     "cancel_btn": "Cancella",
     "cancel_confirm": "Confermi la cancellazione?",
