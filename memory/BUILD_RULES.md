@@ -133,3 +133,4 @@ checklist is sufficient until a CI runner is added.
 |---|---|---|---|
 | 2026-06-27 | 19.3 | Initial policy ledger created. R1-R7 codified. | e1 |
 | 2026-06-27 | 19.x / Round 6A.2c | R8 (Pre-Deploy Lint Gate) added. | e1 |
+| 2026-06-27 | Round 6B FASE B | R8 gate **repaired**: `yarn lint:strict` was a silent no-op (`eslint src --ext .js,.jsx` ignored by ESLint v9). Script now uses glob `"src/**/*.{js,jsx}"` + `--report-unused-disable-directives`. See `REFACTOR_LOG.md`. | e1 |
