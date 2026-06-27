@@ -246,8 +246,14 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
         const r = await authedFetch(token, "/inventory");
         if (!r.ok) return;
         const data = await r.json();
+        // Phase 19.4a — FIX P0 "Deposito non letto da Vendita":
+        // Backend returns `{inventory: [...]}` (not `items`). The previous
+        // `data.items || []` always returned [] → the sell form looked empty
+        // even when the player owned tradeable, available stacks. Accept
+        // both keys to be forward-compatible with any future shape tweak.
+        const rows = data.inventory || data.items || [];
         // Filter to items with available > 0 AND tradeable
-        const sellable = (data.items || []).filter((it) => {
+        const sellable = rows.filter((it) => {
             const available = it.available_quantity ?? (
                 (it.total_quantity || it.quantity || 0)
                 - (it.equipped_quantity || 0)
@@ -255,7 +261,11 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
             );
             const tradeable = it.item?.is_tradeable !== false
                 && it.item?.can_be_sold_for_gold !== false;
-            return available > 0 && tradeable;
+            // P19.4a: filter out bound stacks at the source so the user sees
+            // a clear sell-list (BoE rows show in the Inventory page with
+            // their bound badge; they just don't appear here).
+            const notBound = it.is_bound !== true;
+            return available > 0 && tradeable && notBound;
         });
         setItems(sellable);
         if (sellable.length && !slug) setSlug(sellable[0].item?.slug || "");

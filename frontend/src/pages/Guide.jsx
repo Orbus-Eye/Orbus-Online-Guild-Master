@@ -174,6 +174,20 @@ export default function Guide() {
                         I raid completati appaiono nella <strong>classifica raid pubblica</strong>
                         (<code>/api/leaderboard/raids</code>).
                     </p>
+                    <p className="mt-3">
+                        <strong>Builder filtri (Phase 19.4a)</strong>: sopra la lista degli avventurieri trovi un
+                        pannello filtri per restringere velocemente il roster nei raid di alto livello.
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
+                        <li><strong>Cerca</strong>, <strong>Ruolo</strong> (multi), <strong>Classe</strong>, <strong>Rarità</strong> (multi)</li>
+                        <li><strong>Livello min/max</strong> e <strong>PWR min/max</strong></li>
+                        <li><strong>Disponibilità</strong>: tutti / solo disponibili / nascondi occupati</li>
+                        <li><strong>Ordinamento</strong>: PWR ↓, Livello ↓, Rarità ↓, Nome, Ruolo</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Un avventuriero già assegnato a un party scompare automaticamente dal pool: i filtri
+                        non rompono mai i party in costruzione.
+                    </p>
                 </SectionBlock>
 
                 <SectionBlock id="forge" title="Equipaggiamento e Forge">
@@ -199,6 +213,20 @@ export default function Guide() {
                     <p className="mt-2">
                         Puoi filtrare per tipo (weapon / armor / accessory / consumable / material) o per rarità.
                         Oggetti marcati ⚒ sono usati come <em>materiali di crafting</em>.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Quando un oggetto è vendibile (Phase 19.4a fix)</strong>:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
+                        <li><strong>Disponibile</strong>: quantità &gt; 0 dopo aver tolto equipaggiati e già in vendita.</li>
+                        <li><strong>Non bound</strong>: oggetti raffinati/incantati (◆ BOUND) non sono vendibili.</li>
+                        <li><strong>Non equipaggiato</strong>: rimuovi prima dall&apos;avventuriero.</li>
+                        <li><strong>Tradeable</strong>: alcuni oggetti narrativi/legati sono &quot;Non commerciabili&quot;.</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Bug fix 19.4a: la pagina Mercato leggeva la chiave sbagliata della risposta API
+                        (<code>items</code> invece di <code>inventory</code>) → la lista vendita appariva vuota anche
+                        quando il deposito non lo era. Ora il deposito viene letto correttamente.
                     </p>
                 </SectionBlock>
 
