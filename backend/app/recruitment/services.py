@@ -125,6 +125,64 @@ def candidate_public(doc: dict) -> dict:
     }
 
 
+async def _hydrate_trait_subdocs(db, candidates: list[dict]) -> None:
+    """ROUND 6A.2b — backfill `display_name_it` / `display_name` on legacy
+    trait subdocs at read time.
+
+    Recruitment offers persisted before the trait IT migration store the
+    legacy subdoc shape `{id, name="disciplined", description, ...}` with no
+    display fields. We do ONE batched lookup against `adventurer_traits` and
+    enrich each subdoc in-place so `candidate_public()` (and any downstream
+    `recruit_from_offer`) sees the IT names without needing a sync rewrite.
+
+    Mutates `candidates` in-place. Safe to call with empty/None traits.
+    """
+    trait_ids: set[str] = set()
+    trait_name_keys: set[str] = set()
+    for c in candidates or []:
+        for t in c.get("traits") or []:
+            if isinstance(t, dict):
+                tid = t.get("id") or t.get("trait_id")
+                if tid:
+                    trait_ids.add(tid)
+                n = (t.get("name") or "").strip().lower()
+                if n:
+                    trait_name_keys.add(n)
+    if not trait_ids and not trait_name_keys:
+        return
+    by_id: dict[str, dict] = {}
+    by_name: dict[str, dict] = {}
+    cursor = db.adventurer_traits.find(
+        {
+            "$or": [
+                {"id": {"$in": list(trait_ids)}} if trait_ids else {"id": None},
+                {"name": {"$in": list(trait_name_keys)}} if trait_name_keys else {"name": None},
+            ]
+        },
+        {"_id": 0, "id": 1, "name": 1, "display_name": 1, "display_name_it": 1},
+    )
+    async for m in cursor:
+        if m.get("id"):
+            by_id[m["id"]] = m
+        nk = (m.get("name") or "").strip().lower()
+        if nk:
+            by_name[nk] = m
+    for c in candidates or []:
+        for t in c.get("traits") or []:
+            if not isinstance(t, dict):
+                continue
+            master = (
+                by_id.get(t.get("id") or t.get("trait_id"))
+                or by_name.get((t.get("name") or "").strip().lower())
+            )
+            if not master:
+                continue
+            if not t.get("display_name"):
+                t["display_name"] = master.get("display_name") or master.get("name") or ""
+            if not t.get("display_name_it"):
+                t["display_name_it"] = master.get("display_name_it") or ""
+
+
 def _weighted_choice(choices):
     total = sum(w for _, w in choices)
     r = _rng.uniform(0, total)
@@ -296,6 +354,7 @@ async def get_or_init_candidates_for_guild(db, guild: dict) -> dict:
             except Exception:
                 valid.append(o)
         if valid:
+            await _hydrate_trait_subdocs(db, valid)
             return {
                 "candidates": [candidate_public(c) for c in valid],
                 "guild_gold": guild.get("gold", 0),
@@ -306,6 +365,7 @@ async def get_or_init_candidates_for_guild(db, guild: dict) -> dict:
 
     # No valid offer → initial seed (does NOT consume a refresh)
     candidates = await _roll_and_persist_offer(db, guild)
+    await _hydrate_trait_subdocs(db, candidates)
     return {
         "candidates": [candidate_public(c) for c in candidates],
         "guild_gold": guild.get("gold", 0),
