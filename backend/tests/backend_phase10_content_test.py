@@ -304,7 +304,7 @@ class TestPhase10OpenAPIInvariant:
         paths = r.json().get("paths", {})
         # Phase 9.1 added 1 path → 37. Phase 11.2 adds POST /api/recruitment/refresh → 38.
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 77, f"expected 75, got {len(paths)}"
+        assert len(paths) == 79, f"expected 75, got {len(paths)}"
 
     def test_leaderboard_still_present(self):
         r = requests.get(

@@ -310,7 +310,7 @@ class TestOpenAPIDelta:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 77, f"expected 75, got {len(paths)}"
+        assert len(paths) == 79, f"expected 75, got {len(paths)}"
         assert "/api/recipes" in paths
         assert "/api/recipes/{recipe_slug}/craft" in paths
 

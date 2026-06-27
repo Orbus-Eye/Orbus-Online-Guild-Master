@@ -29,6 +29,7 @@ import Raids from "@/pages/Raids";
 import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
+import Chat from "@/pages/Chat";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -182,6 +183,14 @@ function App() {
                         />
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/guide" element={<Guide />} />
+                        <Route
+                            path="/chat"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Chat />
+                                </ProtectedRoute>
+                            }
+                        />
                         <Route
                             path="/consortiums"
                             element={

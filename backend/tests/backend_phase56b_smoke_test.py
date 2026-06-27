@@ -58,7 +58,7 @@ class TestHealthAndSurface:
         paths = r.json().get("paths", {})
         # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 77, f"Expected 42 OpenAPI paths, got {len(paths)}"
+        assert len(paths) == 79, f"Expected 42 OpenAPI paths, got {len(paths)}"
 
 
 # ---------- Auth / tester seed ----------

@@ -16,6 +16,7 @@ from app.seeds.seed_runner import run_all_seeds
 from app.audit.log import ensure_audit_indexes
 from app.market.services import ensure_market_indexes
 from app.consortiums.services import ensure_consortium_indexes
+from app.chat.services import ensure_chat_indexes
 from app.seeds.seed_forge import run_forge_seeds, run_forge_migration
 from app.seeds.seed_round5 import run_round5_seeds_and_migrations
 
@@ -29,6 +30,7 @@ async def lifespan(app: FastAPI):
     await ensure_audit_indexes(db)
     await ensure_market_indexes(db)
     await ensure_consortium_indexes(db)
+    await ensure_chat_indexes(db)
     await run_forge_migration(db)
     await run_forge_seeds(db)
     await run_all_seeds(db)

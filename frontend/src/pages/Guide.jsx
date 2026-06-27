@@ -16,7 +16,9 @@ const SECTIONS = [
     { id: "market", label: "8. Mercato e Crafting" },
     { id: "quest", label: "9. Quest e Streak" },
     { id: "consortium", label: "10. Cronaca e Consorzi" },
-    { id: "tips", label: "11. Suggerimenti base" },
+    { id: "chat", label: "11. Chat" },
+    { id: "privacy", label: "12. Privacy & Sicurezza" },
+    { id: "tips", label: "13. Suggerimenti base" },
 ];
 
 const SectionBlock = ({ id, title, children }) => (
@@ -142,6 +144,20 @@ export default function Guide() {
                         Più ti avvicini o superi il recommended, maggiore è la success chance. Il report finale
                         ti dice esito, loot, XP e gold guadagnati.
                     </p>
+                    <p className="mt-2">
+                        <strong>Filtri (Phase 19.3)</strong>: sopra la lista dungeon trovi un pannello filtri.
+                        Puoi combinare:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li><strong>Squadra</strong>: 3 / 5 / 7 eroi</li>
+                        <li><strong>PWR min / max</strong>: range di power consigliato</li>
+                        <li><strong>Difficoltà</strong>: facile / medio / difficile / elite</li>
+                        <li><strong>Stato</strong>: disponibili / bloccati</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Suggerimento rapido: per la tua prima spedizione filtra <em>Squadra=3, Difficoltà=facile</em>.
+                        Su mobile, tocca <em>FILTRI ▾</em> per aprire il pannello.
+                    </p>
                 </SectionBlock>
 
                 <SectionBlock id="raid" title="Raid">
@@ -221,6 +237,65 @@ export default function Guide() {
                     <p className="mt-2">
                         I <strong>Consorzi</strong> sono gruppi cooperativi tra gilde: condividi un buff settimanale
                         e un canale di comunicazione testuale. Ogni gilda può appartenere a un consorzio alla volta.
+                    </p>
+                    <p className="mt-2">
+                        I membri del consorzio hanno accesso a una <strong>chat privata</strong> accessibile
+                        dal menu <em>Chat → tab Consorzio</em>.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="chat" title="Chat">
+                    <p>
+                        Dal menu <strong>Chat</strong> hai accesso a due canali:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li>
+                            <strong>Globale</strong>: visibile a tutti i giocatori loggati. Per chiedere aiuto,
+                            scambiare strategie o organizzare consorzi.
+                        </li>
+                        <li>
+                            <strong>Consorzio</strong>: solo per i membri del tuo consorzio. Più tranquilla,
+                            ideale per coordinare raid e crafting.
+                        </li>
+                    </ul>
+                    <p className="mt-2">
+                        <strong>Regole</strong>:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>Niente dati personali, credenziali, email, token o link sospetti.</li>
+                        <li>Massimo 500 caratteri per messaggio.</li>
+                        <li>Rate limit: <strong>5 messaggi ogni 10 secondi</strong>. Oltre, il server ti dice di rallentare.</li>
+                        <li>HTML/script non vengono renderizzati come HTML: scrivi pure quello che vuoi, ma niente formattazione ricca.</li>
+                        <li>I messaggi possono essere moderati: rispettiamo regole di buona convivenza.</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        L&apos;identità mostrata nella chat è il <em>nome pubblico della tua gilda</em>. Email, user id e
+                        consortium id non sono mai esposti.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="privacy" title="Privacy &amp; Sicurezza">
+                    <p>
+                        <strong>Cosa NON condividere mai in chat</strong>:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>Email o numero di telefono.</li>
+                        <li>Password o token di sessione.</li>
+                        <li>Codici di recupero o link di reset.</li>
+                        <li>Dati di pagamento.</li>
+                    </ul>
+                    <p className="mt-2">
+                        <strong>Cosa fa il server per te</strong>:
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>I tuoi user_id / guild_id interni non sono mai mostrati ad altri player.</li>
+                        <li>La sola identità pubblica è il <em>nome della tua gilda</em>.</li>
+                        <li>Gli account flaggati come test non inquinano la chat globale.</li>
+                        <li>I tuoi messaggi sono visibili agli altri player nei canali a cui partecipi.</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Se qualcuno ti chiede password / token / codici di recupero in chat, non rispondere e segnalalo
+                        al support.
                     </p>
                 </SectionBlock>
 

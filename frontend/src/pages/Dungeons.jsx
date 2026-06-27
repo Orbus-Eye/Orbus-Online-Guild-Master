@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
@@ -7,8 +7,8 @@ import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 
 const DifficultyBadge = ({ value }) => {
-    const TIER = { 1: "TIER I", 2: "TIER II", 3: "TIER III" };
-    const TIER_COLOR = { 1: "amber", 2: "rare", 3: "epic" };
+    const TIER = { 1: "TIER I", 2: "TIER II", 3: "TIER III", 4: "TIER IV" };
+    const TIER_COLOR = { 1: "amber", 2: "rare", 3: "epic", 4: "epic" };
     const tone = TIER_COLOR[value] || "amber";
     const color = tone === "rare" ? "#3b82f6" : tone === "epic" ? "#a855f7" : "#f59e0b";
     return (
@@ -37,24 +37,57 @@ const Stat = ({ label, value }) => (
     </div>
 );
 
+const EMPTY_FILTERS = {
+    team_size: "",
+    pwr_min: "",
+    pwr_max: "",
+    difficulty: "",
+    status: "",
+};
+
+const buildQuery = (f) => {
+    const params = new URLSearchParams();
+    Object.entries(f).forEach(([k, v]) => {
+        if (v !== "" && v !== null && v !== undefined) params.set(k, v);
+    });
+    const s = params.toString();
+    return s ? `?${s}` : "";
+};
+
 export default function Dungeons() {
     const { t, tContent } = useT();
     const [dungeons, setDungeons] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [filters, setFilters] = useState(EMPTY_FILTERS);
+    const [panelOpen, setPanelOpen] = useState(false);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await api.get("/dungeons");
-                setDungeons(data.dungeons);
-            } catch (err) {
+    const fetchDungeons = useCallback(async (f) => {
+        setLoading(true);
+        try {
+            const { data } = await api.get(`/dungeons${buildQuery(f)}`);
+            setDungeons(data.dungeons);
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            if (detail && typeof detail === "string" && detail.startsWith("dungeons.")) {
+                toast.error(`Filtri non validi: ${detail.replace("dungeons.", "")}`);
+            } else {
                 toast.error(formatApiError(err));
-                setDungeons([]);
-            } finally {
-                setLoading(false);
             }
-        })();
+            setDungeons([]);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    // Debounced refetch on filter change (250ms)
+    useEffect(() => {
+        const id = setTimeout(() => fetchDungeons(filters), 250);
+        return () => clearTimeout(id);
+    }, [filters, fetchDungeons]);
+
+    const reset = () => setFilters(EMPTY_FILTERS);
+    const setF = (k, v) => setFilters((p) => ({ ...p, [k]: v }));
+    const activeCount = Object.values(filters).filter((v) => v !== "").length;
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
@@ -65,20 +98,137 @@ export default function Dungeons() {
                     :: ACTIVE EXPEDITIONS CATALOG
                 </div>
                 <h1 className="text-3xl font-semibold tracking-tight">{t("dungeons.title")}</h1>
-                <p className="text-sm text-muted-foreground mt-2 max-w-2xl mb-8">
+                <p className="text-sm text-muted-foreground mt-2 max-w-2xl mb-6">
                     Choose a dungeon and dispatch a party. Each run takes time and either
                     rewards your guild or sends them back bruised.
                 </p>
 
+                {/* Phase 19.3 — Filter panel (collapsible on mobile) */}
+                <div
+                    data-testid="dungeon-filters-panel"
+                    className="border border-border bg-card rounded-sm mb-5"
+                >
+                    <button
+                        type="button"
+                        data-testid="dungeon-filters-toggle"
+                        onClick={() => setPanelOpen((v) => !v)}
+                        className="w-full flex items-center justify-between px-4 py-3 text-xs tracking-widest text-amber hover:bg-card/80"
+                    >
+                        <span>
+                            ▾ FILTRI{activeCount > 0 ? ` · ${activeCount} attivi` : ""}
+                        </span>
+                        <span className="text-muted-foreground text-[10px]">
+                            {panelOpen ? "nascondi" : "mostra"}
+                        </span>
+                    </button>
+                    <div className={(panelOpen ? "block" : "hidden sm:block") + " px-4 pb-4"}>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">SQUADRA</label>
+                                <select
+                                    data-testid="filter-team-size"
+                                    value={filters.team_size}
+                                    onChange={(e) => setF("team_size", e.target.value)}
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                >
+                                    <option value="">Tutte</option>
+                                    <option value="3">3 eroi</option>
+                                    <option value="5">5 eroi</option>
+                                    <option value="7">7 eroi</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">PWR MIN</label>
+                                <input
+                                    type="number"
+                                    data-testid="filter-pwr-min"
+                                    min="1" max="9999"
+                                    value={filters.pwr_min}
+                                    onChange={(e) => setF("pwr_min", e.target.value)}
+                                    placeholder="—"
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">PWR MAX</label>
+                                <input
+                                    type="number"
+                                    data-testid="filter-pwr-max"
+                                    min="1" max="9999"
+                                    value={filters.pwr_max}
+                                    onChange={(e) => setF("pwr_max", e.target.value)}
+                                    placeholder="—"
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">DIFFICOLTÀ</label>
+                                <select
+                                    data-testid="filter-difficulty"
+                                    value={filters.difficulty}
+                                    onChange={(e) => setF("difficulty", e.target.value)}
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                >
+                                    <option value="">Tutte</option>
+                                    <option value="facile">Facile</option>
+                                    <option value="medio">Medio</option>
+                                    <option value="difficile">Difficile</option>
+                                    <option value="elite">Elite</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">STATO</label>
+                                <select
+                                    data-testid="filter-status"
+                                    value={filters.status}
+                                    onChange={(e) => setF("status", e.target.value)}
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                >
+                                    <option value="">Tutti</option>
+                                    <option value="available">Disponibili</option>
+                                    <option value="locked">Bloccati</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="mt-3 flex justify-end">
+                            <button
+                                type="button"
+                                data-testid="filter-reset"
+                                onClick={reset}
+                                className="text-[11px] tracking-widest text-muted-foreground hover:text-amber underline-offset-4 hover:underline"
+                            >
+                                ↺ Reset filtri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {loading && (
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground" data-testid="dungeons-loading">
                         {t("common.loading")}<span className="caret-blink" />
                     </div>
                 )}
 
                 {!loading && dungeons && dungeons.length === 0 && (
-                    <div className="border border-border bg-card rounded-sm p-8 text-center text-sm text-muted-foreground">
-                        No dungeons are currently active.
+                    <div
+                        data-testid="dungeons-empty-state"
+                        className="border border-border bg-card rounded-sm p-8 text-center text-sm text-muted-foreground"
+                    >
+                        {activeCount > 0 ? (
+                            <>
+                                Nessun dungeon corrisponde ai filtri.{" "}
+                                <button
+                                    type="button"
+                                    onClick={reset}
+                                    className="text-amber underline-offset-4 hover:underline"
+                                >
+                                    Resetta i filtri
+                                </button>
+                                {" "}per vedere tutti.
+                            </>
+                        ) : (
+                            "No dungeons are currently active."
+                        )}
                     </div>
                 )}
 

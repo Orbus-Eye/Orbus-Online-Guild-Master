@@ -285,7 +285,7 @@ def test_openapi_path_count_is_61():
     paths = r.json().get("paths", {})
     # 53 (ROUND 3.5) + 1 chronicle + 6 consortiums + 1 admin cleanup = 61
     # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-    assert len(paths) == 77, f"expected 75, got {len(paths)}: {sorted(paths)}"
+    assert len(paths) == 79, f"expected 75, got {len(paths)}: {sorted(paths)}"
     assert "/api/chronicle" in paths
     assert "/api/consortiums" in paths
     assert "/api/consortiums/me" in paths

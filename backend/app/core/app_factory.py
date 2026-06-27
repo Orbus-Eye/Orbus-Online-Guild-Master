@@ -96,6 +96,7 @@ def create_app() -> FastAPI:
     from app.consortiums.routes import router as consortiums_router
     from app.forge.routes import router as forge_router
     from app.raids import router as raids_router
+    from app.chat.routes import router as chat_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -115,6 +116,7 @@ def create_app() -> FastAPI:
     app.include_router(consortiums_router)
     app.include_router(forge_router)
     app.include_router(raids_router)
+    app.include_router(chat_router)
 
     return app
 

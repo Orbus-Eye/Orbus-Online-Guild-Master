@@ -311,7 +311,7 @@ class TestOpenAPIInvariant:
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 77, f"expected 75 (Phase 14 added daily quests), got {len(paths)}"
+        assert len(paths) == 79, f"expected 75 (Phase 14 added daily quests), got {len(paths)}"
         # The reset endpoints still exist with the same paths
         assert "/api/auth/password-reset/request" in paths
         assert "/api/auth/password-reset/confirm" in paths
