@@ -232,6 +232,17 @@ export default function ExpeditionReport() {
                                 </Button>
                             </div>
                         )}
+                        {/* ROUND 6B.2c — Save as squad (only on victories with team intact) */}
+                        {isDone && e.result_summary === "Success" && (e.adventurer_ids || []).length > 0 && (
+                            <Link
+                                to={`/squads/new?type=${(e.adventurer_ids || []).length === 5 ? "dungeon_5" : "dungeon_3"}&adventurer_ids=${(e.adventurer_ids || []).join(",")}&suggested_name=${encodeURIComponent("Squadra " + (e.dungeon_name || "vincente"))}`}
+                                data-testid="report-save-as-squad-btn"
+                                className="inline-flex items-center text-xs tracking-widest font-bold border border-amber/60 text-amber px-3 py-2 rounded-sm hover:bg-amber/10 transition-colors"
+                                title={lang === "it" ? "Salva il team come squadra riutilizzabile" : "Save this team as a reusable squad"}
+                            >
+                                💾 {lang === "it" ? "Salva come squadra" : "Save as squad"}
+                            </Link>
+                        )}
                     </div>
                 </div>
 

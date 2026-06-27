@@ -106,6 +106,39 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
+                <SectionBlock id="territorio" title="Territorio di Gilda (ROUND 6B)">
+                    <p>
+                        Il <strong>Territorio</strong> è l&apos;insieme delle 11 strutture che la tua gilda può
+                        costruire e potenziare. Ogni struttura sblocca o migliora una funzionalità del gioco.
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Sala della Gilda</strong> — Cuore amministrativo, è il prerequisito principale per tutte le altre strutture.</li>
+                        <li><strong>Dormitori</strong> — Determinano il cap del roster (Lv1=5, Lv2=10, …, Lv6=30).</li>
+                        <li><strong>Bacheca Spedizioni</strong> — Sblocca dungeon di tier più alti.</li>
+                        <li><strong>Sala della Guerra</strong> — Lv2 sblocca Raid T1, Lv3 i T2.</li>
+                        <li><strong>Banco del Mercato</strong> — Mercato NPC (Lv1=compra, Lv2=vendi).</li>
+                        <li><strong>Casa d&apos;Aste</strong> — Mercato player-to-player (Lv1=compra, Lv2=metti in vendita).</li>
+                        <li><strong>Officina</strong> — Crafting di nuovi item dalle ricette.</li>
+                        <li><strong>Fucina</strong> — Upgrade equipaggiamento (disincanta/raffina/incanta/reroll).</li>
+                        <li><strong>Sala dei Consorzi</strong> — Lv1 per unirti, Lv2 per crearne uno.</li>
+                        <li><strong>Sala delle Comunicazioni</strong> — Lv1 chat globale, Lv2 chat consorzio.</li>
+                        <li><strong>Campo di Addestramento</strong> — Placeholder per specializzazioni (in arrivo ROUND 6C).</li>
+                    </ul>
+                    <p className="mt-3">
+                        Vai a <code>/territory</code> per acquistare e potenziare le strutture. Ogni livello costa
+                        gold + materiali; i prerequisiti (es. Fucina richiede Sala Gilda Lv2 + Officina Lv1) sono
+                        visualizzati direttamente sulla card.
+                    </p>
+                    <p className="mt-2 text-amber/90 text-[12px]">
+                        <strong>👑 Lv7 LEGACY (Dormitori)</strong>: alcuni account storici hanno ricevuto un cap a 50 dalla
+                        migrazione una-tantum di ROUND 6B. Non è acquistabile dall&apos;utente.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Se una funzione del gioco mostra un toast <em>&quot;Funzione bloccata&quot;</em>, controlla il Territorio:
+                        la struttura corrispondente non ha ancora il livello richiesto.
+                    </p>
+                </SectionBlock>
+
                 <SectionBlock id="ruoli" title="Avventurieri e ruoli">
                     <p>
                         Ogni avventuriero ha <strong>classe</strong>, <strong>ruolo</strong>, <strong>rarità</strong>, livello, esperienza,

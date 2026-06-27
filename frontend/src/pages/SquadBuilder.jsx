@@ -114,11 +114,31 @@ export default function SquadBuilder() {
                 if (sBody.squad_type === "raid_20" && sBody.raid_parties) {
                     setParties(sBody.raid_parties);
                 }
+            } else {
+                // ROUND 6B.2c — "Save as squad" deep-link from victory reports.
+                // Accepts ?adventurer_ids=id1,id2,... and optional ?suggested_name=Foo
+                const idsParam = searchParams.get("adventurer_ids");
+                if (idsParam) {
+                    const ids = idsParam.split(",").filter(Boolean).slice(0, 20);
+                    setSelected(ids);
+                    // For raid_20, distribute flat 5+5+5+5 if exactly 20 ids
+                    const t = searchParams.get("type") || "dungeon_3";
+                    if (t === "raid_20" && ids.length === 20) {
+                        setParties({
+                            party_1: ids.slice(0, 5),
+                            party_2: ids.slice(5, 10),
+                            party_3: ids.slice(10, 15),
+                            party_4: ids.slice(15, 20),
+                        });
+                    }
+                }
+                const sugg = searchParams.get("suggested_name");
+                if (sugg) setName(sugg.slice(0, 40));
             }
         } finally {
             setLoading(false);
         }
-    }, [id, isEdit, lang, navigate]);
+    }, [id, isEdit, lang, navigate, searchParams]);
 
     useEffect(() => {
         load();

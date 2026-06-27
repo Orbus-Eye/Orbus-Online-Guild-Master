@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
@@ -12,6 +12,7 @@ import ChronicleCard from "../components/ChronicleCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
+import { DORM_CAP_BY_LEVEL, STRUCTURE_SLUGS } from "../utils/structures";
 
 const Stat = ({ label, value, testid, accent = false }) => (
     <div className="border border-border bg-card rounded-sm p-4">
@@ -26,6 +27,81 @@ const Stat = ({ label, value, testid, accent = false }) => (
         </div>
     </div>
 );
+
+function TerritoryWidget() {
+    const [territory, setTerritory] = useState(null);
+    const [advCount, setAdvCount] = useState(null);
+
+    useEffect(() => {
+        Promise.all([api.get("/territory"), api.get("/adventurers")])
+            .then(([t, a]) => {
+                setTerritory(t.data?.territory || null);
+                setAdvCount((a.data?.adventurers || []).length);
+            })
+            .catch(() => { /* best-effort widget */ });
+    }, []);
+
+    const summary = useMemo(() => {
+        if (!territory) return null;
+        const structures = territory.structures || {};
+        const dormLevel = Number(structures.dormitories?.level || 0);
+        const cap = DORM_CAP_BY_LEVEL[dormLevel] || 0;
+        const unlocked = STRUCTURE_SLUGS.filter((s) => Number(structures[s]?.level || 0) >= 1).length;
+        const overCap = advCount != null && advCount > cap;
+        return { dormLevel, cap, unlocked, overCap };
+    }, [territory, advCount]);
+
+    if (!territory || !summary) return null;
+
+    return (
+        <div className="mb-6">
+            {summary.overCap && (
+                <div
+                    data-testid="dashboard-overcap-banner"
+                    className="border border-red-400/60 bg-red-500/10 text-red-200 rounded-sm px-4 py-2 mb-3 text-xs flex items-center justify-between gap-3 flex-wrap"
+                >
+                    <span>
+                        ⚠ Roster oltre capacità: {advCount}/{summary.cap}. Potenzia i Dormitori o congeda avventurieri.
+                    </span>
+                    <Link to="/territory" className="text-amber font-bold tracking-widest hover:underline">
+                        VAI AL TERRITORIO →
+                    </Link>
+                </div>
+            )}
+            <Link
+                to="/territory"
+                data-testid="dashboard-territory-widget"
+                className="block border border-border bg-card rounded-sm p-4 hover:border-amber/40 transition-colors"
+            >
+                <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] text-amber tracking-widest font-bold">:: TERRITORIO</span>
+                    <span className="text-[10px] text-amber group-hover:translate-x-0.5">→</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">Avventurieri</div>
+                        <div data-testid="dashboard-territory-adv-count" className="font-bold">
+                            {advCount ?? "—"}/{summary.cap}
+                        </div>
+                        <div className="w-full bg-secondary h-1 rounded-sm mt-1 overflow-hidden">
+                            <div
+                                className={`h-full ${summary.overCap ? "bg-red-400" : "bg-amber"}`}
+                                style={{ width: `${Math.min(100, Math.round(((advCount || 0) / Math.max(summary.cap, 1)) * 100))}%` }}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">Strutture</div>
+                        <div data-testid="dashboard-territory-unlocked" className="font-bold">
+                            {summary.unlocked}/11
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-1">sbloccate</div>
+                    </div>
+                </div>
+            </Link>
+        </div>
+    );
+}
 
 const ActiveAction = ({ to, label, code, testid }) => (
     <Link
@@ -118,6 +194,7 @@ export default function Dashboard() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <OnboardingChecklist />
+                <TerritoryWidget />
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)]">
                     <DailyQuestsCard />
                     <StreakBadge />

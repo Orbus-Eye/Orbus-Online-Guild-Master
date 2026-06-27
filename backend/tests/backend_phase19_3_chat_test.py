@@ -52,6 +52,21 @@ def _user(hint="p193c", is_test=False):
     h = {"Authorization": f"Bearer {tok}"}
     requests.post(f"{BASE_URL}/api/guilds", json={"name": f"P193 {tag[-5:]}"}, headers=h, timeout=15)
     g = requests.get(f"{BASE_URL}/api/guilds/me", headers=h, timeout=15).json()["guild"]
+    # ROUND 6B.2a — chat.global/consortium now require communication_hall Lv1/Lv2.
+    # Lazy-create the territory doc, then bump the level so legacy chat tests pass.
+    requests.get(f"{BASE_URL}/api/territory", headers=h, timeout=15)
+    import os as _os
+    from pymongo import MongoClient as _MC
+    _c = _MC(_os.environ["MONGO_URL"])
+    _c[_os.environ["DB_NAME"]].guild_structures.update_one(
+        {"guild_id": g["id"]},
+        {"$set": {"structures.communication_hall.level": 2,
+                  "structures.communication_hall.is_unlocked": True,
+                  "structures.consortium_hall.level": 2,
+                  "structures.consortium_hall.is_unlocked": True}},
+        upsert=True,
+    )
+    _c.close()
     return {"headers": h, "tag": tag, "guild_id": g["id"], "guild_name": g["name"], "email": f"{tag}@orbus.test"}
 
 
@@ -199,8 +214,8 @@ class TestChatMVP:
     def test_C9_openapi_path_count_now_79(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = list(r.json()["paths"].keys())
-        # ROUND 6A.2a added 2 squads paths (/api/squads, /api/squads/{squad_id}).
-        assert len(paths) == 88, f"expected 88 (86 + 2 squads paths), got {len(paths)}"
+        # ROUND 6B.1 added 3 territory paths, 6B.2a added 1 retire path → 92.
+        assert len(paths) == 92, f"expected 92 (post-6B.1+6B.2a), got {len(paths)}"
         # Sanity: all 4 chat paths present
         for p in [
             "/api/chat/global",

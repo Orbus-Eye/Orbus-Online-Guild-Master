@@ -111,6 +111,8 @@ def expedition_public(e: dict) -> dict:
         "gold_reward": e.get("gold_reward", 0),
         "xp_reward": e.get("xp_reward", 0),
         "loot_item_ids": e.get("loot_item_ids", []),
+        # ROUND 6B.2c — expose adventurer_ids for "Save as squad" deep-link.
+        "adventurer_ids": list(e.get("adventurer_ids", [])),
         # Phase 8: marks the run as a "Replay Last Run" dispatch (UI label).
         "is_replay": bool(e.get("is_replay", False)),
         "created_at": e["created_at"],

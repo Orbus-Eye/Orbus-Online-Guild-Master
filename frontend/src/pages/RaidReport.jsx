@@ -106,6 +106,16 @@ export default function RaidReport() {
                             </div>
                             <div className="text-[11px]"><strong>{t("raids.report.raid_score")}:</strong> {raid.raid_score}</div>
                             <div className="text-[11px]"><strong>{t("raids.report.duration")}:</strong> {Math.round((raid.duration_seconds || 0) / 60)} min</div>
+                            {/* ROUND 6B.2c — Save as squad after raid victory */}
+                            {raid.outcome === "victory" && participants.length === 20 && (
+                                <Link
+                                    to={`/squads/new?type=raid_20&adventurer_ids=${participants.map(p => p.adventurer_id).join(",")}&suggested_name=${encodeURIComponent("Raid " + (raid.raid_name || ""))}`}
+                                    data-testid="raid-report-save-as-squad-btn"
+                                    className="inline-flex items-center mt-2 text-[11px] tracking-widest font-bold border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 transition-colors"
+                                >
+                                    💾 Salva come squadra
+                                </Link>
+                            )}
                         </div>
                     )}
                 </section>
