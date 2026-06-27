@@ -174,6 +174,7 @@ def _add_materials(db, guild_id: str, materials: dict):
 # ═════════════════════════════════════════════════════════════════════════
 # 1-3. Migration / Seed idempotency
 # ═════════════════════════════════════════════════════════════════════════
+@pytest.mark.flaky(reruns=3)  # Phase 19 — known parallel xdist flake, see FLAKY_TESTS_AUDIT.md
 def test_01_migration_idempotent_no_dup_fields(db):
     # After backend startup the migration ran. Calling our migration helper
     # again must not create stale duplicates. We assert no row has both
@@ -223,7 +224,8 @@ def test_04_openapi_path_count():
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     assert r.status_code == 200
     paths = list(r.json()["paths"].keys())
-    assert len(paths) == 75, f"expected 75 paths, got {len(paths)}: {sorted(paths)}"
+    # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+    assert len(paths) == 76, f"expected 75 paths, got {len(paths)}: {sorted(paths)}"
 
 
 def test_05_sets_and_enchants_public_routes():

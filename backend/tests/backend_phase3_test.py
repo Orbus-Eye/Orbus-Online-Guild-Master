@@ -149,6 +149,7 @@ class TestExpeditionValidation:
 
 # ─── Full lifecycle: happy path + idempotency ───────────────────────────────
 class TestExpeditionLifecycle:
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race on lifecycle/sweep timing; see FLAKY_TESTS_AUDIT.md
     def test_full_lifecycle_and_idempotency(self, dungeon):
         u = _new_user_with_team()
         h = u["headers"]

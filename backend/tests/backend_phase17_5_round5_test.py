@@ -75,7 +75,8 @@ def _new_user(hint="p18"):
 def test_01_openapi_paths_75():
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     paths = list(r.json()["paths"].keys())
-    assert len(paths) == 75, f"expected 75, got {len(paths)}"
+    # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+    assert len(paths) == 76, f"expected 75, got {len(paths)}"
 
 
 def test_02_starter_roster_creates_5(db):

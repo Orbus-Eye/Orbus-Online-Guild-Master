@@ -57,7 +57,8 @@ class TestHealthAndSurface:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
-        assert len(paths) == 75, f"Expected 42 OpenAPI paths, got {len(paths)}"
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, f"Expected 42 OpenAPI paths, got {len(paths)}"
 
 
 # ---------- Auth / tester seed ----------
@@ -113,7 +114,10 @@ class TestGuildAndCore:
         data = r.json()
         candidates = data.get("candidates", data) if isinstance(data, dict) else data
         assert isinstance(candidates, list)
-        assert len(candidates) == 4, f"expected 4 candidates, got {len(candidates)}"
+        # Updated for Phase 19 §1.1 / Round 5 §I (Phase 17.5) — starter roster
+        # auto-pop seeds 5 advs at guild creation, which can deplete the
+        # recruitment rotation pool to ≤4 if class overlap is high. Accept 3-4.
+        assert 3 <= len(candidates) <= 4, f"expected 3-4 candidates, got {len(candidates)}"
         for c in candidates:
             # API uses candidate_id (not id) per actual response shape
             assert ("candidate_id" in c) or ("id" in c)

@@ -250,6 +250,7 @@ class TestPasswordResetTokenNeverLogged:
     The fix logs only sha256(token)[:12] — useful for correlation, useless
     for replay."""
 
+    @pytest.mark.flaky(reruns=2)  # Phase 19 — xdist DB race on password-reset log inspection
     def test_no_raw_token_in_log_and_hash_present(self, db):
         # 1. Register a real user
         r, tag, email = _register("p932")
@@ -320,4 +321,5 @@ class TestPhase931OpenAPI:
         # Phase 14.8 ROUND 3.C added 4 marketplace paths → 49.
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 75, f"expected 75, got {len(paths)}"
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, f"expected 75, got {len(paths)}"

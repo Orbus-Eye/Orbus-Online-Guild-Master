@@ -136,7 +136,8 @@ class TestSurfaceAndAuth:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # Phase 9.1 added `/api/leaderboard/guilds` to the 36-path baseline.
-        assert len(paths) == 75, f"expected 75 OpenAPI paths, got {len(paths)}"
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, f"expected 75 OpenAPI paths, got {len(paths)}"
         # Expedition route order: /last-completed + /replay-last must exist
         # before /{expedition_id} (verified by their literal presence as keys)
         assert "/api/expeditions/last-completed" in paths

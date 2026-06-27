@@ -114,7 +114,8 @@ class TestOpenAPIStable:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # baseline 43 → 45 → 49 → 53 → 60 → 61 (Phase 16.1 admin cleanup endpoint).
-        assert len(paths) == 75, (
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, (
             f"unexpected OpenAPI path count: {len(paths)}"
         )
 

@@ -268,7 +268,8 @@ class TestPhase113NoRegressions:
     def test_openapi_paths_count_39(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 75, f"expected 75, got {len(paths)}"
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, f"expected 75, got {len(paths)}"
 
     def test_onboarding_path_present(self):
         r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)

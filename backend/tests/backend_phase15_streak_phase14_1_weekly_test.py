@@ -509,15 +509,20 @@ class TestEconomyInvariants:
                 assert item["rarity"] in ("Common", "Uncommon"), \
                     f"streak reward rarity too high: {mat['slug']}={item['rarity']}"
         # Weekly: gold cap per quest, materials are common/uncommon only.
+        # Updated for Phase 19 §1.1 — raid weekly quests bumped per-quest cap
+        # 180 → 200 (raid_t2plus_success rewards 200g) and pool size 6 → 8 →
+        # total cap proportionally 1000 → 1200. Still strictly anti-inflation
+        # (max theoretical 1200g/week even if user clears all 8 quests, but only
+        # 4 are visible per week → real cap ≤ 800g/week).
         total_gold = 0
         for q in WEEKLY_QUEST_POOL:
-            assert 0 < q["reward_gold"] <= 180, f"weekly {q['slug']} gold out of band"
+            assert 0 < q["reward_gold"] <= 200, f"weekly {q['slug']} gold out of band"
             for mat in q.get("reward_materials", []):
                 item = db.items.find_one({"slug": mat["slug"]}, {"item_type": 1, "rarity": 1})
                 assert item is not None
                 assert item["item_type"] == "material"
                 assert item["rarity"] in ("Common", "Uncommon")
             total_gold += q["reward_gold"]
-        # 6 quests in pool, only 4 active per week; theoretical max if user could
-        # complete all 6 is well below 1000g/week — anti-inflation invariant.
-        assert total_gold <= 1000, f"weekly gold pool too high: {total_gold}"
+        # 8 quests in pool (Phase 19), only 4 active per week; theoretical max
+        # if user could complete all 8 is well below 1200g/week.
+        assert total_gold <= 1200, f"weekly gold pool too high: {total_gold}"

@@ -295,7 +295,8 @@ class TestOpenAPIInvariant:
         assert r.status_code == 200
         paths = r.json().get("paths", {})
         # 60 → +1 admin cleanup endpoint (Phase 16.1) = 61.
-        assert len(paths) == 75, (
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, (
             f"expected 75 (Phase 16.1), got {len(paths)}"
         )
 

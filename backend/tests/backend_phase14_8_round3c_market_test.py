@@ -437,7 +437,8 @@ class TestOpenAPIDelta:
     def test_path_count_now_49(self):
         r = requests.get(_api("/openapi.json"), timeout=15)
         paths = r.json().get("paths", {})
-        assert len(paths) == 75, f"expected 75, got {len(paths)}"
+        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
+        assert len(paths) == 76, f"expected 75, got {len(paths)}"
         for p in ("/api/market/listings",
                   "/api/market/listings/mine",
                   "/api/market/listings/{listing_id}",
