@@ -81,6 +81,10 @@ EVENT_TYPES = frozenset({
     "squad_archived",
     # ROUND 6A.2b — Trait hygiene
     "trait_quarantined",
+    # ROUND 6B.1 — Territory
+    "guild_structure_purchased",
+    "guild_structure_upgraded",
+    "guild_territory_migrated",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

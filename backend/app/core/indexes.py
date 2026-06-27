@@ -154,5 +154,15 @@ async def create_all_indexes(db) -> None:
         name="squads_guild_name_unique_active",
     )
 
+    # ROUND 6B.1 — guild_structures (Territory)
+    await db.guild_structures.create_index(
+        [("guild_id", ASCENDING)],
+        unique=True,
+        name="guild_structures_guild_unique",
+    )
+    await db.guild_structures.create_index(
+        [("id", ASCENDING)], unique=True, name="guild_structures_id_unique"
+    )
+
 
 __all__ = ["create_all_indexes"]
