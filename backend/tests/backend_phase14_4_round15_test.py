@@ -115,7 +115,7 @@ class TestOpenAPIStable:
         paths = r.json().get("paths", {})
         # baseline 43 → 45 → 49 → 53 → 60 → 61 (Phase 16.1 admin cleanup endpoint).
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 76, (
+        assert len(paths) == 77, (
             f"unexpected OpenAPI path count: {len(paths)}"
         )
 

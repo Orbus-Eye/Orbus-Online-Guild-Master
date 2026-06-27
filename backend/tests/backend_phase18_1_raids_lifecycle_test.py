@@ -97,13 +97,14 @@ def test_L3_legacy_T3_no_legendary_leak():
         assert "Legendary" not in w, f"{slug} should NOT drop Legendary"
 
 
-def test_L4_path_count_now_76():
+def test_L4_path_count_now_77():
     """Phase 18.1 added 6 raid endpoints (total 75); Phase 19 §1.2 adds
-    +1 endpoint `/api/leaderboard/raids` bringing the total to 76."""
+    +1 endpoint `/api/leaderboard/raids` bringing the total to 76;
+    Phase 19.2 adds +1 endpoint `/api/adventurers/{id}/name` (rename) → 77."""
     r = requests.get(f"{BASE_URL}/api/openapi.json", timeout=15)
     paths = list(r.json()["paths"].keys())
     # Updated for Phase 19 §1.2 — added /api/leaderboard/raids
-    assert len(paths) == 76
+    assert len(paths) == 77
 
 
 # ───────────────────────────────────── R: Raid lifecycle

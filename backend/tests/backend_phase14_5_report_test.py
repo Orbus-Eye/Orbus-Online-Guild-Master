@@ -296,7 +296,7 @@ class TestOpenAPIInvariant:
         paths = r.json().get("paths", {})
         # 60 → +1 admin cleanup endpoint (Phase 16.1) = 61.
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 76, (
+        assert len(paths) == 77, (
             f"expected 75 (Phase 16.1), got {len(paths)}"
         )
 

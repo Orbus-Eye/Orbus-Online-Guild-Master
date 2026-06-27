@@ -28,6 +28,7 @@ import Forge from "@/pages/Forge";
 import Raids from "@/pages/Raids";
 import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
+import Guide from "@/pages/Guide";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -180,6 +181,7 @@ function App() {
                             }
                         />
                         <Route path="/leaderboard" element={<Leaderboard />} />
+                        <Route path="/guide" element={<Guide />} />
                         <Route
                             path="/consortiums"
                             element={

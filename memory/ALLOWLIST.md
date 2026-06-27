@@ -69,6 +69,7 @@ _(all email pending entries cleared on 2026-06-26 — see audit log below)_
 | Harambes | samuelemazzini1994@gmail.com | — | 2026-06-26 |
 | Il Regno di Lanafuoco | ginnyo.gear@gmail.com | Magmorella | 2026-06-26 |
 | Crociata d'Argento | lordcoby87@gmail.com | (TBD username) | 2026-06-26 |
+| Eclipse Vanguard | kyrie.shepard@gmail.com | (TBD username) | 2026-06-27 |
 | The Iron Lantern | _(TEST account)_ | _(forced is_test_user=True via TEST_GUILDS_FORCE)_ | 2026-06-26 |
 
 ## Enforcement points
@@ -109,3 +110,4 @@ flagging code MUST honour both sets.
 | 2026-06-26 (Round 3 post-deploy) | Preview leaderboard residual cleanup | 13 leaderboard-visible test users flagged `is_test_user=True`; 53 orphan-owner guilds got a shadow placeholder user (`is_test_user=True`) so the leaderboard filter applies. Reversible via the backup in `db_leaderboard_residual_flag_backup.json`. No hard delete. |
 | 2026-06-26 (ROUND 5 post-deploy) | +Crociata d'Argento (allowlist, name-based) | Nuovo tester reale confermato dall'utente. Trovata al **rank 1** su prod `/api/leaderboard/guilds` (level 1, max_team_power 177, total_expeditions 4, created 2026-06-26T22:15Z). `is_test_user=False` confermato implicitamente (la leaderboard prod filtra `is_test_user=True`, e la guild compare in classifica). Owner email TBD — protezione attiva via guild-name allowlist su tutti e 3 i file (conftest, prod_leaderboard_cleanup, admin/services). Nessun hard delete. Nessun cleanup eseguito. |
 | 2026-06-26 (Phase 19.1 hotfix B6) | +lordcoby87@gmail.com (Crociata d'Argento) | Email owner confermata dall'utente in seguito a smoke test post-deploy. Aggiunta a `ALLOWLIST_EMAILS` in **tutti e 4 i file** (`conftest.py`, `prod_leaderboard_cleanup.py`, `admin/services.py::CLEANUP_ALLOWLIST_EMAILS`, `ALLOWLIST.md`). Ora **protezione doppia attiva**: guild-name + email. Nessun cleanup eseguito. |
+| 2026-06-27 (Phase 19.2) | +kyrie.shepard@gmail.com (Eclipse Vanguard) | Nuovo giocatore reale confermato dall'utente. Aggiunta sia email (`ALLOWLIST_EMAILS`) sia guild-name (`ALLOWLIST_GUILDS`, lowercase `eclipse vanguard`) in **tutti e 4 i file** (`conftest.py`, `prod_leaderboard_cleanup.py`, `admin/services.py`, `ALLOWLIST.md`). Protezione doppia attiva. `is_test_user=False` (giocatore reale). Nessun cleanup eseguito. |

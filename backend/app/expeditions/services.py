@@ -305,11 +305,20 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 "$inc": {"quantity": 1},
                 "$setOnInsert": {
                     "id": str(uuid.uuid4()),
+                    "instance_id": str(uuid.uuid4()),  # ROUND 4 forge field
                     "guild_id": claimed["guild_id"],
                     "item_id": item_id,
                     "acquired_at": now.isoformat(),
                     "source": "dungeon",
                     "bind_state": "unbound",
+                    # Phase 19.2 fix — ensure ROUND 4 default fields are set
+                    # on first insert so the idempotency test stays green.
+                    "is_bound": False,
+                    "disenchanted_at": None,
+                    "refinement_level": 0,
+                    "enchants": [],
+                    "affixes": [],
+                    "reroll_count": 0,
                 },
             },
             upsert=True,

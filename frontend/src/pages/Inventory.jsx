@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
+import InventoryEquipModal from "../components/InventoryEquipModal";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -93,6 +94,7 @@ export default function Inventory() {
     const [busyKey, setBusyKey] = useState(null);
     const [typeFilter, setTypeFilter] = useState("all");  // all|weapon|armor|accessory|consumable|material
     const [rarityFilter, setRarityFilter] = useState(new Set());
+    const [equipRow, setEquipRow] = useState(null);
 
     const refresh = async () => {
         try {
@@ -435,6 +437,21 @@ export default function Inventory() {
                                             {t("inventory_extra.actions_label")}
                                         </div>
 
+                                        {/* Phase 19.2 — P1.2: primary "Equipaggia" CTA opens modal with eligibility preview */}
+                                        {hasAvailable && (
+                                            <div className="mb-2">
+                                                <Button
+                                                    type="button"
+                                                    data-testid={`inv-open-equip-modal-${r.id}`}
+                                                    onClick={() => setEquipRow(r)}
+                                                    className="h-7 px-2 text-[11px] bg-amber text-black hover:bg-amber/80 rounded-sm"
+                                                    title={t("inventory_extra.status_available")}
+                                                >
+                                                    ▶ {t("inventory_extra.equip_button", "Equipaggia…")}
+                                                </Button>
+                                            </div>
+                                        )}
+
                                         {/* Manage links for adventurers already wearing this item */}
                                         {equippedBy.length > 0 && (
                                             <div className="flex flex-wrap gap-2 mb-2">
@@ -518,6 +535,13 @@ export default function Inventory() {
                     </>
                 )}
             </main>
+            <InventoryEquipModal
+                row={equipRow}
+                adventurers={adventurers}
+                onClose={() => setEquipRow(null)}
+                onEquipped={refresh}
+                lang={lang}
+            />
         </div>
     );
 }

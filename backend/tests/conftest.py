@@ -32,6 +32,7 @@ ALLOWLIST_EMAILS = frozenset({
     "samuelemazzini1994@gmail.com",  # Harambes owner — confirmed 2026-06-26
     "ginnyo.gear@gmail.com",         # Magmorella — Il Regno di Lanafuoco — confirmed 2026-06-26
     "lordcoby87@gmail.com",          # Crociata d'Argento owner — confirmed 2026-06-26
+    "kyrie.shepard@gmail.com",       # Eclipse Vanguard owner — confirmed 2026-06-27 (Phase 19.2)
 })
 ALLOWLIST_GUILDS_LOWER = frozenset({
     "sentiero di efreto",
@@ -40,6 +41,7 @@ ALLOWLIST_GUILDS_LOWER = frozenset({
     "the loremaster",  # CONFIRMED real player (mr.gualmini@gmail.com) — 2026-06-26
     "il regno di lanafuoco",  # CONFIRMED real player — 2026-06-26 (owner email TBD)
     "crociata d'argento",  # CONFIRMED new real tester — 2026-06-26 (owner email TBD, rank 1 prod)
+    "eclipse vanguard",  # CONFIRMED real player (kyrie.shepard@gmail.com) — 2026-06-27 (Phase 19.2)
 })
 
 

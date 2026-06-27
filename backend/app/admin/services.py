@@ -107,6 +107,7 @@ CLEANUP_ALLOWLIST_EMAILS = frozenset({
     "samuelemazzini1994@gmail.com",
     "ginnyo.gear@gmail.com",
     "lordcoby87@gmail.com",  # Crociata d'Argento owner — confirmed 2026-06-26
+    "kyrie.shepard@gmail.com",  # Eclipse Vanguard owner — confirmed 2026-06-27 (Phase 19.2)
 })
 CLEANUP_ALLOWLIST_GUILDS = frozenset({
     "sentiero di efreto",
@@ -115,6 +116,7 @@ CLEANUP_ALLOWLIST_GUILDS = frozenset({
     "harambes",
     "il regno di lanafuoco",
     "crociata d'argento",  # CONFIRMED new real tester 2026-06-26 (owner email TBD)
+    "eclipse vanguard",  # CONFIRMED real player (kyrie.shepard@gmail.com) — 2026-06-27 (Phase 19.2)
 })
 # Guild names (case-insensitive) that MUST be flagged even if their owner
 # would otherwise fall in the allowlist — confirmed test rigs from user.

@@ -95,6 +95,7 @@ ALLOWLIST_EMAILS = {
     "samuelemazzini1994@gmail.com",   # Harambes — confirmed 2026-06-26
     "ginnyo.gear@gmail.com",          # Magmorella — Il Regno di Lanafuoco — 2026-06-26
     "lordcoby87@gmail.com",           # Crociata d'Argento — confirmed 2026-06-26
+    "kyrie.shepard@gmail.com",        # Eclipse Vanguard — confirmed 2026-06-27 (Phase 19.2)
     "tester@orbus.test",              # sandbox admin
 }
 ALLOWLIST_GUILDS = {
@@ -104,6 +105,7 @@ ALLOWLIST_GUILDS = {
     "the loremaster",                 # CONFIRMED real player (mr.gualmini@gmail.com)
     "il regno di lanafuoco",          # CONFIRMED real player 2026-06-26 (owner email TBD)
     "crociata d'argento",             # CONFIRMED new real tester 2026-06-26 (owner email TBD)
+    "eclipse vanguard",               # CONFIRMED real player (kyrie.shepard@gmail.com) 2026-06-27
 }
 # Guilds we explicitly DO NOT TOUCH until the user classifies them.
 PENDING_AMBIGUOUS: set[str] = set()  # cleared 2026-06-26 after user classification

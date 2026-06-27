@@ -8,6 +8,8 @@ import { Button } from "../components/ui/button";
 import { TraitList } from "../components/TraitBadge";
 import TraitPreviewWidget from "../components/TraitPreviewWidget";
 import AdventurerDetailModal from "../components/AdventurerDetailModal";
+import AdventurerRenameModal from "../components/AdventurerRenameModal";
+import RoleMarker from "../components/RoleMarker";
 
 // i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
 // intentionally NOT localized. They follow universal MMO/RPG convention and
@@ -111,9 +113,15 @@ export default function Adventurers() {
     const [rows, setRows] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
+    const [renaming, setRenaming] = useState(null);
 
     const openSheet = (a) => setSelected(a);
     const closeSheet = () => setSelected(null);
+    const openRename = (a) => setRenaming(a);
+    const closeRename = () => setRenaming(null);
+    const onRenamed = (updated) => {
+        setRows((prev) => (prev || []).map((r) => (r.id === updated.id ? updated : r)));
+    };
 
     useEffect(() => {
         (async () => {
@@ -215,7 +223,7 @@ export default function Adventurers() {
                                                 {a.class_name}
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                                                {a.class_role}
+                                                <RoleMarker role={a.class_role} withLabel />
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 <RarityBadge rarity={a.rarity} />
@@ -240,13 +248,29 @@ export default function Adventurers() {
                                                 )}
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                                                <Link
-                                                    to={`/adventurers/${a.id}/equipment`}
-                                                    data-testid={`equip-link-${a.id}`}
-                                                    className="text-[11px] text-amber hover:underline"
-                                                >
-                                                    {t("adventurers.manage")}
-                                                </Link>
+                                                <div className="flex flex-col gap-1">
+                                                    <Link
+                                                        to={`/adventurers/${a.id}/equipment`}
+                                                        data-testid={`equip-link-${a.id}`}
+                                                        className="text-[11px] text-amber hover:underline"
+                                                    >
+                                                        {t("adventurers.manage")}
+                                                    </Link>
+                                                    <button
+                                                        type="button"
+                                                        data-testid={`rename-btn-${a.id}`}
+                                                        onClick={() => openRename(a)}
+                                                        disabled={(a.renames_remaining ?? 2) <= 0}
+                                                        title={
+                                                            (a.renames_remaining ?? 2) <= 0
+                                                                ? "Limite rinomine raggiunto (2/2)"
+                                                                : `Rinomine rimaste: ${a.renames_remaining ?? 2}/2`
+                                                        }
+                                                        className="text-[11px] text-muted-foreground hover:text-amber disabled:opacity-30 disabled:cursor-not-allowed text-left"
+                                                    >
+                                                        ✎ rinomina ({a.renames_remaining ?? 2}/2)
+                                                    </button>
+                                                </div>
                                             </td>
                                             <td className="px-3 py-2 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
                                                 <TraitList traits={a.traits} />
@@ -365,6 +389,7 @@ export default function Adventurers() {
             </main>
 
             <AdventurerDetailModal adventurer={selected} onClose={closeSheet} />
+            <AdventurerRenameModal adventurer={renaming} onClose={closeRename} onRenamed={onRenamed} />
         </div>
     );
 }

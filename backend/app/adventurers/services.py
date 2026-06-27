@@ -139,6 +139,9 @@ def adventurer_public(doc: dict) -> dict:
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
         "is_starter": bool(doc.get("is_starter", False)),
+        "rename_count": int(doc.get("rename_count", 0)),
+        "rename_max": 2,
+        "renames_remaining": max(0, 2 - int(doc.get("rename_count", 0))),
         "traits": trait_public_filtered_list(doc.get("traits", [])),
         "equipment": eq_slots,
         "base_power": base_power,
@@ -223,10 +226,79 @@ async def trait_preview_for_adventurer(db, guild_id: str, adventurer_id: str) ->
     }
 
 
+RENAME_MAX_LIFETIME = 2
+# Adventurer rename: letters (incl. Unicode accents), spaces and apostrophe only.
+RENAME_NAME_RE = re.compile(r"^[\w\s'\-]+$", re.UNICODE)
+
+
+async def rename_adventurer(db, guild_id: str, adventurer_id: str, new_name: str) -> dict:
+    """Phase 19.2 — rename adventurer with lifetime cap of 2. Free.
+
+    Validation:
+      • Adventurer must belong to caller's guild (404 if not — no leak).
+      • `rename_count` must be < 2 (409 if exhausted).
+      • Name length 2-30 (Pydantic enforces), pattern alphanum + spaces + apostrophe.
+      • Uniqueness: case-insensitive within the guild (409 if collision).
+    On success: increments `rename_count`, updates `name`, returns public projection.
+    """
+    from app.equipment.services import _empty_slot_map, _load_equipment_for_guild
+    name = (new_name or "").strip()
+    if not name or not RENAME_NAME_RE.match(name):
+        raise HTTPException(
+            status_code=422,
+            detail="Nome non valido: usa lettere, spazi, apostrofo o trattino.",
+        )
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
+    )
+    if not adv:
+        raise HTTPException(status_code=404, detail="Adventurer not found")
+    current_count = int(adv.get("rename_count", 0))
+    if current_count >= RENAME_MAX_LIFETIME:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"Limite rinomine raggiunto ({current_count}/"
+                f"{RENAME_MAX_LIFETIME}). Nessuna rinomina ulteriore consentita."
+            ),
+        )
+    # Case-insensitive uniqueness within the guild (exclude self)
+    collision = await db.adventurers.find_one(
+        {
+            "guild_id": guild_id,
+            "id": {"$ne": adventurer_id},
+            "name": {"$regex": f"^{re.escape(name)}$", "$options": "i"},
+        },
+        {"_id": 0, "id": 1},
+    )
+    if collision:
+        raise HTTPException(
+            status_code=409,
+            detail="Esiste già un avventuriero con questo nome nella tua gilda.",
+        )
+    now_iso = __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()
+    await db.adventurers.update_one(
+        {"id": adventurer_id, "guild_id": guild_id},
+        {"$set": {"name": name, "updated_at": now_iso}, "$inc": {"rename_count": 1}},
+    )
+    # Re-fetch with the same equipment join as list endpoint, return public projection.
+    fresh = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
+    )
+    equip_map = await _load_equipment_for_guild(db, guild_id)
+    slots, power = equip_map.get(adventurer_id, (_empty_slot_map(), 0))
+    fresh["_equipment_slots"] = slots
+    fresh["_equipment_power"] = power
+    return {"adventurer": adventurer_public(fresh)}
+
+
 __all__ = [
     "class_public",
     "trait_public",
     "adventurer_public",
     "list_adventurers_for_guild",
     "trait_preview_for_adventurer",
+    "rename_adventurer",
+    "RENAME_MAX_LIFETIME",
+    "RENAME_NAME_RE",
 ]

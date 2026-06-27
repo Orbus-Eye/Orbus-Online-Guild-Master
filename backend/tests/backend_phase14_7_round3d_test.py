@@ -197,7 +197,7 @@ class TestOpenAPIStable:
         paths = r.json().get("paths", {})
         # Still 49 — Round 3.D didn't add public endpoints; Round 3.C added 4.
         # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 76, f"expected 75, got {len(paths)}"
+        assert len(paths) == 77, f"expected 75, got {len(paths)}"
 
 
 if __name__ == "__main__":  # pragma: no cover
