@@ -20,6 +20,7 @@ from app.chat.services import ensure_chat_indexes
 from app.shop.services import ensure_shop_indexes
 from app.seeds.seed_forge import run_forge_seeds, run_forge_migration
 from app.seeds.seed_round5 import run_round5_seeds_and_migrations
+from app.seeds.seed_territory_materials import seed_territory_materials
 
 
 logger = logging.getLogger("orbus")
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI):
     await run_forge_seeds(db)
     await run_all_seeds(db)
     await run_round5_seeds_and_migrations(db)
+    await seed_territory_materials(db)  # ROUND 6B.3 — idempotent material seed
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     yield
     mongo_client.close()

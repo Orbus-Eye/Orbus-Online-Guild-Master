@@ -151,6 +151,7 @@ export default function Territory() {
     useEffect(() => { fetchTerritory(); }, []);
 
     const doPurchase = async (slug) => {
+        if (busy) return; // ROUND 6B.3 — defensive guard vs. fast double-click
         setBusy(true);
         try {
             const { data } = await api.post("/territory/purchase", { structure_slug: slug });
@@ -160,7 +161,13 @@ export default function Territory() {
         } catch (err) {
             const detail = err?.response?.data?.detail;
             if (detail?.code === "resources.gold_insufficient") {
-                toast.error(lang === "it" ? "Gold insufficienti" : "Not enough gold");
+                toast.error(lang === "it"
+                    ? `Gold insufficiente: servono ${detail.required}, hai ${detail.available}`
+                    : `Not enough gold: need ${detail.required}, you have ${detail.available}`);
+            } else if (detail?.code === "resources.material_insufficient") {
+                toast.error(lang === "it"
+                    ? `Materiale insufficiente: ${detail.slug} (servono ${detail.required}, hai ${detail.available})`
+                    : `Not enough ${detail.slug}: need ${detail.required}, you have ${detail.available}`);
             } else {
                 toast.error(formatApiError(err));
             }
@@ -170,6 +177,7 @@ export default function Territory() {
     };
 
     const doUpgrade = async (slug) => {
+        if (busy) return; // ROUND 6B.3 — defensive guard vs. fast double-click
         setBusy(true);
         try {
             const { data } = await api.post("/territory/upgrade", { structure_slug: slug });
@@ -177,7 +185,18 @@ export default function Territory() {
             toast.success(`${getStructureName(slug, lang)} ${lang === "it" ? "potenziata!" : "upgraded!"}`);
             refreshGuild();
         } catch (err) {
-            toast.error(formatApiError(err));
+            const detail = err?.response?.data?.detail;
+            if (detail?.code === "resources.gold_insufficient") {
+                toast.error(lang === "it"
+                    ? `Gold insufficiente: servono ${detail.required}, hai ${detail.available}`
+                    : `Not enough gold: need ${detail.required}, you have ${detail.available}`);
+            } else if (detail?.code === "resources.material_insufficient") {
+                toast.error(lang === "it"
+                    ? `Materiale insufficiente: ${detail.slug} (servono ${detail.required}, hai ${detail.available})`
+                    : `Not enough ${detail.slug}: need ${detail.required}, you have ${detail.available}`);
+            } else {
+                toast.error(formatApiError(err));
+            }
         } finally {
             setBusy(false);
         }
