@@ -265,15 +265,6 @@ export default function Guide() {
                         Differenze rispetto al Mercato: il Mercato di Sistema è sempre disponibile a prezzo fisso (anti-grind), l&apos;Asta è un marketplace libero tra giocatori. Le vecchie URL <code>/api/market/listings*</code> continuano a funzionare via redirect automatico.
                     </p>
                 </SectionBlock>
-                    <p>
-                        Il <strong>Mercato</strong> ti permette di mettere in vendita oggetti del deposito a prezzo fisso
-                        (in gold). Altri giocatori possono acquistarli. Tassa di transazione: 5%.
-                    </p>
-                    <p className="mt-2">
-                        Il <strong>Crafting (Forgia)</strong> consuma materiali per produrre oggetti tier intermedio.
-                        Le ricette sono visibili nella pagina dedicata e hanno costi in oro + materiali specifici.
-                    </p>
-                </SectionBlock>
 
                 <SectionBlock id="quest" title="Quest e Streak">
                     <p>
