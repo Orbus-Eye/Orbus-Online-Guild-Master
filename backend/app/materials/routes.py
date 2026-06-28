@@ -92,4 +92,32 @@ async def public_materials_catalog():
     return {"total": len(out), "materials": out, "content_gaps": gaps}
 
 
+@router.get("/materials/lookup/{slug}")
+async def public_material_lookup(slug: str):
+    """ROUND 11.2 EXT-2 — Single-material lookup for inline UI popovers.
+
+    Same security filter contract as `/api/materials/catalog`. Returns
+    404 (not 200 with null) so the FE `MaterialSourceModal` can fail
+    fast on equipment-slug attempts, removed/inactive/test items, and
+    typos — without exposing existence.
+    """
+    from fastapi import HTTPException
+    overlay = get_material_overlay(slug)
+    if overlay is None:
+        raise HTTPException(status_code=404, detail={"code": "material.not_found"})
+    item = await db.items.find_one(
+        {
+            "slug": slug,
+            "item_type": "material",
+            "is_active": {"$ne": False},
+            "is_test": {"$ne": True},
+            "is_cosmetic": {"$ne": True},
+        },
+        {"_id": 0},
+    )
+    if item is None:
+        raise HTTPException(status_code=404, detail={"code": "material.not_found"})
+    return _project_material(item, overlay)
+
+
 __all__ = ["router"]
