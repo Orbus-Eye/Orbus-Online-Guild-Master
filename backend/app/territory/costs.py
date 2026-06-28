@@ -130,6 +130,18 @@ UPGRADE_COSTS: dict[str, list[Optional[dict]]] = {
         {"gold": 5000, "materials": {"greater_arcane_dust": 5}},
         {"gold": 10000, "materials": {"greater_arcane_dust": 10}},
     ],
+    "contract_board": [
+        None,
+        # ROUND 6D — Lv1 unlocks daily + weekly + milestone Tier 1.
+        # Cost set to ~1200g + 3 iron_shard so it sits a step above
+        # market_stall/auction_house Lv1 but below war_room Lv3 — keeps the
+        # progression curve consistent with other "retention" structures.
+        {"gold": 1200, "materials": {"iron_shard": 3}},
+        # Lv2/3 reserved for future expansion (extra milestones, bonus
+        # reward modifiers). Cost approximates the guild_hall curve.
+        {"gold": 3000, "materials": {"iron_shard": 6, "lesser_arcane_dust": 2}},
+        {"gold": 6000, "materials": {"lesser_arcane_dust": 5, "greater_arcane_dust": 1}},
+    ],
 }
 
 

@@ -102,6 +102,7 @@ def create_app() -> FastAPI:
     from app.squads.routes import router as squads_router
     from app.territory.routes import router as territory_router
     from app.training.routes import router as training_router
+    from app.contracts.routes import router as contracts_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -127,6 +128,7 @@ def create_app() -> FastAPI:
     app.include_router(squads_router)
     app.include_router(territory_router)
     app.include_router(training_router)
+    app.include_router(contracts_router)
 
     return app
 

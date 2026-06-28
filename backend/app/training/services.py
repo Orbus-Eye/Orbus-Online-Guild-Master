@@ -299,6 +299,15 @@ async def apply_specialization(
     except Exception:
         pass
 
+    # ROUND 6D — contract progress (synergy 6C↔6D)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild_id, "specializations_applied", 1,
+        )
+    except Exception:
+        pass
+
     return {
         "adventurer_id": adventurer_id,
         "specialization": spec_doc,

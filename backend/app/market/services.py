@@ -386,6 +386,14 @@ async def create_listing(
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("weekly quest hook failed in create_listing: %s", exc)
+    # ROUND 6D — contract progress for the SELLER (listing created)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild["id"], "market_listings_created", 1,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("contract hook failed in create_listing: %s", exc)
 
     total_price = int(price_per_unit) * int(quantity)
     fee = total_price * MARKET_FEE_PCT // 100
@@ -672,6 +680,14 @@ async def buy_listing(
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("weekly quest hook failed in buy_listing: %s", exc)
+    # ROUND 6D — contract progress on the SELLER (market_sales_count)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, listing["seller_guild_id"], "market_sales_count", 1,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("contract hook failed in buy_listing: %s", exc)
 
     # Fetch buyer's remaining gold for the response
     buyer_after = await db.guilds.find_one(

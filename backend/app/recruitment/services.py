@@ -437,6 +437,12 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
         await increment_quest_progress(db, guild["id"], "recruit")
     except Exception:
         pass
+    # ROUND 6D — contract progress (best-effort)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(db, guild["id"], "recruits_added", 1)
+    except Exception:
+        pass
     return adventurer_doc, updated_guild
 
 

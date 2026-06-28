@@ -10,6 +10,7 @@ import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
 import ChronicleCard from "../components/ChronicleCard";
 import RosterHealthCard from "../components/RosterHealthCard";
+import ContractsCard from "../components/ContractsCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
@@ -187,6 +188,9 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-6">
                     <WeeklyQuestsCard />
+                </div>
+                <div className="mb-6">
+                    <ContractsCard />
                 </div>
                 <div className="mb-6">
                     <ChronicleCard limit={15} />

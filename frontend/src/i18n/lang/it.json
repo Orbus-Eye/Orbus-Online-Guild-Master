@@ -125,6 +125,7 @@
     "consortiums": "Consorzi",
     "chronicle": "CRONACA",
     "training": "ADDESTR.",
+    "contracts": "CONTRATTI",
     "forge": "OFFICINA",
     "raids": "RAID",
     "auction": "ASTA",
@@ -1293,6 +1294,50 @@
   "recruitment_cap": {
     "label": "Capienza Dormitori",
     "banner_cta": "Potenzia Dormitori"
+  },
+  "contracts": {
+    "page_title": "Bacheca Contratti",
+    "page_intro": "Completa contratti giornalieri e settimanali per oro, materiali e reputazione. I milestone permanenti danno ricompense più rare a chi gioca con costanza.",
+    "card_title": "BACHECA CONTRATTI",
+    "card_locked_short": "Sblocca la Bacheca Contratti dal Territorio.",
+    "card_badge_ready": "PRONTI",
+    "locked_title": "BACHECA CONTRATTI NON SBLOCCATA",
+    "locked_desc": "Sblocca la Bacheca Contratti dal Territorio (richiede Guild Hall Lv2 + Bacheca Spedizioni Lv1).",
+    "go_territory": "VAI AL TERRITORIO",
+    "tab": {
+      "daily": "GIORNALIERI",
+      "weekly": "SETTIMANALI",
+      "milestones": "MILESTONE"
+    },
+    "no_daily": "Nessun contratto giornaliero attivo.",
+    "no_weekly": "Nessun contratto settimanale attivo.",
+    "no_milestones": "Nessuna milestone disponibile.",
+    "milestones_intro": "I milestone sono permanenti — completali per sbloccare il tier successivo.",
+    "next_daily_reset": "Reset giornaliero",
+    "next_weekly_reset": "Reset settimanale",
+    "in_progress": "IN CORSO",
+    "claim": "RECLAMA",
+    "claimed": "RECLAMATO",
+    "tier_locked": "TIER BLOCCATO",
+    "claim_success": "Reclamato",
+    "reputation_short": "Rep",
+    "daily": {
+      "complete_expedition_1": "Completa 1 spedizione",
+      "market_listing_1": "Crea 1 listing al mercato",
+      "craft_item_1": "Crafta 1 oggetto"
+    },
+    "weekly": {
+      "complete_expeditions_5": "Completa 5 spedizioni",
+      "market_volume_3": "Vendi 3 oggetti al mercato",
+      "upgrade_structure_1": "Potenzia 1 struttura del Territorio",
+      "apply_specialization_1": "Applica 1 specializzazione",
+      "recruit_2": "Recluta 2 nuovi avventurieri"
+    },
+    "milestone": {
+      "run_10_expeditions": "Spedizioni totali: 10",
+      "craft_10_items": "Oggetti craftati totali: 10",
+      "recruit_5_adventurers": "Avventurieri reclutati totali: 5"
+    }
   },
   "feature_locked": {
     "cta": "Vai al Territorio"

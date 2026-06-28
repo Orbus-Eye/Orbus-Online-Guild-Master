@@ -125,6 +125,7 @@
     "consortiums": "Consortiums",
     "chronicle": "CHRONICLE",
     "training": "TRAINING",
+    "contracts": "CONTRACTS",
     "forge": "FORGE",
     "raids": "RAIDS",
     "auction": "AUCTION",
@@ -1293,6 +1294,50 @@
   "recruitment_cap": {
     "label": "Dormitory capacity",
     "banner_cta": "Upgrade Dormitories"
+  },
+  "contracts": {
+    "page_title": "Contract Board",
+    "page_intro": "Complete daily and weekly contracts for gold, materials and reputation. Permanent milestones reward consistent play with rarer payouts.",
+    "card_title": "CONTRACT BOARD",
+    "card_locked_short": "Unlock the Contract Board from the Territory.",
+    "card_badge_ready": "READY",
+    "locked_title": "CONTRACT BOARD NOT UNLOCKED",
+    "locked_desc": "Unlock the Contract Board from the Territory (requires Guild Hall Lv2 + Expedition Board Lv1).",
+    "go_territory": "GO TO TERRITORY",
+    "tab": {
+      "daily": "DAILY",
+      "weekly": "WEEKLY",
+      "milestones": "MILESTONES"
+    },
+    "no_daily": "No active daily contracts.",
+    "no_weekly": "No active weekly contracts.",
+    "no_milestones": "No milestones available.",
+    "milestones_intro": "Milestones are permanent — complete them to unlock the next tier.",
+    "next_daily_reset": "Daily reset",
+    "next_weekly_reset": "Weekly reset",
+    "in_progress": "IN PROGRESS",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "tier_locked": "TIER LOCKED",
+    "claim_success": "Claimed",
+    "reputation_short": "Rep",
+    "daily": {
+      "complete_expedition_1": "Complete 1 expedition",
+      "market_listing_1": "Create 1 market listing",
+      "craft_item_1": "Craft 1 item"
+    },
+    "weekly": {
+      "complete_expeditions_5": "Complete 5 expeditions",
+      "market_volume_3": "Sell 3 items on the market",
+      "upgrade_structure_1": "Upgrade 1 Territory structure",
+      "apply_specialization_1": "Apply 1 specialization",
+      "recruit_2": "Recruit 2 new adventurers"
+    },
+    "milestone": {
+      "run_10_expeditions": "Lifetime expeditions: 10",
+      "craft_10_items": "Lifetime items crafted: 10",
+      "recruit_5_adventurers": "Lifetime adventurers recruited: 5"
+    }
   },
   "feature_locked": {
     "cta": "Go to Territory"

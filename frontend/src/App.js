@@ -37,6 +37,7 @@ import Territory from "@/pages/Territory";
 import RosterManage from "@/pages/RosterManage";
 import Chronicle from "@/pages/Chronicle";
 import Training from "@/pages/Training";
+import Contracts from "@/pages/Contracts";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -251,6 +252,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Training />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/contracts"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Contracts />
                                 </ProtectedRoute>
                             }
                         />

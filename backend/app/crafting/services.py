@@ -290,6 +290,14 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("weekly quest hook failed in craft_recipe: %s", exc)
+    # ROUND 6D — contract progress
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild["id"], "items_crafted", out_qty,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("contract hook failed in craft_recipe: %s", exc)
 
     remaining_gold = int(guild.get("gold", 0)) - gold_cost
     return {

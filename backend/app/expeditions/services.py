@@ -393,6 +393,14 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             )
     except Exception:
         pass
+    # ROUND 6D — contract progress (best-effort, non-critical)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, claimed["guild_id"], "expeditions_completed", 1
+        )
+    except Exception:
+        pass
 
 
 async def complete_due_expeditions(db, guild_id: str) -> int:

@@ -433,6 +433,14 @@ async def upgrade_structure(db, guild: dict, slug: str) -> dict:
         from_level=cur_level, to_level=next_level, cost=cost,
         event="guild_structure_upgraded", source="territory.upgrade",
     )
+    # ROUND 6D — contract progress (structures_upgraded)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild["id"], "structures_upgraded", 1,
+        )
+    except Exception:
+        pass
     return await get_territory(db, guild["id"])
 
 

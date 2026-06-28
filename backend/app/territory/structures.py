@@ -101,6 +101,18 @@ STRUCTURE_CATALOG: dict[str, dict] = {
         "name_en": "Training Grounds",
         # ROUND 6C — flag cleared; specialization system live.
     },
+    "contract_board": {
+        # ROUND 6D — Bacheca Contratti: contracts + milestones unlock.
+        # Lv1 unlocks daily + weekly + milestone Tier 1. Higher levels
+        # are reserved for future expansion (additional milestones, bonus
+        # reward modifiers, etc.).
+        "max_level": 3,
+        "default_level": 0,
+        "default_unlocked": False,
+        "prerequisites": {"guild_hall": 2, "expedition_board": 1},
+        "name_it": "Bacheca Contratti",
+        "name_en": "Contract Board",
+    },
 }
 
 VALID_STRUCTURE_SLUGS = frozenset(STRUCTURE_CATALOG.keys())
