@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-06-28T15:44:36.131160+00:00",
+  "summary": {
+    "audit_specialization_applied_total": 176,
+    "audit_signature_item_created_total": 229,
+    "delta_applied_minus_sig_created": -53,
+    "inventory_signature_items_total": 293,
+    "adventurers_with_missing_signature_item": 0,
+    "audit_says_applied_but_no_adv_specialization": 0,
+    "training_gold_debit_audit_events": 0
+  },
+  "affected_accounts_masked": []
+}

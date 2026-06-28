@@ -42,7 +42,15 @@ const StatRow = ({ label, value }) => (
     </div>
 );
 
-const CandidateCard = ({ candidate, canAfford, onRecruit, busy }) => (
+const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, busy }) => {
+    const disabled = !canAfford || busy || overCap;
+    let title = "Recruit this adventurer";
+    if (overCap) {
+        title = "Capienza avventurieri raggiunta. Potenzia Dormitori o congeda.";
+    } else if (!canAfford) {
+        title = "Not enough gold";
+    }
+    return (
     <div
         data-testid={`candidate-card-${candidate.candidate_id}`}
         className="border border-border bg-card rounded-sm p-4 flex flex-col"
@@ -103,15 +111,16 @@ const CandidateCard = ({ candidate, canAfford, onRecruit, busy }) => (
             <Button
                 data-testid={`recruit-btn-${candidate.candidate_id}`}
                 onClick={() => onRecruit(candidate)}
-                disabled={!canAfford || busy}
-                title={!canAfford ? "Not enough gold" : "Recruit this adventurer"}
+                disabled={disabled}
+                title={title}
                 className="h-9 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs px-4"
             >
                 {busy ? "…" : "Recruit →"}
             </Button>
         </div>
     </div>
-);
+    );
+};
 
 const Skeleton = () => (
     <div className="border border-border bg-card rounded-sm p-4 animate-pulse">
@@ -187,7 +196,9 @@ export default function Recruitment() {
                 api.get("/adventurers"),
             ]);
             const dormLevel = Number(terr.data?.territory?.structures?.dormitories?.level || 0);
-            const capByLevel = [0, 5, 10, 15, 20, 25, 30, 50];
+            // ROUND 11.2 TASK 4 — Dormitories extended to Lv11 (cap 100).
+            // Keep this in sync with backend `structures.DORMITORY_CAP_BY_LEVEL`.
+            const capByLevel = [0, 5, 10, 15, 20, 25, 30, 40, 50, 65, 80, 100];
             const cap = capByLevel[dormLevel] || 0;
             const current = (advs.data?.adventurers || []).length;
             setTerritoryState({ cap, current, dormitory_level: dormLevel, headroom: Math.max(0, cap - current) });
@@ -241,6 +252,7 @@ export default function Recruitment() {
     const gold = guild?.gold ?? 0;
     const cost = candidates?.[0]?.cost_gold ?? 20;
     const canAfford = gold >= cost;
+    const overCap = !!(territoryState && territoryState.current >= territoryState.cap);
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
@@ -365,6 +377,7 @@ export default function Recruitment() {
                                 key={c.candidate_id}
                                 candidate={c}
                                 canAfford={canAfford}
+                                overCap={overCap}
                                 onRecruit={handleRecruit}
                                 busy={recruiting === c.candidate_id}
                             />

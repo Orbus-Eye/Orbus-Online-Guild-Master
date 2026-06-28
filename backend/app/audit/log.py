@@ -103,6 +103,11 @@ EVENT_TYPES = frozenset({
     # ROUND 6E — Respec
     "specialization_respec",
     "specialization_signature_item_discarded_on_respec",
+    # ROUND 11.2 TASK 2 — Specialization atomicity (compensating pattern)
+    "training_specialization_attempt",       # pending: BEFORE gold debit, records intent
+    "training_specialization_committed",     # success: AFTER all writes complete
+    "training_specialization_rolled_back",   # failure: gold refunded, no state change
+    "training_specialization_refund",        # one-shot CLI refund (P0 historical recovery)
     # ROUND 6C — Preview validation seed (dev-only, whitelist-gated)
     "guild_structure_seeded",
     "adventurer_seeded",

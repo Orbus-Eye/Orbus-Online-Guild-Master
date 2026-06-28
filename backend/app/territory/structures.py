@@ -19,9 +19,12 @@ STRUCTURE_CATALOG: dict[str, dict] = {
         "name_en": "Guild Hall",
     },
     "dormitories": {
-        # NB Lv7 is a legacy-only override (cap 50); regular users top out at Lv6 (cap 30).
-        "max_level": 6,
-        "max_legacy_level": 7,
+        # ROUND 11.2 TASK 4 — extended to Lv11 (cap 100). Legacy Lv7 (cap 50)
+        # is no longer a migration-only sentinel: it is now a regular
+        # purchasable level on a progressive cost curve. `max_legacy_level`
+        # is removed; the migration script remains compatible because all
+        # historical Lv7 docs are still valid in the catalog.
+        "max_level": 11,
         "default_level": 1,
         "default_unlocked": True,
         "prerequisites": {},
@@ -118,8 +121,8 @@ STRUCTURE_CATALOG: dict[str, dict] = {
 VALID_STRUCTURE_SLUGS = frozenset(STRUCTURE_CATALOG.keys())
 
 
-# Dormitories cap formula. Lv7 is reachable ONLY via the migration script
-# (Legacy Wing); regular upgrade flow caps at Lv6.
+# Dormitories cap formula. ROUND 11.2 TASK 4: extended to Lv11 (cap 100).
+# Lv7+ is no longer migration-only; all levels follow the normal upgrade flow.
 DORMITORY_CAP_BY_LEVEL: dict[int, int] = {
     0: 0,
     1: 5,
@@ -128,7 +131,11 @@ DORMITORY_CAP_BY_LEVEL: dict[int, int] = {
     4: 20,
     5: 25,
     6: 30,
-    7: 50,  # Legacy Wing — migration-only.
+    7: 40,
+    8: 50,
+    9: 65,
+    10: 80,
+    11: 100,
 }
 
 

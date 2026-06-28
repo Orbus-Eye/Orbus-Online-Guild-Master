@@ -47,7 +47,14 @@ UPGRADE_COSTS: dict[str, list[Optional[dict]]] = {
         {"gold": 1200},                                 # Lv 4 (cap 20)
         {"gold": 2500, "materials": {"iron_shard": 8}}, # Lv 5 (cap 25)
         {"gold": 5000, "materials": {"iron_shard": 16}},# Lv 6 (cap 30)
-        _LEGACY_ONLY,                                   # Lv 7 (cap 50) — migration only
+        # ROUND 11.2 TASK 4 — progressive curve Lv7-Lv11 (cap 40 → 100).
+        # Gold roughly doubles, materials scale with diminishing returns.
+        # No premium, no skip, atomicity inherited from existing flow.
+        {"gold": 8500, "materials": {"iron_shard": 24, "greater_arcane_dust": 3}},  # Lv 7 (cap 40)
+        {"gold": 14000, "materials": {"iron_shard": 36, "greater_arcane_dust": 6}}, # Lv 8 (cap 50)
+        {"gold": 22000, "materials": {"iron_shard": 50, "greater_arcane_dust": 10, "lesser_arcane_dust": 4}},  # Lv 9 (cap 65)
+        {"gold": 32000, "materials": {"iron_shard": 70, "greater_arcane_dust": 16, "lesser_arcane_dust": 8}},  # Lv 10 (cap 80)
+        {"gold": 50000, "materials": {"iron_shard": 100, "greater_arcane_dust": 25, "lesser_arcane_dust": 12}}, # Lv 11 (cap 100)
     ],
     "expedition_board": [
         None,

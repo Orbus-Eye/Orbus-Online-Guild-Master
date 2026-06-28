@@ -247,7 +247,8 @@ def test_apply_spec_blocks_level_too_low(db):
         json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
     )
     assert r.status_code == 422
-    assert r.json()["detail"]["code"] == "training.adventurer_level_too_low"
+    assert r.json()["detail"]["code"] == "training.specialization.requirements_not_met"
+    assert r.json()["detail"]["reason"] == "adventurer_level_too_low"
 
 
 def test_apply_spec_blocks_wrong_class(db):
@@ -260,7 +261,8 @@ def test_apply_spec_blocks_wrong_class(db):
         json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
     )
     assert r.status_code == 422
-    assert r.json()["detail"]["code"] == "training.class_not_eligible"
+    assert r.json()["detail"]["code"] == "training.specialization.requirements_not_met"
+    assert r.json()["detail"]["reason"] == "class_not_eligible"
 
 
 def test_apply_spec_blocks_already_specialized(db):
@@ -279,7 +281,8 @@ def test_apply_spec_blocks_already_specialized(db):
         json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
     )
     assert r2.status_code == 422
-    assert r2.json()["detail"]["code"] == "training.adventurer_already_specialized"
+    assert r2.json()["detail"]["code"] == "training.specialization.requirements_not_met"
+    assert r2.json()["detail"]["reason"] == "already_specialized"
 
 
 def test_apply_spec_blocks_locked(db):
@@ -317,7 +320,7 @@ def test_apply_spec_blocks_insufficient_gold(db):
         json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
     )
     assert r.status_code == 402
-    assert r.json()["detail"]["code"] == "training.insufficient_gold"
+    assert r.json()["detail"]["code"] == "training.specialization.insufficient_gold"
 
 
 # ─── Retire ↔ signature item interaction ────────────────────────────────

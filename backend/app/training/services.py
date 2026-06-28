@@ -121,24 +121,43 @@ async def apply_specialization(
     adventurer_id: str,
     spec_slug: str,
 ) -> dict:
-    """Atomic apply orchestrator.
+    """ROUND 11.2 TASK 2 — Atomic apply orchestrator with compensating rollback.
 
-    Failure modes (all `HTTPException` with structured detail):
-      • 404 if adventurer doesn't belong to the guild
-      • 422 `training.locked` if training_grounds not unlocked
-      • 422 `training.spec_unknown` if the spec slug isn't in catalog
-      • 422 `training.spec_tier_locked` if spec tier > training level tier
-      • 422 `training.class_not_eligible` if adv.class_slug not in spec.eligible
-      • 422 `training.adventurer_level_too_low` if adv.level < 5
-      • 422 `training.adventurer_already_specialized` if adv has spec set
-      • 422 `training.adventurer_retired` if adv.is_retired
-      • 402 `training.insufficient_gold` if guild gold < cost
+    Compensating-pattern flow (no Mongo transactions — works on standalone):
+      A. Pre-validate ALL (reads, no writes). Any failure → 4xx, no debit.
+      B. Resolve cost + signature template (must exist in catalog).
+      C. Write audit `training_specialization_attempt` (status=pending) so
+         every debit has a paper trail BEFORE money moves.
+      D. Atomic gold debit (CAS with `gold >= cost` filter).
+      E. Try { insert signature_item + update adventurer.specialization }
+         on exception → compensate: refund gold + audit rolled_back + raise
+         5xx `training.specialization.internal_error` (sanitized, idempotent).
+      F. Best-effort success audits + contract progress.
+      G. Serializer defensive: response is built outside the writes, with
+         `.get(default)` for every nested field, so a malformed catalog row
+         CANNOT trigger a post-commit 500 (state is already persisted).
+
+    Failure modes (all `HTTPException` with structured `detail.code`):
+      • 404  `adventurer.not_found`
+      • 422  `training.locked`                                  (TG locked)
+      • 422  `training.specialization.invalid_spec`             (slug not in catalog)
+      • 422  `training.spec_tier_locked`                        (full-tier spec, starter-tier TG)
+      • 422  `training.specialization.requirements_not_met`     (level/class/already-spec)
+      • 422  `training.specialization.adventurer_retired`
+      • 402  `training.specialization.insufficient_gold`
+      • 500  `training.specialization.internal_error`           (compensated; gold refunded)
     """
+    from app.audit.log import write_audit  # local import: avoids cycle, lets test patch
+
+    # ─── A. PRE-VALIDATE (reads only — every error path is no-op) ───────────
     spec = SPEC_BY_SLUG.get(spec_slug)
     if not spec:
-        raise _err("training.spec_unknown", f"Specializzazione '{spec_slug}' non riconosciuta.")
+        raise _err(
+            "training.specialization.invalid_spec",
+            f"Specializzazione '{spec_slug}' non riconosciuta.",
+            spec_slug=spec_slug,
+        )
 
-    # 1) Pre-validate (all reads)
     adv = await db.adventurers.find_one(
         {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
     )
@@ -148,39 +167,44 @@ async def apply_specialization(
             adventurer_id=adventurer_id,
         )
     if adv.get("is_retired") is True:
-        raise _err("training.adventurer_retired",
-                   "Non puoi specializzare un avventuriero congedato.")
+        raise _err(
+            "training.specialization.adventurer_retired",
+            "Non puoi specializzare un avventuriero congedato.",
+        )
     if adv.get("specialization"):
         raise _err(
-            "training.adventurer_already_specialized",
-            "Avventuriero già specializzato. In Round 6C il respec non è disponibile.",
+            "training.specialization.requirements_not_met",
+            "Avventuriero già specializzato. Usa il flusso di respec per cambiare.",
+            reason="already_specialized",
             current_spec=adv["specialization"].get("slug"),
         )
-    if int(adv.get("level", 1)) < MIN_ADVENTURER_LEVEL:
+    adv_level = int(adv.get("level", 1))
+    if adv_level < MIN_ADVENTURER_LEVEL:
         raise _err(
-            "training.adventurer_level_too_low",
-            f"Serve livello minimo {MIN_ADVENTURER_LEVEL} (questo avventuriero è Lv{adv.get('level', 1)}).",
-            min_level=MIN_ADVENTURER_LEVEL, current_level=adv.get("level", 1),
+            "training.specialization.requirements_not_met",
+            f"Serve livello minimo {MIN_ADVENTURER_LEVEL} "
+            f"(questo avventuriero è Lv{adv_level}).",
+            reason="adventurer_level_too_low",
+            min_level=MIN_ADVENTURER_LEVEL, current_level=adv_level,
         )
-    # Class eligibility — resolve via lookup so real game-flow advs
-    # (which only persist `adventurer_class_id` + `class_name`, not
-    # `class_slug`) are correctly matched against the catalog's lowercase
-    # slug list. See `_resolve_class_slug` for fallback order.
     actual_class_slug = await _resolve_class_slug(db, adv)
     if actual_class_slug not in spec["eligible_classes"]:
         raise _err(
-            "training.class_not_eligible",
-            f"Classe '{adv.get('class_name')}' non compatibile con '{spec['name_it']}'.",
+            "training.specialization.requirements_not_met",
+            f"Classe '{adv.get('class_name')}' non compatibile "
+            f"con '{spec['name_it']}'.",
+            reason="class_not_eligible",
             eligible_classes=spec["eligible_classes"],
             actual_class=actual_class_slug,
         )
 
-    # Training Grounds gating
     tg_level = await _get_training_level(db, guild_id)
     tier = tier_for_training_level(tg_level)
     if tier is None:
-        raise _err("training.locked",
-                   "Devi sbloccare il Campo di Addestramento per specializzare.")
+        raise _err(
+            "training.locked",
+            "Devi sbloccare il Campo di Addestramento per specializzare.",
+        )
     if spec["tier"] == "full" and tier != "full":
         raise _err(
             "training.spec_tier_locked",
@@ -188,94 +212,196 @@ async def apply_specialization(
             spec_tier=spec["tier"], training_level=tg_level,
         )
 
+    # ─── B. RESOLVE COST + SIGNATURE TEMPLATE ───────────────────────────────
     cost = apply_cost_for_training_level(tg_level)
+    sig_template = SPEC_SIGNATURE_ITEMS.get(spec.get("signature_item_slug") or "")
+    if not sig_template:
+        # Catalog desync (spec → signature mapping broken). Fail fast BEFORE
+        # debit — this is an invalid_spec from the player's perspective.
+        raise _err(
+            "training.specialization.invalid_spec",
+            "Configurazione specializzazione non valida (signature item assente).",
+            spec_slug=spec_slug,
+            signature_slug=spec.get("signature_item_slug"),
+        )
 
-    # 2) Atomic gold debit (idempotent guard via filter)
+    # ─── C. AUDIT: attempt pending (BEFORE any write) ───────────────────────
+    attempt_id = str(uuid.uuid4())
+    now_iso = datetime.now(timezone.utc).isoformat()
+    inv_id = str(uuid.uuid4())  # pre-allocated so audit can reference even on rollback
+    await write_audit(
+        db,
+        event_type="training_specialization_attempt",
+        actor_user_id=actor_user_id,
+        actor_guild_id=guild_id,
+        source="training.apply_specialization",
+        related_entity_id=adventurer_id,
+        gold_delta=-cost,
+        metadata={
+            "attempt_id": attempt_id,
+            "status": "pending",
+            "adventurer_id": adventurer_id,
+            "spec_slug": spec["slug"],
+            "spec_tier": spec["tier"],
+            "cost_gold": cost,
+            "training_grounds_level": tg_level,
+            "signature_item_id_planned": inv_id,
+        },
+    )
+
+    # ─── D. ATOMIC GOLD DEBIT (CAS) ─────────────────────────────────────────
     debit_result = await db.guilds.update_one(
         {"id": guild_id, "gold": {"$gte": cost}},
-        {"$inc": {"gold": -cost}, "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}},
+        {"$inc": {"gold": -cost}, "$set": {"updated_at": now_iso}},
     )
     if debit_result.modified_count != 1:
+        # No money moved → record rollback (no compensation needed).
+        await write_audit(
+            db,
+            event_type="training_specialization_rolled_back",
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
+            source="training.apply_specialization",
+            related_entity_id=adventurer_id,
+            metadata={
+                "attempt_id": attempt_id,
+                "reason": "insufficient_gold",
+                "cost_gold": cost,
+                "refunded": False,  # nothing debited
+            },
+        )
         raise _err(
-            "training.insufficient_gold",
+            "training.specialization.insufficient_gold",
             f"Servono {cost} oro per la specializzazione.",
             status=402, cost=cost,
         )
 
-    # 3) Generate signature_item bound to the adventurer
-    sig_template = SPEC_SIGNATURE_ITEMS.get(spec["signature_item_slug"])
-    now_iso = datetime.now(timezone.utc).isoformat()
-    inv_id = str(uuid.uuid4())
+    # ─── E. PROTECTED WRITES (insert signature + update adv) ────────────────
+    # If ANY of these fail, we must refund gold + record rollback.
     signature_inv_row = {
         "id": inv_id,
         "instance_id": inv_id,
         "guild_id": guild_id,
-        # `item_id` is the slug of the item template; the FE looks up item
-        # data via the items catalog. Signature items are not in the items
-        # collection — we embed the relevant display + power data here.
         "item_id": sig_template["slug"],
         "acquired_at": now_iso,
         "quantity": 1,
-        # Round 4 forge fields (default-safe)
-        "is_bound": True,  # guild-bound (cannot be sold)
+        "is_bound": True,
         "refinement_level": 0,
         "enchants": [],
         "affixes": [],
         "reroll_count": 0,
         "disenchanted_at": None,
-        # Round 6B.4 — adventurer-bound (cannot be equipped on others)
+        "discarded_at": None,
         "bound_to_adventurer_id": adventurer_id,
         "bound_reason": SIGNATURE_BOUND_REASON,
         "bound_at": now_iso,
-        # ROUND 6C — embedded signature-item data so the FE can render without
-        # a separate /api/items round-trip. The `power_score` is used by the
-        # client-side preview when equipping.
         "signature": {
             "spec_slug": spec["slug"],
-            "name_it": sig_template["name_it"],
-            "name_en": sig_template["name_en"],
-            "rarity": sig_template["rarity"],
-            "slot": sig_template["slot"],
+            "name_it": sig_template.get("name_it"),
+            "name_en": sig_template.get("name_en"),
+            "rarity": sig_template.get("rarity"),
+            "slot": sig_template.get("slot"),
             "strength_bonus": sig_template.get("strength_bonus", 0),
             "agility_bonus": sig_template.get("agility_bonus", 0),
             "intellect_bonus": sig_template.get("intellect_bonus", 0),
             "endurance_bonus": sig_template.get("endurance_bonus", 0),
             "faith_bonus": sig_template.get("faith_bonus", 0),
-            "power_score": sig_template["power_score"],
+            "power_score": sig_template.get("power_score", 0),
         },
     }
-    await db.inventory_items.insert_one(signature_inv_row)
-
-    # 4) Set adventurer.specialization (snapshot — modifiers locked in time
-    # so future catalog rebalancing doesn't retroactively change live advs).
     spec_doc = {
         "slug": spec["slug"],
         "name_it": spec["name_it"],
         "name_en": spec["name_en"],
         "tier": spec["tier"],
         "applied_at": now_iso,
-        "applied_at_level": int(adv.get("level", 1)),
+        "applied_at_level": adv_level,
         "signature_item_id": inv_id,
         "modifiers": dict(spec["modifiers"]),
         "applied_by_user_id": actor_user_id,
         "training_grounds_level_at_apply": tg_level,
     }
-    await db.adventurers.update_one(
-        {"id": adventurer_id, "guild_id": guild_id},
-        {"$set": {"specialization": spec_doc, "updated_at": now_iso}},
-    )
 
-    # 5) Audit (best-effort, never raises)
     try:
-        from app.audit.log import write_audit
+        await db.inventory_items.insert_one(signature_inv_row)
+        update_res = await db.adventurers.update_one(
+            # Race-safe filter: adv exists, in our guild, and NOT yet
+            # specialized (null OR field missing). We pre-validated `adv`
+            # already had no spec, but a concurrent request might have
+            # specialized it between our read and this write — in that
+            # case match_count==0 → we fall into the compensate path.
+            {"id": adventurer_id, "guild_id": guild_id,
+             "$or": [{"specialization": None},
+                     {"specialization": {"$exists": False}}]},
+            {"$set": {"specialization": spec_doc, "updated_at": now_iso}},
+        )
+        if update_res.matched_count != 1:
+            raise RuntimeError("adventurer_specialization_race")
+    except Exception as exc:  # noqa: BLE001
+        # ── COMPENSATE: refund gold + best-effort orphan-cleanup of signature_item ──
+        await db.guilds.update_one(
+            {"id": guild_id},
+            {"$inc": {"gold": cost}, "$set": {"updated_at": now_iso}},
+        )
+        # Try to remove the orphan inventory row (if its insert succeeded).
+        try:
+            await db.inventory_items.delete_one(
+                {"id": inv_id, "guild_id": guild_id},
+            )
+        except Exception:  # noqa: BLE001
+            pass
+        await write_audit(
+            db,
+            event_type="training_specialization_rolled_back",
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
+            source="training.apply_specialization",
+            related_entity_id=adventurer_id,
+            gold_delta=cost,  # the refund
+            metadata={
+                "attempt_id": attempt_id,
+                "reason": "internal_error",
+                "error_class": type(exc).__name__,
+                "error_message": str(exc)[:300],
+                "cost_gold": cost,
+                "refunded": True,
+                "signature_item_id_orphan_cleaned": inv_id,
+            },
+        )
+        raise _err(
+            "training.specialization.internal_error",
+            "Errore interno durante la specializzazione. "
+            "L'oro è stato rimborsato automaticamente. Riprova.",
+            status=500, attempt_id=attempt_id,
+        )
+
+    # ─── F. SUCCESS AUDITS (best-effort, never raises) ──────────────────────
+    try:
+        await write_audit(
+            db,
+            event_type="training_specialization_committed",
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
+            source="training.apply_specialization",
+            related_entity_id=adventurer_id,
+            gold_delta=-cost,
+            metadata={
+                "attempt_id": attempt_id,
+                "adventurer_id": adventurer_id,
+                "spec_slug": spec["slug"],
+                "tier": spec["tier"],
+                "cost_gold": cost,
+                "signature_item_id": inv_id,
+                "training_grounds_level": tg_level,
+            },
+        )
+        # Legacy event_types kept for backward compat with the existing
+        # dashboards / reports / FE notifications.
         await write_audit(
             db,
             event_type="specialization_applied",
-            actor_user_id=actor_user_id,
-            actor_guild_id=guild_id,
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
             source="training.apply_specialization",
             related_entity_id=adventurer_id,
             metadata={
+                "attempt_id": attempt_id,
                 "adventurer_id": adventurer_id,
                 "spec_slug": spec["slug"],
                 "tier": spec["tier"],
@@ -287,18 +413,18 @@ async def apply_specialization(
         await write_audit(
             db,
             event_type="specialization_signature_item_created",
-            actor_user_id=actor_user_id,
-            actor_guild_id=guild_id,
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
             source="training.apply_specialization",
             related_entity_id=inv_id,
             metadata={
+                "attempt_id": attempt_id,
                 "adventurer_id": adventurer_id,
                 "spec_slug": spec["slug"],
-                "item_slug": sig_template["slug"],
-                "rarity": sig_template["rarity"],
+                "item_slug": sig_template.get("slug"),
+                "rarity": sig_template.get("rarity"),
             },
         )
-    except Exception:
+    except Exception:  # noqa: BLE001
         pass
 
     # ROUND 6D — contract progress (synergy 6C↔6D)
@@ -307,13 +433,32 @@ async def apply_specialization(
         await increment_contract_progress(
             db, guild_id, "specializations_applied", 1,
         )
-    except Exception:
+    except Exception:  # noqa: BLE001
         pass
 
+    # ─── G. SERIALIZER (defensive — out of try, state already committed) ────
+    try:
+        signature_payload = {
+            "id": signature_inv_row.get("id"),
+            "instance_id": signature_inv_row.get("instance_id"),
+            "guild_id": signature_inv_row.get("guild_id"),
+            "item_id": signature_inv_row.get("item_id"),
+            "acquired_at": signature_inv_row.get("acquired_at"),
+            "quantity": signature_inv_row.get("quantity", 1),
+            "is_bound": signature_inv_row.get("is_bound", True),
+            "bound_to_adventurer_id": signature_inv_row.get("bound_to_adventurer_id"),
+            "bound_reason": signature_inv_row.get("bound_reason"),
+            "bound_at": signature_inv_row.get("bound_at"),
+            "signature": signature_inv_row.get("signature", {}),
+        }
+    except Exception:  # noqa: BLE001 — never blocks a committed result
+        signature_payload = {"id": inv_id, "item_id": sig_template.get("slug")}
+
     return {
+        "attempt_id": attempt_id,
         "adventurer_id": adventurer_id,
         "specialization": spec_doc,
-        "signature_item": {**signature_inv_row, "_id": None},
+        "signature_item": signature_payload,
         "gold_spent": cost,
     }
 

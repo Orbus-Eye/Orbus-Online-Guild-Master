@@ -125,7 +125,7 @@ export const PREREQUISITES = {
 };
 
 export const MAX_LEVEL = 6;          // user-facing cap
-export const DORM_CAP_BY_LEVEL = [0, 5, 10, 15, 20, 25, 30, 50];
+export const DORM_CAP_BY_LEVEL = [0, 5, 10, 15, 20, 25, 30, 40, 50, 65, 80, 100];
 
 /** Resolve the card state for a structure given the territory + guild gold. */
 export function resolveCardState({ slug, structure, structures, gold }) {

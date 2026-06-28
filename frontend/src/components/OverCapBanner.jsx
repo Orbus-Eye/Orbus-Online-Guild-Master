@@ -26,7 +26,7 @@ export default function OverCapBanner({ source = "page" }) {
                 const dormLevel = Number(
                     terr.data?.territory?.structures?.dormitories?.level || 0,
                 );
-                const CAP_BY_LEVEL = [0, 5, 10, 15, 20, 25, 30, 50];
+                const CAP_BY_LEVEL = [0, 5, 10, 15, 20, 25, 30, 40, 50, 65, 80, 100];
                 const cap = CAP_BY_LEVEL[dormLevel] || 0;
                 const current = (advs.data?.adventurers || []).filter(
                     (a) => !a.is_retired,

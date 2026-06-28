@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-06-28T15:57:06.779964+00:00",
+  "dry_run": false,
+  "guild_filter": "20f666b9-fb5d-4f06-8641-1fcfddbee7bc",
+  "candidates_total": 1,
+  "pending": [
+    {
+      "mode": "orphan_signature_pointer",
+      "guild_id": "20f666b9-fb5d-4f06-8641-1fcfddbee7bc",
+      "adventurer_id": "0056fced-174f-4f60-8627-a9689f71c951",
+      "adventurer_name": "R112T2_0056fced",
+      "spec_slug": "spec_difensore",
+      "cost_gold_to_refund": 500,
+      "materials_to_refund": {},
+      "applied_at": "2026-06-28T15:57:06.623312+00:00",
+      "already_refunded": false,
+      "guild_name": "R112T2 c91a0e",
+      "guild_public_id": null,
+      "owner_email_masked": "r***@orbus.test"
+    }
+  ],
+  "skipped_already_refunded": [],
+  "total_gold_planned": 500
+}
