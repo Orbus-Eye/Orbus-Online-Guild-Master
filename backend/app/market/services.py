@@ -28,6 +28,8 @@ from __future__ import annotations
 import logging
 import uuid
 from datetime import datetime, timezone
+
+from app.core.identifiers import to_public_id
 from typing import Optional
 
 from fastapi import HTTPException
@@ -86,7 +88,10 @@ async def _available_qty(db, guild_id: str, item_id: str) -> tuple[int, dict]:
     return available, row
 
 
-def listing_public(listing: dict, *, lang: str = "it", include_buyer: bool = False) -> dict:
+def listing_public(
+    listing: dict, *, lang: str = "it", include_buyer: bool = False,
+    current_user_id: str | None = None,
+) -> dict:
     name = (
         listing.get("item_display_name_en") if lang == "en"
         else listing.get("item_display_name_it")
@@ -108,12 +113,16 @@ def listing_public(listing: dict, *, lang: str = "it", include_buyer: bool = Fal
         "created_at": listing.get("created_at"),
         "seller": {
             "guild_name": listing.get("seller_guild_name"),
-            # ROUND 6B.3 Wave 3 — FIX BUG 1: expose seller_user_id (NOT PII —
-            # internal UUID, never email/username) so the FE can compute
-            # `isOwn` and visibly disable the Buy button on the player's own
-            # listings, instead of relying on a backend 4xx after click.
-            "user_id": listing["seller_user_id"],
+            # ROUND 11.1 B4 — `user_id` UUID removed. Replaced by:
+            #   * `public_id`: stable 16-hex SHA-256 hash (non-reversible)
+            #   * `is_own`: server-side computed flag (replaces FE-side
+            #     comparison of internal UUIDs)
+            "public_id": to_public_id(listing["seller_user_id"]),
         },
+        "is_own": (
+            current_user_id is not None
+            and listing.get("seller_user_id") == current_user_id
+        ),
     }
     if include_buyer and listing.get("buyer_guild_name"):
         out["buyer"] = {"guild_name": listing.get("buyer_guild_name")}
@@ -159,6 +168,7 @@ async def list_active_listings(
     limit: int = 50,
     offset: int = 0,
     lang: str = "it",
+    current_user_id: str | None = None,
 ) -> dict:
     if sort_by not in _VALID_SORT:
         raise HTTPException(status_code=400, detail=f"sort_by must be in {sorted(_VALID_SORT)}")
@@ -204,12 +214,13 @@ async def list_active_listings(
         "total": total,
         "limit": limit,
         "offset": offset,
-        "listings": [listing_public(r, lang=lang) for r in rows],
+        "listings": [listing_public(r, lang=lang, current_user_id=current_user_id) for r in rows],
     }
 
 
 async def list_my_listings(
-    db, user_id: str, *, lang: str = "it", limit: int = 100
+    db, user_id: str, *, lang: str = "it", limit: int = 100,
+    current_user_id: str | None = None,
 ) -> dict:
     rows = await (
         db.market_listings.find(
@@ -220,7 +231,8 @@ async def list_my_listings(
         .to_list(limit)
     )
     return {
-        "listings": [listing_public(r, lang=lang, include_buyer=True) for r in rows],
+        "listings": [listing_public(r, lang=lang, include_buyer=True,
+                                    current_user_id=current_user_id or user_id) for r in rows],
     }
 
 
@@ -273,10 +285,8 @@ async def create_listing(
         {"_id": 0, "id": 1, "instance_id": 1},
     )
     if bound_row:
-        raise HTTPException(
-            status_code=422,
-            detail="market.bound_item_not_sellable",  # frontend resolves via i18n
-        )
+        from app.core.bound_errors import raise_market_not_sellable
+        raise_market_not_sellable(source="market.create_listing")
 
     # ROUND 6B.4 Task 2 — adventurer-bound guard.
     # Items bound to a specific adventurer can never be listed on the auction.
@@ -289,17 +299,10 @@ async def create_listing(
         {"_id": 0, "id": 1, "bound_to_adventurer_id": 1},
     )
     if adv_bound_row:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "auction.bound_to_adventurer_not_listable",
-                "source": "market.create_listing",
-                "bound_to_adventurer_id": adv_bound_row.get("bound_to_adventurer_id"),
-                "user_message": (
-                    "Questo oggetto è legato a un avventuriero e non può "
-                    "essere messo all'asta."
-                ),
-            },
+        from app.core.bound_errors import raise_auction_not_listable
+        raise_auction_not_listable(
+            source="market.create_listing",
+            bound_to_adventurer_id=adv_bound_row.get("bound_to_adventurer_id"),
         )
 
     # 1) Conditional lock: atomically increase market_locked_qty as long

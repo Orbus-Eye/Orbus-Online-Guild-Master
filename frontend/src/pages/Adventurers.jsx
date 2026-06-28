@@ -164,7 +164,7 @@ export default function Adventurers() {
                 toast.error(`${detail.equipped_count} oggetti equipaggiati. Spunta "Disequipaggia e congeda" per procedere.`);
             } else if (code === "adventurer.already_retired") {
                 toast.warning("Avventuriero già congedato");
-            } else if (code === "adventurer.has_bound_items") {
+            } else if (code === "retire.bound_item_blocks_retirement" || code === "adventurer.has_bound_items") {
                 toast.error(detail.user_message || "L'avventuriero ha un signature item legato — spunta 'Distruggi signature item' per congedare.");
             } else {
                 toast.error(formatApiError(err));

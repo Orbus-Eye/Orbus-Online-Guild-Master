@@ -67,6 +67,18 @@ async def create_guild_for_user(
         raise HTTPException(status_code=400, detail="You already own a guild")
 
     now = utc_now()
+    # ROUND 11.1 B6 — propagate `is_test_artifact` from the owner. Guilds
+    # whose owner is flagged `is_test_user` (currently: anyone registering
+    # with an `@orbus.test` email) inherit the artifact flag so public
+    # endpoints (leaderboard, auction, chronicle) can filter them in prod
+    # without depending on `APP_ENV`.
+    owner = await db.users.find_one(
+        {"id": user_id}, {"_id": 0, "is_test_user": 1, "email": 1},
+    )
+    is_test_artifact = bool(
+        (owner or {}).get("is_test_user")
+        or (owner or {}).get("email", "").lower().endswith("@orbus.test")
+    )
     guild_doc = {
         "id": str(uuid.uuid4()),
         "owner_user_id": user_id,
@@ -75,6 +87,7 @@ async def create_guild_for_user(
         "level": 1,
         "reputation": 0,
         "gold": 100,
+        "is_test_artifact": is_test_artifact,
         # Phase 11.3: onboarding state initialised at guild creation so that
         # the lazy migration in `compute_onboarding_state` can distinguish
         # Phase-11.3+ guilds (with `onboarding_step` set) from pre-11.3

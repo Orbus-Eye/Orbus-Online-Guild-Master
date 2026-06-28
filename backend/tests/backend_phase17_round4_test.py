@@ -523,7 +523,7 @@ def test_21_refined_item_blocked_in_market(db):
         headers=ctx["headers"], timeout=15,
     )
     assert r2.status_code == 422, r2.text
-    assert r2.json()["detail"] == "market.bound_item_not_sellable"
+    assert r2.json()["detail"]["code"] == "market.bound_to_adventurer_not_sellable"
 
 
 def test_22_enchanted_item_blocked_in_market(db):
@@ -559,7 +559,7 @@ def test_23_unbound_item_can_be_listed(db):
     # Either 200 (success) or 400 (not tradeable by config). We accept BOTH
     # but MUST NOT see the 422 BoE sentinel here.
     if r.status_code == 422:
-        assert r.json().get("detail") != "market.bound_item_not_sellable"
+        assert r2.json()["detail"].get("code") != "market.bound_to_adventurer_not_sellable"
 
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -686,7 +686,7 @@ def test_27_market_unbound_listing_full_flow(db):
         # Acceptable alternative: backend marked not tradeable in seed.
         assert rL.status_code in (200, 201, 400), rL.text
         if rL.status_code == 422:
-            assert rL.json().get("detail") != "market.bound_item_not_sellable"
+            assert rL.json().get("detail", {}).get("code") if isinstance(rL.json().get("detail"), dict) else rL.json().get("detail") != "market.bound_to_adventurer_not_sellable"
 
 
 def test_28_leaderboard_unchanged():

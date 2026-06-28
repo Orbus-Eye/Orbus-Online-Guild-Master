@@ -203,8 +203,9 @@ class TestShopSell:
             f"{BASE_URL}/api/shop/sell", headers=ctx["headers"],
             json={"instance_id": inst, "quantity": 1}, timeout=15,
         )
-        assert r.status_code == 409
-        assert r.json()["detail"] == "shop.sell.bound"
+        assert r.status_code == 422
+        # ROUND 11.1 B1: shop sell bound → 422 with structured detail.code
+        assert r.json()["detail"]["code"] == "market.bound_to_adventurer_not_sellable"
 
     def test_S11_sell_unknown_item_404(self, db):
         ctx = _user(db, "s11")

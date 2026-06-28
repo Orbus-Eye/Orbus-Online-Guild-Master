@@ -498,3 +498,39 @@ Security: nessun gap — entrambi i path bloccano correttamente la transazione. 
 - **Considerazione futura**: esporre tutta la lista 14 spec con flag `is_unlocked: bool` per ogni spec, così il giocatore vede la roadmap completa e ha incentivo a upgradare il Training Grounds.
 
 **Azione**: lasciato così per ora (decision: progressive disclosure è coerente con UX text-based del gioco). Da rivalutare in **Round 11.1 / UX sprint**.
+
+---
+
+## 2026-06-28 — ROUND 11.1 Slice 1 (B1+B3+B4+B5+B6) — COMPLETE
+
+### B1 — Bound guard naming hygiene
+- NEW: `app/core/bound_errors.py` — 5 helpers + 5 code constants + 422 status uniform + legacy aliases map.
+- Refactored: `market/services.py` (create_listing × 2), `shop/services.py` (sell), `equipment/services.py` (equip), `adventurers/retire.py` (retire).
+- Frontend: `Auction.jsx` + `Market.jsx` + `Adventurers.jsx` updated to handle new + legacy codes during rollout.
+- Tests updated: `backend_phase17_round4_test.py`, `backend_phase19_4b_shop_test.py`, `backend_round6c_specialization_test.py`.
+
+### B3 — pytest-xdist worker isolation
+- Investigation: existing `conftest.py` already has robust pre-suite cleanup (`pre-suite cleanup removed: {'users.email': N}`). Running `pytest -n 4` on Round 6 bundle = **62/62 PASS** (no flakiness reproduced in this run).
+- Decision: do NOT introduce per-worker DB at this time. The integration tests speak to a single live backend server, so true per-worker DB isolation would require spinning up parallel backends (out of scope for Slice 1). Documented Pattern 2 in `conftest.py` "FUTURE" comment remains as design proposal.
+- Test artifact `is_test_user/is_test_artifact` flags (B6) now ensure any guilds created by tests are visually isolatable from prod queries — a complementary mitigation.
+
+### B4 — Public ID hash
+- NEW: `app/core/identifiers.py::to_public_id(internal_uuid, *, salt) -> str` — sha256, 16-hex truncated, salt from env `PUBLIC_ID_SALT` or stable fallback.
+- Auction serializer: `seller.user_id` → `seller.public_id` + new server-side `is_own: bool` flag.
+- Consortium serializer: `founder_user_id` → `founder_public_id` (in list + detail + create response). `founder_guild_id` retained (not PII).
+
+### B5 — PII sweep
+- Audited 12 endpoint families (auction × 2, consortium, leaderboard × 2, chronicle, contracts × 3, training, roster_health, health). 
+- Findings: 2 leaks pre-Slice-1 (`seller.user_id` in auction, `founder_user_id` in consortium) → both fixed via B4 helper.
+- Other endpoints clean (no email, no raw UUID for user PII, no Mongo ObjectId, no traceback, no `[object Object]`).
+
+### B6 — `is_test_user` / `is_test_artifact` + leaderboard filter
+- User model: new field `is_test_user: bool` — set automatically on registration when email ends in `@orbus.test`.
+- Guild model: new field `is_test_artifact: bool` — inherited from owner's `is_test_user` at creation.
+- Backfill executed in preview: 1206 users + 2666 guilds flagged. All `tester@orbus.test` data flagged correctly.
+- Leaderboard filter: now combines `is_test_artifact != True` AND `owner_user_id NOT IN test_owners` (defense in depth). Independent of `APP_ENV`.
+- `/api/health` left untouched (env label flip = deploy step, NOT applied to prod in Slice 1).
+
+### Bearer fallback cleanup (Slice 2 prep)
+- Bearer auth still active. Cookie/CSRF migration scoped to **Slice 2 (dedicated session)**. Documented below in this log for context: do not implement Slice 2 alongside non-auth work.
+

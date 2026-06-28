@@ -35,13 +35,18 @@ async def get_guild_leaderboard(
             detail=f"offset must be an integer in [0, {_MAX_OFFSET}]",
         )
 
-    # Phase 14.3 — exclude guilds owned by `is_test_user=True` accounts from
-    # the public leaderboard. The flag is additive (absent ≡ False), so this
-    # is a no-op when no user has been flagged yet.
+    # ROUND 11.1 B6 — leaderboard now ALSO excludes guilds with the
+    # explicit `is_test_artifact: True` flag (set on creation). This makes
+    # filtering independent of `APP_ENV` / development inference and works
+    # even if the owner row was later modified or deleted.
     test_owner_ids = await db.users.distinct("id", {"is_test_user": True})
-    base_filter: dict = (
-        {"owner_user_id": {"$nin": test_owner_ids}} if test_owner_ids else {}
-    )
+    base_filter: dict = {
+        "$and": [
+            {"is_test_artifact": {"$ne": True}},
+        ]
+    }
+    if test_owner_ids:
+        base_filter["$and"].append({"owner_user_id": {"$nin": test_owner_ids}})
 
     total = await db.guilds.count_documents(base_filter)
 

@@ -340,7 +340,8 @@ def test_retire_specialized_blocks_without_discard_flag(db):
         headers=h, timeout=15,
     )
     assert r.status_code == 422, r.text
-    assert r.json()["detail"]["code"] == "adventurer.has_bound_items"
+    # ROUND 11.1 B1: code renamed to `retire.bound_item_blocks_retirement`.
+    assert r.json()["detail"]["code"] == "retire.bound_item_blocks_retirement"
 
 
 def test_retire_specialized_succeeds_with_discard_flag(db):

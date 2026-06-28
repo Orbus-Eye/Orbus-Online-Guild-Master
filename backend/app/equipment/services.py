@@ -193,18 +193,11 @@ async def equip_item_service(
     # with a 422 + structured `code` so the FE renders the proper toast.
     from app.inventory.bound import is_bound_to_other_adventurer
     if is_bound_to_other_adventurer(inv_row, adv["id"]):
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "equipment.bound_to_other_adventurer",
-                "source": "equipment.equip",
-                "adventurer_id": adv["id"],
-                "bound_to_adventurer_id": inv_row.get("bound_to_adventurer_id"),
-                "user_message": (
-                    "Questo oggetto è legato a un altro avventuriero. "
-                    "Solo l'avventuriero a cui è legato può equipaggiarlo."
-                ),
-            },
+        from app.core.bound_errors import raise_equipment_not_transferable
+        raise_equipment_not_transferable(
+            source="equipment.equip",
+            bound_to_adventurer_id=inv_row.get("bound_to_adventurer_id"),
+            target_adventurer_id=adv["id"],
         )
 
     # Phase 9.3.1 — atomic reservation. Replaces the previous non-atomic

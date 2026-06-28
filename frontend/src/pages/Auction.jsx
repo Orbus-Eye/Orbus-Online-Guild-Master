@@ -225,11 +225,13 @@ function BuyTab({ token, lang, t, refreshGuild, myUserId, myGuildId, myGuildGold
                         ) : (() => {
                             // ROUND 6B.3 Wave 2 — explicit guard reasons so the
                             // FE never lets the player click a CTA that 4xx's.
-                            // ROUND 6B.3 Wave 3 FIX BUG 1 — Use seller.user_id
+                            // ROUND 11.1 B4 — server-authoritative `is_own`
+                            // flag replaces the FE-side UUID comparison.
+                            // `seller.user_id` is no longer exposed.
+                            const isOwn = !!l.is_own;
                             // (now exposed by backend) instead of the previously
                             // missing seller.guild_id, so own-listing buttons are
                             // visibly disabled with structured tooltip.
-                            const isOwn = !!myUserId && l.seller?.user_id === myUserId;
                             const isInactive = l.status && l.status !== "active";
                             const cannotAfford = l.price_per_unit > myGuildGold;
                             const disabled = isOwn || isInactive || cannotAfford;
@@ -332,7 +334,13 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
         } else {
             // ROUND 4 — translate the BoE 422 sentinel into a human i18n string.
             const detail = body.detail;
-            if (r.status === 422 && detail === "market.bound_item_not_sellable") {
+            if (
+                r.status === 422 &&
+                (detail === "market.bound_to_adventurer_not_sellable" ||
+                 detail === "market.bound_item_not_sellable" ||
+                 (typeof detail === "object" &&
+                  detail?.code === "market.bound_to_adventurer_not_sellable"))
+            ) {
                 toast.error(t("market.error_bound_item"));
             } else {
                 toast.error(formatErrorDetail(detail) || "Errore");

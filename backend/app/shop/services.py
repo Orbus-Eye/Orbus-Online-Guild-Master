@@ -321,7 +321,11 @@ async def sell_to_shop(
 
     # Eligibility checks (preserve detail strings for i18n)
     if row.get("is_bound") is True:
-        raise HTTPException(status_code=409, detail=SELLABLE_REASONS["bound"])
+        from app.core.bound_errors import raise_market_not_sellable
+        raise_market_not_sellable(
+            source="shop.sell_to_shop",
+            bound_to_adventurer_id=row.get("bound_to_adventurer_id"),
+        )
 
     # ROUND 6B.4 Task 2 — adventurer-bound guard for NPC shop sale.
     if row.get("bound_to_adventurer_id"):

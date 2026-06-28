@@ -121,19 +121,12 @@ async def _check_no_bound_items(db, *, guild_id: str, adventurer_id: str,
     if not bound_rows:
         return
     item_names = [r["item_name"] for r in bound_rows[:10]]
-    raise HTTPException(
-        status_code=422,
-        detail={
-            "code": "adventurer.has_bound_items",
-            "adventurer_id": adventurer_id,
-            "bound_count": len(bound_rows),
-            "bound_items": item_names,
-            "user_message": (
-                f"Avventuriero ha {len(bound_rows)} oggetto/i legato/i. "
-                f"Trasferisci o sblocca i seguenti item prima di congedarlo: "
-                f"{', '.join(item_names)}."
-            ),
-        },
+    from app.core.bound_errors import raise_retire_blocked
+    raise_retire_blocked(
+        source="adventurers.retire",
+        adventurer_id=adventurer_id,
+        bound_count=len(bound_rows),
+        bound_items=item_names,
     )
 
 

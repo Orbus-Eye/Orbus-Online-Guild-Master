@@ -111,6 +111,19 @@ async def _membership_of(db, user_id: str) -> dict | None:
     return await db.consortium_members.find_one({"user_id": user_id}, {"_id": 0})
 
 
+# ─── ROUND 11.1 B4/B5 — public serializer with PII redaction ──────────
+def _redact_consortium(doc: dict) -> dict:
+    """Strip internal `founder_user_id` UUID and replace with a stable,
+    non-reversible `founder_public_id` (sha256 16-hex). The internal id
+    is never exposed in any public consortium endpoint.
+    """
+    from app.core.identifiers import to_public_id
+    out = {k: v for k, v in doc.items()
+           if k not in ("founder_user_id", "_id", "name_lower")}
+    out["founder_public_id"] = to_public_id(doc.get("founder_user_id"))
+    return out
+
+
 async def create_consortium(
     db, *, current_user: dict, name: str, tag: str | None, description: str | None
 ) -> dict:
@@ -159,7 +172,7 @@ async def create_consortium(
         raise
 
     await _audit(db, "consortium_created", user_id, guild["id"], cid, name)
-    out = {k: v for k, v in doc.items() if k not in ("name_lower", "_id")}
+    out = _redact_consortium(doc)
     out["member_count"] = 1
     return out
 
@@ -176,9 +189,12 @@ async def list_consortiums(db, *, limit: int = 50) -> list[dict]:
         {"$group": {"_id": "$consortium_id", "n": {"$sum": 1}}},
     ]
     counts = {r["_id"]: r["n"] async for r in db.consortium_members.aggregate(pipeline)}
+    redacted = []
     for r in rows:
-        r["member_count"] = int(counts.get(r["id"], 0))
-    return rows
+        item = _redact_consortium(r)
+        item["member_count"] = int(counts.get(r["id"], 0))
+        redacted.append(item)
+    return redacted
 
 
 async def get_consortium_detail(db, cid: str) -> dict:
@@ -189,6 +205,7 @@ async def get_consortium_detail(db, cid: str) -> dict:
         {"consortium_id": cid},
         {"_id": 0, "user_id": 0},  # never expose user_id publicly
     ).sort("joined_at", 1).to_list(200)
+    c = _redact_consortium(c)
     c["members"] = members
     c["member_count"] = len(members)
     return c

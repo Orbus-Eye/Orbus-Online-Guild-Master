@@ -155,12 +155,19 @@ async def register_user(db, email: str, username: str, password: str) -> tuple[d
 
     now = utc_now()
     user_id = str(uuid.uuid4())
+    # ROUND 11.1 B6 — explicit `is_test_user` flag instead of inferring
+    # from `APP_ENV == "development"`. Any registration with an
+    # `@orbus.test` domain (or other documented test-only domain) is
+    # flagged so leaderboard / auction / chronicle filters can exclude
+    # them in prod without depending on the environment variable.
+    is_test = email.lower().endswith("@orbus.test")
     user_doc = {
         "id": user_id,
         "email": email,
         "username": username,
         "password_hash": hash_password(password),
         "is_admin": False,
+        "is_test_user": is_test,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }

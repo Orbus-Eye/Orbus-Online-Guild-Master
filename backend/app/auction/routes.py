@@ -45,12 +45,14 @@ async def get_listings(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0, le=1000),
     lang: str = Query(default="it", pattern=r"^(it|en)$"),
+    current_user: dict = Depends(get_current_user),
 ):
     return await list_active_listings(
         db,
         item_type=item_type, rarity=rarity, level_max=level_max,
         price_max=price_max, name_contains=name_contains,
         sort_by=sort_by, limit=limit, offset=offset, lang=lang,
+        current_user_id=current_user["id"],
     )
 
 
@@ -59,7 +61,10 @@ async def get_my_listings(
     lang: str = Query(default="it", pattern=r"^(it|en)$"),
     current_user: dict = Depends(get_current_user),
 ):
-    return await list_my_listings(db, current_user["id"], lang=lang)
+    return await list_my_listings(
+        db, current_user["id"], lang=lang,
+        current_user_id=current_user["id"],
+    )
 
 
 @router.post("/listings", status_code=201, dependencies=[Depends(require_unlocked("auction.list"))])

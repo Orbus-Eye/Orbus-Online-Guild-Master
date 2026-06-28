@@ -145,6 +145,7 @@ export default function Market() {
             const status = err?.response?.status;
             if (status === 409 && detail?.startsWith("shop.sell.")) {
                 const reason = {
+                    "market.bound_to_adventurer_not_sellable": "Oggetto bound — non vendibile.",
                     "shop.sell.bound": "Oggetto bound — non vendibile.",
                     "shop.sell.equipped": "Oggetto equipaggiato — rimuovi prima.",
                     "shop.sell.listed": "Oggetto già in Asta.",
