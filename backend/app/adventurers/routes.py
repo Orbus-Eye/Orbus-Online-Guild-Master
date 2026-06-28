@@ -128,14 +128,43 @@ def _resolve_roster_state(current: int, cap: int) -> str:
 async def get_roster_health(current_user: dict = Depends(get_current_user)):
     """ROUND 6B.4 — public roster health for the dashboard widget.
 
-    Returns: {current, cap, headroom, dormitory_level, is_over_cap, state}
+    Returns: {current, cap, headroom, dormitory_level, is_over_cap, state,
+              dormitories_next_upgrade}
     where `state ∈ {"healthy","filling","at_cap","over_cap"}`.
-    No PII is exposed: only numeric counts + structure level.
+
+    ROUND 6E Task 5 — single source of truth for next dormitory upgrade
+    cost (FE no longer recomputes from STRUCTURE_COSTS).
     """
     guild = await user_guild_or_404(db, current_user["id"])
     cap_state = await compute_adventurer_cap_state(db, guild["id"])
     state_label = _resolve_roster_state(cap_state["current"], cap_state["cap"])
-    return {**cap_state, "state": state_label}
+    # ROUND 6E — next upgrade hint (null target_level if at max).
+    from app.territory.costs import cost_for
+    from app.territory.structures import STRUCTURE_CATALOG
+    current_dorm_level = int(cap_state.get("dormitory_level") or 0)
+    dorm_max = int(STRUCTURE_CATALOG.get("dormitories", {}).get("max_level", 6))
+    next_target = current_dorm_level + 1
+    next_upgrade: dict
+    if next_target > dorm_max:
+        next_upgrade = {
+            "target_level": None,
+            "cost_gold": 0,
+            "cost_materials": {},
+            "prereq_met": True,
+        }
+    else:
+        cost = cost_for("dormitories", next_target) or {}
+        next_upgrade = {
+            "target_level": next_target,
+            "cost_gold": int(cost.get("gold", 0)),
+            "cost_materials": dict(cost.get("materials") or {}),
+            "prereq_met": True,  # dormitories have no prerequisites
+        }
+    return {
+        **cap_state,
+        "state": state_label,
+        "dormitories_next_upgrade": next_upgrade,
+    }
 
 
 __all__ = ["router"]

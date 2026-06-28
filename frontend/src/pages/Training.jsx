@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import AppHeader from "../components/AppHeader";
+import RespecModal from "../components/RespecModal";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
 import { api, formatApiError } from "../lib/api";
@@ -30,6 +31,9 @@ export default function Training() {
     const [selectedAdv, setSelectedAdv] = useState(null);
     const [selectedSpec, setSelectedSpec] = useState(null);
     const [applying, setApplying] = useState(false);
+    // ROUND 6E — Respec state
+    const [respecAdv, setRespecAdv] = useState(null);
+    const [respecSubmitting, setRespecSubmitting] = useState(false);
 
     async function refresh() {
         setLoading(true);
@@ -86,6 +90,30 @@ export default function Training() {
             toast.error(formatApiError(err));
         } finally {
             setApplying(false);
+        }
+    }
+
+    async function doRespec({ new_spec_slug, discard_signature_items }) {
+        if (!respecAdv) return;
+        setRespecSubmitting(true);
+        try {
+            const r = await api.post(`/training/respec/${respecAdv.id}`, {
+                new_spec_slug,
+                discard_signature_items,
+            });
+            const newName = r.data?.specialization?.name_it || new_spec_slug;
+            toast.success(
+                lang === "it"
+                    ? `✦ ${respecAdv.name} ora è ${newName}!`
+                    : `✦ ${respecAdv.name} is now ${newName}!`
+            );
+            setRespecAdv(null);
+            await refresh();
+            await refreshGuild();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setRespecSubmitting(false);
         }
     }
 
@@ -146,6 +174,7 @@ export default function Training() {
                         {specializedAdvs.length > 0 && (
                             <SpecializedList
                                 advs={specializedAdvs}
+                                onPickRespec={setRespecAdv}
                                 t={t}
                                 lang={lang}
                             />
@@ -162,6 +191,17 @@ export default function Training() {
                         onConfirm={doApply}
                         applying={applying}
                         t={t}
+                        lang={lang}
+                    />
+                )}
+
+                {respecAdv && (
+                    <RespecModal
+                        adv={respecAdv}
+                        catalog={catalog}
+                        onClose={() => setRespecAdv(null)}
+                        onSubmit={doRespec}
+                        submitting={respecSubmitting}
                         lang={lang}
                     />
                 )}
@@ -366,7 +406,7 @@ function SpecColumn({ catalog, selectedAdv, selectedSpec, onPickSpec, t, lang })
     );
 }
 
-function SpecializedList({ advs, t, lang }) {
+function SpecializedList({ advs, onPickRespec, t, lang }) {
     return (
         <div className="mt-6 border border-border bg-card rounded-sm p-4">
             <h2 className="text-[10px] text-amber tracking-widest mb-3">
@@ -380,27 +420,38 @@ function SpecializedList({ advs, t, lang }) {
                         data-testid={`training-specialized-${a.id}`}
                         className="border border-border/60 rounded-sm p-2 text-[11px] flex items-center justify-between gap-2"
                     >
-                        <div>
-                            <div className="font-bold text-foreground/90">{a.name}</div>
+                        <div className="min-w-0">
+                            <div className="font-bold text-foreground/90 truncate">{a.name}</div>
                             <div className="text-muted-foreground">
                                 {a.class_name} · Lv{a.level}
                             </div>
                         </div>
-                        <span
-                            data-testid={`training-spec-badge-${a.id}`}
-                            className="text-[10px] tracking-widest border border-amber/60 text-amber px-2 py-0.5 rounded-sm whitespace-nowrap"
-                        >
-                            ✦ {lang === "it"
-                                ? a.specialization?.name_it
-                                : a.specialization?.name_en}
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <span
+                                data-testid={`training-spec-badge-${a.id}`}
+                                className="text-[10px] tracking-widest border border-amber/60 text-amber px-2 py-0.5 rounded-sm whitespace-nowrap"
+                            >
+                                ✦ {lang === "it"
+                                    ? a.specialization?.name_it
+                                    : a.specialization?.name_en}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => onPickRespec(a)}
+                                data-testid={`training-respec-btn-${a.id}`}
+                                className="text-[10px] tracking-widest border border-border text-muted-foreground hover:border-amber hover:text-amber px-2 py-0.5 rounded-sm whitespace-nowrap transition-colors"
+                                title={t("training.respec_btn_title", "Cambia specializzazione (con costo + cooldown)")}
+                            >
+                                ⟲ {t("training.respec_btn", "Respec")}
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
             <div className="text-[10px] text-muted-foreground mt-3 border-t border-border pt-2">
                 {t(
-                    "training.respec_note",
-                    "Il respec non è disponibile in Round 6C. Pianifica con cura — la specializzazione resta permanente fino a Round 6D."
+                    "training.respec_note_6e",
+                    "ROUND 6E — Respec disponibile: costo crescente (800/1200/2000g + polvere arcana), cooldown 24h, signature item attuale viene distrutto."
                 )}
             </div>
         </div>

@@ -80,6 +80,20 @@ export default function ContractsCard() {
     const totalDaily = data.daily.length;
     const totalWeekly = data.weekly.length;
 
+    // ROUND 6E Task 5 — pick the single highest-reward claimable across all
+    // pools so the dashboard can hint the player at the most profitable
+    // claim. Falls back to highest-progress if nothing is claimable.
+    const claimablePool = [
+        ...data.daily.filter((c) => c.can_claim).map((c) => ({ ...c, scope: "daily" })),
+        ...data.weekly.filter((c) => c.can_claim).map((c) => ({ ...c, scope: "weekly" })),
+        ...data.milestones.filter((m) => m.can_claim).map((m) => ({ ...m, scope: "milestone" })),
+    ];
+    const topClaim = claimablePool.length > 0
+        ? claimablePool.reduce((a, b) =>
+              (b.reward_gold || 0) > (a.reward_gold || 0) ? b : a
+          )
+        : null;
+
     return (
         <Link
             to="/contracts"
@@ -125,6 +139,24 @@ export default function ContractsCard() {
                     </span>
                 </li>
             </ul>
+            {topClaim && (
+                <div
+                    data-testid="contracts-card-top-claim"
+                    className="mt-3 pt-3 border-t border-amber/40 text-[10px]"
+                >
+                    <div className="text-amber/80 tracking-widest mb-0.5">
+                        ★ {t("contracts.card_top_label", "REWARD PIÙ RICCO PRONTO")}
+                    </div>
+                    <div className="flex items-center justify-between text-foreground/90">
+                        <span className="truncate" title={topClaim.slug}>
+                            {topClaim.slug}
+                        </span>
+                        <span className="text-amber font-bold tabular-nums ml-2 shrink-0">
+                            +{topClaim.reward_gold}g
+                        </span>
+                    </div>
+                </div>
+            )}
         </Link>
     );
 }

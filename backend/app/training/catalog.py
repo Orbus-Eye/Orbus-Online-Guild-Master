@@ -50,6 +50,26 @@ def apply_cost_for_training_level(level: int) -> int:
     return 1500      # Lv3+ full tier
 
 
+# ─── ROUND 6E — Respec cost table ────────────────────────────────────────────
+# Cost escalates by respec count to discourage spam: 1st 800g/1 dust,
+# 2nd 1200g/2 dust, 3rd+ 2000g/3 dust (cap). All within "small additive"
+# range — NO P2W. Cooldown of 24h is enforced separately in the service.
+RESPEC_COOLDOWN_HOURS = 24
+
+
+def respec_cost_for_count(count: int) -> dict:
+    """Return `{gold, materials}` cost for the next respec given prior count.
+
+    `count` is the value of `specialization_respec_count` BEFORE the respec
+    is applied (0 means first respec ever).
+    """
+    if count <= 0:
+        return {"gold": 800, "materials": {"lesser_arcane_dust": 1}}
+    if count == 1:
+        return {"gold": 1200, "materials": {"lesser_arcane_dust": 2}}
+    return {"gold": 2000, "materials": {"lesser_arcane_dust": 3}}
+
+
 # ─── Spec catalog ────────────────────────────────────────────────────────────
 # Each entry has:
 #   slug, name_it, name_en, role, tier, eligible_classes (list of class slugs),

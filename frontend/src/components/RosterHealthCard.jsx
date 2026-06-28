@@ -76,10 +76,16 @@ export default function RosterHealthCard() {
         );
     }
 
-    const { current, cap, headroom, dormitory_level: dormLevel, state } = data;
+    const { current, cap, headroom, dormitory_level: dormLevel, state,
+            dormitories_next_upgrade: nextUpgrade } = data;
     const style = STATE_STYLE[state] || STATE_STYLE.healthy;
     const ratio = cap > 0 ? Math.min(100, Math.round((current / cap) * 100)) : 0;
     const isOverCap = state === "over_cap";
+    // ROUND 6E Task 5 — show next dorm upgrade hint when player likely needs it.
+    const showUpgradeHint =
+        nextUpgrade &&
+        nextUpgrade.target_level != null &&
+        ["filling", "at_cap", "over_cap"].includes(state);
 
     return (
         <Link
@@ -146,6 +152,28 @@ export default function RosterHealthCard() {
                     className="mt-3 pt-3 border-t border-red-500/30 text-[11px] text-red-200"
                 >
                     {t("rosterHealth.overcap_hint")}
+                </div>
+            )}
+            {showUpgradeHint && (
+                <div
+                    data-testid="roster-health-upgrade-hint"
+                    className="mt-3 pt-3 border-t border-border text-[10px] text-muted-foreground"
+                >
+                    <span className="tracking-widest">
+                        {t("rosterHealth.next_upgrade_label", "PROSSIMO UPGRADE DORMITORI")}
+                    </span>
+                    <span className="text-amber/80 ml-1.5">
+                        Lv{nextUpgrade.target_level} — {nextUpgrade.cost_gold}g
+                    </span>
+                    {nextUpgrade.cost_materials &&
+                        Object.keys(nextUpgrade.cost_materials).length > 0 && (
+                        <span className="text-muted-foreground/70 ml-1">
+                            +{" "}
+                            {Object.entries(nextUpgrade.cost_materials)
+                                .map(([k, v]) => `${v}× ${k}`)
+                                .join(", ")}
+                        </span>
+                    )}
                 </div>
             )}
         </Link>

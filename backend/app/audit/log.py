@@ -100,6 +100,9 @@ EVENT_TYPES = frozenset({
     "specialization_applied",
     "specialization_signature_item_created",
     "specialization_signature_item_discarded_on_retire",
+    # ROUND 6E — Respec
+    "specialization_respec",
+    "specialization_signature_item_discarded_on_respec",
     # ROUND 6C — Preview validation seed (dev-only, whitelist-gated)
     "guild_structure_seeded",
     "adventurer_seeded",

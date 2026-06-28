@@ -220,6 +220,14 @@ export default function Guide() {
                         <li>NON sono vendibili al mercato NPC, né listabili in asta.</li>
                         <li>Restano sempre nel tuo Deposito anche dopo il congedo dell&apos;avventuriero (vedi Archivio).</li>
                     </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Suggerimento upgrade Dormitori (ROUND 6E)</h3>
+                    <p>
+                        Quando lo stato è <strong>Quasi Pieno</strong>, <strong>Al Limite</strong> o <strong>Oltre Capacità</strong>,
+                        il widget mostra direttamente il <strong>costo del prossimo upgrade dei Dormitori</strong>
+                        (oro + materiali) — così sai immediatamente quanto serve risparmiare. Se sei già al livello massimo,
+                        il suggerimento non viene mostrato.
+                    </p>
+
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Archivio congedati</h3>
                     <p>
                         In <em>Gestione Roster → tab Archivio</em> trovi la lista di tutti gli avventurieri congedati con la
@@ -451,10 +459,21 @@ export default function Guide() {
                     </ul>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Le 10 Full Hybrid (Tier 3, da TG Lv3)</h3>
                     <p>
-                        A partire da Training Grounds Lv3 si sbloccano 10 specializzazioni avanzate (esempio: Furia,
-                        Crociato, Maestro d&apos;Armi, ecc.) per classi specifiche. Ogni Full Hybrid ha il proprio
-                        Signature Item.
+                        A partire da Training Grounds Lv3 si sbloccano <strong>10 specializzazioni avanzate</strong>
+                        (ROUND 6E ha completato la rosa). Ogni Full Hybrid ha il proprio Signature Item Epico.
                     </p>
+                    <ul className="list-disc pl-5 space-y-1 text-[12px]">
+                        <li><strong>Furia</strong> (DPS Warrior) — Grand&apos;Ascia Insanguinata.</li>
+                        <li><strong>Distruttore</strong> (Tank-DPS) — Manopole del Sfondatore.</li>
+                        <li><strong>Assassino</strong> (Pure DPS Rogue) — Kris Silente.</li>
+                        <li><strong>Arcanista</strong> (DPS Mage) — Focus Runico.</li>
+                        <li><strong>Elementalista</strong> (AOE Mage) — Bastone della Tempesta.</li>
+                        <li><strong>Cantore di Battaglia</strong> (Support Bard) — Corno di Guerra.</li>
+                        <li><strong>Paladino Oscuro (NEW 6E)</strong> — Warrior/Paladin ibrido Tank/DPS oscuro.</li>
+                        <li><strong>Difensore della Natura (NEW 6E)</strong> — Druid/Ranger ibrido protettivo.</li>
+                        <li><strong>Maestro di Armi (NEW 6E)</strong> — Warrior/Ranger DPS pluristile.</li>
+                        <li><strong>Guardiano Runico (NEW 6E)</strong> — Mage/Paladin ibrido magia difensiva.</li>
+                    </ul>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Signature Item</h3>
                     <p>
                         Applicare una specializzazione genera automaticamente un <strong>Signature Item</strong> legato
@@ -467,11 +486,29 @@ export default function Guide() {
                         spuntata per procedere. L&apos;item viene soft-discarded (resta in DB come storico, ma non più
                         utilizzabile e non più legato).
                     </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Respec (ROUND 6E)</h3>
+                    <p>
+                        <strong>Round 6E ha sbloccato il respec</strong>: puoi cambiare la specializzazione di un
+                        avventuriero già specializzato dal pulsante <em>⟲ Respec</em> nella lista &quot;Avventurieri già
+                        specializzati&quot;.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-[12px]">
+                        <li><strong>Costo crescente</strong> per respec_count: 800g + 1 polvere arcana (primo),
+                            1200g + 2 polvere (secondo), 2000g + 3 polvere (terzo e successivi — cap fisso).</li>
+                        <li><strong>Cooldown 24h</strong> tra un respec e l&apos;altro per lo stesso avventuriero.</li>
+                        <li><strong>Signature item attuale viene distrutto</strong> (soft-discard, irreversibile).
+                            Il modal richiede una checkbox di conferma esplicita prima di procedere. Viene poi creato
+                            un nuovo signature item per la nuova specializzazione.</li>
+                        <li><strong>Atomico server-side</strong>: oro + materiali debitati con CAS, su qualsiasi
+                            fallimento intermedio i debit vengono rollbackati. Niente duplicazioni di signature.</li>
+                        <li><strong>NO P2W</strong>: costo modesto, non si può saltare la cooldown con denaro reale.</li>
+                    </ul>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Limiti attuali</h3>
                     <ul className="list-disc pl-5 space-y-1">
-                        <li>La specializzazione è <strong>permanente</strong> in Round 6C.</li>
-                        <li>Il <strong>respec</strong> (cambio specializzazione) NON è disponibile e arriverà in un round successivo (6E o futuro).</li>
-                        <li>Pianifica con cura: l&apos;applicazione di una spec consuma oro e genera signature item legato.</li>
+                        <li>Il respec richiede stessa classe-eligibility della nuova spec (es. un Mago non può
+                            diventare Difensore).</li>
+                        <li>Slot extra, set bonus e tier 4-6 di Training Grounds restano placeholder per round
+                            successivi.</li>
                     </ul>
                 </SectionBlock>
 
@@ -579,32 +616,42 @@ export default function Guide() {
                         Reset automatico ogni giorno a <strong>mezzanotte UTC</strong>. Anti-grind: NESSUNA reputazione
                         dai daily. Reward bilanciato per ~30% di un dungeon clear.
                     </p>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Contratti settimanali (4 attivi)</h3>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Contratti settimanali (4 attivi su pool 8)</h3>
                     <ul className="list-disc pl-5 space-y-1">
                         <li>Completa 5 spedizioni → +250 oro + 2 frammento ferro + 2 Rep</li>
                         <li>Vendi 3 oggetti al mercato → +180 oro + 1 cuoio + 1 Rep</li>
                         <li>Potenzia 1 struttura del Territorio → +300 oro + 1 polvere arcana minore + 3 Rep</li>
                         <li>Applica 1 specializzazione → +200 oro + 1 polvere arcana minore + 2 Rep <em>(sinergia 6C)</em></li>
-                        <li>Recluta 2 nuovi avventurieri → +150 oro + 1 frammento ferro + 1 Rep (entra nel pool a rotazione)</li>
+                        <li>Recluta 2 nuovi avventurieri → +150 oro + 1 frammento ferro + 1 Rep</li>
+                        <li><strong>NEW 6E</strong>: Completa 3 raid → +280g + iron_shard + 3 Rep (richiede War Room)</li>
+                        <li><strong>NEW 6E</strong>: Esegui 3 refinement in Fucina → +200g + iron_shard + 2 Rep (richiede Fucina)</li>
+                        <li><strong>NEW 6E</strong>: Crea 2 listing in Asta → +220g + cuoio + 2 Rep (richiede Casa d&apos;Aste)</li>
                     </ul>
                     <p className="mt-2 text-muted-foreground text-[12px]">
-                        Reset automatico ogni <strong>lunedì alle 00:00 UTC</strong>. La reputazione gilda è una NUOVA
-                        risorsa attivata da Round 6D, usata per il leaderboard. Reward bilanciato ~80% dungeon clear.
+                        Reset automatico ogni <strong>lunedì alle 00:00 UTC</strong>. La reputazione gilda è usata per il
+                        leaderboard. <strong>Feature-gating (ROUND 6E)</strong>: i contratti che richiedono una struttura
+                        (raid → War Room, forge → Fucina, asta → Casa d&apos;Aste) appaiono solo se quella struttura è
+                        sbloccata. Lo slot di rotazione settimanale non viene mai sprecato su un contratto bloccato.
                     </p>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Milestone permanenti (Tier 1)</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                        <li>Spedizioni totali: 10 → +200 oro + 1 polvere arcana minore + 5 Rep</li>
-                        <li>Oggetti craftati totali: 10 → +150 oro + 3 frammento ferro + 5 Rep</li>
-                        <li>Avventurieri reclutati totali: 5 → +100 oro + 2 cuoio + 5 Rep</li>
-                    </ul>
-                    <p className="mt-2 text-muted-foreground text-[12px]">
-                        I milestone <strong>non si resettano mai</strong>: il progresso è permanente. Tier 2 e Tier 3
-                        sono in arrivo nelle prossime iterazioni.
-                    </p>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Sinergia Round 6C ↔ Round 6D</h3>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Milestone permanenti (3 Tier, ROUND 6E completi)</h3>
                     <p>
-                        Applicare una specializzazione (Training Grounds) incrementa automaticamente il weekly contract
-                        <em> &quot;Applica 1 specializzazione&quot;</em>. Reward conservativa per evitare incentivi a spec-and-respec abuse.
+                        I milestone <strong>non si resettano mai</strong> e sono organizzati in 3 tier progressivi:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li><strong>Tier 1 (3 milestone, attivi dal Day 1)</strong> — Spedizioni 10, Craft 10, Recruit 5.
+                            Reward 100-200g + 5 Rep ciascuno.</li>
+                        <li><strong>Tier 2 (7 milestone, sblocco dopo aver claimato TUTTI i Tier 1)</strong> —
+                            Spedizioni 50, Craft 50, Recruit 25, Raid 10, Market 30 vendite, Strutture 5 upgrade,
+                            Spec applicate 3. Reward 600-1200g + 15-20 Rep.</li>
+                        <li><strong>Tier 3 (7 milestone end-game, sblocco dopo TUTTI i Tier 2)</strong> —
+                            Spedizioni 200, Craft 200, Recruit 50, Raid 50, Market 100, Strutture 15, Spec 8.
+                            Reward 2000-3000g + 50 Rep + greater_arcane_dust/iron_shard stacks.</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Sinergia Round 6C ↔ Round 6D ↔ Round 6E</h3>
+                    <p>
+                        Applicare una spec incrementa <em>&quot;Applica 1 specializzazione&quot;</em>. Completare un raid,
+                        fare un refinement in Fucina o listare in Asta incrementa i rispettivi contratti weekly 6E.
+                        Reward conservativi anche per il respec — niente incentivi a spec-and-respec abuse.
                     </p>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Garanzie fairness</h3>
                     <ul className="list-disc pl-5 space-y-1">
