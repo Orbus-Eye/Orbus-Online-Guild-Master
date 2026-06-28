@@ -1,9 +1,14 @@
 // ROUND 6B.2b — /territory page. 11-card grid with 6 states + Legacy.
+// ROUND 11.2 EXT-2 — Inline CostBreakdown + Material lookup modal so the
+// player can see required-vs-owned (gold + materials) before clicking
+// Potenzia, and tap a material to learn where to farm it.
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import AppHeader from "../components/AppHeader";
 import OverCapBanner from "../components/OverCapBanner";
+import CostBreakdown from "../components/territory/CostBreakdown";
+import MaterialSourceModal from "../components/territory/MaterialSourceModal";
 import { api, formatApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
@@ -21,7 +26,7 @@ function GoldPill({ value }) {
     );
 }
 
-function StructureCard({ slug, structure, structures, gold, lang, busy, onPurchase, onUpgrade }) {
+function StructureCard({ slug, structure, structures, gold, lang, busy, onPurchase, onUpgrade, onMaterialClick }) {
     const state = useMemo(
         () => resolveCardState({ slug, structure, structures, gold }),
         [slug, structure, structures, gold],
@@ -36,6 +41,17 @@ function StructureCard({ slug, structure, structures, gold, lang, busy, onPurcha
     const isBuyable = state.kind === "buyable";
     const isUpgradable = state.kind === "upgradable";
     const isInsufficient = state.kind === "insufficient_gold";
+
+    // ROUND 11.2 EXT-2 — Backend-driven affordability check. Strict
+    // `=== false` guard: if `can_afford` is undefined (legacy cards
+    // pre-enrichment) we DO NOT disable, otherwise we'd silently lock
+    // upgrades the player could actually pay for.
+    const nextLevelCost = structure?.next_level_cost || null;
+    const blockedByMaterials = (
+        nextLevelCost !== null
+        && nextLevelCost?.can_afford === false
+        && isUpgradable // gold-side already covered by insufficient_gold
+    );
 
     let cta = null;
     if (isLegacy) {
@@ -77,12 +93,21 @@ function StructureCard({ slug, structure, structures, gold, lang, busy, onPurcha
         const verb = isBuyable
             ? (lang === "it" ? "▶ Compra" : "▶ Buy")
             : (lang === "it" ? "▶ Potenzia a Lv" : "▶ Upgrade to Lv");
+        const disabled = busy || blockedByMaterials;
+        const title = blockedByMaterials
+            ? (lang === "it" ? "Materiali insufficienti" : "Not enough materials")
+            : undefined;
         cta = (
             <button
-                disabled={busy}
+                disabled={disabled}
+                title={title}
                 onClick={() => (isBuyable ? onPurchase(slug) : onUpgrade(slug))}
                 data-testid={`territory-card-${slug}-cta`}
-                className="w-full mt-3 px-3 py-2 text-xs tracking-widest font-bold bg-amber text-background hover:opacity-90 transition-opacity rounded-sm disabled:opacity-50 disabled:cursor-wait"
+                className={`w-full mt-3 px-3 py-2 text-xs tracking-widest font-bold rounded-sm transition-opacity ${
+                    blockedByMaterials
+                        ? "border border-border text-muted-foreground cursor-not-allowed bg-secondary/40"
+                        : "bg-amber text-background hover:opacity-90 disabled:opacity-50 disabled:cursor-wait"
+                }`}
             >
                 {verb} {isUpgradable ? state.targetLevel : ""} ({state.goldNeeded || state.cost?.gold || 0}g)
             </button>
@@ -126,6 +151,14 @@ function StructureCard({ slug, structure, structures, gold, lang, busy, onPurcha
                     {lang === "it" ? "Capienza" : "Capacity"}: {dormCap} {lang === "it" ? "avventurieri" : "adventurers"}
                 </div>
             )}
+            {nextLevelCost && (isUpgradable || isInsufficient || blockedByMaterials) && (
+                <CostBreakdown
+                    nextLevelCost={nextLevelCost}
+                    lang={lang}
+                    slug={slug}
+                    onMaterialClick={onMaterialClick}
+                />
+            )}
             {cta}
         </div>
     );
@@ -137,6 +170,8 @@ export default function Territory() {
     const [territory, setTerritory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(false);
+    // ROUND 11.2 EXT-2 — Shared material-lookup modal state.
+    const [materialModalSlug, setMaterialModalSlug] = useState(null);
 
     const fetchTerritory = async () => {
         try {
@@ -289,11 +324,18 @@ export default function Territory() {
                                 busy={busy}
                                 onPurchase={doPurchase}
                                 onUpgrade={doUpgrade}
+                                onMaterialClick={setMaterialModalSlug}
                             />
                         ))}
                     </div>
                 )}
             </main>
+            <MaterialSourceModal
+                slug={materialModalSlug}
+                open={Boolean(materialModalSlug)}
+                onOpenChange={(open) => { if (!open) setMaterialModalSlug(null); }}
+                lang={lang}
+            />
         </div>
     );
 }

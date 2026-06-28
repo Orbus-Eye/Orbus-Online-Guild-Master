@@ -32,6 +32,15 @@ let webpackConfig = {
       },
     },
   },
+  jest: {
+    configure: (jestConfig) => {
+      jestConfig.moduleNameMapper = {
+        ...(jestConfig.moduleNameMapper || {}),
+        "^@/(.*)$": "<rootDir>/src/$1",
+      };
+      return jestConfig;
+    },
+  },
   webpack: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
