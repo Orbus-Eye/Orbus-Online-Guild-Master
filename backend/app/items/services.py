@@ -18,7 +18,14 @@ def item_public(it: dict) -> dict:
         "item_type": it["item_type"],
         "rarity": it["rarity"],
         "level_required": it.get("level_required", 1),
-        "power_score": it["power_score"],
+        # ROUND 11.1 P1 (post-Slice-1 hotfix) — defensive `.get(..., 0)` for
+        # all numeric fields. Some catalog materials (e.g. lesser_arcane_dust,
+        # greater_arcane_dust) were seeded without an explicit `power_score`,
+        # which raised KeyError on `GET /api/inventory` for any guild
+        # holding them. The seed has been backfilled (see migrations), but
+        # we keep the defensive default here so future seeds can't reintroduce
+        # the regression silently.
+        "power_score": it.get("power_score", 0),
         "strength_bonus": it.get("strength_bonus", 0),
         "agility_bonus": it.get("agility_bonus", 0),
         "intellect_bonus": it.get("intellect_bonus", 0),

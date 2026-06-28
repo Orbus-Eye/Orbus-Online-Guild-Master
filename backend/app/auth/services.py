@@ -42,6 +42,9 @@ def user_public(doc: dict) -> dict:
         "email": doc["email"],
         "username": doc["username"],
         "is_admin": doc.get("is_admin", False),
+        # ROUND 11.1 B6 — expose `is_test_user` so testers can verify the
+        # flag from a live login response (operational, not PII).
+        "is_test_user": bool(doc.get("is_test_user", False)),
         "created_at": doc["created_at"],
     }
 

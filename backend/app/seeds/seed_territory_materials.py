@@ -46,7 +46,12 @@ _MATERIALS = [
 
 
 async def seed_territory_materials(db) -> dict:
-    """Idempotent: insert any missing reagent. Returns a small report."""
+    """Idempotent: insert any missing reagent. Returns a small report.
+
+    ROUND 11.1 P1 hotfix: also backfills `power_score: 0` on any item
+    missing the field (materials seeded pre-Round-6E never had it, which
+    raised KeyError on `GET /api/inventory`).
+    """
     now = datetime.now(timezone.utc).isoformat()
     inserted: list[str] = []
     skipped: list[str] = []
@@ -58,6 +63,7 @@ async def seed_territory_materials(db) -> dict:
         doc = {
             "id": str(uuid.uuid4()),
             **m,
+            "power_score": 0,            # ROUND 11.1 P1 — required by `item_public`
             "is_test": False,
             "created_at": now,
             "updated_at": now,
@@ -70,11 +76,22 @@ async def seed_territory_materials(db) -> dict:
             logger.warning("seed_territory_materials insert raced on %s: %s",
                            m["slug"], exc)
             skipped.append(m["slug"])
-    logger.info(
-        "Round 6B.3 territory materials: inserted=%s skipped=%s",
-        inserted, skipped,
+    # ROUND 11.1 P1 — idempotent backfill of `power_score` for legacy rows
+    # that pre-date the field. Safe to re-run on every boot.
+    backfill = await db.items.update_many(
+        {"power_score": {"$exists": False}},
+        {"$set": {"power_score": 0}},
     )
-    return {"inserted": inserted, "skipped": skipped}
+    logger.info(
+        "Round 6B.3 territory materials: inserted=%s skipped=%s "
+        "power_score_backfill=%d",
+        inserted, skipped, backfill.modified_count,
+    )
+    return {
+        "inserted": inserted,
+        "skipped": skipped,
+        "power_score_backfill": backfill.modified_count,
+    }
 
 
 __all__ = ["seed_territory_materials"]
