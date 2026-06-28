@@ -14,8 +14,9 @@ export const STRUCTURE_META = {
     dormitories: {
         name_it: "Dormitori",
         name_en: "Dormitories",
-        desc_it: "Determina la capienza massima del roster (5/10/15/20/25/30).",
-        desc_en: "Sets the roster capacity (5/10/15/20/25/30).",
+        // ROUND 11.2 TASK 4 — scala 1-11, cap massimo 100.
+        desc_it: "Determina la capienza massima del roster (scala 1-11, cap massimo 100: 5 → 10 → 15 → 20 → 25 → 30 → 40 → 50 → 65 → 80 → 100).",
+        desc_en: "Sets the roster capacity (range 1-11, max cap 100: 5 → 10 → 15 → 20 → 25 → 30 → 40 → 50 → 65 → 80 → 100).",
         order: 2,
     },
     expedition_board: {
@@ -99,9 +100,24 @@ export function getStructureDescription(slug, lang = "it") {
 
 // Upgrade costs duplicated (no API for now). Mirrors backend
 // `app/territory/costs.py`. Index = target level. null = legacy-only.
+// ROUND 11.2 TASK 4 — `dormitories` extended Lv7-Lv11 (cap 40→100) with
+// progressive gold + materials costs (aligned exactly with backend).
 export const UPGRADE_COSTS = {
     guild_hall: [null, { gold: 0 }, { gold: 200 }, { gold: 500 }, { gold: 1200 }, { gold: 2500 }, { gold: 5000 }],
-    dormitories: [null, { gold: 0 }, { gold: 200 }, { gold: 500 }, { gold: 1200 }, { gold: 2500 }, { gold: 5000 }, null],
+    dormitories: [
+        null,
+        { gold: 0 },                                       // Lv 1 (cap 5)
+        { gold: 200 },                                     // Lv 2 (cap 10)
+        { gold: 500 },                                     // Lv 3 (cap 15)
+        { gold: 1200 },                                    // Lv 4 (cap 20)
+        { gold: 2500, materials: { iron_shard: 8 } },      // Lv 5 (cap 25)
+        { gold: 5000, materials: { iron_shard: 16 } },     // Lv 6 (cap 30)
+        { gold: 8500, materials: { iron_shard: 24, greater_arcane_dust: 3 } },   // Lv 7 (cap 40)
+        { gold: 14000, materials: { iron_shard: 36, greater_arcane_dust: 6 } },  // Lv 8 (cap 50)
+        { gold: 22000, materials: { iron_shard: 50, greater_arcane_dust: 10, lesser_arcane_dust: 4 } }, // Lv 9 (cap 65)
+        { gold: 32000, materials: { iron_shard: 70, greater_arcane_dust: 16, lesser_arcane_dust: 8 } }, // Lv 10 (cap 80)
+        { gold: 50000, materials: { iron_shard: 100, greater_arcane_dust: 25, lesser_arcane_dust: 12 } }, // Lv 11 (cap 100)
+    ],
     expedition_board: [null, { gold: 0 }, { gold: 200 }, { gold: 500 }, { gold: 1200 }, { gold: 2500 }, { gold: 5000 }],
     war_room: [null, { gold: 100 }, { gold: 250 }, { gold: 700 }, { gold: 1500 }, { gold: 3000 }, { gold: 6000 }],
     market_stall: [null, { gold: 50 }, { gold: 200 }, { gold: 500 }, { gold: 1200 }, { gold: 2500 }, { gold: 5000 }],
@@ -124,18 +140,34 @@ export const PREREQUISITES = {
     training_grounds: { guild_hall: 3, dormitories: 2 },
 };
 
-export const MAX_LEVEL = 6;          // user-facing cap
+export const MAX_LEVEL = 6;          // default cap (legacy callers)
 export const DORM_CAP_BY_LEVEL = [0, 5, 10, 15, 20, 25, 30, 40, 50, 65, 80, 100];
+
+// ROUND 11.2 TASK 4 — per-structure max level. Mirrors backend
+// `app/territory/structures.py::STRUCTURE_CATALOG[*].max_level`. Anything
+// not listed falls back to `MAX_LEVEL` (6) for backwards compatibility.
+export const STRUCTURE_MAX_LEVEL = {
+    dormitories: 11,
+};
+
+export function getStructureMaxLevel(slug) {
+    return STRUCTURE_MAX_LEVEL[slug] ?? MAX_LEVEL;
+}
 
 /** Resolve the card state for a structure given the territory + guild gold. */
 export function resolveCardState({ slug, structure, structures, gold }) {
     const level = Number(structure?.level || 0);
     const isUnlocked = Boolean(structure?.is_unlocked);
     const isLegacy = structure?.acquired_via === "migration_legacy";
-    const isMaxed = level >= MAX_LEVEL;
+    // ROUND 11.2 TASK 4 — per-structure max. Dormitories now goes up to Lv11.
+    const maxLevel = getStructureMaxLevel(slug);
+    const isMaxed = level >= maxLevel;
     const costTable = UPGRADE_COSTS[slug] || [];
 
-    if (isLegacy) {
+    // ROUND 11.2 P1 fix — `legacy` is INFO, not a blocker. If the legacy
+    // structure is below its max level it MUST still be upgradable so the
+    // player can advance (e.g. legacy Lv7 dormitory → Lv8 cap 50).
+    if (isLegacy && isMaxed) {
         return { kind: "legacy", level, isLegacy: true, isMaxed: true };
     }
     if (isMaxed) {
@@ -166,6 +198,7 @@ export function resolveCardState({ slug, structure, structures, gold }) {
             unmet: unmet.map(([reqSlug, reqLvl]) => ({ slug: reqSlug, min_level: reqLvl })),
             targetLevel,
             cost,
+            isLegacy,  // surface to UI as info badge even when upgradable
         };
     }
     return {
@@ -175,5 +208,6 @@ export function resolveCardState({ slug, structure, structures, gold }) {
         cost,
         goldNeeded,
         isPurchase,
+        isLegacy,  // surface to UI as info badge even when upgradable
     };
 }

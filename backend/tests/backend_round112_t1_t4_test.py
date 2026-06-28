@@ -326,3 +326,93 @@ def test_t4_08_frontend_constants_aligned():
     fe_arr = [int(x.strip()) for x in m.group(1).split(",")]
     expected = [DORMITORY_CAP_BY_LEVEL[i] for i in range(12)]
     assert fe_arr == expected, f"FE {fe_arr} != backend {expected}"
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# TASK 4 P1 fix — /territory card Dormitori legacy gating regression
+# ─────────────────────────────────────────────────────────────────────────
+def _eval_resolveCardState_node(slug: str, structure: dict, structures: dict,
+                                gold: int) -> dict:
+    """Invoke resolveCardState() in a Node subprocess so JS logic is
+    end-to-end verified. Uses a small ESM-to-CJS shim because the file
+    uses `export const`."""
+    import json
+    import subprocess
+    import textwrap
+    js = textwrap.dedent(f"""
+        const fs = require('fs');
+        const src = fs.readFileSync('/app/frontend/src/utils/structures.js', 'utf8');
+        // Strip ESM `export ` keyword and load via vm.
+        const cjs = src.replace(/export\\s+(const|function)/g, '$1');
+        const ctx = {{ module: {{ exports: {{}} }}, console }};
+        const vm = require('vm');
+        vm.createContext(ctx);
+        vm.runInContext(cjs + ';module.exports = {{ resolveCardState }};', ctx);
+        const result = ctx.module.exports.resolveCardState({{
+            slug: {json.dumps(slug)},
+            structure: {json.dumps(structure)},
+            structures: {json.dumps(structures)},
+            gold: {gold},
+        }});
+        console.log(JSON.stringify(result));
+    """)
+    proc = subprocess.run(
+        ["node", "-e", js], capture_output=True, text=True, timeout=15,
+    )
+    assert proc.returncode == 0, f"node failed: {proc.stderr}"
+    return json.loads(proc.stdout.strip().splitlines()[-1])
+
+
+def test_t4_p1_01_legacy_lv7_dorm_still_upgradable():
+    """Lv7 legacy → must show upgrade to Lv8 available (NOT isMaxed=true)."""
+    state = _eval_resolveCardState_node(
+        slug="dormitories",
+        structure={"level": 7, "is_unlocked": True,
+                   "acquired_via": "migration_legacy"},
+        structures={"dormitories": {"level": 7, "is_unlocked": True},
+                    "guild_hall": {"level": 3, "is_unlocked": True}},
+        gold=100_000,
+    )
+    assert state.get("isMaxed") is not True, \
+        f"legacy Lv7 must NOT be maxed: {state}"
+    assert state.get("level") == 7
+    assert state.get("targetLevel") == 8
+    # Should be 'upgradable' (we gave 100k gold; Lv8 costs 14000)
+    assert state.get("kind") in ("upgradable", "insufficient_gold"), state
+    assert state.get("isLegacy") is True, "legacy info badge must surface"
+
+
+def test_t4_p1_02_lv11_dorm_isMaxed_true():
+    """Lv11 → effectively maxed (no further upgrade)."""
+    state = _eval_resolveCardState_node(
+        slug="dormitories",
+        structure={"level": 11, "is_unlocked": True},
+        structures={"dormitories": {"level": 11, "is_unlocked": True}},
+        gold=100_000,
+    )
+    assert state.get("isMaxed") is True
+    assert state.get("kind") in ("max", "legacy")
+    assert state.get("level") == 11
+
+
+def test_t4_p1_03_desc_contains_new_scale_text():
+    """desc_it / desc_en must mention the new scale (11 / 100), NOT old (6 / 50)."""
+    import json
+    with open("/app/frontend/src/utils/structures.js") as f:
+        content = f.read()
+    # Crude string check on the dormitories block.
+    import re
+    m = re.search(
+        r"dormitories:\s*\{[^}]*name_it[^}]*\}", content, re.DOTALL,
+    )
+    assert m, "dormitories meta block not found"
+    block = m.group(0)
+    # Must mention the new cap and max level.
+    assert "100" in block, f"desc must reference cap 100 in dormitories meta: {block}"
+    assert ("11" in block or "Lv11" in block.lower() or "1-11" in block), \
+        f"desc must reference max level 11: {block}"
+    # Must NOT reference the legacy "max 6" or "cap 50" copy.
+    assert "max 6" not in block.lower(), f"legacy 'max 6' still present: {block}"
+    # The old "(5/10/15/20/25/30)" sequence (no Lv7+) must be gone.
+    assert "(5/10/15/20/25/30)" not in block, \
+        f"old 6-level scale still present: {block}"

@@ -363,4 +363,386 @@ async def admin_cleanup_flag_test_users(
     )
 
 
+# ═════════════════════════════════════════════════════════════════════════
+# ROUND 11.2 TASK 5a — Admin Ops MVP (Guilds search/detail + grants + audit)
+# ═════════════════════════════════════════════════════════════════════════
+import os as _os  # noqa: E402
+from datetime import datetime as _dt, timezone as _tz  # noqa: E402
+
+from pydantic import constr as _constr, conint as _conint  # noqa: E402
+from app.audit.log import write_audit as _write_audit  # noqa: E402
+from app.core.identifiers import to_public_id as _to_public_id  # noqa: E402
+from app.territory.guards import compute_adventurer_cap_state as _cap_state  # noqa: E402
+
+
+# ── Config knobs (env-overridable for tests/prod) ────────────────────────
+ADMIN_MAX_GRANT_GOLD = int(_os.environ.get("ADMIN_MAX_GRANT_GOLD", "100000"))
+ADMIN_MAX_GRANT_ITEM_QTY = int(_os.environ.get("ADMIN_MAX_GRANT_ITEM_QTY", "1000"))
+
+
+def _mask_email(email: str | None) -> str:
+    if not email or "@" not in email:
+        return "<unknown>"
+    local, domain = email.split("@", 1)
+    return f"{local[:1]}***@{domain}"
+
+
+async def _resolve_guild(id_or_public: str) -> dict | None:
+    """Accept internal `id` (uuid4) OR `public_id` (8-char hex hash)."""
+    if not id_or_public:
+        return None
+    # Try internal id first (uuid4 is 36 chars w/ dashes).
+    if len(id_or_public) > 12 and "-" in id_or_public:
+        g = await db.guilds.find_one({"id": id_or_public}, {"_id": 0})
+        if g:
+            return g
+    # Try public_id (8-char hash). Iterate (no inverse): match by computing.
+    cursor = db.guilds.find({}, {"_id": 0, "id": 1, "name": 1, "owner_user_id": 1,
+                                 "gold": 1, "is_test_artifact": 1, "created_at": 1,
+                                 "updated_at": 1})
+    async for g in cursor:
+        if _to_public_id(g["id"]) == id_or_public:
+            return await db.guilds.find_one({"id": g["id"]}, {"_id": 0})
+    return None
+
+
+async def _enrich_guild_public(g: dict) -> dict:
+    """Build the public/admin-safe projection for a guild row."""
+    owner_email_masked = "<no-owner>"
+    owner_is_test_user = False
+    if g.get("owner_user_id"):
+        u = await db.users.find_one(
+            {"id": g["owner_user_id"]},
+            {"_id": 0, "email": 1, "is_test_user": 1},
+        )
+        if u:
+            owner_email_masked = _mask_email(u.get("email"))
+            owner_is_test_user = bool(u.get("is_test_user"))
+    return {
+        "public_id": _to_public_id(g["id"]),
+        "name": g.get("name"),
+        "owner_email_masked": owner_email_masked,
+        "gold": int(g.get("gold", 0)),
+        "is_test_artifact": bool(g.get("is_test_artifact", False)),
+        "owner_is_test_user": owner_is_test_user,
+        "created_at": g.get("created_at"),
+        "updated_at": g.get("updated_at"),
+    }
+
+
+# ── 1) GET /api/admin/guilds/search ───────────────────────────────────────
+@router.get("/guilds/search")
+async def admin_guilds_search(
+    q: str = "",
+    limit: int = 20,
+    offset: int = 0,
+    actor: dict = Depends(get_admin_user),
+):
+    limit = max(1, min(int(limit or 20), 50))
+    offset = max(0, int(offset or 0))
+    query: dict = {}
+    if q:
+        q_stripped = q.strip()
+        # public_id heuristic: 8 hex chars
+        if len(q_stripped) == 8 and all(c in "0123456789abcdef" for c in q_stripped.lower()):
+            # Exact public_id match (must scan since hash is non-invertible)
+            results: list[dict] = []
+            async for g in db.guilds.find({}, {"_id": 0}).limit(2000):
+                if _to_public_id(g["id"]) == q_stripped.lower():
+                    results.append(g)
+                    break
+            total = len(results)
+            return {"total": total,
+                    "limit": limit, "offset": offset,
+                    "guilds": [await _enrich_guild_public(r) for r in results]}
+        # Otherwise: case-insensitive partial match on name
+        import re as _re
+        query["name"] = {"$regex": _re.escape(q_stripped), "$options": "i"}
+    total = await db.guilds.count_documents(query)
+    cursor = db.guilds.find(query, {"_id": 0}).sort("created_at", -1).skip(offset).limit(limit)
+    rows = [r async for r in cursor]
+    out = [await _enrich_guild_public(r) for r in rows]
+    # Add roster_count + dormitory_level for the search list
+    for entry, raw in zip(out, rows):
+        try:
+            cap = await _cap_state(db, raw["id"])
+            entry["roster_count"] = int(cap.get("current", 0))
+            entry["roster_cap"] = int(cap.get("cap", 0))
+            entry["dormitory_level"] = int(cap.get("dormitory_level", 0))
+        except Exception:
+            entry["roster_count"] = 0
+            entry["roster_cap"] = 0
+            entry["dormitory_level"] = 0
+    return {"total": total, "limit": limit, "offset": offset, "guilds": out}
+
+
+# ── 2) GET /api/admin/guilds/{id} ─────────────────────────────────────────
+@router.get("/guilds/{id_or_public}")
+async def admin_guild_detail(
+    id_or_public: str,
+    actor: dict = Depends(get_admin_user),
+):
+    g = await _resolve_guild(id_or_public)
+    if not g:
+        raise HTTPException(404, detail={
+            "code": "admin.guild.not_found",
+            "user_message": "Gilda non trovata.",
+        })
+    public = await _enrich_guild_public(g)
+    try:
+        cap = await _cap_state(db, g["id"])
+        roster = {"current": int(cap.get("current", 0)),
+                  "cap": int(cap.get("cap", 0)),
+                  "dormitory_level": int(cap.get("dormitory_level", 0))}
+    except Exception:
+        roster = {"current": 0, "cap": 0, "dormitory_level": 0}
+    # Territory structures levels (per slug, max level shown only for dormitories)
+    gs = await db.guild_structures.find_one({"guild_id": g["id"]}, {"_id": 0}) or {}
+    structures = gs.get("structures", {}) or {}
+    territory = {
+        "dormitories_level": int((structures.get("dormitories") or {}).get("level", 0)),
+        "max_buildings_level": max(
+            (int((s or {}).get("level", 0)) for s in structures.values()), default=0,
+        ),
+    }
+    return {**public, "roster": roster, "territory": territory,
+            "flags": {"is_test_artifact": public["is_test_artifact"],
+                      "owner_is_test_user": public["owner_is_test_user"]}}
+
+
+# ── 3) POST /api/admin/guilds/{id}/grant-gold ────────────────────────────
+class _GrantGoldIn(BaseModel):
+    amount: int = Field(..., gt=0, le=ADMIN_MAX_GRANT_GOLD * 10)  # hard cap defensive
+    reason: str = Field(..., min_length=3, max_length=300)
+
+
+@router.post("/guilds/{id_or_public}/grant-gold")
+async def admin_grant_gold(
+    id_or_public: str,
+    payload: _GrantGoldIn,
+    actor: dict = Depends(get_admin_user),
+):
+    if payload.amount > ADMIN_MAX_GRANT_GOLD:
+        raise HTTPException(422, detail={
+            "code": "admin.grant_gold.amount_over_max",
+            "max": ADMIN_MAX_GRANT_GOLD,
+            "user_message": f"Importo eccede il massimo per operazione ({ADMIN_MAX_GRANT_GOLD}).",
+        })
+    g = await _resolve_guild(id_or_public)
+    if not g:
+        raise HTTPException(404, detail={
+            "code": "admin.guild.not_found",
+            "user_message": "Gilda non trovata.",
+        })
+    now_iso = _dt.now(_tz.utc).isoformat()
+    gold_before = int(g.get("gold", 0))
+    await db.guilds.update_one(
+        {"id": g["id"]},
+        {"$inc": {"gold": int(payload.amount)},
+         "$set": {"updated_at": now_iso}},
+    )
+    g2 = await db.guilds.find_one({"id": g["id"]}, {"_id": 0, "gold": 1, "name": 1})
+    gold_after = int((g2 or {}).get("gold", gold_before + payload.amount))
+    actor_email_masked = _mask_email(actor.get("email"))
+    event_id = await _write_audit(
+        db,
+        event_type="admin_gold_granted",
+        actor_user_id=actor.get("id"),
+        actor_guild_id=g["id"],  # target guild
+        source="admin.grant_gold",
+        related_entity_id=g["id"],
+        gold_delta=int(payload.amount),
+        metadata={
+            "admin_actor_id": actor.get("id"),
+            "admin_actor_email_masked": actor_email_masked,
+            "target_guild_id": g["id"],
+            "target_guild_public_id": _to_public_id(g["id"]),
+            "target_guild_name": g2.get("name") if g2 else g.get("name"),
+            "amount": int(payload.amount),
+            "gold_before": gold_before,
+            "gold_after": gold_after,
+            "reason": payload.reason,
+        },
+    )
+    return {
+        "success": True,
+        "gold_before": gold_before,
+        "gold_after": gold_after,
+        "amount": int(payload.amount),
+        "audit_event_id": event_id,
+    }
+
+
+# ── 4) POST /api/admin/guilds/{id}/grant-item ────────────────────────────
+class _GrantItemIn(BaseModel):
+    item_slug: str = Field(..., min_length=1, max_length=120)
+    quantity: int = Field(..., gt=0, le=ADMIN_MAX_GRANT_ITEM_QTY * 10)
+    reason: str = Field(..., min_length=3, max_length=300)
+
+
+@router.post("/guilds/{id_or_public}/grant-item")
+async def admin_grant_item(
+    id_or_public: str,
+    payload: _GrantItemIn,
+    actor: dict = Depends(get_admin_user),
+):
+    if payload.quantity > ADMIN_MAX_GRANT_ITEM_QTY:
+        raise HTTPException(422, detail={
+            "code": "admin.grant_item.qty_over_max",
+            "max": ADMIN_MAX_GRANT_ITEM_QTY,
+            "user_message": f"Quantità eccede il massimo per operazione ({ADMIN_MAX_GRANT_ITEM_QTY}).",
+        })
+    g = await _resolve_guild(id_or_public)
+    if not g:
+        raise HTTPException(404, detail={
+            "code": "admin.guild.not_found",
+            "user_message": "Gilda non trovata.",
+        })
+    tpl = await db.items.find_one({"slug": payload.item_slug}, {"_id": 0})
+    if not tpl:
+        raise HTTPException(422, detail={
+            "code": "admin.item.unknown_slug",
+            "user_message": f"Item slug '{payload.item_slug}' non riconosciuto.",
+        })
+    # Refuse bound or P2W-tagged templates.
+    if tpl.get("is_bound") is True:
+        raise HTTPException(422, detail={
+            "code": "admin.item.bound_not_grantable",
+            "user_message": "Items bound non possono essere grantati via admin.",
+        })
+    if (tpl.get("can_be_sold_for_real_money") is True
+            and tpl.get("affects_combat") is True
+            and tpl.get("is_cosmetic") is False):
+        raise HTTPException(422, detail={
+            "code": "admin.item.p2w_blocked",
+            "user_message": "Items real-money + combat non grantabili.",
+        })
+    now_iso = _dt.now(_tz.utc).isoformat()
+    is_stackable = bool(tpl.get("is_stackable", True)) or \
+                   tpl.get("item_type") in ("material", "consumable")
+    entries_created = 0
+    if is_stackable:
+        # Upsert: increment qty on existing row OR create one fresh entry.
+        existing = await db.inventory_items.find_one({
+            "guild_id": g["id"],
+            "item_slug": payload.item_slug,
+            "is_bound": False,
+            "discarded_at": None,
+        }, {"_id": 0, "id": 1, "quantity": 1})
+        if existing:
+            await db.inventory_items.update_one(
+                {"id": existing["id"]},
+                {"$inc": {"quantity": int(payload.quantity)}},
+            )
+            entries_created = 1
+        else:
+            inv_id = str(uuid.uuid4())
+            await db.inventory_items.insert_one({
+                "id": inv_id, "instance_id": inv_id,
+                "guild_id": g["id"],
+                "item_id": tpl.get("id") or payload.item_slug,
+                "item_slug": payload.item_slug,
+                "quantity": int(payload.quantity),
+                "acquired_at": now_iso,
+                "is_bound": False, "refinement_level": 0,
+                "enchants": [], "affixes": [], "reroll_count": 0,
+                "disenchanted_at": None, "discarded_at": None,
+                "bound_to_adventurer_id": None,
+            })
+            entries_created = 1
+    else:
+        # Non-stackable (equipment): one entry per quantity unit.
+        rows = []
+        for _ in range(int(payload.quantity)):
+            inv_id = str(uuid.uuid4())
+            rows.append({
+                "id": inv_id, "instance_id": inv_id,
+                "guild_id": g["id"],
+                "item_id": tpl.get("id") or payload.item_slug,
+                "item_slug": payload.item_slug,
+                "quantity": 1, "acquired_at": now_iso,
+                "is_bound": False, "refinement_level": 0,
+                "enchants": [], "affixes": [], "reroll_count": 0,
+                "disenchanted_at": None, "discarded_at": None,
+                "bound_to_adventurer_id": None,
+            })
+        if rows:
+            await db.inventory_items.insert_many(rows)
+            entries_created = len(rows)
+    actor_email_masked = _mask_email(actor.get("email"))
+    event_id = await _write_audit(
+        db,
+        event_type="admin_item_granted",
+        actor_user_id=actor.get("id"),
+        actor_guild_id=g["id"],
+        source="admin.grant_item",
+        related_entity_id=g["id"],
+        metadata={
+            "admin_actor_id": actor.get("id"),
+            "admin_actor_email_masked": actor_email_masked,
+            "target_guild_id": g["id"],
+            "target_guild_public_id": _to_public_id(g["id"]),
+            "target_guild_name": g.get("name"),
+            "item_slug": payload.item_slug,
+            "quantity": int(payload.quantity),
+            "inventory_entries_created": entries_created,
+            "reason": payload.reason,
+        },
+    )
+    return {
+        "success": True,
+        "item_slug": payload.item_slug,
+        "quantity": int(payload.quantity),
+        "inventory_entries_created": entries_created,
+        "audit_event_id": event_id,
+    }
+
+
+# ── 5) GET /api/admin/audit ──────────────────────────────────────────────
+@router.get("/audit")
+async def admin_audit_list(
+    guild: str | None = None,
+    action: str | None = None,
+    since: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+    actor: dict = Depends(get_admin_user),
+):
+    limit = max(1, min(int(limit or 50), 200))
+    offset = max(0, int(offset or 0))
+    query: dict = {}
+    if guild:
+        # Resolve public_id → internal id
+        g = await _resolve_guild(guild)
+        if g:
+            query["actor_guild_id"] = g["id"]
+        else:
+            return {"total": 0, "limit": limit, "offset": offset, "events": []}
+    if action:
+        query["event_type"] = action
+    if since:
+        query["created_at"] = {"$gte": since}
+    total = await db.audit_log.count_documents(query)
+    cursor = db.audit_log.find(query, {"_id": 0}).sort("created_at", -1).skip(offset).limit(limit)
+    rows = [r async for r in cursor]
+    # Mask PII on every row.
+    safe_events: list[dict] = []
+    for r in rows:
+        md = dict(r.get("metadata") or {})
+        # Strip any potential raw email/user_id leaks.
+        for k in list(md.keys()):
+            if k in ("admin_actor_id", "target_guild_id"):
+                # Replace with hashed public_id; keep id for grant-context only.
+                md[k] = md[k]  # already an internal id (admin scope is allowed to see it)
+        safe_events.append({
+            "event_type": r.get("event_type"),
+            "actor_email_masked": md.get("admin_actor_email_masked", "<system>"),
+            "target_guild_name": md.get("target_guild_name"),
+            "target_guild_public_id": md.get("target_guild_public_id"),
+            "metadata": md,
+            "ts": r.get("created_at"),
+        })
+    return {"total": total, "limit": limit, "offset": offset, "events": safe_events}
+
+
 __all__ = ["router"]

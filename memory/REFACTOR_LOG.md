@@ -682,3 +682,79 @@ consecutivi. Verifica via log grep / monitoring stack.
 **6 test** in `tests/backend_round112_adventurer_name_uniqueness_test.py` (rename→retired name OK, →active 409, case-insensitive 409, retired keeps name in expedition_members snapshot).
 
 **Storia preservata**: retired adv mantengono il loro `name` field + tutti gli `adventurer_name_snapshot` in `expedition_members` invariati. Nessuna migrazione, nessun hard delete.
+
+### FASE B sanity UI P1 — /territory Dormitori legacy gating fix (2026-06-28)
+
+**Bug regressione UI**: Dopo TASK 4 backend (Lv11 cap 100), il file `frontend/src/utils/structures.js` aveva ancora gating legacy che bloccava l'upgrade su `acquired_via=migration_legacy`:
+- `MAX_LEVEL=6` hardcoded → tutti i dormitori >Lv6 considerati maxed
+- `if (isLegacy) return { isMaxed: true }` → blocco incondizionato
+- `desc_it/en` mostravano vecchia scala `(5/10/15/20/25/30)` (6 livelli)
+- `UPGRADE_COSTS.dormitories` aveva `null` per Lv7+ (migration-only)
+
+**Fix** in 3 punti (`utils/structures.js`):
+1. `desc_it/en` aggiornati: "scala 1-11, cap massimo 100" + sequenza completa visibile.
+2. `UPGRADE_COSTS.dormitories` esteso a 11 entries (Lv7=8500g+materials → Lv11=50000g+materials), allineato esattamente con `app/territory/costs.py` BE.
+3. Aggiunto `STRUCTURE_MAX_LEVEL = { dormitories: 11 }` + helper `getStructureMaxLevel(slug)`. `resolveCardState` usa `maxLevel` per-struttura (fallback `MAX_LEVEL=6` per altre).
+4. `legacy && isMaxed` → ritorna kind=`legacy` (info display). `legacy && !isMaxed` → flusso normale `upgradable/buyable/insufficient_gold` + flag `isLegacy=true` come info badge (NON blocca).
+
+**3 test FE** aggiunti in `backend_round112_t1_t4_test.py`:
+- `test_t4_p1_01`: Lv7 legacy → `isMaxed=false`, `targetLevel=8`, `kind=upgradable`, `isLegacy=true`.
+- `test_t4_p1_02`: Lv11 → `isMaxed=true`.
+- `test_t4_p1_03`: desc contiene "100" e "11"/"1-11", NON contiene "max 6" né "(5/10/15/20/25/30)".
+
+Test eseguiti via Node subprocess che carica `structures.js` (ESM→CJS shim minimale).
+
+**Verifica visiva**: `/territory` con tester guild (Dormitories Lv7 migration_legacy) mostra:
+- Card senza badge "LEGACY"
+- Bottone "▶ Upgrade to Lv 8 (14000g)" ATTIVO (costo Lv8 da BE)
+- Descrizione nuova scala 1-11
+- Capacity: 40 adventurers (corretto Lv7=40)
+- Altre strutture invariate.
+
+**Backend**: invariato (nessuna change).
+
+### P2 — Preview auction seed corruption (NON fixato, prod intatto)
+
+`GET /api/auction/listings` ritorna HTTP 500 in PREVIEW DB per bug seed legacy `item_template_id` mancante. UI modal Conferma/Annulla è "code-ready" + ARIA OK + handler safe (verificato static), ma non runtime-tested per assenza listing. **Prod**: TC2 smoke PASS, GET regolarmente `{total:0, listings:[]}`. Issue ESCLUSIVAMENTE preview. Out-of-scope Round 11.2. Da riesercitare quando ci sarà la prima asta reale in prod.
+
+## ROUND 11.2 FASE C — TASK 5a Admin Ops BACKEND ONLY (2026-06-28)
+
+### Endpoint admin (5 nuovi, già montati su `/api/admin` router esistente)
+- `GET  /api/admin/guilds/search?q=&limit=&offset=` — paginato (default 20, max 50), match name (case-insensitive partial) o public_id (8-hex exact). Response: `{total, limit, offset, guilds:[{public_id, name, owner_email_masked, gold, roster_count, roster_cap, dormitory_level, is_test_artifact, owner_is_test_user, created_at, updated_at}]}`.
+- `GET  /api/admin/guilds/{id_or_public}` — accetta sia internal uuid sia public_id 8-hex. Response: detail completo con `roster:{current,cap,dormitory_level}`, `territory:{dormitories_level,max_buildings_level}`, `flags:{is_test_artifact,owner_is_test_user}`.
+- `POST /api/admin/guilds/{id}/grant-gold` — body `{amount>0, reason min_length=3}`, max `ADMIN_MAX_GRANT_GOLD` (env, default 100000). Atomic `$inc gold`, audit `admin_gold_granted` con `{gold_before, gold_after, reason, admin_actor_email_masked}`.
+- `POST /api/admin/guilds/{id}/grant-item` — body `{item_slug, quantity>0, reason min_length=3}`, max `ADMIN_MAX_GRANT_ITEM_QTY` (env, default 1000). Validazione: slug deve esistere; refuse `is_bound=true`; refuse P2W (`can_be_sold_for_real_money + affects_combat + !is_cosmetic`). Stackable → upsert qty; non-stackable → N entries. Audit `admin_item_granted`.
+- `GET  /api/admin/audit?guild=&action=&since=&limit=&offset=` — paginato (default 50, max 200). PII mask su tutti i campi (`admin_actor_email_masked` only).
+
+### Middleware `require_admin` (estende `get_admin_user` esistente)
+File: `app/core/security.py::get_admin_user`. Logic: primary `user.is_admin == True` (DB flag); fallback `ADMIN_EMAILS` env allowlist (comma-separated, lowercase). Non-admin → 403 con `{code: "admin.forbidden", user_message: "Accesso admin richiesto."}`.
+
+### Side-task: `is_admin` esposto in `/api/auth/me`
+Già esposto via `public_user()` projection in `auth/services.py` (preesistente). Verificato che il payload `me` include `is_admin: true/false`.
+
+### Audit events nuovi (in `app/audit/log.py` allowlist)
+- `admin_gold_granted`
+- `admin_item_granted`
+
+### Sicurezza
+- Tutti i 5 endpoint protetti da `Depends(get_admin_user)`.
+- NO hard delete. NO modifica email/password/token.
+- Grant: reason obbligatoria (min_length 3), max amount/qty env-configurable.
+- Email mascherata `t***@orbus.test` in tutti i payload (search/detail/audit metadata).
+- No `seller.user_id`, no raw email, no `$oid` ObjectId in nessuna risposta.
+
+### 11 test PASS
+`tests/backend_round112_admin_ops_test.py`:
+1. non_admin → 403 ✅
+2. admin → 200 + lista ✅
+3. paginazione limit/offset ✅
+4. detail con masked email + roster/cap/flags ✅
+5. grant-gold incrementa + audit `admin_gold_granted` ✅
+6. reason min_length=3 → 422 ✅
+7. amount<=0 / >max → 422 ✅
+8. grant-item crea inventory entries + audit `admin_item_granted` ✅
+9. unknown slug → 422 `admin.item.unknown_slug` ✅
+10. /api/admin/audit filtrato per guild+action ✅
+11. no PII leak (email/user_id raw, $oid) ✅
+
+### OpenAPI count: 103 → 108 (+5 esatti).

@@ -108,6 +108,9 @@ EVENT_TYPES = frozenset({
     "training_specialization_committed",     # success: AFTER all writes complete
     "training_specialization_rolled_back",   # failure: gold refunded, no state change
     "training_specialization_refund",        # one-shot CLI refund (P0 historical recovery)
+    # ROUND 11.2 TASK 5a — Admin Ops MVP
+    "admin_gold_granted",                    # admin granted gold to a guild (with reason)
+    "admin_item_granted",                    # admin granted item(s) to a guild (with reason)
     # ROUND 6C — Preview validation seed (dev-only, whitelist-gated)
     "guild_structure_seeded",
     "adventurer_seeded",

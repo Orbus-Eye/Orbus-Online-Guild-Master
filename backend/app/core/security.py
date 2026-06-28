@@ -166,9 +166,28 @@ async def get_current_user(
 
 
 async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict:
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return current_user
+    """Admin guard. ROUND 11.2 TASK 5a:
+    - Primary: user.is_admin == True (DB flag)
+    - Fallback: ADMIN_EMAILS env allowlist (comma-separated, lowercase)
+    Both can authorize; either match grants admin scope.
+
+    Non-admin → 403 with structured `admin.forbidden` code.
+    """
+    if current_user.get("is_admin") is True:
+        return current_user
+    # ADMIN_EMAILS env allowlist (bootstrap-safe for prod first admin onboarding).
+    raw = os.environ.get("ADMIN_EMAILS", "") or ""
+    allowed = {e.strip().lower() for e in raw.split(",") if e.strip()}
+    email = (current_user.get("email") or "").strip().lower()
+    if email and email in allowed:
+        return current_user
+    raise HTTPException(
+        status_code=403,
+        detail={
+            "code": "admin.forbidden",
+            "user_message": "Accesso admin richiesto.",
+        },
+    )
 
 
 async def get_optional_user(
