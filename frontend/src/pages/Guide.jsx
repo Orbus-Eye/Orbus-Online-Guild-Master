@@ -10,19 +10,22 @@ const SECTIONS = [
     { id: "gilda", label: "2. Gilda e progressione" },
     { id: "territorio", label: "3. Territorio di Gilda" },
     { id: "roster-cap", label: "4. Capacità roster" },
-    { id: "ruoli", label: "5. Avventurieri e ruoli" },
-    { id: "dungeon", label: "6. Dungeon / Spedizioni" },
-    { id: "raid", label: "7. Raid" },
-    { id: "squadre", label: "8. Squadre Personalizzate" },
-    { id: "forge", label: "9. Equipaggiamento e Forge" },
-    { id: "vault", label: "10. Deposito / Inventario" },
-    { id: "market", label: "11. Mercato (NPC)" },
-    { id: "auction", label: "12. Asta (player-to-player)" },
-    { id: "quest", label: "13. Quest e Streak" },
-    { id: "consortium", label: "14. Cronaca e Consorzi" },
-    { id: "chat", label: "15. Chat" },
-    { id: "privacy", label: "16. Privacy & Sicurezza" },
-    { id: "tips", label: "17. Suggerimenti base" },
+    { id: "roster-health", label: "5. Roster, Item Legati & Archivio" },
+    { id: "ruoli", label: "6. Avventurieri e ruoli" },
+    { id: "dungeon", label: "7. Dungeon / Spedizioni" },
+    { id: "raid", label: "8. Raid" },
+    { id: "squadre", label: "9. Squadre Personalizzate" },
+    { id: "forge", label: "10. Equipaggiamento e Forge" },
+    { id: "training", label: "11. Addestramento & Specializzazioni" },
+    { id: "vault", label: "12. Deposito / Inventario" },
+    { id: "market", label: "13. Mercato (NPC)" },
+    { id: "auction", label: "14. Asta (player-to-player)" },
+    { id: "quest", label: "15. Quest e Streak" },
+    { id: "contracts", label: "16. Bacheca Contratti & Obiettivi" },
+    { id: "consortium", label: "17. Cronaca e Consorzi" },
+    { id: "chat", label: "18. Chat" },
+    { id: "privacy", label: "19. Privacy & Sicurezza" },
+    { id: "tips", label: "20. Suggerimenti base" },
 ];
 
 const SectionBlock = ({ id, title, children }) => (
@@ -194,6 +197,34 @@ export default function Guide() {
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Prima di congedare, rimuovi manualmente l&apos;equipaggiamento bound se desideri trasferirlo
                         ad altri avventurieri. Niente item viene mai perso.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="roster-health" title="Roster Health, Item Legati & Archivio (ROUND 6B.4)">
+                    <p>
+                        <strong>Roster Health</strong> è il widget in Dashboard che riassume lo stato della tua capacità roster.
+                        Quattro stati colorati per identificare a colpo d&apos;occhio se devi intervenire:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li><strong className="text-emerald-300">Sano</strong> — capacità sotto il 70%, puoi reclutare liberamente.</li>
+                        <li><strong className="text-yellow-300">Quasi Pieno</strong> — tra 70% e 90%, pianifica i prossimi recruit.</li>
+                        <li><strong className="text-orange-300">Al Limite</strong> — tra 90% e 100%, ancora 1-2 slot.</li>
+                        <li><strong className="text-red-400">Oltre Capacità</strong> — at-cap consentito (es. ricompense, drop avventuriero) ma non puoi reclutare nuovi finché non riduci il roster con congedo o potenziamento Dormitori.</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Item legati (bound)</h3>
+                    <p>
+                        Alcuni oggetti hanno il badge <strong>LEGATO A <em>{"{avventuriero}"}</em></strong>. Sono legati per design (es. ricompense personali, Signature Item da specializzazione, premi storia) e:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>NON sono equipaggiabili da altri avventurieri.</li>
+                        <li>NON sono vendibili al mercato NPC, né listabili in asta.</li>
+                        <li>Restano sempre nel tuo Deposito anche dopo il congedo dell&apos;avventuriero (vedi Archivio).</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Archivio congedati</h3>
+                    <p>
+                        In <em>Gestione Roster → tab Archivio</em> trovi la lista di tutti gli avventurieri congedati con la
+                        loro storia (livello al congedo, motivo, data). I report delle spedizioni a cui hanno partecipato
+                        restano leggibili dalla Cronaca. Niente viene mai cancellato (soft delete).
                     </p>
                 </SectionBlock>
 
@@ -392,6 +423,58 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
+                <SectionBlock id="training" title="Campo di Addestramento & Specializzazioni (ROUND 6C)">
+                    <p>
+                        Il <strong>Campo di Addestramento</strong> (Training Grounds) è la struttura del Territorio che
+                        permette di specializzare gli avventurieri di livello 5 o superiore.
+                    </p>
+                    <h3 className="mt-3 mb-2 text-amber tracking-wider text-[12px]">Prerequisiti & livelli</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Prereq: Guild Hall Lv3 + Dormitori Lv2.</li>
+                        <li><strong>Lv1 (Starter)</strong> — sblocca le 4 specializzazioni base. Costo apply: 500 oro.</li>
+                        <li><strong>Lv2</strong> — costo apply ridotto a 400 oro.</li>
+                        <li><strong>Lv3 (Full Hybrid)</strong> — sblocca anche le 10 specializzazioni avanzate. Costo apply: 1500 oro.</li>
+                        <li><strong>Lv4-6</strong> — placeholder per future estensioni (slot extra, respec, set bonus).</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Bonus stat</h3>
+                    <p>
+                        Ogni specializzazione fornisce un bonus permanente:
+                        <strong> +2 alla stat principale</strong> della classe + <strong>+1 alla stat secondaria</strong>.
+                        Bonus additivi (non moltiplicativi): NO P2W, NO power gear, solo crescita lineare.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Le 4 specializzazioni Starter (Tier 1)</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li><strong>Difensore</strong> (Tank) — Warrior / Paladin. +2 END, +1 STR. Signature: Egida del Difensore.</li>
+                        <li><strong>Cecchino</strong> (DPS) — Ranger / Rogue. +2 AGI, +1 STR. Signature: Arco del Colpo Vero.</li>
+                        <li><strong>Restauratore</strong> (Healer) — Priest / Druid. +2 FAI, +1 INT. Signature: Calice Sacro.</li>
+                        <li><strong>Stratega</strong> (Support) — Bard / Paladin. +2 INT, +1 END / FAI. Signature: Stendardo da Battaglia.</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Le 10 Full Hybrid (Tier 3, da TG Lv3)</h3>
+                    <p>
+                        A partire da Training Grounds Lv3 si sbloccano 10 specializzazioni avanzate (esempio: Furia,
+                        Crociato, Maestro d&apos;Armi, ecc.) per classi specifiche. Ogni Full Hybrid ha il proprio
+                        Signature Item.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Signature Item</h3>
+                    <p>
+                        Applicare una specializzazione genera automaticamente un <strong>Signature Item</strong> legato
+                        all&apos;avventuriero (slot dedicato, rarità Rare). Resta visibile nel tuo Deposito con il badge
+                        <em> &quot;Legato a {"{nome}"}&quot;</em>. Non può essere disequipaggiato, venduto, listato o trasferito.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        <strong>Congedo di un avventuriero specializzato</strong>: la finestra di congedo mostra un warning rosso
+                        + una checkbox esplicita <em>&quot;Distruggi anche il signature item&quot;</em>. La checkbox deve essere
+                        spuntata per procedere. L&apos;item viene soft-discarded (resta in DB come storico, ma non più
+                        utilizzabile e non più legato).
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Limiti attuali</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>La specializzazione è <strong>permanente</strong> in Round 6C.</li>
+                        <li>Il <strong>respec</strong> (cambio specializzazione) NON è disponibile e arriverà in un round successivo (6E o futuro).</li>
+                        <li>Pianifica con cura: l&apos;applicazione di una spec consuma oro e genera signature item legato.</li>
+                    </ul>
+                </SectionBlock>
+
                 <SectionBlock id="vault" title="Deposito / Inventario">
                     <p>
                         Il <strong>Deposito (Guild Vault)</strong> raccoglie tutti gli oggetti trovati nelle spedizioni.
@@ -473,6 +556,63 @@ export default function Guide() {
                         <strong>Streak</strong>: completare almeno una quest al giorno mantiene la serie attiva.
                         Streak D3 / D5 / D7 sbloccano bonus crescenti.
                     </p>
+                </SectionBlock>
+
+                <SectionBlock id="contracts" title="Bacheca Contratti & Obiettivi Gilda (ROUND 6D)">
+                    <p>
+                        La <strong>Bacheca Contratti</strong> è una nuova struttura del Territorio che apre tre canali
+                        di retention: contratti giornalieri, contratti settimanali e milestone permanenti.
+                    </p>
+                    <h3 className="mt-3 mb-2 text-amber tracking-wider text-[12px]">Struttura & prerequisiti</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Slug struttura: <code>contract_board</code>. Prereq: Guild Hall Lv2 + Bacheca Spedizioni Lv1.</li>
+                        <li>Costo Lv1: 1200 oro + 3 frammento di ferro.</li>
+                        <li>Lv1 sblocca daily + weekly + milestone Tier 1. Lv2/3 riservati per future estensioni.</li>
+                    </ul>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Contratti giornalieri (3 attivi)</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Completa 1 spedizione → +60 oro</li>
+                        <li>Crea 1 listing al mercato → +40 oro + 1 frammento di ferro</li>
+                        <li>Crafta 1 oggetto → +50 oro</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Reset automatico ogni giorno a <strong>mezzanotte UTC</strong>. Anti-grind: NESSUNA reputazione
+                        dai daily. Reward bilanciato per ~30% di un dungeon clear.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Contratti settimanali (4 attivi)</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Completa 5 spedizioni → +250 oro + 2 frammento ferro + 2 Rep</li>
+                        <li>Vendi 3 oggetti al mercato → +180 oro + 1 cuoio + 1 Rep</li>
+                        <li>Potenzia 1 struttura del Territorio → +300 oro + 1 polvere arcana minore + 3 Rep</li>
+                        <li>Applica 1 specializzazione → +200 oro + 1 polvere arcana minore + 2 Rep <em>(sinergia 6C)</em></li>
+                        <li>Recluta 2 nuovi avventurieri → +150 oro + 1 frammento ferro + 1 Rep (entra nel pool a rotazione)</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Reset automatico ogni <strong>lunedì alle 00:00 UTC</strong>. La reputazione gilda è una NUOVA
+                        risorsa attivata da Round 6D, usata per il leaderboard. Reward bilanciato ~80% dungeon clear.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Milestone permanenti (Tier 1)</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Spedizioni totali: 10 → +200 oro + 1 polvere arcana minore + 5 Rep</li>
+                        <li>Oggetti craftati totali: 10 → +150 oro + 3 frammento ferro + 5 Rep</li>
+                        <li>Avventurieri reclutati totali: 5 → +100 oro + 2 cuoio + 5 Rep</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        I milestone <strong>non si resettano mai</strong>: il progresso è permanente. Tier 2 e Tier 3
+                        sono in arrivo nelle prossime iterazioni.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Sinergia Round 6C ↔ Round 6D</h3>
+                    <p>
+                        Applicare una specializzazione (Training Grounds) incrementa automaticamente il weekly contract
+                        <em> &quot;Applica 1 specializzazione&quot;</em>. Reward conservativa per evitare incentivi a spec-and-respec abuse.
+                    </p>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Garanzie fairness</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>NO P2W: solo oro, materiali comuni/uncommon, reputazione.</li>
+                        <li>NO power gear nei reward: nessun oggetto con bonus combattimento.</li>
+                        <li>NO premium / NO XP gilda diretta: la progressione resta nelle spedizioni.</li>
+                        <li>Reward bilanciati: daily 30% / weekly 80% / milestone-T3 200% di un dungeon clear standard.</li>
+                    </ul>
                 </SectionBlock>
 
                 <SectionBlock id="consortium" title="Cronaca e Consorzi">

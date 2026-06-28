@@ -478,3 +478,13 @@ Script idempotente per portare l'account `tester@orbus.test` di prod in stato de
 ```
 
 **Wave 3.1 status**: ✅ READY for prod re-deploy + re-validation mirata su `/chronicle`.
+
+## 2026-06-28 — Round 6D / 6C — Naming hygiene (P2, DEFERRED to Round 11.1)
+
+**Cosmetic WARN da e1_tester finale (4/4 PASS + 2 WARN cosmetic)**:
+- Auction guard sui bound-items risponde `400 "Item is not tradeable"` (catalog flag `is_tradeable=false`) invece di `auction.bound_to_adventurer_not_listable`.
+- Shop NPC sell risponde `409 shop.sell.bound` invece di `market.bound_to_adventurer_not_sellable`.
+
+Security: nessun gap — entrambi i path bloccano correttamente la transazione. Solo naming inconsistency.
+
+**Azione**: allineare gli error codes dei bound guards tra auction/market/equipment/shop in Round 11.1 (hardening sprint) per diagnostic consistency. NON fixare prima del prod deploy.
