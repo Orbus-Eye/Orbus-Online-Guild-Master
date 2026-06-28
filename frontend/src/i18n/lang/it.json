@@ -60,7 +60,24 @@
     "confirm_disclaimer": "⚠ Verifica la selezione: equipaggiamento rimosso resta in inventario, ma il roster perde questi membri immediatamente.",
     "confirm_submit": "Conferma congedo",
     "retire_success": "{n} avventurieri congedati.",
-    "retire_partial_fail": "{n} congedi falliti — riprova o contatta il supporto."
+    "retire_partial_fail": "{n} congedi falliti — riprova o contatta il supporto.",
+    "tab_manage": "GESTISCI",
+    "tab_archive": "ARCHIVIO",
+    "archive_empty": "Nessun avventuriero congedato.",
+    "col_retired_at": "Congedato il",
+    "col_retired_via": "Origine"
+  },
+  "rosterHealth": {
+    "state_healthy": "ROSTER OK",
+    "state_filling": "ROSTER QUASI PIENO",
+    "state_at_cap": "ROSTER AL LIMITE",
+    "state_over_cap": "ROSTER OLTRE CAPACITÀ",
+    "adventurers_label": "Avventurieri",
+    "headroom_label": "Slot disponibili",
+    "dorm_level_label": "Dormitori Lv {n}",
+    "loading": "Caricamento stato roster…",
+    "error": "Impossibile caricare lo stato del roster",
+    "overcap_hint": "Potenzia i Dormitori o congeda avventurieri dal Roster Management."
   },
   "lang": {
     "en": "English",

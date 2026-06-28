@@ -20,6 +20,7 @@ export default function RosterManage() {
     const { t } = useT();
     const navigate = useNavigate();
     const [advs, setAdvs] = useState([]);
+    const [retiredAdvs, setRetiredAdvs] = useState([]);
     const [cap, setCap] = useState(0);
     const [dormLevel, setDormLevel] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -31,17 +32,27 @@ export default function RosterManage() {
     const [sortDir, setSortDir] = useState("desc");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [retiring, setRetiring] = useState(false);
+    // ROUND 6B.4 Task 4 — sub-tab state. Default "manage" preserves the URL
+    // and existing deep-links from Wave 1.5 (no breaking change).
+    const [tab, setTab] = useState("manage");
 
     async function refresh() {
         setLoading(true);
         try {
-            const [advR, terrR] = await Promise.all([
+            const [advR, advAllR, terrR] = await Promise.all([
                 api.get("/adventurers"),
+                api.get("/adventurers?include_retired=true"),
                 api.get("/territory"),
             ]);
             const list = (advR.data?.adventurers || []).filter((a) => !a.is_retired);
+            // The 2nd call returns active + retired; filter only the retired ones
+            // here so we don't pull a 3rd request.
+            const retiredList = (advAllR.data?.adventurers || []).filter(
+                (a) => a.is_retired
+            );
             const lvl = Number(terrR.data?.territory?.structures?.dormitories?.level || 0);
             setAdvs(list);
+            setRetiredAdvs(retiredList);
             setDormLevel(lvl);
             setCap(DORM_CAP_BY_LEVEL[lvl] || 0);
         } catch (err) {
@@ -110,8 +121,11 @@ export default function RosterManage() {
         let failed = 0;
         for (const id of ids) {
             try {
+                // ROUND 6B.4 Task 3 — bulk retires from this page emit the
+                // `bulk_capacity` via tag for audit + analytics segmentation.
                 await api.post(`/adventurers/${id}/retire`, {
                     reason: "Over-cap manual cleanup",
+                    via: "bulk_capacity",
                 });
                 success++;
             } catch (_e) {
@@ -169,6 +183,48 @@ export default function RosterManage() {
                               accent={overCapBy > 0} />
                     </div>
                 </div>
+
+                {/* ROUND 6B.4 Task 4 — Sub-tabs (Gestisci / Archivio).
+                    URL stays at /roster/manage (no breaking change for
+                    Wave 1.5 deep-links); state-only switch. */}
+                <div className="flex gap-1 mb-5 border-b border-border" role="tablist">
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={tab === "manage"}
+                        data-testid="roster-manage-tab-manage"
+                        onClick={() => setTab("manage")}
+                        className={`px-4 py-2 text-xs tracking-widest font-bold transition-colors ${
+                            tab === "manage"
+                                ? "text-amber border-b-2 border-amber -mb-px"
+                                : "text-muted-foreground hover:text-foreground"
+                        }`}
+                    >
+                        {t("rosterManage.tab_manage", "GESTISCI")}
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={tab === "archive"}
+                        data-testid="roster-manage-tab-archive"
+                        onClick={() => setTab("archive")}
+                        className={`px-4 py-2 text-xs tracking-widest font-bold transition-colors ${
+                            tab === "archive"
+                                ? "text-amber border-b-2 border-amber -mb-px"
+                                : "text-muted-foreground hover:text-foreground"
+                        }`}
+                    >
+                        {t("rosterManage.tab_archive", "ARCHIVIO")}{" "}
+                        <span className="text-muted-foreground/60 text-[10px]">
+                            ({retiredAdvs.length})
+                        </span>
+                    </button>
+                </div>
+
+                {tab === "archive" ? (
+                    <ArchivePanel retired={retiredAdvs} loading={loading} t={t} />
+                ) : (
+                <>
 
                 {/* Filters */}
                 <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 mb-4 text-xs">
@@ -292,6 +348,7 @@ export default function RosterManage() {
                 )}
 
                 {/* Confirm modal */}
+                {/* Confirm modal */}
                 {confirmOpen && (
                     <div
                         data-testid="roster-manage-confirm-modal"
@@ -339,6 +396,9 @@ export default function RosterManage() {
                     </div>
                 )}
 
+                </>
+                )}
+
                 <div className="mt-6 text-xs text-muted-foreground">
                     <button
                         data-testid="roster-manage-back-link"
@@ -350,6 +410,85 @@ export default function RosterManage() {
                     </button>
                 </div>
             </main>
+        </div>
+    );
+}
+
+// ROUND 6B.4 Task 4 — Archive sub-panel (read-only list of retired adventurers).
+// Sorts by `retired_at desc`. Shows the `retire_via` chip when available.
+function ArchivePanel({ retired, loading, t }) {
+    const sorted = [...retired].sort((a, b) => {
+        const ta = a.retired_at || "";
+        const tb = b.retired_at || "";
+        return tb.localeCompare(ta);
+    });
+    if (loading) {
+        return (
+            <div className="text-muted-foreground text-sm">{t("common.loading")}</div>
+        );
+    }
+    if (sorted.length === 0) {
+        return (
+            <div
+                data-testid="roster-archive-empty"
+                className="text-muted-foreground text-sm border border-border rounded-sm p-6 text-center"
+            >
+                {t("rosterManage.archive_empty", "Nessun avventuriero congedato.")}
+            </div>
+        );
+    }
+    return (
+        <div
+            className="overflow-x-auto border border-border rounded-sm"
+            data-testid="roster-archive-table"
+        >
+            <table className="w-full text-xs">
+                <thead className="bg-card text-amber tracking-widest">
+                    <tr>
+                        <th className="px-2 py-2 text-left">{t("rosterManage.col_name")}</th>
+                        <th className="px-2 py-2 text-left">{t("rosterManage.col_class")}</th>
+                        <th className="px-2 py-2 text-right">{t("rosterManage.col_level")}</th>
+                        <th className="px-2 py-2 text-left">
+                            {t("rosterManage.col_retired_at", "Congedato il")}
+                        </th>
+                        <th className="px-2 py-2 text-left">
+                            {t("rosterManage.col_retired_via", "Origine")}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {sorted.map((a) => (
+                        <tr
+                            key={a.id}
+                            data-testid={`roster-archive-row-${a.id}`}
+                            className="border-t border-border"
+                        >
+                            <td className="px-2 py-2 text-foreground/90">{a.name || "—"}</td>
+                            <td className="px-2 py-2 text-muted-foreground">
+                                {a.class_name || a.class_slug || "—"}
+                            </td>
+                            <td className="px-2 py-2 text-right text-muted-foreground">
+                                Lv{a.level || 1}
+                            </td>
+                            <td className="px-2 py-2 text-muted-foreground">
+                                {a.retired_at ? a.retired_at.split("T")[0] : "—"}
+                            </td>
+                            <td className="px-2 py-2">
+                                <span
+                                    data-testid={`roster-archive-via-${a.id}`}
+                                    className={`text-[10px] tracking-widest px-2 py-0.5 rounded-sm border ${
+                                        a.retire_via === "bulk_capacity"
+                                            ? "border-orange-500/40 text-orange-300"
+                                            : "border-border text-muted-foreground"
+                                    }`}
+                                >
+                                    {a.retire_via || a.retired_by || "user"}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }

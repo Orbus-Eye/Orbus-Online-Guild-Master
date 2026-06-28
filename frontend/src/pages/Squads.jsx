@@ -16,6 +16,11 @@ const TYPE_META = {
 
 function SquadCard({ squad, lang, onArchive }) {
     const missing = (squad.missing_adventurer_ids || []).length;
+    // ROUND 6B.4 Q5 — Distinguish retired (recoverable history) from
+    // deleted (data corruption edge). Backend now splits the two arrays;
+    // legacy responses fall back to the union `missing_adventurer_ids`.
+    const retiredCount = (squad.retired_adventurer_ids || []).length;
+    const deletedCount = (squad.deleted_adventurer_ids || []).length;
     const isRaid = squad.squad_type === "raid_20";
     // Round 6A.2c — raid deploy guard: disable if any required adventurer is missing.
     const deployDisabled = isRaid && missing > 0;
@@ -45,7 +50,30 @@ function SquadCard({ squad, lang, onArchive }) {
             </div>
             <div className="text-[11px] text-muted-foreground tracking-wider mb-3">
                 {squad.member_count}/{squad.adventurer_ids.length} {lang === "it" ? "membri attivi" : "active members"}
-                {missing > 0 && (
+                {retiredCount > 0 && (
+                    <span
+                        className="ml-2 text-red-400"
+                        data-testid={`squad-retired-${squad.squad_id}`}
+                        title={lang === "it"
+                            ? "Membri congedati. Riaggiungi avventurieri attivi alla squadra."
+                            : "Retired members. Re-roster the squad with active adventurers."}
+                    >
+                        ⚠ {retiredCount} {lang === "it" ? "congedato/i" : "retired"}
+                    </span>
+                )}
+                {deletedCount > 0 && (
+                    <span
+                        className="ml-2 text-orange-300/80"
+                        data-testid={`squad-deleted-${squad.squad_id}`}
+                        title={lang === "it"
+                            ? "Membri non trovati nel DB (caso edge storico)."
+                            : "Members not found in DB (legacy edge case)."}
+                    >
+                        ⚠ {deletedCount} {lang === "it" ? "non trovati" : "not found"}
+                    </span>
+                )}
+                {/* Fallback: legacy missing count if neither split array is present */}
+                {retiredCount === 0 && deletedCount === 0 && missing > 0 && (
                     <span className="ml-2 text-red-400" data-testid={`squad-missing-${squad.squad_id}`}>
                         ⚠ {missing} {lang === "it" ? "non disponibili" : "unavailable"}
                     </span>

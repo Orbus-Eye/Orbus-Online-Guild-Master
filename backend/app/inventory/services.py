@@ -31,6 +31,10 @@ def inventory_entry_public(
         "affixes": row.get("affixes", []) or [],
         "reroll_count": int(row.get("reroll_count", 0)),
         "disenchanted_at": row.get("disenchanted_at"),
+        # ROUND 6B.4 — adventurer-bound metadata. `None` for legacy/unbound rows.
+        "bound_to_adventurer_id": row.get("bound_to_adventurer_id"),
+        "bound_reason": row.get("bound_reason"),
+        "bound_at": row.get("bound_at"),
     }
     if item:
         out["item"] = item_public(item)

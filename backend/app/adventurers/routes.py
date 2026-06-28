@@ -13,9 +13,17 @@ from app.adventurers.services import (
 from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
+from app.territory.guards import compute_adventurer_cap_state
 
 
 router = APIRouter(tags=["adventurers"])
+
+
+# ROUND 6B.4 Task 3 — `retire_via` enum kept strict at the API surface.
+# `retired_by` (storage enum) stays the canonical "who triggered it" field;
+# `via` (this enum) describes the user flow. Defaults to "single" when the
+# caller doesn't specify.
+RETIRE_VIA_VALUES = {"single", "bulk_capacity"}
 
 
 class AdventurerRenameIn(BaseModel):
@@ -25,6 +33,7 @@ class AdventurerRenameIn(BaseModel):
 class AdventurerRetireIn(BaseModel):
     reason: str | None = Field(default=None, max_length=200)
     force_unequip: bool = Field(default=False)
+    via: str = Field(default="single", max_length=32)
 
 
 @router.get("/api/adventurer-classes")
@@ -75,8 +84,10 @@ async def post_adventurer_retire(
     current_user: dict = Depends(get_current_user),
 ):
     """ROUND 6B.2a — soft retire (no hard delete). Frees the roster slot
-    for cap purposes; history records remain intact."""
+    for cap purposes; history records remain intact. ROUND 6B.4 adds
+    `via` metadata + adventurer-bound items guard."""
     guild = await user_guild_or_404(db, current_user["id"])
+    via = payload.via if payload.via in RETIRE_VIA_VALUES else "single"
     return await retire_adventurer(
         db,
         guild_id=guild["id"],
@@ -84,7 +95,39 @@ async def post_adventurer_retire(
         reason=payload.reason,
         force_unequip=payload.force_unequip,
         actor_user_id=current_user["id"],
+        via=via,
     )
+
+
+# ROUND 6B.4 Task 1 — Roster Health endpoint.
+# Thin wrapper around `compute_adventurer_cap_state` that adds the 4-state
+# semantic decision so the FE doesn't duplicate threshold logic. Thresholds
+# locked at Q1 default: 0.7 / 0.9 / 1.0 (over_cap = current > cap).
+def _resolve_roster_state(current: int, cap: int) -> str:
+    if cap <= 0:
+        return "over_cap" if current > 0 else "healthy"
+    if current > cap:
+        return "over_cap"
+    ratio = current / cap
+    if ratio > 0.9:
+        return "at_cap"
+    if ratio > 0.7:
+        return "filling"
+    return "healthy"
+
+
+@router.get("/api/roster/health")
+async def get_roster_health(current_user: dict = Depends(get_current_user)):
+    """ROUND 6B.4 — public roster health for the dashboard widget.
+
+    Returns: {current, cap, headroom, dormitory_level, is_over_cap, state}
+    where `state ∈ {"healthy","filling","at_cap","over_cap"}`.
+    No PII is exposed: only numeric counts + structure level.
+    """
+    guild = await user_guild_or_404(db, current_user["id"])
+    cap_state = await compute_adventurer_cap_state(db, guild["id"])
+    state_label = _resolve_roster_state(cap_state["current"], cap_state["cap"])
+    return {**cap_state, "state": state_label}
 
 
 __all__ = ["router"]

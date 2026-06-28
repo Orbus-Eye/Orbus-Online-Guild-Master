@@ -21,6 +21,10 @@ from app.shop.services import ensure_shop_indexes
 from app.seeds.seed_forge import run_forge_seeds, run_forge_migration
 from app.seeds.seed_round5 import run_round5_seeds_and_migrations
 from app.seeds.seed_territory_materials import seed_territory_materials
+from app.inventory.bound import (
+    backfill_bound_fields_if_missing,
+    ensure_bound_indexes,
+)
 
 
 logger = logging.getLogger("orbus")
@@ -39,6 +43,11 @@ async def lifespan(app: FastAPI):
     await run_all_seeds(db)
     await run_round5_seeds_and_migrations(db)
     await seed_territory_materials(db)  # ROUND 6B.3 — idempotent material seed
+    # ROUND 6B.4 — adventurer-bound schema migration + sparse index.
+    # Both calls are idempotent: safe to run on every boot.
+    bound_result = await backfill_bound_fields_if_missing(db)
+    logger.info("ROUND 6B.4 bound fields backfill: %s", bound_result)
+    await ensure_bound_indexes(db)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     yield
     mongo_client.close()

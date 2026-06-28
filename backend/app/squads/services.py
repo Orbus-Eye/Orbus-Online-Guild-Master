@@ -25,20 +25,35 @@ def _now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def squad_public(doc: dict, adv_index: dict) -> dict:
-    """Project a squad doc into the API shape. NEVER expose owner_user_id."""
-    # Re-derive total_power live from current adventurer state (no snapshots).
+def squad_public(doc: dict, adv_index: dict, retired_index: dict | None = None) -> dict:
+    """Project a squad doc into the API shape. NEVER expose owner_user_id.
+
+    ROUND 6B.4 Q5 — Splits the legacy `missing_adventurer_ids` into two
+    arrays so the FE can distinguish soft-retired members (still
+    recoverable) from genuinely-deleted historical edge-cases:
+
+      * `retired_adventurer_ids`  — exists in DB but `is_retired=true`
+      * `deleted_adventurer_ids`  — not in DB at all
+      * `missing_adventurer_ids`  — union of the above, kept for backward
+        compatibility for 1 round (will be removed in Round 6C).
+    """
+    retired_index = retired_index or {}
     members = [adv_index.get(aid) for aid in doc.get("adventurer_ids", [])]
     members = [m for m in members if m is not None]
     total_power = 0
-    missing = []
+    retired_ids: list[str] = []
+    deleted_ids: list[str] = []
     for aid in doc.get("adventurer_ids", []):
         adv = adv_index.get(aid)
         if adv is None:
-            missing.append(aid)
+            if aid in retired_index:
+                retired_ids.append(aid)
+            else:
+                deleted_ids.append(aid)
         else:
             total_power += adventurer_base_power(adv)
 
+    missing = retired_ids + deleted_ids
     out = {
         "squad_id": doc["id"],
         "name": doc["name"],
@@ -46,7 +61,9 @@ def squad_public(doc: dict, adv_index: dict) -> dict:
         "adventurer_ids": doc.get("adventurer_ids", []),
         "total_power": total_power,
         "member_count": len(members),
-        "missing_adventurer_ids": missing,  # warn the UI: someone deleted/dismissed
+        "missing_adventurer_ids": missing,
+        "retired_adventurer_ids": retired_ids,
+        "deleted_adventurer_ids": deleted_ids,
         "created_at": doc.get("created_at"),
         "updated_at": doc.get("updated_at"),
         "is_archived": doc.get("is_archived", False),
@@ -79,6 +96,16 @@ async def _load_guild_adventurer_index(db, guild_id: str) -> dict:
     """Return {adv_id: adv_doc} for the guild (excluding dismissed/dead)."""
     advs = await db.adventurers.find(
         {"guild_id": guild_id, "is_available": True}, {"_id": 0}
+    ).to_list(2000)
+    return {a["id"]: a for a in advs}
+
+
+async def _load_guild_retired_index(db, guild_id: str) -> dict:
+    """ROUND 6B.4 — Return {adv_id: {id, name}} for retired adventurers.
+    Used by `squad_public` to distinguish retired-vs-deleted members."""
+    advs = await db.adventurers.find(
+        {"guild_id": guild_id, "is_retired": True},
+        {"_id": 0, "id": 1, "name": 1},
     ).to_list(2000)
     return {a["id"]: a for a in advs}
 
@@ -155,7 +182,8 @@ async def list_squads(db, guild_id: str, *, squad_type: Optional[str] = None) ->
         q["squad_type"] = squad_type
     docs = await db.squads.find(q, {"_id": 0}).sort("created_at", -1).to_list(500)
     adv_index = await _load_guild_adventurer_index(db, guild_id)
-    return [squad_public(d, adv_index) for d in docs]
+    retired_index = await _load_guild_retired_index(db, guild_id)
+    return [squad_public(d, adv_index, retired_index) for d in docs]
 
 
 async def get_squad(db, guild_id: str, squad_id: str) -> dict:
@@ -168,7 +196,8 @@ async def get_squad(db, guild_id: str, squad_id: str) -> dict:
         # Hide existence to non-owners (no info leak).
         raise HTTPException(status_code=404, detail="squad.not_found")
     adv_index = await _load_guild_adventurer_index(db, guild_id)
-    return squad_public(doc, adv_index)
+    retired_index = await _load_guild_retired_index(db, guild_id)
+    return squad_public(doc, adv_index, retired_index)
 
 
 async def create_squad(
@@ -219,7 +248,8 @@ async def create_squad(
         source="api:/api/squads",
     )
     adv_index = await _load_guild_adventurer_index(db, guild_id)
-    return squad_public(doc, adv_index)
+    retired_index = await _load_guild_retired_index(db, guild_id)
+    return squad_public(doc, adv_index, retired_index)
 
 
 async def update_squad(
@@ -281,7 +311,8 @@ async def update_squad(
     )
     updated_doc = await db.squads.find_one({"id": squad_id}, {"_id": 0})
     adv_index = await _load_guild_adventurer_index(db, guild_id)
-    return squad_public(updated_doc, adv_index)
+    retired_index = await _load_guild_retired_index(db, guild_id)
+    return squad_public(updated_doc, adv_index, retired_index)
 
 
 async def archive_squad(

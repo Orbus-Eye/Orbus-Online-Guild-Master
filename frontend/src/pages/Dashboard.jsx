@@ -9,6 +9,7 @@ import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
 import ChronicleCard from "../components/ChronicleCard";
+import RosterHealthCard from "../components/RosterHealthCard";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
@@ -54,20 +55,12 @@ function TerritoryWidget() {
     if (!territory || !summary) return null;
 
     return (
-        <div className="mb-6">
-            {summary.overCap && (
-                <div
-                    data-testid="dashboard-overcap-banner"
-                    className="border border-red-400/60 bg-red-500/10 text-red-200 rounded-sm px-4 py-2 mb-3 text-xs flex items-center justify-between gap-3 flex-wrap"
-                >
-                    <span>
-                        ⚠ Roster oltre capacità: {advCount}/{summary.cap}. Potenzia i Dormitori o congeda avventurieri.
-                    </span>
-                    <Link to="/territory" className="text-amber font-bold tracking-widest hover:underline">
-                        VAI AL TERRITORIO →
-                    </Link>
-                </div>
-            )}
+        <div className="mb-6 space-y-3">
+            {/* ROUND 6B.4 Task 1 — RosterHealthCard replaces the inline
+                over-cap snippet. The new card already shows the 4-state
+                colored stripe AND the over-cap CTA in red, so the previous
+                duplicated banner is no longer needed. */}
+            <RosterHealthCard />
             <Link
                 to="/territory"
                 data-testid="dashboard-territory-widget"
@@ -79,23 +72,16 @@ function TerritoryWidget() {
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">Avventurieri</div>
-                        <div data-testid="dashboard-territory-adv-count" className="font-bold">
-                            {advCount ?? "—"}/{summary.cap}
-                        </div>
-                        <div className="w-full bg-secondary h-1 rounded-sm mt-1 overflow-hidden">
-                            <div
-                                className={`h-full ${summary.overCap ? "bg-red-400" : "bg-amber"}`}
-                                style={{ width: `${Math.min(100, Math.round(((advCount || 0) / Math.max(summary.cap, 1)) * 100))}%` }}
-                            />
-                        </div>
-                    </div>
-                    <div>
                         <div className="text-[10px] text-muted-foreground tracking-widest mb-1">Strutture</div>
                         <div data-testid="dashboard-territory-unlocked" className="font-bold">
                             {summary.unlocked}/11
                         </div>
                         <div className="text-[10px] text-muted-foreground mt-1">sbloccate</div>
+                    </div>
+                    <div>
+                        <div className="text-[10px] text-muted-foreground tracking-widest mb-1">Dormitori</div>
+                        <div className="font-bold">Lv{summary.dormLevel}</div>
+                        <div className="text-[10px] text-muted-foreground mt-1">cap roster {summary.cap}</div>
                     </div>
                 </div>
             </Link>

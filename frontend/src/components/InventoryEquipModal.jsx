@@ -111,6 +111,20 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
                             ◆ BOUND
                         </span>
                     )}
+                    {/* ROUND 6B.4 Task 2 — adventurer-bound badge in equip modal. */}
+                    {row.bound_to_adventurer_id && (() => {
+                        const boundAdv = (adventurers || []).find((a) => a.id === row.bound_to_adventurer_id);
+                        const advName = boundAdv?.name || (lang === "it" ? "avventuriero" : "adventurer");
+                        return (
+                            <span
+                                data-testid="equip-modal-adv-bound-badge"
+                                className="text-[10px] tracking-widest border border-orange-500/40 text-orange-300 px-1.5 py-0.5 rounded-sm"
+                                title={lang === "it" ? `Legato a ${advName}` : `Bound to ${advName}`}
+                            >
+                                ⚔ {lang === "it" ? "Legato a" : "Bound to"} {advName}
+                            </span>
+                        );
+                    })()}
                 </h2>
                 <div className="text-xs text-muted-foreground mt-1">
                     {slot?.toUpperCase()} · power {it.power_score ?? 0}

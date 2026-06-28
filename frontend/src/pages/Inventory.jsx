@@ -341,6 +341,25 @@ export default function Inventory() {
                                                         ◆ {t("inventory_extra.bound_badge")}
                                                     </span>
                                                 )}
+                                                {/* ROUND 6B.4 Task 2 — adventurer-bound badge.
+                                                    Coexists with guild-bound (`is_bound`):
+                                                    an item may be both. Resolves the name
+                                                    locally via the loaded adventurers list. */}
+                                                {r.bound_to_adventurer_id && (() => {
+                                                    const boundAdv = adventurers.find((a) => a.id === r.bound_to_adventurer_id);
+                                                    const advName = boundAdv?.name || (lang === "it" ? "avventuriero" : "adventurer");
+                                                    return (
+                                                        <span
+                                                            data-testid={`inv-adv-bound-badge-${r.id}`}
+                                                            className="inline-block text-[10px] tracking-widest border border-orange-500/40 text-orange-300 px-1.5 py-0.5 rounded-sm"
+                                                            title={lang === "it"
+                                                                ? `Legato a ${advName} (motivo: ${r.bound_reason || "—"})`
+                                                                : `Bound to ${advName} (reason: ${r.bound_reason || "—"})`}
+                                                        >
+                                                            ⚔ {lang === "it" ? "Legato a" : "Bound to"} {advName}
+                                                        </span>
+                                                    );
+                                                })()}
                                                 {craftingMaterialSlugs.has(it.slug) && (
                                                     <span
                                                         data-testid={`inv-craft-mat-badge-${r.id}`}

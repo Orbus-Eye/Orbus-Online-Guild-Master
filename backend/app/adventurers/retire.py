@@ -100,6 +100,34 @@ async def _check_not_in_active_squad(db, *, guild_id: str, adventurer_id: str) -
         )
 
 
+async def _check_no_bound_items(db, *, guild_id: str, adventurer_id: str) -> None:
+    """ROUND 6B.4 Step 4b: HARD-block if the adventurer has 1+ inventory
+    items bound to them. The retire must wait until the items are
+    transferred or unbound (transfer/unbound flow ships in Round 6C).
+    """
+    from app.inventory.bound import find_inventory_bound_to_adventurer
+    bound_rows = await find_inventory_bound_to_adventurer(
+        db, guild_id=guild_id, adventurer_id=adventurer_id, limit=20,
+    )
+    if not bound_rows:
+        return
+    item_names = [r["item_name"] for r in bound_rows[:10]]
+    raise HTTPException(
+        status_code=422,
+        detail={
+            "code": "adventurer.has_bound_items",
+            "adventurer_id": adventurer_id,
+            "bound_count": len(bound_rows),
+            "bound_items": item_names,
+            "user_message": (
+                f"Avventuriero ha {len(bound_rows)} oggetto/i legato/i. "
+                f"Trasferisci o sblocca i seguenti item prima di congedarlo: "
+                f"{', '.join(item_names)}."
+            ),
+        },
+    )
+
+
 async def _handle_equipped(
     db, *, adventurer_id: str, force_unequip: bool,
 ) -> list[dict]:
@@ -137,6 +165,7 @@ async def _handle_equipped(
 async def _emit_retire_audit(
     db, *, actor_user_id: str, guild_id: str, adventurer_id: str,
     reason: Optional[str], was_equipped: bool, equipment_returned_count: int,
+    retire_via: str = "single",
 ) -> None:
     """Step 6b: best-effort audit log. Never blocks the retire flow."""
     try:
@@ -153,10 +182,29 @@ async def _emit_retire_audit(
                 "reason": reason,
                 "was_equipped": was_equipped,
                 "equipment_returned_count": equipment_returned_count,
+                # ROUND 6B.4 Q4 — Free-form metadata tag (not part of the
+                # strict `retired_by` enum). Values: "single", "bulk_capacity".
+                "retire_via": retire_via,
             },
         )
     except Exception:
         pass
+    # ROUND 6B.4 — Companion audit event for bulk retires (helps the
+    # operational dashboard to group cap-driven cleanups separately).
+    if retire_via == "bulk_capacity":
+        try:
+            from app.audit.log import write_audit
+            await write_audit(
+                db,
+                event_type="adventurer_retired_bulk",
+                actor_user_id=actor_user_id,
+                actor_guild_id=guild_id,
+                source="adventurers.retire.bulk",
+                related_entity_id=adventurer_id,
+                metadata={"adventurer_id": adventurer_id},
+            )
+        except Exception:
+            pass
 
 
 async def retire_adventurer(
@@ -167,6 +215,7 @@ async def retire_adventurer(
     reason: Optional[str],
     force_unequip: bool,
     actor_user_id: str,
+    via: str = "single",
 ) -> dict:
     # ROUND 6B FASE C — preflight checks moved to single-responsibility
     # helpers above; this orchestrator is now linear (CC ≈ 3, was CC ≈ 16).
@@ -174,6 +223,10 @@ async def retire_adventurer(
     await _check_not_in_active_expedition(db, guild_id=guild_id, adventurer_id=adventurer_id)
     await _check_not_in_active_raid(db, guild_id=guild_id, adventurer_id=adventurer_id)
     await _check_not_in_active_squad(db, guild_id=guild_id, adventurer_id=adventurer_id)
+    # ROUND 6B.4 — bound-items pre-check happens BEFORE the equipment
+    # branch so a force_unequip with bound items still fails fast (we don't
+    # want to silently unequip then leave the user blocked).
+    await _check_no_bound_items(db, guild_id=guild_id, adventurer_id=adventurer_id)
     returned_items = await _handle_equipped(
         db, adventurer_id=adventurer_id, force_unequip=force_unequip,
     )
@@ -190,6 +243,9 @@ async def retire_adventurer(
         # "auto_over_cap" (future bulk cleanup). Legacy retires before
         # Wave 1.5 stay `None` and are treated as "user" by readers.
         "retired_by": "user",
+        # ROUND 6B.4 — `retire_via` is the user-flow tag (single vs bulk).
+        # Stored alongside `retired_by` to make /roster/archive sortable.
+        "retire_via": via if via in {"single", "bulk_capacity"} else "single",
         "updated_at": now,
     }
     await db.adventurers.update_one(
@@ -204,10 +260,12 @@ async def retire_adventurer(
         reason=update["retirement_reason"],
         was_equipped=bool(returned_items),
         equipment_returned_count=len(returned_items),
+        retire_via=update["retire_via"],
     )
 
     return {
         "adventurer_id": adventurer_id,
         "retired_at": now,
         "equipment_returned": returned_items,
+        "retire_via": update["retire_via"],
     }

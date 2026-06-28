@@ -60,7 +60,24 @@
     "confirm_disclaimer": "⚠ Double-check the selection: removed equipment stays in your inventory, but the roster loses these members immediately.",
     "confirm_submit": "Confirm retire",
     "retire_success": "{n} adventurers retired.",
-    "retire_partial_fail": "{n} retires failed — try again or contact support."
+    "retire_partial_fail": "{n} retires failed — try again or contact support.",
+    "tab_manage": "MANAGE",
+    "tab_archive": "ARCHIVE",
+    "archive_empty": "No retired adventurers yet.",
+    "col_retired_at": "Retired on",
+    "col_retired_via": "Origin"
+  },
+  "rosterHealth": {
+    "state_healthy": "ROSTER OK",
+    "state_filling": "ROSTER FILLING UP",
+    "state_at_cap": "ROSTER AT CAP",
+    "state_over_cap": "ROSTER OVER CAPACITY",
+    "adventurers_label": "Adventurers",
+    "headroom_label": "Slots available",
+    "dorm_level_label": "Dormitories Lv {n}",
+    "loading": "Loading roster status…",
+    "error": "Unable to load roster status",
+    "overcap_hint": "Upgrade Dormitories or retire adventurers from Roster Management."
   },
   "lang": {
     "en": "English",

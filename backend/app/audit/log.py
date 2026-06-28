@@ -92,6 +92,10 @@ EVENT_TYPES = frozenset({
     "guild_structure_rollback_free_purchase",
     # ROUND 6B.3 Wave 1.5 — Over-cap roster enforcement
     "roster_over_capacity_blocked",
+    # ROUND 6B.4 — Bound items + retire safety + roster health
+    "adventurer_retired_bulk",
+    "equipment_returned_after_retire",
+    "bound_to_adventurer_dev_seed",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

@@ -323,6 +323,21 @@ async def sell_to_shop(
     if row.get("is_bound") is True:
         raise HTTPException(status_code=409, detail=SELLABLE_REASONS["bound"])
 
+    # ROUND 6B.4 Task 2 — adventurer-bound guard for NPC shop sale.
+    if row.get("bound_to_adventurer_id"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "market.bound_to_adventurer_not_sellable",
+                "source": "shop.sell_to_shop",
+                "bound_to_adventurer_id": row.get("bound_to_adventurer_id"),
+                "user_message": (
+                    "Questo oggetto è legato a un avventuriero e non può "
+                    "essere venduto al mercante."
+                ),
+            },
+        )
+
     item = await db.items.find_one(
         {"id": row["item_id"]}, {"_id": 0},
     )

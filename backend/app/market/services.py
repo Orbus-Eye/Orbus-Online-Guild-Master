@@ -278,6 +278,30 @@ async def create_listing(
             detail="market.bound_item_not_sellable",  # frontend resolves via i18n
         )
 
+    # ROUND 6B.4 Task 2 — adventurer-bound guard.
+    # Items bound to a specific adventurer can never be listed on the auction.
+    adv_bound_row = await db.inventory_items.find_one(
+        {
+            "guild_id": guild["id"],
+            "item_id": item["id"],
+            "bound_to_adventurer_id": {"$ne": None},
+        },
+        {"_id": 0, "id": 1, "bound_to_adventurer_id": 1},
+    )
+    if adv_bound_row:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "auction.bound_to_adventurer_not_listable",
+                "source": "market.create_listing",
+                "bound_to_adventurer_id": adv_bound_row.get("bound_to_adventurer_id"),
+                "user_message": (
+                    "Questo oggetto è legato a un avventuriero e non può "
+                    "essere messo all'asta."
+                ),
+            },
+        )
+
     # 1) Conditional lock: atomically increase market_locked_qty as long
     #    as quantity - equipped - market_locked - requested >= 0.
     #    We approximate equipped count once (race window: a parallel
