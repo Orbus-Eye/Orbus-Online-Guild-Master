@@ -51,6 +51,13 @@ def _fresh_user(db, prefix="r6b3"):
     h = {"Authorization": f"Bearer {token}"}
     requests.post(f"{BASE_URL}/api/guilds", json={"name": f"R6B3 {tag[-6:]}"}, headers=h, timeout=15)
     g = requests.get(f"{BASE_URL}/api/guilds/me", headers=h, timeout=15).json()["guild"]
+    # ROUND 6B.3 Wave 3 (TASK 6) — immediately tag the test artifacts so
+    # downstream leaderboards / global counts can filter them out, and a
+    # later sweep can re-find them deterministically without name-regex
+    # heuristics.
+    db.users.update_one({"email": email},
+                        {"$set": {"is_test_artifact": True, "is_test_user": True}})
+    db.guilds.update_one({"id": g["id"]}, {"$set": {"is_test_artifact": True}})
     return tag, email, h, g["id"]
 
 

@@ -377,3 +377,39 @@ Block destructive write flows when active roster exceeds the
 | Mobile (375px) | Renders without layout breakage |
 
 **Wave 2 status: DONE. Ready for Wave 3.**
+
+---
+
+## ROUND 6B.3 — Wave 3 (Feb 2026) — Guida + regression + chiusura hotfix
+
+### TASK 5 — Guida aggiornata
+- `pages/Guide.jsx`: rinumerate 17 sezioni (era 14). Aggiunta sezione "4. Capacità roster"
+  (Wave 1.5). Aggiornate sezioni Territorio (costi atomici Wave 1), Mercato vs Asta
+  (chiarimento NPC vs P2P), Consorzi (modal "Leggi tutto").
+- Italian-first hardcoded style (coerente con file esistente).
+
+### TASK 6 — Regression sweep + cleanup r6b3
+- 12 endpoint smoke OK (territory/adventurers/expeditions/raids/squads/auction/consortia/
+  chat/quests/leaderboard/inventory/forge — tutti 200).
+- Leaderboard PII check: ✅ no email/user_id/password_hash exposed.
+- DB sanity post-hotfix:
+    - migration structures: 2861 (invariato ✅)
+    - rolled_back structures: 97 (invariato ✅)
+    - audit rollback events: 97 (invariato ✅)
+- r6b3 cleanup: 281 guilds + 147 users + 1780 adventurers flagged
+  `is_test_artifact=True`. **0 hard delete.**
+- `_fresh_user` helper in atomicity test ora tagga automaticamente i nuovi
+  test users come `is_test_artifact=True` per evitare nuovi leftover.
+
+### Verification
+| Check | Result |
+|-------|--------|
+| Pytest critical suite (104 tests) | ✅ 104 passed, 1 skipped |
+| Ruff app/ | ✅ All checks passed |
+| Yarn lint:strict | ✅ 0 warnings, 0 errors |
+| OpenAPI path count | 92 (invariato — no path aggiunti/rimossi) |
+| Backend regression (12 endpoints) | ✅ 12/12 200 OK |
+| DB invariants | ✅ tutti invariati |
+| r6b3 cleanup | ✅ flag-based, 0 hard delete |
+
+**Wave 3 status: DONE. ROUND 6B.3 COMPLETE.**

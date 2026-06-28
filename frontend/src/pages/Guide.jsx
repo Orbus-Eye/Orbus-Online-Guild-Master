@@ -8,18 +8,21 @@ import RoleMarker from "../components/RoleMarker";
 const SECTIONS = [
     { id: "intro", label: "1. Introduzione" },
     { id: "gilda", label: "2. Gilda e progressione" },
-    { id: "ruoli", label: "3. Avventurieri e ruoli" },
-    { id: "dungeon", label: "4. Dungeon / Spedizioni" },
-    { id: "raid", label: "5. Raid" },
-    { id: "squadre", label: "6. Squadre Personalizzate" },
-    { id: "forge", label: "7. Equipaggiamento e Forge" },
-    { id: "vault", label: "8. Deposito / Inventario" },
-    { id: "market", label: "9. Mercato e Crafting" },
-    { id: "quest", label: "10. Quest e Streak" },
-    { id: "consortium", label: "11. Cronaca e Consorzi" },
-    { id: "chat", label: "12. Chat" },
-    { id: "privacy", label: "13. Privacy & Sicurezza" },
-    { id: "tips", label: "14. Suggerimenti base" },
+    { id: "territorio", label: "3. Territorio di Gilda" },
+    { id: "roster-cap", label: "4. Capacità roster" },
+    { id: "ruoli", label: "5. Avventurieri e ruoli" },
+    { id: "dungeon", label: "6. Dungeon / Spedizioni" },
+    { id: "raid", label: "7. Raid" },
+    { id: "squadre", label: "8. Squadre Personalizzate" },
+    { id: "forge", label: "9. Equipaggiamento e Forge" },
+    { id: "vault", label: "10. Deposito / Inventario" },
+    { id: "market", label: "11. Mercato (NPC)" },
+    { id: "auction", label: "12. Asta (player-to-player)" },
+    { id: "quest", label: "13. Quest e Streak" },
+    { id: "consortium", label: "14. Cronaca e Consorzi" },
+    { id: "chat", label: "15. Chat" },
+    { id: "privacy", label: "16. Privacy & Sicurezza" },
+    { id: "tips", label: "17. Suggerimenti base" },
 ];
 
 const SectionBlock = ({ id, title, children }) => (
@@ -129,6 +132,13 @@ export default function Guide() {
                         gold + materiali; i prerequisiti (es. Fucina richiede Sala Gilda Lv2 + Officina Lv1) sono
                         visualizzati direttamente sulla card.
                     </p>
+                    <p className="mt-3 text-amber/90 text-[12px] border-l-2 border-amber/60 pl-3">
+                        <strong>Costi sempre scalati (ROUND 6B.3 Wave 1):</strong> il costo dichiarato sulla card
+                        viene SEMPRE scalato dalle risorse della gilda. Se mancano gold o materiali, l&apos;azione
+                        fallisce con un errore chiaro (codice 422 <code>resources.gold_insufficient</code> o
+                        <code>resources.material_insufficient</code>) e la gilda NON subisce alcun debit parziale.
+                        Le strutture non si comprano mai a costo zero.
+                    </p>
                     <p className="mt-2 text-amber/90 text-[12px]">
                         <strong>👑 Lv7 LEGACY (Dormitori)</strong>: alcuni account storici hanno ricevuto un cap a 50 dalla
                         migrazione una-tantum di ROUND 6B. Non è acquistabile dall&apos;utente.
@@ -136,6 +146,44 @@ export default function Guide() {
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Se una funzione del gioco mostra un toast <em>&quot;Funzione bloccata&quot;</em>, controlla il Territorio:
                         la struttura corrispondente non ha ancora il livello richiesto.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="roster-cap" title="Capacità roster e congedo (ROUND 6B.3 Wave 1.5)">
+                    <p>
+                        La gilda ha un <strong>cap massimo di avventurieri attivi</strong> determinato dal livello
+                        dei <strong>Dormitori</strong>. Potenziare la struttura aumenta il cap:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li>Lv0 = 0 · Lv1 = 5 · Lv2 = 10 · Lv3 = 15 · Lv4 = 20 · Lv5 = 25 · Lv6 = 30 · Lv7 (legacy) = 50</li>
+                    </ul>
+                    <p className="mt-3">
+                        Quando il roster supera il cap (es. dopo un rollback o una riduzione di Dormitori) la
+                        gilda entra in stato <strong>&quot;Roster oltre capacità&quot;</strong> e un banner rosso compare
+                        in cima alle pagine Reclutamento, Spedizioni, Raid, Squadre e Territorio.
+                    </p>
+                    <p className="mt-3 text-[12px]"><strong>Azioni bloccate</strong> finché sei over-cap (HTTP 423 <code>roster_over_capacity</code>):</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
+                        <li>Reclutare nuovi avventurieri</li>
+                        <li>Avviare spedizioni o raid (anche replay-last)</li>
+                        <li>Creare/modificare squadre che includono membri eccedenti</li>
+                        <li>Equipaggiare avventurieri congedati</li>
+                    </ul>
+                    <p className="mt-3 text-[12px]"><strong>Azioni sempre permesse</strong> (le tue vie d&apos;uscita):</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
+                        <li>Consultare roster, inventario, report storici (GET non sono mai bloccate)</li>
+                        <li>Potenziare i Dormitori (aumenta il cap)</li>
+                        <li>Congedare avventurieri (libera slot)</li>
+                    </ul>
+                    <p className="mt-3">
+                        Per gestire il congedo in massa vai su <code>/roster/manage</code> dal banner: filtra per nome/ruolo/rarità,
+                        ordina per Potenza/Livello, multi-seleziona e conferma. Il congedo è una soft-retire: i
+                        <strong> vecchi report che includono l&apos;avventuriero congedato restano sempre leggibili</strong>,
+                        e l&apos;equipaggiamento torna in inventario. Il congedo è reversibile via supporto.
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Prima di congedare, rimuovi manualmente l&apos;equipaggiamento bound se desideri trasferirlo
+                        ad altri avventurieri. Niente item viene mai perso.
                     </p>
                 </SectionBlock>
 
@@ -360,6 +408,12 @@ export default function Guide() {
                 </SectionBlock>
 
                 <SectionBlock id="market" title="Mercato e Crafting">
+                    <p className="mb-3 text-amber/90 text-[12px] border-l-2 border-amber/60 pl-3">
+                        <strong>Mercato ≠ Asta.</strong> Il Mercato è il negozio NPC di sistema (prezzi fissi,
+                        rotazione giornaliera). L&apos;Asta è il marketplace player-to-player. Sono{" "}
+                        <em>due sistemi distinti</em>: il bottone &quot;Vendi al Mercato&quot; vende a NPC; per vendere ad altri player
+                        usa <strong>&quot;Metti all&apos;Asta&quot;</strong> dall&apos;inventario.
+                    </p>
                     <p>
                         Il <strong>Mercato di Sistema</strong> (sezione <code>/market</code>) è il negozio gestito dal Mastro Mercante.
                         Offre <strong>6 oggetti giornalieri</strong> che ruotano alle <strong>04:00 UTC</strong>.
@@ -419,6 +473,17 @@ export default function Guide() {
                     <p className="mt-2">
                         I <strong>Consorzi</strong> sono gruppi cooperativi tra gilde: condividi un buff settimanale
                         e un canale di comunicazione testuale. Ogni gilda può appartenere a un consorzio alla volta.
+                    </p>
+                    <p className="mt-2">
+                        <strong>Consorzio ≠ Gilda.</strong> La gilda è privata, gestita dal singolo player.
+                        Il consorzio è un&apos;alleanza multi-player pubblica.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Come scegliere un Consorzio</strong>: la lista a <code>/consortiums</code> mostra
+                        per ogni consorzio nome, tag, numero membri e descrizione (clamp 2 righe). Se la
+                        descrizione è lunga, clicca <em>&quot;Leggi tutto →&quot;</em> per aprire il <strong>modal di dettaglio</strong> con
+                        descrizione completa, conteggio membri e bottone &quot;Entra&quot;. La descrizione è renderizzata
+                        come testo letterale (nessun HTML eseguito — XSS-safe).
                     </p>
                     <p className="mt-2">
                         I membri del consorzio hanno accesso a una <strong>chat privata</strong> accessibile
