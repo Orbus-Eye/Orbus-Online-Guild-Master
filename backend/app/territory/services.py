@@ -31,14 +31,143 @@ def _utc_now_iso() -> str:
 
 
 def _public_doc(doc: dict) -> dict:
-    """Strip the BSON `_id` and return only the public shape."""
+    """Strip the BSON `_id` and return only the public shape.
+
+    ROUND 11.2 EXT TASK 10 PRE-S2 — also enriches each structure with a
+    `next_level_cost` preview (gold + materials map) so the FE can show
+    "ti mancano: 36× Frammento di Ferro" BEFORE the user clicks Potenzia.
+    Eliminates the "ho l'oggetto ma non permette" UX trap where the
+    backend rejected a click for a cost the FE never displayed.
+
+    TASK 10 M1 — `next_level_cost.materials` is also returned as a flat
+    map (slug → required) plus an opt-in enriched list when an inventory
+    snapshot is provided by the caller via `_enrich_with_inventory()`.
+    """
+    structures = doc["structures"] or {}
+    enriched: dict[str, dict] = {}
+    for slug, info in structures.items():
+        info = dict(info or {})
+        cur_level = int(info.get("level", 0))
+        next_cost = None
+        if cur_level >= 1:
+            max_lv = get_structure_max_level(slug, allow_legacy=False)
+            if cur_level < max_lv:
+                raw = cost_for(slug, cur_level + 1)
+                if raw is not None:
+                    next_cost = {
+                        "target_level": cur_level + 1,
+                        "gold": int(raw.get("gold", 0)),
+                        "materials": dict(raw.get("materials") or {}),
+                    }
+        info["next_level_cost"] = next_cost
+        enriched[slug] = info
     return {
         "id": doc["id"],
         "guild_id": doc["guild_id"],
-        "structures": doc["structures"],
+        "structures": enriched,
         "created_at": doc.get("created_at"),
         "updated_at": doc.get("updated_at"),
     }
+
+
+async def _enrich_territory_with_inventory(db, payload: dict, guild_id: str) -> dict:
+    """ROUND 11.2 EXT TASK 10 M1 — enrich `next_level_cost` with the
+    actual guild inventory snapshot so the FE renders cost preview as
+    `(owned/required, can_afford, missing[])` without a second roundtrip.
+
+    Adds per-structure:
+      * `next_level_cost.materials_detail`: list of
+        `{slug, display_name_it, display_name_en, required, owned, missing}`
+      * `next_level_cost.owned_gold`: guild's current gold.
+      * `next_level_cost.can_afford`: bool — gold AND every material OK.
+      * `next_level_cost.missing`: `{gold:int, materials:[{slug,display_name_it,missing}]}`
+
+    No side effects, no PII leak, no equipment exposed.
+    """
+    structures = payload.get("structures") or {}
+    # Collect all material slugs referenced by any next_level_cost.
+    all_slugs: set[str] = set()
+    for info in structures.values():
+        nlc = info.get("next_level_cost")
+        if nlc:
+            for slug in (nlc.get("materials") or {}).keys():
+                all_slugs.add(slug)
+    if not all_slugs:
+        # Still attach owned_gold to anything with a next_level_cost so
+        # the FE can render "Oro X/Y" even for material-free upgrades.
+        g = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "gold": 1})
+        gold_owned = int((g or {}).get("gold", 0))
+        for info in structures.values():
+            nlc = info.get("next_level_cost")
+            if nlc:
+                nlc["owned_gold"] = gold_owned
+                nlc["can_afford"] = bool(gold_owned >= int(nlc.get("gold", 0)))
+                nlc["missing"] = {"gold": max(0, int(nlc.get("gold", 0)) - gold_owned), "materials": []}
+                nlc["materials_detail"] = []
+        return payload
+
+    # Resolve slugs → template ids + display names (single query).
+    items_by_slug: dict[str, dict] = {}
+    async for it in db.items.find(
+        {"slug": {"$in": list(all_slugs)}, "item_type": "material"},
+        {"_id": 0, "id": 1, "slug": 1, "display_name_it": 1, "display_name_en": 1, "name": 1},
+    ):
+        items_by_slug[it["slug"]] = it
+    template_ids = [v["id"] for v in items_by_slug.values()]
+
+    # Aggregate owned quantities (single query across all templates).
+    owned_by_template: dict[str, int] = {tid: 0 for tid in template_ids}
+    if template_ids:
+        async for row in db.inventory_items.find(
+            {"guild_id": guild_id, "item_id": {"$in": template_ids}},
+            {"_id": 0, "item_id": 1, "quantity": 1},
+        ):
+            owned_by_template[row["item_id"]] = (
+                owned_by_template.get(row["item_id"], 0) + int(row.get("quantity", 0))
+            )
+
+    g = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "gold": 1})
+    gold_owned = int((g or {}).get("gold", 0))
+
+    for slug, info in structures.items():
+        nlc = info.get("next_level_cost")
+        if not nlc:
+            continue
+        materials = nlc.get("materials") or {}
+        detail: list[dict] = []
+        missing_mats: list[dict] = []
+        for mat_slug, required in materials.items():
+            item = items_by_slug.get(mat_slug, {})
+            tid = item.get("id")
+            owned = int(owned_by_template.get(tid, 0)) if tid else 0
+            required_q = int(required)
+            display_it = (
+                item.get("display_name_it")
+                or item.get("name")
+                or mat_slug.replace("_", " ").title()
+            )
+            display_en = item.get("display_name_en") or item.get("name") or mat_slug
+            detail.append({
+                "slug": mat_slug,
+                "display_name_it": display_it,
+                "display_name_en": display_en,
+                "required": required_q,
+                "owned": owned,
+                "missing": max(0, required_q - owned),
+            })
+            if owned < required_q:
+                missing_mats.append({
+                    "slug": mat_slug,
+                    "display_name_it": display_it,
+                    "missing": required_q - owned,
+                })
+        gold_required = int(nlc.get("gold", 0))
+        gold_missing = max(0, gold_required - gold_owned)
+        nlc["materials_detail"] = detail
+        nlc["owned_gold"] = gold_owned
+        nlc["missing"] = {"gold": gold_missing, "materials": missing_mats}
+        nlc["can_afford"] = bool(gold_missing == 0 and not missing_mats)
+    return payload
 
 
 async def ensure_guild_structures_doc(db, guild_id: str) -> dict:
@@ -103,7 +232,9 @@ async def _backfill_missing_catalog_slugs(db, doc: dict) -> dict:
 
 async def get_territory(db, guild_id: str) -> dict:
     doc = await ensure_guild_structures_doc(db, guild_id)
-    return _public_doc(doc)
+    payload = _public_doc(doc)
+    # ROUND 11.2 EXT TASK 10 M1 — overlay owned/missing/can_afford.
+    return await _enrich_territory_with_inventory(db, payload, guild_id)
 
 
 def _validate_slug(slug: str) -> None:
