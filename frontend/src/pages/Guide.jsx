@@ -1,5 +1,5 @@
 // Phase 19.2 — P2.2 Player Guide in-game.
-// ROUND 11.2 TASK 6 G4 — Traits + Stats sezioni data-driven (lazy fetch).
+// TASK 6 G4 — Traits + Stats sezioni data-driven (lazy fetch).
 // Single-page guide with anchor-link tabs. Italian-first.
 // Pure text + tables; no images. Dark/minimal aesthetic to match the rest of the UI.
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ const SECTIONS = [
     { id: "tips", label: "27. Suggerimenti base" },
 ];
 
-// ROUND 11.2 TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
+// TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
 const POLARITY_LABEL = {
     positive: { label: "Positivo", cls: "text-emerald-300 border-emerald-500/40" },
     negative: { label: "Negativo", cls: "text-red-400 border-red-500/40" },
@@ -74,7 +74,7 @@ const SectionBlock = ({ id, title, children }) => (
 
 export default function Guide() {
     const [active, setActive] = useState("intro");
-    // ROUND 11.2 TASK 6 G4 — lazy-loaded data-driven catalog state.
+    // TASK 6 G4 — lazy-loaded data-driven catalog state.
     // Fetch triggered the first time the user opens the relative tab.
     const [traits, setTraits] = useState({ data: null, loading: false, error: null });
     const [stats, setStats] = useState({ data: null, loading: false, error: null });
@@ -97,11 +97,18 @@ export default function Guide() {
     }, [active, traits.data, traits.loading, stats.data, stats.loading]);
 
     const filteredTraits = (traits.data || []).filter((t) => {
-        if (traitFilters.polarity !== "all" && t.polarity !== traitFilters.polarity) return false;
+        if (traitFilters.polarity !== "all") {
+            if (traitFilters.polarity === "mixed") {
+                // Tab "Misti + Neutri" contiene entrambi (i tratti neutral non hanno effetto).
+                if (t.polarity !== "mixed" && t.polarity !== "neutral") return false;
+            } else if (t.polarity !== traitFilters.polarity) {
+                return false;
+            }
+        }
         if (traitFilters.rarity !== "all" && t.rarity !== traitFilters.rarity) return false;
         if (traitFilters.q) {
             const q = traitFilters.q.toLowerCase();
-            const hay = `${t.display_name_it || ""} ${t.description_it || ""}`.toLowerCase();
+            const hay = `${t.display_name_it || ""} ${t.description_it || ""} ${t.gameplay_effect_it || ""}`.toLowerCase();
             if (!hay.includes(q)) return false;
         }
         return true;
@@ -191,7 +198,7 @@ export default function Guide() {
                         <li><strong>Fucina</strong> — Upgrade equipaggiamento (disincanta/raffina/incanta/reroll).</li>
                         <li><strong>Sala dei Consorzi</strong> — Lv1 per unirti, Lv2 per crearne uno.</li>
                         <li><strong>Sala delle Comunicazioni</strong> — Lv1 chat globale, Lv2 chat consorzio.</li>
-                        <li><strong>Campo di Addestramento</strong> — Placeholder per specializzazioni (in arrivo ROUND 6C).</li>
+                        <li><strong>Campo di Addestramento</strong> — Placeholder per specializzazioni (in arrivo ).</li>
                     </ul>
                     <p className="mt-3">
                         Vai a <code>/territory</code> per acquistare e potenziare le strutture. Ogni livello costa
@@ -199,15 +206,15 @@ export default function Guide() {
                         visualizzati direttamente sulla card.
                     </p>
                     <p className="mt-3 text-amber/90 text-[12px] border-l-2 border-amber/60 pl-3">
-                        <strong>Costi sempre scalati (ROUND 6B.3 Wave 1):</strong> il costo dichiarato sulla card
+                        <strong>Costi sempre scalati:</strong> il costo dichiarato sulla card
                         viene SEMPRE scalato dalle risorse della gilda. Se mancano gold o materiali, l&apos;azione
                         fallisce con un errore chiaro (codice 422 <code>resources.gold_insufficient</code> o
                         <code>resources.material_insufficient</code>) e la gilda NON subisce alcun debit parziale.
                         Le strutture non si comprano mai a costo zero.
                     </p>
                     <p className="mt-2 text-amber/90 text-[12px]">
-                        <strong>👑 Lv7-Lv11 (Dormitori, ROUND 11.2)</strong>: la scala dei livelli ora si estende fino a <strong>Lv11 (cap 100)</strong>. Costi gold + materiali progressivi (no premium, no skip). I cap intermedi sono 40 (Lv7), 50 (Lv8), 65 (Lv9), 80 (Lv10), 100 (Lv11). Account legacy con Lv7 pre-Round 11.2 mantengono il loro cap; le strutture esistenti non vengono modificate.
-                        migrazione una-tantum di ROUND 6B. Non è acquistabile dall&apos;utente.
+                        <strong>👑 Lv7-Lv11 (Dormitori, )</strong>: la scala dei livelli ora si estende fino a <strong>Lv11 (cap 100)</strong>. Costi gold + materiali progressivi (no premium, no skip). I cap intermedi sono 40 (Lv7), 50 (Lv8), 65 (Lv9), 80 (Lv10), 100 (Lv11). Account legacy con Lv7 pre-Round 11.2 mantengono il loro cap; le strutture esistenti non vengono modificate.
+                        migrazione una-tantum di . Non è acquistabile dall&apos;utente.
                     </p>
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Se una funzione del gioco mostra un toast <em>&quot;Funzione bloccata&quot;</em>, controlla il Territorio:
@@ -229,7 +236,7 @@ export default function Guide() {
                         in cima alle pagine Reclutamento, Spedizioni, Raid, Squadre e Territorio.
                     </p>
                     <p className="mt-3 text-[12px] border-l-2 border-amber/60 pl-3 text-amber/90">
-                        <strong>AT-cap ≠ over-cap (ROUND 6B.3 Wave 3, decisione semantica)</strong>:
+                        <strong>AT-cap ≠ over-cap</strong>:
                         essere <em>esattamente a cap</em> (es. 5/5 con Dormitori Lv1) consente il gameplay
                         normale — puoi lanciare spedizioni, raid, costruire squadre ed equipaggiare con i
                         tuoi 5 avventurieri. Il blocco scatta SOLO quando <code>current &gt; cap</code> (vero
@@ -283,7 +290,7 @@ export default function Guide() {
                         <li>NON sono vendibili al mercato NPC, né listabili in asta.</li>
                         <li>Restano sempre nel tuo Deposito anche dopo il congedo dell&apos;avventuriero (vedi Archivio).</li>
                     </ul>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Suggerimento upgrade Dormitori (ROUND 6E)</h3>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Suggerimento upgrade Dormitori</h3>
                     <p>
                         Quando lo stato è <strong>Quasi Pieno</strong>, <strong>Al Limite</strong> o <strong>Oltre Capacità</strong>,
                         il widget mostra direttamente il <strong>costo del prossimo upgrade dei Dormitori</strong>
@@ -460,10 +467,10 @@ export default function Guide() {
                                 data-testid="guide-traits-filter-polarity"
                                 className="bg-secondary border border-border rounded-sm px-3 py-2 text-xs"
                             >
-                                <option value="all">Polarità: tutte</option>
-                                <option value="positive">Positivi</option>
-                                <option value="negative">Negativi</option>
-                                <option value="mixed">Misti</option>
+                                <option value="all">Polarità: tutte ({traits.data?.length || 0})</option>
+                                <option value="positive">Positivi ({(traits.data || []).filter(t=>t.polarity==='positive').length})</option>
+                                <option value="negative">Negativi ({(traits.data || []).filter(t=>t.polarity==='negative').length})</option>
+                                <option value="mixed">Misti + Neutri ({(traits.data || []).filter(t=>t.polarity==='mixed'||t.polarity==='neutral').length})</option>
                             </select>
                             <select
                                 value={traitFilters.rarity}
@@ -522,6 +529,9 @@ export default function Guide() {
                                             <p className="text-[12px] text-foreground/85 mt-1">
                                                 {t.description_it}
                                             </p>
+                                            <p className="text-[11px] text-amber/90 mt-1.5 italic" data-testid={`guide-trait-effect-${t.id}`}>
+                                                {t.gameplay_effect_it || "Tratto descrittivo: al momento non modifica direttamente i calcoli principali."}
+                                            </p>
                                             <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
                                                 <span>
                                                     Rarità: <strong className="text-foreground/90">{RARITY_LABEL[t.rarity] || t.rarity}</strong>
@@ -531,6 +541,15 @@ export default function Guide() {
                                                         Stat: <strong className="text-foreground/90">{t.affected_stat}</strong>{" "}
                                                         ({formatModifier(t.modifier_type, t.modifier_value)})
                                                     </span>
+                                                )}
+                                                {t.affects_power && (
+                                                    <span className="text-amber">Influenza PWR</span>
+                                                )}
+                                                {t.is_situational && (
+                                                    <span>Situazionale</span>
+                                                )}
+                                                {t.is_capped && (
+                                                    <span>Cappato</span>
                                                 )}
                                             </div>
                                         </div>
@@ -668,7 +687,7 @@ export default function Guide() {
                     </p>
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         <strong>Integrazione con expedition/raid</strong>: in arrivo nel prossimo update
-                        (ROUND 6A.2b) — un selettore &quot;Carica squadra&quot; dentro
+                        — un selettore &quot;Carica squadra&quot; dentro
                         <code className="text-amber"> /expeditions/new</code> e
                         <code className="text-amber"> /raids/builder</code> per popolare il team con un click.
                     </p>
@@ -732,7 +751,7 @@ export default function Guide() {
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Le 10 Full Hybrid (Tier 3, da TG Lv3)</h3>
                     <p>
                         A partire da Training Grounds Lv3 si sbloccano <strong>10 specializzazioni avanzate</strong>
-                        (ROUND 6E ha completato la rosa). Ogni Full Hybrid ha il proprio Signature Item Epico.
+                       . Ogni Full Hybrid ha il proprio Signature Item Epico.
                     </p>
                     <ul className="list-disc pl-5 space-y-1 text-[12px]">
                         <li><strong>Furia</strong> (DPS Warrior) — Grand&apos;Ascia Insanguinata.</li>
@@ -758,7 +777,7 @@ export default function Guide() {
                         spuntata per procedere. L&apos;item viene soft-discarded (resta in DB come storico, ma non più
                         utilizzabile e non più legato).
                     </p>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Respec (ROUND 6E)</h3>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Respec</h3>
                     <p>
                         <strong>Round 6E ha sbloccato il respec</strong>: puoi cambiare la specializzazione di un
                         avventuriero già specializzato dal pulsante <em>⟲ Respec</em> nella lista &quot;Avventurieri già
@@ -851,25 +870,9 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="quest" title="Quest e Streak">
+                <SectionBlock id="contracts" title="Contratti e Obiettivi di Gilda">
                     <p>
-                        <strong>Quest giornaliere</strong>: 3 obiettivi rapidi che si resettano ogni 24h
-                        (es. <em>completa 1 spedizione</em>, <em>recluta 1 avventuriero</em>).
-                        Reward: gold + materiali.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Quest settimanali</strong>: 4 obiettivi medio-lunghi (1 settimana).
-                        Includono obiettivi raid e mercato. Reward più consistenti.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Streak</strong>: completare almeno una quest al giorno mantiene la serie attiva.
-                        Streak D3 / D5 / D7 sbloccano bonus crescenti.
-                    </p>
-                </SectionBlock>
-
-                <SectionBlock id="contracts" title="Bacheca Contratti & Obiettivi Gilda (ROUND 6D)">
-                    <p>
-                        La <strong>Bacheca Contratti</strong> è una nuova struttura del Territorio che apre tre canali
+                        La <strong>Bacheca Contratti</strong> è una struttura del Territorio che apre tre canali
                         di retention: contratti giornalieri, contratti settimanali e milestone permanenti.
                     </p>
                     <h3 className="mt-3 mb-2 text-amber tracking-wider text-[12px]">Struttura & prerequisiti</h3>
@@ -901,11 +904,11 @@ export default function Guide() {
                     </ul>
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Reset automatico ogni <strong>lunedì alle 00:00 UTC</strong>. La reputazione gilda è usata per il
-                        leaderboard. <strong>Feature-gating (ROUND 6E)</strong>: i contratti che richiedono una struttura
+                        leaderboard. <strong>Feature-gating</strong>: i contratti che richiedono una struttura
                         (raid → War Room, forge → Fucina, asta → Casa d&apos;Aste) appaiono solo se quella struttura è
                         sbloccata. Lo slot di rotazione settimanale non viene mai sprecato su un contratto bloccato.
                     </p>
-                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Milestone permanenti (3 Tier, ROUND 6E completi)</h3>
+                    <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Milestone permanenti (3 Tier, completi)</h3>
                     <p>
                         I milestone <strong>non si resettano mai</strong> e sono organizzati in 3 tier progressivi:
                     </p>
@@ -934,12 +937,16 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
-                <SectionBlock id="consortium" title="Cronaca e Consorzi">
+                <SectionBlock id="chronicle" title="Cronaca">
                     <p>
                         La <strong>Cronaca (Server Chronicle)</strong> mostra gli eventi recenti dei giocatori
-                        sul server: spedizioni completate, oggetti epici trovati, raid vinti.
+                        sul server: spedizioni completate, oggetti epici trovati, raid vinti. Solo dati pubblici
+                        (nome gilda, esito) — mai informazioni private.
                     </p>
-                    <p className="mt-2">
+                </SectionBlock>
+
+                <SectionBlock id="consortium" title="Consorzi">
+                    <p>
                         I <strong>Consorzi</strong> sono gruppi cooperativi tra gilde: condividi un buff settimanale
                         e un canale di comunicazione testuale. Ogni gilda può appartenere a un consorzio alla volta.
                     </p>
