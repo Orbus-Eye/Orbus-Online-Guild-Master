@@ -131,13 +131,13 @@ def test_t3_01_listings_expose_is_own_flag(db):
     seller_view = _get_listings(h_seller)
     buyer_view = _get_listings(h_buyer)
 
-    own_for_seller = [l for l in seller_view if l.get("seller", {}).get("guild_name", "").startswith("R112T3")]
+    own_for_seller = [l for l in seller_view if ((l.get("seller") or {}).get("guild_name") or "").startswith("R112T3")]
     if own_for_seller:
         # At least one of seller's listings must be flagged is_own=True
         assert any(l.get("is_own") is True for l in own_for_seller), \
             "seller view: at least one own listing missing is_own=True"
     # Buyer must see is_own=False on this listing
-    matched = [l for l in buyer_view if l.get("seller", {}).get("guild_name", "").startswith("R112T3")]
+    matched = [l for l in buyer_view if ((l.get("seller") or {}).get("guild_name") or "").startswith("R112T3")]
     if matched:
         assert all(l.get("is_own") is False for l in matched), \
             "buyer view: is_own must be False for other guilds' listings"
