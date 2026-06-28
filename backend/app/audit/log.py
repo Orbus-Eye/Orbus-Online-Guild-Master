@@ -100,6 +100,9 @@ EVENT_TYPES = frozenset({
     "specialization_applied",
     "specialization_signature_item_created",
     "specialization_signature_item_discarded_on_retire",
+    # ROUND 6C — Preview validation seed (dev-only, whitelist-gated)
+    "guild_structure_seeded",
+    "adventurer_seeded",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

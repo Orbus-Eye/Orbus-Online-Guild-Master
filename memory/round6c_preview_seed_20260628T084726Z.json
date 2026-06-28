@@ -1,0 +1,164 @@
+{
+  "applied": {
+    "adventurers": [
+      {
+        "class_name": "Warrior",
+        "from_level": 1,
+        "id": "90ede1b9-0904-4d41-bed1-5b726d9a11e5",
+        "name": "Faelan Nightshade",
+        "optional": false,
+        "plan_label": "tank",
+        "to_level": 5
+      },
+      {
+        "class_name": "Ranger",
+        "from_level": 1,
+        "id": "29ef4fcc-b90d-4dc4-a60b-2baf60119793",
+        "name": "Test Nome Due",
+        "optional": false,
+        "plan_label": "rogue",
+        "to_level": 5
+      },
+      {
+        "class_name": "Priest",
+        "from_level": 1,
+        "id": "e3ee8516-e7d9-42f9-adaf-142fb41a06ea",
+        "name": "Nyx",
+        "optional": false,
+        "plan_label": "healer",
+        "to_level": 5
+      },
+      {
+        "class_name": "Bard",
+        "from_level": 1,
+        "id": "d59308b0-e7b1-4a21-98e4-e360e186b7e3",
+        "name": "Quill Ironfoot",
+        "optional": false,
+        "plan_label": "support",
+        "to_level": 5
+      },
+      {
+        "class_name": "Berserker",
+        "from_level": 1,
+        "id": "f23d56ac-f116-45b9-81c2-a09bff4cd2c1",
+        "name": "Brenna the Bold",
+        "optional": true,
+        "plan_label": "tier_locked_probe",
+        "to_level": 5
+      }
+    ],
+    "structure": true
+  },
+  "guild": {
+    "id": "0788722b-724d-4343-9cd1-cd994d0f6200",
+    "name": "The Iron Lantern"
+  },
+  "mode": "apply",
+  "promotions": [
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Warrior",
+        "id": "90ede1b9-0904-4d41-bed1-5b726d9a11e5",
+        "level": 1,
+        "name": "Faelan Nightshade"
+      },
+      "classes": [
+        "Paladin",
+        "Warrior"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "tank",
+      "spec_hint": "spec_difensore",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Ranger",
+        "id": "29ef4fcc-b90d-4dc4-a60b-2baf60119793",
+        "level": 1,
+        "name": "Test Nome Due"
+      },
+      "classes": [
+        "Rogue",
+        "Ranger"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "rogue",
+      "spec_hint": "spec_furtivo",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Priest",
+        "id": "e3ee8516-e7d9-42f9-adaf-142fb41a06ea",
+        "level": 1,
+        "name": "Nyx"
+      },
+      "classes": [
+        "Priest",
+        "Druid"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "healer",
+      "spec_hint": "spec_guaritore",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Bard",
+        "id": "d59308b0-e7b1-4a21-98e4-e360e186b7e3",
+        "level": 1,
+        "name": "Quill Ironfoot"
+      },
+      "classes": [
+        "Bard"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "support",
+      "spec_hint": "spec_bardo",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Berserker",
+        "id": "f23d56ac-f116-45b9-81c2-a09bff4cd2c1",
+        "level": 1,
+        "name": "Brenna the Bold"
+      },
+      "classes": [
+        "Berserker"
+      ],
+      "from_level": 1,
+      "optional": true,
+      "plan_label": "tier_locked_probe",
+      "spec_hint": "spec_furia",
+      "to_level": 5
+    }
+  ],
+  "ran_at": "2026-06-28T08:47:26.541015+00:00",
+  "structure": {
+    "current": {
+      "acquired_via": "default",
+      "is_unlocked": false,
+      "level": 0,
+      "purchased_at": null,
+      "upgraded_at": null
+    },
+    "needs_update": true,
+    "structure_slug": "training_grounds",
+    "target_level": 1
+  },
+  "tester": {
+    "email": "tester@orbus.test",
+    "user_id": "d280a1e6-d4f5-4826-9aa7-8537290e8cb4"
+  }
+}

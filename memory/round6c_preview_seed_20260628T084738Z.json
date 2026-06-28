@@ -1,0 +1,164 @@
+{
+  "applied": {
+    "adventurers": [
+      {
+        "class_name": "Warrior",
+        "from_level": 1,
+        "id": "e928ab25-cc01-4e0c-a5e2-204c9963ff27",
+        "name": "Nyx",
+        "optional": false,
+        "plan_label": "tank",
+        "to_level": 5
+      },
+      {
+        "class_name": "Rogue",
+        "from_level": 1,
+        "id": "6feca47e-c622-4d8e-a96b-0a93ed5ef4e2",
+        "name": "Vera the Bold",
+        "optional": false,
+        "plan_label": "rogue",
+        "to_level": 5
+      },
+      {
+        "class_name": "Druid",
+        "from_level": 1,
+        "id": "bfbec44d-31c7-459d-afc8-6bfd6962f2dc",
+        "name": "Dorin Stormwind",
+        "optional": false,
+        "plan_label": "healer",
+        "to_level": 5
+      },
+      {
+        "class_name": "Bard",
+        "from_level": 1,
+        "id": "c0b8457f-6aa2-48a9-b5a8-88f8928ff68e",
+        "name": "Kael",
+        "optional": false,
+        "plan_label": "support",
+        "to_level": 5
+      },
+      {
+        "class_name": "Berserker",
+        "from_level": 1,
+        "id": "c20f3340-5fb5-4141-851b-ad1caffbba22",
+        "name": "Wren Brightblade",
+        "optional": true,
+        "plan_label": "tier_locked_probe",
+        "to_level": 5
+      }
+    ],
+    "structure": false
+  },
+  "guild": {
+    "id": "0788722b-724d-4343-9cd1-cd994d0f6200",
+    "name": "The Iron Lantern"
+  },
+  "mode": "apply",
+  "promotions": [
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Warrior",
+        "id": "e928ab25-cc01-4e0c-a5e2-204c9963ff27",
+        "level": 1,
+        "name": "Nyx"
+      },
+      "classes": [
+        "Paladin",
+        "Warrior"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "tank",
+      "spec_hint": "spec_difensore",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Rogue",
+        "id": "6feca47e-c622-4d8e-a96b-0a93ed5ef4e2",
+        "level": 1,
+        "name": "Vera the Bold"
+      },
+      "classes": [
+        "Rogue",
+        "Ranger"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "rogue",
+      "spec_hint": "spec_furtivo",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Druid",
+        "id": "bfbec44d-31c7-459d-afc8-6bfd6962f2dc",
+        "level": 1,
+        "name": "Dorin Stormwind"
+      },
+      "classes": [
+        "Priest",
+        "Druid"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "healer",
+      "spec_hint": "spec_guaritore",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Bard",
+        "id": "c0b8457f-6aa2-48a9-b5a8-88f8928ff68e",
+        "level": 1,
+        "name": "Kael"
+      },
+      "classes": [
+        "Bard"
+      ],
+      "from_level": 1,
+      "optional": false,
+      "plan_label": "support",
+      "spec_hint": "spec_bardo",
+      "to_level": 5
+    },
+    {
+      "action": "promote",
+      "adventurer": {
+        "class_name": "Berserker",
+        "id": "c20f3340-5fb5-4141-851b-ad1caffbba22",
+        "level": 1,
+        "name": "Wren Brightblade"
+      },
+      "classes": [
+        "Berserker"
+      ],
+      "from_level": 1,
+      "optional": true,
+      "plan_label": "tier_locked_probe",
+      "spec_hint": "spec_furia",
+      "to_level": 5
+    }
+  ],
+  "ran_at": "2026-06-28T08:47:38.622884+00:00",
+  "structure": {
+    "current": {
+      "acquired_via": "seed_round6c_validation",
+      "is_unlocked": true,
+      "level": 1,
+      "purchased_at": "2026-06-28T08:47:26.541059+00:00",
+      "upgraded_at": "2026-06-28T08:47:26.541059+00:00"
+    },
+    "needs_update": false,
+    "structure_slug": "training_grounds",
+    "target_level": 1
+  },
+  "tester": {
+    "email": "tester@orbus.test",
+    "user_id": "d280a1e6-d4f5-4826-9aa7-8537290e8cb4"
+  }
+}

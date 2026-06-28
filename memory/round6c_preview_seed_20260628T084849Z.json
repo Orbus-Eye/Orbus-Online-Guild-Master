@@ -1,0 +1,108 @@
+{
+  "applied": {
+    "adventurers": [],
+    "structure": false
+  },
+  "guild": {
+    "id": "0788722b-724d-4343-9cd1-cd994d0f6200",
+    "name": "The Iron Lantern"
+  },
+  "mode": "apply",
+  "promotions": [
+    {
+      "action": "already_satisfied",
+      "adventurer": {
+        "class_name": "Warrior",
+        "id": "90ede1b9-0904-4d41-bed1-5b726d9a11e5",
+        "level": 5,
+        "name": "Faelan Nightshade"
+      },
+      "classes": [
+        "Paladin",
+        "Warrior"
+      ],
+      "optional": false,
+      "plan_label": "tank",
+      "spec_hint": "spec_difensore"
+    },
+    {
+      "action": "already_satisfied",
+      "adventurer": {
+        "class_name": "Ranger",
+        "id": "29ef4fcc-b90d-4dc4-a60b-2baf60119793",
+        "level": 5,
+        "name": "Test Nome Due"
+      },
+      "classes": [
+        "Rogue",
+        "Ranger"
+      ],
+      "optional": false,
+      "plan_label": "rogue",
+      "spec_hint": "spec_furtivo"
+    },
+    {
+      "action": "already_satisfied",
+      "adventurer": {
+        "class_name": "Priest",
+        "id": "e3ee8516-e7d9-42f9-adaf-142fb41a06ea",
+        "level": 5,
+        "name": "Nyx"
+      },
+      "classes": [
+        "Priest",
+        "Druid"
+      ],
+      "optional": false,
+      "plan_label": "healer",
+      "spec_hint": "spec_guaritore"
+    },
+    {
+      "action": "already_satisfied",
+      "adventurer": {
+        "class_name": "Bard",
+        "id": "d59308b0-e7b1-4a21-98e4-e360e186b7e3",
+        "level": 5,
+        "name": "Quill Ironfoot"
+      },
+      "classes": [
+        "Bard"
+      ],
+      "optional": false,
+      "plan_label": "support",
+      "spec_hint": "spec_bardo"
+    },
+    {
+      "action": "already_satisfied",
+      "adventurer": {
+        "class_name": "Berserker",
+        "id": "f23d56ac-f116-45b9-81c2-a09bff4cd2c1",
+        "level": 5,
+        "name": "Brenna the Bold"
+      },
+      "classes": [
+        "Berserker"
+      ],
+      "optional": true,
+      "plan_label": "tier_locked_probe",
+      "spec_hint": "spec_furia"
+    }
+  ],
+  "ran_at": "2026-06-28T08:48:49.498128+00:00",
+  "structure": {
+    "current": {
+      "acquired_via": "seed_round6c_validation",
+      "is_unlocked": true,
+      "level": 1,
+      "purchased_at": "2026-06-28T08:47:26.541059+00:00",
+      "upgraded_at": "2026-06-28T08:47:26.541059+00:00"
+    },
+    "needs_update": false,
+    "structure_slug": "training_grounds",
+    "target_level": 1
+  },
+  "tester": {
+    "email": "tester@orbus.test",
+    "user_id": "d280a1e6-d4f5-4826-9aa7-8537290e8cb4"
+  }
+}
