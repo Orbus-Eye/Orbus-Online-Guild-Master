@@ -321,11 +321,16 @@ async def rename_adventurer(db, guild_id: str, adventurer_id: str, new_name: str
                 f"{RENAME_MAX_LIFETIME}). Nessuna rinomina ulteriore consentita."
             ),
         )
-    # Case-insensitive uniqueness within the guild (exclude self)
+    # ROUND 11.2 TASK 1bis — Uniqueness vale SOLO tra avventurieri ATTIVI
+    # della stessa gilda. Retired/archived mantengono il loro nome storico
+    # nei report (chronicle, expedition_members snapshot, audit) ma NON
+    # bloccano la riassegnazione del nome ad un nuovo adv attivo.
+    # Coerente con `is_retired` flag introdotto in Round 6B.4.
     collision = await db.adventurers.find_one(
         {
             "guild_id": guild_id,
             "id": {"$ne": adventurer_id},
+            "is_retired": {"$ne": True},
             "name": {"$regex": f"^{re.escape(name)}$", "$options": "i"},
         },
         {"_id": 0, "id": 1},
@@ -333,7 +338,11 @@ async def rename_adventurer(db, guild_id: str, adventurer_id: str, new_name: str
     if collision:
         raise HTTPException(
             status_code=409,
-            detail="Esiste già un avventuriero con questo nome nella tua gilda.",
+            detail={
+                "code": "adventurer.name.duplicate_active",
+                "user_message": "Esiste già un avventuriero attivo con questo "
+                                "nome nella tua gilda.",
+            },
         )
     now_iso = __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()
     await db.adventurers.update_one(

@@ -666,3 +666,19 @@ consecutivi. Verifica via log grep / monitoring stack.
 - Test t1_07 inizialmente fallibile → riscritto recruit con compensating "insert-then-verify" (3/3 PASS deterministico).
 - Test t3 (auction): 1 skip su test_t3_06 happy path purchase per bug preesistente del seed (gestito con `pytest.skip` documentato; non in scope Round 11.2).
 - Tutti i nuovi error_code mantengono retrocompat: legacy codes `training.spec_unknown`, `training.insufficient_gold`, etc. sostituiti dai nuovi prefissi `training.specialization.*`.
+
+### TASK 1bis — Adventurer name uniqueness EXCLUDE retired (2026-06-28)
+
+**Bug**: Rename a nome di un avventuriero `is_retired=True` veniva bloccato con 409, sbagliato.
+
+**Fix**: `app/adventurers/services.py::rename_adventurer` — aggiunto `"is_retired": {"$ne": True}` alla query di collision check. Error message convertito a dict strutturato:
+```json
+{"code": "adventurer.name.duplicate_active",
+ "user_message": "Esiste già un avventuriero attivo con questo nome nella tua gilda."}
+```
+
+**FE**: nessun cambio logico. `formatApiError` legge già `detail.user_message` correttamente. Messaggio toast renderizza leggibile, no `[object Object]`.
+
+**6 test** in `tests/backend_round112_adventurer_name_uniqueness_test.py` (rename→retired name OK, →active 409, case-insensitive 409, retired keeps name in expedition_members snapshot).
+
+**Storia preservata**: retired adv mantengono il loro `name` field + tutti gli `adventurer_name_snapshot` in `expedition_members` invariati. Nessuna migrazione, nessun hard delete.
