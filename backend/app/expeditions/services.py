@@ -556,6 +556,20 @@ async def _dispatch_expedition(
             },
         )
 
+    # ROUND 11.3 TASK A — Adventurer-level gate.
+    # MUST run AFTER the live/retired filter (so we only complain about
+    # advs that would actually enter the dungeon) and BEFORE the heavier
+    # equipment snapshot. PWR alone does NOT bypass.
+    from app.expeditions.level_gate import (
+        enforce_min_adventurer_level,
+        legacy_min_level_for_dungeon,
+    )
+    enforce_min_adventurer_level(
+        members_live,
+        legacy_min_level_for_dungeon(dungeon),
+        source="expedition.dispatch",
+    )
+
     # Phase 6: load equipment for each member; snapshot is frozen at departure.
     # Phase 13: also snapshot the active traits so completion can resolve
     # xp_gain modifiers deterministically even if the trait pool changes.

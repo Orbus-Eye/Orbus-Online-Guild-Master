@@ -53,6 +53,10 @@ def _utc_now_iso() -> str:
 
 
 def raid_dungeon_public(d: dict) -> dict:
+    # ROUND 11.3 TASK A — derive min_adventurer_level from explicit field
+    # if present, else from `tier` (1→8, 2→12, 3→15). Avoids a circular
+    # import via late binding.
+    from app.expeditions.level_gate import legacy_min_level_for_raid
     return {
         "id": d["id"],
         "slug": d["slug"],
@@ -72,6 +76,7 @@ def raid_dungeon_public(d: dict) -> dict:
         "guaranteed_dragon_essence_min": d.get("guaranteed_dragon_essence_min", 1),
         "guaranteed_dragon_essence_max": d.get("guaranteed_dragon_essence_max", 3),
         "gate": d.get("gate") or {},
+        "min_adventurer_level": legacy_min_level_for_raid(d),
     }
 
 
@@ -287,6 +292,14 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
     guild = await user_guild_or_404(db, current_user["id"])
     rd = await _resolve_raid_dungeon(payload.raid_slug)
     advs_ordered = await _validate_parties_and_advs(guild, payload.parties)
+    # ROUND 11.3 TASK A — level gate (also on preview so FE blocks early).
+    from app.expeditions.level_gate import (
+        enforce_min_adventurer_level,
+        legacy_min_level_for_raid,
+    )
+    enforce_min_adventurer_level(
+        advs_ordered, legacy_min_level_for_raid(rd), source="raid.preview",
+    )
     parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
     p = _compute_preview(rd, parties_docs)
     return {
@@ -334,6 +347,15 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
         raise HTTPException(status_code=422, detail="raids.already_in_progress")
 
     advs_ordered = await _validate_parties_and_advs(guild, payload.parties)
+
+    # ROUND 11.3 TASK A — level gate before commit. Mirrors expedition.dispatch.
+    from app.expeditions.level_gate import (
+        enforce_min_adventurer_level,
+        legacy_min_level_for_raid,
+    )
+    enforce_min_adventurer_level(
+        advs_ordered, legacy_min_level_for_raid(rd), source="raid.start",
+    )
 
     parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
     p = _compute_preview(rd, parties_docs)

@@ -105,6 +105,18 @@ async def preview_expedition(
             detail="One or more adventurers do not belong to your guild",
         )
 
+    # ROUND 11.3 TASK A — level gate on preview so the FE shows the
+    # blocking error BEFORE the user fires "Avvia Spedizione".
+    from app.expeditions.level_gate import (
+        enforce_min_adventurer_level,
+        legacy_min_level_for_dungeon,
+    )
+    enforce_min_adventurer_level(
+        advs,
+        legacy_min_level_for_dungeon(dungeon),
+        source="expedition.preview",
+    )
+
     # Phase 6+ snapshot equivalent: equip power lookup
     from app.equipment.services import _load_equipment_for_guild
     equip_map = await _load_equipment_for_guild(db, guild["id"])

@@ -8,6 +8,7 @@ imported eagerly at module level — no module-level cycle since
 from typing import Optional
 
 from app.expeditions.services import _evaluate_dungeon_gate
+from app.expeditions.level_gate import legacy_min_level_for_dungeon
 
 
 def dungeon_public(d: dict) -> dict:
@@ -30,6 +31,10 @@ def dungeon_public(d: dict) -> dict:
         "tier_label": d.get("tier_label"),
         "tags": d.get("tags") or [],
         "is_active": d.get("is_active", True),
+        # ROUND 11.3 TASK A — adventurer-level gate exposed to FE so the
+        # roster builder can grey-out under-level cards before dispatch.
+        # Falls back on a `difficulty`-derived default for legacy seeds.
+        "min_adventurer_level": legacy_min_level_for_dungeon(d),
     }
 
 

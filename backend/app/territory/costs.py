@@ -42,9 +42,15 @@ UPGRADE_COSTS: dict[str, list[Optional[dict]]] = {
     "dormitories": [
         None,
         {"gold": 0},                                    # Lv 1 (starter, cap 5)
-        {"gold": 200},                                  # Lv 2 (cap 10)
-        {"gold": 500},                                  # Lv 3 (cap 15)
-        {"gold": 1200},                                 # Lv 4 (cap 20)
+        # ROUND 11.3 TASK H — Lv2-Lv4 previously had only gold. Adding a
+        # light iron_shard cost makes the FE CostBreakdown render a coherent
+        # "Materiali richiesti" row (no more empty section) and ties the
+        # progression curve to the same material that backs every other
+        # Territory upgrade. Costs are intentionally low so early-game
+        # players are not blocked by a missing farm route.
+        {"gold": 200, "materials": {"iron_shard": 2}},  # Lv 2 (cap 10)
+        {"gold": 500, "materials": {"iron_shard": 4}},  # Lv 3 (cap 15)
+        {"gold": 1200, "materials": {"iron_shard": 6}}, # Lv 4 (cap 20)
         {"gold": 2500, "materials": {"iron_shard": 8}}, # Lv 5 (cap 25)
         {"gold": 5000, "materials": {"iron_shard": 16}},# Lv 6 (cap 30)
         # ROUND 11.2 TASK 4 — progressive curve Lv7-Lv11 (cap 40 → 100).
