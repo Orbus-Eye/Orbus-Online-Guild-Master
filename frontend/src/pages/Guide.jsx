@@ -11,25 +11,30 @@ const SECTIONS = [
     { id: "intro", label: "1. Introduzione" },
     { id: "gilda", label: "2. Gilda e progressione" },
     { id: "territorio", label: "3. Territorio di Gilda" },
-    { id: "roster-cap", label: "4. Capacità roster" },
-    { id: "roster-health", label: "5. Roster, Item Legati & Archivio" },
-    { id: "ruoli", label: "6. Avventurieri e ruoli" },
-    { id: "stats-catalog", label: "7. Statistiche (catalog)" },
-    { id: "traits-catalog", label: "8. Tratti (catalog)" },
-    { id: "dungeon", label: "9. Dungeon / Spedizioni" },
-    { id: "raid", label: "10. Raid" },
-    { id: "squadre", label: "11. Squadre Personalizzate" },
-    { id: "forge", label: "12. Equipaggiamento e Forge" },
-    { id: "training", label: "13. Addestramento & Specializzazioni" },
-    { id: "vault", label: "14. Deposito / Inventario" },
-    { id: "market", label: "15. Mercato (NPC)" },
-    { id: "auction", label: "16. Asta (player-to-player)" },
-    { id: "quest", label: "17. Quest e Streak" },
-    { id: "contracts", label: "18. Bacheca Contratti & Obiettivi" },
-    { id: "consortium", label: "19. Cronaca e Consorzi" },
-    { id: "chat", label: "20. Chat" },
-    { id: "privacy", label: "21. Privacy & Sicurezza" },
-    { id: "tips", label: "22. Suggerimenti base" },
+    { id: "roster-cap", label: "4. Capacità roster e Dormitori" },
+    { id: "roster-health", label: "5. Roster Health" },
+    { id: "archivio", label: "6. Congedo e Archivio" },
+    { id: "avventurieri", label: "7. Avventurieri" },
+    { id: "ruoli", label: "8. Ruoli" },
+    { id: "rarita", label: "9. Rarità" },
+    { id: "stats-catalog", label: "10. Statistiche" },
+    { id: "traits-catalog", label: "11. Tratti" },
+    { id: "reclutamento", label: "12. Reclutamento" },
+    { id: "dungeon", label: "13. Dungeon e Spedizioni" },
+    { id: "raid", label: "14. Raid" },
+    { id: "squadre", label: "15. Squadre Personalizzate" },
+    { id: "forge", label: "16. Equipaggiamento e Fucina" },
+    { id: "bound-items", label: "17. Item legati" },
+    { id: "training", label: "18. Addestramento e Specializzazioni" },
+    { id: "vault", label: "19. Deposito e Inventario" },
+    { id: "market", label: "20. Mercato" },
+    { id: "auction", label: "21. Asta" },
+    { id: "contracts", label: "22. Contratti e Obiettivi di Gilda" },
+    { id: "chronicle", label: "23. Cronaca" },
+    { id: "consortium", label: "24. Consorzi" },
+    { id: "chat", label: "25. Chat" },
+    { id: "privacy", label: "26. Privacy e Sicurezza" },
+    { id: "tips", label: "27. Suggerimenti base" },
 ];
 
 // ROUND 11.2 TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
@@ -170,7 +175,7 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
-                <SectionBlock id="territorio" title="Territorio di Gilda (ROUND 6B)">
+                <SectionBlock id="territorio" title="Territorio di Gilda">
                     <p>
                         Il <strong>Territorio</strong> è l&apos;insieme delle 11 strutture che la tua gilda può
                         costruire e potenziare. Ogni struttura sblocca o migliora una funzionalità del gioco.
@@ -210,7 +215,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="roster-cap" title="Capacità roster e congedo (ROUND 6B.3 Wave 1.5)">
+                <SectionBlock id="roster-cap" title="Capacità roster e Dormitori">
                     <p>
                         La gilda ha un <strong>cap massimo di avventurieri attivi</strong> determinato dal livello
                         dei <strong>Dormitori</strong>. Potenziare la struttura aumenta il cap:
@@ -258,7 +263,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="roster-health" title="Roster Health, Item Legati & Archivio (ROUND 6B.4)">
+                <SectionBlock id="roster-health" title="Roster Health">
                     <p>
                         <strong>Roster Health</strong> è il widget in Dashboard che riassume lo stato della tua capacità roster.
                         Quattro stati colorati per identificare a colpo d&apos;occhio se devi intervenire:
@@ -294,84 +299,60 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="ruoli" title="Avventurieri e ruoli">
+                <SectionBlock id="ruoli" title="Ruoli">
                     <p>
-                        Ogni avventuriero ha <strong>classe</strong>, <strong>ruolo</strong>, <strong>rarità</strong>, livello, esperienza,
-                        oltre 7 stat (Forza/Agilità/Intelletto/Resistenza/Stamina/Morale/Fede) ed eventuali tratti.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Rarità (ROUND 6A.1)</strong>: la rarità è decisa server-side al momento della generazione e non è
-                        modificabile. La distribuzione è:
-                    </p>
-                    <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
-                        <li><strong>Common</strong> ≈ 68% — base affidabile</li>
-                        <li><strong>Uncommon</strong> ≈ 24% — bonus stat lievi</li>
-                        <li><strong>Rare</strong> ≈ 7% — +1 a tutte le stat</li>
-                        <li><strong>Epic</strong> ≈ 0.9% — +2 stat + ≥1 stat alta + ≥2 tratti positivi</li>
-                        <li><strong>Legendary</strong> ≈ 0.1% — +3 stat + ≥1 stat al massimo + ≥3 tratti positivi (effetto sorpresa)</li>
-                    </ul>
-                    <p className="mt-2 text-muted-foreground text-[12px]">
-                        Importante: nessuna rarità è acquistabile o boostabile. Il drop è completamente affidato alla
-                        casualità server-side.
-                    </p>
-                    <p className="mt-3">
-                        <strong>Power totale</strong>: somma di <em>base_power</em> (stat + livello + rarità + tratti) +
-                        <em> equipment_power</em> (oggetti equipaggiati). Lo stesso valore appare ovunque in UI: lista roster,
-                        recruitment cards, expedition team picker, raid builder, equip modal preview.
-                    </p>
-                    <p className="mt-3">
-                        Ogni avventuriero ha una classe e un ruolo. I ruoli sono prefissati con un marker ASCII
-                        in tutte le liste per leggere a colpo d&apos;occhio:
-                    </p>
-                    <ul className="mt-2 space-y-1">
-                        <li><RoleMarker role="Tank" withLabel /> — assorbe danni</li>
-                        <li><RoleMarker role="Healer" withLabel /> — cura il gruppo</li>
-                        <li><RoleMarker role="DPS" withLabel /> — danno principale</li>
-                        <li><RoleMarker role="Support" withLabel /> — utility / buff (es. Bard)</li>
-                    </ul>
-                    <p className="mt-2">
-                        Statistiche: <strong>STR</strong> (forza), <strong>AGI</strong> (agilità),
-                        <strong> INT</strong> (intelletto), <strong>END</strong> (endurance),
-                        <strong> FAI</strong> (fede). Influenzano il <em>power</em> totale dell&apos;avventuriero.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Tratti</strong>: ogni avventuriero ha 0-3 tratti che modificano le statistiche
-                        in modo permanente. I tratti possono essere positivi, negativi o misti.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Rinomina</strong>: puoi rinominare ogni avventuriero fino a <strong>2 volte
-                        nella sua vita
-                                                                                            </strong> (rinomina gratuita, no oro). Dopo 2 rinomine il nome è definitivo.
-                    </p>
-
-                    <h3 className="text-amber mt-5 mb-2 text-[12px] tracking-widest">:: RECLUTAMENTO (ROUND 6A.1)</h3>
-                    <p>
-                        Il pool di reclutamento mostra <strong>4 candidati</strong> con rarità decisa
-                        server-side al momento della generazione. La distribuzione è fissa e non boostabile:
-                    </p>
-                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
-                        <li><strong>Common</strong> ≈ 68%</li>
-                        <li><strong>Uncommon</strong> ≈ 24%</li>
-                        <li><strong>Rare</strong> ≈ 7%</li>
-                        <li><strong>Epic</strong> ≈ 0.9% — ≥2 tratti positivi + stat alte</li>
-                        <li><strong>Legendary</strong> ≈ 0.1% — effetto sorpresa: ≥3 tratti positivi + ≥1 stat al massimo (server-enforced)</li>
-                    </ul>
-                    <p className="mt-2">
-                        <strong>Power unificato</strong>: ogni candidato mostra <code className="text-amber">PWR</code> in alto
-                        a destra nella card — è lo stesso valore che vedrai nel roster, raid builder ed
-                        expedition picker dopo il recruit. Confronta direttamente prima di spendere oro.
-                    </p>
-                    <p className="mt-2">
-                        <strong>Refresh</strong>: 3 refresh gratuiti / giorno UTC. Oltre il limite, costo crescente
-                        10g → 20g → 30g (cap). Il refresh NON garantisce Epic/Legendary — è puro reroll del pool.
-                    </p>
-                    <p className="mt-2 text-muted-foreground text-[12px]">
-                        Importante: nessuna rarità è acquistabile, boostabile o sbloccabile via premium. Il drop
-                        è interamente affidato alla casualità server-side gated da pesi pubblici.
+                        Ogni avventuriero ricopre un <strong>ruolo</strong> (Tank, Healer, DPS,
+                        Support) che determina la sua funzione in spedizione. Una squadra
+                        bilanciata di ruoli completa più dungeon e raid di una squadra
+                        sbilanciata, anche a parità di PWR totale.
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="stats-catalog" title="Statistiche (catalog data-driven)">
+                <SectionBlock id="archivio" title="Congedo e Archivio">
+                    <p>
+                        Il <strong>congedo</strong> non è una cancellazione: l&apos;avventuriero
+                        viene spostato in <strong>archivio</strong>. Non occupa più posti nei
+                        dormitori e non partecipa a spedizioni, ma il suo nome resta riservato e
+                        il suo storico (livello, traits) viene conservato.
+                    </p>
+                    <p className="mt-2">
+                        Un avventuriero archiviato può essere richiamato in roster solo se hai
+                        capacità libera. Item personali (bound) restano legati anche dopo il
+                        congedo: non sono né commerciabili né reclaim-abili da altri membri.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="avventurieri" title="Avventurieri">
+                    <p>
+                        Gli <strong>avventurieri</strong> sono il cuore della tua gilda. Ogni
+                        avventuriero ha: nome, livello (1-30), rarità (Common→Legendary),
+                        ruolo, classe, statistiche, fino a 3 tratti permanenti, equipaggiamento
+                        e (a Lv5+) eventuale specializzazione.
+                    </p>
+                    <p className="mt-2">
+                        Il loro <strong>Power Score (PWR)</strong> è la sintesi numerica del
+                        loro potere combinato. Avventurieri identici per PWR possono comportarsi
+                        diversamente in base a tratti e specializzazioni: leggere le sezioni 10 e 11
+                        è essenziale.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="rarita" title="Rarità">
+                    <p>
+                        Ogni avventuriero ha una <strong>rarità</strong>, generata server-side
+                        al reclutamento secondo pesi pubblici. La rarità influenza stat iniziali
+                        e cap massimi a livello 30.
+                    </p>
+                    <ul className="list-disc list-inside text-[12px] mt-2 space-y-1">
+                        <li><strong>Common</strong> — disponibile, stat base.</li>
+                        <li><strong>Uncommon</strong> — leggermente sopra la media.</li>
+                        <li><strong>Rare</strong> — top tier per dungeon avanzati.</li>
+                        <li><strong>Epic</strong> — molto raro, cap stat elevati.</li>
+                        <li><strong>Legendary</strong> — pochi per server, sbloccabili con condizioni speciali.</li>
+                    </ul>
+                </SectionBlock>
+
+                <SectionBlock id="stats-catalog" title="Statistiche">
                     <p>
                         Catalogo completo delle <strong>statistiche</strong> che governano avventurieri, spedizioni e ranking.
                         Dati caricati live dal server: se il team aggiunge una nuova stat, compare qui senza un nuovo deploy
@@ -449,7 +430,7 @@ export default function Guide() {
                     )}
                 </SectionBlock>
 
-                <SectionBlock id="traits-catalog" title="Tratti (catalog data-driven)">
+                <SectionBlock id="traits-catalog" title="Tratti">
                     <p>
                         Catalogo completo dei <strong>tratti</strong> che gli avventurieri possono ottenere alla
                         generazione. Dati caricati live dal server: nessun tratto interno/di test compare in elenco
@@ -576,7 +557,21 @@ export default function Guide() {
                     )}
                 </SectionBlock>
 
-                <SectionBlock id="dungeon" title="Dungeon / Spedizioni">
+                <SectionBlock id="reclutamento" title="Reclutamento">
+                    <p>
+                        Nella pagina <strong>Reclutamento</strong> trovi avventurieri-candidati
+                        generati casualmente dal server. Per ogni candidato vedi: nome, rarità,
+                        ruolo, classe, livello iniziale, stat preview e tratti.
+                    </p>
+                    <p className="mt-2">
+                        Puoi fare <strong>refresh</strong> della lista (sostituisce i candidati,
+                        può avere un costo o cooldown) oppure <strong>reclutare</strong> uno dei
+                        candidati. Se il roster è pieno (Dormitori al massimo) ricevi un errore
+                        chiaro: aumenta capacità prima.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="dungeon" title="Dungeon e Spedizioni">
                     <p>
                         I dungeon sono di due famiglie:
                     </p>
@@ -679,7 +674,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="forge" title="Equipaggiamento e Forge">
+                <SectionBlock id="forge" title="Equipaggiamento e Fucina">
                     <p>
                         Ogni avventuriero ha 3 slot: <strong>weapon</strong>, <strong>armor</strong>, <strong>accessory</strong>.
                         Gli oggetti hanno rarità (Common → Uncommon → Rare → Epic), un livello richiesto e bonus statistici.
@@ -694,7 +689,21 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="training" title="Campo di Addestramento & Specializzazioni (ROUND 6C)">
+                <SectionBlock id="bound-items" title="Item legati">
+                    <p>
+                        Alcuni oggetti sono <strong>legati</strong> (bound) all&apos;avventuriero
+                        che li ha ottenuti. Item legati: non sono commerciabili (Mercato/Asta),
+                        non sono equipaggiabili da altri membri, restano legati anche dopo
+                        congedo/archiviazione del proprietario.
+                    </p>
+                    <p className="mt-2">
+                        Sono identificati da un&apos;icona/badge dedicato in Inventario e Forge.
+                        I bonus di set restano calcolati anche per item legati: il sistema non
+                        crea differenze gameplay per il proprietario.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="training" title="Campo di Addestramento e Specializzazioni">
                     <p>
                         Il <strong>Campo di Addestramento</strong> (Training Grounds) è la struttura del Territorio che
                         permette di specializzare gli avventurieri di livello 5 o superiore.
@@ -775,7 +784,7 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
-                <SectionBlock id="vault" title="Deposito / Inventario">
+                <SectionBlock id="vault" title="Deposito e Inventario">
                     <p>
                         Il <strong>Deposito (Guild Vault)</strong> raccoglie tutti gli oggetti trovati nelle spedizioni.
                         Gli stack mostrano sia copie equipaggiate sia disponibili.
@@ -800,7 +809,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="market" title="Mercato e Crafting">
+                <SectionBlock id="market" title="Mercato">
                     <p className="mb-3 text-amber/90 text-[12px] border-l-2 border-amber/60 pl-3">
                         <strong>Mercato ≠ Asta.</strong> Il Mercato è il negozio NPC di sistema (prezzi fissi,
                         rotazione giornaliera). L&apos;Asta è il marketplace player-to-player. Sono{" "}
@@ -826,7 +835,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="auction" title="Asta (player-to-player)">
+                <SectionBlock id="auction" title="Asta">
                     <p>
                         L&apos;<strong>Asta</strong> (sezione <code>/auction</code>) è il marketplace dove le gilde si scambiano oggetti
                         a <strong>prezzo fisso</strong> (niente bidding per ora).
@@ -981,7 +990,7 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="privacy" title="Privacy &amp; Sicurezza">
+                <SectionBlock id="privacy" title="Privacy e Sicurezza">
                     <p>
                         <strong>Cosa NON condividere mai in chat</strong>:
                     </p>
