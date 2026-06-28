@@ -488,3 +488,13 @@ Script idempotente per portare l'account `tester@orbus.test` di prod in stato de
 Security: nessun gap — entrambi i path bloccano correttamente la transazione. Solo naming inconsistency.
 
 **Azione**: allineare gli error codes dei bound guards tra auction/market/equipment/shop in Round 11.1 (hardening sprint) per diagnostic consistency. NON fixare prima del prod deploy.
+
+---
+
+## 2026-06-28 — Round 6E UX backlog note
+
+**UX gap (notato da e1_tester durante validazione 6E)**:
+- `GET /api/training/catalog` ritorna SOLO le specs sbloccate dal tier corrente (es: 4 starter a TG Lv1). Il pattern attuale è "mostra solo cosa puoi fare ora".
+- **Considerazione futura**: esporre tutta la lista 14 spec con flag `is_unlocked: bool` per ogni spec, così il giocatore vede la roadmap completa e ha incentivo a upgradare il Training Grounds.
+
+**Azione**: lasciato così per ora (decision: progressive disclosure è coerente con UX text-based del gioco). Da rivalutare in **Round 11.1 / UX sprint**.

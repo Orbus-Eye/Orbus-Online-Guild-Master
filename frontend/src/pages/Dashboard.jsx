@@ -176,13 +176,13 @@ export default function Dashboard() {
     const advCount = guild.adventurer_count ?? 0;
 
     return (
-        <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
+        <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline overflow-x-hidden">
             <AppHeader />
 
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-w-0">
                 <OnboardingChecklist />
                 <TerritoryWidget />
-                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)]">
+                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
                     <DailyQuestsCard />
                     <StreakBadge />
                 </div>

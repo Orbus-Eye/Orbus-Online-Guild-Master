@@ -147,8 +147,8 @@ export default function ContractsCard() {
                     <div className="text-amber/80 tracking-widest mb-0.5">
                         ★ {t("contracts.card_top_label", "REWARD PIÙ RICCO PRONTO")}
                     </div>
-                    <div className="flex items-center justify-between text-foreground/90">
-                        <span className="truncate" title={topClaim.slug}>
+                    <div className="flex items-center justify-between text-foreground/90 min-w-0">
+                        <span className="truncate min-w-0" title={topClaim.slug}>
                             {topClaim.slug}
                         </span>
                         <span className="text-amber font-bold tabular-nums ml-2 shrink-0">

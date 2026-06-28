@@ -1,0 +1,49 @@
+{
+  "applied": {
+    "structure": true,
+    "warrior_slot": {
+      "class_name": "Warrior",
+      "from_level": 1,
+      "id": "e928ab25-cc01-4e0c-a5e2-204c9963ff27",
+      "name": "Nyx",
+      "to_level": 5
+    }
+  },
+  "guild": {
+    "id": "0788722b-724d-4343-9cd1-cd994d0f6200",
+    "name": "The Iron Lantern"
+  },
+  "mode": "apply",
+  "ran_at": "2026-06-28T11:49:46.429216+00:00",
+  "structure": {
+    "current": {
+      "acquired_via": "seed_round6c_validation",
+      "is_unlocked": true,
+      "level": 1,
+      "purchased_at": "2026-06-28T08:47:26.541059+00:00",
+      "upgraded_at": "2026-06-28T08:47:26.541059+00:00"
+    },
+    "needs_update": true,
+    "structure_slug": "training_grounds",
+    "target_level": 3
+  },
+  "tester": {
+    "email": "tester@orbus.test",
+    "user_id": "d280a1e6-d4f5-4826-9aa7-8537290e8cb4"
+  },
+  "warrior_slot": {
+    "action": "promote",
+    "adventurer": {
+      "class_name": "Warrior",
+      "id": "e928ab25-cc01-4e0c-a5e2-204c9963ff27",
+      "level": 1,
+      "name": "Nyx"
+    },
+    "classes": [
+      "Warrior",
+      "Paladin"
+    ],
+    "from_level": 1,
+    "to_level": 5
+  }
+}
