@@ -27,14 +27,15 @@ const SECTIONS = [
     { id: "bound-items", label: "17. Item legati" },
     { id: "training", label: "18. Addestramento e Specializzazioni" },
     { id: "vault", label: "19. Deposito e Inventario" },
-    { id: "market", label: "20. Mercato" },
-    { id: "auction", label: "21. Asta" },
-    { id: "contracts", label: "22. Contratti e Obiettivi di Gilda" },
-    { id: "chronicle", label: "23. Cronaca" },
-    { id: "consortium", label: "24. Consorzi" },
-    { id: "chat", label: "25. Chat" },
-    { id: "privacy", label: "26. Privacy e Sicurezza" },
-    { id: "tips", label: "27. Suggerimenti base" },
+    { id: "materiali", label: "20. Materiali e dove trovarli" },
+    { id: "market", label: "21. Mercato" },
+    { id: "auction", label: "22. Asta" },
+    { id: "contracts", label: "23. Contratti e Obiettivi di Gilda" },
+    { id: "chronicle", label: "24. Cronaca" },
+    { id: "consortium", label: "25. Consorzi" },
+    { id: "chat", label: "26. Chat" },
+    { id: "privacy", label: "27. Privacy e Sicurezza" },
+    { id: "tips", label: "28. Suggerimenti base" },
 ];
 
 // TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
@@ -825,6 +826,30 @@ export default function Guide() {
                         Bug fix 19.4a: la pagina Mercato leggeva la chiave sbagliata della risposta API
                         (<code>items</code> invece di <code>inventory</code>) → la lista vendita appariva vuota anche
                         quando il deposito non lo era. Ora il deposito viene letto correttamente.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="materiali" title="Materiali e dove trovarli">
+                    <p>
+                        I <strong>materiali</strong> sono risorse usate per potenziare strutture del
+                        Territorio, craftare oggetti in Fucina e disincantare equip. Si ottengono
+                        giocando: dungeon, raid, contratti, mercato NPC, disincanto.
+                    </p>
+                    <p className="mt-2">
+                        Nessun materiale è acquistabile con denaro reale né tramite admin.
+                        Sono <strong>non equipaggiabili</strong> e generalmente <strong>non legati</strong>
+                        (puoi venderli in Asta).
+                    </p>
+                    <p className="mt-3">
+                        Per il catalogo completo con descrizioni, rarità, fonti e usi: apri la pagina
+                        pubblica <a href="/materials" className="text-amber underline" data-testid="guide-link-materials">/materials</a>.
+                        Lo stesso elenco è esposto via API a <code>/api/materials/catalog</code>.
+                    </p>
+                    <p className="mt-3 text-[12px] text-muted-foreground">
+                        <strong>Quando potenzi una struttura</strong>: il Territorio mostra ora il
+                        costo completo (oro + materiali con quantità richiesta vs posseduta) PRIMA
+                        del click. Materiali messi in vendita all&apos;Asta non sono spendibili per
+                        upgrade (sono &quot;bloccati&quot; finché annulli il listing).
                     </p>
                 </SectionBlock>
 

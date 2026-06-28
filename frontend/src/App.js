@@ -31,6 +31,7 @@ import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
 import TraitsPublic from "@/pages/TraitsPublic";  // ROUND 11.2 TASK 8 — SEO
 import StatsPublic from "@/pages/StatsPublic";    // ROUND 11.2 TASK 8 — SEO
+import MaterialsPublic from "@/pages/MaterialsPublic";  // ROUND 11.2 EXT S3 — SEO
 import Chat from "@/pages/Chat";
 import Auction from "@/pages/Auction";
 import Squads from "@/pages/Squads";
@@ -253,6 +254,8 @@ function App() {
                         {/* ROUND 11.2 TASK 8 — Public SEO routes (no auth, no redirect) */}
                         <Route path="/traits" element={<TraitsPublic />} />
                         <Route path="/stats" element={<StatsPublic />} />
+                        {/* ROUND 11.2 EXT S3 — Public SEO materials page */}
+                        <Route path="/materials" element={<MaterialsPublic />} />
                         <Route
                             path="/chronicle"
                             element={

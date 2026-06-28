@@ -116,14 +116,23 @@ async def _enrich_territory_with_inventory(db, payload: dict, guild_id: str) -> 
     template_ids = [v["id"] for v in items_by_slug.values()]
 
     # Aggregate owned quantities (single query across all templates).
+    # ROUND 11.2 EXT S3 P1 FIX — `owned` here reflects *available*
+    # quantity (= quantity - market_locked_qty). This keeps the FE
+    # preview honest: materials currently listed in an active auction
+    # are NOT spendable on a Territory upgrade, and the preview MUST
+    # mirror the same gate used by `_atomic_debit_materials`.
     owned_by_template: dict[str, int] = {tid: 0 for tid in template_ids}
     if template_ids:
         async for row in db.inventory_items.find(
             {"guild_id": guild_id, "item_id": {"$in": template_ids}},
-            {"_id": 0, "item_id": 1, "quantity": 1},
+            {"_id": 0, "item_id": 1, "quantity": 1, "market_locked_qty": 1},
         ):
+            available = max(
+                0,
+                int(row.get("quantity", 0)) - int(row.get("market_locked_qty", 0)),
+            )
             owned_by_template[row["item_id"]] = (
-                owned_by_template.get(row["item_id"], 0) + int(row.get("quantity", 0))
+                owned_by_template.get(row["item_id"], 0) + available
             )
 
     g = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "gold": 1})
@@ -327,6 +336,13 @@ async def _atomic_debit_materials(
     if a later step fails. Raises 422 on first insufficient material; the
     caller is responsible for the gold refund + already-debited materials
     refund (see `_compensate_refund`).
+
+    ROUND 11.2 EXT S3 P1 FIX — the check now uses *available* quantity
+    (= ``quantity - market_locked_qty``) instead of raw ``quantity``.
+    Materials listed in an active auction are no longer spendable on
+    Territory upgrades, eliminating a latent double-spend window where a
+    player could consume a listed stack, have the listing remain valid,
+    and ship the buyer phantom goods at sale time.
     """
     applied: list[tuple[str, str, int]] = []
     for slug, qty in materials.items():
@@ -334,33 +350,49 @@ async def _atomic_debit_materials(
         if qty <= 0:
             continue
         template_id = template_by_slug[slug]
-        # Sum the available quantities by aggregating across all inventory
-        # rows of this template (we need an atomic decrement on a SINGLE
-        # row, since materials live in their own row per item_id).
+        # Atomic CAS on `quantity - market_locked_qty >= qty`. Materials
+        # never get `equipped_count`, so equipped is implicitly 0.
         res = await db.inventory_items.find_one_and_update(
-            {"guild_id": guild_id, "item_id": template_id,
-             "quantity": {"$gte": qty}},
+            {
+                "guild_id": guild_id,
+                "item_id": template_id,
+                "$expr": {
+                    "$gte": [
+                        {"$subtract": [
+                            "$quantity",
+                            {"$ifNull": ["$market_locked_qty", 0]},
+                        ]},
+                        qty,
+                    ],
+                },
+            },
             {"$inc": {"quantity": -qty}},
-            projection={"_id": 0, "quantity": 1},
+            projection={"_id": 0, "quantity": 1, "market_locked_qty": 1},
             return_document=True,
         )
         if not res:
             # Roll back what we've already debited in this loop, plus the
             # caller will refund gold. The exception detail names the
-            # missing material so the UI can surface it cleanly.
+            # missing material so the UI can surface it cleanly. The
+            # `available` value reported here MUST be computed identically
+            # to the gating condition above so the player message matches
+            # what the FE preview shows.
             await _compensate_refund(
                 db, guild_id=guild_id,
                 gold_refund=0, materials_refund=applied,
             )
             cur = await db.inventory_items.find_one(
                 {"guild_id": guild_id, "item_id": template_id},
-                {"_id": 0, "quantity": 1},
+                {"_id": 0, "quantity": 1, "market_locked_qty": 1},
             )
+            cur_total = int((cur or {}).get("quantity", 0))
+            cur_locked = int((cur or {}).get("market_locked_qty", 0))
+            cur_available = max(0, cur_total - cur_locked)
             raise HTTPException(
                 status_code=422,
                 detail={"code": "resources.material_insufficient",
                         "slug": slug, "required": qty,
-                        "available": int((cur or {}).get("quantity", 0))},
+                        "available": cur_available},
             )
         applied.append((slug, template_id, qty))
     return applied
