@@ -231,7 +231,16 @@ export default function Consortiums() {
                                 <li
                                     key={c.id}
                                     data-testid={`consortium-row-${c.id}`}
-                                    className="border-l-2 border-border/40 pl-3 flex items-baseline justify-between gap-3 flex-wrap"
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => setDetailC(c)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            setDetailC(c);
+                                        }
+                                    }}
+                                    className="border-l-2 border-border/40 pl-3 flex items-baseline justify-between gap-3 flex-wrap cursor-pointer hover:border-amber/60 hover:bg-amber/5 transition-colors rounded-sm py-1 -ml-1 pl-3 focus:outline-none focus:border-amber"
                                 >
                                     <div className="flex-1 min-w-0">
                                         <div className="text-foreground/90 truncate">
@@ -254,21 +263,30 @@ export default function Consortiums() {
                                                 {c.description}
                                             </div>
                                         ) : null}
-                                        {c.description && c.description.length > 100 ? (
-                                            <button
-                                                type="button"
-                                                onClick={() => setDetailC(c)}
-                                                data-testid={`consortium-read-more-${c.id}`}
-                                                className="text-[10px] text-amber tracking-widest mt-1 hover:underline"
-                                            >
-                                                {t("consortiumsExt.read_more")} →
-                                            </button>
-                                        ) : null}
+                                        {/* ROUND 6B.3 Wave 3 — FIX BUG 3:
+                                            "Leggi tutto" is now ALWAYS shown as
+                                            an affordance for any consortium row
+                                            (including short descriptions and
+                                            empty ones), and the entire <li> is
+                                            keyboard- + mouse-clickable. The
+                                            previous `description.length > 100`
+                                            gate left short-description rows
+                                            without a discoverable trigger. */}
+                                        <span
+                                            data-testid={`consortium-read-more-${c.id}`}
+                                            aria-hidden="true"
+                                            className="inline-block text-[10px] text-amber tracking-widest mt-1"
+                                        >
+                                            {t("consortiumsExt.read_more")} →
+                                        </span>
                                     </div>
                                     {!mine && (
                                         <button
                                             type="button"
-                                            onClick={() => onJoin(c.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onJoin(c.id);
+                                            }}
                                             disabled={busy === `join-${c.id}`}
                                             data-testid={`consortium-join-${c.id}`}
                                             className="shrink-0 text-[10px] tracking-widest px-2 py-1 border border-amber text-amber rounded-sm hover:bg-amber/10 disabled:opacity-50"

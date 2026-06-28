@@ -6,6 +6,9 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import AppHeader from "@/components/AppHeader";
 import { useT } from "@/i18n/I18nContext";
+// ROUND 6B.3 Wave 3 — FIX BUG 2: normalise structured backend `detail`
+// payloads to a safe string before passing to `toast.error`.
+import { formatErrorDetail } from "@/lib/api";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -262,7 +265,7 @@ export default function SquadBuilder() {
             });
             const body = await res.json();
             if (!res.ok) {
-                toast.error(body.detail || (lang === "it" ? "Errore" : "Error"));
+                toast.error(formatErrorDetail(body.detail) || (lang === "it" ? "Errore" : "Error"));
                 return;
             }
             toast.success(lang === "it" ? "Squadra salvata" : "Squad saved");

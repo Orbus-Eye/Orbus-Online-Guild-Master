@@ -40,6 +40,16 @@ from app.territory.guards import compute_adventurer_cap_state
 # ─── Pure assertion helpers ──────────────────────────────────────────────────
 
 
+# ROUND 6B.3 Wave 3 — Semantic decision (locked):
+# Strict >cap by design — at-cap is allowed, only true over-cap (>cap,
+# post-rollback or migration edge) is blocked.
+# Rationale: a player who is AT cap (e.g. 5/5 with Dormitori Lv1) must keep
+# normal gameplay — they can launch expeditions, build squads, equip gear.
+# The guard only fires when `current > cap` (true over-cap), which can only
+# come from a defensive rollback or a future cap-reduction migration. The
+# recruit flow uses `additional=1` so it correctly rejects "going from
+# 5/5 → 6/5", which is *projected* over-cap, while all read/use flows pass
+# `additional=0` and only block actual over-cap state.
 async def assert_not_over_cap(
     db, guild_id: str, *, source: str, additional: int = 0,
 ) -> dict:

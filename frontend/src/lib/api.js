@@ -29,6 +29,21 @@ api.interceptors.response.use(
     (res) => res,
     (err) => {
         const status = err?.response?.status;
+        // ROUND 6B.3 Wave 3 — FIX BUG 2: centralised error string normalisation.
+        // The backend returns 4xx with `detail` either as a string or a
+        // structured object `{code, user_message, ...}`. Callers that did
+        // `toast.error(err.response.data.detail)` directly would render
+        // `[object Object]`. Provide a normalised string on the error so
+        // `toast.error(err.normalizedMessage)` is always safe.
+        const _detail = err?.response?.data?.detail;
+        if (typeof _detail === "string") {
+            err.normalizedMessage = _detail;
+        } else if (_detail && typeof _detail === "object") {
+            err.normalizedMessage = _detail.user_message
+                || _detail.message
+                || _detail.code
+                || JSON.stringify(_detail);
+        }
         if (status === 401 && typeof onUnauthorized === "function") {
             onUnauthorized();
         }
@@ -76,6 +91,14 @@ api.interceptors.response.use(
 export function formatApiError(err) {
     const detail = err?.response?.data?.detail;
     if (detail == null) return err?.message || "Something went wrong.";
+    return formatErrorDetail(detail);
+}
+
+// ROUND 6B.3 Wave 3 — FIX BUG 2: helper for non-axios callers (e.g. raw
+// `fetch().then(r => r.json())` blocks). Centralised normalisation so
+// `toast.error(formatErrorDetail(body.detail))` never renders `[object Object]`.
+export function formatErrorDetail(detail) {
+    if (detail == null) return "Something went wrong.";
     if (typeof detail === "string") return detail;
     if (Array.isArray(detail)) {
         return detail
@@ -83,7 +106,12 @@ export function formatApiError(err) {
             .filter(Boolean)
             .join(" ");
     }
-    if (detail && typeof detail.msg === "string") return detail.msg;
+    if (typeof detail === "object") {
+        if (typeof detail.user_message === "string") return detail.user_message;
+        if (typeof detail.message === "string") return detail.message;
+        if (typeof detail.msg === "string") return detail.msg;
+        if (typeof detail.code === "string") return detail.code;
+    }
     return String(detail);
 }
 

@@ -162,7 +162,17 @@ export default function Guide() {
                         gilda entra in stato <strong>&quot;Roster oltre capacità&quot;</strong> e un banner rosso compare
                         in cima alle pagine Reclutamento, Spedizioni, Raid, Squadre e Territorio.
                     </p>
-                    <p className="mt-3 text-[12px]"><strong>Azioni bloccate</strong> finché sei over-cap (HTTP 423 <code>roster_over_capacity</code>):</p>
+                    <p className="mt-3 text-[12px] border-l-2 border-amber/60 pl-3 text-amber/90">
+                        <strong>AT-cap ≠ over-cap (ROUND 6B.3 Wave 3, decisione semantica)</strong>:
+                        essere <em>esattamente a cap</em> (es. 5/5 con Dormitori Lv1) consente il gameplay
+                        normale — puoi lanciare spedizioni, raid, costruire squadre ed equipaggiare con i
+                        tuoi 5 avventurieri. Il blocco scatta SOLO quando <code>current &gt; cap</code> (vero
+                        over-cap, ottenibile solo da un rollback difensivo o da una futura migrazione che
+                        riduca il cap). Il reclutamento usa una proiezione (<code>5/5 → 6/5</code>) e quindi
+                        rifiuta correttamente il nuovo recruit a cap pieno, lasciandoti le due vie d&apos;uscita
+                        (potenzia Dormitori, oppure congeda un avventuriero).
+                    </p>
+                    <p className="mt-3 text-[12px]"><strong>Azioni bloccate</strong> finché sei over-cap (HTTP 423 <code>roster_over_capacity</code>, solo con <code>current &gt; cap</code>):</p>
                     <ul className="list-disc list-inside mt-1 space-y-1 text-[12px]">
                         <li>Reclutare nuovi avventurieri</li>
                         <li>Avviare spedizioni o raid (anche replay-last)</li>

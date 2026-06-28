@@ -106,7 +106,14 @@ def listing_public(listing: dict, *, lang: str = "it", include_buyer: bool = Fal
         "fee_percentage": int(listing.get("fee_percentage", MARKET_FEE_PCT)),
         "status": listing.get("status", LISTING_STATUS_ACTIVE),
         "created_at": listing.get("created_at"),
-        "seller": {"guild_name": listing.get("seller_guild_name")},
+        "seller": {
+            "guild_name": listing.get("seller_guild_name"),
+            # ROUND 6B.3 Wave 3 — FIX BUG 1: expose seller_user_id (NOT PII —
+            # internal UUID, never email/username) so the FE can compute
+            # `isOwn` and visibly disable the Buy button on the player's own
+            # listings, instead of relying on a backend 4xx after click.
+            "user_id": listing["seller_user_id"],
+        },
     }
     if include_buyer and listing.get("buyer_guild_name"):
         out["buyer"] = {"guild_name": listing.get("buyer_guild_name")}

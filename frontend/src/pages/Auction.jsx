@@ -11,6 +11,10 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
+// ROUND 6B.3 Wave 3 — FIX BUG 2: normalise fetch-based error details to
+// a string so `toast.error(...)` never renders `[object Object]` when the
+// backend returns a structured `detail` payload (Pydantic list / dict).
+import { formatErrorDetail } from "../lib/api";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
@@ -46,7 +50,7 @@ function authedFetch(token, path, init = {}) {
 }
 
 // ─── BUY TAB ─────────────────────────────────────────────────────────────
-function BuyTab({ token, lang, t, refreshGuild, myGuildId, myGuildGold }) {
+function BuyTab({ token, lang, t, refreshGuild, myUserId, myGuildId, myGuildGold }) {
     const [listings, setListings] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -88,7 +92,7 @@ function BuyTab({ token, lang, t, refreshGuild, myGuildId, myGuildGold }) {
             await load();
             await refreshGuild();
         } else {
-            toast.error(body.detail || "Errore");
+            toast.error(formatErrorDetail(body.detail) || "Errore");
         }
     }
 
@@ -221,7 +225,11 @@ function BuyTab({ token, lang, t, refreshGuild, myGuildId, myGuildGold }) {
                         ) : (() => {
                             // ROUND 6B.3 Wave 2 — explicit guard reasons so the
                             // FE never lets the player click a CTA that 4xx's.
-                            const isOwn = l.seller?.guild_id === myGuildId;
+                            // ROUND 6B.3 Wave 3 FIX BUG 1 — Use seller.user_id
+                            // (now exposed by backend) instead of the previously
+                            // missing seller.guild_id, so own-listing buttons are
+                            // visibly disabled with structured tooltip.
+                            const isOwn = !!myUserId && l.seller?.user_id === myUserId;
                             const isInactive = l.status && l.status !== "active";
                             const cannotAfford = l.price_per_unit > myGuildGold;
                             const disabled = isOwn || isInactive || cannotAfford;
@@ -327,7 +335,7 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
             if (r.status === 422 && detail === "market.bound_item_not_sellable") {
                 toast.error(t("market.error_bound_item"));
             } else {
-                toast.error(detail || "Errore");
+                toast.error(formatErrorDetail(detail) || "Errore");
             }
         }
         setSubmitting(false);
@@ -466,7 +474,7 @@ function MineTab({ token, lang, t, refreshGuild }) {
             await load();
             await refreshGuild();
         } else {
-            toast.error(body.detail || "Errore");
+            toast.error(formatErrorDetail(body.detail) || "Errore");
         }
     }
 
@@ -608,7 +616,7 @@ export default function Market() {
                             : tab === "sell" ? t("auction.tab_sell")
                             : t("auction.tab_mine")}
                     </SectionTitle>
-                    {tab === "buy" && <BuyTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} myGuildId={guild?.id} myGuildGold={guild?.gold || 0} />}
+                    {tab === "buy" && <BuyTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} myUserId={user?.id} myGuildId={guild?.id} myGuildGold={guild?.gold || 0} />}
                     {tab === "sell" && <SellTab token={token} lang={lang} t={t} fee={FEE} refreshGuild={refreshGuild} />}
                     {tab === "mine" && <MineTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} />}
                 </section>

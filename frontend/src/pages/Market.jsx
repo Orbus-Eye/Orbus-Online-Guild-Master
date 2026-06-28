@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
-import { api, formatApiError } from "../lib/api";
+import { api, formatApiError, formatErrorDetail } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
 
@@ -119,7 +119,7 @@ export default function Market() {
             else if (status === 409) toast.error("Offerta esaurita.");
             else if (status === 410) toast.error("Offerta scaduta. Aggiorna la pagina.");
             else if (status === 429) toast.error("Rallenta un attimo.");
-            else if (detail) toast.error(detail);
+            else if (detail) toast.error(formatErrorDetail(detail));
             else toast.error(formatApiError(err));
         } finally {
             setBusy(false);
