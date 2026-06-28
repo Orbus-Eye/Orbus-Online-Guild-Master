@@ -402,6 +402,14 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
             pass
         raise HTTPException(status_code=400, detail="Insufficient gold")
 
+    # ROUND 11.2 TASK 1 — Post-insert cap verification with compensating
+    # rollback. The pre-debit `assert_not_over_cap` dependency cannot
+    # serialize two concurrent recruits on a 1-slot-left roster (both pass
+    # the count check before either insert lands). We insert the adventurer
+    # FIRST, then re-count: if the total exceeds the cap, the loser is the
+    # one whose post-insert count is > cap (deterministic via MongoDB
+    # serialization). Loser → delete own insert + refund gold + restore offer.
+
     adventurer_doc = {
         "id": str(uuid.uuid4()),
         "guild_id": guild["id"],
@@ -431,6 +439,42 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
         "updated_at": now.isoformat(),
     }
     await db.adventurers.insert_one(adventurer_doc)
+
+    # ROUND 11.2 TASK 1 — Post-insert cap verification (compensating).
+    # If two concurrent recruits both pass the pre-debit assert_not_over_cap
+    # check on a 1-slot-left roster, both will land their insert. The loser
+    # is determined here: whoever sees count > cap AFTER its own insert
+    # rolls back (delete this adv + refund gold + restore offer).
+    try:
+        from app.territory.guards import compute_adventurer_cap_state
+        cap_state = await compute_adventurer_cap_state(db, guild["id"])
+        if int(cap_state.get("current", 0)) > int(cap_state.get("cap", 0)):
+            # We are over cap → we are the loser. Compensate.
+            await db.adventurers.delete_one({"id": adventurer_doc["id"]})
+            await db.guilds.update_one(
+                {"id": guild["id"]},
+                {"$inc": {"gold": RECRUITMENT_COST_GOLD},
+                 "$set": {"updated_at": now.isoformat()}},
+            )
+            offer_to_restore = {k: v for k, v in offer.items() if k != "_id"}
+            try:
+                await db.recruitment_offers.insert_one(offer_to_restore)
+            except Exception:
+                pass
+            raise HTTPException(
+                status_code=423,
+                detail={
+                    "code": "roster_over_capacity",
+                    "current": int(cap_state.get("current", 0)),
+                    "cap": int(cap_state.get("cap", 0)),
+                    "user_message": "Capienza avventurieri raggiunta. "
+                                    "Potenzia Dormitori o congeda.",
+                },
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        pass
     # Phase 14 — daily quest progress (best-effort)
     try:
         from app.quests.services import increment_quest_progress

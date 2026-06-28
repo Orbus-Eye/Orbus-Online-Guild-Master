@@ -119,7 +119,7 @@ export default function Guide() {
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
                         <li><strong>Sala della Gilda</strong> — Cuore amministrativo, è il prerequisito principale per tutte le altre strutture.</li>
-                        <li><strong>Dormitori</strong> — Determinano il cap del roster (Lv1=5, Lv2=10, …, Lv6=30).</li>
+                        <li><strong>Dormitori</strong> — Determinano il cap del roster con scala progressiva da Lv1 (cap 5) a Lv11 (cap 100). Sequenza: 5 → 10 → 15 → 20 → 25 → 30 → 40 → 50 → 65 → 80 → 100. Costi gold + materiali progressivi.</li>
                         <li><strong>Bacheca Spedizioni</strong> — Sblocca dungeon di tier più alti.</li>
                         <li><strong>Sala della Guerra</strong> — Lv2 sblocca Raid T1, Lv3 i T2.</li>
                         <li><strong>Banco del Mercato</strong> — Mercato NPC (Lv1=compra, Lv2=vendi).</li>
@@ -143,7 +143,7 @@ export default function Guide() {
                         Le strutture non si comprano mai a costo zero.
                     </p>
                     <p className="mt-2 text-amber/90 text-[12px]">
-                        <strong>👑 Lv7 LEGACY (Dormitori)</strong>: alcuni account storici hanno ricevuto un cap a 50 dalla
+                        <strong>👑 Lv7-Lv11 (Dormitori, ROUND 11.2)</strong>: la scala dei livelli ora si estende fino a <strong>Lv11 (cap 100)</strong>. Costi gold + materiali progressivi (no premium, no skip). I cap intermedi sono 40 (Lv7), 50 (Lv8), 65 (Lv9), 80 (Lv10), 100 (Lv11). Account legacy con Lv7 pre-Round 11.2 mantengono il loro cap; le strutture esistenti non vengono modificate.
                         migrazione una-tantum di ROUND 6B. Non è acquistabile dall&apos;utente.
                     </p>
                     <p className="mt-2 text-muted-foreground text-[12px]">

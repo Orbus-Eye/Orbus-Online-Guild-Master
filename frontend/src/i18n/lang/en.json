@@ -11,6 +11,8 @@
     "tab_mine": "MY LISTINGS",
     "buy_btn": "Buy from Auction",
     "buy_btn_short": "Buy",
+    "buy_confirm_btn": "Confirm purchase",
+    "buy_cancel_btn": "Cancel",
     "sell_btn": "List on Auction",
     "list_btn": "Submit",
     "buy_confirm_title": "Confirm purchase",

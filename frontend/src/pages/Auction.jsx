@@ -201,8 +201,30 @@ function BuyTab({ token, lang, t, refreshGuild, myUserId, myGuildId, myGuildGold
                             {t("market.seller")}: <span className="text-foreground">{l.seller.guild_name}</span>
                         </div>
                         {confirmId === l.id ? (
-                            <div className="border border-amber/50 rounded-sm p-2 bg-amber/5 space-y-2">
-                                <p className="text-xs">{t("market.buy_confirm")}</p>
+                            <div
+                                className="border border-amber/50 rounded-sm p-3 bg-amber/5 space-y-3"
+                                data-testid={`market-buy-modal-${l.id}`}
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby={`market-buy-title-${l.id}`}
+                            >
+                                <div className="flex items-start justify-between gap-2">
+                                    <p
+                                        id={`market-buy-title-${l.id}`}
+                                        className="text-xs font-semibold uppercase tracking-wider text-amber"
+                                    >
+                                        {t("market.buy_confirm")}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        aria-label="Close"
+                                        onClick={() => { setConfirmId(null); setBuyQty(1); }}
+                                        className="text-muted-foreground hover:text-foreground text-xs px-1"
+                                        data-testid={`market-buy-close-${l.id}`}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
                                 <div className="flex items-center gap-2 text-xs">
                                     <label>{t("auction.buy_quantity")}:</label>
                                     <input
@@ -216,20 +238,21 @@ function BuyTab({ token, lang, t, refreshGuild, myUserId, myGuildId, myGuildGold
                                         = {(buyQty || 0) * l.price_per_unit}g
                                     </span>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-col sm:flex-row gap-2">
                                     <button
-                                        className="bg-amber/90 text-background px-3 py-1 rounded-sm text-xs font-bold disabled:opacity-50"
+                                        className="bg-amber/90 text-background px-4 py-2 rounded-sm text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                                         onClick={() => doBuy(l)}
                                         disabled={(buyQty || 0) * l.price_per_unit > myGuildGold}
                                         data-testid={`market-buy-confirm-${l.id}`}
                                     >
-                                        ✓ {t("auction.buy_btn")}
+                                        {t("auction.buy_confirm_btn")}
                                     </button>
                                     <button
-                                        className="border border-border px-3 py-1 rounded-sm text-xs"
+                                        className="border border-border hover:bg-secondary/50 px-4 py-2 rounded-sm text-xs flex-1"
                                         onClick={() => { setConfirmId(null); setBuyQty(1); }}
+                                        data-testid={`market-buy-cancel-${l.id}`}
                                     >
-                                        ×
+                                        {t("auction.buy_cancel_btn")}
                                     </button>
                                 </div>
                             </div>
