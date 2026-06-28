@@ -106,6 +106,7 @@
     "logout": "esci",
     "brand_subtitle_dashboard": "DASHBOARD",
     "consortiums": "Consorzi",
+    "chronicle": "CRONACA",
     "forge": "OFFICINA",
     "raids": "RAID",
     "auction": "ASTA",
@@ -1072,6 +1073,8 @@
   },
   "chronicle": {
     "title": "CRONACA DEL SERVER",
+    "page_title": "Cronaca del Server",
+    "page_intro": "Feed pubblico in sola lettura degli eventi recenti del server: spedizioni completate, raid vinti, achievement sbloccati, milestone delle altre gilde.",
     "loading": "Caricamento eventi…",
     "error": "Impossibile caricare la cronaca",
     "empty": "Nessuna attività recente",

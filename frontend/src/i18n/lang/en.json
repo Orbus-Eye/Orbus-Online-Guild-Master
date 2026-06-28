@@ -106,6 +106,7 @@
     "logout": "logout",
     "brand_subtitle_dashboard": "DASHBOARD",
     "consortiums": "Consortiums",
+    "chronicle": "CHRONICLE",
     "forge": "FORGE",
     "raids": "RAIDS",
     "auction": "AUCTION",
@@ -1072,6 +1073,8 @@
   },
   "chronicle": {
     "title": "SERVER CHRONICLE",
+    "page_title": "Server Chronicle",
+    "page_intro": "Public read-only feed of recent server-wide events: completed expeditions, raid victories, achievement unlocks and other guild milestones.",
     "loading": "Loading events…",
     "error": "Unable to load chronicle",
     "empty": "No recent activity",

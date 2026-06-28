@@ -413,3 +413,68 @@ Block destructive write flows when active roster exceeds the
 | r6b3 cleanup | ✅ flag-based, 0 hard delete |
 
 **Wave 3 status: DONE. ROUND 6B.3 COMPLETE.**
+
+
+---
+
+## ROUND 6B.3 Wave 3.1 — Post-deploy hotfix (smoke su https://orbusonline.net)
+
+**Data**: 2026-06-28
+**Trigger**: Smoke su prod ha rilevato 1 bug P1 (frontend routing) + 1 finding di sicurezza (UUID leak minor).
+
+### BUG P1 (fixato) — `/chronicle` routing broken
+**Sintomo**: navigazione diretta a `https://orbusonline.net/chronicle` rimbalzava in landing (catch-all `*` → `/`). Nessun link al menu/nav per arrivare alla Cronaca, che era visibile solo come card embedded nella Dashboard.
+
+**Root cause**: la pagina `Chronicle.jsx` non esisteva (esisteva solo il component `ChronicleCard.jsx` usato in `Dashboard.jsx`); nessuna `<Route path="/chronicle">` in `App.js`; nessun `<NavLink to="/chronicle">` in `AppHeader.jsx`.
+
+**Fix** (5 file):
+- ✨ Nuovo: `frontend/src/pages/Chronicle.jsx` (35 righe — wrapper standalone su `ChronicleCard limit={50}` con header `:: SERVER CHRONICLE` + intro text)
+- `frontend/src/App.js`: import + route protetta `requireGuild`
+- `frontend/src/components/AppHeader.jsx`: `<NavLink to="/chronicle" data-testid="nav-chronicle">` inserito tra Consorzi e Chat
+- `frontend/src/i18n/lang/it.json`: aggiunto `nav.chronicle="CRONACA"` + `chronicle.page_title` + `chronicle.page_intro`
+- `frontend/src/i18n/lang/en.json`: speculari `nav.chronicle="CHRONICLE"` + `chronicle.page_title` + `chronicle.page_intro`
+
+**Bug secondario sgamato durante il fix**: il backend `/api/chronicle` ha `limit ≤ 50` (HTTP 422 oltre). Avevo inizialmente messo `limit=100` nella nuova pagina — ridotto a `50` (massimo consentito).
+
+**Smoke locale (preview)**:
+- ✅ `GET /chronicle` (diretto) → carica `data-testid="chronicle-page"`
+- ✅ `nav-chronicle` link visibile (text="CHRONICLE", href="/chronicle")
+- ✅ Click sul link → naviga a `/chronicle` correttamente
+- ✅ Empty state mostrato correttamente (tester preview ha 0 eventi recenti — è normale)
+- ✅ `yarn lint:strict` 0/0 su tutti i file modificati
+- ✅ JSON i18n entrambi validi (IT+EN)
+
+### Finding minor — `seller.user_id` esposto pubblicamente in `/api/auction/listings`
+**Contesto**: introdotto in Wave 3 BUG 1 fix per permettere al FE di calcolare `isOwn` e disabilitare il bottone Buy. Il tester di prod l'ha flaggato come "PII leak minor".
+
+**Decisione product**: **Opzione A — lascia così** (UUID interno non è PII reale: niente email, username o data di nascita). Backlog Round 11.1 per hardening.
+
+**Backlog Round 11.1 hardening** (da affiancare al lavoro su `httpOnly` cookies):
+- Espone solo `seller.public_id = sha256(user_id)[:16]` invece dell'UUID raw nelle listing pubbliche
+- `/api/auth/me` espone `user.public_id` parallelo
+- FE `isOwn` confronta `listing.seller.public_id === currentUser.public_id`
+- Backwards-compat: lasciare `user_id` per 1 deploy con deprecation note, poi rimuovere
+
+### Falsi positivi (NON fixati, by-design)
+**1. Expedition deadlock 9/5**: 9>5 è vero over-cap → 423 corretto come da decisione semantica Wave 3 (codice in `cap_guard.py` riga 40-53). Tester di prod era già in over-cap state per migrazione/rollback storico. **Nessuna azione.**
+
+**2. State mismatch tester prod (gold=0, roster=9/5)**: stato genuinamente diverso da preview (gold=50K, roster nominale). Non è bug.
+
+### Backlog P3 (deferred) — `seed_prod_tester_state.py`
+Script idempotente per portare l'account `tester@orbus.test` di prod in stato demo-ready (gold=50000, Dormitori Lv2, soft-retire degli avventurieri eccedenti con `retired_by="auto_over_cap"`, audit `tester_seed_paid_purchase` su ogni structure purchase — **mai free purchase**). Whitelist hardcoded su `tester@orbus.test`, dry-run by default.
+
+**Status**: deferred. Motivazione: lo script andrebbe testato su prod e non è scope del fix routing. Implementarlo solo quando serve per la prossima sessione di smoke prod. Tracking ID: `seed-prod-tester-state` (cartella consigliata: `backend/app/scripts/`).
+
+### File touched in 3.1
+```
+ frontend/src/App.js                   |  10 +++++++++  (import + route)
+ frontend/src/components/AppHeader.jsx |   1 +          (NavLink)
+ frontend/src/i18n/lang/en.json        |   4 +++-       (nav.chronicle + page_title/intro)
+ frontend/src/i18n/lang/it.json        |   4 +++-       (nav.chronicle + page_title/intro)
+ frontend/src/pages/Chronicle.jsx      |  35 ++++++++   (NEW)
+ memory/REFACTOR_LOG.md                |  56 ++++++++   (this entry)
+ ----------------------------------------
+ 6 files changed, ~110 insertions, 0 deletions
+```
+
+**Wave 3.1 status**: ✅ READY for prod re-deploy + re-validation mirata su `/chronicle`.

@@ -61,6 +61,7 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
                                 <NavLink to="/squads" label={t("nav.squads", "SQUADRE")} testid="nav-squads" />
                                 <NavLink to="/territory" label={t("nav.territory", "TERRITORIO")} testid="nav-territory" />
                                 <NavLink to="/consortiums" label={t("nav.consortiums")} testid="nav-consortiums" />
+                                <NavLink to="/chronicle" label={t("nav.chronicle", "CRONACA")} testid="nav-chronicle" />
                                 <NavLink to="/chat" label={t("nav.chat", "CHAT")} testid="nav-chat" />
                                 <NavLink to="/leaderboard" label={t("nav.leaderboard")} testid="nav-leaderboard" />
                                 <NavLink to="/guide" label={t("nav.guide", "GUIDA")} testid="nav-guide" />

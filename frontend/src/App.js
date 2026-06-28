@@ -35,6 +35,7 @@ import Squads from "@/pages/Squads";
 import SquadBuilder from "@/pages/SquadBuilder";
 import Territory from "@/pages/Territory";
 import RosterManage from "@/pages/RosterManage";
+import Chronicle from "@/pages/Chronicle";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -236,6 +237,14 @@ function App() {
                         />
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/guide" element={<Guide />} />
+                        <Route
+                            path="/chronicle"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Chronicle />
+                                </ProtectedRoute>
+                            }
+                        />
                         <Route
                             path="/chat"
                             element={
