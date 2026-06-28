@@ -31,6 +31,39 @@ from app.training.catalog import (
 SIGNATURE_BOUND_REASON = "specialization_signature"
 
 
+async def _resolve_class_slug(db, adv: dict) -> str | None:
+    """Return the canonical lowercase class slug for an adventurer.
+
+    Real game-flow adventurers (recruitment + onboarding writes) only persist
+    ``adventurer_class_id`` + ``class_name`` (capitalized display) on the doc,
+    NOT ``class_slug``. The training catalog uses lowercase slugs as eligibility
+    keys (`"warrior"`, `"paladin"`, …), so we MUST resolve via a lookup on
+    `adventurer_classes` instead of trusting an embedded field.
+
+    Resolution order (fail-soft, never raises):
+      1. If `adv.class_slug` is already set (legacy data + test seeds + the
+         recruitment generator preview path), use it as-is.
+      2. Otherwise look up `adventurer_classes` by `adv.adventurer_class_id`
+         and read `slug`.
+      3. As a last resort lowercase `class_name` so we never block on a
+         stale/missing FK (no row in the catalog).
+    """
+    cached = adv.get("class_slug")
+    if isinstance(cached, str) and cached:
+        return cached
+    class_id = adv.get("adventurer_class_id")
+    if class_id:
+        row = await db.adventurer_classes.find_one(
+            {"id": class_id}, {"_id": 0, "slug": 1},
+        )
+        if row and row.get("slug"):
+            return row["slug"]
+    name = adv.get("class_name")
+    if isinstance(name, str) and name:
+        return name.lower()
+    return None
+
+
 async def _get_training_level(db, guild_id: str) -> int:
     """Resolve the current `training_grounds` level for this guild."""
     row = await db.guild_structures.find_one(
@@ -127,12 +160,17 @@ async def apply_specialization(
             f"Serve livello minimo {MIN_ADVENTURER_LEVEL} (questo avventuriero è Lv{adv.get('level', 1)}).",
             min_level=MIN_ADVENTURER_LEVEL, current_level=adv.get("level", 1),
         )
-    if adv.get("class_slug") not in spec["eligible_classes"]:
+    # Class eligibility — resolve via lookup so real game-flow advs
+    # (which only persist `adventurer_class_id` + `class_name`, not
+    # `class_slug`) are correctly matched against the catalog's lowercase
+    # slug list. See `_resolve_class_slug` for fallback order.
+    actual_class_slug = await _resolve_class_slug(db, adv)
+    if actual_class_slug not in spec["eligible_classes"]:
         raise _err(
             "training.class_not_eligible",
             f"Classe '{adv.get('class_name')}' non compatibile con '{spec['name_it']}'.",
             eligible_classes=spec["eligible_classes"],
-            actual_class=adv.get("class_slug"),
+            actual_class=actual_class_slug,
         )
 
     # Training Grounds gating

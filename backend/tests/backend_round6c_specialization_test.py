@@ -80,20 +80,31 @@ def _unlock_training(db, guild_id: str, level: int = 1, headers: dict | None = N
 
 
 def _seed_adv(db, *, guild_id: str, class_slug: str = "warrior",
-              level: int = 5, name: str | None = None) -> str:
-    """Insert a level-`level` adventurer in `guild_id`, return adv_id."""
+              level: int = 5, name: str | None = None,
+              with_legacy_class_slug: bool = False) -> str:
+    """Insert a level-`level` adventurer in `guild_id`, return adv_id.
+
+    By default we DO NOT write `class_slug` on the doc — this mirrors the
+    real recruitment + onboarding write path, which only persists
+    ``adventurer_class_id`` + ``class_name`` (capitalized display name).
+    The training service must resolve the lowercase slug via lookup.
+
+    Pass ``with_legacy_class_slug=True`` to also embed a ``class_slug``
+    field, which exercises the legacy/preview path (the
+    ``app.adventurers.generator`` preview attaches one for the UI).
+    """
     cls = db.adventurer_classes.find_one(
-        {"slug": class_slug}, {"_id": 0, "id": 1, "slug": 1, "role": 1},
+        {"slug": class_slug}, {"_id": 0, "id": 1, "slug": 1, "role": 1, "name": 1},
     )
     assert cls, f"class {class_slug} not seeded"
     adv_id = str(uuid.uuid4())
     now = "2026-06-28T07:00:00+00:00"
-    db.adventurers.insert_one({
+    doc = {
         "id": adv_id, "guild_id": guild_id,
         "name": name or f"R6C_{adv_id[:8]}",
         "adventurer_class_id": cls["id"],
-        "class_name": cls.get("slug"),
-        "class_slug": cls.get("slug"),
+        # Capitalized display name — same as real game writes.
+        "class_name": cls.get("name") or cls.get("slug", "").capitalize(),
         "class_role": cls.get("role"),
         "rarity": "Common",
         "level": level, "experience": 0,
@@ -103,7 +114,10 @@ def _seed_adv(db, *, guild_id: str, class_slug: str = "warrior",
         "is_available": True, "is_retired": False,
         "traits": [], "is_starter": False, "is_test_seed": True,
         "created_at": now, "updated_at": now,
-    })
+    }
+    if with_legacy_class_slug:
+        doc["class_slug"] = cls.get("slug")
+    db.adventurers.insert_one(doc)
     return adv_id
 
 
@@ -179,6 +193,49 @@ def test_apply_spec_happy_path(db):
     # gold debited
     g_after = db.guilds.find_one({"id": gid}, {"_id": 0, "gold": 1})["gold"]
     assert g_after == g_before - 500
+
+
+# ─── Regression — adv WITHOUT `class_slug` (real recruitment doc shape) ──
+# Bug fixed in this round: the class eligibility check used to read
+# `adv.class_slug` directly, but real game-flow advs only persist
+# `adventurer_class_id` + (capitalized) `class_name`. The lookup-based
+# resolver now succeeds via `db.adventurer_classes`.
+
+
+def test_apply_spec_resolves_class_via_lookup_when_class_slug_absent(db):
+    h, gid, _ = _fresh_guild(db)
+    _unlock_training(db, gid, level=1, headers=h)
+    adv_id = _seed_adv(
+        db, guild_id=gid, class_slug="warrior", level=5,
+        with_legacy_class_slug=False,  # ← critical: do NOT embed class_slug
+    )
+    # Defensive: confirm the doc truly lacks `class_slug` (would mask the bug).
+    raw = db.adventurers.find_one({"id": adv_id}, {"_id": 0, "class_slug": 1})
+    assert raw is not None
+    assert "class_slug" not in raw or raw.get("class_slug") in (None, "")
+    r = requests.post(
+        f"{BASE_URL}/api/training/specialize/{adv_id}",
+        json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["specialization"]["slug"] == "spec_difensore"
+
+
+def test_apply_spec_still_works_with_legacy_class_slug_present(db):
+    """Backward-compat: the resolver's fast path uses the embedded slug
+    when present (recruitment generator preview attaches one)."""
+    h, gid, _ = _fresh_guild(db)
+    _unlock_training(db, gid, level=1, headers=h)
+    adv_id = _seed_adv(
+        db, guild_id=gid, class_slug="warrior", level=5,
+        with_legacy_class_slug=True,
+    )
+    r = requests.post(
+        f"{BASE_URL}/api/training/specialize/{adv_id}",
+        json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
+    )
+    assert r.status_code == 200, r.text
 
 
 def test_apply_spec_blocks_level_too_low(db):
