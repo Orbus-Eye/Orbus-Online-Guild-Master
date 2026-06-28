@@ -63,14 +63,35 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS — env-gated (see _resolve_cors_origins)
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=_resolve_cors_origins(),
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # CORS — env-gated (see _resolve_cors_origins).
+    # ROUND 11.1 Slice 2 — `allow_credentials=True` is incompatible with
+    # `allow_origins=["*"]` per CORS spec. In dev/preview we therefore use
+    # `allow_origin_regex=".*"` (with explicit credential allowance) so the
+    # cookie-based auth flow can complete preflight from any origin.
+    cors_origins = _resolve_cors_origins()
+    if cors_origins == ["*"]:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origin_regex=".*",
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+    else:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+
+    # ROUND 11.1 Slice 2 — CSRF double-submit on cookie-authed mutating
+    # requests. Bearer-authed requests (legacy 14gg fallback) are exempt
+    # because the attacker cannot forge a Bearer header from a cross-site
+    # context. Login/register/csrf/logout/refresh exempt for bootstrap.
+    from app.core.csrf import CSRFMiddleware
+    app.add_middleware(CSRFMiddleware)
 
     # Health endpoint (no domain)
     app.include_router(_build_health_router())

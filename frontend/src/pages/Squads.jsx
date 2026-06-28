@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import AppHeader from "@/components/AppHeader";
 import OverCapBanner from "@/components/OverCapBanner";
 import { useT } from "@/i18n/I18nContext";
+import { api } from "@/lib/api";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -162,17 +163,11 @@ export default function Squads() {
     const load = useCallback(async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("orbus_token");
-            const res = await fetch(`${API}/squads`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (res.status === 401) {
-                navigate("/login");
-                return;
-            }
-            const body = await res.json();
-            setSquads(body.squads || []);
+            // ROUND 11.1 Slice 2 — switched to `api` wrapper for cookie auth + CSRF.
+            const { data } = await api.get("/squads");
+            setSquads(data.squads || []);
         } catch (e) {
+            if (e?.response?.status === 401) { navigate("/login"); return; }
             toast.error(lang === "it" ? "Errore caricamento squadre" : "Failed to load squads");
         } finally {
             setLoading(false);
@@ -190,12 +185,8 @@ export default function Squads() {
                 : `Archive "${name}"? You can always create a new one.`;
         if (!window.confirm(confirmMsg)) return;
         try {
-            const token = localStorage.getItem("orbus_token");
-            const res = await fetch(`${API}/squads/${id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) throw new Error("archive failed");
+            // ROUND 11.1 Slice 2 — `api.delete` adds CSRF header automatically.
+            await api.delete(`/squads/${id}`);
             toast.success(lang === "it" ? "Squadra archiviata" : "Squad archived");
             load();
         } catch (e) {

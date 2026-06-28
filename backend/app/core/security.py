@@ -1,11 +1,14 @@
 """Auth security helpers: bcrypt, JWT, password rules, current-user dep."""
+import hashlib
+import logging
+import os
 import re
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 import bcrypt
 import jwt
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.config import (
@@ -14,6 +17,18 @@ from app.core.config import (
     ACCESS_TOKEN_TTL_DAYS,
 )
 from app.core.database import db
+
+
+logger = logging.getLogger("orbus.auth")
+
+# ROUND 11.1 Slice 2 — auth migration cookie/CSRF config.
+ACCESS_COOKIE_NAME = "access_token"
+CSRF_COOKIE_NAME = "csrf_token"
+CSRF_HEADER_NAME = "X-CSRF-Token"
+# httpOnly + Secure + SameSite=Lax. Secure is env-gated so localhost dev still
+# works (`Secure` cookies require https; preview/prod set APP_ENV=production).
+def _cookie_secure_flag() -> bool:
+    return os.environ.get("APP_ENV", "development").lower() == "production"
 
 
 PASSWORD_REGEX_LETTER = re.compile(r"[A-Za-z]")
@@ -75,19 +90,78 @@ optional_bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
+    request: Request,
     creds: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
 ) -> dict:
-    if creds is None or not creds.credentials:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_token(creds.credentials)
+    """ROUND 11.1 Slice 2 — dual auth: cookie first, Bearer fallback.
+
+    Order:
+      1. Try `access_token` httpOnly cookie (new flow).
+      2. Fallback to `Authorization: Bearer` (legacy 14-day window). Emits
+         structured `auth.legacy_bearer_usage` log entry with a hashed
+         user id so we can monitor how many clients still use Bearer.
+
+    Auth method is attached to `request.state.auth_method` ∈ {"cookie",
+    "bearer"} for downstream consumers (e.g. CSRF middleware).
+    """
+    token: str | None = None
+    method: str = "none"
+    cookie_tok = request.cookies.get(ACCESS_COOKIE_NAME)
+    if cookie_tok:
+        token = cookie_tok
+        method = "cookie"
+    elif creds is not None and creds.credentials:
+        token = creds.credentials
+        method = "bearer"
+
+    if not token:
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.missing",
+            "user_message": "Sessione non attiva. Effettua il login.",
+        })
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.expired",
+            "user_message": "Sessione scaduta. Effettua di nuovo l'accesso.",
+        })
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.invalid",
+            "user_message": "Token non valido.",
+        })
+
     if payload.get("type") != "access":
-        raise HTTPException(status_code=401, detail="Invalid token type")
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.invalid_type", "user_message": "Token type invalid.",
+        })
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.invalid", "user_message": "Token non valido.",
+        })
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail={
+            "code": "auth.user_not_found",
+            "user_message": "Utente non trovato.",
+        })
+
+    request.state.auth_method = method
+    request.state.user_id = user_id
+    if method == "bearer":
+        # ROUND 11.1 Slice 2 — Bearer fallback metric. Hashed user_id so the
+        # log doesn't leak the internal UUID across log aggregators.
+        uid_hash = hashlib.sha256(user_id.encode()).hexdigest()[:12]
+        logger.info(
+            "auth.legacy_bearer_usage",
+            extra={"event": "auth.legacy_bearer_usage",
+                   "user_id_hash": uid_hash,
+                   "path": request.url.path,
+                   "method": request.method},
+        )
     return user
 
 
@@ -98,20 +172,22 @@ async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict
 
 
 async def get_optional_user(
+    request: Request,
     creds: Optional[HTTPAuthorizationCredentials] = Depends(optional_bearer_scheme),
 ) -> Optional[dict]:
-    if creds is None or not creds.credentials:
+    token = request.cookies.get(ACCESS_COOKIE_NAME)
+    if not token and creds is not None and creds.credentials:
+        token = creds.credentials
+    if not token:
         return None
     try:
-        payload = decode_token(creds.credentials)
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("type") != "access":
             return None
         user_id = payload.get("sub")
         if not user_id:
             return None
         return await db.users.find_one({"id": user_id}, {"_id": 0})
-    except HTTPException:
-        return None
     except Exception:
         return None
 

@@ -534,3 +534,103 @@ Security: nessun gap — entrambi i path bloccano correttamente la transazione. 
 ### Bearer fallback cleanup (Slice 2 prep)
 - Bearer auth still active. Cookie/CSRF migration scoped to **Slice 2 (dedicated session)**. Documented below in this log for context: do not implement Slice 2 alongside non-auth work.
 
+
+---
+
+## 2026-06-28 — ROUND 11.1 Slice 2 (B2 — Auth Migration) — COMPLETE
+
+### Auth flow (new)
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. POST /api/auth/login {email, password}                   │
+│    ⤷ Backend: validates → emits JWT → Response.set_cookie:  │
+│      • access_token (HttpOnly, Secure*, SameSite=Lax, 7d)   │
+│      • csrf_token   (JS-readable, SameSite=Lax,    7d)      │
+│    ⤷ Body also returns `access_token` (14gg Bearer fallback)│
+│                                                             │
+│ 2. GET  /api/auth/csrf  (idempotent, anonymous OK)          │
+│    ⤷ Returns {csrf_token: <64-hex>}, rotates cookie         │
+│                                                             │
+│ 3. Mutating req (POST/PATCH/PUT/DELETE):                    │
+│    Browser auto-sends:    access_token cookie               │
+│    Frontend JS adds:      X-CSRF-Token: <csrf_token>        │
+│    CSRFMiddleware checks: cookie csrf_token == header       │
+│                           → 403 auth.csrf.invalid if mismatch│
+│                                                             │
+│ 4. POST /api/auth/logout                                    │
+│    ⤷ Clears both cookies. CSRF-exempt (idempotent).         │
+└─────────────────────────────────────────────────────────────┘
+* Secure flag is env-gated: True iff APP_ENV=production.
+```
+
+### Decisioni & motivazioni
+1. **SameSite=Lax** (non Strict): Strict rompe redirect post-OAuth e
+   condivisione link autenticato. Lax + CSRF token = same security.
+2. **Double-submit cookie pattern** (non Redis session): stateless,
+   scala bene, no DB lookup per validation. Threat model: attacker
+   cross-origin non legge il csrf_token cookie né può forgiare il header.
+3. **GET /api/auth/csrf endpoint**: idempotente, anonymously fetchable
+   (boot-time), rotation gratuita per ogni call (entropy = 32 bytes).
+4. **Bearer fallback 14 giorni**: get_current_user prova cookie prima,
+   poi Bearer. Emette `auth.legacy_bearer_usage` log con `user_id_hash`
+   + path + method ad ogni Bearer usage. Zero rotture per test suite
+   esistenti (tutti i test usano `Authorization: Bearer`).
+5. **Cookie httpOnly + Secure env-gated**: in dev (APP_ENV=development)
+   Secure=False per permettere localhost http. In prod Secure=True.
+
+### Piano deploy prod Round 11.1 (Slice 1 + Slice 2 insieme)
+1. **Pre-deploy**:
+   - Verifica `APP_ENV=production` su pod prod (variabile supervisor).
+   - Verifica `CORS_ORIGINS=https://orbusonline.net` su pod prod
+     (l'ingress di prod può potenzialmente accettare o no — same-origin
+     in prod rende CORS irrilevante per il flusso normale, ma una lista
+     esplicita serve per crawlers/Stripe webhooks).
+2. **Deploy code** (git push da preview → prod via Emergent panel).
+3. **Post-deploy smoke**:
+   - `GET https://orbusonline.net/api/health` → `env=production`
+   - Login da browser → verifica cookie `access_token` HttpOnly +
+     `csrf_token` non-HttpOnly + `Secure=true`
+   - localStorage check: `orbus_token` rimosso dopo primo /me success
+   - POST mutating senza header CSRF → 403
+   - POST mutating con header CSRF → success
+   - `/api/auction/listings` → no `seller.user_id`
+   - `/api/consortiums` → no `founder_user_id`
+4. **Monitoring**:
+   - Grep log per `auth.legacy_bearer_usage` event → count nel tempo.
+   - Settimanalmente verificare il count → quando vicino a 0 (no client
+     Bearer attivo), procedere al cleanup Bearer (step separato).
+
+### Piano cleanup Bearer fallback (a 14gg post-deploy)
+**Pre-requisito**: `auth.legacy_bearer_usage` metric → 0 per 7gg
+consecutivi. Verifica via log grep / monitoring stack.
+
+**Cosa rimuovere**:
+1. `app/core/security.py::get_current_user`: rimuovi il branch
+   `elif creds is not None and creds.credentials` + tutto il logging
+   `auth.legacy_bearer_usage`. Tieni solo il cookie path.
+2. `app/auth/routes.py`: rimuovi `access_token` field da login/register
+   response body (rimane solo nel cookie).
+3. `frontend/src/lib/api.js`: rimuovi `localStorage.getItem(TOKEN_KEY)`
+   + il blocco `if (token) config.headers.Authorization`. Tieni solo
+   `withCredentials: true` + CSRF interceptor.
+4. `frontend/src/context/AuthContext.jsx`: rimuovi il branch
+   "401 → try Bearer fallback" (linee 56-72 circa).
+5. Rimuovi `localStorage.removeItem(TOKEN_KEY)` opportunistico
+   (non più necessario).
+6. **Test suite**: aggiornare tutti i test esistenti (`headers={"Authorization":...}`) per usare `requests.Session()` con login cookie-based, OPPURE rinominare i test in "legacy_bearer_compat" e marcarli skip.
+
+**Verifica post-cleanup**:
+- Run full test suite → tutti i test che usavano Bearer falliscono con 401 se non aggiornati → conferma che fallback è veramente off.
+- Smoke prod → flow auth ancora funzionante via cookie.
+
+### Blocker scoperti durante Slice 2 (risolti)
+- **CORS `Allow-Origin: *` + `Allow-Credentials: true` incompatible**: 
+  risolto sostituendo `allow_origins=["*"]` con `allow_origin_regex=".*"` 
+  in dev/preview. In prod `CORS_ORIGINS` deve essere lista esplicita.
+- **Browser localhost → preview cross-origin**: l'ingress preview ritorna
+  ancora `Allow-Origin: *` (config infra Emergent). **In preview** il
+  tester accede via `https://guild-master-5.preview.emergentagent.com/`
+  (same-origin) → no CORS triggered → flow auth funziona. **In prod**
+  stesso pattern same-origin (`orbusonline.net`).
+- Local dev (localhost:3000 → preview backend) richiede `CORS_ORIGINS=http://localhost:3000` per dev experience pura. Non blocking per deploy.
+

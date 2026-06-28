@@ -38,15 +38,26 @@ const SectionTitle = ({ children }) => (
     </h2>
 );
 
-function authedFetch(token, path, init = {}) {
-    return fetch(`${API}${path}`, {
-        ...init,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            ...(init.headers || {}),
-        },
-    });
+// ROUND 11.1 Slice 2 — `authedFetch` re-implemented on top of the
+// centralized axios `api` wrapper. The `token` parameter is now unused
+// (cookie auth + CSRF interceptors handle auth) but retained in the
+// signature so existing call sites do not need to change. Returns a
+// `Response`-like object with `.ok`, `.status`, `.json()`.
+async function authedFetch(_token, path, init = {}) {
+    const method = (init.method || "GET").toUpperCase();
+    const body = init.body ? JSON.parse(init.body) : undefined;
+    try {
+        const r = await api.request({
+            url: path, method,
+            data: body,
+            headers: init.headers,
+        });
+        return { ok: true, status: r.status, json: async () => r.data };
+    } catch (e) {
+        const status = e?.response?.status || 0;
+        const data = e?.response?.data;
+        return { ok: false, status, json: async () => data };
+    }
 }
 
 // ─── BUY TAB ─────────────────────────────────────────────────────────────
@@ -573,9 +584,10 @@ export default function Market() {
     // ProtectedRoute already guards `user` and `guild`, so this component
     // does not need to re-check them.
     const { user, guild, refreshGuild } = useAuth();
-    const token = typeof localStorage !== "undefined"
-        ? localStorage.getItem("orbus_token")
-        : null;
+    // ROUND 11.1 Slice 2 — `token` is no longer needed for child fetches;
+    // `api` wrapper handles cookie auth + CSRF transparently. Kept as
+    // `null` placeholder for the `authedFetch(_token, ...)` legacy signature.
+    const token = null;
     const { t, lang } = useT();
     const [tab, setTab] = useState("buy");
     const FEE = 5;

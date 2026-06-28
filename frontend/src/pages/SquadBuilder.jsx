@@ -6,9 +6,10 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import AppHeader from "@/components/AppHeader";
 import { useT } from "@/i18n/I18nContext";
-// ROUND 6B.3 Wave 3 — FIX BUG 2: normalise structured backend `detail`
-// payloads to a safe string before passing to `toast.error`.
-import { formatErrorDetail } from "@/lib/api";
+// ROUND 11.1 Slice 2 — switched to centralized axios `api` wrapper (cookie
+// auth + CSRF + bearer fallback). The legacy `fetchJSON` helper that read
+// `localStorage` directly has been removed.
+import { formatErrorDetail, api } from "@/lib/api";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -20,12 +21,33 @@ const TYPE_META = {
 
 const ROLE_MARKER = { Tank: "[T]", Healer: "[H]", DPS: "[D]", Support: "[S]" };
 
-function fetchJSON(url, init = {}) {
-    const token = localStorage.getItem("orbus_token");
-    return fetch(url, {
-        ...init,
-        headers: { ...(init.headers || {}), Authorization: `Bearer ${token}` },
-    });
+async function fetchJSON(url, init = {}) {
+    // ROUND 11.1 Slice 2 — proxy `fetch(url, init)` calls through axios
+    // so cookie auth + CSRF interceptors apply. Returns a Response-like
+    // object with `.ok`, `.status`, `.json()` so the existing call sites
+    // (look at handleSave / load) don't need shape changes.
+    const method = (init.method || "GET").toUpperCase();
+    // Resolve absolute URL → relative to API base for axios baseURL.
+    const u = url.startsWith(API) ? url.slice(API.length) : url;
+    const body = init.body ? JSON.parse(init.body) : undefined;
+    try {
+        const r = await api.request({
+            url: u, method,
+            data: body,
+            headers: init.headers || undefined,
+        });
+        return {
+            ok: true, status: r.status,
+            json: async () => r.data,
+        };
+    } catch (e) {
+        const status = e?.response?.status || 0;
+        const data = e?.response?.data;
+        return {
+            ok: false, status,
+            json: async () => data,
+        };
+    }
 }
 
 function AdvChip({ adv, onClick, disabled, action, testid }) {

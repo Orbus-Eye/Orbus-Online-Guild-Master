@@ -6,15 +6,39 @@ export const API = `${BACKEND_URL}/api`;
 
 export const TOKEN_KEY = "orbus_token";
 
+// ROUND 11.1 Slice 2 — Auth migration to httpOnly cookies + CSRF.
+//   * `withCredentials: true` → browser sends/receives the `access_token`
+//     httpOnly cookie on every API call.
+//   * `csrf_token` (memory-only) → echoed in `X-CSRF-Token` header on
+//     POST/PATCH/PUT/DELETE for the backend double-submit check.
+//   * `Authorization: Bearer` fallback retained for 14 days post-deploy so
+//     legacy clients (and the existing test suite) keep working without
+//     immediate rewrite.
+
 export const api = axios.create({
     baseURL: API,
     headers: { "Content-Type": "application/json" },
+    withCredentials: true,
 });
 
+// In-memory CSRF token. NEVER persisted to localStorage (so XSS cannot
+// read it; double-submit cookie + header is the protection mechanism).
+let _csrfToken = null;
+export function setCsrfToken(tok) { _csrfToken = tok || null; }
+export function getCsrfToken() { return _csrfToken; }
+
 api.interceptors.request.use((config) => {
+    // Bearer fallback (14gg post-deploy). Cookie auth takes precedence
+    // server-side, but we keep emitting the header so legacy clients keep
+    // working through the transition window.
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+    // CSRF double-submit header for mutating methods.
+    const method = (config.method || "get").toLowerCase();
+    if (["post", "patch", "put", "delete"].includes(method) && _csrfToken) {
+        config.headers["X-CSRF-Token"] = _csrfToken;
     }
     return config;
 });
@@ -25,16 +49,23 @@ export const setUnauthorizedHandler = (fn) => {
     onUnauthorized = fn;
 };
 
+// Avoid infinite CSRF refresh loop on the SAME failing request.
+const _csrfRetryFlag = "__csrfRetried";
+
+async function _refreshCsrf() {
+    try {
+        const r = await axios.get(`${API}/auth/csrf`, { withCredentials: true });
+        setCsrfToken(r.data?.csrf_token || null);
+        return r.data?.csrf_token || null;
+    } catch (_e) {
+        return null;
+    }
+}
+
 api.interceptors.response.use(
     (res) => res,
-    (err) => {
+    async (err) => {
         const status = err?.response?.status;
-        // ROUND 6B.3 Wave 3 — FIX BUG 2: centralised error string normalisation.
-        // The backend returns 4xx with `detail` either as a string or a
-        // structured object `{code, user_message, ...}`. Callers that did
-        // `toast.error(err.response.data.detail)` directly would render
-        // `[object Object]`. Provide a normalised string on the error so
-        // `toast.error(err.normalizedMessage)` is always safe.
         const _detail = err?.response?.data?.detail;
         if (typeof _detail === "string") {
             err.normalizedMessage = _detail;
@@ -44,13 +75,23 @@ api.interceptors.response.use(
                 || _detail.code
                 || JSON.stringify(_detail);
         }
+        // ROUND 11.1 Slice 2 — CSRF 403 single-retry path.
+        if (
+            status === 403 &&
+            _detail && _detail.code === "auth.csrf.invalid" &&
+            !err.config?.[_csrfRetryFlag]
+        ) {
+            err.config[_csrfRetryFlag] = true;
+            const fresh = await _refreshCsrf();
+            if (fresh) {
+                err.config.headers["X-CSRF-Token"] = fresh;
+                return api.request(err.config);
+            }
+            toast.error("Token CSRF non valido. Aggiorna la pagina.");
+        }
         if (status === 401 && typeof onUnauthorized === "function") {
             onUnauthorized();
         }
-        // ROUND 6B.2b — Global 423 Locked handler (feature.locked from territory guards).
-        // ROUND 6B.3 Wave 1.5 — Extended to handle roster_over_capacity and
-        // adventurers.retired_in_set, both of which surface as 423 with a
-        // structured detail.code and a user-friendly user_message.
         if (status === 423) {
             const detail = err?.response?.data?.detail;
             if (detail && detail.code === "feature.locked") {
@@ -94,9 +135,6 @@ export function formatApiError(err) {
     return formatErrorDetail(detail);
 }
 
-// ROUND 6B.3 Wave 3 — FIX BUG 2: helper for non-axios callers (e.g. raw
-// `fetch().then(r => r.json())` blocks). Centralised normalisation so
-// `toast.error(formatErrorDetail(body.detail))` never renders `[object Object]`.
 export function formatErrorDetail(detail) {
     if (detail == null) return "Something went wrong.";
     if (typeof detail === "string") return detail;
@@ -119,4 +157,10 @@ export function formatErrorDetail(detail) {
 export async function getTraitPreview(adventurerId) {
     const { data } = await api.get(`/adventurers/${adventurerId}/trait-preview`);
     return data;
+}
+
+// ROUND 11.1 Slice 2 — fetch + cache the CSRF token. Exposed for AuthContext
+// to call after login and at app boot.
+export async function refreshCsrfToken() {
+    return _refreshCsrf();
 }
