@@ -570,6 +570,14 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
             await increment_weekly_progress(db, guild["id"], "raids_completed", 1)
             if tier >= 2 and outcome in ("victory", "partial"):
                 await increment_weekly_progress(db, guild["id"], "raids_t2plus_success", 1)
+            # ROUND 6E — contract progress (raids_completed)
+            try:
+                from app.contracts.services import increment_contract_progress
+                await increment_contract_progress(
+                    db, guild["id"], "raids_completed", 1,
+                )
+            except Exception:
+                pass
             try:
                 await write_audit(
                     db, event_type="weekly_quest_raid_progressed",

@@ -101,9 +101,17 @@ def test_daily_contracts_generated_on_first_get(db):
     body = r.json()
     assert body["locked"] is False
     assert body["contract_board_level"] >= 1
-    assert len(body["contracts"]) == 3
+    # ROUND 6E — feature-gate filter: fresh guild w/ only contract_board
+    # unlocked sees 4 ungated dailies (expedition, market, craft, recruit).
+    # raid/forge dailies remain hidden until war_room/forge unlock.
     slugs = [c["slug"] for c in body["contracts"]]
     assert "daily_complete_expedition_1" in slugs
+    assert "daily_market_listing_1" in slugs
+    assert "daily_craft_item_1" in slugs
+    assert "daily_recruit_1" in slugs
+    assert "daily_complete_raid_1" not in slugs  # war_room locked
+    assert "daily_forge_refine_1" not in slugs  # forge locked
+    assert len(body["contracts"]) == 4
 
 
 def test_weekly_contracts_generated_on_first_get(db):

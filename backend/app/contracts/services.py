@@ -121,6 +121,31 @@ def _err(code: str, msg: str, *, status: int = 422, **extra) -> HTTPException:
     )
 
 
+async def _get_unlocked_structure_slugs(db, guild_id: str) -> set[str]:
+    """Return the set of structure slugs currently unlocked for the guild.
+
+    Used by `_is_contract_actionable` to filter feature-gated daily/weekly
+    contracts at generation time (no clutter with contracts the player can't
+    yet make progress on).
+    """
+    row = await db.guild_structures.find_one(
+        {"guild_id": guild_id}, {"_id": 0, "structures": 1},
+    )
+    structures = (row or {}).get("structures") or {}
+    return {slug for slug, s in structures.items()
+            if isinstance(s, dict) and s.get("is_unlocked")
+            and int(s.get("level", 0)) >= 1}
+
+
+def _is_contract_actionable(contract: dict, unlocked_slugs: set[str]) -> bool:
+    """True iff this contract's feature_gate (if any) is satisfied."""
+    gate = contract.get("feature_gate")
+    if not gate:
+        return True
+    needed_slug = gate.get("slug")
+    return needed_slug in unlocked_slugs
+
+
 # ──────────────────────────────────────────────────────────────────────
 # DAILY contracts — state + lazy reset + claim
 # ──────────────────────────────────────────────────────────────────────
@@ -169,8 +194,13 @@ async def get_today_contracts(db, guild_id: str) -> dict:
             "contracts": [],
         }
     state = await _ensure_daily_fresh(db, guild_id)
+    # ROUND 6E — feature-gate filter so locked-feature contracts never
+    # clutter the UI (e.g. raid daily appears only after war_room Lv1).
+    unlocked = await _get_unlocked_structure_slugs(db, guild_id)
     out = []
     for defn in DAILY_CONTRACTS:
+        if not _is_contract_actionable(defn, unlocked):
+            continue
         s = state["contracts"].get(defn["slug"]) or {}
         progress = int(s.get("progress", 0))
         claimed = bool(s.get("claimed", False))
@@ -201,9 +231,21 @@ async def get_today_contracts(db, guild_id: str) -> dict:
 # ──────────────────────────────────────────────────────────────────────
 # WEEKLY contracts — state + lazy rotation + claim
 # ──────────────────────────────────────────────────────────────────────
-def _empty_weekly_state() -> dict:
+def _empty_weekly_state(eligible_pool: list[dict] | None = None) -> dict:
     week_idx = _iso_week_index()
-    active = select_active_weekly(week_idx)
+    if eligible_pool is None:
+        active = select_active_weekly(week_idx)
+    else:
+        # ROUND 6E — gate-aware selection: rotate over the *eligible* subset
+        # so a guild never sees fewer than WEEKLY_ACTIVE_COUNT entries when
+        # the pool can still satisfy that floor.
+        from app.contracts.catalog import WEEKLY_ACTIVE_COUNT
+        n = len(eligible_pool)
+        if n == 0:
+            active = []
+        else:
+            active = [eligible_pool[(week_idx + i) % n]
+                      for i in range(min(WEEKLY_ACTIVE_COUNT, n))]
     return {
         "rotation_week": _iso_week_key(),
         "rotation_week_index": week_idx,
@@ -221,7 +263,13 @@ async def _ensure_weekly_fresh(db, guild_id: str) -> dict:
     )
     state = (g or {}).get("weekly_contract_state")
     if not state or state.get("rotation_week") != week:
-        fresh = _empty_weekly_state()
+        # ROUND 6E — filter the pool by guild's unlocked structures BEFORE
+        # rotation, so we don't waste an active slot on a gated contract.
+        unlocked = await _get_unlocked_structure_slugs(db, guild_id)
+        from app.contracts.catalog import WEEKLY_CONTRACT_POOL
+        eligible = [c for c in WEEKLY_CONTRACT_POOL
+                    if _is_contract_actionable(c, unlocked)]
+        fresh = _empty_weekly_state(eligible)
         await db.guilds.update_one(
             {"id": guild_id}, {"$set": {"weekly_contract_state": fresh}},
         )
@@ -239,10 +287,14 @@ async def get_weekly_contracts(db, guild_id: str) -> dict:
             "contracts": [],
         }
     state = await _ensure_weekly_fresh(db, guild_id)
+    # ROUND 6E — feature-gate filter (same as daily).
+    unlocked = await _get_unlocked_structure_slugs(db, guild_id)
     out = []
     for slug in state.get("active_slugs", []):
         defn = WEEKLY_BY_SLUG.get(slug)
         if not defn:
+            continue
+        if not _is_contract_actionable(defn, unlocked):
             continue
         s = state["contracts"].get(slug) or {}
         progress = int(s.get("progress", 0))

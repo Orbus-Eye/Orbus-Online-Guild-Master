@@ -20,7 +20,6 @@ and `insert_one` for missing rows.
 from __future__ import annotations
 
 import logging
-import uuid
 from datetime import datetime, timezone
 
 from app.training.catalog import SPEC_SIGNATURE_ITEMS

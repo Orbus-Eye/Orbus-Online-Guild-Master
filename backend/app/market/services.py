@@ -394,6 +394,14 @@ async def create_listing(
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("contract hook failed in create_listing: %s", exc)
+    # ROUND 6E — auction_listings_created (alias counter; gated by auction_house at generation time)
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild["id"], "auction_listings_created", 1,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("auction contract hook failed in create_listing: %s", exc)
 
     total_price = int(price_per_unit) * int(quantity)
     fee = total_price * MARKET_FEE_PCT // 100

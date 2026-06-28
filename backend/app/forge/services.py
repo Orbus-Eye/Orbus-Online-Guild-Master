@@ -244,6 +244,7 @@ async def refine_instance(
                      "gold_cost": step["gold"],
                      "rate": step["rate"],
                  })
+    await _emit_forge_contract_progress(db, guild["id"])
     return {
         "success": success,
         "refinement_level": new_level,
@@ -251,6 +252,15 @@ async def refine_instance(
         "is_bound": True,
         "instance_id": inv.get("instance_id") or inv["id"],
     }
+
+
+async def _emit_forge_contract_progress(db, guild_id: str) -> None:
+    """ROUND 6E — forge contract progress hook (best-effort)."""
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(db, guild_id, "forge_refinements", 1)
+    except Exception:
+        pass
 
 
 async def enchant_options(

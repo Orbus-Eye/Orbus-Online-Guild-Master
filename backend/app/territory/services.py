@@ -46,10 +46,17 @@ async def ensure_guild_structures_doc(db, guild_id: str) -> dict:
 
     Idempotent and race-safe via the unique index on `guild_id` (created at
     boot in `app.core.indexes`). On DuplicateKeyError we re-read.
+
+    ROUND 6E FIX 0 — for guilds created BEFORE a new structure slug was
+    added to ``STRUCTURE_CATALOG`` (e.g. `training_grounds` from 6C or
+    `contract_board` from 6D), the embedded sub-doc lacks the new slugs.
+    We backfill them in-place with the default shape so the public
+    ``GET /api/territory`` response always carries the full catalog —
+    no more `contract_board: null` on legacy guilds.
     """
     existing = await db.guild_structures.find_one({"guild_id": guild_id})
     if existing:
-        return existing
+        return await _backfill_missing_catalog_slugs(db, existing)
     now = _utc_now_iso()
     doc = {
         "id": str(uuid.uuid4()),
@@ -64,8 +71,33 @@ async def ensure_guild_structures_doc(db, guild_id: str) -> dict:
         # If a parallel request beat us to it, just re-read.
         existing = await db.guild_structures.find_one({"guild_id": guild_id})
         if existing:
-            return existing
+            return await _backfill_missing_catalog_slugs(db, existing)
         raise
+    return doc
+
+
+async def _backfill_missing_catalog_slugs(db, doc: dict) -> dict:
+    """ROUND 6E FIX 0 — patch `structures` with any catalog slug absent
+    from the embedded doc. Uses a per-slug ``$set`` so we never overwrite
+    an unlocked structure. Returns the doc with the patched sub-fields
+    so the caller can return it without an extra read.
+    """
+    current = doc.get("structures") or {}
+    missing: dict[str, dict] = {}
+    defaults = default_structures_doc()
+    for slug, default_value in defaults.items():
+        if slug not in current:
+            missing[slug] = default_value
+    if not missing:
+        return doc
+    updates = {f"structures.{slug}": value for slug, value in missing.items()}
+    updates["updated_at"] = _utc_now_iso()
+    await db.guild_structures.update_one(
+        {"id": doc["id"]}, {"$set": updates},
+    )
+    # Patch the in-memory doc so the caller sees the same view.
+    doc.setdefault("structures", {}).update(missing)
+    doc["updated_at"] = updates["updated_at"]
     return doc
 
 
