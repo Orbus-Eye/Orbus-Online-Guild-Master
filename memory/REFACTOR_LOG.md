@@ -815,3 +815,40 @@ async function onSubmit() {
 **Sweep finale**: 78 PASS + 1 SKIP su 7 suite Round 11.2+11.1 (era 75/76 pre-fix).
 
 **Audit doppi storici**: gli audit `admin_gold_granted` con timestamp `17:58:39.155-159 reason="double submit test"` (TC2c tester E2E) restano in DB come effetti collaterali del test P1. NO hard delete (vincolo brief).
+
+---
+
+## TASK 8 — SEO public pages (PRE-DEPLOY Round 11.2, registered 2026-06-28)
+
+> Spostato da Round 11.3 candidate a **scope Round 11.2 pre-deploy** per scelta
+> umana (option 2=b). Da eseguire DOPO TASK 7 con GO esplicito.
+
+Scope:
+- Rotte pubbliche `/traits` e `/stats` (no auth, no login redirect).
+- Consumano gli endpoint pubblici già live (`GET /api/traits/catalog`,
+  `GET /api/stats/catalog`).
+- SEO essentials: `<title>` + `<meta description>` + Open Graph + canonical URL,
+  H1 unico, robots.txt/sitemap.xml entries.
+- CTA "Gioca ora" → `/register`. Layout marketing-ready, mobile-first.
+- Test attesi: 2 backend (route 200 anonymous) + 5 frontend
+  (render, no-redirect-when-logged-out, meta tags, CTA target, mobile responsive).
+
+Status: **PENDING GO** (post TASK 7 sweep).
+
+---
+
+## Future enhancements (Round 11.3 candidates) — registered 2026-06-28
+
+> Annotato a fine TASK 6/TASK 7 Round 11.2. Non-blocking per il deploy prod 11.2.
+> Triage Round 11.3 da fare dopo OK umano.
+
+1. **Bearer fallback cleanup** post 14gg dal deploy Round 11.1 Slice 2.
+   Monitor: log `auth.legacy_bearer_usage` count. Rimuovi il branch fallback in
+   `app/core/security.py` quando count = 0 per 7gg consecutivi.
+2. **`guilds.public_id` materialized index** — attualmente `_resolve_guild` in
+   `app/admin/routes.py` scansiona fino a 2000 docs. Aggiungi campo persistente
+   `guilds.public_id` con `unique` index; refactor search/detail per usare query
+   diretta (O(n) → O(1)).
+3. **`is_unlocked: bool` on `/api/training/catalog`** — esponi per tutte le 14
+   spec lo stato di sblocco lato server, così il FE non deve inferirlo da
+   `training_grounds_level`.
