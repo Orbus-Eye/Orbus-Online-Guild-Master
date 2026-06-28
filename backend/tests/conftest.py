@@ -140,10 +140,22 @@ def _run_pollution_sweep(db) -> dict:
     # Orphan inventory rows: rows whose item_id no longer exists in items.
     # Still safe — even if Drakarys had inventory, this only nukes rows whose
     # referenced item has already been deleted.
+    # ROUND 6C — signature items are now seeded into `db.items` as part of
+    # the boot lifecycle, so they normally resolve. As an extra safety net
+    # (catalog edits, race conditions during a test run), we also exclude
+    # rows that carry a `bound_reason` — these are always considered
+    # intentional (signature, dev seed, crafting, etc.) and must NEVER be
+    # treated as orphans.
     try:
         item_ids = {d["id"] for d in db.items.find({}, {"id": 1, "_id": 0})}
         if item_ids:
-            orph = db.inventory_items.delete_many({"item_id": {"$nin": list(item_ids)}})
+            orph = db.inventory_items.delete_many({
+                "item_id": {"$nin": list(item_ids)},
+                "$or": [
+                    {"bound_reason": {"$exists": False}},
+                    {"bound_reason": None},
+                ],
+            })
             if orph.deleted_count:
                 deleted["inventory_items.orphan"] = orph.deleted_count
     except Exception as exc:  # noqa: BLE001

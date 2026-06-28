@@ -89,11 +89,12 @@ def test_get_territory_lazy_creates_doc(db):
     territory = body["territory"]
     assert territory["guild_id"] == g["id"]
     structs = territory["structures"]
-    # All 11 slugs present
+    # All 12 slugs present (ROUND 6D added `contract_board`)
     expected = {
         "guild_hall", "dormitories", "expedition_board", "war_room",
         "market_stall", "auction_house", "workshop", "forge",
         "consortium_hall", "communication_hall", "training_grounds",
+        "contract_board",
     }
     assert set(structs.keys()) == expected
     # Defaults: 3 unlocked Lv1, rest locked Lv0
