@@ -124,6 +124,8 @@ def create_app() -> FastAPI:
     from app.territory.routes import router as territory_router
     from app.training.routes import router as training_router
     from app.contracts.routes import router as contracts_router
+    # ROUND 11.2 TASK 6 G1-G2 — public traits + stats catalog (no auth).
+    from app.catalog.routes import router as catalog_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -150,6 +152,7 @@ def create_app() -> FastAPI:
     app.include_router(territory_router)
     app.include_router(training_router)
     app.include_router(contracts_router)
+    app.include_router(catalog_router)
 
     return app
 

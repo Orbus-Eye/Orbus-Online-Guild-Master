@@ -1,0 +1,32 @@
+{
+  "summary": "ROUND 11.2 TASK 6 — Guide player-facing + Catalog API end-to-end validation. All 7 frontend acceptance criteria (FE-T6.01..07) PASS and all 5 backend pytest tests PASS. Public catalog endpoints (/api/traits/catalog, /api/stats/catalog) accessible without Authorization header, server-side filter (is_test!=true AND is_active!=false) works, no PII leak (no `code`, `is_test`, `is_active`, `is_positive`, `name` in payload). Client-side filters (q, polarity, rarity) work and total banner is coherent. Italian seeds present (Fortunato, Coraggioso, Disciplinato, Occhio Acuto, Avventato, Fragile, Avido, Leale, Goffo, Ispirato).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "feature_results": {
+    "FE-T6.01_guide_renders_22_tabs": "PASS — /guide accessible after login as tester@orbus.test/password123. data-testid `guide-tabs` present, 22 tabs total including `guide-tab-stats-catalog` (id 7) and `guide-tab-traits-catalog` (id 8).",
+    "FE-T6.02_stats_catalog_tab_data_driven": "PASS — click on `guide-tab-stats-catalog` renders `guide-stats-table` with 11 rows. All required keys present: strength, agility, intellect, endurance, faith, stamina, morale, level, experience, power_score, rarity.",
+    "FE-T6.03_traits_catalog_tab_data_driven": "PASS — click on `guide-tab-traits-catalog` renders `guide-traits-grid` with 41 cards. All 10 Italian seed traits visible (Fortunato, Coraggioso, Disciplinato, Occhio Acuto, Avventato, Fragile, Avido, Leale, Goffo, Ispirato).",
+    "FE-T6.04_polarity_badges": "PASS — 41 polarity badges rendered, set of texts = {Positivo, Negativo, Misto}. All three polarity classes are represented (e.g. Coraggioso=Positivo, Fragile/Goffo=Negativo, Avventato=Misto).",
+    "FE-T6.05_client_side_filters": "PASS — q='coraggio' narrows to 2 cards (both contain 'Coraggioso'). polarity=negative shows 13 cards with ONLY 'Negativo' badges. Reset (q='', polarity=all) restores 41 cards. Banner `guide-traits-total` shows '41 di 41 tratti visibili (fonte: /api/traits/catalog, filtra automaticamente is_test=true e is_active=false)'.",
+    "FE-T6.06_server_side_filtering": "PASS — DB probes inserted: (a) is_test=true is_active=true → NOT exposed; (b) is_test=false is_active=false → NOT exposed. Total stays at 41. Probes cleaned up after test.",
+    "FE-T6.07_public_no_auth_no_pii_leak": "PASS — GET /api/traits/catalog and GET /api/stats/catalog return 200 with no Authorization header. Traits payload contains ONLY {id, display_name_it, display_name_en, description_it, description_en, rarity, polarity, affected_stat, modifier_type, modifier_value} — `code`, `is_test`, `is_active`, `is_positive`, `name`, `created_at`, `updated_at` are all stripped."
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_round112_t6_catalog_test.py",
+    "/app/test_reports/pytest/round112_t6_iter13.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "catalog/routes.py:_trait_public_catalog_row() correctly projects only safe fields and never leaks `code`/`is_test`/`is_active`/`is_positive`/`name`. Polarity fallback (`is_positive`→positive/negative) covers legacy docs without `polarity` field — sane default. Sort key (rarity bucket + IT display name) gives stable ordering across reloads.",
+    "stats/public_catalog.py: 11 stats co-located with model — single source of truth pattern is good. `affects_pwr=True` on `power_score` is technically self-referential but fine (it's the synthesis itself, documented inline).",
+    "Guide.jsx fetch is lazy (`useEffect(active==='traits-catalog'...)`) — good for perf. Filters are pure client-side over the cached list, no extra API calls when changing q/polarity/rarity.",
+    "Mongo collection `adventurer_traits` has a UNIQUE index on `name`; test code that inserts probes must use a unique `name` (the existing backend_round112_t6_catalog_test.py already does so via uuid suffix)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (5/5 pytest in /app/test_reports/pytest/round112_t6_iter13.xml)", "frontend": "100% (7/7 acceptance criteria FE-T6.01..07)"},
+  "test_credentials": "tester@orbus.test / password123",
+  "seed_data_creation": "Two transient adventurer_traits probes inserted via PyMongo (is_test=true and is_active=false) and immediately deleted in the same script — DB left clean.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "TASK 6 (Guide + Catalog APIs) is fully validated. TASK 7 (regression sweep) was explicitly NOT executed per user choice A=Yes (stop after Task 6). When/if TASK 7 is requested, focus areas should be: (a) confirm the 14-day Bearer fallback window is still honored, (b) re-run Phase 14.3 traits preview suite to ensure the public catalog endpoints did not regress old admin paths, (c) verify Guide page route is NOT in the guild-guarded route list (it only requires auth)."
+}
