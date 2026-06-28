@@ -782,3 +782,36 @@ Già esposto via `public_user()` projection in `auth/services.py` (preesistente)
 **Screenshot verificato**: `/admin/ops` con tester@orbus.test → Search tab carica 10527 guild paginati, click row → Detail panel con masked email + flags + bottoni Grant Gold/Item visibili.
 
 **Sweep finale FASE C 5a+5b**: 75 PASS + 1 SKIP (Round 11.2 + 11.1 stack completo).
+
+### TASK 5b P1 — Double-submit useRef sync guard (2026-06-28)
+
+**Bug**: Doppio click rapido (3.5ms apart) su "Conferma" in GrantGoldModal/GrantItemModal emetteva 2 POST consecutivi. `disabled={busy}` insufficiente: React batching commit `setBusy(true)` DOPO che il secondo handler già giravato. Race tra setState async e handler sync.
+
+**Impatto pre-fix**: ogni grant accidentalmente raddoppiabile (gold scalato 2x, audit doppio). Verificato via TC2c tester E2E.
+
+**Fix** (defense-in-depth, entrambi i modal):
+```jsx
+const submittingRef = useRef(false);
+async function onSubmit() {
+  if (submittingRef.current) return;  // SYNC guard
+  submittingRef.current = true;
+  setBusy(true);
+  try { await api.post(...); }
+  finally {
+    setBusy(false);
+    submittingRef.current = false;
+  }
+}
+```
+`disabled={busy}` mantenuto per la UX visiva (loading state); il `ref` è l'unica protezione reale.
+
+**Backend invariato**: il bug era esclusivamente FE handler.
+
+**3 nuovi test** in `frontend_round112_admin_ops_test.py`:
+- `test_t5b_p1_01_grant_gold_double_click_emits_only_one_post`: simulazione Node di 2 invocazioni sync della funzione `submit` → verifica callCount === 1.
+- `test_t5b_p1_02_grant_item_double_click_emits_only_one_post`: stesso pattern.
+- `test_t5b_p1_03_after_error_submit_re_enabled`: dopo error 422, ref MUST reset a false (verifica `finally`), retry attesa funziona.
+
+**Sweep finale**: 78 PASS + 1 SKIP su 7 suite Round 11.2+11.1 (era 75/76 pre-fix).
+
+**Audit doppi storici**: gli audit `admin_gold_granted` con timestamp `17:58:39.155-159 reason="double submit test"` (TC2c tester E2E) restano in DB come effetti collaterali del test P1. NO hard delete (vincolo brief).

@@ -3,7 +3,7 @@
  * Step 2: strong confirmation showing target guild + amount + reason.
  * On confirm → POST /api/admin/guilds/{id}/grant-gold and refresh detail.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
 
@@ -15,6 +15,11 @@ export default function GrantGoldModal({ guild, onClose, onGranted }) {
     const [reason, setReason] = useState("");
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState(null);
+    // ROUND 11.2 TASK 5b P1 — synchronous guard against double-click.
+    // `disabled={busy}` is not enough: React batches setState, so a fast
+    // second click executes BEFORE `setBusy(true)` is committed. The ref
+    // mutation is synchronous and blocks the second handler immediately.
+    const submittingRef = useRef(false);
 
     const amt = parseInt(amount, 10);
     const validAmount = Number.isFinite(amt) && amt > 0 && amt <= MAX_GOLD;
@@ -28,6 +33,9 @@ export default function GrantGoldModal({ guild, onClose, onGranted }) {
     }, [onClose]);
 
     const onSubmit = async () => {
+        // SYNC guard: blocks the second click BEFORE React commits setBusy.
+        if (submittingRef.current) return;
+        submittingRef.current = true;
         setBusy(true); setError(null);
         try {
             const { data } = await api.post(
@@ -41,6 +49,7 @@ export default function GrantGoldModal({ guild, onClose, onGranted }) {
             setError(formatApiError(err));
         } finally {
             setBusy(false);
+            submittingRef.current = false;  // re-enable after the call completes
         }
     };
 

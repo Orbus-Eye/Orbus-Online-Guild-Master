@@ -3,7 +3,7 @@
  * Step 2: strong confirmation. On confirm → POST grant-item.
  * 4xx error mapping: unknown_slug / bound / p2w → readable inline message.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
 
@@ -16,6 +16,8 @@ export default function GrantItemModal({ guild, onClose, onGranted }) {
     const [reason, setReason] = useState("");
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState(null);
+    // ROUND 11.2 TASK 5b P1 — sync guard against double-click race.
+    const submittingRef = useRef(false);
 
     const qty = parseInt(quantity, 10);
     const validQty = Number.isFinite(qty) && qty > 0 && qty <= MAX_QTY;
@@ -30,6 +32,9 @@ export default function GrantItemModal({ guild, onClose, onGranted }) {
     }, [onClose]);
 
     const submit = async () => {
+        // SYNC guard: blocks second click BEFORE React commits setBusy.
+        if (submittingRef.current) return;
+        submittingRef.current = true;
         setBusy(true); setError(null);
         try {
             const { data } = await api.post(
@@ -56,6 +61,7 @@ export default function GrantItemModal({ guild, onClose, onGranted }) {
             setStep(1);  // back to form so admin can correct slug
         } finally {
             setBusy(false);
+            submittingRef.current = false;  // re-enable after the call completes
         }
     };
 
