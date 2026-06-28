@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useT } from "../i18n/I18nContext";
 import { TraitList } from "./TraitBadge";
+import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
 
 const SLOTS = ["weapon", "armor", "accessory"];
@@ -41,7 +42,7 @@ const formatItemBonuses = (it) => {
 };
 
 export default function AdventurerDetailModal({ adventurer, onClose }) {
-    const { t } = useT();
+    const { t, lang } = useT();
     const dialogRef = useRef(null);
 
     useEffect(() => {
@@ -102,9 +103,14 @@ export default function AdventurerDetailModal({ adventurer, onClose }) {
                 <h2
                     id="adv-modal-title"
                     data-testid="adventurer-modal-name"
-                    className="text-2xl font-semibold tracking-tight"
+                    className="text-2xl font-semibold tracking-tight flex items-center gap-2 flex-wrap"
                 >
-                    {adventurer.name}
+                    <span>{adventurer.name}</span>
+                    <SpecChip
+                        spec={adventurer.specialization}
+                        lang={lang}
+                        testid="adventurer-modal-spec-chip"
+                    />
                 </h2>
                 <div className="text-xs text-muted-foreground mt-1">
                     {adventurer.class_name} · {adventurer.class_role} ·{" "}
@@ -169,6 +175,13 @@ export default function AdventurerDetailModal({ adventurer, onClose }) {
                         </span>
                     </div>
                 </div>
+
+                {/* Specialization (ROUND 6C) — rendered only when present */}
+                <SpecializationPanel
+                    spec={adventurer.specialization}
+                    lang={lang}
+                    t={t}
+                />
 
                 {/* Traits */}
                 <div className="mt-5">

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
+import { SpecChip } from "../components/SpecializationBadge";
 import { useT } from "../i18n/I18nContext";
 import { api, formatApiError } from "../lib/api";
 import { DORM_CAP_BY_LEVEL } from "../utils/structures";
@@ -17,7 +18,7 @@ function powerOf(a) {
 }
 
 export default function RosterManage() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const navigate = useNavigate();
     const [advs, setAdvs] = useState([]);
     const [retiredAdvs, setRetiredAdvs] = useState([]);
@@ -32,6 +33,10 @@ export default function RosterManage() {
     const [sortDir, setSortDir] = useState("desc");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [retiring, setRetiring] = useState(false);
+    // ROUND 6C — bulk retire of specialized advs requires an explicit opt-in
+    // to soft-discard their bound signature items (the backend would 422 the
+    // request otherwise).
+    const [discardSignatures, setDiscardSignatures] = useState(false);
     // ROUND 6B.4 Task 4 — sub-tab state. Default "manage" preserves the URL
     // and existing deep-links from Wave 1.5 (no breaking change).
     const [tab, setTab] = useState("manage");
@@ -123,9 +128,13 @@ export default function RosterManage() {
             try {
                 // ROUND 6B.4 Task 3 — bulk retires from this page emit the
                 // `bulk_capacity` via tag for audit + analytics segmentation.
+                // ROUND 6C — `discard_signature_items` is opt-in via the
+                // bulk modal checkbox; required when any selected adv is
+                // specialized.
                 await api.post(`/adventurers/${id}/retire`, {
                     reason: "Over-cap manual cleanup",
                     via: "bulk_capacity",
+                    discard_signature_items: discardSignatures,
                 });
                 success++;
             } catch (_e) {
@@ -135,6 +144,7 @@ export default function RosterManage() {
         setRetiring(false);
         setConfirmOpen(false);
         setSelected(new Set());
+        setDiscardSignatures(false);
         if (success > 0) {
             toast.success(t("rosterManage.retire_success", { n: success }));
         }
@@ -334,7 +344,16 @@ export default function RosterManage() {
                                                 onChange={() => toggleOne(a.id)}
                                             />
                                         </td>
-                                        <td className="px-2 py-2 font-bold text-foreground">{a.name}</td>
+                                        <td className="px-2 py-2 font-bold text-foreground">
+                                            <span className="inline-flex items-center gap-2 flex-wrap">
+                                                <span>{a.name}</span>
+                                                <SpecChip
+                                                    spec={a.specialization}
+                                                    lang={lang}
+                                                    testid={`roster-manage-spec-chip-${a.id}`}
+                                                />
+                                            </span>
+                                        </td>
                                         <td className="px-2 py-2">{a.class_name || "—"}</td>
                                         <td className="px-2 py-2">{a.class_role || "—"}</td>
                                         <td className="px-2 py-2">{a.rarity || "Common"}</td>
@@ -349,7 +368,13 @@ export default function RosterManage() {
 
                 {/* Confirm modal */}
                 {/* Confirm modal */}
-                {confirmOpen && (
+                {confirmOpen && (() => {
+                    const selectedSpecialized = Array.from(selected)
+                        .map((id) => advs.find((x) => x.id === id))
+                        .filter((a) => a && a.specialization);
+                    const hasSpecialized = selectedSpecialized.length > 0;
+                    const canConfirm = !hasSpecialized || discardSignatures;
+                    return (
                     <div
                         data-testid="roster-manage-confirm-modal"
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
@@ -364,13 +389,51 @@ export default function RosterManage() {
                             <ul className="text-xs text-muted-foreground max-h-40 overflow-y-auto mb-4 border border-border rounded-sm p-2">
                                 {Array.from(selected).map((id) => {
                                     const a = advs.find((x) => x.id === id);
-                                    return a ? (
-                                        <li key={id} className="py-0.5">
-                                            • {a.name} (Lv{a.level || 1}, {a.rarity || "Common"})
+                                    if (!a) return null;
+                                    return (
+                                        <li key={id} className="py-0.5 flex items-center justify-between gap-2">
+                                            <span>
+                                                • {a.name} (Lv{a.level || 1}, {a.rarity || "Common"})
+                                            </span>
+                                            <SpecChip
+                                                spec={a.specialization}
+                                                lang={lang}
+                                                testid={`roster-manage-confirm-spec-${a.id}`}
+                                            />
                                         </li>
-                                    ) : null;
+                                    );
                                 })}
                             </ul>
+                            {hasSpecialized && (
+                                <div
+                                    data-testid="roster-manage-signature-warning"
+                                    className="border border-red-500/60 bg-red-500/10 rounded-sm p-3 mb-3 text-xs"
+                                >
+                                    <div className="text-red-300 font-bold tracking-widest mb-2">
+                                        {t("adventurers_retire.signature_warning_title")}
+                                    </div>
+                                    <p className="text-foreground/80 mb-2 leading-relaxed">
+                                        {(lang === "it"
+                                            ? `${selectedSpecialized.length} avventuriere/i selezionato/i sono specializzati e possiedono un signature item legato. Per congedarli devi accettare di distruggere tutti i signature items.`
+                                            : `${selectedSpecialized.length} selected adventurer(s) are specialized and own a bound signature item. To retire them you must accept destroying all their signature items.`
+                                        )}
+                                    </p>
+                                    <label className="flex items-start gap-2 cursor-pointer">
+                                        <input
+                                            data-testid="roster-manage-discard-signature-checkbox"
+                                            type="checkbox"
+                                            checked={discardSignatures}
+                                            onChange={(e) => setDiscardSignatures(e.target.checked)}
+                                            className="accent-red-500 mt-0.5"
+                                        />
+                                        <span className="text-foreground/90">
+                                            {lang === "it"
+                                                ? `Distruggi anche i ${selectedSpecialized.length} signature item legati`
+                                                : `Also destroy the ${selectedSpecialized.length} bound signature items`}
+                                        </span>
+                                    </label>
+                                </div>
+                            )}
                             <p className="text-xs text-red-400 mb-4">
                                 {t("rosterManage.confirm_disclaimer")}
                             </p>
@@ -379,14 +442,17 @@ export default function RosterManage() {
                                     data-testid="roster-manage-confirm-cancel"
                                     variant="secondary"
                                     disabled={retiring}
-                                    onClick={() => setConfirmOpen(false)}
+                                    onClick={() => {
+                                        setConfirmOpen(false);
+                                        setDiscardSignatures(false);
+                                    }}
                                 >
                                     {t("common.cancel")}
                                 </Button>
                                 <Button
                                     data-testid="roster-manage-confirm-submit"
                                     variant="destructive"
-                                    disabled={retiring}
+                                    disabled={retiring || !canConfirm}
                                     onClick={doRetire}
                                 >
                                     {retiring ? t("common.loading") : t("rosterManage.confirm_submit")}
@@ -394,7 +460,8 @@ export default function RosterManage() {
                             </div>
                         </div>
                     </div>
-                )}
+                    );
+                })()}
 
                 </>
                 )}

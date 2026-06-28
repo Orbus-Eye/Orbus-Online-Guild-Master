@@ -10,6 +10,7 @@ import TraitPreviewWidget from "../components/TraitPreviewWidget";
 import AdventurerDetailModal from "../components/AdventurerDetailModal";
 import AdventurerRenameModal from "../components/AdventurerRenameModal";
 import RoleMarker from "../components/RoleMarker";
+import { SpecChip } from "../components/SpecializationBadge";
 
 // i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
 // intentionally NOT localized. They follow universal MMO/RPG convention and
@@ -109,7 +110,7 @@ const Empty = ({ t }) => (
 );
 
 export default function Adventurers() {
-    const { t } = useT();
+    const { t, lang } = useT();
     const [rows, setRows] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
@@ -118,6 +119,9 @@ export default function Adventurers() {
     const [retireBusy, setRetireBusy] = useState(false);
     const [retireForceUnequip, setRetireForceUnequip] = useState(false);
     const [retireReason, setRetireReason] = useState("");
+    // ROUND 6C — opt-in soft-discard of bound signature item on retire.
+    // Required for the backend to accept the retire of a specialized adv.
+    const [retireDiscardSignature, setRetireDiscardSignature] = useState(false);
 
     const openSheet = (a) => setSelected(a);
     const closeSheet = () => setSelected(null);
@@ -127,8 +131,12 @@ export default function Adventurers() {
         setRetiring(a);
         setRetireForceUnequip(false);
         setRetireReason("");
+        setRetireDiscardSignature(false);
     };
-    const closeRetire = () => setRetiring(null);
+    const closeRetire = () => {
+        setRetiring(null);
+        setRetireDiscardSignature(false);
+    };
     const onRenamed = (updated) => {
         setRows((prev) => (prev || []).map((r) => (r.id === updated.id ? updated : r)));
     };
@@ -139,6 +147,7 @@ export default function Adventurers() {
             await api.post(`/adventurers/${retiring.id}/retire`, {
                 reason: retireReason || null,
                 force_unequip: retireForceUnequip,
+                discard_signature_items: retireDiscardSignature,
             });
             setRows((prev) => (prev || []).filter((r) => r.id !== retiring.id));
             toast.success(`${retiring.name} congedato/a`);
@@ -155,6 +164,8 @@ export default function Adventurers() {
                 toast.error(`${detail.equipped_count} oggetti equipaggiati. Spunta "Disequipaggia e congeda" per procedere.`);
             } else if (code === "adventurer.already_retired") {
                 toast.warning("Avventuriero già congedato");
+            } else if (code === "adventurer.has_bound_items") {
+                toast.error(detail.user_message || "L'avventuriero ha un signature item legato — spunta 'Distruggi signature item' per congedare.");
             } else {
                 toast.error(formatApiError(err));
             }
@@ -246,18 +257,25 @@ export default function Adventurers() {
                                             onClick={() => openSheet(a)}
                                         >
                                             <td className="px-3 py-2 whitespace-nowrap font-medium">
-                                                <button
-                                                    type="button"
-                                                    data-testid={`adventurer-name-${a.id}`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        openSheet(a);
-                                                    }}
-                                                    className="text-left hover:text-amber focus-visible:outline-none focus-visible:text-amber"
-                                                    title={t("adventurer_modal.open_sheet")}
-                                                >
-                                                    {a.name}
-                                                </button>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <button
+                                                        type="button"
+                                                        data-testid={`adventurer-name-${a.id}`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            openSheet(a);
+                                                        }}
+                                                        className="text-left hover:text-amber focus-visible:outline-none focus-visible:text-amber"
+                                                        title={t("adventurer_modal.open_sheet")}
+                                                    >
+                                                        {a.name}
+                                                    </button>
+                                                    <SpecChip
+                                                        spec={a.specialization}
+                                                        lang={lang}
+                                                        testid={`adventurer-spec-chip-${a.id}`}
+                                                    />
+                                                </div>
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                                                 {a.class_name}
@@ -358,7 +376,14 @@ export default function Adventurers() {
                                 >
                                     <div className="flex items-start justify-between gap-2 mb-2">
                                         <div className="min-w-0">
-                                            <div className="font-medium truncate">{a.name}</div>
+                                            <div className="font-medium truncate flex items-center gap-2 flex-wrap">
+                                                <span>{a.name}</span>
+                                                <SpecChip
+                                                    spec={a.specialization}
+                                                    lang={lang}
+                                                    testid={`adventurer-spec-chip-mobile-${a.id}`}
+                                                />
+                                            </div>
                                             <div className="text-xs text-muted-foreground">
                                                 {a.class_name} · {a.class_role}
                                             </div>
@@ -453,7 +478,14 @@ export default function Adventurers() {
                             CONGEDA AVVENTURIERO
                         </h3>
                         <div className="text-sm mb-3">
-                            <div className="text-foreground font-bold">{retiring.name}</div>
+                            <div className="text-foreground font-bold flex items-center gap-2 flex-wrap">
+                                <span>{retiring.name}</span>
+                                <SpecChip
+                                    spec={retiring.specialization}
+                                    lang={lang}
+                                    testid="adventurer-retire-modal-spec-chip"
+                                />
+                            </div>
                             <div className="text-xs text-muted-foreground mt-1">
                                 {retiring.class_name} · {retiring.role || retiring.class_role || "—"} · Lv{retiring.level} · PWR {retiring.total_power ?? retiring.power}
                             </div>
@@ -462,6 +494,41 @@ export default function Adventurers() {
                             Il congedo è soft: lo storico delle spedizioni resta, lo slot del roster viene liberato.
                             L&apos;avventuriero non sarà più selezionabile.
                         </p>
+                        {retiring.specialization && (
+                            <div
+                                data-testid="adventurer-retire-modal-signature-warning"
+                                className="border border-red-500/60 bg-red-500/10 rounded-sm p-3 mb-3 text-[11px]"
+                            >
+                                <div className="text-red-300 font-bold tracking-widest mb-2">
+                                    {t("adventurers_retire.signature_warning_title")}
+                                </div>
+                                <p className="text-foreground/80 mb-2 leading-relaxed">
+                                    {t("adventurers_retire.signature_warning_body", {
+                                        spec: (lang === "it"
+                                            ? retiring.specialization.name_it
+                                            : retiring.specialization.name_en) || retiring.specialization.slug,
+                                        item: t("specialization.signature_label", "signature item"),
+                                    })}
+                                </p>
+                                <label className="flex items-start gap-2 cursor-pointer">
+                                    <input
+                                        data-testid="adventurer-retire-modal-discard-signature"
+                                        type="checkbox"
+                                        checked={retireDiscardSignature}
+                                        onChange={(e) => setRetireDiscardSignature(e.target.checked)}
+                                        className="accent-red-500 mt-0.5"
+                                    />
+                                    <span className="text-foreground/90">
+                                        {t("adventurers_retire.discard_signature_label", {
+                                            item: t("specialization.signature_label", "signature item"),
+                                        })}
+                                    </span>
+                                </label>
+                                <p className="text-[10px] text-muted-foreground mt-2">
+                                    {t("adventurers_retire.discard_signature_hint")}
+                                </p>
+                            </div>
+                        )}
                         <label className="flex items-center gap-2 text-[11px] mb-3 cursor-pointer">
                             <input
                                 type="checkbox"
@@ -494,7 +561,7 @@ export default function Adventurers() {
                             <button
                                 type="button"
                                 onClick={doRetire}
-                                disabled={retireBusy}
+                                disabled={retireBusy || (retiring.specialization && !retireDiscardSignature)}
                                 data-testid="adventurer-retire-modal-confirm"
                                 className="flex-1 px-3 py-2 text-[11px] tracking-widest font-bold bg-red-500/80 text-white hover:bg-red-500 transition-colors rounded-sm disabled:opacity-50"
                             >
