@@ -54,6 +54,18 @@ TARGET_STRUCTURE_LEVEL = 3  # ROUND 6E — Full Hybrid tier unlocked
 TARGET_ADV_LEVEL = 5        # ≥ MIN_ADVENTURER_LEVEL gate
 WARRIOR_CLASSES = ("Warrior", "Paladin")  # spec-eligible for hybrids
 
+# ROUND 6E — Material floor for happy-path respec validation.
+# Respec cost table (see app.training.catalog.respec_cost_for_count):
+#   count 0 → 1 dust  | count 1 → 2 dust  | count 2+ → 3 dust (cap)
+# We grant 10 lesser_arcane_dust to comfortably cover 3-4 respec cycles.
+# `greater_arcane_dust` is NOT required by the respec flow (only used by
+# T3 milestones), but a small grant keeps the env consistent for tier-3
+# milestone claims during the same validation session.
+MATERIAL_FLOOR: dict = {
+    "lesser_arcane_dust": 10,
+    "greater_arcane_dust": 5,
+}
+
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -196,6 +208,108 @@ async def _apply_structure(db, *, user_id: str, guild_id: str, plan: dict) -> No
         pass
 
 
+async def _plan_materials(db, guild_id: str) -> dict:
+    """Compute the deltas needed to bring each material up to its floor.
+
+    Idempotency: if current quantity ≥ floor for a material, the delta
+    is 0 and the script skips that material on apply. The plan also
+    records the template id so the apply step can target the canonical
+    inventory row (vs creating duplicates).
+    """
+    plan: dict = {"materials": [], "needs_update": False}
+    for slug, floor in MATERIAL_FLOOR.items():
+        template = await db.items.find_one(
+            {"slug": slug}, {"_id": 0, "id": 1, "slug": 1, "name_en": 1},
+        )
+        if not template:
+            plan["materials"].append({
+                "slug": slug,
+                "floor": floor,
+                "current": 0,
+                "delta": 0,
+                "action": "skipped_template_missing",
+            })
+            continue
+        row = await db.inventory_items.find_one(
+            {"guild_id": guild_id, "item_id": template["id"]},
+            {"_id": 0, "id": 1, "quantity": 1},
+        )
+        current = int((row or {}).get("quantity", 0))
+        delta = max(0, floor - current)
+        plan["materials"].append({
+            "slug": slug,
+            "template_id": template["id"],
+            "floor": floor,
+            "current": current,
+            "delta": delta,
+            "action": "grant" if delta > 0 else "already_satisfied",
+        })
+        if delta > 0:
+            plan["needs_update"] = True
+    return plan
+
+
+async def _apply_materials(db, *, user_id: str, guild_id: str, plan: dict) -> dict:
+    """Top up each material that is below its floor.
+
+    Uses upsert + `$inc` so concurrent runs cannot create duplicate
+    inventory rows for the same `(guild_id, item_id)` pair. Each grant
+    is emitted as a single audit event with the full quantities map.
+    """
+    now_iso = _utc_iso()
+    granted: dict[str, dict] = {}
+    for entry in plan["materials"]:
+        if entry["action"] != "grant":
+            continue
+        slug = entry["slug"]
+        template_id = entry["template_id"]
+        delta = int(entry["delta"])
+        # Use a 2-step "find then upsert" to keep the canonical row shape
+        # (with full `inventory_items` defaults) intact when creating.
+        existing = await db.inventory_items.find_one(
+            {"guild_id": guild_id, "item_id": template_id},
+            {"_id": 0, "id": 1},
+        )
+        if existing:
+            await db.inventory_items.update_one(
+                {"id": existing["id"]},
+                {"$inc": {"quantity": delta}},
+            )
+        else:
+            import uuid as _uuid
+            await db.inventory_items.insert_one({
+                "id": str(_uuid.uuid4()),
+                "guild_id": guild_id, "item_id": template_id,
+                "acquired_at": now_iso, "quantity": delta,
+                "is_bound": False, "refinement_level": 0,
+                "enchants": [], "affixes": [], "reroll_count": 0,
+                "disenchanted_at": None, "discarded_at": None,
+                "bound_to_adventurer_id": None,
+            })
+        granted[slug] = {"delta": delta, "from": entry["current"],
+                         "to": entry["current"] + delta}
+
+    if granted:
+        try:
+            from app.audit.log import write_audit
+            await write_audit(
+                db,
+                event_type="materials_granted_for_round6e_validation",
+                actor_user_id=user_id,
+                actor_guild_id=guild_id,
+                source=SCRIPT_SOURCE,
+                related_entity_id=guild_id,
+                metadata={
+                    "reason": SEED_REASON,
+                    "quantities": granted,
+                    "floor": MATERIAL_FLOOR,
+                },
+            )
+        except Exception:  # noqa: BLE001
+            pass
+    return granted
+
+
 async def _apply_warrior_promotion(db, *, user_id: str, guild_id: str,
                                    entry: dict) -> None:
     adv = entry["adventurer"]
@@ -243,6 +357,7 @@ async def _seed(*, apply: bool) -> dict:
     user, guild = await _resolve_tester(db)
     structure_plan = await _plan_structure(db, guild["id"])
     warrior_slot = await _plan_warrior_slot(db, guild["id"])
+    materials_plan = await _plan_materials(db, guild["id"])
 
     report = {
         "mode": "apply" if apply else "dry",
@@ -251,7 +366,10 @@ async def _seed(*, apply: bool) -> dict:
         "guild": {"id": guild["id"], "name": guild["name"]},
         "structure": structure_plan,
         "warrior_slot": warrior_slot,
-        "applied": {"structure": False, "warrior_slot": None},
+        "materials": materials_plan,
+        "applied": {
+            "structure": False, "warrior_slot": None, "materials": {},
+        },
     }
 
     if not apply:
@@ -274,6 +392,11 @@ async def _seed(*, apply: bool) -> dict:
             "from_level": warrior_slot["from_level"],
             "to_level": warrior_slot["to_level"],
         }
+
+    if materials_plan["needs_update"]:
+        report["applied"]["materials"] = await _apply_materials(
+            db, user_id=user["id"], guild_id=guild["id"], plan=materials_plan,
+        )
 
     report["backup_file"] = await _write_backup_file(report)
     return report

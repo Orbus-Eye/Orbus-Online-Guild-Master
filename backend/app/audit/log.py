@@ -106,6 +106,8 @@ EVENT_TYPES = frozenset({
     # ROUND 6C — Preview validation seed (dev-only, whitelist-gated)
     "guild_structure_seeded",
     "adventurer_seeded",
+    # ROUND 6E — Preview validation seed extension (materials grant)
+    "materials_granted_for_round6e_validation",
     # ROUND 6D — Contracts + Milestones
     "contract_claimed",
     "guild_milestone_reached",

@@ -1,0 +1,82 @@
+{
+  "applied": {
+    "materials": {
+      "greater_arcane_dust": {
+        "delta": 5,
+        "from": 0,
+        "to": 5
+      },
+      "lesser_arcane_dust": {
+        "delta": 10,
+        "from": 0,
+        "to": 10
+      }
+    },
+    "structure": false,
+    "warrior_slot": {
+      "class_name": "Paladin",
+      "from_level": 1,
+      "id": "30b20a2d-04a3-4184-9728-fad3e87831df",
+      "name": "Gwyn Ironfoot",
+      "to_level": 5
+    }
+  },
+  "guild": {
+    "id": "0788722b-724d-4343-9cd1-cd994d0f6200",
+    "name": "The Iron Lantern"
+  },
+  "materials": {
+    "materials": [
+      {
+        "action": "grant",
+        "current": 0,
+        "delta": 10,
+        "floor": 10,
+        "slug": "lesser_arcane_dust",
+        "template_id": "207eeebd-c29b-4a89-93d0-ff3b7e33f4ec"
+      },
+      {
+        "action": "grant",
+        "current": 0,
+        "delta": 5,
+        "floor": 5,
+        "slug": "greater_arcane_dust",
+        "template_id": "9010302d-39e9-42ae-a76b-b2861d8b0707"
+      }
+    ],
+    "needs_update": true
+  },
+  "mode": "apply",
+  "ran_at": "2026-06-28T12:22:39.864396+00:00",
+  "structure": {
+    "current": {
+      "acquired_via": "seed_round6e_validation",
+      "is_unlocked": true,
+      "level": 3,
+      "purchased_at": "2026-06-28T11:49:46.429229+00:00",
+      "upgraded_at": "2026-06-28T11:49:46.429229+00:00"
+    },
+    "needs_update": false,
+    "structure_slug": "training_grounds",
+    "target_level": 3
+  },
+  "tester": {
+    "email": "tester@orbus.test",
+    "user_id": "d280a1e6-d4f5-4826-9aa7-8537290e8cb4"
+  },
+  "warrior_slot": {
+    "action": "promote",
+    "adventurer": {
+      "class_name": "Paladin",
+      "id": "30b20a2d-04a3-4184-9728-fad3e87831df",
+      "level": 1,
+      "name": "Gwyn Ironfoot"
+    },
+    "classes": [
+      "Warrior",
+      "Paladin"
+    ],
+    "from_level": 1,
+    "to_level": 5
+  }
+}

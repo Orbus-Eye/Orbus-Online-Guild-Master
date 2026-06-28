@@ -155,6 +155,15 @@ def adventurer_public(doc: dict) -> dict:
         "name": doc["name"],
         "adventurer_class_id": doc["adventurer_class_id"],
         "class_name": doc.get("class_name"),
+        # ROUND 6E — lowercase slug exposed for client-side class-eligibility
+        # filters (e.g. RespecModal). Resolved by readers via a class lookup
+        # join (`list_adventurers_for_guild`) or from the doc when already
+        # present. Falls back to a `class_name` lowercasing if neither is
+        # available — safe because spec eligibility uses lowercase slugs.
+        "class_slug": (
+            doc.get("class_slug")
+            or (doc.get("class_name") or "").lower() or None
+        ),
         "class_role": doc.get("class_role"),
         "rarity": doc.get("rarity", "Common"),
         "level": doc.get("level", 1),
