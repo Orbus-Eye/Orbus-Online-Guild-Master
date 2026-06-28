@@ -109,6 +109,14 @@ def enforce_min_adventurer_level(
             })
     if not offenders:
         return
+    # ROUND 11.3 micro-ROI: log blocked attempts to a dedicated stdout
+    # marker so balance design can aggregate which dungeons/raids are the
+    # main psychological walls. We log only counts + source — NO PII.
+    import logging
+    logging.getLogger("orbus.level_gate").info(
+        "level_gate.blocked_attempts source=%s min_level=%d count=%d",
+        source, min_required_level, len(offenders),
+    )
     names = ", ".join(f"{o['name']} (Lv{o['level']})" for o in offenders[:3])
     suffix = "" if len(offenders) <= 3 else f" e altri {len(offenders) - 3}"
     raise HTTPException(

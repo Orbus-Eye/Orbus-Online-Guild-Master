@@ -8,6 +8,9 @@ def item_public(it: dict) -> dict:
     monetization invariant (combat/economy/ranking items MUST NOT be
     `can_be_sold_for_real_money`).
     """
+    # ROUND 11.3 TASK B — single source of truth for the required level.
+    # Avoids drift between the FE display and the server-side gate.
+    from app.equipment.level_gate import resolve_item_required_level
     return {
         "id": it["id"],
         "slug": it["slug"],
@@ -18,6 +21,11 @@ def item_public(it: dict) -> dict:
         "item_type": it["item_type"],
         "rarity": it["rarity"],
         "level_required": it.get("level_required", 1),
+        # ROUND 11.3 TASK B — derived field: the actual gate the equip
+        # service will enforce. Honours explicit `required_adventurer_level`
+        # if set, else legacy `level_required` if > 1, else a rarity-based
+        # default. FE uses this to grey-out under-level cards before equip.
+        "required_adventurer_level": resolve_item_required_level(it),
         # ROUND 11.1 P1 (post-Slice-1 hotfix) — defensive `.get(..., 0)` for
         # all numeric fields. Some catalog materials (e.g. lesser_arcane_dust,
         # greater_arcane_dust) were seeded without an explicit `power_score`,

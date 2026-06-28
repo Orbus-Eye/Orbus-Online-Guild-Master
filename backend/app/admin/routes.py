@@ -745,4 +745,31 @@ async def admin_audit_list(
     return {"total": total, "limit": limit, "offset": offset, "events": safe_events}
 
 
+# ─── Admin: Equipment level audit (ROUND 11.3 TASK B) ────────────────────────
+@router.post("/equipment/level-audit")
+async def admin_equipment_level_audit(
+    payload: dict | None = None, _: dict = Depends(get_admin_user)
+):
+    """Scan `equipped_items` for rows where the equipped item's required
+    level exceeds the wearer's current level. Returns a report.
+
+    Body (all optional):
+        {"dry_run": bool = True, "guild_id_filter": str | None = None}
+
+    When `dry_run=false`, performs soft unequip (item stays in inventory,
+    only `equipped_items` row is removed and `reserved_qty` is released)
+    and writes `equipment_auto_unequipped_level_requirement` audit events.
+    """
+    from app.equipment.level_audit import audit_and_unequip_legacy
+    payload = payload or {}
+    dry_run = bool(payload.get("dry_run", True))
+    guild_filter = payload.get("guild_id_filter")
+    if guild_filter is not None and not isinstance(guild_filter, str):
+        raise HTTPException(400, "guild_id_filter must be a string")
+    report = await audit_and_unequip_legacy(
+        db, dry_run=dry_run, guild_id_filter=guild_filter,
+    )
+    return report
+
+
 __all__ = ["router"]

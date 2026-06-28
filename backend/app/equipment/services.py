@@ -182,6 +182,12 @@ async def equip_item_service(
             ),
         )
 
+    # ROUND 11.3 TASK B — adventurer-level gate on equip. MUST run before
+    # the atomic reservation so we don't have to refund a reserved_qty on
+    # the rejection path. PWR alone does NOT bypass.
+    from app.equipment.level_gate import enforce_item_level_requirement
+    enforce_item_level_requirement(item, adv, source="equipment.equip")
+
     inv_row = await db.inventory_items.find_one(
         {"guild_id": guild["id"], "item_id": item_id}, {"_id": 0}
     )
