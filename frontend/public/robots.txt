@@ -1,0 +1,39 @@
+# ROUND 11.2 TASK 8 — Public robots policy.
+# Goal: allow indexing of SEO surface (landing, public guides, catalog
+# pages, leaderboard) while keeping authenticated and admin areas private.
+
+User-agent: *
+Allow: /$
+Allow: /guide
+Allow: /traits
+Allow: /stats
+Allow: /leaderboard
+Allow: /leaderboard/guilds
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/ops
+Disallow: /api/admin/
+Disallow: /api/auth/
+Disallow: /create-guild
+Disallow: /recruitment
+Disallow: /adventurers
+Disallow: /dungeons
+Disallow: /expeditions
+Disallow: /inventory
+Disallow: /forge
+Disallow: /raids
+Disallow: /squads
+Disallow: /territory
+Disallow: /roster/
+Disallow: /chronicle
+Disallow: /training
+Disallow: /contracts
+Disallow: /chat
+Disallow: /consortiums
+Disallow: /auction
+Disallow: /market
+Disallow: /crafting
+Disallow: /password-reset/
+
+Sitemap: https://orbusonline.net/sitemap.xml
