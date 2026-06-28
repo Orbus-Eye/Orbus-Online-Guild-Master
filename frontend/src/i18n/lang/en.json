@@ -3,6 +3,32 @@
     "banner_text": "Roster over capacity: {current}/{cap}. Retire {must_retire} to unlock actions.",
     "manage_cta": "Manage capacity"
   },
+  "auction": {
+    "title": "Auction",
+    "subtitle": "Buy and sell items between players. Auction fee: {fee}%.",
+    "tab_buy": "BUY",
+    "tab_sell": "SELL",
+    "tab_mine": "MY LISTINGS",
+    "buy_btn": "Buy from Auction",
+    "buy_btn_short": "Buy",
+    "sell_btn": "List on Auction",
+    "list_btn": "Submit",
+    "buy_confirm_title": "Confirm purchase",
+    "buy_quantity": "Quantity",
+    "buy_disabled_own": "You can't buy your own listing",
+    "buy_disabled_gold": "Insufficient gold",
+    "buy_disabled_status": "Listing no longer available",
+    "toast_bought": "Auction purchase successful",
+    "toast_listed": "Listed on Auction",
+    "toast_cancelled": "Listing cancelled"
+  },
+  "consortiumsExt": {
+    "read_more": "Read more",
+    "modal_title": "Consortium details",
+    "modal_close": "Close",
+    "modal_members_count": "Members ({n})",
+    "modal_no_description": "No description provided."
+  },
   "rosterManage": {
     "title": "Manage roster capacity",
     "subtitle": "Reduce active adventurers below the Dormitories cap. Retiring frees the slot; support can reinstate them later.",

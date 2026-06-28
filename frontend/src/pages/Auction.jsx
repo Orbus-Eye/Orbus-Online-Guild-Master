@@ -46,7 +46,7 @@ function authedFetch(token, path, init = {}) {
 }
 
 // ─── BUY TAB ─────────────────────────────────────────────────────────────
-function BuyTab({ token, lang, t, refreshGuild }) {
+function BuyTab({ token, lang, t, refreshGuild, myGuildId, myGuildGold }) {
     const [listings, setListings] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -82,7 +82,7 @@ function BuyTab({ token, lang, t, refreshGuild }) {
         const body = await r.json().catch(() => ({}));
         if (r.ok && body.success) {
             const itemName = body.item_received?.name || listing.item.name;
-            toast.success(`${t("market.toast_bought")}: ${body.item_received?.quantity}× ${itemName} — ${body.gold_spent}g`);
+            toast.success(`${t("auction.toast_bought")}: ${body.item_received?.quantity}× ${itemName} — ${body.gold_spent}g`);
             setConfirmId(null);
             setBuyQty(1);
             await load();
@@ -189,7 +189,7 @@ function BuyTab({ token, lang, t, refreshGuild }) {
                             <div className="border border-amber/50 rounded-sm p-2 bg-amber/5 space-y-2">
                                 <p className="text-xs">{t("market.buy_confirm")}</p>
                                 <div className="flex items-center gap-2 text-xs">
-                                    <label>{t("market.buy_quantity")}:</label>
+                                    <label>{t("auction.buy_quantity")}:</label>
                                     <input
                                         type="number" min="1" max={l.quantity}
                                         value={buyQty}
@@ -203,11 +203,12 @@ function BuyTab({ token, lang, t, refreshGuild }) {
                                 </div>
                                 <div className="flex gap-2">
                                     <button
-                                        className="bg-amber/90 text-background px-3 py-1 rounded-sm text-xs"
+                                        className="bg-amber/90 text-background px-3 py-1 rounded-sm text-xs font-bold disabled:opacity-50"
                                         onClick={() => doBuy(l)}
+                                        disabled={(buyQty || 0) * l.price_per_unit > myGuildGold}
                                         data-testid={`market-buy-confirm-${l.id}`}
                                     >
-                                        ✓ {t("market.buy_btn")}
+                                        ✓ {t("auction.buy_btn")}
                                     </button>
                                     <button
                                         className="border border-border px-3 py-1 rounded-sm text-xs"
@@ -217,15 +218,33 @@ function BuyTab({ token, lang, t, refreshGuild }) {
                                     </button>
                                 </div>
                             </div>
-                        ) : (
-                            <button
-                                className="border border-amber/60 text-amber px-3 py-1.5 rounded-sm text-xs hover:bg-amber/10"
-                                onClick={() => { setConfirmId(l.id); setBuyQty(l.quantity); }}
-                                data-testid={`market-buy-btn-${l.id}`}
-                            >
-                                {t("market.buy_btn")}
-                            </button>
-                        )}
+                        ) : (() => {
+                            // ROUND 6B.3 Wave 2 — explicit guard reasons so the
+                            // FE never lets the player click a CTA that 4xx's.
+                            const isOwn = l.seller?.guild_id === myGuildId;
+                            const isInactive = l.status && l.status !== "active";
+                            const cannotAfford = l.price_per_unit > myGuildGold;
+                            const disabled = isOwn || isInactive || cannotAfford;
+                            let reason = "";
+                            if (isOwn) reason = t("auction.buy_disabled_own");
+                            else if (isInactive) reason = t("auction.buy_disabled_status");
+                            else if (cannotAfford) reason = t("auction.buy_disabled_gold");
+                            return (
+                                <button
+                                    className={`px-3 py-1.5 rounded-sm text-xs ${
+                                        disabled
+                                            ? "border border-border text-muted-foreground cursor-not-allowed"
+                                            : "border border-amber/60 text-amber hover:bg-amber/10 font-bold"
+                                    }`}
+                                    onClick={() => { setConfirmId(l.id); setBuyQty(l.quantity); }}
+                                    disabled={disabled}
+                                    title={reason || undefined}
+                                    data-testid={`market-buy-btn-${l.id}`}
+                                >
+                                    {t("auction.buy_btn_short")} — {l.price_per_unit}g
+                                </button>
+                            );
+                        })()}
                     </div>
                 ))}
             </div>
@@ -297,7 +316,7 @@ function SellTab({ token, lang, t, fee, refreshGuild }) {
         });
         const body = await r.json().catch(() => ({}));
         if (r.ok && body.success) {
-            toast.success(`${t("market.toast_listed")} — ${body.quantity}× @ ${body.price_per_unit}g`);
+            toast.success(`${t("auction.toast_listed")} — ${body.quantity}× @ ${body.price_per_unit}g`);
             setConfirmOpen(false);
             setQty(1);
             await loadInventory();
@@ -555,10 +574,10 @@ export default function Market() {
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
                 <header>
                     <h1 className="text-3xl font-light tracking-wide">
-                        {t("market.title")}
+                        {t("auction.title")}
                     </h1>
                     <p className="text-xs text-muted-foreground mt-1">
-                        {t("market.subtitle").replace("{fee}", FEE)}
+                        {t("auction.subtitle").replace("{fee}", FEE)}
                     </p>
                 </header>
 
@@ -578,18 +597,18 @@ export default function Market() {
                                     : "border-transparent text-muted-foreground hover:text-foreground"
                             }`}
                         >
-                            {t(`market.${key}`)}
+                            {t(`auction.${key}`)}
                         </button>
                     ))}
                 </nav>
 
                 <section>
                     <SectionTitle>
-                        {tab === "buy" ? t("market.tab_buy")
-                            : tab === "sell" ? t("market.tab_sell")
-                            : t("market.tab_mine")}
+                        {tab === "buy" ? t("auction.tab_buy")
+                            : tab === "sell" ? t("auction.tab_sell")
+                            : t("auction.tab_mine")}
                     </SectionTitle>
-                    {tab === "buy" && <BuyTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} />}
+                    {tab === "buy" && <BuyTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} myGuildId={guild?.id} myGuildGold={guild?.gold || 0} />}
                     {tab === "sell" && <SellTab token={token} lang={lang} t={t} fee={FEE} refreshGuild={refreshGuild} />}
                     {tab === "mine" && <MineTab token={token} lang={lang} t={t} refreshGuild={refreshGuild} />}
                 </section>

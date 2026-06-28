@@ -3,6 +3,32 @@
     "banner_text": "Roster oltre capacità: {current}/{cap}. Congeda {must_retire} per sbloccare le azioni.",
     "manage_cta": "Gestisci capacità"
   },
+  "auction": {
+    "title": "Asta",
+    "subtitle": "Compra e vendi oggetti tra giocatori. Commissione asta: {fee}%.",
+    "tab_buy": "COMPRA",
+    "tab_sell": "VENDI",
+    "tab_mine": "INSERZIONI",
+    "buy_btn": "Compra all'Asta",
+    "buy_btn_short": "Compra",
+    "sell_btn": "Metti all'Asta",
+    "list_btn": "Inserisci",
+    "buy_confirm_title": "Conferma acquisto",
+    "buy_quantity": "Quantità",
+    "buy_disabled_own": "Non puoi acquistare la tua inserzione",
+    "buy_disabled_gold": "Gold insufficiente",
+    "buy_disabled_status": "Inserzione non più disponibile",
+    "toast_bought": "Acquisto dall'Asta riuscito",
+    "toast_listed": "Inserito all'Asta",
+    "toast_cancelled": "Inserzione ritirata"
+  },
+  "consortiumsExt": {
+    "read_more": "Leggi tutto",
+    "modal_title": "Dettagli Consorzio",
+    "modal_close": "Chiudi",
+    "modal_members_count": "Membri ({n})",
+    "modal_no_description": "Nessuna descrizione fornita."
+  },
   "rosterManage": {
     "title": "Gestisci capacità roster",
     "subtitle": "Riduci il numero di avventurieri attivi sotto il cap dei Dormitori. Il congedo libera lo slot ma può essere reintegrato dal supporto.",

@@ -340,3 +340,40 @@ Block destructive write flows when active roster exceeds the
 | Smoke: Bulk retire flow | filter→select→confirm→success toast→state refresh OK |
 
 **Wave 1.5 status: DONE. Ready for Wave 2.**
+
+---
+
+## ROUND 6B.3 — Wave 2 (Feb 2026) — UX hotfix: Consorzi + Asta/Mercato
+
+### TASK 2 — Consortium description readability
+- `pages/Consortiums.jsx`: replaced 80-char slice with 2-line CSS clamp,
+  added "Leggi tutto"/"Read more" button when description > 100 chars,
+  full-screen modal with name/tag/members/description/Join/Close.
+- React auto-escape → confirmed XSS safety (5/5 checks passed).
+
+### TASK 3 — Auction/Mercato text cleanup
+- `pages/Auction.jsx`: switched from `market.*` to `auction.*` i18n keys.
+  Page header "Mercato" → "Asta", tab labels updated.
+- `Market.jsx` (NPC shop) intentionally untouched.
+- New i18n keys IT+EN under `auction.*` (15 keys per locale).
+
+### TASK 4 — Auction buy button hardening
+- BuyTab now passes `myGuildId` + `myGuildGold` props.
+- Buy button disabled with structured tooltip when:
+    - listing belongs to own guild
+    - status != "active"
+    - price > guild gold
+- Quantity confirm `[✓ Compra]` also disabled when total > gold.
+
+### Verification
+| Check | Result |
+|-------|--------|
+| Yarn lint:strict | 0 warnings, 0 errors ✅ |
+| Pytest (backend_test + round6b3 atomicity + overcap) | 43 passed, 1 skipped |
+| XSS smoke (script + img onerror) | 5/5 checks passed — escaped, not executed |
+| Asta header smoke | "Auction"/"Asta" header, BUY/SELL/MY LISTINGS tabs |
+| Buy button smoke | 50 buttons visible with price label, no disabled-state false-positive on tester |
+| Modal smoke | Open/close OK, full description visible, Join button present |
+| Mobile (375px) | Renders without layout breakage |
+
+**Wave 2 status: DONE. Ready for Wave 3.**

@@ -16,6 +16,8 @@ export default function Consortiums() {
     const [busy, setBusy] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
     const [form, setForm] = useState({ name: "", tag: "", description: "" });
+    // ROUND 6B.3 Wave 2 — TASK 2: detail modal for full description.
+    const [detailC, setDetailC] = useState(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -238,8 +240,30 @@ export default function Consortiums() {
                                         </div>
                                         <div className="text-[10px] text-muted-foreground">
                                             {c.member_count} {t("consortiums.members_label")}
-                                            {c.description ? ` · ${c.description.slice(0, 80)}` : ""}
                                         </div>
+                                        {c.description ? (
+                                            <div
+                                                className="text-[11px] text-foreground/70 mt-1 overflow-hidden"
+                                                style={{
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: "vertical",
+                                                }}
+                                                data-testid={`consortium-desc-clamp-${c.id}`}
+                                            >
+                                                {c.description}
+                                            </div>
+                                        ) : null}
+                                        {c.description && c.description.length > 100 ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setDetailC(c)}
+                                                data-testid={`consortium-read-more-${c.id}`}
+                                                className="text-[10px] text-amber tracking-widest mt-1 hover:underline"
+                                            >
+                                                {t("consortiumsExt.read_more")} →
+                                            </button>
+                                        ) : null}
                                     </div>
                                     {!mine && (
                                         <button
@@ -257,6 +281,64 @@ export default function Consortiums() {
                         </ul>
                     )}
                 </div>
+
+                {/* ROUND 6B.3 Wave 2 — TASK 2: Detail modal with full description.
+                    React escapes the value by default so XSS payloads render as
+                    literal text — no need for `dangerouslySetInnerHTML`. */}
+                {detailC ? (
+                    <div
+                        data-testid={`consortium-detail-modal-${detailC.id}`}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+                        onClick={() => setDetailC(null)}
+                    >
+                        <div
+                            className="bg-card border border-border rounded-sm p-5 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="text-[10px] text-amber tracking-widest mb-2">
+                                :: {t("consortiumsExt.modal_title")}
+                            </div>
+                            <h2 className="text-xl font-semibold tracking-tight mb-1">
+                                {detailC.name}
+                                {detailC.tag ? <span className="text-amber/70 ml-2 text-xs">[{detailC.tag}]</span> : null}
+                            </h2>
+                            <div className="text-xs text-muted-foreground mb-3">
+                                {t("consortiumsExt.modal_members_count", { n: detailC.member_count })}
+                            </div>
+                            <p
+                                data-testid={`consortium-detail-description-${detailC.id}`}
+                                className="text-sm whitespace-pre-wrap text-foreground/90 mb-4 leading-relaxed"
+                            >
+                                {detailC.description || t("consortiumsExt.modal_no_description")}
+                            </p>
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    data-testid={`consortium-detail-close-${detailC.id}`}
+                                    onClick={() => setDetailC(null)}
+                                    className="border border-border text-muted-foreground px-3 py-1.5 rounded-sm text-xs hover:text-foreground"
+                                >
+                                    {t("consortiumsExt.modal_close")}
+                                </button>
+                                {!mine && (
+                                    <button
+                                        type="button"
+                                        data-testid={`consortium-detail-join-${detailC.id}`}
+                                        onClick={() => {
+                                            const cid = detailC.id;
+                                            setDetailC(null);
+                                            onJoin(cid);
+                                        }}
+                                        disabled={busy === `join-${detailC.id}`}
+                                        className="border border-amber text-amber px-3 py-1.5 rounded-sm text-xs hover:bg-amber/10 disabled:opacity-50 font-bold tracking-widest"
+                                    >
+                                        {t("consortiums.join")}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
             </main>
         </div>
     );
