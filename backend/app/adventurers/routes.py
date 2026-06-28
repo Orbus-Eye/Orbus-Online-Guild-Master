@@ -34,6 +34,13 @@ class AdventurerRetireIn(BaseModel):
     reason: str | None = Field(default=None, max_length=200)
     force_unequip: bool = Field(default=False)
     via: str = Field(default="single", max_length=32)
+    # ROUND 6C — opt-in flag for retiring an adventurer who has a
+    # specialization signature_item. Default `false` keeps the safe
+    # behaviour: signature items still block the retire via the generic
+    # bound-items guard. Setting `true` soft-discards signature items
+    # only (`discarded_at` set, `bound_to_adventurer_id` cleared,
+    # audit emitted); non-signature bound items still block.
+    discard_signature_items: bool = Field(default=False)
 
 
 @router.get("/api/adventurer-classes")
@@ -96,6 +103,7 @@ async def post_adventurer_retire(
         force_unequip=payload.force_unequip,
         actor_user_id=current_user["id"],
         via=via,
+        discard_signature_items=payload.discard_signature_items,
     )
 
 

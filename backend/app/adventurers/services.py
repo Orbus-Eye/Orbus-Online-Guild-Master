@@ -173,12 +173,17 @@ def adventurer_public(doc: dict) -> dict:
         # by readers). New retires set "user"; future automations may set
         # "system" / "auto_over_cap".
         "retired_by": doc.get("retired_by"),
+        "retire_via": doc.get("retire_via"),
         "retirement_reason": doc.get("retirement_reason"),
         "is_starter": bool(doc.get("is_starter", False)),
         "rename_count": int(doc.get("rename_count", 0)),
         "rename_max": 2,
         "renames_remaining": max(0, 2 - int(doc.get("rename_count", 0))),
         "traits": trait_public_filtered_list(doc.get("traits", [])),
+        # ROUND 6C — specialization snapshot (None when not yet specialized).
+        # The snapshot is set at apply-time so future catalog rebalancing
+        # never retroactively changes live adventurers' bonuses.
+        "specialization": doc.get("specialization"),
         "equipment": eq_slots,
         "base_power": base_power,
         "equipment_power": eq_power,

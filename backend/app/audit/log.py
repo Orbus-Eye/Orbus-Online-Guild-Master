@@ -96,6 +96,10 @@ EVENT_TYPES = frozenset({
     "adventurer_retired_bulk",
     "equipment_returned_after_retire",
     "bound_to_adventurer_dev_seed",
+    # ROUND 6C — Training Grounds + Specializations
+    "specialization_applied",
+    "specialization_signature_item_created",
+    "specialization_signature_item_discarded_on_retire",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

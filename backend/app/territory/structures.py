@@ -99,7 +99,7 @@ STRUCTURE_CATALOG: dict[str, dict] = {
         "prerequisites": {"guild_hall": 3, "dormitories": 2},
         "name_it": "Campo di Addestramento",
         "name_en": "Training Grounds",
-        "placeholder_for_round_6c": True,
+        # ROUND 6C — flag cleared; specialization system live.
     },
 }
 

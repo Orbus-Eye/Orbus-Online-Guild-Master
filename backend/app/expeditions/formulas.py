@@ -73,18 +73,23 @@ def adventurer_base_power(adv: dict) -> int:
 
 
 def adventurer_effective_power(adv: dict) -> int:
-    """Phase 13: trait-aware base power (no equipment, no composition).
+    """Phase 13 + ROUND 6C: trait-aware + specialization-aware base power.
 
-    Falls back to raw stats when adv has no traits.
+    Application order: base stats → trait modifiers → specialization modifiers
+    → sum + level*2. Equipment power is added separately in
+    `adventurers/services.py`.
+
+    Falls back to raw stats when adv has no traits AND no specialization.
     """
+    from app.training.catalog import apply_specialization_modifiers
     traits = adv.get("traits") or []
-    if not traits:
+    spec = adv.get("specialization")
+    if not traits and not spec:
         return adventurer_base_power(adv)
-    eff = apply_trait_modifiers(
-        {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS},
-        traits,
-    )
-    return sum(eff.values()) + int(adv.get("level", 1)) * 2
+    base = {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS}
+    after_traits = apply_trait_modifiers(base, traits) if traits else base
+    after_spec = apply_specialization_modifiers(after_traits, spec)
+    return sum(after_spec.values()) + int(adv.get("level", 1)) * 2
 
 
 def item_equip_power(item: dict) -> int:

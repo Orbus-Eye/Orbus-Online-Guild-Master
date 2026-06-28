@@ -36,6 +36,7 @@ import SquadBuilder from "@/pages/SquadBuilder";
 import Territory from "@/pages/Territory";
 import RosterManage from "@/pages/RosterManage";
 import Chronicle from "@/pages/Chronicle";
+import Training from "@/pages/Training";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -242,6 +243,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Chronicle />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/training"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Training />
                                 </ProtectedRoute>
                             }
                         />

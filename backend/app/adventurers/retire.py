@@ -100,15 +100,24 @@ async def _check_not_in_active_squad(db, *, guild_id: str, adventurer_id: str) -
         )
 
 
-async def _check_no_bound_items(db, *, guild_id: str, adventurer_id: str) -> None:
-    """ROUND 6B.4 Step 4b: HARD-block if the adventurer has 1+ inventory
-    items bound to them. The retire must wait until the items are
-    transferred or unbound (transfer/unbound flow ships in Round 6C).
-    """
+async def _check_no_bound_items(db, *, guild_id: str, adventurer_id: str,
+                                 discard_signature_items: bool = False) -> None:
+    """ROUND 6B.4 Step 4b + ROUND 6C: HARD-block if the adventurer has 1+
+    inventory items bound to them. When `discard_signature_items=True` the
+    signature items (bound_reason="specialization_signature") are filtered
+    out from the blocker AND will be soft-discarded in a follow-up step.
+    Non-signature bound items still block the retire."""
     from app.inventory.bound import find_inventory_bound_to_adventurer
     bound_rows = await find_inventory_bound_to_adventurer(
         db, guild_id=guild_id, adventurer_id=adventurer_id, limit=20,
     )
+    if discard_signature_items:
+        # Filter out signature items — caller has explicitly opted to
+        # destroy them in the follow-up soft-discard step.
+        bound_rows = [
+            r for r in bound_rows
+            if r.get("bound_reason") != "specialization_signature"
+        ]
     if not bound_rows:
         return
     item_names = [r["item_name"] for r in bound_rows[:10]]
@@ -126,6 +135,59 @@ async def _check_no_bound_items(db, *, guild_id: str, adventurer_id: str) -> Non
             ),
         },
     )
+
+
+async def _discard_signature_items_on_retire(
+    db, *, guild_id: str, adventurer_id: str, actor_user_id: str,
+) -> int:
+    """ROUND 6C: soft-discard signature items bound to a retiring adventurer.
+
+    Soft delete by design (NO hard delete):
+      - `discarded_at` set to now
+      - `discard_reason` = "adventurer_retired"
+      - `bound_to_adventurer_id` cleared (becomes orphan signature item)
+    Emits one audit event per discarded item.
+    """
+    now_iso = datetime.now(timezone.utc).isoformat()
+    rows = await db.inventory_items.find(
+        {
+            "guild_id": guild_id,
+            "bound_to_adventurer_id": adventurer_id,
+            "bound_reason": "specialization_signature",
+        },
+        {"_id": 0, "id": 1, "item_id": 1, "signature": 1},
+    ).to_list(20)
+    if not rows:
+        return 0
+    await db.inventory_items.update_many(
+        {"id": {"$in": [r["id"] for r in rows]}},
+        {"$set": {
+            "discarded_at": now_iso,
+            "discard_reason": "adventurer_retired",
+            "bound_to_adventurer_id": None,
+            "updated_at": now_iso,
+        }},
+    )
+    try:
+        from app.audit.log import write_audit
+        for r in rows:
+            await write_audit(
+                db,
+                event_type="specialization_signature_item_discarded_on_retire",
+                actor_user_id=actor_user_id,
+                actor_guild_id=guild_id,
+                source="adventurers.retire.discard_signature",
+                related_entity_id=r["id"],
+                metadata={
+                    "adventurer_id": adventurer_id,
+                    "inventory_id": r["id"],
+                    "item_slug": r.get("item_id"),
+                    "spec_slug": (r.get("signature") or {}).get("spec_slug"),
+                },
+            )
+    except Exception:
+        pass
+    return len(rows)
 
 
 async def _handle_equipped(
@@ -216,6 +278,7 @@ async def retire_adventurer(
     force_unequip: bool,
     actor_user_id: str,
     via: str = "single",
+    discard_signature_items: bool = False,
 ) -> dict:
     # ROUND 6B FASE C — preflight checks moved to single-responsibility
     # helpers above; this orchestrator is now linear (CC ≈ 3, was CC ≈ 16).
@@ -223,13 +286,25 @@ async def retire_adventurer(
     await _check_not_in_active_expedition(db, guild_id=guild_id, adventurer_id=adventurer_id)
     await _check_not_in_active_raid(db, guild_id=guild_id, adventurer_id=adventurer_id)
     await _check_not_in_active_squad(db, guild_id=guild_id, adventurer_id=adventurer_id)
-    # ROUND 6B.4 — bound-items pre-check happens BEFORE the equipment
-    # branch so a force_unequip with bound items still fails fast (we don't
-    # want to silently unequip then leave the user blocked).
-    await _check_no_bound_items(db, guild_id=guild_id, adventurer_id=adventurer_id)
+    # ROUND 6B.4 + ROUND 6C — bound-items pre-check. When the caller opts
+    # `discard_signature_items=True`, signature items are excluded from the
+    # blocker (they get soft-discarded post-retire); non-signature bound
+    # items still block.
+    await _check_no_bound_items(
+        db, guild_id=guild_id, adventurer_id=adventurer_id,
+        discard_signature_items=discard_signature_items,
+    )
     returned_items = await _handle_equipped(
         db, adventurer_id=adventurer_id, force_unequip=force_unequip,
     )
+    # ROUND 6C — soft-discard signature items now that the bound guard
+    # passed (caller opted in). Captures the count for the audit metadata.
+    discarded_count = 0
+    if discard_signature_items:
+        discarded_count = await _discard_signature_items_on_retire(
+            db, guild_id=guild_id, adventurer_id=adventurer_id,
+            actor_user_id=actor_user_id,
+        )
 
     # 6. Soft retire — set the flags and free busy-state.
     now = datetime.now(timezone.utc).isoformat()
@@ -268,4 +343,7 @@ async def retire_adventurer(
         "retired_at": now,
         "equipment_returned": returned_items,
         "retire_via": update["retire_via"],
+        # ROUND 6C — number of signature items soft-discarded (0 unless the
+        # caller passed `discard_signature_items=true`).
+        "signature_items_discarded": discarded_count,
     }
