@@ -5,7 +5,7 @@ and validators are preserved verbatim to keep request/response behavior
 identical (HTTP 422 for shape errors, HTTP 400 for password policy enforced at
 the route level).
 """
-from typing import Annotated
+from typing import Annotated, Optional
 
 from email_validator import EmailNotValidError, validate_email
 from pydantic import BaseModel, BeforeValidator, Field
@@ -54,7 +54,11 @@ class RefreshIn(BaseModel):
 
 
 class LogoutIn(BaseModel):
-    refresh_token: str = Field(min_length=8, max_length=256)
+    # ROUND 11.1 Slice 2 P1 — `refresh_token` is now OPTIONAL.
+    # Logout must succeed (clearing cookies) even when called without a
+    # body, with `{}`, or with the field omitted. Validation is preserved
+    # ONLY for the case where the field is actually provided.
+    refresh_token: Optional[str] = Field(default=None, min_length=8, max_length=256)
 
 
 class PasswordResetRequestIn(BaseModel):

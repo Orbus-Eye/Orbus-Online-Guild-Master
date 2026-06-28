@@ -20,9 +20,19 @@ export const AuthProvider = ({ children }) => {
     const [guild, setGuild] = useState(undefined);
 
     const logout = useCallback(async () => {
+        // ROUND 11.1 Slice 2 P1 — best-effort + always-clean.
+        //   1. Call backend logout WITHOUT a body so Pydantic doesn't reject
+        //      a `{}` payload (LogoutIn is now Optional but historical
+        //      builds may still expect omitted body for cleanest semantics).
+        //   2. ALWAYS scrub in-memory state + legacy localStorage token,
+        //      independent of the backend response. The cookies are server-
+        //      cleared on 200; if the network failed or the server errored,
+        //      `setUser(null)` still drops the UI to /login so the user
+        //      isn't left in an ambiguous "looks logged out" state with a
+        //      live session.
         try {
-            await api.post("/auth/logout", {});
-        } catch (_e) { /* idempotent */ }
+            await api.post("/auth/logout");
+        } catch (_e) { /* idempotent, swallow */ }
         localStorage.removeItem(TOKEN_KEY);
         setCsrfToken(null);
         setUser(null);

@@ -27,7 +27,16 @@ import requests
 
 
 BASE_URL = os.environ.get("BACKEND_URL", "http://localhost:8001")
-JWT_SECRET = os.environ.get("JWT_SECRET")
+# ROUND 11.1 Slice 2 fixup: strip quote-wrapping from the .env value when the
+# secret is propagated via bash (`JWT_SECRET=$(grep ... | cut -d= -f2-)`).
+# Without this strip the test signed with `"..."` while the server runs with
+# the un-quoted 64-byte secret loaded by python-dotenv, causing the expired
+# token check to misclassify the failure as InvalidTokenError (auth.invalid)
+# instead of ExpiredSignatureError (auth.expired).
+_raw_secret = os.environ.get("JWT_SECRET")
+if _raw_secret and len(_raw_secret) >= 2 and _raw_secret[0] == _raw_secret[-1] and _raw_secret[0] in ('"', "'"):
+    _raw_secret = _raw_secret[1:-1]
+JWT_SECRET = _raw_secret
 
 
 def _register(email: str | None = None) -> tuple[str, str]:
@@ -130,6 +139,54 @@ def test_logout_clears_cookies():
     # via cookie-only should be 401.
     r2 = s.get(f"{BASE_URL}/api/auth/me", timeout=15)
     assert r2.status_code == 401
+
+
+# ROUND 11.1 Slice 2 P1 — regression for the logout cookie-clear bug.
+# Three scenarios must all clear cookies + return 200:
+#   (a) no body          — frontend default
+#   (b) empty body `{}`  — common SDK / legacy clients
+#   (c) full refresh_token body — server-to-server / refresh rotation
+def test_logout_no_body_clears_cookies():
+    email, _ = _register()
+    s = requests.Session()
+    s.post(f"{BASE_URL}/api/auth/login", json={
+        "email": email, "password": "Slice2_T3st!",
+    }, timeout=15)
+    r = s.post(f"{BASE_URL}/api/auth/logout", timeout=15)
+    assert r.status_code == 200
+    cookies_after = "\n".join(r.raw.headers.getlist("Set-Cookie"))
+    assert "access_token=" in cookies_after
+    assert "csrf_token=" in cookies_after
+    # FastAPI delete_cookie uses Max-Age=0 OR an expires date in the past.
+    assert "Max-Age=0" in cookies_after or "1970" in cookies_after
+
+
+def test_logout_with_empty_body_clears_cookies():
+    email, _ = _register()
+    s = requests.Session()
+    s.post(f"{BASE_URL}/api/auth/login", json={
+        "email": email, "password": "Slice2_T3st!",
+    }, timeout=15)
+    r = s.post(f"{BASE_URL}/api/auth/logout", json={}, timeout=15)
+    assert r.status_code == 200
+    cookies_after = "\n".join(r.raw.headers.getlist("Set-Cookie"))
+    assert "access_token=" in cookies_after
+    assert "csrf_token=" in cookies_after
+
+
+def test_logout_with_refresh_token_body_clears_cookies():
+    email, _ = _register()
+    s = requests.Session()
+    s.post(f"{BASE_URL}/api/auth/login", json={
+        "email": email, "password": "Slice2_T3st!",
+    }, timeout=15)
+    # Use a syntactically valid refresh token (>= 8 chars) even if not in DB.
+    r = s.post(f"{BASE_URL}/api/auth/logout",
+               json={"refresh_token": "nope_aaaaaaaa"}, timeout=15)
+    assert r.status_code == 200
+    cookies_after = "\n".join(r.raw.headers.getlist("Set-Cookie"))
+    assert "access_token=" in cookies_after
+    assert "csrf_token=" in cookies_after
 
 
 def test_auth_missing_returns_structured_401():
