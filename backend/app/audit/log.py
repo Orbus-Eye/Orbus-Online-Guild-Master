@@ -185,11 +185,17 @@ async def write_audit(
     source: str = "unknown",
     related_entity_id: Optional[str] = None,
     metadata: Optional[dict] = None,
-) -> None:
-    """Write a single audit log row. Never raises — failures only log."""
+) -> Optional[str]:
+    """Write a single audit log row. Never raises — failures only log.
+
+    Returns the audit event `id` (uuid4 str) on success, `None` if the
+    write failed or the event_type was rejected. ROUND 11.2 TASK 5b —
+    surfaced for admin grant endpoints to return `audit_event_id` to the
+    client. All other call sites ignore the return value (safe additive).
+    """
     if event_type not in EVENT_TYPES:
         logger.warning("audit: unknown event_type=%s — dropped", event_type)
-        return
+        return None
     doc = {
         "id": str(uuid.uuid4()),
         "event_type": event_type,
@@ -206,9 +212,11 @@ async def write_audit(
     }
     try:
         await db.audit_log.insert_one(doc)
+        return doc["id"]
     except Exception as exc:  # noqa: BLE001
         # Never block business flow on audit write failure.
         logger.warning("audit write failed (%s): %s", event_type, exc)
+        return None
 
 
 __all__ = ["write_audit", "ensure_audit_indexes", "EVENT_TYPES"]

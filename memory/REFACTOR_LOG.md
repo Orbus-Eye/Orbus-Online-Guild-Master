@@ -758,3 +758,27 @@ Già esposto via `public_user()` projection in `auth/services.py` (preesistente)
 11. no PII leak (email/user_id raw, $oid) ✅
 
 ### OpenAPI count: 103 → 108 (+5 esatti).
+
+### TASK 5b — Admin Ops FRONTEND (2026-06-28)
+
+**File creati**:
+- `frontend/src/pages/AdminOps.jsx` (route `/admin/ops`)
+- `frontend/src/components/admin/GrantGoldModal.jsx` (doppia conferma)
+- `frontend/src/components/admin/GrantItemModal.jsx` (doppia conferma + 422 mapping)
+- `backend/tests/frontend_round112_admin_ops_test.py` (8 test)
+
+**File modificati**:
+- `frontend/src/App.js` — route `/admin/ops` aggiunta
+- `frontend/src/components/AppHeader.jsx` — nav link "ADMIN OPS" condizionale `user?.is_admin`
+- `backend/app/audit/log.py::write_audit` — ora ritorna `Optional[str]` (l'id del doc) invece di `None` (side-fix audit_event_id)
+- `backend/app/admin/routes.py::grant_gold` e `grant_item` — propagano `event_id` dal `write_audit`
+
+**Access control**: route `/admin/ops` mostra component `<NotAuthorized />` (pulito, con icona ⛔ + link "Torna al Dashboard") se `user?.is_admin !== true`. NO `<Navigate>` silenzioso.
+
+**Side-fix audit_event_id**: completato. `write_audit` ora ritorna `doc["id"]` su success o `None` su failure. Effetto runtime: `POST grant-gold` ritorna `audit_event_id: "a0fc8b65-..."` invece di `null`. Tutti gli altri call site di `write_audit` (~50+) ignorano il return → no breakage.
+
+**Test FE 8/8 PASS**: source-static checks (testid, ARIA, validation hooks, conditional nav) + live backend contract verification (search endpoint, masked email, 422 unknown_slug).
+
+**Screenshot verificato**: `/admin/ops` con tester@orbus.test → Search tab carica 10527 guild paginati, click row → Detail panel con masked email + flags + bottoni Grant Gold/Item visibili.
+
+**Sweep finale FASE C 5a+5b**: 75 PASS + 1 SKIP (Round 11.2 + 11.1 stack completo).

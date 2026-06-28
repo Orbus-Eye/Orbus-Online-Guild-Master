@@ -38,6 +38,7 @@ import RosterManage from "@/pages/RosterManage";
 import Chronicle from "@/pages/Chronicle";
 import Training from "@/pages/Training";
 import Contracts from "@/pages/Contracts";
+import AdminOps from "@/pages/AdminOps";  // ROUND 11.2 TASK 5b
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -234,6 +235,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Admin />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/ops"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminOps />
                                 </ProtectedRoute>
                             }
                         />
