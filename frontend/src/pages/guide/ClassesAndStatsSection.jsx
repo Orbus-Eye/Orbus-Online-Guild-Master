@@ -1,0 +1,420 @@
+// ROUND 15 — Fase 1 / Task 3
+// Sezione narrativa "Classi e statistiche". Vive accanto al catalogo
+// data-driven già esistente (`stats-catalog`) ma fornisce contenuti
+// editoriali leggibili da player non-tecnico:
+//   3a) Statistiche — 5 entry, ognuna con "Cosa è / Chi la usa / Cosa influenza"
+//   3b) Classi    — 12 entry, ognuna con primary/secondary/equip/playstyle
+// Tutto in italiano fluido. Nessun fetch lazy: i dati sono curated.
+
+import { SectionBlock } from "./_shared";
+
+const STATS = [
+    {
+        slug: "strength",
+        label_it: "Forza",
+        what: "La capacità grezza di colpire forte e portare carichi pesanti.",
+        used_by: ["Guerriero", "Paladino", "Berserker", "Ladro (secondaria)"],
+        influences: [
+            "Power totale dell'avventuriero",
+            "Danno con armi pesanti (spade a due mani, mazze)",
+            "Equipaggiamento di tipo corazza pesante",
+            "Probabilità di successo nei dungeon corpo a corpo",
+        ],
+        example:
+            "Un Berserker con Forza 10 colpisce più duro di tutti gli altri DPS fisici, ma muore in 2 turni senza Resistenza.",
+    },
+    {
+        slug: "agility",
+        label_it: "Agilità",
+        what: "Velocità, riflessi e precisione nei movimenti.",
+        used_by: ["Ladro", "Ranger", "Assassino", "Monaco", "Bard (secondaria)"],
+        influences: [
+            "Power totale",
+            "Probabilità di schivare colpi (PvP e dungeon)",
+            "Iniziativa nei round combat",
+            "Equipaggiamento finesse (pugnali, archi)",
+        ],
+        example:
+            "Un Assassino con Agilità 10 può uccidere un nemico Lv 5 senza essere colpito, ma una sola debolezza in copertura lo fa cadere.",
+    },
+    {
+        slug: "intellect",
+        label_it: "Intelletto",
+        what: "Acume mentale, comprensione arcana, controllo delle energie.",
+        used_by: ["Mago", "Negromante", "Bardo", "Druido (secondaria)"],
+        influences: [
+            "Power totale",
+            "Potenza degli incantesimi di danno e controllo",
+            "Equipaggiamento arcano (bastoni, grimoires, sigilli)",
+            "Capacità di leggere i traits più rari",
+        ],
+        example:
+            "Un Mago con Intelletto 10 polverizza un'ondata di nemici, ma con Intelletto 5 si ritrova a lanciare scintille innocue.",
+    },
+    {
+        slug: "endurance",
+        label_it: "Resistenza",
+        what: "Capacità di assorbire danno e mantenere lo sforzo nel tempo.",
+        used_by: ["Guerriero", "Paladino", "Berserker (secondaria)", "Ranger (secondaria)"],
+        influences: [
+            "Power totale",
+            "Hit point effettivi nei combattimenti lunghi",
+            "Equipaggiamento di tipo corazza pesante e scudi",
+            "Sostenibilità nelle spedizioni multi-stadio",
+        ],
+        example:
+            "Un Guerriero con Resistenza 9 può tenere il fronte di un raid per turni multipli; con Resistenza 3 sarebbe fuori al primo colpo.",
+    },
+    {
+        slug: "faith",
+        label_it: "Fede",
+        what: "Connessione con il sacro, fonte di guarigione e luce.",
+        used_by: ["Sacerdote", "Druido", "Paladino"],
+        influences: [
+            "Power totale",
+            "Potenza delle cure e degli incantesimi sacri",
+            "Equipaggiamento sacro (reliquie, sceptri, talismani)",
+            "Resistenza a effetti negativi di tipo \"oscuro/non-morto\"",
+        ],
+        example:
+            "Un Sacerdote con Fede 10 può salvare un avventuriero sull'orlo della morte in un raid; con Fede 3 può solo accelerare un riposo.",
+    },
+];
+
+const CLASSES = [
+    {
+        slug: "warrior",
+        name_it: "Guerriero",
+        role: "Tank",
+        secondary_role: "Frontline",
+        primary_stat: "Forza",
+        secondary_stats: ["Resistenza"],
+        equip:
+            "Spade e asce a una o due mani, mazze, scudi pesanti, corazze a piastre. Mai armatura di stoffa.",
+        playstyle:
+            "Si piazza davanti al party, intercetta i colpi e li restituisce. Lento ma inossidabile.",
+        differs_from:
+            "Diversamente dal Paladino, non sa curare. Diversamente dal Berserker, non scambia la difesa per più danno.",
+        strengths: ["Sopravvivenza altissima", "Aggro stabile", "Equipaggiamento abbondante"],
+        weaknesses: ["Lento", "Nessun danno magico", "Niente cure"],
+        good_in: ["Dungeon Tier 1-3 con boss melee", "Spedizioni lunghe dove il roster ha pochi healer"],
+    },
+    {
+        slug: "paladin",
+        name_it: "Paladino",
+        role: "Tank",
+        secondary_role: "Off-Healer",
+        primary_stat: "Fede",
+        secondary_stats: ["Forza", "Resistenza"],
+        equip:
+            "Spade/mazze sacre, scudi, armatura pesante con simboli sacri. Reliquie e talismani.",
+        playstyle:
+            "Tank ibrido: meno dura del Guerriero puro, ma può curare l'alleato accanto e colpire più forte i nemici non-morti.",
+        differs_from:
+            "Il Guerriero è più resistente; il Sacerdote cura di più. Il Paladino unisce le due cose a metà costo.",
+        strengths: ["Versatilità", "Auto-sostegno", "Bonus vs Vuoto/Non-morti"],
+        weaknesses: ["Né il miglior tank né il miglior healer", "Statistiche spalmate"],
+        good_in: ["Raid lunghi", "Dungeon di tipo Vuoto/Non-morti", "Squadre con un solo healer"],
+    },
+    {
+        slug: "rogue",
+        name_it: "Ladro",
+        role: "DPS",
+        secondary_role: "Stealth",
+        primary_stat: "Agilità",
+        secondary_stats: ["Forza"],
+        equip:
+            "Pugnali, spade corte, armi finesse. Armatura leggera in cuoio. Niente piastre.",
+        playstyle:
+            "Si infila tra le linee, colpisce il bersaglio più vulnerabile, sparisce. Critici frequenti.",
+        differs_from:
+            "L'Assassino è più letale in singolo colpo ma meno sostenibile; il Ranger lavora a distanza.",
+        strengths: ["Danno alto su bersagli isolati", "Iniziativa", "Mobilità"],
+        weaknesses: ["Fragile", "Vulnerabile a controllo di gruppo"],
+        good_in: ["Dungeon con boss singolo", "PvP veloce"],
+    },
+    {
+        slug: "ranger",
+        name_it: "Ranger",
+        role: "DPS",
+        secondary_role: "Scout / Ranged",
+        primary_stat: "Agilità",
+        secondary_stats: ["Resistenza"],
+        equip:
+            "Archi, balestre, frecce stregate. Armatura leggera/media. Lavora a distanza.",
+        playstyle:
+            "Mantiene la distanza, colpisce prima che il nemico si avvicini. Esploratore naturale.",
+        differs_from:
+            "Il Ladro lavora a corto raggio e sull'agilità; il Ranger usa la stessa stat ma per il tiro lungo. La Resistenza secondaria gli permette spedizioni più lunghe.",
+        strengths: ["Danno costante", "Sicurezza dalla distanza", "Buono nelle esplorazioni"],
+        weaknesses: ["Soffre in stanze strette", "Munizioni / consumabili da gestire"],
+        good_in: ["Dungeon all'aperto", "Spedizioni esplorative", "Raid contro boss volanti"],
+    },
+    {
+        slug: "assassin",
+        name_it: "Assassino",
+        role: "DPS",
+        secondary_role: "Burst Stealth",
+        primary_stat: "Agilità",
+        secondary_stats: ["Forza"],
+        equip:
+            "Pugnali avvelenati, armi finesse. Armatura quasi nulla, abito d'ombra.",
+        playstyle:
+            "Aspetta. Colpisce. Sparisce. Un solo colpo, idealmente decisivo.",
+        differs_from:
+            "Il Ladro è più sostenibile e versatile; l'Assassino è chirurgico. Crolla appena viene visto.",
+        strengths: ["Burst damage estremo", "Stealth puro", "Crit alti"],
+        weaknesses: ["Estremamente fragile", "Pessimo se scoperto", "Niente sostegno"],
+        good_in: ["Boss con poco HP che vanno chiusi rapidamente", "PvP one-shot"],
+    },
+    {
+        slug: "berserker",
+        name_it: "Berserker",
+        role: "DPS",
+        secondary_role: "Frontline",
+        primary_stat: "Forza",
+        secondary_stats: ["Resistenza"],
+        equip:
+            "Armi a due mani: asce, claymore, martelli. Armatura media — niente scudo per definizione.",
+        playstyle:
+            "Carica frontalmente, colpisce a piena forza. Più la sua salute scende, più colpisce.",
+        differs_from:
+            "Il Guerriero difende e regge i colpi; il Berserker assorbe e li restituisce molto più forte ma muore prima.",
+        strengths: ["Danno corpo a corpo top-tier", "Resilienza media", "Identità chiara"],
+        weaknesses: ["Niente cure", "Niente difesa attiva", "Squilibrato in raid lunghi"],
+        good_in: ["Dungeon fast clear", "Boss melee tankato da un alleato"],
+    },
+    {
+        slug: "mage",
+        name_it: "Mago",
+        role: "DPS",
+        secondary_role: "Caster / Control",
+        primary_stat: "Intelletto",
+        secondary_stats: ["Resistenza"],
+        equip:
+            "Bastoni arcani, bacchette, grimoires. Armatura in stoffa, mai pesante.",
+        playstyle:
+            "Sceglie l'incantesimo giusto, lo lancia, ripete. Versatile su danno e controllo.",
+        differs_from:
+            "Il Negromante usa la stessa stat ma con flavor oscuro e meno controllo; il Druido cura più di quanto colpisce.",
+        strengths: ["Ventaglio di incantesimi", "AoE", "Controllo del campo"],
+        weaknesses: ["Fragile", "Dipende dal mana / cooldown", "Vulnerabile in melee"],
+        good_in: ["Dungeon con ondate", "Boss con meccaniche complesse", "AoE clear"],
+    },
+    {
+        slug: "necromancer",
+        name_it: "Negromante",
+        role: "DPS",
+        secondary_role: "Caster / Summoner",
+        primary_stat: "Intelletto",
+        secondary_stats: ["Agilità"],
+        equip:
+            "Bastoni d'ossa, falci, simboli oscuri. Vesti rituali, mai armatura forte.",
+        playstyle:
+            "Drena vita, evoca scheletri, decompone i bersagli. Lavora di logoramento.",
+        differs_from:
+            "Il Mago crea fiamme; il Negromante crea servitori. Il Mago controlla l'arcano; il Negromante controlla la morte.",
+        strengths: ["Damage over time", "Servitori evocati", "Sinergie con loot non-morto"],
+        weaknesses: ["Setup lento", "Disprezzato in spedizioni \"sacre\""],
+        good_in: ["Dungeon non-morti (sinergie loot)", "Spedizioni lunghe dove i pet aiutano"],
+    },
+    {
+        slug: "priest",
+        name_it: "Sacerdote",
+        role: "Healer",
+        secondary_role: "Dedicated single-target",
+        primary_stat: "Fede",
+        secondary_stats: ["Intelletto"],
+        equip:
+            "Mazze sacre, scettri, libri di preghiera. Vesti, talismani sacri.",
+        playstyle:
+            "Tiene in piedi il bersaglio più importante. Cura singola enorme, cura di gruppo limitata.",
+        differs_from:
+            "Il Druido cura più alleati insieme (AoE); il Sacerdote è il salvavita del singolo tank.",
+        strengths: ["Cura singola top-tier", "Buff anti-morte", "Identità chiara"],
+        weaknesses: ["Niente AoE heal", "Niente danno reale"],
+        good_in: ["Raid con un solo tank da tenere su", "Dungeon hard mode con boss melee"],
+    },
+    {
+        slug: "druid",
+        name_it: "Druido",
+        role: "Healer",
+        secondary_role: "AoE Heal / Hybrid Caster",
+        primary_stat: "Fede",
+        secondary_stats: ["Intelletto"],
+        equip:
+            "Bastoni naturali, clave rituali, vesti in cuoio o stoffa naturale.",
+        playstyle:
+            "Cura più alleati insieme, lancia incantesimi naturali, si adatta. Meno specialista ma più flessibile.",
+        differs_from:
+            "Il Sacerdote è migliore sul singolo target; il Druido brilla quando tre alleati sono feriti contemporaneamente.",
+        strengths: ["AoE heal", "Flessibilità", "Danno secondario reale"],
+        weaknesses: ["Cura singola inferiore al Sacerdote", "Identità ibrida non sempre apprezzata"],
+        good_in: ["Dungeon a 5 con molti danni AoE", "Spedizioni con squadra ferita diffusamente"],
+    },
+    {
+        slug: "monk",
+        name_it: "Monaco",
+        role: "DPS",
+        secondary_role: "Self-Sustain",
+        primary_stat: "Agilità",
+        secondary_stats: ["Resistenza", "Fede"],
+        equip:
+            "Armi nude o bastoni. Mai armatura pesante: la sua difesa è l'evasione.",
+        playstyle:
+            "Schiva, colpisce a mani nude o con bastone, recupera piccole ferite tra una mossa e l'altra.",
+        differs_from:
+            "Il Ladro è più burst, l'Assassino più letale; il Monaco si bilancia tra danno e autosostegno.",
+        strengths: ["Auto-cura leggera", "Mobilità", "Indipendente dall'equip"],
+        weaknesses: ["Equip limitato", "Picchi di danno minori dei DPS puri"],
+        good_in: ["Spedizioni solo-friendly", "Dungeon con poche cure disponibili"],
+    },
+    {
+        slug: "bard",
+        name_it: "Bardo",
+        role: "Support",
+        secondary_role: "Buffer / Debuffer",
+        primary_stat: "Intelletto",
+        secondary_stats: ["Agilità", "Fede"],
+        equip:
+            "Pugnali e strumenti musicali. Armatura leggera per restare mobile.",
+        playstyle:
+            "Non fa il danno più alto né cura più di tutti, ma migliora chi ha attorno. Nemici stonati, alleati ispirati.",
+        differs_from:
+            "L'unica classe Support pura. Il suo valore non è nel suo colpo, ma nel moltiplicatore che dà agli altri.",
+        strengths: ["Buff costanti", "Debuff sui nemici", "Utility uniche"],
+        weaknesses: ["DPS solo basso", "Inutile in 1v1 PvP"],
+        good_in: ["Raid", "Squadre da 5+ a basso power"],
+    },
+];
+
+const PRIMARY_STAT_WARNING = (
+    <p
+        data-testid="guide-class-warning-15-2"
+        className="text-[12px] text-amber/95 border-l-2 border-amber pl-3 italic mt-3"
+    >
+        <strong className="text-amber not-italic">Attenzione (Round 15.2):</strong>{" "}
+        una statistica primaria troppo bassa ridurrà l&apos;XP guadagnato
+        dall&apos;avventuriero. La regola precisa verrà attivata nel prossimo round.
+    </p>
+);
+
+function StatEntry({ stat }) {
+    return (
+        <article
+            data-testid={`guide-stat-${stat.slug}`}
+            className="border-l-2 border-amber/40 pl-4 mb-5"
+        >
+            <h3 className="text-[15px] text-foreground font-semibold mb-1">
+                {stat.label_it}{" "}
+                <span className="text-[10px] text-muted-foreground tracking-widest ml-1">
+                    ({stat.slug.toUpperCase()})
+                </span>
+            </h3>
+            <p className="text-[12px] text-muted-foreground mb-2">{stat.what}</p>
+            <p className="text-[12px]">
+                <strong className="text-amber/90">Chi la usa meglio:</strong>{" "}
+                {stat.used_by.join(", ")}.
+            </p>
+            <p className="text-[12px] mt-1.5"><strong className="text-amber/90">Cosa influenza:</strong></p>
+            <ul className="text-[12px] list-disc list-inside ml-1 mt-1 text-muted-foreground/95">
+                {stat.influences.map((line) => <li key={line}>{line}</li>)}
+            </ul>
+            <p className="text-[12px] mt-2 italic text-foreground/80">
+                <strong className="not-italic text-amber/80">Esempio.</strong> {stat.example}
+            </p>
+        </article>
+    );
+}
+
+function ClassEntry({ cls }) {
+    return (
+        <article
+            data-testid={`guide-class-${cls.slug}`}
+            className="border border-border bg-background/30 rounded-sm p-4 mb-4"
+        >
+            <header className="flex items-baseline justify-between gap-3 mb-2 flex-wrap">
+                <h3 className="text-[15px] text-foreground font-semibold">
+                    {cls.name_it}
+                </h3>
+                <span className="text-[10px] text-amber tracking-widest">
+                    {cls.role}{cls.secondary_role ? ` · ${cls.secondary_role}` : ""}
+                </span>
+            </header>
+
+            <dl className="text-[12px] grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 mb-3">
+                <div>
+                    <dt className="inline text-muted-foreground">Statistica primaria: </dt>
+                    <dd className="inline text-amber">{cls.primary_stat}</dd>
+                </div>
+                <div>
+                    <dt className="inline text-muted-foreground">Secondarie utili: </dt>
+                    <dd className="inline">{cls.secondary_stats.join(", ")}</dd>
+                </div>
+            </dl>
+
+            <p className="text-[12px] mb-2">
+                <strong className="text-amber/90">Equipaggiamento consigliato.</strong>{" "}
+                {cls.equip}
+            </p>
+            <p className="text-[12px] mb-2">
+                <strong className="text-amber/90">Stile di gioco.</strong>{" "}
+                {cls.playstyle}
+            </p>
+            <p className="text-[12px] mb-2">
+                <strong className="text-amber/90">Differenze.</strong>{" "}
+                {cls.differs_from}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[12px] mb-2">
+                <div>
+                    <strong className="text-emerald-400/95">Punti forti.</strong>{" "}
+                    {cls.strengths.join(", ")}.
+                </div>
+                <div>
+                    <strong className="text-red-400/90">Punti deboli.</strong>{" "}
+                    {cls.weaknesses.join(", ")}.
+                </div>
+            </div>
+
+            <p className="text-[12px] text-muted-foreground/95">
+                <strong className="text-amber/80">Brilla in:</strong>{" "}
+                {cls.good_in.join("; ")}.
+            </p>
+
+            {PRIMARY_STAT_WARNING}
+        </article>
+    );
+}
+
+export default function ClassesAndStatsSection() {
+    return (
+        <SectionBlock
+            id="classi-e-stats"
+            title="Classi e statistiche"
+        >
+            <p className="text-[13px] mb-4">
+                Ogni avventuriero ha cinque statistiche fondamentali — Forza,
+                Agilità, Intelletto, Resistenza, Fede — e una classe che gli
+                dice quale di queste è la più importante. Capire questa coppia
+                è la differenza fra una squadra di mercenari assemblata a caso
+                e un party che vince un raid.
+            </p>
+
+            <h3 className="text-[13px] text-amber tracking-widest mb-3 mt-6">
+                :: STATISTICHE
+            </h3>
+            {STATS.map((s) => <StatEntry key={s.slug} stat={s} />)}
+
+            <h3 className="text-[13px] text-amber tracking-widest mb-3 mt-8">
+                :: CLASSI
+            </h3>
+            <p className="text-[12px] text-muted-foreground mb-4">
+                Dodici archetipi attivi nel gioco. Ognuno è progettato per
+                fare bene una cosa specifica: il tuo lavoro come Guild Master
+                è scegliere chi mandare a fare cosa.
+            </p>
+            {CLASSES.map((c) => <ClassEntry key={c.slug} cls={c} />)}
+        </SectionBlock>
+    );
+}

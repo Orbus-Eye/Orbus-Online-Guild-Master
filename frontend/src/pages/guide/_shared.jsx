@@ -20,6 +20,7 @@ export const SECTIONS = [
     { id: "avventurieri", label: "7. Avventurieri" },
     { id: "ruoli", label: "8. Ruoli" },
     { id: "rarita", label: "9. Rarità" },
+    { id: "classi-e-stats", label: "9b. Classi e statistiche" },
     { id: "stats-catalog", label: "10. Statistiche" },
     { id: "traits-catalog", label: "11. Tratti" },
     { id: "reclutamento", label: "12. Reclutamento" },

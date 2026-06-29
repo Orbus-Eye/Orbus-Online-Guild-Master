@@ -10,6 +10,7 @@ import AppHeader from "../components/AppHeader";
 import RoleMarker from "../components/RoleMarker";
 import { SECTIONS, SectionBlock } from "./guide/_shared";
 import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSections";
+import ClassesAndStatsSection from "./guide/ClassesAndStatsSection";
 
 export default function Guide() {
     const [active, setActive] = useState("intro");
@@ -266,6 +267,8 @@ export default function Guide() {
                         <li><strong>Legendary</strong> — pochi per server, sbloccabili con condizioni speciali.</li>
                     </ul>
                 </SectionBlock>
+
+                <ClassesAndStatsSection />
 
                 <StatsCatalogSection active={active} />
 
