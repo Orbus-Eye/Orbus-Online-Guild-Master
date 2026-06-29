@@ -47,7 +47,20 @@ async def run(db) -> dict:
     candidate_filter = {
         "$or": [
             {"is_test_artifact": True},
-            {"name": {"$regex": "^(G_|Test|Demo|tester)", "$options": "i"}},
+            # ROUND 14.v2.1 — Extended naming patterns to catch legacy
+            # fixture guilds created by R4/R5/R6B/R6D/R11 seed scripts that
+            # never set `is_test_artifact`. All match `^<round_prefix> <hex>$`.
+            {"name": {"$regex": "^(G_|G |Test|Demo|tester|R[0-9]|[0-9]+[A-Z]|P[0-9]+[A-Za-z]*\\s+[0-9a-fA-F]|Ver\\s+ver_|RaidSmoke\\s+raidsmoke_)",
+                      "$options": "i"}},
+            # ROUND 14.v2.1 (close-out) — Catches every `Guild_*`, `Guild <hex>`,
+            # and `Guildhouse <hex>` fixture families produced by phase/round
+            # seed scripts (Guild_ref_*, Guild_gw_*, Guild_sc_*, Guild_unlock_*,
+            # Guild_gates_*, Guild_disp_lock_*, Guildhouse <HEX>, Guild <hex>).
+            # Safe vs preserved names (`The Iron Lantern`, `Custodi del Vento`,
+            # `Esiliati del Vuoto`, `Compagnia delle Tre Lune`, `Sentiero di
+            # Efreto`) — none of them start with `Guild` or `Guildhouse` + sep.
+            {"name": {"$regex": "^Guild(house)?[_\\s]",
+                      "$options": "i"}},
         ],
         "is_archived_pre_launch": {"$ne": True},
         "id": {"$nin": list(preserve_ids)},
