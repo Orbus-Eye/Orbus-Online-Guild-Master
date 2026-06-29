@@ -188,11 +188,11 @@ export default function Inventory() {
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">
-                            :: GUILD VAULT
+                            :: DEPOSITO GILDA
                         </div>
                         <h1 className="text-3xl font-semibold tracking-tight">{t("inventory.title")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                            Items recovered from dungeon expeditions.
+                            {t("inventory.subtitle", "Oggetti raccolti dalle spedizioni. Equipaggiali ai tuoi avventurieri.")}
                         </p>
                         <p
                             className="text-[11px] text-muted-foreground/80 mt-2 max-w-2xl"
@@ -203,7 +203,7 @@ export default function Inventory() {
                     </div>
                     <div className="text-right">
                         <div className="text-[10px] text-muted-foreground tracking-widest">
-                            STACKS
+                            PEZZI
                         </div>
                         <div
                             data-testid="inventory-stack-count"
@@ -216,7 +216,7 @@ export default function Inventory() {
 
                 {loading && (
                     <div className="text-xs text-muted-foreground">
-                        loading<span className="caret-blink" />
+                        {t("common.loading", "Caricamento…")}<span className="caret-blink" />
                     </div>
                 )}
 
@@ -237,7 +237,7 @@ export default function Inventory() {
                                 data-testid="inventory-goto-dungeons"
                                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
                             >
-                                Go to Dungeons →
+                                Vai ai Dungeon →
                             </Button>
                         </Link>
                     </div>
@@ -372,7 +372,7 @@ export default function Inventory() {
                                                 )}
                                             </div>
                                             <div className="text-[11px] text-muted-foreground mt-1">
-                                                {slot} · power {it.power_score ?? 0}
+                                                {slot} · {t("inventory_extra.power_label", "potere")} {it.power_score ?? 0}
                                                 {statBonusList(it) ? ` · ${statBonusList(it)}` : ""}
                                             </div>
                                         </div>

@@ -129,7 +129,7 @@ export default function DefenseTeamBuilder({
                         data-testid="defense-reset-btn"
                         onClick={() => setChosenIds([])}
                     >
-                        Reset
+                        Azzera
                     </Button>
                     <Button
                         size="sm"

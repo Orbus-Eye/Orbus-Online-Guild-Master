@@ -46,26 +46,26 @@ const StatusBadge = ({ available }) => (
         }`}
         data-testid={`status-${available ? "available" : "busy"}`}
     >
-        {available ? "AVAILABLE" : "BUSY"}
+        {available ? "DISPONIBILE" : "OCCUPATO"}
     </span>
 );
 
 const HEAD = [
-    ["Name", "name"],
-    ["Class", "class"],
-    ["Role", "role"],
-    ["Rarity", "rarity"],
-    ["Lvl", "level"],
+    ["Nome", "name"],
+    ["Classe", "class"],
+    ["Ruolo", "role"],
+    ["Rarità", "rarity"],
+    ["Lv", "level"],
     ["XP", "xp"],
     ["STR", "str"],
     ["AGI", "agi"],
     ["INT", "int"],
     ["END", "end"],
     ["FAI", "fai"],
-    ["Power", "power"],
-    ["Equip", "equip"],
-    ["Traits", "traits"],
-    ["Status", "status"],
+    ["Potere", "power"],
+    ["Equip.", "equip"],
+    ["Tratti", "traits"],
+    ["Stato", "status"],
 ];
 
 function statBonusBadge(slot, item) {
@@ -208,7 +208,7 @@ export default function Adventurers() {
                         </div>
                         <div className="text-right">
                             <div className="text-[10px] text-muted-foreground tracking-widest">
-                                TOTAL
+                                TOTALE
                             </div>
                             <div
                                 data-testid="adventurer-count"
@@ -426,7 +426,7 @@ export default function Adventurers() {
                                     {a.traits && a.traits.length > 0 && (
                                         <div className="mt-3 pt-3 border-t border-border/60">
                                             <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
-                                                TRAITS
+                                                TRATTI
                                             </div>
                                             <TraitList traits={a.traits} />
                                             <TraitPreviewWidget

@@ -44,11 +44,11 @@ const StatRow = ({ label, value }) => (
 
 const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, onFreeze, busy, freezeFull }) => {
     const disabled = !canAfford || busy || overCap;
-    let title = "Recruit this adventurer";
+    let title = "Recluta questo avventuriero";
     if (overCap) {
         title = "Capienza avventurieri raggiunta. Potenzia Dormitori o congeda.";
     } else if (!canAfford) {
-        title = "Not enough gold";
+        title = "Oro insufficiente";
     }
     return (
     <div
@@ -131,7 +131,7 @@ const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, onFreeze, bus
                     title={title}
                     className="h-9 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs px-4"
                 >
-                    {busy ? "…" : "Recruit →"}
+                    {busy ? "…" : "Recluta →"}
                 </Button>
             </div>
         </div>
@@ -435,14 +435,14 @@ export default function Recruitment() {
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
-            <AppHeader subtitle="RECRUIT" />
+            <AppHeader subtitle="RECLUTAMENTO" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <OverCapBanner source="recruitment" />
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">
-                            :: RECRUITMENT BOARD
+                            :: BACHECA RECLUTAMENTO
                         </div>
                         <h1 className="text-3xl font-semibold tracking-tight">
                             {t("recruitment.title")}
@@ -454,7 +454,7 @@ export default function Recruitment() {
                     <div className="flex items-center gap-3">
                         <div className="text-right">
                             <div className="text-[10px] text-muted-foreground tracking-widest">
-                                GUILD GOLD
+                                ORO GILDA
                             </div>
                             <div
                                 data-testid="guild-gold"
@@ -505,8 +505,8 @@ export default function Recruitment() {
                                 className="h-10 rounded-sm bg-transparent border-border hover:bg-secondary text-xs"
                                 title={
                                     meta && meta.next_refresh_cost_gold > 0
-                                        ? `Next refresh costs ${meta.next_refresh_cost_gold}g`
-                                        : "Free refresh available"
+                                        ? `Prossimo refresh: ${meta.next_refresh_cost_gold}o`
+                                        : "Refresh gratuito disponibile"
                                 }
                             >
                                 {refreshing
@@ -534,7 +534,7 @@ export default function Recruitment() {
                         data-testid="insufficient-gold-warning"
                         className="text-xs text-amber/90 border border-amber/40 bg-amber/5 px-3 py-2 rounded-sm mb-4"
                     >
-                        Insufficient gold ({gold}g). You need at least {cost}g per recruit.
+                        Oro insufficiente ({gold}o). Servono almeno {cost}o per ogni reclutamento.
                     </div>
                 )}
 
@@ -642,7 +642,7 @@ export default function Recruitment() {
                         className="text-amber hover:underline"
                         data-testid="goto-adventurers"
                     >
-                        View hired adventurers →
+                        Vedi avventurieri reclutati →
                     </Link>
                 </div>
             </main>
