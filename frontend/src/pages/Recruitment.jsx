@@ -42,7 +42,7 @@ const StatRow = ({ label, value }) => (
     </div>
 );
 
-const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, busy }) => {
+const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, onFreeze, busy, freezeFull }) => {
     const disabled = !canAfford || busy || overCap;
     let title = "Recruit this adventurer";
     if (overCap) {
@@ -108,17 +108,97 @@ const CandidateCard = ({ candidate, canAfford, overCap, onRecruit, busy }) => {
             <span className="text-xs text-amber" data-testid="candidate-cost">
                 {candidate.cost_gold}g
             </span>
-            <Button
-                data-testid={`recruit-btn-${candidate.candidate_id}`}
-                onClick={() => onRecruit(candidate)}
-                disabled={disabled}
-                title={title}
-                className="h-9 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs px-4"
-            >
-                {busy ? "…" : "Recruit →"}
-            </Button>
+            <div className="flex items-center gap-1.5">
+                {/* ROUND 11.3 TASK C — Freeze button. Disabled if bench full. */}
+                <button
+                    type="button"
+                    data-testid={`freeze-btn-${candidate.candidate_id}`}
+                    onClick={() => onFreeze && onFreeze(candidate)}
+                    disabled={busy || freezeFull}
+                    title={
+                        freezeFull
+                            ? "Panchina Reclute piena (2/2). Rilascia un candidato per liberare uno slot."
+                            : "Congela in Panchina Reclute"
+                    }
+                    className="h-9 px-3 text-[11px] tracking-widest border border-amber/60 text-amber rounded-sm hover:bg-amber/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                    ❄ Congela
+                </button>
+                <Button
+                    data-testid={`recruit-btn-${candidate.candidate_id}`}
+                    onClick={() => onRecruit(candidate)}
+                    disabled={disabled}
+                    title={title}
+                    className="h-9 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs px-4"
+                >
+                    {busy ? "…" : "Recruit →"}
+                </Button>
+            </div>
         </div>
     </div>
+    );
+};
+
+// ROUND 11.3 TASK C — Freeze Bench card. Shown in the persistent "Panchina
+// Reclute" section above the candidate pool. Survives `/refresh` because
+// the bench lives on `guilds.recruit_freeze_bench` server-side.
+const FrozenCard = ({ frozen, onRecruit, onRelease, busy, canAfford, overCap }) => {
+    const disabled = !canAfford || busy || overCap;
+    return (
+        <div
+            data-testid={`frozen-card-${frozen.frozen_id}`}
+            className="border border-amber/40 bg-amber/5 rounded-sm p-3 flex flex-col"
+        >
+            <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{frozen.name}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                        {frozen.class_name} · Lv {frozen.level} · {frozen.rarity}
+                    </div>
+                </div>
+                <span className="text-amber text-[10px] tracking-widest">❄ PANCHINA</span>
+            </div>
+            <div className="text-[10px] text-muted-foreground mb-2">
+                STR {frozen.strength} · AGI {frozen.agility} · INT {frozen.intellect} ·
+                END {frozen.endurance} · FAI {frozen.faith}
+            </div>
+            {typeof frozen.total_power === "number" && (
+                <div className="text-[10px] text-amber tracking-widest mb-2">
+                    PWR {frozen.total_power}
+                </div>
+            )}
+            <div className="mt-auto flex items-center justify-between gap-2">
+                <span className="text-xs text-amber">{frozen.cost_gold || frozen.cost || 0}g</span>
+                <div className="flex items-center gap-1.5">
+                    <button
+                        type="button"
+                        data-testid={`release-btn-${frozen.frozen_id}`}
+                        onClick={() => onRelease(frozen)}
+                        disabled={busy}
+                        className="h-8 px-2 text-[11px] border border-border text-muted-foreground hover:bg-secondary rounded-sm disabled:opacity-40"
+                        title="Rilascia lo slot panchina"
+                    >
+                        Rilascia
+                    </button>
+                    <button
+                        type="button"
+                        data-testid={`recruit-frozen-btn-${frozen.frozen_id}`}
+                        onClick={() => onRecruit(frozen)}
+                        disabled={disabled}
+                        className="h-8 px-3 text-[11px] tracking-widest bg-amber text-background font-bold rounded-sm hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                        title={
+                            overCap
+                                ? "Capienza avventurieri raggiunta."
+                                : !canAfford
+                                ? "Oro insufficiente."
+                                : "Recluta dalla panchina"
+                        }
+                    >
+                        Recluta
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 };
 
@@ -142,6 +222,19 @@ export default function Recruitment() {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [recruiting, setRecruiting] = useState(null);
+    // ROUND 11.3 TASK C — Freeze bench state. Bench survives /refresh
+    // (the backend persists it on `guilds.recruit_freeze_bench`).
+    const [bench, setBench] = useState({ frozen: [], used_slots: 0, max_slots: 2 });
+    const [benchBusy, setBenchBusy] = useState(null);  // freeze_id | candidate_id | null
+
+    const fetchBench = useCallback(async () => {
+        try {
+            const { data } = await api.get("/recruitment/frozen");
+            setBench(data);
+        } catch (err) {
+            // Non-fatal; bench will just be empty in the UI.
+        }
+    }, []);
 
     const fetchCandidates = useCallback(async () => {
         setLoading(true);
@@ -185,7 +278,8 @@ export default function Recruitment() {
 
     useEffect(() => {
         fetchCandidates();
-    }, [fetchCandidates]);
+        fetchBench();
+    }, [fetchCandidates, fetchBench]);
 
     const [territoryState, setTerritoryState] = useState(null);
 
@@ -248,6 +342,89 @@ export default function Recruitment() {
             setRecruiting(null);
         }
     };
+
+    // ROUND 11.3 TASK C — bench handlers.
+    const handleFreeze = useCallback(async (candidate) => {
+        setBenchBusy(candidate.candidate_id);
+        try {
+            const { data } = await api.post("/recruitment/freeze", {
+                candidate_id: candidate.candidate_id,
+            });
+            setBench(data);
+            // Remove the candidate from the active pool (server already
+            // deleted it; we mirror the state locally for UI consistency).
+            setCandidates((prev) =>
+                prev ? prev.filter((c) => c.candidate_id !== candidate.candidate_id) : prev,
+            );
+            toast.success(`${candidate.name} è in panchina (${data.used_slots}/${data.max_slots}).`);
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            if (detail?.code === "freeze_bench.full") {
+                toast.warning(detail.user_message || "Panchina piena.");
+            } else if (detail?.code === "freeze_bench.already_frozen") {
+                toast.info("Già in panchina.");
+            } else if (detail?.code === "recruit.candidate_not_found") {
+                toast.error("Candidato non più disponibile. Aggiorna la pagina.");
+            } else {
+                toast.error(formatApiError(err));
+            }
+        } finally {
+            setBenchBusy(null);
+        }
+    }, []);
+
+    const handleRelease = useCallback(async (frozen) => {
+        setBenchBusy(frozen.frozen_id);
+        try {
+            const { data } = await api.post("/recruitment/unfreeze", {
+                frozen_id: frozen.frozen_id,
+            });
+            setBench(data);
+            toast.info(`${frozen.name} rilasciato dalla panchina.`);
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            if (detail?.code === "freeze_bench.not_found") {
+                toast.error("Slot non trovato (potrebbe essere stato già usato).");
+                fetchBench();
+            } else {
+                toast.error(formatApiError(err));
+            }
+        } finally {
+            setBenchBusy(null);
+        }
+    }, [fetchBench]);
+
+    const handleRecruitFrozen = useCallback(async (frozen) => {
+        setBenchBusy(frozen.frozen_id);
+        try {
+            const { data } = await api.post("/recruitment/recruit-frozen", {
+                frozen_id: frozen.frozen_id,
+            });
+            toast.success(`Reclutato ${data.adventurer.name} dalla panchina.`);
+            await fetchBench();
+            await refreshGuild();
+            fetchTerritoryCap();
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            if (detail?.code === "economy.insufficient_gold") {
+                toast.error(detail.user_message || "Oro insufficiente.");
+            } else if (detail?.code === "roster_over_capacity") {
+                toast.error(
+                    (detail.user_message || "Capienza raggiunta.") +
+                    " Congeda un avventuriero o potenzia i Dormitori.",
+                    { duration: 6000 },
+                );
+                fetchTerritoryCap();
+            } else if (detail?.code === "freeze_bench.not_found") {
+                toast.error("Slot non trovato (potrebbe essere stato già usato).");
+                fetchBench();
+            } else {
+                toast.error(formatApiError(err));
+            }
+        } finally {
+            setBenchBusy(null);
+        }
+    }, [fetchBench, fetchTerritoryCap, refreshGuild]);
 
     const gold = guild?.gold ?? 0;
     const cost = candidates?.[0]?.cost_gold ?? 20;
@@ -359,6 +536,49 @@ export default function Recruitment() {
                     </div>
                 )}
 
+                {/* ROUND 11.3 TASK C — Panchina Reclute (persistente). */}
+                <section
+                    data-testid="freeze-bench-section"
+                    className="border border-amber/30 bg-card rounded-sm p-3 mb-6"
+                >
+                    <div className="flex items-center justify-between mb-3">
+                        <div>
+                            <div className="text-[10px] tracking-widest text-amber mb-0.5">
+                                ❄ PANCHINA RECLUTE
+                            </div>
+                            <div
+                                className="text-xs text-muted-foreground"
+                                data-testid="freeze-bench-counter"
+                            >
+                                {bench.used_slots}/{bench.max_slots} · sopravvive ai refresh
+                            </div>
+                        </div>
+                    </div>
+                    {bench.frozen.length === 0 ? (
+                        <div
+                            className="text-[11px] text-muted-foreground italic"
+                            data-testid="freeze-bench-empty"
+                        >
+                            Nessun candidato in panchina. Usa &quot;❄ Congela&quot; su una card per
+                            conservarne uno tra un refresh e l&apos;altro.
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {bench.frozen.map((f) => (
+                                <FrozenCard
+                                    key={f.frozen_id}
+                                    frozen={f}
+                                    onRecruit={handleRecruitFrozen}
+                                    onRelease={handleRelease}
+                                    busy={benchBusy === f.frozen_id}
+                                    canAfford={canAfford}
+                                    overCap={overCap}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
+
                 {loading && !candidates && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         {[...Array(4)].map((_, i) => (
@@ -379,7 +599,9 @@ export default function Recruitment() {
                                 canAfford={canAfford}
                                 overCap={overCap}
                                 onRecruit={handleRecruit}
-                                busy={recruiting === c.candidate_id}
+                                onFreeze={handleFreeze}
+                                busy={recruiting === c.candidate_id || benchBusy === c.candidate_id}
+                                freezeFull={bench.used_slots >= bench.max_slots}
                             />
                         ))}
                     </div>

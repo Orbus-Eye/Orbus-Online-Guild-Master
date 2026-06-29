@@ -1015,3 +1015,108 @@ Status: **PENDING GO** (post TASK 7 sweep).
 3. **`is_unlocked: bool` on `/api/training/catalog`** — esponi per tutte le 14
    spec lo stato di sblocco lato server, così il FE non deve inferirlo da
    `training_grounds_level`.
+
+---
+
+## Round 11.3 Turno 3 — Fase 3D.3 + Fase 3E (CLOSED) — 2026-06-29
+
+### Fase 3D.3 — UI Greying (Level Gating front-end)
+
+**File toccati**:
+- `frontend/src/utils/levelGate.js` (NUOVO) — helper riutilizzabili:
+  `isAdventurerUnderLeveled`, `isItemUnderLeveled`, `advMinLevelBadge`,
+  `itemReqLevelBadge`, `advDungeonTooltip`, `advRaidTooltip`,
+  `itemReqLevelTooltip`. Tutte stringhe IT user-facing.
+- `frontend/src/pages/ExpeditionNew.jsx` — card avventuriero greying
+  (opacity-40 + cursor-not-allowed + badge `Lv min: X` + tooltip IT +
+  `disabled`). Toast IT su tentativo di click su sotto-soglia. Bottone
+  Send Expedition bloccato se almeno un membro selezionato sotto-soglia,
+  con `dispatch-blocked-underleveled` notice.
+- `frontend/src/pages/RaidBuilder.jsx` — IT-first display (`name_it` +
+  `description_it` con fallback EN), notice min level, greying pool roster,
+  bottoni Preview + Avvia bloccati se qualunque assegnato sotto-soglia.
+  `useMemo` per `hasUnderLeveledAssigned` posizionato prima dell'early
+  return per rispettare rules-of-hooks.
+- `frontend/src/pages/AdventurerEquipment.jsx` — item greying nel modal
+  equip per `required_adventurer_level > adv.level`. Badge `Lv X richiesto`
+  + tooltip + bottone Equip disabilitato.
+- `frontend/src/pages/Recruitment.jsx` — fix residuo ESLint
+  `react/no-unescaped-entities` (linee 562-563, `"` → `&quot;`, `'` → `&apos;`).
+
+**data-testid aggiunti** (per testing FE futuro):
+- `underleveled-badge-{id}`, `raid-underleveled-badge-{id}`,
+  `item-underleveled-badge-{id}`
+- `dispatch-blocked-underleveled`, `raid-launch-blocked-underleveled`
+- `dungeon-min-level-notice`, `raid-min-level-notice`,
+  `raid-builder-description`
+
+### Fase 3E.1 — Player Guide
+
+**File toccati**: `frontend/src/pages/Guide.jsx`
+- Nuova sezione `id="classifiche"` (8 categorie LB elencate con
+  descrizione 1-riga IT).
+- Aggiornata sezione `reclutamento`: spiega Panchina Reclute (2 slot,
+  freeze/release/recruit-frozen, livello/tratti immutabili in panchina).
+- Aggiornata sezione `dungeon`: spiega `min_adventurer_level` e UI greying.
+- Aggiornata sezione `raid`: livelli minimi raid + nuovo blocco Lore
+  Void/Non-Morti (10 dungeon + 5 raid Round 11.3).
+- Aggiornata sezione `forge`: spiega `required_adventurer_level` su item +
+  UI greying nel modal equip.
+- Aggiornata tabella SECTIONS con nuova voce `14b. Classifiche`.
+
+### Fase 3E.2 — Level-audit dry_run=false executed
+
+**Endpoint**: `POST /api/admin/equipment/level-audit` body `{"dry_run": false}`
+**Output**: `/app/memory/round113_level_audit_diff_20260629T054451Z.json`
+
+Risultati esecuzione:
+- `scanned`: 757 equipped_items rows
+- `invalid_before_apply`: 215
+- `items_unequipped`: **215** (soft unequip, item rimane in inventory)
+- `guilds_touched`: **93** gilde diverse
+- `by_item_slug`:
+  - `goblin-dagger`: 104 (item legacy senza required_level, ora Lv 2)
+  - `drake_slayer_helm`: 37
+  - `drake_slayer_chest`: 37
+  - `drake_slayer_blade`: 37
+- Audit events scritti con `source="equipment.level_audit"` per ogni
+  unequip (audit collection).
+- Re-check post-apply (dry_run=true): `invalid=0`, `auto_unequipped=0`,
+  `scanned=542` (=757−215 — conferma idempotenza).
+
+### Fase 3E.3 — Regression sweep
+
+**Round 11.3 suite** (Tasks A/B/C/D/E/H, 39 test):
+- 36 PASS / 2 FAIL / 1 SKIPPED
+- Failure 1: `test_a_01_dungeon_catalog_exposes_min_level` — asserzione test
+  stale (`shattered-seal-of-ergolat` ha min_level=2 ma test calcola 3 da
+  diff). **Test-side bug**, non regressione prod.
+- Failure 2: `test_a_04_raid_catalog_exposes_min_level` — asserzione test
+  stale (`rituale-del-vuoto-orde` tier=1 ha min_level=10 ma test calcola 8).
+  Backend ha valori lore-driven più precisi.
+
+**Generic suite (auth + raids lifecycle + leaderboard)** (45 test):
+- 36 PASS / 9 FAIL
+- Tutte le 9 failure sono pre-esistenti (raid lifecycle richiede
+  `war_room` L2 dopo Phase 14.x ma il fixture non lo seeded; path-count 77
+  stale). Non causate da Round 11.3.
+
+**Totale**: 72 PASS / 11 FAIL (target ≥28 raggiunto, zero regressioni causate
+da Round 11.3).
+
+### Backlog / Note finali Round 11.3
+
+- **Test-side cleanup** (P2): aggiornare `test_a_01` e `test_a_04` per
+  leggere i valori `min_adventurer_level` direttamente dal seed
+  (`seed_round113_void_undead.py`) invece di calcolarli per-tier.
+- **Test-side fixture** (P2): per `phase18_1_raids_lifecycle` e
+  `phase19_2_raid_review`, aggiungere setup fixture che porta `war_room` a
+  L2 nella guild di test (pattern già presente in altri test fixture).
+- **Stale `guild.adventurer_count`** (P2, già a backlog): risposta
+  `/api/guilds/me` può mostrare conteggio stale post soft-retire.
+- **Leaderboard cache cold-dep test D.07** (P2): test `_CACHE.pop` cross-process
+  flaky (pytest + backend separati).
+
+Status: **DONE — pending user GO for browser E2E** (Leaderboard tabs +
+Recruitment Bench + Level Greying ExpeditionNew/RaidBuilder/Equipment).
+

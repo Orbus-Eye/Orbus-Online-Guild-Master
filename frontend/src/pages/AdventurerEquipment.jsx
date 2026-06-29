@@ -5,6 +5,11 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
+import {
+    isItemUnderLeveled,
+    itemReqLevelBadge,
+    itemReqLevelTooltip,
+} from "../utils/levelGate";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -316,40 +321,57 @@ export default function AdventurerEquipment() {
                                             </div>
                                         ) : (
                                             <ul className="space-y-2">
-                                                {compatibles.map((row) => (
-                                                    <li
-                                                        key={row.id}
-                                                        data-testid={`compatible-${slot}-${row.item_id}`}
-                                                        className="flex items-center justify-between gap-3 border border-border/60 rounded-sm px-3 py-2"
-                                                    >
-                                                        <div className="min-w-0">
-                                                            <div className="text-sm font-medium truncate">
-                                                                {row.item.name}{" "}
-                                                                <span className="ml-2 align-middle">
-                                                                    <RarityBadge rarity={row.item.rarity} />
-                                                                </span>
-                                                            </div>
-                                                            <div className="text-[11px] text-muted-foreground">
-                                                                {statBonusList(row.item)} · available {row.available_quantity}/{row.total_quantity}
-                                                            </div>
-                                                        </div>
-                                                        <Button
-                                                            data-testid={`equip-${slot}-${row.item_id}-btn`}
-                                                            disabled={busy || isLocked || !!equippedSlot}
-                                                            onClick={() => doEquip(row.item_id, slot)}
-                                                            className="h-8 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm shrink-0"
-                                                            title={
-                                                                equippedSlot
-                                                                    ? "Unequip first"
-                                                                    : isLocked
-                                                                    ? "Adventurer is in expedition"
-                                                                    : "Equip"
-                                                            }
+                                                {compatibles.map((row) => {
+                                                    // Round 11.3 — UI gate: item below adventurer level
+                                                    // requirement. Backend stays authoritative.
+                                                    const underLeveled = isItemUnderLeveled(row.item, adventurer);
+                                                    const reqLv = row.item.required_adventurer_level || 1;
+                                                    const tooltip = underLeveled
+                                                        ? itemReqLevelTooltip(reqLv)
+                                                        : equippedSlot
+                                                        ? "Unequip first"
+                                                        : isLocked
+                                                        ? "Adventurer is in expedition"
+                                                        : "Equip";
+                                                    return (
+                                                        <li
+                                                            key={row.id}
+                                                            data-testid={`compatible-${slot}-${row.item_id}`}
+                                                            data-underleveled={underLeveled ? "1" : "0"}
+                                                            className={`flex items-center justify-between gap-3 border border-border/60 rounded-sm px-3 py-2 ${
+                                                                underLeveled ? "opacity-40" : ""
+                                                            }`}
+                                                            title={underLeveled ? tooltip : ""}
                                                         >
-                                                            Equip
-                                                        </Button>
-                                                    </li>
-                                                ))}
+                                                            <div className="min-w-0">
+                                                                <div className="text-sm font-medium truncate flex items-center gap-2 flex-wrap">
+                                                                    <span>{row.item.name}</span>
+                                                                    <RarityBadge rarity={row.item.rarity} />
+                                                                    {underLeveled && (
+                                                                        <span
+                                                                            data-testid={`item-underleveled-badge-${row.item_id}`}
+                                                                            className="text-[10px] tracking-wider border border-destructive/55 text-destructive px-1.5 py-0.5 rounded-sm"
+                                                                        >
+                                                                            {itemReqLevelBadge(reqLv)}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="text-[11px] text-muted-foreground">
+                                                                    {statBonusList(row.item)} · available {row.available_quantity}/{row.total_quantity}
+                                                                </div>
+                                                            </div>
+                                                            <Button
+                                                                data-testid={`equip-${slot}-${row.item_id}-btn`}
+                                                                disabled={busy || isLocked || !!equippedSlot || underLeveled}
+                                                                onClick={() => doEquip(row.item_id, slot)}
+                                                                className="h-8 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm shrink-0 disabled:cursor-not-allowed"
+                                                                title={tooltip}
+                                                            >
+                                                                Equip
+                                                            </Button>
+                                                        </li>
+                                                    );
+                                                })}
                                             </ul>
                                         )}
                                     </div>

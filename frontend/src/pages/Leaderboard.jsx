@@ -1,12 +1,27 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+// ROUND 11.3 Fase 3D — Multi-category leaderboard.
+//
+// Replaces the legacy single-table layout (peak-power only) with a Tabs
+// (desktop) / Dropdown (mobile) selector over 8 categories served by
+// `GET /api/leaderboard?category=<slug>&limit=50`. Persists the selected
+// category in the URL `?category=` query string so a link to a specific
+// ranking is shareable + survives back/forward navigation.
+//
+// Layout decisions:
+//   * Header label/description come from the payload (server-authoritative
+//     IT copy). FE never invents category names.
+//   * `is_me=true` row → amber highlight + "👤" marker.
+//   * `my_entry != null` AND `my_entry.rank > 50` → "La tua posizione"
+//     card pinned above the table.
+//   * `roster_avg_level` → score / 100 displayed as "Lv X.YZ".
+//   * Skeleton during fetch; empty state IT if entries.length < 3.
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
+
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "") + "/api";
-
-import { formatDateShort as fmtDate } from "../utils/dateFormat";
 
 const RankBadge = ({ rank }) => {
     if (rank === 1)
@@ -30,60 +45,107 @@ const RankBadge = ({ rank }) => {
     return <span className="text-muted-foreground">#{rank}</span>;
 };
 
-const DungeonTier = ({ slug }) => {
-    if (!slug)
-        return (
-            <span className="text-muted-foreground text-xs italic">—</span>
-        );
-    const colorBySlug = {
-        "goblin-warrens": "text-[#9ca3af]",
-        "shadow-crypts": "text-[#a78bfa]",
-        "dragons-hoard": "text-[#f59e0b]",
-    };
-    const color = colorBySlug[slug] || "text-foreground";
-    return (
-        <span className={`text-xs font-mono ${color}`}>{slug}</span>
-    );
-};
-
-const Skeleton = () => (
+const SkeletonRow = ({ i }) => (
     <tr className="border-t border-border" data-testid="leaderboard-skeleton-row">
-        {[...Array(7)].map((_, i) => (
-            <td key={`lb-skel-${i}`} className="px-3 py-3">
+        {[...Array(3)].map((_, k) => (
+            <td key={`lb-skel-${i}-${k}`} className="px-3 py-3">
                 <div className="h-3 bg-secondary rounded-sm w-full" />
             </td>
         ))}
     </tr>
 );
 
+function formatScore(category, score) {
+    // `roster_avg_level` returns score as avg×100; render as a decimal.
+    if (category === "roster_avg_level") {
+        return `Lv ${(Number(score) / 100).toFixed(2)}`;
+    }
+    return Number(score).toLocaleString("it-IT");
+}
+
 export default function Leaderboard() {
-    const { t, lang } = useT();
+    const { t } = useT();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialCategory = searchParams.get("category") || "peak_power";
+
+    const [categories, setCategories] = useState([]);
+    const [category, setCategory] = useState(initialCategory);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [refreshing, setRefreshing] = useState(false);
 
-    const fetchData = useCallback(async () => {
-        setRefreshing(true);
+    // Categories catalog (single fetch on mount).
+    useEffect(() => {
+        let cancelled = false;
+        axios.get(`${API}/leaderboard/categories`, { timeout: 10_000 })
+            .then((r) => {
+                if (cancelled) return;
+                setCategories(r.data.categories || []);
+            })
+            .catch(() => {
+                if (cancelled) return;
+                // Fallback: a hard-coded 8 slugs to keep the picker usable
+                // if the catalog endpoint flakes. Labels remain blank → the
+                // server-side category fetch will still populate the header.
+                setCategories([
+                    "peak_power", "raid_score", "dungeon_clears", "raid_clears",
+                    "territory_score", "contracts_completed", "training_score",
+                    "roster_avg_level",
+                ].map((s) => ({ slug: s, label_it: s, description_it: "" })));
+            });
+        return () => { cancelled = true; };
+    }, []);
+
+    // Fetch category rows.
+    const fetchCategory = useCallback(async (slug) => {
+        setLoading(true);
         setError(null);
         try {
-            const r = await axios.get(`${API}/leaderboard/guilds?limit=50&offset=0`, {
-                timeout: 15000,
-            });
+            // Cookie-auth is the canonical flow; the api.js axios instance
+            // attaches it automatically. Bearer fallback also works for the
+            // public endpoint — we use plain axios here to avoid pulling
+            // CSRF in for a read-only call.
+            const headers = {};
+            try {
+                const tok = localStorage.getItem("orbus_access_token");
+                if (tok) headers.Authorization = `Bearer ${tok}`;
+            } catch (_) { /* ignore */ }
+            const r = await axios.get(
+                `${API}/leaderboard?category=${encodeURIComponent(slug)}&limit=50`,
+                { timeout: 15_000, headers, withCredentials: true },
+            );
             setData(r.data);
         } catch (err) {
-            setError(err?.response?.data?.detail || err.message || "Failed to load");
+            const detail = err?.response?.data?.detail;
+            const msg = typeof detail === "object"
+                ? (detail.user_message || detail.code || "Errore")
+                : (detail || err.message || "Caricamento fallito");
+            setError(msg);
+            setData(null);
         } finally {
             setLoading(false);
-            setRefreshing(false);
         }
     }, []);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchCategory(category);
+    }, [category, fetchCategory]);
+
+    // Update URL when category changes.
+    const handleCategoryChange = (slug) => {
+        setCategory(slug);
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("category", slug);
+            return next;
+        });
+    };
 
     const entries = data?.entries || [];
+    const myEntry = data?.my_entry || null;
+    const showMyEntryPin = myEntry && !entries.some((e) => e.is_me);
+
+    const tooFewEntries = !loading && entries.length > 0 && entries.length < 3;
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
@@ -95,7 +157,7 @@ export default function Leaderboard() {
                         className="flex items-center gap-2 text-xs whitespace-nowrap text-muted-foreground hover:text-foreground"
                     >
                         <span className="text-amber">◆</span>
-                        <span className="tracking-widest">{`ORBUS // ${t("leaderboard_page.brand_subtitle")}`}</span>
+                        <span className="tracking-widest">ORBUS // CLASSIFICA</span>
                     </Link>
                     <div className="flex items-center gap-2 text-xs">
                         <Link
@@ -110,35 +172,63 @@ export default function Leaderboard() {
             </header>
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-                <section className="mb-8">
+                <section className="mb-6">
                     <div className="text-xs text-amber tracking-widest mb-2">
                         :: PUBLIC RANKING
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                        <div>
-                            <h1
-                                data-testid="leaderboard-title"
-                                className="text-3xl sm:text-4xl font-semibold tracking-tight"
-                            >
-                                {t("leaderboard.title")}
-                            </h1>
-                            <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                                Ranked by peak team power ever recorded. Tie-break by
-                                level, then reputation, then guild age.
-                            </p>
-                        </div>
-                        <Button
-                            type="button"
-                            onClick={fetchData}
-                            disabled={refreshing}
-                            data-testid="leaderboard-refresh-btn"
-                            variant="outline"
-                            className="rounded-sm h-9 border-border bg-transparent hover:bg-secondary text-xs tracking-widest"
+                    <h1
+                        data-testid="leaderboard-title"
+                        className="text-3xl sm:text-4xl font-semibold tracking-tight mb-2"
+                    >
+                        {data?.category_label_it || t("leaderboard.title")}
+                    </h1>
+                    {data?.category_description_it && (
+                        <p
+                            className="text-sm text-muted-foreground max-w-2xl"
+                            data-testid="leaderboard-description"
                         >
-                            {refreshing ? "refreshing…" : "↻ refresh"}
-                        </Button>
-                    </div>
+                            {data.category_description_it}
+                        </p>
+                    )}
                 </section>
+
+                {/* Category picker — Tabs on desktop, native select on mobile. */}
+                <div
+                    className="mb-6 border border-border bg-card rounded-sm p-2"
+                    data-testid="leaderboard-category-picker"
+                >
+                    {/* Desktop tabs */}
+                    <div className="hidden sm:flex flex-wrap gap-1">
+                        {categories.map((c) => (
+                            <button
+                                key={c.slug}
+                                type="button"
+                                onClick={() => handleCategoryChange(c.slug)}
+                                data-testid={`leaderboard-tab-${c.slug}`}
+                                className={`text-[11px] tracking-widest px-3 py-1.5 rounded-sm transition-colors ${
+                                    category === c.slug
+                                        ? "bg-amber text-background font-bold"
+                                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                                }`}
+                            >
+                                {c.label_it}
+                            </button>
+                        ))}
+                    </div>
+                    {/* Mobile select */}
+                    <select
+                        className="sm:hidden w-full bg-background border border-border text-xs px-2 py-2 rounded-sm"
+                        value={category}
+                        onChange={(e) => handleCategoryChange(e.target.value)}
+                        data-testid="leaderboard-category-select-mobile"
+                    >
+                        {categories.map((c) => (
+                            <option key={c.slug} value={c.slug}>
+                                {c.label_it}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 {error && (
                     <div
@@ -146,6 +236,45 @@ export default function Leaderboard() {
                         data-testid="leaderboard-error"
                     >
                         {error}
+                    </div>
+                )}
+
+                {/* "La tua posizione" card pinned above table if outside top 50. */}
+                {showMyEntryPin && (
+                    <div
+                        data-testid="leaderboard-my-entry-pin"
+                        className="mb-4 border border-amber/60 bg-amber/5 rounded-sm p-3 flex items-center justify-between"
+                    >
+                        <div>
+                            <div className="text-[10px] tracking-widest text-amber mb-1">
+                                :: LA TUA POSIZIONE
+                            </div>
+                            <div className="text-sm font-medium">
+                                <RankBadge rank={myEntry.rank} />{" "}
+                                <span className="ml-2">{myEntry.guild_name}</span>
+                            </div>
+                        </div>
+                        <span className="text-amber font-semibold">
+                            {formatScore(category, myEntry.score)}
+                        </span>
+                    </div>
+                )}
+
+                {/* Empty-data states. */}
+                {!loading && entries.length === 0 && !error && (
+                    <div
+                        className="border border-border bg-card rounded-sm p-8 text-center text-xs text-muted-foreground"
+                        data-testid="leaderboard-empty"
+                    >
+                        Non abbastanza dati per questa classifica.
+                    </div>
+                )}
+                {tooFewEntries && (
+                    <div
+                        className="mb-4 border border-border bg-card rounded-sm p-3 text-xs text-muted-foreground italic"
+                        data-testid="leaderboard-few-entries"
+                    >
+                        Non abbastanza dati per questa classifica.
                     </div>
                 )}
 
@@ -157,69 +286,38 @@ export default function Leaderboard() {
                     <table className="w-full text-sm">
                         <thead className="bg-secondary/60 text-[10px] tracking-widest text-muted-foreground">
                             <tr>
-                                <th className="px-3 py-2 text-left">{t("leaderboard_page.rank")}</th>
-                                <th className="px-3 py-2 text-left">{t("leaderboard_page.guild")}</th>
-                                <th className="px-3 py-2 text-right">{t("leaderboard_page.peak_pwr_short")}</th>
-                                <th className="px-3 py-2 text-right">{t("leaderboard_page.level_short")}</th>
-                                <th className="px-3 py-2 text-right">{t("leaderboard_page.reputation_short")}</th>
-                                <th className="px-3 py-2 text-left">{t("leaderboard_page.highest")}</th>
-                                <th className="px-3 py-2 text-right">{t("leaderboard_page.expeditions_short")}</th>
+                                <th className="px-3 py-2 text-left">RANK</th>
+                                <th className="px-3 py-2 text-left">GILDA</th>
+                                <th className="px-3 py-2 text-right">PUNTEGGIO</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading &&
-                                [...Array(6)].map((_, i) => (
-                                    <Skeleton key={`skel-${i}`} />
-                                ))}
-                            {!loading && entries.length === 0 && (
-                                <tr>
-                                    <td
-                                        colSpan={7}
-                                        className="px-3 py-8 text-center text-xs text-muted-foreground italic"
-                                        data-testid="leaderboard-empty"
-                                    >
-                                        No guilds in leaderboard yet
-                                    </td>
-                                </tr>
-                            )}
+                                [...Array(6)].map((_, i) => <SkeletonRow key={i} i={i} />)}
                             {!loading &&
                                 entries.map((e) => (
                                     <tr
-                                        key={e.guild_id}
+                                        key={`${e.guild_public_id}-${e.rank}`}
                                         data-testid={`leaderboard-row-${e.rank}`}
-                                        className="border-t border-border hover:bg-secondary/30 transition-colors"
+                                        className={`border-t border-border transition-colors ${
+                                            e.is_me
+                                                ? "bg-amber/10 hover:bg-amber/15"
+                                                : "hover:bg-secondary/30"
+                                        }`}
                                     >
                                         <td className="px-3 py-3">
                                             <RankBadge rank={e.rank} />
                                         </td>
-                                        <td className="px-3 py-3">
-                                            <div
-                                                className="font-medium"
-                                                data-testid={`leaderboard-guild-name-${e.rank}`}
-                                            >
-                                                {e.guild_name}
-                                            </div>
-                                            <div className="text-[10px] text-muted-foreground">
-                                                {t("leaderboard.founded_at", { at: fmtDate(e.created_at, lang) })}
-                                            </div>
+                                        <td className="px-3 py-3 font-medium">
+                                            {e.is_me && (
+                                                <span className="mr-2 text-amber" aria-label="me">
+                                                    👤
+                                                </span>
+                                            )}
+                                            {e.guild_name}
                                         </td>
-                                        <td
-                                            className="px-3 py-3 text-right font-semibold text-amber"
-                                            data-testid={`leaderboard-peak-${e.rank}`}
-                                        >
-                                            {e.max_team_power_ever}
-                                        </td>
-                                        <td className="px-3 py-3 text-right">
-                                            {e.level}
-                                        </td>
-                                        <td className="px-3 py-3 text-right">
-                                            {e.reputation}
-                                        </td>
-                                        <td className="px-3 py-3">
-                                            <DungeonTier slug={e.highest_dungeon_slug} />
-                                        </td>
-                                        <td className="px-3 py-3 text-right text-muted-foreground">
-                                            {e.total_expeditions_completed}
+                                        <td className="px-3 py-3 text-right font-semibold text-amber">
+                                            {formatScore(category, e.score)}
                                         </td>
                                     </tr>
                                 ))}
@@ -233,63 +331,49 @@ export default function Leaderboard() {
                         [...Array(4)].map((_, i) => (
                             <div
                                 key={`m-skel-${i}`}
-                                className="border border-border bg-card rounded-sm p-4 h-24 animate-pulse"
+                                className="border border-border bg-card rounded-sm p-4 h-16 animate-pulse"
                             />
                         ))}
-                    {!loading && entries.length === 0 && (
-                        <div className="text-center text-xs text-muted-foreground italic py-8">
-                            No guilds in leaderboard yet
-                        </div>
-                    )}
                     {!loading &&
                         entries.map((e) => (
                             <div
-                                key={e.guild_id}
+                                key={`${e.guild_public_id}-${e.rank}`}
                                 data-testid={`leaderboard-card-${e.rank}`}
-                                className="border border-border bg-card rounded-sm p-4"
+                                className={`border rounded-sm p-3 flex items-center justify-between gap-3 ${
+                                    e.is_me
+                                        ? "border-amber/60 bg-amber/10"
+                                        : "border-border bg-card"
+                                }`}
                             >
-                                <div className="flex items-center justify-between mb-2">
-                                    <RankBadge rank={e.rank} />
-                                    <span className="text-amber font-semibold">
-                                        {e.max_team_power_ever} pwr
-                                    </span>
+                                <div className="min-w-0">
+                                    <div className="text-xs text-muted-foreground">
+                                        <RankBadge rank={e.rank} />
+                                    </div>
+                                    <div className="font-medium truncate">
+                                        {e.is_me && "👤 "}{e.guild_name}
+                                    </div>
                                 </div>
-                                <div className="font-medium text-sm">
-                                    {e.guild_name}
-                                </div>
-                                <div className="text-[10px] text-muted-foreground mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                                    <span>lvl {e.level}</span>
-                                    <span>rep {e.reputation}</span>
-                                    <span>{e.total_expeditions_completed} exp</span>
-                                    {e.highest_dungeon_slug && (
-                                        <DungeonTier slug={e.highest_dungeon_slug} />
-                                    )}
+                                <div className="text-amber font-semibold shrink-0">
+                                    {formatScore(category, e.score)}
                                 </div>
                             </div>
                         ))}
                 </div>
 
-                {!loading && data && (
+                {!loading && data && entries.length > 0 && (
                     <div
                         className="text-[10px] text-muted-foreground mt-4 tracking-widest"
                         data-testid="leaderboard-meta"
                     >
-                        showing {entries.length} of {data.total} guilds · ordered by peak
-                        team power
+                        mostrate {entries.length} gilde · calcolato il{" "}
+                        {data.computed_at ? new Date(data.computed_at).toLocaleString("it-IT") : "—"}
                     </div>
                 )}
             </main>
 
             <footer className="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-xs text-muted-foreground border-t border-border">
-                <span className="text-amber">$</span> orbus --leaderboard --public · raise
-                your peak in{" "}
-                <Link
-                    to="/dungeons"
-                    className="text-amber hover:underline"
-                    data-testid="leaderboard-footer-dungeons-link"
-                >
-                    Dungeons
-                </Link>
+                <span className="text-amber">$</span> orbus --leaderboard --public ·
+                cambia categoria per stile di gioco diverso.
             </footer>
         </div>
     );

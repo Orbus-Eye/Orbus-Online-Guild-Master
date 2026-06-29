@@ -7,6 +7,11 @@ import AppHeader from "../components/AppHeader";
 import OverCapBanner from "../components/OverCapBanner";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
+import {
+    isAdventurerUnderLeveled,
+    advMinLevelBadge,
+    advDungeonTooltip,
+} from "../utils/levelGate";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -152,7 +157,15 @@ export default function ExpeditionNew() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [squadIdParam, dungeon, squads, advs]);
 
+    const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
+
     const toggleSelect = (adv) => {
+        // Round 11.3 — UI gate: block under-leveled adventurers client-side.
+        // Backend remains authoritative; this is purely UX.
+        if (isAdventurerUnderLeveled(adv, minAdvLevel)) {
+            toast.error(advDungeonTooltip(minAdvLevel));
+            return;
+        }
         setSelected((prev) => {
             if (prev.find((p) => p.id === adv.id)) {
                 return prev.filter((p) => p.id !== adv.id);
@@ -164,6 +177,12 @@ export default function ExpeditionNew() {
             return [...prev, adv];
         });
     };
+
+    // Round 11.3 — at least one selected member is below the dungeon min level.
+    const hasUnderLeveledSelected = useMemo(
+        () => selected.some((a) => isAdventurerUnderLeveled(a, minAdvLevel)),
+        [selected, minAdvLevel],
+    );
 
     const teamPower = useMemo(() => previewTeamPower(selected), [selected]);
     const equipmentBonus = useMemo(
@@ -323,17 +342,21 @@ export default function ExpeditionNew() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {advs.map((a) => {
                                 const isSelected = !!selected.find((s) => s.id === a.id);
+                                const underLeveled = isAdventurerUnderLeveled(a, minAdvLevel);
                                 return (
                                     <button
                                         type="button"
                                         key={a.id}
                                         onClick={() => toggleSelect(a)}
+                                        disabled={underLeveled}
+                                        title={underLeveled ? advDungeonTooltip(minAdvLevel) : ""}
                                         data-testid={`select-adventurer-${a.id}`}
+                                        data-underleveled={underLeveled ? "1" : "0"}
                                         className={`text-left border rounded-sm p-4 transition-colors ${
                                             isSelected
                                                 ? "border-amber bg-amber/5"
                                                 : "border-border bg-card hover:bg-secondary/40"
-                                        }`}
+                                        } ${underLeveled ? "opacity-40 cursor-not-allowed hover:bg-card" : ""}`}
                                     >
                                         <div className="flex items-start justify-between mb-2 gap-2">
                                             <div className="min-w-0">
@@ -346,6 +369,14 @@ export default function ExpeditionNew() {
                                             </div>
                                             <div className="flex flex-col items-end gap-1">
                                                 <RarityBadge rarity={a.rarity} />
+                                                {underLeveled && (
+                                                    <span
+                                                        data-testid={`underleveled-badge-${a.id}`}
+                                                        className="text-[10px] tracking-wider border border-destructive/55 text-destructive px-1.5 py-0.5 rounded-sm"
+                                                    >
+                                                        {advMinLevelBadge(minAdvLevel)}
+                                                    </span>
+                                                )}
                                                 {isSelected && (
                                                     <span className="text-[10px] text-amber">
                                                         ✓ SELECTED
@@ -544,13 +575,30 @@ export default function ExpeditionNew() {
                             <Button
                                 onClick={submit}
                                 data-testid="btn-send-expedition"
-                                disabled={selected.length !== requiredSize || submitting}
+                                disabled={selected.length !== requiredSize || submitting || hasUnderLeveledSelected}
+                                title={hasUnderLeveledSelected ? advDungeonTooltip(minAdvLevel) : ""}
                                 className="w-full h-10 rounded-sm mt-5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {submitting
                                     ? t("expedition_new.dispatching_btn")
                                     : `Send Expedition (${selected.length}/${requiredSize})`}
                             </Button>
+                            {hasUnderLeveledSelected && (
+                                <p
+                                    data-testid="dispatch-blocked-underleveled"
+                                    className="text-[11px] text-destructive mt-2 text-center"
+                                >
+                                    {advDungeonTooltip(minAdvLevel)}
+                                </p>
+                            )}
+                            {!hasUnderLeveledSelected && minAdvLevel > 1 && (
+                                <p
+                                    data-testid="dungeon-min-level-notice"
+                                    className="text-[10px] text-muted-foreground mt-2 text-center"
+                                >
+                                    Liv. minimo dungeon: {minAdvLevel}
+                                </p>
+                            )}
                             <p className="text-[10px] text-muted-foreground mt-2 text-center">
                                 Estimated values; backend recomputes on dispatch.
                             </p>

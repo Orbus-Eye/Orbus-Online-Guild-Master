@@ -22,6 +22,7 @@ const SECTIONS = [
     { id: "reclutamento", label: "12. Reclutamento" },
     { id: "dungeon", label: "13. Dungeon e Spedizioni" },
     { id: "raid", label: "14. Raid" },
+    { id: "classifiche", label: "14b. Classifiche" },
     { id: "squadre", label: "15. Squadre Personalizzate" },
     { id: "forge", label: "16. Equipaggiamento e Fucina" },
     { id: "bound-items", label: "17. Item legati" },
@@ -589,6 +590,15 @@ export default function Guide() {
                         candidati. Se il roster è pieno (Dormitori al massimo) ricevi un errore
                         chiaro: aumenta capacità prima.
                     </p>
+                    <p className="mt-3">
+                        <strong>Panchina Reclute (Round 11.3)</strong>: ogni candidato ha un&apos;icona
+                        <em> ❄ Congela</em>. Cliccala per spostarlo nella <strong>Panchina</strong>:
+                        resta lì anche dopo un refresh della lista. La panchina ha <strong>max 2 slot</strong>.
+                        Dalla panchina puoi <em>Reclutare</em> il candidato (costo gold standard,
+                        come da lista) oppure <em>Rilasciare</em> per liberare lo slot.
+                        Il livello iniziale e i tratti del candidato non cambiano mai mentre è
+                        congelato.
+                    </p>
                 </SectionBlock>
 
                 <SectionBlock id="dungeon" title="Dungeon e Spedizioni">
@@ -617,6 +627,15 @@ export default function Guide() {
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Suggerimento rapido: per la tua prima spedizione filtra <em>Squadra=3, Difficoltà=facile</em>.
                         Su mobile, tocca <em>FILTRI ▾</em> per aprire il pannello.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Livelli minimi (Round 11.3)</strong>: alcuni dungeon richiedono che
+                        <em> tutti gli avventurieri del team</em> abbiano almeno un livello minimo
+                        (es. Lv 3 per T2, Lv 5 per T3/T4, fino a Lv 8 per i contenuti Void/Undead).
+                        Nella schermata di lancio spedizione, gli avventurieri sotto-soglia appaiono
+                        <em> grigiati</em> con badge <code>Lv min: X</code> e non possono essere
+                        selezionati. Il backend riapplica il controllo al dispatch — non c&apos;è modo
+                        di aggirarlo lato client.
                     </p>
                 </SectionBlock>
 
@@ -647,6 +666,43 @@ export default function Guide() {
                     <p className="mt-2 text-muted-foreground text-[12px]">
                         Un avventuriero già assegnato a un party scompare automaticamente dal pool: i filtri
                         non rompono mai i party in costruzione.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Livelli minimi raid (Round 11.3)</strong>: ogni raid ha un
+                        <code> min_adventurer_level</code> (es. Lv 8-14 per i raid Void/Undead).
+                        Gli avventurieri sotto-soglia appaiono grigiati nel pool con badge
+                        <code> Lv min: X</code>; il bottone <em>Avvia raid</em> resta bloccato
+                        finché ogni assegnato rispetta la soglia.
+                    </p>
+                    <p className="mt-3">
+                        <strong>Lore Void / Non-Morti (Round 11.3)</strong>: nel catalogo trovi
+                        15 nuovi contenuti (10 dungeon + 5 raid) tematici sull&apos;invasione del Vuoto
+                        e sulla risalita dei Non-Morti. Hanno descrizioni narrative in italiano,
+                        livelli minimi più alti e rappresentano l&apos;end-game corrente. Cerca tag
+                        <em> Void</em> / <em>Undead</em> nei filtri.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="classifiche" title="Classifiche (Round 11.3)">
+                    <p>
+                        Nella pagina <strong>Classifiche</strong> ora trovi <strong>8 categorie</strong>
+                        di ranking pubblico. Ogni categoria mostra le top 10 gilde per quel
+                        criterio, più la tua posizione (<em>my_entry</em>) se rientri nella top 500.
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Peak Power</strong>: massimo team power mai raggiunto da una squadra della gilda.</li>
+                        <li><strong>Raid Score</strong>: somma dei punteggi dei raid completati con successo.</li>
+                        <li><strong>Dungeon Clears</strong>: numero totale di spedizioni dungeon vittoriose.</li>
+                        <li><strong>Raid Clears</strong>: numero di raid completati con successo.</li>
+                        <li><strong>Territory Score</strong>: punteggio accumulato dalle attività territoriali.</li>
+                        <li><strong>Contracts Completed</strong>: contratti di gilda completati.</li>
+                        <li><strong>Training Score</strong>: punteggio cumulato delle sessioni di addestramento.</li>
+                        <li><strong>Roster Avg Level</strong>: livello medio del roster attivo (almeno 5 avventurieri).</li>
+                    </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        I dati sono cached lato server con TTL breve (~30s) per evitare carico.
+                        Cambia categoria con i tab in alto; l&apos;URL mantiene la categoria selezionata
+                        (puoi condividere link diretti).
                     </p>
                 </SectionBlock>
 
@@ -706,6 +762,14 @@ export default function Guide() {
                     <p className="mt-2">
                         Alla <strong>Forge</strong> puoi <em>raffinare</em> (refinement +1 → +10) o <em>incantare</em>
                         un oggetto per migliorarne i bonus. Refinement e incanto sono permanenti e legano l&apos;oggetto (◆ BOUND).
+                    </p>
+                    <p className="mt-3">
+                        <strong>Livello richiesto item (Round 11.3)</strong>: ogni oggetto ha un
+                        <code> required_adventurer_level</code>. Nel modal di equip gli oggetti
+                        sotto-soglia per l&apos;avventuriero corrente appaiono grigiati con badge
+                        <code> Lv X richiesto</code> e il bottone <em>Equip</em> è disabilitato.
+                        Gli oggetti già equipaggiati in passato senza requisito sono lasciati come sono,
+                        salvo un&apos;audit di pulizia che il team admin esegue periodicamente.
                     </p>
                 </SectionBlock>
 

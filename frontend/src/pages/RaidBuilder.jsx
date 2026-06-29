@@ -10,6 +10,11 @@ import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import RoleMarker from "../components/RoleMarker";
+import {
+    isAdventurerUnderLeveled,
+    advMinLevelBadge,
+    advRaidTooltip,
+} from "../utils/levelGate";
 
 
 const PARTY_COUNT = 4;
@@ -144,6 +149,18 @@ export default function RaidBuilder() {
 
     const totalAssigned = assignedIds.size;
 
+    // Round 11.3 — hook must be called unconditionally before any early return.
+    // Block launch if any assigned adventurer is below the raid min level.
+    const hasUnderLeveledAssigned = useMemo(() => {
+        const min = raidDungeon?.min_adventurer_level || 1;
+        if (min <= 1) return false;
+        for (const id of assignedIds) {
+            const a = advs.find((x) => x.id === id);
+            if (a && isAdventurerUnderLeveled(a, min)) return true;
+        }
+        return false;
+    }, [assignedIds, advs, raidDungeon]);
+
     // Distinct class list for filter dropdown (computed once from roster)
     const classOptions = useMemo(() => {
         const set = new Set(advs.map((a) => a.class_name).filter(Boolean));
@@ -206,6 +223,12 @@ export default function RaidBuilder() {
         const a = advs.find((x) => x.id === advId);
         if (a && a.is_available === false) {
             toast.error("Avventuriero non disponibile");
+            return;
+        }
+        // Round 11.3 — UI gate: block under-leveled adventurer.
+        // Backend still enforces this authoritatively.
+        if (a && isAdventurerUnderLeveled(a, raidDungeon?.min_adventurer_level)) {
+            toast.error(advRaidTooltip(raidDungeon?.min_adventurer_level || 1));
             return;
         }
         const partyIdx = targetPartyIdx ?? parties.findIndex((p) => p.includes(null));
@@ -303,9 +326,14 @@ export default function RaidBuilder() {
     }
 
     const focusHints = raidDungeon.party_focus_hints || [];
+    const minAdvLevel = raidDungeon.min_adventurer_level || 1;
+    // Round 11.3 — IT-first display: name_it / description_it with EN fallback.
     const raidName = lang === "it"
-        ? t(`raids.catalog.${slug}.name`)
-        : (raidDungeon.name || t(`raids.catalog.${slug}.name`));
+        ? (raidDungeon.name_it || t(`raids.catalog.${slug}.name`) || raidDungeon.name)
+        : (raidDungeon.name || raidDungeon.name_it || t(`raids.catalog.${slug}.name`));
+    const raidDescription = lang === "it"
+        ? (raidDungeon.description_it || raidDungeon.description || "")
+        : (raidDungeon.description || raidDungeon.description_it || "");
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -319,6 +347,24 @@ export default function RaidBuilder() {
                         {t("raids.builder.back_to_raids")}
                     </Link>
                 </div>
+
+                {/* Round 11.3 — IT description + min level notice */}
+                {raidDescription && (
+                    <p
+                        data-testid="raid-builder-description"
+                        className="text-[11px] text-muted-foreground italic mb-2 max-w-3xl"
+                    >
+                        {raidDescription}
+                    </p>
+                )}
+                {minAdvLevel > 1 && (
+                    <div
+                        data-testid="raid-min-level-notice"
+                        className="text-[11px] text-amber border border-amber/40 bg-amber/10 px-3 py-1.5 rounded-sm inline-block mb-3"
+                    >
+                        Liv. minimo avventuriero per questo raid: <strong>{minAdvLevel}</strong>
+                    </div>
+                )}
 
                 {/* ROUND 6A.2b — Carica squadra raid_20 */}
                 <div className="mb-4 border border-neutral-800 rounded-sm p-3 bg-secondary/30">
@@ -610,18 +656,36 @@ export default function RaidBuilder() {
                         {available.map((a) => {
                             const fullPartyIdx = parties.findIndex((p) => p.includes(null));
                             const busyAdv = a.is_available === false;
+                            const underLeveled = isAdventurerUnderLeveled(a, minAdvLevel);
+                            const blocked = fullPartyIdx < 0 || busyAdv || underLeveled;
+                            const tooltip = underLeveled
+                                ? advRaidTooltip(minAdvLevel)
+                                : busyAdv
+                                ? "Avventuriero non disponibile (in spedizione/raid)"
+                                : "";
                             return (
                                 <button
                                     key={a.id}
                                     data-testid={`adv-pick-${a.id}`}
+                                    data-underleveled={underLeveled ? "1" : "0"}
                                     onClick={() => assignAdv(a.id)}
-                                    disabled={fullPartyIdx < 0 || busyAdv}
-                                    title={busyAdv ? "Avventuriero non disponibile (in spedizione/raid)" : ""}
-                                    className="text-[11px] border border-border/60 rounded-sm px-2 py-1.5 text-left hover:bg-secondary/30 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    disabled={blocked}
+                                    title={tooltip}
+                                    className={`text-[11px] border border-border/60 rounded-sm px-2 py-1.5 text-left hover:bg-secondary/30 disabled:cursor-not-allowed ${
+                                        underLeveled ? "opacity-40" : "disabled:opacity-40"
+                                    }`}
                                 >
                                     <div className="truncate flex items-center gap-1">
                                         <RoleMarker role={a.class_role} />
                                         <span>{a.name} L{a.level}</span>
+                                        {underLeveled && (
+                                            <span
+                                                data-testid={`raid-underleveled-badge-${a.id}`}
+                                                className="ml-1 text-[9px] tracking-wider border border-destructive/55 text-destructive px-1 py-0.5 rounded-sm"
+                                            >
+                                                {advMinLevelBadge(minAdvLevel)}
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="text-[10px] text-muted-foreground">
                                         {a.class_name || "?"} · {a.rarity || "Common"} · pwr {a.total_power}
@@ -647,7 +711,8 @@ export default function RaidBuilder() {
                 <div className="flex flex-wrap gap-2">
                     <button
                         onClick={doPreview}
-                        disabled={busy || totalAssigned < PARTY_COUNT * PARTY_SIZE}
+                        disabled={busy || totalAssigned < PARTY_COUNT * PARTY_SIZE || hasUnderLeveledAssigned}
+                        title={hasUnderLeveledAssigned ? advRaidTooltip(minAdvLevel) : ""}
                         data-testid="builder-preview-btn"
                         className="text-xs tracking-widest border border-border bg-secondary/50 hover:bg-secondary px-4 py-2 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     >
@@ -655,14 +720,19 @@ export default function RaidBuilder() {
                     </button>
                     <button
                         onClick={doLaunch}
-                        disabled={busy || !preview}
+                        disabled={busy || !preview || hasUnderLeveledAssigned}
+                        title={hasUnderLeveledAssigned ? advRaidTooltip(minAdvLevel) : ""}
                         data-testid="builder-launch-btn"
                         className="text-xs tracking-widest border border-amber/60 text-amber bg-amber/10 hover:bg-amber/20 px-4 py-2 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         ▶ {t("raids.builder.launch_btn")}
                     </button>
                     <div className="text-[10px] text-muted-foreground self-center">
-                        {totalAssigned < PARTY_COUNT * PARTY_SIZE
+                        {hasUnderLeveledAssigned ? (
+                            <span data-testid="raid-launch-blocked-underleveled" className="text-destructive">
+                                {advRaidTooltip(minAdvLevel)}
+                            </span>
+                        ) : totalAssigned < PARTY_COUNT * PARTY_SIZE
                             ? t("raids.builder.not_enough", { have: totalAssigned })
                             : ""}
                     </div>
