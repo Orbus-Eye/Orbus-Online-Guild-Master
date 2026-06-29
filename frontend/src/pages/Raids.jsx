@@ -138,7 +138,11 @@ export default function Raids() {
 
                 {/* Catalogue */}
                 <section className="space-y-4 mb-8">
-                    {(catalog || []).map((r) => (
+                    {(catalog || []).map((r) => {
+                        const itName = r.name_it || t(`raids.catalog.${r.slug}.name`);
+                        const itDesc = r.description_it || t(`raids.catalog.${r.slug}.description`);
+                        const minLvl = r.min_adventurer_level || 1;
+                        return (
                         <article
                             key={r.slug}
                             data-testid={`raid-card-${r.slug}`}
@@ -146,11 +150,37 @@ export default function Raids() {
                         >
                             <header className="flex items-start justify-between gap-2 mb-2 flex-wrap">
                                 <h2 className="text-sm font-semibold tracking-wider">
-                                    {t(`raids.catalog.${r.slug}.name`)}
+                                    {itName}
                                 </h2>
-                                <div className="text-[10px] tracking-widest flex items-center gap-2">
+                                <div className="text-[10px] tracking-widest flex items-center gap-2 flex-wrap">
                                     <span className="border border-border px-1.5 py-0.5 rounded-sm">T{r.tier}</span>
-                                    <span className="border border-border px-1.5 py-0.5 rounded-sm">R{r.tier}</span>
+                                    {r.is_new && (
+                                        <span
+                                            className="border border-emerald-500/60 text-emerald-400 px-1.5 py-0.5 rounded-sm"
+                                            data-testid={`raid-new-badge-${r.slug}`}
+                                            title="Contenuto introdotto nel Round 11.3"
+                                        >
+                                            NUOVO
+                                        </span>
+                                    )}
+                                    {r.is_void_undead && (
+                                        <span
+                                            className="border border-violet-500/60 text-violet-300 px-1.5 py-0.5 rounded-sm"
+                                            data-testid={`raid-void-badge-${r.slug}`}
+                                            title="Lore: Vuoto / Non-Morti"
+                                        >
+                                            ✦ VUOTO
+                                        </span>
+                                    )}
+                                    {minLvl > 1 && (
+                                        <span
+                                            className="border border-amber-500/50 text-amber-400 px-1.5 py-0.5 rounded-sm"
+                                            data-testid={`raid-min-level-badge-${r.slug}`}
+                                            title={`Livello minimo richiesto per ogni avventuriero: Lv ${minLvl}`}
+                                        >
+                                            Lv min: {minLvl}
+                                        </span>
+                                    )}
                                     {!r.unlocked && (
                                         <span
                                             className="border border-amber/50 text-amber px-1.5 py-0.5 rounded-sm"
@@ -161,9 +191,22 @@ export default function Raids() {
                                     )}
                                 </div>
                             </header>
-                            <p className="text-[11px] text-muted-foreground italic mb-3">
-                                {t(`raids.catalog.${r.slug}.description`)}
+                            {r.boss_name && (
+                                <div className="text-[11px] text-amber-400/80 mb-1" data-testid={`raid-boss-${r.slug}`}>
+                                    Boss: <strong>{r.boss_name}</strong>
+                                </div>
+                            )}
+                            <p className="text-[11px] text-muted-foreground italic mb-2" data-testid={`raid-desc-${r.slug}`}>
+                                {itDesc}
                             </p>
+                            {r.narrative_hook && (
+                                <p
+                                    className="text-[11px] italic text-amber-400/80 mb-3 border-l-2 border-amber-500/40 pl-2"
+                                    data-testid={`raid-hook-${r.slug}`}
+                                >
+                                    "{r.narrative_hook}"
+                                </p>
+                            )}
                             <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] mb-2">
                                 <div><dt className="text-muted-foreground">Power</dt><dd>{r.recommended_power_combined}</dd></div>
                                 <div><dt className="text-muted-foreground">Roster</dt>
@@ -192,7 +235,8 @@ export default function Raids() {
                                 </Link>
                             </div>
                         </article>
-                    ))}
+                        );
+                    })}
                 </section>
 
                 {/* History */}

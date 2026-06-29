@@ -30,6 +30,47 @@ const LockedBadge = () => (
     </span>
 );
 
+// ROUND 13a — Lore badges (additivi, no breaking).
+const NewBadge = ({ slug }) => (
+    <span
+        className="inline-block text-[10px] tracking-widest border border-emerald-500/60 text-emerald-400 px-1.5 py-0.5 rounded-sm"
+        data-testid={`dungeon-new-badge-${slug}`}
+        title="Contenuto introdotto nel Round 11.3 (Lore Vuoto/Non-Morti)"
+    >
+        NUOVO
+    </span>
+);
+
+const VoidUndeadBadge = ({ slug }) => (
+    <span
+        className="inline-block text-[10px] tracking-widest border border-violet-500/60 text-violet-300 px-1.5 py-0.5 rounded-sm"
+        data-testid={`dungeon-void-badge-${slug}`}
+        title="Lore: Vuoto / Non-Morti"
+    >
+        ✦ VUOTO
+    </span>
+);
+
+const MinLevelBadge = ({ slug, lvl }) => (
+    <span
+        className="inline-block text-[10px] tracking-widest border border-amber-500/50 text-amber-400 px-1.5 py-0.5 rounded-sm"
+        data-testid={`dungeon-min-level-badge-${slug}`}
+        title={`Livello minimo richiesto per ogni membro della squadra: Lv ${lvl}`}
+    >
+        Lv min: {lvl}
+    </span>
+);
+
+const ThemeBadge = ({ slug, theme }) => (
+    <span
+        className="inline-block text-[10px] tracking-widest text-muted-foreground border border-border/60 px-1.5 py-0.5 rounded-sm"
+        data-testid={`dungeon-theme-badge-${slug}`}
+        title={`Tema lore: ${theme}`}
+    >
+        {String(theme).toUpperCase()}
+    </span>
+);
+
 const Stat = ({ label, value }) => (
     <div className="flex justify-between text-xs py-1 border-b border-border/40 last:border-b-0">
         <span className="text-muted-foreground">{label}</span>
@@ -43,11 +84,14 @@ const EMPTY_FILTERS = {
     pwr_max: "",
     difficulty: "",
     status: "",
+    // ROUND 13a — client-side lore filter (non sul BE per scelta: dataset <100).
+    lore_family: "",
 };
 
 const buildQuery = (f) => {
     const params = new URLSearchParams();
     Object.entries(f).forEach(([k, v]) => {
+        if (k === "lore_family") return; // client-side only
         if (v !== "" && v !== null && v !== undefined) params.set(k, v);
     });
     const s = params.toString();
@@ -274,6 +318,24 @@ export default function Dungeons() {
                                     <option value="locked">Bloccati</option>
                                 </select>
                             </div>
+                            <div>
+                                <label className="block text-muted-foreground text-[10px] mb-1 tracking-widest">LORE</label>
+                                <select
+                                    data-testid="filter-lore-family"
+                                    value={filters.lore_family}
+                                    onChange={(e) => setF("lore_family", e.target.value)}
+                                    className="w-full bg-background border border-border rounded-sm px-2 py-1 text-foreground"
+                                >
+                                    <option value="">Tutti</option>
+                                    <option value="void_undead">Vuoto / Non-Morti</option>
+                                    <option value="new">Solo Nuovi</option>
+                                    <option value="baseline">Baseline</option>
+                                    <option value="nature">Natura</option>
+                                    <option value="memory">Memoria</option>
+                                    <option value="arcane">Arcano</option>
+                                    <option value="divine">Divino</option>
+                                </select>
+                            </div>
                         </div>
                         <div className="mt-3 flex justify-end">
                             <button
@@ -334,8 +396,16 @@ export default function Dungeons() {
 
                 {!loading && dungeons && dungeons.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {dungeons.map((d) => {
+                        {dungeons
+                            .filter((d) => {
+                                if (!filters.lore_family) return true;
+                                if (filters.lore_family === "new") return d.is_new === true;
+                                return d.content_family === filters.lore_family;
+                            })
+                            .map((d) => {
                             const locked = d.unlocked === false;
+                            const itName = d.name_it || d.name;
+                            const minLvl = d.min_adventurer_level || 1;
                             return (
                                 <div
                                     key={d.id}
@@ -348,15 +418,32 @@ export default function Dungeons() {
                                     }
                                 >
                                     <div className="flex items-start justify-between gap-2 mb-2">
-                                        <div className="text-base font-medium">{d.name}</div>
+                                        <div className="text-base font-medium">{itName}</div>
                                         <div className="flex flex-col items-end gap-1">
                                             <DifficultyBadge value={d.difficulty} />
                                             {locked && <LockedBadge />}
                                         </div>
                                     </div>
-                                    <p className="text-xs text-muted-foreground mb-4 flex-1">
-                                        {tContent("dungeon", d.slug, "description", d.description)}
+                                    <div className="flex flex-wrap gap-1 mb-2">
+                                        {d.is_new && <NewBadge slug={d.slug} />}
+                                        {d.is_void_undead && <VoidUndeadBadge slug={d.slug} />}
+                                        {minLvl > 1 && <MinLevelBadge slug={d.slug} lvl={minLvl} />}
+                                        {d.lore_theme && <ThemeBadge slug={d.slug} theme={d.lore_theme} />}
+                                    </div>
+                                    <p
+                                        className="text-xs text-muted-foreground mb-2 flex-1"
+                                        data-testid={`dungeon-desc-${d.slug}`}
+                                    >
+                                        {d.description_it || tContent("dungeon", d.slug, "description", d.description)}
                                     </p>
+                                    {d.narrative_hook && (
+                                        <p
+                                            className="text-[11px] italic text-amber-400/80 mb-3 border-l-2 border-amber-500/40 pl-2"
+                                            data-testid={`dungeon-hook-${d.slug}`}
+                                        >
+                                            "{d.narrative_hook}"
+                                        </p>
+                                    )}
                                     <div className="mb-4">
                                         <Stat label="Required team" value={`${d.required_team_size} heroes`} />
                                         <Stat label="Duration" value={`${d.base_duration_seconds}s`} />

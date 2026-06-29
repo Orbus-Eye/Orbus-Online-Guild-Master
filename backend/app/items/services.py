@@ -47,6 +47,12 @@ def item_public(it: dict) -> dict:
         "can_be_sold_for_gold": it.get("can_be_sold_for_gold", True),
         "can_be_sold_for_real_money": it.get("can_be_sold_for_real_money", False),
         "is_active": it.get("is_active", True),
+        # ROUND 13a — Lore meta (additive, additivo per UI Inventory/Auction/Equip).
+        "flavor_text_it": it.get("flavor_text_it"),
+        "flavor_text_en": it.get("flavor_text_en"),
+        "lore_tags": it.get("lore_tags") or [],
+        "spoiler_level": it.get("spoiler_level") or "public",
+        "lore_reviewed": bool(it.get("lore_reviewed", False)),
     }
 
 

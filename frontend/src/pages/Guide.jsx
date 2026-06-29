@@ -391,6 +391,89 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
+                {/* ROUND 13a — Lore visibility pack */}
+                <SectionBlock id="nuovi-dungeon-void" title="Nuovi Dungeon: Vuoto / Non-Morti (Round 11.3)">
+                    <p>
+                        Il <strong>Round 11.3</strong> ha introdotto <strong>10 nuovi dungeon</strong> dedicati al
+                        ciclo del <strong>Vuoto Eterno</strong> e dei <strong>Non-Morti</strong>. Tutti sono già
+                        attivi: li riconosci dal badge <code>NUOVO</code> e <code>✦ VUOTO</code> sulla pagina
+                        Dungeon, con il <code>Lv min</code> richiesto per ogni avventuriero della squadra.
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Echi del Filo Spezzato</strong> — Lv min 1, tema: vuoto onboarding.</li>
+                        <li><strong>Il Sigillo Spezzato di Ergolat</strong> — Lv min 2, tema: ergolat.</li>
+                        <li><strong>Gli Obelischi del Vuoto</strong> — Lv min 4, tema: vuoto.</li>
+                        <li><strong>Tane Putride della Piaga dei Mille Volti</strong> — Lv min 6, tema: irthe.</li>
+                        <li><strong>I Fili Lunari di Alevora</strong> — Lv min 8, tema: alevora.</li>
+                        <li><strong>Corte Cripta di Ashkaroth</strong> — Lv min 10, tema: ashkaroth.</li>
+                        <li><strong>Santuario Velato di Eclipthra</strong> — Lv min 12, tema: eclipthra.</li>
+                        <li><strong>La Marea di Gralca</strong> — Lv min 15, tema: gralca.</li>
+                        <li><strong>La Gola di Silenzio di Xal&apos;Zoraax</strong> — Lv min 18, tema: xal_zoraax (endgame).</li>
+                        <li><strong>Prova della Punta dell&apos;Oblio</strong> — Lv min 20, tema: vuoto endgame.</li>
+                    </ul>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Tutti i dungeon di Orbus (vecchi e nuovi) sono stati riallineati alla lore del
+                        Lore Book ufficiale. Le descrizioni e i nomi italiani sono ora canonici.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="nuovi-raid-void" title="Nuovi Raid: Vuoto / Non-Morti (Round 11.3)">
+                    <p>
+                        Insieme ai dungeon, il <strong>Round 11.3</strong> ha aggiunto <strong>5 nuovi raid</strong>
+                        (20 avventurieri, 4 parties × 5). Ognuno richiede un livello roster crescente:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Il Rituale del Vuoto</strong> — Lv min 10, boss: Officiante delle Orde.</li>
+                        <li><strong>Marcia dei Figli di Irthe</strong> — Lv min 14, boss: Primogenito di Irthe.</li>
+                        <li><strong>Il Gran Teatro di Alevora</strong> — Lv min 18, boss: Marionettista Lunare.</li>
+                        <li><strong>Tempio del Vuoto Eterno</strong> — Lv min 24, boss: Erede del Tempio.</li>
+                        <li><strong>L&apos;Ultimo Sussurro di Valys Mordivac</strong> — Lv min 30, boss: Valys Mordivac (endgame).</li>
+                    </ul>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        I 3 raid baseline (Bastione Spezzato, Necropoli delle Mille Campane, Volta del Drago
+                        Addormentato) sono stati anch&apos;essi riallineati alla lore.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="lore-vuoto-nonmorte" title="Lore — Vuoto, Filo Spezzato, Non-Morti">
+                    <p>
+                        Il mondo di <strong>Orbus</strong> è attraversato dal <strong>Filo Spezzato</strong> e dalla
+                        sua <strong>Sinfonia</strong>: una musica che non si ascolta, ma che ti suona. Dove il Filo
+                        si lacera, il <strong>Vuoto Eterno</strong> trabocca. Non distrugge: divora ciò che ti
+                        ricorda di essere.
+                    </p>
+                    <p className="mt-2">
+                        I <strong>Sigilli di Ergolat</strong> non chiudono il Vuoto. Lo addomesticano. Quando uno
+                        si incrina, le <strong>Orde Senza Volto</strong> fiutano l&apos;apertura e si moltiplicano
+                        attorno agli <strong>Obelischi Neri</strong>. Gli <strong>Esiliati del Vuoto Eterno</strong>
+                        sono uomini che hanno smesso di voler ricordare; pregano nelle <strong>Cripte d&apos;Ombra</strong>
+                        chi non risponde più.
+                    </p>
+                    <p className="mt-2">
+                        I <strong>Non-Morti</strong> della <strong>Piaga dei Mille Volti</strong> servono
+                        <strong> Irthe</strong>, che cammina in processione senza ricordare dove era diretta.
+                        <strong> Alevora la Marionettista Lunare</strong> tira i fili sotto la <strong>Luna Morta</strong>;
+                        chi la osserva troppo a lungo diventa marionetta a sua volta.
+                    </p>
+                    <p className="mt-2">
+                        Più in profondità, <strong>Ashkaroth</strong> presiede una corte di morti silenti; il suo
+                        verdetto è inciso nelle ossa. <strong>Eclipthra</strong> abita un tempio dietro l&apos;eclissi;
+                        il suo velo si solleva appena, ed è già abbastanza. <strong>Gralca</strong> guida una marea
+                        che sale dove non c&apos;è cielo. <strong>Xal&apos;Zoraax</strong> non parla: occupa la
+                        <strong> Gola del Silenzio</strong>.
+                    </p>
+                    <p className="mt-2">
+                        All&apos;ultimo gradino c&apos;è <strong>Valys Mordivac</strong>, custode finale del
+                        <strong> Tempio del Vuoto Eterno</strong>: il tempio non venera nulla, insegna a non aver
+                        bisogno di nulla. La <strong>Punta dell&apos;Oblio</strong> è la prova ultima: l&apos;ultimo
+                        passo conta sempre verso il basso.
+                    </p>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Tutti i lemmi sono presi verbatim dal <em>Lore Book di Orbus v1</em>. Gli oggetti
+                        Leggendari hanno <code>spoiler_level: mystery</code> per non svelare il finale.
+                    </p>
+                </SectionBlock>
+
                 <SectionBlock id="squadre" title="Squadre Personalizzate">
                     <p>
                         Le <strong>Squadre</strong> sono raggruppamenti di avventurieri salvati per riusarli
@@ -455,6 +538,57 @@ export default function Guide() {
                         <code> Lv X richiesto</code> e il bottone <em>Equip</em> è disabilitato.
                         Gli oggetti già equipaggiati in passato senza requisito sono lasciati come sono,
                         salvo un&apos;audit di pulizia che il team admin esegue periodicamente.
+                    </p>
+                </SectionBlock>
+
+                {/* ROUND 13a — equip level gate + lore tematica */}
+                <SectionBlock id="equip-level-gate" title="Livello richiesto per equipaggiare (Round 13a)">
+                    <p>
+                        Ogni oggetto della Fucina ha un <strong>livello minimo</strong> per essere
+                        equipaggiato. La regola è uniforme su tutto il catalogo (~121 oggetti):
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Comune</strong> — Lv 1</li>
+                        <li><strong>Non comune</strong> — Lv 3</li>
+                        <li><strong>Raro</strong> — Lv 5</li>
+                        <li><strong>Epico</strong> — Lv 8</li>
+                        <li><strong>Leggendario</strong> — Lv 12</li>
+                    </ul>
+                    <p className="mt-2">
+                        Nel modal di equipaggiamento, gli oggetti che il tuo avventuriero non può ancora
+                        portare sono <strong>greyed-out</strong> con badge <code>Lv X richiesto</code> e
+                        tooltip esplicito. Il bottone Equip è disabilitato lato client; il backend
+                        risponde <code>HTTP 423 equipment.required_level_not_met</code> se forzato.
+                    </p>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Al rilascio del Round 13a un&apos;audit ha rilasciato automaticamente
+                        equipaggiamenti incompatibili. Gli oggetti restano nell&apos;inventario di gilda —
+                        nessuna perdita di item, solo un &quot;ti tolgo l&apos;arma fino a che non sei pronto&quot;.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="equip-lore-tematica" title="Lore tematica degli oggetti">
+                    <p>
+                        Il <strong>Round 13a</strong> ha riallineato i nomi italiani degli oggetti alla
+                        lore di Orbus. Ogni rarità ha un&apos;impronta narrativa diversa:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Comune</strong>: nomi puliti, nessun riferimento lore (&quot;Spada di Ferro&quot;).</li>
+                        <li><strong>Non comune</strong>: riferimenti soft, suffisso &quot;del Confine&quot;.</li>
+                        <li><strong>Raro</strong>: suffisso &quot;delle Veglie&quot; + flavor 1-riga.</li>
+                        <li><strong>Epico</strong>: suffisso &quot;del Filo Spezzato&quot;, flavor evocativo.</li>
+                        <li><strong>Leggendario</strong>: nomi hand-written (es. <em>Arco Trafittore del Vuoto</em>,
+                            <em> Pendente dell&apos;Oracolo Cieco</em>, <em>Eco della Sinfonia dei Fili</em>,
+                            <em> Maschera della Luna Morta</em>), <code>spoiler_level: mystery</code>.</li>
+                    </ul>
+                    <p className="mt-2">
+                        Nel <strong>Mercato</strong>, <strong>Asta</strong>, <strong>Inventario</strong> e modal
+                        <strong> Equip</strong> vedi sempre il <code>display_name_it</code>. Il <code>flavor_text</code>
+                        compare nel dettaglio dell&apos;oggetto: una riga, mai più di due.
+                    </p>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Lo slug tecnico (<code>iron-sword</code>, <code>voidpiercer-bow</code>, …) è invariato:
+                        backwards-compat garantita su tutte le aste storiche e i bookmark.
                     </p>
                 </SectionBlock>
 
