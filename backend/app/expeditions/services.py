@@ -455,6 +455,19 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             }
         },
     )
+    # ROUND 15 Phase 3 — achievement trigger only on success
+    # (failed expeditions don't credit `dungeon_completed`).
+    if success:
+        try:
+            from app.achievements.engine import evaluate_achievements
+            await evaluate_achievements(
+                claimed["guild_id"], "dungeon_completed",
+                {"dungeon_slug": dungeon.get("slug"),
+                 "expedition_id": exp_id},
+                db=db,
+            )
+        except Exception:
+            pass
 
     # Phase 14 — daily quest progress (best-effort, non-critical)
     try:

@@ -311,6 +311,17 @@ async def equip_item_service(
     if _equip_warning:
         response["warning_it"] = _equip_warning["reason_it"]
         response["warning_code"] = _equip_warning["reason_code"]
+    # ROUND 15 Phase 3 — achievement trigger (best-effort).
+    try:
+        from app.achievements.engine import evaluate_achievements
+        await evaluate_achievements(
+            guild["id"], "item_equipped",
+            {"item_slug": item.get("slug"), "slot": slot,
+             "adventurer_id": adv["id"], "class_slug": adv.get("class_slug")},
+            db=db,
+        )
+    except Exception:
+        pass
     return response
 
 

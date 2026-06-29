@@ -134,6 +134,8 @@ def create_app() -> FastAPI:
     from app.rewards.routes import router as rewards_router, admin_router as rewards_admin_router
     from app.admin.ops_routes import router as admin_ops_router
     from app.admin.game_health_routes import router as admin_game_health_router
+    # ROUND 15 — Phase 3 — Achievements + Guild XP/Level
+    from app.achievements.routes import router as achievements_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -169,6 +171,7 @@ def create_app() -> FastAPI:
     app.include_router(rewards_router)
     app.include_router(rewards_admin_router)
     app.include_router(admin_ops_router)
+    app.include_router(achievements_router)
 
     return app
 

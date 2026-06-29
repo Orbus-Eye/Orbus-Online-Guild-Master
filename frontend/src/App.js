@@ -29,6 +29,7 @@ import Raids from "@/pages/Raids";
 import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
+import Achievements from "@/pages/Achievements";
 import TraitsPublic from "@/pages/TraitsPublic";  // ROUND 11.2 TASK 8 — SEO
 import StatsPublic from "@/pages/StatsPublic";    // ROUND 11.2 TASK 8 — SEO
 import MaterialsPublic from "@/pages/MaterialsPublic";  // ROUND 11.2 EXT S3 — SEO
@@ -148,6 +149,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <Expeditions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/achievements"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Achievements />
                                 </ProtectedRoute>
                             }
                         />

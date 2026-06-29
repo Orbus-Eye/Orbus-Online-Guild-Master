@@ -577,6 +577,20 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     raid["parties_outcome"] = parties_outcome
     raid["rewards"] = rewards
 
+    # ROUND 15 Phase 3 — achievement trigger for raid completion (best-effort).
+    # Trigger only on victory/partial; wipes do not count for `raid_completed`.
+    try:
+        from app.achievements.engine import evaluate_achievements
+        if outcome in ("victory", "partial"):
+            await evaluate_achievements(
+                guild["id"], "raid_completed",
+                {"raid_id": raid_id, "outcome": outcome,
+                 "raid_dungeon_id": raid["raid_dungeon_id"]},
+                db=db,
+            )
+    except Exception:
+        pass
+
     # ROUND 13b — seasonal raid stats (idempotent via raids.id + flag CAS).
     # Only victory/partial count toward `raid_clears`; `raid_score` always
     # adds the actual score computed above (0 if wipe → no-op).

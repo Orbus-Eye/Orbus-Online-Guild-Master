@@ -64,6 +64,17 @@ async def recruit_adventurer(
     adventurer_doc, updated_guild = await recruit_from_offer(
         db, guild, payload.candidate_id
     )
+    # ROUND 15 Phase 3 — achievement trigger (best-effort).
+    try:
+        from app.achievements.engine import evaluate_achievements
+        await evaluate_achievements(
+            guild["id"], "adventurer_recruited",
+            {"adventurer_id": adventurer_doc.get("id"),
+             "class_name": adventurer_doc.get("class_name")},
+            db=db,
+        )
+    except Exception:
+        pass
     return {
         "adventurer": adventurer_public(adventurer_doc),
         "guild": {"gold": updated_guild["gold"]},

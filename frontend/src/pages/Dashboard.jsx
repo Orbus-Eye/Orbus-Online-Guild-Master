@@ -6,6 +6,7 @@ import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import OnboardingChecklist from "../components/OnboardingChecklist";
 import NextStepsCard from "../components/NextStepsCard";
+import GuildProgressCard from "../components/GuildProgressCard";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
@@ -184,6 +185,9 @@ export default function Dashboard() {
                 <OnboardingChecklist />
                 <TerritoryWidget />
                 <NextStepsCard />
+                <div className="mb-6">
+                    <GuildProgressCard />
+                </div>
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
                     <DailyQuestsCard />
                     <StreakBadge />

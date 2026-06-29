@@ -102,6 +102,14 @@ async def create_guild_for_user(
         await db.guilds.insert_one(guild_doc)
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="You already own a guild")
+    # ROUND 15 Phase 3 — trigger achievement progress (best-effort).
+    try:
+        from app.achievements.engine import evaluate_achievements
+        await evaluate_achievements(
+            guild_doc["id"], "guild_created", {"name": name}, db=db,
+        )
+    except Exception:
+        pass
     return guild_doc
 
 
