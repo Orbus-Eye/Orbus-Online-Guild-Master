@@ -8,6 +8,63 @@
 
 ---
 
+## ROUND 11.3 Turno 3 — Fase 3B (Feb 2026, PREVIEW only)
+
+**Goal**: TASK E — espandere la libreria dungeon/raid con 15 contenuti
+Lore-coherent al tema Vuoto / Non-morti, usando vocabolario verbatim dal
+Lore Book Orbus (Ergolat, Vuoto Eterno, Filo Spezzato, Sigillo Spezzato,
+Punta dell'Oblio, Obelischi del Vuoto, Orde Senza Volto, Piaga dei Mille
+Volti, Sussurro del Nulla, Valys Mordivac, Esiliati del Vuoto Eterno,
+Tempio del Vuoto Eterno, Rituale del Vuoto, Alevora la Marionettista
+Lunare, Ashkaroth, Eclipthra, Gralca, Xal'Zoraax, Figli di Irthe,
+Figli del Vuoto, Sinfonia dei Fili, Vuoto che Divora).
+
+### Backend
+- `backend/app/scripts/seed_round113_void_undead.py` *(new, ~280 LOC)* —
+  upsert idempotente di **10 dungeon** (min_lvl 1→20) + **5 raid**
+  (min_lvl 10→30), tutti con descrizioni IT che citano lemmi del Lore.
+  Esegui con: `cd /app/backend && MONGO_URL=... DB_NAME=... python -m
+  app.scripts.seed_round113_void_undead`.
+- `backend/app/scripts/__init__.py` *(already present, marker)*.
+
+### Esecuzione iniziale (preview)
+Inserted 10 dungeons + 5 raids (0 updates, 0 duplicates).
+
+### Tests
+- `backend/tests/backend_round113_taskE_void_undead_test.py` *(new)* —
+  E.01 idempotenza (run 2× → stessi id, 0 duplicati), E.02 level gate
+  Xal'Zoraax min_lvl 18 → 423 per Lv1, E.03 no copy generico EN, E.04
+  lore keyword coverage (10/10 dungeon + 5/5 raid hanno lemmi canonici),
+  E.05 progressione min_adventurer_level monotona.
+- **Result**: 5/5 PASS.
+
+### Vocabolario Lore utilizzato (verbatim dal PDF)
+Tutti citati in `name` o `description` di almeno un contenuto:
+*Filo Spezzato, Sinfonia dei Fili, Ergolat, Vuoto, Orde Senza Volto,
+Obelischi del Vuoto / Obelischi Neri, Tempio del Vuoto Eterno, Figli del
+Vuoto, Piaga dei Mille Volti, Irthe, Figli di Irthe, Alevora /
+Marionettista Lunare, Ashkaroth, Sussurro del Nulla, Eclipthra,
+Vuoto che Divora, Gralca, Breccia del Vuoto, Xal'Zoraax,
+Punta dell'Oblio, Esiliati del Vuoto Eterno, Rituale del Vuoto,
+Valys Mordivac, Vuoto Eterno*.
+
+### Vincoli rispettati
+- ✅ Solo IT per nomi visibili e descrizioni; raid hanno anche shadow EN
+  per il dual-language già supportato dal serializer.
+- ✅ Slug en-kebab-case ASCII.
+- ✅ Nessun nome proprio fuori-Lore.
+- ✅ Level gating progressivo: dungeon [1,2,4,6,8,10,12,15,18,20], raid
+  [10,14,18,24,30].
+- ✅ `min_adventurer_level` rispettato dal gate esistente
+  (`expeditions/level_gate.py`).
+- ✅ Recommended_power scalato (45→620 dungeon, 1500→6200 raid) coerente
+  con il preview env.
+- ✅ Idempotente: re-run upsert in place, mai duplica.
+
+
+
+---
+
 ## ROUND 11.3 Turno 3 — Fase 3A (Feb 2026, PREVIEW only)
 
 **Goal**: Recruit Freeze Bench — let players park up to 2 candidates that
