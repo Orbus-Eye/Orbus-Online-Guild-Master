@@ -43,6 +43,17 @@ const RarityBadge = ({ value }) => {
     );
 };
 
+// ROUND 13c — i18n delle item_type per UI italiana (no regression backend).
+const ITEM_TYPE_IT = {
+    material: "Materiale",
+    consumable: "Consumabile",
+    equipment: "Equipaggiamento",
+    cosmetic: "Cosmetico",
+    weapon: "Arma",
+    armor: "Armatura",
+    accessory: "Accessorio",
+};
+
 export default function Market() {
     const [tab, setTab] = useState("buy"); // buy | sell
     const [offers, setOffers] = useState([]);
@@ -225,8 +236,16 @@ export default function Market() {
                                         <div className="font-medium text-sm">{o.item.name}</div>
                                         <RarityBadge value={o.item.rarity} />
                                     </div>
+                                    <div className="flex flex-wrap gap-1 mb-2">
+                                        <span
+                                            className="text-[10px] tracking-widest border border-border/50 text-muted-foreground px-1.5 py-0.5 rounded-sm"
+                                            data-testid={`shop-offer-type-${o.offer_id}`}
+                                        >
+                                            {(ITEM_TYPE_IT[o.item.item_type] || o.item.item_type || "").toUpperCase()}
+                                        </span>
+                                    </div>
                                     <div className="text-[11px] text-muted-foreground mb-3">
-                                        {o.item.item_type} · liv. {o.item.level_required}
+                                        {ITEM_TYPE_IT[o.item.item_type] || o.item.item_type} · liv. {o.item.level_required}
                                     </div>
                                     <div className="flex items-center justify-between mb-3 text-xs">
                                         <span>Prezzo: <strong className="text-amber">{o.buy_price} oro</strong></span>
