@@ -133,6 +133,7 @@ def create_app() -> FastAPI:
     from app.pvp.routes import router as pvp_router
     from app.rewards.routes import router as rewards_router, admin_router as rewards_admin_router
     from app.admin.ops_routes import router as admin_ops_router
+    from app.admin.game_health_routes import router as admin_game_health_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -144,6 +145,7 @@ def create_app() -> FastAPI:
     app.include_router(adventurers_router)
     app.include_router(equipment_router)
     app.include_router(admin_router)
+    app.include_router(admin_game_health_router)
     app.include_router(leaderboard_router)
     app.include_router(quests_router)
     app.include_router(crafting_router)

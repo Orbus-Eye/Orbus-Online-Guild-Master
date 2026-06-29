@@ -1,0 +1,300 @@
+{
+  "generated_at": "2026-06-29T15:25:23.350486+00:00",
+  "round": "14.A.1",
+  "guilds": {
+    "active_total": 6454,
+    "level_dist": {
+      "1": 6368,
+      "2": 86
+    },
+    "gold": {
+      "total_in_circulation": 21604310,
+      "avg": 3347,
+      "p25": 80,
+      "p50": 100,
+      "p75": 100,
+      "p90": 1000,
+      "p95": 49500
+    },
+    "reputation_p50": 0,
+    "top_5_by_gold_public": [
+      {
+        "public_id": null,
+        "name": "6D 7c6cb4",
+        "gold": 50060
+      },
+      {
+        "public_id": null,
+        "name": "6D 6a0896",
+        "gold": 50060
+      },
+      {
+        "public_id": null,
+        "name": "6D e79b2d",
+        "gold": 50060
+      },
+      {
+        "public_id": null,
+        "name": "6D 8d2bc8",
+        "gold": 50060
+      },
+      {
+        "public_id": null,
+        "name": "6D 8ec544",
+        "gold": 50060
+      }
+    ]
+  },
+  "roster": {
+    "total_adventurers": 40769,
+    "roster_size_dist": {
+      "22": 50,
+      "5": 4769,
+      "6": 469,
+      "20": 308,
+      "8": 768,
+      "7": 65,
+      "10": 24,
+      "11": 1
+    },
+    "p25": 5,
+    "p50": 5,
+    "p75": 6,
+    "p90": 8,
+    "p95": 20,
+    "avg_level": 1
+  },
+  "items_economy": {
+    "by_rarity_total_units": {
+      "Uncommon": 1000,
+      "Rare": 308,
+      "Common": 4121,
+      "Epic": 49
+    },
+    "top_10_materials_by_volume": [
+      {
+        "slug": "iron_shard",
+        "name": "Frammento di Ferro",
+        "rarity": "Common",
+        "type": "material",
+        "total_in_inventories": 2892
+      },
+      {
+        "slug": "raw_leather",
+        "name": "Cuoio Grezzo",
+        "rarity": "Common",
+        "type": "material",
+        "total_in_inventories": 463
+      },
+      {
+        "slug": "dull_gem",
+        "name": "Gemma Opaca",
+        "rarity": "Uncommon",
+        "type": "material",
+        "total_in_inventories": 278
+      },
+      {
+        "slug": "arcane_dust",
+        "name": "Polvere Arcana",
+        "rarity": "Uncommon",
+        "type": "material",
+        "total_in_inventories": 260
+      },
+      {
+        "slug": "lesser_arcane_dust",
+        "name": "Lesser Arcane Dust del Confine",
+        "rarity": "Uncommon",
+        "type": "material",
+        "total_in_inventories": 168
+      },
+      {
+        "slug": "minor_healing_potion",
+        "name": "Pozione Curativa Minore",
+        "rarity": "Common",
+        "type": "consumable",
+        "total_in_inventories": 13
+      },
+      {
+        "slug": "healing_herb",
+        "name": "Erba Curativa",
+        "rarity": "Common",
+        "type": "material",
+        "total_in_inventories": 7
+      },
+      {
+        "slug": "travel_ration",
+        "name": "Razione da Viaggio",
+        "rarity": "Common",
+        "type": "consumable",
+        "total_in_inventories": 7
+      },
+      {
+        "slug": "dragon_essence",
+        "name": "Essenza di Drago",
+        "rarity": "Rare",
+        "type": "material",
+        "total_in_inventories": 2
+      }
+    ],
+    "bottom_5_materials_by_volume": [
+      {
+        "slug": "lesser_arcane_dust",
+        "name": "Lesser Arcane Dust del Confine",
+        "rarity": "Uncommon",
+        "type": "material",
+        "total_in_inventories": 168
+      },
+      {
+        "slug": "minor_healing_potion",
+        "name": "Pozione Curativa Minore",
+        "rarity": "Common",
+        "type": "consumable",
+        "total_in_inventories": 13
+      },
+      {
+        "slug": "healing_herb",
+        "name": "Erba Curativa",
+        "rarity": "Common",
+        "type": "material",
+        "total_in_inventories": 7
+      },
+      {
+        "slug": "travel_ration",
+        "name": "Razione da Viaggio",
+        "rarity": "Common",
+        "type": "consumable",
+        "total_in_inventories": 7
+      },
+      {
+        "slug": "dragon_essence",
+        "name": "Essenza di Drago",
+        "rarity": "Rare",
+        "type": "material",
+        "total_in_inventories": 2
+      }
+    ],
+    "top_10_equipment_by_volume": [
+      {
+        "slug": "cracked-staff",
+        "name": "Cracked Staff",
+        "rarity": "Common",
+        "type": "weapon",
+        "total_in_inventories": 371
+      },
+      {
+        "slug": "spec_signature_aegis_of_the_defender",
+        "name": "Egida del Difensore",
+        "rarity": "Rare",
+        "type": "shield",
+        "total_in_inventories": 183
+      },
+      {
+        "slug": "goblin-dagger",
+        "name": "Goblin Dagger del Confine",
+        "rarity": "Uncommon",
+        "type": "weapon",
+        "total_in_inventories": 108
+      },
+      {
+        "slug": "iron_sword",
+        "name": "Spada di Ferro",
+        "rarity": "Common",
+        "type": "weapon",
+        "total_in_inventories": 83
+      },
+      {
+        "slug": "cryptbone-blade",
+        "name": "Cryptbone Blade delle Veglie",
+        "rarity": "Rare",
+        "type": "weapon",
+        "total_in_inventories": 38
+      },
+      {
+        "slug": "spec_signature_bloodied_greataxe",
+        "name": "Grand'Ascia Insanguinata",
+        "rarity": "Epic",
+        "type": "weapon",
+        "total_in_inventories": 24
+      },
+      {
+        "slug": "oak-cudgel",
+        "name": "Oak Cudgel",
+        "rarity": "Common",
+        "type": "weapon",
+        "total_in_inventories": 13
+      },
+      {
+        "slug": "woolen-mantle",
+        "name": "Woolen Mantle",
+        "rarity": "Common",
+        "type": "armor",
+        "total_in_inventories": 12
+      },
+      {
+        "slug": "torchbearer-cloak",
+        "name": "Torchbearer Cloak",
+        "rarity": "Common",
+        "type": "armor",
+        "total_in_inventories": 12
+      },
+      {
+        "slug": "steel-half-plate",
+        "name": "Steel Half-Plate delle Veglie",
+        "rarity": "Rare",
+        "type": "armor",
+        "total_in_inventories": 12
+      }
+    ],
+    "unique_item_templates_in_circulation": 98
+  },
+  "equipment": {
+    "equipped_total": 218,
+    "inventory_rows_total": 2315
+  },
+  "items_catalog": {
+    "total_items_in_catalog": 121,
+    "lore_reviewed": 120,
+    "with_required_adventurer_level": 120
+  },
+  "competitive": {
+    "active_season_slug": "ece33b3a-584d-4e3e-ac76-070b509a0034",
+    "participants": 0,
+    "ratings": {
+      "p25": 0,
+      "p50": 0,
+      "p75": 0,
+      "p90": 0,
+      "p95": 0
+    },
+    "leagues": {},
+    "matches_played_total": 0,
+    "season_stats_aggregates": {
+      "dungeon_clears_total": 0,
+      "raid_clears_total": 0,
+      "raid_score_total": 0,
+      "contracts_completed_total": 0,
+      "training_score_total": 0
+    }
+  },
+  "content": {
+    "dungeons_total": 32,
+    "dungeons_lore_reviewed": 32,
+    "raids_total": 8,
+    "raids_lore_reviewed": 8
+  },
+  "audit_ledger_24h": {
+    "total_events": 246,
+    "by_event_type": {
+      "leaderboard_cache_rebuilt": 141,
+      "equipment_auto_unequipped_level_requirement": 103,
+      "season_created": 1,
+      "season_activated": 1
+    },
+    "shop_buy_24h": 0,
+    "shop_sell_24h": 0,
+    "season_stat_increments_24h": 0
+  },
+  "recruitment": {
+    "frozen_total": 0
+  }
+}
