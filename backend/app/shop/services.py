@@ -1,10 +1,17 @@
 """Phase 19.4b — Shop services (NPC system shop).
 
-Design:
-  • Daily rotation server-authoritative, reset 04:00 UTC.
+ROUND 13c — Materials triplicato + refresh ogni 2 ore.
+  • Bucket di rotazione 2-ore (hour // 2 * 2) invece di reset giornaliero 04:00 UTC.
+  • Candidate pool esteso (5 → 9 materiali Common/Uncommon/Rare lite).
+  • Stock max triplicato per Common, raddoppiato per Uncommon (Rare invariato).
+  • DAILY_OFFER_COUNT 6 → 18 (cap a `len(CANDIDATE_OFFERS)` = 9, mostra tutti i candidati per bucket).
+  • Determinismo per bucket via sha256(bucket_key).
+  • NO Legendary, NO P2W, NO premium.
+
+Design originale:
   • Pool of ~12 candidate items (Common/Uncommon materials + consumables).
     NEVER Legendary, NEVER forge endgame, NEVER P2W.
-  • Deterministic daily pick of 6 offers via hashlib seed (date_key).
+  • Deterministic pick of N offers via hashlib seed (bucket_key).
   • Buy price = base_price (anchored to rarity × level); sell price = 40% buy
     (anti-exploit gap).
   • Atomic ops with manual rollback (same pattern as auction).
@@ -28,8 +35,13 @@ from app.audit.log import write_audit
 
 logger = logging.getLogger("orbus.shop")
 
-DAILY_RESET_HOUR_UTC = 4  # 04:00 UTC daily cutoff
-DAILY_OFFER_COUNT = 6
+# ROUND 13c — 2-hour bucket instead of daily reset.
+BUCKET_HOURS = 2
+# DAILY_RESET_HOUR_UTC kept as legacy constant (no longer drives rotation but
+# referenced by an old test). Logical reset window is now BUCKET_HOURS.
+DAILY_RESET_HOUR_UTC = 4
+# Show all candidates per bucket (cap = len(CANDIDATE_OFFERS)).
+DAILY_OFFER_COUNT = 18
 MAX_TX_QUANTITY = 99
 SELL_PRICE_MULTIPLIER = 0.4  # sell to system = 40% of buy_price (anti-exploit)
 RATE_LIMIT_COUNT = 10
@@ -37,53 +49,72 @@ RATE_LIMIT_WINDOW_S = 10
 
 
 # ─── Candidate pool (hardcoded — never grows without code review) ─────────
-# Each entry is keyed by item slug; the seed step at boot ensures the items
-# exist in `db.items`. Prices are anchored to rarity tier × level.
+# ROUND 13c — stock_max triplicato per Common, raddoppiato per Uncommon,
+# invariato per Rare (no flooding endgame economy).
 CANDIDATE_OFFERS: list[dict] = [
-    {"slug": "iron_shard",          "buy_price": 8,  "max_quantity": 25, "rarity": "Common"},
-    {"slug": "raw_leather",         "buy_price": 6,  "max_quantity": 30, "rarity": "Common"},
-    {"slug": "healing_herb",        "buy_price": 5,  "max_quantity": 30, "rarity": "Common"},
-    {"slug": "minor_healing_potion","buy_price": 12, "max_quantity": 20, "rarity": "Common"},
-    {"slug": "travel_ration",       "buy_price": 4,  "max_quantity": 40, "rarity": "Common"},
-    {"slug": "arcane_dust",         "buy_price": 22, "max_quantity": 12, "rarity": "Uncommon"},
-    {"slug": "dull_gem",            "buy_price": 18, "max_quantity": 15, "rarity": "Uncommon"},
+    # Common materials (×3 stock vs legacy)
+    {"slug": "iron_shard",          "buy_price": 8,  "max_quantity": 75, "rarity": "Common"},
+    {"slug": "raw_leather",         "buy_price": 6,  "max_quantity": 90, "rarity": "Common"},
+    {"slug": "healing_herb",        "buy_price": 5,  "max_quantity": 90, "rarity": "Common"},
+    # Common consumables (×3 stock vs legacy)
+    {"slug": "minor_healing_potion","buy_price": 12, "max_quantity": 60, "rarity": "Common"},
+    {"slug": "travel_ration",       "buy_price": 4,  "max_quantity": 120, "rarity": "Common"},
+    # Uncommon materials (×2 stock vs legacy)
+    {"slug": "arcane_dust",         "buy_price": 22, "max_quantity": 24, "rarity": "Uncommon"},
+    {"slug": "dull_gem",            "buy_price": 18, "max_quantity": 30, "rarity": "Uncommon"},
+    {"slug": "lesser_arcane_dust",  "buy_price": 28, "max_quantity": 20, "rarity": "Uncommon"},
+    # Rare crafting material (low stock, gated by price)
+    {"slug": "greater_arcane_dust", "buy_price": 95, "max_quantity": 4,  "rarity": "Rare"},
 ]
 
 
 # ─── Date / cutoff helpers ────────────────────────────────────────────────
-def _shop_day_key(now: Optional[datetime] = None) -> str:
-    """Return the deterministic 'shop day' key (YYYYMMDD).
+def _shop_bucket_key(now: Optional[datetime] = None) -> str:
+    """ROUND 13c — Deterministic 2-hour bucket key.
 
-    A shop day runs from 04:00 UTC to next 04:00 UTC. Times before 04:00
-    UTC belong to the previous calendar day.
+    Format: ``YYYY-MM-DDTHH`` where HH is rounded down to the nearest 2h
+    (00, 02, 04, …, 22). Two requests in the same bucket → same rotation.
     """
     now = now or datetime.now(timezone.utc)
-    pivot = now - timedelta(hours=DAILY_RESET_HOUR_UTC)
-    return pivot.strftime("%Y%m%d")
+    hour_bucket = (now.hour // BUCKET_HOURS) * BUCKET_HOURS
+    return f"{now.strftime('%Y-%m-%d')}T{hour_bucket:02d}"
+
+
+def _shop_day_key(now: Optional[datetime] = None) -> str:
+    """Backwards-compat alias for legacy callers/tests. Returns the 2-hour
+    bucket key (renamed for clarity in ROUND 13c).
+    """
+    return _shop_bucket_key(now)
 
 
 def _next_reset_at(now: Optional[datetime] = None) -> datetime:
-    """Compute the next 04:00 UTC reset moment."""
+    """Compute the start of the *next* 2-hour bucket (ISO timestamp).
+
+    Used by FE for the live countdown "Prossimo refresh tra Xh Ym".
+    """
     now = now or datetime.now(timezone.utc)
-    today_reset = now.replace(
-        hour=DAILY_RESET_HOUR_UTC, minute=0, second=0, microsecond=0
+    cur_bucket_hour = (now.hour // BUCKET_HOURS) * BUCKET_HOURS
+    cur_bucket_start = now.replace(
+        hour=cur_bucket_hour, minute=0, second=0, microsecond=0
     )
-    if now < today_reset:
-        return today_reset
-    return today_reset + timedelta(days=1)
+    return cur_bucket_start + timedelta(hours=BUCKET_HOURS)
 
 
 def _daily_offers_pick(day_key: str) -> list[dict]:
-    """Deterministic pick of N offers for a given day_key.
+    """Deterministic pick of N offers for a given bucket key.
 
-    Uses sha256(day_key) as a stable seed → same offers all day, different
-    rotation each day. No randomness; no external state.
+    Uses sha256(bucket_key) as a stable seed → same offers all bucket,
+    different rotation each bucket. No randomness, no external state.
+
+    ROUND 13c: since `DAILY_OFFER_COUNT` (18) >= `len(CANDIDATE_OFFERS)`
+    (9), every bucket exposes all candidates. The sha256 shuffle controls
+    *order* only — useful for UX freshness.
     """
     digest = hashlib.sha256(day_key.encode()).digest()
     indices = list(range(len(CANDIDATE_OFFERS)))
-    # Shuffle indices using the digest bytes as keys
     indices.sort(key=lambda i: digest[i % len(digest)])
-    return [CANDIDATE_OFFERS[i] for i in indices[:DAILY_OFFER_COUNT]]
+    cap = min(DAILY_OFFER_COUNT, len(CANDIDATE_OFFERS))
+    return [CANDIDATE_OFFERS[i] for i in indices[:cap]]
 
 
 # ─── Index bootstrap ──────────────────────────────────────────────────────
@@ -97,24 +128,34 @@ async def ensure_shop_indexes(db) -> None:
 
 # ─── Daily offer seed (idempotent, called on each GET) ────────────────────
 async def get_or_seed_daily_offers(db) -> list[dict]:
-    """Return today's offers, seeding them if missing. Idempotent."""
-    day_key = _shop_day_key()
+    """Return current-bucket offers, seeding them if missing. Idempotent.
+
+    ROUND 13c: bucket rotation 2h, allows materials with `is_active`
+    missing (defaults True) for legacy seed compatibility (Round 6B.3
+    materials never had `is_active` set).
+    """
+    day_key = _shop_bucket_key()
     rows = await db.shop_daily_offers.find(
         {"day_key": day_key}, {"_id": 0}
     ).to_list(50)
     if rows:
         return rows
-    # Seed today's offers
+    # Seed this bucket's offers
     picks = _daily_offers_pick(day_key)
     docs = []
     for pick in picks:
+        # ROUND 13c — accept materials with `is_active` missing (default True).
         item = await db.items.find_one(
-            {"slug": pick["slug"], "is_active": True, "is_test": {"$ne": True}},
+            {"slug": pick["slug"], "is_active": {"$ne": False},
+             "is_test": {"$ne": True}},
             {"_id": 0, "id": 1, "slug": 1, "name": 1, "rarity": 1,
              "item_type": 1, "level_required": 1, "display_name_it": 1,
-             "display_name_en": 1, "is_tradeable": 1},
+             "display_name_en": 1, "is_tradeable": 1, "is_premium": 1,
+             "is_cosmetic_real_money": 1},
         )
         if not item or item.get("is_tradeable") is False:
+            continue
+        if item.get("is_premium") or item.get("is_cosmetic_real_money"):
             continue
         docs.append({
             "offer_id": f"{day_key}_{pick['slug']}",
@@ -133,6 +174,15 @@ async def get_or_seed_daily_offers(db) -> list[dict]:
     if docs:
         try:
             await db.shop_daily_offers.insert_many(docs, ordered=False)
+            # ROUND 13c — audit rotation event (best-effort).
+            try:
+                await write_audit(
+                    db, event_type="market_rotation_refreshed",
+                    source="shop.bucket_seed",
+                    metadata={"bucket_key": day_key, "offer_count": len(docs)},
+                )
+            except Exception:  # noqa: BLE001
+                pass
         except Exception as exc:  # noqa: BLE001
             # Another concurrent call seeded — fetch and continue.
             logger.info("shop seed race: %s", exc)

@@ -203,15 +203,15 @@ export default function Market() {
                 {tab === "buy" && (
                     <>
                         <div className="text-[11px] text-muted-foreground mb-3 flex items-center justify-between">
-                            <span data-testid="shop-daily-offers">Offerte giornaliere ({offers.length})</span>
+                            <span data-testid="shop-daily-offers">Offerte attive ({offers.length}) · ogni 2h</span>
                             <span data-testid="shop-countdown">
-                                Reset tra <strong>{relativeCountdown(nextResetAt)}</strong>
+                                Prossimo refresh tra <strong>{relativeCountdown(nextResetAt)}</strong>
                             </span>
                         </div>
                         {loading && <div className="text-xs text-muted-foreground">Caricamento…</div>}
                         {!loading && offers.length === 0 && (
                             <div className="border border-border bg-card rounded-sm p-6 text-center text-xs text-muted-foreground">
-                                Nessuna offerta disponibile oggi. Torna alle 04:00 UTC.
+                                Nessuna offerta disponibile in questo ciclo. Il mercato si aggiorna ogni 2 ore.
                             </div>
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

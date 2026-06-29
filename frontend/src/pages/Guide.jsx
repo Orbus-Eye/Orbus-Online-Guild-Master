@@ -332,12 +332,12 @@ export default function Guide() {
                         <li><strong>Dungeon completati</strong> — quanti dungeon hai chiuso con successo durante la stagione.</li>
                         <li><strong>Raid completati</strong> — raid 20-uomini con outcome victory/partial.</li>
                         <li><strong>Punteggio Raid</strong> — somma dei <code>raid_score</code> guadagnati.</li>
-                        <li><strong>Sviluppo Territoriale</strong> — crescita livelli strutture rispetto all'inizio stagione (delta).</li>
+                        <li><strong>Sviluppo Territoriale</strong> — crescita livelli strutture rispetto all&apos;inizio stagione (delta).</li>
                         <li><strong>Contratti completati</strong> — daily, weekly e milestone reclamati.</li>
                         <li><strong>Allenamenti</strong> — somma del <code>power_score</code> guadagnato tramite specializzazioni.</li>
                     </ul>
                     <p className="mt-2 text-[11px] text-muted-foreground italic">
-                        Tutti i contatori sono <strong>resettati</strong> all'inizio di ogni stagione e
+                        Tutti i contatori sono <strong>resettati</strong> all&apos;inizio di ogni stagione e
                         congelati alla chiusura. Le gilde demo e di test sono escluse dalle classifiche.
                     </p>
                 </SectionBlock>
@@ -768,11 +768,14 @@ export default function Guide() {
                     </p>
                     <p>
                         Il <strong>Mercato di Sistema</strong> (sezione <code>/market</code>) è il negozio gestito dal Mastro Mercante.
-                        Offre <strong>6 oggetti giornalieri</strong> che ruotano alle <strong>04:00 UTC</strong>.
+                        Offre fino a <strong>9 oggetti per ciclo</strong> (materiali Common/Uncommon + 1 Rare gated) che ruotano
+                        <strong> ogni 2 ore</strong> (Round 13c).
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1">
                         <li><strong>Compra</strong>: paghi gold, ricevi materiali/consumabili Common/Uncommon. Niente Legendary, niente forge endgame: il Mercato è pensato per coprire i buchi di crafting, non per saltare la progressione.</li>
+                        <li><strong>Materiali abbondanti</strong>: stock triplicato sui Common (75-120 unità), raddoppiato sui Uncommon (20-30). I materiali rari restano gated (stock basso, prezzo alto).</li>
                         <li><strong>Vendi</strong>: il Mercato compra ogni oggetto vendibile al <strong>40%</strong> del prezzo d&apos;acquisto (gap anti-exploit). Bound/equipaggiati/in Asta sono rifiutati con un motivo specifico.</li>
+                        <li><strong>Refresh</strong>: il countdown nell&apos;header è autoritativo lato server (no localStorage). Ogni 2 ore (allo scoccare dei minuti pari: 00, 02, 04, …, 22 UTC) la rotazione cambia.</li>
                         <li><strong>Rate limit</strong>: max 10 transazioni / 10s per evitare scraping.</li>
                         <li><strong>Quantità max</strong>: 99 per transazione.</li>
                     </ul>
