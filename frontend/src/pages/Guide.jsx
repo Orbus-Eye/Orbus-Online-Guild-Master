@@ -68,6 +68,14 @@ export default function Guide() {
                         L&apos;obiettivo è scalare la classifica pubblica raggiungendo il <strong>peak team power</strong>
                         più alto possibile e completando dungeon di tier crescente fino al raid.
                     </p>
+                    <p className="mt-3 text-[12px] text-muted-foreground italic">
+                        <strong className="text-amber">Prossimi passi (Dashboard)</strong> — nella Dashboard
+                        trovi la card <em>Prossimi passi</em>: è dinamica e mostra fino a 3 azioni
+                        consigliate in base allo stato corrente della gilda (es. recluta se hai meno di
+                        3 avventurieri, parti per la prima spedizione, equipaggia il team, sfida l&apos;Arena,
+                        affronta il primo Raid). Cambia man mano che fai progressi — è il modo più rapido
+                        per sapere cosa fare dopo.
+                    </p>
                 </SectionBlock>
 
                 <SectionBlock id="gilda" title="Gilda e progressione">

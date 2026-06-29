@@ -615,11 +615,11 @@ export default function Recruitment() {
                         className="border border-border bg-card rounded-sm p-8 text-center"
                     >
                         <div className="text-amber text-xs tracking-widest mb-2">
-                            :: ROSTER EMPTY
+                            :: NESSUN CANDIDATO
                         </div>
                         <p className="text-sm text-muted-foreground mb-4">
-                            All current candidates have been recruited. Refresh to call new
-                            ones to the hall.
+                            👥 Tutti i candidati sono stati reclutati o congelati.
+                            Aggiorna la board per richiamare nuovi aspiranti.
                         </p>
                         <Button
                             onClick={doRefresh}
@@ -628,10 +628,10 @@ export default function Recruitment() {
                             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
                         >
                             {refreshing
-                                ? "refreshing…"
+                                ? "aggiornamento…"
                                 : meta && meta.next_refresh_cost_gold > 0
-                                ? `↻ Refresh (${meta.next_refresh_cost_gold}g)`
-                                : "↻ Refresh candidates"}
+                                ? `↻ Aggiorna (${meta.next_refresh_cost_gold}g)`
+                                : "↻ Aggiorna candidati"}
                         </Button>
                     </div>
                 )}

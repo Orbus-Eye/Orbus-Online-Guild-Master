@@ -263,6 +263,21 @@ export default function Raids() {
                         </ul>
                     </section>
                 )}
+                {history.length === 0 && !loading && (
+                    <section
+                        className="border-t border-border pt-4"
+                        data-testid="raids-history-empty"
+                    >
+                        <h3 className="text-xs tracking-widest text-amber mb-2">
+                            :: NESSUN RAID COMPLETATO
+                        </h3>
+                        <p className="text-[12px] text-muted-foreground italic">
+                            🐉 Non hai ancora affrontato un raid. Servono almeno 12
+                            avventurieri organizzati in 4 party di squad. Avvia il primo
+                            raid dal catalogo qui sopra.
+                        </p>
+                    </section>
+                )}
 
                 <div className="mt-6 text-[10px] text-muted-foreground italic">
                     Phase 18 MVP — il builder party-by-party (4 × 5) sarà rilasciato in Phase 18.1.

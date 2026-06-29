@@ -226,10 +226,11 @@ export default function Inventory() {
                         className="border border-border bg-card rounded-sm p-10 text-center"
                     >
                         <div className="text-amber text-xs tracking-widest mb-2">
-                            :: VAULT EMPTY
+                            :: DEPOSITO VUOTO
                         </div>
                         <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-                            Your vault is empty. Complete expeditions to find loot.
+                            🎁 Il tuo deposito è vuoto. Completa una spedizione per
+                            ottenere il primo loot da equipaggiare o vendere.
                         </p>
                         <Link to="/dungeons">
                             <Button

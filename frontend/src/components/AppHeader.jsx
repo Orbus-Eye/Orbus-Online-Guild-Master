@@ -73,6 +73,7 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
                                     <>
                                         <NavLink to="/admin" label={t("nav.admin")} testid="nav-admin" />
                                         <NavLink to="/admin/ops" label="ADMIN OPS" testid="nav-admin-ops" />
+                                        <NavLink to="/admin/game-health" label="GAME HEALTH" testid="nav-admin-game-health" />
                                     </>
                                 )}
                             </nav>
