@@ -28,6 +28,8 @@ from app.expeditions.formulas import (
     sum_xp_percent,
 )
 from app.expeditions.loot_tables import roll_loot_for_dungeon
+from app.expeditions.material_drop_tables import roll_materials_for_dungeon
+from app.expeditions.xp_modifier import compute_xp_multiplier
 from app.equipment.services import (
     _empty_slot_map,
     _item_summary_for_snapshot,
@@ -111,6 +113,9 @@ def expedition_public(e: dict) -> dict:
         "gold_reward": e.get("gold_reward", 0),
         "xp_reward": e.get("xp_reward", 0),
         "loot_item_ids": e.get("loot_item_ids", []),
+        # ROUND 15 FASE 2 — separate material drops + per-member XP debuff.
+        "materials_found": e.get("materials_found", []),
+        "xp_debuff_reports": e.get("xp_debuff_reports", []),
         # ROUND 6B.2c — expose adventurer_ids for "Save as squad" deep-link.
         "adventurer_ids": list(e.get("adventurer_ids", [])),
         # Phase 8: marks the run as a "Replay Last Run" dispatch (UI label).
@@ -252,6 +257,8 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
 
     # Phase 7: weighted, per-dungeon loot table (Common-only on failure)
     loot_ids = await roll_loot_for_dungeon(db, dungeon, success)
+    # ROUND 15 FASE 2 — material drop, INDEPENDENT roll from items.
+    materials_found = await roll_materials_for_dungeon(db, dungeon, success)
 
     if success:
         gold_reward = dungeon["base_gold_reward"]
@@ -269,6 +276,19 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     # Apply XP + free adventurers, with level-up loop.
     # Phase 13 — XP per member is scaled by the member's traits_snapshot
     # xp_gain percent modifiers (additive stacking, then applied once).
+    # ROUND 15 FASE 2 — apply class-primary-stat XP multiplier (debuff
+    # when primary stat is below class threshold for current level).
+    # Materials granted on the spot, idempotency follows the same
+    # `status: in_progress → completing` claim used for gold/xp/loot.
+    xp_debuff_reports: list[dict] = []
+    # Pre-load class docs by name for the members in this expedition.
+    class_names = list({(m.get("class_name_snapshot") or "").strip() for m in members})
+    class_docs_by_name: dict[str, dict] = {}
+    if class_names:
+        async for c in db.adventurer_classes.find(
+            {"name": {"$in": class_names}}, {"_id": 0},
+        ):
+            class_docs_by_name[c.get("name") or ""] = c
     for m in members:
         adv = await db.adventurers.find_one(
             {"id": m["adventurer_id"], "guild_id": claimed["guild_id"]}, {"_id": 0}
@@ -277,8 +297,25 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             continue
         traits_snap = m.get("traits_snapshot") or []
         xp_pct = sum_xp_percent(traits_snap)
-        member_xp = int(round(int(xp_per_member) * (1.0 + xp_pct / 100.0)))
-        adv["experience"] = int(adv.get("experience", 0)) + member_xp
+        base_xp_with_traits = int(round(int(xp_per_member) * (1.0 + xp_pct / 100.0)))
+        # ROUND 15 FASE 2 — primary-stat policy multiplier.
+        cls_doc = class_docs_by_name.get(m.get("class_name_snapshot") or "")
+        xp_info = compute_xp_multiplier(adv, cls_doc)
+        final_member_xp = int(round(base_xp_with_traits * float(xp_info["multiplier"])))
+        xp_debuff_reports.append({
+            "adventurer_id": m["adventurer_id"],
+            "name_snapshot": m.get("name_snapshot"),
+            "base_xp": int(base_xp_with_traits),
+            "multiplier": float(xp_info["multiplier"]),
+            "final_xp": int(final_member_xp),
+            "reason_code": xp_info.get("reason_code"),
+            "primary_stat_slug": xp_info.get("primary_stat_slug"),
+            "primary_stat_name_it": xp_info.get("primary_stat_name_it"),
+            "threshold": int(xp_info.get("threshold") or 0),
+            "actual": int(xp_info.get("actual") or 0),
+            "deficit_pct": float(xp_info.get("deficit_pct") or 0.0),
+        })
+        adv["experience"] = int(adv.get("experience", 0)) + final_member_xp
         adv = _resolve_levelup(adv)
         adv["is_available"] = True
         adv["updated_at"] = now.isoformat()
@@ -326,6 +363,47 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             upsert=True,
         )
 
+    # ROUND 15 FASE 2 — credit materials into inventory_items (separate
+    # from item drops). Each row uses the material slug to lookup the
+    # `items` template id. Materials reuse the same inventory_items
+    # collection so the rest of the stack (FE, transmute, audit) works
+    # without changes.
+    if materials_found:
+        mat_slugs = list({m["slug"] for m in materials_found})
+        mat_templates = {
+            mt["slug"]: mt
+            async for mt in db.items.find(
+                {"slug": {"$in": mat_slugs}, "item_type": "material"},
+                {"_id": 0},
+            )
+        }
+        for drop in materials_found:
+            tpl = mat_templates.get(drop["slug"])
+            if not tpl:
+                continue
+            await db.inventory_items.update_one(
+                {"guild_id": claimed["guild_id"], "item_id": tpl["id"]},
+                {
+                    "$inc": {"quantity": int(drop["qty"])},
+                    "$setOnInsert": {
+                        "id": str(uuid.uuid4()),
+                        "instance_id": str(uuid.uuid4()),
+                        "guild_id": claimed["guild_id"],
+                        "item_id": tpl["id"],
+                        "acquired_at": now.isoformat(),
+                        "source": "dungeon_material",
+                        "bind_state": "unbound",
+                        "is_bound": False,
+                        "disenchanted_at": None,
+                        "refinement_level": 0,
+                        "enchants": [],
+                        "affixes": [],
+                        "reroll_count": 0,
+                    },
+                },
+                upsert=True,
+            )
+
     # Phase 14.7 — persistent audit log (best-effort, non-blocking).
     try:
         from app.audit.log import write_audit
@@ -368,6 +446,9 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 "gold_reward": gold_reward,
                 "xp_reward": xp_per_member,
                 "loot_item_ids": loot_ids,
+                # ROUND 15 FASE 2 — material drops + per-member XP debuff report.
+                "materials_found": materials_found,
+                "xp_debuff_reports": xp_debuff_reports,
                 "result_summary": result_summary,
                 "result_log": result_log,
                 "updated_at": now.isoformat(),

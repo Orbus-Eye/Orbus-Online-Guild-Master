@@ -188,6 +188,27 @@ async def equip_item_service(
     from app.equipment.level_gate import enforce_item_level_requirement
     enforce_item_level_requirement(item, adv, source="equipment.equip")
 
+    # ROUND 15 FASE 2 — class-compatibility validator. Hard blocks (heavy
+    # armour on caster, arcane staff on melee, signature class lock) → 400.
+    # Soft warnings (non-recommended class) are appended to the response.
+    from app.equipment.compatibility import check_equip_compatibility
+    compat = check_equip_compatibility(adv, item)
+    if compat["severity"] == "block":
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": f"equip.incompatible.{compat['reason_code']}",
+                "source": "equipment.equip",
+                "reason_it": compat["reason_it"],
+                "severity": "block",
+                "adventurer_id": adventurer_id,
+                "item_id": item_id,
+            },
+        )
+    _equip_warning = (
+        compat if compat["severity"] == "warning" else None
+    )
+
     inv_row = await db.inventory_items.find_one(
         {"guild_id": guild["id"], "item_id": item_id}, {"_id": 0}
     )
@@ -285,7 +306,12 @@ async def equip_item_service(
         )
     except Exception:
         pass
-    return _build_equipment_response(adv, slots, eq_power)
+    response = _build_equipment_response(adv, slots, eq_power)
+    # ROUND 15 FASE 2 — surface soft compatibility warning to FE.
+    if _equip_warning:
+        response["warning_it"] = _equip_warning["reason_it"]
+        response["warning_code"] = _equip_warning["reason_code"]
+    return response
 
 
 async def unequip_item_service(

@@ -293,16 +293,18 @@ CLASS_IDENTITY: dict[str, dict] = {
 }
 
 
-# Placeholder XP policy — Phase 1 only declares it; Phase 2 will turn it on.
+# Placeholder XP policy — Phase 2 activates it. Re-runs will idempotently
+# bump `enabled` from False (Phase 1 default) to True on every class.
 DEFAULT_XP_POLICY = {
-    "enabled": False,                # 15.2 will flip to True
-    "threshold_per_level": 1,        # primary stat ≥ 1 required at L1
+    "enabled": True,                 # ROUND 15 FASE 2 — now LIVE
+    "threshold_per_level": 0.5,      # primary stat grows ~0.5/level
     "debuff_steps": [
-        {"shortfall": 1, "xp_mult": 0.75},
-        {"shortfall": 2, "xp_mult": 0.50},
-        {"shortfall": 3, "xp_mult": 0.25},
+        {"shortfall_pct": 10, "xp_mult": 0.90},
+        {"shortfall_pct": 20, "xp_mult": 0.80},
+        {"shortfall_pct": 30, "xp_mult": 0.70},
     ],
-    "schema_version": 1,
+    "min_multiplier": 0.70,
+    "schema_version": 2,
 }
 
 
@@ -377,6 +379,11 @@ async def main():
 
         if doc.get("xp_primary_stat_policy") is None:
             delta["xp_primary_stat_policy"] = DEFAULT_XP_POLICY
+        else:
+            # ROUND 15 FASE 2 — promote legacy schema_version 1 policy to v2.
+            existing_policy = doc.get("xp_primary_stat_policy") or {}
+            if int(existing_policy.get("schema_version", 1)) < 2:
+                delta["xp_primary_stat_policy"] = DEFAULT_XP_POLICY
 
         if not delta:
             untouched += 1

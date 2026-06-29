@@ -124,7 +124,7 @@ const CLASSES = [
         playstyle: "Difensore ibrido: meno duro del Guerriero puro, ma può curare l'alleato accanto e colpire più forte i nemici non-morti.",
         differs_from: "Il Guerriero è più resistente; il Sacerdote cura di più. Il Paladino unisce le due cose a metà costo.",
         strengths: ["Versatilità", "Auto-sostegno", "Bonus vs Vuoto/Non-morti"],
-        weaknesses: ["Né il miglior tank né il miglior guaritore", "Statistiche spalmate"],
+        weaknesses: ["Né il miglior difensore né il miglior guaritore", "Statistiche spalmate"],
         good_in: ["Raid lunghi", "Dungeon di tipo Vuoto/Non-morti", "Squadre con un solo guaritore"] },
 
     { slug: "rogue", name_it: "Ladro", role: "DPS", secondary_role: "Stealth",
@@ -197,7 +197,7 @@ const CLASSES = [
         differs_from: "Il Druido cura più alleati insieme (AoE); il Sacerdote è il salvavita del singolo Difensore.",
         strengths: ["Cura singola top-tier", "Buff anti-morte", "Identità chiara"],
         weaknesses: ["Niente AoE heal", "Niente danno reale"],
-        good_in: ["Raid con un solo tank da tenere su", "Dungeon hard mode con boss melee"] },
+        good_in: ["Raid con un solo difensore da tenere su", "Dungeon hard mode con boss melee"] },
 
     { slug: "druid", name_it: "Druido", role: "Healer", secondary_role: "AoE Heal / Hybrid Caster",
         primary_stat: "Fede", secondary_stats: ["Intelletto"],
@@ -223,9 +223,11 @@ const PRIMARY_STAT_WARNING = (
         data-testid="guide-class-warning-15-2"
         className="text-[12px] text-amber/95 border-l-2 border-amber pl-3 italic mt-3"
     >
-        <strong className="text-amber not-italic">Attenzione (Round 15.2):</strong>{" "}
-        una statistica primaria troppo bassa ridurrà l&apos;XP guadagnato
-        dall&apos;avventuriero. La regola precisa verrà attivata nel prossimo round.
+        <strong className="text-amber not-italic">Attivo (Round 15.2):</strong>{" "}
+        se la statistica primaria della classe scende sotto la soglia attesa
+        per il livello attuale, l&apos;XP guadagnato in spedizione si riduce:
+        −10% (soglia minore), −20% (soglia maggiore), fino a −30% (critica).
+        Mai sotto il 70%.
     </p>
 );
 
