@@ -8,6 +8,73 @@
 
 ---
 
+## ROUND 12.D — Preview Seed Polish & PvP Validation Hardening (Feb 2026)
+
+**Goal**: Sbloccare il test E2E del Round 12 risolvendo 3 gap operativi
+emersi dal primo giro di test manuale:
+1. Nessun avversario disponibile per il tester (DB privo di gilde demo).
+2. Avventurieri del tester intrappolati in stato `is_available=false`.
+3. Validation ordering del PvP challenge non deterministica (errore
+   `opponent_not_found` mascherava il `team_size_mismatch`).
+
+### Backend
+- `app/scripts/seed_round12_demo_opponents.py` *(new in 12.D.1)* —
+  Seed idempotente preview-only. Inserisce 3 gilde demo lore-coerenti
+  (`Custodi del Vento` silver/1100, `Esiliati del Vuoto` gold/1300,
+  `Compagnia delle Tre Lune` bronze/950), ognuna con owner fittizio
+  `is_demo_owner=true`, 5 avventurieri Tank+Healer+3 DPS Lv6-Lv10,
+  defense team valido, e `season_participation` con `is_demo=true`.
+- `app/scripts/seed_round12_release_tester_roster.py` *(new in 12.D.3)* —
+  Script idempotente al lifespan startup (gate `APP_ENV != production`).
+  Sblocca avventurieri del tester (`tester@orbus.test`) che siano
+  `is_available=false && !retired && !archived && !frozen`. Audit
+  obbligatorio `tester_roster_released_preview` con `released_count` +
+  primi 50 IDs. Sicuro su re-boot: noop con count=0 se roster è già
+  libero.
+- `app/leaderboard/seasonal.py` *(modified)* — `_eligible_parts` ora
+  esclude le partecipazioni con `is_demo=true` e le gilde con flag
+  `is_demo_opponent=true` (campo separato da `is_test_artifact`).
+- `app/pvp/services.py` *(modified)* —
+  * Validation ordering del challenge esplicitato con commento
+    canonico (1.team_size → 2.self → 3.season → 4.account_age →
+    5.opponent → 6.attacker team).
+  * `list_opponents`: quando `my_league == "unranked"` espone tutte le
+    leghe (matchmaking di placement). Sopra unranked rimane band ±1.
+- `app/audit/log.py` *(modified)* — aggiunto event_type
+  `tester_roster_released_preview` alla whitelist.
+- `app/core/lifespan.py` *(modified)* — chiamata a
+  `seed_round12_release_tester_roster.run()` dopo `seed_demos`.
+
+### Tests
+- `tests/backend_round12_polish_test.py` *(+4 tests, 46 → 50)*:
+  * `test_47_demo_opponents_visible_in_pvp_opponents` — tutte e 3 le
+    gilde demo presenti in `/api/pvp/opponents`.
+  * `test_48_demo_opponents_excluded_from_seasonal_leaderboard` — zero
+    leak nelle entries della leaderboard stagionale `arena_rating`.
+  * `test_49_challenge_validation_orders_team_size_first` — payload con
+    team_size=1 + opponent inesistente → 422 `pvp.team_size_mismatch`
+    (NON 404 `pvp.opponent_not_found`).
+  * `test_50_challenge_blocks_self_challenge` — payload con 5 ids verso
+    il proprio `public_id` → 400 `pvp.self_challenge`.
+- `tests/backend_round12_seasons_pvp_test.py::test_27` *(refactor)* —
+  PII guard ora ispeziona le chiavi per-entry invece del `str(body)`,
+  rimuovendo falso positivo su `guild_public_id` (la substring `_id`
+  faceva fallire il test in presenza di opponents reali).
+
+### Verifica
+- `pytest tests/backend_round12_polish_test.py tests/backend_round12_seasons_pvp_test.py` →
+  **50 PASS / 0 FAIL** (target raggiunto).
+- `pytest tests/backend_phase9_leaderboard_test.py tests/backend_round113_taskD_leaderboard_test.py` →
+  79 PASS / 1 skip su categorie LB (no regression).
+- Smoke curl: `GET /api/pvp/opponents` come tester → 3 entries
+  (Esiliati, Custodi, Compagnia delle Tre Lune);
+  `GET /api/leaderboard?scope=season&category=arena_rating` → 0 leak demo.
+- `yarn build` → success (294 KB gzip).
+- `yarn lint` su Arena/Seasons/components/arena → 0 issue.
+
+**Status**: chiuso. Sblocca E2E test del Round 12 lato utente.
+
+
 ## ROUND 11.3 Turno 3 — Fase 3C (Feb 2026, PREVIEW only)
 
 **Goal**: TASK D — Multi-category leaderboard endpoint con 8 categorie

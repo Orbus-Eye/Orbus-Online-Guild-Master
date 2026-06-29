@@ -226,13 +226,15 @@ def test_27_pvp_no_pii_in_opponents(tester_session):
         pytest.skip("no active season at smoke time")
     assert r.status_code == 200, r.text
     body = r.json()
-    serialized = str(body)
-    # No emails (`@`) in payload.
-    assert "@" not in serialized, "PII leak: email-shaped string in opponents response"
-    # No legacy MongoDB internals.
-    assert "_id" not in serialized
-    assert "owner_user_id" not in serialized
-    assert "user_id" not in serialized
+    # Per-entry key inspection (substring checks on str(body) false-positive
+    # against legitimate keys like `guild_public_id`).
+    for opp in body.get("opponents", []):
+        for forbidden in ("_id", "owner_user_id", "user_id", "email"):
+            assert forbidden not in opp, f"PII leak: '{forbidden}' in {opp}"
+        # No email-shaped strings in any value.
+        for v in opp.values():
+            if isinstance(v, str):
+                assert "@" not in v, f"PII leak: email-shaped string in value {v!r}"
 
 
 def test_28_seed_round12_preseason_idempotent():

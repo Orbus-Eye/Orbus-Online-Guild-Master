@@ -142,6 +142,8 @@ EVENT_TYPES = frozenset({
     "pvp_match_resolved",
     "pvp_rating_updated",
     "pvp_match_invalidated",
+    # ROUND 12.D — Preview-only tester roster release
+    "tester_roster_released_preview",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

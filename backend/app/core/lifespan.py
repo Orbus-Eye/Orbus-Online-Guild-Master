@@ -45,6 +45,23 @@ async def lifespan(app: FastAPI):
     await ensure_season_indexes(db)
     await ensure_pvp_indexes(db)
     await ensure_reward_indexes(db)
+    # ROUND 12 — preseason + demo opponents seed (preview-only, idempotent).
+    try:
+        from app.scripts.seed_round12_preseason import run as _seed_preseason
+        from app.scripts.seed_round12_rewards import run as _seed_rewards
+        from app.scripts.seed_round12_demo_opponents import run as _seed_demos
+        from app.scripts.seed_round12_release_tester_roster import (
+            run as _seed_release_tester,
+        )
+        await _seed_preseason()
+        await _seed_rewards()
+        await _seed_demos()
+        # ROUND 12.D.3 — preview-only: free tester's stuck adventurers
+        # so they can build a PvP defense team. No-op in production.
+        await _seed_release_tester()
+    except Exception as exc:  # noqa: BLE001
+        import logging
+        logging.getLogger("orbus").warning("ROUND 12 seed at startup failed: %s", exc)
     await run_forge_migration(db)
     await run_forge_seeds(db)
     await run_all_seeds(db)

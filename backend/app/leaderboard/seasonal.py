@@ -40,13 +40,16 @@ def _register(slug: str, label_it: str, description_it: str):
 
 async def _eligible_parts(db, season_id: str) -> list[dict]:
     rows = await db.season_participations.find(
-        {"season_id": season_id, "is_test": {"$ne": True}},
+        {"season_id": season_id, "is_test": {"$ne": True}, "is_demo": {"$ne": True}},
         {"_id": 0},
     ).to_list(10_000)
-    # Also exclude participants whose guild is test_artifact or owned by test user.
+    # Also exclude participants whose guild is test_artifact, demo_opponent, or owned by test user.
     test_owner_ids = set(await db.users.distinct("id", {"is_test_user": True}))
+    demo_owner_ids = set(await db.users.distinct("id", {"is_demo_owner": True}))
     test_guild_ids = set(await db.guilds.distinct("id", {"$or": [
-        {"is_test_artifact": True}, {"owner_user_id": {"$in": list(test_owner_ids)}}
+        {"is_test_artifact": True},
+        {"is_demo_opponent": True},
+        {"owner_user_id": {"$in": list(test_owner_ids | demo_owner_ids)}},
     ]}))
     return [r for r in rows if r["guild_id"] not in test_guild_ids]
 

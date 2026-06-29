@@ -187,3 +187,76 @@ def test_46_seed_round12_rewards_idempotent():
     from app.scripts.seed_round12_rewards import run
     res = asyncio.run(run())
     assert res["status"] in ("done", "skipped")
+
+
+# ─── ROUND 12.D — Demo opponents + validation ordering ────────────────────────
+DEMO_GUILD_NAMES = {
+    "Custodi del Vento",
+    "Esiliati del Vuoto",
+    "Compagnia delle Tre Lune",
+}
+
+
+def test_47_demo_opponents_visible_in_pvp_opponents(admin_session):
+    """ROUND 12.D.6.a — The 3 lore-coherent demo guilds must be visible to
+    the tester in /api/pvp/opponents (matchmaking unranked → all leagues)."""
+    r = admin_session.get(f"{BASE_URL}/api/pvp/opponents?limit=20", timeout=10)
+    if r.status_code == 423:
+        pytest.skip("season inactive")
+    assert r.status_code == 200, r.text
+    names = {o["guild_name"] for o in r.json()["opponents"]}
+    missing = DEMO_GUILD_NAMES - names
+    assert not missing, f"missing demo opponents in /api/pvp/opponents: {missing}"
+
+
+def test_48_demo_opponents_excluded_from_seasonal_leaderboard():
+    """ROUND 12.D.6.b — Demo guilds must NOT appear in any seasonal LB."""
+    r = requests.get(
+        f"{BASE_URL}/api/leaderboard"
+        f"?scope=season&season=arena-preseason-2026&category=arena_rating",
+        timeout=10,
+    )
+    assert r.status_code == 200, r.text
+    entries = r.json().get("entries", [])
+    leaked = [e["guild_name"] for e in entries if e["guild_name"] in DEMO_GUILD_NAMES]
+    assert not leaked, f"demo guilds leaked into seasonal LB: {leaked}"
+
+
+def test_49_challenge_validation_orders_team_size_first(admin_session):
+    """ROUND 12.D.6.c — `pvp.team_size_mismatch` (422) must precede any
+    opponent-lookup error (404). Send a malformed payload pointing to a
+    bogus opponent and verify the team-size error fires."""
+    bogus_opp = "zzz9zzz9"  # guaranteed not to exist as guild public_id
+    r = admin_session.post(
+        f"{BASE_URL}/api/pvp/challenge",
+        json={
+            "opponent_guild_public_id": bogus_opp,
+            "attacker_adventurer_ids": ["only-one-id"],  # len=1, not 5
+            "mode": "ranked",
+        },
+        timeout=10,
+    )
+    assert r.status_code == 422, r.text
+    body = r.json()
+    assert body["detail"]["code"] == "pvp.team_size_mismatch", body
+
+
+def test_50_challenge_blocks_self_challenge(admin_session):
+    """ROUND 12.D.6.d — Self-challenge must yield 400 pvp.self_challenge,
+    even when payload shape is technically valid (5 ids)."""
+    me = admin_session.get(f"{BASE_URL}/api/guilds/me", timeout=10).json()
+    g = me["guild"]
+    # PvP services derive public_id from `g['public_id']` or `g['id'][:8]`.
+    my_public_id = g.get("public_id") or g["id"][:8]
+    r = admin_session.post(
+        f"{BASE_URL}/api/pvp/challenge",
+        json={
+            "opponent_guild_public_id": my_public_id,
+            # 5 fake but list-shape-valid ids so we pass the size check
+            "attacker_adventurer_ids": [f"fake-{i}" for i in range(5)],
+            "mode": "ranked",
+        },
+        timeout=10,
+    )
+    assert r.status_code == 400, r.text
+    assert r.json()["detail"]["code"] == "pvp.self_challenge"

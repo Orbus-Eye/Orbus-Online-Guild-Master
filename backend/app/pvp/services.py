@@ -219,7 +219,13 @@ async def list_opponents(db, *, my_guild: dict, season: dict, limit: int = 10) -
         idx = league_order.index(my_league)
     except ValueError:
         idx = 0
-    allowed_leagues = league_order[max(0, idx - 1): idx + 2]
+    # ROUND 12.D — during placement (unranked), expose all leagues so
+    # new guilds can sample opponents at any rating tier. Once ranked,
+    # standard ±1 league band applies.
+    if my_league == "unranked":
+        allowed_leagues = list(league_order)
+    else:
+        allowed_leagues = league_order[max(0, idx - 1): idx + 2]
 
     # Filter: not me, has defense team, in allowed leagues, not test artifact.
     pipeline = [
@@ -275,15 +281,24 @@ async def challenge(
     db, *, attacker_guild: dict, attacker_user_id: str,
     opponent_guild_public_id: str, attacker_adventurer_ids: list[str], mode: str = "ranked",
 ) -> dict:
-    # Season gate
-    season = await get_current_season(db)
-    if not season or season["status"] != "active":
-        raise HTTPException(423, {
-            "code": "pvp.season_inactive",
-            "user_message": "Nessuna stagione attiva: l'Arena è chiusa.",
+    # ROUND 12.D — Validation ordering:
+    # 1. payload shape (team size 5) → 422 pvp.team_size_mismatch
+    # 2. self-check → 400 pvp.self_challenge
+    # 3. season active → 423 pvp.season_inactive
+    # 4. account-age gate → 423 pvp.account_too_young
+    # 5. daily limit + target cooldown → 429 (require season + opponent later)
+    # 6. opponent lookup → 404 pvp.opponent_not_found / pvp.no_defense_team
+    # 7. attacker eligibility → 422 pvp.team_invalid
+
+    # 1. Payload shape
+    if not isinstance(attacker_adventurer_ids, list) or len(attacker_adventurer_ids) != TEAM_SIZE:
+        raise HTTPException(422, {
+            "code": "pvp.team_size_mismatch",
+            "user_message": f"Devi selezionare esattamente {TEAM_SIZE} attaccanti.",
+            "received": len(attacker_adventurer_ids) if isinstance(attacker_adventurer_ids, list) else 0,
         })
 
-    # Self-challenge guard
+    # 2. Self-challenge guard
     my_public = attacker_guild.get("public_id") or attacker_guild["id"][:8]
     if opponent_guild_public_id == my_public:
         raise HTTPException(400, {
@@ -291,7 +306,15 @@ async def challenge(
             "user_message": "Non puoi sfidare te stesso.",
         })
 
-    # ROUND 12.C — Account age gate (anti-abuse)
+    # 3. Season active
+    season = await get_current_season(db)
+    if not season or season["status"] != "active":
+        raise HTTPException(423, {
+            "code": "pvp.season_inactive",
+            "user_message": "Nessuna stagione attiva: l'Arena è chiusa.",
+        })
+
+    # 4. Account age gate (ranked only)
     if mode == "ranked":
         try:
             created_at = attacker_guild.get("created_at")
