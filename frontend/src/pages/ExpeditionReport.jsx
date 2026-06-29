@@ -379,11 +379,33 @@ export default function ExpeditionReport() {
                                         </div>
                                     </div>
                                 )}
-                                {isDone && (
-                                    <div className="text-[11px] text-amber mt-2">
-                                        +{e.xp_reward} XP
-                                    </div>
-                                )}
+                                {isDone && (() => {
+                                    const debuff = (e.xp_debuff_reports || []).find(
+                                        (r) => r.adventurer_id === m.adventurer_id,
+                                    );
+                                    if (debuff && debuff.multiplier < 1.0) {
+                                        const dropPct = Math.round((1 - debuff.multiplier) * 100);
+                                        return (
+                                            <div
+                                                data-testid={`report-member-xp-debuff-${m.adventurer_id}`}
+                                                className="text-[11px] mt-2"
+                                            >
+                                                <span className="text-amber">+{debuff.final_xp} XP</span>{" "}
+                                                <span className="text-muted-foreground">
+                                                    (base {debuff.base_xp}, ×{debuff.multiplier.toFixed(2)})
+                                                </span>
+                                                <div className="text-[10px] text-rose-400/90 mt-0.5">
+                                                    XP ridotta: {debuff.primary_stat_name_it} sotto soglia classe (−{dropPct}%)
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <div className="text-[11px] text-amber mt-2">
+                                            +{e.xp_reward} XP
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         ))}
                     </div>
