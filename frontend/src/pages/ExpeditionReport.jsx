@@ -411,10 +411,10 @@ export default function ExpeditionReport() {
                     </div>
                 </section>
 
-                {/* Loot */}
-                <section>
+                {/* Loot — items only (Round 15.2 separates materials below) */}
+                <section className="mb-6">
                     <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
-                        :: LOOT
+                        :: OGGETTI TROVATI
                     </div>
                     {!isDone && (
                         <div className="text-xs text-muted-foreground">
@@ -423,7 +423,7 @@ export default function ExpeditionReport() {
                     )}
                     {isDone && (!loot_items || loot_items.length === 0) && (
                         <div data-testid="report-no-loot" className="text-xs text-muted-foreground border border-border bg-card rounded-sm p-4">
-                            No loot recovered from this run.
+                            Nessun oggetto trovato in questa run.
                         </div>
                     )}
                     {isDone && loot_items && loot_items.length > 0 && (
@@ -452,6 +452,47 @@ export default function ExpeditionReport() {
                         </div>
                     )}
                 </section>
+
+                {/* ROUND 15.2 — Materials trovati (separate roll from items) */}
+                {isDone && (
+                    <section data-testid="report-materials-section">
+                        <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
+                            :: MATERIALI TROVATI
+                        </div>
+                        {(e.materials_found || []).length === 0 && (
+                            <div
+                                data-testid="report-no-materials"
+                                className="text-xs text-muted-foreground border border-border bg-card rounded-sm p-4"
+                            >
+                                Nessun materiale raccolto.
+                            </div>
+                        )}
+                        {(e.materials_found || []).length > 0 && (
+                            <div
+                                data-testid="report-materials-grid"
+                                className="grid grid-cols-2 sm:grid-cols-4 gap-2"
+                            >
+                                {(e.materials_found || []).map((mat, idx) => (
+                                    <div
+                                        key={`${mat.slug}-${idx}`}
+                                        data-testid={`material-drop-${mat.slug}`}
+                                        className="border border-border bg-card rounded-sm p-2 flex items-center gap-2"
+                                    >
+                                        <span className="text-amber">◈</span>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-xs font-medium truncate">
+                                                {mat.slug}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground">
+                                                ×{mat.qty} · {mat.rarity}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                )}
             </main>
         </div>
     );
