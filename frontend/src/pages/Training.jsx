@@ -68,7 +68,6 @@ export default function Training() {
     );
 
     const isUnlocked = catalog?.tier != null;
-    const trainingLv = catalog?.training_grounds_level || 0;
 
     async function doApply() {
         if (!selectedAdv || !selectedSpec) return;

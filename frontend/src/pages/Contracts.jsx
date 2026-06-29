@@ -1,7 +1,7 @@
 // ROUND 6D — Contract Board page: 3 tabs (daily / weekly / milestones).
 // Server-authoritative: progress + claim state come from /api/contracts/*.
 // Locked-state banner shown when contract_board structure is Lv0.
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -183,7 +183,7 @@ function MilestoneRow({ milestone, onClaim, claiming, t }) {
     );
 }
 
-function fmtResetDate(iso, t) {
+function fmtResetDate(iso, _t) {
     if (!iso) return "—";
     try {
         const d = new Date(iso);

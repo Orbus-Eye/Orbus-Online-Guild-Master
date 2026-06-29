@@ -37,13 +37,15 @@ _raw_secret = os.environ.get("JWT_SECRET")
 if _raw_secret and len(_raw_secret) >= 2 and _raw_secret[0] == _raw_secret[-1] and _raw_secret[0] in ('"', "'"):
     _raw_secret = _raw_secret[1:-1]
 JWT_SECRET = _raw_secret
+# Round 11.4a — test password sourced from env (with safe local default).
+R11_PW = os.environ.get("R11_TEST_PASSWORD", "Slice2_T3st!")
 
 
 def _register(email: str | None = None) -> tuple[str, str]:
     email = email or f"r11_{uuid.uuid4().hex[:8]}@orbus.test"
     r = requests.post(f"{BASE_URL}/api/auth/register", json={
         "email": email, "username": email.split("@")[0],
-        "password": "Slice2_T3st!",
+        "password": R11_PW,
     }, timeout=15)
     assert r.status_code == 201, r.text
     return email, r.json()["access_token"]
@@ -62,7 +64,7 @@ def test_login_sets_httponly_access_cookie_and_csrf_cookie():
     email, _ = _register()
     s = requests.Session()
     r = s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     assert r.status_code == 200
     assert "access_token" in s.cookies
@@ -78,7 +80,7 @@ def test_me_via_cookie_only_no_authorization_header():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     # No Authorization header — relies solely on the cookie session
     r = s.get(f"{BASE_URL}/api/auth/me", timeout=15)
@@ -97,7 +99,7 @@ def test_post_mutating_with_cookie_but_no_csrf_header_is_403():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     # Clear the bearer-style Authorization header — we want cookie-only.
     r = s.post(f"{BASE_URL}/api/contracts/daily/x/claim", timeout=15)
@@ -109,7 +111,7 @@ def test_post_mutating_with_cookie_and_valid_csrf_header_is_not_403():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     csrf = s.cookies.get("csrf_token")
     r = s.post(f"{BASE_URL}/api/contracts/daily/x/claim",
@@ -130,7 +132,7 @@ def test_logout_clears_cookies():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     assert "access_token" in s.cookies
     r = s.post(f"{BASE_URL}/api/auth/logout", timeout=15)
@@ -150,7 +152,7 @@ def test_logout_no_body_clears_cookies():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     r = s.post(f"{BASE_URL}/api/auth/logout", timeout=15)
     assert r.status_code == 200
@@ -165,7 +167,7 @@ def test_logout_with_empty_body_clears_cookies():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     r = s.post(f"{BASE_URL}/api/auth/logout", json={}, timeout=15)
     assert r.status_code == 200
@@ -178,7 +180,7 @@ def test_logout_with_refresh_token_body_clears_cookies():
     email, _ = _register()
     s = requests.Session()
     s.post(f"{BASE_URL}/api/auth/login", json={
-        "email": email, "password": "Slice2_T3st!",
+        "email": email, "password": R11_PW,
     }, timeout=15)
     # Use a syntactically valid refresh token (>= 8 chars) even if not in DB.
     r = s.post(f"{BASE_URL}/api/auth/logout",

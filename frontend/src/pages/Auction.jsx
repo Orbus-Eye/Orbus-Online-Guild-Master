@@ -14,7 +14,8 @@ import { useT } from "../i18n/I18nContext";
 // ROUND 6B.3 Wave 3 — FIX BUG 2: normalise fetch-based error details to
 // a string so `toast.error(...)` never renders `[object Object]` when the
 // backend returns a structured `detail` payload (Pydantic list / dict).
-import { formatErrorDetail } from "../lib/api";
+// ROUND 11.4b — import shared axios `api` instance (was implicitly referenced).
+import { api, formatErrorDetail } from "../lib/api";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
@@ -61,7 +62,7 @@ async function authedFetch(_token, path, init = {}) {
 }
 
 // ─── BUY TAB ─────────────────────────────────────────────────────────────
-function BuyTab({ token, lang, t, refreshGuild, myUserId, myGuildId, myGuildGold }) {
+function BuyTab({ token, lang, t, refreshGuild, myUserId: _myUserId, myGuildId: _myGuildId, myGuildGold }) {
     const [listings, setListings] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);

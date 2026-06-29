@@ -18,6 +18,9 @@ import it from "./lang/it.json";
 
 const DICTS = { en, it };
 const SUPPORTED = ["en", "it"];
+// ROUND 11.4a — UI language preference migrated from localStorage to
+// sessionStorage. Trade-off accepted: lang resets at end of browser
+// session (not a sensitive preference, simplifies storage audit).
 const STORAGE_KEY = "orbus.lang";
 const FALLBACK = "en";
 
@@ -29,9 +32,9 @@ function detectBrowserLang() {
 }
 
 function readStoredLang() {
-    if (typeof localStorage === "undefined") return null;
+    if (typeof sessionStorage === "undefined") return null;
     try {
-        const v = localStorage.getItem(STORAGE_KEY);
+        const v = sessionStorage.getItem(STORAGE_KEY);
         if (v && SUPPORTED.includes(v)) return v;
     } catch (_e) {
         // ignore
@@ -114,7 +117,7 @@ export function I18nProvider({ children }) {
 
     useEffect(() => {
         try {
-            localStorage.setItem(STORAGE_KEY, lang);
+            sessionStorage.setItem(STORAGE_KEY, lang);
         } catch (_e) {
             // ignore quota / privacy mode
         }

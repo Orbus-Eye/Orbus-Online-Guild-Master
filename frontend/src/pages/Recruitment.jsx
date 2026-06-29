@@ -233,6 +233,8 @@ export default function Recruitment() {
             setBench(data);
         } catch (err) {
             // Non-fatal; bench will just be empty in the UI.
+            // ROUND 11.4b — empty catch now logs the error for diagnosability.
+            console.error("[Recruitment] failed to fetch frozen bench:", err);
         }
     }, []);
 

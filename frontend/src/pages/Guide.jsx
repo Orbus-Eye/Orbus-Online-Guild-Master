@@ -1,120 +1,18 @@
 // Phase 19.2 — P2.2 Player Guide in-game.
 // TASK 6 G4 — Traits + Stats sezioni data-driven (lazy fetch).
+// ROUND 11.4c — Refactored: shared primitives moved to `./guide/_shared.jsx`
+// and the two data-driven catalog sections to `./guide/CatalogSections.jsx`.
+// Guide.jsx now orchestrates the sticky nav + static section blocks.
 // Single-page guide with anchor-link tabs. Italian-first.
 // Pure text + tables; no images. Dark/minimal aesthetic to match the rest of the UI.
-import { useEffect, useState } from "react";
-import { api, formatApiError } from "../lib/api";
+import { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import RoleMarker from "../components/RoleMarker";
-
-const SECTIONS = [
-    { id: "intro", label: "1. Introduzione" },
-    { id: "gilda", label: "2. Gilda e progressione" },
-    { id: "territorio", label: "3. Territorio di Gilda" },
-    { id: "roster-cap", label: "4. Capacità roster e Dormitori" },
-    { id: "roster-health", label: "5. Roster Health" },
-    { id: "archivio", label: "6. Congedo e Archivio" },
-    { id: "avventurieri", label: "7. Avventurieri" },
-    { id: "ruoli", label: "8. Ruoli" },
-    { id: "rarita", label: "9. Rarità" },
-    { id: "stats-catalog", label: "10. Statistiche" },
-    { id: "traits-catalog", label: "11. Tratti" },
-    { id: "reclutamento", label: "12. Reclutamento" },
-    { id: "dungeon", label: "13. Dungeon e Spedizioni" },
-    { id: "raid", label: "14. Raid" },
-    { id: "classifiche", label: "14b. Classifiche" },
-    { id: "squadre", label: "15. Squadre Personalizzate" },
-    { id: "forge", label: "16. Equipaggiamento e Fucina" },
-    { id: "bound-items", label: "17. Item legati" },
-    { id: "training", label: "18. Addestramento e Specializzazioni" },
-    { id: "vault", label: "19. Deposito e Inventario" },
-    { id: "materiali", label: "20. Materiali e dove trovarli" },
-    { id: "market", label: "21. Mercato" },
-    { id: "auction", label: "22. Asta" },
-    { id: "contracts", label: "23. Contratti e Obiettivi di Gilda" },
-    { id: "chronicle", label: "24. Cronaca" },
-    { id: "consortium", label: "25. Consorzi" },
-    { id: "chat", label: "26. Chat" },
-    { id: "privacy", label: "27. Privacy e Sicurezza" },
-    { id: "tips", label: "28. Suggerimenti base" },
-];
-
-// TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
-const POLARITY_LABEL = {
-    positive: { label: "Positivo", cls: "text-emerald-300 border-emerald-500/40" },
-    negative: { label: "Negativo", cls: "text-red-400 border-red-500/40" },
-    mixed: { label: "Misto", cls: "text-amber border-amber/50" },
-};
-
-const RARITY_LABEL = {
-    common: "Comune",
-    uncommon: "Non comune",
-    rare: "Raro",
-    epic: "Epico",
-    legendary: "Leggendario",
-};
-
-function formatModifier(modifier_type, modifier_value) {
-    if (modifier_value == null || modifier_value === 0) return "—";
-    const sign = modifier_value > 0 ? "+" : "";
-    if (modifier_type === "percent") return `${sign}${modifier_value}%`;
-    return `${sign}${modifier_value}`;
-}
-
-const SectionBlock = ({ id, title, children }) => (
-    <section
-        id={id}
-        data-testid={`guide-section-${id}`}
-        className="border border-border bg-card rounded-sm p-5 mb-4 scroll-mt-24"
-    >
-        <h2 className="text-sm tracking-[0.3em] text-amber mb-3">:: {title}</h2>
-        <div className="prose prose-invert prose-sm max-w-none text-[13px] leading-relaxed text-foreground/90">
-            {children}
-        </div>
-    </section>
-);
+import { SECTIONS, SectionBlock } from "./guide/_shared";
+import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSections";
 
 export default function Guide() {
     const [active, setActive] = useState("intro");
-    // TASK 6 G4 — lazy-loaded data-driven catalog state.
-    // Fetch triggered the first time the user opens the relative tab.
-    const [traits, setTraits] = useState({ data: null, loading: false, error: null });
-    const [stats, setStats] = useState({ data: null, loading: false, error: null });
-    // Filter state for traits section (client-side, no extra fetch).
-    const [traitFilters, setTraitFilters] = useState({ q: "", polarity: "all", rarity: "all" });
-
-    useEffect(() => {
-        if (active === "traits-catalog" && traits.data === null && !traits.loading) {
-            setTraits((s) => ({ ...s, loading: true, error: null }));
-            api.get("/traits/catalog")
-                .then((r) => setTraits({ data: r.data?.traits || [], loading: false, error: null }))
-                .catch((err) => setTraits({ data: [], loading: false, error: formatApiError(err) }));
-        }
-        if (active === "stats-catalog" && stats.data === null && !stats.loading) {
-            setStats((s) => ({ ...s, loading: true, error: null }));
-            api.get("/stats/catalog")
-                .then((r) => setStats({ data: r.data?.stats || [], loading: false, error: null }))
-                .catch((err) => setStats({ data: [], loading: false, error: formatApiError(err) }));
-        }
-    }, [active, traits.data, traits.loading, stats.data, stats.loading]);
-
-    const filteredTraits = (traits.data || []).filter((t) => {
-        if (traitFilters.polarity !== "all") {
-            if (traitFilters.polarity === "mixed") {
-                // Tab "Misti + Neutri" contiene entrambi (i tratti neutral non hanno effetto).
-                if (t.polarity !== "mixed" && t.polarity !== "neutral") return false;
-            } else if (t.polarity !== traitFilters.polarity) {
-                return false;
-            }
-        }
-        if (traitFilters.rarity !== "all" && t.rarity !== traitFilters.rarity) return false;
-        if (traitFilters.q) {
-            const q = traitFilters.q.toLowerCase();
-            const hay = `${t.display_name_it || ""} ${t.description_it || ""} ${t.gameplay_effect_it || ""}`.toLowerCase();
-            if (!hay.includes(q)) return false;
-        }
-        return true;
-    });
 
     const goTo = (id) => {
         setActive(id);
@@ -361,222 +259,9 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
-                <SectionBlock id="stats-catalog" title="Statistiche">
-                    <p>
-                        Catalogo completo delle <strong>statistiche</strong> che governano avventurieri, spedizioni e ranking.
-                        Dati caricati live dal server: se il team aggiunge una nuova stat, compare qui senza un nuovo deploy
-                        della Guida. La colonna <em>PWR</em> indica se la stat concorre al calcolo del Power Score totale.
-                    </p>
-                    {stats.loading && (
-                        <p
-                            className="mt-3 text-[12px] text-muted-foreground italic"
-                            data-testid="guide-stats-loading"
-                        >
-                            Caricamento del catalogo stat…
-                        </p>
-                    )}
-                    {stats.error && !stats.loading && (
-                        <p
-                            className="mt-3 text-[12px] text-red-400"
-                            data-testid="guide-stats-error"
-                        >
-                            Errore nel caricamento: {stats.error}
-                        </p>
-                    )}
-                    {!stats.loading && !stats.error && stats.data && (
-                        <div className="mt-3 overflow-x-auto" data-testid="guide-stats-table-wrap">
-                            <table
-                                className="w-full text-[12px] min-w-[560px]"
-                                data-testid="guide-stats-table"
-                            >
-                                <thead className="border-b border-border">
-                                    <tr className="text-left text-muted-foreground">
-                                        <th className="py-2 px-2">Stat</th>
-                                        <th className="py-2 px-2">Descrizione</th>
-                                        <th className="py-2 px-2 text-center">PWR</th>
-                                        <th className="py-2 px-2">Note</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {stats.data.map((s) => (
-                                        <tr
-                                            key={s.key}
-                                            data-testid={`guide-stat-row-${s.key}`}
-                                            className="border-b border-border/40 align-top"
-                                        >
-                                            <td className="py-2 px-2 font-mono whitespace-nowrap">
-                                                <strong>{s.display_name_it}</strong>
-                                                <div className="text-[10px] text-muted-foreground">
-                                                    {s.key}
-                                                </div>
-                                            </td>
-                                            <td className="py-2 px-2 text-foreground/90">
-                                                {s.description_it}
-                                            </td>
-                                            <td className="py-2 px-2 text-center">
-                                                {s.affects_pwr ? (
-                                                    <span className="text-amber">✓</span>
-                                                ) : (
-                                                    <span className="text-muted-foreground">—</span>
-                                                )}
-                                            </td>
-                                            <td className="py-2 px-2 text-[11px] text-muted-foreground">
-                                                {s.implemented === false
-                                                    ? "documentazione, non ancora applicata nei calcoli"
-                                                    : (s.ui_locations || []).join(" · ")}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <p
-                                className="mt-2 text-[10px] text-muted-foreground"
-                                data-testid="guide-stats-total"
-                            >
-                                {stats.data.length} stat documentate (fonte: <code>/api/stats/catalog</code>)
-                            </p>
-                        </div>
-                    )}
-                </SectionBlock>
+                <StatsCatalogSection active={active} />
 
-                <SectionBlock id="traits-catalog" title="Tratti">
-                    <p>
-                        Catalogo completo dei <strong>tratti</strong> che gli avventurieri possono ottenere alla
-                        generazione. Dati caricati live dal server: nessun tratto interno/di test compare in elenco
-                        (filtraggio automatico server-side per <code>is_test</code> e <code>is_active</code>).
-                    </p>
-                    {/* Filtri client-side */}
-                    {!traits.loading && !traits.error && traits.data && (
-                        <div
-                            className="mt-4 flex flex-col sm:flex-row gap-2"
-                            data-testid="guide-traits-filters"
-                        >
-                            <input
-                                type="text"
-                                value={traitFilters.q}
-                                onChange={(e) =>
-                                    setTraitFilters({ ...traitFilters, q: e.target.value })
-                                }
-                                placeholder="Cerca per nome o descrizione…"
-                                data-testid="guide-traits-filter-q"
-                                className="flex-1 bg-secondary border border-border rounded-sm px-3 py-2 text-xs"
-                            />
-                            <select
-                                value={traitFilters.polarity}
-                                onChange={(e) =>
-                                    setTraitFilters({ ...traitFilters, polarity: e.target.value })
-                                }
-                                data-testid="guide-traits-filter-polarity"
-                                className="bg-secondary border border-border rounded-sm px-3 py-2 text-xs"
-                            >
-                                <option value="all">Polarità: tutte ({traits.data?.length || 0})</option>
-                                <option value="positive">Positivi ({(traits.data || []).filter(t=>t.polarity==='positive').length})</option>
-                                <option value="negative">Negativi ({(traits.data || []).filter(t=>t.polarity==='negative').length})</option>
-                                <option value="mixed">Misti + Neutri ({(traits.data || []).filter(t=>t.polarity==='mixed'||t.polarity==='neutral').length})</option>
-                            </select>
-                            <select
-                                value={traitFilters.rarity}
-                                onChange={(e) =>
-                                    setTraitFilters({ ...traitFilters, rarity: e.target.value })
-                                }
-                                data-testid="guide-traits-filter-rarity"
-                                className="bg-secondary border border-border rounded-sm px-3 py-2 text-xs"
-                            >
-                                <option value="all">Rarità: tutte</option>
-                                <option value="common">Comune</option>
-                                <option value="uncommon">Non comune</option>
-                                <option value="rare">Raro</option>
-                                <option value="epic">Epico</option>
-                                <option value="legendary">Leggendario</option>
-                            </select>
-                        </div>
-                    )}
-
-                    {traits.loading && (
-                        <p
-                            className="mt-3 text-[12px] text-muted-foreground italic"
-                            data-testid="guide-traits-loading"
-                        >
-                            Caricamento del catalogo tratti…
-                        </p>
-                    )}
-                    {traits.error && !traits.loading && (
-                        <p
-                            className="mt-3 text-[12px] text-red-400"
-                            data-testid="guide-traits-error"
-                        >
-                            Errore nel caricamento: {traits.error}
-                        </p>
-                    )}
-                    {!traits.loading && !traits.error && traits.data && (
-                        <>
-                            <div className="mt-3 grid gap-2 sm:grid-cols-2" data-testid="guide-traits-grid">
-                                {filteredTraits.map((t) => {
-                                    const pol = POLARITY_LABEL[t.polarity] || POLARITY_LABEL.positive;
-                                    return (
-                                        <div
-                                            key={t.id}
-                                            data-testid={`guide-trait-card-${t.id}`}
-                                            className="border border-border rounded-sm p-3 bg-card/60"
-                                        >
-                                            <div className="flex items-center justify-between gap-2">
-                                                <strong className="text-sm">{t.display_name_it}</strong>
-                                                <span
-                                                    className={`text-[10px] tracking-widest px-1.5 py-0.5 border rounded-sm ${pol.cls}`}
-                                                    data-testid={`guide-trait-polarity-${t.id}`}
-                                                >
-                                                    {pol.label}
-                                                </span>
-                                            </div>
-                                            <p className="text-[12px] text-foreground/85 mt-1">
-                                                {t.description_it}
-                                            </p>
-                                            <p className="text-[11px] text-amber/90 mt-1.5 italic" data-testid={`guide-trait-effect-${t.id}`}>
-                                                {t.gameplay_effect_it || "Tratto descrittivo: al momento non modifica direttamente i calcoli principali."}
-                                            </p>
-                                            <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
-                                                <span>
-                                                    Rarità: <strong className="text-foreground/90">{RARITY_LABEL[t.rarity] || t.rarity}</strong>
-                                                </span>
-                                                {t.affected_stat && (
-                                                    <span>
-                                                        Stat: <strong className="text-foreground/90">{t.affected_stat}</strong>{" "}
-                                                        ({formatModifier(t.modifier_type, t.modifier_value)})
-                                                    </span>
-                                                )}
-                                                {t.affects_power && (
-                                                    <span className="text-amber">Influenza PWR</span>
-                                                )}
-                                                {t.is_situational && (
-                                                    <span>Situazionale</span>
-                                                )}
-                                                {t.is_capped && (
-                                                    <span>Cappato</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {filteredTraits.length === 0 && (
-                                <p
-                                    className="mt-3 text-[12px] text-muted-foreground italic"
-                                    data-testid="guide-traits-empty"
-                                >
-                                    Nessun tratto corrisponde ai filtri selezionati.
-                                </p>
-                            )}
-                            <p
-                                className="mt-3 text-[10px] text-muted-foreground"
-                                data-testid="guide-traits-total"
-                            >
-                                {filteredTraits.length} di {traits.data.length} tratti visibili
-                                (fonte: <code>/api/traits/catalog</code>, filtra automaticamente
-                                <code> is_test=true</code> e <code>is_active=false</code>)
-                            </p>
-                        </>
-                    )}
-                </SectionBlock>
+                <TraitsCatalogSection active={active} />
 
                 <SectionBlock id="reclutamento" title="Reclutamento">
                     <p>
@@ -850,21 +535,26 @@ export default function Guide() {
                     </p>
                     <ul className="list-disc pl-5 space-y-1 text-[12px]">
                         <li><strong>Costo crescente</strong> per respec_count: 800g + 1 polvere arcana (primo),
-                            1200g + 2 polvere (secondo), 2000g + 3 polvere (terzo e successivi — cap fisso).</li>
+                            1200g + 2 polvere (secondo), 2000g + 3 polvere (terzo e successivi — cap fisso).
+                        </li>
                         <li><strong>Cooldown 24h</strong> tra un respec e l&apos;altro per lo stesso avventuriero.</li>
                         <li><strong>Signature item attuale viene distrutto</strong> (soft-discard, irreversibile).
                             Il modal richiede una checkbox di conferma esplicita prima di procedere. Viene poi creato
-                            un nuovo signature item per la nuova specializzazione.</li>
+                            un nuovo signature item per la nuova specializzazione.
+                        </li>
                         <li><strong>Atomico server-side</strong>: oro + materiali debitati con CAS, su qualsiasi
-                            fallimento intermedio i debit vengono rollbackati. Niente duplicazioni di signature.</li>
+                            fallimento intermedio i debit vengono rollbackati. Niente duplicazioni di signature.
+                        </li>
                         <li><strong>NO P2W</strong>: costo modesto, non si può saltare la cooldown con denaro reale.</li>
                     </ul>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Limiti attuali</h3>
                     <ul className="list-disc pl-5 space-y-1">
                         <li>Il respec richiede stessa classe-eligibility della nuova spec (es. un Mago non può
-                            diventare Difensore).</li>
+                            diventare Difensore).
+                        </li>
                         <li>Slot extra, set bonus e tier 4-6 di Training Grounds restano placeholder per round
-                            successivi.</li>
+                            successivi.
+                        </li>
                     </ul>
                 </SectionBlock>
 
@@ -1003,13 +693,16 @@ export default function Guide() {
                     </p>
                     <ul className="list-disc pl-5 space-y-1">
                         <li><strong>Tier 1 (3 milestone, attivi dal Day 1)</strong> — Spedizioni 10, Craft 10, Recruit 5.
-                            Reward 100-200g + 5 Rep ciascuno.</li>
+                            Reward 100-200g + 5 Rep ciascuno.
+                        </li>
                         <li><strong>Tier 2 (7 milestone, sblocco dopo aver claimato TUTTI i Tier 1)</strong> —
                             Spedizioni 50, Craft 50, Recruit 25, Raid 10, Market 30 vendite, Strutture 5 upgrade,
-                            Spec applicate 3. Reward 600-1200g + 15-20 Rep.</li>
+                            Spec applicate 3. Reward 600-1200g + 15-20 Rep.
+                        </li>
                         <li><strong>Tier 3 (7 milestone end-game, sblocco dopo TUTTI i Tier 2)</strong> —
                             Spedizioni 200, Craft 200, Recruit 50, Raid 50, Market 100, Strutture 15, Spec 8.
-                            Reward 2000-3000g + 50 Rep + greater_arcane_dust/iron_shard stacks.</li>
+                            Reward 2000-3000g + 50 Rep + greater_arcane_dust/iron_shard stacks.
+                        </li>
                     </ul>
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Sinergia Round 6C ↔ Round 6D ↔ Round 6E</h3>
                     <p>

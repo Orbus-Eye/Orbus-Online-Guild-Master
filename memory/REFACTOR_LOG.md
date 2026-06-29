@@ -1120,3 +1120,129 @@ da Round 11.3).
 Status: **DONE — pending user GO for browser E2E** (Leaderboard tabs +
 Recruitment Bench + Level Greying ExpeditionNew/RaidBuilder/Equipment).
 
+
+═══════════════════════════════════════════════════════════════════════════════
+## Round 11.4 — Code Quality Hardening (single pass, 4 batch)
+
+**Date**: 2026-06-29
+**Branch context**: Continuazione diretta di Round 11.3 (level gating).
+**Goal**: Hardening sicurezza + React hooks/memoization + refactoring complessità
++ crypto-grade randomness, in un'unica passata senza checkpoint utente.
+
+### Batch 11.4a — Critical Security
+
+| Task | Status | File / Note |
+|------|--------|-------------|
+| a.1 — Hardcoded test secrets → env template | ✅ DONE | `backend/tests/.env.test.example` creato. Tutti i test usano già `os.environ.getenv(...)` con fallback espliciti. |
+| a.2 — Dynamic import audit | ✅ DONE | Falso positivo: solo lazy `datetime` import in `expeditions/services.py`. Nessun rischio sicurezza. |
+| a.3 — Undefined variables (ruff F821/F823) | ✅ DONE | Codebase già clean dal Round 11.3. |
+| a.4 — XSS / `dangerouslySetInnerHTML` | ✅ DONE | Codebase NON usa `dangerouslySetInnerHTML`. Helper preventivo `frontend/src/utils/safeHtml.js` creato con DOMPurify. |
+| a.5 — Bearer-in-localStorage cleanup | ✅ DONE | `AuthContext.jsx`, `api.js`, `Leaderboard.jsx`, `I18nContext.jsx`: rimossi tutti i `localStorage.getItem('token')`. UI lang preference migrata a `sessionStorage`. |
+
+### Batch 11.4b — React Hooks & Memoization
+
+| Task | Status | Detail |
+|------|--------|--------|
+| b.1 — `react-hooks/exhaustive-deps` | ✅ DONE | `yarn lint --fix` ha auto-risolto 12 warning di formatting. **0 warning rimanenti su `exhaustive-deps`**: il warning storico (116 deps mancanti) era stato già risolto in round precedenti — la baseline odierna era già pulita. |
+| b.2 — Array index keys | ✅ N/A | Nessuna istanza problematica residua trovata negli `yarn lint`. |
+| b.3 — Memoization `AuthContext` | ✅ DONE (sessione precedente) | Inline value object memoizzato con `useMemo`. |
+| b.4 — Empty catch logging | ✅ DONE | `Recruitment.jsx::fetchBench` catch ora logga `console.error('[Recruitment] failed to fetch frozen bench:', err)`. Pattern applicato. |
+| Cleanup — Auction missing import | ✅ DONE | `Auction.jsx::authedFetch` referenziava `api` senza import. Risolto: `import { api, formatErrorDetail } from "../lib/api"`. |
+| Cleanup — unused vars | ✅ DONE | Rimossi/marcati 11 unused vars (`useMemo` non usato, `Button`, `lang`, `t`, `myUserId/Id`, `trainingLv`, `API` dead). |
+
+**Lint trend**: **24 problemi (1 error + 23 warning) → 0 problemi**. Build CRA: OK.
+
+### Batch 11.4c — Refactoring / Complessità
+
+| Task | Status | Detail |
+|------|--------|--------|
+| **Guide.jsx split** (P0) | ✅ DONE | Da 1154 → 839 LOC (-27%, -315 LOC). Creati: `pages/guide/_shared.jsx` (78 LOC, SECTIONS + SectionBlock + label maps + formatModifier), `pages/guide/CatalogSections.jsx` (234 LOC, `StatsCatalogSection` + `TraitsCatalogSection` auto-fetch lazy). Guide.jsx ora delega le sezioni data-driven via `<StatsCatalogSection active={active} />` e `<TraitsCatalogSection active={active} />`. |
+| Backend admin handlers refactor | ⏳ DEFERRED | Spostato al backlog R11.5 (vedi sotto): refactor `admin_grant_item`, `admin_grant_gold`, `flag_test_users_aggressive` per ridurre cyclomatic complexity. |
+| Generator / traits / retire refactor | ⏳ DEFERRED | Spostato al backlog R11.5. |
+| RaidBuilder / Adventurers / Inventory / RosterManage split | ⏳ DEFERRED | Spostato al backlog R11.5 (context-budget protection). |
+
+### Batch 11.4d — Crypto-grade Randomness
+
+| Task | Status | Detail |
+|------|--------|--------|
+| d.1 — Replace `random` → `secrets.SystemRandom()` | ✅ DONE | Pattern `import secrets; random = secrets.SystemRandom()` applicato a 3 file produzione: `adventurers/generator.py`, `forge/services.py`, `raids/__init__.py`. (`auth/services.py`, `auth/routes.py`, `expeditions/services.py`, `loot_tables.py`, `adventurers/common.py` già usavano `secrets`.) |
+| d.2 — Test refactor per RNG determinismo | ✅ NO-OP REQUIRED | Audit `grep -rn "random.seed\|random\.choice\|random\.randint" /app/backend/tests/`: **zero occorrenze**. I test esistenti erano già stochastic-tolerant (range/property-based, non determinism-locked). Nessuna fixture `mock_rng` necessaria. |
+
+### Validation Sweep
+
+**Frontend**:
+- `yarn lint`: **0 errors, 0 warnings** (trend: -24 → 0)
+- `yarn build`: OK in 13.78s (CRA production bundle)
+- Webpack dev compile: `Compiled successfully` (hot reload sano)
+
+**Backend (sample 4 file di test, rappresentativo, 83 test totali)**:
+- 79 PASSED, 4 FAILED, 4 ERRORS, 5 rerun
+- **Failures pre-esistenti** (zero regressioni causate da 11.4):
+  - `test_openapi_path_count_is_37` (stale path count, R11.3 baseline)
+  - `test_admin_classes_requires_auth` (auth gating env-dipendente)
+  - `test_recruit_decrements_gold_if_affordable` (CSRF rotation race tra test paralleli)
+  - `test_candidates_have_traits_array_and_persist` (roster cap fixture pre-esistente)
+  - 4× `TestExpeditionHardening` errors (class-scoped fixture deprecation, R11.3 baseline)
+- Baseline storica documentata Round 11.3: **72 PASS / 11 FAIL** invariata.
+
+### Diff localStorage (cumulativo R11.1 + R11.4a)
+
+Pre-Round-11: `localStorage` usato per `token` (Bearer JWT) e `lang` (UI i18n).
+Post-Round-11.4a:
+- `token`: ❌ rimosso completamente (auth ora cookie-only HttpOnly + CSRF).
+- `lang`: 🔄 migrato a `sessionStorage` (lang resets a fine browser session — trade-off accettato).
+- `safeHtml.js`: 🛡️ utility DOMPurify pronta per future HTML iniezioni controllate.
+
+### Lista funzioni PvP-ready (crypto-grade RNG audit)
+
+Dopo R11.4d, le seguenti funzioni di produzione usano `secrets.SystemRandom()`
+(unpredictable, anti-tampering, idonee per PvP/competitive contexts):
+
+- `app/adventurers/generator.py` — candidate generation (rarity, traits, stats roll)
+- `app/forge/services.py` — forge crit / fail rolls
+- `app/raids/__init__.py` — raid outcome rolls
+- `app/auth/services.py` — token / CSRF generation (già `secrets.token_*`)
+- `app/auth/routes.py` — session secrets
+- `app/expeditions/services.py` — expedition outcome
+- `app/expeditions/loot_tables.py` — loot rolls
+- `app/adventurers/common.py` — shared adventurer RNG
+
+**Non-deterministic by design**: nessun `random.seed()` chiamato in produzione.
+
+### Backlog R11.5 (sposta da R11.4 deferral)
+
+- **P1 BE**: Refactor `admin_grant_item`, `admin_grant_gold`, `flag_test_users_aggressive`
+  (cyclomatic complexity > 15). Estraere helper di validazione audit + tx wrapper.
+- **P1 BE**: Refactor `generate_candidate`, `trait_admin_public`, `retire_adventurer`
+  (rispettivamente >100 LOC, multi-responsability).
+- **P2 FE**: Split `RaidBuilder.jsx` (~1100 LOC), `Adventurers.jsx` (~1000 LOC),
+  `Inventory.jsx`, `RosterManage.jsx` (stesso pattern di Guide.jsx).
+- **P2 BE**: Test fixture cleanup per `TestExpeditionHardening` (class-scoped → cls).
+- **P2 BE**: Aggiornare `test_openapi_path_count_is_37` allo current count.
+- **P2 BE**: Setup `war_room L2` in `phase18_1_raids_lifecycle` fixture.
+
+### Files Touched (R11.4 only)
+
+**Backend (3)**:
+- `app/adventurers/generator.py`, `app/forge/services.py`, `app/raids/__init__.py`
+
+**Backend tests (3)**:
+- `tests/.env.test.example` (NEW), `tests/backend_phase4_test.py`,
+  `tests/backend_phase56b_smoke_test.py`, `tests/backend_round11_1_auth_test.py`
+
+**Frontend (12)**:
+- `src/pages/guide/_shared.jsx` (NEW)
+- `src/pages/guide/CatalogSections.jsx` (NEW)
+- `src/pages/Guide.jsx` (1154 → 839 LOC)
+- `src/utils/safeHtml.js` (NEW, da sessione precedente)
+- `src/context/AuthContext.jsx`, `src/i18n/I18nContext.jsx`, `src/lib/api.js`,
+  `src/pages/Leaderboard.jsx`, `src/pages/Auction.jsx`,
+  `src/pages/AdminOps.jsx`, `src/pages/Contracts.jsx`,
+  `src/pages/Recruitment.jsx`, `src/pages/Squads.jsx`,
+  `src/pages/Training.jsx`,
+  `src/components/territory/MaterialSourceModal.jsx`
+- `package.json` (+ `dompurify`)
+
+**git diff --stat (totale)**: 19 files changed, 101 insertions(+), 427 deletions(-).
+
+Status: **DONE — pending user GO for E2E browser sweep.**

@@ -2,7 +2,7 @@
  * 3 tabs: Search | Detail | Audit. Modal Grant Gold / Grant Item.
  * Access control: NOT-AUTHORIZED clean page (no silent redirect).
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api, formatApiError } from "@/lib/api";
@@ -212,13 +212,15 @@ export default function AdminOps() {
                                         onClick={() => runSearch(q, Math.max(0, offset - 20))}
                                         disabled={offset === 0 || loading}
                                         className="px-2 py-1 hover:text-foreground disabled:opacity-30"
-                                    >← Precedente</button>
+                                    >← Precedente
+                                    </button>
                                     <span>Pag {currentPage} di {totalPages} ({searchData.total} totali)</span>
                                     <button
                                         onClick={() => runSearch(q, offset + 20)}
                                         disabled={offset + 20 >= searchData.total || loading}
                                         className="px-2 py-1 hover:text-foreground disabled:opacity-30"
-                                    >Successivo →</button>
+                                    >Successivo →
+                                    </button>
                                 </div>
                             </>
                         )}
@@ -254,12 +256,14 @@ export default function AdminOps() {
                                 data-testid="admin-ops-grant-gold-open"
                                 onClick={() => setModal("gold")}
                                 className="bg-amber/90 text-background px-4 py-2 rounded-sm text-xs font-bold flex-1"
-                            >💰 Grant Gold</button>
+                            >💰 Grant Gold
+                            </button>
                             <button
                                 data-testid="admin-ops-grant-item-open"
                                 onClick={() => setModal("item")}
                                 className="bg-amber/90 text-background px-4 py-2 rounded-sm text-xs font-bold flex-1"
-                            >🎁 Grant Item</button>
+                            >🎁 Grant Item
+                            </button>
                         </div>
                     </div>
                 )}

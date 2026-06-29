@@ -7,8 +7,6 @@ import OverCapBanner from "@/components/OverCapBanner";
 import { useT } from "@/i18n/I18nContext";
 import { api } from "@/lib/api";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-
 const TYPE_META = {
     dungeon_3: { titleIt: "Squadre Dungeon 3", titleEn: "Dungeon 3 Squads", size: 3 },
     dungeon_5: { titleIt: "Squadre Dungeon 5", titleEn: "Dungeon 5 Squads", size: 5 },

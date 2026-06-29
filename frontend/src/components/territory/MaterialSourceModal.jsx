@@ -29,7 +29,7 @@ const RARITY_COLOR = {
     legendary: "text-amber border-amber/40",
 };
 
-function RarityBadge({ rarity, lang }) {
+function RarityBadge({ rarity, lang: _lang }) {
     const cls = RARITY_COLOR[rarity] || RARITY_COLOR.common;
     const label = (rarity || "common").toUpperCase();
     return (

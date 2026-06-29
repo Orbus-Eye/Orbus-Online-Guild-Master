@@ -14,11 +14,10 @@
 //     card pinned above the table.
 //   * `roster_avg_level` → score / 100 displayed as "Lv X.YZ".
 //   * Skeleton during fetch; empty state IT if entries.length < 3.
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "") + "/api";
@@ -101,21 +100,17 @@ export default function Leaderboard() {
         setLoading(true);
         setError(null);
         try {
-            // Cookie-auth is the canonical flow; the api.js axios instance
-            // attaches it automatically. Bearer fallback also works for the
-            // public endpoint — we use plain axios here to avoid pulling
-            // CSRF in for a read-only call.
-            const headers = {};
-            try {
-                const tok = localStorage.getItem("orbus_access_token");
-                if (tok) headers.Authorization = `Bearer ${tok}`;
-            } catch (_) { /* ignore */ }
+            // ROUND 11.4a — cookie auth is the canonical flow (withCredentials).
+            // Bearer-from-localStorage fallback removed; the public LB endpoint
+            // accepts unauthenticated callers anyway.
             const r = await axios.get(
                 `${API}/leaderboard?category=${encodeURIComponent(slug)}&limit=50`,
-                { timeout: 15_000, headers, withCredentials: true },
+                { timeout: 15_000, withCredentials: true },
             );
             setData(r.data);
         } catch (err) {
+            // ROUND 11.4b — explicit error log (no more silent catch).
+            console.error("[Leaderboard] fetchCategory failed:", err);
             const detail = err?.response?.data?.detail;
             const msg = typeof detail === "object"
                 ? (detail.user_message || detail.code || "Errore")

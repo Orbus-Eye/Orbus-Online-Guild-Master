@@ -28,8 +28,8 @@ BASE_URL = _load_backend_url()
 assert BASE_URL, "REACT_APP_BACKEND_URL must be set"
 API = f"{BASE_URL}/api"
 
-TESTER_EMAIL = "tester@orbus.test"
-TESTER_PASSWORD = "password123"
+TESTER_EMAIL = os.environ.get("TEST_USER_EMAIL", "tester@orbus.test")
+TESTER_PASSWORD = os.environ.get("TEST_USER_PASSWORD", "password123")
 
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────────

@@ -13,7 +13,9 @@ server-side and gated by `RARITY_WEIGHTS`.
 from __future__ import annotations
 
 import logging
-import random
+import random as _legacy_random  # Round 11.4d — kept for any module-level seed only
+import secrets
+random = secrets.SystemRandom()  # PvP-ready: crypto-grade RNG
 from datetime import datetime, timezone
 from typing import Optional
 

@@ -4,7 +4,11 @@ import { toast } from "sonner";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-export const TOKEN_KEY = "orbus_token";
+// ROUND 11.4a — Bearer-in-localStorage removed.
+// Auth migrated to httpOnly cookie + CSRF double-submit. The legacy
+// `TOKEN_KEY` export is kept as `null` for any rare external consumer
+// that imported it but should NEVER be used to read/write a token.
+export const TOKEN_KEY = null;
 
 // ROUND 11.1 Slice 2 — Auth migration to httpOnly cookies + CSRF.
 //   * `withCredentials: true` → browser sends/receives the `access_token`
@@ -28,14 +32,8 @@ export function setCsrfToken(tok) { _csrfToken = tok || null; }
 export function getCsrfToken() { return _csrfToken; }
 
 api.interceptors.request.use((config) => {
-    // Bearer fallback (14gg post-deploy). Cookie auth takes precedence
-    // server-side, but we keep emitting the header so legacy clients keep
-    // working through the transition window.
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    // CSRF double-submit header for mutating methods.
+    // ROUND 11.4a — Bearer fallback removed; cookie auth is the only
+    // credential carrier. Mutating methods still need the CSRF header.
     const method = (config.method || "get").toLowerCase();
     if (["post", "patch", "put", "delete"].includes(method) && _csrfToken) {
         config.headers["X-CSRF-Token"] = _csrfToken;

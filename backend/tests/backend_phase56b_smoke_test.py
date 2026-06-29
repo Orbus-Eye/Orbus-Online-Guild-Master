@@ -13,8 +13,8 @@ if not BASE_URL:
     # Fallback to local while still respecting routing rules
     BASE_URL = "http://localhost:8001"
 
-TESTER_EMAIL = "tester@orbus.test"
-TESTER_PASSWORD = "password123"
+TESTER_EMAIL = os.environ.get("TEST_USER_EMAIL", "tester@orbus.test")
+TESTER_PASSWORD = os.environ.get("TEST_USER_PASSWORD", "password123")
 
 
 @pytest.fixture(scope="module")

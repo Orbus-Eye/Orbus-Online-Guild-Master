@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import {
-    api, TOKEN_KEY, setUnauthorizedHandler, formatApiError,
+    api, setUnauthorizedHandler, formatApiError,
     refreshCsrfToken, setCsrfToken,
 } from "../lib/api";
 
@@ -20,20 +20,11 @@ export const AuthProvider = ({ children }) => {
     const [guild, setGuild] = useState(undefined);
 
     const logout = useCallback(async () => {
-        // ROUND 11.1 Slice 2 P1 — best-effort + always-clean.
-        //   1. Call backend logout WITHOUT a body so Pydantic doesn't reject
-        //      a `{}` payload (LogoutIn is now Optional but historical
-        //      builds may still expect omitted body for cleanest semantics).
-        //   2. ALWAYS scrub in-memory state + legacy localStorage token,
-        //      independent of the backend response. The cookies are server-
-        //      cleared on 200; if the network failed or the server errored,
-        //      `setUser(null)` still drops the UI to /login so the user
-        //      isn't left in an ambiguous "looks logged out" state with a
-        //      live session.
+        // ROUND 11.4a — Auth migration completed: no localStorage involved.
+        // The access_token httpOnly cookie is the only credential carrier.
         try {
             await api.post("/auth/logout");
         } catch (_e) { /* idempotent, swallow */ }
-        localStorage.removeItem(TOKEN_KEY);
         setCsrfToken(null);
         setUser(null);
         setGuild(null);
@@ -44,38 +35,12 @@ export const AuthProvider = ({ children }) => {
     }, [logout]);
 
     const refreshMe = useCallback(async () => {
-        // Try cookie auth first (no token in localStorage required).
-        try {
-            const { data } = await api.get("/auth/me");
-            setUser(data.user);
-            // Opportunistic cleanup: if cookie auth worked and a legacy
-            // token is still in localStorage, scrub it.
-            if (localStorage.getItem(TOKEN_KEY)) {
-                localStorage.removeItem(TOKEN_KEY);
-            }
-            await refreshCsrfToken();
-            return;
-        } catch (err) {
-            const status = err?.response?.status;
-            if (status !== 401) {
-                setUser(null);
-                setGuild(null);
-                return;
-            }
-        }
-        // 401 → no cookie session. Bearer fallback (14gg window).
-        const legacyToken = localStorage.getItem(TOKEN_KEY);
-        if (!legacyToken) {
-            setUser(null);
-            setGuild(null);
-            return;
-        }
+        // ROUND 11.4a — cookie-only auth (Bearer fallback removed from FE).
         try {
             const { data } = await api.get("/auth/me");
             setUser(data.user);
             await refreshCsrfToken();
         } catch {
-            localStorage.removeItem(TOKEN_KEY);
             setUser(null);
             setGuild(null);
         }
@@ -119,11 +84,18 @@ export const AuthProvider = ({ children }) => {
         return data.guild;
     };
 
-    return (
-        <AuthContext.Provider value={{
+    // ROUND 11.4b — memoize provider value to avoid unnecessary re-renders
+    // of consumers when this provider itself re-renders without state change.
+    const value = useMemo(
+        () => ({
             user, guild, login, logout, register, createGuild,
             refreshGuild, formatApiError,
-        }}>
+        }),
+        [user, guild, logout, refreshGuild],
+    );
+
+    return (
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

@@ -14,7 +14,9 @@ NO P2W. NO real-money purchase. NO Mythic. NO hard delete.
 from __future__ import annotations
 
 import logging
-import random
+import random as _legacy_random  # Round 11.4d — kept for any module-level seed only
+import secrets
+random = secrets.SystemRandom()  # PvP-ready: crypto-grade RNG
 import uuid
 from datetime import datetime, timezone
 
