@@ -15,14 +15,34 @@
   - URL sync al primo mount: se `?category=` mancante, il default risolto (`peak_power` global / `arena_rating` season) è scritto in URL via `setSearchParams({replace:true})`.
 - Verifica curl: `/api/leaderboard?category=peak_power&limit=3` → HTTP 200 con `entries=3`. `/api/leaderboard?limit=3` (senza category) → HTTP 422 (BE rifiuta correttamente).
 
-### Fix 3 — TC3 Indagine 2 item delta (DONE)
-- Query motor su `db.items` filtro `is_active != False` + `required_adventurer_level` mancante o None:
-  ```
-  Found 0 items WITHOUT required_adventurer_level (active).
-  ```
-- L'unico item escluso è `banner-of-glory` (rarity=Epic, `is_active=False`) — escluso per design.
-- **Conta finale corretta**: 121 totali, 120 attivi (Common 42 + Uncommon 28 + Rare 22 + Epic 23 + Legendary 5), 1 inactive escluso. **Tutti i 120 attivi hanno `required_adventurer_level >= 1` esplicito e `lore_reviewed=True`**.
-- Il "delta 118/120" segnalato dall'utente era un fraintendimento numerico: gli item attivi sono 120 (Epic=23, non 24, perché 1 Epic è inactive). Nessun gap reale.
+### Fix 3 — TC3 Indagine 2 item delta (RECONCILED — evidenza onesta)
+
+**Conta finale verificata via motor**:
+- `db.items.count_documents({})` = **121**
+- `db.items.count_documents({"is_active": True, "is_test": {"$ne": True}})` = **118** (filtro effettivo `/api/items` in `list_active_items`)
+- Delta = **3 item filtrati**
+
+**I 3 item invisibili via `/api/items`** (query motor `{"$or": [{"is_active": {"$ne": True}}, {"is_test": True}]}`):
+
+| slug | name | rarity | type | flag che li nasconde | motivo |
+|---|---|---|---|---|---|
+| `banner-of-glory` | Banner of Glory | Epic | accessory | `is_active=False` | legacy disattivato, non equipabile né in market |
+| `lesser_arcane_dust` | Lesser Arcane Dust | Uncommon | material | `is_active` **MISSING** | materiale forge seed Round 6B.3 senza `is_active`; type=material, non equipabile, usato solo come reagente forge |
+| `greater_arcane_dust` | Greater Arcane Dust | Rare | material | `is_active` **MISSING** | idem above |
+
+**Correzione del report precedente**: avevo dichiarato "120 attivi + 1 inactive". In realtà:
+- 118 visibili via `/api/items` (confermato dal tester)
+- 3 nascosti: 1 inactive (`banner-of-glory`) + 2 materials (`*_arcane_dust`) con `is_active` non settato
+- Mia claim originale `120 attivi` era basata su `is_active != False` (che è truthy per missing) — ho confuso "non disattivato" con "visibile API". Corretto.
+
+`banner-of-glory` ESISTE in `db.items` con `is_active=False`. Era una mia claim VERA ma incompleta (mancavano i 2 materials).
+
+**Verifica required_adventurer_level sui 3 nascosti**:
+- `banner-of-glory`: `required_adventurer_level=None` (intenzionale: item inactive, non equipabile, fuori scope R13a).
+- `lesser_arcane_dust`: `required_adventurer_level=3`, `lore_reviewed=True` (Round 13a li ha toccati comunque per coerenza).
+- `greater_arcane_dust`: `required_adventurer_level=5`, `lore_reviewed=True` (idem).
+
+**Niente seed migration richiesta**. I 3 sono fuori scope `/api/items` per design; i 118 visibili hanno tutti `required_adventurer_level >= 1` esplicito (confermato dal tester).
 
 ### Fix 4 — Evidenza badge equip UI (DONE)
 - `tests/backend_round13a_test.py::test_r13a_07_underleveled_cannot_equip_legendary_real`:
