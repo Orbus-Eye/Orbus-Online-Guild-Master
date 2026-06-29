@@ -1,0 +1,297 @@
+{
+  "schema": "round14_progression_audit/v1",
+  "generated_at": "2026-06-29T17:59:55.159795+00:00",
+  "days": 30,
+  "rng": "seed=42",
+  "snapshots_at": [
+    1,
+    7,
+    14,
+    30
+  ],
+  "constants": {
+    "INITIAL_GOLD": 100,
+    "RECRUITMENT_COST_GOLD": 20,
+    "XP_THRESHOLD_PER_LEVEL": 100,
+    "RAID_ROSTER_THRESHOLD": 12
+  },
+  "scenarios": [
+    {
+      "scenario": "casual",
+      "params": {
+        "sessions_per_day": 1,
+        "expeditions_per_day": 2,
+        "raids_per_day_if_eligible": 0,
+        "arena_matches_per_day": 0,
+        "training_active": false,
+        "skip_days_at_start": 0
+      },
+      "days_simulated": 30,
+      "snapshots": {
+        "1": {
+          "gold": 125,
+          "roster_size": 5,
+          "team_power": 180,
+          "avg_level": 2.0,
+          "expeditions_completed": 2,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "7": {
+          "gold": 1340,
+          "roster_size": 5,
+          "team_power": 225,
+          "avg_level": 5.0,
+          "expeditions_completed": 14,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "14": {
+          "gold": 3142,
+          "roster_size": 5,
+          "team_power": 255,
+          "avg_level": 7.0,
+          "expeditions_completed": 28,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "30": {
+          "gold": 9247,
+          "roster_size": 5,
+          "team_power": 330,
+          "avg_level": 12.0,
+          "expeditions_completed": 60,
+          "raids_completed": 0,
+          "phase": "active"
+        }
+      },
+      "final": {
+        "gold": 9247,
+        "gold_in_total": 9247,
+        "gold_out_total": 100,
+        "roster_size": 5,
+        "team_power": 330,
+        "expeditions_completed": 60,
+        "raids_completed": 0,
+        "arena_played": 0,
+        "expedition_success_rate_pct": "—"
+      },
+      "milestones": {
+        "first_recruit_day": 1,
+        "first_expedition_day": 1,
+        "first_5_roster_day": 1,
+        "first_12_roster_day": null,
+        "first_raid_day": null
+      },
+      "warnings": []
+    },
+    {
+      "scenario": "active",
+      "params": {
+        "sessions_per_day": 2,
+        "expeditions_per_day": 5,
+        "raids_per_day_if_eligible": 1,
+        "arena_matches_per_day": 2,
+        "training_active": false,
+        "skip_days_at_start": 0
+      },
+      "days_simulated": 30,
+      "snapshots": {
+        "1": {
+          "gold": 299,
+          "roster_size": 5,
+          "team_power": 180,
+          "avg_level": 2.0,
+          "expeditions_completed": 5,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "7": {
+          "gold": 6255,
+          "roster_size": 12,
+          "team_power": 494,
+          "avg_level": 3.92,
+          "expeditions_completed": 35,
+          "raids_completed": 5,
+          "phase": "active"
+        },
+        "14": {
+          "gold": 14678,
+          "roster_size": 12,
+          "team_power": 569,
+          "avg_level": 6.0,
+          "expeditions_completed": 70,
+          "raids_completed": 10,
+          "phase": "active"
+        },
+        "30": {
+          "gold": 43777,
+          "roster_size": 12,
+          "team_power": 734,
+          "avg_level": 10.58,
+          "expeditions_completed": 150,
+          "raids_completed": 20,
+          "phase": "active"
+        }
+      },
+      "final": {
+        "gold": 43777,
+        "gold_in_total": 43917,
+        "gold_out_total": 240,
+        "roster_size": 12,
+        "team_power": 734,
+        "expeditions_completed": 150,
+        "raids_completed": 20,
+        "arena_played": 60,
+        "expedition_success_rate_pct": "—"
+      },
+      "milestones": {
+        "first_recruit_day": 1,
+        "first_expedition_day": 1,
+        "first_5_roster_day": 1,
+        "first_12_roster_day": 2,
+        "first_raid_day": 2
+      },
+      "warnings": []
+    },
+    {
+      "scenario": "power",
+      "params": {
+        "sessions_per_day": 3,
+        "expeditions_per_day": 8,
+        "raids_per_day_if_eligible": 2,
+        "arena_matches_per_day": 5,
+        "training_active": true,
+        "skip_days_at_start": 0
+      },
+      "days_simulated": 30,
+      "snapshots": {
+        "1": {
+          "gold": 570,
+          "roster_size": 5,
+          "team_power": 197,
+          "avg_level": 3.0,
+          "expeditions_completed": 8,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "7": {
+          "gold": 11225,
+          "roster_size": 12,
+          "team_power": 553,
+          "avg_level": 5.17,
+          "expeditions_completed": 56,
+          "raids_completed": 6,
+          "phase": "active"
+        },
+        "14": {
+          "gold": 33315,
+          "roster_size": 12,
+          "team_power": 717,
+          "avg_level": 9.33,
+          "expeditions_completed": 112,
+          "raids_completed": 15,
+          "phase": "active"
+        },
+        "30": {
+          "gold": 130081,
+          "roster_size": 12,
+          "team_power": 1079,
+          "avg_level": 18.5,
+          "expeditions_completed": 240,
+          "raids_completed": 38,
+          "phase": "active"
+        }
+      },
+      "final": {
+        "gold": 130081,
+        "gold_in_total": 131121,
+        "gold_out_total": 1140,
+        "roster_size": 12,
+        "team_power": 1079,
+        "expeditions_completed": 240,
+        "raids_completed": 38,
+        "arena_played": 150,
+        "expedition_success_rate_pct": "—"
+      },
+      "milestones": {
+        "first_recruit_day": 1,
+        "first_expedition_day": 1,
+        "first_5_roster_day": 1,
+        "first_12_roster_day": 2,
+        "first_raid_day": 2
+      },
+      "warnings": []
+    },
+    {
+      "scenario": "returning",
+      "params": {
+        "sessions_per_day": 1,
+        "expeditions_per_day": 3,
+        "raids_per_day_if_eligible": 0,
+        "arena_matches_per_day": 0,
+        "training_active": false,
+        "skip_days_at_start": 5
+      },
+      "days_simulated": 30,
+      "snapshots": {
+        "1": {
+          "gold": 100,
+          "roster_size": 0,
+          "team_power": 0,
+          "avg_level": 0,
+          "expeditions_completed": 0,
+          "raids_completed": 0,
+          "phase": "skip"
+        },
+        "7": {
+          "gold": 435,
+          "roster_size": 5,
+          "team_power": 195,
+          "avg_level": 3.0,
+          "expeditions_completed": 6,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "14": {
+          "gold": 3127,
+          "roster_size": 5,
+          "team_power": 255,
+          "avg_level": 7.0,
+          "expeditions_completed": 27,
+          "raids_completed": 0,
+          "phase": "active"
+        },
+        "30": {
+          "gold": 11617,
+          "roster_size": 5,
+          "team_power": 360,
+          "avg_level": 14.0,
+          "expeditions_completed": 75,
+          "raids_completed": 0,
+          "phase": "active"
+        }
+      },
+      "final": {
+        "gold": 11617,
+        "gold_in_total": 11617,
+        "gold_out_total": 100,
+        "roster_size": 5,
+        "team_power": 360,
+        "expeditions_completed": 75,
+        "raids_completed": 0,
+        "arena_played": 0,
+        "expedition_success_rate_pct": "—"
+      },
+      "milestones": {
+        "first_recruit_day": 6,
+        "first_expedition_day": 6,
+        "first_5_roster_day": 6,
+        "first_12_roster_day": null,
+        "first_raid_day": null
+      },
+      "warnings": []
+    }
+  ],
+  "all_warnings": []
+}

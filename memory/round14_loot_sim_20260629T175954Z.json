@@ -1,0 +1,1067 @@
+{
+  "schema": "round14_loot_sim/v1",
+  "generated_at": "2026-06-29T17:59:54.595893+00:00",
+  "runs_per_dungeon": 5000,
+  "rng": "seed=42",
+  "thresholds": {
+    "epic_plus_max_pct": 8.0,
+    "common_min_pct": 40.0,
+    "single_item_max_pct": 25.0
+  },
+  "dungeons": [
+    {
+      "dungeon_slug": "goblin-warrens",
+      "runs": 5000,
+      "drops_count": 1284,
+      "no_drop_count": 3716,
+      "no_drop_rate_pct": 74.32,
+      "unique_items_dropped": 69,
+      "rarity_distribution_pct": {
+        "Common": 21.76,
+        "Uncommon": 3.92
+      },
+      "top_5_items": [
+        {
+          "slug": "acolyte-mace",
+          "count": 38,
+          "pct_of_drops": 2.96,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "river-pebble-charm",
+          "count": 36,
+          "pct_of_drops": 2.804,
+          "pct_of_runs": 0.72
+        },
+        {
+          "slug": "rusted-sword",
+          "count": 34,
+          "pct_of_drops": 2.648,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "woolen-mantle",
+          "count": 34,
+          "pct_of_drops": 2.648,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "conscripts-helm",
+          "count": 32,
+          "pct_of_drops": 2.492,
+          "pct_of_runs": 0.64
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "shadow-crypts",
+      "runs": 5000,
+      "drops_count": 1808,
+      "no_drop_count": 3192,
+      "no_drop_rate_pct": 63.84,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 20.88,
+        "Uncommon": 10.74,
+        "Rare": 4.54
+      },
+      "top_5_items": [
+        {
+          "slug": "rusted-sword",
+          "count": 37,
+          "pct_of_drops": 2.046,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "river-pebble-charm",
+          "count": 34,
+          "pct_of_drops": 1.881,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "travel_ration",
+          "count": 33,
+          "pct_of_drops": 1.825,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "scout-shortbow",
+          "count": 33,
+          "pct_of_drops": 1.825,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "healing_herb",
+          "count": 32,
+          "pct_of_drops": 1.77,
+          "pct_of_runs": 0.64
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 20.88% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "dragons-hoard",
+      "runs": 5000,
+      "drops_count": 2162,
+      "no_drop_count": 2838,
+      "no_drop_rate_pct": 56.76,
+      "unique_items_dropped": 112,
+      "rarity_distribution_pct": {
+        "Common": 2.56,
+        "Uncommon": 19.88,
+        "Rare": 14.74,
+        "Epic": 6.06
+      },
+      "top_5_items": [
+        {
+          "slug": "warlocks-grimoire",
+          "count": 50,
+          "pct_of_drops": 2.313,
+          "pct_of_runs": 1.0
+        },
+        {
+          "slug": "scholars-spectacles",
+          "count": 46,
+          "pct_of_drops": 2.128,
+          "pct_of_runs": 0.92
+        },
+        {
+          "slug": "songsteel-flute",
+          "count": 45,
+          "pct_of_drops": 2.081,
+          "pct_of_runs": 0.9
+        },
+        {
+          "slug": "steelweave-gauntlets",
+          "count": 44,
+          "pct_of_drops": 2.035,
+          "pct_of_runs": 0.88
+        },
+        {
+          "slug": "bone-rosary",
+          "count": 43,
+          "pct_of_drops": 1.989,
+          "pct_of_runs": 0.86
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 2.56% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "sewer-nest",
+      "runs": 5000,
+      "drops_count": 1091,
+      "no_drop_count": 3909,
+      "no_drop_rate_pct": 78.18,
+      "unique_items_dropped": 68,
+      "rarity_distribution_pct": {
+        "Common": 19.46,
+        "Uncommon": 2.36
+      },
+      "top_5_items": [
+        {
+          "slug": "twine-bracelet",
+          "count": 34,
+          "pct_of_drops": 3.116,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "minor_healing_potion",
+          "count": 30,
+          "pct_of_drops": 2.75,
+          "pct_of_runs": 0.6
+        },
+        {
+          "slug": "conscripts-helm",
+          "count": 28,
+          "pct_of_drops": 2.566,
+          "pct_of_runs": 0.56
+        },
+        {
+          "slug": "iron_shard",
+          "count": 28,
+          "pct_of_drops": 2.566,
+          "pct_of_runs": 0.56
+        },
+        {
+          "slug": "raw_leather",
+          "count": 27,
+          "pct_of_drops": 2.475,
+          "pct_of_runs": 0.54
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "bandit-hideout",
+      "runs": 5000,
+      "drops_count": 1496,
+      "no_drop_count": 3504,
+      "no_drop_rate_pct": 70.08,
+      "unique_items_dropped": 69,
+      "rarity_distribution_pct": {
+        "Common": 23.28,
+        "Uncommon": 6.64
+      },
+      "top_5_items": [
+        {
+          "slug": "apprentice-robe",
+          "count": 40,
+          "pct_of_drops": 2.674,
+          "pct_of_runs": 0.8
+        },
+        {
+          "slug": "training-buckler",
+          "count": 40,
+          "pct_of_drops": 2.674,
+          "pct_of_runs": 0.8
+        },
+        {
+          "slug": "travel_ration",
+          "count": 35,
+          "pct_of_drops": 2.34,
+          "pct_of_runs": 0.7
+        },
+        {
+          "slug": "driftwood-charm",
+          "count": 34,
+          "pct_of_drops": 2.273,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "oak-cudgel",
+          "count": 34,
+          "pct_of_drops": 2.273,
+          "pct_of_runs": 0.68
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "druid-grove",
+      "runs": 5000,
+      "drops_count": 1666,
+      "no_drop_count": 3334,
+      "no_drop_rate_pct": 66.68,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 20.16,
+        "Uncommon": 10.14,
+        "Rare": 3.02
+      },
+      "top_5_items": [
+        {
+          "slug": "cos-7cr91jmb",
+          "count": 34,
+          "pct_of_drops": 2.041,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "iron_shard",
+          "count": 33,
+          "pct_of_drops": 1.981,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "rough-flail",
+          "count": 33,
+          "pct_of_drops": 1.981,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "guard-spear",
+          "count": 33,
+          "pct_of_drops": 1.981,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "healing_herb",
+          "count": 29,
+          "pct_of_drops": 1.741,
+          "pct_of_runs": 0.58
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 20.16% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "cursed-mines",
+      "runs": 5000,
+      "drops_count": 1754,
+      "no_drop_count": 3246,
+      "no_drop_rate_pct": 64.92,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 20.0,
+        "Uncommon": 10.32,
+        "Rare": 4.76
+      },
+      "top_5_items": [
+        {
+          "slug": "light_cuirass",
+          "count": 34,
+          "pct_of_drops": 1.938,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "sling-and-stones",
+          "count": 33,
+          "pct_of_drops": 1.881,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "cracked-staff",
+          "count": 33,
+          "pct_of_drops": 1.881,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "apprentice-wand",
+          "count": 32,
+          "pct_of_drops": 1.824,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "copper-ring",
+          "count": 31,
+          "pct_of_drops": 1.767,
+          "pct_of_runs": 0.62
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 20.00% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "sunken-library",
+      "runs": 5000,
+      "drops_count": 1809,
+      "no_drop_count": 3191,
+      "no_drop_rate_pct": 63.82,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 19.16,
+        "Uncommon": 10.5,
+        "Rare": 6.52
+      },
+      "top_5_items": [
+        {
+          "slug": "apprentice-robe",
+          "count": 32,
+          "pct_of_drops": 1.769,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "torchbearer-cloak",
+          "count": 32,
+          "pct_of_drops": 1.769,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "healing_herb",
+          "count": 31,
+          "pct_of_drops": 1.714,
+          "pct_of_runs": 0.62
+        },
+        {
+          "slug": "apprentice-wand",
+          "count": 31,
+          "pct_of_drops": 1.714,
+          "pct_of_runs": 0.62
+        },
+        {
+          "slug": "traveler-amulet",
+          "count": 29,
+          "pct_of_drops": 1.603,
+          "pct_of_runs": 0.58
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 19.16% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "lich-sanctum",
+      "runs": 5000,
+      "drops_count": 1898,
+      "no_drop_count": 3102,
+      "no_drop_rate_pct": 62.04,
+      "unique_items_dropped": 71,
+      "rarity_distribution_pct": {
+        "Uncommon": 22.26,
+        "Rare": 12.1,
+        "Epic": 3.6
+      },
+      "top_5_items": [
+        {
+          "slug": "rangers-bow",
+          "count": 57,
+          "pct_of_drops": 3.003,
+          "pct_of_runs": 1.14
+        },
+        {
+          "slug": "hex-rod",
+          "count": 52,
+          "pct_of_drops": 2.74,
+          "pct_of_runs": 1.04
+        },
+        {
+          "slug": "goblin-dagger",
+          "count": 50,
+          "pct_of_drops": 2.634,
+          "pct_of_runs": 1.0
+        },
+        {
+          "slug": "monk-staff",
+          "count": 50,
+          "pct_of_drops": 2.634,
+          "pct_of_runs": 1.0
+        },
+        {
+          "slug": "acolyte-vestments",
+          "count": 48,
+          "pct_of_drops": 2.529,
+          "pct_of_runs": 0.96
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "storm-spire",
+      "runs": 5000,
+      "drops_count": 2044,
+      "no_drop_count": 2956,
+      "no_drop_rate_pct": 59.12,
+      "unique_items_dropped": 71,
+      "rarity_distribution_pct": {
+        "Uncommon": 21.82,
+        "Rare": 14.1,
+        "Epic": 4.96
+      },
+      "top_5_items": [
+        {
+          "slug": "bonded-amulet",
+          "count": 56,
+          "pct_of_drops": 2.74,
+          "pct_of_runs": 1.12
+        },
+        {
+          "slug": "arcane_dust",
+          "count": 52,
+          "pct_of_drops": 2.544,
+          "pct_of_runs": 1.04
+        },
+        {
+          "slug": "studded-leather",
+          "count": 49,
+          "pct_of_drops": 2.397,
+          "pct_of_runs": 0.98
+        },
+        {
+          "slug": "wanderer_amulet",
+          "count": 49,
+          "pct_of_drops": 2.397,
+          "pct_of_runs": 0.98
+        },
+        {
+          "slug": "dull_gem",
+          "count": 49,
+          "pct_of_drops": 2.397,
+          "pct_of_runs": 0.98
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "wolf-den-5p",
+      "runs": 5000,
+      "drops_count": 1501,
+      "no_drop_count": 3499,
+      "no_drop_rate_pct": 69.98,
+      "unique_items_dropped": 69,
+      "rarity_distribution_pct": {
+        "Common": 24.3,
+        "Uncommon": 5.72
+      },
+      "top_5_items": [
+        {
+          "slug": "oak-cudgel",
+          "count": 38,
+          "pct_of_drops": 2.532,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "torchbearer-cloak",
+          "count": 37,
+          "pct_of_drops": 2.465,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "apprentice-wand",
+          "count": 37,
+          "pct_of_drops": 2.465,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "raw_leather",
+          "count": 37,
+          "pct_of_drops": 2.465,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "scout-shortbow",
+          "count": 35,
+          "pct_of_drops": 2.332,
+          "pct_of_runs": 0.7
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "frost-cave-5p",
+      "runs": 5000,
+      "drops_count": 1480,
+      "no_drop_count": 3520,
+      "no_drop_rate_pct": 70.4,
+      "unique_items_dropped": 69,
+      "rarity_distribution_pct": {
+        "Common": 22.64,
+        "Uncommon": 6.96
+      },
+      "top_5_items": [
+        {
+          "slug": "iron_sword",
+          "count": 37,
+          "pct_of_drops": 2.5,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "woolen-mantle",
+          "count": 35,
+          "pct_of_drops": 2.365,
+          "pct_of_runs": 0.7
+        },
+        {
+          "slug": "healing_herb",
+          "count": 32,
+          "pct_of_drops": 2.162,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "travelers-cloak",
+          "count": 32,
+          "pct_of_drops": 2.162,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "apprentice-handbook",
+          "count": 31,
+          "pct_of_drops": 2.095,
+          "pct_of_runs": 0.62
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "salt-marsh-5p",
+      "runs": 5000,
+      "drops_count": 1564,
+      "no_drop_count": 3436,
+      "no_drop_rate_pct": 68.72,
+      "unique_items_dropped": 69,
+      "rarity_distribution_pct": {
+        "Common": 22.64,
+        "Uncommon": 8.64
+      },
+      "top_5_items": [
+        {
+          "slug": "travelers-cloak",
+          "count": 36,
+          "pct_of_drops": 2.302,
+          "pct_of_runs": 0.72
+        },
+        {
+          "slug": "cracked-staff",
+          "count": 34,
+          "pct_of_drops": 2.174,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "raw_leather",
+          "count": 34,
+          "pct_of_drops": 2.174,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "initiate_robe",
+          "count": 34,
+          "pct_of_drops": 2.174,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "training-shortsword",
+          "count": 34,
+          "pct_of_drops": 2.174,
+          "pct_of_runs": 0.68
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "iron-foundry-5p",
+      "runs": 5000,
+      "drops_count": 1832,
+      "no_drop_count": 3168,
+      "no_drop_rate_pct": 63.36,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 18.58,
+        "Uncommon": 13.2,
+        "Rare": 4.86
+      },
+      "top_5_items": [
+        {
+          "slug": "driftwood-charm",
+          "count": 34,
+          "pct_of_drops": 1.856,
+          "pct_of_runs": 0.68
+        },
+        {
+          "slug": "wardens-cloak",
+          "count": 32,
+          "pct_of_drops": 1.747,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "hunting-knife",
+          "count": 31,
+          "pct_of_drops": 1.692,
+          "pct_of_runs": 0.62
+        },
+        {
+          "slug": "balanced_dagger",
+          "count": 31,
+          "pct_of_drops": 1.692,
+          "pct_of_runs": 0.62
+        },
+        {
+          "slug": "iron_shard",
+          "count": 30,
+          "pct_of_drops": 1.638,
+          "pct_of_runs": 0.6
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 18.58% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "silent-monastery-5p",
+      "runs": 5000,
+      "drops_count": 1816,
+      "no_drop_count": 3184,
+      "no_drop_rate_pct": 63.68,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 17.62,
+        "Uncommon": 12.76,
+        "Rare": 5.94
+      },
+      "top_5_items": [
+        {
+          "slug": "wanderer_amulet",
+          "count": 37,
+          "pct_of_drops": 2.037,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "luck-coin",
+          "count": 33,
+          "pct_of_drops": 1.817,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "scout-leathers",
+          "count": 32,
+          "pct_of_drops": 1.762,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "arcane_dust",
+          "count": 31,
+          "pct_of_drops": 1.707,
+          "pct_of_runs": 0.62
+        },
+        {
+          "slug": "river-pebble-charm",
+          "count": 30,
+          "pct_of_drops": 1.652,
+          "pct_of_runs": 0.6
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 17.62% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "pirate-fleet-5p",
+      "runs": 5000,
+      "drops_count": 1846,
+      "no_drop_count": 3154,
+      "no_drop_rate_pct": 63.08,
+      "unique_items_dropped": 90,
+      "rarity_distribution_pct": {
+        "Common": 15.28,
+        "Uncommon": 14.28,
+        "Rare": 7.36
+      },
+      "top_5_items": [
+        {
+          "slug": "hex-rod",
+          "count": 38,
+          "pct_of_drops": 2.059,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "silver-pendant",
+          "count": 38,
+          "pct_of_drops": 2.059,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "dull_gem",
+          "count": 33,
+          "pct_of_drops": 1.788,
+          "pct_of_runs": 0.66
+        },
+        {
+          "slug": "monk-staff",
+          "count": 32,
+          "pct_of_drops": 1.733,
+          "pct_of_runs": 0.64
+        },
+        {
+          "slug": "steelweave-gauntlets",
+          "count": 31,
+          "pct_of_drops": 1.679,
+          "pct_of_runs": 0.62
+        }
+      ],
+      "warnings": [
+        "common_rate_low: 15.28% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "obsidian-arena-5p",
+      "runs": 5000,
+      "drops_count": 1890,
+      "no_drop_count": 3110,
+      "no_drop_rate_pct": 62.2,
+      "unique_items_dropped": 71,
+      "rarity_distribution_pct": {
+        "Uncommon": 18.82,
+        "Rare": 13.9,
+        "Epic": 5.08
+      },
+      "top_5_items": [
+        {
+          "slug": "guard-spear",
+          "count": 45,
+          "pct_of_drops": 2.381,
+          "pct_of_runs": 0.9
+        },
+        {
+          "slug": "songsteel-flute",
+          "count": 44,
+          "pct_of_drops": 2.328,
+          "pct_of_runs": 0.88
+        },
+        {
+          "slug": "luck-coin",
+          "count": 43,
+          "pct_of_drops": 2.275,
+          "pct_of_runs": 0.86
+        },
+        {
+          "slug": "acolyte-vestments",
+          "count": 42,
+          "pct_of_drops": 2.222,
+          "pct_of_runs": 0.84
+        },
+        {
+          "slug": "oracle-pendant",
+          "count": 42,
+          "pct_of_drops": 2.222,
+          "pct_of_runs": 0.84
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "clockwork-vault-5p",
+      "runs": 5000,
+      "drops_count": 1998,
+      "no_drop_count": 3002,
+      "no_drop_rate_pct": 60.04,
+      "unique_items_dropped": 71,
+      "rarity_distribution_pct": {
+        "Uncommon": 19.44,
+        "Rare": 14.22,
+        "Epic": 6.3
+      },
+      "top_5_items": [
+        {
+          "slug": "hex-rod",
+          "count": 50,
+          "pct_of_drops": 2.503,
+          "pct_of_runs": 1.0
+        },
+        {
+          "slug": "balanced_dagger",
+          "count": 48,
+          "pct_of_drops": 2.402,
+          "pct_of_runs": 0.96
+        },
+        {
+          "slug": "warding-bracer",
+          "count": 46,
+          "pct_of_drops": 2.302,
+          "pct_of_runs": 0.92
+        },
+        {
+          "slug": "arcane_dust",
+          "count": 46,
+          "pct_of_drops": 2.302,
+          "pct_of_runs": 0.92
+        },
+        {
+          "slug": "spec_signature_truestrike_bow",
+          "count": 46,
+          "pct_of_drops": 2.302,
+          "pct_of_runs": 0.92
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "voidspire-5p",
+      "runs": 5000,
+      "drops_count": 2014,
+      "no_drop_count": 2986,
+      "no_drop_rate_pct": 59.72,
+      "unique_items_dropped": 71,
+      "rarity_distribution_pct": {
+        "Uncommon": 17.72,
+        "Rare": 16.28,
+        "Epic": 6.28
+      },
+      "top_5_items": [
+        {
+          "slug": "steel-half-plate",
+          "count": 51,
+          "pct_of_drops": 2.532,
+          "pct_of_runs": 1.02
+        },
+        {
+          "slug": "seers-monocle",
+          "count": 49,
+          "pct_of_drops": 2.433,
+          "pct_of_runs": 0.98
+        },
+        {
+          "slug": "oracle-pendant",
+          "count": 49,
+          "pct_of_drops": 2.433,
+          "pct_of_runs": 0.98
+        },
+        {
+          "slug": "dragon_essence",
+          "count": 47,
+          "pct_of_drops": 2.334,
+          "pct_of_runs": 0.94
+        },
+        {
+          "slug": "spec_signature_battle_standard",
+          "count": 46,
+          "pct_of_drops": 2.284,
+          "pct_of_runs": 0.92
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "dungeon_slug": "infernal-pit-5p",
+      "runs": 5000,
+      "drops_count": 2097,
+      "no_drop_count": 2903,
+      "no_drop_rate_pct": 58.06,
+      "unique_items_dropped": 116,
+      "rarity_distribution_pct": {
+        "Common": 3.2,
+        "Uncommon": 11.34,
+        "Rare": 13.74,
+        "Epic": 11.76,
+        "Legendary": 1.9
+      },
+      "top_5_items": [
+        {
+          "slug": "captains-signet",
+          "count": 44,
+          "pct_of_drops": 2.098,
+          "pct_of_runs": 0.88
+        },
+        {
+          "slug": "steel-half-plate",
+          "count": 42,
+          "pct_of_drops": 2.003,
+          "pct_of_runs": 0.84
+        },
+        {
+          "slug": "spec_signature_battle_standard",
+          "count": 38,
+          "pct_of_drops": 1.812,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "gravewarden-mail",
+          "count": 38,
+          "pct_of_drops": 1.812,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "relic-signet",
+          "count": 37,
+          "pct_of_drops": 1.764,
+          "pct_of_runs": 0.74
+        }
+      ],
+      "warnings": [
+        "epic_plus_rate_high: 13.66% > soglia 8.0%",
+        "common_rate_low: 3.20% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "celestial-citadel-5p",
+      "runs": 5000,
+      "drops_count": 2065,
+      "no_drop_count": 2935,
+      "no_drop_rate_pct": 58.7,
+      "unique_items_dropped": 117,
+      "rarity_distribution_pct": {
+        "Common": 3.08,
+        "Uncommon": 10.96,
+        "Rare": 14.02,
+        "Epic": 11.5,
+        "Legendary": 1.74
+      },
+      "top_5_items": [
+        {
+          "slug": "minor_sigil",
+          "count": 41,
+          "pct_of_drops": 1.985,
+          "pct_of_runs": 0.82
+        },
+        {
+          "slug": "relic-signet",
+          "count": 41,
+          "pct_of_drops": 1.985,
+          "pct_of_runs": 0.82
+        },
+        {
+          "slug": "warden-longsword",
+          "count": 39,
+          "pct_of_drops": 1.889,
+          "pct_of_runs": 0.78
+        },
+        {
+          "slug": "moonsilver-bow",
+          "count": 37,
+          "pct_of_drops": 1.792,
+          "pct_of_runs": 0.74
+        },
+        {
+          "slug": "oracle-pendant",
+          "count": 36,
+          "pct_of_drops": 1.743,
+          "pct_of_runs": 0.72
+        }
+      ],
+      "warnings": [
+        "epic_plus_rate_high: 13.24% > soglia 8.0%",
+        "common_rate_low: 3.08% < soglia 40.0%"
+      ]
+    },
+    {
+      "dungeon_slug": "world-tree-roots-5p",
+      "runs": 5000,
+      "drops_count": 2051,
+      "no_drop_count": 2949,
+      "no_drop_rate_pct": 58.98,
+      "unique_items_dropped": 118,
+      "rarity_distribution_pct": {
+        "Common": 3.24,
+        "Uncommon": 10.92,
+        "Rare": 13.0,
+        "Epic": 12.2,
+        "Legendary": 1.66
+      },
+      "top_5_items": [
+        {
+          "slug": "warden-longsword",
+          "count": 43,
+          "pct_of_drops": 2.097,
+          "pct_of_runs": 0.86
+        },
+        {
+          "slug": "spiritglass-staff",
+          "count": 42,
+          "pct_of_drops": 2.048,
+          "pct_of_runs": 0.84
+        },
+        {
+          "slug": "aether-weave-robe",
+          "count": 38,
+          "pct_of_drops": 1.853,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "captains-signet",
+          "count": 38,
+          "pct_of_drops": 1.853,
+          "pct_of_runs": 0.76
+        },
+        {
+          "slug": "stormforged-plate",
+          "count": 34,
+          "pct_of_drops": 1.658,
+          "pct_of_runs": 0.68
+        }
+      ],
+      "warnings": [
+        "epic_plus_rate_high: 13.86% > soglia 8.0%",
+        "common_rate_low: 3.24% < soglia 40.0%"
+      ]
+    }
+  ],
+  "all_warnings": [
+    "common_rate_low: 20.88% < soglia 40.0%",
+    "common_rate_low: 2.56% < soglia 40.0%",
+    "common_rate_low: 20.16% < soglia 40.0%",
+    "common_rate_low: 20.00% < soglia 40.0%",
+    "common_rate_low: 19.16% < soglia 40.0%",
+    "common_rate_low: 18.58% < soglia 40.0%",
+    "common_rate_low: 17.62% < soglia 40.0%",
+    "common_rate_low: 15.28% < soglia 40.0%",
+    "epic_plus_rate_high: 13.66% > soglia 8.0%",
+    "common_rate_low: 3.20% < soglia 40.0%",
+    "epic_plus_rate_high: 13.24% > soglia 8.0%",
+    "common_rate_low: 3.08% < soglia 40.0%",
+    "epic_plus_rate_high: 13.86% > soglia 8.0%",
+    "common_rate_low: 3.24% < soglia 40.0%"
+  ]
+}
