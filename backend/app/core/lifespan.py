@@ -53,12 +53,18 @@ async def lifespan(app: FastAPI):
         from app.scripts.seed_round12_release_tester_roster import (
             run as _seed_release_tester,
         )
+        # ROUND 13a — Recovery + Lore pack seeds (idempotent, additive).
+        from app.scripts.seed_round13a_dungeon_raid_lore import run as _seed_r13a_dr
+        from app.scripts.seed_round13a_items_lore import run as _seed_r13a_items
         await _seed_preseason()
         await _seed_rewards()
         await _seed_demos()
         # ROUND 12.D.3 — preview-only: free tester's stuck adventurers
         # so they can build a PvP defense team. No-op in production.
         await _seed_release_tester()
+        # ROUND 13a — Apply lore patches to dungeons/raids + items.
+        await _seed_r13a_dr()
+        await _seed_r13a_items()
     except Exception as exc:  # noqa: BLE001
         import logging
         logging.getLogger("orbus").warning("ROUND 12 seed at startup failed: %s", exc)

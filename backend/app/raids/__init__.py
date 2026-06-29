@@ -59,11 +59,13 @@ def raid_dungeon_public(d: dict) -> dict:
     # if present, else from `tier` (1→8, 2→12, 3→15). Avoids a circular
     # import via late binding.
     from app.expeditions.level_gate import legacy_min_level_for_raid
+    from app.content.lore_meta import raid_lore_meta
+    meta = raid_lore_meta(d.get("slug", ""))
     return {
         "id": d["id"],
         "slug": d["slug"],
         "name": d["name"],
-        "name_it": d.get("name_it"),
+        "name_it": d.get("name_it") or meta.get("name_it") or d["name"],
         "description": d.get("description"),
         "description_it": d.get("description_it"),
         "tier": d.get("tier", 1),
@@ -79,6 +81,16 @@ def raid_dungeon_public(d: dict) -> dict:
         "guaranteed_dragon_essence_max": d.get("guaranteed_dragon_essence_max", 3),
         "gate": d.get("gate") or {},
         "min_adventurer_level": legacy_min_level_for_raid(d),
+        # ROUND 13a — Lore meta (additive, PII-safe).
+        "lore_theme": d.get("lore_theme") or meta.get("lore_theme"),
+        "content_family": d.get("content_family") or meta.get("content_family") or "baseline",
+        "emotional_tone": d.get("emotional_tone") or meta.get("emotional_tone"),
+        "boss_name": d.get("boss_name") or meta.get("boss_name"),
+        "narrative_hook": d.get("narrative_hook") or meta.get("narrative_hook"),
+        "spoiler_level": d.get("spoiler_level") or meta.get("spoiler_level") or "public",
+        "is_new": meta.get("is_new", False),
+        "is_void_undead": meta.get("is_void_undead", False),
+        "lore_reviewed": bool(d.get("lore_reviewed", False)),
     }
 
 
