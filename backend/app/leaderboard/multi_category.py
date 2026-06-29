@@ -65,6 +65,8 @@ async def _exclude_filter(db) -> dict:
     flt: dict = {
         "is_test_artifact": {"$ne": True},
         "is_demo_opponent": {"$ne": True},
+        # ROUND 14 — exclude guilds soft-archived by pre-launch cleanup.
+        "is_archived_pre_launch": {"$ne": True},
     }
     if blocked_owner_ids:
         flt["owner_user_id"] = {"$nin": blocked_owner_ids}

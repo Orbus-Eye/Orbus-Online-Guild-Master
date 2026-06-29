@@ -49,6 +49,8 @@ async def _eligible_parts(db, season_id: str) -> list[dict]:
     test_guild_ids = set(await db.guilds.distinct("id", {"$or": [
         {"is_test_artifact": True},
         {"is_demo_opponent": True},
+        # ROUND 14 — exclude pre-launch cleanup archives.
+        {"is_archived_pre_launch": True},
         {"owner_user_id": {"$in": list(test_owner_ids | demo_owner_ids)}},
     ]}))
     return [r for r in rows if r["guild_id"] not in test_guild_ids]

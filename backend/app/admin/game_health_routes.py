@@ -34,6 +34,7 @@ EXCLUDE_GUILD = {
     "is_test_artifact": {"$ne": True},
     "is_demo_opponent": {"$ne": True},
     "is_demo_owner": {"$ne": True},
+    "is_archived_pre_launch": {"$ne": True},  # ROUND 14 cleanup
     "deleted_at": {"$exists": False},
 }
 
@@ -268,6 +269,43 @@ async def anomalies_health(
     # 4. Equipment rows with adventurer below required_level (post-audit residual).
     # Cheap proxy: count equipped_items where flagged by last audit run.
     return {"warnings": warnings, "checked_at": datetime.now(timezone.utc).isoformat()}
+
+
+# ─── ROUND 14 cleanup safety net ──────────────────────────────────────────
+@router.post("/guilds/{guild_id}/unarchive")
+async def unarchive_guild(
+    guild_id: str,
+    payload: dict,
+    _admin: dict = Depends(get_admin_user),
+) -> dict:
+    """Re-activate a guild that was soft-archived by R14 pre-launch cleanup.
+
+    Requires `reason` field min 3 chars. Audit-logged.
+    """
+    reason = (payload or {}).get("reason", "").strip()
+    if len(reason) < 3:
+        from fastapi import HTTPException
+        raise HTTPException(400, {"code": "reason_too_short",
+                                  "user_message": "reason min 3 char"})
+    res = await db.guilds.update_one(
+        {"id": guild_id, "is_archived_pre_launch": True},
+        {"$set": {"is_archived_pre_launch": False,
+                  "unarchived_at": datetime.now(timezone.utc).isoformat(),
+                  "unarchived_reason": reason}},
+    )
+    if res.matched_count == 0:
+        from fastapi import HTTPException
+        raise HTTPException(404, {"code": "guild_not_archived"})
+    try:
+        from app.audit.log import write_audit
+        await write_audit(
+            db, event_type="guild_unarchived_pre_launch",
+            actor_guild_id=guild_id, source="admin.unarchive",
+            metadata={"reason": reason},
+        )
+    except Exception:  # noqa: BLE001
+        pass
+    return {"unarchived": True, "guild_id": guild_id, "reason": reason}
 
 
 __all__ = ["router"]

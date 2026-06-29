@@ -56,6 +56,9 @@ EVENT_TYPES = frozenset({
     "season_stat_incremented",
     # ROUND 13c
     "market_rotation_refreshed",
+    # ROUND 14
+    "guild_archived_pre_launch",
+    "guild_unarchived_pre_launch",
     "shop_system_sale",
     # ROUND 6A.1 — adventurer generation (server-authoritative)
     "adventurer_generated",
