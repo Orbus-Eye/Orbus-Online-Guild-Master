@@ -328,6 +328,12 @@ async def get_category_rows(db, category: str) -> tuple[list[dict], bool]:
             return cached["rows"], True
         t0 = time.time()
         rows = await CATEGORIES[category]["compute"](db)
+        # ROUND 15.1 — score=0 filter. Public leaderboards must not list
+        # guilds that have never engaged with the category. This is
+        # applied AFTER the calculator so each calc remains simple, and
+        # cached to avoid recomputation. NO data loss: the guild remains
+        # eligible — it simply doesn't show until it earns a score.
+        rows = [r for r in rows if int(r.get("score", 0)) > 0]
         dt_ms = int((time.time() - t0) * 1000)
         _CACHE[category] = {"rows": rows, "ts": time.time()}
         # Audit best-effort.

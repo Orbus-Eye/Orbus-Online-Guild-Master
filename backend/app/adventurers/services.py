@@ -127,6 +127,9 @@ def class_public(doc: dict) -> dict:
     return {
         "id": doc["id"],
         "name": doc["name"],
+        # ROUND 15.1 — IT display name (falls back to `name` until the
+        # seed migration has touched the doc).
+        "display_name_it": doc.get("display_name_it") or doc.get("name"),
         "slug": doc["slug"],
         "role": doc["role"],
         "description": doc.get("description", ""),
@@ -136,6 +139,17 @@ def class_public(doc: dict) -> dict:
         "base_endurance": doc["base_endurance"],
         "base_faith": doc["base_faith"],
         "is_active": doc.get("is_active", True),
+        # ROUND 15 — class identity (Fase 1). All optional in the
+        # projection; the FE shows "—" if missing on legacy/test docs.
+        "primary_stat": doc.get("primary_stat"),
+        "secondary_stats": doc.get("secondary_stats") or [],
+        "allowed_weapon_tags": doc.get("allowed_weapon_tags") or [],
+        "allowed_armor_tags": doc.get("allowed_armor_tags") or [],
+        "preferred_item_tags": doc.get("preferred_item_tags") or [],
+        "role_tags": doc.get("role_tags") or [],
+        "xp_primary_stat_policy": doc.get("xp_primary_stat_policy") or {"enabled": False},
+        "guide_description_it": doc.get("guide_description_it") or "",
+        "guide_description_en": doc.get("guide_description_en") or "",
     }
 
 

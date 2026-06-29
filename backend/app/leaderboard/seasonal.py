@@ -251,6 +251,8 @@ async def get_seasonal_rows(db, category: str, season_id: str) -> tuple[list[dic
         if cached and (time.time() - cached["ts"]) < _TTL:
             return cached["rows"], True
         rows = await SEASONAL_CATEGORIES[category]["compute"](db, season_id)
+        # ROUND 15.1 — score=0 filter (same rationale as multi_category).
+        rows = [r for r in rows if int(r.get("score", 0)) > 0]
         _CACHE[k] = {"rows": rows, "ts": time.time()}
         return rows, False
 

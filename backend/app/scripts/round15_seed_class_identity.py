@@ -44,6 +44,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 CLASS_IDENTITY: dict[str, dict] = {
     # ─── TANKS ────────────────────────────────────────────────────────────
     "warrior": {
+        "display_name_it": "Guerriero",
         "primary_stat": "strength",
         "secondary_stats": ["endurance"],
         "allowed_weapon_tags": ["sword", "axe", "mace", "two_handed"],
@@ -66,6 +67,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "paladin": {
+        "display_name_it": "Paladino",
         "primary_stat": "faith",
         "secondary_stats": ["strength", "endurance"],
         "allowed_weapon_tags": ["sword", "mace", "two_handed"],
@@ -87,6 +89,7 @@ CLASS_IDENTITY: dict[str, dict] = {
     },
     # ─── PHYSICAL DPS ─────────────────────────────────────────────────────
     "rogue": {
+        "display_name_it": "Ladro",
         "primary_stat": "agility",
         "secondary_stats": ["strength"],
         "allowed_weapon_tags": ["dagger", "shortsword", "finesse"],
@@ -106,6 +109,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "ranger": {
+        "display_name_it": "Ranger",
         "primary_stat": "agility",
         "secondary_stats": ["endurance"],
         "allowed_weapon_tags": ["bow", "crossbow", "ranged"],
@@ -125,6 +129,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "assassin": {
+        "display_name_it": "Assassino",
         "primary_stat": "agility",
         "secondary_stats": ["strength"],
         "allowed_weapon_tags": ["dagger", "finesse", "poison"],
@@ -144,6 +149,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "berserker": {
+        "display_name_it": "Berserker",
         "primary_stat": "strength",
         "secondary_stats": ["endurance"],
         "allowed_weapon_tags": ["two_handed", "axe", "rage"],
@@ -163,6 +169,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "monk": {
+        "display_name_it": "Monaco",
         "primary_stat": "agility",
         "secondary_stats": ["endurance", "faith"],
         "allowed_weapon_tags": ["unarmed", "staff", "martial"],
@@ -184,6 +191,7 @@ CLASS_IDENTITY: dict[str, dict] = {
     },
     # ─── MAGIC DPS ────────────────────────────────────────────────────────
     "mage": {
+        "display_name_it": "Mago",
         "primary_stat": "intellect",
         "secondary_stats": ["endurance"],
         "allowed_weapon_tags": ["staff", "wand", "arcane"],
@@ -202,6 +210,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "necromancer": {
+        "display_name_it": "Negromante",
         "primary_stat": "intellect",
         "secondary_stats": ["agility"],
         "allowed_weapon_tags": ["staff", "scythe", "dark"],
@@ -222,6 +231,7 @@ CLASS_IDENTITY: dict[str, dict] = {
     },
     # ─── HEALERS ──────────────────────────────────────────────────────────
     "priest": {
+        "display_name_it": "Sacerdote",
         "primary_stat": "faith",
         "secondary_stats": ["intellect"],
         "allowed_weapon_tags": ["mace", "scepter", "holy"],
@@ -240,6 +250,7 @@ CLASS_IDENTITY: dict[str, dict] = {
         ),
     },
     "druid": {
+        "display_name_it": "Druido",
         "primary_stat": "faith",
         "secondary_stats": ["intellect"],
         "allowed_weapon_tags": ["staff", "club", "natural"],
@@ -260,6 +271,7 @@ CLASS_IDENTITY: dict[str, dict] = {
     },
     # ─── SUPPORT ──────────────────────────────────────────────────────────
     "bard": {
+        "display_name_it": "Bardo",
         "primary_stat": "intellect",
         "secondary_stats": ["agility", "faith"],
         "allowed_weapon_tags": ["dagger", "instrument", "sonic"],
