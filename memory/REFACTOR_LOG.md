@@ -5,6 +5,56 @@
 > Each section is a self-contained record of a phase: scope, files touched,
 > verification commands, status.
 
+
+---
+
+## ROUND 11.3 Turno 3 — Fase 3A (Feb 2026, PREVIEW only)
+
+**Goal**: Recruit Freeze Bench — let players park up to 2 candidates that
+survive pool refreshes, without bypassing the roster cap or economy.
+
+### Backend (TASK C)
+- `backend/app/recruitment/freeze_bench.py` *(new, ~330 LOC)* — single source
+  of truth for snapshot shape, atomic CAS push/pull with capacity guard,
+  compensating restore on every failure branch, audit emit.
+- `backend/app/recruitment/schemas.py` *(rewritten)* — adds `FreezeIn`,
+  `UnfreezeIn`, `RecruitFrozenIn`.
+- `backend/app/recruitment/routes.py` *(patched)* — 4 new endpoints:
+  `GET /api/recruitment/frozen`, `POST /api/recruitment/freeze`,
+  `POST /api/recruitment/unfreeze`, `POST /api/recruitment/recruit-frozen`.
+  Pre-flight `assert_not_over_cap` + post-insert recount on recruit-frozen.
+- `backend/app/audit/log.py` *(patched)* — registers
+  `recruit_candidate_frozen`, `recruit_candidate_unfrozen`,
+  `recruit_frozen_candidate_hired`, plus
+  `equipment_auto_unequipped_level_requirement` (TASK B back-fix).
+
+### Tests
+- `backend/tests/backend_round113_taskC_freeze_bench_test.py` *(new)* — 8 BE
+  tests covering: empty bench, freeze + refresh survival + audit, 404
+  unknown candidate, 409 bench full + no pool consumption on rejection,
+  unfreeze drop + audit + no pool leak, recruit-frozen happy + PII guard,
+  402 insufficient gold with snapshot restore, 423 roster cap full with
+  snapshot restore + no gold debit.
+- **Result**: 8/8 PASS.
+
+### DB schema additions on `guilds`
+- `recruit_freeze_bench.frozen_candidates: [snapshot]` (default `[]`, max 2).
+- `recruit_freeze_bench.max_slots: int` (default 2, server-authoritative).
+
+### Reproducer
+```bash
+cd /app/backend && MONGO_URL="mongodb://localhost:27017" \
+  DB_NAME="test_database" BACKEND_URL="http://localhost:8001" \
+  python -m pytest tests/backend_round113_taskC_freeze_bench_test.py -v
+```
+
+### Notes
+- No P2W: same `RECRUITMENT_COST_GOLD` as a normal recruit.
+- No hard delete: unfreeze drops the snapshot in-place (not returned to pool).
+- CSRF: 4 endpoints inherit the existing middleware (Authorization Bearer
+  + CSRF double-submit cookie). No new auth surface.
+
+
 ---
 
 ## ROUND 6B — Stabilization (Feb 2026, pre-deploy)

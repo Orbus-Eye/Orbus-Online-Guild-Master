@@ -120,6 +120,12 @@ EVENT_TYPES = frozenset({
     "contract_claimed",
     "guild_milestone_reached",
     "guild_milestone_claimed",
+    # ROUND 11.3 TASK B — Equipment level requirement
+    "equipment_auto_unequipped_level_requirement",
+    # ROUND 11.3 TASK C — Recruit Freeze Bench
+    "recruit_candidate_frozen",
+    "recruit_candidate_unfrozen",
+    "recruit_frozen_candidate_hired",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.
