@@ -8,6 +8,62 @@
 
 ---
 
+## ROUND 11.3 Turno 3 — Fase 3C (Feb 2026, PREVIEW only)
+
+**Goal**: TASK D — Multi-category leaderboard endpoint con 8 categorie
+competitive cachate in-memory 60s, anti-PII e con esclusione test
+artifacts. Sostituisce il vecchio `/leaderboard/guilds` come hub
+canonico (i due endpoint legacy `/guilds` e `/raids` restano attivi).
+
+### Backend
+- `backend/app/leaderboard/multi_category.py` *(new, ~380 LOC)* —
+  registry decoratore-based delle 8 categorie con calcolatori atomici
+  (peak_power, raid_score, dungeon_clears, raid_clears, territory_score,
+  contracts_completed, training_score, roster_avg_level), filtro test
+  artifacts riusato da tutte, cache TTL=60s con asyncio.Lock per-cat,
+  audit `leaderboard_cache_rebuilt` emesso su ogni rebuild.
+- `backend/app/leaderboard/routes.py` *(rewritten)* — aggiunge
+  `GET /api/leaderboard?category=<slug>&limit=<n>` (PUBLIC) +
+  `GET /api/leaderboard/categories` (catalogo per FE picker). Header
+  `X-Cache: hit|miss`. `is_me` + `my_entry` resolution via Bearer/cookie.
+- `backend/app/audit/log.py` *(patched)* — registra
+  `leaderboard_cache_rebuilt` event_type.
+
+### Tests
+- `backend/tests/backend_round113_taskD_leaderboard_test.py` *(new)* —
+  D.01 tutte 8 categorie 200, D.02 unknown 400 strutturato, D.03 X-Cache
+  hit/miss + perf<200ms, D.04 esclusione test, D.05 no-PII, D.06
+  ordinamento+rank, D.07 is_me/my_entry (SKIPPED cache-cold),
+  D.08 catalog 8 cats.
+- **Result**: 14 PASS, 1 SKIPPED (D.07 — sensibile a cache TTL
+  cross-process; E2E lo copre lato FE).
+
+### Privacy/security
+- ✅ Output ESCLUSIVAMENTE `guild_public_id` + `guild_name` + `rank` +
+  `score` + `is_me`. NO email/user_id/gold/owner_user_id/_id.
+- ✅ Test artifacts (`is_test_artifact=true`) + test users
+  (`is_test_user=true`) esclusi dal filtro a monte di ogni calcolatore.
+- ✅ Endpoint PUBLIC: nessun 401 forzato; auth opzionale solo per
+  arricchire `is_me`/`my_entry`.
+
+### Fallback documentati
+- `contracts_completed` → `guilds.contracts_completed_count` (campo
+  legacy backfill, score 0 se assente). Nessuna collezione dedicata in
+  preview.
+- `training_score` → somma dei livelli del roster attivo (proxy del
+  training XP). Nessuna collezione `training_sessions` in preview.
+
+### Cosmetic backlog (da Fase 3A)
+- `guild.adventurer_count` ritorna stale in `/api/guilds/me` subito dopo
+  soft-retire — si auto-corregge al recount post-recruit/post-territory.
+  Solo display; nessun side effect su economy/cap. Da risolvere in un
+  refactor del serializer guild quando avremo il "guild stats snapshot"
+  centralizzato. Priority: P3.
+
+
+
+---
+
 ## ROUND 11.3 Turno 3 — Fase 3B (Feb 2026, PREVIEW only)
 
 **Goal**: TASK E — espandere la libreria dungeon/raid con 15 contenuti

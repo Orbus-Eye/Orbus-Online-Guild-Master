@@ -1,16 +1,63 @@
-"""Leaderboard routes (Phase 9.1).
+"""Leaderboard routes (Phase 9.1 + ROUND 11.3 multi-category).
 
-`GET /api/leaderboard/guilds` — PUBLIC (no JWT required). Deliberately does
-NOT use `Depends(get_current_user)`. Returns a paginated, privacy-preserving
-ranked list of guilds.
+* `/guilds` — legacy peak-power ranking (Phase 9.1).
+* `/raids` — legacy raid-score ranking (Phase 19).
+* `/` (NEW R11.3) — unified multi-category endpoint with `?category=`
+  parameter, 8 categories, 60s in-memory cache.
+* `/categories` (NEW R11.3) — catalog of available categories for the FE
+  picker (slug + IT label + IT description).
 """
-from fastapi import APIRouter, Query
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Header, Query, Request, Response
 
 from app.core.database import db
+from app.leaderboard.multi_category import (
+    category_meta,
+    get_category_rows,
+    list_categories,
+)
 from app.leaderboard.services import get_guild_leaderboard, get_raids_leaderboard
 
 
 router = APIRouter(prefix="/api/leaderboard", tags=["leaderboard"])
+
+
+async def _resolve_caller_guild_public_id(request: Request, authorization: str | None) -> str | None:
+    """Best-effort resolution of the caller's guild public_id.
+
+    Multi-category leaderboard is PUBLIC (no auth required), but if a
+    valid token is present we use it to fill `is_me` + `my_entry`. On any
+    auth failure we return None silently — we don't 401 a public endpoint.
+
+    Resolution order:
+      1. `access_token` httpOnly cookie (current Round 11 flow).
+      2. `Authorization: Bearer <jwt>` (legacy + test compat).
+    """
+    import jwt
+    from app.core.security import ACCESS_COOKIE_NAME, JWT_SECRET, JWT_ALGORITHM
+    token = request.cookies.get(ACCESS_COOKIE_NAME)
+    if not token and authorization and authorization.lower().startswith("bearer "):
+        token = authorization[7:].strip()
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except Exception:
+        return None
+    user_id = payload.get("sub") or payload.get("user_id")
+    if not user_id:
+        return None
+    try:
+        g = await db.guilds.find_one(
+            {"owner_user_id": user_id},
+            {"_id": 0, "public_id": 1, "id": 1},
+        )
+        if not g:
+            return None
+        return g.get("public_id") or g["id"][:8]
+    except Exception:
+        return None
 
 
 @router.get("/guilds")
@@ -34,6 +81,75 @@ async def list_raid_leaderboard(
     `limit ∈ [1, 100]`, `offset ∈ [0, 1000]` — cap intentional for perf.
     """
     return await get_raids_leaderboard(db, limit=limit, offset=offset)
+
+
+@router.get("/categories")
+async def list_leaderboard_categories():
+    """ROUND 11.3 — Catalog of multi-category leaderboard slugs (FE picker)."""
+    return {"categories": list_categories()}
+
+
+@router.get("")
+async def list_multi_category(
+    request: Request,
+    response: Response,
+    category: str = Query(..., min_length=2, max_length=64),
+    limit: int = Query(50, ge=1, le=100),
+    authorization: str | None = Header(default=None),
+):
+    """ROUND 11.3 — Multi-category leaderboard.
+
+    `?category=<slug>` is required. 60s in-memory cache; sets `X-Cache: hit|miss`.
+    If the caller is authenticated (cookie/Bearer), the response also
+    includes `my_entry` with the caller's guild rank.
+    Privacy: test artifacts and test users excluded.
+    """
+    rows, hit = await get_category_rows(db, category)
+    response.headers["X-Cache"] = "hit" if hit else "miss"
+
+    # Resolve caller's guild (for `is_me` + `my_entry`). PUBLIC endpoint —
+    # auth resolution is best-effort.
+    me_public_id = await _resolve_caller_guild_public_id(request, authorization)
+
+    # Materialise the public projection with rank + is_me.
+    entries = []
+    my_entry = None
+    for idx, row in enumerate(rows[:limit]):
+        is_me = (me_public_id is not None and row["guild_public_id"] == me_public_id)
+        out = {
+            "rank": idx + 1,
+            "guild_public_id": row["guild_public_id"],
+            "guild_name": row["guild_name"],
+            "score": row["score"],
+            "is_me": is_me,
+        }
+        entries.append(out)
+
+    # If the caller is not in the top `limit`, scan the rest for `my_entry`.
+    if me_public_id is not None and not any(e["is_me"] for e in entries):
+        for idx, row in enumerate(rows):
+            if row["guild_public_id"] == me_public_id:
+                my_entry = {
+                    "rank": idx + 1,
+                    "guild_public_id": row["guild_public_id"],
+                    "guild_name": row["guild_name"],
+                    "score": row["score"],
+                    "is_me": True,
+                }
+                break
+    elif me_public_id is not None:
+        # Caller is already in the top — `my_entry` mirrors the top row.
+        my_entry = next((e for e in entries if e["is_me"]), None)
+
+    meta = category_meta(category)
+    return {
+        "category": meta["slug"],
+        "category_label_it": meta["label_it"],
+        "category_description_it": meta["description_it"],
+        "entries": entries,
+        "my_entry": my_entry,
+        "computed_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 __all__ = ["router"]
