@@ -12,6 +12,7 @@ import {
     advMinLevelBadge,
     advDungeonTooltip,
 } from "../utils/levelGate";
+import { rarityLabel } from "../utils/displayLabels";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -28,7 +29,7 @@ const RarityBadge = ({ rarity }) => (
             borderColor: (RARITY_COLOR[rarity] || RARITY_COLOR.Common) + "55",
         }}
     >
-        {rarity?.toUpperCase()}
+        {rarityLabel(rarity).toUpperCase()}
     </span>
 );
 

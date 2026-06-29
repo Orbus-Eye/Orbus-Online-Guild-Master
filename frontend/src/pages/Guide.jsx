@@ -261,11 +261,11 @@ export default function Guide() {
                         e cap massimi a livello 30.
                     </p>
                     <ul className="list-disc list-inside text-[12px] mt-2 space-y-1">
-                        <li><strong>Common</strong> — disponibile, stat base.</li>
-                        <li><strong>Uncommon</strong> — leggermente sopra la media.</li>
-                        <li><strong>Rare</strong> — top tier per dungeon avanzati.</li>
-                        <li><strong>Epic</strong> — molto raro, cap stat elevati.</li>
-                        <li><strong>Legendary</strong> — pochi per server, sbloccabili con condizioni speciali.</li>
+                        <li><strong>Comune</strong> — disponibile, stat base.</li>
+                        <li><strong>Non comune</strong> — leggermente sopra la media.</li>
+                        <li><strong>Raro</strong> — top tier per dungeon avanzati.</li>
+                        <li><strong>Epico</strong> — molto raro, cap stat elevati.</li>
+                        <li><strong>Leggendario</strong> — pochi per server, sbloccabili con condizioni speciali.</li>
                     </ul>
                 </SectionBlock>
 

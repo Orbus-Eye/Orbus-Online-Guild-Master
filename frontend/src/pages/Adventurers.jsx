@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
+import { rarityLabel } from "../utils/displayLabels";
 import { TraitList } from "../components/TraitBadge";
 import TraitPreviewWidget from "../components/TraitPreviewWidget";
 import AdventurerDetailModal from "../components/AdventurerDetailModal";
@@ -33,7 +34,7 @@ const RarityBadge = ({ rarity }) => (
             borderColor: (RARITY_COLOR[rarity] || RARITY_COLOR.Common) + "55",
         }}
     >
-        {rarity?.toUpperCase()}
+        {rarityLabel(rarity).toUpperCase()}
     </span>
 );
 

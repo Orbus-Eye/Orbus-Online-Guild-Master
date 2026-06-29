@@ -10,6 +10,7 @@ import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import { useT } from "../i18n/I18nContext";
 import RoleMarker from "./RoleMarker";
+import { rarityLabel, itemTypeLabel } from "../utils/displayLabels";
 
 const RARITY_COLOR = {
     common: "#9ca3af",
@@ -104,7 +105,7 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
                         className="text-[10px] tracking-widest border px-1.5 py-0.5 rounded-sm"
                         style={{ color, borderColor: color + "55" }}
                     >
-                        {rarity.toUpperCase()}
+                        {rarityLabel(rarity).toUpperCase()}
                     </span>
                     {row.is_bound && (
                         <span className="text-[10px] tracking-widest border border-amber/60 text-amber px-1.5 py-0.5 rounded-sm">
@@ -127,7 +128,7 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
                     })()}
                 </h2>
                 <div className="text-xs text-muted-foreground mt-1">
-                    {slot?.toUpperCase()} · power {it.power_score ?? 0}
+                    {itemTypeLabel(slot).toUpperCase()} · power {it.power_score ?? 0}
                 </div>
 
                 {/* Bonuses */}

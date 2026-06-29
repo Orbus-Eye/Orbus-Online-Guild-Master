@@ -23,12 +23,13 @@ const RarityBadge = ({ rarity }) => (
             borderColor: (RARITY_COLOR[rarity] || RARITY_COLOR.Common) + "55",
         }}
     >
-        {rarity?.toUpperCase()}
+        {rarityLabel(rarity).toUpperCase()}
     </span>
 );
 
 import { translateDungeonName } from "../i18n/contentMap";
 import { formatDateTime as formatDate } from "../utils/dateFormat";
+import { rarityLabel } from "../utils/displayLabels";
 
 const SummaryBadge = ({ summary, status }) => {
     if (status === "in_progress") {

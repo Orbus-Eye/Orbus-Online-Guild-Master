@@ -8,12 +8,13 @@ import AppHeader from "../components/AppHeader";
 import OverCapBanner from "../components/OverCapBanner";
 import { TraitList } from "../components/TraitBadge";
 import { useT } from "../i18n/I18nContext";
+import { rarityLabel, tagLabel } from "../utils/displayLabels";
 
 const RARITY_STYLE = {
-    Common: { color: "#9ca3af", label: "Common" },
-    Uncommon: { color: "#22c55e", label: "Uncommon" },
-    Rare: { color: "#3b82f6", label: "Rare" },
-    Epic: { color: "#a855f7", label: "Epic" },
+    Common: { color: "#9ca3af", label: "Comune" },
+    Uncommon: { color: "#22c55e", label: "Non comune" },
+    Rare: { color: "#3b82f6", label: "Raro" },
+    Epic: { color: "#a855f7", label: "Epico" },
 };
 
 const RarityBadge = ({ rarity }) => {
@@ -31,7 +32,7 @@ const RarityBadge = ({ rarity }) => {
 
 const RoleBadge = ({ role }) => (
     <span className="inline-flex items-center text-[10px] tracking-widest border border-border bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-sm">
-        {role?.toUpperCase()}
+        {tagLabel(role).toUpperCase()}
     </span>
 );
 
@@ -153,7 +154,7 @@ const FrozenCard = ({ frozen, onRecruit, onRelease, busy, canAfford, overCap }) 
                 <div className="min-w-0">
                     <div className="text-sm font-medium truncate">{frozen.name}</div>
                     <div className="text-[10px] text-muted-foreground">
-                        {frozen.class_name} · Lv {frozen.level} · {frozen.rarity}
+                        {frozen.class_name} · Lv {frozen.level} · {rarityLabel(frozen.rarity)}
                     </div>
                 </div>
                 <span className="text-amber text-[10px] tracking-widest">❄ PANCHINA</span>

@@ -35,6 +35,7 @@ import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import InventoryEquipModal from "../components/InventoryEquipModal";
+import { rarityLabel } from "../utils/displayLabels";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -51,7 +52,7 @@ const RarityBadge = ({ rarity }) => (
             borderColor: (RARITY_COLOR[rarity] || RARITY_COLOR.Common) + "55",
         }}
     >
-        {rarity?.toUpperCase()}
+        {rarityLabel(rarity).toUpperCase()}
     </span>
 );
 
@@ -282,7 +283,7 @@ export default function Inventory() {
                                                 : "border-border text-muted-foreground hover:border-amber/40"
                                         }`}
                                     >
-                                        {r.toUpperCase()}
+                                        {rarityLabel(r).toUpperCase()}
                                     </button>
                                 ))}
                             </div>
