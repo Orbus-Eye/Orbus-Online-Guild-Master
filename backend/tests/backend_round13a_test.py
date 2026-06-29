@@ -140,48 +140,101 @@ def test_r13a_06_items_display_name_it_and_lore_tags(token):
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# 4. Equip gate enforcement: Lv1 adv MUST NOT equip a Lv12 Legendary item.
+# 4. Equip gate enforcement: any adv with level<12 MUST NOT equip a Lv12 item.
+#    Replaces the original Lv1-only test (was skipped on tester) with a real
+#    evidence: tester roster contains advs at L1..L11, gate must trigger.
 # ────────────────────────────────────────────────────────────────────────────
-def test_r13a_07_lv1_cannot_equip_legendary(token):
-    # Find a Lv1 adventurer of the tester guild.
+def test_r13a_07_underleveled_cannot_equip_legendary_real(token):
+    # Find any non-retired adv with level < 12 in tester guild.
     advs = requests.get(f"{API}/adventurers", headers=_auth(token), timeout=15).json().get("adventurers", [])
-    lv1 = next((a for a in advs if a.get("level", 1) == 1 and not a.get("is_retired")), None)
-    if lv1 is None:
-        pytest.skip("tester has no Lv1 adventurer available for equip gate test")
+    candidate = next(
+        (a for a in advs if (a.get("level") or 1) < 12 and not a.get("is_retired") and not a.get("expedition_in_progress")),
+        None,
+    )
+    assert candidate is not None, "no underleveled adv (lv<12) available on tester — fixture issue"
 
-    # Find a legendary item with required_adventurer_level >= 12 in inventory.
-    inv = requests.get(f"{API}/inventory", headers=_auth(token), timeout=15).json()
-    rows = inv.get("inventory", []) or inv.get("rows", []) or inv
+    # Find a Legendary item (Lv12 gate) in inventory.
+    inv_resp = requests.get(f"{API}/inventory", headers=_auth(token), timeout=15).json()
+    rows = inv_resp.get("inventory") or inv_resp.get("rows") or inv_resp.get("items") or []
     if not isinstance(rows, list):
-        rows = rows.get("items", []) if isinstance(rows, dict) else []
+        rows = []
     legendary_row = None
     for r in rows:
         item = r.get("item") or {}
         if item.get("rarity") == "Legendary" and (item.get("required_adventurer_level") or 0) >= 12:
             legendary_row = r
             break
-    if legendary_row is None:
-        pytest.skip("tester inventory has no Legendary Lv12 item; cannot exercise the gate")
 
-    # Try to equip → expect 423 with structured detail.
+    # Provision a Legendary if tester has none — uses admin grant-item (idempotent).
+    if legendary_row is None:
+        grant = requests.post(
+            f"{API}/admin/guilds/by-self/grant-item",
+            headers=_auth(token),
+            json={"item_slug": "drake_slayer_helm", "quantity": 1, "reason": "r13a evidence test"},
+            timeout=15,
+        )
+        # Fallback to a per-id grant if the by-self route doesn't exist.
+        if grant.status_code in (404, 405):
+            me = requests.get(f"{API}/guilds/me", headers=_auth(token), timeout=15).json()
+            guild_id = me.get("guild", {}).get("id") or me.get("id")
+            if guild_id:
+                grant = requests.post(
+                    f"{API}/admin/guilds/{guild_id}/grant-item",
+                    headers=_auth(token),
+                    json={"item_slug": "drake_slayer_helm", "quantity": 1, "reason": "r13a evidence test"},
+                    timeout=15,
+                )
+        if grant.status_code != 200:
+            pytest.skip(f"could not provision Legendary item for evidence test: {grant.status_code} {grant.text[:200]}")
+        # Refetch inventory.
+        inv_resp = requests.get(f"{API}/inventory", headers=_auth(token), timeout=15).json()
+        rows = inv_resp.get("inventory") or inv_resp.get("rows") or inv_resp.get("items") or []
+        for r in rows:
+            item = r.get("item") or {}
+            if item.get("rarity") == "Legendary" and (item.get("required_adventurer_level") or 0) >= 12:
+                legendary_row = r
+                break
+        assert legendary_row is not None, "Legendary still missing in inventory after grant"
+
+    instance_id = legendary_row.get("instance_id") or legendary_row.get("id")
+    item_id = (legendary_row.get("item") or {}).get("id") or legendary_row.get("item_id") or instance_id
+    item_slug = (legendary_row.get("item") or {}).get("slug")
+    # The equip route expects a `slot` payload — derive from item shape.
+    item_slot = (
+        (legendary_row.get("item") or {}).get("slot")
+        or (legendary_row.get("item") or {}).get("item_type")
+        or "weapon"
+    )
+
+    # Try to equip → expect 423 (POST /api/adventurers/{id}/equip).
     r = requests.post(
-        f"{API}/equipment/equip",
+        f"{API}/adventurers/{candidate['id']}/equip",
         headers=_auth(token),
-        json={
-            "adventurer_id": lv1["id"],
-            "inventory_item_id": legendary_row.get("id") or legendary_row.get("instance_id"),
-        },
+        json={"item_id": item_id, "slot": item_slot},
         timeout=15,
     )
-    assert r.status_code == 423, f"expected 423 got {r.status_code}: {r.text[:200]}"
+    assert r.status_code == 423, (
+        f"expected 423 (level_requirement_not_met) for adv lv{candidate.get('level')} "
+        f"on Legendary {item_slug} (slot={item_slot}), got {r.status_code}: {r.text[:300]}"
+    )
     body = r.json()
     detail = body.get("detail")
-    # Accept either string or structured dict (both shapes are valid).
     if isinstance(detail, dict):
         code = detail.get("code") or ""
+        user_message = detail.get("user_message") or ""
     else:
         code = str(detail)
-    assert "required_level" in code or "required_adventurer_level" in code, f"unexpected detail: {body}"
+        user_message = ""
+    haystack = f"{code} {user_message}".lower()
+    assert (
+        "level_requirement" in haystack
+        or "required_adventurer_level" in haystack
+        or "livello" in haystack
+    ), f"expected level-requirement detail, got: {body}"
+    print(
+        f"[R13a evidence] adv lv{candidate.get('level')} on Legendary "
+        f"{item_slug or item_id} → HTTP 423 detail={detail}"
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────────

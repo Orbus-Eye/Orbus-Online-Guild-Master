@@ -427,7 +427,8 @@ export default function Dungeons() {
                                     <div className="flex flex-wrap gap-1 mb-2">
                                         {d.is_new && <NewBadge slug={d.slug} />}
                                         {d.is_void_undead && <VoidUndeadBadge slug={d.slug} />}
-                                        {minLvl > 1 && <MinLevelBadge slug={d.slug} lvl={minLvl} />}
+                                        {/* ROUND 13a Fix 1 — sempre visibile, anche Lv1 */}
+                                        <MinLevelBadge slug={d.slug} lvl={minLvl} />
                                         {d.lore_theme && <ThemeBadge slug={d.slug} theme={d.lore_theme} />}
                                     </div>
                                     <p
@@ -441,7 +442,7 @@ export default function Dungeons() {
                                             className="text-[11px] italic text-amber-400/80 mb-3 border-l-2 border-amber-500/40 pl-2"
                                             data-testid={`dungeon-hook-${d.slug}`}
                                         >
-                                            "{d.narrative_hook}"
+                                            &laquo;{d.narrative_hook}&raquo;
                                         </p>
                                     )}
                                     <div className="mb-4">

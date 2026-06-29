@@ -104,6 +104,15 @@ export default function Leaderboard() {
 
     // Fetch category rows.
     const fetchCategory = useCallback(async (slug, curScope, curSeason) => {
+        // ROUND 13a Fix 2 — Defensive: NEVER fire a leaderboard call without
+        // an explicit category slug. The component initialises `category`
+        // with `peak_power` (global) or `arena_rating` (seasonal), but
+        // a guard here is safer if a future change accidentally clears it.
+        if (!slug) {
+            console.warn("[Leaderboard] fetchCategory skipped: empty category slug");
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         setError(null);
         try {
@@ -132,7 +141,14 @@ export default function Leaderboard() {
 
     useEffect(() => {
         fetchCategory(category, scope, seasonSlug);
-    }, [category, scope, seasonSlug, fetchCategory]);
+        // ROUND 13a Fix 2 — Ensure URL reflects the resolved default category
+        // on first mount when the user lands on `/leaderboard` without query.
+        if (!searchParams.get("category") && category) {
+            const next = new URLSearchParams(searchParams);
+            next.set("category", category);
+            setSearchParams(next, { replace: true });
+        }
+    }, [category, scope, seasonSlug, fetchCategory, searchParams, setSearchParams]);
 
     // Update URL when category/scope/season change.
     const updateUrl = useCallback((next) => {

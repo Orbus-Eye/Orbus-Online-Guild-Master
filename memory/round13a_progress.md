@@ -1,135 +1,74 @@
-# ROUND 13a — Recovery + Lore Pack — Progress Log
+# ROUND 13a — Recovery + Lore Pack — Progress Log (FINAL)
 
-> COMPLETATO. Tutte le 6 fasi DONE. Pronto per E2E utente.
+> 6 fasi DONE + 4 mini-fix richiesti dall'utente DONE. Pronto per E2E tester.
 
-## FASE 0 — Baseline (DONE)
+## Mini-fix finali (Messaggio post-report 30 punti)
 
-Snapshot DB pre-recovery:
-- `db.dungeons` = **32** (22 baseline + 10 R11.3 Void)
-- `db.raid_dungeons` = **8** (3 baseline + 5 R11.3 Void)
-- `db.items` = **121** (120 attivi + 1 inactive)
-- Rarity: Common=42, Uncommon=28, Rare=22, Epic=24, Legendary=5
-- `required_adventurer_level > 1`: 0 (gap)
-- `lore_reviewed`: 0 (gap)
+### Fix 1 — TC1 Dungeon `Lv min` badge SEMPRE visibile (DONE)
+- `Dungeons.jsx`: badge `dungeon-min-level-badge-{slug}` ora visibile su tutti i 32 dungeon (anche `min_adventurer_level=1`).
+- Stile mutato (`border-border/50 text-muted-foreground`) sui Tier 1 per ridurre rumore visivo; stile amber acceso solo per `lvl > 1`.
+- `Raids.jsx`: stesso pattern (badge `raid-min-level-badge-{slug}` su tutti gli 8).
 
-## FASE 1 — Additività R11.3 (DONE)
+### Fix 2 — TC8 Leaderboard default category (DONE)
+- `Leaderboard.jsx`:
+  - Guard difensivo in `fetchCategory(slug, ...)`: se `slug` è falsy → skip + warn, niente chiamata API.
+  - URL sync al primo mount: se `?category=` mancante, il default risolto (`peak_power` global / `arena_rating` season) è scritto in URL via `setSearchParams({replace:true})`.
+- Verifica curl: `/api/leaderboard?category=peak_power&limit=3` → HTTP 200 con `entries=3`. `/api/leaderboard?limit=3` (senza category) → HTTP 422 (BE rifiuta correttamente).
 
-Verificato: 22 baseline dungeon + 10 nuovi R11.3 = 32 → additivi.
-- Slug nuovi: echoes-of-the-broken-thread, shattered-seal-of-ergolat,
-  obelisks-of-the-void, plague-warrens-of-irthe, moonlit-strings-of-alevora,
-  ashkaroth-crypt-court, eclipthra-veiled-sanctum, gralca-tide-of-the-deep,
-  xal-zoraax-throat-of-silence, tip-of-oblivion-trial.
-- Raid additivi: 5 nuovi R11.3 + 3 baseline = 8.
+### Fix 3 — TC3 Indagine 2 item delta (DONE)
+- Query motor su `db.items` filtro `is_active != False` + `required_adventurer_level` mancante o None:
+  ```
+  Found 0 items WITHOUT required_adventurer_level (active).
+  ```
+- L'unico item escluso è `banner-of-glory` (rarity=Epic, `is_active=False`) — escluso per design.
+- **Conta finale corretta**: 121 totali, 120 attivi (Common 42 + Uncommon 28 + Rare 22 + Epic 23 + Legendary 5), 1 inactive escluso. **Tutti i 120 attivi hanno `required_adventurer_level >= 1` esplicito e `lore_reviewed=True`**.
+- Il "delta 118/120" segnalato dall'utente era un fraintendimento numerico: gli item attivi sono 120 (Epic=23, non 24, perché 1 Epic è inactive). Nessun gap reale.
 
-**Decisione**: NON seed altri +10/+5. Uso i 10+5 R11.3 come "i nuovi".
+### Fix 4 — Evidenza badge equip UI (DONE)
+- `tests/backend_round13a_test.py::test_r13a_07_underleveled_cannot_equip_legendary_real`:
+  - Identifica avs Lv1 del tester (non-retired, non in spedizione).
+  - Auto-provisiona Legendary `drake_slayer_helm` via `POST /api/admin/guilds/{guild_id}/grant-item` se inventory non ne contiene.
+  - Chiama `POST /api/adventurers/{adv_id}/equip` con `{item_id, slot}`.
+  - Asserzione: HTTP **423** con detail strutturato `equipment.level_requirement_not_met`.
+  - **Output evidenza**: `adv lv1 on Legendary drake_slayer_helm → HTTP 423 detail={'code':'equipment.level_requirement_not_met',...}`.
+  - **PASSED** in 1.37s.
 
-## FASE 2 — Dungeon/Raid lore rework (DONE)
+## Test BE finali
 
-### Files creati
-- `app/content/lore_meta.py` — SoT slug → {name_it, lore_theme, content_family, emotional_tone, narrative_hook, enemy_families, boss_name, spoiler_level} + sets `NEW_DUNGEON_SLUGS_R113` / `NEW_RAID_SLUGS_R113`.
-- `app/scripts/seed_round13a_dungeon_raid_lore.py` — Seed idempotente registered nel lifespan.
+```
+backend_round13a_test.py::test_r13a_01_dungeons_count_and_lore_reviewed       PASSED
+backend_round13a_test.py::test_r13a_02_dungeons_expose_lore_fields            PASSED
+backend_round13a_test.py::test_r13a_03_raids_count_and_lore_reviewed          PASSED
+backend_round13a_test.py::test_r13a_04_raids_expose_lore_fields               PASSED
+backend_round13a_test.py::test_r13a_05_items_required_level_and_reviewed      PASSED
+backend_round13a_test.py::test_r13a_06_items_display_name_it_and_lore_tags    PASSED
+backend_round13a_test.py::test_r13a_07_underleveled_cannot_equip_legendary_real PASSED
+backend_round13a_test.py::test_r13a_08_slug_count_invariants                  PASSED
+backend_round13a_test.py::test_r13a_09_no_pii_in_inventory                    PASSED
 
-### Bug fix
-`find_one(..., {"_id":0, "lore_reviewed":1})` ritornava `{}` (falsy) per docs senza `lore_reviewed`. Fix: include `slug:1` nella projection e check esplicito `existing is None`.
+9 passed in 0.72s
+```
 
-### Risultati post-run
-- `db.dungeons` reviewed: **32/32** + `name_it` set su 32/32.
-- `db.raid_dungeons` reviewed: **8/8** + `name_it` set su 8/8 + `boss_name` su 8/8.
-- Sample `echoes-of-the-broken-thread` → `{content_family: void_undead, name_it: "Echi del Filo Spezzato"}`
-- Sample `valys-mordivac-final-whisper` → `{name_it: "L'Ultimo Sussurro di Valys Mordivac", boss_name: "Valys Mordivac", spoiler_level: "hidden"}`
+## Smoke regression (curl)
 
-### Serializer estesi
-- `dungeon_public` (`app/dungeons/services.py`) ora espone `name_it`, `description_it`, `lore_theme`, `content_family`, `emotional_tone`, `location_hint`, `narrative_hook`, `enemy_families`, `spoiler_level`, `is_new`, `is_void_undead`, `lore_reviewed`, `min_adventurer_level`.
-- `raid_dungeon_public` (`app/raids/__init__.py`) stesso pattern + `boss_name`.
-
-## FASE 3+4 — Item lore + required_level (DONE)
-
-### Files
-- `app/scripts/seed_round13a_items_lore.py` — Seed idempotente registrato nel lifespan.
-
-### Risultati post-run
-- Items reviewed: **120/121** (1 inactive `banner-of-glory` skippato volutamente).
-- `required_adventurer_level` set su 120 items:
-  - Common (42) → Lv 1
-  - Uncommon (28) → Lv 3
-  - Rare (22) → Lv 5
-  - Epic (23) → Lv 8 (1 Epic inactive)
-  - Legendary (5) → Lv 12
-- `display_name_it`: 120/121
-- `flavor_text_it`: 78/121 (Common = NULL by design)
-- 4 hand-written display name Epic/Legendary: voidpiercer-bow, oracle-pendant, phoenix-relic, dragon-mask
-- `lore_tags` su tutti, `spoiler_level` (mystery per Legendary)
-
-### Serializer esteso
-- `item_public` (`app/items/services.py`) ora espone `display_name_it`, `display_name_en`, `flavor_text_it`, `flavor_text_en`, `lore_tags`, `spoiler_level`, `lore_reviewed`, `required_adventurer_level` (già presente da R11.3).
-
-### Level audit eseguito (dry_run=false)
-- File: `/app/memory/round13a_level_audit_diff_20260629T100848Z.json`
-- Scanned: **568 equipped_items rows**
-- Invalid: **15**
-- Auto-unequipped: **15** (soft, items restano in inventory)
-- Guilds touched: **5**
-- By slug: drake_slayer_helm=5, drake_slayer_chest=5, drake_slayer_blade=5
-- < 50 unequipped: nessun warning operativo.
-
-## FASE 5 — API + UI visibility (DONE)
-
-### Backend serializer
-- ✓ `dungeon_public` espone tutti campi lore additivi.
-- ✓ `raid_dungeon_public` espone tutti campi lore additivi + boss_name.
-- ✓ `item_public` espone display_name_it/en, flavor_text_it/en, lore_tags, spoiler_level, required_adventurer_level.
-
-### Frontend
-- ✓ `Dungeons.jsx` aggiornato: card mostra `name_it` (fallback `name`), badge `NUOVO` / `✦ VUOTO` / `Lv min: X` / `tema lore`, narrative_hook in italics, filtro `lore_family` (Tutti/Void-Nonmorti/Solo Nuovi/Baseline/Natura/Memoria/Arcano/Divino).
-- ✓ `Raids.jsx` aggiornato: card mostra `name_it`, badge `NUOVO`/`✦ VUOTO`/`Lv min`/`Boss: <name>`, narrative_hook.
-- ✓ `AdventurerEquipment.jsx` (R11.3D.3): già usa `resolve_item_required_level` server-side. Nessuna modifica necessaria.
-
-### data-testid aggiunti
-- `dungeon-new-badge-{slug}`, `dungeon-void-badge-{slug}`, `dungeon-min-level-badge-{slug}`, `dungeon-theme-badge-{slug}`, `dungeon-desc-{slug}`, `dungeon-hook-{slug}`, `filter-lore-family`.
-- `raid-new-badge-{slug}`, `raid-void-badge-{slug}`, `raid-min-level-badge-{slug}`, `raid-boss-{slug}`, `raid-desc-{slug}`, `raid-hook-{slug}`.
-
-## FASE 6 — Guide + Test + E2E (DONE)
-
-### Guide.jsx (5 nuove sezioni)
-- `nuovi-dungeon-void` (14c) — Elenco 10 nuovi Void/Non-Morti con Lv min + tema 1-riga.
-- `nuovi-raid-void` (14d) — Elenco 5 nuovi raid Void/Non-Morti con boss_name + Lv min.
-- `lore-vuoto-nonmorte` (14e) — 5 paragrafi player-facing su Filo Spezzato, Vuoto, Esiliati, Non-Morti, endgame (Valys Mordivac).
-- `equip-level-gate` (16a) — Scala Lv min per rarità + spiegazione 423 + audit menzionato.
-- `equip-lore-tematica` (16b) — Pattern naming per rarità + nomi Leggendari cherry-pick.
-- `_shared.jsx` SECTIONS aggiornato: 5 voci nuove nel nav sticky.
-
-### Test
-- `tests/backend_round13a_test.py` — **8 PASSED + 1 SKIPPED** (Lv1 equip gate skip: tester non ha advs Lv1 + Legendary; gate teorico coperto da R11.3D.3 tests).
-- Test coverage:
-  - 01 dungeons count=32 + all lore_reviewed
-  - 02 dungeons espongono name_it/lore_theme/content_family/is_new/is_void_undead/spoiler_level/min_adventurer_level, e i 10 R11.3 Void sono is_new=is_void_undead=True
-  - 03 raids count=8 + all lore_reviewed
-  - 04 raids espongono boss_name (non vuoto per ogni raid)
-  - 05 items required_adventurer_level>=1 esplicito su tutti, lore_reviewed=true
-  - 06 items display_name_it presente; voidpiercer-bow="Arco Trafittore del Vuoto" Lv8 tag vuoto
-  - 07 SKIPPED (no Lv1 adv tester)
-  - 08 slug distinct invariati (dungeons/raids/items)
-  - 09 no PII leak in /api/inventory (no email, no $oid, no owner_user_id)
-
-### Lint
-- `yarn lint:strict` su Dungeons.jsx / Raids.jsx / Guide.jsx → 0 warnings.
-
-## STATUS FINALE
-
-| Layer | Check | Result |
+| Endpoint | Status | Nota |
 |---|---|---|
-| DB | 32 dungeon `lore_reviewed=true` | ✓ |
-| DB | 8 raid `lore_reviewed=true` | ✓ |
-| DB | 120 item `required_adventurer_level>=1` + `lore_reviewed=true` | ✓ |
-| DB | 1 inactive item skippato volutamente | ✓ |
-| DB | Level audit eseguito: 15 unequip, 5 guilds, 0 hard delete | ✓ |
-| Backend | `/api/dungeons` espone name_it + lore meta | ✓ |
-| Backend | `/api/raids/catalog` espone name_it + boss_name + lore meta | ✓ |
-| Backend | `/api/items`, `/api/inventory` espongono display_name_it/flavor/lore_tags | ✓ |
-| Frontend | Dungeons.jsx badge + filtro lore_family | ✓ |
-| Frontend | Raids.jsx badge + boss_name + narrative_hook | ✓ |
-| Frontend | Equip modal R11.3D.3 — verificato (no change) | ✓ |
-| Guide | 5 nuove sezioni R13a | ✓ |
-| Tests | 8 PASSED + 1 SKIPPED (gate skip) | ✓ |
+| `GET /api/recruitment/candidates` | 200 | `candidates=4, frozen=0` |
+| `GET /api/recruitment/frozen` | 200 | OK |
+| `POST /api/admin/ops/release-stuck-adventurers` (dry) | 200 | `released=0 dry_run=True` |
+| `GET /api/leaderboard?category=peak_power` | 200 | `entries=3` |
+| `GET /api/leaderboard?limit=3` (no cat) | 422 | BE rifiuta correttamente |
+| `GET /api/dungeons` | 200 | 32 total, 10 is_new (R11.3), 13 is_void_undead (10 nuovi + 3 baseline tematici), 32/32 min_level |
+| `GET /api/raids/catalog` | 200 | 8 total, 8/8 boss_name |
+| `GET /api/inventory` | 200 | no PII leak |
 
-Ready per E2E utente.
+## Stato Round 13a
+
+✅ 6 fasi originali DONE  
+✅ 4 mini-fix DONE  
+✅ 9/9 test BE PASSED  
+✅ Lint pulito (Dungeons/Raids/Leaderboard)  
+✅ Webpack "Compiled successfully"  
+✅ Smoke regression OK su Recruitment / Admin / Leaderboard / Dungeons / Raids  
+
+**Pronto per il tester E2E utente.**

@@ -172,15 +172,14 @@ export default function Raids() {
                                             ✦ VUOTO
                                         </span>
                                     )}
-                                    {minLvl > 1 && (
-                                        <span
-                                            className="border border-amber-500/50 text-amber-400 px-1.5 py-0.5 rounded-sm"
-                                            data-testid={`raid-min-level-badge-${r.slug}`}
-                                            title={`Livello minimo richiesto per ogni avventuriero: Lv ${minLvl}`}
-                                        >
-                                            Lv min: {minLvl}
-                                        </span>
-                                    )}
+                                    {/* ROUND 13a Fix 1 — Lv min badge sempre visibile, mutato per Lv1 */}
+                                    <span
+                                        className={`px-1.5 py-0.5 rounded-sm border ${minLvl > 1 ? "border-amber-500/50 text-amber-400" : "border-border/50 text-muted-foreground"}`}
+                                        data-testid={`raid-min-level-badge-${r.slug}`}
+                                        title={`Livello minimo richiesto per ogni avventuriero: Lv ${minLvl}`}
+                                    >
+                                        Lv min: {minLvl}
+                                    </span>
                                     {!r.unlocked && (
                                         <span
                                             className="border border-amber/50 text-amber px-1.5 py-0.5 rounded-sm"
@@ -204,7 +203,7 @@ export default function Raids() {
                                     className="text-[11px] italic text-amber-400/80 mb-3 border-l-2 border-amber-500/40 pl-2"
                                     data-testid={`raid-hook-${r.slug}`}
                                 >
-                                    "{r.narrative_hook}"
+                                    &laquo;{r.narrative_hook}&raquo;
                                 </p>
                             )}
                             <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] mb-2">
