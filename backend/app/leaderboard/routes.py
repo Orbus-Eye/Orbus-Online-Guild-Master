@@ -84,9 +84,14 @@ async def list_raid_leaderboard(
 
 
 @router.get("/categories")
-async def list_leaderboard_categories():
-    """ROUND 11.3 — Catalog of multi-category leaderboard slugs (FE picker)."""
-    return {"categories": list_categories()}
+async def list_leaderboard_categories(scope: str = Query("global")):
+    """ROUND 11.3 — Catalog of multi-category leaderboard slugs (FE picker).
+    ROUND 12 — `?scope=season` returns the seasonal category catalog.
+    """
+    if scope == "season":
+        from app.leaderboard.seasonal import list_seasonal_categories
+        return {"scope": "season", "categories": list_seasonal_categories()}
+    return {"scope": "global", "categories": list_categories()}
 
 
 @router.get("")
@@ -95,16 +100,35 @@ async def list_multi_category(
     response: Response,
     category: str = Query(..., min_length=2, max_length=64),
     limit: int = Query(50, ge=1, le=100),
+    scope: str = Query("global"),
+    season: str = Query("current"),
     authorization: str | None = Header(default=None),
 ):
     """ROUND 11.3 — Multi-category leaderboard.
+    ROUND 12 — `?scope=season&season=<slug|current>` switches to seasonal
+    aggregates. Default scope=global preserves backward compatibility.
 
     `?category=<slug>` is required. 60s in-memory cache; sets `X-Cache: hit|miss`.
     If the caller is authenticated (cookie/Bearer), the response also
     includes `my_entry` with the caller's guild rank.
     Privacy: test artifacts and test users excluded.
     """
-    rows, hit = await get_category_rows(db, category)
+    if scope == "season":
+        from app.seasons.services import get_current_season, get_season_by_slug
+        from app.leaderboard.seasonal import get_seasonal_rows, seasonal_category_meta
+        if season == "current":
+            s = await get_current_season(db)
+        else:
+            s = await get_season_by_slug(db, season)
+        if not s:
+            response.headers["X-Cache"] = "miss"
+            return {"scope": "season", "season": season, "category": category,
+                    "entries": [], "my_entry": None, "computed_at": datetime.now(timezone.utc).isoformat()}
+        rows, hit = await get_seasonal_rows(db, category, s["season_id"])
+        meta = seasonal_category_meta(category)
+    else:
+        rows, hit = await get_category_rows(db, category)
+        meta = category_meta(category)
     response.headers["X-Cache"] = "hit" if hit else "miss"
 
     # Resolve caller's guild (for `is_me` + `my_entry`). PUBLIC endpoint —

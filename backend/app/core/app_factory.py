@@ -128,6 +128,9 @@ def create_app() -> FastAPI:
     from app.catalog.routes import router as catalog_router
     # ROUND 11.2 EXT TASK 10 M1+M4 — public materials catalog (no auth).
     from app.materials.routes import router as materials_router
+    # ROUND 12 — Seasons + PvP Arena
+    from app.seasons.routes import router as seasons_router, admin_router as seasons_admin_router
+    from app.pvp.routes import router as pvp_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -156,6 +159,9 @@ def create_app() -> FastAPI:
     app.include_router(contracts_router)
     app.include_router(catalog_router)
     app.include_router(materials_router)
+    app.include_router(seasons_router)
+    app.include_router(seasons_admin_router)
+    app.include_router(pvp_router)
 
     return app
 

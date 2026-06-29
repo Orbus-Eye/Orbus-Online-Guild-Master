@@ -128,6 +128,20 @@ EVENT_TYPES = frozenset({
     "recruit_candidate_frozen",
     "recruit_candidate_unfrozen",
     "recruit_frozen_candidate_hired",
+    # ROUND 12 — Seasons / Leagues / PvP Arena
+    "season_created",
+    "season_activated",
+    "season_ended",
+    "season_archived",
+    "season_scores_recomputed",
+    "season_rewards_granted",
+    "pvp_defense_team_created",
+    "pvp_defense_team_updated",
+    "pvp_defense_team_deleted",
+    "pvp_match_created",
+    "pvp_match_resolved",
+    "pvp_rating_updated",
+    "pvp_match_invalidated",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.
