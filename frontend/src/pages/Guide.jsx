@@ -11,6 +11,7 @@ import RoleMarker from "../components/RoleMarker";
 import { SECTIONS, SectionBlock } from "./guide/_shared";
 import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSections";
 import ClassesAndStatsSection from "./guide/ClassesAndStatsSection";
+import R15GuideSections from "./guide/R15GuideSections";
 
 export default function Guide() {
     const [active, setActive] = useState("intro");
@@ -1101,6 +1102,9 @@ export default function Guide() {
                         come test_artifact sono escluse automaticamente.
                     </p>
                 </SectionBlock>
+
+                {/* ROUND 15 — Phase 4 — Player-facing sections (34–38) */}
+                <R15GuideSections />
 
                 <div className="text-center text-[10px] text-muted-foreground mt-6 italic">
                     Buona avventura, Guild Master. — Orbus Online

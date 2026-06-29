@@ -53,6 +53,12 @@ export const SECTIONS = [
     { id: "arena", label: "31. Arena delle Gilde (PvP)" },
     { id: "fair-play", label: "32. Fair Play e No P2W" },
     { id: "lb-stagionale", label: "33. Leaderboard stagionale" },
+    // ROUND 15 — Phase 4 — Polish & new player-facing sections
+    { id: "equip-compat", label: "34. Equipaggiamento per classe" },
+    { id: "xp-primary-stat", label: "35. XP e statistica primaria" },
+    { id: "drop-materiali", label: "36. Drop materiali in spedizione" },
+    { id: "guild-level", label: "37. Livello Gilda" },
+    { id: "imprese-gilda", label: "38. Imprese di Gilda" },
 ];
 
 // TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
