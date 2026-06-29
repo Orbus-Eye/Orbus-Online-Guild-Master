@@ -260,3 +260,73 @@ def test_50_challenge_blocks_self_challenge(admin_session):
     )
     assert r.status_code == 400, r.text
     assert r.json()["detail"]["code"] == "pvp.self_challenge"
+
+
+# ─── ROUND 12.E — Cross-scope exclusion + LB shape ───────────────────────────
+def test_51_demo_opponents_excluded_from_global_leaderboard():
+    """ROUND 12.E — Demo guilds MUST NOT appear in global LB categories
+    (peak_power, raid_score, training_score, etc.). Filter was applied
+    only to seasonal scope in 12.D; 12.E generalises it to multi_category.
+    """
+    for category in ("peak_power", "training_score", "roster_avg_level"):
+        r = requests.get(
+            f"{BASE_URL}/api/leaderboard?category={category}&limit=100",
+            timeout=10,
+        )
+        assert r.status_code == 200, f"{category}: {r.text}"
+        names = {e["guild_name"] for e in r.json().get("entries", [])}
+        leaked = names & DEMO_GUILD_NAMES
+        assert not leaked, f"global LB '{category}' leaked demo: {leaked}"
+
+
+def test_52_seasonal_arena_rating_entry_includes_league():
+    """ROUND 12.E — schema check: arena_rating entries MUST expose `league`.
+    Inserts a synthetic non-test, non-demo `season_participation`, calls
+    the seasonal calc function directly (bypasses HTTP cache which lives
+    in the backend process), asserts shape, cleans up.
+    """
+    import os
+    import asyncio
+    from pymongo import MongoClient
+    from motor.motor_asyncio import AsyncIOMotorClient
+
+    sync = MongoClient(os.environ["MONGO_URL"])
+    sdb = sync[os.environ["DB_NAME"]]
+    cur = requests.get(f"{BASE_URL}/api/seasons/current", timeout=10).json()
+    season_id = cur["season"]["season_id"]
+    fake_gid = f"r12e-fake-{uuid.uuid4().hex[:8]}"
+    fake_pub = fake_gid[:8]
+    doc = {
+        "season_id": season_id,
+        "guild_id": fake_gid,
+        "guild_public_id": fake_pub,
+        "guild_name": "Lega-Check Sentinel",
+        "league": "silver", "rating": 1234,
+        "placement_matches_played": 5,
+        "wins": 3, "losses": 1, "draws": 1,
+        "attacks_played": 3, "defense_wins": 1, "defense_losses": 1,
+        "best_rating": 1234, "highest_league": "silver",
+        "last_match_at": "2026-06-29T00:00:00+00:00",
+        "is_test": False, "is_demo": False,
+        "created_at": "2026-06-29T00:00:00+00:00",
+        "updated_at": "2026-06-29T00:00:00+00:00",
+    }
+    sdb.season_participations.insert_one(doc)
+    try:
+        from app.leaderboard.seasonal import SEASONAL_CATEGORIES
+
+        async def _run():
+            adb = AsyncIOMotorClient(os.environ["MONGO_URL"])[os.environ["DB_NAME"]]
+            return await SEASONAL_CATEGORIES["arena_rating"]["compute"](adb, season_id)
+
+        rows = asyncio.run(_run())
+        ours = [r for r in rows if r.get("guild_name") == "Lega-Check Sentinel"]
+        assert ours, f"synthetic participation missing from calc rows: {len(rows)} rows"
+        r = ours[0]
+        assert "league" in r, f"league field absent: {r}"
+        assert r["league"] == "silver", f"league mismatch: {r}"
+        assert r["score"] == 1234, f"score (rating) mismatch: {r}"
+        assert "guild_public_id" in r and "guild_name" in r
+    finally:
+        sdb.season_participations.delete_one({"guild_id": fake_gid})
+        sync.close()

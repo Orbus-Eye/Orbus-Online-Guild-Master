@@ -8,6 +8,58 @@
 
 ---
 
+## ROUND 12.E — Cross-scope LB exclusion + shape verification (Feb 2026)
+
+**Goal**: Chiudere il TC3 del tester finale Round 12. Tre punti:
+
+### Issue 1 — Demo opponents nel global leaderboard (BUG reale)
+- `app/leaderboard/multi_category.py` *(modified)* — `_exclude_filter()`
+  ora aggiunge `is_demo_opponent: {"$ne": True}` E unisce `is_demo_owner`
+  user ids al `$nin` su `owner_user_id`. L'esclusione è ora **coerente
+  cross-scope** (global = `multi_category`, seasonal = `seasonal._eligible_parts`).
+- Test **`test_51_demo_opponents_excluded_from_global_leaderboard`** —
+  itera su 3 categorie globali (`peak_power`, `training_score`,
+  `roster_avg_level`) e asserisce zero leak delle 3 demo guilds.
+
+### Issue 2 — Schema `league` field in seasonal LB (FALSO POSITIVO)
+- Verifica codice: `seasonal._calc_arena_rating` (e siblings) emettono
+  già `{guild_public_id, guild_name, score, league}`. Il misreport del
+  tester nasce dal fatto che le entries erano vuote (no real player ha
+  ancora giocato ranked, tester escluso perché `is_test_user`).
+- Test **`test_52_seasonal_arena_rating_entry_includes_league`** —
+  inserisce una `season_participation` sintetica non-test/non-demo,
+  invoca il calcolatore in-process (bypassa la cache HTTP che vive nel
+  worker FastAPI), asserisce shape (`league`, `score`, `guild_*`),
+  cleanup garantito via `try/finally`.
+
+### Issue 3 — Solo 6/12 categorie seasonal (NON-BUG, scelta MVP)
+- Decisione documentale: in Round 12 sono live 6 categorie stagionali
+  (arena_rating, arena_wins, arena_defense_wins, arena_win_rate,
+  peak_team_power, reputation). Le altre 6 (dungeon_clears, raid_clears,
+  raid_score, territory_score, contracts_completed, training_score)
+  restano solo globali finché non si introduce tracking incrementale
+  per-season (aggregati delta, non snapshot). **Deferred → Round 13**.
+- Nessuna modifica al payload `/api/leaderboard/categories?scope=season`
+  in 12.E (FE già gestisce gracefully la differenza tra global/seasonal).
+
+### Issue 4 (note) — `rating_applied=false` per test user (by design)
+- Il flag `is_test = bool(attacker.is_test_artifact or defender.is_test_artifact)`
+  in `pvp.challenge` salta `_apply_rating()` quando uno dei due è
+  artifact di test. Questo è comportamento atteso (anti-pollution della
+  leaderboard stagionale). Documentato per evitare report futuri.
+
+### Verifica 12.E
+- `pytest tests/backend_round12_polish_test.py tests/backend_round12_seasons_pvp_test.py
+  tests/backend_phase9_leaderboard_test.py tests/backend_round113_taskD_leaderboard_test.py` →
+  **81 PASS / 1 skip** (R12: 22 polish + 30 seasons_pvp; LB collateral verde).
+- Smoke curl `GET /api/leaderboard?category=peak_power&limit=10` →
+  top10 senza demo guilds (`leaked_demo: []`).
+- Schema check `arena_rating` entry → `{league:"silver", score:1234,
+  guild_public_id, guild_name}` ✓.
+
+**Status**: chiuso. TC3 sbloccato. Round 12 pronto per consegna finale.
+
+
 ## ROUND 12.D — Preview Seed Polish & PvP Validation Hardening (Feb 2026)
 
 **Goal**: Sbloccare il test E2E del Round 12 risolvendo 3 gap operativi

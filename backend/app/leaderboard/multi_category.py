@@ -52,11 +52,22 @@ def _register(slug: str, label_it: str, description_it: str):
 
 
 async def _exclude_filter(db) -> dict:
-    """MongoDB filter that excludes test artifacts + test users."""
+    """MongoDB filter that excludes test artifacts + test users + demo opponents.
+
+    ROUND 12.E — `is_demo_opponent` guilds (seeded as PvP punching-bags via
+    `seed_round12_demo_opponents`) and their `is_demo_owner` users must be
+    invisible across BOTH global and seasonal leaderboards. Seasonal LB
+    applies the same filter inside `leaderboard/seasonal._eligible_parts`.
+    """
     test_owner_ids = await db.users.distinct("id", {"is_test_user": True})
-    flt: dict = {"is_test_artifact": {"$ne": True}}
-    if test_owner_ids:
-        flt["owner_user_id"] = {"$nin": test_owner_ids}
+    demo_owner_ids = await db.users.distinct("id", {"is_demo_owner": True})
+    blocked_owner_ids = list(set(test_owner_ids) | set(demo_owner_ids))
+    flt: dict = {
+        "is_test_artifact": {"$ne": True},
+        "is_demo_opponent": {"$ne": True},
+    }
+    if blocked_owner_ids:
+        flt["owner_user_id"] = {"$nin": blocked_owner_ids}
     return flt
 
 
