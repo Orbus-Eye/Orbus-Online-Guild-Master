@@ -577,6 +577,26 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     raid["parties_outcome"] = parties_outcome
     raid["rewards"] = rewards
 
+    # ROUND 13b — seasonal raid stats (idempotent via raids.id + flag CAS).
+    # Only victory/partial count toward `raid_clears`; `raid_score` always
+    # adds the actual score computed above (0 if wipe → no-op).
+    try:
+        from app.seasons.season_stats import increment_seasonal_stat
+        if outcome in ("victory", "partial"):
+            await increment_seasonal_stat(
+                db, guild_id=guild["id"], field="raid_clears", delta=1,
+                source="raid_complete", source_collection="raids",
+                source_id=raid_id, flag_key="season_stat_recorded_clear",
+            )
+        if raid_score > 0:
+            await increment_seasonal_stat(
+                db, guild_id=guild["id"], field="raid_score", delta=int(raid_score),
+                source="raid_complete", source_collection="raids",
+                source_id=raid_id, flag_key="season_stat_recorded_score",
+            )
+    except Exception:
+        pass
+
     try:
         await write_audit(
             db, event_type="raid_completed", actor_user_id=current_user["id"],

@@ -402,6 +402,25 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     except Exception:
         pass
 
+    # ROUND 13b — seasonal `dungeon_clears` counter (best-effort, idempotent).
+    # The CAS filter on expeditions.id + flag ensures a replay (lazy sweep
+    # re-running on a stuck row) cannot double-count.
+    if success:
+        try:
+            from app.seasons.season_stats import increment_seasonal_stat
+            await increment_seasonal_stat(
+                db,
+                guild_id=claimed["guild_id"],
+                field="dungeon_clears",
+                delta=1,
+                source="expedition_complete",
+                source_collection="expeditions",
+                source_id=exp_id,
+                flag_key="season_stat_recorded",
+            )
+        except Exception:
+            pass
+
 
 async def complete_due_expeditions(db, guild_id: str) -> int:
     """Lazy sweep: complete any in_progress expedition whose completes_at <= now."""

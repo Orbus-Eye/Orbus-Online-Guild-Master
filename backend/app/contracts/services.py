@@ -532,6 +532,16 @@ async def claim_daily_contract(db, *, guild_id: str, actor_user_id: str,
                  metadata={"scope": "daily", "slug": slug,
                            "reward_gold": defn["reward_gold"],
                            "reward_reputation": defn["reward_reputation"]})
+    # ROUND 13b — seasonal `contracts_completed` (idempotent via the
+    # atomic `claimed:False → True` CAS above; claim cannot fire twice).
+    try:
+        from app.seasons.season_stats import increment_seasonal_stat
+        await increment_seasonal_stat(
+            db, guild_id=guild_id, field="contracts_completed", delta=1,
+            source="contract_daily", source_id=f"daily:{slug}:{today}",
+        )
+    except Exception:
+        pass
     return {"scope": "daily", "slug": slug, "claimed": True,
             "reward": {"gold": defn["reward_gold"],
                        "materials": defn["reward_materials"],
@@ -578,6 +588,15 @@ async def claim_weekly_contract(db, *, guild_id: str, actor_user_id: str,
                  metadata={"scope": "weekly", "slug": slug,
                            "reward_gold": defn["reward_gold"],
                            "reward_reputation": defn["reward_reputation"]})
+    # ROUND 13b — seasonal `contracts_completed` (idempotent via claimed CAS).
+    try:
+        from app.seasons.season_stats import increment_seasonal_stat
+        await increment_seasonal_stat(
+            db, guild_id=guild_id, field="contracts_completed", delta=1,
+            source="contract_weekly", source_id=f"weekly:{slug}:{week}",
+        )
+    except Exception:
+        pass
     return {"scope": "weekly", "slug": slug, "claimed": True,
             "reward": {"gold": defn["reward_gold"],
                        "materials": defn["reward_materials"],
@@ -623,6 +642,15 @@ async def claim_milestone(db, *, guild_id: str, actor_user_id: str,
                  metadata={"slug": slug, "tier": defn["tier"],
                            "reward_gold": defn["reward_gold"],
                            "reward_reputation": defn["reward_reputation"]})
+    # ROUND 13b — seasonal `contracts_completed` (idempotent via claimed CAS).
+    try:
+        from app.seasons.season_stats import increment_seasonal_stat
+        await increment_seasonal_stat(
+            db, guild_id=guild_id, field="contracts_completed", delta=1,
+            source="contract_milestone", source_id=f"milestone:{slug}",
+        )
+    except Exception:
+        pass
     return {"scope": "milestone", "slug": slug, "claimed": True,
             "reward": {"gold": defn["reward_gold"],
                        "materials": defn["reward_materials"],

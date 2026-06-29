@@ -322,6 +322,24 @@ export default function Guide() {
                         selezionati. Il backend riapplica il controllo al dispatch — non c&apos;è modo
                         di aggirarlo lato client.
                     </p>
+                    <p>
+                        La classifica stagionale è organizzata in <strong>12 categorie</strong>
+                        complete: arena (rating, win rate, attacchi/difese vinte), picco di
+                        potenza, reputazione, e — dal Round 13b — sei nuove categorie
+                        <strong>incrementali per stagione</strong>:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Dungeon completati</strong> — quanti dungeon hai chiuso con successo durante la stagione.</li>
+                        <li><strong>Raid completati</strong> — raid 20-uomini con outcome victory/partial.</li>
+                        <li><strong>Punteggio Raid</strong> — somma dei <code>raid_score</code> guadagnati.</li>
+                        <li><strong>Sviluppo Territoriale</strong> — crescita livelli strutture rispetto all'inizio stagione (delta).</li>
+                        <li><strong>Contratti completati</strong> — daily, weekly e milestone reclamati.</li>
+                        <li><strong>Allenamenti</strong> — somma del <code>power_score</code> guadagnato tramite specializzazioni.</li>
+                    </ul>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Tutti i contatori sono <strong>resettati</strong> all'inizio di ogni stagione e
+                        congelati alla chiusura. Le gilde demo e di test sono escluse dalle classifiche.
+                    </p>
                 </SectionBlock>
 
                 <SectionBlock id="raid" title="Raid">

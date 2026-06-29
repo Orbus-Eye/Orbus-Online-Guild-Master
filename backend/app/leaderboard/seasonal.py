@@ -130,6 +130,87 @@ async def _calc_reputation_season(db, season_id: str) -> list[dict]:
     return rows
 
 
+# ─── ROUND 13b — Incremental per-season categories ───────────────────────────
+# All six read `season_participations.season_stats.<field>` populated by the
+# expedition/raid/contract/training hooks (see `app/seasons/season_stats.py`).
+
+def _stat(part: dict, field: str) -> int:
+    return int((part.get("season_stats") or {}).get(field) or 0)
+
+
+@_register("dungeon_clears", "Dungeon completati (stagione)",
+           "Numero di dungeon conquistati durante la stagione corrente.")
+async def _calc_dungeon_clears_season(db, season_id: str) -> list[dict]:
+    parts = await _eligible_parts(db, season_id)
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": _stat(p, "dungeon_clears")} for p in parts]
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+@_register("raid_clears", "Raid completati (stagione)",
+           "Numero di raid 20-uomini chiusi con outcome victory/partial nella stagione.")
+async def _calc_raid_clears_season(db, season_id: str) -> list[dict]:
+    parts = await _eligible_parts(db, season_id)
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": _stat(p, "raid_clears")} for p in parts]
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+@_register("raid_score", "Punteggio Raid (stagione)",
+           "Somma dei raid_score guadagnati durante la stagione.")
+async def _calc_raid_score_season(db, season_id: str) -> list[dict]:
+    parts = await _eligible_parts(db, season_id)
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": _stat(p, "raid_score")} for p in parts]
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+@_register("territory_score", "Sviluppo Territoriale (stagione)",
+           "Crescita dei livelli strutture territoriali rispetto all'inizio della stagione.")
+async def _calc_territory_delta_season(db, season_id: str) -> list[dict]:
+    """Reads delta = current_territory_score - season_stats.territory_score_at_start.
+
+    `territory_score_at_start` is snapshotted lazily at first PvP/event for
+    each guild (see `seasons.services.get_or_create_participation`).
+    """
+    from app.seasons.season_stats import _compute_current_territory_score
+    parts = await _eligible_parts(db, season_id)
+    rows = []
+    for p in parts:
+        at_start = int((p.get("season_stats") or {}).get("territory_score_at_start") or 0)
+        current = await _compute_current_territory_score(db, p["guild_id"])
+        delta = max(0, current - at_start)
+        rows.append({
+            "guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+            "score": delta,
+        })
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+@_register("contracts_completed", "Contratti completati (stagione)",
+           "Numero di contratti daily/weekly reclamati durante la stagione.")
+async def _calc_contracts_season(db, season_id: str) -> list[dict]:
+    parts = await _eligible_parts(db, season_id)
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": _stat(p, "contracts_completed")} for p in parts]
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
+@_register("training_score", "Allenamenti (stagione)",
+           "Somma del power_score guadagnato tramite specializzazioni durante la stagione.")
+async def _calc_training_season(db, season_id: str) -> list[dict]:
+    parts = await _eligible_parts(db, season_id)
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": _stat(p, "training_score")} for p in parts]
+    rows.sort(key=lambda r: -r["score"])
+    return rows
+
+
 # ─── Cache ────────────────────────────────────────────────────────────────────
 _TTL = 60
 _CACHE: dict[str, dict] = {}  # key = "<slug>:<season_id>"

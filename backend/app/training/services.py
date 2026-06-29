@@ -374,6 +374,20 @@ async def apply_specialization(
         )
 
     # ─── F. SUCCESS AUDITS (best-effort, never raises) ──────────────────────
+    # ROUND 13b — seasonal `training_score` increment. The CAS on
+    # adventurers.id with `specialization == None` guarantees this fires
+    # exactly once per adventurer per specialization. Source id is the
+    # signature_inv row, which is unique.
+    try:
+        from app.seasons.season_stats import increment_seasonal_stat
+        sig_power = int((sig_template or {}).get("power_score", 0) or 0)
+        await increment_seasonal_stat(
+            db, guild_id=guild_id, field="training_score",
+            delta=max(0, sig_power),
+            source="training_specialization", source_id=inv_id,
+        )
+    except Exception:
+        pass
     try:
         await write_audit(
             db,

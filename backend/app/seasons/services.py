@@ -233,6 +233,13 @@ async def get_or_create_participation(db, *, season_id: str, guild: dict) -> dic
     )
     if p:
         return p
+    # ROUND 13b — snapshot territory_score_at_start lazily for the new
+    # `territory_score` seasonal category (delta vs season start).
+    try:
+        from app.seasons.season_stats import _compute_current_territory_score
+        territory_at_start = await _compute_current_territory_score(db, guild["id"])
+    except Exception:
+        territory_at_start = 0
     doc = {
         "season_id": season_id,
         "guild_id": guild["id"],
@@ -248,6 +255,16 @@ async def get_or_create_participation(db, *, season_id: str, guild: dict) -> dic
         "highest_league": "unranked",
         "last_match_at": None,
         "is_test": bool(guild.get("is_test_artifact", False)),
+        # ROUND 13b — per-season incremental counters.
+        "season_stats": {
+            "dungeon_clears": 0,
+            "raid_clears": 0,
+            "raid_score": 0,
+            "contracts_completed": 0,
+            "training_score": 0,
+            "territory_score_at_start": int(territory_at_start),
+            "last_updated_at": _now(),
+        },
         "created_at": _now(),
         "updated_at": _now(),
     }
