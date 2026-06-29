@@ -42,6 +42,8 @@ import Chronicle from "@/pages/Chronicle";
 import Training from "@/pages/Training";
 import Contracts from "@/pages/Contracts";
 import AdminOps from "@/pages/AdminOps";  // ROUND 11.2 TASK 5b
+import Seasons from "@/pages/Seasons";  // ROUND 12
+import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -251,6 +253,23 @@ function App() {
                         />
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/guide" element={<Guide />} />
+                        {/* ROUND 12 — Seasons + Arena */}
+                        <Route
+                            path="/seasons"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Seasons />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/arena"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Arena />
+                                </ProtectedRoute>
+                            }
+                        />
                         {/* ROUND 11.2 TASK 8 — Public SEO routes (no auth, no redirect) */}
                         <Route path="/traits" element={<TraitsPublic />} />
                         <Route path="/stats" element={<StatsPublic />} />

@@ -65,51 +65,59 @@ function formatScore(category, score) {
 export default function Leaderboard() {
     const { t } = useT();
     const [searchParams, setSearchParams] = useSearchParams();
-    const initialCategory = searchParams.get("category") || "peak_power";
+    const initialScope = searchParams.get("scope") === "season" ? "season" : "global";
+    const initialSeason = searchParams.get("season") || "current";
+    const initialCategory = searchParams.get("category")
+        || (initialScope === "season" ? "arena_rating" : "peak_power");
 
+    const [scope, setScope] = useState(initialScope);
+    const [seasonSlug] = useState(initialSeason);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(initialCategory);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Categories catalog (single fetch on mount).
+    // Categories catalog (refetch when scope changes).
     useEffect(() => {
         let cancelled = false;
-        axios.get(`${API}/leaderboard/categories`, { timeout: 10_000 })
+        const url = scope === "season"
+            ? `${API}/leaderboard/categories?scope=season`
+            : `${API}/leaderboard/categories`;
+        axios.get(url, { timeout: 10_000 })
             .then((r) => {
                 if (cancelled) return;
                 setCategories(r.data.categories || []);
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error("[Leaderboard] categories fetch failed:", err);
                 if (cancelled) return;
-                // Fallback: a hard-coded 8 slugs to keep the picker usable
-                // if the catalog endpoint flakes. Labels remain blank → the
-                // server-side category fetch will still populate the header.
-                setCategories([
-                    "peak_power", "raid_score", "dungeon_clears", "raid_clears",
-                    "territory_score", "contracts_completed", "training_score",
-                    "roster_avg_level",
-                ].map((s) => ({ slug: s, label_it: s, description_it: "" })));
+                setCategories(scope === "season"
+                    ? ["arena_rating", "arena_wins", "arena_defense_wins", "arena_win_rate",
+                        "peak_team_power", "reputation"].map((s) => ({ slug: s, label_it: s }))
+                    : ["peak_power", "raid_score", "dungeon_clears", "raid_clears",
+                        "territory_score", "contracts_completed", "training_score",
+                        "roster_avg_level"].map((s) => ({ slug: s, label_it: s, description_it: "" })));
             });
         return () => { cancelled = true; };
-    }, []);
+    }, [scope]);
 
     // Fetch category rows.
-    const fetchCategory = useCallback(async (slug) => {
+    const fetchCategory = useCallback(async (slug, curScope, curSeason) => {
         setLoading(true);
         setError(null);
         try {
-            // ROUND 11.4a — cookie auth is the canonical flow (withCredentials).
-            // Bearer-from-localStorage fallback removed; the public LB endpoint
-            // accepts unauthenticated callers anyway.
+            const params = new URLSearchParams({ category: slug, limit: "50" });
+            if (curScope === "season") {
+                params.set("scope", "season");
+                params.set("season", curSeason || "current");
+            }
             const r = await axios.get(
-                `${API}/leaderboard?category=${encodeURIComponent(slug)}&limit=50`,
+                `${API}/leaderboard?${params.toString()}`,
                 { timeout: 15_000, withCredentials: true },
             );
             setData(r.data);
         } catch (err) {
-            // ROUND 11.4b — explicit error log (no more silent catch).
             console.error("[Leaderboard] fetchCategory failed:", err);
             const detail = err?.response?.data?.detail;
             const msg = typeof detail === "object"
@@ -123,17 +131,30 @@ export default function Leaderboard() {
     }, []);
 
     useEffect(() => {
-        fetchCategory(category);
-    }, [category, fetchCategory]);
+        fetchCategory(category, scope, seasonSlug);
+    }, [category, scope, seasonSlug, fetchCategory]);
 
-    // Update URL when category changes.
+    // Update URL when category/scope/season change.
+    const updateUrl = useCallback((next) => {
+        setSearchParams((prev) => {
+            const sp = new URLSearchParams(prev);
+            if (next.scope !== undefined) sp.set("scope", next.scope);
+            if (next.season !== undefined) sp.set("season", next.season);
+            if (next.category !== undefined) sp.set("category", next.category);
+            return sp;
+        });
+    }, [setSearchParams]);
+
     const handleCategoryChange = (slug) => {
         setCategory(slug);
-        setSearchParams((prev) => {
-            const next = new URLSearchParams(prev);
-            next.set("category", slug);
-            return next;
-        });
+        updateUrl({ category: slug });
+    };
+
+    const handleScopeChange = (next) => {
+        const defaultCat = next === "season" ? "arena_rating" : "peak_power";
+        setScope(next);
+        setCategory(defaultCat);
+        updateUrl({ scope: next, category: defaultCat, season: seasonSlug });
     };
 
     const entries = data?.entries || [];
@@ -186,6 +207,37 @@ export default function Leaderboard() {
                         </p>
                     )}
                 </section>
+
+                {/* ROUND 12.B — Scope toggle Globale / Stagionale */}
+                <div
+                    className="mb-3 inline-flex border border-border rounded-sm bg-card overflow-hidden"
+                    data-testid="leaderboard-scope-toggle"
+                >
+                    <button
+                        type="button"
+                        onClick={() => handleScopeChange("global")}
+                        data-testid="leaderboard-scope-global"
+                        className={`text-[11px] tracking-widest px-3 py-1.5 transition-colors ${
+                            scope === "global"
+                                ? "bg-amber text-background font-bold"
+                                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        }`}
+                    >
+                        GLOBALE
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleScopeChange("season")}
+                        data-testid="leaderboard-scope-season"
+                        className={`text-[11px] tracking-widest px-3 py-1.5 transition-colors ${
+                            scope === "season"
+                                ? "bg-amber text-background font-bold"
+                                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        }`}
+                    >
+                        STAGIONALE
+                    </button>
+                </div>
 
                 {/* Category picker — Tabs on desktop, native select on mobile. */}
                 <div
