@@ -40,6 +40,12 @@ export const SECTIONS = [
     { id: "chat", label: "26. Chat" },
     { id: "privacy", label: "27. Privacy e Sicurezza" },
     { id: "tips", label: "28. Suggerimenti base" },
+    // ROUND 12.C — Arena / Stagioni / Leghe / Fair Play / Leaderboard stagionale
+    { id: "stagioni", label: "29. Stagioni delle Arene" },
+    { id: "leghe", label: "30. Leghe e progressione" },
+    { id: "arena", label: "31. Arena delle Gilde (PvP)" },
+    { id: "fair-play", label: "32. Fair Play e No P2W" },
+    { id: "lb-stagionale", label: "33. Leaderboard stagionale" },
 ];
 
 // TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.

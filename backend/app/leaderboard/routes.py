@@ -147,6 +147,9 @@ async def list_multi_category(
             "score": row["score"],
             "is_me": is_me,
         }
+        # ROUND 12.C — Pass-through `league` for seasonal arena_* entries.
+        if "league" in row:
+            out["league"] = row["league"]
         entries.append(out)
 
     # If the caller is not in the top `limit`, scan the rest for `my_entry`.
@@ -160,16 +163,19 @@ async def list_multi_category(
                     "score": row["score"],
                     "is_me": True,
                 }
+                if "league" in row:
+                    my_entry["league"] = row["league"]
                 break
     elif me_public_id is not None:
-        # Caller is already in the top — `my_entry` mirrors the top row.
         my_entry = next((e for e in entries if e["is_me"]), None)
 
-    meta = category_meta(category)
+    # ROUND 12.C — Use the scope-aware meta computed above (no double resolution).
     return {
         "category": meta["slug"],
         "category_label_it": meta["label_it"],
         "category_description_it": meta["description_it"],
+        "scope": scope,
+        "season_slug": (s["slug"] if scope == "season" and s else None),
         "entries": entries,
         "my_entry": my_entry,
         "computed_at": datetime.now(timezone.utc).isoformat(),

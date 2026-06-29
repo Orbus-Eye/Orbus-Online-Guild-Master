@@ -830,6 +830,112 @@ export default function Guide() {
                     </ul>
                 </SectionBlock>
 
+                {/* ROUND 12.C — Nuove sezioni Arena/Stagioni */}
+                <SectionBlock id="stagioni" title="Stagioni delle Arene">
+                    <p>
+                        Le <strong>Stagioni</strong> sono cicli competitivi periodici nelle <em>Arene della Gloria</em>.
+                        Ogni stagione ha un tema lore (Verglasio, Renovare, Luminara, Crepuscolo, Umbralia o Equilibrio)
+                        e una durata definita. Stagione attuale: <strong>Preseason delle Arene</strong>, tema <em>Equilibrio</em>.
+                    </p>
+                    <p className="mt-2">
+                        Al termine, la stagione passa a <em>ended</em> e poi a <em>archived</em>. Il <strong>rating
+                        stagionale viene resettato
+                                                                                                     </strong> a 1000 all&apos;inizio della stagione successiva, ma:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 mt-2 text-[12px]">
+                        <li>Gilda, roster, item, oro, reputazione e progressi PVE <strong>NON</strong> vengono toccati.</li>
+                        <li>Il <code>highest_league</code> raggiunto resta a vita nel tuo profilo.</li>
+                        <li>I reward cosmetici ottenuti restano permanenti.</li>
+                        <li>Lo storico match resta consultabile.</li>
+                    </ul>
+                </SectionBlock>
+
+                <SectionBlock id="leghe" title="Leghe e progressione">
+                    <p>
+                        Ogni gilda partecipante a una stagione viene assegnata a una <strong>lega</strong> in base
+                        al rating Elo. Le leghe sono 7, dalla più bassa alla più alta:
+                    </p>
+                    <ol className="list-decimal list-inside mt-2 space-y-1 text-[12px]">
+                        <li><strong>Unranked</strong> — meno di 5 placement match giocati.</li>
+                        <li><strong>Bronzo</strong> — rating 0–999.</li>
+                        <li><strong>Argento</strong> — rating 1000–1199.</li>
+                        <li><strong>Oro</strong> — rating 1200–1399.</li>
+                        <li><strong>Platino</strong> — rating 1400–1599.</li>
+                        <li><strong>Diamante</strong> — rating 1600–1799.</li>
+                        <li><strong>Maestro</strong> — rating 1800+.</li>
+                    </ol>
+                    <p className="mt-2">
+                        I primi <strong>5 match ranked</strong> sono i <em>placement match</em>: durante questa fase
+                        sei &quot;Unranked&quot;. La <strong>highest_league</strong> è la lega più alta che hai mai toccato
+                        nella stagione: una volta raggiunta, resta nel tuo profilo anche se cali.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="arena" title="Arena delle Gilde (PvP)">
+                    <p>
+                        L&apos;<strong>Arena delle Gilde</strong> è il sistema PvP <strong>asincrono</strong> di Orbus.
+                        Le sfide vengono simulate sul server con i nostri RNG crypto-grade; nessuna perdita di
+                        oro, item, esperienza o avventurieri è prevista.
+                    </p>
+                    <h4 className="mt-3 mb-1 text-amber/90 text-[12px] tracking-wider">::: Squadra Difensiva</h4>
+                    <p className="text-[12px]">
+                        Imposta <strong>5 avventurieri attivi</strong> (Lv 3+ in preview, Lv 5+ in produzione)
+                        come difesa permanente. Vengono usati ogni volta che un avversario ti sfida.
+                    </p>
+                    <h4 className="mt-3 mb-1 text-amber/90 text-[12px] tracking-wider">::: Sfida</h4>
+                    <p className="text-[12px]">
+                        Scegli 5 avventurieri attaccanti, selezioni un avversario nella tua lega ±1 e confermi.
+                        Il server simula 3-5 round e produce un report narrativo IT. L&apos;esito può essere
+                        Vittoria / Sconfitta / Pareggio (raro).
+                    </p>
+                    <h4 className="mt-3 mb-1 text-amber/90 text-[12px] tracking-wider">::: Limiti anti-abuse</h4>
+                    <ul className="list-disc list-inside text-[12px] space-y-1">
+                        <li><strong>10 sfide ranked al giorno</strong> (reset UTC 00:00).</li>
+                        <li><strong>Max 3 sfide / giorno / stesso bersaglio</strong> (cooldown).</li>
+                        <li>Le gilde appena create devono superare un&apos;<strong>account age gate</strong> prima di entrare in ranked.</li>
+                        <li>Self-challenge bloccato.</li>
+                    </ul>
+                    <p className="mt-2 text-[12px] text-amber/90 italic">
+                        Le squadre vengono <strong>snapshottate</strong> nel match: modifiche successive
+                        all&apos;equipaggiamento non riscrivono partite passate.
+                    </p>
+                </SectionBlock>
+
+                <SectionBlock id="fair-play" title="Fair Play e No P2W">
+                    <p>
+                        Orbus è <strong>no pay-to-win</strong> nelle Arene per design. In dettaglio:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
+                        <li>Nessun acquisto può aumentare rating, power, win rate o accessi giornalieri.</li>
+                        <li>I <strong>reward stagionali</strong> sono <strong>esclusivamente cosmetici</strong>:
+                            titoli, badge, cornici profilo, banner, icone lega, chat flair, hall of fame.
+                        </li>
+                        <li>Vietati boost di stat, oro, XP o item competitivi a tempo o premium.</li>
+                        <li>Account-age gate, daily cap e cooldown per limitare smurfing e abusi multi-account.</li>
+                        <li>La simulazione di combattimento usa RNG crypto-grade (<code>secrets.SystemRandom</code>)
+                            non riproducibile lato client: impossibile replay-attack.
+                        </li>
+                    </ul>
+                </SectionBlock>
+
+                <SectionBlock id="lb-stagionale" title="Leaderboard stagionale">
+                    <p>
+                        Su <code>/leaderboard?scope=season</code> trovi le classifiche dedicate alla stagione attuale:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1 text-[11px]">
+                        <li><strong>Arena — Rating</strong>: rating Elo corrente.</li>
+                        <li><strong>Arena — Vittorie</strong>: vittorie ranked totali.</li>
+                        <li><strong>Arena — Difese vinte</strong>: respinte riuscite quando vieni attaccato.</li>
+                        <li><strong>Arena — Win rate</strong>: percentuale W/(W+L+D) con almeno 10 ranked.</li>
+                        <li><strong>Picco di Potenza (stagionale)</strong>: massimo team_power raggiunto.</li>
+                        <li><strong>Reputazione (stagionale)</strong>: reputazione gilda snapshot.</li>
+                    </ul>
+                    <p className="mt-2 text-[11px] text-muted-foreground italic">
+                        Le entry arena_* mostrano anche il badge della lega per ogni gilda. Le gilde flaggate
+                        come test_artifact sono escluse automaticamente.
+                    </p>
+                </SectionBlock>
+
                 <div className="text-center text-[10px] text-muted-foreground mt-6 italic">
                     Buona avventura, Guild Master. — Orbus Online
                 </div>

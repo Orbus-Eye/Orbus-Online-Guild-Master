@@ -131,6 +131,7 @@ def create_app() -> FastAPI:
     # ROUND 12 — Seasons + PvP Arena
     from app.seasons.routes import router as seasons_router, admin_router as seasons_admin_router
     from app.pvp.routes import router as pvp_router
+    from app.rewards.routes import router as rewards_router, admin_router as rewards_admin_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -162,6 +163,8 @@ def create_app() -> FastAPI:
     app.include_router(seasons_router)
     app.include_router(seasons_admin_router)
     app.include_router(pvp_router)
+    app.include_router(rewards_router)
+    app.include_router(rewards_admin_router)
 
     return app
 

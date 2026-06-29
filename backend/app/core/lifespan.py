@@ -41,8 +41,10 @@ async def lifespan(app: FastAPI):
     # ROUND 12 — Seasons + PvP indexes (idempotent).
     from app.seasons.services import ensure_season_indexes
     from app.pvp.services import ensure_pvp_indexes
+    from app.rewards.services import ensure_reward_indexes
     await ensure_season_indexes(db)
     await ensure_pvp_indexes(db)
+    await ensure_reward_indexes(db)
     await run_forge_migration(db)
     await run_forge_seeds(db)
     await run_all_seeds(db)

@@ -54,7 +54,8 @@ async def _eligible_parts(db, season_id: str) -> list[dict]:
 @_register("arena_rating", "Arena — Rating", "Classifica per rating Elo nella stagione attuale.")
 async def _calc_arena_rating(db, season_id: str) -> list[dict]:
     parts = await _eligible_parts(db, season_id)
-    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"], "score": p["rating"]}
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": p["rating"], "league": p["league"]}
             for p in parts]
     rows.sort(key=lambda r: -r["score"])
     return rows
@@ -63,7 +64,8 @@ async def _calc_arena_rating(db, season_id: str) -> list[dict]:
 @_register("arena_wins", "Arena — Vittorie", "Classifica per numero di vittorie ranked.")
 async def _calc_arena_wins(db, season_id: str) -> list[dict]:
     parts = await _eligible_parts(db, season_id)
-    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"], "score": p["wins"]}
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": p["wins"], "league": p["league"]}
             for p in parts]
     rows.sort(key=lambda r: -r["score"])
     return rows
@@ -72,7 +74,8 @@ async def _calc_arena_wins(db, season_id: str) -> list[dict]:
 @_register("arena_defense_wins", "Arena — Difese vinte", "Classifica per difese riuscite.")
 async def _calc_arena_def_wins(db, season_id: str) -> list[dict]:
     parts = await _eligible_parts(db, season_id)
-    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"], "score": p["defense_wins"]}
+    rows = [{"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+             "score": p["defense_wins"], "league": p["league"]}
             for p in parts]
     rows.sort(key=lambda r: -r["score"])
     return rows
@@ -86,8 +89,9 @@ async def _calc_arena_win_rate(db, season_id: str) -> list[dict]:
         total = p["wins"] + p["losses"] + p["draws"]
         if total < 10:
             continue
-        rate = int(round((p["wins"] / total) * 10000))  # bp ×10000 for ranking
-        rows.append({"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"], "score": rate})
+        rate = int(round((p["wins"] / total) * 10000))
+        rows.append({"guild_public_id": p["guild_public_id"], "guild_name": p["guild_name"],
+                     "score": rate, "league": p["league"]})
     rows.sort(key=lambda r: -r["score"])
     return rows
 

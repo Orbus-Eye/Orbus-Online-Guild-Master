@@ -33,6 +33,8 @@ MIN_LEVEL_PVP = 3  # Preview value (see report). Production should restore to 5.
 TEAM_SIZE = 5
 DAILY_RANKED_LIMIT = 10
 TARGET_DAILY_CAP = 3
+# ROUND 12.C — Account age gate. Preview value 1h, production 24h.
+MIN_GUILD_AGE_SECONDS = 60 * 60
 
 
 def _now_iso() -> str:
@@ -288,6 +290,24 @@ async def challenge(
             "code": "pvp.self_challenge",
             "user_message": "Non puoi sfidare te stesso.",
         })
+
+    # ROUND 12.C — Account age gate (anti-abuse)
+    if mode == "ranked":
+        try:
+            created_at = attacker_guild.get("created_at")
+            if isinstance(created_at, str):
+                created_dt = datetime.fromisoformat(created_at)
+            else:
+                created_dt = created_at
+            if created_dt and (datetime.now(timezone.utc) - created_dt).total_seconds() < MIN_GUILD_AGE_SECONDS:
+                raise HTTPException(423, {
+                    "code": "pvp.account_too_young",
+                    "user_message": f"La gilda è troppo giovane per le ranked (min {MIN_GUILD_AGE_SECONDS // 60} minuti).",
+                })
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.warning("[pvp] account_age_gate check failed (allowing): %s", exc)
 
     # Resolve opponent
     opp = await db.guilds.find_one({"public_id": opponent_guild_public_id})
