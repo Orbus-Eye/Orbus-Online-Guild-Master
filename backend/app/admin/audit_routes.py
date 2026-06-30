@@ -149,7 +149,7 @@ async def list_audit_events(
 # ─── 3. Aggregated KPI summary ────────────────────────────────────────────
 @router.get("/summary")
 async def get_audit_summary(
-    window_hours: int = Query(default=24, ge=1, le=10_000),
+    window_hours: int = Query(default=24, ge=1),
     _user: dict = Depends(get_admin_user),
 ):
     # Clamp window to MAX_WINDOW_HOURS regardless of upper bound — query
