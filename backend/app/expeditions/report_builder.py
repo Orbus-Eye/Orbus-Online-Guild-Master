@@ -111,6 +111,90 @@ def _outcome_title(outcome: str) -> str:
     }[outcome]
 
 
+def _build_why_narrative(*, lang: str, outcome: str, dungeon_name: str,
+                          team_power: int, rec_power: int, exp: dict,
+                          members: list[dict]) -> str:
+    """ROUND 16.1 Phase 2 — bilingual "why it went this way" summary.
+
+    Keeps under ~600 chars; no spoilers on formula constants. Uses
+    `threat_resolution` (added by Phase 4) when present.
+    """
+    is_it = (lang or "it").lower().startswith("it")
+    parts: list[str] = []
+
+    # Outcome verdict.
+    if outcome in ("success", "great_success"):
+        parts.append("La spedizione è riuscita." if is_it
+                     else "The expedition succeeded.")
+    elif outcome in ("partial", "partial_success"):
+        parts.append("La spedizione è riuscita parzialmente." if is_it
+                     else "The expedition partially succeeded.")
+    else:
+        parts.append("La spedizione è fallita." if is_it
+                     else "The expedition failed.")
+
+    # Power vs recommended.
+    if team_power and rec_power:
+        delta = team_power - rec_power
+        if delta >= 20:
+            parts.append(
+                f"Il potere del team ({team_power}) supera nettamente il consigliato ({rec_power})."
+                if is_it else
+                f"Team power ({team_power}) is well above the recommended ({rec_power}).")
+        elif delta <= -20:
+            parts.append(
+                f"Il team era sotto-livellato: {team_power} contro {rec_power} consigliato."
+                if is_it else
+                f"The party was under-leveled: {team_power} vs {rec_power} recommended.")
+        else:
+            parts.append(
+                f"Potere del team {team_power} contro {rec_power} consigliato — sfida bilanciata."
+                if is_it else
+                f"Team power {team_power} vs {rec_power} recommended — balanced challenge.")
+
+    # Threat resolution narrative (Void/Undead only).
+    tr = (exp or {}).get("threat_resolution") or {}
+    if tr.get("applies"):
+        threats = tr.get("threats") or []
+        countered = set(tr.get("threats_countered") or [])
+        n_total = len(threats)
+        n_done = sum(1 for t in threats if t in countered)
+        bonus = int(tr.get("success_bonus_pct", 0))
+        if n_total:
+            if is_it:
+                parts.append(
+                    f"Contromisure: {n_done}/{n_total} minacce contrastate "
+                    f"(bonus successo +{bonus}%).")
+                if n_done < n_total:
+                    not_done = [t for t in threats if t not in countered]
+                    parts.append(
+                        f"Nessun membro aveva counter per: {', '.join(not_done)} "
+                        "→ rischio ferite aumentato.")
+            else:
+                parts.append(
+                    f"Counters: {n_done}/{n_total} threats neutralized "
+                    f"(+{bonus}% success bonus).")
+                if n_done < n_total:
+                    not_done = [t for t in threats if t not in countered]
+                    parts.append(
+                        f"No party member countered: {', '.join(not_done)} "
+                        "→ higher injury risk.")
+
+    # Team specialization flavor.
+    if members:
+        spec_members = [m for m in members
+                        if m.get("specialization_slug")
+                        or m.get("specialization_snapshot")]
+        if spec_members:
+            parts.append(
+                f"{len(spec_members)} su {len(members)} membri del team avevano una specializzazione attiva."
+                if is_it else
+                f"{len(spec_members)} of {len(members)} team members had an active specialization.")
+
+    return " ".join(parts)[:600]
+
+
+
 def _narrative_summary(outcome: str, dungeon_name: str, team_size: int) -> str:
     if outcome == "success":
         return (
@@ -364,6 +448,17 @@ def build_expedition_report(
         "outcome": outcome,
         "title": _outcome_title(outcome),
         "narrative_summary": _narrative_summary(outcome, dungeon_name, team_size),
+        # ROUND 16.1 Phase 2 — bilingual "why it went this way" narrative.
+        "narrative_it": _build_why_narrative(
+            lang="it", outcome=outcome, dungeon_name=dungeon_name,
+            team_power=team_power, rec_power=rec_power, exp=exp,
+            members=members or [],
+        ),
+        "narrative_en": _build_why_narrative(
+            lang="en", outcome=outcome, dungeon_name=dungeon_name,
+            team_power=team_power, rec_power=rec_power, exp=exp,
+            members=members or [],
+        ),
         "success_chance_used": success_chance_used,
         "team_power": team_power,
         "recommended_power": rec_power,

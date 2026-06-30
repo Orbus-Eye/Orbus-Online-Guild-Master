@@ -87,4 +87,24 @@ async def list_dungeons(
     }
 
 
+# ROUND 16.1 Phase 2 — Dungeon preview endpoint.
+from app.core.security import get_current_user as _get_current_user  # noqa: E402
+from app.guilds.services import user_guild_or_404 as _user_guild  # noqa: E402
+
+
+@router.get("/{slug}/preview")
+async def dungeon_preview(
+    slug: str,
+    team_ids: str = Query("", description="Comma-separated adventurer ids"),
+    current_user: dict = Depends(_get_current_user),
+):
+    """Pre-launch preview: team_power, success_chance estimate, threats matrix,
+    weakness suggestions. All bilingual IT+EN. Used by the FE pre-launch modal.
+    """
+    from app.dungeons.preview import build_dungeon_preview
+    guild = await _user_guild(db, current_user["id"])
+    ids = [t for t in (team_ids or "").split(",") if t]
+    return await build_dungeon_preview(db, guild=guild, slug=slug, team_ids=ids)
+
+
 __all__ = ["router"]

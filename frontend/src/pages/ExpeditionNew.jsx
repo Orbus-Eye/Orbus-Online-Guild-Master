@@ -13,6 +13,7 @@ import {
     advDungeonTooltip,
 } from "../utils/levelGate";
 import { rarityLabel } from "../utils/displayLabels";
+import DungeonPreviewModal from "../components/DungeonPreviewModal";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -59,7 +60,7 @@ function previewSuccessChance(teamPower, recommended) {
 }
 
 export default function ExpeditionNew() {
-    const { t, tContent } = useT();
+    const { t, tContent, lang } = useT();
     const { slug } = useParams();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -75,6 +76,8 @@ export default function ExpeditionNew() {
     const [previewLoading, setPreviewLoading] = useState(false);
     // ROUND 6A.2b — saved squads dropdown
     const [squads, setSquads] = useState([]);
+    // ROUND 16.1 Phase 2 — narrated pre-launch preview modal.
+    const [showNarratedPreview, setShowNarratedPreview] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -574,11 +577,21 @@ export default function ExpeditionNew() {
                             )}
 
                             <Button
+                                onClick={() => setShowNarratedPreview(true)}
+                                data-testid="btn-narrated-preview"
+                                disabled={selected.length !== requiredSize || submitting || hasUnderLeveledSelected}
+                                variant="outline"
+                                className="w-full h-10 rounded-sm mt-5 border-amber/60 text-amber hover:bg-amber/10 disabled:opacity-50"
+                            >
+                                {lang === "it" ? "✦ Anteprima narrata" : "✦ Narrated preview"}
+                            </Button>
+
+                            <Button
                                 onClick={submit}
                                 data-testid="btn-send-expedition"
                                 disabled={selected.length !== requiredSize || submitting || hasUnderLeveledSelected}
                                 title={hasUnderLeveledSelected ? advDungeonTooltip(minAdvLevel) : ""}
-                                className="w-full h-10 rounded-sm mt-5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-10 rounded-sm mt-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {submitting
                                     ? t("expedition_new.dispatching_btn")
@@ -607,6 +620,17 @@ export default function ExpeditionNew() {
                     </aside>
                 </div>
             </main>
+            <DungeonPreviewModal
+                open={showNarratedPreview}
+                slug={slug}
+                teamIds={selected.map((a) => a.id)}
+                onClose={() => setShowNarratedPreview(false)}
+                onConfirm={async () => {
+                    setShowNarratedPreview(false);
+                    await submit();
+                }}
+                confirming={submitting}
+            />
         </div>
     );
 }

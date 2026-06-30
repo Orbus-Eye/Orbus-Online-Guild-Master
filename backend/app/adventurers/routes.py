@@ -56,12 +56,71 @@ async def list_classes():
 @router.get("/api/adventurers")
 async def list_adventurers(
     include_retired: bool = False,
+    class_slug: str | None = None,
+    spec_slug: str | None = None,
+    role: str | None = None,
+    race_slug: str | None = None,
+    improvable_equip: bool = False,
+    no_spec: bool = False,
+    ready_for_dungeon: bool = False,
+    sort: str | None = None,
     current_user: dict = Depends(get_current_user),
 ):
+    # ROUND 16.1 Phase 2 — light server-side filter + sort overlay.
+    # The base list is loaded once via list_adventurers_for_guild() for
+    # equip-power join; remaining slicing is done in-process to stay simple
+    # and avoid an N+1 cursor (rosters are capped ≤500 rows).
     guild = await user_guild_or_404(db, current_user["id"])
-    return {"adventurers": await list_adventurers_for_guild(
-        db, guild["id"], include_retired=include_retired
-    )}
+    rows = await list_adventurers_for_guild(
+        db, guild["id"], include_retired=include_retired)
+
+    if class_slug:
+        rows = [r for r in rows if r.get("class_slug") == class_slug]
+    if spec_slug:
+        rows = [r for r in rows if r.get("specialization_slug") == spec_slug]
+    if role:
+        rows = [r for r in rows if (r.get("class_role") or "").lower() == role.lower()]
+    if race_slug:
+        rows = [r for r in rows if r.get("race_slug") == race_slug]
+    if no_spec:
+        rows = [r for r in rows if not r.get("specialization_slug")]
+    if improvable_equip:
+        # Best-effort: count equipped slots; consider improvable if < 4.
+        def _is_improvable(a: dict) -> bool:
+            slots = a.get("equipment") or {}
+            equipped = sum(1 for v in slots.values() if v)
+            return equipped < 4
+        rows = [r for r in rows if _is_improvable(r)]
+    if ready_for_dungeon:
+        rows = [r for r in rows
+                if (r.get("level") or 0) >= 3
+                and not r.get("is_retired")
+                and not r.get("is_injured")]
+
+    # Sort overlay
+    sort_map = {
+        "level_desc":   lambda a: -(a.get("level") or 0),
+        "level_asc":    lambda a: (a.get("level") or 0),
+        "power_desc":   lambda a: -((a.get("equipment_power") or 0)
+                                      + (a.get("base_power") or 0)),
+        "power_asc":    lambda a: ((a.get("equipment_power") or 0)
+                                      + (a.get("base_power") or 0)),
+        "class_asc":    lambda a: (a.get("class_slug") or ""),
+        "name_asc":     lambda a: (a.get("name") or "").lower(),
+        "primary_desc": lambda a: -_primary_stat_value(a),
+        "primary_asc":  lambda a: _primary_stat_value(a),
+    }
+    if sort in sort_map:
+        rows = sorted(rows, key=sort_map[sort])
+
+    return {"adventurers": rows, "total": len(rows)}
+
+
+def _primary_stat_value(a: dict) -> int:
+    """Return the value of the adventurer's primary stat, or 0."""
+    stat = (a.get("primary_stat") or "").lower()
+    stats = a.get("stats") or {}
+    return int(stats.get(stat) or 0)
 
 
 @router.get("/api/adventurers/{adventurer_id}/trait-preview")

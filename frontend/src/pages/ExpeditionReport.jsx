@@ -93,6 +93,33 @@ const THREAT_LABEL_IT = {
     magic_barrier: "Barriera Magica",
 };
 
+// ROUND 16.1 Phase 2 — "Why it went this way" expandable narrative section.
+function WhyNarrativeSection({ narrativeIt, narrativeEn, lang }) {
+    const isIt = lang === "it";
+    const text = isIt ? narrativeIt : narrativeEn;
+    if (!text) return null;
+    return (
+        <section className="mb-6" data-testid="report-why-narrative">
+            <details open className="border border-border bg-card rounded-sm">
+                <summary
+                    className="cursor-pointer px-4 py-3 text-[10px] text-amber tracking-widest hover:bg-card/80 select-none"
+                    data-testid="report-why-summary"
+                >
+                    {isIt
+                        ? ":: PERCHÉ È ANDATA COSÌ"
+                        : ":: WHY IT WENT THIS WAY"}
+                </summary>
+                <div
+                    className="px-4 pb-4 pt-1 text-sm text-foreground/90 italic leading-relaxed"
+                    data-testid="report-why-text"
+                >
+                    {text}
+                </div>
+            </details>
+        </section>
+    );
+}
+
 function ThreatResolutionSection({ tr }) {
     const threats = tr?.threats || [];
     const countered = new Set(tr?.threats_countered || []);
@@ -342,6 +369,15 @@ export default function ExpeditionReport() {
                             {e.result_log}
                         </blockquote>
                     </section>
+                )}
+
+                {/* ROUND 16.1 Phase 2 — Why-it-went-this-way bilingual narrative */}
+                {isDone && report_summary && (report_summary.narrative_it || report_summary.narrative_en) && (
+                    <WhyNarrativeSection
+                        narrativeIt={report_summary.narrative_it}
+                        narrativeEn={report_summary.narrative_en}
+                        lang={lang}
+                    />
                 )}
 
                 {/* Phase 14.5 — Explainability layer */}

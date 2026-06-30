@@ -12,6 +12,7 @@ import AdventurerDetailModal from "../components/AdventurerDetailModal";
 import AdventurerRenameModal from "../components/AdventurerRenameModal";
 import RoleMarker from "../components/RoleMarker";
 import { SpecChip } from "../components/SpecializationBadge";
+import RosterFilterBar from "../components/RosterFilterBar";
 
 // i18n note (Phase 12.3): stat abbreviations STR / AGI / INT / END / FAI are
 // intentionally NOT localized. They follow universal MMO/RPG convention and
@@ -113,6 +114,8 @@ const Empty = ({ t }) => (
 export default function Adventurers() {
     const { t, lang } = useT();
     const [rows, setRows] = useState(null);
+    const [totalCount, setTotalCount] = useState(null);
+    const [filters, setFilters] = useState({});
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
     const [renaming, setRenaming] = useState(null);
@@ -176,18 +179,35 @@ export default function Adventurers() {
     };
 
     useEffect(() => {
+        // ROUND 16.1 Phase 2 — refetch whenever filters change.
+        let cancelled = false;
         (async () => {
+            setLoading(true);
             try {
-                const { data } = await api.get("/adventurers");
+                const params = new URLSearchParams();
+                for (const [k, v] of Object.entries(filters || {})) {
+                    if (v === "" || v === null || v === undefined || v === false) continue;
+                    params.set(k, typeof v === "boolean" ? "true" : String(v));
+                }
+                const qs = params.toString();
+                const { data } = await api.get(`/adventurers${qs ? `?${qs}` : ""}`);
+                if (cancelled) return;
                 setRows(data.adventurers);
+                // Capture totalCount on first unfiltered load.
+                if (!qs && totalCount == null) {
+                    setTotalCount(data.adventurers.length);
+                }
             } catch (err) {
+                if (cancelled) return;
                 toast.error(formatApiError(err));
                 setRows([]);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         })();
-    }, []);
+        return () => { cancelled = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters]);
 
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
@@ -227,7 +247,28 @@ export default function Adventurers() {
                     </div>
                 )}
 
-                {!loading && rows && rows.length === 0 && <Empty t={t} />}
+                {!loading && rows && rows.length === 0 && (totalCount == null || totalCount === 0) && <Empty t={t} />}
+
+                {!loading && rows && rows.length === 0 && totalCount != null && totalCount > 0 && (
+                    <div
+                        data-testid="adventurers-no-filter-results"
+                        className="border border-border bg-card rounded-sm p-6 text-center text-xs text-muted-foreground"
+                    >
+                        {lang === "it"
+                            ? "Nessun avventuriero corrisponde ai filtri attivi."
+                            : "No adventurers match the active filters."}
+                    </div>
+                )}
+
+                {/* ROUND 16.1 Phase 2 — Roster filter+sort toolbar.
+                    Stays visible during refetch so users keep context. */}
+                {totalCount != null && totalCount > 0 && (
+                    <RosterFilterBar
+                        onChange={setFilters}
+                        totalCount={totalCount}
+                        filteredCount={rows?.length ?? 0}
+                    />
+                )}
 
                 {/* ROUND 16.0 — quick link to Class Halls. */}
                 {!loading && rows && rows.length > 0 && (
