@@ -315,15 +315,23 @@ Tutti beneficiano del medesimo fix mobile (pb-32, min-h-44, scroll-into-view, w-
 
 ## Sezione 14 — Conferma dropdown desktop non accavallati
 
-**Comportamento ora**:
+**Comportamento ora** (post v2 hotfix click-away):
+
 1. User clicca sezione A → A si apre.
 2. User clicca sezione B → A si chiude, B si apre (`setOpenId("B")`).
 3. User hover sezione C (mentre B è aperto) → B si chiude, C si apre (auto-switch hover gating).
-4. User clicca fuori dal nav → dropdown si chiude (click-outside listener).
+4. **User clicca su body / area vuota / qualsiasi elemento fuori da trigger e panel → dropdown si chiude** ✅ (FIX v2).
 5. User clicca voce link → dropdown si chiude + navigation.
 6. Cambio route → dropdown si chiude (useEffect on pathname).
 
-**Risultato**: impossibile avere 2+ dropdown contemporaneamente. No più accavallamento.
+**FIX v2 — Robust click-away listener** (hotfix per regressione rilevata da `e1_tester`):
+- Marker `data-dropdown-region="trigger"` su tutti i bottoni trigger (sezioni + account).
+- Marker `data-dropdown-region="panel"` su tutti i pannelli `<ul role="menu">` aperti.
+- Listener `mousedown` + `touchstart` su `document`: se il target NON ha `.closest('[data-dropdown-region]')` → `setOpenId(null)`.
+- **Perché data-attributes invece di `navRef.contains`**: il fix v1 falliva quando il click cadeva nello spazio vuoto laterale del `<header sticky>` — tecnicamente dentro il `<header>` ma fuori dall'inner container ref. La detection con marker funziona indipendentemente dal layout DOM (header può crescere/cambiare struttura senza rompere il listener).
+- Cleanup automatico del listener quando `openId === null`.
+
+**Risultato**: impossibile avere 2+ dropdown contemporaneamente. Click su body chiude correttamente.
 
 **Mobile drawer**: invariato (gestito da `MobileBottomNav` + `MobileMenuDrawer`, separati da `AppHeader`). 5 voci bottom + 8 sezioni drawer.
 

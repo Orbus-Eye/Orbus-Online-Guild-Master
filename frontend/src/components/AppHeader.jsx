@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -22,6 +22,7 @@ const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
             <button
                 type="button"
                 data-testid={`desktop-menu-trigger-${section.id}`}
+                data-dropdown-region="trigger"
                 onClick={() => setOpenId(isOpen ? null : section.id)}
                 onMouseEnter={() => {
                     // Auto-switch dropdown on hover ONLY if another one is already open
@@ -42,6 +43,7 @@ const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
             {isOpen && items.length > 0 && (
                 <ul
                     data-testid={`desktop-menu-items-${section.id}`}
+                    data-dropdown-region="panel"
                     role="menu"
                     className="absolute left-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-50"
                 >
@@ -87,6 +89,7 @@ const DesktopAccountMenu = ({ user, onLogout, openId, setOpenId }) => {
             <button
                 type="button"
                 data-testid="desktop-menu-trigger-account"
+                data-dropdown-region="trigger"
                 onClick={() => setOpenId(isOpen ? null : "account")}
                 onMouseEnter={() => { if (openId && openId !== "account") setOpenId("account"); }}
                 aria-expanded={isOpen}
@@ -100,6 +103,7 @@ const DesktopAccountMenu = ({ user, onLogout, openId, setOpenId }) => {
                 <ul
                     role="menu"
                     data-testid="desktop-menu-items-account"
+                    data-dropdown-region="panel"
                     className="absolute right-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-50"
                 >
                     <li className="px-4 py-2 text-[10px] text-muted-foreground border-b border-border/60">
@@ -172,17 +176,28 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     const [menuOpen, setMenuOpen] = useState(false);
     // ROUND 16.1.1 HOTFIX — lifted single `openId` controls all desktop dropdowns.
     const [openId, setOpenId] = useState(null);
-    const navRef = useRef(null);
     const subtitleText = subtitle != null ? subtitle : t(subtitleKey);
 
-    // ROUND 16.1.1 HOTFIX — click-outside listener closes the open dropdown.
+    // ROUND 16.1.1 HOTFIX (v2) — robust click-away listener using
+    // `data-dropdown-region` markers. Closes the open dropdown when the
+    // click target is NOT inside a trigger button OR an open panel.
+    // Why data-attributes instead of `navRef.contains`: the previous
+    // approach failed if the click landed on the empty side area of the
+    // sticky <header> (technically inside the header but outside the
+    // inner container ref). Marker-based detection works regardless of
+    // DOM layout.
     useEffect(() => {
         if (!openId) return;
         const handler = (e) => {
-            if (navRef.current && !navRef.current.contains(e.target)) {
-                setOpenId(null);
+            const target = e.target;
+            if (target && typeof target.closest === "function" &&
+                target.closest('[data-dropdown-region]')) {
+                return; // click landed on a trigger or open panel — keep open
             }
+            setOpenId(null);
         };
+        // mousedown fires before click, so by the time the click event
+        // would re-open the same trigger it's already closed → toggle works.
         document.addEventListener("mousedown", handler);
         document.addEventListener("touchstart", handler);
         return () => {
@@ -200,7 +215,7 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     return (
         <>
             <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-20">
-                <div ref={navRef} className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
                     {/* Brand + desktop nav */}
                     <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                         <Link
