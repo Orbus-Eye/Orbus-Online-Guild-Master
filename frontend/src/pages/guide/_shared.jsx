@@ -59,6 +59,13 @@ export const SECTIONS = [
     { id: "drop-materiali", label: "36. Drop materiali in spedizione" },
     { id: "guild-level", label: "37. Livello Gilda" },
     { id: "imprese-gilda", label: "38. Imprese di Gilda" },
+    // ROUND 16.0 — Phase 2-3 (player-facing reference for class rework)
+    { id: "classe-vs-spec", label: "R16. Classe base vs Specializzazione" },
+    { id: "sale-di-classe", label: "R16. Sale di Classe" },
+    { id: "sblocco-sala-spec", label: "R16. Sbloccare Sala e Specializzazione" },
+    { id: "razze-sesso", label: "R16. Razza e Sesso" },
+    { id: "stat-colors", label: "R16. Colori delle statistiche" },
+    { id: "auto-equip", label: "R16. Auto-Equipaggia" },
     // ROUND 16.0 — Phase 4 — Threats & Counters (Void/Undead)
     { id: "minacce-contromisure", label: "39. Minacce e Contromisure (Vuoto/Non-morti)" },
 ];

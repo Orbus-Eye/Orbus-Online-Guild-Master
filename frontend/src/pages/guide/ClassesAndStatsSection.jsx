@@ -145,7 +145,7 @@ const CLASSES = [
         weaknesses: ["Soffre in stanze strette", "Munizioni/consumabili da gestire"],
         good_in: ["Dungeon all'aperto", "Spedizioni esplorative", "Raid contro boss volanti"] },
 
-    { slug: "assassin", name_it: "Assassino", role: "DPS", secondary_role: "Burst Stealth",
+    { slug: "assassin", name_it: "Assassino (specializzazione di Ladro)", is_specialization: true, parent_class_it: "Ladro", role: "DPS", secondary_role: "Burst Stealth",
         primary_stat: "Destrezza", secondary_stats: ["Forza"],
         equip: "Pugnali avvelenati, armi finesse. Armatura quasi nulla, abito d'ombra.",
         playstyle: "Aspetta. Colpisce. Sparisce. Un solo colpo, idealmente decisivo.",
@@ -154,7 +154,7 @@ const CLASSES = [
         weaknesses: ["Estremamente fragile", "Pessimo se scoperto", "Niente sostegno"],
         good_in: ["Boss con poco HP da chiudere rapidamente", "PvP one-shot"] },
 
-    { slug: "berserker", name_it: "Berserker", role: "DPS", secondary_role: "Frontline",
+    { slug: "berserker", name_it: "Berserker (specializzazione di Guerriero)", is_specialization: true, parent_class_it: "Guerriero", role: "DPS", secondary_role: "Frontline",
         primary_stat: "Forza", secondary_stats: ["Costituzione"],
         equip: "Armi a due mani: asce, claymore, martelli. Armatura media — niente scudo per definizione.",
         playstyle: "Carica frontalmente, colpisce a piena forza. Più la sua salute scende, più colpisce.",
@@ -181,7 +181,7 @@ const CLASSES = [
         weaknesses: ["Fragile", "Dipende dal mana / cooldown", "Vulnerabile in melee"],
         good_in: ["Dungeon con ondate", "Boss con meccaniche complesse", "AoE clear"] },
 
-    { slug: "necromancer", name_it: "Negromante", role: "DPS", secondary_role: "Caster / Summoner",
+    { slug: "necromancer", name_it: "Negromante (specializzazione di Mago)", is_specialization: true, parent_class_it: "Mago", role: "DPS", secondary_role: "Caster / Summoner",
         primary_stat: "Intelletto", secondary_stats: ["Destrezza"],
         equip: "Bastoni d'ossa, falci, simboli oscuri. Vesti rituali, mai armatura forte.",
         playstyle: "Drena vita, evoca scheletri, decompone i bersagli. Lavora di logoramento.",
@@ -265,7 +265,14 @@ function ClassEntry({ cls }) {
             className="border border-border bg-background/30 rounded-sm p-4 mb-4"
         >
             <header className="flex items-baseline justify-between gap-3 mb-2 flex-wrap">
-                <h3 className="text-[15px] text-foreground font-semibold">{cls.name_it}</h3>
+                <h3 className="text-[15px] text-foreground font-semibold">
+                    {cls.name_it}
+                    {cls.is_specialization && (
+                        <span className="ml-2 text-[10px] tracking-widest text-amber/90 border border-amber/50 rounded-sm px-2 py-0.5 align-middle">
+                            SPEC
+                        </span>
+                    )}
+                </h3>
                 <span
                     data-testid={`guide-class-${cls.slug}-roles`}
                     className="text-[10px] text-amber tracking-widest"
@@ -339,9 +346,13 @@ export default function ClassesAndStatsSection() {
                 :: CLASSI
             </h3>
             <p className="text-[12px] text-muted-foreground mb-4">
-                Dodici archetipi attivi nel gioco. Ognuno è progettato per
-                fare bene una cosa specifica: il tuo lavoro come Guild Master
-                è scegliere chi mandare a fare cosa.
+                Dieci classi base attive nel gioco (Guerriero, Paladino, Ladro,
+                Ranger, Monaco, Mago, Sacerdote, Druido, Bardo, Stregone) più
+                tre specializzazioni storiche iconiche (Assassino, Berserker,
+                Negromante), che dal Round 16.0 sono passate da classi base a
+                specializzazioni delle rispettive sale di classe.
+                Ognuna è progettata per fare bene una cosa specifica: il tuo
+                lavoro come Guild Master è scegliere chi mandare a fare cosa.
             </p>
             {CLASSES.map((c) => <ClassEntry key={c.slug} cls={c} />)}
         </SectionBlock>

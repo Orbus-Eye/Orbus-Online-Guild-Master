@@ -75,6 +75,12 @@ export const NAV_SECTIONS = [
         items: [
             { to: "/guide", label: "Guida generale", testid: "menu-guide" },
             { to: "/guide#classi-e-stats", label: "Classi e statistiche", testid: "menu-guide-classes" },
+            { to: "/guide#classe-vs-spec", label: "Classe base vs Specializzazione", testid: "menu-guide-base-vs-spec" },
+            { to: "/guide#sale-di-classe", label: "Sale di Classe", testid: "menu-guide-class-halls" },
+            { to: "/guide#sblocco-sala-spec", label: "Sbloccare Sala e Spec.", testid: "menu-guide-unlock" },
+            { to: "/guide#razze-sesso", label: "Razza e Sesso", testid: "menu-guide-races" },
+            { to: "/guide#stat-colors", label: "Colori statistiche", testid: "menu-guide-stat-colors" },
+            { to: "/guide#auto-equip", label: "Auto-Equipaggia", testid: "menu-guide-auto-equip" },
             { to: "/guide#traits-catalog", label: "Catalogo tratti", testid: "menu-guide-traits" },
             { to: "/guide#equip-compat", label: "Equipaggiamento per classe", testid: "menu-guide-equip" },
             { to: "/guide#dungeon", label: "Dungeon e Spedizioni", testid: "menu-guide-dungeon" },
