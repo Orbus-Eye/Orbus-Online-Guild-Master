@@ -332,8 +332,36 @@ Tutti beneficiano del medesimo fix mobile (pb-32, min-h-44, scroll-into-view, w-
 | Versione | Pattern | Problema |
 |---|---|---|
 | v1 | `mousedown` + `navRef.current.contains(target)` | Falliva quando il click cadeva su elementi tecnicamente dentro `navRef` ma fuori dai trigger/panel (es. brand link, LanguageSwitcher area). |
-| v2 | `mousedown` + `target.closest('[data-dropdown-region]')` | Marker corretto, ma `mousedown` arriva PRIMA dell'`onClick` del trigger. Race condition: il listener vede ancora il vecchio `openId` quando l'utente clicca un nuovo trigger → atomic switch rotto (serviva doppio click). Inoltre il secondo listener `touchstart` aggiungeva rumore. Sub-check (a)+(b)+(d) FAIL. |
-| **v3 (current)** | **`click` (single listener, post-bubble) + marker `data-dropdown-region`** | Pattern canonico click-away: `click` fa bubble DOPO l'`onClick` del trigger, quindi `openId` è già aggiornato quando il listener decide se chiudere. Atomic switch funziona in un click. Nessun race. Touch handled via `click` synthesis del browser. |
+| v2 | `mousedown` + `target.closest('[data-dropdown-region]')` | Marker corretto, ma `mousedown` arriva PRIMA dell'`onClick` del trigger. Race condition: il listener vede ancora il vecchio `openId` quando l'utente clicca un nuovo trigger → atomic switch rotto (serviva doppio click). Sub-check (a)+(b)+(d) FAIL. |
+| v3 | `click` (post-bubble) + marker + **hover auto-switch su trigger** | Listener click pattern OK (5/6 PASS), ma l'`onMouseEnter` auto-switch causava un conflitto: hover sul trigger settava `openId=section.id` → click successivo sullo stesso trigger eseguiva il toggle `prev === id ? null : id` → **chiudeva** invece di mantenerlo aperto. Sub-check (d) ancora FAIL. |
+| **v4 (current)** | **`click` post-bubble + marker, NO hover auto-switch** | Rimosso `onMouseEnter` da `DesktopMenuButton` e `DesktopAccountMenu`. Pattern click-only standard (GitHub/Linear/GitLab style). Hover NON apre né cambia dropdown. Toggle pulito: `setOpenId(isOpen ? null : section.id)` esegue una sola volta per click. Atomic switch funziona perché click su trigger B trova `openId="A"` → `isOpen=false` → apre B; il listener click vede `closest()=B` → skip close. 6/6 PASS atteso. |
+
+### Diff sintetico v3 → v4
+
+```diff
+  <button
+      type="button"
+      data-testid={`desktop-menu-trigger-${section.id}`}
+      data-dropdown-region="trigger"
+      onClick={() => setOpenId(isOpen ? null : section.id)}
+-     onMouseEnter={() => {
+-         // Auto-switch dropdown on hover ONLY if another one is already open
+-         if (openId && openId !== section.id) setOpenId(section.id);
+-     }}
+      aria-expanded={isOpen}
+      ...
+  >
+```
+(Identico per `DesktopAccountMenu` trigger.)
+
+Grep verifica: `grep onMouseEnter /app/frontend/src/components/AppHeader.jsx` → **0 occorrenze**.
+
+### Pattern UX risultante (click-only)
+- **Click** su trigger → toggle (apre se chiuso, chiude se aperto).
+- **Hover** → solo highlight visivo (border / bg) tramite Tailwind, nessun cambio di state.
+- **Click outside** → chiude (via listener `click` post-bubble).
+- **Click su link interno al panel** → navigazione + chiusura.
+- **Cambio route** → chiusura.
 
 ### Diff sintetico v2 → v3
 

@@ -24,11 +24,6 @@ const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
                 data-testid={`desktop-menu-trigger-${section.id}`}
                 data-dropdown-region="trigger"
                 onClick={() => setOpenId(isOpen ? null : section.id)}
-                onMouseEnter={() => {
-                    // Auto-switch dropdown on hover ONLY if another one is already open
-                    // (keeps mouse-driven exploration smooth without spurious opens).
-                    if (openId && openId !== section.id) setOpenId(section.id);
-                }}
                 aria-expanded={isOpen}
                 aria-haspopup="menu"
                 className={`px-3 py-1.5 text-xs tracking-widest font-bold rounded-sm transition-colors inline-flex items-center gap-1 ${
@@ -91,7 +86,6 @@ const DesktopAccountMenu = ({ user, onLogout, openId, setOpenId }) => {
                 data-testid="desktop-menu-trigger-account"
                 data-dropdown-region="trigger"
                 onClick={() => setOpenId(isOpen ? null : "account")}
-                onMouseEnter={() => { if (openId && openId !== "account") setOpenId("account"); }}
                 aria-expanded={isOpen}
                 aria-haspopup="menu"
                 className="px-3 py-1.5 text-xs tracking-widest font-bold rounded-sm transition-colors inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary/60"
