@@ -1,8 +1,9 @@
-"""Equipment routes (Phase 5.5d)."""
+"""Equipment routes (Phase 5.5d; Round 16.0 added auto-equip)."""
 from fastapi import APIRouter, Depends
 
 from app.core.database import db
 from app.core.security import get_current_user
+from app.equipment.auto_equip import auto_equip_adventurer
 from app.equipment.schemas import EquipIn, UnequipIn
 from app.equipment.services import (
     equip_item_service,
@@ -41,6 +42,19 @@ async def unequip_item(
 ):
     guild = await user_guild_or_404(db, current_user["id"])
     return await unequip_item_service(db, guild, adventurer_id, payload.slot)
+
+
+@router.post("/{adventurer_id}/auto-equip")
+async def auto_equip(
+    adventurer_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """ROUND 16.0 — Phase 3 — Equip the best compatible item per slot."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await auto_equip_adventurer(
+        db, guild=guild, adventurer_id=adventurer_id,
+        actor_user_id=current_user["id"],
+    )
 
 
 __all__ = ["router"]

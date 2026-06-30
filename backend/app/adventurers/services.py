@@ -215,6 +215,10 @@ def adventurer_public(doc: dict) -> dict:
         # training snapshot). Identifies the spec attached to the base
         # class (e.g. "berserker_spec" for a Warrior).
         "specialization_slug": doc.get("specialization_slug"),
+        # ROUND 16.0 Phase 3 — flavour identity (race + gender).
+        "race_slug": doc.get("race_slug"),
+        "race_name_it": doc.get("race_name_it"),  # joined by services if needed
+        "gender": doc.get("gender"),
         "equipment": eq_slots,
         "base_power": base_power,
         "equipment_power": eq_power,

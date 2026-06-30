@@ -163,6 +163,11 @@ EVENT_TYPES = frozenset({
     "adventurer_class_migrated",
     "item_class_tags_extended",
     "achievement_text_updated_round160",
+    # ROUND 16.0 Phase 3 — Races + Gender + Auto-Equip
+    "race_seeded_round160",
+    "adventurer_race_assigned",
+    "adventurer_gender_assigned",
+    "adventurer_auto_equipped",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

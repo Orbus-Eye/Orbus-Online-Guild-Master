@@ -87,7 +87,8 @@ async def _setup() -> tuple[str, str, str, str]:
         "item_id": item_id,
         "quantity": 1,
         "is_bound": False,
-        "obtained_at": now,
+        # R6B schema uses `acquired_at` (the canonical timestamp).
+        "acquired_at": now,
         "obtained_from": "round160_evidence_script",
         "is_test": True,
         "created_at": now,

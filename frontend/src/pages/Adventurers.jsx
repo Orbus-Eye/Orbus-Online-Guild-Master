@@ -289,6 +289,16 @@ export default function Adventurers() {
                                                             Spec: {specLabel(a.specialization_slug)}
                                                         </span>
                                                     ) : null}
+                                                    {(a.race_slug || a.gender) ? (
+                                                        <span
+                                                            data-testid={`adventurer-race-gender-${a.id}`}
+                                                            className="text-[10px] text-muted-foreground/70 mt-0.5"
+                                                            aria-label={`Razza ${a.race_slug || 'sconosciuta'}, genere ${a.gender === 'female' ? 'Femmina' : a.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
+                                                        >
+                                                            {a.race_slug ? a.race_slug.replace(/_/g, ' ') : ''}
+                                                            {a.gender ? (a.gender === 'female' ? ' · ♀' : ' · ♂') : ''}
+                                                        </span>
+                                                    ) : null}
                                                 </div>
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
