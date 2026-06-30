@@ -2,7 +2,7 @@
 
 **Data**: 30 giugno 2026
 **Tipo**: Hotfix dedicato (NON è R16.B, NON è R16.C).
-**Stato**: 🟡 **Code change completo + test verdi + dry-run pronto. In attesa conferma per `--apply`.**
+**Stato**: 🟢 **OFFICIALLY APPLIED ✅** — 28/28 raid resolved, 580 adv liberati, 29 audit `raid_recovered` emessi (28 apply + 1 on-visit fallback), 0 errors, 65/65 pytest pass.
 
 ---
 
@@ -126,19 +126,83 @@ Totals: {'resolved': 0, 'skipped': 0, 'previewed': 29, 'error': 0}
 
 ## Sezione 6 — Output apply recovery
 
-⏸️ **NON ESEGUITO**. In attesa conferma esplicita dall'utente prima di lanciare `--apply` (come da richiesta).
+✅ **APPLIED 2026-06-30 19:35 UTC**.
 
-Quando l'utente conferma, eseguirò:
-```bash
-cd /app/backend && set -a && source .env && set +a && \
-  python -m app.scripts.recover_stuck_raids --apply
+```
+=== Raid Recovery [APPLY] — 28 candidate(s) ===
+raid_id    guild_id    members outcome    dup_risk   action
+--------------------------------------------------------------------------------
+56a829ee.. b8f1c4eb..       20 wipe       no         resolved
+a7c6640c.. 99b861e2..       20 wipe       no         resolved
+0d937929.. 11346be4..       20 partial    no         resolved
+21875d23.. af162cdf..       20 partial    no         resolved
+6e89935b.. b4be264c..       20 wipe       no         resolved
+5f48f480.. 45c8a6df..       20 wipe       no         resolved
+6c6c33e4.. e7d57ce4..       20 wipe       no         resolved
+457aec87.. 29e03e58..       20 partial    no         resolved
+d1e65210.. 31ad701c..       20 wipe       no         resolved
+deaf2a3f.. 9beb76cf..       20 wipe       no         resolved
+6611ceab.. ea155cda..       20 wipe       no         resolved
+9820cb93.. bfc7e528..       20 wipe       no         resolved
+24b525cf.. 38c429db..       20 wipe       no         resolved
+290e98e6.. 27d90995..       20 wipe       no         resolved
+3bbd9991.. d3c1b81e..       20 partial    no         resolved
+4856042a.. ed222c0d..       20 partial    no         resolved
+9f9a4593.. 78f4b72f..       20 wipe       no         resolved
+b7c27879.. 93b6eced..       20 partial    no         resolved
+62308c79.. adc91cad..       20 wipe       no         resolved
+99a3fcb9.. 44c87187..       20 wipe       no         resolved
+9e4e7d15.. f8630be6..       20 wipe       no         resolved
+bcde756d.. 956129af..       20 wipe       no         resolved
+2478c389.. fab5789b..       20 partial    no         resolved
+d07eaec7.. bfcb7688..       20 wipe       no         resolved
+eac74bf2.. 6eec9a18..       20 wipe       no         resolved
+1353250e.. c7ea9228..       20 partial    no         resolved
+fc0e3c83.. 6a1eb668..       20 partial    no         resolved
+d45d2189.. e8e87e3d..       20 wipe       no         resolved
+--------------------------------------------------------------------------------
+Totals: {'resolved': 28, 'skipped': 0, 'previewed': 0, 'error': 0}
 ```
 
-Aspettativa: 28 resolved + 0 errors (1 già risolto via on-visit fallback durante i test).
+**28 resolved / 0 skipped / 0 error / 0 duplicate reward** (tutti `dup_risk=no`).
+
+### Post-apply DB smoke check
+
+```
+[1] STUCK raids (in_progress + ends_at<=now): 0  ✅ (expected 0)
+[2] advs from recovered raids still flagged blocked: 0  ✅ (expected 0)
+[3] audit_log event_type=raid_recovered: 29  ✅ (28 apply + 1 on-visit pre-apply)
+[4] raids with recovered=True: 29  ✅
+```
+
+### Regression pytest (R16.A + R16.1 + R16.1.1 + Phase 14.4 + dev-seed)
+
+```
+================== 65 passed, 1 skipped, 2 warnings in 9.42s ===================
+```
+
+**65 passed, 0 fail, 0 regressioni**.
+
+### Frontend lint + webpack
+
+```
+ESLint Forge.jsx:      ✅ No issues found
+ESLint AppHeader.jsx:  ✅ No issues found
+webpack:               ✅ Compiled successfully!
+```
 
 ---
 
 ## Sezione 7 — Conferma squadra/e rilasciate
+
+✅ **APPLIED — 580 avventurieri liberati** (29 raid × 20 membri = 580).
+
+Smoke check post-apply:
+```
+[2] advs from recovered raids still flagged blocked: 0  (expected 0)
+```
+
+Tutti gli avventurieri che erano in `expedition_in_progress=true` o `is_available=false` per i raid recovered ora sono `is_available=true, expedition_in_progress=false`.
 
 Test T02 (`test_stuck_raid_releases_squad_members`) verifica:
 ```python
