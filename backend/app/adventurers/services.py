@@ -235,6 +235,8 @@ async def list_adventurers_for_guild(
 
     ROUND 6B.2a — retired adventurers are EXCLUDED by default; pass
     `include_retired=True` for admin/history views.
+    ROUND 16.0 Phase 3 — single batched join with `races` to populate
+    `race_name_it` on every adventurer DTO.
     """
     from app.equipment.services import _empty_slot_map, _load_equipment_for_guild
 
@@ -247,13 +249,29 @@ async def list_adventurers_for_guild(
         .to_list(500)
     )
     equip_map = await _load_equipment_for_guild(db, guild_id)
+    race_name_cache = await _load_race_name_cache(
+        db, slugs={r.get("race_slug") for r in rows if r.get("race_slug")},
+    )
     out = []
     for r in rows:
         slots, power = equip_map.get(r["id"], (_empty_slot_map(), 0))
         r["_equipment_slots"] = slots
         r["_equipment_power"] = power
+        if r.get("race_slug"):
+            r["race_name_it"] = race_name_cache.get(r["race_slug"])
         out.append(adventurer_public(r))
     return out
+
+
+async def _load_race_name_cache(db, *, slugs: set[str]) -> dict[str, str]:
+    """Batch-fetch `race_name_it` for a set of race slugs (cached per request)."""
+    if not slugs:
+        return {}
+    cursor = db.races.find(
+        {"slug": {"$in": list(slugs)}, "is_active": True},
+        {"_id": 0, "slug": 1, "name_it": 1},
+    )
+    return {r["slug"]: r.get("name_it") async for r in cursor}
 
 
 async def trait_preview_for_adventurer(db, guild_id: str, adventurer_id: str) -> dict:

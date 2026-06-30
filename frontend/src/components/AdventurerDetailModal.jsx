@@ -2,12 +2,14 @@
 // Displays a single adventurer's full sheet: level, XP progress bar,
 // stats, traits with rarity/polarity, equipment per slot.
 // Closes on X click, ESC key, backdrop click. Focus trap kept simple.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { toast } from "sonner";
 import { useT } from "../i18n/I18nContext";
 import { TraitList } from "./TraitBadge";
 import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
+import { api } from "../lib/api";
 
 const SLOTS = ["weapon", "armor", "accessory"];
 
@@ -41,9 +43,39 @@ const formatItemBonuses = (it) => {
     return parts.join(" · ");
 };
 
-export default function AdventurerDetailModal({ adventurer, onClose }) {
+export default function AdventurerDetailModal({ adventurer, onClose, onChanged }) {
     const { t, lang } = useT();
     const dialogRef = useRef(null);
+    const [autoEquipBusy, setAutoEquipBusy] = useState(false);
+
+    const handleAutoEquip = async () => {
+        if (!adventurer?.id || autoEquipBusy) return;
+        setAutoEquipBusy(true);
+        try {
+            const r = await api.post(`/adventurers/${adventurer.id}/auto-equip`);
+            const s = r.data || {};
+            const delta = (s.score_after ?? 0) - (s.score_before ?? 0);
+            const swaps = s.swaps_count ?? 0;
+            if (swaps === 0) {
+                const w = (s.warnings && s.warnings[0]) || "Nessuno swap possibile.";
+                toast.info(w, { description: "Nessun item compatibile più potente in inventario." });
+            } else {
+                toast.success(
+                    `Auto-equipaggiamento completato: ${swaps} oggetto${swaps === 1 ? "" : "i"} aggiornat${swaps === 1 ? "o" : "i"}`,
+                    {
+                        description: `Potere ${s.score_before}→${s.score_after} (${delta >= 0 ? "+" : ""}${delta})`,
+                    },
+                );
+            }
+            if (typeof onChanged === "function") onChanged(adventurer.id);
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Auto-equipaggiamento fallito. Riprova fra poco.";
+            toast.error(msg);
+        } finally {
+            setAutoEquipBusy(false);
+        }
+    };
 
     useEffect(() => {
         if (!adventurer) return undefined;
@@ -261,6 +293,18 @@ export default function AdventurerDetailModal({ adventurer, onClose }) {
                                 </div>
                             );
                         })}
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-end gap-2">
+                        <button
+                            type="button"
+                            data-testid={`auto-equip-btn-${adventurer.id}`}
+                            onClick={handleAutoEquip}
+                            disabled={autoEquipBusy}
+                            className="px-3 py-1.5 rounded-sm text-xs font-medium tracking-wide bg-amber-400/90 text-black hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {autoEquipBusy ? "Equipaggiando…" : "Auto-Equipaggia"}
+                        </button>
                     </div>
                 </div>
             </div>

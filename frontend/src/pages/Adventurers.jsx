@@ -293,9 +293,9 @@ export default function Adventurers() {
                                                         <span
                                                             data-testid={`adventurer-race-gender-${a.id}`}
                                                             className="text-[10px] text-muted-foreground/70 mt-0.5"
-                                                            aria-label={`Razza ${a.race_slug || 'sconosciuta'}, genere ${a.gender === 'female' ? 'Femmina' : a.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
+                                                            aria-label={`Razza ${a.race_name_it || a.race_slug || 'sconosciuta'}, genere ${a.gender === 'female' ? 'Femmina' : a.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
                                                         >
-                                                            {a.race_slug ? a.race_slug.replace(/_/g, ' ') : ''}
+                                                            {a.race_name_it || (a.race_slug ? a.race_slug.replace(/_/g, ' ') : '')}
                                                             {a.gender ? (a.gender === 'female' ? ' · ♀' : ' · ♂') : ''}
                                                         </span>
                                                     ) : null}
