@@ -83,6 +83,7 @@ EVENT_TYPES = frozenset({
     "dungeon_power_bumped",
     "raid_started",
     "raid_completed",
+    "raid_recovered",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

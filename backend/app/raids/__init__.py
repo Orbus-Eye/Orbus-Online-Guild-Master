@@ -671,6 +671,14 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
 @router.get("")
 async def list_raids(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 16.1.1 hotfix — on-visit fallback: auto-resolve any stuck raid
+    # (status=in_progress, ends_at<=now) for this guild before returning the
+    # list. Best-effort, never raises.
+    try:
+        from app.raids.recovery import auto_resolve_stuck_raids_for_guild
+        await auto_resolve_stuck_raids_for_guild(db, guild["id"])
+    except Exception:
+        pass
     cursor = db.raids.find(
         {"guild_id": guild["id"]}, {"_id": 0},
     ).sort("created_at", -1).limit(30)
@@ -681,6 +689,14 @@ async def list_raids(current_user: dict = Depends(get_current_user)):
 @router.get("/{raid_id}")
 async def get_raid(raid_id: str, current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 16.1.1 hotfix — on-visit fallback for the specific raid.
+    try:
+        from app.raids.recovery import resolve_stuck_raid
+        await resolve_stuck_raid(
+            db, raid_id, dry_run=False, reason="on_visit_fallback_detail",
+        )
+    except Exception:
+        pass
     raid = await db.raids.find_one({"id": raid_id, "guild_id": guild["id"]}, {"_id": 0})
     if not raid:
         raise HTTPException(status_code=404, detail="raid_not_found")

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -9,22 +9,26 @@ import MobileMenuDrawer from "./MobileMenuDrawer";
 import { NAV_SECTIONS } from "./navMenu";
 
 // ──────────────────────────────────────────────────────────────────────────
-// Desktop dropdown menu — one per macro-section.
+// ROUND 16.1.1 HOTFIX — Desktop dropdown menu refactor.
+// - Lift `openId` to AppHeader so only ONE dropdown is open at a time.
+// - Click-based open + click-outside listener (no more competing hover states).
+// - Result: no more overlapping dropdowns when user moves between buttons.
 // ──────────────────────────────────────────────────────────────────────────
-const DesktopMenuButton = ({ section, isActive }) => {
-    const [open, setOpen] = useState(false);
+const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
+    const isOpen = openId === section.id;
     const items = section.items || [];
     return (
-        <div
-            className="relative"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-        >
+        <div className="relative">
             <button
                 type="button"
                 data-testid={`desktop-menu-trigger-${section.id}`}
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
+                onClick={() => setOpenId(isOpen ? null : section.id)}
+                onMouseEnter={() => {
+                    // Auto-switch dropdown on hover ONLY if another one is already open
+                    // (keeps mouse-driven exploration smooth without spurious opens).
+                    if (openId && openId !== section.id) setOpenId(section.id);
+                }}
+                aria-expanded={isOpen}
                 aria-haspopup="menu"
                 className={`px-3 py-1.5 text-xs tracking-widest font-bold rounded-sm transition-colors inline-flex items-center gap-1 ${
                     isActive
@@ -35,11 +39,11 @@ const DesktopMenuButton = ({ section, isActive }) => {
                 {section.label.toUpperCase()}
                 <ChevronDown size={12} aria-hidden="true" />
             </button>
-            {open && items.length > 0 && (
+            {isOpen && items.length > 0 && (
                 <ul
                     data-testid={`desktop-menu-items-${section.id}`}
                     role="menu"
-                    className="absolute left-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-30"
+                    className="absolute left-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-50"
                 >
                     {items.map((it) => {
                         if (it.disabled || !it.to) {
@@ -61,6 +65,7 @@ const DesktopMenuButton = ({ section, isActive }) => {
                                     to={it.to}
                                     data-testid={`desktop-${it.testid}`}
                                     role="menuitem"
+                                    onClick={() => setOpenId(null)}
                                     className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber transition-colors"
                                 >
                                     {it.label}
@@ -75,30 +80,27 @@ const DesktopMenuButton = ({ section, isActive }) => {
 };
 
 // Render the Account dropdown specially to include user info + logout + admin.
-const DesktopAccountMenu = ({ user, onLogout }) => {
-    const [open, setOpen] = useState(false);
+const DesktopAccountMenu = ({ user, onLogout, openId, setOpenId }) => {
+    const isOpen = openId === "account";
     return (
-        <div
-            className="relative"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-        >
+        <div className="relative">
             <button
                 type="button"
                 data-testid="desktop-menu-trigger-account"
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
+                onClick={() => setOpenId(isOpen ? null : "account")}
+                onMouseEnter={() => { if (openId && openId !== "account") setOpenId("account"); }}
+                aria-expanded={isOpen}
                 aria-haspopup="menu"
                 className="px-3 py-1.5 text-xs tracking-widest font-bold rounded-sm transition-colors inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary/60"
             >
                 ACCOUNT
                 <ChevronDown size={12} aria-hidden="true" />
             </button>
-            {open && (
+            {isOpen && (
                 <ul
                     role="menu"
                     data-testid="desktop-menu-items-account"
-                    className="absolute right-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-30"
+                    className="absolute right-0 top-full mt-1 min-w-[220px] bg-card border border-border rounded-sm shadow-lg py-1 z-50"
                 >
                     <li className="px-4 py-2 text-[10px] text-muted-foreground border-b border-border/60">
                         Connesso come <span className="text-foreground">@{user?.username || "—"}</span>
@@ -109,6 +111,7 @@ const DesktopAccountMenu = ({ user, onLogout }) => {
                                 <Link
                                     to="/admin"
                                     data-testid="desktop-menu-admin"
+                                    onClick={() => setOpenId(null)}
                                     className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
                                 >
                                     Admin
@@ -118,6 +121,7 @@ const DesktopAccountMenu = ({ user, onLogout }) => {
                                 <Link
                                     to="/admin/ops"
                                     data-testid="desktop-menu-admin-ops"
+                                    onClick={() => setOpenId(null)}
                                     className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
                                 >
                                     Admin Ops
@@ -127,6 +131,7 @@ const DesktopAccountMenu = ({ user, onLogout }) => {
                                 <Link
                                     to="/admin/game-health"
                                     data-testid="desktop-menu-admin-game-health"
+                                    onClick={() => setOpenId(null)}
                                     className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
                                 >
                                     Game Health
@@ -139,7 +144,7 @@ const DesktopAccountMenu = ({ user, onLogout }) => {
                         <button
                             type="button"
                             data-testid="desktop-menu-logout"
-                            onClick={onLogout}
+                            onClick={() => { setOpenId(null); onLogout(); }}
                             className="w-full text-left block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
                         >
                             Esci
@@ -165,7 +170,29 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     const { t } = useT();
     const { pathname } = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
+    // ROUND 16.1.1 HOTFIX — lifted single `openId` controls all desktop dropdowns.
+    const [openId, setOpenId] = useState(null);
+    const navRef = useRef(null);
     const subtitleText = subtitle != null ? subtitle : t(subtitleKey);
+
+    // ROUND 16.1.1 HOTFIX — click-outside listener closes the open dropdown.
+    useEffect(() => {
+        if (!openId) return;
+        const handler = (e) => {
+            if (navRef.current && !navRef.current.contains(e.target)) {
+                setOpenId(null);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        document.addEventListener("touchstart", handler);
+        return () => {
+            document.removeEventListener("mousedown", handler);
+            document.removeEventListener("touchstart", handler);
+        };
+    }, [openId]);
+
+    // Close on route change (defensive — Link onClick already handles it).
+    useEffect(() => { setOpenId(null); }, [pathname]);
 
     // Sections rendered on desktop: all except "account" (rendered separately on the right).
     const sectionsLeft = NAV_SECTIONS.filter((s) => s.id !== "account");
@@ -173,7 +200,7 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     return (
         <>
             <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-20">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+                <div ref={navRef} className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
                     {/* Brand + desktop nav */}
                     <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                         <Link
@@ -201,6 +228,8 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
                                             key={sec.id}
                                             section={sec}
                                             isActive={sectionIsActive(sec, pathname)}
+                                            openId={openId}
+                                            setOpenId={setOpenId}
                                         />
                                     ))}
                                 </nav>
@@ -222,7 +251,12 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
                         )}
                         {guild ? (
                             <div className="hidden md:block">
-                                <DesktopAccountMenu user={user} onLogout={logout} />
+                                <DesktopAccountMenu
+                                    user={user}
+                                    onLogout={logout}
+                                    openId={openId}
+                                    setOpenId={setOpenId}
+                                />
                             </div>
                         ) : (
                             <button

@@ -1,6 +1,6 @@
-// ROUND 4 — Forge / Workshop page (MVP minimale per kick-off preview).
+// ROUND 4 — Forge / Workshop page (ROUND 16.1.1 hotfix: mobile button visibility).
 // 4 tab: Refine / Enchant / Reroll / Disenchant. Server-authoritative.
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { api, formatApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
@@ -25,6 +25,7 @@ export default function Forge() {
     const [selected, setSelected] = useState(null);
     const [busy, setBusy] = useState(false);
     const [enchOptions, setEnchOptions] = useState(null);
+    const operationPanelRef = useRef(null);
 
     const load = useCallback(async () => {
         try {
@@ -44,6 +45,20 @@ export default function Forge() {
 
     useEffect(() => { if (user && guild) load(); }, [user, guild, load]);
 
+    // ROUND 16.1.1 HOTFIX — when user picks an item on mobile, scroll the
+    // operation panel (with confirm button) into view so they don't have to
+    // hunt for it under the bottom nav.
+    useEffect(() => {
+        if (!selected) return;
+        if (typeof window === "undefined") return;
+        if (window.innerWidth >= 768) return;  // desktop: no auto-scroll
+        if (operationPanelRef.current) {
+            operationPanelRef.current.scrollIntoView({
+                behavior: "smooth", block: "start",
+            });
+        }
+    }, [selected]);
+
     if (!user || !guild) return null;
 
     const eligibleItems = inv.filter((r) => {
@@ -61,28 +76,21 @@ export default function Forge() {
         setBusy(true);
         try {
             if (tab === "refine") {
-                const { data } = await api.post(`/inventory/${iid}/refine`);
-                toast.success(data.success
-                    ? t("forge.refine_success", { lvl: data.refinement_level })
-                    : t("forge.refine_failed"));
-                await load();
-                setSelected(null);
-            } else if (tab === "enchant") {
-                if (!enchOptions) {
-                    const { data } = await api.post(`/inventory/${iid}/enchant-options`);
-                    setEnchOptions(data.options || []);
-                } else {
-                    toast.info(t("forge.enchant_pick_option"));
-                }
-            } else if (tab === "reroll") {
-                const { data } = await api.post(`/inventory/${iid}/reroll-affixes`);
-                toast.success(t("forge.reroll_success", { n: data.reroll_count }));
-                await load();
+                await api.post("/forge/refine", { instance_id: iid });
+                toast.success(t("forge.refine_done"));
             } else if (tab === "disenchant") {
-                const { data } = await api.post(`/inventory/${iid}/disenchant`);
-                const mats = [...(data.materials_guaranteed || []), ...(data.materials_bonus || [])]
-                    .map((m) => `${m.qty}×${m.slug}`).join(", ");
-                toast.success(t("forge.disenchant_success", { mats }));
+                await api.post("/forge/disenchant", { instance_id: iid });
+                toast.success(t("forge.disenchant_done"));
+            } else if (tab === "reroll") {
+                await api.post("/forge/reroll", { instance_id: iid });
+                toast.success(t("forge.reroll_done"));
+            } else if (tab === "enchant") {
+                const { data } = await api.get("/forge/enchant-options", {
+                    params: { instance_id: iid },
+                });
+                setEnchOptions(data.options || []);
+            }
+            if (tab !== "enchant") {
                 await load();
                 setSelected(null);
             }
@@ -93,10 +101,12 @@ export default function Forge() {
 
     const applyEnchant = async (slug) => {
         if (!selected) return;
-        const iid = selected.instance_id || selected.id;
         setBusy(true);
         try {
-            await api.post(`/inventory/${iid}/enchant`, { enchant_slug: slug });
+            await api.post("/forge/enchant", {
+                instance_id: selected.instance_id || selected.id,
+                enchant_slug: slug,
+            });
             toast.success(t("forge.enchant_applied"));
             setEnchOptions(null);
             await load();
@@ -109,7 +119,9 @@ export default function Forge() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader />
-            <main className="max-w-5xl mx-auto px-4 py-6 font-mono">
+            {/* ROUND 16.1.1 HOTFIX — `pb-32 md:pb-6` keeps confirm button clear
+                of the mobile bottom nav (h≈64px) + safe-area. */}
+            <main className="max-w-5xl mx-auto px-4 py-6 pb-32 md:pb-6 font-mono">
                 <header className="mb-6">
                     <h1 data-testid="forge-title" className="text-amber text-xl tracking-widest">:: {t("forge.title")}</h1>
                     <p className="text-[11px] text-muted-foreground mt-1">{t("forge.intro")}</p>
@@ -120,7 +132,7 @@ export default function Forge() {
                             key={tb.key}
                             data-testid={`forge-tab-${tb.key}`}
                             onClick={() => { setTab(tb.key); setSelected(null); setEnchOptions(null); }}
-                            className={"text-[10px] tracking-widest px-3 py-2 " +
+                            className={"text-[10px] tracking-widest px-3 py-2 min-h-[44px] " +
                                 (tab === tb.key ? "text-amber border-b-2 border-amber" : "text-muted-foreground hover:text-foreground")}
                         >{t(tb.i18n)}
                         </button>
@@ -132,7 +144,7 @@ export default function Forge() {
                         {eligibleItems.length === 0 ? (
                             <div className="text-[11px] text-muted-foreground italic">:: {t("forge.no_eligible")}</div>
                         ) : (
-                            <ul className="space-y-1 max-h-[60vh] overflow-y-auto">
+                            <ul className="space-y-1 max-h-[40vh] md:max-h-[60vh] overflow-y-auto">
                                 {eligibleItems.map((r) => {
                                     const it = items[r.item_id];
                                     const iid = r.instance_id || r.id;
@@ -141,7 +153,7 @@ export default function Forge() {
                                             <button
                                                 data-testid={`forge-item-${iid}`}
                                                 onClick={() => { setSelected(r); setEnchOptions(null); }}
-                                                className={"w-full text-left text-[11px] px-2 py-1.5 border-l-2 " +
+                                                className={"w-full text-left text-[11px] px-2 py-2 min-h-[44px] border-l-2 " +
                                                     (selected?.instance_id === r.instance_id ? "border-amber bg-amber/5" : "border-border/40 hover:border-amber/40")}
                                             >
                                                 <div className="text-foreground/90">{it.name} {r.refinement_level > 0 ? `+${r.refinement_level}` : ""}</div>
@@ -156,7 +168,12 @@ export default function Forge() {
                             </ul>
                         )}
                     </section>
-                    <section className="border border-border/60 bg-card/40 rounded-sm p-3">
+                    {/* ROUND 16.1.1 HOTFIX — `scroll-mt-20` accounts for sticky header on auto-scroll. */}
+                    <section
+                        ref={operationPanelRef}
+                        data-testid="forge-operation-panel"
+                        className="border border-border/60 bg-card/40 rounded-sm p-3 scroll-mt-20"
+                    >
                         <div className="text-amber tracking-widest text-[11px] mb-2">:: {t("forge.operation_panel")}</div>
                         {!selected ? (
                             <div className="text-[11px] text-muted-foreground italic">:: {t("forge.pick_one")}</div>
@@ -174,7 +191,7 @@ export default function Forge() {
                                                     data-testid={`forge-enchant-option-${e.slug}`}
                                                     onClick={() => applyEnchant(e.slug)}
                                                     disabled={busy}
-                                                    className="w-full text-left text-[11px] px-2 py-1 border border-border/60 rounded-sm hover:border-amber"
+                                                    className="w-full text-left text-[11px] px-2 py-2 min-h-[44px] border border-border/60 rounded-sm hover:border-amber"
                                                 >
                                                     <span className="text-foreground/90">{e.name}</span>
                                                     <span className="text-muted-foreground ml-2">{e.rarity} · +{e.bonus_value} {e.bonus_stat} · {e.cost_gold}g</span>
@@ -189,11 +206,13 @@ export default function Forge() {
                                 <div className="text-[10px] text-amber pt-2 border-t border-border/30">
                                     ⚠ {t("forge.boe_warning")}
                                 </div>
+                                {/* ROUND 16.1.1 HOTFIX — confirm button: 44px min height,
+                                    full-width on mobile for easy tap. */}
                                 <button
                                     data-testid={`forge-confirm-${tab}`}
                                     onClick={onAction}
                                     disabled={busy}
-                                    className="text-[10px] tracking-widest px-3 py-1.5 border border-amber text-amber rounded-sm hover:bg-amber/10 disabled:opacity-50"
+                                    className="w-full md:w-auto text-[11px] tracking-widest px-4 py-2.5 min-h-[44px] border border-amber text-amber rounded-sm hover:bg-amber/10 disabled:opacity-50 font-bold"
                                 >
                                     {busy ? "…" : t(`forge.confirm_${tab}`)}
                                 </button>
