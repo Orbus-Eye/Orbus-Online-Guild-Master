@@ -175,6 +175,10 @@ EVENT_TYPES = frozenset({
     "spec_counter_tags_updated_round160",
     "trait_counter_tags_updated_round160",
     "mission_trait_seeded_round160",
+    # ROUND 16.0.1 — Alchemist (11th base class) + recruitment cleanup
+    "alchemist_class_seeded",
+    "alchemist_class_halls_seeded",
+    "recruitment_offers_deprecated_round160",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

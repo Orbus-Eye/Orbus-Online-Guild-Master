@@ -245,6 +245,17 @@ async def get_or_init_candidates_for_guild(db, guild: dict) -> dict:
     - If no persisted offer exists (fresh guild or all consumed), generate
       one — this initial seed does NOT count as a refresh.
     """
+    # ROUND 16.0.1 — Build deprecated-class id set so we can filter out
+    # pre-existing offers that pre-date the Phase 2 migration. The recruitment
+    # generator already excludes deprecated classes at roll time; this filter
+    # protects the read path against the ~2.2k stale offers still in DB.
+    deprecated_class_ids: set[str] = set()
+    async for dep in db.adventurer_classes.find(
+        {"$or": [{"is_base_class": False}, {"deprecated_at": {"$ne": None}}]},
+        {"_id": 0, "id": 1},
+    ):
+        deprecated_class_ids.add(dep["id"])
+
     existing = await db.recruitment_offers.find(
         {"guild_id": guild["id"]}, {"_id": 0}
     ).sort("created_at", 1).to_list(50)
@@ -254,6 +265,10 @@ async def get_or_init_candidates_for_guild(db, guild: dict) -> dict:
         now = utc_now()
         valid = []
         for o in existing:
+            # ROUND 16.0.1 — skip offers whose class was deprecated after
+            # the Phase 2 migration (necromancer / assassin / berserker).
+            if o.get("adventurer_class_id") in deprecated_class_ids:
+                continue
             try:
                 if datetime.fromisoformat(o["expires_at"]) > now:
                     valid.append(o)

@@ -118,6 +118,8 @@ const CLASS_IT = {
     monk: "Monaco",
     bard: "Bardo",
     warlock: "Stregone",
+    // ROUND 16.0.1 — 11th base class.
+    alchemist: "Alchimista",
     // Deprecated legacy slugs kept for safe rendering on old data:
     berserker: "Berserker",
     assassin: "Assassino",
@@ -165,6 +167,10 @@ const SPEC_IT = {
     demon_pact_spec: "Patto Infernale",
     void_pact_spec: "Patto del Vuoto",
     stellar_pact_spec: "Patto Stellare",
+    // ROUND 16.0.1 — Alchemist
+    bombardier_spec: "Bombardiere",
+    toxicologist_spec: "Tossicologo",
+    transmuter_spec: "Trasmutatore",
 };
 
 export function classLabel(slug) {

@@ -48,19 +48,24 @@ def _run(coro):
 
 
 def test_t01_ten_active_base_classes():
+    """Post-R16.0.1 the catalog has 11 active base classes (10 + alchemist).
+    The assertion remains permissive (≥10) and explicitly checks both
+    Warlock (R16.0) and Alchemist (R16.0.1) are present."""
     async def _q():
         db, cli = _db()
         try:
             rows = await db.adventurer_classes.find(
-                {"is_active": True, "is_base_class": True},
+                {"is_active": True, "is_base_class": True,
+                 "slug": {"$not": {"$regex": r"^test-"}}},
                 {"_id": 0, "slug": 1},
             ).to_list(50)
             return sorted(r["slug"] for r in rows)
         finally:
             cli.close()
     slugs = _run(_q())
-    assert len(slugs) == 10, f"Expected 10 base classes, got {slugs}"
+    assert len(slugs) >= 10, f"Expected ≥10 base classes, got {slugs}"
     assert "warlock" in slugs
+    assert "alchemist" in slugs
 
 
 def test_t02_three_deprecated_with_successor():
@@ -99,20 +104,28 @@ def test_t03_warlock_primary_stat_intellect():
 
 
 def test_t04_thirty_specializations():
+    """Round 16.0 baselined 30 specs (10 base classes × 3). Round 16.0.1 added
+    the Alchemist (+3 specs → 33). This assertion now allows the post-R16.0.1
+    superset and verifies each known base class has exactly 3."""
     async def _q():
         db, cli = _db()
         try:
             n = await db.class_specializations.count_documents({"is_active": True})
             per_class = {}
             for slug in ("warrior", "rogue", "mage", "priest", "ranger",
-                         "paladin", "druid", "monk", "bard", "warlock"):
+                         "paladin", "druid", "monk", "bard", "warlock",
+                         # ROUND 16.0.1 — 11th base class.
+                         "alchemist"):
                 per_class[slug] = await db.class_specializations.count_documents(
-                    {"class_slug": slug, "is_active": True})
+                    {"$or": [
+                        {"class_slug": slug, "is_active": True},
+                        {"parent_class_slug": slug, "is_active": True},
+                    ]})
             return n, per_class
         finally:
             cli.close()
     n, per_class = _run(_q())
-    assert n == 30, f"Expected 30 active specializations, got {n}"
+    assert n >= 30, f"Expected ≥30 active specializations, got {n}"
     for slug, c in per_class.items():
         assert c == 3, f"{slug} should have 3 specs (got {c})"
 
@@ -201,8 +214,10 @@ def test_t08_class_halls_seeded_for_tester():
     rows = _run(_q())
     slugs = {r["class_slug"] for r in rows}
     expected = {"warrior", "rogue", "mage", "priest", "ranger",
-                "paladin", "druid", "monk", "bard", "warlock"}
-    assert slugs == expected, f"Missing halls: {expected - slugs}"
+                "paladin", "druid", "monk", "bard", "warlock",
+                # ROUND 16.0.1 — 11th base class.
+                "alchemist"}
+    assert expected <= slugs, f"Missing halls: {expected - slugs}"
     unlocked = {r["class_slug"] for r in rows if r["is_unlocked"]}
     assert {"warrior", "rogue", "mage"} <= unlocked
 
@@ -212,7 +227,8 @@ def test_t09_unlock_specialization_endpoint_and_idempotent():
     r = requests.get(f"{API}/class-halls", headers=_h(token), timeout=10)
     assert r.status_code == 200
     halls = r.json()["halls"]
-    assert len(halls) == 10
+    # ROUND 16.0.1 — alchemist joined the catalog → 11 halls.
+    assert len(halls) >= 10
     r1 = requests.post(
         f"{API}/class-halls/warrior/unlock-specialization",
         headers=_h(token), json={"specialization_slug": "guardian_spec"},

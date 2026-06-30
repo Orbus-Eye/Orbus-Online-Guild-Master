@@ -154,6 +154,12 @@ def class_public(doc: dict) -> dict:
         "xp_primary_stat_policy": doc.get("xp_primary_stat_policy") or {"enabled": False},
         "guide_description_it": doc.get("guide_description_it") or "",
         "guide_description_en": doc.get("guide_description_en") or "",
+        # ROUND 16.0.1 — expose Round 16 catalogue flags so admin UI can
+        # separate active base classes from deprecated specializations.
+        "is_base_class": bool(doc.get("is_base_class", False)),
+        "is_specialization": bool(doc.get("is_specialization", False)),
+        "parent_class_slug": doc.get("parent_class_slug"),
+        "deprecated_at": doc.get("deprecated_at"),
     }
 
 

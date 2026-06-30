@@ -34,8 +34,27 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 # ─── Admin: Classes ───────────────────────────────────────────────────────────
 @router.get("/classes")
-async def admin_list_classes(_: dict = Depends(get_admin_user)):
-    rows = await db.adventurer_classes.find({}, {"_id": 0}).sort("name", ASCENDING).to_list(200)
+async def admin_list_classes(
+    include_deprecated: bool = False,
+    _: dict = Depends(get_admin_user),
+):
+    # ROUND 16.0.1 — by default the admin panel returns only active base
+    # classes. Deprecated classes (the 3 historic ones converted to
+    # specializations in Round 16.0 Phase 2) require an explicit opt-in
+    # via `?include_deprecated=true` to be returned for audit/listing.
+    query: dict = {}
+    if not include_deprecated:
+        query = {
+            "$and": [
+                {"deprecated_at": None},
+                {"$or": [
+                    {"is_base_class": True},
+                    # Backwards-compat for legacy docs predating the flag.
+                    {"is_base_class": {"$exists": False}},
+                ]},
+            ]
+        }
+    rows = await db.adventurer_classes.find(query, {"_id": 0}).sort("name", ASCENDING).to_list(200)
     return {"classes": [class_public(r) for r in rows]}
 
 

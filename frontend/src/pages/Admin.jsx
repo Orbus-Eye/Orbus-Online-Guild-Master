@@ -240,7 +240,7 @@ function ItemEditor({ form, set }) {
 
 const TAB_CONFIG = {
     classes: {
-        endpoint: "/admin/classes",
+        endpoint: "/admin/classes?include_deprecated=true",
         listKey: "classes",
         singleKey: "class",
         Editor: ClassEditor,
@@ -249,14 +249,38 @@ const TAB_CONFIG = {
             base_strength: 5, base_agility: 5, base_intellect: 5,
             base_endurance: 5, base_faith: 5, is_active: true,
         }),
-        columns: ["Name", "Slug", "Role", "Stats", "Active"],
-        renderRow: (r) => [
-            r.name,
-            <span className="text-muted-foreground font-mono text-xs">{r.slug}</span>,
-            r.role,
-            <span className="text-xs font-mono">{r.base_strength}/{r.base_agility}/{r.base_intellect}/{r.base_endurance}/{r.base_faith}</span>,
-            <ActiveBadge active={r.is_active} />,
-        ],
+        columns: ["Name", "Slug", "Role", "Tipo", "Stats", "Stato"],
+        renderRow: (r) => {
+            const isDeprecated = !!r.deprecated_at;
+            const isBase = !!r.is_base_class && !isDeprecated;
+            return [
+                <span className={isDeprecated ? "text-muted-foreground/60" : ""}>
+                    {r.display_name_it || r.name}
+                </span>,
+                <span className="text-muted-foreground font-mono text-xs">{r.slug}</span>,
+                r.role,
+                isDeprecated ? (
+                    <span
+                        data-testid={`class-deprecated-badge-${r.slug}`}
+                        className="text-[9px] px-1.5 py-0.5 border border-[#ef4444]/55 text-[#ef4444] rounded-sm tracking-widest"
+                        title={`Spec di: ${r.parent_class_slug || '—'}`}
+                    >
+                        DEPRECATA
+                    </span>
+                ) : isBase ? (
+                    <span
+                        data-testid={`class-base-badge-${r.slug}`}
+                        className="text-[9px] px-1.5 py-0.5 border border-emerald-400/55 text-emerald-400/90 rounded-sm tracking-widest"
+                    >
+                        BASE
+                    </span>
+                ) : (
+                    <span className="text-[9px] text-muted-foreground">—</span>
+                ),
+                <span className="text-xs font-mono">{r.base_strength}/{r.base_agility}/{r.base_intellect}/{r.base_endurance}/{r.base_faith}</span>,
+                <ActiveBadge active={r.is_active} />,
+            ];
+        },
     },
     traits: {
         endpoint: "/admin/traits",

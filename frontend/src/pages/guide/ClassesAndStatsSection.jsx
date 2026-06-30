@@ -216,6 +216,16 @@ const CLASSES = [
         strengths: ["Buff costanti", "Debuff sui nemici", "Utility uniche"],
         weaknesses: ["Danno solo basso", "Inutile in 1v1 PvP"],
         good_in: ["Raid", "Squadre da 5+ a basso power"] },
+
+    // ROUND 16.0.1 — 11th base class.
+    { slug: "alchemist", name_it: "Alchimista", role: "DPS", secondary_role: "Support",
+        primary_stat: "Intelletto", secondary_stats: ["Destrezza", "Costituzione"],
+        equip: "Pugnali, tomi, fiale alchemiche. Armature leggere o vesti.",
+        playstyle: "Lancia bombe, distilla veleni, prepara elisir. Studioso pragmatico, sfrutta la chimica più che la magia pura.",
+        differs_from: "Mentre il Mago piega l'arcano e il Negromante (specializzazione del Mago) anima i morti, l'Alchimista è uno sperimentatore terreno: trasforma materia ed essenze in armi e cure.",
+        strengths: ["AoE esplosivo (Bombardiere)", "DoT veleni (Tossicologo)", "Counter maledizioni e barriere (Trasmutatore)"],
+        weaknesses: ["HP medi", "Difesa fisica scarsa", "Dipende dai materiali alchemici"],
+        good_in: ["Dungeon con boss avvelenabili", "Spedizioni assedio", "Squadre con ferite/maledizioni da curare"] },
 ];
 
 const PRIMARY_STAT_WARNING = (
@@ -346,9 +356,9 @@ export default function ClassesAndStatsSection() {
                 :: CLASSI
             </h3>
             <p className="text-[12px] text-muted-foreground mb-4">
-                Dieci classi base attive nel gioco (Guerriero, Paladino, Ladro,
-                Ranger, Monaco, Mago, Sacerdote, Druido, Bardo, Stregone) più
-                tre specializzazioni storiche iconiche (Assassino, Berserker,
+                Undici classi base attive nel gioco (Guerriero, Paladino, Ladro,
+                Ranger, Monaco, Mago, Sacerdote, Druido, Bardo, Stregone, Alchimista)
+                più tre specializzazioni storiche iconiche (Assassino, Berserker,
                 Negromante), che dal Round 16.0 sono passate da classi base a
                 specializzazioni delle rispettive sale di classe.
                 Ognuna è progettata per fare bene una cosa specifica: il tuo

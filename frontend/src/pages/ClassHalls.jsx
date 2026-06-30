@@ -28,6 +28,7 @@ const HALL_NAME_IT = {
     monk: "Sala del Monaco",
     bard: "Sala del Bardo",
     warlock: "Sala dello Stregone",
+    alchemist: "Sala dell'Alchimista",
 };
 
 // The 3 specializations per base class (slugs).
@@ -42,11 +43,12 @@ const SPECS_BY_CLASS = {
     monk: ["inner_fist_spec", "spirit_guardian_spec", "ascetic_spec"],
     bard: ["warsinger_spec", "herald_spec", "inspiration_weaver_spec"],
     warlock: ["demon_pact_spec", "void_pact_spec", "stellar_pact_spec"],
+    alchemist: ["bombardier_spec", "toxicologist_spec", "transmuter_spec"],
 };
 
 const BASE_ORDER = [
     "warrior", "rogue", "mage", "priest", "ranger",
-    "paladin", "druid", "monk", "bard", "warlock",
+    "paladin", "druid", "monk", "bard", "warlock", "alchemist",
 ];
 
 function HallCard({ hall, onUnlock, busySlug }) {
@@ -196,7 +198,7 @@ export default function ClassHalls() {
                             Sale di Classe
                         </h1>
                         <p className="text-xs text-muted-foreground mt-1">
-                            10 sale, una per ogni classe base. Sblocca le specializzazioni per
+                            11 sale, una per ogni classe base. Sblocca le specializzazioni per
                             avanzare gli avventurieri della tua gilda.
                         </p>
                     </div>
@@ -205,9 +207,9 @@ export default function ClassHalls() {
                             data-testid="class-halls-summary"
                             className="text-[11px] tracking-widest text-muted-foreground"
                         >
-                            Sale sbloccate <span className="text-emerald-400/90">{unlockedCount}/10</span>
+                            Sale sbloccate <span className="text-emerald-400/90">{unlockedCount}/{halls.length}</span>
                             {" · "}
-                            Spec sbloccate <span className="text-amber/90">{totalSpecsUnlocked}/30</span>
+                            Spec sbloccate <span className="text-amber/90">{totalSpecsUnlocked}/{halls.length * 3}</span>
                         </div>
                     )}
                 </div>
