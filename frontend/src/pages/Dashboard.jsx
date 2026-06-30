@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
-import OnboardingChecklist from "../components/OnboardingChecklist";
-import NextStepsCard from "../components/NextStepsCard";
+import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
+import NextActionsCard from "../components/NextActionsCard";
+import DailyLoopCard from "../components/DailyLoopCard";
 import GuildProgressCard from "../components/GuildProgressCard";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
@@ -182,9 +183,19 @@ export default function Dashboard() {
             <AppHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-w-0">
-                <OnboardingChecklist />
+                {/* ROUND 16.1 Phase 1 — bilingual data-driven onboarding */}
+                <div className="mb-6">
+                    <OnboardingChecklistV2 />
+                </div>
                 <TerritoryWidget />
-                <NextStepsCard />
+                {/* ROUND 16.1 Phase 1 — data-driven next actions (replaces hardcoded NextStepsCard) */}
+                <div className="mb-6">
+                    <NextActionsCard />
+                </div>
+                {/* ROUND 16.1 Phase 1 — "Cosa fare oggi" rolling daily loop (no rewards) */}
+                <div className="mb-6">
+                    <DailyLoopCard />
+                </div>
                 <div className="mb-6">
                     <GuildProgressCard />
                 </div>

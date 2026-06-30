@@ -138,6 +138,8 @@ def create_app() -> FastAPI:
     from app.achievements.routes import router as achievements_router
     # ROUND 16.0 — Class Halls
     from app.class_halls.routes import router as class_halls_router
+    # ROUND 16.1 Phase 1 — Dashboard data-driven cards
+    from app.dashboard.routes import router as dashboard_router
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -175,6 +177,7 @@ def create_app() -> FastAPI:
     app.include_router(admin_ops_router)
     app.include_router(achievements_router)
     app.include_router(class_halls_router)
+    app.include_router(dashboard_router)
 
     return app
 
