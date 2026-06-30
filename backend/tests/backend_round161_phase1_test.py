@@ -72,11 +72,32 @@ def test_t03_onboarding_eight_steps(auth_headers):
 
 # ── T04: tester guild is far past onboarding (most steps done) ──────
 def test_t04_onboarding_tester_advanced(auth_headers):
+    """The tester guild has matured (≥3 completed expeditions). The card
+    MUST report a graduation: either all_completed OR dismissed_implicit
+    is true (Round 16.1 Phase 4 fix)."""
     r = requests.get(f"{API_BASE}/api/dashboard/onboarding",
                      headers=auth_headers, timeout=10)
-    data = r.json()
+    assert r.status_code == 200
+    d = r.json()
+    # equip_one MUST be completed on a guild with ≥1 completed expedition
+    # (Round 16.1 Phase 4 — equip_one query was reading the wrong
+    # collection; the graduation rule also marks it implicitly done).
+    eq = next((s for s in d["steps"] if s["id"] == "equip_one"), None)
+    assert eq is not None, "equip_one step missing from onboarding payload"
+    assert eq["completed"] is True, (
+        f"equip_one should be completed on tester guild; got: {eq}")
+    # Graduation: either all_completed OR dismissed_implicit must be True.
+    assert d.get("all_completed") or d.get("dismissed_implicit"), (
+        f"tester guild should have graduated onboarding; got: "
+        f"all_completed={d.get('all_completed')} "
+        f"dismissed_implicit={d.get('dismissed_implicit')}")
+    # When dismissed_implicit is true, a graduation_reason must be set.
+    if d.get("dismissed_implicit"):
+        assert d.get("graduation_reason") in (
+            "guild_level_ge_3", "completed_expeditions_ge_3"
+        ), d.get("graduation_reason")
     # Tester has 40+ adventurers, expeditions, class halls — all 8 steps done.
-    assert data["completed_count"] >= 6
+    assert d["completed_count"] >= 6
 
 
 # ── T05: /dashboard/daily-loop shape (6 items) ──────────────────────

@@ -31,7 +31,10 @@ export default function OnboardingChecklistV2() {
     useEffect(() => { load(); }, []);
 
     if (loading || !data) return null;
-    if (data.all_completed || data.dismissed) return null;
+    // ROUND 16.1 Phase 4 — honour the new `dismissed_implicit` flag so
+    // mature guilds (level ≥3 OR ≥3 completed expeditions) never see the
+    // onboarding card again, even if a single derived step never flipped.
+    if (data.all_completed || data.dismissed || data.dismissed_implicit) return null;
 
     const headerTitle = it ? "INIZIA BENE" : "GET STARTED";
     const progressLabel = it ? "completati" : "completed";

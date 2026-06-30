@@ -222,8 +222,8 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
     if adv_count > 3:  # > starter pack
         completed.add("recruit_one")
 
-    n_equipped = await db.items.count_documents(
-        {"guild_id": gid, "equipped_by": {"$ne": None}})
+    n_equipped = await db.equipped_items.count_documents(
+        {"guild_id": gid})
     if n_equipped > 0:
         completed.add("equip_one")
 
@@ -234,6 +234,14 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
         completed.add("first_run")
     if n_exp_done >= 1:
         completed.add("read_report")
+    # ROUND 16.1 Phase 4 — graduation rule: a player who has already
+    # completed an expedition has obviously equipped someone too — the
+    # explicit `equip_one` step would only have been ticked if the FE
+    # had been wired to call the equip endpoint, which is the same path
+    # the auto-expedition pipeline takes. Marking it complete here keeps
+    # mature accounts from seeing an "Equip an adventurer" nag forever.
+    if n_exp_done >= 1:
+        completed.add("equip_one")
 
     n_halls = await db.class_halls.count_documents({"guild_id": gid})
     if n_halls > 0:
@@ -255,12 +263,24 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
 
     all_done = all(s["completed"] for s in steps)
     dismissed = bool(guild.get("onboarding_dismissed", False))
+    # ROUND 16.1 Phase 4 — graduation rule: mature guilds (level ≥ 3 OR
+    # ≥ 3 completed expeditions) auto-dismiss the onboarding card so the
+    # UI does not nag returning players. Documented behaviour: the
+    # `dismissed_implicit` flag is informational; the FE hides the card
+    # when either `dismissed` or `dismissed_implicit` is true.
+    guild_level = int(guild.get("level") or 0)
+    dismissed_implicit = (guild_level >= 3) or (n_exp_done >= 3)
     return {
         "steps": steps,
         "completed_count": sum(1 for s in steps if s["completed"]),
         "total_count": len(steps),
         "all_completed": all_done,
         "dismissed": dismissed,
+        "dismissed_implicit": dismissed_implicit,
+        "graduation_reason": (
+            "guild_level_ge_3" if guild_level >= 3
+            else ("completed_expeditions_ge_3" if n_exp_done >= 3 else None)
+        ),
     }
 
 

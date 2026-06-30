@@ -25,19 +25,32 @@ export default function DailyLoopCard() {
 
     if (loading || !data) return null;
 
-    const headerTitle = it ? "COSA FARE OGGI" : "WHAT TO DO TODAY";
+    // ROUND 16.1 Phase 4 — explicit findable heading.
+    // The previous version only carried a 10px uppercase eyebrow which
+    // E2E text-based crawlers (browser-use) failed to locate. We now
+    // render an h2 with "Loop Giornaliero / Daily Loop" so the card is
+    // discoverable both by accessibility tools and by text search.
+    const cardTitle = it ? "Loop Giornaliero" : "Daily Loop";
+    const headerEyebrow = it ? "COSA FARE OGGI" : "WHAT TO DO TODAY";
     const subLabel = it ? "azioni di oggi" : "today's actions";
 
     return (
         <section
             className="border border-border bg-card rounded-sm p-4"
             data-testid="daily-loop-card"
+            aria-label={cardTitle}
         >
             <header className="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
                 <div>
                     <div className="text-[10px] text-muted-foreground tracking-widest">
-                        {headerTitle}
+                        {headerEyebrow}
                     </div>
+                    <h2
+                        className="text-base font-semibold tracking-tight mt-0.5"
+                        data-testid="daily-loop-card-title"
+                    >
+                        {cardTitle}
+                    </h2>
                     <div className="text-[11px] text-amber/80 mt-1">
                         {data.completed_count}/{data.total_count} {subLabel}
                     </div>
