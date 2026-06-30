@@ -529,6 +529,59 @@ async def _apply_rating(db, *, match_doc: dict, season: dict) -> None:
         metadata={"outcome": outcome, "season_id": season_id},
     )
 
+    # ROUND 16.A Phase 1 — achievement trigger emissions for PvP match.
+    # Fire `pvp_match_completed` for BOTH guilds (with outcome in payload)
+    # and `season_league_reached` whenever a guild's `highest_league`
+    # advanced this match.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        att_outcome = attacker_outcome  # "win" / "loss" / "draw"
+        def_outcome = {"win": "loss", "loss": "win", "draw": "draw"}[att_outcome]
+        match_id = match_doc["match_id"]
+        await emit_achievement_trigger(
+            db, att_guild_id, "pvp_match_completed",
+            {
+                "outcome": att_outcome,
+                "opponent_guild_id": def_guild_id,
+                "match_id": match_id,
+                "season_id": season_id,
+            },
+            idempotency_key=f"{match_id}:att",
+        )
+        await emit_achievement_trigger(
+            db, def_guild_id, "pvp_match_completed",
+            {
+                "outcome": def_outcome,
+                "opponent_guild_id": att_guild_id,
+                "match_id": match_id,
+                "season_id": season_id,
+            },
+            idempotency_key=f"{match_id}:def",
+        )
+        if att_updates.get("highest_league") != att_part.get("highest_league"):
+            await emit_achievement_trigger(
+                db, att_guild_id, "season_league_reached",
+                {
+                    "league_slug": att_updates["highest_league"],
+                    "season_id": season_id,
+                },
+                idempotency_key=f"{att_guild_id}:{season_id}:{att_updates['highest_league']}",
+            )
+        if def_updates.get("highest_league") != def_part.get("highest_league"):
+            await emit_achievement_trigger(
+                db, def_guild_id, "season_league_reached",
+                {
+                    "league_slug": def_updates["highest_league"],
+                    "season_id": season_id,
+                },
+                idempotency_key=f"{def_guild_id}:{season_id}:{def_updates['highest_league']}",
+            )
+    except Exception as exc:  # noqa: BLE001
+        # never break PvP because of an achievement issue
+        import logging
+        logging.getLogger("orbus.pvp").warning(
+            "achievement trigger failed in _apply_rating: %s", exc)
+
 
 async def list_my_matches(db, *, guild_id: str, limit: int = 50) -> list[dict]:
     rows = await db.pvp_matches.find(

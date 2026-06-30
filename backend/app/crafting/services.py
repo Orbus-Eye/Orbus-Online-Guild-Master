@@ -282,6 +282,21 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
     except Exception as exc:  # noqa: BLE001
         logger.warning("audit write failed in craft_recipe: %s", exc)
 
+    # ROUND 16.A Phase 1 — achievement trigger emission.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        await emit_achievement_trigger(
+            db, guild["id"], "item_crafted",
+            {
+                "item_slug": out_item.get("slug"),
+                "rarity": out_item.get("rarity"),
+                "recipe_slug": recipe_slug,
+                "quantity": int(out_qty),
+            },
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("achievement trigger failed in craft_recipe: %s", exc)
+
     # Phase 14.1 — weekly quest progress (best-effort, non-critical)
     try:
         from app.quests.services import increment_weekly_progress

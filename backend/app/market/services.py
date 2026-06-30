@@ -700,6 +700,66 @@ async def buy_listing(
     except Exception as exc:  # noqa: BLE001
         logger.warning("contract hook failed in buy_listing: %s", exc)
 
+    # ROUND 16.A Phase 1 — achievement trigger emissions (buyer + seller).
+    # Notes:
+    #   - market/auction share the same backing collection, so we emit
+    #     BOTH `market_purchase` and `auction_purchase` for the buyer.
+    #     The catalog separates them by `trigger_event`; each progresses
+    #     independently. Achievements that don't exist for one of the two
+    #     simply no-op in the engine.
+    #   - `auction_sale` fires for the seller, gated on `flips_to_sold`
+    #     (a partial qty doesn't count as a closure).
+    #   - `material_purchased` fires only when the listing is a material.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        item_slug = listing.get("item_slug")
+        item_type = (listing.get("item_type") or "").lower()
+        is_material = item_type == "material"
+        # idempotency: per buyer & per listing line. Different qty slices
+        # of the same listing will yield distinct keys.
+        idem_buyer = f"{listing_id}:buy:{buyer_guild['id']}:{now_iso}"
+        idem_seller = f"{listing_id}:sell:{listing['seller_guild_id']}:{now_iso}"
+        await emit_achievement_trigger(
+            db, buyer_guild["id"], "market_purchase",
+            {
+                "item_slug": item_slug,
+                "gold_spent": int(total_cost),
+                "quantity": int(qty),
+            },
+            idempotency_key=idem_buyer,
+        )
+        await emit_achievement_trigger(
+            db, buyer_guild["id"], "auction_purchase",
+            {
+                "item_slug": item_slug,
+                "gold_spent": int(total_cost),
+                "seller_guild_id": listing["seller_guild_id"],
+            },
+            idempotency_key=idem_buyer,
+        )
+        if is_material:
+            await emit_achievement_trigger(
+                db, buyer_guild["id"], "material_purchased",
+                {
+                    "material_slug": item_slug,
+                    "gold_spent": int(total_cost),
+                    "quantity": int(qty),
+                },
+                idempotency_key=idem_buyer,
+            )
+        if flips_to_sold:
+            await emit_achievement_trigger(
+                db, listing["seller_guild_id"], "auction_sale",
+                {
+                    "item_slug": item_slug,
+                    "gold_received": int(seller_proceeds),
+                    "buyer_guild_id": buyer_guild["id"],
+                },
+                idempotency_key=idem_seller,
+            )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("achievement trigger failed in buy_listing: %s", exc)
+
     # Fetch buyer's remaining gold for the response
     buyer_after = await db.guilds.find_one(
         {"id": buyer_guild["id"]}, {"_id": 0, "gold": 1}

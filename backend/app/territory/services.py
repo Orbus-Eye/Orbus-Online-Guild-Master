@@ -636,6 +636,16 @@ async def upgrade_structure(db, guild: dict, slug: str) -> dict:
         )
     except Exception:
         pass
+    # ROUND 16.A Phase 1 — achievement trigger emission.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        await emit_achievement_trigger(
+            db, guild["id"], "territory_upgraded",
+            {"territory_slug": slug, "new_level": int(next_level)},
+            idempotency_key=f"{guild['id']}:{slug}:lv{next_level}",
+        )
+    except Exception:
+        pass
     return await get_territory(db, guild["id"])
 
 

@@ -235,6 +235,16 @@ async def join_consortium(db, *, current_user: dict, cid: str) -> dict:
             raise HTTPException(409, "user or guild already in a consortium")
         raise
     await _audit(db, "consortium_joined", user_id, guild["id"], cid, c["name"])
+    # ROUND 16.A Phase 1 — achievement trigger emission.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        await emit_achievement_trigger(
+            db, guild["id"], "consortium_joined",
+            {"consortium_id": cid},
+            idempotency_key=f"{guild['id']}:{cid}",
+        )
+    except Exception:
+        pass
     return await get_consortium_detail(db, cid)
 
 

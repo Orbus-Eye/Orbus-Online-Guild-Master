@@ -134,3 +134,37 @@
 **Raccomandazione next round**: **R16.A — Achievement Hooks** (massimo ritorno percepito + zero rischio bilanciamento + chiusura naturale del Game Clarity Pass).
 
 **Report finale**: `/app/memory/round161_final_report.md`.
+
+---
+
+## Round 16.A Phase 1 — Achievement Trigger Emission Layer (in progress, 2026-06-30)
+
+**Goal**: emit the 11 trigger_event values previously declared in the achievement catalog. Pure wiring — no new features, no economy/reward changes.
+
+**Centralised emitter**: `backend/app/achievements/trigger_emitter.py::emit_achievement_trigger` — delegates to existing `evaluate_achievements` engine, logs structured, supports optional `idempotency_key` (writes to `trigger_emissions` collection for trace + dedup).
+
+**Wiring map (11 events, 10 WIRED + 1 DEFERRED)**:
+
+| # | Event | Status | File |
+|---|---|---|---|
+| 1 | `item_crafted` | ✅ WIRED | `crafting/services.py::craft_recipe` |
+| 2 | `market_purchase` | ✅ WIRED | `market/services.py::buy_listing` (buyer) |
+| 3 | `auction_purchase` | ✅ WIRED | `market/services.py::buy_listing` (buyer, alias) |
+| 4 | `auction_sale` | ✅ WIRED | `market/services.py::buy_listing` (seller, gated `flips_to_sold`) |
+| 5 | `consortium_joined` | ✅ WIRED | `consortiums/services.py::join_consortium` |
+| 6 | `season_league_reached` | ✅ WIRED | `pvp/services.py::_apply_rating` (when `highest_league` advances) |
+| 7 | `leaderboard_rank_reached` | ⏸ DEFERRED | leaderboard ranks computed on-demand; no per-guild rank-update hook |
+| 8 | `item_disenchanted` | ✅ WIRED | `forge/services.py::disenchant_instance` |
+| 9 | `material_purchased` | ✅ WIRED | `market/services.py::buy_listing` (when `item_type == "material"`) |
+| 10 | `pvp_match_completed` | ✅ WIRED | `pvp/services.py::_apply_rating` (both attacker & defender, `outcome` in payload) |
+| 11 | `territory_upgraded` | ✅ WIRED | `territory/services.py::upgrade_structure` |
+
+**Tests**: `backend/tests/backend_round16A_phase1_test.py` — 14 passed, 1 skipped (DEFERRED).
+**Regression**: R16.1 P1+P2+P3 + Phase14.4 + dev-seed = 27/27 PASS. Total **41 passed, 1 skipped**.
+
+**Design decisions**:
+- **Dedup**: optional `idempotency_key` upserted into `trigger_emissions` for trace only. Engine's existing CAS on `achievement_progress` is the real dedup. The collection gives us an inspectable audit trail for debugging.
+- **Auction = Market**: same backing service. Fire both `market_purchase` and `auction_purchase` for the buyer (catalogs separate them).
+- **PvP outcome**: fired for BOTH sides per user instruction. Idempotency key = `{match_id}:att` / `{match_id}:def`.
+
+**Vincoli rispettati**: NO modifiche a economia / drop / XP / PvP / bilanciamento / reward achievement / valori catalog.

@@ -474,6 +474,21 @@ async def disenchant_instance(
         "guaranteed": guaranteed,
         "bonus": bonus_actual,
     })
+    # ROUND 16.A Phase 1 — achievement trigger emission.
+    try:
+        from app.achievements.trigger_emitter import emit_achievement_trigger
+        materials_yielded = {**granted, **bonus_actual}
+        await emit_achievement_trigger(
+            db, guild["id"], "item_disenchanted",
+            {
+                "item_slug": item.get("slug"),
+                "rarity": rarity,
+                "materials_yielded": materials_yielded,
+            },
+            idempotency_key=instance_id,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("achievement trigger failed in disenchant_instance: %s", exc)
     return {
         "success": True,
         "materials_guaranteed": [{"slug": k, "qty": v} for k, v in granted.items()],
