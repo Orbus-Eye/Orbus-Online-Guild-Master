@@ -471,64 +471,26 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 
 ---
 
-## Round 16.A ready-to-seal — 2026-06-30
+## Round 16.A closed — 2026-06-30
+
+**🟢 OFFICIALLY CLOSED ✅** — Sigillata post verifica E2E `e1_tester` 3/3 PASS.
 
 **Achievement Hooks Coverage + Audit Bridge + Admin Read-Only Audit Dashboard — delivered**
 
-### Phase 1 — Trigger Emission Layer
-10 `trigger_event` cablati su altrettanti code path via il nuovo emitter
-`app.achievements.trigger_emitter.emit_achievement_trigger`. Persistenza
-idempotente in `trigger_emissions` (con `idempotency_key`):
-`item_crafted`, `market_purchase`, `auction_purchase`, `auction_sale`,
-`consortium_joined`, `season_league_reached`, `leaderboard_rank_reached`
-(skipped — feature-gated), `item_disenchanted`, `material_purchased`,
-`pvp_match_completed` (both sides), `territory_upgraded`. **14 passed, 1 skipped.**
+### Riassunto 5 punti
 
-### Phase 2 — Audit Bridge + `add_guild_xp` helper
-- `audit_log` collection ora popolata per 3 event_type whitelisted:
-  `achievement_unlocked`, `guild_xp_gained`, `onboarding_graduated`.
-- `add_guild_xp(db, guild_id, amount, *, source, source_id, points_delta)`
-  in `app/achievements/engine.py` come unico entry-point auditato per i
-  credit XP gilda. Vecchio `_apply_reward` diventa shim. Audit `guild_xp_gained`
-  emesso atomicamente con il `$inc`.
-- `onboarding.graduated` one-shot quando un utente con `guild_level≥3`
-  OR `completed_expeditions≥3` visita la dashboard. Idempotente via
-  `onboarding_graduated_at` su `guilds` + audit row in `audit_log`. **5 passed.**
+1. **Phase 1 — Trigger Emission Layer**: **10 trigger_event WIRED** (`item_crafted`, `market_purchase`, `auction_purchase`, `auction_sale`, `consortium_joined`, `season_league_reached`, `item_disenchanted`, `material_purchased`, `pvp_match_completed`, `territory_upgraded`) + **1 DEFERRED** (`leaderboard_rank_reached`, feature-gated, schedulato R16.B). Persistenza idempotente in `trigger_emissions`.
+2. **Phase 2 — Audit Bridge**: 3 audit event idempotenti (`achievement_unlocked`, `guild_xp_gained`, `onboarding_graduated`) scritti in `audit_log` + nuovo helper `add_guild_xp(db, guild_id, amount, *, source, source_id, points_delta)` in `app/achievements/engine.py` come unico entry-point auditato per credito XP gilda.
+3. **Phase 3 — Admin Read-Only Audit Dashboard**: 3 nuovi endpoint sotto `/api/admin/audit/*` (trigger-emissions, events whitelist-guarded, summary con clamp 720h) + nuova pagina `pages/AdminAudit.jsx` (3 tab IT) su `/admin/audit`. Sweep `add_guild_xp` su `app/expeditions/services.py`: verificato statico (0 occorrenze `guild_xp`, no-op richiesto).
+4. **Total: 60 test PASS** = 58 backend pytest (R16.A P1+P2+P3 = 29 + 1 skipped, R16.1 P1+P2+P3 = 20, Phase 14.4 = 5, dev-seed = 2, + skipped feature-gated) **+ 3 E2E browser** verificati da `e1_tester` (admin gate 403/200, idempotenza onboarding_graduated one-shot, whitelist filter 400 con `allowed[]` nella response).
+5. **0 regressioni R16.1** · 0 hard delete · 0 economy/PvP/balance change · solo preview (no deploy).
 
-### Phase 3 — Admin Read-Only Audit Dashboard
-Nuovi endpoint sotto `/api/admin/audit/*` (gated `get_admin_user`):
+### Evidenze E2E browser (e1_tester)
+- Test 1: 403 per non-admin su 3/3 endpoint; UI 3 tab IT con counter `36 achievement_unlocked` + `4880 XP totale guild_xp_gained`.
+- Test 2: 1 sola riga `onboarding_graduated` post re-visit dashboard (idempotenza one-shot confermata).
+- Test 3: filtro whitelist `event_type=hacker_event` → 400 con `allowed: [achievement_unlocked, guild_xp_gained, onboarding_graduated]`.
 
-| Endpoint | Funzione |
-|---|---|
-| `GET /api/admin/audit/trigger-emissions` | Feed Phase 1 con filtri `event_name`, `guild_id`, paginazione, hard cap 200 |
-| `GET /api/admin/audit/events` | Feed Phase 2 con whitelist `event_type ∈ {achievement_unlocked, guild_xp_gained, onboarding_graduated}` + filtri `guild_id`, `from`/`to`, paginazione |
-| `GET /api/admin/audit/summary?window_hours=N` | KPI aggregati (achievement count, XP totale + count, onboarding count, top 10 trigger events) — clamp interno `min(window_hours, 720h)`, espone `window_clamped: bool` |
+### Hard caps audit dashboard
+`MAX_LIMIT=200`, `MAX_WINDOW_HOURS=720` (30 giorni), whitelist hard-coded sui 3 event_type R16.A.
 
-Frontend: nuova pagina `pages/AdminAudit.jsx` (3 tab: Riepilogo / Emissioni
-Trigger / Timeline Audit) su `/admin/audit`, linkata da `AdminOps.jsx`.
-
-Sweep `add_guild_xp` su `app/expeditions/services.py`: **verifica statica**,
-zero occorrenze di `guild_xp`/`guild_level` nel file — le spedizioni
-accreditano XP agli avventurieri, non alla gilda. Lo sweep delle code path
-residue (daily bonus, contracts, quest rewards, season closing) è
-schedulato per **R16.B**.
-
-**E2E test inclusi**:
-- `test_e2e_tester_advanced_emits_onboarding_graduated_once` — reset flag,
-  due chiamate dashboard, conta esattamente 1 riga audit (idempotenza).
-- `test_e2e_new_player_full_flow` — `clean_onboarding@orbus.test` non
-  emette `onboarding_graduated`.
-
-**Verification**: 10/10 R16.A P3 + 5/5 P2 + 14/14 + 1 skipped P1 = 29 passed,
-1 skipped, 0 failed. Suite estesa 58 passed, 1 skipped (R16.1 P1+P2+P3 +
-R16.A P1+P2+P3 + Phase 14.4 + dev-seed) · 0 economy/balance/drop-rate
-changes · 0 hard delete.
-
-**Hard caps audit dashboard**: `MAX_LIMIT=200`, `MAX_WINDOW_HOURS=720` (30gg).
-
-**Recommendation for next round**: **R16.B — Audit Coverage Extension +
-Sweep XP Round 2**: aggiungere `material_dropped`, `adventurer_xp_gained`,
-`leaderboard_score_updated` ad audit whitelist; sweep `add_guild_xp` su
-quests/contracts/seasons; persistere `leaderboard_snapshots` (storico).
-Stima 1.5-2gg dev + 0.5gg test. R16.C (QoL polish — smooth-scroll guide,
-lock-in spec UI, CSV export admin audit) resta P2.
+**Recommendation for next round**: **R16.B — Audit Coverage Extension + Sweep XP Round 2**. Aggiungere `material_dropped`, `adventurer_xp_gained`, `leaderboard_score_updated` ad audit whitelist; sweep `add_guild_xp` su quests/contracts/seasons (4-5 code path identificate); persistere `leaderboard_snapshots` (storico ranking). Stima 1.5-2gg dev + 0.5gg test. R16.C (QoL polish — smooth-scroll guide, lock-in spec UI, CSV export admin audit) resta P2.

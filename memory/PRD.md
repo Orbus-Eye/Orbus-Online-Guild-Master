@@ -204,3 +204,39 @@
 - ❌ R16.B (3 audit event restanti: MATERIAL_DROPPED, ADVENTURER_XP_GAINED, LEADERBOARD_SCORE_UPDATED) NON in scope.
 - ❌ Phase 3 (admin read-only) NON iniziata.
 - ✅ Tutti 3 event idempotenti (CAS-protected).
+
+
+## Round 16.A Phase 3 — Admin Read-Only Audit Dashboard — 2026-06-30 — **ROUND 16.A CLOSED ✅**
+
+**Scope**: Admin dashboard read-only + sweep XP spedizioni + E2E verification + sigillo R16.A.
+
+**Cosa è stato fatto**:
+- 3 nuovi endpoint sotto `/api/admin/audit/*` (gated `get_admin_user`):
+  - `GET /api/admin/audit/trigger-emissions` (feed Phase 1 con filtri + paginazione).
+  - `GET /api/admin/audit/events` (feed Phase 2 whitelist-guarded su `event_type ∈ {achievement_unlocked, guild_xp_gained, onboarding_graduated}`).
+  - `GET /api/admin/audit/summary?window_hours=N` (KPI aggregati, clamp interno `min(N, 720h)`, espone `window_clamped: bool`).
+- Frontend: nuova pagina `pages/AdminAudit.jsx` (3 tab IT: Riepilogo / Emissioni Trigger / Timeline Audit) su `/admin/audit`, linkata da `AdminOps.jsx`.
+- Sweep `add_guild_xp` su `app/expeditions/services.py`: verificato statico (0 occorrenze `guild_xp`, no-op). Sweep code path residue (quests, contracts, seasons) schedulato per R16.B.
+- 2 E2E pytest aggiunti (`test_e2e_tester_advanced_emits_onboarding_graduated_once`, `test_e2e_new_player_full_flow`).
+
+**File principali**:
+- `backend/app/admin/audit_routes.py` (NEW, 216 righe).
+- `backend/tests/backend_round16A_phase3_test.py` (NEW, 10 test inclusi 2 E2E).
+- `frontend/src/pages/AdminAudit.jsx` (NEW, 420 righe).
+- `frontend/src/App.js` (route `/admin/audit` mounted).
+- `frontend/src/pages/AdminOps.jsx` (link audit dashboard).
+
+**Verification finale**:
+- pytest R16.A P3: 10/10 PASS.
+- Suite estesa (R16.1 P1+P2+P3 + R16.A P1+P2+P3 + Phase 14.4 + dev-seed): **58 passed, 1 skipped, 0 failed**.
+- E2E browser `e1_tester`: **3/3 PASS** (admin gate, idempotenza onboarding, whitelist filter).
+- Totale: **60 test PASS** (58 backend + 3 E2E browser, 1 skipped feature-gated).
+
+**Conferme vincoli**:
+- ❌ Nessun deploy.
+- ❌ Nessuna modifica a economia/XP/drop rate/balancing.
+- ❌ Nessun hard delete.
+- ❌ R16.B (`material_dropped`, `adventurer_xp_gained`, `leaderboard_score_updated`) NON iniziato.
+- ✅ Round 16.A **OFFICIALLY CLOSED** post verifica E2E.
+
+**Raccomandazione next round**: **R16.B — Audit Coverage Extension + Sweep XP Round 2** (aggiungere 3 audit event mancanti, sweep `add_guild_xp` su quests/contracts/seasons, persistere `leaderboard_snapshots`). Stima 1.5-2gg dev + 0.5gg test. R16.C (QoL polish — smooth-scroll guide, lock-in spec UI, CSV export admin audit) resta P2.

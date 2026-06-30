@@ -1,12 +1,28 @@
 # Orbus Online — Round 16.A Final Report
 
-**Status: 🟢 OFFICIALLY READY FOR E2E SIGN-OFF**
+**Status: 🟢 OFFICIALLY CLOSED ✅**
 **Closing date**: 30 giugno 2026
+**Sealed**: 30 giugno 2026 (post-E2E browser verification by `e1_tester`)
 **Scope**: Achievement Hooks Coverage + Audit Bridge + Admin Read-Only Audit Dashboard.
 
-> **Note**: il bollo `OFFICIALLY CLOSED` viene posto **solo dopo** la verifica
-> E2E di `e1_tester`, che l'utente lancia esplicitamente. Questo report
-> documenta lo stato "ready to seal".
+> **Documento finalizzato.** Tutti i test backend (58 + 1 skipped) + 3 E2E
+> browser hanno superato verifica. Round 16.A è ufficialmente chiuso.
+
+---
+
+## E2E Verification Results (browser) — 2026-06-30
+
+Eseguiti da `e1_tester` sul preview deployment via Playwright/DevTools:
+
+| Test # | Area | Result | Evidenze |
+|---|---|---|---|
+| **Test 1** | Admin Audit gate + UI rendering | ✅ **PASS** | 403 per non-admin su tutti e 3 gli endpoint; UI italiana con 3 tab (Riepilogo / Emissioni Trigger / Timeline Audit) renderizza correttamente per admin con counter numerici reali (**36 achievement_unlocked**, **4880 XP totale guild_xp_gained**) |
+| **Test 2** | Onboarding graduation idempotente | ✅ **PASS** | Una visita dashboard su account avanzato emette **1** riga `onboarding_graduated`; re-visit della dashboard non duplica (idempotenza one-shot confermata via `audit_log` count post-replay) |
+| **Test 3** | Whitelist filter sicurezza | ✅ **PASS** | Filtro `event_type=achievement_unlocked` → 36 righe restituite; filtro `event_type=hacker_event` (fuori whitelist) → **400 Bad Request** con campo `allowed: [achievement_unlocked, guild_xp_gained, onboarding_graduated]` nella response detail |
+
+**3/3 E2E browser PASS** + 10/10 pytest Phase 3 + 58/58 suite estesa = sigillo R16.A.
+
+Round 16.A è **officially CLOSED**.
 
 ---
 
@@ -229,4 +245,4 @@ Stima: 1.5–2 giorni dev + 0.5 giorno test.
 
 ---
 
-**Fine R16.A. In attesa di lancio `e1_tester` da parte dell'utente per il sigillo OFFICIAL CLOSED.**
+**Fine R16.A. OFFICIALLY CLOSED ✅ — sigillo apposto post verifica `e1_tester` 3/3 PASS browser E2E + 58/58 backend pytest.**
