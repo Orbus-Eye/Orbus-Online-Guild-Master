@@ -23,6 +23,7 @@ export const NAV_SECTIONS = [
         items: [
             { to: "/adventurers", label: "Roster", testid: "menu-adventurers" },
             { to: "/recruitment", label: "Reclutamento", testid: "menu-recruitment" },
+            { to: "/class-halls", label: "Sale di Classe", testid: "menu-class-halls" },
             { to: "/training", label: "Addestramento e Specializzazioni", testid: "menu-training" },
             { to: "/roster/manage", label: "Gestione Roster", testid: "menu-roster-manage" },
             { to: "/guide#traits-catalog", label: "Tratti", testid: "menu-traits-link", external: false },

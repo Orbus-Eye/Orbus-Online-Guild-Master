@@ -148,6 +148,30 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                     {adventurer.class_name} · {adventurer.class_role} ·{" "}
                     {t("adventurer_modal.level", { n: adventurer.level })}
                 </div>
+                {/* ROUND 16.0 — Race + Gender row (prominent, IT). */}
+                {(adventurer.race_slug || adventurer.gender) && (
+                    <div
+                        data-testid="adventurer-modal-race-gender"
+                        className="text-xs text-amber/85 mt-1.5"
+                        aria-label={`Razza ${adventurer.race_name_it || adventurer.race_slug || 'sconosciuta'}, sesso ${adventurer.gender === 'female' ? 'Femmina' : adventurer.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
+                    >
+                        <span className="text-muted-foreground">Razza:</span>{" "}
+                        <span className="text-foreground">
+                            {adventurer.race_name_it || (adventurer.race_slug
+                                ? adventurer.race_slug.replace(/_/g, ' ')
+                                : '—')}
+                        </span>
+                        {adventurer.gender && (
+                            <>
+                                {" · "}
+                                <span className="text-muted-foreground">Sesso:</span>{" "}
+                                <span className="text-foreground">
+                                    {adventurer.gender === 'female' ? 'Femmina ♀' : 'Maschio ♂'}
+                                </span>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 {/* XP progress */}
                 <div className="mt-5">

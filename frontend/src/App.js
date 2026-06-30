@@ -11,6 +11,7 @@ import CreateGuild from "@/pages/CreateGuild";
 import Dashboard from "@/pages/Dashboard";
 import Recruitment from "@/pages/Recruitment";
 import Adventurers from "@/pages/Adventurers";
+import ClassHalls from "@/pages/ClassHalls";
 import Dungeons from "@/pages/Dungeons";
 import ExpeditionNew from "@/pages/ExpeditionNew";
 import Expeditions from "@/pages/Expeditions";
@@ -125,6 +126,14 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <AdventurerEquipment />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/class-halls"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ClassHalls />
                                 </ProtectedRoute>
                             }
                         />

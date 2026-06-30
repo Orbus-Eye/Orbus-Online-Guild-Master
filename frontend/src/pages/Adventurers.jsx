@@ -229,6 +229,22 @@ export default function Adventurers() {
 
                 {!loading && rows && rows.length === 0 && <Empty t={t} />}
 
+                {/* ROUND 16.0 — quick link to Class Halls. */}
+                {!loading && rows && rows.length > 0 && (
+                    <div className="mb-4 flex items-center justify-between gap-2 flex-wrap text-xs">
+                        <Link
+                            to="/class-halls"
+                            data-testid="adventurers-class-halls-link"
+                            className="inline-flex items-center gap-2 border border-amber/40 text-amber hover:bg-amber/10 px-3 py-1.5 rounded-sm tracking-widest"
+                        >
+                            ◆ SALE DI CLASSE
+                        </Link>
+                        <span className="text-[10px] text-muted-foreground tracking-widest">
+                            Sblocca specializzazioni dalle Sale di Classe.
+                        </span>
+                    </div>
+                )}
+
                 {!loading && rows && rows.length > 0 && (
                     <>
                         {/* Desktop / tablet table */}
@@ -292,7 +308,7 @@ export default function Adventurers() {
                                                     {(a.race_slug || a.gender) ? (
                                                         <span
                                                             data-testid={`adventurer-race-gender-${a.id}`}
-                                                            className="text-[10px] text-muted-foreground/70 mt-0.5"
+                                                            className="text-[11px] text-amber/85 mt-0.5"
                                                             aria-label={`Razza ${a.race_name_it || a.race_slug || 'sconosciuta'}, genere ${a.gender === 'female' ? 'Femmina' : a.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
                                                         >
                                                             {a.race_name_it || (a.race_slug ? a.race_slug.replace(/_/g, ' ') : '')}
@@ -408,6 +424,16 @@ export default function Adventurers() {
                                             <div className="text-xs text-muted-foreground">
                                                 {a.class_name} · {a.class_role}
                                             </div>
+                                            {(a.race_slug || a.gender) && (
+                                                <div
+                                                    data-testid={`adventurer-card-race-gender-${a.id}`}
+                                                    className="text-[11px] text-amber/85 mt-0.5"
+                                                    aria-label={`Razza ${a.race_name_it || a.race_slug || 'sconosciuta'}, genere ${a.gender === 'female' ? 'Femmina' : a.gender === 'male' ? 'Maschio' : 'sconosciuto'}`}
+                                                >
+                                                    {a.race_name_it || (a.race_slug ? a.race_slug.replace(/_/g, ' ') : '')}
+                                                    {a.gender ? (a.gender === 'female' ? ' · ♀' : ' · ♂') : ''}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="flex flex-col items-end gap-1">
                                             <RarityBadge rarity={a.rarity} />
