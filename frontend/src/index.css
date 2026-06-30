@@ -22,6 +22,15 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: #0a0a0c;
     color: #e5e5e5;
+    /* ROUND 16.0 Fase 5 — reserve space for the mobile bottom nav (h-16). */
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+    body {
+        /* Desktop has no bottom nav. */
+        padding-bottom: 0;
+    }
 }
 
 code,
