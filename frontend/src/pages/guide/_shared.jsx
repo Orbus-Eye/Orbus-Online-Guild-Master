@@ -68,6 +68,10 @@ export const SECTIONS = [
     { id: "auto-equip", label: "R16. Auto-Equipaggia" },
     // ROUND 16.0 — Phase 4 — Threats & Counters (Void/Undead)
     { id: "minacce-contromisure", label: "39. Minacce e Contromisure (Vuoto/Non-morti)" },
+    // ROUND 16.1 — Phase 3 — Game Clarity Pass
+    { id: "daily-loop", label: "R16.1. Cosa fare ogni giorno" },
+    { id: "team-composition", label: "R16.1. Come scegliere un team dungeon" },
+    { id: "roster-filters", label: "R16.1. Filtri e ordinamento del roster" },
 ];
 
 // TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.

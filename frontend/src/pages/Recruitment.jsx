@@ -217,7 +217,7 @@ const Skeleton = () => (
 
 export default function Recruitment() {
     const { guild, refreshGuild } = useAuth();
-    const { t } = useT();
+    const { t, lang } = useT();
     const [candidates, setCandidates] = useState(null);
     const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -562,8 +562,9 @@ export default function Recruitment() {
                             className="text-[11px] text-muted-foreground italic"
                             data-testid="freeze-bench-empty"
                         >
-                            Nessun candidato in panchina. Usa &quot;❄ Congela&quot; su una card per
-                            conservarne uno tra un refresh e l&apos;altro.
+                            {lang === "it"
+                                ? "Nessun candidato in panchina. Usa \"❄ Congela\" su una card per conservarne uno tra un refresh e l'altro."
+                                : "No candidate on the bench. Use \"❄ Freeze\" on a card to keep one across refreshes."}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -616,11 +617,12 @@ export default function Recruitment() {
                         className="border border-border bg-card rounded-sm p-8 text-center"
                     >
                         <div className="text-amber text-xs tracking-widest mb-2">
-                            :: NESSUN CANDIDATO
+                            {lang === "it" ? ":: NESSUN CANDIDATO" : ":: NO CANDIDATES"}
                         </div>
                         <p className="text-sm text-muted-foreground mb-4">
-                            👥 Tutti i candidati sono stati reclutati o congelati.
-                            Aggiorna la board per richiamare nuovi aspiranti.
+                            {lang === "it"
+                                ? "👥 Tutti i candidati sono stati reclutati o congelati. Aggiorna la board per richiamare nuovi aspiranti."
+                                : "👥 All candidates have been recruited or frozen. Refresh the board to summon new hopefuls."}
                         </p>
                         <Button
                             onClick={doRefresh}
@@ -629,10 +631,12 @@ export default function Recruitment() {
                             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
                         >
                             {refreshing
-                                ? "aggiornamento…"
+                                ? (lang === "it" ? "aggiornamento…" : "refreshing…")
                                 : meta && meta.next_refresh_cost_gold > 0
-                                ? `↻ Aggiorna (${meta.next_refresh_cost_gold}g)`
-                                : "↻ Aggiorna candidati"}
+                                ? (lang === "it"
+                                    ? `↻ Aggiorna (${meta.next_refresh_cost_gold}g)`
+                                    : `↻ Refresh (${meta.next_refresh_cost_gold}g)`)
+                                : (lang === "it" ? "↻ Aggiorna candidati" : "↻ Refresh candidates")}
                         </Button>
                     </div>
                 )}

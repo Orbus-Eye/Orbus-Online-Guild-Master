@@ -13,6 +13,7 @@ import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSectio
 import ClassesAndStatsSection from "./guide/ClassesAndStatsSection";
 import R15GuideSections from "./guide/R15GuideSections";
 import R16GuideSections from "./guide/R16GuideSections";
+import R161GuideSections from "./guide/R161GuideSections";
 
 export default function Guide() {
     const [active, setActive] = useState("intro");
@@ -1109,6 +1110,9 @@ export default function Guide() {
 
                 {/* ROUND 16.0 — Phase 4 — Threats & Counters (39) */}
                 <R16GuideSections />
+
+                {/* ROUND 16.1 — Phase 3 — Game Clarity Pass */}
+                <R161GuideSections />
 
                 <div className="text-center text-[10px] text-muted-foreground mt-6 italic">
                     Buona avventura, Guild Master. — Orbus Online

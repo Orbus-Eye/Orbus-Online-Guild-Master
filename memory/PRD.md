@@ -65,3 +65,42 @@
 **Constraints honored**: no balancing/economy changes, no localStorage for filters, IT+EN coverage on every new player-facing string.
 
 **Pending (next)**: Round 16.1 Phase 3 — Class Hall espansa + Auto-Equip migliorato + Empty States + Guida.
+
+---
+
+## Round 16.1 Phase 3 — Completed 2026-06-30
+
+**Scope**: Class Hall espansa + Auto-Equip migliorato (bilingual reasons) + Empty States audit + Guida estesa.
+
+**Backend**:
+- `/app/backend/app/class_halls/services.py` — added `enrich_halls_for_ui()` (adventurers_of_class, available_to_specialize, top_adventurers[:3], specializations[3] bilingual, bonuses[] placeholder, unlock_hint_it/en). BASE_CLASS_SLUGS expanded to 11 (alchemist added). SPECS_BY_CLASS constant exposed.
+- `/app/backend/app/class_halls/routes.py` — `GET /api/class-halls` now returns `{halls, base_classes, kpi}` with `kpi: {halls_unlocked, halls_total, specs_unlocked, specs_total}`.
+- `/app/backend/app/equipment/auto_equip.py` — response extended with `reasons[]` (slot, old/new item, stat_delta, primary_gain, reason_it, reason_en), `unchanged_slots_detail[]` (slot, reason_it, reason_en), `score_delta`, `primary_stat`, bilingual `warnings_it/en`. Backwards-compatible.
+
+**Frontend**:
+- `/app/frontend/src/pages/ClassHalls.jsx` — full rewrite, bilingual IT/EN via I18nContext, KPI top right, Top Members list, no-spec hint, specializations grid with role badge + unlockable state, ACTIVE BONUSES placeholder, empty-state CTA.
+- `/app/frontend/src/components/AdventurerDetailModal.jsx` — bilingual `AutoEquipReport` inline panel after click. Shows Power before→after with colored delta, structured reasons (per slot) with stat_delta breakdown, unchanged slots reasons, and empty CTA.
+- `/app/frontend/src/pages/Expeditions.jsx` — empty state now bilingual (Italian + English).
+- `/app/frontend/src/pages/Recruitment.jsx` — freeze-bench and all-recruited empty states now bilingual.
+- `/app/frontend/src/pages/guide/R161GuideSections.jsx` (NEW) — 3 new sections: Cosa fare ogni giorno, Come scegliere un team dungeon, Filtri e ordinamento del roster (bilingual). Registered in `_shared.jsx` SECTIONS + wired in `Guide.jsx`.
+
+**Tests**: `backend/tests/backend_round161_phase3_test.py` — 6 tests, all pass:
+1. class-halls returns 11 halls with all new fields + kpi
+2. auto-equip carries bilingual reasons + score_delta
+3. auto-equip idempotent (2nd call → 0 swaps)
+4. KPI totals match halls/specs counters
+5. /api/expeditions list shape (empty-state contract)
+6. unlock-specialization is idempotent
+
+**Pytest count (Round 16.x bundle)**: phase1=8, phase2=7, phase3=6, round160_phase4=16 → 37/37 PASS
+
+**Empty states audited & bilingualized (≥6 pages)**:
+1. `/adventurers` — no-filter-results (NEW)
+2. `/recruitment` — bench empty + all-recruited (bilingual)
+3. `/inventory` — already CTA dungeon (R14.v3, OK)
+4. `/expeditions` — bilingual + CTA dungeons
+5. `/raids` — pre-existing, OK
+6. `/class-halls` — recruitment CTA when no halls unlocked
+7. `/auto-equip` modal — "no better item available" bilingual
+
+**Pending (next, Phase 4)**: Test 17 checklist + report 17 punti consolidated.

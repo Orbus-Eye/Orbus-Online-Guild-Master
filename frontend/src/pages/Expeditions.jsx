@@ -160,15 +160,16 @@ export default function Expeditions() {
                 {!loading && exps && exps.length === 0 && (
                     <div className="border border-border bg-card rounded-sm p-8 text-center" data-testid="expeditions-empty">
                         <div className="text-amber text-xs tracking-widest mb-2">
-                            :: NESSUNA SPEDIZIONE
+                            {lang === "it" ? ":: NESSUNA SPEDIZIONE" : ":: NO EXPEDITIONS"}
                         </div>
                         <p className="text-sm text-muted-foreground mb-4">
-                            🎯 Non hai ancora avviato nessuna spedizione. Vai alla board
-                            dei Dungeon e invia il tuo primo party.
+                            {lang === "it"
+                                ? "🎯 Non hai ancora avviato nessuna spedizione. Vai alla board dei Dungeon e invia il tuo primo party."
+                                : "🎯 You haven't launched any expedition yet. Open the Dungeon board and send your first party."}
                         </p>
                         <Link to="/dungeons">
                             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm">
-                                Vai ai Dungeon →
+                                {lang === "it" ? "Vai ai Dungeon →" : "Go to Dungeons →"}
                             </Button>
                         </Link>
                     </div>

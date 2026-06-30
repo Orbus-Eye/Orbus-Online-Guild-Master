@@ -47,6 +47,8 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
     const { t, lang } = useT();
     const dialogRef = useRef(null);
     const [autoEquipBusy, setAutoEquipBusy] = useState(false);
+    // ROUND 16.1 Phase 3 — keep the response to render a bilingual report.
+    const [autoEquipResult, setAutoEquipResult] = useState(null);
 
     const handleAutoEquip = async () => {
         if (!adventurer?.id || autoEquipBusy) return;
@@ -54,23 +56,33 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
         try {
             const r = await api.post(`/adventurers/${adventurer.id}/auto-equip`);
             const s = r.data || {};
+            setAutoEquipResult(s);
             const delta = (s.score_after ?? 0) - (s.score_before ?? 0);
             const swaps = s.swaps_count ?? 0;
             if (swaps === 0) {
-                const w = (s.warnings && s.warnings[0]) || "Nessuno swap possibile.";
-                toast.info(w, { description: "Nessun item compatibile più potente in inventario." });
+                toast.info(lang === "it"
+                    ? "Nessuno swap possibile."
+                    : "No swap possible.", {
+                    description: lang === "it"
+                        ? "Nessun item compatibile più potente in inventario."
+                        : "No stronger compatible item in inventory.",
+                });
             } else {
                 toast.success(
-                    `Auto-equipaggiamento completato: ${swaps} oggetto${swaps === 1 ? "" : "i"} aggiornat${swaps === 1 ? "o" : "i"}`,
+                    lang === "it"
+                        ? `${swaps} oggett${swaps === 1 ? "o aggiornato" : "i aggiornati"}`
+                        : `${swaps} item${swaps === 1 ? "" : "s"} updated`,
                     {
-                        description: `Potere ${s.score_before}→${s.score_after} (${delta >= 0 ? "+" : ""}${delta})`,
+                        description: `${lang === "it" ? "Potere" : "Power"} ${s.score_before}→${s.score_after} (${delta >= 0 ? "+" : ""}${delta})`,
                     },
                 );
             }
             if (typeof onChanged === "function") onChanged(adventurer.id);
         } catch (err) {
             const msg = err?.response?.data?.detail?.user_message
-                || "Auto-equipaggiamento fallito. Riprova fra poco.";
+                || (lang === "it"
+                    ? "Auto-equipaggiamento fallito. Riprova fra poco."
+                    : "Auto-equip failed. Try again shortly.");
             toast.error(msg);
         } finally {
             setAutoEquipBusy(false);
@@ -327,11 +339,120 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                             disabled={autoEquipBusy}
                             className="px-3 py-1.5 rounded-sm text-xs font-medium tracking-wide bg-amber-400/90 text-black hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            {autoEquipBusy ? "Equipaggiando…" : "Auto-Equipaggia"}
+                            {autoEquipBusy
+                                ? (lang === "it" ? "Equipaggiando…" : "Equipping…")
+                                : (lang === "it" ? "Auto-Equipaggia" : "Auto-Equip")}
                         </button>
                     </div>
+
+                    {/* ROUND 16.1 Phase 3 — bilingual auto-equip report */}
+                    {autoEquipResult && (
+                        <AutoEquipReport
+                            result={autoEquipResult}
+                            lang={lang}
+                            onDismiss={() => setAutoEquipResult(null)}
+                        />
+                    )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+// ROUND 16.1 Phase 3 — Inline report panel rendered after Auto-Equip click.
+function AutoEquipReport({ result, lang, onDismiss }) {
+    const it = lang === "it";
+    const delta = result.score_delta ?? ((result.score_after ?? 0) - (result.score_before ?? 0));
+    const deltaColor = delta > 0 ? "text-emerald-400" : delta < 0 ? "text-destructive" : "text-muted-foreground";
+    const reasons = result.reasons || [];
+    const unchanged = result.unchanged_slots_detail || [];
+    return (
+        <div
+            data-testid="auto-equip-report"
+            className="mt-4 border border-amber/40 bg-amber/5 rounded-sm p-3 text-sm"
+        >
+            <div className="flex items-baseline justify-between gap-3 mb-2">
+                <div>
+                    <div className="text-[10px] text-amber tracking-widest">
+                        {it ? ":: REPORT AUTO-EQUIP" : ":: AUTO-EQUIP REPORT"}
+                    </div>
+                    <div className="text-sm mt-0.5">
+                        {it ? "Potere" : "Power"}{" "}
+                        <span className="font-semibold">{result.score_before}</span>{" "}
+                        →{" "}
+                        <span className="font-semibold">{result.score_after}</span>{" "}
+                        <span
+                            data-testid="auto-equip-delta"
+                            className={`${deltaColor} font-bold tracking-wide`}
+                        >
+                            ({delta >= 0 ? "+" : ""}{delta})
+                        </span>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    data-testid="auto-equip-report-dismiss"
+                    onClick={onDismiss}
+                    className="text-[10px] tracking-widest text-muted-foreground hover:text-foreground border border-border rounded-sm px-2 py-0.5"
+                >
+                    {it ? "CHIUDI" : "DISMISS"}
+                </button>
+            </div>
+
+            {reasons.length > 0 && (
+                <section className="mb-2">
+                    <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                        {it ? ":: MIGLIORAMENTI" : ":: IMPROVEMENTS"}
+                    </div>
+                    <ul className="space-y-1">
+                        {reasons.map((r, i) => (
+                            <li
+                                key={`${r.slot}-${i}`}
+                                data-testid={`auto-equip-reason-${r.slot}`}
+                                className="text-xs border-l-2 border-emerald-400/55 pl-2 py-0.5"
+                            >
+                                <div className="text-foreground/90">
+                                    {it ? r.reason_it : r.reason_en}
+                                </div>
+                                {r.stat_delta && Object.keys(r.stat_delta).length > 0 && (
+                                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                                        {Object.entries(r.stat_delta)
+                                            .map(([k, v]) => `${v > 0 ? "+" : ""}${v} ${k}`)
+                                            .join(" · ")}
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
+
+            {unchanged.length > 0 && (
+                <section>
+                    <div className="text-[10px] text-muted-foreground tracking-widest mb-1">
+                        {it ? ":: SLOT NON MIGLIORATI" : ":: UNCHANGED SLOTS"}
+                    </div>
+                    <ul className="space-y-0.5">
+                        {unchanged.map((u, i) => (
+                            <li
+                                key={`${u.slot}-${i}`}
+                                data-testid={`auto-equip-unchanged-${u.slot}`}
+                                className="text-xs text-muted-foreground italic border-l-2 border-border pl-2 py-0.5"
+                            >
+                                {it ? u.reason_it : u.reason_en}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
+
+            {(result.swaps_count ?? 0) === 0 && reasons.length === 0 && (
+                <p className="text-xs text-muted-foreground italic">
+                    {it
+                        ? "Nessun item migliore disponibile in inventario. Visita il mercato o completa dungeon."
+                        : "No better item available in inventory. Visit the market or run dungeons."}
+                </p>
+            )}
         </div>
     );
 }

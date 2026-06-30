@@ -126,9 +126,34 @@ async def auto_equip_adventurer(
     replaced_summary: list[dict] = []
     unchanged: list[str] = []
     warnings: list[str] = []
+    # ROUND 16.1 Phase 3 — bilingual structured reasons.
+    reasons: list[dict] = []
+    unchanged_slots_detail: list[dict] = []
     score_before = sum(item_equip_power(i) for i in current_by_slot.values())
 
+    def _slot_label(slot: str) -> tuple[str, str]:
+        return {
+            "weapon": ("Arma", "Weapon"),
+            "armor": ("Armatura", "Armor"),
+            "accessory": ("Accessorio", "Accessory"),
+        }.get(slot, (slot, slot))
+
+    def _stat_delta(old: dict | None, new: dict) -> dict[str, int]:
+        a = (old or {}).get("stats") or {}
+        b = new.get("stats") or {}
+        keys = set(a) | set(b)
+        out = {}
+        for k in keys:
+            try:
+                d = int(b.get(k, 0)) - int(a.get(k, 0))
+            except (TypeError, ValueError):
+                d = 0
+            if d:
+                out[k] = d
+        return out
+
     for slot in EQUIPMENT_SLOTS:
+        slot_it, slot_en = _slot_label(slot)
         expected_type = SLOT_TO_ITEM_TYPE[slot]
         # Candidates: matching item_type + level + compat severity ≠ block.
         candidates: list[tuple[float, dict]] = []
@@ -148,6 +173,11 @@ async def auto_equip_adventurer(
         if not candidates:
             warnings.append(f"{slot}: nessun item compatibile disponibile")
             unchanged.append(slot)
+            unchanged_slots_detail.append({
+                "slot": slot,
+                "reason_it": f"{slot_it}: nessun oggetto compatibile in inventario.",
+                "reason_en": f"{slot_en}: no compatible item in inventory.",
+            })
             continue
         candidates.sort(key=lambda x: x[0], reverse=True)
         best_fit, best_item = candidates[0]
@@ -156,9 +186,19 @@ async def auto_equip_adventurer(
                        if current else -1.0)
         if current and best_item.get("id") == current.get("id"):
             unchanged.append(slot)
+            unchanged_slots_detail.append({
+                "slot": slot,
+                "reason_it": f"{slot_it}: l'oggetto attualmente equipaggiato è già il migliore.",
+                "reason_en": f"{slot_en}: the currently equipped item is already the best.",
+            })
             continue
         if best_fit <= current_fit:
             unchanged.append(slot)
+            unchanged_slots_detail.append({
+                "slot": slot,
+                "reason_it": f"{slot_it}: nessun oggetto migliore disponibile in inventario.",
+                "reason_en": f"{slot_en}: no better item available in inventory.",
+            })
             continue
         # Swap: unequip current then equip new.
         if current:
@@ -173,7 +213,16 @@ async def auto_equip_adventurer(
         except Exception as exc:  # noqa: BLE001
             warnings.append(f"{slot}: equip fallito ({type(exc).__name__})")
             continue
+        stat_delta = _stat_delta(current, best_item)
+        primary_gain = int(stat_delta.get(primary, 0))
+        # Bilingual narrative reason.
         if current:
+            old_name = current.get("name") or current.get("slug")
+            new_name = best_item.get("name") or best_item.get("slug")
+            r_it = (f"{slot_it} sostituita: «{old_name}» → «{new_name}»."
+                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
+            r_en = (f"{slot_en} replaced: \"{old_name}\" → \"{new_name}\"."
+                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
             replaced_summary.append({
                 "slot": slot,
                 "old_item_slug": current.get("slug"),
@@ -181,11 +230,28 @@ async def auto_equip_adventurer(
                 "fitness_delta": round(best_fit - current_fit, 2),
             })
         else:
+            new_name = best_item.get("name") or best_item.get("slug")
+            r_it = (f"{slot_it} equipaggiata: «{new_name}»."
+                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
+            r_en = (f"{slot_en} equipped: \"{new_name}\"."
+                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
             equipped_summary.append({
                 "slot": slot,
                 "item_slug": best_item.get("slug"),
                 "fitness": round(best_fit, 2),
             })
+        reasons.append({
+            "slot": slot,
+            "old_item_slug": (current or {}).get("slug"),
+            "new_item_slug": best_item.get("slug"),
+            "old_item_name": (current or {}).get("name"),
+            "new_item_name": best_item.get("name"),
+            "stat_delta": stat_delta,
+            "primary_stat": primary,
+            "primary_gain": primary_gain,
+            "reason_it": r_it,
+            "reason_en": r_en,
+        })
 
     score_after_rows = await db.equipped_items.find(
         {"guild_id": guild["id"], "adventurer_id": adv["id"]},
@@ -215,9 +281,19 @@ async def auto_equip_adventurer(
         "equipped": equipped_summary,
         "replaced": replaced_summary,
         "unchanged_slots": unchanged,
+        "unchanged_slots_detail": unchanged_slots_detail,
+        "reasons": reasons,
+        "primary_stat": primary,
         "warnings": warnings,
+        "warnings_it": warnings,
+        "warnings_en": [
+            ("No compatible item in inventory."
+             if "nessun item compatibile" in w else w)
+            for w in warnings
+        ],
         "score_before": int(score_before),
         "score_after": int(score_after),
+        "score_delta": int(score_after - score_before),
         "swaps_count": swaps_count,
         "applied_at": datetime.now(timezone.utc).isoformat(),
     }

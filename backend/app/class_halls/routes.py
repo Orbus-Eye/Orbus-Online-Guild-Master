@@ -8,6 +8,7 @@ from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
 from app.class_halls.services import (
     BASE_CLASS_SLUGS,
+    enrich_halls_for_ui,
     get_class_hall,
     list_class_halls,
     seed_class_halls_for_guild,
@@ -27,7 +28,21 @@ async def get_my_class_halls(user: dict = Depends(get_current_user)):
         await seed_class_halls_for_guild(
             db, guild_id=guild["id"], actor_user_id=user["id"])
         halls = await list_class_halls(db, guild_id=guild["id"])
-    return {"halls": halls, "base_classes": list(BASE_CLASS_SLUGS)}
+    # ROUND 16.1 Phase 3 — enrich with adventurer counts + top3 + specs.
+    halls = await enrich_halls_for_ui(db, guild_id=guild["id"], halls=halls)
+    unlocked_count = sum(1 for h in halls if h.get("is_unlocked"))
+    specs_unlocked = sum(len(h.get("unlocked_specializations") or [])
+                          for h in halls)
+    return {
+        "halls": halls,
+        "base_classes": list(BASE_CLASS_SLUGS),
+        "kpi": {
+            "halls_unlocked": unlocked_count,
+            "halls_total": len(halls),
+            "specs_unlocked": specs_unlocked,
+            "specs_total": len(halls) * 3,
+        },
+    }
 
 
 @router.get("/{class_slug}")
