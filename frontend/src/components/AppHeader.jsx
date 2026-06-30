@@ -178,32 +178,27 @@ export default function AppHeader({ subtitle, subtitleKey = "nav.brand_subtitle_
     const [openId, setOpenId] = useState(null);
     const subtitleText = subtitle != null ? subtitle : t(subtitleKey);
 
-    // ROUND 16.1.1 HOTFIX (v2) — robust click-away listener using
-    // `data-dropdown-region` markers. Closes the open dropdown when the
-    // click target is NOT inside a trigger button OR an open panel.
-    // Why data-attributes instead of `navRef.contains`: the previous
-    // approach failed if the click landed on the empty side area of the
-    // sticky <header> (technically inside the header but outside the
-    // inner container ref). Marker-based detection works regardless of
-    // DOM layout.
+    // ROUND 16.1.1 HOTFIX (v3) — canonical click-away pattern.
+    // Use `click` (post-bubble) instead of `mousedown`/`touchstart` so the
+    // trigger's onClick handler runs FIRST and updates `openId` atomically.
+    // This guarantees:
+    //   * Click on a NEW trigger → trigger.onClick toggles openId → listener
+    //     then runs, sees `closest('[data-dropdown-region]') = trigger` →
+    //     skip close (atomic switch works in one click).
+    //   * Click on body/header whitespace → no onClick fires → listener runs
+    //     → `closest()` returns null → close.
+    //   * Click on link inside panel → Link.onClick navigates → unmount
+    //     happens before listener concern.
+    // Note: a single `click` listener also covers touch (browser synthesises
+    // `click` from tap), so no separate `touchstart` is needed.
     useEffect(() => {
         if (!openId) return;
         const handler = (e) => {
-            const target = e.target;
-            if (target && typeof target.closest === "function" &&
-                target.closest('[data-dropdown-region]')) {
-                return; // click landed on a trigger or open panel — keep open
-            }
+            if (e.target?.closest?.('[data-dropdown-region]')) return;
             setOpenId(null);
         };
-        // mousedown fires before click, so by the time the click event
-        // would re-open the same trigger it's already closed → toggle works.
-        document.addEventListener("mousedown", handler);
-        document.addEventListener("touchstart", handler);
-        return () => {
-            document.removeEventListener("mousedown", handler);
-            document.removeEventListener("touchstart", handler);
-        };
+        document.addEventListener("click", handler);
+        return () => document.removeEventListener("click", handler);
     }, [openId]);
 
     // Close on route change (defensive — Link onClick already handles it).

@@ -315,25 +315,71 @@ Tutti beneficiano del medesimo fix mobile (pb-32, min-h-44, scroll-into-view, w-
 
 ## Sezione 14 — Conferma dropdown desktop non accavallati
 
-**Comportamento ora** (post v2 hotfix click-away):
+**Comportamento ora** (post v3 hotfix — `click` listener post-bubble):
 
 1. User clicca sezione A → A si apre.
-2. User clicca sezione B → A si chiude, B si apre (`setOpenId("B")`).
+2. **User clicca sezione B → A si chiude, B si apre nello stesso click** ✅ (atomic switch ripristinato in v3).
 3. User hover sezione C (mentre B è aperto) → B si chiude, C si apre (auto-switch hover gating).
-4. **User clicca su body / area vuota / qualsiasi elemento fuori da trigger e panel → dropdown si chiude** ✅ (FIX v2).
-5. User clicca voce link → dropdown si chiude + navigation.
-6. Cambio route → dropdown si chiude (useEffect on pathname).
+4. **User clicca su body (centro dashboard) / header whitespace / qualsiasi area fuori da trigger e panel → dropdown si chiude** ✅ (sub-check a + b risolti in v3).
+5. User clicca su elemento UI fuori header → dropdown si chiude ✅ (c).
+6. User clicca su panel space vuoto (dentro `<ul>`) → resta aperto ✅ (e).
+7. User clicca link → navigation + chiusura via route effect (Link onClick fa setOpenId(null) prima, poi navigation).
+8. Cambio route → dropdown si chiude (useEffect on pathname).
+9. Highlight pagina corrente → preservato ✅ (f).
 
-**FIX v2 — Robust click-away listener** (hotfix per regressione rilevata da `e1_tester`):
-- Marker `data-dropdown-region="trigger"` su tutti i bottoni trigger (sezioni + account).
-- Marker `data-dropdown-region="panel"` su tutti i pannelli `<ul role="menu">` aperti.
-- Listener `mousedown` + `touchstart` su `document`: se il target NON ha `.closest('[data-dropdown-region]')` → `setOpenId(null)`.
-- **Perché data-attributes invece di `navRef.contains`**: il fix v1 falliva quando il click cadeva nello spazio vuoto laterale del `<header sticky>` — tecnicamente dentro il `<header>` ma fuori dall'inner container ref. La detection con marker funziona indipendentemente dal layout DOM (header può crescere/cambiare struttura senza rompere il listener).
-- Cleanup automatico del listener quando `openId === null`.
+### Evoluzione storica del fix (per audit)
 
-**Risultato**: impossibile avere 2+ dropdown contemporaneamente. Click su body chiude correttamente.
+| Versione | Pattern | Problema |
+|---|---|---|
+| v1 | `mousedown` + `navRef.current.contains(target)` | Falliva quando il click cadeva su elementi tecnicamente dentro `navRef` ma fuori dai trigger/panel (es. brand link, LanguageSwitcher area). |
+| v2 | `mousedown` + `target.closest('[data-dropdown-region]')` | Marker corretto, ma `mousedown` arriva PRIMA dell'`onClick` del trigger. Race condition: il listener vede ancora il vecchio `openId` quando l'utente clicca un nuovo trigger → atomic switch rotto (serviva doppio click). Inoltre il secondo listener `touchstart` aggiungeva rumore. Sub-check (a)+(b)+(d) FAIL. |
+| **v3 (current)** | **`click` (single listener, post-bubble) + marker `data-dropdown-region`** | Pattern canonico click-away: `click` fa bubble DOPO l'`onClick` del trigger, quindi `openId` è già aggiornato quando il listener decide se chiudere. Atomic switch funziona in un click. Nessun race. Touch handled via `click` synthesis del browser. |
 
-**Mobile drawer**: invariato (gestito da `MobileBottomNav` + `MobileMenuDrawer`, separati da `AppHeader`). 5 voci bottom + 8 sezioni drawer.
+### Diff sintetico v2 → v3
+
+```diff
+- // ROUND 16.1.1 HOTFIX (v2) — robust click-away listener using
+- // `data-dropdown-region` markers. ...
+- useEffect(() => {
+-     if (!openId) return;
+-     const handler = (e) => {
+-         const target = e.target;
+-         if (target && typeof target.closest === "function" &&
+-             target.closest('[data-dropdown-region]')) {
+-             return;
+-         }
+-         setOpenId(null);
+-     };
+-     document.addEventListener("mousedown", handler);
+-     document.addEventListener("touchstart", handler);
+-     return () => {
+-         document.removeEventListener("mousedown", handler);
+-         document.removeEventListener("touchstart", handler);
+-     };
+- }, [openId]);
+
++ // ROUND 16.1.1 HOTFIX (v3) — canonical click-away pattern.
++ // Use `click` (post-bubble) instead of `mousedown`/`touchstart` so the
++ // trigger's onClick handler runs FIRST and updates `openId` atomically.
++ useEffect(() => {
++     if (!openId) return;
++     const handler = (e) => {
++         if (e.target?.closest?.('[data-dropdown-region]')) return;
++         setOpenId(null);
++     };
++     document.addEventListener("click", handler);
++     return () => document.removeEventListener("click", handler);
++ }, [openId]);
+```
+
+### DOM marker scope confermato
+Grep `data-dropdown-region` su `/app/frontend/src/`:
+- 4 occorrenze totali in `AppHeader.jsx`:
+  - 2 × `DesktopMenuButton` (1 trigger button + 1 panel `<ul>`)
+  - 2 × `DesktopAccountMenu` (1 trigger button + 1 panel `<ul>`)
+- Nessun parent/sibling indesiderato. `closest('[data-dropdown-region]')` ritorna solo se il click è effettivamente su un trigger o dentro un panel aperto.
+
+**Mobile drawer**: invariato (`MobileBottomNav` + `MobileMenuDrawer`, separati). 5 voci bottom + 8 sezioni drawer.
 
 **Bottom nav**: 5 slot invariati (max-5 rispettato).
 
