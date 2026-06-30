@@ -133,11 +133,15 @@ def class_public(doc: dict) -> dict:
         "slug": doc["slug"],
         "role": doc["role"],
         "description": doc.get("description", ""),
-        "base_strength": doc["base_strength"],
-        "base_agility": doc["base_agility"],
-        "base_intellect": doc["base_intellect"],
-        "base_endurance": doc["base_endurance"],
-        "base_faith": doc["base_faith"],
+        # ROUND 16.0 — base_* keys defaulted with `.get(..., 0)` so that
+        # newly seeded classes (e.g. warlock) without legacy base stats
+        # do not crash the projector. The R15 + R16 catalog uses
+        # `primary_stat` / `secondary_stats` as the canonical signal.
+        "base_strength": int(doc.get("base_strength", 0) or 0),
+        "base_agility": int(doc.get("base_agility", 0) or 0),
+        "base_intellect": int(doc.get("base_intellect", 0) or 0),
+        "base_endurance": int(doc.get("base_endurance", 0) or 0),
+        "base_faith": int(doc.get("base_faith", 0) or 0),
         "is_active": doc.get("is_active", True),
         # ROUND 15 — class identity (Fase 1). All optional in the
         # projection; the FE shows "—" if missing on legacy/test docs.
@@ -207,6 +211,10 @@ def adventurer_public(doc: dict) -> dict:
         # The snapshot is set at apply-time so future catalog rebalancing
         # never retroactively changes live adventurers' bonuses.
         "specialization": doc.get("specialization"),
+        # ROUND 16.0 — Class-level specialization slug (separate from R6C
+        # training snapshot). Identifies the spec attached to the base
+        # class (e.g. "berserker_spec" for a Warrior).
+        "specialization_slug": doc.get("specialization_slug"),
         "equipment": eq_slots,
         "base_power": base_power,
         "equipment_power": eq_power,

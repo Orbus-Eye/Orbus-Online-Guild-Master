@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
-import { rarityLabel } from "../utils/displayLabels";
+import { rarityLabel, classLabel, specLabel } from "../utils/displayLabels";
 import { TraitList } from "../components/TraitBadge";
 import TraitPreviewWidget from "../components/TraitPreviewWidget";
 import AdventurerDetailModal from "../components/AdventurerDetailModal";
@@ -279,7 +279,17 @@ export default function Adventurers() {
                                                 </div>
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                                                {a.class_name}
+                                                <div className="flex flex-col">
+                                                    <span>{classLabel(a.class_slug) || a.class_name}</span>
+                                                    {a.specialization_slug ? (
+                                                        <span
+                                                            data-testid={`adventurer-spec-class-badge-${a.id}`}
+                                                            className="text-[10px] uppercase tracking-wide text-amber-300/80 mt-0.5"
+                                                        >
+                                                            Spec: {specLabel(a.specialization_slug)}
+                                                        </span>
+                                                    ) : null}
+                                                </div>
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                                                 <RoleMarker role={a.class_role} withLabel />

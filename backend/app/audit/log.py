@@ -152,6 +152,17 @@ EVENT_TYPES = frozenset({
     "pvp_match_invalidated",
     # ROUND 12.D — Preview-only tester roster release
     "tester_roster_released_preview",
+    # ROUND 16.0 — Class rework (10 base classes + specializations + Stregone)
+    "class_created_round160",
+    "class_deprecated_round160",
+    "class_marked_base_round160",
+    "class_specialization_seeded",
+    "class_specialization_unlocked",
+    "class_hall_seeded_round160",
+    "class_hall_unlocked",
+    "adventurer_class_migrated",
+    "item_class_tags_extended",
+    "achievement_text_updated_round160",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

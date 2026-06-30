@@ -151,9 +151,24 @@ async def scrub_test_traits_from_adventurers(db) -> None:
 
 
 async def seed_classes_and_traits(db) -> None:
-    """Idempotent content seed (runs in all envs, including production)."""
+    """Idempotent content seed (runs in all envs, including production).
+
+    ROUND 16.0 (2026-06): the deprecated classes (berserker, assassin,
+    necromancer) keep `is_active=False` + `deprecated_at` set by
+    `round160_seed_classes_v2.py`. The bootstrap MUST NOT reactivate
+    them on every startup, so we skip any class document that already
+    carries `deprecated_at`.
+    """
     now = _utc_now_iso()
     for c in CLASS_SEED:
+        existing = await db.adventurer_classes.find_one(
+            {"slug": c["slug"]},
+            {"_id": 0, "deprecated_at": 1},
+        )
+        if existing and existing.get("deprecated_at"):
+            # Leave deprecated rows untouched; soft-deprecation is the
+            # only signal recruitment / generator pools look at.
+            continue
         await db.adventurer_classes.update_one(
             {"slug": c["slug"]},
             {

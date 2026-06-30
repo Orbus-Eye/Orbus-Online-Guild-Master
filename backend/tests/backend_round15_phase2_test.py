@@ -266,8 +266,10 @@ def test_r15p2_17_adventurer_classes_carry_primary_stat():
     classes = body.get("classes") if isinstance(body, dict) else body
     assert isinstance(classes, list)
     with_primary = [c for c in classes if c.get("primary_stat")]
-    assert len(with_primary) >= 12, (
-        f"Expected ≥12 active classes with primary_stat, got {len(with_primary)}"
+    # ROUND 16.0: now exactly 10 active base classes (Berserker,
+    # Assassin, Necromancer deprecated into specializations).
+    assert len(with_primary) >= 10, (
+        f"Expected ≥10 active classes with primary_stat, got {len(with_primary)}"
     )
     # Body PII / ObjectId leak sweep.
     body_text = r.text.lower()
@@ -286,7 +288,8 @@ def test_r15p2_18_class_xp_policy_enabled_in_response():
     # post-seed run. The bootstrap seed runs on app startup so the value is
     # the schema_version-2 default.
     enabled_count = sum(1 for p in policies if p.get("enabled"))
-    assert enabled_count >= 12, (
-        f"Expected XP policy enabled on ≥12 classes, got {enabled_count}. "
+    # ROUND 16.0: 10 active base classes (was 12 before deprecation).
+    assert enabled_count >= 10, (
+        f"Expected XP policy enabled on ≥10 classes, got {enabled_count}. "
         "Re-run app.scripts.round15_seed_class_identity."
     )

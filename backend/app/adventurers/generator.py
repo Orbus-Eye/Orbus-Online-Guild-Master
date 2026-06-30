@@ -76,9 +76,29 @@ async def filter_safe_trait_pool(db) -> list[dict]:
 
 
 async def filter_safe_class_pool(db) -> list[dict]:
-    """Return active classes with NO Test* in name/slug. Required."""
+    """Return active **base** classes with NO Test* in name/slug.
+
+    Round 16.0: filters by `is_base_class=True` to exclude the 3
+    deprecated classes (berserker, assassin, necromancer) which now exist
+    only as specializations attached to their successor base class.
+    Recruitment, candidate generation and class selection UIs must rely
+    on this helper to stay aligned with the 10 base classes.
+    """
     rows = await db.adventurer_classes.find(
-        {"is_active": True, "is_test": {"$ne": True}},
+        {
+            "is_active": True,
+            "is_test": {"$ne": True},
+            "$or": [
+                # Backwards compat: documents seeded before Round 16 lack
+                # the explicit flag; treat *active* ones as base by
+                # default ONLY if they are NOT deprecated.
+                {"is_base_class": True},
+                {"$and": [
+                    {"is_base_class": {"$exists": False}},
+                    {"deprecated_at": None},
+                ]},
+            ],
+        },
         {"_id": 0},
     ).to_list(100)
     safe = [

@@ -73,6 +73,12 @@ BASE_CLASSES: list[dict[str, Any]] = [
         "secondary_role": "Caster",
         "allowed_weapon_tags": ["dagger", "staff", "tome"],
         "allowed_armor_tags": ["robe", "light"],
+        # ROUND 15 base stats — primary=intellect, secondaries lifted.
+        "base_strength": 4,
+        "base_agility": 6,
+        "base_intellect": 10,
+        "base_endurance": 6,
+        "base_faith": 6,
         "xp_primary_stat_policy": _XP_POLICY_V2,
         "description_it": (
             "Lo Stregone stringe patti con entità del Vuoto o delle Stelle. "
@@ -317,8 +323,11 @@ async def _upsert_base_classes(db, *, dry_run: bool) -> dict[str, int]:
                 )
             flagged += 1
         else:
-            # warlock new entry
-            doc = {**entry, "is_active": True, "is_base_class": True,
+            # warlock new entry — include public `id` (UUID) so the
+            # `class_public()` projector and downstream consumers don't
+            # raise KeyError. Reuses uuid4 just like seed_data.py.
+            doc = {**entry, "id": str(uuid.uuid4()),
+                   "is_active": True, "is_base_class": True,
                    "created_at": now, "updated_at": now}
             if not dry_run:
                 await db.adventurer_classes.insert_one(doc)

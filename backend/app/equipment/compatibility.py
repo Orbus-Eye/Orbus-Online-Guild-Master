@@ -1,4 +1,5 @@
 """ROUND 15 — Fase 2 / Task A: Equipment compatibility validator.
+   ROUND 16.0 — Fase 2 / Task 2.3: Validator v2 — base class + specialization.
 
 Server-authoritative compatibility check between an item and an
 adventurer's class. Three severity levels:
@@ -23,16 +24,20 @@ from __future__ import annotations
 
 # Heavy-armour blacklist by class slug. These classes CAN NEVER equip
 # heavy armour even if the seed tag map drifts — defence in depth.
+# Round 16.0: includes the new `warlock` (caster) base class.
+# Legacy `necromancer` kept for back-compat reads only (post-migration
+# no adventurer carries that slug anymore).
 NO_HEAVY_ARMOR_CLASSES = frozenset({
-    "mage", "necromancer", "priest", "druid", "bard",
+    "mage", "necromancer", "priest", "druid", "bard", "warlock",
 })
 
 # Arcane-weapon (staff/wand/grimoire) blacklist for non-caster classes.
+# Legacy `berserker` / `assassin` kept for back-compat reads only.
 NO_ARCANE_WEAPON_CLASSES = frozenset({
     "warrior", "paladin", "berserker", "rogue", "ranger", "assassin", "monk",
 })
 
-ARCANE_WEAPON_TAGS = frozenset({"staff", "wand", "arcane", "grimoire"})
+ARCANE_WEAPON_TAGS = frozenset({"staff", "wand", "arcane", "grimoire", "tome"})
 
 
 def _tags(item: dict, field: str) -> list[str]:
@@ -46,8 +51,10 @@ def check_equip_compatibility(adventurer: dict, item: dict) -> dict:
 
     Args:
         adventurer: dict from `adventurers` collection (must carry
-            `class_slug` or `class_name`).
-        item: dict from `items` collection.
+            `class_slug` or `class_name`; optionally `specialization_slug`).
+        item: dict from `items` collection. Optional new field
+            `specialization_unlocks: list[str]` is consulted when the
+            base class is NOT in `class_tags`/`recommended_classes`.
 
     Returns:
         {
@@ -60,11 +67,13 @@ def check_equip_compatibility(adventurer: dict, item: dict) -> dict:
     cls_slug = (adventurer.get("class_slug")
                 or (adventurer.get("class_name") or "").lower() or "")
     cls_slug = cls_slug.strip().lower()
+    spec_slug = (adventurer.get("specialization_slug") or "").strip().lower()
 
     weapon_tags = set(_tags(item, "weapon_tags"))
     armor_tags = set(_tags(item, "armor_tags"))
     class_tags = set(_tags(item, "class_tags"))
     recommended = set(_tags(item, "recommended_classes"))
+    spec_unlocks = set(_tags(item, "specialization_unlocks"))
     is_universal = bool(item.get("is_universal"))
     required_class = (item.get("required_class_optional") or "").strip().lower()
 
@@ -113,7 +122,49 @@ def check_equip_compatibility(adventurer: dict, item: dict) -> dict:
             ),
         }
 
-    # ── 4. Soft warning: not in recommended_classes / class_tags ────────
+    # ── 4a. Specialization match — base class ok via spec_unlocks ───────
+    # If the item declares specialization_unlocks AND the adventurer has
+    # a matching spec, the item is fully compatible regardless of the
+    # legacy class_tags filter (this handles migrated items where the
+    # base class was added but the spec_unlock is the canonical match).
+    if spec_unlocks:
+        if spec_slug and spec_slug in spec_unlocks:
+            return {
+                "allowed": True,
+                "severity": "ok",
+                "reason_code": "specialization_match",
+                "reason_it": "",
+            }
+        # Item is spec-locked but adventurer has wrong/no spec.
+        if recommended and cls_slug not in recommended:
+            # Block: item explicitly requires a spec the adventurer
+            # lacks, AND base class is not even recommended.
+            spec_human = ", ".join(sorted(spec_unlocks))
+            return {
+                "allowed": False,
+                "severity": "block",
+                "reason_code": "specialization_required",
+                "reason_it": (
+                    f"Questo oggetto richiede una specializzazione "
+                    f"specifica ({spec_human}). L'avventuriero non ha "
+                    f"sbloccato la spec compatibile."
+                ),
+            }
+        # Base class allowed but specialization mismatched → warning.
+        if spec_slug and spec_slug not in spec_unlocks:
+            spec_human = ", ".join(sorted(spec_unlocks))
+            return {
+                "allowed": True,
+                "severity": "warning",
+                "reason_code": "specialization_mismatch",
+                "reason_it": (
+                    f"L'oggetto rende al meglio con la specializzazione "
+                    f"{spec_human}; equipaggiato comunque, ma i bonus di "
+                    f"spec non si applicheranno."
+                ),
+            }
+
+    # ── 4b. Soft warning: not in recommended_classes / class_tags ───────
     if recommended and cls_slug not in recommended:
         return {
             "allowed": True,
