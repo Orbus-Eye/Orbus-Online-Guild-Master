@@ -326,6 +326,51 @@ async def seed_tester(db) -> None:
     logger.info("Seeded tester account: %s (is_admin=True)", TESTER_EMAIL)
 
 
+async def seed_dev_clean_onboarding_account(db) -> None:
+    """ROUND 16.1 Phase 4 — idempotent seed of the `clean_onboarding`
+    test account used by e1_tester to validate the new-player onboarding
+    flow on a guild that genuinely has no progress yet.
+
+    Hard rules:
+      * Gated by APP_ENV (never runs in production).
+      * Only creates the USER row. NO guild, NO adventurers, NO inventory —
+        the whole point is a pristine onboarding state.
+      * Idempotent: if the user already exists we do nothing (we do NOT
+        overwrite — the human tester may have logged in and seeded data
+        meanwhile, and that's their state to keep).
+    """
+    app_env = os.environ.get("APP_ENV", "development")
+    if app_env == "production":
+        logger.info("APP_ENV=production → skipping clean_onboarding seed")
+        return
+    if not TESTER_PASSWORD:
+        # We reuse the same default-password convention as the admin tester.
+        # The constant is enforced non-empty by seed_tester() running above.
+        raise RuntimeError(
+            "TESTER_PASSWORD empty — cannot seed clean_onboarding account.")
+    email = "clean_onboarding@orbus.test"
+    username = "clean_onboarding"
+    existing = await db.users.find_one({"email": email})
+    if existing:
+        logger.info("clean_onboarding account already exists (id=%s)",
+                    existing.get("id"))
+        return
+    now = _utc_now_iso()
+    await db.users.insert_one(
+        {
+            "id": str(uuid.uuid4()),
+            "email": email,
+            "username": username,
+            "password_hash": hash_password(TESTER_PASSWORD),
+            "is_admin": False,
+            "created_at": now,
+            "updated_at": now,
+        }
+    )
+    logger.info("Seeded clean_onboarding account: %s (no guild, no roster)",
+                email)
+
+
 async def unbake_legacy_traits(db) -> None:
     """Phase 13: one-time migration that strips flat trait baking from
     legacy adventurers and persists a `phase13_unbaked` marker.
@@ -376,6 +421,8 @@ async def run_all_seeds(db) -> None:
     await flag_legacy_test_traits(db)
     await scrub_test_traits_from_adventurers(db)
     await seed_tester(db)
+    # ROUND 16.1 Phase 4 — pristine onboarding fixture account.
+    await seed_dev_clean_onboarding_account(db)
     await unbake_legacy_traits(db)
     # Phase 14.6 ROUND 3.A+3.B — Italian item catalog + crafting recipes.
     from app.seeds.seed_items_it import seed_italian_items
@@ -399,6 +446,7 @@ __all__ = [
     "flag_legacy_test_traits",
     "scrub_test_traits_from_adventurers",
     "seed_tester",
+    "seed_dev_clean_onboarding_account",
     "unbake_legacy_traits",
     "run_all_seeds",
 ]

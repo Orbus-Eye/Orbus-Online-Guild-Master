@@ -447,3 +447,23 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 ---
 
 **Audit read-only completato. Nessuna modifica al codice o al DB.**
+
+---
+
+## Round 16.1 closed — 2026-06-30
+
+**Game Clarity Pass — delivered**
+
+1. **Dashboard V2** — `/api/dashboard/{suggestions,onboarding,daily-loop}` with bilingual data-driven cards (NextActions, OnboardingChecklistV2, DailyLoopCard) + graduation rule (`dismissed_implicit` when `guild_level≥3` OR `completed_expeditions≥3`).
+2. **Class Halls UI** — full rewrite of `/class-halls` (11 halls incl. Alchemist, KPI top-right, Top Members, specs grid, bonus placeholder for R16.A) backed by enriched `GET /api/class-halls` via `enrich_halls_for_ui`.
+3. **Auto-Equip improvements** — bilingual structured `reasons[]` + `unchanged_slots_detail[]` + `score_delta` + `primary_stat`; inline `AutoEquipReport` panel in `AdventurerDetailModal` (`equipped_items` collection is source-of-truth).
+4. **Mobile Nav** — 5-slot bottom nav + 8-section drawer (Gilda, Avventurieri, Missioni, Economia, Competizione, Social, Guida, Account), no horizontal scroll, active state highlighted (verified DevTools 390×844 by user).
+5. **Guide expansion** — 3 new sections (Daily Loop, Team Composition, Roster Filters); plus FE features `RosterFilterBar`, `DungeonPreviewModal`, Expedition Report `WhyNarrativeSection` (bilingual `narrative_it/_en`).
+
+**Verification**: 27/27 pytest (R16.1 P1=7, P2=7, P3=6, Phase14.4=5, dev-seed=2) · E2E 4/4 by `e1_tester` + DevTools mobile audit by user · 0 economy/PvP/balance changes · 0 hard deletes.
+
+**Auto-seed (preview/dev only)**: `tester@orbus.test` (admin) + `clean_onboarding@orbus.test` (pristine onboarding fixture). Idempotent, gated on `APP_ENV != "production"`. Implemented in `seeds/seed_runner.py::seed_dev_clean_onboarding_account`.
+
+**OpenAPI baseline**: replaced fragile hard-coded count test with `tests/baselines/openapi_paths_round161.txt` snapshot (155 paths) + drift-resistant superset assertion.
+
+**Recommendation for next round**: R16.A — Achievement Hooks (close the 10 trigger_event gaps noted in §6/§7 above, with side-task `onboarding.graduated` audit event).

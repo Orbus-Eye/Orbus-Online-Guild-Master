@@ -1,8 +1,22 @@
 # Orbus Online — Round 16.1 Final Report
 
-**Status: 🟢 CHIUSO**  
-**Data chiusura**: 30 giugno 2026  
+**Status: 🟢 OFFICIALLY CLOSED ✅**  
+**Closing date**: 30 giugno 2026  
+**Sealed**: 30 giugno 2026 17:10 UTC (post-E2E verification by `e1_tester` + user DevTools audit)  
 **Scope**: Game Clarity Pass (Dashboard V2 + Roster filters/sort + Dungeon Preview narrato + Expedition Report "Perché" + Class Halls espansa + Auto-Equip bilingual + Empty States audit + Guide estesa).
+
+---
+
+## E2E Verification Results — 2026-06-30
+
+| Test # | Area | Result | Verified by |
+|---|---|---|---|
+| **Test 1** | Dashboard V2 advanced account (`tester@orbus.test`) — `equip_one` completed, graduation rule, NextActions + Daily Loop visible | ✅ **PASS** (post-fix) | `e1_tester` |
+| **Test 2** | Onboarding on clean account (`clean_onboarding@orbus.test`) — 3/8 progress, card visible | ✅ **PASS** | `e1_tester` |
+| **Test 3** | Recruitment (no deprecated classes) + Class Halls (KPI + spec unlock) + Auto-Equip (bilingual reasons) | ✅ **PASS** | `e1_tester` |
+| **Test 4** | Mobile Nav — 5-slot bottom + 8-section drawer + no horizontal scroll + active highlight | ✅ **PASS** | Human user, DevTools 390×844 |
+
+All four E2E tests green. Round 16.1 is **officially CLOSED**.
 
 ---
 
@@ -284,3 +298,43 @@ Python: lint su `dashboard/routes.py` → ✅ 0 issues.
 **🟢 CLOSED — entrambi i bug E2E risolti, suite verde 25/25, dashboard mobile-ready.**
 
 Pronto per la verifica finale di `e1_tester` su Test 1 (Daily Loop visibile) e Test 2 (Onboarding equip_one).
+
+---
+
+## Post-closure mini-task — Auto-seed dev test accounts (Task B)
+
+Per richiesta utente in chiusura ufficiale R16.1, gli account di test su preview/dev sono ora **auto-seedati allo startup** del backend, garantendo che `e1_tester` non debba mai più registrare manualmente account fixture.
+
+### Implementazione
+- **File**: `app/seeds/seed_runner.py` — nuova funzione `seed_dev_clean_onboarding_account()` (51 LOC) accanto a `seed_tester()` esistente.
+- **Gate**: `APP_ENV != "production"` (early-return in produzione).
+- **Idempotenza**: leggi-prima-inserisci, NO overwrite. Eseguita 100 volte senza side effect.
+- **Stato seedato**:
+  - `tester@orbus.test` — admin, account avanzato (gilda popolata via altri script, NON da questa funzione).
+  - `clean_onboarding@orbus.test` — utente puro, **senza** gilda, **senza** avventurieri, **senza** progressi (è proprio l'account che valida onboarding da zero).
+- **Wiring**: chiamata in `run_all_seeds()` subito dopo `seed_tester()`.
+
+### Test dedicato
+`backend/tests/backend_dev_seed_test.py` — 2 test, skippati su `APP_ENV=production`:
+1. `test_dev_test_accounts_exist_after_startup` — login funziona per entrambi.
+2. `test_clean_onboarding_account_has_no_guild` — la fixture è pristine (404 su `/api/guilds/me`).
+
+**Verifica live (log startup)**: `Seeded clean_onboarding account: clean_onboarding@orbus.test (no guild, no roster)`. Riavvio successivo: `clean_onboarding account already exists (id=212b356f-…)` — idempotenza confermata.
+
+### File aggiuntivi modificati Task B
+- `backend/app/seeds/seed_runner.py` — `seed_dev_clean_onboarding_account` + wiring + `__all__` export.
+- `backend/tests/backend_dev_seed_test.py` (NEW) — 2 test.
+- `memory/test_credentials.md` — tabella accounts auto-seedati con stato onboarding.
+- `memory/orbus_audit_snapshot.md` — sezione "Round 16.1 closed" appesa.
+- `memory/round161_final_report.md` — questo blocco + header CLOSED ufficiale.
+
+### Vincoli rispettati
+- ❌ NO deploy.
+- ❌ NO hard delete (anche se `tester@orbus.test` esiste con dati, la funzione NON sovrascrive).
+- ❌ NO modifiche a economia / drop / XP / PvP / bilanciamento.
+- ✅ Gated `APP_ENV != "production"`.
+- ✅ Idempotente.
+
+---
+
+## 🟢 Documento sigillato — Round 16.1 ufficialmente chiuso.

@@ -35,6 +35,7 @@ ALLOWLIST_EMAILS = frozenset({
     "mr.gualmini@gmail.com",
     "gianluca.brandi42@gmail.com",
     "tester@orbus.test",  # tester sandbox admin (seeded in dev only)
+    "clean_onboarding@orbus.test",  # R16.1 Phase 4 — pristine onboarding fixture (auto-seeded in dev/preview)
     "samuelemazzini1994@gmail.com",  # Harambes owner — confirmed 2026-06-26
     "ginnyo.gear@gmail.com",         # Magmorella — Il Regno di Lanafuoco — confirmed 2026-06-26
     "lordcoby87@gmail.com",          # Crociata d'Argento owner — confirmed 2026-06-26
