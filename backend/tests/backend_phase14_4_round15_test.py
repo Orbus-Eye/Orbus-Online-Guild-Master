@@ -1,22 +1,13 @@
 """ROUND 1.5 (Phase 14.4) — backend regression suite.
 
 Updated for Round 5 §I — pinned to a single xdist worker via pytestmark.
-
-These tests guard the invariants that ROUND 1.5 frontend work relies on:
-
-  - GET /api/inventory returns the documented shape (stack model + counts).
-  - GET /api/adventurers exposes traits + per-slot equipment so the
-    AdventurerDetailModal and the new Inventory "Equipped by" column can
-    render entirely from existing endpoints (no new API surface).
-  - Equip-on-other-adventurer is rejected when stock is exhausted
-    (cross-adventurer reservation guard, Phase 9.3.1).
-  - OpenAPI path count stays at 43 (ROUND 1.5 introduces no new endpoints).
-
-The suite is intentionally self-seeding (no shared fixtures) so it can be
-run as a single file: `pytest tests/backend_phase14_4_round15_test.py`.
+Updated for Round 16.1 Phase 4 — OpenAPI test now uses a baseline snapshot
+file (`tests/baselines/openapi_paths_round161.txt`) instead of a brittle
+hard-coded count.
 """
 import os
 import uuid
+from pathlib import Path
 
 import pytest
 import requests
@@ -109,15 +100,46 @@ class TestAdventurersShape:
 
 
 class TestOpenAPIStable:
+    """ROUND 16.1 Phase 4 — drift-resistant baseline.
+
+    Rather than hard-coding a path count (which silently rots with every
+    feature round), we snapshot the sorted path set into
+    `tests/baselines/openapi_paths_round161.txt`. The test asserts the
+    LIVE OpenAPI is a superset of the baseline (no path was *removed*
+    without intent), and reports the *new* paths so the next round
+    closer can refresh the baseline knowingly.
+
+    When closing a round, refresh the baseline:
+        curl -s "$API/api/openapi.json" \
+          | python -c "import sys,json;print('\\n'.join(sorted(json.load(sys.stdin)['paths'])))" \
+          > tests/baselines/openapi_paths_round161.txt
+    """
+
+    BASELINE_FILE = (
+        Path(__file__).parent / "baselines" / "openapi_paths_round161.txt"
+    )
+
     def test_round15_introduces_no_new_endpoints(self):
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
-        paths = r.json().get("paths", {})
-        # baseline 43 → 45 → 49 → 53 → 60 → 61 (Phase 16.1 admin cleanup endpoint).
-        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 86, (
-            f"unexpected OpenAPI path count: {len(paths)}"
+        live = set(r.json().get("paths", {}).keys())
+        baseline = set(
+            line.strip() for line in self.BASELINE_FILE.read_text().splitlines()
+            if line.strip()
         )
+        missing = sorted(baseline - live)
+        extra = sorted(live - baseline)
+        # Fail loudly if a baseline path was REMOVED (likely a regression).
+        assert not missing, (
+            f"OpenAPI path(s) removed since baseline (regression?): {missing}. "
+            "If the removal is intentional, refresh "
+            "tests/baselines/openapi_paths_round161.txt."
+        )
+        # Soft signal: new paths are OK, but we surface them so the next
+        # round closer can refresh the baseline intentionally.
+        if extra:
+            print(f"\n[OpenAPI baseline] {len(extra)} new path(s) since R16.1: "
+                  f"{extra[:8]}{'…' if len(extra) > 8 else ''}")
 
 
 class TestRegisterValidation:

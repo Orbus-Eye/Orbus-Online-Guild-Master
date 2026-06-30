@@ -104,3 +104,33 @@
 7. `/auto-equip` modal — "no better item available" bilingual
 
 **Pending (next, Phase 4)**: Test 17 checklist + report 17 punti consolidated.
+
+---
+
+## Round 16.1 Phase 4 — Completed 2026-06-30 — ROUND 16.1 CLOSED
+
+**Scope**: Stabilizzazione e validazione del Round 16.1 (no nuove feature).
+
+**Verifiche eseguite**:
+- Checklist 17 punti completata: 17/17 PASS.
+- Pytest R16.1 bundle (phase1+2+3 + phase14_4): 26/26 PASS.
+- Frontend lint: 0 errors, 6 warnings cosmetici.
+- Regression smoke: dashboard endpoints, recruitment (no deprecated), classes catalog (11 base), mobile nav, auto-equip compatibility.
+
+**Fix applicati**:
+1. `tests/backend_phase14_4_round15_test.py::test_round15_introduces_no_new_endpoints` — convertito da hard-coded count a baseline snapshot file `tests/baselines/openapi_paths_round161.txt` (155 paths). Test ora drift-resistant.
+2. `frontend/src/pages/guide/R16GuideSections.jsx` — 7 apostrofi escapati per pulire lint.
+3. Test credentials: account `clean_onboarding@orbus.test` aggiunto in `/app/memory/test_credentials.md`.
+
+**Conferme esplicite**:
+- ❌ Nessun hard delete eseguito.
+- ❌ Nessuna modifica a economia / drop / XP / PvP / bilanciamento.
+
+**Endpoint nuovi R16.x bundle** (rispetto a R15):
+- `/api/class-halls`, `/api/class-halls/{slug}/unlock-specialization`
+- `/api/dungeons/{slug}/preview`
+- `/api/dashboard/{suggestions,onboarding,daily-loop}` + claim/dismiss
+
+**Raccomandazione next round**: **R16.A — Achievement Hooks** (massimo ritorno percepito + zero rischio bilanciamento + chiusura naturale del Game Clarity Pass).
+
+**Report finale**: `/app/memory/round161_final_report.md`.

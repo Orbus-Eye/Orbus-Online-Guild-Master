@@ -20,7 +20,7 @@ function BaseVsSpecSection() {
                 <strong> specializzazione</strong> tramite la <em>Sala di Classe</em> dedicata.
             </p>
             <ul className="space-y-1 mb-3">
-                <ListItem><strong>Classe base</strong>: identità e statistiche primarie. Si assegna alla generazione dell'avventuriero.</ListItem>
+                <ListItem><strong>Classe base</strong>: identità e statistiche primarie. Si assegna alla generazione dell&apos;avventuriero.</ListItem>
                 <ListItem><strong>Specializzazione</strong>: ramo avanzato (3 per classe base) che aggiunge counter tag, sinergie e item esclusivi.</ListItem>
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
@@ -67,7 +67,7 @@ function UnlockFlowSection() {
                     (richiede oro e XP gilda). La Sala diventa di livello 1.
                 </li>
                 <li>
-                    <strong>Sblocca la specializzazione</strong> all'interno della Sala
+                    <strong>Sblocca la specializzazione</strong> all&apos;interno della Sala
                     (richiede materiali specifici e oro aggiuntivo). Endpoint:
                     <code className="ml-1">POST /api/class-halls/&lt;slug&gt;/unlock-specialization</code>.
                 </li>
@@ -99,7 +99,7 @@ function RacesGenderSection() {
             </p>
             <ul className="space-y-1 mb-3">
                 <ListItem><strong>Razza</strong> (es. Umano del Nord, Elfo silvano, Nano delle profondità, Orchetto delle steppe, …). Distribuzione bilanciata per rarità.</ListItem>
-                <ListItem><strong>Sesso</strong>: solo flavor, mostrato nel profilo dell'avventuriero.</ListItem>
+                <ListItem><strong>Sesso</strong>: solo flavor, mostrato nel profilo dell&apos;avventuriero.</ListItem>
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
                 Gli avventurieri pre-R16.0 sono stati <strong>retroattivamente</strong>
@@ -137,7 +137,7 @@ function StatColorsSection() {
                 </li>
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
-                Usa i colori per scremare il roster a colpo d'occhio: un Ladro con
+                Usa i colori per scremare il roster a colpo d&apos;occhio: un Ladro con
                 Destrezza <em>cyan</em> e Forza <em>rossa</em> è una build coerente;
                 un Guerriero con Forza <em>rossa</em> non è ottimale.
             </p>
@@ -162,11 +162,11 @@ function AutoEquipSection() {
                 <ListItem>Esclude item con <em>hard block</em> (es. armatura pesante su Mago).</ListItem>
                 <ListItem>Ordina per <strong>punteggio</strong> aggregato delle statistiche utili alla classe.</ListItem>
                 <ListItem>Equipaggia uno per <strong>slot</strong> (testa, corpo, mani, armi, accessori).</ListItem>
-                <ListItem>Lascia liberi gli slot per cui non c'è equip valido nel deposito.</ListItem>
+                <ListItem>Lascia liberi gli slot per cui non c&apos;è equip valido nel deposito.</ListItem>
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
-                L'operazione è <strong>idempotente</strong>: rieseguirla con lo stesso
-                inventario non cambia il risultato. È tracciata in audit con l'event
+                L&apos;operazione è <strong>idempotente</strong>: rieseguirla con lo stesso
+                inventario non cambia il risultato. È tracciata in audit con l&apos;event
                 type <code>adventurer_auto_equipped</code>.
             </p>
         </SectionBlock>
