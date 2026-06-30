@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 
+import { api } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
 import LeagueBadge from "../components/arena/LeagueBadge";
@@ -91,7 +92,7 @@ export default function Arena() {
     const handleSaveDefense = async (ids) => {
         setSavingDefense(true);
         try {
-            const r = await axios.put(`${API}/pvp/defense-team`, { adventurer_ids: ids }, cfg);
+            const r = await api.put(`/pvp/defense-team`, { adventurer_ids: ids });
             setDefenseInfo(r.data);
             toast.success("Squadra difensiva salvata.");
         } catch (err) {
@@ -122,11 +123,11 @@ export default function Arena() {
         if (attackIds.length !== teamSize) return;
         setChallenging(true);
         try {
-            const r = await axios.post(`${API}/pvp/challenge`, {
+            const r = await api.post(`/pvp/challenge`, {
                 opponent_guild_public_id: pickerOpp.guild_public_id,
                 attacker_adventurer_ids: attackIds,
                 mode: "ranked",
-            }, cfg);
+            });
             setPickerOpen(false);
             setReportMatch(r.data.match);
             await fetchAll();  // refresh opponents + history + defense
