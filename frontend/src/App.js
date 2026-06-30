@@ -45,6 +45,7 @@ import Training from "@/pages/Training";
 import Contracts from "@/pages/Contracts";
 import AdminOps from "@/pages/AdminOps";  // ROUND 11.2 TASK 5b
 import AdminGameHealth from "@/pages/AdminGameHealth";  // ROUND 14.v3
+import AdminAudit from "@/pages/AdminAudit";  // ROUND 16.A Phase 3
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -275,6 +276,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <AdminGameHealth />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/audit"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminAudit />
                                 </ProtectedRoute>
                             }
                         />
