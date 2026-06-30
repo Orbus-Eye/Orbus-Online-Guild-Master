@@ -168,6 +168,13 @@ EVENT_TYPES = frozenset({
     "adventurer_race_assigned",
     "adventurer_gender_assigned",
     "adventurer_auto_equipped",
+    # ROUND 16.0 Phase 4 — Threats & Counters (schema-only Void/Undead) + Mission Traits
+    "threat_seeded_round160",
+    "counter_tag_seeded_round160",
+    "dungeon_threats_assigned_round160",
+    "spec_counter_tags_updated_round160",
+    "trait_counter_tags_updated_round160",
+    "mission_trait_seeded_round160",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

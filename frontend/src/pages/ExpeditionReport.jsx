@@ -73,6 +73,72 @@ const Cell = ({ label, value, testid, accent = false }) => (
     </div>
 );
 
+// ROUND 16.0 Phase 4 — Threats & Counters (Void/Undead only, IT only)
+const THREAT_LABEL_IT = {
+    boss: "Boss",
+    minion: "Sgherri",
+    spell: "Incantesimo",
+    trap: "Trappola",
+    curse: "Maledizione",
+    ambush: "Imboscata",
+    elite: "Elite",
+    undead: "Non-morti",
+    beast: "Bestie",
+    elemental: "Elementali",
+    void: "Corruzione del Vuoto",
+    poison: "Veleno",
+    disease: "Malattia",
+    siege: "Assedio",
+    stealth: "Furtività",
+    magic_barrier: "Barriera Magica",
+};
+
+function ThreatResolutionSection({ tr }) {
+    const threats = tr?.threats || [];
+    const countered = new Set(tr?.threats_countered || []);
+    const ratio = tr?.counter_ratio ?? 0;
+    const bonus = tr?.success_bonus_pct ?? 0;
+    const injuryRed = tr?.injury_reduction_pct ?? 0;
+    const summary = threats.length > 0
+        ? `Hai contrastato ${countered.size}/${threats.length} minacce del dungeon (ratio ${Math.round(ratio * 100)}%). Bonus successo: +${bonus}%${injuryRed ? ` · Riduzione ferite: -${injuryRed}%` : ""}.`
+        : "Nessuna minaccia rilevata.";
+    return (
+        <section className="mb-6" data-testid="report-threat-resolution">
+            <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
+                :: MINACCE E CONTROMISURE
+            </div>
+            <div className="border border-border bg-card rounded-sm p-4 text-sm">
+                <div className="flex flex-wrap gap-2 mb-3">
+                    {threats.map((slug) => {
+                        const ok = countered.has(slug);
+                        const label = THREAT_LABEL_IT[slug] || slug;
+                        return (
+                            <span
+                                key={slug}
+                                data-testid={`threat-${slug}`}
+                                className={`text-[11px] tracking-wide border px-2 py-1 rounded-sm ${
+                                    ok
+                                        ? "border-[#22c55e]/55 text-[#22c55e]"
+                                        : "border-amber/55 text-amber"
+                                }`}
+                                title={ok ? "Contrastata dalla squadra" : "Non contrastata"}
+                            >
+                                {label} {ok ? "✓" : "⚠"}
+                            </span>
+                        );
+                    })}
+                </div>
+                <div className="text-xs text-foreground/90 italic border-t border-border/40 pt-2">
+                    {summary}
+                </div>
+                <div className="text-[10px] text-muted-foreground mt-2">
+                    Attivo solo su dungeon del Vuoto e della Non-morte. Nessun bonus al bottino.
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export default function ExpeditionReport() {
     const { t, tContent, lang } = useT();
     const { id } = useParams();
@@ -329,6 +395,11 @@ export default function ExpeditionReport() {
                         )}
                     </div>
                 </section>
+
+                {/* ROUND 16.0 Phase 4 — MINACCE E CONTROMISURE (only on Void/Undead) */}
+                {e.threat_resolution && e.threat_resolution.applies && (
+                    <ThreatResolutionSection tr={e.threat_resolution} />
+                )}
 
                 {/* Team */}
                 <section className="mb-6">

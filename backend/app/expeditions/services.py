@@ -29,6 +29,7 @@ from app.expeditions.formulas import (
 )
 from app.expeditions.loot_tables import roll_loot_for_dungeon
 from app.expeditions.material_drop_tables import roll_materials_for_dungeon
+from app.expeditions.threats import compute_threat_resolution
 from app.expeditions.xp_modifier import compute_xp_multiplier
 from app.equipment.services import (
     _empty_slot_map,
@@ -120,6 +121,8 @@ def expedition_public(e: dict) -> dict:
         "adventurer_ids": list(e.get("adventurer_ids", [])),
         # Phase 8: marks the run as a "Replay Last Run" dispatch (UI label).
         "is_replay": bool(e.get("is_replay", False)),
+        # ROUND 16.0 Phase 4 — Threat resolution (Void/Undead only; None elsewhere).
+        "threat_resolution": e.get("threat_resolution"),
         "created_at": e["created_at"],
         "updated_at": e.get("updated_at", e["created_at"]),
     }
@@ -712,6 +715,16 @@ async def _dispatch_expedition(
     team_power = compute_team_power(members_for_power)
     success_chance = compute_success_chance(team_power, dungeon["recommended_power"])
 
+    # ROUND 16.0 Phase 4 — Threat & counter resolution (Void/Undead schema).
+    # Additive: dungeons without `threat_tags` keep behaviour unchanged.
+    threat_resolution = await compute_threat_resolution(
+        db, team_members=members_for_power, dungeon=dungeon,
+    )
+    if threat_resolution.get("applies"):
+        bonus = int(threat_resolution.get("success_bonus_pct", 0))
+        if bonus:
+            success_chance = min(success_chance + bonus, 95)
+
     # Phase 7: equipment delta (frozen at start)
     delta = _build_equipment_delta(
         members_for_power, dungeon, team_power, success_chance
@@ -748,6 +761,8 @@ async def _dispatch_expedition(
         "adventurer_ids": list(adventurer_ids),
         # Phase 8: mark replay expeditions so the FE can label them differently.
         "is_replay": bool(is_replay),
+        # ROUND 16.0 Phase 4 — Threat resolution (only when dungeon has threat_tags).
+        "threat_resolution": threat_resolution if threat_resolution.get("applies") else None,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }

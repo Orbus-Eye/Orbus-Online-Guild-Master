@@ -59,6 +59,8 @@ export const SECTIONS = [
     { id: "drop-materiali", label: "36. Drop materiali in spedizione" },
     { id: "guild-level", label: "37. Livello Gilda" },
     { id: "imprese-gilda", label: "38. Imprese di Gilda" },
+    // ROUND 16.0 — Phase 4 — Threats & Counters (Void/Undead)
+    { id: "minacce-contromisure", label: "39. Minacce e Contromisure (Vuoto/Non-morti)" },
 ];
 
 // TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
