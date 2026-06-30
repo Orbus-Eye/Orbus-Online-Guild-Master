@@ -168,3 +168,39 @@
 - **PvP outcome**: fired for BOTH sides per user instruction. Idempotency key = `{match_id}:att` / `{match_id}:def`.
 
 **Vincoli rispettati**: NO modifiche a economia / drop / XP / PvP / bilanciamento / reward achievement / valori catalog.
+
+---
+
+## Round 16.A Phase 2 — Audit Bridge (achievement+xp+onboarding.graduated) — 2026-06-30
+
+**Scope**: scope ridotto rispetto a R16.B "full" (3 audit event vs 6). Wiring solo dei seguiti:
+- `achievement_unlocked` (sostituisce legacy `audit_logs.achievement_completed` su collection sbagliata)
+- `guild_xp_gained` (emesso da nuovo helper canonico `add_guild_xp`)
+- `onboarding_graduated` (one-shot CAS sulla guild on false→true transition)
+
+**Architettura**:
+- Riusa **collection `audit_log` esistente** + helper `write_audit` (non bifurca con un secondo store).
+- 3 nuovi `event_type` aggiunti all'allowlist (`audit/log.py`).
+- Engine refactor: vecchio `_audit_completion` ora scrive su `audit_log` canonical (era `audit_logs` plural, collection orfana).
+- Nuovo helper `add_guild_xp(db, guild_id, amount, source, source_id, points_delta=0)` in `achievements/engine.py`:
+  - Atomic `find_one_and_update($inc)` + level recompute (logica identica al legacy `_apply_reward`).
+  - Emette `guild_xp_gained` audit event quando `amount != 0`.
+  - `_apply_reward` ora è un thin shim che chiama `add_guild_xp` con `source="achievement_unlock"`.
+- `onboarding_graduated`:
+  - CAS atomico `find_one_and_update({"id":gid, "onboarding_graduated_at": None}, {"$set":{"onboarding_graduated_at":now}})` garantisce 1-shot.
+  - **No backfill retroattivo**: gilde già `dismissed_implicit=True` PRIMA di Phase 2 verranno marcate al primo hit sul dashboard endpoint (graceful — l'evento è "per il futuro", non per la storia).
+
+**File modificati**:
+- `backend/app/audit/log.py` — 3 nuovi event_type in allowlist.
+- `backend/app/achievements/engine.py` — `_audit_completion` riscritto + nuovo `add_guild_xp` + `_apply_reward` shim + `trigger_event` passato dall'engine.
+- `backend/app/dashboard/routes.py` — CAS + audit emit in `get_dashboard_onboarding`.
+- `backend/tests/backend_round16A_phase2_test.py` — 7 test (T01-T07), tutti pass.
+
+**Test result**: 7/7 PASS Phase 2 · 48 passed + 1 skipped (DEFERRED) totale R16.A+R16.1+phase14_4+dev_seed.
+
+**Conferme vincoli**:
+- ❌ Nessuna modifica a `guild_xp_reward` / valori catalog achievement.
+- ❌ Nessun hard delete.
+- ❌ R16.B (3 audit event restanti: MATERIAL_DROPPED, ADVENTURER_XP_GAINED, LEADERBOARD_SCORE_UPDATED) NON in scope.
+- ❌ Phase 3 (admin read-only) NON iniziata.
+- ✅ Tutti 3 event idempotenti (CAS-protected).

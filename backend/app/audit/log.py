@@ -179,6 +179,10 @@ EVENT_TYPES = frozenset({
     "alchemist_class_seeded",
     "alchemist_class_halls_seeded",
     "recruitment_offers_deprecated_round160",
+    # ROUND 16.A Phase 2 — Achievement / XP / Onboarding audit bridge
+    "achievement_unlocked",   # superseded the legacy `achievement_completed`
+    "guild_xp_gained",
+    "onboarding_graduated",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

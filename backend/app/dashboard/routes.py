@@ -270,6 +270,46 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
     # when either `dismissed` or `dismissed_implicit` is true.
     guild_level = int(guild.get("level") or 0)
     dismissed_implicit = (guild_level >= 3) or (n_exp_done >= 3)
+    graduation_reason = (
+        "guild_level_ge_3" if guild_level >= 3
+        else ("completed_expeditions_ge_3" if n_exp_done >= 3 else None)
+    )
+    # ROUND 16.A Phase 2 — emit `onboarding_graduated` once per guild on
+    # the first false→true transition. CAS on `onboarding_graduated_at:
+    # None` guarantees exactly-one emission even under concurrent reads.
+    if dismissed_implicit:
+        try:
+            now_iso = datetime.now(timezone.utc).isoformat()
+            transitioned = await db.guilds.find_one_and_update(
+                {"id": gid, "onboarding_graduated_at": None},
+                {"$set": {"onboarding_graduated_at": now_iso}},
+                projection={"_id": 0, "id": 1},
+            )
+            # `find_one_and_update` returns the PRE-update doc; if the
+            # doc had no `onboarding_graduated_at` field (or it was None)
+            # we just flipped it. Mongo returns `None` only when no doc
+            # matched the filter — i.e. already graduated → skip emit.
+            if transitioned is not None:
+                from app.audit.log import write_audit
+                await write_audit(
+                    db,
+                    event_type="onboarding_graduated",
+                    actor_guild_id=gid,
+                    actor_user_id=ctx["user"]["id"],
+                    source="dashboard.onboarding",
+                    related_entity_id=gid,
+                    metadata={
+                        "graduation_reason": graduation_reason,
+                        "completed_steps_count": sum(
+                            1 for s in steps if s["completed"]),
+                        "guild_level": guild_level,
+                        "completed_expeditions": n_exp_done,
+                    },
+                )
+        except Exception:  # noqa: BLE001
+            # Best-effort: dashboard read must never fail because of an
+            # audit-bridge issue.
+            pass
     return {
         "steps": steps,
         "completed_count": sum(1 for s in steps if s["completed"]),
@@ -277,10 +317,7 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
         "all_completed": all_done,
         "dismissed": dismissed,
         "dismissed_implicit": dismissed_implicit,
-        "graduation_reason": (
-            "guild_level_ge_3" if guild_level >= 3
-            else ("completed_expeditions_ge_3" if n_exp_done >= 3 else None)
-        ),
+        "graduation_reason": graduation_reason,
     }
 
 

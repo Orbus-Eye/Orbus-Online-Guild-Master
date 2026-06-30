@@ -42,41 +42,81 @@ ALLOWED_REWARD_TYPES = frozenset({
 
 
 async def _audit_completion(
-    db, guild_id: str, slug: str, xp: int, points: int
+    db, guild_id: str, slug: str, xp: int, points: int,
+    *, trigger_event: Optional[str] = None,
 ) -> None:
+    """ROUND 16.A Phase 2 — emit canonical `achievement_unlocked` audit.
+
+    Idempotency is enforced one level up by the `completed_at: None` CAS
+    in `find_one_and_update`. By the time we get here the achievement
+    has flipped exactly once, so emitting unconditionally is safe.
+    """
     try:
-        await db.audit_logs.insert_one({
-            "event": "achievement_completed",
-            "payload": {
-                "guild_id": guild_id,
+        from app.audit.log import write_audit
+        await write_audit(
+            db,
+            event_type="achievement_unlocked",
+            actor_guild_id=guild_id,
+            source="achievement.engine",
+            related_entity_id=slug,
+            metadata={
                 "achievement_slug": slug,
-                "xp_awarded": int(xp),
-                "points_awarded": int(points),
+                "guild_xp_reward": int(xp),
+                "achievement_points_reward": int(points),
+                "trigger_event_that_caused_it": trigger_event,
             },
-            "created_at": datetime.now(timezone.utc).isoformat(),
-        })
+        )
     except Exception:  # noqa: BLE001
         # Audit is best-effort; reward already credited.
         pass
 
 
-async def _apply_reward(
-    db, guild_id: str, xp_delta: int, points_delta: int
+async def add_guild_xp(
+    db,
+    guild_id: str,
+    amount: int,
+    *,
+    source: str,
+    source_id: Optional[str] = None,
+    points_delta: int = 0,
 ) -> dict:
-    """Atomic guild XP/points increment + recompute level.
+    """ROUND 16.A Phase 2 — canonical Guild XP helper.
 
-    The level field is recomputed from the *post-increment* xp under the
-    same update via a tiny pipeline. Returns the projected
-    `{guild_xp, guild_level, achievement_points, last_guild_level_up_at}`
-    dict for use by the caller.
+    Single, audited entry-point for all `guild_xp` credits. Wraps the
+    atomic `$inc` previously inlined in `_apply_reward` so every XP
+    transaction can be traced via the `guild_xp_gained` audit event.
+
+    `source` is a free-form enum-style string: `achievement_unlock`,
+    `expedition_completed`, `daily_bonus`, etc. `source_id` ties the
+    event back to the originating row (achievement slug, expedition id…).
+
+    Returns the post-update guild snapshot (same shape as the legacy
+    `_apply_reward` helper). When `amount` is 0 we still recompute the
+    level (no-op) but do NOT emit an audit row — there is nothing to
+    audit when nothing happened.
     """
     now_iso = datetime.now(timezone.utc).isoformat()
-    # Step 1: increment xp + points atomically.
+    if amount == 0 and points_delta == 0:
+        # Read-only path — return current snapshot without touching DB.
+        cur = await db.guilds.find_one(
+            {"id": guild_id},
+            projection={
+                "_id": 0, "guild_xp": 1, "guild_level": 1,
+                "achievement_points": 1, "last_guild_level_up_at": 1,
+            },
+        ) or {}
+        return {
+            "guild_xp": int(cur.get("guild_xp", 0) or 0),
+            "guild_level": int(cur.get("guild_level", 1) or 1),
+            "achievement_points": int(cur.get("achievement_points", 0) or 0),
+            "last_guild_level_up_at": cur.get("last_guild_level_up_at"),
+        }
+
     updated = await db.guilds.find_one_and_update(
         {"id": guild_id},
         {
             "$inc": {
-                "guild_xp": int(xp_delta),
+                "guild_xp": int(amount),
                 "achievement_points": int(points_delta),
             },
             "$set": {"updated_at": now_iso},
@@ -100,12 +140,49 @@ async def _apply_reward(
             {"id": guild_id}, {"$set": delta_level},
         )
         updated.update(delta_level)
+
+    # ROUND 16.A Phase 2 — emit `guild_xp_gained` audit event.
+    if amount != 0:
+        try:
+            from app.audit.log import write_audit
+            await write_audit(
+                db,
+                event_type="guild_xp_gained",
+                actor_guild_id=guild_id,
+                source=source or "unknown",
+                related_entity_id=source_id,
+                metadata={
+                    "xp_amount": int(amount),
+                    "source": source,
+                    "source_id": source_id,
+                    "new_total_xp": new_xp,
+                    "new_level": int(updated.get("guild_level", new_level)),
+                    "level_changed": bool(delta_level),
+                },
+            )
+        except Exception:  # noqa: BLE001
+            # Best-effort: XP already credited.
+            pass
+
     return {
         "guild_xp": new_xp,
         "guild_level": int(updated.get("guild_level", new_level)),
         "achievement_points": int(updated.get("achievement_points", 0)),
         "last_guild_level_up_at": updated.get("last_guild_level_up_at"),
     }
+
+
+async def _apply_reward(
+    db, guild_id: str, xp_delta: int, points_delta: int,
+    *, source_id: Optional[str] = None,
+) -> dict:
+    """Thin shim around `add_guild_xp` to keep the call sites stable."""
+    return await add_guild_xp(
+        db, guild_id, xp_delta,
+        source="achievement_unlock",
+        source_id=source_id,
+        points_delta=points_delta,
+    )
 
 
 async def evaluate_achievements(
@@ -206,8 +283,10 @@ async def evaluate_achievements(
             # Another worker beat us to the completion — no double credit.
             continue
 
-        snapshot = await _apply_reward(db, guild_id, xp_reward, pt_reward)
-        await _audit_completion(db, guild_id, slug, xp_reward, pt_reward)
+        snapshot = await _apply_reward(db, guild_id, xp_reward, pt_reward,
+                                       source_id=slug)
+        await _audit_completion(db, guild_id, slug, xp_reward, pt_reward,
+                                trigger_event=event_type)
         completed.append({
             "slug": slug,
             "name_it": entry.get("name_it"),
@@ -222,4 +301,4 @@ async def evaluate_achievements(
     return completed
 
 
-__all__ = ["evaluate_achievements", "ALLOWED_REWARD_TYPES"]
+__all__ = ["evaluate_achievements", "add_guild_xp", "ALLOWED_REWARD_TYPES"]
