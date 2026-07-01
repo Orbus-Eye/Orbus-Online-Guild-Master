@@ -12,6 +12,8 @@ import WorldMiniCard from "../components/WorldMiniCard";
 import SiteIncomeMiniCard from "../components/SiteIncomeMiniCard";
 import LegendaryForgeMiniCard from "../components/LegendaryForgeMiniCard";
 import ArfusMiniCard from "../components/ArfusMiniCard";
+import TradePactsMiniCard from "../components/TradePactsMiniCard";
+import SpecializationMiniCard from "../components/SpecializationMiniCard";
 import ContinentEventBanner from "../components/ContinentEventBanner";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
@@ -216,6 +218,10 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-4">
                     <ArfusMiniCard />
+                </div>
+                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                    <TradePactsMiniCard />
+                    <SpecializationMiniCard />
                 </div>
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
                     <DailyQuestsCard />

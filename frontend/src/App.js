@@ -65,6 +65,10 @@ import ArfusForge from "@/pages/ArfusForge";  // ROUND 16.3 Phase 5B
 import ArfusTechDetail from "@/pages/ArfusTechDetail";
 import ArfusResearch from "@/pages/ArfusResearch";
 import ArfusActive from "@/pages/ArfusActive";
+import TradePacts from "@/pages/TradePacts";  // ROUND 16.3 Phase 6
+import TradePactRequest from "@/pages/TradePactRequest";
+import GuildSpecialization from "@/pages/GuildSpecialization";
+import GuildSpecializationCatalog from "@/pages/GuildSpecializationCatalog";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -565,6 +569,15 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        {/* ROUND 16.3 Phase 6 — Trade Pacts + Guild Specialization */}
+                        <Route path="/trade-pacts" element={
+                            <ProtectedRoute requireGuild><TradePacts /></ProtectedRoute>} />
+                        <Route path="/trade-pacts/request" element={
+                            <ProtectedRoute requireGuild><TradePactRequest /></ProtectedRoute>} />
+                        <Route path="/guild-specialization" element={
+                            <ProtectedRoute requireGuild><GuildSpecialization /></ProtectedRoute>} />
+                        <Route path="/guild-specialization/catalog" element={
+                            <ProtectedRoute requireGuild><GuildSpecializationCatalog /></ProtectedRoute>} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     </AuthProvider>

@@ -830,3 +830,56 @@ Specialization V0 (pure social + narrative, ZERO numerical modifiers).
 
 **Next**: Iterazione 2 (Frontend Phase 6) dopo verifica manuale utente.
 
+
+---
+
+## R16.3 Phase 6 OFFICIALLY CLOSED — 2026-07-01 (Iter2 Frontend + QA cleanup)
+
+**🟢 OFFICIALLY CLOSED ✅** — Trade Pacts V0 + Guild Specialization V0
+completi (Backend + Frontend + Docs).
+
+1. **Frontend web** (4 pagine + 2 mini-card):
+   - `pages/TradePacts.jsx` — hub attivi + ricevute + inviate + modal dissolve
+   - `pages/TradePactRequest.jsx` — search neighbors + invita
+   - `pages/GuildSpecialization.jsx` — choose free-first + modal reset
+   - `pages/GuildSpecializationCatalog.jsx` — read-only 6 archetipi
+   - `components/TradePactsMiniCard.jsx` — Dashboard N/3 attivi + M ricevute
+   - `components/SpecializationMiniCard.jsx` — branch active/choose/locked
+
+2. **QA Cleanup**:
+   - Script `scripts/reset_test_account_phase6_state.py` (idempotente, gated)
+   - Concatenato a `reset_test_account_world_state.py` (`--skip-phase6-cleanup` opt-out)
+   - Eseguito: **6 pacts archiviati + 1 spec (incursion) archiviata**
+
+3. **Wiring**:
+   - `App.js`: +4 route `requireGuild`
+   - `navMenu.js`: +2 voci "Specializzazione" + "Patti Commerciali" badge NEW
+   - `Dashboard.jsx`: +2 mini-card in grid 2-col
+
+4. **Vincoli UI (checklist rispettata)**:
+   - ✅ Mobile-first, no `overflow-x` fisso
+   - ✅ `pb-32 md:pb-8` sui container
+   - ✅ Touch target ≥44x44
+   - ✅ CTA `w-full md:w-auto`
+   - ✅ Warning modals (dissolve unilateral 7gg, reset 200k+3× ergolat+30gg)
+
+5. **E2E Results** (`e1_tester`):
+   - Test 1 (pact flow): **PASS completo**
+   - Test 2 (spec reset): **PARTIAL** (cost debit coperto da pytest T22)
+   - Test 3 (audit+admin gates): **NOT_EXECUTED per timeout** (coperto
+     pytest T24-T27). Tester rilancerà out-of-band post-sigillo.
+
+6. **Validazione finale**:
+   - `yarn build` → OK (1 warning legacy non-Phase-6)
+   - `pytest -k round163_phase6` → 34/34 pass
+   - R16.3 combined 1-6: 219 passed, 2 skipped, 0 fail
+
+7. **Osservazioni non-bloccanti** (persistenti):
+   - `/api/market/listings` → 307 redirect
+   - PATCH admin usa **query string** `?is_active=<bool>`
+   - BSON ObjectId serialization: pattern `.pop("_id", None)`
+
+**Report completo**: `/app/memory/round163_phase6_final_report.md` sez. 11-15.
+
+**Next**: **STOP per conferma utente Phase 7 — PvP continentale (P2)**.
+

@@ -101,9 +101,19 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--email", default="tester@orbus.test")
     p.add_argument("--continent", default="ambash")
+    p.add_argument("--skip-phase6-cleanup", action="store_true",
+                    help="Skip chained Phase 6 pacts+spec cleanup")
     args = p.parse_args()
     out = asyncio.run(_reset(args.email, args.continent))
-    logger.info("reset result: %s", out)
+    logger.info("reset world result: %s", out)
+    # Chain Phase 6 cleanup (pacts + specialization) by default.
+    if not args.skip_phase6_cleanup:
+        try:
+            from app.scripts.reset_test_account_phase6_state import _reset as _p6
+            out2 = asyncio.run(_p6(args.email))
+            logger.info("reset phase6 result: %s", out2)
+        except Exception as exc:
+            logger.warning("phase6 cleanup skipped: %s", exc)
     return 0 if out.get("status") == "ok" else 1
 
 

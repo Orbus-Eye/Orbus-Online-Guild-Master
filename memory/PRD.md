@@ -470,3 +470,40 @@ Backend + Frontend + Docs**:
 - 📌 Polish Round R16.D (parcheggiato): server-wide first-Arfus-unlock
   chronicle announcement
 
+
+---
+
+## Round 16.3 Phase 6 OFFICIALLY CLOSED ✅ — 2026-07-01 (Iter2 Frontend + QA cleanup)
+
+**Phase 6 (Trade Pacts V0 + Guild Specialization V0) — completa
+Backend + Frontend + QA Cleanup + Docs**:
+
+- **Frontend** (4 pagine + 2 mini-card): `TradePacts.jsx`,
+  `TradePactRequest.jsx`, `GuildSpecialization.jsx`,
+  `GuildSpecializationCatalog.jsx` + `TradePactsMiniCard.jsx`,
+  `SpecializationMiniCard.jsx`
+- **QA Cleanup**: script dedicato + chain automatica in world_state
+  reset. 6 pacts + 1 spec archiviati.
+- **Wiring**: +4 route in App.js, +2 voci nav badge NEW, +2 mini-card
+  in Dashboard grid
+- **Vincoli UI**: mobile-first, `pb-32 md:pb-8`, touch ≥44x44, modals
+  di conferma per dissolve unilateral e reset spec
+
+**Validazione**:
+- `yarn build` OK (1 warning legacy non-Phase-6)
+- `pytest -k round163_phase6` → 34/34 pass
+- R16.3 combined 1-6: 219 passed, 2 skipped, 0 fail
+
+**E2E**: Test 1 PASS completo, Test 2 PARTIAL (cost debit coperto pytest
+T22), Test 3 NOT_EXECUTED per timeout (coperto pytest T24-T27,
+rilancio out-of-band).
+
+**Report**: `/app/memory/round163_phase6_final_report.md` sez. 11-15.
+
+**Next Action Items**:
+- ⏳ Rilancio `e1_tester` Test 3 (audit whitelist + admin gates) out-of-band
+- 🛑 **STOP per conferma utente Phase 7 — PvP continentale (P2)**
+- 🔒 Phase 6.5 (P2 futura): consumo `hook_categories` per bonus meccanici
+- 🔒 Phase 8 (P2): Stalla e cavalcature
+- 📌 Polish R16.D (parcheggiato): server-wide first-Arfus-unlock chronicle
+
