@@ -141,6 +141,11 @@ EVENT_TYPES = frozenset({
     "PVP_SEASON_STARTED",
     "PVP_SEASON_FINALIZED",
     "PVP_COSMETIC_AWARDED",
+    # ROUND 16.3 Phase 8 V1 — Stables & Mounts (cosmetic + narrative only)
+    "MOUNT_STARTER_CLAIMED",
+    "MOUNT_ACQUIRED",
+    "MOUNT_ACTIVE_SET",
+    "NARRATIVE_ROUTE_TRAVELED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

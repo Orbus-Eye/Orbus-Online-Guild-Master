@@ -134,6 +134,21 @@ async def lifespan(app: FastAPI):
         logger.info("ROUND 16.3 Phase 7B pvp_season indexes ensured")
     except Exception as exc:
         logger.warning("R16.3 Phase 7B pvp_season indexes ensure failed: %s", exc)
+    # ROUND 16.3 Phase 8 V1 — Stables & Mounts (indexes + catalog + routes)
+    try:
+        from app.stables import (
+            ensure_stables_indexes as _ensure_stables_ix,
+            ensure_mount_catalog as _ensure_mount_cat,
+            ensure_narrative_routes as _ensure_narr_routes,
+        )
+        await _ensure_stables_ix()
+        mc = await _ensure_mount_cat()
+        nr = await _ensure_narr_routes()
+        logger.info(
+            "ROUND 16.3 Phase 8 V1 stables ready: mounts=%s routes=%s", mc, nr,
+        )
+    except Exception as exc:
+        logger.warning("R16.3 Phase 8 V1 stables seed failed: %s", exc)
     yield
     mongo_client.close()
 

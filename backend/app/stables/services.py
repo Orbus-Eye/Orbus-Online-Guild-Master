@@ -94,29 +94,29 @@ async def get_my_stable(db, guild_id: str) -> dict:
 
 
 async def claim_starter_mount(db, guild: dict) -> dict:
-    if int(guild.get("level") or 0) < STARTER_QUEST_MIN_LEVEL:
-        # Fallback gate: world presence unlocked also counts as "ready".
-        pres = await db.guild_world_presence.find_one(
-            {"guild_id": guild["id"], "status": "active"}, {"_id": 0, "id": 1},
-        )
-        if pres is None:
-            raise HTTPException(
-                status_code=403,
-                detail={"code": "stables.starter_gate",
-                        "user_message":
-                        "Devi raggiungere il livello 5 o sbloccare "
-                        "una presenza continentale per ottenere la "
-                        "cavalcatura iniziale.",
-                        "current_level": int(guild.get("level") or 0),
-                        "required_level": STARTER_QUEST_MIN_LEVEL},
-            )
+    """Grant the starter mount (`ronzino-di-strada`) to a guild.
+
+    First-time only (idempotent via unique index (guild_id, mount_slug)).
+    Auto-activates the newly claimed mount so the guild has a visible
+    mount immediately. Can be deselected later via set_active_mount(None).
+
+    No gameplay gate: any guild can claim from level 1. Anti-P2W by design.
+    """
     # Idempotent claim via unique index (guild_id, mount_slug).
+    # UX: auto-activate the starter mount (deactivating any prior active one),
+    # so the player immediately has a visible mount. Can be deselected later
+    # via POST /api/stables/set-active {mount_slug: null}.
     doc = {
         "id": str(uuid.uuid4()), "guild_id": guild["id"],
-        "mount_slug": STARTER_MOUNT_SLUG, "is_active": False,
+        "mount_slug": STARTER_MOUNT_SLUG, "is_active": True,
         "acquired_at": _now_iso(), "source_type": "starter_quest",
         "source_ref": "starter_quest_v1",
     }
+    # Deactivate any previous active mount first (edge: admin_grant claim).
+    await db.guild_mount_ownership.update_many(
+        {"guild_id": guild["id"], "is_active": True},
+        {"$set": {"is_active": False}},
+    )
     try:
         await db.guild_mount_ownership.insert_one({**doc})
     except DuplicateKeyError:
@@ -130,15 +130,37 @@ async def claim_starter_mount(db, guild: dict) -> dict:
         db, event_type="MOUNT_STARTER_CLAIMED",
         actor_guild_id=guild["id"],
         related_entity_id=STARTER_MOUNT_SLUG, source="stables",
-        metadata={"mount_slug": STARTER_MOUNT_SLUG},
+        metadata={"mount_slug": STARTER_MOUNT_SLUG, "auto_activated": True},
     )
-    return {"acquired": True, "mount_slug": STARTER_MOUNT_SLUG}
+    return {"acquired": True, "mount_slug": STARTER_MOUNT_SLUG,
+            "auto_activated": True}
 
 
 # ── Set active mount (CAS unset old, set new) ───────────────────────
 
 
-async def set_active_mount(db, guild: dict, mount_slug: str) -> dict:
+async def set_active_mount(db, guild: dict, mount_slug: Optional[str]) -> dict:
+    """Set (or unset) the active mount for a guild.
+
+    - ``mount_slug=None`` → deselect current active mount (walk on foot).
+      Always succeeds (idempotent).
+    - ``mount_slug="..."`` → activate that mount. Guild must already own it.
+
+    Only one mount can be active per guild at a time. Setting a new active
+    mount unsets the previous one atomically (2 updates, same guild scope).
+    """
+    if mount_slug is None:
+        await db.guild_mount_ownership.update_many(
+            {"guild_id": guild["id"], "is_active": True},
+            {"$set": {"is_active": False}},
+        )
+        await write_audit(
+            db, event_type="MOUNT_ACTIVE_SET",
+            actor_guild_id=guild["id"],
+            related_entity_id=None, source="stables",
+            metadata={"mount_slug": None, "deselected": True},
+        )
+        return {"active_mount_slug": None, "deselected": True}
     row = await db.guild_mount_ownership.find_one(
         {"guild_id": guild["id"], "mount_slug": mount_slug},
         {"_id": 0, "id": 1},
@@ -165,7 +187,7 @@ async def set_active_mount(db, guild: dict, mount_slug: str) -> dict:
         related_entity_id=mount_slug, source="stables",
         metadata={"mount_slug": mount_slug},
     )
-    return {"active_mount_slug": mount_slug}
+    return {"active_mount_slug": mount_slug, "deselected": False}
 
 
 # ── Narrative routes (one-shot cosmetic reward) ─────────────────────

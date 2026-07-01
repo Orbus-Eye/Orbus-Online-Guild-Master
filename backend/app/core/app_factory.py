@@ -201,6 +201,14 @@ def create_app() -> FastAPI:
         admin_router as pvp_season_admin_router,
         ensure_indexes as ensure_pvp_season_indexes,
     )
+    # ROUND 16.3 Phase 8 V1 — Stables & Mounts (cosmetic + narrative)
+    from app.stables import (
+        router as stables_router,
+        admin_router as stables_admin_router,
+        ensure_stables_indexes,
+        ensure_mount_catalog,
+        ensure_narrative_routes,
+    )
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -265,6 +273,8 @@ def create_app() -> FastAPI:
     app.include_router(guild_spec_admin_router)
     app.include_router(pvp_season_router)
     app.include_router(pvp_season_admin_router)
+    app.include_router(stables_router)
+    app.include_router(stables_admin_router)
 
     # Seed continent event catalog + site income config on startup (idempotent)
     @app.on_event("startup")

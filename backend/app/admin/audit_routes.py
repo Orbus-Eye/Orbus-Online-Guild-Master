@@ -92,6 +92,11 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "PVP_SEASON_STARTED",
     "PVP_SEASON_FINALIZED",
     "PVP_COSMETIC_AWARDED",
+    # ROUND 16.3 Phase 8 V1 — Stables & Mounts (cosmetic + narrative only)
+    "MOUNT_STARTER_CLAIMED",
+    "MOUNT_ACQUIRED",
+    "MOUNT_ACTIVE_SET",
+    "NARRATIVE_ROUTE_TRAVELED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1
