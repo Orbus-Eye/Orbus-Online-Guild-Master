@@ -122,6 +122,45 @@ async def lifespan(app: FastAPI):
         logger.info("ROUND 16.3 Phase 4 continent resources: seeded %s", rc)
     except Exception as exc:
         logger.warning("R16.3 Phase 4 resources seed failed: %s", exc)
+    # ROUND 16.3 Phase 5A — Legendary Forge catalog + indexes (P3.2 migration
+    # from dead `@app.on_event("startup")` handler in app_factory.py).
+    try:
+        from app.legendary_forge import (
+            seed_legendary_forge_catalog as _seed_lf,
+            ensure_indexes as _ensure_lf_ix,
+        )
+        lf = await _seed_lf()
+        await _ensure_lf_ix()
+        logger.info("ROUND 16.3 Phase 5A legendary forge catalog: %s", lf)
+    except Exception as exc:
+        logger.warning("R16.3 Phase 5A legendary_forge seed failed: %s", exc)
+    # ROUND 16.3 Phase 5B — Arfus Forge catalog + indexes (P3.2 migration).
+    try:
+        from app.arfus_forge import (
+            seed_arfus_forge_catalog as _seed_af,
+            ensure_indexes as _ensure_af_ix,
+        )
+        af = await _seed_af()
+        await _ensure_af_ix()
+        logger.info("ROUND 16.3 Phase 5B arfus forge catalog: %s", af)
+    except Exception as exc:
+        logger.warning("R16.3 Phase 5B arfus_forge seed failed: %s", exc)
+    # ROUND 16.3 Phase 6 — Trade Pacts indexes + Guild Specialization catalog
+    # (P3.2 migration).
+    try:
+        from app.trade_pacts import ensure_indexes as _ensure_tp_ix
+        await _ensure_tp_ix()
+        from app.guild_specialization import (
+            seed_guild_specialization_catalog as _seed_gs,
+            ensure_indexes as _ensure_gs_ix,
+        )
+        gs = await _seed_gs()
+        await _ensure_gs_ix()
+        logger.info(
+            "ROUND 16.3 Phase 6 trade_pacts+guild_spec: gs=%s", gs,
+        )
+    except Exception as exc:
+        logger.warning("R16.3 Phase 6 trade_pacts/guild_spec seed failed: %s", exc)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     # ROUND 16.3 Iter B (P2.6) — ensure indexes for Phase 7B pvp_season module.
     # This lifespan is the ACTIVE startup path. The legacy @app.on_event("startup")

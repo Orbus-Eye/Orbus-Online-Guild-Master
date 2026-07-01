@@ -276,80 +276,12 @@ def create_app() -> FastAPI:
     app.include_router(stables_router)
     app.include_router(stables_admin_router)
 
-    # Seed continent event catalog + site income config on startup (idempotent)
-    @app.on_event("startup")
-    async def _seed_r163_phase3_startup():
-        import logging
-        log = logging.getLogger("orbus")
-        try:
-            r1 = await seed_continent_event_catalog()
-            log.info("ROUND 16.3 Phase 3 continent events catalog: %s", r1)
-        except Exception as exc:
-            log.warning("continent_event_catalog seed failed: %s", exc)
-        try:
-            r2 = await seed_site_income_config()
-            log.info("ROUND 16.3 Phase 3 site income config: %s", r2)
-        except Exception as exc:
-            log.warning("site_income_config seed failed: %s", exc)
-        try:
-            await ensure_site_income_indexes()
-        except Exception as exc:
-            log.debug("site_income_indexes ensure failed: %s", exc)
-        try:
-            r3 = await seed_resource_catalog()
-            log.info("ROUND 16.3 Phase 4 resource catalog: %s", r3)
-        except Exception as exc:
-            log.warning("resource_catalog seed failed: %s", exc)
-        try:
-            await ensure_resource_indexes()
-        except Exception as exc:
-            log.debug("resource_indexes ensure failed: %s", exc)
-        try:
-            r4 = await seed_legendary_forge_catalog()
-            log.info("ROUND 16.3 Phase 5A legendary forge catalog: %s", r4)
-        except Exception as exc:
-            log.warning("legendary_forge_catalog seed failed: %s", exc)
-        try:
-            await ensure_legendary_forge_indexes()
-        except Exception as exc:
-            log.debug("legendary_forge_indexes ensure failed: %s", exc)
-        try:
-            r5 = await seed_arfus_forge_catalog()
-            log.info("ROUND 16.3 Phase 5B arfus forge catalog: %s", r5)
-        except Exception as exc:
-            log.warning("arfus_forge_catalog seed failed: %s", exc)
-        try:
-            await ensure_arfus_forge_indexes()
-        except Exception as exc:
-            log.debug("arfus_forge_indexes ensure failed: %s", exc)
-        try:
-            await ensure_trade_pacts_indexes()
-        except Exception as exc:
-            log.debug("trade_pacts_indexes ensure failed: %s", exc)
-        try:
-            r6 = await seed_guild_specialization_catalog()
-            log.info("ROUND 16.3 Phase 6 guild specialization catalog: %s", r6)
-        except Exception as exc:
-            log.warning("guild_specialization_catalog seed failed: %s", exc)
-        try:
-            await ensure_guild_spec_indexes()
-        except Exception as exc:
-            log.debug("guild_spec_indexes ensure failed: %s", exc)
-        try:
-            await ensure_pvp_season_indexes()
-            log.info("ROUND 16.3 Phase 7B pvp_season indexes ensured")
-        except Exception as exc:
-            log.debug("pvp_season_indexes ensure failed: %s", exc)
-
-    # Seed world boss catalog on startup (idempotent)
-    @app.on_event("startup")
-    async def _seed_world_boss_startup():
-        try:
-            await seed_world_boss_catalog()
-        except Exception as exc:
-            import logging
-            logging.getLogger("orbus.world_boss").warning(
-                "world_boss seed failed: %s", exc)
+    # ROUND 16.3 P3.2 — cleanup: both `@app.on_event("startup")` handlers
+    # (`_seed_r163_phase3_startup` and `_seed_world_boss_startup`) were dead
+    # code — FastAPI ignores `on_event` when `lifespan=` is attached to the
+    # app instance (see app_factory line 63 above). All seeds they used to
+    # invoke (Phase 3/4/5A/5B/6/7B/8V1) are now consolidated in the ACTIVE
+    # `lifespan` startup path (`app/core/lifespan.py`).
 
     return app
 

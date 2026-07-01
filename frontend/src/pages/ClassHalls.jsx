@@ -7,7 +7,7 @@
 //   - halls[].bonuses [] (placeholder for Round 16.A)
 // Bilingual IT + EN. Dark theme. Mobile-first card grid.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { toast } from "sonner";
@@ -222,7 +222,7 @@ export default function ClassHalls() {
     const [loading, setLoading] = useState(true);
     const [busySlug, setBusySlug] = useState(null);
 
-    const load = async () => {
+    const load = useCallback(async () => {
         setLoading(true);
         try {
             const r = await api.get("/class-halls");
@@ -239,11 +239,11 @@ export default function ClassHalls() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [it]);
 
-    // ROUND 16.3 Iter B (P2.5) — `load` is intentionally called only at mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { load(); }, []);
+    // ROUND 16.3 P3.4 — `load` is memoized via useCallback with stable `it`
+    // dependency; useEffect now honours react-hooks/exhaustive-deps.
+    useEffect(() => { load(); }, [load]);
 
     const handleUnlock = async (classSlug, specSlug) => {
         setBusySlug(`${classSlug}:${specSlug}`);

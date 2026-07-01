@@ -17,7 +17,12 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 # the test suite consumes (TEST_USER_PASSWORD, TEST_SMTP_*) live outside the
 # source tree. The file is gitignored; `.env.test.example` is the committed
 # template. Real `.env.test` values OVERRIDE backend/.env on key conflicts.
-load_dotenv(Path(__file__).resolve().parent / ".env.test", override=True)
+#
+# ROUND 16.3 P3.5 — `PYTEST_SKIP_DOTENV_OVERRIDE=1` disables this override
+# so the guard-rail self-test can inject a hostile env (DB_NAME=orbus_r16)
+# without `.env.test` masking it. Never set this flag outside the self-test.
+if os.environ.get("PYTEST_SKIP_DOTENV_OVERRIDE") != "1":
+    load_dotenv(Path(__file__).resolve().parent / ".env.test", override=True)
 
 # ROUND 16.3 Iter B (P2.1) — Hard guard-rail: pytest MUST NEVER write to a
 # non-test DB. This assertion runs at conftest import time (before ANY test
@@ -208,12 +213,49 @@ def _cleanup_test_pollution():
     yield
 
 
+def pytest_unconfigure(config):
+    """Teardown counterpart to pytest_configure — kill isolated backend."""
+    proc = getattr(config, "_orbus_isolated_backend_proc", None)
+    if proc is not None:
+        proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except Exception:  # noqa: BLE001
+            proc.kill()
+        logger.info("isolated backend terminated (pytest_unconfigure)")
+        config._orbus_isolated_backend_proc = None
+
+
 def pytest_configure(config):
     """Runs ONCE per pytest invocation, BEFORE xdist forks workers.
 
     Safe place to clean pollution because there are no concurrent test
     sessions yet. Skipped on non-test databases (production safety).
+
+    ROUND 16.3 P3.1/C.7 — Also spawn the isolated backend HERE (not in a
+    fixture) so it's ready BEFORE any test module is imported. Test modules
+    typically read `os.environ["REACT_APP_BACKEND_URL"]` at import time; if
+    the override lands only in a fixture, module-level constants have
+    already captured the wrong URL.
     """
+    # ROUND 16.3 P3.1/C.7 — isolated backend setup MUST happen before test
+    # module import time. Store proc handle on config for teardown.
+    if (
+        os.environ.get("ISOLATED_HTTP_TESTS") == "1"
+        and not os.environ.get("PYTEST_XDIST_WORKER")
+        and not getattr(config, "_orbus_isolated_backend_proc", None)
+    ):
+        proc = _spawn_isolated_backend()
+        config._orbus_isolated_backend_proc = proc
+        # Override every legacy alias so module-level constants capture the
+        # isolated URL when they're evaluated at import time.
+        for k in _BACKEND_URL_ENV_KEYS:
+            os.environ[k] = _ISOLATED_BACKEND_URL
+        logger.info(
+            "isolated backend URL propagated to env keys=%s",
+            ",".join(_BACKEND_URL_ENV_KEYS),
+        )
+
     # Skip on xdist workers — only run in the controller process to avoid
     # double-execution and cross-worker interference.
     if os.environ.get("PYTEST_XDIST_WORKER"):
@@ -362,23 +404,34 @@ def isolated_backend_url() -> str:
 
 
 # Autouse fixture: when ISOLATED_HTTP_TESTS=1, transparently override
-# REACT_APP_BACKEND_URL with the isolated backend so pre-existing tests
-# that read env directly (via `os.environ["REACT_APP_BACKEND_URL"]`) also
-# benefit from the isolation with ZERO code change.
+# REACT_APP_BACKEND_URL (and its many legacy aliases) with the isolated
+# backend URL so pre-existing tests that read env directly (via any of
+# `REACT_APP_BACKEND_URL`, `BACKEND_URL`, `API_BASE_URL`) also benefit
+# from the isolation with ZERO code change.
+_BACKEND_URL_ENV_KEYS = (
+    "REACT_APP_BACKEND_URL",
+    "BACKEND_URL",
+    "API_BASE_URL",
+    "API_BASE",
+)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _apply_isolated_backend_env(isolated_backend_url):
     if os.environ.get("ISOLATED_HTTP_TESTS") == "1":
-        prev = os.environ.get("REACT_APP_BACKEND_URL")
-        os.environ["REACT_APP_BACKEND_URL"] = isolated_backend_url
+        prev = {k: os.environ.get(k) for k in _BACKEND_URL_ENV_KEYS}
+        for k in _BACKEND_URL_ENV_KEYS:
+            os.environ[k] = isolated_backend_url
         logger.info(
-            "REACT_APP_BACKEND_URL overridden with isolated backend: %s",
-            isolated_backend_url,
+            "backend URL env vars overridden with isolated backend %s (keys=%s)",
+            isolated_backend_url, ",".join(_BACKEND_URL_ENV_KEYS),
         )
         yield
-        if prev is not None:
-            os.environ["REACT_APP_BACKEND_URL"] = prev
-        else:
-            os.environ.pop("REACT_APP_BACKEND_URL", None)
+        for k, v in prev.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
     else:
         yield
 

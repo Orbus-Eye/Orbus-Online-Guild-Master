@@ -90,6 +90,21 @@ async def _seed_fixture():
         tester_guild = await db.guilds.find_one(
             {"owner_user_id": tester["id"]}, {"_id": 0, "id": 1},
         )
+        # In isolated DB the tester may exist without a guild — seed one so
+        # HTTP endpoints under /api/stables/* (which require a guild) can be
+        # exercised end-to-end. Skipped when the tester already has a guild.
+        if not tester_guild:
+            tgid = f"{PREFIX}tester_guild"
+            await db.guilds.update_one(
+                {"id": tgid},
+                {"$set": {"id": tgid, "owner_user_id": tester["id"],
+                          "name": "TesterGuild-p8v1",
+                          "level": 5, "reputation": 100, "gold": 500,
+                          "updated_at": datetime.now(timezone.utc)},
+                 "$setOnInsert": {"created_at": datetime.now(timezone.utc)}},
+                upsert=True,
+            )
+            tester_guild = {"id": tgid}
         if tester_guild:
             tgid = tester_guild["id"]
             await db.guild_mount_ownership.delete_many({
