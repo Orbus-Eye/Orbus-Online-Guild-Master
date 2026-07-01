@@ -282,3 +282,26 @@
 **Report finale**: `/app/memory/round163_phase3_final_report.md` (14 sezioni).
 
 **Next**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali basiche.
+
+
+---
+
+## Round 16.3 Phase 4 ready-to-verify — 2026-07-01
+
+**Phase 4 (Risorse Continentali V0 + Classifiche Continentali V0)** — 🟡 READY-TO-VERIFY:
+
+- Backend `app/resources/__init__.py` (~714 righe compact single-file): seed idempotente **8 risorse** (5 epic + 3 rare, una per continente `cristallo_di_ambash/cenere_di_velur/linfa_di_soe/nucleo_di_efreto/osso_di_irthe/seme_di_nathos/frammento_di_ergolat/sigillo_di_aveol`), missioni 30 min / 20 oro / team 3 avv idle esistenti, CAS `_resolve_mission` idempotente, on-visit expiry + CLI recovery. Item mirror in `items` collection con `item_type="material_continental"` per riuso inventory infrastructure.
+- **Drop rate CONSERVATIVE**: 3% epic / 5% rare base + max `+10%` bonus da eventi `site_income_pct > 0` (`+2%` per evento attivo). `market_cap_daily_per_guild=3` persistito nel catalog per Phase 6.
+- **Classifiche V0**: `resource_gathering_count` + `site_income_total`, 7gg rolling, freschezza 24h, top 20 per continente. Snapshot immutabili in `continent_leaderboard_snapshots`, on-visit compute. **Read-only, ZERO reward economico**.
+- **11 endpoint** (7 public + 4 admin), 5 nuovi audit event UPPERCASE (`RESOURCE_MISSION_STARTED/COMPLETED/FAILED`, `RESOURCE_GRANTED`, `LEADERBOARD_SNAPSHOT_COMPUTED`) in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST`. Admin gated 403 non-admin, dev grant gated `APP_ENV != production`.
+- **Frontend mobile-first**: `Resources.jsx`, `ResourceGather.jsx`, `ResourceMissions.jsx`, `ContinentLeaderboards.jsx`. Nav +2 voci (Risorse sotto Gilda, Classifiche sotto Mondo). Badge event modifier trasparente. ESLint clean.
+- **Test**: **30/30 PASS** in `backend_round163_phase4_test.py`. Regression bundle R16.x + Phase14.4 + dev-seed: **208 passed / 2 skipped / 2 failed** (le 2 failure sono debito legacy R16.0: 966 gilde senza alchemist hall + 6336 avventurieri senza race_slug, pre-esistenti a Phase 4). Zero regressioni Phase 4.
+- **Bug scoperto** (solo test, no produzione): `test_adventurers_released_after_resolve` (T12) riscritto per semantica corretta (lock esplicito + resolve + verifica release). `_resolve_mission` produttivo era già corretto.
+- **Task A completato**: 2 WARN Phase 3 chiariti (`level_bonus=15` formula corretta con `guild_level` dinamico; `presence.continent=null` risolto via reset script). Nessun fix codice richiesto.
+- **Recovery script**: `app/scripts/recover_stuck_resource_missions.py` (`--dry-run/--apply/--guild-id`).
+
+**Vincoli rispettati**: NO deploy · NO hard delete (T22 + T26 verificano) · NO scheduler globale · NO P2W · NO buff economici da leaderboard · NO cambi economia/XP/drop esistenti · drop rate CONSERVATIVE cap `+10%` event bonus · cross-continent block (T07).
+
+**Report finale**: `/app/memory/round163_phase4_final_report.md` (15 sezioni).
+
+**Next round proposto**: R16.3 Phase 5 — Forgia Leggendaria & Forgia di Arfus (receipts che consumano risorse continentali, legendary BOP `is_tradeable=false`).

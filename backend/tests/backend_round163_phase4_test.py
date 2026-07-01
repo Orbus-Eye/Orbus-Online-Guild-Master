@@ -309,14 +309,50 @@ def test_recovery_script_resolves_stuck():
 
 # ── T12 team release
 def test_adventurers_released_after_resolve():
+    """Create a mission with 3 locked adventurers, resolve, verify release."""
     from app.core.database import db
-    async def _c():
+    from app.resources import _resolve_mission, _lock_adventurers
+    import random as _rnd
+
+    async def _flow():
         gid = await _get_tester_guild_id()
-        busy = await db.adventurers.count_documents(
-            {"guild_id": gid, "status": "resource_gathering"})
-        # After all previous tests resolved, no team should be locked
-        assert busy == 0, f"expected 0 locked adventurers, got {busy}"
-    _run(_c())
+        # Pick 3 idle adventurers for this test
+        advs = await db.adventurers.find(
+            {"guild_id": gid, "status": {"$in": [None, "idle", "available",
+                                                    "resource_gathering"]}},
+            {"_id": 0, "id": 1}).limit(3).to_list(3)
+        assert len(advs) == 3
+        adv_ids = [a["id"] for a in advs]
+        # Free them first (in case still locked from T04)
+        await db.adventurers.update_many(
+            {"id": {"$in": adv_ids}},
+            {"$set": {"status": "idle", "current_mission_id": None}},
+        )
+        now = _now()
+        mid = str(uuid.uuid4())
+        m = {"id": mid, "guild_id": gid, "continent_slug": "ambash",
+             "resource_slug": "cristallo_di_ambash",
+             "adventurers": adv_ids, "status": "in_progress",
+             "started_at": _iso(now - timedelta(hours=1)),
+             "completes_at": _iso(now - timedelta(minutes=5)),
+             "duration_seconds": 1800, "team_power": 100,
+             "success_chance": 100, "drop_rate": 100,
+             "resolution_started_at": None,
+             "resources_obtained": 0, "outcome": None,
+             "created_at": _iso(now)}
+        await db.resource_gathering_missions.insert_one(m)
+        # Lock adventurers as gather() would
+        await _lock_adventurers(adv_ids, mid)
+        busy_before = await db.adventurers.count_documents(
+            {"id": {"$in": adv_ids}, "status": "resource_gathering"})
+        assert busy_before == 3, f"pre: expected 3 locked, got {busy_before}"
+        # Resolve → must release
+        await _resolve_mission(m, rng=_rnd.Random(42))
+        busy_after = await db.adventurers.count_documents(
+            {"id": {"$in": adv_ids}, "status": "resource_gathering"})
+        assert busy_after == 0, f"post: expected 0 locked, got {busy_after}"
+
+    _run(_flow())
 
 
 # ── T13 event modifier boost

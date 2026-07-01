@@ -586,3 +586,28 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 3. **Frontend mobile-first** 4 file + nav +2 voci. Modificatori esposti con badge trasparente `+/-X%`.
 4. **28 pytest PASS**. Regression 136 PASS · 2 skipped · 0 fail. Recovery script `expire_stuck_continent_events.py`. Cleanup dev script `reset_test_account_world_state.py`.
 5. **E2E `e1_tester` 4/4 PASS**. 2 WARN chiariti: (a) `level_bonus=15` è formula corretta con `guild_level=4` (non il campo legacy `level`); (b) presence null post-pytest → riesecuzione script reset → tester@ambash `change_count=0`, `next_change=2026-07-31`. **Next**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali V0.
+
+---
+
+## R16.3 Phase 4 ready-to-verify — 2026-07-01
+
+**🟡 READY-TO-VERIFY** — Risorse Continentali V0 (8 slug) + Classifiche Continentali V0 delivered.
+
+1. **Backend `app/resources/__init__.py`** (~714 righe compact single-file): seed idempotente 8 risorse (5 epic + 3 rare, una per continente), missioni 30 min / 20 oro / team 3 avv idle, CAS `_resolve_mission` idempotente, on-visit expiry + CLI recovery, item mirror in `items` collection con `item_type="material_continental"` per riuso inventory infrastructure. Formula drop CONSERVATIVE: base 3% epic / 5% rare + max +10% event bonus (solo eventi `site_income_pct > 0`).
+2. **Leaderboards V0**: 2 tipologie (`resource_gathering_count`, `site_income_total`), 7gg rolling window, freschezza 24h, top 20 per continente. Snapshot immutabili in `continent_leaderboard_snapshots`, on-visit compute (no scheduler). Read-only, ZERO reward economico.
+3. **11 endpoint** (7 pubblici sotto `/api/resources/*` e `/api/continent-leaderboards/*` + 4 admin sotto `/api/admin/resources/*` e `/api/admin/continent-leaderboards/*`). Admin 403 non-admin. Dev grant gated `APP_ENV != production`. Recovery script `recover_stuck_resource_missions.py` con `--dry-run/--apply`.
+4. **5 nuovi audit event UPPERCASE**: `RESOURCE_MISSION_STARTED/COMPLETED/FAILED`, `RESOURCE_GRANTED`, `LEADERBOARD_SNAPSHOT_COMPUTED` — presenti in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST` admin filter.
+5. **Frontend mobile-first**: `pages/{Resources,ResourceGather,ResourceMissions,ContinentLeaderboards}.jsx` + nav +2 voci (Risorse sotto Gilda, Classifiche sotto Mondo). `pb-32 md:pb-6`, `min-h-[44px]`, `w-full md:w-auto`, badge event modifier trasparente. ESLint clean, webpack `Compiled successfully!`.
+
+**Test**: **30/30 PASS** in `backend_round163_phase4_test.py`. Regression bundle R16.x + Phase14.4 + dev-seed: **208 passed / 2 skipped / 2 failed**. Le 2 failure sono debito legacy R16.0 (966 gilde legacy senza alchemist hall, 6336 avventurieri legacy senza `race_slug` — pre-esistenti al mio Phase 4, indipendenti dai test aggiunti). Zero regressioni Phase 4.
+
+**1 bug scoperto e risolto durante Phase 4** (solo in test, no produzione):
+- `test_adventurers_released_after_resolve` (T12) originario contava `busy` su tutti gli avventurieri della gilda dopo test sintetici con `adventurers:[]` che non lockavano nulla → assert impossibile causa mission reale da T05. Riscritto in modo semantico: crea missione con lock esplicito → resolve → verifica release. Zero modifiche al codice produttivo `_resolve_mission` (già corretto).
+
+**Task A investigato**: 2 WARN Phase 3 chiariti (level_bonus formula corretta, presence continent pulito).
+
+**Vincoli rispettati**: NO deploy · NO hard delete (T22 + T26 verificano) · NO scheduler globale · NO P2W · NO buff economici da leaderboard · NO cambi economia/XP/drop esistenti (nuove risorse in `item_type` isolato). Drop rate CONSERVATIVE cap `+10%` event bonus. `market_cap_daily_per_guild=3` persistito nel catalog per Phase 6.
+
+**Report finale**: `/app/memory/round163_phase4_final_report.md` (15 sezioni).
+
+**Next round proposto**: R16.3 Phase 5 — Forgia Leggendaria & Forgia di Arfus (receipts che consumano risorse continentali, legendary BOP `is_tradeable=false`).

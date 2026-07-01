@@ -66,9 +66,27 @@
 
 ---
 
-## Phase 4 — Risorse continentali + classifiche continentali *(future)*
+## Phase 4 — Risorse continentali + classifiche continentali *(R16.3, READY-TO-VERIFY 🟡 2026-07-01)*
 
-**Componenti**: 8 slug risorse (una per continente, es. `polvere_arcana_ambash`, `essenza_vitale_nathos`), ranking mensile per continente, poteri top-5 (buff temporanei, no advantage permanente).
+**Stato**: Backend + frontend + 30/30 pytest PASS. In attesa E2E `e1_tester` manuale.
+
+**Goal**: introdurre 8 risorse continentali (5 epic + 3 rare) con missioni di gathering usando avventurieri idle, e classifiche continentali V0 read-only.
+
+**Componenti**:
+- Catalog 8 risorse (una per continente) con `item_type="material_continental"`, drop rate CONSERVATIVE (3% epic / 5% rare + max +10% event bonus).
+- Missioni 30 min / 20 oro cost / team 3 avv idle. CAS resolve + on-visit fallback + CLI recovery.
+- Classifiche V0: `resource_gathering_count` + `site_income_total` (7gg rolling, freschezza 24h, top 20).
+- Modificatori event `site_income_pct > 0` → +2% drop bonus (cap +10%).
+- 11 endpoint (7 public + 4 admin), 5 nuovi audit event UPPERCASE.
+- Frontend mobile-first 4 pagine + 2 nav voci.
+
+**Rischi P2W**: zero (costo oro/missione, no accelerazione premium, leaderboard read-only).
+
+**Rischi bilanciamento**: bassi (drop conservativi, market_cap_daily=3 persistito per Phase 6).
+
+---
+
+## Phase 4 — sealing pending E2E *(future once verified)*
 
 ---
 
@@ -112,4 +130,4 @@
 
 ---
 
-*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅.*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅ · Phase 4 READY-TO-VERIFY 🟡.*
