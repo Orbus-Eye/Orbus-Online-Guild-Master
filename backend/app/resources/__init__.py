@@ -240,8 +240,16 @@ async def _validate_adventurers(guild_id: str, adventurer_ids: list[str]) -> lis
     if len(docs) != TEAM_SIZE:
         raise HTTPException(400, "adventurers_not_found_in_guild")
     for d in docs:
+        # Server-side double-book protection (Phase 4 post-verify):
+        # respect both `is_available` and `status` and per-flow locks.
+        if d.get("is_available") is False:
+            raise HTTPException(409, f"adventurer_busy:{d['id']}:not_available")
         if d.get("status") not in (None, "idle", "available"):
             raise HTTPException(409, f"adventurer_busy:{d['id']}:{d.get('status')}")
+        if d.get("expedition_in_progress"):
+            raise HTTPException(409, f"adventurer_busy:{d['id']}:expedition")
+        if d.get("current_mission_id"):
+            raise HTTPException(409, f"adventurer_busy:{d['id']}:mission_locked")
     return docs
 
 
@@ -260,11 +268,16 @@ def _success_chance(team_power: int) -> int:
 
 
 async def _lock_adventurers(ids: list[str], mission_id: str) -> None:
+    """Post-verify Phase 4 fix: flip is_available=False + stamp
+    current_mission_type so cross-flow gates block this team."""
     now_iso = _iso(_now())
     await db.adventurers.update_many(
         {"id": {"$in": ids}},
         {"$set": {"status": "resource_gathering",
-                  "current_mission_id": mission_id, "updated_at": now_iso}},
+                  "is_available": False,
+                  "current_mission_id": mission_id,
+                  "current_mission_type": "resource_gathering",
+                  "updated_at": now_iso}},
     )
 
 
@@ -272,7 +285,10 @@ async def _release_adventurers(ids: list[str]) -> None:
     now_iso = _iso(_now())
     await db.adventurers.update_many(
         {"id": {"$in": ids}},
-        {"$set": {"status": "idle", "current_mission_id": None,
+        {"$set": {"status": "idle",
+                  "is_available": True,
+                  "current_mission_id": None,
+                  "current_mission_type": None,
                   "updated_at": now_iso}},
     )
 
@@ -693,6 +709,35 @@ async def admin_dev_grant(guild_id: str, resource_slug: str, qty: int = 1,
     )
     return {"status": "ok", "guild_id": guild_id,
             "resource_slug": resource_slug, "qty": qty, "item_id": item_id}
+
+
+@admin_router.post("/dev/complete/{mission_id}")
+async def admin_dev_complete(mission_id: str,
+                              admin: dict = Depends(get_admin_user)):
+    """Force-resolve an in-progress mission NOW (dev/QA only).
+
+    Post-verify Phase 4 utility: bypasses the 30-min wait by setting
+    `completes_at` to the past and triggering `_resolve_mission`
+    immediately. Fully gated on `APP_ENV != production`. Idempotent
+    via the same CAS lock used by the natural resolver.
+    """
+    if _is_production():
+        raise HTTPException(403, "disabled_in_production")
+    m = await db.resource_gathering_missions.find_one(
+        {"id": mission_id}, {"_id": 0},
+    )
+    if not m:
+        raise HTTPException(404, "mission_not_found")
+    if m.get("status") != "in_progress":
+        return {"status": "already_resolved", "mission": _pub(m)}
+    past = _iso(_now() - timedelta(seconds=1))
+    await db.resource_gathering_missions.update_one(
+        {"id": mission_id, "status": "in_progress"},
+        {"$set": {"completes_at": past, "updated_at": past}},
+    )
+    m["completes_at"] = past
+    resolved = await _resolve_mission(m)
+    return {"status": "resolved", "mission": _pub(resolved)}
 
 
 @admin_lb_router.post("/{continent_slug}/{ltype}/recompute")

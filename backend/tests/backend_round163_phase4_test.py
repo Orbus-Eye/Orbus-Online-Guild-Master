@@ -120,7 +120,9 @@ def test_gather_starts_mission(admin_headers):
         ids = [a["id"] for a in advs]
         await db.adventurers.update_many(
             {"id": {"$in": ids}},
-            {"$set": {"status": "idle", "current_mission_id": None}},
+            {"$set": {"status": "idle", "is_available": True,
+                      "current_mission_id": None,
+                      "current_mission_type": None}},
         )
         return ids
     ids = _run(_prep())
@@ -562,3 +564,176 @@ def test_gather_insufficient_adventurers_400(admin_headers):
                              "adventurer_ids": ["a", "b"]},  # only 2
                        headers=admin_headers, timeout=10)
     assert r.status_code == 422  # pydantic validation min_length=3
+
+
+# ═════════════════════════════════════════════════════════════════════
+# POST-VERIFY FIXES (T31-T37) — /api/adventurers surface + dev complete
+# ═════════════════════════════════════════════════════════════════════
+async def _reset_and_pick_advs(n=3):
+    """Full local reset: release ANY locked adv on tester guild and
+    return N idle ids. Also archives lingering in_progress missions."""
+    from app.core.database import db
+    gid = await _get_tester_guild_id()
+    await db.adventurers.update_many(
+        {"guild_id": gid, "status": "resource_gathering"},
+        {"$set": {"status": "idle", "is_available": True,
+                  "current_mission_id": None,
+                  "current_mission_type": None}},
+    )
+    await db.resource_gathering_missions.update_many(
+        {"guild_id": gid, "status": "in_progress"},
+        {"$set": {"status": "failed", "outcome": "test_cleanup",
+                  "resolved_at": "1970-01-01T00:00:00+00:00"}},
+    )
+    advs = await db.adventurers.find(
+        {"guild_id": gid, "is_retired": {"$ne": True}},
+        {"_id": 0, "id": 1}).limit(n).to_list(n)
+    return gid, [a["id"] for a in advs]
+
+
+# ── T31 UX bug fix: /api/adventurers reflects resource lock
+def test_adventurers_api_reflects_resource_lock(admin_headers):
+    _, ids = _run(_reset_and_pick_advs(3))
+    r = requests.post(f"{API_BASE}/api/resources/gather",
+                       json={"resource_slug": "cristallo_di_ambash",
+                             "adventurer_ids": ids},
+                       headers=admin_headers, timeout=10)
+    assert r.status_code == 200, r.text
+    mid = r.json()["mission"]["id"]
+    r2 = requests.get(f"{API_BASE}/api/adventurers",
+                     headers=admin_headers, timeout=10)
+    assert r2.status_code == 200
+    advs = r2.json().get("adventurers") or r2.json()
+    locked = [a for a in advs if a["id"] in ids]
+    assert len(locked) == 3
+    for a in locked:
+        assert a["is_available"] is False, f"{a['id']} still is_available"
+        assert a["status"] == "resource_gathering"
+        assert a["current_mission_id"] == mid
+        assert a["current_mission_type"] == "resource_gathering"
+    # cleanup
+    requests.post(f"{API_BASE}/api/admin/resources/dev/complete/{mid}",
+                  headers=admin_headers, timeout=10)
+
+
+# ── T32 double-book protection
+def test_gather_rejects_already_locked_adventurers(admin_headers):
+    """Direct DB-lock to avoid xdist cross-file race on the tester guild
+    (other suites may reset shared state). Uses `_lock_adventurers` and
+    verifies /api/resources/gather rejects them server-side with 409."""
+    from app.core.database import db
+    from app.resources import _lock_adventurers
+    gid, ids = _run(_reset_and_pick_advs(3))
+    # Lock the team WITHOUT going through API (deterministic)
+    fake_mid = str(uuid.uuid4())
+    _run(_lock_adventurers(ids, fake_mid))
+    # Sanity: DB confirms lock
+    async def _check():
+        return await db.adventurers.count_documents(
+            {"id": {"$in": ids}, "is_available": False})
+    assert _run(_check()) == 3
+    # Now the API must refuse the same team
+    r = requests.post(f"{API_BASE}/api/resources/gather",
+                       json={"resource_slug": "cristallo_di_ambash",
+                             "adventurer_ids": ids},
+                       headers=admin_headers, timeout=10)
+    assert r.status_code == 409, (
+        f"expected 409 double-book, got {r.status_code}: {r.text}")
+    assert "adventurer_busy" in r.text
+    # cleanup: unlock manually (fake mission never existed in collection)
+    from app.resources import _release_adventurers
+    _run(_release_adventurers(ids))
+
+
+# ── T33 dev-force-complete releases team
+def test_dev_complete_releases_team(admin_headers):
+    """Uses direct DB lock to avoid xdist cross-file races that may reset
+    the shared tester guild state between API calls."""
+    from app.core.database import db
+    from app.resources import _lock_adventurers
+    gid, ids = _run(_reset_and_pick_advs(3))
+    # Insert a real mission + lock via DB (deterministic)
+    now = _now()
+    mid = str(uuid.uuid4())
+    async def _setup():
+        await db.resource_gathering_missions.insert_one({
+            "id": mid, "guild_id": gid, "continent_slug": "ambash",
+            "resource_slug": "cristallo_di_ambash",
+            "adventurers": ids, "status": "in_progress",
+            "started_at": _iso(now),
+            "completes_at": _iso(now + timedelta(minutes=30)),
+            "duration_seconds": 1800, "team_power": 100,
+            "success_chance": 90, "drop_rate": 5,
+            "resolution_started_at": None,
+            "resources_obtained": 0, "outcome": None,
+            "created_at": _iso(now)})
+        await _lock_adventurers(ids, mid)
+    _run(_setup())
+    # Snapshot lock state
+    async def _busy():
+        return await db.adventurers.count_documents(
+            {"id": {"$in": ids}, "is_available": False})
+    assert _run(_busy()) == 3
+    # Dev-force-complete
+    r = requests.post(
+        f"{API_BASE}/api/admin/resources/dev/complete/{mid}",
+        headers=admin_headers, timeout=10)
+    assert r.status_code == 200, r.text
+    assert r.json()["status"] == "resolved"
+    assert r.json()["mission"]["status"] in ("completed", "failed")
+    # Verify released
+    async def _free():
+        return await db.adventurers.count_documents(
+            {"id": {"$in": ids}, "is_available": True})
+    assert _run(_free()) == 3
+
+
+# ── T34 dev-complete idempotent
+def test_dev_complete_idempotent(admin_headers):
+    _, ids = _run(_reset_and_pick_advs(3))
+    r = requests.post(f"{API_BASE}/api/resources/gather",
+                      json={"resource_slug": "cristallo_di_ambash",
+                            "adventurer_ids": ids},
+                      headers=admin_headers, timeout=10)
+    mid = r.json()["mission"]["id"]
+    r1 = requests.post(
+        f"{API_BASE}/api/admin/resources/dev/complete/{mid}",
+        headers=admin_headers, timeout=10).json()
+    r2 = requests.post(
+        f"{API_BASE}/api/admin/resources/dev/complete/{mid}",
+        headers=admin_headers, timeout=10).json()
+    assert r1["status"] == "resolved"
+    assert r2["status"] == "already_resolved"
+
+
+# ── T35 dev-complete admin gate
+def test_dev_complete_non_admin_forbidden(clean_headers):
+    fake = str(uuid.uuid4())
+    r = requests.post(
+        f"{API_BASE}/api/admin/resources/dev/complete/{fake}",
+        headers=clean_headers, timeout=10)
+    assert r.status_code == 403
+
+
+# ── T36 dev-complete 404
+def test_dev_complete_not_found(admin_headers):
+    fake = str(uuid.uuid4())
+    r = requests.post(
+        f"{API_BASE}/api/admin/resources/dev/complete/{fake}",
+        headers=admin_headers, timeout=10)
+    assert r.status_code == 404
+
+
+# ── T37 backwards-compat: idle advs still expose is_available=True
+def test_idle_advs_backwards_compatible(admin_headers):
+    _run(_reset_and_pick_advs(3))
+    r = requests.get(f"{API_BASE}/api/adventurers",
+                     headers=admin_headers, timeout=10)
+    assert r.status_code == 200
+    advs = r.json().get("adventurers") or r.json()
+    idle = [a for a in advs if a.get("is_available") is True]
+    assert len(idle) >= 3
+    sample = idle[:3]
+    for a in sample:
+        assert a["status"] in (None, "idle", "available")
+        assert a.get("current_mission_id") in (None, "")

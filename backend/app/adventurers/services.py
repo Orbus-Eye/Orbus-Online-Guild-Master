@@ -200,6 +200,14 @@ def adventurer_public(doc: dict) -> dict:
         "stamina": doc.get("stamina", 100),
         "morale": doc.get("morale", 100),
         "is_available": doc.get("is_available", True),
+        # ROUND 16.3 Phase 4 (post-verify) — expose canonical lock state.
+        # `status` complements `is_available` with the fine-grained lock
+        # type ("idle" / "expedition" / "raid" / "world_boss" /
+        # "resource_gathering"). Consumers should treat `is_available`
+        # as the authoritative gate; `status` explains why.
+        "status": doc.get("status") or ("idle" if doc.get("is_available", True) else "unavailable"),
+        "current_mission_id": doc.get("current_mission_id"),
+        "current_mission_type": doc.get("current_mission_type"),
         "is_retired": bool(doc.get("is_retired", False)),
         "retired_at": doc.get("retired_at"),
         # ROUND 6B.3 Wave 1.5 — None for legacy records (treated as "user"

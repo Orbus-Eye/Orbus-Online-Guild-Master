@@ -314,3 +314,116 @@ Stima: 2-2.5gg dev + 0.5gg test.
 ---
 
 *Report generato: 2026-07-01 — R16.3 Phase 4 READY-TO-VERIFY (pytest 30/30, regression 208/210, 2 legacy R16.0 debt failures non-Phase4).*
+
+---
+
+## 16. POST-VERIFY FIXES (Phase 4 iteration 2 — 2026-07-01)
+
+Sessione seguente al primo `e1_tester` E2E che ha confermato Test 1 + Test 2. Ha emerso 1 bug UX critico + richiesta 1 utility dev + 5 gap testing.
+
+### 16.1 — Bug UX: `/api/adventurers` non riflette `resource_gathering` lock
+
+**Sintomo**: L'endpoint `GET /api/adventurers` restituiva `is_available=True` per avventurieri lockati su una resource mission. Il DB era corretto (`status="resource_gathering"`), ma il campo canonico `is_available` non veniva flipato → altri flow che filtrano su `is_available=True` (world_boss, expeditions, pvp) potevano double-book gli stessi avventurieri.
+
+**Root cause**: `_lock_adventurers` in `app/resources/__init__.py` settava solo `status` e `current_mission_id`. Pattern preesistente: tutti gli altri lock (expedition/raid/world_boss) settano anche `is_available=False`.
+
+**Fix applicato** (`app/resources/__init__.py`):
+```diff
+ async def _lock_adventurers(ids, mission_id):
+     await db.adventurers.update_many(
+         {"id": {"$in": ids}},
+         {"$set": {"status": "resource_gathering",
++                  "is_available": False,
+                   "current_mission_id": mission_id,
++                  "current_mission_type": "resource_gathering",
+                   "updated_at": now_iso}},
+     )
+
+ async def _release_adventurers(ids):
+     await db.adventurers.update_many(
+         {"id": {"$in": ids}},
+         {"$set": {"status": "idle",
++                  "is_available": True,
+                   "current_mission_id": None,
++                  "current_mission_type": None,
+                   "updated_at": now_iso}},
+     )
+```
+
+### 16.2 — Server-side double-book protection (defense-in-depth)
+
+`_validate_adventurers` ora rifiuta 409 su QUALSIASI di questi lock (`app/resources/__init__.py`):
+```diff
+ for d in docs:
++    if d.get("is_available") is False:
++        raise HTTPException(409, f"adventurer_busy:{d['id']}:not_available")
+     if d.get("status") not in (None, "idle", "available"):
+         raise HTTPException(409, f"adventurer_busy:{d['id']}:{d.get('status')}")
++    if d.get("expedition_in_progress"):
++        raise HTTPException(409, f"adventurer_busy:{d['id']}:expedition")
++    if d.get("current_mission_id"):
++        raise HTTPException(409, f"adventurer_busy:{d['id']}:mission_locked")
+```
+Ora il backend NON può double-book anche se il frontend è sbagliato: cambia flow (world_boss → raid → resource) rifiuta server-side.
+
+### 16.3 — Campi diagnostici in `adventurer_public` DTO (backwards-compatible)
+
+`app/adventurers/services.py::adventurer_public` ora espone anche:
+- `status`: enum stringa (`"idle" | "resource_gathering" | ...`) — deriva da `doc.status` con fallback intelligente (`"idle"` se disponibile, `"unavailable"` altrimenti).
+- `current_mission_id`: id della missione bloccante (o `null`).
+- `current_mission_type`: tipo lock (`"resource_gathering"` per adesso, estendibile a `"expedition"|"raid"|"world_boss"` in fasi future).
+
+**Backwards compatibility**: `is_available` resta il campo autoritativo. I nuovi campi sono additive. Nessun campo esistente rimosso o alterato in significato.
+
+### 16.4 — Nuovo endpoint dev-force-complete
+
+**Path**: `POST /api/admin/resources/dev/complete/{mission_id}`
+- Gated `APP_ENV != production` (403 in prod).
+- Gated `is_admin=True` (403 non-admin).
+- Se mission `status != "in_progress"` → response `{"status": "already_resolved"}` (idempotente).
+- Setta `completes_at = now - 1s` + chiama `_resolve_mission` con CAS lock esistente.
+- Response: `{"status": "resolved" | "already_resolved", "mission": {...}}`.
+- Utility QA/tester per bypassare i 30 min di wait.
+
+### 16.5 — Nuovi test T31-T37 (7 test, tutti PASS)
+
+| # | Nome | Verifica |
+|---|---|---|
+| T31 | `adventurers_api_reflects_resource_lock` | `/api/adventurers` restituisce `is_available=False`, `status="resource_gathering"`, `current_mission_id/type` per team lockato |
+| T32 | `gather_rejects_already_locked_adventurers` | POST gather con team già lockato via DB → 409 `adventurer_busy` |
+| T33 | `dev_complete_releases_team` | dev-force-complete resolve missione + rilascia 3 avv (is_available=True) |
+| T34 | `dev_complete_idempotent` | 2 chiamate dev-complete → 1 "resolved" + 1 "already_resolved" |
+| T35 | `dev_complete_non_admin_forbidden` | 403 su non-admin |
+| T36 | `dev_complete_not_found` | 404 su mission_id inesistente |
+| T37 | `idle_advs_backwards_compatible` | idle advs continuano ad avere `is_available=True`, `status in {None,"idle","available"}` (contratto pre-fix mantenuto) |
+
+T32 e T33 usano lock via DB diretto (`_lock_adventurers`) per evitare xdist cross-file races su tester guild shared state.
+
+### 16.6 — Regression finale
+
+- Phase 4 file: **37/37 PASS** (30 originali + 7 post-verify).
+- Bundle R16.x + Phase14.4 + dev-seed: **215 passed / 2 skipped / 2 failed**.
+- Le 2 failure restanti sono debito legacy R16.0 (966 gilde legacy senza `alchemist_hall` + ~7k avventurieri legacy senza `race_slug`), non correlate a Phase 4.
+- Zero regressioni introdotte dai post-verify fixes.
+
+### 16.7 — Files toccati (iteration 2)
+
+| File | Modifica |
+|---|---|
+| `app/resources/__init__.py` | `_lock_adventurers` + `_release_adventurers` + `_validate_adventurers` guards + nuovo endpoint `admin_dev_complete` |
+| `app/adventurers/services.py::adventurer_public` | +3 campi additive (`status`, `current_mission_id`, `current_mission_type`) |
+| `tests/backend_round163_phase4_test.py` | +7 test T31-T37 in coda |
+| `memory/round163_phase4_final_report.md` | +sezione 16 (questa) |
+
+**Nessun cambio a memory doc `orbus_world_roadmap.md` / `orbus_audit_snapshot.md` / `PRD.md`**: Phase 4 resta READY-TO-VERIFY fino alla re-verifica tester.
+
+### 16.8 — Vincoli iteration 2
+
+- ✅ NO deploy, NO hard delete
+- ✅ NO modifiche a economia/XP/drop
+- ✅ NO cambi al catalog risorse o formula drop
+- ✅ Backwards-compatible: `is_available` invariato semantica, `status` come additive field
+- ✅ Server-side double-book protection su TUTTI i lock (defense-in-depth)
+- ✅ Nessuna nuova dipendenza esterna
+
+*Iteration 2 completata: 2026-07-01. In attesa `e1_tester` per re-verifica Test 3 (Leaderboards V0), Test 4 (Audit whitelist), + nuovo Test 5 (bug UX fix su /api/adventurers).*
