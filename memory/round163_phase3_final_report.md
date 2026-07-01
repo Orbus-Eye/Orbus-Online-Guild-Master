@@ -2,7 +2,27 @@
 
 **Data**: 1 luglio 2026
 **Scope**: Eventi Continentali V1 + Incarichi di Sede (entrate passive con cap).
-**Stato**: 🟡 **READY-TO-VERIFY** — Backend/API/admin/audit + 28 test pytest + frontend + doc di memoria completati. Ready per E2E browser finale.
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** — Backend/API/admin/audit + 28 test pytest + frontend + verifica `e1_tester` **4/4 PASS**. Sigillato 2026-07-01.
+
+---
+
+## E2E Verification Results (e1_tester)
+
+**4/4 PASS** su Phase 3. Nessun test fallito.
+
+### WARN chiariti (non blocker)
+
+**WARN 1 — `level_bonus=15` per tester**:
+- **Root cause**: Il tester ha interpretato `guild.level` come 1 (che è il campo legacy, sempre 1). La formula usa `guild.guild_level` (curve R15), che per il tester è **`guild_level=4`**.
+- **Verifica DB**: `db.guilds.find_one({owner_user_id: tester_id})` → `{level: 1, guild_level: 4, guild_xp: 812, reputation: 1}`.
+- **Formula corretta**: `level_bonus = level_bonus_per_level * (guild_level - 1) = 5 * 3 = 15`. ✅
+- **Fix**: nessuno. Chiarimento documentazione: la formula usa `guild_level` (R15) non `level` (legacy).
+
+**WARN 2 — `world/overview.continent=null` dopo test**:
+- **Root cause**: La pytest suite (`conftest._pre_suite_cleanup`) resetta le collections `guild_world_presence` durante l'esecuzione dei test. Lo script `reset_test_account_world_state.py` era stato eseguito PRIMA della suite, ma la suite ha wipato la baseline.
+- **Verifica DB**: `db.guild_world_presence.find({guild_id: tester_guild})` → **0 doc** dopo la suite.
+- **Fix applicato**: rieseguito `python -m app.scripts.reset_test_account_world_state` → tester ora su `ambash`, `change_count=0`, `next_change_available_at=2026-07-31T07:12:43+00:00`.
+- **Nota operativa per il playtest finale**: se si esegue la pytest suite completa prima di un E2E manuale, rieseguire sempre il reset script per riportare il tester allo stato baseline `ambash` pulito.
 
 ---
 

@@ -48,6 +48,8 @@ export const NAV_SECTIONS = [
         items: [
             { to: "/world", label: "Panoramica Mondo", testid: "menu-world", badge: "NEW" },
             { to: "/world-events", label: "Eventi", testid: "menu-world-events", badge: "NEW" },
+            { to: "/world/resources", label: "Risorse", testid: "menu-world-resources", badge: "NEW" },
+            { to: "/world/leaderboards", label: "Classifiche", testid: "menu-world-leaderboards", badge: "NEW" },
             { to: "/world/neighbors", label: "Gilde vicine", testid: "menu-world-neighbors" },
         ],
     },

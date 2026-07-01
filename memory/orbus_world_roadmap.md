@@ -56,9 +56,9 @@
 
 ---
 
-## Phase 3 — Eventi continentali & Incarichi di Sede *(R16.3, READY-TO-VERIFY 2026-07-01)*
+## Phase 3 — Eventi continentali & Incarichi di Sede *(R16.3, CLOSED ✅ 2026-07-01)*
 
-**Stato**: 12 eventi seed + 12 endpoint (5 public + 7 admin) + 4 pagine mobile-first + 28 test PASS + 5 nuovi audit event whitelist. Formula site income trasparente (base 20 oro/g @ lv1 → hard cap 500 oro/g). In attesa E2E browser finale.
+**Stato**: sigillato post-verifica `e1_tester` 4/4 PASS. 2 WARN chiariti (level_bonus=15 corretto via `guild_level=4`; presence null risolto rieseguendo reset script post-pytest).
 
 **Componenti**: gilde vicine (proximity map dentro continente), eventi continentali admin-triggered, Incarichi di Sede (entrate passive scalate su lvl gilda + territorio).
 
@@ -112,4 +112,4 @@
 
 ---
 
-*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 READY-TO-VERIFY.*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅.*

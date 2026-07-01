@@ -574,3 +574,15 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 **Report finale**: `/app/memory/round163_phase3_final_report.md` (14 sezioni).
 
 **Next round proposto**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali basiche.
+
+---
+
+## R16.3 Phase 3 closed — 2026-07-01
+
+**🟢 OFFICIALLY CLOSED ✅** — Eventi Continentali V1 + Incarichi di Sede delivered.
+
+1. **12 endpoint** (5 pubblici + 7 admin), 2 moduli separati, seed 12 eventi + config idempotenti. Formula site income trasparente (base 20 oro/g @ lv1 → hard cap 500 oro/g).
+2. **5 nuovi audit event UPPERCASE** in whitelist admin filter (`CONTINENT_EVENT_CREATED/ACTIVATED/EXPIRED`, `SITE_INCOME_CLAIMED`, `SITE_INCOME_CONFIG_UPDATED`).
+3. **Frontend mobile-first** 4 file + nav +2 voci. Modificatori esposti con badge trasparente `+/-X%`.
+4. **28 pytest PASS**. Regression 136 PASS · 2 skipped · 0 fail. Recovery script `expire_stuck_continent_events.py`. Cleanup dev script `reset_test_account_world_state.py`.
+5. **E2E `e1_tester` 4/4 PASS**. 2 WARN chiariti: (a) `level_bonus=15` è formula corretta con `guild_level=4` (non il campo legacy `level`); (b) presence null post-pytest → riesecuzione script reset → tester@ambash `change_count=0`, `next_change=2026-07-31`. **Next**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali V0.

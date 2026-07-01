@@ -54,6 +54,10 @@ import WorldContinent from "@/pages/WorldContinent";
 import WorldNeighbors from "@/pages/WorldNeighbors";
 import WorldEvents from "@/pages/WorldEvents";  // ROUND 16.3 Phase 3
 import SiteContracts from "@/pages/SiteContracts";
+import Resources from "@/pages/Resources";  // ROUND 16.3 Phase 4
+import ResourceGather from "@/pages/ResourceGather";
+import ResourceMissions from "@/pages/ResourceMissions";
+import ContinentLeaderboards from "@/pages/ContinentLeaderboards";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -359,6 +363,39 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <SiteContracts />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 4 — Continent resources + leaderboards */}
+                        <Route
+                            path="/world/resources"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <Resources />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world/resource-gather"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ResourceGather />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world/resource-missions"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ResourceMissions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world/leaderboards"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ContinentLeaderboards />
                                 </ProtectedRoute>
                             }
                         />

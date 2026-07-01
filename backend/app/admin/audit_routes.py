@@ -54,6 +54,12 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "CONTINENT_EVENT_EXPIRED",
     "SITE_INCOME_CLAIMED",
     "SITE_INCOME_CONFIG_UPDATED",
+    # ROUND 16.3 Phase 4 — Continent resources + leaderboards
+    "RESOURCE_MISSION_STARTED",
+    "RESOURCE_MISSION_COMPLETED",
+    "RESOURCE_MISSION_FAILED",
+    "RESOURCE_GRANTED",
+    "LEADERBOARD_SNAPSHOT_COMPUTED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

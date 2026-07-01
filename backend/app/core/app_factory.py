@@ -157,6 +157,15 @@ def create_app() -> FastAPI:
         seed_site_income_config,
         ensure_indexes as ensure_site_income_indexes,
     )
+    # ROUND 16.3 Phase 4 — Continent resources + leaderboards
+    from app.resources import (
+        router as resources_router,
+        leaderboard_router as continent_lb_router,
+        admin_router as resources_admin_router,
+        admin_lb_router as continent_lb_admin_router,
+        seed_resource_catalog,
+        ensure_indexes as ensure_resource_indexes,
+    )
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -204,6 +213,10 @@ def create_app() -> FastAPI:
     app.include_router(world_events_admin_router)
     app.include_router(site_income_router)
     app.include_router(site_income_admin_router)
+    app.include_router(resources_router)
+    app.include_router(continent_lb_router)
+    app.include_router(resources_admin_router)
+    app.include_router(continent_lb_admin_router)
 
     # Seed continent event catalog + site income config on startup (idempotent)
     @app.on_event("startup")
@@ -224,6 +237,15 @@ def create_app() -> FastAPI:
             await ensure_site_income_indexes()
         except Exception as exc:
             log.debug("site_income_indexes ensure failed: %s", exc)
+        try:
+            r3 = await seed_resource_catalog()
+            log.info("ROUND 16.3 Phase 4 resource catalog: %s", r3)
+        except Exception as exc:
+            log.warning("resource_catalog seed failed: %s", exc)
+        try:
+            await ensure_resource_indexes()
+        except Exception as exc:
+            log.debug("resource_indexes ensure failed: %s", exc)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

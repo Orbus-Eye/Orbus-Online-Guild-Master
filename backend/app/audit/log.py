@@ -100,6 +100,12 @@ EVENT_TYPES = frozenset({
     "CONTINENT_EVENT_EXPIRED",
     "SITE_INCOME_CLAIMED",
     "SITE_INCOME_CONFIG_UPDATED",
+    # ROUND 16.3 Phase 4 — Continent resources + leaderboards
+    "RESOURCE_MISSION_STARTED",
+    "RESOURCE_MISSION_COMPLETED",
+    "RESOURCE_MISSION_FAILED",
+    "RESOURCE_GRANTED",
+    "LEADERBOARD_SNAPSHOT_COMPUTED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",
