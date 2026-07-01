@@ -1,0 +1,1347 @@
+{
+  "overcap": {
+    "banner_text": "Roster over capacity: {current}/{cap}. Retire {must_retire} to unlock actions.",
+    "manage_cta": "Manage capacity"
+  },
+  "auction": {
+    "title": "Auction",
+    "subtitle": "Buy and sell items between players. Auction fee: {fee}%.",
+    "tab_buy": "BUY",
+    "tab_sell": "SELL",
+    "tab_mine": "MY LISTINGS",
+    "buy_btn": "Buy from Auction",
+    "buy_btn_short": "Buy",
+    "buy_confirm_btn": "Confirm purchase",
+    "buy_cancel_btn": "Cancel",
+    "sell_btn": "List on Auction",
+    "list_btn": "Submit",
+    "buy_confirm_title": "Confirm purchase",
+    "buy_quantity": "Quantity",
+    "buy_disabled_own": "You can't buy your own listing",
+    "buy_disabled_gold": "Insufficient gold",
+    "buy_disabled_status": "Listing no longer available",
+    "toast_bought": "Auction purchase successful",
+    "toast_listed": "Listed on Auction",
+    "toast_cancelled": "Listing cancelled"
+  },
+  "consortiumsExt": {
+    "read_more": "Read more",
+    "modal_title": "Consortium details",
+    "modal_close": "Close",
+    "modal_members_count": "Members ({n})",
+    "modal_no_description": "No description provided."
+  },
+  "rosterManage": {
+    "title": "Manage roster capacity",
+    "subtitle": "Reduce active adventurers below the Dormitories cap. Retiring frees the slot; support can reinstate them later.",
+    "upgrade_cta": "Upgrade Dormitories",
+    "stat_current": "ACTIVE",
+    "stat_cap": "CAP",
+    "stat_dormitories": "DORMITORIES",
+    "stat_must_retire": "TO RETIRE",
+    "filter_search": "Search by name…",
+    "filter_all_roles": "All roles",
+    "filter_all_rarities": "All rarities",
+    "sort_power": "Power",
+    "sort_rarity": "Rarity",
+    "sort_level": "Level",
+    "sort_name": "Name",
+    "sort_desc": "Descending",
+    "sort_asc": "Ascending",
+    "selected_count": "Selected: {n}",
+    "bulk_retire_btn": "Retire selected ({n})",
+    "empty": "No active adventurer matches the filters.",
+    "col_name": "NAME",
+    "col_class": "CLASS",
+    "col_role": "ROLE",
+    "col_rarity": "RARITY",
+    "col_level": "LV",
+    "col_power": "PWR",
+    "confirm_title": "CONFIRM RETIRE",
+    "confirm_body": "You are about to retire {n} adventurers. The action is reversible via support, but the adventurer cannot be used for expeditions, raids or squads until reinstated.",
+    "confirm_disclaimer": "⚠ Double-check the selection: removed equipment stays in your inventory, but the roster loses these members immediately.",
+    "confirm_submit": "Confirm retire",
+    "retire_success": "{n} adventurers retired.",
+    "retire_partial_fail": "{n} retires failed — try again or contact support.",
+    "tab_manage": "MANAGE",
+    "tab_archive": "ARCHIVE",
+    "archive_empty": "No retired adventurers yet.",
+    "col_retired_at": "Retired on",
+    "col_retired_via": "Origin"
+  },
+  "rosterHealth": {
+    "state_healthy": "ROSTER OK",
+    "state_filling": "ROSTER FILLING UP",
+    "state_at_cap": "ROSTER AT CAP",
+    "state_over_cap": "ROSTER OVER CAPACITY",
+    "adventurers_label": "Adventurers",
+    "headroom_label": "Slots available",
+    "dorm_level_label": "Dormitories Lv {n}",
+    "loading": "Loading roster status…",
+    "error": "Unable to load roster status",
+    "overcap_hint": "Upgrade Dormitories or retire adventurers from Roster Management."
+  },
+  "lang": {
+    "en": "English",
+    "it": "Italiano",
+    "switch_to_en": "EN",
+    "switch_to_it": "IT"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "empty": "Nothing here yet",
+    "of": "of",
+    "gold": "gold",
+    "gold_short": "g",
+    "relative": {
+      "s_ago": "{n}s ago",
+      "m_ago": "{n}m ago",
+      "h_ago": "{n}h ago",
+      "d_ago": "{n}d ago"
+    }
+  },
+  "nav": {
+    "dashboard": "DASH",
+    "adventurers": "ADVENTURERS",
+    "recruitment": "RECRUIT",
+    "dungeons": "DUNGEONS",
+    "expeditions": "EXPEDITIONS",
+    "inventory": "VAULT",
+    "crafting": "FORGE",
+    "market": "MARKET",
+    "leaderboard": "RANK",
+    "admin": "ADMIN",
+    "logout": "logout",
+    "brand_subtitle_dashboard": "DASHBOARD",
+    "consortiums": "Consortiums",
+    "chronicle": "CHRONICLE",
+    "training": "TRAINING",
+    "contracts": "CONTRACTS",
+    "forge": "FORGE",
+    "raids": "RAIDS",
+    "auction": "AUCTION",
+    "chat": "CHAT",
+    "guide": "GUIDE",
+    "squads": "SQUADS",
+    "territory": "TERRITORY"
+  },
+  "landing": {
+    "title": "Orbus Online: Guild Master",
+    "tagline": "A text-based guild management MMO",
+    "description_1": "Run a guild, recruit adventurers, send them into dangerous dungeons.",
+    "description_2": "No graphics. No sprites. Just numbers, choices, and consequences.",
+    "cta_login": "Login",
+    "cta_register": "Create Account",
+    "cta_leaderboard": "View Leaderboard",
+    "feature_recruit_title": "Recruit",
+    "feature_recruit_desc": "Hire adventurers with unique stats and quirks.",
+    "feature_dispatch_title": "Dispatch",
+    "feature_dispatch_desc": "Send parties into dungeons. Read the after-action report.",
+    "feature_grow_title": "Grow",
+    "feature_grow_desc": "Upgrade your hall, earn reputation, beat rivals.",
+    "cta_dashboard": "Enter Dashboard"
+  },
+  "auth": {
+    "login_title": "Login",
+    "register_title": "Create your account",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirm_password": "Confirm password",
+    "password_min": "min 8 characters",
+    "submit_login": "Login",
+    "submit_register": "Register",
+    "no_account": "No account?",
+    "have_account": "Already registered?",
+    "go_register": "Create one",
+    "go_login": "Sign in",
+    "forgot_password": "Forgot password?",
+    "reset_request_title": "Reset password",
+    "reset_request_body": "Enter your email and we'll send you a reset link.",
+    "reset_confirm_title": "Set new password",
+    "reset_token": "Reset token",
+    "new_password": "New password",
+    "submit_reset": "Reset password",
+    "submit_send_link": "Send reset link",
+    "logout": "Logout",
+    "toast_login_success": "Authenticated. Welcome back.",
+    "toast_register_success": "Account created. Time to found a guild.",
+    "errors": {
+      "invalid_credentials": "Invalid email or password",
+      "email_taken": "Email already registered",
+      "weak_password": "Password too weak (min 8 chars)",
+      "password_mismatch": "Passwords do not match"
+    }
+  },
+  "password_input": {
+    "show_label": "Show password",
+    "hide_label": "Hide password"
+  },
+  "adventurer_modal": {
+    "header": "ADVENTURER SHEET",
+    "close": "Close",
+    "level": "Lvl {n}",
+    "experience": "EXPERIENCE",
+    "total_power": "TOTAL POWER",
+    "condition": "CONDITION",
+    "condition_rested": "rested",
+    "traits": "TRAITS",
+    "no_traits": "No traits.",
+    "equipment": "EQUIPMENT",
+    "slot_weapon": "WEAPON",
+    "slot_armor": "ARMOR",
+    "slot_accessory": "ACCESSORY",
+    "slot_empty": "empty",
+    "open_sheet": "View details"
+  },
+  "inventory_extra": {
+    "model_note": "Inventory model: stacks (multiple copies of the same item, one reservation per equip).",
+    "requirements_label": "REQUIREMENTS",
+    "req_level": "Lvl ≥ {n}",
+    "req_slot": "Slot: {slot}",
+    "status_label": "STATUS",
+    "status_available": "Available",
+    "status_equipped_by": "Equipped by {names}",
+    "status_partial_equipped": "{equipped} equipped · {available} available",
+    "actions_label": "ACTIONS",
+    "manage_on_adventurer": "Manage on adventurer →",
+    "no_compatible_adventurer": "No adventurer can use this item right now.",
+    "usable_by": "Usable by {n} adventurer(s)",
+    "not_usable_reason_level": "Requires level {n}",
+    "type_all": "All",
+    "type_weapon": "Weapons",
+    "type_armor": "Armors",
+    "type_accessory": "Accessories",
+    "type_consumable": "Consumables",
+    "type_material": "Materials",
+    "filter_empty": "No items match the selected filters.",
+    "crafting_material": "MATERIAL",
+    "crafting_material_tip": "Used as input in one of the Forge recipes.",
+    "bound_badge": "BOUND",
+    "bound_tooltip": "Refined/enchanted item — no longer sellable on the market.",
+    "goto_forge": "Go to Forge"
+  },
+  "create_guild": {
+    "title": "Found your guild",
+    "subtitle": "Pick a name and a short description. You will be its Guild Master.",
+    "name": "Guild name",
+    "name_hint": "3-40 characters",
+    "description": "Description",
+    "description_hint": "Optional, max 300 characters",
+    "submit": "Found guild"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {username}",
+    "guild_overview": ":: GUILD OVERVIEW",
+    "no_description": "no description set",
+    "founded": "founded",
+    "stats": {
+      "level": "LEVEL",
+      "reputation": "REPUTATION",
+      "gold": "GOLD",
+      "adventurers": "ADVENTURERS",
+      "active_exp": "ACTIVE EXP",
+      "guild_id": "GUILD ID",
+      "peak_power": "PEAK POWER",
+      "completed": "COMPLETED",
+      "highest": "HIGHEST DUNGEON",
+      "last_loot": "LAST LOOT"
+    },
+    "quick_actions": ":: QUICK ACTIONS",
+    "last_expedition": ":: LAST EXPEDITION",
+    "system_log": ":: SYSTEM LOG",
+    "actions": {
+      "recruit": "Recruit adventurers",
+      "adventurers": "View adventurers",
+      "dungeons": "Dungeons",
+      "inventory": "Inventory"
+    },
+    "recent_reports": ":: RECENT REPORTS",
+    "no_recent_reports": "No expeditions yet. Start your first run in DUNGEONS.",
+    "peak_power_tooltip": "View public guild leaderboard"
+  },
+  "onboarding": {
+    "header": ":: ONBOARDING · STEP {step} OF 5",
+    "skip": "SKIP TUTORIAL",
+    "finish": "finish tutorial",
+    "toast_skipped": "Onboarding hidden.",
+    "toast_completed": "Onboarding completed. Good luck, Guild Master.",
+    "step1": {
+      "label": "Welcome to your guild",
+      "body": "You are the Guild Master. Recruit adventurers and dispatch them on expeditions.",
+      "cta": "Go to Recruitment →"
+    },
+    "step2": {
+      "label": "Recruit 3 adventurers",
+      "body": "You need at least 3 adventurers to form an expedition team. 3 free refreshes per day, then 10/20/30 gold.",
+      "cta": "Open Recruitment →"
+    },
+    "step3": {
+      "label": "Start your first expedition",
+      "body": "Goblin Warrens is your starting dungeon. Recommended power 45, 60s duration.",
+      "cta": "Browse Dungeons →"
+    },
+    "step4": {
+      "label": "Read the expedition report",
+      "body": "Your first run completed. Check the report for XP, gold and loot.",
+      "cta": "View Expeditions →"
+    },
+    "step5": {
+      "label": "Equip items or replay",
+      "body": "Equip loot to boost team power, or use Replay Last Run to grind the same dungeon.",
+      "cta": "Open Inventory →"
+    }
+  },
+  "recruitment": {
+    "title": "Recruitment",
+    "subtitle": "Browse the daily roster of candidates and recruit those that fit your strategy.",
+    "current_offer": "CURRENT OFFER",
+    "no_candidates": "No candidates available. Try refreshing the roster.",
+    "candidate": {
+      "level": "lvl",
+      "recruit": "Recruit",
+      "recruited": "Recruited",
+      "class": "Class",
+      "role": "Role",
+      "rarity": "Rarity",
+      "stats": "Stats",
+      "traits": "Traits"
+    },
+    "refresh": {
+      "free_remaining": "{n} free left today",
+      "cost_label": "Refresh ({cost}g)",
+      "free_label": "Refresh",
+      "tooltip": "Resets every day at 00:00 UTC",
+      "toast_free": "Roster refreshed (free).",
+      "toast_paid": "Roster refreshed (-{cost}g).",
+      "toast_no_gold": "Not enough gold: need {need}, have {have}.",
+      "next_reset": "Next reset {at}"
+    },
+    "recruit_cost": "Recruit cost: {cost}g",
+    "toast_recruited": "{name} joined your guild."
+  },
+  "adventurers": {
+    "title": "Adventurers",
+    "subtitle": "Your guild roster. Click an adventurer to manage their equipment.",
+    "count": "{n} adventurers",
+    "no_adventurers": "You have no adventurers yet. Go to RECRUIT to hire some.",
+    "no_heroes": ":: NO HEROES YET",
+    "guild_roster": ":: GUILD ROSTER",
+    "total": "TOTAL",
+    "manage": "manage →",
+    "manage_equipment": "manage equipment →",
+    "goto_recruitment": "Go to Recruitment →",
+    "available": "Available",
+    "in_expedition": "In expedition",
+    "level": "Lv {n}",
+    "xp": "XP {current}/{next}",
+    "morale": "Morale",
+    "stamina": "Stamina",
+    "traits": {
+      "trait_effects": "Trait effects",
+      "section_title": "TRAIT EFFECTS",
+      "base_power": "Base power:",
+      "effective_power": "Effective power:",
+      "xp_gain": "XP gain:",
+      "xp_gain_short": "XP gain",
+      "active_modifiers": "Active modifiers:",
+      "flavor_traits": "Flavor traits (no effect):",
+      "no_effects": "No active trait effects.",
+      "no_effect": "no effect",
+      "loading": "LOADING TRAIT DATA…",
+      "unavailable": "TRAIT DATA UNAVAILABLE"
+    }
+  },
+  "quests": {
+    "title": "DAILY QUESTS",
+    "reset_in": "Resets in {time}",
+    "loading": "LOADING DAILY QUESTS…",
+    "unavailable": "DAILY QUESTS UNAVAILABLE",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "reward_gold": "gold",
+    "claim_success": "Quest reward claimed: +{gold} gold",
+    "expedition_complete": {
+      "title": "Complete 1 expedition"
+    },
+    "recruit": {
+      "title": "Recruit 1 adventurer"
+    },
+    "equip": {
+      "title": "Equip 1 item"
+    },
+    "weekly": {
+      "run_expeditions_3": "Complete 3 expeditions",
+      "craft_items_2": "Craft 2 items",
+      "market_buy_1": "Buy 1 item on the market",
+      "equip_items_3": "Equip 3 items",
+      "expedition_loot_10": "Collect 10 expedition loot items",
+      "market_listings_1": "Create 1 market listing"
+    }
+  },
+  "dungeons": {
+    "title": "Dungeons",
+    "subtitle": "Choose a dungeon and dispatch a team. Locked dungeons display their unlock requirement.",
+    "tier": "Tier {n}",
+    "duration": "Duration",
+    "duration_sec": "{n}s",
+    "recommended_power": "Recommended Power",
+    "rewards_preview": "Rewards Preview",
+    "locked": "LOCKED",
+    "unlocked": "UNLOCKED",
+    "start_button": "Start Expedition →",
+    "locked_button": "Locked",
+    "unlock_reasons": {
+      "min_adventurers": "Requires {n} adventurers, you have {have}",
+      "min_power": "Requires peak team power ≥ {need}, you have {have}",
+      "min_level_or_power": "Requires guild level ≥ {level} OR peak power ≥ {power}",
+      "dragons_hoard": "Defeat tougher dungeons first (sticky gate)",
+      "shadow_crypts": "Requires peak team power ≥ {need}",
+      "generic": "Locked: {reason}"
+    },
+    "no_dungeons": "No dungeons available."
+  },
+  "expeditions": {
+    "title": "Expeditions",
+    "subtitle": "Active runs and your last reports.",
+    "active": "Active",
+    "recent": "Recent",
+    "no_active": "No active expeditions.",
+    "no_recent": "No completed runs yet.",
+    "view_report": "View report",
+    "replay_last": "Replay last run",
+    "team_power": "Team Power",
+    "success_chance": "Success chance",
+    "ends_in": "ends in {time}",
+    "completed_at": "completed {at}",
+    "report": {
+      "title": "Expedition Report",
+      "outcome": "Outcome",
+      "rewards": "Rewards",
+      "loot": "Loot",
+      "xp_gained": "XP gained",
+      "gold_gained": "Gold gained",
+      "no_loot": "No loot dropped this time."
+    },
+    "started_at": "started {at}"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "subtitle": "Items collected from expeditions. Equip them to adventurers.",
+    "filter_all": "All",
+    "filter_weapon": "Weapons",
+    "filter_armor": "Armor",
+    "filter_accessory": "Accessories",
+    "empty": "Vault is empty. Loot drops from expeditions.",
+    "equipped_on": "Equipped on {name}",
+    "unequipped": "Unequipped",
+    "rarity_label": "Rarity",
+    "type_label": "Type",
+    "slot_label": "Slot"
+  },
+  "equipment": {
+    "title": "Equipment — {name}",
+    "back": "← Back to adventurers",
+    "current_power": "Power",
+    "equip_button": "Equip",
+    "unequip_button": "Unequip",
+    "slot_empty": "empty",
+    "available_items": "Available items",
+    "no_items": "No items available for this slot."
+  },
+  "leaderboard": {
+    "title": "Guild Leaderboard",
+    "subtitle": "Top guilds ranked by Peak Team Power.",
+    "rank": "Rank",
+    "guild": "Guild",
+    "peak_power": "Peak Power",
+    "level": "Level",
+    "no_data": "No guilds on the leaderboard yet.",
+    "founded_at": "founded {at}"
+  },
+  "admin": {
+    "title": "Admin",
+    "tabs": {
+      "classes": "Classes",
+      "traits": "Traits",
+      "dungeons": "Dungeons",
+      "items": "Items"
+    }
+  },
+  "leaderboard_page": {
+    "rank": "RANK",
+    "guild": "GUILD",
+    "peak_pwr_short": "PEAK PWR",
+    "level_short": "LVL",
+    "reputation_short": "REP",
+    "highest": "HIGHEST",
+    "expeditions_short": "EXP",
+    "brand_subtitle": "LEADERBOARD"
+  },
+  "inventory_table": {
+    "name": "NAME",
+    "rarity": "RARITY",
+    "type": "TYPE",
+    "total": "TOTAL",
+    "equipped": "EQUIPPED",
+    "available": "AVAIL.",
+    "bonuses": "BONUSES",
+    "power": "POWER",
+    "filter_all": "ALL",
+    "filter_weapons": "WEAPONS",
+    "filter_armor": "ARMOR",
+    "filter_accessories": "ACCESSORIES"
+  },
+  "adventurers_table": {
+    "name": "NAME",
+    "class": "CLASS",
+    "role": "ROLE",
+    "rarity": "RARITY",
+    "level": "LVL",
+    "xp": "XP",
+    "power": "POWER",
+    "equip": "EQUIP",
+    "traits": "TRAITS",
+    "status": "STATUS"
+  },
+  "dungeons_card": {
+    "tier": "TIER",
+    "duration": "Duration",
+    "recommended_power": "Recommended power",
+    "required_team": "Required team",
+    "base_reward": "Base reward"
+  },
+  "expedition_new": {
+    "title": "Dispatch a team",
+    "subtitle": "Select adventurers for this expedition. Power and morale matter.",
+    "selected": "SELECTED",
+    "dispatch_btn": "Dispatch",
+    "back_to_dungeons": "← Back to Dungeons",
+    "toast_dispatched": "Expedition dispatched. Returns in {seconds}s.",
+    "toast_dungeon_not_found": "Dungeon not found",
+    "brand_subtitle": "DISPATCH",
+    "section_dispatch_party": ":: DISPATCH PARTY",
+    "section_briefing": ":: BRIEFING",
+    "subtitle_select": "Select exactly {n} adventurers. Mix roles (Tank · DPS · Healer) for bonus team power.",
+    "dungeon_meta": "Difficulty {difficulty} · {seconds}s · recommended power {power}",
+    "equipment_bonus_label": "EQUIPMENT BONUS",
+    "team_power_final_label": "TEAM POWER (FINAL)",
+    "success_chance_label": "SUCCESS CHANCE",
+    "underpowered_warning": "⚠ Your team is underpowered for this dungeon (recommended {recommended}, you have {actual}).",
+    "dispatching_btn": "dispatching…",
+    "preview_title": "DISPATCH PREVIEW",
+    "preview_loading": "computing preview…",
+    "preview_injury_risk": "Injury risk",
+    "preview_injury_low": "Low",
+    "preview_injury_medium": "Medium",
+    "preview_injury_high": "High",
+    "preview_expected_loot": "Expected loot",
+    "preview_gold_range": "{min}–{max} gold",
+    "preview_xp_range": "{min}–{max} XP",
+    "preview_loot_rarity_common": "common quality",
+    "preview_loot_rarity_uncommon": "uncommon quality",
+    "preview_loot_rarity_rare": "rare quality",
+    "preview_modifiers": "Active modifiers",
+    "preview_no_modifiers": "No active modifiers for this team.",
+    "preview_unavailable": "Preview unavailable.",
+    "preview_polarity_positive": "Positive",
+    "preview_polarity_negative": "Negative",
+    "preview_polarity_mixed": "Mixed"
+  },
+  "crafting": {
+    "title": "Guild Forge",
+    "subtitle": "Recipes you can craft using materials from your vault.",
+    "empty": "No recipes available.",
+    "inputs": "MATERIALS",
+    "output": "OUTPUT",
+    "gold_cost": "Gold",
+    "missing": "missing",
+    "short": "short",
+    "req_guild_level": "Requires guild level {n}",
+    "status_craftable": "CRAFTABLE",
+    "status_missing_materials": "MISSING MATERIALS",
+    "status_insufficient_gold": "NOT ENOUGH GOLD",
+    "status_requires_level": "GUILD LEVEL TOO LOW",
+    "craft": "Craft",
+    "crafting": "Crafting…",
+    "toast_crafted": "Crafted"
+  },
+  "market": {
+    "title": "Marketplace",
+    "subtitle": "Buy and sell items with other guilds. {fee}% fee on seller.",
+    "tab_buy": "BUY",
+    "tab_sell": "SELL",
+    "tab_mine": "MY LISTINGS",
+    "filter_type": "Type",
+    "filter_rarity": "Rarity",
+    "filter_level_max": "Max level",
+    "filter_price_max": "Max price",
+    "filter_search": "Search name",
+    "sort_created_at": "Newest",
+    "sort_price_asc": "Price ↑",
+    "sort_price_desc": "Price ↓",
+    "sort_level": "Level",
+    "empty_buy": "No listings available.",
+    "empty_mine": "You have no active listings.",
+    "qty": "Qty",
+    "price_unit": "Unit price",
+    "total": "Total",
+    "seller": "Seller",
+    "buy_btn": "Buy",
+    "buy_quantity": "Quantity to buy",
+    "buy_confirm": "Confirm purchase?",
+    "sell_select_item": "Select item",
+    "sell_no_items": "No sellable items available.",
+    "sell_quantity": "Quantity",
+    "sell_price_unit": "Unit price",
+    "sell_fee_estimate": "Fee estimate",
+    "sell_proceeds": "You receive",
+    "sell_btn": "List",
+    "sell_confirm": "Confirm listing?",
+    "cancel_btn": "Cancel",
+    "cancel_confirm": "Confirm cancellation?",
+    "status_active": "ACTIVE",
+    "status_sold": "SOLD",
+    "status_cancelled": "CANCELLED",
+    "status_expired": "EXPIRED",
+    "buyer": "Buyer",
+    "available_qty": "Available",
+    "locked_qty": "Listed",
+    "toast_listed": "Listing published",
+    "toast_bought": "Purchased",
+    "toast_cancelled": "Listing cancelled",
+    "error_bound_item": "BOUND item: cannot be sold on the market (it was refined or enchanted)."
+  },
+  "expedition_report_page": {
+    "brand_subtitle": "REPORT",
+    "replay_title": "This run was dispatched via Replay Last Run",
+    "recommended_power": "Recommended power",
+    "base_power": "Base team power",
+    "equipment_bonus": "Equipment bonus",
+    "final_power": "Final team power",
+    "success_no_equip": "Success chance (no equip)",
+    "success_final": "Success chance (final)",
+    "toast_replay_started": "Replay started: {dungeon}",
+    "started_at": "started {at}",
+    "completed_at": "completed {at}",
+    "replay_toast": "Replay started: {name}",
+    "outcome_success": "Victory",
+    "outcome_partial": "Partial success",
+    "outcome_failure": "Defeat",
+    "rewards_title": "Rewards summary",
+    "rewards_gold": "Gold earned",
+    "rewards_xp": "XP earned",
+    "rewards_loot": "Loot",
+    "rewards_no_loot": "No items recovered",
+    "rewards_injuries": "Injuries",
+    "rewards_fatigue": "Fatigue",
+    "what_happened": "What happened",
+    "modifiers_important": "Key modifiers",
+    "no_modifiers": "No relevant modifiers on this run.",
+    "step_label_exploration": "Exploration",
+    "step_label_traps": "Traps",
+    "step_label_combat": "Combat",
+    "step_label_boss": "Boss encounter",
+    "step_label_loot": "Loot",
+    "step_label_recovery": "Retreat",
+    "step_label_reward": "Rewards",
+    "step_result_success": "success",
+    "step_result_partial": "partial",
+    "step_result_failure": "failure",
+    "step_result_neutral": "neutral",
+    "tip_underpowered": "Team was under recommended power: add equipment or a level.",
+    "tip_no_healer": "No Priest in the party: bringing a Healer mitigates injuries.",
+    "legacy_fallback": "Detailed report not available for this expedition."
+  },
+  "create_guild_page": {
+    "name_placeholder": "The Iron Lantern",
+    "desc_placeholder": "A small but ambitious order, headquartered in a coastal trade town.",
+    "toast_founded": "Guild founded.",
+    "title": "Found a guild"
+  },
+  "password_reset_page": {
+    "request_title": "Reset password",
+    "request_body": "Enter your email and we will send you a reset link.",
+    "confirm_title": "Confirm reset",
+    "token_label": "RESET TOKEN",
+    "new_password_label": "NEW PASSWORD",
+    "confirm_password_label": "CONFIRM NEW PASSWORD",
+    "send_link": "Send reset link",
+    "submit_reset": "Reset password",
+    "toast_request_sent": "Request submitted.",
+    "toast_reset_success": "Password reset successful. Please log in.",
+    "passwords_dont_match": "Passwords do not match"
+  },
+  "equipment_extra": {
+    "toast_equipped": "Equipped on {slot}",
+    "toast_unequipped": "Unequipped {slot}",
+    "required_level": "Required level"
+  },
+  "admin_extra": {
+    "h1": "Admin Panel",
+    "toast_created": "Created.",
+    "toast_updated": "Updated.",
+    "toast_deleted": "Deleted.",
+    "toast_admin_required": "Admin access required",
+    "label_description": "DESCRIPTION",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "network": "Network error. Try again.",
+    "unauthorized": "Session expired. Please log in again.",
+    "forbidden": "Forbidden",
+    "not_found": "Not found",
+    "validation": "Validation error",
+    "server": "Server error. Try again later.",
+    "insufficient_gold": "Not enough gold: need {need}, have {have}.",
+    "dungeon_locked": "Dungeon locked: {reason}"
+  },
+  "content": {
+    "stat": {
+      "strength": {
+        "name": "strength"
+      },
+      "agility": {
+        "name": "agility"
+      },
+      "intellect": {
+        "name": "intellect"
+      },
+      "endurance": {
+        "name": "endurance"
+      },
+      "faith": {
+        "name": "faith"
+      }
+    },
+    "rarity": {
+      "common": "Common",
+      "uncommon": "Uncommon",
+      "rare": "Rare",
+      "epic": "Epic",
+      "legendary": "Legendary"
+    },
+    "role": {
+      "tank": "Tank",
+      "dps": "DPS",
+      "healer": "Healer",
+      "support": "Support",
+      "scout": "Scout"
+    },
+    "item_type": {
+      "weapon": "Weapon",
+      "armor": "Armor",
+      "accessory": "Accessory"
+    },
+    "slot": {
+      "main_hand": "Main Hand",
+      "off_hand": "Off Hand",
+      "head": "Head",
+      "chest": "Chest",
+      "legs": "Legs",
+      "feet": "Feet",
+      "hands": "Hands",
+      "ring": "Ring",
+      "amulet": "Amulet",
+      "trinket": "Trinket",
+      "accessory": "Accessory"
+    },
+    "expedition_status": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "success": "Success",
+      "partial_success": "Partial Success",
+      "defeat": "Defeat"
+    },
+    "class": {
+      "warrior": {
+        "name": "Warrior",
+        "role": "Tank",
+        "description": "Frontline melee fighter, high endurance."
+      },
+      "rogue": {
+        "name": "Rogue",
+        "role": "DPS",
+        "description": "Agile striker that thrives on initiative."
+      },
+      "mage": {
+        "name": "Mage",
+        "role": "DPS",
+        "description": "Arcane caster with massive burst damage."
+      },
+      "cleric": {
+        "name": "Cleric",
+        "role": "Healer",
+        "description": "Divine support, keeps the party alive."
+      },
+      "ranger": {
+        "name": "Ranger",
+        "role": "DPS",
+        "description": "Skirmisher with ranged advantage."
+      },
+      "paladin": {
+        "name": "Paladin",
+        "role": "Tank",
+        "description": "Holy guardian, balanced offense and defense."
+      },
+      "warlock": {
+        "name": "Warlock",
+        "role": "DPS",
+        "description": "Pact-bound caster trading life for power."
+      },
+      "monk": {
+        "name": "Monk",
+        "role": "DPS",
+        "description": "Disciplined martial artist, evasive."
+      },
+      "druid": {
+        "name": "Druid",
+        "role": "Support",
+        "description": "Nature shapeshifter, flexible kit."
+      },
+      "bard": {
+        "name": "Bard",
+        "role": "Support",
+        "description": "Inspires allies, weakens enemies."
+      },
+      "necromancer": {
+        "name": "Necromancer",
+        "role": "DPS",
+        "description": "Commands the dead, drains foes."
+      },
+      "berserker": {
+        "name": "Berserker",
+        "role": "DPS",
+        "description": "Reckless brawler, high risk / reward."
+      }
+    },
+    "trait": {
+      "brave": {
+        "name": "Brave",
+        "description": "Steady under pressure; lends raw strength."
+      },
+      "quick_learner": {
+        "name": "Quick Learner",
+        "description": "Soaks up experience faster than peers."
+      },
+      "frail": {
+        "name": "Frail",
+        "description": "Weaker constitution; tires sooner."
+      },
+      "sharp_eye": {
+        "name": "Sharp Eye",
+        "description": "Spots openings others miss."
+      },
+      "devout": {
+        "name": "Devout",
+        "description": "Anchored to a higher calling."
+      },
+      "iron-willed": {
+        "name": "Iron-Willed",
+        "description": "Stubborn in the face of pain."
+      },
+      "scholar": {
+        "name": "Scholar",
+        "description": "More XP from runs."
+      },
+      "lightfoot": {
+        "name": "Lightfoot",
+        "description": "Moves without a sound."
+      },
+      "bull-strong": {
+        "name": "Bull-Strong",
+        "description": "Carries twice their weight without complaint."
+      },
+      "blessed": {
+        "name": "Blessed",
+        "description": "Born under a kind star."
+      },
+      "fast_reader": {
+        "name": "Fast Reader",
+        "description": "Translates scrolls on the fly."
+      },
+      "veteran's_eye": {
+        "name": "Veteran's Eye",
+        "description": "Has seen this fight before."
+      },
+      "clumsy": {
+        "name": "Clumsy",
+        "description": "Trips over their own feet."
+      },
+      "slow-witted": {
+        "name": "Slow-Witted",
+        "description": "Takes the long way around."
+      },
+      "weak-armed": {
+        "name": "Weak-Armed",
+        "description": "Cannot draw a heavy bow."
+      },
+      "faithless": {
+        "name": "Faithless",
+        "description": "Has nothing to pray to."
+      },
+      "sickly": {
+        "name": "Sickly",
+        "description": "Catches every cold."
+      },
+      "lucky": {
+        "name": "Lucky",
+        "description": "Better loot rolls."
+      },
+      "tough": {
+        "name": "Tough",
+        "description": "Higher endurance."
+      },
+      "swift": {
+        "name": "Swift",
+        "description": "Higher agility."
+      },
+      "wise": {
+        "name": "Wise",
+        "description": "Higher intellect."
+      },
+      "pious": {
+        "name": "Pious",
+        "description": "Higher faith."
+      },
+      "strong": {
+        "name": "Strong",
+        "description": "Higher strength."
+      },
+      "vigilant": {
+        "name": "Vigilant",
+        "description": "Better ambush avoidance."
+      },
+      "patient": {
+        "name": "Patient",
+        "description": "Lower stamina drain."
+      },
+      "merciless": {
+        "name": "Merciless",
+        "description": "More crit damage."
+      },
+      "cunning": {
+        "name": "Cunning",
+        "description": "More trap detection."
+      },
+      "stalwart": {
+        "name": "Stalwart",
+        "description": "Holds ground vs swarms."
+      },
+      "fearless": {
+        "name": "Fearless",
+        "description": "Ignores morale loss."
+      },
+      "thrifty": {
+        "name": "Thrifty",
+        "description": "Better gold drops."
+      },
+      "graceful": {
+        "name": "Graceful",
+        "description": "Lower miss rate."
+      },
+      "iron_will": {
+        "name": "Iron Will",
+        "description": "Resists charm/fear."
+      },
+      "battle_hardened": {
+        "name": "Battle Hardened",
+        "description": "Less damage taken."
+      },
+      "veteran": {
+        "name": "Veteran",
+        "description": "More starting XP."
+      },
+      "natural_leader": {
+        "name": "Natural Leader",
+        "description": "Boosts party morale."
+      },
+      "loyal": {
+        "name": "Loyal",
+        "description": "Never deserts."
+      },
+      "stoic": {
+        "name": "Stoic",
+        "description": "Less stamina drain in long runs."
+      },
+      "agile": {
+        "name": "Agile",
+        "description": "Higher dodge."
+      },
+      "athletic": {
+        "name": "Athletic",
+        "description": "Higher max stamina."
+      },
+      "perceptive": {
+        "name": "Perceptive",
+        "description": "Spots hidden loot."
+      },
+      "fortunate": {
+        "name": "Fortunate",
+        "description": "Lower crit-failure rate."
+      },
+      "iron_constitution": {
+        "name": "Iron Constitution",
+        "description": "Resists poison/disease."
+      },
+      "tireless": {
+        "name": "Tireless",
+        "description": "Faster stamina recovery."
+      },
+      "berserker_blood": {
+        "name": "Berserker Blood",
+        "description": "More damage when low HP."
+      },
+      "shadow_walker": {
+        "name": "Shadow Walker",
+        "description": "Stealth bonus."
+      }
+    },
+    "dungeon": {
+      "goblin-warrens": {
+        "name": "Goblin Warrens",
+        "description": "A maze of damp tunnels infested with goblin scouts. A safe place to learn."
+      },
+      "sewer-nest": {
+        "name": "Sewer Nest",
+        "description": "Stinking sewer levels overrun by giant rats and slimes."
+      },
+      "bandit-hideout": {
+        "name": "Bandit Hideout",
+        "description": "A camp of human bandits with weapons stolen from caravans."
+      },
+      "druid-grove": {
+        "name": "Druid Grove",
+        "description": "A corrupted sacred grove. Beware nature gone wild."
+      },
+      "cursed-mines": {
+        "name": "Cursed Mines",
+        "description": "Abandoned dwarven mines now haunted by undead miners."
+      },
+      "shadow-crypts": {
+        "name": "Shadow Crypts",
+        "description": "Forgotten tombs guarded by wraiths and bound spirits."
+      },
+      "sunken-library": {
+        "name": "Sunken Library",
+        "description": "A drowned library of forbidden tomes; arcane horrors patrol the aisles."
+      },
+      "lich-sanctum": {
+        "name": "Lich Sanctum",
+        "description": "The throne room of a long-dead archmage. High peril, high reward."
+      },
+      "storm-spire": {
+        "name": "Storm Spire",
+        "description": "A tower perpetually struck by lightning. Air elementals rule the upper floors."
+      },
+      "dragons-hoard": {
+        "name": "Dragon's Hoard",
+        "description": "The lair of an ancient wyrm. Only the strongest dare enter."
+      }
+    }
+  },
+  "streak": {
+    "title": "STREAK",
+    "loading": "LOADING STREAK…",
+    "unavailable": "STREAK UNAVAILABLE",
+    "best": "Best: {n}",
+    "today_done": "Today's login completed",
+    "today_pending": "Complete a quest today to extend the streak",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "claiming": "…",
+    "reward_for_tier": "Tier D{tier}: +{gold} gold + {mats}",
+    "no_mats": "no materials",
+    "no_reward": "Continue your streak to unlock rewards",
+    "claim_success": "Streak reward claimed: +{gold} gold"
+  },
+  "weekly": {
+    "title": "WEEKLY QUESTS",
+    "loading": "LOADING WEEKLY…",
+    "unavailable": "WEEKLY QUESTS UNAVAILABLE",
+    "reset_in": "Reset in {time}",
+    "reward_gold": "gold",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "locked": "LOCKED",
+    "claim_success": "Weekly reward claimed: +{gold} gold",
+    "run_expeditions_3": "Complete 3 expeditions",
+    "craft_items_2": "Craft 2 items",
+    "market_buy_1": "Buy 1 item on the market",
+    "equip_items_3": "Equip 3 items",
+    "expedition_loot_10": "Collect 10 expedition loot items",
+    "market_listings_1": "Create 1 market listing"
+  },
+  "chronicle": {
+    "title": "SERVER CHRONICLE",
+    "page_title": "Server Chronicle",
+    "page_intro": "Public read-only feed of recent server-wide events: completed expeditions, raid victories, achievement unlocks and other guild milestones.",
+    "loading": "Loading events…",
+    "error": "Unable to load chronicle",
+    "empty": "No recent activity",
+    "refresh": "REFRESH",
+    "now": "now",
+    "min_ago": "{n} min ago",
+    "hour_ago": "{n}h ago",
+    "day_ago": "{n}d ago"
+  },
+  "consortiums": {
+    "title": "CONSORTIUMS",
+    "intro": "Consortiums are cross-guild social groups. No power bonuses, no competitive rewards — just a meeting point and a shared activity feed.",
+    "create": "CREATE CONSORTIUM",
+    "cancel": "CANCEL",
+    "create_submit": "CREATE",
+    "create_success": "Consortium created",
+    "join": "JOIN",
+    "join_success": "You joined the Consortium",
+    "leave": "LEAVE",
+    "leave_success": "You left the Consortium",
+    "loading": "Loading consortiums…",
+    "empty": "No consortiums yet",
+    "list_title": "ACTIVE CONSORTIUMS",
+    "you_are_in": "YOUR CONSORTIUM",
+    "members": "MEMBERS",
+    "members_label": "members",
+    "field_name": "Name",
+    "field_tag": "Tag",
+    "field_description": "Description",
+    "optional": "optional"
+  },
+  "forge": {
+    "title": "FORGE",
+    "intro": "Refine, enchant or salvage your items. Operations bind the item (no longer sellable).",
+    "tab_refine": "REFINE",
+    "tab_enchant": "ENCHANT",
+    "tab_reroll": "REASSIGN",
+    "tab_disenchant": "SALVAGE",
+    "select_item": "SELECT ITEM",
+    "no_eligible": "No eligible items",
+    "pick_one": "Pick an item from the list",
+    "operation_panel": "OPERATION PANEL",
+    "refine_hint": "Current level: +{lvl}. Gold and material costs scale with level.",
+    "refine_success": "Refinement succeeded! New level: +{lvl}",
+    "refine_failed": "Refinement failed. Materials consumed (item intact).",
+    "enchant_pick_option": "Pick an enchant from the list",
+    "enchant_applied": "Enchant applied!",
+    "reroll_success": "Affixes rerolled ({n}/5).",
+    "disenchant_success": "Salvaged! Got: {mats}",
+    "disenchant_warning": "⚠ The item will be destroyed and you'll receive materials in return.",
+    "boe_warning": "The item will become BOUND (no longer sellable on the market).",
+    "confirm_refine": "CONFIRM REFINE",
+    "confirm_enchant": "SHOW OPTIONS",
+    "confirm_reroll": "CONFIRM REASSIGN",
+    "confirm_disenchant": "CONFIRM SALVAGE"
+  },
+  "set": {
+    "active_bonuses_title": "ACTIVE SET BONUSES",
+    "no_active_bonuses": "No active set bonuses. Equip more pieces of the same family to activate bonuses.",
+    "progress_label": "Set progress: {owned}/{total}",
+    "tier_locked": "Locked ({need} pieces required)"
+  },
+  "raids": {
+    "title": "RAIDS",
+    "subtitle": "Single-player 20-adventurer expeditions.",
+    "cooldown_remaining": "Next raid available in",
+    "roster_gate": "Need {n} adventurers (you have {have})",
+    "peak_gate": "Required peak team_power: {n} (yours: {have})",
+    "history_title": "HISTORY",
+    "mvp_note": "Phase 18 MVP — the 4×5 party builder will ship in Phase 18.1.",
+    "locked_badge": "LOCKED",
+    "roster_label": "Roster",
+    "power_label": "Power",
+    "duration_label": "Duration",
+    "reward_label": "Reward",
+    "duration_min_short": "min",
+    "xp_per_adv": "XP/adv",
+    "catalog": {
+      "broken-bastion-siege": {
+        "name": "Siege of the Broken Bastion",
+        "description": "A ruined keep besieged by a horde. Hold the walls long enough to break the siege engines."
+      },
+      "necropolis-bells": {
+        "name": "Necropolis of a Thousand Bells",
+        "description": "Each bell tolls a dead king. Every chime spawns wraiths. The bells will not stop ringing."
+      },
+      "dragon-vault": {
+        "name": "Vault of the Sleeping Dragon",
+        "description": "The dragon is asleep. The reward is in its hoard. Do not wake the dragon. You will wake the dragon."
+      }
+    },
+    "gate": {
+      "roster_too_small": "Roster too small: need {need} adventurers (have {have})",
+      "max_team_power_too_low": "Max team power too low: need {need} (have {have})",
+      "cooldown_active": "Raid on cooldown — next available in {seconds}s",
+      "already_in_progress": "You already have a raid in progress",
+      "adventurer_busy": "One or more adventurers are busy",
+      "duplicate_adventurer": "An adventurer appears in multiple parties"
+    },
+    "builder": {
+      "title": "RAID BUILDER",
+      "back_to_raids": "← Back to raids",
+      "party_label": "PARTY {n}",
+      "available_advs": "AVAILABLE ADVENTURERS",
+      "preview_btn": "PREVIEW",
+      "launch_btn": "LAUNCH RAID",
+      "remove": "remove",
+      "summary_power": "Combined power",
+      "summary_success": "Combined success",
+      "summary_per_party": "Per-party success",
+      "preview_done": "Preview OK — ready to launch",
+      "not_enough": "Need 20 unique adventurers ({have}/20)",
+      "launched": "Raid launched!"
+    },
+    "report": {
+      "title": "RAID REPORT",
+      "outcome_victory": "VICTORY",
+      "outcome_partial": "PARTIAL",
+      "outcome_wipe": "WIPE",
+      "raid_score": "Raid score",
+      "duration": "Duration",
+      "rewards_label": "REWARDS",
+      "gold_total": "Total gold",
+      "xp_per_member": "XP per survivor",
+      "dragon_essence_drop": "Dragon essence",
+      "no_data": "Raid not yet completed",
+      "survived": "survived",
+      "fainted": "fainted",
+      "complete_now": "Force complete (smoke)"
+    }
+  },
+  "territory": {
+    "title": "TERRITORY",
+    "subtitle": "Guild structures & progression",
+    "status": {
+      "locked": "Locked",
+      "buyable": "Available",
+      "upgradable": "Upgradable",
+      "max": "Max level",
+      "legacy": "Legacy"
+    },
+    "cta": {
+      "buy": "Buy",
+      "upgrade": "Upgrade",
+      "locked_prereq": "Unlock first",
+      "max_reached": "Max level"
+    }
+  },
+  "adventurers_retire": {
+    "button": "Retire",
+    "modal_title": "Retire adventurer",
+    "force_unequip_label": "Auto-unequip",
+    "reason_placeholder": "Reason (optional)",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "signature_warning_title": "⚠ SPECIALIZED ADVENTURER",
+    "signature_warning_body": "This adventurer is specialized as {spec}. They carry a bound signature item ({item}) that would normally block this retire. To proceed you must accept its destruction: the item will be soft-discarded and cannot be recovered.",
+    "discard_signature_label": "Also destroy the signature item ({item})",
+    "discard_signature_hint": "Confirming destruction is required to retire a specialized adventurer."
+  },
+  "training": {
+    "title": "TRAINING GROUNDS",
+    "page_title": "Training",
+    "page_intro": "Specialize your adventurers (Lv5+) into a dedicated role. Each specialization grants a permanent stat bonus and a bound signature item.",
+    "locked_title": "TRAINING GROUNDS NOT UNLOCKED",
+    "locked_desc": "Unlock the Training Grounds from the Territory (requires Guild Hall Lv3 + Dormitories Lv2) to specialize your adventurers.",
+    "go_territory": "GO TO TERRITORY",
+    "tg_level_label": "Training Grounds",
+    "tier_label": "Tier",
+    "tier_starter": "STARTER",
+    "tier_full": "FULL HYBRID",
+    "apply_cost_label": "Apply cost",
+    "eligible_title": "ELIGIBLE ADVENTURERS",
+    "no_eligible": "No Lv5+ adventurer available. Keep running expeditions to level them up.",
+    "spec_title": "AVAILABLE SPECIALIZATIONS",
+    "spec_pick_first": "Pick an adventurer first to see compatible specializations.",
+    "specialized_title": "ALREADY SPECIALIZED",
+    "respec_note": "Respec is not available in Round 6C. Plan carefully — specialization is permanent until Round 6D.",
+    "confirm_title": "CONFIRM SPECIALIZATION",
+    "confirm_target": "Adventurer",
+    "confirm_spec": "Specialization",
+    "confirm_signature": "Signature Item (bound)",
+    "confirm_apply": "APPLY",
+    "respec_warning": "Specialization is PERMANENT in Round 6C. Respec will not ship until Round 6D.",
+    "requirement_hint": "Requirements: Lv{min}+ and not yet specialized.",
+    "class_required": "Requires class: {classes}",
+    "toast_success": "✦ {name} is now a {spec}!"
+  },
+  "specialization": {
+    "badge_label": "SPECIALIZATION",
+    "applied_at_lvl": "Applied at Lv{n}",
+    "modifiers_label": "MODIFIERS",
+    "signature_label": "SIGNATURE ITEM",
+    "tier_starter": "Starter",
+    "tier_full": "Full hybrid",
+    "chip": "✦ {name}"
+  },
+  "recruitment_cap": {
+    "label": "Dormitory capacity",
+    "banner_cta": "Upgrade Dormitories"
+  },
+  "contracts": {
+    "page_title": "Contract Board",
+    "page_intro": "Complete daily and weekly contracts for gold, materials and reputation. Permanent milestones reward consistent play with rarer payouts.",
+    "card_title": "CONTRACT BOARD",
+    "card_locked_short": "Unlock the Contract Board from the Territory.",
+    "card_badge_ready": "READY",
+    "locked_title": "CONTRACT BOARD NOT UNLOCKED",
+    "locked_desc": "Unlock the Contract Board from the Territory (requires Guild Hall Lv2 + Expedition Board Lv1).",
+    "go_territory": "GO TO TERRITORY",
+    "tab": {
+      "daily": "DAILY",
+      "weekly": "WEEKLY",
+      "milestones": "MILESTONES"
+    },
+    "no_daily": "No active daily contracts.",
+    "no_weekly": "No active weekly contracts.",
+    "no_milestones": "No milestones available.",
+    "milestones_intro": "Milestones are permanent — complete them to unlock the next tier.",
+    "next_daily_reset": "Daily reset",
+    "next_weekly_reset": "Weekly reset",
+    "in_progress": "IN PROGRESS",
+    "claim": "CLAIM",
+    "claimed": "CLAIMED",
+    "tier_locked": "TIER LOCKED",
+    "claim_success": "Claimed",
+    "reputation_short": "Rep",
+    "daily": {
+      "complete_expedition_1": "Complete 1 expedition",
+      "market_listing_1": "Create 1 market listing",
+      "craft_item_1": "Craft 1 item"
+    },
+    "weekly": {
+      "complete_expeditions_5": "Complete 5 expeditions",
+      "market_volume_3": "Sell 3 items on the market",
+      "upgrade_structure_1": "Upgrade 1 Territory structure",
+      "apply_specialization_1": "Apply 1 specialization",
+      "recruit_2": "Recruit 2 new adventurers"
+    },
+    "milestone": {
+      "run_10_expeditions": "Lifetime expeditions: 10",
+      "craft_10_items": "Lifetime items crafted: 10",
+      "recruit_5_adventurers": "Lifetime adventurers recruited: 5"
+    }
+  },
+  "feature_locked": {
+    "cta": "Go to Territory"
+  }
+}

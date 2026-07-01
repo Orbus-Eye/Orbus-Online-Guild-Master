@@ -1,0 +1,447 @@
+"""Round 16.0 — Seed classes v2 (10 base + 30 specializations).
+
+Idempotent upsert script. Safe to re-run.
+
+Actions:
+  1. Marks the 9 existing base classes (warrior, rogue, mage, priest, ranger,
+     paladin, druid, monk, bard) with `is_base_class=true`. Preserves all
+     existing fields.
+  2. Creates the new `warlock` (Stregone) class with `is_base_class=true`
+     and `round_intro=16` if it does not exist.
+  3. Marks the 3 deprecated classes (berserker, assassin, necromancer)
+     with `is_active=false`, `deprecated_at=<utcnow>`, `successor_slug`,
+     and `successor_specialization_slug`.
+  4. Upserts 30 entries in `class_specializations` (3 per base class).
+  5. Writes audit log events for every actual change. No-op records are
+     silently skipped (idempotent).
+
+Vincoli:
+  * NO hard delete on `adventurer_classes` (soft deprecate via flag).
+  * Schema R15 `xp_primary_stat_policy` preserved on every class.
+  * Stat catalog NOT modified (charisma intentionally NOT added).
+
+Usage:
+    python -m app.scripts.round160_seed_classes_v2 [--dry-run]
+"""
+from __future__ import annotations
+
+import argparse
+import asyncio
+import os
+import sys
+from datetime import datetime, timezone
+from typing import Any
+
+from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from app.audit.log import write_audit
+
+
+_XP_POLICY_V2 = {
+    "enabled": True,
+    "threshold_per_level": 0.5,
+    "debuff_steps": [
+        {"shortfall_pct": 10, "xp_mult": 0.9},
+        {"shortfall_pct": 20, "xp_mult": 0.8},
+        {"shortfall_pct": 30, "xp_mult": 0.7},
+    ],
+    "min_multiplier": 0.7,
+    "schema_version": 2,
+}
+
+
+# 10 base classes (9 existing + 1 new). The 9 existing are touched only
+# to set `is_base_class=true`; the warlock entry is upserted in full.
+BASE_CLASSES: list[dict[str, Any]] = [
+    {"slug": "warrior"},
+    {"slug": "rogue"},
+    {"slug": "mage"},
+    {"slug": "priest"},
+    {"slug": "ranger"},
+    {"slug": "paladin"},
+    {"slug": "druid"},
+    {"slug": "monk"},
+    {"slug": "bard"},
+    {
+        "slug": "warlock",
+        "name": "Warlock",
+        "display_name_it": "Stregone",
+        "primary_stat": "intellect",
+        "secondary_stats": ["faith", "agility"],
+        "role": "DPS",
+        "secondary_role": "Caster",
+        "allowed_weapon_tags": ["dagger", "staff", "tome"],
+        "allowed_armor_tags": ["robe", "light"],
+        # ROUND 15 base stats — primary=intellect, secondaries lifted.
+        "base_strength": 4,
+        "base_agility": 6,
+        "base_intellect": 10,
+        "base_endurance": 6,
+        "base_faith": 6,
+        "xp_primary_stat_policy": _XP_POLICY_V2,
+        "description_it": (
+            "Lo Stregone stringe patti con entità del Vuoto o delle Stelle. "
+            "Sacrifica la chiarezza arcana del Mago per ricevere potere "
+            "oscuro: scaglia maledizioni, debilita i nemici e canalizza "
+            "l'energia del patto stretto. Diversamente dal Mago studioso, "
+            "lo Stregone è un canalizzatore: la magia non gli appartiene, "
+            "gli è prestata."
+        ),
+        "is_active": True,
+        "is_base_class": True,
+        "round_intro": 16,
+    },
+]
+
+
+# 3 deprecated classes → mapped to base + spec.
+DEPRECATIONS: list[dict[str, str]] = [
+    {"slug": "berserker", "successor_slug": "warrior",
+     "successor_specialization_slug": "berserker_spec"},
+    {"slug": "assassin", "successor_slug": "rogue",
+     "successor_specialization_slug": "assassin_spec"},
+    {"slug": "necromancer", "successor_slug": "mage",
+     "successor_specialization_slug": "necromancer_spec"},
+]
+
+
+# 30 specializations (3 per base class). Fields are minimal-but-complete
+# and aligned with `round160_migration_plan.md` §3.
+SPECIALIZATIONS: list[dict[str, Any]] = [
+    # Warrior
+    {"slug": "berserker_spec", "class_slug": "warrior",
+     "display_name_it": "Berserker",
+     "description_it": "Furia in mischia con armi pesanti e armatura leggera.",
+     "stat_bonus": {"strength": 1},
+     "weapon_tag_unlocks": ["two_handed", "axe", "rage"],
+     "armor_tag_unlocks": ["medium", "light"],
+     "counter_tags": [],
+     "is_legacy_migration_target": True},
+    {"slug": "guardian_spec", "class_slug": "warrior",
+     "display_name_it": "Guardiano",
+     "description_it": "Tank difensivo, scudo e armatura pesante.",
+     "stat_bonus": {"endurance": 1},
+     "weapon_tag_unlocks": [],
+     "armor_tag_unlocks": ["heavy", "shield"],
+     "counter_tags": []},
+    {"slug": "weapon_master_spec", "class_slug": "warrior",
+     "display_name_it": "Maestro d'Armi",
+     "description_it": "Versatile, padroneggia ogni arma.",
+     "stat_bonus": {"strength": 1, "agility": 1},
+     "weapon_tag_unlocks": ["finesse"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    # Rogue
+    {"slug": "assassin_spec", "class_slug": "rogue",
+     "display_name_it": "Assassino",
+     "description_it": "Esecuzioni silenziose con veleno e pugnale.",
+     "stat_bonus": {"agility": 1, "strength": 1},
+     "weapon_tag_unlocks": ["poison"],
+     "armor_tag_unlocks": [],
+     "counter_tags": [],
+     "is_legacy_migration_target": True},
+    {"slug": "duelist_spec", "class_slug": "rogue",
+     "display_name_it": "Duellante",
+     "description_it": "Combattimento di finezza, armi leggere e parata.",
+     "stat_bonus": {"agility": 1},
+     "weapon_tag_unlocks": ["shortsword", "finesse"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "shadow_spec", "class_slug": "rogue",
+     "display_name_it": "Ombra",
+     "description_it": "Stealth e illusioni minori per disorientare.",
+     "stat_bonus": {"agility": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Mage
+    {"slug": "necromancer_spec", "class_slug": "mage",
+     "display_name_it": "Negromante",
+     "description_it": "Magia oscura, evocazioni e DoT.",
+     "stat_bonus": {"intellect": 1, "agility": 1},
+     "weapon_tag_unlocks": ["scythe", "dark"],
+     "armor_tag_unlocks": ["bone"],
+     "counter_tags": [],
+     "is_legacy_migration_target": True},
+    {"slug": "elementalist_spec", "class_slug": "mage",
+     "display_name_it": "Elementalista",
+     "description_it": "Burst AoE basato su elementi.",
+     "stat_bonus": {"intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "arcanist_spec", "class_slug": "mage",
+     "display_name_it": "Arcanista",
+     "description_it": "Controllo e buff arcani.",
+     "stat_bonus": {"intellect": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Priest
+    {"slug": "healer_spec", "class_slug": "priest",
+     "display_name_it": "Guaritore",
+     "description_it": "Cure pure, salvezza del gruppo.",
+     "stat_bonus": {"faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "exorcist_spec", "class_slug": "priest",
+     "display_name_it": "Esorcista",
+     "description_it": "Anti-non-morti e anti-Vuoto.",
+     "stat_bonus": {"faith": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [],
+     "counter_tags": ["undead", "void"]},
+    {"slug": "oracle_spec", "class_slug": "priest",
+     "display_name_it": "Oracolo",
+     "description_it": "Predizioni e buff strategici.",
+     "stat_bonus": {"faith": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Ranger
+    {"slug": "marksman_spec", "class_slug": "ranger",
+     "display_name_it": "Tiratore Scelto",
+     "description_it": "DPS a distanza, precisione massima.",
+     "stat_bonus": {"agility": 1},
+     "weapon_tag_unlocks": ["bow", "crossbow"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "monster_hunter_spec", "class_slug": "ranger",
+     "display_name_it": "Cacciatore di Mostri",
+     "description_it": "Specializzato contro bestie e draghi.",
+     "stat_bonus": {"agility": 1, "strength": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [],
+     "counter_tags": ["beast", "dragon"]},
+    {"slug": "scout_spec", "class_slug": "ranger",
+     "display_name_it": "Esploratore",
+     "description_it": "Ricognizione, agilità e tracciamento.",
+     "stat_bonus": {"agility": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Druid
+    {"slug": "leafwarden_spec", "class_slug": "druid",
+     "display_name_it": "Custode delle Foglie",
+     "description_it": "Cure dalla natura, buff regenerativi.",
+     "stat_bonus": {"faith": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "shapeshifter_spec", "class_slug": "druid",
+     "display_name_it": "Mutaforma",
+     "description_it": "Forme bestiali, ibrido DPS/Tank.",
+     "stat_bonus": {"strength": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "shaman_spec", "class_slug": "druid",
+     "display_name_it": "Sciamano",
+     "description_it": "Caster elementale, totem e spiriti.",
+     "stat_bonus": {"faith": 1, "intellect": 1},
+     "weapon_tag_unlocks": ["totem"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    # Monk
+    {"slug": "inner_fist_spec", "class_slug": "monk",
+     "display_name_it": "Pugno Interiore",
+     "description_it": "Pure martial, niente armi.",
+     "stat_bonus": {"agility": 1, "endurance": 1},
+     "weapon_tag_unlocks": ["unarmed"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "spirit_guardian_spec", "class_slug": "monk",
+     "display_name_it": "Guardiano Spirituale",
+     "description_it": "Tank/Healer ibrido, aure protettive.",
+     "stat_bonus": {"faith": 1, "endurance": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "ascetic_spec", "class_slug": "monk",
+     "display_name_it": "Asceta",
+     "description_it": "Disciplina e burst meditativo.",
+     "stat_bonus": {"agility": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Bard
+    {"slug": "warsinger_spec", "class_slug": "bard",
+     "display_name_it": "Canto di Guerra",
+     "description_it": "Combattente di prima linea con canto bellico.",
+     "stat_bonus": {"intellect": 1, "strength": 1},
+     "weapon_tag_unlocks": ["sword", "dagger"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "herald_spec", "class_slug": "bard",
+     "display_name_it": "Araldo",
+     "description_it": "Buff/aura sulla squadra.",
+     "stat_bonus": {"intellect": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "inspiration_weaver_spec", "class_slug": "bard",
+     "display_name_it": "Tessitore d'Ispirazione",
+     "description_it": "Cura e ispira il gruppo.",
+     "stat_bonus": {"intellect": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    # Paladin
+    {"slug": "oath_defender_spec", "class_slug": "paladin",
+     "display_name_it": "Difensore del Giuramento",
+     "description_it": "Tank puro, scudo e armatura pesante.",
+     "stat_bonus": {"endurance": 1, "faith": 1},
+     "weapon_tag_unlocks": [],
+     "armor_tag_unlocks": ["shield", "heavy"],
+     "counter_tags": []},
+    {"slug": "rune_knight_spec", "class_slug": "paladin",
+     "display_name_it": "Cavaliere Runico",
+     "description_it": "Tank magico, rune protettive.",
+     "stat_bonus": {"faith": 1, "intellect": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "vindicator_spec", "class_slug": "paladin",
+     "display_name_it": "Vendicatore",
+     "description_it": "Anti-non-morti e anti-demoni.",
+     "stat_bonus": {"faith": 1, "strength": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [],
+     "counter_tags": ["undead", "demon"]},
+    # Warlock
+    {"slug": "demon_pact_spec", "class_slug": "warlock",
+     "display_name_it": "Patto Infernale",
+     "description_it": "DPS sostenuto da maledizioni di fuoco e sangue.",
+     "stat_bonus": {"intellect": 1, "faith": 1},
+     "weapon_tag_unlocks": ["tome"],
+     "armor_tag_unlocks": [], "counter_tags": []},
+    {"slug": "void_pact_spec", "class_slug": "warlock",
+     "display_name_it": "Patto del Vuoto",
+     "description_it": "DoT debuffer, drena vita e abilità.",
+     "stat_bonus": {"intellect": 1, "agility": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [],
+     "counter_tags": ["void"]},
+    {"slug": "stellar_pact_spec", "class_slug": "warlock",
+     "display_name_it": "Patto Stellare",
+     "description_it": "Burst caster con cure d'urto al gruppo.",
+     "stat_bonus": {"intellect": 1, "faith": 1},
+     "weapon_tag_unlocks": [], "armor_tag_unlocks": [], "counter_tags": []},
+]
+
+
+async def _upsert_base_classes(db, *, dry_run: bool) -> dict[str, int]:
+    """Mark existing base classes + insert warlock."""
+    now = datetime.now(timezone.utc)
+    inserted = 0
+    flagged = 0
+    skipped = 0
+    for entry in BASE_CLASSES:
+        slug = entry["slug"]
+        existing = await db.adventurer_classes.find_one({"slug": slug})
+        if existing:
+            # Idempotency: only update if is_base_class is not already True.
+            if existing.get("is_base_class") is True:
+                skipped += 1
+                continue
+            if not dry_run:
+                await db.adventurer_classes.update_one(
+                    {"slug": slug},
+                    {"$set": {"is_base_class": True, "updated_at": now}},
+                )
+                await write_audit(
+                    db, event_type="class_marked_base_round160",
+                    actor_user_id=None, actor_guild_id=None,
+                    source="round160.seed_classes_v2",
+                    metadata={"slug": slug},
+                )
+            flagged += 1
+        else:
+            # warlock new entry — include public `id` (UUID) so the
+            # `class_public()` projector and downstream consumers don't
+            # raise KeyError. Reuses uuid4 just like seed_data.py.
+            doc = {**entry, "id": str(uuid.uuid4()),
+                   "is_active": True, "is_base_class": True,
+                   "created_at": now, "updated_at": now}
+            if not dry_run:
+                await db.adventurer_classes.insert_one(doc)
+                await write_audit(
+                    db, event_type="class_created_round160",
+                    actor_user_id=None, actor_guild_id=None,
+                    source="round160.seed_classes_v2",
+                    metadata={"slug": slug, "round_intro": 16},
+                )
+            inserted += 1
+    return {"inserted": inserted, "flagged_base": flagged, "skipped": skipped}
+
+
+async def _deprecate_classes(db, *, dry_run: bool) -> dict[str, int]:
+    now = datetime.now(timezone.utc)
+    deprecated = 0
+    skipped = 0
+    for entry in DEPRECATIONS:
+        slug = entry["slug"]
+        existing = await db.adventurer_classes.find_one({"slug": slug})
+        if not existing:
+            skipped += 1
+            continue
+        # Idempotency: skip if already deprecated.
+        if existing.get("deprecated_at") and existing.get("successor_slug"):
+            skipped += 1
+            continue
+        if not dry_run:
+            await db.adventurer_classes.update_one(
+                {"slug": slug},
+                {"$set": {
+                    "is_active": False,
+                    "is_base_class": False,
+                    "deprecated_at": now,
+                    "successor_slug": entry["successor_slug"],
+                    "successor_specialization_slug":
+                        entry["successor_specialization_slug"],
+                    "updated_at": now,
+                }},
+            )
+            await write_audit(
+                db, event_type="class_deprecated_round160",
+                actor_user_id=None, actor_guild_id=None,
+                source="round160.seed_classes_v2",
+                metadata={
+                    "slug": slug,
+                    "successor_slug": entry["successor_slug"],
+                    "successor_specialization_slug":
+                        entry["successor_specialization_slug"],
+                },
+            )
+        deprecated += 1
+    return {"deprecated": deprecated, "skipped": skipped}
+
+
+async def _seed_specializations(db, *, dry_run: bool) -> dict[str, int]:
+    now = datetime.now(timezone.utc)
+    inserted = 0
+    skipped = 0
+    for spec in SPECIALIZATIONS:
+        slug = spec["slug"]
+        existing = await db.class_specializations.find_one({"slug": slug})
+        if existing:
+            skipped += 1
+            continue
+        doc = {
+            **spec,
+            "is_unlockable": True,
+            "requires_class_hall_level": 1,
+            "is_active": True,
+            "created_at": now,
+            "updated_at": now,
+        }
+        # Default the boolean if not explicitly set.
+        doc.setdefault("is_legacy_migration_target", False)
+        if not dry_run:
+            await db.class_specializations.insert_one(doc)
+            await write_audit(
+                db, event_type="class_specialization_seeded",
+                actor_user_id=None, actor_guild_id=None,
+                source="round160.seed_classes_v2",
+                metadata={"slug": slug, "class_slug": spec["class_slug"]},
+            )
+        inserted += 1
+    return {"inserted": inserted, "skipped": skipped}
+
+
+async def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true",
+                        help="No DB writes, only report counts.")
+    args = parser.parse_args()
+
+    load_dotenv()
+    mongo_url = os.environ.get("MONGO_URL")
+    db_name = os.environ.get("DB_NAME")
+    if not mongo_url or not db_name:
+        print("ERROR: MONGO_URL / DB_NAME not configured", file=sys.stderr)
+        return 2
+
+    client = AsyncIOMotorClient(mongo_url)
+    try:
+        db = client[db_name]
+        bc = await _upsert_base_classes(db, dry_run=args.dry_run)
+        dep = await _deprecate_classes(db, dry_run=args.dry_run)
+        sp = await _seed_specializations(db, dry_run=args.dry_run)
+        print({"dry_run": args.dry_run,
+               "base_classes": bc,
+               "deprecations": dep,
+               "specializations": sp})
+        return 0
+    finally:
+        client.close()
+
+
+if __name__ == "__main__":
+    sys.exit(asyncio.run(main()))

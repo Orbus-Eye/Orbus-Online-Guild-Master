@@ -1,0 +1,1347 @@
+{
+  "overcap": {
+    "banner_text": "Roster oltre capacità: {current}/{cap}. Congeda {must_retire} per sbloccare le azioni.",
+    "manage_cta": "Gestisci capacità"
+  },
+  "auction": {
+    "title": "Asta",
+    "subtitle": "Compra e vendi oggetti tra giocatori. Commissione asta: {fee}%.",
+    "tab_buy": "COMPRA",
+    "tab_sell": "VENDI",
+    "tab_mine": "INSERZIONI",
+    "buy_btn": "Compra all'Asta",
+    "buy_btn_short": "Compra",
+    "buy_confirm_btn": "Conferma acquisto",
+    "buy_cancel_btn": "Annulla",
+    "sell_btn": "Metti all'Asta",
+    "list_btn": "Inserisci",
+    "buy_confirm_title": "Conferma acquisto",
+    "buy_quantity": "Quantità",
+    "buy_disabled_own": "Non puoi acquistare la tua inserzione",
+    "buy_disabled_gold": "Gold insufficiente",
+    "buy_disabled_status": "Inserzione non più disponibile",
+    "toast_bought": "Acquisto dall'Asta riuscito",
+    "toast_listed": "Inserito all'Asta",
+    "toast_cancelled": "Inserzione ritirata"
+  },
+  "consortiumsExt": {
+    "read_more": "Leggi tutto",
+    "modal_title": "Dettagli Consorzio",
+    "modal_close": "Chiudi",
+    "modal_members_count": "Membri ({n})",
+    "modal_no_description": "Nessuna descrizione fornita."
+  },
+  "rosterManage": {
+    "title": "Gestisci capacità roster",
+    "subtitle": "Riduci il numero di avventurieri attivi sotto il cap dei Dormitori. Il congedo libera lo slot ma può essere reintegrato dal supporto.",
+    "upgrade_cta": "Potenzia Dormitori",
+    "stat_current": "ATTIVI",
+    "stat_cap": "CAP",
+    "stat_dormitories": "DORMITORI",
+    "stat_must_retire": "DA CONGEDARE",
+    "filter_search": "Cerca per nome…",
+    "filter_all_roles": "Tutti i ruoli",
+    "filter_all_rarities": "Tutte le rarità",
+    "sort_power": "Potenza",
+    "sort_rarity": "Rarità",
+    "sort_level": "Livello",
+    "sort_name": "Nome",
+    "sort_desc": "Decrescente",
+    "sort_asc": "Crescente",
+    "selected_count": "Selezionati: {n}",
+    "bulk_retire_btn": "Congeda selezionati ({n})",
+    "empty": "Nessun avventuriero attivo corrisponde ai filtri.",
+    "col_name": "NOME",
+    "col_class": "CLASSE",
+    "col_role": "RUOLO",
+    "col_rarity": "RARITÀ",
+    "col_level": "LV",
+    "col_power": "PWR",
+    "confirm_title": "CONFERMA CONGEDO",
+    "confirm_body": "Stai per congedare {n} avventurieri. L'azione è reversibile via supporto, ma l'avventuriero non sarà più utilizzabile in spedizioni, raid o squadre fino al reintegro.",
+    "confirm_disclaimer": "⚠ Verifica la selezione: equipaggiamento rimosso resta in inventario, ma il roster perde questi membri immediatamente.",
+    "confirm_submit": "Conferma congedo",
+    "retire_success": "{n} avventurieri congedati.",
+    "retire_partial_fail": "{n} congedi falliti — riprova o contatta il supporto.",
+    "tab_manage": "GESTISCI",
+    "tab_archive": "ARCHIVIO",
+    "archive_empty": "Nessun avventuriero congedato.",
+    "col_retired_at": "Congedato il",
+    "col_retired_via": "Origine"
+  },
+  "rosterHealth": {
+    "state_healthy": "ROSTER OK",
+    "state_filling": "ROSTER QUASI PIENO",
+    "state_at_cap": "ROSTER AL LIMITE",
+    "state_over_cap": "ROSTER OLTRE CAPACITÀ",
+    "adventurers_label": "Avventurieri",
+    "headroom_label": "Slot disponibili",
+    "dorm_level_label": "Dormitori Lv {n}",
+    "loading": "Caricamento stato roster…",
+    "error": "Impossibile caricare lo stato del roster",
+    "overcap_hint": "Potenzia i Dormitori o congeda avventurieri dal Roster Management."
+  },
+  "lang": {
+    "en": "English",
+    "it": "Italiano",
+    "switch_to_en": "EN",
+    "switch_to_it": "IT"
+  },
+  "common": {
+    "loading": "Caricamento…",
+    "error": "Errore",
+    "retry": "Riprova",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "back": "Indietro",
+    "next": "Avanti",
+    "skip": "Salta",
+    "close": "Chiudi",
+    "yes": "Sì",
+    "no": "No",
+    "empty": "Niente ancora",
+    "of": "di",
+    "gold": "oro",
+    "gold_short": "o",
+    "relative": {
+      "s_ago": "{n}s fa",
+      "m_ago": "{n}m fa",
+      "h_ago": "{n}h fa",
+      "d_ago": "{n}g fa"
+    }
+  },
+  "nav": {
+    "dashboard": "DASH",
+    "adventurers": "AVVENTURIERI",
+    "recruitment": "RECLUTA",
+    "dungeons": "DUNGEON",
+    "expeditions": "SPEDIZIONI",
+    "inventory": "DEPOSITO",
+    "crafting": "FORGIA",
+    "market": "MERCATO",
+    "leaderboard": "CLASSIFICA",
+    "admin": "ADMIN",
+    "logout": "esci",
+    "brand_subtitle_dashboard": "DASHBOARD",
+    "consortiums": "Consorzi",
+    "chronicle": "CRONACA",
+    "training": "ADDESTR.",
+    "contracts": "CONTRATTI",
+    "forge": "OFFICINA",
+    "raids": "RAID",
+    "auction": "ASTA",
+    "chat": "CHAT",
+    "guide": "GUIDA",
+    "squads": "SQUADRE",
+    "territory": "TERRITORIO"
+  },
+  "landing": {
+    "title": "Orbus Online: Guild Master",
+    "tagline": "Un MMO testuale di gestione gilde",
+    "description_1": "Guida una gilda, recluta avventurieri, inviali nei dungeon più pericolosi.",
+    "description_2": "Niente grafica. Niente sprite. Solo numeri, scelte e conseguenze.",
+    "cta_login": "Accedi",
+    "cta_register": "Crea Account",
+    "cta_leaderboard": "Vedi Classifica",
+    "feature_recruit_title": "Recluta",
+    "feature_recruit_desc": "Assumi avventurieri con statistiche e tratti unici.",
+    "feature_dispatch_title": "Spedisci",
+    "feature_dispatch_desc": "Manda squadre nei dungeon. Leggi il report finale.",
+    "feature_grow_title": "Cresci",
+    "feature_grow_desc": "Potenzia la sede, accumula reputazione, batti i rivali.",
+    "cta_dashboard": "Entra in Dashboard"
+  },
+  "auth": {
+    "login_title": "Accedi",
+    "register_title": "Crea il tuo account",
+    "email": "Email",
+    "username": "Nome utente",
+    "password": "Password",
+    "confirm_password": "Conferma password",
+    "password_min": "min 8 caratteri",
+    "submit_login": "Accedi",
+    "submit_register": "Registrati",
+    "no_account": "Nessun account?",
+    "have_account": "Già registrato?",
+    "go_register": "Creane uno",
+    "go_login": "Accedi",
+    "forgot_password": "Password dimenticata?",
+    "reset_request_title": "Recupera password",
+    "reset_request_body": "Inserisci la tua email e ti invieremo un link per il reset.",
+    "reset_confirm_title": "Imposta nuova password",
+    "reset_token": "Token di reset",
+    "new_password": "Nuova password",
+    "submit_reset": "Reimposta password",
+    "submit_send_link": "Invia link di reset",
+    "logout": "Esci",
+    "toast_login_success": "Autenticato. Bentornato.",
+    "toast_register_success": "Account creato. È ora di fondare una gilda.",
+    "errors": {
+      "invalid_credentials": "Email o password non validi",
+      "email_taken": "Email già registrata",
+      "weak_password": "Password troppo debole (min 8 caratteri)",
+      "password_mismatch": "Le password non coincidono"
+    }
+  },
+  "password_input": {
+    "show_label": "Mostra password",
+    "hide_label": "Nascondi password"
+  },
+  "adventurer_modal": {
+    "header": "SCHEDA AVVENTURIERO",
+    "close": "Chiudi",
+    "level": "Lvl {n}",
+    "experience": "ESPERIENZA",
+    "total_power": "POTERE TOTALE",
+    "condition": "CONDIZIONE",
+    "condition_rested": "riposato",
+    "traits": "TRATTI",
+    "no_traits": "Nessun tratto.",
+    "equipment": "EQUIPAGGIAMENTO",
+    "slot_weapon": "ARMA",
+    "slot_armor": "ARMATURA",
+    "slot_accessory": "ACCESSORIO",
+    "slot_empty": "vuoto",
+    "open_sheet": "Vedi scheda"
+  },
+  "inventory_extra": {
+    "model_note": "Modello inventario: stack (copie multiple dello stesso oggetto, una prenotazione per equip).",
+    "requirements_label": "REQUISITI",
+    "req_level": "Lvl ≥ {n}",
+    "req_slot": "Slot: {slot}",
+    "status_label": "STATO",
+    "status_available": "Disponibile",
+    "status_equipped_by": "Equipaggiato da {names}",
+    "status_partial_equipped": "{equipped} equipaggiati · {available} disponibili",
+    "actions_label": "AZIONI",
+    "manage_on_adventurer": "Gestisci sull'avventuriero →",
+    "no_compatible_adventurer": "Nessun avventuriero può usare questo oggetto al momento.",
+    "usable_by": "Utilizzabile da {n} avventuriero/i",
+    "not_usable_reason_level": "Richiede livello {n}",
+    "type_all": "Tutti",
+    "type_weapon": "Armi",
+    "type_armor": "Armature",
+    "type_accessory": "Accessori",
+    "type_consumable": "Consumabili",
+    "type_material": "Materiali",
+    "filter_empty": "Nessun oggetto corrisponde ai filtri selezionati.",
+    "crafting_material": "MATERIALE",
+    "crafting_material_tip": "Usato come ingrediente in una ricetta della Forgia.",
+    "bound_badge": "LEGATO",
+    "bound_tooltip": "Oggetto rifinito/incantato — non più vendibile al mercato.",
+    "goto_forge": "Vai a Officina"
+  },
+  "create_guild": {
+    "title": "Fonda la tua gilda",
+    "subtitle": "Scegli un nome e una descrizione breve. Ne sarai il Guild Master.",
+    "name": "Nome della gilda",
+    "name_hint": "3-40 caratteri",
+    "description": "Descrizione",
+    "description_hint": "Opzionale, max 300 caratteri",
+    "submit": "Fonda gilda"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bentornato, {username}",
+    "guild_overview": ":: GILDA",
+    "no_description": "nessuna descrizione",
+    "founded": "fondata",
+    "stats": {
+      "level": "LIVELLO",
+      "reputation": "REPUTAZIONE",
+      "gold": "ORO",
+      "adventurers": "AVVENTURIERI",
+      "active_exp": "SPED. ATTIVE",
+      "guild_id": "ID GILDA",
+      "peak_power": "POTENZA PEAK",
+      "completed": "COMPLETATE",
+      "highest": "DUNGEON PIÙ ALTO",
+      "last_loot": "ULTIMO BOTTINO"
+    },
+    "quick_actions": ":: AZIONI RAPIDE",
+    "last_expedition": ":: ULTIMA SPEDIZIONE",
+    "system_log": ":: LOG DI SISTEMA",
+    "actions": {
+      "recruit": "Recluta avventurieri",
+      "adventurers": "Vedi avventurieri",
+      "dungeons": "Dungeon",
+      "inventory": "Deposito"
+    },
+    "recent_reports": ":: REPORT RECENTI",
+    "no_recent_reports": "Nessuna spedizione. Inizia la tua prima nei DUNGEON.",
+    "peak_power_tooltip": "Apri la classifica pubblica delle gilde"
+  },
+  "onboarding": {
+    "header": ":: TUTORIAL · STEP {step} DI 5",
+    "skip": "SALTA TUTORIAL",
+    "finish": "termina tutorial",
+    "toast_skipped": "Tutorial nascosto.",
+    "toast_completed": "Tutorial completato. Buona fortuna, Guild Master.",
+    "step1": {
+      "label": "Benvenuto nella tua gilda",
+      "body": "Sei il Guild Master. Recluta avventurieri e inviali in spedizione.",
+      "cta": "Vai a Reclutamento →"
+    },
+    "step2": {
+      "label": "Recluta 3 avventurieri",
+      "body": "Servono almeno 3 avventurieri per una squadra. 3 refresh gratis al giorno, poi 10/20/30 oro.",
+      "cta": "Apri Reclutamento →"
+    },
+    "step3": {
+      "label": "Inizia la prima spedizione",
+      "body": "Goblin Warrens è il dungeon iniziale. Potenza raccomandata 45, durata 60s.",
+      "cta": "Sfoglia i Dungeon →"
+    },
+    "step4": {
+      "label": "Leggi il report",
+      "body": "La prima spedizione è completata. Controlla il report per XP, oro e bottino.",
+      "cta": "Vedi Spedizioni →"
+    },
+    "step5": {
+      "label": "Equipaggia oggetti o replay",
+      "body": "Equipaggia il bottino per aumentare la potenza, o usa Replay per ripetere il dungeon.",
+      "cta": "Apri Deposito →"
+    }
+  },
+  "recruitment": {
+    "title": "Reclutamento",
+    "subtitle": "Sfoglia il roster di candidati e recluta quelli adatti alla tua strategia.",
+    "current_offer": "OFFERTA CORRENTE",
+    "no_candidates": "Nessun candidato disponibile. Prova ad aggiornare il roster.",
+    "candidate": {
+      "level": "lv",
+      "recruit": "Recluta",
+      "recruited": "Reclutato",
+      "class": "Classe",
+      "role": "Ruolo",
+      "rarity": "Rarità",
+      "stats": "Statistiche",
+      "traits": "Tratti"
+    },
+    "refresh": {
+      "free_remaining": "{n} gratis oggi",
+      "cost_label": "Aggiorna ({cost}o)",
+      "free_label": "Aggiorna",
+      "tooltip": "Reset ogni giorno alle 00:00 UTC",
+      "toast_free": "Roster aggiornato (gratis).",
+      "toast_paid": "Roster aggiornato (-{cost}o).",
+      "toast_no_gold": "Oro insufficiente: servono {need}, hai {have}.",
+      "next_reset": "Prossimo reset {at}"
+    },
+    "recruit_cost": "Costo reclutamento: {cost}o",
+    "toast_recruited": "{name} si è unito alla tua gilda."
+  },
+  "adventurers": {
+    "title": "Avventurieri",
+    "subtitle": "Il roster della tua gilda. Clicca un avventuriero per gestire l'equipaggiamento.",
+    "count": "{n} avventurieri",
+    "no_adventurers": "Nessun avventuriero. Vai in RECLUTA per assumerne.",
+    "no_heroes": ":: NESSUN EROE ANCORA",
+    "guild_roster": ":: ROSTER GILDA",
+    "total": "TOTALE",
+    "manage": "gestisci →",
+    "manage_equipment": "gestisci equipaggiamento →",
+    "goto_recruitment": "Vai a Reclutamento →",
+    "available": "Disponibile",
+    "in_expedition": "In spedizione",
+    "level": "Lv {n}",
+    "xp": "XP {current}/{next}",
+    "morale": "Morale",
+    "stamina": "Stamina",
+    "traits": {
+      "trait_effects": "Effetti tratti",
+      "section_title": "EFFETTI TRATTI",
+      "base_power": "Potenza base:",
+      "effective_power": "Potenza effettiva:",
+      "xp_gain": "Guadagno XP:",
+      "xp_gain_short": "guadagno XP",
+      "active_modifiers": "Modificatori attivi:",
+      "flavor_traits": "Tratti narrativi (nessun effetto):",
+      "no_effects": "Nessun effetto attivo dai tratti.",
+      "no_effect": "nessun effetto",
+      "loading": "CARICAMENTO DATI TRATTI…",
+      "unavailable": "DATI TRATTI NON DISPONIBILI"
+    }
+  },
+  "quests": {
+    "title": "MISSIONI GIORNALIERE",
+    "reset_in": "Reset tra {time}",
+    "loading": "CARICAMENTO MISSIONI…",
+    "unavailable": "MISSIONI NON DISPONIBILI",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "reward_gold": "oro",
+    "claim_success": "Ricompensa missione riscossa: +{gold} oro",
+    "expedition_complete": {
+      "title": "Completa 1 spedizione"
+    },
+    "recruit": {
+      "title": "Recluta 1 avventuriero"
+    },
+    "equip": {
+      "title": "Equipaggia 1 oggetto"
+    },
+    "weekly": {
+      "run_expeditions_3": "Completa 3 spedizioni",
+      "craft_items_2": "Crea 2 oggetti",
+      "market_buy_1": "Acquista 1 oggetto al market",
+      "equip_items_3": "Equipaggia 3 oggetti",
+      "expedition_loot_10": "Recupera 10 oggetti dalle spedizioni",
+      "market_listings_1": "Crea 1 inserzione al market"
+    }
+  },
+  "dungeons": {
+    "title": "Dungeon",
+    "subtitle": "Scegli un dungeon e invia una squadra. I dungeon bloccati mostrano i requisiti.",
+    "tier": "Tier {n}",
+    "duration": "Durata",
+    "duration_sec": "{n}s",
+    "recommended_power": "Potenza raccomandata",
+    "rewards_preview": "Anteprima ricompense",
+    "locked": "BLOCCATO",
+    "unlocked": "SBLOCCATO",
+    "start_button": "Avvia Spedizione →",
+    "locked_button": "Bloccato",
+    "unlock_reasons": {
+      "min_adventurers": "Servono {n} avventurieri, ne hai {have}",
+      "min_power": "Serve potenza peak ≥ {need}, hai {have}",
+      "min_level_or_power": "Serve livello gilda ≥ {level} OPPURE potenza peak ≥ {power}",
+      "dragons_hoard": "Sconfiggi prima dungeon più tosti (sticky gate)",
+      "shadow_crypts": "Serve potenza peak ≥ {need}",
+      "generic": "Bloccato: {reason}"
+    },
+    "no_dungeons": "Nessun dungeon disponibile."
+  },
+  "expeditions": {
+    "title": "Spedizioni",
+    "subtitle": "Run attive e ultimi report.",
+    "active": "Attive",
+    "recent": "Recenti",
+    "no_active": "Nessuna spedizione attiva.",
+    "no_recent": "Nessuna run completata.",
+    "view_report": "Vedi report",
+    "replay_last": "Ripeti ultima run",
+    "team_power": "Potenza squadra",
+    "success_chance": "Probabilità successo",
+    "ends_in": "termina tra {time}",
+    "completed_at": "completata {at}",
+    "report": {
+      "title": "Report Spedizione",
+      "outcome": "Esito",
+      "rewards": "Ricompense",
+      "loot": "Bottino",
+      "xp_gained": "XP guadagnato",
+      "gold_gained": "Oro guadagnato",
+      "no_loot": "Nessun bottino questa volta."
+    },
+    "started_at": "iniziata {at}"
+  },
+  "inventory": {
+    "title": "Deposito",
+    "subtitle": "Oggetti raccolti dalle spedizioni. Equipaggiali ai tuoi avventurieri.",
+    "filter_all": "Tutti",
+    "filter_weapon": "Armi",
+    "filter_armor": "Armature",
+    "filter_accessory": "Accessori",
+    "empty": "Il deposito è vuoto. Il bottino arriva dalle spedizioni.",
+    "equipped_on": "Equipaggiato su {name}",
+    "unequipped": "Non equipaggiato",
+    "rarity_label": "Rarità",
+    "type_label": "Tipo",
+    "slot_label": "Slot"
+  },
+  "equipment": {
+    "title": "Equipaggiamento — {name}",
+    "back": "← Torna agli avventurieri",
+    "current_power": "Potenza",
+    "equip_button": "Equipaggia",
+    "unequip_button": "Rimuovi",
+    "slot_empty": "vuoto",
+    "available_items": "Oggetti disponibili",
+    "no_items": "Nessun oggetto per questo slot."
+  },
+  "leaderboard": {
+    "title": "Classifica Gilde",
+    "subtitle": "Top gilde ordinate per Potenza Peak.",
+    "rank": "Pos",
+    "guild": "Gilda",
+    "peak_power": "Potenza Peak",
+    "level": "Livello",
+    "no_data": "Nessuna gilda in classifica.",
+    "founded_at": "fondata il {at}"
+  },
+  "admin": {
+    "title": "Admin",
+    "tabs": {
+      "classes": "Classi",
+      "traits": "Tratti",
+      "dungeons": "Dungeon",
+      "items": "Oggetti"
+    }
+  },
+  "leaderboard_page": {
+    "rank": "POS",
+    "guild": "GILDA",
+    "peak_pwr_short": "PEAK",
+    "level_short": "LV",
+    "reputation_short": "REP",
+    "highest": "PIÙ ALTO",
+    "expeditions_short": "SPED",
+    "brand_subtitle": "CLASSIFICA"
+  },
+  "inventory_table": {
+    "name": "NOME",
+    "rarity": "RARITÀ",
+    "type": "TIPO",
+    "total": "TOT",
+    "equipped": "EQUIP",
+    "available": "DISP",
+    "bonuses": "BONUS",
+    "power": "POTENZA",
+    "filter_all": "TUTTI",
+    "filter_weapons": "ARMI",
+    "filter_armor": "ARMATURE",
+    "filter_accessories": "ACCESSORI"
+  },
+  "adventurers_table": {
+    "name": "NOME",
+    "class": "CLASSE",
+    "role": "RUOLO",
+    "rarity": "RARITÀ",
+    "level": "LV",
+    "xp": "XP",
+    "power": "POTENZA",
+    "equip": "EQUIP",
+    "traits": "TRATTI",
+    "status": "STATO"
+  },
+  "dungeons_card": {
+    "tier": "TIER",
+    "duration": "Durata",
+    "recommended_power": "Potenza raccomandata",
+    "required_team": "Team richiesto",
+    "base_reward": "Ricompensa base"
+  },
+  "expedition_new": {
+    "title": "Manda una squadra",
+    "subtitle": "Seleziona gli avventurieri. Potenza e morale contano.",
+    "selected": "SELEZIONATO",
+    "dispatch_btn": "Invia",
+    "back_to_dungeons": "← Torna ai Dungeon",
+    "toast_dispatched": "Spedizione partita. Torna in {seconds}s.",
+    "toast_dungeon_not_found": "Dungeon non trovato",
+    "brand_subtitle": "INVIO",
+    "section_dispatch_party": ":: INVIO SQUADRA",
+    "section_briefing": ":: BRIEFING",
+    "subtitle_select": "Seleziona esattamente {n} avventurieri. Combina ruoli (Tank · DPS · Healer) per ottenere bonus di potenza.",
+    "dungeon_meta": "Difficoltà {difficulty} · {seconds}s · potenza consigliata {power}",
+    "equipment_bonus_label": "BONUS EQUIPAGGIAMENTO",
+    "team_power_final_label": "POTENZA SQUADRA (FINALE)",
+    "success_chance_label": "PROBABILITÀ DI SUCCESSO",
+    "underpowered_warning": "⚠ Squadra sotto potenziata per questo dungeon (consigliata {recommended}, hai {actual}).",
+    "dispatching_btn": "invio in corso…",
+    "preview_title": "ANTEPRIMA DEL LANCIO",
+    "preview_loading": "calcolo anteprima…",
+    "preview_injury_risk": "Rischio ferite",
+    "preview_injury_low": "Basso",
+    "preview_injury_medium": "Medio",
+    "preview_injury_high": "Alto",
+    "preview_expected_loot": "Bottino atteso",
+    "preview_gold_range": "{min}–{max} oro",
+    "preview_xp_range": "{min}–{max} XP",
+    "preview_loot_rarity_common": "qualità comune",
+    "preview_loot_rarity_uncommon": "qualità non comune",
+    "preview_loot_rarity_rare": "qualità rara",
+    "preview_modifiers": "Modificatori in gioco",
+    "preview_no_modifiers": "Nessun modificatore attivo per questa squadra.",
+    "preview_unavailable": "Anteprima non disponibile.",
+    "preview_polarity_positive": "Positivo",
+    "preview_polarity_negative": "Negativo",
+    "preview_polarity_mixed": "Misto"
+  },
+  "crafting": {
+    "title": "Forgia della Gilda",
+    "subtitle": "Ricette craftabili usando i materiali del deposito.",
+    "empty": "Nessuna ricetta disponibile.",
+    "inputs": "MATERIALI",
+    "output": "OUTPUT",
+    "gold_cost": "Oro",
+    "missing": "mancano",
+    "short": "mancano",
+    "req_guild_level": "Richiede gilda livello {n}",
+    "status_craftable": "CRAFTABILE",
+    "status_missing_materials": "MATERIALI MANCANTI",
+    "status_insufficient_gold": "ORO INSUFFICIENTE",
+    "status_requires_level": "LIVELLO GILDA INSUFFICIENTE",
+    "craft": "Crea",
+    "crafting": "Forgiatura…",
+    "toast_crafted": "Creato"
+  },
+  "market": {
+    "title": "Mercato",
+    "subtitle": "Compra e vendi oggetti con altre gilde. Tassa {fee}% sul venditore.",
+    "tab_buy": "COMPRA",
+    "tab_sell": "VENDI",
+    "tab_mine": "LE MIE INSERZIONI",
+    "filter_type": "Tipo",
+    "filter_rarity": "Rarità",
+    "filter_level_max": "Livello max",
+    "filter_price_max": "Prezzo max",
+    "filter_search": "Cerca nome",
+    "sort_created_at": "Più recenti",
+    "sort_price_asc": "Prezzo ↑",
+    "sort_price_desc": "Prezzo ↓",
+    "sort_level": "Livello",
+    "empty_buy": "Nessuna inserzione disponibile.",
+    "empty_mine": "Non hai inserzioni attive.",
+    "qty": "Qtà",
+    "price_unit": "Prezzo unitario",
+    "total": "Totale",
+    "seller": "Venditore",
+    "buy_btn": "Compra",
+    "buy_quantity": "Quantità da comprare",
+    "buy_confirm": "Confermi l'acquisto?",
+    "sell_select_item": "Seleziona oggetto",
+    "sell_no_items": "Non hai oggetti vendibili disponibili.",
+    "sell_quantity": "Quantità",
+    "sell_price_unit": "Prezzo unitario",
+    "sell_fee_estimate": "Tassa stimata",
+    "sell_proceeds": "Ricevi",
+    "sell_btn": "Vendi",
+    "sell_confirm": "Confermi la pubblicazione?",
+    "cancel_btn": "Cancella",
+    "cancel_confirm": "Confermi la cancellazione?",
+    "status_active": "ATTIVA",
+    "status_sold": "VENDUTA",
+    "status_cancelled": "CANCELLATA",
+    "status_expired": "SCADUTA",
+    "buyer": "Compratore",
+    "available_qty": "Disponibili",
+    "locked_qty": "Listati",
+    "toast_listed": "Inserzione pubblicata",
+    "toast_bought": "Acquistato",
+    "toast_cancelled": "Inserzione cancellata",
+    "error_bound_item": "Oggetto LEGATO: non può essere venduto al mercato (è stato rifinito o incantato)."
+  },
+  "expedition_report_page": {
+    "brand_subtitle": "REPORT",
+    "replay_title": "Questa run è stata avviata via Replay",
+    "recommended_power": "Potenza raccomandata",
+    "base_power": "Potenza base squadra",
+    "equipment_bonus": "Bonus equipaggiamento",
+    "final_power": "Potenza finale squadra",
+    "success_no_equip": "Probabilità (senza equip)",
+    "success_final": "Probabilità (finale)",
+    "toast_replay_started": "Replay avviato: {dungeon}",
+    "started_at": "iniziata {at}",
+    "completed_at": "completata {at}",
+    "replay_toast": "Replay avviato: {name}",
+    "outcome_success": "Vittoria",
+    "outcome_partial": "Successo parziale",
+    "outcome_failure": "Sconfitta",
+    "rewards_title": "Riepilogo ricompense",
+    "rewards_gold": "Oro guadagnato",
+    "rewards_xp": "XP guadagnata",
+    "rewards_loot": "Bottino",
+    "rewards_no_loot": "Nessun oggetto recuperato",
+    "rewards_injuries": "Ferite",
+    "rewards_fatigue": "Fatica",
+    "what_happened": "Cosa è successo",
+    "modifiers_important": "Modificatori importanti",
+    "no_modifiers": "Nessun modificatore rilevante in questa spedizione.",
+    "step_label_exploration": "Esplorazione",
+    "step_label_traps": "Trappole",
+    "step_label_combat": "Combattimento",
+    "step_label_boss": "Scontro decisivo",
+    "step_label_loot": "Bottino",
+    "step_label_recovery": "Ritirata",
+    "step_label_reward": "Ricompense",
+    "step_result_success": "successo",
+    "step_result_partial": "parziale",
+    "step_result_failure": "fallimento",
+    "step_result_neutral": "neutrale",
+    "tip_underpowered": "Il team era sotto la potenza consigliata: prova ad aggiungere equip o un livello in più.",
+    "tip_no_healer": "Senza un Sacerdote nel gruppo, le ferite restano scoperte: valuta un Healer.",
+    "legacy_fallback": "Report dettagliato non disponibile per questa spedizione."
+  },
+  "create_guild_page": {
+    "name_placeholder": "La Lanterna di Ferro",
+    "desc_placeholder": "Un piccolo ma ambizioso ordine, con sede in una città portuale.",
+    "toast_founded": "Gilda fondata.",
+    "title": "Fonda una gilda"
+  },
+  "password_reset_page": {
+    "request_title": "Recupera password",
+    "request_body": "Inserisci la tua email e ti invieremo un link di reset.",
+    "confirm_title": "Conferma reset",
+    "token_label": "TOKEN DI RESET",
+    "new_password_label": "NUOVA PASSWORD",
+    "confirm_password_label": "CONFERMA NUOVA PASSWORD",
+    "send_link": "Invia link",
+    "submit_reset": "Reimposta",
+    "toast_request_sent": "Richiesta inviata.",
+    "toast_reset_success": "Password reimpostata. Effettua l'accesso.",
+    "passwords_dont_match": "Le password non corrispondono"
+  },
+  "equipment_extra": {
+    "toast_equipped": "Equipaggiato su {slot}",
+    "toast_unequipped": "Rimosso da {slot}",
+    "required_level": "Livello richiesto"
+  },
+  "admin_extra": {
+    "h1": "Pannello Admin",
+    "toast_created": "Creato.",
+    "toast_updated": "Aggiornato.",
+    "toast_deleted": "Eliminato.",
+    "toast_admin_required": "Richiesto accesso admin",
+    "label_description": "DESCRIZIONE",
+    "save": "Salva",
+    "delete": "Elimina",
+    "add": "Aggiungi",
+    "cancel": "Annulla"
+  },
+  "errors": {
+    "network": "Errore di rete. Riprova.",
+    "unauthorized": "Sessione scaduta. Accedi di nuovo.",
+    "forbidden": "Vietato",
+    "not_found": "Non trovato",
+    "validation": "Errore di validazione",
+    "server": "Errore del server. Riprova più tardi.",
+    "insufficient_gold": "Oro insufficiente: servono {need}, hai {have}.",
+    "dungeon_locked": "Dungeon bloccato: {reason}"
+  },
+  "content": {
+    "stat": {
+      "strength": {
+        "name": "forza"
+      },
+      "agility": {
+        "name": "agilità"
+      },
+      "intellect": {
+        "name": "intelletto"
+      },
+      "endurance": {
+        "name": "resistenza"
+      },
+      "faith": {
+        "name": "fede"
+      }
+    },
+    "rarity": {
+      "common": "Comune",
+      "uncommon": "Non comune",
+      "rare": "Raro",
+      "epic": "Epico",
+      "legendary": "Leggendario"
+    },
+    "role": {
+      "tank": "Tank",
+      "dps": "DPS",
+      "healer": "Curatore",
+      "support": "Supporto",
+      "scout": "Esploratore"
+    },
+    "item_type": {
+      "weapon": "Arma",
+      "armor": "Armatura",
+      "accessory": "Accessorio"
+    },
+    "slot": {
+      "main_hand": "Mano principale",
+      "off_hand": "Mano secondaria",
+      "head": "Testa",
+      "chest": "Petto",
+      "legs": "Gambe",
+      "feet": "Piedi",
+      "hands": "Mani",
+      "ring": "Anello",
+      "amulet": "Amuleto",
+      "trinket": "Ciondolo",
+      "accessory": "Accessorio"
+    },
+    "expedition_status": {
+      "pending": "In attesa",
+      "in_progress": "In corso",
+      "completed": "Completata",
+      "failed": "Fallita",
+      "cancelled": "Annullata",
+      "success": "Successo",
+      "partial_success": "Successo parziale",
+      "defeat": "Sconfitta"
+    },
+    "class": {
+      "warrior": {
+        "name": "Guerriero",
+        "role": "Tank",
+        "description": "Combattente da mischia, alta resistenza."
+      },
+      "rogue": {
+        "name": "Ladro",
+        "role": "DPS",
+        "description": "Sicario agile che vive di iniziativa."
+      },
+      "mage": {
+        "name": "Mago",
+        "role": "DPS",
+        "description": "Lanciatore arcano con danno burst enorme."
+      },
+      "cleric": {
+        "name": "Chierico",
+        "role": "Curatore",
+        "description": "Supporto divino, tiene in vita la squadra."
+      },
+      "ranger": {
+        "name": "Ranger",
+        "role": "DPS",
+        "description": "Schermagliatore con vantaggio a distanza."
+      },
+      "paladin": {
+        "name": "Paladino",
+        "role": "Tank",
+        "description": "Guardia sacra, offesa e difesa bilanciate."
+      },
+      "warlock": {
+        "name": "Stregone",
+        "role": "DPS",
+        "description": "Patto oscuro: scambia vita per potere."
+      },
+      "monk": {
+        "name": "Monaco",
+        "role": "DPS",
+        "description": "Marziale disciplinato, schiva spesso."
+      },
+      "druid": {
+        "name": "Druido",
+        "role": "Supporto",
+        "description": "Mutaforma naturale, kit flessibile."
+      },
+      "bard": {
+        "name": "Bardo",
+        "role": "Supporto",
+        "description": "Ispira alleati, indebolisce nemici."
+      },
+      "necromancer": {
+        "name": "Necromante",
+        "role": "DPS",
+        "description": "Comanda i morti, prosciuga i nemici."
+      },
+      "berserker": {
+        "name": "Berserker",
+        "role": "DPS",
+        "description": "Picchiatore folle, alto rischio/ricompensa."
+      }
+    },
+    "trait": {
+      "brave": {
+        "name": "Coraggioso",
+        "description": "Forza grezza sotto pressione."
+      },
+      "quick_learner": {
+        "name": "Studioso Veloce",
+        "description": "Apprende esperienza più in fretta."
+      },
+      "frail": {
+        "name": "Fragile",
+        "description": "Costituzione debole; si stanca prima."
+      },
+      "sharp_eye": {
+        "name": "Occhio Acuto",
+        "description": "Coglie aperture invisibili agli altri."
+      },
+      "devout": {
+        "name": "Devoto",
+        "description": "Ancorato a una chiamata superiore."
+      },
+      "iron-willed": {
+        "name": "Volere d'Acciaio",
+        "description": "Ostinato di fronte al dolore."
+      },
+      "scholar": {
+        "name": "Studioso",
+        "description": "Più XP dalle run."
+      },
+      "lightfoot": {
+        "name": "Passo Leggero",
+        "description": "Si muove senza far rumore."
+      },
+      "bull-strong": {
+        "name": "Forza di Toro",
+        "description": "Porta il doppio del suo peso senza lamentarsi."
+      },
+      "blessed": {
+        "name": "Benedetto",
+        "description": "Nato sotto una stella gentile."
+      },
+      "fast_reader": {
+        "name": "Lettore Veloce",
+        "description": "Traduce pergamene al volo."
+      },
+      "veteran's_eye": {
+        "name": "Occhio del Veterano",
+        "description": "Ha già visto questa battaglia."
+      },
+      "clumsy": {
+        "name": "Goffo",
+        "description": "Inciampa nei propri piedi."
+      },
+      "slow-witted": {
+        "name": "Tardo di Mente",
+        "description": "Prende la via più lunga."
+      },
+      "weak-armed": {
+        "name": "Braccio Debole",
+        "description": "Non riesce a tendere un arco pesante."
+      },
+      "faithless": {
+        "name": "Senza Fede",
+        "description": "Non ha nulla a cui pregare."
+      },
+      "sickly": {
+        "name": "Cagionevole",
+        "description": "Prende ogni raffreddore."
+      },
+      "lucky": {
+        "name": "Fortunato",
+        "description": "Migliori tiri sul bottino."
+      },
+      "tough": {
+        "name": "Duro",
+        "description": "Resistenza maggiore."
+      },
+      "swift": {
+        "name": "Veloce",
+        "description": "Agilità maggiore."
+      },
+      "wise": {
+        "name": "Saggio",
+        "description": "Intelletto maggiore."
+      },
+      "pious": {
+        "name": "Pio",
+        "description": "Fede maggiore."
+      },
+      "strong": {
+        "name": "Forte",
+        "description": "Forza maggiore."
+      },
+      "vigilant": {
+        "name": "Vigile",
+        "description": "Meglio contro le imboscate."
+      },
+      "patient": {
+        "name": "Paziente",
+        "description": "Meno stamina consumata."
+      },
+      "merciless": {
+        "name": "Spietato",
+        "description": "Più danno critico."
+      },
+      "cunning": {
+        "name": "Astuto",
+        "description": "Migliore rilevamento trappole."
+      },
+      "stalwart": {
+        "name": "Tenace",
+        "description": "Tiene posizione contro orde."
+      },
+      "fearless": {
+        "name": "Senza paura",
+        "description": "Ignora la perdita di morale."
+      },
+      "thrifty": {
+        "name": "Parsimonioso",
+        "description": "Più oro dai drop."
+      },
+      "graceful": {
+        "name": "Aggraziato",
+        "description": "Meno mancati colpi."
+      },
+      "iron_will": {
+        "name": "Volontà di ferro",
+        "description": "Resiste a charm/paura."
+      },
+      "battle_hardened": {
+        "name": "Temprato in battaglia",
+        "description": "Subisce meno danno."
+      },
+      "veteran": {
+        "name": "Veterano",
+        "description": "XP iniziale maggiore."
+      },
+      "natural_leader": {
+        "name": "Leader naturale",
+        "description": "Aumenta morale del party."
+      },
+      "loyal": {
+        "name": "Leale",
+        "description": "Non diserta mai."
+      },
+      "stoic": {
+        "name": "Stoico",
+        "description": "Meno stamina nelle run lunghe."
+      },
+      "agile": {
+        "name": "Agile",
+        "description": "Maggiore schivata."
+      },
+      "athletic": {
+        "name": "Atletico",
+        "description": "Stamina massima maggiore."
+      },
+      "perceptive": {
+        "name": "Percettivo",
+        "description": "Trova bottino nascosto."
+      },
+      "fortunate": {
+        "name": "Baciato dalla sorte",
+        "description": "Meno fallimenti critici."
+      },
+      "iron_constitution": {
+        "name": "Costituzione di ferro",
+        "description": "Resiste a veleno/malattia."
+      },
+      "tireless": {
+        "name": "Instancabile",
+        "description": "Recupera stamina più in fretta."
+      },
+      "berserker_blood": {
+        "name": "Sangue berserker",
+        "description": "Più danno con poca HP."
+      },
+      "shadow_walker": {
+        "name": "Camminaombra",
+        "description": "Bonus furtività."
+      }
+    },
+    "dungeon": {
+      "goblin-warrens": {
+        "name": "Tane dei Goblin",
+        "description": "Un labirinto di tunnel umidi pieno di goblin scout. Il posto sicuro per imparare."
+      },
+      "sewer-nest": {
+        "name": "Nido di Fogna",
+        "description": "Livelli puzzolenti infestati da ratti giganti e melme."
+      },
+      "bandit-hideout": {
+        "name": "Covo dei Banditi",
+        "description": "Un campo di banditi umani con armi rubate alle carovane."
+      },
+      "druid-grove": {
+        "name": "Bosco dei Druidi",
+        "description": "Un boschetto sacro corrotto. Attenzione alla natura impazzita."
+      },
+      "cursed-mines": {
+        "name": "Miniere Maledette",
+        "description": "Miniere nanesche abbandonate, ora infestate da minatori non morti."
+      },
+      "shadow-crypts": {
+        "name": "Cripte d'Ombra",
+        "description": "Tombe dimenticate sorvegliate da spettri e spiriti vincolati."
+      },
+      "sunken-library": {
+        "name": "Biblioteca Sommersa",
+        "description": "Biblioteca affogata di tomi proibiti; orrori arcani pattugliano i corridoi."
+      },
+      "lich-sanctum": {
+        "name": "Sancta del Lich",
+        "description": "La sala del trono di un arcimago morto da tempo. Pericolo alto, ricompensa alta."
+      },
+      "storm-spire": {
+        "name": "Guglia della Tempesta",
+        "description": "Una torre colpita di continuo da fulmini. Elementali d'aria dominano i piani alti."
+      },
+      "dragons-hoard": {
+        "name": "Tesoro del Drago",
+        "description": "Tana di un'antica wyrm. Solo i più forti osano entrare."
+      }
+    }
+  },
+  "streak": {
+    "title": "STREAK",
+    "loading": "CARICAMENTO STREAK…",
+    "unavailable": "STREAK NON DISPONIBILE",
+    "best": "Best: {n}",
+    "today_done": "Login di oggi completato",
+    "today_pending": "Completa una missione oggi per estendere la streak",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "claiming": "…",
+    "reward_for_tier": "Tier D{tier}: +{gold} oro + {mats}",
+    "no_mats": "nessun materiale",
+    "no_reward": "Continua la streak per sbloccare ricompense",
+    "claim_success": "Ricompensa streak riscossa: +{gold} oro"
+  },
+  "weekly": {
+    "title": "MISSIONI SETTIMANALI",
+    "loading": "CARICAMENTO SETTIMANALI…",
+    "unavailable": "MISSIONI SETTIMANALI NON DISPONIBILI",
+    "reset_in": "Reset tra {time}",
+    "reward_gold": "oro",
+    "claim": "RISCUOTI",
+    "claimed": "RISCOSSA",
+    "locked": "BLOCCATA",
+    "claim_success": "Ricompensa settimanale riscossa: +{gold} oro",
+    "run_expeditions_3": "Completa 3 spedizioni",
+    "craft_items_2": "Crea 2 oggetti",
+    "market_buy_1": "Acquista 1 oggetto al market",
+    "equip_items_3": "Equipaggia 3 oggetti",
+    "expedition_loot_10": "Recupera 10 oggetti dalle spedizioni",
+    "market_listings_1": "Crea 1 inserzione al market"
+  },
+  "chronicle": {
+    "title": "CRONACA DEL SERVER",
+    "page_title": "Cronaca del Server",
+    "page_intro": "Feed pubblico in sola lettura degli eventi recenti del server: spedizioni completate, raid vinti, achievement sbloccati, milestone delle altre gilde.",
+    "loading": "Caricamento eventi…",
+    "error": "Impossibile caricare la cronaca",
+    "empty": "Nessuna attività recente",
+    "refresh": "AGGIORNA",
+    "now": "adesso",
+    "min_ago": "{n} min fa",
+    "hour_ago": "{n}h fa",
+    "day_ago": "{n}g fa"
+  },
+  "consortiums": {
+    "title": "CONSORZI",
+    "intro": "I Consorzi sono gruppi sociali multi-gilda. Niente bonus di potere, niente reward competitive: solo un punto di incontro e una bacheca eventi condivisa.",
+    "create": "CREA CONSORZIO",
+    "cancel": "ANNULLA",
+    "create_submit": "CREA",
+    "create_success": "Consorzio creato",
+    "join": "ENTRA",
+    "join_success": "Sei entrato nel Consorzio",
+    "leave": "ESCI",
+    "leave_success": "Hai lasciato il Consorzio",
+    "loading": "Caricamento Consorzi…",
+    "empty": "Nessun Consorzio ancora creato",
+    "list_title": "CONSORZI ATTIVI",
+    "you_are_in": "IL TUO CONSORZIO",
+    "members": "MEMBRI",
+    "members_label": "membri",
+    "field_name": "Nome",
+    "field_tag": "Tag",
+    "field_description": "Descrizione",
+    "optional": "opzionale"
+  },
+  "forge": {
+    "title": "OFFICINA",
+    "intro": "Rifinisci, incanta o smonta i tuoi oggetti. Le operazioni rendono l'oggetto LEGATO (non più vendibile).",
+    "tab_refine": "RIFINISCI",
+    "tab_enchant": "INCANTA",
+    "tab_reroll": "RIASSEGNA",
+    "tab_disenchant": "SMONTA",
+    "select_item": "SELEZIONA OGGETTO",
+    "no_eligible": "Nessun oggetto compatibile",
+    "pick_one": "Seleziona un oggetto dalla lista",
+    "operation_panel": "PANNELLO OPERAZIONE",
+    "refine_hint": "Livello attuale: +{lvl}. Costo gold e materiali variano per livello.",
+    "refine_success": "Rifinitura riuscita! Nuovo livello: +{lvl}",
+    "refine_failed": "Rifinitura fallita. Materiali consumati (oggetto intatto).",
+    "enchant_pick_option": "Seleziona un incantesimo dalla lista",
+    "enchant_applied": "Incantesimo applicato!",
+    "reroll_success": "Affissi rigenerati ({n}/5).",
+    "disenchant_success": "Smontato! Ottenuti: {mats}",
+    "disenchant_warning": "⚠ L'oggetto verrà distrutto e tu otterrai materiali in cambio.",
+    "boe_warning": "L'oggetto diventerà LEGATO (non più vendibile al mercato).",
+    "confirm_refine": "CONFERMA RIFINITURA",
+    "confirm_enchant": "MOSTRA OPZIONI",
+    "confirm_reroll": "CONFERMA RIASSEGNA",
+    "confirm_disenchant": "CONFERMA SMONTAGGIO"
+  },
+  "set": {
+    "active_bonuses_title": "BONUS SET ATTIVI",
+    "no_active_bonuses": "Nessun bonus set attivo. Equipaggia più pezzi della stessa famiglia per attivare bonus.",
+    "progress_label": "Progresso set: {owned}/{total}",
+    "tier_locked": "Bloccato ({need} pezzi richiesti)"
+  },
+  "raids": {
+    "title": "RAID",
+    "subtitle": "Spedizioni single-player da 20 avventurieri.",
+    "cooldown_remaining": "Prossimo raid disponibile tra",
+    "roster_gate": "Servono {n} avventurieri (hai {have})",
+    "peak_gate": "Picco team_power richiesto: {n} (tuo: {have})",
+    "history_title": "STORIA",
+    "mvp_note": "Phase 18 MVP — il builder party-by-party (4 × 5) sarà rilasciato in Phase 18.1.",
+    "locked_badge": "BLOCCATO",
+    "roster_label": "Roster",
+    "power_label": "Potenza",
+    "duration_label": "Durata",
+    "reward_label": "Reward",
+    "duration_min_short": "min",
+    "xp_per_adv": "XP/avv",
+    "catalog": {
+      "broken-bastion-siege": {
+        "name": "Assedio al Bastione Spezzato",
+        "description": "Una fortezza in rovina sotto assedio. Tenete le mura abbastanza da spezzare le macchine d'assedio."
+      },
+      "necropolis-bells": {
+        "name": "Necropoli delle Mille Campane",
+        "description": "Ogni campana rintocca per un re morto. Ogni rintocco evoca spettri. Le campane non smetteranno."
+      },
+      "dragon-vault": {
+        "name": "Volta del Drago Addormentato",
+        "description": "Il drago dorme. Il tesoro è nella sua tana. Non svegliate il drago. Lo sveglierete."
+      }
+    },
+    "gate": {
+      "roster_too_small": "Roster insufficiente: servono {need} avventurieri (hai {have})",
+      "max_team_power_too_low": "Picco team power insufficiente: serve {need} (hai {have})",
+      "cooldown_active": "Raid in cooldown — prossimo disponibile tra {seconds}s",
+      "already_in_progress": "Hai già un raid in corso",
+      "adventurer_busy": "Uno o più avventurieri sono occupati",
+      "duplicate_adventurer": "Un avventuriere appare in più party"
+    },
+    "builder": {
+      "title": "RAID BUILDER",
+      "back_to_raids": "← Torna ai raid",
+      "party_label": "PARTY {n}",
+      "available_advs": "AVVENTURIERI DISPONIBILI",
+      "preview_btn": "ANTEPRIMA",
+      "launch_btn": "LANCIA RAID",
+      "remove": "rimuovi",
+      "summary_power": "Potenza combinata",
+      "summary_success": "Successo combinato",
+      "summary_per_party": "Successo per party",
+      "preview_done": "Anteprima OK — puoi lanciare",
+      "not_enough": "Servono 20 avventurieri unici ({have}/20)",
+      "launched": "Raid lanciato!"
+    },
+    "report": {
+      "title": "REPORT RAID",
+      "outcome_victory": "VITTORIA",
+      "outcome_partial": "PARZIALE",
+      "outcome_wipe": "WIPE",
+      "raid_score": "Raid score",
+      "duration": "Durata",
+      "rewards_label": "REWARDS",
+      "gold_total": "Oro totale",
+      "xp_per_member": "XP per sopravvissuto",
+      "dragon_essence_drop": "Essenza di drago",
+      "no_data": "Raid non ancora completato",
+      "survived": "sopravvissuto",
+      "fainted": "svenuto",
+      "complete_now": "Forza completamento (smoke)"
+    }
+  },
+  "territory": {
+    "title": "TERRITORIO",
+    "subtitle": "Strutture e progressione gilda",
+    "status": {
+      "locked": "Bloccata",
+      "buyable": "Acquistabile",
+      "upgradable": "Potenziabile",
+      "max": "Livello massimo",
+      "legacy": "Legacy"
+    },
+    "cta": {
+      "buy": "Compra",
+      "upgrade": "Potenzia",
+      "locked_prereq": "Sblocca prima",
+      "max_reached": "Livello massimo"
+    }
+  },
+  "adventurers_retire": {
+    "button": "Congeda",
+    "modal_title": "Congeda avventuriero",
+    "force_unequip_label": "Disequipaggia automaticamente",
+    "reason_placeholder": "Motivo (opzionale)",
+    "confirm": "Conferma",
+    "cancel": "Annulla",
+    "signature_warning_title": "⚠ AVVENTURIERE SPECIALIZZATO",
+    "signature_warning_body": "Questo avventuriero è specializzato come {spec}. Possiede un signature item legato ({item}) che ne blocca normalmente il congedo. Per procedere devi accettare di distruggerlo: l'oggetto verrà soft-discarded e non sarà più recuperabile.",
+    "discard_signature_label": "Distruggi anche il signature item ({item})",
+    "discard_signature_hint": "Confermare la distruzione è obbligatorio per congedare un avventuriere specializzato."
+  },
+  "training": {
+    "title": "CAMPO DI ADDESTRAMENTO",
+    "page_title": "Addestramento",
+    "page_intro": "Specializza i tuoi avventurieri (Lv5+) in un ruolo dedicato. Ogni specializzazione fornisce un bonus permanente alle statistiche e un signature item legato all'avventuriero.",
+    "locked_title": "CAMPO DI ADDESTRAMENTO NON SBLOCCATO",
+    "locked_desc": "Sblocca il Campo di Addestramento dal Territorio (richiede Guild Hall Lv3 + Dormitori Lv2) per specializzare i tuoi avventurieri.",
+    "go_territory": "VAI AL TERRITORIO",
+    "tg_level_label": "Campo di Addestramento",
+    "tier_label": "Tier",
+    "tier_starter": "STARTER",
+    "tier_full": "FULL HYBRID",
+    "apply_cost_label": "Costo applicazione",
+    "eligible_title": "AVVENTURIERI ELEGGIBILI",
+    "no_eligible": "Nessun avventuriero Lv5+ disponibile. Continua le spedizioni per fare livello.",
+    "spec_title": "SPECIALIZZAZIONI DISPONIBILI",
+    "spec_pick_first": "Seleziona prima un avventuriero per vedere le specializzazioni compatibili.",
+    "specialized_title": "AVVENTURIERI GIÀ SPECIALIZZATI",
+    "respec_note": "Il respec non è disponibile in Round 6C. Pianifica con cura — la specializzazione resta permanente fino a Round 6D.",
+    "confirm_title": "CONFERMA SPECIALIZZAZIONE",
+    "confirm_target": "Avventuriero",
+    "confirm_spec": "Specializzazione",
+    "confirm_signature": "Signature Item (legato)",
+    "confirm_apply": "APPLICA",
+    "respec_warning": "La specializzazione è PERMANENTE in Round 6C. Il respec non sarà disponibile fino a Round 6D.",
+    "requirement_hint": "Requisiti: Lv{min}+ e non già specializzato.",
+    "class_required": "Richiede classe: {classes}",
+    "toast_success": "✦ {name} è ora {spec}!"
+  },
+  "specialization": {
+    "badge_label": "SPECIALIZZAZIONE",
+    "applied_at_lvl": "Applicata al Lv{n}",
+    "modifiers_label": "MODIFICATORI",
+    "signature_label": "SIGNATURE ITEM",
+    "tier_starter": "Starter",
+    "tier_full": "Full hybrid",
+    "chip": "✦ {name}"
+  },
+  "recruitment_cap": {
+    "label": "Capienza Dormitori",
+    "banner_cta": "Potenzia Dormitori"
+  },
+  "contracts": {
+    "page_title": "Bacheca Contratti",
+    "page_intro": "Completa contratti giornalieri e settimanali per oro, materiali e reputazione. I milestone permanenti danno ricompense più rare a chi gioca con costanza.",
+    "card_title": "BACHECA CONTRATTI",
+    "card_locked_short": "Sblocca la Bacheca Contratti dal Territorio.",
+    "card_badge_ready": "PRONTI",
+    "locked_title": "BACHECA CONTRATTI NON SBLOCCATA",
+    "locked_desc": "Sblocca la Bacheca Contratti dal Territorio (richiede Guild Hall Lv2 + Bacheca Spedizioni Lv1).",
+    "go_territory": "VAI AL TERRITORIO",
+    "tab": {
+      "daily": "GIORNALIERI",
+      "weekly": "SETTIMANALI",
+      "milestones": "MILESTONE"
+    },
+    "no_daily": "Nessun contratto giornaliero attivo.",
+    "no_weekly": "Nessun contratto settimanale attivo.",
+    "no_milestones": "Nessuna milestone disponibile.",
+    "milestones_intro": "I milestone sono permanenti — completali per sbloccare il tier successivo.",
+    "next_daily_reset": "Reset giornaliero",
+    "next_weekly_reset": "Reset settimanale",
+    "in_progress": "IN CORSO",
+    "claim": "RECLAMA",
+    "claimed": "RECLAMATO",
+    "tier_locked": "TIER BLOCCATO",
+    "claim_success": "Reclamato",
+    "reputation_short": "Rep",
+    "daily": {
+      "complete_expedition_1": "Completa 1 spedizione",
+      "market_listing_1": "Crea 1 listing al mercato",
+      "craft_item_1": "Crafta 1 oggetto"
+    },
+    "weekly": {
+      "complete_expeditions_5": "Completa 5 spedizioni",
+      "market_volume_3": "Vendi 3 oggetti al mercato",
+      "upgrade_structure_1": "Potenzia 1 struttura del Territorio",
+      "apply_specialization_1": "Applica 1 specializzazione",
+      "recruit_2": "Recluta 2 nuovi avventurieri"
+    },
+    "milestone": {
+      "run_10_expeditions": "Spedizioni totali: 10",
+      "craft_10_items": "Oggetti craftati totali: 10",
+      "recruit_5_adventurers": "Avventurieri reclutati totali: 5"
+    }
+  },
+  "feature_locked": {
+    "cta": "Vai al Territorio"
+  }
+}

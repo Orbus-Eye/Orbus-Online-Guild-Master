@@ -1,0 +1,110 @@
+// ROUND 11.4c — Shared primitives extracted from `Guide.jsx`.
+//
+// Contains:
+//   • `SECTIONS` — full tab list driving the sticky nav.
+//   • `POLARITY_LABEL`, `RARITY_LABEL` — i18n label maps for traits.
+//   • `formatModifier()` — pretty-print helper for stat modifiers.
+//   • `SectionBlock` — visual shell used by every guide section.
+//
+// Splitting these out keeps `Guide.jsx` focused on orchestration and lets
+// the data-driven sections (Stats / Traits catalog) live in their own
+// module without circular imports.
+
+export const SECTIONS = [
+    { id: "intro", label: "1. Introduzione" },
+    { id: "gilda", label: "2. Gilda e progressione" },
+    { id: "territorio", label: "3. Territorio di Gilda" },
+    { id: "roster-cap", label: "4. Capacità roster e Dormitori" },
+    { id: "roster-health", label: "5. Roster Health" },
+    { id: "archivio", label: "6. Congedo e Archivio" },
+    { id: "avventurieri", label: "7. Avventurieri" },
+    { id: "ruoli", label: "8. Ruoli" },
+    { id: "rarita", label: "9. Rarità" },
+    { id: "classi-e-stats", label: "9b. Classi e statistiche" },
+    { id: "stats-catalog", label: "10. Statistiche" },
+    { id: "traits-catalog", label: "11. Tratti" },
+    { id: "reclutamento", label: "12. Reclutamento" },
+    { id: "dungeon", label: "13. Dungeon e Spedizioni" },
+    { id: "raid", label: "14. Raid" },
+    { id: "classifiche", label: "14b. Classifiche" },
+    // ROUND 13a — Lore visibility pack
+    { id: "nuovi-dungeon-void", label: "14c. Nuovi Dungeon: Vuoto / Non-Morti" },
+    { id: "nuovi-raid-void", label: "14d. Nuovi Raid: Vuoto / Non-Morti" },
+    { id: "lore-vuoto-nonmorte", label: "14e. Lore — Vuoto, Filo Spezzato, Non-Morti" },
+    { id: "squadre", label: "15. Squadre Personalizzate" },
+    { id: "forge", label: "16. Equipaggiamento e Fucina" },
+    { id: "equip-level-gate", label: "16a. Livello richiesto per equipaggiare" },
+    { id: "equip-lore-tematica", label: "16b. Lore tematica degli oggetti" },
+    { id: "bound-items", label: "17. Item legati" },
+    { id: "training", label: "18. Addestramento e Specializzazioni" },
+    { id: "vault", label: "19. Deposito e Inventario" },
+    { id: "materiali", label: "20. Materiali e dove trovarli" },
+    { id: "market", label: "21. Mercato" },
+    { id: "auction", label: "22. Asta" },
+    { id: "contracts", label: "23. Contratti e Obiettivi di Gilda" },
+    { id: "chronicle", label: "24. Cronaca" },
+    { id: "consortium", label: "25. Consorzi" },
+    { id: "chat", label: "26. Chat" },
+    { id: "privacy", label: "27. Privacy e Sicurezza" },
+    { id: "tips", label: "28. Suggerimenti base" },
+    // ROUND 12.C — Arena / Stagioni / Leghe / Fair Play / Leaderboard stagionale
+    { id: "stagioni", label: "29. Stagioni delle Arene" },
+    { id: "leghe", label: "30. Leghe e progressione" },
+    { id: "arena", label: "31. Arena delle Gilde (PvP)" },
+    { id: "fair-play", label: "32. Fair Play e No P2W" },
+    { id: "lb-stagionale", label: "33. Leaderboard stagionale" },
+    // ROUND 15 — Phase 4 — Polish & new player-facing sections
+    { id: "equip-compat", label: "34. Equipaggiamento per classe" },
+    { id: "xp-primary-stat", label: "35. XP e statistica primaria" },
+    { id: "drop-materiali", label: "36. Drop materiali in spedizione" },
+    { id: "guild-level", label: "37. Livello Gilda" },
+    { id: "imprese-gilda", label: "38. Imprese di Gilda" },
+    // ROUND 16.0 — Phase 2-3 (player-facing reference for class rework)
+    { id: "classe-vs-spec", label: "R16. Classe base vs Specializzazione" },
+    { id: "sale-di-classe", label: "R16. Sale di Classe" },
+    { id: "sblocco-sala-spec", label: "R16. Sbloccare Sala e Specializzazione" },
+    { id: "razze-sesso", label: "R16. Razza e Sesso" },
+    { id: "stat-colors", label: "R16. Colori delle statistiche" },
+    { id: "auto-equip", label: "R16. Auto-Equipaggia" },
+    // ROUND 16.0 — Phase 4 — Threats & Counters (Void/Undead)
+    { id: "minacce-contromisure", label: "39. Minacce e Contromisure (Vuoto/Non-morti)" },
+    // ROUND 16.1 — Phase 3 — Game Clarity Pass
+    { id: "daily-loop", label: "R16.1. Cosa fare ogni giorno" },
+    { id: "team-composition", label: "R16.1. Come scegliere un team dungeon" },
+    { id: "roster-filters", label: "R16.1. Filtri e ordinamento del roster" },
+];
+
+// TASK 6 G4 — i18n + UX helpers per le sezioni data-driven.
+export const POLARITY_LABEL = {
+    positive: { label: "Positivo", cls: "text-emerald-300 border-emerald-500/40" },
+    negative: { label: "Negativo", cls: "text-red-400 border-red-500/40" },
+    mixed: { label: "Misto", cls: "text-amber border-amber/50" },
+};
+
+export const RARITY_LABEL = {
+    common: "Comune",
+    uncommon: "Non comune",
+    rare: "Raro",
+    epic: "Epico",
+    legendary: "Leggendario",
+};
+
+export function formatModifier(modifier_type, modifier_value) {
+    if (modifier_value == null || modifier_value === 0) return "—";
+    const sign = modifier_value > 0 ? "+" : "";
+    if (modifier_type === "percent") return `${sign}${modifier_value}%`;
+    return `${sign}${modifier_value}`;
+}
+
+export const SectionBlock = ({ id, title, children }) => (
+    <section
+        id={id}
+        data-testid={`guide-section-${id}`}
+        className="border border-border bg-card rounded-sm p-5 mb-4 scroll-mt-24"
+    >
+        <h2 className="text-sm tracking-[0.3em] text-amber mb-3">:: {title}</h2>
+        <div className="prose prose-invert prose-sm max-w-none text-[13px] leading-relaxed text-foreground/90">
+            {children}
+        </div>
+    </section>
+);

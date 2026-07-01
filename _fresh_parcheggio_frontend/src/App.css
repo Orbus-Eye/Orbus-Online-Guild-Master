@@ -1,0 +1,5 @@
+/* Orbus — stili globali minimi (il resto vive in tailwind + index.css). */
+.App {
+    min-height: 100%;
+    background-color: #0a0a0c;
+}
