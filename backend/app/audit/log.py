@@ -130,6 +130,13 @@ EVENT_TYPES = frozenset({
     "GUILD_SPECIALIZATION_CHOSEN",
     "GUILD_SPECIALIZATION_RESET",
     "GUILD_SPECIALIZATION_CATALOG_TOGGLED",
+    # ROUND 16.3 Phase 7A — PvP Continental (async 1v1 duels, cosmetic only)
+    "PVP_CHALLENGE_CREATED",
+    "PVP_CHALLENGE_ACCEPTED",
+    "PVP_CHALLENGE_DECLINED",
+    "PVP_CHALLENGE_TIMEOUT_DEFAULTED",
+    "PVP_BATTLE_RESOLVED",
+    "PVP_ELO_UPDATED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",
