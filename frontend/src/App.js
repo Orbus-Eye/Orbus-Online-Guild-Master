@@ -80,6 +80,8 @@ import PvpBattleReport from "@/pages/PvpBattleReport";
 import PvpSeasonOverview from "@/pages/PvpSeasonOverview";
 import PvpSeasonLeaderboardDetail from "@/pages/PvpSeasonLeaderboardDetail";
 import PvpSeasonCosmetics from "@/pages/PvpSeasonCosmetics";
+// ROUND 16.3 Phase 8 V1 — Stables & Mounts
+import Stables from "@/pages/Stables";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -603,6 +605,9 @@ function App() {
                             <ProtectedRoute requireGuild><PvpSeasonLeaderboardDetail /></ProtectedRoute>} />
                         <Route path="/pvp-season/cosmetics" element={
                             <ProtectedRoute requireGuild><PvpSeasonCosmetics /></ProtectedRoute>} />
+                        {/* ROUND 16.3 Phase 8 V1 — Stables & Mounts */}
+                        <Route path="/stables" element={
+                            <ProtectedRoute requireGuild><Stables /></ProtectedRoute>} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     </AuthProvider>

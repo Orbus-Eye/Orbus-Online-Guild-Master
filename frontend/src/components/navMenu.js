@@ -15,6 +15,7 @@ export const NAV_SECTIONS = [
             { to: "/achievements", label: "Imprese", testid: "menu-achievements" },
             { to: "/site-contracts", label: "Incarichi di Sede", testid: "menu-site-contracts", badge: "NEW" },
             { to: "/territory", label: "Territorio", testid: "menu-territory" },
+            { to: "/stables", label: "Stalla", testid: "menu-stables", badge: "NEW" },
             { to: "/chronicle", label: "Cronaca", testid: "menu-chronicle" },
         ],
     },
