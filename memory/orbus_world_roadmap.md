@@ -192,3 +192,15 @@
 - Home/Dashboard: card "Ultimo raid" + replay
 - Raid: countdown timer su lista/dettaglio/dashboard
 - Vincoli: no balance change, no premium, no hard delete
+
+## Round 16.5.1 — COMPLETED (2026-07-01)
+
+- **FASE A** (fallback D2): rimosso fallback difficulty, 3 test aggiunti, Round 16.5 P0 CLOSED
+- **FASE B.1**: world_events extension — GET/PATCH/deactivate/duplicate endpoints (estensione, no nuova collection)
+- **FASE B.2**: Tester Tools — status/grant/set-max/set-min con guardrail rinforzati + audit + snapshot
+- **FASE B.3**: raids/last + raids/replay-preview (backend pronto, UI dashboard integration deferita)
+- **FASE B.4**: raid countdown remaining_seconds server-side (UI live countdown deferita)
+- **Test**: 37/37 passed (13 P0.2 + 10 P0.3+A.3 + 14 R16.5.1)
+- **Frontend**: 2 nuove pagine admin (`/admin/world-events`, `/admin/tester-tools`), lint OK, webpack compile OK
+- **Report**: `/app/memory/round1651_final_report.md`
+- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia

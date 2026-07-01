@@ -312,6 +312,156 @@ async def list_events(continent_slug: Optional[str] = None,
     return {"instances": [_pub(d) for d in docs], "count": len(docs)}
 
 
+# ══════════════════════════════════════════════════════════════════════
+# ROUND 16.5.1 B.1 — Extension endpoints (Q1-a: estende esistente)
+# ══════════════════════════════════════════════════════════════════════
+
+_PATCH_WHITELIST = frozenset({"starts_at", "ends_at", "admin_note"})
+
+
+class PatchEventBody(BaseModel):
+    """Whitelist stretta P0.3 style: solo campi tempo + note admin.
+
+    NON permette la modifica di: event_slug, continent_slug, modifiers,
+    status, created_by (immutabili by design)."""
+    starts_at: Optional[str] = None
+    ends_at: Optional[str] = None
+    admin_note: Optional[str] = None
+
+
+@admin_router.get("/{eid}")
+async def get_event_detail(eid: str,
+                           admin: dict = Depends(get_admin_user)):
+    """Dettaglio singola istanza + catalog resolved."""
+    doc = await db.continent_event_instances.find_one({"id": eid}, {"_id": 0})
+    if not doc:
+        raise HTTPException(404, "event_not_found")
+    cat = await db.continent_event_catalog.find_one(
+        {"slug": doc["event_slug"]}, {"_id": 0},
+    )
+    return {"instance": _pub(doc), "catalog": _pub(cat) if cat else None}
+
+
+@admin_router.patch("/{eid}")
+async def patch_event(eid: str, body: PatchEventBody,
+                      admin: dict = Depends(get_admin_user)):
+    """Update campi ammessi (whitelist). Rifiuta se già expired."""
+    doc = await db.continent_event_instances.find_one({"id": eid}, {"_id": 0})
+    if not doc:
+        raise HTTPException(404, "event_not_found")
+    if doc.get("status") == "expired":
+        raise HTTPException(409, "cannot_patch_expired_event")
+    updates = {k: v for k, v in body.dict(exclude_unset=True).items()
+               if k in _PATCH_WHITELIST and v is not None}
+    if not updates:
+        raise HTTPException(400, "no_valid_fields_to_update")
+    # Guardrail whitelist: verifica ex-post che nessun campo pericoloso
+    # sia passato inavvertitamente.
+    forbidden = set(updates.keys()) - _PATCH_WHITELIST
+    if forbidden:
+        raise HTTPException(400, f"forbidden_fields: {sorted(forbidden)}")
+    now_iso = _iso(_now())
+    updates["updated_at"] = now_iso
+    r = await db.continent_event_instances.find_one_and_update(
+        {"id": eid, "status": {"$ne": "expired"}},
+        {"$set": updates},
+        projection={"_id": 0},
+    )
+    if not r:
+        raise HTTPException(409, "concurrent_update_conflict_or_expired")
+    r.update(updates)
+    await _emit_audit("CONTINENT_EVENT_UPDATED", None, eid,
+                      {"continent_slug": r["continent_slug"],
+                       "event_slug": r["event_slug"],
+                       "updates": list(updates.keys())})
+    return {"instance": _pub(r)}
+
+
+@admin_router.post("/{eid}/deactivate")
+async def deactivate_event(eid: str,
+                           admin: dict = Depends(get_admin_user)):
+    """Forza `active` → `expired` con audit dedicato.
+
+    Semanticamente distinto da `/expire` (che è usato anche dal fallback
+    on-visit su ends_at scaduto) e da `/activate` (che passa scheduled →
+    active). Solo eventi `active` possono essere deactivated manualmente.
+    """
+    doc = await db.continent_event_instances.find_one({"id": eid}, {"_id": 0})
+    if not doc:
+        raise HTTPException(404, "event_not_found")
+    if doc["status"] != "active":
+        raise HTTPException(
+            409, f"cannot_deactivate_status_{doc['status']}"
+        )
+    now_iso = _iso(_now())
+    r = await db.continent_event_instances.find_one_and_update(
+        {"id": eid, "status": "active"},
+        {"$set": {"status": "expired", "expired_at": now_iso,
+                  "deactivated_by_admin": True,
+                  "deactivated_at": now_iso}},
+        projection={"_id": 0},
+    )
+    if not r:
+        raise HTTPException(409, "race_lost_on_deactivate")
+    r["status"] = "expired"
+    r["expired_at"] = now_iso
+    r["deactivated_by_admin"] = True
+    r["deactivated_at"] = now_iso
+    await _emit_audit("CONTINENT_EVENT_DEACTIVATED", None, eid,
+                      {"continent_slug": r["continent_slug"],
+                       "event_slug": r["event_slug"],
+                       "actor_admin_id": admin.get("id")})
+    return {"instance": _pub(r)}
+
+
+@admin_router.post("/{eid}/duplicate")
+async def duplicate_event(eid: str,
+                          admin: dict = Depends(get_admin_user)):
+    """Clona come `scheduled` sullo stesso continente + stesso catalog.
+
+    Rifiuta se il continente ha già un active O uno scheduled — in tal
+    caso l'admin deve prima gestire l'esistente (expire/deactivate) o
+    cambiare continente. Questo evita ambiguità sul CAS.
+
+    Le date `starts_at`/`ends_at` sono copiate dall'originale; l'admin
+    deve poi fare PATCH per aggiornarle prima di attivare (evita
+    duplicati con date passate).
+    """
+    src = await db.continent_event_instances.find_one({"id": eid}, {"_id": 0})
+    if not src:
+        raise HTTPException(404, "event_not_found")
+    # Rifiuta se il continente ha già uno active o scheduled.
+    conflict = await db.continent_event_instances.find_one(
+        {"continent_slug": src["continent_slug"],
+         "status": {"$in": ["active", "scheduled"]}},
+        {"_id": 0, "id": 1, "status": 1},
+    )
+    if conflict:
+        raise HTTPException(
+            409,
+            f"continent_has_conflicting_event: {conflict['id']} "
+            f"({conflict['status']})",
+        )
+    now_iso = _iso(_now())
+    new_doc = {
+        "id": str(uuid.uuid4()),
+        "continent_slug": src["continent_slug"],
+        "event_slug": src["event_slug"],
+        "status": "scheduled",
+        "starts_at": src["starts_at"],
+        "ends_at": src["ends_at"],
+        "created_by": admin.get("id"),
+        "created_at": now_iso,
+        "duplicated_from_id": eid,
+    }
+    await db.continent_event_instances.insert_one(new_doc)
+    await _emit_audit("CONTINENT_EVENT_DUPLICATED", None, new_doc["id"],
+                      {"continent_slug": new_doc["continent_slug"],
+                       "event_slug": new_doc["event_slug"],
+                       "source_id": eid})
+    return {"instance": _pub(new_doc)}
+
+
 @admin_router.get("/catalog")
 async def admin_get_catalog(admin: dict = Depends(get_admin_user)):
     docs = await db.continent_event_catalog.find(

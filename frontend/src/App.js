@@ -53,6 +53,8 @@ import World from "@/pages/World";  // ROUND 16.3 Phase 2
 import WorldContinent from "@/pages/WorldContinent";
 import WorldNeighbors from "@/pages/WorldNeighbors";
 import WorldEvents from "@/pages/WorldEvents";  // ROUND 16.3 Phase 3
+import AdminWorldEvents from "@/pages/AdminWorldEvents";  // ROUND 16.5.1 B.1
+import AdminTesterTools from "@/pages/AdminTesterTools";  // ROUND 16.5.1 B.2
 import SiteContracts from "@/pages/SiteContracts";
 import Resources from "@/pages/Resources";  // ROUND 16.3 Phase 4
 import ResourceGather from "@/pages/ResourceGather";
@@ -318,6 +320,24 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <AdminAudit />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.5.1 B.1 — Admin Continent Events CRUD */}
+                        <Route
+                            path="/admin/world-events"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminWorldEvents />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.5.1 B.2 — Admin Tester Tools */}
+                        <Route
+                            path="/admin/tester-tools"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminTesterTools />
                                 </ProtectedRoute>
                             }
                         />

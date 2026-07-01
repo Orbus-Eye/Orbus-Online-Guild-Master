@@ -276,6 +276,11 @@ def create_app() -> FastAPI:
     app.include_router(stables_router)
     app.include_router(stables_admin_router)
 
+    # ROUND 16.5.1 B.2 — Tester Tools (admin-only, guardrail su
+    # is_test_user + ENV)
+    from app.admin.tester_tools import router as tester_tools_router
+    app.include_router(tester_tools_router)
+
     # ROUND 16.3 P3.2 — cleanup: both `@app.on_event("startup")` handlers
     # (`_seed_r163_phase3_startup` and `_seed_world_boss_startup`) were dead
     # code — FastAPI ignores `on_event` when `lifespan=` is attached to the

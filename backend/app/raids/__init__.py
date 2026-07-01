@@ -95,11 +95,22 @@ def raid_dungeon_public(d: dict) -> dict:
 
 
 def raid_public(r: dict) -> dict:
+    # ROUND 16.5.1 B.4 — countdown server-side (evita drift client)
+    remaining = None
+    status = r.get("status")
+    ends_at = r.get("ends_at")
+    if status in ("in_progress",) and ends_at:
+        try:
+            end_dt = datetime.fromisoformat(ends_at.replace("Z", "+00:00"))
+            now_dt = datetime.now(timezone.utc)
+            remaining = max(0, int((end_dt - now_dt).total_seconds()))
+        except Exception:
+            remaining = None
     return {
         "id": r["id"],
         "guild_id": r["guild_id"],
         "raid_dungeon_slug": r["raid_dungeon_slug"],
-        "status": r["status"],
+        "status": status,
         "outcome": r.get("outcome"),
         "team_power_combined": r["team_power_combined"],
         "recommended_power_combined": r["recommended_power_combined"],
@@ -107,9 +118,10 @@ def raid_public(r: dict) -> dict:
         "success_chance_per_party": r.get("success_chance_per_party", []),
         "raid_score": r.get("raid_score", 0),
         "started_at": r["started_at"],
-        "ends_at": r.get("ends_at"),
+        "ends_at": ends_at,
         "completed_at": r.get("completed_at"),
         "duration_seconds": r.get("duration_seconds"),
+        "remaining_seconds": remaining,
         "rewards": r.get("rewards"),
         "parties_outcome": r.get("parties_outcome", []),
     }
@@ -690,6 +702,100 @@ async def list_raids(current_user: dict = Depends(get_current_user)):
     ).sort("created_at", -1).limit(30)
     rows = await cursor.to_list(30)
     return {"raids": [raid_public(r) for r in rows]}
+
+
+# ══════════════════════════════════════════════════════════════════════
+# ROUND 16.5.1 B.3 — Dashboard "Ultimo raid" + replay preview
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/last")
+async def get_last_raid(current_user: dict = Depends(get_current_user)):
+    """Ritorna l'ultimo raid completato dell'utente + participants +
+    disponibilità squadra per replay (best-effort).
+
+    Se non esistono raid completati → 404 `no_completed_raid`.
+    Nessun `remaining_seconds` calcolato (raid già chiuso)."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    # Best-effort on-visit fallback
+    try:
+        from app.raids.recovery import auto_resolve_stuck_raids_for_guild
+        await auto_resolve_stuck_raids_for_guild(db, guild["id"])
+    except Exception:
+        pass
+    raid = await db.raids.find_one(
+        {"guild_id": guild["id"], "status": "completed"},
+        {"_id": 0},
+        sort=[("completed_at", -1), ("created_at", -1)],
+    )
+    if not raid:
+        raise HTTPException(status_code=404, detail="no_completed_raid")
+    parts = await db.raid_participants.find(
+        {"raid_id": raid["id"]}, {"_id": 0},
+    ).to_list(40)
+    return {
+        "raid": raid_public(raid),
+        "participants": [
+            {"id": p["id"], "adventurer_id": p["adventurer_id"],
+             "party_idx": p["party_idx"],
+             "role_snapshot": p.get("role_snapshot")}
+            for p in parts
+        ],
+    }
+
+
+class RaidReplayPreviewIn(BaseModel):
+    raid_slug: str
+    squad_ids: List[str] = Field(..., min_length=20, max_length=20)
+
+
+@router.post("/replay-preview")
+async def raid_replay_preview(body: RaidReplayPreviewIn,
+                              current_user: dict = Depends(get_current_user)):
+    """Verifica se la stessa squadra può ripetere lo stesso raid_slug.
+
+    Ritorna:
+      - `raid_available`: bool (raid_dungeon esiste e is_active)
+      - `all_adventurers_owned`: bool
+      - `all_adventurers_available`: bool (nessuno busy/retired)
+      - `unavailable_adventurers`: list di {id, name, reason}
+      - `missing_adventurers`: list di id non trovati
+    NON avvia niente. NON modifica nulla."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    # Raid dungeon lookup
+    rd = await db.raid_dungeons.find_one(
+        {"slug": body.raid_slug, "is_active": True}, {"_id": 0},
+    )
+    raid_available = bool(rd)
+    # Adventurers lookup
+    advs = await db.adventurers.find(
+        {"id": {"$in": body.squad_ids},
+         "guild_id": guild["id"]},
+        {"_id": 0, "id": 1, "name": 1, "level": 1,
+         "is_available": 1, "is_retired": 1, "retired": 1},
+    ).to_list(30)
+    found_ids = {a["id"] for a in advs}
+    missing = [aid for aid in body.squad_ids if aid not in found_ids]
+    unavailable = []
+    for a in advs:
+        reasons = []
+        if a.get("is_retired") or a.get("retired"):
+            reasons.append("retired")
+        if a.get("is_available") is False:
+            reasons.append("busy")
+        if reasons:
+            unavailable.append({
+                "id": a["id"], "name": a.get("name", "?"),
+                "reasons": reasons,
+            })
+    return {
+        "raid_available": raid_available,
+        "all_adventurers_owned": len(missing) == 0,
+        "all_adventurers_available": len(unavailable) == 0
+                                     and len(missing) == 0,
+        "unavailable_adventurers": unavailable,
+        "missing_adventurers": missing,
+        "raid_dungeon": raid_dungeon_public(rd) if rd else None,
+    }
 
 
 @router.get("/{raid_id}")
