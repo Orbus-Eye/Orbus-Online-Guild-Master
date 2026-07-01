@@ -691,6 +691,7 @@ async def _dispatch_expedition(
         members_live,
         legacy_min_level_for_dungeon(dungeon),
         source="expedition.dispatch",
+        dungeon_slug=dungeon.get("slug"),
     )
 
     # Phase 6: load equipment for each member; snapshot is frozen at departure.

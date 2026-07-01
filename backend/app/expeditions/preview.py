@@ -115,6 +115,7 @@ async def preview_expedition(
         advs,
         legacy_min_level_for_dungeon(dungeon),
         source="expedition.preview",
+        dungeon_slug=dungeon.get("slug"),
     )
 
     # Phase 6+ snapshot equivalent: equip power lookup

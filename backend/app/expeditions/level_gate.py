@@ -57,11 +57,24 @@ _RAID_TIER_TO_MIN_LEVEL: dict[int, int] = {
 def legacy_min_level_for_dungeon(dungeon: dict) -> int:
     """Resolve `min_adventurer_level` for a dungeon document.
 
-    Explicit field wins. Else map from `difficulty`. Else 1 (safe default).
+    ROUND 16.5 P0.3 — precedenza:
+      1. `required_level` (nuovo campo canonico, P0.2 apply).
+      2. `min_adventurer_level` (legacy, esplicito).
+      3. Fallback mappa `difficulty` → min_level.
+      4. 0 (nessun gate) se tutto assente.
+
+    Semantica falsy: 0/None/valore non-int vengono ignorati e si passa
+    al prossimo step. Un valore >= 1 vince immediatamente.
     """
+    # 1. Nuovo canonical field (P0.2 apply).
+    r165 = dungeon.get("required_level")
+    if isinstance(r165, int) and r165 >= 1:
+        return r165
+    # 2. Legacy esplicito.
     explicit = dungeon.get("min_adventurer_level")
     if isinstance(explicit, int) and explicit >= 1:
         return explicit
+    # 3. Fallback su difficulty (comportamento pre-R16.5).
     diff = int(dungeon.get("difficulty", 1) or 1)
     return _DUNGEON_DIFFICULTY_TO_MIN_LEVEL.get(diff, 1)
 
@@ -88,6 +101,7 @@ def enforce_min_adventurer_level(
     min_required_level: int,
     *,
     source: str,
+    dungeon_slug: str | None = None,
 ) -> None:
     """Raise 423 if any adventurer is below `min_required_level`.
 
@@ -95,6 +109,9 @@ def enforce_min_adventurer_level(
     `source` is a stable string ("expedition.dispatch", "raid.start", etc.)
     used by the FE to branch error UI and by audit dashboards to count
     blocked attempts per surface.
+
+    ROUND 16.5 P0.3 — se il chiamante conosce lo slug del dungeon lo
+    include nel payload d'errore per un debugging più chiaro sul FE.
     """
     if min_required_level <= 1:
         return  # no-op gate
@@ -114,25 +131,27 @@ def enforce_min_adventurer_level(
     # main psychological walls. We log only counts + source — NO PII.
     import logging
     logging.getLogger("orbus.level_gate").info(
-        "level_gate.blocked_attempts source=%s min_level=%d count=%d",
-        source, min_required_level, len(offenders),
+        "level_gate.blocked_attempts source=%s min_level=%d count=%d slug=%s",
+        source, min_required_level, len(offenders), dungeon_slug or "-",
     )
     names = ", ".join(f"{o['name']} (Lv{o['level']})" for o in offenders[:3])
     suffix = "" if len(offenders) <= 3 else f" e altri {len(offenders) - 3}"
-    raise HTTPException(
-        status_code=423,
-        detail={
-            "code": "adventurer.level_too_low",
-            "source": source,
-            "min_required_level": min_required_level,
-            "offending_adventurers": offenders,
-            "count": len(offenders),
-            "user_message": (
-                f"Servono avventurieri di livello {min_required_level}+. "
-                f"Sotto soglia: {names}{suffix}."
-            ),
-        },
-    )
+    detail = {
+        "code": "adventurer.level_too_low",
+        "source": source,
+        "min_required_level": min_required_level,
+        "adventurers_below": offenders,
+        # Alias legacy (retro-compatibilità con FE pre-R16.5).
+        "offending_adventurers": offenders,
+        "count": len(offenders),
+        "user_message": (
+            f"Servono avventurieri di livello {min_required_level}+. "
+            f"Sotto soglia: {names}{suffix}."
+        ),
+    }
+    if dungeon_slug:
+        detail["dungeon_slug"] = dungeon_slug
+    raise HTTPException(status_code=423, detail=detail)
 
 
 __all__ = [
