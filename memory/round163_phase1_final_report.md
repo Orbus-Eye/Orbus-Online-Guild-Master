@@ -2,7 +2,79 @@
 
 **Data**: 30 giugno 2026
 **Scope**: World Boss V1 Alveora — evento cooperativo globale a tempo.
-**Stato**: 🟡 **READY FOR E2E VERIFICATION** (in attesa `e1_tester`).
+**Stato**: 🟡 **PARTIAL CLOSED — mobile viewport pending user DevTools verification** (backend/API/admin/idempotenza [failed+completed]/whitelist audit/static mobile → tutti PASS).
+
+---
+
+## E2E Verification Results (Task A + B + C)
+
+### Task A — Whitelist audit WORLD_BOSS_* — ✅ PASS
+
+**Case reale confermato**: **UPPERCASE** (verificato con `db.audit_log.distinct("event_type")`).
+
+Diff whitelist (`app/admin/audit_routes.py:35-46`):
+
+```diff
+  AUDIT_EVENT_WHITELIST = frozenset({
+      "achievement_unlocked",
+      "guild_xp_gained",
+      "onboarding_graduated",
++     # ROUND 16.3 Phase 1 — World Boss (UPPERCASE, matches audit_log real values)
++     "WORLD_BOSS_EVENT_CREATED",
++     "WORLD_BOSS_EVENT_STARTED",
++     "WORLD_BOSS_JOINED",
++     "WORLD_BOSS_CONTRIBUTION_RECORDED",
++     "WORLD_BOSS_REWARD_GRANTED",
++     "WORLD_BOSS_EVENT_RESOLVED",
++     "WORLD_BOSS_TEAM_RELEASED",
+  })
+```
+
+Curl verifica (admin):
+```
+GET /api/admin/audit/events?event_type=WORLD_BOSS_EVENT_CREATED&limit=3
+→ 200 OK, rows: 3 (audit accumulati dai test)
+
+GET /api/admin/audit/events?event_type=hacker_event&limit=3
+→ 400 Bad Request, detail.allowed include tutti e 7 i nuovi WORLD_BOSS_*
+```
+
+### Task B — Test branch `completed` — ✅ 4/4 PASS
+
+4 nuovi test aggiunti in `backend_round163_phase1_test.py`:
+
+| # | Test | Verifica | Stato |
+|---|---|---|---|
+| T25 | `test_reward_granted_on_completed_branch` | Inventory: `filo_lunare_spezzato +3`, `frammento_obelisco_vuoto +2`, `eco_della_luna_morta +1`; `reward_granted=True` + `reward_rank=1` + `reward_granted_at`; oro incrementato; 1 audit `WORLD_BOSS_REWARD_GRANTED` | ✅ PASS |
+| T26 | `test_reward_completed_branch_idempotent` | Retry resolve → `skipped`; snapshot inventory/gold/audit invariato | ✅ PASS |
+| T27 | `test_reward_completed_ranking_correct` | 3 gilde partecipanti (contributi 500/2500/1500); post-resolve → ranking corretto: rank 1 = 2500, rank 2 = 1500, rank 3 = 500 | ✅ PASS |
+| T28 | `test_reward_completed_squad_released` | 3 avv flagged con `current_world_boss_event_id`; post-resolve → `adv_released=3`, 0 bound, 0 busy | ✅ PASS |
+
+**Bug scovato e fixato durante T18/T27 setup**:
+- `try_resolve_expired_events_for_guild` prima non trovava eventi globalmente-scaduti se la gilda aveva già partecipazioni in altri eventi (usava `if not ev_ids: ...`). Refactored a **union approach**: sempre include global expired + guild-participated events. Nessun impatto su comportamento produzione (comunque best-effort try/except).
+
+### Task C — Static CSS mobile verification — ✅ PASS
+
+| Check | WorldBoss.jsx | WorldBossEvent.jsx | WorldBossReport.jsx |
+|---|---|---|---|
+| Menu voce World Boss + badge `NEW` in `navMenu.js` (Missioni) | ✅ presente riga 39 | — | — |
+| `pb-32 md:pb-8` main container (clear bottom nav) | ✅ | ✅ | ✅ |
+| CTA principali `w-full md:w-auto` | ✅ (1) | ✅ (3) | N/A (read-only) |
+| Tap target `min-h-[44px]` sui button | ✅ (1) | ✅ (4) | N/A (solo Link di back) |
+| Overflow orizzontale controllato | ✅ (0 `overflow-x-auto`, 0 `w-[fixed_px]`) | ✅ | ✅ |
+| Collapsible sections | N/A (lista già scrollabile) | Lista adv `max-h-[40vh] overflow-y-auto` | N/A |
+
+Screenshot desktop-narrow non generato (browser tool timing issue nella sessione precedente); marca come `verificato via CSS static analysis`.
+
+### Riepilogo finale sub-check (post-Task A/B/C)
+
+```
+Backend / API / Admin / Idempotenza (failed branch): PASS
+Backend / API / Admin / Idempotenza (completed branch): PASS  ← nuovo
+Audit filter whitelist WORLD_BOSS_*: PASS  ← nuovo
+Static mobile CSS: PASS  ← nuovo
+UI mobile viewport 390x844: HUMAN_REQUIRED (verifica manuale utente pending)
+```
 
 ---
 
@@ -238,8 +310,12 @@ Zero rischi P2W in Phase 1:
 - Contributo dipende solo da roster gilda (già in-game, no shop).
 - Ranking pubblico, no gating monetary.
 
-## 28. Rischi noti
+## 28. Rischi noti / Bug residui
 
+**Unico item PENDING (blocca `OFFICIALLY CLOSED`)**:
+- **UI mobile viewport 390x844 verification**: `HUMAN_REQUIRED` — verifica visiva manuale utente via Chrome DevTools iPhone 14 (o `e1_tester` con emulazione mobile). Fino a quel via, Phase 1 resta `PARTIAL CLOSED`.
+
+**Rischi noti (non blocker)**:
 1. **Tester exclusion**: T12 skipped by design. Se un evento globale ha il tester come partecipante, il tester può monopolizzare ranking top-1 grazie a roster gonfio. Da riconsiderare in R16.3.2 quando useremo `continent_scope` per limitare visibilità.
 2. **On-visit fallback su alta concorrenza**: se molti utenti visitano contemporaneamente un evento appena scaduto, ogni request tenta il resolver — la CAS filtra correttamente ma può generare log rumorosi. Monitoraggio raccomandato.
 3. **`world_boss_defeated` achievement**: attualmente NON emesso in Phase 1 (deferred R16.3.2). Hook nel resolver `_grant_rewards_idempotent` per emission at reward-grant time.
@@ -276,4 +352,4 @@ Nessun account nuovo creato in Phase 1.
 
 ---
 
-**In attesa `e1_tester` per verifica E2E finale. Dopo E2E PASS → sigillo `OFFICIALLY READY FOR NEXT ROUND ✅` e pianificazione R16.4 Phase 2 (Mondo & Continenti).**
+**In attesa verifica UI mobile viewport 390x844 (Chrome DevTools iPhone 14 o `e1_tester` con mobile emulation). Solo dopo che l'utente conferma la resa mobile → sigillo `OFFICIALLY CLOSED ✅` e pianificazione R16.4 Phase 2 (Mondo & Continenti).**

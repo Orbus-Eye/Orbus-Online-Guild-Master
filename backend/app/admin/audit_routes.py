@@ -36,6 +36,14 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "achievement_unlocked",
     "guild_xp_gained",
     "onboarding_graduated",
+    # ROUND 16.3 Phase 1 — World Boss (UPPERCASE, matches audit_log real values)
+    "WORLD_BOSS_EVENT_CREATED",
+    "WORLD_BOSS_EVENT_STARTED",
+    "WORLD_BOSS_JOINED",
+    "WORLD_BOSS_CONTRIBUTION_RECORDED",
+    "WORLD_BOSS_REWARD_GRANTED",
+    "WORLD_BOSS_EVENT_RESOLVED",
+    "WORLD_BOSS_TEAM_RELEASED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

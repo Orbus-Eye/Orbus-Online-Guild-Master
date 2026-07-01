@@ -506,3 +506,294 @@ def test_raid_recovery_still_works():
     from app.raids.recovery import resolve_stuck_raid, auto_resolve_stuck_raids_for_guild
     assert callable(resolve_stuck_raid)
     assert callable(auto_resolve_stuck_raids_for_guild)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# BRANCH `completed` — Task B (R16.3 P1 conditional close)
+# ═══════════════════════════════════════════════════════════════════
+
+async def _get_gold(db, guild_id: str) -> int:
+    g = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "gold": 1})
+    return g.get("gold", 0)
+
+
+async def _inventory_currency_count(db, guild_id: str, slug: str) -> int:
+    """Sum quantities of currency `slug` in guild inventory."""
+    item = await db.items.find_one({"slug": slug}, {"_id": 0, "id": 1})
+    if not item:
+        return 0
+    rows = await db.inventory_items.find(
+        {"guild_id": guild_id, "item_id": item["id"]},
+        {"_id": 0, "quantity": 1},
+    ).to_list(50)
+    return sum(int(r.get("quantity", 0)) for r in rows)
+
+
+# ── T25 completed branch: rewards granted (currencies + audit) ─────
+def test_reward_granted_on_completed_branch():
+    """T25: Force `completed` branch, verify inventory + audit."""
+    from app.core.database import db
+    from app.world_boss import resolve_stuck_world_boss_event
+    ev = None
+    try:
+        ev = _run(_create_test_event(status="active", ends_in_minutes=60,
+                                       total_hp=100))
+        async def _setup():
+            g = await db.guilds.find_one({"name": "The Iron Lantern"},
+                                          {"_id": 0, "id": 1})
+            before = {
+                slug: await _inventory_currency_count(db, g["id"], slug)
+                for slug in ["filo_lunare_spezzato",
+                             "frammento_obelisco_vuoto",
+                             "eco_della_luna_morta"]
+            }
+            gold_before = await _get_gold(db, g["id"])
+            await db.world_boss_participants.insert_one({
+                "id": str(uuid.uuid4()),
+                "event_id": ev["id"], "guild_id": g["id"],
+                "joined_at": _now().isoformat(),
+                "total_contribution": 1500, "teams_sent": 2,
+                "reward_granted": False,
+            })
+            await db.world_boss_events.update_one(
+                {"id": ev["id"]},
+                {"$set": {"current_hp": 0,
+                          "ends_at": (_now() - timedelta(minutes=1)).isoformat()}},
+            )
+            return g["id"], before, gold_before
+
+        gid, before, gold_before = _run(_setup())
+
+        out = _run(resolve_stuck_world_boss_event(
+            ev["id"], dry_run=False, reason="test_t25",
+        ))
+        assert out["action"] == "resolved", out
+        assert out["outcome"] == "completed", out
+
+        async def _check_participant():
+            p = await db.world_boss_participants.find_one(
+                {"event_id": ev["id"], "guild_id": gid}, {"_id": 0},
+            )
+            assert p is not None
+            assert p["reward_granted"] is True
+            assert "reward_granted_at" in p
+            assert p["reward_rank"] == 1
+            return p
+        _run(_check_participant())
+
+        async def _check_inv():
+            after = {
+                slug: await _inventory_currency_count(db, gid, slug)
+                for slug in ["filo_lunare_spezzato",
+                             "frammento_obelisco_vuoto",
+                             "eco_della_luna_morta"]
+            }
+            return after
+        after = _run(_check_inv())
+        assert after["filo_lunare_spezzato"] - before["filo_lunare_spezzato"] == 3
+        assert after["frammento_obelisco_vuoto"] - before["frammento_obelisco_vuoto"] == 2
+        assert after["eco_della_luna_morta"] - before["eco_della_luna_morta"] == 1
+
+        gold_after = _run(_get_gold(db, gid))
+        assert gold_after > gold_before
+
+        async def _count_audit():
+            return await db.audit_log.count_documents({
+                "event_type": "WORLD_BOSS_REWARD_GRANTED",
+                "related_entity_id": ev["id"],
+                "actor_guild_id": gid,
+            })
+        assert _run(_count_audit()) == 1
+    finally:
+        if ev:
+            _run(_cleanup_events())
+
+
+# ── T26 completed branch: idempotent retry ─────────────────────────
+def test_reward_completed_branch_idempotent():
+    """T26: Retry resolve → skipped, inventory unchanged, no audit dup."""
+    from app.core.database import db
+    from app.world_boss import resolve_stuck_world_boss_event
+    ev = None
+    try:
+        ev = _run(_create_test_event(status="active", ends_in_minutes=60,
+                                       total_hp=100))
+        async def _setup():
+            g = await db.guilds.find_one({"name": "The Iron Lantern"},
+                                          {"_id": 0, "id": 1})
+            await db.world_boss_participants.insert_one({
+                "id": str(uuid.uuid4()),
+                "event_id": ev["id"], "guild_id": g["id"],
+                "joined_at": _now().isoformat(),
+                "total_contribution": 1000, "teams_sent": 1,
+                "reward_granted": False,
+            })
+            await db.world_boss_events.update_one(
+                {"id": ev["id"]},
+                {"$set": {"current_hp": 0,
+                          "ends_at": (_now() - timedelta(minutes=1)).isoformat()}},
+            )
+            return g["id"]
+        gid = _run(_setup())
+
+        out1 = _run(resolve_stuck_world_boss_event(
+            ev["id"], dry_run=False, reason="test_t26_a",
+        ))
+        assert out1["action"] == "resolved"
+
+        snap_filo = _run(_inventory_currency_count(db, gid, "filo_lunare_spezzato"))
+        snap_gold = _run(_get_gold(db, gid))
+        async def _count_audit():
+            return await db.audit_log.count_documents({
+                "event_type": "WORLD_BOSS_REWARD_GRANTED",
+                "related_entity_id": ev["id"], "actor_guild_id": gid,
+            })
+        audit_after_first = _run(_count_audit())
+        assert audit_after_first == 1
+
+        out2 = _run(resolve_stuck_world_boss_event(
+            ev["id"], dry_run=False, reason="test_t26_b",
+        ))
+        assert out2["action"] == "skipped", out2
+
+        assert _run(_inventory_currency_count(
+            db, gid, "filo_lunare_spezzato")) == snap_filo
+        assert _run(_get_gold(db, gid)) == snap_gold
+        assert _run(_count_audit()) == audit_after_first
+    finally:
+        if ev:
+            _run(_cleanup_events())
+
+
+# ── T27 completed branch: ranking correctness ─────────────────────
+def test_reward_completed_ranking_correct(admin_headers):
+    """T27: Multi-guild ranking after completed resolution."""
+    from app.core.database import db
+    from app.world_boss import resolve_stuck_world_boss_event
+    ev = None
+    fake_guild_ids = []
+    try:
+        # Pre-cleanup any leftover stubs from previous failed runs
+        _run(db.guilds.delete_many({"_test_stub": True}))
+        ev = _run(_create_test_event(status="active", ends_in_minutes=60,
+                                       total_hp=100))
+        async def _setup():
+            g_real = await db.guilds.find_one(
+                {"name": "The Iron Lantern"}, {"_id": 0, "id": 1})
+            fakes = []
+            run_uid = uuid.uuid4().hex[:8]
+            for i, contrib in enumerate([500, 2500, 1500]):
+                gid = g_real["id"] if i == 0 else f"fake-guild-t27-{run_uid}-{i}"
+                if i > 0:
+                    fakes.append(gid)
+                    await db.guilds.insert_one({
+                        "id": gid, "name": f"Fake Guild T27 #{i}",
+                        "owner_user_id": f"fake-owner-t27-{i}-{uuid.uuid4()}",
+                        "gold": 0, "level": 1,
+                        "_test_stub": True,
+                    })
+                await db.world_boss_participants.insert_one({
+                    "id": str(uuid.uuid4()),
+                    "event_id": ev["id"], "guild_id": gid,
+                    "joined_at": _now().isoformat(),
+                    "total_contribution": contrib, "teams_sent": 1,
+                    "reward_granted": False,
+                })
+            await db.world_boss_events.update_one(
+                {"id": ev["id"]},
+                {"$set": {"current_hp": 0,
+                          "ends_at": (_now() - timedelta(minutes=1)).isoformat()}},
+            )
+            return fakes
+
+        fake_guild_ids = _run(_setup())
+
+        out = _run(resolve_stuck_world_boss_event(
+            ev["id"], dry_run=False, reason="test_t27",
+        ))
+        assert out["action"] == "resolved"
+        assert out["outcome"] == "completed"
+
+        r = requests.get(
+            f"{API_BASE}/api/world-boss/events/{ev['id']}/ranking",
+            headers=admin_headers, timeout=10,
+        )
+        assert r.status_code == 200
+        ranking = r.json()["ranking"]
+        assert len(ranking) >= 3
+        assert ranking[0]["contribution"] == 2500
+        assert ranking[0]["rank"] == 1
+        assert ranking[1]["contribution"] == 1500
+        assert ranking[2]["contribution"] == 500
+    finally:
+        if fake_guild_ids:
+            _run(db.guilds.delete_many({"id": {"$in": fake_guild_ids},
+                                        "_test_stub": True}))
+        if ev:
+            _run(_cleanup_events())
+
+
+# ── T28 completed branch: squad released ──────────────────────────
+def test_reward_completed_squad_released():
+    """T28: After completed resolution, no adv left with
+    current_world_boss_event_id valorized."""
+    from app.core.database import db
+    from app.world_boss import resolve_stuck_world_boss_event
+    ev = None
+    try:
+        ev = _run(_create_test_event(status="active", ends_in_minutes=60,
+                                       total_hp=100))
+        adv_ids: list[str] = []
+        async def _setup():
+            g = await db.guilds.find_one({"name": "The Iron Lantern"},
+                                          {"_id": 0, "id": 1})
+            advs = await db.adventurers.find(
+                {"guild_id": g["id"], "is_available": True},
+                {"_id": 0, "id": 1},
+            ).to_list(3)
+            aids = [a["id"] for a in advs]
+            await db.adventurers.update_many(
+                {"id": {"$in": aids}},
+                {"$set": {"is_available": False,
+                          "expedition_in_progress": True,
+                          "current_world_boss_event_id": ev["id"]}},
+            )
+            await db.world_boss_participants.insert_one({
+                "id": str(uuid.uuid4()),
+                "event_id": ev["id"], "guild_id": g["id"],
+                "joined_at": _now().isoformat(),
+                "total_contribution": 3000, "teams_sent": 1,
+                "reward_granted": False,
+            })
+            await db.world_boss_events.update_one(
+                {"id": ev["id"]},
+                {"$set": {"current_hp": 0,
+                          "ends_at": (_now() - timedelta(minutes=1)).isoformat()}},
+            )
+            return aids
+        adv_ids = _run(_setup())
+
+        out = _run(resolve_stuck_world_boss_event(
+            ev["id"], dry_run=False, reason="test_t28",
+        ))
+        assert out["action"] == "resolved"
+        assert out["outcome"] == "completed"
+        assert out["adv_released"] == 3
+
+        async def _check():
+            n_bound = await db.adventurers.count_documents({
+                "id": {"$in": adv_ids},
+                "current_world_boss_event_id": ev["id"],
+            })
+            n_busy = await db.adventurers.count_documents({
+                "id": {"$in": adv_ids},
+                "$or": [{"is_available": False},
+                        {"expedition_in_progress": True}],
+            })
+            return n_bound, n_busy
+        n_bound, n_busy = _run(_check())
+        assert n_bound == 0
+        assert n_busy == 0
+    finally:
+        if ev:
+            _run(_cleanup_events())

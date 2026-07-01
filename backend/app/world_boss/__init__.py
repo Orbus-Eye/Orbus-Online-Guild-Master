@@ -357,21 +357,26 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
 
 
 async def try_resolve_expired_events_for_guild(guild_id: str) -> int:
-    """Best-effort on-visit fallback."""
+    """Best-effort on-visit fallback.
+
+    Resolves ANY active+expired event AND any event the guild participates in.
+    Union approach avoids missing globally-active events even when the guild
+    already has participation history in other events.
+    """
     now_iso = _utc_now().isoformat()
     resolved = 0
     try:
-        # Find all events participated by this guild that are expired
+        # 1) All globally-expired active events
+        global_expired = await db.world_boss_events.find(
+            {"status": "active", "ends_at": {"$lte": now_iso}},
+            {"_id": 0, "id": 1},
+        ).to_list(50)
+        ev_ids: set[str] = {e["id"] for e in global_expired}
+        # 2) Events the guild participates in (may be already expired)
         parts = await db.world_boss_participants.find(
             {"guild_id": guild_id}, {"_id": 0, "event_id": 1},
         ).to_list(100)
-        ev_ids = list({p["event_id"] for p in parts})
-        if not ev_ids:
-            # Also scan any active event globally (world scope)
-            ev_ids = [e["id"] for e in await db.world_boss_events.find(
-                {"status": "active", "ends_at": {"$lte": now_iso}},
-                {"_id": 0, "id": 1},
-            ).to_list(50)]
+        ev_ids.update(p["event_id"] for p in parts)
         for eid in ev_ids:
             try:
                 out = await resolve_stuck_world_boss_event(
