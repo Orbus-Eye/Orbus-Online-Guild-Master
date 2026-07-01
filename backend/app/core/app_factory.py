@@ -195,6 +195,12 @@ def create_app() -> FastAPI:
         seed_guild_specialization_catalog,
         ensure_indexes as ensure_guild_spec_indexes,
     )
+    # ROUND 16.3 Phase 7B — PvP Seasons (leaderboard + cosmetics)
+    from app.pvp_season import (
+        router as pvp_season_router,
+        admin_router as pvp_season_admin_router,
+        ensure_indexes as ensure_pvp_season_indexes,
+    )
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -257,6 +263,8 @@ def create_app() -> FastAPI:
     app.include_router(trade_pacts_admin_router)
     app.include_router(guild_spec_router)
     app.include_router(guild_spec_admin_router)
+    app.include_router(pvp_season_router)
+    app.include_router(pvp_season_admin_router)
 
     # Seed continent event catalog + site income config on startup (idempotent)
     @app.on_event("startup")
@@ -317,6 +325,11 @@ def create_app() -> FastAPI:
             await ensure_guild_spec_indexes()
         except Exception as exc:
             log.debug("guild_spec_indexes ensure failed: %s", exc)
+        try:
+            await ensure_pvp_season_indexes()
+            log.info("ROUND 16.3 Phase 7B pvp_season indexes ensured")
+        except Exception as exc:
+            log.debug("pvp_season_indexes ensure failed: %s", exc)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

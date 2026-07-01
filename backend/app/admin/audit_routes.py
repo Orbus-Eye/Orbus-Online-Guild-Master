@@ -88,6 +88,10 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "PVP_CHALLENGE_TIMEOUT_DEFAULTED",
     "PVP_BATTLE_RESOLVED",
     "PVP_ELO_UPDATED",
+    # ROUND 16.3 Phase 7B — PvP Seasons (leaderboard + cosmetics)
+    "PVP_SEASON_STARTED",
+    "PVP_SEASON_FINALIZED",
+    "PVP_COSMETIC_AWARDED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

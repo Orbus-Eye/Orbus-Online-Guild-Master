@@ -137,6 +137,10 @@ EVENT_TYPES = frozenset({
     "PVP_CHALLENGE_TIMEOUT_DEFAULTED",
     "PVP_BATTLE_RESOLVED",
     "PVP_ELO_UPDATED",
+    # ROUND 16.3 Phase 7B — PvP Seasons (weekly leaderboard + cosmetics)
+    "PVP_SEASON_STARTED",
+    "PVP_SEASON_FINALIZED",
+    "PVP_COSMETIC_AWARDED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",
