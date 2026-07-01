@@ -247,7 +247,140 @@ __all__ = [
     "TEST_POLLUTION_PATTERNS",
     "ALLOWLIST_EMAILS",
     "ALLOWLIST_GUILDS_LOWER",
+    "isolated_backend_url",
 ]
+
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.3 P3.1 — ISOLATED HTTP BACKEND (opt-in)
+# ═════════════════════════════════════════════════════════════════════
+#
+# Problem: previously, tests that hit REACT_APP_BACKEND_URL (the running
+# supervised backend on :8001) bypassed the DB isolation guard, because
+# the running backend uses backend/.env → DB_NAME=orbus_r16 (dev DB).
+#
+# Fix: opt-in fixture that spawns a SECOND uvicorn instance on port 8002
+# with DB_NAME=orbus_r16_test + APP_ENV=test, then exposes its URL via
+# the `isolated_backend_url` fixture. Tests that use this URL never write
+# to the prod-dev DB.
+#
+# Activation: set env `ISOLATED_HTTP_TESTS=1` before invoking pytest.
+# When inactive, `isolated_backend_url` falls back to REACT_APP_BACKEND_URL
+# (backward compat).
+#
+# See /app/memory/pytest_db_isolation_policy.md for the full policy.
+
+_ISOLATED_BACKEND_PORT = 8002
+_ISOLATED_BACKEND_HOST = "127.0.0.1"
+_ISOLATED_BACKEND_URL = f"http://{_ISOLATED_BACKEND_HOST}:{_ISOLATED_BACKEND_PORT}"
+
+
+def _spawn_isolated_backend():
+    """Spawn a uvicorn subprocess bound to orbus_r16_test on port 8002.
+
+    Waits up to 30s for /api/health to return 200 before returning the URL.
+    Raises if startup fails, so tests bail out instead of silently hitting
+    the wrong backend.
+    """
+    import subprocess
+    import time
+    import httpx
+
+    env = os.environ.copy()
+    env["DB_NAME"] = os.environ.get("DB_NAME", "orbus_r16_test")
+    env["APP_ENV"] = "test"
+    # PYTEST_XDIST_WORKER must NOT be propagated: uvicorn is a fresh process.
+    env.pop("PYTEST_XDIST_WORKER", None)
+
+    proc = subprocess.Popen(
+        ["uvicorn", "server:app",
+         "--host", _ISOLATED_BACKEND_HOST,
+         "--port", str(_ISOLATED_BACKEND_PORT),
+         "--log-level", "warning"],
+        cwd=str(Path(__file__).resolve().parents[1]),
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    # Health check with timeout.
+    deadline = time.time() + 30
+    while time.time() < deadline:
+        if proc.poll() is not None:
+            raise RuntimeError(
+                f"isolated backend died with code {proc.returncode} "
+                "before health check succeeded"
+            )
+        try:
+            r = httpx.get(f"{_ISOLATED_BACKEND_URL}/api/health", timeout=1.0)
+            if r.status_code == 200:
+                logger.info(
+                    "isolated backend ready on %s (DB_NAME=%s)",
+                    _ISOLATED_BACKEND_URL, env["DB_NAME"],
+                )
+                return proc
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(0.5)
+    proc.terminate()
+    raise RuntimeError(
+        f"isolated backend did NOT become healthy within 30s "
+        f"(port {_ISOLATED_BACKEND_PORT} may be busy)"
+    )
+
+
+@pytest.fixture(scope="session")
+def isolated_backend_url() -> str:
+    """URL of the isolated backend spawned for HTTP admin tests.
+
+    - When `ISOLATED_HTTP_TESTS=1` env is set: spawn subprocess uvicorn on
+      port 8002 with DB_NAME=orbus_r16_test, return its URL, and teardown
+      the process at session end.
+    - Otherwise: fall back to REACT_APP_BACKEND_URL (backward compat).
+
+    Test authors: prefer this fixture over REACT_APP_BACKEND_URL for any
+    test that mutates DB state via HTTP (POST/PUT/DELETE, admin routes).
+    """
+    if os.environ.get("ISOLATED_HTTP_TESTS") == "1":
+        # Only the xdist controller spawns the subprocess; workers reuse it
+        # via the shared port. Guard against per-worker double-spawn.
+        if os.environ.get("PYTEST_XDIST_WORKER"):
+            yield _ISOLATED_BACKEND_URL
+            return
+        proc = _spawn_isolated_backend()
+        try:
+            yield _ISOLATED_BACKEND_URL
+        finally:
+            proc.terminate()
+            try:
+                proc.wait(timeout=5)
+            except Exception:  # noqa: BLE001
+                proc.kill()
+            logger.info("isolated backend terminated")
+    else:
+        yield os.environ.get("REACT_APP_BACKEND_URL") or ""
+
+
+# Autouse fixture: when ISOLATED_HTTP_TESTS=1, transparently override
+# REACT_APP_BACKEND_URL with the isolated backend so pre-existing tests
+# that read env directly (via `os.environ["REACT_APP_BACKEND_URL"]`) also
+# benefit from the isolation with ZERO code change.
+@pytest.fixture(scope="session", autouse=True)
+def _apply_isolated_backend_env(isolated_backend_url):
+    if os.environ.get("ISOLATED_HTTP_TESTS") == "1":
+        prev = os.environ.get("REACT_APP_BACKEND_URL")
+        os.environ["REACT_APP_BACKEND_URL"] = isolated_backend_url
+        logger.info(
+            "REACT_APP_BACKEND_URL overridden with isolated backend: %s",
+            isolated_backend_url,
+        )
+        yield
+        if prev is not None:
+            os.environ["REACT_APP_BACKEND_URL"] = prev
+        else:
+            os.environ.pop("REACT_APP_BACKEND_URL", None)
+    else:
+        yield
 
 # ----------------------------------------------------------------------
 # Pattern 2 (FUTURE — not implemented)

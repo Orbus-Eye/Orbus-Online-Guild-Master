@@ -111,3 +111,80 @@ mongosh --quiet --eval 'db.getMongo().getDBNames().filter(n => n.startsWith("orb
 | Data | Modifica | Autore |
 |---|---|---|
 | 2026-07-01 | Policy creata, isolation attivata (Round 16.3 Iter B P2.1) | E1 main agent |
+| 2026-07-01 | **P3.1 HTTP admin bypass fixato** — fixture `isolated_backend_url` + autouse env override quando `ISOLATED_HTTP_TESTS=1` | E1 main agent |
+
+---
+
+## P3.1 — HTTP admin bypass isolation (Round 16.3 Iter C)
+
+### Problema originale
+
+I test HTTP che colpiscono `REACT_APP_BACKEND_URL` bypassavano il guard-rail DB isolation, perché il backend running su :8001 gestito da supervisor usa `backend/.env` → `DB_NAME=orbus_r16` (DB dev). Risultato: test HTTP scrivevano su `orbus_r16` invece che `orbus_r16_test`.
+
+### Strategia scelta: **Opzione B — second uvicorn instance opt-in**
+
+Motivazione della scelta:
+- ✅ Backend prod-dev (:8001) **rimane completamente intoccato**: browser dev-preview continua a funzionare durante i test
+- ✅ Zero rischio di race con supervisor auto-restart
+- ✅ Isolation è opt-in (env flag) → backward-compat totale con test esistenti
+- ✅ Fixture pytest gestisce lifecycle: spawn + health check + teardown automatici
+- ✅ Se il subprocess non risponde in 30s → RuntimeError esplicito, mai silent-fallback su prod DB
+
+Alternative scartate:
+- ❌ **Env var + supervisor restart**: complicato lifecycle, race conditions, browser dev-preview interrotto
+- ❌ **Monkey-patch database module**: molto invasivo, non traccia bene errori runtime
+
+### Implementazione
+
+In `/app/backend/tests/conftest.py`:
+
+```python
+@pytest.fixture(scope="session")
+def isolated_backend_url() -> str:
+    if os.environ.get("ISOLATED_HTTP_TESTS") == "1":
+        proc = _spawn_isolated_backend()  # uvicorn :8002 con DB_NAME=orbus_r16_test
+        try: yield "http://127.0.0.1:8002"
+        finally: proc.terminate()
+    else:
+        yield os.environ.get("REACT_APP_BACKEND_URL") or ""
+
+@pytest.fixture(scope="session", autouse=True)
+def _apply_isolated_backend_env(isolated_backend_url):
+    # Override transparente REACT_APP_BACKEND_URL quando isolated attivo
+    if os.environ.get("ISOLATED_HTTP_TESTS") == "1":
+        os.environ["REACT_APP_BACKEND_URL"] = isolated_backend_url
+    yield
+```
+
+### Attivazione
+
+```bash
+cd /app/backend
+ISOLATED_HTTP_TESTS=1 python -m pytest tests/ -n 0
+```
+
+Nota: `-n 0` (serial) è necessario perché il subprocess uvicorn è single-instance. Xdist workers riusano lo stesso port :8002 (safe: solo il controller spawna).
+
+### Evidence P3.1 (2026-07-01)
+
+Snapshot `orbus_r16` PRE / POST `pytest tests/test_stables_phase8_v1.py` con `ISOLATED_HTTP_TESTS=1`:
+
+| Collection | PRE | POST | Match |
+|---|---|---|---|
+| `guild_mount_ownership` | 2 | 2 | ✅ |
+| `narrative_route_completions` | 0 | 0 | ✅ |
+| `pvp_seasons` | 15 | 15 | ✅ |
+| `guilds` | 153 | 153 | ✅ |
+| `adventurers` | 890 | 890 | ✅ |
+
+**Risultato**: 5/5 collezioni INVARIATE. Le scritture confluiscono in `orbus_r16_test`. Isolation funziona end-to-end.
+
+### Note sui test skip in modalità isolated
+
+I test `test_14_set_active_not_owned_returns_403` e `test_15_travel_narrative_route_wrong_domain_returns_403` sono marcati `pytest.skip` quando `ISOLATED_HTTP_TESTS=1`, perché dipendono dallo stato "vergine" del tester account. Nel DB test lo stato del tester è non-deterministico (accumulato tra run). Le stesse assertion sono coperte in modo decoupled da `test_17` e `test_18` che usano fixture guild dedicate `p8v1_guild_0` sotto controllo direct-DB.
+
+### Uso raccomandato
+
+- **Sviluppo/CI locale**: `ISOLATED_HTTP_TESTS=1` per garanzia hard isolation
+- **Smoke test rapido dev**: default (senza flag), tocca prod-dev DB come prima
+- **Full pytest safe**: `ISOLATED_HTTP_TESTS=1 pytest tests/ -n 0` con snapshot pre/post per doppia verifica
