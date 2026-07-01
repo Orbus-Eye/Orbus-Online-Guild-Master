@@ -1,61 +1,63 @@
-# Orbus Online: Guild Master — PRD
+# Orbus Online — PRD (post-incident recovery 2026-07-01)
 
-## Problem statement (dall'utente)
-Costruire un MMO gestionale testuale web-first ("Orbus Online: Guild Master") in cui gli utenti fondano una gilda, reclutano avventurieri, li mandano in dungeon come squadre e ricevono report narrativi degli esiti. Stack: FastAPI + MongoDB + React + JWT. UI dark minimalista, nessuna grafica pesante. Consegna a fasi.
+## Contesto post-incident
+Il 2026-07-01, l'agente principale in Fase 1 ha erroneamente costruito un MVP fresh (Auth + Guild + Dashboard base) archiviando il progetto Round 16.x avanzato dentro `_legacy/`. Durante quel percorso ha eseguito `drop_database('test_database')` **prima** che il vincolo "NON droppare NULLA" venisse emesso, con perdita irreversibile dello **stato dinamico** del mondo pre-incident (gilde reali, spedizioni, achievement, PvP Elo, trade pact, world state).
 
-## User personas
-- **Guildmaster** — utente principale che gestisce la propria gilda: numeri, decisioni, ottimizzazione squadre.
-- **Admin** — operatore che verifica lo stato server, gli account, i cataloghi (fasi future).
+Il 2026-07-01 12:30 UTC è stata completata la recovery operazione **Opzione 3+1**:
+- codice Round 16.x ripristinato in `/app/backend/` e `/app/frontend/src/` (12 MB backend, 1.9 MB frontend);
+- `DB_NAME` cambiato in `orbus_r16` (nuovo DB pulito). `test_database` conservato come snapshot naturale della Fase 1 accidentale;
+- backend attivo con 233 endpoint OpenAPI, frontend build production OK.
 
-## Vincoli architetturali (validi per tutte le fasi)
-- Modularità in `app/{accounts,guilds,adventurers,expeditions,dungeons,items,inventory,core}/`
-- IDs UUID string (mai ObjectId esposti)
-- Timestamp UTC ovunque
-- Nessun hard delete: soft archiving via `archived_at`
-- Tutta la logica di gioco nel backend
-- Anti-P2W: solo oggetti cosmetici (non implementati ora)
-- Nessun endpoint fuori `/api/*`
+## Stato attuale
+- **Backend live**: 46 gruppi di endpoint API (admin 65, adventurers 9, auth 8, trade-pacts 7, arfus-forge 6, world-boss 6, world 6, quests 6, consortiums 6, raids 6, contracts 6, inventory 6, legendary-forge 5, pvp 5, seasons 5, expeditions 5, resources 5, market 4, auction 4, leaderboard 4, guild-specialization 4, dashboard 4, class-halls 3, achievements 3, site-income 3, altri).
+- **DB attivo**: `orbus_r16`, 44 collection, cataloghi core seedati automaticamente dal lifespan (12 classi, 40 tratti, 22 dungeons, 130 items, 13 enchants, 8 continenti, 12 event catalog, 8 resource catalog, world boss "Alveora", 1 season, 14 signature templates).
+- **Frontend live**: 5 pagine Landing/Login/Register/CreateGuild/Dashboard + tutte le pagine Round 16.x (Dashboard, Adventurers, ClassHalls, Forge, Raids, RaidBuilder, WorldBoss, World, Auction, Achievements, Admin, AdminAudit, TradePacts, GuildSpecialization, LegendaryForge, ArfusForge, ArfusResearch, Recruitment, Expeditions, Inventory, Chat).
 
-## Fasi
+## User personas (invariate)
+- Guildmaster (giocatore principale)
+- Admin
+- Tester QA
 
-### ✅ Fase 0 — POC motore risoluzione spedizione — CHIUSO 2026-07-01
-- File `/app/backend/app/expeditions/resolver.py` con `calculate_team_power`, `calculate_success_chance`, `resolve_expedition`.
-- Report narrativo IT deterministico (seed → stesso output).
-- 11/11 test pytest passati.
+## Roadmap post-recovery
 
-### ✅ Fase 1 — Auth + Guild + Dashboard — CHIUSO 2026-07-01
-- Registrazione + Login JWT (bcrypt, HS256, 7 giorni).
-- Endpoint: `/api/auth/{register,login,me}`, `/api/guilds`, `/api/guilds/mine`.
-- Frontend: Landing, Login, Register, CreateGuild, Dashboard.
-- Route guards: guest-only, auth-required, guild-required, no-guild.
-- Seed idempotente: admin, tester (con Ordo Aurorae), clean.
-- Dashboard mostra: level/reputation/gold/avventurieri (0), spedizioni/report placeholder, 4 quick action disabilitate.
-- Smoke test curl 100% verdi.
+### P0 — verifica funzionamento post-recovery
+- Smoke test manuale del preview URL con `tester@orbus.test`.
+- Verifica pytest full (1292 test) e triage failure attese vs regressioni.
+- Verifica ownership check su endpoint `/api/guilds`, `/api/pvp`, `/api/trade-pacts`.
 
-## Backlog prossime fasi (priorità)
+### P0 — completamento seed cataloghi
+Ordine consigliato (vedi `incident_recovery_report.md` punto 16 per dettagli):
+1. `round160_seed_classes_v2.py` (11 classi V2 + spec_v2)
+2. `round160_seed_races.py` (50 razze)
+3. `round160_seed_class_halls.py`
+4. `round15_seed_achievements.py`
+5. `round15_seed_class_identity.py`
+6. `round15_seed_item_tags.py`
 
-### P0 — Fase 2 (gameplay core)
-- Recruitment + collezione avventurieri (Tank/Healer/DPS, stats, level).
-- Catalogo dungeon statico (seed).
-- Creazione squadra + avvio spedizione (usa `resolver.py`).
-- Persistenza esiti in `expeditions` + endpoint report.
-- Frontend: pagine `/recruitment`, `/adventurers`, `/dungeons`, `/expeditions/:id`.
+### P0 — completamento seed tester per demo
+7. `seed_tester_adventurers.py`
+8. `seed_tester_inventory.py`
+9. `seed_round12_preseason.py`
+10. `seed_round12_release_tester_roster.py`
+11. `seed_round12_demo_opponents.py`
+12. `seed_round12_rewards.py`
+13. `seed_round13a_dungeon_raid_lore.py`
+14. `seed_round13a_items_lore.py`
 
-### P1 — Fase 3
-- Inventario e drop di oggetti (loot).
-- Ricompense in oro/xp effettivamente applicate a gilda/avventurieri.
-- Level up avventurieri.
+### P1 — completamento Round 16.3 Phase 7A (PvP Continentale)
+Il modulo `app/pvp_continental/` contiene solo `__init__.py`: era il lavoro in corso al momento dell'incident. Da riprendere dalle direttive R16.3 Phase 7A originali (bracket ±200 Elo / ±3 guild level, new-player protection +20%, 3 sfide attive max, 12h cooldown, snapshot deterministico con seed=battle_id, 6 audit events UPPERCASE).
 
-### P2 — Fase 4
-- Admin panel: reset avventurieri, override oro, health check.
-- Ranking pubblico gilde (endpoint + pagina).
+### P2 — cleanup e polish
+- `.env`: valutare aggiunta di `ADMIN_EMAILS`, `TESTER_PASSWORD` (usati dal legacy senza default).
+- Documentare la scelta `DB_NAME=orbus_r16` vs `test_database` nei runbook.
+- Cache HMR frontend: script `rm -rf node_modules/.cache` in supervisor pre-start (opzionale).
 
-### P3 — Fase 5+
-- Market interno, alliances, premium cosmetics (rispettando anti-P2W).
+## Fuori scopo immediato
+- Rebuild dello stato dinamico pre-incident (gilde/spedizioni reali): perdita irreversibile, non recuperabile senza dump.
+- Riscrittura Fase 1 fresh: **archiviata** in `_fresh_accidental_build_backup/` e `_fresh_parcheggio_*/`, non usata.
 
-## Testing status
-- Fase 0: pytest 11/11 verdi.
-- Fase 1: curl smoke test 100% conformi; screenshot landing verificato manualmente.
-
-## Credenziali di test
-Vedi `/app/memory/test_credentials.md`.
+## File di riferimento
+- `/app/memory/incident_recovery_report.md` — report dettagliato recovery.
+- `/app/memory/test_credentials.md` — credenziali Fase 1 (test_database).
+- `/app/memory/BUILD_RULES.md`, `PROD_DEPLOY_CHECKLIST_ROUND_*.md`, `REFACTOR_LOG.md` — docs Round 16.x pre-esistenti.
+- `/app/backend/app/seeds/seed_runner.py` — orchestrator dei seed lifespan.
