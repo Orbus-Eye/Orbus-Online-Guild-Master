@@ -206,3 +206,14 @@ Phase 8 V2      — FUTURE / DESIGN REVIEW REQUIRED 🔴
 - `/app/memory/PRD.md` — Product Requirements Document (aggiornata a Round 16.3 CLOSED)
 - `/app/memory/BUILD_RULES.md`, `PROD_DEPLOY_CHECKLIST_*.md`, `REFACTOR_LOG.md`
 - `/app/memory/test_credentials.md` — credenziali test
+
+---
+
+## Referenze Round 16.5 P0 (2026-07-01)
+
+Chiusura Round 16.5 P0: sigillo in `/app/memory/round165_p0_final_report.md`.
+- 22 dungeon con `required_level` popolato, 5 Legendary con `min_level >= 8`
+- Runtime gate wired su nuovo campo `required_level`
+- Fallback difficulty rimosso (opzione D2)
+- 23 test passed su DB isolato
+- 0 orphaned legendaries, 0 whitelist violations, snapshot rollback-able

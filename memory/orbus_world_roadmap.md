@@ -174,3 +174,21 @@
 ---
 
 *Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1..6 CLOSED ✅ · **Phase 7A CLOSED ✅** (Backend 33/33 + Frontend + gate lvl8 + Arfus PvP whitelist) · **Phase 7B CLOSED ✅** (Backend 31/31 + Frontend + 24 cosmetici + disclaimer anti-P2W ×3) · **Phase 8 V1 CLOSED ✅** (Backend 28/28 + Frontend + 9 mount + 5 rotte narrative + anti-P2W ×2). **Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 V2 (`-5% travel time` esplorativo) parked in attesa design review conservativo anti-P2W. Vedi `/app/memory/round163_final_report.md` per il consolidamento finale.*
+
+---
+
+## Round 16.5 P0 — CLOSED (2026-07-01)
+
+- Fasi: P0.1 (dry-run) + P0.2 (apply DB) + P0.3 (wiring runtime) + P0.3-D2 (rimozione fallback difficulty)
+- Test: 23/23 passed su `orbus_r16_test`
+- Problema utente originale (team lv4 → dungeon lv7) risolto e verificato
+- Report finale: `/app/memory/round165_p0_final_report.md`
+- Snapshot rollback: `/app/memory/round165_p0_prechange_snapshot.json` (sha256 `a028743e…`)
+
+## Round 16.5.1 — IN PROGRESS (2026-07-01)
+
+- Admin: CRUD eventi continentali
+- Admin: Tester Tools (grant advs / set MAX / set MIN) con guardrail su account test
+- Home/Dashboard: card "Ultimo raid" + replay
+- Raid: countdown timer su lista/dettaglio/dashboard
+- Vincoli: no balance change, no premium, no hard delete

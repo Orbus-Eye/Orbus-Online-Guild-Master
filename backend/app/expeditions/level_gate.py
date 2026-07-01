@@ -55,16 +55,23 @@ _RAID_TIER_TO_MIN_LEVEL: dict[int, int] = {
 
 
 def legacy_min_level_for_dungeon(dungeon: dict) -> int:
-    """Resolve `min_adventurer_level` for a dungeon document.
+    """Resolve il min level richiesto per un dungeon.
 
-    ROUND 16.5 P0.3 — precedenza:
-      1. `required_level` (nuovo campo canonico, P0.2 apply).
-      2. `min_adventurer_level` (legacy, esplicito).
-      3. Fallback mappa `difficulty` → min_level.
-      4. 0 (nessun gate) se tutto assente.
+    ROUND 16.5 P0.3 (D2 — rimozione fallback difficulty):
+      1. `required_level` (nuovo campo canonico, popolato in P0.2).
+      2. `min_adventurer_level` (legacy esplicito, retrocompat).
+      3. `0` = nessun gate (fallback finale).
 
-    Semantica falsy: 0/None/valore non-int vengono ignorati e si passa
+    Semantica falsy: `0`/`None`/valore non-int vengono ignorati e si passa
     al prossimo step. Un valore >= 1 vince immediatamente.
+
+    NOTA (rimozione fallback `difficulty`): la mappa
+    `_DUNGEON_DIFFICULTY_TO_MIN_LEVEL` NON è più consultata da questa
+    funzione. Il diff analysis pre-rimozione (`/app/memory/
+    round165_p03_fallback_diff_analysis.md`) ha verificato che tutti i 22
+    dungeon attivi in produzione hanno `required_level` popolato (impatto
+    reale = 0). La mappa resta esportata solo come riferimento
+    documentale per audit/telemetria; non è più letta a runtime.
     """
     # 1. Nuovo canonical field (P0.2 apply).
     r165 = dungeon.get("required_level")
@@ -74,9 +81,8 @@ def legacy_min_level_for_dungeon(dungeon: dict) -> int:
     explicit = dungeon.get("min_adventurer_level")
     if isinstance(explicit, int) and explicit >= 1:
         return explicit
-    # 3. Fallback su difficulty (comportamento pre-R16.5).
-    diff = int(dungeon.get("difficulty", 1) or 1)
-    return _DUNGEON_DIFFICULTY_TO_MIN_LEVEL.get(diff, 1)
+    # 3. Nessun gate. Comportamento retrocompatibile per doc parziali.
+    return 0
 
 
 def legacy_min_level_for_raid(raid_dungeon: dict) -> int:

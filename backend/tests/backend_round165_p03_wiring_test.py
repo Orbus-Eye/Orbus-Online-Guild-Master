@@ -190,6 +190,22 @@ def seeded_dungeons(test_db):
             "base_duration_seconds": 60,
             "is_active": True,
         },
+        # Test A.3.4 — dungeon con SOLO difficulty=4 (nessun required_level,
+        # nessun min_adventurer_level). Post-D2 il fallback difficulty è
+        # rimosso → gate = 0 (accesso libero). Pre-D2 era gate=12.
+        {
+            "id": f"r165test-diff-only-{uuid.uuid4()}",
+            "slug": "r165test-diff-only",
+            "name": "R165 Test Difficulty Only",
+            "name_it": "R165 Test Difficulty Only",
+            "difficulty": 4,  # avrebbe mappato → gate=12 pre-D2
+            "recommended_power": 100,
+            "required_team_size": 3,
+            "base_gold_reward": 10,
+            "base_xp_reward": 10,
+            "base_duration_seconds": 60,
+            "is_active": True,
+        },
     ]
     for d in dungeons:
         d_id = d["id"]
@@ -429,3 +445,80 @@ def test_7_payload_shape_contains_all_required_fields(
     # user_message localizzato IT
     assert "livello" in detail["user_message"].lower()
     assert isinstance(detail["min_required_level"], int)
+
+
+# ═════════════════════════════════════════════════════════════════════
+# FASE A.3 — Test rimozione fallback `difficulty` (D2)
+# ═════════════════════════════════════════════════════════════════════
+
+
+def test_A3_source_code_no_difficulty_fallback_in_resolver():
+    """Verifica statica: la funzione `legacy_min_level_for_dungeon` NON
+    referenzia più `_DUNGEON_DIFFICULTY_TO_MIN_LEVEL` come fallback.
+
+    La costante può restare esportata a fini documentali/telemetria, ma
+    NON deve comparire nel body della funzione resolver."""
+    import inspect
+    from app.expeditions import level_gate
+    src = inspect.getsource(level_gate.legacy_min_level_for_dungeon)
+    # Strip commenti e docstring per verificare solo il codice eseguibile.
+    import ast
+    tree = ast.parse(src)
+    func_node = tree.body[0]
+    if (isinstance(func_node.body[0], ast.Expr)
+            and isinstance(func_node.body[0].value, ast.Constant)):
+        func_node.body = func_node.body[1:]  # drop docstring
+    code_only = ast.unparse(func_node)
+    assert "_DUNGEON_DIFFICULTY_TO_MIN_LEVEL" not in code_only, (
+        "REGRESSIONE D2: `legacy_min_level_for_dungeon` referenzia ancora "
+        "la mappa difficulty come fallback nel codice eseguibile."
+    )
+    assert 'dungeon.get("difficulty"' not in code_only, (
+        "REGRESSIONE D2: il resolver legge ancora `dungeon.get('difficulty')`."
+    )
+    assert "dungeon.get('difficulty'" not in code_only, (
+        "REGRESSIONE D2: il resolver legge ancora `dungeon.get('difficulty')`."
+    )
+
+
+def test_A3_difficulty_only_dungeon_now_has_zero_gate(
+    test_db, tester_auth, seeded_team, seeded_dungeons,
+):
+    """Dungeon con SOLO `difficulty=4` (nessun `required_level`, nessun
+    `min_adventurer_level`).
+
+    Pre-D2: fallback mappava difficulty=4 → gate=12 (team lv1-11 bloccati).
+    Post-D2: gate=0 (accesso libero). Team lv3 deve poter entrare senza 423
+    di level gate."""
+    base = _api_base()
+    d = test_db.dungeons.find_one(
+        {"slug": "r165test-diff-only"}, {"_id": 0},
+    )
+    dungeon_id = d["id"]
+    # Team 3p tutto lv3 (pre-D2 sarebbe stato bloccato con min=12)
+    ids = [seeded_team[k]["id"] for k in ("lv3", "lv4a", "lv4b")]
+    r = _post_expedition(base, tester_auth["headers"], dungeon_id, ids)
+    # Non deve tornare 423 con code=adventurer.level_too_low.
+    if r.status_code == 423:
+        detail = r.json().get("detail", {})
+        assert detail.get("code") != "adventurer.level_too_low", (
+            f"REGRESSIONE D2: gate scattato ma fallback difficulty è "
+            f"stato rimosso. Detail: {detail}"
+        )
+
+
+def test_A3_regression_team_lv4_still_blocked_on_worldtree_lv14(
+    test_db, tester_auth, seeded_team,
+):
+    """Regression: dopo la rimozione del fallback difficulty, team lv4
+    deve continuare a essere bloccato su dungeon `required_level=14`.
+    Il gate `required_level` è la prima priorità e rimane attivo."""
+    base = _api_base()
+    dungeon_id = _dungeon_id_from_slug(test_db, "world-tree-roots-5p")
+    ids = [seeded_team[k]["id"]
+           for k in ("lv4a", "lv4b", "lv4c", "lv3", "lv7a")]
+    r = _post_expedition(base, tester_auth["headers"], dungeon_id, ids)
+    assert r.status_code == 423
+    detail = r.json()["detail"]
+    assert detail["code"] == "adventurer.level_too_low"
+    assert detail["min_required_level"] == 14

@@ -511,3 +511,131 @@ Se invece si vuole procedere subito con P1, scope minimo suggerito:
 
 Attendo conferma utente per marcare Round 16.5 P0 come **CLOSED** e
 decidere se aprire subito Round 16.6 P1 o rimandare.
+
+---
+
+# 🔧 P0.3 update — Rimozione fallback `difficulty` (opzione D2)
+
+**Autorizzazione utente**: opzione D2 confermata (rimuovere fallback
+difficulty, tenere solo `required_level → min_adventurer_level → 0`).
+**Data**: 2026-07-01
+
+## D2.1 — Motivazione
+
+Il fallback `difficulty→min_level` era un residuo di Round 11.3 che
+serviva a dungeon senza `required_level` esplicito. Dopo l'apply P0.2
+tutti i 22 dungeon attivi hanno `required_level >= 1` popolato: il
+fallback è **codice morto in produzione**. Rimuoverlo migliora:
+- leggibilità DB/catalogo (il gate è visibile 1:1 dal campo `required_level`)
+- prevedibilità runtime (nessuna trasformazione nascosta)
+- superficie di attacco per bug futuri
+
+## D2.2 — Diff analysis pre-rimozione
+
+Report completo: `/app/memory/round165_p03_fallback_diff_analysis.md`
+
+| metrica | valore |
+|---|---:|
+| Dungeon totali | 22 |
+| Attivi con `required_level` popolato | **22** |
+| Attivi che dipendono dal fallback difficulty | **0** |
+| Delta gate `with_difficulty` vs `pure_zero` | **0** su tutti i 22 |
+
+**Checkpoint #1 NON triggerato** → rimozione safe, procedura senza pausa.
+
+## D2.3 — File modificati
+
+| file | linee cambiate | scope |
+|---|---:|---|
+| `/app/backend/app/expeditions/level_gate.py` | -6 / +6 | rimossa lettura mappa difficulty da resolver |
+| `/app/backend/tests/backend_round165_p03_wiring_test.py` | +75 | 3 nuovi test A.3 |
+| `/app/memory/round165_p03_fallback_diff_analysis.md` + `.json` | new | diff analysis pre-rimozione |
+
+Nota: la costante `_DUNGEON_DIFFICULTY_TO_MIN_LEVEL` **resta esportata**
+dal modulo `level_gate` (per documentazione / eventuale telemetria
+storica), ma **NON è più letta** dal resolver runtime. Un test regressione
+statica lo verifica.
+
+## D2.4 — Logica finale gate resolver
+
+```python
+def legacy_min_level_for_dungeon(dungeon: dict) -> int:
+    # 1. Nuovo canonical field (P0.2 apply).
+    r165 = dungeon.get("required_level")
+    if isinstance(r165, int) and r165 >= 1:
+        return r165
+    # 2. Legacy esplicito.
+    explicit = dungeon.get("min_adventurer_level")
+    if isinstance(explicit, int) and explicit >= 1:
+        return explicit
+    # 3. Nessun gate. Comportamento retrocompatibile per doc parziali.
+    return 0
+```
+
+Coerente al 100% con la specifica utente:
+`effective_required_level = required_level or min_adventurer_level or 0`.
+
+## D2.5 — Test aggiunti (A.3)
+
+| # | test | scenario | risultato |
+|:-:|---|---|:---:|
+| A.3.1 | `test_A3_source_code_no_difficulty_fallback_in_resolver` | Verifica statica (AST-based) che il body del resolver non contiene più `_DUNGEON_DIFFICULTY_TO_MIN_LEVEL` né `dungeon.get("difficulty")` | ✅ PASS |
+| A.3.2 | `test_A3_difficulty_only_dungeon_now_has_zero_gate` | Dungeon con solo `difficulty=4` → pre-D2 mappava a gate=12, post-D2 gate=0 (accesso libero anche a team lv3) | ✅ PASS |
+| A.3.3 | `test_A3_regression_team_lv4_still_blocked_on_worldtree_lv14` | Regression: team lv4 continua a essere bloccato su dungeon `required_level=14` | ✅ PASS |
+
+## D2.6 — Test globale post-rimozione
+
+```
+tests/backend_round165_p0_balance_test.py  ...  13 passed
+tests/backend_round165_p03_wiring_test.py  ...  10 passed  (7 wiring + 3 A.3)
+─────────────────────────────────────────────────────────
+TOTALE ROUND 16.5 P0                       ...  23 passed
+```
+
+Zero regressioni. Isolamento verificato: tutti i test HTTP hanno colpito
+`orbus_r16_test` (port 8002, `ISOLATED_HTTP_TESTS=1`).
+
+---
+
+# 🔒 Sigillo di chiusura — Round 16.5 P0
+
+**Timestamp chiusura**: 2026-07-01
+**Fasi incluse**: P0.1 (dry-run) + P0.2 (apply) + P0.3 (wiring) + P0.3-D2
+(rimozione fallback difficulty)
+
+## Test totali eseguiti
+
+| suite | test | esito |
+|---|---:|:---:|
+| `backend_round165_p0_balance_test.py` | 13 | ✅ |
+| `backend_round165_p03_wiring_test.py` | 10 | ✅ |
+| **totale** | **23** | ✅ **PASS** |
+
+## Conferma vincoli rispettati
+
+- ✅ **Nessuna modifica** a: reward, drop, XP, PvP, economia, Stalla,
+  formule success chance, threat_tags, equip_power, rarity, soft cap.
+- ✅ **Nessun hard delete** su collezioni prod.
+- ✅ **Snapshot pre-apply** disponibile con SHA256 verificato per
+  rollback deterministico.
+- ✅ **Whitelist campi** rispettata (0 violazioni durante apply).
+- ✅ **Isolamento pytest** verificato su `orbus_r16_test`.
+- ✅ **Nessun Legendary orfano** unequippato (0 orfani rilevati).
+- ✅ **Payload errore 423** completo e localizzato in italiano.
+
+## Statement finale
+
+> **Round 16.5 P0 CLOSED**
+>
+> Il problema utente originale ("team lv4 batte dungeon lv7") è
+> completamente risolto e verificato con 23 test. Il gate `required_level`
+> è runtime-enforced con precedenza priorità 1, fallback legacy solo su
+> `min_adventurer_level`, nessun altro fallback nascosto.
+>
+> Round 16.6 (P1 reward-tuning / P2 curva formula) resta aperto ma non
+> avviato — l'utente decide se e quando lanciarlo su dati reali.
+
+## Prossimo round programmato
+
+- **Round 16.5.1**: Admin/Tester Tools + Continent Events + Raid UX
+  (partenza subito dopo questo sigillo, in blocco separato).
