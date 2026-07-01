@@ -61,6 +61,10 @@ import ContinentLeaderboards from "@/pages/ContinentLeaderboards";
 import LegendaryForge from "@/pages/LegendaryForge";  // ROUND 16.3 Phase 5A
 import LegendaryForgeRecipe from "@/pages/LegendaryForgeRecipe";
 import LegendaryForgeOrders from "@/pages/LegendaryForgeOrders";
+import ArfusForge from "@/pages/ArfusForge";  // ROUND 16.3 Phase 5B
+import ArfusTechDetail from "@/pages/ArfusTechDetail";
+import ArfusResearch from "@/pages/ArfusResearch";
+import ArfusActive from "@/pages/ArfusActive";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -525,6 +529,39 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <LegendaryForgeOrders />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 5B — Forgia di Arfus */}
+                        <Route
+                            path="/arfus-forge"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ArfusForge />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/arfus-forge/tech/:slug"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ArfusTechDetail />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/arfus-forge/research"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ArfusResearch />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/arfus-forge/active"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <ArfusActive />
                                 </ProtectedRoute>
                             }
                         />

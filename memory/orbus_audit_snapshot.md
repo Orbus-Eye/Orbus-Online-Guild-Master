@@ -736,3 +736,55 @@ passive technologies) + Enhancement Chronicle server-wide announcement.
 
 **Next**: Iterazione 2 (Frontend Phase 5B) dopo verifica manuale utente.
 
+
+---
+
+## R16.3 Phase 5B OFFICIALLY CLOSED — 2026-07-01 (Iterazione 2 Frontend)
+
+**🟢 OFFICIALLY CLOSED ✅** — Forgia di Arfus V0 completa (Backend +
+Frontend + Docs).
+
+1. **Frontend web** (4 pagine + 1 mini-card):
+   - `pages/ArfusForge.jsx` — hub Tech Tree (gate lvl<6 + 3 gruppi categoria + slot counter)
+   - `pages/ArfusTechDetail.jsx` — dettaglio + modal warning slot ≥4 + CTA "Avvia Ricerca"
+   - `pages/ArfusResearch.jsx` — countdown timer + auto-refresh 30s + storico
+   - `pages/ArfusActive.jsx` — toggle attiva/disattiva + riassunto bonus con CATEGORY_CAPS
+   - `components/ArfusMiniCard.jsx` — Dashboard V2 mini-card
+
+2. **Chronicle enhancement (nessun nuovo componente)**:
+   - `ChronicleCard.jsx` esistente rende automaticamente
+     `legendary_perfezionato` (backend whitelisted).
+
+3. **Wiring**:
+   - `App.js`: +4 route `requireGuild`
+   - `navMenu.js`: voce "Forgia di Arfus" badge NEW
+   - `Dashboard.jsx`: mount `<ArfusMiniCard />`
+
+4. **Vincoli UI (checklist static CSS rispettata)**:
+   - ✅ Mobile-first, no `overflow-x` fisso
+   - ✅ `pb-32 md:pb-8` sui container root
+   - ✅ Touch target ≥44x44 (`min-h-[44px]`)
+   - ✅ CTA `w-full md:w-auto`
+   - ✅ Warning slot ≥4 con checkbox conferma prima di sblocco
+   - ✅ Bonus attivi combinati mostrati per categoria con caps
+
+5. **Validazione finale**:
+   - `yarn build` → 1 warning legacy (ClassHalls.jsx non-5B)
+   - `yarn lint` sui file Arfus → solo warning cosmetici
+   - `pytest -k round163_phase5B` → 39 passed, 1 skipped
+   - `pytest -k round163_phase5A` → 38/38 (backward-compat)
+
+6. **E2E Results (Iter1 backend, `e1_tester`)**: 10/13 PASS + 2 HUMAN_REQUIRED
+   + 1 DESIGN_ONLY (i 3 non-PASS sono limiti test infra, non bug —
+   verificati via code inspection utente).
+
+7. **Osservazioni non-bloccanti** (persistenti):
+   - `/api/market/listings` → 307 redirect
+   - PATCH admin usa **query string** `?is_active=<bool>`
+   - Slug leggendari: `legendary_cape_aveol`
+   - Sub-check 2.7 no-stack: logica presente ma unreachable con V1 seed
+
+**Report completo**: `/app/memory/round163_phase5B_final_report.md` sez. 11-14.
+
+**Next**: **Phase 6 — Patti commerciali gilda + Specializzazioni gilda (P2)**.
+

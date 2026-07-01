@@ -1,10 +1,10 @@
-# ROUND 16.3 — Phase 5B Iterazione 1 (BACKEND) Final Report
+# ROUND 16.3 — Phase 5B Final Report (OFFICIALLY CLOSED ✅)
 
 **Data**: 2026-07-01
 **Scope**: Forgia di Arfus (guild passive technologies) V0 — Backend +
-Enhancement Chronicle server-wide announcement + tests.
-**Stato**: 🟡 **BACKEND CLOSED / FRONTEND PENDING** — Iterazione 2
-(frontend) partirà dopo verifica manuale utente.
+Enhancement Chronicle server-wide announcement + Frontend + tests.
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** — Iterazione 1 (backend), Iterazione 2
+(frontend) e sigillo documentale tutti completati.
 
 ---
 
@@ -233,3 +233,118 @@ FRONTEND PENDING**
 
 *Iterazione 1 backend completata: 2026-07-01. Iterazione 2 frontend
 segue dopo conferma utente.*
+
+---
+
+## 11. Iterazione 2 — Frontend Phase 5B (2026-07-01)
+
+### 11.1 — File creati
+
+| File | Righe | Ruolo |
+|---|---:|---|
+| `frontend/src/pages/ArfusForge.jsx` | ~185 | Hub Tech Tree (gate lvl<6 branch + 3 gruppi categoria, slot counter, deep-link ricerche/gestione) |
+| `frontend/src/pages/ArfusTechDetail.jsx` | ~200 | Dettaglio + costo owned/required + CTA "Avvia Ricerca" + modal warning slot ≥4 |
+| `frontend/src/pages/ArfusResearch.jsx` | ~140 | Ordini in corso con countdown timer + auto-refresh 30s + storico 20 |
+| `frontend/src/pages/ArfusActive.jsx` | ~155 | Toggle attiva/disattiva con enforcement UI + riassunto bonus combinati per categoria |
+| `frontend/src/components/ArfusMiniCard.jsx` | ~85 | Mini-card Dashboard V2 con branch locked/access |
+
+**Nota**: `ChronicleBanner.jsx` NON creato — il componente esistente
+`ChronicleCard.jsx` renderizza già gli eventi `legendary_perfezionato`
+automaticamente (backend whitelisted `PUBLIC_EVENTS` + template IT/EN
+già presenti in `chronicle/services.py`). Zero frontend aggiuntivo
+richiesto per l'enhancement.
+
+### 11.2 — File modificati
+
+| File | Modifica |
+|---|---|
+| `frontend/src/App.js` | +4 route protette `requireGuild`: `/arfus-forge`, `/arfus-forge/tech/:slug`, `/arfus-forge/research`, `/arfus-forge/active` |
+| `frontend/src/components/navMenu.js` | +voce "Forgia di Arfus" badge NEW (testid `menu-arfus-forge`) sotto macro-sezione Gilda |
+| `frontend/src/pages/Dashboard.jsx` | +import `ArfusMiniCard` + mount sotto `LegendaryForgeMiniCard` |
+
+### 11.3 — Vincoli UI rispettati (checklist static CSS)
+
+- ✅ **Mobile-first**: nessun `overflow-x` fisso, layout `grid gap-3 md:grid-cols-2`
+  con fallback single-column.
+- ✅ **`pb-32 md:pb-8`**: applicato ai container root di tutte e 4 le pagine.
+- ✅ **CTA `w-full md:w-auto`**: "Vai alle Missioni" (branch blocked),
+  "Avvia Ricerca", "Ho capito/Annulla" modal warning, "Ricerche/Gestisci
+  slot attivi", tutti touch-friendly su mobile.
+- ✅ **Touch target ≥44x44**: `min-h-[44px]` sui bottoni principali +
+  `w-24 md:w-32` sui toggle di gestione slot.
+- ✅ **Warning slot ≥4**: modal con CTA "Ho capito, avvia" + "Annulla"
+  quando l'utente prova a sbloccare la sesta tech (obbligo di free-slot
+  per successiva attivazione).
+- ✅ **PATCH admin via query string**: nel codice admin (non presente in
+  UI Iter2 V1, ma documentato in `ArfusForge.jsx` comment) userà
+  `axios.patch(url, null, { params: { is_active } })` — coerente Phase 5A.
+- ✅ **`data-testid` naming**: coerente (`arfus-forge-page`,
+  `arfus-tech-card-{slug}`, `arfus-toggle-{slug}`, `arfus-mini-card`,
+  `arfus-bonus-{category}`, ecc.).
+- ✅ **Tema dark**: coerente (bg-slate-900, accenti amber-500 per
+  Arfus, emerald-500 per attiva, sky-500 per ricerche).
+
+### 11.4 — Validazione statica finale
+
+| Comando | Risultato |
+|---|---|
+| `yarn build` (dev mode) | Compilato con 1 warning legacy (ClassHalls.jsx pre-esistente, non-Phase-5B) ✅ |
+| `yarn lint` sui file Arfus | Solo warning cosmetici `react/jsx-closing-tag-location`, nessun errore ✅ |
+| `pytest -k round163_phase5B` | **39 passed, 1 skipped** (invariato) ✅ |
+| `pytest -k round163_phase5A` (backward-compat check) | **38 passed** ✅ |
+
+---
+
+## 12. E2E Verification Results (Iterazione 1 Backend, `e1_tester`)
+
+**10/13 PASS + 2 HUMAN_REQUIRED + 1 DESIGN_ONLY** — utente ha confermato
+via code inspection dei 3 non-PASS come **NON bug ma limiti test infra**:
+
+- **Sub-check 2.4** (gate `access:false` per lvl<6): non seedato account
+  low-level nel test env, ma logica presente in
+  `arfus_forge.list_catalog` (linea 251).
+- **Sub-check 2.6** (applier differential expedition): verificato via
+  code inspection in `expeditions/services.py:288-289` (patch inline
+  `leader_experience` bonus).
+- **Sub-check 2.7** (no-stack same-category): seed V1 ha 1 tech per
+  categoria → il branch codice `stack_same_category` è **presente ma
+  unreachable** con V1 catalog. Enforce statico validato in T13 del
+  test suite (mock fake catalog entry per raggiungere il branch).
+
+Tutti gli altri sub-check hanno PASS diretto.
+
+---
+
+## 13. Osservazioni non-bloccanti (persistenti + nuove)
+
+Confermate valide per Phase 5B:
+
+1. **`/api/market/listings` → 307 redirect** a `/api/auction/listings`.
+2. **PATCH admin arfus/legendary usa query string** `?is_active=<bool>`
+   (design intentional).
+3. **Slug leggendari**: `legendary_cape_aveol` (non `cloak_aveol`).
+4. **Sub-check 2.7 no-stack unreachable con V1**: logica presente
+   per V2 (multi-tech-per-category future-proof), non-blocker.
+
+---
+
+## 14. Stato finale Phase 5B
+
+**Backend**: 10 tecnologie, applier in 5 servizi, chronicle enhancement,
+9 endpoint (6 public + 3 admin), 5 audit UPPERCASE + 1 lowercase
+chronicle.
+**Frontend**: 4 pagine + 1 mini-card, mobile-first, warning slot ≥4,
+riassunto bonus per categoria con CATEGORY_CAPS, chronicle
+auto-integrato via `ChronicleCard` esistente.
+**Test suite Phase 5B**: **39/40 pass** (1 skip register SMTP) — R16.3
+combined (phases 1-5B): **185 passed, 2 skipped, 0 fail**.
+**Documentazione**: report + roadmap + audit snapshot + PRD tutti
+sigillati.
+
+**Phase 5B: OFFICIALLY CLOSED ✅**
+
+Prossimo step: **Phase 6** — Patti commerciali gilda + Specializzazioni
+gilda (P2 confermato utente).
+
+*Iterazione 2 (Frontend) e sigillo completati: 2026-07-01.*
+

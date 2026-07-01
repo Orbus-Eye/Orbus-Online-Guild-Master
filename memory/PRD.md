@@ -401,3 +401,42 @@
   (hard-coded, path count ora 218), raid lifecycle 423 pre-esistenti,
   2 alchemist/adventurers noti — non regressions Phase 5B
 
+
+---
+
+## Round 16.3 Phase 5B OFFICIALLY CLOSED ✅ — 2026-07-01 (Iter2 Frontend)
+
+**Phase 5B (Forgia di Arfus + Chronicle Enhancement) — completa
+Backend + Frontend + Docs**:
+
+- **Frontend web** (4 pagine + 1 mini-card):
+  - `ArfusForge.jsx`, `ArfusTechDetail.jsx`, `ArfusResearch.jsx`,
+    `ArfusActive.jsx` + `ArfusMiniCard.jsx`
+  - Warning slot ≥4 con conferma esplicita, riassunto bonus per
+    categoria con CATEGORY_CAPS
+  - Chronicle: `ChronicleCard.jsx` esistente rende automaticamente
+    `legendary_perfezionato` (zero frontend aggiuntivo)
+- **Wiring**: +4 route in `App.js`, voce nav "Forgia di Arfus" badge NEW,
+  `<ArfusMiniCard />` in Dashboard
+- **Vincoli UI**: mobile-first, `pb-32 md:pb-8`, touch ≥44x44, CTA
+  `w-full md:w-auto`, tema dark coerente
+
+**Validazione finale**:
+- `yarn build` → OK (1 warning legacy non-5B)
+- `yarn lint` file Arfus → solo warning cosmetici
+- `pytest -k round163_phase5B` → 39 passed, 1 skipped
+- `pytest -k round163_phase5A` → 38/38 (backward-compat)
+
+**E2E Backend results** (`e1_tester` Iter1): 10/13 PASS + 2 HUMAN_REQUIRED +
+1 DESIGN_ONLY (3 non-PASS validati via code inspection, non-bug).
+
+**Report**: `/app/memory/round163_phase5B_final_report.md` sez. 11-14.
+
+**Next Action Items**:
+- ⏳ Playtest globale utente a fine roadmap R16.3
+- 🎯 **Phase 6 (P2)**: Patti commerciali gilda + Specializzazioni gilda
+- 🔒 Phase 7 (P2): PvP continentale
+- 🔒 Phase 8 (P2): Stalla e cavalcature
+- 🐛 Debito legacy noto (openapi count hardcoded 86, 2 alchemist R16.0)
+  — non-Phase-5B
+

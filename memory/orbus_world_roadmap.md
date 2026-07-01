@@ -130,4 +130,4 @@
 
 ---
 
-*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅ · Phase 4 CLOSED ✅ · Phase 5A CLOSED ✅ · Phase 5B BACKEND CLOSED 🟡 (frontend pending).*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅ · Phase 4 CLOSED ✅ · Phase 5A CLOSED ✅ · Phase 5B CLOSED ✅ (Backend + Frontend + Docs sigillati).*
