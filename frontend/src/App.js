@@ -76,6 +76,10 @@ import PvpOpponents from "@/pages/PvpOpponents";
 import PvpChallenge from "@/pages/PvpChallenge";
 import PvpBattles from "@/pages/PvpBattles";
 import PvpBattleReport from "@/pages/PvpBattleReport";
+// ROUND 16.3 Phase 7B — PvP Season pages
+import PvpSeasonOverview from "@/pages/PvpSeasonOverview";
+import PvpSeasonLeaderboardDetail from "@/pages/PvpSeasonLeaderboardDetail";
+import PvpSeasonCosmetics from "@/pages/PvpSeasonCosmetics";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {
@@ -592,6 +596,13 @@ function App() {
                             <ProtectedRoute requireGuild><PvpBattles /></ProtectedRoute>} />
                         <Route path="/pvp/battles/:battleId" element={
                             <ProtectedRoute requireGuild><PvpBattleReport /></ProtectedRoute>} />
+                        {/* ROUND 16.3 Phase 7B — PvP Season */}
+                        <Route path="/pvp-season" element={
+                            <ProtectedRoute requireGuild><PvpSeasonOverview /></ProtectedRoute>} />
+                        <Route path="/pvp-season/leaderboard/:continentSlug" element={
+                            <ProtectedRoute requireGuild><PvpSeasonLeaderboardDetail /></ProtectedRoute>} />
+                        <Route path="/pvp-season/cosmetics" element={
+                            <ProtectedRoute requireGuild><PvpSeasonCosmetics /></ProtectedRoute>} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     </AuthProvider>

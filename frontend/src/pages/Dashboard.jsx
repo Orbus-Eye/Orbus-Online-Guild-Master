@@ -15,6 +15,7 @@ import ArfusMiniCard from "../components/ArfusMiniCard";
 import TradePactsMiniCard from "../components/TradePactsMiniCard";
 import SpecializationMiniCard from "../components/SpecializationMiniCard";
 import PvpMiniCard from "../components/PvpMiniCard";
+import PvpSeasonMiniCard from "../components/PvpSeasonMiniCard";
 import ContinentEventBanner from "../components/ContinentEventBanner";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
@@ -226,6 +227,9 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-4">
                     <PvpMiniCard />
+                </div>
+                <div className="mb-4">
+                    <PvpSeasonMiniCard />
                 </div>
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
                     <DailyQuestsCard />

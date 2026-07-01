@@ -81,6 +81,7 @@ export const NAV_SECTIONS = [
             { to: "/seasons", label: "Stagioni", testid: "menu-seasons" },
             { to: "/arena", label: "Arena", testid: "menu-arena" },
             { to: "/pvp", label: "PvP Continentale", testid: "menu-pvp-continental", badge: "NEW" },
+            { to: "/pvp-season", label: "Stagione PvP", testid: "menu-pvp-season", badge: "NEW" },
         ],
     },
     {
