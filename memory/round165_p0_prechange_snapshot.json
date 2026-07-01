@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "created_at": "2026-07-01T20:26:27.463979Z",
+    "purpose": "Round 16.5 P0 pre-apply snapshot. Restore = for each entry run update_one({slug}, {$set: <this row>}) to revert.",
+    "db_name": "orbus_r16"
+  },
+  "dungeons": [
+    {
+      "slug": "bandit-hideout",
+      "required_level": 2,
+      "bucket": "tutorial",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.440070Z"
+    },
+    {
+      "slug": "celestial-citadel-5p",
+      "required_level": 13,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.443889Z"
+    },
+    {
+      "slug": "clockwork-vault-5p",
+      "required_level": 10,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.443313Z"
+    },
+    {
+      "slug": "cursed-mines",
+      "required_level": 4,
+      "bucket": "early",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.440817Z"
+    },
+    {
+      "slug": "dragons-hoard",
+      "required_level": 6,
+      "bucket": "mid",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.441893Z"
+    },
+    {
+      "slug": "druid-grove",
+      "required_level": 3,
+      "bucket": "early",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.440363Z"
+    },
+    {
+      "slug": "frost-cave-5p",
+      "required_level": 4,
+      "bucket": "early",
+      "progression_tag": "story_catchup",
+      "updated_at": "2026-07-01T20:26:21.441482Z"
+    },
+    {
+      "slug": "goblin-warrens",
+      "required_level": 2,
+      "bucket": "tutorial",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.439769Z"
+    },
+    {
+      "slug": "infernal-pit-5p",
+      "required_level": 12,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.443697Z"
+    },
+    {
+      "slug": "iron-foundry-5p",
+      "required_level": 6,
+      "bucket": "mid",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.442508Z"
+    },
+    {
+      "slug": "lich-sanctum",
+      "required_level": 5,
+      "bucket": "mid",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.441688Z"
+    },
+    {
+      "slug": "obsidian-arena-5p",
+      "required_level": 9,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.443109Z"
+    },
+    {
+      "slug": "pirate-fleet-5p",
+      "required_level": 8,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.442904Z"
+    },
+    {
+      "slug": "salt-marsh-5p",
+      "required_level": 5,
+      "bucket": "early",
+      "progression_tag": "story_catchup",
+      "updated_at": "2026-07-01T20:26:21.442098Z"
+    },
+    {
+      "slug": "sewer-nest",
+      "required_level": 1,
+      "bucket": "tutorial",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.439326Z"
+    },
+    {
+      "slug": "shadow-crypts",
+      "required_level": 3,
+      "bucket": "early",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.440596Z"
+    },
+    {
+      "slug": "silent-monastery-5p",
+      "required_level": 7,
+      "bucket": "mid",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.442708Z"
+    },
+    {
+      "slug": "storm-spire",
+      "required_level": 6,
+      "bucket": "mid",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.442306Z"
+    },
+    {
+      "slug": "sunken-library",
+      "required_level": 4,
+      "bucket": "early",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.441265Z"
+    },
+    {
+      "slug": "voidspire-5p",
+      "required_level": 11,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.443506Z"
+    },
+    {
+      "slug": "wolf-den-5p",
+      "required_level": 3,
+      "bucket": "early",
+      "progression_tag": "story_catchup",
+      "updated_at": "2026-07-01T20:26:21.441039Z"
+    },
+    {
+      "slug": "world-tree-roots-5p",
+      "required_level": 14,
+      "bucket": "high",
+      "progression_tag": null,
+      "updated_at": "2026-07-01T20:26:21.444101Z"
+    }
+  ],
+  "items": [
+    {
+      "slug": "arcane_adept_orb",
+      "min_level": 9,
+      "updated_at": "2026-07-01T20:26:21.444303Z"
+    },
+    {
+      "slug": "drake_slayer_blade",
+      "min_level": 9,
+      "updated_at": "2026-07-01T20:26:21.444500Z"
+    },
+    {
+      "slug": "drake_slayer_chest",
+      "min_level": 8,
+      "updated_at": "2026-07-01T20:26:21.444695Z"
+    },
+    {
+      "slug": "drake_slayer_helm",
+      "min_level": 8,
+      "updated_at": "2026-07-01T20:26:21.444893Z"
+    },
+    {
+      "slug": "goblin_hunter_ring",
+      "min_level": 8,
+      "updated_at": "2026-07-01T20:26:21.445096Z"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+=== APPLY PREVIEW — Round 16.5 P0 ===
+Snapshot path: /app/memory/round165_p0_prechange_snapshot.json
+Snapshot SHA256: 28a1e085fd743cfb7ce407168bdc88961817a3ddd76239a4f12bbc62a89fc537
+Snapshot size: 4814 bytes
+
+Dungeon da modificare: 22/22
+  Campi modificati per dungeon: required_level, bucket (dove applicabile), updated_at
+  Nessun altro campo verrà toccato.
+
+Legendary items da modificare: 5/5
+  Campi modificati per item: min_level, updated_at
+  Nessun altro campo verrà toccato.
+
+Story_catchup tags aggiunti: 3 dungeon
+  Slug: ['wolf-den-5p', 'frost-cave-5p', 'salt-marsh-5p']
+
+Whitelist campi modificabili attiva: ['bucket', 'min_level', 'progression_tag', 'required_level', 'updated_at']
+Guard-rail attivo: qualsiasi tentativo di scrittura su altro campo → refuse
+
+=== APPLY PREVIEW END ===

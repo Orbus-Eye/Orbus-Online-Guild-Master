@@ -34,13 +34,27 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
 sys.path.insert(0, "/app/backend")
+
+
+# ═════════════════════════════════════════════════════════════════════
+# WHITELIST — hard guard-rail: fields that --apply is ALLOWED to write.
+# Any attempt to write outside this set → RuntimeError.
+# ═════════════════════════════════════════════════════════════════════
+_DUNGEON_WHITELIST = frozenset(
+    {"required_level", "bucket", "progression_tag", "updated_at"}
+)
+_ITEM_WHITELIST = frozenset(
+    {"min_level", "updated_at"}
+)
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -534,6 +548,317 @@ Il campo `min_level` sugli Epic è attualmente non impostato (default 1 implicit
 
 
 # ═════════════════════════════════════════════════════════════════════
+# 5.5. APPLY MODE — snapshot, preview, whitelisted writes
+# ═════════════════════════════════════════════════════════════════════
+
+
+def _sha256_of_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _iso_utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _build_dungeon_apply_set(row: dict) -> dict:
+    """Compute the exact $set doc for one dungeon. Whitelist-enforced.
+
+    We recompute delta at apply-time so idempotent reruns become $set on
+    the same value (no-op writes are fine, they update `updated_at` but
+    that field is inside the whitelist).
+    """
+    fields: dict[str, Any] = {
+        "required_level": int(row["required_level_proposed"]),
+        "bucket": str(row["bucket"]),
+        "updated_at": _iso_utc_now(),
+    }
+    if row.get("story_catchup"):
+        fields["progression_tag"] = "story_catchup"
+    # Whitelist guard-rail
+    illegal = set(fields.keys()) - _DUNGEON_WHITELIST
+    if illegal:
+        raise RuntimeError(
+            f"WHITELIST VIOLATION on dungeon {row['dungeon_slug']}: "
+            f"attempted to write fields outside whitelist: {illegal}"
+        )
+    return fields
+
+
+def _build_item_apply_set(row: dict) -> dict:
+    """Compute the exact $set doc for one legendary item."""
+    fields: dict[str, Any] = {
+        "min_level": int(row["min_level_proposed"]),
+        "updated_at": _iso_utc_now(),
+    }
+    illegal = set(fields.keys()) - _ITEM_WHITELIST
+    if illegal:
+        raise RuntimeError(
+            f"WHITELIST VIOLATION on item {row['item_slug']}: "
+            f"attempted to write fields outside whitelist: {illegal}"
+        )
+    return fields
+
+
+def _build_snapshot(db, dungeon_props: list[dict],
+                    legendary_props: list[dict]) -> dict:
+    """Snapshot the EXACT current state of every doc we're about to touch.
+
+    Only the fields inside our two whitelists are snapshotted (plus `slug`
+    and the doc's canonical `id`/`_id`-substitute). This bounds the
+    snapshot size and makes rollback trivially deterministic.
+    """
+    dungeon_slugs = [r["dungeon_slug"] for r in dungeon_props]
+    item_slugs = [r["item_slug"] for r in legendary_props]
+
+    dungeons_snap: list[dict] = []
+    for d in db.dungeons.find(
+        {"slug": {"$in": dungeon_slugs}},
+        {"_id": 0, "slug": 1, "required_level": 1, "bucket": 1,
+         "progression_tag": 1, "updated_at": 1},
+    ):
+        dungeons_snap.append({
+            "slug": d.get("slug"),
+            "required_level": d.get("required_level"),
+            "bucket": d.get("bucket"),
+            "progression_tag": d.get("progression_tag"),
+            "updated_at": (
+                d.get("updated_at").isoformat()
+                if hasattr(d.get("updated_at"), "isoformat")
+                else d.get("updated_at")
+            ),
+        })
+
+    items_snap: list[dict] = []
+    for it in db.items.find(
+        {"slug": {"$in": item_slugs}},
+        {"_id": 0, "slug": 1, "min_level": 1, "updated_at": 1},
+    ):
+        items_snap.append({
+            "slug": it.get("slug"),
+            "min_level": it.get("min_level"),
+            "updated_at": (
+                it.get("updated_at").isoformat()
+                if hasattr(it.get("updated_at"), "isoformat")
+                else it.get("updated_at")
+            ),
+        })
+
+    return {
+        "meta": {
+            "created_at": _iso_utc_now(),
+            "purpose": (
+                "Round 16.5 P0 pre-apply snapshot. Restore = for each entry "
+                "run update_one({slug}, {$set: <this row>}) to revert."
+            ),
+            "db_name": db.name,
+        },
+        "dungeons": sorted(dungeons_snap, key=lambda x: x["slug"]),
+        "items": sorted(items_snap, key=lambda x: x["slug"]),
+    }
+
+
+def _render_preview(preview_data: dict) -> str:
+    d_rows = preview_data["dungeons_planned"]
+    i_rows = preview_data["items_planned"]
+    story_slugs = [r["dungeon_slug"] for r in d_rows
+                   if r.get("story_catchup")]
+    lines = [
+        "=== APPLY PREVIEW — Round 16.5 P0 ===",
+        f"Snapshot path: {preview_data['snapshot_path']}",
+        f"Snapshot SHA256: {preview_data['snapshot_sha256']}",
+        f"Snapshot size: {preview_data['snapshot_size_bytes']} bytes",
+        "",
+        f"Dungeon da modificare: {len(d_rows)}/22",
+        "  Campi modificati per dungeon: required_level, bucket "
+        "(dove applicabile), updated_at",
+        "  Nessun altro campo verrà toccato.",
+        "",
+        f"Legendary items da modificare: {len(i_rows)}/5",
+        "  Campi modificati per item: min_level, updated_at",
+        "  Nessun altro campo verrà toccato.",
+        "",
+        f"Story_catchup tags aggiunti: {len(story_slugs)} dungeon",
+        f"  Slug: {story_slugs}",
+        "",
+        f"Whitelist campi modificabili attiva: "
+        f"{sorted(_DUNGEON_WHITELIST | _ITEM_WHITELIST)}",
+        "Guard-rail attivo: qualsiasi tentativo di scrittura su altro "
+        "campo → refuse",
+        "",
+        "=== APPLY PREVIEW END ===",
+    ]
+    return "\n".join(lines)
+
+
+def _render_apply_report(dungeon_props, legendary_props, unresolved,
+                         epic_notes, meta, apply_result) -> str:
+    d_changed = apply_result["dungeon_modified"]
+    d_noop = apply_result["dungeon_noop"]
+    i_changed = apply_result["item_modified"]
+    i_noop = apply_result["item_noop"]
+    return f"""# Round 16.5 P0 — Balance Gates & Legendary Level (APPLY)
+
+**Data**: {meta['run_at']}
+**Modalità**: `--apply` (modifiche effettive al DB `{meta['db_name']}`)
+**Tempo esecuzione**: {meta['elapsed_seconds']}s
+**Script**: `/app/backend/app/scripts/round165_balance_p0_gates_and_legendary_levels.py`
+
+## Snapshot
+- Path: `{apply_result['snapshot_path']}`
+- SHA256: `{apply_result['snapshot_sha256']}`
+- Size: {apply_result['snapshot_size_bytes']} bytes
+
+## Diff Preview (audit trail)
+- Path: `{apply_result['preview_path']}`
+
+## Risultati
+- Dungeon **modificati** ({d_changed}), no-op ({d_noop})
+- Legendary **modificati** ({i_changed}), no-op ({i_noop})
+- Whitelist violations: {apply_result['whitelist_violations']} (deve essere 0)
+- Unresolved (non toccati): {len(unresolved)}
+
+## Tabella A — required_level dungeon (applicati)
+
+{_md_table_dungeons(dungeon_props)}
+
+## Tabella B — min_level Legendary (applicati)
+
+{_md_table_legendary(legendary_props)}
+"""
+
+
+def _run_apply() -> int:
+    print("=== APPLY MODE ===")
+    t0 = time.time()
+
+    client, db = _connect_db()
+    print(f"[r165] connected to DB: {db.name}")
+    if db.name != "orbus_r16":
+        raise RuntimeError(
+            f"APPLY REFUSED: DB name = {db.name!r}, expected 'orbus_r16'."
+        )
+
+    # Rebuild the same proposal set the dry-run produced (deterministic).
+    dungeon_props, dungeon_unresolved = _build_dungeon_proposals(db)
+    legendary_props, legendary_unresolved, epic_notes = (
+        _build_legendary_proposals(db)
+    )
+    all_unresolved = dungeon_unresolved + legendary_unresolved
+    if all_unresolved:
+        print(f"[r165] WARN: {len(all_unresolved)} unresolved rows — "
+              f"they will NOT be touched.")
+
+    # ── 2.1 Snapshot ────────────────────────────────────────────────────
+    snapshot = _build_snapshot(db, dungeon_props, legendary_props)
+    snap_path = Path("/app/memory/round165_p0_prechange_snapshot.json")
+    snap_path.write_text(json.dumps(snapshot, indent=2, default=str))
+    snap_sha = _sha256_of_file(snap_path)
+    snap_size = snap_path.stat().st_size
+    print(f"[r165] snapshot written: {snap_path}")
+    print(f"[r165] snapshot sha256:  {snap_sha}")
+    print(f"[r165] snapshot bytes:   {snap_size}")
+
+    # ── 2.1b Preview ────────────────────────────────────────────────────
+    preview_data = {
+        "snapshot_path": str(snap_path),
+        "snapshot_sha256": snap_sha,
+        "snapshot_size_bytes": snap_size,
+        "dungeons_planned": dungeon_props,
+        "items_planned": legendary_props,
+    }
+    preview_text = _render_preview(preview_data)
+    print("\n" + preview_text + "\n")
+    preview_path = Path("/app/memory/round165_p0_apply_preview.txt")
+    preview_path.write_text(preview_text)
+    print(f"[r165] preview written:  {preview_path}")
+
+    # ── 2.2 Apply (whitelist-enforced) ──────────────────────────────────
+    whitelist_violations = 0
+    d_modified = 0
+    d_noop = 0
+    for row in dungeon_props:
+        try:
+            set_doc = _build_dungeon_apply_set(row)
+        except RuntimeError as exc:
+            whitelist_violations += 1
+            print(f"[r165] REFUSED dungeon {row['dungeon_slug']}: {exc}")
+            continue
+        result = db.dungeons.update_one(
+            {"slug": row["dungeon_slug"]}, {"$set": set_doc}
+        )
+        if result.modified_count > 0:
+            d_modified += 1
+        else:
+            d_noop += 1
+
+    i_modified = 0
+    i_noop = 0
+    for row in legendary_props:
+        try:
+            set_doc = _build_item_apply_set(row)
+        except RuntimeError as exc:
+            whitelist_violations += 1
+            print(f"[r165] REFUSED item {row['item_slug']}: {exc}")
+            continue
+        result = db.items.update_one(
+            {"slug": row["item_slug"]}, {"$set": set_doc}
+        )
+        if result.modified_count > 0:
+            i_modified += 1
+        else:
+            i_noop += 1
+
+    apply_result = {
+        "snapshot_path": str(snap_path),
+        "snapshot_sha256": snap_sha,
+        "snapshot_size_bytes": snap_size,
+        "preview_path": str(preview_path),
+        "dungeon_modified": d_modified,
+        "dungeon_noop": d_noop,
+        "item_modified": i_modified,
+        "item_noop": i_noop,
+        "whitelist_violations": whitelist_violations,
+    }
+
+    elapsed = round(time.time() - t0, 3)
+    meta = {
+        "run_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "elapsed_seconds": elapsed,
+        "db_name": db.name,
+        "mode": "apply",
+    }
+
+    report_md = _render_apply_report(
+        dungeon_props, legendary_props, all_unresolved, epic_notes,
+        meta, apply_result,
+    )
+    report_path = Path("/app/memory/round165_p0_apply_report.md")
+    report_path.write_text(report_md)
+    data_path = Path("/app/memory/round165_p0_apply_data.json")
+    data_path.write_text(json.dumps({
+        "meta": meta,
+        "apply_result": apply_result,
+        "dungeon_proposals": dungeon_props,
+        "legendary_proposals": legendary_props,
+        "unresolved": all_unresolved,
+    }, indent=2, default=str))
+
+    print(f"[r165] apply report: {report_path}")
+    print(f"[r165] apply data:   {data_path}")
+    print(f"[r165] dungeons modified={d_modified} noop={d_noop}")
+    print(f"[r165] items    modified={i_modified} noop={i_noop}")
+    print(f"[r165] whitelist violations: {whitelist_violations}")
+    print(f"[r165] elapsed: {elapsed}s")
+
+    client.close()
+    return 0 if whitelist_violations == 0 else 2
+
+
+# ═════════════════════════════════════════════════════════════════════
 # 6. MAIN
 # ═════════════════════════════════════════════════════════════════════
 
@@ -541,13 +866,7 @@ Il campo `min_level` sugli Epic è attualmente non impostato (default 1 implicit
 def main() -> int:
     args = _parse_args()
     if args.apply:
-        # STEP 2 not enabled in this step 1 script variant. Refuse gracefully.
-        print(
-            "REFUSING: --apply is reserved for STEP 2. "
-            "Run --dry-run first to generate proposals.",
-            file=sys.stderr,
-        )
-        return 1
+        return _run_apply()
 
     print("=== DRY-RUN MODE ===")
     t0 = time.time()

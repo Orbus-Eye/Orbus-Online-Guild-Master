@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "run_at": "2026-07-01 20:31:24",
+    "db_name": "orbus_r16",
+    "elapsed_seconds": 0.014,
+    "mode": "read-only"
+  },
+  "adv_distribution": {
+    "total_adventurers": 1985,
+    "active": 1984,
+    "retired": 1,
+    "bands": {
+      "lv4-6": 8,
+      "lv7-9": 9,
+      "lv1-3": 1967
+    },
+    "stats": {
+      "count_active": 1984,
+      "count_retired": 1,
+      "mean": 1.05,
+      "median": 1.0,
+      "min": 1,
+      "max": 9,
+      "p90": 1
+    }
+  },
+  "legendary_equipped": {
+    "source_used": "inventory_items.equipped_by",
+    "total_legendary_equipped": 0,
+    "by_item_slug": {},
+    "raw_pairs_sample": [],
+    "raw_pairs_count": 0
+  },
+  "orphaned": {
+    "min_level_catalog": {
+      "drake_slayer_helm": 8,
+      "drake_slayer_chest": 8,
+      "drake_slayer_blade": 9,
+      "arcane_adept_orb": 9,
+      "goblin_hunter_ring": 8
+    },
+    "total_orphans": 0,
+    "unique_adventurers_impacted": 0,
+    "unique_guilds_impacted": 0,
+    "unique_items_impacted": {},
+    "orphans": []
+  }
+}
