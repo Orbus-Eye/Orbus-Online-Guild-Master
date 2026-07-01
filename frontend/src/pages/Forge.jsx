@@ -76,18 +76,16 @@ export default function Forge() {
         setBusy(true);
         try {
             if (tab === "refine") {
-                await api.post("/forge/refine", { instance_id: iid });
+                await api.post(`/inventory/${iid}/refine`);
                 toast.success(t("forge.refine_done"));
             } else if (tab === "disenchant") {
-                await api.post("/forge/disenchant", { instance_id: iid });
+                await api.post(`/inventory/${iid}/disenchant`);
                 toast.success(t("forge.disenchant_done"));
             } else if (tab === "reroll") {
-                await api.post("/forge/reroll", { instance_id: iid });
+                await api.post(`/inventory/${iid}/reroll-affixes`);
                 toast.success(t("forge.reroll_done"));
             } else if (tab === "enchant") {
-                const { data } = await api.get("/forge/enchant-options", {
-                    params: { instance_id: iid },
-                });
+                const { data } = await api.post(`/inventory/${iid}/enchant-options`);
                 setEnchOptions(data.options || []);
             }
             if (tab !== "enchant") {
@@ -103,8 +101,7 @@ export default function Forge() {
         if (!selected) return;
         setBusy(true);
         try {
-            await api.post("/forge/enchant", {
-                instance_id: selected.instance_id || selected.id,
+            await api.post(`/inventory/${selected.instance_id || selected.id}/enchant`, {
                 enchant_slug: slug,
             });
             toast.success(t("forge.enchant_applied"));
