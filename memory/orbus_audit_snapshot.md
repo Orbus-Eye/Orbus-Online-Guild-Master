@@ -494,3 +494,37 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 `MAX_LIMIT=200`, `MAX_WINDOW_HOURS=720` (30 giorni), whitelist hard-coded sui 3 event_type R16.A.
 
 **Recommendation for next round**: **R16.B — Audit Coverage Extension + Sweep XP Round 2**. Aggiungere `material_dropped`, `adventurer_xp_gained`, `leaderboard_score_updated` ad audit whitelist; sweep `add_guild_xp` su quests/contracts/seasons (4-5 code path identificate); persistere `leaderboard_snapshots` (storico ranking). Stima 1.5-2gg dev + 0.5gg test. R16.C (QoL polish — smooth-scroll guide, lock-in spec UI, CSV export admin audit) resta P2.
+
+---
+
+## Hotfix R16.1.1 closed — 2026-06-30
+
+**🟢 OFFICIALLY CLOSED ✅** — Post-verifica utente DevTools iPhone 14 (Forge mobile) + `e1_tester` 6/6 sub-check PASS (Desktop menu).
+
+1. **Raid recovery**: 28/28 raid stuck `broken-bastion-siege` risolti idempotentemente (script CLI `recover_stuck_raids.py --apply`), 580 avventurieri liberati, 29 audit `raid_recovered` (28 + 1 on-visit fallback). On-visit fallback integrato in `GET /api/raids` e `GET /api/raids/{id}`.
+2. **Forge mobile visibility**: `Forge.jsx` riscritto — `pb-32 md:pb-6` per bottom-nav clear, `min-h-[44px]` tap target Apple HIG, auto-scroll operation panel su selezione, confirm button `w-full md:w-auto` full-prominence. PASS confermato in verifica utente DevTools iPhone 14 (viewport 390×844).
+3. **Desktop menu click-only**: `AppHeader.jsx` refactor — lifted `openId` state, marker `data-dropdown-region`, listener `click` post-bubble, rimosso `onMouseEnter` auto-switch hover (root cause del conflitto atomic switch). Pattern GitHub/Linear/GitLab-style. 6/6 sub-check E2E `e1_tester` PASS.
+4. **Test coverage**: 65/65 pytest PASS (R16.1 + R16.A + R16.1.1 raid recovery [7 tests] + Phase 14.4 + dev-seed, 1 skipped feature-gated). 0 regressioni.
+5. **Vincoli rispettati**: NO deploy, NO hard delete, NO cambi a economia/XP/drop rate/balancing/PvP. Recovery riusa logica `complete_raid` deterministic (rng seeded by raid_id). Solo preview.
+
+**Prossimo round schedulato**: R16.3 Phase 1 — World Boss V1 Alveora (in esecuzione).
+
+---
+
+## R16.3 Phase 1 ready-to-verify — 2026-06-30
+
+**🟡 READY FOR E2E VERIFICATION** — In attesa `e1_tester` per verifica browser finale. Backend + frontend + test tutti verdi.
+
+**World Boss V1 Alveora — delivered**:
+
+1. **Backend module** `app/world_boss/__init__.py` (~450 righe) — compact single-file con seed idempotente Alveora catalog + `counter_mind_control` counter (append-only), `THREAT_COUNTER_MAP` locale (no modifica seed R16.0), `resolve_stuck_world_boss_event()` CAS-protected, on-visit fallback, 10 endpoint (`/api/world-boss/*` 6 public + `/api/admin/world-boss/*` 4 admin).
+2. **Idempotenza CAS-first** (lezione R16.1.1): CAS lock su status transition (`active → resolving`) + CAS su reward grant (`reward_granted={"$ne": True}`). Retry non duplica mai reward/audit/release. Recovery script CLI `recover_stuck_world_boss_events.py` con `--dry-run/--apply/--event-id`.
+3. **Formula contributo**: `int(base_power * (1 + matched_counters * 0.15) * (1 + (phase-1) * 0.2))`. Solo lettura di `power` avv esistenti, nessuna modifica a economia/drop/XP. Reward = 3 event currency (`filo_lunare_spezzato`, `frammento_obelisco_vuoto`, `eco_della_luna_morta`) + oro pool; tutte `is_tradeable=true, can_be_sold_for_real_money=false`. Nessun leggendario diretto, zero P2W.
+4. **Frontend** 3 pagine mobile-first: `WorldBoss.jsx` (lista), `WorldBossEvent.jsx` (dettaglio + send-team + ranking), `WorldBossReport.jsx` (report finale). Nav integrata sotto Missioni con badge "NEW". `pb-32 md:pb-8`, `min-h-[44px]` tap target, `w-full md:w-auto` CTA. ESLint clean, webpack `Compiled successfully`.
+5. **Test coverage**: 17 pytest PASS + 1 skipped by design (T12 tester exclusion, deferred) in `backend_round163_phase1_test.py`. Regression suite completa **82 passed, 2 skipped, 0 failed** (R16.1 P1+P2+P3 + R16.A P1+P2+P3 + R16.1.1 + R16.3 P1 + Phase 14.4 + dev-seed). Zero regressioni. Target minimo utente 65+ ampiamente superato.
+
+**Roadmap doc creato**: `/app/memory/orbus_world_roadmap.md` con Phase 1 (in esecuzione) + Phase 2-8 (future: Mondo/continenti, gilde vicine, risorse, Forgia Leggendaria, patti, PvP continentale, cavalcature). Nessuna Phase 2+ implementata.
+
+**Audit events aggiunti**: `WORLD_BOSS_EVENT_CREATED/STARTED/RESOLVED/TEAM_RELEASED`, `WORLD_BOSS_JOINED`, `WORLD_BOSS_CONTRIBUTION_RECORDED`, `WORLD_BOSS_REWARD_GRANTED`. Whitelist estesa in `audit/log.py`.
+
+**Next round proposto**: **R16.4 Phase 2 — Mondo & 8 mastocontinenti** (catalog, guilds.continent_slug, scelta post-first-raid, storico trasferimenti, UI Mondo). Stima 2-2.5gg dev + 0.5gg test.

@@ -84,6 +84,13 @@ EVENT_TYPES = frozenset({
     "raid_started",
     "raid_completed",
     "raid_recovered",
+    "WORLD_BOSS_EVENT_CREATED",
+    "WORLD_BOSS_EVENT_STARTED",
+    "WORLD_BOSS_JOINED",
+    "WORLD_BOSS_CONTRIBUTION_RECORDED",
+    "WORLD_BOSS_REWARD_GRANTED",
+    "WORLD_BOSS_EVENT_RESOLVED",
+    "WORLD_BOSS_TEAM_RELEASED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

@@ -141,6 +141,8 @@ def create_app() -> FastAPI:
     from app.class_halls.routes import router as class_halls_router
     # ROUND 16.1 Phase 1 — Dashboard data-driven cards
     from app.dashboard.routes import router as dashboard_router
+    # ROUND 16.3 Phase 1 — World Boss V1 Alveora
+    from app.world_boss import router as world_boss_router, admin_router as world_boss_admin_router, seed_world_boss_catalog
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -180,6 +182,18 @@ def create_app() -> FastAPI:
     app.include_router(achievements_router)
     app.include_router(class_halls_router)
     app.include_router(dashboard_router)
+    app.include_router(world_boss_router)
+    app.include_router(world_boss_admin_router)
+
+    # Seed world boss catalog on startup (idempotent)
+    @app.on_event("startup")
+    async def _seed_world_boss_startup():
+        try:
+            await seed_world_boss_catalog()
+        except Exception as exc:
+            import logging
+            logging.getLogger("orbus.world_boss").warning(
+                "world_boss seed failed: %s", exc)
 
     return app
 

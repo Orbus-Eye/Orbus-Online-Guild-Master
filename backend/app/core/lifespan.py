@@ -90,6 +90,13 @@ async def lifespan(app: FastAPI):
     logger.info("ROUND 6C signature templates: %s", sig_tpl)
     sig_bf = await backfill_missing_signature_inventory_rows(db)
     logger.info("ROUND 6C signature backfill: %s", sig_bf)
+    # ROUND 16.3 Phase 1 — seed World Boss catalog Alveora
+    try:
+        from app.world_boss import seed_world_boss_catalog
+        await seed_world_boss_catalog()
+        logger.info("ROUND 16.3 Phase 1 world boss catalog: seeded (idempotent)")
+    except Exception as exc:
+        logger.warning("world_boss seed failed: %s", exc)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     yield
     mongo_client.close()

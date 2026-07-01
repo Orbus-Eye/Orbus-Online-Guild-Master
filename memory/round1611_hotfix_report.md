@@ -1,8 +1,9 @@
 # Round 16.1.1 HOTFIX — Raid Recovery + Forgia Mobile + Desktop Menu
 
 **Data**: 30 giugno 2026
+**Data chiusura ufficiale**: 30 giugno 2026 (post-verifica DevTools iPhone 14 + `e1_tester` 6/6 sub-check PASS)
 **Tipo**: Hotfix dedicato (NON è R16.B, NON è R16.C).
-**Stato**: 🟢 **OFFICIALLY APPLIED ✅** — 28/28 raid resolved, 580 adv liberati, 29 audit `raid_recovered` emessi (28 apply + 1 on-visit fallback), 0 errors, 65/65 pytest pass.
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** — 28/28 raid resolved (580 adv liberati, 29 audit `raid_recovered`), Forge mobile PASS (verifica utente DevTools iPhone 14), Desktop menu 6/6 sub-check PASS (fix v4 click-only pattern), 65/65 pytest pass, 0 regressioni.
 
 ---
 

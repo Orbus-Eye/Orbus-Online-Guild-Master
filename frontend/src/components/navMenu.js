@@ -36,6 +36,7 @@ export const NAV_SECTIONS = [
             { to: "/dungeons", label: "Dungeon", testid: "menu-dungeons" },
             { to: "/expeditions", label: "Spedizioni", testid: "menu-expeditions" },
             { to: "/raids", label: "Raid", testid: "menu-raids" },
+            { to: "/world-boss", label: "World Boss", testid: "menu-world-boss", badge: "NEW" },
             { to: "/squads", label: "Squadre", testid: "menu-squads" },
             { to: "/guide#minacce-contromisure", label: "Minacce e Contromisure", testid: "menu-threats" },
         ],

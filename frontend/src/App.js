@@ -46,6 +46,9 @@ import Contracts from "@/pages/Contracts";
 import AdminOps from "@/pages/AdminOps";  // ROUND 11.2 TASK 5b
 import AdminGameHealth from "@/pages/AdminGameHealth";  // ROUND 14.v3
 import AdminAudit from "@/pages/AdminAudit";  // ROUND 16.A Phase 3
+import WorldBoss from "@/pages/WorldBoss";  // ROUND 16.3 Phase 1
+import WorldBossEvent from "@/pages/WorldBossEvent";
+import WorldBossReport from "@/pages/WorldBossReport";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -284,6 +287,31 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <AdminAudit />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 1 — World Boss */}
+                        <Route
+                            path="/world-boss"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldBoss />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world-boss/:eventId"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldBossEvent />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world-boss/:eventId/report"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldBossReport />
                                 </ProtectedRoute>
                             }
                         />
