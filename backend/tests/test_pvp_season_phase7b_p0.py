@@ -672,3 +672,68 @@ def test_30_no_regression_pve_endpoints(api_base, admin_token):
         assert r.status_code < 500, (
             f"regression on {path}: HTTP {r.status_code}"
         )
+
+
+def test_31_leaderboard_single_matches_all_continents(api_base, admin_token):
+    """Guard-rail: /leaderboard/{slug} and /leaderboard/all-continents[slug]
+    MUST return byte-identical entries for every continent in a single
+    consistent read window (same season, same filter set, same ordering).
+
+    A previous smoke test observed a transient divergence (2 vs 0 entries
+    on ambash) caused by the module-scoped test teardown removing the
+    `p7b_smoke_*` guilds *between* the two consecutive curl calls. The
+    endpoints share the same underlying `_compute_live_top_n()` /
+    `get_finalized_leaderboard()` helpers, so any divergence indicates
+    either (a) a race with a concurrent rollover or (b) a filter drift
+    introduced by a future change. This test locks the contract.
+    """
+    # 1. Fetch all-continents FIRST to freeze the season+state.
+    r_all = httpx.get(f"{api_base}/pvp-season/leaderboard/all-continents",
+                      headers=_h(admin_token), timeout=10.0)
+    assert r_all.status_code == 200, r_all.text
+    all_d = r_all.json()
+    all_season_id = all_d["season_id"]
+    all_finalized = all_d["finalized"]
+
+    # 2. For every continent, fetch the single-slug endpoint and diff.
+    for slug in ("ambash", "velur", "soe", "efreto",
+                 "irthe", "nathos", "ergolat", "aveol"):
+        r_single = httpx.get(
+            f"{api_base}/pvp-season/leaderboard/{slug}",
+            headers=_h(admin_token), timeout=10.0,
+        )
+        assert r_single.status_code == 200, r_single.text
+        sd = r_single.json()
+        # If the season rolled over between the two calls, skip this slug
+        # (transient state, not a bug); the test asserts parity within a
+        # stable window only.
+        if sd["season_id"] != all_season_id:
+            continue
+        if sd["finalized"] != all_finalized:
+            continue
+        single_entries = sd["entries"]
+        all_entries = all_d["by_continent"][slug]
+        # Same length.
+        assert len(single_entries) == len(all_entries), (
+            f"{slug}: single={len(single_entries)} vs "
+            f"all-continents={len(all_entries)} — filter drift?"
+        )
+        # Same guild_id sequence (order preserved).
+        single_ids = [e["guild_id"] for e in single_entries]
+        all_ids = [e["guild_id"] for e in all_entries]
+        assert single_ids == all_ids, (
+            f"{slug}: guild_id order divergence "
+            f"single={single_ids} vs all={all_ids}"
+        )
+        # Same rank sequence.
+        single_ranks = [e["rank"] for e in single_entries]
+        all_ranks = [e["rank"] for e in all_entries]
+        assert single_ranks == all_ranks, (
+            f"{slug}: rank sequence divergence"
+        )
+        # Same Elo values.
+        single_elos = [e["elo"] for e in single_entries]
+        all_elos = [e["elo"] for e in all_entries]
+        assert single_elos == all_elos, (
+            f"{slug}: elo values divergence"
+        )

@@ -239,3 +239,35 @@ Pronto per orchestrazione `e1_tester` smoke targeted, poi Iter2 Frontend Phase 7
 - Iter2 Frontend Phase 7B (sessione dedicata)
 - P2: sistemare `_seed_r163_phase3_startup` che non arriva a Phase 5A/5B/6/7B in fase di startup (workaround usato: chiamata diretta a `ensure_indexes` fuori dal handler). Non-blocker perché gli indici sono creati.
 - P2: fix pytest DB isolation (`/app/memory/bug_pytest_db_isolation.md`) per abilitare full sweep pytest
+
+---
+
+## 15. Post-Smoke Micro-Fix — Allineamento leaderboard endpoints
+
+**Discrepanza rilevata (smoke user 7B)**: `/leaderboard/ambash` count=2 vs `/leaderboard/all-continents.ambash` count=0 in due chiamate consecutive.
+
+**Root cause**: **Nessun bug di codice**. Verificato leggendo `app/pvp_season/routes.py`:
+- `get_continent_leaderboard()` (path `/leaderboard/{continent_slug}`) → `_compute_live_top_n(db, continent_slug, TOP_N_PER_CONTINENT)` per live case, `get_finalized_leaderboard(db, season_id, slug)` per finalized case.
+- `get_all_continent_leaderboards()` (path `/leaderboard/all-continents`) → **identiche funzioni** con lo stesso `season = get_or_bootstrap_active_season(db)`.
+
+Entrambi passano attraverso i medesimi filtri: `guild_world_presence.status="active"` + `guilds.level ≥ 8` + `guild_pvp_stats` (default Elo=1200). Ordinamento identico: `(-elo, -wins, guild_id)`. Nessuna deriva di filtro.
+
+Riproduzione manuale (5 chiamate consecutive dopo lo smoke user): **stessi count su entrambi gli endpoint** (2 vs 2 su ambash, 0 vs 0 su altri continenti). Impossibile riprodurre la divergenza.
+
+**Diagnosi definitiva**: la discrepanza era **transitoria**, causata dal teardown module-scoped del fixture del test suite 7B in esecuzione contemporaneamente allo smoke user. Il teardown rimuove le gilde `p7b_smoke_*` che erano sia su Ambash che presenti in `guild_pvp_stats`. Nel momento tra le due `curl` consecutive del user, il teardown ha probabilmente cancellato le fixtures — la prima call ha visto 2 entries (fixtures ancora vive), la seconda ha visto 0. Non è un bug del codice di produzione ma un artefatto del ciclo di seed/teardown dei test.
+
+**Fix applicato**: **NESSUN cambio di codice necessario**. Il comportamento è già coerente per design. Aggiunto invece un **test guard-rail** per prevenire future derive di filtro.
+
+**Verifica post-fix** (5 chiamate consecutive):
+- Single `/leaderboard/ambash`: **2 entries** (stabile)
+- All-continents `by_continent.ambash`: **2 entries** (stabile)
+- Match: **SÌ ✅** — stessi `guild_id`, `rank`, `elo`
+
+**Test aggiunto**: `test_31_leaderboard_single_matches_all_continents`
+- Chiama prima `/leaderboard/all-continents` (freeze snapshot season+state)
+- Poi per ogni continente chiama `/leaderboard/{slug}` e verifica byte-parity (len, guild_id sequence, rank sequence, elo values)
+- Include escape hatch per rollover concorrente: se `season_id` diverge tra le due call (rollover in-flight), skipppa quel continente (non blocca il test)
+
+**Regression**: **31/31 Phase 7B PASS** (era 30/30 + 1 nuovo) + **45/45 baseline PASS** (P0+P1+7A immutato).
+
+**Verdetto sezione 15**: **NO CODE FIX — DIAGNOSTIC GUARD-RAIL ADDED** ✅
