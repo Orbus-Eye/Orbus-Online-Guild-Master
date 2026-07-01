@@ -611,3 +611,34 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 **Report finale**: `/app/memory/round163_phase4_final_report.md` (15 sezioni).
 
 **Next round proposto**: R16.3 Phase 5 — Forgia Leggendaria & Forgia di Arfus (receipts che consumano risorse continentali, legendary BOP `is_tradeable=false`).
+
+
+---
+
+## R16.3 Phase 4 closed (post-verify) — 2026-07-01
+
+**🟢 OFFICIALLY CLOSED ✅** — E2E `e1_tester` 3/3 PASS post-verify. Bug UX su `/api/adventurers` fixato (ora riflette `is_available=False` + `status="resource_gathering"` + double-book server-side protection). Utility QA `POST /api/admin/resources/dev/complete/{mission_id}` gated APP_ENV. **37/37 pytest** post-verify (30+7 T31-T37). Regression 215/217 (2 legacy R16.0 debt). **Next**: Phase 5A.
+
+---
+
+## R16.3 Phase 5A backend closed — 2026-07-01
+
+**🟡 BACKEND CLOSED / FRONTEND PENDING** — Forgia Leggendaria V0 backend (iterazione 1/2 dello split concordato).
+
+1. **`app/legendary_forge/__init__.py`** (~665 righe compact): seed idempotente 6 ricette (spada_di_alveora, armatura_ambash, anello_di_velur, bastone_di_efreto, amuleto_di_nathos, mantello_di_aveol) + 6 legendary items. Deterministic RNG `_rng_for(guild_id, order_id)` → idempotency on-visit + CLI. Guild-level gate lvl 5. Durata craft 180s V1.
+2. **BOP totale**: instances in collection dedicata `legendary_item_instances` (evita clash unique index `inventory_items`). Flag NO_TRADE completi + `bound_to_guild_id`.
+3. **Stat cap hard +50% vs epic baseline snapshot 2026-Q2**: `EPIC_STAT_BASELINE` grep-friendly + `LEGENDARY_CAP` runtime clamp + `_validate_base_stats_within_cap()` seed-time guardrail. Clamp trigger → audit `LEGENDARY_STAT_CLAMPED`.
+4. **Pity system**: 5 streak senza perfezionato → 6° imperfetto forzato a normale + `pity_applied=true`. Reset su perfezionato reale. Trasparente in `catalog/{slug}.pity_status`.
+5. **Materiali rimappati**: 8 slug originali del brief non esistevano nel DB. Rimappato su `iron_shard, raw_leather, arcane_dust, greater_arcane_dust, dragon_essence` con approvazione utente (doc esplicita nel report sez.4).
+6. **8 endpoint** (5 public + 3 admin), **5 audit UPPERCASE** in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST` (23→28). Admin gated 403 non-admin, dev-force-complete gated APP_ENV.
+7. **Recovery**: `app/scripts/recover_stuck_legendary_orders.py` (dry-run/apply/guild-id).
+
+**Test**: 33/33 PASS. Regression full **248 passed / 2 skipped / 2 failed** (2 legacy R16.0 debt). Zero regressioni Phase 5A.
+
+**3 bug scoperti+fixati**: signature `user_guild_or_404(db, user_id)`, DuplicateKey `inventory_items` → collection dedicata `legendary_item_instances`, test IDs deterministici → uuid prefix.
+
+**Vincoli**: NO deploy · NO hard delete (T25+T33) · NO scheduler · NO P2W · NO RMT · BOP totale · clamp hard · preview trasparente · pity trasparente · guild lvl 5 gate.
+
+**Report**: `/app/memory/round163_phase5A_final_report.md` (15 sezioni).
+
+**Next**: attesa `e1_tester` E2E backend → iterazione 2 Frontend (LegendaryForge.jsx + LegendaryForgeRecipe.jsx + LegendaryForgeOrders.jsx + MiniCard + nav) → sigillo OFFICIALLY CLOSED.

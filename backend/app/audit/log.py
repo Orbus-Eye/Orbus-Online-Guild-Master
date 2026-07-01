@@ -106,6 +106,12 @@ EVENT_TYPES = frozenset({
     "RESOURCE_MISSION_FAILED",
     "RESOURCE_GRANTED",
     "LEADERBOARD_SNAPSHOT_COMPUTED",
+    # ROUND 16.3 Phase 5A — Legendary Forge
+    "LEGENDARY_CRAFT_STARTED",
+    "LEGENDARY_CRAFT_COMPLETED",
+    "LEGENDARY_CRAFT_FAILED",
+    "LEGENDARY_STAT_CLAMPED",
+    "LEGENDARY_RECIPE_TOGGLED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

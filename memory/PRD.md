@@ -305,3 +305,31 @@
 **Report finale**: `/app/memory/round163_phase4_final_report.md` (15 sezioni).
 
 **Next round proposto**: R16.3 Phase 5 — Forgia Leggendaria & Forgia di Arfus (receipts che consumano risorse continentali, legendary BOP `is_tradeable=false`).
+
+
+---
+
+## Round 16.3 Phase 4 closed (post-verify) — 2026-07-01
+
+**🟢 OFFICIALLY CLOSED ✅** — E2E `e1_tester` 3/3 PASS post-verify. Bug UX su `/api/adventurers` fixato (ora riflette `is_available=False` + `status="resource_gathering"`). Utility `POST /api/admin/resources/dev/complete/{mission_id}` gated APP_ENV. 37/37 pytest (30+7). Regression 215/217 (2 legacy R16.0 debt).
+
+---
+
+## Round 16.3 Phase 5A backend closed — 2026-07-01
+
+**Phase 5A (Forgia Leggendaria) — iterazione 1/2** — 🟡 BACKEND CLOSED / FRONTEND PENDING:
+
+- Backend `app/legendary_forge/__init__.py` (~665 righe compact): seed idempotente **6 ricette** + 6 legendary items. Determinismo RNG `_rng_for(guild_id, order_id)`. Guild-level gate 5. Durata craft 180s V1.
+- **BOP totale**: legendary instances in collection dedicata `legendary_item_instances`. Tutti flag NO_TRADE + `bound_to_guild_id`.
+- **Stat cap hard +50% vs epic baseline 2026-Q2**: `EPIC_STAT_BASELINE` + `LEGENDARY_CAP` + `_validate_base_stats_within_cap()` seed-time guardrail. Clamp → `LEGENDARY_STAT_CLAMPED` audit.
+- **Pity system**: 5 streak senza perfezionato → 6° imperfetto forzato a normale. Reset su perfezionato reale.
+- **Materiali rimappati**: brief originale usava 8 slug inesistenti → rimappato su reali (`iron_shard, raw_leather, arcane_dust, greater_arcane_dust, dragon_essence`) con approvazione utente + doc esplicita nel report.
+- **8 endpoint** (5 public + 3 admin), 5 audit UPPERCASE, whitelist 23→28. Recovery script `recover_stuck_legendary_orders.py`.
+- **Test**: 33/33 PASS. Regression full **248 passed / 2 skipped / 2 failed** (2 legacy R16.0 debt). Zero regressioni Phase 5A.
+- **3 bug scoperti+fixati** durante Phase 5A: signature `user_guild_or_404`, DuplicateKey → collection dedicata, test IDs collision → uuid prefix.
+
+**Vincoli**: NO deploy · NO hard delete · NO scheduler · NO P2W · NO RMT · BOP totale · clamp hard · preview trasparente · pity trasparente · guild lvl 5 gate.
+
+**Report**: `/app/memory/round163_phase5A_final_report.md` (15 sezioni).
+
+**Next**: attesa `e1_tester` E2E backend → iterazione 2 Frontend (LegendaryForge.jsx + LegendaryForgeRecipe.jsx + LegendaryForgeOrders.jsx + MiniCard + nav) → sigillo OFFICIALLY CLOSED.

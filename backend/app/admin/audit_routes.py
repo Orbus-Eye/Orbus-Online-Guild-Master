@@ -60,6 +60,12 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "RESOURCE_MISSION_FAILED",
     "RESOURCE_GRANTED",
     "LEADERBOARD_SNAPSHOT_COMPUTED",
+    # ROUND 16.3 Phase 5A — Legendary Forge
+    "LEGENDARY_CRAFT_STARTED",
+    "LEGENDARY_CRAFT_COMPLETED",
+    "LEGENDARY_CRAFT_FAILED",
+    "LEGENDARY_STAT_CLAMPED",
+    "LEGENDARY_RECIPE_TOGGLED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1
