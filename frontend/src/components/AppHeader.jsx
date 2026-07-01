@@ -9,6 +9,19 @@ import MobileMenuDrawer from "./MobileMenuDrawer";
 import { NAV_SECTIONS } from "./navMenu";
 
 // ──────────────────────────────────────────────────────────────────────────
+// ROUND 16.3 — Shared "NEW" badge (rendered next to menu labels).
+// Exported so MobileMenuDrawer can reuse the same visual token.
+// ──────────────────────────────────────────────────────────────────────────
+export const NavBadge = ({ label }) => (
+    <span
+        data-testid={`nav-badge-${String(label).toLowerCase()}`}
+        className="shrink-0 px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 rounded"
+    >
+        {label}
+    </span>
+);
+
+// ──────────────────────────────────────────────────────────────────────────
 // ROUND 16.1.1 HOTFIX — Desktop dropdown menu refactor.
 // - Lift `openId` to AppHeader so only ONE dropdown is open at a time.
 // - Click-based open + click-outside listener (no more competing hover states).
@@ -48,10 +61,11 @@ const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
                                 <li key={it.testid} role="none">
                                     <span
                                         data-testid={`desktop-${it.testid}`}
-                                        className="block px-4 py-2 text-xs text-muted-foreground/50 cursor-not-allowed"
+                                        className="flex items-center justify-between gap-2 px-4 py-2 text-xs text-muted-foreground/50 cursor-not-allowed"
                                         aria-disabled="true"
                                     >
-                                        {it.label}
+                                        <span>{it.label}</span>
+                                        {it.badge && <NavBadge label={it.badge} />}
                                     </span>
                                 </li>
                             );
@@ -63,9 +77,10 @@ const DesktopMenuButton = ({ section, isActive, openId, setOpenId }) => {
                                     data-testid={`desktop-${it.testid}`}
                                     role="menuitem"
                                     onClick={() => setOpenId(null)}
-                                    className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber transition-colors"
+                                    className="flex items-center justify-between gap-2 px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber transition-colors"
                                 >
-                                    {it.label}
+                                    <span>{it.label}</span>
+                                    {it.badge && <NavBadge label={it.badge} />}
                                 </Link>
                             </li>
                         );

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { X, ChevronDown } from "lucide-react";
 import { NAV_SECTIONS } from "./navMenu";
+import { NavBadge } from "./AppHeader";
 import { useAuth } from "../context/AuthContext";
 
 export default function MobileMenuDrawer({ open, onClose }) {
@@ -105,7 +106,7 @@ export default function MobileMenuDrawer({ open, onClose }) {
                                     >
                                         {items.map((it) => {
                                             const active = isActive(it.to);
-                                            const cls = `block px-6 py-3 text-sm transition-colors ${
+                                            const cls = `flex items-center justify-between gap-2 px-6 py-3 text-sm transition-colors ${
                                                 it.disabled
                                                     ? "text-muted-foreground/40 cursor-not-allowed"
                                                     : active
@@ -121,7 +122,8 @@ export default function MobileMenuDrawer({ open, onClose }) {
                                                             aria-disabled="true"
                                                             style={{ minHeight: 44 }}
                                                         >
-                                                            {it.label}
+                                                            <span>{it.label}</span>
+                                                            {it.badge && <NavBadge label={it.badge} />}
                                                         </span>
                                                     </li>
                                                 );
@@ -136,7 +138,8 @@ export default function MobileMenuDrawer({ open, onClose }) {
                                                         style={{ minHeight: 44 }}
                                                         aria-current={active ? "page" : undefined}
                                                     >
-                                                        {it.label}
+                                                        <span>{it.label}</span>
+                                                        {it.badge && <NavBadge label={it.badge} />}
                                                     </Link>
                                                 </li>
                                             );
