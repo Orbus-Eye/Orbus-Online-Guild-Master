@@ -2,7 +2,7 @@
 
 **Data**: 2026-07-01
 **Scope**: Risorse Continentali V0 (8 slug) + Classifiche Continentali V0.
-**Stato**: 🟢 **READY-TO-VERIFY** (in attesa E2E `e1_tester` manuale utente).
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** (post-verify iteration 2 + E2E `e1_tester` 3/3 PASS).
 
 ---
 
