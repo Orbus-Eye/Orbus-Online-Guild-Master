@@ -104,15 +104,27 @@
 
 ---
 
-## Phase 7 — PvP continentale *(future)*
+## Phase 7 — PvP continentale *(R16.3, CLOSED ✅ 2026-07-01)*
 
-**Componenti**: PvP arena bracket per continente, stagionale, no cross-continent per bilanciare. Reward = titoli + cosmetici.
+**Stato**: sigillato dopo doppio ciclo Iter1 Backend + Iter2 Frontend per entrambe le sub-fasi 7A e 7B.
 
-**Rischi P2W**: nessun buff acquistabile prima del match.
+### Phase 7A — PvP 1v1 Continentale
+- **Backend**: 33/33 pytest PASS
+- Elo K=32 clamp `[800, 2400]`, gate `guild.level ≥ 8`, max 3 sfide attive, cooldown 12h coppia, bracket ±200 Elo, team snapshot 5v5, resolution deterministica `random.Random(battle_id+role)`, on-visit fallback, recovery CLI, Arfus applier filtrato PvP (6 categorie combat_*, cap 50%)
+- 6 audit events UPPERCASE + admin whitelist 41 → 47
+- **Frontend**: 4 pagine + `PvpMiniCard` + `PvpGuildLevelGate` + battle log narrativo italiano
+
+### Phase 7B — Leaderboard settimanale + Cosmetici
+- **Backend**: 31/31 pytest PASS (+ guard-rail leaderboard endpoint parity)
+- Snapshot settimanale + rollover on-visit, CAS lock idempotente, 24 cosmetici (8 continenti × 3 tipi: `title` rank1, `badge` rank≤3, `frame` rank≤10)
+- Recovery CLI, 3 audit events UPPERCASE + admin whitelist 47 → **50**
+- **Frontend**: 3 pagine + `PvpSeasonMiniCard` + nav voce "Stagione PvP" badge NEW + disclaimer anti-P2W ×3
+
+**Rischi P2W**: neutralizzati. Reward = titoli + cosmetici puramente decorativi (test regression `test_26_no_p2w_stat_impact_after_award` asserta immutabilità di `guild.gold/reputation/level/name` e `guild_pvp_stats.elo/wins/losses/draws` dopo award). Nessun buff acquistabile pre-match. Whitelist Arfus PvP taglia effetti non-combat.
 
 ---
 
-## Phase 8 — Stalla e cavalcature *(future)*
+## Phase 8 — Stalla e cavalcature *(future — DESIGN REVIEW PENDING 🔴)*
 
 **Componenti**: gestione stalla gilda, roster cavalcature (drop da World Boss / craft), bonus movimento in mondo (velocità viaggio inter-continentale ridotta).
 
@@ -130,4 +142,4 @@
 
 ---
 
-*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 CLOSED ✅ · Phase 3 CLOSED ✅ · Phase 4 CLOSED ✅ · Phase 5A CLOSED ✅ · Phase 5B CLOSED ✅ · Phase 6 CLOSED ✅ (Backend + Frontend + QA cleanup + Docs sigillati). Polish Round R16.D parked: server-wide first-Arfus-unlock chronicle announcement.*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1..6 CLOSED ✅ · **Phase 7A CLOSED ✅** (Backend 33/33 + Frontend + gate lvl8 + Arfus PvP whitelist) · **Phase 7B CLOSED ✅** (Backend 31/31 + Frontend + 24 cosmetici + disclaimer anti-P2W ×3). **Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 (Stalla) parked in attesa di design review conservativo anti-P2W. Vedi `/app/memory/round163_final_report.md` per il consolidamento finale.*

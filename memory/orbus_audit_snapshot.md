@@ -883,3 +883,47 @@ completi (Backend + Frontend + Docs).
 
 **Next**: **STOP per conferma utente Phase 7 — PvP continentale (P2)**.
 
+
+---
+
+## R16.3 Phase 7 — Ciclo PvP completo *(CLOSED ✅ 2026-07-01)*
+
+### Phase 7A — PvP Continentale 1v1 (Iter1 Backend + Iter2 Frontend)
+- **Backend**: 33/33 pytest PASS
+- Elo K=32 clamp `[800, 2400]`, gate `guild.level ≥ 8`, max 3 sfide attive, cooldown 12h coppia
+- Bracket ±200 Elo, team snapshot 5v5, resolution deterministica `random.Random(battle_id+role)`
+- On-visit fallback per timeout defaulted + recovery CLI `recover_stuck_pvp_battles.py`
+- Arfus applier filtrato PvP: whitelist 6 categorie combat (`combat_damage`, `combat_healing`, `combat_defense`, `counter_effectiveness`, `iron_will`, `team_morale`), cap totale 50%
+- 6 audit events UPPERCASE + admin whitelist 41 → 47
+- **Frontend**: 4 pagine (`PvpOpponents`, `PvpChallenge`, `PvpBattles`, `PvpBattleReport`) + `PvpMiniCard` + `PvpGuildLevelGate` + battle log narrativo italiano
+- **Fix trasversale badge NEW**: nav Component `<NavBadge>` esportato + rendering in AppHeader + MobileMenuDrawer
+
+### Phase 7B — Leaderboard settimanale + Cosmetici (Iter1 Backend + Iter2 Frontend)
+- **Backend**: 31/31 pytest PASS (30 P0 + 1 guard-rail leaderboard endpoint parity)
+- Snapshot settimanale + rollover on-visit (nessuno scheduler globale), CAS lock idempotente `active→closing→finalized`
+- 24 cosmetici (8 continenti × 3 tipi: `title` rank1, `badge` rank≤3, `frame` rank≤10)
+- Recovery CLI `recover_stuck_pvp_seasons.py`
+- 3 audit events UPPERCASE + admin whitelist 47 → **50**
+- **Frontend**: 3 pagine (`PvpSeasonOverview`, `PvpSeasonLeaderboardDetail`, `PvpSeasonCosmetics`) + `PvpSeasonMiniCard` + nav voce "Stagione PvP" badge NEW + disclaimer anti-P2W ×3
+
+### Anti-P2W GUARANTEE (verificato)
+- Whitelist Arfus PvP taglia effetti non-combat (arcane_knowledge, exploration_luck, market_bonus, ecc.)
+- Cosmetici puramente decorativi (title/badge/frame — zero gameplay impact)
+- Test regression `test_26_no_p2w_stat_impact_after_award` asserta immutabilità di `guild.gold`, `guild.reputation`, `guild.level`, `guild.name`, `guild_pvp_stats.elo/wins/losses/draws` dopo `award_cosmetic()`
+- Disclaimer utente frontend visibile ×3 (Overview footer + Cosmetics top + Detail footer)
+
+### Risultato test suite Round 16.3 Phase 7
+| Suite | Result |
+|---|---|
+| `test_pvp_phase7a_p0.py` | 33/33 PASS |
+| `test_pvp_season_phase7b_p0.py` | 31/31 PASS |
+| `test_forge_actions_p0.py` (regression) | 6/6 PASS |
+| `test_races_endpoint_p1.py` (regression) | 6/6 PASS |
+| **Totale sessione Phase 7** | **76/76 PASS** |
+
+**Report completo**: `/app/memory/round163_final_report.md` (sigillo consolidato Round 16.3).
+
+**Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 (Stalla) parked in attesa di design review conservativo anti-P2W.
+
+**Next**: **Debito tecnico P2 (Iter B)** — pytest DB isolation, specializzazioni R16 investigation, `/api/forge/enchant-options` 404, POST PvP validation ordering, ESLint warning ClassHalls, startup handler `_seed_r163_phase3_startup`.
+
