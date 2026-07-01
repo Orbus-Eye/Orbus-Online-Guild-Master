@@ -583,6 +583,15 @@ function App() {
                             <ProtectedRoute requireGuild><GuildSpecialization /></ProtectedRoute>} />
                         <Route path="/guild-specialization/catalog" element={
                             <ProtectedRoute requireGuild><GuildSpecializationCatalog /></ProtectedRoute>} />
+                        {/* ROUND 16.3 Phase 7A — PvP Continentale */}
+                        <Route path="/pvp" element={
+                            <ProtectedRoute requireGuild><PvpOpponents /></ProtectedRoute>} />
+                        <Route path="/pvp/challenge/:defenderGuildId" element={
+                            <ProtectedRoute requireGuild><PvpChallenge /></ProtectedRoute>} />
+                        <Route path="/pvp/battles" element={
+                            <ProtectedRoute requireGuild><PvpBattles /></ProtectedRoute>} />
+                        <Route path="/pvp/battles/:battleId" element={
+                            <ProtectedRoute requireGuild><PvpBattleReport /></ProtectedRoute>} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     </AuthProvider>
