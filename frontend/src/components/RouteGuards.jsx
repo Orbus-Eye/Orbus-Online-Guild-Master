@@ -1,40 +1,46 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
-const Loading = () => (
-    <div
-        data-testid="route-loading"
-        className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm"
-    >
-        <span>loading</span>
-        <span className="caret-blink" />
-    </div>
-);
+function FullScreenLoader() {
+    return (
+        <div
+            data-testid="auth-bootstrap-loader"
+            className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm"
+        >
+            <span className="opacity-70">Caricamento…</span>
+            <span className="caret-blink" />
+        </div>
+    );
+}
 
-export const ProtectedRoute = ({ children, requireGuild = false }) => {
-    const { user, guild } = useAuth();
-    if (user === undefined) return <Loading />;
-    if (!user) return <Navigate to="/login" replace />;
-    if (requireGuild) {
-        if (guild === undefined) return <Loading />;
-        if (!guild) return <Navigate to="/create-guild" replace />;
-    }
+/** Reindirizza a /dashboard se l'utente è già loggato (login/register pages). */
+export function GuestOnly({ children }) {
+    const { loading, isAuthenticated, hasGuild } = useAuth();
+    if (loading) return <FullScreenLoader />;
+    if (isAuthenticated) return <Navigate to={hasGuild ? "/dashboard" : "/create-guild"} replace />;
     return children;
-};
+}
 
-export const GuildGate = ({ children }) => {
-    // page shown only to users who DON'T have a guild yet
-    const { user, guild } = useAuth();
-    if (user === undefined) return <Loading />;
-    if (!user) return <Navigate to="/login" replace />;
-    if (guild === undefined) return <Loading />;
-    if (guild) return <Navigate to="/dashboard" replace />;
+/** Richiede autenticazione: se manca, redirect a /login. */
+export function RequireAuth({ children }) {
+    const { loading, isAuthenticated } = useAuth();
+    if (loading) return <FullScreenLoader />;
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
     return children;
-};
+}
 
-export const GuestOnly = ({ children }) => {
-    const { user } = useAuth();
-    if (user === undefined) return <Loading />;
-    if (user) return <Navigate to="/dashboard" replace />;
+/** Richiede che l'utente abbia già una gilda; altrimenti → /create-guild. */
+export function RequireGuild({ children }) {
+    const { loading, hasGuild } = useAuth();
+    if (loading) return <FullScreenLoader />;
+    if (!hasGuild) return <Navigate to="/create-guild" replace />;
     return children;
-};
+}
+
+/** Opposto: pagina raggiungibile solo se NON hai ancora una gilda. */
+export function RequireNoGuild({ children }) {
+    const { loading, hasGuild } = useAuth();
+    if (loading) return <FullScreenLoader />;
+    if (hasGuild) return <Navigate to="/dashboard" replace />;
+    return children;
+}

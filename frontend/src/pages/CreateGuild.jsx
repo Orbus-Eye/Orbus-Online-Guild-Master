@@ -1,135 +1,129 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
 import { toast } from "sonner";
-import { useAuth } from "../context/AuthContext";
-import { useT } from "../i18n/I18nContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { errorMessage } from "@/lib/api";
 
 export default function CreateGuild() {
-    const { user, createGuild, logout, formatApiError } = useAuth();
-    const { t } = useT();
-    const navigate = useNavigate();
+    const nav = useNavigate();
+    const { createGuild, logout } = useAuth();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [submitting, setSubmitting] = useState(false);
-    const [errorMsg, setErrorMsg] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const submit = async (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        setErrorMsg("");
-        const trimmed = name.trim();
-        if (trimmed.length < 3 || trimmed.length > 40) {
-            setErrorMsg("Guild name must be 3–40 characters");
+        setError(null);
+        if (name.trim().length < 3) {
+            setError("Il nome della gilda deve avere almeno 3 caratteri.");
             return;
         }
-        if (description.length > 300) {
-            setErrorMsg("Description must be at most 300 characters");
-            return;
-        }
-        setSubmitting(true);
+        setLoading(true);
         try {
-            await createGuild(trimmed, description.trim());
-            toast.success(t("create_guild_page.toast_founded"));
-            navigate("/dashboard", { replace: true });
+            await createGuild(name.trim(), description.trim());
+            toast.success("Gilda fondata!");
+            nav("/dashboard", { replace: true });
         } catch (err) {
-            const msg = formatApiError(err);
-            setErrorMsg(msg);
+            const msg = errorMessage(err, "Creazione gilda fallita.");
+            setError(msg);
             toast.error(msg);
         } finally {
-            setSubmitting(false);
+            setLoading(false);
         }
     };
 
+    const onLogout = () => {
+        logout();
+        nav("/", { replace: true });
+    };
+
     return (
-        <div className="min-h-screen bg-background term-grid-bg">
-            <header className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between border-b border-border">
-                <div className="text-xs text-muted-foreground">
-                    <span className="text-amber">◆</span> ORBUS // SETUP
-                </div>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span data-testid="header-username">@{user?.username}</span>
+        <div className="min-h-screen bg-background text-foreground term-scanline">
+            <div className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-10">
+                <div className="mb-4 flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                        &gt; onboarding · step 1/1
+                    </p>
                     <button
-                        onClick={logout}
-                        data-testid="logout-btn"
-                        className="text-muted-foreground hover:text-foreground"
+                        type="button"
+                        onClick={onLogout}
+                        data-testid="create-guild-logout-btn"
+                        className="text-xs text-muted-foreground hover:text-amber"
                     >
-                        logout
+                        Logout
                     </button>
                 </div>
-            </header>
 
-            <main className="max-w-3xl mx-auto px-6 py-12">
-                <div className="text-xs text-amber tracking-widest mb-2">
-                    :: STEP 02 / FOUND YOUR GUILD
-                </div>
-                <h1 className="text-3xl font-semibold mb-2">{t("create_guild_page.title")}</h1>
-                <p className="text-sm text-muted-foreground mb-8 max-w-xl">
-                    Every Guild Master commands one guild. Choose its banner carefully —
-                    you cannot rename it later (until phase 4, at least).
+                <h1 className="mb-2 text-3xl font-semibold tracking-tight">
+                    Fonda la tua gilda<span className="text-amber">.</span>
+                </h1>
+                <p className="mb-8 text-sm text-muted-foreground">
+                    Un solo tentativo. Scegli con cura: il nome ti rappresenterà
+                    davanti alle altre gilde di Orbus.
                 </p>
 
-                <form
-                    onSubmit={submit}
-                    className="space-y-5 border border-border bg-card rounded-sm p-6 max-w-xl"
-                    data-testid="create-guild-form"
-                >
-                    <div className="space-y-2">
-                        <Label htmlFor="name" className="text-xs text-muted-foreground tracking-wider">
-                            GUILD NAME <span className="text-muted-foreground">(3–40)</span>
-                        </Label>
-                        <Input
-                            id="name"
-                            data-testid="create-guild-name-input"
-                            required
-                            minLength={3}
-                            maxLength={40}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="bg-background border-border rounded-sm h-11 font-mono"
-                            placeholder={t("create_guild_page.name_placeholder")}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="description" className="text-xs text-muted-foreground tracking-wider">
-                            DESCRIPTION <span className="text-muted-foreground">(optional, max 300)</span>
-                        </Label>
-                        <Textarea
-                            id="description"
-                            data-testid="create-guild-description-input"
-                            maxLength={300}
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="bg-background border-border rounded-sm font-mono min-h-[110px]"
-                            placeholder={t("create_guild_page.desc_placeholder")}
-                        />
-                        <div className="text-right text-xs text-muted-foreground">
-                            {description.length}/300
+                <Card className="border-border/70 bg-card p-6">
+                    <form onSubmit={onSubmit} className="space-y-4" data-testid="create-guild-form">
+                        <div className="space-y-2">
+                            <Label htmlFor="name" className="text-xs uppercase tracking-widest text-muted-foreground">
+                                Nome gilda <span className="text-muted-foreground/70">(3–40 caratteri)</span>
+                            </Label>
+                            <Input
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                minLength={3}
+                                maxLength={40}
+                                placeholder="Es. Ordo Aurorae"
+                                data-testid="create-guild-name-input"
+                                className="border-border/70 bg-background"
+                            />
                         </div>
-                    </div>
-
-                    {errorMsg && (
-                        <div
-                            data-testid="create-guild-error"
-                            className="text-xs text-destructive border border-destructive/40 bg-destructive/10 px-3 py-2 rounded-sm"
+                        <div className="space-y-2">
+                            <Label htmlFor="description" className="text-xs uppercase tracking-widest text-muted-foreground">
+                                Descrizione <span className="text-muted-foreground/70">(max 500)</span>
+                            </Label>
+                            <Textarea
+                                id="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                maxLength={500}
+                                rows={4}
+                                placeholder="Cosa contraddistingue la tua gilda?"
+                                data-testid="create-guild-description-input"
+                                className="border-border/70 bg-background"
+                            />
+                            <p className="text-right text-[10px] text-muted-foreground">
+                                {description.length}/500
+                            </p>
+                        </div>
+                        {error && (
+                            <div
+                                role="alert"
+                                data-testid="create-guild-error"
+                                className="rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+                            >
+                                {error}
+                            </div>
+                        )}
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            data-testid="create-guild-submit-btn"
+                            className="w-full bg-amber text-black hover:bg-amber/90"
                         >
-                            {errorMsg}
-                        </div>
-                    )}
-
-                    <Button
-                        type="submit"
-                        data-testid="create-guild-submit-btn"
-                        disabled={submitting}
-                        className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
-                    >
-                        {submitting ? "founding…" : "Found guild →"}
-                    </Button>
-                </form>
-            </main>
+                            {loading ? "Fondazione in corso…" : "Fonda la gilda"}
+                        </Button>
+                    </form>
+                </Card>
+            </div>
         </div>
     );
 }

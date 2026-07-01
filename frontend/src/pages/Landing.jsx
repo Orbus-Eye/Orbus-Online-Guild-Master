@@ -1,119 +1,68 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { useAuth } from "../context/AuthContext";
-import { useT } from "../i18n/I18nContext";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import { Button } from "@/components/ui/button";
 
 export default function Landing() {
-    const { user } = useAuth();
-    const { t } = useT();
-
-    const features = [
-        { k: "01", titleKey: "landing.feature_recruit_title", descKey: "landing.feature_recruit_desc" },
-        { k: "02", titleKey: "landing.feature_dispatch_title", descKey: "landing.feature_dispatch_desc" },
-        { k: "03", titleKey: "landing.feature_grow_title", descKey: "landing.feature_grow_desc" },
-    ];
-
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg term-scanline">
-            <header className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="text-amber">◆</span>
-                    <span data-testid="brand-tag">ORBUS // GUILDMASTER</span>
-                </div>
-                <div className="flex items-center gap-3">
-                    <LanguageSwitcher />
-                    <div className="text-xs text-muted-foreground hidden sm:block">
-                        v0.12 · i18n
-                    </div>
-                </div>
-            </header>
+            <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-between px-6 py-10">
+                <header className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                        <span className="text-amber">orbus</span>::terminal
+                    </span>
+                    <span className="hidden text-[10px] text-muted-foreground sm:inline">
+                        v0.1 · fase 1
+                    </span>
+                </header>
 
-            <main className="max-w-5xl mx-auto px-6 pt-16 pb-24">
-                <div className="text-xs text-muted-foreground tracking-widest mb-4">
-                    [ TEXT-BASED MMO · GUILD MANAGEMENT ]
-                </div>
+                <section className="flex flex-1 flex-col justify-center py-16">
+                    <p className="mb-4 text-xs uppercase tracking-widest text-muted-foreground">
+                        &gt; boot sequence
+                    </p>
+                    <h1
+                        data-testid="landing-title"
+                        className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl"
+                    >
+                        Orbus Online<span className="text-amber">.</span>
+                        <br />
+                        <span className="text-muted-foreground">Guild Master</span>
+                        <span className="caret-blink" />
+                    </h1>
+                    <p
+                        data-testid="landing-tagline"
+                        className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+                    >
+                        Un MMO gestionale testuale. Fonda una gilda, recluta avventurieri,
+                        rispedisci ogni notte le tue squadre nei dungeon più oscuri.
+                        Nessuna grafica: solo scelte, numeri e rapporti dopo lo scontro.
+                    </p>
 
-                <h1
-                    data-testid="landing-title"
-                    className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight"
-                >
-                    Orbus Online:
-                    <br />
-                    <span className="text-amber">Guild Master</span>
-                    <span className="caret-blink align-baseline" />
-                </h1>
-
-                <p className="mt-6 max-w-2xl text-base text-muted-foreground leading-relaxed">
-                    {t("landing.description_1")} {t("landing.description_2")}
-                </p>
-
-                <div className="mt-10 flex flex-col sm:flex-row gap-3">
-                    {user ? (
-                        <Link to="/dashboard">
+                    <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                        <Link to="/register">
                             <Button
-                                data-testid="landing-dashboard-btn"
-                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-6 h-11"
+                                size="lg"
+                                data-testid="landing-register-btn"
+                                className="min-w-[180px] bg-amber text-black hover:bg-amber/90"
                             >
-                                {t("landing.cta_dashboard")} →
+                                Fonda la tua gilda
                             </Button>
                         </Link>
-                    ) : (
-                        <>
-                            <Link to="/register">
-                                <Button
-                                    data-testid="landing-register-btn"
-                                    className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-6 h-11"
-                                >
-                                    {t("landing.cta_register")}
-                                </Button>
-                            </Link>
-                            <Link to="/login">
-                                <Button
-                                    data-testid="landing-login-btn"
-                                    variant="outline"
-                                    className="rounded-sm px-6 h-11 border-border bg-transparent hover:bg-secondary"
-                                >
-                                    {t("landing.cta_login")}
-                                </Button>
-                            </Link>
-                        </>
-                    )}
-                </div>
-
-                <div className="mt-4">
-                    <Link
-                        to="/leaderboard"
-                        data-testid="landing-leaderboard-link"
-                        className="text-xs text-muted-foreground hover:text-amber tracking-widest underline-offset-4 hover:underline"
-                    >
-                        ▸ {t("landing.cta_leaderboard")} →
-                    </Link>
-                </div>
-
-                <section className="mt-20 grid sm:grid-cols-3 gap-4 text-sm">
-                    {features.map((b) => (
-                        <div
-                            key={b.k}
-                            className="border border-border bg-card p-5 rounded-sm"
-                        >
-                            <div className="text-amber text-xs mb-2 tracking-widest">
-                                ::{b.k}
-                            </div>
-                            <div className="text-foreground font-medium mb-1">
-                                {t(b.titleKey)}
-                            </div>
-                            <div className="text-muted-foreground text-xs leading-relaxed">
-                                {t(b.descKey)}
-                            </div>
-                        </div>
-                    ))}
+                        <Link to="/login">
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                data-testid="landing-login-btn"
+                                className="min-w-[180px] border-border text-foreground hover:bg-secondary"
+                            >
+                                Accedi
+                            </Button>
+                        </Link>
+                    </div>
                 </section>
-            </main>
 
-            <footer className="max-w-5xl mx-auto px-6 py-6 text-xs text-muted-foreground border-t border-border">
-                <span className="text-amber">$</span> orbus --phase 12 --status ready
-            </footer>
+                <footer className="border-t border-border/60 pt-6 text-[11px] uppercase tracking-widest text-muted-foreground">
+                    &gt; sistema pronto · in ascolto su porta 8001
+                </footer>
+            </div>
         </div>
     );
 }

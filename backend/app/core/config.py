@@ -1,58 +1,47 @@
-"""Centralised env/config accessors for the backend.
+"""Caricamento configurazione da variabili d'ambiente.
 
-Combines os.environ lookups with the gameplay/security constants from
-`app.shared.constants` so the rest of the app has a single import surface.
+Non impone default per URI/credenziali sensibili: se manca .env, l'app
+fallisce all'avvio in modo esplicito, come richiesto dalle regole di piattaforma.
 """
+from __future__ import annotations
+
 import os
-
-from app.shared.constants import (
-    JWT_ALGORITHM,
-    JWT_EXPIRY_DAYS as ACCESS_TOKEN_TTL_DAYS,
-    REFRESH_TOKEN_TTL_DAYS,
-    PASSWORD_RESET_TTL_MINUTES,
-    LOGIN_LOCK_MAX_ATTEMPTS as LOGIN_LOCKOUT_THRESHOLD,
-    LOGIN_LOCK_DURATION_MINUTES as LOGIN_LOCKOUT_MINUTES,
-    LOGIN_ATTEMPTS_TTL_SECONDS,
-)
+from functools import lru_cache
 
 
-# ─── Env-driven settings ─────────────────────────────────────────────────────
-MONGO_URL = os.environ["MONGO_URL"]
-DB_NAME = os.environ["DB_NAME"]
-JWT_SECRET = os.environ["JWT_SECRET"]
-APP_ENV = os.environ.get("APP_ENV", "development")
+class Settings:
+    """Contenitore di configurazione, valorizzato una sola volta."""
+
+    def __init__(self) -> None:
+        # ─── MongoDB (obbligatorio) ────────────────────────────────────────
+        mongo_url = os.environ.get("MONGO_URL")
+        db_name = os.environ.get("DB_NAME")
+        if not mongo_url:
+            raise RuntimeError("MONGO_URL non impostato in .env")
+        if not db_name:
+            raise RuntimeError("DB_NAME non impostato in .env")
+        self.mongo_url: str = mongo_url
+        self.db_name: str = db_name
+
+        # ─── JWT (obbligatorio) ────────────────────────────────────────────
+        jwt_secret = os.environ.get("JWT_SECRET")
+        if not jwt_secret:
+            raise RuntimeError("JWT_SECRET non impostato in .env")
+        self.jwt_secret: str = jwt_secret
+        self.jwt_algorithm: str = "HS256"
+        self.jwt_ttl_seconds: int = 60 * 60 * 24 * 7  # 7 giorni
+
+        # ─── CORS ──────────────────────────────────────────────────────────
+        cors_raw = os.environ.get("CORS_ORIGINS", "*")
+        self.cors_origins: list[str] = [
+            o.strip() for o in cors_raw.split(",") if o.strip()
+        ] or ["*"]
+
+        # ─── App metadata ─────────────────────────────────────────────────
+        self.app_env: str = os.environ.get("APP_ENV", "development")
 
 
-def get_cors_origins() -> list[str]:
-    """Resolve allowed CORS origins. In production, `CORS_ORIGINS` must be
-    set explicitly (no wildcard). In dev/preview, defaults to ['*']."""
-    raw = os.environ.get("CORS_ORIGINS", "").strip()
-    if APP_ENV == "production":
-        if not raw or raw == "*":
-            raise RuntimeError(
-                "APP_ENV=production requires CORS_ORIGINS to be set explicitly "
-                "(comma-separated, no '*')."
-            )
-        origins = [o.strip() for o in raw.split(",") if o.strip()]
-        if "*" in origins:
-            raise RuntimeError("CORS_ORIGINS cannot contain '*' when APP_ENV=production.")
-        return origins
-    if not raw:
-        return ["*"]
-    return [o.strip() for o in raw.split(",") if o.strip()]
-
-
-__all__ = [
-    "MONGO_URL",
-    "DB_NAME",
-    "JWT_SECRET",
-    "JWT_ALGORITHM",
-    "APP_ENV",
-    "ACCESS_TOKEN_TTL_DAYS",
-    "REFRESH_TOKEN_TTL_DAYS",
-    "PASSWORD_RESET_TTL_MINUTES",
-    "LOGIN_LOCKOUT_THRESHOLD",
-    "LOGIN_LOCKOUT_MINUTES",
-    "LOGIN_ATTEMPTS_TTL_SECONDS",
-    "get_cors_origins",
-]
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    """Cache singleton delle settings."""
+    return Settings()
