@@ -627,3 +627,128 @@ def test_no_hard_delete_on_orders(admin_headers):
     o = _run(_find())
     assert o is not None
     assert o["status"] in ("completed", "failed")
+
+
+# ═════════════════════════════════════════════════════════════════════
+# POST-VERIFY ITER1 FIXES (T34-T39) — 3 bug P0 dal tester
+# ═════════════════════════════════════════════════════════════════════
+
+# ── T34 legendary items mirror in `items` catalog (bug #1 fix)
+def test_legendary_items_seeded_in_items_catalog():
+    from app.core.database import db
+    slugs = [it["slug"] for it in [
+        {"slug": "legendary_sword_alveora"},
+        {"slug": "legendary_armor_ambash"},
+        {"slug": "legendary_ring_velur"},
+        {"slug": "legendary_staff_efreto"},
+        {"slug": "legendary_amulet_nathos"},
+        {"slug": "legendary_cape_aveol"},
+    ]]
+    async def _c():
+        for s in slugs:
+            it = await db.items.find_one({"slug": s}, {"_id": 0})
+            assert it is not None, f"legendary item {s} missing in items catalog"
+            assert it["rarity"] == "legendary"
+            assert it["is_tradeable"] is False
+            assert it["is_bound"] is True
+            assert it["can_be_sold_for_gold"] is False
+            assert it["can_be_sold_for_real_money"] is False
+            assert it["is_active"] is True
+    _run(_c())
+
+
+# ── T35 inventory includes legendary instances (bug #2 fix)
+def test_inventory_includes_legendary_instances(admin_headers):
+    """After a successful craft, /api/inventory must include the legendary
+    instance with is_legendary_instance=True + is_bound=True + quantity=1."""
+    from app.core.database import db
+    from app.legendary_forge import _resolve_order, _rng_for
+    gid = _run(_set_guild_level_and_gold(10, 1_000_000))
+    async def _create_success_and_resolve():
+        for i in range(500):
+            oid = f"inv-test-{uuid.uuid4().hex[:8]}-{i}"
+            rng = _rng_for(gid, oid)
+            if rng.randint(1, 100) <= 92:
+                order = {
+                    "id": oid, "guild_id": gid,
+                    "recipe_slug": "anello_di_velur",
+                    "status": "in_progress",
+                    "started_at": _iso(_now() - timedelta(hours=1)),
+                    "completes_at": _iso(_now() - timedelta(minutes=5)),
+                    "duration_seconds": 180,
+                    "resources_consumed": [], "materials_consumed": [],
+                    "gold_consumed": 15000,
+                    "resolution_started_at": None,
+                    "created_at": _iso(_now())}
+                await db.legendary_forge_crafting_orders.insert_one(order)
+                res = await _resolve_order(order)
+                return res
+        raise AssertionError("no success seed found")
+    resolved = _run(_create_success_and_resolve())
+    assert resolved["result_item_instance_id"] is not None
+    # /api/inventory must include it
+    r = requests.get(f"{API_BASE}/api/inventory",
+                      headers=admin_headers, timeout=10)
+    assert r.status_code == 200
+    inv = r.json() if isinstance(r.json(), list) else r.json().get("items", r.json().get("inventory", []))
+    if isinstance(inv, dict) and "items" in inv:
+        inv = inv["items"]
+    legendary_entries = [e for e in inv if e.get("is_legendary_instance")]
+    matching = [e for e in legendary_entries
+                if e.get("instance_id") == resolved["result_item_instance_id"]
+                   or e.get("id") == resolved["result_item_instance_id"]]
+    assert len(matching) >= 1, (
+        f"legendary instance {resolved['result_item_instance_id']} "
+        f"not visible in /api/inventory (found {len(legendary_entries)} "
+        f"legendary entries total)")
+    entry = matching[0]
+    assert entry["is_bound"] is True
+    assert entry["quantity"] == 1
+
+
+# ── T36 backwards-compat: non-legendary inventory items still work
+def test_inventory_non_legendary_items_backwards_compat(admin_headers):
+    r = requests.get(f"{API_BASE}/api/inventory",
+                     headers=admin_headers, timeout=10)
+    assert r.status_code == 200, f"inventory API broke: {r.text[:200]}"
+    inv = r.json()
+    if isinstance(inv, dict) and "items" in inv:
+        inv = inv["items"]
+    if isinstance(inv, dict) and "inventory" in inv:
+        inv = inv["inventory"]
+    # Response is still an array (backwards-compat contract)
+    assert isinstance(inv, list)
+    # Each entry (if any) must expose the pre-fix legacy fields
+    for e in inv[:5]:
+        assert "quantity" in e
+        assert "item_id" in e
+        assert "guild_id" in e
+        # New additive field must NEVER break legacy consumers
+        assert "is_legendary_instance" in e  # additive default False/True
+
+
+# ── T37 market rejects legendary BOP listing (bug #3 verified)
+def test_market_rejects_legendary_bop_listing(admin_headers):
+    """Attempt to list a legendary item on the market must return 400."""
+    r = requests.post(f"{API_BASE}/api/market/listings",
+                      json={"item_slug": "legendary_ring_velur",
+                            "quantity": 1, "price_per_unit": 1000},
+                      headers=admin_headers, timeout=10)
+    assert r.status_code == 400, (
+        f"expected 400 not_tradeable, got {r.status_code}: {r.text}")
+    body = r.text.lower()
+    assert ("not tradeable" in body or "not_tradeable" in body
+            or "cannot be sold" in body)
+
+
+# ── T38 auction rejects legendary BOP listing
+def test_auction_rejects_legendary_bop_listing(admin_headers):
+    r = requests.post(f"{API_BASE}/api/auction/listings",
+                      json={"item_slug": "legendary_ring_velur",
+                            "quantity": 1, "price_per_unit": 1000},
+                      headers=admin_headers, timeout=10)
+    assert r.status_code == 400, (
+        f"expected 400 not_tradeable, got {r.status_code}: {r.text}")
+    body = r.text.lower()
+    assert ("not tradeable" in body or "not_tradeable" in body
+            or "cannot be sold" in body)

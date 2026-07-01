@@ -22,7 +22,7 @@ def inventory_entry_public(
         "equipped_quantity": equipped,
         "market_locked_quantity": market_locked,
         "available_quantity": available,
-        "acquired_at": row["acquired_at"],
+        "acquired_at": row.get("acquired_at") or row.get("bound_at") or row.get("created_at") or "1970-01-01T00:00:00+00:00",
         # ROUND 4 per-instance fields (additive, default-safe)
         "instance_id": row.get("instance_id") or row["id"],
         "is_bound": bool(row.get("is_bound", False)),
@@ -35,6 +35,8 @@ def inventory_entry_public(
         "bound_to_adventurer_id": row.get("bound_to_adventurer_id"),
         "bound_reason": row.get("bound_reason"),
         "bound_at": row.get("bound_at"),
+        # Phase 5A additive: legendary instance markers (default False).
+        "is_legendary_instance": bool(row.get("is_legendary_instance", False)),
     }
     if item:
         out["item"] = item_public(item)
@@ -57,13 +59,27 @@ async def list_inventory_for_guild(db, guild_id: str) -> list[dict]:
     """Return the full inventory of a guild, joined with item docs + equipped counts.
 
     Sorted by `acquired_at` desc to match the prior implementation.
+
+    Post-verify Phase 5A Iter1 fix (bug #2): the returned list also
+    includes rows from `legendary_item_instances` (BOP legendary items
+    live in a dedicated collection to avoid unique-index clash with
+    stackable materials). Legendary rows are shaped like regular
+    inventory rows with `is_legendary_instance=True` + `is_bound=True`
+    + `quantity=1` (legendary instances are unique).
     """
     rows = (
         await db.inventory_items.find({"guild_id": guild_id}, {"_id": 0})
         .sort("acquired_at", -1)
         .to_list(500)
     )
-    item_ids = list({r["item_id"] for r in rows})
+    # Phase 5A: merge legendary instances (dedicated collection).
+    leg_rows = (
+        await db.legendary_item_instances.find(
+            {"guild_id": guild_id}, {"_id": 0}
+        ).sort("created_at", -1).to_list(500)
+    )
+    item_ids = list({r["item_id"] for r in rows}
+                    | {r["item_id"] for r in leg_rows if r.get("item_id")})
     items_map: dict[str, dict] = {}
     if item_ids:
         items = await db.items.find(
@@ -71,12 +87,39 @@ async def list_inventory_for_guild(db, guild_id: str) -> list[dict]:
         ).to_list(500)
         items_map = {it["id"]: it for it in items}
     equipped_counts = await count_equipped_for_guild_items(db, guild_id)
-    return [
+    out = [
         inventory_entry_public(
             r, items_map.get(r["item_id"]), equipped_counts.get(r["item_id"], 0)
         )
         for r in rows
     ]
+    # Append legendary instances mapped to public shape
+    now_iso = "1970-01-01T00:00:00+00:00"
+    for lr in leg_rows:
+        entry = inventory_entry_public(
+            {
+                "id": lr["id"],
+                "guild_id": lr["guild_id"],
+                "item_id": lr.get("item_id") or "",
+                "quantity": int(lr.get("quantity", 1)),
+                "acquired_at": (lr.get("bound_at") or lr.get("created_at")
+                                 or now_iso),
+                "instance_id": lr["id"],
+                "is_bound": True,
+                "bound_to_adventurer_id": None,
+                "bound_reason": "legendary_forge_craft",
+                "bound_at": lr.get("bound_at"),
+                "is_legendary_instance": True,
+            },
+            items_map.get(lr.get("item_id")),
+            0,
+        )
+        entry["is_legendary_instance"] = True
+        entry["legendary_quality"] = lr.get("legendary_quality")
+        entry["legendary_stats"] = lr.get("legendary_stats") or {}
+        entry["source_craft_order_id"] = lr.get("source_craft_order_id")
+        out.append(entry)
+    return out
 
 
 __all__ = [

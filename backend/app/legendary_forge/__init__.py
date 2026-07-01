@@ -176,7 +176,7 @@ def _validate_base_stats_within_cap() -> None:
 
 
 async def seed_legendary_forge_catalog() -> dict:
-    """Idempotent seed of 6 recipes + 6 legendary items."""
+    """Idempotent seed of 6 recipes + 6 legendary items + 6 items catalog mirrors."""
     _validate_base_stats_within_cap()
     now_iso = _iso(_now())
     inserted_recipes = 0
@@ -193,6 +193,7 @@ async def seed_legendary_forge_catalog() -> dict:
         if res.upserted_id:
             inserted_recipes += 1
     inserted_items = 0
+    inserted_items_mirror = 0
     for it in LEGENDARY_ITEMS:
         doc = {
             "slug": it["slug"], "name_it": it["name_it"],
@@ -212,10 +213,66 @@ async def seed_legendary_forge_catalog() -> dict:
             {"$setOnInsert": doc}, upsert=True)
         if res.upserted_id:
             inserted_items += 1
+        # Mirror in `items` catalog so /api/items exposes them AND
+        # market/auction can reject them via is_tradeable=False guard
+        # (post-verify Iter1 bug #1 fix).
+        base_stats = it["base_stats"]
+        mirror = {
+            "id": str(uuid.uuid4()),
+            "slug": it["slug"],
+            "name": it["name_it"],
+            "name_it": it["name_it"],
+            "name_en": it["name_it"],
+            "description_it": f"Oggetto leggendario forgiato — {it['name_it']}",
+            "description_en": f"Legendary forged item — {it['name_it']}",
+            "item_type": it["item_type"],
+            "rarity": "legendary",
+            "is_tradeable": False,
+            "is_bound": True,
+            "bind_type": "on_pickup",
+            "bind_on_pickup": True,
+            "is_cosmetic": False,
+            "is_active": True,
+            "is_test": False,
+            "affects_combat": True,
+            "affects_economy": False,
+            "can_be_sold_for_gold": False,
+            "can_be_sold_for_real_money": False,
+            "strength_bonus": int(base_stats.get("strength", 0)),
+            "agility_bonus": int(base_stats.get("agility", 0)),
+            "intellect_bonus": int(base_stats.get("intellect", 0)),
+            "endurance_bonus": int(base_stats.get("endurance", 0)),
+            "faith_bonus": int(base_stats.get("faith", 0)),
+            "power_score": int(base_stats.get("power_score", 0)),
+            "created_at": now_iso,
+        }
+        # $setOnInsert (immutable at insert): id/slug/names/descriptions/stats
+        # $set (idempotent forced): required flags (post-verify fix for
+        # legacy lazy rows created before this seed patch).
+        set_on_insert = {k: v for k, v in mirror.items() if k not in
+                          ("is_tradeable", "is_bound", "bind_type",
+                           "bind_on_pickup", "can_be_sold_for_gold",
+                           "can_be_sold_for_real_money", "is_active",
+                           "is_test", "affects_combat", "affects_economy")}
+        res2 = await db.items.update_one(
+            {"slug": it["slug"]},
+            {"$setOnInsert": set_on_insert,
+             "$set": {
+                "is_tradeable": False, "is_bound": True,
+                "bind_type": "on_pickup", "bind_on_pickup": True,
+                "can_be_sold_for_gold": False,
+                "can_be_sold_for_real_money": False,
+                "is_active": True, "is_test": False,
+                "affects_combat": True, "affects_economy": False,
+             }},
+            upsert=True)
+        if res2.upserted_id:
+            inserted_items_mirror += 1
     return {"recipes_total": len(RECIPES),
             "items_total": len(LEGENDARY_ITEMS),
             "inserted_recipes": inserted_recipes,
-            "inserted_items": inserted_items}
+            "inserted_items": inserted_items,
+            "inserted_items_mirror": inserted_items_mirror}
 
 
 async def ensure_indexes() -> None:

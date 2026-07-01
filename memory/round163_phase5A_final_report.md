@@ -253,3 +253,121 @@ Le 2 failure sono debito legacy R16.0 pre-esistenti (966 gilde legacy senza `alc
 ---
 
 *Report generato: 2026-07-01 — R16.3 Phase 5A BACKEND CLOSED (33/33 test, 248 regression), FRONTEND PENDING.*
+
+---
+
+## 16. POST-VERIFY ITER1 FIXES (2026-07-01)
+
+Sessione seguente al primo `e1_tester` E2E che ha confermato Test 1 PASS + Test 2 parziale. 3 bug P0 identificati dal tester e risolti in iterazione dedicata.
+
+### 16.1 — Bug P0 #1 · Legendary items non seedati in `/api/items`
+
+**Sintomo**: `/api/items` non conteneva i 6 slug `legendary_*_*` corrispondenti agli `output_slug` delle ricette. La creazione lazy in `_grant_legendary` non bastava (l'item non esisteva finché nessuno craftava).
+
+**Fix** (`app/legendary_forge/__init__.py::seed_legendary_forge_catalog`):
+```diff
++ # Mirror ogni legendary in `items` collection al boot seed
++ set_on_insert = {"id","slug","name","name_it","name_en",
++                  "description_it","description_en","item_type","rarity",
++                  "strength_bonus","agility_bonus","intellect_bonus",
++                  "endurance_bonus","faith_bonus","power_score","created_at"}
++ await db.items.update_one(
++     {"slug": it["slug"]},
++     {"$setOnInsert": set_on_insert,
++      "$set": {"is_tradeable": False, "is_bound": True,
++               "bind_type": "on_pickup", "bind_on_pickup": True,
++               "can_be_sold_for_gold": False,
++               "can_be_sold_for_real_money": False,
++               "is_active": True, "is_test": False,
++               "affects_combat": True, "affects_economy": False}},
++     upsert=True)
+```
+
+**Nota importante**: `$set` idempotente sui flag NO_TRADE forza consistency anche sui doc `items` creati lazy da craft precedenti (self-healing per legacy state). Il seed ora ritorna `inserted_items_mirror: N` per audit.
+
+### 16.2 — Bug P0 #2 · Legendary instances invisibili in `/api/inventory`
+
+**Sintomo**: instances vivono in collection dedicata `legendary_item_instances` (per evitare clash unique index su `inventory_items`), ma `list_inventory_for_guild` leggeva solo `inventory_items`. L'utente non vedeva mai le istanze legendary craftate.
+
+**Fix** (`app/inventory/services.py::list_inventory_for_guild`, opzione A — merge in-response come da preferenza utente):
+```diff
++ # Phase 5A: merge legendary instances (dedicated collection).
++ leg_rows = await db.legendary_item_instances.find(
++     {"guild_id": guild_id}, {"_id": 0}
++ ).sort("created_at", -1).to_list(500)
++ item_ids = list({r["item_id"] for r in rows}
++                 | {r["item_id"] for r in leg_rows if r.get("item_id")})
+  ...
++ for lr in leg_rows:
++     entry = inventory_entry_public({
++         "id": lr["id"], "guild_id": lr["guild_id"],
++         "item_id": lr.get("item_id") or "",
++         "quantity": int(lr.get("quantity", 1)),
++         "acquired_at": lr.get("bound_at") or lr.get("created_at") or "1970-...",
++         "instance_id": lr["id"], "is_bound": True,
++         "bound_reason": "legendary_forge_craft",
++         "bound_at": lr.get("bound_at"),
++         "is_legendary_instance": True,
++     }, items_map.get(lr.get("item_id")), 0)
++     entry["is_legendary_instance"] = True
++     entry["legendary_quality"] = lr.get("legendary_quality")
++     entry["legendary_stats"] = lr.get("legendary_stats") or {}
++     entry["source_craft_order_id"] = lr.get("source_craft_order_id")
++     out.append(entry)
+```
++ Aggiunto `is_legendary_instance` (default False) al `inventory_entry_public` DTO come additive field.
++ **Robustezza aggiuntiva**: `"acquired_at": row.get("acquired_at") or row.get("bound_at") or row.get("created_at") or "1970-..."` per gestire legacy row senza `acquired_at`.
+
+**Scelta**: **Opzione A** (merge in-response) come raccomandato dall'utente per UX coerenza. Nessun endpoint dedicato per legendary. Frontend continua a fare 1 sola chiamata `/api/inventory`.
+
+### 16.3 — Bug P0 #3 · Market/Auction devono rifiutare BOP items
+
+**Investigazione**: `app/market/services.py::create_listing` ha già il guard corretto (line 263):
+```python
+if item.get("is_tradeable") is False:
+    raise HTTPException(400, "Item is not tradeable")
+if item.get("can_be_sold_for_gold") is False:
+    raise HTTPException(400, "Item cannot be sold for gold")
+```
+`app/auction/routes.py` **riutilizza** `create_listing` da market → **stesso guard è già applicato**.
+
+**Root cause reale**: fino a Bug #1, il market ritornava 404 (item_slug non esiste). Con Bug #1 fixato, il market ora torna correttamente 400 `not_tradeable` (verificato in T37+T38).
+
+**Nessun cambiamento a market/auction**: il fix di Bug #1 attiva automaticamente le guardie preesistenti. **Defense-in-depth ora completa**.
+
+### 16.4 — Nuovi test T34-T38 (5 test, tutti PASS)
+
+| # | Nome | Verifica |
+|---|---|---|
+| T34 | `legendary_items_seeded_in_items_catalog` | 6 slug in `items` con tutti flag NO_TRADE + `is_active=True` |
+| T35 | `inventory_includes_legendary_instances` | POST craft resolve + `/api/inventory` include instance con `is_legendary_instance=True` |
+| T36 | `inventory_non_legendary_items_backwards_compat` | Response resta array + campi legacy invariati + `is_legendary_instance` additive |
+| T37 | `market_rejects_legendary_bop_listing` | POST `/api/market/listings` con legendary → 400 `not_tradeable` |
+| T38 | `auction_rejects_legendary_bop_listing` | POST `/api/auction/listings` con legendary → 400 `not_tradeable` |
+
+### 16.5 — Regression finale iterazione 2
+
+- **Phase 5A file**: **38/38 PASS** (33 originali + 5 post-verify) ✅
+- **Bundle regression** R16.x + Phase14.4 + dev-seed: **253 passed / 2 skipped / 2 failed**
+  - Le 2 failure sono debito legacy R16.0 pre-esistenti (`alchemist_class_halls_per_guild`, `all_adventurers_have_race_and_gender`) — non regressioni Phase 5A.
+  - Zero regressioni introdotte dai fix post-verify Iter1.
+
+### 16.6 — Files toccati (iterazione 2)
+
+| File | Modifica |
+|---|---|
+| `app/legendary_forge/__init__.py::seed_legendary_forge_catalog` | +mirror in `items` collection con flag NO_TRADE forced via `$set` |
+| `app/inventory/services.py::list_inventory_for_guild` | +merge `legendary_item_instances` in response |
+| `app/inventory/services.py::inventory_entry_public` | +`is_legendary_instance` additive field + `acquired_at` robusto |
+| `tests/backend_round163_phase5A_test.py` | +5 test T34-T38 |
+| `memory/round163_phase5A_final_report.md` | +sezione 16 (questa) |
+
+### 16.7 — Vincoli iterazione 2
+
+- ✅ NO deploy, NO hard delete
+- ✅ NO cambio semantica legendary (restano BOP totale, cap +50% invariato)
+- ✅ Backwards-compatible: `/api/inventory` resta array + campi legacy invariati; nuovo campo `is_legendary_instance` additive default False
+- ✅ Idempotenza mantenuta (seed usa `$setOnInsert` + `$set` idempotente)
+- ✅ Nessuna nuova dipendenza esterna
+
+*Iterazione 2 completata: 2026-07-01. In attesa `e1_tester` per re-verifica solo dei sub-check falliti (Test 2 BOP + presence in inventory + Test 3 audit whitelist). Iterazione 3 Frontend seguirà dopo conferma tester.*
