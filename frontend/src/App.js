@@ -71,6 +71,11 @@ import GuildSpecialization from "@/pages/GuildSpecialization";
 import GuildSpecializationCatalog from "@/pages/GuildSpecializationCatalog";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
+// ROUND 16.3 Phase 7A — PvP Continentale
+import PvpOpponents from "@/pages/PvpOpponents";
+import PvpChallenge from "@/pages/PvpChallenge";
+import PvpBattles from "@/pages/PvpBattles";
+import PvpBattleReport from "@/pages/PvpBattleReport";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
 
 function App() {

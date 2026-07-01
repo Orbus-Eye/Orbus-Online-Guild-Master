@@ -80,6 +80,7 @@ export const NAV_SECTIONS = [
             { to: "/leaderboard", label: "Classifiche", testid: "menu-leaderboard" },
             { to: "/seasons", label: "Stagioni", testid: "menu-seasons" },
             { to: "/arena", label: "Arena", testid: "menu-arena" },
+            { to: "/pvp", label: "PvP Continentale", testid: "menu-pvp-continental", badge: "NEW" },
         ],
     },
     {
