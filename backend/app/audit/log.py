@@ -94,6 +94,12 @@ EVENT_TYPES = frozenset({
     "WORLD_CONTINENT_JOINED",
     "WORLD_CONTINENT_CHANGED",
     "WORLD_ACCESS_GRANTED",
+    # ROUND 16.3 Phase 3 — Continent events + site contracts
+    "CONTINENT_EVENT_CREATED",
+    "CONTINENT_EVENT_ACTIVATED",
+    "CONTINENT_EVENT_EXPIRED",
+    "SITE_INCOME_CLAIMED",
+    "SITE_INCOME_CONFIG_UPDATED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

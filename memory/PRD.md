@@ -259,3 +259,26 @@
 **Report**: `/app/memory/round163_phase2_final_report.md` (13 sezioni).
 **Roadmap**: Phase 1 → CLOSED, Phase 2 → READY-TO-VERIFY.
 **Next**: R16.3 Phase 3 — Eventi continentali admin + Incarichi di Sede (entrate passive con cap).
+
+
+---
+
+## Round 16.3 Phase 3 ready-to-verify — 2026-07-01
+
+**Phase 3 (Eventi Continentali + Incarichi di Sede V1)** — 🟡 READY-TO-VERIFY:
+
+- Backend 2 moduli: `app/world_events/__init__.py` (12 eventi seed, instances CAS, on-visit expire fallback) + `app/site_contracts/__init__.py` (config singleton, ledger daily unique `(guild_id, day_bucket)`, formula trasparente, claim CAS).
+- **12 endpoint** (5 pubblici + 7 admin) sotto `/api/world-events/*` e `/api/site-income/*`. Admin gated 403 non-admin.
+- **Formula trasparente**: `min(round((base + level_bonus + reputation_bonus) * (1 + event_mod_pct/100)), hard_cap)`. Config default: base 20, +5/level, cap 500, rep cap 1.2. Sanity: lv 1 = 20 oro/g, lv 10 = 65, hard cap 500 (piccolo vs raid).
+- **12 eventi catalog** con 5 modificatori `site_income_pct` (`[-15, +15]`) + 6 flavor + 1 `mission_risk_pct` esposto ma non applicato (preparazione Phase 4-5). Badge UI +/-X% trasparente.
+- **5 nuovi audit event** UPPERCASE (`CONTINENT_EVENT_CREATED/ACTIVATED/EXPIRED`, `SITE_INCOME_CLAIMED`, `SITE_INCOME_CONFIG_UPDATED`) in whitelist admin filter.
+- **Frontend mobile-first**: `WorldEvents.jsx`, `SiteContracts.jsx`, `SiteIncomeMiniCard.jsx`, `ContinentEventBanner.jsx`. Nav +2 voci con badge NEW.
+- **Test**: 28/28 PASS. Regression totale **136/138 PASS · 0 fail** (108 pre-esistenti + 28 nuovi). Zero regressioni.
+- **Recovery script**: `app/scripts/expire_stuck_continent_events.py` (dry-run/apply).
+- **Cleanup dev**: `app/scripts/reset_test_account_world_state.py` eseguito post-sigillo Phase 2 → tester@ambash pulito.
+
+**Vincoli rispettati**: NO deploy · NO hard delete (T25) · NO scheduler globale · NO P2W · cap conservativi.
+
+**Report finale**: `/app/memory/round163_phase3_final_report.md` (14 sezioni).
+
+**Next**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali basiche.

@@ -145,6 +145,18 @@ def create_app() -> FastAPI:
     from app.world_boss import router as world_boss_router, admin_router as world_boss_admin_router, seed_world_boss_catalog
     # ROUND 16.3 Phase 2 — Mondo & 8 Mastocontinenti V1
     from app.world import router as world_router, admin_router as world_admin_router, seed_world_continents
+    # ROUND 16.3 Phase 3 — Continent events + Site contracts
+    from app.world_events import (
+        router as world_events_router,
+        admin_router as world_events_admin_router,
+        seed_continent_event_catalog,
+    )
+    from app.site_contracts import (
+        router as site_income_router,
+        admin_router as site_income_admin_router,
+        seed_site_income_config,
+        ensure_indexes as ensure_site_income_indexes,
+    )
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -188,6 +200,30 @@ def create_app() -> FastAPI:
     app.include_router(world_boss_admin_router)
     app.include_router(world_router)
     app.include_router(world_admin_router)
+    app.include_router(world_events_router)
+    app.include_router(world_events_admin_router)
+    app.include_router(site_income_router)
+    app.include_router(site_income_admin_router)
+
+    # Seed continent event catalog + site income config on startup (idempotent)
+    @app.on_event("startup")
+    async def _seed_r163_phase3_startup():
+        import logging
+        log = logging.getLogger("orbus")
+        try:
+            r1 = await seed_continent_event_catalog()
+            log.info("ROUND 16.3 Phase 3 continent events catalog: %s", r1)
+        except Exception as exc:
+            log.warning("continent_event_catalog seed failed: %s", exc)
+        try:
+            r2 = await seed_site_income_config()
+            log.info("ROUND 16.3 Phase 3 site income config: %s", r2)
+        except Exception as exc:
+            log.warning("site_income_config seed failed: %s", exc)
+        try:
+            await ensure_site_income_indexes()
+        except Exception as exc:
+            log.debug("site_income_indexes ensure failed: %s", exc)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

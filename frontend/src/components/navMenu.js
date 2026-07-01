@@ -13,6 +13,7 @@ export const NAV_SECTIONS = [
         items: [
             { to: "/dashboard", label: "Home", testid: "menu-dashboard" },
             { to: "/achievements", label: "Imprese", testid: "menu-achievements" },
+            { to: "/site-contracts", label: "Incarichi di Sede", testid: "menu-site-contracts", badge: "NEW" },
             { to: "/territory", label: "Territorio", testid: "menu-territory" },
             { to: "/chronicle", label: "Cronaca", testid: "menu-chronicle" },
         ],
@@ -46,6 +47,7 @@ export const NAV_SECTIONS = [
         label: "Mondo",
         items: [
             { to: "/world", label: "Panoramica Mondo", testid: "menu-world", badge: "NEW" },
+            { to: "/world-events", label: "Eventi", testid: "menu-world-events", badge: "NEW" },
             { to: "/world/neighbors", label: "Gilde vicine", testid: "menu-world-neighbors" },
         ],
     },

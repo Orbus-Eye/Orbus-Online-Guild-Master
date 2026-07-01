@@ -52,6 +52,8 @@ import WorldBossReport from "@/pages/WorldBossReport";
 import World from "@/pages/World";  // ROUND 16.3 Phase 2
 import WorldContinent from "@/pages/WorldContinent";
 import WorldNeighbors from "@/pages/WorldNeighbors";
+import WorldEvents from "@/pages/WorldEvents";  // ROUND 16.3 Phase 3
+import SiteContracts from "@/pages/SiteContracts";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -340,6 +342,23 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <WorldNeighbors />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 3 — Continent events + Site contracts */}
+                        <Route
+                            path="/world-events"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldEvents />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/site-contracts"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <SiteContracts />
                                 </ProtectedRoute>
                             }
                         />

@@ -9,6 +9,8 @@ import NextActionsCard from "../components/NextActionsCard";
 import DailyLoopCard from "../components/DailyLoopCard";
 import GuildProgressCard from "../components/GuildProgressCard";
 import WorldMiniCard from "../components/WorldMiniCard";
+import SiteIncomeMiniCard from "../components/SiteIncomeMiniCard";
+import ContinentEventBanner from "../components/ContinentEventBanner";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
@@ -200,7 +202,11 @@ export default function Dashboard() {
                 <div className="mb-6">
                     <GuildProgressCard />
                 </div>
-                <div className="mb-6">
+                <div className="mb-4">
+                    <ContinentEventBanner />
+                </div>
+                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                    <SiteIncomeMiniCard />
                     <WorldMiniCard />
                 </div>
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">

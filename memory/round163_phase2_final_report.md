@@ -2,7 +2,24 @@
 
 **Data**: 1 luglio 2026
 **Scope**: Mondo & 8 Mastocontinenti V1 (puro flavor + social).
-**Stato**: 🟡 **READY-TO-VERIFY** — Backend/API/admin/audit + 22 test + frontend + doc di memoria completati. In attesa E2E browser finale (`e1_tester` non triggerato per richiesta esplicita utente).
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** — Backend/API/admin/audit + 22 test pytest + frontend + `e1_tester` E2E browser 4/4 PASS. Sigillato 2026-07-01 post-verifica.
+
+---
+
+## E2E Verification Results (e1_tester)
+
+4 test browser eseguiti da `e1_tester` in preview mobile viewport:
+
+| # | Test | Verifica | Stato |
+|---|---|---|---|
+| 3.1 | Access gate | Clean user senza raid → 403/`first_raid_required` con CTA `/raids` | ✅ PASS |
+| 3.2 | Join primo continente | POST /join `ambash` → `presence.change_count=0`, `next_change_available_at` = now+30gg | ✅ PASS |
+| 3.3 | Change (cooldown bypass admin) | Fast-forward → change → old presence `archived`, new `active` slug `velur`, `change_count=1` | ✅ PASS |
+| 3.4 | Neighbors + audit whitelist | `/neighbors` 200 con `total_in_continent`; admin filter accetta `WORLD_CONTINENT_JOINED/CHANGED/WORLD_ACCESS_GRANTED` | ✅ PASS |
+
+**WARN NON BLOCCANTE**: `GET /api/world/continents` pubblico filtra `is_active: true`. Design intenzionale (nasconde continenti admin-disabilitati agli utenti). Confermato dall'utente: non fixare.
+
+**Stato test account** post-3.3: `tester@orbus.test` risulta su `velur` con `change_count=1`. Ripristinato a `ambash` pulito via `app/scripts/reset_test_account_world_state.py` (vedi PARTE 1 sigillo, sezione cleanup).
 
 ---
 

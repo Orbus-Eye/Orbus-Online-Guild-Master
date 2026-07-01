@@ -554,3 +554,23 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 5. **Test**: **22/22 PASS** in `backend_round163_phase2_test.py`. Regression totale **108 passed / 2 skipped / 0 failed**. Zero cambi economia/XP/drop/PvP/premium. Puro flavor + social.
 
 **Next round proposto**: R16.3 Phase 3 — Eventi continentali admin + Incarichi di Sede (entrate passive con cap).
+
+---
+
+## R16.3 Phase 2 sealed & Phase 3 ready-to-verify — 2026-07-01
+
+**Phase 2 (Mondo & 8 Mastocontinenti)** — 🟢 **OFFICIALLY CLOSED ✅** dopo verifica `e1_tester` 4/4 PASS (access gate, join, change 30gg, neighbors + audit whitelist). WARN filtro `is_active` sui continenti pubblici confermato come design. Tester account riportato a `ambash` pulito via nuovo `app/scripts/reset_test_account_world_state.py` (permanente, gated `APP_ENV != production`).
+
+**Phase 3 (Eventi Continentali + Incarichi di Sede V1)** — 🟡 **READY-TO-VERIFY**:
+
+1. **Backend 2 moduli**: `app/world_events/__init__.py` (~340 righe: seed 12 eventi, instances CAS, on-visit fallback expire) + `app/site_contracts/__init__.py` (~340 righe: config singleton, ledger daily unique_key, formula trasparente, claim CAS). Registrati in `app_factory.py` con seed a boot.
+2. **12 endpoint**: `/api/world-events/{continent/{slug}/active,mine}` + `/api/site-income/{today,claim,history}` (5 public); `/api/admin/world-events/{create,catalog,activate,expire,all}` + `/api/admin/site-income/{config,stats}` (7 admin, 403 non-admin, dev routes gated `APP_ENV != production`).
+3. **5 nuovi audit event UPPERCASE**: `CONTINENT_EVENT_CREATED/ACTIVATED/EXPIRED`, `SITE_INCOME_CLAIMED`, `SITE_INCOME_CONFIG_UPDATED` — presenti in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST` admin filter.
+4. **Frontend mobile-first**: `pages/WorldEvents.jsx` (evento attivo con modifier badge trasparente), `pages/SiteContracts.jsx` (breakdown giornaliero + claim CTA + storico 7gg), `components/SiteIncomeMiniCard.jsx` in Dashboard, `components/ContinentEventBanner.jsx` slim banner. Nav +2 voci (Eventi sotto Mondo, Incarichi di Sede sotto Gilda). Modificatori mostrati +/-X% esplicito (green/red/amber).
+5. **Test**: **28/28 PASS** in `backend_round163_phase3_test.py`. Regression totale **136 passed / 2 skipped / 0 failed** (108 pre-esistenti + 28 Phase 3). Cap conservativi verificati: 20 oro/g @ lv 1, 65 @ lv 10, 500 hard cap. Zero regressioni. Nuovo recovery script `app/scripts/expire_stuck_continent_events.py` con `--dry-run/--apply`.
+
+**Vincoli rispettati**: NO deploy · NO hard delete (T25) · NO scheduler globale · NO P2W (cap uguale per tutte) · NO cambi economia/XP/drop/PvP fuori site income (che è comunque piccolo vs raid). Modificatori esposti trasparentemente.
+
+**Report finale**: `/app/memory/round163_phase3_final_report.md` (14 sezioni).
+
+**Next round proposto**: R16.3 Phase 4 — Risorse continentali (8 slug) + classifiche continentali basiche.
