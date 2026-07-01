@@ -66,6 +66,12 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "LEGENDARY_CRAFT_FAILED",
     "LEGENDARY_STAT_CLAMPED",
     "LEGENDARY_RECIPE_TOGGLED",
+    # ROUND 16.3 Phase 5B — Arfus Forge (guild passive technologies)
+    "ARFUS_RESEARCH_STARTED",
+    "ARFUS_RESEARCH_COMPLETED",
+    "ARFUS_TECHNOLOGY_UNLOCKED",
+    "ARFUS_TECHNOLOGY_ACTIVATED",
+    "ARFUS_TECHNOLOGY_DEACTIVATED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

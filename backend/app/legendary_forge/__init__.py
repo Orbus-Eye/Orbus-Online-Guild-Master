@@ -502,9 +502,17 @@ async def _resolve_order(order: dict) -> dict:
     if not recipe:
         raise HTTPException(500, "recipe_missing_on_resolve")
     guild = await db.guilds.find_one({"id": order["guild_id"]},
-                                       {"_id": 0, "level": 1})
+                                       {"_id": 0, "level": 1, "name": 1})
     guild_level = int(guild.get("level", 1)) if guild else 1
+    # ROUND 16.3 Phase 5B — apply Arfus passive bonuses (backward-compat:
+    # returns 0 if no active tech).
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    arcane_bonus = await _arfus_bonus(order["guild_id"], "arcane_knowledge")
+    forge_bonus = await _arfus_bonus(order["guild_id"], "forge_efficiency")
     success_chance = _compute_success_chance(recipe, guild_level)
+    success_chance = min(100, success_chance + int(arcane_bonus))
+    perf_threshold = PERFEZIONATO_CHANCE + int(forge_bonus)
+    imp_threshold = perf_threshold + IMPERFETTO_CHANCE
     rng = _rng_for(order["guild_id"], order["id"])
     success_roll = rng.randint(1, 100)
     success = success_roll <= success_chance
@@ -515,9 +523,9 @@ async def _resolve_order(order: dict) -> dict:
     clamp_audit: list[dict] = []
     if success:
         quality_roll = rng.randint(1, 100)
-        if quality_roll <= PERFEZIONATO_CHANCE:
+        if quality_roll <= perf_threshold:
             quality = "perfezionato"
-        elif quality_roll <= PERFEZIONATO_CHANCE + IMPERFETTO_CHANCE:
+        elif quality_roll <= imp_threshold:
             quality = "imperfetto"
         else:
             quality = "normale"
@@ -565,6 +573,25 @@ async def _resolve_order(order: dict) -> dict:
          "success_roll": success_roll, "quality_roll": quality_roll,
          "pity_applied": pity_applied,
          "result_item_instance_id": inst_id})
+    # ROUND 16.3 Phase 5A Enhancement — server-wide announcement on
+    # perfezionato via chronicle (lowercase event mirrored into audit_log).
+    if quality == "perfezionato":
+        try:
+            await db.audit_log.insert_one({
+                "id": str(uuid.uuid4()),
+                "event_type": "legendary_perfezionato",
+                "actor_user_id": None,
+                "actor_guild_id": order["guild_id"],
+                "item_slug": recipe["output_slug"],
+                "item_template_id": None,
+                "quantity": 1,
+                "metadata": {"output_slug": recipe["output_slug"],
+                             "recipe_slug": recipe["slug"],
+                             "order_id": order["id"]},
+                "created_at": now_iso,
+            })
+        except Exception as exc:
+            logger.warning("chronicle perfezionato emit: %s", exc)
     return await db.legendary_forge_crafting_orders.find_one(
         {"id": order["id"]}, {"_id": 0})
 

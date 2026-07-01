@@ -467,8 +467,13 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     multiplier = _outcome_multiplier(outcome)
 
     rd = await db.raid_dungeons.find_one({"id": raid["raid_dungeon_id"]}, {"_id": 0})
+    # ROUND 16.3 Phase 5B — Arfus passive bonuses (0 if none active).
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    _dmg_bonus = await _arfus_bonus(guild["id"], "combat_damage")
+    _leader_xp_bonus = await _arfus_bonus(guild["id"], "leader_experience")
     gold = int(rd["base_gold_reward"] * multiplier)
-    xp_per_member = int(rd["base_xp_per_member"] * multiplier)
+    xp_per_member = int(rd["base_xp_per_member"] * multiplier
+                        * (1.0 + _leader_xp_bonus / 100.0))
 
     # dragon_essence: guaranteed range, scaled by outcome
     de_min = rd.get("guaranteed_dragon_essence_min", 1)
@@ -482,7 +487,8 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
 
     # Apply rewards
     now = _utc_now()
-    raid_score = int(raid["team_power_combined"] * multiplier)
+    raid_score = int(raid["team_power_combined"] * multiplier
+                     * (1.0 + _dmg_bonus / 100.0))
     await db.guilds.update_one(
         {"id": guild["id"]},
         {"$inc": {

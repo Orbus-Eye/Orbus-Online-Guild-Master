@@ -522,7 +522,11 @@ async def send_team(event_id: str, body: SendTeamBody,
             matched += 1
     counter_bonus = matched * 0.15
     phase_mult = 1.0 + max(0, ev.get("phase", 1) - 1) * 0.2
-    contribution = int(base_power * (1 + counter_bonus) * phase_mult)
+    # ROUND 16.3 Phase 5B — Arfus combat_damage bonus (0 if none active).
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    _dmg_bonus = await _arfus_bonus(guild["id"], "combat_damage")
+    contribution = int(base_power * (1 + counter_bonus) * phase_mult
+                       * (1.0 + _dmg_bonus / 100.0))
 
     now_iso = _utc_now().isoformat()
     contrib_id = str(uuid.uuid4())

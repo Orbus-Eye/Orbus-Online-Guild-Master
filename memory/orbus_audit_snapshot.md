@@ -683,3 +683,56 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 **Report completo**: `/app/memory/round163_phase5A_final_report.md` sez. 17 (Iterazione 3).
 
 **Next**: attesa conferma utente per **Phase 5B — Forgia di Arfus (P1)** — bilanciamento tecnologie passive gilda con cap +30% totale.
+
+---
+
+## R16.3 Phase 5B — Backend + Chronicle Enhancement (2026-07-01)
+
+**🟡 BACKEND CLOSED / FRONTEND PENDING** — Forgia di Arfus V0 (guild
+passive technologies) + Enhancement Chronicle server-wide announcement.
+
+1. **Backend module** (`app/arfus_forge/__init__.py`, ~600 righe):
+   - 10 tecnologie categorizzate (1 per categoria, no stack same-cat)
+   - Cap +30% totale con `CATEGORY_CAPS` differenziati (drop 15%, XP 20%,
+     forge 10%, altri 30%)
+   - Max 5 tech attive (server-side)
+   - Guild level gate ≥ 6
+   - Applier `get_active_bonuses_for_guild(guild_id)` backward-compat
+   - CAS orders + on-visit fallback (no scheduler)
+   - 9 endpoint (6 public + 3 admin)
+
+2. **Applier integrato in 5 servizi** (patch mirati, no refactor):
+   - `expeditions/services.py::_complete_one_expedition` — leader_experience → xp
+   - `raids/__init__.py::complete_raid` — combat_damage → raid_score, leader_experience → xp
+   - `world_boss/__init__.py::send_team` — combat_damage → contribution
+   - `resources/__init__.py::_resolve_mission` — exploration_luck → drop_rate
+   - `legendary_forge/__init__.py::_resolve_order` — arcane_knowledge → success_chance, forge_efficiency → perfezionato_chance
+
+3. **Chronicle Enhancement server-wide announcement**:
+   - Nuovo lowercase audit event `legendary_perfezionato` emesso su
+     crafting perfezionato
+   - Whitelist `PUBLIC_EVENTS` + template IT/EN in `_EVENT_TEMPLATES`
+   - **Reuse elegante di `audit_log`** (no nuova collection — vedi §6.1
+     del report per rationale)
+
+4. **Audit whitelist**: 28 → 33 (5 UPPERCASE arfus events).
+   `legendary_perfezionato` in `EVENT_TYPES` per chronicle, NOT nella
+   admin whitelist (design intentional).
+
+5. **Test suite**:
+   - Phase 5B: **39 passed, 1 skipped** (40 test totali)
+   - Phase 1-5B combined R16.3: **185 passed, 2 skipped, 0 fail**
+   - Backward-compat Phase 5A: **38/38 pass** (nessuna regression numerica)
+
+6. **Deviazioni dal brief** (documentate nel report finale sez. §6):
+   - Chronicle NON usa `world_chronicle_entries` — riuso `audit_log`
+     esistente (soluzione strictly better)
+   - Endpoint `/api/chronicle/latest` NON aggiunto — l'esistente
+     `/api/chronicle?limit=N` è semanticamente equivalente
+   - Whitelist +5 (non +7): `ARFUS_BONUS_APPLIED` skipped (noisy),
+     `CHRONICLE_ENTRY_RECORDED` non serve (reuse audit_log)
+
+**Report completo**: `/app/memory/round163_phase5B_final_report.md`
+
+**Next**: Iterazione 2 (Frontend Phase 5B) dopo verifica manuale utente.
+

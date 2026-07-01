@@ -365,3 +365,39 @@
 - ⏳ Attesa conferma utente per **Phase 5B — Forgia di Arfus (P1)** — bilanciamento tecnologie passive gilda con cap +30% totale.
 - 🔒 Phase 6+ (P2): patti commerciali gilda, specializzazioni gilda, PvP continentale, stalla/cavalcature — in coda dopo Phase 5B.
 - 🐛 Debito tecnico R16.0 (`test_t03_alchemist_class_halls_per_guild`, `test_t03_all_adventurers_have_race_and_gender`) — noto, non-bloccante, non regression Phase 5A.
+
+---
+
+## Round 16.3 Phase 5B — Backend + Chronicle Enhancement 🟡 (2026-07-01)
+
+**Phase 5B Iterazione 1 — BACKEND CLOSED / FRONTEND PENDING**:
+
+- **Forgia di Arfus V0** (10 tecnologie passive, cap +30% con category
+  caps differenziati, max 5 attive, no stack same-cat, guild lvl ≥ 6,
+  CAS orders + on-visit resolve)
+- **Applier integrato** in 5 servizi (expedition XP, raid score+XP,
+  world_boss contribution, resource drop-rate, legendary success+perfezionato)
+- **Chronicle Enhancement**: `legendary_perfezionato` server-wide
+  announcement via riuso `audit_log` (no nuova collection)
+- 9 endpoint arfus (6 public + 3 admin) + 5 nuovi audit UPPERCASE
+
+**Validazione**:
+- Phase 5B: 39 passed, 1 skipped
+- R16.3 phases 1-5B: 185 passed, 2 skipped, 0 fail
+- Backward-compat Phase 5A: 38/38 pass
+
+**Deviazioni dal brief** (rationale nel report §6):
+1. Chronicle NON usa nuova collection — reuse `audit_log` (strictly better)
+2. `/api/chronicle/latest` non aggiunto — `/api/chronicle?limit=N` equivalente
+3. Whitelist +5 (non +7) — 2 opzionali skipped per design
+
+**Report**: `/app/memory/round163_phase5B_final_report.md`
+
+**Next Action Items**:
+- ⏳ Verifica manuale utente Phase 5B backend
+- ⏳ Iterazione 2 Frontend Phase 5B (3 pagine + MiniCard)
+- 🔒 Phase 6+ (P2): patti commerciali, specializzazioni, PvP, stalla
+- 🐛 Debito legacy pre-esistente: `test_openapi_path_count_is_61`
+  (hard-coded, path count ora 218), raid lifecycle 423 pre-esistenti,
+  2 alchemist/adventurers noti — non regressions Phase 5B
+

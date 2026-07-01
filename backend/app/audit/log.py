@@ -112,6 +112,15 @@ EVENT_TYPES = frozenset({
     "LEGENDARY_CRAFT_FAILED",
     "LEGENDARY_STAT_CLAMPED",
     "LEGENDARY_RECIPE_TOGGLED",
+    # ROUND 16.3 Phase 5A Enhancement — Chronicle public event (lowercase
+    # so it flows into the existing chronicle whitelist)
+    "legendary_perfezionato",
+    # ROUND 16.3 Phase 5B — Arfus Forge (guild passive technologies)
+    "ARFUS_RESEARCH_STARTED",
+    "ARFUS_RESEARCH_COMPLETED",
+    "ARFUS_TECHNOLOGY_UNLOCKED",
+    "ARFUS_TECHNOLOGY_ACTIVATED",
+    "ARFUS_TECHNOLOGY_DEACTIVATED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

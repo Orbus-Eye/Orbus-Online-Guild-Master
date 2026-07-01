@@ -171,7 +171,13 @@ def create_app() -> FastAPI:
         router as legendary_forge_router,
         admin_router as legendary_forge_admin_router,
         seed_legendary_forge_catalog,
-        ensure_indexes as ensure_legendary_forge_indexes,
+        ensure_indexes as ensure_legendary_forge_indexes,    )
+    # ROUND 16.3 Phase 5B — Arfus Forge
+    from app.arfus_forge import (
+        router as arfus_forge_router,
+        admin_router as arfus_forge_admin_router,
+        seed_arfus_forge_catalog,
+        ensure_indexes as ensure_arfus_forge_indexes,
     )
 
     app.include_router(auth_router)
@@ -226,6 +232,8 @@ def create_app() -> FastAPI:
     app.include_router(continent_lb_admin_router)
     app.include_router(legendary_forge_router)
     app.include_router(legendary_forge_admin_router)
+    app.include_router(arfus_forge_router)
+    app.include_router(arfus_forge_admin_router)
 
     # Seed continent event catalog + site income config on startup (idempotent)
     @app.on_event("startup")
@@ -264,6 +272,15 @@ def create_app() -> FastAPI:
             await ensure_legendary_forge_indexes()
         except Exception as exc:
             log.debug("legendary_forge_indexes ensure failed: %s", exc)
+        try:
+            r5 = await seed_arfus_forge_catalog()
+            log.info("ROUND 16.3 Phase 5B arfus forge catalog: %s", r5)
+        except Exception as exc:
+            log.warning("arfus_forge_catalog seed failed: %s", exc)
+        try:
+            await ensure_arfus_forge_indexes()
+        except Exception as exc:
+            log.debug("arfus_forge_indexes ensure failed: %s", exc)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

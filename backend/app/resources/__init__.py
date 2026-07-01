@@ -336,12 +336,17 @@ async def _resolve_mission(mission: dict, rng: Optional[_random.Random] = None) 
             {"id": mission["id"]}, {"_id": 0},
         ) or mission
     rng = rng or _random
+    # ROUND 16.3 Phase 5B — Arfus exploration_luck bonus (0 if none active).
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    _luck_bonus = await _arfus_bonus(r["guild_id"], "exploration_luck")
     success = rng.randint(1, 100) <= int(r.get("success_chance", 50))
     resources_obtained = 0
     outcome = "failed"
     if success:
         drop_roll = rng.randint(1, 100)
-        if drop_roll <= int(r.get("drop_rate", DROP_RATE_RARE)):
+        effective_drop = min(100, int(r.get("drop_rate", DROP_RATE_RARE))
+                               + int(_luck_bonus))
+        if drop_roll <= effective_drop:
             resources_obtained = 1
             outcome = "completed_with_drop"
         else:

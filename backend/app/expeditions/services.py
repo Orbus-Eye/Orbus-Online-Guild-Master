@@ -284,6 +284,10 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     # Materials granted on the spot, idempotency follows the same
     # `status: in_progress → completing` claim used for gold/xp/loot.
     xp_debuff_reports: list[dict] = []
+    # ROUND 16.3 Phase 5B — apply Arfus leader_experience bonus (0 if none).
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    _leader_xp_bonus = await _arfus_bonus(claimed["guild_id"],
+                                          "leader_experience")
     # Pre-load class docs by name for the members in this expedition.
     class_names = list({(m.get("class_name_snapshot") or "").strip() for m in members})
     class_docs_by_name: dict[str, dict] = {}
@@ -301,6 +305,9 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         traits_snap = m.get("traits_snapshot") or []
         xp_pct = sum_xp_percent(traits_snap)
         base_xp_with_traits = int(round(int(xp_per_member) * (1.0 + xp_pct / 100.0)))
+        # ROUND 16.3 Phase 5B — apply leader_experience multiplier (0 if none).
+        base_xp_with_traits = int(round(
+            base_xp_with_traits * (1.0 + _leader_xp_bonus / 100.0)))
         # ROUND 15 FASE 2 — primary-stat policy multiplier.
         cls_doc = class_docs_by_name.get(m.get("class_name_snapshot") or "")
         xp_info = compute_xp_multiplier(adv, cls_doc)

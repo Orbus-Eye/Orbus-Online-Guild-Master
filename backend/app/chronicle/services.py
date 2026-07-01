@@ -35,6 +35,8 @@ PUBLIC_EVENTS = frozenset({
     "loot_awarded",
     "streak_reward_claimed",
     "weekly_quest_claimed",
+    # ROUND 16.3 Phase 5A Enhancement — legendary perfezionato server-wide
+    "legendary_perfezionato",
 })
 
 # Event types that only surface if the item rarity is Uncommon+.
@@ -155,6 +157,12 @@ _EVENT_TEMPLATES: dict[str, tuple[str, str, str]] = {
         "weekly_done",
         "{guild} ha completato una missione settimanale ({md.slug})",
         "{guild} completed a weekly quest ({md.slug})",
+    ),
+    # ROUND 16.3 Phase 5A Enhancement — legendary perfezionato server-wide
+    "legendary_perfezionato": (
+        "legendary_perfezionato",
+        "{guild} ha forgiato un leggendario perfezionato ({md.output_slug})",
+        "{guild} forged a perfezionato legendary ({md.output_slug})",
     ),
 }
 
