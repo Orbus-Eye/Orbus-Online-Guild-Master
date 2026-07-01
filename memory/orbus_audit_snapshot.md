@@ -923,7 +923,118 @@ completi (Backend + Frontend + Docs).
 
 **Report completo**: `/app/memory/round163_final_report.md` (sigillo consolidato Round 16.3).
 
-**Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 (Stalla) parked in attesa di design review conservativo anti-P2W.
+**Round 16.3 OFFICIALLY CLOSED ✅** con inclusione Phase 8 V1.
 
-**Next**: **Debito tecnico P2 (Iter B)** — pytest DB isolation, specializzazioni R16 investigation, `/api/forge/enchant-options` 404, POST PvP validation ordering, ESLint warning ClassHalls, startup handler `_seed_r163_phase3_startup`.
+---
+
+## ROUND 16.3 Phase 8 V1 — Stalla & Cavalcature (cosmetic-only) ✅ CLOSED 2026-07-01
+
+### Backend Iter1
+
+**Modulo**: `/app/backend/app/stables/` (7 file: `__init__`, `models`, `catalog`, `seed`, `services`, `routes`, `admin_routes`).
+
+**Collezioni Mongo** (4 principali + 1 ausiliaria):
+- `mount_catalog` — 9 mount seeded (unique(slug))
+- `narrative_routes` — 5 rotte seeded (unique(slug))
+- `guild_mount_ownership` — ownership per guild (unique(guild_id, mount_slug), aux (guild_id, is_active))
+- `narrative_route_completions` — one-shot completions (unique(guild_id, route_slug))
+- `narrative_rewards_unlocked` — badge/title/lore assegnati (unique(guild_id, reward_slug))
+
+**9 Mount seedati**:
+| Slug | Dominio | Rarità | Fonte |
+|---|---|---|---|
+| ronzino-di-strada | starter | common | starter_quest |
+| scarabeo-runico | ambash | uncommon | craft |
+| cervo-lunare | velur | rare | world_boss_drop |
+| lupo-delle-fronde | soe | uncommon | world_boss_drop |
+| salamandra-di-efreto | efreto | rare | craft |
+| segugio-cinereo | irthe | uncommon | achievement |
+| remora-tempestosa | nathos | rare | world_boss_drop |
+| ombra-sellata | ergolat | epic | narrative |
+| grifone-delle-alture | aveol | rare | achievement |
+
+**5 Rotte narrative seedate**:
+| Slug | Dominio richiesto | Reward type | Reward slug |
+|---|---|---|---|
+| sentiero-delle-fronde | soe | cosmetic_badge | traveler_of_fronde |
+| via-delle-alture | aveol | cosmetic_title | titolo_scalatore_delle_alture |
+| traccia-lunare | velur | lore_entry | codex_traccia_lunare |
+| passo-delle-ceneri | efreto | cosmetic_badge | badge_passo_ceneri |
+| cammino-ombra | ergolat | cosmetic_title | titolo_pellegrino_ombra |
+
+I 3 domini scoperti (ambash, irthe, nathos) sono riservati a Phase 8 V2.
+
+**Endpoint** (9 = 7 pubblici + 2 admin dev-gated):
+- `GET /api/stables/catalog`
+- `GET /api/stables/mine`
+- `POST /api/stables/set-active` (accetta `mount_slug: null` per deselect)
+- `POST /api/stables/quest/starter/claim` (idempotente, first-time only, auto-attiva)
+- `GET /api/stables/narrative-routes`
+- `POST /api/stables/narrative-routes/{slug}/travel` (one-shot per rotta+guild)
+- `GET /api/stables/narrative-rewards/mine`
+- `GET /api/admin/stables/catalog`
+- `POST /api/admin/stables/dev/grant-mount`
+
+**Audit events UPPERCASE** (+4):
+- `MOUNT_STARTER_CLAIMED`
+- `MOUNT_ACQUIRED`
+- `MOUNT_ACTIVE_SET`
+- `NARRATIVE_ROUTE_TRAVELED`
+
+Whitelist admin: **50 → 54** (verificato runtime da `test_24_audit_whitelist_has_54_entries`).
+
+### Anti-P2W hard verification (Phase 8 V1)
+
+**Catalog invariants** (hardcoded + anti-drift override nel seed):
+- `affects_combat=false`
+- `affects_economy=false`
+- `affects_ranking=false`
+- `affects_travel_time=false`
+- `can_be_sold_for_real_money=false`
+
+**Reward invariants**: `reward_type ∈ {cosmetic_badge, cosmetic_title, lore_entry}` — mai `gold/xp/reputation/materials`.
+
+**Regression test esplicito** con snapshot BEFORE/AFTER:
+- `test_20_no_p2w_stat_impact_after_claim`: `guild.gold`, `guild.reputation`, `guild.level`, `guild.name` invariati dopo claim starter
+- `test_21_no_p2w_stat_impact_after_narrative_travel`: `guild.gold/reputation/level` invariati dopo travel narrative
+
+**Zero scritture runtime** a `guilds.gold`, `guilds.reputation`, `guilds.level`, `guild_pvp_stats.*`, `adventurers.stats`, `inventory`, `item_instances`.
+
+### Frontend Iter2
+
+**File creati** (4):
+- `/app/frontend/src/pages/Stables.jsx` — hub pagina con 3 tab (Le Mie Cavalcature / Catalogo Completo / Rotte Narrative), CTA "Rivendica il Ronzino", loading/empty state, toast IT
+- `/app/frontend/src/components/MountCard.jsx` — card riutilizzabile con emoji, rarity badge, dominio, activate/deactivate CTA
+- `/app/frontend/src/components/NarrativeRouteCard.jsx` — card rotta con status pill (Percorribile/Completata/Cavalcatura mancante) + CTA travel
+- `/app/frontend/src/components/StablesMiniCard.jsx` — mini-card dashboard con mount attivo + count + micro-disclaimer
+
+**File modificati** (3):
+- `App.js` — route `/stables` con `requireGuild`
+- `Dashboard.jsx` — inclusione `<StablesMiniCard />` sotto `PvpSeasonMiniCard`
+- `navMenu.js` — voce "Stalla" in sezione Gilda (badge NEW, `menu-stables`)
+
+**Anti-P2W disclaimer visibile ×2**:
+1. `Stables.jsx` footer full box emerald (`stables-antip2w-disclaimer`)
+2. `StablesMiniCard.jsx` micro-disclaimer 1 riga (`stables-mini-antip2w`)
+
+### Test suite Phase 8 V1
+
+- `test_stables_phase8_v1.py`: **28/28 PASS** — Unit catalog invariants (6), seed idempotency (2), HTTP endpoints (8), direct-DB flows (3), anti-P2W regression (3), audit registration (2), admin HTTP (2), regression baseline (2)
+
+### Totale sessione R16.3 Phase 7 + 8
+
+| Suite | Result |
+|---|---|
+| `test_pvp_phase7a_p0.py` | 33/33 PASS |
+| `test_pvp_season_phase7b_p0.py` | 31/31 PASS |
+| `test_stables_phase8_v1.py` | 28/28 PASS |
+| `test_forge_actions_p0.py` (regression) | 6/6 PASS |
+| `test_races_endpoint_p1.py` (regression) | 6/6 PASS |
+| **Totale sessione Phase 7+8 V1** | **106/106 PASS** |
+
+**Report Phase 8 V1**: `/app/memory/round163_phase8_v1_iter1_backend_report.md` + `/app/memory/round163_phase8_v1_iter2_frontend_report.md`.
+
+---
+
+**Next**: **P3 Debt cleanup (Iter C)** — pytest HTTP admin bypass DB isolation, startup handler cleanup, schema drift Alchemist, ESLint warning ClassHalls, guard-rail self-test, mobile viewport workaround.
 

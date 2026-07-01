@@ -124,11 +124,42 @@
 
 ---
 
-## Phase 8 — Stalla e cavalcature *(future — DESIGN REVIEW PENDING 🔴)*
+## Phase 8 V1 — Stalla & Cavalcature (cosmetic-only) *(R16.3, CLOSED ✅ 2026-07-01)*
 
-**Componenti**: gestione stalla gilda, roster cavalcature (drop da World Boss / craft), bonus movimento in mondo (velocità viaggio inter-continentale ridotta).
+**Stato**: sigillato dopo doppio ciclo Iter1 Backend + Iter2 Frontend, con 28/28 pytest PASS su `test_stables_phase8_v1.py`.
 
-**Rischi P2W**: cavalcature premium purchase → **VIETATO**. Solo drop/craft.
+**Goal**: introdurre un sistema di cavalcature **puramente cosmetico e narrativo** — nessun impatto su combat/economia/ranking/travel time. Cataloghi statici, seed idempotente, feature free-to-earn.
+
+**Componenti chiave**:
+- **9 mount**: 1 starter (`ronzino-di-strada`) + 8 domain (uno per continente): scarabeo-runico (ambash), cervo-lunare (velur), lupo-delle-fronde (soe), salamandra-di-efreto (efreto), segugio-cinereo (irthe), remora-tempestosa (nathos), ombra-sellata (ergolat), grifone-delle-alture (aveol)
+- **5 rotte narrative** cosmetic-only: sentiero-delle-fronde (soe), via-delle-alture (aveol), traccia-lunare (velur), passo-delle-ceneri (efreto), cammino-ombra (ergolat)
+- 4 collezioni Mongo con seed idempotenti al lifespan
+- **9 endpoint**: 7 pubblici + 2 admin (dev-gated)
+- **4 audit events** UPPERCASE: `MOUNT_STARTER_CLAIMED`, `MOUNT_ACQUIRED`, `MOUNT_ACTIVE_SET`, `NARRATIVE_ROUTE_TRAVELED` → admin whitelist 50 → **54**
+- **Frontend**: pagina `Stables.jsx` con 3 tab (Le Mie / Catalogo / Rotte Narrative), CTA "Rivendica il Ronzino" (auto-attiva), set-active con deselect (`mount_slug: null`), toast italiani, mini-card Dashboard, nav voce "Stalla" (badge NEW) in sezione Gilda
+- **Anti-P2W disclaimer ×2**: box emerald full su Stables page + micro-disclaimer su mini-card
+
+**Rischi P2W**: NEUTRALIZZATI runtime.
+- Catalog hardcoded `affects_combat=false`, `affects_economy=false`, `affects_ranking=false`, `affects_travel_time=false`, `can_be_sold_for_real_money=false`
+- Anti-drift override nel seed (anche se catalog venisse editato, seed force-sets flags a False)
+- Reward rotte limitato a `cosmetic_badge | cosmetic_title | lore_entry` (test 05 + 22)
+- Test regression `test_20_no_p2w_stat_impact_after_claim` + `test_21_no_p2w_stat_impact_after_narrative_travel` snapshot BEFORE/AFTER assertano immutabilità di `guild.gold/reputation/level/name` e `guild_pvp_stats.*`
+- Zero scritture runtime a `adventurers.stats`, `inventory`, `item_instances`
+
+---
+
+## Phase 8 V2 — Rotte narrative estese + esplorazione dedicata *(FUTURE / DESIGN REVIEW REQUIRED 🔴)*
+
+**Componenti proposti**:
+- 3 rotte narrative sui domini non ancora coperti (ambash, irthe, nathos)
+- Variante esplorativa opzionale con `-5% travel time` **applicabile SOLO a rotte narrative dedicate**, mai a farm loop di gathering/expedition/mission
+- Ricompense sempre cosmetiche
+
+**Rischi P2W**: **richiede design review conservativo** prima dell'implementazione.
+- Il `-5% travel time` non deve mai applicarsi a operazioni economiche (gathering, expedition, missione) — altrimenti impatta indirettamente il balance economico
+- Nessun sovrapposizione con `world_events.travel_time_bonus`
+- Nessuna monetizzazione premium
+- Free-to-earn come V1
 
 ---
 
@@ -142,4 +173,4 @@
 
 ---
 
-*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1..6 CLOSED ✅ · **Phase 7A CLOSED ✅** (Backend 33/33 + Frontend + gate lvl8 + Arfus PvP whitelist) · **Phase 7B CLOSED ✅** (Backend 31/31 + Frontend + 24 cosmetici + disclaimer anti-P2W ×3). **Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 (Stalla) parked in attesa di design review conservativo anti-P2W. Vedi `/app/memory/round163_final_report.md` per il consolidamento finale.*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1..6 CLOSED ✅ · **Phase 7A CLOSED ✅** (Backend 33/33 + Frontend + gate lvl8 + Arfus PvP whitelist) · **Phase 7B CLOSED ✅** (Backend 31/31 + Frontend + 24 cosmetici + disclaimer anti-P2W ×3) · **Phase 8 V1 CLOSED ✅** (Backend 28/28 + Frontend + 9 mount + 5 rotte narrative + anti-P2W ×2). **Round 16.3 OFFICIALLY CLOSED ✅**. Phase 8 V2 (`-5% travel time` esplorativo) parked in attesa design review conservativo anti-P2W. Vedi `/app/memory/round163_final_report.md` per il consolidamento finale.*

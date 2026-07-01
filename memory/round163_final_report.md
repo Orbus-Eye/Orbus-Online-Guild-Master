@@ -2,9 +2,20 @@
 
 ## Stato: **OFFICIALLY CLOSED ✅**
 
-**Data chiusura**: 01 Luglio 2026
+**Data chiusura**: 01 Luglio 2026 (aggiornato con Phase 8 V1 il 01/07/2026)
 
-Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chiuso end-to-end con test backend 76/76 PASS, frontend 8/8 smoke PASS, disclaimer anti-P2W visibile ×3, e nessuna regression rilevata.
+Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chiuso end-to-end. Phase 8 V1 (Stalla — solo cosmetico) è chiusa in doppio Iter (Backend + Frontend). Totali sessione R16.3: **106/106 pytest PASS**, frontend smoke completi, disclaimer anti-P2W visibile ×5 (3 PvP + 2 Stalla), zero regression rilevata.
+
+---
+
+## Etichette esplicite
+
+```
+Round 16.3      — CLOSED ✅
+Phase 1-7       — CLOSED ✅
+Phase 8 V1      — CLOSED ✅
+Phase 8 V2      — FUTURE / DESIGN REVIEW REQUIRED 🔴
+```
 
 ---
 
@@ -73,6 +84,22 @@ Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chius
   - 3 audit events UPPERCASE + admin whitelist 47 → **50**
 - **Frontend**: 3 pagine (`PvpSeasonOverview`, `PvpSeasonLeaderboardDetail`, `PvpSeasonCosmetics`) + `PvpSeasonMiniCard` + nav voce "Stagione PvP" con badge NEW + disclaimer anti-P2W ×3
 
+**Phase 8 V1 — Stalla & Cavalcature (puramente cosmetico)** (Iter1 Backend + Iter2 Frontend)
+- **Backend Iter1**: 28/28 pytest PASS (`test_stables_phase8_v1.py`)
+  - **4 collezioni Mongo**: `mount_catalog`, `narrative_routes`, `guild_mount_ownership`, `narrative_route_completions` (+ ausiliaria `narrative_rewards_unlocked`)
+  - Seed idempotenti su lifespan: 9 mount + 5 rotte
+  - **9 endpoint** totali: 7 pubblici (`/api/stables/*`) + 2 admin (`/api/admin/stables/*`)
+  - **4 audit events** UPPERCASE: `MOUNT_STARTER_CLAIMED`, `MOUNT_ACQUIRED`, `MOUNT_ACTIVE_SET`, `NARRATIVE_ROUTE_TRAVELED` → whitelist 50 → **54**
+  - Anti-P2W hard V1: catalog ha `affects_combat/affects_economy/affects_ranking/affects_travel_time/can_be_sold_for_real_money = False` hardcoded + anti-drift override nel seed
+  - Reward rotte narrative limitato a `cosmetic_badge | cosmetic_title | lore_entry`
+- **Frontend Iter2**: build+lint puliti, mobile 375px 0px horizontal overflow
+  - **4 componenti**: `Stables.jsx` (pagina hub 3 tab: Le Mie / Catalogo / Rotte Narrative), `MountCard.jsx`, `NarrativeRouteCard.jsx`, `StablesMiniCard.jsx`
+  - Nav voce "Stalla" in sezione Gilda con badge NEW (`menu-stables`)
+  - Dashboard mini-card integrata sotto `PvpSeasonMiniCard`
+  - Anti-P2W disclaimer ×2 (box emerald full su Stables + micro-disclaimer su mini-card)
+- **Catalog 9 mount**: 1 starter (`ronzino-di-strada`, domain `starter`) + 8 domain (uno per continente: `scarabeo-runico`, `cervo-lunare`, `lupo-delle-fronde`, `salamandra-di-efreto`, `segugio-cinereo`, `remora-tempestosa`, `ombra-sellata`, `grifone-delle-alture`)
+- **Catalog 5 rotte narrative**: `sentiero-delle-fronde` (soe), `via-delle-alture` (aveol), `traccia-lunare` (velur), `passo-delle-ceneri` (efreto), `cammino-ombra` (ergolat). I 3 domini scoperti (ambash, irthe, nathos) sono riservati a Phase 8 V2.
+
 ---
 
 ## Anti-P2W verifica
@@ -84,10 +111,17 @@ Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chius
 - **Test regression** `test_26_no_p2w_stat_impact_after_award`: asserta immutabilità di `guild.gold`, `guild.reputation`, `guild.level`, `guild.name`, `guild_pvp_stats.elo/wins/losses/draws` dopo `award_cosmetic()`
 
 ### Frontend
-- **Disclaimer anti-P2W visibile ×3**:
+- **Disclaimer anti-P2W visibile ×5** (3 PvP + 2 Stables):
   1. `PvpSeasonOverview.jsx` footer full disclosure (data-testid `pvp-season-antip2w-disclaimer`)
   2. `PvpSeasonCosmetics.jsx` top notice emerald-bordered
   3. `PvpSeasonLeaderboardDetail.jsx` compact footer italic
+  4. `Stables.jsx` footer full disclosure (data-testid `stables-antip2w-disclaimer`)
+  5. `StablesMiniCard.jsx` micro-disclaimer italic (data-testid `stables-mini-antip2w`)
+
+### Stables Anti-P2W hard (Phase 8 V1)
+- Ogni mount ha esplicitamente `affects_combat=false`, `affects_economy=false`, `affects_ranking=false`, `affects_travel_time=false`, `can_be_sold_for_real_money=false` — verificato runtime da 2 test unit (`test_06_anti_p2w_flags_shape`, `test_09_get_catalog_returns_9_with_anti_p2w_flags`)
+- Reward rotte narrative: solo `cosmetic_badge | cosmetic_title | lore_entry` — verificato runtime da 2 test (`test_05_narrative_routes_reward_is_cosmetic_only`, `test_22_reward_reference_is_cosmetic_only_in_db`)
+- **Regression test esplicito** `test_20_no_p2w_stat_impact_after_claim` + `test_21_no_p2w_stat_impact_after_narrative_travel`: snapshot BEFORE/AFTER assertano immutabilità di `guild.gold`, `guild.reputation`, `guild.level`, `guild.name`, `guild_pvp_stats.elo/wins/losses/draws` dopo claim e dopo travel
 
 ---
 
@@ -100,19 +134,20 @@ Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chius
 | `test_pvp_season_phase7b_p0.py` | 31/31 PASS | Phase 7B backend + guard-rail |
 | `test_forge_actions_p0.py` | 6/6 PASS | Regression baseline |
 | `test_races_endpoint_p1.py` | 6/6 PASS | Regression baseline |
-| **Totale sessione R16.3 Phase 7** | **76/76 PASS** | Zero regressione |
+| `test_stables_phase8_v1.py` | 28/28 PASS | Phase 8 V1 backend (unit + HTTP + anti-P2W regression + admin) |
+| **Totale sessione R16.3 Phase 7+8** | **106/106 PASS** | Zero regressione |
 
 ### Frontend
-- Smoke targeted: 8/8 PASS (Phase 7A + 7B + fix badge NEW)
-- `yarn build` pulito (11.56s, ~+13 kB gzip JS totali)
-- `yarn lint` pulito su tutti i file nuovi
-- Screenshot desktop 1280×800 + mobile 390×844 verificati
+- Smoke targeted: 15/15 PASS (Phase 7A + 7B + fix badge NEW + Phase 8 V1 Stables)
+- `yarn build` pulito (11.86s, ~+3.61 kB gzip JS aggiuntivi per Phase 8 V1)
+- `yarn lint` pulito su tutti i file nuovi (4 file Phase 8: Stables/MountCard/NarrativeRouteCard/StablesMiniCard)
+- Screenshot desktop 1920×800 + mobile 375×800 verificati (0px horizontal overflow)
 
 ---
 
 ## Cosa NON è stato implementato in Round 16.3
 
-- **Phase 8** (Stalla e cavalcature) — richiede design review conservativo anti-P2W dedicato prima dell'implementazione
+- **Phase 8 V2** (rotte narrative sui 3 domini restanti ambash/irthe/nathos + variante esplorativa con `-5% travel time` opzionale) — **DESIGN REVIEW REQUIRED**: il bonus travel time deve applicarsi SOLO a rotte narrative dedicate mai a farm loop
 - **Notifications post-battle** (deferred a round successivo)
 - **Storico stagioni completo su Leaderboard** — endpoint backend `GET /api/pvp-season/history/{n}` esiste, UI rimandata a P2
 - **Phase 6.5**: consumo `hook_categories` da Guild Specialization
@@ -120,14 +155,14 @@ Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chius
 
 ---
 
-## Debito tecnico residuo P2
+## Debito tecnico residuo P3
 
-1. **Pytest DB isolation** (bug design in `/app/memory/bug_pytest_db_isolation.md`) — in lavorazione Iter B
-2. **30 specializzazioni R16**: verifica collection reale (`adventurer_classes` ne mostra 14) — investigation Iter B
-3. **`/api/forge/enchant-options` 404**: gap Forge P5A — verifica Iter B
-4. **Ordering validazione POST PvP** (422 vs 403/404): refactor handler Iter B
-5. **Warning ESLint** `ClassHalls.jsx:244` (react-hooks/exhaustive-deps): fix Iter B
-6. **Startup handler** `_seed_r163_phase3_startup` che si ferma dopo Phase 4: investigation Iter B
+1. **P3.1 Pytest HTTP admin bypass DB isolation** — HTTP admin tests colpiscono backend running su `orbus_r16` invece che `orbus_r16_test` (workaround idempotency-tolerant applicato in `test_stables_phase8_v1.py test_26`)
+2. **P3.2 Startup handler cleanup** — `_seed_r163_phase3_startup` si ferma dopo Phase 4 (dead code o incomplete)
+3. **P3.3 Schema drift Alchemist** — 3 doc `class_specializations` con `parent_class_slug` vs 30 con `class_slug` (naming inconsistente)
+4. **P3.4 ESLint warning** `ClassHalls.jsx:244` (react-hooks/exhaustive-deps)
+5. **P3.5 Guard-rail self-test mancante** — nessun test verifica che il guard-rail rifiuti DB name non-`_test`
+6. **P3.6 Mobile viewport verification** — `browser-use` headless non ridimensiona viewport nel pod, serve workaround Playwright dedicato
 
 ---
 
@@ -154,6 +189,8 @@ Round 16.3 è formalmente sigillato. Il ciclo PvP (Phase 7A + Phase 7B) è chius
 - `/app/memory/round163_phase7a_iter2_frontend_report.md` — Phase 7A frontend
 - `/app/memory/round163_phase7b_iter1_backend_report.md` — Phase 7B backend (+ sezione 15 micro-fix leaderboard endpoint parity)
 - `/app/memory/round163_phase7b_iter2_frontend_report.md` — Phase 7B frontend
+- `/app/memory/round163_phase8_v1_iter1_backend_report.md` — **Phase 8 V1 backend (28/28 pytest)**
+- `/app/memory/round163_phase8_v1_iter2_frontend_report.md` — **Phase 8 V1 frontend (4 componenti + anti-P2W ×2)**
 
 ### Report fasi 1-6 (pre-esistenti)
 - `/app/memory/round163_phase1_final_report.md`

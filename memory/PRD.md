@@ -1,7 +1,9 @@
-# Orbus Online — PRD (Round 16.3 CLOSED, 2026-07-01)
+# Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
 ## Stato attuale
-**Round 16.3 OFFICIALLY CLOSED ✅** — ciclo completo Fasi 1..7 sigillato. Ciclo PvP (Phase 7A 1v1 + Phase 7B Leaderboard/Cosmetici) chiuso end-to-end con test 76/76 backend PASS, frontend smoke 8/8 PASS, disclaimer anti-P2W visibile ×3, zero regression.
+**Round 16.3 OFFICIALLY CLOSED ✅** — ciclo completo Fasi 1..8 V1 sigillato. Ciclo PvP (Phase 7A 1v1 + Phase 7B Leaderboard/Cosmetici) chiuso end-to-end. **Phase 8 V1 (Stalla cosmetica) chiusa** con Backend Iter1 + Frontend Iter2.
+
+Totali sessione: **106/106 backend pytest PASS** con DB isolation attiva, frontend smoke 15/15 PASS, disclaimer anti-P2W visibile ×5 (3 PvP + 2 Stables), zero regression.
 
 Vedi `/app/memory/round163_final_report.md` per il consolidamento finale sigillato.
 
@@ -26,34 +28,34 @@ Il 2026-07-01 12:30 UTC è stata completata la recovery operazione **Opzione 3+1
 | 6 | Trade Pacts V0 + Guild Specialization V0 | ✅ CLOSED |
 | **7A** | **PvP Continentale 1v1** | ✅ **CLOSED** |
 | **7B** | **Leaderboard Settimanale + Cosmetici** | ✅ **CLOSED** |
-| 8 | Stalla e cavalcature | 🔴 DESIGN REVIEW PENDING |
+| **8 V1** | **Stalla & Cavalcature (cosmetic-only, narrative)** | ✅ **CLOSED** |
+| 8 V2 | Rotte narrative su 3 domini restanti + variante esplorativa `-5% travel time` | 🔴 FUTURE / DESIGN REVIEW REQUIRED |
 
-## Test suite Round 16.3 Phase 7
+## Test suite Round 16.3 (Phase 7 + 8)
 - `test_pvp_phase7a_p0.py`: 33/33 PASS
 - `test_pvp_season_phase7b_p0.py`: 31/31 PASS
+- `test_stables_phase8_v1.py`: 28/28 PASS
 - Regression baseline (`test_forge_actions_p0.py`, `test_races_endpoint_p1.py`): 12/12 PASS
-- **Totale sessione Phase 7**: 76/76 PASS
+- **Totale sessione Phase 7+8 V1**: **106/106 PASS** con DB isolation attiva (`orbus_r16_test`)
 
 ## User personas (invariate)
 - Guildmaster (giocatore principale)
 - Admin
 - Tester QA
 
-## Debito tecnico residuo P2
-Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P2":
-1. Pytest DB isolation (in lavorazione Iter B)
-2. 30 specializzazioni R16 investigation (read-only)
-3. `/api/forge/enchant-options` 404
-4. POST PvP validation ordering (422 vs 403/404)
-5. ESLint warning `ClassHalls.jsx:244`
-6. Startup handler `_seed_r163_phase3_startup` (ferma dopo Phase 4)
+## Debito tecnico residuo P3
+Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P3":
+1. Pytest HTTP admin bypass DB isolation
+2. Startup handler `_seed_r163_phase3_startup` cleanup
+3. Schema drift Alchemist (3 doc con `parent_class_slug` vs `class_slug`)
+4. ESLint warning `ClassHalls.jsx:244`
+5. Guard-rail self-test mancante
+6. Mobile viewport verification workaround
 
 ## Prossima raccomandazione
-1. Chiudere debito P2 (Iter B, brief attivo)
-2. **Design review anti-P2W** per Phase 8 (Stalla) con vincoli espliciti:
-   - Cavalcature narrative/utility, NO stat gameplay-impattanti
-   - NO premium purchase, solo free-to-earn (drop World Boss / craft)
-3. Solo dopo review approvata: implementare Phase 8
+1. **P3 Debt cleanup** (Iter C — attivo in questa sessione)
+2. **Design review anti-P2W** per Phase 8 V2 (`-5% travel time` deve essere esclusivo di rotte narrative dedicate, mai su farm loop di gathering/expedition)
+3. Solo dopo review approvata: implementare Phase 8 V2
 
 ## Fuori scopo immediato
 - Rebuild dello stato dinamico pre-incident (gilde/spedizioni reali): perdita irreversibile, non recuperabile senza dump.
