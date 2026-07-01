@@ -240,3 +240,22 @@
 - ✅ Round 16.A **OFFICIALLY CLOSED** post verifica E2E.
 
 **Raccomandazione next round**: **R16.B — Audit Coverage Extension + Sweep XP Round 2** (aggiungere 3 audit event mancanti, sweep `add_guild_xp` su quests/contracts/seasons, persistere `leaderboard_snapshots`). Stima 1.5-2gg dev + 0.5gg test. R16.C (QoL polish — smooth-scroll guide, lock-in spec UI, CSV export admin audit) resta P2.
+
+
+---
+
+## Round 16.3 Phase 1 closed & Phase 2 ready-to-verify — 2026-07-01
+
+**Phase 1 (World Boss V1 Alveora)** — 🟢 CLOSED ✅. 10 endpoint idempotenti CAS + on-visit fallback + recovery CLI. 21 test PASS + 1 skipped by design. Whitelist audit R16.A esteso con 7 event UPPERCASE `WORLD_BOSS_*`.
+
+**Phase 2 (Mondo & 8 Mastocontinenti V1)** — 🟡 READY-TO-VERIFY:
+- Backend `app/world/__init__.py` (~460 righe): seed 8 continenti (`ambash/velur/soe/efreto/irthe/nathos/ergolat/aveol`), access gate via primo raid completed, cooldown 30gg UTC su change, CAS active→archived, NO hard delete.
+- 9 endpoint: `/api/world/{overview,continents,continents/{slug},continents/{slug}/join,continents/{slug}/change,neighbors}` (6 public) + `/api/admin/world/{continents-stats,dev/grant-first-raid/{gid},continents/{slug}}` (3 admin, 403 non-admin).
+- 3 nuovi audit event UPPERCASE (`WORLD_CONTINENT_JOINED/CHANGED`, `WORLD_ACCESS_GRANTED`) in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST`.
+- Frontend mobile-first: `pages/World.jsx` (3 branch), `pages/WorldContinent.jsx`, `pages/WorldNeighbors.jsx`, `components/WorldMiniCard.jsx` in Dashboard V2, nav "Mondo" macro-sezione dopo Missioni con badge NEW. Modal cooldown 30gg warning.
+- Test: **22 PASS** in `backend_round163_phase2_test.py`. Regression **108 passed / 2 skipped / 0 failed**.
+- Vincoli: NO deploy, NO hard delete, NO cambi economia/XP/drop/PvP, NO scheduler globale, NO P2W (puro flavor + social).
+
+**Report**: `/app/memory/round163_phase2_final_report.md` (13 sezioni).
+**Roadmap**: Phase 1 → CLOSED, Phase 2 → READY-TO-VERIFY.
+**Next**: R16.3 Phase 3 — Eventi continentali admin + Incarichi di Sede (entrate passive con cap).

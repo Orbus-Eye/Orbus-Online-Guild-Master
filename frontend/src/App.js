@@ -49,6 +49,9 @@ import AdminAudit from "@/pages/AdminAudit";  // ROUND 16.A Phase 3
 import WorldBoss from "@/pages/WorldBoss";  // ROUND 16.3 Phase 1
 import WorldBossEvent from "@/pages/WorldBossEvent";
 import WorldBossReport from "@/pages/WorldBossReport";
+import World from "@/pages/World";  // ROUND 16.3 Phase 2
+import WorldContinent from "@/pages/WorldContinent";
+import WorldNeighbors from "@/pages/WorldNeighbors";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -312,6 +315,31 @@ function App() {
                             element={
                                 <ProtectedRoute requireGuild>
                                     <WorldBossReport />
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 2 — Mondo & 8 Mastocontinenti */}
+                        <Route
+                            path="/world"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <World />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world/continents/:slug"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldContinent />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/world/neighbors"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <WorldNeighbors />
                                 </ProtectedRoute>
                             }
                         />

@@ -1,8 +1,17 @@
 # Orbus Online — Round 16.3 Phase 1 Final Report
 
 **Data**: 30 giugno 2026
+**Data chiusura**: 1 luglio 2026
 **Scope**: World Boss V1 Alveora — evento cooperativo globale a tempo.
-**Stato**: 🟡 **PARTIAL CLOSED — mobile viewport pending user DevTools verification** (backend/API/admin/idempotenza [failed+completed]/whitelist audit/static mobile → tutti PASS).
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** — Backend/API/admin/idempotenza (failed+completed) + whitelist audit + static mobile CSS tutti PASS. HUMAN QA UI mobile viewport 390x844 deferita al playtest finale al termine dell'intero Round 16.3 (Mondo completo, Phase 2..8). Static CSS check PASS. Zero regressioni con 108/110 test post-Phase 2.
+
+---
+
+## E2E Verification Results (Task A + B, post-fix)
+
+Confermati dopo re-verifica:
+- **Audit whitelist WORLD_BOSS_***: 200 OK per i 7 event type di R16.3 P1 filtrati singolarmente; 400 Bad Request per `hacker_event` con `allowed[]` completo nella response.
+- **Branch `completed` end-to-end**: verifica utente dopo `admin/resolve` — inventory `filo_lunare_spezzato +3` + `frammento_obelisco_vuoto +2` + `eco_della_luna_morta +1`, oro +100.000, 3 avventurieri liberati (`is_available=true, current_world_boss_event_id=null`), idempotency confermata su retry (retry `skipped`, DB snapshot invariato).
 
 ---
 

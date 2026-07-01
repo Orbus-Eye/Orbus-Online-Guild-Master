@@ -42,6 +42,14 @@ export const NAV_SECTIONS = [
         ],
     },
     {
+        id: "mondo",
+        label: "Mondo",
+        items: [
+            { to: "/world", label: "Panoramica Mondo", testid: "menu-world", badge: "NEW" },
+            { to: "/world/neighbors", label: "Gilde vicine", testid: "menu-world-neighbors" },
+        ],
+    },
+    {
         id: "economia",
         label: "Economia",
         items: [

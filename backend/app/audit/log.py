@@ -91,6 +91,9 @@ EVENT_TYPES = frozenset({
     "WORLD_BOSS_REWARD_GRANTED",
     "WORLD_BOSS_EVENT_RESOLVED",
     "WORLD_BOSS_TEAM_RELEASED",
+    "WORLD_CONTINENT_JOINED",
+    "WORLD_CONTINENT_CHANGED",
+    "WORLD_ACCESS_GRANTED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

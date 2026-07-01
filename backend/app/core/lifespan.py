@@ -97,6 +97,13 @@ async def lifespan(app: FastAPI):
         logger.info("ROUND 16.3 Phase 1 world boss catalog: seeded (idempotent)")
     except Exception as exc:
         logger.warning("world_boss seed failed: %s", exc)
+    # ROUND 16.3 Phase 2 — seed World continents
+    try:
+        from app.world import seed_world_continents
+        wc = await seed_world_continents()
+        logger.info("ROUND 16.3 Phase 2 world continents: seeded %s", wc)
+    except Exception as exc:
+        logger.warning("world continents seed failed: %s", exc)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
     yield
     mongo_client.close()

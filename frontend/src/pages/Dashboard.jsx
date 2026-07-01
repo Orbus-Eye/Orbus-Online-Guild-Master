@@ -8,6 +8,7 @@ import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
 import NextActionsCard from "../components/NextActionsCard";
 import DailyLoopCard from "../components/DailyLoopCard";
 import GuildProgressCard from "../components/GuildProgressCard";
+import WorldMiniCard from "../components/WorldMiniCard";
 import DailyQuestsCard from "../components/DailyQuestsCard";
 import StreakBadge from "../components/StreakBadge";
 import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
@@ -198,6 +199,9 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-6">
                     <GuildProgressCard />
+                </div>
+                <div className="mb-6">
+                    <WorldMiniCard />
                 </div>
                 <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
                     <DailyQuestsCard />

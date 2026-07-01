@@ -4,7 +4,7 @@
 
 ---
 
-## Phase 1 — World Boss V1 Alveora *(R16.3, in esecuzione)*
+## Phase 1 — World Boss V1 Alveora *(R16.3, CLOSED ✅ 2026-07-01)*
 
 **Goal**: introdurre il primo evento cooperativo globale a tempo — un mega-boss ("Alveora, la Burattinaia della Luna") condiviso da tutte le gilde. Le gilde inviano squadre per contribuire a ridurre l'HP totale entro il timer.
 
@@ -26,7 +26,9 @@
 
 ---
 
-## Phase 2 — Mondo & 8 mastocontinenti *(future)*
+## Phase 2 — Mondo & 8 mastocontinenti *(R16.3, READY-TO-VERIFY 2026-07-01)*
+
+**Stato**: backend + tests + frontend + audit + memory sigillati. In attesa E2E browser finale.
 
 **Goal**: mappare il mondo su 8 continenti tematici. Ogni gilda sceglie il proprio continente d'ancoraggio DOPO aver completato il primo raid.
 
@@ -108,4 +110,4 @@
 
 ---
 
-*Ultimo aggiornamento: 30 giugno 2026 — R16.3 Phase 1 in esecuzione.*
+*Ultimo aggiornamento: 1 luglio 2026 — R16.3 Phase 1 CLOSED ✅ · Phase 2 READY-TO-VERIFY.*

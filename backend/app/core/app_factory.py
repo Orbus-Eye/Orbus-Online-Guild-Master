@@ -143,6 +143,8 @@ def create_app() -> FastAPI:
     from app.dashboard.routes import router as dashboard_router
     # ROUND 16.3 Phase 1 — World Boss V1 Alveora
     from app.world_boss import router as world_boss_router, admin_router as world_boss_admin_router, seed_world_boss_catalog
+    # ROUND 16.3 Phase 2 — Mondo & 8 Mastocontinenti V1
+    from app.world import router as world_router, admin_router as world_admin_router, seed_world_continents
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -184,6 +186,8 @@ def create_app() -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(world_boss_router)
     app.include_router(world_boss_admin_router)
+    app.include_router(world_router)
+    app.include_router(world_admin_router)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

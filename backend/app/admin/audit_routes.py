@@ -44,6 +44,10 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "WORLD_BOSS_REWARD_GRANTED",
     "WORLD_BOSS_EVENT_RESOLVED",
     "WORLD_BOSS_TEAM_RELEASED",
+    # ROUND 16.3 Phase 2 — World & Continents
+    "WORLD_CONTINENT_JOINED",
+    "WORLD_CONTINENT_CHANGED",
+    "WORLD_ACCESS_GRANTED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

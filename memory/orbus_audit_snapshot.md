@@ -528,3 +528,29 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 **Audit events aggiunti**: `WORLD_BOSS_EVENT_CREATED/STARTED/RESOLVED/TEAM_RELEASED`, `WORLD_BOSS_JOINED`, `WORLD_BOSS_CONTRIBUTION_RECORDED`, `WORLD_BOSS_REWARD_GRANTED`. Whitelist estesa in `audit/log.py`.
 
 **Next round proposto**: **R16.4 Phase 2 — Mondo & 8 mastocontinenti** (catalog, guilds.continent_slug, scelta post-first-raid, storico trasferimenti, UI Mondo). Stima 2-2.5gg dev + 0.5gg test.
+
+---
+
+## R16.3 Phase 1 closed — 2026-07-01
+
+**🟢 OFFICIALLY CLOSED ✅** — World Boss V1 Alveora delivered.
+
+1. **10 endpoint** (`/api/world-boss/*` 6 public + `/api/admin/world-boss/*` 4 admin) idempotenti CAS-protected + on-visit fallback + script CLI recovery.
+2. **Whitelist audit R16.A** estesa append-only con 7 event UPPERCASE `WORLD_BOSS_*`; 400 filter test PASS.
+3. **Branch reward `completed`** verificato end-to-end: currency `+3/+2/+1`, oro +100k, squadra rilasciata, idempotency confermata su retry.
+4. **86 test pytest PASS + 2 skipped** (R16.3 P1: 21 test compresi 4 T25-T28 branch completed, R16.A P1-P3, R16.1 P1-P3, R16.1.1, Phase 14.4, dev-seed). Static mobile CSS check PASS (pb-32, min-h-44, w-full md:w-auto, no scroll-x forzato).
+5. **HUMAN QA UI mobile viewport 390x844 deferred** al playtest finale al termine di R16.3 (Mondo completo). **Next**: R16.3 Phase 2 — Mondo & 8 mastocontinenti V1 (in esecuzione).
+
+---
+
+## R16.3 Phase 2 ready-to-verify — 2026-07-01
+
+**🟡 READY-TO-VERIFY** — Mondo & 8 Mastocontinenti V1 delivered.
+
+1. **Backend `app/world/__init__.py`** (~460 righe) single-file: seed idempotente 8 continenti (ambash/velur/soe/efreto/irthe/nathos/ergolat/aveol), access gate primo raid completed, cooldown 30gg UTC su change, CAS flip active→archived, history append-only. **NO hard delete** verificato T21.
+2. **9 endpoint** (`/api/world/*` 6 pubblici: overview/continents/get/join/change/neighbors + `/api/admin/world/*` 3 admin: stats/dev-grant-first-raid/toggle). Dev grant gated `APP_ENV != production`.
+3. **3 nuovi audit event UPPERCASE** (`WORLD_CONTINENT_JOINED`, `WORLD_CONTINENT_CHANGED`, `WORLD_ACCESS_GRANTED`) in `EVENT_TYPES` + `AUDIT_EVENT_WHITELIST` admin filter.
+4. **Frontend mobile-first**: `pages/World.jsx` (blocked/no-continent/with-continent), `pages/WorldContinent.jsx`, `pages/WorldNeighbors.jsx`, `components/WorldMiniCard.jsx` in Dashboard V2, nav "Mondo" sezione con badge NEW, modal cooldown 30gg. ESLint clean, webpack `Compiled successfully!`.
+5. **Test**: **22/22 PASS** in `backend_round163_phase2_test.py`. Regression totale **108 passed / 2 skipped / 0 failed**. Zero cambi economia/XP/drop/PvP/premium. Puro flavor + social.
+
+**Next round proposto**: R16.3 Phase 3 — Eventi continentali admin + Incarichi di Sede (entrate passive con cap).
