@@ -694,3 +694,47 @@ def test_33_dev_force_resolve_gated_in_prod(api_base: str, admin_token: str,
     src = inspect.getsource(admin_routes)
     assert "pvp.dev_disabled_in_prod" in src
     assert "APP_ENV" in src and "production" in src
+
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Round 16.3 Iter B (P2.4) — validation ordering: gate/lookup BEFORE payload
+# ═══════════════════════════════════════════════════════════════════
+
+
+def test_34_p24_invalid_payload_still_gets_403_when_gate_fails(
+    api_base: str, admin_token: str,
+):
+    """Payload malformed + user guild lvl<8 → must return 403 (gate), not 422.
+
+    Before P2.4 fix, FastAPI's Pydantic pre-validation on `ChallengePayload`
+    raised 422 before the request body ever reached `create_challenge`
+    which is where the level gate lives. After the fix, the handler
+    accepts a raw `dict` body and only extracts `adventurer_ids` after
+    the gate + defender lookup have run.
+    """
+    # tester@orbus.test is guild level 1 in preview → gate is lvl 8
+    r = httpx.post(
+        f"{api_base}/pvp/challenge/some-fake-defender",
+        headers=_h(admin_token),
+        json={"totally": "invalid", "shape": True},
+        timeout=10.0,
+    )
+    assert r.status_code == 403, r.text
+    body = r.json()
+    assert body["detail"]["code"] == "pvp.level_gate", body
+
+
+def test_35_p24_invalid_payload_still_gets_404_when_battle_missing(
+    api_base: str, admin_token: str,
+):
+    """Payload malformed + battle_id inesistente → must return 404, not 422."""
+    r = httpx.post(
+        f"{api_base}/pvp/battles/definitely-does-not-exist-p24/respond",
+        headers=_h(admin_token),
+        json={"totally": "invalid"},
+        timeout=10.0,
+    )
+    assert r.status_code == 404, r.text
+    body = r.json()
+    assert body["detail"]["code"] == "pvp.battle_not_found", body

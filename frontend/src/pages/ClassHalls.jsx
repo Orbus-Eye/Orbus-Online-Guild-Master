@@ -241,6 +241,8 @@ export default function ClassHalls() {
         }
     };
 
+    // ROUND 16.3 Iter B (P2.5) — `load` is intentionally called only at mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { load(); }, []);
 
     const handleUnlock = async (classSlug, specSlug) => {

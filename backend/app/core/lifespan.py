@@ -123,6 +123,17 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("R16.3 Phase 4 resources seed failed: %s", exc)
     logger.info("Orbus backend ready (env=%s)", os.environ.get("APP_ENV", "development"))
+    # ROUND 16.3 Iter B (P2.6) — ensure indexes for Phase 7B pvp_season module.
+    # This lifespan is the ACTIVE startup path. The legacy @app.on_event("startup")
+    # handler in app_factory.py is dead code (never invoked when lifespan is
+    # attached). Indexes for pre-existing collections (Phase 5A/5B/6) survive
+    # from earlier runs; Phase 7B is new and needs explicit ensure here.
+    try:
+        from app.pvp_season import ensure_indexes as _ensure_pvp_season_ix
+        await _ensure_pvp_season_ix()
+        logger.info("ROUND 16.3 Phase 7B pvp_season indexes ensured")
+    except Exception as exc:
+        logger.warning("R16.3 Phase 7B pvp_season indexes ensure failed: %s", exc)
     yield
     mongo_client.close()
 
