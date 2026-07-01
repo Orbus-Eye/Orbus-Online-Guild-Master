@@ -121,6 +121,15 @@ EVENT_TYPES = frozenset({
     "ARFUS_TECHNOLOGY_UNLOCKED",
     "ARFUS_TECHNOLOGY_ACTIVATED",
     "ARFUS_TECHNOLOGY_DEACTIVATED",
+    # ROUND 16.3 Phase 6 — Trade Pacts + Guild Specialization
+    "TRADE_PACT_REQUESTED",
+    "TRADE_PACT_ACCEPTED",
+    "TRADE_PACT_REJECTED",
+    "TRADE_PACT_DISSOLVED",
+    "TRADE_PACT_FORCE_DISSOLVED",
+    "GUILD_SPECIALIZATION_CHOSEN",
+    "GUILD_SPECIALIZATION_RESET",
+    "GUILD_SPECIALIZATION_CATALOG_TOGGLED",
     # ROUND 6A.2a — Squads (custom adventurer groupings)
     "squad_created",
     "squad_updated",

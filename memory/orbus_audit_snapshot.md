@@ -788,3 +788,45 @@ Frontend + Docs).
 
 **Next**: **Phase 6 — Patti commerciali gilda + Specializzazioni gilda (P2)**.
 
+
+---
+
+## R16.3 Phase 6 — Backend Trade Pacts + Guild Specialization (2026-07-01)
+
+**🟡 BACKEND CLOSED / FRONTEND PENDING** — Trade Pacts V0 + Guild
+Specialization V0 (pure social + narrative, ZERO numerical modifiers).
+
+1. **Trade Pacts V0** (`app/trade_pacts/`, ~350 righe):
+   - Max 3 patti accepted per gilda, cross-continent block via
+     `guild_world_presence.status='active'`, cooldown 7gg unilateral
+   - 7 public endpoint + 2 admin
+   - No hard delete: dissolve preserva la row con `status=dissolved`
+
+2. **Guild Specialization V0** (`app/guild_specialization/`, ~330 righe):
+   - 6 archetipi (incursion/production/merchant/exploration/military/
+     arcane_research) con `hook_categories` per Phase 6.5+
+   - Guild lvl ≥ 8, prima scelta gratuita, reset 200k oro + 3×
+     frammento_di_ergolat + cooldown 30gg
+   - 4 public endpoint + 2 admin
+   - Zero bonus meccanici in V0
+
+3. **Whitelist audit**: 33 → 41 (8 nuovi UPPERCASE events).
+
+4. **Test suite**:
+   - Phase 6: **34 passed** (0 fail, 0 skip)
+   - R16.3 phases 1-6 combined: **219 passed, 2 skipped, 0 fail**
+   - Backward-compat Phase 5A/5B: intatto (38/38 + 39/40)
+
+5. **Deviazioni dal brief** (rationale nel report §6):
+   - Max 3 check applicato sull'acceptor (guild_b_id) per design intentional
+   - `hook_categories` persistito ma non consumato in V0 (demandato a 6.5+)
+   - BSON ObjectId serialization fix: `.pop("_id", None)` pattern
+
+6. **Osservazioni non-bloccanti** (persistenti):
+   - `/api/market/listings` → 307 redirect
+   - PATCH admin usa **query string** `?is_active=<bool>`
+
+**Report completo**: `/app/memory/round163_phase6_final_report.md`
+
+**Next**: Iterazione 2 (Frontend Phase 6) dopo verifica manuale utente.
+

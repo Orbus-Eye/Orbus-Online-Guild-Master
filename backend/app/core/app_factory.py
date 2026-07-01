@@ -179,6 +179,18 @@ def create_app() -> FastAPI:
         seed_arfus_forge_catalog,
         ensure_indexes as ensure_arfus_forge_indexes,
     )
+    # ROUND 16.3 Phase 6 — Trade Pacts + Guild Specialization
+    from app.trade_pacts import (
+        router as trade_pacts_router,
+        admin_router as trade_pacts_admin_router,
+        ensure_indexes as ensure_trade_pacts_indexes,
+    )
+    from app.guild_specialization import (
+        router as guild_spec_router,
+        admin_router as guild_spec_admin_router,
+        seed_guild_specialization_catalog,
+        ensure_indexes as ensure_guild_spec_indexes,
+    )
 
     app.include_router(auth_router)
     app.include_router(guilds_router)
@@ -234,6 +246,10 @@ def create_app() -> FastAPI:
     app.include_router(legendary_forge_admin_router)
     app.include_router(arfus_forge_router)
     app.include_router(arfus_forge_admin_router)
+    app.include_router(trade_pacts_router)
+    app.include_router(trade_pacts_admin_router)
+    app.include_router(guild_spec_router)
+    app.include_router(guild_spec_admin_router)
 
     # Seed continent event catalog + site income config on startup (idempotent)
     @app.on_event("startup")
@@ -281,6 +297,19 @@ def create_app() -> FastAPI:
             await ensure_arfus_forge_indexes()
         except Exception as exc:
             log.debug("arfus_forge_indexes ensure failed: %s", exc)
+        try:
+            await ensure_trade_pacts_indexes()
+        except Exception as exc:
+            log.debug("trade_pacts_indexes ensure failed: %s", exc)
+        try:
+            r6 = await seed_guild_specialization_catalog()
+            log.info("ROUND 16.3 Phase 6 guild specialization catalog: %s", r6)
+        except Exception as exc:
+            log.warning("guild_specialization_catalog seed failed: %s", exc)
+        try:
+            await ensure_guild_spec_indexes()
+        except Exception as exc:
+            log.debug("guild_spec_indexes ensure failed: %s", exc)
 
     # Seed world boss catalog on startup (idempotent)
     @app.on_event("startup")

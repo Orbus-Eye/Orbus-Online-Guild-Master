@@ -440,3 +440,33 @@ Backend + Frontend + Docs**:
 - 🐛 Debito legacy noto (openapi count hardcoded 86, 2 alchemist R16.0)
   — non-Phase-5B
 
+
+---
+
+## Round 16.3 Phase 6 — Backend Trade Pacts + Guild Specialization 🟡 (2026-07-01)
+
+**Phase 6 Iterazione 1 — BACKEND CLOSED / FRONTEND PENDING**:
+
+- **Trade Pacts V0**: max 3 accepted/gilda, cross-continent block,
+  cooldown 7gg unilateral. **ZERO bonus economici** (V0 = social-only).
+- **Guild Specialization V0**: 6 archetipi con `hook_categories` per
+  Phase 6.5+, guild lvl ≥ 8, prima scelta gratuita, reset 200k oro +
+  3× ergolat + cooldown 30gg. **ZERO bonus meccanici** (V0 = flavor-only).
+- 15 endpoint (11 public + 4 admin) + 8 nuovi audit UPPERCASE (whitelist 33→41)
+
+**Validazione**:
+- Phase 6: 34/34 pass
+- R16.3 phases 1-6: 219 passed, 2 skipped, 0 fail
+- Backward-compat 5A/5B intatto
+
+**Report**: `/app/memory/round163_phase6_final_report.md`
+
+**Next Action Items**:
+- ⏳ Verifica manuale utente Phase 6 backend
+- ⏳ Iterazione 2 Frontend Phase 6 (Trade Pacts hub + Specialization + MiniCard)
+- 🔒 Phase 6.5 (P2 futura): consumo `hook_categories` per bonus meccanici
+- 🔒 Phase 7 (P2): PvP continentale
+- 🔒 Phase 8 (P2): Stalla e cavalcature
+- 📌 Polish Round R16.D (parcheggiato): server-wide first-Arfus-unlock
+  chronicle announcement
+
