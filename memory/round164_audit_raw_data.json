@@ -1,0 +1,2297 @@
+{
+  "meta": {
+    "run_at": "2026-07-01 19:11:16",
+    "elapsed_seconds": 0.79,
+    "monte_carlo_iters_used": 10000,
+    "db_name": "orbus_r16"
+  },
+  "formulas": {
+    "adventurer_base_power": {
+      "formula": "STR + AGI + INT + END + FTH + level*2",
+      "source": "app/expeditions/formulas.py:59-72"
+    },
+    "adventurer_effective_power": {
+      "formula": "sum(base_stats) after trait modifiers + specialization modifiers, then + level*2. Traits: flat additive, then percent multiplicative additive-stack. Spec modifiers resolved by app.training.catalog.",
+      "source": "app/expeditions/formulas.py:75-92"
+    },
+    "item_equip_power": {
+      "formula": "STR_bonus + AGI_bonus + INT_bonus + END_bonus + FTH_bonus + item.power_score",
+      "source": "app/expeditions/formulas.py:95-104"
+    },
+    "compute_team_power": {
+      "formula": "\u03a3 total_power_snapshot (o legacy fallback stats+lvl*2) + role bonus: Tank +5, Healer +5, DPS +5, all-3-roles +10 (additivo, cap implicito +25 su 3 roli).",
+      "source": "app/expeditions/formulas.py:107-142"
+    },
+    "compute_success_chance": {
+      "formula": "raw = 50 + (team_power - recommended_power); clamp [SUCCESS_CHANCE_MIN=10, SUCCESS_CHANCE_MAX=95].",
+      "source": "app/expeditions/formulas.py:145-152",
+      "note": "Curva LINEARE con pendenza +1%/punto. Il team che eccede recommended_power di 45 punti raggiunge il cap 95%."
+    },
+    "threat_bonus": {
+      "formula": "counter_ratio * SUCCESS_BONUS_CAP_PCT (12%); injury_reduction = counter_ratio * 8%.",
+      "source": "app/expeditions/threats.py:26-27, 90-91"
+    },
+    "final_success_chance": {
+      "formula": "min(base_success + threat_bonus, 95). Threat bonus cap +12.",
+      "source": "app/dungeons/preview.py:112-119"
+    }
+  },
+  "dungeons": [
+    {
+      "slug": "sewer-nest",
+      "base_gold_reward": 25,
+      "base_xp_reward": 18,
+      "difficulty": 1,
+      "gate": {
+        "min_adventurers": 3
+      },
+      "name": "Sewer Nest",
+      "recommended_power": 35,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "baseline",
+      "enemy_families": [
+        "rats",
+        "kobolds"
+      ],
+      "name_it": "Nido nelle Fogne"
+    },
+    {
+      "slug": "goblin-warrens",
+      "base_gold_reward": 35,
+      "base_xp_reward": 25,
+      "difficulty": 1,
+      "gate": {},
+      "name": "Goblin Warrens",
+      "recommended_power": 45,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "baseline",
+      "enemy_families": [
+        "goblins"
+      ],
+      "name_it": "Tane dei Goblin"
+    },
+    {
+      "slug": "bandit-hideout",
+      "base_gold_reward": 45,
+      "base_xp_reward": 30,
+      "difficulty": 1,
+      "gate": {
+        "min_adventurers": 3
+      },
+      "name": "Bandit Hideout",
+      "recommended_power": 50,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "baseline",
+      "enemy_families": [
+        "bandits"
+      ],
+      "name_it": "Covo dei Banditi"
+    },
+    {
+      "slug": "wolf-den-5p",
+      "base_gold_reward": 50,
+      "base_xp_reward": 35,
+      "difficulty": 1,
+      "gate": {
+        "min_adventurers": 5
+      },
+      "is_5p": true,
+      "name": "Wolf Den",
+      "recommended_power": 80,
+      "required_team_size": 5,
+      "content_family": "nature",
+      "enemy_families": [
+        "warg",
+        "wolves"
+      ],
+      "name_it": "Tana dei Lupi"
+    },
+    {
+      "slug": "frost-cave-5p",
+      "base_gold_reward": 55,
+      "base_xp_reward": 38,
+      "difficulty": 1,
+      "gate": {
+        "min_adventurers": 5
+      },
+      "is_5p": true,
+      "name": "Frost Cave",
+      "recommended_power": 90,
+      "required_team_size": 5,
+      "content_family": "nature",
+      "enemy_families": [
+        "frost_elementals"
+      ],
+      "name_it": "Caverna del Gelo"
+    },
+    {
+      "slug": "salt-marsh-5p",
+      "base_gold_reward": 60,
+      "base_xp_reward": 42,
+      "difficulty": 1,
+      "gate": {
+        "min_adventurers": 5
+      },
+      "is_5p": true,
+      "name": "Salt Marsh",
+      "recommended_power": 100,
+      "required_team_size": 5,
+      "content_family": "memory",
+      "enemy_families": [
+        "bog_revenants"
+      ],
+      "name_it": "Palude Salata"
+    },
+    {
+      "slug": "druid-grove",
+      "base_gold_reward": 55,
+      "base_xp_reward": 42,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 3,
+        "min_max_team_power_ever": 45
+      },
+      "name": "Corrupted Druid Grove",
+      "recommended_power": 69,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "nature",
+      "enemy_families": [
+        "corrupted_druids",
+        "treants"
+      ],
+      "name_it": "Bosco dei Druidi Corrotti"
+    },
+    {
+      "slug": "shadow-crypts",
+      "base_gold_reward": 65,
+      "base_xp_reward": 50,
+      "difficulty": 2,
+      "gate": {},
+      "name": "Shadow Crypts",
+      "recommended_power": 75,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "void_undead",
+      "enemy_families": [
+        "wights",
+        "shadowkin"
+      ],
+      "name_it": "Cripte d'Ombra"
+    },
+    {
+      "slug": "cursed-mines",
+      "base_gold_reward": 70,
+      "base_xp_reward": 52,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 3,
+        "min_max_team_power_ever": 50
+      },
+      "name": "Cursed Mines",
+      "recommended_power": 78,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "arcane",
+      "enemy_families": [
+        "miners_undead"
+      ],
+      "name_it": "Miniere Maledette"
+    },
+    {
+      "slug": "sunken-library",
+      "base_gold_reward": 80,
+      "base_xp_reward": 62,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 3,
+        "min_max_team_power_ever": 55
+      },
+      "name": "Sunken Library",
+      "recommended_power": 85,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "memory",
+      "enemy_families": [
+        "scribe_specters"
+      ],
+      "name_it": "Biblioteca Sommersa"
+    },
+    {
+      "slug": "iron-foundry-5p",
+      "base_gold_reward": 90,
+      "base_xp_reward": 65,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 120
+      },
+      "is_5p": true,
+      "name": "Iron Foundry",
+      "recommended_power": 140,
+      "required_team_size": 5,
+      "content_family": "arcane",
+      "enemy_families": [
+        "construct"
+      ],
+      "name_it": "Fonderia di Ferro"
+    },
+    {
+      "slug": "silent-monastery-5p",
+      "base_gold_reward": 100,
+      "base_xp_reward": 72,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 130
+      },
+      "is_5p": true,
+      "name": "Silent Monastery",
+      "recommended_power": 155,
+      "required_team_size": 5,
+      "content_family": "memory",
+      "enemy_families": [
+        "silent_monks"
+      ],
+      "name_it": "Monastero del Silenzio"
+    },
+    {
+      "slug": "pirate-fleet-5p",
+      "base_gold_reward": 115,
+      "base_xp_reward": 80,
+      "difficulty": 2,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 140
+      },
+      "is_5p": true,
+      "name": "Pirate Fleet",
+      "recommended_power": 170,
+      "required_team_size": 5,
+      "content_family": "baseline",
+      "enemy_families": [
+        "pirates"
+      ],
+      "name_it": "Flotta dei Corsari"
+    },
+    {
+      "slug": "lich-sanctum",
+      "base_gold_reward": 100,
+      "base_xp_reward": 75,
+      "difficulty": 3,
+      "gate": {
+        "min_adventurers": 3,
+        "min_guild_level_or_peak": [
+          2,
+          60
+        ]
+      },
+      "name": "Lich's Sanctum",
+      "recommended_power": 94,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "void_undead",
+      "enemy_families": [
+        "lich",
+        "undead"
+      ],
+      "name_it": "Santuario del Lich"
+    },
+    {
+      "slug": "dragons-hoard",
+      "base_gold_reward": 120,
+      "base_xp_reward": 90,
+      "difficulty": 3,
+      "gate": {},
+      "name": "Dragon's Hoard",
+      "recommended_power": 100,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "arcane",
+      "enemy_families": [
+        "draconic"
+      ],
+      "name_it": "Tesoro del Drago"
+    },
+    {
+      "slug": "storm-spire",
+      "base_gold_reward": 135,
+      "base_xp_reward": 100,
+      "difficulty": 3,
+      "gate": {
+        "min_adventurers": 3,
+        "min_guild_level_or_peak": [
+          2,
+          65
+        ]
+      },
+      "name": "Storm Spire",
+      "recommended_power": 110,
+      "required_team_size": 3,
+      "is_5p": false,
+      "content_family": "arcane",
+      "enemy_families": [
+        "storm_elementals"
+      ],
+      "name_it": "Guglia della Tempesta"
+    },
+    {
+      "slug": "obsidian-arena-5p",
+      "base_gold_reward": 160,
+      "base_xp_reward": 110,
+      "difficulty": 3,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 200
+      },
+      "is_5p": true,
+      "name": "Obsidian Arena",
+      "recommended_power": 210,
+      "required_team_size": 5,
+      "content_family": "arcane",
+      "enemy_families": [
+        "gladiators_revenant"
+      ],
+      "name_it": "Arena d'Ossidiana"
+    },
+    {
+      "slug": "clockwork-vault-5p",
+      "base_gold_reward": 180,
+      "base_xp_reward": 125,
+      "difficulty": 3,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 220
+      },
+      "is_5p": true,
+      "name": "Clockwork Vault",
+      "recommended_power": 230,
+      "required_team_size": 5,
+      "content_family": "arcane",
+      "enemy_families": [
+        "construct"
+      ],
+      "name_it": "Camera degli Ingranaggi"
+    },
+    {
+      "slug": "voidspire-5p",
+      "base_gold_reward": 200,
+      "base_xp_reward": 140,
+      "difficulty": 3,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 240
+      },
+      "is_5p": true,
+      "name": "Voidspire",
+      "recommended_power": 250,
+      "required_team_size": 5,
+      "content_family": "void_undead",
+      "enemy_families": [
+        "void_kin"
+      ],
+      "name_it": "Pinnacolo del Vuoto"
+    },
+    {
+      "slug": "infernal-pit-5p",
+      "base_gold_reward": 260,
+      "base_xp_reward": 180,
+      "difficulty": 4,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 280
+      },
+      "is_5p": true,
+      "name": "Infernal Pit",
+      "recommended_power": 290,
+      "required_team_size": 5,
+      "content_family": "arcane",
+      "enemy_families": [
+        "fiends"
+      ],
+      "name_it": "Fossa Infernale"
+    },
+    {
+      "slug": "celestial-citadel-5p",
+      "base_gold_reward": 300,
+      "base_xp_reward": 210,
+      "difficulty": 4,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 300
+      },
+      "is_5p": true,
+      "name": "Celestial Citadel",
+      "recommended_power": 320,
+      "required_team_size": 5,
+      "content_family": "divine",
+      "enemy_families": [
+        "celestial_guardians"
+      ],
+      "name_it": "Cittadella Celeste"
+    },
+    {
+      "slug": "world-tree-roots-5p",
+      "base_gold_reward": 360,
+      "base_xp_reward": 250,
+      "difficulty": 4,
+      "gate": {
+        "min_adventurers": 5,
+        "min_max_team_power_ever": 340
+      },
+      "is_5p": true,
+      "name": "World-Tree Roots",
+      "recommended_power": 360,
+      "required_team_size": 5,
+      "content_family": "nature",
+      "enemy_families": [
+        "primal_spirits"
+      ],
+      "name_it": "Radici dell'Albero del Mondo"
+    }
+  ],
+  "adventurer_stats_by_band": {
+    "total_seen": 1985,
+    "legacy_schema_skipped": 15,
+    "bands": {
+      "1-3": {
+        "count": 1968,
+        "mean": 30.33,
+        "median": 30.0,
+        "stdev": 4.38,
+        "p25": 28.0,
+        "p50": 30.0,
+        "p75": 32.0,
+        "p90": 35.0,
+        "min": 20,
+        "max": 52
+      },
+      "4-6": {
+        "count": 2,
+        "mean": 63,
+        "median": 63.0,
+        "stdev": 0.0,
+        "p25": 63.0,
+        "p50": 63.0,
+        "p75": 63.0,
+        "p90": 63.0,
+        "min": 63,
+        "max": 63
+      },
+      "7-9": {
+        "count": 0
+      },
+      "10+": {
+        "count": 0
+      }
+    }
+  },
+  "archetype_powers": {
+    "team_base_no_equip": 167,
+    "team_medio_reale": 200,
+    "team_buono": 257,
+    "team_forte_outlier": 356,
+    "team_counter_perfetto": 236,
+    "team_no_counter": 236
+  },
+  "monte_carlo": {
+    "team_base_no_equip": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 167,
+        "delta_power": 132,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9386,
+        "expected_gold": 23.46,
+        "expected_xp": 16.89
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 167,
+        "delta_power": 122,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9352,
+        "expected_gold": 32.73,
+        "expected_xp": 23.38
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 167,
+        "delta_power": 117,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9388,
+        "expected_gold": 42.25,
+        "expected_xp": 28.16
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 167,
+        "delta_power": 87,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9339,
+        "expected_gold": 46.7,
+        "expected_xp": 32.69
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 167,
+        "delta_power": 77,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9331,
+        "expected_gold": 51.32,
+        "expected_xp": 35.46
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 167,
+        "delta_power": 67,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9346,
+        "expected_gold": 56.08,
+        "expected_xp": 39.25
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 167,
+        "delta_power": 98,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9396,
+        "expected_gold": 51.68,
+        "expected_xp": 39.46
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 167,
+        "delta_power": 92,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9406,
+        "expected_gold": 61.14,
+        "expected_xp": 47.03
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 167,
+        "delta_power": 89,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9376,
+        "expected_gold": 65.63,
+        "expected_xp": 48.76
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 167,
+        "delta_power": 82,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9371,
+        "expected_gold": 74.97,
+        "expected_xp": 58.1
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 167,
+        "delta_power": 27,
+        "base_success_chance": 77,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 77,
+        "mc_success_rate": 0.7683,
+        "expected_gold": 69.15,
+        "expected_xp": 49.94
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 167,
+        "delta_power": 12,
+        "base_success_chance": 62,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 62,
+        "mc_success_rate": 0.6181,
+        "expected_gold": 61.81,
+        "expected_xp": 44.5
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 167,
+        "delta_power": -3,
+        "base_success_chance": 47,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 47,
+        "mc_success_rate": 0.4711,
+        "expected_gold": 54.18,
+        "expected_xp": 37.69
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 167,
+        "delta_power": 73,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9372,
+        "expected_gold": 93.72,
+        "expected_xp": 70.29
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 167,
+        "delta_power": 67,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9379,
+        "expected_gold": 112.55,
+        "expected_xp": 84.41
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 167,
+        "delta_power": 57,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9386,
+        "expected_gold": 126.71,
+        "expected_xp": 93.86
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 167,
+        "delta_power": -43,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1032,
+        "expected_gold": 16.51,
+        "expected_xp": 11.35
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 167,
+        "delta_power": -63,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0999,
+        "expected_gold": 17.98,
+        "expected_xp": 12.49
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 167,
+        "delta_power": -83,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1002,
+        "expected_gold": 20.04,
+        "expected_xp": 14.03
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 167,
+        "delta_power": -123,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0977,
+        "expected_gold": 25.4,
+        "expected_xp": 17.59
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 167,
+        "delta_power": -153,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1006,
+        "expected_gold": 30.18,
+        "expected_xp": 21.13
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 167,
+        "delta_power": -193,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0953,
+        "expected_gold": 34.31,
+        "expected_xp": 23.82
+      }
+    },
+    "team_medio_reale": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 200,
+        "delta_power": 165,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9361,
+        "expected_gold": 23.4,
+        "expected_xp": 16.85
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 200,
+        "delta_power": 155,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9332,
+        "expected_gold": 32.66,
+        "expected_xp": 23.33
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 200,
+        "delta_power": 150,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9404,
+        "expected_gold": 42.32,
+        "expected_xp": 28.21
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 200,
+        "delta_power": 120,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9368,
+        "expected_gold": 46.84,
+        "expected_xp": 32.79
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 200,
+        "delta_power": 110,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9427,
+        "expected_gold": 51.85,
+        "expected_xp": 35.82
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 200,
+        "delta_power": 100,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9389,
+        "expected_gold": 56.33,
+        "expected_xp": 39.43
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 200,
+        "delta_power": 131,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.942,
+        "expected_gold": 51.81,
+        "expected_xp": 39.56
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 200,
+        "delta_power": 125,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9367,
+        "expected_gold": 60.89,
+        "expected_xp": 46.84
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 200,
+        "delta_power": 122,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9357,
+        "expected_gold": 65.5,
+        "expected_xp": 48.66
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 200,
+        "delta_power": 115,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9376,
+        "expected_gold": 75.01,
+        "expected_xp": 58.13
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 200,
+        "delta_power": 60,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9347,
+        "expected_gold": 84.12,
+        "expected_xp": 60.76
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 200,
+        "delta_power": 45,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.937,
+        "expected_gold": 93.7,
+        "expected_xp": 67.46
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 200,
+        "delta_power": 30,
+        "base_success_chance": 80,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 80,
+        "mc_success_rate": 0.8027,
+        "expected_gold": 92.31,
+        "expected_xp": 64.22
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 200,
+        "delta_power": 106,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9455,
+        "expected_gold": 94.55,
+        "expected_xp": 70.91
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 200,
+        "delta_power": 100,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9374,
+        "expected_gold": 112.49,
+        "expected_xp": 84.37
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 200,
+        "delta_power": 90,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9377,
+        "expected_gold": 126.59,
+        "expected_xp": 93.77
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 200,
+        "delta_power": -10,
+        "base_success_chance": 40,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 40,
+        "mc_success_rate": 0.3962,
+        "expected_gold": 63.39,
+        "expected_xp": 43.58
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 200,
+        "delta_power": -30,
+        "base_success_chance": 20,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 20,
+        "mc_success_rate": 0.2046,
+        "expected_gold": 36.83,
+        "expected_xp": 25.57
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 200,
+        "delta_power": -50,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1018,
+        "expected_gold": 20.36,
+        "expected_xp": 14.25
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 200,
+        "delta_power": -90,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0991,
+        "expected_gold": 25.77,
+        "expected_xp": 17.84
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 200,
+        "delta_power": -120,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1023,
+        "expected_gold": 30.69,
+        "expected_xp": 21.48
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 200,
+        "delta_power": -160,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1028,
+        "expected_gold": 37.01,
+        "expected_xp": 25.7
+      }
+    },
+    "team_buono": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 257,
+        "delta_power": 222,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9374,
+        "expected_gold": 23.43,
+        "expected_xp": 16.87
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 257,
+        "delta_power": 212,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9331,
+        "expected_gold": 32.66,
+        "expected_xp": 23.33
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 257,
+        "delta_power": 207,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9329,
+        "expected_gold": 41.98,
+        "expected_xp": 27.99
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 257,
+        "delta_power": 177,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9393,
+        "expected_gold": 46.97,
+        "expected_xp": 32.88
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 257,
+        "delta_power": 167,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9424,
+        "expected_gold": 51.83,
+        "expected_xp": 35.81
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 257,
+        "delta_power": 157,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9391,
+        "expected_gold": 56.35,
+        "expected_xp": 39.44
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 257,
+        "delta_power": 188,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9355,
+        "expected_gold": 51.45,
+        "expected_xp": 39.29
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 257,
+        "delta_power": 182,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9356,
+        "expected_gold": 60.81,
+        "expected_xp": 46.78
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 257,
+        "delta_power": 179,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9356,
+        "expected_gold": 65.49,
+        "expected_xp": 48.65
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 257,
+        "delta_power": 172,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9378,
+        "expected_gold": 75.02,
+        "expected_xp": 58.14
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 257,
+        "delta_power": 117,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9383,
+        "expected_gold": 84.45,
+        "expected_xp": 60.99
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 257,
+        "delta_power": 102,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9377,
+        "expected_gold": 93.77,
+        "expected_xp": 67.51
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 257,
+        "delta_power": 87,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9377,
+        "expected_gold": 107.84,
+        "expected_xp": 75.02
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 257,
+        "delta_power": 163,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9361,
+        "expected_gold": 93.61,
+        "expected_xp": 70.21
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 257,
+        "delta_power": 157,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9376,
+        "expected_gold": 112.51,
+        "expected_xp": 84.38
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 257,
+        "delta_power": 147,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9364,
+        "expected_gold": 126.41,
+        "expected_xp": 93.64
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 257,
+        "delta_power": 47,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9381,
+        "expected_gold": 150.1,
+        "expected_xp": 103.19
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 257,
+        "delta_power": 27,
+        "base_success_chance": 77,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 77,
+        "mc_success_rate": 0.7747,
+        "expected_gold": 139.45,
+        "expected_xp": 96.84
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 257,
+        "delta_power": 7,
+        "base_success_chance": 57,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 57,
+        "mc_success_rate": 0.573,
+        "expected_gold": 114.6,
+        "expected_xp": 80.22
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 257,
+        "delta_power": -33,
+        "base_success_chance": 17,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 17,
+        "mc_success_rate": 0.1723,
+        "expected_gold": 44.8,
+        "expected_xp": 31.01
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 257,
+        "delta_power": -63,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0976,
+        "expected_gold": 29.28,
+        "expected_xp": 20.5
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 257,
+        "delta_power": -103,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1032,
+        "expected_gold": 37.15,
+        "expected_xp": 25.8
+      }
+    },
+    "team_forte_outlier": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 356,
+        "delta_power": 321,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9366,
+        "expected_gold": 23.41,
+        "expected_xp": 16.86
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 356,
+        "delta_power": 311,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9358,
+        "expected_gold": 32.75,
+        "expected_xp": 23.39
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 356,
+        "delta_power": 306,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9382,
+        "expected_gold": 42.22,
+        "expected_xp": 28.15
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 356,
+        "delta_power": 276,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9362,
+        "expected_gold": 46.81,
+        "expected_xp": 32.77
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 356,
+        "delta_power": 266,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9356,
+        "expected_gold": 51.46,
+        "expected_xp": 35.55
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 356,
+        "delta_power": 256,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9406,
+        "expected_gold": 56.44,
+        "expected_xp": 39.51
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 356,
+        "delta_power": 287,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9414,
+        "expected_gold": 51.78,
+        "expected_xp": 39.54
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 356,
+        "delta_power": 281,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9395,
+        "expected_gold": 61.07,
+        "expected_xp": 46.98
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 356,
+        "delta_power": 278,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9357,
+        "expected_gold": 65.5,
+        "expected_xp": 48.66
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 356,
+        "delta_power": 271,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9412,
+        "expected_gold": 75.3,
+        "expected_xp": 58.35
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 356,
+        "delta_power": 216,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9403,
+        "expected_gold": 84.63,
+        "expected_xp": 61.12
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 356,
+        "delta_power": 201,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9322,
+        "expected_gold": 93.22,
+        "expected_xp": 67.12
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 356,
+        "delta_power": 186,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.938,
+        "expected_gold": 107.87,
+        "expected_xp": 75.04
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 356,
+        "delta_power": 262,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9409,
+        "expected_gold": 94.09,
+        "expected_xp": 70.57
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 356,
+        "delta_power": 256,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9407,
+        "expected_gold": 112.88,
+        "expected_xp": 84.66
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 356,
+        "delta_power": 246,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9326,
+        "expected_gold": 125.9,
+        "expected_xp": 93.26
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 356,
+        "delta_power": 146,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9371,
+        "expected_gold": 149.94,
+        "expected_xp": 103.08
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 356,
+        "delta_power": 126,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9427,
+        "expected_gold": 169.69,
+        "expected_xp": 117.84
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 356,
+        "delta_power": 106,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9394,
+        "expected_gold": 187.88,
+        "expected_xp": 131.52
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 356,
+        "delta_power": 66,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9377,
+        "expected_gold": 243.8,
+        "expected_xp": 168.79
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 356,
+        "delta_power": 36,
+        "base_success_chance": 86,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 86,
+        "mc_success_rate": 0.8622,
+        "expected_gold": 258.66,
+        "expected_xp": 181.06
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 356,
+        "delta_power": -4,
+        "base_success_chance": 46,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 46,
+        "mc_success_rate": 0.4542,
+        "expected_gold": 163.51,
+        "expected_xp": 113.55
+      }
+    },
+    "team_counter_perfetto": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 236,
+        "delta_power": 201,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.936,
+        "expected_gold": 23.4,
+        "expected_xp": 16.85
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 236,
+        "delta_power": 191,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9445,
+        "expected_gold": 33.06,
+        "expected_xp": 23.61
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 236,
+        "delta_power": 186,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9372,
+        "expected_gold": 42.17,
+        "expected_xp": 28.12
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 236,
+        "delta_power": 156,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9368,
+        "expected_gold": 46.84,
+        "expected_xp": 32.79
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 236,
+        "delta_power": 146,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9387,
+        "expected_gold": 51.63,
+        "expected_xp": 35.67
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 236,
+        "delta_power": 136,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9355,
+        "expected_gold": 56.13,
+        "expected_xp": 39.29
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 236,
+        "delta_power": 167,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9405,
+        "expected_gold": 51.73,
+        "expected_xp": 39.5
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 236,
+        "delta_power": 161,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9371,
+        "expected_gold": 60.91,
+        "expected_xp": 46.86
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 236,
+        "delta_power": 158,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.94,
+        "expected_gold": 65.8,
+        "expected_xp": 48.88
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 236,
+        "delta_power": 151,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9363,
+        "expected_gold": 74.9,
+        "expected_xp": 58.05
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 236,
+        "delta_power": 96,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9398,
+        "expected_gold": 84.58,
+        "expected_xp": 61.09
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 236,
+        "delta_power": 81,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9411,
+        "expected_gold": 94.11,
+        "expected_xp": 67.76
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 236,
+        "delta_power": 66,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9437,
+        "expected_gold": 108.53,
+        "expected_xp": 75.5
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 236,
+        "delta_power": 142,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9383,
+        "expected_gold": 93.83,
+        "expected_xp": 70.37
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 236,
+        "delta_power": 136,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9357,
+        "expected_gold": 112.28,
+        "expected_xp": 84.21
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 236,
+        "delta_power": 126,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9373,
+        "expected_gold": 126.54,
+        "expected_xp": 93.73
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 236,
+        "delta_power": 26,
+        "base_success_chance": 76,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 76,
+        "mc_success_rate": 0.7663,
+        "expected_gold": 122.61,
+        "expected_xp": 84.29
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 236,
+        "delta_power": 6,
+        "base_success_chance": 56,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 56,
+        "mc_success_rate": 0.5618,
+        "expected_gold": 101.12,
+        "expected_xp": 70.22
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 236,
+        "delta_power": -14,
+        "base_success_chance": 36,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 36,
+        "mc_success_rate": 0.3632,
+        "expected_gold": 72.64,
+        "expected_xp": 50.85
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 236,
+        "delta_power": -54,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1012,
+        "expected_gold": 26.31,
+        "expected_xp": 18.22
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 236,
+        "delta_power": -84,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0976,
+        "expected_gold": 29.28,
+        "expected_xp": 20.5
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 236,
+        "delta_power": -124,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0945,
+        "expected_gold": 34.02,
+        "expected_xp": 23.62
+      }
+    },
+    "team_no_counter": {
+      "sewer-nest": {
+        "dungeon_name": "Sewer Nest",
+        "required_level": null,
+        "recommended_power": 35,
+        "team_power": 236,
+        "delta_power": 201,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9381,
+        "expected_gold": 23.45,
+        "expected_xp": 16.89
+      },
+      "goblin-warrens": {
+        "dungeon_name": "Goblin Warrens",
+        "required_level": null,
+        "recommended_power": 45,
+        "team_power": 236,
+        "delta_power": 191,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9362,
+        "expected_gold": 32.77,
+        "expected_xp": 23.41
+      },
+      "bandit-hideout": {
+        "dungeon_name": "Bandit Hideout",
+        "required_level": null,
+        "recommended_power": 50,
+        "team_power": 236,
+        "delta_power": 186,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.938,
+        "expected_gold": 42.21,
+        "expected_xp": 28.14
+      },
+      "wolf-den-5p": {
+        "dungeon_name": "Wolf Den",
+        "required_level": null,
+        "recommended_power": 80,
+        "team_power": 236,
+        "delta_power": 156,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9348,
+        "expected_gold": 46.74,
+        "expected_xp": 32.72
+      },
+      "frost-cave-5p": {
+        "dungeon_name": "Frost Cave",
+        "required_level": null,
+        "recommended_power": 90,
+        "team_power": 236,
+        "delta_power": 146,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9404,
+        "expected_gold": 51.72,
+        "expected_xp": 35.74
+      },
+      "salt-marsh-5p": {
+        "dungeon_name": "Salt Marsh",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 236,
+        "delta_power": 136,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9343,
+        "expected_gold": 56.06,
+        "expected_xp": 39.24
+      },
+      "druid-grove": {
+        "dungeon_name": "Corrupted Druid Grove",
+        "required_level": null,
+        "recommended_power": 69,
+        "team_power": 236,
+        "delta_power": 167,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9357,
+        "expected_gold": 51.46,
+        "expected_xp": 39.3
+      },
+      "shadow-crypts": {
+        "dungeon_name": "Shadow Crypts",
+        "required_level": null,
+        "recommended_power": 75,
+        "team_power": 236,
+        "delta_power": 161,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9411,
+        "expected_gold": 61.17,
+        "expected_xp": 47.05
+      },
+      "cursed-mines": {
+        "dungeon_name": "Cursed Mines",
+        "required_level": null,
+        "recommended_power": 78,
+        "team_power": 236,
+        "delta_power": 158,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9368,
+        "expected_gold": 65.58,
+        "expected_xp": 48.71
+      },
+      "sunken-library": {
+        "dungeon_name": "Sunken Library",
+        "required_level": null,
+        "recommended_power": 85,
+        "team_power": 236,
+        "delta_power": 151,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9392,
+        "expected_gold": 75.14,
+        "expected_xp": 58.23
+      },
+      "iron-foundry-5p": {
+        "dungeon_name": "Iron Foundry",
+        "required_level": null,
+        "recommended_power": 140,
+        "team_power": 236,
+        "delta_power": 96,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9363,
+        "expected_gold": 84.27,
+        "expected_xp": 60.86
+      },
+      "silent-monastery-5p": {
+        "dungeon_name": "Silent Monastery",
+        "required_level": null,
+        "recommended_power": 155,
+        "team_power": 236,
+        "delta_power": 81,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9368,
+        "expected_gold": 93.68,
+        "expected_xp": 67.45
+      },
+      "pirate-fleet-5p": {
+        "dungeon_name": "Pirate Fleet",
+        "required_level": null,
+        "recommended_power": 170,
+        "team_power": 236,
+        "delta_power": 66,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9421,
+        "expected_gold": 108.34,
+        "expected_xp": 75.37
+      },
+      "lich-sanctum": {
+        "dungeon_name": "Lich's Sanctum",
+        "required_level": null,
+        "recommended_power": 94,
+        "team_power": 236,
+        "delta_power": 142,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.937,
+        "expected_gold": 93.7,
+        "expected_xp": 70.28
+      },
+      "dragons-hoard": {
+        "dungeon_name": "Dragon's Hoard",
+        "required_level": null,
+        "recommended_power": 100,
+        "team_power": 236,
+        "delta_power": 136,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.9406,
+        "expected_gold": 112.87,
+        "expected_xp": 84.65
+      },
+      "storm-spire": {
+        "dungeon_name": "Storm Spire",
+        "required_level": null,
+        "recommended_power": 110,
+        "team_power": 236,
+        "delta_power": 126,
+        "base_success_chance": 95,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 95,
+        "mc_success_rate": 0.94,
+        "expected_gold": 126.9,
+        "expected_xp": 94.0
+      },
+      "obsidian-arena-5p": {
+        "dungeon_name": "Obsidian Arena",
+        "required_level": null,
+        "recommended_power": 210,
+        "team_power": 236,
+        "delta_power": 26,
+        "base_success_chance": 76,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 76,
+        "mc_success_rate": 0.7557,
+        "expected_gold": 120.91,
+        "expected_xp": 83.13
+      },
+      "clockwork-vault-5p": {
+        "dungeon_name": "Clockwork Vault",
+        "required_level": null,
+        "recommended_power": 230,
+        "team_power": 236,
+        "delta_power": 6,
+        "base_success_chance": 56,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 56,
+        "mc_success_rate": 0.5616,
+        "expected_gold": 101.09,
+        "expected_xp": 70.2
+      },
+      "voidspire-5p": {
+        "dungeon_name": "Voidspire",
+        "required_level": null,
+        "recommended_power": 250,
+        "team_power": 236,
+        "delta_power": -14,
+        "base_success_chance": 36,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 36,
+        "mc_success_rate": 0.3648,
+        "expected_gold": 72.96,
+        "expected_xp": 51.07
+      },
+      "infernal-pit-5p": {
+        "dungeon_name": "Infernal Pit",
+        "required_level": null,
+        "recommended_power": 290,
+        "team_power": 236,
+        "delta_power": -54,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.0981,
+        "expected_gold": 25.51,
+        "expected_xp": 17.66
+      },
+      "celestial-citadel-5p": {
+        "dungeon_name": "Celestial Citadel",
+        "required_level": null,
+        "recommended_power": 320,
+        "team_power": 236,
+        "delta_power": -84,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.094,
+        "expected_gold": 28.2,
+        "expected_xp": 19.74
+      },
+      "world-tree-roots-5p": {
+        "dungeon_name": "World-Tree Roots",
+        "required_level": null,
+        "recommended_power": 360,
+        "team_power": 236,
+        "delta_power": -124,
+        "base_success_chance": 10,
+        "threat_bonus_pct": 0,
+        "effective_success_chance": 10,
+        "mc_success_rate": 0.1036,
+        "expected_gold": 37.3,
+        "expected_xp": 25.9
+      }
+    }
+  },
+  "incoherent_dungeons": [],
+  "outliers": {
+    "class_outliers": [
+      {
+        "slug": "warlock",
+        "role": "DPS",
+        "base_total": 32,
+        "mu": 25.21,
+        "threshold": 30.88
+      }
+    ],
+    "spec_outliers": [],
+    "item_outliers": [
+      {
+        "slug": "drake_slayer_blade",
+        "name": "Drake Slayer Blade",
+        "rarity": "Legendary",
+        "equip_power": 73,
+        "min_level": 1
+      },
+      {
+        "slug": "arcane_adept_orb",
+        "name": "Arcane Adept Orb",
+        "rarity": "Legendary",
+        "equip_power": 67,
+        "min_level": 1
+      },
+      {
+        "slug": "drake_slayer_chest",
+        "name": "Drake Slayer Cuirass",
+        "rarity": "Legendary",
+        "equip_power": 57,
+        "min_level": 1
+      },
+      {
+        "slug": "goblin_hunter_ring",
+        "name": "Goblin Hunter Ring",
+        "rarity": "Legendary",
+        "equip_power": 50,
+        "min_level": 1
+      },
+      {
+        "slug": "drake_slayer_helm",
+        "name": "Drake Slayer Helm",
+        "rarity": "Legendary",
+        "equip_power": 43,
+        "min_level": 1
+      }
+    ],
+    "class_stat_sum_summary": {
+      "count": 14,
+      "mean": 25.21,
+      "min": 21,
+      "max": 32
+    }
+  },
+  "stacking_analysis": {
+    "scenarios": {
+      "baseline_no_equip": 149,
+      "with_moderate_equip": 179,
+      "with_strong_equip": 239,
+      "lv7_baseline_no_equip": 212,
+      "lv7_with_strong_equip": 302
+    },
+    "lv4_equip_power_lift_pct": 60.4,
+    "note": "Equip a +30/adv (Epic tier) raddoppia quasi il team power di un team lv4. Chi ha equip decente a lv4 supera team lv7 nudi."
+  }
+}
