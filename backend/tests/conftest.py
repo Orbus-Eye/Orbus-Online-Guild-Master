@@ -19,6 +19,30 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 # template. Real `.env.test` values OVERRIDE backend/.env on key conflicts.
 load_dotenv(Path(__file__).resolve().parent / ".env.test", override=True)
 
+# ROUND 16.3 Iter B (P2.1) — Hard guard-rail: pytest MUST NEVER write to a
+# non-test DB. This assertion runs at conftest import time (before ANY test
+# module is imported), so a misconfigured environment cannot bypass it.
+# Bypass rules:
+#   1. DB_NAME must end with "_test" OR contain the token "test" in lowercase
+#   2. OR APP_ENV must equal "test" / "testing" / "ci"
+# See /app/memory/pytest_db_isolation_policy.md for the full policy.
+_pytest_db_name = os.environ.get("DB_NAME", "")
+_pytest_app_env = (os.environ.get("APP_ENV") or "").lower()
+_db_name_looks_testy = (
+    _pytest_db_name.endswith("_test")
+    or "test" in _pytest_db_name.lower()
+)
+_app_env_is_test = _pytest_app_env in {"test", "testing", "ci"}
+if not (_db_name_looks_testy or _app_env_is_test):
+    raise RuntimeError(
+        "REFUSING to run pytest against non-test DB: "
+        f"DB_NAME={_pytest_db_name!r} APP_ENV={_pytest_app_env!r}. "
+        "Ensure /app/backend/tests/.env.test defines "
+        "DB_NAME=<something>_test (e.g. orbus_r16_test) and APP_ENV=test. "
+        "See /app/memory/pytest_db_isolation_policy.md."
+    )
+del _pytest_db_name, _pytest_app_env, _db_name_looks_testy, _app_env_is_test
+
 logger = logging.getLogger("orbus.test.cleanup")
 logger.setLevel(logging.INFO)
 if not logger.handlers:
