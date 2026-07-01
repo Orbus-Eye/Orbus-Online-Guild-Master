@@ -642,3 +642,44 @@ achievement_progress: { _id: "guild_id::slug", guild_id, slug,
 **Report**: `/app/memory/round163_phase5A_final_report.md` (15 sezioni).
 
 **Next**: attesa `e1_tester` E2E backend → iterazione 2 Frontend (LegendaryForge.jsx + LegendaryForgeRecipe.jsx + LegendaryForgeOrders.jsx + MiniCard + nav) → sigillo OFFICIALLY CLOSED.
+
+
+---
+
+## R16.3 Phase 5A OFFICIALLY CLOSED — 2026-07-01 (Iterazione 3 Frontend)
+
+**🟢 OFFICIALLY CLOSED ✅** — Forgia Leggendaria V0 completa (Backend + Frontend + Docs).
+
+1. **Frontend web** (3 pagine + 1 mini-card):
+   - `frontend/src/pages/LegendaryForge.jsx` — hub ricette (gate lvl 5, grid catalog, link ordini).
+   - `frontend/src/pages/LegendaryForgeRecipe.jsx` — dettaglio (probabilità trasparenti, pity status, checklist requisiti, **warning BOP evidenziato** con checkbox awareness obbligatoria pre-craft).
+   - `frontend/src/pages/LegendaryForgeOrders.jsx` — ordini attivi + storico + auto-refresh 30s.
+   - `frontend/src/components/LegendaryForgeMiniCard.jsx` — mini-card in Dashboard V2 sotto SiteIncome/World.
+
+2. **Wiring**:
+   - `frontend/src/App.js`: +3 route `ProtectedRoute requireGuild` (`/legendary-forge`, `/legendary-forge/recipe/:slug`, `/legendary-forge/orders`).
+   - `frontend/src/components/navMenu.js`: voce "Forgia Leggendaria" badge NEW (testid `menu-legendary-forge`).
+   - `frontend/src/pages/Dashboard.jsx`: import + `<LegendaryForgeMiniCard />` mount.
+
+3. **Vincoli UI rispettati**:
+   - ✅ Mobile-first, nessun `overflow-x` fisso.
+   - ✅ `pb-32 md:pb-8` sui container root delle 3 pagine.
+   - ✅ Touch target ≥ 44x44 (min-h-11 sui CTA principali).
+   - ✅ Warning BOP evidenziato con checkbox obbligatoria pre-craft.
+   - ✅ Probabilità trasparenti (perfezionato/normale/imperfetto + pity bonus).
+   - ✅ `data-testid` naming coerente (`legendary-forge-*`, `recipe-card-*`, `forge-craft-cta`, `forge-orders-active`).
+   - ✅ Tema dark coerente (bg-slate-900, accenti amber-500/40).
+
+4. **Osservazioni non-bloccanti** (post-testing manuale utente):
+   - `/api/market/listings` → 307 redirect a `/api/auction/listings` (consolidamento intenzionale).
+   - PATCH admin `is_active` via **query string** (non body): `axios.patch(url, null, { params: { is_active } })`.
+   - Slug leggendari confermati: **`legendary_cape_aveol`** (non `cloak_aveol`).
+
+5. **Validazione statica finale**:
+   - `pytest tests/backend_round163_phase5A_test.py -q` → **38/38 PASS**.
+   - `yarn build` → compilato con 1 warning legacy non-Phase-5A (`ClassHalls.jsx`).
+   - Bundle: 348.29 kB gzip (-9 B).
+
+**Report completo**: `/app/memory/round163_phase5A_final_report.md` sez. 17 (Iterazione 3).
+
+**Next**: attesa conferma utente per **Phase 5B — Forgia di Arfus (P1)** — bilanciamento tecnologie passive gilda con cap +30% totale.

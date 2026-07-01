@@ -333,3 +333,35 @@
 **Report**: `/app/memory/round163_phase5A_final_report.md` (15 sezioni).
 
 **Next**: attesa `e1_tester` E2E backend → iterazione 2 Frontend (LegendaryForge.jsx + LegendaryForgeRecipe.jsx + LegendaryForgeOrders.jsx + MiniCard + nav) → sigillo OFFICIALLY CLOSED.
+
+
+---
+
+## Round 16.3 Phase 5A OFFICIALLY CLOSED ✅ — 2026-07-01 (Iterazione 3 Frontend)
+
+**Phase 5A (Forgia Leggendaria) — completa Backend + Frontend + Docs**:
+
+- **Frontend web** (3 pagine + 1 mini-card):
+  - `LegendaryForge.jsx` — hub ricette (gate lvl 5).
+  - `LegendaryForgeRecipe.jsx` — dettaglio con **probabilità trasparenti**, pity status, checklist requisiti, **warning BOP** con checkbox awareness obbligatoria pre-craft.
+  - `LegendaryForgeOrders.jsx` — ordini attivi + storico + auto-refresh 30s.
+  - `LegendaryForgeMiniCard.jsx` — mini-card in Dashboard V2.
+- **Wiring**: +3 route `ProtectedRoute requireGuild` in `App.js`, voce nav "Forgia Leggendaria" (badge NEW), mount MiniCard in Dashboard.
+- **Vincoli UI**: mobile-first, `pb-32 md:pb-8`, touch target ≥44x44, no `overflow-x` fisso, tema dark coerente, `data-testid` naming coerente.
+
+**Osservazioni non-bloccanti** (post-testing manuale utente):
+1. `/api/market/listings` → 307 redirect a `/api/auction/listings` (consolidamento intenzionale).
+2. PATCH admin recipe usa **query string** `?is_active=<bool>` (non body).
+3. Slug leggendari: **`legendary_cape_aveol`** (non `cloak_aveol`).
+
+**Validazione finale**:
+- `pytest tests/backend_round163_phase5A_test.py -q` → **38/38 PASS**.
+- `yarn build` → OK (1 warning legacy non-Phase-5A in ClassHalls.jsx).
+- Bundle: 348.29 kB gzip (-9 B).
+
+**Report completo**: `/app/memory/round163_phase5A_final_report.md` sez. 17.
+
+**Next tasks**:
+- ⏳ Attesa conferma utente per **Phase 5B — Forgia di Arfus (P1)** — bilanciamento tecnologie passive gilda con cap +30% totale.
+- 🔒 Phase 6+ (P2): patti commerciali gilda, specializzazioni gilda, PvP continentale, stalla/cavalcature — in coda dopo Phase 5B.
+- 🐛 Debito tecnico R16.0 (`test_t03_alchemist_class_halls_per_guild`, `test_t03_all_adventurers_have_race_and_gender`) — noto, non-bloccante, non regression Phase 5A.

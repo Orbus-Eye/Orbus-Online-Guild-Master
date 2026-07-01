@@ -58,6 +58,9 @@ import Resources from "@/pages/Resources";  // ROUND 16.3 Phase 4
 import ResourceGather from "@/pages/ResourceGather";
 import ResourceMissions from "@/pages/ResourceMissions";
 import ContinentLeaderboards from "@/pages/ContinentLeaderboards";
+import LegendaryForge from "@/pages/LegendaryForge";  // ROUND 16.3 Phase 5A
+import LegendaryForgeRecipe from "@/pages/LegendaryForgeRecipe";
+import LegendaryForgeOrders from "@/pages/LegendaryForgeOrders";
 import Seasons from "@/pages/Seasons";  // ROUND 12
 import Arena from "@/pages/Arena";  // ROUND 12
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
@@ -497,6 +500,31 @@ function App() {
                                     >
                                         <RaidReport />
                                     </ReportErrorBoundary>
+                                </ProtectedRoute>
+                            }
+                        />
+                        {/* ROUND 16.3 Phase 5A — Forgia Leggendaria */}
+                        <Route
+                            path="/legendary-forge"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <LegendaryForge />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/legendary-forge/recipe/:slug"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <LegendaryForgeRecipe />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/legendary-forge/orders"
+                            element={
+                                <ProtectedRoute requireGuild>
+                                    <LegendaryForgeOrders />
                                 </ProtectedRoute>
                             }
                         />

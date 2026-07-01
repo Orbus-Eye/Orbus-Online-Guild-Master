@@ -62,6 +62,8 @@ export const NAV_SECTIONS = [
             { to: "/auction", label: "Asta", testid: "menu-auction" },
             { to: "/crafting", label: "Crafting", testid: "menu-crafting" },
             { to: "/forge", label: "Forgia", testid: "menu-forge" },
+            { to: "/legendary-forge", label: "Forgia Leggendaria",
+              testid: "menu-legendary-forge", badge: "NEW" },
             { to: "/contracts", label: "Contratti", testid: "menu-contracts" },
         ],
     },

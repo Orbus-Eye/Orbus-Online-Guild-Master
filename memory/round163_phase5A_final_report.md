@@ -1,8 +1,8 @@
-# ROUND 16.3 — Phase 5A Final Report (BACKEND CLOSED / FRONTEND PENDING)
+# ROUND 16.3 — Phase 5A Final Report (OFFICIALLY CLOSED ✅)
 
 **Data**: 2026-07-01
-**Scope**: Forgia Leggendaria (Legendary Forge) V0 — Backend + tests.
-**Stato**: 🟡 **BACKEND CLOSED · FRONTEND PENDING** (iterazione 2 da lanciare dopo E2E `e1_tester` conferma).
+**Scope**: Forgia Leggendaria (Legendary Forge) V0 — Backend + Frontend + tests.
+**Stato**: 🟢 **OFFICIALLY CLOSED ✅** (Iterazione 1 backend + Iterazione 2 fix P0 + Iterazione 3 frontend tutte completate).
 
 ---
 
@@ -371,3 +371,80 @@ if item.get("can_be_sold_for_gold") is False:
 - ✅ Nessuna nuova dipendenza esterna
 
 *Iterazione 2 completata: 2026-07-01. In attesa `e1_tester` per re-verifica solo dei sub-check falliti (Test 2 BOP + presence in inventory + Test 3 audit whitelist). Iterazione 3 Frontend seguirà dopo conferma tester.*
+
+---
+
+## 17. Iterazione 3 — Frontend Forgia Leggendaria (2026-07-01)
+
+### 17.1 — Scope
+
+Completamento UI web mobile-first per la Forgia Leggendaria (3 pagine + 1 mini-card in Dashboard V2). Nessuna modifica al backend.
+
+### 17.2 — File creati
+
+| File | Righe | Ruolo |
+|---|---:|---|
+| `frontend/src/pages/LegendaryForge.jsx` | ~150 | Hub ricette (gate lvl 5, catalog grid, link ordini) |
+| `frontend/src/pages/LegendaryForgeRecipe.jsx` | ~260 | Dettaglio ricetta (probabilità trasparenti, pity status, checklist requisiti, warning BOP, modale conferma con checkbox awareness) |
+| `frontend/src/pages/LegendaryForgeOrders.jsx` | ~185 | Ordini in corso + storico + auto-refresh 30s + on-visit fallback |
+| `frontend/src/components/LegendaryForgeMiniCard.jsx` | ~90 | Mini-card Dashboard V2 con contatore ricette accessibili + ordini attivi |
+
+### 17.3 — File modificati
+
+| File | Modifica |
+|---|---|
+| `frontend/src/App.js` | +3 route protette con `requireGuild`: `/legendary-forge`, `/legendary-forge/recipe/:slug`, `/legendary-forge/orders` |
+| `frontend/src/components/navMenu.js` | +voce "Forgia Leggendaria" badge NEW (testid `menu-legendary-forge`) |
+| `frontend/src/pages/Dashboard.jsx` | +import `LegendaryForgeMiniCard` + posizionamento sotto la riga SiteIncome/World |
+
+### 17.4 — Vincoli UI rispettati
+
+- ✅ **Mobile-first**: nessun `overflow-x` fisso, layout `grid gap-4 md:grid-cols-2` con fallback single-column su mobile.
+- ✅ **`pb-32 md:pb-8`**: applicato ai container root delle 3 pagine per garantire scroll libero sopra il bottom nav mobile.
+- ✅ **Touch target 44x44**: bottoni principali (`Forgia`, `Conferma`, `Torna alla forgia`) hanno `min-h-11` + padding sufficienti.
+- ✅ **Warning BOP evidenziato**: box dedicato nel `LegendaryForgeRecipe.jsx` con testo "Bound On Pickup — non scambiabile, non vendibile" + checkbox obbligatoria "Sono consapevole che il crafting produce un oggetto BOP" prima di poter cliccare Forgia.
+- ✅ **Probabilità trasparenti**: mostrate le 3 possibili qualità (perfezionato / normale / imperfetto) con probabilità calcolate + eventuale pity bonus.
+- ✅ **`data-testid` naming**: tutti gli elementi interattivi/critici hanno testid coerente (`legendary-forge-*`, `recipe-card-*`, `forge-craft-cta`, `forge-orders-active`, ecc.).
+- ✅ **Tema dark**: rispettato lo stile del resto della webapp (bg-slate-900, bordi amber-500/40 per accenti leggendari).
+
+### 17.5 — Validazione statica
+
+| Comando | Risultato |
+|---|---|
+| `pytest tests/backend_round163_phase5A_test.py -q` | **38 passed, 1 warning** ✅ |
+| `yarn build` (dev mode) | Compilato con **1 warning legacy** (ClassHalls.jsx pre-esistente, non-Phase-5A) ✅ |
+| `yarn lint` sui file Phase 5A | Solo warning cosmetici `react/jsx-closing-tag-location`, nessun errore ✅ |
+| Bundle size | 348.29 kB gzip (-9 B vs baseline) ✅ |
+
+### 17.6 — Osservazioni non-bloccanti (post-testing manuale utente Phase 5A)
+
+Riportate su richiesta esplicita dell'utente per memoria futura, **NON considerate bug**:
+
+1. **`/api/market/listings` → 307 redirect a `/api/auction/listings`**
+   Consolidamento intenzionale del market V2 sotto il modulo Auction. Frontend deve seguire il redirect (axios lo fa di default). Nessuna azione richiesta.
+
+2. **PATCH admin recipe usa query string, non body**
+   L'endpoint `PATCH /api/admin/legendary-forge/recipes/{slug}?is_active=<bool>` accetta il flag **solo via query string** (FastAPI `Query(...)`). Il client (curl/axios/admin panel) deve invocarlo così:
+   ```js
+   axios.patch(`/api/admin/legendary-forge/recipes/${slug}`, null, {
+     params: { is_active: false },
+   });
+   ```
+   Chiamate con body JSON `{"is_active": false}` verranno accettate ma il flag non verrà letto. Comportamento intenzionale (design decisione minimalista).
+
+3. **Slug `legendary_cape_aveol` (non `cloak_aveol`)**
+   Nome finale del pattern coerente in seed, ricette, tests e UI. Documentato per evitare confusione con eventuali proposte iniziali "cloak_aveol".
+
+### 17.7 — Stato finale Phase 5A
+
+**Backend**: 5 endpoint public + 3 admin, 6 ricette leggendarie con pity/BOP/audit, on-visit resolve, hard cap stat +50%.
+**Frontend**: 3 pagine + 1 mini-card, mobile-first, warning BOP con checkbox, probabilità trasparenti.
+**Test suite Phase 5A**: **38/38 PASS** — bundle regression **253 pass / 2 skipped / 2 legacy fail (non-Phase-5A)**.
+**Documentazione**: report + roadmap + audit snapshot + PRD tutti sigillati.
+
+**Phase 5A: OFFICIALLY CLOSED ✅**
+
+Prossimo step: attesa conferma utente per **Phase 5B — Forgia di Arfus** (P1) — bilanciamento tecnologie passive gilda con cap +30% totale.
+
+*Iterazione 3 (Frontend) completata: 2026-07-01.*
+
