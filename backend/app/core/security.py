@@ -33,8 +33,17 @@ def _cookie_secure_flag() -> bool:
 
 PASSWORD_REGEX_LETTER = re.compile(r"[A-Za-z]")
 PASSWORD_REGEX_DIGIT = re.compile(r"\d")
+# ROUND 16.5.4a — nuova policy Q1-C: 8 char + 1 maiuscola + 1 numero + 1 speciale.
+# La regola precedente (letter+digit) è retrocompatibile per utenti esistenti:
+# gli hash bcrypt esistenti non vengono ri-validati al login. La nuova policy
+# vale solo per register + password-reset/confirm.
+PASSWORD_REGEX_UPPER = re.compile(r"[A-Z]")
+PASSWORD_REGEX_SPECIAL = re.compile(
+    r"[!@#$%^&*(),.?\":{}|<>\[\]/_\-+=~`'\\]"
+)
 PASSWORD_RULES_MESSAGE = (
-    "Password must be at least 8 characters and contain a letter and a digit"
+    "La password deve contenere almeno 8 caratteri, "
+    "una lettera maiuscola, un numero e un carattere speciale."
 )
 
 
@@ -51,13 +60,32 @@ def verify_password(password: str, hashed: str) -> bool:
 
 
 def validate_password_strength(password: str) -> None:
-    """Raise HTTP 400 if password does not satisfy the Phase-5 policy."""
+    """Raise HTTP 400 with structured payload if the password does not
+    satisfy the ROUND 16.5.4a policy.
+
+    Policy (Q1-C, PM approved 2026-07-02):
+      - min length 8
+      - almeno una LETTERA MAIUSCOLA
+      - almeno un NUMERO
+      - almeno un CARATTERE SPECIALE
+
+    Nota: la validazione NON viene richiamata al login — gli hash bcrypt
+    di utenti pre-fix restano validi (nessun breaking change su chi si è
+    registrato prima del deploy).
+    """
     if (
         len(password) < 8
-        or not PASSWORD_REGEX_LETTER.search(password)
+        or not PASSWORD_REGEX_UPPER.search(password)
         or not PASSWORD_REGEX_DIGIT.search(password)
+        or not PASSWORD_REGEX_SPECIAL.search(password)
     ):
-        raise HTTPException(status_code=400, detail=PASSWORD_RULES_MESSAGE)
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "password.requirements_not_met",
+                "user_message": PASSWORD_RULES_MESSAGE,
+            },
+        )
 
 
 # ─── JWT ────────────────────────────────────────────────────────────────────

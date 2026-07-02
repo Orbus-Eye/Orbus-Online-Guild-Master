@@ -234,3 +234,15 @@ Scope: unificazione UX/tecnica delle pagine admin. Vedi
 per l'elenco dettagliato dei 5 items. Nessun cambio funzionale.
 Vincoli: no modifiche a balance/reward/drop/XP/PvP/economia.
 Attesa decisione utente per apertura.
+
+
+## Round 16.5.4a — Password UX Fix CLOSED ✅ (2026-07-02)
+
+Micro-fix registrazione con policy password strutturata + checklist dinamica FE.
+
+- **Policy Q1-C**: 8 char + 1 maiuscola + 1 numero + 1 speciale (era 8+letter+digit).
+- **Backend**: `app/core/security.py` — nuovo `validate_password_strength()` con payload strutturato `{code:"password.requirements_not_met", user_message: "…"}` (400). Applicato a `/api/auth/register` + `/api/auth/password-reset/confirm`. Login invariato (retro-compat utenti esistenti).
+- **Frontend**: nuovo helper `lib/passwordPolicy.js` (mirror validator BE) + nuovo componente `PasswordChecklist.jsx` (4 righe live, ✓/✗). Integrato in `Register.jsx` + `PasswordResetConfirm.jsx` con submit disabled finché policy KO.
+- **Test**: 8/8 PASS (5 password matrix + missing_special + change-password + login retro-compat) su `orbus_r16_test`.
+- **Report**: `/app/memory/round1654a_password_ux_report.md`
+- **NESSUNA modifica**: login, sessioni, cookie, CSRF, JWT, DB, endpoint.

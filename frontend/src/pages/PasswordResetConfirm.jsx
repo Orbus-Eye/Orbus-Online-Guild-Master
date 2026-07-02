@@ -3,10 +3,10 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
-// eslint-disable-next-line no-unused-vars -- reserved for future password field UX
-import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import PasswordInput from "../components/PasswordInput";
+import PasswordChecklist from "../components/PasswordChecklist";
+import { checkPasswordPolicy, PASSWORD_POLICY_MESSAGE } from "../lib/passwordPolicy";
 import { toast } from "sonner";
 
 export default function PasswordResetConfirm() {
@@ -19,11 +19,19 @@ export default function PasswordResetConfirm() {
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
+    const pwPolicy = checkPasswordPolicy(pw);
+    const canSubmit = pwPolicy.allValid && pw === pw2 && token.trim().length > 0 && !submitting;
+
     const submit = async (e) => {
         e.preventDefault();
         setErrorMsg("");
+        // ROUND 16.5.4a — validazione client mirror del backend
+        if (!pwPolicy.allValid) {
+            setErrorMsg(`Password non valida: ${PASSWORD_POLICY_MESSAGE}`);
+            return;
+        }
         if (pw !== pw2) {
-            setErrorMsg("Passwords do not match.");
+            setErrorMsg("Le password non coincidono.");
             return;
         }
         setSubmitting(true);
@@ -60,9 +68,8 @@ export default function PasswordResetConfirm() {
                     </div>
                     <h1 className="text-2xl font-semibold mb-2">{t("password_reset_page.confirm_title")}</h1>
                     <p className="text-xs text-muted-foreground mb-6">
-                        Paste your reset token and choose a new password (min 8 chars,
-                        at least one letter and one digit). Check backend logs for your
-                        reset token in dev/test mode.
+                        Incolla il token del reset e scegli una nuova password.
+                        In modalità dev/test il token viene stampato nei log del backend.
                     </p>
 
                     <form onSubmit={submit} className="space-y-4" data-testid="pwreset-confirm-form">
@@ -90,6 +97,13 @@ export default function PasswordResetConfirm() {
                                 value={pw}
                                 onChange={(e) => setPw(e.target.value)}
                             />
+                            <div className="text-[10px] text-muted-foreground tracking-wider mt-2">
+                                REQUISITI PASSWORD
+                            </div>
+                            <PasswordChecklist
+                                password={pw}
+                                testid="pwreset-password-checklist"
+                            />
                         </div>
 
                         <div className="space-y-2">
@@ -102,6 +116,14 @@ export default function PasswordResetConfirm() {
                                 value={pw2}
                                 onChange={(e) => setPw2(e.target.value)}
                             />
+                            {pw2 && pw2 !== pw && (
+                                <div
+                                    data-testid="pwreset-mismatch-hint"
+                                    className="text-[11px] text-destructive"
+                                >
+                                    Le password non coincidono.
+                                </div>
+                            )}
                         </div>
 
                         {errorMsg && (
@@ -116,10 +138,10 @@ export default function PasswordResetConfirm() {
                         <Button
                             type="submit"
                             data-testid="pwreset-confirm-submit"
-                            disabled={submitting}
-                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
+                            disabled={!canSubmit}
+                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {submitting ? "submitting…" : "Reset password →"}
+                            {submitting ? "invio…" : "Reimposta password →"}
                         </Button>
                     </form>
                 </div>

@@ -4,6 +4,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import PasswordInput from "../components/PasswordInput";
+import PasswordChecklist from "../components/PasswordChecklist";
+import { checkPasswordPolicy, PASSWORD_POLICY_MESSAGE } from "../lib/passwordPolicy";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n/I18nContext";
@@ -20,11 +22,15 @@ export default function Register() {
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
+    const pwPolicy = checkPasswordPolicy(password);
+    const canSubmit = pwPolicy.allValid && password === confirmPassword && !submitting;
+
     const submit = async (e) => {
         e.preventDefault();
         setErrorMsg("");
-        if (password.length < 8) {
-            setErrorMsg(t("auth.errors.weak_password"));
+        // ROUND 16.5.4a — validazione client mirror del backend
+        if (!pwPolicy.allValid) {
+            setErrorMsg(`Password non valida: ${PASSWORD_POLICY_MESSAGE}`);
             return;
         }
         if (password !== confirmPassword) {
@@ -104,8 +110,7 @@ export default function Register() {
 
                         <div className="space-y-2">
                             <Label htmlFor="password" className="text-xs text-muted-foreground tracking-wider">
-                                {t("auth.password").toUpperCase()}{" "}
-                                <span className="text-muted-foreground">({t("auth.password_min")})</span>
+                                {t("auth.password").toUpperCase()}
                             </Label>
                             <PasswordInput
                                 id="password"
@@ -115,6 +120,13 @@ export default function Register() {
                                 autoComplete="new-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <div className="text-[10px] text-muted-foreground tracking-wider mt-2">
+                                REQUISITI PASSWORD
+                            </div>
+                            <PasswordChecklist
+                                password={password}
+                                testid="register-password-checklist"
                             />
                         </div>
 
@@ -132,6 +144,14 @@ export default function Register() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
+                            {confirmPassword && confirmPassword !== password && (
+                                <div
+                                    data-testid="register-mismatch-hint"
+                                    className="text-[11px] text-destructive"
+                                >
+                                    Le password non coincidono.
+                                </div>
+                            )}
                         </div>
 
                         {errorMsg && (
@@ -146,8 +166,8 @@ export default function Register() {
                         <Button
                             type="submit"
                             data-testid="register-submit-btn"
-                            disabled={submitting}
-                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
+                            disabled={!canSubmit}
+                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {submitting ? t("common.loading") : `${t("auth.submit_register")} →`}
                         </Button>
