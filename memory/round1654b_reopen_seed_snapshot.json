@@ -1,0 +1,58 @@
+{
+  "equipped_before": [
+    {
+      "adventurer_id": "53608708-f551-4ef2-92e6-a57e898980d0",
+      "equipped_at": "2026-07-02T17:35:37.953842+00:00",
+      "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+      "id": "8c4e15ec-b854-4802-833c-3b685c906e34",
+      "item_id": "4cee6484-7c02-4da4-8e6f-3dc1ed497cfd",
+      "slot": "accessory"
+    }
+  ],
+  "generated_at": "2026-07-02T17:48:12.302906+00:00",
+  "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+  "guild_name": "la lanterna di ferro",
+  "inventory_before": [
+    {
+      "acquired_at": "2026-07-02T10:56:00.240754+00:00",
+      "affixes": [],
+      "bound_at": null,
+      "bound_reason": null,
+      "bound_to_adventurer_id": null,
+      "disenchanted_at": null,
+      "enchants": [],
+      "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+      "id": "7fffe50c-e3ba-4786-ac16-bf900470ad4d",
+      "instance_id": "44d8b0e4-bb7f-40e9-a539-37767c025424",
+      "is_bound": false,
+      "item_id": "8f302ad7-4032-40de-9f08-f14030fc56a2",
+      "quantity": 2,
+      "refinement_level": 0,
+      "reroll_count": 0,
+      "source": "raid_reward_recovered"
+    },
+    {
+      "acquired_at": "2026-07-02T10:57:36.606972+00:00",
+      "affixes": [],
+      "bind_state": "unbound",
+      "bound_at": null,
+      "bound_reason": null,
+      "bound_to_adventurer_id": null,
+      "disenchanted_at": null,
+      "enchants": [],
+      "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+      "id": "c58deb7c-e7a5-488e-8d59-76c4d42de8ab",
+      "instance_id": "8529cc3d-4130-48fc-bdd3-76745be3e9ad",
+      "is_bound": false,
+      "item_id": "4cee6484-7c02-4da4-8e6f-3dc1ed497cfd",
+      "quantity": 1,
+      "refinement_level": 0,
+      "reroll_count": 0,
+      "reserved_qty": 1,
+      "source": "dungeon"
+    }
+  ],
+  "owner_email": "tester@orbus.test",
+  "purpose": "Snapshot pre-seed tester@orbus.test inventory",
+  "round": "16.5.4b REOPEN"
+}

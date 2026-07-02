@@ -319,7 +319,225 @@ Non ancora automatizzato in un rollback CLI: se serve, aprire task R16.5.4d.
 | Sort deterministico | Parziale | ✅ Totale |
 | Test coverage auto-equip | 0 test dedicati | 11 test |
 | Test coverage seed integrity | 0 | 5 test |
+| Test coverage HTTP E2E | 0 | 3 test (REOPEN) |
 
 ---
 
-**Firmato**: E1 · Round 16.5.4b · pronto per merge.
+## 18. REOPEN — Verifica empirica end-to-end (post-deploy, live)
+
+Dopo il primo merge R16.5.4b, tester live hanno riaperto la round:
+"auto-equip installa solo `balanced_dagger`, non armor né accessory". Il PM ha
+richiesto una diagnosi empirica **prima** di qualsiasi altro coding. Ecco i
+17 punti mandatori del REOPEN:
+
+### 18.1 — Deploy attivo verificato
+`git rev-parse HEAD` post-merge R16.5.4b + backend restart via supervisor.
+Nel log `/var/log/supervisor/backend.err.log` vediamo la stringa
+`Orbus backend ready (env=development)` timestamp `2026-07-02 17:59:32`.
+
+### 18.2 — Seed items reali sul tester
+`admin@orbus.test` (username `Admin`) ha lanciato `POST /api/admin/guilds/{gid}/grant-item` × 9 verso la gilda `la lanterna di ferro`
+(`gid=30758454-2224-4d5a-9ee7-93c7fc64a593`) del tester. Item seedati:
+- Weapons Legendary: `drakefang-greatsword` (str+end), `voidcaster-staff` (int), `hoarfrost-scepter` (int+fai)
+- Armors Legendary: `stormforged-plate` (str+end), `ashwoven-robe` (int), `radiant-vestment` (fai+int)
+- Accessories Legendary: `hoardlords-seal` (multi), `flarebound-band` (int+fai), `stoutheart-locket` (end+str)
+
+### 18.3 — Adventurer test
+`53608708-f551-4ef2-92e6-a57e898980d0` "MaxAdv-d7f067" — Warrior Lv10, gilda
+la lanterna di ferro. Doc DB mostra `class_name: "Guerriero"` ma
+**manca `class_slug`** (vedi punto 18.17).
+
+### 18.4 — Trace live pre-fix (curl reale)
+Primo curl dopo restart: `POST /api/adventurers/{id}/auto-equip` →
+**HTTP 500 `NameError: name 'grammar_it' is not defined`** al frame
+`auto_equip.py:415`. Log completo in `/var/log/supervisor/backend.err.log`
+timestamp `17:53:42` — vedi punto 18.5 per root cause.
+
+### 18.5 — Root cause del 500 (P0 immediato)
+Le modifiche di grammatica IT del primo pass R16.5.4b introducevano il
+riferimento a `grammar_it['past_part']` in `auto_equip.py:396` e `:415`
+senza mai definire la variabile locale nel loop. Fix in 1 riga:
+
+```python
+for slot in EQUIPMENT_SLOTS:
+    slot_it, slot_en = _slot_label(slot)
+    grammar_it = _slot_grammar_it(slot)   # ← aggiunta (linea 259)
+```
+
+Un secondo `NameError: class_it_short` scoperto durante il pytest run
+(branch "nessun candidato") — fix con rename a `class_it` (variabile già
+definita a linea 210). File modificato: `/app/backend/app/equipment/auto_equip.py`
+(2 righe, riga 259 e 286).
+
+### 18.6 — Trace live post-fix (payload reale, non simulato)
+Payload di `POST /api/adventurers/{id}/auto-equip` dopo unequip 3-slot:
+
+```json
+{
+  "equipped": [
+    {"slot":"weapon","item_slug":"drakefang-greatsword","fitness":27.0,
+     "stat_delta":{"strength":5,"endurance":2,"power":7}},
+    {"slot":"armor","item_slug":"stormforged-plate","fitness":18.5,
+     "stat_delta":{"strength":1,"endurance":5,"power":6}},
+    {"slot":"accessory","item_slug":"hoardlords-seal","fitness":14.0,
+     "stat_delta":{"strength":2,"faith":2,"intellect":2,"power":6}}
+  ],
+  "swaps_count": 3,
+  "score_before": 0, "score_after": 38, "score_delta": 38,
+  "primary_stat": "strength",
+  "secondary_stats": ["endurance"]
+}
+```
+
+Tutti e 3 gli slot equipaggiati, class-aware: weapon+armor scelgono item
+`str+end` (primary Warrior). Il bug `balanced_dagger` sistematico è
+sparito.
+
+### 18.7 — Reason IT leggibile (post fix UX)
+Esempio reale dal payload:
+
+- `"Arma equipaggiata: «Drakefang Greatsword del Filo Spezzato» (+5 Str, +2 End, +7 Power), migliore per Guerriero."`
+- `"Armatura equipaggiata: «Stormforged Plate del Filo Spezzato» (+1 Str, +5 End, +6 Power), migliore per Guerriero."`
+- `"Accessorio equipaggiato: «Hoardlord's Seal del Filo Spezzato» (+2 Str, +2 Faith, +2 Int, +6 Power), migliore per Guerriero."`
+
+Grammatica italiana **corretta** su tutti e 3 gli slot (Arma/Armatura
+→ `equipaggiata` femminile; Accessorio → `equipaggiato` maschile).
+Sostituzione: "sostituita/sostituito" concordata con lo slot.
+
+### 18.8 — Idempotenza confermata
+Seconda chiamata consecutiva a `auto-equip` (senza modifiche di stato
+tra le due) produce:
+
+```json
+{
+  "equipped": [], "replaced": [], "swaps_count": 0,
+  "score_before": 38, "score_after": 38,
+  "unchanged_slots": ["weapon","armor","accessory"],
+  "unchanged_slots_detail": [
+    {"slot":"weapon","reason_it":"Arma: l'oggetto attualmente equipaggiato è già il migliore."},
+    {"slot":"armor","reason_it":"Armatura: l'oggetto attualmente equipaggiato è già il migliore."},
+    {"slot":"accessory","reason_it":"Accessorio: l'oggetto attualmente equipaggiato è già il migliore."}
+  ]
+}
+```
+
+`score_delta=0`, `swaps_count=0`, nessun replace inutile.
+
+### 18.9 — Empty state (nessun candidato per slot)
+Se `candidates=[]` per uno slot (inventario vuoto o tutti gli item bloccati),
+`unchanged_slots_detail[].reason_it` ora legge:
+
+```
+"{Slot}: nessun oggetto compatibile in inventario per {Classe} Lv{N}.
+Completa spedizioni, raid o missioni per trovarne."
+```
+
+Include classe italiana + livello + hint azionabile.
+
+### 18.10 — Test HTTP E2E aggiunti
+`/app/backend/tests/backend_round1654b_test.py` — 3 nuovi test (17–19):
+- **test_17** `_e2e_full_flow_warrior_lv10_class_aware_selection`: verifica
+  che `POST /auto-equip` restituisca weapon+armor+accessory equipaggiati,
+  weapon con `strength+endurance>0` (Warrior primary+secondary), NON
+  `balanced_dagger`, `swaps_count=3`, `score_after > score_before`.
+- **test_18** `_e2e_second_call_idempotent`: dopo la prima chiamata,
+  la seconda restituisce `equipped=[], replaced=[], swaps=0, score_delta=0`,
+  `unchanged_slots={weapon,armor,accessory}`, tutti i `reason_it`
+  contengono "migliore".
+- **test_19** `_e2e_italian_message_readable`: verifica accordo di genere
+  su tutti e 3 gli slot ("Arma equipaggiata", "Armatura equipaggiata",
+  "Accessorio equipaggiato"), citazione "Guerriero", assenza di
+  stringhe "None" leaked.
+
+Tutti e 3 gli E2E test **PASS** contro `REACT_APP_BACKEND_URL` reale
+(guild-master-5.preview.emergentagent.com) con tester@orbus.test.
+
+### 18.11 — Regression suite completa
+`python -m pytest backend_round1654b_test.py` → **19/19 PASS** in 2.77s
+(11 unit auto-equip + 5 unit seed integrity + 3 HTTP E2E). Nessuna
+regressione sui test pre-esistenti.
+
+### 18.12 — Nessun impatto su altre feature
+File toccati nel REOPEN:
+- `/app/backend/app/equipment/auto_equip.py` (2 hunk minori, riga 259 e 286)
+- `/app/backend/tests/backend_round1654b_test.py` (append di 3 test HTTP E2E, 259 righe)
+- `/app/memory/round1654b_final_report.md` (questa sezione)
+
+**Zero modifiche** a: routes, DB schema, altri servizi (expeditions,
+raids, forge, market), catalogo classi, catalogo item, seed script.
+
+### 18.13 — CORS / auth non toccati
+Le route `auto-equip` / `unequip` / `admin/grant-item` sono già
+autenticate via `Bearer <JWT>` dal codice pre-esistente. Nessuna modifica
+CORS. Il test E2E `test_18_e2e_second_call_idempotent` verifica in modo
+implicito che l'endpoint accetti chiamate consecutive con lo stesso token.
+
+### 18.14 — No secret leak
+Nessun log del token JWT completo. `tester@orbus.test / password123` è
+credential documented in `/app/memory/test_credentials.md` (tester sandbox).
+
+### 18.15 — File di riferimento aggiornati
+- `/app/memory/round1654b_final_report.md` (questo file, sez. 18)
+- `/app/memory/backlog.md` (aggiungere ADJ-9 in Round 16.5.4c — vedi 18.17)
+
+### 18.16 — Comando per riprodurre la verifica
+```bash
+cd /app/backend
+python -m pytest tests/backend_round1654b_test.py \
+    -v --no-header -o addopts=""
+# expected: 19 passed
+```
+
+Per test manuale via curl:
+```bash
+API="https://guild-master-5.preview.emergentagent.com"
+TOK=$(curl -s -X POST "$API/api/auth/login" \
+   -H 'Content-Type: application/json' \
+   -d '{"email":"tester@orbus.test","password":"password123"}' \
+   | python3 -c 'import sys,json;print(json.load(sys.stdin)["access_token"])')
+ADV="53608708-f551-4ef2-92e6-a57e898980d0"
+for slot in weapon armor accessory; do
+  curl -s -X POST "$API/api/adventurers/$ADV/unequip" \
+    -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+    -d "{\"slot\":\"$slot\"}" > /dev/null
+done
+curl -s -X POST "$API/api/adventurers/$ADV/auto-equip" \
+    -H "Authorization: Bearer $TOK" | python3 -m json.tool
+```
+
+### 18.17 — Nota scoperta durante REOPEN: `class_slug` mancante (→ ADJ-9)
+
+**Scoperta empirica**: interrogando la collection `adventurers` con
+`db.adventurers.count_documents({class_slug: {$exists: true}})` vs
+`count_documents({})`, risulta che **~94% degli avventurieri esistenti
+NON ha il campo `class_slug`** popolato (usano solo `class_name` o
+`class`). Il tester adventurer stesso ne è privo.
+
+**Impatto sul fix R16.5.4b**: il loader class-aware
+`_load_class_meta(db, _resolve_class_slug(adv))` avrebbe restituito
+`{}` (nessuna primary_stat) per il 94% del catalogo, degradando il
+fitness a solo `power_score`. È esattamente il sintomo che i tester
+live riportavano ("sempre balanced_dagger, mai class-aware").
+
+**Mitigazione runtime già applicata**: `_resolve_class_slug()` in
+`auto_equip.py:145-150` legge `class_slug` → fallback a `class_name`
+→ fallback a `class`, tutti lowercased e trimmed. Questo garantisce che
+il 100% degli avventurieri esistenti abbia primary_stat corretta.
+
+**Fix data-integrity NON incluso in R16.5.4b** (fuori scope). Tracciato
+come **ADJ-9 [P1] Backfill class_slug on legacy adventurers** in
+`/app/memory/backlog.md` sotto Round 16.5.4c. Piano:
+1. Script dry-run+apply `round1654c_backfill_class_slug.py`.
+2. Lookup `class_name → class_slug` via catalogo `adventurer_classes`.
+3. Update idempotente `db.adventurers.update_many({class_slug: null}, {$set: {class_slug: <resolved>}})`.
+4. Modifica `POST /api/adventurers/recruit` per popolare sempre `class_slug`
+   (root cause della lacuna: le recruit routes storiche popolavano solo
+   `class_name`).
+5. Test `100% adventurers hanno class_slug post-backfill`.
+
+---
+
+**Firmato REOPEN**: E1 · Round 16.5.4b · **19/19 test PASS** · pronto per closure.
+
+---
+

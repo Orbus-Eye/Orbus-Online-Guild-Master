@@ -132,6 +132,53 @@ async def _load_class_meta(db, class_slug: Optional[str]) -> dict:
     return doc
 
 
+def _resolve_class_slug(adv: dict) -> Optional[str]:
+    """Resolve the class slug from an adventurer document.
+
+    Legacy adventurers were seeded with `class_name` (Title-cased,
+    e.g. "Warrior") only; the `class_slug` field was added in R16.0
+    but only ~6% of the 2000+ existing documents were backfilled.
+
+    Mirrors the fallback used by `check_equip_compatibility` so the
+    auto-equip class-aware scoring works on the same population that
+    the compatibility validator already handles correctly.
+    """
+    slug = (adv.get("class_slug") or "").strip().lower()
+    if slug:
+        return slug
+    name = (adv.get("class_name") or adv.get("class") or "").strip().lower()
+    return name or None
+
+
+# ── Italian noun agreement per slot for narrative messages ──────────────
+_SLOT_GRAMMAR_IT: dict[str, dict[str, str]] = {
+    "weapon":    {"noun": "Arma",       "past_part": "equipaggiata",   "art": "un'"},
+    "armor":     {"noun": "Armatura",   "past_part": "equipaggiata",   "art": "un'"},
+    "accessory": {"noun": "Accessorio", "past_part": "equipaggiato",   "art": "un "},
+}
+
+
+def _slot_grammar_it(slot: str) -> dict[str, str]:
+    return _SLOT_GRAMMAR_IT.get(
+        slot,
+        {"noun": slot.capitalize(), "past_part": "equipaggiato",
+         "art": "un "},
+    )
+
+
+# Italian class labels used when the adventurer_classes doc lacks a
+# `display_name_it` (defensive fallback; class catalog is fully
+# localised as of R16.0).
+_CLASS_LABELS_IT: dict[str, str] = {
+    "warrior": "Guerriero", "mage": "Mago", "priest": "Sacerdote",
+    "rogue": "Ladro", "ranger": "Ranger", "paladin": "Paladino",
+    "berserker": "Berserker", "druid": "Druido",
+    "necromancer": "Negromante", "monk": "Monaco", "bard": "Bardo",
+    "assassin": "Assassino", "warlock": "Stregone",
+    "alchemist": "Alchimista",
+}
+
+
 def _class_it_label(cls_meta: dict) -> str:
     """Human-readable Italian class label used in narrative reasons."""
     return (
@@ -157,7 +204,7 @@ async def auto_equip_adventurer(
             "user_message": "Avventuriero non trovato in questa gilda.",
         })
 
-    cls_meta = await _load_class_meta(db, adv.get("class_slug"))
+    cls_meta = await _load_class_meta(db, _resolve_class_slug(adv))
     primary = cls_meta.get("primary_stat") or "strength"
     secondaries = cls_meta.get("secondary_stats") or []
     class_it = _class_it_label(cls_meta)
@@ -209,6 +256,7 @@ async def auto_equip_adventurer(
 
     for slot in EQUIPMENT_SLOTS:
         slot_it, slot_en = _slot_label(slot)
+        grammar_it = _slot_grammar_it(slot)
         expected_type = SLOT_TO_ITEM_TYPE[slot]
         # Candidates: matching item_type + level gate + compat != block.
         candidates: list[tuple[float, dict]] = []
@@ -232,13 +280,22 @@ async def auto_equip_adventurer(
         if not candidates:
             warnings.append(f"{slot}: nessun item compatibile disponibile")
             unchanged.append(slot)
+            # ROUND 16.5.4b REOPEN — Empty state più informativo:
+            # include classe italiana + livello + hint drop.
+            hint_it = (
+                f" per {class_it} Lv{adv_level}"
+                if class_it else ""
+            )
             unchanged_slots_detail.append({
                 "slot": slot,
                 "reason_it": (
-                    f"{slot_it}: nessun oggetto compatibile in inventario."
+                    f"{slot_it}: nessun oggetto compatibile in inventario"
+                    f"{hint_it}. Completa spedizioni, raid o missioni "
+                    f"per trovarne."
                 ),
                 "reason_en": (
-                    f"{slot_en}: no compatible item in inventory."
+                    f"{slot_en}: no compatible item in inventory. "
+                    f"Complete expeditions, raids or contracts to loot one."
                 ),
             })
             continue
@@ -282,8 +339,7 @@ async def auto_equip_adventurer(
                     f"{slot_en}: no better item available in inventory."
                 ),
             })
-            continue
-        # Swap: unequip current then equip new.
+            continue        # Swap: unequip current then equip new.
         if current:
             try:
                 await unequip_item_service(db, guild, adv["id"], slot)
@@ -338,7 +394,7 @@ async def auto_equip_adventurer(
                 or current.get("slug")
             )
             r_it = (
-                f"{slot_it} sostituita: «{old_name}» → «{new_name}»"
+                f"{slot_it} sostituit{'a' if grammar_it['past_part']=='equipaggiata' else 'o'}: «{old_name}» → «{new_name}»"
                 + (f" ({stat_str_it})" if stat_str_it else "")
                 + class_suffix_it
             )
@@ -357,7 +413,7 @@ async def auto_equip_adventurer(
             })
         else:
             r_it = (
-                f"{slot_it} equipaggiata: «{new_name}»"
+                f"{slot_it} {grammar_it['past_part']}: «{new_name}»"
                 + (f" ({stat_str_it})" if stat_str_it else "")
                 + class_suffix_it
             )

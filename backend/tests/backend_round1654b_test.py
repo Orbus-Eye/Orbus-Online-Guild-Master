@@ -589,3 +589,305 @@ def test_16_no_other_items_modified(sync_db):
             f"snapshot pianifica slug fuori whitelist: "
             f"{planned_slugs - whitelisted}"
         )
+
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.5.4b REOPEN — HTTP E2E tests (17–19)
+#
+# Rationale: unit tests 01–11 above validate the auto-equip service in
+# isolation (motor DB, no HTTP). Live testers reported the bug over
+# HTTP (`POST /api/adventurers/{id}/auto-equip` returning weapon only,
+# always `balanced_dagger`), so we add an end-to-end contract test
+# against the running backend to prevent regressions at the transport
+# layer (routing, serialization, auth, response schema).
+#
+# Design decisions:
+#   • Uses `REACT_APP_BACKEND_URL` (external preview URL) via httpx —
+#     same pattern as `test_forge_actions_p0.py`.
+#   • Relies on the pre-seeded `tester@orbus.test / password123`
+#     account. Adventurer is picked dynamically from
+#     `GET /api/adventurers` (first Warrior with level ≥ 10 and 3+
+#     items in inventory); the module skips gracefully if none is
+#     available (e.g. brand new tester account).
+#   • Non-destructive at the semantic level: the test unequips the 3
+#     slots before running auto-equip, so re-running the suite is
+#     idempotent. State touched is limited to `equipped_items` for
+#     the tester's guild — never creates users/guilds/items.
+#   • These tests are the HTTP twin of unit tests 01 & 08–11: they do
+#     NOT re-validate the scoring formula (already covered by 01–11)
+#     but assert the transport contract (payload shape, IT grammar,
+#     idempotency across calls).
+# ═════════════════════════════════════════════════════════════════════
+
+import httpx as _httpx
+from pathlib import Path as _Path
+from dotenv import load_dotenv as _load_dotenv
+
+_load_dotenv(_Path("/app/frontend/.env"))
+_BACKEND_URL_E2E = os.environ.get("REACT_APP_BACKEND_URL")
+_TESTER_EMAIL = "tester@orbus.test"
+_TESTER_PASSWORD = "password123"
+
+_e2e_skip = pytest.mark.skipif(
+    not _BACKEND_URL_E2E,
+    reason="REACT_APP_BACKEND_URL not set — skipping HTTP E2E tests",
+)
+
+
+def _e2e_headers(token: str) -> dict:
+    return {"Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"}
+
+
+@pytest.fixture(scope="module")
+def e2e_token() -> str:
+    if not _BACKEND_URL_E2E:
+        pytest.skip("no backend URL")
+    try:
+        r = _httpx.post(
+            f"{_BACKEND_URL_E2E}/api/auth/login",
+            json={"email": _TESTER_EMAIL, "password": _TESTER_PASSWORD},
+            timeout=10.0,
+        )
+    except _httpx.HTTPError as exc:
+        pytest.skip(f"backend unreachable: {exc}")
+    if r.status_code != 200:
+        pytest.skip(f"tester login failed: {r.status_code} {r.text}")
+    return r.json()["access_token"]
+
+
+@pytest.fixture(scope="module")
+def e2e_warrior_adv(e2e_token: str) -> dict:
+    """Pick a Warrior lv≥10 with 3+ items in inventory; skip otherwise."""
+    hdrs = _e2e_headers(e2e_token)
+    r = _httpx.get(
+        f"{_BACKEND_URL_E2E}/api/adventurers",
+        headers=hdrs, timeout=10.0,
+    )
+    if r.status_code != 200:
+        pytest.skip(f"adventurers list failed: {r.status_code}")
+    advs = r.json() if isinstance(r.json(), list) else r.json().get("adventurers", [])
+    # Warrior detection: class_slug OR class_name (94% docs lack class_slug —
+    # class_slug fallback issue documented in R16.5.4b REOPEN report).
+    def _is_warrior(a: dict) -> bool:
+        slug = (a.get("class_slug") or "").lower()
+        name = (a.get("class_name") or a.get("class") or "").lower()
+        return slug == "warrior" or "warrior" in name or "guerriero" in name
+    warriors = [a for a in advs if _is_warrior(a) and int(a.get("level", 0)) >= 10]
+    if not warriors:
+        pytest.skip("no Warrior lv≥10 available on tester@orbus.test")
+    # Check inventory has ≥3 items (weapon+armor+accessory minimum).
+    r_inv = _httpx.get(
+        f"{_BACKEND_URL_E2E}/api/inventory",
+        headers=hdrs, timeout=10.0,
+    )
+    if r_inv.status_code != 200:
+        pytest.skip(f"inventory fetch failed: {r_inv.status_code}")
+    inv = r_inv.json()
+    inv_items = (
+        inv if isinstance(inv, list)
+        else (inv.get("inventory") or inv.get("items") or [])
+    )
+    if len(inv_items) < 3:
+        pytest.skip(
+            f"tester inventory has {len(inv_items)} items, need ≥3 "
+            f"(weapon+armor+accessory) — run /app/backend/app/scripts/"
+            f"round1654b_seed_test_items.py to seed"
+        )
+    return warriors[0]
+
+
+def _reset_slots(adv_id: str, token: str) -> None:
+    """Unequip all 3 slots to give auto-equip a clean board."""
+    hdrs = _e2e_headers(token)
+    for slot in ("weapon", "armor", "accessory"):
+        _httpx.post(
+            f"{_BACKEND_URL_E2E}/api/adventurers/{adv_id}/unequip",
+            headers=hdrs, json={"slot": slot}, timeout=10.0,
+        )
+
+
+@_e2e_skip
+def test_17_e2e_full_flow_warrior_lv10_class_aware_selection(
+    e2e_token: str, e2e_warrior_adv: dict,
+):
+    """POST /api/adventurers/{id}/auto-equip su Warrior lv≥10 con inventario
+    Legendary popolato → weapon+armor+accessory equipaggiati, weapon
+    class-aware (strength_bonus > 0 o power_score alto), NON balanced_dagger.
+
+    Questo è il test che replica il bug live: prima del fix R16.5.4b
+    l'endpoint restituiva solo weapon=balanced_dagger.
+    """
+    adv_id = e2e_warrior_adv["id"]
+    _reset_slots(adv_id, e2e_token)
+
+    r = _httpx.post(
+        f"{_BACKEND_URL_E2E}/api/adventurers/{adv_id}/auto-equip",
+        headers=_e2e_headers(e2e_token), timeout=15.0,
+    )
+    assert r.status_code == 200, f"auto-equip failed: {r.status_code} {r.text}"
+    payload = r.json()
+
+    # Contract shape
+    for k in ("equipped", "replaced", "unchanged_slots",
+              "unchanged_slots_detail", "reasons", "primary_stat",
+              "score_before", "score_after", "score_delta",
+              "swaps_count", "warnings_it", "warnings_en"):
+        assert k in payload, f"payload manca il campo obbligatorio {k!r}"
+
+    # Almeno weapon+armor+accessory equipaggiati (3 slot).
+    equipped_slots = {e["slot"] for e in payload["equipped"]}
+    assert equipped_slots == {"weapon", "armor", "accessory"}, (
+        f"Attesi 3 slot equipaggiati (weapon/armor/accessory), "
+        f"trovati {equipped_slots}. Payload: {payload['equipped']}"
+    )
+
+    # Il bug originale: weapon sempre = 'balanced_dagger'. Ora deve
+    # essere qualcosa di class-aware (non un generic balanced).
+    weapon = next(e for e in payload["equipped"] if e["slot"] == "weapon")
+    assert "balanced_dagger" not in weapon["item_slug"], (
+        f"REGRESSIONE: weapon torna a balanced_dagger! "
+        f"item_slug={weapon['item_slug']}"
+    )
+
+    # Warrior primary=strength: weapon deve dare almeno un bonus tra
+    # strength/endurance (Warrior primary+secondary), NON solo intellect.
+    stat_delta = weapon["stat_delta"]
+    warrior_stat_gain = (
+        int(stat_delta.get("strength", 0) or 0)
+        + int(stat_delta.get("endurance", 0) or 0)
+    )
+    other_stat_gain = (
+        int(stat_delta.get("intellect", 0) or 0)
+        + int(stat_delta.get("faith", 0) or 0)
+    )
+    assert warrior_stat_gain > 0, (
+        f"weapon del Warrior deve dare almeno strength o endurance, "
+        f"stat_delta={stat_delta}"
+    )
+    # Score deve crescere (era 0 dopo unequip, ora >= 30 con 3 Legendary).
+    assert payload["score_after"] > payload["score_before"], (
+        f"score_delta non positivo: {payload['score_before']} → "
+        f"{payload['score_after']}"
+    )
+    assert payload["swaps_count"] == 3, (
+        f"swaps_count deve essere 3 (weapon+armor+accessory), "
+        f"got {payload['swaps_count']}"
+    )
+
+
+@_e2e_skip
+def test_18_e2e_second_call_idempotent(
+    e2e_token: str, e2e_warrior_adv: dict,
+):
+    """Doppia chiamata consecutiva di auto-equip: la seconda deve essere
+    no-op (equipped=[], replaced=[], unchanged=3, score_delta=0)."""
+    adv_id = e2e_warrior_adv["id"]
+
+    # Baseline: assicurati che tutto sia equipaggiato con auto-equip.
+    _reset_slots(adv_id, e2e_token)
+    r1 = _httpx.post(
+        f"{_BACKEND_URL_E2E}/api/adventurers/{adv_id}/auto-equip",
+        headers=_e2e_headers(e2e_token), timeout=15.0,
+    )
+    assert r1.status_code == 200
+
+    # Second call → idempotente.
+    r2 = _httpx.post(
+        f"{_BACKEND_URL_E2E}/api/adventurers/{adv_id}/auto-equip",
+        headers=_e2e_headers(e2e_token), timeout=15.0,
+    )
+    assert r2.status_code == 200
+    p2 = r2.json()
+
+    assert p2["equipped"] == [], (
+        f"seconda chiamata deve avere equipped=[] "
+        f"(già ottimale), got {p2['equipped']}"
+    )
+    assert p2["replaced"] == [], (
+        f"seconda chiamata deve avere replaced=[], got {p2['replaced']}"
+    )
+    assert p2["swaps_count"] == 0, (
+        f"swaps_count seconda chiamata deve essere 0, got {p2['swaps_count']}"
+    )
+    assert p2["score_after"] == p2["score_before"], (
+        f"score non deve cambiare tra chiamate consecutive: "
+        f"{p2['score_before']} vs {p2['score_after']}"
+    )
+    assert set(p2["unchanged_slots"]) == {"weapon", "armor", "accessory"}, (
+        f"unchanged_slots deve contenere tutti e 3 gli slot, "
+        f"got {p2['unchanged_slots']}"
+    )
+    # unchanged_slots_detail deve avere motivazione IT leggibile.
+    for detail in p2["unchanged_slots_detail"]:
+        assert "reason_it" in detail and detail["reason_it"], (
+            f"unchanged_slots_detail manca reason_it: {detail}"
+        )
+        # Il messaggio "già il migliore" è la motivazione R16.5.4b.
+        assert "migliore" in detail["reason_it"].lower(), (
+            f"reason_it deve contenere 'migliore', got: {detail['reason_it']}"
+        )
+
+
+@_e2e_skip
+def test_19_e2e_italian_message_readable(
+    e2e_token: str, e2e_warrior_adv: dict,
+):
+    """UX / grammatica IT: dopo auto-equip iniziale, i `reason_it` in
+    `reasons[]` devono usare accordo di genere corretto per slot
+    (Arma/Armatura → 'equipaggiata', Accessorio → 'equipaggiato') e
+    citare la classe italiana (Guerriero) come giustificazione."""
+    adv_id = e2e_warrior_adv["id"]
+    _reset_slots(adv_id, e2e_token)
+
+    r = _httpx.post(
+        f"{_BACKEND_URL_E2E}/api/adventurers/{adv_id}/auto-equip",
+        headers=_e2e_headers(e2e_token), timeout=15.0,
+    )
+    assert r.status_code == 200
+    payload = r.json()
+    reasons_by_slot = {r["slot"]: r for r in payload["reasons"]}
+
+    # ── Weapon: "Arma equipaggiata: …" (femminile)
+    wpn_it = reasons_by_slot["weapon"]["reason_it"]
+    assert wpn_it.startswith("Arma equipaggiata:"), (
+        f"weapon reason_it deve iniziare con 'Arma equipaggiata:', "
+        f"got: {wpn_it}"
+    )
+    # Errori grammaticali comuni da evitare (R16.5.4b UX fix):
+    assert "Arma equipaggiato" not in wpn_it, (
+        f"BUG IT: 'Arma equipaggiato' (maschile) invece di "
+        f"'Arma equipaggiata' (femminile): {wpn_it}"
+    )
+
+    # ── Armor: "Armatura equipaggiata: …" (femminile)
+    arm_it = reasons_by_slot["armor"]["reason_it"]
+    assert arm_it.startswith("Armatura equipaggiata:"), (
+        f"armor reason_it deve iniziare con 'Armatura equipaggiata:', "
+        f"got: {arm_it}"
+    )
+    assert "Armatura equipaggiato" not in arm_it
+
+    # ── Accessory: "Accessorio equipaggiato: …" (maschile)
+    acc_it = reasons_by_slot["accessory"]["reason_it"]
+    assert acc_it.startswith("Accessorio equipaggiato:"), (
+        f"accessory reason_it deve iniziare con "
+        f"'Accessorio equipaggiato:', got: {acc_it}"
+    )
+    assert "Accessorio equipaggiata" not in acc_it, (
+        f"BUG IT: 'Accessorio equipaggiata' (femminile) invece di "
+        f"'Accessorio equipaggiato' (maschile): {acc_it}"
+    )
+
+    # ── Classe italiana citata almeno nel weapon reason (Warrior → Guerriero)
+    assert "Guerriero" in wpn_it or "warrior" in wpn_it.lower(), (
+        f"weapon reason_it deve citare la classe italiana 'Guerriero', "
+        f"got: {wpn_it}"
+    )
+
+    # ── Nessun stringa "None" o "null" leakato nel messaggio.
+    for slot, r_data in reasons_by_slot.items():
+        assert "None" not in r_data["reason_it"], (
+            f"{slot} reason_it contiene 'None' (bug di formattazione): "
+            f"{r_data['reason_it']}"
+        )
