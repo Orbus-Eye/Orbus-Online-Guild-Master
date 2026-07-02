@@ -27,8 +27,11 @@ zero swaps (the newly-equipped item becomes the current best).
 """
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from typing import Any, Optional
+
+from fastapi import HTTPException
 
 from app.audit.log import write_audit
 from app.equipment.compatibility import check_equip_compatibility
@@ -36,6 +39,8 @@ from app.equipment.level_gate import resolve_item_required_level
 from app.equipment.services import equip_item_service, unequip_item_service
 from app.expeditions.formulas import item_equip_power
 from app.shared.constants import EQUIPMENT_SLOTS, SLOT_TO_ITEM_TYPE
+
+logger = logging.getLogger("orbus.equipment.auto_equip")
 
 # ── Scoring weights (tunable, per R16.5.4b STEP 1 spec approval) ─────────
 PRIMARY_WEIGHT = 3.0
@@ -47,6 +52,26 @@ STAT_TAG_BONUS = 2.0
 # candidates enter the ranking. Manual equip is UNCHANGED. See sezione
 # 19 di round1654b_final_report.md.
 # (Legacy `WARNING_PENALTY = 0.5` constant removed — no longer applied.)
+
+
+def _extract_it_message(http_exc: HTTPException, slot_it: str,
+                       *, fallback: str) -> str:
+    """ROUND 16.5.4c ADJ-3.c — estrai messaggio IT pulito da HTTPException.
+
+    Contract dei service Orbus: `detail` è tipicamente
+    `{"code": "...", "user_message": "…in italiano…"}`. Ritorna quel
+    messaggio se disponibile, altrimenti `fallback`. NON stringifica mai
+    `type(exc).__name__` — quel comportamento leakava "HTTPException"
+    nel report del player (bug del REOPEN #2 R16.5.4b).
+    """
+    detail = getattr(http_exc, "detail", None)
+    if isinstance(detail, dict):
+        user_msg = detail.get("user_message") or detail.get("message")
+        if user_msg and isinstance(user_msg, str):
+            return f"{slot_it}: {user_msg}"
+    elif isinstance(detail, str) and detail.strip():
+        return f"{slot_it}: {detail.strip()}"
+    return fallback
 
 
 def _stat_bonus(item: dict, stat_name: str) -> int:
@@ -202,7 +227,6 @@ async def auto_equip_adventurer(
          "class_name": 1, "specialization_slug": 1},
     )
     if not adv:
-        from fastapi import HTTPException
         raise HTTPException(404, {
             "code": "auto_equip.adventurer_not_found",
             "user_message": "Avventuriero non trovato in questa gilda.",
@@ -365,22 +389,60 @@ async def auto_equip_adventurer(
                     f"{slot_en}: no better item available in inventory."
                 ),
             })
-            continue        # Swap: unequip current then equip new.
+            continue
+        # Swap: unequip current then equip new.
         if current:
             try:
                 await unequip_item_service(db, guild, adv["id"], slot)
+            except HTTPException as http_exc:
+                # ROUND 16.5.4c ADJ-3.c — business error dal service: usa
+                # il `user_message` italiano strutturato se disponibile,
+                # altrimenti un fallback IT amichevole. NON stringificare
+                # mai "HTTPException" nel warning player-facing.
+                warnings.append(_extract_it_message(
+                    http_exc, slot_it,
+                    fallback=f"{slot_it}: impossibile rimuovere "
+                             f"l'oggetto attuale in questo momento."
+                ))
+                logger.warning(
+                    "auto_equip: unequip failed adv=%s slot=%s http=%s",
+                    adv["id"], slot, http_exc.status_code,
+                )
+                continue
             except Exception as exc:  # noqa: BLE001
+                # Errore tecnico imprevisto — solo log, no dettaglio nel report.
+                logger.exception(
+                    "auto_equip: unequip crashed adv=%s slot=%s",
+                    adv["id"], slot,
+                )
                 warnings.append(
-                    f"{slot}: unequip fallito ({type(exc).__name__})"
+                    f"{slot_it}: impossibile rimuovere l'oggetto attuale "
+                    f"in questo momento."
                 )
                 continue
         try:
             await equip_item_service(
                 db, guild, adv["id"], best_item["id"], slot,
             )
+        except HTTPException as http_exc:
+            warnings.append(_extract_it_message(
+                http_exc, slot_it,
+                fallback=f"{slot_it}: impossibile equipaggiare l'oggetto "
+                         f"scelto in questo momento."
+            ))
+            logger.warning(
+                "auto_equip: equip failed adv=%s slot=%s item=%s http=%s",
+                adv["id"], slot, best_item.get("id"), http_exc.status_code,
+            )
+            continue
         except Exception as exc:  # noqa: BLE001
+            logger.exception(
+                "auto_equip: equip crashed adv=%s slot=%s item=%s",
+                adv["id"], slot, best_item.get("id"),
+            )
             warnings.append(
-                f"{slot}: equip fallito ({type(exc).__name__})"
+                f"{slot_it}: impossibile equipaggiare l'oggetto scelto "
+                f"in questo momento."
             )
             continue
         # ROUND 16.5.4b — stat delta from canonical *_bonus fields.

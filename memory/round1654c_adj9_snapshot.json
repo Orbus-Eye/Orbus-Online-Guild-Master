@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-07-02T20:17:30.875830+00:00",
+  "sample_count": 6,
+  "sample": [
+    {
+      "id": "447b2020-9993-49d2-bed2-3884a24d77ff",
+      "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+      "class": "Guardian",
+      "level": 6
+    },
+    {
+      "id": "96081c7a-2870-4ab5-a740-5d8573e0ec00",
+      "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+      "class": "Cleric",
+      "level": 7
+    },
+    {
+      "id": "5bb24516-2ed6-4490-87d8-8c855176c17a",
+      "guild_id": "5b3e8a42-f84f-4c35-b61f-6d15d47bfb62",
+      "class": "Guardian",
+      "level": 6
+    },
+    {
+      "id": "bada2366-9096-4b35-9f88-b1d588dcadbe",
+      "guild_id": "5b3e8a42-f84f-4c35-b61f-6d15d47bfb62",
+      "class": "Cleric",
+      "level": 7
+    },
+    {
+      "id": "173b525d-a36a-4317-84de-6ac1b9dc55fa",
+      "guild_id": "753b3fdf-e17c-4d18-a174-35fca6f70cf0",
+      "class": "Guardian",
+      "level": 6
+    },
+    {
+      "id": "85f45676-0190-4560-8b87-3afc6791ca1a",
+      "guild_id": "753b3fdf-e17c-4d18-a174-35fca6f70cf0",
+      "class": "Cleric",
+      "level": 7
+    }
+  ]
+}

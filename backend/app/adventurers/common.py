@@ -125,6 +125,11 @@ def _generate_candidate(
         "name": _generate_name(rng=rng),
         "adventurer_class_id": klass["id"],
         "class_name": klass["name"],
+        # ROUND 16.5.4c — ADJ-9: popola sempre `class_slug` in write path,
+        # in modo che i futuri Auto-Equip / spec eligibility / filtri
+        # non debbano più cadere sul fallback runtime. Il valore proviene
+        # dal catalog `adventurer_classes` (fonte di verità unica).
+        "class_slug": (klass.get("slug") or "").strip().lower() or None,
         "class_role": klass["role"],
         "rarity": rarity,
         "level": 1,
