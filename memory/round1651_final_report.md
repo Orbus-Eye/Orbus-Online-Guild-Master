@@ -329,3 +329,140 @@ Manca solo l'esecuzione di **`e1_tester`** (delegata all'utente).
 - Compilazione punto 8 con esito e1_tester
 - Sigillo formale Round 16.5.1 in roadmap
 - Valutazione Round 16.6 P1 (opzionale, tuning reward) su feedback utente
+
+---
+
+# 🐛 Bug fix post e1_tester (2/4 pass → target 4/4)
+
+**Data**: 2026-07-02
+**Trigger**: report e1_tester 2/4 PASS, 1 FAIL (Bug #1 world_events catalog 404),
+1 HUMAN_REQUIRED (Bug #2 tester tools "[object Object]" + mancanza dati raid).
+
+## Bug #1 [P0] — Route ordering world_events
+
+**Root cause confermata**: `@admin_router.get("/{eid}")` (linea 332) precedeva
+`@admin_router.get("/catalog")` (linea 465 pre-fix). FastAPI matcha in ordine di
+registrazione → `catalog` interpretato come `eid` → 404 `event_not_found`.
+
+**Fix applicato** (`/app/backend/app/world_events/__init__.py`):
+- Spostato `admin_get_catalog` **prima** di `get_event_detail` (subito dopo `list_events /all`).
+- Rimossa la definizione duplicata a fine file.
+- Aggiunto commento inline con nota sul bug e la ragione dello spostamento.
+
+**Smoke test post-fix**:
+```
+GET /api/admin/world-events/catalog → 200 OK, 12 eventi ritornati.
+GET /api/admin/world-events/{id_reale} → 200 OK, invariato.
+```
+
+**Route ordering altri router**: sondato con grep, nessun altro router ha lo
+stesso pattern `/{param}` prima di `/statica`. Nessun fix collaterale eseguito
+(fuori scope come richiesto).
+
+## Bug #2 [P1] — "Errore: [object Object]" in Tester Tools UI
+
+**Root cause confermata**:
+1. Body FE include già `target_email` (default era `tester@orbus.test`), ma
+   quell'account **non ha `is_test_user=True`** in prod → backend risponde 403
+   `{"detail":"target_is_not_a_test_user_refusing_operation"}` (stringa OK) oppure
+   422 con `detail` array se il body è malformato.
+2. Il toast frontend faceva `String(err.response.data.detail)` → su array/obj
+   produce `[object Object]`.
+
+**Fix applicato** (`/app/frontend/src/pages/AdminTesterTools.jsx`):
+1. Aggiunta helper `formatApiError(err)` che gestisce **stringa | array | obj**:
+   - stringa → passthrough
+   - array Pydantic → `"loc.path: msg | loc.path: msg"`
+   - oggetto con `user_message` / `message` / `code` → estrae il campo
+   - fallback → `JSON.stringify`
+2. Default `email` cambiato da `tester@orbus.test` a **`admin@orbus.test`**
+   (che è già `is_admin=True + is_test_user=True` ✅).
+3. `loadStatus` e `invoke` ora usano `formatApiError(e)` invece di `e.response.data.detail`.
+
+**Sistemazione audit whitelist** (side-catch):
+Dai log server ho notato `orbus.audit - WARNING - audit: unknown
+event_type=TESTER_TOOL_INVOKED — dropped`. Aggiunti alla whitelist in
+`/app/backend/app/audit/log.py`:
+- `TESTER_TOOL_INVOKED`, `TESTER_TOOL_REJECTED`
+- `CONTINENT_EVENT_UPDATED`, `CONTINENT_EVENT_DEACTIVATED`, `CONTINENT_EVENT_DUPLICATED`
+
+Senza questo, gli audit event Round 16.5.1 venivano silenziosamente scartati.
+
+## Seed dati raid per re-run e1_tester
+
+Non implementato endpoint dedicato (fuori scope). Documentata procedura completa
+in **`/app/memory/round1651_seed_procedure_for_e1_tester.md`** con:
+- Setup admin token
+- Verifica `is_test_user` sul target
+- Passo 1: Set MAX (roster + oro)
+- Passo 2: `POST /api/raids/start` con 20 avv → **raid attivo** per Test 3
+- Passo 3: Opzione A (attesa naturale + on-visit fallback) OR Opzione B
+  (forzare `ends_at` nel passato via DB, autorizzazione PM richiesta) → **raid completato** per Test 2
+- Note su edge case (cooldown, already_in_progress, missing_adventurers)
+
+⚠️ **Aperta domanda per il PM**: se vuoi che questo diventi endpoint
+`POST /api/admin/tester-tools/seed-raid-scenario` con parametro `status`,
+è un'estensione da autorizzare esplicitamente. Non implementato ora.
+
+## Test regression aggiunti
+
+Suite `backend_round1651_test.py` +4 test:
+
+| # | test | scopo | esito |
+|:-:|---|---|:---:|
+| BUG1.1 | `test_BUG1_admin_catalog_is_reachable` | GET /catalog → 200, 12 eventi, no `detail: event_not_found` | ✅ |
+| BUG1.2 | `test_BUG1_admin_get_by_id_still_works` | GET /{id} con id reale → 200 (no regressione) | ✅ |
+| BUG2.1 | `test_BUG2_tester_tools_returns_pydantic_422_when_body_missing` | Body vuoto → 422 con `detail` array `[{loc, msg}]` (contratto stabile per FE parser) | ✅ |
+| BUG2.2 | `test_BUG2_tester_tools_admin_as_target_works` | Default admin@orbus.test come target funziona → 200 | ✅ |
+
+**Nuovi conteggi test**:
+```
+tests/backend_round165_p0_balance_test.py  ......  13 passed
+tests/backend_round165_p03_wiring_test.py  ......  10 passed
+tests/backend_round1651_test.py            ......  18 passed  (14 + 4 bug regression)
+─────────────────────────────────────────────────────────────
+TOTALE                                      ...... 41 passed  (+4 vs. run precedente)
+```
+
+Tempo esecuzione 4.4s. Zero regressioni.
+
+## Frontend lint + build
+
+- **ESLint**: ✅ 0 issues sul file modificato (`AdminTesterTools.jsx`)
+- **Webpack**: ✅ `Compiled successfully!` in `frontend.out.log` post-fix
+
+## File modificati (delta bug fix)
+
+| tipo | file |
+|---|---|
+| Backend MOD | `/app/backend/app/world_events/__init__.py` (route reorder + commento) |
+| Backend MOD | `/app/backend/app/audit/log.py` (+5 audit event types whitelist) |
+| Test MOD | `/app/backend/tests/backend_round1651_test.py` (+4 regression test) |
+| Frontend MOD | `/app/frontend/src/pages/AdminTesterTools.jsx` (formatApiError + default email admin) |
+| Docs NEW | `/app/memory/round1651_seed_procedure_for_e1_tester.md` |
+| Docs MOD | `/app/memory/round1651_final_report.md` (questa sezione) |
+
+## Sorprese emerse
+
+1. **Audit whitelist silenzioso**: gli audit event nuovi venivano droppati senza
+   errore visibile lato caller. Il `write_audit()` fa un `logger.warning`
+   ma la funzione ritorna `None` normalmente. Ho aggiunto il fix ma segnalo il
+   pattern: **se in futuro l'audit event non compare, cerca il warning
+   `unknown event_type=X — dropped` nei log**.
+2. **`is_test_user` mancante su tester@orbus.test**: già segnalato in
+   R16.5.1 X1, ora fixato di fatto usando `admin@orbus.test` come default.
+   Il PM può comunque decidere di settare il flag anche sul tester (una
+   riga MongoDB) se preferisce.
+3. **Nessun endpoint dev per force-complete raid**: la procedura seed richiede
+   passi manuali. Se il volume di re-testing lo richiede, l'endpoint
+   `POST /api/admin/tester-tools/seed-raid-scenario` sarebbe un +30 min di
+   lavoro. Fuori scope corrente.
+
+## Stato Round 16.5.1
+
+**Non ancora chiuso** — in attesa di re-run `e1_tester` sui:
+- Test 1 (world-events admin) → dovrebbe passare col fix Bug #1
+- Test 2 (raid replay card) → dipende dall'esecuzione della procedura seed (Passo 1-3)
+- Test 3 (raid countdown live) → dipende dall'esecuzione della procedura seed (Passo 2)
+
+**Punto 8 del report finale (esito e1_tester)** resta ancora placeholder da compilare.

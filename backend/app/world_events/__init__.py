@@ -312,6 +312,16 @@ async def list_events(continent_slug: Optional[str] = None,
     return {"instances": [_pub(d) for d in docs], "count": len(docs)}
 
 
+# ROUND 16.5.1 BUG#1 fix — /catalog è path statico e DEVE stare sopra
+# la route /{eid} per essere raggiungibile. Prima era in fondo al file
+# → matchata come eid="catalog" → 404 event_not_found.
+@admin_router.get("/catalog")
+async def admin_get_catalog(admin: dict = Depends(get_admin_user)):
+    docs = await db.continent_event_catalog.find(
+        {}, {"_id": 0}).sort("sort_order", 1).to_list(50)
+    return {"catalog": [_pub(d) for d in docs]}
+
+
 # ══════════════════════════════════════════════════════════════════════
 # ROUND 16.5.1 B.1 — Extension endpoints (Q1-a: estende esistente)
 # ══════════════════════════════════════════════════════════════════════
@@ -460,13 +470,6 @@ async def duplicate_event(eid: str,
                        "event_slug": new_doc["event_slug"],
                        "source_id": eid})
     return {"instance": _pub(new_doc)}
-
-
-@admin_router.get("/catalog")
-async def admin_get_catalog(admin: dict = Depends(get_admin_user)):
-    docs = await db.continent_event_catalog.find(
-        {}, {"_id": 0}).sort("sort_order", 1).to_list(50)
-    return {"catalog": [_pub(d) for d in docs]}
 
 
 __all__ = ["router", "admin_router", "seed_continent_event_catalog",

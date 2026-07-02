@@ -370,3 +370,87 @@ def test_B3_replay_preview_missing_squad(admin_auth):
     assert body["raid_available"] is False
     assert body["all_adventurers_owned"] is False
     assert len(body["missing_adventurers"]) == 20
+
+
+# ═════════════════════════════════════════════════════════════════════
+# BUG#1 REGRESSION — /catalog deve stare sopra /{eid} nel routing
+# ═════════════════════════════════════════════════════════════════════
+
+def test_BUG1_admin_catalog_is_reachable(admin_auth):
+    """`GET /api/admin/world-events/catalog` deve tornare 200 con la lista
+    dei 12 eventi seedati. Pre-fix ritornava 404 event_not_found perché
+    `/{eid}` matchava 'catalog' come id."""
+    base = _api()
+    r = requests.get(f"{base}/api/admin/world-events/catalog",
+                     headers=admin_auth["headers"], timeout=10)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert "catalog" in body
+    assert isinstance(body["catalog"], list)
+    assert len(body["catalog"]) >= 1, "catalog seedato vuoto?"
+    # Nessun record col detail 'event_not_found'
+    assert "detail" not in body
+
+
+def test_BUG1_admin_get_by_id_still_works(admin_auth, sample_event):
+    """Regressione: dopo la riorganizzazione delle rotte, GET /{eid}
+    con un id reale deve continuare a funzionare (200)."""
+    base = _api()
+    r = requests.get(
+        f"{base}/api/admin/world-events/{sample_event['id']}",
+        headers=admin_auth["headers"], timeout=10)
+    assert r.status_code == 200, r.text
+    assert r.json()["instance"]["id"] == sample_event["id"]
+
+
+# ═════════════════════════════════════════════════════════════════════
+# BUG#2 REGRESSION — target_email obbligatorio nel body tester-tools
+# ═════════════════════════════════════════════════════════════════════
+
+def test_BUG2_tester_tools_returns_pydantic_422_when_body_missing(admin_auth):
+    """Se il client dimentica `target_email`, il backend risponde 422
+    Pydantic con array di errori. Il FE ora deve saperli renderizzare
+    come stringa leggibile (non `[object Object]`).
+
+    Questo test verifica la SHAPE dell'errore così il formatApiError
+    del FE può fare il proprio job."""
+    base = _api()
+    r = requests.post(
+        f"{base}/api/admin/tester-tools/set-max",
+        headers=admin_auth["headers"],
+        json={},  # ← target_email mancante
+        timeout=10,
+    )
+    assert r.status_code == 422, r.text
+    body = r.json()
+    assert "detail" in body
+    detail = body["detail"]
+    # Pydantic v2: detail è lista di oggetti con loc/msg/type
+    assert isinstance(detail, list), f"detail non è array: {detail}"
+    assert len(detail) >= 1
+    first = detail[0]
+    assert "loc" in first
+    assert "msg" in first
+    # loc dovrebbe includere 'target_email'
+    assert any("target_email" in str(x) for x in first.get("loc", [])), first
+
+
+def test_BUG2_tester_tools_admin_as_target_works(admin_auth, test_db):
+    """Il default admin@orbus.test come TARGET funziona (ha
+    is_test_user=True in orbus_r16_test dopo la fixture admin_auth)."""
+    base = _api()
+    # admin_auth ha promosso admin_test_email a is_admin=True, ma
+    # potrebbe NON aver settato is_test_user. Applico il flag.
+    test_db.users.update_one(
+        {"email": admin_auth["email"]},
+        {"$set": {"is_test_user": True}},
+    )
+    r = requests.get(
+        f"{base}/api/admin/tester-tools/status",
+        headers=admin_auth["headers"],
+        params={"target_email": admin_auth["email"]}, timeout=10,
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["target_user"]["email"] == admin_auth["email"]
+    assert body["target_user"]["is_test_user"] is True

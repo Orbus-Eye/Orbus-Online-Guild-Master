@@ -8,12 +8,45 @@ import axios from "axios";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+/** ROUND 16.5.1 BUG#2 fix — parser errore robusto.
+ * Il backend può ritornare:
+ *   - string (HTTPException con detail stringa)
+ *   - array (Pydantic ValidationError: [{loc, msg, type}, ...])
+ *   - dict (custom code+message)
+ * Il pattern `String(err)` produce `[object Object]`. Questa helper
+ * appiattisce ogni caso in una stringa leggibile in italiano.
+ */
+function formatApiError(err) {
+  const detail = err.response?.data?.detail;
+  if (detail === undefined || detail === null) return err.message || "Errore";
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((e) => {
+        if (typeof e === "string") return e;
+        const loc = Array.isArray(e.loc) ? e.loc.join(".") : "";
+        const msg = e.msg || e.message || JSON.stringify(e);
+        return loc ? `${loc}: ${msg}` : msg;
+      })
+      .join(" | ");
+  }
+  if (typeof detail === "object") {
+    if (detail.user_message) return detail.user_message;
+    if (detail.message) return detail.message;
+    if (detail.code) return detail.code;
+    try { return JSON.stringify(detail); } catch { return "Errore"; }
+  }
+  return String(detail);
+}
+
 /** ROUND 16.5.1 B.2 — Admin Tester Tools UI.
  * SOLO account @orbus.test o is_test_user=True.
  * Ambiente APP_ENV=dev/preview OR ENABLE_TESTER_TOOLS=true.
  */
 export default function AdminTesterTools() {
-  const [email, setEmail] = useState("tester@orbus.test");
+  // ROUND 16.5.1 BUG#2 fix — default target = admin corrente (che ha
+  // is_test_user=True). Ne evita 403 all'apertura del pannello.
+  const [email, setEmail] = useState("admin@orbus.test");
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [pendingTool, setPendingTool] = useState(null);
@@ -34,8 +67,7 @@ export default function AdminTesterTools() {
       setStatus(r.data);
       toast.success("Status caricato");
     } catch (e) {
-      const detail = e.response?.data?.detail || e.message;
-      toast.error(`Errore: ${detail}`);
+      toast.error(`Errore: ${formatApiError(e)}`);
       setStatus(null);
     } finally { setLoading(false); }
   };
@@ -52,13 +84,13 @@ export default function AdminTesterTools() {
       setNeedConfirm(false);
       setPendingTool(null);
     } catch (e) {
-      const detail = e.response?.data?.detail || e.message;
-      if (typeof detail === "string" && detail.includes("require_confirm")) {
+      const parsed = formatApiError(e);
+      if (parsed.includes("require_confirm")) {
         toast.warning("Chiamata recente rilevata — richiede conferma esplicita");
         setPendingTool(tool);
         setNeedConfirm(true);
       } else {
-        toast.error(`Errore: ${detail}`);
+        toast.error(`Errore: ${parsed}`);
       }
     }
   };
@@ -147,7 +179,7 @@ function ConfirmButton({ label, confirmText, onConfirm, testId }) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confermi "{label}"?</AlertDialogTitle>
+          <AlertDialogTitle>Confermi &laquo;{label}&raquo;?</AlertDialogTitle>
           <AlertDialogDescription>{confirmText}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
