@@ -662,7 +662,56 @@ Con la nuova regola Q2-b(iii), l'empty state per Druid/Warlock/Alchemist diventa
 - ✅ Test isolati su `orbus_r16_test`
 
 ### 19.13 — Statement
-**Round 16.5.4b REOPEN #2** — 23/23 test PASS, pronto per verifica browser `e1_tester`. **NON ancora chiuso** — attende conferma PM post browser test.
+**Round 16.5.4b REOPEN #2** — 23/23 test PASS, verificato via `e1_tester` browser (M1) il 2026-07-02.
+
+---
+
+## 🔒 Sigillo Round 16.5.4b — CLOSED & SEALED (definitivo)
+
+**Data**: 2026-07-02T20:11Z
+
+### Verifica finale end-to-end
+- ✅ Backend pytest: **23/23 PASS** (11 unit + 5 backfill + 3 HTTP E2E + 4 warning-skip)
+- ✅ Curl live regression Warrior: `drakefang-greatsword` + `stormforged-plate` + `hoardlords-seal` invariati
+- ✅ `e1_tester` browser Test 1 (UI refresh Warrior Lv10): **PASS**
+- ✅ `e1_tester` Test 2 (Warning-only skip, API su Mage): **PASS** con evidenza:
+  - Payload: `equipped: []`, `unchanged_slots_detail[weapon].off_class_seen: 4`
+  - `reason_it`: «Oggetti trovati, ma nessuno adatto alla classe Mago per lo slot arma.»
+- ✅ `e1_tester` Test 3 (Warrior regression): **PASS**
+
+### 4 criteri di chiusura soddisfatti
+1. ✅ Auto-Equip HTTP equipaggia weapon+armor+accessory quando ci sono candidati class-fit
+2. ✅ `balanced_dagger` NON scelto quando esiste alternativa migliore class-aware
+3. ✅ Empty state chiaro in italiano (branch `off_class_seen=0` e `>0`)
+4. ✅ Fix deployato in preview (evidenza browser + API)
+
+### Regola Auto-Equip finale
+- `block`   → scarta
+- `warning` → **SCARTA** (nuovo comportamento Q2-b(iii))
+- `ok`      → candidato valido
+
+### Fix consegnati
+- Formula class-aware reale su campi `{stat}_bonus` canonici
+- Level gate via `resolve_item_required_level`
+- 6 Legendary ADJ-2 backfillati (snapshot SHA256)
+- UI stale fix Opzione B1 (`Adventurers.jsx` → `onChanged = reloadAndRefreshSelected`)
+- Warning-only skip (`auto_equip.py`)
+- Empty state IT differenziato (`off_class_seen` 0 / >0)
+
+### Vincoli rispettati
+- Zero modifiche a drop/reward/PvP/economia/premium/stat item/class primary_stat/formule
+- Zero hard delete
+- Zero forced-unequip retroattivo
+- Test isolati su `orbus_r16_test`
+
+### Caveat tracciati per R16.5.4c (NON blocker)
+- **P1 ADJ-9**: 94% avventurieri senza `class_slug` → backfill + fix recruit
+- **P1 ADJ-3**: Warlock/Alchemist/Druid item pool scarso → seed patch dedicata
+- **P2 NEW ADJ-3.c**: "accessory: equip fallito (HTTPException)" nel payload → gestione except pulita + reason italiana
+- **P3 NEW**: verifica visiva UI empty state con label "Druido" branch `off_class_seen=0`
+
+### Statement
+**Round 16.5.4b CLOSED & SEALED (definitivo)**
 
 ---
 

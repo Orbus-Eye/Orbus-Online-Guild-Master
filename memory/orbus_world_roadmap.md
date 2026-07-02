@@ -249,11 +249,11 @@ Micro-fix registrazione con policy password strutturata + checklist dinamica FE.
 
 ---
 
-## Round 16.5.4b — Auto-Equip Class-Aware · REOPEN #2 in-flight ⚠️ (2026-07-02)
+## Round 16.5.4b — Auto-Equip Class-Aware CLOSED & SEALED ✅ (definitivo, 2026-07-02T20:11Z)
 
-> **Status**: REOPEN #1 chiuso 2026-07-02T19:06Z (19/19 test PASS). **REOPEN #2 aperto stesso giorno** dopo screenshot player live (Gwyn Ironfoot Druid/Healer Lv11 su produzione): UI stale + Druid riceve item STR. 23/23 test PASS post-fix. In attesa `e1_tester` browser per closure formale.
+> **Status**: Sigillo definitivo dopo REOPEN #2 chiuso via `e1_tester` browser (M1). 23/23 test PASS + 3/3 test browser PASS (UI refresh Warrior Lv10, Warning-only skip Mage, Warrior regression).
 
-BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary required_level) + REOPEN #1 (verifica live end-to-end + fix 2× `NameError` + HTTP E2E test) + REOPEN #2 (UI stale onChanged + warning-only skip).
+BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary required_level) + REOPEN #1 (verifica live end-to-end + fix 2× `NameError` + HTTP E2E test) + REOPEN #2 (UI stale onChanged + warning-only skip Q2-b(iii)).
 
 - **Root cause originale**: formula fitness leggeva `item['stats']` (dict inesistente) → ranking degenerato a solo `power_score`; level gate leggeva campi legacy inesistenti; `item_equip_power` locale ignorava i `*_bonus`.
 - **Fix formula**: `PRIMARY_WEIGHT=3.0 · SECONDARY_WEIGHT=1.5 · POWER_WEIGHT=1.0 · STAT_TAG_BONUS=2.0 · WARNING_PENALTY=0.5`. Sort tie-break totalmente deterministico.
@@ -272,16 +272,27 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## Round 16.5.4c — Seed Integrity & Class Equipment Coverage PLANNED 🔜
+## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup PLANNED 🔜
 
-Chiude i buchi di data-integrity + coverage di classi introdotti dopo R16.0 rilevati durante audit e REOPEN R16.5.4b.
+Chiude i buchi di data-integrity + coverage di classi + cleanup Auto-Equip rilevati durante audit e REOPEN #1/#2 di R16.5.4b.
 
-**Priorità items** (da `/app/memory/backlog.md`):
-1. **ADJ-9 [P1]** ⭐ Backfill `class_slug` sugli avventurieri legacy (94% dei doc senza campo). Script `round1654c_backfill_class_slug.py` + fix `POST /api/adventurers/recruit`.
-2. **ADJ-1 [P2]** Rarity case-mismatch normalization (rare/epic/legendary → Rare/Epic/Legendary).
-3. **ADJ-3 [P1]** Seed pack minimale Warlock + Alchemist (weapon/armor/accessory a 5 livelli target).
-4. **ADJ-6 [P3]** Estensione `related_entity_id=adv.id` a `equip_item_service` + `unequip_item_service`.
-5. **ADJ-7 [P3]** Bubble-up 423 level_gate come warning strutturato in auto-equip.
+**Lista aggiornata dopo Sigillo definitivo R16.5.4b (2026-07-02):**
+
+### P1 items
+1. **ADJ-9** ⭐ Backfill `class_slug` per 94% avventurieri legacy + fix `POST /api/adventurers/recruit`.
+2. **ADJ-3** Item pool coverage per Warlock/Alchemist/Druid — seed patch dedicata con `recommended_classes` popolato (weapon+armor+accessory a 5 livelli target).
+
+### P2 items
+3. **ADJ-3.c** NEW: "accessory: equip fallito (HTTPException)" nel payload Mage
+   - Root cause probabile: except generico che cattura `HTTPException` senza logging pulito.
+   - Fix: gestire il caso "nessun accessorio adatto" con reason italiana pulita, no eccezione nel warning.
+   - Test dedicato: mage senza accessory class-fit → reason IT pulita, no "HTTPException" stringato.
+
+### P3 items
+4. **ADJ-1** Rarity case-mismatch normalization (Legendary vs legendary, 11+ docs).
+5. **ADJ-6** Estensione `related_entity_id=adv.id` a `equip_item_service` + `unequip_item_service`.
+6. **ADJ-7** Bubble-up 423 level_gate come warning strutturato in `auto_equip`.
+7. **NEW** Verifica visiva UI empty state per Druido (branch `off_class_seen=0`).
 
 Vincoli: dry-run+apply obbligatorio per ogni seed patch, snapshot rollback, zero drop/balance/P2W shift, zero hard delete.
 

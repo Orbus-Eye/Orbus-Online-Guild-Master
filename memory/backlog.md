@@ -138,6 +138,13 @@ Hook rimanenti da attivare:
    - Fix proposto: seed pack minimale (weapon + armor + accessory per ciascuna classe, rarità Common/Uncommon/Rare/Epic, cinque livelli target); verificare che le drop table delle spedizioni includano item class-fit per ogni classe attiva post-R16.0. Design + balance separato per NON alterare drop rate esistenti.
    - Nessun P2W, nessun combat balance shift, nessun cambio primary_stat.
 
+4. **ADJ-3.c [P2] NEW — Warning "equip fallito (HTTPException)" leaka nel payload** (scoperto in `e1_tester` Test 2 Mage 2026-07-02)
+   - Sintomo: nel test Mage senza accessory class-fit, il payload `warnings_it` conteneva stringa "accessory: equip fallito (HTTPException)" invece di reason italiana pulita.
+   - Root cause probabile: except generico in `auto_equip.py` che cattura `HTTPException` sollevato da `equip_item_service` e la stringifica senza estrarre il `detail`.
+   - Fix: gestire il caso "nessun accessorio adatto" con reason italiana pulita (probabilmente non dovrebbe nemmeno raggiungere quel branch se il filtro warning-skip è già applicato — verifica se è un branch dormiente).
+   - Test dedicato: mage senza accessory class-fit → nessun "HTTPException" stringato nel payload, solo reason IT.
+   - Nessun impatto funzionale (l'auto-equip funziona correttamente), solo UX/log cleanup.
+
 4. **ADJ-6 — write_audit senza `related_entity_id=adv.id`** — ✅ MITIGATO in R16.5.4b (aggiunto in `auto_equip.py`).
    - Chiudibile: audit `adventurer_auto_equipped` ora popola `related_entity_id`. Verificare che altri handler nel modulo `equipment/` seguano la stessa convenzione (`equip_item_service`, `unequip_item_service`).
 
