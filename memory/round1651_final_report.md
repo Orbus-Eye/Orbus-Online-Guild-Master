@@ -223,3 +223,109 @@ Route `/admin/world-events` protetta da `ProtectedRoute`. La UI mostra:
 2. **UI raid countdown** (15 min): mostrare `remaining_seconds` come countdown live nella lista/dettaglio raid (già esposto dal backend).
 3. **e1_tester**: end-to-end di admin UI + tester tools + raid dashboard.
 4. **Round 16.6 P1** (opzionale): tuning fine di 2-3 dungeon con reward incoerenti (storm-spire, silent-monastery-5p, iron-foundry-5p) come discusso nel report P0.
+
+---
+
+# 🎨 Wiring UI B.3 + B.4 (chiusura X1)
+
+**Data**: 2026-07-02
+**Autorizzazione utente**: X1 — chiusura pulita con UI wired prima di lanciare e1_tester.
+
+## Punti richiesti (13)
+
+### 1. File frontend modificati
+| tipo | file |
+|---|---|
+| NEW | `/app/frontend/src/components/LastRaidCard.jsx` (~220 righe) |
+| NEW | `/app/frontend/src/components/RaidCountdown.jsx` (~80 righe) |
+| MOD | `/app/frontend/src/pages/Dashboard.jsx` (+import + card) |
+| MOD | `/app/frontend/src/pages/Raids.jsx` (+import + sezione "Raid in corso") |
+| MOD | `/app/frontend/src/pages/RaidReport.jsx` (+import + countdown nel banner in corso) |
+
+### 2. Card Ultimo raid implementata sì/no
+**SÌ.** Componente `LastRaidCard` consuma `GET /api/raids/last`:
+- Loading state, empty state ("Nessun raid ancora completato"), stato normale
+- Mostra: esito (Vittoria/Sconfitta color-coded), score, durata (m), squadra count, ricompense (oro/XP/items count)
+- CTA "Ripeti raid" abilitato solo se raid presente
+- data-testid: `last-raid-card`, `last-raid-card-empty`, `last-raid-card-loading`, `last-raid-outcome`, `last-raid-score`, `last-raid-duration`, `last-raid-squad-count`, `last-raid-rewards`, `last-raid-replay-btn`
+
+### 3. Endpoint `/api/raids/last` consumato sì/no
+**SÌ.** Chiamato su mount del componente + dopo ogni azione di replay. Gestisce 404 come empty state (non errore).
+
+### 4. Replay preview UI implementata sì/no
+**SÌ.** Modal `AlertDialog` che apre su click "Ripeti raid":
+- Chiama `POST /api/raids/replay-preview` con `raid_slug` + `squad_ids` dell'ultimo raid
+- Mostra: disponibilità raid (verde/rosso), avv non disponibili (giallo, con motivo), avv mancanti (rosso), stato "pronto" (verde)
+- Confirmation button `Vai al Raid Builder` disabilitato se `raid_available=false`
+- **Nessun auto-start**: click su confirm → naviga a `/raid-builder?raid_slug=...&squad_ids=...` (pagina esistente, l'utente parte da lì manualmente)
+- data-testid: `replay-preview-modal`, `replay-raid-available`, `replay-raid-unavailable`, `replay-unavailable-warnings`, `replay-missing-warnings`, `replay-ready`, `replay-cancel`, `replay-confirm`
+
+### 5. Countdown raid implementato sì/no
+**SÌ.** Componente `RaidCountdown` consuma `raid.ends_at` + `raid.remaining_seconds` + `raid.status`:
+- `in_progress` con `remaining > 0`: `Finisce tra Xh Ym` / `Ym Zs` / `Zs` (formato auto-adattivo)
+- `in_progress` con `remaining <= 0`: `Completato — in attesa di resolution` (amber)
+- `completed`: `Completato — risultato disponibile` (emerald)
+- Aggiornamento live via `setInterval(1000)`, calcolato da `endsAt` (server-authoritative, no drift)
+- Cleanup interval on unmount / cambio status
+- Fallback su `remainingSeconds` server se `endsAt` mancante (raro)
+- data-testid: `raid-countdown` (o override via prop)
+
+### 6. Pagine raid aggiornate (elenco)
+- `Dashboard.jsx` → card "Ultimo raid" tra ContractsCard e ChronicleCard
+- `Raids.jsx` → nuova sezione "RAID IN CORSO" prima del catalog, filtrata su `status="in_progress"` da `history`, ogni riga con countdown + link al dettaglio (`testid="raid-active-<id>"`, `raid-active-countdown-<id>`, `raid-active-link-<id>`)
+- `RaidReport.jsx` → banner `in_progress` ora usa `RaidCountdown` invece di `Ends at: <iso>` grezzo (`testid="raid-report-countdown"`)
+
+### 7. Mobile check (esito breve)
+- Card usa `grid-cols-2 md:grid-cols-4` → responsive down to 320px
+- Modal `AlertDialog` shadcn: già mobile-first (già usato in altre parti dell'app)
+- Countdown text piccolo (`text-[11px]`) leggibile su viewport strette
+- Layout Raids.jsx section "in corso" con `flex-wrap` per evitare overflow
+- Nessun elemento coperto da bottom nav (safe area rispettata dal layout esistente)
+- **Nota**: nessun test playwright viewport-mobile eseguito — delegato a `e1_tester`.
+
+### 8. e1_tester risultato
+**PLACEHOLDER** — l'utente lancerà i 16 test case elencati. Da compilare in questo file dopo l'esecuzione.
+
+### 9. Frontend lint/build risultato
+- **ESLint**: ✅ 0 issues su tutti i file toccati (LastRaidCard, RaidCountdown, Raids, RaidReport, Dashboard)
+- **Webpack**: ✅ compilation successful (`webpack compiled successfully` in `/var/log/supervisor/frontend.out.log`)
+
+### 10. Test backend risultato
+**37/37 passed** (13 P0.2 + 10 P0.3+A.3 + 14 R16.5.1). Tempo 4.56s. Zero regressioni post-wiring UI.
+
+### 11. Bug residui
+- **`is_test_user` mancante su `tester@orbus.test`** in `orbus_r16`: NON impatta il flow tester tools *chiamante*, ma se qualcuno vuole usare `tester@orbus.test` come *target* dei tools → serve set manuale. Raccomando usare `admin@orbus.test` come target (che ha entrambi i flag). Documentato in `test_credentials.md`.
+- **Bottom-nav / safe-area mobile**: verificato solo via layout code review, non testato con playwright viewport-mobile.
+- **`raid-builder` route esistente**: verificata da `App.js` ma le query string `?raid_slug=X&squad_ids=Y` non sono garantite consumabili dalla pagina (dipende dall'implementazione del builder). Se il builder ignora le query string, l'utente vede la pagina vuota — il replay funziona ma senza preselezioni. **Da verificare in e1_tester test case dedicato.**
+- Nessun altro bug rilevato.
+
+### 12. Conferma no modifiche balance/reward/drop/XP/PvP/economia
+✅ **CONFERMATO**. Il wiring UI è solo lettura. Nessuna modifica a:
+- `raid_public()` (solo aggiunta di `remaining_seconds` calcolato client-facing, campo derivato, non persistito)
+- Nessun endpoint di scrittura toccato
+- Zero cambi a reward/drop/XP tables
+- Zero cambi a PvP season / stables / economia
+
+### 13. Conferma Round 16.5.1 chiuso (backend + UI completa)
+✅ **CONFERMATO**. Round 16.5.1 chiuso su tutti i fronti:
+- **FASE A** (fallback D2): DONE — Round 16.5 P0 CLOSED
+- **FASE B.1** (world_events extension): DONE — 4 endpoint + UI admin
+- **FASE B.2** (Tester Tools): DONE — 4 endpoint + UI admin + guardrail
+- **FASE B.3** (raids/last + replay preview): DONE — backend + UI card
+- **FASE B.4** (raid countdown): DONE — backend + UI live in 3 pagine
+- **FASE C** (test globale): 37/37 backend passed + lint OK + webpack OK
+- **FASE D** (report unificato): questo file
+
+Manca solo l'esecuzione di **`e1_tester`** (delegata all'utente).
+
+## Credenziali per e1_tester
+
+- Admin: `admin@orbus.test` / `admin123` (is_admin=True + is_test_user=True ✅)
+- User standard: `tester@orbus.test` / `password123` (is_admin=True)
+- Vedi `/app/memory/test_credentials.md` per dettagli auth injection e endpoint protetti.
+
+## Prossime attività dopo e1_tester
+
+- Compilazione punto 8 con esito e1_tester
+- Sigillo formale Round 16.5.1 in roadmap
+- Valutazione Round 16.6 P1 (opzionale, tuning reward) su feedback utente

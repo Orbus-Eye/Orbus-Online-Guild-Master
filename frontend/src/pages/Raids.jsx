@@ -1,4 +1,4 @@
-// Phase 18 — Raids list (read-only catalog + cooldown banner + history).
+import RaidCountdown from "../components/RaidCountdown";  // ROUND 16.5.1 B.4 UI
 // Builder + report are deferred to Phase 18.1 (out of scope for ROUND 5 MVP).
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -135,6 +135,35 @@ export default function Raids() {
                 )}
 
                 {loading && <div className="text-xs text-muted-foreground">…</div>}
+
+                {/* ROUND 16.5.1 B.4 UI — Raid in corso con countdown live */}
+                {history.filter((r) => r.status === "in_progress").length > 0 && (
+                    <section className="border border-amber/40 bg-amber/5 rounded-sm px-4 py-3 mb-6"
+                             data-testid="raids-active-section">
+                        <h3 className="text-xs tracking-widest text-amber mb-2">
+                            :: RAID IN CORSO
+                        </h3>
+                        <ul className="space-y-2">
+                            {history.filter((r) => r.status === "in_progress")
+                              .map((r) => (
+                                <li key={r.id}
+                                    className="text-[11px] flex items-center gap-3 flex-wrap"
+                                    data-testid={`raid-active-${r.id}`}>
+                                    <span>{t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
+                                    <RaidCountdown endsAt={r.ends_at}
+                                                   remainingSeconds={r.remaining_seconds}
+                                                   status={r.status}
+                                                   testid={`raid-active-countdown-${r.id}`} />
+                                    <Link to={`/raids/${r.id}/report`}
+                                          className="text-amber hover:underline ml-auto"
+                                          data-testid={`raid-active-link-${r.id}`}>
+                                        dettaglio →
+                                    </Link>
+                                </li>
+                              ))}
+                        </ul>
+                    </section>
+                )}
 
                 {/* Catalogue */}
                 <section className="space-y-4 mb-8">

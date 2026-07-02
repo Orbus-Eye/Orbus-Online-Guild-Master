@@ -24,6 +24,7 @@ import WeeklyQuestsCard from "../components/WeeklyQuestsCard";
 import ChronicleCard from "../components/ChronicleCard";
 import RosterHealthCard from "../components/RosterHealthCard";
 import ContractsCard from "../components/ContractsCard";
+import LastRaidCard from "../components/LastRaidCard";  // ROUND 16.5.1 B.3 UI
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 import { formatDateTime, formatRelative } from "../utils/dateFormat";
@@ -244,6 +245,10 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-6">
                     <ContractsCard />
+                </div>
+                {/* ROUND 16.5.1 B.3 UI — Ultimo raid card */}
+                <div className="mb-6">
+                    <LastRaidCard />
                 </div>
                 <div className="mb-6">
                     <ChronicleCard limit={15} />

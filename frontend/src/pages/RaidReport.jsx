@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import RaidCountdown from "../components/RaidCountdown";  // ROUND 16.5.1 B.4 UI
 import { useT } from "../i18n/I18nContext";
 
 
@@ -90,7 +91,14 @@ export default function RaidReport() {
                 <section className="border border-border bg-card rounded-sm p-4 mb-4" data-testid="raid-report-summary">
                     {raid.status === "in_progress" ? (
                         <div className="space-y-2">
-                            <div className="text-xs text-amber">⏳ In corso · Ends at: {raid.ends_at}</div>
+                            <div className="text-xs text-amber flex items-center gap-2 flex-wrap"
+                                 data-testid="raid-report-status">
+                                <span>⏳ In corso</span>
+                                <RaidCountdown endsAt={raid.ends_at}
+                                               remainingSeconds={raid.remaining_seconds}
+                                               status={raid.status}
+                                               testid="raid-report-countdown" />
+                            </div>
                             <button
                                 onClick={forceComplete}
                                 disabled={busy}
