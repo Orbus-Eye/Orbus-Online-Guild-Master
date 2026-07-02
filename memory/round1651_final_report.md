@@ -466,3 +466,133 @@ Tempo esecuzione 4.4s. Zero regressioni.
 - Test 3 (raid countdown live) → dipende dall'esecuzione della procedura seed (Passo 2)
 
 **Punto 8 del report finale (esito e1_tester)** resta ancora placeholder da compilare.
+
+---
+
+# 🎯 Setup dati per re-run e1_tester (2026-07-02)
+
+## Timeline esecuzione
+
+### Step 1 — Set MAX su tester@orbus.test
+```bash
+POST /api/admin/tester-tools/set-max
+Body: {"target_email":"tester@orbus.test"}
+Auth: admin@orbus.test
+```
+Risposta: `{"applied":"MAX","snapshot_id":"06f39cc2-8fdd-4370-a124-9911a4f78722"}`
+
+### Step 1b — Bug scoperto e fixato in-flight
+Al primo tentativo di ottenere il roster (`GET /api/adventurers`), risposta **HTTP 500 KeyError: 'adventurer_class_id'**.
+
+**Root cause**: il Tester Tool `grant-adventurers` creava avv con schema minimo (mancavano `adventurer_class_id`, `experience`, `morale`, `stamina`, `rarity`, `is_starter`) — `adventurer_public()` esplodeva.
+
+**Fix applicato** (`/app/backend/app/admin/tester_tools.py`):
+1. Nuova helper `_resolve_class_map()` che carica dinamicamente `slug→id` dal catalog `adventurer_classes`.
+2. `grant_adventurers` ora setta `adventurer_class_id` + tutti i campi runtime richiesti (`morale=100`, `stamina=100`, `rarity="common"`, `is_starter=False`, `experience=0`).
+
+**Backfill degli avv già creati**: script one-shot ha patchato 30 avv `is_test_artifact` con i campi mancanti (dry-run + verify → 30 patchati).
+
+Post-fix `GET /api/adventurers` → **HTTP 200 con 20 avv** ✅
+
+### Step 1c — Set MAX v2 con bump strutture
+Il primo tentativo raid ha fallito con `structure_locked (war_room lv 2 required)`. Il Tester Tool Set MAX non aumentava le strutture guild.
+
+**Fix applicato** (stesso file): `set_max` ora bump `structures.{dormitories, war_room, training_grounds, forge, market, library}.level` a valori "MAX" (5-10) + `is_unlocked=True`.
+
+Set MAX re-eseguito con `confirm=true` → snapshot `4a966f3c-da95-4a09-af8d-5d3e6993b7f9`.
+
+### Step 2 — Raid A avviato ✅
+```bash
+POST /api/raids/start
+Body: {"raid_slug":"broken-bastion-siege",
+       "parties":[
+         {"party_idx":1,"adventurer_ids":[...5]},
+         {"party_idx":2,"adventurer_ids":[...5]},
+         {"party_idx":3,"adventurer_ids":[...5]},
+         {"party_idx":4,"adventurer_ids":[...5]}
+       ]}
+Auth: tester@orbus.test
+```
+Risposta: `raid_id=9d51c842-ffc0-4d9a-91e1-1d8f74c33577`, `status=in_progress`, `team_power_combined=1851`, `recommended_power_combined=800`, `success_chance_combined=95%`.
+
+- **Durata**: `broken-bastion-siege` = 1800s (30 min) — è il raid più corto nel catalog
+- **ends_at**: `2026-07-02T05:44:41Z`
+- **remaining_seconds** al momento verifica: **1783s** (server-authoritative)
+
+### Step 3 — Raid B (secondo raid attivo) NON eseguibile
+**Vincolo di sistema**: il codice `raids.start` rifiuta con `raids.already_in_progress` se esiste già un raid attivo per la stessa gilda. **Solo 1 raid alla volta.**
+
+Il PM aveva chiesto 2 raid (uno breve + uno medio); il sistema impone 1. Ho avviato il raid con durata più breve disponibile (30 min), che copre entrambi gli scenari:
+- Prima parte del test: countdown live (Test 3a/b)
+- Dopo 30 min: transizione a `Completato — in attesa di resolution` (Test 3c) → poi auto-resolve al primo GET `/api/raids`
+
+### Step 4 — Raid completato per Test 2 (Ultimo raid card)
+**Situazione**: non c'è ancora nessun raid completato → `GET /api/raids/last` → **404 no_completed_raid**.
+
+**Card "Ultimo raid"**: mostrerà **empty state** ("Nessun raid ancora completato. Vai su Raid per iniziarne uno.") — comportamento by-design, testabile ma non ideale per validare la card popolata.
+
+**Opzioni per raid completed**:
+- **A (naturale)**: aspettare ~30 min → il raid A si completa via on-visit fallback → card popolata. Rallenta il re-run e1_tester.
+- **B (endpoint seed-raid-scenario)**: come proposto dal PM. Aggiungerebbe `POST /api/admin/tester-tools/seed-raid-scenario` con `{status: completed}` che crea un raid completed valido (con outcome, rewards, timestamps coerenti). **~30 min di lavoro backend + test**. Fuori scope corrente ma disponibile su tua richiesta.
+
+## Stato finale tester@orbus.test
+
+| campo | valore |
+|---|---|
+| Guild id | `30758454-2224-4d5a-9ee7-93c7fc64a593` |
+| Guild name | "la lanterna" |
+| Guild level | 15 |
+| Gold | 100000 |
+| Reputation | 1000 |
+| Max team power ever | 999 |
+| Adventurers attivi | 20 (mix warrior/rogue/priest/mage/ranger, tutti lv 10) |
+| Structures | dormitories lv10, war_room lv5, training_grounds/forge/market/library lv5 |
+| Raid attivi | 1 (`broken-bastion-siege`, remaining ~30 min) |
+| Raid completati | 0 |
+
+## Snapshot IDs generati (per rollback se serve)
+
+- `06f39cc2-8fdd-4370-a124-9911a4f78722` (Set MAX v1)
+- `4a966f3c-da95-4a09-af8d-5d3e6993b7f9` (Set MAX v2 con structures)
+
+## Verifiche API finali
+
+```
+GET  /api/raids/last               → 404 no_completed_raid  (empty state OK)
+GET  /api/raids                     → 200, 1 raid in_progress con remaining_seconds=1783
+GET  /api/adventurers               → 200, 20 avv attivi (post-fix schema)
+GET  /api/admin/tester-tools/status → 200, guild.level=15, roster.active_count=20
+```
+
+## Blocchi tecnici emersi (risolti)
+
+| # | blocco | root cause | fix |
+|:-:|---|---|---|
+| 1 | `GET /api/adventurers` → 500 | `adventurer_class_id` missing in avv creati dal Tester Tool | Fix + backfill retroattivo dei 30 avv esistenti |
+| 2 | `POST /api/raids/start` → 423 `war_room level 2 required` | Set MAX non toccava le strutture guild | Aggiunto bump `structures.war_room.level=5` (+ altre) in `set-max` |
+| 3 | Body `parties` schema | serve `party_idx: int (ge=1)` per party | Ricostruito payload con `party_idx: 1..4` |
+
+## File modificati (delta questa fase)
+
+- `/app/backend/app/admin/tester_tools.py` — fix schema `grant-adventurers` + bump strutture `set-max`
+
+Nessuna modifica al frontend. Nessuna modifica alle rotte API. Sono tutti bug fix mirati al Tester Tool.
+
+## Guardrail rispettati
+
+- ✅ Modifiche SOLO su `tester@orbus.test` (verificato guild_id target = tester)
+- ✅ Nessun `update_one` diretto su `raids.status` o `raids.ends_at`
+- ✅ Snapshot Tester Tools generati (2 IDs sopra)
+- ✅ Nessun hard delete (i 30 avv sono stati aggiornati via `$set`, non rimossi)
+- ✅ Audit `TESTER_TOOL_INVOKED` emesso ad ogni chiamata Set MAX
+
+## Domanda per il PM
+
+Vuoi che implementi **`POST /api/admin/tester-tools/seed-raid-scenario`** (~30 min) per creare uno stato "raid completed" senza aspettare 30 min? Se sì:
+- Payload: `{"target_email":"tester@orbus.test", "raid_slug":"broken-bastion-siege", "outcome":"success"}`
+- Crea un doc `raids` con `status=completed`, `outcome=success`, `started_at=-1h`, `completed_at=now`, `rewards` calcolati normalmente
+- Crea `raid_participants` collegati
+- Audit dedicato `TESTER_TOOL_SEED_RAID`
+- Snapshot pre-modifica
+
+**In alternativa**, se preferisci lanciare e1_tester ora e accettare che Test 2 verifichi solo l'empty state, sono già pronto.

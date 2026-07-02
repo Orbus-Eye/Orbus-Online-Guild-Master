@@ -182,6 +182,15 @@ async def status(target_email: str,
     }
 
 
+async def _resolve_class_map(db) -> dict[str, str]:
+    """Ritorna dict class_slug (lowercase) → adventurer_class_id.
+    Cache O(1) lookup per grant-adventurers."""
+    docs = await db.adventurer_classes.find(
+        {"is_active": {"$ne": False}}, {"_id": 0, "id": 1, "slug": 1},
+    ).to_list(50)
+    return {d["slug"].lower(): d["id"] for d in docs if d.get("id")}
+
+
 @router.post("/grant-adventurers")
 async def grant_adventurers(body: TargetIn,
                             admin: dict = Depends(get_admin_user)):
@@ -204,12 +213,19 @@ async def grant_adventurers(body: TargetIn,
     snap_id = await _snapshot_state(
         user["id"], guild_id, "grant-adventurers",
     )
+    # ROUND 16.5.1 BUG#3 fix — resolve class_id da adventurer_classes
+    # (era omesso in R16.5.1 iniziale → adventurer_public() esplodeva
+    # con KeyError su list_adventurers_for_guild).
+    class_map = await _resolve_class_map(db)
     created = []
-    _CLASSES = [("Warrior", "Tank"), ("Rogue", "DPS"),
-                ("Cleric", "Healer"), ("Mage", "DPS"),
-                ("Ranger", "DPS")]
+    _CLASSES = [("warrior", "Tank"), ("rogue", "DPS"),
+                ("priest", "Healer"), ("mage", "DPS"),
+                ("ranger", "DPS")]
     for i in range(to_create):
-        cls_name, cls_role = _CLASSES[i % len(_CLASSES)]
+        cls_slug, cls_role = _CLASSES[i % len(_CLASSES)]
+        class_id = class_map.get(cls_slug)
+        if not class_id:  # fallback: prendi la prima classe attiva
+            class_id = next(iter(class_map.values()), None)
         adv_id = str(uuid.uuid4())
         doc = {
             "id": adv_id, "guild_id": guild_id,
@@ -218,8 +234,15 @@ async def grant_adventurers(body: TargetIn,
             "is_available": True, "is_retired": False,
             "retired": False, "archived": False, "frozen": False,
             "is_test_artifact": True,
-            "class_name": cls_name, "class_role": cls_role,
-            "class": cls_name, "role": cls_role,
+            # Schema legittimo — deve superare adventurer_public()
+            "adventurer_class_id": class_id,
+            "class_name": cls_slug.capitalize(),
+            "class_role": cls_role,
+            "class": cls_slug.capitalize(),
+            "role": cls_role,
+            "rarity": "common",
+            "is_starter": False,
+            "morale": 100, "stamina": 100,
             "strength": 15, "agility": 10, "intellect": 8,
             "endurance": 12, "faith": 6,
             "stats": {"strength": 15, "agility": 10, "intellect": 8,
@@ -266,6 +289,27 @@ async def set_max(body: TargetIn,
         {"$set": {"level": 15, "gold": 100000,
                   "max_team_power_ever": 999,
                   "reputation": 1000, "updated_at": now}},
+    )
+    # ROUND 16.5.1 BUG#4 fix — Set MAX deve anche unlockare le strutture
+    # necessarie per i sistemi (raid richiede war_room lv 2+). Aggiungiamo
+    # bump per tutte le strutture ai valori "MAX" ragionevoli.
+    await db.guild_structures.update_one(
+        {"guild_id": guild_id},
+        {"$set": {
+            "structures.dormitories.level": 10,
+            "structures.dormitories.is_unlocked": True,
+            "structures.war_room.level": 5,
+            "structures.war_room.is_unlocked": True,
+            "structures.training_grounds.level": 5,
+            "structures.training_grounds.is_unlocked": True,
+            "structures.forge.level": 5,
+            "structures.forge.is_unlocked": True,
+            "structures.market.level": 5,
+            "structures.market.is_unlocked": True,
+            "structures.library.level": 5,
+            "structures.library.is_unlocked": True,
+            "updated_at": now,
+        }},
     )
     # Roster: garantisci 20 avv lv 10 attivi
     await db.adventurers.update_many(
