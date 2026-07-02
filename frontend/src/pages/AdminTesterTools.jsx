@@ -123,15 +123,15 @@ export default function AdminTesterTools() {
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader><CardTitle>Azioni</CardTitle></CardHeader>
         <CardContent className="flex flex-col md:flex-row gap-3">
-          <ConfirmButton label="Grant adventurers"
+          <ConfirmButton label="Dai avventurieri al tester"
                          confirmText="Crea avv fino a 20 attivi (idempotente)."
                          onConfirm={() => invoke("grant-adventurers")}
                          testId="grant-btn" />
-          <ConfirmButton label="Set MAX"
+          <ConfirmButton label="Set tester MAX"
                          confirmText="Guild lv 15, oro 100k, roster lv 10. NON hard-delete."
                          onConfirm={() => invoke("set-max", needConfirm && pendingTool === "set-max")}
                          testId="set-max-btn" />
-          <ConfirmButton label="Set MIN"
+          <ConfirmButton label="Set tester MIN"
                          confirmText="Guild lv 1, oro 100, roster 3 lv 1. Archivio soft il resto."
                          onConfirm={() => invoke("set-min", needConfirm && pendingTool === "set-min")}
                          testId="set-min-btn" />

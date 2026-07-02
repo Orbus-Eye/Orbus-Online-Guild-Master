@@ -187,19 +187,31 @@
 
 ## Round 16.5.1 — CLOSED ✅ (2026-07-02)
 
+Sigillo definitivo dopo doppio pass `e1_tester` + fix E2 (CSRF Tester
+Tools UI) + fix F2 (i18n bottoni Tester Tools).
+
 - **FASE A** (fallback D2): rimosso fallback difficulty, 3 test aggiunti, Round 16.5 P0 CLOSED
 - **FASE B.1**: world_events extension — GET/PATCH/deactivate/duplicate endpoints (estensione, no nuova collection)
 - **FASE B.2**: Tester Tools — status/grant/set-max/set-min con guardrail rinforzati + audit + snapshot
-- **FASE B.3**: raids/last + raids/replay-preview (backend pronto, UI dashboard integration deferita)
-- **FASE B.4**: raid countdown remaining_seconds server-side (UI live countdown deferita)
-- **FASE E2** (2026-07-02, chiusura): `AdminTesterTools.jsx` refactored a wrapper condiviso `lib/api.js` — cookie auth + double-submit CSRF header auto-injection. 2 nuovi test backend (`test_E2_csrf_reject_when_cookie_auth_and_no_header`, `test_E2_csrf_accept_when_header_matches_cookie`). Difesa CSRF backend NON abbassata.
-- **Test**: 43/43 backend passed (13 P0.2 + 10 P0.3+A.3 + 14 R16.5.1 + 2 R16.5.1 E2 CSRF + 4 BUG#1/#2 regression)
-- **Frontend**: 2 pagine admin (`/admin/world-events`, `/admin/tester-tools`), lint OK, webpack compile OK
-- **Report finale**: `/app/memory/round1651_final_report.md`
-- **Deferred esplicito** (non blockers, tracked):
-  - B.3 UI replay-preview deferita finché non esiste un raid completed reale.
-  - B.4 UI countdown "resolution pending" state deferita.
-  - Mobile viewport validation E2E deferita a round UX dedicato.
-  - Admin F5 blank-screen (P3) → `/app/memory/backlog.md` W1.
-  - `AdminWorldEvents.jsx` allineamento CSRF wrapper (P3) → `backlog.md` W2.
+- **FASE B.3**: raids/last + raids/replay-preview (backend pronto, UI dashboard integration deferita a R16.5.2)
+- **FASE B.4**: raid countdown remaining_seconds server-side (osservato live decrement 16m 45s → 16m 33s)
+- **FASE E2** (2026-07-02): `AdminTesterTools.jsx` refactored a wrapper condiviso `lib/api.js` — cookie auth + double-submit CSRF header auto-injection. 2 nuovi test backend (`test_E2_csrf_reject_when_cookie_auth_and_no_header`, `test_E2_csrf_accept_when_header_matches_cookie`). Difesa CSRF backend NON abbassata.
+- **FASE F2** (2026-07-02): i18n bottoni Tester Tools — 3 label italianizzate (`Dai avventurieri al tester`, `Set tester MAX`, `Set tester MIN`). Stringhe minori residue → backlog R16.5.2 item 5.
+- **Test**: 20/20 backend passed su `orbus_r16_test` (isolated port 8002)
+- **Frontend**: lint OK, webpack compile OK
+- **Report finale**: `/app/memory/round1651_final_report.md` (sezione "Sigillo finale")
+- **Deferred esplicito** (non blockers, tracked in `/app/memory/backlog.md` R16.5.2):
+  - Admin F5 blank-screen (item 1)
+  - Client-side guard `/admin/tester-tools` (item 2)
+  - `AdminWorldEvents.jsx` allineamento wrapper (item 3)
+  - Hook `useAdminGuard()` condiviso (item 4)
+  - Stringhe residue admin (item 5)
 - **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia, no rimozione difese CSRF backend.
+
+## Round 16.5.2 — PLANNED — Admin Polish (P3)
+
+Scope: unificazione UX/tecnica delle pagine admin. Vedi
+`/app/memory/backlog.md` sezione "Round 16.5.2 — Admin Polish"
+per l'elenco dettagliato dei 5 items. Nessun cambio funzionale.
+Vincoli: no modifiche a balance/reward/drop/XP/PvP/economia.
+Attesa decisione utente per apertura.

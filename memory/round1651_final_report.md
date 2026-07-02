@@ -684,8 +684,71 @@ resta invariata. La fix è puramente lato client (echo dell'header).
 
 ## Round 16.5.1 — CLOSED ✅ (2026-07-02)
 
-Firma di chiusura: E2 CSRF fix + backend test coverage + P3 backlog
-tracker + deferred items documentati. Nessun bug P0/P1 aperto.
-Roadmap aggiornata: `/app/memory/orbus_world_roadmap.md`.
-Prossimo round pianificato: **R16.6** (P1 Balance tuning —
-recommended_power scaling + mid/high tier rewards).
+Firma di chiusura: E2 CSRF fix + backend test coverage + F2 i18n bottoni
+Tester Tools + P3 backlog tracker + deferred items documentati. Nessun
+bug P0/P1 aperto. Roadmap aggiornata:
+`/app/memory/orbus_world_roadmap.md`. Prossimo round pianificato:
+**R16.5.2 — Admin Polish (P3)** oppure **R16.6 — P1 Balance tuning**
+(decisione utente).
+
+---
+
+## Sigillo finale — Round 16.5.1 CLOSED
+
+**Data chiusura**: 2026-07-02T06:47:32Z
+
+### Verificato E2E via e1_tester
+
+1. ✅ Fix CSRF Tester Tools UI (3 bottoni funzionano via browser, no CSRF error, toast leggibili in italiano)
+2. ✅ Etichette bottoni Tester Tools in italiano
+   - `Grant adventurers` → `Dai avventurieri al tester`
+   - `Set MAX` → `Set tester MAX`
+   - `Set MIN` → `Set tester MIN`
+3. ✅ Admin World Events CRUD funzionante (catalog raggiungibile, create/activate/deactivate)
+4. ✅ Tester Tools funzionanti via UI (grant-adventurers, set-max, set-min)
+5. ✅ Raid countdown live (osservato decremento reale 16m 45s → 16m 33s)
+6. ✅ Dashboard "Ultimo raid" empty state pulito
+7. ✅ Guard-rail backend non-admin: 403 su tutti gli endpoint admin (invalicabile)
+
+### Deferred (coperture non blocker)
+
+- Replay preview reale (serve raid completed su tester@)
+- Stato "Completato — in attesa di resolution" (serve raid con
+  `remaining_seconds ≤ 0`)
+- Mobile viewport countdown (HUMAN_REQUIRED su device reale)
+
+### Tracciato per Round 16.5.2 Admin Polish
+
+Vedi `/app/memory/backlog.md` sezione "Round 16.5.2 — Admin Polish":
+
+1. Admin F5 blank screen
+2. Client-side guard mancante `/admin/tester-tools`
+3. `AdminWorldEvents.jsx` axios raw
+4. Hook condiviso `useAdminGuard()`
+5. Stringhe residue in inglese (`Carica status`, toast `Status caricato`,
+   header `Admin — Tester Tools`, slug tool eseguito, ecc.)
+
+### Vincoli rispettati
+
+- ✅ Nessuna modifica a balance/reward/drop/XP/PvP/economia/Stalla
+- ✅ Nessun hard delete
+- ✅ Nessuna modifica ai modifiers `world_events`
+- ✅ Test isolati su `orbus_r16_test` (port 8002)
+- ✅ Difese CSRF backend (`app/core/csrf.py`) invariate
+- ✅ Lingua italiano coerente sui bottoni Tester Tools
+
+### File modificati (delta chiusura F2)
+
+- `/app/frontend/src/pages/AdminTesterTools.jsx` — 3 label italianizzate (righe 126/130/134). Nessuna modifica a endpoint/payload/logica.
+- `/app/memory/backlog.md` — riorganizzata sezione Round 16.5.2 (5 items).
+- `/app/memory/round1651_final_report.md` — sigillo finale (questo blocco).
+- `/app/memory/orbus_world_roadmap.md` — chiusura definitiva Round 16.5.1 + apertura riga Round 16.5.2 PLANNED.
+
+### Nota fuori scope
+
+Nei log backend è visibile un `KeyError: 'library'` in
+`app/territory/services.py:53` durante `GET /api/territory/me` (rotta
+non toccata da questo round). Segnalato per audit indipendente — non
+appartiene a Round 16.5.1.
+
+**Round 16.5.1 CLOSED — pronto per revisione utente.**
