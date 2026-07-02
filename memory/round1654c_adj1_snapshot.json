@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-07-02T20:59:34.630960+00:00",
+  "mismatch_count": 17,
+  "unrecognized_count": 0,
+  "mismatch_sample": [
+    {
+      "slug": "filo_lunare_spezzato",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "frammento_obelisco_vuoto",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "eco_della_luna_morta",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "cristallo_di_ambash",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "cenere_di_velur",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "linfa_di_soe",
+      "before": "rare",
+      "after": "Rare"
+    },
+    {
+      "slug": "nucleo_di_efreto",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "osso_di_irthe",
+      "before": "rare",
+      "after": "Rare"
+    },
+    {
+      "slug": "seme_di_nathos",
+      "before": "rare",
+      "after": "Rare"
+    },
+    {
+      "slug": "frammento_di_ergolat",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "sigillo_di_aveol",
+      "before": "epic",
+      "after": "Epic"
+    },
+    {
+      "slug": "legendary_sword_alveora",
+      "before": "legendary",
+      "after": "Legendary"
+    },
+    {
+      "slug": "legendary_armor_ambash",
+      "before": "legendary",
+      "after": "Legendary"
+    },
+    {
+      "slug": "legendary_ring_velur",
+      "before": "legendary",
+      "after": "Legendary"
+    },
+    {
+      "slug": "legendary_staff_efreto",
+      "before": "legendary",
+      "after": "Legendary"
+    },
+    {
+      "slug": "legendary_amulet_nathos",
+      "before": "legendary",
+      "after": "Legendary"
+    },
+    {
+      "slug": "legendary_cape_aveol",
+      "before": "legendary",
+      "after": "Legendary"
+    }
+  ],
+  "unrecognized_sample": []
+}

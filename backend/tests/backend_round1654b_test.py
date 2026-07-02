@@ -1049,3 +1049,200 @@ def test_23_empty_state_message_italian(sync_db, cleanup_r1654b):
         wpn_det2["reason_it"]
     ), f"weapon reason_it caso B non conforme: {wpn_det2['reason_it']}"
 
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.5.4c ADJ-3 — Class coverage seed tests (24–27)
+#
+# Verifica che Warlock/Alchemist/Druid con i NUOVI item del seed pack
+# R16.5.4c (approvato PM 2026-07-02, opzione A) equipaggino correttamente
+# tutti e 3 gli slot senza empty state falsi. La Druid regression
+# aggiuntiva verifica che l'algoritmo class-aware R16.5.4b continui a
+# preferire item Druid-fit rispetto a item Warrior-only in inventario
+# misto.
+#
+# NOTA: questi test seedano item con la STESSA forma del seed script
+# (`_seed_item` con `class_tags=[<slug>]`, `recommended_classes=[<slug>]`)
+# per riprodurre il payload che sarà in produzione. Non toccano `orbus_r16`.
+# ═════════════════════════════════════════════════════════════════════
+
+
+def _seed_r1654c_warlock_pack(sync_db) -> dict:
+    """Seed i 10 item Warlock del pack R16.5.4c. Ritorna dict slot→item."""
+    return {
+        "weapon": _seed_item(
+            sync_db, item_type="weapon", name_tag="w_wlk_epic",
+            rarity="Epic", intellect=4, faith=2, power=6,
+            required_level=1, class_tags=["test_r1654c_warlock"],
+            weapon_tags=["tome", "arcane"],
+            stat_tags=["intellect", "faith"],
+        ),
+        "armor": _seed_item(
+            sync_db, item_type="armor", name_tag="a_wlk_epic",
+            rarity="Epic", intellect=4, agility=2, power=6,
+            required_level=1, class_tags=["test_r1654c_warlock"],
+            armor_tags=["robe", "light"],
+            stat_tags=["intellect", "agility"],
+        ),
+        "accessory": _seed_item(
+            sync_db, item_type="accessory", name_tag="acc_wlk_epic",
+            rarity="Epic", intellect=4, faith=2, power=6,
+            required_level=1, class_tags=["test_r1654c_warlock"],
+            stat_tags=["intellect", "faith"],
+        ),
+    }
+
+
+def test_24_r1654c_warlock_full_equip(sync_db, cleanup_r1654b):
+    """Warlock (int primary, faith+agility secondary) con weapon+armor+
+    accessory Epic Lv8 del seed pack R16.5.4c → tutti e 3 equipaggiati,
+    swaps=3, nessun off_class_seen (tutti class-fit)."""
+    _seed_class(sync_db, "test_r1654c_warlock", "intellect",
+                ["faith", "agility"], name="Warlock")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_warlock",
+                           level=10)
+    pack = _seed_r1654c_warlock_pack(sync_db)
+    for it in pack.values():
+        _seed_inventory(sync_db, g["id"], it["id"])
+
+    res = _run(_call_auto_equip(g, adv["id"]))
+    equipped_slots = {e["slot"] for e in res["equipped"]}
+    assert equipped_slots == {"weapon", "armor", "accessory"}, (
+        f"Warlock deve equipaggiare tutti e 3 gli slot, got "
+        f"{equipped_slots}"
+    )
+    assert res["swaps_count"] == 3
+    # Nessun unchanged_slots_detail con off_class_seen > 0.
+    for d in res.get("unchanged_slots_detail", []):
+        assert d.get("off_class_seen", 0) == 0, (
+            f"Warlock non deve avere off_class_seen>0 (tutti class-fit): "
+            f"{d}"
+        )
+
+
+def test_25_r1654c_alchemist_full_equip(sync_db, cleanup_r1654b):
+    """Alchemist (int primary, agility+endurance secondary) → tutti e 3
+    gli slot equipaggiati con item Epic Lv8 class-fit."""
+    _seed_class(sync_db, "test_r1654c_alchemist", "intellect",
+                ["agility", "endurance"], name="Alchemist")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_alchemist",
+                           level=10)
+    weapon = _seed_item(
+        sync_db, item_type="weapon", name_tag="w_alch_epic",
+        rarity="Epic", intellect=4, agility=2, power=6,
+        class_tags=["test_r1654c_alchemist"],
+        weapon_tags=["alchemical_flask", "arcane"],
+        stat_tags=["intellect", "agility"],
+    )
+    armor = _seed_item(
+        sync_db, item_type="armor", name_tag="a_alch_epic",
+        rarity="Epic", intellect=4, endurance=2, power=6,
+        class_tags=["test_r1654c_alchemist"],
+        armor_tags=["robe", "light"],
+        stat_tags=["intellect", "endurance"],
+    )
+    accessory = _seed_item(
+        sync_db, item_type="accessory", name_tag="acc_alch_epic",
+        rarity="Epic", intellect=4, endurance=2, power=6,
+        class_tags=["test_r1654c_alchemist"],
+        stat_tags=["intellect", "endurance"],
+    )
+    for it in (weapon, armor, accessory):
+        _seed_inventory(sync_db, g["id"], it["id"])
+
+    res = _run(_call_auto_equip(g, adv["id"]))
+    equipped_slots = {e["slot"] for e in res["equipped"]}
+    assert equipped_slots == {"weapon", "armor", "accessory"}, (
+        f"Alchemist deve equipaggiare tutti e 3 gli slot, got "
+        f"{equipped_slots}"
+    )
+    assert res["swaps_count"] == 3
+    for d in res.get("unchanged_slots_detail", []):
+        assert d.get("off_class_seen", 0) == 0
+
+
+def test_26_r1654c_druid_prefers_class_fit_over_warrior_armor(
+    sync_db, cleanup_r1654b,
+):
+    """Regression class-aware R16.5.4b + ADJ-3 Druid: Druid con NUOVA
+    armor Druid-fit (grovewarden-mantle-like Rare) + armor Warrior-only
+    (off-class) in inventario → sceglie SEMPRE la nuova armor Druid,
+    mai la Warrior."""
+    _seed_class(sync_db, "test_r1654c_druid", "faith", ["intellect"],
+                name="Druido")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_druid",
+                           level=8)
+    # NEW armor druid-fit (ADJ-3 pack).
+    druid_armor = _seed_item(
+        sync_db, item_type="armor", name_tag="druid_grove_new",
+        rarity="Rare", faith=2, intellect=2, power=4,
+        required_level=5, class_tags=["test_r1654c_druid"],
+        armor_tags=["leather", "natural", "light"],
+        stat_tags=["faith", "intellect"],
+    )
+    # Warrior-only armor (off-class for druid).
+    warrior_armor = _seed_item(
+        sync_db, item_type="armor", name_tag="warr_plate",
+        rarity="Epic", strength=5, endurance=2, power=8,
+        required_level=7, class_tags=["warrior", "paladin"],
+        armor_tags=["heavy", "plate"],
+    )
+    _seed_inventory(sync_db, g["id"], druid_armor["id"])
+    _seed_inventory(sync_db, g["id"], warrior_armor["id"])
+
+    res = _run(_call_auto_equip(g, adv["id"]))
+    armor_equipped = next(
+        (e for e in res["equipped"] if e["slot"] == "armor"), None,
+    )
+    assert armor_equipped is not None, "armor doveva essere equipaggiato"
+    assert armor_equipped["item_slug"] == druid_armor["slug"], (
+        f"Druid deve preferire armor class-fit ({druid_armor['slug']}), "
+        f"ha scelto {armor_equipped['item_slug']}"
+    )
+    # Warrior armor NON deve essere nella lista equipped.
+    equipped_slugs = [e["item_slug"] for e in res["equipped"]]
+    assert warrior_armor["slug"] not in equipped_slugs, (
+        f"REGRESSIONE R16.5.4b: warrior armor equipaggiato su Druido! "
+        f"equipped={equipped_slugs}"
+    )
+
+
+def test_27_r1654c_alchemist_no_httpexception_leak_in_warnings(
+    sync_db, cleanup_r1654b,
+):
+    """R16.5.4c ADJ-3.c: garantisce che il payload Auto-Equip non contenga
+    MAI la stringa tecnica 'HTTPException' nei `warnings_it` / warning
+    generici (bug R16.5.4b REOPEN #2). Verifica anche assenza di
+    '[object Object]' e 'None' leak nei messaggi player-facing."""
+    _seed_class(sync_db, "test_r1654c_al2", "intellect", ["agility"],
+                name="Alchemist")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_al2", level=10)
+    # Inventory con solo weapon class-fit; armor+accessory ASSENTI.
+    weapon = _seed_item(
+        sync_db, item_type="weapon", name_tag="w_alch_only",
+        rarity="Epic", intellect=4, agility=2, power=6,
+        class_tags=["test_r1654c_al2"],
+        weapon_tags=["alchemical_flask", "arcane"],
+    )
+    _seed_inventory(sync_db, g["id"], weapon["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+
+    # Collect ALL strings from the response for a text scan.
+    import json as _json
+    payload_str = _json.dumps(res, ensure_ascii=False)
+    for banned in ("HTTPException", "[object Object]", "'None'"):
+        assert banned not in payload_str, (
+            f"REGRESSIONE R16.5.4c ADJ-3.c: stringa tecnica {banned!r} "
+            f"leakata nel payload player-facing. Payload: {payload_str}"
+        )
+    # Empty state IT deve essere presente per armor + accessory.
+    unchanged_slots = set(res.get("unchanged_slots", []))
+    assert "armor" in unchanged_slots and "accessory" in unchanged_slots
+    for d in res.get("unchanged_slots_detail", []):
+        # reason_it deve essere pulito, italiano, no leak tecnico.
+        assert isinstance(d.get("reason_it"), str) and d["reason_it"]
+        assert "HTTPException" not in d["reason_it"]
+

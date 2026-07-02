@@ -272,6 +272,32 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
+## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup COMPLETATO ✅ (2026-07-02)
+
+> **Status**: 4/6 item completati (ADJ-9, ADJ-3, ADJ-1, P2 accessory HTTPException). ADJ-6 verificato già a posto pre-R16.5.4c. ADJ-7 risolto insieme a P2. Attesa consolidamento finale PM per sealing.
+
+**Interventi chiave**:
+- **ADJ-9**: backfill `class_slug` su 1909 avventurieri (94.01%→99.71%), fix `common._generate_candidate` per popolare `class_slug` in write path, 6 orfani Guardian/Cleric documentati.
+- **ADJ-3 opzione A approvata dal PM**: 22 nuovi item (Warlock 10 + Alchemist 10 + Druid 2 armor gap), Epic Lv8, no Legendary, no power creep verificato programmatico via `POWER_MAX_BY_BUCKET`. Coverage Warlock/Alchemist: 0/0/0 → 4/3/3.
+- **ADJ-1**: 17 item con rarity lowercase normalizzati a Capitalized; nuovo helper `app.shared.rarity.canonicalize_rarity` (27 test unit PASS).
+- **P2 (ADJ-3.c)**: fix `auto_equip.py` — no più leak "HTTPException" nei warning player-facing; `_extract_it_message` estrae `user_message` italiano; logger dedicato per errori tecnici server-side.
+- **ADJ-6**: verificato già presente in `auto_equip.py`, `equip_item_service`, `unequip_item_service` (fix R16.5.4b).
+- **ADJ-7**: 423 `level_gate` ora bubble-up come user_message pulito nel warning (non più mangiato da `except Exception`).
+
+**Test**: 54/54 PASS (27 R16.5.4b/c auto-equip + 27 canonicalizer). Regression curl live Warrior invariata.
+
+**Snapshot**: `round1654c_adj9_snapshot.json` + `round1654c_adj3_snapshot.json` + `round1654c_adj1_snapshot.json`. Audit events emessi.
+
+**File nuovi**: `app/scripts/round1654c_seed_integrity.py`, `round1654c_class_coverage_seed.py`, `round1654c_rarity_normalize.py`, `app/shared/rarity.py`, `tests/backend_round1654c_rarity_test.py`. **Modified**: `adventurers/common.py`, `equipment/auto_equip.py`. Frontend: nessun file toccato.
+
+**Bug residui / tracking per fasi successive**:
+- 6 avventurieri orfani Guardian/Cleric (classe non nel catalog) — decisione design pendente.
+- Testing E2E browser Warlock/Alchemist non eseguito (tester@orbus.test non ha adv di queste classi).
+
+**Report**: `/app/memory/round1654c_final_report.md`.
+
+---
+
 ## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup PLANNED 🔜
 
 Chiude i buchi di data-integrity + coverage di classi + cleanup Auto-Equip rilevati durante audit e REOPEN #1/#2 di R16.5.4b.

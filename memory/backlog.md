@@ -170,7 +170,41 @@ Hook rimanenti da attivare:
 
 ---
 
-## Round 16.5.5+ UX Polish (backlog basso, non blocker)
+## Round 16.5.4c — COMPLETATO ✅ (2026-07-02, in attesa consolidamento PM)
+
+Vedi `/app/memory/round1654c_final_report.md`. Sintesi:
+- ADJ-9 backfill class_slug: **1909/1915 avventurieri backfillati** (99.71% coverage), 6 orfani Guardian/Cleric documentati.
+- ADJ-3 seed pack Warlock/Alchemist/Druid: **22 nuovi item** approvati opzione A dal PM, Epic Lv8, no Legendary.
+- ADJ-1 rarity normalize: **17 item** normalizzati a Capitalized + canonicalizer helper.
+- ADJ-3.c (P2 accessory): **no più "HTTPException" leak** nei warning player-facing.
+- ADJ-6 già a posto pre-R16.5.4c; ADJ-7 risolto insieme a P2.
+- Test 54/54 PASS. Regression curl live invariata.
+
+---
+
+## Round 16.5.4d — Cleanup residuo & polish (PLANNED, P3)
+
+Item residui non chiusi in R16.5.4c, tutti a bassa priorità.
+
+### P3 items
+
+1. **Orfani Guardian / Cleric**
+   - 6 avventurieri legacy con `class_name ∈ {"Guardian", "Cleric"}`, classi non presenti in `adventurer_classes`.
+   - Post R16.5.4c ADJ-9 sono l'unico residuo con `class_slug=null`.
+   - Decisione di design pendente:
+     - (a) mappare Guardian → paladin e Cleric → priest (aliasing);
+     - (b) retire tramite endpoint standard (soft delete → collezione retired);
+     - (c) aggiungere Guardian/Cleric al catalog come classi vere.
+   - Impatto UX minimo (6 doc su 2037).
+
+2. **Testing E2E browser Warlock/Alchemist**
+   - `e1_tester` browser dedicato con adventurer Warlock/Alchemist creati ad-hoc via Tester Tools per validare l'UX Auto-Equip con il nuovo seed pack ADJ-3 in condizioni reali.
+
+3. **UX polish Auto-Equip** (rimasto da R16.5.4b R16.5.5+):
+   - Label più chiare "Slot Equipaggiati" vs "Zaino/Inventario".
+   - Messaggio empty state più caloroso.
+
+
 
 Raccolti durante REOPEN R16.5.4b (verifica browser `e1_tester`):
 - **UI Auto-Equip label**: differenziare visivamente "Slot Equipaggiati" vs "Zaino/Inventario" (attualmente ambigui).

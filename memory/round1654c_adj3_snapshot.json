@@ -1,0 +1,632 @@
+{
+  "generated_at": "2026-07-02T20:55:37.438011+00:00",
+  "item_count": 22,
+  "slugs": [
+    "warlock_apprentice_tome",
+    "warlock_hex_grimoire",
+    "warlock_shadowbound_grimoire",
+    "warlock_witchking_codex",
+    "warlock_novice_robe",
+    "warlock_shadowweave_robe",
+    "warlock_coven_mantle",
+    "warlock_cursed_pendant",
+    "warlock_hex_sigil",
+    "warlock_patron_seal",
+    "alchemist_apprentice_flask",
+    "alchemist_elemental_flask",
+    "alchemist_transmuters_tome",
+    "alchemist_philosophers_flask",
+    "alchemist_apron",
+    "alchemist_ember_lined_vest",
+    "alchemist_quintessence_robe",
+    "alchemist_reagent_pouch",
+    "alchemist_alembic_pendant",
+    "alchemist_transmutation_medallion",
+    "druid_grovewarden_mantle",
+    "druid_elder_vestments"
+  ],
+  "items": [
+    {
+      "slug": "warlock_apprentice_tome",
+      "name": "Tomo del Novizio",
+      "item_type": "weapon",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "warlock_hex_grimoire",
+      "name": "Grimorio del Malèfico",
+      "item_type": "weapon",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 2,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "warlock_shadowbound_grimoire",
+      "name": "Grimorio dell'Ombra Vincolata",
+      "item_type": "weapon",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 2,
+      "faith_bonus": 1
+    },
+    {
+      "slug": "warlock_witchking_codex",
+      "name": "Codice del Re-Strega",
+      "item_type": "weapon",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 4,
+      "faith_bonus": 2
+    },
+    {
+      "slug": "warlock_novice_robe",
+      "name": "Veste del Novizio Occulto",
+      "item_type": "armor",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "robe",
+        "cloth",
+        "light"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "warlock_shadowweave_robe",
+      "name": "Veste in Trama d'Ombra",
+      "item_type": "armor",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "robe",
+        "light"
+      ],
+      "intellect_bonus": 2,
+      "faith_bonus": 2
+    },
+    {
+      "slug": "warlock_coven_mantle",
+      "name": "Mantello del Coven",
+      "item_type": "armor",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "agility"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "robe",
+        "light"
+      ],
+      "intellect_bonus": 4,
+      "agility_bonus": 2
+    },
+    {
+      "slug": "warlock_cursed_pendant",
+      "name": "Pendente Maledetto",
+      "item_type": "accessory",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [
+        "pendant",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "warlock_hex_sigil",
+      "name": "Sigillo del Malocchio",
+      "item_type": "accessory",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith",
+        "agility"
+      ],
+      "equipment_tags": [
+        "sigil",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 2,
+      "faith_bonus": 1,
+      "agility_bonus": 1
+    },
+    {
+      "slug": "warlock_patron_seal",
+      "name": "Sigillo del Patrono",
+      "item_type": "accessory",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [
+        "seal",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 4,
+      "faith_bonus": 2
+    },
+    {
+      "slug": "alchemist_apprentice_flask",
+      "name": "Boccetta dell'Apprendista",
+      "item_type": "weapon",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "alchemical_flask",
+        "arcane"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "alchemist_elemental_flask",
+      "name": "Boccetta Elementale",
+      "item_type": "weapon",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 2,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "alchemical_flask",
+        "arcane"
+      ],
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "alchemist_transmuters_tome",
+      "name": "Tomo del Trasmutatore",
+      "item_type": "weapon",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "agility",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 2,
+      "agility_bonus": 1,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "alchemist_philosophers_flask",
+      "name": "Boccetta del Filosofo",
+      "item_type": "weapon",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "agility"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "weapon_tags": [
+        "alchemical_flask",
+        "arcane"
+      ],
+      "intellect_bonus": 4,
+      "agility_bonus": 2
+    },
+    {
+      "slug": "alchemist_apron",
+      "name": "Grembiule dell'Alchimista",
+      "item_type": "armor",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "light",
+        "robe"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "alchemist_ember_lined_vest",
+      "name": "Panciotto dalla Fodera d'Ember",
+      "item_type": "armor",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "light"
+      ],
+      "intellect_bonus": 2,
+      "endurance_bonus": 2
+    },
+    {
+      "slug": "alchemist_quintessence_robe",
+      "name": "Veste della Quintessenza",
+      "item_type": "armor",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "robe",
+        "light"
+      ],
+      "intellect_bonus": 4,
+      "endurance_bonus": 2
+    },
+    {
+      "slug": "alchemist_reagent_pouch",
+      "name": "Borsa dei Reagenti",
+      "item_type": "accessory",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [
+        "pouch",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "alchemist_alembic_pendant",
+      "name": "Pendente dell'Alambicco",
+      "item_type": "accessory",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "agility",
+        "endurance"
+      ],
+      "equipment_tags": [
+        "pendant",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 2,
+      "agility_bonus": 1,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "alchemist_transmutation_medallion",
+      "name": "Medaglione della Trasmutazione",
+      "item_type": "accessory",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [
+        "medallion",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "intellect_bonus": 4,
+      "endurance_bonus": 2
+    },
+    {
+      "slug": "druid_grovewarden_mantle",
+      "name": "Manto del Guardiano del Bosco",
+      "item_type": "armor",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "druid"
+      ],
+      "class_tags": [
+        "druid"
+      ],
+      "stat_tags": [
+        "faith",
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "leather",
+        "natural",
+        "light"
+      ],
+      "faith_bonus": 2,
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "druid_elder_vestments",
+      "name": "Paramenti dell'Anziano Druido",
+      "item_type": "armor",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "druid"
+      ],
+      "class_tags": [
+        "druid"
+      ],
+      "stat_tags": [
+        "faith",
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round1654c_class_coverage",
+      "armor_tags": [
+        "cloth",
+        "natural",
+        "light"
+      ],
+      "faith_bonus": 4,
+      "intellect_bonus": 2
+    }
+  ]
+}
