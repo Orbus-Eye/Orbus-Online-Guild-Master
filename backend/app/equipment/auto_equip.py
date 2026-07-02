@@ -42,7 +42,11 @@ PRIMARY_WEIGHT = 3.0
 SECONDARY_WEIGHT = 1.5
 POWER_WEIGHT = 1.0
 STAT_TAG_BONUS = 2.0
-WARNING_PENALTY = 0.5
+# ROUND 16.5.4b REOPEN #2 (2026-07-02) — PM decision Q2-b(iii): Auto-Equip
+# SKIPS warning-severity items entirely (no penalty fallback). Only "ok"
+# candidates enter the ranking. Manual equip is UNCHANGED. See sezione
+# 19 di round1654b_final_report.md.
+# (Legacy `WARNING_PENALTY = 0.5` constant removed — no longer applied.)
 
 
 def _stat_bonus(item: dict, stat_name: str) -> int:
@@ -258,8 +262,15 @@ async def auto_equip_adventurer(
         slot_it, slot_en = _slot_label(slot)
         grammar_it = _slot_grammar_it(slot)
         expected_type = SLOT_TO_ITEM_TYPE[slot]
-        # Candidates: matching item_type + level gate + compat != block.
+        # Candidates: matching item_type + level gate + compat == "ok".
+        # ROUND 16.5.4b REOPEN #2 — PM decision Q2-b(iii): warning-severity
+        # items are SKIPPED (previously they entered the pool with a ×0.5
+        # penalty). This prevents Auto-Equip from putting off-class weapons
+        # (e.g. Frostfang Claymore on a Druid) when the inventory lacks
+        # class-fit items. Manual equip is UNCHANGED (still allowed with
+        # a warning UX).
         candidates: list[tuple[float, dict]] = []
+        off_class_seen = 0  # matching type + level, rejected by class compat
         for it in items_pool:
             if it.get("item_type") != expected_type:
                 continue
@@ -271,32 +282,47 @@ async def auto_equip_adventurer(
             if req_lv > adv_level:
                 continue
             verdict = check_equip_compatibility(adv, it)
-            if verdict["severity"] == "block":
+            severity = verdict.get("severity") or "ok"
+            if severity in ("block", "warning"):
+                # Class-fit rejected. Track it so we can differentiate the
+                # empty state ("nothing at all" vs "only off-class here").
+                off_class_seen += 1
                 continue
             fit = _compute_fitness(it, primary, secondaries)
-            if verdict["severity"] == "warning":
-                fit *= WARNING_PENALTY
             candidates.append((fit, it))
         if not candidates:
             warnings.append(f"{slot}: nessun item compatibile disponibile")
             unchanged.append(slot)
-            # ROUND 16.5.4b REOPEN — Empty state più informativo:
-            # include classe italiana + livello + hint drop.
-            hint_it = (
-                f" per {class_it} Lv{adv_level}"
-                if class_it else ""
-            )
-            unchanged_slots_detail.append({
-                "slot": slot,
-                "reason_it": (
-                    f"{slot_it}: nessun oggetto compatibile in inventario"
-                    f"{hint_it}. Completa spedizioni, raid o missioni "
-                    f"per trovarne."
-                ),
-                "reason_en": (
+            # ROUND 16.5.4b REOPEN #2 — Empty state differenziato:
+            #   - se `off_class_seen == 0` → inventario proprio vuoto per il tipo
+            #   - se `off_class_seen > 0`  → item trovati ma tutti off-class
+            noun_it = grammar_it.get("noun") or slot_it
+            noun_it_lower = noun_it.lower()
+            if off_class_seen == 0:
+                reason_it = (
+                    f"Nessuna {noun_it_lower} adatta a {class_it} "
+                    f"Lv{adv_level} trovata in inventario. Completa "
+                    f"spedizioni, raid o missioni per trovare "
+                    f"equipaggiamento compatibile."
+                )
+                reason_en = (
                     f"{slot_en}: no compatible item in inventory. "
                     f"Complete expeditions, raids or contracts to loot one."
-                ),
+                )
+            else:
+                reason_it = (
+                    f"Oggetti trovati, ma nessuno adatto alla classe "
+                    f"{class_it} per lo slot {noun_it_lower}."
+                )
+                reason_en = (
+                    f"{slot_en}: items found in inventory, but none is "
+                    f"class-compatible for this adventurer."
+                )
+            unchanged_slots_detail.append({
+                "slot": slot,
+                "reason_it": reason_it,
+                "reason_en": reason_en,
+                "off_class_seen": off_class_seen,
             })
             continue
         # ROUND 16.5.4b — deterministic tie-break: fitness DESC,

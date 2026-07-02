@@ -132,10 +132,11 @@ Hook rimanenti da attivare:
    - Fix proposto: script idempotente `round1654c_rarity_case_normalize.py` con dry-run/apply + snapshot che uppercase-a il primo carattere (whitelist `rare|epic|legendary` → `Rare|Epic|Legendary`).
    - Vincolo: solo campo `rarity`, whitelist esplicita.
 
-3. **ADJ-3 — Warlock + Alchemist ZERO item copertura**
-   - Sintomo: `warlock` e `alchemist` (introdotti dopo R16.0) non hanno alcun item con `recommended_classes` compatibile. L'auto-equip per queste classi ritorna sempre `unchanged`.
-   - Fix proposto: seed pack minimale (weapon + armor + accessory per ciascuna classe, rarità Common/Uncommon/Rare/Epic, cinque livelli target). Design + balance separato per NON alterare drop rate esistenti.
-   - Nessun P2W, nessun combat balance shift.
+3. **ADJ-3 — Warlock + Alchemist + Druid item coverage** ⭐ (promosso a P1 IMPORTANTE 2026-07-02 dopo REOPEN #2 Q2-b(iii))
+   - Sintomo: `warlock`, `alchemist` (post-R16.0) e `druid` (parzialmente) non hanno abbastanza item con `recommended_classes` compatibile.
+   - Impatto REOPEN #2: con la nuova regola "Auto-Equip scarta warning" (approvata dal PM 2026-07-02), l'empty state per queste classi diventa molto più visibile. Un Druid Lv11 con inventario Legendary ma senza item druid-fit vedrà "Nessuna arma adatta a Druido Lv11 trovata in inventario" invece di ricevere Frostfang Claymore.
+   - Fix proposto: seed pack minimale (weapon + armor + accessory per ciascuna classe, rarità Common/Uncommon/Rare/Epic, cinque livelli target); verificare che le drop table delle spedizioni includano item class-fit per ogni classe attiva post-R16.0. Design + balance separato per NON alterare drop rate esistenti.
+   - Nessun P2W, nessun combat balance shift, nessun cambio primary_stat.
 
 4. **ADJ-6 — write_audit senza `related_entity_id=adv.id`** — ✅ MITIGATO in R16.5.4b (aggiunto in `auto_equip.py`).
    - Chiudibile: audit `adventurer_auto_equipped` ora popola `related_entity_id`. Verificare che altri handler nel modulo `equipment/` seguano la stessa convenzione (`equip_item_service`, `unequip_item_service`).

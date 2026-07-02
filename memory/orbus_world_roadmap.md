@@ -249,16 +249,21 @@ Micro-fix registrazione con policy password strutturata + checklist dinamica FE.
 
 ---
 
-## Round 16.5.4b — Auto-Equip Class-Aware CLOSED & SEALED ✅ (2026-07-02)
+## Round 16.5.4b — Auto-Equip Class-Aware · REOPEN #2 in-flight ⚠️ (2026-07-02)
 
-BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary required_level) + REOPEN (verifica live end-to-end + fix 2× `NameError` + HTTP E2E test).
+> **Status**: REOPEN #1 chiuso 2026-07-02T19:06Z (19/19 test PASS). **REOPEN #2 aperto stesso giorno** dopo screenshot player live (Gwyn Ironfoot Druid/Healer Lv11 su produzione): UI stale + Druid riceve item STR. 23/23 test PASS post-fix. In attesa `e1_tester` browser per closure formale.
+
+BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary required_level) + REOPEN #1 (verifica live end-to-end + fix 2× `NameError` + HTTP E2E test) + REOPEN #2 (UI stale onChanged + warning-only skip).
 
 - **Root cause originale**: formula fitness leggeva `item['stats']` (dict inesistente) → ranking degenerato a solo `power_score`; level gate leggeva campi legacy inesistenti; `item_equip_power` locale ignorava i `*_bonus`.
 - **Fix formula**: `PRIMARY_WEIGHT=3.0 · SECONDARY_WEIGHT=1.5 · POWER_WEIGHT=1.0 · STAT_TAG_BONUS=2.0 · WARNING_PENALTY=0.5`. Sort tie-break totalmente deterministico.
 - **ADJ-2 backfill**: 6 Legendary con `required_adventurer_level` a valore corretto (sword/staff=9, altri=8). Script `round1654b_seed_integrity.py` dry-run+apply idempotente con snapshot rollback.
 - **REOPEN fix 2× `NameError`** (`grammar_it`, `class_it_short`) — 2 righe in `auto_equip.py`.
-- **Test**: 19/19 PASS (11 unit auto-equip + 5 unit backfill + 3 HTTP E2E) su `orbus_r16_test`.
-- **e1_tester browser**: 6/6 PASS (drakefang-greatsword + stormforged-plate + hoardlords-seal, no balanced_dagger, no 500/CSRF/[object Object], idempotenza confermata).
+- **Test**: 23/23 PASS (11 unit auto-equip + 5 unit backfill + 3 HTTP E2E + 4 REOPEN #2 warning-skip) su `orbus_r16_test`.
+- **e1_tester browser**: REOPEN #1 6/6 PASS. REOPEN #2 in attesa di verifica browser dopo Q2-b(iii).
+- **REOPEN #2 fix chiave**:
+  - FE: `Adventurers.jsx` — nuovo `reloadAndRefreshSelected` + `onChanged` prop → modale rinfrescata senza reload.
+  - BE: `auto_equip.py` — Auto-Equip **SCARTA** severity=warning (regola PM Q2-b(iii)); empty state IT differenziato con `off_class_seen` counter.
 - **Report**: `/app/memory/round1654b_final_report.md` (con sez. 18 REOPEN + Sigillo CLOSED & SEALED)
 - **Audit**: `/app/memory/round1654b_audit_report.md`
 - **Snapshot ADJ-2**: `/app/memory/round1654b_adj2_snapshot.json`

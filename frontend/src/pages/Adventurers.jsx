@@ -129,6 +129,34 @@ export default function Adventurers() {
 
     const openSheet = (a) => setSelected(a);
     const closeSheet = () => setSelected(null);
+
+    /**
+     * ROUND 16.5.4b REOPEN #2 — Fix Bug #1 (UI stale post Auto-Equip).
+     * After the modal mutates the adventurer (auto-equip / unequip),
+     * refetch the roster and re-hydrate `selected` with the fresh row
+     * so the modal picks up the new `equipment` snapshot without a
+     * close/reopen or a page reload.
+     */
+    const reloadAndRefreshSelected = async (advId) => {
+        try {
+            const params = new URLSearchParams();
+            for (const [k, v] of Object.entries(filters || {})) {
+                if (v === "" || v === null || v === undefined || v === false) continue;
+                params.set(k, typeof v === "boolean" ? "true" : String(v));
+            }
+            const qs = params.toString();
+            const { data } = await api.get(`/adventurers${qs ? `?${qs}` : ""}`);
+            setRows(data.adventurers);
+            if (advId) {
+                const fresh = (data.adventurers || []).find((r) => r.id === advId);
+                if (fresh) setSelected(fresh);
+            }
+        } catch (err) {
+            // Non-fatal: modal report is already shown; a manual close/
+            // reopen still recovers the correct state.
+            toast.error(formatApiError(err));
+        }
+    };
     const openRename = (a) => setRenaming(a);
     const closeRename = () => setRenaming(null);
     const openRetire = (a) => {
@@ -550,7 +578,11 @@ export default function Adventurers() {
                 )}
             </main>
 
-            <AdventurerDetailModal adventurer={selected} onClose={closeSheet} />
+            <AdventurerDetailModal
+                adventurer={selected}
+                onClose={closeSheet}
+                onChanged={reloadAndRefreshSelected}
+            />
             <AdventurerRenameModal adventurer={renaming} onClose={closeRename} onRenamed={onRenamed} />
             {retiring && (
                 <div

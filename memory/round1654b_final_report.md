@@ -574,7 +574,95 @@ come **ADJ-9 [P1] Backfill class_slug on legacy adventurers** in
 - Test isolati su `orbus_r16_test`
 
 ### Statement
-**Round 16.5.4b CLOSED & SEALED**
+**Round 16.5.4b CLOSED & SEALED** (prima chiusura REOPEN #1)
+
+---
+
+## 19. REOPEN #2 — UI stale post Auto-Equip + Warning-only skip
+
+**Data apertura**: 2026-07-02, dopo screenshot player live (Gwyn Ironfoot Druid/Healer Lv11 su produzione).
+
+### 19.1 — Bug segnalati dal player
+- **Bug #1 (P0)**: dopo Auto-Equip, il report mostra 3 oggetti aggiornati (Frostfang + Manopole + HoardLord's Seal, potere 12→36), ma la scheda avventuriero nella modale continua a mostrare `Balanced Dagger` / armatura vuota / accessorio vuoto. Secondo click restituisce "Nessun miglioramento disponibile".
+- **Bug #2 (P1)**: Gwyn (Druid/Healer, primary=faith) riceve item STR (Frostfang Claymore +3 STR, Manopole del Sfondatore +3 STR, HoardLord's Seal +2 STR).
+
+### 19.2 — Root cause Bug #1 (UI stale)
+`AdventurerDetailModal.jsx` legge `equipment` dalla prop `adventurer` (immutabile finché il parent non la rinfresca). Il parent `Adventurers.jsx:553` istanziava `<AdventurerDetailModal adventurer={selected} onClose={closeSheet} />` **senza `onChanged` prop**; la callback `onChanged(adventurer.id)` chiamata dopo auto-equip veniva risolta come `undefined` → no-op. Né `rows` (lista) né `selected` (modale) venivano rinfrescati.
+
+### 19.3 — Root cause Bug #2 (Druid off-class equip)
+Diagnosi empirica su DB dev (`orbus_r16`):
+- Definizione Druid **corretta**: `primary_stat=faith, secondary_stats=[intellect], role=Healer, allowed_weapon_tags=[staff, club, natural]`.
+- **Frostfang Claymore** ha `recommended_classes=[warrior, paladin, berserker]` (NO druid) e `weapon_tags=[sword, two_handed]` (NON in Druid `allowed_weapon_tags`).
+- `check_equip_compatibility` verdict per Druid+Frostfang: **`severity="warning"`** (soft warning "not_recommended_class"), NON `"block"`.
+- Nel codice R16.5.4b pre-REOPEN#2, warning veniva **equipaggiato** con penalty ×0.5 (`fit *= WARNING_PENALTY`). Con l'inventario di Gwyn produzione povero di weapon druid-compatible, Frostfang era l'unico candidato non-block → vinceva per default.
+- Ipotesi confermata: **(b)** del PM — Druid primary corretto ma inventario production non contiene item druid-fit; l'algoritmo falliva sul fallback warning-penalty.
+
+### 19.4 — Decisioni PM approvate (2026-07-02)
+- **Q1-a**: Fix Bug #1 via Opzione B1 (FE only, no backend change).
+- **Q2-b(iii)**: **MAI equipaggiare warning-only** in Auto-Equip (nuova regola di selezione, non bilanciamento). Il manual equip resta invariato. Nessun forced-unequip retroattivo di item off-class già equipaggiati.
+- **Q3-a**: Test browser finale via `e1_tester` sul dev preview con Druid Lv1 esistente.
+
+### 19.5 — Regola Auto-Equip finale approvata
+```
+compatibility = block   → scarta
+compatibility = warning → SCARTA (nuovo — prima con penalty ×0.5)
+compatibility = ok      → candidato valido
+```
+
+### 19.6 — Fix Bug #1 (FE only)
+File: `/app/frontend/src/pages/Adventurers.jsx`
+- Aggiunta funzione `reloadAndRefreshSelected(advId)`: rifà `GET /api/adventurers` (con gli stessi filtri correnti), aggiorna `rows`, cerca l'entry per id e chiama `setSelected(fresh)` → la modale si ri-renderizza col nuovo `equipment`.
+- Passata come prop: `<AdventurerDetailModal ... onChanged={reloadAndRefreshSelected} />`.
+
+Nessun backend change. Nessuna modifica ad `AdventurerDetailModal.jsx` (era già pronto a chiamare `onChanged`).
+
+### 19.7 — Fix Bug #2 (backend `auto_equip.py`)
+- Rimosso `WARNING_PENALTY = 0.5` (costante inutilizzata).
+- Loop candidati: `if severity in ("block", "warning"): continue` (prima solo "block").
+- Aggiunto counter `off_class_seen` per differenziare empty state.
+- Empty state IT nuovi (nel loop `if not candidates`):
+  - `off_class_seen == 0` → `«Nessuna {arma/armatura/accessorio} adatta a {ClasseIT} Lv{n} trovata in inventario. Completa spedizioni, raid o missioni per trovare equipaggiamento compatibile.»`
+  - `off_class_seen > 0` → `«Oggetti trovati, ma nessuno adatto alla classe {ClasseIT} per lo slot {arma/armatura/accessorio}.»`
+- Il campo `off_class_seen` è esposto in `unchanged_slots_detail[].off_class_seen` per il FE (opzionale, non usato oggi).
+- Mappa `_CLASS_LABELS_IT`: **`druid → Druido` già presente** (verificato riga 175). Nessuna aggiunta necessaria.
+
+### 19.8 — Test regression (backend_round1654b_test.py)
+Aggiunti 4 nuovi test (**23 totali**, prima 19):
+
+| # | Nome | Verifica |
+|---|------|---------|
+| 20 | `test_druid_warning_only_weapon_skipped` | Druid + solo Frostfang-like in inv → weapon in `unchanged_slots`, `off_class_seen>=1`, nessun equip |
+| 21 | `test_druid_class_fit_weapon_preferred` | Druid + off-class + class-fit → sceglie sempre class-fit |
+| 22 | `test_warrior_regression_still_equips` | Warrior + 3 class-fit → tutti e 3 equipaggiati (no regressione R16.5.4b) |
+| 23 | `test_empty_state_message_italian` | Empty state IT: entrambi i pattern (off_class_seen==0 e >0) |
+
+**Test esistenti aggiornati**: nessuno. I test 01-11 tutti passano invariati perché usavano già `class_tags` matching alla classe dell'adventurer (severity=ok, mai warning). Il test 07 (`class_locked_item_blocked`) usava `required_class_optional` che genera "block" (comportamento invariato).
+
+### 19.9 — Verifica live post-fix (curl reale)
+Warrior tester@orbus.test regression: `weapon=drakefang-greatsword`, `armor=stormforged-plate`, `accessory=hoardlords-seal`, `swaps=3`, `score 0→38`. Nessuna regressione dal REOPEN #1.
+
+### 19.10 — Nota ADJ-3 (item pool druid/warlock/alchemist)
+Con la nuova regola Q2-b(iii), l'empty state per Druid/Warlock/Alchemist diventa **più visibile** quando il pool inventory è povero. Traccia aggiornata come **P1 IMPORTANTE** in R16.5.4c backlog: seed pack minimale + verifica drop expedition per garantire copertura class-fit su tutte le classi post-R16.0.
+
+### 19.11 — File modificati REOPEN #2
+- `/app/backend/app/equipment/auto_equip.py` — rimosso WARNING_PENALTY, aggiornato loop candidati e empty state (~40 righe hunk).
+- `/app/frontend/src/pages/Adventurers.jsx` — aggiunta `reloadAndRefreshSelected` + `onChanged` prop (~30 righe).
+- `/app/backend/tests/backend_round1654b_test.py` — +4 test warning-skip (~150 righe append).
+- `/app/memory/round1654b_final_report.md` — questa sezione 19.
+- `/app/memory/backlog.md` — ADJ-3 promosso a P1 IMPORTANTE.
+- `/app/memory/orbus_world_roadmap.md` — annotazione REOPEN #2 in-flight.
+
+### 19.12 — Vincoli rispettati
+- ✅ Nessun cambio a drop/reward/economia/PvP/premium/stat item
+- ✅ Nessun cambio a class primary_stat / secondary_stats / formule bilanciamento
+- ✅ Nessun forced-unequip retroattivo di item off-class già equipaggiati
+- ✅ Nessun hard delete
+- ✅ Nessuna modifica al manual equip
+- ✅ Italiano su tutti i messaggi user-facing
+- ✅ Test isolati su `orbus_r16_test`
+
+### 19.13 — Statement
+**Round 16.5.4b REOPEN #2** — 23/23 test PASS, pronto per verifica browser `e1_tester`. **NON ancora chiuso** — attende conferma PM post browser test.
 
 ---
 

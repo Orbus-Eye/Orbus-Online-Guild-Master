@@ -891,3 +891,161 @@ def test_19_e2e_italian_message_readable(
             f"{slot} reason_it contiene 'None' (bug di formattazione): "
             f"{r_data['reason_it']}"
         )
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.5.4b REOPEN #2 — Warning-only skip tests (20–23)
+#
+# PM decision Q2-b(iii) approvata 2026-07-02: Auto-Equip scarta gli
+# item con `severity="warning"` (prima venivano equipaggiati con
+# penalty ×0.5). Il manual equip resta invariato.
+# ═════════════════════════════════════════════════════════════════════
+
+
+def test_20_druid_warning_only_weapon_skipped(sync_db, cleanup_r1654b):
+    """Druid + solo Frostfang-like (warrior-only) in inv → empty state,
+    NESSUN equip di weapon (comportamento post-Q2-b(iii)).
+
+    Ripete il caso Gwyn Ironfoot Lv11 in produzione:
+      - Adv classe Druid (faith primary, intellect secondary)
+      - Inv weapon: solo item con `recommended_classes=[warrior,paladin,berserker]`
+      - Atteso: weapon in `unchanged_slots`, `off_class_seen>=1`, reason IT
+        cita "adatto alla classe Druido".
+    """
+    _seed_class(sync_db, "test_r1654b_druid20", "faith", ["intellect"],
+                name="Druido")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654b_druid20", level=11)
+    # Frostfang-like: strong warrior weapon, NOT class-fit for druid
+    frostfang = _seed_item(
+        sync_db, item_type="weapon", name_tag="warrior_only_sword",
+        rarity="Epic", strength=5, endurance=2, power=7,
+        required_level=8,
+        class_tags=["warrior", "paladin", "berserker"],  # NO druid
+    )
+    _seed_inventory(sync_db, g["id"], frostfang["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+
+    equipped_slugs = [e["item_slug"] for e in res["equipped"]]
+    assert frostfang["slug"] not in equipped_slugs, (
+        f"REGRESSIONE Q2-b(iii): Frostfang-like non doveva essere "
+        f"equipaggiato su Druido, got equipped={equipped_slugs}"
+    )
+    assert "weapon" in res["unchanged_slots"]
+    weapon_detail = next(
+        (d for d in res["unchanged_slots_detail"] if d["slot"] == "weapon"),
+        None,
+    )
+    assert weapon_detail is not None
+    assert weapon_detail.get("off_class_seen", 0) >= 1, (
+        f"off_class_seen doveva essere >=1, got {weapon_detail}"
+    )
+
+
+def test_21_druid_class_fit_weapon_preferred(sync_db, cleanup_r1654b):
+    """Druid + Frostfang (off-class) + spiritglass-staff (class-fit) in
+    inv → sceglie sempre lo staff druid-compatibile, mai il sword warrior.
+    """
+    _seed_class(sync_db, "test_r1654b_druid21", "faith", ["intellect"],
+                name="Druido")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654b_druid21", level=10)
+    off_class = _seed_item(
+        sync_db, item_type="weapon", name_tag="off_druid",
+        rarity="Epic", strength=5, endurance=2, power=7,
+        class_tags=["warrior", "paladin"],
+    )
+    class_fit = _seed_item(
+        sync_db, item_type="weapon", name_tag="druid_staff",
+        rarity="Rare", intellect=3, faith=1, power=4,
+        class_tags=["test_r1654b_druid21"],  # match adv class
+    )
+    _seed_inventory(sync_db, g["id"], off_class["id"])
+    _seed_inventory(sync_db, g["id"], class_fit["id"])
+
+    res = _run(_call_auto_equip(g, adv["id"]))
+    equipped_w = next((e for e in res["equipped"] if e["slot"] == "weapon"),
+                     None)
+    assert equipped_w is not None, "weapon doveva essere equipaggiato"
+    assert equipped_w["item_slug"] == class_fit["slug"], (
+        f"Doveva scegliere lo staff druid-fit ({class_fit['slug']}), "
+        f"ha scelto {equipped_w['item_slug']}"
+    )
+
+
+def test_22_warrior_regression_still_equips(sync_db, cleanup_r1654b):
+    """Regression: Warrior + 3 item class-fit (weapon/armor/accessory)
+    → tutti e 3 equipaggiati (nessuna regressione dal pass R16.5.4b
+    precedente causata dal nuovo filtro warning)."""
+    _seed_class(sync_db, "test_r1654b_warr22", "strength", ["endurance"],
+                name="Guerriero")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654b_warr22", level=10)
+    w = _seed_item(sync_db, item_type="weapon", name_tag="w_warr",
+                   strength=5, endurance=2, power=7,
+                   class_tags=["test_r1654b_warr22"])
+    a = _seed_item(sync_db, item_type="armor", name_tag="a_warr",
+                   strength=1, endurance=5, power=6,
+                   class_tags=["test_r1654b_warr22"])
+    acc = _seed_item(sync_db, item_type="accessory", name_tag="acc_warr",
+                     strength=2, endurance=2, power=6,
+                     class_tags=["test_r1654b_warr22"])
+    for it in (w, a, acc):
+        _seed_inventory(sync_db, g["id"], it["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+    equipped_slots = {e["slot"] for e in res["equipped"]}
+    assert equipped_slots == {"weapon", "armor", "accessory"}, (
+        f"Warrior con inv class-fit deve equipaggiare tutti e 3 gli "
+        f"slot, got {equipped_slots}"
+    )
+    assert res["swaps_count"] == 3
+
+
+def test_23_empty_state_message_italian(sync_db, cleanup_r1654b):
+    """Empty state IT: messaggi devono seguire il pattern approvato.
+
+    - Se `off_class_seen == 0` → «Nessuna arma/armatura adatta a {Classe}
+      Lv{n} trovata in inventario. Completa spedizioni, raid o missioni…»
+    - Se `off_class_seen > 0`  → «Oggetti trovati, ma nessuno adatto alla
+      classe {Classe} per lo slot arma/armatura/…»
+    """
+    _seed_class(sync_db, "test_r1654b_druid23", "faith", ["intellect"],
+                name="Druido")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654b_druid23", level=7)
+
+    # Caso A: inventario COMPLETAMENTE vuoto per il tipo weapon.
+    #   Ma inventario contiene un armor druid-fit, così solo weapon
+    #   scatena il messaggio "Nessuna arma adatta…" con off_class=0.
+    armor_fit = _seed_item(sync_db, item_type="armor", name_tag="dr_armor",
+                           intellect=2, faith=1, power=3,
+                           class_tags=["test_r1654b_druid23"])
+    _seed_inventory(sync_db, g["id"], armor_fit["id"])
+    res_a = _run(_call_auto_equip(g, adv["id"]))
+    wpn_det = next(
+        (d for d in res_a["unchanged_slots_detail"] if d["slot"] == "weapon"),
+        None,
+    )
+    assert wpn_det is not None
+    assert wpn_det.get("off_class_seen", 0) == 0
+    assert "Nessuna arma adatta a Druido Lv7" in wpn_det["reason_it"], (
+        f"weapon reason_it non conforme: {wpn_det['reason_it']}"
+    )
+    assert "Completa spedizioni, raid o missioni" in wpn_det["reason_it"]
+
+    # Caso B: aggiungiamo una weapon off-class → off_class_seen>0 →
+    # messaggio deve cambiare a "Oggetti trovati, ma nessuno adatto…".
+    off = _seed_item(sync_db, item_type="weapon", name_tag="off_w",
+                     strength=5, power=7,
+                     class_tags=["warrior"])
+    _seed_inventory(sync_db, g["id"], off["id"])
+    res_b = _run(_call_auto_equip(g, adv["id"]))
+    wpn_det2 = next(
+        (d for d in res_b["unchanged_slots_detail"] if d["slot"] == "weapon"),
+        None,
+    )
+    assert wpn_det2 is not None
+    assert wpn_det2.get("off_class_seen", 0) >= 1
+    assert "Oggetti trovati, ma nessuno adatto alla classe Druido" in (
+        wpn_det2["reason_it"]
+    ), f"weapon reason_it caso B non conforme: {wpn_det2['reason_it']}"
+
