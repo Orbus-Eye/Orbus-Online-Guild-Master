@@ -130,6 +130,39 @@ const DesktopAccountMenu = ({ user, onLogout, openId, setOpenId }) => {
                                     Admin
                                 </Link>
                             </li>
+                            {/* ROUND 16.5.2 — voci prima orfane (R16.5.1 B.1/B.2 + R16.A audit) */}
+                            <li>
+                                <Link
+                                    to="/admin/world-events"
+                                    data-testid="desktop-menu-admin-world-events"
+                                    onClick={() => setOpenId(null)}
+                                    className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
+                                >
+                                    Eventi continentali
+                                </Link>
+                            </li>
+                            {user.email?.endsWith("@orbus.test") && (
+                                <li>
+                                    <Link
+                                        to="/admin/tester-tools"
+                                        data-testid="desktop-menu-admin-tester-tools"
+                                        onClick={() => setOpenId(null)}
+                                        className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
+                                    >
+                                        Strumenti tester (TEST ONLY)
+                                    </Link>
+                                </li>
+                            )}
+                            <li>
+                                <Link
+                                    to="/admin/audit"
+                                    data-testid="desktop-menu-admin-audit"
+                                    onClick={() => setOpenId(null)}
+                                    className="block px-4 py-2 text-xs text-foreground/85 hover:bg-secondary/60 hover:text-amber"
+                                >
+                                    Audit
+                                </Link>
+                            </li>
                             <li>
                                 <Link
                                     to="/admin/ops"

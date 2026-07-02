@@ -27,12 +27,14 @@ Items:
      → primo render vede `user === undefined` → race condition.
    - Impatto: solo UX admin. Nessuna leak di dati.
 
-2. **Client-side guard mancante su `/admin/tester-tools`**
-   - Origine: `e1_tester` pass 2 (2026-07-02)
-   - Sintomo: non-admin vede l'UI del pannello (backend blocca 403 su
-     ogni azione → sicurezza OK, UX da sistemare).
-   - Fix proposto: montare guard `!user?.is_admin → NotAuthorized`
-     (pattern già presente in `AdminOps.jsx`).
+2. **Client-side guard mancante su `/admin/tester-tools`** — ✅ MITIGATO in R16.5.2 hotfix visibility
+   - Fix applicato: guard di **visibilità** inline nel menu (dropdown desktop + drawer mobile) —
+     `user?.is_admin && user.email?.endsWith("@orbus.test")` — impedisce che un non-tester
+     scopra l'esistenza della rotta tramite il menu.
+   - Resta aperto (P3): guard **hard** client-side lato pagina (redirect / "Accesso negato")
+     per il caso in cui un admin non-`@orbus.test` digiti manualmente l'URL. Backend blocca
+     comunque 403, quindi UX-only.
+   - Vedi `/app/memory/round1652_visibility_fix_report.md`.
 
 3. **`AdminWorldEvents.jsx` usa `axios` raw**
    - File: `/app/frontend/src/pages/AdminWorldEvents.jsx`

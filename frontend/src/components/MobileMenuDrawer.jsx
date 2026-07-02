@@ -169,6 +169,36 @@ export default function MobileMenuDrawer({ open, onClose }) {
                                                         >
                                                             Admin
                                                         </Link>
+                                                        {/* ROUND 16.5.2 — voci prima orfane (R16.5.1 B.1/B.2 + R16.A audit) */}
+                                                        <Link
+                                                            to="/admin/world-events"
+                                                            onClick={handleNavClick}
+                                                            data-testid="mobile-menu-admin-world-events"
+                                                            className="block px-6 py-3 text-sm text-foreground/85 hover:bg-secondary/40"
+                                                            style={{ minHeight: 44 }}
+                                                        >
+                                                            Eventi continentali
+                                                        </Link>
+                                                        {user.email?.endsWith("@orbus.test") && (
+                                                            <Link
+                                                                to="/admin/tester-tools"
+                                                                onClick={handleNavClick}
+                                                                data-testid="mobile-menu-admin-tester-tools"
+                                                                className="block px-6 py-3 text-sm text-foreground/85 hover:bg-secondary/40"
+                                                                style={{ minHeight: 44 }}
+                                                            >
+                                                                Strumenti tester (TEST ONLY)
+                                                            </Link>
+                                                        )}
+                                                        <Link
+                                                            to="/admin/audit"
+                                                            onClick={handleNavClick}
+                                                            data-testid="mobile-menu-admin-audit"
+                                                            className="block px-6 py-3 text-sm text-foreground/85 hover:bg-secondary/40"
+                                                            style={{ minHeight: 44 }}
+                                                        >
+                                                            Audit
+                                                        </Link>
                                                         <Link
                                                             to="/admin/ops"
                                                             onClick={handleNavClick}
