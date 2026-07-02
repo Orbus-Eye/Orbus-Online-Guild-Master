@@ -160,3 +160,12 @@ Hook rimanenti da attivare:
 **Note tecniche**:
 - Il pattern `round1654b_seed_integrity.py` (whitelist + snapshot + audit event) è il template per ADJ-1 e per il seed pack ADJ-3.
 
+---
+
+## Round 16.5.5+ UX Polish (backlog basso, non blocker)
+
+Raccolti durante REOPEN R16.5.4b (verifica browser `e1_tester`):
+- **UI Auto-Equip label**: differenziare visivamente "Slot Equipaggiati" vs "Zaino/Inventario" (attualmente ambigui).
+- **Messaggio empty state "già ottimale"**: `"Nessun item migliore disponibile"` → più caloroso, es. `"Equipaggiamento già ottimale ✨"` o `"L'oggetto attuale è la scelta migliore per questa classe."`
+
+Nessun impatto funzionale, solo copy + microinterazioni.

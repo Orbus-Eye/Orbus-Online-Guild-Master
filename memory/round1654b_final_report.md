@@ -541,3 +541,40 @@ come **ADJ-9 [P1] Backfill class_slug on legacy adventurers** in
 
 ---
 
+## Sigillo Round 16.5.4b — CLOSED & SEALED
+
+**Data**: 2026-07-02T19:06Z
+
+### Verifica finale end-to-end
+- ✅ 19/19 test isolati PASS (11 unit + 5 backfill + 3 HTTP E2E)
+- ✅ Trace curl live post-seed su `tester@orbus.test` → `drakefang-greatsword` + `stormforged-plate` + `hoardlords-seal`
+- ✅ `e1_tester` browser 6/6 PASS: UI conferma equipment corretto, italiano leggibile, idempotenza
+
+### 4 criteri di chiusura soddisfatti
+1. ✅ Auto-Equip HTTP equipaggia weapon+armor+accessory
+2. ✅ `balanced_dagger` NON scelto se esiste arma migliore
+3. ✅ Empty state chiaro (classe + livello + hint drop)
+4. ✅ R16.5.4b deployato in preview
+
+### Bug adiacenti tracciati per R16.5.4c
+- **ADJ-9 [P1]** `class_slug` mancante 94% avventurieri (backfill + fix recruit)
+- **ADJ-3 [P1]** warlock/alchemist zero item compatibili
+- **ADJ-1 [P2]** rarity case mismatch
+- **ADJ-6 [P3]** audit entity_id
+- **ADJ-7 [P3]** except generico che mangia 423
+
+### 2 warning UX minori (backlog cosmetico R16.5.5+)
+- Ambiguità visiva UI "Inventario" vs "Equipaggiamento" (label più chiare)
+- Messaggio "Nessun item migliore disponibile" potrebbe essere più caloroso (es. "Equipaggiamento già ottimale ✨")
+
+### Vincoli rispettati
+- Zero modifiche a drop/reward/PvP/economia/premium/stat item
+- Zero hard delete
+- Solo `required_adventurer_level` modificato sui 6 Legendary target (ADJ-2 backfill)
+- Test isolati su `orbus_r16_test`
+
+### Statement
+**Round 16.5.4b CLOSED & SEALED**
+
+---
+

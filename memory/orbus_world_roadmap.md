@@ -246,3 +246,37 @@ Micro-fix registrazione con policy password strutturata + checklist dinamica FE.
 - **Test**: 8/8 PASS (5 password matrix + missing_special + change-password + login retro-compat) su `orbus_r16_test`.
 - **Report**: `/app/memory/round1654a_password_ux_report.md`
 - **NESSUNA modifica**: login, sessioni, cookie, CSRF, JWT, DB, endpoint.
+
+---
+
+## Round 16.5.4b — Auto-Equip Class-Aware CLOSED & SEALED ✅ (2026-07-02)
+
+BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary required_level) + REOPEN (verifica live end-to-end + fix 2× `NameError` + HTTP E2E test).
+
+- **Root cause originale**: formula fitness leggeva `item['stats']` (dict inesistente) → ranking degenerato a solo `power_score`; level gate leggeva campi legacy inesistenti; `item_equip_power` locale ignorava i `*_bonus`.
+- **Fix formula**: `PRIMARY_WEIGHT=3.0 · SECONDARY_WEIGHT=1.5 · POWER_WEIGHT=1.0 · STAT_TAG_BONUS=2.0 · WARNING_PENALTY=0.5`. Sort tie-break totalmente deterministico.
+- **ADJ-2 backfill**: 6 Legendary con `required_adventurer_level` a valore corretto (sword/staff=9, altri=8). Script `round1654b_seed_integrity.py` dry-run+apply idempotente con snapshot rollback.
+- **REOPEN fix 2× `NameError`** (`grammar_it`, `class_it_short`) — 2 righe in `auto_equip.py`.
+- **Test**: 19/19 PASS (11 unit auto-equip + 5 unit backfill + 3 HTTP E2E) su `orbus_r16_test`.
+- **e1_tester browser**: 6/6 PASS (drakefang-greatsword + stormforged-plate + hoardlords-seal, no balanced_dagger, no 500/CSRF/[object Object], idempotenza confermata).
+- **Report**: `/app/memory/round1654b_final_report.md` (con sez. 18 REOPEN + Sigillo CLOSED & SEALED)
+- **Audit**: `/app/memory/round1654b_audit_report.md`
+- **Snapshot ADJ-2**: `/app/memory/round1654b_adj2_snapshot.json`
+- **Bug adiacenti tracciati per R16.5.4c**: ADJ-9 [P1] class_slug backfill (94% avventurieri), ADJ-3 [P1] warlock/alchemist zero item, ADJ-1 [P2] rarity case mismatch, ADJ-6 [P3] audit entity_id, ADJ-7 [P3] except generico che mangia 423.
+- **NESSUNA modifica** a drop/reward/PvP/economia/premium/stat item; zero hard delete; solo `required_adventurer_level` toccato sui 6 Legendary target.
+
+---
+
+## Round 16.5.4c — Seed Integrity & Class Equipment Coverage PLANNED 🔜
+
+Chiude i buchi di data-integrity + coverage di classi introdotti dopo R16.0 rilevati durante audit e REOPEN R16.5.4b.
+
+**Priorità items** (da `/app/memory/backlog.md`):
+1. **ADJ-9 [P1]** ⭐ Backfill `class_slug` sugli avventurieri legacy (94% dei doc senza campo). Script `round1654c_backfill_class_slug.py` + fix `POST /api/adventurers/recruit`.
+2. **ADJ-1 [P2]** Rarity case-mismatch normalization (rare/epic/legendary → Rare/Epic/Legendary).
+3. **ADJ-3 [P1]** Seed pack minimale Warlock + Alchemist (weapon/armor/accessory a 5 livelli target).
+4. **ADJ-6 [P3]** Estensione `related_entity_id=adv.id` a `equip_item_service` + `unequip_item_service`.
+5. **ADJ-7 [P3]** Bubble-up 423 level_gate come warning strutturato in auto-equip.
+
+Vincoli: dry-run+apply obbligatorio per ogni seed patch, snapshot rollback, zero drop/balance/P2W shift, zero hard delete.
+
