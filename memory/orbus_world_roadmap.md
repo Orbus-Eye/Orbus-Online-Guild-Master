@@ -208,26 +208,26 @@ Tools UI) + fix F2 (i18n bottoni Tester Tools).
   - Stringhe residue admin (item 5)
 - **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia, no rimozione difese CSRF backend.
 
-## Round 16.5.3 — CLOSED ✅ (2026-07-02)
+## Round 16.5.3 — CLOSED & SEALED ✅ (2026-07-02)
 
-Core loop fixes: P0.1 raid gate + P0.2 activity sweep + P1 Guild XP V1.
+Core loop fixes: P0.1 raid gate + P0.2 activity sweep + P1 Guild XP V1 + I2 label micro-fix.
 
 - **P0.1** Raid gate visibility & enforcement — audit ha rivelato che il fix era già al 90% presente. Micro-fix: aggiunto `dungeon_slug` al payload d'errore `underleveled_squad` in raid.preview + raid.start. Mapping confermato: tier1→8, tier2→12.
 - **P0.2** Sweep unificato `sweep_activities_for_guild` nuovo helper in `app/core/activity_sweep.py`. Chiama best-effort expedition + raid recovery + resource mission resolver. Agganciato a `GET /api/adventurers`, `GET /api/roster/health`, `GET /api/guilds/me`. Latency <30ms (0 attività) / ~80ms worst-case.
 - **P1** Guild XP "Prestigio di Gilda" V1 bare-minimum — nuovo modulo `app/achievements/xp_hooks.py`. 3 drip hooks: expedition (+15/+5, cap 8/day), raid (+80/+40/+15, cap 1/day), resource mission (+10, cap 6/day). Nuova collection `guild_xp_daily_cap_tracker` con unique index. Idempotenza via activity_id + `db.audit_log`. Nessun backfill retroattivo. Frontend: card "PRESTIGIO DI GILDA" (label italiana) con sezione "COSA FARE PER SALIRE" statica V1.
+- **I2** Label micro-fix (chiusura, 2026-07-02): risolto ambiguità `guild.level` legacy vs `prestige_level`. `GuildProgressCard.jsx`: `LIVELLO` → `LV PRESTIGIO`, `XP` → `XP Prestigio`. Nessun cambio logica. Le ~10 occorrenze "Livello Gilda" in Forge/Spec/PvP/Arfus restano invariate (riferite al guild.level legacy, semanticamente corrette).
 - **Test**: 12/12 backend passed su `orbus_r16_test` (isolated port 8002)
 - **Frontend**: lint OK, webpack compile OK
 - **Deferred a R16.5.4** (Guild XP V2 Extended): 7 hook rimanenti (continental event, daily/weekly contract, structure upgrade, guild spec, trade pact, PvP battle) — vedi `/app/memory/backlog.md`.
-- **Report finale**: `/app/memory/round1653_final_report.md`
-- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati XP avventurieri/reward/drop/PvP/Stalla/economia, no rimozione difese CSRF/gate.
+- **Report finale**: `/app/memory/round1653_final_report.md` (con sezione "Label micro-fix" + firma SEALED)
+- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati XP avventurieri/reward/drop/PvP/Stalla/economia, no rimozione difese CSRF/gate, no unificazione livelli.
 
-## Round 16.5.4 — PLANNED — Guild XP V2 Extended Hooks (P2)
+### Backlog aperto (ordine suggerito per prossimi round)
 
-Scope: 7 hook rimanenti sul sistema Prestigio di Gilda. Vedi
-`/app/memory/backlog.md` sezione dedicata per l'elenco dettagliato.
-Vincoli: no monetizzazione, no backfill retroattivo, tracker
-giornaliero e settimanale, audit GUILD_XP_GAINED.
-Attesa decisione utente per apertura.
+1. **R16.5.4** — Guild XP V2 Extended Hooks (P2) — 7 hook rimanenti al sistema Prestigio.
+2. **R16.5.2** — Admin Polish (P3) — 5 item tracciati (F5 blank, guard client-side, AdminWorldEvents axios raw, useAdminGuard, stringhe residue).
+3. **Territory `KeyError: 'library'`** — audit indipendente (P2) — visibile nei log su `GET /api/territory/me`.
+4. **R16.5.5+ (opzionale)** — Unificazione terminologia `guild.level` vs `prestige_level` — pianificare con cautela (impatti gate Forge/Spec/PvP/Arfus/TradePact).
 
 Scope: unificazione UX/tecnica delle pagine admin. Vedi
 `/app/memory/backlog.md` sezione "Round 16.5.2 — Admin Polish"

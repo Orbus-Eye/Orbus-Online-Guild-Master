@@ -201,3 +201,58 @@ Test focalizzati suggeriti per e1_tester:
 1. Card raid mostra Lv reale (non Lv1) sulla lista `/raids` e nel builder.
 2. Avventuriero completa expedition, NON apro report, vado direttamente in `/adventurers` → avv rilasciato entro pochi secondi.
 3. Dashboard mostra card "PRESTIGIO DI GILDA" con progress bar XP e sezione "COSA FARE PER SALIRE" con 3 hint.
+
+---
+
+## Label micro-fix (chiusura I2 — 2026-07-02)
+
+**Contesto**: post-fix STEP 2.B l'utente ha notato ambiguità tra `guild.level` legacy (valore 1-15, usato come gate unlock Forge/Specializzazione/PvP/Arfus) e il nuovo `prestige_level` (valore basso, tipicamente 1-3 all'inizio) esposto dalla card Prestigio. Il campo `summary.guild_level` restituito da `/api/achievements/summary` **è** il prestige_level, ma la label diceva genericamente `LIVELLO`.
+
+**Grep audit sull'intero FE**: emerse ~10 occorrenze di "Livello Gilda" (Forge, Specialization, PvP, Arfus, TradePact) — TUTTE riferite al `guild.level` legacy come gate di unlock. Semanticamente corrette nei loro contesti (non parlano di prestigio). Nessuna toccata.
+
+L'unico punto ambiguo era la nuova `GuildProgressCard.jsx`. Fix a 2 stringhe:
+
+| # | Stringa | Prima | Dopo |
+|:-:|---|---|---|
+| 1 | Label livello (linea 87) | `LIVELLO` | `LV PRESTIGIO` |
+| 2 | Label XP (linea 92) | `{into} / {span} XP` | `{into} / {span} XP Prestigio` |
+
+Il valore `Lv {summary.guild_level}` (linea 89-90) resta invariato — è la vera cifra prestigio (es. `Lv 3`).
+
+**File modificato (unico atteso)**: `/app/frontend/src/components/GuildProgressCard.jsx`.
+
+**Confermato NESSUN cambio logica**:
+- ❌ Formule XP invariate
+- ❌ Gate unlock invariati
+- ❌ Formule prestige_level invariate
+- ❌ `guild.level` legacy invariato
+
+**Confermato NESSUN cambio DB**:
+- ❌ Nessun update collection
+- ❌ Nessun migration
+- ❌ Nessun seed toccato
+
+**Verifica**:
+- ✅ Frontend lint: 0 issues
+- ✅ Webpack: `Compiled successfully!`
+- ✅ Grep post-fix: nessuna occorrenza `Livello Gilda` residua nella card Prestigio
+
+---
+
+## Round 16.5.3 CLOSED & SEALED — 2026-07-02
+
+### Backlog prossimo consigliato (ordine suggerito)
+
+1. **Round 16.5.4 — Guild XP V2 Extended Hooks (P2)**
+   Aggiungere i 7 hook drip rimanenti al sistema Prestigio: continental event, daily/weekly contract, structure upgrade, guild specialization, trade pact, PvP battle. Vedi `/app/memory/backlog.md`.
+
+2. **Round 16.5.2 — Admin Polish (P3)**
+   5 item già tracciati: F5 blank screen, client-side guard tester-tools, `AdminWorldEvents.jsx` axios raw, hook `useAdminGuard()`, stringhe residue admin. Vedi `/app/memory/backlog.md`.
+
+3. **Territory `KeyError: 'library'`** — audit indipendente (P2)
+   Nei log backend visibile durante `GET /api/territory/me` → `app/territory/services.py:53` → `get_structure_max_level("library", allow_legacy=False)` → KeyError. Fuori scope R16.5.3; richiede audit del catalog delle strutture per capire se "library" è uno slug legacy da mappare o rimuovere.
+
+4. **Round 16.5.5+ (opzionale) — Unificazione terminologia `guild.level` vs `prestige_level`**
+   La coesistenza dei due concetti è oggi risolta con label esplicite ("Prestigio di Gilda" per il nuovo, "Livello Gilda" per il gate legacy). Se in futuro si vuole unificare, andrà pianificato con cautela (impatti su Forge, Specialization, PvP, Arfus, TradePact — tutti gate legacy).
+
+**Firma di chiusura**: nessun bug P0/P1 aperto. Test isolati 12/12 PASS. Frontend lint + webpack pass. Difese CSRF, gate runtime, guardrail invariati.

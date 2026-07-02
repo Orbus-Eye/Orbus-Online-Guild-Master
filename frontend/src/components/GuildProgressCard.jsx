@@ -85,14 +85,14 @@ export default function GuildProgressCard() {
 
             <div className="flex items-baseline gap-4 mb-3">
                 <div>
-                    <div className="text-[10px] text-muted-foreground">LIVELLO</div>
+                    <div className="text-[10px] text-muted-foreground">LV PRESTIGIO</div>
                     <div className="text-2xl font-light text-amber" data-testid="card-guild-level">
                         Lv {summary.guild_level}
                     </div>
                 </div>
                 <div className="flex-1">
                     <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
-                        <span>{into} / {span} XP</span>
+                        <span>{into} / {span} XP Prestigio</span>
                         <span data-testid="card-points">{summary.achievement_points} pt</span>
                     </div>
                     <div className="h-2 bg-background border border-border rounded-sm overflow-hidden">
