@@ -506,6 +506,17 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     except Exception:
         pass
 
+    # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
+    # idempotente su expedition_id, cap 8/giorno. Success +15, fail +5.
+    try:
+        from app.achievements.xp_hooks import on_expedition_completed
+        await on_expedition_completed(
+            db, claimed["guild_id"],
+            expedition_id=exp_id, success=success,
+        )
+    except Exception:
+        pass
+
     # ROUND 13b — seasonal `dungeon_clears` counter (best-effort, idempotent).
     # The CAS filter on expeditions.id + flag ensures a replay (lazy sweep
     # re-running on a stuck row) cannot double-count.

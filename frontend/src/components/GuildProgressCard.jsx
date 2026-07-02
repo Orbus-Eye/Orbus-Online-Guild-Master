@@ -72,7 +72,7 @@ export default function GuildProgressCard() {
         >
             <div className="flex items-center justify-between mb-2">
                 <div className="text-[10px] text-muted-foreground tracking-widest">
-                    :: PROGRESSO GILDA
+                    :: PRESTIGIO DI GILDA
                 </div>
                 <Link
                     to="/achievements"
@@ -103,6 +103,33 @@ export default function GuildProgressCard() {
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* ROUND 16.5.3 P1 — "Cosa fare per salire" (drip XP hint) */}
+            <div
+                data-testid="how-to-level-up"
+                className="mb-3 pt-3 border-t border-border/50"
+            >
+                <div className="text-[10px] text-muted-foreground mb-1 tracking-widest">
+                    :: COSA FARE PER SALIRE
+                </div>
+                <ul className="text-[11px] space-y-1 text-foreground/80">
+                    <li data-testid="hint-expedition"
+                        className="flex items-center justify-between gap-2">
+                        <span>Completa una spedizione</span>
+                        <span className="text-amber/80 font-mono whitespace-nowrap">+15 XP</span>
+                    </li>
+                    <li data-testid="hint-raid"
+                        className="flex items-center justify-between gap-2">
+                        <span>Vinci un raid</span>
+                        <span className="text-amber/80 font-mono whitespace-nowrap">+80 XP</span>
+                    </li>
+                    <li data-testid="hint-resource-mission"
+                        className="flex items-center justify-between gap-2">
+                        <span>Completa una missione risorse</span>
+                        <span className="text-amber/80 font-mono whitespace-nowrap">+10 XP</span>
+                    </li>
+                </ul>
             </div>
 
             {nextUp.length > 0 && (

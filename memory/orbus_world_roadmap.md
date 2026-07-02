@@ -208,7 +208,26 @@ Tools UI) + fix F2 (i18n bottoni Tester Tools).
   - Stringhe residue admin (item 5)
 - **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia, no rimozione difese CSRF backend.
 
-## Round 16.5.2 — PLANNED — Admin Polish (P3)
+## Round 16.5.3 — CLOSED ✅ (2026-07-02)
+
+Core loop fixes: P0.1 raid gate + P0.2 activity sweep + P1 Guild XP V1.
+
+- **P0.1** Raid gate visibility & enforcement — audit ha rivelato che il fix era già al 90% presente. Micro-fix: aggiunto `dungeon_slug` al payload d'errore `underleveled_squad` in raid.preview + raid.start. Mapping confermato: tier1→8, tier2→12.
+- **P0.2** Sweep unificato `sweep_activities_for_guild` nuovo helper in `app/core/activity_sweep.py`. Chiama best-effort expedition + raid recovery + resource mission resolver. Agganciato a `GET /api/adventurers`, `GET /api/roster/health`, `GET /api/guilds/me`. Latency <30ms (0 attività) / ~80ms worst-case.
+- **P1** Guild XP "Prestigio di Gilda" V1 bare-minimum — nuovo modulo `app/achievements/xp_hooks.py`. 3 drip hooks: expedition (+15/+5, cap 8/day), raid (+80/+40/+15, cap 1/day), resource mission (+10, cap 6/day). Nuova collection `guild_xp_daily_cap_tracker` con unique index. Idempotenza via activity_id + `db.audit_log`. Nessun backfill retroattivo. Frontend: card "PRESTIGIO DI GILDA" (label italiana) con sezione "COSA FARE PER SALIRE" statica V1.
+- **Test**: 12/12 backend passed su `orbus_r16_test` (isolated port 8002)
+- **Frontend**: lint OK, webpack compile OK
+- **Deferred a R16.5.4** (Guild XP V2 Extended): 7 hook rimanenti (continental event, daily/weekly contract, structure upgrade, guild spec, trade pact, PvP battle) — vedi `/app/memory/backlog.md`.
+- **Report finale**: `/app/memory/round1653_final_report.md`
+- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati XP avventurieri/reward/drop/PvP/Stalla/economia, no rimozione difese CSRF/gate.
+
+## Round 16.5.4 — PLANNED — Guild XP V2 Extended Hooks (P2)
+
+Scope: 7 hook rimanenti sul sistema Prestigio di Gilda. Vedi
+`/app/memory/backlog.md` sezione dedicata per l'elenco dettagliato.
+Vincoli: no monetizzazione, no backfill retroattivo, tracker
+giornaliero e settimanale, audit GUILD_XP_GAINED.
+Attesa decisione utente per apertura.
 
 Scope: unificazione UX/tecnica delle pagine admin. Vedi
 `/app/memory/backlog.md` sezione "Round 16.5.2 — Admin Polish"

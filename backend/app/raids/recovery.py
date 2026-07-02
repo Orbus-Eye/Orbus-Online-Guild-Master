@@ -333,6 +333,17 @@ async def resolve_stuck_raid(
         logger.warning("raid_recovery.season_stats_failed raid=%s err=%s",
                        raid_id, exc)
 
+    # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
+    # idempotente su raid_id, cap 1/giorno. Mirror del complete_raid.
+    try:
+        from app.achievements.xp_hooks import on_raid_completed
+        await on_raid_completed(
+            db, claimed["guild_id"], raid_id=raid_id, outcome=outcome,
+        )
+    except Exception as exc:
+        logger.warning("raid_recovery.xp_hook_failed raid=%s err=%s",
+                       raid_id, exc)
+
     return {
         "raid_id": raid_id,
         "guild_id": claimed["guild_id"],

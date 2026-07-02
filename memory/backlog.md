@@ -80,6 +80,37 @@ Items:
 
 ---
 
+## Round 16.5.4 — Guild XP V2 Extended Hooks (PLANNED)
+
+Scope: estendere il Prestigio di Gilda con le 7 fonti mancanti non implementate nella V1 (R16.5.3 STEP 2.B bare-minimum).
+
+Hook rimanenti da attivare:
+
+1. **continental_event_participation** (+25, cap 1/settimana/evento) — richiede tracker settimanale distinto (differente dalla granularità giornaliera dei drip R16.5.3)
+2. **daily_contract_claimed** (+20, cap 3/giorno) — solo se sistema daily contract già esiste (`app/contracts/` presente, verificare che il flow di claim sia raggiungibile)
+3. **weekly_contract_claimed** (+150, cap 1/settimana) — tracker settimanale
+4. **structure_upgraded** (+30, cap 3/giorno, one-time per struttura) — hook in `app/territory/*` sulla structure upgrade action; usare `structure_id` come `source_id` per idempotenza permanente (non solo giornaliera)
+5. **guild_specialization_chosen** (+200, one-shot per lifetime) — hook in `app/guild_specialization/*` sulla scelta iniziale
+6. **trade_pact_signed** (+50, cap 2/giorno) — hook in `app/trade_pacts/*` (verificare esistenza del sistema)
+7. **pvp_battle_completed** (+15, cap 3/giorno) — hook post battle chiuso (win/loss entrambi); usare `battle_id` come `source_id`
+
+**Prerequisiti**: audit rapido di esistenza dei moduli `contracts/`, `trade_pacts/`, `guild_specialization/`, `territory/structure_upgrade`, `pvp_continental/battle_resolver`. Se qualcuno di questi non ha ancora un endpoint di completion stabile, deferire il singolo hook al round successivo.
+
+**Priorità**: P2 (miglioramento, non blocker).
+
+**Vincoli**:
+- No monetizzazione
+- No backfill retroattivo
+- Cap giornaliero/settimanale rigoroso (nuovo tracker `guild_xp_weekly_cap_tracker` per gli hook 1/3)
+- Audit `GUILD_XP_GAINED` con `source` distinto per ogni hook (metriche future)
+- Nessuna modifica alle formule drip R16.5.3 (expedition/raid/resource) — solo additivo
+
+**Note tecniche riprese da R16.5.3**:
+- Il pattern `sweep_activities_for_guild` in `app/core/activity_sweep.py` è estendibile: se in R16.5.4 emergono altre attività lazy, aggiungere il resolver best-effort lì.
+- Il modulo `app/achievements/xp_hooks.py` centralizza già `_credit_xp` con cap + idempotency: i 7 nuovi hook sono thin wrapper che chiamano `_credit_xp` con nuove chiavi cap. Nessun refactor infra richiesto.
+
+---
+
 ## Convenzioni
 
 - Ogni item elenca: pagina/file, sintomo, root cause sospetta,

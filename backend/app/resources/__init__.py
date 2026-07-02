@@ -380,6 +380,15 @@ async def _resolve_mission(mission: dict, rng: Optional[_random.Random] = None) 
          "resource_slug": r["resource_slug"],
          "continent_slug": r["continent_slug"]},
     )
+    # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
+    # idempotente su mission_id, cap 6/giorno. Solo su success.
+    try:
+        from app.achievements.xp_hooks import on_resource_mission_completed
+        await on_resource_mission_completed(
+            db, r["guild_id"], mission_id=r["id"], success=success,
+        )
+    except Exception:
+        pass
     return r
 
 

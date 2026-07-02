@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 
 from app.core.database import db
 from app.core.security import get_current_user
-from app.expeditions.services import complete_due_expeditions
+from app.expeditions.services import complete_due_expeditions  # noqa: F401  # still exported for legacy imports
 from app.guilds.schemas import GuildCreateIn, OnboardingPatchIn
 from app.guilds.services import (
     compute_dashboard_stats,
@@ -40,8 +40,10 @@ async def create_guild(
 @router.get("/me")
 async def get_my_guild(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
-    # Phase 5.5e: lazy completion sweep
-    await complete_due_expeditions(db, guild["id"])
+    # ROUND 16.5.3 P0.2 — lazy sweep unificato (sostituisce il vecchio
+    # complete_due_expeditions puntuale; ora include anche raid + resource).
+    from app.core.activity_sweep import sweep_activities_for_guild
+    await sweep_activities_for_guild(db, guild["id"])
     # Re-fetch guild after sweep (gold/level/onboarding may have changed)
     guild = await user_guild_or_404(db, current_user["id"])
 

@@ -325,6 +325,7 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
     )
     enforce_min_adventurer_level(
         advs_ordered, legacy_min_level_for_raid(rd), source="raid.preview",
+        dungeon_slug=rd.get("slug"),
     )
     parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
     p = _compute_preview(rd, parties_docs)
@@ -381,6 +382,7 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
     )
     enforce_min_adventurer_level(
         advs_ordered, legacy_min_level_for_raid(rd), source="raid.start",
+        dungeon_slug=rd.get("slug"),
     )
 
     parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
@@ -535,6 +537,16 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
         {"id": {"$in": all_adv_ids}},
         {"$set": {"is_available": True, "expedition_in_progress": False, "updated_at": now.isoformat()}},
     )
+
+    # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
+    # idempotente su raid_id, cap 1/giorno. Victory +80, partial +40, defeat +15.
+    try:
+        from app.achievements.xp_hooks import on_raid_completed
+        await on_raid_completed(
+            db, guild["id"], raid_id=raid_id, outcome=outcome,
+        )
+    except Exception:
+        pass
 
     # dragon_essence to guild inventory (additive insert into inventory_items)
     if de_count > 0:

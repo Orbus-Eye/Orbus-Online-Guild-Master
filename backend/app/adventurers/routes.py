@@ -71,6 +71,10 @@ async def list_adventurers(
     # equip-power join; remaining slicing is done in-process to stay simple
     # and avoid an N+1 cursor (rosters are capped ≤500 rows).
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 16.5.3 P0.2 — lazy sweep unificato: rilascia squadre bloccate
+    # da expedition/raid/resource mission scaduti. Idempotente, best-effort.
+    from app.core.activity_sweep import sweep_activities_for_guild
+    await sweep_activities_for_guild(db, guild["id"])
     rows = await list_adventurers_for_guild(
         db, guild["id"], include_retired=include_retired)
 
@@ -195,6 +199,9 @@ async def get_roster_health(current_user: dict = Depends(get_current_user)):
     cost (FE no longer recomputes from STRUCTURE_COSTS).
     """
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 16.5.3 P0.2 — lazy sweep unificato prima del calcolo cap state.
+    from app.core.activity_sweep import sweep_activities_for_guild
+    await sweep_activities_for_guild(db, guild["id"])
     cap_state = await compute_adventurer_cap_state(db, guild["id"])
     state_label = _resolve_roster_state(cap_state["current"], cap_state["cap"])
     # ROUND 6E — next upgrade hint (null target_level if at max).

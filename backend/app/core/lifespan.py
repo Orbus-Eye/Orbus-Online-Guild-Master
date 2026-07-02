@@ -45,6 +45,9 @@ async def lifespan(app: FastAPI):
     await ensure_season_indexes(db)
     await ensure_pvp_indexes(db)
     await ensure_reward_indexes(db)
+    # ROUND 16.5.3 P1 — guild XP daily cap tracker (Prestigio di Gilda).
+    from app.achievements.xp_hooks import ensure_cap_tracker_indexes
+    await ensure_cap_tracker_indexes(db)
     # ROUND 12 — preseason + demo opponents seed (preview-only, idempotent).
     try:
         from app.scripts.seed_round12_preseason import run as _seed_preseason
