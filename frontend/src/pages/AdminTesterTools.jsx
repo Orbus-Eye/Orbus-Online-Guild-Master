@@ -4,44 +4,29 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
 import { toast } from "sonner";
-import axios from "axios";
-
-const API = process.env.REACT_APP_BACKEND_URL;
-
-/** ROUND 16.5.1 BUG#2 fix — parser errore robusto.
- * Il backend può ritornare:
- *   - string (HTTPException con detail stringa)
- *   - array (Pydantic ValidationError: [{loc, msg, type}, ...])
- *   - dict (custom code+message)
- * Il pattern `String(err)` produce `[object Object]`. Questa helper
- * appiattisce ogni caso in una stringa leggibile in italiano.
- */
-function formatApiError(err) {
-  const detail = err.response?.data?.detail;
-  if (detail === undefined || detail === null) return err.message || "Errore";
-  if (typeof detail === "string") return detail;
-  if (Array.isArray(detail)) {
-    return detail
-      .map((e) => {
-        if (typeof e === "string") return e;
-        const loc = Array.isArray(e.loc) ? e.loc.join(".") : "";
-        const msg = e.msg || e.message || JSON.stringify(e);
-        return loc ? `${loc}: ${msg}` : msg;
-      })
-      .join(" | ");
-  }
-  if (typeof detail === "object") {
-    if (detail.user_message) return detail.user_message;
-    if (detail.message) return detail.message;
-    if (detail.code) return detail.code;
-    try { return JSON.stringify(detail); } catch { return "Errore"; }
-  }
-  return String(detail);
-}
+import { api, formatApiError } from "../lib/api";
 
 /** ROUND 16.5.1 B.2 — Admin Tester Tools UI.
  * SOLO account @orbus.test o is_test_user=True.
  * Ambiente APP_ENV=dev/preview OR ENABLE_TESTER_TOOLS=true.
+ *
+ * ROUND 16.5.1 E2 fix — Refactor a `api` wrapper condiviso (lib/api.js).
+ * Motivazione: la vecchia versione usava `axios` raw + `Authorization:
+ * Bearer` letto da localStorage. Post ROUND 11.4a l'auth è cookie-only
+ * (httpOnly) e le richieste mutating richiedono il double-submit CSRF.
+ * Su same-origin il browser inviava il cookie automaticamente ma il
+ * client raw NON echeggiava mai l'header `X-CSRF-Token`, producendo
+ * 403 `auth.csrf.invalid` su Set MAX / Set MIN / Grant.
+ *
+ * Il wrapper `api`:
+ *   - `withCredentials: true` (cookie httpOnly access_token viaggia)
+ *   - inietta `X-CSRF-Token` su POST/PATCH/PUT/DELETE se già cacheato
+ *   - retry singolo su 403 `auth.csrf.invalid` dopo `_refreshCsrf()`
+ *   - normalizza `detail` in `err.normalizedMessage` per il toast
+ *
+ * `formatApiError` (import condiviso) gestisce tutti i casi:
+ * string / array Pydantic / object {code, user_message, message}.
+ * Sostituisce la funzione locale che duplicava la logica pre-fix BUG#2.
  */
 export default function AdminTesterTools() {
   // ROUND 16.5.1 BUG#2 fix — default target = admin corrente (che ha
@@ -52,17 +37,12 @@ export default function AdminTesterTools() {
   const [pendingTool, setPendingTool] = useState(null);
   const [needConfirm, setNeedConfirm] = useState(false);
 
-  const authHeader = () => {
-    const t = localStorage.getItem("token");
-    return t ? { Authorization: `Bearer ${t}` } : {};
-  };
-
   const loadStatus = async () => {
     if (!email) return;
     setLoading(true);
     try {
-      const r = await axios.get(`${API}/api/admin/tester-tools/status`, {
-        headers: authHeader(), params: { target_email: email },
+      const r = await api.get(`/admin/tester-tools/status`, {
+        params: { target_email: email },
       });
       setStatus(r.data);
       toast.success("Status caricato");
@@ -74,10 +54,9 @@ export default function AdminTesterTools() {
 
   const invoke = async (tool, confirm = false) => {
     try {
-      const r = await axios.post(
-        `${API}/api/admin/tester-tools/${tool}`,
+      const r = await api.post(
+        `/admin/tester-tools/${tool}`,
         { target_email: email, confirm },
-        { headers: authHeader() },
       );
       toast.success(`${tool} eseguito: ${JSON.stringify(r.data).slice(0, 100)}`);
       loadStatus();

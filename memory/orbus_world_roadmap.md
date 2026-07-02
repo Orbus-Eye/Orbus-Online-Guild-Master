@@ -185,22 +185,21 @@
 - Report finale: `/app/memory/round165_p0_final_report.md`
 - Snapshot rollback: `/app/memory/round165_p0_prechange_snapshot.json` (sha256 `a028743e…`)
 
-## Round 16.5.1 — IN PROGRESS (2026-07-01)
-
-- Admin: CRUD eventi continentali
-- Admin: Tester Tools (grant advs / set MAX / set MIN) con guardrail su account test
-- Home/Dashboard: card "Ultimo raid" + replay
-- Raid: countdown timer su lista/dettaglio/dashboard
-- Vincoli: no balance change, no premium, no hard delete
-
-## Round 16.5.1 — COMPLETED (2026-07-01)
+## Round 16.5.1 — CLOSED ✅ (2026-07-02)
 
 - **FASE A** (fallback D2): rimosso fallback difficulty, 3 test aggiunti, Round 16.5 P0 CLOSED
 - **FASE B.1**: world_events extension — GET/PATCH/deactivate/duplicate endpoints (estensione, no nuova collection)
 - **FASE B.2**: Tester Tools — status/grant/set-max/set-min con guardrail rinforzati + audit + snapshot
 - **FASE B.3**: raids/last + raids/replay-preview (backend pronto, UI dashboard integration deferita)
 - **FASE B.4**: raid countdown remaining_seconds server-side (UI live countdown deferita)
-- **Test**: 37/37 passed (13 P0.2 + 10 P0.3+A.3 + 14 R16.5.1)
-- **Frontend**: 2 nuove pagine admin (`/admin/world-events`, `/admin/tester-tools`), lint OK, webpack compile OK
-- **Report**: `/app/memory/round1651_final_report.md`
-- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia
+- **FASE E2** (2026-07-02, chiusura): `AdminTesterTools.jsx` refactored a wrapper condiviso `lib/api.js` — cookie auth + double-submit CSRF header auto-injection. 2 nuovi test backend (`test_E2_csrf_reject_when_cookie_auth_and_no_header`, `test_E2_csrf_accept_when_header_matches_cookie`). Difesa CSRF backend NON abbassata.
+- **Test**: 43/43 backend passed (13 P0.2 + 10 P0.3+A.3 + 14 R16.5.1 + 2 R16.5.1 E2 CSRF + 4 BUG#1/#2 regression)
+- **Frontend**: 2 pagine admin (`/admin/world-events`, `/admin/tester-tools`), lint OK, webpack compile OK
+- **Report finale**: `/app/memory/round1651_final_report.md`
+- **Deferred esplicito** (non blockers, tracked):
+  - B.3 UI replay-preview deferita finché non esiste un raid completed reale.
+  - B.4 UI countdown "resolution pending" state deferita.
+  - Mobile viewport validation E2E deferita a round UX dedicato.
+  - Admin F5 blank-screen (P3) → `/app/memory/backlog.md` W1.
+  - `AdminWorldEvents.jsx` allineamento CSRF wrapper (P3) → `backlog.md` W2.
+- **Guardrail rispettati**: no balance change, no P2W, no hard delete, no toccati modifiers/reward/economia, no rimozione difese CSRF backend.

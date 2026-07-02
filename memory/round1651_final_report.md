@@ -596,3 +596,96 @@ Vuoi che implementi **`POST /api/admin/tester-tools/seed-raid-scenario`** (~30 m
 - Snapshot pre-modifica
 
 **In alternativa**, se preferisci lanciare e1_tester ora e accettare che Test 2 verifichi solo l'empty state, sono già pronto.
+
+
+---
+
+## 8. Punto E2 — CSRF fix Tester Tools + chiusura Round 16.5.1 (2026-07-02)
+
+**Contesto**: pass 2 di `e1_tester` ha riportato 403 `auth.csrf.invalid`
+su `POST /api/admin/tester-tools/set-max` cliccando dal pannello UI.
+Root cause: `AdminTesterTools.jsx` (creato in questa round) usava
+`axios` raw con `Authorization: Bearer` letto da `localStorage`.
+Dopo ROUND 11.4a la localStorage-based auth è stata rimossa
+(cookie httpOnly only) e il backend enforce il double-submit CSRF
+(header `X-CSRF-Token` = cookie `csrf_token`) su ogni request
+mutating cookie-authed. Il client raw NON echeggiava mai l'header
+→ 403 su same-origin (dove il browser invia il cookie
+automaticamente anche senza `withCredentials`).
+
+**Fix frontend applicato** (nessuna nuova astrazione — solo
+allineamento al wrapper condiviso `lib/api.js` già usato in
+`AdminOps.jsx`, `AdminAudit.jsx`, `AdminGameHealth.jsx`, e ~40
+altre pagine):
+
+- `import { api, formatApiError } from "../lib/api"`
+- Rimosso `import axios from "axios"` e helper locale `authHeader()`
+- Rimossa `formatApiError` locale (identica a quella esportata dal
+  wrapper post BUG#2 fix)
+- Tutte le chiamate riformulate `api.get("/admin/tester-tools/...")`
+  / `api.post(...)` con path relativo (baseURL già `${BACKEND_URL}/api`)
+
+**Fix backend**: **NESSUNO** — la difesa CSRF (`app/core/csrf.py`)
+resta invariata. La fix è puramente lato client (echo dell'header).
+
+**Test backend aggiunti** (`tests/backend_round1651_test.py`):
+
+1. `test_E2_csrf_reject_when_cookie_auth_and_no_header`
+   - Setup: register admin + promote `is_admin=True, is_test_user=True`,
+     login via `requests.Session()` per catturare i cookie
+     (`access_token` httpOnly + `csrf_token` non-httpOnly).
+   - Action: `s.post("/api/admin/tester-tools/set-max", json={...})`
+     SENZA `X-CSRF-Token`.
+   - Assert: `status_code == 403`, `body.detail.code == "auth.csrf.invalid"`.
+   - Copertura: se il middleware CSRF venisse rimosso/allentato in
+     futuro il test cade subito → guard-rail permanente contro
+     regressioni di sicurezza.
+
+2. `test_E2_csrf_accept_when_header_matches_cookie`
+   - Setup identico + auto-creazione gilda se manca (via `X-CSRF-Token`).
+   - Action: stesso POST **con** `headers={"X-CSRF-Token": csrf}`.
+   - Assert: `status_code != 403`, in {200, 409} — il 409
+     `recent_invocation_within_60s_require_confirm` è comunque prova
+     che il middleware ha lasciato passare (business path raggiunto).
+   - Copertura simmetrica: garantisce che il fix E2 lato FE sia
+     sufficiente a soddisfare il contratto server.
+
+**Warning P3 loggate in `/app/memory/backlog.md`**:
+
+- **W1** — Admin routes blank screen su F5 (`/admin/world-events`,
+  `/admin/tester-tools`). Root cause sospetta: hydration race di
+  `useAuth`. Fix proposto: round dedicato "Admin Guard UX P3" con
+  hook `useAdminGuard()` condiviso.
+- **W2** — `AdminWorldEvents.jsx` usa ancora `axios` raw. Stesso
+  pattern-bug latente, non triggerato nel pass 2 ma potenziale.
+  Fix proposto: round "Frontend axios cleanup" (5 file totali).
+
+**Deferred esplicito (non blockers, tracked)**:
+
+| # | item | motivo | dove ripartire |
+|:-:|---|---|---|
+| 1 | UI replay-preview integration | manca un raid completed reale su prod per testare end-to-end | Round 16.6+ dopo primo raid concluso |
+| 2 | Countdown "resolution pending" UI state | il timer parte solo a raid `in_progress`; lo stato `resolving` non è renderizzato distinto | Round 16.6 UX raid polish |
+| 3 | Mobile viewport E2E validation | pass 2 verificato solo su desktop 1920×800 | Round UX dedicato |
+| 4 | Admin F5 blank-screen | UX non blocker → P3 backlog W1 | `/app/memory/backlog.md` W1 |
+| 5 | `AdminWorldEvents` allineamento CSRF wrapper | pattern-bug latente → P3 backlog W2 | `/app/memory/backlog.md` W2 |
+
+**Contatore test finale**: 41 → **43/43** backend passed su
+`orbus_r16_test` (isolated port 8002).
+
+**Guardrail rispettati**:
+- ✅ Difese CSRF backend NON abbassate (`CSRFMiddleware` invariato).
+- ✅ Nessuna nuova astrazione — solo allineamento a wrapper esistente.
+- ✅ Nessun hardcode secrets/URL/db.
+- ✅ Nessuna scrittura DB prod da questo pass.
+- ✅ Deferred items documentati esplicitamente.
+
+---
+
+## Round 16.5.1 — CLOSED ✅ (2026-07-02)
+
+Firma di chiusura: E2 CSRF fix + backend test coverage + P3 backlog
+tracker + deferred items documentati. Nessun bug P0/P1 aperto.
+Roadmap aggiornata: `/app/memory/orbus_world_roadmap.md`.
+Prossimo round pianificato: **R16.6** (P1 Balance tuning —
+recommended_power scaling + mid/high tier rewards).

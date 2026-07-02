@@ -435,6 +435,113 @@ def test_BUG2_tester_tools_returns_pydantic_422_when_body_missing(admin_auth):
     assert any("target_email" in str(x) for x in first.get("loc", [])), first
 
 
+# ═════════════════════════════════════════════════════════════════════
+# E2 — CSRF double-submit su tester-tools (cookie auth path)
+# ═════════════════════════════════════════════════════════════════════
+#
+# Motivazione: `AdminTesterTools.jsx` è stato refactored per usare il
+# wrapper condiviso `lib/api.js` che invia `withCredentials: true`.
+# In quella modalità la richiesta include il cookie `access_token`
+# httpOnly, il middleware `CSRFMiddleware` (app/core/csrf.py) esige
+# l'header `X-CSRF-Token` che deve coincidere col cookie
+# `csrf_token`. Se manca → 403 `auth.csrf.invalid`. Questi due test
+# blindano il contratto backend richiesto dal FE post-fix E2.
+
+
+def test_E2_csrf_reject_when_cookie_auth_and_no_header(admin_auth, test_db):
+    """POST /api/admin/tester-tools/set-max con cookie session ma SENZA
+    X-CSRF-Token → 403 auth.csrf.invalid.
+
+    Regressione: se il middleware CSRF venisse rimosso/allentato in
+    futuro questo test cadrebbe subito. La difesa NON deve essere
+    abbassata al backend anche quando il FE è pulito.
+    """
+    base = _api()
+    # Login via SESSION (cookie-based), NON via Bearer. Registra prima
+    # l'admin dedicato a questo test così ha già la promozione.
+    email = "r1651csrf@orbus.test"
+    pwd = "R1651Csrf!password"
+    r = requests.post(f"{base}/api/auth/register",
+                      json={"email": email, "password": pwd,
+                            "username": "r1651csrf"}, timeout=10)
+    assert r.status_code in (200, 201, 409), r.text
+    # Promuovi admin + is_test_user (target self)
+    test_db.users.update_one(
+        {"email": email},
+        {"$set": {"is_admin": True, "is_test_user": True}},
+    )
+    s = requests.Session()
+    lr = s.post(f"{base}/api/auth/login",
+                json={"email": email, "password": pwd}, timeout=10)
+    assert lr.status_code == 200, lr.text
+    assert "access_token" in s.cookies, "login didn't set access_token cookie"
+    assert "csrf_token" in s.cookies, "login didn't set csrf_token cookie"
+    # POST mutating con cookie ma senza header CSRF → 403 auth.csrf.invalid
+    r = s.post(
+        f"{base}/api/admin/tester-tools/set-max",
+        json={"target_email": email},
+        timeout=15,
+    )
+    assert r.status_code == 403, r.text
+    body = r.json()
+    assert body["detail"]["code"] == "auth.csrf.invalid", body
+
+
+def test_E2_csrf_accept_when_header_matches_cookie(admin_auth, test_db):
+    """POST /api/admin/tester-tools/set-max con cookie + header CSRF
+    valido → NON 403 (business path raggiunto, 200/409/etc. accettabile).
+
+    Copertura simmetrica del test negativo: garantisce che il fix E2
+    (frontend che invia l'header via wrapper `api`) sia sufficiente
+    a soddisfare il contratto lato server.
+    """
+    base = _api()
+    email = "r1651csrf2@orbus.test"
+    pwd = "R1651Csrf2!password"
+    r = requests.post(f"{base}/api/auth/register",
+                      json={"email": email, "password": pwd,
+                            "username": "r1651csrf2"}, timeout=10)
+    assert r.status_code in (200, 201, 409), r.text
+    test_db.users.update_one(
+        {"email": email},
+        {"$set": {"is_admin": True, "is_test_user": True}},
+    )
+    # Cleanup rate-limit snapshot per rendere il test idempotente
+    user_doc = test_db.users.find_one({"email": email},
+                                       {"_id": 0, "id": 1})
+    if user_doc:
+        test_db.tester_tool_snapshots.delete_many(
+            {"target_user_id": user_doc["id"]}
+        )
+    s = requests.Session()
+    lr = s.post(f"{base}/api/auth/login",
+                json={"email": email, "password": pwd}, timeout=10)
+    assert lr.status_code == 200, lr.text
+    # Assicura una guild (necessaria per set-max)
+    gr = s.get(f"{base}/api/guilds/me", timeout=10)
+    if gr.status_code == 404:
+        # Guild create richiede CSRF header dato che è POST cookie-authed
+        csrf = s.cookies.get("csrf_token")
+        s.post(f"{base}/api/guilds",
+               headers={"X-CSRF-Token": csrf},
+               json={"name": f"CsrfG{int(time.time())}",
+                     "description": "csrf"}, timeout=10)
+    csrf = s.cookies.get("csrf_token")
+    assert csrf, "csrf_token cookie mancante post-login"
+    r = s.post(
+        f"{base}/api/admin/tester-tools/set-max",
+        headers={"X-CSRF-Token": csrf},
+        json={"target_email": email},
+        timeout=15,
+    )
+    # 200 OK oppure 409 recent_invocation (se test ripetuto): entrambi
+    # dimostrano che il middleware CSRF ha lasciato passare.
+    assert r.status_code != 403, (
+        f"CSRF middleware ha rifiutato una richiesta con header valido: {r.text}"
+    )
+    assert r.status_code in (200, 409), r.text
+
+
 def test_BUG2_tester_tools_admin_as_target_works(admin_auth, test_db):
     """Il default admin@orbus.test come TARGET funziona (ha
     is_test_user=True in orbus_r16_test dopo la fixture admin_auth)."""
