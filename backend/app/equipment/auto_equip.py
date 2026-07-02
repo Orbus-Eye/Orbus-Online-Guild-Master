@@ -1,23 +1,29 @@
-"""ROUND 16.0 — Phase 3 — Auto-Equip service.
+"""ROUND 16.5.4b — Auto-Equip class-aware, stat-aware, level-gated.
 
 Given an adventurer, scans guild inventory and equips the best
-compatible item per slot, honouring the R15/R16 compatibility validator
-(`check_equip_compatibility`). Never downgrades, never equips
-incompatible items, and is fully idempotent: a second invocation with
-the same inventory state yields zero swaps.
+compatible item per slot, honouring:
+  * `check_equip_compatibility` (block → exclude, warning → penalty ×0.5)
+  * `resolve_item_required_level` (item under-level → exclude)
+  * class primary/secondary stat weighting from `adventurer_classes`
+  * deterministic tie-break (fitness DESC, power_score DESC, id ASC)
 
-Fitness scoring (simple, deterministic):
-    fitness = power_score
-            + 2 * sum(stats[primary_stat])
-            + 1 * sum(stats[s] for s in secondary_stats)
-            + level_bonus (small)
+Fitness formula (single source of truth):
+    fitness = PRIMARY_WEIGHT   * item[f"{primary}_bonus"]
+            + SECONDARY_WEIGHT * sum(item[f"{s}_bonus"] for s in secondaries)
+            + POWER_WEIGHT     * item.power_score
+            + STAT_TAG_BONUS   if primary in item.stat_tags else 0
+    warning verdict → fitness *= WARNING_PENALTY
 
-Hard rules:
-    * severity == "block"  → item excluded.
-    * severity == "warning" → item considered but only as last resort
-      (fitness penalised −50%).
-    * `required_level` > adventurer.level → excluded.
-    * Equipment slot mapping uses `SLOT_TO_ITEM_TYPE`.
+Item stat schema (canonical, verified in R16.5.4b audit):
+  * strength_bonus, agility_bonus, intellect_bonus,
+    endurance_bonus, faith_bonus, power_score  (all int)
+  * class primary_stat values are: strength|agility|intellect|
+    endurance|faith  (from adventurer_classes catalog). The pattern
+    `f"{primary}_bonus"` resolves directly to the matching item field.
+    No mapping table required.
+
+Idempotency: a second invocation with the same inventory state yields
+zero swaps (the newly-equipped item becomes the current best).
 """
 from __future__ import annotations
 
@@ -26,55 +32,118 @@ from typing import Any, Optional
 
 from app.audit.log import write_audit
 from app.equipment.compatibility import check_equip_compatibility
+from app.equipment.level_gate import resolve_item_required_level
 from app.equipment.services import equip_item_service, unequip_item_service
+from app.expeditions.formulas import item_equip_power
 from app.shared.constants import EQUIPMENT_SLOTS, SLOT_TO_ITEM_TYPE
 
-
-def item_equip_power(item: dict) -> int:
-    """Local copy of `app.equipment.power.item_equip_power` semantics.
-
-    Falls back to `power_score` when available, otherwise sums up the
-    integer stat values present on the item.
-    """
-    if not item:
-        return 0
-    if "power_score" in item:
-        try:
-            return int(item.get("power_score") or 0)
-        except (TypeError, ValueError):
-            pass
-    stats = item.get("stats") or {}
-    return sum(int(v) for v in stats.values()
-               if isinstance(v, (int, float)))
-
-
-PRIMARY_STAT_WEIGHT = 2
-SECONDARY_STAT_WEIGHT = 1
+# ── Scoring weights (tunable, per R16.5.4b STEP 1 spec approval) ─────────
+PRIMARY_WEIGHT = 3.0
+SECONDARY_WEIGHT = 1.5
+POWER_WEIGHT = 1.0
+STAT_TAG_BONUS = 2.0
 WARNING_PENALTY = 0.5
 
 
-def _compute_fitness(item: dict, primary: str, secondaries: list[str]) -> float:
-    stats = item.get("stats") or {}
-    base = float(item_equip_power(item))
-    primary_boost = float(stats.get(primary, 0)) * PRIMARY_STAT_WEIGHT
-    secondary_boost = sum(
-        float(stats.get(s, 0)) for s in (secondaries or [])
-    ) * SECONDARY_STAT_WEIGHT
-    return base + primary_boost + secondary_boost
+def _stat_bonus(item: dict, stat_name: str) -> int:
+    """Read the canonical `{stat}_bonus` int field. Missing / null → 0.
+
+    NOTE: `adventurer_classes.primary_stat` values are already lowercase
+    canonical stat names (strength / agility / intellect / endurance /
+    faith). The item schema mirrors those names verbatim with a `_bonus`
+    suffix, so no translation table is needed.
+    """
+    return int(item.get(f"{stat_name}_bonus", 0) or 0)
+
+
+def _compute_fitness(
+    item: dict, primary: str, secondaries: list[str]
+) -> float:
+    primary_score = _stat_bonus(item, primary) * PRIMARY_WEIGHT
+    secondary_score = sum(
+        _stat_bonus(item, s) for s in (secondaries or [])
+    ) * SECONDARY_WEIGHT
+    power_score_v = int(item.get("power_score", 0) or 0) * POWER_WEIGHT
+    stat_tags = item.get("stat_tags") or []
+    tag_bonus = STAT_TAG_BONUS if primary in stat_tags else 0.0
+    return float(primary_score + secondary_score + power_score_v + tag_bonus)
+
+
+def _stat_delta(
+    old_item: dict | None, new_item: dict, primary: str,
+) -> dict[str, int]:
+    """Compute per-stat delta between two items using canonical bonus fields.
+
+    Includes only non-zero deltas. Always includes `power` (from
+    `power_score`) when it differs — this is what the FE displays as
+    "+X Power".
+    """
+    out: dict[str, int] = {}
+    stat_keys = (
+        "strength", "agility", "intellect", "endurance", "faith",
+    )
+    old = old_item or {}
+    for k in stat_keys:
+        d = _stat_bonus(new_item, k) - _stat_bonus(old, k)
+        if d:
+            out[k] = d
+    power_delta = (
+        int(new_item.get("power_score", 0) or 0)
+        - int(old.get("power_score", 0) or 0)
+    )
+    if power_delta:
+        out["power"] = power_delta
+    # Order: primary first (best FE readability), then others alphabetical.
+    ordered: dict[str, int] = {}
+    if primary in out:
+        ordered[primary] = out.pop(primary)
+    for k in sorted(out.keys()):
+        ordered[k] = out[k]
+    return ordered
+
+
+def _format_stat_delta(delta: dict[str, int]) -> str:
+    """Compact stat delta rendering: '+5 Int, +2 End, +8 Power'."""
+    if not delta:
+        return ""
+    labels = {
+        "strength": "Str", "agility": "Agi", "intellect": "Int",
+        "endurance": "End", "faith": "Faith", "power": "Power",
+    }
+    parts = []
+    for k, v in delta.items():
+        sign = "+" if v > 0 else ""
+        parts.append(f"{sign}{v} {labels.get(k, k.capitalize())}")
+    return ", ".join(parts)
 
 
 async def _load_class_meta(db, class_slug: Optional[str]) -> dict:
     if not class_slug:
-        return {"primary_stat": "strength", "secondary_stats": []}
+        return {"primary_stat": "strength", "secondary_stats": [],
+                "display_name_it": None}
     doc = await db.adventurer_classes.find_one(
         {"slug": class_slug},
-        {"_id": 0, "primary_stat": 1, "secondary_stats": 1},
+        {"_id": 0, "primary_stat": 1, "secondary_stats": 1,
+         "display_name_it": 1, "name": 1},
     )
-    return doc or {"primary_stat": "strength", "secondary_stats": []}
+    if not doc:
+        return {"primary_stat": "strength", "secondary_stats": [],
+                "display_name_it": None}
+    return doc
+
+
+def _class_it_label(cls_meta: dict) -> str:
+    """Human-readable Italian class label used in narrative reasons."""
+    return (
+        cls_meta.get("display_name_it")
+        or cls_meta.get("name")
+        or ""
+    )
 
 
 async def auto_equip_adventurer(
-    db, *, guild: dict, adventurer_id: str, actor_user_id: Optional[str],
+    db, *, guild: dict, adventurer_id: str,
+    actor_user_id: Optional[str],
 ) -> dict[str, Any]:
     adv = await db.adventurers.find_one(
         {"id": adventurer_id, "guild_id": guild["id"]},
@@ -91,45 +160,45 @@ async def auto_equip_adventurer(
     cls_meta = await _load_class_meta(db, adv.get("class_slug"))
     primary = cls_meta.get("primary_stat") or "strength"
     secondaries = cls_meta.get("secondary_stats") or []
+    class_it = _class_it_label(cls_meta)
     adv_level = int(adv.get("level") or 1)
 
     # Current equipment snapshot per slot.
     eq_docs = await db.equipped_items.find(
         {"guild_id": guild["id"], "adventurer_id": adv["id"]},
         {"_id": 0, "slot": 1, "item_id": 1},
-    ).to_list(20)
+    ).sort([("slot", 1)]).to_list(20)
     current_by_slot: dict[str, dict] = {}
     for e in eq_docs:
-        item = await db.items.find_one({"id": e["item_id"]},
-                                       {"_id": 0})
+        item = await db.items.find_one({"id": e["item_id"]}, {"_id": 0})
         if item:
             current_by_slot[e["slot"]] = item
 
-    # Inventory pool (NOT bound to other adventurers).
+    # Inventory pool (NOT bound to other adventurers). Deterministic sort.
     inv_rows = await db.inventory_items.find(
         {"guild_id": guild["id"], "is_active": {"$ne": False}},
         {"_id": 0, "item_id": 1, "is_bound": 1,
          "bound_to_adventurer_id": 1},
-    ).to_list(2000)
-    item_ids = list({r["item_id"] for r in inv_rows
-                     if not r.get("is_bound") or
-                     r.get("bound_to_adventurer_id") == adv["id"]})
+    ).sort([("item_id", 1)]).to_list(2000)
+    item_ids = sorted({r["item_id"] for r in inv_rows
+                       if not r.get("is_bound") or
+                       r.get("bound_to_adventurer_id") == adv["id"]})
     if not item_ids:
         items_pool: list[dict] = []
     else:
         items_pool = await db.items.find(
             {"id": {"$in": item_ids}, "is_active": {"$ne": False}},
             {"_id": 0},
-        ).to_list(len(item_ids))
+        ).sort([("id", 1)]).to_list(len(item_ids))
 
     equipped_summary: list[dict] = []
     replaced_summary: list[dict] = []
     unchanged: list[str] = []
     warnings: list[str] = []
-    # ROUND 16.1 Phase 3 — bilingual structured reasons.
     reasons: list[dict] = []
     unchanged_slots_detail: list[dict] = []
-    score_before = sum(item_equip_power(i) for i in current_by_slot.values())
+    score_before = sum(item_equip_power(i)
+                       for i in current_by_slot.values())
 
     def _slot_label(slot: str) -> tuple[str, str]:
         return {
@@ -138,29 +207,19 @@ async def auto_equip_adventurer(
             "accessory": ("Accessorio", "Accessory"),
         }.get(slot, (slot, slot))
 
-    def _stat_delta(old: dict | None, new: dict) -> dict[str, int]:
-        a = (old or {}).get("stats") or {}
-        b = new.get("stats") or {}
-        keys = set(a) | set(b)
-        out = {}
-        for k in keys:
-            try:
-                d = int(b.get(k, 0)) - int(a.get(k, 0))
-            except (TypeError, ValueError):
-                d = 0
-            if d:
-                out[k] = d
-        return out
-
     for slot in EQUIPMENT_SLOTS:
         slot_it, slot_en = _slot_label(slot)
         expected_type = SLOT_TO_ITEM_TYPE[slot]
-        # Candidates: matching item_type + level + compat severity ≠ block.
+        # Candidates: matching item_type + level gate + compat != block.
         candidates: list[tuple[float, dict]] = []
         for it in items_pool:
             if it.get("item_type") != expected_type:
                 continue
-            req_lv = int(it.get("required_level") or it.get("level_requirement") or 1)
+            # ROUND 16.5.4b — use the shared R11.3 level gate helper.
+            # Legacy fields `required_level` / `level_requirement` do NOT
+            # exist in the item schema; using them here (the pre-fix
+            # behaviour) meant the auto-equip skipped every level gate.
+            req_lv = resolve_item_required_level(it)
             if req_lv > adv_level:
                 continue
             verdict = check_equip_compatibility(adv, it)
@@ -175,29 +234,53 @@ async def auto_equip_adventurer(
             unchanged.append(slot)
             unchanged_slots_detail.append({
                 "slot": slot,
-                "reason_it": f"{slot_it}: nessun oggetto compatibile in inventario.",
-                "reason_en": f"{slot_en}: no compatible item in inventory.",
+                "reason_it": (
+                    f"{slot_it}: nessun oggetto compatibile in inventario."
+                ),
+                "reason_en": (
+                    f"{slot_en}: no compatible item in inventory."
+                ),
             })
             continue
-        candidates.sort(key=lambda x: x[0], reverse=True)
+        # ROUND 16.5.4b — deterministic tie-break: fitness DESC,
+        # power_score DESC, id ASC. Python's sort is stable; the tuple
+        # key gives a total order.
+        candidates.sort(key=lambda pair: (
+            -pair[0],
+            -int(pair[1].get("power_score", 0) or 0),
+            str(pair[1].get("id", "")),
+        ))
         best_fit, best_item = candidates[0]
         current = current_by_slot.get(slot)
-        current_fit = (_compute_fitness(current, primary, secondaries)
-                       if current else -1.0)
+        current_fit = (
+            _compute_fitness(current, primary, secondaries)
+            if current else -1.0
+        )
         if current and best_item.get("id") == current.get("id"):
             unchanged.append(slot)
             unchanged_slots_detail.append({
                 "slot": slot,
-                "reason_it": f"{slot_it}: l'oggetto attualmente equipaggiato è già il migliore.",
-                "reason_en": f"{slot_en}: the currently equipped item is already the best.",
+                "reason_it": (
+                    f"{slot_it}: l'oggetto attualmente equipaggiato è "
+                    f"già il migliore."
+                ),
+                "reason_en": (
+                    f"{slot_en}: the currently equipped item is already "
+                    f"the best."
+                ),
             })
             continue
         if best_fit <= current_fit:
             unchanged.append(slot)
             unchanged_slots_detail.append({
                 "slot": slot,
-                "reason_it": f"{slot_it}: nessun oggetto migliore disponibile in inventario.",
-                "reason_en": f"{slot_en}: no better item available in inventory.",
+                "reason_it": (
+                    f"{slot_it}: nessun oggetto migliore disponibile "
+                    f"in inventario."
+                ),
+                "reason_en": (
+                    f"{slot_en}: no better item available in inventory."
+                ),
             })
             continue
         # Swap: unequip current then equip new.
@@ -205,40 +288,91 @@ async def auto_equip_adventurer(
             try:
                 await unequip_item_service(db, guild, adv["id"], slot)
             except Exception as exc:  # noqa: BLE001
-                warnings.append(f"{slot}: unequip fallito ({type(exc).__name__})")
+                warnings.append(
+                    f"{slot}: unequip fallito ({type(exc).__name__})"
+                )
                 continue
         try:
-            await equip_item_service(db, guild, adv["id"],
-                                     best_item["id"], slot)
+            await equip_item_service(
+                db, guild, adv["id"], best_item["id"], slot,
+            )
         except Exception as exc:  # noqa: BLE001
-            warnings.append(f"{slot}: equip fallito ({type(exc).__name__})")
+            warnings.append(
+                f"{slot}: equip fallito ({type(exc).__name__})"
+            )
             continue
-        stat_delta = _stat_delta(current, best_item)
+        # ROUND 16.5.4b — stat delta from canonical *_bonus fields.
+        stat_delta = _stat_delta(current, best_item, primary)
         primary_gain = int(stat_delta.get(primary, 0))
-        # Bilingual narrative reason.
+        item_score_before = (
+            item_equip_power(current) if current else 0
+        )
+        item_score_after = item_equip_power(best_item)
+        # Bilingual narrative reason (Italian: "arcane_focus
+        # equipaggiato: +5 Int, +2 End, migliore per Mago.")
+        new_name = (
+            best_item.get("display_name_it")
+            or best_item.get("name")
+            or best_item.get("slug")
+        )
+        new_name_en = (
+            best_item.get("display_name_en")
+            or best_item.get("name")
+            or best_item.get("slug")
+        )
+        stat_str_it = _format_stat_delta(stat_delta)
+        class_suffix_it = f", migliore per {class_it}." if class_it else "."
+        class_suffix_en = (
+            f", better for {cls_meta.get('name') or ''}."
+            if cls_meta.get("name") else "."
+        )
         if current:
-            old_name = current.get("name") or current.get("slug")
-            new_name = best_item.get("name") or best_item.get("slug")
-            r_it = (f"{slot_it} sostituita: «{old_name}» → «{new_name}»."
-                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
-            r_en = (f"{slot_en} replaced: \"{old_name}\" → \"{new_name}\"."
-                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
+            old_name = (
+                current.get("display_name_it")
+                or current.get("name")
+                or current.get("slug")
+            )
+            old_name_en = (
+                current.get("display_name_en")
+                or current.get("name")
+                or current.get("slug")
+            )
+            r_it = (
+                f"{slot_it} sostituita: «{old_name}» → «{new_name}»"
+                + (f" ({stat_str_it})" if stat_str_it else "")
+                + class_suffix_it
+            )
+            r_en = (
+                f"{slot_en} replaced: \"{old_name_en}\" → \"{new_name_en}\""
+                + class_suffix_en
+            )
             replaced_summary.append({
                 "slot": slot,
                 "old_item_slug": current.get("slug"),
                 "new_item_slug": best_item.get("slug"),
                 "fitness_delta": round(best_fit - current_fit, 2),
+                "score_before": item_score_before,
+                "score_after": item_score_after,
+                "stat_delta": stat_delta,
             })
         else:
-            new_name = best_item.get("name") or best_item.get("slug")
-            r_it = (f"{slot_it} equipaggiata: «{new_name}»."
-                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
-            r_en = (f"{slot_en} equipped: \"{new_name}\"."
-                    + (f" +{primary_gain} {primary.capitalize()}." if primary_gain > 0 else ""))
+            r_it = (
+                f"{slot_it} equipaggiata: «{new_name}»"
+                + (f" ({stat_str_it})" if stat_str_it else "")
+                + class_suffix_it
+            )
+            r_en = (
+                f"{slot_en} equipped: \"{new_name_en}\""
+                + class_suffix_en
+            )
             equipped_summary.append({
                 "slot": slot,
                 "item_slug": best_item.get("slug"),
+                "item_name": new_name,
                 "fitness": round(best_fit, 2),
+                "score_before": item_score_before,
+                "score_after": item_score_after,
+                "stat_delta": stat_delta,
             })
         reasons.append({
             "slot": slot,
@@ -249,6 +383,8 @@ async def auto_equip_adventurer(
             "stat_delta": stat_delta,
             "primary_stat": primary,
             "primary_gain": primary_gain,
+            "score_before": item_score_before,
+            "score_after": item_score_after,
             "reason_it": r_it,
             "reason_en": r_en,
         })
@@ -256,11 +392,11 @@ async def auto_equip_adventurer(
     score_after_rows = await db.equipped_items.find(
         {"guild_id": guild["id"], "adventurer_id": adv["id"]},
         {"_id": 0, "item_id": 1},
-    ).to_list(20)
+    ).sort([("slot", 1)]).to_list(20)
     after_items = await db.items.find(
         {"id": {"$in": [r["item_id"] for r in score_after_rows]}},
         {"_id": 0},
-    ).to_list(20)
+    ).sort([("id", 1)]).to_list(20)
     score_after = sum(item_equip_power(i) for i in after_items)
 
     swaps_count = len(equipped_summary) + len(replaced_summary)
@@ -268,6 +404,7 @@ async def auto_equip_adventurer(
         db, event_type="adventurer_auto_equipped",
         actor_user_id=actor_user_id, actor_guild_id=guild["id"],
         source="equipment.auto_equip",
+        related_entity_id=adv["id"],
         metadata={
             "adventurer_id": adv["id"],
             "swaps_count": swaps_count,
@@ -284,6 +421,7 @@ async def auto_equip_adventurer(
         "unchanged_slots_detail": unchanged_slots_detail,
         "reasons": reasons,
         "primary_stat": primary,
+        "secondary_stats": list(secondaries),
         "warnings": warnings,
         "warnings_it": warnings,
         "warnings_en": [

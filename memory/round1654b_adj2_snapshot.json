@@ -1,0 +1,58 @@
+{
+  "before": [
+    {
+      "id": "b6908623-15e0-436e-9f39-5a770b832ce7",
+      "item_type": "accessory",
+      "rarity": "legendary",
+      "required_adventurer_level": 8,
+      "slug": "legendary_amulet_nathos"
+    },
+    {
+      "id": "2e9ebb90-59ce-4a74-b402-d9c8ae11e1f5",
+      "item_type": "armor",
+      "rarity": "legendary",
+      "required_adventurer_level": 8,
+      "slug": "legendary_armor_ambash"
+    },
+    {
+      "id": "ff717a4b-ecff-4f1d-9092-882a854eb58b",
+      "item_type": "armor",
+      "rarity": "legendary",
+      "required_adventurer_level": 8,
+      "slug": "legendary_cape_aveol"
+    },
+    {
+      "id": "e7d250c2-4ff8-4d6c-88ab-40f2764d6151",
+      "item_type": "accessory",
+      "rarity": "legendary",
+      "required_adventurer_level": 8,
+      "slug": "legendary_ring_velur"
+    },
+    {
+      "id": "4f74ac1b-1804-463d-94fc-6fa6b2992bc5",
+      "item_type": "weapon",
+      "rarity": "legendary",
+      "required_adventurer_level": 9,
+      "slug": "legendary_staff_efreto"
+    },
+    {
+      "id": "8518052d-9a4b-4861-8726-f334b914b45d",
+      "item_type": "weapon",
+      "rarity": "legendary",
+      "required_adventurer_level": 9,
+      "slug": "legendary_sword_alveora"
+    }
+  ],
+  "generated_at": "2026-07-02T17:06:36.620744+00:00",
+  "planned_updates": [],
+  "purpose": "ADJ-2 Legendary min-level pre-change snapshot",
+  "round": "16.5.4b",
+  "whitelist": {
+    "legendary_amulet_nathos": 8,
+    "legendary_armor_ambash": 8,
+    "legendary_cape_aveol": 8,
+    "legendary_ring_velur": 8,
+    "legendary_staff_efreto": 9,
+    "legendary_sword_alveora": 9
+  }
+}

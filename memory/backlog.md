@@ -111,9 +111,44 @@ Hook rimanenti da attivare:
 
 ---
 
-## Convenzioni
+## Round 16.5.4c — Seed Integrity & Class Equipment Coverage (PLANNED)
 
-- Ogni item elenca: pagina/file, sintomo, root cause sospetta,
-  impatto, priorità, fix proposto.
-- Chiusura: item risolto → sposta in changelog del round che lo
-  esegue e rimuovi da qui.
+**Priority**: P1 (chiude i buchi rilevati durante audit R16.5.4b).
+
+**Origine**: audit STEP 1 R16.5.4b (`/app/memory/round1654b_audit_report.md`).
+
+### Items
+
+1. **ADJ-1 — Rarity case-mismatch normalization**
+   - Sintomo: `db.items` contiene `rare/epic/legendary` (lowercase) accanto a `Rare/Epic/Legendary` (~11+ docs). Le tabelle di gate (rarity→level) sono case-sensitive.
+   - Fix proposto: script idempotente `round1654c_rarity_case_normalize.py` con dry-run/apply + snapshot che uppercase-a il primo carattere (whitelist `rare|epic|legendary` → `Rare|Epic|Legendary`).
+   - Vincolo: solo campo `rarity`, whitelist esplicita.
+
+2. **ADJ-3 — Warlock + Alchemist ZERO item copertura**
+   - Sintomo: `warlock` e `alchemist` (introdotti dopo R16.0) non hanno alcun item con `recommended_classes` compatibile. L'auto-equip per queste classi ritorna sempre `unchanged`.
+   - Fix proposto: seed pack minimale (weapon + armor + accessory per ciascuna classe, rarità Common/Uncommon/Rare/Epic, cinque livelli target). Design + balance separato per NON alterare drop rate esistenti.
+   - Nessun P2W, nessun combat balance shift.
+
+3. **ADJ-6 — write_audit senza `related_entity_id=adv.id`** — ✅ MITIGATO in R16.5.4b (aggiunto in `auto_equip.py`).
+   - Chiudibile: audit `adventurer_auto_equipped` ora popola `related_entity_id`. Verificare che altri handler nel modulo `equipment/` seguano la stessa convenzione (`equip_item_service`, `unequip_item_service`).
+
+4. **ADJ-7 — 423 level_gate mangiato da `except Exception` in auto-equip**
+   - Sintomo: quando il gate `enforce_item_level_requirement` in `equip_item_service` restituisce 423, il wrapper `try/except` in `auto_equip.py:213-215` lo cattura come warning generico "equip fallito ({name})".
+   - Fix proposto: fare bubble-up del `HTTPException.detail` come `warnings[i] = {code, user_message}` strutturato invece di string generica.
+   - Rischio basso: R16.5.4b ha già introdotto il filtro pre-scoring `resolve_item_required_level`, quindi il 423 non dovrebbe più scattare in condizioni normali. Fix rimane per robustness contro race condition (item mod live durante auto-equip).
+
+5. **Orfani già equipaggiati (segnalazione)**
+   - Prima del backfill R16.5.4b, un utente lv1 poteva aver equipaggiato uno dei 6 Legendary a `required_adventurer_level:1`. Post-backfill quei riferimenti restano validi (nessun forced unequip).
+   - Decisione utente: NON forzare l'unequip retroattivo (rispettato in questo round).
+   - Se serve tracciarli: query `equipped_items` join `items` per rarità legendary + `adv.level < req_level`. Report separato, no fix automatico.
+
+**Vincoli**:
+- No drop rate / balance modificati
+- No P2W
+- No hard delete
+- Dry-run + apply obbligatorio per ogni seed patch
+- Snapshot rollback per ogni script
+
+**Note tecniche**:
+- Il pattern `round1654b_seed_integrity.py` (whitelist + snapshot + audit event) è il template per ADJ-1 e per il seed pack ADJ-3.
+

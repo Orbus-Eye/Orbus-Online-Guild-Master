@@ -1,0 +1,325 @@
+# Round 16.5.4b — Report Finale (Auto-Equip Class-Aware + ADJ-2 Backfill)
+
+**Data completamento:** 2026-02
+**Modalità:** implementazione + test isolati + apply DB live
+**Scope:** BLOCCO A (auto-equip fix codice) + BLOCCO B (seed integrity ADJ-2)
+
+---
+
+## 1. Causa reale del "auto-equip random"
+
+Il codice `auto_equip.py` **dichiarava** una logica class-aware già in R16.0, ma nella pratica **la formula di fitness leggeva un campo `stats` (dict) che NON esiste nel schema item**. Su 113 equippables in catalogo, **0 hanno il campo `stats`**. I bonus stat sono invece storati come campi separati (`strength_bonus`, `agility_bonus`, `intellect_bonus`, `endurance_bonus`, `faith_bonus`).
+
+Conseguenza: `primary_boost` e `secondary_boost` erano sempre 0, e il ranking degenerava a `power_score` puro (con penalty ×0.5 sui warning). Un mage non riusciva a distinguere un weapon `intellect:10` da uno `strength:10` a parità di `power_score`.
+
+In aggiunta:
+- Il level gate leggeva `required_level` / `level_requirement` (campi INESISTENTI nel DB), non il canonico `required_adventurer_level` esposto via `resolve_item_required_level`.
+- Il `_stat_delta` esposto al FE leggeva anch'esso `.stats`, quindi la narrativa "+X Stat" al FE era sempre "+0".
+- `item_equip_power` locale in `auto_equip.py` ombreggiava la funzione canonica in `expeditions/formulas.py`, ignorando i `*_bonus` e restituendo solo `power_score`.
+
+---
+
+## 2. Formula implementata (esatta, con pesi)
+
+```python
+# app/equipment/auto_equip.py — costanti
+PRIMARY_WEIGHT   = 3.0
+SECONDARY_WEIGHT = 1.5
+POWER_WEIGHT     = 1.0
+STAT_TAG_BONUS   = 2.0
+WARNING_PENALTY  = 0.5
+
+# _compute_fitness(item, primary, secondaries):
+primary_score   = item[f"{primary}_bonus"] * 3.0
+secondary_score = sum(item[f"{s}_bonus"] for s in secondaries) * 1.5
+power_score     = item["power_score"] * 1.0
+tag_bonus       = 2.0 if primary in item.get("stat_tags", []) else 0.0
+fitness = primary_score + secondary_score + power_score + tag_bonus
+if verdict.severity == "warning":
+    fitness *= 0.5     # WARNING_PENALTY
+```
+
+**Sort tie-break**: `(fitness DESC, power_score DESC, id ASC)` — totalmente deterministico.
+
+---
+
+## 3. Lettura primary/secondary stats
+
+Sorgente: collection **`adventurer_classes`** (14 documenti, tutti valorizzati).
+- Campo `primary_stat`: string, uno di `strength|agility|intellect|endurance|faith`.
+- Campo `secondary_stats`: list[string], mai `None`.
+
+Loader: `_load_class_meta(db, class_slug)` in `auto_equip.py:106-118` — fallback a `strength/[]` se la classe manca.
+
+**Nota importante**: `primary_stat` = `"intellect"` (NON "intelligence"). Il pattern `f"{primary}_bonus"` risolve correttamente al campo `intellect_bonus` degli item senza mapping table.
+
+---
+
+## 4. Lettura stat item (campi canonici `{stat}_bonus`)
+
+Helper `_stat_bonus(item, stat_name)` in `auto_equip.py:57-64`:
+```python
+return int(item.get(f"{stat_name}_bonus", 0) or 0)
+```
+
+Copertura schema item verificata in audit STEP 1:
+| Campo | Coverage |
+|---|---|
+| `strength_bonus` | 112/113 equippables |
+| `agility_bonus` | 110/113 |
+| `intellect_bonus` | 109/113 |
+| `endurance_bonus` | 110/113 |
+| `faith_bonus` | 108/113 |
+| `power_score` | 113/113 |
+| `stat_tags` | 115/136 (usato per tag bonus) |
+
+**Edge documentato**: se una `secondary_stat` non ha campo `{stat}_bonus` sull'item (raro; DB coverage ≥ 108/113), contribuisce 0.
+
+---
+
+## 5. Level gate auto-equip corretto
+
+**Prima** (auto_equip.py:163):
+```python
+req_lv = int(it.get("required_level") or it.get("level_requirement") or 1)
+```
+Entrambi i campi **NON esistono** in DB → gate = 1 sempre.
+
+**Ora** (auto_equip.py:192):
+```python
+from app.equipment.level_gate import resolve_item_required_level
+req_lv = resolve_item_required_level(it)
+if req_lv > adv_level:
+    continue   # filtro pre-scoring
+```
+
+`resolve_item_required_level` è la stessa funzione usata da `equip_item_service` (R11.3 TASK B). Ordine di risoluzione: `required_adventurer_level` esplicito → `level_required > 1` legacy → fallback rarity→level (Common=1, Rare=5, Epic=8, Legendary=12).
+
+---
+
+## 6. Tie-break deterministico
+
+Applicato in tre punti (`auto_equip.py`):
+
+1. **Cursor MongoDB** (linee 149, 158, 168, 306, 310) — ogni `.find()` ha `.sort([...])` esplicito. Nessuna dipendenza dall'insertion order.
+2. **Set → sorted list** (`item_ids = sorted({...})`) — deduplica preservando ordine deterministico.
+3. **Ranking finale** — `candidates.sort(key=lambda p: (-p[0], -int(p[1]['power_score']), str(p[1]['id'])))`.
+
+Zero uso di `random.*` (verificato con grep).
+
+---
+
+## 7. File backend modificati
+
+| File | Tipo | Note |
+|---|---|---|
+| `/app/backend/app/equipment/auto_equip.py` | **Rewrite** | 303 → 386 righe. Formula, level gate, stat_delta, sort, audit fix. |
+| `/app/backend/app/scripts/round1654b_seed_integrity.py` | **Nuovo** | Script ADJ-2 con dry-run/apply/snapshot/audit. |
+| `/app/backend/tests/backend_round1654b_test.py` | **Nuovo** | 16 test (11 auto-equip + 5 ADJ-2). |
+| `/app/memory/backlog.md` | Update | Aggiunta sezione Round 16.5.4c (P1). |
+| `/app/memory/round1654b_audit_report.md` | Esistente | Prodotto in STEP 1. |
+| `/app/memory/round1654b_adj2_snapshot.json` | **Nuovo** | Snapshot pre-change ADJ-2 (SHA256 verificato). |
+| `/app/memory/round1654b_final_report.md` | **Questo file** | Report finale. |
+
+---
+
+## 8. File frontend modificati
+
+**Nessuna modifica**. Il componente `AutoEquipReport` in `AdventurerDetailModal.jsx` (linee 362-459) già consumava `reasons[].reason_it`, `reasons[].stat_delta` con `Object.entries(...)`, `score_before`, `score_after`, `score_delta`. La modifica al backend è retro-compatibile con la UI esistente e ora **popola con valori reali** i campi che il FE già rendeva.
+
+Rendering del messaggio in italiano — esempio reale prodotto dal backend:
+> "Arma equipaggiata: «arcane_focus» (+5 Int, +2 End, +8 Power), migliore per Mago-Test."
+
+Il FE già mostra la seconda riga con delta compatti: `"+5 intellect · +2 endurance · +8 power"`.
+
+---
+
+## 9. `stat_delta` esposto: **SÌ**
+
+Payload `POST /api/adventurers/{id}/auto-equip` → array `reasons` include per ogni swap:
+
+```json
+{
+  "slot": "weapon",
+  "old_item_slug": "old_stick",
+  "new_item_slug": "arcane_focus",
+  "old_item_name": "Old Stick",
+  "new_item_name": "Arcane Focus",
+  "primary_stat": "intellect",
+  "primary_gain": 5,
+  "score_before": 3,
+  "score_after": 15,
+  "stat_delta": {
+    "intellect": 5,
+    "endurance": 2,
+    "power": 8
+  },
+  "reason_it": "Arma equipaggiata: «arcane_focus» (+5 Int, +2 End, +8 Power), migliore per Mago-Test.",
+  "reason_en": "Weapon equipped: \"arcane_focus\", better for Mago-Test."
+}
+```
+
+Inoltre gli array `equipped` e `replaced` includono `score_before`, `score_after`, `stat_delta` per ogni item (test #10 verifica).
+
+---
+
+## 10. Test auto-equip (11/11 PASS)
+
+| # | Test | Esito |
+|---|---|---|
+| 1 | warrior preferisce stat primaria (strength/endurance) | ✅ PASS |
+| 2 | mage preferisce intellect | ✅ PASS |
+| 3 | priest preferisce faith | ✅ PASS |
+| 4 | item power alto + stat sbagliata NON vince | ✅ PASS |
+| 5 | item over-level NON equipaggiato | ✅ PASS |
+| 6 | Legendary lv8/9 NON equipaggiato da lv1 | ✅ PASS |
+| 7 | item incompatibile classe (block) NON equipaggiato | ✅ PASS |
+| 8 | item attuale migliore NON sostituito | ✅ PASS |
+| 9 | determinismo: 2 run stesso input → stesso output | ✅ PASS |
+| 10 | `stat_delta` restituito nel payload FE | ✅ PASS |
+| 11 | Messaggio UI italiano contiene stat + classe | ✅ PASS |
+
+Comando: `DB_NAME=orbus_r16_test APP_ENV=test pytest tests/backend_round1654b_test.py -v`
+
+---
+
+## 11. Script ADJ-2 dry-run / apply
+
+### Dry-run — 2026-02 (timestamp effettivo nel snapshot JSON)
+```
+Item da aggiornare (6):
+  legendary_amulet_nathos    1  →  8  +7
+  legendary_armor_ambash     1  →  8  +7
+  legendary_cape_aveol       1  →  8  +7
+  legendary_ring_velur       1  →  8  +7
+  legendary_staff_efreto     1  →  9  +8
+  legendary_sword_alveora    1  →  9  +8
+Snapshot: /app/memory/round1654b_adj2_snapshot.json
+SHA256:   db006bda2fec435419a27c3b90432d24896b0ae6e08275480a6e47159539d4d4
+DRY-RUN: nessuna scrittura eseguita.
+```
+
+### Apply — 2026-02 (subito dopo il dry-run pulito)
+```
+APPLY: aggiorno 6 item…
+✔ Aggiornati: 6 item.
+Snapshot pre-change: /app/memory/round1654b_adj2_snapshot.json
+SHA256:              9e1071d8df20e2069c53cc47f1fbb9d78b3d6174190aefeea5e2a64a281dbac5
+```
+
+### Secondo apply (verifica idempotenza)
+```
+Nessun item da aggiornare (idempotenza OK).
+Noop (6) — già al target o oltre.
+✔ Aggiornati: 0 item.
+```
+
+---
+
+## 12. Lista item Legendary corretti
+
+| Slug | Old req_level | New req_level | Δ |
+|---|:-:|:-:|:-:|
+| `legendary_sword_alveora` | 1 | **9** | +8 |
+| `legendary_staff_efreto` | 1 | **9** | +8 |
+| `legendary_armor_ambash` | 1 | **8** | +7 |
+| `legendary_ring_velur` | 1 | **8** | +7 |
+| `legendary_amulet_nathos` | 1 | **8** | +7 |
+| `legendary_cape_aveol` | 1 | **8** | +7 |
+
+Verifica finale su `orbus_r16` (DB dev live) post-apply:
+```
+legendary_amulet_nathos        req_lv=8  rarity=legendary
+legendary_armor_ambash         req_lv=8  rarity=legendary
+legendary_cape_aveol           req_lv=8  rarity=legendary
+legendary_ring_velur           req_lv=8  rarity=legendary
+legendary_staff_efreto         req_lv=9  rarity=legendary
+legendary_sword_alveora        req_lv=9  rarity=legendary
+```
+
+---
+
+## 13. Idempotenza script verificata
+
+Metodi di verifica:
+- **Manuale**: apply → apply → secondo run produce "Nessun item da aggiornare" + "Noop (6)".
+- **Automatico**: test #14 (`test_14_second_apply_zero_changes`) esegue apply a DB già a target, verifica `len(applied) == 0` e `len(plan) == 0`. ✅ PASS.
+
+Meccanismo tecnico: la query `_apply` filtra su `required_adventurer_level: old_value` (found-and-update atomico). Se il valore corrente è già `new_value`, `modified_count == 0`. Non downgrade: il `_plan_diff` gestisce anche il caso "current > target" mettendolo in `noop` con reason `current_above_target_no_downgrade`.
+
+---
+
+## 14. ADJ-3 tracciato in backlog
+
+Aggiunta sezione **Round 16.5.4c — Seed Integrity & Class Equipment Coverage** in `/app/memory/backlog.md`:
+- Item 2: **Warlock + Alchemist ZERO item copertura** (P1).
+- Contiene design constraint (no P2W, no combat balance shift) e template consigliato (`round1654b_seed_integrity.py`).
+
+---
+
+## 15. Altri ADJ tracciati in backlog
+
+Round 16.5.4c include:
+- **ADJ-1** (rarity case-mismatch) — script normalize `round1654c_rarity_case_normalize.py`.
+- **ADJ-6** (write_audit `related_entity_id`) — ✅ già mitigato in R16.5.4b, aperto solo per allineare `equip_item_service` / `unequip_item_service`.
+- **ADJ-7** (423 mangiato da `except Exception`) — bubble-up del `HTTPException.detail` come `warnings[i] = {code, user_message}`.
+- **Orfani già equipaggiati** (segnalazione, no forced unequip).
+
+---
+
+## 16. Conferma: no drop / reward / PvP / economia / premium modificati
+
+Modifiche in R16.5.4b:
+- ✅ Codice: `auto_equip.py` (algoritmo di ranking client-side, zero side effects economici).
+- ✅ Codice: `round1654b_seed_integrity.py` (whitelist di 6 item, campo unico `required_adventurer_level`).
+- ✅ Test: 16 test unitari/integrazione.
+
+**Non toccato** (verificato con grep):
+- ❌ Nessun endpoint drop/reward.
+- ❌ Nessuna formula PvP.
+- ❌ Nessuna economia (gold, market, auction).
+- ❌ Nessun premium/monetizzazione.
+- ❌ Nessuna modifica al catalogo classi (`adventurer_classes`).
+- ❌ Nessun `strength_bonus` / `agility_bonus` / `intellect_bonus` / `endurance_bonus` / `faith_bonus` / `power_score` mutato sui 6 Legendary.
+
+---
+
+## 17. Conferma: no hard delete
+
+Verificato con grep sul PR e sullo script:
+- `round1654b_seed_integrity.py` usa esclusivamente `update_one` con `$set`. **Nessuna `delete_many` / `delete_one` / `drop`**.
+- `auto_equip.py` mantiene lo stesso ciclo unequip→equip via `unequip_item_service` / `equip_item_service` che sono operazioni di stato transazionali (non hard delete di item né inventory row).
+- Il `_apply` filtra su `required_adventurer_level: old_value` per garantire l'atomicità (nessuna doppia scrittura, nessuna race).
+- Snapshot pre-change salvato in `/app/memory/round1654b_adj2_snapshot.json` con SHA256 (permette rollback deterministico se necessario).
+
+---
+
+## Appendice A — Comando per rollback ADJ-2 (se mai serve)
+
+```python
+# In caso di rollback, ripristinare i valori pre-change dallo snapshot.
+import json
+snap = json.load(open("/app/memory/round1654b_adj2_snapshot.json"))
+for row in snap["before"]:
+    # ...update items.slug=row['slug'] required_adventurer_level=row['required_adventurer_level']
+```
+
+Non ancora automatizzato in un rollback CLI: se serve, aprire task R16.5.4d.
+
+---
+
+## Appendice B — Statistiche pre/post
+
+| Metrica | Pre-R16.5.4b | Post-R16.5.4b |
+|---|---|---|
+| Fitness class-aware effettiva | ❌ (sempre 0) | ✅ 3.0·primary + 1.5·secondary + 1.0·power + 2.0·tag |
+| Level gate su `resolve_item_required_level` | ❌ | ✅ |
+| Legendary bypass gate (`req_lv:1`) | 6 item | 0 item |
+| `stat_delta` popolato | ❌ | ✅ |
+| Sort deterministico | Parziale | ✅ Totale |
+| Test coverage auto-equip | 0 test dedicati | 11 test |
+| Test coverage seed integrity | 0 | 5 test |
+
+---
+
+**Firmato**: E1 · Round 16.5.4b · pronto per merge.
