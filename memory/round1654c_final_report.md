@@ -440,7 +440,37 @@ Occultista? True · Stregone? False · HTTPException? False
 - ✅ Snapshot + audit per ogni scrittura
 - ✅ Italiano su tutte le stringhe player-facing dell'Auto-Equip
 
-### 13.10 Sealing proposta
+### 13.10 Add-on Mage seed per TC4
+Dopo il fix pack, il PM ha richiesto il seed di 1 Mage sulla guild tester per rendere TC4 eseguibile via browser (senza dover creare adventurer via UI). Update di `round1654c_test_seed_adventurers.py`:
+- Aggiunto `("mage", "Test-Mage-R1654c")` a `ADVENTURER_SEED_SPEC`.
+- `INVENTORY_BY_CLASS["mage"]` include **2 class-fit** (`apprentice-wand`, `initiate_robe`) + **2 off-class Warrior-only** (`rusted-sword`, `torn-leather-vest`) per stressare TC4 silent-skip.
+- Idempotenza rispettata: script riusa Warlock/Alchemist esistenti, crea solo il Mage.
+- Snapshot pre-seed aggiornato in `/app/memory/round1654c_test_seed_snapshot.json`.
+- Audit event `TEST_ADVENTURER_SEEDED` emesso per il Mage.
+
+**Verifica curl live TC4**:
+```
+Mage aac9f4dd-... auto-equip:
+  equipped: [('weapon','apprentice-wand'), ('armor','initiate_robe')]
+  swaps_count: 2, score 0→9
+  reasons:
+    "Arma equipaggiata: «Apprentice Wand» (+1 Int, +1 Power), migliore per Mago."
+    "Armatura equipaggiata: «Veste da Iniziato» (+2 Int, +1 Faith, +4 Power), migliore per Mago."
+  unchanged_slots_detail:
+    - accessory (off_class_seen=5): "Oggetti trovati, ma nessuno adatto alla classe Mago per lo slot accessorio."
+
+QC:
+  rusted-sword leak?     False
+  torn-leather-vest leak? False
+  Rusted Sword leak?     False
+  Torn Leather Vest leak? False
+  HTTPException?          False
+  Mago in reason?         True
+```
+
+TC4 verificato: nessun nome item off-class visibile al player, empty state IT pulito.
+
+### 13.11 Sealing proposta
 **Proposta**: sealing R16.5.4c **subordinato all'esito di `e1_tester` browser** su TC1/TC2/TC3/TC4. Se tutti PASS → sealing definitivo. Se qualcuno FAIL → REOPEN #4 dedicato.
 
 **Verifica programmatica pre-browser**: 61/61 test backend PASS + curl live conferma "Occultista" senza leak.

@@ -37,6 +37,9 @@ AUDIT_EVENT = "TEST_ADVENTURER_SEEDED"
 
 # Item slugs from ADJ-3 seed pack — Common Lv1 sono i più permissivi
 # per il tester (nessun level gate blocca).
+# ROUND 16.5.4c REOPEN #3 add-on: `mage` include ANCHE 2 item off-class
+# Warrior-only (`rusted-sword`, `torn-leather-vest`) per stressare TC4
+# (silent-skip degli item off-class + empty state IT "Mago").
 INVENTORY_BY_CLASS = {
     "warlock": [
         "warlock_apprentice_tome",
@@ -48,7 +51,22 @@ INVENTORY_BY_CLASS = {
         "alchemist_apron",
         "alchemist_reagent_pouch",
     ],
+    "mage": [
+        # Class-fit (mage: int primary):
+        "apprentice-wand",       # weapon Common Lv1 I+1
+        "initiate_robe",         # armor Common Lv1 I+2
+        # Off-class Warrior-only per TC4 silent-skip:
+        "rusted-sword",          # weapon Common Lv1 S+1  (warrior/paladin/berserker)
+        "torn-leather-vest",     # armor Common Lv1       (warrior/paladin/berserker)
+    ],
 }
+
+
+ADVENTURER_SEED_SPEC = [
+    ("warlock", "Test-Warlock-R1654c"),
+    ("alchemist", "Test-Alchemist-R1654c"),
+    ("mage", "Test-Mage-R1654c"),
+]
 
 
 def _utc_iso_now() -> str:
@@ -209,8 +227,7 @@ async def run(dry_run: bool) -> int:
 
     results: dict[str, dict] = {}
 
-    for class_slug, name in (("warlock", "Test-Warlock-R1654c"),
-                             ("alchemist", "Test-Alchemist-R1654c")):
+    for class_slug, name in ADVENTURER_SEED_SPEC:
         print(f"\n=== {class_slug} ===")
         existing = await _existing_test_seed_adv(
             db, guild["id"], class_slug,
