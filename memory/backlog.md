@@ -253,3 +253,30 @@ Nessun impatto funzionale, solo copy + microinterazioni.
 - Round DEDICATO — non mischiare con altri fix.
 
 **Priorità**: P3 (crasha solo `GET /api/territory/my` per gilde affette; non blocca gameplay core).
+
+---
+
+## Round 16.5.4f — Localization Sweep [P3] (PLANNED)
+
+Scope: pulizia testi EN residui nella UI generale, fuori da R16.5.4d.
+
+Token noti da tradurre:
+- "Best" (Dashboard chrome badge)
+- "NEW" (Dashboard chrome badge)
+- "SUCCESS" (contesto da identificare — probabilmente badge stato spedizione)
+- "SOCIAL" (nav/menu)
+- "ACCOUNT" (nav/menu)
+
+Token aggiuntivi identificati durante screenshot R16.5.4d desktop 1280×800:
+- "WHY IT WENT THIS WAY" (`ExpeditionReport` collapsible header — non tradotto in R16.5.4d perché scoperto tardi)
+- ":: REWARDS SUMMARY" (`ExpeditionReport` sezione — non tradotto in R16.5.4d)
+- "Gold earned" / "XP earned" / "Loot" / "Injuries · fatigue" (labels della rewards summary desktop)
+- "The expedition succeeded. Team power (...) is well above the recommended (...)" (narrative fallback EN — probabile backend-generated in `expeditions/services.py`)
+- "completed" prefix nella data spedizione (`completed 02/07/2026, 10:57 UTC`)
+
+Note:
+- Round dedicato solo a localization sweep UI-wide.
+- Non toccare Auto-Equip, expedition report top-level (già IT), dashboard prestige (già IT).
+- Scope: nav, badge, misc chrome + eventuali stringhe FE residue non toccate in R16.5.4d.
+- Se lo scope include copy narrativa backend-generated (`result_log`, `narrative`), aprire sub-task separato per non mischiare FE/BE.
+- Non-blocking.
