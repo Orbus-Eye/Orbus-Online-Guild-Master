@@ -152,7 +152,7 @@ async def _load_class_meta(db, class_slug: Optional[str]) -> dict:
                 "display_name_it": None}
     doc = await db.adventurer_classes.find_one(
         {"slug": class_slug},
-        {"_id": 0, "primary_stat": 1, "secondary_stats": 1,
+        {"_id": 0, "slug": 1, "primary_stat": 1, "secondary_stats": 1,
          "display_name_it": 1, "name": 1},
     )
     if not doc:
@@ -203,13 +203,23 @@ _CLASS_LABELS_IT: dict[str, str] = {
     "rogue": "Ladro", "ranger": "Ranger", "paladin": "Paladino",
     "berserker": "Berserker", "druid": "Druido",
     "necromancer": "Negromante", "monk": "Monaco", "bard": "Bardo",
-    "assassin": "Assassino", "warlock": "Stregone",
+    "assassin": "Assassino", "warlock": "Occultista",
     "alchemist": "Alchimista",
 }
 
 
 def _class_it_label(cls_meta: dict) -> str:
-    """Human-readable Italian class label used in narrative reasons."""
+    """Human-readable Italian class label used in narrative reasons.
+
+    ROUND 16.5.4c REOPEN #3 — Precedenza: mappa canonica
+    `_CLASS_LABELS_IT[slug]` (single source of truth) → `display_name_it`
+    del catalog → `name` (fallback). Il PM ha deciso `warlock → Occultista`
+    (era `Stregone`); la mappa `_CLASS_LABELS_IT` è la sede canonica per
+    questi override, indipendentemente da `adventurer_classes.name`.
+    """
+    slug = (cls_meta.get("slug") or "").strip().lower()
+    if slug and slug in _CLASS_LABELS_IT:
+        return _CLASS_LABELS_IT[slug]
     return (
         cls_meta.get("display_name_it")
         or cls_meta.get("name")

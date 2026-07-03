@@ -355,3 +355,94 @@ Audit events (in `db.audit_events`):
 ---
 
 **Firmato**: E1 · Round 16.5.4c · pronto per consolidamento finale PM.
+
+---
+
+## 13. REOPEN #3 — E2E blocker fix pack (i18n + off-class silent skip)
+
+**Data apertura**: 2026-07-03, dopo screenshot `e1_tester`. Il PM ha rilevato:
+- **Bug 1**: Auto-Equip report mostrato in inglese al player quando il browser è `lang="en"`.
+- **Bug 2**: nomi item off-class visibili nel report player-facing (es. "Iron Sword", "Steel Half-Plate").
+
+### 13.1 Root cause Bug 1 (i18n)
+- Il backend produceva GIÀ `reason_it` correttamente (verificato via curl live: payload italiano completo).
+- Il frontend `AutoEquipReport` (`AdventurerDetailModal.jsx:349, :364`) sceglieva tra `reason_it` e `reason_en` in base al `lang` del `I18nContext`. Per browser `lang="en"` mostrava le stringhe tecniche `reason_en`.
+- **Fix**: `AutoEquipReport` ora usa helper `pickReport(row)` che preferisce SEMPRE `reason_it` (fallback `reason_en` solo se `reason_it` è assente — edge case dati legacy). Il resto della UI resta bilingue via `lang`; scope stretto solo all'Auto-Equip report come da spec PM.
+
+### 13.2 Bug secondario: label classe warlock
+- Il backend usava `class_meta.name = "Stregone"` (dal DB `adventurer_classes`) invece di consultare la mappa `_CLASS_LABELS_IT` che il PM aveva impostato a `warlock → Occultista`.
+- Root cause: `_load_class_meta` projection MongoDB non includeva `slug`, quindi `_class_it_label` non poteva applicare l'override della mappa.
+- **Fix (2 modifiche)**:
+  1. `_load_class_meta` projection ora include `slug`.
+  2. `_class_it_label` ora consulta `_CLASS_LABELS_IT[slug]` come priorità 1 (fallback: `display_name_it`, poi `name`).
+- Mappa `_CLASS_LABELS_IT["warlock"]` cambiata da `"Stregone"` a `"Occultista"`.
+
+### 13.3 Bug 2 (off-class silent skip) — già coperto
+- Audit del codice R16.5.4b REOPEN #2 conferma: l'algoritmo Auto-Equip **già** filtra silenziosamente gli item warning/block (regola PM Q2-b(iii)). I loro nomi NON entrano mai in `reason_it` / `warnings_it` / `unchanged_slots_detail[].reason_it`.
+- Il messaggio empty state usa solo **contatore** `off_class_seen` (mai i nomi item off-class): `"Oggetti trovati, ma nessuno adatto alla classe {ClasseIT} per lo slot {arma/armatura/accessorio}."`
+- `off_class_seen` resta come **metrica tecnica** nel payload (`unchanged_slots_detail[].off_class_seen`) per audit/dashboard, ma non è mai stringificato nella UI player-facing.
+- **Fix**: nessuna modifica al codice — il comportamento era già corretto. Rafforzato con 3 nuovi test (32, 33, 34) che pongono blacklist esplicita.
+
+### 13.4 File modificati REOPEN #3
+
+| File | Cambio |
+|---|---|
+| `/app/backend/app/equipment/auto_equip.py` | `_CLASS_LABELS_IT["warlock"]="Occultista"`; `_load_class_meta` projection include `slug`; `_class_it_label` prima consulta `_CLASS_LABELS_IT[slug]`. |
+| `/app/frontend/src/components/AdventurerDetailModal.jsx` | Helper `pickReport(row)` che preferisce sempre `reason_it` per l'Auto-Equip report (scope stretto, no framework i18n globale). |
+| `/app/backend/tests/backend_round1654c_i18n_test.py` | **NEW** — 7 test i18n / off-class silent-skip (test 28-34). |
+
+Nessun altro file toccato. **Frontend**: solo il componente `AutoEquipReport` è stato modificato; il resto della UI resta bilingue.
+
+### 13.5 Setup test — reset Warlock su tester (unequip regolare)
+Effettuato per rendere leggibile il TC1 con delta reale:
+- Snapshot pre-reset: `/app/memory/round1654c_test_reset_snapshot.json` (equipment pre-reset dei 3 slot Warlock/Alchemist).
+- 3× `POST /api/adventurers/706a8b6b.../unequip` (HTTP 200) — soft unequip, item torna nell'inventory guild.
+- Audit event `TEST_ADVENTURER_EQUIP_RESET` emesso con metadata `{target, method:"unequip_soft", slots}`.
+- **Nessun hard delete**. Nessuna modifica ad altri utenti.
+
+### 13.6 Test backend post-fix
+```
+tests/backend_round1654b_test.py          27 passed
+tests/backend_round1654c_rarity_test.py   27 passed
+tests/backend_round1654c_i18n_test.py      7 passed   ← REOPEN #3 nuovi
+─────────────────────────────────────────────────────
+TOTALE                                    61 passed, 0 failed
+```
+
+Nuovi test i18n:
+- `test_28_it_slot_labels_present` — `reason_it` inizia con "Arma equipaggiata:" / "Armatura equipaggiata:" / "Accessorio equipaggiato:"
+- `test_29_no_english_leakage_in_player_strings` — blacklist di 11 stringhe inglesi vietate (`Weapon:`, `already the best`, `equip failed`, `HTTPException`, `[object Object]`, ...)
+- `test_30_already_the_best_it_all_three_slots` — messaggio "già il migliore" IT esatto per tutti e 3 gli slot
+- `test_31_no_httpexception_ever_in_payload` — Warlock con inv vuoto → nessun leak `HTTPException`
+- `test_32_mage_off_class_names_not_leaked` — Mage + Iron_Sword_offclass + Steel_Half_Plate_offclass → nomi off-class MAI in `reason_it`, empty state cita "Mago"
+- `test_33_off_class_seen_tech_metric_accessible` — `off_class_seen` presente come tech metric ma nessuna stringa/name off-class nel `reason_it`
+- `test_34_warlock_class_label_is_occultista` — PM decision `warlock → Occultista`; "Stregone" bandito
+
+### 13.7 Curl live post-fix (Warlock tester)
+```
+Arma equipaggiata: «Tomo del Novizio» (+1 Int, +1 Power), migliore per Occultista.
+Armatura equipaggiata: «Veste del Novizio Occulto» (+1 Int, +1 Power), migliore per Occultista.
+Accessorio equipaggiato: «Pendente Maledetto» (+1 Int, +1 Power), migliore per Occultista.
+
+Occultista? True · Stregone? False · HTTPException? False
+```
+
+### 13.8 Off-class metric `off_class_seen` invariato nei log/tech data
+- Il campo continua ad essere presente in `unchanged_slots_detail[].off_class_seen` (int).
+- Test 33 asserisce che value=1 quando c'è esattamente 1 item off-class nell'inventario.
+- Non renderizzato nella UI player-facing (frontend `AutoEquipReport` usa solo `reason_it`).
+
+### 13.9 Vincoli REOPEN #3 rispettati
+- ✅ NO framework i18n globale introdotto (no i18next, no react-intl)
+- ✅ NO drop/reward/economia/PvP/premium/crafting toccati
+- ✅ NO hard delete aggiuntivi (solo unequip regolare per il reset test)
+- ✅ NO refactor massiccio della UI (solo helper `pickReport` in `AutoEquipReport`)
+- ✅ Snapshot + audit per ogni scrittura
+- ✅ Italiano su tutte le stringhe player-facing dell'Auto-Equip
+
+### 13.10 Sealing proposta
+**Proposta**: sealing R16.5.4c **subordinato all'esito di `e1_tester` browser** su TC1/TC2/TC3/TC4. Se tutti PASS → sealing definitivo. Se qualcuno FAIL → REOPEN #4 dedicato.
+
+**Verifica programmatica pre-browser**: 61/61 test backend PASS + curl live conferma "Occultista" senza leak.
+
+---

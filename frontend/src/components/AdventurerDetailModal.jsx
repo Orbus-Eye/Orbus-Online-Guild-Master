@@ -360,12 +360,26 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
 }
 
 // ROUND 16.1 Phase 3 — Inline report panel rendered after Auto-Equip click.
+// ROUND 16.5.4c REOPEN — Il PM ha stabilito che il report Auto-Equip
+// deve essere SEMPRE in italiano (payload backend `reason_it` /
+// `unchanged_slots_detail[].reason_it`), a prescindere dal `lang`
+// dell'utente. Motivi:
+//   1. Il PM non ha ancora deciso una politica i18n globale.
+//   2. Il backend R16.5.4b/c popola `reason_it` completo e leggibile;
+//      `reason_en` è un semplice fallback tecnico.
+//   3. Nomi item off-class rimangono già filtrati lato backend.
+// Il resto della UI (label esterne del pannello) resta bilingue via
+// `lang` — questo scope è ristretto alle stringhe player-facing del
+// report Auto-Equip come da spec R16.5.4c REOPEN #3.
 function AutoEquipReport({ result, lang, onDismiss }) {
     const it = lang === "it";
     const delta = result.score_delta ?? ((result.score_after ?? 0) - (result.score_before ?? 0));
     const deltaColor = delta > 0 ? "text-emerald-400" : delta < 0 ? "text-destructive" : "text-muted-foreground";
     const reasons = result.reasons || [];
     const unchanged = result.unchanged_slots_detail || [];
+    // Piccolo helper: preferisce sempre `reason_it`; solo se assente
+    // (edge case in dati legacy) fa fallback a `reason_en`.
+    const pickReport = (row) => row?.reason_it || row?.reason_en || "";
     return (
         <div
             data-testid="auto-equip-report"
@@ -412,7 +426,7 @@ function AutoEquipReport({ result, lang, onDismiss }) {
                                 className="text-xs border-l-2 border-emerald-400/55 pl-2 py-0.5"
                             >
                                 <div className="text-foreground/90">
-                                    {it ? r.reason_it : r.reason_en}
+                                    {pickReport(r)}
                                 </div>
                                 {r.stat_delta && Object.keys(r.stat_delta).length > 0 && (
                                     <div className="text-[10px] text-muted-foreground mt-0.5">
@@ -439,7 +453,7 @@ function AutoEquipReport({ result, lang, onDismiss }) {
                                 data-testid={`auto-equip-unchanged-${u.slot}`}
                                 className="text-xs text-muted-foreground italic border-l-2 border-border pl-2 py-0.5"
                             >
-                                {it ? u.reason_it : u.reason_en}
+                                {pickReport(u)}
                             </li>
                         ))}
                     </ul>

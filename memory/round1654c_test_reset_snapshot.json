@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-07-03T05:35:04.096158+00:00",
+  "action": "TEST_ADVENTURER_EQUIP_RESET",
+  "targets": [
+    {
+      "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+      "equipped_before": [
+        {
+          "id": "384b04ba-cb0a-4ca7-a5ef-7cce83b93d27",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+          "item_id": "b2401c31-e92a-4dec-add2-42cfe75cab00",
+          "slot": "weapon",
+          "equipped_at": "2026-07-03T05:32:06.066295+00:00"
+        },
+        {
+          "id": "15f4effb-96d2-4807-b868-53ddbda7b76d",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+          "item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
+          "slot": "armor",
+          "equipped_at": "2026-07-03T05:32:06.131399+00:00"
+        },
+        {
+          "id": "65d94491-367f-4301-bc9c-e537740ba39e",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+          "item_id": "31b9b255-123e-425f-a071-4a70f53d989b",
+          "slot": "accessory",
+          "equipped_at": "2026-07-03T05:32:06.150088+00:00"
+        }
+      ]
+    },
+    {
+      "adventurer_id": "bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1",
+      "equipped_before": [
+        {
+          "id": "6bdb43ac-2491-4133-aa77-93148fc7f6b0",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1",
+          "item_id": "d2808f53-5c5d-4290-9df3-777b03d3daa1",
+          "slot": "weapon",
+          "equipped_at": "2026-07-03T04:56:58.163003+00:00"
+        },
+        {
+          "id": "a6a63a07-40e9-48d6-9f98-a0337535fc8d",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1",
+          "item_id": "a86520a8-5bc2-41eb-a89d-8ef769e05846",
+          "slot": "armor",
+          "equipped_at": "2026-07-03T04:56:58.177465+00:00"
+        },
+        {
+          "id": "2ae32a41-0b90-4431-9841-8e99429d0384",
+          "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+          "adventurer_id": "bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1",
+          "item_id": "9684d81a-238f-4f90-8e42-9804f4897881",
+          "slot": "accessory",
+          "equipped_at": "2026-07-03T04:56:58.190173+00:00"
+        }
+      ]
+    }
+  ]
+}
