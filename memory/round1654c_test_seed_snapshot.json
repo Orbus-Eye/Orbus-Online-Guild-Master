@@ -1,0 +1,167 @@
+{
+  "generated_at": "2026-07-03T04:57:16.295284+00:00",
+  "tester_email": "tester@orbus.test",
+  "guild_id": "30758454-2224-4d5a-9ee7-93c7fc64a593",
+  "guild_name": "la lanterna di ferro",
+  "roster_count_before": 22,
+  "roster_before": [
+    {
+      "id": "7d23171a-3664-4e79-8e60-0c0024a184bf",
+      "name": "Rhea Ashwood",
+      "class_name": "Warrior",
+      "level": 10,
+      "class_slug": "warrior"
+    },
+    {
+      "id": "baf5c963-232c-426f-9c0e-ebaaad63de2a",
+      "name": "Elara Nightshade",
+      "class_name": "Mage",
+      "level": 10,
+      "class_slug": "mage"
+    },
+    {
+      "id": "3d5c1298-59c5-41a4-b8d7-b6fd852832d0",
+      "name": "Hadrian Brightblade",
+      "class_name": "Monk",
+      "level": 10,
+      "class_slug": "monk"
+    },
+    {
+      "id": "ed0f4d5a-8e15-4661-81ef-dfc10acecaa9",
+      "name": "Ulric Stoneheart",
+      "class_name": "Paladin",
+      "level": 10,
+      "class_slug": "paladin"
+    },
+    {
+      "id": "8477be20-40ac-4ae2-bb7d-de6b4296ba20",
+      "name": "Wren",
+      "class_name": "Priest",
+      "level": 10,
+      "class_slug": "priest"
+    },
+    {
+      "id": "53608708-f551-4ef2-92e6-a57e898980d0",
+      "name": "MaxAdv-d7f067",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "13e59a90-e116-4ae9-85b1-308ab49bb09b",
+      "name": "MaxAdv-f9483f",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "5b989d87-5eb6-419e-8008-a9d36760abe5",
+      "name": "MaxAdv-c9657f",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "d3c8f270-a928-46de-be28-d3c9fdf8c8df",
+      "name": "MaxAdv-71dc6b",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "8abae3d0-6af2-414c-a68d-7f7b6048e8bd",
+      "name": "MaxAdv-2bae30",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "9ca6afc6-f663-40c5-8f13-4c51868d5d6d",
+      "name": "MaxAdv-955117",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "7b860325-d35b-4307-a3e2-cbc7d6d9bde6",
+      "name": "MaxAdv-e4c08e",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "189c311a-f13e-4a87-a2af-57cda9242f2e",
+      "name": "MaxAdv-5e68e6",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "811e5709-f8b2-4d70-a207-bea7d211d854",
+      "name": "MaxAdv-625925",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "cb070680-e797-4f71-bc17-8a9f15568ea2",
+      "name": "MaxAdv-f9bd62",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "b2703fd2-e5c0-4c10-b5e4-75d30369d2ab",
+      "name": "MaxAdv-122d4f",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "88f1e436-eb85-450f-acad-e50055023513",
+      "name": "MaxAdv-88a504",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "e63282d0-2bd5-45ea-8d81-e9393d9bd0dd",
+      "name": "MaxAdv-40fb09",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "774f2bf3-a9ca-4415-85f9-c12cdb4c92ef",
+      "name": "MaxAdv-d8c114",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "aaccfe79-92de-4b77-a1f4-96e8edc03aca",
+      "name": "MaxAdv-a5c465",
+      "level": 10,
+      "class_name": "Warrior",
+      "class_slug": "warrior"
+    },
+    {
+      "id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+      "name": "Test-Warlock-R1654c",
+      "class_name": "Warlock",
+      "class_slug": "warlock",
+      "level": 5,
+      "is_test_seed": true,
+      "test_seed_source": "round1654c_e2e"
+    },
+    {
+      "id": "bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1",
+      "name": "Test-Alchemist-R1654c",
+      "class_name": "Alchemist",
+      "class_slug": "alchemist",
+      "level": 5,
+      "is_test_seed": true,
+      "test_seed_source": "round1654c_e2e"
+    }
+  ]
+}

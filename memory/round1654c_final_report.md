@@ -325,7 +325,7 @@ Regressione test suite ampia (curl live tester@orbus.test): Warrior Auto-Equip c
 - ✅ Backfill `class_slug`: solo `$set: {class_slug, updated_at}`.
 - ✅ Rarity normalize: solo `$set: {rarity, updated_at}`.
 - ✅ Class coverage seed: solo `insert_one` di 22 nuovi doc; nessun `delete_one`/`delete_many` su item esistenti.
-- ✅ Cleanup 1 item orfano di crash-partial durante il primo apply ADJ-3 (`warlock_apprentice_tome` inserito prima del crash `DuplicateKeyError`): rimosso via `delete_many({seed_source: 'round1654c_class_coverage'})` **prima** di ri-applicare pulito. Documentato qui per trasparenza.
+- ⚠️ **Eccezione controllata alla regola no-hard-delete**: cleanup selettivo di 1 doc seed parziale creato dallo stesso round dopo `DuplicateKeyError`. Filtro selettivo `{seed_source: 'round1654c_class_coverage'}`. Non dato storico. Non dato player. Non precedente autorizzativo per futuri hard delete.
 
 ---
 
