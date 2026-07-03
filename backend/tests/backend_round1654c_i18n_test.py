@@ -273,3 +273,106 @@ def test_34_warlock_class_label_is_occultista(sync_db, cleanup_r1654b):
     )
     # Non deve MAI usare "Stregone" (label vecchia).
     assert "Stregone" not in reason
+
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.5.4c REOPEN #4 — full class labels IT (35–38)
+# Il PM ha rilevato che warrior/warlock/alchemist non uscivano IT nella
+# UI (mentre mage funzionava per matching accidentale). Il fix R16.5.4c
+# REOPEN #3 aveva aggiornato solo `warlock → Occultista`; ora si
+# blindano test parametrici su TUTTE le 14 classi.
+# ═════════════════════════════════════════════════════════════════════
+
+# Mappa canonica IT approvata dal PM (single source of truth server-side).
+_EXPECTED_CLASS_LABELS_IT = {
+    "warrior": "Guerriero", "mage": "Mago", "priest": "Sacerdote",
+    "ranger": "Ranger", "rogue": "Ladro", "warlock": "Occultista",
+    "alchemist": "Alchimista", "druid": "Druido",
+    "paladin": "Paladino", "berserker": "Berserker",
+    "monk": "Monaco", "bard": "Bardo", "assassin": "Assassino",
+    "necromancer": "Negromante",
+}
+
+
+def test_35_warrior_report_uses_guerriero_not_warrior(
+    sync_db, cleanup_r1654b,
+):
+    _seed_class(sync_db, "test_r1654c_warr35", "strength", ["endurance"],
+                name="Guerriero")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_warr35",
+                           level=8)
+    w = _seed_item(sync_db, item_type="weapon", name_tag="w35",
+                   strength=5, endurance=2, power=7,
+                   class_tags=["test_r1654c_warr35"])
+    _seed_inventory(sync_db, g["id"], w["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+    reason = next(r["reason_it"] for r in res["reasons"]
+                  if r["slot"] == "weapon")
+    assert "Guerriero" in reason
+    assert "Warrior" not in reason
+
+
+def test_36_warlock_report_uses_occultista_not_warlock(
+    sync_db, cleanup_r1654b,
+):
+    _seed_class(sync_db, "test_r1654c_wlk36", "intellect",
+                ["faith", "agility"], name="Occultista")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_wlk36",
+                           level=5)
+    w = _seed_item(sync_db, item_type="weapon", name_tag="wlk36",
+                   intellect=4, faith=2, power=6,
+                   class_tags=["test_r1654c_wlk36"])
+    _seed_inventory(sync_db, g["id"], w["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+    reason = next(r["reason_it"] for r in res["reasons"]
+                  if r["slot"] == "weapon")
+    assert "Occultista" in reason
+    assert "Warlock" not in reason
+    assert "Stregone" not in reason  # label deprecata
+
+
+def test_37_alchemist_report_uses_alchimista_not_alchemist(
+    sync_db, cleanup_r1654b,
+):
+    _seed_class(sync_db, "test_r1654c_alch37", "intellect",
+                ["agility", "endurance"], name="Alchimista")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_alch37",
+                           level=5)
+    w = _seed_item(sync_db, item_type="weapon", name_tag="alch37",
+                   intellect=4, agility=2, power=6,
+                   class_tags=["test_r1654c_alch37"])
+    _seed_inventory(sync_db, g["id"], w["id"])
+    res = _run(_call_auto_equip(g, adv["id"]))
+    reason = next(r["reason_it"] for r in res["reasons"]
+                  if r["slot"] == "weapon")
+    assert "Alchimista" in reason
+    assert "Alchemist" not in reason
+
+
+@pytest.mark.parametrize("slug,label_it",
+                         list(_EXPECTED_CLASS_LABELS_IT.items()))
+def test_38_class_labels_it_lookup_is_canonical(slug, label_it):
+    """La mappa `_CLASS_LABELS_IT` di `auto_equip.py` deve mappare
+    TUTTE le 14 classi alla label italiana canonica approvata dal PM.
+    Case-insensitive lookup non è testato qui (il codice usa già
+    `slug` lowercase dal catalog), ma `_class_it_label` deve
+    preferire questa mappa a `name` o `display_name_it`."""
+    from app.equipment.auto_equip import (
+        _CLASS_LABELS_IT, _class_it_label,
+    )
+    # Direct dict lookup
+    assert _CLASS_LABELS_IT.get(slug) == label_it, (
+        f"_CLASS_LABELS_IT[{slug!r}] deve essere {label_it!r}, "
+        f"got {_CLASS_LABELS_IT.get(slug)!r}"
+    )
+    # Precedence check: anche se `name` del catalog fosse la label EN,
+    # il helper deve preferire `_CLASS_LABELS_IT[slug]`.
+    fake_cls_meta = {"slug": slug, "name": f"EN_{slug.capitalize()}"}
+    assert _class_it_label(fake_cls_meta) == label_it, (
+        f"_class_it_label deve preferire la mappa canonica per {slug!r}, "
+        f"got {_class_it_label(fake_cls_meta)!r}"
+    )
+

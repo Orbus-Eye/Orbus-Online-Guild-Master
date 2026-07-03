@@ -117,7 +117,7 @@ const CLASS_IT = {
     druid: "Druido",
     monk: "Monaco",
     bard: "Bardo",
-    warlock: "Stregone",
+    warlock: "Occultista",
     // ROUND 16.0.1 — 11th base class.
     alchemist: "Alchimista",
     // Deprecated legacy slugs kept for safe rendering on old data:

@@ -491,7 +491,7 @@ export default function Adventurers() {
                                                 />
                                             </div>
                                             <div className="text-xs text-muted-foreground">
-                                                {a.class_name} · {a.class_role}
+                                                {classLabel(a.class_slug) || a.class_name} · {a.class_role}
                                             </div>
                                             {(a.race_slug || a.gender) && (
                                                 <div

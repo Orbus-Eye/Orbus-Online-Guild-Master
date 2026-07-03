@@ -9,6 +9,7 @@ import { useT } from "../i18n/I18nContext";
 import { TraitList } from "./TraitBadge";
 import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
+import { classLabel } from "../utils/displayLabels";
 import { api } from "../lib/api";
 
 const SLOTS = ["weapon", "armor", "accessory"];
@@ -157,7 +158,7 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                     />
                 </h2>
                 <div className="text-xs text-muted-foreground mt-1">
-                    {adventurer.class_name} · {adventurer.class_role} ·{" "}
+                    {classLabel(adventurer.class_slug) || adventurer.class_name} · {adventurer.class_role} ·{" "}
                     {t("adventurer_modal.level", { n: adventurer.level })}
                 </div>
                 {/* ROUND 16.0 — Race + Gender row (prominent, IT). */}
