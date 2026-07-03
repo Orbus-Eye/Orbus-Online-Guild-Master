@@ -325,3 +325,37 @@ Backend pytest: **nessuna modifica al codice backend eseguita in questo round** 
 - Su viewport ≤ 430px il `pb-24` su `<main>` garantisce che l'ultima sezione (`MATERIALI TROVATI`) resti sempre completamente visibile sopra il bottom nav.
 
 **Sealing proposto**: subordinato al PASS del prossimo giro `e1_tester` sui viewport 390×844 e 375×667 (mobile) più desktop.
+
+---
+
+## R16.5.4d — CLOSED & SEALED ✅
+
+**Data sigillo**: 2026-07-03T12:45:00Z (UTC).
+
+**Esito test**: 4/4 TC accepted dal PM (opzione A: sealing immediato).
+
+| TC | Viewport | Verifica | Esito |
+| --- | --- | --- | --- |
+| TC1 | 390×844 iPhone 12 | gap materials↔bottomNav = +31.25px, no coverage | ✅ PASS |
+| TC2 | 375×667 iPhone SE | gap materials↔bottomNav = +31.25px, no coverage | ✅ PASS |
+| TC3 | 390×844 Dashboard | legacy `LIVELLO` nascosto, Prestigio Lv6 + copy dinamico "Ti mancano 85 XP…" | ✅ PASS |
+| TC4 | 1280×800 Desktop | bottom nav `md:hidden` verificato, no horizontal scroll | ✅ PASS |
+
+Screenshot di riferimento: `/app/memory/round1654d_viewports/report_{390x844,375x667,1280x800}*.png`.
+
+**3 fix consegnati**:
+1. **Mobile padding fix** — `<main>` di `ExpeditionReport.jsx` con `pb-24 sm:pb-8`. Gap positivo garantito su tutti i viewport ≤ 430px.
+2. **IT localization report** — 10+ stringhe hardcoded IT nel `ExpeditionReport.jsx` (AFTER-ACTION REPORT → REPORT SPEDIZIONE, TEAM POWER → POTERE SQUADRA, ecc.). Scanner blacklist 11 stringhe EN: 0 leak.
+3. **Dashboard Prestigio-first** — `Dashboard.jsx` rimossa stat card `LIVELLO` legacy (campo DB intatto). `GuildProgressCard.jsx` con copy dinamico "Ti mancano N XP Prestigio per il prossimo livello (Lv M+1)" da payload backend runtime.
+
+**Follow-up tracked in backlog**:
+- **R16.5.4e** Territory KeyError Audit [P3] — `library` mancante nel STRUCTURE_CATALOG.
+- **R16.5.4f** Localization Sweep [P3] — 10 token noti (5 PM originali + 5 identificati desktop screenshot).
+
+**Vincoli tassativi rispettati**:
+- ✅ Nessuna modifica a curve/pesi XP, drop/reward, PvP, economia, premium.
+- ✅ Nessun hard delete.
+- ✅ `territory/services.py` non toccato (tracciato in R16.5.4e).
+- ✅ Legacy `guild.level` nascosto ma non eliminato dal DB.
+
+**Sigillo**: R16.5.4d chiuso definitivamente. Nessun REOPEN atteso.
