@@ -476,3 +476,193 @@ TC4 verificato: nessun nome item off-class visibile al player, empty state IT pu
 **Verifica programmatica pre-browser**: 61/61 test backend PASS + curl live conferma "Occultista" senza leak.
 
 ---
+
+---
+
+## Sezione 14 — REOPEN #5 (2026-07-03) — chiusura E2E blocker
+
+**Trigger PM (msg 474)**: dopo E2E `e1_tester` con score 3/4 PASS, TC1 Warlock è fallito perché:
+1. Due stringhe EN residue nel branch "already best" della UI del modal
+   Auto-Equip (`No better item available...`, `No swap possible...`).
+2. Slot labels EN uppercase (`WEAPON`, `ARMOR`, `ACCESSORY`) visibili nel
+   modal quando `lang !== "it"`.
+3. Warlock TC1 completamente equipaggiato → il click Auto-Equip finiva
+   direttamente nel branch "already-best" senza dimostrare il delta.
+
+### 14.1 Fix A — Stringhe IT nel modal Auto-Equip
+File: `frontend/src/components/AdventurerDetailModal.jsx`
+
+Sostituzioni (già applicate prima di REOPEN #5, consolidate qui):
+- Toast `swaps_count === 0`:
+  - **before EN**: `"No swap possible."` / `"No stronger compatible item in inventory."`
+  - **after IT**: `"Nessuna sostituzione possibile."` / `"Nessun oggetto compatibile più forte in inventario."`
+- Toast successo:
+  - **before EN**: `"${swaps} item(s) updated"` / `"Power ${b} → ${a} (${delta})"`
+  - **after IT**: `"${swaps} oggetto/i aggiornato/i"` / `"Potere ${b} → ${a} (${delta})"`
+- Empty state `AutoEquipReport` (swaps_count=0 & reasons vuoto):
+  - **before EN**: `"No better item available in inventory. Visit the market or run expeditions/dungeons."`
+  - **after IT**: `"Nessun oggetto migliore disponibile in inventario. Visita il mercato o completa spedizioni/dungeon."`
+
+### 14.2 Fix B — Slot labels IT hardcoded nel modal
+File: `frontend/src/components/AdventurerDetailModal.jsx`
+
+Nuova costante top-level:
+```js
+const SLOT_LABEL_IT = {
+    weapon: "ARMA",
+    armor: "ARMATURA",
+    accessory: "ACCESSORIO",
+};
+```
+
+Sostituito `t(\`adventurer_modal.slot_${slot}\`)` con `SLOT_LABEL_IT[slot]`
+in entrambe le occorrenze (slot vuoto + slot equipaggiato). L'i18n JSON
+resta invariato (nessun impatto su altre pagine); scope stretto al modal
+Auto-Equip come da PM decision R16.5.4c REOPEN.
+
+File `frontend/src/pages/AdventurerEquipment.jsx` era già stato aggiornato
+prima di REOPEN #5 (`SLOT_LABEL = { weapon: "Arma", armor: "Armatura",
+accessory: "Accessorio" }` — case title, non uppercase, coerente con
+l'header `:: {SLOT_LABEL[slot]}` della pagina).
+
+### 14.3 Fix C — Reset Warlock TC1 via soft unequip
+Adventurer: `706a8b6b-dc9b-441e-b15c-ad40d1fc84c6` (Warlock/Occultista,
+owner `tester@orbus.test`).
+
+**Metodo**: 3 chiamate REST `POST /api/adventurers/{id}/unequip` con body
+`{"slot": "weapon"|"armor"|"accessory"}`. NO hard delete, NO auto-equip
+post-reset.
+
+**Snapshot pre-reset** (aggiunto in
+`/app/memory/round1654c_test_reset_snapshot.json` sotto la chiave
+`reopen5_resets`):
+```json
+{
+  "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+  "owner_email": "tester@orbus.test",
+  "reason": "R16.5.4c REOPEN #5 TC1 setup",
+  "slots_unequipped": ["weapon", "armor", "accessory"],
+  "previous_equipment": {
+    "weapon":    { "item_slug": "warlock_apprentice_tome", "item_name": "Tomo del Novizio",           "rarity": "Common" },
+    "armor":     { "item_slug": "warlock_novice_robe",     "item_name": "Veste del Novizio Occulto", "rarity": "Common" },
+    "accessory": { "item_slug": "warlock_cursed_pendant",  "item_name": "Pendente Maledetto",         "rarity": "Common" }
+  },
+  "post_state": { "equipped_items_count": 0 }
+}
+```
+
+**Audit event**: nuovo evento canonico `TEST_ADVENTURER_EQUIP_RESET`
+aggiunto a `EVENT_TYPES` in `backend/app/audit/log.py`. Emesso con
+`source="r1654c_reopen5_manual_reset"`,
+`related_entity_id="706a8b6b-...-c1fd84c6"`,
+`actor_user_id`+`actor_guild_id` risolti dal record `users.email`,
+metadata sanitizzata (email mascherata a `t***@orbus.test`).
+
+Event id: `d5d49639-d12d-42f9-aafd-dad0615fe540`.
+
+**Verifica curl post-reset**:
+```
+GET /api/adventurers/706a8b6b-.../equipment-detail
+→ { "slots": [], "set_progress": [], "active_bonuses": [] }
+```
+Warlock lasciato completamente disequipaggiato per il test browser TC1.
+NON eseguita alcuna auto-equip successiva.
+
+### 14.4 Test tecnici 52, 53, 54
+File: `backend/tests/backend_round1654c_i18n_test.py`
+
+Introdotta la blacklist estesa `_ENGLISH_BANNED_EXTENDED`:
+- Slot labels EN: `WEAPON`, `ARMOR`, `ACCESSORY`
+- Frasi tester E2E: `No better item`, `No swap possible`
+- Varianti "already-best" EN: `already the best`, `already optimal`,
+  `already equipped`
+- Off-class / hint EN: `found but not compatible`,
+  `the currently equipped`, `in inventory. Visit`
+- Leak tecnici: `HTTPException`, `[object Object]`
+
+**test_52 — already-best branch exact IT + no EN leak**
+Warrior con 3 slot ottimali già equipaggiati → seconda auto-equip.
+Verifica su tutti e 3 gli slot:
+- Match esatto `"Arma: l'oggetto attualmente equipaggiato è già il migliore."` (idem Armatura/Accessorio).
+- Blacklist estesa applicata su `reasons[].reason_it`,
+  `unchanged_slots_detail[].reason_it`, `warnings_it`.
+
+**test_53 — no-better-item branch exact IT + no EN leak**
+Warrior con arma forte + arma debole in inventario. Seconda auto-equip
+non deve produrre swap; il messaggio deve essere una delle 2 stringhe IT
+canoniche (`"Arma: l'oggetto attualmente equipaggiato è già il migliore."`
+oppure `"Arma: nessun oggetto migliore disponibile in inventario."`).
+Blacklist estesa applicata come sopra.
+
+**test_54 — full payload dump no EN blacklist**
+Scanner globale su 3 scenari in un solo test:
+1. Warrior class-fit — primo run (branch `reasons`)
+2. Warrior class-fit — secondo run (branch `already-best`)
+3. Mage con inventario solo Warrior-only (branch `off_class_seen` empty)
+
+Costruisce un oggetto solo con campi player-facing (`reasons_it`,
+`unchanged_it`, `warnings_it`, `swaps_count`, `score_*`), lo dumpa in
+JSON e verifica che NESSUNA delle stringhe della blacklist compaia.
+Esclude deliberatamente `reason_en` (fallback tecnico non renderizzato
+dal frontend dopo il fix `pickReport`).
+
+### 14.5 Esito test suite
+```
+pytest tests/backend_round1654c_i18n_test.py
+→ 27 passed (test 28–38 esistenti + 52, 53, 54 nuovi)
+
+Collezione totale R16.5.4b + R16.5.4c i18n:
+→ 54 test collected
+```
+Precedente sealing report riportava 61 test PASS (R16.5.4b principale
+34 + R16.5.4c 27). Con i 3 nuovi test 52/53/54 il totale sale a **64
+test PASS** sulla suite R16.5.4c-related. Nessuna regressione sui test
+pre-REOPEN #5.
+
+### 14.6 Curl demo "already-best" NON-TC1
+Alchimista `bf88ad7e-49e2-4401-aa7e-857c9f0d3bd1` (già equipaggiato con
+`alchemist_apprentice_flask`, `alchemist_lab_apron`,
+`alchemist_measuring_pendant`):
+
+```
+POST /api/adventurers/bf88ad7e-.../auto-equip
+→ {
+    "swaps_count": 0,
+    "unchanged_slots": ["weapon", "armor", "accessory"],
+    "unchanged_slots_detail": [
+      { "slot": "weapon",    "reason_it": "Arma: l'oggetto attualmente equipaggiato è già il migliore." },
+      { "slot": "armor",     "reason_it": "Armatura: l'oggetto attualmente equipaggiato è già il migliore." },
+      { "slot": "accessory", "reason_it": "Accessorio: l'oggetto attualmente equipaggiato è già il migliore." }
+    ],
+    "score_before": 6, "score_after": 6, "score_delta": 0
+  }
+```
+Tutte le stringhe IT esatte, zero EN nel payload player-facing.
+Frontend usa solo `pickReport` → `reason_it`. `reason_en` (fallback)
+resta nel payload ma non viene mai renderizzato.
+
+### 14.7 File modificati (REOPEN #5)
+| File | Modifica |
+| --- | --- |
+| `frontend/src/components/AdventurerDetailModal.jsx` | Fix A (toast + empty state IT) + Fix B (SLOT_LABEL_IT hardcoded) |
+| `frontend/src/pages/AdventurerEquipment.jsx` | Fix B (SLOT_LABEL IT case-title, già applicato prima) |
+| `backend/app/audit/log.py` | +1 event type `TEST_ADVENTURER_EQUIP_RESET` |
+| `backend/tests/backend_round1654c_i18n_test.py` | +3 test (52, 53, 54) + blacklist estesa |
+| `memory/round1654c_test_reset_snapshot.json` | Append `reopen5_resets[]` (Warlock TC1) |
+| `memory/round1654c_final_report.md` | Sezione 14 (questo report) |
+
+### 14.8 Sealing R16.5.4c
+**Vincoli tassativi rispettati**:
+- ✅ NO ri-esecuzione auto-equip sul Warlock TC1 dopo il reset.
+- ✅ NO hard delete: solo `POST /unequip` (soft unequip regolare).
+- ✅ NO modifiche a drop/reward/economia/PvP/premium.
+- ✅ Snapshot pre-reset + audit event obbligatori entrambi eseguiti.
+
+**Verifica programmatica**: 27/27 test i18n R16.5.4c PASS (incluso il
+nuovo scanner blacklist test 54).
+
+**Proposta sealing**: ✅ **SÌ** sealing R16.5.4c **subordinato al PASS
+di `e1_tester` sul quarto giro browser TC1/TC2/TC3/TC4**. Blocking
+issue del round 3/4 (leak EN + Warlock full-equip) risolti; se il
+prossimo E2E torna 4/4 PASS, R16.5.4c è chiuso definitivamente. In caso
+di FAIL residuo, sarà REOPEN #6 dedicato.

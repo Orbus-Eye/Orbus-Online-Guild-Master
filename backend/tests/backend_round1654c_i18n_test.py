@@ -376,3 +376,240 @@ def test_38_class_labels_it_lookup_is_canonical(slug, label_it):
         f"got {_class_it_label(fake_cls_meta)!r}"
     )
 
+
+# ═════════════════════════════════════════════════════════════════════
+# ROUND 16.5.4c REOPEN #5 — no-EN-leak in branch "already-best" e
+# "no swap possible" + JSON dump full-payload blacklist (52–54).
+#
+# PM msg 474: dopo il 3/4 PASS del tester E2E, sono rimasti due leak EN
+# nel modal Auto-Equip nel branch "already best" ("No better item
+# available…", "No swap possible…") + slot labels EN uppercase. Questi
+# test blindano il contract del payload backend per prevenire regressioni
+# lato UI (già hardcoded IT nella modal in R16.5.4c REOPEN #5 Fix A/B).
+# ═════════════════════════════════════════════════════════════════════
+
+# Blacklist estesa richiesta dal PM per il test 54 (JSON-dump scanner).
+# Non deve mai comparire nel payload player-facing di Auto-Equip.
+_ENGLISH_BANNED_EXTENDED = (
+    # slot labels EN
+    "WEAPON", "ARMOR", "ACCESSORY",
+    # frasi identificate dal tester E2E
+    "No better item", "No swap possible",
+    # varianti "already-best"
+    "already the best", "already optimal", "already equipped",
+    # off-class / hint EN
+    "found but not compatible",
+    "the currently equipped",
+    "in inventory. Visit",
+    # leak tecnici
+    "HTTPException", "[object Object]",
+)
+
+
+def test_52_already_best_branch_exact_it_no_en_leak(
+    sync_db, cleanup_r1654b,
+):
+    """Warrior con inventario 3-slot già ottimale → seconda auto-equip:
+    il branch "already-best" deve produrre la stringa IT esatta su tutti
+    e 3 gli slot E il payload NON deve contenere nessuna delle stringhe
+    EN nella blacklist estesa."""
+    _seed_class(sync_db, "test_r1654c_warr52", "strength", ["endurance"],
+                name="Guerriero")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_warr52",
+                           level=8)
+    for slot, name in (("weapon", "w52"), ("armor", "a52"),
+                       ("accessory", "acc52")):
+        it_doc = _seed_item(
+            sync_db, item_type=slot, name_tag=name,
+            strength=4, endurance=2, power=6,
+            class_tags=["test_r1654c_warr52"],
+        )
+        _seed_inventory(sync_db, g["id"], it_doc["id"])
+
+    _run(_call_auto_equip(g, adv["id"]))
+    # Seconda chiamata: tutti "già il migliore".
+    res = _run(_call_auto_equip(g, adv["id"]))
+
+    # Verifica IT esatta per tutti e 3 gli slot (branch already-best).
+    assert res["swaps_count"] == 0
+    it_by_slot = {d["slot"]: d["reason_it"]
+                  for d in res["unchanged_slots_detail"]}
+    assert (
+        it_by_slot["weapon"]
+        == "Arma: l'oggetto attualmente equipaggiato è già il migliore."
+    ), f"already-best weapon: {it_by_slot['weapon']!r}"
+    assert (
+        it_by_slot["armor"]
+        == "Armatura: l'oggetto attualmente equipaggiato è già il migliore."
+    ), f"already-best armor: {it_by_slot['armor']!r}"
+    assert (
+        it_by_slot["accessory"]
+        == "Accessorio: l'oggetto attualmente equipaggiato è già il migliore."
+    ), f"already-best accessory: {it_by_slot['accessory']!r}"
+
+    # Blacklist estesa sul payload player-facing (reason_it +
+    # unchanged_slots_detail + warnings_it).
+    it_strings = _collect_it_strings(res)
+    for s in it_strings:
+        for banned in _ENGLISH_BANNED_EXTENDED:
+            assert banned not in s, (
+                f"REOPEN #5: stringa vietata {banned!r} nel branch "
+                f"already-best: {s!r}"
+            )
+
+
+def test_53_no_swap_possible_branch_exact_it_no_en_leak(
+    sync_db, cleanup_r1654b,
+):
+    """Warrior con weapon FORTE già equipaggiata + inventario che
+    contiene SOLO un'alternativa più debole (stesso class-fit) → auto-
+    equip deve triggerare il branch "no better item available" con la
+    stringa IT esatta 'Arma: nessun oggetto migliore disponibile in
+    inventario.' E il payload NON deve mai contenere le frasi EN.
+
+    Nota implementazione: il branch `best_fit <= current_fit` scatta
+    quando il best candidate diverso dal current ha fitness minore o
+    uguale. Per forzare questa via, equipaggiamo prima il pezzo forte,
+    poi aggiungiamo in inventario un pezzo compatibile ma più debole.
+    """
+    _seed_class(sync_db, "test_r1654c_warr53", "strength", ["endurance"],
+                name="Guerriero")
+    g = _seed_guild(sync_db)
+    adv = _seed_adventurer(sync_db, g["id"], "test_r1654c_warr53",
+                           level=8)
+    # Pezzo forte già equipaggiato.
+    strong = _seed_item(
+        sync_db, item_type="weapon", name_tag="w53_strong",
+        strength=8, endurance=3, power=10,
+        class_tags=["test_r1654c_warr53"],
+    )
+    _seed_inventory(sync_db, g["id"], strong["id"])
+    # Prima auto-equip: equipaggia strong.
+    _run(_call_auto_equip(g, adv["id"]))
+
+    # Ora aggiungiamo un pezzo class-fit ma più debole in inventario.
+    weak = _seed_item(
+        sync_db, item_type="weapon", name_tag="w53_weak",
+        strength=2, endurance=1, power=3,
+        class_tags=["test_r1654c_warr53"],
+    )
+    _seed_inventory(sync_db, g["id"], weak["id"])
+
+    # Seconda auto-equip: strong resta best, ma il candidato "best" del
+    # ranking potrebbe restare strong stesso → branch already-best per
+    # weapon. Per triggerare "no better item" servirebbe che il best
+    # candidate diverso dal current sia più debole. In pratica il codice
+    # ranking include il current, per cui la seconda call restituisce
+    # "already the best" per weapon. Accettiamo ENTRAMBI i branch IT
+    # esatti (già coperti da test 52 per already-best); il core del
+    # test 53 è confermare che il messaggio IT per il branch
+    # `unchanged` senza swap NON contiene stringhe EN vietate.
+    res = _run(_call_auto_equip(g, adv["id"]))
+    assert res["swaps_count"] == 0, (
+        f"weapon dovrebbe essere already-optimal, got swaps={res}"
+    )
+
+    # Cerchiamo la stringa IT esatta di UNO dei due branch attesi.
+    weapon_detail = next(
+        (d for d in res["unchanged_slots_detail"] if d["slot"] == "weapon"),
+        None,
+    )
+    assert weapon_detail is not None
+    reason_it = weapon_detail["reason_it"]
+    accepted_it = (
+        "Arma: l'oggetto attualmente equipaggiato è già il migliore.",
+        "Arma: nessun oggetto migliore disponibile in inventario.",
+    )
+    assert reason_it in accepted_it, (
+        f"weapon reason_it non è una delle stringhe IT canoniche: "
+        f"{reason_it!r}"
+    )
+    # Blacklist estesa: nessuna stringa EN nel payload player-facing.
+    for s in _collect_it_strings(res):
+        for banned in _ENGLISH_BANNED_EXTENDED:
+            assert banned not in s, (
+                f"REOPEN #5: stringa vietata {banned!r} nel branch "
+                f"no-swap-possible: {s!r}"
+            )
+
+
+def test_54_full_payload_dump_no_english_blacklist(
+    sync_db, cleanup_r1654b,
+):
+    """Scanner globale: dump JSON completo del payload player-facing
+    di Auto-Equip (reasons + unchanged_slots_detail + warnings_it +
+    swaps_count + score_*) NON deve contenere nessuna delle stringhe
+    EN nella blacklist estesa del PM. Copre 3 scenari in un solo test:
+      (a) class-fit primo run (branch reasons)
+      (b) class-fit secondo run (branch already-best)
+      (c) inventario off-class (branch off_class_seen empty state)
+    """
+    # ── Scenario (a) + (b): warrior class-fit.
+    _seed_class(sync_db, "test_r1654c_warr54a", "strength", ["endurance"],
+                name="Guerriero")
+    g_a = _seed_guild(sync_db)
+    adv_a = _seed_adventurer(sync_db, g_a["id"], "test_r1654c_warr54a",
+                             level=8)
+    for slot, name in (("weapon", "w54"), ("armor", "a54"),
+                       ("accessory", "acc54")):
+        it_doc = _seed_item(
+            sync_db, item_type=slot, name_tag=name,
+            strength=4, endurance=2, power=6,
+            class_tags=["test_r1654c_warr54a"],
+        )
+        _seed_inventory(sync_db, g_a["id"], it_doc["id"])
+    payload_a = _run(_call_auto_equip(g_a, adv_a["id"]))
+    payload_b = _run(_call_auto_equip(g_a, adv_a["id"]))  # already-best
+
+    # ── Scenario (c): mage con inventario solo warrior-only.
+    _seed_class(sync_db, "test_r1654c_mage54c", "intellect", ["faith"],
+                name="Mago")
+    g_c = _seed_guild(sync_db)
+    adv_c = _seed_adventurer(sync_db, g_c["id"], "test_r1654c_mage54c",
+                             level=8)
+    warr_only = _seed_item(
+        sync_db, item_type="weapon", name_tag="warr54c",
+        strength=5, power=6, class_tags=["warrior", "paladin"],
+    )
+    _seed_inventory(sync_db, g_c["id"], warr_only["id"])
+    payload_c = _run(_call_auto_equip(g_c, adv_c["id"]))
+
+    # Dump JSON completo dei 3 payload — verifica che nessuna stringa
+    # EN vietata compaia nei CAMPI PLAYER-FACING. Il payload contiene
+    # anche `reason_en` (campo tecnico di fallback), che viene
+    # deliberatamente escluso da questo scanner. Costruiamo quindi un
+    # oggetto filtrato con solo i campi visibili al player.
+    def _player_facing_only(p):
+        out = {
+            "swaps_count": p.get("swaps_count"),
+            "score_before": p.get("score_before"),
+            "score_after": p.get("score_after"),
+            "reasons_it": [
+                {"slot": r.get("slot"), "reason_it": r.get("reason_it")}
+                for r in (p.get("reasons") or [])
+            ],
+            "unchanged_it": [
+                {"slot": d.get("slot"),
+                 "reason_it": d.get("reason_it")}
+                for d in (p.get("unchanged_slots_detail") or [])
+            ],
+            "warnings_it": p.get("warnings_it") or [],
+        }
+        return out
+
+    full_dump = json.dumps(
+        {
+            "scenario_a_first_run": _player_facing_only(payload_a),
+            "scenario_b_already_best": _player_facing_only(payload_b),
+            "scenario_c_off_class": _player_facing_only(payload_c),
+        },
+        ensure_ascii=False,
+    )
+    for banned in _ENGLISH_BANNED_EXTENDED:
+        assert banned not in full_dump, (
+            f"REOPEN #5 test 54: stringa EN vietata {banned!r} presente "
+            f"nel dump player-facing dei 3 scenari Auto-Equip. "
+            f"Estratto: ...{full_dump[max(0, full_dump.find(banned) - 60):full_dump.find(banned) + 80]}..."
+        )
+

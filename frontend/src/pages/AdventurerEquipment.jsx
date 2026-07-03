@@ -44,7 +44,7 @@ function statBonusList(it) {
 }
 
 const SLOT_ORDER = ["weapon", "armor", "accessory"];
-const SLOT_LABEL = { weapon: "WEAPON", armor: "ARMOR", accessory: "ACCESSORY" };
+const SLOT_LABEL = { weapon: "Arma", armor: "Armatura", accessory: "Accessorio" };
 
 export default function AdventurerEquipment() {
     const { t } = useT();

@@ -60,5 +60,40 @@
         }
       ]
     }
-  ]
+  ],
+  "reopen5_resets": [
+    {
+      "adventurer_id": "706a8b6b-dc9b-441e-b15c-ad40d1fc84c6",
+      "owner_email": "tester@orbus.test",
+      "reason": "R16.5.4c REOPEN #5 TC1 setup",
+      "reset_at": "2026-07-03T06:30:50.009467+00:00",
+      "slots_unequipped": [
+        "weapon",
+        "armor",
+        "accessory"
+      ],
+      "previous_equipment": {
+        "weapon": {
+          "item_slug": "warlock_apprentice_tome",
+          "item_name": "Tomo del Novizio",
+          "rarity": "Common"
+        },
+        "armor": {
+          "item_slug": "warlock_novice_robe",
+          "item_name": "Veste del Novizio Occulto",
+          "rarity": "Common"
+        },
+        "accessory": {
+          "item_slug": "warlock_cursed_pendant",
+          "item_name": "Pendente Maledetto",
+          "rarity": "Common"
+        }
+      },
+      "post_state": {
+        "equipped_items_count": 0,
+        "note": "Warlock lasciato completamente disequipaggiato: il tester E2E vedrà un delta reale al prossimo click Auto-Equip."
+      }
+    }
+  ],
+  "last_reopen5_update": "2026-07-03T06:30:50.009467+00:00"
 }

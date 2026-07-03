@@ -253,6 +253,9 @@ EVENT_TYPES = frozenset({
     "achievement_unlocked",   # superseded the legacy `achievement_completed`
     "guild_xp_gained",
     "onboarding_graduated",
+    # ROUND 16.5.4c REOPEN #5 — Test fixture reset event (soft-unequip
+    # snapshot for TC1 Warlock; player never sees this event, admin-only).
+    "TEST_ADVENTURER_EQUIP_RESET",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

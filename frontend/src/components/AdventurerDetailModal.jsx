@@ -14,6 +14,17 @@ import { api } from "../lib/api";
 
 const SLOTS = ["weapon", "armor", "accessory"];
 
+// ROUND 16.5.4c REOPEN #5 Fix B — slot labels sempre in italiano nel
+// modal-scope (adiacente al bottone Auto-Equip). Prima si affidavano a
+// `t("adventurer_modal.slot_*")` che restituiva WEAPON/ARMOR/ACCESSORY
+// se `lang === "en"`, generando leak player-facing durante il flow
+// Auto-Equip. Scope stretto: solo questo componente.
+const SLOT_LABEL_IT = {
+    weapon: "ARMA",
+    armor: "ARMATURA",
+    accessory: "ACCESSORIO",
+};
+
 const RARITY_COLOR = {
     common: "#9ca3af",
     uncommon: "#22c55e",
@@ -61,29 +72,25 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
             const delta = (s.score_after ?? 0) - (s.score_before ?? 0);
             const swaps = s.swaps_count ?? 0;
             if (swaps === 0) {
-                toast.info(lang === "it"
-                    ? "Nessuno swap possibile."
-                    : "No swap possible.", {
-                    description: lang === "it"
-                        ? "Nessun item compatibile più potente in inventario."
-                        : "No stronger compatible item in inventory.",
+                // ROUND 16.5.4c REOPEN #5 — Auto-Equip toast sempre IT
+                // (scope stretto: player-facing dell'Auto-Equip).
+                toast.info("Nessuna sostituzione possibile.", {
+                    description:
+                        "Nessun oggetto compatibile più forte in inventario.",
                 });
             } else {
+                // ROUND 16.5.4c REOPEN #5 — toast successo sempre IT.
                 toast.success(
-                    lang === "it"
-                        ? `${swaps} oggett${swaps === 1 ? "o aggiornato" : "i aggiornati"}`
-                        : `${swaps} item${swaps === 1 ? "" : "s"} updated`,
+                    `${swaps} oggett${swaps === 1 ? "o aggiornato" : "i aggiornati"}`,
                     {
-                        description: `${lang === "it" ? "Potere" : "Power"} ${s.score_before}→${s.score_after} (${delta >= 0 ? "+" : ""}${delta})`,
+                        description: `Potere ${s.score_before ?? 0} → ${s.score_after ?? 0} (${delta >= 0 ? "+" : ""}${delta})`,
                     },
                 );
             }
             if (typeof onChanged === "function") onChanged(adventurer.id);
         } catch (err) {
             const msg = err?.response?.data?.detail?.user_message
-                || (lang === "it"
-                    ? "Auto-equipaggiamento fallito. Riprova fra poco."
-                    : "Auto-equip failed. Try again shortly.");
+                || "Auto-equipaggiamento fallito. Riprova fra poco.";
             toast.error(msg);
         } finally {
             setAutoEquipBusy(false);
@@ -293,7 +300,7 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                                         className="border border-border rounded-sm p-2 flex items-center justify-between"
                                     >
                                         <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                                            {t(`adventurer_modal.slot_${slot}`)}
+                                            {SLOT_LABEL_IT[slot]}
                                         </span>
                                         <span className="text-xs text-muted-foreground italic">
                                             {t("adventurer_modal.slot_empty")}
@@ -313,7 +320,7 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2 min-w-0">
                                             <span className="text-[9px] text-muted-foreground uppercase tracking-widest shrink-0">
-                                                {t(`adventurer_modal.slot_${slot}`)}
+                                                {SLOT_LABEL_IT[slot]}
                                             </span>
                                             <span className="text-sm font-medium truncate">{it.name}</span>
                                         </div>
@@ -463,9 +470,10 @@ function AutoEquipReport({ result, lang, onDismiss }) {
 
             {(result.swaps_count ?? 0) === 0 && reasons.length === 0 && (
                 <p className="text-xs text-muted-foreground italic">
-                    {it
-                        ? "Nessun item migliore disponibile in inventario. Visita il mercato o completa dungeon."
-                        : "No better item available in inventory. Visit the market or run dungeons."}
+                    {/* ROUND 16.5.4c REOPEN #5 — messaggio empty state
+                        sempre IT (scope stretto: Auto-Equip report). */}
+                    Nessun oggetto migliore disponibile in inventario.
+                    Visita il mercato o completa spedizioni/dungeon.
                 </p>
             )}
         </div>
