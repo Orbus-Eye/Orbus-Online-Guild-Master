@@ -272,9 +272,9 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup COMPLETATO ✅ (2026-07-02)
+## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup — CLOSED & SEALED ✅ (2026-07-03)
 
-> **Status**: 4/6 item completati (ADJ-9, ADJ-3, ADJ-1, P2 accessory HTTPException). ADJ-6 verificato già a posto pre-R16.5.4c. ADJ-7 risolto insieme a P2. Attesa consolidamento finale PM per sealing.
+> **Status**: sigillato definitivo 2026-07-03T11:27:00Z. E2E `e1_tester` 4/4 PASS accettato dal PM (TC1 Warlock, TC2 Alchemist, TC3 Warrior, TC4 Mage). 64/64 pytest verde.
 
 **Interventi chiave**:
 - **ADJ-9**: backfill `class_slug` su 1909 avventurieri (94.01%→99.71%), fix `common._generate_candidate` per popolare `class_slug` in write path, 6 orfani Guardian/Cleric documentati.

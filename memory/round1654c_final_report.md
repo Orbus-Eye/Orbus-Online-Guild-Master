@@ -666,3 +666,49 @@ di `e1_tester` sul quarto giro browser TC1/TC2/TC3/TC4**. Blocking
 issue del round 3/4 (leak EN + Warlock full-equip) risolti; se il
 prossimo E2E torna 4/4 PASS, R16.5.4c è chiuso definitivamente. In caso
 di FAIL residuo, sarà REOPEN #6 dedicato.
+
+---
+
+## R16.5.4c — CLOSED & SEALED ✅
+
+**Data sigillo**: 2026-07-03T11:27:00Z (UTC).
+
+**Esito E2E `e1_tester`**: 4/4 PASS accettato dal PM.
+- TC1 Warlock: PASS (Auto-Equip mostra delta +6, IT-only, no leak).
+- TC2 Alchemist: PASS.
+- TC3 Warrior: PASS accettato dal PM. Criterio "Report contiene 'Guerriero'" giudicato troppo asimmetrico rispetto a TC2; i veri requisiti (header IT, slot IT, blacklist EN vuota, no `HTTPException`, no `[object Object]`, no downgrade, no auto-equip off-class) sono tutti soddisfatti.
+- TC4 Mage silent-skip: PASS.
+
+**Test backend**: **64/64 PASS**
+- 27 tests `backend_round1654c_i18n_test.py` (28–38 + 52–54).
+- 34 tests `backend_round1654b_test.py`.
+- 3 tests HTTP E2E residui R16.5.4b/c.
+- Zero regressioni.
+
+**12 fix consegnati in R16.5.4c** (dalla apertura al sigillo):
+1. **ADJ-9** — backfill `class_slug` su 1909/1915 avventurieri legacy (99.71%).
+2. **ADJ-9 (recruit path)** — fix `common._generate_candidate` che ometteva `class_slug`.
+3. **ADJ-3** — seed pack 22 item (Warlock 10 + Alchemist 10 + Druid 2) Epic Lv8, no power creep.
+4. **ADJ-1** — normalizzazione 17 item rarity lowercase → Capitalized + helper `canonicalize_rarity`.
+5. **P2 accessory `HTTPException`** — `auto_equip.py` non leaka più stringa `HTTPException` nei warning player-facing (helper `_extract_it_message` + `user_message` IT).
+6. **ADJ-6 / ADJ-7** — verificati / risolti insieme al P2 (audit `related_entity_id` presente; 423 level_gate bubble-up pulito).
+7. **Off-class silent skip** — Auto-Equip scarta severity=warning silenziosamente (regola PM 2026-07-02); niente più penalty 0.5x.
+8. **i18n Auto-Equip payload backend** — `reason_it` completo per branch equipped/already-best/no-better-item/off-class; frontend legge esclusivamente `reason_it` via `pickReport`.
+9. **i18n class labels IT** — mappa canonica `_CLASS_LABELS_IT` (14 classi) + helper `_class_it_label` precedente su catalog `name`/`display_name_it`.
+10. **REOPEN #5 Fix A** — hardcoded IT nel modal per toast Auto-Equip + empty state report ("Nessuna sostituzione possibile.", "Nessun oggetto migliore disponibile in inventario. Visita il mercato o completa spedizioni/dungeon.").
+11. **REOPEN #5 Fix B** — `SLOT_LABEL_IT` hardcoded nel modal + `SLOT_LABEL` IT case-title nella pagina Equipment (Arma/Armatura/Accessorio invece di WEAPON/ARMOR/ACCESSORY).
+12. **REOPEN #5 Fix C** — nuovo audit event canonico `TEST_ADVENTURER_EQUIP_RESET` + soft-unequip Warlock TC1 con snapshot pre-reset e audit event id `d5d49639-d12d-42f9-aafd-dad0615fe540`.
+
+**Vincoli tassativi rispettati (nessuna eccezione)**:
+- ❌ Nessun hard delete di adventurer/item/inventory.
+- ❌ Nessuna modifica a drop rate, reward, PvP, economia, premium boost.
+- ❌ Nessun re-equip automatico sul Warlock TC1 post-reset.
+- ✅ Ogni scrittura DB accompagnata da snapshot + audit event.
+- ✅ Approccio Dry-Run per tutti gli script.
+
+**Follow-up tracked** (spostati in backlog):
+- P3 NEW **Auto-Equip already-best class-fit interpolation** — cosmetico, non bloccante.
+- P3 residui **6 orfani Guardian/Cleric** — decisione di design pendente (aliasing / retire / add-to-catalog).
+- E2E browser Warlock/Alchemist — chiuso in R16.5.4c REOPEN #4-5.
+
+**Sigillo**: R16.5.4c chiuso definitivamente. Nessun ulteriore REOPEN atteso.

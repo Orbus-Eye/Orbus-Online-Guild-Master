@@ -186,9 +186,22 @@ Vedi `/app/memory/round1654c_final_report.md`. Sintesi:
 
 Item residui non chiusi in R16.5.4c, tutti a bassa priorità.
 
-### P3 items
+**Status R16.5.4c (2026-07-03)**: **CLOSED & SEALED ✅** — TC1/TC2/TC3/TC4 accettati dal PM (TC3 accettato per simmetria con TC2). 64/64 pytest verde. Chiusi definitivamente:
+- ✅ ADJ-9 (backfill class_slug + fix recruit path)
+- ✅ ADJ-3 (22 nuovi item Warlock/Alchemist/Druid)
+- ✅ ADJ-1 (rarity normalize + canonicalizer)
+- ✅ P2 ADJ-3.c (no più leak `HTTPException`)
+- ✅ ADJ-6 (audit `related_entity_id` verificato)
+- ✅ ADJ-7 (423 level_gate bubble-up pulito)
+- ✅ i18n Auto-Equip completa (backend `reason_it` + FE hardcoded IT modal REOPEN #5)
+- ✅ Off-class silent-skip (regola PM Q2-b(iii))
+- ✅ Class labels IT (mappa canonica 14 classi)
+- ✅ Nuovo audit event `TEST_ADVENTURER_EQUIP_RESET` + reset TC1 Warlock
+- ✅ E2E browser Warlock/Alchemist — verificato in R16.5.4c REOPEN #4-5, chiuso.
 
-1. **Orfani Guardian / Cleric**
+### P3 items (aperti / da tracciare)
+
+1. **Orfani Guardian / Cleric** (P3, R16.5.4d o oltre)
    - 6 avventurieri legacy con `class_name ∈ {"Guardian", "Cleric"}`, classi non presenti in `adventurer_classes`.
    - Post R16.5.4c ADJ-9 sono l'unico residuo con `class_slug=null`.
    - Decisione di design pendente:
@@ -197,8 +210,13 @@ Item residui non chiusi in R16.5.4c, tutti a bassa priorità.
      - (c) aggiungere Guardian/Cleric al catalog come classi vere.
    - Impatto UX minimo (6 doc su 2037).
 
-2. **Testing E2E browser Warlock/Alchemist**
-   - `e1_tester` browser dedicato con adventurer Warlock/Alchemist creati ad-hoc via Tester Tools per validare l'UX Auto-Equip con il nuovo seed pack ADJ-3 in condizioni reali.
+2. **P3 NEW — Auto-Equip report polish: interpolare la classe IT nel branch already-best** (tracciato 2026-07-03 dopo sealing R16.5.4c)
+   - **Non bloccante, cosmetico.** Origine: PM ha rilevato che il criterio TC3 "Report contiene 'Guerriero'" era asimmetrico rispetto a TC2 (che non lo richiedeva).
+   - **Current copy IT**: `"Arma: l'oggetto attualmente equipaggiato è già il migliore."` (identico per tutte le classi).
+   - **Proposal**: `"Arma: l'oggetto attualmente equipaggiato è già il migliore per Guerriero."` — simmetrico anche per Mago/Alchimista/Occultista/Druido/Paladino/Berserker/Monaco/Bardo/Assassino/Negromante/Sacerdote/Ranger/Ladro.
+   - Scope: solo `unchanged_slots_detail[].reason_it` in `equipment/auto_equip.py` branch `already-best`. Nessuna modifica al branch `reasons[]` (già include la classe nella copy corrente "migliore per {classe}").
+   - Test da aggiornare: `test_30_already_the_best_it_all_three_slots`, `test_52_already_best_branch_exact_it_no_en_leak`, `test_53_no_swap_possible_branch_exact_it_no_en_leak` — allentare match esatto a `startswith(...) and endswith(" per {classe}.")` oppure aggiornare stringhe attese.
+   - Priorità: P3 (UX polish, no impatto funzionale).
 
 3. **UX polish Auto-Equip** (rimasto da R16.5.4b R16.5.5+):
    - Label più chiare "Slot Equipaggiati" vs "Zaino/Inventario".
