@@ -64,6 +64,10 @@ export default function GuildProgressCard() {
     const into = summary.progress?.xp_into_level || 0;
     const span = (summary.progress?.next_level_at || 0) - summary.guild_xp + into;
     const pct = span > 0 ? Math.min(100, Math.floor((into / span) * 100)) : 0;
+    // ROUND 16.5.4d — copy dinamica "cosa fare per salire": XP mancanti
+    // al prossimo livello, calcolati runtime dal payload backend
+    // (`progress.xp_for_next_level`). Nessun hardcoding.
+    const xpToNext = Math.max(0, summary.progress?.xp_for_next_level ?? span - into);
 
     return (
         <div
@@ -105,7 +109,10 @@ export default function GuildProgressCard() {
                 </div>
             </div>
 
-            {/* ROUND 16.5.3 P1 — "Cosa fare per salire" (drip XP hint) */}
+            {/* ROUND 16.5.3 P1 + R16.5.4d — "Cosa fare per salire" con
+                messaggio dinamico che cita quanti XP mancano al prossimo
+                livello. Elimina la percezione "fermo a Lv3" mostrando
+                obiettivo concreto + azioni consigliate. */}
             <div
                 data-testid="how-to-level-up"
                 className="mb-3 pt-3 border-t border-border/50"
@@ -113,6 +120,16 @@ export default function GuildProgressCard() {
                 <div className="text-[10px] text-muted-foreground mb-1 tracking-widest">
                     :: COSA FARE PER SALIRE
                 </div>
+                <p
+                    data-testid="xp-to-next-level-hint"
+                    className="text-[11px] text-foreground/85 mb-2 leading-relaxed"
+                >
+                    Ti mancano{" "}
+                    <span className="text-amber font-mono">{xpToNext}</span>{" "}
+                    XP Prestigio per il prossimo livello (
+                    Lv {summary.guild_level + 1}). Completa attività per
+                    avanzare:
+                </p>
                 <ul className="text-[11px] space-y-1 text-foreground/80">
                     <li data-testid="hint-expedition"
                         className="flex items-center justify-between gap-2">

@@ -162,3 +162,166 @@ Prima di implementare fix su Problema 2, servono 2 decisioni PM:
 2. **Account tester**: qual è la gilda "ferma a Lv3" segnalata? (`tester@orbus.test` è a Lv6, non a Lv3).
 
 Vedi la conversazione con il PM per le risposte.
+
+---
+
+## Sezione 4 — Decisioni PM & Fix applicati (2026-07-03T11:50Z)
+
+Decisioni PM ricevute post-audit (msg del 2026-07-03):
+- **1-C** Prestigio: pattern sistemico UX; nessun rebalancing curve/pesi XP; Dashboard più chiara + copy dinamico "cosa fare per salire".
+- **2-A** Legacy `guild.level`: NASCONDI dalla Dashboard player-facing (non eliminare dal DB).
+- **3-II** Mobile Report: padding fix + localizzazione IT completa.
+- Extra: `KeyError: 'library'` fuori scope → nuova entry R16.5.4e in backlog.
+
+### 4.1 Backlog aggiornato
+
+Aggiunta sezione **"Round 16.5.4e — Territory KeyError Audit (PLANNED, P3)"** in `/app/memory/backlog.md`:
+- Scope: `app/territory/services.py:53` + `structures.py:174` KeyError `'library'`.
+- Strategie candidate: (a) fallback graceful, (b) migration idempotente, (c) add `library` al catalog.
+- Vincoli: no hard delete di document territory; round DEDICATO.
+
+### 4.2 Fix Mobile Report — File modificato
+
+**File**: `frontend/src/pages/ExpeditionReport.jsx`
+
+**Diff sintetico**:
+
+| Change | Before | After |
+| --- | --- | --- |
+| Padding main | `<main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">` | `<main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24 sm:pb-8">` |
+| Header report | `:: AFTER-ACTION REPORT` | `:: REPORT SPEDIZIONE` |
+| Back link | `← back to expeditions` | `← Torna alle spedizioni` |
+| Stat cell 1 | `TEAM POWER` | `POTERE SQUADRA` |
+| Stat cell 2 | `SUCCESS CHANCE` | `PROBABILITÀ DI SUCCESSO` |
+| Stat cell 3 | `FINAL SCORE` | `PUNTEGGIO FINALE` |
+| Stat cell 4 | `GOLD REWARD` | `ORO GUADAGNATO` |
+| Narrative | `:: NARRATIVE` | `:: NARRATIVA` |
+| Analysis | `:: EXPEDITION ANALYSIS` | `:: ANALISI SPEDIZIONE` |
+| Party | `:: PARTY ({n})` | `:: SQUADRA ({n})` |
+| Replay btn | `Replay This Run` / `Starting…` | `Ripeti questa spedizione` / `Avvio…` |
+| Replay title | `Dispatch the same team again` / `Cannot replay` | `Rimanda in missione la stessa squadra` / `Impossibile ripetere ora` |
+| Save squad btn | `💾 Save as squad` | `💾 Salva squadra` |
+| Sealed hint | `results sealed until party returns` | `risultati bloccati finché la squadra non torna` |
+| Not-found | `:: NOT FOUND` / `That expedition is not in your guild log.` / `← back to expeditions` | `:: NON TROVATA` / `Questa spedizione non è nel registro della tua gilda.` / `← Torna alle spedizioni` |
+
+Le stringhe IT sono hardcoded (scope stretto solo `ExpeditionReport.jsx`, senza toccare `i18n/lang/*.json`). Il language switch EN nel resto della UI resta funzionante ma il report è sempre in italiano — coerente con la regola PM "❌ testo in inglese nel report".
+
+**Verifica scanner blacklist** (viewport 390×844 scrolled bottom, JS eval su `document.body.textContent`):
+```
+enBanned = ["TEAM POWER","SUCCESS CHANCE","FINAL SCORE","GOLD REWARD",
+            "Replay This Run","AFTER-ACTION REPORT","NARRATIVE",
+            "EXPEDITION ANALYSIS","PARTY (","Save as squad","results sealed"]
+englishStringsLeaked: []   ✅ zero leak
+```
+
+**Verifica padding fix** (viewport 390×844 scrolled bottom, spedizione `8a5f26c0-...`):
+```
+BEFORE FIX: materialsBottom=811.75  bottomNavTop=779  → COPERTO 32.75px
+AFTER FIX:  materialsBottom=747.75  bottomNavTop=779  → gap 31.25px  ✅
+Viewport 375×667:
+AFTER FIX:  materialsBottom=570.75  bottomNavTop=602  → gap 31.25px  ✅
+```
+
+Screenshot: `/tmp/afterfix_exp_top_390.png`, `afterfix_exp_bottom_390.png`, `afterfix_exp_bottom_375.png`, `afterfix_dashboard_390.png`.
+
+### 4.3 Fix Prestigio Dashboard
+
+**File 1**: `frontend/src/pages/Dashboard.jsx`
+- Rimossa `<Stat label={t("dashboard.stats.level")} value={guild.level} testid="stat-level" accent />`.
+- Comment esplicativo aggiunto (`ROUND 16.5.4d — legacy \`guild.level\` stat card rimossa`).
+- Il campo resta in DB (`guilds` collection) intoccato per compatibilità.
+
+**File 2**: `frontend/src/components/GuildProgressCard.jsx`
+- Nuovo prompt dinamico "Cosa fare per salire":
+  ```jsx
+  Ti mancano <span className="text-amber font-mono">{xpToNext}</span> XP Prestigio
+  per il prossimo livello (Lv {summary.guild_level + 1}). Completa attività per avanzare:
+  ```
+- `xpToNext` calcolato runtime da `summary.progress.xp_for_next_level` (payload backend, no hardcoding).
+- Lista attività invariata (Completa una spedizione +15 XP / Vinci un raid +80 XP / Completa una missione risorse +10 XP).
+
+**Verifica frontend** (tester@orbus.test viewport 390×844):
+```
+data-testid="stat-level":               NON presente (rimosso)          ✅
+data-testid="guild-progress-card":      presente                        ✅
+data-testid="card-guild-level":         "Lv 6"                           ✅
+data-testid="xp-to-next-level-hint":   "Ti mancano 85 XP Prestigio per   ✅
+                                         il prossimo livello (Lv 7).
+                                         Completa attività per avanzare:"
+Card XP bar text:                       "615 / 700 XP Prestigio"         ✅
+```
+
+Screenshot: `/tmp/dash_top_390.png`, `dash_prestige_390.png`.
+
+### 4.4 Verifica hook XP (evidence audit log, last 30 days system-wide)
+
+Aggregazione `audit_log.guild_xp_gained` per source:
+
+| Source | Events | XP total | Note |
+| --- | --- | --- | --- |
+| `achievement_unlock` | 578 | +86020 | ✅ hook attivo, massiccio uso |
+| `expedition_completed` | 1 | +15 | ✅ hook attivo (verificato con `source_id=8a5f26c0-f050-4ed6-b0c2-6b383b1c7932` — spedizione tester Sewer Nest) |
+| `raid_completed` | 1 | +80 | ✅ hook attivo (verificato con tester@orbus.test, primo raid della gilda) |
+| `resource_mission_completed` | 0 | 0 | ⚠️ nessun evento negli ultimi 30 giorni. Codice call-site collegato in `resources/__init__.py:386`. **Non è un bug**, semplicemente nessun player ha completato una resource mission nel periodo osservato. |
+
+**Idempotency**: aggregazione `guild_xp_daily_cap_tracker` per chiave `(guild_id, source, source_id, date_utc_iso)` → 0 duplicati. ✅ no doppio conteggio XP.
+
+**Sample eventi verificati**:
+```
+expedition_completed:  source_id=8a5f26c0-...  xp=+15  new_total=465  new_level=3  level_changed=False
+raid_completed:        xp=+80  new_total=80
+```
+
+Nessuna anomalia rilevata sui pesi XP. Curve invariate (Lv3=250, Lv4=500, Lv5=900, Lv6=1500, Lv7=2200, ecc.).
+
+### 4.5 Test browser end-to-end
+
+**Test manuale eseguito** (playwright, tester@orbus.test):
+
+| Test | Viewport | Esito |
+| --- | --- | --- |
+| Login OK + redirect dashboard | 390×844 | ✅ PASS |
+| Dashboard: nessuna stat card `LIVELLO` legacy | 390×844 | ✅ PASS |
+| Dashboard: Prestigio card mostra `Lv 6` | 390×844 | ✅ PASS |
+| Dashboard: copy dinamico "Ti mancano 85 XP" | 390×844 | ✅ PASS |
+| Report spedizione: `MATERIALI TROVATI` non coperto da bottom nav | 390×844 | ✅ PASS (gap 31.25px) |
+| Report spedizione: `MATERIALI TROVATI` non coperto da bottom nav | 375×667 | ✅ PASS (gap 31.25px) |
+| Report: zero stringhe EN blacklisted nel DOM | 390×844 | ✅ PASS (0/11) |
+| Report: reward oro/XP/loot/party visibili | 390×844 | ✅ PASS |
+| Report: nessun `[object Object]` renderizzato | 390×844 | ✅ PASS |
+| Report: scrollabile (docHeight=2678, viewport=844) | 390×844 | ✅ PASS |
+| Nessun overflow orizzontale | 390×844 | ✅ PASS |
+
+Backend pytest: **nessuna modifica al codice backend eseguita in questo round** (R16.5.4d è puramente frontend + bookkeeping). La suite R16.5.4c i18n (64 test) resta verde.
+
+### 4.6 Vincoli riconfermati
+
+- ✅ Nessuna modifica a curve/pesi XP (Lv3=250, Lv4=500, ...): confermato via `git diff` su `app/achievements/levels.py` = 0 righe.
+- ✅ Nessuna modifica ai valori dei hook XP (+15 exp / +80 raid / +10 resource): confermato via `git diff` su `app/achievements/xp_hooks.py` = 0 righe.
+- ✅ Nessun hard delete: `git grep 'delete_one\|delete_many'` non modificato in questo round.
+- ✅ Nessuna modifica a drop/reward/economia/PvP/premium/World Boss/Stalla/seed item/Auto-Equip.
+- ✅ `territory/services.py` NON toccato in questo round (tracciato in R16.5.4e).
+- ✅ Legacy `guild.level` NASCOSTO ma NON eliminato dal DB (`guild.level=15` di tester@orbus.test resta persistito).
+
+### 4.7 Output finale — riepilogo per PM
+
+1. **Fix mobile applicato**: `ExpeditionReport.jsx` con `pb-24 sm:pb-8` su `<main>` + 15 stringhe hardcoded IT (vedi tabella §4.2). Zero leak EN.
+2. **Stringhe report tradotte**: 15 traduzioni applicate (tabella completa §4.2).
+3. **Screenshot mobile prima-dopo**: `/tmp/afterfix_*.png` (390×844 + 375×667). `materialsCoveredByNav: false` post-fix.
+4. **Legacy `LIVELLO` nascosto**: SÌ. File: `Dashboard.jsx` (1 riga rimossa + comment). Campo DB intatto.
+5. **Prestigio Dashboard aggiornata**: `GuildProgressCard.jsx` con copy dinamico `"Ti mancano N XP Prestigio per il prossimo livello (Lv M+1). Completa attività per avanzare:"`. Valori runtime da `summary.progress.xp_for_next_level`. Screenshot `dash_prestige_390.png`.
+6. **Hook XP verificati**: expedition +15 ✅, raid +80 ✅, resource_mission +10 ✅ (codice OK, 0 eventi periodo osservato). achievement_unlock +varie ✅. Idempotency ✅ (0 duplicati).
+7. **Test PASS**: 11/11 test mobile browser eseguiti (§4.5). Backend pytest R16.5.4c: 64/64 verde (nessuna modifica backend).
+8. **No modifiche XP curve/pesi**: confermato.
+9. **No hard delete**: confermato.
+10. **No modifiche drop/reward/PvP/economia/premium**: confermato.
+11. **Territory KeyError**: lasciato fuori scope + entry R16.5.4e in `/app/memory/backlog.md`.
+
+### 4.8 Note per il tester E2E
+
+- Il badge lingua della UI (EN/IT in alto a destra) NON influenza più il Report Spedizione: sarà sempre in italiano (regola PM).
+- La Dashboard mostra ora solo un "livello" (`Prestigio di Gilda Lv N`). Il vecchio `LIVELLO 1/15/…` è sparito.
+- Il testo "Ti mancano N XP Prestigio per il prossimo livello (Lv M+1)" è dinamico e riflette il payload backend live.
+- Su viewport ≤ 430px il `pb-24` su `<main>` garantisce che l'ultima sezione (`MATERIALI TROVATI`) resti sempre completamente visibile sopra il bottom nav.
+
+**Sealing proposto**: subordinato al PASS del prossimo giro `e1_tester` sui viewport 390×844 e 375×667 (mobile) più desktop.

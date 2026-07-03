@@ -292,7 +292,12 @@ export default function Dashboard() {
                 </section>
 
                 <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-                    <Stat label={t("dashboard.stats.level")} value={guild.level} testid="stat-level" accent />
+                    {/* ROUND 16.5.4d — legacy `guild.level` stat card
+                        rimossa dalla Dashboard player-facing. Il campo
+                        resta in DB per compatibilità storica ma non è
+                        più esposto: la progressione della gilda è
+                        rappresentata solo dal `Prestigio di Gilda` in
+                        <GuildProgressCard /> sopra. */}
                     <Stat
                         label={t("dashboard.stats.reputation")}
                         value={guild.reputation}

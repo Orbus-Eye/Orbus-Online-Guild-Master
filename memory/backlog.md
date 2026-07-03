@@ -229,3 +229,27 @@ Raccolti durante REOPEN R16.5.4b (verifica browser `e1_tester`):
 - **Messaggio empty state "già ottimale"**: `"Nessun item migliore disponibile"` → più caloroso, es. `"Equipaggiamento già ottimale ✨"` o `"L'oggetto attuale è la scelta migliore per questa classe."`
 
 Nessun impatto funzionale, solo copy + microinterazioni.
+
+---
+
+## Round 16.5.4e — Territory KeyError Audit (PLANNED, P3)
+
+**Origine**: crash `KeyError: 'library'` rilevato nei log backend durante audit R16.5.4d
+(`territory/services.py:53` → `_public_doc` → `structures.py:174` → `STRUCTURE_CATALOG[slug]`).
+
+**Scope**:
+- Investigare `app/territory/services.py:53` e `app/territory/structures.py:174`.
+- Root cause di `KeyError: 'library'`: gilde con documento territory che
+  referenzia una struttura `library` non presente in `STRUCTURE_CATALOG`
+  (probabile legacy schema pre-refactor).
+- Decidere strategia: (a) fallback graceful in `get_structure_max_level`
+  con `allow_legacy=True` per slug sconosciuti, (b) migration idempotente
+  che rimuove/rinomina la struct `library` dai document `territory`,
+  oppure (c) aggiungere `library` al catalog come struttura vera.
+
+**Vincoli**:
+- No hard delete di document territory (usare migration idempotente con snapshot).
+- No modifiche a Auto-Equip, drop/reward, PvP, economia, premium.
+- Round DEDICATO — non mischiare con altri fix.
+
+**Priorità**: P3 (crasha solo `GET /api/territory/my` per gilde affette; non blocca gameplay core).

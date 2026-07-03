@@ -256,13 +256,13 @@ export default function ExpeditionReport() {
             <div className="min-h-screen bg-background">
                 <AppHeader subtitleKey="expedition_report_page.brand_subtitle" />
                 <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
-                    <div className="text-amber text-xs tracking-widest mb-2">:: NOT FOUND</div>
+                    <div className="text-amber text-xs tracking-widest mb-2">:: NON TROVATA</div>
                     <p className="text-sm text-muted-foreground mb-4">
-                        That expedition is not in your guild log.
+                        Questa spedizione non è nel registro della tua gilda.
                     </p>
                     <Link to="/expeditions">
                         <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm">
-                            ← back to expeditions
+                            ← Torna alle spedizioni
                         </Button>
                     </Link>
                 </main>
@@ -277,15 +277,15 @@ export default function ExpeditionReport() {
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
             <AppHeader subtitleKey="expedition_report_page.brand_subtitle" />
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24 sm:pb-8">
                 <Link to="/expeditions" className="text-xs text-muted-foreground hover:text-foreground" data-testid="back-to-expeditions">
-                    ← back to expeditions
+                    ← Torna alle spedizioni
                 </Link>
 
                 <div className="flex items-start justify-between gap-3 mt-4 mb-6 flex-wrap">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">
-                            :: AFTER-ACTION REPORT
+                            :: REPORT SPEDIZIONE
                         </div>
                         <h1 data-testid="report-dungeon-name" className="text-3xl font-semibold tracking-tight">
                             {translateDungeonName(tContent, e.dungeon_name, lang)}
@@ -311,8 +311,8 @@ export default function ExpeditionReport() {
                             <div
                                 title={
                                     replayInfo.can_replay
-                                        ? "Dispatch the same team again"
-                                        : replayInfo.cannot_replay_reason || "Cannot replay"
+                                        ? "Rimanda in missione la stessa squadra"
+                                        : replayInfo.cannot_replay_reason || "Impossibile ripetere ora"
                                 }
                             >
                                 <Button
@@ -322,7 +322,7 @@ export default function ExpeditionReport() {
                                     data-testid="report-replay-this-run-btn"
                                     className="bg-amber text-amber-foreground hover:bg-amber/90 rounded-sm font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {replayBusy ? "Starting…" : "Replay This Run"}
+                                    {replayBusy ? "Avvio…" : "Ripeti questa spedizione"}
                                 </Button>
                             </div>
                         )}
@@ -334,22 +334,22 @@ export default function ExpeditionReport() {
                                 className="inline-flex items-center text-xs tracking-widest font-bold border border-amber/60 text-amber px-3 py-2 rounded-sm hover:bg-amber/10 transition-colors"
                                 title={lang === "it" ? "Salva il team come squadra riutilizzabile" : "Save this team as a reusable squad"}
                             >
-                                💾 {lang === "it" ? "Salva come squadra" : "Save as squad"}
+                                💾 Salva squadra
                             </Link>
                         )}
                     </div>
                 </div>
 
                 <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                    <Cell label="TEAM POWER" value={e.team_power} testid="report-team-power" accent />
-                    <Cell label="SUCCESS CHANCE" value={`${e.success_chance}%`} testid="report-success-chance" />
+                    <Cell label="POTERE SQUADRA" value={e.team_power} testid="report-team-power" accent />
+                    <Cell label="PROBABILITÀ DI SUCCESSO" value={`${e.success_chance}%`} testid="report-success-chance" />
                     <Cell
-                        label="FINAL SCORE"
+                        label="PUNTEGGIO FINALE"
                         value={e.final_score != null ? e.final_score : "—"}
                         testid="report-final-score"
                     />
                     <Cell
-                        label="GOLD REWARD"
+                        label="ORO GUADAGNATO"
                         value={isDone ? `${e.gold_reward}g` : "—"}
                         testid="report-gold-reward"
                         accent
@@ -360,7 +360,7 @@ export default function ExpeditionReport() {
                 {e.result_log && (
                     <section className="mb-6">
                         <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
-                            :: NARRATIVE
+                            :: NARRATIVA
                         </div>
                         <blockquote
                             data-testid="report-narrative"
@@ -392,7 +392,7 @@ export default function ExpeditionReport() {
                 {/* Phase 7: Expedition Analysis (equipment delta) */}
                 <section className="mb-6" data-testid="report-analysis">
                     <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
-                        :: EXPEDITION ANALYSIS
+                        :: ANALISI SPEDIZIONE
                     </div>
                     <div className="border border-border bg-card rounded-sm p-4 text-sm">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
@@ -440,7 +440,7 @@ export default function ExpeditionReport() {
                 {/* Team */}
                 <section className="mb-6">
                     <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
-                        :: PARTY ({members?.length ?? 0})
+                        :: SQUADRA ({members?.length ?? 0})
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {members?.map((m) => (
@@ -526,7 +526,7 @@ export default function ExpeditionReport() {
                     </div>
                     {!isDone && (
                         <div className="text-xs text-muted-foreground">
-                            results sealed until party returns<span className="caret-blink" />
+                            risultati bloccati finché la squadra non torna<span className="caret-blink" />
                         </div>
                     )}
                     {isDone && (!loot_items || loot_items.length === 0) && (
