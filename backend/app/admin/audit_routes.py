@@ -97,6 +97,21 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "MOUNT_ACQUIRED",
     "MOUNT_ACTIVE_SET",
     "NARRATIVE_ROUTE_TRAVELED",
+    # ROUND 17.1 — Onboarding funnel telemetry. Idempotent guard in
+    # `app.audit.first_events.emit_first_event`. Metadata leggero:
+    # `{user_id_masked, emitted_at, ...}`. Nessun PII (email/password
+    # non presenti; user_id mascherato `abc123...xyz45678`).
+    "REGISTERED",
+    "GUILD_CREATED",
+    "FIRST_ADVENTURER_VIEWED",
+    "FIRST_DUNGEON_VIEWED",
+    "FIRST_EXPEDITION_PREVIEWED",
+    "FIRST_EXPEDITION_STARTED",
+    "FIRST_EXPEDITION_COMPLETED",
+    "FIRST_REPORT_OPENED",
+    "FIRST_PRESTIGE_GAINED",
+    # ROUND 17.1 P0.5 — Starter fallback reward audit event.
+    "STARTER_FALLBACK_REWARD_GRANTED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1
