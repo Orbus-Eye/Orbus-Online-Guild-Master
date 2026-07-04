@@ -2,6 +2,28 @@
 
 **Status**: living document. Solo Phase 1 in esecuzione (R16.3). Le fasi 2→8 sono in scope FUTURO e NON vanno implementate prima dell'approvazione esplicita per ogni round.
 
+
+---
+
+## R18 — Progression Rework (nuova sequenza — aggiornata 2026-07-04 in R18.1.1)
+
+Il PM ha espanso lo scope R18 con nuova visione: Lv 60, 100 dungeon, 20 raid, 15 classi canoniche, class-bound, Tomi/Maestria, Grade Common→Legendary. Vedi documento dedicato **`/app/memory/round18_progression_rework_roadmap.md`** per le 12 sezioni di material decisionale.
+
+| Fase | Status | Scope sintetico |
+|---|---|---|
+| **R18.0** | ✅ CLOSED | Audit adventurer/classes/items/schema |
+| **R18.0b** | 🔜 PENDING (audit-only) | Class Canon & Archetype Audit — identificare le 15 classi canoniche vs sottoclassi/rami talento |
+| **R18.1** | ✅ CLOSED | Schema Foundation & Backfill (91 orfani, aliasing 6, grade backfill 2131, roster cap, talent scaffolding) |
+| **R18.1.1** | ✅ IN PROGRESS | Safety Hotfix (canonical roster cap `max(level, guild_level, 1)`) + guard `recruit_unassigned` su expedition dispatch + roadmap expansion |
+| **R18.2** | ⏸ WAITING R18.0b | Talent Tree Engine Schema + Beta UI (no talenti reali, solo engine) |
+| **R18.3** | ⏸ WAITING R18.2 | Training Fields + Class Choice + Class Mastery + Tomes drop |
+| **R18.4** | ⏸ WAITING R18.3 | Grade System (Common→Legendary) + Class-Bound Item Soft/Hard Migration (5 fasi) |
+| **R18.5** | ⏸ WAITING R18.4 | PWR Solo-Equip + XP Curve Lv60 (3 varianti) + Item Tier Rework (2 modelli) |
+| **R18.6** | ⏸ AUDIT-ONLY | Dungeon/Raid Content Rebalance Plan (23 dungeon + 3 raid attuali) |
+| **R18.7** | ⏸ HEAVY LIFT | Large Content Expansion: 77 nuovi dungeon + 17 nuovi raid |
+
+**Prossimo brief richiesto:** R18.0b — Class Canon & Archetype Audit (audit-only, 1-2 giorni). Motivazione: R18.2 talent tree design dipende dal N esatto di classi canoniche. Vedi `round18_progression_rework_roadmap.md` §2 e "Raccomandazione prossimo step".
+
 ---
 
 ## Phase 1 — World Boss V1 Alveora *(R16.3, CLOSED ✅ 2026-07-01)*

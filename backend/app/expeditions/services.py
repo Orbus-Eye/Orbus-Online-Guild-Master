@@ -863,6 +863,41 @@ async def _dispatch_expedition(
             },
         )
 
+    # ROUND 18.1.1 Hotfix 2 — Guard "recruit_unassigned" / non-playable class.
+    # Safety-only backend guard: rifiuta gli avventurieri con class_slug
+    # tecnico (`recruit_unassigned`) o classi non canoniche/non giocabili.
+    # NON è il class-bound HARD (arriva in R18.4) — è protezione minima
+    # contro dispatch diretto via API di adventurers orphan-migrated.
+    # Feature flag independent (safety layer). User-message in italiano.
+    _playable_slugs: set[str] = set()
+    async for _c in db.adventurer_classes.find(
+        {"is_playable": {"$ne": False}}, {"_id": 0, "slug": 1}
+    ):
+        _playable_slugs.add(_c["slug"])
+    _unassigned_advs: list[dict] = []
+    for _adv in members_live:
+        _cs = _adv.get("class_slug")
+        if _cs == "recruit_unassigned" or not _cs or _cs not in _playable_slugs:
+            _unassigned_advs.append({
+                "adventurer_id": _adv.get("id"),
+                "name": _adv.get("name"),
+                "class_slug": _cs,
+            })
+    if _unassigned_advs:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "adventurers.recruit_unassigned_in_set",
+                "source": "expedition.dispatch",
+                "unassigned_adventurers": _unassigned_advs,
+                "count": len(_unassigned_advs),
+                "user_message": (
+                    "Questo avventuriero non ha ancora una classe assegnata. "
+                    "Riassegnalo prima di mandarlo in missione."
+                ),
+            },
+        )
+
     # ROUND 11.3 TASK A — Adventurer-level gate.
     # MUST run AFTER the live/retired filter (so we only complain about
     # advs that would actually enter the dungeon) and BEFORE the heavier

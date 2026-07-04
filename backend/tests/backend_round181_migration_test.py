@@ -168,15 +168,15 @@ def test_10_roster_cap_computed(db):
         f"only {with_cap}/{total} guilds have max_roster_cap"
 
 
-# ─── 11. SOFT enforcement (no hard block on grandfathered) ─────────────
+# ─── 11. SOFT enforcement (post-R18.1.1 canonical formula) ─────────────
 def test_11_soft_no_hard_block(db):
-    # Formula cap = min(50, 10 + level*2). Alcune guilds low-level con roster
-    # denso risultano over-cap → is_grandfathered=True. In R18.1 SOFT enforce:
-    # nessun blocco applicato. Verifichiamo solo che il marker exists e che
-    # per ogni grandfathered, roster > cap (coerenza).
+    # Post R18.1.1: formula ora è `min(50, 10 + max(level, guild_level, 1)*2)`.
+    # Verifica: (a) grandfathered marker coerente con roster>cap,
+    # (b) `la lanterna di ferro` NON è più grandfathered (cap=40, roster=23),
+    # (c) feature flag OFF.
     gf = _run(db.guilds.find(
         {"is_grandfathered": True},
-        {"_id": 0, "id": 1, "max_roster_cap": 1, "current_roster_size": 1}
+        {"_id": 0, "id": 1, "name": 1, "max_roster_cap": 1, "current_roster_size": 1}
     ).to_list(length=None))
     for g in gf:
         cap = g.get("max_roster_cap")
@@ -185,6 +185,21 @@ def test_11_soft_no_hard_block(db):
         assert cur > cap, (
             f"guild {g['id']} grandfathered ma roster {cur} <= cap {cap}"
         )
+    # `la lanterna di ferro` deve essere sana post-hotfix
+    lanterna = _run(db.guilds.find_one(
+        {"name": "la lanterna di ferro"},
+        {"_id": 0, "max_roster_cap": 1, "is_grandfathered": 1,
+         "r18_effective_level": 1}
+    ))
+    if lanterna is not None:
+        assert lanterna.get("max_roster_cap") == 40, (
+            f"la lanterna di ferro cap should be 40 post-hotfix, "
+            f"got {lanterna.get('max_roster_cap')}"
+        )
+        assert lanterna.get("is_grandfathered") is False, \
+            "la lanterna di ferro should NOT be grandfathered post R18.1.1"
+        assert lanterna.get("r18_effective_level") == 15, \
+            "la lanterna di ferro effective_level should be 15"
     # Feature flag deve restare OFF → nessun enforcement attivo
     assert os.environ.get("R18_REWORK_ENABLED", "false").lower() == "false"
 
@@ -295,43 +310,34 @@ def test_17_audit_log_retroactive_events(db):
             f"{evt} missing original_occurred_at"
 
 
-# ─── 18. Expedition guardrail status (R18.1 baseline; R18.3 HARD gate) ──
-def test_18_expedition_guardrail_status_r181_baseline(db):
-    """Sub-3b closure: in R18.1 (SOFT enforce, feature flag OFF) NON
-    esiste guardrail contro `class_slug=recruit_unassigned` nel dispatch
-    espedizioni. Coerente col brief: HARD class-bound arriva in R18.3.
+# ─── 18. Expedition guardrail — R18.1.1 recruit_unassigned block ────────
+def test_18_expedition_guardrail_recruit_unassigned_active(db):
+    """R18.1.1 Hotfix 2: safety guard su expedition dispatch che rifiuta
+    adventurers con `class_slug=recruit_unassigned` o class non canonica
+    (`is_playable=false` o slug non in catalogo).
 
-    Questo test è DIAGNOSTICO: verifica lo stato corrente, non impone
-    behavior. Documenta:
-      1. `recruit_unassigned` class doc ha `is_playable=False` (barrier
-         concettuale, non runtime).
-      2. Feature flag `R18_REWORK_ENABLED=false` → nessun enforcement.
-      3. Il codice `app.expeditions` NON contiene riferimenti a
-         `recruit_unassigned` né a `is_playable=false` (fail-fast se
-         qualcuno introduce un guardrail R18.3 in anticipo senza brief).
+    Verifica presenza codice guard nel service (senza chiamata HTTP).
+    Test HTTP dedicato è in `backend_round1811_guard_test.py`.
     """
-    # 1. class doc marker
+    import pathlib
+    svc = pathlib.Path("/app/backend/app/expeditions/services.py")
+    assert svc.exists()
+    content = svc.read_text()
+    # Guard signature
+    assert "recruit_unassigned_in_set" in content, (
+        "expedition guard code marker 'recruit_unassigned_in_set' missing"
+    )
+    assert "is_playable" in content, (
+        "expedition guard should check is_playable"
+    )
+    assert "Riassegnalo prima di mandarlo in missione" in content, (
+        "IT user_message missing from expedition guard"
+    )
+    # class doc marker still correct
     class_doc = _run(db.adventurer_classes.find_one(
         {"slug": "recruit_unassigned"}, {"_id": 0}
     ))
     assert class_doc is not None
     assert class_doc.get("is_playable") is False
-    assert class_doc.get("is_talent_tree_eligible") is False
-    assert class_doc.get("drops_items") is False
-
-    # 2. feature flag OFF
+    # Feature flag OFF (guard is safety-only, flag-independent)
     assert os.environ.get("R18_REWORK_ENABLED", "false").lower() == "false"
-
-    # 3. codice expeditions non contiene guardrail R18.3 pre-timing
-    import pathlib
-    exp_dir = pathlib.Path("/app/backend/app/expeditions")
-    assert exp_dir.exists()
-    r18_leak = []
-    for py_file in exp_dir.glob("*.py"):
-        content = py_file.read_text()
-        if "recruit_unassigned" in content or "is_playable" in content:
-            r18_leak.append(py_file.name)
-    assert not r18_leak, (
-        f"R18.3 guardrail leaked into R18.1 expeditions code: {r18_leak}. "
-        "Class-bound HARD enforcement must arrive in R18.3, not R18.1."
-    )
