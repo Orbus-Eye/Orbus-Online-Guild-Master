@@ -529,3 +529,70 @@ Linee guida PM riducono i 13 rischi Alta gravità di R18.0 a **8 rischi Media** 
 **Firma**: E1 Coding Agent · 2026-07-04T16:30Z
 
 Nessuna modifica DB/codice/seed eseguita. Nessuna decisione sigillata come definitiva. R18.1 NON aperto.
+
+---
+
+## §10. PM Confirmations — Round 1 (parziali)
+
+**Data**: 2026-07-04T16:45Z
+**Scope**: conferme parziali del PM prima dell'apertura R18.1. Zero apply, zero implementazione. Registrazione testuale in memoria.
+
+### D2 → CONFIRMED B (con vincoli)
+
+- Classe temporanea / stato tecnico: `recruit_unassigned`.
+- Banner UI: "Da riassegnare".
+- **NON** trattare come 15ª classe canonica.
+- **NON** compare nella guida come classe giocabile.
+- **NON** entra nei talent tree.
+- **NON** droppa item dedicati.
+- Solo stato tecnico safe per recuperare orfani, zero delete, zero perdita dati.
+- UI deve dire chiaramente "l'avventuriero deve essere riassegnato".
+
+### D3 → CONFIRMED A (con caveat)
+
+- `grade = Common` è **default tecnico iniziale**, NON retrocessione player-facing.
+- Obbligatorio: feature flag `r18_rework_enabled=false` in R18.1.
+- NON mostrare ancora il grade ai player in produzione.
+- Preservare storia/counter esistenti.
+- Preparare `career_history` (o equivalente) come tabella append-only.
+- Zero perdita progressione, zero reset equip, zero forced downgrade visibile.
+- Compensazione veterani da decidere in R18.3 **prima** che il grade diventi visibile.
+- **Testo esatto**: "grade=Common è uno stato iniziale tecnico per normalizzare lo schema, non una decisione finale di progressione veterani."
+
+### D6 → CONFIRMED A come scaffolding schema-only
+
+- 3 rami × 5 tier × 4 talenti per tier = 60 slot teorici / classe, max 30 punti.
+- **NON** creare talenti reali.
+- **NON** decidere nomi rami.
+- **NON** decidere talenti specifici.
+- **NON** applicare bonus.
+- **NON** creare UI completa.
+- **NON** cambiare combat math.
+- Serve solo a validare che lo schema supporta questa dimensione.
+
+### D15 → CONFIRMED A (con vincoli operativi)
+
+- Guardian → `paladin`, Cleric → `priest`.
+- Mapping deterministico.
+- Dry-run obbligatorio prima.
+- Preview dei 6 documenti prima dell'apply (nomi, guild, level).
+- Apply solo se corrispondono esattamente ai 6 identificati nell'audit.
+- Nessun altro avventuriero toccato.
+- Idempotenza: secondo apply = 0 modifiche.
+- Audit log obbligatorio.
+
+### D7 / D13 → PENDING
+
+Attesa query roster read-only (vedi `/app/memory/round180_roster_distribution_query.md`).
+
+### Pre-condizioni R18.1 → APPROVATE (non apply)
+
+- Snapshot DB completo pre-R18.1.
+- Feature flag globale `r18_rework_enabled=false`.
+- Test suite `backend_round181_migration_test.py`.
+- Dry-run obbligatorio per ogni backfill.
+- Preview diff obbligatorio.
+- Apply idempotente.
+- Rollback plan documentato.
+
+**Status**: 4/6 decisioni R18.1 confermate (D2/D3/D6/D15), 2 pending (D7/D13) in attesa dati query roster. R18.1 NON aperto. Zero apply.
