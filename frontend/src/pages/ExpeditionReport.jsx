@@ -478,6 +478,22 @@ export default function ExpeditionReport() {
                             <div className="text-[11px] text-muted-foreground">
                                 Progresso: {guild_prestige_delta.guild_xp} / {guild_prestige_delta.next_level_at} XP verso Lv {guild_prestige_delta.next_level}
                             </div>
+                            {/* ROUND 17.2 P1 — next-unlock tooltip */}
+                            {guild_prestige_delta.next_unlock ? (
+                                <div
+                                    className="mt-2 pt-2 border-t border-border/40 text-[11px] text-amber/90"
+                                    data-testid="report-prestige-next-unlock"
+                                >
+                                    Prossimo sblocco: <strong>{guild_prestige_delta.next_unlock.feature_it}</strong> al Lv {guild_prestige_delta.next_unlock.level}
+                                </div>
+                            ) : (
+                                <div
+                                    className="mt-2 pt-2 border-t border-border/40 text-[11px] text-muted-foreground italic"
+                                    data-testid="report-prestige-next-unlock-generic"
+                                >
+                                    Continua a guadagnare Prestigio per sbloccare nuove funzioni della gilda.
+                                </div>
+                            )}
                         </div>
                     </section>
                 )}

@@ -78,7 +78,7 @@ CATALOG_SEED = [
      "description_en": "Runic seal of the Order Guardians. Hums near chaos."},
 ]
 
-MISSION_DURATION_SECONDS = 1800  # 30 min
+MISSION_DURATION_SECONDS = 780  # 13 min (ROUND 17.2 P0.3 — was 1800)
 MISSION_COST_GOLD = 20
 TEAM_SIZE = 3
 DROP_RATE_RARE = 5
@@ -86,6 +86,11 @@ DROP_RATE_EPIC = 3
 EVENT_DROP_BOOST_MAX = 10  # cap
 LEADERBOARD_FRESHNESS_HOURS = 24
 LEADERBOARD_TOP_N = 20
+
+# ROUND 17.2 P0.3 — Gating & pacing
+MIN_GUILD_LEVEL = 2                # Prestigio di Gilda Lv 2 required
+DAILY_MISSION_CAP = 6              # max started per guild per UTC day
+CONTINENT_DAILY_LIMIT = 1          # max per continent per guild per UTC day
 
 RESOURCE_ITEM_TYPE = "material_continental"
 
@@ -382,10 +387,12 @@ async def _resolve_mission(mission: dict, rng: Optional[_random.Random] = None) 
     )
     # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
     # idempotente su mission_id, cap 6/giorno. Solo su success.
+    # ROUND 17.2 P0.3 — XP tier per rarity (rare=+8, epic=+10).
     try:
         from app.achievements.xp_hooks import on_resource_mission_completed
         await on_resource_mission_completed(
             db, r["guild_id"], mission_id=r["id"], success=success,
+            rarity=r.get("resource_rarity"),
         )
     except Exception:
         pass
@@ -453,6 +460,19 @@ async def gather(body: GatherBody, current_user: dict = Depends(get_current_user
     has_acc, _ = await has_world_access(guild["id"])
     if not has_acc:
         raise HTTPException(403, "world_access_denied")
+    # ROUND 17.2 P0.3 — Gate Prestigio di Gilda Lv 2 (schema field: `guild_level`).
+    # Legacy `guild.level` NOT used (R16.5.4d separation preserved).
+    prestige_level = int(guild.get("guild_level", 1) or 1)
+    if prestige_level < MIN_GUILD_LEVEL:
+        raise HTTPException(
+            403,
+            {
+                "code": "prestige_level_gate",
+                "message": f"Richiede Prestigio di Gilda Lv {MIN_GUILD_LEVEL} per raccogliere risorse.",
+                "current_level": prestige_level,
+                "required_level": MIN_GUILD_LEVEL,
+            },
+        )
     # Resolve any expired missions before starting a new one
     await _resolve_expired_missions_for_guild(guild["id"])
     slug = await _get_current_continent_slug(guild["id"])
@@ -465,6 +485,51 @@ async def gather(body: GatherBody, current_user: dict = Depends(get_current_user
         raise HTTPException(404, "resource_not_found")
     if resource["continent_slug"] != slug:
         raise HTTPException(400, "resource_not_in_current_continent")
+
+    # ROUND 17.2 P0.3 — Daily cap 6/guild + cooldown 1/continent/day.
+    # Count all statuses (in_progress + completed + failed) for the current UTC day.
+    today_iso_date = _now().strftime("%Y-%m-%d")
+    today_prefix = today_iso_date  # ISO dates start with YYYY-MM-DD
+    started_today_total = await db.resource_gathering_missions.count_documents({
+        "guild_id": guild["id"],
+        "created_at": {"$regex": f"^{today_prefix}"},
+    })
+    if started_today_total >= DAILY_MISSION_CAP:
+        raise HTTPException(
+            429,
+            {
+                "code": "daily_cap_reached",
+                "message": (
+                    f"Hai già completato o avviato il massimo di {DAILY_MISSION_CAP} "
+                    "missioni risorse oggi. Torna domani per raccogliere altre risorse."
+                ),
+                "cap": DAILY_MISSION_CAP,
+                "count_today": started_today_total,
+            },
+        )
+    started_today_continent = await db.resource_gathering_missions.count_documents({
+        "guild_id": guild["id"],
+        "continent_slug": slug,
+        "created_at": {"$regex": f"^{today_prefix}"},
+    })
+    if started_today_continent >= CONTINENT_DAILY_LIMIT:
+        continent_doc = await db.world_continents.find_one(
+            {"slug": slug}, {"_id": 0, "name_it": 1, "name": 1},
+        ) or {}
+        continent_name = continent_doc.get("name_it") or continent_doc.get("name") or slug.title()
+        raise HTTPException(
+            429,
+            {
+                "code": "continent_daily_limit",
+                "message": (
+                    f"Hai già raccolto risorse a {continent_name} oggi. "
+                    "Scegli un altro continente o torna domani."
+                ),
+                "continent_slug": slug,
+                "continent_name": continent_name,
+            },
+        )
+
     if int(guild.get("gold", 0)) < MISSION_COST_GOLD:
         raise HTTPException(400, f"insufficient_gold:{MISSION_COST_GOLD}")
     advs = await _validate_adventurers(guild["id"], body.adventurer_ids)
@@ -481,6 +546,7 @@ async def gather(body: GatherBody, current_user: dict = Depends(get_current_user
         "guild_id": guild["id"],
         "continent_slug": slug,
         "resource_slug": body.resource_slug,
+        "resource_rarity": resource.get("rarity"),  # R17.2 P0.3 — tier XP reward
         "adventurers": body.adventurer_ids,
         "team_snapshot": [
             {"id": a["id"], "name": a.get("name"), "level": a.get("level", 1)}
@@ -531,6 +597,38 @@ async def my_missions(current_user: dict = Depends(get_current_user)):
     ).sort("resolved_at", -1).limit(10).to_list(10)
     return {"in_progress": [_pub(m) for m in in_prog],
             "recent": [_pub(m) for m in recent]}
+
+
+# ROUND 17.2 P0.3 — Frontend-facing daily usage stats + gating info.
+@router.get("/missions/stats")
+async def my_missions_stats(current_user: dict = Depends(get_current_user)):
+    guild = await user_guild_or_404(db, current_user["id"])
+    today_prefix = _now().strftime("%Y-%m-%d")
+    total_today = await db.resource_gathering_missions.count_documents({
+        "guild_id": guild["id"],
+        "created_at": {"$regex": f"^{today_prefix}"},
+    })
+    # Continents already used today (list of slugs).
+    cursor = db.resource_gathering_missions.aggregate([
+        {"$match": {
+            "guild_id": guild["id"],
+            "created_at": {"$regex": f"^{today_prefix}"},
+        }},
+        {"$group": {"_id": "$continent_slug"}},
+    ])
+    continents_today = [d["_id"] for d in await cursor.to_list(20) if d.get("_id")]
+    prestige_level = int(guild.get("guild_level", 1) or 1)
+    return {
+        "daily_used": total_today,
+        "daily_cap": DAILY_MISSION_CAP,
+        "continents_used_today": continents_today,
+        "min_guild_level": MIN_GUILD_LEVEL,
+        "current_guild_level": prestige_level,
+        "gate_passed": prestige_level >= MIN_GUILD_LEVEL,
+        "mission_duration_seconds": MISSION_DURATION_SECONDS,
+        "prestige_reward_rare": 8,
+        "prestige_reward_epic": 10,
+    }
 
 
 @router.get("/missions/{mission_id}")

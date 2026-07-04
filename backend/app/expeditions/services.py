@@ -1213,6 +1213,33 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
             "level_up_this_expedition": level_up_this_expedition,
         }
 
+        # ROUND 17.2 P1 — Prestigio next reward tooltip.
+        # Sorgente unica: costanti backend (`MIN_GUILD_LEVEL`) dei moduli
+        # feature-gated. NO hardcode duplicato.
+        try:
+            from app.legendary_forge import MIN_GUILD_LEVEL as _LF_LVL
+        except Exception:
+            _LF_LVL = 5
+        try:
+            from app.arfus_forge import MIN_GUILD_LEVEL as _AF_LVL
+        except Exception:
+            _AF_LVL = 6
+        try:
+            from app.guild_specialization import MIN_GUILD_LEVEL as _GS_LVL
+        except Exception:
+            _GS_LVL = 8
+        _unlocks = [
+            (_LF_LVL, "Forgia Leggendaria"),
+            (_AF_LVL, "Forgia di Arfus"),
+            (_GS_LVL, "Specializzazione della Gilda"),
+        ]
+        next_unlock = None
+        for lvl, name in sorted(_unlocks, key=lambda t: t[0]):
+            if cur_level < lvl:
+                next_unlock = {"level": lvl, "feature_it": name}
+                break
+        guild_prestige_delta["next_unlock"] = next_unlock
+
         # Milestones — derive from audit_log with strict guard (this exp is
         # the SAME one that triggered the FIRST_* event).
         first_complete_count = await db.audit_log.count_documents({

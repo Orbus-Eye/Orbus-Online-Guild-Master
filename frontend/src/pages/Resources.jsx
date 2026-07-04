@@ -11,15 +11,16 @@ const RARITY_CLS = {
 };
 
 export default function Resources() {
-    const [state, setState] = useState({ loading: true, catalog: [], mine: null, err: null });
+    const [state, setState] = useState({ loading: true, catalog: [], mine: null, err: null, stats: null });
 
     useEffect(() => {
         let cancelled = false;
         (async () => {
             try {
-                const [c, m] = await Promise.all([
+                const [c, m, s] = await Promise.all([
                     api.get("/resources/catalog"),
                     api.get("/resources/mine").catch((e) => ({ data: null, err: e })),
+                    api.get("/resources/missions/stats").catch(() => ({ data: null })),
                 ]);
                 if (!cancelled) {
                     setState({
@@ -27,11 +28,12 @@ export default function Resources() {
                         catalog: c.data.resources || [],
                         mine: m.data,
                         err: m.err ? formatApiError(m.err) : null,
+                        stats: s.data || null,
                     });
                 }
             } catch (err) {
                 if (!cancelled) setState({ loading: false, catalog: [], mine: null,
-                                          err: formatApiError(err) });
+                                          err: formatApiError(err), stats: null });
             }
         })();
         return () => { cancelled = true; };
@@ -41,6 +43,7 @@ export default function Resources() {
     const invByItem = Object.fromEntries(
         (state.mine?.inventory || []).map((r) => [r.slug, r.quantity]),
     );
+    const st = state.stats;
 
     return (
         <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -72,6 +75,45 @@ export default function Resources() {
                     <div data-testid="resources-blocked"
                          className="border border-amber/40 bg-amber/5 rounded-sm p-4 mb-4">
                         <p className="text-[12px] text-amber">{state.err}</p>
+                    </div>
+                )}
+
+                {/* ROUND 17.2 P0.3 — Daily stats + gate banner */}
+                {!state.loading && st && (
+                    <div
+                        data-testid="resources-daily-stats"
+                        className="border border-border/60 bg-card/40 rounded-sm p-3 mb-4 text-[11px]"
+                    >
+                        {!st.gate_passed ? (
+                            <p data-testid="resources-gate-warning" className="text-amber">
+                                🔒 Richiede Prestigio di Gilda Lv {st.min_guild_level}. Sei attualmente Lv {st.current_guild_level}.
+                                Guadagna Prestigio completando spedizioni.
+                            </p>
+                        ) : (
+                            <div className="flex flex-wrap gap-x-6 gap-y-1 text-muted-foreground">
+                                <span>
+                                    Missioni oggi:{" "}
+                                    <strong data-testid="resources-daily-used" className="text-foreground">
+                                        {st.daily_used}/{st.daily_cap}
+                                    </strong>
+                                </span>
+                                <span>Durata missione: <strong className="text-foreground">
+                                    {Math.round((st.mission_duration_seconds || 780) / 60)} min
+                                </strong></span>
+                                <span>Prestigio: <strong className="text-amber">
+                                    +{st.prestige_reward_rare}
+                                </strong>/<strong className="text-amber">+{st.prestige_reward_epic}
+                                </strong> (rara/epica)</span>
+                                {st.continents_used_today?.length > 0 && (
+                                    <span data-testid="resources-continents-used">
+                                        Continenti già raccolti oggi:{" "}
+                                        <strong className="text-foreground">
+                                            {st.continents_used_today.join(", ")}
+                                        </strong>
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
 

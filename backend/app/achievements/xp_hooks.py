@@ -215,18 +215,27 @@ async def on_raid_completed(db, guild_id: str, *, raid_id: str,
 
 async def on_resource_mission_completed(db, guild_id: str, *,
                                           mission_id: str,
-                                          success: bool) -> Optional[dict]:
+                                          success: bool,
+                                          rarity: Optional[str] = None) -> Optional[dict]:
     """Drip XP per resource mission completed.
 
-    +10 su successo. Cap 6/giorno. Nessun consolation su fail (le
-    mission fallite non danno XP guild).
+    ROUND 17.2 P0.3 — XP tier per resource rarity:
+        rare → +8 XP Prestigio
+        epic → +10 XP Prestigio
+        (fallback: +10 se rarity unknown, backward-compat R16.5.3)
+    Cap 6/giorno. Nessun consolation su fail (le mission fallite non danno XP guild).
     Idempotente su mission_id.
     """
     if not success:
         return None
+    amount = 10  # backward-compat default (matches pre-R17.2 behavior)
+    if rarity == "rare":
+        amount = 8
+    elif rarity == "epic":
+        amount = 10
     return await _credit_xp(
         db, guild_id, source="resource_mission",
-        amount=10, source_id=mission_id,
+        amount=amount, source_id=mission_id,
     )
 
 
