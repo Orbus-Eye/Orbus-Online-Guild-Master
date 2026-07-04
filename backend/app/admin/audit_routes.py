@@ -143,6 +143,12 @@ AUDIT_EVENT_WHITELIST = frozenset({
     # NOT modified in this round (enum conflict deferred to R18.3b.1).
     "R18_CLASS_ORPHAN_MIGRATION_APPLIED",
     "R18_CLASS_ORPHAN_MIGRATION_ROLLED_BACK",
+    # ROUND 18.3a.2 HOTFIX — recruitment hidden class filter. Patched
+    # `filter_safe_class_pool` in `app/adventurers/generator.py` to
+    # exclude `is_playable=false` docs (specifically the two migration
+    # target classes seeded by R18.3a). Fixes live HTTP 500 on
+    # `/api/recruitment/refresh` (~15% failure rate).
+    "R18_RECRUITMENT_HIDDEN_CLASS_FILTER_PATCHED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

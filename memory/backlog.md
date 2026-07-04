@@ -905,7 +905,61 @@ Nome proposto: `R18_FATIGUE_ENABLED` (default `false`).
 **BLOCKER pre-apply**:
 - Baseline drift rilevato: 4 test in `backend_round181_migration_test.py` falliscono (1058 adv con class_slug invalid, 663 gilde vs 303 con roster cap). Da chiarire con PM se il drift blocca l'apply o va riparato in un round separato prima di R18.3d.
 
-**Status**: BLOCKED — awaiting PM confirmation on regression baseline drift.
+**Status**: ⏸ PAUSED (post-R18.3b.1) — PM ha deciso di prioritizzare R18.3a.2 hotfix + R18.Reset.0 planning. R18.3d resta paused finché R18.1.3 (drift) o R18.Reset.0 non risolvono lo state.
+
+---
+
+## R18.3a.2 — Recruitment Hidden Class Filter Hotfix — CLOSED & SEALED ✅ (2026-07-04T21:38Z)
+
+**Round type**: Hotfix chirurgico P0 (bug live HTTP 500 su produzione).
+
+**Bug live risolto**:
+- Endpoint: `POST /api/recruitment/refresh`
+- Symptom: HTTP 500 con probabilità ~15% (2/13)
+- Error: `KeyError: 'base_strength'` in `app/adventurers/common.py:115`
+- Root cause: `filter_safe_class_pool` a `app/adventurers/generator.py:87-109` non filtrava `is_playable`, quindi `rng.choice()` in `generate_candidate` pescava le 2 classi hidden R18.3a (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) che sono `is_playable=false + migration_target_only=true` e mancano dei campi `base_strength/base_agility/base_intellect/base_endurance/base_faith`.
+
+**Patch chirurgica** (aggiunta 1 chiave al filter MongoDB):
+- File: `app/adventurers/generator.py`
+- Funzione: `filter_safe_class_pool` (linee 87-109; brief PM citava linea 64 ma quella è il traits pool, la fix corretta è al classes pool)
+- Nuova chiave filter: `"is_playable": {"$ne": False}`
+- Semantica: doc con `is_playable=false` esclusi; doc con `is_playable` unset o True passano (backward compat).
+
+**Vincoli rispettati**:
+- ✅ Zero DB write sui doc classi
+- ✅ Zero seed
+- ✅ Zero schema migration
+- ✅ Zero modifica combat math / auto-equip / reward / drop / economia / PvP / premium
+- ✅ Zero hard delete (le 2 hidden classes restano nel DB, solo escluse dal recruitment pool)
+- ✅ Zero UI change
+- ✅ R18.3d resta PAUSED
+- ✅ Zero backfill drift R18.1
+- ✅ Solo modifica sorgente `generator.py` + audit event marker one-shot
+
+**Audit event**: `R18_RECRUITMENT_HIDDEN_CLASS_FILTER_PATCHED`
+- Aggiunto a `AUDIT_EVENT_WHITELIST` in `admin/audit_routes.py`
+- Emesso via `python -m app.scripts.round183a2_recruitment_filter_hotfix --apply`
+- Idempotente (secondo run → `already logged — skip`)
+
+**Test suite** (`backend_round183a2_recruitment_hotfix_test.py`, target ≥ 7):
+- **Delivered: 11 test → 11/11 PASS** (1.08s)
+
+**Regression cross-round**: 87/87 PASS (R18.1.2 + R18.2 + R18.3a + R18.3a.1 + R18.3c + R18.3a.2). Test R18.1 migration esclusi (4 drift noti, tracciati per R18.1.3/R18.Reset.0).
+
+**Verifica bug live risolto**: 10 chiamate `POST /api/recruitment/refresh` con account tester → **10/10 HTTP 200** (pre-patch ~1-2/10 sarebbero stati 500).
+
+**Deliverable**:
+- `app/adventurers/generator.py` (patch)
+- `app/admin/audit_routes.py` (whitelist +1)
+- `app/scripts/round183a2_recruitment_filter_hotfix.py` (script apply)
+- `tests/backend_round183a2_recruitment_hotfix_test.py` (11 test)
+- `memory/round183a2_recruitment_hotfix_report.md` (report principale)
+
+**Appendice — Warning correlato pre-esistente (non coperto)**:
+```
+orbus.seed_round5 - WARNING - starter backfill failed: 'base_strength'
+```
+Anche il starter fallback R5 legge classi con pattern simile. Pre-esistente da R18.3a, catturato da try/except (nessun player-facing crash). Da valutare in round successivo o obsoletare via R18.Reset.0.
 
 ---
 

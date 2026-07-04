@@ -88,6 +88,15 @@ async def filter_safe_class_pool(db) -> list[dict]:
         {
             "is_active": True,
             "is_test": {"$ne": True},
+            # ROUND 18.3a.2 HOTFIX — exclude hidden classes seeded by
+            # R18.3a (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) that
+            # carry `is_playable=false` + `migration_target_only=true` and
+            # lack `base_*` stat fields. Without this filter, recruitment
+            # rng.choice would occasionally pick them and crash with
+            # KeyError: 'base_strength' inside `_generate_candidate`.
+            # `$ne: False` preserves legacy docs where `is_playable` is
+            # unset (they pass) while excluding only explicit False.
+            "is_playable": {"$ne": False},
             "$or": [
                 # Backwards compat: documents seeded before Round 16 lack
                 # the explicit flag; treat *active* ones as base by
