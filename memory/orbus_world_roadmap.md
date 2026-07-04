@@ -276,9 +276,17 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 > **Status**: sigillato 2026-07-03T12:45:00Z (opzione A PM). 4/4 TC accepted (mobile 390/375 padding, dashboard Prestigio-first, desktop). 3 fix consegnati: mobile `pb-24 sm:pb-8` su ExpeditionReport, 10+ stringhe IT hardcoded, Dashboard con `LIVELLO` legacy nascosto + copy Prestigio dinamico. Screenshot in `/app/memory/round1654d_viewports/`. Follow-up: R16.5.4e (Territory KeyError) e R16.5.4f (Localization Sweep) tracciati in backlog.
 
-## Round 17.0 — Game Systems Refoundation Audit (IN PROGRESS, READ-ONLY)
+## Round 17.0 — Game Systems Refoundation Audit — COMPLETED ✅ (2026-07-03)
 
-> **Aperto**: 2026-07-03. Audit strategico read-only. Deliverable: `/app/memory/round17_refoundation_audit.md` + appendix + 3-round roadmap R17.1/R17.2/R17.3.
+> **Deliverable consegnati**: `/app/memory/round17_refoundation_audit.md` + `round17_appendix_queries.md`. Roadmap R17.1 → R17.2 → R17.3 approvata dal PM.
+
+## Round 16.5.4e — Territory KeyError Hotfix — CLOSED & SEALED ✅ (2026-07-04)
+
+> **Status**: fix difensivo `get_structure_max_level` con fallback a 0 per slug legacy orfani (`library`, `market`). 6/6 pytest verde. WARN log confermato live in produzione.
+
+## Round 17 Step 0 — First Funnel Stabilization — IN PROGRESS (2026-07-04)
+
+> **Preflight R17.1**: telemetry mapping + Dashboard nudge card per gilde Lv0. `FirstObjectiveCard.jsx` attivo. Report: `/app/memory/round17_step0_report.md`.
 
 > **Status**: sigillato definitivo 2026-07-03T11:27:00Z. E2E `e1_tester` 4/4 PASS accettato dal PM (TC1 Warlock, TC2 Alchemist, TC3 Warrior, TC4 Mage). 64/64 pytest verde.
 

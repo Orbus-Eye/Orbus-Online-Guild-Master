@@ -280,3 +280,36 @@ Note:
 - Scope: nav, badge, misc chrome + eventuali stringhe FE residue non toccate in R16.5.4d.
 - Se lo scope include copy narrativa backend-generated (`result_log`, `narrative`), aprire sub-task separato per non mischiare FE/BE.
 - Non-blocking.
+
+---
+
+## Round 16.5.4e — Territory KeyError Hotfix — CLOSED & SEALED ✅ (2026-07-04)
+
+**Origine**: crash `KeyError: 'library'` in `territory/services.py::_public_doc` → `structures.py::get_structure_max_level`.
+
+**Fix applicato**: `STRUCTURE_CATALOG[slug]` → `STRUCTURE_CATALOG.get(slug)` + fallback a `0` con WARN log una-tantum. Slug legacy orfani (`library`, `market`, ecc.) restano nella response ma non upgradabili.
+
+**Test dedicato**: `backend/tests/backend_round1654e_territory_hotfix_test.py` — **6/6 PASS**.
+
+**Log live conferma**: dopo il fix, WARN emessi in produzione per `library` e `market` — nessun crash.
+
+**Follow-up**: data cleanup migration idempotente per rimuovere gli slug orfani dai doc `guild_structures` legacy — tracciato come R16.5.4e.b (non urgente, opzionale).
+
+---
+
+## Round 17 Step 0 — First Funnel Stabilization — IN PROGRESS (2026-07-04)
+
+Preflight R17.1: stabilizzazione funnel + telemetry setup + Dashboard nudge per gilde Lv0.
+
+Componenti:
+- ✅ R16.5.4e Territory KeyError hotfix (chiuso, sopra).
+- ✅ Step 0 A: audit funnel events (9 eventi mappati, vedi `round17_step0_report.md`).
+- ✅ Step 0 B+D: `FirstObjectiveCard.jsx` nuovo componente + mount in Dashboard.
+- ✅ Step 0 C: starter dungeon audit (solo `sewer-nest` disponibile, pwr=35 troppo alto).
+
+Deliverable: `/app/memory/round17_step0_report.md` (report finale).
+
+Follow-up per R17.1:
+- Emit dei 9 eventi FIRST_* (audit_log) — pianificato in R17.1.
+- Starter dungeon dedicato con power 15-20 (proposta in report).
+- Wizard onboarding pesante (out of scope Step 0, rimane in R17.1).

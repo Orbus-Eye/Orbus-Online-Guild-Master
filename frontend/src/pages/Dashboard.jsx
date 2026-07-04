@@ -8,6 +8,7 @@ import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
 import NextActionsCard from "../components/NextActionsCard";
 import DailyLoopCard from "../components/DailyLoopCard";
 import GuildProgressCard from "../components/GuildProgressCard";
+import FirstObjectiveCard from "../components/FirstObjectiveCard";
 import WorldMiniCard from "../components/WorldMiniCard";
 import SiteIncomeMiniCard from "../components/SiteIncomeMiniCard";
 import LegendaryForgeMiniCard from "../components/LegendaryForgeMiniCard";
@@ -199,6 +200,10 @@ export default function Dashboard() {
                     <OnboardingChecklistV2 />
                 </div>
                 <TerritoryWidget />
+                {/* ROUND 17 STEP 0 — Nudge "Primo obiettivo" per gilde
+                    che non hanno mai completato una spedizione.
+                    Nasconde automaticamente dopo total_expeditions_completed >= 1. */}
+                <FirstObjectiveCard guild={guild} advCount={advCount} />
                 {/* ROUND 16.1 Phase 1 — data-driven next actions (replaces hardcoded NextStepsCard) */}
                 <div className="mb-6">
                     <NextActionsCard />

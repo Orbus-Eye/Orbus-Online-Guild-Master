@@ -170,8 +170,28 @@ def default_structures_doc() -> dict:
 
 def get_structure_max_level(slug: str, *, allow_legacy: bool = False) -> int:
     """Return max upgrade level. allow_legacy=True is migration-only and
-    exposes the dormitories Lv7 override."""
-    meta = STRUCTURE_CATALOG[slug]
+    exposes the dormitories Lv7 override.
+
+    ROUND 16.5.4e — HOTFIX difensivo: `slug` sconosciuti nel catalog
+    (es. `library` presente nei doc `guild_structures` legacy ma
+    rimosso da `STRUCTURE_CATALOG` in un refactor storico) NON devono
+    più causare `KeyError`. Ritorniamo `0` come sentinel "no upgrade
+    path" e logghiamo un WARN una-tantum per catch-up di data cleanup
+    futuro. Nessun cambio economia/gameplay: uno slug sconosciuto con
+    max_level=0 non è mai `cur_level < max_level`, quindi la
+    `_public_doc` non calcola `next_level_cost` e la struttura non è
+    upgradabile via user (che è il comportamento corretto).
+    """
+    meta = STRUCTURE_CATALOG.get(slug)
+    if meta is None:
+        import logging
+        logging.getLogger("orbus.territory").warning(
+            "get_structure_max_level: unknown structure slug %r "
+            "(likely legacy doc referencing a dropped catalog slug). "
+            "Returning 0 as sentinel.",
+            slug,
+        )
+        return 0
     if allow_legacy and "max_legacy_level" in meta:
         return int(meta["max_legacy_level"])
     return int(meta["max_level"])
