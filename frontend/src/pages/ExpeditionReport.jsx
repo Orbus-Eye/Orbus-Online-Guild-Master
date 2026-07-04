@@ -35,7 +35,7 @@ const SummaryBadge = ({ summary, status }) => {
     if (status === "in_progress") {
         return (
             <span className="inline-block text-xs tracking-widest border border-amber/55 text-amber px-2 py-1 rounded-sm">
-                IN PROGRESS
+                IN CORSO
             </span>
         );
     }
@@ -45,7 +45,7 @@ const SummaryBadge = ({ summary, status }) => {
                 data-testid="report-success-badge"
                 className="inline-block text-xs tracking-widest border border-[#22c55e]/55 text-[#22c55e] px-2 py-1 rounded-sm"
             >
-                SUCCESS
+                SUCCESSO
             </span>
         );
     }
@@ -55,7 +55,7 @@ const SummaryBadge = ({ summary, status }) => {
                 data-testid="report-failed-badge"
                 className="inline-block text-xs tracking-widest border border-[#ef4444]/55 text-[#ef4444] px-2 py-1 rounded-sm"
             >
-                FAILED
+                FALLIMENTO
             </span>
         );
     }
@@ -240,6 +240,39 @@ export default function ExpeditionReport() {
         return () => clearInterval(pollRef.current);
     }, [data?.expedition?.status, fetchOne, refreshGuild, fetchReplayEligibility]);
 
+    // ROUND 17.1b P1.1 — Milestone toasts (one-shot per guild via localStorage
+    // guard; backend derives `milestones.is_first_*` from audit_log with strict
+    // idempotency, so refresh non genera spam).
+    useEffect(() => {
+        if (!data?.milestones) return;
+        const guildId = data.expedition?.guild_id;
+        if (!guildId) return;
+        const m = data.milestones;
+        if (m.is_first_expedition_completed) {
+            const key = `orbus.milestone.first_expedition_completed.${guildId}`;
+            if (!localStorage.getItem(key)) {
+                const isSuccess = data.expedition?.result_summary === "Success";
+                toast.success(
+                    isSuccess
+                        ? "Prima spedizione completata! La tua gilda ha guadagnato Prestigio."
+                        : "Prima spedizione completata! La tua gilda ha imparato dall'esperienza.",
+                    { duration: 5000, id: `milestone-first-complete-${guildId}` }
+                );
+                try { localStorage.setItem(key, new Date().toISOString()); } catch { /* noop */ }
+            }
+        }
+        if (m.is_first_prestige_gained) {
+            const key = `orbus.milestone.first_prestige_gained.${guildId}`;
+            if (!localStorage.getItem(key)) {
+                toast.success(
+                    "Hai ottenuto il tuo primo Prestigio di Gilda!",
+                    { duration: 5000, id: `milestone-first-prestige-${guildId}` }
+                );
+                try { localStorage.setItem(key, new Date().toISOString()); } catch { /* noop */ }
+            }
+        }
+    }, [data?.milestones, data?.expedition?.guild_id, data?.expedition?.result_summary]);
+
     if (loading) {
         return (
             <div className="min-h-screen bg-background">
@@ -270,7 +303,7 @@ export default function ExpeditionReport() {
         );
     }
 
-    const { expedition: e, members, loot_items, report_summary, report_steps, fallback_reward } = data;
+    const { expedition: e, members, loot_items, report_summary, report_steps, fallback_reward, guild_prestige_delta, milestones } = data;
     const isDone = e.status === "completed";
 
     return (
@@ -379,6 +412,73 @@ export default function ExpeditionReport() {
                                 <span className="text-amber font-semibold">+{fallback_reward.prestige_xp} Prestigio di Gilda</span>
                             </li>
                         </ul>
+                        {/* ROUND 17.1b P1.4 — CTA "Riprova con team più forte" */}
+                        <div className="mt-4 pt-3 border-t border-amber/30">
+                            <Link
+                                to="/expeditions/new?dungeon=training-yard&auto=strongest"
+                                data-testid="report-fallback-retry-cta"
+                                className="inline-block text-xs tracking-wider border border-amber text-amber px-3 py-2 rounded-sm hover:bg-amber hover:text-background transition-colors"
+                            >
+                                🎯 Riprova con team più forte →
+                            </Link>
+                            <div className="mt-2 text-[11px] text-muted-foreground">
+                                Ti proponiamo i 3 avventurieri con il potere più alto tra quelli disponibili. Nessun bonus nascosto, solo una selezione ottimale.
+                            </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* ROUND 17.1b P0.2 — PRESTIGIO DI GILDA (prominenza in-report) */}
+                {guild_prestige_delta && guild_prestige_delta.xp_gained > 0 && (
+                    <section
+                        className="mb-6 border border-amber/40 bg-card rounded-sm p-4"
+                        data-testid="report-prestige-section"
+                    >
+                        <div className="flex items-baseline justify-between mb-3">
+                            <div className="text-[10px] text-amber tracking-widest">
+                                :: PRESTIGIO DI GILDA
+                            </div>
+                            <div
+                                className="text-xl font-semibold text-amber"
+                                data-testid="report-prestige-xp-gained"
+                            >
+                                +{guild_prestige_delta.xp_gained} XP Prestigio
+                            </div>
+                        </div>
+                        {guild_prestige_delta.level_up_this_expedition && (
+                            <div
+                                className="mb-3 text-sm text-amber font-semibold"
+                                data-testid="report-prestige-levelup"
+                            >
+                                ⭐ Livello Prestigio salito a Lv {guild_prestige_delta.guild_level}!
+                            </div>
+                        )}
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-[11px] text-muted-foreground">
+                                <span data-testid="report-prestige-level">
+                                    Lv {guild_prestige_delta.guild_level}
+                                </span>
+                                <span data-testid="report-prestige-progress">
+                                    {guild_prestige_delta.guild_xp} / {guild_prestige_delta.next_level_at} XP
+                                </span>
+                            </div>
+                            {guild_prestige_delta.next_level_at > 0 && (
+                                <div className="w-full h-2 bg-border rounded-sm overflow-hidden">
+                                    <div
+                                        className="h-full bg-amber transition-all"
+                                        style={{
+                                            width: `${Math.min(100, Math.floor(
+                                                (guild_prestige_delta.guild_xp / guild_prestige_delta.next_level_at) * 100
+                                            ))}%`,
+                                        }}
+                                        data-testid="report-prestige-bar"
+                                    />
+                                </div>
+                            )}
+                            <div className="text-[11px] text-muted-foreground">
+                                Progresso: {guild_prestige_delta.guild_xp} / {guild_prestige_delta.next_level_at} XP verso Lv {guild_prestige_delta.next_level}
+                            </div>
+                        </div>
                     </section>
                 )}
 

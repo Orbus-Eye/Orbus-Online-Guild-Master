@@ -181,17 +181,17 @@ def build_equipment_delta(
     )
 
     if equipment_power_bonus == 0:
-        narrative = "No equipment was used on this run."
+        narrative = "Nessun equipaggiamento è stato consumato in questa spedizione."
     elif success_chance_without_eq == success_chance_with_eq:
         narrative = (
-            f"Equipment contributed +{equipment_power_bonus} team power. "
-            f"Success chance was already at maximum ({success_chance_with_eq}%)."
+            f"L'equipaggiamento ha aggiunto +{equipment_power_bonus} al potere della squadra. "
+            f"La probabilità di successo era già al massimo ({success_chance_with_eq}%)."
         )
     else:
         narrative = (
-            f"Equipment contributed +{equipment_power_bonus} team power, "
-            f"improving success chance from {success_chance_without_eq}% "
-            f"to {success_chance_with_eq}%."
+            f"L'equipaggiamento ha aggiunto +{equipment_power_bonus} al potere della squadra, "
+            f"aumentando la probabilità di successo dal {success_chance_without_eq}% "
+            f"al {success_chance_with_eq}%."
         )
     return {
         "base_team_power": base_team_power,

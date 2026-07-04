@@ -161,6 +161,31 @@ export default function ExpeditionNew() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [squadIdParam, dungeon, squads, advs]);
 
+    // ROUND 17.1b P1.4 — Auto-select top-N adventurers by power_score when
+    // arriving via `?auto=strongest` (from the fallback CTA "Riprova con team
+    // più forte"). NO hidden boost, NO reward tweak — pure UX pre-selection.
+    useEffect(() => {
+        const autoParam = searchParams.get("auto");
+        if (autoParam !== "strongest" || autoLoadedRef.current) return;
+        if (!dungeon || advs.length === 0) return;
+        const size = dungeon?.required_team_size || 3;
+        // Filter available + level-compatible, then rank by power_score.
+        const eligible = advs
+            .filter((a) => a.is_available !== false)
+            .filter((a) => !isAdventurerUnderLeveled(a, minAdvLevel))
+            .sort((x, y) => (Number(y.power_score) || 0) - (Number(x.power_score) || 0))
+            .slice(0, size);
+        if (eligible.length > 0) {
+            autoLoadedRef.current = true;
+            setSelected(eligible);
+            toast.success(
+                `Squadra suggerita: i ${eligible.length} avventurieri con il potere più alto.`,
+                { duration: 4000 }
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, dungeon, advs, minAdvLevel]);
+
     const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
 
     const toggleSelect = (adv) => {
@@ -245,6 +270,20 @@ export default function ExpeditionNew() {
                 adventurer_ids: selected.map((a) => a.id),
             });
             toast.success(t("expedition_new.toast_dispatched", { seconds: dungeon.base_duration_seconds }));
+
+            // ROUND 17.1b P1.1 — milestone toast primo start (idempotente per guild).
+            if (data?.milestones?.is_first_expedition_started) {
+                const guildId = data.expedition?.guild_id;
+                const key = `orbus.milestone.first_expedition_started.${guildId}`;
+                if (guildId && !localStorage.getItem(key)) {
+                    toast.success(
+                        "Prima spedizione avviata! Il tuo team è in missione.",
+                        { duration: 5000, id: `milestone-first-start-${guildId}` }
+                    );
+                    try { localStorage.setItem(key, new Date().toISOString()); } catch { /* noop */ }
+                }
+            }
+
             await refreshGuild();
             navigate(`/expeditions/${data.expedition.id}`, { replace: true });
         } catch (err) {

@@ -164,6 +164,25 @@ async def add_guild_xp(
             # Best-effort: XP already credited.
             pass
 
+        # ROUND 17.1b — emit FIRST_PRESTIGE_GAINED (one-shot per guild via
+        # emit_first_event idempotency guard). Fixes R17.1 WARN #11 (0 records).
+        # Any positive XP credit qualifies as "first prestige" for the guild.
+        if amount > 0:
+            try:
+                from app.audit.first_events import emit_first_event
+                await emit_first_event(
+                    db,
+                    event_type="FIRST_PRESTIGE_GAINED",
+                    guild_id=guild_id,
+                    extra={
+                        "expedition_id": source_id if source in ("expedition_completed", "starter_fallback_grant") else None,
+                        "source": source,
+                        "xp_amount": int(amount),
+                    },
+                )
+            except Exception:  # noqa: BLE001
+                pass
+
     return {
         "guild_xp": new_xp,
         "guild_level": int(updated.get("guild_level", new_level)),

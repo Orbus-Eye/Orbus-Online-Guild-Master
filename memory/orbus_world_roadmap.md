@@ -312,21 +312,26 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## Round 17.1b — Onboarding Polish & Report Localization — OPEN in backlog (2026-07-04)
+## Round 17.1b — Onboarding Polish & Report Localization — CLOSED ✅ (2026-07-04T12:00Z)
 
-**Status**: aperto nel backlog, **NON ancora iniziato**. Attende ok esplicito del PM per l'apertura operativa.
+> **Status**: chiuso 2026-07-04T12:00Z con 6/6 items PASS + fix root-cause `FIRST_PRESTIGE_GAINED`. Deliverable: `/app/memory/round171b_final_report.md`.
+>
+> **Consegnato**:
+> - P0.1 Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text` (nuovi doc + legacy regex mapper runtime).
+> - P0.2 Sezione `:: PRESTIGIO DI GILDA` in report con `+N XP Prestigio` + progress bar + `Progresso X / Y XP verso Lv Z`.
+> - P1.1 3 milestone toasts IT one-shot per gilda (first-start / first-complete / first-prestige) con guard client+backend.
+> - P1.2 Badge `SUCCESSO / FALLIMENTO / IN CORSO` in IT (report + lista).
+> - P1.3 Mobile readability PASS viewport 390 (screenshot `round171b_mobile_390.jpeg`).
+> - P1.4 CTA `🎯 Riprova con team più forte →` → auto-preselect top-N `power_score`.
+> - Fix `FIRST_PRESTIGE_GAINED`: emesso da `add_guild_xp` con guard idempotency di `emit_first_event`.
+>
+> **Test**: 13/13 pytest R17.1 PASS (regression). Playwright desktop + mobile PASS.
+>
+> **Class-fit balancing CTA**: deferrito (P2). Se PM richiesto prima di R17.2 → R17.1c dedicato.
 
-Scope 6 items (P0×2 + P1×4). Vedi `/app/memory/backlog.md` §"R17.1b" per lo scope elenco completo.
+---
 
-**Priorità sintetica**:
-- P0.1 Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text`.
-- P0.2 Prominenza label "Prestigio" nel report.
-- P1.3 Milestone toasts (3 momenti chiave).
-- P1.4 Polish report primo dungeon (mobile-friendly, no EN residue).
-- P1.5 Mobile readability check (viewport 375/390/430).
-- P1.6 CTA "Riprova con team più forte" nel banner fallback (senza boost, senza premium, senza reward extra).
-
-**Vincoli tassativi R17.1b**: no hard delete · no PvP/economia/premium/drop/reward endgame/curve XP · no apertura R17.2 fino a chiusura R17.1b polish primo report · no wizard onboarding completo (deferrato).
+## Round 17.1b — Onboarding Polish — PLANNED 🔜 (superato)
 
 ---
 

@@ -37,15 +37,20 @@ async def start_expedition_route(
     guild = await user_guild_or_404(db, current_user["id"])
     result = await start_expedition(db, guild, payload)
     # ROUND 17.1 P0.3 — funnel event FIRST_EXPEDITION_STARTED.
+    is_first_start = False
     try:
         from app.audit.first_events import emit_first_event
-        await emit_first_event(
+        is_first_start = await emit_first_event(
             db, event_type="FIRST_EXPEDITION_STARTED",
             guild_id=guild["id"], user_id=current_user["id"],
             extra={"dungeon_id": payload.dungeon_id if hasattr(payload, "dungeon_id") else None},
         )
     except Exception:  # noqa: BLE001
         pass
+    # ROUND 17.1b P1.1 — surface milestone flag for client-side toast.
+    if isinstance(result, dict):
+        result.setdefault("milestones", {})
+        result["milestones"]["is_first_expedition_started"] = bool(is_first_start)
     return result
 
 

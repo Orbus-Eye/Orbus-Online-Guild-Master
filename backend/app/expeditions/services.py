@@ -12,6 +12,7 @@ All async helpers accept the Motor `db` handle as first positional arg so the
 module remains import-safe (no implicit global db).
 """
 import secrets
+import re
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -107,10 +108,12 @@ def expedition_public(e: dict) -> dict:
         "success_chance_with_equipment": e.get(
             "success_chance_with_equipment", e.get("success_chance", 0)
         ),
-        "equipment_delta_text": e.get("equipment_delta_text"),
+        "equipment_delta_text": _translate_legacy_equipment_delta(
+            e.get("equipment_delta_text")
+        ),
         "final_score": e.get("final_score"),
         "result_summary": e.get("result_summary"),
-        "result_log": e.get("result_log"),
+        "result_log": _translate_legacy_result_log(e.get("result_log")),
         "gold_reward": e.get("gold_reward", 0),
         "xp_reward": e.get("xp_reward", 0),
         "loot_item_ids": e.get("loot_item_ids", []),
@@ -208,18 +211,106 @@ def _resolve_levelup(adv: dict) -> dict:
 
 
 def _build_result_log(dungeon_name: str, member_names: list, success: bool) -> str:
-    names = ", ".join(member_names) if member_names else "Your party"
+    """ROUND 17.1b P0.1 — Narrativa IT del report spedizione."""
+    names = ", ".join(member_names) if member_names else "Il tuo gruppo"
     if success:
         return (
-            f"Your party of {names} entered the {dungeon_name} at dawn. "
-            f"After hours of careful work, they cleared the main chamber and returned "
-            f"with what they could carry. The expedition was successful."
+            f"Il tuo gruppo composto da {names} è entrato in {dungeon_name} all'alba. "
+            f"Dopo ore di lavoro attento, ha ripulito la camera principale ed è tornato "
+            f"con tutto ciò che è riuscito a trasportare. La spedizione è stata un successo."
         )
     return (
-        f"Your party pushed too deep into the {dungeon_name}. "
-        f"A hidden ambush split the formation, and the group was forced to retreat. "
-        f"The expedition failed, but the survivors returned with valuable experience."
+        f"Il tuo gruppo si è spinto troppo in profondità in {dungeon_name}. "
+        f"Un'imboscata nascosta ha diviso la formazione e il gruppo è stato costretto a ritirarsi. "
+        f"La spedizione è fallita, ma i superstiti sono tornati con preziosa esperienza."
     )
+
+
+# ROUND 17.1b P0.1 — Mappa di traduzione per report LEGACY (docs pre-R17.1b in DB)
+# con stringhe EN già persistite. Applicato in `expedition_public` a runtime,
+# senza migration DB. Zero regression per docs nuovi (già IT).
+_LEGACY_LOG_EN_IT_MAP = (
+    (
+        re.compile(
+            r"^Your party of (.+?) entered the (.+?) at dawn\. "
+            r"After hours of careful work, they cleared the main chamber and returned "
+            r"with what they could carry\. The expedition was successful\.$"
+        ),
+        lambda m: (
+            f"Il tuo gruppo composto da {m.group(1)} è entrato in {m.group(2)} all'alba. "
+            f"Dopo ore di lavoro attento, ha ripulito la camera principale ed è tornato "
+            f"con tutto ciò che è riuscito a trasportare. La spedizione è stata un successo."
+        ),
+    ),
+    (
+        re.compile(
+            r"^Your party pushed too deep into the (.+?)\. "
+            r"A hidden ambush split the formation, and the group was forced to retreat\. "
+            r"The expedition failed, but the survivors returned with valuable experience\.$"
+        ),
+        lambda m: (
+            f"Il tuo gruppo si è spinto troppo in profondità in {m.group(1)}. "
+            f"Un'imboscata nascosta ha diviso la formazione e il gruppo è stato costretto a ritirarsi. "
+            f"La spedizione è fallita, ma i superstiti sono tornati con preziosa esperienza."
+        ),
+    ),
+)
+
+
+def _translate_legacy_result_log(text):
+    """Return IT translation for legacy EN result_log; passthrough otherwise."""
+    if not text:
+        return text
+    stripped = text.strip()
+    for pattern, translator in _LEGACY_LOG_EN_IT_MAP:
+        m = pattern.match(stripped)
+        if m:
+            return translator(m)
+    if stripped == "Dungeon data unavailable.":
+        return "Dati del dungeon non disponibili."
+    return text
+
+
+# ROUND 17.1b P0.1 — Legacy EN → IT map per `equipment_delta_text`.
+_LEGACY_EQUIP_DELTA_EN_IT_MAP = (
+    (
+        re.compile(r"^No equipment was used on this run\.$"),
+        lambda m: "Nessun equipaggiamento è stato consumato in questa spedizione.",
+    ),
+    (
+        re.compile(
+            r"^Equipment contributed \+(\d+) team power\. "
+            r"Success chance was already at maximum \((\d+)%\)\.$"
+        ),
+        lambda m: (
+            f"L'equipaggiamento ha aggiunto +{m.group(1)} al potere della squadra. "
+            f"La probabilità di successo era già al massimo ({m.group(2)}%)."
+        ),
+    ),
+    (
+        re.compile(
+            r"^Equipment contributed \+(\d+) team power, "
+            r"improving success chance from (\d+)% to (\d+)%\.$"
+        ),
+        lambda m: (
+            f"L'equipaggiamento ha aggiunto +{m.group(1)} al potere della squadra, "
+            f"aumentando la probabilità di successo dal {m.group(2)}% "
+            f"al {m.group(3)}%."
+        ),
+    ),
+)
+
+
+def _translate_legacy_equipment_delta(text):
+    """Return IT translation for legacy EN equipment_delta_text; passthrough otherwise."""
+    if not text:
+        return text
+    stripped = text.strip()
+    for pattern, translator in _LEGACY_EQUIP_DELTA_EN_IT_MAP:
+        m = pattern.match(stripped)
+        if m:
+            return translator(m)
+    return text
 
 
 # ─── Lazy completion sweep ────────────────────────────────────────────────────
@@ -243,7 +334,7 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 "$set": {
                     "status": "failed",
                     "result_summary": "Failed",
-                    "result_log": "Dungeon data unavailable.",
+                    "result_log": "Dati del dungeon non disponibili.",
                     "completed_at": utc_now().isoformat(),
                 }
             },
@@ -1049,6 +1140,113 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
                     "prestige_xp": 5,
                 }
 
+    # ROUND 17.1b P0.2 + P1.1 — Derivazione READ-ONLY di:
+    #   - guild_prestige_delta: XP Prestigio guadagnata IN QUESTA spedizione
+    #     (aggregata da `audit_log.guild_xp_gained` con source_id=exp.id)
+    #     + snapshot corrente del livello gilda + progresso verso il prossimo.
+    #   - milestones: flag one-shot per triggerare toast client-side.
+    # Zero scritture DB.
+    guild_prestige_delta: dict | None = None
+    milestones = {
+        "is_first_expedition_completed": False,
+        "is_first_prestige_gained": False,
+    }
+    if exp.get("status") in ("completed",) or exp.get("result_summary") in ("Success", "Failed"):
+        # Aggregate XP earned in this expedition (regular +15/+5 + starter fallback +5).
+        xp_docs = await db.audit_log.find(
+            {
+                "event_type": "guild_xp_gained",
+                "actor_guild_id": guild["id"],
+                "related_entity_id": expedition_id,
+            },
+            {"_id": 0, "metadata.xp_amount": 1},
+        ).to_list(20)
+        xp_gained_total = 0
+        for doc in xp_docs:
+            meta = doc.get("metadata") or {}
+            xp_gained_total += int(meta.get("xp_amount", 0) or 0)
+
+        # Fetch current guild XP + level.
+        guild_doc_full = await db.guilds.find_one(
+            {"id": guild["id"]},
+            {"_id": 0, "guild_xp": 1, "guild_level": 1, "last_guild_level_up_at": 1},
+        ) or {}
+        cur_xp = int(guild_doc_full.get("guild_xp", 0) or 0)
+        cur_level = int(guild_doc_full.get("guild_level", 1) or 1)
+
+        # Level curve import (already used elsewhere in the codebase).
+        try:
+            from app.achievements.levels import xp_required_for_level, current_level_for_xp
+            level_by_xp = current_level_for_xp(cur_xp)
+            next_level = level_by_xp + 1
+            next_level_at = xp_required_for_level(next_level)
+            level_start = xp_required_for_level(level_by_xp)
+            xp_into_level = max(0, cur_xp - level_start)
+            xp_for_next_level = max(0, next_level_at - cur_xp)
+        except Exception:
+            level_by_xp = cur_level
+            next_level = cur_level + 1
+            next_level_at = cur_xp
+            xp_into_level = 0
+            xp_for_next_level = 0
+
+        # Level up: did last_guild_level_up_at happen at (or just after) this
+        # expedition's completion timestamp?
+        completed_at = exp.get("completed_at")
+        last_lvlup = guild_doc_full.get("last_guild_level_up_at")
+        level_up_this_expedition = bool(
+            completed_at and last_lvlup and last_lvlup >= completed_at
+            and last_lvlup <= (completed_at[:19] + completed_at[-6:] if len(completed_at) >= 25 else completed_at)
+        ) if False else (
+            # Simpler heuristic: if lvlup timestamp equals completed_at exactly.
+            bool(completed_at and last_lvlup and last_lvlup == completed_at)
+        )
+
+        guild_prestige_delta = {
+            "xp_gained": xp_gained_total,
+            "guild_level": cur_level,
+            "guild_xp": cur_xp,
+            "xp_into_level": xp_into_level,
+            "next_level": next_level,
+            "next_level_at": next_level_at,
+            "xp_for_next_level": xp_for_next_level,
+            "level_up_this_expedition": level_up_this_expedition,
+        }
+
+        # Milestones — derive from audit_log with strict guard (this exp is
+        # the SAME one that triggered the FIRST_* event).
+        first_complete_count = await db.audit_log.count_documents({
+            "event_type": "FIRST_EXPEDITION_COMPLETED",
+            "actor_guild_id": guild["id"],
+        })
+        first_complete_doc = await db.audit_log.find_one({
+            "event_type": "FIRST_EXPEDITION_COMPLETED",
+            "actor_guild_id": guild["id"],
+        }, {"_id": 0, "related_entity_id": 1, "metadata.expedition_id": 1})
+        if first_complete_count == 1 and first_complete_doc:
+            same_exp = (
+                first_complete_doc.get("related_entity_id") == expedition_id
+                or (first_complete_doc.get("metadata") or {}).get("expedition_id") == expedition_id
+            )
+            milestones["is_first_expedition_completed"] = bool(same_exp)
+
+        first_prestige_count = await db.audit_log.count_documents({
+            "event_type": "FIRST_PRESTIGE_GAINED",
+            "actor_guild_id": guild["id"],
+        })
+        first_prestige_doc = await db.audit_log.find_one({
+            "event_type": "FIRST_PRESTIGE_GAINED",
+            "actor_guild_id": guild["id"],
+        }, {"_id": 0, "related_entity_id": 1, "metadata.expedition_id": 1, "created_at": 1})
+        if first_prestige_count == 1 and first_prestige_doc:
+            # first-prestige is tied to a `guild_xp_gained` event whose source_id
+            # matches this expedition id (audit's related_entity_id or metadata).
+            related = first_prestige_doc.get("related_entity_id")
+            meta_exp = (first_prestige_doc.get("metadata") or {}).get("expedition_id")
+            milestones["is_first_prestige_gained"] = bool(
+                related == expedition_id or meta_exp == expedition_id
+            )
+
     return {
         "expedition": expedition_public(exp),
         "members": [member_public(m) for m in members],
@@ -1056,6 +1254,8 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
         "report_summary": report["report_summary"],
         "report_steps": report["report_steps"],
         "fallback_reward": fallback_reward,
+        "guild_prestige_delta": guild_prestige_delta,
+        "milestones": milestones,
     }
 
 

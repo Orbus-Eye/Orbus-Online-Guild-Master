@@ -15,7 +15,7 @@ const StatusBadge = ({ status, summary }) => {
                 data-testid="exp-status-in-progress"
                 className="inline-block text-[10px] tracking-widest border border-amber/55 text-amber px-1.5 py-0.5 rounded-sm"
             >
-                IN PROGRESS
+                IN CORSO
             </span>
         );
     }
@@ -26,7 +26,7 @@ const StatusBadge = ({ status, summary }) => {
                 data-testid="exp-status-success"
                 className="inline-block text-[10px] tracking-widest border border-[#22c55e]/55 text-[#22c55e] px-1.5 py-0.5 rounded-sm"
             >
-                SUCCESS
+                SUCCESSO
             </span>
         );
     }
@@ -36,13 +36,16 @@ const StatusBadge = ({ status, summary }) => {
                 data-testid="exp-status-failed"
                 className="inline-block text-[10px] tracking-widest border border-[#ef4444]/55 text-[#ef4444] px-1.5 py-0.5 rounded-sm"
             >
-                FAILED
+                FALLIMENTO
             </span>
         );
     }
+    // Legacy fallback IT labels for other statuses.
+    const upper = (status || "").toUpperCase();
+    const STATUS_IT = { COMPLETED: "COMPLETATA", FAILED: "FALLITA", COMPLETING: "IN CHIUSURA" };
     return (
         <span className="inline-block text-[10px] tracking-widest border border-border text-muted-foreground px-1.5 py-0.5 rounded-sm">
-            {status?.toUpperCase()}
+            {STATUS_IT[upper] || upper}
         </span>
     );
 };

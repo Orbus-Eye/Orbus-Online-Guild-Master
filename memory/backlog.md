@@ -344,73 +344,22 @@ Sigillato con: 13/13 pytest PASS · Browser check Playwright PASS · Zero regres
 
 ---
 
-## R17.1b — Onboarding Polish & Report Localization (OPEN in backlog, NOT started)
+## R17.1b — Onboarding Polish & Report Localization — CLOSED ✅ (2026-07-04T12:00Z)
 
-**Status**: aperto nel backlog per approvazione PM. **Non aprire finché PM non conferma.** Nessun task iniziato.
+Vedi `/app/memory/round171b_final_report.md` per il dettaglio delle 6 items chiuse (P0×2 + P1×4) + fix root-cause `FIRST_PRESTIGE_GAINED`.
 
-**Vincoli tassativi**:
-- ❌ No hard delete.
-- ❌ No modifiche PvP/economia/premium/drop/reward endgame/curve XP.
-- ❌ No apertura R17.2 finché R17.1b non chiude polish primo report.
-- ❌ No wizard onboarding completo (deferrato a round dedicato).
+Sintesi consegna:
+- ✅ **P0.1** Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text` (nuovi doc + legacy regex mapper runtime).
+- ✅ **P0.2** Sezione `:: PRESTIGIO DI GILDA` in report con `+N XP Prestigio`, progress bar, `Progresso X / Y XP verso Lv Z`.
+- ✅ **P1.1** 3 milestone toasts IT one-shot per gilda (first-start / first-complete / first-prestige) con guard client+backend.
+- ✅ **P1.2** Badge `SUCCESSO/FALLIMENTO/IN CORSO` in IT su report+lista.
+- ✅ **P1.3** Mobile readability check viewport 390 PASS.
+- ✅ **P1.4** CTA `🎯 Riprova con team più forte →` nel banner fallback → deep-link `/expeditions/new?auto=strongest` con auto-preselect top-N per `power_score`.
+- ✅ **`FIRST_PRESTIGE_GAINED`** ora emesso da `add_guild_xp` (fix root cause WARN R17.1 #11).
 
-### Scope R17.1b (6 items)
+Sigillato con: 13/13 pytest PASS · Playwright IT desktop+mobile PASS · zero regressioni · zero hard delete · zero modifiche a drop/reward/PvP/premium/economia/curve XP.
 
-1. **[P0]** Localizzazione IT completa `result_log` / `result_summary` / `equipment_delta_text`
-   - Contesto: attualmente in inglese, visibile sotto il banner fallback e nei report success.
-   - Backend: identificare string builders in `expeditions/services.py::_build_result_log` (e sub-moduli narrative se esistono). Sostituire le strings statiche con versione IT. Se il testo è generato dinamicamente (es. narrative AI), aggiungere layer di traduzione o cambiare prompt IT.
-   - Vincolo: no i18n framework globale, solo mapping IT locale come già fatto per Auto-Equip in R16.5.4c.
-   - File coinvolti: `app/expeditions/services.py`, `app/expeditions/report_builder.py`, `frontend/src/pages/ExpeditionReport.jsx`.
-
-2. **[P0]** Label "Prestigio" più evidente nel report spedizione
-   - Attualmente il valore è calcolato ma la label è marginale. Aumentare prominenza visuale (dedicata card/row) senza cambiare il valore.
-   - File coinvolti: `frontend/src/pages/ExpeditionReport.jsx` (sezione REWARDS SUMMARY), `frontend/src/components/GuildProgressCard.jsx`.
-
-3. **[P1]** Milestone toast — 3 momenti:
-   - Prima spedizione avviata → `"Prima spedizione avviata! Il tuo team è in missione."`
-   - Prima spedizione completata (successo) → `"Prima spedizione completata! La tua gilda ha guadagnato Prestigio."`
-   - Primo Prestigio guadagnato → `"Hai ottenuto il tuo primo Prestigio di Gilda!"`
-   - Non invasivi, auto-dismiss 4-5s, dismissible con click.
-   - Meccanismo suggerito: flag booleani `is_first_*: true` nel payload di response degli endpoint spedizione/completion (alternativa lean al polling globale).
-
-4. **[P1]** Polish report primo dungeon/training-yard — leggibilità mobile, no `[object Object]`, no stringhe EN residue.
-
-5. **[P1]** Mobile/readability check — viewport 375/390/430. Screenshot + metriche.
-
-6. **[P1]** CTA "Riprova con team più forte" (nel banner fallback)
-   - **Comportamento desiderato**:
-     - Non avvia automaticamente la spedizione.
-     - Porta alla preview di training-yard.
-     - Suggerisce/preseleziona la miglior squadra disponibile per class-fit + power.
-     - Spiega **perché** quei membri sono consigliati (breve tooltip/riga informativa).
-     - Rispetta livello adventurer, disponibilità (non impegnati), class-fit.
-     - **NO boost nascosto** (nessun modificatore power occulto).
-     - **NO vantaggio premium**.
-     - **NO reward extra**.
-     - Interamente in italiano.
-   - **Non deve**:
-     - Bloccare il sealing di R17.1b.
-     - Superare localizzazione/toast come priorità.
-   - **Origine**: proposta business enhancement post-sealing R17.1 (2026-07-04); PM ha approvato l'inclusione come P1 nell'onboarding polish.
-
-### Ordine consigliato R17.1b
-
-1. P0.1 Localizzazione result_log/summary/equipment_delta (contributo maggiore alla percezione qualità).
-2. P0.2 Prominenza Prestigio nel report.
-3. P1.3 Milestone toast.
-4. P1.4–5 Polish + mobile readability.
-5. P1.6 CTA "Riprova con team più forte".
-
-### Exit criteria R17.1b
-
-- 6 punti sopra completati.
-- Regressione `tester@orbus.test` PASS.
-- Browser check IT sul report (nessuna stringa EN residua sotto il banner fallback né nei report success).
-- Screenshot mobile 375/390/430 salvati in `/app/memory/round171b_*`.
-
-### Monitoring residui da R17.1 (tracciamento in R17.1b)
-
-- ⚠️ **`FIRST_PRESTIGE_GAINED` 0 record**: whitelist ok, ma nessun player reale ha ancora triggerato l'evento nel funnel. Non-blocker per R17.1. Da monitorare tra R17.1b e R17.2 (potrebbe indicare gap negli emit sites, oppure semplicemente pochi first-prestige nel periodo di misurazione).
+**Class-fit balancing CTA (P2)**: deferrito. Se PM lo vuole implementato prima di R17.2 → aprire R17.1c dedicato.
 
 ---
 
