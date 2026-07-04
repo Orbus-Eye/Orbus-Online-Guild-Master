@@ -1,0 +1,63 @@
+{
+  "round": "R18.3b.1",
+  "title": "Stat/Role Enum Reconciliation Matrix",
+  "opened_at": "2026-07-04T21:02Z",
+  "sealed_at": "2026-07-04T21:35Z",
+  "status": "CLOSED_AND_SEALED",
+  "audit_only": true,
+  "pm_decision_sealed": true,
+  "stat_option": "C.2",
+  "role_option": "R3",
+  "stat_option_label": "Explicit mapping 6-stat design -> 5-stat live, Saggezza -> intellect (not faith)",
+  "role_option_label": "Atomic role backend (VALID_ROLES immutable) + role_display_it composite + class_role_tags UI-only",
+  "official_stat_mapping": {
+    "strength": "strength",
+    "dexterity": "agility",
+    "constitution": "endurance",
+    "intelligence": "intellect",
+    "wisdom": "intellect",
+    "charisma": "faith"
+  },
+  "design_stat_it_mapping": {
+    "Forza": "strength",
+    "Destrezza": "agility",
+    "Costituzione": "endurance",
+    "Intelligenza": "intellect",
+    "Saggezza": "intellect",
+    "Carisma": "faith"
+  },
+  "collision_documented": {
+    "saggezza_vs_intelligenza": {
+      "both_map_to": "intellect",
+      "by_design_pm": true,
+      "rationale": "Avoid overloading faith (already mapped from Carisma). Mental stats converge on intellect legacy; differentiation via role_tags."
+    }
+  },
+  "valid_roles_immutable": ["Tank", "DPS", "Healer"],
+  "role_display_it_examples": {
+    "paladin": "Healer/Tank",
+    "warrior": "DPS/Tank",
+    "rogue": "DPS/Utility",
+    "cacciatore_di_mostri": "DPS/Utility",
+    "cacciatore_del_vuoto": "DPS Caster"
+  },
+  "combat_math_impact": "NONE",
+  "auto_equip_impact": "NONE",
+  "schema_migration": false,
+  "base_stat_fields_touched": false,
+  "adventurers_docs_touched": false,
+  "feature_flag_r18_rework_enabled": false,
+  "pm_motivation": [
+    "Saggezza->intellect evita sovraccarico su faith (gia usato da Carisma)",
+    "Mantiene coerenza per classi caster/scholar (Astrologo, Sognatore, CdM)",
+    "Druido/Sciamano gestibili via role_tags (Healer + Nature/Elemental)",
+    "Collisione Saggezza/Intelligenza accettata by-design; differentiation via role_tags"
+  ],
+  "next_round": "R18.3d",
+  "next_round_scope": "Stat/Role Mapping Registry Apply (non-combat, append-only metadata)",
+  "sealing_agent": "e1 main agent (relay PM decision)",
+  "deliverables": [
+    "/app/memory/round183b1_stat_role_enum_reconciliation_matrix.md",
+    "/app/memory/round183b1_stat_role_enum_reconciliation_matrix.json"
+  ]
+}

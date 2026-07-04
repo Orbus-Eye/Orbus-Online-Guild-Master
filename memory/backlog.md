@@ -841,7 +841,75 @@ Nome proposto: `R18_FATIGUE_ENABLED` (default `false`).
 
 ---
 
-## R18.3b.1 — Stat/Role Enum Reconciliation Matrix — OPEN PENDING 🔍
+## R18.3b.1 — Stat/Role Enum Reconciliation Matrix — CLOSED & SEALED ✅ (2026-07-04T21:35Z)
+
+**Round type**: Audit-only + PM decision recording.
+
+**PM Decision Sealed**:
+- **Stat option**: **C.2** — mapping esplicito 6-stat design → 5-stat live, con **Saggezza → intellect** (non faith)
+- **Role option**: **R3** — role atomico backend (`VALID_ROLES=("Tank","DPS","Healer")` immutato) + `role_display_it` composito (es. "Healer/Tank") + `class_role_tags[]` UI-only
+
+**Official mapping sealed**:
+| Design (6-stat, IT) | Design (EN) | Live (5-stat) |
+|---|---|---|
+| Forza | strength | strength |
+| Destrezza | dexterity | agility |
+| Costituzione | constitution | endurance |
+| Intelligenza | intelligence | intellect |
+| Saggezza | wisdom | intellect (collisione by-design) |
+| Carisma | charisma | faith |
+
+**Motivazione PM**:
+- Saggezza→intellect evita overload su `faith` (già mappato da Carisma)
+- Classi caster/scholar (Astrologo, Sognatore, Cacciatore di Mostri) usano wisdom come acume mentale
+- Druido/Sciamano gestibili via `role_tags`
+- Collisione Saggezza/Intelligenza→`intellect` accettata
+
+**Vincoli invariati**:
+- Zero schema migration
+- Zero cambio combat math / auto-equip
+- Zero cambio `base_*` stat fields
+- `VALID_ROLES` immutato
+
+**Deliverable**:
+- `/app/memory/round183b1_stat_role_enum_reconciliation_matrix.md` (§11 PM Decision Sealed appended)
+- `/app/memory/round183b1_stat_role_enum_reconciliation_matrix.json` (nuovo, con `pm_decision_sealed=true`)
+- Roadmap `orbus_world_roadmap.md` aggiornato
+
+**Round successivo**: R18.3d — Stat/Role Mapping Registry Apply (OPEN)
+
+---
+
+## R18.3d — Stat/Role Mapping Registry Apply — OPEN 🚀 (2026-07-04T21:35Z)
+
+**Round type**: Apply controllato, non-combat, append-only metadata.
+
+**Scope**:
+1. Registry autorevole in `/app/memory/r18_stat_role_mapping_registry.md/.json` (mapping 6→5 sigillato)
+2. Catalog metadata append-only sui 13 doc `adventurer_classes` live: `design_primary_stat_it`, `design_secondary_stats_it`, `mapped_primary_stat_live`, `mapped_secondary_stats_live`, `role_display_it`, `class_role_tags[]`, `role_mapping_source_round="R18.3d"`
+3. 5 classi migration-critical (Paladino, Guerriero, Ladro, Cacciatore di Mostri, Cacciatore del Vuoto) con mapping esplicito
+4. Registry design-only per le 27 classi PM canoniche (17 non seedate a DB, resta memory)
+5. Audit event `R18_STAT_ROLE_MAPPING_REGISTERED`
+6. Test suite ≥ 17 in `backend_round183d_stat_role_test.py`
+
+**Vincoli assoluti**:
+- ❌ Zero schema migration
+- ❌ Zero cambio stat live (base_*)
+- ❌ Zero cambio `VALID_ROLES` enum
+- ❌ Zero cambio combat math / auto-equip
+- ❌ Zero cambio adventurers
+- ❌ Zero UI player-facing
+- ❌ Zero player-facing leak dei metadata nuovi
+- ✅ Solo: registry memory + catalog metadata append-only NON-combat
+
+**BLOCKER pre-apply**:
+- Baseline drift rilevato: 4 test in `backend_round181_migration_test.py` falliscono (1058 adv con class_slug invalid, 663 gilde vs 303 con roster cap). Da chiarire con PM se il drift blocca l'apply o va riparato in un round separato prima di R18.3d.
+
+**Status**: BLOCKED — awaiting PM confirmation on regression baseline drift.
+
+---
+
+## R18.3b.1 — Stat/Role Enum Reconciliation Matrix — ARCHIVE PRE-SEAL 📜
 
 **Status**: PENDING — non aprire senza brief PM esplicito. Registrato 2026-07-04T20:47Z.
 
