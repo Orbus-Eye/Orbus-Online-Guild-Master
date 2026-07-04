@@ -336,6 +336,66 @@ Follow-up per R17.1:
 
 ---
 
-## R17.1 — Onboarding & First Player Success — IN CLOSING (2026-07-04)
+## R17.1 — Onboarding & First Player Success — CLOSED & SEALED (2026-07-04)
 
-Vedi `/app/memory/round171_final_report.md` per il dettaglio consegne P0 + P1.
+Vedi `/app/memory/round171_final_report.md` per il dettaglio consegne P0 + P1 + mini-fix pre-sealing (audit whitelist + UI fallback reward + browser check).
+
+Sigillato con: 13/13 pytest PASS · Browser check PASS · Zero regressioni · Zero modifiche a drop/reward/PvP/premium/economia.
+
+---
+
+## R17.1b — Onboarding Polish (mini-round da schedulare)
+
+**Priorità**: P1 (non-blocking; migliora UX del funnel post-R17.1).
+
+Scope elenco:
+
+1. **Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text`** (starter path)
+   - Attualmente `_build_result_log(...)` genera stringhe inglesi ("Your party pushed too deep into the Campo d'Addestramento..."). Il banner IT `LEZIONE APPRESA` è già ok, ma la Narrativa subito sotto è bilingue misto.
+   - Estendere `report_builder.build_expedition_report` per popolare `narrative_it` sistematicamente (in parte già fatto in `WhyNarrativeSection`).
+   - File coinvolti: `app/expeditions/services.py::_build_result_log`, `app/expeditions/report_builder.py`, `frontend/src/pages/ExpeditionReport.jsx`.
+
+2. **Prominenza label "Prestigio" in dashboard/report**
+   - Attualmente XP guadagnata dopo la spedizione è mostrata come `+5` senza contesto "Prestigio di Gilda" nel report principale.
+   - Migliorare le label in `Cell` + `GuildProgressCard`.
+
+3. **Milestone toasts** (P1.7 deferrato da R17.1)
+   - Toast celebrativi:
+     - `first-expedition-started` → "🎯 Prima missione in corso!"
+     - `first-expedition-completed` → "🎉 Prima missione completata!"
+     - `first-prestige-gained` → "⭐ Primo Prestigio guadagnato!"
+   - Meccanismo: hook globale che ascolta `emit_first_event` via polling `/api/events/subscribe` (nuovo endpoint) OR reagisce al payload di response degli endpoint spedizione/completion.
+   - **Alternativa lean**: emettere flag booleani nel payload (`is_first_*: true`) e lasciare al frontend il trigger dei toast.
+
+4. **Wizard onboarding interattivo** (P2.8 deferrato da R17.1)
+   - 5-step interactive tour: welcome → recruit → dungeon → expedition → prestige.
+   - Attivo solo per `guild.created_at < 24h` && `!wizard_completed`.
+   - Skip button con conferma.
+   - Persistenza dello step corrente in `guild.onboarding_wizard_step`.
+
+5. **Polish report prima spedizione**
+   - Se `fallback_reward.granted === true`, aggiungere un CTA "Riprova con team più forte" che pre-compila la squad.
+   - Micro-copy tuning per rendere la failure meno "punitiva" nel primo report.
+
+6. **Mobile readability check**
+   - Viewport 320 / 375 / 390.
+   - Verifica overflow: banner LEZIONE APPRESA, WhyNarrative, ExpeditionExplainer.
+   - Font size min 14px sul banner (attualmente text-sm = 14px, ok).
+
+**Dependencies**: nessuna. Può partire subito dopo R17.1 sealing.
+
+**Exit criteria**: 6 punti sopra completati + regressione tester@orbus.test + browser check IT sul report.
+
+---
+
+## R17.2 — World Content Activation (P0)
+
+Prossimo round major dopo R17.1b. Priorità dei 3 sistemi dormienti:
+
+1. **Achievements catalog seed** (P0, alta priorità) — 40-50 doc programmatici con `slug/title_it/en/description/tier/category/prestige_xp_reward`. Sblocca la pagina `/achievements` oggi vuota nonostante 578 `achievement_unlocked` events.
+2. **Raids catalog seed** (P0) — 5 raid Lv5/8/11/14/17 con reward Legendary Forge material.
+3. **Resource missions generator** (P1) — daily cron, 1 mission/day/continente, cap 6/day/gilda.
+
+**Ordine**: 1 → 2 → 3. **Metrica di successo**: ≥20% gilde attive sblocca ≥3 achievement in 1 settimana; ≥5 gilde completano 1 raid in 2 settimane.
+
+Vedi `/app/memory/round171_final_report.md` §17 (raccomandazione R17.2) e `/app/memory/orbus_world_roadmap.md`.

@@ -284,15 +284,40 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 > **Status**: sigillato 2026-07-04T08:00:00Z. Fix difensivo `get_structure_max_level`. 6/6 pytest verde. WARN log live confermato.
 
+## Round 17.1 — Onboarding & First Player Success — CLOSED & SEALED ✅ (2026-07-04)
+
+> **Status**: sigillato definitivo 2026-07-04T10:35Z. Mini-fix pre-sealing completato (audit whitelist + UI fallback reward + browser check Playwright). Deliverable: `/app/memory/round171_final_report.md` (13-point PM checklist).
+>
+> **P0 delivered**:
+> - `training-yard` starter dungeon seedato (idempotent boot hook).
+> - `FirstObjectiveCard` in Dashboard + `?starter=training-yard` handler in `/dungeons`.
+> - 10 FIRST_* audit events emessi da `emit_first_event` con idempotency guard per gilda.
+> - Fallback reward primo fallimento starter: +5 gold + +5 XP Prestigio + audit `STARTER_FALLBACK_REWARD_GRANTED`.
+> - **Mini-fix (2026-07-04)**:
+>   - `AUDIT_EVENT_WHITELIST` include i 10 R17.1 event types → admin filter enabled.
+>   - `GET /api/expeditions/{id}` espone `fallback_reward` (read-only derivation).
+>   - Frontend banner IT `:: LEZIONE APPRESA` con testo esatto + `+5 oro` + `+5 Prestigio di Gilda`.
+>   - Playwright browser check PASS (screenshot `/app/memory/round171_fallback_banner.jpeg`).
+>
+> **Test**: 13/13 pytest R17.1 PASS (4 whitelist + 9 fallback logic+UI). Regression `tester@orbus.test` invariata.
+>
+> **Bug residui non bloccanti**:
+> - SMTP `@orbus.test` refused (P2, tracciato `R17.infra.smtp`).
+> - `result_log` post-fail in inglese sotto il banner IT (deferrato a R17.1b).
+>
+> **Deferred to R17.1b**: milestone toasts, wizard onboarding, localizzazione result_log/summary/equipment_delta, prominenza label Prestigio, mobile readability check.
+
+---
+
+## Round 17.1b — Onboarding Polish — PLANNED 🔜 (P1)
+
+Mini-round da schedulare post-R17.1. Vedi `/app/memory/backlog.md` §"R17.1b" per lo scope elenco (6 items). Priorità P1 non-bloccante; migliora il funnel UX senza toccare gameplay.
+
+---
+
 ## Round 17.1 Step 0 — First Funnel Stabilization — CLOSED & SEALED ✅ (2026-07-04)
 
 > **Status**: sigillato 2026-07-04T08:00:00Z. Preflight R17.1 completo. `FirstObjectiveCard` mounted in Dashboard. Funnel event mapping.
-
-## Round 17.1 — Onboarding & First Player Success — OPEN (2026-07-04)
-
-> **Status**: implementazione P0+P1 completata. Deliverable: `/app/memory/round171_final_report.md`.
-
-> **Status**: sigillato definitivo 2026-07-03T11:27:00Z. E2E `e1_tester` 4/4 PASS accettato dal PM (TC1 Warlock, TC2 Alchemist, TC3 Warrior, TC4 Mage). 64/64 pytest verde.
 
 **Interventi chiave**:
 - **ADJ-9**: backfill `class_slug` su 1909 avventurieri (94.01%→99.71%), fix `common._generate_candidate` per popolare `class_slug` in write path, 6 orfani Guardian/Cleric documentati.

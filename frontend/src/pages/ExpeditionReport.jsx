@@ -270,7 +270,7 @@ export default function ExpeditionReport() {
         );
     }
 
-    const { expedition: e, members, loot_items, report_summary, report_steps } = data;
+    const { expedition: e, members, loot_items, report_summary, report_steps, fallback_reward } = data;
     const isDone = e.status === "completed";
 
     return (
@@ -355,6 +355,32 @@ export default function ExpeditionReport() {
                         accent
                     />
                 </section>
+
+                {/* ROUND 17.1 P0.5 — Fallback reward banner (first-fail su starter) */}
+                {fallback_reward && fallback_reward.granted === true && (
+                    <section
+                        className="mb-6 border border-amber/50 bg-amber/10 rounded-sm p-4"
+                        data-testid="report-fallback-reward-banner"
+                    >
+                        <div className="text-[10px] text-amber tracking-widest mb-2">
+                            :: LEZIONE APPRESA
+                        </div>
+                        <p
+                            className="text-sm text-foreground/90 leading-relaxed"
+                            data-testid="report-fallback-reward-message"
+                        >
+                            La spedizione non è andata come sperato, ma la tua gilda ha imparato dall&apos;esperienza.
+                        </p>
+                        <ul className="mt-3 space-y-1 text-sm text-foreground/90">
+                            <li data-testid="report-fallback-reward-gold">
+                                <span className="text-amber font-semibold">+{fallback_reward.gold} oro</span>
+                            </li>
+                            <li data-testid="report-fallback-reward-prestige">
+                                <span className="text-amber font-semibold">+{fallback_reward.prestige_xp} Prestigio di Gilda</span>
+                            </li>
+                        </ul>
+                    </section>
+                )}
 
                 {/* Narrative log */}
                 {e.result_log && (

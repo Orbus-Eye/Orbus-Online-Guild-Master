@@ -1020,12 +1020,42 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
     )
     report = build_expedition_report(exp, members, dungeon, loot_items)
 
+    # ROUND 17.1 P0.5 (UI feedback) — Derivazione READ-ONLY del flag
+    # fallback_reward per questa specifica spedizione. Il grant vero
+    # è già stato applicato in `_complete_one_expedition` (idempotente).
+    # Qui non scriviamo mai su DB: leggiamo `guild.first_expedition_fallback_granted_at`
+    # e lo confrontiamo con `exp.completed_at`. Se coincidono → questa
+    # spedizione è quella che ha triggerato il grant.
+    fallback_reward: dict | None = None
+    if (
+        exp.get("result_summary") == "Failed"
+        and dungeon is not None
+        and dungeon.get("is_starter") is True
+    ):
+        guild_doc = await db.guilds.find_one(
+            {"id": guild["id"]},
+            {
+                "first_expedition_fallback_granted": 1,
+                "first_expedition_fallback_granted_at": 1,
+            },
+        )
+        if guild_doc and guild_doc.get("first_expedition_fallback_granted"):
+            granted_at = guild_doc.get("first_expedition_fallback_granted_at")
+            completed_at = exp.get("completed_at")
+            if granted_at and completed_at and granted_at == completed_at:
+                fallback_reward = {
+                    "granted": True,
+                    "gold": 5,
+                    "prestige_xp": 5,
+                }
+
     return {
         "expedition": expedition_public(exp),
         "members": [member_public(m) for m in members],
         "loot_items": loot_items,
         "report_summary": report["report_summary"],
         "report_steps": report["report_steps"],
+        "fallback_reward": fallback_reward,
     }
 
 
