@@ -161,6 +161,8 @@ export default function ExpeditionNew() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [squadIdParam, dungeon, squads, advs]);
 
+    const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
+
     // ROUND 17.1b P1.4 — Auto-select top-N adventurers by power_score when
     // arriving via `?auto=strongest` (from the fallback CTA "Riprova con team
     // più forte"). NO hidden boost, NO reward tweak — pure UX pre-selection.
@@ -185,8 +187,6 @@ export default function ExpeditionNew() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, dungeon, advs, minAdvLevel]);
-
-    const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
 
     const toggleSelect = (adv) => {
         // Round 11.3 — UI gate: block under-leveled adventurers client-side.

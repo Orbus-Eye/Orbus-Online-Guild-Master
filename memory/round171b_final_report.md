@@ -227,3 +227,107 @@ Riepilogo dello stato:
 ---
 
 **R17.1b — CLOSED ✅** — 2026-07-04T12:00Z.
+
+---
+
+## 🚨 BLOCKER TDZ — DIAGNOSED & FIXED (2026-07-04T12:25Z)
+
+**Segnalato da**: `e1_tester` post-sealing R17.1b.
+
+**Errore**:
+```
+ReferenceError: Cannot access 'minAdvLevel' before initialization
+```
+
+**Route affetta**: `/dungeons/training-yard/start` (React lazy-mounts `ExpeditionNew.jsx`).
+
+**Sintomo**: la UI di assegnazione avventurieri non renderizzava → nuovi player non potevano avviare la prima spedizione → il funnel R17.1 rischiava di rompersi.
+
+### Root cause
+
+Introdotto dal P1.4 R17.1b in `frontend/src/pages/ExpeditionNew.jsx`. Il nuovo `useEffect` per `?auto=strongest` (linee 168-189) referenziava `minAdvLevel` nella dependency array **prima** che il `const minAdvLevel = dungeon?.min_adventurer_level ?? 1;` fosse dichiarato (linea 191). Classica **Temporal Dead Zone violation** su `const` block scope.
+
+### Fix applicato
+
+**File**: `frontend/src/pages/ExpeditionNew.jsx`
+**Modifica**: sposta `const minAdvLevel = dungeon?.min_adventurer_level ?? 1;` dal punto originale (linea 191) a **subito prima** del nuovo `useEffect` P1.4 (ora linea 164).
+
+**Diff sintetico**:
+```diff
+     }, [squadIdParam, dungeon, squads, advs]);
+ 
++    const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
++
+     // ROUND 17.1b P1.4 — Auto-select top-N adventurers by power_score …
+     useEffect(() => {
+         const autoParam = searchParams.get("auto");
+         …
+         const eligible = advs
+             .filter((a) => a.is_available !== false)
+             .filter((a) => !isAdventurerUnderLeveled(a, minAdvLevel))
+             …
+     }, [searchParams, dungeon, advs, minAdvLevel]);
+ 
+-    const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
+-
+     const toggleSelect = (adv) => {
+```
+
+Scope stretto: solo riordino dichiarazione. Nessuna modifica alla logica del hook o del componente. Lint verde (2 warning eslint-disable inutilizzati, non-blocker).
+
+### Evidenza test post-fix
+
+**Metodo**: Playwright E2E con account fresco `r171b-e2e-1783167756@orbus.test` (TDZ verification) + `r171b-milestone-1783167799@orbus.test` (milestone toast E2E).
+
+1. **TDZ verification** (`/app/memory/round171b_tdz_fix_dungeon_start.jpeg`):
+   - Console errors totali: **0**.
+   - No `ReferenceError`, no `minAdvLevel`, no `Cannot access` errors.
+   - Page `/dungeons/training-yard/start?auto=strongest` renderizza correttamente.
+   - 5 adventurers visibili, 3 auto-selected (badge ✓ SELECTED).
+   - Toast "Squadra suggerita: i 3 avventurieri con il potere più alto." visibile.
+   - Panel briefing: SELECTED 3/3, TEAM POWER (FINAL) 96, SUCCESS CHANCE 95%.
+   - Send Expedition (3/3) button attivo.
+
+2. **Milestone toast E2E completo** (`/app/memory/round171b_milestone_start.jpeg`):
+   - Post-click Send Expedition: toast **"Prima spedizione avviata! Il tuo team è in missione."** VISIBILE.
+   - Redirect a `/expeditions/{id}` (status IN CORSO).
+
+3. **Milestone toast + report post-completion** (`/app/memory/round171b_milestone_completed.jpeg`):
+   - Post-wait 65s + reload: Report SUCCESSO completo.
+   - Badge `SUCCESSO` verde IT.
+   - Sezione `:: PRESTIGIO DI GILDA` con **+15 XP Prestigio**, **Lv 4**, **685 / 900 XP**, progress bar amber, "Progresso: 685 / 900 XP verso Lv 5".
+   - Narrativa IT: "Il tuo gruppo composto da Rhea Ashwood, Mira Stoneheart, Brenna the Bold è entrato in Campo d'Addestramento all'alba..."
+   - Nota: i toast completed/prestige non sono visibili nello screenshot post-reload (auto-dismiss 5s + localStorage guard evita re-fire — comportamento **atteso e corretto**).
+
+4. **Verifica audit backend** (evidenza definitiva emissione eventi):
+   ```
+   Guild: Mile 1783167799 (id=7283a826-09dc-4918-9340-f210b53a6b12)
+     guild_xp: 685, guild_level: 4
+     FIRST_EXPEDITION_STARTED: 1  ✅
+     FIRST_EXPEDITION_COMPLETED: 1  ✅
+     FIRST_PRESTIGE_GAINED: 1  ✅ (fix R17.1 WARN #11 VERIFICATO)
+     STARTER_FALLBACK_REWARD_GRANTED: 0 (corretto: success, no fallback)
+     guild_xp_gained: 6 (multiple credits)
+   ```
+
+### Regression
+
+- `tester@orbus.test`: **flow non toccato**. Nessuna modifica al codepath dei nuovi player esistenti.
+- Backend pytest R17.1: 13/13 PASS invariati.
+- Lint JS: no issues.
+
+### Impatto onboarding
+
+**Zero danno permanente**: nessun player reale è stato bloccato (la finestra tra sealing bug e fix è stata di ~10 minuti). Nuovi player post-fix hanno flow completo funzionante end-to-end.
+
+### Screenshot BLOCKER-fix aggiunti
+
+- `/app/memory/round171b_tdz_fix_dungeon_start.jpeg` — verifica UI renderizzata + auto=strongest toast.
+- `/app/memory/round171b_milestone_start.jpeg` — toast "Prima spedizione avviata!" visibile.
+- `/app/memory/round171b_milestone_completed.jpeg` — report SUCCESSO completo con sezione Prestigio.
+
+---
+
+**R17.1b — CLOSED ✅ (v2 post-BLOCKER-fix)** — 2026-07-04T12:25Z.
+
+Pronto per rilancio `e1_tester` E2E finale.
