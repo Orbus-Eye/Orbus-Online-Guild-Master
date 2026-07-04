@@ -87,4 +87,94 @@ async def update_onboarding(
     }
 
 
+# ─────────────────────────────────────────────────────────────────────
+# ROUND 18.3c — Migration Banner IT (player-facing informativo).
+# Zero leak metadata tecnici (migration_round, previous_class_slug,
+# career_history, migration_reason, migration_timestamp, role, stat).
+# ─────────────────────────────────────────────────────────────────────
+
+_R18_3C_MAPPING_IT: list[dict] = [
+    {"from_it": "Ranger", "to_it": "Cacciatore di Mostri"},
+    {"from_it": "Warlock", "to_it": "Cacciatore del Vuoto"},
+    {"from_it": "Priest", "to_it": "Paladino"},
+    {"from_it": "Berserker", "to_it": "Guerriero"},
+    {"from_it": "Assassin", "to_it": "Ladro"},
+]
+
+# BYTE-EXACT PM-approved message. Do NOT modify wording.
+_R18_3C_BANNER_MESSAGE_IT: str = (
+    "Alcuni tuoi avventurieri sono stati riallineati alle classi "
+    "canoniche di Orbus. Nessun livello, oggetto o progresso è "
+    "stato perso."
+)
+
+
+@router.get("/me/migration-banner")
+async def get_migration_banner(
+    current_user: dict = Depends(get_current_user),
+):
+    """ROUND 18.3c — Player-facing migration banner IT.
+
+    Returns `show=true` solo se la guild ha almeno 1 adventurer con
+    `migration_round="R18.3c"` E il flag di dismiss non è impostato.
+    Zero leak di field tecnici sull'adventurer o sulla migration.
+    """
+    guild = await user_guild_or_404(db, current_user["id"])
+    guild_id = guild["id"]
+
+    dismissed = bool(guild.get("migration_banner_r18_3c_dismissed", False))
+
+    migrated_count = await db.adventurers.count_documents({
+        "guild_id": guild_id,
+        "migration_round": "R18.3c",
+    })
+
+    applicable_mappings: list[dict] = []
+    if migrated_count > 0:
+        source_slugs_present = await db.adventurers.distinct(
+            "previous_class_slug",
+            {"guild_id": guild_id, "migration_round": "R18.3c"},
+        )
+        source_set = set(source_slugs_present)
+        _SOURCE_TO_IT = {
+            "ranger": "Ranger",
+            "warlock": "Warlock",
+            "priest": "Priest",
+            "berserker": "Berserker",
+            "assassin": "Assassin",
+        }
+        for m in _R18_3C_MAPPING_IT:
+            source_it = m["from_it"]
+            source_slug = next(
+                (s for s, i in _SOURCE_TO_IT.items() if i == source_it), None
+            )
+            if source_slug and source_slug in source_set:
+                applicable_mappings.append(
+                    {"from_it": m["from_it"], "to_it": m["to_it"]}
+                )
+
+    show = (migrated_count > 0) and (not dismissed)
+    return {
+        "show": show,
+        "dismissed": dismissed,
+        "migrated_count": migrated_count,
+        "message_it": _R18_3C_BANNER_MESSAGE_IT,
+        "mappings": applicable_mappings,
+    }
+
+
+@router.post("/me/migration-banner/dismiss")
+async def dismiss_migration_banner(
+    current_user: dict = Depends(get_current_user),
+):
+    """ROUND 18.3c — Persist banner dismiss server-side (guild-level)."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    await db.guilds.update_one(
+        {"id": guild["id"]},
+        {"$set": {"migration_banner_r18_3c_dismissed": True}},
+    )
+    return {"ok": True, "dismissed": True}
+
+
+
 __all__ = ["router"]

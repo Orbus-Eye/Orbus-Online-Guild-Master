@@ -404,3 +404,37 @@ Legenda: **H**=Pesante · **M**=Media · **L**=Leggera · **N**=Nessuna · **TBD
 ---
 
 *Firma: e1 main agent · R18.3b OPEN · decision support only.*
+
+---
+
+## §9 · PM Decisions Sealed (P0-1..P0-7) — as design intent, NOT live DB values
+
+⚠️ **STATUS**: le 7 answers PM alle domande P0 sono state **sigillate come design intent** in `round183b_pm_answers_p0.md` il 2026-07-04T20:40Z. Il catalog `adventurer_classes` NON è stato modificato in R18.3c (mode split `adventurer_class_slug_only`).
+
+**Enum conflict identificato**:
+- Schema live 5-stat (`strength/agility/intellect/endurance/faith`) vs PM 6-stat (`charisma/dexterity/constitution/intelligence/wisdom` + `strength`)
+- `VALID_ROLES = ("Tank", "DPS", "Healer")` atomic vs PM composite (`Healer/Tank hybrid`, `Martial DPS/Tank`, `DPS/Utility`, `DPS Caster`)
+- `base_*` schema catalog non ha `base_dexterity/constitution/wisdom/charisma`
+
+**Reconciliation deferrita a R18.3b.1** (mini-round decisionale, PENDING).
+
+### Sintesi 5 migration-critical (design intent)
+
+| Classe | role_intent | primary_stat_intent | secondary_stats_intent | live DB (invariato) |
+|---|---|---|---|---|
+| **Paladino** | `Healer/Tank hybrid` | `charisma` | `[strength, constitution]` | role=Tank, primary=faith, secondary=[strength,endurance] |
+| **Guerriero** | `Martial DPS/Tank` | `strength` | `[constitution, dexterity]` | role=Tank, primary=strength, secondary=[endurance] |
+| **Ladro** | `DPS/Utility` | `dexterity` | `[intelligence, charisma]` | role=DPS, primary=agility, secondary=[strength] |
+| **Cacciatore di Mostri** | `DPS/Utility` | `dexterity` | `[wisdom, constitution]` | role=TBD (R18.3a.1), primary=None |
+| **Cacciatore del Vuoto** | `DPS Caster` | `intelligence` | `[constitution, dexterity]` | role=TBD (R18.3a.1), primary=None |
+
+### Le altre 22 classi
+
+Restano con placeholder TBD candidato — PM non ha ancora sigillato answers per P0-3/P0-4 in dettaglio esteso (Guerriero/Paladino/Cav Morte differentiation come "opzione A", 3 Cacciatori come "opzione B+C" combinate), né per P1-*/P2-*/P3-*.
+
+**Deliverable R18.3b sealed**:
+- `round183b_class_design_decision_matrix.md` (questo file, con §9)
+- `round183b_class_design_decision_matrix.json` (aggiornato con `role_intent`/`primary_stat_intent`/`secondary_stats_intent` + `applied_to_live_db=false`)
+- `round183b_pm_answers_p0.md` (7 answers PM sealed as design intent)
+
+**R18.3b CLOSED & SEALED (as design intent) ✅ (2026-07-04T20:40Z).** Non riaprire senza brief PM.

@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
+import MigrationBannerR183c from "../components/MigrationBannerR183c";
 import NextActionsCard from "../components/NextActionsCard";
 import DailyLoopCard from "../components/DailyLoopCard";
 import GuildProgressCard from "../components/GuildProgressCard";
@@ -195,6 +196,8 @@ export default function Dashboard() {
             <AppHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-w-0">
+                {/* ROUND 18.3c — Migration Banner IT (dismissible, guild-scoped) */}
+                <MigrationBannerR183c />
                 {/* ROUND 16.1 Phase 1 — bilingual data-driven onboarding */}
                 <div className="mb-6">
                     <OnboardingChecklistV2 />

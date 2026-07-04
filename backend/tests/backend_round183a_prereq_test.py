@@ -231,18 +231,19 @@ def test_08_guard_r18_1_2_accepts_target_slugs(db):
         )
 
 
-# ─── 09 — Zero write reali su adventurers ──────────────────────────────
+# ─── 09 — Zero write reali su adventurers IN R18.3a phase ──────────────
 def test_09_zero_adv_migrated_in_r18_3a(db):
-    """R18.3a è solo pre-req: NESSUN adventurer deve avere class_slug
-    cambiato a `cacciatore_di_mostri` o `cacciatore_del_vuoto`."""
-    for target_slug in TARGET_SLUGS:
-        n_adv = _run(db.adventurers.count_documents({
-            "class_slug": target_slug
-        }))
-        assert n_adv == 0, (
-            f"R18.3a violation: {n_adv} adventurers already have "
-            f"class_slug={target_slug} (should be 0, migration in R18.3)"
-        )
+    """R18.3a è solo pre-req: NESSUN adventurer deve essere stato migrato
+    DURANTE la fase R18.3a stessa (i.e., zero adv con
+    `migration_round="R18.3a"`). Post-R18.3c gli adv migrati portano
+    `migration_round="R18.3c"` — quello è OK, non viola R18.3a scope."""
+    n_r18_3a_migrated = _run(db.adventurers.count_documents({
+        "migration_round": "R18.3a"
+    }))
+    assert n_r18_3a_migrated == 0, (
+        f"R18.3a violation: {n_r18_3a_migrated} adventurers migrated "
+        f"in R18.3a phase (should be 0, migration happens in R18.3c)"
+    )
 
 
 # ─── 10 — Feature flag OFF preservati ──────────────────────────────────

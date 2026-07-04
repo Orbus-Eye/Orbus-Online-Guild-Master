@@ -463,7 +463,15 @@
         "risorsa_classe (solo hints estratti, non conferme)",
         "fantasy_archetipo"
       ],
-      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)",
+      "role_intent": "DPS Caster",
+      "primary_stat_intent": "intelligence",
+      "secondary_stats_intent": [
+        "constitution",
+        "dexterity"
+      ],
+      "intent_applied_to_live_db": false,
+      "intent_source": "R18.3b PM P0 answers (design intent, sealed 2026-07-04T20:40Z)"
     },
     {
       "pos": 8,
@@ -509,7 +517,15 @@
         "risorsa_classe (solo hints estratti, non conferme)",
         "fantasy_archetipo"
       ],
-      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)",
+      "role_intent": "DPS/Utility",
+      "primary_stat_intent": "dexterity",
+      "secondary_stats_intent": [
+        "wisdom",
+        "constitution"
+      ],
+      "intent_applied_to_live_db": false,
+      "intent_source": "R18.3b PM P0 answers (design intent, sealed 2026-07-04T20:40Z)"
     },
     {
       "pos": 9,
@@ -866,7 +882,15 @@
         "livelli_speciali dettagliati",
         "risorsa_classe (solo hints estratti, non conferme)"
       ],
-      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)",
+      "role_intent": "Martial DPS/Tank",
+      "primary_stat_intent": "strength",
+      "secondary_stats_intent": [
+        "constitution",
+        "dexterity"
+      ],
+      "intent_applied_to_live_db": false,
+      "intent_source": "R18.3b PM P0 answers (design intent, sealed 2026-07-04T20:40Z)"
     },
     {
       "pos": 17,
@@ -911,7 +935,15 @@
         "risorsa_classe (solo hints estratti, non conferme)",
         "fantasy_archetipo"
       ],
-      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)",
+      "role_intent": "DPS/Utility",
+      "primary_stat_intent": "dexterity",
+      "secondary_stats_intent": [
+        "intelligence",
+        "charisma"
+      ],
+      "intent_applied_to_live_db": false,
+      "intent_source": "R18.3b PM P0 answers (design intent, sealed 2026-07-04T20:40Z)"
     },
     {
       "pos": 18,
@@ -1136,7 +1168,15 @@
         "risorsa_classe (solo hints estratti, non conferme)",
         "fantasy_archetipo"
       ],
-      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)",
+      "role_intent": "Healer/Tank hybrid",
+      "primary_stat_intent": "charisma",
+      "secondary_stats_intent": [
+        "strength",
+        "constitution"
+      ],
+      "intent_applied_to_live_db": false,
+      "intent_source": "R18.3b PM P0 answers (design intent, sealed 2026-07-04T20:40Z)"
     },
     {
       "pos": 23,
@@ -2071,5 +2111,8 @@
     "warlock": 128,
     "alchemist": 135,
     "recruit_unassigned": 85
-  }
+  },
+  "pm_answers_p0_sealed_at_utc": "2026-07-04T20:40Z",
+  "pm_answers_applied_to_live_db": false,
+  "pm_answers_deferred_reason": "Enum conflict: 5-stat vs 6-stat + atomic role vs composite. Deferred to R18.3b.1."
 }

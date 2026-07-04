@@ -138,6 +138,11 @@ AUDIT_EVENT_WHITELIST = frozenset({
     # per prevenire HTTP 500 nel serializer `class_public()`. Marker
     # role_pm_decision_pending=true (Q7-Q24 deferred).
     "R18_CLASS_ROLE_PLACEHOLDER_BACKFILLED",
+    # ROUND 18.3c — Orphan Class Migration Applied. Mode split
+    # `adventurer_class_slug_only` — catalog `adventurer_classes`
+    # NOT modified in this round (enum conflict deferred to R18.3b.1).
+    "R18_CLASS_ORPHAN_MIGRATION_APPLIED",
+    "R18_CLASS_ORPHAN_MIGRATION_ROLLED_BACK",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

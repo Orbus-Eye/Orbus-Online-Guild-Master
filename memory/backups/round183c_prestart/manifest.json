@@ -1,0 +1,25 @@
+{
+  "round": "R18.3c",
+  "phase": "prestart_backup",
+  "created_at_utc": "2026-07-04T20:39:46Z",
+  "backup_tool": "mongodump",
+  "backup_format": "bson.gz",
+  "backup_path": "/app/memory/backups/round183c_prestart/",
+  "db_name_reference": "orbus_r16",
+  "critical_collections_pre_apply_counts": {
+    "adventurers_total": null,
+    "adventurers_by_migration_source": {
+      "priest": 190,
+      "ranger": 175,
+      "warlock": 128,
+      "berserker": 3,
+      "assassin": 0,
+      "TOTAL_EXPECTED_TO_MIGRATE": 496
+    },
+    "adventurer_classes_total": null,
+    "guilds_total": null,
+    "audit_log_total": 7004
+  },
+  "restore_command_example": "mongorestore --uri=$MONGO_URL --gzip --nsInclude='orbus_r16.adventurers' /app/memory/backups/round183c_prestart/",
+  "note": "Full DB dump gzipped. Use for rollback if R18.3c apply corrupt state. Preferred rollback: `round183c_rollback.py` script for surgical revert."
+}

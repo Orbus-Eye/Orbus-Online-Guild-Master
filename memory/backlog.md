@@ -779,3 +779,97 @@ Nome proposto: `R18_FATIGUE_ENABLED` (default `false`).
 5. Flip `is_playable=false → true` + `migration_target_only=true → false` post apply
 
 **NON eseguire senza brief PM esplicito post-R18.3b.**
+
+---
+
+## R18.3b — Class Design Decision Matrix — CLOSED & SEALED (design intent) ✅ (2026-07-04T20:40Z)
+
+**Archivio** — sigillato definitivamente come design intent. NON riaprire senza brief PM esplicito.
+
+**PM P0 answers registrate come DESIGN INTENT** (⚠️ NON applicate al live DB, enum conflict deferrito a R18.3b.1):
+
+- **P0-1**: Paladino = `Healer/Tank hybrid` + `charisma` primary + `[strength, constitution]` secondary
+- **P0-2**: Cacciatore di Mostri = `DPS/Utility` + `dexterity` + `[wisdom, constitution]`
+- **P0-3**: Guerriero/Paladino/Cav Morte differenziazione = opzione A (ruoli distinti, no dual-primary)
+- **P0-4**: 3 Cacciatori differenziazione = opzione B+C combinate (archetipo tematico + item-pool separato)
+- **P0-5**: Cacciatore del Vuoto = `DPS Caster` + `intelligence` + `[constitution, dexterity]`
+- **P0-6**: Paladino primary stat = `charisma` (B)
+- **P0-7**: Cacciatore di Mostri primary stat = `dexterity` (A)
+
+**Deliverable finali**:
+- `/app/memory/round183b_pm_answers_p0.md`
+- `/app/memory/round183b_class_design_decision_matrix.md` (§9 aggiunto)
+- `/app/memory/round183b_class_design_decision_matrix.json` (con `role_intent`, `applied_to_live_db=false`)
+
+**Enum conflict identificato** (bloccante per apply live):
+1. Schema 5-stat legacy (`strength/agility/intellect/endurance/faith`) vs PM 6-stat (`charisma/dexterity/constitution/intelligence/wisdom`)
+2. `VALID_ROLES = ("Tank", "DPS", "Healer")` atomic vs PM composite (`Healer/Tank hybrid`, `Martial DPS/Tank`, `DPS/Utility`, `DPS Caster`)
+3. `base_*` schema catalog manca `base_dexterity/constitution/wisdom/charisma`
+
+**Reconciliation deferrita a R18.3b.1** (nuovo mini-round PENDING).
+
+---
+
+## R18.3c — Orphan Class Migration Apply — CLOSED & SEALED ✅ (2026-07-04T20:47Z)
+
+**Archivio** — apply reale completato, backup safe, rollback pronto. NON riaprire senza brief PM esplicito.
+
+**Mode**: `adventurer_class_slug_only` — **zero touch catalog `adventurer_classes`**.
+
+**Consegne**:
+- Backup completo pre-apply: `/app/memory/backups/round183c_prestart/` (mongodump gzip)
+- **Apply 496/496 adv**: 190 priest→paladin, 175 ranger→cacciatore_di_mostri, 128 warlock→cacciatore_del_vuoto, 3 berserker→warrior, 0 assassin→rogue
+- Metadati append-only per doc: `previous_class_slug`, `migration_round=R18.3c`, `migration_reason`, `migration_timestamp`, `career_history[]` embedded push, `class_name` aggiornato a display IT canonico
+- **Zero touch**: `role`, `class_role`, `primary_stat`, `secondary_stats`, base 5-stat, level, xp, grade, equipment, inventory, gold, dungeon/raid history, catalog `adventurer_classes`
+- Banner UI IT byte-exact + dismiss endpoint persistente (`GET/POST /api/guilds/me/migration-banner*`)
+- Audit event `R18_CLASS_ORPHAN_MIGRATION_APPLIED` (idempotente) + `R18_CLASS_ORPHAN_MIGRATION_ROLLED_BACK` in whitelist
+- Rollback script eseguibile: `/app/backend/app/scripts/round183c_migration_rollback.py`
+- Test 23/23 PASS. Regression cross-round **94/94 PASS**
+
+**Deliverable finali**:
+- `/app/memory/round183c_migration_apply_report.md`
+- `/app/memory/backups/round183c_prestart/` (mongodump + manifest.json)
+- `/app/backend/app/scripts/round183c_migration_apply.py`
+- `/app/backend/app/scripts/round183c_migration_rollback.py`
+- `/app/backend/tests/backend_round183c_migration_test.py` (23 test)
+- `/app/backend/app/guilds/routes.py` (endpoint banner GET + POST dismiss)
+- `/app/frontend/src/components/MigrationBannerR183c.jsx`
+- `/app/frontend/src/pages/Dashboard.jsx` (integrazione banner)
+- `/app/backend/app/admin/audit_routes.py` (whitelist +2 event types)
+
+**Guardrail rispettati**: Zero hard delete · Zero modifiche a level/xp/grade/equipment/inventory/stats/gold/history · Zero player-facing leak metadata · Zero modifiche econ/PvP/premium/drop/reward/combat math · Zero implementazione Trait/Fatigue/Cucina · Feature flag `R18_REWORK_ENABLED=false` invariato · Idempotenza confermata · IT byte-exact preservato · Rollback disponibile
+
+---
+
+## R18.3b.1 — Stat/Role Enum Reconciliation Matrix — OPEN PENDING 🔍
+
+**Status**: PENDING — non aprire senza brief PM esplicito. Registrato 2026-07-04T20:47Z.
+
+**Trigger**: R18.3b P0 answers PM (design intent) usano schema 6-stat + role composite, mentre backend live usa schema 5-stat + `VALID_ROLES` atomic. R18.3c ha aggirato il conflitto (mode split `adventurer_class_slug_only`), ma la decisione formale enum resta pending.
+
+**Scope R18.3b.1** (decision support only, ZERO implementazione):
+1. Analisi dettagliata delle 3 opzioni PM per stat system:
+   - **Opzione A**: adottare 6-stat (STR/DEX/CON/INT/WIS/CHA) — schema migration + backfill 15 catalog docs + regression
+   - **Opzione B**: mantenere 5-stat legacy (`strength/agility/intellect/endurance/faith`) — PM riscrive answers in enum-compatible
+   - **Opzione C**: mapping esplicito 6→5 canonicalizzato (`charisma→faith`, `dexterity→agility`, `constitution→endurance`, `intelligence→intellect`, `wisdom→?`) — mapping documented as sealed
+2. Analisi delle 2 opzioni per role enum:
+   - **Opzione X**: mantenere atomic (`Tank`, `DPS`, `Healer`, forse `Support`) — PM sceglie primario per composite
+   - **Opzione Y**: estendere enum a composite (`Healer/Tank hybrid`, `DPS/Utility`, ecc.) + validation aggiornata
+3. Impact tecnico per ogni opzione (righe codice toccate, backfill count, regression risk)
+4. Rischi player-facing (nessuno finché è audit-only, ma pipeline `adventurer_public` potrebbe leakare futuri campi)
+
+**Deliverable atteso**:
+- `/app/memory/round183b1_stat_role_enum_reconciliation_matrix.md`
+- `/app/memory/round183b1_stat_role_enum_reconciliation_matrix.json`
+
+**Vincoli**:
+- ❌ Zero DB write
+- ❌ Zero schema change
+- ❌ Zero implementazione
+- ❌ Zero decisione (PM must decide)
+- ✅ Solo scritture su `/app/memory/round183b1_*`
+
+**Dependencies**:
+- Blocca: R18.4 (item class-bound), R18.5 (talenti reali)
+- Non blocca: R18.3c (già completato in mode split)
+
