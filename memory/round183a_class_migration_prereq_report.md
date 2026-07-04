@@ -1,4 +1,4 @@
-# ROUND 18.3a — Class Migration Pre-Req Report — CLOSED ✅
+# ROUND 18.3a — Class Migration Pre-Req Report — CLOSED & SEALED ✅ (2026-07-04T20:08Z)
 
 **Round**: R18.3a · **Data**: 2026-07-04 · **Autore**: e1 main agent
 **Status**: PRE-REQ COMPLETO — seed classi + bridge item + dry-run migration corretto. **APPLY reale in R18.3.**

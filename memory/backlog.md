@@ -716,3 +716,66 @@ Nome proposto: `R18_FATIGUE_ENABLED` (default `false`).
 ### Dipendenze
 - Non blocca R18.2/R18.3/R18.4 (parallelo)
 - Bloccato da: decisione PM su 10 audit questions sopra + priorità vs R18.6 Dungeon/Raid Rebalance
+
+
+---
+
+## R18.3b — Class Design Decision Matrix — OPEN 🔍 (2026-07-04T20:12Z)
+
+**Status**: OPEN (decision support, audit-only). NON un round di implementazione — solo materiale per decisioni PM.
+
+**Deliverable**:
+- `/app/memory/round183b_class_design_decision_matrix.md` (406 righe, 26KB, 8 sezioni)
+- `/app/memory/round183b_class_design_decision_matrix.json` (16 chiavi top-level, 27 righe matrix, 8 overlaps, 20 PM questions)
+- `/app/backend/app/scripts/round183b_class_design_matrix_gen.py` (generator idempotente)
+
+**Contenuto principale**:
+- §1 Executive summary — 7 P0 domande bloccanti R18.3 apply
+- §2 Migration-critical classes (5 classi target) — opzioni ruolo A/B, stat A/B, armor, scudi, bridge pool, rischio player-facing
+- §3 Matrice completa 27 classi — 27/27 righe con stat model + armor + risorse + roles + live counterpart
+- §4 8 gruppi di sovrapposizioni analizzate (Mago vs Runista, 3 tank d10, 3 hunter, Artificiere vs Fabbro Arcano, Sognatore vs Pittore, Sciamano vs Druido, Mercante vs GdA, 3 knowledge)
+- §5 Stat model candidato (6-stat STR/DEX/CON/INT/WIS/CHA) — 27/27 classi mappate
+- §6 Armor + scudi candidati con distribuzione (H:4, M:5, L:15, N:3, TBD:0 armor · Sì:4, N:18, TBD:5 scudi)
+- §7 Risorse — 11 candidate uniche estratte, 0 classi con `TBD source_silent`
+- §8 20 domande PM per priorità (P0:7, P1:7, P2:3, P3:3)
+
+**Vincoli rispettati**:
+- ❌ Zero DB write (nemmeno index scriventi)
+- ❌ Zero migration
+- ❌ Zero seed
+- ❌ Zero UI player-facing
+- ❌ Zero item bridge nuovo
+- ❌ Zero talenti reali
+- ❌ Zero auto-equip / combat math / reward / drop / economia / PvP / premium
+- ❌ Zero decisioni sigillate (tutte le opzioni sono candidate)
+- ✅ Solo lettura da `source_materials/r18_27_class_sources/` + `round180b_27_class_canon_raw_data.json`
+- ✅ Solo scritture su `/app/memory/round183b_*`
+
+**Rischio principale identificato**:
+- Item pool `cacciatore_del_vuoto` (18 items) insufficiente per 128 adv migrated → mitigation in R18.4
+- 8 sovrapposizioni item pool duplicati → mitigation via P1 decisions
+- 17/27 classi senza live adventurers → richiede rappresentazione in recruitment
+- 11 risorse candidate → sistema combat troppo eterogeneo (P1-7 raccomanda max 6-8)
+- OCR sporco su 5 classi (scudi TBD) → P1-6
+
+**Next action**: PM risponde ordine raccomandato P0-1 (Paladino role) → P0-2 (CdM role) → P0-5 (CdV role) → P0-4 (3 hunter differentiation) → P0-3 (3 tank differentiation) → P0-6 → P0-7. Solo dopo P0 tutti risolti si può procedere con R18.3 apply.
+
+---
+
+## R18.3 — Class Migration Apply Reale — ⏸ DEFERRED (bloccato da R18.3b P0 decisioni PM)
+
+**Status**: DEFERRED (bloccato). Pre-req tecnico R18.3a DONE, ma decisione PM su role/stat/armor delle 5 migration-critical classes NON risolta.
+
+**Blockers**:
+- 7 domande P0 in R18.3b non risolte
+- Le 2 classi target R18.3a hanno `role='TBD'` + `role_pm_decision_pending=true`
+- Item pool coverage `cacciatore_del_vuoto` (18) potrebbe essere insufficiente per 128 adv
+
+**Cosa serve prima di riaprire**:
+1. PM risponde a P0-1 ... P0-7 in `/app/memory/round183b_class_design_decision_matrix.md`
+2. Backfill role/stat/armor sui 2 doc R18.3a (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) con valori sigillati
+3. Career_history snapshot policy attiva
+4. UI banner IT preparato
+5. Flip `is_playable=false → true` + `migration_target_only=true → false` post apply
+
+**NON eseguire senza brief PM esplicito post-R18.3b.**

@@ -1,4 +1,4 @@
-# ROUND 18.3a.1 HOTFIX — `/api/adventurer-classes` HTTP 500 Blocker Fix
+# ROUND 18.3a.1 HOTFIX — `/api/adventurer-classes` HTTP 500 Blocker Fix — CLOSED & SEALED ✅ (2026-07-04T20:08Z)
 
 **Round**: R18.3a.1 (hotfix di R18.3a) · **Data**: 2026-07-04T20:06Z · **Autore**: e1 main agent
 **Status**: HOTFIX APPLICATO ✅ — 3 fix chirurgici, 10 test aggiuntivi (71/71 regression), blocker rimosso.

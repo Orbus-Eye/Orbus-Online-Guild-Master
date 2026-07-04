@@ -1,0 +1,2075 @@
+{
+  "generated_at_utc": "2026-07-04T20:24:31.087724+00:00",
+  "round": "R18.3b",
+  "phase": "class_design_decision_matrix (audit-only, decision support)",
+  "authority": "PM-facing decision support — ZERO sealed decisions",
+  "constraints": [
+    "zero DB write",
+    "zero migration",
+    "zero seed",
+    "zero UI player-facing",
+    "zero item bridge nuovo",
+    "zero talenti reali",
+    "zero auto-equip/combat math modification",
+    "all options CANDIDATE — PM decides"
+  ],
+  "sources": {
+    "primary": "round180b_27_class_canon_raw_data.json",
+    "raw_pdfs_dir": "source_materials/r18_27_class_sources/",
+    "live_db_ref": "adventurer_classes + live_adv_distribution snapshot R18.0b"
+  },
+  "counts": {
+    "n_classes_total": 27,
+    "n_classes_with_live_counterpart": 9,
+    "n_classes_without_live": 18,
+    "n_classes_stat_model_filled": 27,
+    "n_classes_armor_tier_filled": 27,
+    "n_classes_with_tbd_source_silent_resources": 0,
+    "pm_questions_by_priority": {
+      "P0": 7,
+      "P1": 7,
+      "P2": 3,
+      "P3": 3
+    },
+    "overlaps_by_risk": {
+      "ALTO": 4,
+      "MEDIO": 4,
+      "BASSO": 0
+    },
+    "armor_distribution": {
+      "H_pesante": 4,
+      "M_media": 5,
+      "L_leggera": 15,
+      "N_nessuna": 3,
+      "TBD": 0
+    },
+    "shields_distribution": {
+      "Sì": 4,
+      "N": 18,
+      "TBD": 5
+    }
+  },
+  "migration_critical_classes": [
+    {
+      "slug": "paladino",
+      "name": "Paladino",
+      "legacy_mapping": "priest → paladin",
+      "orphans_to_migrate": 190,
+      "role_option_A": "Tank",
+      "role_option_B": "Healer",
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CHA",
+      "armor_tier": "H",
+      "shields": "Sì",
+      "resources_candidate": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "bridge_item_pool": 92,
+      "player_facing_migration_risk": "190 player vedranno la loro classe cambiare da 'priest' a 'Paladino' — banner UI IT necessario",
+      "pm_decision_required": "P0: role finale + stat primary + armor tier (opzioni A=Tank/STR, B=Healer/CHA)"
+    },
+    {
+      "slug": "guerriero",
+      "name": "Guerriero",
+      "legacy_mapping": "berserker → warrior",
+      "orphans_to_migrate": 3,
+      "role_option_A": "Tank",
+      "role_option_B": "DPS",
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CON",
+      "armor_tier": "H",
+      "shields": "Sì",
+      "resources_candidate": [
+        "mana",
+        "furia",
+        "carica"
+      ],
+      "bridge_item_pool": 69,
+      "player_facing_migration_risk": "3 player vedranno la loro classe cambiare da 'berserker' a 'Guerriero' — banner UI IT necessario",
+      "pm_decision_required": "P0: role finale + stat primary + armor tier (opzioni A=Tank/STR, B=DPS/CON)"
+    },
+    {
+      "slug": "ladro",
+      "name": "Ladro",
+      "legacy_mapping": "assassin → rogue",
+      "orphans_to_migrate": 0,
+      "role_option_A": "DPS",
+      "role_option_B": "Utility",
+      "stat_primary_A": "DEX",
+      "stat_primary_B": "INT",
+      "armor_tier": "L",
+      "shields": "N",
+      "resources_candidate": [
+        "carica",
+        "vuoto",
+        "rune"
+      ],
+      "bridge_item_pool": 31,
+      "player_facing_migration_risk": "Zero orphan (alias no-migration)",
+      "pm_decision_required": "P0: role finale + stat primary + armor tier (opzioni A=DPS/DEX, B=Utility/INT)"
+    },
+    {
+      "slug": "cacciatore_di_mostri",
+      "name": "Cacciatore di Mostri",
+      "legacy_mapping": "ranger → cacciatore_di_mostri",
+      "orphans_to_migrate": 175,
+      "role_option_A": "DPS",
+      "role_option_B": "Utility",
+      "stat_primary_A": "DEX",
+      "stat_primary_B": "WIS",
+      "armor_tier": "M",
+      "shields": "N",
+      "resources_candidate": [
+        "essenza",
+        "carica",
+        "carte"
+      ],
+      "bridge_item_pool": 31,
+      "player_facing_migration_risk": "175 player vedranno la loro classe cambiare da 'ranger' a 'Cacciatore di Mostri' — banner UI IT necessario",
+      "pm_decision_required": "P0: role finale + stat primary + armor tier (opzioni A=DPS/DEX, B=Utility/WIS)"
+    },
+    {
+      "slug": "cacciatore_del_vuoto",
+      "name": "Cacciatore del Vuoto",
+      "legacy_mapping": "warlock → cacciatore_del_vuoto",
+      "orphans_to_migrate": 128,
+      "role_option_A": "DPS",
+      "role_option_B": "Control",
+      "stat_primary_A": "INT",
+      "stat_primary_B": "CHA",
+      "armor_tier": "L",
+      "shields": "N",
+      "resources_candidate": [
+        "mana",
+        "vuoto"
+      ],
+      "bridge_item_pool": 18,
+      "player_facing_migration_risk": "128 player vedranno la loro classe cambiare da 'warlock' a 'Cacciatore del Vuoto' — banner UI IT necessario",
+      "pm_decision_required": "P0: role finale + stat primary + armor tier (opzioni A=DPS/INT, B=Control/CHA)"
+    }
+  ],
+  "matrix_27_classes": [
+    {
+      "pos": 1,
+      "name": "Alchimista",
+      "slug_candidate": "alchimista",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "alchimista",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d6",
+      "risorse_candidate": [
+        "ki",
+        "carica"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "DEX",
+      "stat_secondary": [
+        "WIS",
+        "CON"
+      ],
+      "stat_rationale": "d6 caster + carica risorsa → INT primary; DEX per bombe/pozioni physical",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "TBD",
+      "armor_note": "Base PDF menziona 'armature leggere' preliminare",
+      "live_counterpart": "alchemist",
+      "adv_live_count": 135,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 2,
+      "name": "Artificiere",
+      "slug_candidate": "artificiere",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "artificiere",
+      "archetipo": "Tra le fucine ruggenti, i laboratori illuminati da scintille e le biblioteche cariche di tomi arcani,",
+      "dadi_vita": "d6",
+      "risorse_candidate": [
+        "ki",
+        "carica",
+        "runa"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "DEX",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d6 tinker + carica/runa → INT ; costruzione fisica → DEX",
+      "armor_tier_candidate": "M",
+      "shields_candidate": "TBD",
+      "armor_note": "Costruzioni robotiche → medium armor plausible; TBD OCR",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 3,
+      "name": "Astrologo",
+      "slug_candidate": "astrologo",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "astrologo",
+      "archetipo": "frase scritta dagli dèi o da forze più antiche degli dèi stessi. Interpretare il firmamento significa",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "WIS",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "CHA"
+      ],
+      "stat_rationale": "d8 divinazione + carte/sangue → WIS insight ; INT lettura arcana",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Caster + carte → leggera consistent",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 4,
+      "name": "Bardo",
+      "slug_candidate": "bardo",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "bardo",
+      "archetipo": "combattimento, il loro fascino naturale e la loro creatività li rendono figure centrali nelle relazioni",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "vuoto",
+        "spiriti"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "CHA",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "DEX"
+      ],
+      "stat_rationale": "d6 support/control + vuoto/spiriti → CHA performance ; INT sapienza",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Legacy bard armor leggera",
+      "live_counterpart": "bard",
+      "adv_live_count": 177,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 5,
+      "name": "Burattinaio",
+      "slug_candidate": "burattinaio",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "burattinaio",
+      "archetipo": "Al livello 36, una volta al giorno può usare Sinfonia dei Fili: per 1 minuto, tutti i nemici entro 18",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "dominio",
+        "vuoto"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": false,
+        "Control": true,
+        "Summoner": true,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "DEX"
+      ],
+      "stat_rationale": "d8 summoner + dominio/vuoto → INT controllo ; CHA imposizione volontà",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Summoner tende leggera; TBD conferma OCR",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 6,
+      "name": "Cacciatore del Sangue",
+      "slug_candidate": "cacciatore_del_sangue",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "cacciatore_sangue",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "STR",
+      "stat_primary_B": "DEX",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d8 DPS + furia/sangue → STR raw damage ; DEX weapon versatility",
+      "armor_tier_candidate": "M",
+      "shields_candidate": "N",
+      "armor_note": "Hunter tende media; furia/sangue melee → medium",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 7,
+      "name": "Cacciatore del Vuoto",
+      "slug_candidate": "cacciatore_del_vuoto",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "cacciatore_vuoto",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d8",
+      "risorse_candidate": [
+        "mana",
+        "vuoto"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "DEX",
+        "WIS"
+      ],
+      "stat_rationale": "d8 DPS/Control + mana/vuoto → INT arcana ; CHA void bond (warlock lineage)",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Warlock lineage → leggera consistente",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": 18,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+    },
+    {
+      "pos": 8,
+      "name": "Cacciatore di Mostri",
+      "slug_candidate": "cacciatore_di_mostri",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "cacciatore_mostri",
+      "archetipo": "Da solo, è perfetto per sessioni investigative e contratti: seguire una pista, interrogare testimoni,",
+      "dadi_vita": "1d10",
+      "risorse_candidate": [
+        "essenza",
+        "carica",
+        "carte"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "DEX",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "STR",
+        "INT"
+      ],
+      "stat_rationale": "d10 DPS/Utility + essenza/carica/carte → DEX ranger lineage ; WIS hunt lore",
+      "armor_tier_candidate": "M",
+      "shields_candidate": "N",
+      "armor_note": "Ranger lineage → media consistent; d10 supporta",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": 31,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+    },
+    {
+      "pos": 9,
+      "name": "Cartografo",
+      "slug_candidate": "cartografo",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "cartografo",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "dominio"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "CHA"
+      ],
+      "stat_rationale": "d8 utility + carica/dominio → INT mapping ; WIS pathfinding",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Utility explorer → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 10,
+      "name": "Cavaliere della Morte",
+      "slug_candidate": "cavaliere_della_morte",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "cavaliere_morte",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d10",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "roles_possible": {
+        "Tank": true,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CON",
+      "stat_secondary": [
+        "INT"
+      ],
+      "stat_rationale": "d10 Tank/DPS + mana/furia/essenza → STR martial ; CON undead resilience",
+      "armor_tier_candidate": "H",
+      "shields_candidate": "Sì",
+      "armor_note": "Death knight canonico H+shield",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 11,
+      "name": "Cavaliere di Draghi",
+      "slug_candidate": "cavaliere_dei_draghi",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "cavaliere_draghi",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d10",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "dominio"
+      ],
+      "roles_possible": {
+        "Tank": true,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d10 Tank/DPS + mana/furia/dominio → STR mounted combat ; CHA dragon bond",
+      "armor_tier_candidate": "H",
+      "shields_candidate": "Sì",
+      "armor_note": "Dragon knight mounted H+shield",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 12,
+      "name": "Cronista",
+      "slug_candidate": "cronista",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "cronista",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "WIS"
+      ],
+      "stat_rationale": "d6 utility + carica/carte/sangue → INT knowledge ; CHA storytelling",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Scholar → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 13,
+      "name": "Druido",
+      "slug_candidate": "druido",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "druido",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d6",
+      "risorse_candidate": [
+        "mana",
+        "vuoto",
+        "spiriti"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": true,
+        "DPS": false,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": true
+      },
+      "stat_primary_A": "WIS",
+      "stat_primary_B": "CON",
+      "stat_secondary": [
+        "STR"
+      ],
+      "stat_rationale": "d6 healer/hybrid + mana/vuoto/spiriti → WIS nature attunement",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Legacy druid natural armor (leggera + forme animali)",
+      "live_counterpart": "druid",
+      "adv_live_count": 167,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 14,
+      "name": "Fabbro Arcano",
+      "slug_candidate": "fabbro_arcano",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "fabbro_arcano",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "rune"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "STR",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d8 support/utility + carica/rune → INT craft-lore ; STR forge labor",
+      "armor_tier_candidate": "M",
+      "shields_candidate": "TBD",
+      "armor_note": "Craft-heavy → media; TBD scudi",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 15,
+      "name": "Giocatore d'Azzardo",
+      "slug_candidate": "giocatore_dazzardo",
+      "slug_pm_override_from_r180b": true,
+      "raw_slug_r180b": "giocatore_azzardo",
+      "archetipo": "pericolosi, tornei, tavoli maledetti e patti con entità che giocano con anime, ricordi o anni di vita.",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": true
+      },
+      "stat_primary_A": "CHA",
+      "stat_primary_B": "DEX",
+      "stat_secondary": [
+        "INT"
+      ],
+      "stat_rationale": "d8 hybrid + carica/carte/sangue → CHA luck-charm ; DEX sleight",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Sleight-based → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 16,
+      "name": "Guerriero",
+      "slug_candidate": "guerriero",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "guerriero",
+      "archetipo": "Scegliendo la via del Guerriero/Barbaro, incarnerai sia la disciplina del combattente addestrato che la furia selvaggia dell’antico guerriero tribale. La tua forza nasce dall’unione tra tecniche precise, apprese sul campo di battaglia o nell’addestramento militare, e l’istinto esplosivo che ti trasforma in una forza inarrestabile quando la rabbia monta. Sai sfruttare armature e armi con competenza, ma il tuo vero potere emerge quando lasci che la tua furia ti guidi. In battaglia sei la tempesta:",
+      "dadi_vita": "d10",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "carica"
+      ],
+      "roles_possible": {
+        "Tank": true,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CON",
+      "stat_secondary": [
+        "DEX"
+      ],
+      "stat_rationale": "d10 Tank/DPS + mana/furia/carica → STR classic martial primary",
+      "armor_tier_candidate": "H",
+      "shields_candidate": "Sì",
+      "armor_note": "Warrior canonico H+shield",
+      "live_counterpart": "warrior",
+      "adv_live_count": 290,
+      "bridge_item_pool_r18_3a": 69,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)"
+      ],
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+    },
+    {
+      "pos": 17,
+      "name": "Ladro",
+      "slug_candidate": "ladro",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "ladro",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "vuoto",
+        "rune"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "DEX",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "CHA"
+      ],
+      "stat_rationale": "d8 DPS/Utility + carica/vuoto/rune → DEX classic rogue primary",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Rogue canonico leggera",
+      "live_counterpart": "rogue",
+      "adv_live_count": 229,
+      "bridge_item_pool_r18_3a": 31,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+    },
+    {
+      "pos": 18,
+      "name": "Mago",
+      "slug_candidate": "mago",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "mago",
+      "archetipo": "mondi interi. Il vostro potere deriva dallo studio approfondito, dai tomi polverosi delle biblioteche",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "furia",
+        "carica",
+        "dominio"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d6 DPS/Control + furia/carica/dominio → INT classic arcane primary",
+      "armor_tier_candidate": "N",
+      "shields_candidate": "N",
+      "armor_note": "Mage canonico no-armor (o robes → N)",
+      "live_counterpart": "mage",
+      "adv_live_count": 218,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 19,
+      "name": "Mercante",
+      "slug_candidate": "mercante",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "mercante",
+      "archetipo": "trasformato in potere. il Mercante piega il mondo attraverso contratti, favori, debiti, oggetti rari,",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "carica",
+        "sangue",
+        "vuoto"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": true,
+        "Hybrid": false
+      },
+      "stat_primary_A": "CHA",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "WIS"
+      ],
+      "stat_rationale": "d8 utility/support + carica/sangue/vuoto → CHA trade ; INT economics",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Merchant → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 20,
+      "name": "Monaco",
+      "slug_candidate": "monaco",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "monaco",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "furia",
+        "ki",
+        "essenza"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": true
+      },
+      "stat_primary_A": "DEX",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "STR"
+      ],
+      "stat_rationale": "d8 DPS/Hybrid + furia/ki/essenza → DEX martial arts ; WIS ki mastery",
+      "armor_tier_candidate": "N",
+      "shields_candidate": "N",
+      "armor_note": "Monk canonico unarmored (ki-based)",
+      "live_counterpart": "monk",
+      "adv_live_count": 162,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 21,
+      "name": "Negromante",
+      "slug_candidate": "negromante",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "negromante",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "essenza",
+        "dominio"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": false,
+        "Summoner": true,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d8 Summoner/DPS + essenza/dominio → INT arcana ; WIS death lore",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Necro classic leggera + robes",
+      "live_counterpart": "necromancer",
+      "adv_live_count": 0,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 22,
+      "name": "Paladino",
+      "slug_candidate": "paladino",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "paladino",
+      "archetipo": "difensori dei deboli, giustizieri contro il male e protettori della sacra armonia. Tuttavia, non tutti i",
+      "dadi_vita": "d10",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "roles_possible": {
+        "Tank": true,
+        "Healer": true,
+        "DPS": false,
+        "Support": false,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "STR",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "CON",
+        "WIS"
+      ],
+      "stat_rationale": "d10 Tank/Healer + mana/furia/essenza → STR martial ; CHA divine channeling (priest lineage)",
+      "armor_tier_candidate": "H",
+      "shields_candidate": "Sì",
+      "armor_note": "Paladin canonico H+shield (priest lineage → optional shield)",
+      "live_counterpart": "paladin",
+      "adv_live_count": 166,
+      "bridge_item_pool_r18_3a": 92,
+      "rischio_tecnico_r180b": "basso",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "role (Q7-Q24 deferred)"
+    },
+    {
+      "pos": 23,
+      "name": "Parassita",
+      "slug_candidate": "parassita",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "parassita",
+      "archetipo": "In gruppo, il Parassita è resistente, disturbante e adattabile. Può assorbire danni, rubare vitalità,",
+      "dadi_vita": "1d8",
+      "risorse_candidate": [
+        "mana",
+        "carica",
+        "dominio"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": false,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "CON",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "STR"
+      ],
+      "stat_rationale": "d8 DPS/Control + mana/carica/dominio → CON biomass host ; INT infestation control",
+      "armor_tier_candidate": "N",
+      "shields_candidate": "N",
+      "armor_note": "Biomass host → nessuna (integrata nel corpo)",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 24,
+      "name": "Pittore",
+      "slug_candidate": "pittore",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "pittore",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "essenza",
+        "carica",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "CHA",
+      "stat_primary_B": "INT",
+      "stat_secondary": [
+        "WIS"
+      ],
+      "stat_rationale": "d6 support/control + essenza/carica/sangue → CHA soul expression ; INT pigment arcana",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Artist → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 25,
+      "name": "Runista",
+      "slug_candidate": "runista",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "runista",
+      "archetipo": "delle rune: alcuni studiano le rune elementali, altri quelle protettive, altri ancora le rune proibite",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "mana",
+        "essenza",
+        "carica"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": true,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "INT",
+      "stat_primary_B": "WIS",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d6 support/DPS + mana/essenza/carica → INT rune-craft ; WIS ancient script",
+      "armor_tier_candidate": "M",
+      "shields_candidate": "TBD",
+      "armor_note": "Runecrafter → media plausible; TBD OCR",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 26,
+      "name": "Sciamano",
+      "slug_candidate": "sciamano",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "sciamano",
+      "archetipo": "Gli sciamani sono guide spirituali, intermediari tra il regno dei mortali e quello degli spiriti. Essi",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": true,
+        "DPS": false,
+        "Support": true,
+        "Control": false,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "WIS",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "CON"
+      ],
+      "stat_rationale": "d6 healer/support + mana/furia/essenza → WIS spirit ; CHA totem-charm",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "TBD",
+      "armor_note": "Legacy shaman leggera; scudi tribal TBD",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "medio",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    },
+    {
+      "pos": 27,
+      "name": "Sognatore",
+      "slug_candidate": "sognatore",
+      "slug_pm_override_from_r180b": false,
+      "raw_slug_r180b": "sognatore",
+      "archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "risorse_candidate": [
+        "carica",
+        "dominio",
+        "sangue"
+      ],
+      "roles_possible": {
+        "Tank": false,
+        "Healer": false,
+        "DPS": false,
+        "Support": true,
+        "Control": true,
+        "Summoner": false,
+        "Utility": false,
+        "Hybrid": false
+      },
+      "stat_primary_A": "WIS",
+      "stat_primary_B": "CHA",
+      "stat_secondary": [
+        "INT"
+      ],
+      "stat_rationale": "d6 control/support + carica/dominio/sangue → WIS oneiric ; CHA dream-manipulation",
+      "armor_tier_candidate": "L",
+      "shields_candidate": "N",
+      "armor_note": "Dreamweaver → leggera",
+      "live_counterpart": "NO_LIVE_MATCH",
+      "adv_live_count": null,
+      "bridge_item_pool_r18_3a": null,
+      "rischio_tecnico_r180b": "alto",
+      "dati_mancanti_r180b": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "pm_decision_pending_top1": "TBD"
+    }
+  ],
+  "overlaps_analysis": [
+    {
+      "group_id": "OL1",
+      "group_name": "Mago vs Runista",
+      "classes": [
+        "mago",
+        "runista"
+      ],
+      "level": "MEDIO",
+      "risk": "Mago = arcana pure caster (d6, INT), Runista = arcana rune-craft (d6, INT). Item pool arcana rischia duplicati.",
+      "differentiation_options": [
+        "Opz A — Mago = damage pure (evocazione/blast), Runista = support/utility (buff/ward via runes)",
+        "Opz B — Mago = mana pool tradizionale, Runista = rune-consuming (risorsa dedicata)",
+        "Opz C — Mago = single-target, Runista = area/persistent effect (rune inscritte)"
+      ],
+      "pm_question": "P1-1: Quale differenziazione per Mago vs Runista? (A/B/C/deferred)"
+    },
+    {
+      "group_id": "OL2",
+      "group_name": "Guerriero vs Paladino vs Cavaliere della Morte",
+      "classes": [
+        "guerriero",
+        "paladino",
+        "cavaliere_della_morte"
+      ],
+      "level": "ALTO",
+      "risk": "3 heavy melee STR-primary d10 armor pesante shield-yes. Rischio party composition ambigua: quale scegliere come Tank principale?",
+      "differentiation_options": [
+        "Opz A — Guerriero=Tank puro, Paladino=Tank/Healer hybrid, Cavaliere Morte=Tank/DPS con risorsa essenza",
+        "Opz B — Distinguere via risorsa: Guerriero=furia, Paladino=mana+essenza divina, CDM=essenza + curse mechanic",
+        "Opz C — Distinguere via alignment: Guerriero=neutral, Paladino=light, CDM=dark → tema visivo/narrativo"
+      ],
+      "pm_question": "P0-3: Differenziazione Guerriero/Paladino/Cavaliere Morte come Tank+DPS d10 STR-heavy (A/B/C)?"
+    },
+    {
+      "group_id": "OL3",
+      "group_name": "Cacciatore di Mostri vs Cacciatore del Sangue vs Cacciatore del Vuoto",
+      "classes": [
+        "cacciatore_di_mostri",
+        "cacciatore_del_sangue",
+        "cacciatore_del_vuoto"
+      ],
+      "level": "MEDIO",
+      "risk": "3 hunter archetypes. CdM=ranger lineage (DEX, d10, media armor), CdS=blood-magic DPS (STR/DEX, d8, media), CdV=warlock lineage (INT/CHA, d8, leggera). Rischio: item pool 'weapon+hunt gear' condiviso.",
+      "differentiation_options": [
+        "Opz A — CdM=ranged physical (bow/crossbow, DEX), CdS=melee physical + blood-consume (STR), CdV=arcane ranged + void-consume (INT)",
+        "Opz B — CdM=nature/beast focus, CdS=corruption/blood focus, CdV=void/eldritch focus — differenziazione tematica",
+        "Opz C — Item pool separati (già in R18.3a: 31 items CdM, 18 items CdV, blood pool TBD)"
+      ],
+      "pm_question": "P0-4: Differenziazione dei 3 cacciatori come archetype/stat/armor (A/B/C)?"
+    },
+    {
+      "group_id": "OL4",
+      "group_name": "Artificiere vs Fabbro Arcano",
+      "classes": [
+        "artificiere",
+        "fabbro_arcano"
+      ],
+      "level": "ALTO",
+      "risk": "2 tinker/craft classes con carica risorsa comune. Artificiere=Support/DPS d6 (INT/DEX), Fabbro Arcano=Support/Utility d8 (INT/STR). Rischio item pool 'crafted items' duplicato.",
+      "differentiation_options": [
+        "Opz A — Artificiere=combat automaton (turrets/robots active), Fabbro Arcano=item enhancement (buff pre-battle)",
+        "Opz B — Artificiere=DPS-focused tinker, Fabbro Arcano=pure utility craftsman (0 combat presence, party enabler)",
+        "Opz C — Fondere in una singola classe (mossa più drastica: -1 canonical class)"
+      ],
+      "pm_question": "P1-2: Differenziazione Artificiere vs Fabbro Arcano (A/B/C, C=merge)?"
+    },
+    {
+      "group_id": "OL5",
+      "group_name": "Sognatore vs Pittore",
+      "classes": [
+        "sognatore",
+        "pittore"
+      ],
+      "level": "MEDIO",
+      "risk": "2 abstract/psy caster d6 CHA/WIS. Sognatore=Control/Support (dream), Pittore=Support/Control (pigmenti-anima). Rischio: player confusion 'chi fa cosa mentale'.",
+      "differentiation_options": [
+        "Opz A — Sognatore=mental control (charm/sleep/illusion), Pittore=area buff/debuff via 'canvases'",
+        "Opz B — Sognatore=INT-based (arcane oneiric), Pittore=CHA-based (art-charisma buff)",
+        "Opz C — Merge in singola 'Artista dell'Anima' con 2 rami talenti"
+      ],
+      "pm_question": "P1-3: Differenziazione Sognatore vs Pittore (A/B/C, C=merge)?"
+    },
+    {
+      "group_id": "OL6",
+      "group_name": "Sciamano vs Druido",
+      "classes": [
+        "sciamano",
+        "druido"
+      ],
+      "level": "ALTO",
+      "risk": "2 nature/spirit healer. Druido=Healer/Hybrid d6 WIS (già live, druid, 167 adv), Sciamano=Healer/Support d6 WIS/CHA (nuova, 0 adv). Rischio: 167 druid live vs sciamano nuovo → chi ha priorità di feature?",
+      "differentiation_options": [
+        "Opz A — Druido=nature transformation (forme animali), Sciamano=totem/spirit-bond (evocazione spiriti immateriali)",
+        "Opz B — Druido=WIS-primary (nature), Sciamano=CHA-primary (spirit voice)",
+        "Opz C — Sciamano diventa specializzazione Druido (2 rami talenti) invece che classe separata"
+      ],
+      "pm_question": "P1-4: Differenziazione Druido (live 167 adv) vs Sciamano nuovo (A/B/C, C=spec merge)?"
+    },
+    {
+      "group_id": "OL7",
+      "group_name": "Mercante vs Giocatore d'Azzardo",
+      "classes": [
+        "mercante",
+        "giocatore_dazzardo"
+      ],
+      "level": "ALTO",
+      "risk": "2 economy/luck classes CHA-based d8. Rischio economico: entrambi possono manipolare drop/prezzi/oro → double abuse.",
+      "differentiation_options": [
+        "Opz A — Mercante=economia strategica (prezzi/inventario), GdA=combat luck/dice/carte (in-fight variance)",
+        "Opz B — Mercante=guild-level buff (income+), GdA=party-level buff (single-encounter variance)",
+        "Opz C — Bandire una delle due (Mercante o GdA) come classe player e ridurla a NPC"
+      ],
+      "pm_question": "P1-5: Differenziazione Mercante vs Giocatore d'Azzardo (A/B/C, C=demote NPC)?"
+    },
+    {
+      "group_id": "OL8",
+      "group_name": "Cartografo vs Cronista vs Astrologo",
+      "classes": [
+        "cartografo",
+        "cronista",
+        "astrologo"
+      ],
+      "level": "MEDIO",
+      "risk": "3 knowledge/utility. Cartografo=Utility/Support d8 (dominio/carica), Cronista=Support/Utility d6 (carte/sangue), Astrologo=Support/Control d8 (carte/sangue). Overlap su 'carte' risorsa.",
+      "differentiation_options": [
+        "Opz A — Cartografo=exploration (map bonus, world-tier), Cronista=lore/party-XP boost, Astrologo=predictions/buff",
+        "Opz B — Distinguere via risorsa unica: Cartografo=dominio, Cronista=sangue, Astrologo=carte (già preliminare)",
+        "Opz C — Merge 2 delle 3 (es. Cartografo+Cronista = 'Scholar' con 2 rami)"
+      ],
+      "pm_question": "P2-1: Differenziazione Cartografo/Cronista/Astrologo (A/B/C, C=merge scholar)?"
+    }
+  ],
+  "stat_model_candidate": {
+    "alchimista": {
+      "primary_A": "INT",
+      "primary_B": "DEX",
+      "secondary": [
+        "WIS",
+        "CON"
+      ],
+      "rationale": "d6 caster + carica risorsa → INT primary; DEX per bombe/pozioni physical"
+    },
+    "artificiere": {
+      "primary_A": "INT",
+      "primary_B": "DEX",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d6 tinker + carica/runa → INT ; costruzione fisica → DEX"
+    },
+    "astrologo": {
+      "primary_A": "WIS",
+      "primary_B": "INT",
+      "secondary": [
+        "CHA"
+      ],
+      "rationale": "d8 divinazione + carte/sangue → WIS insight ; INT lettura arcana"
+    },
+    "bardo": {
+      "primary_A": "CHA",
+      "primary_B": "INT",
+      "secondary": [
+        "DEX"
+      ],
+      "rationale": "d6 support/control + vuoto/spiriti → CHA performance ; INT sapienza"
+    },
+    "burattinaio": {
+      "primary_A": "INT",
+      "primary_B": "CHA",
+      "secondary": [
+        "DEX"
+      ],
+      "rationale": "d8 summoner + dominio/vuoto → INT controllo ; CHA imposizione volontà"
+    },
+    "cacciatore_del_sangue": {
+      "primary_A": "STR",
+      "primary_B": "DEX",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d8 DPS + furia/sangue → STR raw damage ; DEX weapon versatility"
+    },
+    "cacciatore_del_vuoto": {
+      "primary_A": "INT",
+      "primary_B": "CHA",
+      "secondary": [
+        "DEX",
+        "WIS"
+      ],
+      "rationale": "d8 DPS/Control + mana/vuoto → INT arcana ; CHA void bond (warlock lineage)"
+    },
+    "cacciatore_di_mostri": {
+      "primary_A": "DEX",
+      "primary_B": "WIS",
+      "secondary": [
+        "STR",
+        "INT"
+      ],
+      "rationale": "d10 DPS/Utility + essenza/carica/carte → DEX ranger lineage ; WIS hunt lore"
+    },
+    "cartografo": {
+      "primary_A": "INT",
+      "primary_B": "WIS",
+      "secondary": [
+        "CHA"
+      ],
+      "rationale": "d8 utility + carica/dominio → INT mapping ; WIS pathfinding"
+    },
+    "cavaliere_della_morte": {
+      "primary_A": "STR",
+      "primary_B": "CON",
+      "secondary": [
+        "INT"
+      ],
+      "rationale": "d10 Tank/DPS + mana/furia/essenza → STR martial ; CON undead resilience"
+    },
+    "cavaliere_dei_draghi": {
+      "primary_A": "STR",
+      "primary_B": "CHA",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d10 Tank/DPS + mana/furia/dominio → STR mounted combat ; CHA dragon bond"
+    },
+    "cronista": {
+      "primary_A": "INT",
+      "primary_B": "CHA",
+      "secondary": [
+        "WIS"
+      ],
+      "rationale": "d6 utility + carica/carte/sangue → INT knowledge ; CHA storytelling"
+    },
+    "druido": {
+      "primary_A": "WIS",
+      "primary_B": "CON",
+      "secondary": [
+        "STR"
+      ],
+      "rationale": "d6 healer/hybrid + mana/vuoto/spiriti → WIS nature attunement"
+    },
+    "fabbro_arcano": {
+      "primary_A": "INT",
+      "primary_B": "STR",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d8 support/utility + carica/rune → INT craft-lore ; STR forge labor"
+    },
+    "giocatore_dazzardo": {
+      "primary_A": "CHA",
+      "primary_B": "DEX",
+      "secondary": [
+        "INT"
+      ],
+      "rationale": "d8 hybrid + carica/carte/sangue → CHA luck-charm ; DEX sleight"
+    },
+    "guerriero": {
+      "primary_A": "STR",
+      "primary_B": "CON",
+      "secondary": [
+        "DEX"
+      ],
+      "rationale": "d10 Tank/DPS + mana/furia/carica → STR classic martial primary"
+    },
+    "ladro": {
+      "primary_A": "DEX",
+      "primary_B": "INT",
+      "secondary": [
+        "CHA"
+      ],
+      "rationale": "d8 DPS/Utility + carica/vuoto/rune → DEX classic rogue primary"
+    },
+    "mago": {
+      "primary_A": "INT",
+      "primary_B": "WIS",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d6 DPS/Control + furia/carica/dominio → INT classic arcane primary"
+    },
+    "mercante": {
+      "primary_A": "CHA",
+      "primary_B": "INT",
+      "secondary": [
+        "WIS"
+      ],
+      "rationale": "d8 utility/support + carica/sangue/vuoto → CHA trade ; INT economics"
+    },
+    "monaco": {
+      "primary_A": "DEX",
+      "primary_B": "WIS",
+      "secondary": [
+        "STR"
+      ],
+      "rationale": "d8 DPS/Hybrid + furia/ki/essenza → DEX martial arts ; WIS ki mastery"
+    },
+    "negromante": {
+      "primary_A": "INT",
+      "primary_B": "WIS",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d8 Summoner/DPS + essenza/dominio → INT arcana ; WIS death lore"
+    },
+    "paladino": {
+      "primary_A": "STR",
+      "primary_B": "CHA",
+      "secondary": [
+        "CON",
+        "WIS"
+      ],
+      "rationale": "d10 Tank/Healer + mana/furia/essenza → STR martial ; CHA divine channeling (priest lineage)"
+    },
+    "parassita": {
+      "primary_A": "CON",
+      "primary_B": "INT",
+      "secondary": [
+        "STR"
+      ],
+      "rationale": "d8 DPS/Control + mana/carica/dominio → CON biomass host ; INT infestation control"
+    },
+    "pittore": {
+      "primary_A": "CHA",
+      "primary_B": "INT",
+      "secondary": [
+        "WIS"
+      ],
+      "rationale": "d6 support/control + essenza/carica/sangue → CHA soul expression ; INT pigment arcana"
+    },
+    "runista": {
+      "primary_A": "INT",
+      "primary_B": "WIS",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d6 support/DPS + mana/essenza/carica → INT rune-craft ; WIS ancient script"
+    },
+    "sciamano": {
+      "primary_A": "WIS",
+      "primary_B": "CHA",
+      "secondary": [
+        "CON"
+      ],
+      "rationale": "d6 healer/support + mana/furia/essenza → WIS spirit ; CHA totem-charm"
+    },
+    "sognatore": {
+      "primary_A": "WIS",
+      "primary_B": "CHA",
+      "secondary": [
+        "INT"
+      ],
+      "rationale": "d6 control/support + carica/dominio/sangue → WIS oneiric ; CHA dream-manipulation"
+    }
+  },
+  "armor_shields_candidate": {
+    "alchimista": {
+      "tier": "L",
+      "scudi": "TBD",
+      "note": "Base PDF menziona 'armature leggere' preliminare"
+    },
+    "artificiere": {
+      "tier": "M",
+      "scudi": "TBD",
+      "note": "Costruzioni robotiche → medium armor plausible; TBD OCR"
+    },
+    "astrologo": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Caster + carte → leggera consistent"
+    },
+    "bardo": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Legacy bard armor leggera"
+    },
+    "burattinaio": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Summoner tende leggera; TBD conferma OCR"
+    },
+    "cacciatore_del_sangue": {
+      "tier": "M",
+      "scudi": "N",
+      "note": "Hunter tende media; furia/sangue melee → medium"
+    },
+    "cacciatore_del_vuoto": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Warlock lineage → leggera consistente"
+    },
+    "cacciatore_di_mostri": {
+      "tier": "M",
+      "scudi": "N",
+      "note": "Ranger lineage → media consistent; d10 supporta"
+    },
+    "cartografo": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Utility explorer → leggera"
+    },
+    "cavaliere_della_morte": {
+      "tier": "H",
+      "scudi": "Sì",
+      "note": "Death knight canonico H+shield"
+    },
+    "cavaliere_dei_draghi": {
+      "tier": "H",
+      "scudi": "Sì",
+      "note": "Dragon knight mounted H+shield"
+    },
+    "cronista": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Scholar → leggera"
+    },
+    "druido": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Legacy druid natural armor (leggera + forme animali)"
+    },
+    "fabbro_arcano": {
+      "tier": "M",
+      "scudi": "TBD",
+      "note": "Craft-heavy → media; TBD scudi"
+    },
+    "giocatore_dazzardo": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Sleight-based → leggera"
+    },
+    "guerriero": {
+      "tier": "H",
+      "scudi": "Sì",
+      "note": "Warrior canonico H+shield"
+    },
+    "ladro": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Rogue canonico leggera"
+    },
+    "mago": {
+      "tier": "N",
+      "scudi": "N",
+      "note": "Mage canonico no-armor (o robes → N)"
+    },
+    "mercante": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Merchant → leggera"
+    },
+    "monaco": {
+      "tier": "N",
+      "scudi": "N",
+      "note": "Monk canonico unarmored (ki-based)"
+    },
+    "negromante": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Necro classic leggera + robes"
+    },
+    "paladino": {
+      "tier": "H",
+      "scudi": "Sì",
+      "note": "Paladin canonico H+shield (priest lineage → optional shield)"
+    },
+    "parassita": {
+      "tier": "N",
+      "scudi": "N",
+      "note": "Biomass host → nessuna (integrata nel corpo)"
+    },
+    "pittore": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Artist → leggera"
+    },
+    "runista": {
+      "tier": "M",
+      "scudi": "TBD",
+      "note": "Runecrafter → media plausible; TBD OCR"
+    },
+    "sciamano": {
+      "tier": "L",
+      "scudi": "TBD",
+      "note": "Legacy shaman leggera; scudi tribal TBD"
+    },
+    "sognatore": {
+      "tier": "L",
+      "scudi": "N",
+      "note": "Dreamweaver → leggera"
+    }
+  },
+  "pm_questions": [
+    {
+      "id": "P0-1",
+      "priority": "P0",
+      "section": "§2",
+      "question": "Ruolo finale Paladino: Tank/Healer hybrid A o Healer/Tank B?",
+      "answer_format": "A / B / deferred",
+      "blocks": "R18.3 apply (190 priest orphan)"
+    },
+    {
+      "id": "P0-2",
+      "priority": "P0",
+      "section": "§2",
+      "question": "Ruolo finale Cacciatore di Mostri: DPS puro A o Ranger/Support B?",
+      "answer_format": "A / B / deferred",
+      "blocks": "R18.3 apply (175 ranger orphan)"
+    },
+    {
+      "id": "P0-3",
+      "priority": "P0",
+      "section": "§4 OL2",
+      "question": "Differenziazione Guerriero/Paladino/Cavaliere Morte come 3 tank-DPS d10 STR-heavy?",
+      "answer_format": "A (ruoli distinti) / B (risorse distinte) / C (alignment) / deferred",
+      "blocks": "R18.3 apply + R18.4 item class-bound"
+    },
+    {
+      "id": "P0-4",
+      "priority": "P0",
+      "section": "§4 OL3",
+      "question": "Differenziazione dei 3 cacciatori (di Mostri / del Sangue / del Vuoto)?",
+      "answer_format": "A (physical vs blood vs arcane) / B (tematica) / C (item-pool) / deferred",
+      "blocks": "R18.3 apply (303 hunter-ish orphan)"
+    },
+    {
+      "id": "P0-5",
+      "priority": "P0",
+      "section": "§2",
+      "question": "Ruolo finale Cacciatore del Vuoto: DPS/Caster A o Support/Control B?",
+      "answer_format": "A / B / deferred",
+      "blocks": "R18.3 apply (128 warlock orphan)"
+    },
+    {
+      "id": "P0-6",
+      "priority": "P0",
+      "section": "§5",
+      "question": "Stat primaria Paladino: STR (martial) A o CHA (divine channeling) B?",
+      "answer_format": "A / B / entrambe (dual-primary) / deferred",
+      "blocks": "R18.3 apply + R18.4 armor requirements"
+    },
+    {
+      "id": "P0-7",
+      "priority": "P0",
+      "section": "§6",
+      "question": "Armor tier finale Cacciatore di Mostri: Media (ranger lineage) o Leggera (agility)?",
+      "answer_format": "Media / Leggera / deferred",
+      "blocks": "R18.3 apply + R18.4 item catalog"
+    },
+    {
+      "id": "P1-1",
+      "priority": "P1",
+      "section": "§4 OL1",
+      "question": "Differenziazione Mago vs Runista (arcana caster overlap)?",
+      "answer_format": "A / B / C / deferred",
+      "blocks": "R18.4 item class-bound (arcana items)"
+    },
+    {
+      "id": "P1-2",
+      "priority": "P1",
+      "section": "§4 OL4",
+      "question": "Differenziazione Artificiere vs Fabbro Arcano (tinker overlap)?",
+      "answer_format": "A / B / C=merge / deferred",
+      "blocks": "R18.4 crafting items"
+    },
+    {
+      "id": "P1-3",
+      "priority": "P1",
+      "section": "§4 OL5",
+      "question": "Differenziazione Sognatore vs Pittore (abstract-psy overlap)?",
+      "answer_format": "A / B / C=merge / deferred",
+      "blocks": "R18.4 caster items"
+    },
+    {
+      "id": "P1-4",
+      "priority": "P1",
+      "section": "§4 OL6",
+      "question": "Differenziazione Druido (167 live) vs Sciamano nuovo?",
+      "answer_format": "A / B / C=spec merge / deferred",
+      "blocks": "R18.4 healer items + potential R18.3 druid impact"
+    },
+    {
+      "id": "P1-5",
+      "priority": "P1",
+      "section": "§4 OL7",
+      "question": "Differenziazione Mercante vs Giocatore d'Azzardo (economy/luck overlap)?",
+      "answer_format": "A / B / C=demote NPC / deferred",
+      "blocks": "R18.4 economy items"
+    },
+    {
+      "id": "P1-6",
+      "priority": "P1",
+      "section": "§6",
+      "question": "Scudi Sì/No per: Alchimista, Artificiere, Fabbro Arcano, Runista, Sciamano (TBD OCR)?",
+      "answer_format": "Sì / No / per-classe / deferred",
+      "blocks": "R18.4 item slot equipment"
+    },
+    {
+      "id": "P1-7",
+      "priority": "P1",
+      "section": "§7",
+      "question": "Risorse finali dominio + carica + essenza + vuoto + sangue + carte + spiriti + rune + furia + ki + mana → 11 candidate. Quali sigillare come canoniche (max 6-8 raccomandato)?",
+      "answer_format": "elenco slug sigillati / deferred",
+      "blocks": "R18.4 combat resource system"
+    },
+    {
+      "id": "P2-1",
+      "priority": "P2",
+      "section": "§4 OL8",
+      "question": "Differenziazione Cartografo vs Cronista vs Astrologo (knowledge overlap)?",
+      "answer_format": "A / B / C=merge scholar / deferred",
+      "blocks": "R18.5 talent branch overlap"
+    },
+    {
+      "id": "P2-2",
+      "priority": "P2",
+      "section": "§3",
+      "question": "3 rami talenti canonici per classe: nomi standard (es. per Paladino 'Vendetta', 'Devozione', 'Protezione')?",
+      "answer_format": "per-classe elenco / template comune / deferred",
+      "blocks": "R18.5 talent tree naming"
+    },
+    {
+      "id": "P2-3",
+      "priority": "P2",
+      "section": "§3",
+      "question": "Bonus preliminari 5 tier x 4 talenti per ramo: pattern (es. +Damage / +Utility / +Defensive)?",
+      "answer_format": "pattern / per-classe custom / deferred",
+      "blocks": "R18.5 talent bonus formula"
+    },
+    {
+      "id": "P3-1",
+      "priority": "P3",
+      "section": "§3",
+      "question": "Achievement dedicati per classi non-live (17/27 senza adv attuali) — priorità high o low?",
+      "answer_format": "high / low / per-classe / deferred",
+      "blocks": "R18.6+ achievement content"
+    },
+    {
+      "id": "P3-2",
+      "priority": "P3",
+      "section": "§3",
+      "question": "Set item cross-classe (es. 'Set del Cacciatore' per tutti e 3 i cacciatori) o item pool 100% separati?",
+      "answer_format": "cross / separati / deferred",
+      "blocks": "R18.7 item expansion"
+    },
+    {
+      "id": "P3-3",
+      "priority": "P3",
+      "section": "§5",
+      "question": "Naming stat: adottare 6-stat standard (STR/DEX/CON/INT/WIS/CHA) o mantenere schema legacy Orbus (Strength/Agility/Intellect/Endurance/Faith)?",
+      "answer_format": "6-stat / legacy 5-stat / mapping / deferred",
+      "blocks": "R18.X polish + adventurer_public serializer"
+    }
+  ],
+  "top_5_technical_risks": [
+    {
+      "rank": 1,
+      "risk": "Item pool bridge cacciatore_del_vuoto (18 items) insufficiente per 128 adv migrated",
+      "mitigation": "R18.4 espandere pool warlock/void items OR abbassare item-slot requirement per migration graduale"
+    },
+    {
+      "rank": 2,
+      "risk": "8 sovrapposizioni (Mago/Runista, 3 Tank d10, 3 Hunter, Artificiere/Fabbro, ecc.) generano item pool duplicati",
+      "mitigation": "R18.3b PM decisioni P1-1..P1-5 + R18.4 item-pool audit per rimuovere duplicati"
+    },
+    {
+      "rank": 3,
+      "risk": "17/27 classi senza live adventurers (0 baseline) → onboarding e recruitment devono creare rappresentazione",
+      "mitigation": "R18.3 apply + recruit generator adapt (deferred a decisione P0)"
+    },
+    {
+      "rank": 4,
+      "risk": "11 risorse candidate (mana/furia/carica/ki/carte/vuoto/sangue/essenza/dominio/rune/spiriti) → sistema combat troppo eterogeneo",
+      "mitigation": "P1-7 sigillare max 6-8 risorse canoniche in R18.5 pre-implementation"
+    },
+    {
+      "rank": 5,
+      "risk": "OCR sporco su alcuni PDF (armor_tier + scudi TBD per 5-7 classi)",
+      "mitigation": "R18.3b PM P1-6 chiarire scudi via testo diretto anziché tabelle formattate"
+    }
+  ],
+  "recommendation": {
+    "priority_order": [
+      "P0-1 (Paladino role) — 190 adv più grande gruppo migrato",
+      "P0-2 (Cacciatore di Mostri role) — 175 adv",
+      "P0-5 (Cacciatore del Vuoto role) — 128 adv",
+      "P0-4 (differenziazione 3 hunter) — sblocca item pool R18.4",
+      "P0-3 (differenziazione 3 tank) — sblocca item pool R18.4",
+      "P0-6 (stat primary Paladino) — decide 190 adv equip",
+      "P0-7 (armor CdM) — decide 175 adv equip"
+    ],
+    "rationale": "Rispondere P0-1 per primo perché blocca R18.3 apply per il gruppo più numeroso (190 priest → paladin). Poi P0-2 + P0-5 per completare il quadro dei 493 orphan migrated (fuori i 3 berserker + 0 assassin, già alias no-brainer). P0-4 + P0-3 poi risolvono item pool conflicts. P0-6 + P0-7 sono raffinamenti dettagliati."
+  },
+  "adv_live_distribution_snapshot": {
+    "paladin": 166,
+    "priest": 190,
+    "berserker": 3,
+    "ranger": 175,
+    "mage": 218,
+    "bard": 177,
+    "warrior": 290,
+    "monk": 162,
+    "rogue": 229,
+    "druid": 167,
+    "warlock": 128,
+    "alchemist": 135,
+    "recruit_unassigned": 85
+  }
+}
