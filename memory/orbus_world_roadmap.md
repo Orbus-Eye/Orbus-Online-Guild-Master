@@ -338,6 +338,29 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
+## R17.3 — Endgame & Class Depth — OPEN (Step 2 in-progress: D + C1P1 + E CLOSED pre-sealing, Step 3+ deferred) ⏳ (2026-07-04T15:10Z)
+
+**Step 1 (audit-only)**: `/app/memory/round173_step1_audit.md` ✅ CLOSED
+
+**Step 2 (D + C1P1 + E)**: `/app/memory/round173_step2_report.md` ⏳ **CLOSED pre-sealing** — awaiting `e1_tester` E2E validation prima del sealing formale.
+
+**Consegne Step 2**:
+- ✅ **D** Tooltip Lv2 → mapping esteso Lv 2/5/6/8 (Missioni Risorse + Forgia Leg + Arfus + Spec). Sorgente unica `MIN_GUILD_LEVEL` da 4 moduli.
+- ✅ **C1P1** Class coverage patch (20 item, bucket 1/3/5/8, P-A approvato): monk accessory 1→5, warlock 4/3/3→6/6/6, alchemist 4/3/3→6/6/6. Snapshot `round173step2_c1p1_snapshot.json` sha256=`ee3e5d47…`. Idempotenza confermata.
+- ✅ **E** CTA class-fit balancing → `?auto=classfit` in `ExpeditionNew.jsx` con role mapping 14 classi (Tank/Healer/Support/DPS) + fallback graceful. CTA testo IT "Riprova con squadra bilanciata" in `ExpeditionReport.jsx`.
+- ✅ **T-A** upgrade testo CTA da "team più forte" → "squadra bilanciata" (grep verify: 0 residui).
+
+**Test**: pytest R17.1 13/13 PASS · Auto-Equip live E2E su 3 classi (monk +11, warlock +6, alchemist +6) · dry-run+apply pattern R16.5.4c rispettato.
+
+**Guardrail**: NO Legendary · NO power creep (verifica programmatica) · NO hard delete · NO modifiche drop/economia/PvP/premium · Solo `db.items.insert_one × 20`.
+
+**Deferred Step 3+**:
+- **A** Bridge Raids Lv12-17 (5 raid: sunken-vault, whispering-arboretum, shattered-mint, hollow-choir, starfall-reliquary)
+- **B** Endgame Lv15-20 (3 dungeon: void-cradle, moonshadow-crypt, astral-lens) + 10-15 achievement endgame + B1 material sink
+- **D** estensioni certezza MEDIA/BASSA (PvP continentale, site contracts, territory) — richiedono audit code path dedicato
+
+---
+
 ## Round 17.3 — Endgame & Class Depth — OPEN (Step 1 audit-only) 🔍 (2026-07-04)
 
 > **Status**: aperto Step 1 audit-only 2026-07-04. PM approva "A+i": procedere con audit design PRIMA di qualsiasi apply. Nessun seed, nessuna modifica reward/drop/economia in Step 1.

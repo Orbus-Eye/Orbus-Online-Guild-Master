@@ -378,7 +378,45 @@ Sigillato definitivamente. PM approva A+i post-hotfix Auto-Equip UI parity + `e1
 
 ---
 
-## R17.3 — Endgame & Class Depth — OPEN (Step 1 audit-only) 🔍 (2026-07-04)
+## R17.3 — Endgame & Class Depth — OPEN (Step 2 CLOSED pre-sealing) ⏳ (2026-07-04T15:10Z)
+
+### Step 2 (D + C1P1 + E) — CLOSED pre-sealing
+
+**Deliverable**: `/app/memory/round173_step2_report.md`. Awaiting `e1_tester` E2E prima del sealing formale.
+
+- ✅ **D** Tooltip Lv2 → mapping Lv 2/5/6/8 (Missioni Risorse / Forgia Leg / Arfus / Spec). Sorgente unica `MIN_GUILD_LEVEL`.
+- ✅ **C1P1** Class coverage patch **20 item** bucket 1/3/5/8 (P-A approvato): monk accessory 1→5 · warlock 4/3/3→6/6/6 · alchemist 4/3/3→6/6/6. Idempotenza confermata. Snapshot `round173step2_c1p1_snapshot.json` sha256=`ee3e5d47…`.
+- ✅ **E** CTA class-fit `?auto=classfit` → role mapping 14 classi + fallback graceful.
+- ✅ **T-A** upgrade CTA testo "team più forte" → "**squadra bilanciata**".
+
+**Test**: pytest R17.1 13/13 PASS · Auto-Equip live E2E su Monk/Warlock/Alchemist (score +11/+6/+6) · dry-run+apply pattern R16.5.4c.
+
+**Guardrail**: 0 Legendary · 0 power creep · 0 hard delete · 0 modifiche drop/economia/PvP/premium. Solo `db.items.insert_one × 20`.
+
+### Step 3+ (deferred)
+
+- **A Bridge Raids Lv12-17**: 5 raid intermedi (sunken-vault, whispering-arboretum, shattered-mint, hollow-choir, starfall-reliquary). Rec power ≤ 780 (no creep vs endgame 800/900/1400).
+- **B Endgame Lv15-20**: 3 dungeon (void-cradle Lv18 · moonshadow-crypt Lv19 · astral-lens Lv20) + 10-15 achievement endgame + B1 material sink.
+- **D estensioni certezza MEDIA/BASSA**: PvP continentale + site contracts + territory upgrade tooltip (richiedono audit code path dedicato).
+- **CTA class-fit v2**: server-side preset per share URL / raid preset (opzionale se PM approva).
+
+### Sub-task R17.3 P2 — Mini-audit funnel Lv1→Lv2 (post-Step 2 D)
+
+**Obiettivo**: misurare se il tooltip "Missioni Risorse al Lv 2" aumenta il passaggio Lv1→Lv2 Prestigio.
+
+**Metriche via `audit_log` esistente** (no nuovo schema):
+- Quante nuove gilde vedono tooltip Lv 2 (`guild_level == 1` che consultano `/expeditions/{id}` con `guild_prestige_delta.next_unlock.level == 2`).
+- Quante arrivano a Lv 2 (`FIRST_PRESTIGE_GAINED` audit event o `guild_level >= 2` snapshot).
+- Tempo medio Lv1→Lv2 (delta `guild.created_at` vs prima transizione a Lv 2).
+- Quante avviano una resource mission dopo Lv 2 (`db.resource_missions` filtro `started_at >= first_lv2_at`).
+
+**Priority**: P2 — non blocca Step 3.
+**Costo**: zero aggiuntivo (query aggregate su audit_log + resource_missions esistenti).
+**Trigger analisi**: 2-4 settimane post-sealing R17.3 Step 2 (attesa cohort sufficiente).
+
+---
+
+## R17.3 — Endgame & Class Depth — Step 1 audit archived (superato)
 
 **Status**: aperto Step 1 audit-only 2026-07-04. PM approva "A+i": procedere con audit design PRIMA di qualsiasi apply. Nessun seed, nessuna modifica reward/drop/economia in Step 1.
 

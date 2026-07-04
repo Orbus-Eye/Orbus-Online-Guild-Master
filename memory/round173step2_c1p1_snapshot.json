@@ -1,0 +1,569 @@
+{
+  "generated_at": "2026-07-04T15:02:58.416116+00:00",
+  "round": "R17.3-Step2-C1P1",
+  "item_count": 20,
+  "slugs": [
+    "monk_jade_cord",
+    "monk_serpent_anklet",
+    "monk_mantra_bead",
+    "monk_thousand_hands_bracer",
+    "warlock_apprentice_grimoire",
+    "warlock_pact_binder",
+    "warlock_hex_focus_robe",
+    "warlock_shadow_mail",
+    "warlock_covenant_robe",
+    "warlock_fetish_charm",
+    "warlock_imp_collar",
+    "warlock_black_ring",
+    "alchemist_glass_wand",
+    "alchemist_catalyst_flask",
+    "alchemist_brewers_apron",
+    "alchemist_quicksilver_vest",
+    "alchemist_philosophers_plate",
+    "alchemist_brew_belt",
+    "alchemist_catalyst_ring",
+    "alchemist_golden_vial"
+  ],
+  "items": [
+    {
+      "slug": "monk_jade_cord",
+      "name": "Cordone di Giada",
+      "item_type": "accessory",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "monk"
+      ],
+      "class_tags": [
+        "monk"
+      ],
+      "stat_tags": [
+        "agility"
+      ],
+      "equipment_tags": [
+        "cord",
+        "natural",
+        "light"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "agility_bonus": 1
+    },
+    {
+      "slug": "monk_serpent_anklet",
+      "name": "Cavigliera del Serpente",
+      "item_type": "accessory",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 3,
+      "recommended_classes": [
+        "monk"
+      ],
+      "class_tags": [
+        "monk"
+      ],
+      "stat_tags": [
+        "agility"
+      ],
+      "equipment_tags": [
+        "anklet",
+        "natural",
+        "light"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "agility_bonus": 2
+    },
+    {
+      "slug": "monk_mantra_bead",
+      "name": "Grano da Mantra",
+      "item_type": "accessory",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 5,
+      "recommended_classes": [
+        "monk"
+      ],
+      "class_tags": [
+        "monk"
+      ],
+      "stat_tags": [
+        "agility",
+        "endurance"
+      ],
+      "equipment_tags": [
+        "bead",
+        "arcane",
+        "light"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "agility_bonus": 2,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "monk_thousand_hands_bracer",
+      "name": "Bracciale delle Mille Mani",
+      "item_type": "accessory",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "power_score": 6,
+      "recommended_classes": [
+        "monk"
+      ],
+      "class_tags": [
+        "monk"
+      ],
+      "stat_tags": [
+        "agility",
+        "endurance"
+      ],
+      "equipment_tags": [
+        "bracer",
+        "martial",
+        "medium"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "agility_bonus": 3,
+      "endurance_bonus": 2
+    },
+    {
+      "slug": "warlock_apprentice_grimoire",
+      "name": "Grimorio dell'Apprendista",
+      "item_type": "weapon",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "warlock_pact_binder",
+      "name": "Legatore del Patto",
+      "item_type": "weapon",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "weapon_tags": [
+        "tome",
+        "arcane"
+      ],
+      "intellect_bonus": 2,
+      "faith_bonus": 1
+    },
+    {
+      "slug": "warlock_hex_focus_robe",
+      "name": "Veste del Focus Malèfico",
+      "item_type": "armor",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 2,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "cloth",
+        "arcane",
+        "light"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "warlock_shadow_mail",
+      "name": "Cotta d'Ombra",
+      "item_type": "armor",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 3,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "cloth",
+        "dark",
+        "medium"
+      ],
+      "intellect_bonus": 2,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "warlock_covenant_robe",
+      "name": "Veste del Vecchio Patto",
+      "item_type": "armor",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "cloth",
+        "arcane",
+        "medium"
+      ],
+      "intellect_bonus": 2,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "warlock_fetish_charm",
+      "name": "Feticcio Malevolo",
+      "item_type": "accessory",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [
+        "trinket",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "warlock_imp_collar",
+      "name": "Collare dell'Imp",
+      "item_type": "accessory",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 3,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [
+        "trinket",
+        "dark"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "warlock_black_ring",
+      "name": "Anello del Nero Patto",
+      "item_type": "accessory",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 5,
+      "recommended_classes": [
+        "warlock"
+      ],
+      "class_tags": [
+        "warlock"
+      ],
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "equipment_tags": [
+        "ring",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "intellect_bonus": 2,
+      "faith_bonus": 1
+    },
+    {
+      "slug": "alchemist_glass_wand",
+      "name": "Bacchetta di Vetro",
+      "item_type": "weapon",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "weapon_tags": [
+        "focus",
+        "arcane"
+      ],
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "alchemist_catalyst_flask",
+      "name": "Fiala del Catalizzatore",
+      "item_type": "weapon",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "weapon_tags": [
+        "focus",
+        "arcane"
+      ],
+      "intellect_bonus": 2,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "alchemist_brewers_apron",
+      "name": "Grembiule del Distillatore",
+      "item_type": "armor",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 2,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "cloth",
+        "artisan",
+        "light"
+      ],
+      "intellect_bonus": 1
+    },
+    {
+      "slug": "alchemist_quicksilver_vest",
+      "name": "Corpetto Mercuriale",
+      "item_type": "armor",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 3,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "cloth",
+        "artisan",
+        "medium"
+      ],
+      "intellect_bonus": 2,
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "alchemist_philosophers_plate",
+      "name": "Placca del Filosofo",
+      "item_type": "armor",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 4,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "armor_tags": [
+        "leather",
+        "artisan",
+        "medium"
+      ],
+      "intellect_bonus": 1,
+      "endurance_bonus": 2
+    },
+    {
+      "slug": "alchemist_brew_belt",
+      "name": "Cintura Distillante",
+      "item_type": "accessory",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "power_score": 1,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "endurance"
+      ],
+      "equipment_tags": [
+        "belt",
+        "artisan"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "endurance_bonus": 1
+    },
+    {
+      "slug": "alchemist_catalyst_ring",
+      "name": "Anello Catalitico",
+      "item_type": "accessory",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "power_score": 3,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect"
+      ],
+      "equipment_tags": [
+        "ring",
+        "arcane"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "intellect_bonus": 2
+    },
+    {
+      "slug": "alchemist_golden_vial",
+      "name": "Fiala d'Oro",
+      "item_type": "accessory",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "power_score": 5,
+      "recommended_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "equipment_tags": [
+        "trinket",
+        "artisan"
+      ],
+      "is_active": true,
+      "affects_combat": true,
+      "seed_source": "round173_class_coverage_step2",
+      "intellect_bonus": 2,
+      "endurance_bonus": 1
+    }
+  ]
+}
