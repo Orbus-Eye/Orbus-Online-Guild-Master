@@ -1214,8 +1214,13 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
         }
 
         # ROUND 17.2 P1 — Prestigio next reward tooltip.
-        # Sorgente unica: costanti backend (`MIN_GUILD_LEVEL`) dei moduli
-        # feature-gated. NO hardcode duplicato.
+        # ROUND 17.3 Step 2 D — Esteso a Lv2 Missioni Risorse (nuovo primo
+        # step post-onboarding). Sorgente unica: costanti backend
+        # (`MIN_GUILD_LEVEL`) dei moduli feature-gated. NO hardcode duplicato.
+        try:
+            from app.resources import MIN_GUILD_LEVEL as _RES_LVL
+        except Exception:
+            _RES_LVL = 2
         try:
             from app.legendary_forge import MIN_GUILD_LEVEL as _LF_LVL
         except Exception:
@@ -1229,6 +1234,7 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
         except Exception:
             _GS_LVL = 8
         _unlocks = [
+            (_RES_LVL, "Missioni Risorse"),
             (_LF_LVL, "Forgia Leggendaria"),
             (_AF_LVL, "Forgia di Arfus"),
             (_GS_LVL, "Specializzazione della Gilda"),

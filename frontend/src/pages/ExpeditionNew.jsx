@@ -163,27 +163,134 @@ export default function ExpeditionNew() {
 
     const minAdvLevel = dungeon?.min_adventurer_level ?? 1;
 
-    // ROUND 17.1b P1.4 — Auto-select top-N adventurers by power_score when
-    // arriving via `?auto=strongest` (from the fallback CTA "Riprova con team
-    // più forte"). NO hidden boost, NO reward tweak — pure UX pre-selection.
+    // ROUND 17.3 Step 2 E — Class-fit / role-balanced team selection.
+    // Estende R17.1b P1.4: oltre a `?auto=strongest` (pure-power) supporta
+    // `?auto=classfit` che considera class-fit primary/secondary stat +
+    // role balance (Tank/Healer/DPS). NO hidden boost, NO reward tweak —
+    // solo UX pre-selection.
+    //
+    // Role mapping (14 classi da `adventurer_classes` catalog):
+    //   Tank    → warrior, paladin
+    //   Healer  → priest, druid
+    //   Support → bard
+    //   DPS     → berserker, mage, necromancer, warlock, alchemist,
+    //             assassin, ranger, rogue, monk
+    //
+    // Ideal role mix (parametrico su team_size):
+    //   3-player: [Tank, Healer, DPS]  (fallback: any DPS)
+    //   5-player: [Tank, Healer, DPS, DPS, DPS]
+    //   Others:  Tank + Healer + rest DPS
+    const ROLE_TANK = new Set(["warrior", "paladin"]);
+    const ROLE_HEALER = new Set(["priest", "druid"]);
+    const ROLE_SUPPORT = new Set(["bard"]);
+    const classToRole = (adv) => {
+        const slug = (adv?.class_slug || adv?.class_name || "").toLowerCase();
+        if (ROLE_TANK.has(slug)) return "Tank";
+        if (ROLE_HEALER.has(slug)) return "Healer";
+        if (ROLE_SUPPORT.has(slug)) return "Support";
+        return "DPS";
+    };
+    const idealRoleMix = (size) => {
+        if (size <= 0) return [];
+        if (size === 1) return ["DPS"];
+        if (size === 2) return ["Tank", "Healer"];
+        // 3+: 1 Tank, 1 Healer, rest DPS.
+        const mix = ["Tank", "Healer"];
+        for (let i = 2; i < size; i++) mix.push("DPS");
+        return mix;
+    };
+
+    // ROUND 17.1b P1.4 (existing) + R17.3 Step 2 E (new classfit).
     useEffect(() => {
         const autoParam = searchParams.get("auto");
-        if (autoParam !== "strongest" || autoLoadedRef.current) return;
+        if (!autoParam || autoLoadedRef.current) return;
         if (!dungeon || advs.length === 0) return;
         const size = dungeon?.required_team_size || 3;
-        // Filter available + level-compatible, then rank by power_score.
-        const eligible = advs
+
+        // Filter available + level-compatible (shared by both modes).
+        const pool = advs
             .filter((a) => a.is_available !== false)
-            .filter((a) => !isAdventurerUnderLeveled(a, minAdvLevel))
-            .sort((x, y) => (Number(y.power_score) || 0) - (Number(x.power_score) || 0))
-            .slice(0, size);
-        if (eligible.length > 0) {
+            .filter((a) => !isAdventurerUnderLeveled(a, minAdvLevel));
+
+        if (pool.length === 0) {
             autoLoadedRef.current = true;
-            setSelected(eligible);
-            toast.success(
-                `Squadra suggerita: i ${eligible.length} avventurieri con il potere più alto.`,
-                { duration: 4000 }
+            toast.error(
+                "Non hai ancora una squadra adatta. Recluta o migliora altri avventurieri prima di riprovare.",
+                { duration: 5000 }
             );
+            return;
+        }
+
+        // Mode 1: strongest (pure-power, R17.1b fallback CTA).
+        if (autoParam === "strongest") {
+            const eligible = pool
+                .slice()
+                .sort((x, y) => (Number(y.power_score) || 0) - (Number(x.power_score) || 0))
+                .slice(0, size);
+            if (eligible.length > 0) {
+                autoLoadedRef.current = true;
+                setSelected(eligible);
+                toast.success(
+                    `Squadra suggerita: i ${eligible.length} avventurieri con il potere più alto.`,
+                    { duration: 4000 }
+                );
+            }
+            return;
+        }
+
+        // Mode 2: classfit (R17.3 Step 2 E — role-balanced).
+        if (autoParam === "classfit") {
+            if (pool.length < size) {
+                // Fallback: not enough available → pure-power on what we have.
+                autoLoadedRef.current = true;
+                const fallback = pool
+                    .slice()
+                    .sort((x, y) => (Number(y.power_score) || 0) - (Number(x.power_score) || 0))
+                    .slice(0, size);
+                setSelected(fallback);
+                toast.info(
+                    "Non abbastanza avventurieri disponibili per un team bilanciato. Selezione pura per potere.",
+                    { duration: 5000 }
+                );
+                return;
+            }
+            const roles = idealRoleMix(size);
+            const team = [];
+            const remaining = pool.slice();
+            const nameList = [];
+            for (const target of roles) {
+                let candidates = remaining.filter((a) => classToRole(a) === target);
+                if (candidates.length === 0) candidates = remaining.slice();
+                candidates.sort(
+                    (x, y) => (Number(y.power_score) || 0) - (Number(x.power_score) || 0)
+                );
+                const pick = candidates[0];
+                if (!pick) break;
+                team.push(pick);
+                nameList.push(pick.name || pick.class_name || pick.id);
+                const idx = remaining.findIndex((r) => r.id === pick.id);
+                if (idx >= 0) remaining.splice(idx, 1);
+            }
+            if (team.length === size) {
+                autoLoadedRef.current = true;
+                setSelected(team);
+                toast.success(
+                    `Squadra suggerita: ${nameList.join(", ")}.`,
+                    {
+                        description:
+                            "Scelti perché hanno il livello richiesto e il potere migliore per questa spedizione. Composizione bilanciata (Tank / Healer / DPS).",
+                        duration: 6000,
+                    }
+                );
+            } else {
+                autoLoadedRef.current = true;
+                toast.info(
+                    "Non hai ancora una squadra bilanciata. Selezione parziale per potere.",
+                    { duration: 5000 }
+                );
+                setSelected(team);
+            }
+            return;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, dungeon, advs, minAdvLevel]);

@@ -412,17 +412,18 @@ export default function ExpeditionReport() {
                                 <span className="text-amber font-semibold">+{fallback_reward.prestige_xp} Prestigio di Gilda</span>
                             </li>
                         </ul>
-                        {/* ROUND 17.1b P1.4 — CTA "Riprova con team più forte" */}
+                        {/* ROUND 17.1b P1.4 — CTA "Riprova con team più forte"
+                            ROUND 17.3 Step 2 E — upgraded to classfit (role-balanced) */}
                         <div className="mt-4 pt-3 border-t border-amber/30">
                             <Link
-                                to="/expeditions/new?dungeon=training-yard&auto=strongest"
+                                to="/expeditions/new?dungeon=training-yard&auto=classfit"
                                 data-testid="report-fallback-retry-cta"
                                 className="inline-block text-xs tracking-wider border border-amber text-amber px-3 py-2 rounded-sm hover:bg-amber hover:text-background transition-colors"
                             >
-                                🎯 Riprova con team più forte →
+                                🎯 Riprova con squadra bilanciata →
                             </Link>
                             <div className="mt-2 text-[11px] text-muted-foreground">
-                                Ti proponiamo i 3 avventurieri con il potere più alto tra quelli disponibili. Nessun bonus nascosto, solo una selezione ottimale.
+                                Ti proponiamo una squadra bilanciata (Tank / Healer / DPS) tra gli avventurieri disponibili al livello richiesto. Nessun bonus nascosto, solo una selezione ottimale.
                             </div>
                         </div>
                     </section>
