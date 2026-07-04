@@ -1,0 +1,1526 @@
+{
+  "round": "R18.0",
+  "generated_at_utc": "2026-07-04T16:10:00Z",
+  "scope": "audit-only, read-only, no implementation",
+  "classes": [
+    {
+      "id": "ba0362b6-e69f-4136-9600-1d95ea6fbe05",
+      "slug": "alchemist",
+      "name": "Alchemist",
+      "display_name_it": "Alchimista",
+      "name_en": "Alchemist",
+      "role": "DPS",
+      "secondary_role": "Support",
+      "primary_stat": "intellect",
+      "secondary_stats": [
+        "agility",
+        "endurance"
+      ],
+      "description": "Pragmatic scholar who turns herbs, minerals and essences into weapons and cures.",
+      "description_it": "L'Alchimista trasforma erbe, minerali e essenze in armi e cure. Lancia bombe, distilla veleni, prepara elisir. Studioso pragmatico, sfrutta la chimica più che la magia pura.",
+      "allowed_weapon_tags": [
+        "dagger",
+        "tome",
+        "alchemical_flask"
+      ],
+      "allowed_armor_tags": [
+        "light",
+        "robe"
+      ],
+      "base_strength": 3,
+      "base_agility": 6,
+      "base_intellect": 9,
+      "base_endurance": 6,
+      "base_faith": 4,
+      "is_active": true,
+      "is_base_class": true,
+      "is_specialization": false,
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5
+      },
+      "round_intro": "16.0.1",
+      "created_at": "2026-07-01T14:30:43.203586+00:00",
+      "updated_at": "2026-07-01T14:30:43.203586+00:00",
+      "is_test": false
+    },
+    {
+      "slug": "assassin",
+      "base_agility": 10,
+      "base_endurance": 3,
+      "base_faith": 1,
+      "base_intellect": 4,
+      "base_strength": 6,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A silent killer who waits for the one perfect strike — and never the second.",
+      "id": "0a5cb70d-4e82-4549-8084-0cf52feb3187",
+      "is_active": false,
+      "name": "Assassin",
+      "role": "DPS",
+      "updated_at": "2026-07-01 13:04:53.877000",
+      "allowed_armor_tags": [
+        "light"
+      ],
+      "allowed_weapon_tags": [
+        "dagger",
+        "finesse",
+        "poison"
+      ],
+      "display_name_it": "Assassino",
+      "guide_description_en": "The Assassin lives one perfect strike at a time. Pure Agility, thin armour, no second chances.",
+      "guide_description_it": "L'Assassino vive per il colpo che chiude lo scontro prima che inizi. Il Ladro ruba in mezzo al combattimento; l'Assassino aspetta nell'ombra e poi sparisce. Agilità estrema, armatura inesistente — un solo errore e cade. Da 15.2 una stat primaria troppo bassa rallenterà l'XP.",
+      "preferred_item_tags": [
+        "stealth",
+        "crit",
+        "poison"
+      ],
+      "primary_stat": "agility",
+      "role_tags": [
+        "dps_burst",
+        "stealth"
+      ],
+      "secondary_stats": [
+        "strength"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "deprecated_at": "2026-07-01 13:04:53.877000",
+      "is_base_class": false,
+      "successor_slug": "rogue",
+      "successor_specialization_slug": "assassin_spec"
+    },
+    {
+      "slug": "bard",
+      "base_agility": 6,
+      "base_endurance": 4,
+      "base_faith": 5,
+      "base_intellect": 7,
+      "base_strength": 3,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A traveling minstrel whose songs bolster allies and unnerve foes.",
+      "id": "17e0abb7-aab2-453b-8416-49597630e815",
+      "is_active": true,
+      "name": "Bard",
+      "role": "Support",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "light",
+        "leather"
+      ],
+      "allowed_weapon_tags": [
+        "dagger",
+        "instrument",
+        "sonic"
+      ],
+      "display_name_it": "Bardo",
+      "guide_description_en": "The Bard tilts the fight without firing the loudest shot. Intellect primary; Agility and Faith for verses and travel.",
+      "guide_description_it": "Il Bardo non fa il danno più alto né cura più di tutti. Ma moltiplica chi ha vicino: alleati che colpiscono più forte, nemici che sbagliano la prossima mossa. Intelletto e una buona Agilità per restare lontano dai colpi. Una primary bassa, da 15.2, vorrà dire canzoni stonate e XP zero.",
+      "preferred_item_tags": [
+        "buff",
+        "debuff",
+        "sonic",
+        "social"
+      ],
+      "primary_stat": "intellect",
+      "role_tags": [
+        "support",
+        "buffer",
+        "debuffer"
+      ],
+      "secondary_stats": [
+        "agility",
+        "faith"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "berserker",
+      "base_agility": 5,
+      "base_endurance": 6,
+      "base_faith": 1,
+      "base_intellect": 1,
+      "base_strength": 10,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A frenzied warrior who trades defense for devastating two-handed strikes.",
+      "id": "10ce6847-c2a7-4735-9455-7e4d63495d10",
+      "is_active": false,
+      "name": "Berserker",
+      "role": "DPS",
+      "updated_at": "2026-07-01 13:04:53.877000",
+      "allowed_armor_tags": [
+        "medium",
+        "light"
+      ],
+      "allowed_weapon_tags": [
+        "two_handed",
+        "axe",
+        "rage"
+      ],
+      "display_name_it": "Berserker",
+      "guide_description_en": "The Berserker swings hardest the closer to death he gets. Strength uber alles, Endurance to outlast the swing.",
+      "guide_description_it": "Il Berserker rinuncia all'armatura pesante in cambio di potenza bruta. Due mani sull'arma, nessuno scudo, e un boost al danno mentre la salute scende. Forza estrema come priorità assoluta. Da 15.2, una primary bassa spegnerà l'XP.",
+      "preferred_item_tags": [
+        "frontline",
+        "rage",
+        "anti_armor"
+      ],
+      "primary_stat": "strength",
+      "role_tags": [
+        "dps_melee",
+        "frontline"
+      ],
+      "secondary_stats": [
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "deprecated_at": "2026-07-01 13:04:53.877000",
+      "is_base_class": false,
+      "successor_slug": "warrior",
+      "successor_specialization_slug": "berserker_spec"
+    },
+    {
+      "slug": "druid",
+      "base_agility": 5,
+      "base_endurance": 5,
+      "base_faith": 7,
+      "base_intellect": 7,
+      "base_strength": 3,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A keeper of the wild paths, channeling nature for both mending and assault.",
+      "id": "94e5da79-17b6-42be-8d71-b39a7400cf36",
+      "is_active": true,
+      "name": "Druid",
+      "role": "Healer",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "leather",
+        "cloth",
+        "natural"
+      ],
+      "allowed_weapon_tags": [
+        "staff",
+        "club",
+        "natural"
+      ],
+      "display_name_it": "Druido",
+      "guide_description_en": "The Druid mends crowds and shifts shape. Faith primary, Intellect close behind.",
+      "guide_description_it": "Il Druido è meno specializzato del Sacerdote ma più adattabile: cura più alleati assieme, sa danneggiare con incantesimi naturali, e in pizzo può mutare forma. Fede primaria, Intelletto vicino per gli incantesimi più complessi. Da 15.2 una primary bassa ridurrà l'XP.",
+      "preferred_item_tags": [
+        "nature",
+        "heal_aoe",
+        "shapeshift"
+      ],
+      "primary_stat": "faith",
+      "role_tags": [
+        "healer_aoe",
+        "support"
+      ],
+      "secondary_stats": [
+        "intellect"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "mage",
+      "base_agility": 4,
+      "base_endurance": 3,
+      "base_faith": 3,
+      "base_intellect": 10,
+      "base_strength": 2,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A scholar of the arcane, frail in body but devastating in spell.",
+      "id": "a6267904-a813-45b0-94e0-d537db356286",
+      "is_active": true,
+      "name": "Mage",
+      "role": "DPS",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "cloth",
+        "robe",
+        "light"
+      ],
+      "allowed_weapon_tags": [
+        "staff",
+        "wand",
+        "arcane"
+      ],
+      "display_name_it": "Mago",
+      "guide_description_en": "The Mage trades armour for arcane firepower. Intellect primary, Endurance to survive the cast.",
+      "guide_description_it": "Il Mago studia le tavole arcane e libera incantesimi devastanti. Fragile in armatura, ma la sua Intelletto governa tutto: potenza, varietà, costo magico. Resistenza per sopravvivere alla prima onda. Da 15.2 una primary bassa frenerà l'XP.",
+      "preferred_item_tags": [
+        "arcane",
+        "burst",
+        "control"
+      ],
+      "primary_stat": "intellect",
+      "role_tags": [
+        "dps_caster",
+        "control"
+      ],
+      "secondary_stats": [
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "monk",
+      "base_agility": 9,
+      "base_endurance": 6,
+      "base_faith": 5,
+      "base_intellect": 3,
+      "base_strength": 5,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "An ascetic martial artist who turns body and breath into weapons.",
+      "id": "26c61b46-0dd6-4cd9-ad50-e3d38e5dfcbe",
+      "is_active": true,
+      "name": "Monk",
+      "role": "DPS",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "cloth",
+        "light",
+        "martial"
+      ],
+      "allowed_weapon_tags": [
+        "unarmed",
+        "staff",
+        "martial"
+      ],
+      "display_name_it": "Monaco",
+      "guide_description_en": "The Monk weaponises body and breath. Agility primary, Endurance and a touch of Faith for self-sustain.",
+      "guide_description_it": "Il Monaco trasforma corpo e respiro in armi: nessuna spada, nessuna armatura pesante, solo allenamento. Più resistente del Ladro, meno fragile dell'Assassino, e quel pizzico di Fede gli permette di curarsi piccole ferite tra una mossa e l'altra. Agilità su tutto. Da 15.2 una primary bassa rallenterà la sua crescita.",
+      "preferred_item_tags": [
+        "martial",
+        "ki",
+        "self_heal"
+      ],
+      "primary_stat": "agility",
+      "role_tags": [
+        "dps_melee",
+        "self_sustain"
+      ],
+      "secondary_stats": [
+        "endurance",
+        "faith"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "necromancer",
+      "base_agility": 4,
+      "base_endurance": 4,
+      "base_faith": 1,
+      "base_intellect": 10,
+      "base_strength": 2,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A scholar of forbidden arts who weaponizes decay and bound spirits.",
+      "id": "bc931c9f-5ffd-4f03-94d0-c1ffa0ae71df",
+      "is_active": false,
+      "name": "Necromancer",
+      "role": "DPS",
+      "updated_at": "2026-07-01 13:04:53.877000",
+      "allowed_armor_tags": [
+        "cloth",
+        "bone"
+      ],
+      "allowed_weapon_tags": [
+        "staff",
+        "scythe",
+        "dark"
+      ],
+      "display_name_it": "Negromante",
+      "guide_description_en": "The Necromancer drains, raises and rots. Intellect primary, Agility to keep distance from the bound spirits.",
+      "guide_description_it": "Il Negromante è il fratello oscuro del Mago: pari Intelletto ma anziché controllare l'arcano controlla la decadenza. Evoca scheletri, drena vita, plasma servitori dai cadaveri. Agilità secondaria per evitare il contraccolpo. Da 15.2 una primary bassa fermerà la crescita.",
+      "preferred_item_tags": [
+        "dark",
+        "drain",
+        "undead"
+      ],
+      "primary_stat": "intellect",
+      "role_tags": [
+        "dps_caster",
+        "summoner"
+      ],
+      "secondary_stats": [
+        "agility"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "deprecated_at": "2026-07-01 13:04:53.877000",
+      "is_base_class": false,
+      "successor_slug": "mage",
+      "successor_specialization_slug": "necromancer_spec"
+    },
+    {
+      "slug": "paladin",
+      "base_agility": 3,
+      "base_endurance": 7,
+      "base_faith": 6,
+      "base_intellect": 2,
+      "base_strength": 7,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A holy guardian whose shield-arm is matched only by their faith. Tank with healing utility.",
+      "id": "002f2308-af9e-4419-8e05-2bd663db6015",
+      "is_active": true,
+      "name": "Paladin",
+      "role": "Tank",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "heavy",
+        "shield",
+        "holy"
+      ],
+      "allowed_weapon_tags": [
+        "sword",
+        "mace",
+        "two_handed"
+      ],
+      "display_name_it": "Paladino",
+      "guide_description_en": "The Paladin trades raw Warrior toughness for hybrid utility: shield, blade, and a hand of light. Faith primary.",
+      "guide_description_it": "Il Paladino combina lo scudo del tank con la mano guaritrice del sacerdote. È meno duro di un Guerriero puro, ma può curare l'alleato accanto e applicare colpi sacri ai nemici corrotti. La sua primary stat è Fede — scarsa, e la sua identità ibrida sparisce. Da 15.2 questo costerà XP.",
+      "preferred_item_tags": [
+        "frontline",
+        "holy",
+        "support_heal"
+      ],
+      "primary_stat": "faith",
+      "role_tags": [
+        "tank",
+        "off_healer"
+      ],
+      "secondary_stats": [
+        "strength",
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "priest",
+      "base_agility": 3,
+      "base_endurance": 4,
+      "base_faith": 10,
+      "base_intellect": 6,
+      "base_strength": 2,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A devout channeler whose prayers mend wounds and lift spirits.",
+      "id": "cdc69941-be44-4e4b-bc4c-be8e36c811d8",
+      "is_active": true,
+      "name": "Priest",
+      "role": "Healer",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "cloth",
+        "robe",
+        "holy"
+      ],
+      "allowed_weapon_tags": [
+        "mace",
+        "scepter",
+        "holy"
+      ],
+      "display_name_it": "Sacerdote",
+      "guide_description_en": "The Priest is the single-target lifeline. Faith dominant, Intellect for the longer chants.",
+      "guide_description_it": "Il Sacerdote cura la singola ferita decisiva: braccio spezzato, anima vacillante, alleato sul punto di cadere. Più focalizzato del Druido ma meno versatile. La Fede è tutto. Da 15.2 una Fede troppo bassa azzererà la crescita.",
+      "preferred_item_tags": [
+        "heal",
+        "holy",
+        "single_target"
+      ],
+      "primary_stat": "faith",
+      "role_tags": [
+        "healer_dedicated",
+        "support"
+      ],
+      "secondary_stats": [
+        "intellect"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "ranger",
+      "base_agility": 8,
+      "base_endurance": 5,
+      "base_faith": 3,
+      "base_intellect": 4,
+      "base_strength": 5,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A keen-eyed scout who strikes from range before the foe closes.",
+      "id": "47f07561-2e93-4149-936f-2260f117836b",
+      "is_active": true,
+      "name": "Ranger",
+      "role": "DPS",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "light",
+        "medium",
+        "leather"
+      ],
+      "allowed_weapon_tags": [
+        "bow",
+        "crossbow",
+        "ranged"
+      ],
+      "display_name_it": "Ranger",
+      "guide_description_en": "The Ranger keeps distance and patience. Agility primary, Endurance for long marches and recovery.",
+      "guide_description_it": "Il Ranger lavora a distanza: archi, balestre, frecce stregate. Non è un assassino — è un cacciatore. Resistenza per lunghe esplorazioni, Agilità per mirare. Senza Agilità alta i tiri scivolano via. Da 15.2 una primary bassa ridurrà l'XP guadagnato.",
+      "preferred_item_tags": [
+        "ranged",
+        "tracking",
+        "outdoor"
+      ],
+      "primary_stat": "agility",
+      "role_tags": [
+        "dps_ranged",
+        "scout"
+      ],
+      "secondary_stats": [
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "rogue",
+      "base_agility": 9,
+      "base_endurance": 4,
+      "base_faith": 2,
+      "base_intellect": 3,
+      "base_strength": 5,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A nimble striker who finds the seams between armor plates.",
+      "id": "48c8160d-c0e1-47b2-bb74-ac7bbf2b229d",
+      "is_active": true,
+      "name": "Rogue",
+      "role": "DPS",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "light",
+        "leather"
+      ],
+      "allowed_weapon_tags": [
+        "dagger",
+        "shortsword",
+        "finesse"
+      ],
+      "display_name_it": "Ladro",
+      "guide_description_en": "The Rogue thrives on speed and angles. Agility primary, Strength to back up the killing strike.",
+      "guide_description_it": "Il Ladro si infila dove gli altri non riescono. Veloce, leggero, letale al primo colpo se coglie il fianco. L'Agilità governa tutto: schivata, danno critico, iniziativa. Senza AGI alta il Ladro è solo un Guerriero magro. Da 15.2 una primary bassa lo penalizzerà.",
+      "preferred_item_tags": [
+        "stealth",
+        "crit",
+        "finesse"
+      ],
+      "primary_stat": "agility",
+      "role_tags": [
+        "dps_melee",
+        "stealth"
+      ],
+      "secondary_stats": [
+        "strength"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    },
+    {
+      "slug": "warlock",
+      "name": "Warlock",
+      "display_name_it": "Occultista",
+      "primary_stat": "intellect",
+      "secondary_stats": [
+        "faith",
+        "agility"
+      ],
+      "role": "DPS",
+      "secondary_role": "Caster",
+      "allowed_weapon_tags": [
+        "dagger",
+        "staff",
+        "tome"
+      ],
+      "allowed_armor_tags": [
+        "robe",
+        "light"
+      ],
+      "base_strength": 4,
+      "base_agility": 6,
+      "base_intellect": 10,
+      "base_endurance": 6,
+      "base_faith": 6,
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "description_it": "Lo Stregone stringe patti con entità del Vuoto o delle Stelle. Sacrifica la chiarezza arcana del Mago per ricevere potere oscuro: scaglia maledizioni, debilita i nemici e canalizza l'energia del patto stretto. Diversamente dal Mago studioso, lo Stregone è un canalizzatore: la magia non gli appartiene, gli è prestata.",
+      "is_active": true,
+      "is_base_class": true,
+      "round_intro": 16,
+      "id": "395cc067-f278-4f1a-bb5c-9eb76ae58940",
+      "created_at": "2026-07-01 13:04:53.865000",
+      "updated_at": "2026-07-03T06:10:32.620970+00:00"
+    },
+    {
+      "slug": "warrior",
+      "base_agility": 4,
+      "base_endurance": 9,
+      "base_faith": 2,
+      "base_intellect": 2,
+      "base_strength": 8,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A stalwart front-liner who absorbs punishment so others may strike.",
+      "id": "a0ea32ac-e912-4733-bebb-2a314cf9cc19",
+      "is_active": true,
+      "name": "Warrior",
+      "role": "Tank",
+      "updated_at": "2026-07-04T16:47:44.149185+00:00",
+      "allowed_armor_tags": [
+        "heavy",
+        "shield",
+        "medium"
+      ],
+      "allowed_weapon_tags": [
+        "sword",
+        "axe",
+        "mace",
+        "two_handed"
+      ],
+      "display_name_it": "Guerriero",
+      "guide_description_en": "The Warrior anchors the front line. Heavy armour, shield, and a willingness to take the first hit. Strength as primary, Endurance as backbone.",
+      "guide_description_it": "Il Guerriero è la spina dorsale della linea avanzata. Pareggia colpi con la corazza, intercetta nemici con lo scudo, e tiene il fronte mentre il resto della squadra lavora. Forza alta per imporsi nei dungeon corpo a corpo e Resistenza per non cedere. La sua primary stat è Forza: una stat troppo bassa rallenterà la sua crescita di XP (meccanica attiva da Round 15.2).",
+      "preferred_item_tags": [
+        "frontline",
+        "stamina"
+      ],
+      "primary_stat": "strength",
+      "role_tags": [
+        "tank",
+        "frontline"
+      ],
+      "secondary_stats": [
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    }
+  ],
+  "classes_count": 14,
+  "adventurers_total": 2125,
+  "adventurers_per_class_slug": [
+    {
+      "_id": "bard",
+      "count": 177
+    },
+    {
+      "_id": "monk",
+      "count": 162
+    },
+    {
+      "_id": "rogue",
+      "count": 229
+    },
+    {
+      "_id": "warlock",
+      "count": 128
+    },
+    {
+      "_id": null,
+      "count": 91
+    },
+    {
+      "_id": "warrior",
+      "count": 290
+    },
+    {
+      "_id": "priest",
+      "count": 187
+    },
+    {
+      "_id": "druid",
+      "count": 167
+    },
+    {
+      "_id": "paladin",
+      "count": 163
+    },
+    {
+      "_id": "ranger",
+      "count": 175
+    },
+    {
+      "_id": "mage",
+      "count": 218
+    },
+    {
+      "_id": "berserker",
+      "count": 3
+    },
+    {
+      "_id": "alchemist",
+      "count": 135
+    }
+  ],
+  "adventurers_rarity_dist": [
+    {
+      "_id": "Uncommon",
+      "count": 3
+    },
+    {
+      "_id": null,
+      "count": 32
+    },
+    {
+      "_id": "Common",
+      "count": 2060
+    },
+    {
+      "_id": "common",
+      "count": 30
+    }
+  ],
+  "adventurers_grade_dist": [
+    {
+      "_id": null,
+      "count": 2125
+    }
+  ],
+  "items_total": 178,
+  "items_with_recommended_classes": 157,
+  "items_generic": 21,
+  "items_coverage_per_class_slot": [
+    {
+      "_id": {
+        "cls": "mage",
+        "slot": "weapon"
+      },
+      "count": 16
+    },
+    {
+      "_id": {
+        "cls": "priest",
+        "slot": "weapon"
+      },
+      "count": 10
+    },
+    {
+      "_id": {
+        "cls": "priest",
+        "slot": "shield"
+      },
+      "count": 1
+    },
+    {
+      "_id": {
+        "cls": "paladin",
+        "slot": "shield"
+      },
+      "count": 2
+    },
+    {
+      "_id": {
+        "cls": "bard",
+        "slot": "weapon"
+      },
+      "count": 11
+    },
+    {
+      "_id": {
+        "cls": "ranger",
+        "slot": "weapon"
+      },
+      "count": 21
+    },
+    {
+      "_id": {
+        "cls": "necromancer",
+        "slot": "armor"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "necromancer",
+        "slot": "accessory"
+      },
+      "count": 14
+    },
+    {
+      "_id": {
+        "cls": "monk",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "mage",
+        "slot": "armor"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "alchemist",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "necromancer",
+        "slot": "weapon"
+      },
+      "count": 16
+    },
+    {
+      "_id": {
+        "cls": "druid",
+        "slot": "weapon"
+      },
+      "count": 10
+    },
+    {
+      "_id": {
+        "cls": "mage",
+        "slot": "accessory"
+      },
+      "count": 14
+    },
+    {
+      "_id": {
+        "cls": "priest",
+        "slot": "accessory"
+      },
+      "count": 16
+    },
+    {
+      "_id": {
+        "cls": "rogue",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "assassin",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "druid",
+        "slot": "shield"
+      },
+      "count": 1
+    },
+    {
+      "_id": {
+        "cls": "rogue",
+        "slot": "weapon"
+      },
+      "count": 21
+    },
+    {
+      "_id": {
+        "cls": "berserker",
+        "slot": "accessory"
+      },
+      "count": 14
+    },
+    {
+      "_id": {
+        "cls": "druid",
+        "slot": "accessory"
+      },
+      "count": 16
+    },
+    {
+      "_id": {
+        "cls": "paladin",
+        "slot": "armor"
+      },
+      "count": 29
+    },
+    {
+      "_id": {
+        "cls": "berserker",
+        "slot": "armor"
+      },
+      "count": 23
+    },
+    {
+      "_id": {
+        "cls": "warrior",
+        "slot": "accessory"
+      },
+      "count": 14
+    },
+    {
+      "_id": {
+        "cls": "ranger",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "warrior",
+        "slot": "shield"
+      },
+      "count": 2
+    },
+    {
+      "_id": {
+        "cls": "alchemist",
+        "slot": "accessory"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "monk",
+        "slot": "weapon"
+      },
+      "count": 13
+    },
+    {
+      "_id": {
+        "cls": "monk",
+        "slot": "accessory"
+      },
+      "count": 5
+    },
+    {
+      "_id": {
+        "cls": "bard",
+        "slot": "accessory"
+      },
+      "count": 14
+    },
+    {
+      "_id": {
+        "cls": "assassin",
+        "slot": "weapon"
+      },
+      "count": 21
+    },
+    {
+      "_id": {
+        "cls": "assassin",
+        "slot": "accessory"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "bard",
+        "slot": "armor"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "ranger",
+        "slot": "accessory"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "warrior",
+        "slot": "weapon"
+      },
+      "count": 26
+    },
+    {
+      "_id": {
+        "cls": "warlock",
+        "slot": "weapon"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "rogue",
+        "slot": "accessory"
+      },
+      "count": 4
+    },
+    {
+      "_id": {
+        "cls": "alchemist",
+        "slot": "weapon"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "berserker",
+        "slot": "shield"
+      },
+      "count": 2
+    },
+    {
+      "_id": {
+        "cls": "warrior",
+        "slot": "armor"
+      },
+      "count": 27
+    },
+    {
+      "_id": {
+        "cls": "berserker",
+        "slot": "weapon"
+      },
+      "count": 25
+    },
+    {
+      "_id": {
+        "cls": "priest",
+        "slot": "armor"
+      },
+      "count": 5
+    },
+    {
+      "_id": {
+        "cls": "warlock",
+        "slot": "accessory"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "warlock",
+        "slot": "armor"
+      },
+      "count": 6
+    },
+    {
+      "_id": {
+        "cls": "druid",
+        "slot": "armor"
+      },
+      "count": 7
+    },
+    {
+      "_id": {
+        "cls": "paladin",
+        "slot": "weapon"
+      },
+      "count": 34
+    },
+    {
+      "_id": {
+        "cls": "paladin",
+        "slot": "accessory"
+      },
+      "count": 27
+    }
+  ],
+  "dungeons_total": 23,
+  "dungeons_5p_total": 12,
+  "raid_dungeons_total": 3,
+  "class_halls_total": 1673,
+  "class_halls_unlocked": 10,
+  "class_specializations_total": 33,
+  "adventurer_traits_total": 40,
+  "races_total": 50,
+  "races_by_rarity": [
+    {
+      "_id": "uncommon",
+      "count": 12
+    },
+    {
+      "_id": "epic",
+      "count": 2
+    },
+    {
+      "_id": "rare",
+      "count": 6
+    },
+    {
+      "_id": "common",
+      "count": 30
+    }
+  ],
+  "schemas": {
+    "adventurers": [
+      "archived",
+      "class",
+      "created_at",
+      "frozen",
+      "guild_id",
+      "id",
+      "is_available",
+      "is_test_artifact",
+      "level",
+      "name",
+      "phase13_unbaked",
+      "retired",
+      "role",
+      "stats",
+      "team_power",
+      "traits"
+    ],
+    "items": [
+      "affects_combat",
+      "affix_pool_tag",
+      "class_tags",
+      "created_at",
+      "description",
+      "display_name_en",
+      "display_name_it",
+      "enchant_slots",
+      "flavor_text_it",
+      "id",
+      "is_active",
+      "is_tradeable",
+      "item_type",
+      "lore_reviewed",
+      "lore_reviewed_at",
+      "lore_source",
+      "lore_tags",
+      "max_refinement",
+      "name",
+      "power_score",
+      "rarity",
+      "recommended_classes",
+      "required_adventurer_level",
+      "role_tags",
+      "set_id",
+      "slot_type",
+      "slug",
+      "spoiler_level",
+      "stat_tags",
+      "updated_at"
+    ],
+    "dungeons": [
+      "base_duration_seconds",
+      "base_gold_reward",
+      "base_xp_reward",
+      "bucket",
+      "content_family",
+      "created_at",
+      "description",
+      "difficulty",
+      "emotional_tone",
+      "enemy_families",
+      "gate",
+      "id",
+      "is_5p",
+      "is_active",
+      "is_legacy",
+      "location_hint",
+      "lore_reviewed",
+      "lore_reviewed_at",
+      "lore_source",
+      "lore_theme",
+      "name",
+      "name_it",
+      "narrative_hook",
+      "recommended_power",
+      "required_level",
+      "required_team_size",
+      "slug",
+      "spoiler_level",
+      "updated_at"
+    ],
+    "raid_dungeons": [
+      "base_duration_seconds",
+      "base_gold_reward",
+      "base_xp_per_member",
+      "boss_name",
+      "content_family",
+      "created_at",
+      "description",
+      "description_it",
+      "emotional_tone",
+      "gate",
+      "guaranteed_dragon_essence_max",
+      "guaranteed_dragon_essence_min",
+      "id",
+      "is_active",
+      "loot_pool_slug",
+      "lore_reviewed",
+      "lore_reviewed_at",
+      "lore_source",
+      "lore_theme",
+      "min_roster_size",
+      "name",
+      "name_it",
+      "narrative_hook",
+      "party_focus_hints",
+      "recommended_power_combined",
+      "required_party_count",
+      "required_party_size",
+      "slug",
+      "spoiler_level",
+      "tier",
+      "updated_at"
+    ],
+    "class_halls": [
+      "class_slug",
+      "created_at",
+      "guild_id",
+      "is_unlocked",
+      "level",
+      "training_territory_id",
+      "unlocked_at",
+      "unlocked_specializations",
+      "updated_at"
+    ],
+    "class_specializations": [
+      "armor_tag_unlocks",
+      "class_slug",
+      "counter_tags",
+      "created_at",
+      "description_it",
+      "display_name_it",
+      "is_active",
+      "is_legacy_migration_target",
+      "is_unlockable",
+      "requires_class_hall_level",
+      "slug",
+      "stat_bonus",
+      "updated_at",
+      "weapon_tag_unlocks"
+    ],
+    "guilds": [
+      "created_at",
+      "description",
+      "gold",
+      "id",
+      "is_demo_opponent",
+      "is_test_artifact",
+      "last_raid_completed_at",
+      "level",
+      "max_raid_score",
+      "max_team_power_ever",
+      "name",
+      "owner_user_id",
+      "public_id",
+      "raids_completed_count",
+      "raids_victory_count",
+      "reputation",
+      "updated_at"
+    ],
+    "adventurer_traits": [
+      "affected_stat",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "is_positive",
+      "modifier_type",
+      "modifier_value",
+      "name",
+      "updated_at"
+    ],
+    "races": [
+      "created_at",
+      "description_it",
+      "is_active",
+      "is_playable",
+      "lore_group",
+      "name_en",
+      "name_it",
+      "rarity",
+      "slug",
+      "stat_modifiers",
+      "tags",
+      "updated_at"
+    ]
+  },
+  "known_min_guild_level_gates": {
+    "resources": 2,
+    "legendary_forge": 5,
+    "arfus_forge": 6,
+    "guild_specialization": 8
+  },
+  "systems_impacted_collections": [
+    "adventurers",
+    "adventurer_classes",
+    "adventurer_traits",
+    "class_halls",
+    "class_specializations",
+    "items",
+    "equipped_items",
+    "inventory_items",
+    "item_sets",
+    "recipes",
+    "dungeons",
+    "raid_dungeons",
+    "raids",
+    "expedition_members",
+    "expeditions",
+    "squads",
+    "pvp_battles",
+    "pvp_matches",
+    "pvp_defense_teams",
+    "pvp_season_leaderboards",
+    "guild_arfus_technologies",
+    "arfus_technology_catalog",
+    "legendary_forge_crafting_orders",
+    "legendary_recipe_catalog",
+    "legendary_item_instances",
+    "legendary_items_catalog",
+    "guild_specialization_catalog",
+    "guild_specialization_choice",
+    "resource_gathering_missions",
+    "continent_resource_catalog",
+    "guilds",
+    "guild_structures",
+    "races",
+    "achievement_progress",
+    "achievements_catalog",
+    "audit_events",
+    "audit_log"
+  ]
+}

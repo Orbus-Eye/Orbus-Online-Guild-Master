@@ -378,7 +378,33 @@ Sigillato definitivamente. PM approva A+i post-hotfix Auto-Equip UI parity + `e1
 
 ---
 
-## R17.3 — Endgame & Class Depth — OPEN (Step 2 CLOSED pre-sealing) ⏳ (2026-07-04T15:10Z)
+## R17.3 — Step 2 CLOSED & SEALED ✅ (2026-07-04T16:00Z)
+
+Sigillato post-`e1_tester` E2E. Deliverable: `/app/memory/round173_step2_report.md`.
+
+**Consegne**: D tooltip Lv2 · C1P1 20 item · E CTA classfit · T-A "squadra bilanciata".
+
+**R17.3 Step 3 (Bridge Raids Lv12-17 + Endgame Lv15-20)**: **DEFERRED indefinitely** — PM apre R18.0 rework macro (adventurer identity, class mastery, PWR solo equip, talent tree, grado Common→Legendary, roster 50) prima di procedere con content endgame.
+
+**Localization Sweep R16.5.4f [P3]**: aggiunto token `quests.weekly.raid_complete_1` (chiave i18n mancante nel dashboard weekly quests).
+
+---
+
+## R18.0 — Adventurer Identity, Class Mastery & Progression Rework — OPEN (audit-only) 🔍 (2026-07-04T16:10Z)
+
+**Status**: aperto audit READ-ONLY. NO implementazione. NO modifica codice/DB/seed. Solo raccolta dati + feasibility + rischi.
+
+**Deliverable**:
+- `/app/memory/round180_adventurer_rework_audit.md` — 17 sezioni
+- `/app/memory/round180_adventurer_rework_raw_data.json` — dati raw DB
+
+**Vincoli tassativi**: NO implementazione · NO modifica codice/DB/seed · NO hard delete · NO balance/drop/reward/PvP/economia/premium · NO scelta classi finali · NO talent tree · NO nomi definitivi 15 classi · SOLO audit.
+
+**Prossimo step**: PM legge audit → prende decisioni design → apre R18.1/R18.2/R18.3/R18.4 (roadmap 4 round tematici raccomandata).
+
+---
+
+## R17.3 — Step 2 pre-sealing archived (superato)
 
 ### Step 2 (D + C1P1 + E) — CLOSED pre-sealing
 

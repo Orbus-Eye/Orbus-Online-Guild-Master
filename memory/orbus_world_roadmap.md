@@ -338,7 +338,37 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## R17.3 — Endgame & Class Depth — OPEN (Step 2 in-progress: D + C1P1 + E CLOSED pre-sealing, Step 3+ deferred) ⏳ (2026-07-04T15:10Z)
+## R17.3 — Endgame & Class Depth — Step 2 CLOSED & SEALED ✅ (2026-07-04T16:00Z)
+
+**Status**: Step 2 sigillato definitivamente. Deliverable: `/app/memory/round173_step2_report.md` (14-point checklist + hotfix + CLOSED & SEALED).
+
+**Consegne sigillate**:
+- ✅ D Tooltip Prestigio Lv 2/5/6/8 — sorgente unica `MIN_GUILD_LEVEL`
+- ✅ C1P1 Class coverage 20 item bucket-safe · idempotenza confermata · Auto-Equip E2E PASS
+- ✅ E CTA class-fit `?auto=classfit` con role mapping 14 classi
+- ✅ T-A CTA testo "squadra bilanciata"
+
+**R17.3 Step 3**: DEFERRED indefinitely — PM apre R18.0 rework macro prima.
+
+---
+
+## R18.0 — Adventurer Identity, Class Mastery & Progression Rework — OPEN (audit-only) 🔍 (2026-07-04T16:10Z)
+
+**Status**: aperto audit READ-ONLY. NO implementazione. NO modifica codice/DB/seed. Solo dati + feasibility + rischi.
+
+**Deliverable**:
+- `/app/memory/round180_adventurer_rework_audit.md` — 17 sezioni
+- `/app/memory/round180_adventurer_rework_raw_data.json` — dati raw
+
+**Scope visione**: adventurer Common/Recluta → training field → 15 classi canoniche + talent tree + mastery + tomi + PWR solo equip + item class-bound + grado Common→Legendary + roster 50 + rework dungeon/raid.
+
+**Vincoli tassativi**: NO implementazione · NO modifica codice/DB/seed · NO hard delete · NO balance/drop/reward/PvP/economia/premium · SOLO audit.
+
+**Prossimo step**: PM legge → prende decisioni design → apre R18.1/R18.2/R18.3/R18.4 (roadmap 4 round tematici).
+
+---
+
+## R17.3 — Step 2 pre-sealing archived (superato)
 
 **Step 1 (audit-only)**: `/app/memory/round173_step1_audit.md` ✅ CLOSED
 

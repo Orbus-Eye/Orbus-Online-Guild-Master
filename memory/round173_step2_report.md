@@ -373,4 +373,41 @@ Query base: db.audit_events.find({event_type:'FIRST_PRESTIGE_GAINED'}) + db.reso
 
 ---
 
+## 🔒 R17.3 Step 2 — CLOSED & SEALED ✅ (2026-07-04T16:00Z)
+
+**Autorità sealing**: PM ha approvato post-`e1_tester` E2E. Deliverable stabile in produzione (preview + deploy).
+
+**Checklist 14 punti PM confermati**:
+1. ✅ D Tooltip Prestigio Lv 2/5/6/8 — sorgente unica `MIN_GUILD_LEVEL` (4 moduli)
+2. ✅ C1P1 20 item bucket 1/3/5/8 — snapshot sha256=`ee3e5d47…`
+3. ✅ Coverage target 100% raggiunto (monk 1→5 · warlock 4/3/3→6/6/6 · alchemist 4/3/3→6/6/6)
+4. ✅ Dry-run: 14/14 clausole PM PASS, 20 INSERT / 0 UPDATE / 0 DELETE / 0 collision / 0 power_creep
+5. ✅ Apply: 20 insert effettivi
+6. ✅ Idempotenza: 2° apply = 0 modifiche
+7. ✅ Auto-Equip live E2E: monk +11, warlock +6, alchemist +6 score delta con payload IT class-aware
+8. ✅ E CTA classfit → role mapping 14 classi, fallback graceful, no team invalido, no avvio auto
+9. ✅ T-A CTA testo "squadra bilanciata" (grep verify 0 residui "team più forte")
+10. ✅ Pytest R17.1 regression: 13/13 PASS
+11. ✅ Snapshot pre-change scritto, audit event emesso
+12. ✅ NO hard delete · NO drop/economia/PvP/premium/stables/curva Prestigio
+13. ✅ NO Legendary · NO power creep (verifica programmatica)
+14. ✅ NO refactor · NO extension POWER_MAX_BY_BUCKET · NO migration schema
+
+**Deliverable finali sigillati**:
+- `/app/memory/round173_step2_report.md` — questo report (14 sezioni + CLOSED & SEALED)
+- `/app/backend/app/scripts/round173_class_coverage_seed.py` — seed idempotent
+- `/app/memory/round173step2_c1p1_snapshot.json` — snapshot pre-apply
+- `/app/memory/round173step2_*.jpeg` — 3 screenshot Playwright
+- Frontend: `ExpeditionNew.jsx` (+128 righe classfit), `ExpeditionReport.jsx` (CTA upgrade)
+- Backend: `expeditions/services.py` (+8 righe tooltip Lv2)
+
+**Non-blocker tracciati (post-sealing)**:
+- **Item test injection cleanup**: 3 item `source_type="test_seed_r173step2"` in `db.inventory_items` (rimovibili con `delete_many` una-shot, se richiesto)
+- **Localization Sweep R16.5.4f [P3]**: aggiunto token `quests.weekly.raid_complete_1` (chiave i18n mancante nel dashboard weekly quests)
+- **R17.3 Step 3 (Bridge Raids Lv12-17 + Endgame Lv15-20)**: **DEFERRED indefinitely** — PM ha deciso rework macro R18.0 (adventurer identity, class mastery, PWR solo equip, talent tree, grade Common→Legendary, roster 50) prima di procedere con content endgame.
+
+**R17.3 Step 2 — CLOSED & SEALED ✅** — 2026-07-04T16:00Z. Prossimo round: **R18.0 — OPEN (audit-only)** (vedi `/app/memory/round180_adventurer_rework_audit.md`).
+
+---
+
 **Firma**: E1 Coding Agent · 2026-07-04T15:10Z
