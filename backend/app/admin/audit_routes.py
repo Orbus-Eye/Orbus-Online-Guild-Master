@@ -126,6 +126,14 @@ AUDIT_EVENT_WHITELIST = frozenset({
     # ROUND 18.2 PILOT — Talent Tree Engine schema seed (placeholder only,
     # feature flag double-gate OFF).
     "R18_TALENT_PILOT_SEEDED",
+    # ROUND 18.1.2 — Guard Whitelist Extension. Guard R18.1.1 esteso per
+    # accettare classi target di R18.3 migration con `is_playable=false`
+    # + `migration_target_only=true` + slug whitelisted esplicito.
+    "R18_GUARD_WHITELIST_EXTENDED",
+    # ROUND 18.3a — Class Migration Pre-Req. Seed classi target
+    # (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) + bridge item
+    # append-only. NO migration reale, NO player-facing.
+    "R18_CLASS_MIGRATION_PREREQ_READY",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

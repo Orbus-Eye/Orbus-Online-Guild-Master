@@ -869,9 +869,30 @@ async def _dispatch_expedition(
     # NON è il class-bound HARD (arriva in R18.4) — è protezione minima
     # contro dispatch diretto via API di adventurers orphan-migrated.
     # Feature flag independent (safety layer). User-message in italiano.
+    #
+    # ROUND 18.1.2 — Guard Whitelist Extension. Le classi target R18.3
+    # migration (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) sono
+    # seedate con `is_playable=false` per prevenire leak player-facing
+    # (recruitment/training/onboarding già filtrano su questo flag). Per
+    # non bloccare gli adventurer post-migration futuri, il guard accetta
+    # una whitelist esplicita di slug con `is_playable=false` +
+    # `migration_target_only=true`. Whitelist chiusa: solo gli slug
+    # elencati passano l'eccezione, tutti gli altri restano bloccati.
+    _R18_MIGRATION_TARGET_WHITELIST: list[str] = [
+        "cacciatore_di_mostri",
+        "cacciatore_del_vuoto",
+    ]
     _playable_slugs: set[str] = set()
     async for _c in db.adventurer_classes.find(
-        {"is_playable": {"$ne": False}}, {"_id": 0, "slug": 1}
+        {"$or": [
+            {"is_playable": {"$ne": False}},
+            {
+                "is_playable": False,
+                "migration_target_only": True,
+                "slug": {"$in": _R18_MIGRATION_TARGET_WHITELIST},
+            },
+        ]},
+        {"_id": 0, "slug": 1},
     ):
         _playable_slugs.add(_c["slug"])
     _unassigned_advs: list[dict] = []

@@ -472,7 +472,7 @@ Sigillato post-`e1_tester` E2E. Deliverable: `/app/memory/round173_step2_report.
 
 ---
 
-## R18.X — Trait System Rework: Positive Reward Traits + Temporary Negative Setbacks [PM-DECIDED-SCOPE]
+## R18.X-Traits — Trait System Rework: Positive Reward Traits + Temporary Negative Setbacks [PM-DECIDED-SCOPE]
 
 **Status**: PENDING — non implementare senza brief PM esplicito. Registrato in R18.2 PILOT come backlog item.
 
@@ -592,3 +592,111 @@ Alchimista, Artificiere, Astrologo, Bardo, Burattinaio, Cacciatore del Sangue, C
 
 ---
 
+
+
+---
+
+## R18.1.2 — Guard Whitelist Extension — CLOSED & SEALED ✅ (2026-07-04T19:48Z)
+
+**Archivio** — micro-round sigillato definitivamente. NON riaprire senza brief PM esplicito.
+
+**Consegne**:
+- Patch chirurgica al guard R18.1.1 in `expeditions/services.py`: `$or` query estende accept alla whitelist esplicita `["cacciatore_di_mostri", "cacciatore_del_vuoto"]` con `is_playable=false + migration_target_only=true`.
+- IT user_message byte-exact preservato ("Questo avventuriero non ha ancora una classe assegnata. Riassegnalo prima di mandarlo in missione.").
+- Audit event `R18_GUARD_WHITELIST_EXTENDED` (idempotente) + whitelist admin estesa.
+- Test 12/12 PASS. Regression 45/45 (R18.1 18 + R18.2 15 + R18.1.2 12).
+
+**Deliverable finali**:
+- `/app/memory/round1812_guard_whitelist_extension_report.md`
+- `/app/backend/app/expeditions/services.py` (patch)
+- `/app/backend/app/scripts/round1812_emit_guard_whitelist_audit.py`
+- `/app/backend/tests/backend_round1812_guard_test.py`
+- `/app/backend/app/admin/audit_routes.py` (whitelist)
+
+**Guardrail rispettati**: Zero hard delete · Zero modifiche recruitment/training/onboarding/generator/UI · Zero modifiche economia/PvP/premium/drop/reward/combat math · Feature flag OFF preservati · IT message byte-exact preservato.
+
+---
+
+## R18.3a — Class Migration Pre-Req — CLOSED ✅ (2026-07-04T19:55Z)
+
+**Archivio** — pre-req sigillato. NON riaprire senza brief PM esplicito.
+
+**Consegne**:
+- Seed classi `cacciatore_di_mostri` + `cacciatore_del_vuoto` in `adventurer_classes` con `is_playable=false + migration_target_only=true + is_canonical=true + is_active=true + source_round=R18.3a`.
+- Bridge item append-only: 31 ranger items + 18 warlock items via `$addToSet` su `recommended_classes`. Zero override, zero modifica stats.
+- Dry-run migration script aggiornato con slug corretti + `slug_correction_note` (correzione da forme brevi R18.2 mai seedate).
+- Audit event `R18_CLASS_MIGRATION_PREREQ_READY` (idempotente) + metadata completa.
+- Whitelist admin audit estesa.
+- Test 16/16 PASS. Regression 61/61 (R18.1 18 + R18.2 15 + R18.1.2 12 + R18.3a 16).
+
+**Deliverable finali**:
+- `/app/memory/round183a_class_migration_prereq_report.md`
+- `/app/memory/round183a_orphan_migration_plan.md`
+- `/app/memory/round183a_orphan_migration_dry_run.json`
+- `/app/backend/app/scripts/round183a_class_migration_prereq_seed.py`
+- `/app/backend/app/scripts/round183a_orphan_migration_dry_run.py`
+- `/app/backend/tests/backend_round183a_prereq_test.py`
+
+**Guardrail rispettati**: Zero hard delete · Zero migration reale su adventurers · Zero modifiche a stats/rarity/level/drop/power/reward/economia/PvP/premium/combat math · Zero item nuovi · Zero UI player-facing change · Feature flag OFF preservati · Append-only (`$addToSet`) · Idempotenza confermata · Slug PM-sigillati con preposizione articolata.
+
+---
+
+## R18.X-Fatigue — Adventurer Fatigue & Kitchen/Cooking Consumables [PM-DECIDED-SCOPE, DEFERRED]
+
+**Status**: PENDING — non implementare senza brief PM esplicito. Registrato nel backlog 2026-07-04T19:56Z.
+
+**Filosofia PM (preliminare, da progettare in round dedicato):**
+
+### Fatica avventurieri (per-adventurer)
+- 1 raid → cooldown 30 minuti
+- OR 5 dungeon → cooldown 15 minuti
+- Reset/reduce tramite: pozioni, cibo, consumabili craftati
+
+### Cucina (nuova sezione futura)
+- Cucinare consumabili che possono:
+  1. Buff temporanei generali giocatore/gilda
+  2. Buff temporanei avventurieri
+  3. Ridurre o resettare fatica
+- Buff sempre TEMPORANEI
+- Zero pay-to-win: nessun reset fatica o buff vendibile come vantaggio competitivo premium
+
+### Audit futuro richiesto (round dedicato)
+1. Dove salvare fatigue state (adventurer schema? nuova collection?)
+2. Conteggio dungeon parte da dispatch o completion?
+3. La fatica si applica anche in caso di sconfitta?
+4. Come evitare farm/abusi?
+5. Interazione con achievement, dungeon, raid, reward e drop
+6. Interazione con pozioni/cibo/crafting
+7. Durata buff cucina
+8. Limiti giornalieri o cooldown consumabili
+9. UI necessaria
+10. Audit events necessari
+
+### Vincoli oggi
+- ❌ NON implementare fatica
+- ❌ NON creare cucina
+- ❌ NON creare consumabili
+- ❌ NON creare pozioni
+- ❌ NON creare buff
+- ❌ NON modificare expedition/raid dispatch
+- ❌ NON modificare reward/drop/economia
+- ✅ Solo registrare decisione PM per round futuro
+
+### Distinzione da R18.X-Traits
+Questo item (`R18.X-Fatigue`) è **separato** dall'item preesistente `R18.X-Traits` (Trait System Rework — positive reward + temporary negative setbacks). Entrambi restano PENDING, indipendenti tra loro, con feature flag propri quando implementati:
+- `R18_TRAITS_REWORK_ENABLED=false` (per Traits)
+- `R18_FATIGUE_ENABLED=false` (proposto per Fatigue, da confermare in brief dedicato)
+
+### Feature flag futuro
+Nome proposto: `R18_FATIGUE_ENABLED` (default `false`).
+
+### Timeline previsione
+- Fase 1 (Audit R18.X-Fatigue.a): read-only scan schema adventurer + collezioni esistenti per identificare punto di aggancio fatigue state
+- Fase 2 (Schema R18.X-Fatigue.b): scaffolding schema fatigue + collezione (o field su adventurer)
+- Fase 3 (Kitchen Catalog R18.X-Fatigue.c): seed ricette + consumabili + buff schema
+- Fase 4 (Engine R18.X-Fatigue.d): logica accumulo fatigue da dispatch/completion + reset via consumables
+- Fase 5 (UI R18.X-Fatigue.e): pannello fatigue + inventario consumabili + cooldown countdown
+
+### Dipendenze
+- Non blocca R18.2/R18.3/R18.4 (parallelo)
+- Bloccato da: decisione PM su 10 audit questions sopra + priorità vs R18.6 Dungeon/Raid Rebalance
