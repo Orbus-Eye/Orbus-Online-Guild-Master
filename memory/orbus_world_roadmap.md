@@ -312,22 +312,17 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## Round 17.1b — Onboarding Polish & Report Localization — CLOSED ✅ (2026-07-04T12:00Z)
+## Round 17.1b — Onboarding Polish & Report Localization — CLOSED & SEALED ✅ (2026-07-04T12:35Z)
 
-> **Status**: chiuso 2026-07-04T12:00Z con 6/6 items PASS + fix root-cause `FIRST_PRESTIGE_GAINED`. Deliverable: `/app/memory/round171b_final_report.md`.
+> **Status**: sigillato definitivo 2026-07-04T12:35Z (2/2 E2E PASS post-fix TDZ accettati dal PM). Include mini-fix BLOCKER TDZ e fix root-cause `FIRST_PRESTIGE_GAINED`. Deliverable: `/app/memory/round171b_final_report.md`.
 >
-> **Consegnato**:
-> - P0.1 Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text` (nuovi doc + legacy regex mapper runtime).
-> - P0.2 Sezione `:: PRESTIGIO DI GILDA` in report con `+N XP Prestigio` + progress bar + `Progresso X / Y XP verso Lv Z`.
-> - P1.1 3 milestone toasts IT one-shot per gilda (first-start / first-complete / first-prestige) con guard client+backend.
-> - P1.2 Badge `SUCCESSO / FALLIMENTO / IN CORSO` in IT (report + lista).
-> - P1.3 Mobile readability PASS viewport 390 (screenshot `round171b_mobile_390.jpeg`).
-> - P1.4 CTA `🎯 Riprova con team più forte →` → auto-preselect top-N `power_score`.
-> - Fix `FIRST_PRESTIGE_GAINED`: emesso da `add_guild_xp` con guard idempotency di `emit_first_event`.
+> **Test**: 13/13 pytest R17.1 PASS · milestone toasts audit-verified (FIRST_EXPEDITION_STARTED/COMPLETED/PRESTIGE_GAINED 1/1/1 per fresh guild) · Playwright desktop+mobile PASS · fix TDZ verified con 0 console errors.
 >
-> **Test**: 13/13 pytest R17.1 PASS (regression). Playwright desktop + mobile PASS.
->
-> **Class-fit balancing CTA**: deferrito (P2). Se PM richiesto prima di R17.2 → R17.1c dedicato.
+> **Follow-up non-blocker**: CTA class-fit balancing (P2, tracciato R17.1c/R17.2 P2) · FIRST_PRESTIGE_GAINED legacy non retroattivo (accettato).
+
+---
+
+## Round 17.2 — World Content Activation — OPEN (Step 1 audit-only) (2026-07-04)
 
 ---
 

@@ -344,22 +344,15 @@ Sigillato con: 13/13 pytest PASS · Browser check Playwright PASS · Zero regres
 
 ---
 
-## R17.1b — Onboarding Polish & Report Localization — CLOSED ✅ (2026-07-04T12:00Z)
+## R17.1b — Onboarding Polish & Report Localization — CLOSED & SEALED ✅ (2026-07-04T12:35Z)
 
-Vedi `/app/memory/round171b_final_report.md` per il dettaglio delle 6 items chiuse (P0×2 + P1×4) + fix root-cause `FIRST_PRESTIGE_GAINED`.
+Vedi `/app/memory/round171b_final_report.md` per il dettaglio delle 8 consegne (6 items scope + fix `FIRST_PRESTIGE_GAINED` + fix BLOCKER TDZ) e sealing autorità PM (2/2 E2E PASS post-fix accettati).
 
-Sintesi consegna:
-- ✅ **P0.1** Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text` (nuovi doc + legacy regex mapper runtime).
-- ✅ **P0.2** Sezione `:: PRESTIGIO DI GILDA` in report con `+N XP Prestigio`, progress bar, `Progresso X / Y XP verso Lv Z`.
-- ✅ **P1.1** 3 milestone toasts IT one-shot per gilda (first-start / first-complete / first-prestige) con guard client+backend.
-- ✅ **P1.2** Badge `SUCCESSO/FALLIMENTO/IN CORSO` in IT su report+lista.
-- ✅ **P1.3** Mobile readability check viewport 390 PASS.
-- ✅ **P1.4** CTA `🎯 Riprova con team più forte →` nel banner fallback → deep-link `/expeditions/new?auto=strongest` con auto-preselect top-N per `power_score`.
-- ✅ **`FIRST_PRESTIGE_GAINED`** ora emesso da `add_guild_xp` (fix root cause WARN R17.1 #11).
+Sigillato con: 13/13 pytest PASS · Playwright IT desktop+mobile PASS · milestone toasts E2E VERIFIED (audit_log conferma FIRST_EXPEDITION_STARTED/COMPLETED/PRESTIGE_GAINED 1/1/1 per fresh guild) · zero regressioni · zero hard delete · zero modifiche a drop/reward/PvP/premium/economia/curve XP.
 
-Sigillato con: 13/13 pytest PASS · Playwright IT desktop+mobile PASS · zero regressioni · zero hard delete · zero modifiche a drop/reward/PvP/premium/economia/curve XP.
-
-**Class-fit balancing CTA (P2)**: deferrito. Se PM lo vuole implementato prima di R17.2 → aprire R17.1c dedicato.
+**Follow-up tracciati (P2 non-blocker)**:
+- **R17.1c/R17.2 P2 — CTA retry class-fit balancing**: la CTA `?auto=strongest` attualmente usa pure-power ranking. In futuro deve considerare class-fit/ruoli (Tank/DPS/Healer balance). NON blocca R17.2.
+- **FIRST_PRESTIGE_GAINED legacy non retroattivo**: accettato non-blocker. Nuove gilde OK. NO backfill programmato.
 
 ---
 

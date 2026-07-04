@@ -331,3 +331,32 @@ Scope stretto: solo riordino dichiarazione. Nessuna modifica alla logica del hoo
 **R17.1b — CLOSED ✅ (v2 post-BLOCKER-fix)** — 2026-07-04T12:25Z.
 
 Pronto per rilancio `e1_tester` E2E finale.
+
+---
+
+## 🔒 R17.1b — CLOSED & SEALED (2026-07-04T12:35Z)
+
+**Autorità sealing**: PM ha accettato 2/2 E2E PASS post-fix TDZ + tutti gli 8 item consegnati + fix `FIRST_PRESTIGE_GAINED` + fix BLOCKER TDZ.
+
+**Consegne definitive**:
+1. ✅ P0.1 Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text` + legacy regex mapper.
+2. ✅ P0.2 Sezione `:: PRESTIGIO DI GILDA` in report.
+3. ✅ P1.1 3 Milestone toasts IT one-shot.
+4. ✅ P1.2 Polish badge IT (SUCCESSO/FALLIMENTO/IN CORSO).
+5. ✅ P1.3 Mobile readability check viewport 390.
+6. ✅ P1.4 CTA "🎯 Riprova con team più forte" (versione pure-power).
+7. ✅ Fix `FIRST_PRESTIGE_GAINED` root cause (add_guild_xp → emit_first_event).
+8. ✅ Fix BLOCKER TDZ `minAdvLevel` (riordino dichiarazione).
+
+**Deliverable finali**:
+- `/app/memory/round171b_final_report.md` — questo report.
+- `/app/memory/round171b_{fallback_full, prestige_section, mobile_390, tdz_fix_dungeon_start, milestone_start, milestone_completed}.jpeg` — 6 screenshot evidenza.
+- 13/13 pytest R17.1 PASS. Lint verde.
+
+**Non-blocker tracciati per follow-up**:
+- CTA class-fit balancing (attualmente pure-power) → tracciato in backlog come **R17.1c/R17.2 P2**.
+- `FIRST_PRESTIGE_GAINED` legacy non retroattivo (nuove gilde OK, no backfill) → tracciato come **accettato non-blocker**.
+- Framework labels UI in EN quando `lang=en` (comportamento by-design i18n).
+- SMTP `@orbus.test` refused (`R17.infra.smtp [P2]`).
+
+**R17.1b — CLOSED & SEALED ✅** — 2026-07-04T12:35Z. Prossimo round: **R17.2 World Content Activation** (OPEN in audit mode Step 1).
