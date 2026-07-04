@@ -120,6 +120,42 @@ export default function AdventurerEquipment() {
         }
     };
 
+    // ROUND 17.2 pre-sealing hotfix — Auto-Equip button parity con
+    // AdventurerDetailModal. Il tester non trovava il bottone perché
+    // esisteva solo nel modale (accessibile dalla card), non nella
+    // pagina dedicata `/adventurers/{id}/equipment`. Scope stretto:
+    // riuso stesso endpoint + toast IT identici al modale.
+    const [autoEquipBusy, setAutoEquipBusy] = useState(false);
+    const handleAutoEquip = async () => {
+        if (!advId || autoEquipBusy || isLocked) return;
+        setAutoEquipBusy(true);
+        try {
+            const r = await api.post(`/adventurers/${advId}/auto-equip`);
+            const s = r.data?.summary || {};
+            const delta = (s.score_after ?? 0) - (s.score_before ?? 0);
+            const swaps = s.swaps_count ?? 0;
+            if (swaps === 0) {
+                toast.info("Nessuna sostituzione possibile.", {
+                    description: "Nessun oggetto compatibile più forte in inventario.",
+                });
+            } else {
+                toast.success(
+                    `${swaps} oggett${swaps === 1 ? "o aggiornato" : "i aggiornati"}`,
+                    {
+                        description: `Potere ${s.score_before ?? 0} → ${s.score_after ?? 0} (${delta >= 0 ? "+" : ""}${delta})`,
+                    },
+                );
+            }
+            await refresh();
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Auto-equipaggiamento fallito. Riprova fra poco.";
+            toast.error(msg);
+        } finally {
+            setAutoEquipBusy(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
             <AppHeader subtitleKey="nav.adventurers" />
@@ -191,6 +227,22 @@ export default function AdventurerEquipment() {
                                     {equipment.total_power}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* ROUND 17.2 pre-sealing hotfix — Auto-Equip button
+                            parity con AdventurerDetailModal. Placement: sotto
+                            i 3 power cards, sopra il banner locked. Disabled
+                            se avventuriero locked o busy. */}
+                        <div className="mb-6 flex items-center justify-end">
+                            <button
+                                type="button"
+                                data-testid={`auto-equip-btn-page-${advId}`}
+                                onClick={handleAutoEquip}
+                                disabled={autoEquipBusy || isLocked}
+                                className="px-3 py-1.5 rounded-sm text-xs font-medium tracking-wide bg-amber-400/90 text-black hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {autoEquipBusy ? "Equipaggiando…" : "Auto-Equipaggia"}
+                            </button>
                         </div>
 
                         {isLocked && (

@@ -327,3 +327,146 @@ Se `e1_tester` FAIL → REOPEN R17.2 sub-task mirato al fix (no rewrite di scope
 ---
 
 **R17.2 — CLOSED (pre-sealing) ⏳** — 2026-07-04T13:45Z. Awaiting `e1_tester` validation before final SEAL.
+
+---
+
+## 🔧 Fix regressione UI Auto-Equip pre-sealing (2026-07-04T14:07Z)
+
+**Segnalato da**: `e1_tester` durante prima passata E2E R17.2 (1 FAIL parziale bloccante pre-sealing).
+
+**Sintomo**:
+- Backend `POST /api/adventurers/{id}/auto-equip` → 200 OK, payload IT completo.
+- UI: bottone "Auto-Equipaggia" non trovato nella panel equipment del flow tester.
+
+### Root cause
+
+**NON è una regressione R17.2**. Diagnosi via `git log` sui file coinvolti:
+```
+frontend/src/components/AdventurerDetailModal.jsx  → ultimo commit dab8231 (2026-07-03, R16.5.4c REOPEN #5)
+frontend/src/pages/AdventurerEquipment.jsx         → ultimo commit dab8231 (2026-07-03, R16.5.4c REOPEN #5)
+frontend/src/pages/Adventurers.jsx                 → ultimo commit a7771eb (2026-07-03, R16.5.4c)
+```
+R17.1/R17.1b/R17.2 non hanno mai toccato questi file (verificato via `git diff e0e08e0 HEAD -- frontend/` — solo `FirstObjectiveCard, Dashboard, Dungeons, ExpeditionNew, ExpeditionReport, Expeditions, Resources` toccati).
+
+**Gap UX preesistente**: il bottone Auto-Equip esisteva **solo** in `AdventurerDetailModal.jsx` (righe 343-353, `data-testid="auto-equip-btn-{id}"`), accessibile cliccando la card avventuriero → apre modale.
+
+**Non esisteva** nella pagina dedicata `AdventurerEquipment.jsx` (`/adventurers/{id}/equipment`), raggiungibile dal link "Gestisci equipaggiamento" nella card avventuriero. Il tester probabilmente ha navigato alla pagina dedicata (deep-link/link Gestisci) invece che aprire il modale.
+
+Questa asimmetria era latente da tempo (verosimilmente pre-R16.5.4c). R17.2 l'ha resa visibile perché il PM ha chiesto una passata E2E indipendente più approfondita sul flow Auto-Equip.
+
+### Fix applicato
+
+**File**: `/app/frontend/src/pages/AdventurerEquipment.jsx`
+
+**Diff sintetico**:
+```diff
++ // ROUND 17.2 pre-sealing hotfix — Auto-Equip button parity con
++ // AdventurerDetailModal. Scope stretto: riuso stesso endpoint + toast IT.
++ const [autoEquipBusy, setAutoEquipBusy] = useState(false);
++ const handleAutoEquip = async () => {
++     if (!advId || autoEquipBusy || isLocked) return;
++     setAutoEquipBusy(true);
++     try {
++         const r = await api.post(`/adventurers/${advId}/auto-equip`);
++         const s = r.data?.summary || {};
++         const swaps = s.swaps_count ?? 0;
++         if (swaps === 0) {
++             toast.info("Nessuna sostituzione possibile.", {
++                 description: "Nessun oggetto compatibile più forte in inventario.",
++             });
++         } else {
++             toast.success(`${swaps} oggett${swaps === 1 ? "o aggiornato" : "i aggiornati"}`, ...);
++         }
++         await refresh();
++     } catch (err) {
++         toast.error(err?.response?.data?.detail?.user_message
++                     || "Auto-equipaggiamento fallito. Riprova fra poco.");
++     } finally { setAutoEquipBusy(false); }
++ };
+```
+
+**JSX** (dopo i 3 power stat cards, prima del banner locked):
+```jsx
+<div className="mb-6 flex items-center justify-end">
+    <button
+        type="button"
+        data-testid={`auto-equip-btn-page-${advId}`}
+        onClick={handleAutoEquip}
+        disabled={autoEquipBusy || isLocked}
+        className="px-3 py-1.5 rounded-sm text-xs font-medium tracking-wide bg-amber-400/90 text-black hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    >
+        {autoEquipBusy ? "Equipaggiando…" : "Auto-Equipaggia"}
+    </button>
+</div>
+```
+
+**Scope stretto**:
+- ✅ Solo aggiunta bottone + handler + state locale nella pagina dedicata.
+- ✅ Riuso identico endpoint backend (nessuna modifica BE).
+- ✅ Riuso testi toast IT identici al modale (`AdventurerDetailModal.jsx` righe 76-89).
+- ✅ Disable durante busy o `!adventurer.is_available` (locked se in spedizione).
+- ✅ Nuovo `data-testid="auto-equip-btn-page-{advId}"` (distinto dal modale `auto-equip-btn-{advId}` per evitare collision selettore).
+- ❌ Nessun `AutoEquipReport` panel inline (bloat non richiesto; toast è sufficiente).
+- ❌ Nessuna modifica al modale (bottone lì continua a funzionare).
+- ❌ Nessun refactor.
+
+### Verifica E2E post-fix
+
+**Test 1 — visibilità bottone**:
+```
+LOGIN OK, url= https://guild-master-5.preview.emergentagent.com/dashboard
+Found equip link: /adventurers/aac9f4dd-1669-4381-a683-e2690469209a/equipment
+SUCCESS: auto-equip button FOUND on equipment page
+  testid=auto-equip-btn-page-aac9f4dd-1669-4381-a683-e2690469209a  text='Auto-Equipaggia'
+```
+Screenshot: `/app/memory/round172_hotfix_autoequip_btn.jpeg`.
+
+**Test 2 — click + toast + payload**:
+```
+Button present, clicking…
+TOAST content: 'Nessuna sostituzione possibile.\nNessun oggetto compatibile più forte in inventario.'
+```
+Backend log conferma: `POST /api/adventurers/aac9f4dd-.../auto-equip HTTP/1.1 200 OK`.
+Screenshot: `/app/memory/round172_hotfix_autoequip_click.jpeg` (toast IT visibile in alto a destra).
+
+**Lint**: `AdventurerEquipment.jsx` → ✅ No issues found.
+
+**Regression**:
+- Bottone Auto-Equip nel modale `AdventurerDetailModal.jsx` → invariato, nessuna modifica al file.
+- Endpoint backend `/api/adventurers/{id}/auto-equip` → invariato.
+- Toast IT R16.5.4c → invariati (stessi testi riusati).
+- Flow "Gestisci equipaggiamento" → invariato, bottone aggiunto in coda ai power cards.
+
+### File modificati (delta hotfix)
+
+| File | Righe | Modifica |
+| --- | --- | --- |
+| `/app/frontend/src/pages/AdventurerEquipment.jsx` | +49 | Handler + state + JSX button (righe ~110-172 dopo `doUnequip`) |
+| `/app/memory/round172_final_report.md` | +N | Questa sezione hotfix |
+| `/app/memory/round172_hotfix_autoequip_btn.jpeg` | NEW | Screenshot bottone visibile pre-click |
+| `/app/memory/round172_hotfix_autoequip_click.jpeg` | NEW | Screenshot post-click con toast IT |
+
+### Guardrail rispettati (hotfix)
+
+- ✅ NO modifiche backend
+- ✅ NO modifiche payload response
+- ✅ NO modifiche i18n / traduzioni
+- ✅ NO modifiche al modale esistente (`AdventurerDetailModal.jsx`)
+- ✅ NO modifiche a endpoint/routing
+- ✅ NO refactor
+- ✅ Scope: solo aggiunta bottone parity in pagina dedicata
+
+### Follow-up note dal tester (fuori scope hotfix)
+
+Tutti gli item cosmetici tracciati nel report principale, sezione "Known Limits / Caveats". Aggiornati/confermati come **P3** in `R16.5.4f Localization Sweep`:
+- `rare`/`epic` in reward Missioni Risorse (accettabile — spec brief usa questi termini)
+- `NEW` badge menu, `BASE POWER`, `Unequip`, `available` in equip modal
+- `Warrior`/`Tank`/`Common`/`accessory`/`power`/`Sewer Nest` in report expedition
+
+**HUMAN_REQUIRED non-blocker**:
+- Gate Lv2 su account fresh: coperto da `GET /api/resources/missions/stats` payload (verified).
+- Cooldown per-continente + cap 6/6 flusso live: coperto da payload stats.
+
+---
+
+**R17.2 — CLOSED (pre-sealing, post-hotfix) ⏳** — 2026-07-04T14:10Z. Pronto per rilancio `e1_tester` TC4 regression.
