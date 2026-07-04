@@ -21,6 +21,7 @@ Il PM ha espanso lo scope R18 con nuova visione: Lv 60, 100 dungeon, 20 raid, **
 | **R18.5** | ⏸ WAITING R18.4 | PWR Solo-Equip + XP Curve Lv60 (3 varianti) + Item Tier Rework (2 modelli) |
 | **R18.6** | ⏸ AUDIT-ONLY | Dungeon/Raid Content Rebalance Plan (23 dungeon + 3 raid attuali) |
 | **R18.7** | ⏸ HEAVY LIFT | Large Content Expansion: 77 nuovi dungeon + 17 nuovi raid |
+| **R18.X** | ⏸ PENDING (audit + implementation) | **Trait System Rework** — Positive reward traits (rarity Common→Legendary, multiplier x1-x3, drop da dungeon/raid/achievement) + Temporary negative setbacks (debuff temporanei da sconfitta con applied_at/expires_at/cause). Backlog item in `/app/memory/backlog.md`. Feature flag `R18_TRAITS_REWORK_ENABLED=false`. |
 
 **Prossimo brief attivo:** R18.0b — 27 Class Canon Ingestion & Technical Audit (audit-only, read-only, zero write). Deliverable: `/app/memory/round180b_27_class_canon_audit.md` + `/app/memory/round180b_27_class_canon_raw_data.json`. Rischio blocker: fonti dati per le 27 classi non ancora trovate nel filesystem — in attesa di conferma PM.
 

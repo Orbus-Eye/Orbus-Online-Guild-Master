@@ -472,6 +472,49 @@ Sigillato post-`e1_tester` E2E. Deliverable: `/app/memory/round173_step2_report.
 
 ---
 
+## R18.X — Trait System Rework: Positive Reward Traits + Temporary Negative Setbacks [PM-DECIDED-SCOPE]
+
+**Status**: PENDING — non implementare senza brief PM esplicito. Registrato in R18.2 PILOT come backlog item.
+
+**Scope futuro**:
+- Audit sistema traits esistente (collection, field su adventurer, modulo backend, count doc, esempi)
+- Separazione: `positive_reward_traits` (permanenti, drop da dungeon/raid/achievement) vs `temporary_negative_setbacks` (temporanei, da sconfitta)
+- Rarity Common/Uncommon/Rare/Epic/Legendary con multiplier x1/x1.5/x2/x2.5/x3
+- Traits positivi ottenuti tramite: completion dungeon, victory raid, achievement unlock
+- Traits negativi solo temporanei da sconfitta (es. 5 min duration, -15% dmg, applied_at + expires_at + cause)
+- UI dedicata per durata/scadenza dei debuff
+- Nessuna assegnazione random senza approvazione PM finale
+- Effect calculator integration in combat math (deferred R18.4+)
+
+**Vincoli**:
+- ❌ NON implementare senza brief PM esplicito
+- ❌ Zero hard delete traits esistenti (audit-only preservation)
+- ❌ Zero player-facing rollout
+- ✅ Migration adventurer.traits: solo dry-run + snapshot in career_history prima dell'apply
+- ✅ Feature flag dedicato `R18_TRAITS_REWORK_ENABLED=false` fino a rilascio
+
+**Timeline previsione**:
+- Fase 1 (Audit R18.X.a): read-only scan `adventurers.traits` field / collection dedicated
+- Fase 2 (Schema R18.X.b): estensione schema con rarity + multiplier + expires_at
+- Fase 3 (Backfill R18.X.c): dry-run + apply su traits esistenti (assumendo tutti permanenti = positive)
+- Fase 4 (Engine R18.X.d): setback logic on defeat (temporary negative)
+- Fase 5 (UI R18.X.e): banner + tooltip + expiration countdown
+
+**Dipendenze**:
+- Non blocca R18.2/R18.3/R18.4 (parallelo)
+- Bloccato da: decisione PM su rarity/multiplier scale + policy setback trigger
+
+**PM decision points aperti**:
+- Quali dungeon/raid/achievement droppano quali positive traits (mappa)?
+- Setback trigger: solo su dungeon fail? Anche su raid wipe? Anche su PvP loss?
+- Setback duration base (5 min proposto)?
+- Rarity distribution: gaussian o power-law (per Legendary rarissimi)?
+
+---
+
+
+---
+
 ## R18.1 — Adventurer Identity & Schema Foundation — CLOSED & SEALED ✅ (2026-07-04T17:52Z)
 
 **Archivio finale** — round sigillato definitivamente. NON riaprire senza nuovo brief PM esplicito.

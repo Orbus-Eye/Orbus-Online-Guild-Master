@@ -1060,3 +1060,24 @@ Aggiornamento parametri:
 ---
 
 **Firmato:** e1 main agent · 2026-07-04 19:10 UTC · R18.0b OPEN (audit-only, waiting PM decisions on Q1-Q24)
+
+
+---
+
+## Sezione 13 — PM Decisions Sealed (Q1-Q6) 🔒
+
+Aggiornata 2026-07-04 in apertura R18.2 PILOT.
+
+| Q# | Live | → Canonical | Type | Status |
+|---|---|---|---|---|
+| **Q1** | priest (190 adv) | **Paladino** (`paladin`) | merge_into_existing | ✅ SEALED |
+| **Q2** | ranger (175 adv) | **Cacciatore di Mostri** (`cacciatore_mostri`) | migration_to_new_class | ✅ SEALED |
+| **Q3** | warlock (128 adv) | **Cacciatore del Vuoto** (`cacciatore_vuoto`) | migration_to_new_class | ✅ SEALED |
+| **Q4** | berserker (3 adv) | **Guerriero** (`warrior`) | alias_deprecated | ✅ SEALED |
+| **Q5** | assassin (0 adv) | **Ladro** (`rogue`) | alias_deprecated_zero_migration | ✅ SEALED |
+| **Q6** | 27 slug candidati (§3) | Approvati come tecnici | non_final_slugs | ✅ APPROVED |
+| Q7-Q24 | stat/ruoli/armor/risorsa/content | (P1/P2/P3) | — | ⏸ DEFERRED |
+
+**Impatto migration totale**: **496 adv** da riassegnare in R18.3 (apply futuro con pre-seed catalog + item bridge).
+
+**R18.2 PILOT scope**: schema/engine talent tree only (9 classi live 1:1) + migration dry-run + traits audit backlog. Nessuna migration applicata.

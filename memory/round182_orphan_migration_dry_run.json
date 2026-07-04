@@ -1,0 +1,372 @@
+{
+  "generated_at_utc": "2026-07-04T19:22:17.514926+00:00",
+  "round": "R18.2",
+  "phase": "PILOT_dry_run",
+  "sealed_pm_decisions": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q5"
+  ],
+  "total_orphan_adv_to_migrate": 496,
+  "safety_summary": {
+    "any_writes_performed": false,
+    "feature_flag_R18_REWORK_ENABLED": "false",
+    "feature_flag_R18_TALENT_ENGINE_ENABLED": "false"
+  },
+  "migrations": [
+    {
+      "source_slug": "priest",
+      "target_slug": "paladin",
+      "target_canonical_it": "Paladino",
+      "target_exists_live": true,
+      "target_class_doc_exists": true,
+      "migration_type": "merge_into_existing",
+      "pm_decision": "Q1",
+      "expected_adv": 190,
+      "actual_adv_count": 190,
+      "delta_expected_vs_actual": 0,
+      "n_retired": 0,
+      "n_available": 190,
+      "n_in_expedition": 0,
+      "n_equipped": 0,
+      "n_with_talent_progress": 0,
+      "guild_ids_impacted_count": 175,
+      "level_distribution": {
+        "1": 186,
+        "7": 3,
+        "10": 1
+      },
+      "sample_docs_before_after": [
+        {
+          "id": "96081c7a-2870-4ab5-a740-5d8573e0ec00",
+          "name": "Lyandra",
+          "level": 7,
+          "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+          "class_slug_before": "priest",
+          "class_slug_after_migration": "paladin",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "bada2366-9096-4b35-9f88-b1d588dcadbe",
+          "name": "Mireah",
+          "level": 7,
+          "guild_id": "5b3e8a42-f84f-4c35-b61f-6d15d47bfb62",
+          "class_slug_before": "priest",
+          "class_slug_after_migration": "paladin",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "85f45676-0190-4560-8b87-3afc6791ca1a",
+          "name": "Sylvi",
+          "level": 7,
+          "guild_id": "753b3fdf-e17c-4d18-a174-35fca6f70cf0",
+          "class_slug_before": "priest",
+          "class_slug_after_migration": "paladin",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "a68622f6-1b2a-43b5-acf6-d6cf584e1d20",
+          "name": "Aldric Ashwood",
+          "level": 1,
+          "guild_id": "9a48d6ef-51fc-4183-a0bd-803ce4f5e781",
+          "class_slug_before": "priest",
+          "class_slug_after_migration": "paladin",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "6114fa92-cffd-4de5-94fa-59030ae8c7c9",
+          "name": "Mira Ashwood",
+          "level": 1,
+          "guild_id": "d0a05bbd-eed8-44fc-9b90-227ac96eeff1",
+          "class_slug_before": "priest",
+          "class_slug_after_migration": "paladin",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        }
+      ],
+      "target_item_pool_size": 92,
+      "target_item_pool_risk": "BASSO",
+      "equipped_off_class_sample": []
+    },
+    {
+      "source_slug": "ranger",
+      "target_slug": "cacciatore_mostri",
+      "target_canonical_it": "Cacciatore di Mostri",
+      "target_exists_live": false,
+      "target_class_doc_exists": false,
+      "migration_type": "migration_to_new_class",
+      "pm_decision": "Q2",
+      "expected_adv": 175,
+      "actual_adv_count": 175,
+      "delta_expected_vs_actual": 0,
+      "n_retired": 0,
+      "n_available": 175,
+      "n_in_expedition": 0,
+      "n_equipped": 0,
+      "n_with_talent_progress": 0,
+      "guild_ids_impacted_count": 175,
+      "level_distribution": {
+        "1": 172,
+        "9": 3
+      },
+      "sample_docs_before_after": [
+        {
+          "id": "376a8ef9-f037-4295-a29c-98c78cc13d3b",
+          "name": "Eithne",
+          "level": 9,
+          "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+          "class_slug_before": "ranger",
+          "class_slug_after_migration": "cacciatore_mostri",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "78999903-fb0b-41e0-a57e-3d1c485543ef",
+          "name": "Asha",
+          "level": 9,
+          "guild_id": "5b3e8a42-f84f-4c35-b61f-6d15d47bfb62",
+          "class_slug_before": "ranger",
+          "class_slug_after_migration": "cacciatore_mostri",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "baea1d41-8aa7-444a-925f-429e43d40655",
+          "name": "Yuna",
+          "level": 9,
+          "guild_id": "753b3fdf-e17c-4d18-a174-35fca6f70cf0",
+          "class_slug_before": "ranger",
+          "class_slug_after_migration": "cacciatore_mostri",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "0c0dd04b-cac4-4c1c-b284-641271d8c11f",
+          "name": "Vera",
+          "level": 1,
+          "guild_id": "9a48d6ef-51fc-4183-a0bd-803ce4f5e781",
+          "class_slug_before": "ranger",
+          "class_slug_after_migration": "cacciatore_mostri",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "2e5300c4-bea5-4697-a1d7-df311d0ba94c",
+          "name": "Joren Nightshade",
+          "level": 1,
+          "guild_id": "88267c7f-775c-4308-8be4-1142ba553217",
+          "class_slug_before": "ranger",
+          "class_slug_after_migration": "cacciatore_mostri",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        }
+      ],
+      "target_item_pool_size": 0,
+      "target_item_pool_risk": "ALTO",
+      "equipped_off_class_sample": []
+    },
+    {
+      "source_slug": "warlock",
+      "target_slug": "cacciatore_vuoto",
+      "target_canonical_it": "Cacciatore del Vuoto",
+      "target_exists_live": false,
+      "target_class_doc_exists": false,
+      "migration_type": "migration_to_new_class",
+      "pm_decision": "Q3",
+      "expected_adv": 128,
+      "actual_adv_count": 128,
+      "delta_expected_vs_actual": 0,
+      "n_retired": 0,
+      "n_available": 128,
+      "n_in_expedition": 0,
+      "n_equipped": 0,
+      "n_with_talent_progress": 0,
+      "guild_ids_impacted_count": 128,
+      "level_distribution": {
+        "1": 127,
+        "5": 1
+      },
+      "sample_docs_before_after": [
+        {
+          "id": "3c5be8fa-076e-4f72-92ca-1b5bbde51209",
+          "name": "Zane",
+          "level": 1,
+          "guild_id": "b4b2790b-c8a7-4937-b875-9de2f02e1660",
+          "class_slug_before": "warlock",
+          "class_slug_after_migration": "cacciatore_vuoto",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "e80718bc-ae67-42a5-99e5-11203cc19a18",
+          "name": "Iona Ashwood",
+          "level": 1,
+          "guild_id": "84b6d6f2-8b95-4600-885b-5a6eb2852f72",
+          "class_slug_before": "warlock",
+          "class_slug_after_migration": "cacciatore_vuoto",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "30824296-2697-4455-aa30-68e2d5671968",
+          "name": "Hadrian Nightshade",
+          "level": 1,
+          "guild_id": "49439e1b-a1f1-43ed-b0eb-d46d5683be1d",
+          "class_slug_before": "warlock",
+          "class_slug_after_migration": "cacciatore_vuoto",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "2954f3e8-8930-41fb-a525-2a52874211de",
+          "name": "Brenna",
+          "level": 1,
+          "guild_id": "72d663d7-af7d-41b6-97f8-d62d77755bc0",
+          "class_slug_before": "warlock",
+          "class_slug_after_migration": "cacciatore_vuoto",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "304cca47-ffae-4ea5-9c77-363ad6cf26d4",
+          "name": "Vera Stoneheart",
+          "level": 1,
+          "guild_id": "a32357f3-a9b0-4c31-94a8-606c346f837d",
+          "class_slug_before": "warlock",
+          "class_slug_after_migration": "cacciatore_vuoto",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        }
+      ],
+      "target_item_pool_size": 0,
+      "target_item_pool_risk": "ALTO",
+      "equipped_off_class_sample": []
+    },
+    {
+      "source_slug": "berserker",
+      "target_slug": "warrior",
+      "target_canonical_it": "Guerriero",
+      "target_exists_live": true,
+      "target_class_doc_exists": true,
+      "migration_type": "alias_deprecated",
+      "pm_decision": "Q4",
+      "expected_adv": 3,
+      "actual_adv_count": 3,
+      "delta_expected_vs_actual": 0,
+      "n_retired": 0,
+      "n_available": 3,
+      "n_in_expedition": 0,
+      "n_equipped": 0,
+      "n_with_talent_progress": 0,
+      "guild_ids_impacted_count": 3,
+      "level_distribution": {
+        "8": 3
+      },
+      "sample_docs_before_after": [
+        {
+          "id": "755845e1-96d5-4406-aab3-66297d93dcfa",
+          "name": "Korash",
+          "level": 8,
+          "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+          "class_slug_before": "berserker",
+          "class_slug_after_migration": "warrior",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "3d04c46a-5229-40d9-ad23-abb6b81387cd",
+          "name": "Tor'val",
+          "level": 8,
+          "guild_id": "5b3e8a42-f84f-4c35-b61f-6d15d47bfb62",
+          "class_slug_before": "berserker",
+          "class_slug_after_migration": "warrior",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        },
+        {
+          "id": "df44136f-632b-45d9-9a5e-5ea6f1d7dace",
+          "name": "Garrick",
+          "level": 8,
+          "guild_id": "753b3fdf-e17c-4d18-a174-35fca6f70cf0",
+          "class_slug_before": "berserker",
+          "class_slug_after_migration": "warrior",
+          "is_available": true,
+          "is_retired": null,
+          "in_expedition": false,
+          "grade": "common"
+        }
+      ],
+      "target_item_pool_size": 69,
+      "target_item_pool_risk": "BASSO",
+      "equipped_off_class_sample": []
+    },
+    {
+      "source_slug": "assassin",
+      "target_slug": "rogue",
+      "target_canonical_it": "Ladro",
+      "target_exists_live": true,
+      "target_class_doc_exists": true,
+      "migration_type": "alias_deprecated_zero_migration",
+      "pm_decision": "Q5",
+      "expected_adv": 0,
+      "actual_adv_count": 0,
+      "delta_expected_vs_actual": 0,
+      "n_retired": 0,
+      "n_available": 0,
+      "n_in_expedition": 0,
+      "n_equipped": 0,
+      "n_with_talent_progress": 0,
+      "guild_ids_impacted_count": 0,
+      "level_distribution": {},
+      "sample_docs_before_after": [],
+      "target_item_pool_size": 31,
+      "target_item_pool_risk": "BASSO",
+      "equipped_off_class_sample": []
+    }
+  ],
+  "rollback_snapshot_recipe": {
+    "step_1_snapshot": "BEFORE apply: dump adventurers.class_slug into career_history as {event_type: 'r18_migration', class_slug_before, class_slug_after, migrated_at}",
+    "step_2_apply": "update_many({class_slug: source}, {$set: {class_slug: target, r18_migrated_at: iso, r18_migrated_from: source}})",
+    "step_3_rollback": "IF rollback needed: update_many({r18_migrated_from: source}, {$set: {class_slug: '$r18_migrated_from'}, $unset: {r18_migrated_at: 1, r18_migrated_from: 1}})"
+  }
+}

@@ -123,6 +123,9 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "R18_ROSTER_CAP_COMPUTED",
     "R18_ROSTER_CAP_RECOMPUTED",
     "R18_BETA_FIELD_PREPARED",
+    # ROUND 18.2 PILOT — Talent Tree Engine schema seed (placeholder only,
+    # feature flag double-gate OFF).
+    "R18_TALENT_PILOT_SEEDED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1
