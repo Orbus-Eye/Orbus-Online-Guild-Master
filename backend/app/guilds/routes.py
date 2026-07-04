@@ -34,6 +34,15 @@ async def create_guild(
         await ensure_starter_roster(db, guild_doc["id"], user_id=current_user["id"])
     except Exception:  # noqa: BLE001
         pass
+    # ROUND 17.1 P0.3 — funnel event GUILD_CREATED (idempotente per guild).
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="GUILD_CREATED",
+            guild_id=guild_doc["id"], user_id=current_user["id"],
+        )
+    except Exception:  # noqa: BLE001
+        pass
     return {"guild": guild_public(guild_doc)}
 
 

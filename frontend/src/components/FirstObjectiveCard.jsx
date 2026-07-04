@@ -23,7 +23,7 @@ export default function FirstObjectiveCard({ guild, advCount }) {
     const needsRecruit = (advCount ?? 0) < 3;
     const ctaTo = needsRecruit
         ? "/recruitment"
-        : "/expeditions?starter=sewer-nest";
+        : "/dungeons?starter=training-yard";
     const ctaLabel = needsRecruit
         ? "Recluta il primo team"
         : "Prepara la prima spedizione";

@@ -282,11 +282,15 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ## Round 16.5.4e — Territory KeyError Hotfix — CLOSED & SEALED ✅ (2026-07-04)
 
-> **Status**: fix difensivo `get_structure_max_level` con fallback a 0 per slug legacy orfani (`library`, `market`). 6/6 pytest verde. WARN log confermato live in produzione.
+> **Status**: sigillato 2026-07-04T08:00:00Z. Fix difensivo `get_structure_max_level`. 6/6 pytest verde. WARN log live confermato.
 
-## Round 17 Step 0 — First Funnel Stabilization — IN PROGRESS (2026-07-04)
+## Round 17.1 Step 0 — First Funnel Stabilization — CLOSED & SEALED ✅ (2026-07-04)
 
-> **Preflight R17.1**: telemetry mapping + Dashboard nudge card per gilde Lv0. `FirstObjectiveCard.jsx` attivo. Report: `/app/memory/round17_step0_report.md`.
+> **Status**: sigillato 2026-07-04T08:00:00Z. Preflight R17.1 completo. `FirstObjectiveCard` mounted in Dashboard. Funnel event mapping.
+
+## Round 17.1 — Onboarding & First Player Success — OPEN (2026-07-04)
+
+> **Status**: implementazione P0+P1 completata. Deliverable: `/app/memory/round171_final_report.md`.
 
 > **Status**: sigillato definitivo 2026-07-03T11:27:00Z. E2E `e1_tester` 4/4 PASS accettato dal PM (TC1 Warlock, TC2 Alchemist, TC3 Warrior, TC4 Mage). 64/64 pytest verde.
 

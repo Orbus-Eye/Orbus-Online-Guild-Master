@@ -85,6 +85,15 @@ async def register(payload: RegisterIn, request: Request, response: Response):
         email, username,
         accept_language=request.headers.get("accept-language"),
     )
+    # ROUND 17.1 P0.3 — funnel event REGISTERED (idempotente per user).
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="REGISTERED",
+            user_id=user_doc.get("id"),
+        )
+    except Exception:  # noqa: BLE001
+        pass
     return {
         "access_token": access,    # legacy bearer (14gg fallback)
         "refresh_token": refresh,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
@@ -101,6 +101,9 @@ const buildQuery = (f) => {
 export default function Dungeons() {
     const { t, tContent } = useT();
     const [searchParams, setSearchParams] = useSearchParams();
+    // ROUND 17.1 P0.2 — starter dungeon highlight via `?starter=<slug>`.
+    const starterSlug = searchParams.get("starter");
+    const starterCardRef = useRef(null);
     const squadIdParam = searchParams.get("squad_id") || "";
     const [activeSquad, setActiveSquad] = useState(null);
     const [squadLoading, setSquadLoading] = useState(false);
@@ -180,6 +183,20 @@ export default function Dungeons() {
         const id = setTimeout(() => fetchDungeons(filters), 250);
         return () => clearTimeout(id);
     }, [filters, fetchDungeons]);
+
+    // ROUND 17.1 P0.2 — auto-scroll to starter card once dungeons loaded.
+    useEffect(() => {
+        if (!starterSlug || !dungeons || !starterCardRef.current) return;
+        // small delay to let DOM settle
+        const t = setTimeout(() => {
+            try {
+                starterCardRef.current?.scrollIntoView({
+                    behavior: "smooth", block: "center",
+                });
+            } catch (_) { /* noop */ }
+        }, 300);
+        return () => clearTimeout(t);
+    }, [starterSlug, dungeons]);
 
     const reset = () => setFilters(EMPTY_FILTERS);
     const setF = (k, v) => setFilters((p) => ({ ...p, [k]: v }));
@@ -406,17 +423,31 @@ export default function Dungeons() {
                             const locked = d.unlocked === false;
                             const itName = d.name_it || d.name;
                             const minLvl = d.min_adventurer_level || 1;
+                            // ROUND 17.1 P0.2 — starter highlight via ?starter=<slug>.
+                            const isStarter = d.slug === starterSlug || d.is_starter === true;
                             return (
                                 <div
                                     key={d.id}
+                                    ref={isStarter ? starterCardRef : null}
                                     data-testid={`dungeon-card-${d.slug}`}
+                                    data-starter-highlight={isStarter ? "true" : undefined}
                                     className={
                                         "border bg-card rounded-sm p-5 flex flex-col " +
                                         (locked
                                             ? "border-border/40 opacity-60"
-                                            : "border-border")
+                                            : isStarter
+                                                ? "border-amber ring-1 ring-amber/40"
+                                                : "border-border")
                                     }
                                 >
+                                    {isStarter && (
+                                        <div
+                                            data-testid={`starter-recommended-badge-${d.slug}`}
+                                            className="mb-2 inline-flex items-center text-[9px] tracking-widest text-amber border border-amber/60 bg-amber/10 rounded-sm px-2 py-0.5 self-start"
+                                        >
+                                            📍 CONSIGLIATO PER INIZIARE
+                                        </div>
+                                    )}
                                     <div className="flex items-start justify-between gap-2 mb-2">
                                         <div className="text-base font-medium">{itName}</div>
                                         <div className="flex flex-col items-end gap-1">

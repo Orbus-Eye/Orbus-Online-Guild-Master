@@ -479,6 +479,88 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         except Exception:
             pass
 
+    # ROUND 17.1 P0.5 — Fallback reward per il primo fallimento sullo
+    # starter dungeon (una volta sola per gilda). Vincoli PM:
+    #   - solo dungeon `is_starter=True` (attualmente: `training-yard`)
+    #   - solo se `guild.first_expedition_fallback_granted != True`
+    #   - reward piccolo: +5 gold + +5 XP Prestigio, NO loot, NO XP adventurer
+    if (not success) and (dungeon.get("is_starter") is True):
+        try:
+            _guild_doc = await db.guilds.find_one(
+                {"id": claimed["guild_id"]},
+                {"first_expedition_fallback_granted": 1, "gold": 1},
+            )
+            already_granted = bool(
+                (_guild_doc or {}).get("first_expedition_fallback_granted")
+            )
+            if not already_granted:
+                # 1. Guard flag + gold (transactional-ish: setta il flag
+                # DENTRO l'update per prevenire double-grant su race).
+                res = await db.guilds.update_one(
+                    {
+                        "id": claimed["guild_id"],
+                        "first_expedition_fallback_granted": {"$ne": True},
+                    },
+                    {
+                        "$inc": {"gold": 5},
+                        "$set": {
+                            "first_expedition_fallback_granted": True,
+                            "first_expedition_fallback_granted_at": now.isoformat(),
+                            "updated_at": now.isoformat(),
+                        },
+                    },
+                )
+                if res.modified_count == 1:
+                    # 2. +5 XP Prestigio via hook standard (rispetta
+                    # cap giornalieri e audit event `guild_xp_gained`).
+                    try:
+                        from app.achievements.engine import add_guild_xp
+                        await add_guild_xp(
+                            db,
+                            guild_id=claimed["guild_id"],
+                            xp_amount=5,
+                            source="starter_fallback_grant",
+                            source_id=exp_id,
+                        )
+                    except Exception:
+                        pass
+                    # 3. Audit dedicato del grant.
+                    try:
+                        from app.audit.log import write_audit
+                        await write_audit(
+                            db,
+                            event_type="STARTER_FALLBACK_REWARD_GRANTED",
+                            actor_guild_id=claimed["guild_id"],
+                            source="expeditions.complete",
+                            related_entity_id=exp_id,
+                            metadata={
+                                "dungeon_slug": dungeon.get("slug"),
+                                "gold_bonus": 5,
+                                "prestige_xp_bonus": 5,
+                            },
+                        )
+                    except Exception:
+                        pass
+        except Exception:  # noqa: BLE001
+            pass
+
+    # ROUND 17.1 P0.3+P0.4 — funnel event FIRST_EXPEDITION_COMPLETED.
+    # Emesso qui nel completion hook (non nel report GET), così vale
+    # anche se il player non apre mai il report. Idempotente per guild.
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="FIRST_EXPEDITION_COMPLETED",
+            guild_id=claimed["guild_id"],
+            extra={
+                "expedition_id": exp_id,
+                "dungeon_slug": dungeon.get("slug"),
+                "success": success,
+            },
+        )
+    except Exception:  # noqa: BLE001
+        pass
+
     # Phase 14 — daily quest progress (best-effort, non-critical)
     try:
         from app.quests.services import increment_quest_progress

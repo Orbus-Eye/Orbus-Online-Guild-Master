@@ -253,9 +253,20 @@ EVENT_TYPES = frozenset({
     "achievement_unlocked",   # superseded the legacy `achievement_completed`
     "guild_xp_gained",
     "onboarding_graduated",
-    # ROUND 16.5.4c REOPEN #5 — Test fixture reset event (soft-unequip
-    # snapshot for TC1 Warlock; player never sees this event, admin-only).
-    "TEST_ADVENTURER_EQUIP_RESET",
+    # ROUND 17.1 — Onboarding funnel FIRST_* events. Idempotent guard
+    # in `app.audit.first_events.emit_first_event`. Metadata leggero
+    # (guild_id, user_id_masked, timestamp) — no PII.
+    "REGISTERED",
+    "GUILD_CREATED",
+    "FIRST_ADVENTURER_VIEWED",
+    "FIRST_DUNGEON_VIEWED",
+    "FIRST_EXPEDITION_PREVIEWED",
+    "FIRST_EXPEDITION_STARTED",
+    "FIRST_EXPEDITION_COMPLETED",
+    "FIRST_REPORT_OPENED",
+    "FIRST_PRESTIGE_GAINED",
+    # ROUND 17.1 — Fallback reward audit (starter dungeon first fail).
+    "STARTER_FALLBACK_REWARD_GRANTED",
 })
 
 # Indexes asserted at module import via `ensure_audit_indexes`.

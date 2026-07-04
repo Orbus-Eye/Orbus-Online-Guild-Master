@@ -71,6 +71,15 @@ async def list_adventurers(
     # equip-power join; remaining slicing is done in-process to stay simple
     # and avoid an N+1 cursor (rosters are capped ≤500 rows).
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 17.1 P0.3 — funnel event FIRST_ADVENTURER_VIEWED (best-effort).
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="FIRST_ADVENTURER_VIEWED",
+            guild_id=guild["id"], user_id=current_user["id"],
+        )
+    except Exception:  # noqa: BLE001
+        pass
     # ROUND 16.5.3 P0.2 — lazy sweep unificato: rilascia squadre bloccate
     # da expedition/raid/resource mission scaduti. Idempotente, best-effort.
     from app.core.activity_sweep import sweep_activities_for_guild

@@ -313,3 +313,29 @@ Follow-up per R17.1:
 - Emit dei 9 eventi FIRST_* (audit_log) — pianificato in R17.1.
 - Starter dungeon dedicato con power 15-20 (proposta in report).
 - Wizard onboarding pesante (out of scope Step 0, rimane in R17.1).
+
+---
+
+## R17.infra.smtp — SMTP delivery fix per @orbus.test domain [P2]
+
+**Origine**: audit R17 Step 0 rilevò `SMTPRecipientsRefused` sul dominio `@orbus.test` durante `send_welcome_email_safe` (`orbus.email` logger).
+
+**Impatto**: le email di benvenuto (`welcome_email`) non arrivano ai player registrati su domini `.test` o non registrati con MX record valido. NON blocca registrazione (l'errore è catturato in `send_welcome_email_safe`), ma l'onboarding email è degradato.
+
+**Scope proposto**:
+- Configurare fallback per domini di test: se `email.endswith("@orbus.test")` o dominio senza MX → skip silently senza WARN.
+- Documentare ambiente di test (esempi email che il tester può usare senza SMTP error).
+- Alternativa: mock SMTP server locale per test/preview.
+
+**Vincoli**:
+- No modifiche a template email prod.
+- Nessuna riscrittura dell'email service.
+- Solo guard difensivo sul dominio + config.
+
+**Priorità**: P2 (non blocca funnel, solo pulizia log).
+
+---
+
+## R17.1 — Onboarding & First Player Success — IN CLOSING (2026-07-04)
+
+Vedi `/app/memory/round171_final_report.md` per il dettaglio consegne P0 + P1.

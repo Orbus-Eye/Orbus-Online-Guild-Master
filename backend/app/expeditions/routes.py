@@ -35,7 +35,18 @@ async def start_expedition_route(
     current_user: dict = Depends(get_current_user),
 ):
     guild = await user_guild_or_404(db, current_user["id"])
-    return await start_expedition(db, guild, payload)
+    result = await start_expedition(db, guild, payload)
+    # ROUND 17.1 P0.3 — funnel event FIRST_EXPEDITION_STARTED.
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="FIRST_EXPEDITION_STARTED",
+            guild_id=guild["id"], user_id=current_user["id"],
+            extra={"dungeon_id": payload.dungeon_id if hasattr(payload, "dungeon_id") else None},
+        )
+    except Exception:  # noqa: BLE001
+        pass
+    return result
 
 
 @router.post("/preview")
@@ -48,6 +59,15 @@ async def preview_expedition_route(
     Wave 1.5 — intentionally NOT gated by over-cap; the FE shows a warning
     banner using the cap_state from the dashboard widget."""
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 17.1 P0.3 — funnel event FIRST_EXPEDITION_PREVIEWED.
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="FIRST_EXPEDITION_PREVIEWED",
+            guild_id=guild["id"], user_id=current_user["id"],
+        )
+    except Exception:  # noqa: BLE001
+        pass
     return await preview_expedition(
         db, guild, payload.dungeon_id, payload.adventurer_ids
     )
@@ -72,6 +92,15 @@ async def replay_last_route(current_user: dict = Depends(get_current_user)):
 @router.get("")
 async def list_expeditions_route(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
+    # ROUND 17.1 P0.3 — funnel event FIRST_DUNGEON_VIEWED.
+    try:
+        from app.audit.first_events import emit_first_event
+        await emit_first_event(
+            db, event_type="FIRST_DUNGEON_VIEWED",
+            guild_id=guild["id"], user_id=current_user["id"],
+        )
+    except Exception:  # noqa: BLE001
+        pass
     return await list_expeditions(db, guild)
 
 
@@ -81,7 +110,24 @@ async def get_expedition_route(
     current_user: dict = Depends(get_current_user),
 ):
     guild = await user_guild_or_404(db, current_user["id"])
-    return await svc_get_expedition(db, expedition_id, guild)
+    result = await svc_get_expedition(db, expedition_id, guild)
+    # ROUND 17.1 P0.3 — funnel event FIRST_REPORT_OPENED (best-effort;
+    # emesso solo se la spedizione è completed, per evitare che una
+    # navigation su in-progress conti come "report opened").
+    try:
+        # result payload wraps as { expedition, members, loot_items, ... }
+        exp_doc = (result or {}).get("expedition") if isinstance(result, dict) else None
+        exp_status = (exp_doc or {}).get("status") if exp_doc else None
+        if exp_status in ("completed", "success", "failed", "Success", "Failed"):
+            from app.audit.first_events import emit_first_event
+            await emit_first_event(
+                db, event_type="FIRST_REPORT_OPENED",
+                guild_id=guild["id"], user_id=current_user["id"],
+                extra={"expedition_id": expedition_id},
+            )
+    except Exception:  # noqa: BLE001
+        pass
+    return result
 
 
 __all__ = ["router"]

@@ -249,3 +249,20 @@ Scope R17.1 confermato dall'audit R17.0 + Step 0:
 - Backlog + roadmap aggiornati.
 
 **Sigillo**: Step 0 chiuso. Pronto per apertura R17.1 quando il PM decide.
+
+---
+
+## R17.1 Step 0 — CLOSED & SEALED ✅
+
+**Data sigillo**: 2026-07-04T08:00:00Z (UTC).
+**Contesto**: PM ha confermato sealing come pre-requisito di R17.1.
+
+Deliverable Step 0:
+- ✅ R16.5.4e Territory KeyError hotfix (sealed, vedi report separato).
+- ✅ Audit funnel events: mappa 9 eventi (3 derivabili + 6 da aggiungere).
+- ✅ FirstObjectiveCard component + mount in Dashboard.
+- ✅ Starter dungeon audit → gap identificato (unico candidato = sewer-nest, pwr 35 troppo alto).
+- ✅ 3/3 E2E test PASS (card visible su fresh guild, card null su tester, no horizontal overflow).
+
+Nessuna modifica gameplay/economia/PvP/premium/drop.
+Sealed.

@@ -537,6 +537,51 @@ async def ensure_raid_indexes(db) -> None:
         logger.warning("ensure_raid_indexes failed: %s", exc)
 
 
+async def seed_starter_training_yard(db) -> int:
+    """ROUND 17.1 P0.1 — Seed idempotente dello starter dungeon
+    `training-yard`. Reward piccolo (15 gold, 12 XP), power 15 → team
+    rookie Lv1 base (~20-25 team power) ha >50% success chance.
+
+    Vincoli: no Legendary, no power creep, coerente con curva esistente.
+    Marcato `is_starter=True` per essere filtrabile lato UI + fallback
+    reward logic (vedi `_complete_one_expedition`).
+    """
+    now = _now_iso()
+    doc = {
+        "slug": "training-yard",
+        "name": "Campo d'Addestramento",
+        "description": (
+            "Consigliato per la tua prima spedizione. Un'area protetta "
+            "dove nuove reclute affrontano manichini e ombre di goblin."
+        ),
+        "difficulty": "trivial",
+        "required_team_size": 3,
+        "base_duration_seconds": 60,
+        "recommended_power": 15,
+        "base_gold_reward": 15,
+        "base_xp_reward": 12,
+        "required_level": 1,
+        "gate": {},
+        "tier_label": "Starter",
+        "tags": ["starter", "onboarding"],
+        "is_legacy": False,
+        "is_5p": False,
+        "power_bumped": True,
+        "is_active": True,
+        "is_starter": True,  # flag consumato da UI + fallback reward
+        "updated_at": now,
+    }
+    await db.dungeons.update_one(
+        {"slug": "training-yard"},
+        {
+            "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now},
+            "$set": doc,
+        },
+        upsert=True,
+    )
+    return 1
+
+
 async def run_round5_seeds_and_migrations(db) -> dict:
     """Top-level orchestrator invoked from lifespan.
 
@@ -544,6 +589,7 @@ async def run_round5_seeds_and_migrations(db) -> dict:
     """
     summary = {}
     summary["dungeons_5p_upserted"] = await seed_5p_dungeons(db)
+    summary["starter_training_yard_upserted"] = await seed_starter_training_yard(db)
     summary["legacy_marked"] = await mark_legacy_dungeons(db)
     summary["power_bumped"] = await bump_legacy_t2_t3_power(db)
     summary["guilds_extended"] = await add_guild_raid_fields(db)

@@ -61,3 +61,18 @@
 Un round futuro dedicato di data cleanup potrà emettere una migration idempotente per rimuovere gli slug orfani dai doc `guild_structures` legacy, usando il WARN log come input per identificarli. Non urgente.
 
 **Sigillo**: R16.5.4e chiuso.
+
+---
+
+## R16.5.4e — CLOSED & SEALED ✅
+
+**Data sigillo**: 2026-07-04T08:00:00Z (UTC).
+**Contesto**: PM ha confermato sealing come pre-requisito di R17.1.
+
+- Fix `get_structure_max_level` con fallback difensivo a `0` per slug legacy.
+- Test dedicati: **6/6 PASS**.
+- WARN log confermato live in produzione per `library` E `market` orfani.
+- Nessuna modifica gameplay/economia/PvP/premium/drop.
+- Follow-up opzionale (data cleanup migration) → non urgente, non-blocking.
+
+Sealed.
