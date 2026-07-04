@@ -322,7 +322,51 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 ---
 
-## Round 17.2 — World Content Activation — OPEN (Step 1 audit-only) (2026-07-04)
+## Round 17.2 — World Content Activation (Path A) — CLOSED (pre-sealing, awaiting e1_tester validation) ⏳ (2026-07-04T13:45Z)
+
+> **Status**: implementazione + Pytest regression (13/13 R17.1 PASS) + Playwright live check completati. Awaiting `e1_tester` E2E indipendente (pattern R17.1/R17.1b) prima del sealing definitivo.
+>
+> **Scope Path A** (post-audit pivot approvato PM Msg 280):
+> - **P0.1** Achievements audit — `/achievements` render OK (110 catalog in DB verificati, endpoint funzionante). No re-seed necessario.
+> - **P0.3** Resource Missions Path A — durata 780s (13m, era 1800), cap 6/gilda/giorno, cooldown 1/continente/giorno, gate Prestigio Lv2, reward +8 rare / +10 epic XP Prestigio (idempotent via `add_guild_xp`).
+> - **P1** Prestige next-unlock tooltip — mapping dinamico Lv5 Forgia Leggendaria / Lv6 Forgia di Arfus / Lv8 Specializzazione della Gilda, sorgente unica da `MIN_GUILD_LEVEL` costanti dei moduli feature-gated. No hardcode duplicato.
+>
+> **File chiave**:
+> - Backend: `app/resources/__init__.py` (Path A + `/missions/stats` endpoint), `app/expeditions/services.py` (`next_unlock` payload).
+> - Frontend: `ExpeditionReport.jsx` (tooltip render), `Resources.jsx` (banner IT gate/cap/cooldown).
+>
+> **Test**: 13/13 pytest R17.1 PASS (regression coverage). No dedicated R17.2 pytest — config tuning su codepath già coperti. Playwright screenshot: `round172_{achievements_audit, prestige_tooltip, resources_stats}.jpeg`.
+>
+> **Guardrail rispettati**: NO hard delete, NO migration DB, NO modifiche a drop/reward/PvP/premium/economia, NO refactor. Solo config + additive endpoint + payload derivation.
+>
+> **Deliverable**: `/app/memory/round172_final_report.md` (14-point pre-sealing checklist).
+>
+> **Non-blocker tracciati** (dettaglio in `backlog.md`):
+> - SMTP `@orbus.test` (P2, R17.infra.smtp)
+> - CTA class-fit balancing → R17.3 (P1)
+> - FIRST_PRESTIGE_GAINED legacy retroattivo → accepted
+> - Localization Sweep EN residui → R16.5.4f (P3)
+
+---
+
+## Round 17.3 — Endgame & Class Depth — PLANNED 🔜
+
+> **Status**: apertura post-sealing R17.2. Scope definito dal PM in Msg 280 (deferrito esplicitamente da R17.2 Path A).
+>
+> **Scope**:
+> 1. **Raid mid-tier Lv5-14** (P0) — 5 raid tier2 con reward Legendary Forge material. Gate `guild.level ≥ 5` (o `guild_level` — decisione unificazione pendente).
+> 2. **Endgame Lv15-20** (P0) — content late-game: dungeon tier3 con drop Legendary controllati, world event narrativi post-Alveora, achievement endgame dedicati.
+> 3. **Territory / Raid unlock tooltip mapping** (P1) — estensione del `next_unlock` payload (introdotto in R17.2 P1) a feature non-Forge/Specialization (territory upgrades, raid tier unlocks, ecc.). Richiede audit gate certi prima dell'estensione.
+> 4. **CTA class-fit balancing** (P1, deferrito da R17.1c/R17.2 P2) — la CTA `?auto=strongest` di R17.1b usa pure-power ranking. Deve considerare class-fit / Tank-DPS-Healer role balance per squadre "wow" in retry post-fallback.
+>
+> **Vincoli** (anti-P2W, anti-refactor):
+> - No monetizzazione mid-tier/endgame.
+> - No hard delete.
+> - No modifiche a curva Prestigio.
+> - Legendary drop diretti CAP-ped (rispetto R16.3 Phase 5 vincolo BOP).
+> - Nessuna modifica a economia/PvP/premium.
+>
+> **Prerequisito**: sealing formale R17.2 (post `e1_tester` PASS) + eventuale REOPEN mirato.
 
 ---
 
