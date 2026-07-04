@@ -469,3 +469,83 @@ Sigillato post-`e1_tester` E2E. Deliverable: `/app/memory/round173_step2_report.
 ---
 
 ## R17.2 — World Content Activation — Round precedente CLOSED (superato)
+
+---
+
+## R18.1 — Adventurer Identity & Schema Foundation — CLOSED & SEALED ✅ (2026-07-04T17:52Z)
+
+**Archivio finale** — round sigillato definitivamente. NON riaprire senza nuovo brief PM esplicito.
+
+**Consegne sigillate**:
+- Feature flag `R18_REWORK_ENABLED=false` in `.env` OFF stabile
+- Backup mongodump `/app/memory/backups/round181_prestart/` (76 collezioni)
+- Migration `round181_schema_foundation.py`: 91 orfani `recruit_unassigned` + 6 Guardian/Cleric aliasati + 2131 grade backfilled + 303 guilds roster cap + 3 talent scaffolding collezioni + 7 audit event types R18_*
+- Follow-up `round181_audit_log_backfill.py`: 7 event retroactive in `audit_log` con `is_retroactive=true` + whitelist admin estesa
+- Test: 18/18 PASS (backend_round181_migration_test.py)
+- Sub-3b: guardrail expedition confermato absent by design in R18.1 (delegato a R18.1.1/R18.4)
+- Idempotenza confermata (secondo apply 0 modifiche B/C/D/F)
+
+**Deviation risolta in R18.1.1**: `la lanterna di ferro` cap 22 vs 40 (canonical roster formula).
+
+**Deliverable finali**:
+- `/app/memory/round181_completion_report.md` (19-point sealing report)
+- `/app/memory/round181_followup_audit_fix_report.md` (TEST 4 audit_log fix)
+- `/app/backend/app/scripts/round181_schema_foundation.py`
+- `/app/backend/app/scripts/round181_audit_log_backfill.py`
+- `/app/backend/tests/backend_round181_migration_test.py`
+
+**Guardrail rispettati**: Zero hard delete · Zero frontend touched · Zero modifiche economia/PvP/premium/drop/reward/auto-equip/combat math · Feature flag OFF preservato.
+
+---
+
+## R18.1.1 — Safety Hotfix + Roadmap Expansion — CLOSED & SEALED ✅ (2026-07-04T18:33Z)
+
+**Archivio finale** — round sigillato definitivamente. NON riaprire senza nuovo brief PM esplicito.
+
+**Consegne sigillate**:
+- **Hotfix 1** — Canonical roster formula `min(50, 10 + max(level, guild_level, 1) * 2)` applicata via `round1811_roster_cap_hotfix.py`. Solo 1 guild reale impattata: `la lanterna di ferro` cap 22→40 (eff_lvl=15). Audit event `R18_ROSTER_CAP_RECOMPUTED` emesso.
+- **Hotfix 2** — Guard `recruit_unassigned` in `app/expeditions/services.py`. HTTP 400 con code `adventurers.recruit_unassigned_in_set` + user_message IT esatto. E2E verificato via curl inject+rollback.
+- **Whitelist admin audit** — 1 event type aggiunto (`R18_ROSTER_CAP_RECOMPUTED`)
+- **Roadmap R18** — Documento `round18_progression_rework_roadmap.md` (644 righe, 12 sezioni, 24 domande PM P0-P3). **Nota**: superato su §2/§3 dopo sigillo PM 27 classi canoniche.
+- Test: 18/18 PASS
+
+**Deliverable finali**:
+- `/app/memory/round1811_completion_report.md`
+- `/app/memory/round18_progression_rework_roadmap.md`
+- `/app/backend/app/scripts/round1811_roster_cap_hotfix.py`
+- `/app/backend/app/expeditions/services.py` (patch)
+- `/app/backend/app/admin/audit_routes.py` (whitelist)
+- `/app/backend/tests/backend_round181_migration_test.py` (test_11/test_18 riscritti)
+
+**Guardrail rispettati**: Zero hard delete · Zero frontend touched · Zero modifiche economia/PvP/premium/drop/reward/auto-equip/combat math · Feature flag `R18_REWORK_ENABLED=false` OFF preservato · Raid/Resource extension deferred to R18.4.
+
+---
+
+## R18.0b — 27 Class Canon Ingestion & Technical Audit — OPEN (audit-only) 🔍 (2026-07-04T18:40Z)
+
+**Status**: aperto audit READ-ONLY 2026-07-04. **BLOCCATO** — in attesa conferma PM sulle fonti dati per le 27 classi canoniche.
+
+**Target ufficiale (PM sigillato)**: catalogazione tecnica delle 27 classi canoniche Orbus:
+Alchimista, Artificiere, Astrologo, Bardo, Burattinaio, Cacciatore del Sangue, Cacciatore del Vuoto, Cacciatore di Mostri, Cartografo, Cavaliere della Morte, Cavaliere di Draghi, Cronista, Druido, Fabbro Arcano, Giocatore d'Azzardo, Guerriero, Ladro, Mago, Mercante, Monaco, Negromante, Paladino, Parassita, Pittore, Runista, Sciamano, Sognatore.
+
+**Deliverable attesi**:
+- `/app/memory/round180b_27_class_canon_audit.md` (12 sezioni)
+- `/app/memory/round180b_27_class_canon_raw_data.json`
+
+**Rischio blocker attivo**: fonti dati non trovate nel filesystem
+- `/app/uploads/`: NON esiste
+- `/app/backend/data/`: NON esiste
+- `/app/memory/`: trovato solo `Orbus_Lore_Book_Worldbuilding.pdf` (lore generico, probabilmente parziale) + `round160_class_audit.md` (audit 14 classi live R16.0) + script legacy `round160_*_seed_classes_v2.py` con 14 classi seedate
+- `file_base`, `file_abilita`, `file_progressione_extra` per singola classe: NON trovati
+
+**Vincoli tassativi R18.0b**:
+- ❌ Zero implementazione · Zero DB write (solo find/aggregate read-only) · Zero modifiche codice/seed
+- ❌ Zero hard delete · Zero modifiche combat math/drop/reward/economia/PvP/premium/auto-equip
+- ❌ Zero decisioni sigillate come definitive (slug, ruoli, stat, armor tier)
+- ❌ NON inventare la 28ª classe · NON proporre sostituzioni · NON rinominare come finale · NON fondere in talent tree come finale
+- ✅ Solo audit / catalogazione tecnica · Solo scritture in `/app/memory/*.md` e `/app/memory/*.json`
+
+**Prossimo step**: conferma PM su fonti dati → sblocco esecuzione audit R18.0b.
+
+---
+

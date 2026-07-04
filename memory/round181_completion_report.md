@@ -1,11 +1,15 @@
-# ROUND 18.1 — Schema Foundation & Data Backfill · Completion Report
+# ROUND 18.1 — Schema Foundation & Data Backfill · Completion Report — CLOSED & SEALED ✅
 
 **Round:** R18.1 (Adventurer Identity & Schema Foundation Rework — Fase 1/4)
 **Data completamento:** 2026-07-04
+**Data SEAL:** 2026-07-04T17:52:00Z
 **Autorizzato dal PM:** Msg 249
+**Sigillato dal PM:** post-`e1_tester` follow-up (TEST 4 audit_log fix + TEST 3b closure)
 **Autore agent:** e1 main agent
 **DB target:** `orbus_r16` (dev/preview live)
 **Scope:** APPEND-ONLY · Feature flag OFF · Zero player-facing impact
+
+> **⚠️ NON RIAPRIRE senza nuovo brief PM esplicito.** Le deviazioni note (`la lanterna di ferro` cap 22→40) sono state chiuse nel round successivo R18.1.1.
 
 ---
 

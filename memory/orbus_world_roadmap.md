@@ -7,22 +7,22 @@
 
 ## R18 — Progression Rework (nuova sequenza — aggiornata 2026-07-04 in R18.1.1)
 
-Il PM ha espanso lo scope R18 con nuova visione: Lv 60, 100 dungeon, 20 raid, 15 classi canoniche, class-bound, Tomi/Maestria, Grade Common→Legendary. Vedi documento dedicato **`/app/memory/round18_progression_rework_roadmap.md`** per le 12 sezioni di material decisionale.
+Il PM ha espanso lo scope R18 con nuova visione: Lv 60, 100 dungeon, 20 raid, **27 classi canoniche** (target ufficiale sigillato dal PM, sostituisce il precedente target 15), class-bound, Tomi/Maestria, Grade Common→Legendary. Vedi documento dedicato **`/app/memory/round18_progression_rework_roadmap.md`** per le 12 sezioni di material decisionale.
 
 | Fase | Status | Scope sintetico |
 |---|---|---|
 | **R18.0** | ✅ CLOSED | Audit adventurer/classes/items/schema |
-| **R18.0b** | 🔜 PENDING (audit-only) | Class Canon & Archetype Audit — identificare le 15 classi canoniche vs sottoclassi/rami talento |
-| **R18.1** | ✅ CLOSED | Schema Foundation & Backfill (91 orfani, aliasing 6, grade backfill 2131, roster cap, talent scaffolding) |
-| **R18.1.1** | ✅ IN PROGRESS | Safety Hotfix (canonical roster cap `max(level, guild_level, 1)`) + guard `recruit_unassigned` su expedition dispatch + roadmap expansion |
-| **R18.2** | ⏸ WAITING R18.0b | Talent Tree Engine Schema + Beta UI (no talenti reali, solo engine) |
+| **R18.0b** | 🔍 OPEN (audit-only) | **27 Class Canon Ingestion & Technical Audit** — catalogazione tecnica delle 27 classi canoniche ufficiali (Alchimista, Artificiere, Astrologo, Bardo, Burattinaio, Cacciatore del Sangue, Cacciatore del Vuoto, Cacciatore di Mostri, Cartografo, Cavaliere della Morte, Cavaliere di Draghi, Cronista, Druido, Fabbro Arcano, Giocatore d'Azzardo, Guerriero, Ladro, Mago, Mercante, Monaco, Negromante, Paladino, Parassita, Pittore, Runista, Sciamano, Sognatore). Zero implementazione. Deliverable: `round180b_27_class_canon_audit.md` + `_raw_data.json`. |
+| **R18.1** | ✅ CLOSED & SEALED (2026-07-04T17:52Z) | Schema Foundation & Backfill — feature flag `R18_REWORK_ENABLED=false` OFF · 91 orfani → `recruit_unassigned` · 6 Guardian/Cleric aliasati → paladin/priest · 2131 grade backfilled `common` · 303 guilds con `max_roster_cap` · 3 talent scaffolding collezioni · 7 audit event R18_* backfilled in `audit_log` con `is_retroactive=true`. Test: 18/18 PASS. Report: `round181_completion_report.md` + `round181_followup_audit_fix_report.md`. |
+| **R18.1.1** | ✅ CLOSED & SEALED (2026-07-04T18:33Z) | Safety Hotfix + Roadmap Expansion — canonical roster formula `max(level, guild_level, 1)` applied · `la lanterna di ferro` cap 22→40 (unica guild reale impattata) · guard `recruit_unassigned` HTTP 400 IT su `POST /api/expeditions` (E2E verificato) · roadmap document `round18_progression_rework_roadmap.md` 644 righe con 12 sezioni + 24 domande PM aperte. Test: 18/18 PASS + audit event `R18_ROSTER_CAP_RECOMPUTED`. Report: `round1811_completion_report.md`. |
+| **R18.2** | ⏸ WAITING R18.0b | Talent Tree Engine Schema + Beta UI (no talenti reali, solo engine). **Impatto 27 classi**: 27 × 3 rami × 5 tier × 4 talenti = 1620 slot teorici totali. |
 | **R18.3** | ⏸ WAITING R18.2 | Training Fields + Class Choice + Class Mastery + Tomes drop |
 | **R18.4** | ⏸ WAITING R18.3 | Grade System (Common→Legendary) + Class-Bound Item Soft/Hard Migration (5 fasi) |
 | **R18.5** | ⏸ WAITING R18.4 | PWR Solo-Equip + XP Curve Lv60 (3 varianti) + Item Tier Rework (2 modelli) |
 | **R18.6** | ⏸ AUDIT-ONLY | Dungeon/Raid Content Rebalance Plan (23 dungeon + 3 raid attuali) |
 | **R18.7** | ⏸ HEAVY LIFT | Large Content Expansion: 77 nuovi dungeon + 17 nuovi raid |
 
-**Prossimo brief richiesto:** R18.0b — Class Canon & Archetype Audit (audit-only, 1-2 giorni). Motivazione: R18.2 talent tree design dipende dal N esatto di classi canoniche. Vedi `round18_progression_rework_roadmap.md` §2 e "Raccomandazione prossimo step".
+**Prossimo brief attivo:** R18.0b — 27 Class Canon Ingestion & Technical Audit (audit-only, read-only, zero write). Deliverable: `/app/memory/round180b_27_class_canon_audit.md` + `/app/memory/round180b_27_class_canon_raw_data.json`. Rischio blocker: fonti dati per le 27 classi non ancora trovate nel filesystem — in attesa di conferma PM.
 
 ---
 
@@ -469,6 +469,68 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 **Report**: `/app/memory/round1654c_final_report.md`.
 
 ---
+
+---
+
+## R18.1 — Adventurer Identity & Schema Foundation — CLOSED & SEALED ✅ (2026-07-04T17:52Z)
+
+**Status**: sigillato definitivamente 2026-07-04T17:52Z (post e1_tester validation di TEST 4 audit_log fix + TEST 3b guardrail closure). NON riaprire senza nuovo brief PM esplicito.
+
+**Checklist sealing R18.1**:
+- ✅ Backup pre-migrazione `mongodump` in `/app/memory/backups/round181_prestart/dump/orbus_r16` (2026-07-04T17:32:53Z)
+- ✅ Feature flag `R18_REWORK_ENABLED=false` in `/app/backend/.env` OFF stabile
+- ✅ Block B: 91 orfani `class_slug=None|invalid` marcati `recruit_unassigned` + `r18_orphan_migrated_at`
+- ✅ Block C: 6 Guardian/Cleric aliasati → paladin/priest + `legacy_class_original` preservato
+- ✅ Block D: 2131 adventurers `grade='common'` backfilled + `r18_grade_note` esplicativa
+- ✅ Block E: 3 collezioni scaffolding create (`talent_tree_definitions`, `adventurer_talent_progress`, `career_history`) con indici
+- ✅ Block F: 303 guilds con `max_roster_cap` + `current_roster_size` + `is_grandfathered` + `r18_beta_opt_in=False`
+- ✅ Idempotenza confermata su secondo `--apply` (0 modifiche B/C/D/F)
+- ✅ 7 audit event R18_* backfilled in `audit_log` via `round181_audit_log_backfill.py` con `is_retroactive=true`
+- ✅ `AUDIT_EVENT_WHITELIST` esteso in `app/admin/audit_routes.py` per accettare 7 R18_* event_types
+- ✅ Test: 18/18 PASS su `backend_round181_migration_test.py`
+- ✅ Zero hard delete · Zero player-facing UI change · Zero modifiche a economia/PvP/premium/drop/reward/auto-equip/combat math
+- ✅ Sub-3b closure: guardrail expedition confermato absent by design in R18.1 (baseline), delegato a R18.4 con brief dedicato
+
+**Deliverable R18.1**:
+- `/app/memory/round181_completion_report.md` (19-point PM sealing report)
+- `/app/memory/round181_followup_audit_fix_report.md` (TEST 4 audit_log fix + TEST 3b closure)
+- `/app/backend/app/scripts/round181_schema_foundation.py` (429 righe migration)
+- `/app/backend/app/scripts/round181_audit_log_backfill.py` (144 righe retroactive backfill)
+- `/app/backend/tests/backend_round181_migration_test.py` (18 test)
+
+**Deviazione documentata (spostata su R18.1.1)**: `la lanterna di ferro` cap 22 vs 40 → risolta in R18.1.1 Hotfix 1.
+
+---
+
+## R18.1.1 — Safety Hotfix + Roadmap Expansion — CLOSED & SEALED ✅ (2026-07-04T18:33Z)
+
+**Status**: sigillato definitivamente 2026-07-04T18:33Z. Chiude i 2 residui tecnici di R18.1 + apre roadmap R18 espansa. NON riaprire senza nuovo brief PM esplicito.
+
+**Checklist sealing R18.1.1**:
+- ✅ Hotfix 1 — Canonical roster level formula `effective_level = max(guild.level or 0, guild.guild_level or 0, 1)` → `cap = min(50, 10 + eff * 2)` applicata via `round1811_roster_cap_hotfix.py` (dry-run + apply + idempotency verified)
+- ✅ Hotfix 1 — Solo 1 guild reale impattata: `la lanterna di ferro` cap 22 → 40 (eff_lvl=15, roster=23 → NOT grandfathered). 207/303 guilds hanno drift level!=guild_level ma le altre 206 avevano `guild_level ≥ level` → cap invariato.
+- ✅ Hotfix 1 — `R18_ROSTER_CAP_RECOMPUTED` event emesso in `audit_log` con top_diffs metadata + whitelist estesa
+- ✅ Hotfix 2 — Guard `recruit_unassigned` in `app/expeditions/services.py::_validate_and_persist_expedition` (+38 righe)
+- ✅ Hotfix 2 — Copre `POST /api/expeditions` + `POST /api/expeditions/preview` (single dispatch point). Rifiuta `class_slug=recruit_unassigned` OR `is_playable=false` OR slug non in catalogo playable → HTTP 400 con `code=adventurers.recruit_unassigned_in_set` + `user_message="Questo avventuriero non ha ancora una classe assegnata. Riassegnalo prima di mandarlo in missione."`
+- ✅ Hotfix 2 — E2E HTTP verified: inject temporaneo su tester guild adv, POST 400 con messaggio IT esatto, rollback OK
+- ✅ Roadmap doc creato: `/app/memory/round18_progression_rework_roadmap.md` (644 righe, 12 sezioni + 24 domande PM P0-P3)
+- ✅ Test: 18/18 PASS (test_11 riscritto per canonical formula, test_18 riscritto per guard attivo)
+- ✅ Feature flag `R18_REWORK_ENABLED=false` sempre OFF preservato
+- ✅ Zero hard delete · Zero frontend touched · Zero modifiche a economia/PvP/premium/drop/reward/auto-equip/combat math
+- ✅ Raid/Resource extension NON applicata (deferred to R18.4 con brief dedicato — resource missions non usano `adventurer_ids` diretto, raid usa flow separato)
+
+**Deliverable R18.1.1**:
+- `/app/memory/round1811_completion_report.md` (19-point PM sealing report)
+- `/app/memory/round18_progression_rework_roadmap.md` (working document 12 sezioni)
+- `/app/backend/app/scripts/round1811_roster_cap_hotfix.py` (210 righe)
+- `/app/backend/app/expeditions/services.py` (+38 righe guard, patch)
+- `/app/backend/app/admin/audit_routes.py` (+1 event type whitelist)
+- `/app/backend/tests/backend_round181_migration_test.py` (test_11 + test_18 riscritti)
+
+**Nota importante**: la roadmap `round18_progression_rework_roadmap.md` è basata su target **15 classi** (versione ante-brief 2026-07-04T18:35Z). Il PM ha successivamente sigillato **27 classi canoniche** — il documento è **superato** su §2 (Class Canon) e §3 (Talent Tree scale). Il nuovo audit R18.0b partirà da 27 classi.
+
+---
+
 
 ## Round 16.5.4c — Seed Integrity & Auto-Equip Cleanup PLANNED 🔜
 
