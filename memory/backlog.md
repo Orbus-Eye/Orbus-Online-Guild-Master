@@ -617,27 +617,43 @@ Alchimista, Artificiere, Astrologo, Bardo, Burattinaio, Cacciatore del Sangue, C
 
 ---
 
-## R18.3a — Class Migration Pre-Req — CLOSED ✅ (2026-07-04T19:55Z)
+## R18.3a — Class Migration Pre-Req — CLOSED ✅ (2026-07-04T19:55Z) + HOTFIX R18.3a.1 ✅ (2026-07-04T20:06Z)
 
-**Archivio** — pre-req sigillato. NON riaprire senza brief PM esplicito.
+**Archivio** — pre-req + hotfix sigillati. NON riaprire senza brief PM esplicito.
 
-**Consegne**:
-- Seed classi `cacciatore_di_mostri` + `cacciatore_del_vuoto` in `adventurer_classes` con `is_playable=false + migration_target_only=true + is_canonical=true + is_active=true + source_round=R18.3a`.
+**Consegne R18.3a**:
+- Seed classi `cacciatore_di_mostri` + `cacciatore_del_vuoto` in `adventurer_classes` con `is_playable=false + migration_target_only=true + is_canonical=true + is_active=true + source_round=R18.3a` (marker `role="TBD" + role_placeholder=true + role_pm_decision_pending=true` post-hotfix R18.3a.1).
 - Bridge item append-only: 31 ranger items + 18 warlock items via `$addToSet` su `recommended_classes`. Zero override, zero modifica stats.
-- Dry-run migration script aggiornato con slug corretti + `slug_correction_note` (correzione da forme brevi R18.2 mai seedate).
-- Audit event `R18_CLASS_MIGRATION_PREREQ_READY` (idempotente) + metadata completa.
-- Whitelist admin audit estesa.
-- Test 16/16 PASS. Regression 61/61 (R18.1 18 + R18.2 15 + R18.1.2 12 + R18.3a 16).
+- Dry-run migration script aggiornato con slug corretti + `slug_correction_note`.
+- Audit event `R18_CLASS_MIGRATION_PREREQ_READY` (idempotente).
+
+**Consegne R18.3a.1 hotfix** (fix blocker HTTP 500 su `/api/adventurer-classes` + `/api/admin/classes`):
+- Fix 1: filter `is_playable != False` sul route pubblico `list_classes()` (leak prevention).
+- Fix 2: serializer `class_public()` difensivo (`.get()` con `TBD` default su `role`, resilienza schema-evolution).
+- Fix 3: backfill `role="TBD" + role_placeholder=true + role_pm_decision_pending=true` sui 2 doc R18.3a (idempotente).
+- Audit event `R18_CLASS_ROLE_PLACEHOLDER_BACKFILLED` (idempotente).
+- Curl verify: `/api/adventurer-classes` 200 (11 classi, no cacciatori) · `/api/admin/classes` 200 (13 classi, cacciatori inclusi con TBD).
+
+**Test finali**:
+- R18.3a: 16/16 PASS
+- R18.3a.1: 10/10 PASS
+- Regression cross-round: **71/71 PASS** (R18.1 18 + R18.2 15 + R18.1.2 12 + R18.3a 16 + R18.3a.1 10) in 0.68s.
 
 **Deliverable finali**:
 - `/app/memory/round183a_class_migration_prereq_report.md`
 - `/app/memory/round183a_orphan_migration_plan.md`
 - `/app/memory/round183a_orphan_migration_dry_run.json`
+- `/app/memory/round183a1_hotfix_report.md`
 - `/app/backend/app/scripts/round183a_class_migration_prereq_seed.py`
 - `/app/backend/app/scripts/round183a_orphan_migration_dry_run.py`
+- `/app/backend/app/scripts/round183a1_backfill_role_placeholder.py`
 - `/app/backend/tests/backend_round183a_prereq_test.py`
+- `/app/backend/tests/backend_round183a1_hotfix_test.py`
+- `/app/backend/app/adventurers/routes.py` (Fix 1 patch)
+- `/app/backend/app/adventurers/services.py` (Fix 2 patch — serializer difensivo)
+- `/app/backend/app/admin/audit_routes.py` (whitelist esteso)
 
-**Guardrail rispettati**: Zero hard delete · Zero migration reale su adventurers · Zero modifiche a stats/rarity/level/drop/power/reward/economia/PvP/premium/combat math · Zero item nuovi · Zero UI player-facing change · Feature flag OFF preservati · Append-only (`$addToSet`) · Idempotenza confermata · Slug PM-sigillati con preposizione articolata.
+**Guardrail rispettati R18.3a + R18.3a.1**: Zero hard delete · Zero migration reale su adventurers · Zero modifiche a stats/rarity/level/drop/power/reward/economia/PvP/premium/combat math · Zero item nuovi · Zero UI player-facing change · Zero riapertura R18.1.1/R18.1.2/R18.2 (sealed) · Zero modifica guard R18.1.2 · Feature flag OFF preservati · Append-only (`$addToSet`) · Idempotenza confermata · Slug PM-sigillati con preposizione articolata · **Zero decisione PM su role finale (Q7-Q24 rispettati) — `role="TBD"` + `role_pm_decision_pending=true` come marker esplicito**.
 
 ---
 

@@ -124,14 +124,22 @@ def trait_public_filtered_list(traits: list) -> list[dict]:
 
 
 def class_public(doc: dict) -> dict:
+    # ROUND 18.3a.1 hotfix — serializer difensivo. Alcuni doc seedati da
+    # R18.3a (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) potrebbero
+    # mancare di campi come `role` finché PM Q7-Q24 non sigilla i valori.
+    # Uso `.get(field, <sensible_default>)` per resilienza (defense in
+    # depth). NON è pulizia opportunistica: previene HTTP 500 su schema
+    # evolution futura.
     return {
-        "id": doc["id"],
-        "name": doc["name"],
+        "id": doc.get("id"),
+        "name": doc.get("name") or doc.get("slug") or "",
         # ROUND 15.1 — IT display name (falls back to `name` until the
         # seed migration has touched the doc).
-        "display_name_it": doc.get("display_name_it") or doc.get("name"),
-        "slug": doc["slug"],
-        "role": doc["role"],
+        "display_name_it": doc.get("display_name_it") or doc.get("name") or doc.get("slug") or "",
+        "slug": doc.get("slug"),
+        # ROUND 18.3a.1 — default "TBD" placeholder, PM decision deferred
+        # (see Q7-Q24 in `orbus_world_roadmap.md`).
+        "role": doc.get("role", "TBD"),
         "description": doc.get("description", ""),
         # ROUND 16.0 — base_* keys defaulted with `.get(..., 0)` so that
         # newly seeded classes (e.g. warlock) without legacy base stats
@@ -160,6 +168,13 @@ def class_public(doc: dict) -> dict:
         "is_specialization": bool(doc.get("is_specialization", False)),
         "parent_class_slug": doc.get("parent_class_slug"),
         "deprecated_at": doc.get("deprecated_at"),
+        # ROUND 18.3a.1 — expose R18 migration-target metadata so admin
+        # UI can distinguish hidden migration classes from live ones.
+        "is_playable": doc.get("is_playable", True),
+        "migration_target_only": bool(doc.get("migration_target_only", False)),
+        "source_round": doc.get("source_round"),
+        "role_placeholder": bool(doc.get("role_placeholder", False)),
+        "role_pm_decision_pending": bool(doc.get("role_pm_decision_pending", False)),
     }
 
 

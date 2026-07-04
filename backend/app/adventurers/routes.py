@@ -45,8 +45,14 @@ class AdventurerRetireIn(BaseModel):
 
 @router.get("/api/adventurer-classes")
 async def list_classes():
+    # ROUND 18.3a.1 hotfix — escludi le classi hidden (is_playable=false)
+    # dalla lista player-facing. Le classi target-migration R18.3a
+    # (cacciatore_di_mostri, cacciatore_del_vuoto) restano invisibili
+    # ai player fino al flip esplicito in R18.3 apply.
     classes = (
-        await db.adventurer_classes.find({"is_active": True}, {"_id": 0})
+        await db.adventurer_classes.find(
+            {"is_active": True, "is_playable": {"$ne": False}}, {"_id": 0}
+        )
         .sort("name", ASCENDING)
         .to_list(100)
     )

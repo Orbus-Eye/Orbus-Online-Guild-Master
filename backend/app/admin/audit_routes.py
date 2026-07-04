@@ -134,6 +134,10 @@ AUDIT_EVENT_WHITELIST = frozenset({
     # (`cacciatore_di_mostri`, `cacciatore_del_vuoto`) + bridge item
     # append-only. NO migration reale, NO player-facing.
     "R18_CLASS_MIGRATION_PREREQ_READY",
+    # ROUND 18.3a.1 hotfix — role placeholder backfill sui doc R18.3a
+    # per prevenire HTTP 500 nel serializer `class_public()`. Marker
+    # role_pm_decision_pending=true (Q7-Q24 deferred).
+    "R18_CLASS_ROLE_PLACEHOLDER_BACKFILLED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1
