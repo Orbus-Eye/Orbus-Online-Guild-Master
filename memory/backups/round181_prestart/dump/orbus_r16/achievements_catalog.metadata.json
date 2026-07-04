@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"slug":{"$numberInt":"1"}},"name":"slug_1","unique":true},{"v":{"$numberInt":"2"},"key":{"category":{"$numberInt":"1"}},"name":"category_1"}],"uuid":"3dc20b101b024dac9db84a7bbb53f2a9","collectionName":"achievements_catalog","type":"collection"}

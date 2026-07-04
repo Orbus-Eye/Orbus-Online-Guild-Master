@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"slug":{"$numberInt":"1"}},"name":"mount_slug_unique","unique":true},{"v":{"$numberInt":"2"},"key":{"domain_slug":{"$numberInt":"1"}},"name":"mount_domain_idx"}],"uuid":"898ac65f09c24a41bbc90c0fad701118","collectionName":"mount_catalog","type":"collection"}

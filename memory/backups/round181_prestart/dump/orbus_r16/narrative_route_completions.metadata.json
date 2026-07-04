@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"},"route_slug":{"$numberInt":"1"}},"name":"guild_route_completion_unique","unique":true}],"uuid":"fdaafd1728e141a9b7023751d22564c6","collectionName":"narrative_route_completions","type":"collection"}

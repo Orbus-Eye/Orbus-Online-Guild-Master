@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"7e60f9a0dc6a476ea5f0514578ca7c11","collectionName":"continent_event_catalog","type":"collection"}

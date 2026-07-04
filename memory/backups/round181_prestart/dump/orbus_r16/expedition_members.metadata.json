@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"id":{"$numberInt":"1"}},"name":"members_id_unique","unique":true},{"v":{"$numberInt":"2"},"key":{"expedition_id":{"$numberInt":"1"}},"name":"members_exp_idx"}],"uuid":"9ef47faf809146f78998e2dc8980f05e","collectionName":"expedition_members","type":"collection"}

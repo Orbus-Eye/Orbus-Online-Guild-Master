@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"},"day_bucket":{"$numberInt":"1"}},"name":"uniq_guild_day","unique":true}],"uuid":"cbcff050d61a416fbf56eb54cb979c2f","collectionName":"guild_site_income_ledger","type":"collection"}

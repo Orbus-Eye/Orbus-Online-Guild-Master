@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"id":{"$numberInt":"1"}},"name":"offers_id_unique","unique":true},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"}},"name":"offers_guild_idx"}],"uuid":"dc3f53c86097417e8c28bf611eb68772","collectionName":"recruitment_offers","type":"collection"}

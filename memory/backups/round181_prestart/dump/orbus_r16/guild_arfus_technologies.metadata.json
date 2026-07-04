@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"},"technology_slug":{"$numberInt":"1"}},"name":"guild_id_1_technology_slug_1","unique":true}],"uuid":"d52581bfaa0348ea934321957b2f7e61","collectionName":"guild_arfus_technologies","type":"collection"}

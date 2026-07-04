@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"3b0b40ee015c4e0d92f0aafd6e839839","collectionName":"world_boss_catalog","type":"collection"}

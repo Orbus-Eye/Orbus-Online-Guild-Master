@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"c6b9ebc6d0f641fa833db80824117d5a","collectionName":"world_continents","type":"collection"}

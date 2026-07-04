@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"60a4ebb4ff8548dc820d6d081f592e07","collectionName":"guild_pvp_stats","type":"collection"}

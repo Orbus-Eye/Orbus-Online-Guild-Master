@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"559592002c7741ec9ced4b5f1ef16eaa","collectionName":"guild_world_presence","type":"collection"}

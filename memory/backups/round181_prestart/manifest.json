@@ -1,0 +1,321 @@
+{
+  "timestamp_utc": "2026-07-04T17:32:53.936895+00:00",
+  "db_name": "orbus_r16",
+  "round": "R18.1",
+  "purpose": "pre-migration snapshot before schema foundation & backfill",
+  "collections": {
+    "achievement_progress": {
+      "size_bytes": 242845,
+      "sha256_prefix": "f229493742bc2ea4"
+    },
+    "achievements_catalog": {
+      "size_bytes": 64483,
+      "sha256_prefix": "f65919a070074b59"
+    },
+    "adventurer_classes": {
+      "size_bytes": 20009,
+      "sha256_prefix": "2a00ba96eb42fc9f"
+    },
+    "adventurer_traits": {
+      "size_bytes": 16198,
+      "sha256_prefix": "0ef64be777c6f922"
+    },
+    "adventurers": {
+      "size_bytes": 1520041,
+      "sha256_prefix": "44448d7df51f4a10"
+    },
+    "arfus_technology_catalog": {
+      "size_bytes": 8165,
+      "sha256_prefix": "00d5ad96b50d7132"
+    },
+    "audit_events": {
+      "size_bytes": 4244,
+      "sha256_prefix": "dbcf8a09aabc5fd8"
+    },
+    "audit_log": {
+      "size_bytes": 3187493,
+      "sha256_prefix": "3377cc589adca282"
+    },
+    "audit_logs": {
+      "size_bytes": 42919,
+      "sha256_prefix": "82533c88750366f5"
+    },
+    "chat_messages": {
+      "size_bytes": 854,
+      "sha256_prefix": "da805a6c6f6b0abf"
+    },
+    "class_halls": {
+      "size_bytes": 491594,
+      "sha256_prefix": "14b4b02264830b1c"
+    },
+    "class_specializations": {
+      "size_bytes": 13768,
+      "sha256_prefix": "15c6ebfe66f80561"
+    },
+    "consortium_members": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "consortiums": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "continent_event_catalog": {
+      "size_bytes": 5335,
+      "sha256_prefix": "68a990ddba5fad4b"
+    },
+    "continent_event_instances": {
+      "size_bytes": 512,
+      "sha256_prefix": "6fd8fb2564ea351a"
+    },
+    "continent_leaderboard_snapshots": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "continent_resource_catalog": {
+      "size_bytes": 3841,
+      "sha256_prefix": "c4167de3f980c471"
+    },
+    "counter_tags": {
+      "size_bytes": 213,
+      "sha256_prefix": "d1b71a5864e3a8fb"
+    },
+    "dungeons": {
+      "size_bytes": 23024,
+      "sha256_prefix": "e08a3854c0298da2"
+    },
+    "enchants": {
+      "size_bytes": 4385,
+      "sha256_prefix": "d553dfa65885a4b9"
+    },
+    "equipped_items": {
+      "size_bytes": 6062,
+      "sha256_prefix": "2861c684ae0298bb"
+    },
+    "expedition_members": {
+      "size_bytes": 14724,
+      "sha256_prefix": "5837c99c04534cde"
+    },
+    "expeditions": {
+      "size_bytes": 19092,
+      "sha256_prefix": "c6f89672aab2dec0"
+    },
+    "granted_rewards": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "guild_arfus_research_orders": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "guild_arfus_technologies": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "guild_mount_ownership": {
+      "size_bytes": 532,
+      "sha256_prefix": "b9dfd774fc86a8af"
+    },
+    "guild_pvp_stats": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "guild_site_income_config": {
+      "size_bytes": 237,
+      "sha256_prefix": "eb0f74ed0fd29746"
+    },
+    "guild_site_income_ledger": {
+      "size_bytes": 5740,
+      "sha256_prefix": "c589cf8b490f239e"
+    },
+    "guild_specialization_catalog": {
+      "size_bytes": 3277,
+      "sha256_prefix": "508d66913f499805"
+    },
+    "guild_specialization_choice": {
+      "size_bytes": 1798,
+      "sha256_prefix": "dcfc3d7919293203"
+    },
+    "guild_structures": {
+      "size_bytes": 296330,
+      "sha256_prefix": "9c819aa3f5a08f9b"
+    },
+    "guild_trade_pacts": {
+      "size_bytes": 622,
+      "sha256_prefix": "eb99faa97850ff12"
+    },
+    "guild_world_presence": {
+      "size_bytes": 1570,
+      "sha256_prefix": "07fa9beb654de929"
+    },
+    "guild_xp_daily_cap_tracker": {
+      "size_bytes": 1749,
+      "sha256_prefix": "e3a85e5bb8aecfeb"
+    },
+    "guilds": {
+      "size_bytes": 225844,
+      "sha256_prefix": "b9e6d1a934d204bb"
+    },
+    "inventory_items": {
+      "size_bytes": 49005,
+      "sha256_prefix": "10d7b0fdc9a5284f"
+    },
+    "item_sets": {
+      "size_bytes": 1666,
+      "sha256_prefix": "769850b4d93b17d1"
+    },
+    "items": {
+      "size_bytes": 220681,
+      "sha256_prefix": "9d9e6fe87a18a9e0"
+    },
+    "legendary_forge_crafting_orders": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "legendary_forge_pity_counters": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "legendary_item_instances": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "legendary_items_catalog": {
+      "size_bytes": 3340,
+      "sha256_prefix": "5c831f26001f67e0"
+    },
+    "legendary_recipe_catalog": {
+      "size_bytes": 3484,
+      "sha256_prefix": "ab48ef7306381abc"
+    },
+    "login_attempts": {
+      "size_bytes": 130,
+      "sha256_prefix": "aaed033894977112"
+    },
+    "market_listings": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "mount_catalog": {
+      "size_bytes": 4955,
+      "sha256_prefix": "62596a4fab7becae"
+    },
+    "narrative_rewards_unlocked": {
+      "size_bytes": 417,
+      "sha256_prefix": "955af25a4adf23fe"
+    },
+    "narrative_route_completions": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "narrative_routes": {
+      "size_bytes": 3874,
+      "sha256_prefix": "9163e9bfe9e76b4e"
+    },
+    "password_reset_tokens": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "pvp_battles": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "pvp_challenge_cooldowns": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "pvp_cosmetics_unlocked": {
+      "size_bytes": 1750,
+      "sha256_prefix": "41613a261c85c296"
+    },
+    "pvp_defense_teams": {
+      "size_bytes": 1482,
+      "sha256_prefix": "b824422748542490"
+    },
+    "pvp_matches": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "pvp_season_leaderboards": {
+      "size_bytes": 14218,
+      "sha256_prefix": "1902cb01f233a2da"
+    },
+    "pvp_seasons": {
+      "size_bytes": 5895,
+      "sha256_prefix": "7165d53635db8aae"
+    },
+    "races": {
+      "size_bytes": 12542,
+      "sha256_prefix": "74315e5526b25fb4"
+    },
+    "raid_dungeons": {
+      "size_bytes": 4698,
+      "sha256_prefix": "ba090b26b4058439"
+    },
+    "raid_participants": {
+      "size_bytes": 8453,
+      "sha256_prefix": "3a91784c362702be"
+    },
+    "raids": {
+      "size_bytes": 1522,
+      "sha256_prefix": "ac35afa85cbce3e9"
+    },
+    "recipes": {
+      "size_bytes": 3185,
+      "sha256_prefix": "b821518442f0cedd"
+    },
+    "recruitment_offers": {
+      "size_bytes": 139212,
+      "sha256_prefix": "5d3961d2e0c1e2fd"
+    },
+    "refresh_tokens": {
+      "size_bytes": 222208,
+      "sha256_prefix": "0c5a3657a708d298"
+    },
+    "resource_gathering_missions": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "season_participations": {
+      "size_bytes": 9449,
+      "sha256_prefix": "4c8c01cbd4121549"
+    },
+    "season_rewards": {
+      "size_bytes": 1911,
+      "sha256_prefix": "b06e201f15ec7f6a"
+    },
+    "seasons": {
+      "size_bytes": 548,
+      "sha256_prefix": "2bcf04268735ab6b"
+    },
+    "shop_daily_offers": {
+      "size_bytes": 3292,
+      "sha256_prefix": "2312b4bef30a5679"
+    },
+    "squads": {
+      "size_bytes": 618,
+      "sha256_prefix": "73355fe5758e749e"
+    },
+    "tester_tool_snapshots": {
+      "size_bytes": 37810,
+      "sha256_prefix": "fbdd6c8a4abbb0fe"
+    },
+    "users": {
+      "size_bytes": 58272,
+      "sha256_prefix": "f37dca6b9cccf2dc"
+    },
+    "world_boss_catalog": {
+      "size_bytes": 1639,
+      "sha256_prefix": "059e18430144ab58"
+    },
+    "world_boss_events": {
+      "size_bytes": 0,
+      "sha256_prefix": "e3b0c44298fc1c14"
+    },
+    "world_continents": {
+      "size_bytes": 5078,
+      "sha256_prefix": "1f46a1125d139a46"
+    }
+  },
+  "restore_command": "mongorestore --uri=$MONGO_URL --db=orbus_r16 --drop /app/memory/backups/round181_prestart/dump/orbus_r16"
+}

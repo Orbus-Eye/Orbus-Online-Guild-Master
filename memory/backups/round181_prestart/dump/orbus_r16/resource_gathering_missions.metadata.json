@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"},"status":{"$numberInt":"1"}},"name":"idx_guild_status"}],"uuid":"a60f48d6fe2e4ea791a3e1d47f8f86c9","collectionName":"resource_gathering_missions","type":"collection"}

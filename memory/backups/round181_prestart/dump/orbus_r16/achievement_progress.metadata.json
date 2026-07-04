@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"guild_id":{"$numberInt":"1"},"achievement_slug":{"$numberInt":"1"}},"name":"guild_id_1_achievement_slug_1","unique":true}],"uuid":"3e881d1b899b4ee982250d7d6d9010d5","collectionName":"achievement_progress","type":"collection"}

@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"continent_slug":{"$numberInt":"1"},"leaderboard_type":{"$numberInt":"1"},"computed_at":{"$numberInt":"-1"}},"name":"idx_lb_freshness"}],"uuid":"eecec2e60108415ca088604762f43142","collectionName":"continent_leaderboard_snapshots","type":"collection"}
