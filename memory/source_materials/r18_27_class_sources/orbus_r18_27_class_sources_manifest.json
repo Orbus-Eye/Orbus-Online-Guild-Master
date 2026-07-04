@@ -1,0 +1,180 @@
+{
+  "created_at_utc": "2026-07-04T18:57:56Z",
+  "purpose": "R18.0b 27 Class Canon Ingestion & Technical Audit source bundle",
+  "class_count": 27,
+  "classes": [
+    {
+      "class_name_it": "Alchimista",
+      "base_file": "Base Alchimista.pdf",
+      "ability_file": "Descrizione Abilità Alchimista.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Artificiere",
+      "base_file": "Base Artificiere.pdf",
+      "ability_file": "Descrizione Abilità Artificiere.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Astrologo",
+      "base_file": "Base Astrologo.pdf",
+      "ability_file": "Descrizione Abilità Astrologo.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Bardo",
+      "base_file": "Base Bardo.pdf",
+      "ability_file": "Descrizione Abilità Bardo.pdf",
+      "extra_files": [
+        "Leggende Bardiche.TXT"
+      ]
+    },
+    {
+      "class_name_it": "Burattinaio",
+      "base_file": "Base Burattinaio.pdf",
+      "ability_file": "Descrizione Abilità Burattinaio.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cacciatore del Sangue",
+      "base_file": "Base Cacciatore del Sangue.pdf",
+      "ability_file": "Descrizione Abilità Cacciatore del Sangue.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cacciatore del Vuoto",
+      "base_file": "Base Cacciatore del Vuoto.pdf",
+      "ability_file": "Descrizione abilità Cacciatore del Vuoto.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cacciatore di Mostri",
+      "base_file": "Base Cacciatore di Mostri.pdf",
+      "ability_file": "Descrizione Abilità Cacciatore di Mostri.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cartografo",
+      "base_file": "Base Cartografo.pdf",
+      "ability_file": "Descrizione Abilità Cartografo.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cavaliere della Morte",
+      "base_file": "Base Cavaliere della Morte.pdf",
+      "ability_file": "Descrizione abilità Cavaliere della Morte.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cavaliere di Draghi",
+      "base_file": "Base Cavaliere di Draghi.pdf",
+      "ability_file": "Descrizione Abilità Cavliere di Draghi.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Cronista",
+      "base_file": "Base Cronista.pdf",
+      "ability_file": "Descrizione Abilità Cronista.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Druido",
+      "base_file": "Base Druido.pdf",
+      "ability_file": "Descrizioni Abilità Druido.pdf",
+      "extra_files": [
+        "Sentiero del Guardiano.TXT",
+        "Trasformazioni Druido.pdf"
+      ]
+    },
+    {
+      "class_name_it": "Fabbro Arcano",
+      "base_file": "Base Fabbro Arcano.pdf",
+      "ability_file": "Descrizione Abilità Fabbro Arcano.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Giocatore d'Azzardo",
+      "base_file": "Base Giocatore d'Azzardo.pdf",
+      "ability_file": "Descrizione Abilità Giocatore d'Azzardo.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Guerriero",
+      "base_file": "Base Guerriero.pdf",
+      "ability_file": "Descrizione Abilità Guerriero.pdf",
+      "extra_files": [
+        "Via del Dominatore.TXT"
+      ]
+    },
+    {
+      "class_name_it": "Ladro",
+      "base_file": "Base Ladro.pdf",
+      "ability_file": "Descrizione Abilità Ladro.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Mago",
+      "base_file": "Base Mago.pdf",
+      "ability_file": "Descrizione Abilità Mago.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Mercante",
+      "base_file": "Base Mercante.pdf",
+      "ability_file": "Descrizione Abilità Mercante.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Monaco",
+      "base_file": "Base Monaco.pdf",
+      "ability_file": "Descrizione abilità Monaco.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Negromante",
+      "base_file": "Base Negromante.pdf",
+      "ability_file": "Descrizione Abilità Negromante.pdf",
+      "extra_files": [
+        "Scuole di Necromanzia.TXT"
+      ]
+    },
+    {
+      "class_name_it": "Paladino",
+      "base_file": "Base Paladino.pdf",
+      "ability_file": "Descrizione abilità Paladino.pdf",
+      "extra_files": [
+        "Cammino Celeste.TXT"
+      ]
+    },
+    {
+      "class_name_it": "Parassita",
+      "base_file": "Base Parassita.pdf",
+      "ability_file": "Descrizione Abilità Parassita.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Pittore",
+      "base_file": "Base Pittore.pdf",
+      "ability_file": "Descrizione Abilità Pittore.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Runista",
+      "base_file": "Base Runista.pdf",
+      "ability_file": "Descrizione Abilità Runista.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Sciamano",
+      "base_file": "Base Sciamano.pdf",
+      "ability_file": "Descrizione Abilità Sciamano.pdf",
+      "extra_files": []
+    },
+    {
+      "class_name_it": "Sognatore",
+      "base_file": "Base Sognatore.pdf",
+      "ability_file": "Descrizione Abilità Sognatore.pdf",
+      "extra_files": []
+    }
+  ]
+}

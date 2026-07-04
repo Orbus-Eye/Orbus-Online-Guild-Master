@@ -1,0 +1,1241 @@
+{
+  "generated_at_utc": "2026-07-04T19:04:45.095960+00:00",
+  "round": "R18.0b",
+  "source_manifest_ok": true,
+  "class_count_target": 27,
+  "class_count_extracted": 27,
+  "schede_27_classi": [
+    {
+      "class_name_it": "Alchimista",
+      "slug_candidate_non_finale": "alchimista",
+      "file_base": "Base Alchimista.pdf",
+      "file_abilita": "Descrizione Abilità Alchimista.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "ki",
+        "carica"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi semplici: Pugnali, balestre leggere, baston",
+      "armature_consentite": "Competenze nelle Armature:",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "alchemist",
+      "note_ocr_formattazione": "Base PDF 3785 chars, Abilità PDF 14764 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Artificiere",
+      "slug_candidate_non_finale": "artificiere",
+      "file_base": "Base Artificiere.pdf",
+      "file_abilita": "Descrizione Abilità Artificiere.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "Tra le fucine ruggenti, i laboratori illuminati da scintille e le biblioteche cariche di tomi arcani,",
+      "dadi_vita": "d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "ki",
+        "carica",
+        "runa"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi semplici: L'Artificiere padroneggia le armi più basilari come bastoni, pugnali, fionde",
+      "armature_consentite": "Armature",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 4052 chars, Abilità PDF 21581 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Astrologo",
+      "slug_candidate_non_finale": "astrologo",
+      "file_base": "Base Astrologo.pdf",
+      "file_abilita": "Descrizione Abilità Astrologo.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "frase scritta dagli dèi o da forze più antiche degli dèi stessi. Interpretare il firmamento significa",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 7263 chars, Abilità PDF 24764 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Bardo",
+      "slug_candidate_non_finale": "bardo",
+      "file_base": "Base Bardo.pdf",
+      "file_abilita": "Descrizione Abilità Bardo.pdf",
+      "file_progressione_extra": [
+        "Leggende Bardiche.TXT"
+      ],
+      "fantasy_archetipo": "combattimento, il loro fascino naturale e la loro creatività li rendono figure centrali nelle relazioni",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "vuoto",
+        "spiriti"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [
+        "Leggende Bardiche.TXT"
+      ],
+      "live_counterpart": "bard",
+      "note_ocr_formattazione": "Base PDF 6785 chars, Abilità PDF 24580 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Burattinaio",
+      "slug_candidate_non_finale": "burattinaio",
+      "file_base": "Base Burattinaio.pdf",
+      "file_abilita": "Descrizione Abilità Burattinaio.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "Al livello 36, una volta al giorno può usare Sinfonia dei Fili: per 1 minuto, tutti i nemici entro 18",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "dominio",
+        "vuoto"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Summoner",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 8333 chars, Abilità PDF 30064 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Cacciatore del Sangue",
+      "slug_candidate_non_finale": "cacciatore_sangue",
+      "file_base": "Base Cacciatore del Sangue.pdf",
+      "file_abilita": "Descrizione Abilità Cacciatore del Sangue.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Tutte le armi semplici",
+      "armature_consentite": "Competenze – Armi e Armature",
+      "scudi": "Scudi (ma molte abilità impongono pen",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 3233 chars, Abilità PDF 22018 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Cacciatore del Vuoto",
+      "slug_candidate_non_finale": "cacciatore_vuoto",
+      "file_base": "Base Cacciatore del Vuoto.pdf",
+      "file_abilita": "Descrizione abilità Cacciatore del Vuoto.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "vuoto"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi: Armi semplici e armi da guerra.",
+      "armature_consentite": "Armature: Armature leggere e medie, scudi.",
+      "scudi": "Armature: Armature leggere e medie, scudi.",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 3558 chars, Abilità PDF 13794 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Cacciatore di Mostri",
+      "slug_candidate_non_finale": "cacciatore_mostri",
+      "file_base": "Base Cacciatore di Mostri.pdf",
+      "file_abilita": "Descrizione Abilità Cacciatore di Mostri.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "Da solo, è perfetto per sessioni investigative e contratti: seguire una pista, interrogare testimoni,",
+      "dadi_vita": "1d10",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "essenza",
+        "carica",
+        "carte"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 9088 chars, Abilità PDF 17393 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Cartografo",
+      "slug_candidate_non_finale": "cartografo",
+      "file_base": "Base Cartografo.pdf",
+      "file_abilita": "Descrizione Abilità Cartografo.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "dominio"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Utility",
+        "Support"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 6478 chars, Abilità PDF 18368 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Cavaliere della Morte",
+      "slug_candidate_non_finale": "cavaliere_morte",
+      "file_base": "Base Cavaliere della Morte.pdf",
+      "file_abilita": "Descrizione abilità Cavaliere della Morte.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d10",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi: Tutte le armi semplici e da guerra.",
+      "armature_consentite": "Competenze di armi e armature",
+      "scudi": "Armature: Tutte le armature (leggere, medie, pesanti) e scudi.",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Tank",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 3227 chars, Abilità PDF 17371 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Cavaliere di Draghi",
+      "slug_candidate_non_finale": "cavaliere_draghi",
+      "file_base": "Base Cavaliere di Draghi.pdf",
+      "file_abilita": "Descrizione Abilità Cavliere di Draghi.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d10",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "dominio"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "Armature:",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Tank",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [
+        "Si può ottenere l'amicizia di un drago già giovane o adulto prima del livello"
+      ],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 4120 chars, Abilità PDF 18447 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Cronista",
+      "slug_candidate_non_finale": "cronista",
+      "file_base": "Base Cronista.pdf",
+      "file_abilita": "Descrizione Abilità Cronista.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 8692 chars, Abilità PDF 23909 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Druido",
+      "slug_candidate_non_finale": "druido",
+      "file_base": "Base Druido.pdf",
+      "file_abilita": "Descrizioni Abilità Druido.pdf",
+      "file_progressione_extra": [
+        "Sentiero del Guardiano.TXT",
+        "Trasformazioni Druido.pdf"
+      ],
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "vuoto",
+        "spiriti"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "Armature",
+      "scudi": "degli scudi. Tuttavia, hanno una particolarità molto importante: non indossano",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Healer",
+        "Hybrid"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [
+        "Sentiero del Guardiano.TXT",
+        "Trasformazioni Druido.pdf"
+      ],
+      "live_counterpart": "druid",
+      "note_ocr_formattazione": "Base PDF 4013 chars, Abilità PDF 16866 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Fabbro Arcano",
+      "slug_candidate_non_finale": "fabbro_arcano",
+      "file_base": "Base Fabbro Arcano.pdf",
+      "file_abilita": "Descrizione Abilità Fabbro Arcano.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "rune"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "Ogni armatura ha una volontà.",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 8595 chars, Abilità PDF 24641 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Giocatore d'Azzardo",
+      "slug_candidate_non_finale": "giocatore_azzardo",
+      "file_base": "Base Giocatore d'Azzardo.pdf",
+      "file_abilita": "Descrizione Abilità Giocatore d'Azzardo.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "pericolosi, tornei, tavoli maledetti e patti con entità che giocano con anime, ricordi o anni di vita.",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "carte",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Hybrid",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 8836 chars, Abilità PDF 17874 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Guerriero",
+      "slug_candidate_non_finale": "guerriero",
+      "file_base": "Base Guerriero.pdf",
+      "file_abilita": "Descrizione Abilità Guerriero.pdf",
+      "file_progressione_extra": [
+        "Via del Dominatore.TXT"
+      ],
+      "fantasy_archetipo": "Scegliendo la via del Guerriero/Barbaro, incarnerai sia la disciplina del combattente addestrato che la furia selvaggia dell’antico guerriero tribale. La tua forza nasce dall’unione tra tecniche precise, apprese sul campo di battaglia o nell’addestramento militare, e l’istinto esplosivo che ti trasforma in una forza inarrestabile quando la rabbia monta. Sai sfruttare armature e armi con competenza, ma il tuo vero potere emerge quando lasci che la tua furia ti guidi. In battaglia sei la tempesta:",
+      "dadi_vita": "d10",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "carica"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Tutte le armi semplici e marziali",
+      "armature_consentite": "Competenze in Armi e Armature:",
+      "scudi": "Scudi",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Tank",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [
+        "Guerriero"
+      ],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [
+        "Via del Dominatore.TXT"
+      ],
+      "live_counterpart": "warrior",
+      "note_ocr_formattazione": "Base PDF 3195 chars, Abilità PDF 14461 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Ladro",
+      "slug_candidate_non_finale": "ladro",
+      "file_base": "Base Ladro.pdf",
+      "file_abilita": "Descrizione Abilità Ladro.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "vuoto",
+        "rune"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi semplici (pugnali, bastoni, fionde, archi corti).",
+      "armature_consentite": "ricchezze o vendetta, la notte è tua complice e le tenebre la tua armatura.",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Utility"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "rogue",
+      "note_ocr_formattazione": "Base PDF 3590 chars, Abilità PDF 22774 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Mago",
+      "slug_candidate_non_finale": "mago",
+      "file_base": "Base Mago.pdf",
+      "file_abilita": "Descrizione Abilità Mago.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "mondi interi. Il vostro potere deriva dallo studio approfondito, dai tomi polverosi delle biblioteche",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "furia",
+        "carica",
+        "dominio"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Come mago hai accesso principalmente alle armi più semplici e meno ingombranti, adatte a chi",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "mage",
+      "note_ocr_formattazione": "Base PDF 4171 chars, Abilità PDF 27098 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Mercante",
+      "slug_candidate_non_finale": "mercante",
+      "file_base": "Base Mercante.pdf",
+      "file_abilita": "Descrizione Abilità Mercante.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "trasformato in potere. il Mercante piega il mondo attraverso contratti, favori, debiti, oggetti rari,",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "sangue",
+        "vuoto"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Utility",
+        "Support"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 9824 chars, Abilità PDF 20950 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Monaco",
+      "slug_candidate_non_finale": "monaco",
+      "file_base": "Base Monaco.pdf",
+      "file_abilita": "Descrizione abilità Monaco.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "furia",
+        "ki",
+        "essenza"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Il Monaco è un guerriero ascetico, maestro di arti marziali e del corpo come arma. Addestrato",
+      "armature_consentite": "Come Monaco, il vostro personaggio non si affida tanto alle armi tradizionali o alle armature",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Hybrid"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "monk",
+      "note_ocr_formattazione": "Base PDF 4387 chars, Abilità PDF 18680 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Negromante",
+      "slug_candidate_non_finale": "negromante",
+      "file_base": "Base Negromante.pdf",
+      "file_abilita": "Descrizione Abilità Negromante.pdf",
+      "file_progressione_extra": [
+        "Scuole di Necromanzia.TXT"
+      ],
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "essenza",
+        "dominio"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Summoner",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [
+        "Scuole di Necromanzia.TXT"
+      ],
+      "live_counterpart": "necromancer",
+      "note_ocr_formattazione": "Base PDF 3547 chars, Abilità PDF 14904 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Paladino",
+      "slug_candidate_non_finale": "paladino",
+      "file_base": "Base Paladino.pdf",
+      "file_abilita": "Descrizione abilità Paladino.pdf",
+      "file_progressione_extra": [
+        "Cammino Celeste.TXT"
+      ],
+      "fantasy_archetipo": "difensori dei deboli, giustizieri contro il male e protettori della sacra armonia. Tuttavia, non tutti i",
+      "dadi_vita": "d10",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "Caratterizzati da un'armatura scintillante e una fede incrollabile, i paladini si ergono come",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Tank",
+        "Healer"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [
+        "Cammino Celeste.TXT"
+      ],
+      "live_counterpart": "paladin",
+      "note_ocr_formattazione": "Base PDF 3708 chars, Abilità PDF 15799 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "basso"
+    },
+    {
+      "class_name_it": "Parassita",
+      "slug_candidate_non_finale": "parassita",
+      "file_base": "Base Parassita.pdf",
+      "file_abilita": "Descrizione Abilità Parassita.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "In gruppo, il Parassita è resistente, disturbante e adattabile. Può assorbire danni, rubare vitalità,",
+      "dadi_vita": "1d8",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "carica",
+        "dominio"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "DPS",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 11766 chars, Abilità PDF 21108 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Pittore",
+      "slug_candidate_non_finale": "pittore",
+      "file_base": "Base Pittore.pdf",
+      "file_abilita": "Descrizione Abilità Pittore.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "essenza",
+        "carica",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "Control"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 9367 chars, Abilità PDF 21338 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    },
+    {
+      "class_name_it": "Runista",
+      "slug_candidate_non_finale": "runista",
+      "file_base": "Base Runista.pdf",
+      "file_abilita": "Descrizione Abilità Runista.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "delle rune: alcuni studiano le rune elementali, altri quelle protettive, altri ancora le rune proibite",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "essenza",
+        "carica"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "Può incidere rune su armi, armature, porte, pavimenti o oggetti, trasformandoli in catalizzatori",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Support",
+        "DPS"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 6161 chars, Abilità PDF 28533 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Sciamano",
+      "slug_candidate_non_finale": "sciamano",
+      "file_base": "Base Sciamano.pdf",
+      "file_abilita": "Descrizione Abilità Sciamano.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "Gli sciamani sono guide spirituali, intermediari tra il regno dei mortali e quello degli spiriti. Essi",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "mana",
+        "furia",
+        "essenza"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "Armi semplici: Lo sciamano è esperto nell'uso di armi basilari, spesso preferendo",
+      "armature_consentite": "Competenze in Armature:",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Healer",
+        "Support"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 5310 chars, Abilità PDF 15568 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "medio"
+    },
+    {
+      "class_name_it": "Sognatore",
+      "slug_candidate_non_finale": "sognatore",
+      "file_base": "Base Sognatore.pdf",
+      "file_abilita": "Descrizione Abilità Sognatore.pdf",
+      "file_progressione_extra": null,
+      "fantasy_archetipo": "TBD_source_readable_but_extraction_regex_missed_quote_marker",
+      "dadi_vita": "1d6",
+      "progressione_incantesimi": "Completa (7 livelli incantesimi)",
+      "risorsa_classe": [
+        "carica",
+        "dominio",
+        "sangue"
+      ],
+      "oggetto_di_classe": "TBD_ocr_or_ability_pdf",
+      "armi_consentite": "TBD_ocr",
+      "armature_consentite": "TBD_ocr",
+      "scudi": "TBD_ocr",
+      "stat_primaria_probabile": "TBD_PM_decision",
+      "ruoli_potenziali_preliminari": [
+        "Control",
+        "Support"
+      ],
+      "meccaniche_uniche_top3": [],
+      "livelli_speciali": "TBD_needs_full_table_parse",
+      "cammini_scuole_vie": [],
+      "live_counterpart": "NO_LIVE_MATCH",
+      "note_ocr_formattazione": "Base PDF 9367 chars, Abilità PDF 20025 chars. Tabelle progressione incantesimi con separatori '----' → parsing colonne complesso; fantasia/quote potenzialmente in virgolette curly '\"\"' non catturate da regex ASCII; regex ha catturato correttamente 'Completa (7 livelli)' per tutte le 27 classi ma la matrice slot per livello richiede parsing manuale.",
+      "dati_mancanti_confermati": [
+        "stat_primaria_probabile",
+        "oggetto_di_classe",
+        "livelli_speciali dettagliati",
+        "risorsa_classe (solo hints estratti, non conferme)",
+        "fantasy_archetipo"
+      ],
+      "rischio_tecnico": "alto"
+    }
+  ],
+  "live_catalog": [
+    {
+      "slug": "warrior",
+      "name_it": "Warrior",
+      "role": "Tank",
+      "primary_stat": "strength",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "rogue",
+      "name_it": "Rogue",
+      "role": "DPS",
+      "primary_stat": "agility",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "mage",
+      "name_it": "Mage",
+      "role": "DPS",
+      "primary_stat": "intellect",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "priest",
+      "name_it": "Priest",
+      "role": "Healer",
+      "primary_stat": "faith",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "ranger",
+      "name_it": "Ranger",
+      "role": "DPS",
+      "primary_stat": "agility",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "paladin",
+      "name_it": "Paladin",
+      "role": "Tank",
+      "primary_stat": "faith",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "berserker",
+      "name_it": "Berserker",
+      "role": "DPS",
+      "primary_stat": "strength",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "druid",
+      "name_it": "Druid",
+      "role": "Healer",
+      "primary_stat": "faith",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "necromancer",
+      "name_it": "Necromancer",
+      "role": "DPS",
+      "primary_stat": "intellect",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "monk",
+      "name_it": "Monk",
+      "role": "DPS",
+      "primary_stat": "agility",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "bard",
+      "name_it": "Bard",
+      "role": "Support",
+      "primary_stat": "intellect",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "assassin",
+      "name_it": "Assassin",
+      "role": "DPS",
+      "primary_stat": "agility",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "warlock",
+      "name_it": "Warlock",
+      "role": "DPS",
+      "primary_stat": "intellect",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "alchemist",
+      "name_it": "Alchemist",
+      "role": "DPS",
+      "primary_stat": "intellect",
+      "is_playable": null,
+      "is_talent_tree_eligible": null
+    },
+    {
+      "slug": "recruit_unassigned",
+      "name_it": null,
+      "role": null,
+      "primary_stat": null,
+      "is_playable": false,
+      "is_talent_tree_eligible": false
+    }
+  ],
+  "live_adv_distribution": {
+    "paladin": 166,
+    "priest": 190,
+    "berserker": 3,
+    "ranger": 175,
+    "mage": 218,
+    "bard": 177,
+    "warrior": 290,
+    "monk": 162,
+    "rogue": 229,
+    "druid": 167,
+    "warlock": 128,
+    "alchemist": 135,
+    "recruit_unassigned": 85
+  },
+  "live_to_canonical_matrix": {
+    "warrior": {
+      "target": "Guerriero",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto, seed R160 → R18.1 alias-safe"
+    },
+    "rogue": {
+      "target": "Ladro",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto"
+    },
+    "mage": {
+      "target": "Mago",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto"
+    },
+    "priest": {
+      "target": "?",
+      "confidence": "ambiguo_alto",
+      "note": "Non in 27 canonical. Candidati: (a) merge in Paladino (spec Healer), (b) merge in Sciamano, (c) split come 28ª. **PM decision required** — priest ha 190 adv attivi (post-alias Cleric R18.1) → migrazione critica."
+    },
+    "ranger": {
+      "target": "?",
+      "confidence": "ambiguo_alto",
+      "note": "Non in 27 canonical. Candidati: Cacciatore di Mostri (fantasy 'tracker/hunter'), Cacciatore del Vuoto, Cacciatore del Sangue. **PM decision required** — 175 adv attivi."
+    },
+    "paladin": {
+      "target": "Paladino",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto. Extra `Cammino Celeste.TXT` disponibile."
+    },
+    "berserker": {
+      "target": "Guerriero?",
+      "confidence": "ambiguo_medio",
+      "note": "Non in 27 canonical. Il PDF `Base Guerriero.pdf` menziona 'Guerriero/Barbaro' unificato + `Via del Dominatore.TXT`. **Possibile ramo talento** del Guerriero, non classe canonica separata. 3 adv attivi (low risk)."
+    },
+    "druid": {
+      "target": "Druido",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto. Extra `Sentiero del Guardiano.TXT` + `Trasformazioni Druido.pdf`."
+    },
+    "necromancer": {
+      "target": "Negromante",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto. Extra `Scuole di Necromanzia.TXT`."
+    },
+    "monk": {
+      "target": "Monaco",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto"
+    },
+    "bard": {
+      "target": "Bardo",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto. Extra `Leggende Bardiche.TXT`."
+    },
+    "assassin": {
+      "target": "Ladro",
+      "confidence": "ambiguo_basso",
+      "note": "Non in 27 canonical. Merge naturale con Ladro (0 adv attivi → low risk). Alternativa: ramo talento specializzato."
+    },
+    "warlock": {
+      "target": "?",
+      "confidence": "ambiguo_alto",
+      "note": "Non in 27 canonical. Candidati: (a) Cacciatore del Vuoto (patronage 'Vuoto'), (b) Parassita, (c) Cavaliere della Morte. **PM decision required** — 128 adv attivi."
+    },
+    "alchemist": {
+      "target": "Alchimista",
+      "confidence": "sicuro",
+      "note": "1:1 match diretto. Kit Alchemico come oggetto di classe."
+    },
+    "recruit_unassigned": {
+      "target": "recruit_unassigned (tecnico)",
+      "confidence": "n/a",
+      "note": "R18.1 tecnical class, non canonical player-facing"
+    }
+  },
+  "note": "Raw data audit R18.0b. Ownership: PM. Slug e ruoli sono CANDIDATI TECNICI, non decisioni finali."
+}
