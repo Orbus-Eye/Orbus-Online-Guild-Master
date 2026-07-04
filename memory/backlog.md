@@ -336,59 +336,85 @@ Follow-up per R17.1:
 
 ---
 
-## R17.1 — Onboarding & First Player Success — CLOSED & SEALED (2026-07-04)
+## R17.1 — Onboarding & First Player Success — CLOSED & SEALED (2026-07-04T10:45Z)
 
-Vedi `/app/memory/round171_final_report.md` per il dettaglio consegne P0 + P1 + mini-fix pre-sealing (audit whitelist + UI fallback reward + browser check).
+Vedi `/app/memory/round171_final_report.md` per il dettaglio consegne P0 + P1 + mini-fix pre-sealing + 16-point sealing checklist.
 
-Sigillato con: 13/13 pytest PASS · Browser check PASS · Zero regressioni · Zero modifiche a drop/reward/PvP/premium/economia.
-
----
-
-## R17.1b — Onboarding Polish (mini-round da schedulare)
-
-**Priorità**: P1 (non-blocking; migliora UX del funnel post-R17.1).
-
-Scope elenco:
-
-1. **Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text`** (starter path)
-   - Attualmente `_build_result_log(...)` genera stringhe inglesi ("Your party pushed too deep into the Campo d'Addestramento..."). Il banner IT `LEZIONE APPRESA` è già ok, ma la Narrativa subito sotto è bilingue misto.
-   - Estendere `report_builder.build_expedition_report` per popolare `narrative_it` sistematicamente (in parte già fatto in `WhyNarrativeSection`).
-   - File coinvolti: `app/expeditions/services.py::_build_result_log`, `app/expeditions/report_builder.py`, `frontend/src/pages/ExpeditionReport.jsx`.
-
-2. **Prominenza label "Prestigio" in dashboard/report**
-   - Attualmente XP guadagnata dopo la spedizione è mostrata come `+5` senza contesto "Prestigio di Gilda" nel report principale.
-   - Migliorare le label in `Cell` + `GuildProgressCard`.
-
-3. **Milestone toasts** (P1.7 deferrato da R17.1)
-   - Toast celebrativi:
-     - `first-expedition-started` → "🎯 Prima missione in corso!"
-     - `first-expedition-completed` → "🎉 Prima missione completata!"
-     - `first-prestige-gained` → "⭐ Primo Prestigio guadagnato!"
-   - Meccanismo: hook globale che ascolta `emit_first_event` via polling `/api/events/subscribe` (nuovo endpoint) OR reagisce al payload di response degli endpoint spedizione/completion.
-   - **Alternativa lean**: emettere flag booleani nel payload (`is_first_*: true`) e lasciare al frontend il trigger dei toast.
-
-4. **Wizard onboarding interattivo** (P2.8 deferrato da R17.1)
-   - 5-step interactive tour: welcome → recruit → dungeon → expedition → prestige.
-   - Attivo solo per `guild.created_at < 24h` && `!wizard_completed`.
-   - Skip button con conferma.
-   - Persistenza dello step corrente in `guild.onboarding_wizard_step`.
-
-5. **Polish report prima spedizione**
-   - Se `fallback_reward.granted === true`, aggiungere un CTA "Riprova con team più forte" che pre-compila la squad.
-   - Micro-copy tuning per rendere la failure meno "punitiva" nel primo report.
-
-6. **Mobile readability check**
-   - Viewport 320 / 375 / 390.
-   - Verifica overflow: banner LEZIONE APPRESA, WhyNarrative, ExpeditionExplainer.
-   - Font size min 14px sul banner (attualmente text-sm = 14px, ok).
-
-**Dependencies**: nessuna. Può partire subito dopo R17.1 sealing.
-
-**Exit criteria**: 6 punti sopra completati + regressione tester@orbus.test + browser check IT sul report.
+Sigillato con: 13/13 pytest PASS · Browser check Playwright PASS · Zero regressioni · Zero hard delete · Zero modifiche a drop/reward/PvP/premium/economia/curve XP.
 
 ---
 
-## R17.2 — World Content Activation (P0)
+## R17.1b — Onboarding Polish & Report Localization (OPEN in backlog, NOT started)
+
+**Status**: aperto nel backlog per approvazione PM. **Non aprire finché PM non conferma.** Nessun task iniziato.
+
+**Vincoli tassativi**:
+- ❌ No hard delete.
+- ❌ No modifiche PvP/economia/premium/drop/reward endgame/curve XP.
+- ❌ No apertura R17.2 finché R17.1b non chiude polish primo report.
+- ❌ No wizard onboarding completo (deferrato a round dedicato).
+
+### Scope R17.1b (6 items)
+
+1. **[P0]** Localizzazione IT completa `result_log` / `result_summary` / `equipment_delta_text`
+   - Contesto: attualmente in inglese, visibile sotto il banner fallback e nei report success.
+   - Backend: identificare string builders in `expeditions/services.py::_build_result_log` (e sub-moduli narrative se esistono). Sostituire le strings statiche con versione IT. Se il testo è generato dinamicamente (es. narrative AI), aggiungere layer di traduzione o cambiare prompt IT.
+   - Vincolo: no i18n framework globale, solo mapping IT locale come già fatto per Auto-Equip in R16.5.4c.
+   - File coinvolti: `app/expeditions/services.py`, `app/expeditions/report_builder.py`, `frontend/src/pages/ExpeditionReport.jsx`.
+
+2. **[P0]** Label "Prestigio" più evidente nel report spedizione
+   - Attualmente il valore è calcolato ma la label è marginale. Aumentare prominenza visuale (dedicata card/row) senza cambiare il valore.
+   - File coinvolti: `frontend/src/pages/ExpeditionReport.jsx` (sezione REWARDS SUMMARY), `frontend/src/components/GuildProgressCard.jsx`.
+
+3. **[P1]** Milestone toast — 3 momenti:
+   - Prima spedizione avviata → `"Prima spedizione avviata! Il tuo team è in missione."`
+   - Prima spedizione completata (successo) → `"Prima spedizione completata! La tua gilda ha guadagnato Prestigio."`
+   - Primo Prestigio guadagnato → `"Hai ottenuto il tuo primo Prestigio di Gilda!"`
+   - Non invasivi, auto-dismiss 4-5s, dismissible con click.
+   - Meccanismo suggerito: flag booleani `is_first_*: true` nel payload di response degli endpoint spedizione/completion (alternativa lean al polling globale).
+
+4. **[P1]** Polish report primo dungeon/training-yard — leggibilità mobile, no `[object Object]`, no stringhe EN residue.
+
+5. **[P1]** Mobile/readability check — viewport 375/390/430. Screenshot + metriche.
+
+6. **[P1]** CTA "Riprova con team più forte" (nel banner fallback)
+   - **Comportamento desiderato**:
+     - Non avvia automaticamente la spedizione.
+     - Porta alla preview di training-yard.
+     - Suggerisce/preseleziona la miglior squadra disponibile per class-fit + power.
+     - Spiega **perché** quei membri sono consigliati (breve tooltip/riga informativa).
+     - Rispetta livello adventurer, disponibilità (non impegnati), class-fit.
+     - **NO boost nascosto** (nessun modificatore power occulto).
+     - **NO vantaggio premium**.
+     - **NO reward extra**.
+     - Interamente in italiano.
+   - **Non deve**:
+     - Bloccare il sealing di R17.1b.
+     - Superare localizzazione/toast come priorità.
+   - **Origine**: proposta business enhancement post-sealing R17.1 (2026-07-04); PM ha approvato l'inclusione come P1 nell'onboarding polish.
+
+### Ordine consigliato R17.1b
+
+1. P0.1 Localizzazione result_log/summary/equipment_delta (contributo maggiore alla percezione qualità).
+2. P0.2 Prominenza Prestigio nel report.
+3. P1.3 Milestone toast.
+4. P1.4–5 Polish + mobile readability.
+5. P1.6 CTA "Riprova con team più forte".
+
+### Exit criteria R17.1b
+
+- 6 punti sopra completati.
+- Regressione `tester@orbus.test` PASS.
+- Browser check IT sul report (nessuna stringa EN residua sotto il banner fallback né nei report success).
+- Screenshot mobile 375/390/430 salvati in `/app/memory/round171b_*`.
+
+### Monitoring residui da R17.1 (tracciamento in R17.1b)
+
+- ⚠️ **`FIRST_PRESTIGE_GAINED` 0 record**: whitelist ok, ma nessun player reale ha ancora triggerato l'evento nel funnel. Non-blocker per R17.1. Da monitorare tra R17.1b e R17.2 (potrebbe indicare gap negli emit sites, oppure semplicemente pochi first-prestige nel periodo di misurazione).
+
+---
+
+## R17.2 — World Content Activation — PLANNED (P0, NON APRIRE fino a chiusura R17.1b)
 
 Prossimo round major dopo R17.1b. Priorità dei 3 sistemi dormienti:
 

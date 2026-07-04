@@ -304,4 +304,50 @@ Riferimento: `/app/memory/orbus_world_roadmap.md` e `/app/memory/backlog.md`.
 
 ---
 
-**Sealing R17.1**: ✅ **CLOSED & SEALED — 2026-07-04T10:35Z**.
+**Sealing R17.1**: ✅ **CLOSED & SEALED — 2026-07-04T10:45Z**.
+
+---
+
+## 🔒 R17.1 — CLOSED & SEALED — Sealing checklist finale (16 punti PM)
+
+**Data sealing definitivo**: 2026-07-04T10:45Z (UTC).
+**Autorità**: PM ha accettato la validazione Playwright TC2 come sufficiente per il sealing (nessun tester account aveva expedition fallita reale al momento del last-mile check).
+
+1. ✅ TC1 New player E2E PASS
+2. ✅ `training-yard` starter dungeon funzionante
+3. ✅ CTA `?starter=training-yard` funzionante
+4. ✅ FirstObjectiveCard behavior PASS (visibile prima, sparisce dopo prima expedition completata)
+5. ✅ Adventurers release senza aprire report PASS (completion hook async indipendente)
+6. ✅ Admin audit whitelist PASS (10 event types R17.1 visibili via `/api/admin/audit/events`)
+7. ✅ Fallback reward backend PASS (pytest 9/9, `STARTER_FALLBACK_REWARD_GRANTED` audit corretto)
+8. ✅ Fallback banner Playwright PASS (browser check con force fail + revert)
+9. ✅ Screenshot desktop + mobile salvati:
+   - `/app/memory/round171_fallback_banner.jpeg`
+   - `/app/memory/round171_fallback_banner_mobile.jpeg`
+10. ✅ Regression `tester@orbus.test` PASS (Dashboard, Auto-Equip R16.5.4c, Prestigio R16.5.4d)
+11. ⚠️ WARN `FIRST_PRESTIGE_GAINED` 0 record tracciato (whitelist ok, event non ancora triggerato da player reali — monitorare)
+12. ⏳ Report bilingue tracciato → R17.1b (result_log, result_summary, equipment_delta_text)
+13. ⏳ Milestone toast tracciato → R17.1b
+14. ⏳ Nuovo P1: CTA "Riprova con team più forte" tracciato → R17.1b
+15. ✅ Conferma NO hard delete
+16. ✅ Conferma NO modifiche PvP/economia/premium/drop/reward endgame/curve XP
+
+### TC2 Fallback banner — nota testuale ufficiale
+
+```
+TC2 Fallback banner:
+- Backend logic PASS (pytest 9/9)
+- Playwright visual validation PASS (dev-side, R17.1 mini-fix)
+- Screenshot desktop: /app/memory/round171_fallback_banner.jpeg
+- Screenshot mobile: /app/memory/round171_fallback_banner_mobile.jpeg
+- Manual live tester: HUMAN_REQUIRED — nessun tester account aveva expedition
+  fallita reale al momento del last-mile check. PM ha esplicitamente accettato
+  la validazione Playwright come sufficiente per il sealing.
+```
+
+### Prossimo step
+
+- **R17.1b** OPEN in backlog (`/app/memory/backlog.md` §"R17.1b — Onboarding Polish & Report Localization"). Aperto ma NON iniziato. Attende ok esplicito del PM per l'apertura operativa.
+- **R17.2** PLANNED — non aprire finché R17.1b non chiude polish primo report.
+
+**R17.1 — CLOSED & SEALED ✅** — 2026-07-04T10:45Z.

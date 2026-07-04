@@ -284,9 +284,9 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 
 > **Status**: sigillato 2026-07-04T08:00:00Z. Fix difensivo `get_structure_max_level`. 6/6 pytest verde. WARN log live confermato.
 
-## Round 17.1 — Onboarding & First Player Success — CLOSED & SEALED ✅ (2026-07-04)
+## Round 17.1 — Onboarding & First Player Success — CLOSED & SEALED ✅ (2026-07-04T10:45Z)
 
-> **Status**: sigillato definitivo 2026-07-04T10:35Z. Mini-fix pre-sealing completato (audit whitelist + UI fallback reward + browser check Playwright). Deliverable: `/app/memory/round171_final_report.md` (13-point PM checklist).
+> **Status**: sigillato definitivo 2026-07-04T10:45Z (validazione Playwright TC2 accettata dal PM). Mini-fix pre-sealing completato (audit whitelist + UI fallback reward + browser check Playwright). Deliverable: `/app/memory/round171_final_report.md` (16-point PM sealing checklist).
 >
 > **P0 delivered**:
 > - `training-yard` starter dungeon seedato (idempotent boot hook).
@@ -297,21 +297,36 @@ BLOCCO A (auto-equip class-aware fix) + BLOCCO B (ADJ-2 seed integrity Legendary
 >   - `AUDIT_EVENT_WHITELIST` include i 10 R17.1 event types → admin filter enabled.
 >   - `GET /api/expeditions/{id}` espone `fallback_reward` (read-only derivation).
 >   - Frontend banner IT `:: LEZIONE APPRESA` con testo esatto + `+5 oro` + `+5 Prestigio di Gilda`.
->   - Playwright browser check PASS (screenshot `/app/memory/round171_fallback_banner.jpeg`).
+>   - Playwright browser check PASS (screenshot `/app/memory/round171_fallback_banner.jpeg` + `_mobile.jpeg`).
 >
 > **Test**: 13/13 pytest R17.1 PASS (4 whitelist + 9 fallback logic+UI). Regression `tester@orbus.test` invariata.
 >
+> **Warning tracciato non-blocker**:
+> - `FIRST_PRESTIGE_GAINED` 0 record (whitelist ok, event non ancora triggerato da player reali) — monitorare in R17.1b/R17.2.
+>
 > **Bug residui non bloccanti**:
 > - SMTP `@orbus.test` refused (P2, tracciato `R17.infra.smtp`).
-> - `result_log` post-fail in inglese sotto il banner IT (deferrato a R17.1b).
+> - `result_log` post-fail in inglese sotto il banner IT (deferrato a R17.1b P0).
 >
-> **Deferred to R17.1b**: milestone toasts, wizard onboarding, localizzazione result_log/summary/equipment_delta, prominenza label Prestigio, mobile readability check.
+> **Deferred to R17.1b (aperto in backlog, non ancora iniziato)**: localizzazione IT result_log/summary/equipment_delta, prominenza label Prestigio, milestone toasts, polish primo report, mobile readability check, CTA "Riprova con team più forte".
 
 ---
 
-## Round 17.1b — Onboarding Polish — PLANNED 🔜 (P1)
+## Round 17.1b — Onboarding Polish & Report Localization — OPEN in backlog (2026-07-04)
 
-Mini-round da schedulare post-R17.1. Vedi `/app/memory/backlog.md` §"R17.1b" per lo scope elenco (6 items). Priorità P1 non-bloccante; migliora il funnel UX senza toccare gameplay.
+**Status**: aperto nel backlog, **NON ancora iniziato**. Attende ok esplicito del PM per l'apertura operativa.
+
+Scope 6 items (P0×2 + P1×4). Vedi `/app/memory/backlog.md` §"R17.1b" per lo scope elenco completo.
+
+**Priorità sintetica**:
+- P0.1 Localizzazione IT `result_log` / `result_summary` / `equipment_delta_text`.
+- P0.2 Prominenza label "Prestigio" nel report.
+- P1.3 Milestone toasts (3 momenti chiave).
+- P1.4 Polish report primo dungeon (mobile-friendly, no EN residue).
+- P1.5 Mobile readability check (viewport 375/390/430).
+- P1.6 CTA "Riprova con team più forte" nel banner fallback (senza boost, senza premium, senza reward extra).
+
+**Vincoli tassativi R17.1b**: no hard delete · no PvP/economia/premium/drop/reward endgame/curve XP · no apertura R17.2 fino a chiusura R17.1b polish primo report · no wizard onboarding completo (deferrato).
 
 ---
 
