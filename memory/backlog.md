@@ -356,62 +356,52 @@ Sigillato con: 13/13 pytest PASS · Playwright IT desktop+mobile PASS · milesto
 
 ---
 
-## R17.2 — World Content Activation (Path A) — CLOSED (pre-sealing, awaiting e1_tester) ⏳ (2026-07-04T13:45Z)
+## R17.2 — World Content Activation (Path A) — CLOSED & SEALED ✅ (2026-07-04T14:20Z)
 
-**Scope Path A** (pivot post-audit approvato PM Msg 280):
+Sigillato definitivamente. PM approva A+i post-hotfix Auto-Equip UI parity + `e1_tester` accepted.
 
-1. **P0.1 Achievements audit** — `/achievements` render OK con 110 catalog seedati verificati. Endpoint `/api/achievements/catalog` funzionante. **No re-seed necessario** (già seedato in R16.x).
-2. **P0.3 Resource Missions Path A** — durata 780s (13m, era 1800), cap 6/gilda/giorno, cooldown 1/continente/giorno, gate Prestigio `guild_level ≥ 2`, reward **+8 XP rare / +10 XP epic** Prestigio (idempotent via `add_guild_xp(source="resource_mission")`). Nuovo endpoint `GET /api/resources/missions/stats` per FE.
-3. **P1 Prestige next-unlock tooltip** — mapping dinamico:
-   - Lv < 5 → "Forgia Leggendaria al Lv 5"
-   - Lv 5 → "Forgia di Arfus al Lv 6"
-   - Lv 6-7 → "Specializzazione della Gilda al Lv 8"
-   - Lv ≥ 8 → `next_unlock: null` (tooltip nascosto)
-   - Sorgente unica: `MIN_GUILD_LEVEL` importato dai 3 moduli feature-gated. No hardcode duplicato.
+**Deliverable finali**:
+- `/app/memory/round172_final_report.md` — 14-point checklist + fix regressione UI + sezione CLOSED & SEALED
+- 5 screenshot Playwright: `round172_{achievements_audit, prestige_tooltip, resources_stats, hotfix_autoequip_btn, hotfix_autoequip_click}.jpeg`
+- 13/13 pytest R17.1 PASS (regression). Lint verde.
 
-**File chiave modificati**:
-- `app/resources/__init__.py` (costanti Path A + endpoint `/missions/stats`)
-- `app/expeditions/services.py` (`guild_prestige_delta.next_unlock` payload derivation)
-- `frontend/src/pages/ExpeditionReport.jsx` (render tooltip IT)
-- `frontend/src/pages/Resources.jsx` (banner IT gate/cap/cooldown)
+**Consegne**:
+1. ✅ P0.3 Resource Missions Path A — 780s duration, cap 6/day, cooldown 1/continent/day, gate Lv2, reward +8/+10 idempotent.
+2. ✅ P0.1 Achievements audit — 110 catalog verificati, page rendering OK.
+3. ✅ P1 Prestige tooltip — mapping dinamico Lv5/6/8 da `MIN_GUILD_LEVEL` moduli.
+4. ✅ Hotfix Auto-Equip UI parity — bottone ora in `AdventurerEquipment.jsx` (era solo nel modale).
 
-**Test**: 13/13 pytest R17.1 PASS (regression). No dedicated pytest R17.2 (config tuning su codepath già coperti). Playwright screenshot in `/app/memory/round172_*.jpeg`.
-
-**Deliverable**: `/app/memory/round172_final_report.md` (14-point pre-sealing checklist).
-
-**Guardrail**: NO hard delete · NO migration DB · NO modifiche a drop/reward/PvP/premium/economia · NO refactor.
-
-**Non-blocker tracciati per follow-up** (dettaglio nel report):
-- SMTP `@orbus.test` refused → `R17.infra.smtp [P2]` (invariato)
-- CTA class-fit balancing → **R17.3 P1** (deferrito da R17.1c/R17.2 P2)
-- FIRST_PRESTIGE_GAINED legacy non retroattivo → **accepted non-blocker**
-- 6 orfani Guardian/Cleric → R16.5.4c residuo [P3]
-- Auto-Equip polish class IT already-best branch → R16.5.4d residuo [P3]
-- R16.5.4f Localization Sweep 10 token EN → [P3] invariato
-- Raid mid-tier Lv5-14 + Endgame Lv15-20 + Territory/Raid unlock mapping → **R17.3**
+**Non-blocker deferrito → R17.3 Step 1 audit**:
+- CTA class-fit balancing → R17.3 audit E
+- Item coverage residua (monk/warlock/alchemist) → R17.3 audit C
+- Raid mid-tier Lv5-14 + endgame Lv15-20 + territory/raid tooltip → R17.3 audit A/B/D
 
 ---
 
-## R17.3 — Endgame & Class Depth — PLANNED 🔜
+## R17.3 — Endgame & Class Depth — OPEN (Step 1 audit-only) 🔍 (2026-07-04)
 
-**Apertura**: post-sealing R17.2 (attesa `e1_tester` PASS + approvazione PM).
+**Status**: aperto Step 1 audit-only 2026-07-04. PM approva "A+i": procedere con audit design PRIMA di qualsiasi apply. Nessun seed, nessuna modifica reward/drop/economia in Step 1.
 
-**Scope deferrito esplicitamente da R17.2 Path A** (PM Msg 280):
+**Deliverable Step 1**: `/app/memory/round173_step1_audit.md` — 5 audit A→E consegnati.
 
-1. **Raid mid-tier Lv5-14** (P0) — 5 raid tier2 con reward Legendary Forge material. Gate `guild.level` (o `guild_level` — decisione unificazione pendente). Rispetta cap 1 raid completion/day per idempotency Prestigio hook R16.5.3.
-2. **Endgame Lv15-20** (P0) — content late-game: dungeon tier3 con drop Legendary controllati (BOP), world event narrativi post-Alveora, achievement endgame dedicati (extendere `achievements_catalog` seed esistente da 110 → ~130 target).
-3. **Territory / Raid unlock tooltip mapping** (P1) — estensione del `next_unlock` payload (introdotto in R17.2 P1) a feature non-Forge/Specialization (territory upgrades, raid tier unlocks, guild-spec sub-branches). Richiede audit gate certi prima dell'estensione.
-4. **CTA class-fit balancing** (P1, deferrito da R17.1c/R17.2 P2) — la CTA `?auto=strongest` di R17.1b usa pure-power ranking. Deve considerare class-fit / Tank-DPS-Healer role balance. Impatto UX su retry post-fallback.
+**Scope Step 1** (5 audit, NO apply):
+1. **A. Raid mid-tier Lv5-14** — proposta 5 raid tabella completa (slug/name_it/level/power/durata/reward/materiali/ruoli/note). Progressione Lv5→7→9→11→13. NO power creep vs endgame esistente.
+2. **B. Endgame Lv15-20** — lacune (dungeon Lv15+? raid endgame? reward endgame? Legendary Forge gate?). Elenco + rischi + priorità. NO implement.
+3. **C. Class depth / item coverage residua** — tabella coverage per 14 classi. 6 orfani Guardian/Cleric. Proposta item patch se necessaria.
+4. **D. Tooltip Prestigio mapping completo** — audit gate reali (territory/raid/forge/world/class hall/specializations/resource/PvP). Tabella livello/feature/fonte/endpoint/certezza. Implementa solo certezza ALTA in Step 2.
+5. **E. CTA retry class-fit balancing** — algoritmo pseudocodice: disponibilità + livello + class-fit + ruoli + power + requisito. NO party invalide.
 
-**Vincoli anti-P2W / anti-refactor**:
-- No monetizzazione mid-tier/endgame
-- No hard delete, no migration destructive
-- No modifiche a curva Prestigio (`app/achievements/levels.py` invariato)
-- Legendary drop diretti CAP-ped (rispetto R16.3 Phase 5 BOP)
-- No modifiche a economia/PvP/premium
+**Vincoli tassativi Step 1**:
+- ❌ NO apply seed massivo · NO modifica reward/drop/economia · NO hard delete
+- ❌ NO premium/PvP/Stalla/World Boss touch · NO refactor tecnico generico
+- ✅ SOLO audit / design / proposta / tabelle
 
-**Prerequisito**: sealing formale R17.2 (post `e1_tester` PASS) + eventuale REOPEN mirato R17.2 chiuso.
+**Note**:
+- R16.5.4f Localization Sweep [P3]: NON aperto come mini-round separato, tracciato parallelo.
+- PM approverà ogni sub-item (A/B/C/D/E) singolarmente prima del passaggio a Step 2 (apply).
+
+**Prossimo step**: PM review audit → approvazione sub-item singoli → Step 2 (apply mirato, uno per uno).
 
 ---
 
-## R17.2 — World Content Activation — PLANNED (superato, ora CLOSED pre-sealing)
+## R17.2 — World Content Activation — Round precedente CLOSED (superato)

@@ -470,3 +470,33 @@ Tutti gli item cosmetici tracciati nel report principale, sezione "Known Limits 
 ---
 
 **R17.2 — CLOSED (pre-sealing, post-hotfix) ⏳** — 2026-07-04T14:10Z. Pronto per rilancio `e1_tester` TC4 regression.
+
+---
+
+## 🔒 R17.2 — CLOSED & SEALED ✅ (2026-07-04T14:20Z)
+
+**Autorità sealing**: PM ha approvato "A + i" post-hotfix Auto-Equip UI parity + validation `e1_tester` accepted.
+
+**Consegne definitive**:
+1. ✅ **P0.3 Resource Missions Path A** — 780s (13m) · cap 6/gilda/giorno · cooldown 1/continente/giorno · gate Prestigio Lv2 · reward +8 rare / +10 epic XP Prestigio (idempotent).
+2. ✅ **P0.1 Achievements audit** — `/achievements` render OK (110 catalog verificati, endpoint funzionante).
+3. ✅ **P1 Prestige next-unlock tooltip** — mapping dinamico Lv5 Forgia Leggendaria / Lv6 Forgia di Arfus / Lv8 Specializzazione della Gilda (sorgente unica `MIN_GUILD_LEVEL`).
+4. ✅ **Hotfix Auto-Equip UI parity** — bottone "Auto-Equipaggia" ora presente sia in `AdventurerDetailModal.jsx` (esistente) sia in `AdventurerEquipment.jsx` (nuovo, `auto-equip-btn-page-{advId}`). Regressione UX preesistente (pre-R17.1), non regression R17.2.
+
+**Deliverable finali**:
+- `/app/memory/round172_final_report.md` — questo report (14-point pre-sealing checklist + fix regressione UI Auto-Equip + CLOSED & SEALED)
+- `/app/memory/round172_achievements_audit.jpeg` · `round172_prestige_tooltip.jpeg` · `round172_resources_stats.jpeg` — 3 screenshot Playwright pre-sealing
+- `/app/memory/round172_hotfix_autoequip_btn.jpeg` · `round172_hotfix_autoequip_click.jpeg` — 2 screenshot hotfix
+- 13/13 pytest R17.1 PASS (regression). Lint verde.
+
+**Guardrail rispettati**: NO hard delete · NO migration DB · NO modifiche a drop/reward/PvP/premium/economia · NO refactor · NO modifiche a backend Auto-Equip · Scope stretto sull'hotfix.
+
+**Non-blocker tracciati** (dettaglio in `backlog.md`):
+- SMTP `@orbus.test` → `R17.infra.smtp [P2]`
+- CTA class-fit balancing → **R17.3 P1** (Step 1 audit E)
+- FIRST_PRESTIGE_GAINED legacy non retroattivo → accepted
+- Localization Sweep 10 token EN → R16.5.4f [P3] parallelo (no round dedicato ora)
+- Item coverage residua monk/warlock/alchemist → **R17.3 Step 1 audit C**
+- Raid mid-tier Lv5-14 + endgame Lv15-20 + territory/raid tooltip mapping → **R17.3 Step 1 audit A/B/D**
+
+**R17.2 — CLOSED & SEALED ✅** — 2026-07-04T14:20Z. Prossimo round: **R17.3 — OPEN Step 1 audit-only** (vedi `/app/memory/round173_step1_audit.md`).
