@@ -112,6 +112,16 @@ AUDIT_EVENT_WHITELIST = frozenset({
     "FIRST_PRESTIGE_GAINED",
     # ROUND 17.1 P0.5 — Starter fallback reward audit event.
     "STARTER_FALLBACK_REWARD_GRANTED",
+    # ROUND 18.1 — Adventurer Identity & Schema Foundation (retroactive
+    # summary events emitted by `round181_audit_log_backfill.py`. Feature
+    # flag R18_REWORK_ENABLED remains OFF; these are observability-only).
+    "R18_MIGRATION_STARTED",
+    "R18_MIGRATION_COMPLETED",
+    "R18_ORPHAN_MARKED_UNASSIGNED",
+    "R18_GUARDIAN_CLERIC_ALIASED",
+    "R18_GRADE_BACKFILLED",
+    "R18_ROSTER_CAP_COMPUTED",
+    "R18_BETA_FIELD_PREPARED",
 })
 
 # Whitelist for the trigger_emissions feed — mirrors the 11 R16.A Phase 1

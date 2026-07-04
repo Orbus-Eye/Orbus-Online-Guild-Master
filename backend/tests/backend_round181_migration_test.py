@@ -254,3 +254,84 @@ def test_16_no_player_facing_r18_change(db):
     # In R18.1 field esistono in DB ma non sono usati dai router API.
     # Test symbolic: confermiamo che il flag è OFF.
     assert os.environ.get("R18_REWORK_ENABLED", "false").lower() == "false"
+
+
+
+# ─── 17. audit_log R18_* observability (fixed via backfill) ─────────────
+def test_17_audit_log_retroactive_events(db):
+    """RCA post-hoc: gli event R18_* originali erano scritti solo in
+    `audit_events` (secondaria). Lo script
+    `round181_audit_log_backfill.py` li ha replicati in `audit_log`
+    (feed admin) con `is_retroactive=true`. Verifica:
+      - 7 event_type presenti (uno per tipo, idempotente)
+      - `metadata.is_retroactive=True`
+      - `metadata.round="R18.1"`
+      - `metadata.original_occurred_at` preservato dal source
+    """
+    required = [
+        "R18_MIGRATION_STARTED",
+        "R18_MIGRATION_COMPLETED",
+        "R18_ORPHAN_MARKED_UNASSIGNED",
+        "R18_GUARDIAN_CLERIC_ALIASED",
+        "R18_GRADE_BACKFILLED",
+        "R18_ROSTER_CAP_COMPUTED",
+        "R18_BETA_FIELD_PREPARED",
+    ]
+    total_r18 = _run(db.audit_log.count_documents(
+        {"event_type": {"$regex": "^R18_"}}
+    ))
+    assert total_r18 >= 7, (
+        f"audit_log R18_* count={total_r18}, expected ≥ 7 "
+        "(run round181_audit_log_backfill.py --apply)"
+    )
+    for evt in required:
+        doc = _run(db.audit_log.find_one(
+            {"event_type": evt, "metadata.round": "R18.1"}, {"_id": 0}
+        ))
+        assert doc is not None, f"{evt} missing from audit_log"
+        assert doc.get("metadata", {}).get("is_retroactive") is True, \
+            f"{evt} missing is_retroactive marker"
+        assert doc.get("metadata", {}).get("original_occurred_at"), \
+            f"{evt} missing original_occurred_at"
+
+
+# ─── 18. Expedition guardrail status (R18.1 baseline; R18.3 HARD gate) ──
+def test_18_expedition_guardrail_status_r181_baseline(db):
+    """Sub-3b closure: in R18.1 (SOFT enforce, feature flag OFF) NON
+    esiste guardrail contro `class_slug=recruit_unassigned` nel dispatch
+    espedizioni. Coerente col brief: HARD class-bound arriva in R18.3.
+
+    Questo test è DIAGNOSTICO: verifica lo stato corrente, non impone
+    behavior. Documenta:
+      1. `recruit_unassigned` class doc ha `is_playable=False` (barrier
+         concettuale, non runtime).
+      2. Feature flag `R18_REWORK_ENABLED=false` → nessun enforcement.
+      3. Il codice `app.expeditions` NON contiene riferimenti a
+         `recruit_unassigned` né a `is_playable=false` (fail-fast se
+         qualcuno introduce un guardrail R18.3 in anticipo senza brief).
+    """
+    # 1. class doc marker
+    class_doc = _run(db.adventurer_classes.find_one(
+        {"slug": "recruit_unassigned"}, {"_id": 0}
+    ))
+    assert class_doc is not None
+    assert class_doc.get("is_playable") is False
+    assert class_doc.get("is_talent_tree_eligible") is False
+    assert class_doc.get("drops_items") is False
+
+    # 2. feature flag OFF
+    assert os.environ.get("R18_REWORK_ENABLED", "false").lower() == "false"
+
+    # 3. codice expeditions non contiene guardrail R18.3 pre-timing
+    import pathlib
+    exp_dir = pathlib.Path("/app/backend/app/expeditions")
+    assert exp_dir.exists()
+    r18_leak = []
+    for py_file in exp_dir.glob("*.py"):
+        content = py_file.read_text()
+        if "recruit_unassigned" in content or "is_playable" in content:
+            r18_leak.append(py_file.name)
+    assert not r18_leak, (
+        f"R18.3 guardrail leaked into R18.1 expeditions code: {r18_leak}. "
+        "Class-bound HARD enforcement must arrive in R18.3, not R18.1."
+    )
