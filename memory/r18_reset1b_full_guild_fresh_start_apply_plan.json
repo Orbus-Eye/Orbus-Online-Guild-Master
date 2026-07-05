@@ -248,10 +248,10 @@
       }
     },
     "section_16_human_approval_gate": {
-      "status": "APPLY_BLOCKED_2_OF_5_GATES_PENDING",
+      "status": "APPLY_BLOCKED_1_OF_5_GATES_PENDING",
       "gates_total": 5,
-      "gates_satisfied": 3,
-      "gates_pending": 2,
+      "gates_satisfied": 4,
+      "gates_pending": 1,
       "hard_blockers": [
         {
           "id": "r18_reset1c_rollback_completeness_pass",
@@ -278,13 +278,14 @@
           "id": "pm_sign_off_renewed",
           "description": "PM sign-off renewed after rollback review",
           "satisfied": false,
-          "blocked_by": "conditional on R18.Reset.1b.ops PASS"
+          "blocked_by": "conditional on R18.Reset.1b.ops PASS + staged pre-apply verify"
         },
         {
           "id": "backend_write_freeze",
           "description": "Backend maintenance mode / write-freeze active during apply",
-          "satisfied": false,
-          "blocked_by": "R18.Reset.1b.ops"
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T08:36:37Z",
+          "evidence": "R18.Reset.1b.ops SEALED, 8/8 tester PASS, middleware /app/backend/app/core/maintenance.py wired in app_factory.py, playbook /app/memory/r18_reset1b_ops_write_freeze_playbook.md"
         }
       ],
       "while_blocked_prohibitions": [
@@ -342,9 +343,24 @@
     {
       "id": "R18.Reset.1b.ops",
       "name": "Backend Write-Freeze Maintenance Mode",
-      "status": "IN_PROGRESS",
+      "status": "CLOSED_AND_SEALED",
       "reason": "Hard gate 5 di piano 1b §16 - blocker per apply reale",
-      "started_at": "2026-07-05T08:20:46Z"
+      "started_at": "2026-07-05T08:20:46Z",
+      "sealed_at": "2026-07-05T08:36:37Z"
+    },
+    {
+      "id": "R18.Tooling.HealthMaintenanceEndpoint",
+      "name": "GET /api/health/maintenance diagnostic endpoint",
+      "status": "BACKLOG",
+      "reason": "PM approved concept, deferred: utile per monitoring esterno pre/post-apply ma non blocking",
+      "candidate_after": ["R18.Reset.1b apply", "R18.Reset.2"]
+    },
+    {
+      "id": "R18.Infra.PreviewApiRoutingCheck",
+      "name": "Preview edge /api/* returns 404 while localhost:8001 works",
+      "status": "BACKLOG",
+      "reason": "Finding rilevato durante tester 1b.ops verification. Non blocca il reset. Preview edge routing va indagato in un round infra separato.",
+      "candidate_after": ["R18.Reset.1b apply"]
     }
   ],
   "deliverables": [

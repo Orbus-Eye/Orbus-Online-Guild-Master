@@ -1,5 +1,10 @@
 # R18.Reset.1b.ops — Backend Write-Freeze Playbook
 
+> **Status:** CLOSED & SEALED (PM authorized on 2026-07-05T08:36:37Z)
+> **Tester independent verification:** 8/8 PASS
+> **Middleware:** /app/backend/app/core/maintenance.py
+> **Wiring:** /app/backend/app/core/app_factory.py (dopo CSRF, esegue primo)
+
 **Round:** R18.Reset.1b.ops
 **Autore:** e1 main agent
 **Data:** 2026-07-05 (UTC)

@@ -542,10 +542,10 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 1. ✅ **R18.Reset.1c** rollback completeness PASS — **SATISFIED 2026-07-05T08:18:11Z**
 2. ✅ `restore_from_jsonl_manifest.py` verified — **SATISFIED** (10/10 tester PASS, dry-run + fake fixture)
 3. ✅ `sha256 manifest` verification PASS — **SATISFIED** (HARD STOP runtime verified via test 4 mismatch)
-4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS)
-5. ☐ **Backend maintenance mode / write-freeze** — **PENDING** (blocked by R18.Reset.1b.ops)
+4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS + staged pre-apply verify)
+5. ✅ **Backend maintenance mode / write-freeze** — **SATISFIED 2026-07-05T08:36:37Z** (R18.Reset.1b.ops SEALED, 8/8 tester PASS, middleware `/app/backend/app/core/maintenance.py` wired in `app_factory.py`, playbook `/app/memory/r18_reset1b_ops_write_freeze_playbook.md`)
 
-**Status:** APPLY BLOCKED, **2 of 5 gates pending** (gate 4 + gate 5).
+**Status:** APPLY BLOCKED, **1 of 5 gates pending** (gate 4).
 
 **While these gates are NOT all satisfied:**
 
@@ -590,7 +590,9 @@ Round e task esplicitamente esclusi da R18.Reset.1b (in HOLD / PAUSED / CANDIDAT
 - **R18.Tooling** — Generalized Read-Only Live Snapshot Utility (**BACKLOG**, PM approved concept, deferred as "LATER" to avoid scope creep pre-rollback blocker. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
 - **R18.Tooling.PreSealContract** — `pre_seal_grep_contract.py` — automated grep contract validator (**BACKLOG**, PM approved concept but deferred; utile per round futuri, non deve bloccare R18.Reset.1c. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
 - **R18.Tooling.DryRunReport** — `--dry-run-report` machine-readable summary for CI/CD gating (**BACKLOG**, PM approved concept, deferred: utile per CI/CD ma fuori scope write-freeze. Candidate after: R18.Reset.1b.ops, R18.Reset.1b apply)
-- **R18.Reset.1b.ops** — Backend Write-Freeze Maintenance Mode (**IN PROGRESS**, opens after R18.Reset.1c seal to unblock gate 5 of piano 1b §16)
+- **R18.Reset.1b.ops** — Backend Write-Freeze Maintenance Mode (**CLOSED & SEALED 2026-07-05T08:36:37Z**, gate 5 §16 satisfied, 8/8 tester PASS)
+- **R18.Tooling.HealthMaintenanceEndpoint** — `GET /api/health/maintenance` diagnostic endpoint (**BACKLOG**, PM approved concept, deferred: utile per monitoring esterno pre/post-apply ma non blocking. Candidate after: R18.Reset.1b apply, R18.Reset.2)
+- **R18.Infra.PreviewApiRoutingCheck** — Preview edge `/api/*` returns 404 while `localhost:8001` works (**BACKLOG**, finding rilevato durante tester 1b.ops verification. Non blocca il reset. Preview edge routing va indagato in un round infra separato. Candidate after: R18.Reset.1b apply)
 
 ---
 
