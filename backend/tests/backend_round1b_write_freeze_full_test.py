@@ -1,3 +1,13 @@
+# ═════════════════════════════════════════════════════════════════════
+# R18.Reset.1b.hotfix.write_freeze_full — CLOSED & SEALED on 2026-07-05T11:15:00Z
+# Tester independent verification: 10/10 PASS + live runtime evidence
+# Pytest: 11/11 PASS (10 PM + 1 gap-evidence t11)
+# Sealed by: PM_authorization
+# NON modificare. Se serve fix, creare nuovo sibling test file
+#   (es. backend_round1b_write_freeze_full_v2_test.py).
+# ═════════════════════════════════════════════════════════════════════
+
+
 """R18.Reset.1b.hotfix.write_freeze_full — Test suite.
 
 Copre 11 test cases (10 PM + 1 gap-evidence) per il freeze internal
@@ -372,10 +382,15 @@ def test_t09_no_real_apply_executed():
 
 # ─────────────────────────────────────────────────────────────────────
 # t10 — R18.Reset.1b APPLY resta bloccato (§16 gate 4 pending)
+# Baseline post-seal 2026-07-05T11:15:00Z: gate 7 promoted a
+# satisfied=true da PM_authorization. Il contract del test resta
+# "no unauthorized promotion" → resta pending solo gate 4.
 # ─────────────────────────────────────────────────────────────────────
 def test_t10_apply_still_blocked_gate_4_pending():
     """Verifica che il plan §16 abbia gate 4 (PM sign-off) ancora
-    PENDING. Le mie modifiche non hanno auto-promosso PM sign-off."""
+    PENDING. Le modifiche del round non hanno auto-promosso PM sign-off.
+    Nota: gate 7 (write_freeze_full) e' stato SEALED da PM in Fase A
+    2026-07-05T11:15Z — questo test riflette il baseline post-seal."""
     import json
     plan = json.loads(PLAN_JSON_PATH.read_text())
     s16 = plan["sections"]["section_16_human_approval_gate"]
@@ -387,14 +402,23 @@ def test_t10_apply_still_blocked_gate_4_pending():
         "Gate 4 PM sign-off era pending, ora e' satisfied — "
         "auto-promotion non autorizzata."
     )
-    # Il gate 7 write_freeze_full non e' auto-promosso (sara' seal PM)
+    # Gate 7 write_freeze_full: verifica seal formale documentato
     gate_7 = next(
         hb for hb in s16["hard_blockers"]
         if hb["id"] == "r18_reset1b_hotfix_write_freeze_full_pass"
     )
-    assert gate_7["satisfied"] is False, (
-        "Gate 7 write_freeze_full deve restare pending fino a seal PM."
+    # Post-seal PM_authorization: gate 7 deve essere satisfied CON
+    # sealed_at + sealed_by esplicito
+    assert gate_7["satisfied"] is True, (
+        "Gate 7 write_freeze_full post-seal PM deve essere satisfied."
     )
+    assert gate_7.get("sealed_by") == "PM_authorization", (
+        "Gate 7 deve avere sealed_by='PM_authorization' come marker seal."
+    )
+    # Status residuo: 1 of 7 pending (solo gate 4)
+    assert s16["status"] == "APPLY_BLOCKED_1_OF_7_GATES_PENDING"
+    assert s16["gates_satisfied"] == 6
+    assert s16["gates_pending"] == 1
 
 
 # ─────────────────────────────────────────────────────────────────────

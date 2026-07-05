@@ -248,11 +248,11 @@
       }
     },
     "section_16_human_approval_gate": {
-      "status": "APPLY_BLOCKED_2_OF_7_GATES_PENDING",
+      "status": "APPLY_BLOCKED_1_OF_7_GATES_PENDING",
       "gates_total": 7,
-      "gates_satisfied": 5,
-      "gates_pending": 2,
-      "hotfix_note": "Gate 6 SATISFIED da 2026-07-05T09:48:57Z (implementazione) e CLOSED_AND_SEALED il 2026-07-05T10:02:00Z (PM_authorization). Apply reale post-hotfix DEVE usare round18_reset1b_apply_v1_1.py (sibling script). Sealed round18_reset1b_apply.py preserved untouched. Gate 7 (write_freeze_full) added on 2026-07-05T09:52Z per PM directive: env ORBUS_INTERNAL_JOB_FREEZE required to block internal async jobs during apply. Both gate 4 (PM sign-off) and gate 7 (write_freeze_full) remain PENDING. Il seal formale del hotfix NON altera i contatori matematici (gate 6 era già satisfied=true dall'implementazione): 5 satisfied + 2 pending (4+7) AS-IS.",
+      "gates_satisfied": 6,
+      "gates_pending": 1,
+      "hotfix_note": "Gate 6 SATISFIED 2026-07-05T09:48:57Z, CLOSED_AND_SEALED 2026-07-05T10:02:00Z (PM_authorization). Gate 7 SATISFIED + CLOSED_AND_SEALED 2026-07-05T11:15:00Z (PM_authorization) via ORBUS_INTERNAL_JOB_FREEZE. Apply reale post-hotfix DEVE usare round18_reset1b_apply_v1_1.py + activation dei DUE flag (HTTP maintenance + internal job freeze). Sealed originali 5/5 preservati untouched. Resta solo gate 4 (PM sign-off renewed) pending.",
       "hard_blockers": [
         {
           "id": "r18_reset1c_rollback_completeness_pass",
@@ -323,13 +323,15 @@
           "id": "r18_reset1b_hotfix_write_freeze_full_pass",
           "name": "R18.Reset.1b.hotfix.write_freeze_full PASS",
           "description": "Extend maintenance write-freeze to internal async jobs during apply (HARD PREREQUISITE per real apply post-hotfix)",
-          "satisfied": false,
-          "blocked_by": "R18.Reset.1b.hotfix.write_freeze_full round not yet started",
-          "evidence": null,
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T11:15:00Z",
+          "sealed_at": "2026-07-05T11:15:00Z",
+          "sealed_by": "PM_authorization",
+          "evidence": "10/10 tester PASS + live freeze evidence. 11/11 pytest PASS. 12 job patched. Sealed originali 5/5 invariati. Live runtime WARN log observed for L1 starter_roster with freeze active. Playbook completo con procedura attivazione/disattivazione/escalation.",
           "purpose": "Env ORBUS_INTERNAL_JOB_FREEZE per bloccare job async interni durante apply",
           "added_at": "2026-07-05T09:52Z",
           "added_by": "PM directive after R18.Reset.1b.hotfix seal review",
-          "gap_architetturale": "MaintenanceMiddleware R18.Reset.1b.ops copre solo HTTP request; job async interni (es. orbus.onboarding.starter_roster, seed loops) bypassano il freeze e possono introdurre drift durante apply reale"
+          "gap_architetturale_chiuso": "MaintenanceMiddleware R18.Reset.1b.ops copriva solo HTTP request. Ora job async interni (lifespan boot, GET-triggered sweep, on-visit resolver) sono bloccati via decorator @frozen_when_active."
         }
       ],
       "while_blocked_prohibitions": [
@@ -427,29 +429,25 @@
     },
     {
       "id": "R18.Reset.1b.hotfix.write_freeze_full",
-      "name": "Extend MaintenanceMiddleware to internal async jobs",
-      "status": "IMPLEMENTED_PENDING_PM_SEAL",
+      "name": "Extend MaintenanceMiddleware to internal async jobs (via ORBUS_INTERNAL_JOB_FREEZE)",
+      "status": "CLOSED_AND_SEALED",
+      "sealed_at": "2026-07-05T11:15:00Z",
+      "sealed_by": "PM_authorization",
       "started_at": "2026-07-05T10:08:00Z",
       "implemented_at": "2026-07-05T11:00:00Z",
-      "current_phase": "B.5_REPORT_AWAITING_PM_SEAL",
-      "reason": "Fixed via env ORBUS_INTERNAL_JOB_FREEZE + fallback file flag /tmp/orbus_internal_job_freeze.flag. Decorator @frozen_when_active applicato a 12 job hard-include. Sealed scripts 5/5 INVARIATI. 11/11 test PASS incluso t11 gap-evidence.",
-      "candidate_after": ["R18.Reset.1b.hotfix", "R18.Reset.2"],
-      "pm_note": "Pronto per seal PM finale. Dopo seal, gate 7 §16 puo' passare a SATISFIED.",
-      "b0_inventory": {
-        "file": "/app/memory/r18_reset1b_hotfix_write_freeze_full_job_inventory.md",
-        "jobs_analyzed": 19,
-        "hard_include": 12,
-        "exclude_already_covered_or_catalog_only": 7,
-        "ambiguous_pm_review_required": 0,
-        "live_evidence_of_gap": "2026-07-05T10:21:55Z backend restart triggered 'starter roster seeded: guild=907b4ae4 inserted=2' via lifespan boot - proves ensure_starter_roster_for_all_guilds bypasses HTTP freeze"
+      "deliverables": [
+        "/app/backend/app/core/job_freeze.py",
+        "/app/backend/tests/backend_round1b_write_freeze_full_test.py",
+        "/app/memory/r18_reset1b_hotfix_write_freeze_full_job_inventory.md",
+        "/app/memory/r18_reset1b_ops_write_freeze_playbook.md (section Internal Job Freeze)",
+        "12 job patched (10 hard + AMB-1 seed_round12 + AMB-2 run_forge_migration)"
+      ],
+      "verification": {
+        "pytest": "11/11 PASS in 0.88s",
+        "tester_independent": "10/10 PASS with live evidence",
+        "sealed_scripts_integrity": "5/5 byte-identici pre/post",
+        "runtime_freeze_evidence": "5 WARN log observed on lifespan boot with freeze active, DB snapshot invariant"
       },
-      "deliverables": {
-        "helper": "/app/backend/app/core/job_freeze.py",
-        "test_suite": "/app/backend/tests/backend_round1b_write_freeze_full_test.py",
-        "playbook_section": "/app/memory/r18_reset1b_ops_write_freeze_playbook.md (section 'Internal Job Freeze')",
-        "inventory": "/app/memory/r18_reset1b_hotfix_write_freeze_full_job_inventory.md"
-      },
-      "test_result": "11/11 PASS (10 PM + 1 gap-evidence t11)",
       "coverage_patched_jobs": [
         "L1: orbus.onboarding.starter_roster_for_all_guilds",
         "L5: orbus.inventory.backfill_bound_fields_if_missing",

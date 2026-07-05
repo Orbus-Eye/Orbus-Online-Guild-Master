@@ -1,3 +1,13 @@
+# ═════════════════════════════════════════════════════════════════════
+# R18.Reset.1b.hotfix.write_freeze_full — CLOSED & SEALED on 2026-07-05T11:15:00Z
+# Tester independent verification: 10/10 PASS + live runtime evidence
+# Pytest: 11/11 PASS (10 PM + 1 gap-evidence t11)
+# Sealed by: PM_authorization
+# NON modificare. Se serve fix, creare nuovo sibling round
+#   (es. R18.Reset.1b.hotfix.write_freeze_full_v2 in un file separato).
+# ═════════════════════════════════════════════════════════════════════
+
+
 """ROUND 18.Reset.1b.hotfix.write_freeze_full — Internal Job Freeze.
 
 Estende il write-freeze oltre l'HTTP `MaintenanceMiddleware` (R18.Reset.1b.ops)

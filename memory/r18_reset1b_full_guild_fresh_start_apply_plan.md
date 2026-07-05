@@ -545,11 +545,11 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS + staged pre-apply verify + hotfix acceptance + write_freeze_full PASS)
 5. ✅ **Backend maintenance mode / write-freeze** — **SATISFIED 2026-07-05T08:36:37Z** (R18.Reset.1b.ops SEALED, 8/8 tester PASS, middleware `/app/backend/app/core/maintenance.py` wired in `app_factory.py`, playbook `/app/memory/r18_reset1b_ops_write_freeze_playbook.md`)
 6. ✅ **R18.Reset.1b.hotfix — Starter Kit Inventory Unique Index Fix** — **SATISFIED 2026-07-05T09:48:57Z** — **CLOSED_AND_SEALED 2026-07-05T10:02:00Z** by PM_authorization (sibling script `/app/backend/app/scripts/round18_reset1b_apply_v1_1.py` sha256 `43ca97f284b50706cf450bf4a0dc8e6b977aa195547bc69e99a80da55ede3031`, 12/12 pytest PASS in `/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py` sha256 `bf26da31dce950256c0ec6e92b180fdfa6e82fdd308004c454b82ff712a755ec`, tester independent 9/10 PASS + WARN fixed pre-seal, sealed originali INTATTI 5/5 — preflight/postflight in `/app/memory/r18_reset1b_hotfix_sealed_preflight.json` + `_postflight.json`)
-7. ☐ **R18.Reset.1b.hotfix.write_freeze_full PASS** — **PENDING** (round non ancora avviato; env var `ORBUS_INTERNAL_JOB_FREEZE` letta dai job async interni per bloccare `orbus.onboarding.starter_roster` + seed durante l'apply; HARD PREREQUISITE per real apply post-hotfix — id `r18_reset1b_hotfix_write_freeze_full_pass`)
+7. ✅ **R18.Reset.1b.hotfix.write_freeze_full PASS** — **SATISFIED + CLOSED_AND_SEALED 2026-07-05T11:15:00Z** by PM_authorization (helper `/app/backend/app/core/job_freeze.py` + test suite `/app/backend/tests/backend_round1b_write_freeze_full_test.py` 11/11 PASS + 10/10 tester independent PASS + live runtime WARN evidence, 12 job async patched, playbook section 'Internal Job Freeze' aggiunta, env `ORBUS_INTERNAL_JOB_FREEZE` + fallback flag `/tmp/orbus_internal_job_freeze.flag`, sealed originali 5/5 invariati)
 
-**Status:** APPLY BLOCKED, **2 of 7 gates pending** (gate 4, gate 7). `APPLY_BLOCKED_2_OF_7_GATES_PENDING`.
+**Status:** APPLY BLOCKED, **1 of 7 gates pending** (gate 4 PM sign-off). `APPLY_BLOCKED_1_OF_7_GATES_PENDING`.
 
-**Gate satisfaction summary:** gates satisfied: **5 / 7**.
+**Gate satisfaction summary:** gates satisfied: **6 / 7**.
 
 **Nota hotfix (gate 6):** Il nuovo apply reale DEVE usare
 `round18_reset1b_apply_v1_1.py` (NON il sealed originale
