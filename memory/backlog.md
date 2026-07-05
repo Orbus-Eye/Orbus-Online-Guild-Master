@@ -963,6 +963,81 @@ Anche il starter fallback R5 legge classi con pattern simile. Pre-esistente da R
 
 ---
 
+## R18.Reset.0 — Full Guild Fresh Start Reset Plan — OPEN 📋 (2026-07-04T21:42Z)
+
+**Round type**: Audit-only / Planning-only. Zero execution.
+
+**Trigger**: PM decisione strategica di valutare fresh start globale per baseline pulita post-R18. Alternativa a R18.1.3 backfill drift.
+
+**Scope**:
+1. Report strutturato (16 sezioni) in `/app/memory/r18_reset0_full_guild_fresh_start_plan.md` (815 righe) e `.json` (328 righe)
+2. Read-only DB inspection (find/aggregate only) per stats correnti
+3. Elenco 30 collections preserve obbligatorie
+4. Elenco 42 collections reset candidate (di cui 15 con 0 doc)
+5. Analisi 4 scope alternative (S1/S2/S3/S4)
+6. Analisi 3 archive pattern (A/B/C, raccomandato B — sibling `_r18_archive`)
+7. 3 adventurers strategy (A.a delete / A.b archive+regen / A.c reset in-place)
+8. Design dry-run + rollback script (NON implementati)
+9. Testo banner IT candidato (post-reset welcome only)
+10. Analisi rischi legali/GDPR/consumer (nessuno operativo — 0 real users, 0 premium)
+11. **20 domande PM finali** ordinate per priority (P0×8, P1×5, P2×3, P3×4)
+
+**Numeri chiave verificati read-only (2026-07-04T21:42Z)**:
+- Guilds: 672 (669 test_artifact + 3 demo_opponent, 7 grandfathered, 0 real domain owner)
+- Users: 340 (333 @orbus.test, 3 @orbus.preview, 2 admin, 0 is_test flag)
+- Adventurers: 3302 (2125 valid + **1177 orphan drift** post-R18.1)
+- 496 adv migrati R18.3c intatti
+- Achievement progress: 1686 · PvP seasons: 19 · Cosmetici: 5+2+1 doc
+- **Collezioni premium/billing/subscription: 0** (solo `pvp_cosmetics_unlocked` cosmetico gratuito)
+
+**Trade-off preview**:
+- Nessun player reale → nessun rischio legale
+- Reset è operativamente test env cleanup
+- Drift R18.1 risolto by construction post-reset (R18.1.3 backfill diventa obsoleto)
+- R18.3d mapping registry resta PAUSED anche post-reset
+
+**Warning known_non_blocking**:
+- `orbus.seed_round5 - WARNING - starter backfill failed: 'base_strength'` — registrato §11 del piano. Rivalutare post-reset (patch simmetrica in R18.3a.3 se persiste).
+
+**Raccomandazioni tecniche e1_dev (non vincolanti)**:
+- **P0-1 scope**: **S1** (reset totale — 0 real users)
+- **P0-3 adventurers**: **A.b** (archive + regen 5 starter per guild)
+- **P1-1 archive**: **B** (sibling collections `_r18_archive`)
+- **P1-2 retention**: **90 giorni**
+- **P1-3 leaderboard**: **L.d** (preserve cosmetici + timestamp nuova era)
+- **P1-4 achievement**: **Ach.d** (Hall of Fame + Founder badge combo)
+- **P2-1 timing**: **A** (post-reset welcome only, nessun player attivo da pre-avvisare)
+
+**Vincoli rispettati** (checklist R18.Reset.0):
+- ✅ Zero reset reale
+- ✅ Zero DB write (nemmeno index)
+- ✅ Zero hard delete
+- ✅ Zero codice modificato
+- ✅ Zero seed
+- ✅ Zero schema migration
+- ✅ Zero patch a `seed_round5.py`
+- ✅ Zero patch a `generator.py` (R18.3a.2 sealed rispettato)
+- ✅ Zero decisioni sigillate come definitive
+- ✅ Solo lettura DB + scritture memory files
+- ✅ Feature flag `R18_REWORK_ENABLED=false` invariato
+- ✅ R18.3d resta PAUSED
+
+**Deliverable**:
+- `/app/memory/r18_reset0_full_guild_fresh_start_plan.md` (815 righe, 18 sezioni)
+- `/app/memory/r18_reset0_full_guild_fresh_start_plan.json` (328 righe, chiavi strutturate)
+- Roadmap `orbus_world_roadmap.md` aggiornato (R18.Reset.0 OPEN)
+
+**Status**: OPEN — awaiting PM responses to 20 questions in §16 (recommend answer P0-1 e P0-3 first).
+
+**Prossimi passi post-PM-decisione**:
+- R18.Reset.1a: implement dry-run script
+- R18.Reset.1b: implement archive apply script
+- R18.Reset.1c: implement reset apply script
+- R18.Reset.1d: implement rollback script
+- R18.Reset.2: banner UI component
+
+---
+
 ## R18.3b.1 — Stat/Role Enum Reconciliation Matrix — ARCHIVE PRE-SEAL 📜
 
 **Status**: PENDING — non aprire senza brief PM esplicito. Registrato 2026-07-04T20:47Z.

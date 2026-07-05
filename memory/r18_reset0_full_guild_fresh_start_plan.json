@@ -1,0 +1,328 @@
+{
+  "round": "R18.Reset.0",
+  "title": "Full Guild Fresh Start Reset Plan",
+  "opened_at": "2026-07-04T21:42Z",
+  "status": "OPEN",
+  "type": "Planning-only, Audit-only",
+  "authorized_by": "PM decision GO A (2026-07-04)",
+  "author": "e1 main agent",
+  "philosophy": {
+    "zero_hard_delete": true,
+    "append_only_reset_semantic": true,
+    "snapshot_preserved": true,
+    "archive_technical_state": true,
+    "rollback_script_e2e": true,
+    "audit_event_dedicated": true,
+    "communication_new_era_not_loss": true
+  },
+  "numbers_verified_at": "2026-07-04T21:42Z",
+  "db_state_snapshot": {
+    "guilds_total": 672,
+    "guilds_is_test_artifact": 669,
+    "guilds_is_demo_opponent": 3,
+    "guilds_is_grandfathered": 7,
+    "guilds_owner_email_orbus_test": 280,
+    "guilds_owner_email_orbus_preview": 3,
+    "guilds_owner_email_real_domain": 0,
+    "guilds_orphan_no_owner_user": 389,
+    "users_total": 340,
+    "users_is_admin": 2,
+    "users_is_test": 0,
+    "adventurers_total": 3302,
+    "adventurers_with_class_slug": 2125,
+    "adventurers_null_class_slug_drift": 1177,
+    "adventurers_r18_3c_migrated": 496,
+    "adventurers_recruit_unassigned": 85,
+    "achievement_progress": 1686,
+    "pvp_seasons": 19,
+    "pvp_season_leaderboards": 36,
+    "pvp_cosmetics_unlocked": 5,
+    "guild_mount_ownership": 2,
+    "narrative_rewards_unlocked": 1,
+    "expeditions": 17,
+    "recruitment_offers_cache": 255,
+    "inventory_items": 111,
+    "equipped_items": 20,
+    "chat_messages": 2,
+    "class_halls": 1673,
+    "guild_structures": 421,
+    "talent_tree_definitions_r18_2_pilot": 540,
+    "adventurer_talent_progress": 0,
+    "audit_log_total": 11704,
+    "audit_events": 37,
+    "collections_premium_billing_subscription": 0,
+    "market_listings": 0
+  },
+  "preserve_obligatory": {
+    "collections": [
+      "users", "refresh_tokens", "login_attempts", "password_reset_tokens",
+      "audit_log", "audit_logs", "audit_events",
+      "adventurer_classes", "adventurer_traits", "items", "item_sets", "enchants",
+      "recipes", "races", "talent_tree_definitions", "achievements_catalog",
+      "class_specializations", "dungeons", "raid_dungeons", "world_boss_catalog",
+      "world_continents", "continent_event_catalog", "continent_resource_catalog",
+      "legendary_recipe_catalog", "legendary_items_catalog", "arfus_technology_catalog",
+      "guild_specialization_catalog", "narrative_routes", "mount_catalog",
+      "counter_tags", "guild_site_income_config"
+    ],
+    "guild_fields": [
+      "_id", "id", "public_id", "owner_user_id", "name", "created_at", "email",
+      "is_test", "is_test_artifact", "is_grandfathered", "is_demo_opponent", "updated_at"
+    ],
+    "count_collections_preserved": 30
+  },
+  "reset_candidate": {
+    "guild_fields": {
+      "level": {"reset_value": 1},
+      "gold": {"reset_value": 100},
+      "reputation": {"reset_value": 0},
+      "current_roster_size": {"reset_value": "recomputed"},
+      "max_roster_cap": {"reset_value": "R18.1 formula recompute"},
+      "resources": {"reset_value": "starter_dict"},
+      "raids_completed_count": {"reset_value": 0},
+      "raids_victory_count": {"reset_value": 0},
+      "max_raid_score": {"reset_value": 0},
+      "last_raid_completed_at": {"reset_value": null},
+      "max_team_power_ever": {"reset_value": 0},
+      "r18_beta_opt_in": {"reset_value": false},
+      "r18_roster_cap_computed_at": {"reset_value": "iso_now"}
+    },
+    "collections_full_reset": [
+      "adventurers", "inventory_items", "equipped_items", "class_halls",
+      "achievement_progress", "granted_rewards", "squads", "expeditions",
+      "expedition_members", "raids", "raid_participants", "recruitment_offers",
+      "shop_daily_offers", "chat_messages", "consortiums", "consortium_members",
+      "guild_specialization_choice", "guild_trade_pacts", "guild_structures",
+      "guild_arfus_research_orders", "guild_arfus_technologies",
+      "guild_site_income_ledger", "guild_pvp_stats", "guild_world_presence",
+      "narrative_route_completions", "pvp_battles", "pvp_matches",
+      "pvp_challenge_cooldowns", "pvp_seasons", "pvp_season_leaderboards",
+      "pvp_defense_teams", "continent_leaderboard_snapshots",
+      "continent_event_instances", "seasons", "season_participations",
+      "season_rewards", "world_boss_events", "resource_gathering_missions",
+      "market_listings", "career_history", "adventurer_talent_progress",
+      "tester_tool_snapshots", "guild_xp_daily_cap_tracker"
+    ],
+    "collections_preserve_or_decide_p2_3": [
+      "pvp_cosmetics_unlocked", "guild_mount_ownership",
+      "narrative_rewards_unlocked"
+    ],
+    "count_collections_reset_candidate": 42
+  },
+  "invariant_do_not_touch": [
+    "adventurer_classes catalog (R18.3a + R18.3a.1 sealed)",
+    "items + item_sets + enchants + recipes + races catalog",
+    "talent_tree_definitions (R18.2 pilot, double-gated OFF)",
+    "achievements_catalog + adventurer_traits + class_specializations",
+    "dungeons + raid_dungeons + world_boss_catalog + world_continents",
+    "continent_event_catalog + continent_resource_catalog + legendary_*_catalog",
+    "arfus_technology_catalog + guild_specialization_catalog + narrative_routes",
+    "mount_catalog",
+    "VALID_ROLES enum (Tank, DPS, Healer)",
+    "primary_stat fields (strength, agility, intellect, endurance, faith)",
+    "base_* stat fields",
+    "R18_REWORK_ENABLED=false feature flag",
+    "R18_TALENT_ENGINE_ENABLED=false feature flag",
+    "audit_log historical trail",
+    "guard R18.1.2 whitelist in expeditions/services.py",
+    "27 slug candidates registry",
+    "round183b1 stat/role reconciliation matrix (PM decision C.2+R3 sealed)"
+  ],
+  "guild_segmentation": {
+    "S1_reset_all": {"count": 672, "risk": "none", "feasible": true},
+    "S2_reset_real_only": {"count": 0, "risk": "N/A", "feasible": false},
+    "S3_reset_test_infra": {"count": 283, "risk": "none", "feasible": true},
+    "S4_reset_optin_ui": {"count": "TBD", "risk": "low", "feasible": "requires UI"},
+    "recommendation_e1_dev": "S1 (0 real users, zero risk)"
+  },
+  "archive_pattern": {
+    "options": {
+      "A": {"name": "mongodump external", "recommendation": false},
+      "B": {"name": "sibling collections _r18_archive", "recommendation": true},
+      "C": {"name": "DB clone separate", "recommendation": false}
+    },
+    "recommendation_e1_dev": "B",
+    "retention_days_proposed": 90,
+    "storage_estimate_mb": 50,
+    "manifest_path": "/app/memory/backups/r18_reset0_prestart/manifest.json"
+  },
+  "adventurers_strategy": {
+    "options": {
+      "A_a": {"name": "delete hard + regen starter", "recommendation": false},
+      "A_b": {"name": "archive + regen starter", "recommendation": true},
+      "A_c": {"name": "reset in-place preserve class_slug", "recommendation": false}
+    },
+    "recommendation_e1_dev": "A.b",
+    "post_reset_regen_pool": "11 legacy classes (post-R18.3a.2 filter)"
+  },
+  "leaderboard_strategy": {
+    "options": {
+      "L_a": "azzera tutto",
+      "L_b": "archive + fresh season 20",
+      "L_c": "preserve cosmetici, reset ranking",
+      "L_d": "nuova era: preserve cosmetici + timestamp"
+    },
+    "recommendation_e1_dev": "L.d"
+  },
+  "achievement_strategy": {
+    "options": {
+      "Ach_a": "reset totale",
+      "Ach_b": "Hall of Fame preserve",
+      "Ach_c": "prime-mover bonus",
+      "Ach_d": "combo Ach_b + Ach_c"
+    },
+    "recommendation_e1_dev": "Ach.d"
+  },
+  "r18_migrations_impact": {
+    "R18.1": "drift resolved by construction (regen adv have grade+class_slug)",
+    "R18.1.2": "codebase invariant, guard whitelist preserved",
+    "R18.2": "540 catalog docs intact, 0 progress docs unchanged",
+    "R18.3a": "2 hidden classes catalog invariato",
+    "R18.3a.1": "role placeholder TBD invariato",
+    "R18.3a.2": "recruitment filter invariato, pool = 11 legacy post-reset",
+    "R18.3b.1": "sealed memory file invariato",
+    "R18.3c": "496 orphan migrated -> archived; design intent preserved in memory",
+    "R18.3d": "PAUSED, resta PAUSED"
+  },
+  "known_non_blocking_warning": {
+    "id": "seed_round5_starter_backfill_base_strength",
+    "log_line": "orbus.seed_round5 - WARNING - starter backfill failed: 'base_strength'",
+    "location": "app/scripts/seed_round5.py starter_backfill routine",
+    "root_cause": "reads adventurer_classes without is_playable filter, includes hidden R18.3a classes without base_* fields",
+    "player_facing_impact": "none (caught by try/except, starter_backfill=0)",
+    "post_reset_relevance": "TBD (depends on new starter path)",
+    "recommended_action_post_reset": "reverify; if persists, apply R18.3a.3 symmetric patch to seed_round5"
+  },
+  "dry_run_design": {
+    "path": "app/scripts/r18_reset0_dry_run.py",
+    "implemented": false,
+    "phases": [
+      "read snapshot (count_documents per collection)",
+      "simulate write (JSON diff before/after, no update_many)",
+      "archive plan preview (Opzione B commands)",
+      "metrics post-simulation prediction",
+      "report dump to /app/memory/backups/r18_reset0_dry_run_report.json"
+    ],
+    "fixture": {
+      "test_guild": 1,
+      "test_adventurers": 3,
+      "test_expedition": 1,
+      "test_achievement_progress": 1
+    }
+  },
+  "rollback_plan": {
+    "snapshot_path": "/app/memory/backups/r18_reset0_prestart/",
+    "manifest_schema": {
+      "round": "R18.Reset.0",
+      "snapshot_at": "ISO",
+      "archive_pattern": "B",
+      "scope": "S1|S2|S3|S4",
+      "collections": [{"name": "...", "doc_count_pre": 0, "archive_name": "..._r18_archive", "checksum_sample": "..."}],
+      "retention_days": 90,
+      "reset_script": "app/scripts/r18_reset0_apply.py",
+      "rollback_script": "app/scripts/r18_reset0_rollback.py"
+    },
+    "rollback_script_implemented": false,
+    "time_to_rollback_estimate_seconds": 60,
+    "retention_days_proposed": 90,
+    "testing_fixture": "1 synthetic guild + 3 adv"
+  },
+  "communication_plan": {
+    "banner_language": "IT",
+    "banner_post_reset_welcome": {
+      "component_name_suggested": "ResetWelcomeBannerR18Reset0.jsx",
+      "title_it": "Benvenuto nella Nuova Era di Orbus!",
+      "body_it_template": "Il tuo mondo è stato ridefinito. La tua gilda \"{guild.name}\" inizia una nuova avventura con classi canoniche, obiettivi rinnovati e progressione bilanciata. Il tuo nome, la tua storia, il tuo ruolo di Master restano tuoi. Tutto il resto è pronto per essere riscritto.",
+      "cta_it": "Inizia la nuova avventura",
+      "dismissible": true,
+      "endpoint_read_suggested": "GET /api/guilds/me/reset0-banner",
+      "endpoint_dismiss_suggested": "POST /api/guilds/me/reset0-banner/dismiss"
+    },
+    "banner_pre_reset_announcement_optional": {
+      "recommended": false,
+      "rationale": "0 active real players to notify"
+    },
+    "timing_recommendation": "post-reset welcome only",
+    "compensation_cosmetic": {
+      "founder_badge": {"key": "founder_r18", "recommended": true, "cost": "zero"},
+      "profile_title": {"key": "prima_era", "recommended": true, "cost": "zero"},
+      "hall_of_fame_view": {"path_suggested": "/hall_of_fame_r18", "recommended": true}
+    }
+  },
+  "legal_privacy_risks": {
+    "gdpr": "no risk (0 sensitive data, archive preserves)",
+    "consumer_rights": "no risk (transparent banner)",
+    "financial": "no risk (0 premium/billing)",
+    "reputational": "low (transparent communication)",
+    "technical_data_loss": "low (archive + rollback)"
+  },
+  "pm_questions": {
+    "P0": [
+      {"id": "P0-1", "topic": "reset scope", "options": ["S1_all", "S3_test_only", "S1_except_grandfathered", "other"], "recommendation_e1_dev": "S1_all"},
+      {"id": "P0-2", "topic": "preserve beyond guild.name", "options": ["A_minimal", "B_include_level", "C_include_reputation", "D_include_hall_of_fame"], "recommendation_e1_dev": "D"},
+      {"id": "P0-3", "topic": "adventurers strategy", "options": ["A_a_delete", "A_b_archive_regen", "A_c_reset_in_place"], "recommendation_e1_dev": "A_b"},
+      {"id": "P0-4", "topic": "items/equipment", "options": ["A_archive", "B_delete", "C_preserve_guild_inventory"], "recommendation_e1_dev": "A"},
+      {"id": "P0-5", "topic": "class_slug regen pool", "options": ["A_11_legacy", "B_13_incl_hidden", "C_conditional"], "recommendation_e1_dev": "A"},
+      {"id": "P0-6", "topic": "preserve R18.3c migration decision", "options": ["A_no_archive_only", "B_yes_as_design_intent", "C_yes_and_reapply"], "recommendation_e1_dev": "B"},
+      {"id": "P0-7", "topic": "gold/resources strategy", "options": ["A_reset_starter", "B_preserve_resources", "C_starter_kit_r18"], "recommendation_e1_dev": "C"},
+      {"id": "P0-8", "topic": "cosmetic compensation", "options": ["A_none", "B_badge_only", "C_badge_and_title", "D_full_hall_of_fame"], "recommendation_e1_dev": "D"}
+    ],
+    "P1": [
+      {"id": "P1-1", "topic": "archive pattern", "options": ["A_mongodump", "B_sibling_collections", "C_db_clone"], "recommendation_e1_dev": "B"},
+      {"id": "P1-2", "topic": "retention window", "options": ["A_30d", "B_60d", "C_90d", "D_180d"], "recommendation_e1_dev": "C_90d"},
+      {"id": "P1-3", "topic": "leaderboard strategy", "options": ["L_a_azzera", "L_b_archive_fresh_season", "L_c_preserve_cosmetici", "L_d_new_era_with_timestamp"], "recommendation_e1_dev": "L_d"},
+      {"id": "P1-4", "topic": "achievement post-reset", "options": ["Ach_a_reset", "Ach_b_hof", "Ach_c_prime_mover", "Ach_d_combo"], "recommendation_e1_dev": "Ach_d"},
+      {"id": "P1-5", "topic": "reset trigger", "options": ["A_admin_endpoint", "B_cli_script", "C_cron_auto"], "recommendation_e1_dev": "B"}
+    ],
+    "P2": [
+      {"id": "P2-1", "topic": "banner timing", "options": ["A_post_only", "B_pre_and_post", "C_pre_optin"], "recommendation_e1_dev": "A"},
+      {"id": "P2-2", "topic": "banner dismissible", "options": ["A_dismissible", "B_sticky_onboarding", "C_sticky_7d"], "recommendation_e1_dev": "A"},
+      {"id": "P2-3", "topic": "cosmetici earned preservation", "options": ["A_preserve_all", "B_archive_all", "C_preserve_pvp_only"], "recommendation_e1_dev": "A"}
+    ],
+    "P3": [
+      {"id": "P3-1", "topic": "R18.1.3 drift backfill still needed", "options": ["A_no_obsolete", "B_yes_partial"], "recommendation_e1_dev": "A"},
+      {"id": "P3-2", "topic": "R18.3d mapping registry post-reset", "options": ["A_apply_immediately", "B_stay_paused", "C_admin_debug_only"], "recommendation_e1_dev": "A_or_C"},
+      {"id": "P3-3", "topic": "seed_round5 warning patch post-reset", "options": ["A_patch_if_persists", "B_obsolete", "C_reverify_first"], "recommendation_e1_dev": "C"},
+      {"id": "P3-4", "topic": "adventurer_talent_progress", "options": ["A_preserve_zero_docs", "B_irrelevant"], "recommendation_e1_dev": "B"}
+    ],
+    "total": 20,
+    "count_by_priority": {"P0": 8, "P1": 5, "P2": 3, "P3": 4},
+    "recommendation_order_pm_answer": ["P0-1", "P0-3", "then_rest_of_P0", "P1", "P2", "P3"]
+  },
+  "constraints_respected": {
+    "zero_reset_execution": true,
+    "zero_db_write": true,
+    "zero_hard_delete": true,
+    "zero_code_modified": true,
+    "zero_seed": true,
+    "zero_schema_migration": true,
+    "zero_combat_math_change": true,
+    "zero_reward_drop_economy_pvp_premium_change": true,
+    "zero_ui_player_facing_deploy": true,
+    "zero_account_modification": true,
+    "zero_guilds_live_modification": true,
+    "zero_adventurers_live_modification": true,
+    "zero_items_live_modification": true,
+    "zero_patch_seed_round5": true,
+    "zero_patch_generator_py": true,
+    "zero_sealed_decisions": true,
+    "only_read_db_find_aggregate": true,
+    "only_write_memory_files": true,
+    "feature_flag_r18_rework_enabled_false": true,
+    "r18_3d_stays_paused": true,
+    "r18_3a_2_sealing_respected": true
+  },
+  "next_steps": {
+    "await_pm_decision_on_P0_1_and_P0_3": true,
+    "on_pm_go": [
+      "implement dry-run script (R18.Reset.1a)",
+      "implement archive apply script (R18.Reset.1b)",
+      "implement reset apply script (R18.Reset.1c)",
+      "implement rollback script (R18.Reset.1d)",
+      "test suite for all above",
+      "banner UI component (R18.Reset.2 frontend)"
+    ]
+  },
+  "sealing_agent": "e1 main agent",
+  "sealing_timestamp": "2026-07-04T21:42Z"
+}
