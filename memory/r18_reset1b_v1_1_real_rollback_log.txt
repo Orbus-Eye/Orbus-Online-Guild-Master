@@ -1,0 +1,89 @@
+[2026-07-05T12:04:24.815157+00:00] [WARN] MODE = APPLY. Sto per RESTORE il DB dal backup JSONL. sha256 verification obbligatoria. Identity divergence = HARD STOP (bypass solo con --force-identity-override).
+[2026-07-05T12:04:24.815378+00:00] [INFO] ====== R18.Reset.1c START (mode=APPLY) ======
+[2026-07-05T12:04:24.815395+00:00] [INFO] manifest_path = /app/backend/backups/r18_reset1b_v1_1_20260705T114841Z/manifest.json
+[2026-07-05T12:04:24.815502+00:00] [INFO] [manifest] loaded round=R18.Reset.1b.hotfix collections=33 created_at=2026-07-05T11:48:41.867275+00:00
+[2026-07-05T12:04:24.820802+00:00] [INFO] [sha256] adventurers: 3380 lines, sha256=2e19a3a1bcc10ac5... PASS
+[2026-07-05T12:04:24.820950+00:00] [INFO] [sha256] inventory_items: 111 lines, sha256=3d0103c9b2f93bde... PASS
+[2026-07-05T12:04:24.820996+00:00] [INFO] [sha256] equipped_items: 20 lines, sha256=fa731bd764fa9d10... PASS
+[2026-07-05T12:04:24.821807+00:00] [INFO] [sha256] class_halls: 1673 lines, sha256=a517fe969f5b14d7... PASS
+[2026-07-05T12:04:24.822596+00:00] [INFO] [sha256] achievement_progress: 1686 lines, sha256=faa0c7be3e7c1a63... PASS
+[2026-07-05T12:04:24.822685+00:00] [INFO] [sha256] expeditions: 17 lines, sha256=a4792830a17f125d... PASS
+[2026-07-05T12:04:24.822779+00:00] [INFO] [sha256] expedition_members: 45 lines, sha256=56e16b84342c791a... PASS
+[2026-07-05T12:04:24.822813+00:00] [INFO] [sha256] raids: 1 lines, sha256=1017014b51e4308f... PASS
+[2026-07-05T12:04:24.822855+00:00] [INFO] [sha256] raid_participants: 20 lines, sha256=a06efe3b0069b6a5... PASS
+[2026-07-05T12:04:24.822885+00:00] [INFO] [sha256] chat_messages: 2 lines, sha256=a083478158a41725... PASS
+[2026-07-05T12:04:24.822915+00:00] [INFO] [sha256] squads: 2 lines, sha256=1bf9f8fe4483c1c1... PASS
+[2026-07-05T12:04:24.823736+00:00] [INFO] [sha256] guild_structures: 421 lines, sha256=edbaef2990c777ee... PASS
+[2026-07-05T12:04:24.823779+00:00] [INFO] [sha256] guild_specialization_choice: 4 lines, sha256=7ad125f2fcb79aae... PASS
+[2026-07-05T12:04:24.823808+00:00] [INFO] [sha256] guild_trade_pacts: 1 lines, sha256=292314b110a547eb... PASS
+[2026-07-05T12:04:24.823843+00:00] [INFO] [sha256] guild_site_income_ledger: 14 lines, sha256=d9a48dad40bce449... PASS
+[2026-07-05T12:04:24.823873+00:00] [INFO] [sha256] guild_world_presence: 6 lines, sha256=096e2fdd126261ec... PASS
+[2026-07-05T12:04:24.823903+00:00] [INFO] [sha256] guild_xp_daily_cap_tracker: 10 lines, sha256=90badeb5853064d8... PASS
+[2026-07-05T12:04:24.823939+00:00] [INFO] [sha256] pvp_seasons: 19 lines, sha256=33538283e5006592... PASS
+[2026-07-05T12:04:24.823988+00:00] [INFO] [sha256] pvp_season_leaderboards: 36 lines, sha256=c6fd6c4162cc4763... PASS
+[2026-07-05T12:04:24.824018+00:00] [INFO] [sha256] pvp_defense_teams: 3 lines, sha256=f6c6b93899d23b95... PASS
+[2026-07-05T12:04:24.824047+00:00] [INFO] [sha256] pvp_cosmetics_unlocked: 5 lines, sha256=b33e4d98895885d2... PASS
+[2026-07-05T12:04:24.824075+00:00] [INFO] [sha256] guild_mount_ownership: 2 lines, sha256=fd9def9d3efd7d82... PASS
+[2026-07-05T12:04:24.824102+00:00] [INFO] [sha256] narrative_rewards_unlocked: 1 lines, sha256=64eddd9745076574... PASS
+[2026-07-05T12:04:24.824131+00:00] [INFO] [sha256] continent_leaderboard_snapshots: 3 lines, sha256=e7e200ab3b485f8b... PASS
+[2026-07-05T12:04:24.824169+00:00] [INFO] [sha256] continent_event_instances: 1 lines, sha256=52e50714bd973607... PASS
+[2026-07-05T12:04:24.824199+00:00] [INFO] [sha256] seasons: 1 lines, sha256=a29faf1bd1715e94... PASS
+[2026-07-05T12:04:24.824241+00:00] [INFO] [sha256] season_participations: 14 lines, sha256=5b902058e9ac4ad1... PASS
+[2026-07-05T12:04:24.824270+00:00] [INFO] [sha256] season_rewards: 4 lines, sha256=6af396836f5577c7... PASS
+[2026-07-05T12:04:24.824301+00:00] [INFO] [sha256] world_boss_events: 4 lines, sha256=a3edd3a320064501... PASS
+[2026-07-05T12:04:24.824571+00:00] [INFO] [sha256] recruitment_offers: 255 lines, sha256=02434dc42b3f413b... PASS
+[2026-07-05T12:04:24.824611+00:00] [INFO] [sha256] shop_daily_offers: 18 lines, sha256=f538f7560b063752... PASS
+[2026-07-05T12:04:24.824683+00:00] [INFO] [sha256] tester_tool_snapshots: 14 lines, sha256=3aa7ee7ff2970912... PASS
+[2026-07-05T12:04:24.825514+00:00] [INFO] [sha256] guilds: 672 lines, sha256=145b1f442ee20ee2... PASS
+[2026-07-05T12:04:24.825525+00:00] [INFO] [sha256] all 33 files verified, total_lines=8465
+[2026-07-05T12:04:25.202896+00:00] [INFO] [restore_guilds] mode=APPLY backup_docs=672 would_restore=672 identity_divergences=0
+[2026-07-05T12:04:25.306286+00:00] [INFO] [restore_archive] adventurers: deleted=3360 inserted=3380
+[2026-07-05T12:04:25.319604+00:00] [INFO] [restore_archive] inventory_items: deleted=672 inserted=111
+[2026-07-05T12:04:25.321154+00:00] [INFO] [restore_archive] equipped_items: deleted=0 inserted=20
+[2026-07-05T12:04:25.341182+00:00] [INFO] [restore_archive] class_halls: deleted=0 inserted=1673
+[2026-07-05T12:04:25.361789+00:00] [INFO] [restore_archive] achievement_progress: deleted=0 inserted=1686
+[2026-07-05T12:04:25.363862+00:00] [INFO] [restore_archive] expeditions: deleted=0 inserted=17
+[2026-07-05T12:04:25.365662+00:00] [INFO] [restore_archive] expedition_members: deleted=0 inserted=45
+[2026-07-05T12:04:25.366622+00:00] [INFO] [restore_archive] raids: deleted=0 inserted=1
+[2026-07-05T12:04:25.367793+00:00] [INFO] [restore_archive] raid_participants: deleted=0 inserted=20
+[2026-07-05T12:04:25.368650+00:00] [INFO] [restore_archive] chat_messages: deleted=0 inserted=2
+[2026-07-05T12:04:25.369531+00:00] [INFO] [restore_archive] squads: deleted=0 inserted=2
+[2026-07-05T12:04:25.382124+00:00] [INFO] [restore_archive] guild_structures: deleted=1 inserted=421
+[2026-07-05T12:04:25.383438+00:00] [INFO] [restore_archive] guild_specialization_choice: deleted=0 inserted=4
+[2026-07-05T12:04:25.384301+00:00] [INFO] [restore_archive] guild_trade_pacts: deleted=0 inserted=1
+[2026-07-05T12:04:25.385283+00:00] [INFO] [restore_archive] guild_site_income_ledger: deleted=0 inserted=14
+[2026-07-05T12:04:25.386106+00:00] [INFO] [restore_archive] guild_world_presence: deleted=0 inserted=6
+[2026-07-05T12:04:25.386982+00:00] [INFO] [restore_archive] guild_xp_daily_cap_tracker: deleted=0 inserted=10
+[2026-07-05T12:04:25.388082+00:00] [INFO] [restore_archive] pvp_seasons: deleted=0 inserted=19
+[2026-07-05T12:04:25.389459+00:00] [INFO] [restore_archive] pvp_season_leaderboards: deleted=0 inserted=36
+[2026-07-05T12:04:25.390339+00:00] [INFO] [restore_archive] pvp_defense_teams: deleted=3 inserted=3
+[2026-07-05T12:04:25.391189+00:00] [INFO] [restore_archive] pvp_cosmetics_unlocked: deleted=0 inserted=5
+[2026-07-05T12:04:25.391962+00:00] [INFO] [restore_archive] guild_mount_ownership: deleted=0 inserted=2
+[2026-07-05T12:04:25.392687+00:00] [INFO] [restore_archive] narrative_rewards_unlocked: deleted=0 inserted=1
+[2026-07-05T12:04:25.393463+00:00] [INFO] [restore_archive] continent_leaderboard_snapshots: deleted=0 inserted=3
+[2026-07-05T12:04:25.394205+00:00] [INFO] [restore_archive] continent_event_instances: deleted=0 inserted=1
+[2026-07-05T12:04:25.395016+00:00] [INFO] [restore_archive] seasons: deleted=1 inserted=1
+[2026-07-05T12:04:25.396233+00:00] [INFO] [restore_archive] season_participations: deleted=3 inserted=14
+[2026-07-05T12:04:25.397188+00:00] [INFO] [restore_archive] season_rewards: deleted=4 inserted=4
+[2026-07-05T12:04:25.397982+00:00] [INFO] [restore_archive] world_boss_events: deleted=0 inserted=4
+[2026-07-05T12:04:25.403179+00:00] [INFO] [restore_archive] recruitment_offers: deleted=4 inserted=255
+[2026-07-05T12:04:25.404586+00:00] [INFO] [restore_archive] shop_daily_offers: deleted=0 inserted=18
+[2026-07-05T12:04:25.406189+00:00] [INFO] [restore_archive] tester_tool_snapshots: deleted=0 inserted=14
+[2026-07-05T12:04:25.406617+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_ROLLED_BACK emitted
+[2026-07-05T12:04:25.406635+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T12:04:25.406692+00:00] [INFO] {
+  "sha256": {
+    "files_verified": 33,
+    "total_lines_hashed": 8465
+  },
+  "guilds": {
+    "target": 672,
+    "would_restore": 672,
+    "identity_divergences": 0
+  },
+  "archive": {
+    "collections_processed": 32
+  }
+}
+[2026-07-05T12:04:25.406700+00:00] [INFO] ====== R18.Reset.1b APPLY REMAINS BLOCKED ======
+[2026-07-05T12:04:25.406715+00:00] [INFO] ====== R18.Reset.1c DONE (mode=APPLY) ======
