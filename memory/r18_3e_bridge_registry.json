@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "registry_name": "R18.3e Legacy EN ↔ Canonical IT Class Bridge Registry",
+    "registry_version": "R18.3e.v1",
+    "round": "R18.3e",
+    "phase": "B",
+    "stage": "B1_documental_only",
+    "source_round": "R18.3e Phase B",
+    "generated_at_utc": "2026-07-05T18:39:19Z",
+    "seal_authority": "PM Orchestrator",
+    "seal_status": "OPEN_STAGE_B1_DOCUMENTAL_ONLY",
+    "seal_note": "Registry documental-only, unwired. No DB apply. Awaiting PM gate for B2 real apply.",
+    "reference_decision_lock": "/app/memory/r18_3e_phase_b_pm_decisions.json",
+    "reference_phase_a_discovery": "/app/memory/r18_3e_phase_a_legacy_canonical_bridge_discovery.md",
+    "reference_r18_3d_canonical_set": "/app/memory/r18_3d_stat_role_mapping_registry.json",
+    "canonical_classes_count": 27,
+    "legacy_live_classes_count": 16,
+    "canonical_hidden_intersect_count": 2,
+    "total_bridge_entries": 18,
+    "would_modify_dry_run_count": 18,
+    "self_hash_sha256": "COMPUTED_POST_CREATION",
+    "runtime_wired": false,
+    "governance": {
+      "unwired_by_design": true,
+      "hard_stop_field_write_check": true,
+      "player_facing_change": false,
+      "recruitment_unlock": false,
+      "migration_slug": false,
+      "audit_event_emitted": false
+    }
+  },
+
+  "canonical_it_set_27_locked": [
+    "alchimista", "artificiere", "astrologo", "bardo", "burattinaio",
+    "cacciatore_del_sangue", "cacciatore_del_vuoto", "cacciatore_di_mostri",
+    "cartografo", "cavaliere_della_morte", "cavaliere_di_draghi", "cronista",
+    "druido", "fabbro_arcano", "giocatore_d_azzardo", "guerriero", "ladro",
+    "mago", "mercante", "monaco", "negromante", "paladino", "parassita",
+    "pittore", "runista", "sciamano", "sognatore"
+  ],
+
+  "bridge_status_enum": [
+    "mapped_canonical",
+    "mapped_alias",
+    "deprecated_alias",
+    "technical_placeholder",
+    "test_artifact",
+    "canonical_native",
+    "ambiguous_pending_pm"
+  ],
+
+  "safe_fields_apply_scope": {
+    "target_collection": "adventurer_classes",
+    "fields_to_apply_via_set": [
+      "canonical_slug",
+      "alias_target",
+      "bridge_status",
+      "bridge_source_round",
+      "bridge_applied_at"
+    ],
+    "eligible_apply_scope": "all 18 live adventurer_classes docs (16 legacy + 2 canonical native)",
+    "blocked_fields_never_touch": [
+      "class_slug",
+      "display_name_it",
+      "primary_stat",
+      "secondary_stats",
+      "role",
+      "base_strength",
+      "base_agility",
+      "base_intellect",
+      "base_endurance",
+      "base_faith",
+      "is_playable",
+      "is_active",
+      "is_canonical",
+      "slug",
+      "name"
+    ]
+  },
+
+  "bridge_entries": [
+    {"slug": "warrior", "canonical_slug": "guerriero", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 331, "display_name_it_live": "Guerriero", "notes": "display_name_it match; canonical guerriero in R18.3d canonical set"},
+    {"slug": "rogue", "canonical_slug": "ladro", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 302, "display_name_it_live": "Ladro", "notes": "display_name_it match"},
+    {"slug": "mage", "canonical_slug": "mago", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 281, "display_name_it_live": "Mago", "notes": "display_name_it match"},
+    {"slug": "priest", "canonical_slug": "paladino", "alias_target": "paladino", "bridge_status": "mapped_alias", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 278, "display_name_it_live": "Sacerdote", "notes": "PM Q3 decision: deprecated_alias semantic, display_name_it='Sacerdote' preserved, player continues seeing 'Sacerdote' until UI round"},
+    {"slug": "ranger", "canonical_slug": "cacciatore_di_mostri", "alias_target": null, "bridge_status": "mapped_alias", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 299, "display_name_it_live": "Ranger", "notes": "PM Q6 decision: canonical hidden target, no recruitment unlock, no label change; consistent with R18.3a orphan migration design intent"},
+    {"slug": "monk", "canonical_slug": "monaco", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 327, "display_name_it_live": "Monaco", "notes": "display_name_it match"},
+    {"slug": "paladin", "canonical_slug": "paladino", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 303, "display_name_it_live": "Paladino", "notes": "display_name_it match; primary_stat='faith' drift locked live (R18.3d)"},
+    {"slug": "druid", "canonical_slug": "druido", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 311, "display_name_it_live": "Druido", "notes": "display_name_it match"},
+    {"slug": "alchemist", "canonical_slug": "alchimista", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 299, "display_name_it_live": "Alchimista", "notes": "display_name_it match"},
+    {"slug": "bard", "canonical_slug": "bardo", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 324, "display_name_it_live": "Bardo", "notes": "role='Support' drift deferred to R18.3d.followup (PM Q12)"},
+    {"slug": "warlock", "canonical_slug": "cacciatore_del_vuoto", "alias_target": null, "bridge_status": "mapped_alias", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 305, "display_name_it_live": "Occultista", "notes": "PM Q6 decision: canonical hidden target, no recruitment unlock, no label change; 18 items already bind cacciatore_del_vuoto via recommended_classes"},
+    {"slug": "necromancer", "canonical_slug": "negromante", "alias_target": null, "bridge_status": "mapped_canonical", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 0, "display_name_it_live": "Negromante", "notes": "is_active=False deprecated, display_name_it match"},
+    {"slug": "assassin", "canonical_slug": null, "alias_target": "ladro", "bridge_status": "deprecated_alias", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 0, "display_name_it_live": "Assassino", "notes": "PM Q4 decision: is_active=False, spec assassin_spec is rogue subspec"},
+    {"slug": "berserker", "canonical_slug": null, "alias_target": "guerriero", "bridge_status": "deprecated_alias", "bridge_source_round": "R18.3e Phase B", "confidence": "MEDIUM", "adventurers_live": 0, "display_name_it_live": "Berserker", "notes": "PM Q5 decision: is_active=False, spec berserker_spec is warrior subspec, NO items.class_tags rewrite"},
+    {"slug": "recruit_unassigned", "canonical_slug": null, "alias_target": null, "bridge_status": "technical_placeholder", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 0, "display_name_it_live": "Da riassegnare", "notes": "PM Q7 decision: excluded from canonical bridge, hardcoded in expeditions/services.py:907 guard"},
+    {"slug": "test-class-5e0064", "canonical_slug": null, "alias_target": null, "bridge_status": "test_artifact", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 0, "display_name_it_live": null, "notes": "PM Q8 decision: test artifact permanent, NO delete_one"},
+    {"slug": "cacciatore_di_mostri", "canonical_slug": "cacciatore_di_mostri", "alias_target": null, "bridge_status": "canonical_native", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 0, "display_name_it_live": "Cacciatore di Mostri", "notes": "Main agent recommendation (pending PM validation at B2 gate): canonical native, self-canonical, target of ranger alias; 31 items already reference via recommended_classes"},
+    {"slug": "cacciatore_del_vuoto", "canonical_slug": "cacciatore_del_vuoto", "alias_target": null, "bridge_status": "canonical_native", "bridge_source_round": "R18.3e Phase B", "confidence": "HIGH", "adventurers_live": 0, "display_name_it_live": "Cacciatore del Vuoto", "notes": "Main agent recommendation (pending PM validation at B2 gate): canonical native, self-canonical, target of warlock alias; 18 items already reference via recommended_classes"}
+  ],
+
+  "reverse_map_canonical_to_legacy": {
+    "guerriero": ["warrior", "berserker"],
+    "ladro": ["rogue", "assassin"],
+    "mago": ["mage"],
+    "paladino": ["paladin", "priest"],
+    "monaco": ["monk"],
+    "druido": ["druid"],
+    "alchimista": ["alchemist"],
+    "bardo": ["bard"],
+    "negromante": ["necromancer"],
+    "cacciatore_di_mostri": ["ranger", "cacciatore_di_mostri"],
+    "cacciatore_del_vuoto": ["warlock", "cacciatore_del_vuoto"]
+  },
+
+  "canonical_not_referenced_by_bridge": [
+    "artificiere", "astrologo", "burattinaio", "cacciatore_del_sangue",
+    "cartografo", "cavaliere_della_morte", "cavaliere_di_draghi", "cronista",
+    "fabbro_arcano", "giocatore_d_azzardo", "mercante", "parassita",
+    "pittore", "runista", "sciamano", "sognatore"
+  ],
+
+  "backlog_entries_registered_by_this_registry": [
+    "R18.3d.followup — Bard Role Drift Resolution (P3, already open)",
+    "R18.Backlog — Null Adventurer Class Slug Backfill Review (P3, NEW per Q14)",
+    "R18.3f — Class Slug Migration Planning (deferred round per Q9)"
+  ]
+}

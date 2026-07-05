@@ -1,0 +1,144 @@
+{
+  "meta": {
+    "round": "R18.3e",
+    "phase": "B",
+    "stage": "B0_decision_lock",
+    "generated_at_utc": "2026-07-05T18:39:19Z",
+    "seal_authority": "PM Orchestrator",
+    "reference_phase_a": "/app/memory/r18_3e_phase_a_legacy_canonical_bridge_discovery.md",
+    "deviation_policy": "any change to Q1-Q14 requires new PM gate",
+    "self_hash_sha256": "COMPUTED_POST_CREATION"
+  },
+  "answers_verbatim": {
+    "Q1": {
+      "question": "canonical_slug vs alias_target vs both?",
+      "answer": "both",
+      "detail": "canonical_slug = target canonico IT di riferimento. alias_target = solo per alias legacy/deprecati. bridge_status determina come interpretarli."
+    },
+    "Q2": {
+      "question": "Bridge on adventurer_classes / registry / both?",
+      "answer": "both_staged",
+      "detail": "r18_3e_bridge_registry.json = source documentale di design. adventurer_classes = eventuale reflection append-only, SOLO dopo dry-run + nuovo gate PM. Per ora autorizzato SOLO registry file + loader UNWIRED + dry-run dello script $set."
+    },
+    "Q3": {
+      "question": "priest mapping?",
+      "answer": "priest_to_paladino_mapped_alias",
+      "detail": "Non aggiungere sacerdote al canonical set. Non rinominare priest. Non cambiare display_name_it='Sacerdote'. Bridge documentale: priest.canonical_slug=paladino, bridge_status=mapped_alias. Player continua a vedere 'Sacerdote' fino a round UI dedicato."
+    },
+    "Q4": {
+      "question": "assassin mapping?",
+      "answer": "assassin_to_ladro_deprecated_alias",
+      "detail": "No migration."
+    },
+    "Q5": {
+      "question": "berserker mapping?",
+      "answer": "berserker_to_guerriero_deprecated_alias",
+      "detail": "NO rewrite items.class_tags."
+    },
+    "Q6": {
+      "question": "ranger/warlock to canonical hidden?",
+      "answer": "yes_both_mapped_alias",
+      "detail": "ranger->cacciatore_di_mostri e warlock->cacciatore_del_vuoto con bridge_status=mapped_alias. Vincoli: no migration slug, no unlock recruitment, no cambio display_name_it, no cambio label player-facing. Bridge è design mapping puro."
+    },
+    "Q7": {
+      "question": "recruit_unassigned?",
+      "answer": "excluded_technical_placeholder",
+      "detail": "bridge_status=technical_placeholder, canonical_slug=null, alias_target=null."
+    },
+    "Q8": {
+      "question": "test-class-5e0064?",
+      "answer": "test_artifact_permanent",
+      "detail": "bridge_status=test_artifact permanente. NO delete_one."
+    },
+    "Q9": {
+      "question": "R18.4 approach?",
+      "answer": "bridge_documentale_read_only",
+      "detail": "R18.4 usa bridge documentale/read-only. NO migration DB completa. NO rewrite adventurers.class_slug, frontend slug map, backend runtime assumptions, test fixtures. Migration completa (se mai) = round separato R18.3f — Class Slug Migration Planning."
+    },
+    "Q10": {
+      "question": "UI label player-facing?",
+      "answer": "no_ui_player_facing",
+      "detail": "Bridge admin/design only. Niente 'Occultista→Cacciatore del Vuoto', 'Ranger→Cacciatore di Mostri', 'Sacerdote→Paladino' in UI."
+    },
+    "Q11": {
+      "question": "items.class_tags rewrite?",
+      "answer": "items_class_tags_legacy_key_stays",
+      "detail": "NO rewrite. R18.4 potrà leggere bridge documentale per compatibilità futura, senza cambiare tag esistenti."
+    },
+    "Q12": {
+      "question": "bard drift?",
+      "answer": "deferred_to_r18_3d_followup",
+      "detail": "Bardo drift deferred. Resta backlog R18.3d.followup — Bard Role Drift Resolution."
+    },
+    "Q13": {
+      "question": "audit event?",
+      "answer": "audit_only_on_real_apply_aggregated",
+      "detail": "B1 documental-only = zero audit. Eventuale B2 apply reale futuro = 1 solo evento aggregato R18_3E_BRIDGE_METADATA_APPLIED (NO audit per-doc)."
+    },
+    "Q14": {
+      "question": "null class_slug backfill?",
+      "answer": "fallback_runtime_continues_no_backfill",
+      "detail": "NO backfill in R18.3e. Aggiungi backlog R18.Backlog — Null Adventurer Class Slug Backfill Review (P3, non-blocking)."
+    }
+  },
+  "mapping_official_locked": [
+    {"legacy_slug": "warrior", "canonical_slug": "guerriero", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "rogue", "canonical_slug": "ladro", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "mage", "canonical_slug": "mago", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "priest", "canonical_slug": "paladino", "alias_target": "paladino", "bridge_status": "mapped_alias", "pm_note": "deprecated_alias semantic, display_name_it='Sacerdote' preserved"},
+    {"legacy_slug": "ranger", "canonical_slug": "cacciatore_di_mostri", "alias_target": null, "bridge_status": "mapped_alias", "pm_note": "canonical hidden target, no recruitment unlock, no label change"},
+    {"legacy_slug": "monk", "canonical_slug": "monaco", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "paladin", "canonical_slug": "paladino", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "druid", "canonical_slug": "druido", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "alchemist", "canonical_slug": "alchimista", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "bard", "canonical_slug": "bardo", "alias_target": null, "bridge_status": "mapped_canonical", "pm_note": "role='Support' drift deferred to R18.3d.followup"},
+    {"legacy_slug": "warlock", "canonical_slug": "cacciatore_del_vuoto", "alias_target": null, "bridge_status": "mapped_alias", "pm_note": "canonical hidden target, no recruitment unlock, no label change"},
+    {"legacy_slug": "necromancer", "canonical_slug": "negromante", "alias_target": null, "bridge_status": "mapped_canonical"},
+    {"legacy_slug": "assassin", "canonical_slug": null, "alias_target": "ladro", "bridge_status": "deprecated_alias", "pm_note": "0 adv live, no migration"},
+    {"legacy_slug": "berserker", "canonical_slug": null, "alias_target": "guerriero", "bridge_status": "deprecated_alias", "pm_note": "0 adv live, no rewrite items.class_tags"},
+    {"legacy_slug": "recruit_unassigned", "canonical_slug": null, "alias_target": null, "bridge_status": "technical_placeholder", "pm_note": "excluded from canonical bridge, hardcoded in expeditions guard"},
+    {"legacy_slug": "test-class-5e0064", "canonical_slug": null, "alias_target": null, "bridge_status": "test_artifact", "pm_note": "test artifact permanent, NO delete"}
+  ],
+  "canonical_native_extension_by_main_agent": {
+    "rationale": "PM did not explicitly rule on the 2 canonical hidden already present in DB (cacciatore_di_mostri, cacciatore_del_vuoto). Main agent recommends canonical_native status for auto-descriptiveness of registry across all 18 live docs.",
+    "recommendation_pending_pm_validation_at_b2_gate": true,
+    "entries": [
+      {"canonical_slug_self": "cacciatore_di_mostri", "alias_target": null, "bridge_status": "canonical_native"},
+      {"canonical_slug_self": "cacciatore_del_vuoto", "alias_target": null, "bridge_status": "canonical_native"}
+    ]
+  },
+  "hard_locked_constraints": [
+    "NO DB apply reale (bridge metadata)",
+    "NO migration class_slug",
+    "NO rewrite adventurers",
+    "NO rewrite items",
+    "NO modifica frontend label player-facing",
+    "NO unlock classi hidden",
+    "NO seed nuove classi",
+    "NO hard delete",
+    "NO audit event emesso in B0/B1/B2 dry-run",
+    "NO touch ai 16 sigilli (14 R18.Reset.1b/1.2/1c + 2 R18.3d Phase B) — byte-identici obbligatori"
+  ],
+  "blocked_fields_hard_stop_never_touch": [
+    "class_slug",
+    "display_name_it",
+    "primary_stat",
+    "secondary_stats",
+    "role",
+    "base_strength",
+    "base_agility",
+    "base_intellect",
+    "base_endurance",
+    "base_faith",
+    "is_playable",
+    "is_active",
+    "is_canonical"
+  ],
+  "safe_fields_apply_scope_5": [
+    "canonical_slug",
+    "alias_target",
+    "bridge_status",
+    "bridge_source_round",
+    "bridge_applied_at"
+  ]
+}

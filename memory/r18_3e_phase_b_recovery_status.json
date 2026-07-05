@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "round": "R18.3e",
+    "phase": "B",
+    "stage": "recovery_audit_read_only",
+    "generated_at_utc": "2026-07-05T18:57:00Z",
+    "trigger": "builder cancellato durante Phase B; PM richiesto opzione C recovery audit",
+    "audit_log_baseline_pre_phase_b": 11896,
+    "audit_log_now": 11896,
+    "audit_log_delta": 0,
+    "final_classification": "C_artefatti_parziali_serve_cleanup_o_overwrite_pm_autorizzato"
+  },
+
+  "artefacts_inventory": [
+    {"id": 1, "path": "/app/memory/r18_3e_phase_b_pm_decisions.md", "exists": true, "bytes": 6297, "mtime_utc": "2026-07-05T18:41:16Z", "sha256": "a29dfbd9400648f49ff0f1cee035d7fe370f7f37c61329294724249aff25d20b", "complete": true, "json_parsable": null, "has_14_answers_pm": true, "has_16_legacy_27_canonical": true, "dry_run_only": null, "notes": "MD ends with 'Self-hash Decision Lock' section — closed"},
+    {"id": 2, "path": "/app/memory/r18_3e_phase_b_pm_decisions.json", "exists": true, "bytes": 8113, "mtime_utc": "2026-07-05T18:41:16Z", "sha256": "17fdc96cb05efce24f1f9f3a8bde4ff318ff117939e27b0f5e8b9df3b7e5dbfc", "complete": true, "json_parsable": true, "has_14_answers_pm": true, "has_16_legacy_27_canonical": true, "dry_run_only": null, "notes": "answers_verbatim.Q1..Q14 all present; mapping_official_locked has 16 entries"},
+    {"id": 3, "path": "/app/memory/r18_3e_bridge_registry.json", "exists": true, "bytes": 9730, "mtime_utc": "2026-07-05T18:41:16Z", "sha256": "4934f5d2527125144b00588611621348faf1ee862c0e4821ce7c63518498627f", "complete": true, "json_parsable": true, "has_14_answers_pm": null, "has_16_legacy_27_canonical": true, "dry_run_only": null, "notes": "27 canonical + 18 bridge_entries (16 legacy + 2 canonical native); 7 bridge_status enum values"},
+    {"id": 4, "path": "/app/memory/r18_3e_bridge_registry.md", "exists": true, "bytes": 9738, "mtime_utc": "2026-07-05T18:44:27Z", "sha256": "52230a20ed047951b6bc1e3e23536cfc517aed45948ccba0a5de270f1b958744", "complete": true, "json_parsable": null, "has_14_answers_pm": null, "has_16_legacy_27_canonical": true, "dry_run_only": null, "notes": "172 lines; ends with '16 sigilli byte-identici obbligatori'"},
+    {"id": 5, "path": "/app/backend/app/scripts/round18_3e_apply_bridge.py", "exists": true, "bytes": 13448, "mtime_utc": "2026-07-05T18:45:13Z", "sha256": "30f0a73dbacbf673985ba036fb9435b70efb47f122e5677c7df4c137684fe744", "complete": true, "json_parsable": null, "has_14_answers_pm": null, "has_16_legacy_27_canonical": null, "dry_run_only": true, "notes": "APPLY_ENABLED=False verified at line 64. Dry-run tested OK 18/18 would_modify. --apply without ack: exit=1. F841 lint fix applied"},
+    {"id": 6, "path": "/app/backend/tests/backend_r18_3e_bridge_test.py", "exists": true, "bytes": 16007, "mtime_utc": "2026-07-05T18:48:58Z", "sha256": "90d662aa60356b69de1f31da31f86a39262b50bfb5ffce8a475d87d6b0db877c", "complete": false, "json_parsable": null, "has_14_answers_pm": true, "has_16_legacy_27_canonical": true, "dry_run_only": true, "notes": "15 test def present. test_01 set-comparison fix APPLIED. test_14/test_15 subprocess pytest fix NOT applied (mcp_search_replace interrupted by Bad Gateway pre-cancel). test_15 has nested pytest recursion (subprocess pytest -k 'sealed or integrity' would re-select test_15 itself)"}
+  ],
+
+  "invariants_10_points": [
+    {"n": 1, "name": "zero_db_write_adventurer_classes_bridge_fields", "result": "PASS", "evidence": "count_documents({canonical_slug: {$exists: true}}) = 0 (and same for alias_target, bridge_status, bridge_source_round, bridge_applied_at)"},
+    {"n": 2, "name": "zero_audit_event_R18_3E", "result": "PASS", "evidence": "audit_log.count({event_type: /R18_3E/i}) = 0"},
+    {"n": 3, "name": "zero_modifica_adventurers", "result": "PASS", "evidence": "adventurers.count() = 3373 (baseline invariato)"},
+    {"n": 4, "name": "zero_modifica_items_class_tags", "result": "PASS", "evidence": "items.class_tags non-empty = 157, items.recommended_classes non-empty = 157 (baseline invariati)"},
+    {"n": 5, "name": "zero_modifica_frontend", "result": "PASS", "evidence": "git status /app/frontend/src no tracked changes"},
+    {"n": 6, "name": "zero_runtime_wiring", "result": "PASS", "evidence": "grep r18_3e|round18_3e|R18.3e in /app/backend/app (exclude scripts/tests) = empty"},
+    {"n": 7, "name": "sigilli_16_byte_identical", "result": "PASS", "evidence": "5/5 R18.3d SHA256 MATCH vs closure report R18.3d noto; sealed/integrity round precedenti 4/4 PASS (test_15 R18.3e sospeso per bug ricorsione)", "detail": {"r18_3d_json": "MATCH", "r18_3d_md": "MATCH", "stat_role_registry_py": "MATCH", "round18_3d_apply_metadata_py": "MATCH", "backend_r18_3d_stat_role_registry_test_py": "MATCH", "sealed_pytest_round_precedenti_pass": 4}},
+    {"n": 8, "name": "freeze_flags_off", "result": "PASS", "evidence": "/tmp/orbus_maintenance.flag NOT exists; /tmp/orbus_internal_job_freeze.flag NOT exists"},
+    {"n": 9, "name": "gameplay_live_healthy", "result": "PASS", "evidence": "/api/health = 200 (0.19s), /api/dungeons = 200, /api/adventurers = 401 no-token (expected)"},
+    {"n": 10, "name": "audit_log_delta_zero", "result": "PASS", "evidence": "audit_log count now = 11896 (baseline pre-Phase B = 11896)"}
+  ],
+
+  "sealed_files_sha256_verification": {
+    "method": "compare 5 R18.3d sealed files SHA256 vs closure report R18.3d Phase B (known at seal 2026-07-05T18:05:00Z)",
+    "all_5_match": true,
+    "details": [
+      {"path": "/app/memory/r18_3d_stat_role_mapping_registry.json", "expected": "3dec65cab59a92a36d52db7187fa3ae6aa01450e7160378722faa1bf54e2bb16", "actual_now": "3dec65cab59a92a36d52db7187fa3ae6aa01450e7160378722faa1bf54e2bb16", "match": true},
+      {"path": "/app/memory/r18_3d_stat_role_mapping_registry.md", "expected": "2e360cfec4fa59db0f57e6a6dec6332eb6bca9d589d923ca27552cc16937c398", "actual_now": "2e360cfec4fa59db0f57e6a6dec6332eb6bca9d589d923ca27552cc16937c398", "match": true},
+      {"path": "/app/backend/app/core/stat_role_registry.py", "expected": "e1e083e3b923fcf547baa3cb1fee27816ef4a149217f49d47699c62c08ab134b", "actual_now": "e1e083e3b923fcf547baa3cb1fee27816ef4a149217f49d47699c62c08ab134b", "match": true},
+      {"path": "/app/backend/app/scripts/round18_3d_apply_metadata.py", "expected": "b439f429adabccf62897dae78fa163df5b2ba8c404d65f7f5f51f575f50c61d7", "actual_now": "b439f429adabccf62897dae78fa163df5b2ba8c404d65f7f5f51f575f50c61d7", "match": true},
+      {"path": "/app/backend/tests/backend_r18_3d_stat_role_registry_test.py", "expected": "12ee2df3316147985c3a83b4e30c9c38fac45facd260f8898f8f53f2aef7c1e2", "actual_now": "12ee2df3316147985c3a83b4e30c9c38fac45facd260f8898f8f53f2aef7c1e2", "match": true}
+    ],
+    "note_r18_reset_1b_files": "11 R18.Reset.1b/1.2/1c files also hashed and stored in /tmp/r18_3e_sealed_hashes_recovery.txt. Since no pre-baseline file survived environment reset, verified indirectly via pytest sealed/integrity 4/4 PASS on round1b_hotfix + round160 sealed test cases."
+  },
+
+  "dry_run_sanity_check": {
+    "invocation": "python -m app.scripts.round18_3e_apply_bridge --json",
+    "mode": "dry_run",
+    "apply_enabled": false,
+    "source_round": "R18.3e Phase B",
+    "total_entries": 18,
+    "would_modify_count": 18,
+    "skipped_count": 0,
+    "errors_count": 0,
+    "guard_hard_stop_passed": 18,
+    "canonical_slug_ref_passed": 18,
+    "breakdown_by_bridge_status": {
+      "mapped_canonical": 9,
+      "mapped_alias": 3,
+      "deprecated_alias": 2,
+      "technical_placeholder": 1,
+      "test_artifact": 1,
+      "canonical_native": 2
+    },
+    "audit_event_actually_emitted": false,
+    "backup_snapshot_actually_written": false,
+    "real_apply_result": "BLOCKED - APPLY_ENABLED=False (LOCKED per R18.3e Phase B)",
+    "apply_without_ack_returncode": 1
+  },
+
+  "known_bugs_in_artefacts": [
+    {
+      "artefact_id": 6,
+      "path": "/app/backend/tests/backend_r18_3e_bridge_test.py",
+      "bug": "test_15_sealed_integrity_16_sigilli uses subprocess.run([python, -m pytest, -k 'sealed or integrity']) which recursively includes test_15 itself, causing potential deadlock/hang under xdist.",
+      "root_cause": "Fix was drafted pre-cancel (in-process file exists + SHA256 valid-hex assertion) but mcp_search_replace was interrupted by Bad Gateway error before applying.",
+      "workaround": "Direct invocation: pytest -k 'sealed or integrity' from shell PASS 4/4 on non-recursive tests; test_15 R18.3e itself pends.",
+      "recommended_fix": "search_replace test_14 (subprocess->in-process R18.3d registry count assertions) and test_15 (subprocess->file exists+hash valid-hex only, no nested pytest). Fix draft available in agent context.",
+      "impact_on_bridge_registry": "NONE. Bug is isolated to test file. Registry, decision lock, and dry-run script are correct and functional."
+    }
+  ],
+
+  "recommended_next_steps": {
+    "primary_recommendation": "Opzione 1: PM autorizza overwrite mirato di test_14 + test_15 in backend_r18_3e_bridge_test.py",
+    "alternatives": [
+      "Opzione 2: mark test_14/test_15 as pytest.mark.skip (accetta gap regression)",
+      "Opzione 3: cancellare 6 artefatti R18.3e e ripartire da zero (SCONSIGLIATA - 5/6 valid)"
+    ],
+    "no_auto_resume": true,
+    "no_auto_cleanup": true,
+    "no_auto_seal": true
+  },
+
+  "boundary_conditions_respected": {
+    "zero_db_write_during_audit": true,
+    "zero_apply": true,
+    "zero_cleanup_files": true,
+    "zero_overwrite_existing_files": true,
+    "zero_resume_phase_b": true,
+    "zero_seal": true,
+    "zero_touch_16_sigilli": true
+  }
+}
