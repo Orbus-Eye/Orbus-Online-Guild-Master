@@ -1,0 +1,394 @@
+{
+  "generated_at": "2026-07-05T13:47:08.864769+00:00",
+  "apply_id": "5815c73c-dae7-447c-ac3c-70455d3099a3",
+  "approved_backup": "/app/backend/backups/r18_reset1b_v1_2_staged_20260705T132515Z",
+  "fresh_apply_backup": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+  "checks": [
+    {
+      "check": 1,
+      "name": "guild_count",
+      "status": "PASS",
+      "expected": 672,
+      "actual": 672
+    },
+    {
+      "check": 2,
+      "name": "adventurers_live",
+      "status": "PASS",
+      "expected": 3360,
+      "actual": 3360
+    },
+    {
+      "check": 3,
+      "name": "adventurers_archived",
+      "status": "PASS",
+      "expected": 3415,
+      "actual": 3415
+    },
+    {
+      "check": 4,
+      "name": "adventurers_no_null_stats",
+      "status": "PASS",
+      "expected": 0,
+      "actual": 0,
+      "extra": {
+        "query": "$or exists:false OR null on 5 stats"
+      }
+    },
+    {
+      "check": 5,
+      "name": "adventurers_readable_sample",
+      "status": "PASS",
+      "expected": "sample_doc_present",
+      "actual": "present",
+      "extra": {
+        "sample": {
+          "class_slug": "rogue",
+          "name": "Starter 1",
+          "level": 1,
+          "grade": "F",
+          "strength": 5,
+          "agility": 9,
+          "intellect": 3,
+          "endurance": 4,
+          "faith": 2,
+          "hp_max": 100
+        }
+      }
+    },
+    {
+      "check": 6,
+      "name": "dungeons_readable",
+      "status": "PASS",
+      "expected": ">0",
+      "actual": 24
+    },
+    {
+      "check": 7,
+      "name": "expedition_stat_keys_present_on_sample",
+      "status": "PASS",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "check": 8,
+      "name": "gold_total_aggregate",
+      "status": "PASS",
+      "expected": 67200,
+      "actual": 67200
+    },
+    {
+      "check": 9,
+      "name": "gold_per_guild_uniform_100",
+      "status": "PASS",
+      "expected": {
+        "min": 100,
+        "max": 100
+      },
+      "actual": {
+        "min": 100,
+        "max": 100
+      }
+    },
+    {
+      "check": 10,
+      "name": "inventory_kit_doc_count",
+      "status": "PASS",
+      "expected": 672,
+      "actual": 672
+    },
+    {
+      "check": 11,
+      "name": "potion_total_quantity",
+      "status": "PASS",
+      "expected": 2016,
+      "actual": 2016
+    },
+    {
+      "check": 12,
+      "name": "no_null_item_id_inventory",
+      "status": "PASS",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "check": 13,
+      "name": "no_duplicate_guild_item",
+      "status": "PASS",
+      "expected": 0,
+      "actual": 0,
+      "extra": {
+        "duplicates_sample": []
+      }
+    },
+    {
+      "check": 14,
+      "name": "banner_dismissed_false_all",
+      "status": "PASS",
+      "expected": {
+        "false": 672,
+        "true": 0,
+        "missing": 0
+      },
+      "actual": {
+        "false": 672,
+        "true": 0,
+        "missing": 0
+      }
+    },
+    {
+      "check": 15,
+      "name": "audit_generic_applied_count_current_apply",
+      "status": "PASS",
+      "expected": 1,
+      "actual": 1,
+      "extra": {
+        "sample": [
+          {
+            "event_type": "R18_FULL_GUILD_FRESH_START_APPLIED",
+            "source": "script.round18_reset1b_apply_v1_2",
+            "metadata": {
+              "round": "R18.Reset.1b.hotfix.v1_2",
+              "apply_script": "round18_reset1b_apply_v1_2.py",
+              "apply_version": "v1.2",
+              "starter_kit_fix": true,
+              "starter_roster_stats_fix": true,
+              "stat_strategy": "base_stats_exact_no_variance",
+              "inventory_unique_index_respected": true,
+              "http_maintenance_required": true,
+              "internal_job_freeze_required": true,
+              "hotfix_ref": "R18.Reset.1b.hotfix.v1_2",
+              "supersedes_versions": [
+                "v1.0_original",
+                "v1.1_hotfix"
+              ],
+              "manifest_path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+              "apply_id": "5815c73c-dae7-447c-ac3c-70455d3099a3",
+              "guild_count": 672,
+              "adv_regen_count": 3360,
+              "potions_regen_count": 672,
+              "gold_total_after": 67200,
+              "completed_at": "2026-07-05T13:42:31.886654+00:00",
+              "safe_starter_slugs": [
+                "alchemist",
+                "bard",
+                "druid",
+                "mage",
+                "monk",
+                "paladin",
+                "priest",
+                "ranger",
+                "rogue",
+                "warlock",
+                "warrior"
+              ],
+              "class_templates_used": [
+                "alchemist",
+                "bard",
+                "druid",
+                "mage",
+                "monk",
+                "paladin",
+                "priest",
+                "ranger",
+                "rogue",
+                "warlock",
+                "warrior"
+              ],
+              "summary": {
+                "backup": {
+                  "mode": "APPLY",
+                  "backup_path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+                  "manifest": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+                  "created": true,
+                  "collections_count": 33
+                },
+                "archive": {
+                  "collections_touched": 32
+                },
+                "wipe": {
+                  "collections_wiped": 32
+                },
+                "guild_reset": {
+                  "guilds_target": 672,
+                  "guilds_modified": 672
+                },
+                "roster": {
+                  "guilds_processed": 672,
+                  "total_adv_created": 3360,
+                  "stat_strategy": "base_stats_exact_no_variance",
+                  "class_templates_used": [
+                    "alchemist",
+                    "bard",
+                    "druid",
+                    "mage",
+                    "monk",
+                    "paladin",
+                    "priest",
+                    "ranger",
+                    "rogue",
+                    "warlock",
+                    "warrior"
+                  ],
+                  "sample_adv_stats": null
+                },
+                "kit": {
+                  "created_inventory_docs": 672,
+                  "quantity_per_doc": 3,
+                  "item_id_resolved": "fd5cbdef-3146-483c-b1fd-217b4da0a59d",
+                  "upsert_skipped": 0
+                }
+              }
+            },
+            "created_at": "2026-07-05T13:42:31.886654+00:00"
+          }
+        ],
+        "historical_records_from_prior_apply_ids": 1
+      }
+    },
+    {
+      "check": 16,
+      "name": "audit_v1_2_applied_count_current_apply",
+      "status": "PASS",
+      "expected": 1,
+      "actual": 1,
+      "extra": {
+        "sample": [
+          {
+            "event_type": "R18_FULL_GUILD_FRESH_START_APPLIED_V1_2",
+            "source": "script.round18_reset1b_apply_v1_2",
+            "metadata": {
+              "round": "R18.Reset.1b.hotfix.v1_2",
+              "apply_script": "round18_reset1b_apply_v1_2.py",
+              "apply_version": "v1.2",
+              "starter_kit_fix": true,
+              "starter_roster_stats_fix": true,
+              "stat_strategy": "base_stats_exact_no_variance",
+              "inventory_unique_index_respected": true,
+              "http_maintenance_required": true,
+              "internal_job_freeze_required": true,
+              "hotfix_ref": "R18.Reset.1b.hotfix.v1_2",
+              "supersedes_versions": [
+                "v1.0_original",
+                "v1.1_hotfix"
+              ],
+              "manifest_path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+              "apply_id": "5815c73c-dae7-447c-ac3c-70455d3099a3",
+              "guild_count": 672,
+              "adv_regen_count": 3360,
+              "potions_regen_count": 672,
+              "gold_total_after": 67200,
+              "completed_at": "2026-07-05T13:42:31.886654+00:00",
+              "safe_starter_slugs": [
+                "alchemist",
+                "bard",
+                "druid",
+                "mage",
+                "monk",
+                "paladin",
+                "priest",
+                "ranger",
+                "rogue",
+                "warlock",
+                "warrior"
+              ],
+              "class_templates_used": [
+                "alchemist",
+                "bard",
+                "druid",
+                "mage",
+                "monk",
+                "paladin",
+                "priest",
+                "ranger",
+                "rogue",
+                "warlock",
+                "warrior"
+              ],
+              "summary": {
+                "backup": {
+                  "mode": "APPLY",
+                  "backup_path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+                  "manifest": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+                  "created": true,
+                  "collections_count": 33
+                },
+                "archive": {
+                  "collections_touched": 32
+                },
+                "wipe": {
+                  "collections_wiped": 32
+                },
+                "guild_reset": {
+                  "guilds_target": 672,
+                  "guilds_modified": 672
+                },
+                "roster": {
+                  "guilds_processed": 672,
+                  "total_adv_created": 3360,
+                  "stat_strategy": "base_stats_exact_no_variance",
+                  "class_templates_used": [
+                    "alchemist",
+                    "bard",
+                    "druid",
+                    "mage",
+                    "monk",
+                    "paladin",
+                    "priest",
+                    "ranger",
+                    "rogue",
+                    "warlock",
+                    "warrior"
+                  ],
+                  "sample_adv_stats": null
+                },
+                "kit": {
+                  "created_inventory_docs": 672,
+                  "quantity_per_doc": 3,
+                  "item_id_resolved": "fd5cbdef-3146-483c-b1fd-217b4da0a59d",
+                  "upsert_skipped": 0
+                }
+              }
+            },
+            "created_at": "2026-07-05T13:42:31.886654+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "check": 17,
+      "name": "no_hard_delete_archive_check",
+      "status": "PASS",
+      "expected": {
+        "adventurers_r18_archive": 3415,
+        "inventory_items_r18_archive": 111,
+        "expeditions_r18_archive": 17,
+        "raids_r18_archive": 1
+      },
+      "actual": {
+        "adventurers_r18_archive": 3415,
+        "inventory_items_r18_archive": 111,
+        "expeditions_r18_archive": 17,
+        "raids_r18_archive": 1
+      }
+    },
+    {
+      "check": 18,
+      "name": "approved_backup_manifest_sha256",
+      "status": "PASS",
+      "expected": "no_mismatch",
+      "actual": {
+        "files_checked": 33,
+        "mismatches": [],
+        "unknown_schema": false
+      }
+    }
+  ],
+  "summary": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "verdict": "ALL_PASS"
+  },
+  "failures": []
+}

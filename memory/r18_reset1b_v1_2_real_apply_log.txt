@@ -1,0 +1,164 @@
+[2026-07-05T13:42:30.739783+00:00] [WARN] MODE = APPLY. Sto per modificare il DB.
+[2026-07-05T13:42:30.740044+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_2 START (mode=APPLY) ======
+[2026-07-05T13:42:30.748099+00:00] [INFO] [apply_guard] evidence: {"guilds_with_active_apply_flag": 0, "audit_APPLIED_V1_2_count": 0, "audit_ROLLED_BACK_total_count": 2, "legacy_APPLIED_with_v1_2_metadata": false, "audit_APPLIED_legacy_count": 1, "ambiguous_apply_events_no_version": 0}
+[2026-07-05T13:42:30.748182+00:00] [INFO] [freeze_check] {"http_maintenance_flag": true, "internal_job_freeze_flag": true, "both_active": true}
+[2026-07-05T13:42:30.748191+00:00] [INFO] [preload] loading adventurer_classes base_* templates...
+[2026-07-05T13:42:30.751260+00:00] [INFO] [preload] 11/11 classi safe caricate con tutti i 5 base_* stats. OK.
+[2026-07-05T13:42:30.808720+00:00] [INFO] [backup] adventurers: saved 3415 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/adventurers.jsonl
+[2026-07-05T13:42:30.810985+00:00] [INFO] [backup] inventory_items: saved 111 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/inventory_items.jsonl
+[2026-07-05T13:42:30.811507+00:00] [INFO] [backup] equipped_items: saved 20 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/equipped_items.jsonl
+[2026-07-05T13:42:30.822351+00:00] [INFO] [backup] class_halls: saved 1673 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/class_halls.jsonl
+[2026-07-05T13:42:30.833683+00:00] [INFO] [backup] achievement_progress: saved 1686 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/achievement_progress.jsonl
+[2026-07-05T13:42:30.834999+00:00] [INFO] [backup] expeditions: saved 17 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/expeditions.jsonl
+[2026-07-05T13:42:30.836049+00:00] [INFO] [backup] expedition_members: saved 45 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/expedition_members.jsonl
+[2026-07-05T13:42:30.836454+00:00] [INFO] [backup] raids: saved 1 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/raids.jsonl
+[2026-07-05T13:42:30.836929+00:00] [INFO] [backup] raid_participants: saved 20 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/raid_participants.jsonl
+[2026-07-05T13:42:30.837251+00:00] [INFO] [backup] chat_messages: saved 2 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/chat_messages.jsonl
+[2026-07-05T13:42:30.837568+00:00] [INFO] [backup] squads: saved 2 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/squads.jsonl
+[2026-07-05T13:42:30.854761+00:00] [INFO] [backup] guild_structures: saved 421 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_structures.jsonl
+[2026-07-05T13:42:30.855640+00:00] [INFO] [backup] guild_specialization_choice: saved 4 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_specialization_choice.jsonl
+[2026-07-05T13:42:30.856020+00:00] [INFO] [backup] guild_trade_pacts: saved 1 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_trade_pacts.jsonl
+[2026-07-05T13:42:30.856467+00:00] [INFO] [backup] guild_site_income_ledger: saved 14 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_site_income_ledger.jsonl
+[2026-07-05T13:42:30.856807+00:00] [INFO] [backup] guild_world_presence: saved 6 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_world_presence.jsonl
+[2026-07-05T13:42:30.857168+00:00] [INFO] [backup] guild_xp_daily_cap_tracker: saved 11 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_xp_daily_cap_tracker.jsonl
+[2026-07-05T13:42:30.857588+00:00] [INFO] [backup] pvp_seasons: saved 19 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/pvp_seasons.jsonl
+[2026-07-05T13:42:30.858159+00:00] [INFO] [backup] pvp_season_leaderboards: saved 36 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/pvp_season_leaderboards.jsonl
+[2026-07-05T13:42:30.858495+00:00] [INFO] [backup] pvp_defense_teams: saved 3 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/pvp_defense_teams.jsonl
+[2026-07-05T13:42:30.858811+00:00] [INFO] [backup] pvp_cosmetics_unlocked: saved 5 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/pvp_cosmetics_unlocked.jsonl
+[2026-07-05T13:42:30.859102+00:00] [INFO] [backup] guild_mount_ownership: saved 2 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guild_mount_ownership.jsonl
+[2026-07-05T13:42:30.859392+00:00] [INFO] [backup] narrative_rewards_unlocked: saved 1 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/narrative_rewards_unlocked.jsonl
+[2026-07-05T13:42:30.859808+00:00] [INFO] [backup] continent_leaderboard_snapshots: saved 3 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/continent_leaderboard_snapshots.jsonl
+[2026-07-05T13:42:30.860125+00:00] [INFO] [backup] continent_event_instances: saved 1 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/continent_event_instances.jsonl
+[2026-07-05T13:42:30.860437+00:00] [INFO] [backup] seasons: saved 1 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/seasons.jsonl
+[2026-07-05T13:42:30.860893+00:00] [INFO] [backup] season_participations: saved 14 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/season_participations.jsonl
+[2026-07-05T13:42:30.861224+00:00] [INFO] [backup] season_rewards: saved 4 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/season_rewards.jsonl
+[2026-07-05T13:42:30.861546+00:00] [INFO] [backup] world_boss_events: saved 4 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/world_boss_events.jsonl
+[2026-07-05T13:42:30.865102+00:00] [INFO] [backup] recruitment_offers: saved 255 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/recruitment_offers.jsonl
+[2026-07-05T13:42:30.865760+00:00] [INFO] [backup] shop_daily_offers: saved 18 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/shop_daily_offers.jsonl
+[2026-07-05T13:42:30.866822+00:00] [INFO] [backup] tester_tool_snapshots: saved 14 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/tester_tool_snapshots.jsonl
+[2026-07-05T13:42:30.876583+00:00] [INFO] [backup] guilds: saved 672 docs -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/guilds.jsonl
+[2026-07-05T13:42:30.876878+00:00] [INFO] [backup] manifest saved -> /app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json
+[2026-07-05T13:42:30.907046+00:00] [INFO] [archive] adventurers (3415 docs) -> adventurers_r18_archive (3415 docs). OK
+[2026-07-05T13:42:30.919103+00:00] [INFO] [archive] inventory_items (111 docs) -> inventory_items_r18_archive (111 docs). OK
+[2026-07-05T13:42:30.929921+00:00] [INFO] [archive] equipped_items (20 docs) -> equipped_items_r18_archive (20 docs). OK
+[2026-07-05T13:42:30.947116+00:00] [INFO] [archive] class_halls (1673 docs) -> class_halls_r18_archive (1673 docs). OK
+[2026-07-05T13:42:30.964505+00:00] [INFO] [archive] achievement_progress (1686 docs) -> achievement_progress_r18_archive (1686 docs). OK
+[2026-07-05T13:42:30.976312+00:00] [INFO] [archive] expeditions (17 docs) -> expeditions_r18_archive (17 docs). OK
+[2026-07-05T13:42:30.988528+00:00] [INFO] [archive] expedition_members (45 docs) -> expedition_members_r18_archive (45 docs). OK
+[2026-07-05T13:42:30.999618+00:00] [INFO] [archive] raids (1 docs) -> raids_r18_archive (1 docs). OK
+[2026-07-05T13:42:31.011526+00:00] [INFO] [archive] raid_participants (20 docs) -> raid_participants_r18_archive (20 docs). OK
+[2026-07-05T13:42:31.022015+00:00] [INFO] [archive] chat_messages (2 docs) -> chat_messages_r18_archive (2 docs). OK
+[2026-07-05T13:42:31.033735+00:00] [INFO] [archive] squads (2 docs) -> squads_r18_archive (2 docs). OK
+[2026-07-05T13:42:31.046231+00:00] [INFO] [archive] guild_structures (421 docs) -> guild_structures_r18_archive (421 docs). OK
+[2026-07-05T13:42:31.057371+00:00] [INFO] [archive] guild_specialization_choice (4 docs) -> guild_specialization_choice_r18_archive (4 docs). OK
+[2026-07-05T13:42:31.068906+00:00] [INFO] [archive] guild_trade_pacts (1 docs) -> guild_trade_pacts_r18_archive (1 docs). OK
+[2026-07-05T13:42:31.080306+00:00] [INFO] [archive] guild_site_income_ledger (14 docs) -> guild_site_income_ledger_r18_archive (14 docs). OK
+[2026-07-05T13:42:31.090659+00:00] [INFO] [archive] guild_world_presence (6 docs) -> guild_world_presence_r18_archive (6 docs). OK
+[2026-07-05T13:42:31.101939+00:00] [INFO] [archive] guild_xp_daily_cap_tracker (11 docs) -> guild_xp_daily_cap_tracker_r18_archive (11 docs). OK
+[2026-07-05T13:42:31.111733+00:00] [INFO] [archive] pvp_seasons (19 docs) -> pvp_seasons_r18_archive (19 docs). OK
+[2026-07-05T13:42:31.123330+00:00] [INFO] [archive] pvp_season_leaderboards (36 docs) -> pvp_season_leaderboards_r18_archive (36 docs). OK
+[2026-07-05T13:42:31.134843+00:00] [INFO] [archive] pvp_defense_teams (3 docs) -> pvp_defense_teams_r18_archive (3 docs). OK
+[2026-07-05T13:42:31.145184+00:00] [INFO] [archive] pvp_cosmetics_unlocked (5 docs) -> pvp_cosmetics_unlocked_r18_archive (5 docs). OK
+[2026-07-05T13:42:31.156523+00:00] [INFO] [archive] guild_mount_ownership (2 docs) -> guild_mount_ownership_r18_archive (2 docs). OK
+[2026-07-05T13:42:31.170157+00:00] [INFO] [archive] narrative_rewards_unlocked (1 docs) -> narrative_rewards_unlocked_r18_archive (1 docs). OK
+[2026-07-05T13:42:31.180766+00:00] [INFO] [archive] continent_leaderboard_snapshots (3 docs) -> continent_leaderboard_snapshots_r18_archive (3 docs). OK
+[2026-07-05T13:42:31.191609+00:00] [INFO] [archive] continent_event_instances (1 docs) -> continent_event_instances_r18_archive (1 docs). OK
+[2026-07-05T13:42:31.203550+00:00] [INFO] [archive] seasons (1 docs) -> seasons_r18_archive (1 docs). OK
+[2026-07-05T13:42:31.214791+00:00] [INFO] [archive] season_participations (14 docs) -> season_participations_r18_archive (14 docs). OK
+[2026-07-05T13:42:31.228240+00:00] [INFO] [archive] season_rewards (4 docs) -> season_rewards_r18_archive (4 docs). OK
+[2026-07-05T13:42:31.239894+00:00] [INFO] [archive] world_boss_events (4 docs) -> world_boss_events_r18_archive (4 docs). OK
+[2026-07-05T13:42:31.257906+00:00] [INFO] [archive] recruitment_offers (255 docs) -> recruitment_offers_r18_archive (255 docs). OK
+[2026-07-05T13:42:31.270733+00:00] [INFO] [archive] shop_daily_offers (18 docs) -> shop_daily_offers_r18_archive (18 docs). OK
+[2026-07-05T13:42:31.281701+00:00] [INFO] [archive] tester_tool_snapshots (14 docs) -> tester_tool_snapshots_r18_archive (14 docs). OK
+[2026-07-05T13:42:31.305881+00:00] [INFO] [wipe] adventurers: deleted 3415 docs (pre=3415)
+[2026-07-05T13:42:31.312589+00:00] [INFO] [wipe] inventory_items: deleted 111 docs (pre=111)
+[2026-07-05T13:42:31.320052+00:00] [INFO] [wipe] equipped_items: deleted 20 docs (pre=20)
+[2026-07-05T13:42:31.330123+00:00] [INFO] [wipe] class_halls: deleted 1673 docs (pre=1673)
+[2026-07-05T13:42:31.339879+00:00] [INFO] [wipe] achievement_progress: deleted 1686 docs (pre=1686)
+[2026-07-05T13:42:31.342119+00:00] [INFO] [wipe] expeditions: deleted 17 docs (pre=17)
+[2026-07-05T13:42:31.345263+00:00] [INFO] [wipe] expedition_members: deleted 45 docs (pre=45)
+[2026-07-05T13:42:31.348402+00:00] [INFO] [wipe] raids: deleted 1 docs (pre=1)
+[2026-07-05T13:42:31.354309+00:00] [INFO] [wipe] raid_participants: deleted 20 docs (pre=20)
+[2026-07-05T13:42:31.362064+00:00] [INFO] [wipe] chat_messages: deleted 2 docs (pre=2)
+[2026-07-05T13:42:31.369034+00:00] [INFO] [wipe] squads: deleted 2 docs (pre=2)
+[2026-07-05T13:42:31.377220+00:00] [INFO] [wipe] guild_structures: deleted 421 docs (pre=421)
+[2026-07-05T13:42:31.380303+00:00] [INFO] [wipe] guild_specialization_choice: deleted 4 docs (pre=4)
+[2026-07-05T13:42:31.383754+00:00] [INFO] [wipe] guild_trade_pacts: deleted 1 docs (pre=1)
+[2026-07-05T13:42:31.386623+00:00] [INFO] [wipe] guild_site_income_ledger: deleted 14 docs (pre=14)
+[2026-07-05T13:42:31.388406+00:00] [INFO] [wipe] guild_world_presence: deleted 6 docs (pre=6)
+[2026-07-05T13:42:31.389043+00:00] [INFO] [wipe] guild_xp_daily_cap_tracker: deleted 11 docs (pre=11)
+[2026-07-05T13:42:31.394738+00:00] [INFO] [wipe] pvp_seasons: deleted 19 docs (pre=19)
+[2026-07-05T13:42:31.399652+00:00] [INFO] [wipe] pvp_season_leaderboards: deleted 36 docs (pre=36)
+[2026-07-05T13:42:31.402558+00:00] [INFO] [wipe] pvp_defense_teams: deleted 3 docs (pre=3)
+[2026-07-05T13:42:31.406694+00:00] [INFO] [wipe] pvp_cosmetics_unlocked: deleted 5 docs (pre=5)
+[2026-07-05T13:42:31.411529+00:00] [INFO] [wipe] guild_mount_ownership: deleted 2 docs (pre=2)
+[2026-07-05T13:42:31.414229+00:00] [INFO] [wipe] narrative_rewards_unlocked: deleted 1 docs (pre=1)
+[2026-07-05T13:42:31.417821+00:00] [INFO] [wipe] continent_leaderboard_snapshots: deleted 3 docs (pre=3)
+[2026-07-05T13:42:31.420023+00:00] [INFO] [wipe] continent_event_instances: deleted 1 docs (pre=1)
+[2026-07-05T13:42:31.426812+00:00] [INFO] [wipe] seasons: deleted 1 docs (pre=1)
+[2026-07-05T13:42:31.429662+00:00] [INFO] [wipe] season_participations: deleted 14 docs (pre=14)
+[2026-07-05T13:42:31.434236+00:00] [INFO] [wipe] season_rewards: deleted 4 docs (pre=4)
+[2026-07-05T13:42:31.436561+00:00] [INFO] [wipe] world_boss_events: deleted 4 docs (pre=4)
+[2026-07-05T13:42:31.444448+00:00] [INFO] [wipe] recruitment_offers: deleted 255 docs (pre=255)
+[2026-07-05T13:42:31.448710+00:00] [INFO] [wipe] shop_daily_offers: deleted 18 docs (pre=18)
+[2026-07-05T13:42:31.450717+00:00] [INFO] [wipe] tester_tool_snapshots: deleted 14 docs (pre=14)
+[2026-07-05T13:42:31.464177+00:00] [INFO] [reset_guilds] modified 672/672 guilds
+[2026-07-05T13:42:31.672616+00:00] [INFO] [regen_roster] mode=APPLY guilds=672 total_adv_created=3360 stat_strategy=base_stats_exact_no_variance
+[2026-07-05T13:42:31.886577+00:00] [INFO] [regen_kit] APPLY: created=672 upsert_skipped=0 (quantity_per_doc=3)
+[2026-07-05T13:42:31.887007+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED emitted (apply_id=5815c73c-dae7-447c-ac3c-70455d3099a3)
+[2026-07-05T13:42:31.887277+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED_V1_2 emitted (apply_id=5815c73c-dae7-447c-ac3c-70455d3099a3)
+[2026-07-05T13:42:31.887286+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T13:42:31.887347+00:00] [INFO] {
+  "backup": {
+    "mode": "APPLY",
+    "backup_path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+    "manifest": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+    "created": true,
+    "collections_count": 33
+  },
+  "archive": {
+    "collections_touched": 32
+  },
+  "wipe": {
+    "collections_wiped": 32
+  },
+  "guild_reset": {
+    "guilds_target": 672,
+    "guilds_modified": 672
+  },
+  "roster": {
+    "guilds_processed": 672,
+    "total_adv_created": 3360,
+    "stat_strategy": "base_stats_exact_no_variance",
+    "class_templates_used": [
+      "alchemist",
+      "bard",
+      "druid",
+      "mage",
+      "monk",
+      "paladin",
+      "priest",
+      "ranger",
+      "rogue",
+      "warlock",
+      "warrior"
+    ],
+    "sample_adv_stats": null
+  },
+  "kit": {
+    "created_inventory_docs": 672,
+    "quantity_per_doc": 3,
+    "item_id_resolved": "fd5cbdef-3146-483c-b1fd-217b4da0a59d",
+    "upsert_skipped": 0
+  },
+  "audit": {
+    "emitted": true,
+    "mode": "APPLY",
+    "events_emitted": [
+      "R18_FULL_GUILD_FRESH_START_APPLIED",
+      "R18_FULL_GUILD_FRESH_START_APPLIED_V1_2"
+    ],
+    "apply_id": "5815c73c-dae7-447c-ac3c-70455d3099a3"
+  }
+}
+[2026-07-05T13:42:31.887355+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_2 DONE (mode=APPLY) ======

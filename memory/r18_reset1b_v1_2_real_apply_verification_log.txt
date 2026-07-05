@@ -1,0 +1,25 @@
+==============================================================================
+R18.Reset.1b.hotfix.v1_2 REAL APPLY — 18-Point Post-Verification
+==============================================================================
+[✓]  1. guild_count                              status=PASS
+[✓]  2. adventurers_live                         status=PASS
+[✓]  3. adventurers_archived                     status=PASS
+[✓]  4. adventurers_no_null_stats                status=PASS
+[✓]  5. adventurers_readable_sample              status=PASS
+[✓]  6. dungeons_readable                        status=PASS
+[✓]  7. expedition_stat_keys_present_on_sample   status=PASS
+[✓]  8. gold_total_aggregate                     status=PASS
+[✓]  9. gold_per_guild_uniform_100               status=PASS
+[✓] 10. inventory_kit_doc_count                  status=PASS
+[✓] 11. potion_total_quantity                    status=PASS
+[✓] 12. no_null_item_id_inventory                status=PASS
+[✓] 13. no_duplicate_guild_item                  status=PASS
+[✓] 14. banner_dismissed_false_all               status=PASS
+[✓] 15. audit_generic_applied_count_current_apply status=PASS
+[✓] 16. audit_v1_2_applied_count_current_apply   status=PASS
+[✓] 17. no_hard_delete_archive_check             status=PASS
+[✓] 18. approved_backup_manifest_sha256          status=PASS
+------------------------------------------------------------------------------
+TOTAL: 18/18 PASSED — verdict=ALL_PASS
+
+Evidence JSON -> /app/memory/r18_reset1b_v1_2_real_apply_verification.json

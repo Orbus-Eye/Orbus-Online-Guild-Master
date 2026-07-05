@@ -1,0 +1,7 @@
+{
+  "start_ts_utc": "2026-07-05T13:42:30.583653194Z",
+  "end_ts_utc": "2026-07-05T13:42:32.278940954Z",
+  "duration_seconds": 2,
+  "exit_code": 0,
+  "cli": "python -m app.scripts.round18_reset1b_apply_v1_2 --apply --i-understand-this-will-reset-all-guilds"
+}
