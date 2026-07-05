@@ -399,6 +399,12 @@ async def _resolve_mission(mission: dict, rng: Optional[_random.Random] = None) 
     return r
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.resources._resolve_expired_missions_for_guild", freeze_return_value=0,
+)
 async def _resolve_expired_missions_for_guild(guild_id: str) -> int:
     now_iso = _iso(_now())
     stuck = await db.resource_gathering_missions.find(

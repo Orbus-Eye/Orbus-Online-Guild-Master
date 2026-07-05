@@ -375,6 +375,12 @@ async def find_stuck_raids_for_guild(db, guild_id: str) -> list[dict]:
     return await cur.to_list(50)
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.raids.auto_resolve_stuck_raids_for_guild", freeze_return_value=0,
+)
 async def auto_resolve_stuck_raids_for_guild(db, guild_id: str) -> int:
     """On-visit fallback hook. Resolves all stuck raids for one guild.
 

@@ -107,6 +107,13 @@ async def seed_signature_templates(db) -> dict:
     return {"templates_inserted": inserted, "templates_updated": updated}
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.training.backfill_missing_signature_inventory_rows",
+    freeze_return_value={"signature_rows_restored": 0, "skipped_no_template": 0, "skipped_freeze": True},
+)
 async def backfill_missing_signature_inventory_rows(db) -> dict:
     """Re-create `inventory_items` rows for advs with a dangling `signature_item_id`.
 

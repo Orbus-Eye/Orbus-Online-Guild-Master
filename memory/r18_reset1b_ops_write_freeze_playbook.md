@@ -332,3 +332,137 @@ Playbook validato in dry-run via test suite 8/8 PASS. Log dettagliato: `/app/mem
 **R18.Reset.1b APPLY resta BLOCKED.** Questo playbook chiude il gate 5 di §16. Gate 4 (`pm_sign_off_renewed`) resta PENDING in attesa del brief PM esplicito post-review.
 
 *Firma: e1 main agent — 2026-07-05T08:20:46Z*
+
+---
+
+## Internal Job Freeze (R18.Reset.1b.hotfix.write_freeze_full)
+
+Il `MaintenanceMiddleware` HTTP (gate 5) copre solo POST/PUT/PATCH/DELETE
+inviati dai client. I **job async interni** (lifespan boot, GET-triggered
+sweep, on-visit resolver) BYPASSANO il freeze HTTP. Questa sezione documenta
+il **secondo layer** di freeze — `ORBUS_INTERNAL_JOB_FREEZE` — che li ferma.
+
+### 1. Attivazione (runtime, no restart)
+
+Metodo A — env var (richiede supervisor restart):
+```bash
+export ORBUS_INTERNAL_JOB_FREEZE=true
+sudo supervisorctl restart backend
+```
+
+Metodo B — file flag (RUNTIME, nessun restart):
+```bash
+touch /tmp/orbus_internal_job_freeze.flag
+```
+
+Entrambi i metodi vengono riletti a OGNI invocazione del decorator
+`@frozen_when_active`. Non c'e' caching.
+
+### 2. Verifica che `orbus.onboarding.starter_roster` venga skippato
+
+```bash
+# Trigger manuale del boot (o attendi un hot-reload)
+sudo supervisorctl restart backend
+# Attendi ~10s
+tail -n 20 /var/log/supervisor/backend.err.log | grep "Internal job skipped"
+```
+
+Log WARN atteso (esempio):
+```
+orbus.job_freeze - WARNING - Internal job skipped due to
+ORBUS_INTERNAL_JOB_FREEZE — job=orbus.onboarding.starter_roster_for_all_guilds
+```
+
+### 3. Uso combinato HTTP maintenance + Internal Job Freeze
+
+ORDINE PRE-APPLY (obbligatorio):
+```bash
+# 1. Attiva HTTP maintenance (gate 5)
+touch /tmp/orbus_maintenance.flag
+# 2. Attiva Internal Job Freeze (gate 7)
+touch /tmp/orbus_internal_job_freeze.flag
+# 3. Verifica entrambi
+curl -X POST $REACT_APP_BACKEND_URL/api/auth/login \
+  -H "Content-Type: application/json" -d '{}' -o /dev/null -w "%{http_code}\n"
+# Atteso: 503
+# 4. Ora esegui l'apply script v1.1 (in un'altra shell)
+python -m app.scripts.round18_reset1b_apply_v1_1 --apply \
+  --i-understand-this-will-reset-all-guilds
+```
+
+I due flag sono INDIPENDENTI: puoi disattivarne uno senza l'altro.
+
+### 4. Disattivazione post-apply
+
+```bash
+rm -f /tmp/orbus_maintenance.flag
+rm -f /tmp/orbus_internal_job_freeze.flag
+# Verifica
+curl -X POST $REACT_APP_BACKEND_URL/api/auth/login \
+  -H "Content-Type: application/json" -d '{"email":"","password":""}' \
+  -o /dev/null -w "%{http_code}\n"
+# Atteso: 401 (o 400 - non piu' 503)
+```
+
+### 5. Escalation — cosa fare se un job scrive durante freeze
+
+Se durante un apply reale rilevi che un job async interno HA scritto
+(check `audit_log` per timestamp durante freeze window):
+
+1. **STOP immediato** dell'apply (Ctrl+C sullo script v1.1).
+2. Nota `event_type`, `actor_guild_id`, `source`, `created_at` dell'evento.
+3. **Aggiungi il job al inventory** in
+   `r18_reset1b_hotfix_write_freeze_full_job_inventory.md`.
+4. Apri un round hotfix follow-up per patchare quel job specifico.
+5. Non riprendere l'apply finche' il gap non e' chiuso.
+
+### 6. Comandi verifica per job coperti (12/12)
+
+```bash
+# Job L1 — starter_roster
+grep "Internal job skipped.*starter_roster" /var/log/supervisor/backend.err.log
+
+# Job L5 — bound fields backfill
+grep "Internal job skipped.*backfill_bound_fields" /var/log/supervisor/backend.err.log
+
+# Job L7 — signature inventory backfill
+grep "Internal job skipped.*backfill_missing_signature" /var/log/supervisor/backend.err.log
+
+# Job L9 — release_tester_roster
+grep "Internal job skipped.*release_tester" /var/log/supervisor/backend.err.log
+
+# Job L10 — forge migration
+grep "Internal job skipped.*run_forge_migration" /var/log/supervisor/backend.err.log
+
+# Job R1/R2/R3 — sweep GET-triggered (test con GET /api/guilds/me)
+curl -X GET $REACT_APP_BACKEND_URL/api/guilds/me -H "Authorization: Bearer $TOKEN"
+grep "Internal job skipped.*(complete_due_expeditions|auto_resolve_stuck_raids|_resolve_expired_missions)" \
+  /var/log/supervisor/backend.err.log
+
+# Job D1/D2/D3/D4 — route-triggered resolvers (idem)
+grep "Internal job skipped.*(legendary_forge|arfus_forge|world_boss|pvp_continental)" \
+  /var/log/supervisor/backend.err.log
+```
+
+### 7. Live evidence del gap chiuso da gate 7
+
+Durante il hot-reload backend del **2026-07-05T10:21:55Z** (Fase A del
+seal R18.Reset.1b.hotfix), il lifespan boot ha scritto **2 adventurers**
+sulla guild live `907b4ae4-8301-4852-bd65-b4e3937824f7` PRIMA dell'attivazione
+del internal freeze:
+
+```
+orbus.onboarding - INFO - starter roster seeded:
+  guild=907b4ae4-8301-4852-bd65-b4e3937824f7 inserted=2
+```
+
+Dopo la patch B.2 del gate 7 hotfix (2026-07-05T10:56Z), lo stesso
+trigger ha prodotto invece un `inserted=5` PRIMA dell'attivazione del
+freeze — perche' il decorator `@frozen_when_active` legge il flag SOLO
+quando attivo. Ecco perche' **il freeze DEVE essere attivato PRIMA**
+del real apply, non dopo.
+
+Il test 11 (`t11_gap_evidence_lifespan_starter_roster_frozen`) dimostra
+formalmente che con freeze ON, il lifespan trigger produce
+`inserted=0` + WARN log + return dict controllato. **Gap architetturale
+chiuso.**

@@ -11,6 +11,11 @@ team-size-5 expeditions and the 20-adventurer raid roster gate are reachable.
 Generation re-uses the canonical recruitment helpers so the starter advs have
 exactly the same stat/trait distribution as Common candidates — no power
 inflation, no rarity boost, no PvP advantage.
+
+R18.Reset.1b.hotfix.write_freeze_full (gate 7): `ensure_starter_roster_for_all_guilds`
+(L1) e' decorata con `@frozen_when_active` per rispettare
+`ORBUS_INTERNAL_JOB_FREEZE` durante la finestra di apply. Zero cambi di
+logica al job; solo un guard all'ingresso.
 """
 from __future__ import annotations
 
@@ -26,6 +31,7 @@ from app.recruitment.services import (
 )
 from app.shared.constants import RARITY_BONUS
 from app.audit.log import write_audit
+from app.core.job_freeze import frozen_when_active
 
 
 logger = logging.getLogger("orbus.onboarding")
@@ -120,6 +126,15 @@ async def ensure_starter_roster(db, guild_id: str, *, user_id: str | None = None
     return inserted
 
 
+@frozen_when_active(
+    "orbus.onboarding.starter_roster_for_all_guilds",
+    freeze_return_value={
+        "guilds_checked": 0,
+        "guilds_topped_up": 0,
+        "advs_inserted": 0,
+        "skipped_due_to_freeze": True,
+    },
+)
 async def ensure_starter_roster_for_all_guilds(db) -> dict:
     """Backfill helper for lifespan boot. Walks every guild and tops up roster."""
     summary = {"guilds_checked": 0, "guilds_topped_up": 0, "advs_inserted": 0}

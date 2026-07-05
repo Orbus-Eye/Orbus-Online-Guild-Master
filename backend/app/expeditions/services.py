@@ -710,6 +710,12 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             pass
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.expeditions.complete_due_expeditions", freeze_return_value=0,
+)
 async def complete_due_expeditions(db, guild_id: str) -> int:
     """Lazy sweep: complete any in_progress expedition whose completes_at <= now."""
     now_iso = utc_now().isoformat()

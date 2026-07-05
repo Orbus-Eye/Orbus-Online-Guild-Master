@@ -596,6 +596,12 @@ async def _resolve_research_order(order: dict) -> dict:
         {"id": order["id"]}, {"_id": 0})
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.arfus_forge._resolve_expired_for_guild", freeze_return_value=0,
+)
 async def _resolve_expired_for_guild(guild_id: str) -> int:
     now = _now()
     cur = db.guild_arfus_research_orders.find(

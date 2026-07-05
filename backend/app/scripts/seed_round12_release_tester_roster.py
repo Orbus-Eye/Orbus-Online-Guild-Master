@@ -26,6 +26,13 @@ logger = logging.getLogger("orbus.seed_round12_release_tester_roster")
 TESTER_EMAIL = "tester@orbus.test"
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.seed_round12_release_tester_roster",
+    freeze_return_value={"updated": 0, "skipped_freeze": True},
+)
 async def run() -> dict[str, Any]:
     if (os.environ.get("APP_ENV") or "").lower() == "production":
         return {"status": "skipped", "reason": "production_env"}

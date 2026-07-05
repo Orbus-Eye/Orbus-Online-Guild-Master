@@ -428,20 +428,42 @@
     {
       "id": "R18.Reset.1b.hotfix.write_freeze_full",
       "name": "Extend MaintenanceMiddleware to internal async jobs",
-      "status": "IN_PROGRESS",
+      "status": "IMPLEMENTED_PENDING_PM_SEAL",
       "started_at": "2026-07-05T10:08:00Z",
-      "current_phase": "B.0_JOB_INVENTORY_AWAITING_PM_REVIEW",
-      "reason": "MaintenanceMiddleware R18.Reset.1b.ops copre solo HTTP request. Job async interni, incluso onboarding.starter_roster, bypassano il freeze. Rilevato durante R18.Reset.1c.cleanup CTRL 4 FAIL. Fix candidato: env var ORBUS_INTERNAL_JOB_FREEZE letta dai job interni prima di scrivere.",
+      "implemented_at": "2026-07-05T11:00:00Z",
+      "current_phase": "B.5_REPORT_AWAITING_PM_SEAL",
+      "reason": "Fixed via env ORBUS_INTERNAL_JOB_FREEZE + fallback file flag /tmp/orbus_internal_job_freeze.flag. Decorator @frozen_when_active applicato a 12 job hard-include. Sealed scripts 5/5 INVARIATI. 11/11 test PASS incluso t11 gap-evidence.",
       "candidate_after": ["R18.Reset.1b.hotfix", "R18.Reset.2"],
-      "pm_note": "Non blocca chiusura cleanup, ma va rivalutato prima di un nuovo apply reale.",
+      "pm_note": "Pronto per seal PM finale. Dopo seal, gate 7 §16 puo' passare a SATISFIED.",
       "b0_inventory": {
         "file": "/app/memory/r18_reset1b_hotfix_write_freeze_full_job_inventory.md",
         "jobs_analyzed": 19,
-        "hard_include": 10,
+        "hard_include": 12,
         "exclude_already_covered_or_catalog_only": 7,
-        "ambiguous_pm_review_required": 2,
+        "ambiguous_pm_review_required": 0,
         "live_evidence_of_gap": "2026-07-05T10:21:55Z backend restart triggered 'starter roster seeded: guild=907b4ae4 inserted=2' via lifespan boot - proves ensure_starter_roster_for_all_guilds bypasses HTTP freeze"
-      }
+      },
+      "deliverables": {
+        "helper": "/app/backend/app/core/job_freeze.py",
+        "test_suite": "/app/backend/tests/backend_round1b_write_freeze_full_test.py",
+        "playbook_section": "/app/memory/r18_reset1b_ops_write_freeze_playbook.md (section 'Internal Job Freeze')",
+        "inventory": "/app/memory/r18_reset1b_hotfix_write_freeze_full_job_inventory.md"
+      },
+      "test_result": "11/11 PASS (10 PM + 1 gap-evidence t11)",
+      "coverage_patched_jobs": [
+        "L1: orbus.onboarding.starter_roster_for_all_guilds",
+        "L5: orbus.inventory.backfill_bound_fields_if_missing",
+        "L7: orbus.training.backfill_missing_signature_inventory_rows",
+        "L9: orbus.seed_round12_release_tester_roster",
+        "L10: orbus.seed_forge.run_forge_migration",
+        "R1: orbus.expeditions.complete_due_expeditions",
+        "R2: orbus.raids.auto_resolve_stuck_raids_for_guild",
+        "R3: orbus.resources._resolve_expired_missions_for_guild",
+        "D1: orbus.legendary_forge._resolve_expired_for_guild",
+        "D2: orbus.arfus_forge._resolve_expired_for_guild",
+        "D3: orbus.world_boss.try_resolve_expired_events_for_guild",
+        "D4: orbus.pvp_continental.auto_resolve_stuck_battles_for_guild"
+      ]
     },
     {
       "id": "R18.Reset.1b.hotfix",

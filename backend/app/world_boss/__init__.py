@@ -356,6 +356,12 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
     return {"granted": granted}
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.world_boss.try_resolve_expired_events_for_guild", freeze_return_value=0,
+)
 async def try_resolve_expired_events_for_guild(guild_id: str) -> int:
     """Best-effort on-visit fallback.
 

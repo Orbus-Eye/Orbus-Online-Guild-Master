@@ -240,6 +240,10 @@ async def run_forge_seeds(db) -> None:
     )
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active("orbus.seed_forge.run_forge_migration")
 async def run_forge_migration(db) -> None:
     """ROUND 4 additive migration. Idempotent: re-runnable any number of times."""
     # Step 0 — inventory_items per-instance fields

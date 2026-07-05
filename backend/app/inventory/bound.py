@@ -79,6 +79,13 @@ async def find_inventory_bound_to_adventurer(
     return enriched
 
 
+from app.core.job_freeze import frozen_when_active as _frozen_when_active
+
+
+@_frozen_when_active(
+    "orbus.inventory.backfill_bound_fields_if_missing",
+    freeze_return_value={"migrated_count": 0, "already_present_count": "skipped_freeze"},
+)
 async def backfill_bound_fields_if_missing(db) -> dict:
     """Idempotent migration: ensure every `inventory_items` row has the three
     Round 6B.4 bound fields (default `None`). Safe to run repeatedly — the

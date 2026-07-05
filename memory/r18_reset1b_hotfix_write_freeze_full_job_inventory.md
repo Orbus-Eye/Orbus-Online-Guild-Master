@@ -93,38 +93,60 @@ Questi sono chiamati DENTRO handler HTTP mutanti (POST/PUT/DELETE) o da altre GE
 | 2 — GET-triggered sweep | 3 | 3 (R1, R2, R3) | 0 | 0 |
 | 3 — Route-triggered resolvers | 4 | 4 (D1, D2, D3, D4) | 0 | 0 |
 | 4 — Onboarding POST | 1 | 0 | 1 (O1, coperto da gate 5) | 0 |
-| **TOTALE** | **19** | **10** | **7** | **2** |
+| **TOTALE** | **19** | **12 hard-include** (10 + AMB-1 + AMB-2) | **6** | **0 (risolti)** |
 
 ---
 
 ## ⚠️ Ambigui — DECISIONE PM RICHIESTA
 
-### AMB-1 — `seed_round12_release_tester_roster`
+### AMB-1 — `seed_round12_release_tester_roster` → **INCLUDE** ✅ (PM decision 2026-07-05T10:31Z)
 
 **Path**: `/app/backend/app/scripts/seed_round12_release_tester_roster.py`
 **Trigger**: chiamato al lifespan boot (linea 67 lifespan.py, dentro try/except).
-**Contesto**: dal commento in lifespan.py riga 65-67:
-> "ROUND 12.D.3 — preview-only: free tester's stuck adventurers so they can build a PvP defense team. No-op in production."
+**Verifica source** (linea 58):
+```python
+res = await db.adventurers.update_many(flt, {"$set": {"is_available": True}})
+```
+**Collezione scritta**: `adventurers` — reset-impacted.
+**Decisione PM**: **INCLUDE** — coverage obbligatoria anche se preview/test-only.
 
-**Effetto plausibile**: modifica campi di `adventurers` per tester account (`tester@orbus.test`). Non insert new — solo update.
+### AMB-2 — `run_forge_migration` → **INCLUDE** ✅ (PM decision + source evidence 2026-07-05T10:31Z)
 
-**Domande per PM**:
-1. INCLUDE (safe: no adventurer writes during freeze anche se solo tester)?
-2. EXCLUDE (è preview-only e tester-scoped, drift trascurabile)?
-
-**Mia raccomandazione**: **INCLUDE conservative** — modifica documento `adventurers` (collezione reset-impacted). Il freeze deve essere massimalista.
-
-### AMB-2 — `run_forge_migration`
-
-**Path**: `/app/backend/app/seeds/seed_forge.py`
+**Path**: `/app/backend/app/seeds/seed_forge.py:243`
 **Trigger**: chiamato al lifespan boot (linea 74 lifespan.py, PRIMA di `run_forge_seeds`).
-**Contesto**: nome suggerisce migration schema (update documenti esistenti) su forge catalog.
+**Verifica source** (grep `.update_many` in `seed_forge.py`):
+```python
+# app/seeds/seed_forge.py:246-260
+await db.inventory_items.update_many(
+    {"instance_id": {"$exists": False}},
+    [{"$set": {"instance_id": "$id"}}],
+)
+await db.inventory_items.update_many(
+    {"refinement_level": {"$exists": False}},
+    {"$set": {
+        "refinement_level": 0, "enchants": [], "affixes": [],
+        "reroll_count": 0, "is_bound": False, "disenchanted_at": None,
+    }},
+)
+# app/seeds/seed_forge.py:263-278
+await db.items.update_many(...)   # catalog
+```
+**Collezioni scritte**:
+- **`inventory_items`** (righe 246, 250) → RESET-IMPACTED ⚠️
+- `items` (righe 263, 275) → catalog invariant (irrilevante)
 
-**Domande per PM**:
-1. INCLUDE (safe se scrive su collezioni live non-catalog)?
-2. EXCLUDE (se scrive solo su catalog invariant come nome suggerirebbe)?
+**Decisione PM (regola esplicita)**: scrive su collezione reset-impacted → **INCLUDE**.
 
-**Mia raccomandazione**: **verificare il source** prima della decisione. Se scrive solo `items`/`recipes` catalog → EXCLUDE. Se scrive `inventory_items` o `guilds` → INCLUDE.
+### Verifica O1 path non-HTTP (regola PM 2026-07-05T10:31Z)
+
+Grep `ensure_starter_roster` in `/app/backend/app/` (escluso scripts round18):
+```
+app/onboarding/services.py:71  async def ensure_starter_roster(...)     [definizione]
+app/onboarding/services.py:123 ensure_starter_roster_for_all_guilds     [wrapper, gia' L1]
+app/guilds/routes.py:34        await ensure_starter_roster(...)         [POST /guilds - gate 5]
+app/seeds/seed_round5.py:603   ensure_starter_roster_for_all_guilds     [lifespan - L1]
+```
+**Conclusione**: NON esiste alcun path interno non-HTTP che chiami la sola `ensure_starter_roster` (single-guild). Gli unici 2 trigger sono POST /guilds (gate 5) e lifespan wrapper (L1). **O1 EXCLUDE confermato**.
 
 ---
 
