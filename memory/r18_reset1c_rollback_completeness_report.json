@@ -2,7 +2,10 @@
   "round": "R18.Reset.1c",
   "mode": "report_only_no_execution",
   "prepared_at": "2026-07-05",
-  "status": "REPORT_READY_R18_RESET1B_APPLY_REMAINS_BLOCKED",
+  "status": "CLOSED_AND_SEALED",
+  "sealed_at": "2026-07-05T08:18:11Z",
+  "sealed_by": "PM_authorization",
+  "tester_independent_verification": "10/10 PASS",
   "authorized_by": "PM brief R18.Reset.1c Option C (metonymy + forward-compat full-doc replace)",
   "author": "e1 main agent",
   "sections": {

@@ -1,5 +1,9 @@
 # ROUND 18.Reset.1c — Full Guild Reset Rollback Completeness Report
 
+> **Status:** CLOSED & SEALED (PM authorized on 2026-07-05T08:18:11Z)
+> **Tester independent verification:** 10/10 PASS
+> **rollback_full_ready:** true
+
 **Round:** R18.Reset.1c
 **Autore:** e1 main agent
 **Data:** 2026-07-05 (UTC)

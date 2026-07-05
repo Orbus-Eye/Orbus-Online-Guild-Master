@@ -248,12 +248,44 @@
       }
     },
     "section_16_human_approval_gate": {
-      "status": "APPLY_BLOCKED_HARD_GATES_NOT_SATISFIED",
+      "status": "APPLY_BLOCKED_2_OF_5_GATES_PENDING",
+      "gates_total": 5,
+      "gates_satisfied": 3,
+      "gates_pending": 2,
       "hard_blockers": [
-        "R18.Reset.1c Full Guild Reset Rollback Completeness PASS",
-        "restore_from_jsonl_manifest.py created and verified in dry-run mode",
-        "sha256 manifest verification protocol PASS",
-        "PM sign-off renewed after rollback review"
+        {
+          "id": "r18_reset1c_rollback_completeness_pass",
+          "description": "R18.Reset.1c Full Guild Reset Rollback Completeness PASS",
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T08:18:11Z",
+          "evidence": "/app/memory/r18_reset1c_rollback_completeness_report.md (CLOSED & SEALED)"
+        },
+        {
+          "id": "restore_script_verified_dry_run",
+          "description": "restore_from_jsonl_manifest.py created and verified in dry-run mode",
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T08:18:11Z",
+          "evidence": "10/10 tester independent verification PASS, fake fixture /tmp/r18_reset1c_fake_backup_f337f8a7/"
+        },
+        {
+          "id": "sha256_manifest_verification_pass",
+          "description": "sha256 manifest verification protocol PASS",
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T08:18:11Z",
+          "evidence": "HARD STOP runtime verified via test 4 sha256 mismatch (/app/memory/r18_reset1c_sha256_mismatch_log.txt)"
+        },
+        {
+          "id": "pm_sign_off_renewed",
+          "description": "PM sign-off renewed after rollback review",
+          "satisfied": false,
+          "blocked_by": "conditional on R18.Reset.1b.ops PASS"
+        },
+        {
+          "id": "backend_write_freeze",
+          "description": "Backend maintenance mode / write-freeze active during apply",
+          "satisfied": false,
+          "blocked_by": "R18.Reset.1b.ops"
+        }
       ],
       "while_blocked_prohibitions": [
         "NO reset apply",
@@ -273,8 +305,8 @@
         "zero UI change deploy in R18.Reset.1b (banner UI = round successivo) accettabile",
         "Snapshot-at-Apply Rule sec.13 accettabile (count autorevoli da manifest sha256 at apply time, non da piano)"
       ],
-      "sign_off_request_format_for_pm": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory.",
-      "next_brief_pm_template": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory."
+      "sign_off_request_format_for_pm": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. R18.Reset.1b.ops PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory.",
+      "next_brief_pm_template": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. R18.Reset.1b.ops PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory."
     }
   },
   "hold_paused_registry": [
@@ -299,6 +331,13 @@
       "status": "BACKLOG",
       "reason": "PM approved concept but deferred; utile per round futuri non deve bloccare R18.Reset.1c",
       "candidate_after": ["R18.Reset.1c", "R18.Reset.1b apply", "R18.Reset.2"]
+    },
+    {
+      "id": "R18.Tooling.DryRunReport",
+      "name": "--dry-run-report machine-readable summary for CI/CD gating",
+      "status": "BACKLOG",
+      "reason": "PM approved concept, deferred: utile per CI/CD ma fuori scope write-freeze",
+      "candidate_after": ["R18.Reset.1b.ops", "R18.Reset.1b apply"]
     }
   ],
   "deliverables": [

@@ -537,14 +537,17 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 
 ## 16. Human Approval Gate — R18.Reset.1b APPLY
 
-⚠️ **APPLY BLOCKED until ALL of the following are satisfied (HARD BLOCKERS):** ⚠️
+⚠️ **APPLY BLOCKED until ALL of the following are satisfied (HARD BLOCKERS — 5 gates):** ⚠️
 
-1. ☐ **R18.Reset.1c** — Full Guild Reset Rollback Completeness **PASS**
-2. ☐ `restore_from_jsonl_manifest.py` **created and verified in dry-run mode** (con `sha256 manifest` reso obbligatorio)
-3. ☐ `sha256 manifest` verification protocol **PASS**
-4. ☐ **PM sign-off renewed after rollback review**
+1. ✅ **R18.Reset.1c** rollback completeness PASS — **SATISFIED 2026-07-05T08:18:11Z**
+2. ✅ `restore_from_jsonl_manifest.py` verified — **SATISFIED** (10/10 tester PASS, dry-run + fake fixture)
+3. ✅ `sha256 manifest` verification PASS — **SATISFIED** (HARD STOP runtime verified via test 4 mismatch)
+4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS)
+5. ☐ **Backend maintenance mode / write-freeze** — **PENDING** (blocked by R18.Reset.1b.ops)
 
-**While these gates are NOT satisfied:**
+**Status:** APPLY BLOCKED, **2 of 5 gates pending** (gate 4 + gate 5).
+
+**While these gates are NOT all satisfied:**
 
 - **NO reset apply**
 - **NO archive apply**
@@ -586,6 +589,8 @@ Round e task esplicitamente esclusi da R18.Reset.1b (in HOLD / PAUSED / CANDIDAT
 - **R18.Reset.2** — Banner UI + Compensation cosmetic (CANDIDATE, founder badge / hall of fame se PM decide dopo reset)
 - **R18.Tooling** — Generalized Read-Only Live Snapshot Utility (**BACKLOG**, PM approved concept, deferred as "LATER" to avoid scope creep pre-rollback blocker. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
 - **R18.Tooling.PreSealContract** — `pre_seal_grep_contract.py` — automated grep contract validator (**BACKLOG**, PM approved concept but deferred; utile per round futuri, non deve bloccare R18.Reset.1c. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
+- **R18.Tooling.DryRunReport** — `--dry-run-report` machine-readable summary for CI/CD gating (**BACKLOG**, PM approved concept, deferred: utile per CI/CD ma fuori scope write-freeze. Candidate after: R18.Reset.1b.ops, R18.Reset.1b apply)
+- **R18.Reset.1b.ops** — Backend Write-Freeze Maintenance Mode (**IN PROGRESS**, opens after R18.Reset.1c seal to unblock gate 5 of piano 1b §16)
 
 ---
 
