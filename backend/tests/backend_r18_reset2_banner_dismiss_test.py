@@ -1,3 +1,18 @@
+# ═══════════════════════════════════════════════════════════════════════
+# ✦ CLOSED & SEALED — R18.Reset.2 Fresh Start Banner UI/API (contract lock)
+# ═══════════════════════════════════════════════════════════════════════
+# SEAL AUTHORITY:      PM Orchestrator
+# SEAL DATE (UTC):     2026-07-05T16:04:00Z
+# STATUS:              CLOSED & SEALED (contract test lock)
+# SCOPE:               protects endpoint contract for
+#                        POST /api/guilds/me/r18-reset-banner/dismiss
+#                        GET  /api/guilds/me/r18-reset-banner
+#                      + tenant isolation, idempotency, no-leak invariants
+#                      + regression baseline post R18.Reset.1b.hotfix.v1_3
+# DO NOT MODIFY THIS FILE.
+# If contract evolves, create a NEW sibling test file (e.g. v2) and
+# register it separately.
+# ═══════════════════════════════════════════════════════════════════════
 """R18.Reset.2 — Fresh Start Banner UI/API Test Suite (backend).
 
 Tests verificano:

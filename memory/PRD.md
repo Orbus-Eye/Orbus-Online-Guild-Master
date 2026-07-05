@@ -115,4 +115,78 @@ Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P3":
 - `SMTP R17`
 
 ### Prossimo round consigliato
-`R18.Reset.2 — Fresh Start Banner UI/API` (in attesa GO PM)
+`R18.Reset.2 — Fresh Start Banner UI/API` (in attesa GO PM) → **completato e chiuso** (vedi sezione successiva).
+
+---
+
+## R18.Reset.2 — CLOSED & SEALED (2026-07-05)
+
+**Round**: `R18.Reset.2` (Fresh Start Banner UI/API)
+**Chiusura**: 2026-07-05T16:04:00Z UTC — **CLOSED & SEALED** (autorità: PM Orchestrator)
+**Report finale**: `/app/memory/r18_reset2_final_closure_report.md`
+**Test suite**: `/app/backend/tests/backend_r18_reset2_banner_dismiss_test.py` (15/15 PASS, header SEALED banner applicato)
+
+### Sintesi
+- Endpoint `POST /api/guilds/me/r18-reset-banner/dismiss` implementato, autenticato, idempotente, tenant-isolated.
+- Endpoint `GET /api/guilds/me/r18-reset-banner` espone `{show, dismissed, message_it}` con testo byte-exact IT-locale LOCKED.
+- Componente React `R18ResetBanner.jsx` integrato in Dashboard, palette scura Orbus, nessuna emoji, no gradient viola.
+- Field `r18_reset1b_banner_dismissed` (bool) + `r18_reset1b_banner_dismissed_at` (ISO UTC) persistiti in `guilds`.
+- Nessun leak metadata tecnici (backup, archive, apply_id, hotfix marker) in `GET /api/guilds/me`.
+- Zero side-effect su altri endpoint (adventurers, dungeons, expeditions, inventory, migration-banner).
+
+### Deliverable del round
+- 2 endpoint backend (`POST` dismiss + `GET` state)
+- 1 componente React frontend (`R18ResetBanner.jsx`)
+- 1 test suite backend end-to-end (15 test PASS)
+- 1 report closure 8 punti
+- 1 contract-lock documentale nel registry `r18_reset1b_hotfix_v1_3_seal_registry.json` (sezione `contract_lock_tests`)
+
+### Test integrity
+- `test_t01_sealed_scripts_untouched` (8 sigilli R18.Reset.1b) → **PASS** post-R18.Reset.2 (nessuno script sealed alterato)
+- Regression e1_tester dedicato → 4/4 PASS
+
+### Nuove voci di backlog aperte
+- `R18.Backlog — Migration Banner State Schema Review` (WARN 1, P3, documentale)
+- `R18.Backlog — Dungeon Locked Status Code Consistency Review` (WARN 2, P3, contract REST)
+
+### Prossimo round consigliato
+`R18.3d — Stat/Role Mapping Registry` (brief pronto: `/app/memory/r18_3d_stat_role_mapping_registry_brief.md`) → **in attesa GO PM esplicito, NESSUNA implementazione**.
+
+---
+
+## Full Guild Fresh Start Reset — CLOSED & SEALED (2026-07-05)
+
+**Blocco completo**: sequenza `R18.Reset.1b` + `R18.Reset.1b.hotfix.v1_3` + `R18.Reset.2`
+**Chiusura formale**: 2026-07-05T16:30:00Z UTC — **CLOSED & SEALED** (autorità: PM Orchestrator)
+
+### Composizione del blocco
+| Round | Stato | Documento chiusura |
+|:---|:---:|:---|
+| R18.Reset.1b (Full Guild Fresh Start) | 🔒 CLOSED & SEALED | `/app/memory/r18_reset1b_final_closure_report.md` |
+| R18.Reset.1b.hotfix.v1_3 (Schema Compat Fix) | 🔒 CLOSED & SEALED | `/app/memory/r18_reset1b_hotfix_v1_3_phase_a_report.md` + `/app/memory/r18_reset1b_hotfix_v1_3_phase_b_prereport.md` |
+| R18.Reset.2 (Fresh Start Banner UI/API) | 🔒 CLOSED & SEALED | `/app/memory/r18_reset2_final_closure_report.md` |
+
+### Risultato consolidato
+- **672 guild** riallineate (nome preservato, gold=100, progressione azzerata).
+- **3360 adventurers starter** rigenerati sui base_stats catalog (11 classi safe).
+- **3415 adventurers storici** archiviati soft in `adventurers_r18_archive` (no hard delete).
+- **672 kit iniziali** minor_healing_potion × 3 (= 2016 potion totali).
+- **Banner UI/API** operativo, byte-exact IT-locale, idempotente, tenant-isolated.
+- **Sistema live healthy**, freeze OFF permanente, endpoint runtime no-500.
+- **8 sigilli R18.Reset.1b** ancora byte-identici (verificato via `test_t01_sealed_scripts_untouched`).
+
+### Backlog aperto del blocco
+1. `R18.Tooling.AuditEventIdempotencyKey` (P3)
+2. `R18.Backlog — Migration Banner State Schema Review` (P3)
+3. `R18.Backlog — Dungeon Locked Status Code Consistency Review` (P3)
+
+### HOLD confermati dopo il SEAL
+- `R18.1 drift`
+- `R18.3d Stat/Role Mapping Registry` (brief pronto, HOLD implementazione)
+- `Traits`
+- `Fatigue/Cucina`
+- `SMTP R17`
+- `orbus.seed_round5.base_strength` warning (P3, HOLD)
+
+### Next-in-queue (attesa GO PM)
+`R18.3d — Stat/Role Mapping Registry`

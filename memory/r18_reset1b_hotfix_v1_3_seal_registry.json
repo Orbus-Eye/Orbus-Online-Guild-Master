@@ -62,11 +62,27 @@
     }
   },
   "backlog_references": [
-    "R18.Tooling.AuditEventIdempotencyKey (see /app/memory/backlog.md)"
+    "R18.Tooling.AuditEventIdempotencyKey (see /app/memory/backlog.md)",
+    "R18.Backlog — Migration Banner State Schema Review (see /app/memory/backlog.md)",
+    "R18.Backlog — Dungeon Locked Status Code Consistency Review (see /app/memory/backlog.md)"
   ],
   "backup_retention": {
     "r18_reset1b_v1_2_staged_20260705T132515Z": "90 days minimum",
     "r18_reset1b_v1_2_20260705T134230Z": "90 days minimum",
     "r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z": "90 days minimum"
+  },
+  "contract_lock_tests": {
+    "registry_version": "R18.Reset.2.contract_lock.v1",
+    "generated_at": "2026-07-05T16:04:00Z",
+    "seal_authority": "PM Orchestrator",
+    "notes": "Documental contract-lock only. Enforcement rimane documentale (banner header 'CLOSED & SEALED' nel file di test) senza aggiungere assert dedicato al test integrity pre-esistente (per non alterare `test_t01_sealed_scripts_untouched` sigillato). SHA256 registrato per audit trail e futura verifica manuale.",
+    "sealed_tests": {
+      "backend/tests/backend_r18_reset2_banner_dismiss_test.py": {
+        "sha256": "c1b5bb74e4aeeed8a933df7900ce440cec190125937968567edd8666a52a8d2e",
+        "round_ref": "R18.Reset.2 — Fresh Start Banner UI/API",
+        "test_count": 15,
+        "notes": "Contract lock del test suite banner-dismiss. Header 'CLOSED & SEALED' inserito 2026-07-05T16:04:00Z UTC. Non enforced da pytest integrity per policy (test integrity sealed); verify manuale con `sha256sum` su richiesta PM."
+      }
+    }
   }
 }
