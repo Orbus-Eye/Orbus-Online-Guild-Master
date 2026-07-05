@@ -1,0 +1,192 @@
+{
+  "meta": {
+    "round": "R18.3e",
+    "phase": "B",
+    "stage": "B2_dry_run_prereport_post_fix",
+    "generated_at_utc": "2026-07-05T19:24:52Z",
+    "trigger": "PM authorized surgical fix of test_14/test_15 to remove nested pytest subprocess recursion",
+    "audit_log_baseline_pre_phase_b": 11896,
+    "audit_log_now": 11896,
+    "audit_log_delta": 0
+  },
+
+  "surgical_fix_summary": {
+    "target_file": "/app/backend/tests/backend_r18_3e_bridge_test.py",
+    "functions_modified": ["test_14_r18_3d_registry_regression -> test_14_r18_3d_registry_intact", "test_15_sealed_integrity_16_sigilli -> test_15_sealed_integrity_16_files"],
+    "constants_added": ["R18_3D_SEALED_HASHES_KNOWN (5 hashes from R18.3d Phase B Closure Report SEAL @ 2026-07-05T18:05:00Z)"],
+    "approach": "in_process_static_checks (no subprocess pytest, no recursion)",
+    "sha256_pre_fix": "90d662aa60356b69de1f31da31f86a39262b50bfb5ffce8a475d87d6b0db877c",
+    "sha256_post_fix": "c7f1585a8da8117b9eb2bd090ecec4622a45f19a9c4c462295b58b1fdeb4f440",
+    "size_pre_fix_bytes": 16007,
+    "size_post_fix_bytes": 17849,
+    "other_files_touched": []
+  },
+
+  "1_artifact_status_6_of_6": [
+    {"path": "/app/memory/r18_3e_phase_b_pm_decisions.md", "bytes": 6297, "sha256": "a29dfbd9400648f49ff0f1cee035d7fe370f7f37c61329294724249aff25d20b", "complete": true},
+    {"path": "/app/memory/r18_3e_phase_b_pm_decisions.json", "bytes": 8113, "sha256": "17fdc96cb05efce24f1f9f3a8bde4ff318ff117939e27b0f5e8b9df3b7e5dbfc", "complete": true},
+    {"path": "/app/memory/r18_3e_bridge_registry.json", "bytes": 9730, "sha256": "4934f5d2527125144b00588611621348faf1ee862c0e4821ce7c63518498627f", "complete": true},
+    {"path": "/app/memory/r18_3e_bridge_registry.md", "bytes": 9738, "sha256": "52230a20ed047951b6bc1e3e23536cfc517aed45948ccba0a5de270f1b958744", "complete": true},
+    {"path": "/app/backend/app/scripts/round18_3e_apply_bridge.py", "bytes": 13448, "sha256": "30f0a73dbacbf673985ba036fb9435b70efb47f122e5677c7df4c137684fe744", "complete": true},
+    {"path": "/app/backend/tests/backend_r18_3e_bridge_test.py", "bytes": 17849, "sha256": "c7f1585a8da8117b9eb2bd090ecec4622a45f19a9c4c462295b58b1fdeb4f440", "complete_post_fix": true}
+  ],
+
+  "2_test_suite_result": {
+    "command": "cd /app/backend && pytest tests/backend_r18_3e_bridge_test.py -v",
+    "total_test_items_executed": 27,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "duration_seconds": 0.49,
+    "test_functions": {
+      "test_01_decision_lock_parsable_14_answers": "PASS",
+      "test_02_registry_schema_valid": "PASS",
+      "test_03_16_legacy_coverage_with_5_safe_fields": "PASS",
+      "test_04_mapping_matches_pm_decisions": "PASS",
+      "test_05_canonical_slug_ref_in_27_or_null": "PASS",
+      "test_06_bridge_status_enum": "PASS",
+      "test_07_script_apply_enabled_locked_false": "PASS",
+      "test_08_guard_hard_stop_blocked_field_param": "13/13 PASS",
+      "test_09_script_apply_without_ack_fails_fast": "PASS",
+      "test_10_zero_runtime_wiring": "PASS",
+      "test_11_no_blocked_fields_in_registry_entries": "PASS",
+      "test_12_technical_placeholder_and_test_artifact_separated": "PASS",
+      "test_13_registry_sha256_computable": "PASS",
+      "test_14_r18_3d_registry_intact_POST_FIX_INPROCESS": "PASS",
+      "test_15_sealed_integrity_16_files_POST_FIX_INPROCESS": "PASS"
+    },
+    "sealed_integrity_global": {
+      "command": "pytest -k 'sealed or integrity'",
+      "total": 6,
+      "passed": 6,
+      "duration_seconds": 1.70,
+      "recursion_present": false
+    }
+  },
+
+  "3_dry_run_result": {
+    "command": "python -m app.scripts.round18_3e_apply_bridge --json",
+    "mode": "dry_run",
+    "apply_enabled": false,
+    "source_round": "R18.3e Phase B",
+    "registry_sha256": "4934f5d2527125144b00588611621348faf1ee862c0e4821ce7c63518498627f",
+    "decision_lock_sha256": "17fdc96cb05efce24f1f9f3a8bde4ff318ff117939e27b0f5e8b9df3b7e5dbfc",
+    "total_entries": 18,
+    "would_modify_count": 18,
+    "skipped_count": 0,
+    "errors_count": 0,
+    "guard_hard_stop_checks_passed": 18,
+    "canonical_slug_ref_checks_passed": 18,
+    "breakdown_by_bridge_status": {
+      "mapped_canonical": 9,
+      "mapped_alias": 3,
+      "deprecated_alias": 2,
+      "technical_placeholder": 1,
+      "test_artifact": 1,
+      "canonical_native": 2
+    },
+    "audit_event_would_emit": {"event_type": "R18_3E_BRIDGE_METADATA_APPLIED", "aggregated": true, "count_docs": 18, "actually_emitted": false},
+    "backup_snapshot_would_write": {"actually_written": false},
+    "real_apply_result": "BLOCKED — APPLY_ENABLED=False (LOCKED per R18.3e Phase B)"
+  },
+
+  "4_target_count": 18,
+  "5_would_modify_count": 18,
+
+  "6_fields_would_set": [
+    {"field": "canonical_slug", "type": "str | null", "example_populated": "guerriero", "example_null_for": "recruit_unassigned"},
+    {"field": "alias_target", "type": "str | null", "example_populated": "ladro (for assassin)", "example_null_for": "warrior"},
+    {"field": "bridge_status", "type": "enum", "valid_values": ["mapped_canonical", "mapped_alias", "deprecated_alias", "technical_placeholder", "test_artifact", "canonical_native", "ambiguous_pending_pm"]},
+    {"field": "bridge_source_round", "type": "str", "value": "R18.3e Phase B"},
+    {"field": "bridge_applied_at", "type": "ISO datetime UTC", "example": "2026-07-05T19:24:52Z (populated at real apply time)"}
+  ],
+
+  "7_apply_enabled_false_evidence": {
+    "grep_matches_in_script": [
+      "line 5: DRY-RUN ONLY. APPLY_ENABLED = False. Zero DB write.",
+      "line 34: APPLY_ENABLED = False.",
+      "line 64: APPLY_ENABLED: bool = False  # LOCKED at False for entire R18.3e Phase B",
+      "line 215: 'apply_enabled': APPLY_ENABLED,",
+      "line 266: if not APPLY_ENABLED:"
+    ],
+    "covered_by_test": "test_07_script_apply_enabled_locked_false"
+  },
+
+  "8_apply_blocked_subprocess_evidence": {
+    "test_a_apply_no_ack": {"cmd": "python -m app.scripts.round18_3e_apply_bridge --apply", "returncode": 1, "stderr_prefix": "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False"},
+    "test_b_apply_with_ack": {"cmd": "python -m app.scripts.round18_3e_apply_bridge --apply --i-understand-this-will-write-bridge-metadata", "returncode": 1, "stderr_prefix": "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False"},
+    "covered_by_test": "test_09_script_apply_without_ack_fails_fast"
+  },
+
+  "9_zero_db_write": {
+    "audit_log_delta": 0,
+    "audit_log_count_baseline": 11896,
+    "audit_log_count_now": 11896,
+    "adventurer_classes_with_canonical_slug": 0,
+    "adventurer_classes_with_alias_target": 0,
+    "adventurer_classes_with_bridge_status": 0,
+    "adventurers_total": 3373,
+    "items_class_tags_non_empty": 157,
+    "items_recommended_classes_non_empty": 157
+  },
+
+  "10_zero_audit_event_new": {
+    "audit_log_events_R18_3E_regex_match": 0,
+    "regex_pattern": "R18_3E|R18.3E|R18_3e"
+  },
+
+  "11_zero_runtime_wiring": {
+    "grep_command": "grep -rn 'r18_3e|round18_3e|R18.3e' /app/backend/app --exclude-dir=__pycache__ --exclude-dir=scripts --exclude-dir=tests",
+    "grep_result_empty": true,
+    "covered_by_test": "test_10_zero_runtime_wiring"
+  },
+
+  "12_sealed_integrity_static_check": {
+    "method": "In-process SHA256 comparison vs R18_3D_SEALED_HASHES_KNOWN table (no subprocess pytest)",
+    "r18_3d_5_files_match": [
+      {"path": "/app/memory/r18_3d_stat_role_mapping_registry.json", "expected": "3dec65cab59a92a36d52db7187fa3ae6aa01450e7160378722faa1bf54e2bb16", "actual": "3dec65cab59a92a36d52db7187fa3ae6aa01450e7160378722faa1bf54e2bb16", "match": true},
+      {"path": "/app/memory/r18_3d_stat_role_mapping_registry.md", "expected": "2e360cfec4fa59db0f57e6a6dec6332eb6bca9d589d923ca27552cc16937c398", "actual": "2e360cfec4fa59db0f57e6a6dec6332eb6bca9d589d923ca27552cc16937c398", "match": true},
+      {"path": "/app/backend/app/core/stat_role_registry.py", "expected": "e1e083e3b923fcf547baa3cb1fee27816ef4a149217f49d47699c62c08ab134b", "actual": "e1e083e3b923fcf547baa3cb1fee27816ef4a149217f49d47699c62c08ab134b", "match": true},
+      {"path": "/app/backend/app/scripts/round18_3d_apply_metadata.py", "expected": "b439f429adabccf62897dae78fa163df5b2ba8c404d65f7f5f51f575f50c61d7", "actual": "b439f429adabccf62897dae78fa163df5b2ba8c404d65f7f5f51f575f50c61d7", "match": true},
+      {"path": "/app/backend/tests/backend_r18_3d_stat_role_registry_test.py", "expected": "12ee2df3316147985c3a83b4e30c9c38fac45facd260f8898f8f53f2aef7c1e2", "actual": "12ee2df3316147985c3a83b4e30c9c38fac45facd260f8898f8f53f2aef7c1e2", "match": true}
+    ],
+    "r18_reset_11_files_status": "existence + hash valid-hex + non-zero verified in test_15_sealed_integrity_16_files. Byte-identity vs previous baseline validated indirectly by test_t01_sealed_scripts_untouched (round1b) and test_06_whitelist_slugs_sealed (round1812) — all PASS in sealed/integrity global suite 6/6"
+  },
+
+  "13_recommendation_b2_apply_real": {
+    "verdict": "CONDITIONAL_GO",
+    "confidence": "HIGH",
+    "reasoning_pro": [
+      "Registry B1 complete and coherent (27 canonical + 18 bridge_entries)",
+      "Dry-run clean: 18/18 would_modify, 0 errors, 0 skipped",
+      "SAFE-only fields (5): canonical_slug, alias_target, bridge_status, bridge_source_round, bridge_applied_at",
+      "APPLY_ENABLED double-lock guard robust (returncode=1 with or without ack)",
+      "27/27 test PASS + 6/6 sealed/integrity PASS",
+      "DB invariato: 0 write, 0 audit event, baseline 11896",
+      "Runtime intatto: 0 wiring, gameplay 200/200, freeze OFF",
+      "R18.3d sealed 5/5 SHA256 MATCH vs closure report"
+    ],
+    "condition_before_go": "PM must explicitly confirm inclusion of 2 canonical native (cacciatore_di_mostri, cacciatore_del_vuoto) with bridge_status=canonical_native (currently main agent recommendation, documented in pm_decisions.json.canonical_native_extension_by_main_agent). If approved -> apply on 18 docs. If rejected -> apply only on 16 legacy docs.",
+    "prerequisites_when_pm_authorizes_b2_apply": [
+      "Flip APPLY_ENABLED=True in round18_3e_apply_bridge.py (single-line search_replace) + rerun dry-run to confirm count invariance",
+      "Enable backup snapshot creation (/app/memory/r18_3e_bridge_pre_apply_snapshot_YYYYMMDDTHHMMSSZ.json with full copy of 18 docs pre-write)",
+      "Confirm Q13 audit policy: 1 aggregated event R18_3E_BRIDGE_METADATA_APPLIED (already in dry-run report, actually_emitted=false)",
+      "Prepare rollback script round18_3e_rollback_bridge.py with symmetric $unset of 5 SAFE fields"
+    ]
+  },
+
+  "boundary_conditions_respected": {
+    "zero_db_write": true,
+    "zero_apply": true,
+    "zero_cleanup": true,
+    "zero_overwrite_existing_5_artefacts": true,
+    "zero_runtime_wiring": true,
+    "zero_frontend_change": true,
+    "zero_migration_slug": true,
+    "zero_item_rewrite": true,
+    "zero_adventurer_rewrite": true,
+    "zero_seal": true,
+    "zero_touch_16_sigilli": true
+  }
+}

@@ -288,26 +288,57 @@ def test_13_registry_sha256_computable():
         int(h, 16)  # valid hex
 
 
-# ─── Test 14 — Test suite R18.3d resta PASS (regression) ─────────────────
-def test_14_r18_3d_registry_regression():
-    """Rilancia la R18.3d test suite come regression check."""
-    proc = subprocess.run(
-        [sys.executable, "-m", "pytest",
-         "tests/backend_r18_3d_stat_role_registry_test.py", "-q"],
-        cwd=str(REPO_ROOT / "backend"),
-        capture_output=True, text=True, timeout=60,
+# ─── Test 14 — R18.3d registry intatto (regression, in-process, no subprocess) ─
+def test_14_r18_3d_registry_intact():
+    """Regression check in-process: verifica che il registry R18.3d Phase B
+    contenga esattamente 27 canonical + 16 legacy e che il meta.seal_status
+    sia CLOSED_AND_SEALED_DOCUMENTAL_ONLY.
+
+    Sostituisce il vecchio subprocess pytest (deprecato per race/deadlock).
+    """
+    r18_3d = json.loads(R18_3D_REGISTRY_JSON.read_text(encoding="utf-8"))
+    canonical = r18_3d["canonical_classes"]
+    legacy = r18_3d["legacy_live_classes"]
+    meta = r18_3d["meta"]
+    assert len(canonical) == 27, f"R18.3d canonical drift: {len(canonical)} != 27"
+    assert len(legacy) == 16, f"R18.3d legacy drift: {len(legacy)} != 16"
+    assert meta.get("canonical_classes") == 27
+    assert meta.get("legacy_live_classes_count") == 16
+    assert meta.get("seal_status") == "CLOSED_AND_SEALED_DOCUMENTAL_ONLY"
+    # Cross-ref: R18.3e registry must reference the same canonical set
+    r18_3e = json.loads(REGISTRY_JSON.read_text(encoding="utf-8"))
+    canon_3d_slugs = {c["slug"] for c in canonical}
+    canon_3e_slugs = set(r18_3e["canonical_it_set_27_locked"])
+    assert canon_3d_slugs == canon_3e_slugs, (
+        f"Canonical set drift R18.3d vs R18.3e:\n"
+        f"  in 3d not 3e: {canon_3d_slugs - canon_3e_slugs}\n"
+        f"  in 3e not 3d: {canon_3e_slugs - canon_3d_slugs}"
     )
-    assert proc.returncode == 0, (
-        f"R18.3d regression FAIL: exit={proc.returncode}\nstdout={proc.stdout}\nstderr={proc.stderr}"
-    )
-    assert "28 passed" in proc.stdout, f"Expected 28 R18.3d passed, got:\n{proc.stdout}"
 
 
-# ─── Test 15 — Sealed integrity check (16 sigilli byte-identici) ─────────
-def test_15_sealed_integrity_16_sigilli():
-    """Verifica che i 16 sigilli (14 R18.Reset.1b/1.2/1c + 2 R18.3d Phase B files
-    memoria) non abbiano digest 0 e che ogni file esista.
-    Combinato con il rerun della suite sealed/integrity dei round precedenti.
+# ─── Test 15 — Sealed integrity (in-process SHA256 static check, no subprocess)
+# Hash noti dal R18.3d Phase B Closure Report (SEAL @ 2026-07-05T18:05:00Z).
+# Qualsiasi drift su questi 5 hash indica corruzione dei sigilli R18.3d.
+R18_3D_SEALED_HASHES_KNOWN = {
+    "/app/memory/r18_3d_stat_role_mapping_registry.json":
+        "3dec65cab59a92a36d52db7187fa3ae6aa01450e7160378722faa1bf54e2bb16",
+    "/app/memory/r18_3d_stat_role_mapping_registry.md":
+        "2e360cfec4fa59db0f57e6a6dec6332eb6bca9d589d923ca27552cc16937c398",
+    "/app/backend/app/core/stat_role_registry.py":
+        "e1e083e3b923fcf547baa3cb1fee27816ef4a149217f49d47699c62c08ab134b",
+    "/app/backend/app/scripts/round18_3d_apply_metadata.py":
+        "b439f429adabccf62897dae78fa163df5b2ba8c404d65f7f5f51f575f50c61d7",
+    "/app/backend/tests/backend_r18_3d_stat_role_registry_test.py":
+        "12ee2df3316147985c3a83b4e30c9c38fac45facd260f8898f8f53f2aef7c1e2",
+}
+
+
+def test_15_sealed_integrity_16_files():
+    """Verifica in-process (no subprocess pytest, no ricorsione):
+    - I 16 file sealed esistono
+    - Ogni file ha SHA256 con 64 hex-digit valid
+    - I 5 file R18.3d Phase B hanno SHA256 identico al closure report noto
+    - I 11 file R18.Reset.1b/1.2/1c NON hanno hash zero e sono leggibili
     """
     sealed_paths = [
         REPO_ROOT / "backend/app/core/job_freeze.py",
@@ -327,19 +358,23 @@ def test_15_sealed_integrity_16_sigilli():
         REPO_ROOT / "memory/r18_3d_stat_role_mapping_registry.json",
         REPO_ROOT / "memory/r18_3d_stat_role_mapping_registry.md",
     ]
-    # 14 sealed source files + 2 R18.3d registry memory files = 16 total
     assert len(sealed_paths) == 16, f"Expected 16 sealed files, got {len(sealed_paths)}"
+
+    # 1) All 16 files exist + hash valid-hex + non-zero
+    zero_hash = "0" * 64
     for p in sealed_paths:
         assert p.exists(), f"Sealed file missing: {p}"
         h = hashlib.sha256(p.read_bytes()).hexdigest()
-        assert len(h) == 64
-    # Rerun sealed/integrity pytest keyword filter
-    proc = subprocess.run(
-        [sys.executable, "-m", "pytest", "-k", "sealed or integrity", "-q"],
-        cwd=str(REPO_ROOT / "backend"),
-        capture_output=True, text=True, timeout=60,
-    )
-    assert proc.returncode == 0, (
-        f"sealed/integrity regression FAIL: exit={proc.returncode}\nstdout={proc.stdout}"
-    )
-    assert "5 passed" in proc.stdout, f"Expected 5 sealed/integrity passed, got:\n{proc.stdout}"
+        assert len(h) == 64, f"Invalid hex length for {p}: {len(h)}"
+        int(h, 16)  # hex validation
+        assert h != zero_hash, f"Zero hash detected for {p}"
+
+    # 2) 5 R18.3d files SHA256 match closure report known hashes (byte-identical)
+    drifts: list[str] = []
+    for path_str, expected in R18_3D_SEALED_HASHES_KNOWN.items():
+        path = Path(path_str)
+        assert path.exists(), f"R18.3d sealed file missing: {path}"
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            drifts.append(f"{path_str}: expected={expected}, actual={actual}")
+    assert not drifts, "R18.3d sealed SHA256 DRIFT detected:\n" + "\n".join(drifts)
