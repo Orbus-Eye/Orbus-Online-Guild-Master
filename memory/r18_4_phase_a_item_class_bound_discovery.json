@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "round": "R18.4",
+    "phase": "A",
+    "stage": "discovery_lite_read_only",
+    "generated_at_utc": "2026-07-05T20:35:00Z",
+    "trigger": "PM GO — R18.4 Phase A DISCOVERY LITE (read-only)",
+    "perimeter": "static codebase analysis + read-only DB queries",
+    "governance": {
+      "zero_db_write": true,
+      "zero_code_change_runtime": true,
+      "zero_frontend_change": true,
+      "zero_migration_slug": true,
+      "zero_recruitment_unlock_hidden": true,
+      "zero_items_rewrite": true,
+      "zero_runtime_wiring_bridge_r18_3e": true,
+      "zero_touch_24_seals": true,
+      "zero_apply_r18_4": true
+    },
+    "caveat_locked": "class_slug live NON is canonical IT. Adventurers restano su slug legacy EN (warrior, rogue, mage, ecc.). Bridge R18.3e is documental input only.",
+    "bridge_r18_3e_usage": "read-only reference for canonical target mapping and bridge_status classification. NO runtime wiring."
+  },
+
+  "executive_summary": {
+    "verdict": "system already hybrid — R18.4 is consolidation/refinement, not greenfield",
+    "top_findings": [
+      "equipment/compatibility.py implements HARD block (required_class_optional, heavy_armor_forbidden, arcane_weapon_forbidden, specialization_required) + SOFT warning (not_recommended_class, off_class_tags, specialization_mismatch)",
+      "3373 adventurers live TUTTI con class_slug legacy EN + 13 NULL (backlog P3 pre-esistente)",
+      "178 items catalog: 157 con class_tags non-empty (legacy EN), 157 con recommended_classes non-empty (legacy EN + 49 canonical hidden refs)",
+      "49 canonical IT refs = 31 cacciatore_di_mostri + 18 cacciatore_del_vuoto, esclusivamente in recommended_classes",
+      "Only 17/178 items hanno slot_type populated — 140 items equipaggiabili in bucket G senza slot_type (bucket G1)",
+      "0 equipped_items live post-reset R18.Reset.1b (timing safe per policy hard-bound)",
+      "Bridge R18.3e presente su 18 adventurer_classes docs come 5 SAFE metadata field, NOT runtime wired"
+    ]
+  },
+
+  "current_state_binding": {
+    "hard_bound_mechanisms": [
+      {"name": "required_class_optional_class_locked", "field": "items.required_class_optional", "severity": "block", "items_affected_currently": 0, "note": "signature single-class hard lock"},
+      {"name": "heavy_armor_forbidden", "logic": "armor_tags contains 'heavy' AND class_slug in {mage,necromancer,priest,druid,bard,warlock}", "severity": "block"},
+      {"name": "arcane_weapon_forbidden", "logic": "weapon_tags intersect {staff,wand,arcane,grimoire,tome} AND class_slug in {warrior,paladin,berserker,rogue,ranger,assassin,monk}", "severity": "block"},
+      {"name": "specialization_required", "logic": "specialization_unlocks non-empty + spec mismatch + class not in recommended_classes", "severity": "block", "items_affected": 12, "bucket": "E"}
+    ],
+    "soft_warning_mechanisms": [
+      {"name": "not_recommended_class", "field": "recommended_classes", "severity": "warning", "items_affected": 157},
+      {"name": "off_class_tags", "field": "class_tags", "severity": "warning", "items_affected": 157},
+      {"name": "specialization_mismatch", "field": "specialization_unlocks", "severity": "warning", "items_affected": 12}
+    ],
+    "ownership_binding_non_class": [
+      {"name": "guild_BoE", "field": "inventory_items.is_bound", "round_intro": "Phase 4 / Round 4"},
+      {"name": "adventurer_bound", "field": "inventory_items.bound_to_adventurer_id", "round_intro": "Round 6B.4"}
+    ]
+  },
+
+  "class_tags_recommended_classes_inventory": {
+    "populators_scripts": [
+      "round15_seed_item_tags.py",
+      "round160_update_items_class_tags.py",
+      "round1654c_class_coverage_seed.py",
+      "round173_class_coverage_seed.py"
+    ],
+    "readers_runtime": [
+      "app/equipment/compatibility.py::check_equip_compatibility (soft warnings)",
+      "app/equipment/auto_equip.py (fitness scoring, 594 lines, not deep-audited in Phase A)"
+    ],
+    "populators_bridge_r18_3e": "NOT applicable — bridge does NOT populate items, only adventurer_classes (5 SAFE fields documental)",
+    "format_dominance": "legacy_EN",
+    "class_tags_distribution": {
+      "paladin": 92, "warrior": 69, "berserker": 64, "mage": 34, "necromancer": 34,
+      "druid": 34, "priest": 32, "rogue": 31, "ranger": 31, "assassin": 31,
+      "bard": 29, "monk": 24, "warlock": 18, "alchemist": 18
+    },
+    "recommended_classes_distribution": {
+      "paladin": 92, "warrior": 69, "berserker": 64, "mage": 34, "necromancer": 34,
+      "druid": 34, "priest": 32, "rogue": 31, "ranger": 31, "assassin": 31,
+      "cacciatore_di_mostri": 31, "bard": 29, "monk": 24, "warlock": 18,
+      "cacciatore_del_vuoto": 18, "alchemist": 18
+    },
+    "canonical_it_total_refs_49": {
+      "cacciatore_di_mostri": 31,
+      "cacciatore_del_vuoto": 18,
+      "notes": "Only in recommended_classes. Zero in class_tags. Zero adventurers live use these slugs."
+    }
+  },
+
+  "buckets_7_classification": {
+    "A_legacy_only": {"count": 3, "examples": ["drake_slayer_helm","drake_slayer_chest","arcane_adept_orb"]},
+    "B_canonical_only": {"count": 0, "note": "no item uses only canonical IT — coherent (canonical is additive to legacy)"},
+    "C_mixed_legacy_canonical": {"count": 2, "examples": ["drake_slayer_blade","goblin_hunter_ring"], "note": "canonical only in recommended_classes"},
+    "D_no_binding": {"count": 0, "note": "all equippable items have some tag; empty tags belong to G group"},
+    "E_signature_special": {"count": 12, "examples": ["spec_signature_truestrike_bow","spec_signature_sacred_chalice","spec_signature_battle_standard","spec_signature_bloodied_greataxe","spec_signature_breakers_gauntlets"], "note": "Round 6C signature templates; some include CdM refs"},
+    "F_starter_common_generic": {"count": 0, "note": "no slug match; starter_kit uses minor_healing_potion (consumable, non-equippable)"},
+    "G_missing_metadata": {
+      "count": 161,
+      "split": {
+        "G1_equippable_no_slot_type_with_class_tags": 140,
+        "G2_materials_consumables_by_design": 21
+      },
+      "item_type_distribution": {
+        "weapon": 54, "accessory": 42, "armor": 42, "material": 8,
+        "material_continental": 8, "material_event": 3, "shield": 2, "consumable": 2
+      }
+    }
+  },
+
+  "item_counts_by_class_slug": {
+    "class_tags_legacy_en": {
+      "paladin": 92, "warrior": 69, "berserker": 64, "mage": 34, "necromancer": 34,
+      "druid": 34, "priest": 32, "rogue": 31, "ranger": 31, "assassin": 31,
+      "bard": 29, "monk": 24, "warlock": 18, "alchemist": 18
+    },
+    "recommended_classes_all": {
+      "paladin": 92, "warrior": 69, "berserker": 64, "mage": 34, "necromancer": 34,
+      "druid": 34, "priest": 32, "rogue": 31, "ranger": 31, "assassin": 31,
+      "cacciatore_di_mostri": 31, "bard": 29, "monk": 24, "warlock": 18,
+      "cacciatore_del_vuoto": 18, "alchemist": 18
+    },
+    "adventurers_live_class_slug": {
+      "warrior": 331, "monk": 327, "bard": 324, "druid": 311, "warlock": 305,
+      "paladin": 303, "rogue": 302, "alchemist": 299, "ranger": 299, "mage": 281,
+      "priest": 278, "null": 13
+    },
+    "bridge_r18_3e_coverage_vs_adventurers_live": {
+      "live_slugs_11_distinct_effective": ["warrior","monk","bard","druid","warlock","paladin","rogue","alchemist","ranger","mage","priest"],
+      "all_covered_by_bridge": true,
+      "berserker_assassin_in_registry_but_zero_adv_live": true,
+      "note": "post-reset R18.Reset.1b safe classes = 11; berserker/assassin documented but not seeded to adventurers"
+    }
+  },
+
+  "equip_flow_backend": {
+    "endpoints": [
+      "GET /api/adventurers/{adventurer_id}/equipment",
+      "POST /api/adventurers/{adventurer_id}/equip (EquipIn{item_id, slot})",
+      "POST /api/adventurers/{adventurer_id}/unequip (UnequipIn{slot})",
+      "POST /api/adventurers/{adventurer_id}/auto-equip (Round 16.0 Phase 3)"
+    ],
+    "guards_order": [
+      "user_guild_or_404 (ownership)",
+      "is_bound_to_other_adventurer (Round 6B.4)",
+      "resolve_item_required_level (level_gate.py)",
+      "check_equip_compatibility (compatibility.py) — block/warning/ok",
+      "persist equipped_items + update inventory"
+    ],
+    "responses": {
+      "block": "HTTP 400 with reason_it + reason_code",
+      "warning": "HTTP 201 with allowed=true + warning_it",
+      "ok": "HTTP 201 clean"
+    }
+  },
+
+  "auto_equip_dependency_map": {
+    "file": "/app/backend/app/equipment/auto_equip.py",
+    "lines": 594,
+    "endpoint": "POST /api/adventurers/{id}/auto-equip",
+    "round_intro": "16.0 Phase 3",
+    "signature": "auto_equip_adventurer(db, guild, adventurer_id, actor_user_id)",
+    "presumed_input_signals": [
+      "adventurer.class_slug", "adventurer.stat_bonuses",
+      "item.power_score", "item.class_tags", "item.recommended_classes",
+      "item.stat_tags", "item.role_tags",
+      "item.level_required + item.required_adventurer_level",
+      "heavy_armor + arcane_weapon blacklists (via compatibility)"
+    ],
+    "not_audited_in_phase_a": [
+      "score weights", "tie-breaker rules",
+      "materials/potion handling", "best-per-slot selection"
+    ]
+  },
+
+  "frontend_dependency_map": {
+    "components": [
+      {"file": "src/pages/Inventory.jsx", "role": "guild global inventory list"},
+      {"file": "src/pages/AdventurerEquipment.jsx", "role": "slot management per adventurer"},
+      {"file": "src/components/InventoryEquipModal.jsx", "role": "equip/unequip transactional modal"},
+      {"file": "src/components/AdventurerDetailModal.jsx", "role": "detail with inline slot equip"}
+    ],
+    "not_audited_in_phase_a": [
+      "class-bound badge signal (icon/color/tooltip)",
+      "filter/sort 'equippable-only'",
+      "auto-equip button UX",
+      "multi-select equip flows"
+    ]
+  },
+
+  "bridge_r18_3e_applicability": {
+    "adventurer_classes_bridge_fields_5_safe": [
+      "canonical_slug", "alias_target", "bridge_status", "bridge_source_round", "bridge_applied_at"
+    ],
+    "example_warrior": {"canonical_slug": "guerriero", "alias_target": null, "bridge_status": "mapped_canonical"},
+    "consumers_potential_documental_only": [
+      "compatibility validator (accept both legacy + canonical as input — RISKY, requires slug migration first)",
+      "auto-equip fitness (lookup table — same constraint)",
+      "frontend badge (canonical_slug as design name overlay — SAFE, doc only)"
+    ],
+    "conservative_default_r18_4": "SLUG legacy live as SoT runtime. Bridge stays documental until R18.3f (slug migration, deferred).",
+    "no_runtime_wiring_in_r18_4": true
+  },
+
+  "risk_matrix": [
+    {"change": "UI badge 'consigliato per classe X' (reading existing not_recommended_class warning)", "risk": "SAFE", "blocked": false},
+    {"change": "Backfill slot_type for 140 bucket G1 items", "risk": "SAFE", "blocked": false, "note": "requires dedicated seed + audit event"},
+    {"change": "Converge item_type → derived slot_type in equip path", "risk": "RISKY", "blocked": false, "note": "impacts 178 items + auto-equip"},
+    {"change": "Hard-bound all items with class_tags non-empty", "risk": "RISKY", "blocked": false, "note": "requires audit of equipped_items (currently 0) + PM gate"},
+    {"change": "Wire bridge R18.3e runtime (canonical_slug in compatibility)", "risk": "RISKY", "blocked": true, "reason": "blocked until R18.3f slug migration"},
+    {"change": "Migrate adventurers.class_slug legacy EN → canonical IT", "risk": "BLOCKED", "reason": "separate round R18.3f (deferred)"},
+    {"change": "Unlock recruitment hidden classes (CdM/CdV)", "risk": "BLOCKED", "reason": "out of R18.4 scope, explicitly PM-locked"},
+    {"change": "Populate class_tags with canonical IT on all items", "risk": "BLOCKED", "reason": "separate round after R18.3f"},
+    {"change": "Rewrite 12 signature items with hard required_class_optional", "risk": "RISKY", "blocked": false, "note": "audit + PM gate"},
+    {"change": "Frontend new tab 'Equip per classe' with compatibility filter", "risk": "SAFE", "blocked": false},
+    {"change": "Add audit event EQUIP_BLOCKED / EQUIP_WARNING for telemetry", "risk": "SAFE", "blocked": false},
+    {"change": "Backfill recommended_classes with canonical target on 157 items", "risk": "RISKY", "blocked": true, "reason": "equivalent to partial slug migration, requires R18.3f"}
+  ],
+
+  "proposed_r18_4_design_options": {
+    "option_1_soft_recommendation_only": {
+      "description": "Status-quo consolidation. UI investment on badges/filters/tooltips exposing existing not_recommended_class and warning_it player-friendly. No backend change.",
+      "prerequisites": [],
+      "migration_path": "none",
+      "impact_ui": "high",
+      "impact_backend": "low (optional audit event only)",
+      "impact_test": "medium (frontend badge/filter tests)",
+      "pro": ["zero breaking", "immediate delivery", "no touch to 3373 adventurers"],
+      "contro": ["no design coherence gain (soft warning stays)"],
+      "risk_level": "LOW"
+    },
+    "option_2_hard_class_bound_full": {
+      "description": "Transform all not_recommended_class warnings to block. class_tags becomes hard-bound.",
+      "prerequisites": ["audit equipped_items (currently 0 live)", "PM gate"],
+      "migration_path": "none (0 equipped_items live)",
+      "impact_ui": "high (remove warning path)",
+      "impact_backend": "medium",
+      "impact_test": "high (rewrite compatibility tests)",
+      "pro": ["strong design coherence", "clean semantic", "prepares migration"],
+      "contro": ["future breaking risk if delayed", "rigid for generalist items (bucket A)"],
+      "risk_level": "HIGH (post-first-equip populate)"
+    },
+    "option_3_hybrid_refined_RECOMMENDED": {
+      "description": "Formalize existing hybrid pattern + UI polish. Hard-bound for bucket E (12 signature) + heavy/arcane blacklists. Soft-recommended for bucket A/C/G1 (145 items). Universal for G2 (21 materials).",
+      "prerequisites": ["backfill slot_type on bucket G1 (140 items)", "optional audit event", "UI badge upgrade"],
+      "migration_path": "slot_type backfill only (SAFE seed)",
+      "impact_ui": "medium (badge + filter)",
+      "impact_backend": "low (compatibility.py unchanged, optional audit event)",
+      "impact_test": "medium (backfill validation + audit event test)",
+      "pro": ["incremental", "non-breaking", "reflects existing design", "prepares R18.3f without forcing it", "leverages R18.3e bridge as documental reference"],
+      "contro": ["semantic ambiguity on bucket A (soft warning for off-class)"],
+      "risk_level": "MEDIUM-LOW",
+      "recommended_by_agent": true
+    }
+  },
+
+  "open_questions_pm_14": [
+    "OQ1: R18.4 deve essere soft, hard o hybrid? (Recommend Option 3)",
+    "OQ2: Gli item starter/common devono restare generici (bucket F, oggi vuoto)? Ridefinire?",
+    "OQ3: Gli item signature (bucket E, 12 items) devono essere hard class-bound? Attualmente usano specialization_unlocks soft/block.",
+    "OQ4: recommended_classes deve usare slug legacy live o canonical IT (via bridge)?",
+    "OQ5: class_tags deve restare legacy o diventare bridge-aware (accetta entrambi)?",
+    "OQ6: Auto-equip deve rispettare class-bound o solo raccomandazioni?",
+    "OQ7: UI deve mostrare 'non compatibile' (block) o solo 'consigliato' (warning)?",
+    "OQ8: Cosa succede a items già equipaggiati non compatibili se passa a hard-bound? (Attualmente 0 live, timing safe.)",
+    "OQ9: Le 2 canonical hidden CdM/CdV possono avere item class-bound anche se non reclutabili?",
+    "OQ10: Serve audit event per equip blocked/failed?",
+    "OQ11: Serve migration metadata sugli item prima di enforcement? (es. item_binding_policy: soft|hard|universal)",
+    "OQ12: R18.4 può partire senza R18.3f (slug migration)?",
+    "OQ13: Bucket G1 (140 items senza slot_type) va backfillato prima o durante R18.4?",
+    "OQ14: Il round R18.3d.followup Bard Role Drift (bard.role='Support' fuori VALID_ROLES) impatta R18.4?"
+  ],
+
+  "recommendation_phase_b_staged": {
+    "phase_b1_deep_dive_audit_readonly": [
+      "full audit auto_equip.py (594 lines): fitness weights, tie-breaker, class impact",
+      "audit frontend InventoryEquipModal.jsx + AdventurerEquipment.jsx: current badge and warning display",
+      "test suite baseline: pytest -k equip + snapshot report",
+      "sample verify: 10 items × 5 classes = 50 compatibility_check calls coverage matrix"
+    ],
+    "phase_b2_decision_lock": [
+      "14 Open Questions → PM decisions locked in r18_4_phase_b_pm_decisions.md",
+      "select Option 1 / 2 / 3",
+      "backlog policy for bucket G1 slot_type backfill"
+    ],
+    "phase_b3_registry_sibling_script": [
+      "r18_4_item_class_bound_registry.md + .json (bucket assignment, target policy, safe/blocked fields)",
+      "sibling apply/rollback script round18_4_apply_class_bound.py (dry-run only, APPLY_ENABLED=False)",
+      "test suite backend_r18_4_class_bound_test.py (16+ tests)"
+    ],
+    "phase_b4_contract_lock_seal": [
+      "e1_tester regression (4-6 macro tests)",
+      "SEAL R18.4 con banner CLOSED & SEALED",
+      "registry aggregato 29 sigilli (24 attuali + 5 R18.4)"
+    ],
+    "deferred_not_in_phase_b": [
+      "slug migration (R18.3f)",
+      "recruitment unlock CdM/CdV",
+      "rewrite items canonical IT",
+      "bard role drift (R18.3d.followup, backlog P3)"
+    ]
+  },
+
+  "self_check_10_phase_a": {
+    "1_report_md_created": true,
+    "2_report_json_created_parsable": true,
+    "3_zero_db_write_audit_delta_0": true,
+    "4_zero_new_audit_event": true,
+    "5_zero_code_change_runtime": true,
+    "6_zero_frontend_change": true,
+    "7_sealed_24_files_byte_identical": "verified_pytest_sealed_or_integrity_PASS",
+    "8_item_counts_documented_bucket_and_class": true,
+    "9_open_questions_pm_present_min_12": "14_present",
+    "10_recommendation_phase_b_present": true
+  }
+}
