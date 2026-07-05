@@ -1,0 +1,19 @@
+==============================================================================
+R18.Reset.1b.hotfix.v1_3 REAL APPLY — 14-Point DB Verification
+==============================================================================
+[✓]  1. target_patched_count                     PASS
+[✓]  2. adventurer_class_id_present_nonnull      PASS
+[✓]  3. experience_present_all                   PASS
+[✓]  4. is_available_true_all                    PASS
+[✓]  5. no_missing_runtime_critical_keys         PASS
+[✓]  6. class_slug_to_class_id_mapping_11_11     PASS
+[✓]  7. stats_invariance_v1_2                    PASS
+[✓]  8. gold_total_67200                         PASS
+[✓]  9. inventory_kit_672_docs                   PASS
+[✓] 10. potion_total_qty_2016                    PASS
+[✓] 11. audit_generic_applied_v1_3               PASS
+[✓] 12. audit_specific_applied_v1_3              PASS
+[✓] 13. no_hard_delete_archive_intact            PASS
+[✓] 14. prepatch_backup_sha256_intact            PASS
+------------------------------------------------------------------------------
+TOTAL: 14/14 PASSED — verdict=ALL_PASS

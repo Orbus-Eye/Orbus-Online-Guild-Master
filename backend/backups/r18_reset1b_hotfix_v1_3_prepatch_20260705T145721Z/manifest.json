@@ -1,0 +1,205 @@
+{
+  "round": "R18.Reset.1b",
+  "created_at": "2026-07-05T14:57:21.324289+00:00",
+  "backup_path": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z",
+  "collections": [
+    {
+      "name": "adventurers",
+      "doc_count": 3360,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/adventurers.jsonl",
+      "sha256": "a461b72f4b3c20d62c401ebec573ffa7b7b5d1d0cf6156d5e2e14e02c66de9ea"
+    },
+    {
+      "name": "inventory_items",
+      "doc_count": 672,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/inventory_items.jsonl",
+      "sha256": "3c09c5dcc66952b547e258f1210a033534c72f2a0c5a294a05125d7b8da558ef"
+    },
+    {
+      "name": "equipped_items",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/equipped_items.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "class_halls",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/class_halls.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "achievement_progress",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/achievement_progress.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "expeditions",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/expeditions.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "expedition_members",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/expedition_members.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "raids",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/raids.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "raid_participants",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/raid_participants.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "chat_messages",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/chat_messages.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "squads",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/squads.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_structures",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_structures.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_specialization_choice",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_specialization_choice.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_trade_pacts",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_trade_pacts.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_site_income_ledger",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_site_income_ledger.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_world_presence",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_world_presence.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_xp_daily_cap_tracker",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_xp_daily_cap_tracker.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "pvp_seasons",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/pvp_seasons.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "pvp_season_leaderboards",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/pvp_season_leaderboards.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "pvp_defense_teams",
+      "doc_count": 3,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/pvp_defense_teams.jsonl",
+      "sha256": "cf1356b4bf52804179ab70f6ea9ad5d0a8c7c0a0de490d53454a63bedeb5f755"
+    },
+    {
+      "name": "pvp_cosmetics_unlocked",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/pvp_cosmetics_unlocked.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guild_mount_ownership",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guild_mount_ownership.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "narrative_rewards_unlocked",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/narrative_rewards_unlocked.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "continent_leaderboard_snapshots",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/continent_leaderboard_snapshots.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "continent_event_instances",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/continent_event_instances.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "seasons",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/seasons.jsonl",
+      "sha256": "99482696de6b6198af8246ee86ca3c894d9e2e0442c1d904b58286be67fed5ad"
+    },
+    {
+      "name": "season_participations",
+      "doc_count": 3,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/season_participations.jsonl",
+      "sha256": "2f000ec2e2a18a164f74c55ce097f54035390c331847e41cd4c88aafc4ff82cf"
+    },
+    {
+      "name": "season_rewards",
+      "doc_count": 4,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/season_rewards.jsonl",
+      "sha256": "a258f66110026d316d5949ccbde74155fa70094e5de39633d7d4679f87b7281a"
+    },
+    {
+      "name": "world_boss_events",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/world_boss_events.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "recruitment_offers",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/recruitment_offers.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "shop_daily_offers",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/shop_daily_offers.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "tester_tool_snapshots",
+      "doc_count": 0,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/tester_tool_snapshots.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "guilds",
+      "doc_count": 672,
+      "file": "/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/guilds.jsonl",
+      "sha256": "3104c5c08b4a763b98bbd7a23fb6062d5bab37ac72c7b1ab74a09209277abae6"
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "generated_at": "2026-07-05T14:59:00Z",
+  "apply_id_v1_3": "3e1e6462-694b-49d4-8e60-0045460c58d0",
+  "checks": [
+    {
+      "check": 1,
+      "name": "target_patched_count",
+      "status": "PASS",
+      "expected": 3360,
+      "actual": 3360
+    },
+    {
+      "check": 2,
+      "name": "adventurer_class_id_present_nonnull",
+      "status": "PASS",
+      "expected": 3360,
+      "actual": 3360,
+      "extra": {
+        "total_v1_2_targets": 3360
+      }
+    },
+    {
+      "check": 3,
+      "name": "experience_present_all",
+      "status": "PASS",
+      "expected": {
+        "present": 3360,
+        "value_zero": 3360
+      },
+      "actual": {
+        "present": 3360,
+        "value_zero": 3360
+      }
+    },
+    {
+      "check": 4,
+      "name": "is_available_true_all",
+      "status": "PASS",
+      "expected": 3360,
+      "actual": 3360
+    },
+    {
+      "check": 5,
+      "name": "no_missing_runtime_critical_keys",
+      "status": "PASS",
+      "expected": "all zero",
+      "actual": {
+        "id": 0,
+        "guild_id": 0,
+        "name": 0,
+        "adventurer_class_id": 0,
+        "strength": 0,
+        "agility": 0,
+        "intellect": 0,
+        "endurance": 0,
+        "faith": 0,
+        "created_at": 0
+      }
+    },
+    {
+      "check": 6,
+      "name": "class_slug_to_class_id_mapping_11_11",
+      "status": "PASS",
+      "expected": "11/11 matched",
+      "actual": {
+        "alchemist": {
+          "cat_id": "ba0362b6-e69f-4136-9600-1d95ea6fbe05",
+          "matched": 299,
+          "expected": 299
+        },
+        "bard": {
+          "cat_id": "17e0abb7-aab2-453b-8416-49597630e815",
+          "matched": 324,
+          "expected": 324
+        },
+        "druid": {
+          "cat_id": "94e5da79-17b6-42be-8d71-b39a7400cf36",
+          "matched": 311,
+          "expected": 311
+        },
+        "mage": {
+          "cat_id": "a6267904-a813-45b0-94e0-d537db356286",
+          "matched": 281,
+          "expected": 281
+        },
+        "monk": {
+          "cat_id": "26c61b46-0dd6-4cd9-ad50-e3d38e5dfcbe",
+          "matched": 327,
+          "expected": 327
+        },
+        "paladin": {
+          "cat_id": "002f2308-af9e-4419-8e05-2bd663db6015",
+          "matched": 303,
+          "expected": 303
+        },
+        "priest": {
+          "cat_id": "cdc69941-be44-4e4b-bc4c-be8e36c811d8",
+          "matched": 278,
+          "expected": 278
+        },
+        "ranger": {
+          "cat_id": "47f07561-2e93-4149-936f-2260f117836b",
+          "matched": 299,
+          "expected": 299
+        },
+        "rogue": {
+          "cat_id": "48c8160d-c0e1-47b2-bb74-ac7bbf2b229d",
+          "matched": 302,
+          "expected": 302
+        },
+        "warlock": {
+          "cat_id": "395cc067-f278-4f1a-bb5c-9eb76ae58940",
+          "matched": 305,
+          "expected": 305
+        },
+        "warrior": {
+          "cat_id": "a0ea32ac-e912-4733-bebb-2a314cf9cc19",
+          "matched": 331,
+          "expected": 331
+        }
+      }
+    },
+    {
+      "check": 7,
+      "name": "stats_invariance_v1_2",
+      "status": "PASS",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "check": 8,
+      "name": "gold_total_67200",
+      "status": "PASS",
+      "expected": 67200,
+      "actual": 67200
+    },
+    {
+      "check": 9,
+      "name": "inventory_kit_672_docs",
+      "status": "PASS",
+      "expected": 672,
+      "actual": 672
+    },
+    {
+      "check": 10,
+      "name": "potion_total_qty_2016",
+      "status": "PASS",
+      "expected": 2016,
+      "actual": 2016
+    },
+    {
+      "check": 11,
+      "name": "audit_generic_applied_v1_3",
+      "status": "PASS",
+      "expected": 1,
+      "actual": 1,
+      "extra": {
+        "sample": [
+          {
+            "event_type": "R18_STARTER_ROSTER_HOTFIX_APPLIED",
+            "source": "script.round18_reset1b_apply_v1_3",
+            "metadata": {
+              "round": "R18.Reset.1b.hotfix.v1_3",
+              "apply_script": "round18_reset1b_apply_v1_3.py",
+              "apply_version": "v1.3",
+              "target_count": 3360,
+              "fields_patched": [
+                "adventurer_class_id",
+                "experience",
+                "is_available",
+                "class_name",
+                "class_role",
+                "rarity",
+                "stamina",
+                "morale",
+                "status",
+                "is_starter",
+                "traits",
+                "rename_count",
+                "is_retired",
+                "grade"
+              ],
+              "class_mapping_count": 11,
+              "schema_compatibility_fix": true,
+              "http_maintenance_required": true,
+              "internal_job_freeze_required": true,
+              "apply_id": "3e1e6462-694b-49d4-8e60-0045460c58d0",
+              "completed_at": "2026-07-05T14:57:33.626508+00:00",
+              "backup_reference": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+              "supersedes_versions": [
+                "v1.2"
+              ],
+              "patch_stats": {
+                "target_count": 3360,
+                "adventurer_class_id_set": 3360,
+                "class_name_set": 3360,
+                "class_role_set": 3360,
+                "experience_set": 3360,
+                "is_available_set": 3360,
+                "stamina_set": 3360,
+                "morale_set": 3360,
+                "status_set": 3360,
+                "rarity_set": 3360,
+                "is_starter_set": 3360,
+                "traits_set": 3360,
+                "rename_count_set": 3360,
+                "is_retired_set": 3360,
+                "grade_updated": 3360,
+                "hotfix_marker_set": 3360
+              }
+            },
+            "created_at": "2026-07-05T14:57:33.626508+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "check": 12,
+      "name": "audit_specific_applied_v1_3",
+      "status": "PASS",
+      "expected": 1,
+      "actual": 1,
+      "extra": {
+        "sample": [
+          {
+            "event_type": "R18_STARTER_ROSTER_HOTFIX_APPLIED_V1_3",
+            "source": "script.round18_reset1b_apply_v1_3",
+            "metadata": {
+              "round": "R18.Reset.1b.hotfix.v1_3",
+              "apply_script": "round18_reset1b_apply_v1_3.py",
+              "apply_version": "v1.3",
+              "target_count": 3360,
+              "fields_patched": [
+                "adventurer_class_id",
+                "experience",
+                "is_available",
+                "class_name",
+                "class_role",
+                "rarity",
+                "stamina",
+                "morale",
+                "status",
+                "is_starter",
+                "traits",
+                "rename_count",
+                "is_retired",
+                "grade"
+              ],
+              "class_mapping_count": 11,
+              "schema_compatibility_fix": true,
+              "http_maintenance_required": true,
+              "internal_job_freeze_required": true,
+              "apply_id": "3e1e6462-694b-49d4-8e60-0045460c58d0",
+              "completed_at": "2026-07-05T14:57:33.626508+00:00",
+              "backup_reference": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z",
+              "supersedes_versions": [
+                "v1.2"
+              ],
+              "patch_stats": {
+                "target_count": 3360,
+                "adventurer_class_id_set": 3360,
+                "class_name_set": 3360,
+                "class_role_set": 3360,
+                "experience_set": 3360,
+                "is_available_set": 3360,
+                "stamina_set": 3360,
+                "morale_set": 3360,
+                "status_set": 3360,
+                "rarity_set": 3360,
+                "is_starter_set": 3360,
+                "traits_set": 3360,
+                "rename_count_set": 3360,
+                "is_retired_set": 3360,
+                "grade_updated": 3360,
+                "hotfix_marker_set": 3360
+              }
+            },
+            "created_at": "2026-07-05T14:57:33.626508+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "check": 13,
+      "name": "no_hard_delete_archive_intact",
+      "status": "PASS",
+      "expected": {
+        "adventurers_r18_archive": 3415,
+        "inventory_items_r18_archive": 111,
+        "expeditions_r18_archive": 17,
+        "raids_r18_archive": 1,
+        "adventurers_live": 3360
+      },
+      "actual": {
+        "adventurers_r18_archive": 3415,
+        "inventory_items_r18_archive": 111,
+        "expeditions_r18_archive": 17,
+        "raids_r18_archive": 1,
+        "adventurers_live": 3360
+      }
+    },
+    {
+      "check": 14,
+      "name": "prepatch_backup_sha256_intact",
+      "status": "PASS",
+      "expected": "no mismatch",
+      "actual": {
+        "mismatches": [],
+        "files_checked": 33
+      }
+    }
+  ],
+  "summary": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0,
+    "verdict": "ALL_PASS"
+  }
+}

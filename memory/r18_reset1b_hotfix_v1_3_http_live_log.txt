@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /root/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /app/backend
+configfile: pytest.ini
+plugins: xdist-3.8.0, rerunfailures-16.3, anyio-4.14.0
+created: 2/2 workers
+2 workers [3 items]
+
+scheduling tests via LoadScopeScheduling
+
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t14_get_adventurers_http_live_200 
+[gw0] [ 33%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t14_get_adventurers_http_live_200 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t15_get_dungeons_http_live_200 
+[gw0] [ 66%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t15_get_dungeons_http_live_200 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t16_post_expedition_http_live_no_500 
+[gw0] [100%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t16_post_expedition_http_live_no_500 
+
+============================== 3 passed in 1.96s ===============================
+[orbus.test] INFO pre-suite cleanup: DB already clean

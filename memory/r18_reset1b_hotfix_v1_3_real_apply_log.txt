@@ -1,0 +1,115 @@
+[2026-07-05T14:57:33.506786+00:00] [INFO] MODE = APPLY. Sto per modificare il DB.
+[2026-07-05T14:57:33.506814+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_3 START (mode=APPLY) ======
+[2026-07-05T14:57:33.506821+00:00] [INFO] [self-audit] {'audit_pattern_check': 'PASS', 'notes': 'sibling non-sealed; guards enforce apply gating'}
+[2026-07-05T14:57:33.506883+00:00] [INFO] [freeze_check] {"http_maintenance_flag": true, "internal_job_freeze_flag": true, "both_active": true}
+[2026-07-05T14:57:33.512125+00:00] [INFO] [catalog_preload] loaded=11/11 ok=True missing=[] incomplete=[]
+[2026-07-05T14:57:33.520566+00:00] [INFO] [target_scan] target_count=3360 expected=3360 slug_conformant=3360 non_conformant=0
+[2026-07-05T14:57:33.521693+00:00] [INFO] [idempotency] {"prior_applied_events": 0, "prior_rolled_back_events": 0, "blocks_apply": false}
+[2026-07-05T14:57:33.531035+00:00] [INFO] [patch] slug=alchemist matched=299 modified=299
+[2026-07-05T14:57:33.541062+00:00] [INFO] [patch] slug=bard matched=324 modified=324
+[2026-07-05T14:57:33.550616+00:00] [INFO] [patch] slug=druid matched=311 modified=311
+[2026-07-05T14:57:33.559824+00:00] [INFO] [patch] slug=mage matched=281 modified=281
+[2026-07-05T14:57:33.569600+00:00] [INFO] [patch] slug=monk matched=327 modified=327
+[2026-07-05T14:57:33.579107+00:00] [INFO] [patch] slug=paladin matched=303 modified=303
+[2026-07-05T14:57:33.588267+00:00] [INFO] [patch] slug=priest matched=278 modified=278
+[2026-07-05T14:57:33.597722+00:00] [INFO] [patch] slug=ranger matched=299 modified=299
+[2026-07-05T14:57:33.607185+00:00] [INFO] [patch] slug=rogue matched=302 modified=302
+[2026-07-05T14:57:33.616551+00:00] [INFO] [patch] slug=warlock matched=305 modified=305
+[2026-07-05T14:57:33.626488+00:00] [INFO] [patch] slug=warrior matched=331 modified=331
+[2026-07-05T14:57:33.627114+00:00] [INFO] [audit] emitted BOTH events for apply_id=3e1e6462-694b-49d4-8e60-0045460c58d0
+[2026-07-05T14:57:33.627125+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T14:57:33.627226+00:00] [INFO] {
+  "mode": "APPLY",
+  "apply_id": "3e1e6462-694b-49d4-8e60-0045460c58d0",
+  "target": {
+    "marker": "r18_reset1b_hotfix_v1_2",
+    "count": 3360,
+    "expected": 3360
+  },
+  "catalog_mapping": {
+    "count": 11,
+    "ok": true
+  },
+  "patch_stats": {
+    "target_count": 3360,
+    "adventurer_class_id_set": 3360,
+    "class_name_set": 3360,
+    "class_role_set": 3360,
+    "experience_set": 3360,
+    "is_available_set": 3360,
+    "stamina_set": 3360,
+    "morale_set": 3360,
+    "status_set": 3360,
+    "rarity_set": 3360,
+    "is_starter_set": 3360,
+    "traits_set": 3360,
+    "rename_count_set": 3360,
+    "is_retired_set": 3360,
+    "grade_updated": 3360,
+    "hotfix_marker_set": 3360
+  },
+  "per_slug_stats": {
+    "alchemist": {
+      "matched": 299,
+      "modified": 299
+    },
+    "bard": {
+      "matched": 324,
+      "modified": 324
+    },
+    "druid": {
+      "matched": 311,
+      "modified": 311
+    },
+    "mage": {
+      "matched": 281,
+      "modified": 281
+    },
+    "monk": {
+      "matched": 327,
+      "modified": 327
+    },
+    "paladin": {
+      "matched": 303,
+      "modified": 303
+    },
+    "priest": {
+      "matched": 278,
+      "modified": 278
+    },
+    "ranger": {
+      "matched": 299,
+      "modified": 299
+    },
+    "rogue": {
+      "matched": 302,
+      "modified": 302
+    },
+    "warlock": {
+      "matched": 305,
+      "modified": 305
+    },
+    "warrior": {
+      "matched": 331,
+      "modified": 331
+    }
+  },
+  "audit_result": {
+    "inserted_ids": [
+      "83545b23-bfd1-4bc6-9399-5f0257efb4d8",
+      "2bd3b5dd-769b-4092-83b3-838deb584404"
+    ],
+    "events_emitted": [
+      "R18_STARTER_ROSTER_HOTFIX_APPLIED",
+      "R18_STARTER_ROSTER_HOTFIX_APPLIED_V1_3"
+    ],
+    "apply_id": "3e1e6462-694b-49d4-8e60-0045460c58d0"
+  },
+  "freeze_state": {
+    "http_maintenance_flag": true,
+    "internal_job_freeze_flag": true,
+    "both_active": true
+  },
+  "backup_reference": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z"
+}
+[2026-07-05T14:57:33.627235+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_3 DONE (mode=APPLY) ======

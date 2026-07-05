@@ -1,0 +1,7 @@
+{
+  "start_ts_utc": "2026-07-05T14:57:33.363483349Z",
+  "end_ts_utc": "2026-07-05T14:57:34.041864114Z",
+  "duration_seconds": 1,
+  "exit_code": 0,
+  "cli": "python -m app.scripts.round18_reset1b_apply_v1_3 --apply --i-understand-this-will-patch-reset-adventurers"
+}
