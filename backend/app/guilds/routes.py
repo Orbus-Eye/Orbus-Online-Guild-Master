@@ -176,5 +176,53 @@ async def dismiss_migration_banner(
     return {"ok": True, "dismissed": True}
 
 
+# ────────────────────────────────────────────────────────────────────
+# R18.Reset.2 — Fresh Start Banner UI/API
+# ────────────────────────────────────────────────────────────────────
+
+_R18_RESET1B_BANNER_MESSAGE_IT = (
+    "Le gilde sono state riallineate per il nuovo inizio di Orbus. "
+    "Il nome della tua gilda è stato preservato; progressi, roster e "
+    "risorse sono ripartiti da zero."
+)
+
+
+@router.get("/me/r18-reset-banner")
+async def get_r18_reset_banner(
+    current_user: dict = Depends(get_current_user),
+):
+    """R18.Reset.2 — Player-facing fresh-start banner IT.
+
+    Returns `show=true` solo se la guild NON ha ancora fatto dismiss del
+    banner reset R18.Reset.1b. Nessun leak di metadata tecnici
+    (backup path, apply_id, archive count, ecc.).
+    """
+    guild = await user_guild_or_404(db, current_user["id"])
+    dismissed = bool(guild.get("r18_reset1b_banner_dismissed", False))
+    return {
+        "show": not dismissed,
+        "dismissed": dismissed,
+        "message_it": _R18_RESET1B_BANNER_MESSAGE_IT,
+    }
+
+
+@router.post("/me/r18-reset-banner/dismiss")
+async def dismiss_r18_reset_banner(
+    current_user: dict = Depends(get_current_user),
+):
+    """R18.Reset.2 — Persist fresh-start banner dismiss server-side.
+
+    Idempotent: se il flag è già `true`, l'endpoint ritorna comunque 200
+    con `dismissed=true` (nessun side-effect aggiuntivo). Modifica solo
+    la guild del `current_user` via filtro `owner_user_id`.
+    """
+    guild = await user_guild_or_404(db, current_user["id"])
+    await db.guilds.update_one(
+        {"id": guild["id"], "owner_user_id": current_user["id"]},
+        {"$set": {"r18_reset1b_banner_dismissed": True}},
+    )
+    return {"ok": True, "r18_reset1b_banner_dismissed": True}
+
+
 
 __all__ = ["router"]

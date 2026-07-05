@@ -41,6 +41,10 @@ def guild_public(doc: dict) -> dict:
         "last_raid_completed_at": doc.get("last_raid_completed_at"),
         "raids_completed_count": int(doc.get("raids_completed_count", 0)),
         "raids_victory_count": int(doc.get("raids_victory_count", 0)),
+        # R18.Reset.2 — Fresh Start banner dismissed state (player-facing)
+        "r18_reset1b_banner_dismissed": bool(
+            doc.get("r18_reset1b_banner_dismissed", False)
+        ),
         "created_at": doc["created_at"],
         "updated_at": doc["updated_at"],
     }

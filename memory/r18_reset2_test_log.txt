@@ -1,0 +1,43 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /root/.venv/bin/python
+rootdir: /app/backend
+configfile: pytest.ini
+plugins: xdist-3.8.0, rerunfailures-16.3, anyio-4.14.0
+created: 2/2 workers
+2 workers [15 items]
+
+scheduling tests via LoadScopeScheduling
+
+tests/backend_r18_reset2_banner_dismiss_test.py::test_1_dismiss_requires_auth 
+[gw0] [  6%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_1_dismiss_requires_auth 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_2_dismiss_sets_flag_own_guild 
+[gw0] [ 13%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_2_dismiss_sets_flag_own_guild 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_3_dismiss_idempotent 
+[gw0] [ 20%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_3_dismiss_idempotent 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_4_dismiss_isolates_tenant 
+[gw0] [ 26%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_4_dismiss_isolates_tenant 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_5_banner_visible_if_not_dismissed 
+[gw0] [ 33%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_5_banner_visible_if_not_dismissed 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_6_banner_hidden_after_dismiss 
+[gw0] [ 40%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_6_banner_hidden_after_dismiss 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_7_dismiss_endpoint_route_active 
+[gw0] [ 46%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_7_dismiss_endpoint_route_active 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_8_refresh_state_persists 
+[gw0] [ 53%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_8_refresh_state_persists 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_9_migration_banner_still_works 
+[gw0] [ 60%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_9_migration_banner_still_works 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_10_no_technical_leak_in_guild_me 
+[gw0] [ 66%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_10_no_technical_leak_in_guild_me 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_11_login_regression 
+[gw0] [ 73%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_11_login_regression 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_12_recruitment_regression 
+[gw0] [ 80%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_12_recruitment_regression 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_13_adventurers_regression 
+[gw0] [ 86%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_13_adventurers_regression 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_14_dungeons_and_expedition_regression 
+[gw0] [ 93%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_14_dungeons_and_expedition_regression 
+tests/backend_r18_reset2_banner_dismiss_test.py::test_15_freeze_off 
+[gw0] [100%] PASSED tests/backend_r18_reset2_banner_dismiss_test.py::test_15_freeze_off 
+
+============================== 15 passed in 8.03s ==============================
+[orbus.test] INFO pre-suite cleanup: DB already clean
