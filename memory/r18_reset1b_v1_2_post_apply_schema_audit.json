@@ -1,0 +1,1355 @@
+{
+  "generated_at": "2026-07-05T14:11:58.932126+00:00",
+  "apply_id_v1_2": "5815c73c-dae7-447c-ac3c-70455d3099a3",
+  "pre_apply_backup": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/adventurers.jsonl",
+  "pre_apply_total_docs": 3415,
+  "post_apply_total_docs": 3360,
+  "side_by_side_sample": {
+    "pre_apply_sample": {
+      "id": "0c0dd04b-cac4-4c1c-b284-641271d8c11f",
+      "guild_id": "9a48d6ef-51fc-4183-a0bd-803ce4f5e781",
+      "name": "Vera",
+      "adventurer_class_id": "47f07561-2e93-4149-936f-2260f117836b",
+      "class_name": "Cacciatore di Mostri",
+      "class_role": "DPS",
+      "rarity": "Common",
+      "level": 1,
+      "experience": 0,
+      "strength": 7,
+      "agility": 7,
+      "intellect": 3,
+      "endurance": 4,
+      "faith": 4,
+      "stamina": 100,
+      "morale": 100,
+      "traits": [
+        {
+          "id": "63ecea62-084a-45ab-9081-55584967bf35",
+          "name": "Quick Learner",
+          "description": "Soaks up experience faster than peers.",
+          "modifier_type": "percent",
+          "affected_stat": "xp_gain",
+          "modifier_value": 10.0,
+          "is_positive": true
+        }
+      ],
+      "is_available": true,
+      "is_starter": true,
+      "created_at": "2026-07-01T12:23:04.910307+00:00",
+      "updated_at": "2026-07-04T20:42:45.499752+00:00",
+      "phase13_unbaked": true,
+      "class_slug": "cacciatore_di_mostri",
+      "grade": "common",
+      "r18_grade_backfilled_at": "2026-07-04T17:34:33.149789+00:00",
+      "r18_grade_note": "grade=Common \u00e8 normalizzazione tecnica iniziale, non retrocessione player-facing",
+      "career_history": [
+        {
+          "event": "class_migration",
+          "round": "R18.3c",
+          "from": "ranger",
+          "to": "cacciatore_di_mostri",
+          "timestamp": "2026-07-04T20:42:45.499752+00:00"
+        }
+      ],
+      "migration_reason": "orphan_legacy_class_canonicalization",
+      "migration_round": "R18.3c",
+      "migration_timestamp": "2026-07-04T20:42:45.499752+00:00",
+      "previous_class_slug": "ranger"
+    },
+    "post_apply_sample": {
+      "id": "b2d44a2e-53c3-4493-97b1-a3832af4d0b5",
+      "guild_id": "57ae4e07-7fbe-44f2-b297-f5c0f42f6540",
+      "class_slug": "rogue",
+      "name": "Starter 1",
+      "level": 1,
+      "xp": 0,
+      "grade": "F",
+      "strength": 5,
+      "agility": 9,
+      "intellect": 3,
+      "endurance": 4,
+      "faith": 2,
+      "hp_current": 100,
+      "hp_max": 100,
+      "status": "idle",
+      "created_at": "2026-07-05T13:42:31.465611+00:00",
+      "updated_at": "2026-07-05T13:42:31.465615+00:00",
+      "r18_reset1b_starter": true,
+      "r18_reset1b_hotfix_v1_2": true,
+      "r18_reset1b_seed_source": "sha256(r18_reset1b:57ae4e07-7fbe-44f2-b297-f5c0f42f6540)",
+      "r18_reset1b_stat_source": "adventurer_classes.base_*_catalog_lookup",
+      "phase13_unbaked": true
+    }
+  },
+  "schema_diff": [
+    {
+      "field": "adventurer_class_id",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "agility",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3400
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "archived",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "archived_by_tester_tool",
+      "pre_exists_pct": 1.0,
+      "pre_nonnull_pct": 1.0,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 34
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.0% pre)"
+    },
+    {
+      "field": "career_history",
+      "pre_exists_pct": 14.52,
+      "pre_nonnull_pct": 14.52,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "list": 496
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 14.52% pre)"
+    },
+    {
+      "field": "class",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "class_name",
+      "pre_exists_pct": 99.91,
+      "pre_nonnull_pct": 99.91,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 3412
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.91% pre)"
+    },
+    {
+      "field": "class_role",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 3400
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.56% pre)"
+    },
+    {
+      "field": "class_slug",
+      "pre_exists_pct": 62.23,
+      "pre_nonnull_pct": 62.23,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 2125
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "created_at",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 3415
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "endurance",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3400
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "expedition_in_progress",
+      "pre_exists_pct": 0.59,
+      "pre_nonnull_pct": 0.59,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 20
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.59% pre)"
+    },
+    {
+      "field": "experience",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "int": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "faith",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3400
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "frozen",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "grade",
+      "pre_exists_pct": 62.23,
+      "pre_nonnull_pct": 62.23,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 2125
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "guild_id",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 3415
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "hp_current",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "hp_max",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "id",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 3415
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "intellect",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3400
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "is_available",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 3415
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 100.0% pre)"
+    },
+    {
+      "field": "is_retired",
+      "pre_exists_pct": 2.84,
+      "pre_nonnull_pct": 2.84,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 97
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 2.84% pre)"
+    },
+    {
+      "field": "is_starter",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "is_test_artifact",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "is_test_seed",
+      "pre_exists_pct": 0.97,
+      "pre_nonnull_pct": 0.97,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 33
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.97% pre)"
+    },
+    {
+      "field": "legacy_class_original",
+      "pre_exists_pct": 0.18,
+      "pre_nonnull_pct": 0.18,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 6
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.18% pre)"
+    },
+    {
+      "field": "level",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3415
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "migration_reason",
+      "pre_exists_pct": 14.52,
+      "pre_nonnull_pct": 14.52,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 496
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 14.52% pre)"
+    },
+    {
+      "field": "migration_round",
+      "pre_exists_pct": 14.52,
+      "pre_nonnull_pct": 14.52,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 496
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 14.52% pre)"
+    },
+    {
+      "field": "migration_timestamp",
+      "pre_exists_pct": 14.52,
+      "pre_nonnull_pct": 14.52,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 496
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 14.52% pre)"
+    },
+    {
+      "field": "morale",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "int": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "name",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 3415
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "needs_reassignment",
+      "pre_exists_pct": 2.66,
+      "pre_nonnull_pct": 2.66,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 91
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 2.66% pre)"
+    },
+    {
+      "field": "phase13_unbaked",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "bool": 3415
+      },
+      "type_post": {
+        "bool": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "previous_class_slug",
+      "pre_exists_pct": 14.52,
+      "pre_nonnull_pct": 14.52,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 496
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 14.52% pre)"
+    },
+    {
+      "field": "r18_alias_migrated_at",
+      "pre_exists_pct": 0.18,
+      "pre_nonnull_pct": 0.18,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 6
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.18% pre)"
+    },
+    {
+      "field": "r18_grade_backfilled_at",
+      "pre_exists_pct": 62.23,
+      "pre_nonnull_pct": 62.23,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 2125
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 62.23% pre)"
+    },
+    {
+      "field": "r18_grade_note",
+      "pre_exists_pct": 62.23,
+      "pre_nonnull_pct": 62.23,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 2125
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 62.23% pre)"
+    },
+    {
+      "field": "r18_orphan_migrated_at",
+      "pre_exists_pct": 2.66,
+      "pre_nonnull_pct": 2.66,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 91
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 2.66% pre)"
+    },
+    {
+      "field": "r18_reset1b_hotfix_v1_2",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "bool": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "r18_reset1b_seed_source",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "r18_reset1b_starter",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "bool": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "r18_reset1b_stat_source",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "rarity",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "rename_count",
+      "pre_exists_pct": 0.82,
+      "pre_nonnull_pct": 0.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "int": 28
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.82% pre)"
+    },
+    {
+      "field": "retire_via",
+      "pre_exists_pct": 0.44,
+      "pre_nonnull_pct": 0.44,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 15
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.44% pre)"
+    },
+    {
+      "field": "retired",
+      "pre_exists_pct": 1.87,
+      "pre_nonnull_pct": 1.87,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "bool": 64
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.87% pre)"
+    },
+    {
+      "field": "retired_at",
+      "pre_exists_pct": 0.44,
+      "pre_nonnull_pct": 0.44,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 15
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.44% pre)"
+    },
+    {
+      "field": "retired_by",
+      "pre_exists_pct": 0.44,
+      "pre_nonnull_pct": 0.44,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 15
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.44% pre)"
+    },
+    {
+      "field": "retirement_reason",
+      "pre_exists_pct": 0.44,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {},
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.44% pre)"
+    },
+    {
+      "field": "role",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "specialization",
+      "pre_exists_pct": 0.06,
+      "pre_nonnull_pct": 0.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "dict": 2
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.06% pre)"
+    },
+    {
+      "field": "specialization_applied_at",
+      "pre_exists_pct": 3.57,
+      "pre_nonnull_pct": 3.57,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 122
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 3.57% pre)"
+    },
+    {
+      "field": "specialization_slug",
+      "pre_exists_pct": 3.57,
+      "pre_nonnull_pct": 3.57,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 122
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 3.57% pre)"
+    },
+    {
+      "field": "stamina",
+      "pre_exists_pct": 99.06,
+      "pre_nonnull_pct": 99.06,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "int": 3383
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 99.06% pre)"
+    },
+    {
+      "field": "stats",
+      "pre_exists_pct": 0.44,
+      "pre_nonnull_pct": 0.44,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "dict": 15
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.44% pre)"
+    },
+    {
+      "field": "status",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "strength",
+      "pre_exists_pct": 99.56,
+      "pre_nonnull_pct": 99.56,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "int": 3400
+      },
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "team_power",
+      "pre_exists_pct": 1.82,
+      "pre_nonnull_pct": 1.82,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "int": 62
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 1.82% pre)"
+    },
+    {
+      "field": "test_seed_source",
+      "pre_exists_pct": 0.09,
+      "pre_nonnull_pct": 0.09,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "str": 3
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 0.09% pre)"
+    },
+    {
+      "field": "traits",
+      "pre_exists_pct": 100.0,
+      "pre_nonnull_pct": 100.0,
+      "post_exists_pct": 0.0,
+      "post_nonnull_pct": 0.0,
+      "type_pre": {
+        "list": 3415
+      },
+      "type_post": {},
+      "status": "MISSING_POST",
+      "notes": "field lost 100% post-apply (was in 100.0% pre)"
+    },
+    {
+      "field": "updated_at",
+      "pre_exists_pct": 99.91,
+      "pre_nonnull_pct": 99.91,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {
+        "str": 3412
+      },
+      "type_post": {
+        "str": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    },
+    {
+      "field": "xp",
+      "pre_exists_pct": 0.0,
+      "pre_nonnull_pct": 0.0,
+      "post_exists_pct": 100.0,
+      "post_nonnull_pct": 100.0,
+      "type_pre": {},
+      "type_post": {
+        "int": 3360
+      },
+      "status": "OK",
+      "notes": ""
+    }
+  ],
+  "missing_fields_summary": {
+    "missing_universally_count": 42,
+    "missing_universally": [
+      "adventurer_class_id",
+      "archived",
+      "archived_by_tester_tool",
+      "career_history",
+      "class",
+      "class_name",
+      "class_role",
+      "expedition_in_progress",
+      "experience",
+      "frozen",
+      "is_available",
+      "is_retired",
+      "is_starter",
+      "is_test_artifact",
+      "is_test_seed",
+      "legacy_class_original",
+      "migration_reason",
+      "migration_round",
+      "migration_timestamp",
+      "morale",
+      "needs_reassignment",
+      "previous_class_slug",
+      "r18_alias_migrated_at",
+      "r18_grade_backfilled_at",
+      "r18_grade_note",
+      "r18_orphan_migrated_at",
+      "rarity",
+      "rename_count",
+      "retire_via",
+      "retired",
+      "retired_at",
+      "retired_by",
+      "retirement_reason",
+      "role",
+      "specialization",
+      "specialization_applied_at",
+      "specialization_slug",
+      "stamina",
+      "stats",
+      "team_power",
+      "test_seed_source",
+      "traits"
+    ],
+    "runtime_critical_count": 1,
+    "runtime_critical": [
+      "adventurer_class_id"
+    ],
+    "non_critical_count": 41,
+    "non_critical": [
+      "archived",
+      "archived_by_tester_tool",
+      "career_history",
+      "class",
+      "class_name",
+      "class_role",
+      "expedition_in_progress",
+      "experience",
+      "frozen",
+      "is_available",
+      "is_retired",
+      "is_starter",
+      "is_test_artifact",
+      "is_test_seed",
+      "legacy_class_original",
+      "migration_reason",
+      "migration_round",
+      "migration_timestamp",
+      "morale",
+      "needs_reassignment",
+      "previous_class_slug",
+      "r18_alias_migrated_at",
+      "r18_grade_backfilled_at",
+      "r18_grade_note",
+      "r18_orphan_migrated_at",
+      "rarity",
+      "rename_count",
+      "retire_via",
+      "retired",
+      "retired_at",
+      "retired_by",
+      "retirement_reason",
+      "role",
+      "specialization",
+      "specialization_applied_at",
+      "specialization_slug",
+      "stamina",
+      "stats",
+      "team_power",
+      "test_seed_source",
+      "traits"
+    ]
+  },
+  "class_mapping": {
+    "queries_attempted": [
+      {
+        "collection": "adventurer_classes",
+        "count": 18
+      },
+      {
+        "collection": "adventurer_class_catalog",
+        "count": 0
+      },
+      {
+        "collection": "classes",
+        "count": 0
+      },
+      {
+        "collection": "adventurer_class",
+        "count": 0
+      },
+      {
+        "collection": "class_catalog",
+        "count": 0
+      }
+    ],
+    "mapping_by_slug": {
+      "alchemist": {
+        "found": true,
+        "candidates": 1,
+        "id": "ba0362b6-e69f-4136-9600-1d95ea6fbe05",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 3,
+          "base_agility": 6,
+          "base_intellect": 9,
+          "base_endurance": 6,
+          "base_faith": 4
+        },
+        "is_hidden": null
+      },
+      "bard": {
+        "found": true,
+        "candidates": 1,
+        "id": "17e0abb7-aab2-453b-8416-49597630e815",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 3,
+          "base_agility": 6,
+          "base_intellect": 7,
+          "base_endurance": 4,
+          "base_faith": 5
+        },
+        "is_hidden": null
+      },
+      "druid": {
+        "found": true,
+        "candidates": 1,
+        "id": "94e5da79-17b6-42be-8d71-b39a7400cf36",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 3,
+          "base_agility": 5,
+          "base_intellect": 7,
+          "base_endurance": 5,
+          "base_faith": 7
+        },
+        "is_hidden": null
+      },
+      "mage": {
+        "found": true,
+        "candidates": 1,
+        "id": "a6267904-a813-45b0-94e0-d537db356286",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 2,
+          "base_agility": 4,
+          "base_intellect": 10,
+          "base_endurance": 3,
+          "base_faith": 3
+        },
+        "is_hidden": null
+      },
+      "monk": {
+        "found": true,
+        "candidates": 1,
+        "id": "26c61b46-0dd6-4cd9-ad50-e3d38e5dfcbe",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 5,
+          "base_agility": 9,
+          "base_intellect": 3,
+          "base_endurance": 6,
+          "base_faith": 5
+        },
+        "is_hidden": null
+      },
+      "paladin": {
+        "found": true,
+        "candidates": 1,
+        "id": "002f2308-af9e-4419-8e05-2bd663db6015",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 7,
+          "base_agility": 3,
+          "base_intellect": 2,
+          "base_endurance": 7,
+          "base_faith": 6
+        },
+        "is_hidden": null
+      },
+      "priest": {
+        "found": true,
+        "candidates": 1,
+        "id": "cdc69941-be44-4e4b-bc4c-be8e36c811d8",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 2,
+          "base_agility": 3,
+          "base_intellect": 6,
+          "base_endurance": 4,
+          "base_faith": 10
+        },
+        "is_hidden": null
+      },
+      "ranger": {
+        "found": true,
+        "candidates": 1,
+        "id": "47f07561-2e93-4149-936f-2260f117836b",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 5,
+          "base_agility": 8,
+          "base_intellect": 4,
+          "base_endurance": 5,
+          "base_faith": 3
+        },
+        "is_hidden": null
+      },
+      "rogue": {
+        "found": true,
+        "candidates": 1,
+        "id": "48c8160d-c0e1-47b2-bb74-ac7bbf2b229d",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 5,
+          "base_agility": 9,
+          "base_intellect": 3,
+          "base_endurance": 4,
+          "base_faith": 2
+        },
+        "is_hidden": null
+      },
+      "warlock": {
+        "found": true,
+        "candidates": 1,
+        "id": "395cc067-f278-4f1a-bb5c-9eb76ae58940",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 4,
+          "base_agility": 6,
+          "base_intellect": 10,
+          "base_endurance": 6,
+          "base_faith": 6
+        },
+        "is_hidden": null
+      },
+      "warrior": {
+        "found": true,
+        "candidates": 1,
+        "id": "a0ea32ac-e912-4733-bebb-2a314cf9cc19",
+        "id_unique_across_matches": true,
+        "base_stats_populated": true,
+        "base_stats": {
+          "base_strength": 8,
+          "base_agility": 4,
+          "base_intellect": 2,
+          "base_endurance": 9,
+          "base_faith": 2
+        },
+        "is_hidden": null
+      }
+    },
+    "collection_used": "adventurer_classes",
+    "total_docs_in_catalog": 18,
+    "safe_classes_mapped": 11,
+    "safe_classes_unmapped": [],
+    "duplicates_by_slug": {},
+    "catalog_sample_doc": {
+      "slug": "warrior",
+      "base_agility": 4,
+      "base_endurance": 9,
+      "base_faith": 2,
+      "base_intellect": 2,
+      "base_strength": 8,
+      "created_at": "2026-07-01T12:21:20.418000+00:00",
+      "description": "A stalwart front-liner who absorbs punishment so others may strike.",
+      "id": "a0ea32ac-e912-4733-bebb-2a314cf9cc19",
+      "is_active": true,
+      "name": "Warrior",
+      "role": "Tank",
+      "updated_at": "2026-07-05T14:11:53.844603+00:00",
+      "allowed_armor_tags": [
+        "heavy",
+        "shield",
+        "medium"
+      ],
+      "allowed_weapon_tags": [
+        "sword",
+        "axe",
+        "mace",
+        "two_handed"
+      ],
+      "display_name_it": "Guerriero",
+      "guide_description_en": "The Warrior anchors the front line. Heavy armour, shield, and a willingness to take the first hit. Strength as primary, Endurance as backbone.",
+      "guide_description_it": "Il Guerriero \u00e8 la spina dorsale della linea avanzata. Pareggia colpi con la corazza, intercetta nemici con lo scudo, e tiene il fronte mentre il resto della squadra lavora. Forza alta per imporsi nei dungeon corpo a corpo e Resistenza per non cedere. La sua primary stat \u00e8 Forza: una stat troppo bassa rallenter\u00e0 la sua crescita di XP (meccanica attiva da Round 15.2).",
+      "preferred_item_tags": [
+        "frontline",
+        "stamina"
+      ],
+      "primary_stat": "strength",
+      "role_tags": [
+        "tank",
+        "frontline"
+      ],
+      "secondary_stats": [
+        "endurance"
+      ],
+      "xp_primary_stat_policy": {
+        "enabled": true,
+        "threshold_per_level": 0.5,
+        "debuff_steps": [
+          {
+            "shortfall_pct": 10,
+            "xp_mult": 0.9
+          },
+          {
+            "shortfall_pct": 20,
+            "xp_mult": 0.8
+          },
+          {
+            "shortfall_pct": 30,
+            "xp_mult": 0.7
+          }
+        ],
+        "min_multiplier": 0.7,
+        "schema_version": 2
+      },
+      "is_base_class": true
+    }
+  },
+  "code_refs": {
+    "adventurer_public_required_fields": {
+      "hard_access_via_doc[key]": [
+        "adventurer_class_id",
+        "agility",
+        "created_at",
+        "endurance",
+        "faith",
+        "guild_id",
+        "id",
+        "intellect",
+        "name",
+        "strength"
+      ],
+      "soft_access_via_doc.get()": [
+        "_equipment_power",
+        "_equipment_slots",
+        "class_name",
+        "class_role",
+        "class_slug",
+        "current_mission_id",
+        "current_mission_type",
+        "experience",
+        "gender",
+        "is_available",
+        "is_retired",
+        "is_starter",
+        "level",
+        "morale",
+        "race_name_it",
+        "race_slug",
+        "rarity",
+        "rename_count",
+        "retire_via",
+        "retired_at",
+        "retired_by",
+        "retirement_reason",
+        "specialization",
+        "specialization_slug",
+        "stamina",
+        "status",
+        "traits",
+        "updated_at"
+      ]
+    },
+    "adventurer_base_power_required_fields": [
+      "<function not found>"
+    ],
+    "files_grepped": [
+      "/app/backend/app/adventurers/services.py"
+    ]
+  },
+  "fresh_backup_manifest": {
+    "path": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/manifest.json",
+    "exists": true,
+    "files_verified": 33,
+    "mismatches": []
+  }
+}
