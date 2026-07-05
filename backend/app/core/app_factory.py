@@ -93,6 +93,15 @@ def create_app() -> FastAPI:
     from app.core.csrf import CSRFMiddleware
     app.add_middleware(CSRFMiddleware)
 
+    # ROUND 18.Reset.1b.ops — Backend Write-Freeze Maintenance Mode.
+    # Env var ORBUS_MAINTENANCE_MODE=true (or file flag
+    # /tmp/orbus_maintenance.flag) -> POST/PUT/PATCH/DELETE respond 503.
+    # GET/HEAD/OPTIONS continue normally (CORS preflight unaffected).
+    # Added LAST among middlewares so Starlette executes it FIRST on
+    # incoming requests (Starlette runs middlewares in reverse add order).
+    from app.core.maintenance import MaintenanceMiddleware
+    app.add_middleware(MaintenanceMiddleware)
+
     # Health endpoint (no domain)
     app.include_router(_build_health_router())
 

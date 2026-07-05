@@ -1,0 +1,33 @@
+R18.Reset.1b.ops - Test Report
+Timestamp: 2026-07-05T08:23:16Z
+API_URL: https://guild-master-5.preview.emergentagent.com
+
+==== TEST 1: default OFF ====
+  GET /api/health = 200 (expect 200)
+  POST /api/auth/login = 401 (expect not 503, e.g. 401/400)
+  RESULT: PASS
+
+==== TEST 2: POST -> 503 ====
+{"detail":"Orbus è temporaneamente in manutenzione. Riprova tra poco."}
+__HTTP=503
+__RETRY=60
+
+==== TEST 3: PUT/PATCH/DELETE -> 503 ====
+  PUT /api/guilds/me = 503 (expect 503)
+  PATCH /api/guilds/me = 503 (expect 503)
+  DELETE /api/guilds/me = 503 (expect 503)
+
+==== TEST 4: GET/HEAD/OPTIONS passano ====
+  GET /api/health = 200 (expect 200, not 503)
+  HEAD /api/health = 405 (expect not 503)
+  OPTIONS /api/health = 204 (expect not 503, CORS preflight)
+
+==== TEST 5: no tech leak in 503 body ====
+  body: {"detail":"Orbus è temporaneamente in manutenzione. Riprova tra poco."}
+  no leak (PASS)
+
+==== TEST after flag OFF: POST = 401 (expect not 503, e.g. 401/400) ====
+==== TEST 6: DB DIFF ====
+before.collections_total=81  after.collections_total=81
+DIFF_VERDICT: DIRTY (1 changes)
+  login_attempts: 3 -> 4

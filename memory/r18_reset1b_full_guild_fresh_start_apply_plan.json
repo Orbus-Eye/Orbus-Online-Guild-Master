@@ -338,6 +338,13 @@
       "status": "BACKLOG",
       "reason": "PM approved concept, deferred: utile per CI/CD ma fuori scope write-freeze",
       "candidate_after": ["R18.Reset.1b.ops", "R18.Reset.1b apply"]
+    },
+    {
+      "id": "R18.Reset.1b.ops",
+      "name": "Backend Write-Freeze Maintenance Mode",
+      "status": "IN_PROGRESS",
+      "reason": "Hard gate 5 di piano 1b §16 - blocker per apply reale",
+      "started_at": "2026-07-05T08:20:46Z"
     }
   ],
   "deliverables": [
