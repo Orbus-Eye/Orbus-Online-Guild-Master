@@ -361,6 +361,40 @@
       "status": "BACKLOG",
       "reason": "Finding rilevato durante tester 1b.ops verification. Non blocca il reset. Preview edge routing va indagato in un round infra separato.",
       "candidate_after": ["R18.Reset.1b apply"]
+    },
+    {
+      "id": "R18.Reset.1c.cleanup",
+      "name": "Rollback Residual Guild Flags Cleanup",
+      "status": "CLOSED_AND_SEALED",
+      "sealed_at": "2026-07-05T09:31:08Z",
+      "sealed_by": "PM_authorization",
+      "notes": [
+        "CTRL 7 originale: PASS (0/672 guild con field residui)",
+        "3 field residui rimossi: r18_reset1b_applied, r18_reset1b_applied_at, r18_reset1b_banner_dismissed",
+        "Guild count: 672 (invariato)",
+        "Adventurers live: 3324 (drift +2 accettato - CTRL 4 delta benign onboarding drift da orbus.onboarding.starter_roster)",
+        "Gold totale: 4.083.608 (invariato)",
+        "Audit APPLIED count: 0",
+        "Audit ROLLED_BACK count: 1",
+        "Audit CLEANUP count: 1 (R18_RESET1C_FIELD_CLEANUP_APPLIED)",
+        "Tool R18.Reset.1c sealed integrity: INVARIATA",
+        "CTRL 4 delta +2 accepted as benign onboarding drift. Covered by Snapshot-at-Apply Rule sec.13."
+      ]
+    },
+    {
+      "id": "R18.Reset.1b.hotfix.write_freeze_full",
+      "name": "Extend MaintenanceMiddleware to internal async jobs",
+      "status": "BACKLOG",
+      "reason": "MaintenanceMiddleware R18.Reset.1b.ops copre solo HTTP request. Job async interni, incluso onboarding.starter_roster, bypassano il freeze. Rilevato durante R18.Reset.1c.cleanup CTRL 4 FAIL. Fix candidato: env var ORBUS_INTERNAL_JOB_FREEZE letta dai job interni prima di scrivere.",
+      "candidate_after": ["R18.Reset.1b.hotfix", "R18.Reset.2"],
+      "pm_note": "Non blocca chiusura cleanup, ma va rivalutato prima di un nuovo apply reale."
+    },
+    {
+      "id": "R18.Reset.1b.hotfix",
+      "name": "Starter Kit Inventory Unique Index Fix",
+      "status": "IN_PROGRESS",
+      "reason": "Fix _regen_starter_kit S7 dup key on inv_guild_item_unique. Autorizzato da PM in R18.Reset.1c.cleanup seal message.",
+      "started_at": "2026-07-05T09:31:08Z"
     }
   ],
   "deliverables": [

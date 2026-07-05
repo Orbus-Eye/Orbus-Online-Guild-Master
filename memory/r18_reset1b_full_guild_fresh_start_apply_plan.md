@@ -593,6 +593,9 @@ Round e task esplicitamente esclusi da R18.Reset.1b (in HOLD / PAUSED / CANDIDAT
 - **R18.Reset.1b.ops** — Backend Write-Freeze Maintenance Mode (**CLOSED & SEALED 2026-07-05T08:36:37Z**, gate 5 §16 satisfied, 8/8 tester PASS)
 - **R18.Tooling.HealthMaintenanceEndpoint** — `GET /api/health/maintenance` diagnostic endpoint (**BACKLOG**, PM approved concept, deferred: utile per monitoring esterno pre/post-apply ma non blocking. Candidate after: R18.Reset.1b apply, R18.Reset.2)
 - **R18.Infra.PreviewApiRoutingCheck** — Preview edge `/api/*` returns 404 while `localhost:8001` works (**BACKLOG**, finding rilevato durante tester 1b.ops verification. Non blocca il reset. Preview edge routing va indagato in un round infra separato. Candidate after: R18.Reset.1b apply)
+- **R18.Reset.1c.cleanup** — Rollback Residual Guild Flags Cleanup (**CLOSED & SEALED 2026-07-05T09:31:08Z**, 3 field residui rimossi da 672 guild, CTRL 7 PASS, CTRL 4 delta +2 accepted as benign onboarding drift covered by Snapshot-at-Apply Rule §13. Audit CLEANUP=1, APPLIED=0, ROLLED_BACK=1. Tool 1c sealed integrity: INVARIATA.)
+- **R18.Reset.1b.hotfix.write_freeze_full** — Extend MaintenanceMiddleware to internal async jobs (**BACKLOG**, gap architetturale rilevato durante R18.Reset.1c.cleanup CTRL 4: job async interni bypassano il write-freeze middleware. Candidate: env var `ORBUS_INTERNAL_JOB_FREEZE` letta dai job onboarding/seed. Candidate after: R18.Reset.1b.hotfix, R18.Reset.2)
+- **R18.Reset.1b.hotfix** — Starter Kit Inventory Unique Index Fix (**IN_PROGRESS 2026-07-05T09:31:08Z**, fix `_regen_starter_kit` S7 dup key su `inv_guild_item_unique`. Autorizzato da PM in R18.Reset.1c.cleanup seal message. Brief proposal in preparation.)
 
 ---
 
