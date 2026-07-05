@@ -1,5 +1,5 @@
 # ROUND 18.Reset.1a - Full Guild Fresh Start Dry-Run
-**Data computazione**: 2026-07-05T06:37:27.193232+00:00
+**Data computazione**: 2026-07-05T06:41:00.795293+00:00
 **Status**: DRY-RUN COMPLETED - Read-only, zero mutazioni.
 **Round successivo (apply)**: R18.Reset.1b (non eseguito).
 
@@ -353,4 +353,4 @@ python -m app.scripts.r18_reset0_rollback --confirm --manifest=/app/memory/backu
 
 ---
 
-*Firma: e1 main agent - dry-run generato 2026-07-05T06:37:27.193232+00:00*
+*Firma: e1 main agent - dry-run generato 2026-07-05T06:41:00.795293+00:00*
