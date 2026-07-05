@@ -1,32 +1,44 @@
 {
   "app/scripts/round18_reset1b_apply.py": {
     "sha256": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
-    "mtime": 1783235358
+    "mtime": 1783235358,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/scripts/round18_reset1b_apply_v1_1.py": {
     "sha256": "14d38bf8ea66c878da60112c0936da720f38e4b2251e07f76aa4817259e51abd",
-    "mtime": 1783246914
+    "mtime": 1783246914,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/scripts/round18_reset1c_restore_from_jsonl_manifest.py": {
     "sha256": "453b87c8a83e303ee5e72f805c8a86c167b30792e8798704e27f51ac86ec3048",
-    "mtime": 1783238570
+    "mtime": 1783238570,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/scripts/round18_reset1c_field_cleanup.py": {
     "sha256": "fe2d39bf1a2a1189a8fe011969209001150bfb9d2a5c425836fb489e271e052c",
-    "mtime": 1783243467
+    "mtime": 1783243467,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/scripts/round18_reset1b_staged_backup_materialize.py": {
     "sha256": "db42665587dc7a18d416e54eebedaa87fb9cf256dd0d43a868db43a1761a7dd9",
-    "mtime": 1783241080
+    "mtime": 1783241080,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/core/job_freeze.py": {
     "sha256": "487c9223532c30165ef1bdba86bdc33976c4d82b7801e8509c6dd3dfa17311be",
-    "mtime": 1783251376
+    "mtime": 1783251376,
+    "sha256_match": true,
+    "mtime_match": true
   },
   "app/scripts/round18_reset1b_apply_v1_2.py": {
     "sha256": "d754c0dd273a05bd62d16c258d42e1503857da5dc953c3904e02181c877b3f66",
     "mtime": 1783257670,
-    "sealed_at": "2026-07-05T13:15:00Z",
-    "sealed_by": "PM_authorization"
+    "sha256_match": true,
+    "mtime_match": true
   }
 }

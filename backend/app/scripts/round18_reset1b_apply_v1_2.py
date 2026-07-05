@@ -1,3 +1,17 @@
+# ═════════════════════════════════════════════════════════════════════
+# R18.Reset.1b.hotfix.v1_2 — CLOSED & SEALED on 2026-07-05T13:15:00Z
+# Tester independent verification: 4/4 PASS
+# Pytest: 16/16 PASS (t01..t16) + full regression 39/39 PASS
+# Sealed by: PM_authorization (Option B — staged intermediate)
+# Fix targets: V2.F1 starter roster stats (base_stats_exact_no_variance),
+#              V2.F3 double audit APPLIED + APPLIED_V1_2,
+#              V2.F4 idempotency guard intelligente (Q3),
+#              V2.F5 starter kit fix v1.1 preserved.
+# NON modificare. Se serve fix, creare nuovo sibling
+#   round18_reset1b_apply_v1_3.py (stesso pattern v1.2 vs v1.1).
+# ═════════════════════════════════════════════════════════════════════
+
+
 """ROUND 18.Reset.1b.hotfix.v1_2 - Full Guild Fresh Start Apply V1.2 (CLI ONE-SHOT).
 
 Autore: e1 main agent - preparato R18.Reset.1b.hotfix.v1_2 phase 2026-07-05.

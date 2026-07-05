@@ -1,0 +1,15 @@
+{
+  "snapshot": "BEFORE",
+  "at": "2026-07-05T13:16:00Z",
+  "counts": {
+    "guilds": 672,
+    "adventurers": 3415,
+    "inventory_items": 111,
+    "items": 178,
+    "expeditions": 17,
+    "raids": 1,
+    "audit_log": 11831,
+    "users": 340,
+    "gold_total": 4083643
+  }
+}

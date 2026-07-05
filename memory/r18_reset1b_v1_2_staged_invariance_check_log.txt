@@ -1,0 +1,19 @@
+========================================================================
+R18.Reset.1b.hotfix.v1_2 — Step 4 Invariance Check
+========================================================================
+BEFORE snapshot: /app/memory/r18_reset1b_v1_2_staged_db_snapshot_before.json (at=2026-07-05T13:16:00Z)
+AFTER  snapshot: /app/memory/r18_reset1b_v1_2_staged_db_snapshot_after.json (at=2026-07-05T13:26:17.860533+00:00)
+------------------------------------------------------------------------
+collection                        BEFORE       AFTER       DELTA    STATUS
+------------------------------------------------------------------------
+guilds                               672         672          +0        OK
+adventurers                         3415        3415          +0        OK
+inventory_items                      111         111          +0        OK
+items                                178         178          +0        OK
+expeditions                           17          17          +0        OK
+raids                                  1           1          +0        OK
+audit_log                          11831       11831          +0        OK
+users                                340         340          +0        OK
+gold_total                       4083643     4083643          +0        OK
+------------------------------------------------------------------------
+RESULT: PASS — DB invariance mantained (delta=0 across all tracked collections + gold_total).

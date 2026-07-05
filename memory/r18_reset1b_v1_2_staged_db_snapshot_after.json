@@ -1,0 +1,15 @@
+{
+  "snapshot": "AFTER_STAGED_STEP4",
+  "at": "2026-07-05T13:26:17.860533+00:00",
+  "counts": {
+    "guilds": 672,
+    "adventurers": 3415,
+    "inventory_items": 111,
+    "items": 178,
+    "expeditions": 17,
+    "raids": 1,
+    "audit_log": 11831,
+    "users": 340,
+    "gold_total": 4083643
+  }
+}

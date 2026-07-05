@@ -1,0 +1,17 @@
+================================================================================
+SEALED INTEGRITY CHECK — 7 sealed files (v1.2 preflight baseline)
+================================================================================
+file                                                          sha256_status   mtime
+--------------------------------------------------------------------------------
+app/scripts/round18_reset1b_apply.py                                  OK      OK
+app/scripts/round18_reset1b_apply_v1_1.py                             OK      OK
+app/scripts/round18_reset1c_restore_from_jsonl_manifest.py            OK      OK
+app/scripts/round18_reset1c_field_cleanup.py                          OK      OK
+app/scripts/round18_reset1b_staged_backup_materialize.py              OK      OK
+app/core/job_freeze.py                                                OK      OK
+app/scripts/round18_reset1b_apply_v1_2.py                             OK      OK
+--------------------------------------------------------------------------------
+TOTAL SEALED FILES CHECKED: 7
+RESULT: PASS
+
+Postflight snapshot saved -> /app/memory/r18_reset1b_v1_2_staged_sealed_postflight.json
