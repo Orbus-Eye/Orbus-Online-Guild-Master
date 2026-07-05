@@ -1,0 +1,13 @@
+[2026-07-05T09:24:37.251338+00:00] [WARN] MODE = APPLY. Sto per $unset 3 field residui sulle guild. Nessun altro campo sara' toccato.
+[2026-07-05T09:24:37.251476+00:00] [INFO] [self-audit] PASS - checked 10 patterns, no literals in audited section
+[2026-07-05T09:24:37.251502+00:00] [INFO] [maintenance] flag present at /tmp/orbus_maintenance.flag
+[2026-07-05T09:24:37.251701+00:00] [INFO] ====== R18.Reset.1c.cleanup START (mode=APPLY) ======
+[2026-07-05T09:24:37.259042+00:00] [INFO] [preverify] guilds total = 672
+[2026-07-05T09:24:37.259065+00:00] [INFO] [preverify] guilds con almeno 1 field residuo = 672
+[2026-07-05T09:24:37.259071+00:00] [INFO] [preverify] guilds con TUTTI e 3 field residui = 672
+[2026-07-05T09:24:37.259075+00:00] [INFO] [preverify] PASS: 672/672 guild hanno TUTTI e 3 i field residui, come atteso dal rollback R18.Reset.1c gap
+[2026-07-05T09:24:37.265191+00:00] [INFO] [cleanup] APPLY: matched=672 modified=672 (target guild_total=672)
+[2026-07-05T09:24:37.266332+00:00] [INFO] [cleanup] post-verify: 0/672 guilds retain any residual field
+[2026-07-05T09:24:37.267061+00:00] [INFO] [audit] R18_RESET1C_FIELD_CLEANUP_APPLIED emitted (id=6365d620-4712-461d-9b0a-ee701a0b8a4a)
+[2026-07-05T09:24:37.267421+00:00] [INFO] [audit] APPLIED count still 0 (as required)
+[2026-07-05T09:24:37.267430+00:00] [INFO] ====== R18.Reset.1c.cleanup DONE (mode=APPLY) ======

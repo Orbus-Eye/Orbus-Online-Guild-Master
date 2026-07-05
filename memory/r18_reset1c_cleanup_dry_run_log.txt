@@ -1,0 +1,11 @@
+[2026-07-05T09:24:36.587504+00:00] [INFO] MODE = DRY_RUN. Nessuna scrittura sara' effettuata. Per apply reale usa --confirm-cleanup.
+[2026-07-05T09:24:36.587645+00:00] [INFO] [self-audit] PASS - checked 10 patterns, no literals in audited section
+[2026-07-05T09:24:36.587670+00:00] [INFO] [maintenance] flag present at /tmp/orbus_maintenance.flag
+[2026-07-05T09:24:36.587869+00:00] [INFO] ====== R18.Reset.1c.cleanup START (mode=DRY_RUN) ======
+[2026-07-05T09:24:36.595181+00:00] [INFO] [preverify] guilds total = 672
+[2026-07-05T09:24:36.595206+00:00] [INFO] [preverify] guilds con almeno 1 field residuo = 672
+[2026-07-05T09:24:36.595211+00:00] [INFO] [preverify] guilds con TUTTI e 3 field residui = 672
+[2026-07-05T09:24:36.595216+00:00] [INFO] [preverify] PASS: 672/672 guild hanno TUTTI e 3 i field residui, come atteso dal rollback R18.Reset.1c gap
+[2026-07-05T09:24:36.595223+00:00] [INFO] [cleanup] DRY_RUN: would $unset ['r18_reset1b_applied', 'r18_reset1b_applied_at', 'r18_reset1b_banner_dismissed'] on 672 guilds. Nessuna scrittura reale.
+[2026-07-05T09:24:36.595227+00:00] [INFO] [audit] DRY_RUN: would emit R18_RESET1C_FIELD_CLEANUP_APPLIED
+[2026-07-05T09:24:36.595231+00:00] [INFO] ====== R18.Reset.1c.cleanup DONE (mode=DRY_RUN) ======
