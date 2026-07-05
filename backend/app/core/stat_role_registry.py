@@ -1,6 +1,12 @@
 """R18.3d — Stat/Role Mapping Registry loader (READ-ONLY, UNWIRED).
 
 ═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3d Phase B (documental-only) — 2026-07-05T18:05:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Closed as documental-only registry. No DB metadata apply executed.
+🔒 Do NOT modify this file without explicit new PM gate.
+═══════════════════════════════════════════════════════════════════════
+
 UNWIRED MODULE — DO NOT IMPORT FROM RUNTIME CODE PATHS WITHOUT NEW PM GO
 ═══════════════════════════════════════════════════════════════════════
 

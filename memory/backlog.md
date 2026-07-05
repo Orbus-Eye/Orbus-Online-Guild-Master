@@ -7,6 +7,29 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] R18.3e — Canonical IT ↔ Legacy EN Class Bridge
+Origine: R18.3d Phase B Q10.b + verifica e1_tester (canonical 27 IT vs live 16 EN legacy quasi disgiunti)
+Obiettivo: mappare legacy live EN verso canonical IT; decidere se usare `alias_target`, `canonical_slug`, o migration vera.
+Vincoli: NO recruitment change senza approvazione PM. NO runtime fields change senza PM.
+
+Esempi da valutare in quel round (draft, NON applicati):
+  warrior     → guerriero
+  rogue       → ladro
+  mage        → mago
+  priest      → paladino OPPURE classe legacy da dismettere (decisione PM)
+  ranger      → cacciatore_di_mostri
+  warlock     → cacciatore_del_vuoto
+  monk        → monaco
+  druid       → druido
+  bard        → bardo
+  alchemist   → alchimista
+  necromancer → negromante
+
+Priorità: P2 (blocker prerequisito per R18.4 se R18.4 tocca item class-bound player-facing)
+Status: BACKLOG
+
+---
+
 ### [BACKLOG] R18.Tooling.AuditEventIdempotencyKey
 - **Aperto**: 2026-07-05
 - **Origine**: WARN M3 regression `R18.Reset.1b.hotfix.v1_3` — l'audit event `R18_FULL_GUILD_FRESH_START_APPLIED` risulta emesso 2 volte (una da REAL APPLY v1.1 subsequently rolled-back, una da v1.2 apply).
@@ -76,7 +99,7 @@ Vuoto.
 ## HOLD (in attesa di GO PM)
 
 - `R18.1 drift`
-- `R18.3d Stat/Role Mapping Registry`
+- ~~`R18.3d Stat/Role Mapping Registry`~~ → **CLOSED & SEALED 2026-07-05 (documental-only, no DB apply)**
 - `Traits`
 - `Fatigue/Cucina`
 - `SMTP R17`

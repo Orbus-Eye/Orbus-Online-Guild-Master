@@ -10,7 +10,9 @@
     "source_round": "R18.3d Phase B (Q10.b correction applied)",
     "generated_at_utc": "2026-07-05T17:50:00Z",
     "seal_authority": "PM Orchestrator",
-    "seal_status": "DRAFT_PENDING_PM_GATE_B5",
+    "seal_status": "CLOSED_AND_SEALED_DOCUMENTAL_ONLY",
+    "sealed_at_utc": "2026-07-05T18:05:00Z",
+    "seal_note": "Closed as documental-only registry. No DB metadata apply executed.",
     "governance": {
       "source_of_truth": "adventurer_classes collection (live DB) is authoritative for runtime primary_stat/role/base_*",
       "registry_purpose": "DOCUMENTAL + ADMIN INTROSPECTION ONLY — NOT wired to runtime",

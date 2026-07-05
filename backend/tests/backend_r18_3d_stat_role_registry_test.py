@@ -1,5 +1,13 @@
 """R18.3d — Phase B4 · Stat/Role Registry Test Suite (Q10.b correction).
 
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3d Phase B (documental-only) — 2026-07-05T18:05:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Closed as documental-only registry. No DB metadata apply executed.
+🔒 This test suite protects the R18.3d Phase B contract. Do NOT modify
+🔒 without explicit new PM gate.
+═══════════════════════════════════════════════════════════════════════
+
 Coverage:
     - 27 canonical classes locked (Q10.b)
     - 16 legacy live documented separately (not counted as canonical)

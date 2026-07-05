@@ -1,5 +1,11 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## R18.3d Phase B — CLOSED & SEALED (documental-only)
+Timestamp: 2026-07-05T18:06:50Z
+Nota: Closed as documental-only registry. No DB metadata apply executed.
+File sigillati: registry JSON + MD companion + stat_role_registry.py + round18_3d_apply_metadata.py + test suite
+Prossimo round consigliato: R18.3e (bridge IT↔EN) o R18.4 con caveat
+
 ## Stato attuale
 **Round 16.3 OFFICIALLY CLOSED ✅** — ciclo completo Fasi 1..8 V1 sigillato. Ciclo PvP (Phase 7A 1v1 + Phase 7B Leaderboard/Cosmetici) chiuso end-to-end. **Phase 8 V1 (Stalla cosmetica) chiusa** con Backend Iter1 + Frontend Iter2.
 

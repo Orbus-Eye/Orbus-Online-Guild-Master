@@ -1,5 +1,14 @@
 """R18.3d — Phase B3 · Apply Metadata (append-only SAFE fields).
 
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3d Phase B (documental-only) — 2026-07-05T18:05:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Closed as documental-only registry. No DB metadata apply executed.
+🔒 This script was NEVER executed with --apply. Preserved as documental
+🔒 artefact + guard hard-stop reference. Do NOT invoke --apply without
+🔒 explicit new PM gate.
+═══════════════════════════════════════════════════════════════════════
+
 Correzione Q10.b applicata: registry ora ha 27 classi canoniche + legacy
 separate. L'apply scope opera SOLO sull'intersezione:
 
