@@ -405,7 +405,7 @@ cd /app/backend && python -m app.scripts.round18_reset1b_rollback --confirm-roll
    - `r18_reset1b_applied = False`
    - `r18_reset1b_applied_at = None`
    - `r18_reset1b_banner_dismissed = None`
-   - ⚠️ **NOTA**: `gold/level/reputation` originali NON sono ripristinati automaticamente da questo step (guild non è in ARCHIVE_COLLECTIONS). Per restore completo dell'identity, serve JSONL manifest restore (round dedicato R18.Reset.1c hotfix se necessario). Per test dry-run, la roster restore è comunque sufficiente.
+   - ⚠️ **NOTA HARD BLOCKER**: `gold/level/reputation/prestige/resources/progression fields` originali NON sono ripristinati automaticamente da questo step (guild non è in ARCHIVE_COLLECTIONS). Per restore completo dell'identity serve `restore_from_jsonl_manifest.py` con verifica `sha256 manifest` — round dedicato **R18.Reset.1c**, che è **hard prerequisite blocker** (non opzionale) per l'apply reale di R18.Reset.1b.
 
 4. **Audit event**: emit `R18_FULL_GUILD_FRESH_START_ROLLED_BACK` con summary metadata
 
@@ -417,15 +417,28 @@ Stimato: **60-120 secondi** per ~7500 doc totali su 32 collections.
 
 **90 giorni minimi** su `_r18_archive` (P1-a). Nessun purge automatico. Cleanup richiede nuovo OK PM.
 
-### Limitazioni note
+### Limitazione nota rollback (senza R18.Reset.1c)
 
-- Guild fields originali (gold/level/reputation) non sono in ARCHIVE_COLLECTIONS. Rollback ripristina solo gli oggetti collection (adventurers, inventory, ecc.), non i field guild. Se PM vuole restore full-identity, serve `restore_from_jsonl_manifest.py` in un round dedicato.
+Il rollback da `_r18_archive` **NON ripristina automaticamente** i seguenti campi delle guild:
+
+- `gold`
+- `level`
+- `reputation`
+- `prestige`
+- `resources`
+- `progression fields` (qualsiasi campo state/progress dinamico)
+
+Questi campi sono modificati in-place durante l'apply (step S5 `_reset_guild_fields`) e richiedono restore da backup JSONL + `sha256 manifest` (round dedicato **R18.Reset.1c**).
+
+**R18.Reset.1c è hard prerequisite blocker** — non opzionale, non hotfix, non "se necessario". Nessuna scorciatoia è ammessa: l'apply reale di R18.Reset.1b resta bloccato finché R18.Reset.1c non è PASS e il tool `restore_from_jsonl_manifest.py` non è verificato in dry-run.
 
 ---
 
 ## 13. Expected Counts Post-Apply
 
-Confronto con snapshot R18.Reset.1a (2026-07-05T06:41Z):
+> ⚠️ **Nota importante — reference at plan-time.** I numeri riportati in questa sezione (672 guilds, 3314 adventurers pre-archive, 3360 adv regen, gold totale 4.083.608 → 67.200, 2016 potions) sono **reference at plan-time** derivati dallo snapshot R18.Reset.1a del 2026-07-05. **NON sono autorevoli.** Il count autorevole verrà rilevato al momento dell'apply reale tramite dry-run immediatamente-precedente e `manifest sha256`. Vedi sottosezione **Snapshot-at-Apply Rule** più sotto.
+
+Confronto con snapshot R18.Reset.1a (2026-07-05T06:41Z) — valori **reference at plan-time**, non autorevoli:
 
 | Metrica | Pre-apply (R18.Reset.1a) | Post-apply (atteso) | Delta |
 |---|---:|---:|---:|
@@ -448,6 +461,20 @@ Confronto con snapshot R18.Reset.1a (2026-07-05T06:41Z):
 ### Nota tolleranza test data
 
 Durante il round R18.Reset.1a → 1b, alcuni test agent hanno creato guild sintetiche (`orbus.onboarding - starter roster seeded: guild=... inserted=1..2`). Il conteggio finale può variare di ±20-50 doc rispetto a expected. Documentato per non fare false-positive nel tester brief.
+
+### Snapshot-at-Apply Rule
+
+I numeri qui riportati (672 guilds, 3314 adventurers pre-archive, 3360 adv regen, gold totale 4.083.608 → 67.200, 2016 potions) sono **reference at plan-time** (snapshot R18.Reset.1a del 2026-07-05). Il count autorevole verrà rilevato al momento dell'apply reale tramite dry-run immediatamente-precedente e verifica `manifest sha256`.
+
+**Protocollo obbligatorio pre-apply reale:**
+
+1. Eseguire `round18_reset1b_apply.py` in DRY_RUN immediatamente prima dell'apply reale.
+2. Generare snapshot/backup JSONL + `manifest.json` con `sha256` per ogni file.
+3. Usare i count del **manifest sha256** come **fonte autorevole** (non i numeri di questo piano, che sono `reference at plan-time`).
+4. **Bloccare l'apply** se il manifest non viene generato oppure se la verifica `sha256 manifest` fallisce.
+5. Riportare nel report finale post-apply i **count effettivi al momento apply**, non i reference at plan-time.
+
+**NON usare tolerance percentuale come criterio principale.** Il reset globale si basa su **snapshot effettivo** (`manifest sha256` at apply time), non su count statici del piano.
 
 ---
 
@@ -508,28 +535,56 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 
 ---
 
-## 16. Human Approval Gate
+## 16. Human Approval Gate — R18.Reset.1b APPLY
 
-⚠️ **REQUIRE PM SIGN-OFF BEFORE `--apply`** ⚠️
+⚠️ **APPLY BLOCKED until ALL of the following are satisfied (HARD BLOCKERS):** ⚠️
 
-Questo piano è **NON auto-approvato**. L'esecuzione reale di R18.Reset.1b richiede:
+1. ☐ **R18.Reset.1c** — Full Guild Reset Rollback Completeness **PASS**
+2. ☐ `restore_from_jsonl_manifest.py` **created and verified in dry-run mode** (con `sha256 manifest` reso obbligatorio)
+3. ☐ `sha256 manifest` verification protocol **PASS**
+4. ☐ **PM sign-off renewed after rollback review**
 
-1. Review del PM di questo documento (`/app/memory/r18_reset1b_full_guild_fresh_start_apply_plan.md`)
-2. Review degli script apply/rollback
-3. Nuovo brief PM con OK esplicito del tipo:
-   > "R18.Reset.1b APPROVATO. Esegui `--apply --i-understand-this-will-reset-all-guilds` con backup obbligatorio."
+**While these gates are NOT satisfied:**
 
-Finché questo brief non arriva, gli script restano nel repo ma **DEFAULT DRY-RUN**. Nessuna esecuzione automatica. Nessun git commit automatico.
+- **NO reset apply**
+- **NO archive apply**
+- **NO starter regen live**
+- **NO guild gold/resources reset**
+- **NO DB write**
+- **NO banner UI activation**
+- **NO audit event `R18_FULL_GUILD_FRESH_START_APPLIED` emission**
 
-### Blocker check pre-approval
+**Sign-off request format (for PM):**
 
-Il PM dovrebbe verificare almeno:
+> "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. Execute `--apply --i-understand-this-will-reset-all-guilds` with backup mandatory."
+
+Finché i 4 gate non sono tutti verdi, gli script restano nel repo ma **DEFAULT DRY-RUN**. Nessuna esecuzione automatica. Nessun git commit automatico.
+
+### Blocker check pre-approval (checklist review PM)
+
 - [ ] Slug potion (`minor_healing_potion`) accettabile
 - [ ] Retention 90gg minimi accettabile
 - [ ] Testo banner P2-a byte-exact accettabile
 - [ ] Warning `seed_round5` deferrito post-apply accettabile
-- [ ] Guild fields originali (gold/level/reputation) NON restoreabili da `_r18_archive` (solo da JSONL manifest) accettabile — se PM vuole full identity restore, serve round successivo dedicato
-- [ ] Zero UI change deploy in R18.Reset.1b (banner UI = round successivo)
+- [ ] Guild fields (`gold`, `level`, `reputation`, `prestige`, `resources`, `progression fields`) originali restoreabili SOLO tramite **R18.Reset.1c** (JSONL manifest + `sha256 manifest`) — hard prerequisite blocker confermato, non opzionale
+- [ ] Zero UI change deploy in R18.Reset.1b (banner UI = round successivo) accettabile
+- [ ] **Snapshot-at-Apply Rule** §13 accettabile (count autorevoli da `manifest sha256` at apply time, non da questo piano)
+
+---
+
+## 17. Scope Exclusions & HOLD/PAUSED Registry
+
+Round e task esplicitamente esclusi da R18.Reset.1b (in HOLD / PAUSED / CANDIDATE / BACKLOG):
+
+- **R18.1.3** — drift backfill (HOLD, obsoleto post-reset)
+- **R18.3d** — Stat/Role Mapping Registry (PAUSED, in attesa post-reset)
+- **R18.X-Traits** — Traits System Rework (HOLD, backlog P2)
+- **R18.X-Fatigue** — Fatigue/Kitchen (HOLD, backlog P2)
+- **R17.infra.smtp** — SMTP fix (HOLD, infra deferred)
+- **seed_round5** — starter_backfill patch (HOLD, P0-e: no pre-reset patch. Verifica post-apply)
+- **R18.3a.3** — seed_round5 symmetric patch (CANDIDATE, solo se warning persiste post-apply)
+- **R18.Reset.2** — Banner UI + Compensation cosmetic (CANDIDATE, founder badge / hall of fame se PM decide dopo reset)
+- **R18.Tooling** — Generalized Read-Only Live Snapshot Utility (**BACKLOG**, PM approved concept, deferred as "LATER" to avoid scope creep pre-rollback blocker. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
 
 ---
 

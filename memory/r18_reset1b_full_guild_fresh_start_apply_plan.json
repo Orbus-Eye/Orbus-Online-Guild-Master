@@ -187,9 +187,35 @@
       "time_to_rollback_seconds": 90,
       "retention_days_min": 90,
       "auto_purge": false,
-      "known_limitation": "guild fields (gold/level/reputation) original values NOT restorable from _r18_archive (guild not in ARCHIVE_COLLECTIONS). Full identity restore requires JSONL manifest restore in dedicated round."
+      "hard_prerequisite": "R18.Reset.1c",
+      "limitations": {
+        "note": "Il rollback da _r18_archive NON ripristina automaticamente i campi guild elencati sotto. Restore completo richiede JSONL manifest + sha256 manifest tramite round R18.Reset.1c (hard prerequisite blocker per l'apply di R18.Reset.1b, non opzionale).",
+        "affected_guild_fields": [
+          "gold",
+          "level",
+          "reputation",
+          "prestige",
+          "resources",
+          "progression_fields"
+        ]
+      },
+      "known_limitation": "guild fields (gold, level, reputation, prestige, resources, progression_fields) original values NOT restorable from _r18_archive (guild not in ARCHIVE_COLLECTIONS). Full identity restore REQUIRES JSONL manifest + sha256 manifest via R18.Reset.1c (hard prerequisite blocker, non opzionale, non hotfix)."
     },
     "section_13_expected_counts_post_apply": {
+      "reference_at_plan_time": true,
+      "authoritative": false,
+      "snapshot_at_apply_rule": {
+        "reference_snapshot_source": "R18.Reset.1a 2026-07-05",
+        "authority": "manifest_sha256_at_apply_time",
+        "protocol_steps": [
+          "immediate_dry_run_before_apply",
+          "generate_jsonl_manifest_with_sha256",
+          "manifest_counts_are_authoritative",
+          "block_apply_on_manifest_generation_or_sha256_failure",
+          "report_actual_counts_post_apply"
+        ],
+        "tolerance_policy": "no_percentage_tolerance_use_snapshot_effective"
+      },
       "guilds": {"pre": 672, "post": 672, "delta": "invariant"},
       "users": {"pre": 340, "post": 340, "delta": "invariant"},
       "adventurers_live": {"pre": 3314, "post": 3360, "delta_expected": "672*5 - 3314 + test_data_tolerance"},
@@ -222,16 +248,33 @@
       }
     },
     "section_16_human_approval_gate": {
-      "status": "REQUIRE_PM_SIGN_OFF_BEFORE_APPLY",
+      "status": "APPLY_BLOCKED_HARD_GATES_NOT_SATISFIED",
+      "hard_blockers": [
+        "R18.Reset.1c Full Guild Reset Rollback Completeness PASS",
+        "restore_from_jsonl_manifest.py created and verified in dry-run mode",
+        "sha256 manifest verification protocol PASS",
+        "PM sign-off renewed after rollback review"
+      ],
+      "while_blocked_prohibitions": [
+        "NO reset apply",
+        "NO archive apply",
+        "NO starter regen live",
+        "NO guild gold/resources reset",
+        "NO DB write",
+        "NO banner UI activation",
+        "NO audit event R18_FULL_GUILD_FRESH_START_APPLIED emission"
+      ],
       "review_checklist": [
         "slug potion (minor_healing_potion) accettabile",
         "retention 90gg minimi accettabile",
         "testo banner P2-a byte-exact accettabile",
         "warning seed_round5 deferrito post-apply accettabile",
-        "guild fields (gold/level/reputation) originali NON restoreabili da _r18_archive (solo da JSONL) accettabile",
-        "zero UI change deploy in R18.Reset.1b (banner UI = round successivo) accettabile"
+        "guild fields (gold, level, reputation, prestige, resources, progression fields) originali restoreabili SOLO tramite R18.Reset.1c (JSONL manifest + sha256 manifest) - hard prerequisite blocker confermato, non opzionale",
+        "zero UI change deploy in R18.Reset.1b (banner UI = round successivo) accettabile",
+        "Snapshot-at-Apply Rule sec.13 accettabile (count autorevoli da manifest sha256 at apply time, non da piano)"
       ],
-      "next_brief_pm_template": "R18.Reset.1b APPROVATO. Esegui --apply --i-understand-this-will-reset-all-guilds con backup obbligatorio."
+      "sign_off_request_format_for_pm": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory.",
+      "next_brief_pm_template": "R18.Reset.1b APPLY APPROVED. R18.Reset.1c PASS confirmed. Execute --apply --i-understand-this-will-reset-all-guilds with backup mandatory."
     }
   },
   "hold_paused_registry": [
@@ -242,7 +285,14 @@
     {"id": "R17.infra.smtp", "name": "SMTP fix", "status": "HOLD", "reason": "infra deferred"},
     {"id": "seed_round5", "name": "starter_backfill patch", "status": "HOLD", "reason": "P0-e: no pre-reset patch. Verifica post-apply."},
     {"id": "R18.3a.3", "name": "seed_round5 symmetric patch", "status": "CANDIDATE", "reason": "solo se warning persiste post-apply"},
-    {"id": "R18.Reset.2", "name": "Banner UI + Compensation cosmetic", "status": "CANDIDATE", "reason": "founder badge/hall of fame se PM decide dopo reset"}
+    {"id": "R18.Reset.2", "name": "Banner UI + Compensation cosmetic", "status": "CANDIDATE", "reason": "founder badge/hall of fame se PM decide dopo reset"},
+    {
+      "id": "R18.Tooling",
+      "name": "Generalized Read-Only Live Snapshot Utility",
+      "status": "BACKLOG",
+      "reason": "PM approved concept, deferred as 'LATER' to avoid scope creep pre-rollback blocker",
+      "candidate_after": ["R18.Reset.1c", "R18.Reset.1b apply", "R18.Reset.2"]
+    }
   ],
   "deliverables": [
     "/app/backend/app/scripts/round18_reset1b_apply.py",
