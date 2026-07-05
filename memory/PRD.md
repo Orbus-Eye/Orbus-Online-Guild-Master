@@ -1,5 +1,51 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## R18.3e — Canonical IT ↔ Legacy EN Class Bridge — CLOSED & SEALED (2026-07-05)
+
+**Round**: `R18.3e` (Legacy EN ↔ Canonical IT Class Bridge, Phase B post B2 real apply)
+**Chiusura**: 2026-07-05T20:15:00Z UTC — **CLOSED & SEALED** (autorità: PM Orchestrator)
+**Report finale**: `/app/memory/r18_3e_phase_b_final_closure_report.md`
+**Seal registry aggregato**: `/app/memory/r18_3e_seal_registry.json`
+
+### Sintesi
+- 18/18 doc `adventurer_classes` aggiornati con 5 SAFE bridge metadata field (`canonical_slug`, `alias_target`, `bridge_status`, `bridge_source_round`, `bridge_applied_at`).
+- Distribuzione: 9 mapped_canonical + 3 mapped_alias + 2 deprecated_alias + 2 canonical_native + 1 technical_placeholder + 1 test_artifact.
+- 1 audit event aggregato `R18_3E_BRIDGE_METADATA_APPLIED` (apply_id `35302c0c-98dc-4b3b-b5b2-f1646540b74a`, applied_at `2026-07-05T19:45:31Z`).
+- Rollback dry-run 18/18 PASS + backup pre-apply intatto.
+- e1_tester post-B2 4/4 macro-tests PASS.
+- 3 WARN accettati come governance notes documentate.
+
+### 5 nuovi sigilli R18.3e (SHA256 finali)
+1. `/app/memory/r18_3e_bridge_registry.json` → `44f30612c559385e0b44b3cefe785c879cd341ce2d7b64fa4e1fe71e577ee244`
+2. `/app/memory/r18_3e_bridge_registry.md` → `4161fdf657992742843ffabc093ed509d8aef5945c979fff0704e518a5449b66`
+3. `/app/backend/app/scripts/round18_3e_apply_bridge.py` → `942fe04070b1cf4f3763bc3e733889855960d3e6f46f8e191b93c11a7a10c7fd`
+4. `/app/backend/app/scripts/round18_3e_rollback_bridge.py` → `7c39bdc4db665e17ee2928dfa2a378527e59461186b9eb7eead200b4f3b1a26c`
+5. `/app/backend/tests/backend_r18_3e_bridge_test.py` → `6d948b716dd63387b21ca12fbaed2392278c902ef5823f4a26825fee8396f086`
+
+### Totale sigilli attivi post-seal
+**24** = 19 pre-esistenti byte-identical (14 R18.Reset.1b/1.2/1c + banner R18.Reset.2 contract-lock tests + 5 R18.3d Phase B) + 5 R18.3e nuovi.
+
+### 3 WARN accettati (governance notes)
+1. WARN 1: `bridge_source_round="R18.3e Phase B"` accettato come precisione phase-level, no normalization.
+2. WARN 2: expedition write side-effect dal tester (Campo d'Addestramento L1), non R18.3e-caused, no gameplay regression.
+3. WARN 3: dungeon label i18n → backlog `R18.Backlog — Dungeon Label i18n Consistency Review` (P3).
+
+### Regression result
+- 27/27 R18.3e bridge test PASS
+- 6/6 sealed/integrity PASS
+- 4/4 e1_tester post-B2 macro PASS
+- 0 regression sui 19 sigilli pre-esistenti
+
+### Backlog aperti/confermati dal round
+1. `R18.Backlog — Seed Idempotent Timestamp Churn Noise` (P3, da W1 investigation)
+2. `R18.Tooling — DryRun/Apply Path Readiness Gate` (P3, da W3 scope drift, già aperto)
+3. `R18.Backlog — Dungeon Label i18n Consistency Review` (P3, da WARN 3)
+
+### Prossimo round consigliato
+`R18.4 — Item class-bound player-facing` (P2, in attesa GO PM). Caveat: usare il bridge R18.3e come input documentale/metadata senza assumere che `class_slug` live sia canonical IT (i doc adventurers restano su legacy EN slug). `R18.3f — Class Slug Migration Planning` resta deferred.
+
+---
+
 ## R18.3d Phase B — CLOSED & SEALED (documental-only)
 Timestamp: 2026-07-05T18:06:50Z
 Nota: Closed as documental-only registry. No DB metadata apply executed.

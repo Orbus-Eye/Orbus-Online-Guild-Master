@@ -1,11 +1,26 @@
+<!--
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3e Phase B — 2026-07-05T20:15:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Bridge registry chiuso post B2 real apply (18/18 doc
+🔒 adventurer_classes, apply_id 35302c0c-98dc-4b3b-b5b2-f1646540b74a).
+🔒 e1_tester post-B2 4/4 PASS. 3 WARN accettati da PM (governance notes:
+🔒 bridge_source_round precisione, expedition write side-effect, dungeon
+🔒 label i18n backlog). APPLY_ENABLED sibling re-locked = False. Rollback
+🔒 sibling operativo (dry-run PASS 18/18). Byte-identical enforcement:
+🔒 verify manuale con sha256sum + registry aggregate.
+═══════════════════════════════════════════════════════════════════════
+-->
+
 # R18.3e Bridge Registry — Legacy EN ↔ Canonical IT Class Bridge
 
 - **Registry**: R18.3e Legacy EN ↔ Canonical IT Class Bridge
 - **Version**: R18.3e.v1
-- **Round**: R18.3e Phase B — Stage B1 (documental-only)
-- **Timestamp UTC**: `2026-07-05T18:39:19Z`
+- **Round**: R18.3e Phase B — Stage B2 (real apply completed & sealed)
+- **Timestamp UTC (creation)**: `2026-07-05T18:39:19Z`
+- **Timestamp UTC (SEAL)**: `2026-07-05T20:15:00Z`
 - **Seal Authority**: PM Orchestrator
-- **Seal Status**: `OPEN_STAGE_B1_DOCUMENTAL_ONLY` (in attesa di gate PM per B2 apply reale)
+- **Seal Status**: `CLOSED_AND_SEALED_R18_3E_PHASE_B` (post B2 apply reale + tester 4/4 PASS)
 - **Reference decision lock**: `/app/memory/r18_3e_phase_b_pm_decisions.md`
 - **Reference discovery Phase A**: `/app/memory/r18_3e_phase_a_legacy_canonical_bridge_discovery.md`
 - **Reference canonical set (R18.3d)**: `/app/memory/r18_3d_stat_role_mapping_registry.json`

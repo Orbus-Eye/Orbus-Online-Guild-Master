@@ -1,5 +1,17 @@
 """ROUND 18.3e Phase B — Bridge Registry Test Suite (15 punti minimo).
 
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3e Phase B — 2026-07-05T20:15:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Contract lock documentale del test suite R18.3e Phase B.
+🔒 15 test PASS (breakdown: cross-ref canonical R18.3d/3e, bridge_status
+🔒 registry, hard-stop guard, APPLY_ENABLED=False lock, sealed integrity
+🔒 16 file, canonical_it_set_27_locked coherence). Test suite READ-ONLY:
+🔒 nessuna scrittura DB, nessun runtime wiring. Enforcement rimane
+🔒 documentale (banner header). Byte-identical enforcement: verify
+🔒 manuale con sha256sum + aggregate seal registry R18.3e.
+═══════════════════════════════════════════════════════════════════════
+
 Test suite dedicata al registry documentale R18.3e (Legacy EN ↔ Canonical IT).
 Tutti i test sono READ-ONLY: nessuna scrittura DB, nessun runtime wiring.
 
@@ -80,7 +92,8 @@ def test_02_registry_schema_valid(registry):
     meta = registry["meta"]
     assert meta["round"] == "R18.3e"
     assert meta["phase"] == "B"
-    assert meta["stage"] == "B1_documental_only"
+    assert meta["stage"] == "B2_real_apply_completed_and_sealed"
+    assert meta["seal_status"] == "CLOSED_AND_SEALED_R18_3E_PHASE_B"
     assert meta["runtime_wired"] is False
     assert meta["governance"]["audit_event_emitted"] is False
     assert meta["governance"]["player_facing_change"] is False

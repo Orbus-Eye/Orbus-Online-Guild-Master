@@ -1,8 +1,20 @@
 """
-ROUND 18.3e — Phase B Stage B2 — Legacy↔Canonical Bridge Dry-Run Script
+ROUND 18.3e — Phase B Stage B2 — Legacy↔Canonical Bridge Apply Script
 ========================================================================
 
-**Status**: DRY-RUN ONLY. `APPLY_ENABLED = False`. Zero DB write.
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3e Phase B — 2026-07-05T20:15:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: B2 real apply completato (18/18 doc adventurer_classes,
+🔒 apply_id 35302c0c-98dc-4b3b-b5b2-f1646540b74a, applied_at
+🔒 2026-07-05T19:45:31Z). APPLY_ENABLED re-locked = False post-apply.
+🔒 Static verification confirms zero item rewrite (grep db.items = 0,
+🔒 audit item_rewrite=false). e1_tester post-B2 4/4 PASS.
+🔒 Do NOT flip APPLY_ENABLED without explicit new PM gate.
+🔒 Byte-identical enforcement: verify manuale con sha256sum.
+═══════════════════════════════════════════════════════════════════════
+
+**Status**: SEALED. `APPLY_ENABLED = False` (re-locked). Zero DB write.
 
 **Purpose**:
     Genera il payload $set per 5 SAFE bridge metadata field su `adventurer_classes`

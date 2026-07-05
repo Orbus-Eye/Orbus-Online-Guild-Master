@@ -7,6 +7,22 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] R18.Backlog — Seed Idempotent Timestamp Churn Noise
+Origine: R18.3e Phase B W1 investigation (delta items +5 post-B2)
+Obiettivo: evitare o ridurre churn non necessario su collezioni seedate quando un hot-reload backend riesegue seed idempotenti.
+Priorità: P3
+Status: BACKLOG
+
+---
+
+### [BACKLOG] R18.Backlog — Dungeon Label i18n Consistency Review
+Origine: R18.3e Phase B WARN 3 (tester browser rilevò dungeon label IT nonostante scelta i18n EN)
+Obiettivo: allineare comportamento i18n frontend sui dungeon label (rispettare la lingua selezionata dall'utente).
+Priorità: P3
+Status: BACKLOG
+
+---
+
 ### [BACKLOG] R18.Tooling — DryRun/Apply Path Readiness Gate
 Origine: R18.3e Phase B W3 (apply_real() stub scoperto in fase apply reale)
 Obiettivo: policy che i sibling script dry-run debbano dichiarare esplicitamente nel gate pre-apply se il write path è implementato o stubbed, evitando scope drift durante l'apply reale.

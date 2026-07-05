@@ -4,12 +4,32 @@
     "registry_version": "R18.3e.v1",
     "round": "R18.3e",
     "phase": "B",
-    "stage": "B1_documental_only",
+    "stage": "B2_real_apply_completed_and_sealed",
     "source_round": "R18.3e Phase B",
     "generated_at_utc": "2026-07-05T18:39:19Z",
+    "sealed_at_utc": "2026-07-05T20:15:00Z",
     "seal_authority": "PM Orchestrator",
-    "seal_status": "OPEN_STAGE_B1_DOCUMENTAL_ONLY",
-    "seal_note": "Registry documental-only, unwired. No DB apply. Awaiting PM gate for B2 real apply.",
+    "seal_status": "CLOSED_AND_SEALED_R18_3E_PHASE_B",
+    "seal_note": "Registry sealed post B2 real apply (18/18 doc adventurer_classes, apply_id 35302c0c-98dc-4b3b-b5b2-f1646540b74a, applied_at 2026-07-05T19:45:31Z). e1_tester post-B2 4/4 PASS. 3 WARN accepted by PM as governance notes. APPLY_ENABLED re-locked = False. Rollback sibling operational (dry-run 18/18 PASS). Byte-identical enforcement: manual sha256sum + aggregate seal registry.",
+    "b2_apply_record": {
+      "apply_id": "35302c0c-98dc-4b3b-b5b2-f1646540b74a",
+      "applied_at_utc": "2026-07-05T19:45:31Z",
+      "target_count": 18,
+      "modified_count": 18,
+      "item_rewrite": false,
+      "adventurer_rewrite": false,
+      "migration_slug_rewrite": false,
+      "runtime_wiring": false
+    },
+    "post_b2_regression": {
+      "e1_tester_result": "4/4 PASS",
+      "macro_tests": ["M1_M4_DB_metadata", "M2_HTTP_API_healthy", "M3_no_UI_label_change", "M5_M6_audit_rollback_sealed"],
+      "warn_accepted_pm": [
+        "WARN1_bridge_source_round_uses_phase_precision",
+        "WARN2_expedition_write_by_tester_no_regression",
+        "WARN3_dungeon_label_i18n_backlog_P3"
+      ]
+    },
     "reference_decision_lock": "/app/memory/r18_3e_phase_b_pm_decisions.json",
     "reference_phase_a_discovery": "/app/memory/r18_3e_phase_a_legacy_canonical_bridge_discovery.md",
     "reference_r18_3d_canonical_set": "/app/memory/r18_3d_stat_role_mapping_registry.json",

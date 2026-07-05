@@ -2,7 +2,17 @@
 ROUND 18.3e — Rollback Bridge Metadata Sibling Script
 ======================================================
 
-**Status**: sibling di `round18_3e_apply_bridge.py`. Default DRY-RUN.
+═══════════════════════════════════════════════════════════════════════
+🔒 CLOSED & SEALED — R18.3e Phase B — 2026-07-05T20:15:00Z UTC
+🔒 SEAL AUTHORITY: PM Orchestrator
+🔒 SEAL NOTE: Rollback sibling di apply_bridge.py. Dry-run 18/18 PASS
+🔒 verificato post-B2. Default DRY-RUN preserved. Real rollback richiede
+🔒 doppio flag (--apply + --i-understand-this-will-unset-bridge-metadata)
+🔒 e nuovo gate PM esplicito. Rollback source-of-truth per emergency-only.
+🔒 Byte-identical enforcement: verify manuale con sha256sum.
+═══════════════════════════════════════════════════════════════════════
+
+**Status**: SEALED. Default DRY-RUN. Sibling di `round18_3e_apply_bridge.py`.
 Se lanciato con `--apply --i-understand-this-will-unset-bridge-metadata`, esegue
 $unset simmetrico dei 5 SAFE bridge metadata field sui 18 doc adventurer_classes.
 
