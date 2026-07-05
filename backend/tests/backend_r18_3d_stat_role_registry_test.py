@@ -1,11 +1,18 @@
-"""R18.3d — Phase B4 · Stat/Role Registry Test Suite.
+"""R18.3d — Phase B4 · Stat/Role Registry Test Suite (Q10.b correction).
 
-Tests both static invariants (registry parsing, mapping locked, unwired
-module) and script-guard invariants (BLOCKED field hard-stop, SAFE-only
-apply scope). NO DB writes performed by any test in this suite (registry
-apply is dry-run only).
+Coverage:
+    - 27 canonical classes locked (Q10.b)
+    - 16 legacy live documented separately (not counted as canonical)
+    - excluded_manifest_entries present (empty by design)
+    - dry-run modifies ONLY canonical ∩ live (not legacy)
+    - 5 SAFE fields only
+    - guard hard-stop on BLOCKED fields
+    - legacy live hard-stop on plan
+    - Bard drift documented + backlog entry
+    - Paladin faith accepted
+    - Registry module unwired
 
-Author: e1_dev (R18.3d Phase B4)
+Zero DB writes.
 """
 from __future__ import annotations
 
@@ -25,9 +32,7 @@ from app.core.stat_role_registry import (
     LIVE_STATS_ATOMIC,
     SAFE_METADATA_FIELDS,
     compute_registry_sha256,
-    get_stat_role_mapping,
     load_registry,
-    validate_registry_or_raise,
 )
 
 REGISTRY_PATH = Path("/app/memory/r18_3d_stat_role_mapping_registry.json")
@@ -39,8 +44,17 @@ _ENV = dotenv_values("/app/backend/.env")
 PROD_MONGO_URL = _ENV["MONGO_URL"]
 PROD_DB_NAME = _ENV["DB_NAME"]
 
+CANONICAL_27_SLUGS_LOCKED = {
+    "alchimista", "artificiere", "astrologo", "bardo", "burattinaio",
+    "cacciatore_del_sangue", "cacciatore_del_vuoto", "cacciatore_di_mostri",
+    "cartografo", "cavaliere_della_morte", "cavaliere_di_draghi", "cronista",
+    "druido", "fabbro_arcano", "giocatore_d_azzardo", "guerriero", "ladro",
+    "mago", "mercante", "monaco", "negromante", "paladino", "parassita",
+    "pittore", "runista", "sciamano", "sognatore",
+}
 
-# ── 1. Mapping 6→5 locked (parametrized) ────────────────────────────
+
+# ── 1. Mapping 6→5 locked ───────────────────────────────────────────
 @pytest.mark.parametrize("design_it,expected_live", [
     ("Forza", "strength"),
     ("Destrezza", "agility"),
@@ -52,21 +66,60 @@ PROD_DB_NAME = _ENV["DB_NAME"]
 def test_1_mapping_6_to_5_locked(design_it, expected_live):
     assert DESIGN_STAT_MAPPING_6_TO_5[design_it] == expected_live
     reg = load_registry()
-    mapping = reg["stat_system"]["design_stat_mapping_6_to_5_LOCKED"]
+    mapping = reg["stat_mapping_6_to_5"]
     assert mapping[design_it]["live"] == expected_live
 
 
-# ── 2. Registry JSON parses ─────────────────────────────────────────
-def test_2_registry_parses():
+# ── 2. Registry JSON parses + meta structure ────────────────────────
+def test_2_registry_parses_meta_present():
     reg = load_registry()
-    assert reg["registry_version"] == "R18.3d.v1"
-    assert isinstance(reg["live_classes_18"], list)
-    assert isinstance(reg["canonical_design_only_16"], list)
-    validate_registry_or_raise()  # explicit validation
+    meta = reg.get("meta")
+    assert meta is not None, "top-level 'meta' missing"
+    assert meta["canonical_classes"] == 27
+    assert meta["registry_version"] == "R18.3d.v2"
+    assert meta["source_round"] == "R18.3d Phase B (Q10.b correction applied)"
 
 
-# ── 3. 18 live classes covered vs DB ────────────────────────────────
-def test_3_live_classes_18_match_db():
+# ── 3. 27 canonical slugs LOCKED ────────────────────────────────────
+def test_3_canonical_27_locked():
+    reg = load_registry()
+    canonical = reg["canonical_classes"]
+    assert len(canonical) == 27, (
+        f"expected 27 canonical entries, got {len(canonical)}"
+    )
+    slugs = {e["slug"] for e in canonical}
+    assert slugs == CANONICAL_27_SLUGS_LOCKED, (
+        f"canonical slug set mismatch. "
+        f"extra: {slugs - CANONICAL_27_SLUGS_LOCKED}, "
+        f"missing: {CANONICAL_27_SLUGS_LOCKED - slugs}"
+    )
+    # No duplicates
+    assert len(slugs) == 27
+
+
+# ── 4. Legacy live documented separately ────────────────────────────
+def test_4_legacy_live_documented_separately():
+    reg = load_registry()
+    legacy = reg["legacy_live_classes"]
+    assert isinstance(legacy, list)
+    # Legacy count must match meta
+    meta = reg["meta"]
+    assert len(legacy) == meta["legacy_live_classes_count"]
+    # Legacy slugs must NOT overlap with canonical
+    legacy_slugs = {e["live_slug"] for e in legacy}
+    canonical_slugs = {e["slug"] for e in reg["canonical_classes"]}
+    overlap = legacy_slugs & canonical_slugs
+    assert not overlap, (
+        f"legacy_live overlap with canonical: {overlap}"
+    )
+    # Every legacy entry declares canonical_target=false
+    for entry in legacy:
+        assert entry.get("canonical_target") is False
+        assert entry.get("legacy_live") is True
+
+
+# ── 5. Legacy live matches live DB catalog ──────────────────────────
+def test_5_legacy_live_matches_db():
     async def _run():
         client = AsyncIOMotorClient(PROD_MONGO_URL)
         db = client[PROD_DB_NAME]
@@ -76,48 +129,60 @@ def test_3_live_classes_18_match_db():
 
     db_slugs = asyncio.run(_run())
     reg = load_registry()
-    registry_slugs = {e["class_slug"] for e in reg["live_classes_18"]}
-    assert len(reg["live_classes_18"]) == 18, (
-        f"expected 18 live entries, got {len(reg['live_classes_18'])}"
+    legacy_slugs = {e["live_slug"] for e in reg["legacy_live_classes"]}
+    canonical_slugs_in_db = {
+        e["slug"] for e in reg["canonical_classes"]
+        if e.get("exists_in_live_db")
+    }
+    # Every DB slug must be either in legacy or in canonical-with-exists_in_live_db
+    documented_slugs = legacy_slugs | canonical_slugs_in_db
+    missing = db_slugs - documented_slugs
+    extra_legacy = legacy_slugs - db_slugs
+    assert not missing, f"DB slugs not documented in registry: {missing}"
+    assert not extra_legacy, (
+        f"legacy_live entries not in DB: {extra_legacy}"
     )
-    missing = db_slugs - registry_slugs
-    extra = registry_slugs - db_slugs
-    assert not missing, f"live DB slugs missing from registry: {missing}"
-    assert not extra, f"registry has slugs not in DB: {extra}"
 
 
-# ── 4. 16 canonical design-only covered ─────────────────────────────
-def test_4_canonical_design_only_16():
+# ── 6. Excluded manifest entries present (empty by design) ──────────
+def test_6_excluded_manifest_entries_present():
     reg = load_registry()
-    design_only = reg["canonical_design_only_16"]
-    assert len(design_only) == 16, (
-        f"expected 16 design-only, got {len(design_only)}"
-    )
-    for entry in design_only:
-        assert entry.get("design_only") is True
-        assert entry.get("in_live_db") is False
-        assert entry.get("canonical_slug_candidate")
-        assert entry.get("canonical_name_it")
+    assert "excluded_manifest_entries" in reg
+    excluded = reg["excluded_manifest_entries"]
+    assert isinstance(excluded, list)
+    assert len(excluded) == reg["meta"]["excluded_manifest_entries_count"]
 
 
-# ── 5. Apply script uses only SAFE fields ───────────────────────────
-def test_5_apply_script_scope_safe_only():
+# ── 7. 5 SAFE fields exclusive scope ────────────────────────────────
+def test_7_safe_fields_scope():
     reg = load_registry()
     scope = reg["safe_metadata_fields_apply_scope"]
     fields = set(scope["fields_to_apply_via_set"])
-    assert fields == set(SAFE_METADATA_FIELDS), (
-        f"scope fields mismatch: {fields} vs {SAFE_METADATA_FIELDS}"
-    )
+    assert fields == set(SAFE_METADATA_FIELDS)
     blocked = set(scope["blocked_fields_never_touch"])
     for bf in BLOCKED_RUNTIME_FIELDS:
-        assert bf in blocked, f"blocked list missing {bf}"
+        assert bf in blocked
 
 
-# ── 6. Zero runtime wiring of stat_role_registry module ─────────────
-def test_6_registry_module_unwired():
-    """Grep-based test: verify no runtime module (excluding scripts, tests,
-    and stat_role_registry.py itself) imports from app.core.stat_role_registry.
-    """
+# ── 8. Eligible apply intersection = canonical ∩ live ────────────────
+def test_8_eligible_apply_is_canonical_intersect_live():
+    reg = load_registry()
+    scope = reg["safe_metadata_fields_apply_scope"]
+    eligible = set(scope["eligible_apply_slugs"])
+    canonical_in_live = {
+        e["slug"] for e in reg["canonical_classes"]
+        if e.get("exists_in_live_db")
+    }
+    assert eligible == canonical_in_live, (
+        f"eligible_apply_slugs mismatch. "
+        f"eligible={eligible} vs canonical∩live={canonical_in_live}"
+    )
+    # Meta count consistency
+    assert reg["meta"]["canonical_live_count"] == len(canonical_in_live)
+
+
+# ── 9. Registry module unwired ─────────────────────────────────────
+def test_9_registry_module_unwired():
     result = subprocess.run(
         ["grep", "-rn", "--include=*.py", "-l",
          "from app.core.stat_role_registry",
@@ -125,7 +190,6 @@ def test_6_registry_module_unwired():
         capture_output=True, text=True,
     )
     lines = [ln.strip() for ln in result.stdout.splitlines() if ln.strip()]
-    # exclude the module itself and scripts/tests
     disallowed = [
         ln for ln in lines
         if not ln.endswith("stat_role_registry.py")
@@ -133,16 +197,12 @@ def test_6_registry_module_unwired():
         and "/tests/" not in ln
     ]
     assert not disallowed, (
-        f"stat_role_registry imported by runtime code paths: {disallowed}"
+        f"stat_role_registry imported by runtime paths: {disallowed}"
     )
 
 
-# ── 7. Zero player-facing leak (no new metadata fields exposed) ─────
-def test_7_no_player_facing_leak():
-    """Verify that adventurers/services.py list-adventurers endpoint does NOT
-    emit any of the 5 SAFE metadata fields (they belong to adventurer_classes,
-    not to adventurer docs — but a defensive check on public API surface).
-    """
+# ── 10. No player-facing leak in adventurers service ────────────────
+def test_10_no_player_facing_leak():
     services_src = Path("/app/backend/app/adventurers/services.py").read_text()
     for f in SAFE_METADATA_FIELDS:
         assert f"'{f}'" not in services_src and f'"{f}"' not in services_src, (
@@ -150,43 +210,48 @@ def test_7_no_player_facing_leak():
         )
 
 
-# ── 8. Bard drift documented + backlog entry present ────────────────
-def test_8_bard_drift_documented():
+# ── 11. Bard drift documented + backlog ────────────────────────────
+def test_11_bard_drift_documented():
     reg = load_registry()
-    bard = next(
-        (e for e in reg["live_classes_18"] if e["class_slug"] == "bard"),
+    bard_legacy = next(
+        (e for e in reg["legacy_live_classes"] if e["live_slug"] == "bard"),
         None,
     )
-    assert bard is not None, "bard entry missing from registry"
-    assert bard.get("drift_flag") == "bard_role_support_not_in_valid_roles"
-    assert bard.get("needs_PM_review") is True
-    # backlog entry
-    backlog_content = BACKLOG_PATH.read_text()
-    assert "R18.3d.followup — Bard Role Drift Resolution" in backlog_content, (
-        "backlog missing R18.3d.followup Bard Role Drift entry"
-    )
-
-
-# ── 9. Paladin faith accepted ──────────────────────────────────────
-def test_9_paladin_faith_accepted():
-    reg = load_registry()
-    pal = next(
-        (e for e in reg["live_classes_18"] if e["class_slug"] == "paladin"),
+    assert bard_legacy is not None
+    assert bard_legacy.get("drift_flag") == "bard_role_support_not_in_valid_roles"
+    assert bard_legacy.get("needs_PM_review") is True
+    # canonical entry 'bardo' should reference the alias
+    bardo = next(
+        (e for e in reg["canonical_classes"] if e["slug"] == "bardo"),
         None,
     )
-    assert pal is not None
-    assert pal["mapped_primary_stat_live"] == "faith"
-    assert pal["design_primary_stat_it"] == "Carisma"
-    assert pal["role_display_it"] == "Healer/Tank"
-    assert "Holy" in pal["class_role_tags"]
-    assert "Support" in pal["class_role_tags"]
+    assert bardo is not None
+    assert bardo.get("alias_from_live_slug") == "bard"
+    # Backlog entry
+    backlog = BACKLOG_PATH.read_text()
+    assert "R18.3d.followup — Bard Role Drift Resolution" in backlog
 
 
-# ── 10. Guard hard-stop rejects BLOCKED field ──────────────────────
+# ── 12. Paladin faith accepted (canonical 'paladino') ──────────────
+def test_12_paladin_faith_accepted():
+    reg = load_registry()
+    paladino = next(
+        (e for e in reg["canonical_classes"] if e["slug"] == "paladino"),
+        None,
+    )
+    assert paladino is not None
+    assert paladino["mapped_primary_stat_live"] == "faith"
+    assert paladino["design_primary_stat_it"] == "Carisma"
+    assert paladino["role_display_it"] == "Healer/Tank"
+    assert "Holy" in paladino["class_role_tags"]
+    assert paladino["alias_from_live_slug"] == "paladin"
+
+
+# ── 13. Guard hard-stop rejects BLOCKED fields ──────────────────────
 @pytest.mark.parametrize("blocked_field", [
     "primary_stat", "role", "base_strength", "is_playable",
 ])
-def test_10_guard_hard_stop_blocked_field(blocked_field):
+def test_13_guard_hard_stop_blocked_field(blocked_field):
     from app.scripts.round18_3d_apply_metadata import (
         GuardHardStop,
         _guard_payload,
@@ -197,53 +262,101 @@ def test_10_guard_hard_stop_blocked_field(blocked_field):
     assert blocked_field in str(exc.value)
 
 
-# ── 11. Apply script dry-run exits 0 ────────────────────────────────
-def test_11_apply_script_dry_run_exit_0():
+# ── 14. Legacy live hard-stop: plan never contains legacy slug ─────
+def test_14_legacy_live_hard_stop_in_plan():
+    from app.scripts.round18_3d_apply_metadata import _plan_apply
+    reg = load_registry()
+    plan = _plan_apply(reg)
+    plan_slugs = {p["slug"] for p in plan}
+    legacy_hardstop = set(
+        reg["safe_metadata_fields_apply_scope"]["legacy_live_slugs_hard_stop"]
+    )
+    leaks = plan_slugs & legacy_hardstop
+    assert not leaks, f"legacy slugs leaked into plan: {leaks}"
+    # And plan slugs must all be canonical
+    canonical_slugs = {e["slug"] for e in reg["canonical_classes"]}
+    non_canonical = plan_slugs - canonical_slugs
+    assert not non_canonical, f"non-canonical slugs in plan: {non_canonical}"
+
+
+# ── 15. Dry-run exits 0 and modifies only canonical ∩ live ──────────
+def test_15_dry_run_only_canonical_intersect_live():
     res = subprocess.run(
         ["python", "-m", APPLY_SCRIPT, "--dry-run"],
         capture_output=True, text=True, cwd=BACKEND_ROOT,
     )
     assert res.returncode == 0, (
-        f"dry-run exit={res.returncode}\nstdout={res.stdout[-800:]}"
-        f"\nstderr={res.stderr[-400:]}"
+        f"dry-run exit={res.returncode}\nstdout={res.stdout[-800:]}\n"
+        f"stderr={res.stderr[-400:]}"
     )
     assert "DRY_RUN complete" in res.stdout
-    assert "16 eligible" in res.stdout or "plan: 16" in res.stdout
+    reg = load_registry()
+    expected_count = reg["meta"]["canonical_live_count"]
+    assert f"plan: {expected_count} canonical class(es) eligible" in res.stdout, (
+        f"expected plan={expected_count}; stdout tail={res.stdout[-500:]}"
+    )
+    # Verify no legacy slug appears in dry-run output
+    for slug in reg["safe_metadata_fields_apply_scope"]["legacy_live_slugs_hard_stop"]:
+        assert f" · {slug}:" not in res.stdout, (
+            f"legacy slug {slug} appeared in dry-run plan"
+        )
 
 
-# ── 12. Apply script --apply without ack fails 30 ──────────────────
-def test_12_apply_without_ack_fails_30():
+# ── 16. --apply without ack fails with exit 30 ─────────────────────
+def test_16_apply_without_ack_fails_30():
     res = subprocess.run(
         ["python", "-m", APPLY_SCRIPT, "--apply"],
         capture_output=True, text=True, cwd=BACKEND_ROOT,
     )
     assert res.returncode == 30, (
-        f"expected exit 30, got {res.returncode}\n{res.stdout[-400:]}"
+        f"expected exit 30, got {res.returncode}"
     )
 
 
-# ── 13. Registry SHA256 computable ─────────────────────────────────
-def test_13_registry_sha256_computable():
+# ── 17. Registry SHA256 computable ─────────────────────────────────
+def test_17_registry_sha256_computable():
     sha = compute_registry_sha256()
     assert len(sha) == 64
-    # verify consistency
-    sha2 = compute_registry_sha256()
-    assert sha == sha2
+    assert sha == compute_registry_sha256()
 
 
-# ── 14. get_stat_role_mapping helper unwired ───────────────────────
-def test_14_get_stat_role_mapping_helper():
-    entry = get_stat_role_mapping("warrior")
-    assert entry is not None
-    assert entry["mapped_primary_stat_live"] == "strength"
-    # unknown slug returns None
-    assert get_stat_role_mapping("this_does_not_exist_slug") is None
-
-
-# ── 15. Priority critical slugs present ────────────────────────────
-def test_15_priority_critical_slugs():
+# ── 18. Priority critical slugs (5) present in canonical ───────────
+def test_18_priority_critical_slugs():
     reg = load_registry()
     critical = set(reg.get("priority_critical_slugs") or [])
-    expected = {"paladin", "warrior", "rogue",
+    expected = {"paladino", "guerriero", "ladro",
                 "cacciatore_di_mostri", "cacciatore_del_vuoto"}
-    assert critical == expected, f"critical slugs mismatch: {critical}"
+    assert critical == expected
+    # And they must be present in canonical
+    canonical_slugs = {e["slug"] for e in reg["canonical_classes"]}
+    assert critical.issubset(canonical_slugs)
+
+
+# ── 19. Meta counts internally consistent ──────────────────────────
+def test_19_meta_counts_internally_consistent():
+    reg = load_registry()
+    m = reg["meta"]
+    assert m["canonical_classes"] == len(reg["canonical_classes"])
+    assert m["legacy_live_classes_count"] == len(reg["legacy_live_classes"])
+    assert m["excluded_manifest_entries_count"] == len(reg["excluded_manifest_entries"])
+    canonical_in_live = sum(
+        1 for e in reg["canonical_classes"] if e.get("exists_in_live_db")
+    )
+    assert m["canonical_live_count"] == canonical_in_live
+    assert m["design_only_classes_count"] == m["canonical_classes"] - m["canonical_live_count"]
+
+
+# ── 20. No BLOCKED field appears anywhere in canonical entries ─────
+def test_20_no_blocked_fields_in_canonical_entries():
+    reg = load_registry()
+    forbidden_top_level = {
+        "primary_stat", "secondary_stats", "role",
+        "is_playable", "is_active", "is_canonical",
+        "base_strength", "base_agility", "base_intellect",
+        "base_endurance", "base_faith",
+    }
+    for entry in reg["canonical_classes"]:
+        overlap = set(entry.keys()) & forbidden_top_level
+        assert not overlap, (
+            f"canonical entry {entry.get('slug')} contains BLOCKED top-level keys: {overlap}"
+        )

@@ -1,10 +1,13 @@
 """R18.3d — Phase B3 · Apply Metadata (append-only SAFE fields).
 
-SIBLING SCRIPT — NOT SEALED YET. Sealing is B5 gate (PM approval).
+Correzione Q10.b applicata: registry ora ha 27 classi canoniche + legacy
+separate. L'apply scope opera SOLO sull'intersezione:
 
-Purpose: append 5 SAFE metadata fields from
-`/app/memory/r18_3d_stat_role_mapping_registry.json` to eligible live
-`adventurer_classes` documents. Zero runtime touch.
+    canonical_classes ∩ live_catalog (via `exists_in_live_db=true`)
+
+Legacy live classes sono documentate ma NON toccate (guard esplicito).
+
+SIBLING SCRIPT — NOT SEALED YET. Sealing è B5 gate (PM approval).
 
 Fields applied via `$set` (append-only):
     * role_display_it
@@ -18,8 +21,8 @@ BLOCKED fields (guard hard-stop, fail-fast):
     base_intellect, base_endurance, base_faith, is_playable, is_active,
     is_canonical
 
-Skip list (registry-side skip_apply=true):
-    recruit_unassigned, test-class-5e0064
+Legacy live hard-stop: qualsiasi slug in `legacy_live_slugs_hard_stop`
+del registry provoca un rifiuto immediato (exit 22).
 
 CLI:
     python -m app.scripts.round18_3d_apply_metadata --dry-run        # default
@@ -30,18 +33,18 @@ Exit codes:
     0   OK (dry-run or apply successful)
     20  registry file missing / invalid
     21  guard hard-stop triggered (BLOCKED field in payload)
+    22  legacy live slug leaked into apply plan
     30  --apply without ack flag
     31  backup path failure
     40  DB error
 
-Author: e1_dev (R18.3d Phase B3)
+Author: e1_dev (R18.3d Phase B3, corr. Q10.b)
 """
 from __future__ import annotations
 
 import argparse
 import asyncio
 import json
-import os
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -77,12 +80,15 @@ BLOCKED_FIELDS = {
     "VALID_ROLES",
 }
 
-SKIP_SLUGS = {"recruit_unassigned", "test-class-5e0064"}
 SOURCE_ROUND_TAG = "R18.3d Phase B"
 
 
 class GuardHardStop(RuntimeError):
     """Raised when payload attempts to touch a BLOCKED field."""
+
+
+class LegacyLiveLeak(RuntimeError):
+    """Raised when apply plan includes a legacy live slug."""
 
 
 def _guard_payload(payload: dict[str, Any]) -> None:
@@ -94,7 +100,6 @@ def _guard_payload(payload: dict[str, Any]) -> None:
 
 
 def _build_payload_for(entry: dict[str, Any]) -> dict[str, Any]:
-    """Return $set payload for one class entry (SAFE fields only)."""
     payload: dict[str, Any] = {
         "role_display_it": entry.get("role_display_it"),
         "class_role_tags": entry.get("class_role_tags") or [],
@@ -117,22 +122,43 @@ def _load_registry() -> dict[str, Any]:
 
 
 def _plan_apply(registry: dict[str, Any]) -> list[dict[str, Any]]:
-    """Build plan of (slug, payload) items for eligible live classes."""
+    """Build apply plan for canonical classes that exist in live DB.
+    Legacy live classes are NEVER included in the plan (guard).
+    """
+    scope = registry.get("safe_metadata_fields_apply_scope") or {}
+    eligible = set(scope.get("eligible_apply_slugs") or [])
+    legacy_hardstop = set(scope.get("legacy_live_slugs_hard_stop") or [])
+
     plan: list[dict[str, Any]] = []
-    for entry in registry.get("live_classes_18", []):
-        slug = entry.get("class_slug")
-        if not slug or slug in SKIP_SLUGS or entry.get("skip_apply"):
+    for entry in registry.get("canonical_classes", []):
+        slug = entry.get("slug")
+        if not slug:
+            continue
+        if slug in legacy_hardstop:
+            # canonical slugs should never overlap with legacy hardstop;
+            # if this ever happens, fail fast
+            raise LegacyLiveLeak(
+                f"canonical slug {slug!r} appears in legacy_live_slugs_hard_stop"
+            )
+        if not entry.get("exists_in_live_db"):
+            continue
+        if eligible and slug not in eligible:
             continue
         payload = _build_payload_for(entry)
         _guard_payload(payload)
-        plan.append({"class_slug": slug, "payload": payload})
+        plan.append({"slug": slug, "payload": payload})
+
+    # Belt & suspenders: verify no legacy slug ends up in plan.
+    plan_slugs = {p["slug"] for p in plan}
+    leaks = plan_slugs & legacy_hardstop
+    if leaks:
+        raise LegacyLiveLeak(
+            f"legacy slugs leaked into apply plan: {sorted(leaks)}"
+        )
     return plan
 
 
 async def _snapshot_pre_apply(db, slugs: list[str], backup_dir: Path) -> Path:
-    """Save read-only snapshot of eligible docs before apply.
-    Returns path to snapshot file.
-    """
     backup_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     snapshot_file = backup_dir / f"adventurer_classes_pre_apply_{ts}.jsonl"
@@ -150,15 +176,14 @@ async def _apply_all(db, plan: list[dict[str, Any]]) -> dict[str, int]:
     modified = 0
     skipped_no_doc = 0
     for item in plan:
-        # defensive re-check (belt & suspenders)
         _guard_payload(item["payload"])
         res = await db.adventurer_classes.update_one(
-            {"slug": item["class_slug"]},
+            {"slug": item["slug"]},
             {"$set": item["payload"]},
         )
         if res.matched_count == 0:
             skipped_no_doc += 1
-        elif res.modified_count > 0 or res.matched_count > 0:
+        else:
             modified += 1
     return {"modified": modified, "skipped_no_doc": skipped_no_doc}
 
@@ -175,32 +200,42 @@ async def _emit_audit(db, plan_count: int, apply_id: str) -> None:
             "fields_added": sorted(SAFE_FIELDS),
             "class_count": plan_count,
             "source_round": SOURCE_ROUND_TAG,
+            "correction_applied": "Q10.b canonical=27",
         },
         "created_at": now.isoformat(),
     }
     try:
         await db.audit_log.insert_one(doc)
     except Exception as exc:  # noqa: BLE001
-        # non-fatal, log but don't rollback
         print(f"WARN: audit emit failed: {exc}")
 
 
 async def _main_async(args: argparse.Namespace) -> int:
     registry = _load_registry()
 
-    print("── R18.3d Phase B3 · Apply Metadata ──")
+    print("── R18.3d Phase B3 · Apply Metadata (Q10.b canonical=27) ──")
     print(f"registry: {REGISTRY_PATH}")
     print(f"mode:     {'APPLY' if args.apply else 'DRY_RUN'}")
+    meta = registry.get("meta") or {}
+    print(f"canonical_classes={meta.get('canonical_classes')} "
+          f"live_catalog={meta.get('live_catalog_classes')} "
+          f"canonical_live={meta.get('canonical_live_count')} "
+          f"legacy_live={meta.get('legacy_live_classes_count')} "
+          f"design_only={meta.get('design_only_classes_count')}")
 
     try:
         plan = _plan_apply(registry)
     except GuardHardStop as exc:
         print(f"GUARD HARD-STOP: {exc}")
         return 21
+    except LegacyLiveLeak as exc:
+        print(f"LEGACY LIVE LEAK: {exc}")
+        return 22
 
-    print(f"plan: {len(plan)} eligible live classes")
+    print(f"plan: {len(plan)} canonical class(es) eligible "
+          f"(intersezione canonical ∩ live_catalog)")
     for it in plan:
-        print(f"  · {it['class_slug']}: {sorted(it['payload'].keys())}")
+        print(f"  · {it['slug']}: {sorted(it['payload'].keys())}")
 
     if not args.apply:
         print()
@@ -221,7 +256,7 @@ async def _main_async(args: argparse.Namespace) -> int:
     backup_dir = BACKUP_DIR_BASE / f"r18_3d_metadata_{apply_id}"
     try:
         snap = await _snapshot_pre_apply(
-            db, [it["class_slug"] for it in plan], backup_dir
+            db, [it["slug"] for it in plan], backup_dir
         )
         print(f"backup snapshot: {snap}")
     except Exception as exc:  # noqa: BLE001
@@ -233,6 +268,9 @@ async def _main_async(args: argparse.Namespace) -> int:
     except GuardHardStop as exc:
         print(f"GUARD HARD-STOP (during apply): {exc}")
         return 21
+    except LegacyLiveLeak as exc:
+        print(f"LEGACY LIVE LEAK (during apply): {exc}")
+        return 22
     except Exception as exc:  # noqa: BLE001
         print(f"DB ERROR: {exc}")
         return 40
@@ -249,12 +287,10 @@ async def _main_async(args: argparse.Namespace) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="R18.3d Phase B3 metadata apply (append-only SAFE fields).",
+        description="R18.3d Phase B3 metadata apply (SAFE, canonical∩live)",
     )
-    parser.add_argument("--dry-run", action="store_true", default=True,
-                        help="dry-run (default)")
-    parser.add_argument("--apply", action="store_true", default=False,
-                        help="really apply to DB (requires ack flag)")
+    parser.add_argument("--dry-run", action="store_true", default=True)
+    parser.add_argument("--apply", action="store_true", default=False)
     parser.add_argument(
         "--i-understand-this-will-write-metadata",
         dest="i_understand",

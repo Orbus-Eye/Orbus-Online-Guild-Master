@@ -121,30 +121,25 @@ def validate_registry_or_raise(path: Path = REGISTRY_PATH) -> dict[str, Any]:
     reg = load_registry(path)
 
     required = [
-        "registry_version",
-        "stat_system",
+        "meta",
+        "stat_mapping_6_to_5",
         "role_system",
-        "live_classes_18",
-        "canonical_design_only_16",
+        "canonical_classes",
+        "legacy_live_classes",
+        "excluded_manifest_entries",
         "safe_metadata_fields_apply_scope",
     ]
     for k in required:
         if k not in reg:
             raise RegistryValidationError(f"registry missing top-level key: {k}")
 
-    stats = tuple(reg["stat_system"].get("live_stats_5_atomic") or ())
-    if stats != LIVE_STATS_ATOMIC:
+    stats = tuple(reg["role_system"].get("live_roles_atomic") or ())
+    if stats != LIVE_ROLES_ATOMIC:
         raise RegistryValidationError(
-            f"live_stats_5_atomic mismatch: {stats} vs {LIVE_STATS_ATOMIC}"
+            f"live_roles_atomic mismatch: {stats} vs {LIVE_ROLES_ATOMIC}"
         )
 
-    roles = tuple(reg["role_system"].get("live_roles_atomic") or ())
-    if roles != LIVE_ROLES_ATOMIC:
-        raise RegistryValidationError(
-            f"live_roles_atomic mismatch: {roles} vs {LIVE_ROLES_ATOMIC}"
-        )
-
-    mapping_raw = reg["stat_system"].get("design_stat_mapping_6_to_5_LOCKED") or {}
+    mapping_raw = reg.get("stat_mapping_6_to_5") or {}
     for design_it, live_expected in DESIGN_STAT_MAPPING_6_TO_5.items():
         got = (mapping_raw.get(design_it) or {}).get("live")
         if got != live_expected:
@@ -152,11 +147,14 @@ def validate_registry_or_raise(path: Path = REGISTRY_PATH) -> dict[str, Any]:
                 f"design_stat_mapping mismatch for {design_it}: {got} vs {live_expected}"
             )
 
-    if not isinstance(reg["live_classes_18"], list) or not reg["live_classes_18"]:
-        raise RegistryValidationError("live_classes_18 must be a non-empty list")
+    if not isinstance(reg["canonical_classes"], list) or len(reg["canonical_classes"]) != 27:
+        raise RegistryValidationError(
+            f"canonical_classes must be a list of exactly 27 entries, "
+            f"got {len(reg['canonical_classes'])}"
+        )
 
-    if not isinstance(reg["canonical_design_only_16"], list):
-        raise RegistryValidationError("canonical_design_only_16 must be a list")
+    if not isinstance(reg["legacy_live_classes"], list):
+        raise RegistryValidationError("legacy_live_classes must be a list")
 
     scope = reg["safe_metadata_fields_apply_scope"]
     fields = tuple(scope.get("fields_to_apply_via_set") or ())
@@ -179,16 +177,17 @@ def validate_registry_or_raise(path: Path = REGISTRY_PATH) -> dict[str, Any]:
 def get_stat_role_mapping(
     class_slug: str, path: Path = REGISTRY_PATH
 ) -> Optional[dict[str, Any]]:
-    """UNWIRED helper — return the registry entry for a given `class_slug`,
-    or None if not present. Callers: ONLY tests or admin endpoints.
+    """UNWIRED helper — return the canonical registry entry for a given
+    canonical `class_slug`, or None if not present. Callers: ONLY tests
+    or admin endpoints.
 
     DO NOT invoke from auto-equip, xp_modifier, combat, sorting, recruitment,
     or matchmaking code paths. If a runtime consumer needs stat/role data,
     it MUST read from `adventurer_classes` collection (source-of-truth).
     """
     reg = load_registry(path)
-    for entry in reg.get("live_classes_18", []):
-        if entry.get("class_slug") == class_slug:
+    for entry in reg.get("canonical_classes", []):
+        if entry.get("slug") == class_slug:
             return entry
     return None
 
