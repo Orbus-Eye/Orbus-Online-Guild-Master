@@ -7,6 +7,14 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] R18.Tooling — DryRun/Apply Path Readiness Gate
+Origine: R18.3e Phase B W3 (apply_real() stub scoperto in fase apply reale)
+Obiettivo: policy che i sibling script dry-run debbano dichiarare esplicitamente nel gate pre-apply se il write path è implementato o stubbed, evitando scope drift durante l'apply reale.
+Priorità: P3
+Status: BACKLOG
+
+---
+
 ### [BACKLOG] R18.3e — Canonical IT ↔ Legacy EN Class Bridge
 Origine: R18.3d Phase B Q10.b + verifica e1_tester (canonical 27 IT vs live 16 EN legacy quasi disgiunti)
 Obiettivo: mappare legacy live EN verso canonical IT; decidere se usare `alias_target`, `canonical_slug`, o migration vera.

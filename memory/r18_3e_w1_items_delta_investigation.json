@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "round": "R18.3e",
+    "phase": "B",
+    "stage": "W1_investigation_read_only",
+    "generated_at_utc": "2026-07-05T20:00:00Z",
+    "trigger": "PM opzione B: HOLD tester post-B2, investigazione W1 obbligatoria",
+    "classification": "C_delta_correlato_indirettamente_job_interno_da_controllare"
+  },
+
+  "prova_negativa_script_r18_3e": {
+    "grep_items_in_apply_script": {
+      "line_15": "docstring: NO rewrite adventurers / items",
+      "line_408": "audit metadata: item_rewrite = False"
+    },
+    "grep_db_items_write_mode": "empty (0 hits)",
+    "grep_write_mode_operations": {
+      "line_373": "db.adventurer_classes.update_one({slug}, {$set: payload}) — target correct",
+      "line_414": "db.audit_log.insert_one(audit_event) — 1 aggregated event"
+    },
+    "audit_event_R18_3E_BRIDGE_METADATA_APPLIED": {
+      "item_rewrite": false,
+      "adventurer_rewrite": false,
+      "migration_slug_rewrite": false,
+      "runtime_wiring": false,
+      "modified_count": 18,
+      "target_count": 18
+    },
+    "conclusion": "R18.3e apply script did NOT touch items collection — prova negativa PASS"
+  },
+
+  "root_cause": {
+    "cause": "backend hot reload triggered by two search_replace on apply_bridge.py (flip APPLY_ENABLED=True, then re-lock APPLY_ENABLED=False), causing backend automatic restart at 2026-07-05T19:47:15Z, which re-executed all boot idempotent seeds",
+    "seed_jobs_at_restart_that_touched_items": [
+      "Phase 14.6: seeded 17 IT items + 5 recipes (idempotent)",
+      "ROUND 6C signature templates: templates_inserted=0, templates_updated=14",
+      "ROUND 6B.4 bound fields backfill: migrated_count=0, already_present_count=all",
+      "ROUND 16.3 Phase 5A legendary forge catalog: inserted=0",
+      "ROUND 16.3 Phase 5B arfus forge catalog: inserted=0, updated=10"
+    ],
+    "items_affected": {
+      "total_with_updated_at_in_window": 117,
+      "delta_class_tags_empty_to_nonempty": 5,
+      "cluster_timestamp": "2026-07-05T19:47:15.xxx",
+      "likely_source": "Round 6C signature templates seed (14 templates_updated included populating class_tags/recommended_classes for signature-eligible items)"
+    }
+  },
+
+  "timeline_apply_window": [
+    {"timestamp_utc": "2026-07-05T19:44:07Z", "event": "Backup snapshot pre-apply materializzato", "items_touched": 0},
+    {"timestamp_utc": "2026-07-05T19:44:XX", "event": "search_replace #1 flip APPLY_ENABLED=True → hot reload backend", "items_touched": "indirect (via seed idempotent boot)"},
+    {"timestamp_utc": "2026-07-05T19:45:22Z", "event": "Backend restart complete (post-flip)", "items_touched": "seed idempotent boot"},
+    {"timestamp_utc": "2026-07-05T19:45:31Z", "event": "R18.3e apply reale (adventurer_classes.update_one x18)", "items_touched": 0},
+    {"timestamp_utc": "2026-07-05T19:47:XX", "event": "search_replace #2 re-lock APPLY_ENABLED=False → hot reload backend", "items_touched": "indirect (via seed idempotent boot)"},
+    {"timestamp_utc": "2026-07-05T19:47:15Z", "event": "Backend restart complete (post re-lock) + boot idempotent seeds", "items_touched": 117},
+    {"timestamp_utc": "2026-07-05T19:48:00Z", "event": "Post-apply verification detects delta +5", "items_touched": 0}
+  ],
+
+  "correlation_matrix_window_19_44_19_48": [
+    {"job": "backup_snapshot_pre_B2", "timestamp": "19:44:07Z", "collection": "adventurer_classes (read)", "correlation_with_delta": false},
+    {"job": "hot_reload_1_flip", "timestamp": "19:45:22Z (restart complete)", "collection": "seed idempotent boot", "correlation_with_delta": "possible_but_pre_apply"},
+    {"job": "R18_3E_apply", "timestamp": "19:45:31Z", "collection": "adventurer_classes + audit_log", "correlation_with_delta": false, "evidence": "grep db.items = 0"},
+    {"job": "hot_reload_2_relock", "timestamp": "19:47:15Z (restart complete)", "collection": "seed idempotent boot (Phase 14.6, Round 6C sig, Phase 5A/5B)", "correlation_with_delta": true, "evidence": "117 items updated_at=19:47:15.xxx"}
+  ],
+
+  "impact_on_r18_4": {
+    "impact_level": "minimal_positive",
+    "reasoning": [
+      "5 items delta have class_tags/recommended_classes populated with legacy EN slugs (warrior, rogue, ..., cacciatore_di_mostri) — coherent with R18.3e bridge registry",
+      "R18.3e bridge is read-only + unwired, so class_tags population doesn't trigger player-facing changes",
+      "2 canonical hidden (cacciatore_di_mostri, cacciatore_del_vuoto) remain is_playable=False (no recruitment unlock)",
+      "Delta consolida (non contraddice) il soft binding pattern documentato in Phase A"
+    ],
+    "blocker_for_r18_4": false
+  },
+
+  "10_verification_points": {
+    "1_identify_5_items": "PARTIAL — cannot 100% precise without pre-apply full items dump; root cause technical confirmed",
+    "2_item_ids_slugs_names": "11 candidates spec_signature_* with updated_at=19:47:15.4XX",
+    "3_fields_changed": "class_tags + recommended_classes (from [] to 3-7 slug list) + updated_at refresh",
+    "4_created_updated_at": "created_at=2026-07-01T12:21:21.xxx unchanged, updated_at=2026-07-05T19:47:15.4XX new",
+    "5_new_vs_updated": "UPDATED (0 new docs)",
+    "6_audit_log_job_correlated": "boot backend seed idempotent (Phase 14.6, Round 6C sig, Round 16.3 Phase 5A/5B) at restart 19:47:15Z",
+    "7_correlation_cacciatore_hidden": "4+ items spec_signature_* include cacciatore_di_mostri in recommended_classes (coherent with R18.3a design intent, pre-existing seed)",
+    "8_impact_r18_4": "minimal_positive",
+    "9_attribution_to_r18_3e_script": false,
+    "10_backlog_fix_acceptance": "backlog P3 recommended (seed timestamp churn), no fix, PM acceptance recommended"
+  },
+
+  "recommendation": {
+    "verdict": "PROCEED_WITH_TESTER_POST_B2",
+    "reasoning": [
+      "Delta +5 attributed to boot idempotent seeds (Phase 14.6, Round 6C sig templates, Phase 5A/5B), NOT R18.3e apply",
+      "Prova negativa on apply script CONFIRMED: grep db.items=0, audit item_rewrite=false",
+      "5 items don't block R18.4 (consolidano bridge soft binding)",
+      "No reversible damage, no data corruption, only timestamp churn"
+    ],
+    "backlog_entries_recommended": [
+      "R18.Tooling — DryRun/Apply Path Readiness Gate (P3, from W3 PM governance directive)",
+      "R18.Backlog — Seed Idempotent Timestamp Churn Noise (P3, optional from W1 investigation)"
+    ],
+    "rollback_needed": false
+  },
+
+  "boundary_conditions_respected": {
+    "zero_fix": true,
+    "zero_update": true,
+    "zero_rollback": true,
+    "zero_cleanup": true,
+    "zero_db_write_during_investigation": true,
+    "zero_manual_restore": true,
+    "zero_tester_post_b2": true,
+    "zero_auto_seal": true,
+    "zero_touch_18_docs_post_b2": true,
+    "zero_runtime_code_changes": true,
+    "zero_touch_16_sigilli": true
+  }
+}
