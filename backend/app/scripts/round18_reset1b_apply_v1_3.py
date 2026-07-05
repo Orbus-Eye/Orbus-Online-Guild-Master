@@ -1,3 +1,19 @@
+# ═══════════════════════════════════════════════════════════════════════
+# ✦ CLOSED & SEALED — R18.Reset.1b.hotfix.v1_3
+# ═══════════════════════════════════════════════════════════════════════
+# SEAL AUTHORITY:      PM Orchestrator
+# SEAL DATE (UTC):     2026-07-05T15:04:00Z
+# APPLY ID (executed): 3e1e6462-694b-49d4-8e60-0045460c58d0
+# APPLIED AT (UTC):    2026-07-05T14:57:33Z
+# STATUS:              CLOSED & SEALED
+# DO NOT MODIFY THIS FILE.
+# If a fix is required, create a NEW sibling script
+# (e.g. round18_reset1b_apply_v1_4.py) and register it separately.
+#
+# KNOWN DEFERRED SCOPE (accepted by PM):
+#   Banner dismiss endpoint non implementato in R18.Reset.1b.
+#   Deferred to R18.Reset.2 — Fresh Start Banner UI/API.
+# ═══════════════════════════════════════════════════════════════════════
 """
 R18.Reset.1b.hotfix.v1_3 — Starter Adventurer Schema Compatibility Fix.
 

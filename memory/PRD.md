@@ -68,3 +68,51 @@ Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P3":
 - `/app/memory/test_credentials.md` — credenziali test
 - `/app/memory/BUILD_RULES.md`, `PROD_DEPLOY_CHECKLIST_ROUND_*.md`, `REFACTOR_LOG.md`
 - Report fasi 1..7: `/app/memory/round163_phase[N]_final_report.md`, `round163_phase7[a|b]_iter[1|2]_[backend|frontend]_report.md`
+
+---
+
+## R18.Reset.1b — CLOSED & SEALED (2026-07-05)
+
+**Round**: `R18.Reset.1b` (Full Guild Fresh Start)
+**Chiusura**: 2026-07-05T15:04:00Z UTC — **CLOSED & SEALED** (autorità: PM Orchestrator)
+**Report finale**: `/app/memory/r18_reset1b_final_closure_report.md`
+
+### Sintesi
+- **672 guild** riallineate (nome preservato, gold=100, progressione azzerata)
+- **3360 adventurers starter** rigenerati (11 classi safe, `base_stats_exact_no_variance` dal catalog)
+- **3415 adventurers storici** archiviati soft in `adventurers_r18_archive` (no hard delete)
+- **672 kit iniziali** (minor_healing_potion × 3 = 2016 potion totali)
+- **Endpoint runtime** operativi post-v1.3 (adventurers, dungeons, expeditions no-500)
+
+### 8 sigilli attivi (registry: `r18_reset1b_hotfix_v1_3_seal_registry.json`)
+1. `round18_reset1b_apply.py` (initial)
+2. `round18_reset1b_apply_v1_1.py`
+3. `round18_reset1b_apply_v1_2.py`
+4. `round18_reset1b_apply_v1_3.py` ← **NEW SEAL 2026-07-05**
+5. `round18_reset1b_staged_backup_materialize.py`
+6. `round18_reset1c_field_cleanup.py`
+7. `round18_reset1c_restore_from_jsonl_manifest.py`
+8. `app/core/job_freeze.py`
+
+### Known Deferred Scope
+- **M4 Banner dismiss endpoint** — deferred a **R18.Reset.2 — Fresh Start Banner UI/API**
+- Brief pronto: `/app/memory/r18_reset2_fresh_start_banner_brief.md`
+- Nessuna implementazione fino a GO PM esplicito
+
+### Backup retention (90 giorni minimo)
+- `r18_reset1b_v1_2_staged_20260705T132515Z/` (staged approved)
+- `r18_reset1b_v1_2_20260705T134230Z/` (fresh pre-apply v1.2)
+- **`r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/`** (fresh pre-apply v1.3, rollback source-of-truth)
+
+### Backlog aperto
+- `R18.Tooling.AuditEventIdempotencyKey` — vedi `/app/memory/backlog.md`
+
+### HOLD confermati dopo il SEAL
+- `R18.1 drift`
+- `R18.3d Stat/Role Mapping Registry`
+- `Traits`
+- `Fatigue/Cucina`
+- `SMTP R17`
+
+### Prossimo round consigliato
+`R18.Reset.2 — Fresh Start Banner UI/API` (in attesa GO PM)

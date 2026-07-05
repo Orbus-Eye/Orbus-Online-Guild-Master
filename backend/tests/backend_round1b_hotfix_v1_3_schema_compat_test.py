@@ -28,7 +28,7 @@ _BACKEND_ENV = dotenv_values("/app/backend/.env")
 PROD_MONGO_URL = _BACKEND_ENV["MONGO_URL"]
 PROD_DB_NAME = _BACKEND_ENV["DB_NAME"]  # e.g. "orbus_r16"
 
-# ── 7 sealed scripts inventory (byte-identity anchor) ───────────────
+# ── 8 sealed scripts inventory (byte-identity anchor) ───────────────
 SEALED = {
     "app/scripts/round18_reset1b_apply.py":
         "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
@@ -36,6 +36,8 @@ SEALED = {
         "14d38bf8ea66c878da60112c0936da720f38e4b2251e07f76aa4817259e51abd",
     "app/scripts/round18_reset1b_apply_v1_2.py":
         "d754c0dd273a05bd62d16c258d42e1503857da5dc953c3904e02181c877b3f66",
+    "app/scripts/round18_reset1b_apply_v1_3.py":
+        "3737052166b0e89632d6f022331fa713591ce4817e1d3f5abc5465aadc264d88",
     "app/scripts/round18_reset1b_staged_backup_materialize.py":
         "db42665587dc7a18d416e54eebedaa87fb9cf256dd0d43a868db43a1761a7dd9",
     "app/scripts/round18_reset1c_field_cleanup.py":

@@ -1,0 +1,191 @@
+# R18.Reset.1b — Final Closure Report
+
+**Round**: `R18.Reset.1b` (Full Guild Fresh Start)
+**Data closure**: 2026-07-05T15:04:00Z UTC
+**Autore**: e1_dev
+**Stato**: 🔒 **CLOSED & SEALED**
+**Seal authority**: PM Orchestrator (opzione B — SEAL con nota)
+
+---
+
+## Report 9 punti
+
+### 1. `R18.Reset.1b.hotfix.v1_3` — SEAL status
+
+- **SEALED**: SÌ
+- **Timestamp UTC**: `2026-07-05T15:04:00Z`
+- **File sigillato**: `/app/backend/app/scripts/round18_reset1b_apply_v1_3.py`
+- **SHA256** (post-header seal): `3737052166b0e89632d6f022331fa713591ce4817e1d3f5abc5465aadc264d88`
+- **mtime**: `1783264440`
+- **Banner sealed** contiene:
+  - SEAL AUTHORITY, DATE, APPLY_ID (`3e1e6462-694b-49d4-8e60-0045460c58d0`), APPLIED_AT
+  - Istruzione "DO NOT MODIFY — create a new sibling if fix is required"
+  - Nota "Known Deferred Scope" per M4 (banner dismiss → R18.Reset.2)
+- **Registro sigilli aggiornato**: `/app/memory/r18_reset1b_hotfix_v1_3_seal_registry.json` (**8 sigilli totali**)
+- **Test integrity** aggiornato: `backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t01_sealed_scripts_untouched` verifica 8/8 sigilli byte-identici
+
+### 2. `R18.Reset.1b` (intero round) — SEAL status
+
+- **SEALED**: SÌ
+- **Timestamp UTC**: `2026-07-05T15:04:00Z`
+- **Documenti closure**:
+  - `/app/memory/r18_reset1b_final_closure_report.md` (questo file)
+  - `/app/memory/PRD.md` (sezione R18.Reset.1b — CLOSED & SEALED aggiornata)
+- **Deliverable del round**:
+  - 4 apply script sigillati (v1.0 initial + v1.1 + v1.2 + v1.3)
+  - 2 rollback script sigillati (`round18_reset1c_restore_from_jsonl_manifest`, `round18_reset1c_field_cleanup`)
+  - 1 backup materialize sigillato (`round18_reset1b_staged_backup_materialize`)
+  - 1 freeze wrapper sigillato (`app/core/job_freeze`)
+  - 4 test suite (round1b, hotfix_starter_kit, hotfix_v1_2_starter_stats, write_freeze_full, hotfix_v1_3_schema_compat)
+  - 3 backup persistiti (retention 90gg)
+
+### 3. Sistema live healthy
+
+Curl finali (freeze OFF definitivo):
+
+```
+GET  /api/health                       → 200
+POST /api/auth/login (valid creds)     → 200 (JWT emesso)
+POST /api/auth/login (wrong creds)     → 401
+GET  /api/adventurers  (auth)          → 200
+GET  /api/dungeons     (auth)          → 200
+GET  /api/guilds/me    (auth)          → 200
+GET  /api/roster/health (auth)         → 200
+GET  /api/recruitment/candidates(auth) → 200
+GET  /api/recruitment/frozen  (auth)   → 200
+GET  /api/territory    (auth)          → 200
+POST /api/expeditions  (goblin-warrens, adv lv1) → 423 Locked (functional level_gate; NON 500)
+```
+
+Sample adventurer via API (post-v1.3):
+```
+Starter 5, class Monk (id 26c61b46-…),
+str=5 agi=9 int=3 end=6 faith=5 (= base_stats Monk catalog),
+xp=0, level=1, is_available=true, status=idle, rarity=Common,
+stamina=100, morale=100, is_starter=true, traits=[]
+```
+
+### 4. Freeze OFF confirmation
+
+| Item | Stato |
+|:---|:---:|
+| `/tmp/orbus_maintenance.flag` | **GONE ✓** |
+| `/tmp/orbus_internal_job_freeze.flag` | **GONE ✓** |
+| `test -f flag_file` | exit 1 (missing, corretto) |
+| Backend seed dopo unfreeze | Regolare (`ROUND 6B.4 bound fields backfill: migrated_count=672`) — job_freeze non più skipping |
+| `POST /api/auth/login` | 200/401, NON più 503 |
+
+### 5. Conferma M1/M2/M3 PASS (regression e1_tester)
+
+**Estratto dai risultati regression (17 test PM-approved)**:
+
+| Milestone | Descrizione | Risultato |
+|:---|:---|:---:|
+| M1 | Login + Dashboard + Guild ownership | PASS |
+| M2 | Adventurers list + Dungeon list + Recruitment + Inventory | PASS |
+| M3 | Expedition creation flow (no 500, functional errors OK) | PASS |
+| M4 | Banner dismiss endpoint | ❌ FAIL — endpoint 404 (endpoint non implementato) |
+
+**Accettazione PM**: M4 è marcato come **known deferred scope** (opzione B).
+
+Altri check regression (guild count=672, starter roster=3360, gold=100/guild, potion=3/guild, hidden classes off recruitment, no hard delete, freeze OFF finale): tutti verificati e coerenti con i 14 check DB v1.3 già PASS.
+
+### 6. M4 deferred to R18.Reset.2 — Banner text LOCKED
+
+**Deferred milestone**: `R18.Reset.1b.M4` — Banner dismiss endpoint
+**Target round**: `R18.Reset.2 — Fresh Start Banner UI/API`
+**Brief pronto**: `/app/memory/r18_reset2_fresh_start_banner_brief.md`
+
+**Banner text byte-exact (IT-locale, LOCKED)**:
+```
+Le gilde sono state riallineate per il nuovo inizio di Orbus. Il nome della tua gilda è stato preservato; progressi, roster e risorse sono ripartiti da zero.
+```
+
+**Endpoint previsto**: `POST /api/guilds/me/r18-reset-banner/dismiss`
+
+**Nessuna implementazione fino a GO PM esplicito.**
+
+### 7. Backup rollback path — Retention 90 giorni
+
+| Backup | Path | Contenuto | Retention |
+|:---|:---|:---|:---:|
+| STAGED approved v1.2 | `/app/backend/backups/r18_reset1b_v1_2_staged_20260705T132515Z/` | 33 file jsonl + manifest (pre-apply v1.2) | 90gg |
+| FRESH pre-v1.2 apply | `/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z/` | 33 file jsonl + manifest (auto-generated by v1.2 apply) | 90gg |
+| **FRESH pre-v1.3 apply** | `/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/` | 33 file jsonl + manifest (source-of-truth per eventuale rollback v1.3) | **90gg** |
+
+Tutti e 3 i manifest sha256 line-by-line = **PASS 33/33** ognuno.
+
+**Rollback source-of-truth ufficiale per v1.3**:
+`/app/backend/backups/r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z/`
+
+### 8. Warning residui
+
+| Warning | Priorità | Stato | Azione |
+|:---|:---:|:---|:---|
+| Audit `R18_FULL_GUILD_FRESH_START_APPLIED` emesso 2 volte (v1.1 rolled-back + v1.2) | P3 | ACCETTATO (WARN M3) | Backlog → `R18.Tooling.AuditEventIdempotencyKey` in `/app/memory/backlog.md` |
+| `orbus.seed_round5.base_strength` | P3 | HOLD (PM directive) | Backlog |
+| `PendingDeprecationWarning starlette.formparsers` | P3 | Dipendenza esterna | Nessuna azione |
+| Mobile ngrok tunnel | P3 | Non correlato | Nessuna azione |
+
+Nessun warning bloccante introdotto da v1.3.
+
+### 9. Brief R18.Reset.2 — pronto
+
+- **Path**: `/app/memory/r18_reset2_fresh_start_banner_brief.md`
+- **Contenuti**: 9 sezioni (scope, endpoint, UI, DB schema, test attesi 15 punti, rischi/mitigazione, OpenAPI draft, backup, GO checklist PM)
+- **Stato**: 📋 BRIEF PRONTO — attende GO PM esplicito per implementazione.
+
+---
+
+## Timeline sintetica R18.Reset.1b
+
+| Timestamp UTC | Evento |
+|:---|:---|
+| 2026-07-01 | Setup iniziale round R18.Reset.1b |
+| 2026-07-05 11:40 | STAGED APPLY v1.1 |
+| 2026-07-05 11:48 | REAL APPLY v1.1 → rilevati 15 adventurers null-stats |
+| 2026-07-05 11:52 | Rollback via R1c |
+| 2026-07-05 13:15 | SEAL v1.2 |
+| 2026-07-05 13:25 | STAGED APPLY v1.2 |
+| 2026-07-05 13:42:30 | REAL APPLY v1.2 → 3360 adv rigenerati con stats corretti |
+| 2026-07-05 13:48 | Rilevato bug 500 su `GET /api/adventurers` (KeyError adventurer_class_id) |
+| 2026-07-05 13:52 | Deep audit read-only (opzione C) — mapping 11/11 confermato |
+| 2026-07-05 14:40 | Dry-run + test suite v1.3 (17 PASS + 3 SKIP HTTP live gate) |
+| 2026-07-05 14:57:33 | **REAL APPLY v1.3** → 3360 adv patchati (14 field) — exit 0 in 1s |
+| 2026-07-05 14:59 | 14 DB checks post-apply v1.3 → **ALL_PASS** |
+| 2026-07-05 15:00 | HTTP live gate 3/3 PASS + freeze OFF |
+| 2026-07-05 ~15:03 | Regression e1_tester (M1/M2/M3 PASS · M4 deferred) |
+| 2026-07-05 15:04 | **SEAL v1.3 + SEAL round R18.Reset.1b** |
+
+## Statistiche finali
+
+- **Adventurers live**: 3360 (671 archived storicamente = 3415 archivio totale)
+- **Guilds**: 672 (nome preservato, progressione reset)
+- **Gold per guild**: 100 (totale 67200)
+- **Kit iniziale**: 672 doc × 3 minor_healing_potion = 2016 potion
+- **Sigilli**: **8** (v1.0 + v1.1 + v1.2 + v1.3 apply + staged_backup + restore + field_cleanup + job_freeze)
+- **Backup retention**: 3 × 33 file jsonl (staged approved + fresh pre-v1.2 + fresh pre-v1.3)
+- **Audit events emessi**:
+  - `R18_FULL_GUILD_FRESH_START_APPLIED` (2 record: v1.1 rolled-back + v1.2 apply)
+  - `R18_FULL_GUILD_FRESH_START_APPLIED_V1_2` (1 record, apply_id `5815c73c…`)
+  - `R18_STARTER_ROSTER_HOTFIX_APPLIED` (1 record, apply_id `3e1e6462…`)
+  - `R18_STARTER_ROSTER_HOTFIX_APPLIED_V1_3` (1 record, apply_id `3e1e6462…`)
+
+## HOLD confermati dopo il SEAL
+
+- `R18.1 drift`
+- `R18.3d Stat/Role Mapping Registry`
+- `Traits`
+- `Fatigue/Cucina`
+- `SMTP R17`
+- (in tutti i casi, in attesa di nuova decisione PM)
+
+## Prossimo round consigliato
+
+**`R18.Reset.2 — Fresh Start Banner UI/API`** in attesa di GO PM esplicito.
+Brief pronto: `/app/memory/r18_reset2_fresh_start_banner_brief.md`.
+
+---
+
+**R18.Reset.1b = CLOSED & SEALED (2026-07-05T15:04:00Z UTC)**
+**R18.Reset.1b.hotfix.v1_3 = CLOSED & SEALED (sha256 3737052166b0e89632d6f022331fa713591ce4817e1d3f5abc5465aadc264d88)**

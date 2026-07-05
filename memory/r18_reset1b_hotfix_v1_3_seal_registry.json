@@ -1,0 +1,72 @@
+{
+  "registry_version": "R18.Reset.1b.hotfix.v1_3.seal",
+  "generated_at": "2026-07-05T15:04:00Z",
+  "seal_authority": "PM Orchestrator",
+  "total_sealed": 8,
+  "sealed_scripts": {
+    "app/scripts/round18_reset1b_apply.py": {
+      "sha256": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
+      "mtime": 1783235358,
+      "round_ref": "R18.Reset.1b (initial)",
+      "notes": "byte-identical since original seal"
+    },
+    "app/scripts/round18_reset1b_apply_v1_1.py": {
+      "sha256": "14d38bf8ea66c878da60112c0936da720f38e4b2251e07f76aa4817259e51abd",
+      "mtime": 1783246914,
+      "round_ref": "R18.Reset.1b.hotfix.v1_1",
+      "notes": "byte-identical since original seal"
+    },
+    "app/scripts/round18_reset1b_apply_v1_2.py": {
+      "sha256": "d754c0dd273a05bd62d16c258d42e1503857da5dc953c3904e02181c877b3f66",
+      "mtime": 1783257670,
+      "round_ref": "R18.Reset.1b.hotfix.v1_2",
+      "notes": "byte-identical since original seal"
+    },
+    "app/scripts/round18_reset1b_apply_v1_3.py": {
+      "sha256": "3737052166b0e89632d6f022331fa713591ce4817e1d3f5abc5465aadc264d88",
+      "mtime": 1783264440,
+      "round_ref": "R18.Reset.1b.hotfix.v1_3",
+      "notes": "sealed with PM-directed banner header; apply_id 3e1e6462-694b-49d4-8e60-0045460c58d0"
+    },
+    "app/scripts/round18_reset1b_staged_backup_materialize.py": {
+      "sha256": "db42665587dc7a18d416e54eebedaa87fb9cf256dd0d43a868db43a1761a7dd9",
+      "mtime": 1783241080,
+      "round_ref": "R18.Reset.1b.hotfix.staged_backup",
+      "notes": "byte-identical since original seal"
+    },
+    "app/scripts/round18_reset1c_field_cleanup.py": {
+      "sha256": "fe2d39bf1a2a1189a8fe011969209001150bfb9d2a5c425836fb489e271e052c",
+      "mtime": 1783243467,
+      "round_ref": "R18.Reset.1c",
+      "notes": "byte-identical since original seal"
+    },
+    "app/scripts/round18_reset1c_restore_from_jsonl_manifest.py": {
+      "sha256": "453b87c8a83e303ee5e72f805c8a86c167b30792e8798704e27f51ac86ec3048",
+      "mtime": 1783238570,
+      "round_ref": "R18.Reset.1c",
+      "notes": "rollback source-of-truth; byte-identical since original seal"
+    },
+    "app/core/job_freeze.py": {
+      "sha256": "487c9223532c30165ef1bdba86bdc33976c4d82b7801e8509c6dd3dfa17311be",
+      "mtime": 1783251376,
+      "round_ref": "R18.Reset.1b.hotfix.write_freeze_full",
+      "notes": "byte-identical since original seal"
+    }
+  },
+  "known_deferred_scope": {
+    "R18.Reset.1b.M4_banner_dismiss_endpoint": {
+      "status": "DEFERRED",
+      "target_round": "R18.Reset.2",
+      "brief": "/app/memory/r18_reset2_fresh_start_banner_brief.md",
+      "note": "Endpoint POST /api/guilds/me/r18-reset-banner/dismiss non implementato in R18.Reset.1b. Accepted by PM as deferred scope."
+    }
+  },
+  "backlog_references": [
+    "R18.Tooling.AuditEventIdempotencyKey (see /app/memory/backlog.md)"
+  ],
+  "backup_retention": {
+    "r18_reset1b_v1_2_staged_20260705T132515Z": "90 days minimum",
+    "r18_reset1b_v1_2_20260705T134230Z": "90 days minimum",
+    "r18_reset1b_hotfix_v1_3_prepatch_20260705T145721Z": "90 days minimum"
+  }
+}
