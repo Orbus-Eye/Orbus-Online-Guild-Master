@@ -662,7 +662,8 @@
         "bulk_write",
         ".drop(",
         ".rename("
-      ]
+      ],
+      "self_audit_behavior_note": "Il self-audit statico scansiona il proprio sorgente riga per riga e ignora le righe che iniziano con # (commenti puri) per evitare falsi positivi su documentazione inline. Le occorrenze in stringhe di codice attivo (es. print(\"insert_one\")) vengono correttamente bloccate come dimostrato dal tester. Se si desidera policy piu stretta (block anche in commenti), e opzione futura tracciata come nota interna."
     },
     "section_16_pm_decisions_required": [
       {
@@ -710,6 +711,86 @@
         "topic": "Banner post-reset welcome dismissibile o sticky?",
         "raccomandazione_e1_dev": "Dismissibile (analog. R18.3c)."
       }
-    ]
-  }
+    ],
+    "section_17_scope_exclusions": {
+      "title": "Scope Exclusions & HOLD/PAUSED Registry",
+      "note": "Round e task non toccati da questo dry-run. Restano nello stato attuale.",
+      "registry": [
+        {
+          "id": "R18.1.3",
+          "name": "drift backfill",
+          "status": "HOLD",
+          "reason": "4 regression tests failing, PM directive"
+        },
+        {
+          "id": "R18.3d",
+          "name": "Stat/Role Mapping Registry",
+          "status": "PAUSED",
+          "reason": "waiting post-reset"
+        },
+        {
+          "id": "R18.X-Traits",
+          "name": "Traits System Rework",
+          "status": "HOLD",
+          "reason": "backlog P2"
+        },
+        {
+          "id": "R18.X-Fatigue",
+          "name": "Fatigue/Kitchen",
+          "status": "HOLD",
+          "reason": "backlog P2"
+        },
+        {
+          "id": "R17.infra.smtp",
+          "name": "SMTP fix",
+          "status": "HOLD",
+          "reason": "infra deferred"
+        },
+        {
+          "id": "seed_round5",
+          "name": "starter_backfill patch",
+          "status": "HOLD",
+          "reason": "analyzed section_11, no patch per round constraint"
+        }
+      ]
+    }
+  },
+  "hold_paused_registry": [
+    {
+      "id": "R18.1.3",
+      "name": "drift backfill",
+      "status": "HOLD",
+      "reason": "4 regression tests failing, PM directive"
+    },
+    {
+      "id": "R18.3d",
+      "name": "Stat/Role Mapping Registry",
+      "status": "PAUSED",
+      "reason": "waiting post-reset"
+    },
+    {
+      "id": "R18.X-Traits",
+      "name": "Traits System Rework",
+      "status": "HOLD",
+      "reason": "backlog P2"
+    },
+    {
+      "id": "R18.X-Fatigue",
+      "name": "Fatigue/Kitchen",
+      "status": "HOLD",
+      "reason": "backlog P2"
+    },
+    {
+      "id": "R17.infra.smtp",
+      "name": "SMTP fix",
+      "status": "HOLD",
+      "reason": "infra deferred"
+    },
+    {
+      "id": "seed_round5",
+      "name": "starter_backfill patch",
+      "status": "HOLD",
+      "reason": "analyzed section_11, no patch per round constraint"
+    }
+  ]
 }

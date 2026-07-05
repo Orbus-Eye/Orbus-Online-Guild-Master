@@ -321,6 +321,10 @@ python -m app.scripts.r18_reset0_rollback --confirm --manifest=/app/memory/backu
 
 **Chiamate DB vietate**: insert_one, insert_many, update_one, update_many, replace_one, delete_one, delete_many, bulk_write, .drop(, .rename(
 
+### Nota comportamento self-audit (chiarimento post-tester)
+
+Il self-audit statico scansiona il proprio sorgente riga per riga e ignora le righe che iniziano con `#` (commenti puri) per evitare falsi positivi su documentazione inline. Le occorrenze in stringhe di codice attivo (es. `print("insert_one")`) vengono correttamente bloccate come dimostrato dal tester. Se si desidera policy più stretta (block anche in commenti), è un'opzione futura tracciata come nota interna.
+
 ---
 ## 16. PM Decisions Required Before Reset.1b
 
@@ -350,6 +354,21 @@ python -m app.scripts.r18_reset0_rollback --confirm --manifest=/app/memory/backu
 
 **P2-a**. Banner post-reset welcome dismissibile o sticky?
 - **Raccomandazione e1_dev**: Dismissibile (analog. R18.3c).
+
+---
+
+## Scope Exclusions & HOLD/PAUSED Registry (R18.Reset.1a)
+
+I seguenti round/task NON sono stati toccati da questo dry-run e restano nel loro stato attuale:
+
+- **R18.1.3 drift backfill** — HOLD (4 test regressione in fail, PM instructed to not touch)
+- **R18.3d Stat/Role Mapping Registry** — PAUSED (in attesa post-reset)
+- **R18.X Traits System Rework** — HOLD (backlog P2)
+- **R18.X Fatigue/Cucina** — HOLD (backlog P2)
+- **SMTP fix R17.infra.smtp** — HOLD
+- **seed_round5 patch** — HOLD (analizzato §11, non patchato per vincolo di round)
+
+Nessuna modifica DB, nessuna modifica codice, nessuna modifica UI è stata eseguita per questi elementi. Ogni futuro round che intenda riaprirli deve dichiararlo esplicitamente nel brief PM.
 
 ---
 
