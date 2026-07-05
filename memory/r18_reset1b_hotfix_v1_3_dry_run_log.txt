@@ -1,0 +1,105 @@
+[2026-07-05T14:40:15.019987+00:00] [INFO] MODE = DRY_RUN. Nessuna scrittura sara effettuata.
+[2026-07-05T14:40:15.020016+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_3 START (mode=DRY_RUN) ======
+[2026-07-05T14:40:15.020024+00:00] [INFO] [self-audit] {'audit_pattern_check': 'PASS', 'notes': 'sibling non-sealed; guards enforce apply gating'}
+[2026-07-05T14:40:15.020102+00:00] [INFO] [freeze_check] {"http_maintenance_flag": true, "internal_job_freeze_flag": true, "both_active": true}
+[2026-07-05T14:40:15.025515+00:00] [INFO] [catalog_preload] loaded=11/11 ok=True missing=[] incomplete=[]
+[2026-07-05T14:40:15.033798+00:00] [INFO] [target_scan] target_count=3360 expected=3360 slug_conformant=3360 non_conformant=0
+[2026-07-05T14:40:15.034847+00:00] [INFO] [idempotency] {"prior_applied_events": 0, "prior_rolled_back_events": 0, "blocks_apply": false}
+[2026-07-05T14:40:15.036397+00:00] [INFO] [patch] DRY_RUN slug=alchemist would_modify=299
+[2026-07-05T14:40:15.037875+00:00] [INFO] [patch] DRY_RUN slug=bard would_modify=324
+[2026-07-05T14:40:15.039290+00:00] [INFO] [patch] DRY_RUN slug=druid would_modify=311
+[2026-07-05T14:40:15.040664+00:00] [INFO] [patch] DRY_RUN slug=mage would_modify=281
+[2026-07-05T14:40:15.042081+00:00] [INFO] [patch] DRY_RUN slug=monk would_modify=327
+[2026-07-05T14:40:15.043511+00:00] [INFO] [patch] DRY_RUN slug=paladin would_modify=303
+[2026-07-05T14:40:15.044881+00:00] [INFO] [patch] DRY_RUN slug=priest would_modify=278
+[2026-07-05T14:40:15.046288+00:00] [INFO] [patch] DRY_RUN slug=ranger would_modify=299
+[2026-07-05T14:40:15.047732+00:00] [INFO] [patch] DRY_RUN slug=rogue would_modify=302
+[2026-07-05T14:40:15.049242+00:00] [INFO] [patch] DRY_RUN slug=warlock would_modify=305
+[2026-07-05T14:40:15.050923+00:00] [INFO] [patch] DRY_RUN slug=warrior would_modify=331
+[2026-07-05T14:40:15.050944+00:00] [INFO] [audit] DRY_RUN: would emit BOTH ['R18_STARTER_ROSTER_HOTFIX_APPLIED', 'R18_STARTER_ROSTER_HOTFIX_APPLIED_V1_3'] with apply_id=e3b7750a-f26e-46b1-9cd8-20e16b8b2833
+[2026-07-05T14:40:15.050951+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T14:40:15.051044+00:00] [INFO] {
+  "mode": "DRY_RUN",
+  "apply_id": "e3b7750a-f26e-46b1-9cd8-20e16b8b2833",
+  "target": {
+    "marker": "r18_reset1b_hotfix_v1_2",
+    "count": 3360,
+    "expected": 3360
+  },
+  "catalog_mapping": {
+    "count": 11,
+    "ok": true
+  },
+  "patch_stats": {
+    "target_count": 3360,
+    "adventurer_class_id_set": 3360,
+    "class_name_set": 3360,
+    "class_role_set": 3360,
+    "experience_set": 3360,
+    "is_available_set": 3360,
+    "stamina_set": 3360,
+    "morale_set": 3360,
+    "status_set": 3360,
+    "rarity_set": 3360,
+    "is_starter_set": 3360,
+    "traits_set": 3360,
+    "rename_count_set": 3360,
+    "is_retired_set": 3360,
+    "grade_updated": 3360,
+    "hotfix_marker_set": 3360
+  },
+  "per_slug_stats": {
+    "alchemist": {
+      "matched": 299,
+      "modified": 0
+    },
+    "bard": {
+      "matched": 324,
+      "modified": 0
+    },
+    "druid": {
+      "matched": 311,
+      "modified": 0
+    },
+    "mage": {
+      "matched": 281,
+      "modified": 0
+    },
+    "monk": {
+      "matched": 327,
+      "modified": 0
+    },
+    "paladin": {
+      "matched": 303,
+      "modified": 0
+    },
+    "priest": {
+      "matched": 278,
+      "modified": 0
+    },
+    "ranger": {
+      "matched": 299,
+      "modified": 0
+    },
+    "rogue": {
+      "matched": 302,
+      "modified": 0
+    },
+    "warlock": {
+      "matched": 305,
+      "modified": 0
+    },
+    "warrior": {
+      "matched": 331,
+      "modified": 0
+    }
+  },
+  "audit_result": null,
+  "freeze_state": {
+    "http_maintenance_flag": true,
+    "internal_job_freeze_flag": true,
+    "both_active": true
+  },
+  "backup_reference": "/app/backend/backups/r18_reset1b_v1_2_20260705T134230Z"
+}
+[2026-07-05T14:40:15.051052+00:00] [INFO] ====== R18.Reset.1b.hotfix.v1_3 DONE (mode=DRY_RUN) ======

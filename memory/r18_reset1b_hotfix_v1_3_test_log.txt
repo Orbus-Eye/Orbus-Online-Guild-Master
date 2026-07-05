@@ -1,0 +1,54 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /root/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /app/backend
+configfile: pytest.ini
+plugins: xdist-3.8.0, rerunfailures-16.3, anyio-4.14.0
+created: 2/2 workers
+2 workers [20 items]
+
+scheduling tests via LoadScopeScheduling
+
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t01_sealed_scripts_untouched 
+[gw0] [  5%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t01_sealed_scripts_untouched 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t02_v1_3_sibling_exists 
+[gw0] [ 10%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t02_v1_3_sibling_exists 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t03_apply_without_ack_blocked 
+[gw0] [ 15%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t03_apply_without_ack_blocked 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t04_dry_run_target_count 
+[gw0] [ 20%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t04_dry_run_target_count 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t05_class_mapping_11_11 
+[gw0] [ 25%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t05_class_mapping_11_11 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t06_all_target_will_get_class_id 
+[gw0] [ 30%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t06_all_target_will_get_class_id 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t07_experience_zero_post_fix 
+[gw0] [ 35%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t07_experience_zero_post_fix 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t08_is_available_true_post_fix 
+[gw0] [ 40%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t08_is_available_true_post_fix 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t09_enum_canonical_values 
+[gw0] [ 45%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t09_enum_canonical_values 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t10_dry_run_no_db_write 
+[gw0] [ 50%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t10_dry_run_no_db_write 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t11_apply_requires_double_flag 
+[gw0] [ 55%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t11_apply_requires_double_flag 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t12_idempotency_guard_present 
+[gw0] [ 60%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t12_idempotency_guard_present 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t13_audit_events_declared 
+[gw0] [ 65%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t13_audit_events_declared 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t14_get_adventurers_http_live_200 
+[gw0] [ 70%] SKIPPED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t14_get_adventurers_http_live_200 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t15_get_dungeons_http_live_200 
+[gw0] [ 75%] SKIPPED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t15_get_dungeons_http_live_200 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t16_post_expedition_http_live_no_500 
+[gw0] [ 80%] SKIPPED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t16_post_expedition_http_live_no_500 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t17_inventory_kit_unchanged 
+[gw0] [ 85%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t17_inventory_kit_unchanged 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t18_gold_invariant 
+[gw0] [ 90%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t18_gold_invariant 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t19_no_hidden_classes_in_target 
+[gw0] [ 95%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t19_no_hidden_classes_in_target 
+tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t20_freeze_off_gate_documented 
+[gw0] [100%] PASSED tests/backend_round1b_hotfix_v1_3_schema_compat_test.py::test_t20_freeze_off_gate_documented 
+
+======================== 17 passed, 3 skipped in 3.31s =========================
+[orbus.test] INFO pre-suite cleanup: DB already clean
