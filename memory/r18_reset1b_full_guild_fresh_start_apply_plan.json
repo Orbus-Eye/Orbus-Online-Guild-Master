@@ -252,7 +252,7 @@
       "gates_total": 7,
       "gates_satisfied": 5,
       "gates_pending": 2,
-      "hotfix_note": "Gate 6 added by R18.Reset.1b.hotfix on 2026-07-05T09:48:57Z. Apply reale post-hotfix DEVE usare round18_reset1b_apply_v1_1.py (sibling script). Sealed round18_reset1b_apply.py preserved untouched. Gate 7 (write_freeze_full) added on 2026-07-05T09:52Z per PM directive: env ORBUS_INTERNAL_JOB_FREEZE required to block internal async jobs during apply. Both gate 4 (PM sign-off) and gate 7 (write_freeze_full) remain PENDING.",
+      "hotfix_note": "Gate 6 SATISFIED da 2026-07-05T09:48:57Z (implementazione) e CLOSED_AND_SEALED il 2026-07-05T10:02:00Z (PM_authorization). Apply reale post-hotfix DEVE usare round18_reset1b_apply_v1_1.py (sibling script). Sealed round18_reset1b_apply.py preserved untouched. Gate 7 (write_freeze_full) added on 2026-07-05T09:52Z per PM directive: env ORBUS_INTERNAL_JOB_FREEZE required to block internal async jobs during apply. Both gate 4 (PM sign-off) and gate 7 (write_freeze_full) remain PENDING. Il seal formale del hotfix NON altera i contatori matematici (gate 6 era già satisfied=true dall'implementazione): 5 satisfied + 2 pending (4+7) AS-IS.",
       "hard_blockers": [
         {
           "id": "r18_reset1c_rollback_completeness_pass",
@@ -293,18 +293,24 @@
           "description": "R18.Reset.1b.hotfix - Starter Kit Inventory Unique Index Fix (sibling script v1.1)",
           "satisfied": true,
           "satisfied_at": "2026-07-05T09:48:57Z",
+          "sealed_at": "2026-07-05T10:02:00Z",
+          "sealed_by": "PM_authorization",
           "evidence": {
+            "seal_summary": "R18.Reset.1b.hotfix CLOSED_AND_SEALED, 12/12 pytest PASS, 9/10 tester indep PASS + WARN fixed",
             "sibling_script": "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
             "sibling_script_sha256": "43ca97f284b50706cf450bf4a0dc8e6b977aa195547bc69e99a80da55ede3031",
             "test_suite": "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
             "test_suite_sha256": "bf26da31dce950256c0ec6e92b180fdfa6e82fdd308004c454b82ff712a755ec",
             "tests_result": "12/12 PASS (t01..t12)",
+            "tester_independent": "9/10 PASS + 1 WARN (fixed pre-seal, gate 7 promoted)",
             "sealed_originale_intatto": true,
+            "sealed_scripts_integrity_5_of_5": "byte-identici pre/post",
             "sealed_sha256_pre": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
             "sealed_sha256_post": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
             "preflight_report": "/app/memory/r18_reset1b_hotfix_sealed_preflight.json",
             "postflight_report": "/app/memory/r18_reset1b_hotfix_sealed_postflight.json",
             "double_audit_events": ["R18_FULL_GUILD_FRESH_START_APPLIED", "R18_FULL_GUILD_FRESH_START_APPLIED_V1_1"],
+            "dry_run_live_zero_write": "confirmed",
             "fix_summary": {
               "F1_regen_starter_kit": "lookup item_id da items catalog; 1 doc per (guild_id, item_id) con quantity=3",
               "F2_upsert_idempotency": "update_one($setOnInsert, upsert=True) per re-run safety",
@@ -430,13 +436,24 @@
     {
       "id": "R18.Reset.1b.hotfix",
       "name": "Starter Kit Inventory Unique Index Fix",
-      "status": "IMPLEMENTED_PENDING_PM_ACCEPTANCE",
-      "reason": "Fix _regen_starter_kit S7 dup key on inv_guild_item_unique. Sibling script v1.1 creato, sealed intatto, 12/12 test PASS. Gate 6 sec.16 SATISFIED.",
+      "status": "CLOSED_AND_SEALED",
+      "sealed_at": "2026-07-05T10:02:00Z",
+      "sealed_by": "PM_authorization",
+      "reason": "Fix _regen_starter_kit S7 dup key on inv_guild_item_unique. Sibling script v1.1 creato, sealed intatto, 12/12 pytest PASS + 9/10 tester independent PASS. Gate 6 sec.16 SATISFIED da 2026-07-05T09:48:57Z (evidence enriched al seal). WARN test 8 (gate 7 promotion) fixed pre-seal.",
       "started_at": "2026-07-05T09:31:08Z",
       "implemented_at": "2026-07-05T09:48:57Z",
-      "sibling_script": "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
-      "test_file": "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
-      "tests_result": "12/12 PASS"
+      "deliverables": [
+        "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
+        "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
+        "/app/memory/r18_reset1b_hotfix_sealed_preflight.json",
+        "/app/memory/r18_reset1b_hotfix_sealed_postflight.json"
+      ],
+      "verification": {
+        "pytest": "12/12 PASS",
+        "tester_independent": "9/10 PASS + 1 WARN (fixed pre-seal, gate 7 promoted)",
+        "sealed_scripts_integrity": "5/5 byte-identici pre/post",
+        "dry_run_live_zero_write": "confirmed"
+      }
     }
   ],
   "deliverables": [

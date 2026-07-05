@@ -1,3 +1,14 @@
+# ═════════════════════════════════════════════════════════════════════
+# R18.Reset.1b.hotfix — CLOSED & SEALED on 2026-07-05T10:02:00Z
+# Tester independent verification: 9/10 PASS + 1 WARN (fixed pre-seal,
+#   gate 7 write_freeze_full promoted to §16 hard blocker).
+# Pytest: 12/12 PASS (t01..t12).
+# Sealed by: PM_authorization
+# NON modificare. Se serve fix, creare nuovo sibling
+#   round18_reset1b_apply_v1_2.py (stesso pattern del v1_1 vs sealed).
+# ═════════════════════════════════════════════════════════════════════
+
+
 """ROUND 18.Reset.1b.hotfix - Full Guild Fresh Start Apply V1.1 (CLI ONE-SHOT).
 
 Autore: e1 main agent - preparato R18.Reset.1b.hotfix phase 2026-07-05.

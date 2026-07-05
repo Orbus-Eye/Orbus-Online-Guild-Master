@@ -1,3 +1,14 @@
+# ═════════════════════════════════════════════════════════════════════
+# R18.Reset.1b.hotfix — CLOSED & SEALED on 2026-07-05T10:02:00Z
+# Tester independent verification: 9/10 PASS + 1 WARN (fixed pre-seal,
+#   gate 7 write_freeze_full promoted to §16 hard blocker).
+# Pytest: 12/12 PASS (t01..t12).
+# Sealed by: PM_authorization
+# NON modificare. Se serve fix, creare nuovo sibling test file
+#   backend_round1b_hotfix_starter_kit_v1_2_test.py.
+# ═════════════════════════════════════════════════════════════════════
+
+
 """R18.Reset.1b.hotfix — Test suite per `round18_reset1b_apply_v1_1.py`.
 
 Autore: e1 main agent — 2026-07-05T09:44Z.
