@@ -61,7 +61,7 @@ from pathlib import Path
 from typing import Any
 
 # ─── Hard governance flags ───────────────────────────────────────────────
-APPLY_ENABLED: bool = False  # LOCKED at False for entire R18.3e Phase B
+APPLY_ENABLED: bool = False  # Re-locked to False post-B2 apply (2026-07-05T19:45:31Z, apply_id=35302c0c-98dc-4b3b-b5b2-f1646540b74a). Was temporarily flipped to True for R18.3e B2 apply reale per PM GO.
 SOURCE_ROUND_TAG: str = "R18.3e Phase B"
 REGISTRY_PATH = Path("/app/memory/r18_3e_bridge_registry.json")
 DECISION_LOCK_PATH = Path("/app/memory/r18_3e_phase_b_pm_decisions.json")
@@ -270,11 +270,26 @@ def dry_run() -> dict[str, Any]:
 
 
 def apply_real(ack: bool) -> None:
-    """Reale $set apply. **BLOCKED in R18.3e Phase B**.
+    """Reale $set apply dei 5 SAFE bridge metadata field su 18 doc adventurer_classes.
 
-    Anche se l'utente passa `--apply --i-understand-...`, questa funzione
-    solleva SystemExit finché `APPLY_ENABLED = False`.
+    Guards obbligatori (fail-fast se falliscono):
+    - target_count == 18
+    - canonical_native_count == 2
+    - legacy_count == 16
+    - Registry parsabile
+    - Mapping completo
+    - Rollback script presente
+
+    Emette 1 solo audit event aggregato R18_3E_BRIDGE_METADATA_APPLIED (NO per-doc).
     """
+    import asyncio
+    import os
+    import uuid
+    from datetime import datetime, timezone
+
+    from dotenv import load_dotenv
+    from motor.motor_asyncio import AsyncIOMotorClient
+
     if not APPLY_ENABLED:
         raise SystemExit(
             "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False (LOCKED per R18.3e Phase B).\n"
@@ -286,8 +301,142 @@ def apply_real(ack: bool) -> None:
             "[FAIL-FAST] Missing acknowledgment flag "
             "`--i-understand-this-will-write-bridge-metadata`."
         )
-    # Unreachable while APPLY_ENABLED=False
-    raise SystemExit("[UNREACHABLE] apply_real invoked while APPLY_ENABLED=False.")
+
+    # Load registry + decision lock (raises if missing/unparsable)
+    registry = _load_registry()
+    _load_decision_lock()
+
+    entries: list[dict[str, Any]] = registry["bridge_entries"]
+    canonical_set: set[str] = set(registry["canonical_it_set_27_locked"])
+
+    # Guard 1: target_count == 18
+    if len(entries) != 18:
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] target_count drift: {len(entries)} != 18. Aborting apply."
+        )
+
+    # Guard 2/3: canonical_native == 2 AND legacy == 16
+    canonical_native = [e for e in entries if e.get("bridge_status") == "canonical_native"]
+    non_native = [e for e in entries if e.get("bridge_status") != "canonical_native"]
+    if len(canonical_native) != 2:
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] canonical_native_count drift: {len(canonical_native)} != 2."
+        )
+    if len(non_native) != 16:
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] legacy_count drift: {len(non_native)} != 16."
+        )
+
+    # Guard 4: canonical_slug references point to canonical 27 (or null)
+    for e in entries:
+        _validate_canonical_slug_reference(e, canonical_set)
+
+    # Guard 5: rollback script presente (sibling)
+    rollback_path = Path("/app/backend/app/scripts/round18_3e_rollback_bridge.py")
+    if not rollback_path.exists():
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] Rollback script missing at {rollback_path}. "
+            f"Refusing to apply without symmetric rollback available."
+        )
+
+    # Guard 6: backup snapshot pre-apply presente
+    backups_dir = Path("/app/backend/backups")
+    prepatch_dirs = list(backups_dir.glob("r18_3e_bridge_prepatch_*"))
+    if not prepatch_dirs:
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] No pre-apply backup snapshot found under {backups_dir}."
+        )
+    latest_backup = max(prepatch_dirs, key=lambda p: p.stat().st_mtime)
+    backup_file = latest_backup / "adventurer_classes.jsonl"
+    if not backup_file.exists():
+        raise SystemExit(
+            f"[GUARD FAIL-FAST] Backup file missing: {backup_file}"
+        )
+
+    applied_at_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    apply_id = str(uuid.uuid4())
+
+    async def _run_apply() -> dict[str, Any]:
+        load_dotenv("/app/backend/.env")
+        client = AsyncIOMotorClient(os.environ["MONGO_URL"])
+        try:
+            db = client[os.environ["DB_NAME"]]
+            modified = 0
+            skipped = 0
+            errors: list[str] = []
+            for entry in entries:
+                slug = entry["slug"]
+                payload = _build_set_payload(entry, applied_at_utc)
+                # Pre-write guard (defense-in-depth)
+                _guard_payload_hard_stop(payload, slug)
+                try:
+                    res = await db.adventurer_classes.update_one(
+                        {"slug": slug}, {"$set": payload}
+                    )
+                    if res.matched_count == 1:
+                        modified += 1
+                    else:
+                        skipped += 1
+                        errors.append(
+                            f"slug={slug!r}: matched={res.matched_count}, modified={res.modified_count}"
+                        )
+                except Exception as exc:
+                    errors.append(f"slug={slug!r}: {exc}")
+
+            # Emit 1 aggregated audit event
+            audit_event = {
+                "id": str(uuid.uuid4()),
+                "event_type": "R18_3E_BRIDGE_METADATA_APPLIED",
+                "created_at": applied_at_utc,
+                "metadata": {
+                    "round": "R18.3e",
+                    "phase": "B",
+                    "apply_id": apply_id,
+                    "target_count": len(entries),
+                    "legacy_count": 16,
+                    "canonical_native_count": 2,
+                    "modified_count": modified,
+                    "skipped_count": skipped,
+                    "errors_count": len(errors),
+                    "errors": errors,
+                    "fields_set": list(SAFE_FIELDS),
+                    "registry_sha256": _sha256_file(REGISTRY_PATH),
+                    "decision_lock_sha256": _sha256_file(DECISION_LOCK_PATH),
+                    "backup_snapshot_path": str(backup_file),
+                    "migration_slug_rewrite": False,
+                    "runtime_wiring": False,
+                    "item_rewrite": False,
+                    "adventurer_rewrite": False,
+                    "applied_at_utc": applied_at_utc,
+                    "source_round": SOURCE_ROUND_TAG,
+                },
+            }
+            await db.audit_log.insert_one(audit_event)
+
+            return {
+                "mode": "apply",
+                "apply_id": apply_id,
+                "applied_at_utc": applied_at_utc,
+                "total_entries": len(entries),
+                "modified_count": modified,
+                "skipped_count": skipped,
+                "errors_count": len(errors),
+                "errors": errors,
+                "audit_event_id": audit_event["id"],
+                "audit_event_type": audit_event["event_type"],
+                "backup_snapshot_used": str(backup_file),
+            }
+        finally:
+            client.close()
+
+    result = asyncio.run(_run_apply())
+    print(json.dumps(result, indent=2, default=str))
+    if result["errors_count"] > 0 or result["skipped_count"] > 0:
+        raise SystemExit(
+            f"[APPLY WARN] modified={result['modified_count']} "
+            f"skipped={result['skipped_count']} errors={result['errors_count']}. "
+            f"See audit event {result['audit_event_id']} for details."
+        )
 
 
 def main() -> int:

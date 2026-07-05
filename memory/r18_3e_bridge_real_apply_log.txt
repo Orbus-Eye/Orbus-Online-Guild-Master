@@ -1,0 +1,13 @@
+{
+  "mode": "apply",
+  "apply_id": "35302c0c-98dc-4b3b-b5b2-f1646540b74a",
+  "applied_at_utc": "2026-07-05T19:45:31Z",
+  "total_entries": 18,
+  "modified_count": 18,
+  "skipped_count": 0,
+  "errors_count": 0,
+  "errors": [],
+  "audit_event_id": "63c9ffd8-c47c-4d4d-89af-f1a0b5e8aa6d",
+  "audit_event_type": "R18_3E_BRIDGE_METADATA_APPLIED",
+  "backup_snapshot_used": "/app/backend/backups/r18_3e_bridge_prepatch_20260705T194407Z/adventurer_classes.jsonl"
+}
