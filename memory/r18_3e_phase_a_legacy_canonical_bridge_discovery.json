@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "round": "R18.3e",
+    "phase": "A",
+    "scope": "Discovery LITE read-only",
+    "generated_at_utc": "2026-07-05T18:06:50Z",
+    "audit_log_baseline_pre_scan": 11896,
+    "audit_log_baseline_post_scan": 11896,
+    "audit_log_delta": 0,
+    "db_writes": 0,
+    "code_changes": 0,
+    "new_routes": 0,
+    "ui_changes": 0,
+    "runtime_wiring_added": 0,
+    "sealed_files_touched": 0,
+    "seal_authority_required_for_phase_b": true
+  },
+
+  "section_1_executive_summary": {
+    "canonical_it_classes_total": 27,
+    "legacy_live_en_classes_total": 16,
+    "canonical_hidden_live_intersect": ["cacciatore_di_mostri", "cacciatore_del_vuoto"],
+    "critical_findings": [
+      "display_name_it già popolato su 18/18 doc live adventurer_classes",
+      "frontend CLASS_IT map hardcoded in utils/displayLabels.js contiene 14 slug legacy",
+      "49 items già bindano cacciatore_di_mostri (31) e cacciatore_del_vuoto (18) via items.recommended_classes",
+      "class_slug è runtime-critical in 10+ moduli backend + 15+ componenti frontend",
+      "32 test file referenziano slug legacy hardcoded (339 occorrenze totali)",
+      "13 adventurers live con class_slug=NULL ma class_name set (drift pre-R16)"
+    ],
+    "recommendation": "R18.3e Phase B DEVE essere bridge documentale append-only (5 SAFE metadata field) su adventurer_classes docs o registry file. NO rename slug live. Deferire migration reale a R18.3f post-decisione PM."
+  },
+
+  "section_2_legacy_live_full_catalog": {
+    "adventurer_classes_total_docs": 18,
+    "legacy_live_en_16": [
+      {"slug": "warrior", "name": "Warrior", "display_name_it": "Guerriero", "role": "Tank", "primary_stat": "strength", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "rogue", "name": "Rogue", "display_name_it": "Ladro", "role": "DPS", "primary_stat": "agility", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "mage", "name": "Mage", "display_name_it": "Mago", "role": "DPS", "primary_stat": "intellect", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "priest", "name": "Priest", "display_name_it": "Sacerdote", "role": "Healer", "primary_stat": "faith", "is_active": true, "is_base_class": true, "drift_flags": ["display_name_it_diverges_from_pm_candidate_paladino"]},
+      {"slug": "ranger", "name": "Ranger", "display_name_it": "Ranger", "role": "DPS", "primary_stat": "agility", "is_active": true, "is_base_class": true, "drift_flags": ["display_name_it_untranslated", "display_name_it_diverges_from_pm_candidate_cacciatore_di_mostri"]},
+      {"slug": "paladin", "name": "Paladin", "display_name_it": "Paladino", "role": "Tank", "primary_stat": "faith", "is_active": true, "is_base_class": true, "drift_flags": ["primary_stat_faith_vs_canonical_strength"]},
+      {"slug": "berserker", "name": "Berserker", "display_name_it": "Berserker", "role": "DPS", "primary_stat": "strength", "is_active": false, "is_base_class": null, "drift_flags": ["is_active_false_deprecated", "display_name_it_untranslated"]},
+      {"slug": "druid", "name": "Druid", "display_name_it": "Druido", "role": "Healer", "primary_stat": "faith", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "necromancer", "name": "Necromancer", "display_name_it": "Negromante", "role": "DPS", "primary_stat": "intellect", "is_active": false, "is_base_class": null, "drift_flags": ["is_active_false_deprecated"]},
+      {"slug": "monk", "name": "Monk", "display_name_it": "Monaco", "role": "DPS", "primary_stat": "agility", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "bard", "name": "Bard", "display_name_it": "Bardo", "role": "Support", "primary_stat": "intellect", "is_active": true, "is_base_class": true, "drift_flags": ["role_support_out_of_valid_roles"]},
+      {"slug": "assassin", "name": "Assassin", "display_name_it": "Assassino", "role": "DPS", "primary_stat": "agility", "is_active": false, "is_base_class": null, "drift_flags": ["is_active_false_deprecated"]},
+      {"slug": "warlock", "name": "Warlock", "display_name_it": "Occultista", "role": "DPS", "primary_stat": "intellect", "is_active": true, "is_base_class": true, "drift_flags": ["display_name_it_diverges_from_pm_candidate_cacciatore_del_vuoto"]},
+      {"slug": "alchemist", "name": "Alchemist", "display_name_it": "Alchimista", "role": "DPS", "primary_stat": "intellect", "is_active": true, "is_base_class": true, "drift_flags": []},
+      {"slug": "recruit_unassigned", "name": null, "display_name_it": "Da riassegnare", "role": null, "primary_stat": null, "is_playable": false, "is_canonical": false, "is_base_class": false, "drift_flags": ["technical_placeholder", "hardcoded_in_expeditions_guard"]},
+      {"slug": "test-class-5e0064", "name": "Updated Test Class", "display_name_it": null, "role": "Tank", "primary_stat": null, "is_active": false, "drift_flags": ["test_artifact"]}
+    ],
+    "canonical_hidden_2": [
+      {"slug": "cacciatore_di_mostri", "name": "Cacciatore di Mostri", "display_name_it": "Cacciatore di Mostri", "role": "TBD", "is_active": true, "is_playable": false, "is_canonical": true, "description": "Migration target class R18.3a for orphan migration from 'ranger'. Not exposed to recruitment until R18.3 apply."},
+      {"slug": "cacciatore_del_vuoto", "name": "Cacciatore del Vuoto", "display_name_it": "Cacciatore del Vuoto", "role": "TBD", "is_active": true, "is_playable": false, "is_canonical": true, "description": "Migration target class R18.3a for orphan migration from 'warlock'. Not exposed to recruitment until R18.3 apply."}
+    ]
+  },
+
+  "section_3_usage_count_per_legacy_slug": {
+    "adventurers_total": 3373,
+    "distribution": [
+      {"class_slug": "warrior", "count": 331, "pct": 9.81},
+      {"class_slug": "monk", "count": 327, "pct": 9.69},
+      {"class_slug": "bard", "count": 324, "pct": 9.60},
+      {"class_slug": "druid", "count": 311, "pct": 9.22},
+      {"class_slug": "warlock", "count": 305, "pct": 9.04},
+      {"class_slug": "paladin", "count": 303, "pct": 8.98},
+      {"class_slug": "rogue", "count": 302, "pct": 8.95},
+      {"class_slug": "ranger", "count": 299, "pct": 8.86},
+      {"class_slug": "alchemist", "count": 299, "pct": 8.86},
+      {"class_slug": "mage", "count": 281, "pct": 8.33},
+      {"class_slug": "priest", "count": 278, "pct": 8.24},
+      {"class_slug": null, "count": 13, "pct": 0.39, "drift_note": "class_slug=NULL but class_name set (pre-R16 residual drift)"}
+    ],
+    "playable_slugs_covered": ["warrior","monk","bard","druid","warlock","paladin","rogue","ranger","alchemist","mage","priest"],
+    "zero_live_slugs": ["berserker","assassin","necromancer","recruit_unassigned","test-class-5e0064","cacciatore_di_mostri","cacciatore_del_vuoto"]
+  },
+
+  "section_4_player_facing_impact": {
+    "frontend_files_using_class_refs_count": 20,
+    "frontend_class_it_map_location": "/app/frontend/src/utils/displayLabels.js:110-127",
+    "frontend_class_it_map_keys": ["warrior","rogue","mage","priest","ranger","paladin","druid","monk","bard","warlock","alchemist","berserker","assassin","necromancer"],
+    "frontend_class_it_map_missing": ["cacciatore_di_mostri","cacciatore_del_vuoto","recruit_unassigned","test-class-5e0064"],
+    "frontend_class_it_map_render_fallback": "returns slug raw when key missing"
+  },
+
+  "section_5_recruitment_impact": {
+    "recruitable_playable_slugs_11": ["warrior","rogue","mage","priest","ranger","paladin","druid","monk","bard","warlock","alchemist"],
+    "not_recruitable_deprecated": ["berserker","assassin","necromancer"],
+    "not_recruitable_hidden_canonical": ["cacciatore_di_mostri","cacciatore_del_vuoto"],
+    "not_recruitable_technical": ["recruit_unassigned","test-class-5e0064"],
+    "expedition_guard_hardcoded_slug": "recruit_unassigned",
+    "expedition_guard_location": "backend/app/expeditions/services.py:907",
+    "r18_3a_migration_intent_documented": {
+      "cacciatore_di_mostri": "Migration target from ranger (per description in adventurer_classes doc)",
+      "cacciatore_del_vuoto": "Migration target from warlock (per description in adventurer_classes doc)"
+    }
+  },
+
+  "section_6_item_equipment_impact": {
+    "items_total": 178,
+    "items_with_hard_class_slug": 0,
+    "items_with_class_tags_non_empty": 157,
+    "items_with_recommended_classes_non_empty": 157,
+    "items_with_role_tags_non_empty": 115,
+    "class_tags_distinct_values_14_legacy_en": ["alchemist","assassin","bard","berserker","druid","mage","monk","necromancer","paladin","priest","ranger","rogue","warlock","warrior"],
+    "recommended_classes_distinct_values_16": ["alchemist","assassin","bard","berserker","cacciatore_del_vuoto","cacciatore_di_mostri","druid","mage","monk","necromancer","paladin","priest","ranger","rogue","warlock","warrior"],
+    "items_binding_canonical_hidden": {
+      "cacciatore_di_mostri": 31,
+      "cacciatore_del_vuoto": 18,
+      "total": 49
+    },
+    "empty_collections_related_to_class_bindings": {
+      "equipment": 0,
+      "player_inventory": 0,
+      "specializations": 0,
+      "class_halls": 0,
+      "adventurer_specializations": 0,
+      "training_specs": 0
+    },
+    "recipes_total": 5,
+    "recipes_class_bindings": 0
+  },
+
+  "section_7_frontend_api_test_dependencies": {
+    "backend_runtime_paths_with_class_refs": [
+      {"file": "app/adventurers/services.py", "lines": [161, 169, 196, 200, 202, 203, 204, 206]},
+      {"file": "app/adventurers/routes.py", "lines": [65, 96, 97, 101, 127]},
+      {"file": "app/adventurers/common.py", "lines": [127, 128, 132, 133]},
+      {"file": "app/adventurers/generator.py", "lines": [216]},
+      {"file": "app/equipment/compatibility.py", "lines": [54, 67, 68, 74, 75, 128, 167, 178, 182]},
+      {"file": "app/equipment/auto_equip.py", "lines": [149, 150, 154, 164, 167, 175, 178, 236, 245]},
+      {"file": "app/equipment/services.py", "lines": [320]},
+      {"file": "app/training/services.py", "lines": [36, 40, 46, 53, 63, 190, 194, 198, 576, 580, 583]},
+      {"file": "app/training/catalog.py", "lines": [409, 410, 414]},
+      {"file": "app/expeditions/services.py", "lines": [872, 874, 907, 917]},
+      {"file": "app/pvp_continental/services.py", "lines": [112]},
+      {"file": "app/recruitment/services.py", "lines": [113, 114, 433, 434]},
+      {"file": "app/recruitment/routes.py", "lines": [73]},
+      {"file": "app/recruitment/freeze_bench.py", "lines": [52, 91, 92, 238, 374, 375]},
+      {"file": "app/onboarding/services.py", "lines": [57, 58, 117]},
+      {"file": "app/admin/tester_tools.py", "lines": [186, 216, 239, 240, 335]},
+      {"file": "app/admin/routes.py", "lines": [57, 89, 97, 116, 123, 127, 131]},
+      {"file": "app/admin/audit_routes.py", "lines": [142]},
+      {"file": "app/guilds/routes.py", "lines": [92, 135]},
+      {"file": "app/audit/log.py", "lines": [234]}
+    ],
+    "frontend_runtime_paths_with_class_refs": [
+      "pages/Adventurers.jsx",
+      "pages/RaidBuilder.jsx",
+      "pages/PvpChallenge.jsx",
+      "pages/PvpBattleReport.jsx",
+      "pages/ExpeditionReport.jsx",
+      "pages/ExpeditionNew.jsx",
+      "pages/WorldBossEvent.jsx",
+      "pages/Training.jsx",
+      "pages/RosterManage.jsx",
+      "pages/ClassHalls.jsx",
+      "pages/Recruitment.jsx",
+      "pages/SquadBuilder.jsx",
+      "components/AdventurerDetailModal.jsx",
+      "components/InventoryEquipModal.jsx",
+      "components/RespecModal.jsx",
+      "components/AdventurerRenameModal.jsx",
+      "components/RosterFilterBar.jsx",
+      "utils/displayLabels.js"
+    ],
+    "test_files_referencing_legacy_slugs_count": 32,
+    "test_files_total_occurrences_count": 339
+  },
+
+  "section_8_candidate_mapping_legacy_to_canonical_10": [
+    {"legacy_slug": "warrior", "canonical_slug": "guerriero", "confidence": "HIGH", "evidence": "display_name_it match. Canonical guerriero in registry R18.3d design-only. No semantic conflict."},
+    {"legacy_slug": "rogue", "canonical_slug": "ladro", "confidence": "HIGH", "evidence": "display_name_it match. Canonical ladro in registry design-only."},
+    {"legacy_slug": "mage", "canonical_slug": "mago", "confidence": "HIGH", "evidence": "display_name_it match. Canonical mago in registry design-only."},
+    {"legacy_slug": "monk", "canonical_slug": "monaco", "confidence": "HIGH", "evidence": "display_name_it match. Canonical monaco in registry design-only."},
+    {"legacy_slug": "druid", "canonical_slug": "druido", "confidence": "HIGH", "evidence": "display_name_it match. Canonical druido in registry design-only."},
+    {"legacy_slug": "bard", "canonical_slug": "bardo", "confidence": "MEDIUM", "evidence": "display_name_it match, BUT bard.role='Support' drift out of VALID_ROLES (R18.3d.followup backlog)."},
+    {"legacy_slug": "alchemist", "canonical_slug": "alchimista", "confidence": "HIGH", "evidence": "display_name_it match. Canonical alchimista in registry design-only."},
+    {"legacy_slug": "necromancer", "canonical_slug": "negromante", "confidence": "MEDIUM", "evidence": "display_name_it match, BUT is_active=False deprecato silenziosamente. Deve essere mappato o marcato deprecated?"},
+    {"legacy_slug": "ranger", "canonical_slug": "cacciatore_di_mostri", "confidence": "MEDIUM", "evidence": "Coerente con R18.3a 'Migration target from ranger'. BUT display_name_it='Ranger' (untranslated) mentre canonical è 'Cacciatore di Mostri'. UI cambia label significativamente. 299 adventurers live impattati."},
+    {"legacy_slug": "warlock", "canonical_slug": "cacciatore_del_vuoto", "confidence": "MEDIUM", "evidence": "Coerente con R18.3a 'Migration target from warlock'. BUT display_name_it='Occultista' diverge da canonical 'Cacciatore del Vuoto'. UI cambia label significativamente. 305 adventurers live impattati. 18 items already bind cacciatore_del_vuoto."}
+  ],
+
+  "section_9_ambiguous_mappings_6": [
+    {"legacy_slug": "priest", "options": ["paladino", "sacerdote_new_canonical", "deprecato"], "pro_contro": "(a) semplice ma role/stats non allineati; (b) coerente con display_name_it='Sacerdote' ma sacerdote NON è in canonical set R18.3d; (c) 278 adventurers live orfani", "pm_decision_required": true},
+    {"legacy_slug": "paladin", "options": ["paladino", "deprecato", "split_paladino_tank_plus_sacerdote"], "pro_contro": "display_name_it='Paladino' match, MA primary_stat='faith' diverge da canonical design ('strength', LOCKED live).", "pm_decision_required": true},
+    {"legacy_slug": "assassin", "options": ["ladro_dup", "assassino_new_canonical", "deprecated_alias_target_ladro"], "pro_contro": "is_active=False, 0 adventurers live. Frontend CLASS_IT map lo tiene per 'safe rendering old data'. Spec assassin_spec è di rogue.", "pm_decision_required": true},
+    {"legacy_slug": "berserker", "options": ["guerriero_dup", "berserker_new_canonical", "deprecated_alias_target_guerriero"], "pro_contro": "is_active=False, 0 adventurers live. Spec berserker_spec è di warrior. items class_tags include berserker (12 items drift).", "pm_decision_required": true},
+    {"legacy_slug": "recruit_unassigned", "options": ["excluded_from_canonical_bridge", "canonical_nessuna_classe", "legacy_only"], "pro_contro": "Tecnical placeholder. Guard expeditions/services.py:907 hardcoded. is_playable=False, is_canonical=False.", "pm_decision_required": true},
+    {"legacy_slug": "test-class-5e0064", "options": ["test_artifact_permanent", "delete_from_catalog", "rename_test_artifact_reserved"], "pro_contro": "is_active=False, artifact test admin. Nessun runtime dep.", "pm_decision_required": true}
+  ],
+
+  "section_10_unsafe_mappings_6": [
+    {"scenario": "Rename slug warrior→guerriero in adventurer_classes.slug", "unsafe_reason": "Rompe adventurers.class_slug='warrior' su 331 doc + fallback class_name.lower() in adventurers/services.py:200-206", "affected_runtime": ["auto-equip", "training", "expeditions", "PvP snapshot"]},
+    {"scenario": "Rename recruit_unassigned→da_riassegnare", "unsafe_reason": "Rompe guard expeditions/services.py:907 hardcoded + round181_schema_foundation.py orphan target", "affected_runtime": ["expeditions hard-block", "orphan migration"]},
+    {"scenario": "Rimozione is_active=True su warlock/ranger/priest ecc.", "unsafe_reason": "Rompe recruitment offer pool", "affected_runtime": ["recruitment/services.py"]},
+    {"scenario": "Rimozione class_tags berserker dagli items", "unsafe_reason": "0 adventurers live berserker ma triggera WARN sui 32 test", "affected_runtime": ["test suite legacy assumptions"]},
+    {"scenario": "Aggiungere class_slug HARD field su items", "unsafe_reason": "Feature nuova (R18.4) — richiederebbe cascade rewrite 157 items", "affected_runtime": ["R18.4 scope"]},
+    {"scenario": "Aggiornare paladin.primary_stat: faith→strength", "unsafe_reason": "Rompe XP debuff calc su 303 adventurers paladin live (xp_primary_stat_policy)", "affected_runtime": ["xp_primary_stat_policy runtime"]}
+  ],
+
+  "section_11_noop_deprecated_test_only": [
+    {"slug": "recruit_unassigned", "class": "technical_placeholder", "adventurers_live": 0, "runtime_dep": "hardcoded_in_guards", "exclude_from_canonical_bridge": true},
+    {"slug": "test-class-5e0064", "class": "test_artifact", "adventurers_live": 0, "runtime_dep": "none", "recommendation": "mark bridge_status=test_artifact"},
+    {"slug": "berserker", "class": "deprecated_legacy", "adventurers_live": 0, "runtime_dep": "frontend_class_it_map + items.class_tags (12 items)", "recommendation": "deprecated_alias_target=guerriero"},
+    {"slug": "assassin", "class": "deprecated_legacy", "adventurers_live": 0, "runtime_dep": "frontend_class_it_map + items.class_tags", "recommendation": "deprecated_alias_target=ladro"},
+    {"slug": "necromancer", "class": "deprecated_legacy", "adventurers_live": 0, "runtime_dep": "frontend_class_it_map + items.class_tags", "recommendation": "deprecated_alias_target=negromante"},
+    {"slug": "cacciatore_di_mostri", "class": "canonical_hidden_soft_live", "adventurers_live": 0, "items_bound": 31, "runtime_dep": "items.recommended_classes (31 items) + description declares 'migration target from ranger'"},
+    {"slug": "cacciatore_del_vuoto", "class": "canonical_hidden_soft_live", "adventurers_live": 0, "items_bound": 18, "runtime_dep": "items.recommended_classes (18 items) + description declares 'migration target from warlock'"}
+  ],
+
+  "section_12_recommended_bridge_shape": {
+    "approach": "documental_append_only_metadata",
+    "target_collection": "adventurer_classes",
+    "safe_fields_5": [
+      {"name": "canonical_slug", "type": "str | null", "classification": "SAFE", "reversible_via": "$unset"},
+      {"name": "alias_target", "type": "str | null", "classification": "SAFE", "reversible_via": "$unset"},
+      {"name": "bridge_status", "type": "enum", "classification": "SAFE", "valid_values": ["mapped_canonical","mapped_alias","ambiguous_pending_pm","deprecated_alias","test_artifact","technical_placeholder","canonical_native"]},
+      {"name": "bridge_source_round", "type": "str", "classification": "SAFE", "example": "R18.3e Phase B"},
+      {"name": "bridge_applied_at", "type": "ISO datetime UTC", "classification": "SAFE"}
+    ],
+    "risky_fields_to_avoid": [
+      {"name": "canonical_class_slug", "reason": "duplicate naming vs canonical_slug"},
+      {"name": "rename_slug_field", "classification": "BLOCKED", "reason": "breaks 20+ backend paths + 20+ frontend + 32 tests"}
+    ],
+    "registry_file_proposal": {
+      "path": "/app/memory/r18_3e_bridge_registry.json",
+      "companion_md_path": "/app/memory/r18_3e_bridge_registry.md",
+      "documental_only": true,
+      "unwired": true,
+      "python_loader": "app/core/bridge_registry.py (proposed, unwired)",
+      "dry_run_script": "app/scripts/round18_3e_apply_bridge.py (proposed, APPLY_ENABLED=False)",
+      "test_suite": "tests/backend_r18_3e_bridge_registry_test.py (proposed)"
+    }
+  },
+
+  "section_13_open_questions_pm_14": [
+    {"q_id": "Q1", "question": "canonical_slug primario o alias_target primario o entrambi?", "default": null},
+    {"q_id": "Q2", "question": "Bridge su adventurer_classes docs, su registry file, o entrambi?", "default": null},
+    {"q_id": "Q3", "question": "priest → paladino / sacerdote / deprecato?", "default": null, "note": "display_name_it live è 'Sacerdote'"},
+    {"q_id": "Q4", "question": "assassin → ladro / assassino_new_canonical / deprecato?", "default": null, "note": "0 adventurers live"},
+    {"q_id": "Q5", "question": "berserker → guerriero / berserker_new_canonical / deprecato?", "default": null, "note": "0 adventurers live"},
+    {"q_id": "Q6", "question": "ranger/warlock → cacciatore_di_mostri/cacciatore_del_vuoto anche se hidden e display_it diverge?", "default": null, "note": "299+305 adventurers live impattati, 49 items already bind hidden canonical"},
+    {"q_id": "Q7", "question": "recruit_unassigned escluso dal canonical bridge o inserito come nessuna_classe?", "default": null},
+    {"q_id": "Q8", "question": "test-class-5e0064 test_artifact permanente o delete?", "default": null},
+    {"q_id": "Q9", "question": "R18.4 può usare bridge append-only o richiede migration DB completa?", "default": null},
+    {"q_id": "Q10", "question": "UI label IT player-facing (post-bridge visibile) o solo admin/design layer (invisibile)?", "default": null},
+    {"q_id": "Q11_bonus", "question": "items.class_tags ri-scritto canonical o legacy + bridge risolve solo adventurer?", "default": null},
+    {"q_id": "Q12_bonus", "question": "bard.role='Support' — mantenere drift o allineare in R18.3e?", "default": null},
+    {"q_id": "Q13_bonus", "question": "Bridge apply emette audit event R18_3E_BRIDGE_APPLIED o zero-audit?", "default": null},
+    {"q_id": "Q14_bonus", "question": "13 adventurers class_slug=NULL: backfill in R18.3e o continua fallback runtime?", "default": null}
+  ],
+
+  "section_14_phase_b_recommendation_staged": {
+    "stage_b0": {"name": "PM decisioni su 14 Open Questions", "action": "zero_code", "blocker": true},
+    "stage_b1": {"name": "Bridge registry file documental-only", "action": "create /app/memory/r18_3e_bridge_registry.json + md + python loader unwired + dry-run script + test suite", "db_write": false, "runtime_wiring": false, "close_as": "CLOSED_AND_SEALED_DOCUMENTAL_ONLY"},
+    "stage_b2": {"name": "Optional DB append-only apply (only on GO PM)", "action": "$set 5 SAFE fields on 18 adventurer_classes docs", "db_write": true, "reversible": true, "rollback": "$unset simmetric script", "audit_event_optional": "R18_3E_BRIDGE_APPLIED"},
+    "stage_b3": {"name": "R18.4 può leggere canonical_slug documental", "action": "optional post-B1/B2 read-only wiring per player-facing recommendations", "in_scope": false},
+    "stage_b4_deferred": {"name": "Migration slug live (R18.3f)", "action": "rewrite adventurers.class_slug + rewrite 32 test + update frontend CLASS_IT + update expeditions guard", "in_scope": false, "requires": "PM go + downtime window"}
+  },
+
+  "section_15_self_check_phase_a": {
+    "1_report_md_created": true,
+    "2_report_json_created_parsable": true,
+    "3_zero_db_write_audit_delta_0": true,
+    "4_zero_new_audit_event": true,
+    "5_zero_new_route": true,
+    "6_zero_ui_change": true,
+    "7_zero_runtime_import_wiring": true,
+    "8_sealed_files_intact_14_sigilli_byte_identical": true,
+    "9_all_16_legacy_slugs_documented_8_dimensions": true,
+    "10_open_questions_pm_at_least_10": true,
+    "audit_log_pre_scan": 11896,
+    "audit_log_post_scan": 11896,
+    "audit_log_delta": 0,
+    "sealed_pytest_result": "5/5 PASSED (0.90s + 1.68s)"
+  }
+}
