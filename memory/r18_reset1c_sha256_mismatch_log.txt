@@ -1,0 +1,8 @@
+[2026-07-05T08:03:28.043725+00:00] [INFO] MODE = DRY_RUN. Nessuna scrittura sara' effettuata. Per restore reale usa --confirm-rollback.
+[2026-07-05T08:03:28.043991+00:00] [INFO] ====== R18.Reset.1c START (mode=DRY_RUN) ======
+[2026-07-05T08:03:28.044007+00:00] [INFO] manifest_path = /tmp/r18_reset1c_fake_backup_f337f8a7/manifest.json
+[2026-07-05T08:03:28.044144+00:00] [INFO] [manifest] loaded round=R18.Reset.1b collections=33 created_at=2026-07-05T08:03:09.476862+00:00
+[2026-07-05T08:03:28.044155+00:00] [INFO] [manifest] this is a FAKE FIXTURE (test regression). Zero real data. Restore simulation only.
+[2026-07-05T08:03:28.044238+00:00] [INFO] [sha256] guilds: 3 lines, sha256=6bce472f4d90af1a... PASS
+[2026-07-05T08:03:28.044273+00:00] [INFO] [sha256] achievement_progress: 2 lines, sha256=b92faf3f8f14373d... PASS
+[2026-07-05T08:03:28.044881+00:00] [ERROR] HARD STOP: HARD STOP: SHA256 MISMATCH on adventurers. expected=9d73a80a5455e0ed0a8f984cf98dee3063dbb2ac6315691f24beb4d90f6f521f actual=eb528eebe33288080006d63f32507a80e8e2dbc5fe4cb7e5af259c63a315255b file=/tmp/r18_reset1c_fake_backup_f337f8a7/adventurers.jsonl. Rollback aborted.

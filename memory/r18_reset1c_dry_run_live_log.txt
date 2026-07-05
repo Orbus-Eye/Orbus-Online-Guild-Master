@@ -1,0 +1,90 @@
+[2026-07-05T08:04:00.540607+00:00] [INFO] MODE = DRY_RUN. Nessuna scrittura sara' effettuata. Per restore reale usa --confirm-rollback.
+[2026-07-05T08:04:00.540892+00:00] [INFO] ====== R18.Reset.1c START (mode=DRY_RUN) ======
+[2026-07-05T08:04:00.540909+00:00] [INFO] manifest_path = /tmp/r18_reset1c_fake_backup_f337f8a7/manifest.json
+[2026-07-05T08:04:00.541031+00:00] [INFO] [manifest] loaded round=R18.Reset.1b collections=33 created_at=2026-07-05T08:04:00.374846+00:00
+[2026-07-05T08:04:00.541037+00:00] [INFO] [manifest] this is a FAKE FIXTURE (test regression). Zero real data. Restore simulation only.
+[2026-07-05T08:04:00.541135+00:00] [INFO] [sha256] guilds: 3 lines, sha256=ce85a95a36c4d864... PASS
+[2026-07-05T08:04:00.541178+00:00] [INFO] [sha256] achievement_progress: 2 lines, sha256=c6ca273c459351ec... PASS
+[2026-07-05T08:04:00.541211+00:00] [INFO] [sha256] adventurers: 2 lines, sha256=1ea8d18824d4fd5c... PASS
+[2026-07-05T08:04:00.541243+00:00] [INFO] [sha256] chat_messages: 2 lines, sha256=b34ce0a445ea538e... PASS
+[2026-07-05T08:04:00.541270+00:00] [INFO] [sha256] class_halls: 2 lines, sha256=85a47f8ff34e9976... PASS
+[2026-07-05T08:04:00.541296+00:00] [INFO] [sha256] continent_event_instances: 2 lines, sha256=6d36014fbd21eb80... PASS
+[2026-07-05T08:04:00.541322+00:00] [INFO] [sha256] continent_leaderboard_snapshots: 2 lines, sha256=206909bf40565f44... PASS
+[2026-07-05T08:04:00.541350+00:00] [INFO] [sha256] equipped_items: 2 lines, sha256=1c51b0944d304994... PASS
+[2026-07-05T08:04:00.541375+00:00] [INFO] [sha256] expedition_members: 2 lines, sha256=f77c884b45f4391a... PASS
+[2026-07-05T08:04:00.541400+00:00] [INFO] [sha256] expeditions: 2 lines, sha256=04dcb5c3e0592658... PASS
+[2026-07-05T08:04:00.541426+00:00] [INFO] [sha256] guild_mount_ownership: 2 lines, sha256=c486c3a6f53acdd2... PASS
+[2026-07-05T08:04:00.541451+00:00] [INFO] [sha256] guild_site_income_ledger: 2 lines, sha256=3d517e61f5254e90... PASS
+[2026-07-05T08:04:00.541475+00:00] [INFO] [sha256] guild_specialization_choice: 2 lines, sha256=819315fa25bd7807... PASS
+[2026-07-05T08:04:00.541501+00:00] [INFO] [sha256] guild_structures: 2 lines, sha256=3acf4c8a7df62317... PASS
+[2026-07-05T08:04:00.541525+00:00] [INFO] [sha256] guild_trade_pacts: 2 lines, sha256=491414c3d1360c94... PASS
+[2026-07-05T08:04:00.541549+00:00] [INFO] [sha256] guild_world_presence: 2 lines, sha256=c54aa2515c1363da... PASS
+[2026-07-05T08:04:00.541574+00:00] [INFO] [sha256] guild_xp_daily_cap_tracker: 2 lines, sha256=8b2a05ad77c8325c... PASS
+[2026-07-05T08:04:00.541598+00:00] [INFO] [sha256] inventory_items: 2 lines, sha256=216a35d3c092f08d... PASS
+[2026-07-05T08:04:00.541622+00:00] [INFO] [sha256] narrative_rewards_unlocked: 2 lines, sha256=e95a40e08cc3823b... PASS
+[2026-07-05T08:04:00.541645+00:00] [INFO] [sha256] pvp_cosmetics_unlocked: 2 lines, sha256=189ea9cc871247ea... PASS
+[2026-07-05T08:04:00.541669+00:00] [INFO] [sha256] pvp_defense_teams: 2 lines, sha256=52c9b7a1cb697cbc... PASS
+[2026-07-05T08:04:00.541693+00:00] [INFO] [sha256] pvp_season_leaderboards: 2 lines, sha256=c47e74a13e0e406c... PASS
+[2026-07-05T08:04:00.541716+00:00] [INFO] [sha256] pvp_seasons: 2 lines, sha256=c693fe1605650ada... PASS
+[2026-07-05T08:04:00.541740+00:00] [INFO] [sha256] raid_participants: 2 lines, sha256=f52242670ef04ccd... PASS
+[2026-07-05T08:04:00.541764+00:00] [INFO] [sha256] raids: 2 lines, sha256=23bd9906265e2633... PASS
+[2026-07-05T08:04:00.541789+00:00] [INFO] [sha256] recruitment_offers: 2 lines, sha256=f0d97d4449a15424... PASS
+[2026-07-05T08:04:00.541813+00:00] [INFO] [sha256] season_participations: 2 lines, sha256=c71e141c8e5980e3... PASS
+[2026-07-05T08:04:00.541851+00:00] [INFO] [sha256] season_rewards: 2 lines, sha256=210185aab2449971... PASS
+[2026-07-05T08:04:00.541880+00:00] [INFO] [sha256] seasons: 2 lines, sha256=d820e326521a0bd9... PASS
+[2026-07-05T08:04:00.541908+00:00] [INFO] [sha256] shop_daily_offers: 2 lines, sha256=e88534f7e9356365... PASS
+[2026-07-05T08:04:00.541932+00:00] [INFO] [sha256] squads: 2 lines, sha256=3c43ef848c0f05fa... PASS
+[2026-07-05T08:04:00.541956+00:00] [INFO] [sha256] tester_tool_snapshots: 2 lines, sha256=e2d5b402e16e0014... PASS
+[2026-07-05T08:04:00.541987+00:00] [INFO] [sha256] world_boss_events: 2 lines, sha256=023f733d490fb0b6... PASS
+[2026-07-05T08:04:00.541992+00:00] [INFO] [sha256] all 33 files verified, total_lines=67
+[2026-07-05T08:04:00.547943+00:00] [INFO] [restore_guilds] mode=DRY_RUN backup_docs=3 would_restore=3 identity_divergences=0
+[2026-07-05T08:04:00.548955+00:00] [INFO] [restore_archive] DRY_RUN: achievement_progress live=1686 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.550496+00:00] [INFO] [restore_archive] DRY_RUN: adventurers live=3321 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.550858+00:00] [INFO] [restore_archive] DRY_RUN: chat_messages live=2 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.551657+00:00] [INFO] [restore_archive] DRY_RUN: class_halls live=1673 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.552014+00:00] [INFO] [restore_archive] DRY_RUN: continent_event_instances live=1 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.552315+00:00] [INFO] [restore_archive] DRY_RUN: continent_leaderboard_snapshots live=3 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.552594+00:00] [INFO] [restore_archive] DRY_RUN: equipped_items live=20 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.552878+00:00] [INFO] [restore_archive] DRY_RUN: expedition_members live=45 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.553154+00:00] [INFO] [restore_archive] DRY_RUN: expeditions live=17 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.553414+00:00] [INFO] [restore_archive] DRY_RUN: guild_mount_ownership live=2 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.553671+00:00] [INFO] [restore_archive] DRY_RUN: guild_site_income_ledger live=14 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.553923+00:00] [INFO] [restore_archive] DRY_RUN: guild_specialization_choice live=4 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.554321+00:00] [INFO] [restore_archive] DRY_RUN: guild_structures live=421 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.554567+00:00] [INFO] [restore_archive] DRY_RUN: guild_trade_pacts live=1 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.554810+00:00] [INFO] [restore_archive] DRY_RUN: guild_world_presence live=6 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.555062+00:00] [INFO] [restore_archive] DRY_RUN: guild_xp_daily_cap_tracker live=10 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.555356+00:00] [INFO] [restore_archive] DRY_RUN: inventory_items live=111 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.555594+00:00] [INFO] [restore_archive] DRY_RUN: narrative_rewards_unlocked live=1 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.555844+00:00] [INFO] [restore_archive] DRY_RUN: pvp_cosmetics_unlocked live=5 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.556085+00:00] [INFO] [restore_archive] DRY_RUN: pvp_defense_teams live=3 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.556356+00:00] [INFO] [restore_archive] DRY_RUN: pvp_season_leaderboards live=36 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.556615+00:00] [INFO] [restore_archive] DRY_RUN: pvp_seasons live=19 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.556868+00:00] [INFO] [restore_archive] DRY_RUN: raid_participants live=20 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.557119+00:00] [INFO] [restore_archive] DRY_RUN: raids live=1 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.557451+00:00] [INFO] [restore_archive] DRY_RUN: recruitment_offers live=255 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.557704+00:00] [INFO] [restore_archive] DRY_RUN: season_participations live=14 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.557947+00:00] [INFO] [restore_archive] DRY_RUN: season_rewards live=4 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.558201+00:00] [INFO] [restore_archive] DRY_RUN: seasons live=1 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.558450+00:00] [INFO] [restore_archive] DRY_RUN: shop_daily_offers live=18 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.558821+00:00] [INFO] [restore_archive] DRY_RUN: squads live=2 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.559129+00:00] [INFO] [restore_archive] DRY_RUN: tester_tool_snapshots live=14 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.559389+00:00] [INFO] [restore_archive] DRY_RUN: world_boss_events live=4 backup=2 would delete_many({}) then insert_many(2 docs)
+[2026-07-05T08:04:00.559400+00:00] [INFO] [audit] DRY_RUN: would emit R18_FULL_GUILD_FRESH_START_ROLLED_BACK linked to manifest_path=/tmp/r18_reset1c_fake_backup_f337f8a7/manifest.json
+[2026-07-05T08:04:00.559405+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T08:04:00.559452+00:00] [INFO] {
+  "sha256": {
+    "files_verified": 33,
+    "total_lines_hashed": 67
+  },
+  "guilds": {
+    "target": 3,
+    "would_restore": 3,
+    "identity_divergences": 0
+  },
+  "archive": {
+    "collections_processed": 32
+  }
+}
+[2026-07-05T08:04:00.559456+00:00] [INFO] ====== R18.Reset.1b APPLY REMAINS BLOCKED ======
+[2026-07-05T08:04:00.559461+00:00] [INFO] ====== R18.Reset.1c DONE (mode=DRY_RUN) ======

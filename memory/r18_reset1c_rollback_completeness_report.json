@@ -1,0 +1,220 @@
+{
+  "round": "R18.Reset.1c",
+  "mode": "report_only_no_execution",
+  "prepared_at": "2026-07-05",
+  "status": "REPORT_READY_R18_RESET1B_APPLY_REMAINS_BLOCKED",
+  "authorized_by": "PM brief R18.Reset.1c Option C (metonymy + forward-compat full-doc replace)",
+  "author": "e1 main agent",
+  "sections": {
+    "section_01_executive_summary": {
+      "purpose": "Chiude la Coverage Gap del piano 1b (guild fields resettati in-place non ripristinabili dal solo rollback sibling _r18_archive).",
+      "tool": "round18_reset1c_restore_from_jsonl_manifest.py",
+      "key_features": [
+        "sha256 manifest verification obbligatoria (hard stop su mismatch)",
+        "full-doc replace guild con identity protection",
+        "idempotency guard (audit event + manifest_path key)",
+        "default DRY_RUN, --confirm-rollback per apply reale",
+        "HARD STOP su identity divergence in APPLY (bypass con --force-identity-override)",
+        "coverage esplicita 6 mandatory field (gold, level, reputation + forward-compat prestige/resources/progression)"
+      ],
+      "test_suite": {"total": 13, "passed": 13, "failed": 0},
+      "db_diff_verdict": "CLEAN"
+    },
+    "section_02_rollback_gap_originario": {
+      "gap_description": "Il rollback del piano 1b (round18_reset1b_rollback.py) ripristina solo le 32 archive collections. La collection guilds ha i field resettati in-place da step S5 _reset_guild_fields; questi campi NON sono nelle sibling _r18_archive.",
+      "affected_guild_fields_in_1b_reset": [
+        "level", "gold", "reputation", "current_roster_size",
+        "max_roster_cap", "raids_completed_count", "raids_victory_count",
+        "max_raid_score", "last_raid_completed_at", "max_team_power_ever",
+        "r18_beta_opt_in", "migration_banner_r18_3c_dismissed",
+        "r18_reset1b_applied", "r18_reset1b_banner_dismissed",
+        "r18_reset1b_applied_at", "updated_at"
+      ],
+      "source_of_truth_for_restore": "guilds.jsonl in backup JSONL prodotto da piano 1b step S2"
+    },
+    "section_03_manifest_sha256_strategy": {
+      "manifest_format_reference": "compatibile con _backup_snapshot piano 1b §S2",
+      "entries_expected": 33,
+      "entries_breakdown": "32 archive collections + 1 guilds",
+      "sha256_algorithm": "per file JSONL, line-by-line con line.encode('utf-8') dopo rstrip('\\n')",
+      "determinism": "garantita da simmetria write/read (json.dumps ensure_ascii=False + rstrip newline in read)",
+      "on_mismatch": "HARD STOP exit 1, log ERROR 'SHA256 MISMATCH on <coll>. expected=... actual=... Rollback aborted.'",
+      "on_file_missing": "FileNotFoundError HARD STOP exit 1",
+      "on_manifest_invalid": "ValueError HARD STOP exit 1",
+      "on_doc_count_mismatch": "ValueError HARD STOP exit 1",
+      "zero_best_effort_or_partial_recovery": true
+    },
+    "section_04_restore_coverage_guild_fields": {
+      "coverage_table": [
+        {"field": "gold", "strategy": "coverage-by-field-presence", "notes": "restore diretto"},
+        {"field": "level", "strategy": "coverage-by-field-presence", "notes": "restore diretto"},
+        {"field": "reputation", "strategy": "coverage-by-field-presence", "notes": "restore diretto"},
+        {"field": "prestige", "strategy": "coverage-by-strategy", "notes": "forward-compat, 0/672 guild oggi, full-doc replace lo coprira'"},
+        {"field": "resources", "strategy": "coverage-by-strategy", "notes": "forward-compat, 0/672 guild oggi"},
+        {"field": "progression", "strategy": "coverage-by-metonymy + full-doc restore", "notes": "semantic alias, not a single live field today"}
+      ],
+      "progression_metonymy_mapping": [
+        "raids_completed_count",
+        "raids_victory_count",
+        "max_raid_score",
+        "last_raid_completed_at",
+        "max_team_power_ever",
+        "current_roster_size",
+        "max_roster_cap",
+        "r18_beta_opt_in"
+      ],
+      "full_doc_replace_strategy": {
+        "algorithm": "for each backup doc, find live by id, protect identity, $set restored dict",
+        "identity_protected_fields": [
+          "id", "name", "owner_user_id", "user_id",
+          "created_at", "public_id",
+          "is_grandfathered", "is_demo_opponent", "is_test_artifact"
+        ],
+        "identity_divergence_behavior": {
+          "dry_run": "WARN + procede simulazione",
+          "apply_default": "HARD STOP exit 1",
+          "apply_with_force_identity_override": "WARN + procede (bypass, richiede approvazione PM esplicita)"
+        }
+      }
+    },
+    "section_05_restore_coverage_archive_collections": {
+      "collections_count": 32,
+      "strategy": "per each: delete_many({}) live + insert_many(docs_from_backup_jsonl)",
+      "match_with_piano_1b": "1:1 con ARCHIVE_COLLECTIONS piano 1b §3",
+      "collections_list_sorted": [
+        "achievement_progress", "adventurers", "chat_messages", "class_halls",
+        "continent_event_instances", "continent_leaderboard_snapshots",
+        "equipped_items", "expedition_members", "expeditions",
+        "guild_mount_ownership", "guild_site_income_ledger",
+        "guild_specialization_choice", "guild_structures",
+        "guild_trade_pacts", "guild_world_presence",
+        "guild_xp_daily_cap_tracker", "inventory_items",
+        "narrative_rewards_unlocked", "pvp_cosmetics_unlocked",
+        "pvp_defense_teams", "pvp_season_leaderboards", "pvp_seasons",
+        "raid_participants", "raids", "recruitment_offers",
+        "season_participations", "season_rewards", "seasons",
+        "shop_daily_offers", "squads", "tester_tool_snapshots",
+        "world_boss_events"
+      ],
+      "whitelist_enforcement": "collections not in ARCHIVE_COLLECTIONS or guilds are WARN-skipped, defensive by design"
+    },
+    "section_06_dry_run_restore_simulation": {
+      "fake_backup_fixture_path": "/tmp/r18_reset1c_fake_backup_f337f8a7/",
+      "fake_backup_contents": {
+        "jsonl_files": 33,
+        "manifest_json": true,
+        "fake_guilds_count": 3,
+        "fake_archive_docs_per_collection": 2,
+        "total_archive_docs": 64,
+        "is_fake_fixture_flag": true,
+        "keep_in_place_policy": "PM directive 1c §3"
+      },
+      "regeneration_command": "python -m app.scripts.round18_reset1c_restore_from_jsonl_manifest --generate-fake-backup /tmp/r18_reset1c_fake_backup_f337f8a7",
+      "dry_run_command": "python -m app.scripts.round18_reset1c_restore_from_jsonl_manifest --manifest-path /tmp/r18_reset1c_fake_backup_f337f8a7/manifest.json",
+      "dry_run_result": {
+        "exit_code": 0,
+        "log_lines": 90,
+        "log_bytes": 10028,
+        "sha256_files_verified": 33,
+        "sha256_total_lines_hashed": 67,
+        "guilds_target": 3,
+        "guilds_would_restore": 3,
+        "identity_divergences": 0,
+        "archive_collections_processed": 32,
+        "r18_reset1b_apply_remains_blocked_line_present": true
+      },
+      "snapshot_before_after_diff_verdict": "CLEAN",
+      "snapshot_files": {
+        "before": "/app/memory/r18_reset1c_dry_run_live_before.json",
+        "after": "/app/memory/r18_reset1c_dry_run_live_after.json"
+      }
+    },
+    "section_07_idempotency_guard": {
+      "mechanism": "audit_log.count_documents({event_type: R18_FULL_GUILD_FRESH_START_ROLLED_BACK, metadata.manifest_path: <path>}) > 0 -> HARD STOP exit 3",
+      "idempotency_key": ["event_type", "metadata.manifest_path"],
+      "allows": "rollback multipli da manifest diversi",
+      "denies": "re-rollback dallo stesso manifest",
+      "duplicate_rollback_workaround": "not implemented by default (safety choice); PM può rimuovere audit event manualmente se necessario"
+    },
+    "section_08_failure_modes": [
+      {"mode": "manifest_path_missing_arg", "behavior": "USAGE ERROR stderr", "exit": 2},
+      {"mode": "manifest_file_not_exists", "behavior": "FileNotFoundError HARD STOP", "exit": 1},
+      {"mode": "manifest_schema_invalid", "behavior": "ValueError HARD STOP", "exit": 1},
+      {"mode": "manifest_collections_empty", "behavior": "ValueError HARD STOP", "exit": 1},
+      {"mode": "jsonl_file_missing", "behavior": "FileNotFoundError HARD STOP", "exit": 1},
+      {"mode": "sha256_mismatch", "behavior": "ValueError HARD STOP with detailed log", "exit": 1, "verified_by_test_4": true, "log_evidence": "/app/memory/r18_reset1c_sha256_mismatch_log.txt"},
+      {"mode": "doc_count_mismatch", "behavior": "ValueError HARD STOP", "exit": 1},
+      {"mode": "backup_doc_without_id", "behavior": "ValueError HARD STOP", "exit": 1},
+      {"mode": "identity_divergence_apply_no_override", "behavior": "RuntimeError HARD STOP", "exit": 1},
+      {"mode": "identity_divergence_dry_run", "behavior": "WARN + procede", "exit": 0},
+      {"mode": "identity_divergence_apply_with_force_override", "behavior": "WARN + procede", "exit": 0},
+      {"mode": "idempotency_violation_same_manifest", "behavior": "HARD STOP log ERROR", "exit": 3},
+      {"mode": "collection_not_in_whitelist", "behavior": "WARN + skip", "exit": 0},
+      {"mode": "db_connection_or_permission_error", "behavior": "Exception raise FATAL log", "exit": "non-zero"}
+    ],
+    "section_09_commands_allowed_disallowed": {
+      "allowed": [
+        "--generate-fake-backup <path> (utility zero DB contact)",
+        "--manifest-path <p> (DRY_RUN default)",
+        "--manifest-path <p> --dry-run (esplicito)"
+      ],
+      "requires_pm_signoff": [
+        "--manifest-path <p> --confirm-rollback (restore reale)"
+      ],
+      "requires_pm_explicit_case_by_case": [
+        "--manifest-path <p> --confirm-rollback --force-identity-override"
+      ],
+      "sealed_do_not_touch": [
+        "round18_reset1b_apply.py",
+        "round18_reset1b_rollback.py"
+      ],
+      "blocked_gates_16": [
+        "round18_reset1b_apply.py --apply --i-understand-this-will-reset-all-guilds"
+      ]
+    },
+    "section_10_residual_risks": [
+      {"id": "R1", "risk": "prestige/resources schema mai definito", "impact": "LOW", "mitigation": "coverage-by-strategy via full-doc replace, nessuna azione necessaria"},
+      {"id": "R2", "risk": "progression semantic drift (nuovo field aggiunto in futuro non nel mapping)", "impact": "LOW", "mitigation": "full-doc replace copre tutti i field non-identity nel backup"},
+      {"id": "R3", "risk": "backup JSONL 1b diverge dal formato atteso 1c", "impact": "LOW", "mitigation": "verificato: simmetria write/read protocol"},
+      {"id": "R4", "risk": "identity divergence tra backup e live", "impact": "MEDIUM", "mitigation": "HARD STOP APPLY default, override esplicito richiesto"},
+      {"id": "R5", "risk": "race condition scritture concorrenti backend live durante APPLY", "impact": "MEDIUM", "mitigation": "OUT OF SCOPE 1c: backend maintenance mode / write-freeze deve precedere apply reale (remaining blocker)"},
+      {"id": "R6", "risk": "fake backup fixture rimosso/corrotto tra test runs", "impact": "LOW", "mitigation": "rigenerazione idempotente via --generate-fake-backup"},
+      {"id": "R7", "risk": "backup mai stato prodotto (piano 1b non ancora applicato)", "impact": "INFO", "mitigation": "by design: 1c non necessita backup reale per essere validato"}
+    ],
+    "section_11_final_gate": {
+      "rollback_full_ready": true,
+      "r18_reset1b_apply_still_blocked": true,
+      "remaining_blockers": [
+        "PM sign-off renewed after review of this report (piano 1b §16 gate 4)",
+        "Backend maintenance mode / write-freeze before apply reale (mitigation R5)"
+      ],
+      "note": "Test suite 13/13 PASS. Zero DB write. sha256 verification working. HARD STOP verified on mismatch."
+    }
+  },
+  "test_plan_coverage": [
+    {"test_id": 1, "name": "Script default = DRY_RUN", "status": "PASS", "evidence": "log line 2: MODE = DRY_RUN"},
+    {"test_id": 2, "name": "Restore reale richiede --confirm-rollback", "status": "PASS", "evidence": "code review pipeline _run_restore + gating mode==APPLY"},
+    {"test_id": 3, "name": "sha256 manifest verificato", "status": "PASS", "evidence": "log: 33 sha256 PASS lines"},
+    {"test_id": 4, "name": "Manifest corrotto/mismatch blocca restore", "status": "PASS", "evidence": "/app/memory/r18_reset1c_sha256_mismatch_log.txt, exit=1"},
+    {"test_id": 5, "name": "Backup JSONL finto valido letto correttamente", "status": "PASS", "evidence": "/tmp/r18_reset1c_fake_backup_f337f8a7/ + dry-run exit 0"},
+    {"test_id": 6, "name": "Restore simulation copre i 6 guild fields obbligatori", "status": "PASS", "evidence": "coverage table §4, full-doc replace strategy"},
+    {"test_id": 7, "name": "Restore simulation copre le 32 archive collections", "status": "PASS", "evidence": "log grep restore_archive DRY_RUN = 32 uniche"},
+    {"test_id": 8, "name": "Nessun DB write in dry-run", "status": "PASS", "evidence": "before/after snapshot DIFF_VERDICT: CLEAN"},
+    {"test_id": 9, "name": "No hard delete cross-collection", "status": "PASS", "evidence": "solo delete_many({}) su whitelisted archive (necessario per rollback)"},
+    {"test_id": 10, "name": "Idempotency/duplicate-restore guard presente", "status": "PASS", "evidence": "_already_rolled_back(db, manifest_path_str) chiamato in APPLY"},
+    {"test_id": 11, "name": "Report MD creato", "status": "PASS", "evidence": "/app/memory/r18_reset1c_rollback_completeness_report.md"},
+    {"test_id": 12, "name": "Report JSON creato e parsabile", "status": "PASS", "evidence": "this file, json.load ok"},
+    {"test_id": 13, "name": "R18.Reset.1b APPLY resta BLOCKED", "status": "PASS", "evidence": "§11 + log line 'R18.Reset.1b APPLY REMAINS BLOCKED'"}
+  ],
+  "artifacts": {
+    "script": "/app/backend/app/scripts/round18_reset1c_restore_from_jsonl_manifest.py",
+    "report_md": "/app/memory/r18_reset1c_rollback_completeness_report.md",
+    "report_json": "/app/memory/r18_reset1c_rollback_completeness_report.json",
+    "dry_run_log": "/app/memory/r18_reset1c_dry_run_live_log.txt",
+    "sha256_mismatch_evidence": "/app/memory/r18_reset1c_sha256_mismatch_log.txt",
+    "snapshot_before": "/app/memory/r18_reset1c_dry_run_live_before.json",
+    "snapshot_after": "/app/memory/r18_reset1c_dry_run_live_after.json",
+    "fake_backup_gen_log": "/app/memory/r18_reset1c_fake_backup_gen.log",
+    "fake_backup_fixture_root": "/tmp/r18_reset1c_fake_backup_f337f8a7/"
+  }
+}
