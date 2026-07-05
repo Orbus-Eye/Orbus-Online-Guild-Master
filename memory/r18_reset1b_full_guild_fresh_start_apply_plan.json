@@ -248,10 +248,11 @@
       }
     },
     "section_16_human_approval_gate": {
-      "status": "APPLY_BLOCKED_1_OF_5_GATES_PENDING",
-      "gates_total": 5,
-      "gates_satisfied": 4,
+      "status": "APPLY_BLOCKED_1_OF_6_GATES_PENDING",
+      "gates_total": 6,
+      "gates_satisfied": 5,
       "gates_pending": 1,
+      "hotfix_note": "Gate 6 added by R18.Reset.1b.hotfix on 2026-07-05T09:48:57Z. Apply reale post-hotfix DEVE usare round18_reset1b_apply_v1_1.py (sibling script). Sealed round18_reset1b_apply.py preserved untouched.",
       "hard_blockers": [
         {
           "id": "r18_reset1c_rollback_completeness_pass",
@@ -286,6 +287,31 @@
           "satisfied": true,
           "satisfied_at": "2026-07-05T08:36:37Z",
           "evidence": "R18.Reset.1b.ops SEALED, 8/8 tester PASS, middleware /app/backend/app/core/maintenance.py wired in app_factory.py, playbook /app/memory/r18_reset1b_ops_write_freeze_playbook.md"
+        },
+        {
+          "id": "r18_reset1b_hotfix_starter_kit_inventory_unique_fix",
+          "description": "R18.Reset.1b.hotfix - Starter Kit Inventory Unique Index Fix (sibling script v1.1)",
+          "satisfied": true,
+          "satisfied_at": "2026-07-05T09:48:57Z",
+          "evidence": {
+            "sibling_script": "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
+            "sibling_script_sha256": "43ca97f284b50706cf450bf4a0dc8e6b977aa195547bc69e99a80da55ede3031",
+            "test_suite": "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
+            "test_suite_sha256": "bf26da31dce950256c0ec6e92b180fdfa6e82fdd308004c454b82ff712a755ec",
+            "tests_result": "12/12 PASS (t01..t12)",
+            "sealed_originale_intatto": true,
+            "sealed_sha256_pre": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
+            "sealed_sha256_post": "657d5853a5b203005a319452260bc2d8413e94d5fa8857ba36de4b78d427d934",
+            "preflight_report": "/app/memory/r18_reset1b_hotfix_sealed_preflight.json",
+            "postflight_report": "/app/memory/r18_reset1b_hotfix_sealed_postflight.json",
+            "double_audit_events": ["R18_FULL_GUILD_FRESH_START_APPLIED", "R18_FULL_GUILD_FRESH_START_APPLIED_V1_1"],
+            "fix_summary": {
+              "F1_regen_starter_kit": "lookup item_id da items catalog; 1 doc per (guild_id, item_id) con quantity=3",
+              "F2_upsert_idempotency": "update_one($setOnInsert, upsert=True) per re-run safety",
+              "F3_double_audit_event": "emette APPLIED + APPLIED_V1_1 con metadata identico ed esteso",
+              "F4_idempotency_guard": "rifiuta apply se AL MENO UNO dei due audit event esiste"
+            }
+          }
         }
       ],
       "while_blocked_prohibitions": [
@@ -392,16 +418,25 @@
     {
       "id": "R18.Reset.1b.hotfix",
       "name": "Starter Kit Inventory Unique Index Fix",
-      "status": "IN_PROGRESS",
-      "reason": "Fix _regen_starter_kit S7 dup key on inv_guild_item_unique. Autorizzato da PM in R18.Reset.1c.cleanup seal message.",
-      "started_at": "2026-07-05T09:31:08Z"
+      "status": "IMPLEMENTED_PENDING_PM_ACCEPTANCE",
+      "reason": "Fix _regen_starter_kit S7 dup key on inv_guild_item_unique. Sibling script v1.1 creato, sealed intatto, 12/12 test PASS. Gate 6 sec.16 SATISFIED.",
+      "started_at": "2026-07-05T09:31:08Z",
+      "implemented_at": "2026-07-05T09:48:57Z",
+      "sibling_script": "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
+      "test_file": "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
+      "tests_result": "12/12 PASS"
     }
   ],
   "deliverables": [
     "/app/backend/app/scripts/round18_reset1b_apply.py",
+    "/app/backend/app/scripts/round18_reset1b_apply_v1_1.py",
     "/app/backend/app/scripts/round18_reset1b_rollback.py",
+    "/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py",
     "/app/memory/r18_reset1b_full_guild_fresh_start_apply_plan.md",
     "/app/memory/r18_reset1b_full_guild_fresh_start_apply_plan.json",
-    "/app/memory/r18_reset1b_tester_brief_post_apply.md"
+    "/app/memory/r18_reset1b_tester_brief_post_apply.md",
+    "/app/memory/r18_reset1b_hotfix_proposal.md",
+    "/app/memory/r18_reset1b_hotfix_sealed_preflight.json",
+    "/app/memory/r18_reset1b_hotfix_sealed_postflight.json"
   ]
 }
