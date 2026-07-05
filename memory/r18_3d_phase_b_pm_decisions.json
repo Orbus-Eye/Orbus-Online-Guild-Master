@@ -1,0 +1,33 @@
+{
+  "decision_lock_version": "R18.3d.PhaseB.v1",
+  "round_ref": "R18.3d — Stat/Role Mapping Registry — Phase B",
+  "generated_at": "2026-07-05T17:15:00Z",
+  "seal_authority": "PM Orchestrator",
+  "status": "LOCKED",
+  "decisions": {
+    "Q1": {"topic": "Metadata SAFE append-only", "answer": "YES", "authorized_fields": ["role_display_it", "class_role_tags", "design_primary_stat_it", "design_secondary_stats_it", "stat_role_registry_source_round"], "constraints": ["append-only", "$unset-reversible", "zero-runtime", "zero-player-facing"]},
+    "Q2": {"topic": "role_display_it visibility", "answer": "b_admin_only", "note": "NOT player-facing in this round; UI defers to R18.3d.v2"},
+    "Q3": {"topic": "class_role_tags vs role_tags R15", "answer": "b_separate_fields", "note": "role_tags R15 unchanged; class_role_tags = design/admin metadata; no runtime unification"},
+    "Q4": {"topic": "Registry source-of-truth", "answer": "b_catalog_stays_SoT_registry_is_docs", "note": "Do NOT wire registry to auto-equip / xp_modifier / combat / sorting / recruitment / matchmaking"},
+    "Q5": {"topic": "Mapping 6→5 confirmed", "mapping": {"Forza": "strength", "Destrezza": "agility", "Costituzione": "endurance", "Intelligenza": "intellect", "Saggezza": "intellect", "Carisma": "faith"}, "collision_accepted": ["Saggezza→intellect (with Intelligenza)"], "spiritual_classes_note": "No per-class override, no 6th stat; use design_primary_stat_it/role_display_it/class_role_tags/focus/description"},
+    "Q6": {"topic": "Hidden classes", "answer": "a_keep_hidden", "affected_slugs": ["cacciatore_di_mostri", "cacciatore_del_vuoto"], "reopen_target_round": "R18.3e / R18.ClassRecruitment.Unlock"},
+    "Q7": {"topic": "R18.4 dependency", "answer": "YES", "note": "R18.4 can start without role_display_it player-facing; registry/admin metadata suffice"},
+    "Q8": {"topic": "Bard drift", "answer": "c_document_and_leave", "registry_treatment": {"role_atomic_candidate_hint": "Healer_or_DPS", "role_display_it": "Support", "class_role_tags": ["Support", "..."]}, "backlog_entry_required": "R18.3d.followup — Bard Role Drift Resolution"},
+    "Q9": {"topic": "Paladin faith", "answer": "a_accept_live_faith_and_c_class_role_tags", "registry_treatment": {"design_primary_stat_it": "Carisma", "mapped_primary_stat_live": "faith", "role_display_it": "Healer/Tank", "class_role_tags": ["Healer", "Tank", "Support", "Holy"]}, "note": "Do NOT touch R15 seed"},
+    "Q10": {"topic": "27 canonical vs 18 live", "answer": "phase_b_covers_both_views", "phase_b_scope": {"live_classes_in_db": 18, "design_only_missing_from_db_pm_count": 9, "canonical_design_target": 27, "agent_analysis_note": "27 canonical - 11 mapped-to-live = 16 canonical missing from DB (not 9). 7 live docs are orphan (not in canonical 27): priest, ranger, warlock, assassin, berserker, recruit_unassigned, test-class-5e0064. Registry Phase B documents both views transparently."}, "restrictions": ["NO seed new classes", "NO new classes in DB", "NO recruitment change"]}
+  },
+  "locked_constraints": {
+    "no_change_to": ["primary_stat", "role", "base_strength", "base_agility", "base_intellect", "base_endurance", "base_faith", "VALID_ROLES", "is_playable", "is_active", "is_canonical"],
+    "no_combat_math_change": true,
+    "no_auto_equip_change": true,
+    "no_xp_modifier_change": true,
+    "no_recruitment_visibility_change": true,
+    "no_hidden_class_unlock": true,
+    "no_player_facing_ui_change": true,
+    "no_schema_migration": true,
+    "no_class_seed": true,
+    "no_hard_delete": true,
+    "no_touch_sealed_r18_reset1b_scripts": true,
+    "no_touch_sealed_r18_reset2_test": true
+  }
+}

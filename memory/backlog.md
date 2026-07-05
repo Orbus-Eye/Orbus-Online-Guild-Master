@@ -37,6 +37,21 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ---
 
+### [BACKLOG] R18.3d.followup — Bard Role Drift Resolution
+- **Aperto**: 2026-07-05
+- **Origine**: R18.3d Phase B — decisione PM Q8 ("lascia drift e documenta"). Il documento live `adventurer_classes` per la classe `bard` ha `role="Support"`, valore che **non è incluso** nel set canonico `VALID_ROLES=(Tank, DPS, Healer)` definito in `backend/app/admin/services.py:19`.
+- **Obiettivo**: convergere il valore `bard.role` sul set canonico o espandere formalmente `VALID_ROLES` includendo "Support", risolvendo il drift storico.
+- **Motivazione**: coerenza contract admin (validation `POST /api/admin/classes` blocca upsert con role fuori VALID_ROLES ma il doc esistente vive in drift), leggibilità API pubblica (frontend `RoleMarker.jsx` gestisce già "Support" come marker ma senza garanzia backend).
+- **Priorità**: P3 (documentato, non-blocking; il drift è preesistente a R18.Reset.1b e non impatta 3360 adventurers starter post-reset).
+- **Scope opzioni**:
+  - (a) `db.adventurer_classes.update_one({"slug":"bard"}, {"$set":{"role":"Healer" o "DPS"}})` — richiede regenerazione snapshot `class_role` sugli adventurers Bard esistenti (~0 live, bard non è nelle 11 safe).
+  - (b) Espansione `VALID_ROLES` includendo "Support" — impatto trasversale admin/formulas/pvp; richiede audit dedicato.
+  - (c) Introduzione secondary field `role_display_it` (già in R18.3d Phase B) come workaround player-facing senza cambiare `role` runtime.
+- **Non fare**: modificare `role` in autonomia senza GO PM esplicito; il registry R18.3d documenta il drift con `role_atomic_candidate` hint + `drift_flag`.
+- **Round dedicato**: da schedulare come `R18.3d.followup.BardRoleDriftResolution`.
+
+---
+
 ### [BACKLOG] R18.Backlog — Dungeon Locked Status Code Consistency Review
 - **Aperto**: 2026-07-05
 - **Origine**: WARN 2 emerso durante regression check R18.Reset.1b.hotfix.v1_3. Il flusso `POST /api/expeditions` con dungeon locked per gate di livello restituisce **HTTP 403 Forbidden** in alcuni percorsi vs **HTTP 423 Locked** in altri, senza uno standard consolidato lato server.
