@@ -1,0 +1,205 @@
+{
+  "round": "R18.Reset.1b",
+  "created_at": "2026-07-05T11:40:36.356002+00:00",
+  "backup_path": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z",
+  "collections": [
+    {
+      "name": "adventurers",
+      "doc_count": 3380,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/adventurers.jsonl",
+      "sha256": "2e19a3a1bcc10ac53d5343114603dd9ba2bd70e7ee2edf77f1e584565a1de9f1"
+    },
+    {
+      "name": "inventory_items",
+      "doc_count": 111,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/inventory_items.jsonl",
+      "sha256": "3d0103c9b2f93bde55d577c2d7916f33269e32b69e0b3490dc796db03de0cbe3"
+    },
+    {
+      "name": "equipped_items",
+      "doc_count": 20,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/equipped_items.jsonl",
+      "sha256": "fa731bd764fa9d10ba72f60a3dbdba4edbfe34500e8e1286e92f40cf5c15ce3a"
+    },
+    {
+      "name": "class_halls",
+      "doc_count": 1673,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/class_halls.jsonl",
+      "sha256": "a517fe969f5b14d70f73dccbef957f9837895581816a0ae060aac5323f6941ff"
+    },
+    {
+      "name": "achievement_progress",
+      "doc_count": 1686,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/achievement_progress.jsonl",
+      "sha256": "faa0c7be3e7c1a6305c9eaba4e6596c5394b22e68352d6afb75602f084f479b4"
+    },
+    {
+      "name": "expeditions",
+      "doc_count": 17,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/expeditions.jsonl",
+      "sha256": "a4792830a17f125de12ce1866fa36ad5f1cd3d2d6a8f41e626f7e974c5c56ce1"
+    },
+    {
+      "name": "expedition_members",
+      "doc_count": 45,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/expedition_members.jsonl",
+      "sha256": "56e16b84342c791ad5461daca07ccfb62e39bbc8455af515f6563275818e2672"
+    },
+    {
+      "name": "raids",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/raids.jsonl",
+      "sha256": "1017014b51e4308fdaf63fa47ad9d1436c3b4b9358da0ffd0085f4eea2f83f2e"
+    },
+    {
+      "name": "raid_participants",
+      "doc_count": 20,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/raid_participants.jsonl",
+      "sha256": "a06efe3b0069b6a5be5041be1ae9842db3fffa0d8be74fc250ba8e3101ff5683"
+    },
+    {
+      "name": "chat_messages",
+      "doc_count": 2,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/chat_messages.jsonl",
+      "sha256": "a083478158a41725199c4f1c5810ce979cd30d46bbd4eea53ac9f5e87a9ae6e2"
+    },
+    {
+      "name": "squads",
+      "doc_count": 2,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/squads.jsonl",
+      "sha256": "1bf9f8fe4483c1c116d08e815ce5f66692d834fa5b907d5a9d27e535080f1a9a"
+    },
+    {
+      "name": "guild_structures",
+      "doc_count": 421,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_structures.jsonl",
+      "sha256": "edbaef2990c777eefde3a7d193496a19c43f132341e048285b122da84c7c0d9d"
+    },
+    {
+      "name": "guild_specialization_choice",
+      "doc_count": 4,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_specialization_choice.jsonl",
+      "sha256": "7ad125f2fcb79aae3c7d291bfef4037bc11b5a214db26bc493341ff50b2df3a7"
+    },
+    {
+      "name": "guild_trade_pacts",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_trade_pacts.jsonl",
+      "sha256": "292314b110a547ebfbb026b4a9de017bafadea20e6c15700686d6d9ba57e3c14"
+    },
+    {
+      "name": "guild_site_income_ledger",
+      "doc_count": 14,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_site_income_ledger.jsonl",
+      "sha256": "d9a48dad40bce449e51c60280fbcbf33dc8dd3839ee1858f528f94ebc4a70fd5"
+    },
+    {
+      "name": "guild_world_presence",
+      "doc_count": 6,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_world_presence.jsonl",
+      "sha256": "096e2fdd126261ecfe684f0c0876dff84b5c97bf0abbe200c94a137b6f772adf"
+    },
+    {
+      "name": "guild_xp_daily_cap_tracker",
+      "doc_count": 10,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_xp_daily_cap_tracker.jsonl",
+      "sha256": "90badeb5853064d8714758a0540759e9c2f4511d8a9fdcb8b514668057e40aec"
+    },
+    {
+      "name": "pvp_seasons",
+      "doc_count": 19,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/pvp_seasons.jsonl",
+      "sha256": "33538283e5006592a957bb67b739aca6400dc560bdfac88b46469ecd5595ea80"
+    },
+    {
+      "name": "pvp_season_leaderboards",
+      "doc_count": 36,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/pvp_season_leaderboards.jsonl",
+      "sha256": "c6fd6c4162cc47636debdaf180b7e4d597cab013ac69d1952b991cec42a81b40"
+    },
+    {
+      "name": "pvp_defense_teams",
+      "doc_count": 3,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/pvp_defense_teams.jsonl",
+      "sha256": "f6c6b93899d23b958ebe1a9eea66d88ba03093754c0e726a5761afaa9adb7e03"
+    },
+    {
+      "name": "pvp_cosmetics_unlocked",
+      "doc_count": 5,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/pvp_cosmetics_unlocked.jsonl",
+      "sha256": "b33e4d98895885d210cafdfdd7e8c40a3208ded8538960d31efc133680bf92bb"
+    },
+    {
+      "name": "guild_mount_ownership",
+      "doc_count": 2,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guild_mount_ownership.jsonl",
+      "sha256": "fd9def9d3efd7d82a906b08f0de990d89f005aff001c9f36df9d6f49e405297b"
+    },
+    {
+      "name": "narrative_rewards_unlocked",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/narrative_rewards_unlocked.jsonl",
+      "sha256": "64eddd97450765744ead62fb7d696ac8e01669fa3960d2439c2f20e1bad507ec"
+    },
+    {
+      "name": "continent_leaderboard_snapshots",
+      "doc_count": 3,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/continent_leaderboard_snapshots.jsonl",
+      "sha256": "e7e200ab3b485f8b60c4c04ff7c9e4ae7aa844950e08889a8dba5ac067954674"
+    },
+    {
+      "name": "continent_event_instances",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/continent_event_instances.jsonl",
+      "sha256": "52e50714bd973607526393a1932e29ec02fbd479ff98338316be487a07406326"
+    },
+    {
+      "name": "seasons",
+      "doc_count": 1,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/seasons.jsonl",
+      "sha256": "a29faf1bd1715e943e4873a9cd05e22acd6911db804d3a7ffa296dae84b27253"
+    },
+    {
+      "name": "season_participations",
+      "doc_count": 14,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/season_participations.jsonl",
+      "sha256": "5b902058e9ac4ad146881dda9d091efbb9f1f71e0c9bc1bae12996e5d66ba632"
+    },
+    {
+      "name": "season_rewards",
+      "doc_count": 4,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/season_rewards.jsonl",
+      "sha256": "6af396836f5577c70ed8e6c18657b405f9f384ae1d0ea91ae396ceeea3ea5f45"
+    },
+    {
+      "name": "world_boss_events",
+      "doc_count": 4,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/world_boss_events.jsonl",
+      "sha256": "a3edd3a320064501e1ee49a67dd87d75ab4e338d3faabe5f9029aee9f1179451"
+    },
+    {
+      "name": "recruitment_offers",
+      "doc_count": 255,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/recruitment_offers.jsonl",
+      "sha256": "02434dc42b3f413b356d6cf0764f9f111dd9b3dc552a7dc43e57e05513c7ef2e"
+    },
+    {
+      "name": "shop_daily_offers",
+      "doc_count": 18,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/shop_daily_offers.jsonl",
+      "sha256": "f538f7560b063752b50bd23936da6930c27a155afaf3be7abd01acad3051907b"
+    },
+    {
+      "name": "tester_tool_snapshots",
+      "doc_count": 14,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/tester_tool_snapshots.jsonl",
+      "sha256": "3aa7ee7ff297091273501f2cfcfa64e1dd635a860815471fae141e7587ed5a24"
+    },
+    {
+      "name": "guilds",
+      "doc_count": 672,
+      "file": "/app/backend/backups/r18_reset1b_v1_1_staged_20260705T114100Z/guilds.jsonl",
+      "sha256": "145b1f442ee20ee2ae5e10742a09d8def9ce632fbbbf85ed4abe632821f91eb4"
+    }
+  ]
+}

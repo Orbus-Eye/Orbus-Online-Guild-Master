@@ -1,0 +1,13 @@
+{
+  "counts": {
+    "guilds": 672,
+    "adventurers": 3380,
+    "inventory_items": 111,
+    "items": 178,
+    "expeditions": 17,
+    "raids": 1,
+    "audit_log": 11784,
+    "users": 340
+  },
+  "gold_total": 4083608
+}
