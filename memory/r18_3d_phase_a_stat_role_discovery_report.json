@@ -1,0 +1,265 @@
+{
+  "report_version": "R18.3d.PhaseA.v1",
+  "round_ref": "R18.3d — Stat/Role Mapping Registry — Fase A Discovery",
+  "generated_at": "2026-07-05T16:40:00Z",
+  "author": "e1_dev",
+  "status": "DRAFT_READY_FOR_PM_REVIEW",
+  "locked_constraints_respected": {
+    "no_db_write": true,
+    "no_schema_migration": true,
+    "no_new_route": true,
+    "no_frontend_player_facing_change": true,
+    "no_sealed_script_touch": true,
+    "no_class_catalog_mutation": true,
+    "no_adventurers_mutation": true,
+    "audit_log_baseline_count": 11896,
+    "audit_log_post_discovery_count": 11896
+  },
+  "executive_summary": {
+    "adventurer_classes_total_in_db": 18,
+    "adventurer_classes_active_playable_ready": 11,
+    "adventurer_classes_canonical_hidden_TBD": 2,
+    "adventurer_classes_legacy_or_test": 5,
+    "runtime_uses_of_6_stat_legacy_tokens": 0,
+    "player_facing_uses_of_6_stat_it_labels": 12,
+    "runtime_critical_files_touching_primary_stat": [
+      "backend/app/expeditions/xp_modifier.py",
+      "backend/app/equipment/auto_equip.py"
+    ],
+    "runtime_critical_files_touching_role": [
+      "backend/app/expeditions/formulas.py",
+      "backend/app/pvp/simulator.py",
+      "backend/app/expeditions/report_builder.py",
+      "backend/app/admin/services.py",
+      "backend/app/admin/routes.py"
+    ],
+    "known_drift": [
+      "bard.role='Support' not in VALID_ROLES tuple (Tank,DPS,Healer)",
+      "cacciatore_di_mostri and cacciatore_del_vuoto have role='TBD' and no primary_stat",
+      "Brief R18.3d ipotizza paladin.primary_stat=strength ma catalog live is faith"
+    ],
+    "top_3_findings": [
+      "Catalog has 18 classes not 27 as brief suggests — need PM clarification on canonical set",
+      "Zero runtime uses of 6-stat legacy tokens (dexterity/constitution/intelligence/wisdom/charisma) — codebase is clean",
+      "Paladin design divergence: brief says primary=strength, catalog says primary=faith (R15 sealed seed source-of-truth)"
+    ]
+  },
+  "stat_system_locked_by_pm": {
+    "decision": "C.2 — mapping esplicito 6→5",
+    "live_stats": ["strength", "agility", "intellect", "endurance", "faith"],
+    "mapping_6_to_5": [
+      {"design_it": "Forza",        "design_en": "strength",     "live": "strength"},
+      {"design_it": "Destrezza",    "design_en": "dexterity",    "live": "agility"},
+      {"design_it": "Costituzione", "design_en": "constitution", "live": "endurance"},
+      {"design_it": "Intelletto",   "design_en": "intelligence", "live": "intellect"},
+      {"design_it": "Saggezza",     "design_en": "wisdom",       "live": "intellect"},
+      {"design_it": "Carisma",      "design_en": "charisma",     "live": "faith"}
+    ]
+  },
+  "role_system_locked_by_pm": {
+    "decision": "R3 — role backend atomico",
+    "valid_roles_runtime": ["Tank", "DPS", "Healer"],
+    "role_display_and_role_tags_status": "future_candidates_not_introducible_now"
+  },
+  "codebase_usage_map": {
+    "runtime_5_stat": [
+      {"token": "VALID_AFFECTED_STAT tuple", "file": "backend/app/admin/services.py", "line": 20, "kind": "definition"},
+      {"token": "strength/…/faith runtime", "file": "backend/app/expeditions/formulas.py", "lines": "98-102, 124-128", "kind": "runtime-combat"},
+      {"token": "primary_stat", "file": "backend/app/expeditions/xp_modifier.py", "lines": "59,101,107,122,145", "kind": "runtime-xp"},
+      {"token": "primary_stat/secondary_stats", "file": "backend/app/equipment/auto_equip.py", "lines": "80,149,151-152", "kind": "runtime-equip"},
+      {"token": "base_strength/…/base_faith", "file": "backend/app/seeds/seed_data.py", "lines": "16-62", "kind": "seed"},
+      {"token": "base_*", "file": "backend/app/seeds/seed_runner.py", "lines": "181-185", "kind": "seed"},
+      {"token": "*_bonus", "file": "backend/app/equipment/auto_equip.py", "lines": "112-113,139-141", "kind": "runtime-equip-item"}
+    ],
+    "role_system": [
+      {"token": "VALID_ROLES", "file": "backend/app/admin/services.py", "line": 19, "kind": "definition", "value": ["Tank","DPS","Healer"]},
+      {"token": "VALID_ROLES usage", "file": "backend/app/admin/routes.py", "lines": "19,70,109", "kind": "runtime-admin-validation"},
+      {"token": "role bonus +5 each +10 all", "file": "backend/app/expeditions/formulas.py", "lines": "134-140", "kind": "runtime-combat"},
+      {"token": "ROLE_BONUS PvP", "file": "backend/app/pvp/simulator.py", "line": 21, "kind": "runtime-pvp"},
+      {"token": "role_tags seed R15", "file": "backend/app/scripts/round15_seed_class_identity.py", "lines": "53-280", "kind": "sealed-seed"},
+      {"token": "role_tags exposed to FE", "file": "backend/app/adventurers/services.py", "line": 161, "kind": "runtime-api-expose"},
+      {"token": "class_role snapshot", "file": "denormalized on adventurers doc", "kind": "runtime-snapshot"},
+      {"token": "role_display", "file": null, "kind": "not_used_in_codebase", "note": "Only mentioned in R18.3d brief"},
+      {"token": "class_role_tags", "file": null, "kind": "not_used_in_codebase", "note": "Only mentioned in R18.3d brief"}
+    ],
+    "frontend_consumers": [
+      {"file": "frontend/src/components/RoleMarker.jsx", "usage": "ASCII markers Tank/[T],Healer/[+],DPS/[D],Ranger/[R],Mage/[M],Support/[S]", "player_facing": true},
+      {"file": "frontend/src/pages/Adventurers.jsx", "lines": "390,494", "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/Recruitment.jsx", "line": 75, "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/RosterManage.jsx", "lines": "76,99,358", "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/RaidBuilder.jsx", "lines": "190,210,253,679", "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/SquadBuilder.jsx", "lines": "54,83,179", "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/ExpeditionNew.jsx", "lines": "49,339,517", "field": "class_role", "player_facing": true},
+      {"file": "frontend/src/pages/guide/ClassesAndStatsSection.jsx", "lines": "113-222,297,301", "field": "hardcoded IT primary_stat/secondary_stats for 12 classes", "player_facing": true, "note": "STATIC IT 6-stat labels; NOT sourced from API"}
+    ],
+    "6_stat_legacy_tokens_scan_result": {
+      "dexterity": {"runtime": 0, "test": 0, "flavor": 0, "note": "no occurrence anywhere"},
+      "constitution": {"runtime": 0, "test": 0, "flavor": 2, "files": ["backend/app/seeds/seed_traits_it.py:92", "backend/app/seeds/seed_data.py:73", "frontend/src/i18n/lang/en.json:848"], "note": "only 'Frail' trait description flavor"},
+      "intelligence": {"runtime": 0, "test": 0, "flavor": 0, "note": "no occurrence"},
+      "wisdom": {"runtime": 0, "test": 1, "flavor": 0, "files": ["backend/tests/backend_phase4_test.py:195 affected_stat=wisdom"], "note": "single legacy test data, non-runtime"},
+      "charisma": {"runtime": 0, "test": 0, "flavor": 3, "files": ["backend/app/scripts/round160_seed_classes_v2.py:21 comment", "backend/app/scripts/round160_seed_classes_v2.py.bak_pre_uuid_fix:21", "backend/app/scripts/round183b_class_design_matrix_gen.py:173 design note"], "note": "only comments and design docs"}
+    }
+  },
+  "db_schema_snapshot": {
+    "adventurer_classes": {
+      "total_docs": 18,
+      "keys_union": ["_id","allowed_armor_tags","allowed_weapon_tags","base_agility","base_endurance","base_faith","base_intellect","base_strength","created_at","deprecated_at","description","description_it","display_name_en","display_name_it","drops_items","guide_description_en","guide_description_it","id","is_active","is_base_class","is_canonical","is_playable","is_specialization","is_talent_tree_eligible","is_test","migration_target_only","name","name_en","pm_decision","preferred_item_tags","primary_stat","role","role_placeholder","role_pm_decision_pending","role_tags","round_intro","secondary_role","secondary_stats","seed_source","slug","source_round","source_slug_bridge","successor_slug","successor_specialization_slug","updated_at","xp_primary_stat_policy"]
+    },
+    "adventurers": {
+      "total_docs_live": 3373,
+      "with_r18_reset_marker": 3360,
+      "keys_union_sample_200": ["_id","adventurer_class_id","agility","class_name","class_role","class_slug","created_at","endurance","experience","faith","grade","guild_id","hp_current","hp_max","id","intellect","is_available","is_retired","is_starter","level","morale","name","phase13_unbaked","r18_reset1b_hotfix_v1_2","r18_reset1b_hotfix_v1_3","r18_reset1b_hotfix_v1_3_apply_id","r18_reset1b_hotfix_v1_3_at","r18_reset1b_seed_source","r18_reset1b_starter","r18_reset1b_stat_source","rarity","rename_count","stamina","status","strength","traits","updated_at","xp"]
+    },
+    "collections_total": 113,
+    "sample_adventurers_post_reset": [
+      {"class_slug": "rogue", "class_role": "DPS", "strength": 5, "agility": 9, "intellect": 3, "endurance": 4, "faith": 2, "level": 1, "status": "idle", "r18_reset1b_stat_source": "adventurer_classes.base_*_catalog_lookup"},
+      {"class_slug": "mage", "class_role": "DPS", "strength": 2, "agility": 4, "intellect": 10, "endurance": 3, "faith": 3, "level": 1, "status": "idle"},
+      {"class_slug": "warrior", "class_role": "Tank", "strength": 8, "agility": 4, "intellect": 2, "endurance": 9, "faith": 2, "level": 1, "status": "idle"}
+    ]
+  },
+  "runtime_critical_fields_ranked": [
+    {"field": "adventurer_classes.primary_stat", "severity": "HIGH", "used_by": ["xp_modifier", "auto_equip"], "impact_if_modified": "XP gain% + auto-equip result change for 3360 live adventurers"},
+    {"field": "adventurer_classes.role", "severity": "HIGH", "used_by": ["admin routes VALID_ROLES validation", "snapshot to adventurers.class_role"], "impact_if_modified": "Snapshot on adventurers is denormalized, not retroactive"},
+    {"field": "adventurer_classes.secondary_stats", "severity": "MEDIUM", "used_by": ["auto_equip fitness SECONDARY_WEIGHT=1.5"], "impact_if_modified": "Fitness changes, no crash"},
+    {"field": "adventurers.class_role", "severity": "MEDIUM", "used_by": ["expeditions/formulas.compute_team_power +5 per role"], "impact_if_modified": "Team power changes"},
+    {"field": "adventurers.strength/agility/intellect/endurance/faith", "severity": "MEDIUM", "used_by": ["formulas.compute_team_power fallback"], "impact_if_modified": "Fallback only, when total_power_snapshot is null"},
+    {"field": "adventurer_classes.role_tags", "severity": "LOW", "used_by": ["adventurers/services expose", "round15 item tags derivation"]},
+    {"field": "adventurer_classes.xp_primary_stat_policy", "severity": "LOW", "used_by": ["xp_modifier override optional"], "impact_if_modified": "Default fallback preserves behavior"},
+    {"field": "adventurers.class_slug", "severity": "HIGH", "used_by": ["auto_equip class lookup", "expeditions xp mod"], "impact_if_modified": "Loss of weighting entirely"}
+  ],
+  "combat_auto_equip_dependency_graph_text": "primary_stat → auto_equip._load_class_meta → _compute_fitness (PRIMARY_WEIGHT=3.0); primary_stat → xp_modifier.expected_primary_stat → compute_xp_multiplier; secondary_stats → auto_equip._compute_fitness (SECONDARY_WEIGHT=1.5); role → admin/routes VALID_ROLES validation → adventurers.class_role (snapshot); adventurers.class_role → formulas.compute_team_power (+5 per role, +10 all-three) + pvp/simulator.ROLE_BONUS (Tank=0.05,Healer=0.05,DPS=0.03); adventurers.{stat} → formulas.compute_team_power (fallback); role_tags → adventurers/services expose to FE + equipment/compatibility.check_equip_compatibility",
+  "api_admin_frontend_dependencies": {
+    "public_endpoints_reading_stat_or_role": [
+      {"endpoint": "GET /api/adventurers", "fields": ["strength","agility","intellect","endurance","faith","class_role","class_slug","class_name","role_tags"], "impact": "HIGH"},
+      {"endpoint": "GET /api/recruitment/candidates", "fields": ["class_role","class_slug"], "impact": "MEDIUM"},
+      {"endpoint": "POST /api/expeditions", "usage": "team composition role check", "impact": "HIGH"},
+      {"endpoint": "POST /api/adventurers/{id}/auto-equip", "usage": "reads primary_stat/secondary_stats from catalog", "impact": "HIGH"},
+      {"endpoint": "GET /api/guild-specialization/mine", "fields": ["preferred_role"], "impact": "LOW"}
+    ],
+    "admin_endpoints": [
+      {"endpoint": "POST /api/admin/classes", "validates": "VALID_ROLES tuple", "impact": "HIGH"},
+      {"endpoint": "POST /api/admin/traits", "validates": "VALID_AFFECTED_STAT", "impact": "MEDIUM"},
+      {"endpoint": "POST /api/admin/items", "validates": "5 *_bonus fields int", "impact": "MEDIUM"}
+    ],
+    "frontend_player_facing_consumers": 11,
+    "frontend_static_it_guide_hardcoded_classes": 12
+  },
+  "class_catalog_field_inventory_18": [
+    {"slug": "alchemist","name":"Alchemist","display_name_it":"Alchemist","role":"DPS","primary_stat":"intellect","secondary_stats":["agility","endurance"],"base":{"s":3,"a":6,"i":9,"e":6,"f":4},"is_active":true,"is_playable":null,"is_canonical":null,"migration_target_only":null,"priority":"normal"},
+    {"slug":"assassin","name":"Assassin","role":"DPS","primary_stat":"agility","secondary_stats":["strength"],"base":{"s":6,"a":10,"i":4,"e":3,"f":1},"is_active":false,"priority":"legacy-inactive"},
+    {"slug":"bard","name":"Bard","display_name_it":"Bardo","role":"Support","primary_stat":"intellect","secondary_stats":["agility","faith"],"base":{"s":3,"a":6,"i":7,"e":4,"f":5},"is_active":true,"priority":"normal","drift":"role='Support' not in VALID_ROLES tuple"},
+    {"slug":"berserker","name":"Berserker","role":"DPS","primary_stat":"strength","secondary_stats":["endurance"],"base":{"s":10,"a":5,"i":1,"e":6,"f":1},"is_active":false,"priority":"legacy-inactive"},
+    {"slug":"cacciatore_del_vuoto","name":"Cacciatore del Vuoto","display_name_it":"Cacciatore del Vuoto","role":"TBD","primary_stat":null,"secondary_stats":null,"base":null,"is_active":true,"is_playable":false,"is_canonical":true,"migration_target_only":true,"priority":"critical","note":"Hidden migration target, PM decision pending"},
+    {"slug":"cacciatore_di_mostri","name":"Cacciatore di Mostri","display_name_it":"Cacciatore di Mostri","role":"TBD","primary_stat":null,"secondary_stats":null,"base":null,"is_active":true,"is_playable":false,"is_canonical":true,"migration_target_only":true,"priority":"critical","note":"Hidden migration target, PM decision pending"},
+    {"slug":"druid","name":"Druid","role":"Healer","primary_stat":"faith","secondary_stats":["intellect"],"base":{"s":3,"a":5,"i":7,"e":5,"f":7},"is_active":true,"priority":"normal"},
+    {"slug":"mage","name":"Mage","role":"DPS","primary_stat":"intellect","secondary_stats":["endurance"],"base":{"s":2,"a":4,"i":10,"e":3,"f":3},"is_active":true,"priority":"normal"},
+    {"slug":"monk","name":"Monk","role":"DPS","primary_stat":"agility","secondary_stats":["endurance","faith"],"base":{"s":5,"a":9,"i":3,"e":6,"f":5},"is_active":true,"priority":"normal"},
+    {"slug":"necromancer","name":"Necromancer","role":"DPS","primary_stat":"intellect","secondary_stats":["agility"],"base":{"s":2,"a":4,"i":10,"e":4,"f":1},"is_active":false,"priority":"legacy-inactive"},
+    {"slug":"paladin","name":"Paladin","display_name_it":"Paladino","role":"Tank","primary_stat":"faith","secondary_stats":["strength","endurance"],"base":{"s":7,"a":3,"i":2,"e":7,"f":6},"is_active":true,"priority":"critical","note":"Brief R18.3d ipotizza primary=strength; DB live is faith. Source-of-truth = round15_seed_class_identity.py (SEALED)"},
+    {"slug":"priest","name":"Priest","role":"Healer","primary_stat":"faith","secondary_stats":["intellect"],"base":{"s":2,"a":3,"i":6,"e":4,"f":10},"is_active":true,"priority":"normal"},
+    {"slug":"ranger","name":"Ranger","role":"DPS","primary_stat":"agility","secondary_stats":["endurance"],"base":{"s":5,"a":8,"i":4,"e":5,"f":3},"is_active":true,"priority":"normal"},
+    {"slug":"recruit_unassigned","name":"","role":null,"primary_stat":null,"secondary_stats":null,"base":null,"is_active":false,"is_playable":false,"priority":"placeholder"},
+    {"slug":"rogue","name":"Rogue","display_name_it":"Ladro","role":"DPS","primary_stat":"agility","secondary_stats":["strength"],"base":{"s":5,"a":9,"i":3,"e":4,"f":2},"is_active":true,"priority":"critical"},
+    {"slug":"test-class-5e0064","name":"Updated Test Class","role":"Tank","primary_stat":null,"secondary_stats":null,"base":{"s":10,"a":5,"i":4,"e":9,"f":3},"is_active":false,"priority":"test-doc"},
+    {"slug":"warlock","name":"Warlock","role":"DPS","primary_stat":"intellect","secondary_stats":["faith","agility"],"base":{"s":4,"a":6,"i":10,"e":6,"f":6},"is_active":true,"priority":"normal"},
+    {"slug":"warrior","name":"Warrior","display_name_it":"Guerriero","role":"Tank","primary_stat":"strength","secondary_stats":["endurance"],"base":{"s":8,"a":4,"i":2,"e":9,"f":2},"is_active":true,"priority":"critical"}
+  ],
+  "class_registry_candidate_memory_only": {
+    "note": "Memory-only proposal, NOT applied to DB in Phase A",
+    "safe_11_classes_full": [
+      {"class_slug":"warrior","class_name_it":"Guerriero","design_primary_stat_it":"Forza","design_secondary_stats_it":["Costituzione"],"mapped_primary_stat_live":"strength","mapped_secondary_stats_live":["endurance"],"role_atomic_candidate":"Tank","role_display_it_candidate":"Guerriero (Tank)","class_role_tags_candidate":["tank","frontline"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"rogue","class_name_it":"Ladro","design_primary_stat_it":"Destrezza","design_secondary_stats_it":["Forza"],"mapped_primary_stat_live":"agility","mapped_secondary_stats_live":["strength"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Ladro (DPS Melee/Stealth)","class_role_tags_candidate":["dps_melee","stealth"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"mage","class_name_it":"Mago","design_primary_stat_it":"Intelletto","design_secondary_stats_it":["Costituzione"],"mapped_primary_stat_live":"intellect","mapped_secondary_stats_live":["endurance"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Mago (DPS Caster)","class_role_tags_candidate":["dps_caster","control"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"priest","class_name_it":"Sacerdote","design_primary_stat_it":"Fede","design_secondary_stats_it":["Intelletto"],"mapped_primary_stat_live":"faith","mapped_secondary_stats_live":["intellect"],"role_atomic_candidate":"Healer","role_display_it_candidate":"Sacerdote (Healer)","class_role_tags_candidate":["healer_dedicated","support"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"ranger","class_name_it":"Ranger","design_primary_stat_it":"Destrezza","design_secondary_stats_it":["Costituzione"],"mapped_primary_stat_live":"agility","mapped_secondary_stats_live":["endurance"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Ranger (DPS Ranged)","class_role_tags_candidate":["dps_ranged","scout"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"paladin","class_name_it":"Paladino","design_primary_stat_it":"Fede","design_secondary_stats_it":["Forza","Costituzione"],"mapped_primary_stat_live":"faith","mapped_secondary_stats_live":["strength","endurance"],"role_atomic_candidate":"Tank","role_display_it_candidate":"Paladino (Tank/Support Divino)","class_role_tags_candidate":["tank","support","holy"],"confidence":"high","needs_PM_review":true,"PM_review_reason":"Brief supposes primary=strength; catalog live is primary=faith (R15 sealed source-of-truth)"},
+      {"class_slug":"druid","class_name_it":"Druido","design_primary_stat_it":"Fede","design_secondary_stats_it":["Intelletto"],"mapped_primary_stat_live":"faith","mapped_secondary_stats_live":["intellect"],"role_atomic_candidate":"Healer","role_display_it_candidate":"Druido (Healer)","class_role_tags_candidate":["healer_aoe","support"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"monk","class_name_it":"Monaco","design_primary_stat_it":"Destrezza","design_secondary_stats_it":["Costituzione","Fede"],"mapped_primary_stat_live":"agility","mapped_secondary_stats_live":["endurance","faith"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Monaco (DPS Melee)","class_role_tags_candidate":["dps_melee","self_sustain"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"warlock","class_name_it":"Warlock","design_primary_stat_it":"Intelletto","design_secondary_stats_it":["Fede","Destrezza"],"mapped_primary_stat_live":"intellect","mapped_secondary_stats_live":["faith","agility"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Warlock (DPS Caster/Summoner)","class_role_tags_candidate":["dps_caster","summoner"],"confidence":"high","needs_PM_review":false},
+      {"class_slug":"alchemist","class_name_it":"Alchimista","design_primary_stat_it":"Intelletto","design_secondary_stats_it":["Destrezza","Costituzione"],"mapped_primary_stat_live":"intellect","mapped_secondary_stats_live":["agility","endurance"],"role_atomic_candidate":"DPS","role_display_it_candidate":"Alchimista (DPS Utility)","class_role_tags_candidate":["support","buffer","debuffer"],"confidence":"medium","needs_PM_review":true,"PM_review_reason":"role_atomic_candidate potenzialmente Support ma VALID_ROLES esclude Support; DB has role='DPS'"},
+      {"class_slug":"bard","class_name_it":"Bardo","design_primary_stat_it":"Intelletto","design_secondary_stats_it":["Destrezza","Fede"],"mapped_primary_stat_live":"intellect","mapped_secondary_stats_live":["agility","faith"],"role_atomic_candidate":"Healer_or_DPS","role_display_it_candidate":"Bardo (Support/Utility)","class_role_tags_candidate":["support","buffer","debuffer"],"confidence":"medium","needs_PM_review":true,"PM_review_reason":"DB has role='Support' NOT in VALID_ROLES tuple; needs mapping decision"}
+    ],
+    "hidden_2_classes_TBD": [
+      {"class_slug":"cacciatore_di_mostri","class_name_it":"Cacciatore di Mostri","design_primary_stat_it":null,"design_secondary_stats_it":null,"mapped_primary_stat_live":null,"mapped_secondary_stats_live":null,"role_atomic_candidate":"TBD","role_display_it_candidate":"Cacciatore di Mostri (design pending)","class_role_tags_candidate":[],"confidence":"none","needs_PM_review":true,"PM_review_reason":"is_playable=false, migration_target_only=true, role='TBD' — full design definition needed"},
+      {"class_slug":"cacciatore_del_vuoto","class_name_it":"Cacciatore del Vuoto","design_primary_stat_it":null,"design_secondary_stats_it":null,"mapped_primary_stat_live":null,"mapped_secondary_stats_live":null,"role_atomic_candidate":"TBD","role_display_it_candidate":"Cacciatore del Vuoto (design pending)","class_role_tags_candidate":[],"confidence":"none","needs_PM_review":true,"PM_review_reason":"is_playable=false, migration_target_only=true, role='TBD' — full design definition needed"}
+    ],
+    "legacy_or_test_5": ["assassin","berserker","necromancer","recruit_unassigned","test-class-5e0064"]
+  },
+  "safe_unsafe_classification": {
+    "SAFE_append_only_metadata": [
+      {"field": "role_display_it", "target": "adventurer_classes", "note": "Non runtime, only player-facing/admin display"},
+      {"field": "class_role_tags", "target": "adventurer_classes", "note": "Documental superset of role_tags R15"},
+      {"field": "design_primary_stat_it", "target": "adventurer_classes", "note": "IT label documental"},
+      {"field": "design_secondary_stats_it", "target": "adventurer_classes", "note": "IT label documental"},
+      {"field": "stat_role_registry_source_round", "target": "adventurer_classes", "note": "Traceability"}
+    ],
+    "RISKY_runtime_field": [
+      {"field": "secondary_stats", "reason": "Auto-equip fitness SECONDARY_WEIGHT=1.5"},
+      {"field": "role_tags", "reason": "R15 item derivation chain"},
+      {"field": "xp_primary_stat_policy", "reason": "XP mod runtime override"}
+    ],
+    "BLOCKED_without_PM": [
+      {"field": "primary_stat", "reason": "XP mod + auto-equip; 3360 adventurers immediately affected"},
+      {"field": "role", "reason": "VALID_ROLES admin check + snapshot on adventurers.class_role non-retroactive"},
+      {"field": "base_strength/…/base_faith", "reason": "R18.Reset.1b applied these values — drift if touched"},
+      {"field": "VALID_ROLES tuple in code", "reason": "Broad admin/validation impact"},
+      {"field": "is_playable/is_canonical/is_active", "reason": "Recruitment guard governance"}
+    ]
+  },
+  "proposed_registry_shape_memory_only": {
+    "file_target": "/app/memory/r18_3d_stat_role_mapping_registry.json",
+    "not_applied_in_phase_a": true,
+    "top_level_schema": {
+      "registry_version": "R18.3d.v1",
+      "generated_at": "<ISO UTC>",
+      "seal_authority": "PM Orchestrator",
+      "stat_system": {
+        "live_stats": ["strength","agility","intellect","endurance","faith"],
+        "design_stat_mapping_6_to_5": "see stat_system_locked_by_pm above"
+      },
+      "role_system": {
+        "live_roles_atomic": ["Tank","DPS","Healer"],
+        "candidate_role_display_it": {"Tank":"Difensore","DPS":"Danneggiante","Healer":"Curatore"},
+        "candidate_class_role_tags_taxonomy": ["tank","frontline","off_healer","dps_melee","dps_ranged","dps_burst","dps_caster","healer_dedicated","healer_aoe","support","buffer","debuffer","stealth","scout","summoner","control","self_sustain","holy"]
+      },
+      "classes": "array of 18 objects (see class_registry_candidate_memory_only)"
+    }
+  },
+  "open_questions_pm": [
+    {"id":"Q1","topic":"Metadata append-only allowed?","proposal":"Aggiungere role_display_it, class_role_tags, design_primary_stat_it, design_secondary_stats_it, stat_role_registry_source_round; zero runtime touch","need_decision":true},
+    {"id":"Q2","topic":"role_display_it player-facing subito?","options":["player-facing (frontend refactor incluso)","admin-only / API introspection"],"need_decision":true},
+    {"id":"Q3","topic":"class_role_tags relation with role_tags R15","options":["alias/unification","separate field","superset"],"need_decision":true},
+    {"id":"Q4","topic":"Registry source-of-truth","options":["registry JSON is SoT (backend reads from it)","adventurer_classes stays SoT (registry is docs)"],"need_decision":true},
+    {"id":"Q5","topic":"Saggezza→intellect + Carisma→faith mappings — definitive?","context":"2 collisions in 6→5 mapping","need_decision":true},
+    {"id":"Q6","topic":"When to reopen hidden classes at recruitment?","options":["keep hidden","define primary_stat+role in Phase C","separate round"],"need_decision":true},
+    {"id":"Q7","topic":"R18.4 item class-bound depends on role_display?","suggestion":"Ship R18.3d as documental-only to unblock R18.4","need_decision":true},
+    {"id":"Q8","topic":"Drift bard.role='Support' — sanitize in Phase B?","options":["set bard.role='Healer' or 'DPS'","expand VALID_ROLES to include Support","leave drift documented"],"need_decision":true},
+    {"id":"Q9","topic":"Paladin design divergence brief vs catalog","options":["accept live faith as definitive","revise brief and change catalog (BLOCKED — requires unseal R15)","document as hybrid tank/support/holy"],"need_decision":true},
+    {"id":"Q10","topic":"27 canonical classes in brief vs 18 in DB","context":"9 classes possibly design-only not seeded","need_decision":true}
+  ],
+  "recommendation_phase_b": {
+    "approach": "DESIGN-FIRST STAGED APPLY",
+    "sub_phases": [
+      {"id":"B0","name":"PM Review Open Questions","duration_estimate":"2h","artifacts":["decisions_locked_from_PM"]},
+      {"id":"B1","name":"Draft Registry JSON complete","duration_estimate":"4h","artifacts":["/app/memory/r18_3d_stat_role_mapping_registry.json","SHA256 self-hash"]},
+      {"id":"B2","name":"Loader read-only module","duration_estimate":"3h","artifacts":["backend/app/core/stat_role_registry.py","fail-fast startup validation","get_stat_role_mapping helper (unwired)"]},
+      {"id":"B3","name":"Append-only DB apply (optional, requires PM GO)","duration_estimate":"3h","artifacts":["backend/app/scripts/round18_3d_apply_metadata.py","5 SAFE fields on 18 classes","dry-run gate + double flag"]},
+      {"id":"B4","name":"Test suite","duration_estimate":"3h","artifacts":["contract test + fail-fast test + snapshot regression"]},
+      {"id":"B5","name":"SEAL","duration_estimate":"1h","artifacts":["sealed script + registry JSON + tests","update PRD + closure report R18.3d"]}
+    ],
+    "rationale": "Sicurezza (3360 live adventurers), reversibilità (append-only naturally reversible via $unset), modularità (Phase B1 zero live impact)",
+    "alternative_not_recommended": "runtime-first approach: wire registry directly into auto_equip/xp_modifier — high drift risk, needs full regression on 3360 adv × 27+ dungeons; better as R18.3d.v2 dedicated"
+  },
+  "self_check_10_points": [
+    {"n":1,"check":"Report MD created","pass":true,"path":"/app/memory/r18_3d_phase_a_stat_role_discovery_report.md"},
+    {"n":2,"check":"Report JSON created and parsable","pass":true,"path":"/app/memory/r18_3d_phase_a_stat_role_discovery_report.json"},
+    {"n":3,"check":"Zero DB write (audit_log invariant)","pass":true,"baseline":11896,"post":11896},
+    {"n":4,"check":"Zero schema migration","pass":true},
+    {"n":5,"check":"Zero new route","pass":true},
+    {"n":6,"check":"Zero UI player-facing modification","pass":true},
+    {"n":7,"check":"Zero sealed script touch","pass":true,"evidence":"pytest test_t01_sealed_scripts_untouched still PASS"},
+    {"n":8,"check":"Discovery covers backend/frontend/tests/memory","pass":true,"scope":"rg -rn across 4 domains + DB dump read-only"},
+    {"n":9,"check":"Runtime-critical usage documented","pass":true,"sections":[4,5]},
+    {"n":10,"check":"Recommendation Phase B present","pass":true,"section":13}
+  ]
+}
