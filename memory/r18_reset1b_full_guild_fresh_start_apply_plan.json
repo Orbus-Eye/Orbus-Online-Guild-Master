@@ -292,6 +292,13 @@
       "status": "BACKLOG",
       "reason": "PM approved concept, deferred as 'LATER' to avoid scope creep pre-rollback blocker",
       "candidate_after": ["R18.Reset.1c", "R18.Reset.1b apply", "R18.Reset.2"]
+    },
+    {
+      "id": "R18.Tooling.PreSealContract",
+      "name": "pre_seal_grep_contract.py - automated grep contract validator",
+      "status": "BACKLOG",
+      "reason": "PM approved concept but deferred; utile per round futuri non deve bloccare R18.Reset.1c",
+      "candidate_after": ["R18.Reset.1c", "R18.Reset.1b apply", "R18.Reset.2"]
     }
   ],
   "deliverables": [

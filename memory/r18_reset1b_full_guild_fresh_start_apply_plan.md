@@ -585,6 +585,7 @@ Round e task esplicitamente esclusi da R18.Reset.1b (in HOLD / PAUSED / CANDIDAT
 - **R18.3a.3** — seed_round5 symmetric patch (CANDIDATE, solo se warning persiste post-apply)
 - **R18.Reset.2** — Banner UI + Compensation cosmetic (CANDIDATE, founder badge / hall of fame se PM decide dopo reset)
 - **R18.Tooling** — Generalized Read-Only Live Snapshot Utility (**BACKLOG**, PM approved concept, deferred as "LATER" to avoid scope creep pre-rollback blocker. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
+- **R18.Tooling.PreSealContract** — `pre_seal_grep_contract.py` — automated grep contract validator (**BACKLOG**, PM approved concept but deferred; utile per round futuri, non deve bloccare R18.Reset.1c. Candidate after: R18.Reset.1c, R18.Reset.1b apply, R18.Reset.2)
 
 ---
 
