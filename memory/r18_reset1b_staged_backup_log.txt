@@ -1,0 +1,51 @@
+[2026-07-05T08:44:54.692730+00:00] [INFO] ====== R18.Reset.1b STAGED backup materialize START ======
+[2026-07-05T08:44:54.692850+00:00] [INFO] [self-audit] PASS - no literal mutating tokens in audited section (checked 12 patterns)
+[2026-07-05T08:44:54.692875+00:00] [INFO] [maintenance] flag file present at /tmp/orbus_maintenance.flag
+[2026-07-05T08:44:54.692889+00:00] [INFO] [main] backup_root = /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z
+[2026-07-05T08:44:54.696094+00:00] [INFO] [materialize] calling _backup_snapshot with mode='STAGED_PRE_APPLY_READONLY_BACKUP' backup_root=/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z
+[2026-07-05T08:44:54.752689+00:00] [INFO] [backup] adventurers: saved 3322 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/adventurers.jsonl
+[2026-07-05T08:44:54.755108+00:00] [INFO] [backup] inventory_items: saved 111 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/inventory_items.jsonl
+[2026-07-05T08:44:54.755691+00:00] [INFO] [backup] equipped_items: saved 20 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/equipped_items.jsonl
+[2026-07-05T08:44:54.768909+00:00] [INFO] [backup] class_halls: saved 1673 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/class_halls.jsonl
+[2026-07-05T08:44:54.779713+00:00] [INFO] [backup] achievement_progress: saved 1686 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/achievement_progress.jsonl
+[2026-07-05T08:44:54.780751+00:00] [INFO] [backup] expeditions: saved 17 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/expeditions.jsonl
+[2026-07-05T08:44:54.781735+00:00] [INFO] [backup] expedition_members: saved 45 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/expedition_members.jsonl
+[2026-07-05T08:44:54.782130+00:00] [INFO] [backup] raids: saved 1 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/raids.jsonl
+[2026-07-05T08:44:54.782583+00:00] [INFO] [backup] raid_participants: saved 20 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/raid_participants.jsonl
+[2026-07-05T08:44:54.782880+00:00] [INFO] [backup] chat_messages: saved 2 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/chat_messages.jsonl
+[2026-07-05T08:44:54.783164+00:00] [INFO] [backup] squads: saved 2 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/squads.jsonl
+[2026-07-05T08:44:54.799334+00:00] [INFO] [backup] guild_structures: saved 421 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_structures.jsonl
+[2026-07-05T08:44:54.799845+00:00] [INFO] [backup] guild_specialization_choice: saved 4 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_specialization_choice.jsonl
+[2026-07-05T08:44:54.800179+00:00] [INFO] [backup] guild_trade_pacts: saved 1 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_trade_pacts.jsonl
+[2026-07-05T08:44:54.800560+00:00] [INFO] [backup] guild_site_income_ledger: saved 14 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_site_income_ledger.jsonl
+[2026-07-05T08:44:54.800853+00:00] [INFO] [backup] guild_world_presence: saved 6 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_world_presence.jsonl
+[2026-07-05T08:44:54.801181+00:00] [INFO] [backup] guild_xp_daily_cap_tracker: saved 10 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_xp_daily_cap_tracker.jsonl
+[2026-07-05T08:44:54.801566+00:00] [INFO] [backup] pvp_seasons: saved 19 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/pvp_seasons.jsonl
+[2026-07-05T08:44:54.802129+00:00] [INFO] [backup] pvp_season_leaderboards: saved 36 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/pvp_season_leaderboards.jsonl
+[2026-07-05T08:44:54.802421+00:00] [INFO] [backup] pvp_defense_teams: saved 3 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/pvp_defense_teams.jsonl
+[2026-07-05T08:44:54.802703+00:00] [INFO] [backup] pvp_cosmetics_unlocked: saved 5 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/pvp_cosmetics_unlocked.jsonl
+[2026-07-05T08:44:54.802960+00:00] [INFO] [backup] guild_mount_ownership: saved 2 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guild_mount_ownership.jsonl
+[2026-07-05T08:44:54.803228+00:00] [INFO] [backup] narrative_rewards_unlocked: saved 1 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/narrative_rewards_unlocked.jsonl
+[2026-07-05T08:44:54.803487+00:00] [INFO] [backup] continent_leaderboard_snapshots: saved 3 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/continent_leaderboard_snapshots.jsonl
+[2026-07-05T08:44:54.803724+00:00] [INFO] [backup] continent_event_instances: saved 1 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/continent_event_instances.jsonl
+[2026-07-05T08:44:54.803973+00:00] [INFO] [backup] seasons: saved 1 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/seasons.jsonl
+[2026-07-05T08:44:54.804393+00:00] [INFO] [backup] season_participations: saved 14 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/season_participations.jsonl
+[2026-07-05T08:44:54.804668+00:00] [INFO] [backup] season_rewards: saved 4 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/season_rewards.jsonl
+[2026-07-05T08:44:54.804965+00:00] [INFO] [backup] world_boss_events: saved 4 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/world_boss_events.jsonl
+[2026-07-05T08:44:54.808558+00:00] [INFO] [backup] recruitment_offers: saved 255 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/recruitment_offers.jsonl
+[2026-07-05T08:44:54.809078+00:00] [INFO] [backup] shop_daily_offers: saved 18 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/shop_daily_offers.jsonl
+[2026-07-05T08:44:54.809933+00:00] [INFO] [backup] tester_tool_snapshots: saved 14 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/tester_tool_snapshots.jsonl
+[2026-07-05T08:44:54.818719+00:00] [INFO] [backup] guilds: saved 672 docs -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/guilds.jsonl
+[2026-07-05T08:44:54.818960+00:00] [INFO] [backup] manifest saved -> /app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/manifest.json
+[2026-07-05T08:44:54.818979+00:00] [INFO] [materialize] _backup_snapshot returned: {'mode': 'STAGED_PRE_APPLY_READONLY_BACKUP', 'backup_path': '/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z', 'manifest': '/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/manifest.json', 'created': True, 'collections_count': 33}
+[2026-07-05T08:44:54.829146+00:00] [INFO] [verify] sha256 line-by-line PASS on 33 files, 8407 lines hashed total
+[2026-07-05T08:44:54.829165+00:00] [INFO] ====== R18.Reset.1b STAGED backup materialize DONE (manifest=/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/manifest.json) ======
+
+=== SUMMARY_JSON ===
+{
+  "manifest_path": "/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z/manifest.json",
+  "backup_root": "/app/backend/backups/r18_reset1b_staged_20260705T084454.692880Z",
+  "sha256_verification": "PASS",
+  "files_verified": 33,
+  "total_lines": 8407
+}
