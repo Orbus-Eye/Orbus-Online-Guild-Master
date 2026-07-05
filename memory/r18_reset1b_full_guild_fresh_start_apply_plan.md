@@ -537,16 +537,19 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 
 ## 16. Human Approval Gate — R18.Reset.1b APPLY
 
-⚠️ **APPLY BLOCKED until ALL of the following are satisfied (HARD BLOCKERS — 6 gates, updated by R18.Reset.1b.hotfix):** ⚠️
+⚠️ **APPLY BLOCKED until ALL of the following are satisfied (HARD BLOCKERS — 7 gates, updated by R18.Reset.1b.hotfix):** ⚠️
 
 1. ✅ **R18.Reset.1c** rollback completeness PASS — **SATISFIED 2026-07-05T08:18:11Z**
 2. ✅ `restore_from_jsonl_manifest.py` verified — **SATISFIED** (10/10 tester PASS, dry-run + fake fixture)
 3. ✅ `sha256 manifest` verification PASS — **SATISFIED** (HARD STOP runtime verified via test 4 mismatch)
-4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS + staged pre-apply verify + hotfix acceptance)
+4. ☐ **PM sign-off renewed** — **PENDING** (conditional on R18.Reset.1b.ops PASS + staged pre-apply verify + hotfix acceptance + write_freeze_full PASS)
 5. ✅ **Backend maintenance mode / write-freeze** — **SATISFIED 2026-07-05T08:36:37Z** (R18.Reset.1b.ops SEALED, 8/8 tester PASS, middleware `/app/backend/app/core/maintenance.py` wired in `app_factory.py`, playbook `/app/memory/r18_reset1b_ops_write_freeze_playbook.md`)
 6. ✅ **R18.Reset.1b.hotfix — Starter Kit Inventory Unique Index Fix** — **SATISFIED 2026-07-05T09:48:57Z** (sibling script `/app/backend/app/scripts/round18_reset1b_apply_v1_1.py` sha256 `43ca97f284b50706cf450bf4a0dc8e6b977aa195547bc69e99a80da55ede3031`, 12/12 tests PASS in `/app/backend/tests/backend_round1b_hotfix_starter_kit_test.py` sha256 `bf26da31dce950256c0ec6e92b180fdfa6e82fdd308004c454b82ff712a755ec`, sealed originale INTATTO — preflight/postflight in `/app/memory/r18_reset1b_hotfix_sealed_preflight.json` + `_postflight.json`)
+7. ☐ **R18.Reset.1b.hotfix.write_freeze_full PASS** — **PENDING** (round non ancora avviato; env var `ORBUS_INTERNAL_JOB_FREEZE` letta dai job async interni per bloccare `orbus.onboarding.starter_roster` + seed durante l'apply; HARD PREREQUISITE per real apply post-hotfix — id `r18_reset1b_hotfix_write_freeze_full_pass`)
 
-**Status:** APPLY BLOCKED, **1 of 6 gates pending** (gate 4).
+**Status:** APPLY BLOCKED, **2 of 7 gates pending** (gate 4, gate 7). `APPLY_BLOCKED_2_OF_7_GATES_PENDING`.
+
+**Gate satisfaction summary:** gates satisfied: **5 / 7**.
 
 **Nota hotfix (gate 6):** Il nuovo apply reale DEVE usare
 `round18_reset1b_apply_v1_1.py` (NON il sealed originale
@@ -554,6 +557,13 @@ Verificare che `R18_REWORK_ENABLED=false` e `R18_TALENT_ENGINE_ENABLED=false` re
 audit trail. Il rollback via `round18_reset1b_rollback.py` continua a
 funzionare invariato (v1.1 emette entrambi gli audit event
 `R18_FULL_GUILD_FRESH_START_APPLIED` + `..._V1_1`).
+
+**Nota gate 7 (write_freeze_full):** Il maintenance middleware R18.Reset.1b.ops
+copre solo HTTP request. I job async interni (es.
+`orbus.onboarding.starter_roster`, seed loops) bypassano il freeze e
+possono introdurre drift durante l'apply reale. Il round
+`R18.Reset.1b.hotfix.write_freeze_full` chiude questo gap architetturale
+prima del real apply post-hotfix.
 
 **While these gates are NOT all satisfied:**
 
