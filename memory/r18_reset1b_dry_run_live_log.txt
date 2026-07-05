@@ -1,0 +1,98 @@
+[2026-07-05T07:21:59.325716+00:00] [INFO] MODE = DRY_RUN. Nessuna scrittura sara' effettuata. Per apply reale usa: --apply --i-understand-this-will-reset-all-guilds
+[2026-07-05T07:21:59.325972+00:00] [INFO] ====== R18.Reset.1b START (mode=DRY_RUN) ======
+[2026-07-05T07:21:59.327632+00:00] [INFO] [backup] DRY_RUN: skipping backup snapshot creation. In apply mode, sarebbero stati creati JSONL per 32 collections + guilds.
+[2026-07-05T07:21:59.332073+00:00] [INFO] [archive] DRY_RUN: adventurers (3316 docs) -> adventurers_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.332571+00:00] [INFO] [archive] DRY_RUN: inventory_items (111 docs) -> inventory_items_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.332910+00:00] [INFO] [archive] DRY_RUN: equipped_items (20 docs) -> equipped_items_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.333683+00:00] [INFO] [archive] DRY_RUN: class_halls (1673 docs) -> class_halls_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.334454+00:00] [INFO] [archive] DRY_RUN: achievement_progress (1686 docs) -> achievement_progress_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.334743+00:00] [INFO] [archive] DRY_RUN: expeditions (17 docs) -> expeditions_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.335032+00:00] [INFO] [archive] DRY_RUN: expedition_members (45 docs) -> expedition_members_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.335340+00:00] [INFO] [archive] DRY_RUN: raids (1 docs) -> raids_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.335606+00:00] [INFO] [archive] DRY_RUN: raid_participants (20 docs) -> raid_participants_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.335848+00:00] [INFO] [archive] DRY_RUN: chat_messages (2 docs) -> chat_messages_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.336081+00:00] [INFO] [archive] DRY_RUN: squads (2 docs) -> squads_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.336526+00:00] [INFO] [archive] DRY_RUN: guild_structures (421 docs) -> guild_structures_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.336849+00:00] [INFO] [archive] DRY_RUN: guild_specialization_choice (4 docs) -> guild_specialization_choice_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.337149+00:00] [INFO] [archive] DRY_RUN: guild_trade_pacts (1 docs) -> guild_trade_pacts_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.337438+00:00] [INFO] [archive] DRY_RUN: guild_site_income_ledger (14 docs) -> guild_site_income_ledger_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.337660+00:00] [INFO] [archive] DRY_RUN: guild_world_presence (6 docs) -> guild_world_presence_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.337880+00:00] [INFO] [archive] DRY_RUN: guild_xp_daily_cap_tracker (10 docs) -> guild_xp_daily_cap_tracker_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.338101+00:00] [INFO] [archive] DRY_RUN: pvp_seasons (19 docs) -> pvp_seasons_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.338335+00:00] [INFO] [archive] DRY_RUN: pvp_season_leaderboards (36 docs) -> pvp_season_leaderboards_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.338537+00:00] [INFO] [archive] DRY_RUN: pvp_defense_teams (3 docs) -> pvp_defense_teams_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.338738+00:00] [INFO] [archive] DRY_RUN: pvp_cosmetics_unlocked (5 docs) -> pvp_cosmetics_unlocked_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.338951+00:00] [INFO] [archive] DRY_RUN: guild_mount_ownership (2 docs) -> guild_mount_ownership_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.339241+00:00] [INFO] [archive] DRY_RUN: narrative_rewards_unlocked (1 docs) -> narrative_rewards_unlocked_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.339602+00:00] [INFO] [archive] DRY_RUN: continent_leaderboard_snapshots (3 docs) -> continent_leaderboard_snapshots_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.339937+00:00] [INFO] [archive] DRY_RUN: continent_event_instances (1 docs) -> continent_event_instances_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.340287+00:00] [INFO] [archive] DRY_RUN: seasons (1 docs) -> seasons_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.340617+00:00] [INFO] [archive] DRY_RUN: season_participations (14 docs) -> season_participations_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.340944+00:00] [INFO] [archive] DRY_RUN: season_rewards (4 docs) -> season_rewards_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.341266+00:00] [INFO] [archive] DRY_RUN: world_boss_events (4 docs) -> world_boss_events_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.341668+00:00] [INFO] [archive] DRY_RUN: recruitment_offers (255 docs) -> recruitment_offers_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.341995+00:00] [INFO] [archive] DRY_RUN: shop_daily_offers (18 docs) -> shop_daily_offers_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.342321+00:00] [INFO] [archive] DRY_RUN: tester_tool_snapshots (14 docs) -> tester_tool_snapshots_r18_archive (would use aggregate $out)
+[2026-07-05T07:21:59.343770+00:00] [INFO] [wipe] DRY_RUN: would wipe adventurers (3316 docs) via delete_many({})
+[2026-07-05T07:21:59.344168+00:00] [INFO] [wipe] DRY_RUN: would wipe inventory_items (111 docs) via delete_many({})
+[2026-07-05T07:21:59.344501+00:00] [INFO] [wipe] DRY_RUN: would wipe equipped_items (20 docs) via delete_many({})
+[2026-07-05T07:21:59.345286+00:00] [INFO] [wipe] DRY_RUN: would wipe class_halls (1673 docs) via delete_many({})
+[2026-07-05T07:21:59.346068+00:00] [INFO] [wipe] DRY_RUN: would wipe achievement_progress (1686 docs) via delete_many({})
+[2026-07-05T07:21:59.346409+00:00] [INFO] [wipe] DRY_RUN: would wipe expeditions (17 docs) via delete_many({})
+[2026-07-05T07:21:59.346741+00:00] [INFO] [wipe] DRY_RUN: would wipe expedition_members (45 docs) via delete_many({})
+[2026-07-05T07:21:59.347068+00:00] [INFO] [wipe] DRY_RUN: would wipe raids (1 docs) via delete_many({})
+[2026-07-05T07:21:59.347407+00:00] [INFO] [wipe] DRY_RUN: would wipe raid_participants (20 docs) via delete_many({})
+[2026-07-05T07:21:59.347790+00:00] [INFO] [wipe] DRY_RUN: would wipe chat_messages (2 docs) via delete_many({})
+[2026-07-05T07:21:59.348050+00:00] [INFO] [wipe] DRY_RUN: would wipe squads (2 docs) via delete_many({})
+[2026-07-05T07:21:59.348425+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_structures (421 docs) via delete_many({})
+[2026-07-05T07:21:59.348650+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_specialization_choice (4 docs) via delete_many({})
+[2026-07-05T07:21:59.348868+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_trade_pacts (1 docs) via delete_many({})
+[2026-07-05T07:21:59.349089+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_site_income_ledger (14 docs) via delete_many({})
+[2026-07-05T07:21:59.349312+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_world_presence (6 docs) via delete_many({})
+[2026-07-05T07:21:59.349521+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_xp_daily_cap_tracker (10 docs) via delete_many({})
+[2026-07-05T07:21:59.349730+00:00] [INFO] [wipe] DRY_RUN: would wipe pvp_seasons (19 docs) via delete_many({})
+[2026-07-05T07:21:59.349961+00:00] [INFO] [wipe] DRY_RUN: would wipe pvp_season_leaderboards (36 docs) via delete_many({})
+[2026-07-05T07:21:59.350186+00:00] [INFO] [wipe] DRY_RUN: would wipe pvp_defense_teams (3 docs) via delete_many({})
+[2026-07-05T07:21:59.350400+00:00] [INFO] [wipe] DRY_RUN: would wipe pvp_cosmetics_unlocked (5 docs) via delete_many({})
+[2026-07-05T07:21:59.350655+00:00] [INFO] [wipe] DRY_RUN: would wipe guild_mount_ownership (2 docs) via delete_many({})
+[2026-07-05T07:21:59.351018+00:00] [INFO] [wipe] DRY_RUN: would wipe narrative_rewards_unlocked (1 docs) via delete_many({})
+[2026-07-05T07:21:59.351365+00:00] [INFO] [wipe] DRY_RUN: would wipe continent_leaderboard_snapshots (3 docs) via delete_many({})
+[2026-07-05T07:21:59.351688+00:00] [INFO] [wipe] DRY_RUN: would wipe continent_event_instances (1 docs) via delete_many({})
+[2026-07-05T07:21:59.352014+00:00] [INFO] [wipe] DRY_RUN: would wipe seasons (1 docs) via delete_many({})
+[2026-07-05T07:21:59.352361+00:00] [INFO] [wipe] DRY_RUN: would wipe season_participations (14 docs) via delete_many({})
+[2026-07-05T07:21:59.352681+00:00] [INFO] [wipe] DRY_RUN: would wipe season_rewards (4 docs) via delete_many({})
+[2026-07-05T07:21:59.352994+00:00] [INFO] [wipe] DRY_RUN: would wipe world_boss_events (4 docs) via delete_many({})
+[2026-07-05T07:21:59.353410+00:00] [INFO] [wipe] DRY_RUN: would wipe recruitment_offers (255 docs) via delete_many({})
+[2026-07-05T07:21:59.353737+00:00] [INFO] [wipe] DRY_RUN: would wipe shop_daily_offers (18 docs) via delete_many({})
+[2026-07-05T07:21:59.354056+00:00] [INFO] [wipe] DRY_RUN: would wipe tester_tool_snapshots (14 docs) via delete_many({})
+[2026-07-05T07:21:59.354806+00:00] [INFO] [reset_guilds] DRY_RUN: would update_many 672 guilds with fields=['level', 'gold', 'reputation', 'current_roster_size', 'raids_completed_count', 'raids_victory_count', 'max_raid_score', 'last_raid_completed_at', 'max_team_power_ever', 'r18_beta_opt_in', 'migration_banner_r18_3c_dismissed', 'r18_reset1b_applied', 'r18_reset1b_banner_dismissed', 'updated_at', 'r18_reset1b_applied_at', 'max_roster_cap']
+[2026-07-05T07:21:59.380321+00:00] [INFO] [regen_roster] mode=DRY_RUN guilds=672 total_adv_created=0
+[2026-07-05T07:21:59.390160+00:00] [INFO] [regen_kit] DRY_RUN: would create 2016 inventory_items (3 potions × 672 guilds)
+[2026-07-05T07:21:59.390253+00:00] [INFO] [audit] DRY_RUN: would emit R18_FULL_GUILD_FRESH_START_APPLIED with summary metadata
+[2026-07-05T07:21:59.390260+00:00] [INFO] ====== SUMMARY ======
+[2026-07-05T07:21:59.390318+00:00] [INFO] {
+  "backup": {
+    "mode": "DRY_RUN",
+    "backup_path": "/app/backend/backups/r18_reset1b_20260705T072159Z",
+    "created": false,
+    "reason": "dry_run_no_write"
+  },
+  "archive": {
+    "collections_touched": 32
+  },
+  "wipe": {
+    "collections_wiped": 32
+  },
+  "guild_reset": {
+    "guilds_target": 672,
+    "guilds_modified": 0
+  },
+  "roster": {
+    "guilds_processed": 672,
+    "total_adv_created": 0
+  },
+  "kit": {
+    "created_inventory_docs": 0
+  }
+}
+[2026-07-05T07:21:59.390323+00:00] [INFO] ====== R18.Reset.1b DONE (mode=DRY_RUN) ======
