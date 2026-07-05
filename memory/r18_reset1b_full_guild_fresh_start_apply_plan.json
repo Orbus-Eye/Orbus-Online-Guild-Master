@@ -1,0 +1,254 @@
+{
+  "round": "R18.Reset.1b",
+  "mode": "plan_only_no_execution",
+  "prepared_at": "2026-07-05T07:10Z",
+  "status": "PLAN_READY_APPLY_BLOCKED",
+  "authorized_by": "PM decision GO A (sealed)",
+  "author": "e1 main agent",
+  "require_pm_sign_off_before_apply": true,
+  "sections": {
+    "section_01_executive_summary": {
+      "scope": "S1 - reset totale tutte le guild",
+      "target_guilds": 672,
+      "target_adventurers_archive": 3314,
+      "target_adventurers_regen": 3360,
+      "target_gold_post": 67200,
+      "target_gold_pre": 4083608,
+      "storage_archive_mb_estimate": 5,
+      "audit_event_expected": "R18_FULL_GUILD_FRESH_START_APPLIED",
+      "pm_decisions_reflected": {
+        "P0-a": "S1_reset_all",
+        "P0-b": "A.b_archive_and_regen",
+        "P0-c": "kit_100gold_3potions_0xp",
+        "P0-d": "archive_all_cosmetics",
+        "P0-e": "seed_round5_no_pre_patch",
+        "P0-f": "banner_r18_3c_suppress",
+        "P1-a": "retention_90d_min_no_auto_purge",
+        "P1-b": "cli_script_one_shot",
+        "P2-a": "post_reset_banner_dismissible_fixed_text"
+      }
+    },
+    "section_02_backup_strategy": {
+      "path_template": "/app/backend/backups/r18_reset1b_<UTC_ISO_timestamp>/",
+      "format": "JSONL per collection + manifest.json",
+      "retention_days_min": 90,
+      "cleanup_policy": "manual_only_requires_pm_ok",
+      "auto_purge": false,
+      "sha256_per_file": true,
+      "files_expected": 34,
+      "note": "mongodump non richiesto (JSONL indipendente da tool esterni). guilds.jsonl incluso nel backup per full identity restore."
+    },
+    "section_03_archive_collections_mapping": {
+      "pattern": "sibling collections _r18_archive via aggregate $out",
+      "zero_hard_delete_on_archive": true,
+      "collections_count": 32,
+      "collections_list": [
+        "adventurers", "inventory_items", "equipped_items",
+        "class_halls", "achievement_progress", "expeditions",
+        "expedition_members", "raids", "raid_participants",
+        "chat_messages", "squads",
+        "guild_structures", "guild_specialization_choice",
+        "guild_trade_pacts", "guild_site_income_ledger",
+        "guild_world_presence", "guild_xp_daily_cap_tracker",
+        "pvp_seasons", "pvp_season_leaderboards", "pvp_defense_teams",
+        "pvp_cosmetics_unlocked", "guild_mount_ownership",
+        "narrative_rewards_unlocked",
+        "continent_leaderboard_snapshots", "continent_event_instances",
+        "seasons", "season_participations", "season_rewards",
+        "world_boss_events",
+        "recruitment_offers", "shop_daily_offers",
+        "tester_tool_snapshots"
+      ]
+    },
+    "section_04_apply_steps": [
+      {"id": "S0", "name": "parse_args_safety_gate", "precondition": "flags --apply + --i-understand present", "postcondition": "mode=APPLY"},
+      {"id": "S1", "name": "idempotency_check", "precondition": "audit event applied count = 0", "postcondition": "proceed or exit=2"},
+      {"id": "S2", "name": "backup_snapshot", "precondition": "backup dir writable", "postcondition": "34 jsonl + manifest.json with sha256"},
+      {"id": "S3", "name": "archive_collections", "precondition": "32 live collections exist", "postcondition": "32 _r18_archive collections with pre_count == post_count"},
+      {"id": "S4", "name": "wipe_live_collections", "precondition": "S3 assertion OK", "postcondition": "32 live collections count = 0"},
+      {"id": "S5", "name": "reset_guild_fields", "precondition": "672 guilds present", "postcondition": "672 guilds have level=1 gold=100 r18_reset1b_applied=true"},
+      {"id": "S6", "name": "regen_starter_roster", "precondition": "guilds reset OK; whitelist 11 slugs", "postcondition": "adventurers count = 3360 (672x5); all in SAFE_STARTER_SLUGS"},
+      {"id": "S7", "name": "regen_starter_kit", "precondition": "item minor_healing_potion in catalog", "postcondition": "inventory_items count = 2016 (672x3)"},
+      {"id": "S8", "name": "emit_audit_event", "precondition": "all prior steps OK", "postcondition": "audit_log has 1 R18_FULL_GUILD_FRESH_START_APPLIED with full metadata"},
+      {"id": "S9", "name": "log_summary", "precondition": "any", "postcondition": "stdout JSON summary emitted"}
+    ],
+    "section_05_identity_preservation_contract": {
+      "guild_preserve_fields": [
+        "_id", "id", "public_id", "owner_user_id", "name",
+        "created_at", "email", "is_test", "is_test_artifact",
+        "is_grandfathered", "is_demo_opponent"
+      ],
+      "collections_preserve_intact": [
+        "users (340 docs)", "refresh_tokens (1722)",
+        "login_attempts", "password_reset_tokens",
+        "audit_log (11704)", "audit_logs (143)", "audit_events (37)",
+        "catalogs (30 collections, ~1500 docs total)"
+      ],
+      "archived_and_wiped": [
+        "adventurers (3314)", "inventory_items (111)",
+        "equipped_items (20)", "achievement_progress (1686)",
+        "cosmetics (8: 5 pvp + 2 mount + 1 narrative)",
+        "expeditions/raids/season history"
+      ],
+      "regenerated": [
+        "5 starter adventurers per guild (deterministic RNG)",
+        "3 minor_healing_potion per guild inventory",
+        "Guild fields reset (level=1 gold=100 reputation=0 max_roster_cap=10)"
+      ]
+    },
+    "section_06_starter_roster_regen_algorithm": {
+      "safe_slugs": [
+        "alchemist", "bard", "druid", "mage", "monk",
+        "paladin", "priest", "ranger", "rogue", "warlock", "warrior"
+      ],
+      "safe_slugs_count": 11,
+      "blacklist": ["cacciatore_di_mostri", "cacciatore_del_vuoto"],
+      "rng_algorithm": "random.Random(int(sha256('r18_reset1b:' + guild_id).hexdigest()[:16], 16))",
+      "roster_size_per_guild": 5,
+      "adventurer_document_shape": {
+        "id": "uuid4",
+        "guild_id": "guild.id",
+        "class_slug": "safe_slug",
+        "name": "Starter 1..5",
+        "level": 1,
+        "xp": 0,
+        "grade": "F",
+        "hp_current": 100,
+        "hp_max": 100,
+        "status": "idle",
+        "r18_reset1b_starter": true,
+        "r18_reset1b_seed_source": "sha256(r18_reset1b:<guild_id>)"
+      },
+      "no_dependency_on": ["seed_round5", "filter_safe_class_pool"]
+    },
+    "section_07_starter_kit_regen_payload": {
+      "gold_per_guild": 100,
+      "potions_per_guild": 3,
+      "xp_boosters_per_guild": 0,
+      "item_slug_canonical_verified": "minor_healing_potion",
+      "item_slug_ui_name": "Minor Healing Potion",
+      "alternatives_not_found_in_catalog": [
+        "basic_healing_potion", "healing_potion", "basic_potion", "potion_basic", "starter_potion"
+      ],
+      "defensive_fallback": "if slug missing, skip potions creation with WARN log; guild still gets 100 gold"
+    },
+    "section_08_cosmetics_archive_handling": {
+      "collections": {
+        "pvp_cosmetics_unlocked": {"pre": 5, "post_live": 0, "archived_to": "pvp_cosmetics_unlocked_r18_archive"},
+        "guild_mount_ownership": {"pre": 2, "post_live": 0, "archived_to": "guild_mount_ownership_r18_archive"},
+        "narrative_rewards_unlocked": {"pre": 1, "post_live": 0, "archived_to": "narrative_rewards_unlocked_r18_archive"}
+      },
+      "total_docs": 8,
+      "founder_badge": false,
+      "hall_of_fame": false,
+      "prima_era_title": false,
+      "note": "No preserve live. No founder badge. Recovery via _r18_archive for admin/audit debug or via rollback."
+    },
+    "section_09_banner_r18_3c_suppression_logic": {
+      "field_set_to_true": "guilds.migration_banner_r18_3c_dismissed",
+      "reason": "R18.3c banner obsolete post-reset. New R18.Reset.0 banner (P2-a) sostituisce.",
+      "verify_endpoint": "GET /api/guilds/me/migration-banner (must return no banner)"
+    },
+    "section_10_post_reset_banner_p2_a_design": {
+      "banner_text_it_byte_exact": "Le gilde sono state riallineate per il nuovo inizio di Orbus. Il nome della tua gilda è stato preservato; progressi, roster e risorse sono ripartiti da zero.",
+      "no_references_to": ["bug", "test data", "reset interno", "R18", "migration", "dry-run"],
+      "dismissible": true,
+      "show_once": true,
+      "flag_name": "r18_reset1b_banner_dismissed",
+      "flag_default_post_reset": false,
+      "flag_after_dismiss": true,
+      "endpoint_read_suggested": "GET /api/guilds/me/reset1b-banner",
+      "endpoint_dismiss_suggested": "POST /api/guilds/me/reset1b-banner/dismiss",
+      "component_name_suggested": "ResetWelcomeBannerR18Reset1b.jsx",
+      "ui_implementation_in_this_round": false,
+      "ui_deferred_to": "R18.Reset.2 (candidate future round)"
+    },
+    "section_11_seed_round5_post_reset_verification_plan": {
+      "pm_directive_p0_e": "no pre-reset patch",
+      "reset_dependency_on_seed_round5": false,
+      "reset_uses_static_whitelist": true,
+      "verify_post_apply": [
+        "grep backend logs for 'seed_round5.*starter backfill failed'",
+        "if persists, open R18.3a.3 hotfix (1-line symmetric patch)",
+        "if disappeared, warning obsolete, skip"
+      ],
+      "residual_risk_pre_reset": "LOW (try/except catch, no HTTP 500, no data corruption)"
+    },
+    "section_12_rollback_plan": {
+      "cli_command_dry_run": "python -m app.scripts.round18_reset1b_rollback",
+      "cli_command_confirm": "python -m app.scripts.round18_reset1b_rollback --confirm-rollback",
+      "steps": [
+        "1. Pre-condition checks (apply audit present, rollback audit absent, archive docs > 0)",
+        "2. Restore step: fetch from _r18_archive, wipe live, insert_many back",
+        "3. Unset guild reset markers (r18_reset1b_applied=False)",
+        "4. Emit R18_FULL_GUILD_FRESH_START_ROLLED_BACK audit event"
+      ],
+      "archive_stays_intact": true,
+      "time_to_rollback_seconds": 90,
+      "retention_days_min": 90,
+      "auto_purge": false,
+      "known_limitation": "guild fields (gold/level/reputation) original values NOT restorable from _r18_archive (guild not in ARCHIVE_COLLECTIONS). Full identity restore requires JSONL manifest restore in dedicated round."
+    },
+    "section_13_expected_counts_post_apply": {
+      "guilds": {"pre": 672, "post": 672, "delta": "invariant"},
+      "users": {"pre": 340, "post": 340, "delta": "invariant"},
+      "adventurers_live": {"pre": 3314, "post": 3360, "delta_expected": "672*5 - 3314 + test_data_tolerance"},
+      "adventurers_archive": {"pre": 0, "post": 3314, "delta": "archive"},
+      "inventory_items_live": {"pre": 111, "post": 2016, "delta": "672*3 potions - 111 delete"},
+      "inventory_items_archive": {"pre": 0, "post": 111, "delta": "archive"},
+      "equipped_items_live": {"pre": 20, "post": 0, "delta": "archive"},
+      "achievement_progress_live": {"pre": 1686, "post": 0, "delta": "archive"},
+      "guild_gold_sum": {"pre": 4083608, "post": 67200, "delta": "672*100 reset"},
+      "guild_gold_avg": {"pre": 6076.8, "post": 100.0, "delta": "reset"},
+      "guild_level_avg": {"pre": "variable", "post": 1, "delta": "reset"},
+      "pvp_cosmetics_live": {"pre": 5, "post": 0, "delta": "archive"},
+      "mount_ownership_live": {"pre": 2, "post": 0, "delta": "archive"},
+      "narrative_rewards_live": {"pre": 1, "post": 0, "delta": "archive"},
+      "audit_event_r18_reset1b_applied": {"pre": 0, "post": 1, "delta": "emit"},
+      "test_data_tolerance_note": "test agents may create synthetic guilds during window; tolerance +/- 20-50 docs"
+    },
+    "section_14_test_plan_post_apply_reference": {
+      "brief_file": "/app/memory/r18_reset1b_tester_brief_post_apply.md",
+      "test_cases_count": 12
+    },
+    "section_15_safety_checks_pre_apply": {
+      "required_flags_apply": ["--apply", "--i-understand-this-will-reset-all-guilds"],
+      "default_if_flags_missing": "DRY_RUN mode",
+      "backup_dir_timestamp_format": "YYYYMMDDTHHMMSSZ",
+      "sha256_source_check_optional": true,
+      "feature_flag_double_gate": {
+        "R18_REWORK_ENABLED": "false (invariant)",
+        "R18_TALENT_ENGINE_ENABLED": "false (invariant)"
+      }
+    },
+    "section_16_human_approval_gate": {
+      "status": "REQUIRE_PM_SIGN_OFF_BEFORE_APPLY",
+      "review_checklist": [
+        "slug potion (minor_healing_potion) accettabile",
+        "retention 90gg minimi accettabile",
+        "testo banner P2-a byte-exact accettabile",
+        "warning seed_round5 deferrito post-apply accettabile",
+        "guild fields (gold/level/reputation) originali NON restoreabili da _r18_archive (solo da JSONL) accettabile",
+        "zero UI change deploy in R18.Reset.1b (banner UI = round successivo) accettabile"
+      ],
+      "next_brief_pm_template": "R18.Reset.1b APPROVATO. Esegui --apply --i-understand-this-will-reset-all-guilds con backup obbligatorio."
+    }
+  },
+  "hold_paused_registry": [
+    {"id": "R18.1.3", "name": "drift backfill", "status": "HOLD", "reason": "in HOLD per direttiva PM (obsoleto post-reset)"},
+    {"id": "R18.3d", "name": "Stat/Role Mapping Registry", "status": "PAUSED", "reason": "in attesa post-reset"},
+    {"id": "R18.X-Traits", "name": "Traits System Rework", "status": "HOLD", "reason": "backlog P2"},
+    {"id": "R18.X-Fatigue", "name": "Fatigue/Kitchen", "status": "HOLD", "reason": "backlog P2"},
+    {"id": "R17.infra.smtp", "name": "SMTP fix", "status": "HOLD", "reason": "infra deferred"},
+    {"id": "seed_round5", "name": "starter_backfill patch", "status": "HOLD", "reason": "P0-e: no pre-reset patch. Verifica post-apply."},
+    {"id": "R18.3a.3", "name": "seed_round5 symmetric patch", "status": "CANDIDATE", "reason": "solo se warning persiste post-apply"},
+    {"id": "R18.Reset.2", "name": "Banner UI + Compensation cosmetic", "status": "CANDIDATE", "reason": "founder badge/hall of fame se PM decide dopo reset"}
+  ],
+  "deliverables": [
+    "/app/backend/app/scripts/round18_reset1b_apply.py",
+    "/app/backend/app/scripts/round18_reset1b_rollback.py",
+    "/app/memory/r18_reset1b_full_guild_fresh_start_apply_plan.md",
+    "/app/memory/r18_reset1b_full_guild_fresh_start_apply_plan.json",
+    "/app/memory/r18_reset1b_tester_brief_post_apply.md"
+  ]
+}
