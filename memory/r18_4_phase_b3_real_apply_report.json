@@ -1,0 +1,270 @@
+{
+  "meta": {
+    "round": "R18.4",
+    "phase": "B3_REAL_APPLY",
+    "authorized_by_pm_at_utc": "2026-07-06T05:23:00Z",
+    "executed_at_utc_slot_type": "2026-07-06T05:24:52Z",
+    "executed_at_utc_class_bound": "2026-07-06T05:25:00Z",
+    "verdict_global": "APPLY_SUCCESS_ZERO_ANOMALIES",
+    "governance": {
+      "apply_enabled_true_real_apply_scripts_only": true,
+      "b3_dry_run_scripts_byte_identical": true,
+      "sealed_files_byte_identical": true,
+      "zero_hard_delete": true,
+      "zero_class_slug_migration": true,
+      "zero_class_tags_rewrite": true,
+      "zero_runtime_bridge_activation": true,
+      "zero_unlock_cdm_cdv": true,
+      "zero_unlock_berserker_assassin": true,
+      "zero_bard_role_drift_change": true,
+      "zero_valid_roles_change": true,
+      "zero_player_facing_label_change": true
+    }
+  },
+
+  "e2e_gate_result": {
+    "reported_by_pm": true,
+    "score": "4/4 PASS",
+    "checks": [
+      {"check": "/api/health", "status": "200 OK"},
+      {"check": "Guild test 'la lanterna di ferro' lvl 1, gold 85, 5 avventurieri", "status": "OK"},
+      {"check": "Roster/Inventory/Equipment pages", "status": "OK, zero console error"},
+      {"check": "Expedition (Goblin Warrens gate 423 lvl_too_low legit / training-yard 201 team_power 92)", "status": "OK"},
+      {"check": "/api/items /api/inventory", "status": "200 OK"}
+    ]
+  },
+
+  "backup_snapshots": [
+    {
+      "apply": "slot_type",
+      "path": "/app/backend/backups/r18_4_slot_type_prepatch_20260706T052452Z/items_slot_type_snapshot.jsonl",
+      "sha256": "17ca0efd4a66f41696b1bfdc42cfd96b3b8e575e03c9d1862692d3e0a85f118a",
+      "item_count": 140
+    },
+    {
+      "apply": "class_bound",
+      "path": "/app/backend/backups/r18_4_class_bound_prepatch_20260706T052500Z/items_class_bound_snapshot.jsonl",
+      "sha256": "6cbd5a088ee6b7d2ea7296b7c58444d00b45e1c51b95cc5ef507420d89cec1d1",
+      "item_count": 178
+    }
+  ],
+
+  "dry_run_pre_apply": {
+    "slot_type": {"would_modify_count": 140, "target": 140, "match": true},
+    "class_bound": {
+      "would_modify": 178,
+      "already_correct": 0,
+      "total_target": 178,
+      "breakdown_by_policy_target": {"hard": 11, "soft": 146, "universal": 21},
+      "match": true
+    }
+  },
+
+  "apply_results": {
+    "slot_type": {
+      "apply_id": "892e876d-ac29-4e9a-a02f-4a4ff9526558",
+      "applied_at_utc": "2026-07-06T05:24:52Z",
+      "modified_count": 140,
+      "already_correct_count": 0,
+      "skipped_count": 0,
+      "errors_count": 0,
+      "errors": [],
+      "breakdown_by_slot_type_applied": {"weapon": 54, "accessory": 42, "armor": 44},
+      "shield_mapped_to_armor": ["spec_signature_aegis_of_the_defender", "spec_signature_thornwood_shield"],
+      "post_apply_verify": {"still_null_or_missing_count": 0, "verify_pass": true},
+      "audit_event_id": "c7c5016e-8764-42a0-882d-13be96e28e54",
+      "audit_event_type": "R18_4_SLOT_TYPE_BACKFILL_APPLIED"
+    },
+    "class_bound": {
+      "apply_id": "8d99f067-16a5-4c0a-a303-3a8b6d2ed751",
+      "applied_at_utc": "2026-07-06T05:25:00Z",
+      "modified_count": 178,
+      "already_correct_count": 0,
+      "skipped_count": 0,
+      "errors_count": 0,
+      "errors": [],
+      "breakdown_applied": {"hard": 11, "soft": 146, "universal": 21},
+      "post_apply_verify": {
+        "post_hard": 11, "post_soft": 146, "post_universal": 21,
+        "post_null_or_missing": 0, "post_total_populated": 178, "verify_pass": true
+      },
+      "audit_event_id": "53c73162-6649-4bbf-834e-474a01dda0d0",
+      "audit_event_type": "R18_4_ITEM_BINDING_POLICY_APPLIED"
+    }
+  },
+
+  "exact_modified_count_breakdown": {
+    "slot_type": {
+      "modified_total": 140,
+      "target": 140,
+      "match": true,
+      "by_slot": {"weapon": {"applied": 54, "target": 54}, "accessory": {"applied": 42, "target": 42}, "armor": {"applied": 44, "target": 44, "note": "42 armor + 2 shield SQ1a"}}
+    },
+    "class_bound": {
+      "modified_total": 178,
+      "target": 178,
+      "match": true,
+      "by_policy": {"hard": {"applied": 11, "target": 11}, "soft": {"applied": 146, "target": 146}, "universal": {"applied": 21, "target": 21}}
+    }
+  },
+
+  "post_apply_db_verification": {
+    "items_total": 178,
+    "item_binding_policy": {"hard": 11, "soft": 146, "universal": 21, "null_or_missing": 0},
+    "slot_type_equipable_null": 0,
+    "slot_type_all_counts": {"weapon": 54, "armor": 44, "accessory": 42},
+    "all_targets_match_exact": true
+  },
+
+  "audit_events": {
+    "R18_4_SLOT_TYPE_BACKFILL_APPLIED": {"count": 1, "primary_id": "c7c5016e-8764-42a0-882d-13be96e28e54"},
+    "R18_4_ITEM_BINDING_POLICY_APPLIED": {"count": 2, "primary_id": "53c73162-6649-4bbf-834e-474a01dda0d0", "rerun_idempotent_id": "1ec4f43b-56f7-4504-8dd3-bb143c0fba41", "note": "second event from idempotency rerun with modified=0"}
+  },
+
+  "idempotency_verification": {
+    "slot_type_rerun": {
+      "result": "GUARD_FAIL_FAST_early_return",
+      "reason": "Backup count drift: got 0, expected 140. Post-apply filter returns 0 items.",
+      "db_write": 0,
+      "safe": true
+    },
+    "class_bound_rerun": {
+      "result": "modified=0_already_correct=178",
+      "modified_count": 0,
+      "already_correct_count": 178,
+      "db_write": 0,
+      "safe": true,
+      "verify_pass": true
+    },
+    "conclusion": "Both scripts idempotent via different but equivalent-safety mechanisms."
+  },
+
+  "rollback_dry_run": {
+    "slot_type": {
+      "backup_entries_count": 140,
+      "found_in_db": 140,
+      "would_restore_count": 140,
+      "rollback_feasible": true,
+      "db_write": 0
+    },
+    "class_bound": {
+      "backup_entries_count": 178,
+      "found_in_db": 178,
+      "would_restore_count": 178,
+      "rollback_feasible": true,
+      "db_write": 0
+    }
+  },
+
+  "test_suite_r18_4": {
+    "test_file": "backend/tests/backend_r18_4_class_bound_test.py",
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "duration_sec": 0.91,
+    "groups": {
+      "registry_shape": "3/3 PASS",
+      "bucket_derivation": "4/4 PASS",
+      "backfill_dry_run": "4/4 PASS",
+      "class_bound_dry_run": "3/3 PASS",
+      "rate_limit_and_signals": "2/2 PASS"
+    }
+  },
+
+  "regression_r16_5_4b": {
+    "test_file": "backend/tests/backend_round1654b_test.py",
+    "passed": 24,
+    "skipped": 3,
+    "failed": 0,
+    "total": 27,
+    "invariato_pre_post_real_apply": true
+  },
+
+  "sealed_scripts_untouched": {
+    "sealed_files_19": {"missing": 0, "mismatches": 0, "byte_identical": true},
+    "b3_dry_run_scripts_byte_identical": {
+      "round18_4_backfill_slot_type_py": {
+        "sha256_pre": "64560c89bc473239e8e7f7553292ac0aafa28e0a304e1d7301c2b5a751d03b01",
+        "sha256_post": "64560c89bc473239e8e7f7553292ac0aafa28e0a304e1d7301c2b5a751d03b01",
+        "match": true
+      },
+      "round18_4_apply_class_bound_py": {
+        "sha256_pre": "f638449bc2fb921eb33ac26def557658706e102ec484c809fa98d3a7355089dc",
+        "sha256_post": "f638449bc2fb921eb33ac26def557658706e102ec484c809fa98d3a7355089dc",
+        "match": true
+      }
+    }
+  },
+
+  "risk_notes": [
+    {
+      "id": "minor_1",
+      "severity": "documental",
+      "blocker": false,
+      "description": "backfill_slot_type_apply idempotency via early guard fail-fast (exit 1) invece che 'already_correct' counter come class_bound_apply.",
+      "impact": "zero DB write in rerun. Comportamento intenzionale safe.",
+      "recommendation": "NO fix in R18.4 B3. Backlog P3 opzionale: R18.4.followup — Backfill script idempotency pattern alignment."
+    },
+    {
+      "id": "minor_2",
+      "severity": "documental",
+      "blocker": false,
+      "description": "class_bound_apply rerun emette un 2° audit event R18_4_ITEM_BINDING_POLICY_APPLIED con modified_count=0.",
+      "impact": "audit noise minimo; distinguibile via apply_id UUID.",
+      "recommendation": "acceptable. Backlog P3 opzionale se PM richiede compressione: R18.4.followup — class_bound idempotent rerun audit noise."
+    }
+  ],
+
+  "new_deliverables_created_this_phase": [
+    {"path": "/app/backend/app/scripts/round18_4_backfill_slot_type_apply.py", "sha256": "3e1d076d6f69f8b5f049035a10837f22ffe4fe97827e0f291c39360743d6ac8f"},
+    {"path": "/app/backend/app/scripts/round18_4_apply_class_bound_apply.py", "sha256": "7e3fcc60db0f1d6064033a0cfeef6fd00d19ba0a153468706db197928da9d578"},
+    {"path": "/app/backend/backups/r18_4_slot_type_prepatch_20260706T052452Z/items_slot_type_snapshot.jsonl", "sha256": "17ca0efd4a66f41696b1bfdc42cfd96b3b8e575e03c9d1862692d3e0a85f118a"},
+    {"path": "/app/backend/backups/r18_4_class_bound_prepatch_20260706T052500Z/items_class_bound_snapshot.jsonl", "sha256": "6cbd5a088ee6b7d2ea7296b7c58444d00b45e1c51b95cc5ef507420d89cec1d1"},
+    {"path": "/app/memory/r18_4_phase_b3_real_apply_report.md", "sha256": "PENDING (computed post-write)"},
+    {"path": "/app/memory/r18_4_phase_b3_real_apply_report.json", "sha256": "PENDING (this file)"}
+  ],
+
+  "self_check_final_10_of_10": {
+    "1_backup_snapshot_created_and_verified": true,
+    "2_dry_run_pre_apply_match_target": true,
+    "3_apply_executed_with_audit_event": true,
+    "4_post_apply_count_verify_match_target": true,
+    "5_idempotency_verified": true,
+    "6_rollback_dry_run_ok": true,
+    "7_test_suite_r18_4_16_16_pass": true,
+    "8_regression_r16_5_4b_24_3_invariant": true,
+    "9_19_sealed_files_byte_identical": true,
+    "10_2_b3_dry_run_scripts_byte_identical": true
+  },
+
+  "recommendation_for_b4": {
+    "verdict": "READY_FOR_B4_CONTRACT_LOCK_AND_SEAL",
+    "authorization_required": "explicit PM GO after review of this report",
+    "candidates_for_seal": [
+      "/app/memory/r18_4_phase_b2_pm_decisions.md",
+      "/app/memory/r18_4_phase_b2_pm_decisions.json",
+      "/app/memory/r18_4_class_bound_registry.md",
+      "/app/memory/r18_4_class_bound_registry.json",
+      "/app/backend/app/scripts/round18_4_backfill_slot_type.py",
+      "/app/backend/app/scripts/round18_4_apply_class_bound.py",
+      "/app/backend/app/scripts/round18_4_backfill_slot_type_apply.py",
+      "/app/backend/app/scripts/round18_4_apply_class_bound_apply.py",
+      "/app/backend/tests/backend_r18_4_class_bound_test.py",
+      "/app/memory/r18_4_phase_b3_dry_run_prereport.md",
+      "/app/memory/r18_4_phase_b3_real_apply_report.md"
+    ],
+    "candidates_count": 11,
+    "post_b4_total_sealed_target": "19 existing + 11 new = 30 (subject to PM discretion)"
+  },
+
+  "backlog_p3_confirmed_from_b3_dry_run": [
+    "R18.4.followup — Shield slot mapping decision (SQ1)",
+    "R18.4.backlog — specialization_unlocks dead branch cleanup (SQ2)",
+    "R18.4.backlog — berserker/assassin dormant signature items (SQ4)"
+  ],
+
+  "backlog_p3_optional_new_from_real_apply": [
+    "R18.4.followup — Backfill script idempotency pattern alignment (optional, from risk_note minor_1)",
+    "R18.4.followup — class_bound idempotent rerun audit noise (optional, from risk_note minor_2)"
+  ]
+}
