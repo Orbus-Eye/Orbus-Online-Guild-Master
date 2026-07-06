@@ -1,0 +1,318 @@
+{
+  "meta": {
+    "round": "R18.4",
+    "phase": "B1",
+    "stage": "deep_dive_audit_read_only",
+    "generated_at_utc": "2026-07-05T20:50:00Z",
+    "direction_preliminary_locked_by_pm": "Option 3 Hybrid Refined",
+    "governance": {
+      "zero_db_write": true, "zero_code_change": true, "zero_frontend_change": true,
+      "zero_runtime_wiring": true, "zero_item_rewrite": true, "zero_adventurer_rewrite": true,
+      "zero_class_unlock": true, "zero_migration_canonical": true,
+      "zero_valid_roles_change": true, "zero_touch_24_seals": true,
+      "zero_b2_decision_lock_auto": true, "zero_b3_script_apply": true,
+      "zero_backfill_real": true, "zero_hard_full_enforcement": true,
+      "zero_bard_drift_fix": true, "zero_player_facing_label_change": true,
+      "zero_hard_delete": true
+    }
+  },
+
+  "executive_summary": {
+    "verdict": "system already ~80% coherent with Option 3 Hybrid Refined; proceed to B2 decision lock",
+    "top_findings": [
+      "auto_equip.py Q6 already implemented via REOPEN #2 R16.5.4b (2026-07-02): warning items SKIPPED entirely, no penalty fallback",
+      "Signature items are 14 (NOT 12): split into E1 hard=8 (required_class_optional) + E2 soft=6 (only recommended_classes)",
+      "specialization_unlocks is DEAD BRANCH: 0 items use it, logic present but no runtime input",
+      "required_class_optional populated on 11 items (feature hard-bound already exists, partial coverage)",
+      "EQUIPMENT_SLOTS runtime = 3 slot (weapon, armor, accessory) — shield NOT equippable slot",
+      "Bard drift (role='Support') NO bug on compatibility/auto-equip/UI/warning",
+      "NULL class_slug (13 adventurers) handled via _resolve_class_slug fallback to class_name (verified: all 13 have class_name populated)",
+      "G1 backfill feasible via item_type→slot_type for 138/140 items; 2 shield items OPEN (sub-question B2.SQ1)"
+    ]
+  },
+
+  "auto_equip_audit": {
+    "file": "/app/backend/app/equipment/auto_equip.py",
+    "lines": 594,
+    "fitness_formula": {
+      "PRIMARY_WEIGHT": 3.0, "SECONDARY_WEIGHT": 1.5,
+      "POWER_WEIGHT": 1.0, "STAT_TAG_BONUS": 2.0,
+      "equation": "fitness = PRIMARY_WEIGHT*primary_bonus + SECONDARY_WEIGHT*sum(secondary_bonus) + POWER_WEIGHT*power_score + STAT_TAG_BONUS if primary in stat_tags else 0"
+    },
+    "tie_break": "(-fitness DESC, -power_score DESC, id ASC) — deterministic idempotent",
+    "hard_reject_paths": [
+      "check_equip_compatibility severity in {block,warning} → EXCLUDE",
+      "resolve_item_required_level > adv_level → EXCLUDE",
+      "is_active: false on inventory → EXCLUDE",
+      "bound_to_other_adventurer → EXCLUDE",
+      "item_type != expected_type per slot → EXCLUDE"
+    ],
+    "soft_warning_integration": "REOPEN #2 R16.5.4b (2026-07-02): warning SKIPPED (no penalty). Only severity=ok enters ranking. Manual equip UNCHANGED.",
+    "null_class_slug_handling": {
+      "resolve_class_slug_fallback": "class_slug → class_name → class → None",
+      "load_class_meta_default": "{primary_stat:'strength', secondary_stats:[], display_name_it:None}",
+      "live_impact_13_null_adv": "all 13 have class_name populated (Druid/Monk/Ranger/etc.), fallback works correctly"
+    },
+    "empty_state_differentiated": {
+      "off_class_seen_0": "Nessun oggetto adatto in inventario",
+      "off_class_seen_positive": "Oggetti trovati, ma nessuno adatto alla classe X"
+    },
+    "equipment_slots_runtime": ["weapon", "armor", "accessory"],
+    "slot_to_item_type_map": {"weapon":"weapon","armor":"armor","accessory":"accessory"}
+  },
+
+  "frontend_components_inventory": [
+    {"path": "src/pages/Inventory.jsx", "lines": 574, "role": "guild global inventory list"},
+    {"path": "src/pages/AdventurerEquipment.jsx", "lines": 439, "role": "slot management per adventurer (3 slots)"},
+    {"path": "src/components/InventoryEquipModal.jsx", "lines": 208, "role": "equip/unequip transactional modal"},
+    {"path": "src/components/AdventurerDetailModal.jsx", "lines": 481, "role": "detail with inline slot equip"}
+  ],
+
+  "compatibility_ui_current_state": {
+    "warning_it_flow": "backend check_equip_compatibility → equip_item_service → frontend receives reason_it/warning_it",
+    "extract_it_message_helper": "auto_equip._extract_it_message uses detail.user_message as SoT (never type(exc).__name__)",
+    "i18n_handling": "IT hardcoded + _CLASS_LABELS_IT map (warlock=Occultista). EN partial (empty_state hardcoded EN).",
+    "ui_current_states": 3,
+    "ui_target_states_q7": 4,
+    "missing_signals_for_4_state": ["recommended_for_class:bool", "is_universal:bool"],
+    "feasibility_ui_4_state": "HIGH — schema exists, only serialization change needed"
+  },
+
+  "test_baseline_coverage": {
+    "primary_files": [
+      {"file": "backend_round1654b_test.py", "count": 27, "coverage": "auto-equip class-aware R16.5.4b"},
+      {"file": "backend_round15_phase2_test.py", "count_approx": 15, "coverage": "compatibility validator base"},
+      {"file": "backend_round160_phase2_test.py", "count_approx": 14, "coverage": "validator v2 base+specialization"},
+      {"file": "backend_round1654c_i18n_test.py", "count_approx": 14, "coverage": "i18n class labels"},
+      {"file": "backend_round160_phase3_test.py", "count_approx": 8, "coverage": "equip flow e2e"}
+    ],
+    "coverage_gaps": [
+      "NULL class_slug edge case (13 live doc)",
+      "UI 4-state (no Cypress/Playwright)",
+      "audit event EQUIP_BLOCKED/WARNING (not existing yet)",
+      "item_binding_policy field (Q11, not existing yet)",
+      "G1 slot_type backfill (Q13, not existing yet)",
+      "Shield items (2, item_type=shield but slot not in EQUIPMENT_SLOTS)"
+    ]
+  },
+
+  "coverage_matrix_10x5": {
+    "total_verdicts": 50,
+    "distribution": {"ok": 15, "warning": 15, "block": 20},
+    "matrix": {
+      "drake_slayer_helm": {"warrior": "ok", "mage": "block(class_locked)", "ranger": "block", "bard": "block", "priest": "block"},
+      "drake_slayer_blade": {"warrior": "ok", "mage": "block", "ranger": "block", "bard": "block", "priest": "block"},
+      "arcane_adept_orb": {"warrior": "warning(not_recommended)", "mage": "ok", "ranger": "warning", "bard": "ok", "priest": "warning"},
+      "goblin_hunter_ring": {"warrior": "ok", "mage": "warning", "ranger": "ok", "bard": "warning", "priest": "warning"},
+      "spec_signature_truestrike_bow": {"warrior": "block(class_locked)", "mage": "block", "ranger": "ok", "bard": "block", "priest": "block", "note": "required_class=ranger"},
+      "spec_signature_sacred_chalice": {"warrior": "warning", "mage": "ok", "ranger": "warning", "bard": "ok", "priest": "ok"},
+      "spec_signature_battle_standard": {"warrior": "ok", "mage": "ok", "ranger": "warning", "bard": "ok", "priest": "warning"},
+      "spec_signature_bloodied_greataxe": {"all_5_classes": "block", "note": "required_class=berserker, 0 live adventurer"},
+      "spec_signature_breakers_gauntlets": {"warrior": "ok", "others": "block", "note": "required_class=warrior"},
+      "spec_signature_silent_kris": {"all_5_classes": "block", "note": "required_class=assassin, 0 live adventurer"}
+    },
+    "insight_dormant_signatures": "3 items (bloodied_greataxe, silent_kris, twin_blades) hanno required_class in {berserker,assassin} → 0 adv live → de facto unusable"
+  },
+
+  "bard_drift_verification_q14": {
+    "bard_role_db": "Support",
+    "bard_primary_stat": "intellect",
+    "bard_secondary_stats": ["agility", "faith"],
+    "items_with_bard_in_rc": 29,
+    "sample_verdicts_3_of_29": {
+      "arcane_adept_orb": "ok",
+      "cracked-staff": "ok",
+      "spiritglass-staff": "ok"
+    },
+    "bug_detection": "ZERO bugs detected. Drift is cosmetic — compatibility.py and auto_equip.py do NOT read role field.",
+    "impact_on_r18_4": "NULL — bard drift stays in backlog P3 (R18.3d.followup)"
+  },
+
+  "signature_items_flow_bucket_e": {
+    "actual_count": 14,
+    "phase_a_reported_count": 12,
+    "correction_reason": "Phase A grep pattern was partial",
+    "sub_bucket_e1_hard": {
+      "count": 8,
+      "field_populated": "required_class_optional",
+      "examples": [
+        {"slug": "spec_signature_truestrike_bow", "required_class": "ranger"},
+        {"slug": "spec_signature_bloodied_greataxe", "required_class": "berserker"},
+        {"slug": "spec_signature_breakers_gauntlets", "required_class": "warrior"},
+        {"slug": "spec_signature_corrupted_blade", "required_class": "necromancer"},
+        {"slug": "spec_signature_runic_aegis", "required_class": "paladin"},
+        {"slug": "spec_signature_silent_kris", "required_class": "assassin"},
+        {"slug": "spec_signature_storm_rod", "required_class": "mage"},
+        {"slug": "spec_signature_twin_blades", "required_class": "rogue"}
+      ]
+    },
+    "sub_bucket_e2_soft": {
+      "count": 6,
+      "field_populated": "recommended_classes (no required_class_optional)",
+      "examples": ["aegis_of_the_defender", "battle_standard", "runed_focus", "sacred_chalice", "thornwood_shield", "warhorn"]
+    },
+    "specialization_unlocks_dead_branch": {
+      "items_populated": 0,
+      "logic_lines_in_compatibility": "130-165 (dead code)",
+      "recommendation": "document as 'reserved for future spec system' in B2"
+    },
+    "dormant_signatures_zero_live_adv": {
+      "count": 3,
+      "affected_classes": ["berserker", "assassin"],
+      "items": ["bloodied_greataxe", "silent_kris", "twin_blades (partial)"]
+    }
+  },
+
+  "g1_slot_type_backfill_strategy": {
+    "g1_total": 140,
+    "distribution_by_item_type": {
+      "weapon": 54, "armor": 42, "accessory": 42, "shield": 2
+    },
+    "proposed_derivation_safe": {
+      "weapon_armor_accessory_138_items": "slot_type = item_type (identity map)",
+      "shield_2_items": "OPEN — see sub-question B2.SQ1"
+    },
+    "shield_mapping_options": {
+      "option_a_map_to_armor": {"desc": "shield item_type → slot_type='armor' (D&D-like)", "risk": "LOW", "breaking": false},
+      "option_b_add_shield_slot": {"desc": "extend EQUIPMENT_SLOTS to 4 slots", "risk": "MEDIUM", "breaking": true},
+      "option_c_leave_null": {"desc": "shield slot_type=null (off-slot universal)", "risk": "LOW", "breaking": false}
+    },
+    "governance_backfill_q13": {
+      "sequence_locked_by_pm": "B1 audit → B2 decision lock → B3 sibling script dry-run → real apply post-verify + PM gate",
+      "b3_sibling_script_proposed": "round18_4_backfill_slot_type.py with APPLY_ENABLED=False default"
+    }
+  },
+
+  "multi_field_interaction_priority": {
+    "rule_1_class_locked": {"field": "required_class_optional", "severity": "block", "population": 11, "code": "class_locked"},
+    "rule_2_universal": {"field": "is_universal", "severity": "ok", "population": 0, "code": "universal"},
+    "rule_3_heavy_armor": {"field": "armor_tags 'heavy' × NO_HEAVY_ARMOR_CLASSES", "severity": "block", "code": "heavy_armor_forbidden"},
+    "rule_4_arcane_weapon": {"field": "weapon_tags ∩ ARCANE_WEAPON_TAGS × NO_ARCANE_WEAPON_CLASSES", "severity": "block", "code": "arcane_weapon_forbidden"},
+    "rule_5_spec_match": {"field": "specialization_unlocks × spec_slug", "severity": "ok", "population": 0, "code": "specialization_match", "dead": true},
+    "rule_6_spec_required": {"field": "specialization_unlocks non-empty × class not in rc", "severity": "block", "population": 0, "code": "specialization_required", "dead": true},
+    "rule_7_spec_mismatch": {"field": "specialization_unlocks × class in rc + spec mismatch", "severity": "warning", "population": 0, "code": "specialization_mismatch", "dead": true},
+    "rule_8_not_recommended": {"field": "recommended_classes non-empty × class not in rc", "severity": "warning", "population": 157, "code": "not_recommended_class"},
+    "rule_9_off_class_tags": {"field": "class_tags non-empty × class not in ct", "severity": "warning", "population": 157, "code": "off_class_tags"},
+    "rule_10_default": {"severity": "ok", "code": "ok"},
+    "conflict_resolution": "rule_1 (class_locked) highest priority, never overridden. Rules 2-10 evaluated in order.",
+    "insight": "item_binding_policy (Q11) can be added as rule 0 (top priority) without disrupting existing order"
+  },
+
+  "open_sub_questions_b2": [
+    {"id": "B2.SQ1", "topic": "Shield (2 items) slot mapping", "options": ["(a) map to armor", "(b) add shield slot 4°", "(c) leave null"], "agent_preference": "(a) SAFE non-breaking"},
+    {"id": "B2.SQ2", "topic": "specialization_unlocks DEAD branch", "options": ["keep + document reserved", "deprecate + remove logic", "keep silently"], "agent_preference": "keep + document 'reserved for future spec system'"},
+    {"id": "B2.SQ3", "topic": "required_class_optional populated (11 items) vs new item_binding_policy field", "options": ["migrate all to policy", "keep back-compat + policy as override"], "agent_preference": "keep back-compat + policy as override"},
+    {"id": "B2.SQ4", "topic": "6 signature items dormant (berserker/assassin required_class)", "options": ["remove from catalog", "mark is_active=false", "leave dormant + backlog P3"], "agent_preference": "leave dormant + backlog P3 revisit"},
+    {"id": "B2.SQ5", "topic": "EQUIP_WARNING rate-limit strategy", "options": ["sampling 1:N", "daily bucket per (guild,adv,reason_code)", "aggregate telemetry only"], "agent_preference": "daily bucket per (guild_id, adventurer_id, reason_code) — 1 event/day max"},
+    {"id": "B2.SQ6", "topic": "item_binding_policy default derivation for existing 178 items", "options": ["manual assignment", "derive from bucket (E1→hard, E2/A/C/G1→soft, G2→universal)"], "agent_preference": "derive from bucket"},
+    {"id": "B2.SQ7", "topic": "UI 4-state signal (recommended_for_class, is_universal in API response)", "options": ["add to item_public()", "add to equip response only", "no add (compute frontend)"], "agent_preference": "add to item_public() SAFE, derive runtime"}
+  ],
+
+  "b2_decision_lock_proposal_draft": {
+    "item_binding_policy_field": {
+      "field": "items.item_binding_policy",
+      "type": "enum",
+      "values": ["soft", "hard", "universal"],
+      "default_derivation": [
+        "required_class_optional populated → hard",
+        "slug matches ^spec_signature_ AND required_class_optional → hard",
+        "item_type in [material, material_*, consumable] → universal",
+        "else → soft"
+      ],
+      "target_population": 178
+    },
+    "slot_type_backfill_b3": {
+      "target_138_items": "item_type → slot_type identity map",
+      "shield_2_items": "PENDING B2.SQ1",
+      "sibling_script": "round18_4_backfill_slot_type.py",
+      "apply_enabled_default": false
+    },
+    "audit_events": {
+      "EQUIP_BLOCKED": {
+        "metadata_keys": ["guild_id", "adventurer_id", "item_id", "item_slug", "reason_code", "class_slug", "source_route", "timestamp"],
+        "rate": "unlimited (rare event)"
+      },
+      "EQUIP_WARNING": {
+        "metadata_keys": ["...", "rate_bucket_id"],
+        "rate": "1 per (guild_id, adventurer_id, reason_code) per day (aggregate)"
+      }
+    },
+    "ui_4_state_mapping": {
+      "block": {"visual": "red icon", "label": "Non equipaggiabile"},
+      "warning": {"visual": "yellow icon", "label": "reason_it (soft)"},
+      "ok_recommended": {"visual": "green icon", "label": "Consigliato"},
+      "ok_universal": {"visual": "grey icon", "label": "Universale"},
+      "ok_neutral": {"visual": "none", "label": "no badge"}
+    },
+    "backlog_additions_p3": [
+      "R18.4.followup — Shield slot mapping decision (B2.SQ1)",
+      "R18.4.backlog — specialization_unlocks dead branch cleanup (B2.SQ2)",
+      "R18.4.backlog — berserker/assassin dormant signature items (B2.SQ4)"
+    ]
+  },
+
+  "risks_safety_signals": {
+    "safety_signals_in_favor": [
+      "auto_equip.py Q6 already respected (REOPEN #2 R16.5.4b)",
+      "0 equipped_items live (timing safe for policy change)",
+      "27 tests R16.5.4b cover class_locked/warning/druid/alchemist/warlock/tie-break",
+      "Bard drift NO impact on R18.4 (verified 3 samples)",
+      "13 NULL class_slug all have class_name fallback",
+      "Signature 14 items natural hard/soft split",
+      "required_class_optional (11 items) already the true hard-bound infrastructure"
+    ],
+    "medium_risks_manageable_in_b2": [
+      "Shield 2 items OPEN slot mapping (B2.SQ1)",
+      "specialization_unlocks DEAD branch (B2.SQ2)",
+      "6 signature dormant items (B2.SQ4)",
+      "UI 4-state new API signal (feasibility HIGH but frontend change in B3)",
+      "G1 backfill 140 items — dry-run mandatory",
+      "Coverage gap tests (NULL class_slug, audit event, item_binding_policy, G1 backfill)"
+    ],
+    "blocked_pm_locks": [
+      "bridge R18.3e wired runtime → BLOCKED R18.3f",
+      "canonical IT rewrite items → BLOCKED",
+      "unlock recruitment CdM/CdV → BLOCKED",
+      "VALID_ROLES change (Bard) → BLOCKED",
+      "migration adventurers class_slug → BLOCKED",
+      "player-facing slug change → BLOCKED"
+    ]
+  },
+
+  "recommendation_b2": {
+    "verdict": "PROCEED_TO_B2_DECISION_LOCK",
+    "confidence": "HIGH",
+    "motivation": [
+      "System ~80% coherent with Option 3 Hybrid Refined",
+      "Q6 already implemented (2026-07-02 REOPEN #2)",
+      "Test baseline solid (27 R16.5.4b + related)",
+      "7 sub-questions all SAFE non-blocking",
+      "G1 backfill feasible via dry-run"
+    ],
+    "next_steps_b2": [
+      "PM lock on SQ1-SQ7 (7 sub-questions)",
+      "PM lock on item_binding_policy schema (Q11 confirmed)",
+      "PM lock on UI 4-state API signal design (Q7)",
+      "PM lock on audit event rate-limit (Q10 + SQ5)",
+      "Deliverable: r18_4_phase_b2_pm_decisions.md + .json"
+    ],
+    "risk_flags": {
+      "high": [],
+      "medium": ["shield mapping", "dormant signatures", "UI signal design"],
+      "low": ["backfill dry-run", "test coverage gap", "dead branch cleanup", "i18n edge"]
+    }
+  },
+
+  "self_check_10": {
+    "1_report_md_created": true,
+    "2_report_json_created_parsable": true,
+    "3_zero_db_write": true,
+    "4_zero_new_audit_event": true,
+    "5_zero_code_change_runtime": true,
+    "6_zero_frontend_change": true,
+    "7_24_seals_byte_identical": "verified_pytest_sealed_or_integrity_6_6_PASS",
+    "8_coverage_matrix_10x5_50_verdicts_executed": true,
+    "9_open_sub_questions_min_7": 7,
+    "10_recommendation_b2_present": true
+  }
+}
