@@ -14,6 +14,14 @@
     ],
     "successor_blocked": "Phase C tech dry-run — BLOCCATO finché PM non compila/approva tabella item"
   },
+  "superseded_by_c0bis_2026_07_06T19_00_00Z": {
+    "authority": "PM Orchestrator",
+    "scope": "scala catalogo reale",
+    "note": "Questo file resta valido come micro-sample/skeleton (80 item, max 4 Legendary), NON come cap catalogo reale",
+    "real_catalog_ref": "r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json",
+    "real_catalog_specs": {"items":1500, "legendary_max":15, "dungeons":60, "raids":12, "proficiency_system":true},
+    "13_drafts_status": "restano come esempi non autoritativi"
+  },
   "scope": {
     "objective": "Preparare tabella item leggibile, compilabile in-place dal PM, fonte unica per dry-run tecnico successivo",
     "emergent_can": [

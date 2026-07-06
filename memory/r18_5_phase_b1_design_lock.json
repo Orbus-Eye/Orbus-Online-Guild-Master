@@ -15,6 +15,21 @@
     "deprecated_sections_kept_for_history": ["Section 1 MAX_VISIBLE_LEVEL", "Section 5 equipment_pwr original formula", "Section 5 tier_bonus 2/5 + slot_completion 5 coefficients"],
     "authoritative_override": "In caso di conflitto tra questo file e Gate 1 decisions → Gate 1 prevale"
   },
+  "scale_up_correction_2026_07_06T19_00_00Z": {
+    "authority": "PM Orchestrator",
+    "focus": "correzione scala catalogo da micro-batch a MMO reale",
+    "superseding": {
+      "item_batch_size": {"micro_sample":80, "real_catalog":1500},
+      "legendary_max": {"micro_sample":4, "real_catalog":15},
+      "dungeon_count": {"planned_before":0, "real_catalog":60, "distribution":{"Lv1-15":12,"Lv16-30":14,"Lv31-45":16,"Lv46-55":10,"Lv56-60":8}},
+      "raid_count": {"planned_before":0, "real_catalog":12, "distribution":{"Lv20-30":2,"Lv31-45":3,"Lv46-55":3,"Lv60":4}},
+      "proficiency_system": {"planned_before":false, "real_catalog":"armor + weapon proficiency obbligatorie, hard block runtime"},
+      "progression_lv60plus": {"before":"ILVL/equip", "corrected":"ILVL / raid / loot raro / utility / ranking / mercato"}
+    },
+    "note": "80 item + max 4 Legendary del batch B.1/C0 originale restano validi come micro-sample/skeleton per drafting iniziale, NON come cap del catalogo reale",
+    "authoritative_ref_real_catalog": "r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json",
+    "equip_evaluation_order_pm_locked": ["proficiency (hard block)", "main stat", "ilvl/rarity/tier", "utility"]
+  },
   "sq_locks": {
     "SQ1":"(a) formula polinomiale unica invariata",
     "SQ2":"(b) soft cap MAX_VISIBLE_LEVEL=60, XP accumula senza block",

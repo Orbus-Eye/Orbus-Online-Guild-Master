@@ -559,3 +559,96 @@ Ogni draft flaggato `🟢 DRAFT PENDING PM approval / DRAFT ONLY / NOT FINAL`. O
 
 **NO Phase C tech dry-run** finché PM non completa C0. Nessun altro deliverable Emergent in questa iterazione.
 
+
+---
+
+## R18.5 Phase C0-bis — Scale-up + Progression/Dungeon/Raid/Proficiency Matrices (2026-07-06T19:00:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟡 **Scale-up applicato**. **Phase C0-bis CLOSED** (deliverable pronto). Attesa **PM Gate 2 review** + risposte agli item PENDING PM su proficiency mapping, main stat, naming drift.
+
+### 🔄 Scale-up correction (autorità PM)
+
+Il PM ha corretto la scala del catalogo R18.5 da micro-batch a **MMO reale**:
+
+| Aspetto | Micro-batch B.1/C0 | **Catalogo reale (C0-bis)** |
+|---|---|---|
+| Item totali | 80 (skeleton) | **1500 minimo** |
+| Legendary max | 4 (micro-batch) | **15** (catalogo hard cap) |
+| Dungeon | 0 | **60** (12/14/16/10/8) |
+| Raid | 0 | **12** (2/3/3/4) |
+| Proficiency system | non pianificato | **armor + weapon obbligatorie, hard block runtime** |
+| Progression post-Lv60 | ILVL/equip | ILVL / raid / loot raro / utility / ranking / mercato |
+
+**Il micro-batch 80/4 resta valido come skeleton drafting**, non come cap catalogo reale.
+
+### 📋 Deliverable C0-bis (3 nuovi + 3 patched)
+
+**File nuovi**:
+| File | SHA256 |
+|:---|:---|
+| `r18_5_phase_c0bis_progression_dungeon_raid_matrix.md` | `506811f8…3f` |
+| `r18_5_phase_c0bis_progression_dungeon_raid_matrix.json` | `dc990821…fa` |
+| `r18_5_pm_workspace_master.md` (READ-ONLY MIRROR) | `3a923fed…48` |
+
+**File patched (superseding notes)**:
+| File | SHA256 post-patch |
+|:---|:---|
+| `r18_5_phase_b1_design_lock.md` | `7da73b15…22` |
+| `r18_5_phase_b1_design_lock.json` | `312d1ab8…df` |
+| `r18_5_phase_c0_item_table_drafting_support.md` | `d271f018…2a` |
+| `r18_5_phase_c0_item_table_drafting_support.json` | `5bdf74f5…d7` |
+
+### 🎯 12 sezioni C0-bis (deliverable principale)
+
+1. **5 brackets progression** Lv1-60 + percezione player (verbatim PM)
+2. **60 dungeon** distribuzione PM-locked: 12/14/16/10/8
+3. **12 raid** distribuzione PM-locked: 2/3/3/4 + 9 structural requirements (team, ruoli, gear check, proficiency, main stat, utility, reward, ranking)
+4. **Matrice classi → main stat** (5 classi live × 6 stat) — tutti `PENDING PM approval`
+5. **Matrice classi → armor proficiency** (5 × 4 armor types, hard block) — tutti `PENDING PM`
+6. **Matrice classi → weapon proficiency** (5 × 16 weapon families) — tutti `PENDING PM`
+7. **Matrice dungeon/raid → tier loot** (proposta preliminare per bracket)
+8. **Matrice dungeon/raid → lore source** (17 fonti PM-approved)
+9. **Matrice dungeon/raid → required level** (proposta pacing)
+10. **Scala 1500 item** — tier (300/350/350/300/200) + rarity (400/450/400/235/15) PM-locked + Legendary policy (max 15, utility unica, lore-linked, no craft/shop/paywin/statstick)
+11. **Superseding note** vecchio hard cap 80 item
+12. **Superseding note** vecchio max 4 Legendary
+13. **Ordine valutazione equip** (verbatim PM): proficiency → main stat → ILVL/rarity/tier → utility
+
+### 🔎 Observation naming drift documentata
+
+Discrepanza tra:
+- **PM C0-bis verbatim**: Warrior, Rogue, **Mage**, **Priest**, Ranger
+- **B.1 Extra D placeholder**: Warrior, Paladin, Berserker, Rogue, Ranger, Assassin, Monk, **Cleric**, **Wizard**, Cacciatore di Mostri
+
+Da chiarire dal PM: canonizzazione Mage/Priest o conferma rename Wizard→Mage / Cleric→Priest. **`PENDING PM approval`**.
+
+### 💡 Workspace Master (READ-ONLY MIRROR)
+
+Header PM verbatim: *"READ-ONLY MIRROR — authoritative decisions remain in PM gate files. No new design decisions may be introduced here."*
+Contiene: cheat sheet Gate 1 (SQ11-SQ18), 17 lore sources, superseding note esplicita, regole tassative, cheat sheet C0-bis (5 brackets + 60 dungeon + 12 raid + 1500 items + rarity + proficiency matrices), 10 item PENDING PM aperti, nota consulenza workflow (non decisione). **Non introduce decisioni nuove**.
+
+### Governance validation
+- ✅ **36/36 sigilli byte-identical** (pytest PASS)
+- ✅ **Zero file .py/.js/.jsx/.ts/.tsx modificati**
+- ✅ **Zero DB writes**
+- ✅ **5 JSON validity** (tutti clean)
+- ✅ **Distribuzioni PM-locked verbatim**: 60=12+14+16+10+8 · 12=2+3+3+4 · 1500=300+350+350+300+200 · rarity=400+450+400+235+15
+- ✅ **Legendary count catalogo reale**: 15 (hard cap rispettato)
+- ✅ **Nessuna finalizzazione autonoma** su nomi player-facing, proficiency mapping, main stat, utility, drop rate
+
+### 10 item PENDING PM aperti (Gate 2)
+1. Classe → main stat finale (Warrior Forza vs Costituzione, Ranger Destrezza vs Forza)
+2. Classe → armor proficiency finale (matrice 5×4 hard block)
+3. Classe → weapon proficiency finale (matrice 5×16 hard block)
+4. Naming drift Mage/Priest vs B.1 Wizard/Cleric
+5. Mapping tier↔rarity nel catalogo reale (Gate 1 SQ12 1:1 non è più coerente numericamente con 1500 items)
+6. Nomi player-facing dei 60 dungeon
+7. Nomi player-facing dei 12 raid + meccaniche specifiche
+8. Drop rate finali per tier/rarity nei dungeon/raid
+9. Match specifici lore↔dungeon/raid (17 fonti × 72 content)
+10. Utility narrative delle 15 Legendary + effetti finali
+
+### Next-in-queue
+**PM Gate 2**: review C0-bis + risposte ai 10 item PENDING PM (proficiency mapping e naming drift sono bloccanti per identità classe). Solo dopo Gate 2 potrà aprirsi **Phase C0-ter** (eventuale expansion tabella 1500) o **Phase C tech dry-run** (backfill scripts documentali, sempre NO apply).
+
+

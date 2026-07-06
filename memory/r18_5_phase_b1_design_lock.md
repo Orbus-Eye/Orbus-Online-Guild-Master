@@ -35,6 +35,28 @@ Massimo **4 Legendary** nel primo batch R18.5, non craftabili normalmente, non o
 ### Riferimento normativo
 Le risposte PM lockate a SQ11-SQ18 e le lore rules sono formalizzate in **`/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json`**. In caso di conflitto tra questo file e Gate 1 decisions → **Gate 1 prevale**.
 
+---
+
+## 0-TER. SCALE-UP CORRECTION 2026-07-06T19:00:00Z (autorità PM)
+
+Il PM ha corretto la **scala del catalogo R18.5** da micro-batch (80 item) a **scala MMO reale**.
+
+### Superseding (catalogo reale vs micro-sample)
+
+| Ambito | B.1 originale (superseded per catalogo reale) | Catalogo reale (Phase C0-bis) |
+|---|---|---|
+| Item batch size | 80 item totali (SQ14 lock micro-batch) | **1500 equip minimo** |
+| Legendary max | 4 (SQ14 lock micro-batch) | **max 15** (catalogo reale) |
+| Dungeon count | non pianificato | **60 dungeon** (12/14/16/10/8 per bracket) |
+| Raid count | non pianificato | **12 raid** (2/3/3/4 per bracket) |
+| Proficiency system | non pianificato | **armor + weapon proficiency obbligatorie**, hard block |
+| Progression Lv60+ | ILVL/equip | ILVL / raid / loot raro / utility / ranking / mercato |
+
+**Nota**: gli 80 item + max 4 Legendary del batch originale restano validi come **micro-sample / skeleton** per il drafting iniziale, **NON come cap del catalogo reale**. Riferimento autoritativo del catalogo reale: `r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json`.
+
+### Nuovo principio: proficiency obbligatoria
+Ordine valutazione equip PM-lockato: (1) proficiency → (2) main stat → (3) ILVL/rarity/tier → (4) utility. "Se non hai proficiency, non puoi equipaggiare quell'oggetto" (hard block runtime, non solo warning).
+
 ## 0. Lock PM verbatim — R18.5.SQ1..SQ10
 
 | SQ | Answer | Decisione lockata |

@@ -1,0 +1,233 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "round_title": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "round_subtitle": "Lv60 cap, item-centered endgame, lore-driven equipment",
+    "phase": "C0-bis",
+    "description": "Progression / Dungeon / Raid / Proficiency matrices (scale-up MMO reale)",
+    "locked_at_utc": "2026-07-06T19:00:00Z",
+    "governance": "DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes, zero migration",
+    "predecessors": [
+      "r18_5_phase_b1_design_lock.md/.json (patched, scale-up correction added)",
+      "r18_5_phase_b2_implementation_plan.md/.json (patched)",
+      "r18_5_phase_b_gate1_pm_decisions.md/.json (authoritative SQ11-SQ18)",
+      "r18_5_phase_c0_item_table_drafting_support.md/.json (superseded per scala reale)"
+    ],
+    "authoritative_over": ["real catalog scale (1500 items)", "60 dungeons", "12 raids", "proficiency system", "equip evaluation order"]
+  },
+  "0_superseding": {
+    "items_total": {"B1_C0_micro_sample": 80, "real_catalog": 1500},
+    "legendary_max": {"B1_C0_micro_sample": 4, "real_catalog": 15},
+    "dungeons": {"B1_C0": 0, "real_catalog": 60},
+    "raids": {"B1_C0": 0, "real_catalog": 12},
+    "proficiency_system": {"B1_C0": false, "real_catalog": "armor + weapon obbligatorie, hard block runtime"},
+    "progression_lv60plus": {"B1_original": "ILVL/equip", "real": "ILVL / raid / loot raro / utility / ranking / mercato"},
+    "note": "80 item + 13 draft C0 restano come micro-sample/skeleton propositivo, non cap catalogo reale"
+  },
+  "1_progression_pacing_5_brackets": [
+    {"bracket": "Lv1-15", "semantic": "facile / onboarding / primi dungeon", "player_perception": "entro nel gioco"},
+    {"bracket": "Lv16-30", "semantic": "progressione normale / prime build", "player_perception": "costruisco la squadra"},
+    {"bracket": "Lv31-45", "semantic": "salita seria / dungeon più tecnici", "player_perception": "devo iniziare a capire build, main stat ed equip"},
+    {"bracket": "Lv46-55", "semantic": "late game / ottimizzazione equip", "player_perception": "devo farmare e ottimizzare"},
+    {"bracket": "Lv56-60", "semantic": "scalata finale / pre-raid + endgame", "player_perception": "sto scalando una vetta"},
+    {"bracket": "Lv60_endgame", "semantic": "ILVL / raid / dungeon endgame / loot raro / ranking / mercato", "player_perception": "inizia il vero endgame item-based"}
+  ],
+  "progression_constraints": {
+    "max_adventurer_level": 60,
+    "hard_cap": true,
+    "xp_beyond_lv60_no_level_up": true,
+    "post_lv60_progression": ["ILVL", "equip", "raid", "utility", "ranking", "mercato"]
+  },
+  "2_60_dungeons_distribution": {
+    "pm_locked": true,
+    "Lv1-15": 12,
+    "Lv16-30": 14,
+    "Lv31-45": 16,
+    "Lv46-55": 10,
+    "Lv56-60": 8,
+    "total": 60,
+    "pending_pm_approval_per_dungeon": ["nome", "tema", "lore_source_specifica", "boss", "affissi", "modifier"]
+  },
+  "3_12_raids_distribution": {
+    "pm_locked": true,
+    "Lv20-30_intro": 2,
+    "Lv31-45_intermedi": 3,
+    "Lv46-55_late": 3,
+    "Lv60_endgame": 4,
+    "total": 12,
+    "structural_requirements": [
+      "team composition (dimensione + limiti classe)",
+      "ruoli obbligatori (Tank + Healer + DPS)",
+      "gear check (min ILVL medio + avg PWR check)",
+      "armor proficiency corretta (no bypass)",
+      "weapon proficiency corretta",
+      "main stat sensata",
+      "utility item (almeno 1 lore-linked nel loadout squadra)",
+      "reward superiori (drop T4/T5 potenziato, chance Legendary)",
+      "ranking dedicati (leaderboard raid-specific + season)"
+    ],
+    "pending_pm_approval": ["nomi", "meccaniche_specifiche", "drop_rate_finali", "numeri_gear_check"]
+  },
+  "4_classi_main_stat": {
+    "main_stat_pm_approved_verbatim": ["Forza", "Destrezza", "Costituzione", "Intelligenza", "Saggezza", "Carisma"],
+    "live_classes_pm_verbatim": ["Warrior", "Rogue", "Mage", "Priest", "Ranger"],
+    "proposed_mapping_all_pending_pm": {
+      "Warrior": {"proposed": "Forza", "alternative": "Costituzione", "status": "PENDING PM approval"},
+      "Rogue": {"proposed": "Destrezza", "status": "PENDING PM approval"},
+      "Mage": {"proposed": "Intelligenza", "b1_drift_notice": "B.1 Extra D placeholder = 'Wizard'", "status": "PENDING PM approval"},
+      "Priest": {"proposed": "Saggezza", "b1_drift_notice": "B.1 Extra D placeholder = 'Cleric'", "status": "PENDING PM approval"},
+      "Ranger": {"proposed": "Destrezza", "alternative": "Forza", "status": "PENDING PM approval"}
+    },
+    "blocked_classes_no_unlock_c0bis": ["CdM (Cacciatore di Mostri, R18.3f HOLD)", "CdV", "Berserker (dormant)", "Assassin (dormant)"],
+    "bard_status": "role drift in backlog, no mapping in C0-bis",
+    "naming_drift_observation": {
+      "pm_c0bis_verbatim": ["Warrior", "Rogue", "Mage", "Priest", "Ranger"],
+      "b1_extra_d_placeholder": ["Warrior", "Paladin", "Berserker", "Rogue", "Ranger", "Assassin", "Monk", "Cleric", "Wizard", "Cacciatore di Mostri"],
+      "questions_pending_pm": [
+        "canonizzare Mage/Priest come nuovi nomi player-facing?",
+        "confermare rename Wizard→Mage e Cleric→Priest?",
+        "o B.1 Extra D era solo placeholder mai canonico?"
+      ]
+    }
+  },
+  "5_classi_armor_proficiency_hard_block": {
+    "armor_types_pm_verbatim": ["stoffa", "cuoio", "maglia", "piastre"],
+    "rule": "Se non hai proficiency, non puoi equipaggiare quell'oggetto — hard block runtime, non solo warning",
+    "proposed_mapping_all_pending_pm": {
+      "Warrior": {"stoffa": false, "cuoio": false, "maglia": true, "piastre": true, "rationale": "Tank/DPS_melee alta difesa"},
+      "Rogue": {"stoffa": true, "cuoio": true, "maglia": false, "piastre": false, "rationale": "Stealth/DPS mobilità"},
+      "Mage": {"stoffa": true, "cuoio": false, "maglia": false, "piastre": false, "rationale": "DPS_ranged casting"},
+      "Priest": {"stoffa": true, "cuoio": true, "maglia": false, "piastre": false, "rationale": "Healer flessibilità light"},
+      "Ranger": {"stoffa": false, "cuoio": true, "maglia": true, "piastre": false, "rationale": "DPS_ranged + melee ibrido"}
+    },
+    "warning": "Tutte le celle PENDING PM approval — impatta identità classe hard, no Emergent canonicalization"
+  },
+  "6_classi_weapon_proficiency_hard_block": {
+    "weapon_families_pm_verbatim_16": ["spada", "ascia", "martello", "pugnale", "arco", "balestra", "bastone", "tomo", "focus", "strumento", "falce", "lancia", "arma in asta", "scudo", "reliquia", "trinket"],
+    "proposed_mapping_all_pending_pm": {
+      "Warrior": ["spada", "ascia", "martello", "lancia", "arma in asta", "scudo", "trinket"],
+      "Rogue": ["spada", "pugnale", "arco", "balestra", "trinket"],
+      "Mage": ["pugnale", "bastone", "tomo", "focus", "reliquia", "trinket"],
+      "Priest": ["martello", "bastone", "tomo", "focus", "scudo", "reliquia", "trinket"],
+      "Ranger": ["spada", "pugnale", "arco", "balestra", "lancia", "trinket"]
+    },
+    "families_not_mapped_to_live_classes": ["strumento", "falce"],
+    "candidates_for_families_not_mapped": ["Bard drift", "classi future"],
+    "warning": "Tutte le celle PENDING PM approval — impatta identità classe hard"
+  },
+  "7_dungeon_raid_tier_loot": {
+    "Lv1-15": {"dungeons": 12, "prevalent_tier": "T1", "notes": "qualche T2 rare drop"},
+    "Lv16-30": {"dungeons": 14, "raids": 2, "prevalent_tier": "T2, alcuni T3", "raid_notes": "raid intro Lv20-30 → chance T3"},
+    "Lv31-45": {"dungeons": 16, "raids": 3, "prevalent_tier": "T3, alcuni T4", "raid_notes": "raid intermedi → chance T4"},
+    "Lv46-55": {"dungeons": 10, "raids": 3, "prevalent_tier": "T4", "raid_notes": "raid late → T4/T5"},
+    "Lv56-60": {"dungeons": 8, "raids": 4, "prevalent_tier": "T4-T5 principale", "raid_notes": "raid endgame → fonte principale T5 + Legendary drop (max 15 catalogo)"},
+    "cripta_faglie_ambash_ref": "Gate 1 SQ15 endgame dungeon lockato — uno dei raid/dungeon endgame Lv60",
+    "drop_rate_final": "PENDING PM approval per tier/rarity nei dungeon/raid"
+  },
+  "8_dungeon_raid_lore_source": {
+    "lore_sources_pm_approved_17": [
+      "Ambash", "Irthe", "Velur", "Efreto", "Halodi", "Alevora", "Soe", "Aveol",
+      "Ergolat", "Krastlov", "Adalan", "Greatwood/Elfwood", "Alberi della Vita",
+      "Faglie arcane", "Vuoto", "Luna Morta", "Ciclo delle anime"
+    ],
+    "rule": "Ogni dungeon/raid deve avere almeno una lore source. Item T3+ droppati ereditano priority sulla lore source del content",
+    "proposed_pool_per_bracket": {
+      "Lv1-15": {"dungeons": 12, "raids": 0, "suggested_pool": ["Greatwood/Elfwood", "Adalan", "Alberi della Vita", "Halodi", "Soe"]},
+      "Lv16-30": {"dungeons": 14, "raids": 2, "suggested_pool": ["Krastlov", "Aveol", "Irthe", "Velur", "Ergolat"]},
+      "Lv31-45": {"dungeons": 16, "raids": 3, "suggested_pool": ["Alevora", "Efreto", "Faglie arcane", "Ambash (early)"]},
+      "Lv46-55": {"dungeons": 10, "raids": 3, "suggested_pool": ["Ambash", "Vuoto", "Luna Morta (mid)"]},
+      "Lv56-60": {"dungeons": 8, "raids": 4, "suggested_pool": ["Ambash (endgame — Cripta delle Faglie)", "Vuoto", "Luna Morta", "Ciclo delle anime"]}
+    },
+    "warning": "Match specifici lore↔dungeon/raid → PENDING PM approval. Emergent NON assegna in modo canonico"
+  },
+  "9_dungeon_raid_required_level": {
+    "proposal": [
+      {"content": "Dungeon Lv1-15", "count": 12, "required_level_range": "1-15", "status": "PENDING PM approval"},
+      {"content": "Dungeon Lv16-30", "count": 14, "required_level_range": "16-30", "status": "PENDING PM approval"},
+      {"content": "Raid Lv20-30", "count": 2, "required_level_range": "20-30", "min_avg_ilvl": "PENDING PM approval", "status": "PENDING PM approval"},
+      {"content": "Dungeon Lv31-45", "count": 16, "required_level_range": "31-45", "status": "PENDING PM approval"},
+      {"content": "Raid Lv31-45", "count": 3, "required_level_range": "31-45", "status": "PENDING PM approval"},
+      {"content": "Dungeon Lv46-55", "count": 10, "required_level_range": "46-55", "status": "PENDING PM approval"},
+      {"content": "Raid Lv46-55", "count": 3, "required_level_range": "46-55", "status": "PENDING PM approval"},
+      {"content": "Dungeon Lv56-60", "count": 8, "required_level_range": "56-60", "status": "PENDING PM approval"},
+      {"content": "Raid Lv60", "count": 4, "required_level_range": "60", "gear_check": "avg ILVL squadra >= T4/T5", "status": "PENDING PM approval"}
+    ]
+  },
+  "10_scale_1500_items": {
+    "distribution_by_tier_pm_locked": {"T1": 300, "T2": 350, "T3": 350, "T4": 300, "T5": 200, "total": 1500},
+    "distribution_by_rarity_pm_locked": {"Common": 400, "Uncommon": 450, "Rare": 400, "Epic": 235, "Legendary": 15, "total": 1500},
+    "tier_bracket_mapping": {"T1": "Lv1-15", "T2": "Lv16-30", "T3": "Lv31-45", "T4": "Lv46-55", "T5": "Lv56-60"},
+    "tier_rarity_mapping_gap": {
+      "note": "Il mapping Gate 1 SQ12 (1 rarity ↔ 1 tier) NON è più 1:1 numericamente con distribuzioni reali",
+      "example_mismatch": "T1=300 vs Common=400; T5=200 vs Legendary=15",
+      "pending_pm_approval": "Chiarimento mapping definitivo tier×rarity nel catalogo reale (soft distribuzione cross-tier?)"
+    },
+    "legendary_policy_verbatim_pm": {
+      "max_catalog": 15,
+      "hard_cap": true,
+      "utility_unique_required": true,
+      "lore_source_required": true,
+      "source_precise": true,
+      "drop_rate": "rarissimo (PENDING PM approval numerico)",
+      "craftable_normally": false,
+      "shop_obtainable": false,
+      "pay_to_win": false,
+      "no_pure_stat_stick": true,
+      "example_approved": "Lama della Faglia Quieta — Fonte lore: Ambash — Utility: riduce il rischio di eventi arcani instabili nei dungeon legati alle faglie",
+      "example_rejected": "Spada Leggendaria +20 Forza"
+    }
+  },
+  "11_superseding_note_80_items_cap": {
+    "old_ref": "r18_5_phase_c0_item_table_drafting_support.md/.json (Gate 1 SQ14 micro-batch)",
+    "old_value": "80 item totali",
+    "new_value": "1500 item minimo (catalogo reale)",
+    "old_status": "micro-sample/skeleton propositivo (valido per drafting iniziale)",
+    "13_drafts_c0_status": "restano validi come esempi non autoritativi, pattern/skeleton di riferimento per naming/lore/utility",
+    "authoritative_ref": "sezione 10 di questo file (C0-bis)"
+  },
+  "12_superseding_note_max_4_legendary": {
+    "old_ref": "r18_5_phase_b_gate1_pm_decisions.md/.json (Gate 1 SQ14 micro-batch)",
+    "old_value": 4,
+    "new_value": 15,
+    "old_scope": "solo micro-batch 80 item (drafting iniziale C0)",
+    "new_scope": "catalogo reale R18.5 (1500 item)",
+    "authoritative_ref": "sezione 10 di questo file (C0-bis)"
+  },
+  "13_equip_evaluation_order_verbatim_pm": {
+    "order": [
+      {"step": 1, "question": "Posso equipaggiarlo?", "check": "armor/weapon proficiency", "policy": "HARD BLOCK se no"},
+      {"step": 2, "question": "È adatto alla classe?", "check": "main stat"},
+      {"step": 3, "question": "Quanto è forte?", "check": "ILVL, rarity, tier"},
+      {"step": 4, "question": "Ha utility?", "check": "effetti speciali / lore / dungeon-specific"}
+    ],
+    "future_impact_phase_c_tech": {
+      "note": "NON implementare in C0-bis, solo documentare come requisito",
+      "eligible_items_serializer": {"file": "R18.4.followup Phase B/C SEALED", "change_needed": "estensione per proficiency check"},
+      "ui_compatibility_badge": {"file": "ItemCompatibilityBadge (SEALED R18.4.followup C)", "change_needed": "estensione con nuovo stato 'no proficiency' (5-state, o hard block pre-4-state)"},
+      "auto_equip_logic": {"file": "app/equipment/auto_equip.py (non-sealed)", "current": "skip con warning", "future": "hard block su proficiency mismatch"}
+    }
+  },
+  "self_check_20_20": {
+    "1_5_brackets_progression": true,
+    "2_60_dungeons_pm_locked": true,
+    "3_12_raids_pm_locked_plus_9_structural": true,
+    "4_main_stat_matrix_pending_pm": true,
+    "5_armor_proficiency_matrix_hard_block_pending_pm": true,
+    "6_weapon_proficiency_matrix_16_families_pending_pm": true,
+    "7_tier_loot_dungeon_raid": true,
+    "8_lore_source_dungeon_raid_17_fonts": true,
+    "9_required_level_dungeon_raid": true,
+    "10_scale_1500_pm_locked_plus_rarity_400_450_400_235_15": true,
+    "11_superseding_80_items": true,
+    "12_superseding_max_4_legendary": true,
+    "13_equip_evaluation_order_verbatim": true,
+    "naming_drift_mage_priest_documented": true,
+    "blocked_classes_listed": true,
+    "bard_backlog_noted": true,
+    "no_autonomous_finalization": true,
+    "pm_locked_distributions_verbatim": true,
+    "legendary_count_leq_15": true,
+    "zero_db_zero_code_seals_intact": true
+  },
+  "status": "PHASE C0-BIS CLOSED — attesa PM Gate 2 review + risposta PENDING PM (proficiency mapping, main stat mapping, mapping tier×rarity catalogo reale, naming drift Mage/Priest)"
+}

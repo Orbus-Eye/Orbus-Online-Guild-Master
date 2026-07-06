@@ -1,5 +1,8 @@
 # R18.5 Phase C0 — PM Item Table Drafting Support (DOCUMENTAL ONLY)
 
+> **⚠️ SUPERSEDED (scope catalogo reale)** — 2026-07-06T19:00:00Z
+> Questo file resta valido come **micro-sample / skeleton** (80 item, max 4 Legendary), ma **NON è più il cap del catalogo reale**. Il catalogo reale R18.5 è definito in `r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json`: **1500 equip minimo, max 15 Legendary, 60 dungeon, 12 raid, proficiency system obbligatorio**. I 13 draft di questo file restano come esempi non autoritativi.
+
 - **Round**: `R18.5 — Itemization, ILVL & Gear Progression Rework`
 - **Sottotitolo**: *Lv60 cap, item-centered endgame, lore-driven equipment*
 - **Fase**: **C0** (pre-C tech) — supporto documentale al drafting PM della tabella item batch primo lotto
