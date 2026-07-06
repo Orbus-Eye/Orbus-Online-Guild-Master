@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "round_title": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "round_subtitle": "Lv60 cap, item-centered endgame, lore-driven equipment",
+    "gate": 1,
+    "unlocks": "Phase C0 — PM Item Table Drafting Support",
+    "authority": "PM Orchestrator",
+    "locked_at_utc": "2026-07-06T18:00:00Z",
+    "governance": "DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes",
+    "predecessors": ["r18_5_phase_b1_design_lock.md/.json (patched)", "r18_5_phase_b2_implementation_plan.md/.json (patched)"],
+    "authoritative_over": ["SQ11..SQ18", "lore-driven rules", "legendary policy"],
+    "conflict_resolution": "In caso di conflitto con B.1/B.2 patched → questo file prevale"
+  },
+  "direction_correction": {
+    "focus": "item-centered / ILVL-centered / lore-driven",
+    "NOT": ["leveling", "XP curve refactor"],
+    "level_cap": {
+      "MAX_ADVENTURER_LEVEL": 60,
+      "MAX_EQUIPMENT_REQUIRED_LEVEL": 60,
+      "hard_cap": true,
+      "no_level_up_beyond_60": true,
+      "post_lv60_progression": "ILVL/equip",
+      "deprecated": "MAX_VISIBLE_LEVEL=60 UI-only (B.1 original)"
+    },
+    "player_facing_metric": {
+      "primary": "ilvl",
+      "secondary_calculated": "equipment_pwr",
+      "retro_compat": "total_power",
+      "ilvl_range_r18_5": [1, 60]
+    }
+  },
+  "sq_decisions": {
+    "SQ11": {
+      "topic": "starter_endgame_transition_threshold",
+      "decision": "Lv30 confermato",
+      "starter_range": "Lv1-29",
+      "starter_slots": ["weapon", "armor", "accessory"],
+      "endgame_range": "Lv30+",
+      "endgame_slots": ["weapon", "helm", "chest", "legs", "accessory", "shield"],
+      "shield_policy": "Nessuna modifica distruttiva schema senza gate PM. Mapping R18.4 SQ1a (shield → slot_type=armor) resta valido"
+    },
+    "SQ12": {
+      "topic": "tier_badge_colors_dual_label",
+      "decision": "dual-label rarity/tier con colori standard fantasy",
+      "colors": {"T1": "grigio", "T2": "verde", "T3": "blu", "T4": "viola", "T5": "oro"},
+      "rarity_mapping": {"T1": "Common", "T2": "Uncommon", "T3": "Rare", "T4": "Epic", "T5": "Legendary"},
+      "accessibility": {"not_color_only": true, "require_text_and_aria_label": true},
+      "labels": {"primary": "rarity (testo)", "secondary": "tier (badge + tooltip + colore)"}
+    },
+    "SQ13": {
+      "topic": "signature_policy",
+      "decision": {
+        "count": {"min": 15, "target": 18, "max": 25},
+        "max_equipped_per_adv": 1,
+        "runtime_constraint": true,
+        "acquisition": "drop only",
+        "crafting_in_r18_5": false,
+        "dormant_class_signatures": false,
+        "individual_pm_approval_required": true
+      }
+    },
+    "SQ14": {
+      "topic": "first_batch_size_distribution",
+      "decision": {
+        "total": 80,
+        "distribution": {"T1": 24, "T2": 20, "T3": 20, "T4": 12, "T5": 4},
+        "cap_hard": 80,
+        "requires_new_gate_to_exceed": true,
+        "legendary_count_in_batch": 4
+      }
+    },
+    "SQ15": {
+      "topic": "endgame_dungeon_naming",
+      "decision": {
+        "name_it": "Cripta delle Faglie di Ambash",
+        "slug_status": "placeholder PM-approved",
+        "level_range": [50, 60],
+        "primary_drop_source": ["T4", "T5"],
+        "goblin_warrens_impact": "none (resta early-only)",
+        "pending_further_pm_go": ["descrizione", "boss", "drop rate", "affissi/modifier"]
+      }
+    },
+    "SQ16": {
+      "topic": "min_level_required_adventurer_level_normalization",
+      "decision": {
+        "coexistence": true,
+        "precedence_rule": "effective_required_level = required_adventurer_level if exists else min_level",
+        "dry_run_cross_check_mandatory": true,
+        "dry_run_outputs": ["count entrambi campi", "count divergenti", "lista divergenti", "proposta normalizzazione"],
+        "auto_fix": false,
+        "zero_write_during_dry_run": true,
+        "migration_requires_gate": "Gate 2"
+      }
+    },
+    "SQ17": {
+      "topic": "workshop_level_per_tier",
+      "decision": {
+        "T1": 1, "T2": 2, "T3": 3, "T4": 4, "T5": 5,
+        "t1_early_game": true,
+        "t4_t5_not_early_game": true,
+        "signature_out_of_forge": true,
+        "if_workshop_locked": "documentare + simulare, non forzare unlock"
+      }
+    },
+    "SQ18": {
+      "topic": "equipment_pwr_formula_ilvl_based",
+      "decision": {
+        "formula": "equipment_pwr = ilvl + tier_bonus + slot_weight_bonus + utility_weight_bonus",
+        "ilvl_range_per_tier": {"T1": [1, 15], "T2": [16, 30], "T3": [31, 45], "T4": [46, 55], "T5": [56, 60]},
+        "tier_bonus": {"T1": 0, "T2": 3, "T3": 8, "T4": 15, "T5": 25},
+        "slot_weight_bonus": {"weapon": 1.20, "chest": 1.15, "helm": 1.00, "legs": 1.00, "shield": 1.10, "accessory": 0.80},
+        "utility_weight_bonus": {"none": 0, "minor": 3, "major": 8, "legendary": 15},
+        "dry_run_only": true,
+        "runtime_enforcement": false,
+        "replaces_total_power": false
+      }
+    }
+  },
+  "lore_driven_rules": {
+    "lore_sources_valid_t3plus": [
+      "Ambash", "Irthe", "Velur", "Efreto", "Halodi", "Alevora", "Soe", "Aveol",
+      "Ergolat", "Krastlov", "Adalan", "Greatwood", "Elfwood",
+      "Alberi della Vita", "Faglie arcane", "Vuoto", "Luna Morta", "Ciclo delle anime"
+    ],
+    "mandatory_rule": "Item T3+ NON devono essere solo '+stat'. Devono avere utility unica lore-legata.",
+    "t1_t2_generic_allowed": true,
+    "t3_plus_lore_source_required": true,
+    "t3_plus_utility_narrative_required": true,
+    "example_approved": "'Lama della Faglia Quieta' (fonte Ambash) — riduce rischio evento arcano instabile nei dungeon magici",
+    "example_rejected": "'Spada Epica +15 Forza' — solo stat, nessuna utility lore-linked, nessuna fonte"
+  },
+  "legendary_policy": {
+    "max_first_batch_r18_5": 4,
+    "craftable_normally": false,
+    "acquisition_allowed": ["drop via Cripta delle Faglie di Ambash", "boss encounter approvati"],
+    "shop_or_premium": false,
+    "required_for_base_game": false,
+    "utility": "unica, lore-legata, memorabile",
+    "individual_pm_approval": true
+  },
+  "gate1_unlocks": {
+    "authorized": ["Phase C0 — PM Item Table Drafting Support (documentale)"],
+    "not_authorized": [
+      "Phase C tech dry-run scripts",
+      "Registry runtime",
+      "Migration reale",
+      "Item creation live",
+      "Naming finale player-facing",
+      "Stat numerici finali",
+      "Utility narrative finali",
+      "Drop rate finali",
+      "Signature finali",
+      "Legendary finali"
+    ]
+  },
+  "self_check": {
+    "sq11_locked": true, "sq12_locked": true, "sq13_locked": true, "sq14_locked": true,
+    "sq15_locked": true, "sq16_locked": true, "sq17_locked": true, "sq18_locked": true,
+    "lore_sources_listed": 17,
+    "legendary_policy_complete": true,
+    "direction_correction_explicit": true,
+    "authoritative_override_declared": true,
+    "status": "GATE 1 CLOSED — next: Phase C0"
+  }
+}

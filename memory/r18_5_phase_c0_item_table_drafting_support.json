@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "round_title": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "round_subtitle": "Lv60 cap, item-centered endgame, lore-driven equipment",
+    "phase": "C0",
+    "position": "pre-C tech (documental drafting support)",
+    "locked_at_utc": "2026-07-06T18:00:00Z",
+    "governance": "DOCUMENTAL ONLY, zero DB writes, zero code changes, zero migration, zero registry definitivo",
+    "predecessors": [
+      "r18_5_phase_b1_design_lock.md/.json (patched)",
+      "r18_5_phase_b2_implementation_plan.md/.json (patched)",
+      "r18_5_phase_b_gate1_pm_decisions.md/.json (authoritative)"
+    ],
+    "successor_blocked": "Phase C tech dry-run — BLOCCATO finché PM non compila/approva tabella item"
+  },
+  "scope": {
+    "objective": "Preparare tabella item leggibile, compilabile in-place dal PM, fonte unica per dry-run tecnico successivo",
+    "emergent_can": [
+      "definire schema 14 campi PM-defined",
+      "fornire skeleton vuoto 80 righe (T1=24/T2=20/T3=20/T4=12/T5=4)",
+      "proporre 10-15 draft esempi come stimolo (tutti PENDING PM approval)",
+      "elencare campi PENDING PM per ogni draft"
+    ],
+    "emergent_cannot": [
+      "finalizzare nomi player-facing",
+      "finalizzare stat numerici",
+      "finalizzare utility narrative",
+      "finalizzare drop source / drop rate",
+      "finalizzare classi consigliate",
+      "finalizzare signature / legendary",
+      "auto-approvare bilanciamento",
+      "superare 15 draft esempi",
+      "superare 4 Legendary nel draft"
+    ]
+  },
+  "schema_14_fields": [
+    {"n":1,"field":"id","type":"slug","description":"id univoco backend","constraints":"lowercase [a-z0-9_]","example":"lama_faglia_quieta"},
+    {"n":2,"field":"nome_it","type":"string","description":"nome player-facing","constraints":"italiano lore-consistent","example":"Lama della Faglia Quieta"},
+    {"n":3,"field":"lore_source","type":"enum|null","description":"fonte narrativa","constraints":"obbligatorio T3+, null per T1/T2 generic","allowed":["Ambash","Irthe","Velur","Efreto","Halodi","Alevora","Soe","Aveol","Ergolat","Krastlov","Adalan","Greatwood","Elfwood","Alberi della Vita","Faglie arcane","Vuoto","Luna Morta","Ciclo delle anime"]},
+    {"n":4,"field":"rarity","type":"enum","description":"rarità player-facing","allowed":["Common","Uncommon","Rare","Epic","Legendary"]},
+    {"n":5,"field":"tier","type":"enum","description":"tier tecnico","allowed":["T1","T2","T3","T4","T5"],"mapping_with_rarity":true},
+    {"n":6,"field":"required_level","type":"int","description":"livello min. equip","range":[1,60]},
+    {"n":7,"field":"ilvl","type":"int","description":"item level","range":[1,60],"tier_range":{"T1":[1,15],"T2":[16,30],"T3":[31,45],"T4":[46,55],"T5":[56,60]}},
+    {"n":8,"field":"slot","type":"enum","description":"slot equip","allowed":["weapon","helm","chest","legs","accessory","shield","armor"]},
+    {"n":9,"field":"tipo","type":"enum","description":"tipo entità","allowed_subset":["spada","ascia","mazza","bastone","arco","balestra","pugnale","elmo","armor_light","armor_medium","armor_heavy","robe","stivali","gambali","anello","amuleto","cintura","scudo","talismano"]},
+    {"n":10,"field":"stat","type":"dict","description":"bonus stat numerici","keys":["str","agi","int","end","faith"],"example":{"str":8,"agi":4,"int":0,"end":2,"faith":0}},
+    {"n":11,"field":"utility","type":"string|null","description":"effetto narrativo lore-linked","constraints":"obbligatoria T3+, null per T1/T2"},
+    {"n":12,"field":"classi_consigliate","type":"list","description":"class_slug compatibili","example":["warrior","paladin"]},
+    {"n":13,"field":"binding","type":"enum","description":"policy binding","allowed":["universal","soft","hard","signature"]},
+    {"n":14,"field":"fonte","type":"enum","description":"acquisition","allowed":["drop","craft","dungeon","boss","achievement"]}
+  ],
+  "example_valid": {
+    "id":"lama_faglia_quieta","nome_it":"Lama della Faglia Quieta","lore_source":"Ambash","rarity":"Rare","tier":"T3","required_level":35,"ilvl":38,"slot":"weapon","tipo":"spada",
+    "stat":{"str":8,"agi":4,"int":0,"end":2,"faith":0},
+    "utility":"Riduce del 10% il rischio di evento arcano instabile nei dungeon magici",
+    "classi_consigliate":["warrior","paladin","cacciatore_di_mostri"],"binding":"soft","fonte":"dungeon"
+  },
+  "example_rejected": {
+    "id":"spada_epica_forza","nome_it":"Spada Epica di Forza","lore_source":null,"rarity":"Epic","tier":"T4","required_level":48,"ilvl":50,"slot":"weapon","tipo":"spada",
+    "stat":{"str":15},"utility":null,"classi_consigliate":["warrior"],"binding":"soft","fonte":"drop",
+    "rejection_reason":"Item T3+ senza lore_source + senza utility → viola Gate 1 lore-driven rule"
+  },
+  "batch_distribution_gate1_sq14": {
+    "T1":{"count":24,"ilvl_range":[1,15],"required_level_range":[1,10],"lore_source_required":false,"utility_required":false},
+    "T2":{"count":20,"ilvl_range":[16,30],"required_level_range":[10,20],"lore_source_required":false,"utility_required":false},
+    "T3":{"count":20,"ilvl_range":[31,45],"required_level_range":[20,35],"lore_source_required":true,"utility_required":true},
+    "T4":{"count":12,"ilvl_range":[46,55],"required_level_range":[35,50],"lore_source_required":true,"utility_required":true},
+    "T5":{"count":4,"ilvl_range":[56,60],"required_level_range":[50,60],"lore_source_required":true,"utility_required":true,"legendary_hard_cap":4},
+    "total":80
+  },
+  "emergent_drafts": [
+    {"n":1,"tier":"T1","id":"spada_arrugginita","nome_it":"Spada Arrugginita","slot":"weapon","tipo":"spada","ilvl":3,"required_level":1,"stat":{"str":2},"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":2,"tier":"T1","id":"armatura_cuoio_grezzo","nome_it":"Armatura di Cuoio Grezzo","slot":"armor","tipo":"armor_light","ilvl":5,"required_level":2,"stat":{"end":2,"agi":1},"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":3,"tier":"T1","id":"anello_rame","nome_it":"Anello di Rame","slot":"accessory","tipo":"ring","ilvl":4,"required_level":1,"stat":{"end":1},"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":4,"tier":"T2","id":"arco_cacciatore","nome_it":"Arco del Cacciatore","slot":"weapon","tipo":"bow","ilvl":20,"required_level":12,"stat":{"agi":5,"str":2},"binding":"soft","status":"DRAFT PENDING PM"},
+    {"n":5,"tier":"T2","id":"mantello_boscaiolo","nome_it":"Mantello del Boscaiolo","slot":"armor","tipo":"armor_medium","ilvl":22,"required_level":14,"stat":{"end":3,"agi":3},"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":6,"tier":"T3","id":"lama_faglia_quieta","nome_it":"Lama della Faglia Quieta","slot":"weapon","tipo":"spada","ilvl":38,"required_level":30,"stat":{"str":8,"agi":4},"lore_source":"Ambash","utility":"Riduce del 10% il rischio di evento arcano instabile nei dungeon magici","classi_consigliate":["warrior","paladin","cacciatore_di_mostri"],"binding":"soft","status":"DRAFT PENDING PM"},
+    {"n":7,"tier":"T3","id":"mantello_alba_silente","nome_it":"Mantello dell'Alba Silente","slot":"armor","tipo":"robe","ilvl":40,"required_level":32,"stat":{"int":6,"faith":4},"lore_source":"Alevora","utility":"Cura 5 HP all'inizio di ogni scontro nei dungeon della Luna Morta","classi_consigliate":["cleric","wizard"],"binding":"soft","status":"DRAFT PENDING PM"},
+    {"n":8,"tier":"T3","id":"talismano_ergolat","nome_it":"Talismano di Ergolat","slot":"accessory","tipo":"amulet","ilvl":35,"required_level":25,"stat":{"end":5,"int":3},"lore_source":"Ergolat","utility":"Aumenta del 5% la resistenza contro creature della Faglia","classi_consigliate":["cleric","paladin","monk"],"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":9,"tier":"T4","id":"elmo_krastlov","nome_it":"Elmo di Krastlov","slot":"helm","tipo":"armor_heavy","ilvl":50,"required_level":42,"stat":{"end":12,"str":6},"lore_source":"Krastlov","utility":"Ignora la prima ferita critica di ogni scontro (1x/dungeon)","classi_consigliate":["warrior","paladin"],"binding":"soft","status":"DRAFT PENDING PM"},
+    {"n":10,"tier":"T4","id":"arco_vento_halodi","nome_it":"Arco del Vento di Halodi","slot":"weapon","tipo":"bow","ilvl":52,"required_level":45,"stat":{"agi":14,"str":5},"lore_source":"Halodi","utility":"+15% probabilità di colpo critico in dungeon aperti","classi_consigliate":["ranger","rogue"],"binding":"soft","status":"DRAFT PENDING PM"},
+    {"n":11,"tier":"T4","id":"stivali_soe","nome_it":"Stivali di Soe","slot":"legs","tipo":"armor_medium","ilvl":48,"required_level":38,"stat":{"agi":10,"end":6},"lore_source":"Soe","utility":"Riduce la fatica accumulata dopo il combattimento del 20%","classi_consigliate":["rogue","ranger","monk"],"binding":"universal","status":"DRAFT PENDING PM"},
+    {"n":12,"tier":"T5","id":"lama_vuoto_ambash","nome_it":"Lama del Vuoto di Ambash","slot":"weapon","tipo":"spada","ilvl":60,"required_level":55,"stat":{"str":20,"agi":8,"int":6},"lore_source":"Ambash","utility":"Una volta a dungeon: dissolve l'affisso più pericoloso del boss finale","classi_consigliate":["warrior","paladin","cacciatore_di_mostri"],"binding":"signature","status":"DRAFT PENDING PM (LEGENDARY)"},
+    {"n":13,"tier":"T5","id":"corona_luna_morta","nome_it":"Corona della Luna Morta","slot":"helm","tipo":"armor_heavy","ilvl":58,"required_level":52,"stat":{"int":15,"faith":12,"end":8},"lore_source":"Luna Morta","utility":"Immunità agli effetti di 'silenzio arcano'. Vede sempre il boss in eventi con nebbia","classi_consigliate":["cleric","wizard"],"binding":"signature","status":"DRAFT PENDING PM (LEGENDARY)"}
+  ],
+  "draft_count_summary": {
+    "T1_drafts":3, "T1_empty_for_pm":21, "T1_total":24,
+    "T2_drafts":2, "T2_empty_for_pm":18, "T2_total":20,
+    "T3_drafts":3, "T3_empty_for_pm":17, "T3_total":20,
+    "T4_drafts":3, "T4_empty_for_pm":9, "T4_total":12,
+    "T5_drafts":2, "T5_empty_for_pm":2, "T5_total":4,
+    "total_drafts":13,
+    "total_empty":67,
+    "grand_total":80,
+    "cap_drafts_c0":15,
+    "cap_drafts_respected":true,
+    "cap_legendary_gate1_sq14":4,
+    "cap_legendary_respected":true
+  },
+  "pending_pm_checklist_per_draft": [
+    {"field":"id","deterministic":true,"pending_pm":"opzionale rename"},
+    {"field":"nome_it","deterministic":false,"pending_pm":true},
+    {"field":"lore_source","deterministic":"range list","pending_pm":"scelta specifica"},
+    {"field":"rarity","deterministic":true,"pending_pm":false},
+    {"field":"tier","deterministic":true,"pending_pm":false},
+    {"field":"required_level","deterministic":"range","pending_pm":"valore esatto"},
+    {"field":"ilvl","deterministic":"range","pending_pm":"valore esatto"},
+    {"field":"slot","deterministic":"enum","pending_pm":"scelta"},
+    {"field":"tipo","deterministic":"enum subset","pending_pm":"scelta"},
+    {"field":"stat","deterministic":"range budget","pending_pm":"numeri esatti"},
+    {"field":"utility","deterministic":false,"pending_pm":"full text"},
+    {"field":"classi_consigliate","deterministic":"compatibili family","pending_pm":"lista finale"},
+    {"field":"binding","deterministic":"enum","pending_pm":"scelta"},
+    {"field":"fonte","deterministic":"enum","pending_pm":"scelta"}
+  ],
+  "tassative_rules": {
+    "emergent_no_finalize": ["nomi player-facing","stat numerici","utility narrative","drop source","drop rate","classi consigliate","signature","legendary"],
+    "emergent_no_auto_approve": true,
+    "every_draft_flagged_pending_pm": true,
+    "legendary_hard_cap_4": true,
+    "t3plus_lore_source_required": true,
+    "t3plus_utility_required": true,
+    "drafts_total_cap_15": true
+  },
+  "post_c0_workflow": {
+    "pm_can": [
+      "approvare i 13 draft as-is",
+      "modificare i draft (rename, ritoccare stat, riscrivere utility, cambiare classi)",
+      "compilare le 67 righe vuote con nuovi item",
+      "rifiutare draft e sostituirli",
+      "ridurre/espandere batch con giustificazione (cap 80 senza nuovo gate)"
+    ],
+    "next_phase": "Phase C tech dry-run (backfill scripts + validation) — SOLO dopo compilazione + approvazione PM tabella item"
+  },
+  "self_check": {
+    "schema_14_fields_complete": true,
+    "example_valid_provided": true,
+    "example_rejected_with_reason": true,
+    "skeleton_80_rows_distributed_sq14": true,
+    "drafts_total_13_leq_15": true,
+    "legendary_drafts_2_leq_4": true,
+    "t3plus_lore_source_present": true,
+    "t3plus_utility_present": true,
+    "every_draft_pending_pm_flagged": true,
+    "pending_pm_checklist_present": true,
+    "tassative_rules_explicit": true,
+    "zero_db_writes": true,
+    "zero_code_changes": true,
+    "zero_migration": true,
+    "status": "PHASE C0 CLOSED (deliverable pronto) — attesa compilazione + approvazione PM tabella item"
+  }
+}

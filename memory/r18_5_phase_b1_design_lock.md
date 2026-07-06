@@ -1,9 +1,39 @@
 # R18.5 Phase B.1 — Design Lock (DOCUMENTAL ONLY)
 
-- **Round**: `R18.5 — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework`
-- **Fase**: B.1 — Design Lock (documentale, con lock PM SQ1..SQ10)
-- **Locked at UTC**: `2026-07-06T17:00:00Z`
+- **Round (corrected)**: `R18.5 — Itemization, ILVL & Gear Progression Rework`
+- **Sottotitolo**: *Lv60 cap, item-centered endgame, lore-driven equipment*
+- **Round (superseded)**: ~~`R18.5 — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework`~~
+- **Fase**: B.1 — Design Lock (documentale, con lock PM SQ1..SQ10) — **PATCHED 2026-07-06T18:00:00Z**
+- **Locked at UTC**: `2026-07-06T17:00:00Z` — **Correction Patch UTC**: `2026-07-06T18:00:00Z`
 - **Governance**: **DOCUMENTAL ONLY** — 36 sigilli byte-identical, zero DB writes, zero code changes.
+
+## 0-BIS. STRATEGIC CORRECTION 2026-07-06T18:00:00Z (autorità PM)
+
+Il focus del round è stato ridirezionato dal PM. **NON leveling / XP curve refactor**. Il centro è: **oggetti, ILVL, rarità, utility, drop endgame, progressione equip post level max, coerenza con la lore di Orbus**.
+
+### Correzioni tassative applicate
+
+| Ambito | Prima (superseded) | Dopo (corrected) |
+|---|---|---|
+| Level cap | `MAX_VISIBLE_LEVEL=60` (soft, UI-only) | `MAX_ADVENTURER_LEVEL=60` **HARD CAP gameplay** + `MAX_EQUIPMENT_REQUIRED_LEVEL=60` |
+| Overflow | XP accumula oltre Lv60 senza block | XP oltre Lv60 **NON aumenta** il livello. Progressione post-Lv60 = **ILVL/equip** |
+| Player-facing item metric | `equipment_pwr` (PWR-centric) | **ILVL** player-facing principale. `equipment_pwr` = metrica calcolata secondaria. `total_power` retro-compat |
+| ILVL range R18.5 iniziale | non definito | **1-60** (T1=1-15, T2=16-30, T3=31-45, T4=46-55, T5=56-60) |
+| Itemization principle | rarity+tier meccanico | **Lore-driven**: item rare+ devono avere lore source e utility unica, NON solo "+stat" |
+
+### Deprecated (mantenuti nel file per storia)
+- Sezioni con `MAX_VISIBLE_LEVEL` (Sezioni 1, 5): **superseded** — leggere in chiave "hard cap Lv60".
+- Formula `equipment_pwr` originale (Sezione 5): **superseded** — la formula finale è in **Gate 1 decisions SQ18** (ILVL-based).
+- Coefficienti PWR provvisori (`tier_bonus 2/5`, `slot_completion +5`): **superseded** — vedi Gate 1 SQ18 lock.
+
+### Principio guida (lore-driven itemization)
+Le fonti lore valide per item rare+ (Rare, Epic, Legendary): **Ambash, Irthe, Velur, Efreto, Halodi, Alevora, Soe, Aveol, Ergolat, Krastlov, Adalan, Greatwood/Elfwood, Alberi della Vita, Faglie arcane, Vuoto, Luna Morta, Ciclo delle anime**. Ogni item T3+ nel batch R18.5 avrà `lore_source` obbligatorio. Esempio approvato: *"Lama della Faglia Quieta" (Ambash) — riduce rischio evento arcano instabile*. Esempio rifiutato: *"Spada Epica +15 Forza"*.
+
+### Legendary policy (correction)
+Massimo **4 Legendary** nel primo batch R18.5, non craftabili normalmente, non ottenibili da shop/premium, non necessari per completare gioco base, utility unica lore-legata memorabile.
+
+### Riferimento normativo
+Le risposte PM lockate a SQ11-SQ18 e le lore rules sono formalizzate in **`/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json`**. In caso di conflitto tra questo file e Gate 1 decisions → **Gate 1 prevale**.
 
 ## 0. Lock PM verbatim — R18.5.SQ1..SQ10
 

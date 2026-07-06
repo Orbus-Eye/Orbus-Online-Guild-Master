@@ -460,3 +460,102 @@ Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P3":
 ### Next-in-queue (attesa GO PM Gate 1)
 `R18.5 Phase C — Migration Dry-Run` (documentale + script dry-run, **NO apply**)
 
+
+
+---
+
+## R18.5 — Strategic Correction + Gate 1 Lock + Phase C0 (2026-07-06T18:00:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟡 **Direction corretta**, **Gate 1 CLOSED**, **Phase C0 CLOSED** (deliverable pronto). Attesa **compilazione + approvazione PM tabella item** per sbloccare Phase C tech.
+
+### 🔄 Strategic Correction (autorità PM)
+
+Il focus del round è stato ridirezionato. **Nuovo titolo**:
+
+> **R18.5 — Itemization, ILVL & Gear Progression Rework**
+> *Lv60 cap, item-centered endgame, lore-driven equipment*
+
+**NON è più**: leveling / XP curve refactor.
+**È**: oggetti, ILVL, rarità, utility, drop endgame, progressione equip post level max, coerenza lore di Orbus.
+
+### Correzioni tassative applicate
+
+| Ambito | Prima (superseded) | Dopo (corrected) |
+|---|---|---|
+| Level cap | `MAX_VISIBLE_LEVEL=60` (soft UI-only) | `MAX_ADVENTURER_LEVEL=60` **hard cap gameplay** + `MAX_EQUIPMENT_REQUIRED_LEVEL=60` |
+| Overflow XP > Lv60 | accumula, no block | **NO level up**. Progressione post-Lv60 = **ILVL/equip** |
+| Player-facing item metric | `equipment_pwr` (PWR-centric) | **ILVL** (player-facing principale). `equipment_pwr` = metrica calcolata secondaria (dry-run only). `total_power` retro-compat |
+| ILVL range R18.5 | non definito | **1-60** (T1=1-15, T2=16-30, T3=31-45, T4=46-55, T5=56-60) |
+| Principio itemization | rarity+tier meccanico | **Lore-driven** — item T3+ obbligatoriamente lore-linked con utility unica |
+
+### 🔒 Gate 1 CLOSED — 8 Sub-Question lockate (verbatim PM)
+
+| SQ | Decisione |
+|---|---|
+| **SQ11** | Soglia starter→endgame **Lv30 confermato**. Shield senza modifica distruttiva |
+| **SQ12** | Dual-label + colori: T1→grigio, T2→verde, T3→blu, T4→viola, T5→oro. Non solo colore, richiesto testo + aria-label |
+| **SQ13** | Signature **min 15 / target 18 / max 25**. Max 1 equipped/adv. Drop-only. No dormant class signature |
+| **SQ14** | Batch **80 item totali** — T1=24 / T2=20 / T3=20 / T4=12 / T5=4 (**Legendary hard cap 4**) |
+| **SQ15** | Endgame dungeon: **"Cripta delle Faglie di Ambash"** — Lv50-60, fonte T4/T5 |
+| **SQ16** | Precedenza `required_adventurer_level > min_level`. Dry-run obbligatorio, no auto-fix |
+| **SQ17** | Workshop level: T1→Lv1, T2→Lv2, T3→Lv3, T4→Lv4, T5→Lv5. Signature fuori dal forge |
+| **SQ18** | Formula ILVL-based: `equipment_pwr = ilvl + tier_bonus + slot_weight + utility_weight`. Solo dry-run, no runtime enforce |
+
+### Lore sources approvate (T3+ obbligatorie)
+Ambash, Irthe, Velur, Efreto, Halodi, Alevora, Soe, Aveol, Ergolat, Krastlov, Adalan, Greatwood/Elfwood, Alberi della Vita, Faglie arcane, Vuoto, Luna Morta, Ciclo delle anime (17 fonti).
+
+### Legendary policy
+- Max **4** nel primo batch R18.5
+- Non craftabili normalmente
+- Non ottenibili shop/premium
+- Non necessari per gioco base
+- Utility unica lore-legata, memorabile
+
+### 📊 Phase C0 CLOSED — PM Item Table Drafting Support
+
+**Deliverable**: schema 14 campi PM-defined + skeleton 80 righe compilabile in-place + 13 draft esempi come stimolo creativo.
+
+| Tier | Draft Emergent | Da compilare PM | Totale |
+|---|---:|---:|---:|
+| T1 | 3 | 21 | 24 |
+| T2 | 2 | 18 | 20 |
+| T3 | 3 | 17 | 20 |
+| T4 | 3 | 9 | 12 |
+| T5 | 2 (Legendary) | 2 | 4 |
+| **Totale** | **13** (≤15 cap C0) | **67** | **80** |
+
+Ogni draft flaggato `🟢 DRAFT PENDING PM approval / DRAFT ONLY / NOT FINAL`. Ogni item T3+ nei draft ha `lore_source` (da lista Gate 1) + `utility` narrativa. Nessuna finalizzazione da parte di Emergent.
+
+### 📋 Deliverable finali R18.5 Direction Correction
+
+**File patchati (4)**:
+| File | SHA256 post-patch |
+|:---|:---|
+| `r18_5_phase_b1_design_lock.md` | `62963e3e…4d` |
+| `r18_5_phase_b1_design_lock.json` | `8c8b04d0…0c` |
+| `r18_5_phase_b2_implementation_plan.md` | `ecd6a64e…b6` |
+| `r18_5_phase_b2_implementation_plan.json` | `0e8186d6…2d` |
+
+**File nuovi (4)**:
+| File | SHA256 |
+|:---|:---|
+| `r18_5_phase_b_gate1_pm_decisions.md` | `758d5311…b9` |
+| `r18_5_phase_b_gate1_pm_decisions.json` | `d8bb6d7f…de` |
+| `r18_5_phase_c0_item_table_drafting_support.md` | `c357524a…c3` |
+| `r18_5_phase_c0_item_table_drafting_support.json` | `d63a39ae…62` |
+
+### Governance validation (Direction Correction + Gate 1 + C0)
+- ✅ **36/36 sigilli byte-identical** (pytest PASS)
+- ✅ **Zero file .py/.js/.jsx/.ts/.tsx modificati** (git diff pulito su codice)
+- ✅ **Zero DB writes**
+- ✅ **4 JSON validity** (python -m json.tool clean)
+- ✅ **Legendary count draft**: 2 ≤ 4 (rispetto SQ14 hard cap)
+- ✅ **Draft count C0**: 13 ≤ 15 (rispetto cap C0 rule)
+- ✅ **Ogni item T3+ nei draft** ha `lore_source` + `utility`
+- ✅ **Ogni draft flaggato** `PENDING PM approval`
+
+### Next-in-queue
+**PM azione**: compilare le 67 righe vuote e rivedere/approvare i 13 draft nella tabella `r18_5_phase_c0_item_table_drafting_support.md`. Una volta approvata la tabella item, potrà essere aperta **Phase C tech dry-run** (scripts backfill + validation).
+
+**NO Phase C tech dry-run** finché PM non completa C0. Nessun altro deliverable Emergent in questa iterazione.
+

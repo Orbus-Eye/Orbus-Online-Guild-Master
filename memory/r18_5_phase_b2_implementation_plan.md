@@ -1,10 +1,37 @@
 # R18.5 Phase B.2 — Implementation Plan (DOCUMENTAL ONLY)
 
-- **Round**: `R18.5`
-- **Fase**: B.2 — Implementation Plan (documentale, dopo B.1 Design Lock)
-- **Locked at UTC**: `2026-07-06T17:20:00Z`
+- **Round (corrected)**: `R18.5 — Itemization, ILVL & Gear Progression Rework`
+- **Sottotitolo**: *Lv60 cap, item-centered endgame, lore-driven equipment*
+- **Round (superseded)**: ~~`R18.5` con focus XP/PWR-centric~~
+- **Fase**: B.2 — Implementation Plan (documentale, dopo B.1 Design Lock) — **PATCHED 2026-07-06T18:00:00Z**
+- **Locked at UTC**: `2026-07-06T17:20:00Z` — **Correction Patch UTC**: `2026-07-06T18:00:00Z`
 - **Governance**: **DOCUMENTAL ONLY** — 36 sigilli byte-identical, zero DB writes, zero code changes.
-- **Predecessore**: `r18_5_phase_b1_design_lock.md/.json`
+- **Predecessore**: `r18_5_phase_b1_design_lock.md/.json` (patched)
+- **Gate 1 lock**: `r18_5_phase_b_gate1_pm_decisions.md/.json` (authoritative)
+
+## 0-BIS. STRATEGIC CORRECTION 2026-07-06T18:00:00Z (autorità PM)
+
+Il piano di implementazione è ricentrato **item-centered / ILVL-centered / lore-driven**. Nessuna fase XP curve refactor.
+
+### Correzioni tassative applicate al piano
+
+| Sezione | Prima (superseded) | Dopo (corrected) |
+|---|---|---|
+| 1.2 constant | `MAX_VISIBLE_LEVEL=60` UI-only | `MAX_ADVENTURER_LEVEL=60` **hard cap gameplay** + `MAX_EQUIPMENT_REQUIRED_LEVEL=60` |
+| 1.3 PWR | `equipment_pwr` player-facing principale | **`ilvl` player-facing principale**. `equipment_pwr` = metrica calcolata secondaria (dry-run/simulazione) |
+| Nuovo campo DB | non previsto ILVL esplicito | `items.ilvl` int 1-60 (range vincolato al tier) — dry-run backfill in Phase C |
+| Formula PWR | `equipment_pwr = sum(power_score) + tier_bonus 2/5 + slot_completion 5` (superseded) | **PM Gate 1 SQ18 lock**: `equipment_pwr = ilvl + tier_bonus + slot_weight_bonus + utility_weight_bonus` (solo dry-run, NON enforcement runtime) |
+| Overflow XP oltre Lv60 | accumula, no block | **NO livello up oltre Lv60**. Progressione post-Lv60 = ILVL/equip |
+| 1.5 slot endgame | soglia proposta | **PM Gate 1 SQ11 lock: Lv30 confermato** |
+| 1.6 min_level cross-check | proposta manuale | **PM Gate 1 SQ16 lock**: precedenza `required_adventurer_level` > `min_level`. Dry-run obbligatorio, no auto-fix, no migration senza gate PM |
+
+### Nuove sotto-fasi documentali aggiunte
+
+- **Phase C0 (nuova, pre-C tech)**: PM Item Table Drafting Support — schema tabella item + skeleton compilabile in-place dal PM + max 15 draft PM-review. Deliverable: `r18_5_phase_c0_item_table_drafting_support.md/.json`.
+- **Phase C tech (dry-run scripts)**: **BLOCCATO** finché PM non compila/approva C0 item table.
+
+### Authoritative reference
+Le risposte PM SQ11-SQ18 sono in **`r18_5_phase_b_gate1_pm_decisions.md/.json`**. Coefficienti e range ILVL nel piano tecnico C/D/E dovranno essere allineati a Gate 1 (autoritativo su questo file in caso di conflitto).
 
 ## 1. Migration / dry-run plan
 

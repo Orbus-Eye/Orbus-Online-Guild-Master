@@ -1,5 +1,20 @@
 {
-  "meta": {"round":"R18.5","phase":"B.1","stage":"design_lock","locked_at_utc":"2026-07-06T17:00:00Z","governance":"DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes"},
+  "meta": {"round":"R18.5","round_title_corrected":"R18.5 — Itemization, ILVL & Gear Progression Rework","round_subtitle":"Lv60 cap, item-centered endgame, lore-driven equipment","round_title_superseded":"R18.5 — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework","phase":"B.1","stage":"design_lock","locked_at_utc":"2026-07-06T17:00:00Z","correction_patch_utc":"2026-07-06T18:00:00Z","governance":"DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes","gate1_authoritative_ref":"r18_5_phase_b_gate1_pm_decisions.md/.json"},
+  "strategic_correction_2026_07_06T18_00_00Z": {
+    "authority": "PM Orchestrator",
+    "focus_corrected": "item-centered / ILVL-centered / lore-driven — NOT leveling / NOT XP curve refactor",
+    "corrections": {
+      "level_cap": {"superseded":"MAX_VISIBLE_LEVEL=60 (soft UI-only)", "corrected":"MAX_ADVENTURER_LEVEL=60 HARD CAP gameplay + MAX_EQUIPMENT_REQUIRED_LEVEL=60"},
+      "overflow_policy": {"superseded":"XP accumula oltre Lv60 senza block", "corrected":"XP oltre Lv60 NON aumenta livello. Progressione post-Lv60 = ILVL/equip"},
+      "player_facing_metric": {"superseded":"equipment_pwr (PWR-centric)", "corrected":"ILVL player-facing principale. equipment_pwr = metrica calcolata. total_power retro-compat"},
+      "ilvl_range_r18_5": {"corrected":"1-60", "tier_mapping":{"T1":"1-15","T2":"16-30","T3":"31-45","T4":"46-55","T5":"56-60"}},
+      "itemization_principle": {"superseded":"rarity+tier meccanico", "corrected":"lore-driven — item T3+ obbligatoriamente lore-linked con utility unica, NO solo '+stat'"}
+    },
+    "lore_sources_valid_t3plus": ["Ambash","Irthe","Velur","Efreto","Halodi","Alevora","Soe","Aveol","Ergolat","Krastlov","Adalan","Greatwood","Elfwood","Alberi della Vita","Faglie arcane","Vuoto","Luna Morta","Ciclo delle anime"],
+    "legendary_policy": {"max_first_batch":4,"craftable":false,"shop_premium":false,"required_for_base_game":false,"utility":"unica, lore-legata, memorabile"},
+    "deprecated_sections_kept_for_history": ["Section 1 MAX_VISIBLE_LEVEL", "Section 5 equipment_pwr original formula", "Section 5 tier_bonus 2/5 + slot_completion 5 coefficients"],
+    "authoritative_override": "In caso di conflitto tra questo file e Gate 1 decisions → Gate 1 prevale"
+  },
   "sq_locks": {
     "SQ1":"(a) formula polinomiale unica invariata",
     "SQ2":"(b) soft cap MAX_VISIBLE_LEVEL=60, XP accumula senza block",
