@@ -1,0 +1,559 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "C0-quater",
+    "batch": 1,
+    "bracket": "Lv1-15 / Early Game",
+    "locked_at_utc": "2026-07-06T20:40:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "DRAFT / PENDING PM approval on all player-facing fields",
+    "authority": "PM Orchestrator — GO Batch 1 esplicito ricevuto",
+    "authoritative_predecessors": [
+      "/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json",
+      "/app/memory/r18_5_gate2_pm_decisions.md/.json",
+      "/app/memory/r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json",
+      "/app/memory/r18_5_phase_c0ter_live_class_matrix.md/.json"
+    ],
+    "authorized_successor": null,
+    "batch2_status": "BLOCKED — attende PM review Batch 1"
+  },
+  "pm_locked_structural_constraints_verbatim": {
+    "bracket_all_dungeons": "Lv1-15 / Early Game",
+    "party_size_all_dungeons": 3,
+    "canonical_class_naming": [
+      "Warrior",
+      "Rogue",
+      "Mage",
+      "Priest",
+      "Ranger"
+    ],
+    "canonical_class_naming_drift_forbidden": [
+      "Wizard",
+      "Cleric"
+    ],
+    "weapon_families_not_assigned_batch1": [
+      "strumento",
+      "falce",
+      "trinket"
+    ],
+    "loot_direction": {
+      "tier_dominant": "T1",
+      "tier_minor_introduction": "T2 minor da dungeon 7 in poi, T2 assicurato boss dungeon 10 e 12",
+      "tier_absent": ["T3", "T4", "T5"],
+      "rarity_dominant": ["Common", "Uncommon"],
+      "rarity_limited": "Rare solo boss drop dungeon 7-8-9-10-11-12",
+      "rarity_rare": "Epic molto raro, max 1 slot possibile solo dungeon 12 boss (rate PENDING PM)",
+      "rarity_absent": ["Legendary"]
+    },
+    "no_punitive_mechanics": true,
+    "no_generic_names": true
+  },
+  "level_progression_bucketing": {
+    "onboarding_lv1_5": {
+      "count": 3,
+      "dungeons": ["goblin-warrens", "elfwood-glade", "chapel-of-silent-vows"]
+    },
+    "progressione_bassa_lv5_10": {
+      "count": 4,
+      "dungeons": ["salt-fen-outpost", "boarhollow-cave", "forgotten-shrine-of-adalan", "ironvein-collapse"]
+    },
+    "progressione_media_lv10_13": {
+      "count": 4,
+      "dungeons": ["frozen-vigil-hall", "dunestalker-outpost", "heartwood-grove", "bandit-warlord-hideout"]
+    },
+    "transizione_batch2_lv13_15": {
+      "count": 1,
+      "dungeons": ["broken-tower-of-adalan"]
+    },
+    "total_count": 12,
+    "note": "Level range mapping proposta Emergent flaggata PENDING PM approval. Sistema live usa difficulty+recommended_power, non level_min/max."
+  },
+  "lore_sources_usage": {
+    "used_in_batch1": {
+      "Halodi": ["goblin-warrens (LIVE)"],
+      "Greatwood/Elfwood": ["elfwood-glade"],
+      "Aveol": ["chapel-of-silent-vows", "bandit-warlord-hideout"],
+      "Velur": ["salt-fen-outpost"],
+      "Soe": ["boarhollow-cave"],
+      "Adalan": ["forgotten-shrine-of-adalan", "broken-tower-of-adalan"],
+      "Ambash": ["ironvein-collapse"],
+      "Krastlov": ["frozen-vigil-hall"],
+      "Efreto": ["dunestalker-outpost"],
+      "Alberi della Vita": ["heartwood-grove"]
+    },
+    "reserved_for_later_batches": {
+      "Irthe": "Batch 2 (Lv20-30) — culto Esiliati, tono dread, già in shadow-crypts live",
+      "Alevora": "Batch 4/5 (Lv40-60) — world boss endgame",
+      "Ergolat": "Batch 4/5 (Lv40-60) — fonte epica endgame",
+      "Faglie arcane": "Batch 3+ (Lv30-45) — metafisica arcana mid-late",
+      "Vuoto": "Batch 5 (Lv55-60) — cosmico endgame estremo",
+      "Luna Morta": "Batch 5 (Lv55-60) — arcano oscuro endgame",
+      "Ciclo delle anime": "Batch 5 (Lv55-60) — metafisico endgame"
+    },
+    "used_count": 10,
+    "reserved_count": 7,
+    "total_count": 17
+  },
+  "dungeons": [
+    {
+      "index": 1,
+      "flag": "LIVE — already seed data",
+      "dungeon_id": "goblin-warrens",
+      "name_it": "Tane dei Goblin",
+      "name_it_status": "already assigned (lore_meta.py:51)",
+      "level_range_proposal": "Lv1-3",
+      "level_range_status": "PENDING PM approval",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Halodi",
+      "lore_source_status": "already assigned (lore_theme=frontiera, location_hint=boschi di Halodi orientale)",
+      "region_biome": "Boschi/tunnel di frontiera",
+      "narrative_theme": "I tamburi dei goblin segnano il passo di un'invasione minore.",
+      "narrative_theme_status": "already assigned (lore_meta.py:54) — NO CHANGE, history preserved",
+      "enemy_family": "goblins",
+      "main_mechanic": "Onboarding puro — party comp 3-slot, primi test main stat, ingresso ai sistemi core. NO proficiency hard block (design accessibilità T1).",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale. NO Rare/Epic/Legendary.",
+      "materials_proposal": ["cuoio grezzo", "ossa di goblin", "pietre"],
+      "materials_status": "PENDING PM approval on specific names",
+      "boss_miniboss_proposal": "Sciamano goblin minore",
+      "boss_miniboss_status": "PENDING PM approval — NO drift Wizard/Cleric",
+      "itemization_notes": "Loot universale prevalente (accessibile a tutte le 5 classi). Piccola quantità Warrior/Ranger-friendly (spade/pugnali comuni) per introdurre concetto proficiency senza hard block.",
+      "achievement_ranking_hints": "Achievement 'Primo Passo' + Ranking 'First Clear Goblin Warrens' — PENDING PM approval",
+      "seed_data_reference": {
+        "file": "backend/app/seeds/seed_data.py",
+        "line": 168,
+        "difficulty": 1,
+        "required_team_size": 3,
+        "recommended_power": 45,
+        "base_gold_reward": 35,
+        "base_xp_reward": 25,
+        "note": "Phase 3 original 3 — DO NOT MODIFY (gates depend on this slug)"
+      }
+    },
+    {
+      "index": 2,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "elfwood-glade",
+      "name_it_proposal": "Radura dell'Elfwood",
+      "level_range_proposal": "Lv2-4",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Greatwood/Elfwood",
+      "region_biome": "Bosco antico, radure con rovine elfiche minori",
+      "narrative_theme_proposal": "Le radure dell'Elfwood custodiscono tracce silenziose. Qualcosa ha rotto il silenzio, e i lupi lo seguono.",
+      "enemy_family_proposal": "Bestie della foresta (lupi, cinghiali, ghiri giganti)",
+      "main_mechanic": "Ranger teaching — introduzione a main stat Destrezza, weapon family arco + pugnale. Loot enfatizza cuoio + arco/pugnale comune.",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale",
+      "materials_proposal": ["corteccia antica", "pelle di lupo", "frecce grezze"],
+      "boss_miniboss_proposal": "Alpha-lupo silvano",
+      "itemization_notes": "Loot Ranger-friendly (archi corti T1, cuoio T1). Universal per boots/gloves. NO drop reliquia/tomo/piastre.",
+      "achievement_ranking_hints": "Achievement 'Cacciatore Silente' (clear senza alert) — PENDING PM approval",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 3,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "chapel-of-silent-vows",
+      "name_it_proposal": "Cappella dei Voti Silenti",
+      "level_range_proposal": "Lv3-5",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Aveol",
+      "region_biome": "Cappella abbandonata sui passi montani",
+      "narrative_theme_proposal": "I voti silenti sono stati infranti. Qualcosa risponde ai richiami di chi non parla più.",
+      "narrative_theme_note": "NO Cleric drift — culto minore, guardiani non sono Cleric né Priest live PM-locked",
+      "enemy_family_proposal": "Cultisti minori votati al silenzio + non-morti a bassa intensità (spettri di iniziati)",
+      "main_mechanic": "Priest teaching (soft intro) — main stat Saggezza, weapon family reliquia + focus. Loot stoffa + reliquia comune. NO drift Cleric nel naming/tema.",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale",
+      "materials_proposal": ["cera votiva", "ossa consacrate minori", "stoffa penitenziale"],
+      "boss_miniboss_proposal": "Il Sussurro (spettro ex-officiante, NON nominato Cleric né Priest)",
+      "itemization_notes": "Loot Priest-friendly (reliquia T1, stoffa T1, focus T1). Universal per anelli/amuleti. NO drop piastre/arco/tomo.",
+      "achievement_ranking_hints": "Achievement 'Voto Compiuto' (clear con Priest nel party)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 4,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "salt-fen-outpost",
+      "name_it_proposal": "Avamposto della Palude Salata",
+      "level_range_proposal": "Lv4-7",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Velur",
+      "lore_source_differentiation_note": "salt-marsh-5p live usa già Velur (content_family=memory); Batch 1 differenzia come 'avamposto' (insediamento) vs 'palude aperta' (bioma)",
+      "region_biome": "Palude salata, moli marci, capanne su palafitte",
+      "narrative_theme_proposal": "Contrabbandieri hanno preso l'avamposto. La palude ricorda chi hanno cacciato prima.",
+      "enemy_family_proposal": "Contrabbandieri + briganti costieri",
+      "main_mechanic": "Rogue teaching — main stat Destrezza, weapon family pugnale + balestra, armor cuoio. Loot enfatizza pugnali T1 + balestre leggere + cuoio T1.",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale",
+      "materials_proposal": ["sale grezzo", "cuoio salato", "corde di canapa", "chele di crostaceo"],
+      "boss_miniboss_proposal": "Capo-contrabbandiere 'Marlo il Salato'",
+      "itemization_notes": "Loot Rogue-friendly (pugnali T1, balestre T1, cuoio T1). Universal per cinture/mantelli. NO drop piastre/tomo/reliquia.",
+      "achievement_ranking_hints": "Achievement 'Marea Silenziosa' (clear senza kill sentinelle)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 5,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "boarhollow-cave",
+      "name_it_proposal": "Grotta di Cinghialecupa",
+      "level_range_proposal": "Lv5-8",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Soe",
+      "lore_source_differentiation_note": "wolf-den-5p live usa già Soe; Batch 1 differenzia come 'grotta bestiale' (chthonic) vs 'tana di lupi' (superficie)",
+      "region_biome": "Grotta boschiva, torrente sotterraneo, ossari",
+      "narrative_theme_proposal": "I cinghialecupa sono più grandi dell'anno scorso. Qualcosa sotto la terra li nutre.",
+      "enemy_family_proposal": "Bestie chthonic (cinghiali giganti, orsi delle grotte)",
+      "main_mechanic": "Warrior teaching (soft intro) — main stat Forza, weapon family spada + lancia, armor maglia. Loot enfatizza spade/lance T1 + maglia T1.",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale",
+      "materials_proposal": ["zanne di cinghiale", "pelle spessa", "ferro grezzo"],
+      "boss_miniboss_proposal": "Cinghialecupa Anziano (bestia gigante, no nome umano)",
+      "itemization_notes": "Loot Warrior-friendly (spade T1, lance T1, maglia T1). Universal per cinture/stivali. NO drop stoffa/tomo/reliquia/focus.",
+      "achievement_ranking_hints": "Achievement 'Zanna Spezzata'",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 6,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "forgotten-shrine-of-adalan",
+      "name_it_proposal": "Santuario Dimenticato di Adalan",
+      "level_range_proposal": "Lv6-9",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Adalan",
+      "region_biome": "Rovine di un santuario in pietra, sale con costrutti in ceramica",
+      "narrative_theme_proposal": "Il santuario si è svegliato senza motivo. I custodi in ceramica difendono un cuore che nessuno ricorda più.",
+      "enemy_family_proposal": "Costrutti minori (golem di ceramica, elementali arcani deboli)",
+      "main_mechanic": "Mage teaching (soft intro) — main stat Intelligenza, weapon family bastone + focus + tomo, armor stoffa. Loot enfatizza bastoni/focus T1 + stoffa T1. Naming canonical Mage (NO drift Wizard).",
+      "party_size": 3,
+      "tier_loot": "T1 puro",
+      "rarity_loot": "Common prevalente, Uncommon occasionale",
+      "materials_proposal": ["frammenti di ceramica arcana", "polvere di essenza", "tessuto rituale"],
+      "boss_miniboss_proposal": "Cuore di Ceramica (costrutto guardiano)",
+      "itemization_notes": "Loot Mage-friendly (bastoni T1, focus T1, tomi T1, stoffa T1). Universal per anelli/amuleti. NO drop piastre/arco/reliquia.",
+      "achievement_ranking_hints": "Achievement 'Custode Silente' (clear senza rompere pilastri)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 7,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "ironvein-collapse",
+      "name_it_proposal": "Crollo della Vena di Ferro",
+      "level_range_proposal": "Lv7-10",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Ambash",
+      "region_biome": "Miniera abbandonata, gallerie crollate, laghetti sotterranei",
+      "narrative_theme_proposal": "La vena di ferro è collassata all'improvviso. I minatori non sono mai risaliti — ma qualcosa sì.",
+      "enemy_family_proposal": "Kobold + ratti giganti + carogne minerarie",
+      "main_mechanic": "Party synergy teaching — prima introduzione a ruoli party (tank/dps/support) via terreno claustrofobico. Loot bilanciato tra classi (no favoritismo). Primi hint T2 minor su materiali crafting.",
+      "party_size": 3,
+      "tier_loot": "T1 prevalente + T2 minor su materiali di crafting (introduzione)",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare molto raro (boss drop)",
+      "materials_proposal": ["ferro grezzo", "ferro raffinato (T2 minor)", "gemme opache", "corde di miniera"],
+      "boss_miniboss_proposal": "Sciacallo del Crollo (kobold anziano capobanda)",
+      "itemization_notes": "Loot universal prevalente (accessori) + primi hint materiali T2. Introduce concetto 'materiale > item' (crafting placeholder futuro). NO Epic/Legendary.",
+      "achievement_ranking_hints": "Achievement 'Vena Aperta' (recovery drop T2)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 8,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "frozen-vigil-hall",
+      "name_it_proposal": "Sala della Veglia Gelata",
+      "level_range_proposal": "Lv8-11",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Krastlov",
+      "lore_source_differentiation_note": "frost-cave-5p live usa Halodi ghiacciai; Krastlov ha tono più marziale/veglia",
+      "region_biome": "Sala fortificata su tundra, cripte veterane, statue di guerrieri caduti",
+      "narrative_theme_proposal": "I veterani della Veglia non sono mai stati sciolti dal loro giuramento. Il ghiaccio li ha tenuti — e ora si muovono.",
+      "enemy_family_proposal": "Non-morti minori (guerrieri caduti animati) + elementali di gelo",
+      "main_mechanic": "Party comp mista Warrior+Priest — introduzione a resistenze status leggere (rallentamento gelo, purificazione debole). Loot bilanciato Warrior (maglia, spada, martello) + Priest (stoffa, reliquia, martello).",
+      "party_size": 3,
+      "tier_loot": "T1 prevalente + T2 minor possibile su boss drop",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare limitato (boss)",
+      "materials_proposal": ["ghiaccio persistente", "ferro invernale", "filo consacrato"],
+      "boss_miniboss_proposal": "Capitano della Veglia Gelata (guerriero non-morto veterano)",
+      "itemization_notes": "Loot dual-target Warrior+Priest (introduzione a party comp mixed). Item universal per anelli/amuleti. NO drop cuoio/arco/tomo.",
+      "achievement_ranking_hints": "Achievement 'Giuramento Rotto' (clear con Priest nel party che purifica il boss)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 9,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "dunestalker-outpost",
+      "name_it_proposal": "Avamposto degli Ombre della Duna",
+      "level_range_proposal": "Lv9-12",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Efreto",
+      "region_biome": "Deserto, oasi razziate, tende razziatrici semi-mobili",
+      "narrative_theme_proposal": "Gli Ombre della Duna razziano oasi mercantili. Cacciano dal vento, non dal sole.",
+      "enemy_family_proposal": "Banditi nomadi + sciacalli + sciamano nomade minore",
+      "main_mechanic": "Ranger + Rogue party teaching — main stat Destrezza doppia, weapon family arco/balestra/pugnale. Loot enfatizza mobilità (cuoio/maglia leggera Ranger, cuoio Rogue).",
+      "party_size": 3,
+      "tier_loot": "T1 prevalente + T2 minor su boss drop",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare limitato (boss)",
+      "materials_proposal": ["cuoio bruciato dal sole", "corda nomade", "gemme grezze"],
+      "boss_miniboss_proposal": "Capo-razziatore della Duna (bandito veterano)",
+      "itemization_notes": "Loot Ranger-friendly (archi/balestre T1-T2minor, cuoio+maglia leggera) + Rogue-friendly (balestre/pugnali). NO drop stoffa/piastre/reliquia.",
+      "achievement_ranking_hints": "Achievement 'Vento del Deserto' (clear rapido sotto X sec)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 10,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "heartwood-grove",
+      "name_it_proposal": "Bosco del Cuore-Legno",
+      "level_range_proposal": "Lv10-12",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Alberi della Vita",
+      "lore_source_soft_use_note": "Fonte lore potenzialmente epica — Batch 1 la usa in versione soft (senza metafisica endgame), riservando manifestazioni maggiori a batch futuri",
+      "region_biome": "Bosco antico, radici enormi, cuori-legno pulsanti",
+      "narrative_theme_proposal": "Il bosco del Cuore-Legno ha un ritmo. Chi non lo segue viene digerito lentamente.",
+      "enemy_family_proposal": "Driadi minori + spiriti della foresta + bestie druidiche",
+      "main_mechanic": "All-class coherence — dungeon accessibile a party misto (tutte 5 classi). Loot bilanciato universal prevalente + hint T2 assicurato su boss. Prima esperienza vera 'party build matters'.",
+      "party_size": 3,
+      "tier_loot": "T1 prevalente + T2 minor assicurato su boss drop",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare limitato (boss)",
+      "materials_proposal": ["linfa antica", "corteccia druidica", "semi cuoreverde"],
+      "boss_miniboss_proposal": "Cuore-Legno Anziano (spirito custode)",
+      "itemization_notes": "Loot universal prevalente + primi T2 minor bilanciati (accessori, cinture, mantelli). Introduce concetto 'first T2 gear'. NO Epic/Legendary.",
+      "achievement_ranking_hints": "Achievement 'Cuore Ascoltato' (clear con Ranger nel party)",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 11,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "bandit-warlord-hideout",
+      "name_it_proposal": "Nascondiglio del Signore dei Briganti",
+      "level_range_proposal": "Lv11-13",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Aveol",
+      "lore_source_differentiation_note": "bandit-hideout live usa già Aveol (briganti disertori Crociata d'Argento); Batch 1 versione 'Warlord' è successivo cronologicamente, un capo organizzato che unifica bande",
+      "region_biome": "Fortezza rocciosa sui passi, camere di guerra, tesoreria trappolata",
+      "narrative_theme_proposal": "Il Signore dei Briganti ha unito tre bande. La sua tesoreria è armata meglio della guarnigione.",
+      "enemy_family_proposal": "Briganti veterani + sciamano ribelle + sicari",
+      "main_mechanic": "Proficiency check narrativo — il loot del boss è class-specific hint. Introduce narrativamente il concetto Gate 2 sez. 5/6 (armor/weapon proficiency hard-block). Loot mostrato = 'cosa Warrior può usare, Mage no', teaching senza runtime enforcement (che arriverà in Phase C tech, gated).",
+      "party_size": 3,
+      "tier_loot": "T1 prevalente + T2 minor su boss drop",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare limitato (boss)",
+      "materials_proposal": ["acciaio brigantesco", "cuoio veterano", "ferro montano", "gemme opache"],
+      "boss_miniboss_proposal": "Il Signore dei Briganti + sciamano ribelle (2 fase, NO drift Wizard)",
+      "itemization_notes": "Loot multi-class (Warrior spade/asce T1-T2 minor + Rogue pugnali T1 + Ranger balestre T1). NO drop stoffa/reliquia/tomo. Introduce concetto 'questo pezzo Warrior può, Priest no'.",
+      "achievement_ranking_hints": "Achievement 'Signore Deposto' — spunto per prima traccia proficiency teaching narrativo",
+      "all_fields_pending_pm": true
+    },
+    {
+      "index": 12,
+      "flag": "DRAFT NEW",
+      "dungeon_id_proposal": "broken-tower-of-adalan",
+      "name_it_proposal": "Torre Spezzata di Adalan",
+      "level_range_proposal": "Lv13-15",
+      "bracket": "Lv1-15 / Early Game",
+      "lore_source": "Adalan",
+      "region_biome": "Torre spezzata a metà, piani sospesi, biblioteca crollata",
+      "narrative_theme_proposal": "La torre è caduta secoli fa. Chi la abita ora custodisce un sapere che nessuno chiede più.",
+      "enemy_family_proposal": "Guardiani costrutti + apostata erudito (NON Wizard, nomenclatura canonical: 'erudito', 'apostata', 'studioso')",
+      "main_mechanic": "Transition Lv15 → Lv20 (Batch 1 → Batch 2) — primo boss con T2 assicurato, primo hint Epic drop molto raro (max 1 slot possibile, rate PENDING PM). Party comp matura. Naming apostata/erudito canonical NO drift Wizard.",
+      "party_size": 3,
+      "tier_loot": "T1 + T2 assicurato su boss + Epic molto raro (max 1-2 slot, PENDING PM per rate)",
+      "rarity_loot": "Common/Uncommon prevalenti, Rare regolare, Epic molto raro (boss drop only)",
+      "materials_proposal": ["pietra spezzata di Adalan", "tomo consumato", "cristallo focus grezzo", "filo d'oro antico"],
+      "boss_miniboss_proposal": "L'Erudito Apostata (mago rinnegato, nomenclatura canonical, NO Wizard)",
+      "itemization_notes": "Loot Mage-friendly primario (tomi T1-T2, focus T1-T2, bastoni T1-T2, stoffa T1-T2) + universal accessori T2 minor. Possibile primo Epic drop molto raro su focus/tomo/anello. NO Legendary.",
+      "achievement_ranking_hints": "Achievement 'Primo Epic' (unlock a chi ottiene primo Epic drop qui) — spunto transition Batch 2",
+      "all_fields_pending_pm": true
+    }
+  ],
+  "class_proficiency_teaching_map": {
+    "Warrior": {
+      "main_stat": "Forza",
+      "teaching_primary_dungeons": [
+        {"index": 5, "id": "boarhollow-cave", "teaches": "spada/lancia/maglia"},
+        {"index": 8, "id": "frozen-vigil-hall", "teaches": "spada/martello/maglia"},
+        {"index": 11, "id": "bandit-warlord-hideout", "teaches": "spada/ascia"}
+      ],
+      "welcome_secondary_dungeons": [
+        {"index": 1, "id": "goblin-warrens", "role": "universal accessibile"},
+        {"index": 7, "id": "ironvein-collapse", "role": "party synergy"},
+        {"index": 10, "id": "heartwood-grove", "role": "all-class"}
+      ]
+    },
+    "Rogue": {
+      "main_stat": "Destrezza",
+      "teaching_primary_dungeons": [
+        {"index": 4, "id": "salt-fen-outpost", "teaches": "pugnale/balestra/cuoio"},
+        {"index": 9, "id": "dunestalker-outpost", "teaches": "balestra/pugnale/cuoio"},
+        {"index": 11, "id": "bandit-warlord-hideout", "teaches": "pugnale"}
+      ],
+      "welcome_secondary_dungeons": [
+        {"index": 1, "id": "goblin-warrens", "role": "universal"},
+        {"index": 7, "id": "ironvein-collapse", "role": "party"},
+        {"index": 10, "id": "heartwood-grove", "role": "all-class"}
+      ]
+    },
+    "Mage": {
+      "main_stat": "Intelligenza",
+      "teaching_primary_dungeons": [
+        {"index": 6, "id": "forgotten-shrine-of-adalan", "teaches": "bastone/focus/tomo/stoffa"},
+        {"index": 12, "id": "broken-tower-of-adalan", "teaches": "tomo/focus/bastone/stoffa T2"}
+      ],
+      "welcome_secondary_dungeons": [
+        {"index": 1, "id": "goblin-warrens", "role": "universal"},
+        {"index": 7, "id": "ironvein-collapse", "role": "party"},
+        {"index": 10, "id": "heartwood-grove", "role": "all-class"}
+      ]
+    },
+    "Priest": {
+      "main_stat": "Saggezza",
+      "teaching_primary_dungeons": [
+        {"index": 3, "id": "chapel-of-silent-vows", "teaches": "reliquia/focus/stoffa"},
+        {"index": 8, "id": "frozen-vigil-hall", "teaches": "martello/reliquia/stoffa"}
+      ],
+      "welcome_secondary_dungeons": [
+        {"index": 1, "id": "goblin-warrens", "role": "universal"},
+        {"index": 7, "id": "ironvein-collapse", "role": "party"},
+        {"index": 10, "id": "heartwood-grove", "role": "all-class"}
+      ]
+    },
+    "Ranger": {
+      "main_stat": "Destrezza",
+      "teaching_primary_dungeons": [
+        {"index": 2, "id": "elfwood-glade", "teaches": "arco/pugnale/cuoio"},
+        {"index": 9, "id": "dunestalker-outpost", "teaches": "arco/balestra/cuoio+maglia"},
+        {"index": 10, "id": "heartwood-grove", "teaches": "arco/lancia"}
+      ],
+      "welcome_secondary_dungeons": [
+        {"index": 5, "id": "boarhollow-cave", "role": "lancia secondaria"},
+        {"index": 7, "id": "ironvein-collapse", "role": "party"}
+      ]
+    }
+  },
+  "weapon_families_coverage_batch1": {
+    "contemplated_in_teaching": {
+      "spada": ["#4", "#5", "#8", "#9", "#11"],
+      "ascia": ["#11"],
+      "martello": ["#8"],
+      "pugnale": ["#2", "#4", "#9", "#11"],
+      "arco": ["#2", "#9", "#10"],
+      "balestra": ["#4", "#9"],
+      "bastone": ["#6", "#12"],
+      "tomo": ["#6", "#12"],
+      "focus": ["#3", "#6", "#8", "#12"],
+      "lancia": ["#5", "#10"],
+      "arma_in_asta": ["#5"],
+      "scudo": ["#5", "#8"],
+      "reliquia": ["#3", "#8"]
+    },
+    "not_assigned_pending_pm": {
+      "strumento": "Candidato per Bard drift/classe futura — NON assegnata in Batch 1",
+      "falce": "Candidato per classe futura (reaper/necromante/druido?) — NON assegnata in Batch 1",
+      "trinket": "Categoria 'accessorio generico' — possibile universal, decisione PM successiva"
+    },
+    "contemplated_count": 13,
+    "not_assigned_count": 3,
+    "total_count": 16
+  },
+  "loot_direction_summary": {
+    "tier_distribution": {
+      "T1": "Prevalente su tutti i 12 dungeon",
+      "T2 minor": "Presente da dungeon #7 in poi, assicurato su boss #10 e #12",
+      "T3": "Non presente — riservato Batch 2+",
+      "T4": "Non presente — riservato Batch 3+",
+      "T5": "Non presente — riservato Batch 4/5"
+    },
+    "rarity_distribution": {
+      "Common": "Prevalente ovunque",
+      "Uncommon": "Regolare, presente ovunque",
+      "Rare": "Molto limitato — solo boss drop dungeon #7, #8, #9, #10, #11, #12",
+      "Epic": "Molto raro — solo dungeon #12 boss (max 1 slot possibile, rate PENDING PM)",
+      "Legendary": "Assente in Batch 1 (Gate 2: Legendary solo T5)"
+    },
+    "crosswalk_1500_reference": {
+      "pool_used": "principalmente Riga T1 (300 item) + primi item Riga T2 (350 item)",
+      "estimated_utilization_batch1": "35-45% del pool T1 targeting Lv1-15",
+      "reserved_for_batch2": "rimanente pool T1 + T2 core (Lv20-30)"
+    }
+  },
+  "governance_check": {
+    "dungeon_count": 12,
+    "obligatory_fields_per_dungeon": 16,
+    "goblin_warrens_included_as_live": true,
+    "level_range_coverage": "Lv1-15 progressiva (3/4/4/1 bucket)",
+    "player_facing_fields_pending_pm": true,
+    "lore_sources_used_batch1": 10,
+    "lore_sources_reserved_future_batches": 7,
+    "canonical_classes_all_have_primary_teaching": true,
+    "loot_target_respected": true,
+    "party_size_verbatim": 3,
+    "bracket_verbatim": "Lv1-15 / Early Game",
+    "canonical_naming_mage_priest_verbatim": true,
+    "no_drift_wizard_cleric": true,
+    "weapon_families_not_assigned_pending_pm": ["strumento", "falce", "trinket"],
+    "no_punitive_mechanics": true,
+    "no_generic_names": true,
+    "sealed_files_36_byte_identical_expected": true,
+    "zero_db_writes": true,
+    "zero_code_changes": true,
+    "zero_migrations": true,
+    "zero_dungeon_live_creation": true,
+    "zero_xp_apply": true,
+    "zero_level_cap_apply": true,
+    "zero_drop_table_apply": true,
+    "zero_proficiency_runtime_enforcement": true,
+    "prd_md_update_deferred_pending_pm": true
+  },
+  "observations": [
+    {
+      "id": "obs_1",
+      "topic": "Lore sources epiche riservate",
+      "summary": "7 su 17 fonti (Irthe, Alevora, Ergolat, Faglie arcane, Vuoto, Luna Morta, Ciclo delle anime) risultano troppo epiche per Batch 1. Irthe già usata da shadow-crypts live coerente con Batch 2. Le altre 6 destinabili a Batch 3/4/5. NESSUN conflitto immediato."
+    },
+    {
+      "id": "obs_2",
+      "topic": "Nomenclatura mago apostata vs Wizard drift",
+      "summary": "Dungeon #12 usa 'erudito apostata'/'studioso rinnegato' per evitare drift verso Wizard. Classe canonical Mage preservata verbatim. NESSUN rischio drift se PM approva."
+    },
+    {
+      "id": "obs_3",
+      "topic": "Overlap lore con dungeon live pre-esistenti",
+      "summary": "3 lore sources già usate da dungeon live fuori Batch 1: Halodi (goblin-warrens live in Batch 1 + frost-cave-5p bracket più alto PENDING PM), Aveol (bandit-hideout live + proposta Bandit Warlord successivo cronologicamente), Velur (salt-marsh-5p live + Salt Fen Outpost insediamento vs bioma), Soe (wolf-den-5p superficie + Boarhollow Cave chthonic). PM potrebbe voler integrare i live dungeon come parte esplicita Batch 1 anziché proporre sovrapposti. PENDING PM approval."
+    },
+    {
+      "id": "obs_4",
+      "topic": "Dungeon live oltre i 3 Phase 3 originali",
+      "summary": "Nel codebase esistono oltre 3 dungeon live (sewer-nest, bandit-hideout, wolf-den-5p, frost-cave-5p, salt-marsh-5p, dragons-hoard, shadow-crypts). Molti coerenti con bracket Lv1-30. Emergent NON li ha inclusi automaticamente in Batch 1. Audit dedicato per riallineamento bracket-based FLAGGATO per gate PM successivo, NON toccato in C0-quater Batch 1."
+    },
+    {
+      "id": "obs_5",
+      "topic": "Level range mapping vs difficulty legacy",
+      "summary": "Sistema live NON espone level_min/level_max per dungeon. Mapping Batch 1 a Lv1-15 è strato documentale che non modifica DB. Se PM autorizzerà esposizione level range in Phase C tech, servirà backfill script dry-run dedicato (fuori scope C0-quater)."
+    },
+    {
+      "id": "obs_6",
+      "topic": "Nessuna Legendary in Batch 1",
+      "summary": "Rispettata verbatim regola PM. 15 Legendary catalogo (tutto T5, Gate 2 sez. 2) riservate Batch 4/5 endgame."
+    }
+  ],
+  "handoff": {
+    "deliverable_files": [
+      "/app/memory/r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.md",
+      "/app/memory/r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.json"
+    ],
+    "expected_sanity_governance_post_write": [
+      "git status → solo 2 nuovi file untracked in memory/",
+      "pytest backend/tests/backend_r18_4_sealed_integrity_test.py → PASS (36 sigilli byte-identical)"
+    ],
+    "next_steps_awaiting_pm_go": [
+      "PM Gate review Batch 1 → approva/modifica proposte PENDING PM approval",
+      "Post-approval: aggiornamento PRD.md sezione 'R18.5 Phase C0-quater Batch 1 CLOSED' (NON eseguito ora)",
+      "Batch 2 (Lv20-30) BLOCKED fino a review PM Batch 1",
+      "Phase C tech dry-run BLOCKED (governance sigilli su derive_ui_4state / item_public())"
+    ],
+    "strategic_recommendation": "Audit read-only dedicato per integrazione dei 8-10 dungeon live pre-esistenti nel modello bracket-based Batch 1/2/3 (nuovo deliverable .md/.json), se PM autorizza."
+  }
+}
