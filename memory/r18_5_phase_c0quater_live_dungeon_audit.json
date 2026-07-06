@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "C0-quater — Live Dungeon Audit",
+    "locked_at_utc": "2026-07-06T21:00:00Z",
+    "governance": "DOCUMENTAL ONLY / READ-ONLY",
+    "status": "AUDIT COMPLETE / PENDING PM decisions",
+    "authority": "PM Orchestrator — GO audit esplicito ricevuto",
+    "authoritative_predecessors": [
+      "/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json",
+      "/app/memory/r18_5_gate2_pm_decisions.md/.json",
+      "/app/memory/r18_5_phase_c0ter_live_class_matrix.md/.json",
+      "/app/memory/r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.md/.json (DRAFT to be superseded post-audit)"
+    ],
+    "method": "MongoDB read-only queries (find, aggregate) + read of backend/app/seeds/seed_data.py, backend/app/content/lore_meta.py",
+    "db_name": "orbus_r16",
+    "collections_queried": [
+      "dungeons",
+      "raid_dungeons",
+      "expeditions",
+      "expeditions_r18_archive"
+    ]
+  },
+  "executive_summary_surprises": [
+    {
+      "id": "surprise_1",
+      "severity": "SOFT stop-rule triggered (>20)",
+      "topic": "24 dungeon live totali",
+      "detail": "DB dungeons contiene 24 documenti (23 attivi + 1 test disattivato). Stima pre-audit 8-10. Audit continua ma segnala deviazione significativa."
+    },
+    {
+      "id": "surprise_2",
+      "severity": "INFO / DESIGN CORRECTION",
+      "topic": "required_level e bucket già esistenti nel DB",
+      "detail": "Contrariamente a Osservazione 5 del Batch 1 DRAFT, il DB ha già required_level (int, Lv1-Lv14) + bucket (tutorial/early/mid/high). Nessun backfill Phase C tech necessario per esposizione level range."
+    },
+    {
+      "id": "surprise_3",
+      "severity": "CRITICAL",
+      "topic": "Party size split 3p/5p + lore theme disallineamento",
+      "detail": "10 dungeon 3-player + 12 dungeon 5-player + 1 training-yard. Gate 1 SQ13 party_size=3 escluderebbe 12 dungeon 5-player. Inoltre 8 tag lore_theme live non presenti nelle 17 fonti Gate 1; 10 fonti Gate 1 orfane. Serve decisione PM."
+    }
+  ],
+  "dungeon_inventory": {
+    "total_documents": 24,
+    "active_count": 23,
+    "inactive_test_count": 1,
+    "party_3_count": 11,
+    "party_5_count": 12,
+    "legacy_count": 8,
+    "non_legacy_count": 15,
+    "training_yard_utility": true,
+    "test_dungeon_excluded": true
+  },
+  "dungeons_3_player_active": [
+    {"index": 1, "slug": "training-yard", "name_it": null, "required_level": 1, "difficulty": "trivial", "bucket": null, "lore_theme": null, "content_family": null, "emotional_tone": null, "spoiler_level": null, "is_legacy": false, "note": "Utility onboarding, no narrativa"},
+    {"index": 2, "slug": "sewer-nest", "name_it": "Nido nelle Fogne", "required_level": 1, "difficulty": 1, "bucket": "tutorial", "lore_theme": "urban", "content_family": "baseline", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": true},
+    {"index": 3, "slug": "goblin-warrens", "name_it": "Tane dei Goblin", "required_level": 2, "difficulty": 1, "bucket": "tutorial", "lore_theme": "frontiera", "content_family": "baseline", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": true},
+    {"index": 4, "slug": "bandit-hideout", "name_it": "Covo dei Banditi", "required_level": 2, "difficulty": 1, "bucket": "tutorial", "lore_theme": "urban", "content_family": "baseline", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": true},
+    {"index": 5, "slug": "shadow-crypts", "name_it": "Cripte d'Ombra", "required_level": 3, "difficulty": 2, "bucket": "early", "lore_theme": "irthe", "content_family": "void_undead", "emotional_tone": "dread", "spoiler_level": "mystery", "is_legacy": true},
+    {"index": 6, "slug": "druid-grove", "name_it": "Bosco dei Druidi Corrotti", "required_level": 3, "difficulty": 2, "bucket": "early", "lore_theme": "soe", "content_family": "nature", "emotional_tone": "grim", "spoiler_level": "public", "is_legacy": true},
+    {"index": 7, "slug": "cursed-mines", "name_it": "Miniere Maledette", "required_level": 4, "difficulty": 2, "bucket": "early", "lore_theme": "efreto", "content_family": "arcane", "emotional_tone": "dread", "spoiler_level": "mystery", "is_legacy": true},
+    {"index": 8, "slug": "sunken-library", "name_it": "Biblioteca Sommersa", "required_level": 4, "difficulty": 2, "bucket": "early", "lore_theme": "memoria", "content_family": "memory", "emotional_tone": "wonder", "spoiler_level": "mystery", "is_legacy": true},
+    {"index": 9, "slug": "lich-sanctum", "name_it": "Santuario del Lich", "required_level": 5, "difficulty": 3, "bucket": "mid", "lore_theme": "irthe", "content_family": "void_undead", "emotional_tone": "dread", "spoiler_level": "mystery", "is_legacy": true},
+    {"index": 10, "slug": "dragons-hoard", "name_it": "Tesoro del Drago", "required_level": 6, "difficulty": 3, "bucket": "mid", "lore_theme": "draco", "content_family": "arcane", "emotional_tone": "wonder", "spoiler_level": "mystery", "is_legacy": true},
+    {"index": 11, "slug": "storm-spire", "name_it": "Guglia della Tempesta", "required_level": 6, "difficulty": 3, "bucket": "mid", "lore_theme": "ambash", "content_family": "arcane", "emotional_tone": "wonder", "spoiler_level": "public", "is_legacy": true}
+  ],
+  "dungeons_5_player_active": [
+    {"index": 12, "slug": "wolf-den-5p", "name_it": "Tana dei Lupi", "required_level": 3, "difficulty": 1, "bucket": "early", "lore_theme": "soe", "content_family": "nature", "emotional_tone": "wonder", "spoiler_level": "public", "is_legacy": false},
+    {"index": 13, "slug": "frost-cave-5p", "name_it": "Caverna del Gelo", "required_level": 4, "difficulty": 1, "bucket": "early", "lore_theme": "halodi", "content_family": "nature", "emotional_tone": "melancholy", "spoiler_level": "public", "is_legacy": false},
+    {"index": 14, "slug": "salt-marsh-5p", "name_it": "Palude Salata", "required_level": 5, "difficulty": 1, "bucket": "early", "lore_theme": "velur", "content_family": "memory", "emotional_tone": "melancholy", "spoiler_level": "public", "is_legacy": false},
+    {"index": 15, "slug": "iron-foundry-5p", "name_it": "Fonderia di Ferro", "required_level": 6, "difficulty": 2, "bucket": "mid", "lore_theme": "fucina", "content_family": "arcane", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": false},
+    {"index": 16, "slug": "silent-monastery-5p", "name_it": "Monastero del Silenzio", "required_level": 7, "difficulty": 2, "bucket": "mid", "lore_theme": "memoria", "content_family": "memory", "emotional_tone": "melancholy", "spoiler_level": "mystery", "is_legacy": false},
+    {"index": 17, "slug": "pirate-fleet-5p", "name_it": "Flotta dei Corsari", "required_level": 8, "difficulty": 2, "bucket": "high", "lore_theme": "mare", "content_family": "baseline", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": false},
+    {"index": 18, "slug": "obsidian-arena-5p", "name_it": "Arena d'Ossidiana", "required_level": 9, "difficulty": 3, "bucket": "high", "lore_theme": "infernale", "content_family": "arcane", "emotional_tone": "grim", "spoiler_level": "mystery", "is_legacy": false},
+    {"index": 19, "slug": "clockwork-vault-5p", "name_it": "Camera degli Ingranaggi", "required_level": 10, "difficulty": 3, "bucket": "high", "lore_theme": "fucina", "content_family": "arcane", "emotional_tone": "tension", "spoiler_level": "public", "is_legacy": false},
+    {"index": 20, "slug": "voidspire-5p", "name_it": "Pinnacolo del Vuoto", "required_level": 11, "difficulty": 3, "bucket": "high", "lore_theme": "vuoto", "content_family": "void_undead", "emotional_tone": "dread", "spoiler_level": "mystery", "is_legacy": false},
+    {"index": 21, "slug": "infernal-pit-5p", "name_it": "Fossa Infernale", "required_level": 12, "difficulty": 4, "bucket": "high", "lore_theme": "infernale", "content_family": "arcane", "emotional_tone": "dread", "spoiler_level": "mystery", "is_legacy": false},
+    {"index": 22, "slug": "celestial-citadel-5p", "name_it": "Cittadella Celeste", "required_level": 13, "difficulty": 4, "bucket": "high", "lore_theme": "celeste", "content_family": "divine", "emotional_tone": "hope", "spoiler_level": "mystery", "is_legacy": false},
+    {"index": 23, "slug": "world-tree-roots-5p", "name_it": "Radici dell'Albero del Mondo", "required_level": 14, "difficulty": 4, "bucket": "high", "lore_theme": "soe", "content_family": "nature", "emotional_tone": "wonder", "spoiler_level": "mystery", "is_legacy": false}
+  ],
+  "dungeons_inactive_test": [
+    {"index": 24, "slug": "test-dungeon-531a1a", "name_it": null, "required_level": null, "is_active": false, "note": "Test artifact escluso da audit"}
+  ],
+  "raid_dungeons_active": [
+    {"slug": "broken-bastion-siege", "name_it": "Assedio al Bastione Spezzato", "lore_theme": "ergolat", "content_family": "baseline", "boss_name": "Comandante del Bastione", "required_level": null},
+    {"slug": "necropolis-bells", "name_it": "Necropoli delle Mille Campane", "lore_theme": "irthe", "content_family": "void_undead", "boss_name": "Campanaro Senza Volto", "required_level": null},
+    {"slug": "dragon-vault", "name_it": "Volta del Drago Addormentato", "lore_theme": "draco", "content_family": "arcane", "boss_name": "Drago di Pietra", "required_level": null}
+  ],
+  "level_fields_analysis": {
+    "field_required_level": {"present": true, "coverage": "23/24 (95.8%)", "range": "Lv1 to Lv14", "note": "Popolato su tutti gli attivi"},
+    "field_bucket": {"present": true, "coverage": "22/24 (91.7%)", "values": ["tutorial", "early", "mid", "high"], "note": "Bucketing legacy a 4 valori (vs 5 R18.5)"},
+    "field_recommended_power": {"present": true, "coverage": "24/24 (100%)"},
+    "field_required_team_size": {"present": true, "coverage": "24/24 (100%)", "values": [3, 5]},
+    "field_is_5p": {"present": true, "coverage": "24/24 (100%)"},
+    "conclusion": "Il backfill script Phase C tech per esposizione level range NON è necessario — il campo required_level è già live."
+  },
+  "level_distribution": {
+    "Lv1": ["sewer-nest", "training-yard"],
+    "Lv2": ["goblin-warrens", "bandit-hideout"],
+    "Lv3": ["shadow-crypts", "druid-grove", "wolf-den-5p"],
+    "Lv4": ["cursed-mines", "sunken-library", "frost-cave-5p"],
+    "Lv5": ["lich-sanctum", "salt-marsh-5p"],
+    "Lv6": ["dragons-hoard", "storm-spire", "iron-foundry-5p"],
+    "Lv7": ["silent-monastery-5p"],
+    "Lv8": ["pirate-fleet-5p"],
+    "Lv9": ["obsidian-arena-5p"],
+    "Lv10": ["clockwork-vault-5p"],
+    "Lv11": ["voidspire-5p"],
+    "Lv12": ["infernal-pit-5p"],
+    "Lv13": ["celestial-citadel-5p"],
+    "Lv14": ["world-tree-roots-5p"],
+    "Lv15_60": [],
+    "coverage_live_range": "Lv1-Lv14",
+    "gap_r18_5_target": "Lv15-Lv60 completely uncovered live"
+  },
+  "party_size_split": {
+    "party_3_active": 11,
+    "party_5_active": 12,
+    "party_5_slugs": ["wolf-den-5p", "frost-cave-5p", "salt-marsh-5p", "iron-foundry-5p", "silent-monastery-5p", "pirate-fleet-5p", "obsidian-arena-5p", "clockwork-vault-5p", "voidspire-5p", "infernal-pit-5p", "celestial-citadel-5p", "world-tree-roots-5p"],
+    "gate1_sq13_constraint": "party_size = 3",
+    "conflict_risk": "CRITICAL — 12 dungeon 5-player esclusi se SQ13 tassativo",
+    "options_pending_pm": [
+      {"id": "A_stricto", "description": "SQ13=3 rigido. Batch 1 usa solo 3-player. 12 5-player orfani."},
+      {"id": "B_bifork", "description": "Batch 1 diviso in traccia 3-player + traccia 5-player parallel. Rompe unified bracket."},
+      {"id": "C_revisione_sq13", "description": "Riapertura SQ13 per accettare team=5 in Batch 1. Rompe Gate 1 decisions."}
+    ]
+  },
+  "lore_theme_analysis": {
+    "live_lore_theme_distinct": ["ambash", "celeste", "draco", "efreto", "frontiera", "fucina", "halodi", "infernale", "irthe", "mare", "memoria", "soe", "urban", "velur", "vuoto"],
+    "live_lore_theme_distinct_count": 15,
+    "gate1_sources_count": 17,
+    "gate1_sources_list": ["Ambash", "Irthe", "Velur", "Efreto", "Halodi", "Alevora", "Soe", "Aveol", "Ergolat", "Krastlov", "Adalan", "Greatwood/Elfwood", "Alberi della Vita", "Faglie arcane", "Vuoto", "Luna Morta", "Ciclo delle anime"],
+    "direct_matches_live_to_gate1": {
+      "ambash": "Ambash",
+      "efreto": "Efreto",
+      "halodi": "Halodi",
+      "irthe": "Irthe",
+      "soe": "Soe",
+      "velur": "Velur",
+      "vuoto": "Vuoto"
+    },
+    "direct_match_count": 7,
+    "live_tags_orphan_from_gate1": {
+      "urban": {"used_by": ["sewer-nest", "bandit-hideout"], "proposal_pm": "Mappabile ad Aveol (borghi) o Adalan (cittadina)"},
+      "frontiera": {"used_by": ["goblin-warrens"], "proposal_pm": "Mappabile ad Halodi o Aveol"},
+      "fucina": {"used_by": ["iron-foundry-5p", "clockwork-vault-5p"], "proposal_pm": "Mappabile ad Ambash (mercantile) o Aveol"},
+      "memoria": {"used_by": ["sunken-library", "silent-monastery-5p"], "proposal_pm": "Non 1:1 con Gate 1. Possibile mapping a Ciclo delle anime o nuova fonte custom"},
+      "mare": {"used_by": ["pirate-fleet-5p"], "proposal_pm": "Non presente in Gate 1. NUOVA fonte 'Mare di Velur' o sub-tag Velur"},
+      "draco": {"used_by": ["dragons-hoard", "dragon-vault (raid)"], "proposal_pm": "Non presente in Gate 1. NUOVA fonte 'Draco' o bracket endgame"},
+      "celeste": {"used_by": ["celestial-citadel-5p"], "proposal_pm": "Potenziale sinonimo Alberi della Vita o NUOVA fonte 'Celeste'"},
+      "infernale": {"used_by": ["obsidian-arena-5p", "infernal-pit-5p"], "proposal_pm": "Potenziale sinonimo Luna Morta o NUOVA fonte 'Infernale'"}
+    },
+    "orphan_live_tag_count": 8,
+    "gate1_sources_orphan_from_live": {
+      "Alevora": {"impact": "Riservata a World Boss endgame (world boss narrativo)"},
+      "Aveol": {"impact": "Batch 1 DRAFT ne proponeva 2 nuovi (chapel-of-silent-vows, bandit-warlord-hideout)"},
+      "Ergolat": {"impact": "Usata da raid broken-bastion-siege (fuori dungeon)"},
+      "Krastlov": {"impact": "Batch 1 DRAFT ne proponeva 1 nuovo (frozen-vigil-hall)"},
+      "Adalan": {"impact": "Batch 1 DRAFT ne proponeva 2 nuovi (forgotten-shrine, broken-tower)"},
+      "Greatwood/Elfwood": {"impact": "Batch 1 DRAFT ne proponeva 1 nuovo (elfwood-glade)"},
+      "Alberi della Vita": {"impact": "Batch 1 DRAFT ne proponeva 1 nuovo (heartwood-grove)"},
+      "Faglie arcane": {"impact": "Riservata a Batch 3+"},
+      "Luna Morta": {"impact": "Riservata a Batch 5 endgame"},
+      "Ciclo delle anime": {"impact": "Riservata a Batch 5 endgame"}
+    },
+    "orphan_gate1_source_count": 10,
+    "pm_decision_required": true,
+    "pm_options": [
+      "Espandere fonti Gate 1 a ~22-25 aggiungendo Mare, Draco, Celeste, Infernale, Fucina, Memoria, Urban, Frontiera",
+      "Mapping 1:N tag live esistenti verso fonti Gate 1 (es. mare → sotto-tag Velur)",
+      "Normalizzare lore_theme live per allinearli alle 17 fonti (breaking change lore_meta.py)"
+    ]
+  },
+  "expedition_economy_analysis": {
+    "expeditions_current_count": 3,
+    "expeditions_archive_count": 17,
+    "total_runs_tracked": 20,
+    "dungeon_slug_populated_percent": 0,
+    "dungeon_slug_null_percent": 100,
+    "risk_level": "LOW",
+    "conclusion": "Economia storica non tracciata per singolo dungeon. Ri-classificazione bracket sicura da rischio economico.",
+    "flag_for_pm_info_only": "Verifica separata (fuori scope C0-quater) se schema dungeon_slug su expedition sia bug o design intenzionale"
+  },
+  "bracket_lv1_60_proposal": {
+    "batch_1_lv1_15": {
+      "candidates_3p_live": ["training-yard", "sewer-nest", "goblin-warrens", "bandit-hideout", "shadow-crypts", "druid-grove", "cursed-mines", "sunken-library", "lich-sanctum", "dragons-hoard", "storm-spire"],
+      "candidates_3p_live_count": 11,
+      "candidates_5p_live": "12 dungeon 5-player Lv3-Lv14, orfani se SQ13 stricto",
+      "gap_lv7_15_3p_live": "Nessun dungeon 3-player live oltre Lv6",
+      "new_dungeons_needed_optionA_stricto": "~4-6 nuovi 3-player Lv7-15"
+    },
+    "batch_2_lv16_30": {
+      "candidates_live": 0,
+      "note": "Nessun dungeon live copre Lv15+. Batch 2 richiede creazione integrale (~12 nuovi)."
+    },
+    "batch_3_lv31_45": {"candidates_live": 0, "note": "Vuoto live. Creazione integrale richiesta."},
+    "batch_4_lv46_55": {"candidates_live": 0, "note": "Vuoto live. Creazione integrale richiesta."},
+    "batch_5_lv56_60": {"candidates_live": 0, "note": "Vuoto live. Creazione integrale richiesta."},
+    "raid_bracket": {
+      "candidates_live": 3,
+      "slugs": ["broken-bastion-siege", "necropolis-bells", "dragon-vault"],
+      "required_level_populated": false,
+      "proposal_pm": "Probabile bracket Batch 3-5 endgame — assignment PENDING PM approval"
+    }
+  },
+  "batch1_gap_analysis": {
+    "optionA_stricto_3p": {
+      "live_lv1_5_available": 8,
+      "live_lv1_5_plus_utility": 9,
+      "live_lv6_10_available": 3,
+      "live_lv11_15_available": 0,
+      "new_dungeons_required_lv6_10_3p": 4,
+      "new_dungeons_required_lv11_15_3p": 4,
+      "total_new_required": "~8-10 to complete 12"
+    },
+    "optionB_mix_3p_5p": {
+      "live_lv1_14_available": 23,
+      "new_dungeons_required": 0,
+      "note": "Surplus di 11 dungeon → richiede scarto o Batch 1 esteso Lv1-14"
+    },
+    "optionE_emergent_recommended": {
+      "live_selected_3p": 8,
+      "new_created_3p_lv7_15": 4,
+      "total": 12,
+      "advantages": [
+        "Rispetta Gate 1 SQ13 party_size=3 verbatim",
+        "Sfrutta 67% Batch 1 = live esistenti",
+        "Copre 3 fonti Gate 1 live (irthe, soe, efreto) + 2 nuove (Aveol, Adalan)",
+        "Introduce Priest + Mage teaching",
+        "Progression bucketing coerente",
+        "Workload creazione ridotto (4 vs 11)"
+      ],
+      "disadvantages": [
+        "dragons-hoard + storm-spire in limbo tra Batch 1 e Batch 2",
+        "12 dungeon 5-player restano non-bracketati (decisione PM successiva)",
+        "4 nuovi 3-player Lv7-15 aggiungono workload creazione"
+      ]
+    }
+  },
+  "risks": [
+    {"id": "risk_1", "severity": "CRITICAL", "topic": "Party size 3p vs 5p conflict", "detail": "12 5-player orfani se SQ13 stricto. 50% catalogo live inutilizzato in R18.5.", "mitigation": "Gate PM dedicato per Opzione A/B/C"},
+    {"id": "risk_2", "severity": "CRITICAL", "topic": "Lore theme disallineamento", "detail": "8 tag live orfani + 10 fonti Gate 1 orfane.", "mitigation": "Espansione fonti Gate 1 O mapping 1:N O breaking change lore_meta.py (gate PM)"},
+    {"id": "risk_3", "severity": "HIGH", "topic": "Copertura Lv15-60 live = 0", "detail": "~48 dungeon nuovi richiesti per Batch 2-5.", "mitigation": "Pianificare batch cadence realistica"},
+    {"id": "risk_4", "severity": "MEDIUM", "topic": "Bucket legacy 4→5 R18.5", "detail": "DB usa 4 bucket, R18.5 usa 5 bracket.", "mitigation": "Nuovo field r18_5_bracket opzionale non-breaking (PENDING PM)"},
+    {"id": "risk_5", "severity": "MEDIUM", "topic": "training-yard senza narrativa", "detail": "Utility onboarding, no lore/bucket/narrativa.", "mitigation": "Escluso da bracket R18.5, resta utility separato (PENDING PM)"},
+    {"id": "risk_6", "severity": "LOW", "topic": "Economia expedition-per-dungeon = null", "detail": "100% expedition run con dungeon_slug=None. Non c'è economia storica da rompere.", "mitigation": "Info-only, non blocker Batch 1"},
+    {"id": "risk_7", "severity": "MEDIUM", "topic": "Overlap tag lore >1 dungeon", "detail": "irthe (3 usi), soe (3 usi), memoria (2), infernale (2), fucina (2).", "mitigation": "PENDING PM approval se accettabile design 'tema condiviso ambientazione differenziata'"}
+  ],
+  "batch1_recommendation_emergent_optionE": {
+    "structure": "8 live 3-player + 4 nuovi 3-player Lv7-15 = 12 totali",
+    "live_selected": [
+      {"index": 1, "slug": "sewer-nest", "name_it": "Nido nelle Fogne", "req_lvl": 1, "lore_theme": "urban", "reason": "Onboarding Lv1, tema urban distinto"},
+      {"index": 2, "slug": "goblin-warrens", "name_it": "Tane dei Goblin", "req_lvl": 2, "lore_theme": "frontiera", "reason": "Legacy Phase 3, obligatorio per gate"},
+      {"index": 3, "slug": "bandit-hideout", "name_it": "Covo dei Banditi", "req_lvl": 2, "lore_theme": "urban", "reason": "Introduce combattimento umanoide"},
+      {"index": 4, "slug": "shadow-crypts", "name_it": "Cripte d'Ombra", "req_lvl": 3, "lore_theme": "irthe", "reason": "Introduzione void_undead lore"},
+      {"index": 5, "slug": "druid-grove", "name_it": "Bosco dei Druidi Corrotti", "req_lvl": 3, "lore_theme": "soe", "reason": "Introduzione natura corrotta"},
+      {"index": 6, "slug": "cursed-mines", "name_it": "Miniere Maledette", "req_lvl": 4, "lore_theme": "efreto", "reason": "Introduzione arcane mining"},
+      {"index": 7, "slug": "sunken-library", "name_it": "Biblioteca Sommersa", "req_lvl": 4, "lore_theme": "memoria", "reason": "Introduzione tema memory/mystery"},
+      {"index": 8, "slug": "lich-sanctum", "name_it": "Santuario del Lich", "req_lvl": 5, "lore_theme": "irthe", "reason": "Boss narrativo Lv5"}
+    ],
+    "live_excluded_but_pending_pm": [
+      {"slug": "training-yard", "reason": "Utility onboarding, no narrativa → escluso da bracket, resta live separato"},
+      {"slug": "dragons-hoard", "req_lvl": 6, "lore_theme": "draco", "reason": "Ottima qualità narrativa, ma candidato migliore per Batch 2 (tono draco reveal più tardo). PENDING PM"},
+      {"slug": "storm-spire", "req_lvl": 6, "lore_theme": "ambash", "reason": "Ottima qualità narrativa, riservato Batch 2 come chiusura tema ambash. PENDING PM"}
+    ],
+    "new_dungeons_proposed_lv7_15": [
+      {"index": 9, "slug_proposal": "chapel-of-silent-vows", "name_it_proposal": "Cappella dei Voti Silenti", "lv_range": "Lv7-9", "lore_theme_proposal": "Aveol", "teaching": "Priest teaching"},
+      {"index": 10, "slug_proposal": "forgotten-shrine-of-adalan", "name_it_proposal": "Santuario Dimenticato di Adalan", "lv_range": "Lv9-11", "lore_theme_proposal": "Adalan", "teaching": "Mage teaching"},
+      {"index": 11, "slug_proposal": "bandit-warlord-hideout", "name_it_proposal": "Nascondiglio del Signore dei Briganti", "lv_range": "Lv11-13", "lore_theme_proposal": "Aveol", "teaching": "Proficiency teaching narrativo"},
+      {"index": 12, "slug_proposal": "broken-tower-of-adalan", "name_it_proposal": "Torre Spezzata di Adalan", "lv_range": "Lv13-15", "lore_theme_proposal": "Adalan", "teaching": "Transition Batch 2 + primo Epic raro"}
+    ],
+    "alternatives": [
+      {"id": "optionA_max_live", "description": "Tenere tutti 11 live 3-player + 1 nuovo Lv13-15 = 12. Rimuove training-yard. Perde teaching Priest/Mage esplicito."},
+      {"id": "optionB_mix_3p_5p", "description": "Mix 3p+5p con revisione SQ13. NON raccomandato da Emergent."}
+    ]
+  },
+  "governance_check": {
+    "dungeons_censiti": 24,
+    "stop_rule_soft_gt20_triggered": true,
+    "audit_stopped": false,
+    "sections_obligatory_completed": 15,
+    "lore_source_proposed_per_dungeon": true,
+    "bracket_proposed_per_dungeon": true,
+    "batch1_recommendation_provided": true,
+    "risks_documented": 7,
+    "sealed_files_36_byte_identical_expected": true,
+    "zero_db_writes": true,
+    "zero_code_changes": true,
+    "zero_migrations": true,
+    "zero_dungeon_creation": true,
+    "zero_dungeon_deletion": true,
+    "zero_dungeon_deprecation": true,
+    "zero_economy_changes": true,
+    "zero_drop_table_apply": true,
+    "zero_level_backfill": true,
+    "zero_rinaming_slug": true,
+    "zero_schema_serializer_changes": true,
+    "prd_md_update_deferred_pending_pm": true
+  },
+  "pm_decisions_required_post_audit": [
+    "1. Party size policy (Opzione A stricto / B bifork / C revisione SQ13)",
+    "2. Lore theme normalization (espansione Gate 1 / mapping 1:N / breaking change live)",
+    "3. training-yard inclusion/exclusion in bracket R18.5",
+    "4. dragons-hoard + storm-spire (Batch 1 tail o Batch 2 head?)",
+    "5. 12 dungeon 5-player (traccia parallela / ri-team-size / congelamento)",
+    "6. 3 raid live bracket assignment (Batch 3/4/5)",
+    "7. Batch 1 opzione selezionata (E Emergent recommended / A max live / B mix / D custom PM)"
+  ],
+  "handoff": {
+    "deliverable_files": [
+      "/app/memory/r18_5_phase_c0quater_live_dungeon_audit.md",
+      "/app/memory/r18_5_phase_c0quater_live_dungeon_audit.json"
+    ],
+    "batch1_draft_status_post_audit": "SUPERSEDED — file r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.md/.json preservato per audit trail ma deprecato in attesa nuovo Batch 1 informed",
+    "next_step": "PM decisions sui 7 punti → Emergent rifà Batch 1 informed con matrice 12 dungeon Lv1-15 coerente",
+    "phase_c_tech_dry_run_status": "BLOCKED (governance sigilli invariata)"
+  }
+}
