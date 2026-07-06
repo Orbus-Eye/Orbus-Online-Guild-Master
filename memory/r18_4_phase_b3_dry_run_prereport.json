@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "round": "R18.4",
+    "phase": "B3",
+    "stage": "dry_run_pre_report",
+    "executed_at_utc": "2026-07-06T05:10:00Z",
+    "governance": {
+      "zero_db_write": true,
+      "zero_apply_real": true,
+      "zero_audit_event_emitted": true,
+      "zero_backup_snapshot_written": true,
+      "zero_touch_sealed_files": true,
+      "apply_enabled_locked_false": true,
+      "double_flag_required_for_apply": true,
+      "guard_hard_stop_active": true
+    },
+    "sources": [
+      "/app/memory/r18_4_phase_b2_pm_decisions.md",
+      "/app/memory/r18_4_phase_b2_pm_decisions.json",
+      "/app/memory/r18_4_class_bound_registry.md",
+      "/app/memory/r18_4_class_bound_registry.json"
+    ]
+  },
+
+  "deliverables_created": [
+    {"path": "/app/memory/r18_4_phase_b2_pm_decisions.md", "sha256": "377c773df4f4dd8b6eaa0b9e867ace7e6dc9804844885079d89503b66feb73e7"},
+    {"path": "/app/memory/r18_4_phase_b2_pm_decisions.json", "sha256": "fd0c538ed69311768faa921d4a1e2a5ab24b94854dc921a5ea056d13cdf2ddd6"},
+    {"path": "/app/memory/r18_4_class_bound_registry.md", "sha256": "e6650a8fdbfb59200a5defe6a35263f8be0b803df2cb5534db733c4a46e01d3d"},
+    {"path": "/app/memory/r18_4_class_bound_registry.json", "sha256": "bff4521863012089e809e165641ba1088a17bb4aa5b7f3c054c21a92ba2ded17"},
+    {"path": "/app/backend/app/scripts/round18_4_backfill_slot_type.py", "sha256": "64560c89bc473239e8e7f7553292ac0aafa28e0a304e1d7301c2b5a751d03b01"},
+    {"path": "/app/backend/app/scripts/round18_4_apply_class_bound.py", "sha256": "f638449bc2fb921eb33ac26def557658706e102ec484c809fa98d3a7355089dc"},
+    {"path": "/app/backend/tests/backend_r18_4_class_bound_test.py", "sha256": "eea0e3a49bfa04d53a0ed9b1217426c5993ef62706be178da4db9977889b50c8"},
+    {"path": "/app/memory/r18_4_phase_b1_compact_summary_for_pm.md", "sha256": "e25b69567ecae01b8205cac65da5a7dfb3161de721e24a81aba164666e8c8a33"}
+  ],
+
+  "backfill_slot_type_dry_run": {
+    "mode": "dry_run",
+    "apply_enabled": false,
+    "source_round": "R18.4 Phase B3",
+    "registry_sha256": "bff4521863012089e809e165641ba1088a17bb4aa5b7f3c054c21a92ba2ded17",
+    "decision_lock_sha256": "fd0c538ed69311768faa921d4a1e2a5ab24b94854dc921a5ea056d13cdf2ddd6",
+    "target_count_expected": 140,
+    "would_modify_count": 140,
+    "skipped_count": 0,
+    "errors_count": 0,
+    "guard_hard_stop_checks_passed": 140,
+    "breakdown_by_item_type": {"weapon": 54, "accessory": 42, "armor": 42, "shield": 2},
+    "breakdown_by_target_slot_type": {"weapon": 54, "accessory": 42, "armor": 44},
+    "shield_mapped_to_armor_slugs": ["spec_signature_aegis_of_the_defender", "spec_signature_thornwood_shield"],
+    "audit_event_actually_emitted": false,
+    "backup_snapshot_actually_written": false,
+    "real_apply_result": "BLOCKED — APPLY_ENABLED=False (LOCKED per R18.4 Phase B2)"
+  },
+
+  "class_bound_dry_run": {
+    "mode": "dry_run",
+    "apply_enabled": false,
+    "source_round": "R18.4 Phase B3",
+    "registry_sha256": "bff4521863012089e809e165641ba1088a17bb4aa5b7f3c054c21a92ba2ded17",
+    "target_count_expected_total": 178,
+    "target_count_expected_hard": 11,
+    "target_count_expected_universal": 21,
+    "target_count_expected_soft": 146,
+    "would_modify_count": 178,
+    "already_populated_skipped_count": 0,
+    "errors_count": 0,
+    "guard_hard_stop_checks_passed": 178,
+    "breakdown_by_policy": {"hard": 11, "soft": 146, "universal": 21},
+    "breakdown_matches_expected": true,
+    "audit_event_actually_emitted": false,
+    "backup_snapshot_actually_written": false,
+    "real_apply_result": "BLOCKED — APPLY_ENABLED=False (LOCKED per R18.4 Phase B2)"
+  },
+
+  "guard_hard_stop_verification": {
+    "apply_flag_rejection_backfill": {"exit_code": 1, "message": "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False", "passed": true},
+    "apply_flag_rejection_class_bound": {"exit_code": 1, "message": "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False", "passed": true},
+    "apply_without_ack_flag": {"exit_code": 1, "message": "[FAIL-FAST] Real apply BLOCKED. APPLY_ENABLED=False", "passed": true},
+    "blocked_fields_payload_guard_via_test_t13": {"passed": true, "fields_rejected": ["class_slug", "role", "primary_stat", "base_strength", "is_playable", "slot_type", "required_class_optional"]},
+    "invalid_policy_enum_value_rejected": true
+  },
+
+  "test_suite_results": {
+    "test_file": "backend/tests/backend_r18_4_class_bound_test.py",
+    "total_tests": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "duration_sec": 0.89,
+    "groups": {
+      "group_1_registry_shape": {"passed": 3, "failed": 0},
+      "group_2_bucket_derivation": {"passed": 4, "failed": 0},
+      "group_3_backfill_dry_run": {"passed": 4, "failed": 0},
+      "group_4_class_bound_dry_run": {"passed": 3, "failed": 0},
+      "group_5_rate_limit_and_signals": {"passed": 2, "failed": 0}
+    }
+  },
+
+  "regression_baseline": {
+    "test_file": "backend/tests/backend_round1654b_test.py",
+    "passed": 24,
+    "skipped": 3,
+    "failed": 0,
+    "total": 27,
+    "invariato_pre_post_b3": true
+  },
+
+  "sealed_files_verify": {
+    "total_paths_verified": 19,
+    "missing": 0,
+    "mismatches": 0,
+    "byte_identical": true,
+    "post_b3_status": "ALL 19 SEALED FILES BYTE-IDENTICAL POST-B3"
+  },
+
+  "no_go_boundaries_verification": [
+    {"boundary": "adventurers.class_slug not touched", "verified": true},
+    {"boundary": "adventurer_classes.role not touched", "verified": true},
+    {"boundary": "adventurer_classes.primary_stat/secondary_stats not touched", "verified": true},
+    {"boundary": "adventurer_classes.base_* not touched", "verified": true},
+    {"boundary": "is_playable/is_active/is_canonical not touched", "verified": true},
+    {"boundary": "VALID_ROLES not touched", "verified": true},
+    {"boundary": "adventurers collection zero write", "verified": true},
+    {"boundary": "items canonical IT rewrite (name/display_name/description) not touched", "verified": true},
+    {"boundary": "Unlock CdM/CdV: none", "verified": true},
+    {"boundary": "Unlock berserker/assassin: none (SQ4 dormant)", "verified": true},
+    {"boundary": "is_active=false on dormant items: none", "verified": true},
+    {"boundary": "Hard delete: none", "verified": true},
+    {"boundary": "specialization_unlocks branch removed: no (SQ2 kept)", "verified": true},
+    {"boundary": "Bard role drift not modified", "verified": true},
+    {"boundary": "Player-facing class labels not changed", "verified": true},
+    {"boundary": "19 sealed files byte-identical (SHA256)", "verified": true},
+    {"boundary": "APPLY_ENABLED=False in both sibling scripts", "verified": true}
+  ],
+
+  "backlog_p3_added": [
+    "R18.4.followup — Shield slot mapping decision",
+    "R18.4.backlog — specialization_unlocks dead branch cleanup",
+    "R18.4.backlog — berserker/assassin dormant signature items"
+  ],
+
+  "self_check_b3_10_of_10": {
+    "1_b2_decision_lock_created": true,
+    "2_registry_md_json_created": true,
+    "3_sibling_scripts_apply_enabled_false": true,
+    "4_double_flag_required_for_apply": true,
+    "5_guard_hard_stop_active": true,
+    "6_test_suite_16_of_16_pass": true,
+    "7_baseline_regression_invariant": true,
+    "8_sealed_files_byte_identical": true,
+    "9_dry_run_counts_match_locked_target": true,
+    "10_backlog_p3_added_to_backlog_md": true
+  },
+
+  "next_gate_required": {
+    "gate": "PM review pre-report + explicit new GO required for real apply",
+    "authorized_actions_without_new_go": [],
+    "blocked_actions_without_new_go": [
+      "flip APPLY_ENABLED to True",
+      "run --apply on either sibling script",
+      "modify sealed files",
+      "modify runtime enforcement",
+      "add audit_event emit",
+      "write backup snapshot for real"
+    ],
+    "recommended_next_phase": "B4 — Contract Lock + SEAL (documental) OR real apply gate with PM GO"
+  }
+}

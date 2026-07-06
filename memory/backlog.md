@@ -7,6 +7,42 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] R18.4.followup — Shield slot mapping decision
+- **Aperto**: 2026-07-06
+- **Origine**: R18.4 Phase B2 PM Decision Lock — SQ1 opzione (a) confermata
+- **Obiettivo**: rivalutare mapping shield → armor in caso di introduzione futura di un 4° slot equipaggiabile dedicato (`shield`) o di modifica delle regole di equipaggio a 4 slot.
+- **Motivazione**: SQ1(a) è SAFE non-breaking ma è una scelta di semplicità (2 items impattati: `spec_signature_aegis_of_the_defender`, `spec_signature_thornwood_shield`). Se il gameplay futuro richiede shield stackabile con armor o slot dedicato, questo mapping va rivisto.
+- **Priorità**: P3
+- **Scope**: rivisitazione del design equipment slots + eventuale extend EQUIPMENT_SLOTS.
+- **Non fare**: cambiare il mapping in autonomia senza GO PM esplicito.
+- **Status**: BACKLOG
+
+---
+
+### [BACKLOG] R18.4.backlog — specialization_unlocks dead branch cleanup
+- **Aperto**: 2026-07-06
+- **Origine**: R18.4 Phase B1 Deep-Dive Audit + Phase B2 SQ2 lock
+- **Obiettivo**: decidere se rimuovere, deprecare formalmente, o riattivare il branch `specialization_unlocks` in `backend/app/equipment/compatibility.py:130-165` (3 rule-step attualmente non usati da nessun item runtime).
+- **Motivazione**: feature R16.0 introdotta ma mai popolata su items. Il branch è dead code runtime; da SQ2 PM lock è mantenuto e documentato come "reserved for future specialization system".
+- **Priorità**: P3
+- **Scope**: audit di eventuali round futuri che potrebbero riattivare la feature; documentazione formale della semantica in `equipment/README` (se creato).
+- **Non fare**: rimuovere il codice senza GO PM esplicito; usarlo come SoT R18.4 (esplicitamente escluso da SQ2).
+- **Status**: BACKLOG
+
+---
+
+### [BACKLOG] R18.4.backlog — berserker/assassin dormant signature items
+- **Aperto**: 2026-07-06
+- **Origine**: R18.4 Phase B1 Deep-Dive Audit + Phase B2 SQ4 lock
+- **Obiettivo**: rivalutare lo status dei 2 items signature `spec_signature_bloodied_greataxe` (req=berserker) e `spec_signature_silent_kris` (req=assassin), attualmente de-facto unusable (0 adventurer live per berserker/assassin post-reset R18.Reset.1b).
+- **Motivazione**: mantenere metadata dormant (SQ4 opzione a) evita perdite di dati storici del catalog; rivisitazione richiesta quando/se berserker/assassin verranno unlockati in round dedicati.
+- **Priorità**: P3
+- **Scope**: audit periodico (ogni ~3 round) dello status delle classi dormant + policy per gli items associati (mantenere / disattivare / riassegnare classe).
+- **Non fare**: rimuovere gli items dal catalog, disattivarli (`is_active=false`), cambiare `required_class_optional`, o unlockare le classi target senza GO PM esplicito.
+- **Status**: BACKLOG
+
+---
+
 ### [BACKLOG] R18.Backlog — Seed Idempotent Timestamp Churn Noise
 Origine: R18.3e Phase B W1 investigation (delta items +5 post-B2)
 Obiettivo: evitare o ridurre churn non necessario su collezioni seedate quando un hot-reload backend riesegue seed idempotenti.
