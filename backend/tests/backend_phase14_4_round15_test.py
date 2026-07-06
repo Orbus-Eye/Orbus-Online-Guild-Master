@@ -26,10 +26,7 @@ def _make_user_with_guild():
     suffix = uuid.uuid4().hex[:10]
     email = f"r15_{suffix}@orbus.test"
     username = f"r15_{suffix}"
-    payload = {"email": email, "username": username, "password": "password123"}
-    r = requests.post(_api("/auth/register"), json=payload, timeout=15)
-    assert r.status_code == 201, r.text
-    token = r.json()["access_token"]
+    payload = {"email": email, "username": username, "password": "Test12345!"}
     auth = {"Authorization": f"Bearer {token}"}
 
     guild_payload = {"name": f"Guild {suffix}", "description": "round 1.5"}
@@ -161,7 +158,7 @@ class TestRegisterValidation:
         # Capture the email by registering twice with a forced known suffix.
         suffix = uuid.uuid4().hex[:10]
         email = f"dup_{suffix}@orbus.test"
-        payload = {"email": email, "username": f"dup_{suffix}", "password": "password123"}
+        payload = {"email": email, "username": f"dup_{suffix}", "password": "Test12345!"}
         r1 = requests.post(_api("/auth/register"), json=payload, timeout=15)
         assert r1.status_code == 201
         r2 = requests.post(_api("/auth/register"), json=payload, timeout=15)

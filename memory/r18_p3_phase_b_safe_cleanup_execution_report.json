@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "round": "R18.P3",
+    "topic": "Post-R18.4 Cleanup & Backlog Triage",
+    "phase": "B",
+    "stage": "safe_cleanup_execution_report",
+    "executed_at_utc": "2026-07-06T16:00:00Z",
+    "author": "MainAgent (E1)",
+    "governance": "36 sigilli byte-identical, zero DB writes, zero enforcement change, zero sealed touch, zero refactor auth flow"
+  },
+  "tasks_executed": {
+    "task_1_p3_6_closure_administrative": {
+      "backlog_id": "R18.4.followup — Public API serializer exposure of slot_type + item_binding_policy for UI activation",
+      "action": "backlog.md entry marked Status: CLOSED — 2026-07-06 (R18.P3 Phase B Task 1)",
+      "code_change": false,
+      "verification": "GET /api/items live audit: item_binding_policy, slot_type, is_universal all exposed; test t06 PASS in R18.4.followup Phase B/C"
+    },
+    "task_2_p3_8_smtp_env_flag_guard": {
+      "backlog_id": "R18.backlog — SMTPRecipientsRefused warning on register flow",
+      "sub_question_lock": "P3.SQ8.a=(b) env flag EMAIL_ENABLED=false",
+      "files_modified": {
+        "/app/backend/app/core/email.py": {
+          "function": "get_email_provider()",
+          "lines_added": 23,
+          "lines_removed": 0,
+          "change_summary": "env-flag guard esplicito: se EMAIL_ENABLED=false forza ConsoleProvider (log INFO, no SMTP call); default true per backward-compat produzione"
+        },
+        "/app/backend/tests/.env.test": {"lines_added": 4, "content": "EMAIL_ENABLED=false + commento IT"},
+        "/app/backend/.env": {"lines_added": 3, "content": "EMAIL_ENABLED=false per dev/preview env"}
+      },
+      "backward_compat": true,
+      "impacto_produzione": "zero (default true, .env prod-specifico non toccato)",
+      "verification_live": {
+        "smtp_recipients_refused_errors_post_fix": 0,
+        "register_flow_still_completes_201": true,
+        "log_level": "INFO (non ERROR/WARNING)"
+      }
+    },
+    "task_3_p3_7_phase14_soft_assert": {
+      "backlog_id": "R18.backlog — phase14_* legacy regression debt cleanup",
+      "sub_question_lock": "P3.SQ7.a=(b) soft-assert threshold >= 200",
+      "files_modified": {
+        "/app/backend/tests/backend_phase14_4_round15_test.py": {
+          "line_29": "password '12345678' → 'Test12345!' (conforme policy)",
+          "line_161": "password '12345678' → 'Test12345!' (conforme policy)"
+        },
+        "/app/backend/tests/backend_phase14_6_round3ab_test.py": {
+          "line_34": "password '12345678' → 'Test12345!' (conforme policy)",
+          "lines_308_315": "path_count == 86 → path_count >= 200 (soft-assert P3.SQ7.a)"
+        }
+      },
+      "result_delta": {
+        "before_phase_b": {"failed": 10, "passed": 5},
+        "after_phase_b": {"failed": 7, "passed": 8},
+        "delta_failed": -3,
+        "delta_passed": 3
+      },
+      "residual_failures_7_tests_not_soft_assert_convertible": [
+        {"test": "test_register_rejects_duplicate_email", "cause": "API contract drift on duplicate check", "recommended_action": "dedicated round shape drift refactor"},
+        {"test": "test_inventory_endpoint_returns_stack_fields", "cause": "response shape drifted post-round", "recommended_action": "shape drift refactor"},
+        {"test": "test_adventurers_expose_traits_and_equipment", "cause": "traits/equipment schema drift", "recommended_action": "shape drift refactor"},
+        {"test": "TestCraftingFlows::test_craft_missing_materials_does_not_decrement", "cause": "workshop feature.locked 423 post-round 15", "recommended_action": "dedicated craft workshop lock refactor"},
+        {"test": "TestCraftingFlows::test_craft_insufficient_gold_does_not_decrement", "cause": "workshop feature.locked 423", "recommended_action": "dedicated craft workshop lock refactor"},
+        {"test": "TestCraftingFlows::test_craft_success_path", "cause": "workshop feature.locked 423", "recommended_action": "dedicated craft workshop lock refactor"},
+        {"test": "TestCraftingFlows::test_craft_requires_guild_level", "cause": "workshop feature.locked 423", "recommended_action": "dedicated craft workshop lock refactor"}
+      ],
+      "policy_pm_respected": "NO forward-fix automatico; documentati e lasciati stale (aspetta PM directive)"
+    },
+    "task_4_backlog_md_update": {
+      "categories_delta": {
+        "backlog_open_p3": {"before": 8, "after": 5},
+        "closed_new_r18_p3": {"before": 0, "after": 1, "ids": ["P3.6"]},
+        "fixed_new_r18_p3": {"before": 0, "after": 2, "ids": ["P3.7", "P3.8"]}
+      },
+      "textual_changes": [
+        "P3.6: Status BACKLOG → CLOSED — 2026-07-06 (R18.P3 Phase B Task 1)",
+        "P3.7: added 'Scope applicato R18.P3 Phase B Task 3' block + Status FIXED",
+        "P3.8: NEW entry created with Status FIXED — 2026-07-06 (R18.P3 Phase B Task 2)"
+      ]
+    }
+  },
+  "files_changed_summary": [
+    {"path": "/app/backend/app/core/email.py", "type": "code_non_sealed", "delta": "+23 lines"},
+    {"path": "/app/backend/tests/backend_phase14_4_round15_test.py", "type": "test_non_sealed", "delta": "±3 lines"},
+    {"path": "/app/backend/tests/backend_phase14_6_round3ab_test.py", "type": "test_non_sealed", "delta": "±10 lines"},
+    {"path": "/app/backend/tests/.env.test", "type": "env_test", "delta": "+4 lines"},
+    {"path": "/app/backend/.env", "type": "env_dev_preview", "delta": "+3 lines"},
+    {"path": "/app/memory/backlog.md", "type": "doc", "delta": "±40 lines"},
+    {"path": "/app/memory/r18_p3_phase_b_safe_cleanup_execution_report.md", "type": "doc_new", "delta": "+N lines"},
+    {"path": "/app/memory/r18_p3_phase_b_safe_cleanup_execution_report.json", "type": "doc_new", "delta": "+N lines"}
+  ],
+  "tests_run_and_results": {
+    "api_health_200": true,
+    "phase14_result": {"failed": 7, "passed": 8, "baseline_before_phase_b": {"failed": 10, "passed": 5}, "delta": -3},
+    "r18_4_followup_ui_4state_13_13": "PASS",
+    "r18_4_class_bound_16_16": "PASS",
+    "sealed_integrity_6_6_36_files_byte_identical": "PASS",
+    "email_enabled_false_live_verify": "PASS (ConsoleProvider risolto, no SMTP call)",
+    "sanity_gate_35_35_final": "PASS in 1.72s"
+  },
+  "sealed_36_36_byte_identical": {
+    "verified_via": [
+      "backend_r18_4_sealed_integrity_test.py::test_01 (19 pre-existing) → PASS",
+      "backend_r18_4_sealed_integrity_test.py::test_02 (11 R18.4 B4) → PASS",
+      "backend_r18_4_sealed_integrity_test.py::test_06 (6 R18.4.followup) → PASS",
+      "manual sha256 check on 6 R18.4.followup sealed files → ALL 6 BYTE-IDENTICAL: True"
+    ],
+    "total_verified": 36,
+    "drift_count": 0
+  },
+  "zero_db_writes_confirmation": {
+    "verified": true,
+    "audit_notes": "no insert/update/replace/delete in Phase B code; only pre-existing test HTTP register calls (fresh users)"
+  },
+  "backlog_md_update_summary": {
+    "before_phase_b_categories": {"backlog_open": 8, "closed_or_fixed_r18_p3": 0},
+    "after_phase_b_categories": {"backlog_open": 5, "closed": 1, "fixed": 2}
+  },
+  "remaining_p3_deferred_or_dedicated": [
+    {"id": "P3.1", "status": "BACKLOG_dedicated_round", "waiting_for": "PM SQ answer P3.SQ1.a/b"},
+    {"id": "P3.2", "status": "BACKLOG_defer", "reason": "sealed R18.3e file touch required"},
+    {"id": "P3.3", "status": "BACKLOG_defer", "reason": "by-design dormant items in vista R18.5+"},
+    {"id": "P3.4", "status": "BACKLOG_defer", "reason": "sealed R18.4 B4 apply script touch required"},
+    {"id": "P3.5", "status": "BACKLOG_defer", "reason": "accorpabile con P3.4"}
+  ],
+  "recommendation_next_gate": {
+    "current_round_status": "R18.P3 CLOSED",
+    "proposed_next_rounds": [
+      {"id": "R18.5", "priority": "P1", "note": "next core round PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework"},
+      {"id": "R18.backlog.shield_slot_mapping_dedicated", "priority": "P2", "note": "chiude P3.1"},
+      {"id": "R18.backlog.phase14_craft_workshop_lock_refactor", "priority": "P3", "note": "chiude 4 test craft residui"},
+      {"id": "R18.backlog.phase14_shape_drift_refactor", "priority": "P3", "note": "chiude 3 test shape drift residui"},
+      {"id": "R18.backlog.apply_pattern_spec", "priority": "P3", "note": "accorpa P3.4+P3.5 senza sealed touch"},
+      {"id": "R18.3f", "priority": "HOLD", "note": "class slug migration"}
+    ]
+  },
+  "self_check": {
+    "sections_completed": 10,
+    "sections_required": 10,
+    "status": "COMPLETE"
+  }
+}

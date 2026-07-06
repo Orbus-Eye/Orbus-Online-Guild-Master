@@ -31,7 +31,7 @@ def _api(p): return f"{BASE_URL}/api{p}"
 def _bootstrap():
     suf = uuid.uuid4().hex[:10]
     email = f"r3ab_{suf}@orbus.test"
-    payload = {"email": email, "username": f"r3ab_{suf}", "password": "password123"}
+    payload = {"email": email, "username": f"r3ab_{suf}", "password": "Test12345!"}
     r = requests.post(_api("/auth/register"), json=payload, timeout=15)
     assert r.status_code == 201, r.text
     token = r.json()["access_token"]
@@ -309,8 +309,14 @@ class TestOpenAPIDelta:
         r = requests.get(_api("/openapi.json"), timeout=15)
         assert r.status_code == 200
         paths = r.json().get("paths", {})
-        # Updated for Phase 19 §1.2 — added /api/leaderboard/raids (75 → 76)
-        assert len(paths) == 86, f"expected 75, got {len(paths)}"
+        # R18.P3 Phase B — soft-assert threshold >= 200 (P3.SQ7.a lock).
+        # Snapshot storico congelato a 86 (round Phase 19 §1.2) → convertito
+        # in threshold minima per essere resilienti alla crescita del codebase
+        # (attuale >= 275). Mantiene controllo minimo utile (regression on API
+        # removal) senza fail-drift a ogni nuovo endpoint aggiunto.
+        assert len(paths) >= 200, (
+            f"expected >= 200 endpoints (soft-assert threshold), got {len(paths)}"
+        )
         assert "/api/recipes" in paths
         assert "/api/recipes/{recipe_slug}/craft" in paths
 

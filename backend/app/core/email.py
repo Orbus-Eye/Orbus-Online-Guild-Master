@@ -216,6 +216,10 @@ def get_email_provider() -> EmailProvider:
     """Resolve the active provider from env (memoized).
 
     Resolution order:
+      * `EMAIL_ENABLED=false`   → ConsoleProvider (info-level log, no SMTP call).
+                                   R18.P3 Phase B guard: env-flag esplicito per
+                                   disabilitare invio in test env / staging /
+                                   CI, senza toccare EMAIL_PROVIDER.
       * `EMAIL_PROVIDER=console` → ConsoleProvider
       * `EMAIL_PROVIDER=smtp`    → SMTPProvider if creds present, else fallback
       * `EMAIL_PROVIDER=resend`  → ResendProvider if RESEND_API_KEY set, else fallback
@@ -223,6 +227,19 @@ def get_email_provider() -> EmailProvider:
     """
     global _cached_provider
     if _cached_provider is not None:
+        return _cached_provider
+
+    # R18.P3 Phase B — env-flag guard esplicito. Se EMAIL_ENABLED=false il
+    # provider è forzato a ConsoleProvider (log info, no SMTP). Default true
+    # per backward-compat produzione.
+    enabled_raw = (os.environ.get("EMAIL_ENABLED") or "true").strip().lower()
+    if enabled_raw in ("false", "0", "no", "off"):
+        logger.info(
+            "[EMAIL] EMAIL_ENABLED=%s — email delivery disabled, "
+            "using ConsoleProvider (no SMTP call).",
+            enabled_raw,
+        )
+        _cached_provider = ConsoleProvider()
         return _cached_provider
 
     requested = (os.environ.get("EMAIL_PROVIDER") or "").strip().lower()

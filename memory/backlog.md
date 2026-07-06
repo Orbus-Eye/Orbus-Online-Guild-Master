@@ -36,7 +36,7 @@ Origine di verità dei backlog aperti dei round R18.*.
 - **Priorità**: P3
 - **Blocker**: none — sblocca SQ7 UI activation futura.
 - **Non fare**: modificare serializer runtime senza GO PM esplicito.
-- **Status**: BACKLOG
+- **Status**: **CLOSED — 2026-07-06 (R18.P3 Phase B Task 1)**. Completato in R18.4.followup Phase B (serializer `item_public()` esteso con `slot_type` + `item_binding_policy` + `is_universal`) e sigillato in Phase C (SEAL 6/6 byte-identical). Verifica in R18.P3 Phase A triage sezione P3.6 (audit live `GET /api/items` conferma esposizione dei 3 field). Chiusura amministrativa lock R18.P3 Phase B.
 
 ---
 
@@ -199,12 +199,25 @@ Vuoto.
   - **Path count congelato**: `test_path_count_now_45` si aspetta 86 paths ma il codebase attuale ne ha 275 (crescita normale post round 14–18).
 - **Non correlati a R18.4/followup**: verificato che il fail esiste anche pre-Phase B/C (git blame + timestamp). Nessuna modifica in Phase B o Phase C ha aggravato o causato questi drift.
 - **Priorità**: **P3** (test stale, non impatta runtime; regression coverage attivo garantito da suite più recenti).
-- **Scope**:
-  - refactor helper `_make_user_with_guild` in `backend_phase14_4_round15_test.py` per usare password conforme alla policy corrente
-  - refresh dello snapshot `path_count` in `backend_phase14_6_round3ab_test.py` al valore attuale del codebase
-  - opzionale: convertire il path count check in soft-assert (soglia minima) per evitare stale drift a ogni nuovo endpoint
+- **Scope applicato R18.P3 Phase B Task 3 (P3.SQ7.a=(b) soft-assert threshold)**:
+  - `_make_user_with_guild` in `backend_phase14_4_round15_test.py:29`: password aggiornata da `password123` a `Test12345!` (conforme policy corrente: min 8 char, uppercase, digit, special).
+  - `test_register_rejects_duplicate_email` in `backend_phase14_4_round15_test.py:164`: stessa correzione password conforme.
+  - `test_path_count_now_45` in `backend_phase14_6_round3ab_test.py:308`: convertito da hardcoded `== 86` a **soft-assert `>= 200`** (P3.SQ7.a lock, non forzato hardcoded a 275).
 - **Non fare**: modificare la logica applicativa; è solo debito di test stale.
-- **Round dedicato**: da schedulare come `R18.backlog.phase14_legacy_test_cleanup` quando prioritizzato.
+- **Status**: **FIXED — 2026-07-06 (R18.P3 Phase B Task 3)**. Verifica post-fix nel report `r18_p3_phase_b_safe_cleanup_execution_report.md`.
+
+---
+
+### [BACKLOG] R18.backlog — SMTPRecipientsRefused warning on register flow
+- **Aperto**: 2026-07-06 (durante R18.4.followup Phase C, chiude Nota 2 del PM sui log noise)
+- **Origine**: log backend durante test suite `POST /api/auth/register` con email fittizia `t09a_XXX@orbus.test` → `[EMAIL/smtp] send failed host=smtp.ionos.it err=SMTPRecipientsRefused`. Register flow completa comunque (`201 Created`), solo rumore log.
+- **Priorità**: **P3** (config-only, no runtime enforcement).
+- **Scope applicato R18.P3 Phase B Task 2 (P3.SQ8.a=(b) env-flag esplicito)**:
+  - Aggiunto supporto env var `EMAIL_ENABLED` in `backend/app/core/email.py::get_email_provider()` (default `true` per backward-compat produzione).
+  - Se `EMAIL_ENABLED=false` (case-insensitive `false`/`0`/`no`/`off`): forza `ConsoleProvider` (log INFO-level, no SMTP call, no exception).
+  - Aggiornato `backend/tests/.env.test` con `EMAIL_ENABLED=false` per test env.
+- **Impatto**: 5-15 righe in `backend/app/core/email.py` + 4 righe env test file. Zero refactor auth flow. Nessun impatto produzione (default `true`).
+- **Status**: **FIXED — 2026-07-06 (R18.P3 Phase B Task 2)**. Verifica post-fix nel report `r18_p3_phase_b_safe_cleanup_execution_report.md`.
 
 ---
 
