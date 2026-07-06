@@ -1,0 +1,181 @@
+{
+  "meta": {
+    "round": "R18.P3",
+    "topic": "Post-R18.4 Cleanup & Backlog Triage",
+    "phase": "A",
+    "stage": "triage_read_only",
+    "executed_at_utc": "2026-07-06T11:40:00Z",
+    "author": "MainAgent (E1)",
+    "governance": "zero DB writes, zero code changes, zero sealed touch (36 sigilli byte-identical)"
+  },
+  "methodology": {
+    "type": "read_only_audit",
+    "tools_used": ["grep", "pytest (read-only rerun)", "curl to public endpoints", "MongoClient find() only"],
+    "no_apply_scripts_executed": true,
+    "no_test_rewrite": true,
+    "no_frontend_or_backend_code_changes": true
+  },
+  "p3_triage": [
+    {
+      "id": "P3.1",
+      "backlog_id": "R18.4.followup — Shield slot mapping (SQ1)",
+      "origin": "R18.4 Phase A discovery (backlog SQ1)",
+      "current_state": "open — PM decision required",
+      "technical_analysis": "2 shield attivi in catalog live (aegis_of_the_defender, thornwood_shield): item_type=shield, slot_type=armor. Frontend fallback slot_type ?? item_type permette equip normale. Nessun bug funzionale attivo. Domanda: shield deve avere slot dedicato o mantenere collapse in armor?",
+      "recommendation": "dedicated_round",
+      "risk": "medium",
+      "risk_reason": "schema change su items collection, updates a equipment/services.py, UI ridisegno equipment page",
+      "tests_required_if_fixed": ["T-shield-01 schema migration idempotency", "T-shield-02 equip flow con nuovo slot", "T-shield-03 retrocompatibilità equipment attuali"],
+      "impact": ["db_migration", "backend_code", "frontend_code", "test"],
+      "sub_questions_pm": [
+        "P3.SQ1.a — promuovere shield a slot dedicato o mantenere collapse in armor?",
+        "P3.SQ1.b — se dedicato, quarto slot indipendente o alternativo a weapon (dual-wield)?"
+      ]
+    },
+    {
+      "id": "P3.2",
+      "backlog_id": "R18.4.backlog — specialization_unlocks dead branch cleanup (SQ2)",
+      "origin": "R18.4 Phase A discovery (backlog SQ2)",
+      "current_state": "open — dead code confermato",
+      "technical_analysis": "Query db.classes.find({specialization_unlocks: {$exists: true}}) → 0 documenti. Il campo non esiste in nessuna class doc. Branch dead in equipment/compatibility.py (sealed R18.3e) e round18_4_apply_class_bound_apply.py (sealed R18.4 B4). Cleanup richiederebbe re-seal.",
+      "recommendation": "defer",
+      "risk": "low",
+      "risk_reason": "dead code inerte, no runtime impact",
+      "tests_required_if_fixed": ["T-spec-01 assert branch never triggered"],
+      "impact": ["doc_only"],
+      "sub_questions_pm": [
+        "P3.SQ2.a — mantenere dead branch (debt permanente) o schedulare dedicated re-seal round?"
+      ]
+    },
+    {
+      "id": "P3.3",
+      "backlog_id": "R18.4.backlog — berserker/assassin dormant signature items (SQ4)",
+      "origin": "R18.4 backlog SQ4",
+      "current_state": "open — items presenti ma classi dormant (by-design)",
+      "technical_analysis": "84 items con reference a berserker/assassin come recommended_classes o required_class_optional (drake_slayer_*, goblin_hunter_ring, ecc.). Classi berserker/assassin non attivate (unlock via specialization roadmap futura). Dati seed pre-preparati.",
+      "recommendation": "defer",
+      "risk": "low",
+      "risk_reason": "by-design behavior in vista R18.5+ unlock roadmap",
+      "tests_required_if_fixed": [],
+      "impact": ["none_in_p3"],
+      "sub_questions_pm": []
+    },
+    {
+      "id": "P3.4",
+      "backlog_id": "R18.4.backlog — Backfill Apply Idempotency Counter Pattern",
+      "origin": "R18.4 B3 risk note",
+      "current_state": "open — technical debt su sealed apply scripts",
+      "technical_analysis": "round18_4_backfill_slot_type_apply.py + round18_4_apply_class_bound_apply.py (entrambi sealed R18.4 B4) hanno audit_event ma mancano counter espliciti (already_present_skip, no_change_delta_count). Debito cosmetico non-blocking.",
+      "recommendation": "defer",
+      "risk": "low",
+      "risk_reason": "audit già registrato; counter mancante è cosmetico",
+      "tests_required_if_fixed": ["T-apply-01 apply pattern spec compliance"],
+      "impact": ["doc_only_or_dedicated_round"],
+      "sub_questions_pm": [
+        "P3.SQ4.a — produrre R18.apply.pattern.spec.md guideline (safe) o dedicated round re-seal apply scripts?"
+      ]
+    },
+    {
+      "id": "P3.5",
+      "backlog_id": "R18.4.backlog — Class-Bound Apply Zero-Write Audit Noise",
+      "origin": "R18.4 B3 risk note",
+      "current_state": "open — technical debt su sealed apply script",
+      "technical_analysis": "round18_4_apply_class_bound_apply.py (sealed) chiama db.audit_log.insert_one(audit_event) anche quando delta=0 (no rows to update). Audit noise ma nessun impatto funzionale.",
+      "recommendation": "defer",
+      "risk": "low",
+      "risk_reason": "rumore audit non impatta runtime",
+      "tests_required_if_fixed": ["T-apply-02 skip insert when delta=0"],
+      "impact": ["doc_or_dedicated_round"],
+      "sub_questions_pm": [
+        "accorpato con P3.SQ4.a"
+      ]
+    },
+    {
+      "id": "P3.6",
+      "backlog_id": "R18.4.followup — Public API serializer exposure",
+      "origin": "Tester nota POST-APPLY R18.4 B4",
+      "current_state": "probably_completed",
+      "technical_analysis": "Verifica live GET /api/items (2026-07-06T11:33:00Z): item_binding_policy ESPOSTO, slot_type ESPOSTO, is_universal ESPOSTO. Sample: item_binding_policy=soft slot_type=weapon is_universal=False. Coperto da test t06 test_item_public_exposes_new_r18_4_fields PASS.",
+      "recommendation": "close_now",
+      "risk": "low",
+      "risk_reason": "chiusura amministrativa",
+      "tests_required_if_fixed": ["already_covered_by_t06"],
+      "impact": ["doc_only"],
+      "sub_questions_pm": []
+    },
+    {
+      "id": "P3.7",
+      "backlog_id": "R18.backlog — phase14_* legacy regression debt cleanup",
+      "origin": "R18.4.followup Phase C (chiude Nota 2 PM)",
+      "current_state": "open — 10 test failed confermato",
+      "technical_analysis": "Rerun 2026-07-06: pytest backend_phase14_4_round15_test.py + backend_phase14_6_round3ab_test.py → 10 failed, 5 passed, 2 rerun. Cause: password policy stale (12345678 non conforme) + path_count congelato a 86 vs 275 attuali.",
+      "recommendation": "fix_now_safe",
+      "risk": "low",
+      "risk_reason": "test refresh, zero logica applicativa toccata",
+      "tests_required_if_fixed": ["rerun completo phase14_* deve essere green post-fix"],
+      "impact": ["test_only"],
+      "sub_questions_pm": [
+        "P3.SQ7.a — path_count refresh hardcoded a 275 o soft-assert threshold (>= 200)?"
+      ]
+    },
+    {
+      "id": "P3.8",
+      "backlog_id": "R18.backlog — SMTPRecipientsRefused warning on register flow",
+      "origin": "R18.4.followup Phase C (log noise in test env)",
+      "current_state": "open — warning noto in test env",
+      "technical_analysis": "backend/.env SMTP_HOST=smtp.ionos.it. POST /api/auth/register con email fittizia @orbus.test genera SMTPRecipientsRefused. Register flow completa comunque (201 Created), solo rumore log.",
+      "recommendation": "fix_now_safe",
+      "risk": "low",
+      "risk_reason": "guard config-level, no sealed touch",
+      "tests_required_if_fixed": ["T-smtp-01 register con @orbus.test → no SMTP call no ERROR log"],
+      "impact": ["backend_code_email_service", "env_test_flag"],
+      "sub_questions_pm": [
+        "P3.SQ8.a — dominio @*.test auto-skip SMTP o env flag EMAIL_ENABLED=false esplicito?"
+      ]
+    }
+  ],
+  "summary_classification": {
+    "close_now": {"count": 1, "ids": ["P3.6"]},
+    "duplicate": {"count": 0, "ids": []},
+    "fix_now_safe": {"count": 2, "ids": ["P3.7", "P3.8"]},
+    "dedicated_round": {"count": 1, "ids": ["P3.1"]},
+    "defer_keep_hold": {"count": 4, "ids": ["P3.2", "P3.3", "P3.4", "P3.5"]},
+    "total": 8
+  },
+  "sub_questions_pm_aggregate": [
+    {"id": "P3.SQ1.a", "text": "Shield slot dedicato o collapse in armor?"},
+    {"id": "P3.SQ1.b", "text": "Se dedicato, quarto slot indipendente o alternativo a weapon (dual-wield)?"},
+    {"id": "P3.SQ2.a", "text": "Mantenere dead branch specialization_unlocks o schedulare re-seal round?"},
+    {"id": "P3.SQ4.a", "text": "Apply pattern spec (safe) o dedicated round re-seal apply scripts?"},
+    {"id": "P3.SQ7.a", "text": "path_count refresh hardcoded o soft-assert threshold?"},
+    {"id": "P3.SQ8.a", "text": "SMTP guard pattern: dominio @*.test auto-skip o env flag EMAIL_ENABLED=false?"}
+  ],
+  "phase_b_overall_risk": "low",
+  "phase_b_proposed_scope": {
+    "order_of_execution": [
+      {"step": 1, "action": "chiusura amministrativa P3.6 — move a Backlog risolti", "impact": "doc"},
+      {"step": 2, "action": "fix P3.8 SMTP guard (dopo P3.SQ8.a)", "impact": "backend_email + env_test"},
+      {"step": 3, "action": "fix P3.7 phase14_* legacy cleanup (dopo P3.SQ7.a)", "impact": "test_only"},
+      {"step": 4, "action": "update backlog.md con classificazioni close/defer per gli 8 items", "impact": "doc"}
+    ],
+    "stop_conditions": ["qualsiasi touch a sealed files", "runtime enforcement change", "DB write imprevisto", "scope creep verso items dedicated_round o defer"]
+  },
+  "governance_check": {
+    "sealed_36_36_byte_identical": true,
+    "verified_via": "pytest backend/tests/backend_r18_4_sealed_integrity_test.py → 6/6 PASSED",
+    "zero_db_writes_phase_a": true,
+    "zero_code_changes_phase_a": true,
+    "diff_working_tree_phase_a": [
+      "/app/memory/PRD.md (documental only)",
+      "/app/memory/r18_p3_post_r18_4_cleanup_triage.md (new)",
+      "/app/memory/r18_p3_post_r18_4_cleanup_triage.json (new)"
+    ],
+    "zero_apply_script_execution": true,
+    "phase14_tests_not_touched_in_phase_a": true
+  },
+  "self_check": {
+    "sections_completed": 10,
+    "sections_required": 10,
+    "status": "COMPLETE"
+  }
+}

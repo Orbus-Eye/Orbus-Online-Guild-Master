@@ -1,5 +1,25 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## 🧹 R18.P3 — Post-R18.4 Cleanup & Backlog Triage — Phase A READ-ONLY (2026-07-06)
+
+**Round attivo**: `R18.P3 — Post-R18.4 Cleanup & Backlog Triage`
+**Fase attiva**: A — Triage READ-ONLY di 8 P3 backlog items
+**Documento triage**: `/app/memory/r18_p3_post_r18_4_cleanup_triage.md/.json`
+**Governance**: zero DB writes, zero code changes, zero sealed touch (36 sigilli byte-identical).
+
+### Stato prossimi round
+- **R18.5** — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework → **NON aperto** (attesa GO PM)
+- **R18.3f** — Class Slug Migration → **HOLD**
+- **Phase D** — Playwright snapshot E2E → opzionale, delegabile al testing subagent
+
+### Deliverable UI 4-state (chiuso in R18.4.followup Phase C)
+- Badge **Bloccato / Non consigliato / Consigliato / Universale** con icona lucide + testo IT
+- Endpoint `GET /api/adventurers/{id}/eligible-items` con contract 10-field
+- Serializer `item_public()` espone raw `item_binding_policy` + canonical `slot_type` + derived `is_universal`
+- Slot fallback `slot_type ?? item_type` applicato in `Inventory.jsx`, `InventoryEquipModal.jsx`, `AdventurerEquipment.jsx`
+
+---
+
 ## 🔒 R18.4.followup Phase C — UI 4-State Item Compatibility Activation — CLOSED & SEALED (2026-07-06)
 
 **Round**: `R18.4.followup — UI 4-State Item Compatibility Activation`
