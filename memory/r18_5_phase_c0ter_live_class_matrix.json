@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "round_title": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "round_subtitle": "Lv60 cap, item-centered endgame, lore-driven equipment",
+    "phase": "C0-ter",
+    "description": "Live Class Matrix Integration — 5 classi PM-locked con main stat + armor/weapon proficiency + identità narrativa",
+    "locked_at_utc": "2026-07-06T20:00:00Z",
+    "governance": "DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes",
+    "predecessors_authoritative": [
+      "r18_5_gate2_pm_decisions.md/.json",
+      "r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json",
+      "r18_5_phase_b_gate1_pm_decisions.md/.json"
+    ],
+    "successor_status": "Phase C tech dry-run — BLOCCATO fino a nuovo gate PM"
+  },
+  "0_scope": {
+    "objective": "Registrare le 5 classi live PM verbatim con main stat + proficiency + identità + vietati",
+    "no_new_decisions": true,
+    "integration_only": true
+  },
+  "live_classes_5": {
+    "Warrior": {
+      "label_it": "Guerriero",
+      "main_stat": "Forza",
+      "armor_proficiency": ["maglia", "piastre"],
+      "weapon_proficiency": ["spada", "ascia", "martello", "scudo", "lancia", "arma_in_asta"],
+      "identita_pm_verbatim": "frontliner, uso naturale di piastre e scudi",
+      "vietato": ["stoffa/cuoio come equip principale", "focus", "tomi", "bastoni magici"]
+    },
+    "Rogue": {
+      "label_it": "Ladro",
+      "main_stat": "Destrezza",
+      "armor_proficiency": ["cuoio"],
+      "weapon_proficiency": ["pugnale", "spada", "balestra"],
+      "identita_pm_verbatim": "danno agile, equip leggero",
+      "vietato": ["maglia/piastre", "scudo", "bastoni", "tomi", "focus"]
+    },
+    "Mage": {
+      "label_it": "Mago",
+      "main_stat": "Intelligenza",
+      "armor_proficiency": ["stoffa"],
+      "weapon_proficiency": ["bastone", "tomo", "focus", "pugnale"],
+      "identita_pm_verbatim": "caster arcano, fragile ma potente",
+      "vietato": ["cuoio/maglia/piastre", "scudo", "armi pesanti"]
+    },
+    "Priest": {
+      "label_it": "Priest (legacy label mantenuto)",
+      "main_stat": "Saggezza",
+      "armor_proficiency": ["stoffa"],
+      "weapon_proficiency": ["bastone", "martello", "focus", "reliquia"],
+      "identita_pm_verbatim": "caster sacro/support, NON Cleric drift, NON Warrior con cure",
+      "vietato": ["piastre (in questa fase)", "spade/asce/pugnali come identità primaria"]
+    },
+    "Ranger": {
+      "label_it": "Ranger (legacy label mantenuto)",
+      "main_stat": "Destrezza",
+      "armor_proficiency": ["cuoio", "maglia"],
+      "weapon_proficiency": ["arco", "balestra", "spada", "pugnale", "lancia"],
+      "identita_pm_verbatim": "combattente mobile a distanza",
+      "vietato": ["piastre", "focus/tomi/bastoni da caster"]
+    }
+  },
+  "cross_tab_class_x_armor_proficiency": {
+    "armor_types_4": ["stoffa", "cuoio", "maglia", "piastre"],
+    "matrix": {
+      "Warrior": {"stoffa": false, "cuoio": false, "maglia": true,  "piastre": true},
+      "Rogue":   {"stoffa": false, "cuoio": true,  "maglia": false, "piastre": false},
+      "Mage":    {"stoffa": true,  "cuoio": false, "maglia": false, "piastre": false},
+      "Priest":  {"stoffa": true,  "cuoio": false, "maglia": false, "piastre": false},
+      "Ranger":  {"stoffa": false, "cuoio": true,  "maglia": true,  "piastre": false}
+    },
+    "coherence_observations": {
+      "stoffa": "solo Mage e Priest (caster)",
+      "cuoio": "solo Rogue e Ranger (agili)",
+      "maglia": "solo Warrior e Ranger (ibrido difesa-mobilità)",
+      "piastre": "solo Warrior (frontliner)",
+      "priest_no_piastre_note": "esclude piastre 'in questa fase' (PM verbatim), riservato per possibile futura variante"
+    }
+  },
+  "cross_tab_class_x_weapon_proficiency": {
+    "weapon_families_16": ["spada","ascia","martello","pugnale","arco","balestra","bastone","tomo","focus","strumento","falce","lancia","arma_in_asta","scudo","reliquia","trinket"],
+    "matrix": {
+      "Warrior": {"spada":true,"ascia":true,"martello":true,"pugnale":false,"arco":false,"balestra":false,"bastone":false,"tomo":false,"focus":false,"strumento":false,"falce":false,"lancia":true,"arma_in_asta":true,"scudo":true,"reliquia":false,"trinket":false},
+      "Rogue":   {"spada":true,"ascia":false,"martello":false,"pugnale":true,"arco":false,"balestra":true,"bastone":false,"tomo":false,"focus":false,"strumento":false,"falce":false,"lancia":false,"arma_in_asta":false,"scudo":false,"reliquia":false,"trinket":false},
+      "Mage":    {"spada":false,"ascia":false,"martello":false,"pugnale":true,"arco":false,"balestra":false,"bastone":true,"tomo":true,"focus":true,"strumento":false,"falce":false,"lancia":false,"arma_in_asta":false,"scudo":false,"reliquia":false,"trinket":false},
+      "Priest":  {"spada":false,"ascia":false,"martello":true,"pugnale":false,"arco":false,"balestra":false,"bastone":true,"tomo":false,"focus":true,"strumento":false,"falce":false,"lancia":false,"arma_in_asta":false,"scudo":false,"reliquia":true,"trinket":false},
+      "Ranger":  {"spada":true,"ascia":false,"martello":false,"pugnale":true,"arco":true,"balestra":true,"bastone":false,"tomo":false,"focus":false,"strumento":false,"falce":false,"lancia":true,"arma_in_asta":false,"scudo":false,"reliquia":false,"trinket":false}
+    },
+    "weapon_count_per_class": {"Warrior": 6, "Rogue": 3, "Mage": 4, "Priest": 4, "Ranger": 5},
+    "exclusivity_observations": {
+      "scudo": "esclusivo Warrior (coerente con frontliner + uso naturale di scudi)",
+      "reliquia": "esclusiva Priest (coerente con caster sacro/support)",
+      "arma_in_asta": "esclusiva Warrior",
+      "ascia": "esclusiva Warrior",
+      "tomo": "esclusivo Mage (coerente con caster arcano)",
+      "arco": "esclusivo Ranger (coerente con combattente mobile a distanza)"
+    }
+  },
+  "weapon_families_unassigned_pending_pm": {
+    "strumento": {
+      "status": "non assegnato",
+      "candidate_use": "Bard drift (backlog) o classe futura (musicista/bardo/scaldo)",
+      "pending_pm_approval": true
+    },
+    "falce": {
+      "status": "non assegnato",
+      "candidate_use": "classe futura (reaper/necromante/druido?)",
+      "pending_pm_approval": true
+    },
+    "trinket": {
+      "status": "non assegnato",
+      "candidate_use": "accessorio generico — possibile universal (utilizzabile da tutte le classi) o riservato a classi future",
+      "pending_pm_approval": true
+    },
+    "governance_note": "Emergent NON assegna autonomamente queste 3 famiglie. Verranno lockate dal PM in future gate."
+  },
+  "impact_analysis_future_phase_c_tech": {
+    "note": "Documentale, NON implementato in C0-ter. Phase C tech dry-run BLOCCATO fino a nuovo gate PM",
+    "eligible_items_endpoint": {
+      "path": "/api/adventurers/{id}/eligible-items",
+      "seal_status": "SEALED R18.4.followup Phase B/C",
+      "current_states": ["universal", "recommended", "not_recommended", "blocked"],
+      "future_extension": "pre-4-state proficiency hard block check",
+      "new_reason_codes": ["proficiency_missing_armor", "proficiency_missing_weapon"],
+      "blocked_state_on_proficiency": true,
+      "seal_break_warning": "derive_ui_4state SEALED — richiede gate PM dedicato per estensione (o wrapping approach)"
+    },
+    "ui_compatibility_badge": {
+      "seal_status": "SEALED R18.4.followup C (ItemCompatibilityBadge)",
+      "current_states": 4,
+      "option_A": "5° stato 'Non equipaggiabile per proficiency' (badge dedicato)",
+      "option_B": "Integrare in 'Bloccato' con tooltip reason_code",
+      "pm_preference": "PENDING — da decidere in prossimo gate"
+    },
+    "auto_equip_logic": {
+      "file": "app/equipment/auto_equip.py",
+      "sealed": false,
+      "current_behavior": "skip con warning su compatibility mismatch",
+      "future_behavior": "hard block su proficiency mismatch (armor o weapon)"
+    },
+    "item_public_serializer": {
+      "sealed": "verifica in Phase C tech (potrebbe essere SEALED)",
+      "new_fields_required": ["armor_type", "weapon_family"],
+      "example_weapon": {"slot_type": "weapon", "weapon_family": "spada", "armor_type": null},
+      "example_armor": {"slot_type": "chest", "weapon_family": null, "armor_type": "piastre"}
+    },
+    "db_backfill_dry_run_scripts": [
+      {"name": "round18_5_backfill_weapon_family_dryrun.py", "purpose": "mapping item.slot_type=weapon → weapon_family da metadata/name/subtype"},
+      {"name": "round18_5_backfill_armor_type_dryrun.py", "purpose": "analogo per armor"}
+    ],
+    "idempotency": "no_change_skip counter mandatory"
+  },
+  "self_check_c0ter": {
+    "5_classes_pm_verbatim_registered": true,
+    "main_stat_per_class": {"Warrior": "Forza", "Rogue": "Destrezza", "Mage": "Intelligenza", "Priest": "Saggezza", "Ranger": "Destrezza"},
+    "armor_proficiency_counts": {"Warrior": 2, "Rogue": 1, "Mage": 1, "Priest": 1, "Ranger": 2},
+    "weapon_proficiency_counts": {"Warrior": 6, "Rogue": 3, "Mage": 4, "Priest": 4, "Ranger": 5},
+    "identita_narrativa_pm_verbatim": true,
+    "vietati_espliciti_pm": true,
+    "cross_tab_armor_5x4_complete": true,
+    "cross_tab_weapon_5x16_complete": true,
+    "coherence_cross_tab_vs_identity_verified": true,
+    "weapon_families_unassigned_pending_pm_explicit": ["strumento", "falce", "trinket"],
+    "impact_analysis_documented": true,
+    "canonical_naming_mage_priest_only": true,
+    "no_wizard_cleric_drift": true,
+    "no_new_decisions_introduced": true,
+    "zero_db_zero_code_seals_intact": true,
+    "status": "PHASE C0-TER CLOSED — 5 classi live matrice pronta; Phase C tech dry-run BLOCCATO fino a nuovo gate PM"
+  },
+  "notes_for_pm": [
+    "Weapon families non coperte (strumento, falce, trinket) restano congelate — servono gate PM per assegnazione o marcare universal (trinket)",
+    "Rottura sigillo derive_ui_4state o item_public() per proficiency check richiede gate PM dedicato con motivazione + preservation plan 36 SHA256",
+    "6 remaining non-blocking items (Gate 2 sez. 9) restano audit-only"
+  ]
+}

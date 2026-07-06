@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "round_title": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "round_subtitle": "Lv60 cap, item-centered endgame, lore-driven equipment",
+    "gate": 2,
+    "unlocks": "Phase C0-ter Live Class Matrix + successive expansion",
+    "authority": "PM Orchestrator",
+    "locked_at_utc": "2026-07-06T20:00:00Z",
+    "governance": "DOCUMENTAL ONLY — solo audit trail PM verbatim, ZERO nuove decisioni introdotte",
+    "predecessors": [
+      "r18_5_phase_b_gate1_pm_decisions.md/.json (Gate 1)",
+      "r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json (C0-bis)"
+    ],
+    "successor": "r18_5_phase_c0ter_live_class_matrix.md/.json"
+  },
+  "1_tier_rarity_many_to_many": {
+    "gate1_sq12_1to1_mapping": "REMOVED",
+    "new_rule": {
+      "tier": "fascia tecnica / ILVL / bracket di potenza",
+      "rarity": "qualità, rarità di drop e valore"
+    },
+    "examples": {
+      "T2_can_be": ["Common", "Uncommon", "Rare"],
+      "T5_can_be": ["Rare", "Epic", "Legendary"]
+    },
+    "legendary_scope": "Legendary NON significa 'tutto T5' — è solo una piccola parte di T5",
+    "gate1_sq12_status": "colorazione UI badge resta valida, ma NON più 1:1 mapping numerico rarity↔tier"
+  },
+  "2_crosswalk_1500_pm_approved": {
+    "matrix": {
+      "T1": {"Common": 220, "Uncommon": 80,  "Rare": 0,   "Epic": 0,   "Legendary": 0,  "row_total": 300},
+      "T2": {"Common": 150, "Uncommon": 150, "Rare": 50,  "Epic": 0,   "Legendary": 0,  "row_total": 350},
+      "T3": {"Common": 30,  "Uncommon": 160, "Rare": 130, "Epic": 30,  "Legendary": 0,  "row_total": 350},
+      "T4": {"Common": 0,   "Uncommon": 60,  "Rare": 150, "Epic": 90,  "Legendary": 0,  "row_total": 300},
+      "T5": {"Common": 0,   "Uncommon": 0,   "Rare": 70,  "Epic": 115, "Legendary": 15, "row_total": 200}
+    },
+    "column_totals": {"Common": 400, "Uncommon": 450, "Rare": 400, "Epic": 235, "Legendary": 15},
+    "grand_total": 1500,
+    "arithmetic_verification": {
+      "row_sums_ok": true,
+      "column_sums_ok": true,
+      "grand_total_ok": true,
+      "verified_at_utc": "2026-07-06T20:00:00Z"
+    },
+    "design_intent_per_tier": {
+      "T1": "Early game — prevalentemente Common (220), Uncommon (80)",
+      "T2": "Progressione iniziale/intermedia — Common ancora (150), Uncommon (150), Rare iniziano (50)",
+      "T3": "Mid game serio — Rare importanti (130), Uncommon dominanti (160), Epic iniziano (30)",
+      "T4": "Late game — Rare/Epic dominanti (150+90), Uncommon transizione (60)",
+      "T5": "Endgame — solo Rare (70) / Epic (115) / Legendary (15). NO Common/Uncommon a T5"
+    },
+    "legendary_scope_final": "solo T5, max 15 item catalogo iniziale"
+  },
+  "3_canonical_naming_live_classes": {
+    "pm_locked_5_classes": [
+      {"slug": "Warrior", "label_it": "Guerriero", "legacy_note": null},
+      {"slug": "Rogue", "label_it": "Ladro", "legacy_note": null},
+      {"slug": "Mage", "label_it": "Mago", "legacy_note": "canonical — era placeholder B.1 'Wizard'"},
+      {"slug": "Priest", "label_it": "Priest (legacy label mantenuto)", "legacy_note": "NON Cleric drift — Priest resta label"},
+      {"slug": "Ranger", "label_it": "Ranger (legacy label mantenuto)", "legacy_note": null}
+    ]
+  },
+  "4_purge_drift_wizard_cleric": {
+    "rule_pm_verbatim": "Wizard e Cleric sono drift vietati, da rimuovere/correggere in file futuri e placeholder B.1 dove presenti",
+    "not_synonyms_of": ["Mage", "Priest"],
+    "no_new_classes_without_pm_gate": true,
+    "no_rename_without_pm_gate": true,
+    "purge_scope_c0ter": "SOLO DOCUMENTALE — nessun touch codice runtime",
+    "b1_extra_d_placeholder": "resta come history preserved, formalmente deprecated → canonizzazione a Mage/Priest",
+    "future_naming_use": "Mage e Priest verbatim in item/dungeon/raid/UI copy",
+    "runtime_removal": "NON in C0-ter — richiede gate PM dedicato"
+  },
+  "5_armor_proficiency_hard_block": {
+    "rule_pm_verbatim": "Se una classe non ha armor proficiency, non può equipaggiare quell'armor type",
+    "hard_block": true,
+    "not_warning": true,
+    "rejected_logic": "può equipaggiarlo chiunque, ma è consigliato ad alcuni",
+    "admitted_logic_exceptions": ["consumabili", "materiali", "risorse", "accessori generici rarissimi", "item non equipaggiabili"],
+    "runtime_impact_documental": {
+      "endpoint": "/api/adventurers/{id}/eligible-items",
+      "future_reason_code": "proficiency_missing_armor",
+      "implementation_phase": "Phase C tech dry-run"
+    }
+  },
+  "6_weapon_proficiency_hard_block": {
+    "rule_pm_verbatim": "Se una classe non ha weapon proficiency, non può equipaggiare quella weapon family",
+    "hard_block_runtime": true,
+    "symmetric_to_armor": true,
+    "runtime_impact_documental": {
+      "future_reason_code": "proficiency_missing_weapon",
+      "implementation_phase": "Phase C tech dry-run"
+    }
+  },
+  "7_main_stat_policy": {
+    "definition": "cuore della performance della classe",
+    "visibility_required": ["design item (naming, stat, utility scaling)", "futura guida classi (in-game/help/UI)"]
+  },
+  "8_equip_evaluation_order_pm_verbatim_reaffirmed": [
+    {"step": 1, "question": "Posso equipaggiarlo?", "check": "armor/weapon proficiency", "policy": "HARD BLOCK se no"},
+    {"step": 2, "question": "È adatto alla classe?", "check": "main stat"},
+    {"step": 3, "question": "Quanto è forte?", "check": "ILVL, rarity, tier"},
+    {"step": 4, "question": "Ha utility?", "check": "effetti speciali / lore / dungeon-specific"}
+  ],
+  "9_remaining_non_blocking_pm_items_audit_only": [
+    {"n": 1, "item": "Nomi e temi dei 60 dungeon", "resolution": "batch iterativi futuri"},
+    {"n": 2, "item": "Nomi e meccaniche dei 12 raid", "resolution": "batch iterativi futuri"},
+    {"n": 3, "item": "Drop rate finali per bracket / tier / rarity", "resolution": "batch iterativo futuro"},
+    {"n": 4, "item": "Lore source specifiche per ogni dungeon/raid (17 fonti × 72 istanze)", "resolution": "batch iterativo futuro"},
+    {"n": 5, "item": "Utility narrative + effetti dei 15 Legendary", "resolution": "batch iterativo futuro"},
+    {"n": 6, "item": "Signature items design finale (max 25 signature)", "resolution": "batch iterativo futuro"}
+  ],
+  "self_check_gate2": {
+    "9_sections_pm_verbatim": true,
+    "crosswalk_arithmetic_verified": true,
+    "no_new_decisions_introduced": true,
+    "audit_trail_only": true,
+    "zero_db_zero_code_seals_intact": true,
+    "status": "GATE 2 CLOSED — unlocks Phase C0-ter Live Class Matrix"
+  }
+}
