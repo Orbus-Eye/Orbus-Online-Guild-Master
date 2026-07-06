@@ -652,3 +652,112 @@ Contiene: cheat sheet Gate 1 (SQ11-SQ18), 17 lore sources, superseding note espl
 **PM Gate 2**: review C0-bis + risposte ai 10 item PENDING PM (proficiency mapping e naming drift sono bloccanti per identità classe). Solo dopo Gate 2 potrà aprirsi **Phase C0-ter** (eventuale expansion tabella 1500) o **Phase C tech dry-run** (backfill scripts documentali, sempre NO apply).
 
 
+## R18.5 Phase C0-ter — Gate 2 CLOSED + Live Class Matrix (2026-07-06T20:00:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Gate 2 CLOSED** + **Phase C0-ter CLOSED**. Attesa **PM Gate 2 review formale** del deliverable prima di sbloccare eventuale **Phase C0-quater** (batch iterativi dungeon/raid naming) OR **Phase C tech dry-run** (backfill scripts documentali, sempre NO apply). Phase C tech resta **BLOCCATA** fino a nuovo gate PM esplicito.
+
+### File autoritativi C0-ter (untracked, ready for PM review)
+
+| File | Path | SHA256 |
+|---|---|---|
+| Gate 2 PM Decisions Record (MD) | `/app/memory/r18_5_gate2_pm_decisions.md` | `a269d3a807af1c85e02fd1a7c31e5efcab969a3b69a4f3207515eb9b42603ec3` |
+| Gate 2 PM Decisions Record (JSON) | `/app/memory/r18_5_gate2_pm_decisions.json` | `36b68234fdd4b2261a93e3f5cff115b2ca1e37dad9049e7b3e9c8ba14361f2e8` |
+| Phase C0-ter Live Class Matrix (MD) | `/app/memory/r18_5_phase_c0ter_live_class_matrix.md` | `1fdebdd26c0464f896e04d34f5c930c96c15105c79922d0b0510a863879ad692` |
+| Phase C0-ter Live Class Matrix (JSON) | `/app/memory/r18_5_phase_c0ter_live_class_matrix.json` | `859b29129b693d3d775a1dc4e82bdf65df9656d03a0929279a058327f6f872e4` |
+
+### 🔒 3 decisioni bloccanti Gate 2 risolte inline (verbatim PM)
+
+1. **Tier ↔ Rarity many-to-many** (Gate 2 sez. 1) — il mapping 1:1 di Gate 1 SQ12 è rimosso. Tier = fascia tecnica/ILVL; Rarity = qualità e drop. Un T2 può essere Common/Uncommon/Rare; un T5 può essere Rare/Epic/Legendary. Legendary NON significa "tutto T5" — è solo una piccola parte di T5. Gate 1 SQ12 resta valido come **colorazione UI del badge**, non più mapping numerico.
+
+2. **Canonical naming classi live** (Gate 2 sez. 3) — 5 classi PM-lockate: **Warrior**, **Rogue**, **Mage** (canonical, era placeholder B.1 "Wizard"), **Priest** (legacy label mantenuto, NON Cleric drift), **Ranger**.
+
+3. **5 classi live identity** (C0-ter sez. 1-5) — matrice PM verbatim registrata:
+
+| Classe | Main stat | Armor prof. | Weapon prof. (count) |
+|---|---|---|---|
+| Warrior | Forza | maglia, piastre | spada, ascia, martello, scudo, lancia, arma_in_asta (6) |
+| Rogue | Destrezza | cuoio | pugnale, spada, balestra (3) |
+| Mage | Intelligenza | stoffa | bastone, tomo, focus, pugnale (4) |
+| Priest | Saggezza | stoffa | bastone, martello, focus, reliquia (4) |
+| Ranger | Destrezza | cuoio, maglia | arco, balestra, spada, pugnale, lancia (5) |
+
+### 📊 Crosswalk 1500 item PM-approved (aritmeticamente verificata)
+
+Matrice 5×5 Tier×Rarity con **verifica aritmetica eseguita**: righe tier 300+350+350+300+200 = **1500**, colonne rarity 400+450+400+235+15 = **1500**. Cfr. `r18_5_gate2_pm_decisions.md` sez. 2 per la tabella completa.
+
+- **T1**: 220 Common + 80 Uncommon = 300
+- **T2**: 150 Common + 150 Uncommon + 50 Rare = 350
+- **T3**: 30 Common + 160 Uncommon + 130 Rare + 30 Epic = 350
+- **T4**: 60 Uncommon + 150 Rare + 90 Epic = 300
+- **T5**: 70 Rare + 115 Epic + 15 Legendary = 200 (NO Common/Uncommon a T5)
+- **Legendary**: solo T5, max 15 item catalogo iniziale.
+
+### 🧹 Purge drift Wizard → Mage / Cleric → Priest (documentale)
+
+**Regola tassativa PM** (Gate 2 sez. 4):
+- **Wizard** e **Cleric** sono **drift vietati**.
+- Da rimuovere/correggere in file futuri e placeholder B.1 dove presenti.
+- NON usare come sinonimi di Mage/Priest.
+- NON introdurre nuove classi o rename senza gate PM esplicito.
+
+**Scope purge in C0-ter** (verbatim):
+- **Solo documentale**. Nessun touch al codice runtime.
+- Placeholder B.1 Extra D (Wizard, Cleric) restano nel file B.1 come **history preserved**, ma sono formalmente `deprecated` — canonizzazione a Mage/Priest.
+- Naming futuro (item, dungeon, raid, UI copy) userà **Mage** e **Priest** verbatim.
+- Rimozione fisica da codice runtime → **NON in C0-ter**, richiede gate PM dedicato.
+
+### ⚔️ 3 weapon families NON assegnate a classi live — `PENDING PM approval`
+
+3 famiglie su 16 non coperte da nessuna delle 5 classi live PM (C0-ter sez. 8):
+
+| Weapon family | Nota |
+|---|---|
+| **strumento** | Candidato per Bard drift (in backlog) o classe futura (musicista/bardo/scaldo) |
+| **falce** | Candidato per classe futura (reaper/necromante/druido?) |
+| **trinket** | Categoria "accessorio generico" — possibile universal o riservato a classi future |
+
+**Governance**: Emergent NON assegna autonomamente queste 3 famiglie. Verranno lockate dal PM in future gate.
+
+### 📋 6 remaining non-blocking PM items (verbatim Gate 2 sez. 9)
+
+Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansion di Phase C0-ter / C tech. Possono essere risolti a batch nelle fasi successive:
+
+1. **Nomi e temi dei 60 dungeon** — batch iterativi futuri.
+2. **Nomi e meccaniche dei 12 raid** — batch iterativi futuri.
+3. **Drop rate finali** per bracket / tier / rarity.
+4. **Lore source specifiche** per ogni dungeon/raid (17 fonti × 72 istanze content).
+5. **Utility narrative + effetti** dei 15 Legendary.
+6. **Signature items design finale** (max 25 signature — Gate 1 SQ13 lockato su count/policy, design specifico non ancora fissato).
+
+### 🛡️ Governance check C0-ter
+
+- ✅ **36 sigilli byte-identical** — nessuna modifica ai sealed files (verifica: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` attesa PASS)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` intatti, verificato via `git status`)
+- ✅ **Zero DB writes**
+- ✅ **Zero migrations / apply scripts**
+- ✅ **Solo audit trail verbatim PM** — nessuna decisione nuova introdotta nei file C0-ter
+- ✅ **Aritmetica crosswalk 1500 verificata** (righe + colonne + totale)
+- ✅ **Naming canonical Mage/Priest** usato ovunque nei file C0-ter (no Wizard/Cleric drift)
+
+### 🎯 Handoff — pronto per Gate 2 review PM
+
+**Prossimo step atteso** (a discrezione PM):
+- **Phase C0-quater** — batch iterativi dungeon/raid naming (60 dungeon + 12 raid, 17 lore sources × 72 istanze content). Ancora documentale.
+- **Phase C tech dry-run** — backfill scripts documentali per `weapon_family` + `armor_type` (BLOCCATO fino a nuovo gate PM esplicito). Impact analysis già registrato in C0-ter sez. 9 (endpoint `/api/adventurers/{id}/eligible-items`, UI `ItemCompatibilityBadge`, auto-equip, serializer `item_public()`, DB backfill dry-run).
+
+**Attenzione governance sigilli** (C0-ter sez. 11): la rottura del sigillo di `derive_ui_4state` o `item_public()` per aggiungere il proficiency hard-block richiede **gate PM dedicato** con motivazione esplicita e preservation plan dei 36 sigilli byte-identical (o accettazione della loro modifica con nuovo hash registry).
+
+**Files chiave R18.5 (cumulativo)**:
+- `/app/memory/r18_5_phase_a_discovery.md/.json` (Discovery)
+- `/app/memory/r18_5_phase_b1_design_lock.md/.json` (Design Lock)
+- `/app/memory/r18_5_phase_b2_implementation_plan.md/.json` (Implementation Plan)
+- `/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json` (Gate 1 CLOSED)
+- `/app/memory/r18_5_phase_c0_item_table_drafting_support.md/.json` (Phase C0 CLOSED)
+- `/app/memory/r18_5_phase_c0bis_progression_dungeon_raid_matrix.md/.json` (Phase C0-bis CLOSED)
+- `/app/memory/r18_5_pm_workspace_master.md` (PM workspace master, cumulative)
+- `/app/memory/r18_5_gate2_pm_decisions.md/.json` (**Gate 2 CLOSED** — nuovo)
+- `/app/memory/r18_5_phase_c0ter_live_class_matrix.md/.json` (**Phase C0-ter CLOSED** — nuovo)
+
+**R18.5 status flow**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → **`Gate 2` ✅ + `Phase C0-ter` ✅** → *Phase C0-quater* ⏸ *PENDING PM* / *Phase C tech dry-run* 🔒 *BLOCKED gate PM*
+
