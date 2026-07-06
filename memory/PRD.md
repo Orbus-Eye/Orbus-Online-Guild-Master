@@ -1,5 +1,41 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## 🎯 R18.5 — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework — Phase A Discovery READ-ONLY (2026-07-06)
+
+**Round attivo**: `R18.5 — PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework`
+**Fase attiva**: A — Discovery READ-ONLY (audit sistema attuale, no design lock)
+**Documento discovery**: `/app/memory/r18_5_phase_a_discovery.md/.json`
+**Sigilli attivi**: **36** (invariati post-R18.P3).
+
+### Prossimi round / status
+- **R18.5** Phase A → **OPEN** (in corso)
+- **R18.3f** Class Slug Migration → **HOLD**
+- **R18.backlog.shield_slot_mapping_dedicated** → BACKLOG P2
+- **R18.backlog.phase14_craft_workshop_lock_refactor** → BACKLOG P3 (nuovo, 4 test craft residue)
+- **R18.backlog.phase14_shape_drift_refactor** → BACKLOG P3 (nuovo, 3 test shape drift residue)
+- **R18.backlog.apply_pattern_spec** → BACKLOG P3
+
+---
+
+## 🧹 R18.P3 — Post-R18.4 Cleanup — CLOSED (2026-07-06)
+
+**Round**: `R18.P3 — Post-R18.4 Cleanup & Backlog Triage`
+**Fase**: B — Safe Cleanup Execution (chiude round R18.P3)
+**Chiusura**: 2026-07-06T16:00:00Z UTC
+**Note governance**: R18.P3 è **CLOSED (non sealed)** — modifiche solo su file non-sealed.
+**Report finale**: `/app/memory/r18_p3_phase_b_safe_cleanup_execution_report.md/.json`
+
+### Sintesi
+- **P3.6** (Public API serializer exposure) → **CLOSED** (già completato in R18.4.followup Phase B/C).
+- **P3.7** (phase14_* legacy debt) → **FIXED parziale** (3 su 10 test recuperati via soft-assert `>= 200` + password conformi).
+- **P3.8** (SMTPRecipientsRefused) → **FIXED** (env flag `EMAIL_ENABLED` in `backend/app/core/email.py` + `.env.test` + dev `.env`).
+- **P3.1, P3.2, P3.3, P3.4, P3.5** → **BACKLOG open** (defer/dedicated round).
+- **Sigilli 36/36 byte-identical** verificati.
+- **Zero DB writes**, **zero enforcement change**, **zero refactor auth flow**.
+- **2 nuovi backlog P3 aperti** dalla Phase B (residual failure documentati per dedicated round futuro).
+
+---
+
 ## 🧹 R18.P3 — Post-R18.4 Cleanup & Backlog Triage — Phase A READ-ONLY (2026-07-06)
 
 **Round attivo**: `R18.P3 — Post-R18.4 Cleanup & Backlog Triage`

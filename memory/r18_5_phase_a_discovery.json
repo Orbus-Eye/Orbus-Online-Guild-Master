@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "topic": "PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework",
+    "phase": "A",
+    "stage": "discovery_read_only",
+    "executed_at_utc": "2026-07-06T16:20:00Z",
+    "author": "MainAgent (E1)",
+    "governance": "36 sigilli byte-identical, zero DB writes, zero code changes"
+  },
+  "executive_summary": {
+    "xp_curve": "already extended beyond Lv60 (Lv60=442260 XP), monotone up to Lv200 safety belt",
+    "level_cap": "no explicit MAX_LEVEL constant; adventurer_level gate via enforce_min_adventurer_level (423)",
+    "pwr": "partial: item.power_score + adventurer.base_power exists; missing standardized solo-equip formula + PWR-per-tier",
+    "item_tier": "rarity 5-level (Common/Uncommon/Rare/Epic/Legendary); no explicit tier numeric field",
+    "slot_equip": "double granularity: item_type (3-4 base) vs slot_type (canonical, extended to weapon_main/helm/chest/amulet/ring for only 17/173 items)",
+    "drop_table": "24 dungeon with weighted rarity mix; Goblin Warrens Common:85+Uncommon:15; Rare/Epic/Legendary in higher-tier dungeon",
+    "class_bound_status": "R18.4 policy active (hard:11 / soft:146 / universal:16), eligible-items endpoint live, badge 4-state UI integrated"
+  },
+  "xp_curve": {
+    "module": "app/achievements/levels.py",
+    "formula_early": "hand-tuned _EARLY_CURVE dict {Lv1..Lv10}",
+    "formula_late": "5000 + round((lvl-10)^1.93 * 230) for Lv11+",
+    "safety_cap": 200,
+    "no_hard_cap_at_60": true,
+    "thresholds_verified": {"1":0,"5":900,"10":5000,"20":24576,"30":79596,"40":168144,"50":289252,"55":361803,"60":442260,"70":626670,"80":842080,"100":1364615}
+  },
+  "level_cap_state": {
+    "explicit_max_level_constant": false,
+    "adventurers_live_max_level": 1,
+    "guilds_live_max_level": 1,
+    "gate_via": "enforce_min_adventurer_level (423 Locked)"
+  },
+  "pwr_state": {
+    "adventurer_base_power_formula": "STR + AGI + INT + END + FAITH + level*2",
+    "adventurer_effective_power": "base + trait modifier (Phase 13)",
+    "total_power": "base_power + equipment_power",
+    "equipment_power": "sum(item.power_score for equipped slots)",
+    "item_power_score_range_live": "0-60 (Legendary set signature)",
+    "auto_equip_fitness": "primary_score + secondary_score + POWER_WEIGHT * power_score + tag_bonus",
+    "legendary_forge_caps": {"epic": {"weapon_armor": {"primary":5,"secondary":2,"power_score":7},"accessory":{"primary":2,"secondary":2,"power_score":7}}, "legendary": {"weapon_armor":{"primary":7,"secondary":3,"power_score":10},"accessory":{"primary":3,"secondary":3,"power_score":10}}},
+    "signature_items_out_of_cap": ["drake_slayer_blade (power_score=60)", "drake_slayer_helm (35)"],
+    "gap": "no standalone solo-equip formula, no PWR-per-tier standardization"
+  },
+  "item_tier_state": {
+    "system": "rarity 5-level string",
+    "distribution_live": {"Common":52,"Uncommon":36,"Rare":38,"Epic":36,"Legendary":11},
+    "total_active_items": 173,
+    "explicit_tier_field": false,
+    "rework_options": ["A: keep rarity + add power_tier derived", "B: replace rarity with tier T1-T5", "C: dual schema rarity(UI)+tier(gating)"]
+  },
+  "slot_equip_state": {
+    "item_type_taxonomy": ["weapon","armor","accessory","shield","material","consumable"],
+    "slot_type_distribution_live": {"weapon":54,"armor":44,"accessory":42,"weapon_main":7,"chest":3,"helm":1,"amulet":5,"ring":1},
+    "granular_slot_items_count": 17,
+    "simple_slot_items_count": 130,
+    "r18_4_sq1a_status": "shield → slot_type=armor (Risk 10.1 closed)"
+  },
+  "item_stats_state": {
+    "bonus_fields": ["strength_bonus","agility_bonus","intellect_bonus","endurance_bonus","faith_bonus"],
+    "additional_fields": ["power_score","enchant_slots","max_refinement","required_adventurer_level","min_level"],
+    "duplication_risk": "min_level vs required_adventurer_level not aligned in all docs",
+    "sample_legendary_weapon": {"strength_bonus":10,"agility_bonus":3,"power_score":60,"max_refinement":10,"enchant_slots":2}
+  },
+  "drop_crafting_materials_state": {
+    "dungeon_loot_tables_file": "app/expeditions/loot_tables.py",
+    "dungeon_count": 24,
+    "goblin_warrens_drop": {"success_chance":0.50,"success_weights":{"Common":85,"Uncommon":15}},
+    "highest_dungeon_drop": {"weights":{"Common":45,"Uncommon":35,"Rare":20}},
+    "materials_independent_roll": true,
+    "materials_module": "app/expeditions/material_drop_tables.py",
+    "workshop_gate": "feature.locked 423 (Livello 1 required); blocks phase14 craft tests",
+    "recipes_count": "6 legendary_forge + 10 arfus"
+  },
+  "r18_4_class_bound_dependencies": {
+    "item_binding_policy_distribution": {"hard":11,"soft":146,"universal":16},
+    "eligible_items_endpoint_active": true,
+    "ui_4state_badge_integrated_in": ["Inventory.jsx","AdventurerEquipment.jsx","InventoryEquipModal.jsx"],
+    "sealed_files_touching_forbidden": ["app/equipment/compatibility.py (R18.3e)","app/equipment/bindings.py (R18.4 B4)","apply_scripts (R18.4 B4)"]
+  },
+  "ui_dependencies": [
+    "pages/Inventory.jsx (rarity/slot/is_universal)",
+    "pages/AdventurerEquipment.jsx (eligible-items + 4-state badge)",
+    "components/InventoryEquipModal.jsx (slot fallback + Universale badge)",
+    "components/ItemCompatibilityBadge.jsx (SEALED R18.4.followup)",
+    "utils/compatibilityLabels.js (SEALED)",
+    "utils/displayLabels.js (itemTypeLabel, rarityLabel)",
+    "inline RarityBadge components"
+  ],
+  "backend_api_dependencies": [
+    {"endpoint":"GET /api/items","serializer":"item_public()","impact":"expose new tier?"},
+    {"endpoint":"GET /api/inventory","serializer":"inventory_public + item_public","impact":"idem"},
+    {"endpoint":"GET /api/adventurers","serializer":"adventurer_public()","impact":"expose new pwr fields?"},
+    {"endpoint":"GET /api/adventurers/{id}/equipment","serializer":"equipment_public()","impact":"idem"},
+    {"endpoint":"GET /api/adventurers/{id}/eligible-items","serializer":"derive_ui_4state (SEALED)","impact":"NO CHANGE"},
+    {"endpoint":"GET /api/recipes/*","serializer":"recipe + result item","impact":"idem"},
+    {"endpoint":"POST /api/expeditions/complete","serializer":"loot_roll + xp_apply","impact":"tune curve if needed"}
+  ],
+  "auto_equip_dependencies": {
+    "auto_equip_py": "non-sealed, extensible",
+    "compatibility_py": "SEALED R18.3e — not modifiable",
+    "level_gate_py": "non-sealed, extensible for min_level → required_adventurer_level unification"
+  },
+  "risks": [
+    {"category":"DB","risk":"add tier field to 173 items requires apply script","severity":"medium"},
+    {"category":"DB","risk":"deprecate min_level without migration breaks validation","severity":"high"},
+    {"category":"code","risk":"modify power_score semantics breaks Legendary Forge cap check","severity":"high"},
+    {"category":"code","risk":"new solo-equip PWR must coexist with existing formulas","severity":"medium"},
+    {"category":"code","risk":"new granular slot_type breaks inventoryBySlot map fallback","severity":"medium"},
+    {"category":"frontend","risk":"scattered inline RarityBadge components need audit","severity":"low"},
+    {"category":"test","risk":"update drop tables Goblin Warrens breaks loot_sim determinism","severity":"medium"},
+    {"category":"r18_4_integration","risk":"any touch to sealed files blocks round","severity":"critical"},
+    {"category":"regression","risk":"modify item_binding_policy semantics breaks eligible-items contract","severity":"critical"},
+    {"category":"backwards_compat","risk":"live adventurers with equipment must be preserved during migration","severity":"high"}
+  ],
+  "open_questions_pm": [
+    {"id":"R18.5.SQ1","text":"XP curve Lv50-Lv60 override: mantenere formula polinomiale attuale (Lv60=442k) o introdurre _LATE_CURVE hand-tuned override table Lv51-60?"},
+    {"id":"R18.5.SQ2","text":"Level cap hard-enforcement: introdurre MAX_ADVENTURER_LEVEL=60 constant + gate applicativo o lasciare soft (curve monotona senza block)?"},
+    {"id":"R18.5.SQ3","text":"Item tier explicit field: aggiungere tier numeric (T1-T5) esplicito o mantenere rarity come unico proxy tier?"},
+    {"id":"R18.5.SQ4","text":"PWR solo-equip formula: nuova formula standalone o mantenere total_power esistente?"},
+    {"id":"R18.5.SQ5","text":"Slot granularity: espandere slot da 3 a 10 (Diablo-like) o mantenere 3 base + slot_type metadata?"},
+    {"id":"R18.5.SQ6","text":"min_level deprecation: rimuovere (duplicato con required_adventurer_level) o mantenere entrambi con cross-check?"},
+    {"id":"R18.5.SQ7","text":"Rarity → Tier rename: mantenere labeling Common..Legendary (visual UI) o rinominare in T1..T5?"},
+    {"id":"R18.5.SQ8","text":"Drop table Lv60: estendere Goblin Warrens o creare nuovo dungeon endgame Lv55-60?"},
+    {"id":"R18.5.SQ9","text":"Signature items out-of-forge: mantenere power_score=60 fuori dai cap o forzare tutti dentro il cap?"},
+    {"id":"R18.5.SQ10","text":"Set bonus system: attivare set_id + set bonus 2pc/4pc/6pc via UI/endpoint o mantenere opaque?"}
+  ],
+  "phase_b_recommendation": {
+    "split_proposed": true,
+    "phase_b1": "Design Lock (documentale, con PM SQ 1-10 answers) → r18_5_phase_b1_design_lock.md/.json",
+    "phase_b2": "Implementation Plan (documentale, dopo B.1) → r18_5_phase_b2_implementation_plan.md/.json",
+    "tables_proposed_for_b1": [
+      "r18_5_slot_taxonomy.md — mapping slot equip (3 vs 10 slot)",
+      "r18_5_tier_taxonomy.md — mapping tier (T1-T5 vs rarity, budget PWR per tier)",
+      "r18_5_pwr_formula.md — formula PWR solo-equip + soglie per tier",
+      "r18_5_stat_budget.md — budget stat per tier + slot",
+      "r18_5_item_family_taxonomy.md — famiglie equip (weapon subtypes, armor tipi)",
+      "r18_5_naming_conventions.md — nomi base + prefissi/suffissi player-facing",
+      "r18_5_class_compatibility_matrix.md — matrice class × slot × item_family",
+      "r18_5_item_signature_policy.md — signature items fuori dai cap",
+      "r18_5_drop_matrix.md — drop table per dungeon (Goblin Warrens + endgame)",
+      "r18_5_materials_crafting.md — materials per tier + ricette Lv60",
+      "r18_5_xp_curve_lv60_override.md — override table Lv51-60 (se SQ1=yes)",
+      "r18_5_set_bonus_system.md — set bonus taxonomy (se SQ10=yes)"
+    ],
+    "phase_b_documental_risk": "low"
+  },
+  "governance_check": {
+    "sealed_36_36_byte_identical": true,
+    "verified_via": "pytest backend_r18_4_sealed_integrity_test.py → 6/6 PASSED",
+    "zero_db_writes_phase_a": true,
+    "zero_code_changes_phase_a": true,
+    "diff_working_tree_phase_a": ["memory/PRD.md (documental)", "memory/r18_5_phase_a_discovery.md (new)", "memory/r18_5_phase_a_discovery.json (new)"]
+  },
+  "self_check": {
+    "sections_completed": 15,
+    "sections_required": 15,
+    "status": "COMPLETE"
+  }
+}
