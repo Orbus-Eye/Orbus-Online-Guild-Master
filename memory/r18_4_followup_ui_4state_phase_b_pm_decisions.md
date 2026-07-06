@@ -1,3 +1,6 @@
+<!-- 🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED -->
+<!-- R18.4.followup CLOSED & SEALED -->
+<!-- SHA256 registered in /app/memory/r18_4_followup_ui_4state_phase_c_integration_and_seal_report.md -->
 # R18.4.followup — UI 4-State Item Compatibility Activation — Phase B PM Decision Lock
 
 - **Round**: `R18.4.followup — UI 4-State Item Compatibility Activation`

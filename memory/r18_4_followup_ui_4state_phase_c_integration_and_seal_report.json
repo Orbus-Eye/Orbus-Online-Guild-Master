@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "banner": "🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED",
+    "round": "R18.4.followup",
+    "topic": "UI 4-State Item Compatibility Activation",
+    "phase": "C",
+    "stage": "integration_and_seal_report",
+    "closed_at_utc": "2026-07-06T11:35:00Z",
+    "author": "MainAgent (E1)",
+    "status": "CLOSED & SEALED"
+  },
+  "seal_perimeter": {
+    "phase_c_new_sealed_count": 6,
+    "phase_c_new_sealed_files": [
+      {
+        "path": "/app/backend/app/equipment/ui_4state.py",
+        "sha256_post_banner": "7054ec65d19066074f6cdb646f472f08213533ab0683e6dcfbeefa01a1e74aa7",
+        "role": "backend helper (pure function)"
+      },
+      {
+        "path": "/app/frontend/src/components/ItemCompatibilityBadge.jsx",
+        "sha256_post_banner": "3a2948220a75fce9f7eb8166f37cfa6efc6b5ad5fd2962857564da873fb4dd01",
+        "role": "frontend component 4-state"
+      },
+      {
+        "path": "/app/frontend/src/utils/compatibilityLabels.js",
+        "sha256_post_banner": "0a7db2ea6c208a33af1cd7a0c30ed19fa41add923b03bed33078edb603aa11f6",
+        "role": "frontend util enum labels IT"
+      },
+      {
+        "path": "/app/backend/tests/backend_r18_4_followup_ui_4state_test.py",
+        "sha256_post_banner": "ac92a93ee31147019f6a01d880ca2da10a91927032572c55c71196b72a2903c0",
+        "role": "test suite 13 cases"
+      },
+      {
+        "path": "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.md",
+        "sha256_post_banner": "7eb6a552c6689e593c720a697c06ad6d0a547148707d8c57c8f69226ca30dc72",
+        "role": "PM contract lock verbatim"
+      },
+      {
+        "path": "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.json",
+        "sha256_post_banner": "9b04d554b5c8c66f2fb12f0889d5b153aedd81895bfd67fddccee81c5f2fe085",
+        "role": "PM contract lock machine-readable"
+      }
+    ],
+    "phase_c_exclusions": [
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_a_discovery.md", "reason": "discovery read-only, no contract lock (pattern R18.3e)"},
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_a_discovery.json", "reason": "discovery read-only, no contract lock"},
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_b_implementation_report.md", "reason": "storical snapshot, superato dal Phase C SEAL report"},
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_b_implementation_report.json", "reason": "storical snapshot"},
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_c_integration_and_seal_report.md", "reason": "self-reference: contiene la lista sigilli, non può contenere il proprio hash"},
+      {"path": "/app/memory/r18_4_followup_ui_4state_phase_c_integration_and_seal_report.json", "reason": "self-reference (idem)"},
+      {"paths_modified_not_new": ["/app/backend/app/items/services.py", "/app/backend/app/adventurers/routes.py", "/app/frontend/src/pages/Inventory.jsx", "/app/frontend/src/components/InventoryEquipModal.jsx", "/app/frontend/src/pages/AdventurerEquipment.jsx"], "reason": "file live evolutivi con logica non-R18.4.followup"}
+    ]
+  },
+  "sealed_aggregate_totals": {
+    "preexisting_19": 19,
+    "r18_4_new_11": 11,
+    "r18_4_followup_new_6": 6,
+    "total": 36
+  },
+  "preexisting_30_byte_identical": {
+    "verified_via_test": "backend_r18_4_sealed_integrity_test.py::test_r18_4_b4_seal_01_preexisting_19_byte_identical + test_r18_4_b4_seal_02_new_11_byte_identical",
+    "status": "PASS",
+    "drift_count": 0
+  },
+  "test_4state_visual_coverage": {
+    "states_covered": ["blocked", "not_recommended", "recommended", "universal"],
+    "backend_deterministic_tests": {
+      "test_t10_phase_c_full_4state_blocked_deterministic": "PASS",
+      "test_t11_phase_c_full_4state_not_recommended_deterministic": "PASS",
+      "test_t12_phase_c_full_4state_recommended_deterministic": "PASS",
+      "test_t13_phase_c_full_4state_universal_deterministic": "PASS"
+    },
+    "frontend_rendering": "delegated_to_testing_agent_playwright_optional_phase_d"
+  },
+  "backend_tests": {
+    "suite": "/app/backend/tests/backend_r18_4_followup_ui_4state_test.py",
+    "total": 13,
+    "passed": 13,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "webpack_compilation": "successful",
+    "eslint": "no_issues",
+    "e2e_playwright": "delegated_to_testing_agent"
+  },
+  "r18_4_class_bound_regression": {
+    "suite": "/app/backend/tests/backend_r18_4_class_bound_test.py",
+    "total": 16,
+    "passed": 16,
+    "failed": 0
+  },
+  "sealed_integrity_36_36": {
+    "suite": "/app/backend/tests/backend_r18_4_sealed_integrity_test.py",
+    "total": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "zero_db_writes": {
+    "verified": true,
+    "audit_notes": "endpoint eligible-items solo find/find_one; derive_ui_4state pure function; nessun updated_at su catalog items alterato"
+  },
+  "zero_enforcement_change": {
+    "verified": true,
+    "audit_notes": "equipment/services.py + equipment/bindings.py NON toccati; equip gate runtime identico pre/post"
+  },
+  "shield_slot_mismatch_verification": {
+    "risk_id": "10.1",
+    "status": "CLOSED",
+    "shield_items_in_catalog": [
+      {"slug": "spec_signature_aegis_of_the_defender", "item_type": "shield", "slot_type": "armor"},
+      {"slug": "spec_signature_thornwood_shield", "item_type": "shield", "slot_type": "armor"}
+    ],
+    "fallback_pattern_applied_in_files": [
+      "/app/frontend/src/pages/Inventory.jsx",
+      "/app/frontend/src/components/InventoryEquipModal.jsx",
+      "/app/frontend/src/pages/AdventurerEquipment.jsx"
+    ]
+  },
+  "backlog_p3_phase14_legacy_added": {
+    "file": "/app/memory/backlog.md",
+    "entry_id": "R18.backlog.phase14_legacy_test_cleanup",
+    "priority": "P3",
+    "cause": "password policy stale + path count congelato (86 vs 275)",
+    "unrelated_to_phase_b_c": true
+  },
+  "risk_notes_residue": [
+    {"id": "10.1", "status": "CLOSED"},
+    {"id": "10.2", "status": "MITIGATED", "note": "starter roster async race in test suite mitigated via _tester_ctx()"},
+    {"id": "10.3", "status": "AVOIDED", "note": "Phase C SEAL report escluso dal set 6 per self-reference"},
+    {"id": "phase14_legacy", "status": "TRACKED_P3"}
+  ],
+  "final_recommendation": "R18.4.followup CLOSED & SEALED",
+  "next_in_queue": [
+    "R18.5 — next round (attesa GO PM)",
+    "R18.backlog.phase14_legacy_test_cleanup (P3)",
+    "R18.4.followup shield slot mapping decision SQ1 (P3)"
+  ],
+  "self_check": {
+    "sections_completed": 15,
+    "sections_required": 15,
+    "status": "COMPLETE"
+  }
+}

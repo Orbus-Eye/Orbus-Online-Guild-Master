@@ -1,3 +1,8 @@
+/*
+ * 🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED
+ * R18.4.followup CLOSED & SEALED
+ * DO NOT MODIFY. SHA256 verified in /app/backend/tests/backend_r18_4_sealed_integrity_test.py
+ */
 // R18.4.followup Phase B — UI 4-state compatibility labels + icons
 // Governance: solo mapping enum → label IT + icona lucide-react.
 // Zero logica policy (server-side responsability).

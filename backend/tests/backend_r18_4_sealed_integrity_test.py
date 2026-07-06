@@ -1,9 +1,10 @@
-"""ROUND 18.4 — Phase B4 Sealed Integrity Test Suite (30 files aggregate).
+"""ROUND 18.4 — Phase B4 + R18.4.followup Phase C Sealed Integrity Test Suite (36 files aggregate).
 
-Verifica statica in-process (no subprocess pytest, no ricorsione) di **30 sigilli**:
+Verifica statica in-process (no subprocess pytest, no ricorsione) di **36 sigilli**:
   - 19 pre-esistenti (11 R18.Reset + 5 R18.3d + 3 R18.3e) — byte-identical dal
     registry /app/memory/r18_3e_seal_registry.json
   - 11 nuovi R18.4 sealed post-B4 (SHA256 hard-coded post-banner)
+  - 6 nuovi R18.4.followup sealed post-Phase C (SHA256 hard-coded post-banner)
 
 Ogni drift → fail immediato con path + expected/actual hash.
 
@@ -15,7 +16,7 @@ Governance:
 
 Sealed file di R18.3e già coperti dal test 15 in
 `backend_r18_3e_bridge_test.py` (16 file). Qui aggiungiamo verifica esaustiva
-di TUTTI i 30 sigilli attivi post-B4.
+di TUTTI i 36 sigilli attivi post-R18.4.followup Phase C SEAL.
 """
 from __future__ import annotations
 
@@ -73,6 +74,25 @@ R18_4_NEW_11_SEALED_HASHES: dict[str, str] = {
         "3bb1484826710a9a8b688e6152150ad2c8a860352daaaf1978b1a686aef76d59",
     "/app/memory/r18_4_phase_b3_real_apply_report.md":
         "de0c9b4661ac17b9b16ea7bd4b1e90ec7909a7b46b899563eb04c8e2fad94585",
+}
+
+
+# ─── 6 nuovi sigilli R18.4.followup Phase C (post-banner apposition) ───
+# Perimetro locked PM Phase C: memory contract (2) + code (3) + test (1).
+# Motivazione dettagliata nel report Phase C section 2.
+R18_4_FOLLOWUP_NEW_6_SEALED_HASHES: dict[str, str] = {
+    "/app/backend/app/equipment/ui_4state.py":
+        "7054ec65d19066074f6cdb646f472f08213533ab0683e6dcfbeefa01a1e74aa7",
+    "/app/frontend/src/components/ItemCompatibilityBadge.jsx":
+        "3a2948220a75fce9f7eb8166f37cfa6efc6b5ad5fd2962857564da873fb4dd01",
+    "/app/frontend/src/utils/compatibilityLabels.js":
+        "0a7db2ea6c208a33af1cd7a0c30ed19fa41add923b03bed33078edb603aa11f6",
+    "/app/backend/tests/backend_r18_4_followup_ui_4state_test.py":
+        "ac92a93ee31147019f6a01d880ca2da10a91927032572c55c71196b72a2903c0",
+    "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.md":
+        "7eb6a552c6689e593c720a697c06ad6d0a547148707d8c57c8f69226ca30dc72",
+    "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.json":
+        "9b04d554b5c8c66f2fb12f0889d5b153aedd81895bfd67fddccee81c5f2fe085",
 }
 
 
@@ -135,24 +155,33 @@ def test_r18_4_b4_seal_02_new_11_byte_identical():
 
 
 # ═════════════════════════════════════════════════════════════════════
-# Test 3 — Aggregate count = 30 sealed files
+# Test 3 — Aggregate count = 36 sealed files
 # ═════════════════════════════════════════════════════════════════════
 
-def test_r18_4_b4_seal_03_aggregate_count_30():
-    """Il totale aggregato dei sigilli attivi post-B4 deve essere esattamente 30."""
+def test_r18_4_b4_seal_03_aggregate_count_36():
+    """Il totale aggregato dei sigilli attivi post-R18.4.followup Phase C SEAL
+    deve essere esattamente 36 (19 pre-existing + 11 R18.4 + 6 R18.4.followup)."""
     preexisting = _flatten_preexisting_19()
-    total = len(preexisting) + len(R18_4_NEW_11_SEALED_HASHES)
-    assert total == 30, f"expected 30 total sealed files, got {total}"
+    total = (
+        len(preexisting)
+        + len(R18_4_NEW_11_SEALED_HASHES)
+        + len(R18_4_FOLLOWUP_NEW_6_SEALED_HASHES)
+    )
+    assert total == 36, f"expected 36 total sealed files, got {total}"
 
 
 # ═════════════════════════════════════════════════════════════════════
-# Test 4 — All 30 hashes are valid hex, 64 chars, non-zero
+# Test 4 — All 36 hashes are valid hex, 64 chars, non-zero
 # ═════════════════════════════════════════════════════════════════════
 
 def test_r18_4_b4_seal_04_hash_shape_validity():
     """Ogni hash deve essere 64-char hex non-zero."""
     zero_hash = "0" * 64
-    all_hashes = {**_flatten_preexisting_19(), **R18_4_NEW_11_SEALED_HASHES}
+    all_hashes = {
+        **_flatten_preexisting_19(),
+        **R18_4_NEW_11_SEALED_HASHES,
+        **R18_4_FOLLOWUP_NEW_6_SEALED_HASHES,
+    }
     for path_str, h in all_hashes.items():
         assert len(h) == 64, f"invalid hex length for {path_str}: {len(h)}"
         int(h, 16)  # hex validation
@@ -160,12 +189,54 @@ def test_r18_4_b4_seal_04_hash_shape_validity():
 
 
 # ═════════════════════════════════════════════════════════════════════
-# Test 5 — No duplicate paths across the 30 set
+# Test 5 — No duplicate paths across the 36 set
 # ═════════════════════════════════════════════════════════════════════
 
 def test_r18_4_b4_seal_05_no_duplicate_paths():
-    """Nessun path deve apparire sia in pre-existing che in new R18.4."""
+    """Nessun path deve apparire in più di uno dei 3 gruppi."""
     preexisting_paths = set(_flatten_preexisting_19().keys())
-    new_paths = set(R18_4_NEW_11_SEALED_HASHES.keys())
-    overlap = preexisting_paths & new_paths
-    assert overlap == set(), f"unexpected overlap: {overlap}"
+    r18_4_paths = set(R18_4_NEW_11_SEALED_HASHES.keys())
+    r18_4_followup_paths = set(R18_4_FOLLOWUP_NEW_6_SEALED_HASHES.keys())
+    overlap_pre_new = preexisting_paths & r18_4_paths
+    overlap_pre_followup = preexisting_paths & r18_4_followup_paths
+    overlap_new_followup = r18_4_paths & r18_4_followup_paths
+    assert overlap_pre_new == set(), f"unexpected pre/new overlap: {overlap_pre_new}"
+    assert overlap_pre_followup == set(), (
+        f"unexpected pre/followup overlap: {overlap_pre_followup}"
+    )
+    assert overlap_new_followup == set(), (
+        f"unexpected new/followup overlap: {overlap_new_followup}"
+    )
+
+
+# ═════════════════════════════════════════════════════════════════════
+# Test 6 — 6 nuovi R18.4.followup sealed byte-identical (Phase C SEAL)
+# ═════════════════════════════════════════════════════════════════════
+
+def test_r18_4_followup_seal_06_new_6_byte_identical():
+    """I 6 nuovi sigilli R18.4.followup Phase C (post-banner apposition) devono
+    essere byte-identical agli hash registrati nel report Phase C."""
+    assert len(R18_4_FOLLOWUP_NEW_6_SEALED_HASHES) == 6, (
+        f"expected 6 R18.4.followup sealed paths, "
+        f"got {len(R18_4_FOLLOWUP_NEW_6_SEALED_HASHES)}"
+    )
+
+    drifts: list[str] = []
+    missing: list[str] = []
+    for path_str, expected in R18_4_FOLLOWUP_NEW_6_SEALED_HASHES.items():
+        path = Path(path_str)
+        if not path.exists():
+            missing.append(path_str)
+            continue
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            drifts.append(
+                f"  {path_str}\n    expected: {expected}\n    actual:   {actual}"
+            )
+    assert not missing, (
+        "R18.4.followup sealed files MISSING:\n" + "\n".join(missing)
+    )
+    assert not drifts, (
+        "R18.4.followup sealed SHA256 DRIFT (governance violation):\n"
+        + "\n".join(drifts)
+    )

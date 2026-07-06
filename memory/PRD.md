@@ -1,5 +1,33 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## 🔒 R18.4.followup Phase C — UI 4-State Item Compatibility Activation — CLOSED & SEALED (2026-07-06)
+
+**Round**: `R18.4.followup — UI 4-State Item Compatibility Activation`
+**Fase**: C — Integration + SEAL
+**Chiusura Phase C**: 2026-07-06T11:35:00Z UTC — round CLOSED & SEALED
+**Report finale**: `/app/memory/r18_4_followup_ui_4state_phase_c_integration_and_seal_report.md/.json`
+
+### Sintesi Phase C
+- Integrazione full 4-state badge in `AdventurerEquipment` page via consumo endpoint `/api/adventurers/{id}/eligible-items` (B.SQ6).
+- Slot fallback `slot_type ?? item_type` applicato anche in `AdventurerEquipment.jsx::inventoryBySlot` (Risk 10.1 fully CLOSED).
+- 4 nuovi test deterministici t10-t13 (blocked / not_recommended / recommended / universal) → 13/13 PASS totale.
+- SEAL di **6 nuovi file** (2 memory contract + 3 code + 1 test), portando il totale a **36 sigilli** attivi.
+- Sealed integrity 36/36 PASS (30 pre-esistenti byte-identical + 6 nuovi byte-identical).
+- Backlog P3 `R18.backlog.phase14_legacy_test_cleanup` aggiunto (chiude Nota 2 PM).
+
+### Sigilli Phase C (6/6)
+1. `/app/backend/app/equipment/ui_4state.py`
+2. `/app/frontend/src/components/ItemCompatibilityBadge.jsx`
+3. `/app/frontend/src/utils/compatibilityLabels.js`
+4. `/app/backend/tests/backend_r18_4_followup_ui_4state_test.py`
+5. `/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.md`
+6. `/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.json`
+
+### Next-in-queue
+- `R18.5` (o backlog P2/P3) in attesa di GO PM.
+
+---
+
 ## R18.4.followup Phase B — UI 4-State Item Compatibility Activation — DELIVERED (2026-07-06)
 
 **Round**: `R18.4.followup — UI 4-State Item Compatibility Activation`

@@ -1,3 +1,8 @@
+/*
+ * 🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED
+ * R18.4.followup CLOSED & SEALED
+ * DO NOT MODIFY. SHA256 verified in /app/backend/tests/backend_r18_4_sealed_integrity_test.py
+ */
 // R18.4.followup Phase B — ItemCompatibilityBadge
 // Componente riutilizzabile per badge UI 4-state (blocked/not_recommended/recommended/universal).
 // Props derivano da payload endpoint /api/adventurers/{id}/eligible-items.

@@ -1,4 +1,9 @@
 {
+  "_seal": {
+    "status": "R18.4.followup CLOSED & SEALED",
+    "banner": "🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED",
+    "sha256_verified_in": "/app/backend/tests/backend_r18_4_sealed_integrity_test.py"
+  },
   "meta": {
     "round": "R18.4.followup",
     "topic": "UI 4-State Item Compatibility Activation",

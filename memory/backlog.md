@@ -189,6 +189,25 @@ Vuoto.
 
 ---
 
+## Nuovi backlog P3 aperti in R18.4.followup Phase C (2026-07-06)
+
+### [BACKLOG] R18.backlog — phase14_* legacy regression debt cleanup
+- **Aperto**: 2026-07-06 (durante R18.4.followup Phase C, chiude Nota 2 del PM)
+- **Origine**: durante regression Phase B+C sono stati rilevati **10 test PRE-ESISTENTI failing** nella suite `phase14_*` (`backend_phase14_4_round15_test.py`, `backend_phase14_6_round3ab_test.py`).
+- **Cause identificate**:
+  - **Password policy stale**: alcuni test usano password `12345678` che non passa più la validation aggiornata (`_make_user_with_guild` builder legacy).
+  - **Path count congelato**: `test_path_count_now_45` si aspetta 86 paths ma il codebase attuale ne ha 275 (crescita normale post round 14–18).
+- **Non correlati a R18.4/followup**: verificato che il fail esiste anche pre-Phase B/C (git blame + timestamp). Nessuna modifica in Phase B o Phase C ha aggravato o causato questi drift.
+- **Priorità**: **P3** (test stale, non impatta runtime; regression coverage attivo garantito da suite più recenti).
+- **Scope**:
+  - refactor helper `_make_user_with_guild` in `backend_phase14_4_round15_test.py` per usare password conforme alla policy corrente
+  - refresh dello snapshot `path_count` in `backend_phase14_6_round3ab_test.py` al valore attuale del codebase
+  - opzionale: convertire il path count check in soft-assert (soglia minima) per evitare stale drift a ogni nuovo endpoint
+- **Non fare**: modificare la logica applicativa; è solo debito di test stale.
+- **Round dedicato**: da schedulare come `R18.backlog.phase14_legacy_test_cleanup` quando prioritizzato.
+
+---
+
 ## HOLD (in attesa di GO PM)
 
 - `R18.1 drift`

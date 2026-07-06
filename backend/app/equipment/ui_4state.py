@@ -1,4 +1,9 @@
-"""R18.4.followup Phase B — UI 4-state compatibility derivation helper.
+"""
+🔒 R18.4.followup — UI 4-State Item Compatibility Activation — CLOSED & SEALED
+R18.4.followup CLOSED & SEALED
+DO NOT MODIFY. SHA256 verified in /app/backend/tests/backend_r18_4_sealed_integrity_test.py
+
+R18.4.followup Phase B — UI 4-state compatibility derivation helper.
 
 Modulo READ-ONLY che deriva `compatibility_state` + `reason_code` per un pair
 (adventurer, item) sulla base dei metadata R18.4 già applicati:

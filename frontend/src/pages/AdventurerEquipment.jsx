@@ -11,6 +11,8 @@ import {
     itemReqLevelTooltip,
 } from "../utils/levelGate";
 import { rarityLabel } from "../utils/displayLabels";
+// R18.4.followup Phase C — full 4-state badge integration.
+import ItemCompatibilityBadge from "../components/ItemCompatibilityBadge";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -53,6 +55,8 @@ export default function AdventurerEquipment() {
     const [adventurer, setAdventurer] = useState(null);
     const [inventory, setInventory] = useState([]);
     const [equipmentDetail, setEquipmentDetail] = useState(null);
+    // R18.4.followup Phase C — payload endpoint eligible-items per badge 4-state.
+    const [eligibleItems, setEligibleItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(false);
 
@@ -60,17 +64,22 @@ export default function AdventurerEquipment() {
 
     const refresh = useCallback(async () => {
         try {
-            const [eqRes, advRes, invRes, detailRes] = await Promise.all([
+            const [eqRes, advRes, invRes, detailRes, eligRes] = await Promise.all([
                 api.get(`/adventurers/${advId}/equipment`),
                 api.get("/adventurers"),
                 api.get("/inventory"),
                 api.get(`/adventurers/${advId}/equipment-detail`).catch(() => ({ data: null })),
+                // R18.4.followup Phase C — endpoint context-aware 4-state.
+                // Best-effort: se fallisce (es. 404 su adventurer retired), fallback silente
+                // a lista vuota, badge 4-state non renderizzato (Universal badge da is_universal resta).
+                api.get(`/adventurers/${advId}/eligible-items`).catch(() => ({ data: { eligible_items: [] } })),
             ]);
             setEquipment(eqRes.data);
             const matchedAdv = advRes.data.adventurers.find((a) => a.id === advId);
             setAdventurer(matchedAdv || null);
             setInventory(invRes.data.inventory || []);
             setEquipmentDetail(detailRes.data);
+            setEligibleItems(eligRes.data?.eligible_items || []);
         } catch (err) {
             toast.error(formatApiError(err));
         } finally {
@@ -82,13 +91,30 @@ export default function AdventurerEquipment() {
         refresh();
     }, [refresh]);
 
+    // R18.4.followup Phase C — map item_id → {compatibility_state, reason_code}
+    // per rendering badge full 4-state accanto agli items compatibili.
+    const compatibilityByItemId = useMemo(() => {
+        const out = {};
+        for (const entry of eligibleItems) {
+            out[entry.item_id] = {
+                compatibility_state: entry.compatibility_state,
+                reason_code: entry.reason_code,
+                is_universal: entry.is_universal,
+            };
+        }
+        return out;
+    }, [eligibleItems]);
+
     const inventoryBySlot = useMemo(() => {
         const out = { weapon: [], armor: [], accessory: [] };
         for (const row of inventory) {
             const it = row.item;
             if (!it) continue;
-            if (row.available_quantity > 0 && out[it.item_type]) {
-                out[it.item_type].push(row);
+            // R18.4.followup B.SQ5 — slot_type canonico post-R18.4 con fallback a item_type.
+            // Risolve Risk 10.1 shield mapping (item_type=shield → slot_type=armor).
+            const slot = it.slot_type ?? it.item_type;
+            if (row.available_quantity > 0 && out[slot]) {
+                out[slot].push(row);
             }
         }
         return out;
@@ -400,6 +426,21 @@ export default function AdventurerEquipment() {
                                                                 <div className="text-sm font-medium truncate flex items-center gap-2 flex-wrap">
                                                                     <span>{row.item.name}</span>
                                                                     <RarityBadge rarity={row.item.rarity} />
+                                                                    {/* R18.4.followup Phase C — full 4-state badge context-aware.
+                                                                        Prende compatibility_state dal payload eligible-items;
+                                                                        fallback a is_universal se endpoint non ha ancora risposto. */}
+                                                                    {compatibilityByItemId[row.item_id]?.compatibility_state ? (
+                                                                        <ItemCompatibilityBadge
+                                                                            compatibilityState={compatibilityByItemId[row.item_id].compatibility_state}
+                                                                            reasonCode={compatibilityByItemId[row.item_id].reason_code}
+                                                                            className={`eq-compat-${row.item_id}`}
+                                                                        />
+                                                                    ) : row.item.is_universal ? (
+                                                                        <ItemCompatibilityBadge
+                                                                            compatibilityState="universal"
+                                                                            reasonCode="universal_item"
+                                                                        />
+                                                                    ) : null}
                                                                     {underLeveled && (
                                                                         <span
                                                                             data-testid={`item-underleveled-badge-${row.item_id}`}
