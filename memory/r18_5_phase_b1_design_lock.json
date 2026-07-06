@@ -1,0 +1,51 @@
+{
+  "meta": {"round":"R18.5","phase":"B.1","stage":"design_lock","locked_at_utc":"2026-07-06T17:00:00Z","governance":"DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes"},
+  "sq_locks": {
+    "SQ1":"(a) formula polinomiale unica invariata",
+    "SQ2":"(b) soft cap MAX_VISIBLE_LEVEL=60, XP accumula senza block",
+    "SQ3":"(c) rarity + nuovo tier 1..5, mapping Common→T1..Legendary→T5",
+    "SQ4":"(c) coesistenza equipment_pwr/gear_pwr + total_power",
+    "SQ5":"(d) ibrido starter 3 + endgame 6, shield placeholder differito",
+    "SQ6":"(b) min_level + required_adventurer_level coesistono con cross-check",
+    "SQ7":"(c) dual-label UI Common/T1..Legendary/T5",
+    "SQ8":"(b) nuovo dungeon endgame Lv50-60, Goblin Warrens early-only",
+    "SQ9":"(b) max 1 signature equipped/adv, out-of-forge",
+    "SQ10":"(c) defer set bonus, solo placeholder compat"
+  },
+  "tables_14": {
+    "1_xp_curve_lv60_softcap": {"formula":"unchanged (polinomiale)", "max_visible_level":60, "policy":"clamp UI only, DB xp continuous"},
+    "2_tier_taxonomy": {"new_field":"items.tier int 1..5 NOT NULL post-migration", "levels":{"T1":"Lv1-10","T2":"Lv10-20","T3":"Lv20-35","T4":"Lv35-50","T5":"Lv50-60"}, "power_ranges_pending_pm": {"T1":"1-5","T2":"4-9","T3":"8-15","T4":"14-25","T5":"22-40","T5_signature":"40-70"}},
+    "3_rarity_tier_mapping": {"Common":"T1","Uncommon":"T2","Rare":"T3","Epic":"T4","Legendary":"T5", "dual_label":"testo=rarity, badge=tier", "colors_pending_pm":{"T1":"grey","T2":"green","T3":"blue","T4":"purple","T5":"gold"}},
+    "4_slot_taxonomy": {"starter_3":["weapon","armor","accessory"], "endgame_6":["weapon","helm","chest","legs","accessory","shield"], "shield_policy":"R18.4 SQ1a shield→slot=armor resta valido; NO attivazione distruttiva", "transition_threshold_pending_pm":"Lv30"},
+    "5_pwr_formula": {"new_field":"adventurer.equipment_pwr (alias gear_pwr)", "formula":"sum(item.power_score) + tier_bonus + slot_completion_bonus", "tier_bonus_pending_pm":"2 per T4 + 5 per T5", "slot_completion_bonus_pending_pm":5, "coexists_with":"total_power (retro-compat)"},
+    "6_stat_budget": {"pending_pm": true, "T1":"1-8","T2":"5-14","T3":"10-22","T4":"18-36","T5":"30-60","T5_signature":"50-100", "slot_multipliers":{"weapon":1.2,"armor":1.0,"accessory":0.7,"shield":0.8}},
+    "7_item_family_taxonomy": {"weapon":["sword","axe","mace","dagger","bow","staff","wand","crossbow"], "armor":["armor_heavy","armor_medium","armor_light","robe"], "accessory":["amulet","ring","belt","trinket"], "shield_placeholder":["shield_heavy","shield_light"]},
+    "8_naming_conventions": {"pattern":"[Prefix?] + Base + [of Suffix?]", "prefix_pool_pending_pm":["Affilato","Rinforzato","Antico","Runato","Benedetto","Maledetto","Etereo"], "suffix_pool_pending_pm":["del Lupo","del Saggio","del Vuoto","dell'Alba"], "lore_source":"orbus_lore_book_v1"},
+    "9_class_compatibility_matrix": {"pending_pm": true, "principles":"R18.4 item_binding_policy invariata", "families_roles_mapped":14},
+    "10_signature_policy": {"max_equipped_per_adv":1, "new_field":"items.is_signature bool", "crafting_r18_5":"NO", "drop_only":"boss/raid/event", "target_count_pending_pm":"15-25 total"},
+    "11_drop_matrix": {"goblin_warrens":"unchanged (early only)", "endgame_dungeon_new":[{"slug_placeholder":"endgame-void-crucible","lvl":"50-60","mix":"Rare:35 Epic:45 Legendary:20","success":"40%"}], "signature_drop":"via dungeon.rewards.signature_drop_id flag"},
+    "12_materials_matrix": {"categories":["essence","hide","ore","crystal","essence_signature"], "subtypes":{"T1-T2":"crude_*","T3":"refined_*","T4":"pristine_*","T5":"essence_of_*"}, "workshop_gating_pending_pm":{"T1":1,"T3":3,"T4":5,"T5":7}},
+    "13_min_level_coexist": {"precedence":"required_adventurer_level >= 1 → autoritativa, altrimenti fallback min_level, default 1", "cross_check":"dry-run in B.2, NO auto-fix"},
+    "14_set_bonus_placeholder": {"activated_in_r18_5": false, "placeholder_only": true, "future_collection":"item_sets"}
+  },
+  "extra_sections_6": {
+    "A_materials_granularity": "subtypes crude/refined/pristine/essence per tier",
+    "B_first_batch_size": {"target":"80-120","cap":"120 senza PM GO","distribution_pending_pm":{"T1":"25-35","T2":"20-30","T3":"15-25","T4":"10-15","T5_base":"5-8","T5_signature":"15-25"}, "split_by_slot":{"weapon":"40%","armor":"35%","accessory":"15%","shield":"5%","other":"5%"}},
+    "C_naming_rules": "IT primaria, EN opzionale, flavor T3+, signature naming curato",
+    "D_class_stat_priority_placeholder": "PENDING PM — 10 classi mappate preliminarmente, tutte da lockare in Class Guide round",
+    "E_class_guide_dependency": "R18.5 item budget stat migrable senza rework se Class Guide sblocca",
+    "F_r18_3f_class_slug_hold": "R18.5 seed usa lowercase slug italiano (warrior, cacciatore_di_mostri) migrable se R18.3f sblocca"
+  },
+  "pending_pm_approval_count": 8,
+  "new_sub_questions_pm": [
+    "SQ11_starter_endgame_threshold_lv30",
+    "SQ12_tier_badge_colors",
+    "SQ13_signature_target_count",
+    "SQ14_batch_item_distribution",
+    "SQ15_endgame_dungeon_slug",
+    "SQ16_min_level_normalization_policy",
+    "SQ17_workshop_level_per_tier",
+    "SQ18_pwr_bonus_coefficients"
+  ],
+  "self_check": {"tables_14": "COMPLETE", "extra_6": "COMPLETE", "batch_target_within_120": true, "no_final_decision_beyond_pm": true}
+}
