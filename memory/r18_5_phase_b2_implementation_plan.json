@@ -1,0 +1,201 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "B.2",
+    "stage": "implementation_plan",
+    "locked_at_utc": "2026-07-06T17:20:00Z",
+    "governance": "DOCUMENTAL ONLY, 36 sigilli byte-identical, zero DB writes, zero code changes",
+    "predecessor": "r18_5_phase_b1_design_lock.md/.json",
+    "mirror_of": "r18_5_phase_b2_implementation_plan.md"
+  },
+  "1_migration_dry_run_plan": {
+    "pattern": "R18.4 B3 (dry-run report -> PM GO -> apply -> post-apply report)",
+    "sub_plans": {
+      "1_1_items_tier": {
+        "field": "items.tier",
+        "type": "int 1..5",
+        "dry_run_script": "app/scripts/round18_5_backfill_tier_dryrun.py",
+        "mapping": {"Common": 1, "Uncommon": 2, "Rare": 3, "Epic": 4, "Legendary": 5},
+        "targets": "173 active items + stale detection",
+        "deliverable": "r18_5_backfill_tier_dryrun_report.md/.json",
+        "apply_script": "app/scripts/round18_5_backfill_tier_apply.py",
+        "apply_gate": "GO PM required",
+        "idempotency": "no_change_skip counter",
+        "rollback": "unset $items.tier script"
+      },
+      "1_2_max_visible_level": {
+        "constant": "MAX_VISIBLE_LEVEL = 60",
+        "file": "app/shared/constants.py",
+        "sealed": false,
+        "serializer_patch": "adventurer_public() clamp level = min(level, MAX_VISIBLE_LEVEL)",
+        "db_migration": false,
+        "notes": "XP accumulates continuous in DB, only UI clamp"
+      },
+      "1_3_adventurers_equipment_pwr": {
+        "fields": ["equipment_pwr", "gear_pwr"],
+        "stored": false,
+        "computed_in": "serializer on-the-fly",
+        "db_migration": false
+      },
+      "1_4_items_is_signature": {
+        "field": "items.is_signature",
+        "type": "bool",
+        "default": false,
+        "dry_run": "identify drake_slayer_* set (~14 items) as candidates",
+        "apply": "backfill idempotent, others = false",
+        "gate": "GO PM required"
+      },
+      "1_5_endgame_slots": {
+        "new_slots": ["helm", "chest", "legs"],
+        "existing_items_migration": false,
+        "retro_compat": "slot_type=armor items remain equipable as generic armor",
+        "new_batch_phase_c": "granular slot_type direct",
+        "frontend_change": "inventoryBySlot map extended"
+      },
+      "1_6_min_level_cross_check": {
+        "script": "app/scripts/round18_5_min_level_cross_check_dryrun.py",
+        "purpose": "identify items with min_level != required_adventurer_level",
+        "auto_fix": false,
+        "policy": "manual if <5% divergence, migration if >5%",
+        "gate": "GO PM required"
+      }
+    }
+  },
+  "2_registry_plan": {
+    "location": "/app/memory/",
+    "new_registries": [
+      {"name": "r18_5_item_family_registry", "formats": ["md", "json"], "content": "family -> primary/secondary stat, class compatibility, item_type/slot_type"},
+      {"name": "r18_5_signature_registry", "formats": ["md", "json"], "content": "~14 existing signature + new, effetti/lore"},
+      {"name": "r18_5_drop_matrix_registry", "formats": ["md", "json"], "content": "drop table per dungeon (24 + 1 endgame)"},
+      {"name": "r18_5_naming_registry", "formats": ["md", "json"], "content": "prefix/suffix approvati PM + naming batch"}
+    ]
+  },
+  "3_test_plan": {
+    "unit_min": 12,
+    "unit_breakdown": {
+      "tier_backfill_mapping": 5,
+      "equipment_pwr_formula": 3,
+      "max_visible_level_clamp": 2,
+      "signature_uniqueness_constraint": 2
+    },
+    "integration_min": 8,
+    "integration_breakdown": {
+      "get_items_tier_exposure": 2,
+      "get_adventurers_pwr_exposure": 2,
+      "get_dungeons_endgame_new": 1,
+      "eligible_items_seal_preserve": 1,
+      "equipment_flow_new_slots_lv30plus": 2
+    },
+    "regression_min": 6,
+    "regression_breakdown": {
+      "ui_4state_suite": "13/13 PASS invariato",
+      "class_bound_suite": "16/16 PASS invariato",
+      "sealed_integrity": "36/36 byte-identical",
+      "phase19_2_rename": "6/1 skipped invariato",
+      "auto_equip_fitness": "no ranking degradation",
+      "base_power_backward_compat": "total_power invariato"
+    },
+    "deterministic_4state_coverage": "rerun backend_r18_4_followup_ui_4state_test.py t01-t13 invariato"
+  },
+  "4_rollback_plan": {
+    "snapshot_pre_apply": "mongodump --db=$DB_NAME --collection=items --out=/tmp/backup_pre_r18_5_<step>_<utc>.bson",
+    "rollback_scripts": "round18_5_rollback_<step>.py per unset campo",
+    "verification": "post-rollback SHA256 fields target = pre-migration snapshot",
+    "constant_rollback": "rimozione MAX_VISIBLE_LEVEL da constants.py + revert serializer patch"
+  },
+  "5_db_impact_estimate": {
+    "collections": [
+      {"name": "items", "count_estimate": "173 active + 80-120 new = 253-293", "impact": "tier backfill + is_signature backfill + slot_type update per new batch"},
+      {"name": "adventurers", "count_estimate": "5 live + fresh users", "impact": "zero write (equipment_pwr computed)"},
+      {"name": "dungeons", "count_estimate": "24 + 1 new", "impact": "additive: 1 doc endgame-void-crucible"},
+      {"name": "recipes", "count_estimate": "6 legendary + 10 arfus + T3/T4 workshop", "impact": "additive Phase C"},
+      {"name": "materials", "count_estimate": "existing + T3-T5", "impact": "additive Phase C"}
+    ],
+    "total_records_touched": "~200 update + ~100 insert",
+    "idempotency": "mandatory on all apply"
+  },
+  "6_frontend_impact_estimate": [
+    {"component": "pages/Inventory.jsx", "change": "display tier + dual-label + nuovi slot", "est_lines": 15},
+    {"component": "pages/AdventurerEquipment.jsx", "change": "slot endgame dinamici Lv>=30 + equipment_pwr display", "est_lines": 25},
+    {"component": "components/InventoryEquipModal.jsx", "change": "slot filter esteso helm/chest/legs", "est_lines": 10},
+    {"component": "components/TierBadge.jsx", "change": "NEW badge tier secondario", "est_lines": 50},
+    {"component": "utils/displayLabels.js", "change": "tierLabel helper IT", "est_lines": 10},
+    {"component": "components/ItemCompatibilityBadge.jsx", "change": "NO CHANGE (SEALED R18.4.followup)", "est_lines": 0},
+    {"component": "utils/compatibilityLabels.js", "change": "NO CHANGE (SEALED R18.4.followup)", "est_lines": 0},
+    {"component": "inline_rarity_badge_audit", "change": "audit + eventuale patch dual-label", "est_lines": 20}
+  ],
+  "7_backend_api_impact_estimate": [
+    {"endpoint": "GET /api/items", "serializer": "item_public()", "change": "expose tier + tier_label"},
+    {"endpoint": "GET /api/items/{slug}", "serializer": "item_public()", "change": "idem"},
+    {"endpoint": "GET /api/inventory", "serializer": "item_public()", "change": "idem"},
+    {"endpoint": "GET /api/adventurers", "serializer": "adventurer_public()", "change": "expose equipment_pwr + gear_pwr, clamp level=min(level,60)"},
+    {"endpoint": "GET /api/adventurers/{id}/equipment", "serializer": "equipment_public()", "change": "idem PWR"},
+    {"endpoint": "GET /api/adventurers/{id}/eligible-items", "serializer": "derive_ui_4state (SEALED)", "change": "NO CHANGE"},
+    {"endpoint": "GET /api/dungeons", "serializer": "dungeon_public", "change": "expose endgame nuovo dungeon"},
+    {"endpoint": "POST /api/expeditions/complete", "serializer": "loot + xp", "change": "soft cap Lv60 clamp UI only"},
+    {"endpoint": "GET /api/gear-ranking", "serializer": "new endpoint", "change": "OPTIONAL leaderboard equipment_pwr top 10"}
+  ],
+  "8_auto_equip_impact_estimate": {
+    "app/equipment/auto_equip.py": {"sealed": false, "change": "fitness formula tier_bonus tie-break secondario, backward-compat"},
+    "app/equipment/compatibility.py": {"sealed": true, "seal_round": "R18.3e", "change": "NO CHANGE"},
+    "app/equipment/bindings.py": {"sealed": true, "seal_round": "R18.4 B4", "change": "NO CHANGE"},
+    "app/equipment/level_gate.py": {"sealed": false, "change": "extend validation precedence required_adventurer_level (SQ6 lock)"},
+    "app/equipment/ui_4state.py": {"sealed": true, "seal_round": "R18.4.followup C", "change": "NO CHANGE"},
+    "signature_uniqueness_constraint": "runtime check in equipment/services.py::equip_item (non-sealed), return 400 IT if violation"
+  },
+  "9_phase_c_d_e_proposal": {
+    "phase_c_migration_dry_run": {
+      "type": "documentale + script",
+      "scripts": ["tier backfill dry-run", "is_signature backfill dry-run", "min_level cross-check dry-run"],
+      "deliverable": "r18_5_phase_c_migration_dry_run_report.md/.json",
+      "gate": "GO PM required prima di Phase D"
+    },
+    "phase_d_code_apply": {
+      "sub_steps": {
+        "D_1": "constant + serializer patch (MAX_VISIBLE_LEVEL, equipment_pwr, tier exposure)",
+        "D_2": "apply script backfill (post-GO PM dry-run)",
+        "D_3": "nuovi 80-120 items seed (post-GO PM naming registry)",
+        "D_4": "endgame dungeon endgame-void-crucible seed",
+        "D_5": "Frontend: TierBadge, dual-label, slot endgame Lv30+",
+        "D_6": "Test suite: 26+ nuovi test"
+      }
+    },
+    "phase_e_seal": {
+      "steps": [
+        "selezione file nuovi da sigillare (PM decision perimetro)",
+        "banner apposition + SHA256 registry",
+        "update backend_r18_4_sealed_integrity_test.py -> aggregate 36 + N"
+      ],
+      "deliverable": "r18_5_phase_e_seal_report.md/.json"
+    }
+  },
+  "10_pm_gates": [
+    {"gate": 1, "description": "PM review Phase B.1 + risposta 8 new sub-questions (SQ11..SQ18)", "unlocks": "Phase C"},
+    {"gate": 2, "description": "PM review dry-run report Phase C", "unlocks": "backfill apply Phase D.2"},
+    {"gate": 3, "description": "PM approval naming registry (batch 80-120 items)", "unlocks": "seed Phase D.3"},
+    {"gate": 4, "description": "PM approval endgame dungeon naming + drop rate", "unlocks": "seed Phase D.4"},
+    {"gate": 5, "description": "PM review Phase D end-to-end (test PASS + sealed 36/36 + integration smoke)", "unlocks": "Phase E"},
+    {"gate": 6, "description": "PM approval SEAL perimeter (N file Phase E)", "unlocks": "SEAL apposition"},
+    {"gate": 7, "description": "PM approval post-SEAL report", "unlocks": "CLOSED R18.5"}
+  ],
+  "stop_conditions_preserved": [
+    "Sealed drift -> STOP critical",
+    "DB write senza GO -> STOP critical",
+    "Batch > 120 items -> STOP + report al PM",
+    "Auto-decision su bilanciamento/naming/class identity/stat priority -> STOP + segnala"
+  ],
+  "self_check": {
+    "1_migration_dry_run_plan": "COMPLETE (6 sub-plan)",
+    "2_registry_plan": "COMPLETE (4 registry doc)",
+    "3_test_plan": "COMPLETE (12 unit + 8 integration + 6 regression + 4-state)",
+    "4_rollback_plan": "COMPLETE (snapshot + script + verification)",
+    "5_db_impact": "COMPLETE (5 collezioni + count est.)",
+    "6_frontend_impact": "COMPLETE (8 componenti)",
+    "7_backend_api_impact": "COMPLETE (9 endpoint)",
+    "8_auto_equip_impact": "COMPLETE (compatibility SEALED preserved)",
+    "9_phase_c_d_e_proposal": "COMPLETE (breakdown 12 sub-step)",
+    "10_pm_gates": "COMPLETE (7 gate ordinati)",
+    "ready_for_pm_review": true,
+    "next_action": "Phase B.2 CLOSED, attesa PM Gate 1 (risposta 8 SQ + GO Phase C)"
+  }
+}

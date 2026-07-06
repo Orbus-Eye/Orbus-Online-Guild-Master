@@ -393,3 +393,70 @@ Vedi `/app/memory/round163_final_report.md` sezione "Debito tecnico residuo P3":
 
 ### Next-in-queue (attesa GO PM)
 `R18.3d — Stat/Role Mapping Registry`
+
+
+---
+
+## R18.5 Phase B.1 + B.2 — Design Lock & Implementation Plan (2026-07-06) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **CLOSED (documentale)** — in attesa **PM Gate 1** (GO Phase C)
+**Locked at UTC**: `2026-07-06T17:20:00Z`
+**Governance**: DOCUMENTAL ONLY — 36 sigilli byte-identical, zero DB writes, zero code changes.
+
+### Deliverable (4 file in `/app/memory/`)
+| File | Ruolo | Size |
+|:---|:---|---:|
+| `r18_5_phase_b1_design_lock.md` | Design Lock leggibile (14 tabelle + 6 sezioni extra) | 15.028 B |
+| `r18_5_phase_b1_design_lock.json` | Design Lock machine-readable (mirror) | 5.370 B |
+| `r18_5_phase_b2_implementation_plan.md` | Implementation Plan leggibile (10 sezioni) | 9.967 B |
+| `r18_5_phase_b2_implementation_plan.json` | Implementation Plan machine-readable (mirror) | 11.081 B |
+
+### Design Lock Phase B.1 (highlights)
+- **XP curve Lv60**: formula polinomiale invariata (SQ1a); **soft cap** `MAX_VISIBLE_LEVEL=60` (SQ2b) — clamp UI only, XP DB continuo.
+- **Item tier rework**: nuovo campo `items.tier` int 1..5 (SQ3c) + dual-label rarity/tier UI (SQ7c).
+- **PWR solo-equip**: nuovo campo `adventurers.equipment_pwr` (alias `gear_pwr`) computato, coesiste con `total_power` (SQ4c).
+- **Slot endgame**: ibrido starter 3 (weapon/armor/accessory) + endgame 6 (helm/chest/legs/…) attivato a soglia Lv30 (SQ5d).
+- **Signature policy**: max 1 signature equipped/adv (SQ9b), drop-only (no crafting R18.5), 15-25 signature target (`PENDING PM`).
+- **Set bonus**: differito (SQ10c) — solo placeholder collection `item_sets`.
+
+### Implementation Plan Phase B.2 (highlights)
+- **6 migration/dry-run plan** (tier backfill, MAX_VISIBLE_LEVEL constant, equipment_pwr computed, is_signature backfill, endgame slots additive, min_level cross-check).
+- **4 registry documentali** in `/app/memory/` (item_family, signature, drop_matrix, naming).
+- **Test plan**: 12 unit + 8 integration + 6 regression + 4-state deterministic coverage.
+- **Rollback plan** per ogni migration (snapshot mongodump + rollback script + verification SHA256).
+- **DB impact**: 5 collezioni (~200 update + ~100 insert), idempotency mandatory.
+- **Frontend impact**: 8 componenti (~130 lines), 3 SEALED preserved.
+- **Backend/API impact**: 9 endpoint (serializer patch + 1 new leaderboard opzionale), `derive_ui_4state` **SEALED preserved**.
+- **Auto-equip**: `compatibility.py` + `bindings.py` + `ui_4state.py` **SEALED preserved** — solo `auto_equip.py` (non-sealed) estende fitness con tier_bonus tie-break.
+- **Phase C/D/E breakdown**: 12 sub-step totali, ogni gate autorizzato singolarmente dal PM.
+
+### 8 nuove Sub-Question aperte al PM (Gate 1)
+1. **SQ11** — soglia starter→endgame slot transition (proposta Lv30, PM confirm)
+2. **SQ12** — tier badge colors (proposta grey/green/blue/purple/gold)
+3. **SQ13** — signature target count finale (proposta 15-25)
+4. **SQ14** — batch item distribution T1..T5 (proposta 25-35 / 20-30 / 15-25 / 10-15 / 5-8 + 15-25 signature)
+5. **SQ15** — endgame dungeon slug + naming player-facing (placeholder `endgame-void-crucible`)
+6. **SQ16** — min_level normalization policy (auto-fix vs manual, dry-run threshold 5%)
+7. **SQ17** — workshop level minimo per tier (T1=1, T3=3, T4=5, T5=7 proposto)
+8. **SQ18** — PWR bonus coefficients (tier_bonus T4=2/T5=5, slot_completion_bonus=5 proposto)
+
+### 7 PM Gate sequenziali
+1. **Gate 1** (ATTESA): PM review B.1 + risposte SQ11-SQ18 → GO Phase C
+2. **Gate 2**: PM review dry-run report Phase C → GO backfill apply Phase D.2
+3. **Gate 3**: PM approval naming registry (80-120 items) → GO seed Phase D.3
+4. **Gate 4**: PM approval endgame dungeon naming + drop rate → GO seed Phase D.4
+5. **Gate 5**: PM review Phase D end-to-end → GO Phase E
+6. **Gate 6**: PM approval SEAL perimeter Phase E → GO SEAL apposition
+7. **Gate 7**: PM approval post-SEAL report → CLOSED R18.5
+
+### Governance validation Phase B.1 + B.2
+- ✅ **36/36 sigilli byte-identical** (`backend_r18_4_sealed_integrity_test.py` PASS)
+- ✅ **Zero file .py/.js/.jsx/.ts/.tsx modificati** (git diff = empty su codice)
+- ✅ **Zero DB writes** (nessuno script eseguito su MongoDB)
+- ✅ **JSON validity**: entrambi B.1.json e B.2.json parse clean via `python -m json.tool`
+- ✅ **Simmetria .md/.json** rispettata per B.1 e B.2 (pattern R18.4)
+- ✅ **`PENDING PM approval`** marcato su tutti i numeri di bilanciamento, naming player-facing, stat priorities, drop rate finali, colors, coefficients
+
+### Next-in-queue (attesa GO PM Gate 1)
+`R18.5 Phase C — Migration Dry-Run` (documentale + script dry-run, **NO apply**)
+
