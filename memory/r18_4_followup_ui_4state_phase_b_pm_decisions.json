@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "round": "R18.4.followup",
+    "topic": "UI 4-State Item Compatibility Activation",
+    "phase": "B",
+    "stage": "pm_decision_lock",
+    "locked_at_utc": "2026-07-06T08:15:00Z",
+    "seal_authority": "PM Orchestrator",
+    "perimeter": "read-side API updates + UI 4-state activation; zero DB write; zero runtime enforcement change"
+  },
+  "sq_locked": {
+    "B.SQ1": {"topic": "Enum values naming", "decision": "c", "verbatim": "Entrambi — raw enum + derived flags", "impact": "item_public estende output con slot_type, item_binding_policy raw + is_universal derived"},
+    "B.SQ2": {"topic": "Computed vs raw exposure", "decision": "a", "verbatim": "Server-side context-aware", "impact": "recommended_for_class SOLO in endpoint context-aware; item_public non lo calcola"},
+    "B.SQ3": {"topic": "Localization scope", "decision": "a", "verbatim": "Solo enum tecnico backend", "impact": "label IT è responsabilità frontend helper"},
+    "B.SQ4": {"topic": "Mobile display", "decision": "b", "verbatim": "Icona + badge testuale mobile", "impact": "ItemCompatibilityBadge rende icona lucide + testo IT sempre"},
+    "B.SQ5": {"topic": "Backward compat slot", "decision": "a", "verbatim": "Fallback obbligatorio slot_type ?? item_type", "impact": "modifiche InventoryEquipModal e altri consumer"},
+    "B.SQ6": {"topic": "Endpoint contract", "decision": "c", "verbatim": "Endpoint dedicato /api/adventurers/{id}/eligible-items", "impact": "nuovo endpoint READ-ONLY con ownership guard"},
+    "B.SQ7": {"topic": "Shield fix scope", "decision": "a", "verbatim": "Incluso in Phase B", "impact": "test dedicato shield mapping end-to-end"},
+    "B.SQ8": {"topic": "Test coverage", "decision": "a", "verbatim": "12 test minimi (8 backend + 4 frontend/E2E)", "impact": "test suite dedicata"}
+  },
+  "compatibility_state_enum": ["blocked", "not_recommended", "recommended", "universal"],
+  "reason_code_enum": ["universal_item", "class_recommended", "class_mismatch_soft", "class_mismatch_hard", "slot_missing"],
+  "derivation_logic": {
+    "universal": {"trigger": "item_binding_policy == 'universal'", "can_equip": true, "recommended_for_class": true, "reason_code": "universal_item"},
+    "recommended_hard": {"trigger": "policy=hard AND class matches", "can_equip": true, "recommended_for_class": true, "reason_code": "class_recommended"},
+    "blocked_hard": {"trigger": "policy=hard AND class mismatch", "can_equip": false, "recommended_for_class": false, "reason_code": "class_mismatch_hard"},
+    "recommended_soft": {"trigger": "policy=soft AND class in recommended", "can_equip": true, "recommended_for_class": true, "reason_code": "class_recommended"},
+    "not_recommended_soft": {"trigger": "policy=soft AND class NOT in recommended", "can_equip": true, "recommended_for_class": false, "reason_code": "class_mismatch_soft"}
+  },
+  "governance": {
+    "zero_db_writes": true,
+    "zero_runtime_enforcement_change": true,
+    "zero_migration": true,
+    "zero_class_slug_migration": true,
+    "zero_class_tags_canonical_rewrite": true,
+    "zero_touch_30_sealed_files": true,
+    "zero_apply_script_execution": true,
+    "zero_phase_c_seal": true
+  }
+}

@@ -53,6 +53,14 @@ def item_public(it: dict) -> dict:
         "lore_tags": it.get("lore_tags") or [],
         "spoiler_level": it.get("spoiler_level") or "public",
         "lore_reviewed": bool(it.get("lore_reviewed", False)),
+        # R18.4 canonical slot_type (post-B3 real apply; null se non equipable/materials)
+        "slot_type": it.get("slot_type"),
+        # R18.4 item binding policy raw enum ("hard"|"soft"|"universal"); default None se legacy
+        "item_binding_policy": it.get("item_binding_policy"),
+        # R18.4.followup UI 4-state derived signal (context-free):
+        # true se item_binding_policy=="universal". recommended_for_class NON è
+        # esposto qui (context-aware, solo endpoint /api/adventurers/{id}/eligible-items).
+        "is_universal": (it.get("item_binding_policy") == "universal"),
     }
 
 

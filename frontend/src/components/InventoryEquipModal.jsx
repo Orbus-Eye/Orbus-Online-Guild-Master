@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useT } from "../i18n/I18nContext";
 import RoleMarker from "./RoleMarker";
 import { rarityLabel, itemTypeLabel } from "../utils/displayLabels";
+import ItemCompatibilityBadge from "./ItemCompatibilityBadge";
 
 const RARITY_COLOR = {
     common: "#9ca3af",
@@ -43,7 +44,7 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
 
     const eligible = useMemo(() => {
         if (!row?.item) return [];
-        const slot = row.item.item_type;
+        const slot = row.item.slot_type ?? row.item.item_type;
         const levelReq = row.item.level_required || 1;
         return (adventurers || []).filter((a) => {
             if (!a.is_available) return false;
@@ -55,7 +56,7 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
 
     if (!row?.item) return null;
     const it = row.item;
-    const slot = it.item_type;
+    const slot = it.slot_type ?? it.item_type;
     const rarity = (it.rarity || "common").toLowerCase();
     const color = RARITY_COLOR[rarity] || RARITY_COLOR.common;
     const bonuses = bonusList(it);
@@ -107,6 +108,15 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
                     >
                         {rarityLabel(rarity).toUpperCase()}
                     </span>
+                    {/* R18.4.followup Phase B — UI 4-state badge (context-free: is_universal).
+                        Full compatibility_state (blocked/not_recommended/recommended)
+                        richiede context adventurer → esposto in Adventurer detail (Phase C). */}
+                    {it.is_universal && (
+                        <ItemCompatibilityBadge
+                            compatibilityState="universal"
+                            reasonCode="universal_item"
+                        />
+                    )}
                     {row.is_bound && (
                         <span className="text-[10px] tracking-widest border border-amber/60 text-amber px-1.5 py-0.5 rounded-sm">
                             ◆ BOUND

@@ -1,5 +1,26 @@
 # Orbus Online — PRD (Round 16.3 CLOSED incluso Phase 8 V1, 2026-07-01)
 
+## R18.4.followup Phase B — UI 4-State Item Compatibility Activation — DELIVERED (2026-07-06)
+
+**Round**: `R18.4.followup — UI 4-State Item Compatibility Activation`
+**Fase**: B — Implementation (read-side API + UI activation)
+**Chiusura Phase B**: 2026-07-06T09:24:00Z UTC — implementation completa, ready per Phase C review
+**Report finale**: `/app/memory/r18_4_followup_ui_4state_phase_b_implementation_report.md/.json`
+
+### Sintesi
+- Serializer `item_public()` estende output con `slot_type`, `item_binding_policy`, `is_universal` (B.SQ1).
+- Nuovo endpoint context-aware `GET /api/adventurers/{id}/eligible-items` con contract 4-state (B.SQ6).
+- Helper `app/equipment/ui_4state.py` come single source of truth read-only derivation.
+- Frontend `ItemCompatibilityBadge` + slot fallback `slot_type ?? item_type` (B.SQ4/SQ5, mitigazione Risk 10.1 shield).
+- Test suite dedicata: **9/9 PASSED** backend (>= 8 minimo B.SQ8); frontend/E2E delegati a testing agent.
+- **Sealed integrity 5/5 PASSED** — nessun sigillo dei 30 file R18.4 SEAL toccato.
+- Zero DB writes, zero runtime enforcement change, zero migration.
+
+### Next-in-queue Phase C (attesa GO PM)
+- Integrazione full 4-state (blocked/not_recommended/recommended) nella `AdventurerEquipment` page.
+- SEAL Phase C dei 6 nuovi file Phase B.
+
+
 ## R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED (2026-07-06)
 
 **Round**: `R18.4` (Item Class-Bound Player-Facing — Option 3 Hybrid Refined)

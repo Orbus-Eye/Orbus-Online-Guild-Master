@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "round": "R18.4.followup",
+    "topic": "UI 4-State Item Compatibility Activation",
+    "phase": "B",
+    "stage": "implementation_report",
+    "locked_at_utc": "2026-07-06T09:24:00Z",
+    "author": "MainAgent (E1)",
+    "perimeter": "read-side API updates + UI 4-state activation; zero DB write; zero runtime enforcement change; zero sealed file touch"
+  },
+  "artifacts": {
+    "backend_created": [
+      "/app/backend/app/equipment/ui_4state.py",
+      "/app/backend/tests/backend_r18_4_followup_ui_4state_test.py"
+    ],
+    "backend_modified": [
+      "/app/backend/app/items/services.py",
+      "/app/backend/app/adventurers/routes.py"
+    ],
+    "frontend_created": [
+      "/app/frontend/src/utils/compatibilityLabels.js",
+      "/app/frontend/src/components/ItemCompatibilityBadge.jsx"
+    ],
+    "frontend_modified": [
+      "/app/frontend/src/components/InventoryEquipModal.jsx",
+      "/app/frontend/src/pages/Inventory.jsx"
+    ],
+    "memory": [
+      "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.md",
+      "/app/memory/r18_4_followup_ui_4state_phase_b_pm_decisions.json",
+      "/app/memory/r18_4_followup_ui_4state_phase_b_implementation_report.md",
+      "/app/memory/r18_4_followup_ui_4state_phase_b_implementation_report.json"
+    ]
+  },
+  "endpoint_added": {
+    "method": "GET",
+    "path": "/api/adventurers/{adventurer_id}/eligible-items",
+    "auth": "JWT Bearer",
+    "ownership_guard": "user_guild_or_404 + adventurers.find_one(id, guild_id) → 404 if mismatch",
+    "response_top_level_fields": ["adventurer_id", "class_slug", "total", "eligible_items"],
+    "per_item_contract_fields": [
+      "item_id", "name", "item_type", "slot_type", "item_binding_policy",
+      "can_equip", "compatibility_state", "recommended_for_class",
+      "is_universal", "reason_code"
+    ],
+    "item_filter": "item_type in {weapon, armor, accessory, shield}",
+    "dedup": "by item_id"
+  },
+  "serializer_changes": {
+    "file": "/app/backend/app/items/services.py",
+    "function": "item_public",
+    "added_fields": ["slot_type", "item_binding_policy", "is_universal"],
+    "deliberately_omitted_context_aware": ["recommended_for_class", "compatibility_state"],
+    "impact_endpoints": [
+      "GET /api/items",
+      "GET /api/inventory",
+      "GET /api/adventurers/{id}/equipment",
+      "market/auction listings via inventory_public"
+    ]
+  },
+  "ui_4state_helper": {
+    "backend_module": "app/equipment/ui_4state.py",
+    "public_api": ["derive_ui_4state", "VALID_COMPATIBILITY_STATES", "VALID_REASON_CODES"],
+    "valid_compatibility_states": ["blocked", "not_recommended", "recommended", "universal"],
+    "valid_reason_codes": ["universal_item", "class_recommended", "class_mismatch_soft", "class_mismatch_hard", "slot_missing"],
+    "frontend_helper": "frontend/src/utils/compatibilityLabels.js",
+    "frontend_component": "frontend/src/components/ItemCompatibilityBadge.jsx"
+  },
+  "slot_fallback_fix": {
+    "pattern": "item.slot_type ?? item.item_type",
+    "applied_files": [
+      "/app/frontend/src/components/InventoryEquipModal.jsx",
+      "/app/frontend/src/pages/Inventory.jsx"
+    ],
+    "risk_mitigated": "10.1 (shield item_type=shield mapped to slot_type=armor was breaking eligible filter)"
+  },
+  "test_coverage": {
+    "backend_test_file": "/app/backend/tests/backend_r18_4_followup_ui_4state_test.py",
+    "backend_test_count": 9,
+    "backend_test_passed": 9,
+    "backend_test_failed": 0,
+    "minimum_required_backend": 8,
+    "minimum_required_frontend_e2e": 4,
+    "frontend_e2e_delegated_to_testing_agent": true,
+    "backend_tests": {
+      "t01_derive_universal_item": "PASSED",
+      "t02_derive_hard_class_match": "PASSED",
+      "t03_derive_hard_class_mismatch": "PASSED",
+      "t04_derive_soft_class_recommended": "PASSED",
+      "t05_derive_soft_class_not_recommended": "PASSED",
+      "t06_item_public_exposes_new_r18_4_fields": "PASSED",
+      "t07_eligible_items_endpoint_shape_and_enum_conformance": "PASSED",
+      "t08_eligible_items_endpoint_shield_maps_to_armor_slot": "PASSED",
+      "t09_eligible_items_endpoint_ownership_guard_404_cross_guild": "PASSED"
+    }
+  },
+  "governance_verification": {
+    "zero_db_writes": true,
+    "zero_runtime_enforcement_change": true,
+    "zero_migration": true,
+    "zero_class_slug_migration": true,
+    "zero_touch_30_sealed_files": true,
+    "zero_apply_script_execution": true,
+    "zero_phase_c_seal": true
+  },
+  "sanity_gate": {
+    "sealed_integrity_tests": "5/5 PASSED",
+    "r18_4_class_bound_tests": "16/16 PASSED",
+    "phase19_2_rename_tests": "6 passed, 1 skipped",
+    "phase14_legacy_tests": "10 FAILED (pre-existing stale: password policy + path count drift) — NOT caused by Phase B",
+    "lint_python": "no errors",
+    "lint_javascript": "no errors"
+  },
+  "deferred_to_phase_c": [
+    "Full 4-state badge integration in AdventurerEquipment page (consume /api/adventurers/{id}/eligible-items)",
+    "Consume eligible-items API in AdventurerDetailModal for suggested items",
+    "Phase C SEAL (add 6 new files to sealed set)",
+    "Shield item catalog audit (SQ1 backlog)"
+  ],
+  "known_limitations": [
+    "endpoint dedup: instance granularity dropped in favour of item unicity (Phase C can add ?include_instances=true)",
+    "class_slug fallback uses class_name.lower() — coherent with adventurer_public() but dependent on catalog naming",
+    "Frontend badge currently only wired for state=universal (context-free); full 4-state deferred to Phase C",
+    "Legacy regression tests phase14_* stale (pre-existing, independent from Phase B)"
+  ],
+  "next_round_handoff": {
+    "recommended_next_round": "R18.5 (Phase C SEAL + full 4-state UI integration)",
+    "backlog_items_to_prioritize": [
+      "R18.4.followup — Shield slot mapping decision (SQ1)",
+      "R18.4.backlog — specialization_unlocks dead branch cleanup (SQ2)",
+      "R18.3f — Class Slug Migration Planning"
+    ]
+  },
+  "self_check": {
+    "sections_completed": 13,
+    "sections_required": 13,
+    "status": "COMPLETE"
+  }
+}

@@ -1,5 +1,5 @@
 """Adventurers + classes routes (Phase 5.5d, Phase 19.2 rename, ROUND 6B.2a retire)."""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from pymongo import ASCENDING
 
@@ -12,6 +12,7 @@ from app.adventurers.services import (
 )
 from app.core.database import db
 from app.core.security import get_current_user
+from app.equipment.ui_4state import derive_ui_4state
 from app.guilds.services import user_guild_or_404
 from app.territory.guards import compute_adventurer_cap_state
 
@@ -245,6 +246,96 @@ async def get_roster_health(current_user: dict = Depends(get_current_user)):
         **cap_state,
         "state": state_label,
         "dormitories_next_upgrade": next_upgrade,
+    }
+
+
+@router.get("/api/adventurers/{adventurer_id}/eligible-items")
+async def list_eligible_items(
+    adventurer_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """R18.4.followup Phase B — UI 4-state eligible items per adventurer.
+
+    Endpoint READ-ONLY che espone, per ogni item nell'inventory della guild
+    dell'avventuriero, i signal di compatibilità 4-state (context-aware).
+
+    Contract locked B.SQ6 (Phase B PM decisions):
+        item_id, name, item_type, slot_type, item_binding_policy,
+        can_equip, compatibility_state, recommended_for_class,
+        is_universal, reason_code.
+
+    Governance:
+        - Zero DB writes (query-only).
+        - Zero runtime enforcement change (no gate su equip; solo UI hint).
+        - Ownership enforced via user_guild_or_404 + adventurer.guild_id match.
+        - Solo item equipable (weapon/armor/accessory/shield); material e
+          consumable esclusi (non equipabili) per rispettare scope UI badge.
+        - Dedup per item_id (una stessa arma stacked non compare due volte).
+    """
+    guild = await user_guild_or_404(db, current_user["id"])
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild["id"]}, {"_id": 0}
+    )
+    if not adv:
+        raise HTTPException(status_code=404, detail="Adventurer not found")
+
+    # class_slug fallback identico ad adventurer_public() per coerenza (SQ5+).
+    cls_slug = (
+        adv.get("class_slug")
+        or (adv.get("class_name") or "").lower()
+        or ""
+    )
+    adv_ctx = {"class_slug": cls_slug, "class_name": adv.get("class_name")}
+
+    inv_rows = (
+        await db.inventory_items.find(
+            {"guild_id": guild["id"]}, {"_id": 0}
+        ).to_list(500)
+    )
+    item_ids = list({r["item_id"] for r in inv_rows if r.get("item_id")})
+    items_map: dict[str, dict] = {}
+    if item_ids:
+        items = await db.items.find(
+            {"id": {"$in": item_ids}}, {"_id": 0}
+        ).to_list(500)
+        items_map = {it["id"]: it for it in items}
+
+    equipable_types = {"weapon", "armor", "accessory", "shield"}
+    out: list[dict] = []
+    seen: set[str] = set()
+    for r in inv_rows:
+        item = items_map.get(r.get("item_id"))
+        if not item:
+            continue
+        item_type = (item.get("item_type") or "").lower()
+        if item_type not in equipable_types:
+            continue
+        if item["id"] in seen:
+            continue
+        seen.add(item["id"])
+        derived = derive_ui_4state(adv_ctx, item)
+        out.append({
+            "item_id": item["id"],
+            "name": (
+                item.get("display_name_it")
+                or item.get("display_name_en")
+                or item.get("name")
+            ),
+            "item_type": item_type,
+            "slot_type": derived["slot_type"],
+            "item_binding_policy": derived["item_binding_policy"],
+            "can_equip": derived["can_equip"],
+            "compatibility_state": derived["compatibility_state"],
+            "recommended_for_class": derived["recommended_for_class"],
+            "is_universal": derived["is_universal"],
+            "reason_code": derived["reason_code"],
+        })
+
+    return {
+        "adventurer_id": adventurer_id,
+        "class_slug": cls_slug or None,
+        "eligible_items": out,
+        "total": len(out),
     }
 
 

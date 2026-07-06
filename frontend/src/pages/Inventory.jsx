@@ -35,6 +35,7 @@ import AppHeader from "../components/AppHeader";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import InventoryEquipModal from "../components/InventoryEquipModal";
+import ItemCompatibilityBadge from "../components/ItemCompatibilityBadge";
 import { rarityLabel } from "../utils/displayLabels";
 
 const RARITY_COLOR = {
@@ -298,7 +299,9 @@ export default function Inventory() {
                             {filteredRows.map((r) => {
                             const it = r.item;
                             if (!it) return null;
-                            const slot = it.item_type; // weapon | armor | accessory
+                            // R18.4.followup B.SQ5 — slot_type è la fonte canonica post-R18.4;
+                            // item_type resta il fallback per catalog seedato pre-backfill.
+                            const slot = it.slot_type ?? it.item_type; // weapon | armor | accessory
                             const levelReq = it.level_required || 1;
                             const equippedBy = equippedByMap[it.id] || [];
 
@@ -334,6 +337,14 @@ export default function Inventory() {
                                                     {r.refinement_level > 0 ? ` +${r.refinement_level}` : ""}
                                                 </span>
                                                 <RarityBadge rarity={it.rarity} />
+                                                {/* R18.4.followup Phase B — UI 4-state badge (is_universal context-free). */}
+                                                {it.is_universal && (
+                                                    <ItemCompatibilityBadge
+                                                        compatibilityState="universal"
+                                                        reasonCode="universal_item"
+                                                        className={`inv-universal-${r.id}`}
+                                                    />
+                                                )}
                                                 {r.is_bound && (
                                                     <span
                                                         data-testid={`inv-bound-badge-${r.id}`}
