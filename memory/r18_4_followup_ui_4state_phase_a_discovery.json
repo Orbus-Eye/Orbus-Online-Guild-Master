@@ -1,0 +1,288 @@
+{
+  "meta": {
+    "round_naming_decision": "R18.4.followup — UI 4-State Item Compatibility Activation",
+    "round_naming_reason": "R18.5 già riservato in roadmap per 'PWR Solo-Equip + XP Curve Lv60 + Item Tier Rework' — evitato conflict",
+    "phase": "A",
+    "stage": "discovery_lite_read_only",
+    "generated_at_utc": "2026-07-06T07:55:00Z",
+    "perimeter": "read-only investigation; no DB write; no code change; no sealed file touch",
+    "governance": {
+      "zero_db_writes": true,
+      "zero_runtime_enforcement_changes": true,
+      "zero_class_slug_migration": true,
+      "zero_class_tags_canonical_rewrite": true,
+      "zero_runtime_bridge_activation": true,
+      "zero_unlock_cdm_cdv": true,
+      "zero_unlock_berserker_assassin": true,
+      "zero_bard_role_drift_change": true,
+      "zero_valid_roles_change": true,
+      "zero_hard_delete": true,
+      "zero_sealed_file_modification": true,
+      "zero_apply_script_execution": true,
+      "zero_code_changes_frontend_backend": true
+    }
+  },
+
+  "section_1_round_naming": {
+    "chosen": "R18.4.followup — UI 4-State Item Compatibility Activation",
+    "alternative_considered_rejected": "R18.5",
+    "reason_rejection": "roadmap /app/memory/orbus_world_roadmap.md:29 R18.5 già assegnato a 'PWR Solo-Equip + XP Curve Lv60 (3 varianti) + Item Tier Rework (2 modelli)'"
+  },
+
+  "section_2_serializer_api": {
+    "public_endpoints": [
+      {"path": "GET /api/items", "file": "/app/backend/app/items/routes.py:11-15", "serializer": "list_active_items → item_public"},
+      {"path": "GET /api/inventory", "file": "/app/backend/app/inventory/services.py:42", "serializer": "embed item_public"},
+      {"path": "POST /api/adventurers/{id}/equip", "file": "/app/backend/app/adventurers/routes.py", "payload": "{item_id, slot}"}
+    ],
+    "admin_endpoints": [
+      {"path": "GET /api/admin/items", "file": "/app/backend/app/admin/routes.py:292"},
+      {"path": "POST /api/admin/items", "file": "/app/backend/app/admin/routes.py:298"},
+      {"path": "PATCH /api/admin/items/{item_id}", "file": "/app/backend/app/admin/routes.py:322"},
+      {"path": "POST /api/admin/items/{item_id}/toggle-active", "file": "/app/backend/app/admin/routes.py:339"},
+      {"path": "POST /api/admin/guilds/{id_or_public}/grant-item", "file": "/app/backend/app/admin/routes.py:602"}
+    ],
+    "item_public_exposed_fields": [
+      "id", "slug", "name", "display_name_it", "display_name_en", "description",
+      "item_type", "rarity", "level_required", "required_adventurer_level", "power_score",
+      "strength_bonus", "agility_bonus", "intellect_bonus", "endurance_bonus", "faith_bonus",
+      "is_tradeable", "is_cosmetic", "affects_combat", "affects_economy", "affects_ranking",
+      "can_be_sold_for_gold", "can_be_sold_for_real_money", "is_active",
+      "flavor_text_it", "flavor_text_en", "lore_tags", "spoiler_level", "lore_reviewed"
+    ],
+    "item_public_NOT_exposed_candidates_for_ui_4state": [
+      "class_tags", "recommended_classes", "required_class_optional",
+      "slot_type", "item_binding_policy", "is_universal_derived", "recommended_for_class_derived"
+    ]
+  },
+
+  "section_3_frontend_components": {
+    "files_consuming_item_metadata": [
+      "/app/frontend/src/pages/Inventory.jsx",
+      "/app/frontend/src/components/InventoryEquipModal.jsx",
+      "/app/frontend/src/components/AdventurerDetailModal.jsx",
+      "/app/frontend/src/pages/RaidBuilder.jsx",
+      "/app/frontend/src/pages/Crafting.jsx",
+      "/app/frontend/src/pages/Resources.jsx",
+      "/app/frontend/src/pages/MaterialsPublic.jsx",
+      "/app/frontend/src/pages/Dashboard.jsx",
+      "/app/frontend/src/pages/ExpeditionReport.jsx",
+      "/app/frontend/src/components/territory/MaterialSourceModal.jsx",
+      "/app/frontend/src/components/MountCard.jsx",
+      "/app/frontend/src/components/ExpeditionExplainer.jsx",
+      "/app/frontend/src/components/TraitBadge.jsx"
+    ],
+    "critical_render_pattern_inventory_equip_modal": {
+      "file": "/app/frontend/src/components/InventoryEquipModal.jsx",
+      "line": 46,
+      "code": "const slot = row.item.item_type;",
+      "issue": "usa item_type direttamente come slot; problema per shield (item_type=shield vs slot_type=armor post-R18.4 SQ1a)"
+    },
+    "ui_patterns_reusable": [
+      "data-testid=equip-modal-adv-bound-badge (badge pattern)",
+      "equip-modal-no-eligible (disabled state message)",
+      "level_required warning render",
+      "toast.success/error feedback (sonner)"
+    ]
+  },
+
+  "section_4_mapping_api_to_ui_4state": {
+    "state_1_blocked": {
+      "signal": "check_equip_compatibility severity=block",
+      "logic": "required_class_optional mismatch OR heavy_armor_forbidden OR arcane_weapon_forbidden OR level_gate OR ownership"
+    },
+    "state_2_warning": {
+      "signal": "check_equip_compatibility severity=warning",
+      "logic": "class_tags/recommended_classes mismatch"
+    },
+    "state_3_recommended": {
+      "signal": "severity=ok AND recommended_for_class=true",
+      "logic": "classe adventurer in item.recommended_classes o class_tags"
+    },
+    "state_4_universal": {
+      "signal": "severity=ok AND is_universal=true AND !recommended_for_class",
+      "logic": "item_binding_policy=universal"
+    },
+    "proposal": {
+      "server_side_compute_recommended": true,
+      "server_side_compute_is_universal": true,
+      "client_side_rendering_only": true,
+      "rationale": "single source of truth policy, retro-compat additive, no client policy drift"
+    }
+  },
+
+  "section_5_slot_type_exposure": {
+    "target_endpoints": ["GET /api/items", "GET /api/inventory", "GET /api/admin/items", "optional: GET /api/adventurers/{id}/equipment"],
+    "localization_needed_it": false,
+    "reason": "enum tecnico weapon/armor/accessory; label già gestita frontend da itemTypeLabel()"
+  },
+
+  "section_6_item_binding_policy_exposure": {
+    "target_endpoints": "same as slot_type",
+    "options": {
+      "option_a_raw_enum": "expose item_binding_policy: 'hard'|'soft'|'universal' — flexible",
+      "option_b_derived_only": "expose is_universal + recommended_for_class only — minimalist"
+    },
+    "agent_preference": "option_a (max flessibilità future use)"
+  },
+
+  "section_7_mobile_responsive": {
+    "current_stack": "Tailwind + shadcn/ui + lucide-react",
+    "no_heavy_graphics_required": true,
+    "proposed_4_state_badges": {
+      "blocked": {"color": "red", "icon": "Ban or Lock", "label_it": "Bloccato"},
+      "warning": {"color": "amber/yellow", "icon": "AlertTriangle", "label_it": "Non consigliato"},
+      "recommended": {"color": "green", "icon": "Check or Star", "label_it": "Consigliato"},
+      "universal": {"color": "gray/neutral", "icon": "Globe or Users", "label_it": "Universale"}
+    },
+    "mobile_strategy": "solo icona con aria-label; tap-to-toggle popover per dettagli",
+    "zero_new_dependencies": true
+  },
+
+  "section_8_existing_tests": [
+    {"file": "/app/backend/tests/backend_phase19_4a_inventory_shape_test.py", "coverage": "inventory shape validation"},
+    {"file": "/app/backend/tests/backend_round1654b_test.py", "coverage": "27 test compatibility + auto_equip baseline"},
+    {"file": "/app/backend/tests/backend_r18_4_class_bound_test.py", "coverage": "16 test R18.4 registry + dry-run + guard"},
+    {"file": "/app/backend/tests/backend_r18_4_sealed_integrity_test.py", "coverage": "5 test sealed integrity 30 files"},
+    {"file": "/app/backend/tests/backend_r18_3e_bridge_test.py", "coverage": "27+ test bridge R18.3e"}
+  ],
+
+  "section_9_missing_tests_for_phase_b": {
+    "backend_8": [
+      "test_item_public_exposes_slot_type",
+      "test_item_public_exposes_item_binding_policy",
+      "test_item_public_exposes_is_universal_derived",
+      "test_item_public_exposes_recommended_for_class_when_class_slug_provided",
+      "test_item_public_backward_compat_absent_class_slug",
+      "test_list_active_items_all_178_expose_new_fields",
+      "test_inventory_public_embed_item_new_fields",
+      "test_ui_4_state_derivation_all_combinations"
+    ],
+    "frontend_e2e_4": [
+      "test_inventory_shows_4_state_badges",
+      "test_equip_modal_disables_incompatible_items",
+      "test_mobile_responsive_badges_render",
+      "test_tooltip_or_popover_on_badge_interaction"
+    ],
+    "total_minimum": 12
+  },
+
+  "section_10_risks": [
+    {
+      "id": "risk_10_1_shield_slot_mismatch",
+      "severity": "low_today_medium_post_exposure",
+      "description": "InventoryEquipModal.jsx:46 usa item.item_type come slot; per 2 shield items post-R18.4 SQ1a: item_type=shield vs slot_type=armor",
+      "impact_now": "basso (2 signature items non-live)",
+      "impact_after_exposure": "medio (backend potrebbe rifiutare slot=shield)",
+      "mitigation": "frontend usa item.slot_type ?? item.item_type — additive update Phase B",
+      "governance_note": "NO fix in Phase A"
+    },
+    {
+      "id": "risk_10_2_backward_compat_serializer",
+      "severity": "low",
+      "description": "aggiunta nuovi field a item_public è additiva; client vecchi ignorano field sconosciuti",
+      "impact": "basso",
+      "mitigation": "nessuna azione richiesta"
+    },
+    {
+      "id": "risk_10_3_performance_list_endpoints",
+      "severity": "low_medium",
+      "description": "GET /api/items (178) + GET /api/inventory (N righe); recommended_for_class per-class = O(N × classes)",
+      "mitigation": "is_universal item-only; recommended_for_class delegato a endpoint helper opzionale o client con recommended_classes esposto"
+    },
+    {
+      "id": "risk_10_4_localization_scope",
+      "severity": "low",
+      "description": "label 4-state IT-only (game IT-native)",
+      "mitigation": "usa i18n frontend esistente o hardcoded IT; NO EN traduzioni ora"
+    },
+    {
+      "id": "risk_10_5_canonical_vs_legacy_class_slug",
+      "severity": "low",
+      "description": "adventurers.class_slug live resta legacy EN post-R18.3e; compat check usa legacy EN",
+      "impact": "recommended_for_class deve usare legacy EN class_slug (coerente con check_equip_compatibility)",
+      "mitigation": "NO scope creep in EN→IT migration"
+    },
+    {
+      "id": "risk_10_6_test_regression_snapshot",
+      "severity": "medium",
+      "description": "aggiunta field a item_public potrebbe rompere test snapshot strict-key",
+      "candidate_impact": "/app/backend/tests/backend_phase19_4a_inventory_shape_test.py",
+      "mitigation": "verify shape test tolerance pre-implementation Phase B"
+    }
+  ],
+
+  "section_11_sub_questions_pm_phase_b": [
+    {
+      "id": "B.SQ1",
+      "topic": "Enum values naming: raw exposure di item_binding_policy?",
+      "options": {"a": "expose raw enum item_binding_policy", "b": "expose only is_universal + recommended_for_class"},
+      "agent_preference": "a"
+    },
+    {
+      "id": "B.SQ2",
+      "topic": "Computed vs raw exposure di recommended_for_class",
+      "options": {"a": "server-side via endpoint context (?for_class=)", "b": "client-side via recommended_classes esposto raw"},
+      "agent_preference": "b"
+    },
+    {
+      "id": "B.SQ3",
+      "topic": "Localization scope backend",
+      "options": {"a": "solo enum, client fa mapping", "b": "backend espone label IT preformattata"},
+      "agent_preference": "a"
+    },
+    {
+      "id": "B.SQ4",
+      "topic": "Mobile display strategy",
+      "options": {"a": "solo icona lucide + aria-label", "b": "icona + label breve (2-3 char)", "c": "layout desktop uguale"},
+      "agent_preference": "a"
+    },
+    {
+      "id": "B.SQ5",
+      "topic": "Backward compat frontend (item_type as slot vs slot_type)",
+      "options": {"a": "frontend update Phase B (usa slot_type ?? item_type)", "b": "backend backfill item_type shield→armor (VIOLA governance R18.4)", "c": "postpone round separato"},
+      "agent_preference": "a"
+    },
+    {
+      "id": "B.SQ6",
+      "topic": "Endpoint contract per class context",
+      "options": {"a": "query param ?for_class=warrior", "b": "header X-For-Class", "c": "implicit /api/adventurers/{id}/eligible-items"},
+      "agent_preference": "c"
+    },
+    {
+      "id": "B.SQ7",
+      "topic": "Shield fix scope (risk 10.1)",
+      "options": {"a": "included in Phase B", "b": "separate in R18.4.followup Shield backlog"},
+      "agent_preference": "a"
+    },
+    {
+      "id": "B.SQ8",
+      "topic": "Test coverage minimo Phase B",
+      "options": {"a": "8 backend + 4 frontend E2E = 12", "b": "solo 12 backend + manual e1_tester", "c": "20+ exhaustive"},
+      "agent_preference": "a"
+    }
+  ],
+
+  "self_check_phase_a_12_of_12": {
+    "1_round_naming_decision": true,
+    "2_serializer_api_mapped": true,
+    "3_frontend_components_identified": true,
+    "4_mapping_api_to_4state_formalized": true,
+    "5_slot_type_exposure_plan": true,
+    "6_item_binding_policy_exposure_plan": true,
+    "7_mobile_responsive_analyzed": true,
+    "8_existing_tests_censited": true,
+    "9_missing_tests_identified": true,
+    "10_risks_identified_with_mitigation": true,
+    "11_sub_questions_pm_formulated": true,
+    "12_read_only_constraints_respected": true
+  },
+
+  "next_gate_required": {
+    "phase_b_authorization_required": true,
+    "pm_review_of_sq1_to_sq8_required": true,
+    "no_scope_creep_detected": true,
+    "no_class_slug_migration_needed": true,
+    "recommendation": "PROCEED_TO_PHASE_B_AFTER_PM_LOCK_ON_SQ1_TO_SQ8"
+  }
+}
