@@ -1,0 +1,226 @@
+{
+  "_seal": {
+    "status": "R18.4 CLOSED & SEALED",
+    "title": "🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED",
+    "sealed_at_utc": "2026-07-06T07:20:00Z",
+    "seal_authority": "PM Orchestrator"
+  },
+  "meta": {
+    "round": "R18.4",
+    "phase": "B4",
+    "stage": "contract_lock_and_seal",
+    "final_status": "R18.4 CLOSED & SEALED",
+    "authorized_by_pm_at_utc": "2026-07-06T07:15:00Z",
+    "executed_at_utc": "2026-07-06T07:20:00Z",
+    "governance": {
+      "no_rename": true,
+      "no_scope_creep": true,
+      "no_target_change_stays_at_30": true,
+      "no_ui_4_state_activation": true,
+      "no_serializer_exposure_now": true,
+      "no_runtime_enforcement_change": true,
+      "no_new_db_writes": true,
+      "no_new_apply": true,
+      "no_rollback": true,
+      "no_class_slug_migration": true,
+      "no_class_tags_canonical_rewrite": true,
+      "no_runtime_bridge_activation": true,
+      "no_unlock_cdm_cdv": true,
+      "no_unlock_berserker_assassin": true,
+      "no_bard_role_drift_change": true,
+      "no_valid_roles_change": true,
+      "no_player_facing_class_label_change": true,
+      "no_hard_delete": true,
+      "sealed_files_byte_identical_19_preexisting": true
+    }
+  },
+
+  "e2e_gate_post_apply_result": {
+    "score": "4/4 PASS",
+    "checks": [
+      {"check": "/api/health", "status": "200 OK"},
+      {"check": "Guild test 'la lanterna di ferro' lvl 1, gold 85, 5 avventurieri", "status": "OK"},
+      {"check": "Roster/Inventory/Equipment pages", "status": "OK, zero console error"},
+      {"check": "Expedition (Goblin Warrens 423 lvl_too_low legit / training-yard 201 team_power 92)", "status": "OK"},
+      {"check": "/api/items /api/inventory", "status": "200 OK"}
+    ]
+  },
+
+  "sealed_files_new_r18_4_11": [
+    {"path": "/app/memory/r18_4_phase_b2_pm_decisions.md", "sha256": "83b5f60813cef99cc30d8f4704860ec7f17a40da0de64093b706efa2de974566", "format": "markdown", "banner_type": "html_comment_header"},
+    {"path": "/app/memory/r18_4_phase_b2_pm_decisions.json", "sha256": "c73e6743a6fbb26177deb7e941ce6e900f38b3db08fd894451d8859711832be4", "format": "json", "banner_type": "_seal_field_option_a"},
+    {"path": "/app/memory/r18_4_class_bound_registry.md", "sha256": "e26065a1da92e98278163ee7a2dd757d65dbddbacb668ff43df2e44a3611b43c", "format": "markdown", "banner_type": "html_comment_header"},
+    {"path": "/app/memory/r18_4_class_bound_registry.json", "sha256": "c3a58e3d94f0053870a12197b29c02e0ec7d17ddae5d85496ca17584d0a2059d", "format": "json", "banner_type": "_seal_field_option_a"},
+    {"path": "/app/backend/app/scripts/round18_4_backfill_slot_type.py", "sha256": "7108bf189415468bc7148f70186d6b5f2e1f7a618f712cbb2f02693e00ab54e6", "format": "python", "banner_type": "docstring_header"},
+    {"path": "/app/backend/app/scripts/round18_4_apply_class_bound.py", "sha256": "fda696467001d313128630735a4e91dc03f0af3cf8eb9da43ef4ca7e8f2c26fa", "format": "python", "banner_type": "docstring_header"},
+    {"path": "/app/backend/app/scripts/round18_4_backfill_slot_type_apply.py", "sha256": "6a9a3c5cb50fc97c436fe39a71d39657d199885fd0ae35d335e08c8dc60c8461", "format": "python", "banner_type": "docstring_header"},
+    {"path": "/app/backend/app/scripts/round18_4_apply_class_bound_apply.py", "sha256": "1358d42fa051623ed5e06a44ee8b5279fb11fd99afc44bb0596f06d312ec42b3", "format": "python", "banner_type": "docstring_header"},
+    {"path": "/app/backend/tests/backend_r18_4_class_bound_test.py", "sha256": "f0644e2c3df869c0344afb2e831f2fffc8759eaef7554ed1764d7ba0a74d5d28", "format": "python", "banner_type": "docstring_header"},
+    {"path": "/app/memory/r18_4_phase_b3_dry_run_prereport.md", "sha256": "3bb1484826710a9a8b688e6152150ad2c8a860352daaaf1978b1a686aef76d59", "format": "markdown", "banner_type": "html_comment_header"},
+    {"path": "/app/memory/r18_4_phase_b3_real_apply_report.md", "sha256": "de0c9b4661ac17b9b16ea7bd4b1e90ec7909a7b46b899563eb04c8e2fad94585", "format": "markdown", "banner_type": "html_comment_header"}
+  ],
+
+  "sealed_files_preexisting_19_byte_identical": {
+    "verified_missing": 0,
+    "verified_mismatches": 0,
+    "verified_byte_identical": true,
+    "source_registry": "/app/memory/r18_3e_seal_registry.json",
+    "verification_test": "/app/backend/tests/backend_r18_4_sealed_integrity_test.py::test_r18_4_b4_seal_01_preexisting_19_byte_identical",
+    "verification_result": "PASS"
+  },
+
+  "mapping_pm_intended_to_actual": [
+    {"pm_intended": "r18_4_item_binding_registry.md", "actual": "/app/memory/r18_4_class_bound_registry.md", "reason": "naming effettivo storicamente coerente col round B2/B3"},
+    {"pm_intended": "r18_4_item_binding_registry.json", "actual": "/app/memory/r18_4_class_bound_registry.json", "reason": "naming effettivo storicamente coerente col round B2/B3"},
+    {"pm_intended": "backend_r18_4_item_class_bound_test.py", "actual": "/app/backend/tests/backend_r18_4_class_bound_test.py", "reason": "naming test suite già in uso"},
+    {"pm_intended": "r18_4_phase_b3_dry_run_report.md", "actual": "/app/memory/r18_4_phase_b3_dry_run_prereport.md", "reason": "file effettivo ha suffix _prereport"}
+  ],
+
+  "total_sealed_count": {
+    "preexisting_19": 19,
+    "new_r18_4_11": 11,
+    "grand_total": 30,
+    "target_pm": 30,
+    "match": true
+  },
+
+  "backup_snapshots_hash_registered_only": [
+    {
+      "path": "/app/backend/backups/r18_4_slot_type_prepatch_20260706T052452Z/items_slot_type_snapshot.jsonl",
+      "sha256": "17ca0efd4a66f41696b1bfdc42cfd96b3b8e575e03c9d1862692d3e0a85f118a",
+      "created_at_utc": "2026-07-06T05:24:52Z",
+      "item_count": 140,
+      "sealed": false,
+      "reason": "backup artifact, not part of 30-file seal scope"
+    },
+    {
+      "path": "/app/backend/backups/r18_4_class_bound_prepatch_20260706T052500Z/items_class_bound_snapshot.jsonl",
+      "sha256": "6cbd5a088ee6b7d2ea7296b7c58444d00b45e1c51b95cc5ef507420d89cec1d1",
+      "created_at_utc": "2026-07-06T05:25:00Z",
+      "item_count": 178,
+      "sealed": false,
+      "reason": "backup artifact, not part of 30-file seal scope"
+    }
+  ],
+
+  "json_support_artifacts_hash_registered_only": [
+    {
+      "path": "/app/memory/r18_4_phase_b3_dry_run_prereport.json",
+      "sha256": "14864f6f289e1ce5e7cad3c0a01bd38cc8809d1db563f82b6757c19ca5b5990d",
+      "created_at_utc": "2026-07-06T05:10:00Z",
+      "verified_at_utc": "2026-07-06T07:20:00Z",
+      "sealed": false,
+      "reason": "support artifact (JSON), not part of 30-file seal scope; sibling .md is sealed"
+    },
+    {
+      "path": "/app/memory/r18_4_phase_b3_real_apply_report.json",
+      "sha256": "393d897b14992aa760f08ca08e6f27e8e3e18f206d84cd3bc9f64e270b75e94b",
+      "created_at_utc": "2026-07-06T05:35:00Z",
+      "verified_at_utc": "2026-07-06T07:20:00Z",
+      "sealed": false,
+      "reason": "support artifact (JSON), not part of 30-file seal scope; sibling .md is sealed"
+    }
+  ],
+
+  "backlog_p3_added_pre_seal": [
+    {"id": "R18.4.backlog — Backfill Apply Idempotency Counter Pattern", "priority": "P3", "origin": "risk note #1 B3 real apply", "blocker": false},
+    {"id": "R18.4.backlog — Class-Bound Apply Zero-Write Audit Noise", "priority": "P3", "origin": "risk note #2 B3 real apply", "blocker": false},
+    {"id": "R18.4.followup — Public API serializer exposure of slot_type + item_binding_policy for UI activation", "priority": "P3", "origin": "tester POST-APPLY nota + PM directive B4", "blocker": false}
+  ],
+
+  "backlog_p3_confirmed_from_b3_dry_run": [
+    "R18.4.followup — Shield slot mapping decision (SQ1)",
+    "R18.4.backlog — specialization_unlocks dead branch cleanup (SQ2)",
+    "R18.4.backlog — berserker/assassin dormant signature items (SQ4)"
+  ],
+
+  "total_backlog_p3_r18_4_active": 6,
+
+  "audit_events_from_b3_real_apply": [
+    {"event_id": "c7c5016e-8764-42a0-882d-13be96e28e54", "event_type": "R18_4_SLOT_TYPE_BACKFILL_APPLIED", "apply": "slot_type_primary", "modified_count": 140},
+    {"event_id": "53c73162-6649-4bbf-834e-474a01dda0d0", "event_type": "R18_4_ITEM_BINDING_POLICY_APPLIED", "apply": "class_bound_primary", "modified_count": 178},
+    {"event_id": "1ec4f43b-56f7-4504-8dd3-bb143c0fba41", "event_type": "R18_4_ITEM_BINDING_POLICY_APPLIED", "apply": "class_bound_rerun_idempotency", "modified_count": 0}
+  ],
+
+  "rollback_dry_run_readiness": {
+    "backup_snapshot_slot_type": {"present": true, "parsable": true, "records": 140},
+    "backup_snapshot_class_bound": {"present": true, "parsable": true, "records": 178},
+    "rollback_dry_run_slot_type_feasible": true,
+    "rollback_dry_run_class_bound_feasible": true,
+    "rollback_real_activated_in_b4": false
+  },
+
+  "hard_delete_confirmed_zero": true,
+
+  "test_r18_4_class_bound_suite_16_16_pass": {
+    "test_file": "/app/backend/tests/backend_r18_4_class_bound_test.py",
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "duration_sec": 0.90,
+    "rerun_post_banner": true
+  },
+
+  "regression_r16_5_4b_24_3_invariant": {
+    "test_file": "/app/backend/tests/backend_round1654b_test.py",
+    "passed": 24,
+    "skipped": 3,
+    "failed": 0,
+    "total": 27,
+    "rerun_post_banner": true,
+    "invariato_pre_post_b4": true
+  },
+
+  "sealed_integrity_test_30_files": {
+    "test_file": "/app/backend/tests/backend_r18_4_sealed_integrity_test.py",
+    "test_file_sha256_documental_not_sealed": "0b177a798a3610e6af869322739edb93baba67adac686ff7628fd29092f33706",
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "tests": [
+      "test_r18_4_b4_seal_01_preexisting_19_byte_identical PASS",
+      "test_r18_4_b4_seal_02_new_11_byte_identical PASS",
+      "test_r18_4_b4_seal_03_aggregate_count_30 PASS",
+      "test_r18_4_b4_seal_04_hash_shape_validity PASS",
+      "test_r18_4_b4_seal_05_no_duplicate_paths PASS"
+    ],
+    "cross_check_r18_3e_test_15_still_pass": true
+  },
+
+  "self_check_final_r18_4_b4": {
+    "1_11_effective_files_sealed_no_rename": true,
+    "2_banner_apposto_format_safe_per_type": true,
+    "3_sha256_post_banner_registered_all_11": true,
+    "4_19_preexisting_byte_identical_verified": true,
+    "5_2_backup_snapshots_hash_registered_sealed_false": true,
+    "6_2_json_support_artifacts_hash_registered_sealed_false": true,
+    "7_3_new_backlog_p3_added": true,
+    "8_test_suite_r18_4_16_16_post_banner": true,
+    "9_regression_r16_5_4b_24_3_invariant": true,
+    "10_test_verifica_sigilli_30_30_match": true,
+    "11_report_b4_md_json_created_complete_19_sections": true,
+    "12_final_status_r18_4_closed_and_sealed_declared": true
+  },
+
+  "recommendation_for_next_round": {
+    "option_a_recommended": {
+      "round": "R18.5 — UI 4-state activation",
+      "rationale": "massima value delivery user-facing, coerente con SQ7 lock documentale già completo",
+      "impact_backend": "item_public() serializer exposure di slot_type + item_binding_policy + derived signals",
+      "impact_frontend": "catalog cards con binding badges 4-state",
+      "backlog_ref": "R18.4.followup — Public API serializer exposure",
+      "suggested_phasing": ["A1 discovery lite", "A2 serializer + tests", "A3 UI badges + tests", "A4 SEAL"]
+    },
+    "option_b": {
+      "round": "R18.3f — Class Slug Migration Planning",
+      "rationale": "migrazione adventurers.class_slug legacy EN → canonical IT via bridge R18.3e",
+      "impact": "adventurers collection write (fuori scope R18.4)",
+      "backlog_ref": "R18.3f — Class Slug Migration Planning (P2)"
+    },
+    "option_c": {
+      "round": "R18.4.backlog pickup",
+      "rationale": "low-hanging follow-ups per idempotency alignment / audit noise / shield / spec_unlocks / dormant"
+    },
+    "final_decision": "attesa direttiva PM"
+  }
+}

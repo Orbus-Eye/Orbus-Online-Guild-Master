@@ -1,4 +1,8 @@
 """
+🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED
+R18.4 CLOSED & SEALED
+DO NOT MODIFY. SHA256 verified in /app/backend/tests/backend_r18_4_sealed_integrity_test.py
+
 ROUND 18.4 — Phase B3 Dry-Run — Apply item_binding_policy per catalog items
 ========================================================================
 

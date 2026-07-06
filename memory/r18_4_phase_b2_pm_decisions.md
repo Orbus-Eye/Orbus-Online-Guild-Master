@@ -1,3 +1,6 @@
+<!-- 🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED -->
+<!-- R18.4 CLOSED & SEALED -->
+<!-- SHA256 registered in /app/memory/r18_4_phase_b4_contract_lock_and_seal_report.md -->
 # R18.4 Phase B2 — PM Decision Lock
 
 - **Round**: R18.4 — Item Class-Bound Player-Facing — Phase B2

@@ -7,6 +7,39 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] R18.4.backlog — Backfill Apply Idempotency Counter Pattern
+- **Aperto**: 2026-07-06
+- **Origine**: risk note #1 report B3 real apply
+- **Descrizione**: `backfill_slot_type_apply` usa early guard fail-fast (exit 1) in idempotency invece di `already_correct` counter. Zero DB write in rerun, comportamento safe intenzionale. Alignment desiderabile con pattern `class_bound_apply` (che ritorna `modified_count=0` + `already_correct=178` esplicito).
+- **Priorità**: P3
+- **Blocker**: none
+- **Non fare**: modificare i 2 sibling script real apply senza GO PM esplicito (sono sealed post-B4).
+- **Status**: BACKLOG
+
+---
+
+### [BACKLOG] R18.4.backlog — Class-Bound Apply Zero-Write Audit Noise
+- **Aperto**: 2026-07-06
+- **Origine**: risk note #2 report B3 real apply
+- **Descrizione**: `class_bound_apply` rerun emette 2° audit event `R18_4_ITEM_BINDING_POLICY_APPLIED` con `modified_count=0`. Audit noise minimo, distinguibile via `apply_id` UUID. Considerare filtro audit event se `count==0` per compressione telemetria.
+- **Priorità**: P3
+- **Blocker**: none
+- **Non fare**: modificare i sibling script apply senza GO PM (sealed post-B4).
+- **Status**: BACKLOG
+
+---
+
+### [BACKLOG] R18.4.followup — Public API serializer exposure of slot_type + item_binding_policy for UI activation
+- **Aperto**: 2026-07-06
+- **Origine**: nota tester POST-APPLY smoke E2E + PM directive B4
+- **Descrizione**: I public API serializers (`/api/items`, `/api/admin/items`, inventory item embed) NON espongono `slot_type` e `item_binding_policy`. Coerente con "metadata only, no runtime enforcement" attuale R18.4. Sblocco necessario per future UI features (binding badges 4-state su catalog cards, SQ7 UI activation, `recommended_for_class` + `is_universal` derived signals).
+- **Priorità**: P3
+- **Blocker**: none — sblocca SQ7 UI activation futura.
+- **Non fare**: modificare serializer runtime senza GO PM esplicito.
+- **Status**: BACKLOG
+
+---
+
 ### [BACKLOG] R18.4.followup — Shield slot mapping decision
 - **Aperto**: 2026-07-06
 - **Origine**: R18.4 Phase B2 PM Decision Lock — SQ1 opzione (a) confermata

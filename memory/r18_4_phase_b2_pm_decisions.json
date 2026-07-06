@@ -1,4 +1,10 @@
 {
+  "_seal": {
+    "status": "R18.4 CLOSED & SEALED",
+    "title": "🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED",
+    "sha256_registered_in": "/app/memory/r18_4_phase_b4_contract_lock_and_seal_report.md",
+    "sealed_at": "2026-07-06T07:17:27Z"
+  },
   "meta": {
     "round": "R18.4",
     "phase": "B2",
@@ -23,7 +29,6 @@
       "PM chat responses SQ1..SQ7 verbatim (2026-07-06)"
     ]
   },
-
   "sq_locked": {
     "SQ1_shield_slot_mapping": {
       "verbatim": "(a) mappa i 2 shield item in `armor`. Scelta SAFE, no 4° slot, no breaking UI/equip. Backfill slot_type → 140/140.",
@@ -74,7 +79,10 @@
     "SQ7_ui_4_state_signal": {
       "verbatim": "SÌ, aggiungere recommended_for_class: bool e is_universal: bool a item_public() response, derivati runtime da current fields.",
       "decision": "add_derived_signals_to_item_public",
-      "new_signals": ["recommended_for_class", "is_universal"],
+      "new_signals": [
+        "recommended_for_class",
+        "is_universal"
+      ],
       "ui_states": [
         "1. Non equipaggiabile / Bloccato",
         "2. Equipaggiabile ma non consigliato",
@@ -83,14 +91,19 @@
       ]
     }
   },
-
   "schema_item_binding_policy": {
     "field": "items.item_binding_policy",
     "type": "string_enum",
-    "values": ["hard", "soft", "universal"],
+    "values": [
+      "hard",
+      "soft",
+      "universal"
+    ],
     "required": false,
     "nullable_default_derivation": true,
-    "exposed_in": ["item_public()"],
+    "exposed_in": [
+      "item_public()"
+    ],
     "runtime_enforcement_r18_4": false,
     "governance_note": "catalog metadata only. NO runtime enforcement in R18.4. Enforcement runtime richiede round dedicato con PM gate.",
     "default_derivation_rules": [
@@ -99,20 +112,42 @@
       "soft: else (residuo)"
     ]
   },
-
   "ui_4_state_mapping": {
-    "state_1_blocked": {"signal": "severity==block", "ui_badge": "icon rossa · label 'Non equipaggiabile'"},
-    "state_2_warning": {"signal": "severity==warning", "ui_badge": "icon gialla · label 'Non consigliato'"},
-    "state_3_recommended": {"signal": "severity==ok AND recommended_for_class==true", "ui_badge": "icon verde · label 'Consigliato'"},
-    "state_4_universal": {"signal": "severity==ok AND is_universal==true AND !recommended_for_class", "ui_badge": "icon grigia · label 'Universale'"},
-    "state_5_neutral_ok": {"signal": "severity==ok AND !recommended_for_class AND !is_universal", "ui_badge": "nessuno"}
+    "state_1_blocked": {
+      "signal": "severity==block",
+      "ui_badge": "icon rossa · label 'Non equipaggiabile'"
+    },
+    "state_2_warning": {
+      "signal": "severity==warning",
+      "ui_badge": "icon gialla · label 'Non consigliato'"
+    },
+    "state_3_recommended": {
+      "signal": "severity==ok AND recommended_for_class==true",
+      "ui_badge": "icon verde · label 'Consigliato'"
+    },
+    "state_4_universal": {
+      "signal": "severity==ok AND is_universal==true AND !recommended_for_class",
+      "ui_badge": "icon grigia · label 'Universale'"
+    },
+    "state_5_neutral_ok": {
+      "signal": "severity==ok AND !recommended_for_class AND !is_universal",
+      "ui_badge": "nessuno"
+    }
   },
-
   "rate_limit_strategy": {
     "equip_blocked": {
       "event_type": "EQUIP_BLOCKED",
       "rate_limit": "unlimited",
-      "metadata_fields": ["guild_id", "adventurer_id", "item_id", "item_slug", "reason_code", "class_slug", "source_route", "timestamp"]
+      "metadata_fields": [
+        "guild_id",
+        "adventurer_id",
+        "item_id",
+        "item_slug",
+        "reason_code",
+        "class_slug",
+        "source_route",
+        "timestamp"
+      ]
     },
     "equip_warning": {
       "event_type": "EQUIP_WARNING",
@@ -120,11 +155,20 @@
       "bucket_key_format": "{guild_id}:{adventurer_id}:{reason_code}:{YYYY-MM-DD-UTC}",
       "max_per_day_per_combo": 1,
       "storage_strategy": "audit_log with idempotency_key = bucket_key (upsert-on-write)",
-      "metadata_fields": ["guild_id", "adventurer_id", "item_id", "item_slug", "reason_code", "class_slug", "source_route", "timestamp", "rate_bucket_id"],
+      "metadata_fields": [
+        "guild_id",
+        "adventurer_id",
+        "item_id",
+        "item_slug",
+        "reason_code",
+        "class_slug",
+        "source_route",
+        "timestamp",
+        "rate_bucket_id"
+      ],
       "telemetry_only": true
     }
   },
-
   "policy_counts_final": {
     "total_items": 178,
     "hard": 11,
@@ -133,34 +177,121 @@
     "overlap_hard_intersect_universal": 0,
     "verified_at_utc": "2026-07-06T05:05:00Z"
   },
-
   "hard_items_exhaustive_11": [
-    {"slug": "drake_slayer_helm", "required_class_optional": "warrior", "item_type": "armor", "current_slot_type": "helm", "dormant": false},
-    {"slug": "drake_slayer_chest", "required_class_optional": "warrior", "item_type": "armor", "current_slot_type": "chest", "dormant": false},
-    {"slug": "drake_slayer_blade", "required_class_optional": "warrior", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_truestrike_bow", "required_class_optional": "ranger", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_bloodied_greataxe", "required_class_optional": "berserker", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": true},
-    {"slug": "spec_signature_breakers_gauntlets", "required_class_optional": "warrior", "item_type": "armor", "current_slot_type": "chest", "dormant": false},
-    {"slug": "spec_signature_silent_kris", "required_class_optional": "assassin", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": true},
-    {"slug": "spec_signature_storm_rod", "required_class_optional": "mage", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_corrupted_blade", "required_class_optional": "necromancer", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_twin_blades", "required_class_optional": "rogue", "item_type": "weapon", "current_slot_type": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_runic_aegis", "required_class_optional": "paladin", "item_type": "armor", "current_slot_type": "chest", "dormant": false}
+    {
+      "slug": "drake_slayer_helm",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "current_slot_type": "helm",
+      "dormant": false
+    },
+    {
+      "slug": "drake_slayer_chest",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "current_slot_type": "chest",
+      "dormant": false
+    },
+    {
+      "slug": "drake_slayer_blade",
+      "required_class_optional": "warrior",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_truestrike_bow",
+      "required_class_optional": "ranger",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_bloodied_greataxe",
+      "required_class_optional": "berserker",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": true
+    },
+    {
+      "slug": "spec_signature_breakers_gauntlets",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "current_slot_type": "chest",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_silent_kris",
+      "required_class_optional": "assassin",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": true
+    },
+    {
+      "slug": "spec_signature_storm_rod",
+      "required_class_optional": "mage",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_corrupted_blade",
+      "required_class_optional": "necromancer",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_twin_blades",
+      "required_class_optional": "rogue",
+      "item_type": "weapon",
+      "current_slot_type": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_runic_aegis",
+      "required_class_optional": "paladin",
+      "item_type": "armor",
+      "current_slot_type": "chest",
+      "dormant": false
+    }
   ],
-
   "universal_items_exhaustive_21": {
-    "material_8": ["arcane_dust", "dragon_essence", "dull_gem", "greater_arcane_dust", "healing_herb", "iron_shard", "lesser_arcane_dust", "raw_leather"],
-    "material_continental_8": ["cenere_di_velur", "cristallo_di_ambash", "frammento_di_ergolat", "linfa_di_soe", "nucleo_di_efreto", "osso_di_irthe", "seme_di_nathos", "sigillo_di_aveol"],
-    "material_event_3": ["eco_della_luna_morta", "filo_lunare_spezzato", "frammento_obelisco_vuoto"],
-    "consumable_2": ["minor_healing_potion", "travel_ration"]
+    "material_8": [
+      "arcane_dust",
+      "dragon_essence",
+      "dull_gem",
+      "greater_arcane_dust",
+      "healing_herb",
+      "iron_shard",
+      "lesser_arcane_dust",
+      "raw_leather"
+    ],
+    "material_continental_8": [
+      "cenere_di_velur",
+      "cristallo_di_ambash",
+      "frammento_di_ergolat",
+      "linfa_di_soe",
+      "nucleo_di_efreto",
+      "osso_di_irthe",
+      "seme_di_nathos",
+      "sigillo_di_aveol"
+    ],
+    "material_event_3": [
+      "eco_della_luna_morta",
+      "filo_lunare_spezzato",
+      "frammento_obelisco_vuoto"
+    ],
+    "consumable_2": [
+      "minor_healing_potion",
+      "travel_ration"
+    ]
   },
-
   "manual_overrides": {
     "count": 0,
     "list": [],
     "note": "Nessuna eccezione manuale registrata in B2. Tutti gli 11 hard e i 21 universal derivano dal PM default derivation rule (SQ6)."
   },
-
   "backfill_slot_type_plan": {
     "target_collection": "items",
     "target_count": 140,
@@ -172,7 +303,13 @@
       "accessory": "accessory",
       "shield": "armor"
     },
-    "breakdown_target": {"weapon": 54, "armor": 42, "accessory": 42, "shield": 2, "total": 140},
+    "breakdown_target": {
+      "weapon": 54,
+      "armor": 42,
+      "accessory": 42,
+      "shield": 2,
+      "total": 140
+    },
     "edge_cases_handling": {
       "already_populated_17_skipped": true,
       "materials_consumable_21_out_of_scope": true,
@@ -181,63 +318,167 @@
     "script_governance": {
       "file": "/app/backend/app/scripts/round18_4_backfill_slot_type.py",
       "apply_enabled_default": false,
-      "double_flag_required": ["--apply", "--i-understand-this-will-backfill-slot-type"],
+      "double_flag_required": [
+        "--apply",
+        "--i-understand-this-will-backfill-slot-type"
+      ],
       "default_mode": "dry-run",
       "audit_event_would_emit": "R18_4_SLOT_TYPE_BACKFILL_APPLIED (aggregated)",
       "backup_snapshot_would_write_path": "/app/memory/r18_4_slot_type_pre_apply_snapshot_<ts>.json"
     }
   },
-
   "class_bound_apply_plan": {
     "target_collection": "items",
     "target_count": 178,
     "target_percentage": "100%",
     "target_filter": "all items (item_binding_policy field addition)",
     "mapping_rule": "derived via SQ6 bucket algorithm",
-    "breakdown_target": {"hard": 11, "soft": 146, "universal": 21, "total": 178},
+    "breakdown_target": {
+      "hard": 11,
+      "soft": 146,
+      "universal": 21,
+      "total": 178
+    },
     "script_governance": {
       "file": "/app/backend/app/scripts/round18_4_apply_class_bound.py",
       "apply_enabled_default": false,
-      "double_flag_required": ["--apply", "--i-understand-this-will-set-item-binding-policy"],
+      "double_flag_required": [
+        "--apply",
+        "--i-understand-this-will-set-item-binding-policy"
+      ],
       "default_mode": "dry-run",
       "audit_event_would_emit": "R18_4_ITEM_BINDING_POLICY_APPLIED (aggregated)",
       "backup_snapshot_would_write_path": "/app/memory/r18_4_class_bound_pre_apply_snapshot_<ts>.json"
     }
   },
-
   "risk_matrix_r18_4_b2": [
-    {"change": "Backfill slot_type 140 items (dry-run only)", "risk": "SAFE", "blocked": false},
-    {"change": "Shield → armor mapping (2 items)", "risk": "SAFE", "blocked": false, "note": "SQ1(a)"},
-    {"change": "item_binding_policy catalog field add (dry-run only)", "risk": "SAFE", "blocked": false, "note": "catalog metadata; no runtime enforcement in R18.4"},
-    {"change": "UI 4-state signal (recommended_for_class/is_universal)", "risk": "SAFE", "blocked": false, "note": "derived at item_public() read time"},
-    {"change": "Rate-limit strategy audit EQUIP_WARNING", "risk": "SAFE", "blocked": false},
-    {"change": "Rimozione berserker/assassin dormant items", "risk": "BLOCKED", "blocked": true, "reason": "SQ4(a): mantenere dormant"},
-    {"change": "Rimozione branch specialization_unlocks", "risk": "BLOCKED", "blocked": true, "reason": "SQ2: mantenere + documentare"},
-    {"change": "Enforcement runtime nuovo (item_binding_policy in compatibility.py)", "risk": "BLOCKED", "blocked": true, "reason": "fuori scope R18.4"},
-    {"change": "Migration adventurers.class_slug legacy EN → canonical IT", "risk": "BLOCKED", "blocked": true, "reason": "R18.3f dedicated round"},
-    {"change": "Bridge R18.3e runtime wiring", "risk": "BLOCKED", "blocked": true, "reason": "R18.3f gate"},
-    {"change": "Unlock recruitment CdM/CdV", "risk": "BLOCKED", "blocked": true},
-    {"change": "Modifica VALID_ROLES / Bard drift", "risk": "BLOCKED", "blocked": true, "reason": "R18.3d.followup backlog"},
-    {"change": "Cambio player-facing label classi", "risk": "BLOCKED", "blocked": true}
+    {
+      "change": "Backfill slot_type 140 items (dry-run only)",
+      "risk": "SAFE",
+      "blocked": false
+    },
+    {
+      "change": "Shield → armor mapping (2 items)",
+      "risk": "SAFE",
+      "blocked": false,
+      "note": "SQ1(a)"
+    },
+    {
+      "change": "item_binding_policy catalog field add (dry-run only)",
+      "risk": "SAFE",
+      "blocked": false,
+      "note": "catalog metadata; no runtime enforcement in R18.4"
+    },
+    {
+      "change": "UI 4-state signal (recommended_for_class/is_universal)",
+      "risk": "SAFE",
+      "blocked": false,
+      "note": "derived at item_public() read time"
+    },
+    {
+      "change": "Rate-limit strategy audit EQUIP_WARNING",
+      "risk": "SAFE",
+      "blocked": false
+    },
+    {
+      "change": "Rimozione berserker/assassin dormant items",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "SQ4(a): mantenere dormant"
+    },
+    {
+      "change": "Rimozione branch specialization_unlocks",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "SQ2: mantenere + documentare"
+    },
+    {
+      "change": "Enforcement runtime nuovo (item_binding_policy in compatibility.py)",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "fuori scope R18.4"
+    },
+    {
+      "change": "Migration adventurers.class_slug legacy EN → canonical IT",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "R18.3f dedicated round"
+    },
+    {
+      "change": "Bridge R18.3e runtime wiring",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "R18.3f gate"
+    },
+    {
+      "change": "Unlock recruitment CdM/CdV",
+      "risk": "BLOCKED",
+      "blocked": true
+    },
+    {
+      "change": "Modifica VALID_ROLES / Bard drift",
+      "risk": "BLOCKED",
+      "blocked": true,
+      "reason": "R18.3d.followup backlog"
+    },
+    {
+      "change": "Cambio player-facing label classi",
+      "risk": "BLOCKED",
+      "blocked": true
+    }
   ],
-
   "test_plan_b3": {
     "test_file": "/app/backend/tests/backend_r18_4_class_bound_test.py",
     "test_db_isolation": "orbus_r18_4_test",
     "minimum_test_count": 16,
     "test_groups": [
-      {"group": "registry_shape", "tests": ["t01_registry_json_parsable", "t02_registry_totals_178_11_21_146", "t03_registry_hard_items_exact_11_slugs"]},
-      {"group": "bucket_derivation", "tests": ["t04_hard_derivation_required_class_optional", "t05_universal_derivation_material_consumable", "t06_soft_derivation_residual", "t07_no_overlap_hard_intersect_universal"]},
-      {"group": "backfill_dry_run", "tests": ["t08_backfill_dry_run_target_count_140", "t09_backfill_shield_maps_to_armor", "t10_backfill_skip_already_populated_17", "t11_backfill_apply_enabled_false_blocks_write"]},
-      {"group": "class_bound_dry_run", "tests": ["t12_class_bound_dry_run_would_add_binding_policy_178", "t13_class_bound_guard_hard_stop_rejects_blocked_fields", "t14_class_bound_apply_enabled_false_blocks_write"]},
-      {"group": "rate_limit_and_signals", "tests": ["t15_rate_limit_bucket_key_format", "t16_derived_signals_recommended_for_class_and_universal"]}
+      {
+        "group": "registry_shape",
+        "tests": [
+          "t01_registry_json_parsable",
+          "t02_registry_totals_178_11_21_146",
+          "t03_registry_hard_items_exact_11_slugs"
+        ]
+      },
+      {
+        "group": "bucket_derivation",
+        "tests": [
+          "t04_hard_derivation_required_class_optional",
+          "t05_universal_derivation_material_consumable",
+          "t06_soft_derivation_residual",
+          "t07_no_overlap_hard_intersect_universal"
+        ]
+      },
+      {
+        "group": "backfill_dry_run",
+        "tests": [
+          "t08_backfill_dry_run_target_count_140",
+          "t09_backfill_shield_maps_to_armor",
+          "t10_backfill_skip_already_populated_17",
+          "t11_backfill_apply_enabled_false_blocks_write"
+        ]
+      },
+      {
+        "group": "class_bound_dry_run",
+        "tests": [
+          "t12_class_bound_dry_run_would_add_binding_policy_178",
+          "t13_class_bound_guard_hard_stop_rejects_blocked_fields",
+          "t14_class_bound_apply_enabled_false_blocks_write"
+        ]
+      },
+      {
+        "group": "rate_limit_and_signals",
+        "tests": [
+          "t15_rate_limit_bucket_key_format",
+          "t16_derived_signals_recommended_for_class_and_universal"
+        ]
+      }
     ],
     "regression_gate": [
       "27 test R16.5.4b must still pass",
       "24 sealed files must remain byte-identical (SHA256 verify)"
     ]
   },
-
   "explicit_no_go_boundaries_b3": [
     "adventurers.class_slug (any collection)",
     "adventurer_classes.role",
@@ -256,19 +497,16 @@
     "Change player-facing class labels",
     "Modify any of the 19 sealed files (14 R18.Reset + 5 R18.3d + 5 R18.3e) — verified byte-identical via SHA256"
   ],
-
   "apply_enabled_governance": {
     "backfill_slot_type_apply_enabled": false,
     "class_bound_apply_enabled": false,
     "lock_note": "APPLY_ENABLED is hard-coded to False in both sibling scripts. Cannot be flipped without new explicit PM gate + review of B3 pre-report."
   },
-
   "backlog_p3_created_or_confirmed": [
     "R18.4.followup — Shield slot mapping decision",
     "R18.4.backlog — specialization_unlocks dead branch cleanup",
     "R18.4.backlog — berserker/assassin dormant signature items"
   ],
-
   "next_gate": {
     "next_phase": "B3_dry_run_only",
     "authorization": "conditional_go_by_pm_2026_07_06",

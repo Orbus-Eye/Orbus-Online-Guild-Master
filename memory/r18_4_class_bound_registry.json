@@ -1,4 +1,10 @@
 {
+  "_seal": {
+    "status": "R18.4 CLOSED & SEALED",
+    "title": "🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED",
+    "sha256_registered_in": "/app/memory/r18_4_phase_b4_contract_lock_and_seal_report.md",
+    "sealed_at": "2026-07-06T07:17:27Z"
+  },
   "meta": {
     "round": "R18.4",
     "phase": "B3_registry",
@@ -9,7 +15,6 @@
       "read-only DB queries on items collection (live)"
     ]
   },
-
   "totals": {
     "total_items": 178,
     "hard_policy_target": 11,
@@ -19,13 +24,11 @@
     "backfill_slot_type_target": 140,
     "already_populated_slot_type": 17
   },
-
   "policy_derivation_algorithm_locked_sq6": {
     "step_1_hard": "if item.required_class_optional populated (non-null, non-empty) → hard",
     "step_2_universal": "if item.item_type in {material, material_continental, material_event, consumable} → universal",
     "step_3_soft_default": "else → soft"
   },
-
   "slot_type_backfill": {
     "target_count": 140,
     "filter": "slot_type IN (null, missing) AND item_type IN (weapon, armor, accessory, shield)",
@@ -35,57 +38,206 @@
       "accessory": "accessory",
       "shield": "armor"
     },
-    "breakdown_by_item_type": {"weapon": 54, "armor": 42, "accessory": 42, "shield": 2},
+    "breakdown_by_item_type": {
+      "weapon": 54,
+      "armor": 42,
+      "accessory": 42,
+      "shield": 2
+    },
     "shield_items_mapped_to_armor_sq1a": [
       "spec_signature_aegis_of_the_defender",
       "spec_signature_thornwood_shield"
     ],
     "already_populated_17_skipped": [
-      {"slug": "drake_slayer_helm", "current_slot_type": "helm"},
-      {"slug": "drake_slayer_chest", "current_slot_type": "chest"},
-      {"slug": "drake_slayer_blade", "current_slot_type": "weapon_main"},
-      {"slug": "arcane_adept_orb", "current_slot_type": "amulet"},
-      {"slug": "goblin_hunter_ring", "current_slot_type": "ring"},
-      {"slug": "spec_signature_truestrike_bow", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_sacred_chalice", "current_slot_type": "amulet"},
-      {"slug": "spec_signature_battle_standard", "current_slot_type": "amulet"},
-      {"slug": "spec_signature_bloodied_greataxe", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_breakers_gauntlets", "current_slot_type": "chest"},
-      {"slug": "spec_signature_silent_kris", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_runed_focus", "current_slot_type": "amulet"},
-      {"slug": "spec_signature_storm_rod", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_warhorn", "current_slot_type": "amulet"},
-      {"slug": "spec_signature_corrupted_blade", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_twin_blades", "current_slot_type": "weapon_main"},
-      {"slug": "spec_signature_runic_aegis", "current_slot_type": "chest"}
+      {
+        "slug": "drake_slayer_helm",
+        "current_slot_type": "helm"
+      },
+      {
+        "slug": "drake_slayer_chest",
+        "current_slot_type": "chest"
+      },
+      {
+        "slug": "drake_slayer_blade",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "arcane_adept_orb",
+        "current_slot_type": "amulet"
+      },
+      {
+        "slug": "goblin_hunter_ring",
+        "current_slot_type": "ring"
+      },
+      {
+        "slug": "spec_signature_truestrike_bow",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_sacred_chalice",
+        "current_slot_type": "amulet"
+      },
+      {
+        "slug": "spec_signature_battle_standard",
+        "current_slot_type": "amulet"
+      },
+      {
+        "slug": "spec_signature_bloodied_greataxe",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_breakers_gauntlets",
+        "current_slot_type": "chest"
+      },
+      {
+        "slug": "spec_signature_silent_kris",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_runed_focus",
+        "current_slot_type": "amulet"
+      },
+      {
+        "slug": "spec_signature_storm_rod",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_warhorn",
+        "current_slot_type": "amulet"
+      },
+      {
+        "slug": "spec_signature_corrupted_blade",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_twin_blades",
+        "current_slot_type": "weapon_main"
+      },
+      {
+        "slug": "spec_signature_runic_aegis",
+        "current_slot_type": "chest"
+      }
     ]
   },
-
   "hard_bucket_11": [
-    {"slug": "drake_slayer_helm", "required_class_optional": "warrior", "item_type": "armor", "slot_type_current": "helm", "dormant": false},
-    {"slug": "drake_slayer_chest", "required_class_optional": "warrior", "item_type": "armor", "slot_type_current": "chest", "dormant": false},
-    {"slug": "drake_slayer_blade", "required_class_optional": "warrior", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_truestrike_bow", "required_class_optional": "ranger", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_bloodied_greataxe", "required_class_optional": "berserker", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": true},
-    {"slug": "spec_signature_breakers_gauntlets", "required_class_optional": "warrior", "item_type": "armor", "slot_type_current": "chest", "dormant": false},
-    {"slug": "spec_signature_silent_kris", "required_class_optional": "assassin", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": true},
-    {"slug": "spec_signature_storm_rod", "required_class_optional": "mage", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_corrupted_blade", "required_class_optional": "necromancer", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_twin_blades", "required_class_optional": "rogue", "item_type": "weapon", "slot_type_current": "weapon_main", "dormant": false},
-    {"slug": "spec_signature_runic_aegis", "required_class_optional": "paladin", "item_type": "armor", "slot_type_current": "chest", "dormant": false}
+    {
+      "slug": "drake_slayer_helm",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "slot_type_current": "helm",
+      "dormant": false
+    },
+    {
+      "slug": "drake_slayer_chest",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "slot_type_current": "chest",
+      "dormant": false
+    },
+    {
+      "slug": "drake_slayer_blade",
+      "required_class_optional": "warrior",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_truestrike_bow",
+      "required_class_optional": "ranger",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_bloodied_greataxe",
+      "required_class_optional": "berserker",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": true
+    },
+    {
+      "slug": "spec_signature_breakers_gauntlets",
+      "required_class_optional": "warrior",
+      "item_type": "armor",
+      "slot_type_current": "chest",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_silent_kris",
+      "required_class_optional": "assassin",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": true
+    },
+    {
+      "slug": "spec_signature_storm_rod",
+      "required_class_optional": "mage",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_corrupted_blade",
+      "required_class_optional": "necromancer",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_twin_blades",
+      "required_class_optional": "rogue",
+      "item_type": "weapon",
+      "slot_type_current": "weapon_main",
+      "dormant": false
+    },
+    {
+      "slug": "spec_signature_runic_aegis",
+      "required_class_optional": "paladin",
+      "item_type": "armor",
+      "slot_type_current": "chest",
+      "dormant": false
+    }
   ],
-
   "universal_bucket_21": {
-    "material": ["arcane_dust", "dragon_essence", "dull_gem", "greater_arcane_dust", "healing_herb", "iron_shard", "lesser_arcane_dust", "raw_leather"],
-    "material_continental": ["cenere_di_velur", "cristallo_di_ambash", "frammento_di_ergolat", "linfa_di_soe", "nucleo_di_efreto", "osso_di_irthe", "seme_di_nathos", "sigillo_di_aveol"],
-    "material_event": ["eco_della_luna_morta", "filo_lunare_spezzato", "frammento_obelisco_vuoto"],
-    "consumable": ["minor_healing_potion", "travel_ration"]
+    "material": [
+      "arcane_dust",
+      "dragon_essence",
+      "dull_gem",
+      "greater_arcane_dust",
+      "healing_herb",
+      "iron_shard",
+      "lesser_arcane_dust",
+      "raw_leather"
+    ],
+    "material_continental": [
+      "cenere_di_velur",
+      "cristallo_di_ambash",
+      "frammento_di_ergolat",
+      "linfa_di_soe",
+      "nucleo_di_efreto",
+      "osso_di_irthe",
+      "seme_di_nathos",
+      "sigillo_di_aveol"
+    ],
+    "material_event": [
+      "eco_della_luna_morta",
+      "filo_lunare_spezzato",
+      "frammento_obelisco_vuoto"
+    ],
+    "consumable": [
+      "minor_healing_potion",
+      "travel_ration"
+    ]
   },
-
   "soft_bucket_summary_146": {
     "count": 146,
     "note": "residuo (not hard, not universal). Include A/C/E2/G1 buckets from R18.4 Phase A discovery.",
-    "breakdown_by_item_type": {"weapon": 53, "armor": 43, "accessory": 48, "shield": 2},
+    "breakdown_by_item_type": {
+      "weapon": 53,
+      "armor": 43,
+      "accessory": 48,
+      "shield": 2
+    },
     "e2_signature_soft_6": [
       "spec_signature_aegis_of_the_defender",
       "spec_signature_battle_standard",
@@ -95,15 +247,33 @@
       "spec_signature_warhorn"
     ]
   },
-
-  "manual_overrides": {"count": 0, "list": []},
-
+  "manual_overrides": {
+    "count": 0,
+    "list": []
+  },
   "backlog_p3_cross_reference": [
-    {"backlog_entry": "R18.4.followup — Shield slot mapping decision", "related_sq": "SQ1", "related_items": ["spec_signature_aegis_of_the_defender", "spec_signature_thornwood_shield"]},
-    {"backlog_entry": "R18.4.backlog — specialization_unlocks dead branch cleanup", "related_sq": "SQ2", "related_items": []},
-    {"backlog_entry": "R18.4.backlog — berserker/assassin dormant signature items", "related_sq": "SQ4", "related_items": ["spec_signature_bloodied_greataxe", "spec_signature_silent_kris"]}
+    {
+      "backlog_entry": "R18.4.followup — Shield slot mapping decision",
+      "related_sq": "SQ1",
+      "related_items": [
+        "spec_signature_aegis_of_the_defender",
+        "spec_signature_thornwood_shield"
+      ]
+    },
+    {
+      "backlog_entry": "R18.4.backlog — specialization_unlocks dead branch cleanup",
+      "related_sq": "SQ2",
+      "related_items": []
+    },
+    {
+      "backlog_entry": "R18.4.backlog — berserker/assassin dormant signature items",
+      "related_sq": "SQ4",
+      "related_items": [
+        "spec_signature_bloodied_greataxe",
+        "spec_signature_silent_kris"
+      ]
+    }
   ],
-
   "self_check": {
     "totals_sum_ok": "11 + 21 + 146 = 178",
     "overlap_zero": true,

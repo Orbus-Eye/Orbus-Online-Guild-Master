@@ -1,4 +1,8 @@
-"""ROUND 18.4 — Phase B3 Class-Bound Dry-Run Test Suite.
+"""🔒 R18.4 — Item Class-Bound Player-Facing — CLOSED & SEALED
+R18.4 CLOSED & SEALED
+DO NOT MODIFY. SHA256 verified in /app/backend/tests/backend_r18_4_sealed_integrity_test.py
+
+ROUND 18.4 — Phase B3 Class-Bound Dry-Run Test Suite.
 
 Copertura (16 test = 5 gruppi):
 
