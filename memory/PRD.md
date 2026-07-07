@@ -1927,3 +1927,72 @@ Phase C Tech Dry-Run autorizzata come **SPLIT SEQUENCE**, GO immediato SOLO C0 +
 **R18.5 status flow (aggiornato post-STEP 26)**:
 `Phase E2.1 (STEP 25)` ✅ CLOSED → **`PRD E2.1 CLOSED + Catalogo STABILIZZATO (STEP 26)`** ✅ **CLOSED (questo append)** → **`Phase C0 Technical Readiness (STEP 27)`** 🟡 **AUTHORIZED (chain immediata)** → **`Phase C0.L Legendary Finalization (STEP 28)`** 🟡 **AUTHORIZED CONDITIONAL (se C0=GO)** → `C1-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
 
+
+
+## R18.5 Phase C0 + C0.L CLOSED (STEP 29 · 2026-07-07T20:30:00Z)
+
+**Milestone**: **R18.5 Phase C0 Technical Readiness + Phase C0.L Legendary Finalization CLOSED** ✅
+
+**Governance**: DOCUMENTAL ONLY append. Nessuna modifica code/DB/migrations/sealed/item table/lore_meta.py. 36 sigilli intatti (pytest 6/6 PASSED).
+
+**Deliverables C0 (STEP 27)**:
+- `/app/memory/r18_5_phase_c0_technical_readiness_inventory.md` (SHA256 `88f51036e7f9f1fcb8bf2c63d9ae282fe26268988e215361ac336e773854a63f`)
+- `/app/memory/r18_5_phase_c0_technical_readiness_inventory.json` (SHA256 `14efc0d728b90864f3db3ab65816e6f417a46d0f342ea84ebc12f0e0b8e612e8`)
+
+**Deliverables C0.L (STEP 28 + 28-bis)**:
+- `/app/memory/r18_5_phase_c0_l_legendary_finalization_gate.md` (SHA256 `f4bf47a679d0db4a2670d7d0a2368116d5c232cec9c0bd0adbc44a7171efe865`, gemello narrativo STEP 28-bis)
+- `/app/memory/r18_5_phase_c0_l_legendary_finalization_gate.json` (SHA256 `2860a2a7332982855ff00496585850d405c7428f46cf81e3446c66a1d15db6e4`)
+
+**C0 CLOSED — Decisioni PM verbatim (Q1=A)**:
+- **C0 Technical Readiness CLOSED**
+- **C0 recommendation GO confirmed**
+- **0 HARD blockers** · **2 SOFT blockers deferred**:
+  - `class_slug` missing 1500/1500 → **deferred to C5 R18.3f Class Slug Migration Prep** (Q8=A: `class_slug=null` + `class_slug_resolution_status="deferred_to_C5_R18_3f"`)
+  - 4 Progressive Legendary PENDING PM → handled in C0.L
+- 15/15 check eseguiti (13 ✅ + 2 ⚠️ handled)
+
+**C0.L CLOSED — Decisioni PM verbatim (Q1..Q8)**:
+- **C0.L Legendary Finalization CLOSED**
+- **15 Legendary composition confirmed**:
+  - **7 APPROVED_CANDIDATE**: ambash-forge-hammer · dragon-elder-scale · dragonlord-crown · void-touched-blade · sole-nero-diadem · seraph-halo-crown · worldroot-scepter
+  - **4 HYBRID_PRE_ALLOCATED**: irthe-price-shroud-hybrid · ergolat-obelisk-focus-hybrid · celestial-conclave-mantle-hybrid · halodi-fate-quiver-hybrid
+  - **4 PROGRESSIVE_DISCOVERY_PLACEHOLDER**: rogue-P3 · mage-P1 · priest-P2 · ranger-P4
+- **11 Legendary registry design-ready** (7 approved + 4 hybrid)
+- **4 Progressive Discovery = PENDING PM / registry_reserved** (Q3=A)
+- **C0.L.1 Numeric Finals authorized before C1** (Q2=A) — 11 Legendary numeric finalization mini-gate
+- **C1 authorized after C0.L.1** (Q5=A)
+- **C1 scope = registry aggregato + differential `.md` report** (Q6=C)
+- **6 T4 progressive marker → flag `progressive_marker=true` in C1** (Q4=B) — nota: C0.L Sezione 3.6 tabella lista 10 T4 hint items · discrepanza wording Q4 (6) vs tabella (10) segnalata come PM gate item C1 validation
+- **class_slug handling** = `class_slug: null` + `class_slug_resolution_status: "deferred_to_C5_R18_3f"` (Q8=A)
+- **runtime_apply_ready** rimane **0** (dry-run design layer, no runtime enforcement)
+- **PRD append `C0+C0.L CLOSED` = questo append** (Q7=A)
+
+**Governance C0+C0.L CLOSED**:
+- 36 seals byte-identical (pytest `backend_r18_4_sealed_integrity_test.py` 6/6 PASSED)
+- Zero DB writes / code changes / migrations / `lore_meta.py` touches
+- Zero item table D1-D5 modifications (read-only analysis)
+- Zero legendary stat/utility/lore changes (analysis-only)
+- Progressive placeholder finalization = ZERO autonomous (P3=A: reserved status)
+- Classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (PM lockato post-C0+C0.L approval)**:
+
+Phase C Tech Dry-Run autorizzata come **CATENA STEP 29→30→31** (STOP obbligatorio dopo C1):
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C0.L.1 Legendary Numeric Finals** (STEP 30) | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 29 |
+| **C1 Item Registry Generation Dry-Run** (STEP 31) | 🟢 **AUTHORIZED (chain immediata)** | subito post-C0.L.1 clean |
+| **C2 Proficiency Runtime** | 🔒 **HOLD** | PM review post-C1 |
+| **C3 ILVL + Backfill** | 🔒 **HOLD** | post-C2 |
+| **C4 Drop Table** | 🔒 **HOLD** | post-C3 |
+| **C5 Class Slug Migration Prep** | 🔒 **HOLD** | post-C4 (Q8=A deferral) |
+| **C6 Final Closure** | 🔒 **HOLD** | post-C5 |
+
+**R18.6 Class Halls**: 🔒 PLANNED / HOLD post-Phase C readiness
+**Marketing Brief**: 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 29)**:
+`Phase E2.1 (STEP 25)` ✅ CLOSED → `PRD E2.1 CLOSED + Catalogo STABILIZZATO (STEP 26)` ✅ CLOSED → `Phase C0 Technical Readiness (STEP 27)` ✅ CLOSED → `Phase C0.L Legendary Finalization (STEP 28+28-bis)` ✅ CLOSED → **`PRD C0+C0.L CLOSED (STEP 29)`** ✅ **CLOSED (questo append)** → `Phase C0.L.1 Legendary Numeric Finals (STEP 30)` 🟢 **AUTHORIZED (chain immediata)** → `Phase C1 Item Registry Dry-Run (STEP 31)` 🟢 **AUTHORIZED (chain immediata)** → `C2-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED

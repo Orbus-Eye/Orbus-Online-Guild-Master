@@ -1,0 +1,477 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C0.L.1 Legendary Numeric Finals Mini-Gate",
+    "step": "STEP 30",
+    "locked_at_utc": "2026-07-07T20:30:00Z",
+    "governance": "DOCUMENTAL ONLY — proposta numeric finals per 11 Legendary approved+hybrid. NO modifica item table D1-D5. NO runtime apply. NO code/DB/migrations.",
+    "status": "APPLIED — numeric finals proposal per PM review",
+    "authority": "PM Orchestrator — STEP 30 catena autorizzata post-STEP 29 (Q2=A GO C0.L.1)"
+  },
+  "scope": {
+    "in_scope_11_legendary": [
+      "warrior-t5-legendary-dragonlord-crown",
+      "rogue-t5-legendary-void-touched-blade",
+      "priest-t5-legendary-seraph-halo-crown",
+      "ranger-t5-legendary-worldroot-scepter",
+      "warrior-t5-legendary-ambash-forge-hammer",
+      "warrior-t5-legendary-dragon-elder-scale",
+      "mage-t5-legendary-sole-nero-diadem",
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ],
+    "out_of_scope_4_progressive": [
+      "mage-t5-legendary-progressive-slot-01-pending",
+      "priest-t5-legendary-progressive-slot-02-pending",
+      "rogue-t5-legendary-progressive-slot-03-pending",
+      "ranger-t5-legendary-progressive-slot-04-pending"
+    ],
+    "progressive_status": "registry_reserved / PENDING PM (Q3=A)"
+  },
+  "sezione_1_legendary_numeric_finals_11": [
+    {
+      "n": 1,
+      "chain_tag": "APPROVED-7 (L1)",
+      "item_id": "warrior-t5-legendary-dragonlord-crown",
+      "nome_it": "Corona del Signore dei Draghi",
+      "classe": "Warrior",
+      "lore_source": "Draco",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "STR",
+      "slot": "head",
+      "armor_type": "piastre",
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "STR": 38,
+        "armor": 55
+      },
+      "utility_final": "Command Draconic — 1x/encounter, guida temporaneamente 1 drago giovane ostile trasformandolo in alleato per una fase (12s)",
+      "utility_trigger_condition": "active-on-use (self-cast), targeted enemy = young dragon minion presente in encounter",
+      "cooldown_limit": "1x per encounter (~12s alleato duration, then boss-tag return)",
+      "drop_readiness": "READY — 2% drop dragon-vault raid boss finale (Il Drago Primordiale) LIVE (chain STEP 8)",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true, affects_economy=false, affects_ranking=false",
+      "proficiency_confirmation": "Warrior + slot=head + armor_type=piastre + weapon_family=None → conforme (piastre solo Warrior post-E1.1 fix)",
+      "risk_notes": "LOW — utility+numerics coerenti chain STEP 8 approved, drop rate confirmato LIVE"
+    },
+    {
+      "n": 2,
+      "chain_tag": "APPROVED-7 (L2)",
+      "item_id": "rogue-t5-legendary-void-touched-blade",
+      "nome_it": "Lama Toccata dal Vuoto",
+      "classe": "Rogue",
+      "lore_source": "Vuoto",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "AGI",
+      "slot": "main-hand",
+      "armor_type": null,
+      "weapon_family": "pugnale",
+      "stat_numeric_final": {
+        "AGI": 55,
+        "damage_min": 72,
+        "damage_max": 90,
+        "crit_pct": 12
+      },
+      "utility_final": "Void-Pierce — passive proc on-hit: 15% chance di ignorare armor del target per quel colpo",
+      "utility_trigger_condition": "passive on-hit auto-proc (15% chance per attacco fisico melee)",
+      "cooldown_limit": "n/a (passive proc, no cooldown design-only — PM può capare a max 1 proc/round in C2)",
+      "drop_readiness": "READY — 2% drop void-cathedral raid boss finale (Il Silenzio Primordiale) NEW (chain STEP 8)",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Rogue + slot=main-hand + weapon_family=pugnale → conforme (pugnale Rogue-only)",
+      "risk_notes": "LOW — proc 15% coerente con Rogue crit build; passive va cappato max 1 proc/round in C2 per fairness"
+    },
+    {
+      "n": 3,
+      "chain_tag": "APPROVED-7 (L3)",
+      "item_id": "priest-t5-legendary-seraph-halo-crown",
+      "nome_it": "Corona d'Aureola del Serafino",
+      "classe": "Priest",
+      "lore_source": "Celeste",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "WIS",
+      "slot": "head",
+      "armor_type": "stoffa",
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "WIS": 38,
+        "armor": 55
+      },
+      "utility_final": "Divine Resurrect — 1x/encounter, resurrect di 1 fallen ally in endgame party (target al 50% max HP, 3s cast time)",
+      "utility_trigger_condition": "active-on-use, target ally=fallen (last-death timestamp within encounter)",
+      "cooldown_limit": "1x per encounter (rebirth cooldown 3s cast time, no interrupt-safe design)",
+      "drop_readiness": "READY — 2% drop celestial-conclave raid boss finale (Il Primo Serafino) NEW (chain STEP 8)",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Priest + slot=head + armor_type=stoffa → conforme (Priest no scudo/piastre/cuoio/maglia post-E1.1)",
+      "risk_notes": "MEDIUM — resurrect utility ha impatto meta-progression PvE endgame; PM review C2 raccomandata per interazione con raid wipe recovery mechanics"
+    },
+    {
+      "n": 4,
+      "chain_tag": "APPROVED-7 (L4)",
+      "item_id": "ranger-t5-legendary-worldroot-scepter",
+      "nome_it": "Scettro della Radice del Mondo",
+      "classe": "Ranger",
+      "lore_source": "Alberi della Vita",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "AGI",
+      "slot": "main-hand",
+      "armor_type": null,
+      "weapon_family": "lancia",
+      "stat_numeric_final": {
+        "AGI": 55,
+        "damage_min": 72,
+        "damage_max": 90,
+        "crit_pct": 12
+      },
+      "utility_final": "Nature's Blessing — 1x/encounter, AoE Heal-over-Time area 8m (3% max HP heal per turn, 3 turni)",
+      "utility_trigger_condition": "active-on-use, target=ground area 8m radius; require encounter tag natural_terrain=true (terrain lore-defined)",
+      "cooldown_limit": "1x per encounter (durata 3 turni HoT)",
+      "drop_readiness": "READY — 2% drop world-tree-collapse raid boss finale (Il Cuore dell'Albero del Mondo) NEW (chain STEP 8)",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Ranger + slot=main-hand + weapon_family=lancia → conforme (Ranger no arco per L4 slot: lancia weapon_family verificato D5)",
+      "risk_notes": "LOW — HoT balanced (3%/turn per 3 turni = 9% total, subito the utility charge)"
+    },
+    {
+      "n": 5,
+      "chain_tag": "APPROVED-7 (L5)",
+      "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+      "nome_it": "Martello della Fucina di Ambash",
+      "classe": "Warrior",
+      "lore_source": "Ambash",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 59,
+      "ilvl": 60,
+      "main_stat_target": "STR",
+      "slot": "main-hand",
+      "armor_type": null,
+      "weapon_family": "martello",
+      "stat_numeric_final": {
+        "STR": 55,
+        "damage_min": 72,
+        "damage_max": 90,
+        "crit_pct": 12
+      },
+      "utility_final": "Reforge weapon slot mid-encounter — 1x/encounter, cambia damage type dell'arma di un alleato (physical↔elemental) per 3 turni",
+      "utility_trigger_condition": "active-on-use, target ally in party (raid o dungeon 3p)",
+      "cooldown_limit": "1x per encounter (durata effetto 3 turni)",
+      "drop_readiness": "READY — 1% drop ambash-legendary-forge dungeon 3p boss finale (Il Maestro Fabbro delle Leggende) chain STEP 8",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Warrior + slot=main-hand + weapon_family=martello → conforme",
+      "risk_notes": "MEDIUM — cross-target utility richiede validazione runtime C2 per ownership+consent (target ally must be in same encounter)"
+    },
+    {
+      "n": 6,
+      "chain_tag": "APPROVED-7 (L6)",
+      "item_id": "warrior-t5-legendary-dragon-elder-scale",
+      "nome_it": "Scaglia del Verme Ancestrale",
+      "classe": "Warrior",
+      "lore_source": "Draco",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "STR",
+      "slot": "off-hand",
+      "armor_type": null,
+      "weapon_family": "scudo",
+      "stat_numeric_final": {
+        "STR": 40,
+        "block_pct": 14
+      },
+      "utility_final": "Temporary Dragon-scale Armor Buff — 1x/encounter, self-buff resistenza elementale+physical +30% per 4 turni",
+      "utility_trigger_condition": "active-on-use, self only",
+      "cooldown_limit": "1x per encounter (durata buff 4 turni)",
+      "drop_readiness": "READY — 1% drop elder-wyrm-descent dungeon 3p boss finale (Draco l'Ancestrale) chain STEP 8",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Warrior + slot=off-hand + weapon_family=scudo → conforme (scudo Warrior-only, Priest no scudo post-E1.1)",
+      "risk_notes": "LOW — self-buff durata contenuta, no stack"
+    },
+    {
+      "n": 7,
+      "chain_tag": "APPROVED-7 (L7)",
+      "item_id": "mage-t5-legendary-sole-nero-diadem",
+      "nome_it": "Diadema del Sole Nero",
+      "classe": "Mage",
+      "lore_source": "Celeste",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "INT",
+      "slot": "head",
+      "armor_type": "stoffa",
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "INT": 38,
+        "armor": 55
+      },
+      "utility_final": "Swap Light/Void Resist mid-encounter — 1x/encounter, alterna la propria resistenza tra light e void (durata rimane fino a next swap o end-encounter)",
+      "utility_trigger_condition": "active-on-use, self, encounter-only (reset a fine encounter)",
+      "cooldown_limit": "1x per encounter (durata persistente fino fine encounter o next use)",
+      "drop_readiness": "READY — 1% drop pantheon-of-fallen-suns dungeon 3p Lv60 boss finale (Il Sole Nero) chain STEP 8",
+      "registry_readiness": "READY (design layer, runtime_apply_ready=false)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Mage + slot=head + armor_type=stoffa → conforme",
+      "risk_notes": "LOW — strategic utility bound a light/void mechanic boss, no leverage cross-encounter"
+    },
+    {
+      "n": 8,
+      "chain_tag": "HYBRID-4 (H1 Celeste)",
+      "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "nome_it": "Manto del Conclave Celeste",
+      "classe": "Priest",
+      "lore_source": "Celeste",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "WIS",
+      "slot": "chest",
+      "armor_type": "stoffa",
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "WIS": 38,
+        "armor": 78,
+        "END": 27
+      },
+      "utility_final": "Celestial Barrier — 1x/encounter, self-barrier assorbe 40% massive damage per 2 turni",
+      "utility_trigger_condition": "active-on-use (reactive), self only",
+      "cooldown_limit": "1x per encounter (durata 2 turni)",
+      "drop_readiness": "PARTIAL — 0.5% direzionale drop celestial-conclave raid alternate (Il Primo Serafino secondary) HYBRID — PENDING PM numeric final",
+      "registry_readiness": "PARTIAL (design layer, runtime_apply_ready=false; drop_rate HYBRID PENDING PM)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Priest + slot=chest + armor_type=stoffa → conforme",
+      "risk_notes": "MEDIUM — drop_rate HYBRID direzionale 0.5% PENDING PM final decision (Q gate C2)"
+    },
+    {
+      "n": 9,
+      "chain_tag": "HYBRID-4 (H2 Irthe)",
+      "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "nome_it": "Sudario del Prezzo di Irthe",
+      "classe": "Rogue",
+      "lore_source": "Irthe",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "AGI",
+      "slot": "chest",
+      "armor_type": "cuoio",
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "AGI": 38,
+        "armor": 78,
+        "END": 27
+      },
+      "utility_final": "Death's Toll — 1x/encounter, next-attack infligge damage massimizzato; il portatore paga 15% max HP self-damage + permanente cooldown/encounter",
+      "utility_trigger_condition": "active-on-use pre-attack; next melee/ranged hit infligge damage_max deterministico",
+      "cooldown_limit": "1x per encounter (permanente per encounter, no reset)",
+      "drop_readiness": "PARTIAL — 0.5% direzionale drop world-tree-collapse raid alternate (Il Cuore dell'Albero secondary, Irthe capstone) HYBRID — PENDING PM numeric final",
+      "registry_readiness": "PARTIAL (design layer, runtime_apply_ready=false; drop_rate HYBRID PENDING PM)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Rogue + slot=chest + armor_type=cuoio → conforme (Rogue cuoio-only chest)",
+      "risk_notes": "MEDIUM — drop_rate HYBRID PENDING PM final; self-damage 15% richiede validazione runtime C2 vs downed-mechanic (non causa auto-death se HP > 15%)"
+    },
+    {
+      "n": 10,
+      "chain_tag": "HYBRID-4 (H3 Ergolat)",
+      "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "nome_it": "Focus dell'Obelisco di Ergolat",
+      "classe": "Mage",
+      "lore_source": "Ergolat",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "INT",
+      "slot": "off-hand",
+      "armor_type": null,
+      "weapon_family": "focus",
+      "stat_numeric_final": {
+        "INT": 40,
+        "block_pct": 14
+      },
+      "utility_final": "Absence Distortion — 1x/encounter, AoE silence area 8m per 2 turni (nemici in area non possono castare)",
+      "utility_trigger_condition": "active-on-use, target=ground area 8m radius",
+      "cooldown_limit": "1x per encounter (durata 2 turni AoE silence)",
+      "drop_readiness": "PARTIAL — 0.5% direzionale drop ambash-legendary-forge dungeon 3p alternate (Maestro Fabbro secondary, Ergolat capstone) HYBRID — PENDING PM numeric final",
+      "registry_readiness": "PARTIAL (design layer, runtime_apply_ready=false; drop_rate HYBRID PENDING PM)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Mage + slot=off-hand + weapon_family=focus → conforme (focus off-hand Mage/Priest weapon_family, Mage main-stat INT)",
+      "risk_notes": "MEDIUM — drop_rate HYBRID PENDING PM; AoE silence 8m può essere overturned in dungeon 3p, C2 raccomanda cap sui boss (silence-resistance) mob elite"
+    },
+    {
+      "n": 11,
+      "chain_tag": "HYBRID-4 (H4 Halodi)",
+      "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+      "nome_it": "Faretra del Fato di Halodi",
+      "classe": "Ranger",
+      "lore_source": "Halodi",
+      "tier": "T5",
+      "rarity": "Legendary",
+      "required_level": 60,
+      "ilvl": 60,
+      "main_stat_target": "AGI",
+      "slot": "trinket",
+      "armor_type": null,
+      "weapon_family": null,
+      "stat_numeric_final": {
+        "AGI": 33,
+        "utility_pct": 16
+      },
+      "utility_final": "Fate Deflection — 1x/encounter, il prossimo attacco letale al portatore viene deviato su bersaglio nemico casuale in encounter",
+      "utility_trigger_condition": "passive/auto-reactive on next lethal hit (attivato automaticamente da damage that would reduce HP<=0)",
+      "cooldown_limit": "1x per encounter (auto-reactive, next lethal hit trigger)",
+      "drop_readiness": "PARTIAL — 0.5% direzionale drop pantheon-of-fallen-suns dungeon 3p Lv60 alternate (Il Sole Nero secondary, Halodi capstone) HYBRID — PENDING PM numeric final",
+      "registry_readiness": "PARTIAL (design layer, runtime_apply_ready=false; drop_rate HYBRID PENDING PM)",
+      "anti_p2w_confirmation": "can_be_sold_for_real_money=false · can_be_sold_for_gold=false · bind-on-pickup · affects_combat=true",
+      "proficiency_confirmation": "Ranger + slot=trinket → conforme (trinket cross-class, main_stat_target=AGI Ranger-oriented)",
+      "risk_notes": "MEDIUM — drop_rate HYBRID PENDING PM; auto-reactive lethal deflection richiede C2 handling per raid boss mechanic (deflection su boss potrebbe essere no-op design)"
+    }
+  ],
+  "sezione_2_progressive_discovery_reserved_4": [
+    {
+      "slot_id": "P1",
+      "class_reserved": "Mage",
+      "lore_reserved": "Memoria (proposta PM, non finale)",
+      "item_id_placeholder": "mage-t5-legendary-progressive-slot-01-pending",
+      "status": "registry_reserved / PENDING PM / not_runtime_apply_ready"
+    },
+    {
+      "slot_id": "P2",
+      "class_reserved": "Priest",
+      "lore_reserved": "Luna Morta (proposta PM, non finale)",
+      "item_id_placeholder": "priest-t5-legendary-progressive-slot-02-pending",
+      "status": "registry_reserved / PENDING PM / not_runtime_apply_ready"
+    },
+    {
+      "slot_id": "P3",
+      "class_reserved": "Rogue",
+      "lore_reserved": "Ciclo delle anime (proposta PM, non finale)",
+      "item_id_placeholder": "rogue-t5-legendary-progressive-slot-03-pending",
+      "status": "registry_reserved / PENDING PM / not_runtime_apply_ready"
+    },
+    {
+      "slot_id": "P4",
+      "class_reserved": "Ranger",
+      "lore_reserved": "Greatwood/Elfwood (proposta PM, non finale)",
+      "item_id_placeholder": "ranger-t5-legendary-progressive-slot-04-pending",
+      "status": "registry_reserved / PENDING PM / not_runtime_apply_ready"
+    }
+  ],
+  "sezione_3_regole_strict_verified": {
+    "no_legendary_generico_solo_stat": "PASSED 11/11 (utility unica + trigger/cooldown descritti per ognuno)",
+    "no_legendary_premium_shop": "PASSED 11/11 (can_be_sold_for_real_money=false + can_be_sold_for_gold=false + bind-on-pickup)",
+    "proficiency_hard_block": "PASSED 11/11 (verified post-E1.1: Priest no scudo/piastre/cuoio/maglia; Rogue no arco; Warrior scudo L6 conforme; Mage focus off-hand conforme; Ranger main-stat AGI conforme)",
+    "anti_p2w": "PASSED 11/11 (affects_combat=true; affects_economy=false; affects_ranking=false; can_be_sold_for_real_money=false)",
+    "utility_unica_obbligatoria": "PASSED 11/11 (proc/trigger/passive/cooldown esplicitamente descritti)",
+    "lore_source_forte": "PASSED 11/11 (capstone T5: Draco/Vuoto/Celeste/Alberi della Vita/Ambash/Irthe/Ergolat/Halodi)"
+  },
+  "sezione_4_risk_summary": {
+    "LOW_risk_count": 5,
+    "MEDIUM_risk_count": 6,
+    "HIGH_risk_count": 0,
+    "note": "Nessun HIGH risk. Tutti i MEDIUM (5) richiedono validazione runtime C2 (ownership cross-target, resurrect meta-progression, HYBRID drop_rate PM final, auto-reactive lethal deflection, AoE silence cap boss)."
+  },
+  "sezione_5_hybrid_drop_rate_pending": {
+    "value_proposed_direzionale": "0.5% (documental only, PENDING PM final)",
+    "rationale": "0.5% è sotto il 1% dungeon 3p e sotto il 2% raid finale (approved chain STEP 8), coerente con secondary/alternate drop rarity. Numeric final PM richiesto pre-C4 Drop Table apply.",
+    "items_affected": [
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ]
+  },
+  "sezione_6_registry_readiness_output": {
+    "design_ready_registry_11": [
+      "warrior-t5-legendary-dragonlord-crown",
+      "rogue-t5-legendary-void-touched-blade",
+      "priest-t5-legendary-seraph-halo-crown",
+      "ranger-t5-legendary-worldroot-scepter",
+      "warrior-t5-legendary-ambash-forge-hammer",
+      "warrior-t5-legendary-dragon-elder-scale",
+      "mage-t5-legendary-sole-nero-diadem",
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ],
+    "runtime_apply_ready": 0,
+    "notes": "registry_apply_ready=false per tutti 11 (dry-run design layer). Numeric finals utility/cooldown proposti; PM può accettare in C1 review o affinare in C2 runtime prep."
+  },
+  "sezione_7_pm_open_questions_post_c0_l_1": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C0.L.1 numeric finals per 11 Legendary (7 approved + 4 hybrid) come baseline design layer?"
+    },
+    {
+      "id": "Q2",
+      "topic": "HYBRID drop_rate direzionale 0.5% (H1-H4) accettato o preferisci differenziare (es. 1% per H1 raid + 0.5% per H2-H4)?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Void-Pierce passive proc 15% chance: cap in C2 runtime a max 1 proc/round o lasciare stateless?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Divine Resurrect (L3): consenti in encounter attivi o solo post-wipe recovery (raid meta impact)?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Reforge weapon slot (L5) cross-target: richiede consent runtime target ally o auto-applica in party?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Absence Distortion (H3) AoE silence 8m: applicare cap silence-resistance su boss/elite in C2?"
+    },
+    {
+      "id": "Q7",
+      "topic": "Fate Deflection (H4) su boss raid: no-op (deflection annullata) o valida (deflect su random adds)?"
+    },
+    {
+      "id": "Q8",
+      "topic": "Autorizzare STEP 31 Phase C1 Item Registry Dry-Run immediato con C0.L.1 come design layer input?"
+    }
+  ],
+  "governance_check_step30": {
+    "sealed": "VERIFIED pytest 6/6",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_table_modification": "ZERO (read-only analysis su D5.json)",
+    "legendary_stat_semantic_changes": "ZERO (numeric finals proposti = coerenti con stat_principali già in D5.json)",
+    "legendary_lore_changes": "ZERO",
+    "progressive_finalization_autonomous": "ZERO (Q3=A verbatim: 4 progressive = registry_reserved / PENDING PM)",
+    "hybrid_drop_rate_apply": "ZERO (0.5% proposta documentale, PENDING PM final)",
+    "runtime_apply_ready": "ZERO (design layer only)",
+    "class_slug_auto_derivation": "ZERO (Q8=A deferral C5)",
+    "c1_auto_start_after_c0l1": "AUTHORIZED (chain immediata Q8 approved)",
+    "c2_auto_start_after_c1": "BLOCKED (STOP after C1, PM review required)",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_c0_l_1_direction": {
+    "auto_transition_c1": true,
+    "note": "C1 auto-chain immediata post C0.L.1 (Q5+Q8 approved). STOP obbligatorio dopo C1."
+  }
+}
