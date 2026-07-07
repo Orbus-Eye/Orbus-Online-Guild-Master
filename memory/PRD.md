@@ -761,3 +761,126 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → **`Gate 2` ✅ + `Phase C0-ter` ✅** → *Phase C0-quater* ⏸ *PENDING PM* / *Phase C tech dry-run* 🔒 *BLOCKED gate PM*
 
+## R18.5 Phase C0-quater Batch 1 Informed — CLOSED (2026-07-06T21:20:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Phase C0-quater CLOSED**. Include il ciclo completo: audit READ-ONLY del catalogo dungeon live + finalization Batch 1 Lv1-15 con 7 decisioni PM lockate. Attesa **PM Gate review formale** del deliverable prima di sbloccare **Phase C0-quinquies** (Batch 2 Lv16-30) — autorizzata come next step.
+
+### File autoritativi C0-quater (untracked, ready for PM review)
+
+| File | Path | SHA256 |
+|---|---|---|
+| Live Dungeon Audit (MD) | `/app/memory/r18_5_phase_c0quater_live_dungeon_audit.md` | `9252ee01c27e15c948fdf75190ebd706239f6c41a6b306ca4e450d0b73c5fe14` |
+| Live Dungeon Audit (JSON) | `/app/memory/r18_5_phase_c0quater_live_dungeon_audit.json` | `db8329cf803a552cac71427fd5746555b4395741c4403592a1ebc9ef36d09912` |
+| Batch 1 Informed Finalization (MD) | `/app/memory/r18_5_phase_c0quater_batch1_informed_final.md` | `7f59bfb297d10ad55cd9723a37ca8ed38a3a5c0365b81063ab19e2ee4f8ce2d2` |
+| Batch 1 Informed Finalization (JSON) | `/app/memory/r18_5_phase_c0quater_batch1_informed_final.json` | `f43beb6fd604105d95bd3313b66be625504185cb96ce963ac6e9391fb6f6ad40` |
+
+**Predecessore superseded**: `/app/memory/r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.md/.json` (DRAFT deprecato post-audit, preservato per audit trail).
+
+### 🎯 Batch 1 finale — 12 dungeon Lv1-15 Normal Track (party_size=3)
+
+**8 LIVE approvati** (nessuna re-creation richiesta, `name_it` già validato DB):
+
+| # | Slug | Nome IT | Lv | Lore source (post-expansion) |
+|:---:|---|---|:---:|:---:|
+| 1 | `sewer-nest` | Nido nelle Fogne | 1 | Aveol (ex-tag `urban` merged) |
+| 2 | `goblin-warrens` | Tane dei Goblin | 2 | Halodi (ex-tag `frontiera` merged) |
+| 3 | `bandit-hideout` | Covo dei Banditi | 2 | Aveol (ex-tag `urban` merged) |
+| 4 | `shadow-crypts` | Cripte d'Ombra | 3 | Irthe |
+| 5 | `druid-grove` | Bosco dei Druidi Corrotti | 3 | Soe |
+| 6 | `cursed-mines` | Miniere Maledette | 4 | Efreto |
+| 7 | `sunken-library` | Biblioteca Sommersa | 4 | **Memoria** (nuova fonte standalone) |
+| 8 | `lich-sanctum` | Santuario del Lich | 5 | Irthe |
+
+**4 NEW DRAFT approvati** (design proposto, NO creation live in questa fase):
+
+| # | Slug (PM-locked) | Nome IT proposta | Lv range | Lore source | Teaching |
+|:---:|---|---|:---:|:---:|---|
+| 9 | `chapel-of-silent-vows` | Cappella dei Voti Silenti | Lv7-9 | Aveol | Priest PRIMARY |
+| 10 | `forgotten-shrine-of-adalan` | Santuario Dimenticato di Adalan | Lv9-11 | Adalan | Mage PRIMARY |
+| 11 | `bandit-warlord-hideout` | Nascondiglio del Signore dei Briganti | Lv11-13 | Aveol | Proficiency teaching narrativo |
+| 12 | `broken-tower-of-adalan` | Torre Spezzata di Adalan | Lv13-15 | Adalan | Transition Batch 2 + primo Epic |
+
+### 📚 Lore expansion 17 → 22 fonti (PM decisions lockate)
+
+**Espansione pragmatica approvata** — 5 nuove fonti standalone, **zero merge**, **zero breaking change** su `lore_meta.py`:
+
+| Nuova fonte | Origin tag live | Dungeon che la usano | Modalità |
+|:---:|:---:|---|:---:|
+| **Memoria** | `memoria` | sunken-library (Batch 1), silent-monastery-5p (Elite) | Standalone (recommended Emergent) |
+| **Mare** | `mare` | pirate-fleet-5p (Elite B2) | **Standalone** (Q1 PM = no merge sotto Velur) |
+| **Draco** | `draco` | dragons-hoard (Batch 2 head), dragon-vault (raid B5) | Standalone (recommended Emergent) |
+| **Celeste** | `celeste` | celestial-citadel-5p (Elite B5) | **Standalone** (Q2 PM = no merge sotto Alberi della Vita) |
+| **Infernale** | `infernale` | obsidian-arena-5p, infernal-pit-5p (Elite B2/B4) | **Standalone** (Q3 PM = no merge sotto Luna Morta) |
+
+**Sub-tag preservato** (non conta come nuova fonte): `fucina` resta come sotto-classe di **Ambash** (Fucine di Ambash — iron-foundry-5p, clockwork-vault-5p).
+
+**Totale post-expansion**: **22 fonti** (target 22-25 rispettato, spazio per 3 future).
+
+### ⚔️ Elite/Group Dungeon Track — 12 dungeon 5-player live approvati
+
+**Governance PM #5**: NO re-team-size, NO congelamento, NO deprecazione. Bracket documentale approvato:
+
+| Bracket | Count | Dungeon 5-player |
+|:---:|:---:|---|
+| **Batch 1 Elite (Lv1-15)** | 5 | wolf-den-5p, frost-cave-5p, salt-marsh-5p, iron-foundry-5p, silent-monastery-5p |
+| **Batch 2 Elite (Lv16-30)** | 3 | pirate-fleet-5p, obsidian-arena-5p, clockwork-vault-5p |
+| **Batch 3 Elite (Lv31-45)** | 1 | world-tree-roots-5p |
+| **Batch 4 Elite (Lv46-55)** | 1 | infernal-pit-5p |
+| **Batch 5 Elite (Lv56-60)** | 2 | voidspire-5p, celestial-citadel-5p |
+| **TOTAL** | **12** | Equivalente al catalogo live 5p |
+
+### 🔴 3 drift endgame documentati — known drift, no rewrite (PM decision)
+
+| Slug | Drift | Governance PM |
+|---|---|---|
+| `voidspire-5p` | `required_level=11` LIVE vs Vuoto endgame → Batch 5 Elite (Lv56-60) | **Known drift, NO runtime rewrite** |
+| `infernal-pit-5p` | `required_level=12` LIVE vs Infernale endgame → Batch 4 Elite (Lv46-55) | **Known drift, NO runtime rewrite** |
+| `celestial-citadel-5p` | `required_level=13` LIVE vs Celeste endgame → Batch 5 Elite (Lv56-60) | **Known drift, NO runtime rewrite** |
+
+**Rationale**: il drift è puramente design-vs-runtime. DB rimane invariato. Riallineamento eventuale in future Phase C tech (BLOCCATA).
+
+### 🐉 Raid bracket live approvati
+
+| Raid slug | Nome IT | Lore | Bracket approvato |
+|---|---|:---:|:---:|
+| `broken-bastion-siege` | Assedio al Bastione Spezzato | Ergolat | **Batch 3 Raid (Lv31-45)** |
+| `necropolis-bells` | Necropoli delle Mille Campane | Irthe | **Batch 4 Raid (Lv46-55)** |
+| `dragon-vault` | Volta del Drago Addormentato | **Draco** (nuova standalone) | **Batch 5 Raid (Lv56-60) — endgame capstone** |
+
+**Raid pool R18.5**: 3 live + **9 nuovi da progettare** in gate futuri = 12 raid target totali.
+
+### 🔒 Ulteriori decisioni PM lockate in questa chiusura
+
+- **`training-yard`**: escluso da bracket R18.5, resta utility onboarding (fuori sistema Batch 1-5)
+- **`dragons-hoard` + `storm-spire`**: spostati a **Batch 2 head** (Lv16-30), NON Batch 1 tail. Drift `required_level=6` LIVE accettato as-is.
+- **Party size policy**: variabile 3p Normal Track + 5p Elite/Group Track. Batch 1 Normal Track = solo 3p verbatim.
+
+### 🛡️ Governance state C0-quater CLOSED
+
+- ✅ **36 sigilli byte-identical** — nessuna modifica ai sealed files (verificato `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6 passed 0.39s)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` / `.ts` intatti, verificato via `git status`)
+- ✅ **Zero DB writes** — `dungeons` (24), `raid_dungeons` (3), `expeditions` (3) tutti invariati pre-post audit
+- ✅ **Zero migrations / apply scripts**
+- ✅ **Zero dungeon/raid creation live** (4 nuovi Batch 1 = design docs)
+- ✅ **`lore_meta.py` invariato** (espansione 17→22 puramente documentale)
+- ✅ **Naming canonical Mage/Priest** verbatim in tutti i deliverable (NO drift Wizard/Cleric)
+- ✅ **Aritmetica verificata programmaticamente**: 12 dungeon Batch 1 (8+4), 12 Elite Track (5+3+1+1+2), 3 raid, 8 orphan lore tags → 22 fonti expansion, 8 residual risks, 15 Open Questions PM
+
+### 🎯 Handoff — Phase C0-quinquies Batch 2 AUTHORIZED
+
+**Prossimo step autorizzato**: **Phase C0-quinquies** — Batch 2 (Lv16-30) Normal Track = **14 dungeon 3-player** (incluso `dragons-hoard` + `storm-spire` come head) + **2 raid introduttivi** Lv20-30 (party size raid `PENDING PM` — preferenza orchestratore 5p).
+
+**Deliverable Batch 2 attesi**:
+- `/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md`
+- `/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.json`
+
+**Batch 3-5 + Phase C tech dry-run**: 🔒 **BLOCCATI** fino a nuovo gate PM (governance sigilli `derive_ui_4state`/`item_public()` invariata).
+
+**Files chiave R18.5 (cumulativo aggiornato)**:
+- Predecessori: `phase_a_discovery`, `phase_b1_design_lock`, `phase_b2_implementation_plan`, `gate1_pm_decisions`, `phase_c0_item_table_drafting_support`, `phase_c0bis_progression_dungeon_raid_matrix`, `pm_workspace_master`
+- Gate 2: `r18_5_gate2_pm_decisions.md/.json`, `r18_5_phase_c0ter_live_class_matrix.md/.json`
+- **C0-quater** (nuovo): `r18_5_phase_c0quater_batch1_lv1_15_dungeon_matrix.md/.json` (DRAFT superseded), `r18_5_phase_c0quater_live_dungeon_audit.md/.json`, `r18_5_phase_c0quater_batch1_informed_final.md/.json`
+
+**R18.5 status flow (aggiornato)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → **`Phase C0-quater Batch 1` ✅ CLOSED** → *`Phase C0-quinquies Batch 2`* 🟡 *AUTHORIZED — in progress* / *Phase C tech dry-run* 🔒 *BLOCKED gate PM*
+

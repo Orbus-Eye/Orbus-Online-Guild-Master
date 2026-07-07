@@ -1,0 +1,218 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "C0-quinquies — Batch 2 (Lv16-30) Normal Track + Raid Introduttivi",
+    "locked_at_utc": "2026-07-06T21:40:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "BATCH 2 DRAFT / PENDING PM approval",
+    "authority": "PM Orchestrator — Batch 1 CLOSED + Phase C0-quinquies autorizzata",
+    "authoritative_predecessors": [
+      "/app/memory/r18_5_phase_b_gate1_pm_decisions.md/.json",
+      "/app/memory/r18_5_gate2_pm_decisions.md/.json",
+      "/app/memory/r18_5_phase_c0ter_live_class_matrix.md/.json",
+      "/app/memory/r18_5_phase_c0quater_live_dungeon_audit.md/.json",
+      "/app/memory/r18_5_phase_c0quater_batch1_informed_final.md/.json"
+    ],
+    "lore_pool_available": 22,
+    "lore_pool_composition": "17 Gate 1 originali + 5 nuove standalone (Memoria, Mare, Draco, Celeste, Infernale)"
+  },
+  "gap_analysis": {
+    "remaining_3p_live_available": 2,
+    "remaining_3p_live_slugs": ["dragons-hoard", "storm-spire"],
+    "target_batch_2_normal_dungeons": 14,
+    "new_3p_needed": 12,
+    "raid_new_needed": 2,
+    "note": "Query DB read-only conferma: solo 2 dungeon 3p LIVE non allocati Batch 1 (esclusi training-yard utility). 12 nuovi da progettare + 2 raid nuovi."
+  },
+  "level_distribution": {
+    "early_lv16_19": {"count": 4, "slugs": ["dragons-hoard", "storm-spire", "blackpine-thicket", "ironhold-keep"], "live_count": 2, "new_count": 2},
+    "mid_lv20_25": {"count": 5, "slugs": ["worldroot-hollow", "veiled-forge", "tidebound-cove", "hollow-monastery", "wild-hunt-lair"], "live_count": 0, "new_count": 5},
+    "late_lv26_30": {"count": 5, "slugs": ["frostbound-vault", "sunken-shipyard", "emberlord-hideout", "stormcaller-vault", "bonefall-crypt"], "live_count": 0, "new_count": 5},
+    "raid_lv20_30": {"count": 2, "slugs": ["krastlov-siege", "bloodgrove-uprising"], "new_count": 2},
+    "total_dungeons": 14,
+    "total_raids": 2,
+    "total_content": 16
+  },
+  "dungeons_batch2": [
+    {"index": 1, "slug": "dragons-hoard", "status": "LIVE", "name_it_source": "LIVE DB", "name_it": "Tesoro del Drago", "lv_range": "Lv16", "required_level_live": 6, "drift_accepted_pm4": true, "party_size": 3, "lore_source": "Draco (nuova standalone)", "enemy_family": "draconic (LIVE)", "mechanic_teaching": "Warrior+Rogue melee synergy vs draconic boss (draconic reveal mid-game)", "loot_tier": "T2 prevalente + T3 minor materiali draconici", "rarity_range": "Common/Uncommon prevalenti, Rare regolare boss", "materials_pending_pm_verify": ["squame draconiche", "oro antico", "gemme opache"], "boss_pending_pm_verify": "Custode Draconico (mini) + Drago di Rame Anziano", "itemization_notes": "Warrior spade/asce T2, Rogue pugnali T2, universal accessori. NO stoffa/reliquia/tomo.", "achievement_hint": "Prima Squama"},
+    {"index": 2, "slug": "storm-spire", "status": "LIVE", "name_it_source": "LIVE DB", "name_it": "Guglia della Tempesta", "lv_range": "Lv17", "required_level_live": 6, "drift_accepted_pm4": true, "party_size": 3, "lore_source": "Ambash", "enemy_family": "storm_elementals (LIVE)", "mechanic_teaching": "Mage+Ranger ranged synergy vs storm elementals (arcane reveal mid-game)", "loot_tier": "T2 prevalente + T3 minor materiali arcane", "rarity_range": "Common/Uncommon prevalenti, Rare regolare boss", "materials_pending_pm_verify": ["cristallo tempesta", "cera arcana", "filo elettrico"], "boss_pending_pm_verify": "Elementale Tempesta Anziano + Signore-Fulmine", "itemization_notes": "Mage bastoni/focus T2, stoffa T2. Ranger arco/pugnale T2, cuoio T2. Universal accessori.", "achievement_hint": "Fulmine Sale (clear con Mage nel party)"},
+    {"index": 3, "slug": "blackpine-thicket", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Boschetto del Pino Nero", "lv_range": "Lv17-19", "party_size": 3, "lore_source_proposal_pending_pm": "Greatwood/Elfwood", "enemy_family_proposal_pending_pm": "Bestie boschive avanzate (lupi-alpha, orsi ancestrali)", "mechanic_teaching": "Ranger primary (arco/pugnale/lancia cuoio T2) + Warrior tank intro", "loot_tier": "T2 puro", "rarity_range": "Common/Uncommon prevalenti", "materials_proposal_pending_pm": ["corteccia nera", "resina druidica", "artigli ancestrali"], "boss_proposal_pending_pm": "Lupo-Alpha Ancestrale + Orso Anziano di Elfwood", "itemization_notes": "Ranger arco/pugnale/lancia T2, cuoio T2. Warrior spada T2, maglia T2. Universal.", "achievement_hint": "Caccia Silente (clear senza alert)"},
+    {"index": 4, "slug": "ironhold-keep", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Forte di Ferro", "lv_range": "Lv18-19", "party_size": 3, "lore_source_proposal_pending_pm": "Krastlov", "enemy_family_proposal_pending_pm": "Guerrieri caduti + costrutti gelo", "mechanic_teaching": "Tank+Healer synergy DEDICATO (Warrior tank + Priest healer)", "loot_tier": "T2 puro", "rarity_range": "Common/Uncommon prevalenti", "materials_proposal_pending_pm": ["acciaio invernale", "ferro rinforzato", "filo di comando"], "boss_proposal_pending_pm": "Capitano-Comandante Caduto + Costrutto Assedio", "itemization_notes": "Warrior maglia/piastre T2, spada/martello T2, scudo T2. Priest reliquia T2, stoffa T2, martello T2.", "achievement_hint": "Tank+Healer First"},
+    {"index": 5, "slug": "worldroot-hollow", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Cavità delle Radici del Mondo", "lv_range": "Lv20-22", "party_size": 3, "lore_source_proposal_pending_pm": "Alberi della Vita", "enemy_family_proposal_pending_pm": "Driadi anziane + spiriti-radice + treants giovani", "mechanic_teaching": "All-class + first Rare guaranteed (party build matters)", "loot_tier": "T2 prevalente + T3 minor materiali", "rarity_range": "Common/Uncommon prevalenti, Rare guaranteed boss", "materials_proposal_pending_pm": ["linfa antica T2-T3", "radici ancestrali", "semi silvani"], "boss_proposal_pending_pm": "Driade Anziana + Radice-Cuore Antica", "itemization_notes": "Universal prevalente T2-T3 (accessori multi-class). All-class weapons T2. Primo Rare guaranteed.", "achievement_hint": "Primo Rare Batch 2"},
+    {"index": 6, "slug": "veiled-forge", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Fucina Velata", "lv_range": "Lv21-23", "party_size": 3, "lore_source_proposal_pending_pm": "Ambash (sub-tag fucina)", "enemy_family_proposal_pending_pm": "Costrutti artigiani + fabbri-fantasma", "mechanic_teaching": "Warrior+Rogue crafting reveal (Warrior aggro, Rogue burst DPS)", "loot_tier": "T2 prevalente + T3 minor gemme", "rarity_range": "Common/Uncommon prevalenti, Rare limitato boss", "materials_proposal_pending_pm": ["metallo velato", "essenza fabbrile", "gemme rifinite T2-T3"], "boss_proposal_pending_pm": "Mastro-Fabbro Velato + Costrutto Padre", "itemization_notes": "Warrior armi da forgia T2 (spada/ascia/martello), maglia T2. Rogue pugnale T2, cuoio T2.", "achievement_hint": "Fabbro Rivelato (interact all forge nodes)"},
+    {"index": 7, "slug": "tidebound-cove", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Insenatura della Marea Vincolata", "lv_range": "Lv22-24", "party_size": 3, "lore_source_proposal_pending_pm": "Mare (nuova standalone)", "enemy_family_proposal_pending_pm": "Pirati veterani + creature marine", "mechanic_teaching": "Rogue+Ranger mobility (naval terrain)", "loot_tier": "T2 prevalente + T3 minor", "rarity_range": "Common/Uncommon prevalenti, Rare limitato boss", "materials_proposal_pending_pm": ["cristallo marino", "corallo grezzo T2", "corda salata"], "boss_proposal_pending_pm": "Ammiraglio Corsaro + Kraken Minore", "itemization_notes": "Rogue pugnale/balestra T2, cuoio T2. Ranger arco/balestra T2, cuoio+maglia T2.", "achievement_hint": "Marea Cavalcata (clear rapido)"},
+    {"index": 8, "slug": "hollow-monastery", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Monastero Cavo", "lv_range": "Lv23-25", "party_size": 3, "lore_source_proposal_pending_pm": "Memoria (nuova standalone)", "enemy_family_proposal_pending_pm": "Monaci-eco + spettri contemplativi", "mechanic_teaching": "Healer+DPS synergy DEDICATO (Priest heal + Mage burst)", "loot_tier": "T2 prevalente + T3 minor", "rarity_range": "Common/Uncommon prevalenti, Rare regolare boss", "materials_proposal_pending_pm": ["cera monastica", "pergamena eco", "cristallo memoria T2-T3"], "boss_proposal_pending_pm": "Abate-Eco + Spettro-Meditante", "itemization_notes": "Priest reliquia/focus T2, stoffa T2, martello T2. Mage bastone/tomo/focus T2, stoffa T2.", "achievement_hint": "Eco Ascoltata (clear con Priest+Mage party)"},
+    {"index": 9, "slug": "wild-hunt-lair", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Tana della Caccia Selvaggia", "lv_range": "Lv24-25", "party_size": 3, "lore_source_proposal_pending_pm": "Soe", "enemy_family_proposal_pending_pm": "Cacciatori spettrali + bestie leggendarie minori", "mechanic_teaching": "Ranger primary + all-class hunt teaching", "loot_tier": "T2 prevalente + T3 minor materiali", "rarity_range": "Common/Uncommon prevalenti, Rare regolare boss", "materials_proposal_pending_pm": ["pelli veterane", "ossa di bestia leggendaria minore", "artigli T2"], "boss_proposal_pending_pm": "Grande Cacciatore Spettrale + Grifone Ancestrale", "itemization_notes": "Ranger arco/pugnale/lancia T2-T3 minor, cuoio+maglia T2. Universal accessori.", "achievement_hint": "Grande Cacciatore"},
+    {"index": 10, "slug": "frostbound-vault", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Cripta Legata al Gelo", "lv_range": "Lv26-27", "party_size": 3, "lore_source_proposal_pending_pm": "Halodi + Krastlov (co-source)", "enemy_family_proposal_pending_pm": "Non-morti gelidi + guardiani cripta", "mechanic_teaching": "Warrior+Priest (cold resistance mechanics)", "loot_tier": "T2 + T3 minor materiali", "rarity_range": "Common/Uncommon/Rare regolari", "materials_proposal_pending_pm": ["ghiaccio persistente T2-T3", "filo consacrato invernale", "ossa gelate"], "boss_proposal_pending_pm": "Guardiano-Lich Minore + Elementale Cripta", "itemization_notes": "Warrior spada/martello T2-T3 minor, maglia T2-T3 minor. Priest reliquia T2, stoffa T2-T3 minor.", "achievement_hint": "Gelo Rotto (clear con Priest purifier)"},
+    {"index": 11, "slug": "sunken-shipyard", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Cantiere Sommerso", "lv_range": "Lv27-28", "party_size": 3, "lore_source_proposal_pending_pm": "Velur + Mare (co-source)", "enemy_family_proposal_pending_pm": "Marinai-relitto + costrutti navali", "mechanic_teaching": "Rogue+Ranger mobility late (naval boss phase)", "loot_tier": "T2 + T3 minor", "rarity_range": "Common/Uncommon/Rare regolari", "materials_proposal_pending_pm": ["legno relitto", "chiodi salati", "gemme marine T2-T3"], "boss_proposal_pending_pm": "Ingegnere-Relitto + Kraken Costruttivo", "itemization_notes": "Rogue pugnale/balestra T2-T3 minor, cuoio T2-T3. Ranger arco/balestra T2-T3.", "achievement_hint": "Relitto Riparato"},
+    {"index": 12, "slug": "emberlord-hideout", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Nascondiglio del Signore delle Braci", "lv_range": "Lv28-29", "party_size": 3, "lore_source_proposal_pending_pm": "Aveol", "enemy_family_proposal_pending_pm": "Briganti signori + sicari elite", "mechanic_teaching": "Warrior+Rogue (proficiency check narrativo continuazione B1 bandit-warlord-hideout)", "loot_tier": "T2 + T3 minor su boss", "rarity_range": "Common/Uncommon/Rare regolari", "materials_proposal_pending_pm": ["acciaio elite", "cuoio signore", "gemme brace"], "boss_proposal_pending_pm": "Il Signore delle Braci (successor Signore dei Briganti B1) + Guardaspalle Elite", "itemization_notes": "Warrior spada/ascia T2-T3, maglia T2-T3. Rogue pugnale T2-T3. Signature 'signore' items PENDING PM.", "achievement_hint": "Signore delle Braci Deposto"},
+    {"index": 13, "slug": "stormcaller-vault", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Cripta dell'Evocatempesta", "lv_range": "Lv28-30", "party_size": 3, "lore_source_proposal_pending_pm": "Draco (secondo dungeon Draco Batch 2)", "enemy_family_proposal_pending_pm": "Draconici minori + evocatori arcani (NO Wizard drift)", "mechanic_teaching": "Mage primary + Ranger (arcane DPS + support, secondo Draco)", "loot_tier": "T2 + T3 minor", "rarity_range": "Common/Uncommon/Rare regolari", "materials_proposal_pending_pm": ["cristallo tempesta T3", "essenza draconica minore", "filo elettrico avanzato"], "boss_proposal_pending_pm": "Evocatempesta Anziano (NON Wizard) + Draconico Minore", "itemization_notes": "Mage bastone/focus/tomo T2-T3, stoffa T2-T3. NO Wizard drift naming.", "achievement_hint": "Evocatempesta Silenziato"},
+    {"index": 14, "slug": "bonefall-crypt", "status": "NEW DRAFT", "name_it_proposal_pending_pm": "Cripta della Caduta d'Ossa", "lv_range": "Lv29-30", "party_size": 3, "lore_source_proposal_pending_pm": "Krastlov", "enemy_family_proposal_pending_pm": "Non-morti veterani + necrofagi (NO Cleric drift)", "mechanic_teaching": "Priest+Warrior (heal + tank, transition B3, primo Epic)", "loot_tier": "T2 + T3 assicurato + PRIMO Epic Batch 2 (max 1-2 slot, rate PENDING PM)", "rarity_range": "Common/Uncommon/Rare regolari, Epic molto raro (boss drop only)", "materials_proposal_pending_pm": ["ossa consacrate T3", "filo di controllo", "gemma di anima minore"], "boss_proposal_pending_pm": "Necrofago Anziano + Comandante-Ossa (boss transition B3)", "itemization_notes": "Priest reliquia/focus/martello T3, stoffa T3. Warrior maglia/piastre T3, spada T3. Primo Epic Batch 2 (max 1-2 slot).", "achievement_hint": "Primo Epic Batch 2"}
+  ],
+  "raids_batch2": [
+    {
+      "index": "R1",
+      "slug_proposal_pending_pm": "krastlov-siege",
+      "name_it_proposal_pending_pm": "Assedio delle Torri Gemelle di Krastlov",
+      "lv_range": "Lv22-25",
+      "party_size_proposal_pending_pm": 5,
+      "party_size_preference_emergent": "5p (coerente con Elite/Group Track policy PM #1)",
+      "party_size_decision_pending_pm": "NON decisa autonomamente per non violare governance",
+      "lore_source_proposal_pending_pm": "Krastlov (fonte Gate 1 orfana Batch 1)",
+      "content_family_proposal_pending_pm": "baseline (militare/politico)",
+      "narrative_theme_proposal_pending_pm": "Le Torri Gemelle di Krastlov cadono sotto un assedio invernale. Nessuno può ricordarne il nome del comandante — perché lui l'ha mangiato.",
+      "enemy_family_proposal_pending_pm": "Guerrieri veterani + sciamano gelo + comandante-lich minore (NO Cleric drift)",
+      "main_mechanic": "Team composition espansa 5p — Tank + Healer + 2 DPS + Utility. Prime meccaniche raid: interrupt casting, positioning cold zones, boss phase transitions.",
+      "loot_tier": "T2 assicurato + T3 introduttivo + Epic guaranteed boss finale",
+      "rarity_range": "Common/Uncommon/Rare regolari, Epic guaranteed boss finale",
+      "materials_proposal_pending_pm": ["acciaio invernale T3", "gemma di comando", "filo consacrato Krastlov", "essenza-lich"],
+      "boss_proposal_pending_pm": "Comandante Senza Memoria (lich minore raid boss) + 2 fase",
+      "itemization_notes": "Loot Tank/Healer-friendly primario (piastre T2-T3 minor, reliquia T2, martello T2). DPS accessories T2. NO Legendary. Introduce ranking dedicato raid.",
+      "achievement_ranking_hint": "First Kill Krastlov-Siege (world/server first, min ILVL leaderboard)"
+    },
+    {
+      "index": "R2",
+      "slug_proposal_pending_pm": "bloodgrove-uprising",
+      "name_it_proposal_pending_pm": "Rivolta del Bosco Sanguigno",
+      "lv_range": "Lv28-30",
+      "party_size_proposal_pending_pm": 5,
+      "party_size_preference_emergent": "5p (stesso rationale R1)",
+      "party_size_decision_pending_pm": "NON decisa autonomamente",
+      "lore_source_proposal_pending_pm": "Alberi della Vita + Greatwood/Elfwood (co-source)",
+      "content_family_proposal_pending_pm": "nature (druidico/silvano)",
+      "narrative_theme_proposal_pending_pm": "Il Bosco Sanguigno si è ribellato. Le linfe che nutrivano gli Alberi della Vita ora nutrono altro.",
+      "enemy_family_proposal_pending_pm": "Druidi caduti + treants ancestrali + spirito-radice corrotto",
+      "main_mechanic": "Team 5p con ruoli espliciti — Tank aggro-swap, Healer AoE recovery, DPS burst phase, Utility crowd-control. Multi-role synergy hard test.",
+      "loot_tier": "T2 + T3 assicurato + Epic guaranteed boss finale + rare hint materiale Legendary crafting (NO Legendary drop diretto)",
+      "rarity_range": "Common/Uncommon/Rare regolari, Epic guaranteed boss finale",
+      "materials_proposal_pending_pm": ["linfa consacrata T3", "corteccia ancestrale", "semi Bosco Sanguigno", "filo verde", "materiale Legendary crafting hint"],
+      "boss_proposal_pending_pm": "Il Cuore Corrotto degli Alberi della Vita (spirito-radice) + 3 fase",
+      "itemization_notes": "Loot multi-role (accessori dedicati per Tank/Healer/DPS T2-T3). Introduce concetto 'gear check pre-raid' (min ILVL suggerito Lv27+, non enforced runtime).",
+      "achievement_ranking_hint": "First Kill Bloodgrove (world/server first, min ILVL leaderboard)"
+    }
+  ],
+  "lore_distribution_batch2": {
+    "sources_used_11_of_22": {
+      "Draco": {"dungeons": ["dragons-hoard", "stormcaller-vault"], "raids": [], "total_uses": 2},
+      "Ambash": {"dungeons": ["storm-spire", "veiled-forge (sub-tag fucina)"], "raids": [], "total_uses": 2},
+      "Greatwood/Elfwood": {"dungeons": ["blackpine-thicket"], "raids": ["bloodgrove-uprising (co-source)"], "total_uses": 1.5},
+      "Krastlov": {"dungeons": ["ironhold-keep", "frostbound-vault (co-source)", "bonefall-crypt"], "raids": ["krastlov-siege"], "total_uses": 3.5},
+      "Alberi della Vita": {"dungeons": ["worldroot-hollow"], "raids": ["bloodgrove-uprising (co-source)"], "total_uses": 1.5},
+      "Mare": {"dungeons": ["tidebound-cove", "sunken-shipyard (co-source)"], "raids": [], "total_uses": 1.5},
+      "Memoria": {"dungeons": ["hollow-monastery"], "raids": [], "total_uses": 1},
+      "Soe": {"dungeons": ["wild-hunt-lair"], "raids": [], "total_uses": 1},
+      "Halodi": {"dungeons": ["frostbound-vault (co-source)"], "raids": [], "total_uses": 0.5},
+      "Velur": {"dungeons": ["sunken-shipyard (co-source)"], "raids": [], "total_uses": 0.5},
+      "Aveol": {"dungeons": ["emberlord-hideout"], "raids": [], "total_uses": 1}
+    },
+    "orphan_gate1_batch1_now_covered_batch2": ["Krastlov", "Greatwood/Elfwood", "Alberi della Vita", "Mare"],
+    "sources_reserved_future_batches": {
+      "Alevora": "World boss endgame, Batch 5",
+      "Ergolat": "raid B3 live (broken-bastion-siege)",
+      "Adalan": "Batch 1 già coperto, Batch 2 bilanciamento",
+      "Efreto": "Batch 1 già coperto, Batch 2 bilanciamento",
+      "Faglie arcane": "Riservata Batch 3+ (metafisica mid-late)",
+      "Vuoto": "Usata Elite Track B5 (voidspire-5p)",
+      "Luna Morta": "Riservata Batch 5 endgame",
+      "Ciclo delle anime": "Riservata Batch 5 endgame",
+      "Irthe": "Batch 1 già coperto + raid B4 (necropolis-bells)",
+      "Celeste (nuova)": "Riservata Elite B5 (celestial-citadel-5p)",
+      "Infernale (nuova)": "Riservata Elite B2/B4 (obsidian-arena-5p, infernal-pit-5p)"
+    }
+  },
+  "loot_target_summary": {
+    "tier_distribution": {
+      "T1": "Coda residua (accessori occasionali)",
+      "T2": "Prevalente ovunque",
+      "T3": "Introduttivo su boss mid+ (dungeon #5+, raid)",
+      "T4": "Non presente — riservato Batch 3+",
+      "T5": "Non presente — riservato Batch 4/5"
+    },
+    "rarity_distribution": {
+      "Common": "Regolare ovunque",
+      "Uncommon": "Prevalente ovunque (vs Common prevalente Batch 1)",
+      "Rare": "Regolare boss mid+",
+      "Epic": "Solo boss dungeon #14 bonefall-crypt + boss finale raid #2 bloodgrove-uprising (max 2-3 slot Batch 2 totali)",
+      "Legendary": "Assente (T5 only, riservato B5)"
+    }
+  },
+  "multi_role_synergy_teaching": {
+    "tank_healer_dedicated": ["ironhold-keep"],
+    "healer_dps_dedicated": ["hollow-monastery"],
+    "dps_support_dedicated": ["tidebound-cove", "sunken-shipyard"],
+    "all_class": ["worldroot-hollow", "wild-hunt-lair"],
+    "hybrid_warrior_priest": ["frostbound-vault", "bonefall-crypt"],
+    "raid_full_5p_multi_role": ["krastlov-siege", "bloodgrove-uprising"]
+  },
+  "risks_batch2": [
+    {"id": "risk_1", "severity": "MEDIUM", "topic": "12 nuovi dungeon design richiedono future DB creation", "mitigation": "Deferita gate PM successivo + Phase C tech BLOCCATA"},
+    {"id": "risk_2", "severity": "MEDIUM", "topic": "2 nuovi raid design - party size PENDING PM approval", "mitigation": "Preferenza 5p documentata, non decisa autonomamente"},
+    {"id": "risk_3", "severity": "LOW", "topic": "Drift required_level dragons-hoard/storm-spire (LIVE Lv6 vs Batch 2 head Lv16-17)", "mitigation": "PM #4 verbatim, no rewrite"},
+    {"id": "risk_4", "severity": "LOW", "topic": "Naming IT player-facing 12 nuovi + 2 raid PENDING PM", "mitigation": "PM approva/rinomina gate futuro"},
+    {"id": "risk_5", "severity": "LOW", "topic": "Materiali specifici PENDING PM verify vs loot_tables.py SEALED", "mitigation": "Coerenza verificata in gate PM successivo"},
+    {"id": "risk_6", "severity": "MEDIUM", "topic": "Compatibility policy runtime proficiency (Gate 2 sez. 5-6) out-of-scope Batch 2", "mitigation": "Enforcement Phase C tech (BLOCCATA)"},
+    {"id": "risk_7", "severity": "LOW", "topic": "Sovrapposizione lore Batch 1↔Batch 2 (Aveol, Draco, Memoria, Ambash)", "mitigation": "Differenziazione narrativa esplicita. Info-only."},
+    {"id": "risk_8", "severity": "MEDIUM", "topic": "Krastlov utilizzato 3.5 volte Batch 2 (concentrazione alta)", "mitigation": "Priorità recupero orfana Batch 1. PENDING PM se accettare o ridistribuire."},
+    {"id": "risk_9", "severity": "LOW", "topic": "Nessuna fonte endgame Batch 2 (Vuoto/Luna Morta/Ciclo delle anime/Alevora tutte B4/B5)", "mitigation": "Design intenzionale. Info-only."},
+    {"id": "risk_10", "severity": "LOW", "topic": "Boss dragons-hoard/storm-spire LIVE PENDING PM verify da loot_tables.py SEALED", "mitigation": "Read-only pending, non blocker Batch 2"},
+    {"id": "risk_11", "severity": "LOW", "topic": "Emergent NO drop rates numerici specifici (target direzionale)", "mitigation": "Regola PM verbatim rispettata"}
+  ],
+  "open_questions_pm": [
+    {"id": "Q1", "topic": "BATCH 2 KEY — Raid party size 5-player (preferenza Emergent) o 3-player o bracket dedicato raid?"},
+    {"id": "Q2", "topic": "Nome IT proposta per i 12 nuovi dungeon — approve verbatim o rinomina selettiva?"},
+    {"id": "Q3", "topic": "Nome IT proposta per i 2 raid — approve verbatim o rinomina?"},
+    {"id": "Q4", "topic": "stormcaller-vault — accettabile 'Cripta dell'Evocatempesta' o rischia drift Wizard?"},
+    {"id": "Q5", "topic": "Slug proposta per 14 dungeon + 2 raid confermati per PM-lock?"},
+    {"id": "Q6", "topic": "Bracket dungeon 'Lv16-30 / Mid-Early Game' naming ufficiale?"},
+    {"id": "Q7", "topic": "Bracket raid 'Lv20-30 Raid Intro' naming ufficiale?"},
+    {"id": "Q8", "topic": "Epic drop rate su bonefall-crypt + raid #2 boss finale — direzionale o rate numerici in Batch 2?"},
+    {"id": "Q9", "topic": "Krastlov usata 3.5 volte Batch 2 — accettabile o ridistribuire?"},
+    {"id": "Q10", "topic": "Post-decisions Q1-Q9, aggiornare PRD.md con 'R18.5 Phase C0-quinquies Batch 2 CLOSED'?"},
+    {"id": "Q11", "topic": "Autorizzare Phase C0-sexies Batch 3 (Lv31-45) o pausa?"},
+    {"id": "Q12", "topic": "broken-bastion-siege (raid live B3) — includere Batch 3 come 'raid live head' o gestione separata?"}
+  ],
+  "governance_check_final": {
+    "dungeons_batch2_count": 14,
+    "live_count": 2,
+    "new_draft_count": 12,
+    "raids_batch2_count": 2,
+    "new_raid_count": 2,
+    "obligatory_sections_completed": 16,
+    "dragons_hoard_storm_spire_included_as_head": true,
+    "lore_sources_used": 11,
+    "lore_sources_available": 22,
+    "orphan_gate1_batch1_now_covered_batch2": 4,
+    "party_size_normal_track_verbatim_3": true,
+    "party_size_raid_pending_pm": true,
+    "multi_role_synergy_teaching_covered": true,
+    "loot_target_t2_prevalent_t3_intro": true,
+    "no_legendary_batch2": true,
+    "epic_only_last_boss_and_raid_finale": true,
+    "canonical_naming_mage_priest_verbatim": true,
+    "no_wizard_cleric_drift": true,
+    "proficiency_coherence_gate2": true,
+    "sealed_files_36_byte_identical_expected": true,
+    "zero_db_writes": true,
+    "zero_code_changes": true,
+    "zero_migrations": true,
+    "zero_dungeon_creation": true,
+    "zero_raid_creation": true,
+    "zero_dungeon_deletion_deprecation": true,
+    "zero_party_size_rewrite": true,
+    "zero_required_level_rewrite": true,
+    "zero_lore_meta_py_touch": true,
+    "zero_economy_changes": true,
+    "zero_drop_table_apply": true,
+    "zero_runtime_bridge_activation": true,
+    "prd_md_update_deferred_pending_pm_batch2": true
+  },
+  "handoff": {
+    "deliverable_files": [
+      "/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md",
+      "/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.json"
+    ],
+    "next_step": "PM Gate review Batch 2 → risposte 12 Open Questions → chiusura formale Batch 2 con PRD.md update + autorizzazione (o pausa) Phase C0-sexies Batch 3 (Lv31-45)",
+    "batch3_5_status": "BLOCKED fino a nuovo gate PM",
+    "phase_c_tech_dry_run_status": "BLOCKED (governance sigilli invariata)"
+  }
+}
