@@ -1865,3 +1865,65 @@ Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere
 **R18.5 status flow (aggiornato post-STEP 24)**:
 `Phase D5 (STEP 18)` ✅ → `CATALOGO 1500/1500 (STEP 19)` ✅ → `Phase E1 (STEP 20)` ✅ → `Phase E1.1 (STEP 21)` ✅ → `PRD E1 CLOSED (STEP 22)` ✅ → `Phase E2 (STEP 23)` ✅ → **`PRD E1+E2 CLOSED (STEP 24)`** ✅ **CLOSED (questo append)** → **`Phase E2.1 Duplicate Name Resolution (STEP 25)`** 🟡 **AUTHORIZED (chain immediata)** → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E2.1 CLOSED / `R18.6 Class Halls` 🔒 PLANNED SERIAL post-Phase C / `Marketing Brief` 🔒 DEFERRED
 
+
+---
+
+## R18.5 Phase E2.1 CLOSED + 🎯 Catalogo 1500 STABILIZZATO (2026-07-07T19:15:00Z)
+
+**Milestone**: **R18.5 Phase E2.1 Duplicate Name Resolution CLOSED + R18.5 catalog status = FULLY STABILIZED** ✅
+
+**Deliverables E2.1**:
+- `/app/memory/r18_5_phase_e2_1_duplicate_name_resolution.md` (340 righe · SHA256 `b0a988ea0b82c2f9e58267c66d971fafceb41b4c408dda9739b45f0ecf15b2f6`)
+- `/app/memory/r18_5_phase_e2_1_duplicate_name_resolution.json` (1722 righe · SHA256 `d39e9b9dfc51987e39ad1869c579d848b028705fbe525f92d354aef3973850b4`)
+
+**Item table files SHA256 finali post-E2.1** (STABILIZZATI):
+- D1: `40107a3e7cfd3cce...`
+- D2: `f30f39f327db39e0...`
+- D3: `39e0f88fa7121c1d...`
+- D4: `a6c24abfcb3c442b...`
+- D5: `58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e` (invariato dal design STEP 18)
+
+**E2.1 CLOSED — Decisioni PM verbatim (Q1=A)**:
+- **E2.1 Duplicate Name Resolution CLOSED**
+- **14 duplicate nome_it resolved**
+- **29 rename completed** (class-suffix + tier-suffix varianti leggere)
+- **Duplicate residue = 0** ✅
+- **Catalog remains 1500/1500** ✅
+- **Rarity remains 400/450/400/235/15** ✅
+- **Class distribution remains 300×5** (Warrior/Rogue/Mage/Priest/Ranger) ✅
+- **Proficiency violations = 0** ✅
+- **Anti-P2W 1500/1500** (`can_be_sold_for_real_money=false`) ✅
+- **Weapon backlog remains RESERVED** (`strumento`/`falce`/`trinket_backlog` = 0 usi) ✅
+- **D4 slug drift documented / no rename** (9 slug B4 accepted Q3=A)
+- **Family redundancy accepted** (design intent per progressione cross-tier Q4=A)
+- **R18.5 catalog status = FULLY STABILIZED** 🎯
+
+**Governance E2.1 CLOSED**:
+- Micro-eccezione DOCUMENTAL autorizzata PM per rename nome_it SOLO (item table D1-D4 .json). NO code/DB/migrations/sealed touches.
+- Full snapshot verification: **all other fields unchanged 29/29** (governance strict)
+- 36 seals byte-identical (pytest 6/6 PASSED)
+- Zero DB/code/migrations/economy/lore_meta.py touches
+
+**NEXT GATE (PM lockato post-E2.1 approval Q4=B)**:
+
+Phase C Tech Dry-Run autorizzata come **SPLIT SEQUENCE**, GO immediato SOLO C0 + C0.L in catena (C1-C6 HOLD):
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C0 Technical Readiness Inventory** (STEP 27) | 🟡 **AUTHORIZED** (chain immediata post-STEP 26) | subito |
+| **C0.L Legendary Finalization Mini-Gate** (STEP 28) | 🟡 **AUTHORIZED CONDITIONAL** | solo se C0 = GO |
+| **C1 Item Registry Generation Dry-Run** | 🔒 **HOLD** | PM review post-C0.L |
+| **C2 Proficiency Runtime** | 🔒 **HOLD** | post-C1 |
+| **C3 ILVL + Backfill** | 🔒 **HOLD** | post-C2 |
+| **C4 Drop Table** | 🔒 **HOLD** | post-C3 |
+| **C5 Class Slug Migration Prep** | 🔒 **HOLD** | post-C4 |
+| **C6 Final Closure** | 🔒 **HOLD** | post-C5 |
+
+**R18.6 Class Halls**: 🔒 PLANNED / HOLD UNTIL Phase C readiness (Q9 invariato)
+**Marketing Brief**: 🔒 DEFERRED (Q10 invariato)
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 26)**:
+`Phase E2.1 (STEP 25)` ✅ CLOSED → **`PRD E2.1 CLOSED + Catalogo STABILIZZATO (STEP 26)`** ✅ **CLOSED (questo append)** → **`Phase C0 Technical Readiness (STEP 27)`** 🟡 **AUTHORIZED (chain immediata)** → **`Phase C0.L Legendary Finalization (STEP 28)`** 🟡 **AUTHORIZED CONDITIONAL (se C0=GO)** → `C1-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+

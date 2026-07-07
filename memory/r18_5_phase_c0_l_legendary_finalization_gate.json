@@ -1,0 +1,664 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C0.L Legendary Finalization Mini-Gate",
+    "step": "STEP 28",
+    "locked_at_utc": "2026-07-07T20:14:12.775137+00:00",
+    "governance": "DOCUMENTAL ONLY — read-only analysis + PM proposals. NO modifica item table.",
+    "status": "APPLIED — analysis + finalization proposal",
+    "authority": "PM Orchestrator — STEP 28 catena autorizzata post-STEP 27 C0=GO"
+  },
+  "sezione_1_15_legendary_finalization_table": [
+    {
+      "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+      "nome_it": "Martello della Fucina di Ambash",
+      "class": "Warrior",
+      "lore_source": "Ambash",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L5)",
+      "utility_summary": "STR +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: Reforge weapon slot mid-encounter — 1x/encounter rimodella l'arma di un alleato cambiando damage type o property",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "ambash-legendary-forge dungeon 3p boss finale (1% drop — Il Maestro Fabbro delle Leggende)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "warrior-t5-legendary-dragon-elder-scale",
+      "nome_it": "Scaglia del Verme Ancestrale",
+      "class": "Warrior",
+      "lore_source": "Draco",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L6)",
+      "utility_summary": "STR +40, block +14%, unique-utility slot — Utility: Temporary Dragon-scale Armor Buff — conferisce armor buff draconico (resistenza elementale + physical) per durata endgame limitata",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "elder-wyrm-descent dungeon 3p boss finale (1% drop — Draco l'Ancestrale)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "warrior-t5-legendary-dragonlord-crown",
+      "nome_it": "Corona del Signore dei Draghi",
+      "class": "Warrior",
+      "lore_source": "Draco",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L1)",
+      "utility_summary": "STR +38, armor +55, unique-utility slot — Utility: Command Draconic — 1x/encounter, guida temporaneamente 1 drago giovane ostile trasformandolo in alleato per una fase",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "dragon-vault raid boss finale (2% drop, LIVE — Il Drago Primordiale)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "nome_it": "Sudario del Prezzo di Irthe",
+      "class": "Rogue",
+      "lore_source": "Irthe",
+      "status": "HYBRID_PRE_ALLOCATED",
+      "chain_tag": "HYBRID-4 (H2 Irthe)",
+      "utility_summary": " unique-utility slot — Utility: Death's Toll — 1x/encounter, un attacco letale infligge un colpo massimizzato ma il portatore paga un prezzo narrativo (self-damage e permanente cooldown per encounter)",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals PENDING PM; drop_rate HYBRID direzionale documentale",
+      "drop_readiness": "PARTIAL — source secondary drop mapped (raid/dungeon endgame alternate); drop_rate HYBRID PENDING numeric final PM",
+      "registry_readiness": "PARTIAL / PENDING drop_rate numeric final",
+      "source_endgame_mapped": "world-tree-collapse raid alternate drop (drop rate HYBRID — Il Cuore dell'Albero secondary, Irthe capstone endgame)",
+      "PENDING_PM_residue": [
+        "numeric utility finals",
+        "drop_rate HYBRID numeric final"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+      "nome_it": "Legendary Progressive Slot 03 — Rogue (PENDING PM)",
+      "class": "Rogue",
+      "lore_source": "PENDING PM (lore source proposta: Ciclo delle anime — sanctum-of-fading-souls capstone Rogue soul-bind)",
+      "status": "PROGRESSIVE_DISCOVERY_PLACEHOLDER",
+      "chain_tag": "PROGRESSIVE-4 (P3)",
+      "utility_summary": "AGI +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: PENDING PM — Narrative direction: soul-bind unique utility (es. steal 1 enemy passive for encounter duration)",
+      "numeric_readiness": "NOT READY — utility_unique = PENDING PM, tutti campi placeholder",
+      "drop_readiness": "NOT READY — source = PENDING PM (raid endgame OR dungeon 3p endgame direzionale)",
+      "registry_readiness": "NOT READY — reserved slot narrativo/documentale, non applicabile in registry finché PM non finalizza",
+      "source_endgame_mapped": "PENDING PM (tipologia: raid endgame progressive discovery, drop rate 1-2% direzionale)",
+      "PENDING_PM_residue": [
+        "lore_source finale",
+        "source finale (drop specifica)",
+        "utility_unique numeric finale",
+        "nome_it finale",
+        "drop_rate numeric finale"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "rogue-t5-legendary-void-touched-blade",
+      "nome_it": "Lama Toccata dal Vuoto",
+      "class": "Rogue",
+      "lore_source": "Vuoto",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L2)",
+      "utility_summary": "I +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: Void-Pierce — attacchi ignorano armor del target con probabilita' narrativa, come se la lama passasse tra le realta'",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "void-cathedral raid boss finale (2% drop, NEW — Il Silenzio Primordiale)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "nome_it": "Focus dell'Obelisco di Ergolat",
+      "class": "Mage",
+      "lore_source": "Ergolat",
+      "status": "HYBRID_PRE_ALLOCATED",
+      "chain_tag": "HYBRID-4 (H3 Ergolat/Vuoto — Ergolat selezionato per no-repeat Vuoto)",
+      "utility_summary": " +14%, unique-utility slot — Utility: Absence Distortion — 1x/encounter, il caster proietta un obelisco di distorsione arcana che silenzia i nemici in area per una fase (assenza narrativa manifestata)",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals PENDING PM; drop_rate HYBRID direzionale documentale",
+      "drop_readiness": "PARTIAL — source secondary drop mapped (raid/dungeon endgame alternate); drop_rate HYBRID PENDING numeric final PM",
+      "registry_readiness": "PARTIAL / PENDING drop_rate numeric final",
+      "source_endgame_mapped": "ambash-legendary-forge dungeon 3p alternate drop (drop rate HYBRID — Maestro Fabbro secondary, Ergolat/absence capstone). Nota governance: V",
+      "PENDING_PM_residue": [
+        "numeric utility finals",
+        "drop_rate HYBRID numeric final"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+      "nome_it": "Legendary Progressive Slot 01 — Mage (PENDING PM)",
+      "class": "Mage",
+      "lore_source": "PENDING PM (lore source proposta: Memoria — echi cristallizzati endgame Mage)",
+      "status": "PROGRESSIVE_DISCOVERY_PLACEHOLDER",
+      "chain_tag": "PROGRESSIVE-4 (P1)",
+      "utility_summary": "+55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: PENDING PM — Narrative direction: memoria-echo unique utility (es. recall past encounter action, replicate ally spell)",
+      "numeric_readiness": "NOT READY — utility_unique = PENDING PM, tutti campi placeholder",
+      "drop_readiness": "NOT READY — source = PENDING PM (raid endgame OR dungeon 3p endgame direzionale)",
+      "registry_readiness": "NOT READY — reserved slot narrativo/documentale, non applicabile in registry finché PM non finalizza",
+      "source_endgame_mapped": "PENDING PM (tipologia: raid endgame progressive discovery, drop rate 1-2% direzionale)",
+      "PENDING_PM_residue": [
+        "lore_source finale",
+        "source finale (drop specifica)",
+        "utility_unique numeric finale",
+        "nome_it finale",
+        "drop_rate numeric finale"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "mage-t5-legendary-sole-nero-diadem",
+      "nome_it": "Diadema del Sole Nero",
+      "class": "Mage",
+      "lore_source": "Celeste",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L7)",
+      "utility_summary": " +38, armor +55, unique-utility slot — Utility: Swap Light/Void Resist mid-encounter — cambia la propria resistenza tra light e void durante un encounter (utility strategica boss damage type mutevole)",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "pantheon-of-fallen-suns dungeon 3p Lv60 boss finale (1% drop — Il Sole Nero)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "nome_it": "Manto del Conclave Celeste",
+      "class": "Priest",
+      "lore_source": "Celeste",
+      "status": "HYBRID_PRE_ALLOCATED",
+      "chain_tag": "HYBRID-4 (H1 Celeste)",
+      "utility_summary": "WIS +38, armor +78, END +27, unique-utility slot — Utility: Celestial Barrier — 1x/encounter, genera una barriera divina che assorbe massive damage sky-realm per fase intera",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals PENDING PM; drop_rate HYBRID direzionale documentale",
+      "drop_readiness": "PARTIAL — source secondary drop mapped (raid/dungeon endgame alternate); drop_rate HYBRID PENDING numeric final PM",
+      "registry_readiness": "PARTIAL / PENDING drop_rate numeric final",
+      "source_endgame_mapped": "celestial-conclave raid boss finale (drop rate HYBRID — Il Primo Serafino, secondary Legendary slot)",
+      "PENDING_PM_residue": [
+        "numeric utility finals",
+        "drop_rate HYBRID numeric final"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+      "nome_it": "Legendary Progressive Slot 02 — Priest (PENDING PM)",
+      "class": "Priest",
+      "lore_source": "PENDING PM (lore source proposta: Luna Morta — resurrection endgame Priest, capstone Ciclo delle anime)",
+      "status": "PROGRESSIVE_DISCOVERY_PLACEHOLDER",
+      "chain_tag": "PROGRESSIVE-4 (P2)",
+      "utility_summary": "WIS +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: PENDING PM — Narrative direction: resurrection-progressive utility (es. mass-resurrect party wipe recovery 1x/day)",
+      "numeric_readiness": "NOT READY — utility_unique = PENDING PM, tutti campi placeholder",
+      "drop_readiness": "NOT READY — source = PENDING PM (raid endgame OR dungeon 3p endgame direzionale)",
+      "registry_readiness": "NOT READY — reserved slot narrativo/documentale, non applicabile in registry finché PM non finalizza",
+      "source_endgame_mapped": "PENDING PM (tipologia: dungeon 3p endgame progressive discovery, drop rate 1% direzionale)",
+      "PENDING_PM_residue": [
+        "lore_source finale",
+        "source finale (drop specifica)",
+        "utility_unique numeric finale",
+        "nome_it finale",
+        "drop_rate numeric finale"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "priest-t5-legendary-seraph-halo-crown",
+      "nome_it": "Corona d'Aureola del Serafino",
+      "class": "Priest",
+      "lore_source": "Celeste",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L3)",
+      "utility_summary": "WIS +38, armor +55, unique-utility slot — Utility: Divine Resurrect — 1x/encounter, resurrect di 1 fallen ally in endgame party (simbolo della misericordia dei Serafini caduti)",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "celestial-conclave raid boss finale (2% drop, NEW — Il Primo Serafino)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+      "nome_it": "Faretra del Fato di Halodi",
+      "class": "Ranger",
+      "lore_source": "Halodi",
+      "status": "HYBRID_PRE_ALLOCATED",
+      "chain_tag": "HYBRID-4 (H4 Halodi)",
+      "utility_summary": "16%, unique-utility slot — Utility: Fate Deflection — 1x/encounter, il prossimo attacco letale al portatore viene deviato narrativamente su bersaglio nemico casuale (possibilita' del fato manifestata)",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals PENDING PM; drop_rate HYBRID direzionale documentale",
+      "drop_readiness": "PARTIAL — source secondary drop mapped (raid/dungeon endgame alternate); drop_rate HYBRID PENDING numeric final PM",
+      "registry_readiness": "PARTIAL / PENDING drop_rate numeric final",
+      "source_endgame_mapped": "pantheon-of-fallen-suns dungeon 3p Lv60 alternate drop (drop rate HYBRID — Il Sole Nero secondary, Halodi fato/deviazione capstone)",
+      "PENDING_PM_residue": [
+        "numeric utility finals",
+        "drop_rate HYBRID numeric final"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+      "nome_it": "Legendary Progressive Slot 04 — Ranger (PENDING PM)",
+      "class": "Ranger",
+      "lore_source": "PENDING PM (lore source proposta: Greatwood/Elfwood — capstone Ranger nature-bond endgame)",
+      "status": "PROGRESSIVE_DISCOVERY_PLACEHOLDER",
+      "chain_tag": "PROGRESSIVE-4 (P4)",
+      "utility_summary": "AGI +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: PENDING PM — Narrative direction: nature-bond unique utility (es. summon 1 elfwood spirit companion for encounter)",
+      "numeric_readiness": "NOT READY — utility_unique = PENDING PM, tutti campi placeholder",
+      "drop_readiness": "NOT READY — source = PENDING PM (raid endgame OR dungeon 3p endgame direzionale)",
+      "registry_readiness": "NOT READY — reserved slot narrativo/documentale, non applicabile in registry finché PM non finalizza",
+      "source_endgame_mapped": "PENDING PM (tipologia: dungeon 3p endgame progressive discovery, drop rate 1% direzionale)",
+      "PENDING_PM_residue": [
+        "lore_source finale",
+        "source finale (drop specifica)",
+        "utility_unique numeric finale",
+        "nome_it finale",
+        "drop_rate numeric finale"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    },
+    {
+      "item_id": "ranger-t5-legendary-worldroot-scepter",
+      "nome_it": "Scettro della Radice del Mondo",
+      "class": "Ranger",
+      "lore_source": "Alberi della Vita",
+      "status": "APPROVED_CANDIDATE",
+      "chain_tag": "APPROVED-7 (L4)",
+      "utility_summary": "AGI +55, damage 72-90, crit +12%, unique-utility slot (see utility_unique) — Utility: Nature's Blessing — AoE Heal-over-Time in aree naturali definite narrativamente dal terrain lore",
+      "numeric_readiness": "PARTIAL — utility narrative descriptor present; numeric finals (cooldown, %, scaling) PENDING PM",
+      "drop_readiness": "READY — drop rate 2% raid finale OR 1% dungeon 3p finale (direzionale approved chain STEP 8)",
+      "registry_readiness": "READY (design) / PENDING numeric finals for runtime apply",
+      "source_endgame_mapped": "world-tree-collapse raid boss finale (2% drop, NEW — Il Cuore dell'Albero del Mondo)",
+      "PENDING_PM_residue": [
+        "numeric utility finals (cooldown, %, scaling durate encounter)"
+      ],
+      "proficiency_valid": true,
+      "anti_p2w_valid": true,
+      "bind_on_pickup": true
+    }
+  ],
+  "sezione_2_composition_summary": {
+    "approved_candidate_7": [
+      "warrior-t5-legendary-ambash-forge-hammer",
+      "warrior-t5-legendary-dragon-elder-scale",
+      "warrior-t5-legendary-dragonlord-crown",
+      "rogue-t5-legendary-void-touched-blade",
+      "mage-t5-legendary-sole-nero-diadem",
+      "priest-t5-legendary-seraph-halo-crown",
+      "ranger-t5-legendary-worldroot-scepter"
+    ],
+    "hybrid_pre_allocated_4": [
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ],
+    "progressive_discovery_placeholder_4": [
+      "rogue-t5-legendary-progressive-slot-03-pending",
+      "mage-t5-legendary-progressive-slot-01-pending",
+      "priest-t5-legendary-progressive-slot-02-pending",
+      "ranger-t5-legendary-progressive-slot-04-pending"
+    ],
+    "total": 15
+  },
+  "sezione_3_6_t4_progressive_markers_timing": {
+    "count": 10,
+    "items": [
+      {
+        "item_id": "warrior-t4-legendary-emberking-crown-hint",
+        "nome_it": "Frammento della Corona d'Ember (T4 hint)",
+        "class": "Warrior",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "STR +18, fire +15, damage +6 (LEGENDARY-hint teaser emberking-crown)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "warrior-t4-legendary-void-touched-hint",
+        "nome_it": "Scaglia del Vuoto T4 (T4 hint)",
+        "class": "Warrior",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "STR +18, void +15, damage +7 (LEGENDARY-hint teaser void-touched-blade)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "rogue-t4-legendary-void-touched-hint",
+        "nome_it": "Pugnale-Frammento del Vuoto (T4 hint)",
+        "class": "Rogue",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "AGI +26, damage 37-47, void +14, crit +6% (LEGENDARY-hint teaser void-touched-blade)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "rogue-t4-legendary-soul-abyss-hint",
+        "nome_it": "Frammento d'Anima T4 (T4 hint)",
+        "class": "Rogue",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "AGI +18, soul +14, stealth +8 (LEGENDARY-hint teaser future soulbind-legendary)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "mage-t4-legendary-celestial-halo-hint",
+        "nome_it": "Bacchetta-Frammento d'Aureola T4 (T4 hint)",
+        "class": "Mage",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "INT +26, magic damage 37-47, light +15, mana +36 (LEGENDARY-hint teaser seraph-halo-crown)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "mage-t4-legendary-void-warlock-hint",
+        "nome_it": "Tomo del Vuoto T4 (T4 hint)",
+        "class": "Mage",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "INT +18, spell power +20, void +14 (LEGENDARY-hint teaser void-touched-blade)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "priest-t4-legendary-celestial-halo-hint",
+        "nome_it": "Reliquia-Frammento d'Aureola T4 (T4 hint)",
+        "class": "Priest",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "WIS +18, heal +17, light +14, mana +22 (LEGENDARY-hint teaser seraph-halo-crown)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "priest-t4-legendary-resurrect-hint",
+        "nome_it": "Reliquia della Resurrezione T4 (T4 hint)",
+        "class": "Priest",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "WIS +17, heal +18, undead-slaying +12, holy +13 (LEGENDARY-hint teaser future resurrection-legendary)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "ranger-t4-legendary-worldroot-hint",
+        "nome_it": "Arco-Radice T4 (T4 hint)",
+        "class": "Ranger",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "AGI +26, damage 37-47, nature +16, range +6 (LEGENDARY-hint teaser worldroot-scepter)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      },
+      {
+        "item_id": "ranger-t4-legendary-emberking-crown-hint",
+        "nome_it": "Arco-Frammento Ember-Crown T4 (T4 hint)",
+        "class": "Ranger",
+        "tier": "T4",
+        "rarity": "Epic",
+        "stat_principali": "AGI +26, damage 37-47, fire +15, range +6 (LEGENDARY-hint teaser emberking-crown)",
+        "design_intent": "sub-Epic progressive marker T4 -> anticipa Legendary T5 corrispondente",
+        "recommended_timing": "Post-Phase C tech gate — includere in registry come Epic normal (rarity=Epic, design intent placeholder narrative). NO promozione rarity, NO cambio stat (Q6=A E1 accepted). Registry-ready.",
+        "registry_readiness": "READY (rarity Epic, stat design intent voluto)"
+      }
+    ],
+    "recommendation": "Includere in registry Phase C1 come Epic normali (rarity Epic already set post-E1 Q6=A). Design intent sub-Epic stat voluto per anticipare Legendary T5 corrispondenti. NO promozione rarity. Nessun blocker registry."
+  },
+  "sezione_4_source_drop_readiness_legendary": {
+    "approved_7": "READY — drop rate direzionale (2% raid finale / 1% dungeon 3p finale) approved chain STEP 8. Registry-mappable per runtime.",
+    "hybrid_4": "PARTIAL — source secondary drop mapped, drop_rate HYBRID PENDING PM numeric final",
+    "progressive_4": "NOT READY — source PENDING PM, non mappabile in registry finché PM non finalizza"
+  },
+  "sezione_5_status_distinction": {
+    "design_candidate_ready_registry": [
+      "warrior-t5-legendary-ambash-forge-hammer",
+      "warrior-t5-legendary-dragon-elder-scale",
+      "warrior-t5-legendary-dragonlord-crown",
+      "rogue-t5-legendary-void-touched-blade",
+      "mage-t5-legendary-sole-nero-diadem",
+      "priest-t5-legendary-seraph-halo-crown",
+      "ranger-t5-legendary-worldroot-scepter",
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ],
+    "design_candidate_partial_pending_numeric_finals": [
+      "warrior-t5-legendary-ambash-forge-hammer",
+      "warrior-t5-legendary-dragon-elder-scale",
+      "warrior-t5-legendary-dragonlord-crown",
+      "rogue-t5-legendary-void-touched-blade",
+      "mage-t5-legendary-sole-nero-diadem",
+      "priest-t5-legendary-seraph-halo-crown",
+      "ranger-t5-legendary-worldroot-scepter",
+      "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "ranger-t5-legendary-halodi-fate-quiver-hybrid"
+    ],
+    "reserved_slot_not_applicable": [
+      "rogue-t5-legendary-progressive-slot-03-pending",
+      "mage-t5-legendary-progressive-slot-01-pending",
+      "priest-t5-legendary-progressive-slot-02-pending",
+      "ranger-t5-legendary-progressive-slot-04-pending"
+    ],
+    "technically_ready_full_registry_apply": []
+  },
+  "sezione_6_pending_pm_residue": {
+    "total_pending_items": 15,
+    "progressive_4_full_pending": [
+      {
+        "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+        "gaps": [
+          "lore_source finale",
+          "source finale (drop specifica)",
+          "utility_unique numeric finale",
+          "nome_it finale",
+          "drop_rate numeric finale"
+        ]
+      },
+      {
+        "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+        "gaps": [
+          "lore_source finale",
+          "source finale (drop specifica)",
+          "utility_unique numeric finale",
+          "nome_it finale",
+          "drop_rate numeric finale"
+        ]
+      },
+      {
+        "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+        "gaps": [
+          "lore_source finale",
+          "source finale (drop specifica)",
+          "utility_unique numeric finale",
+          "nome_it finale",
+          "drop_rate numeric finale"
+        ]
+      },
+      {
+        "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+        "gaps": [
+          "lore_source finale",
+          "source finale (drop specifica)",
+          "utility_unique numeric finale",
+          "nome_it finale",
+          "drop_rate numeric finale"
+        ]
+      }
+    ],
+    "approved_hybrid_11_numeric_finals_pending": [
+      {
+        "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragon-elder-scale",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragonlord-crown",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-void-touched-blade",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "mage-t5-legendary-sole-nero-diadem",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "priest-t5-legendary-seraph-halo-crown",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-worldroot-scepter",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+        "gap": "numeric utility finals (cooldown, %, scaling)"
+      }
+    ],
+    "governance_note": "PM verbatim Q6-Q8=B: mini-gate C0.L separato per Legendary finalization. Decisione PM in C0.L review: (A) finalizzare numeric finals ORA in C0.L; (B) mantenere PENDING per Phase C1 registry apply; (C) split — approved/hybrid ready registry design layer, progressive placeholder come reserved slot documentali."
+  },
+  "sezione_7_regole_strict_verified": {
+    "no_legendary_generico_solo_stat": "PASSED 15/15 (utility narrative descriptor present + PROGRESSIVE placeholder marker esplicit)",
+    "no_legendary_premium_shop": "PASSED 15/15 (can_be_sold_for_gold=false 15/15, bind-on-pickup 15/15)",
+    "proficiency_hard_block": "PASSED 15/15 (verified post-E1.1 fixes: Priest no scudo/piastre/cuoio/maglia; Rogue no arco; Warrior scudo Legendary L6 dragon-elder-scale conforme)",
+    "anti_p2w": "PASSED 15/15 (can_be_sold_for_real_money=false)",
+    "progressive_placeholders_in_registry_condition": "Se progressive entrano in registry -> DEVE avere campi tecnici completi. Attualmente NOT READY: mantenere come reserved slot narrativi/documentali finché PM non finalizza in C0.L review o post-C1."
+  },
+  "sezione_8_registry_readiness_final_summary": {
+    "legendary_15_15_status": {
+      "ready_for_registry_design_layer": 11,
+      "ready_for_registry_runtime_apply_full": 0,
+      "reserved_slot_not_in_registry": 4
+    },
+    "gate_conditions_c0_l_output": {
+      "approved_7_status": "design candidate READY (numeric finals PENDING PM decision)",
+      "hybrid_4_status": "design candidate READY (numeric finals + drop_rate PENDING PM decision)",
+      "progressive_4_status": "reserved slot NOT in registry (PENDING PM full finalization or accept as documental)"
+    }
+  },
+  "sezione_9_pm_open_questions_post_c0_l": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C0.L CLOSED con distinzione: 11 Legendary (approved+hybrid) READY registry design layer + 4 progressive reserved slot documentali (NOT in registry finché PM finalizza)?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Legendary numeric finals (cooldown/%/scaling per 11 approved+hybrid): finalizzare ORA in mini-gate C0.L.1 o rimandare a C1 registry apply?"
+    },
+    {
+      "id": "Q3",
+      "topic": "4 progressive placeholders: mantenere come reserved slot documentali (NON in registry C1) o finalizzare ora prima di C1?"
+    },
+    {
+      "id": "Q4",
+      "topic": "6 T4 progressive marker (accepted Q6=A E1 design intent): confermare registry-ready come Epic normali (rarity Epic mantenuto, stat design intent voluto)?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Post C0.L approval: autorizzare Phase C1 Item Registry Generation Dry-Run?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Phase C1 scope: registry generation include 11 Legendary approved+hybrid come design layer (senza runtime enforcement) o richiede numeric finals prima?"
+    },
+    {
+      "id": "Q7",
+      "topic": "Autorizzare PRD.md append `R18.5 Phase C0 + C0.L CLOSED` post-review?"
+    },
+    {
+      "id": "Q8",
+      "topic": "C1 auto-start post-approval o mini-gate C0.L.1 se Q2 richiede numeric finals prima?"
+    }
+  ],
+  "governance_check_step28": {
+    "sealed": "VERIFIED pytest 6/6",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_table_modification": "ZERO (read-only analysis)",
+    "legendary_stat_changes": "ZERO",
+    "legendary_utility_changes": "ZERO",
+    "legendary_lore_changes": "ZERO",
+    "progressive_finalization_autonomous": "ZERO (PENDING PM per Q3 gate)",
+    "c1_auto_start": "BLOCKED (STOP after C0.L, PM review required)",
+    "r18_6_auto_start": "BLOCKED (PLANNED)",
+    "marketing_auto_start": "BLOCKED (DEFERRED)",
+    "prd_append_c0_c0l_closed_auto": "BLOCKED (rinviato PM approval)",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_c0_l": {
+    "auto_transition_c1": false,
+    "note": "STOP dopo C0.L. Attendo PM review Q1-Q8 + GO esplicito prima di C1 registry generation."
+  }
+}

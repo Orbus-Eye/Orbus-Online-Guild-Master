@@ -1,0 +1,201 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C0 Technical Readiness Inventory",
+    "step": "STEP 27",
+    "governance": "DOCUMENTAL ONLY — read-only analysis",
+    "status": "APPLIED"
+  },
+  "check_1_schema_common_fields": [
+    "affects_combat",
+    "affects_economy",
+    "affects_progression",
+    "affects_ranking",
+    "armor_type",
+    "can_be_sold_for_gold",
+    "can_be_sold_for_real_money",
+    "classe_orientata",
+    "iconic_family",
+    "ilvl",
+    "is_cosmetic",
+    "is_tradeable",
+    "item_id",
+    "lore_source",
+    "main_stat_target",
+    "nome_it",
+    "rarity",
+    "required_level",
+    "slot",
+    "source",
+    "stat_principali",
+    "tier",
+    "weapon_family"
+  ],
+  "check_1_tier_specific_fields": {
+    "D1": [],
+    "D2": [],
+    "D3": [],
+    "D4": [],
+    "D5": [
+      "chain_tag",
+      "item_binding_policy"
+    ]
+  },
+  "check_2_missing_core_fields": {
+    "count": 0,
+    "items_sample": []
+  },
+  "check_3_item_id_uniqueness": {
+    "count": 1500,
+    "duplicates": {},
+    "status": "PASSED"
+  },
+  "check_4_nome_it_uniqueness_post_e2_1": {
+    "count": 1500,
+    "duplicates": {},
+    "status": "PASSED"
+  },
+  "check_5_slug_source_consistency": {
+    "missing_source_count": 0,
+    "d4_slug_drift_accepted": 9,
+    "note": "9 D4 slug drift accepted per Q3=A PM verbatim, non blockers per registry"
+  },
+  "check_6_armor_weapon_coverage": {
+    "armor_types": {
+      "piastre": 88,
+      "cuoio": 152,
+      "stoffa": 208,
+      "maglia": 100
+    },
+    "weapon_families": {
+      "spada": 81,
+      "scudo": 27,
+      "pugnale": 122,
+      "bastone": 91,
+      "focus": 43,
+      "martello": 112,
+      "arco": 111,
+      "ascia": 14,
+      "arma_in_asta": 6,
+      "balestra": 28,
+      "tomo": 26,
+      "reliquia": 34,
+      "lancia": 22,
+      "wand": 25
+    }
+  },
+  "check_7_class_compatibility_fields": {
+    "class_slug_present": 0,
+    "note": "class_slug NOT presente in item table — sarà derivato in Phase C5 migration prep. Non blocker per C1 registry (usare classe_orientata come chiave)"
+  },
+  "check_8_main_stat_target_coverage": {
+    "STR": 287,
+    "END": 13,
+    "AGI": 600,
+    "INT": 300,
+    "WIS": 300
+  },
+  "check_9_ilvl_presence": {
+    "ilvl_present": 1500,
+    "total": 1500,
+    "derivable_from_required_level": 1500,
+    "status": "PASSED"
+  },
+  "check_10_rarity_tier_level_consistency": {
+    "mismatches": [],
+    "count": 0,
+    "status": "PASSED"
+  },
+  "check_11_anti_p2w_1500_1500": {
+    "compliant": 1500,
+    "total": 1500,
+    "status": "PASSED"
+  },
+  "check_12_affects_completeness": {
+    "missing_count": 0,
+    "sample": [],
+    "status": "PASSED"
+  },
+  "check_13_legendary_placeholder_gaps": {
+    "count": 4,
+    "items": [
+      {
+        "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+        "gaps": [
+          "lore_source",
+          "source",
+          "stat_principali (utility_unique numeric)"
+        ]
+      },
+      {
+        "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+        "gaps": [
+          "lore_source",
+          "source",
+          "stat_principali (utility_unique numeric)"
+        ]
+      },
+      {
+        "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+        "gaps": [
+          "lore_source",
+          "source",
+          "stat_principali (utility_unique numeric)"
+        ]
+      },
+      {
+        "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+        "gaps": [
+          "lore_source",
+          "source",
+          "stat_principali (utility_unique numeric)"
+        ]
+      }
+    ],
+    "blocker_for_C0L": true
+  },
+  "check_14_source_types_distribution": {
+    "other": 974,
+    "crafting": 146,
+    "vendor": 27,
+    "achievement_ranking": 31,
+    "quest": 14,
+    "dungeon": 183,
+    "raid": 125
+  },
+  "check_15_registry_readiness_blockers": {
+    "blockers_count": 2,
+    "list": [
+      "class_slug missing in 1500 items (Phase C5 concern)",
+      "4 progressive Legendary with PENDING PM gaps (BLOCKER C0.L)"
+    ]
+  },
+  "recommendation": {
+    "status": "GO",
+    "gap_analysis": {
+      "blocker_hard": [],
+      "blocker_soft": [
+        "class_slug derivation needed in Phase C5 (non blocker C1)",
+        "ilvl present or derivable OK",
+        "4 progressive Legendary PENDING PM gaps -> to resolve in C0.L (mini-gate)"
+      ]
+    },
+    "go_conditions_met": {
+      "item_id_unique": true,
+      "nome_it_unique": true,
+      "no_missing_source": true,
+      "no_tier_lv_mismatch": true,
+      "anti_p2w_100pct": true,
+      "affects_complete": true,
+      "no_missing_core": true
+    },
+    "note": "GO for C0.L + C1 — Technical readiness confirmed. class_slug + 4 progressive Legendary gaps handled in dedicated sub-steps (C0.L for Legendary, C5 for class_slug migration prep)."
+  },
+  "governance_check": {
+    "sealed": "VERIFIED pytest 6/6",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "item_table_modification": "ZERO (read-only)",
+    "files_deliverable": 2
+  }
+}
