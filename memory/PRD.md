@@ -1465,3 +1465,109 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow (aggiornato Batch 5 CLOSED)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → `Phase C0-septies Batch 4` ✅ CLOSED → **`Phase C0-octies Batch 5 ENDGAME`** ✅ **CLOSED** → *`Mini-Gate Legendary Discovery Chain (STEP 8)`* 🟡 *AUTHORIZED chain* → *`Phase D0 Item Table Blueprint (STEP 9)`* 🟡 *AUTHORIZED chain* → *`Phase D1-D5 item table drafting`* 🔒 *pending D0* / *Phase C tech dry-run* 🔒 *NOT IN AGENDA*
 
+
+---
+
+## R18.5 Phase D3 CLOSED (2026-07-07T17:15:00Z)
+
+**Deliverables**:
+- `/app/memory/r18_5_phase_d3_t3_item_table.md` (523 righe · SHA256 `528b0bf7e304ef4ddc1663644aacb7dacba6a5e2d8db3f7fc8d0d2ef2be00e1f`)
+- `/app/memory/r18_5_phase_d3_t3_item_table.json` (9320 righe · SHA256 `27cf0003da4fba1c510786d224bcff0e0b97d075093da44b2b16e0c07f248cf1`)
+
+**Decisioni PM verbatim**:
+- **Q1=B** — D3 APPROVED after Q6 fix
+- **Q2/Q5/Q7/Q8/Q9/Q10** — approved in blocco
+- **Q3=A** — 3 Legendary hint T3 ACCEPTED as no-drop / T5 hint only (Celestial Halo-Fragment ×2 Mage+Priest, Worldroot Master Bow Ranger). NO drop diretto, teaser narrativo T5 only.
+- **Q4=A** — criterio iconic 173 ACCEPTED as extended metric. **Da D4 in poi obbligo split** nei report: **(1) pure evolutions T→T+1 · (2) intra-family extensions · (3) free/new families**
+- **Q6=B** — **Priest shield removed/replaced** (`priest-fabbro-bulwark-priest-shield` weapon_family=`scudo` REMOVED post-fix → `priest-fabbro-bulwark-vow-relic` weapon_family=`reliquia` Rare Lv37 WIS +12, heal +11, mana +18, holy +5, iconic bulwark-priest, source `fabbro-bulwark: craft T3 rare`). **Motivazione**: `scudo` NON in proficiency Priest verbatim (Priest = stoffa + bastone/martello/focus/reliquia). **Regola HARD (post-Q6)**: nessun item può violare armor/weapon proficiency, nessuna eccezione implicita.
+- **Split Lv31-35 drift (136 vs target 120)** — ACCEPTED (non-blocking, coerente con Early Batch 3 8-dungeon early concentration)
+
+**Numeri finali D3 (post-fix)**:
+- **350 items T3 Lv31-45**
+- **Rarity 30/160/130/30/0** (Common/Uncommon/Rare/Epic/Legendary) — EXACT MATCH
+- **70 items per classe** (Warrior/Rogue/Mage/Priest/Ranger) — perfectly balanced
+- **30 Epic first-appearance** (22 dungeon Batch 3 + 8 raid Batch 3) — 6 Epic per classe, teaser meccaniche endgame narrativo
+- **3 Legendary hint T3** no-drop / T5 hint only
+- **5 NPC LOCKED** utilizzati (fabbro-bulwark 21, sarto-sacro 12, tessitrice-arcana 12, conciatore-elfwood 13, cuoiaia-elfwood 6 — post-fix). 0 nuovi NPC PENDING.
+- **Weapon backlog** `strumento`/`falce`/`trinket-backlog` = 0 usi ✅
+- **Anti-P2W** 350/350 real_money=false ✅
+- **Iconic-family criterion**: 40-50 pure evolutions target / 173 extended metric ACCEPTED. Da D4 split obbligatorio 3-way.
+
+**Governance R18.5 Phase D3 CLOSED**:
+- **36 seals byte-identical** (`pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6/6 PASSED pre-write + intra-write + post-fix)
+- **Zero DB writes** / **zero code changes** `.py/.js/.jsx/.tsx/.ts` / **zero migrations** / **zero drop table apply** / **zero economy changes** / `lore_meta.py` **invariato** / **zero sealed file modification** / **zero runtime bridge activation** / **zero class_slug migration** / **zero proficiency runtime enforcement** / **zero anti-P2W runtime validator** / **Phase C tech dry-run NOT INITIATED** / **D4 auto-start NEUTRALIZZATO** in favore di gate PM formale con revisione D3 esplicita.
+- Classi canoniche verbatim: Warrior/Rogue/Mage/Priest/Ranger (NO Wizard/Cleric drift).
+- Balance pass deferred **post-D5**.
+- Naming pass deferred **post-D5** (5 note cumulative D1+D2+D3).
+- 10 risks documentati (0 HIGH · 1 MEDIUM · 9 LOW). Nessun BLOCKER.
+
+**File touch D3**:
+- `r18_5_phase_d3_t3_item_table.md/.json` (NUOVI)
+- `PRD.md` (append CLOSED, questo aggiornamento)
+
+**Prossima fase autorizzata PM (2026-07-07T17:15:00Z)**: **Phase D4 (T4 × 300 items Lv46-55)** — STEP 16 catena automatica post-STEP 15.
+
+---
+
+## Roadmap R18.6 — Class Halls, Classless Start & Adventurer Identity (P1 PLANNED)
+
+**Round**: R18.6 (post R18.5 completo)
+**Priorità**: **P1 · PLANNED / HOLD UNTIL R18.5 ITEM TABLE COMPLETE (D1-D5)**
+**Governance**: solo roadmap/design ora — **DOCUMENTAL ONLY** (Phase R18.5 in corso)
+
+### Obiettivo R18.6
+
+Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere una **Sala di Classe** prima di diventare pienamente utilizzabile. La Sala determina la classe. Il player esperisce una fase identitaria narrativa esplicita (non class-auto-assign).
+
+### Regola design R18.6
+
+- Nuovo avventuriero → **Senza Classe** (stato: `recruit_unassigned`)
+- Player sceglie **Sala di Classe** → ottiene classe
+- Classe → main stat + armor proficiency + weapon proficiency + equip consentito + identità gameplay
+
+### Scope R18.6 (9 punti-cardine)
+
+1. Stato iniziale adventurer = `classless / recruit_unassigned`
+2. Lista Sale di Classe (5 canoniche: Warrior/Rogue/Mage/Priest/Ranger + eventuali future)
+3. UI scelta Sala player-facing
+4. Assegnazione classe post scelta Sala (transizione `recruit_unassigned` → `<class>`)
+5. Blocco dungeon/spedizioni se avventuriero senza classe (gate hard)
+6. Main stat per classe (STR/AGI/INT/WIS)
+7. Armor/weapon proficiency per classe (regole R18.5 verbatim)
+8. Collegamento equip system R18.5 (proficiency check runtime post-R18.6)
+9. Guida classe player-facing (tutorial, class identity page)
+
+### Regola gameplay R18.6 — avventuriero senza classe
+
+- **Può** esistere nel roster
+- **Può** essere visualizzato / selezionato
+- **Può** ricevere prompt/tutorial di scelta Sala
+- **NON** può essere mandato in dungeon/raid
+- **NON** può equipaggiare gear specializzato (nessun item con `classe_orientata` != universal)
+- **Deve** scegliere Sala per sbloccare identità completa
+
+### Prerequisiti R18.6 (hard blockers)
+
+- R18.5 D1-D5 item table COMPLETE (all tiers, all levels)
+- R18.5 post-D5 balance/naming review CLOSED
+- Class proficiency matrix STABLE (nessun drift open)
+- Anti-P2W validator design ready (Phase C tech dry-run outcome)
+
+### Ordine roadmap consigliato post-R18.5
+
+- **R18.5 (in corso)** — Itemization + ILVL + Gear Progression Rework (D1 CLOSED, D2 CLOSED, D3 CLOSED, D4 in agenda STEP 16, D5 pending)
+- **R18.6 — Class Halls, Classless Start & Adventurer Identity** ← NUOVO (P1 PLANNED / HOLD)
+- **R18.7 — Class Guide + Stat Identity Player-Facing** (P2 PLANNED)
+- **R18.8 — Talent Tree / Specialization System** (P2 PLANNED)
+
+### Vincoli R18.6 (solo roadmap/design ora)
+
+- **NO code / DB / migrations / class_slug migration / runtime bridge / unlock classi future / talent tree / sealed modification** durante R18.5.
+- R18.6 esecutiva **NON** autorizzata prima che R18.5 sia CLOSED.
+- Design docs R18.6 saranno preparati POST-R18.5 chiuso (fase Discovery R18.6 = post-D5 + balance/naming pass).
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 15)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → `Phase C0-septies Batch 4` ✅ CLOSED → `Phase C0-octies Batch 5 ENDGAME` ✅ CLOSED → `Mini-Gate Legendary Discovery Chain (STEP 8)` ✅ CLOSED → `Phase D0 Item Table Blueprint (STEP 9)` ✅ CLOSED → `Phase D pre-D1 Iconic Starter (STEP 10)` ✅ CLOSED → `Phase D1 T1×300 (STEP 11)` ✅ CLOSED → `Phase D2 pre-Craft NPC Directory (STEP 12)` ✅ CLOSED → `Phase D2 T2×350 (STEP 13)` ✅ CLOSED → **`Phase D3 T3×350 (STEP 14+15)`** ✅ **CLOSED (post-Q6 fix)** → **`Phase D4 T4×300 (STEP 16)`** 🟡 **IN AGENDA (chain autorizzata)** → `Phase D5 T5×200` 🔒 pending / `Phase C tech dry-run + Item table live creation` 🔒 NOT IN AGENDA / `R18.6 Class Halls` 🔒 HOLD UNTIL R18.5 COMPLETE
+

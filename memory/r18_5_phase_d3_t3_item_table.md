@@ -127,7 +127,7 @@ Proficiency verbatim brief PM (INVARIATA da D2):
 | Priest | WIS | stoffa (+ scudo cross-craft) | martello, bastone, reliquia, tomo, scudo |
 | Ranger | AGI | cuoio + maglia | arco, balestra, lancia |
 
-**Verify per class**: nessun item D3 assegna armor_type o weapon_family fuori dalla proficiency di classe. Cross-craft Priest+Scudo (`priest-fabbro-bulwark-priest-shield` Rare Lv37 via Fabbro Bulwark) è **coerente** con doctrine Priest heavy_armor+shield (proficiency D0 blueprint) — annotato in NPC craft directory sezione cross-craft.
+**Verify per class**: nessun item D3 assegna armor_type o weapon_family fuori dalla proficiency di classe. Cross-craft Priest+Reliquia (`priest-fabbro-bulwark-vow-relic` Rare Lv37 via Fabbro Bulwark) è **coerente** con proficiency Priest (`reliquia` in weapon_family Priest verbatim) — post-Q6 fix (l'item precedente `priest-fabbro-bulwark-priest-shield` con weapon_family=`scudo` è stato rimosso in quanto scudo NON è in proficiency Priest).
 
 **Weapon backlog RESERVED (Q6 D0)**: `strumento`, `falce`, `trinket_backlog` **0 items** (target 0). ✅
 
@@ -385,9 +385,9 @@ Solo `#1 bastion-of-alevora` non ha Epic dedicato (Warlord è direzionale Epic i
 - Non emergono famiglie/materiali T3 che richiedano un nuovo NPC specifico
 - Nuovi NPC (es. Fabbro-Ergolat per T4 black-forge line) sono candidati per D4 gate PM
 
-### Cross-craft usage note
+### Cross-craft usage note (post-Q6 fix)
 
-Un item Priest **`priest-fabbro-bulwark-priest-shield`** (Rare Lv37) è crafted da fabbro-bulwark tramite pattern cross-craft. Coerente con doctrine Priest heavy_armor+shield (D0 blueprint Sezione 8 armor type per Priest include "heavy/medium armor + mace/staff/shield/wand"). Flag PM Q6 per validation formale del cross-craft pattern.
+Un item Priest **`priest-fabbro-bulwark-vow-relic`** (Rare Lv37, weapon_family=`reliquia`, slot `off-hand`, WIS +12, heal +11, mana +18, holy +5) è crafted da `fabbro-bulwark` tramite pattern cross-craft **Priest-compatible**. La `reliquia` è **in proficiency Priest** verbatim (bastone, martello, focus, **reliquia**). Il precedente item `priest-fabbro-bulwark-priest-shield` (weapon_family=`scudo`) è stato **rimosso post-Q6 PM decision** in quanto `scudo` **NON è in proficiency Priest** (proficiency verbatim Priest = stoffa + bastone/martello/focus/reliquia — no shield). **Regola HARD (post-Q6)**: nessun item può violare armor/weapon proficiency, nessuna eccezione implicita.
 
 ---
 
