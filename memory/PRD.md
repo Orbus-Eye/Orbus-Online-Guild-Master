@@ -884,3 +884,138 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow (aggiornato)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → **`Phase C0-quater Batch 1` ✅ CLOSED** → *`Phase C0-quinquies Batch 2`* 🟡 *AUTHORIZED — in progress* / *Phase C tech dry-run* 🔒 *BLOCKED gate PM*
 
+## R18.5 Phase C0-quinquies Batch 2 Lv16-30 — CLOSED (2026-07-06T21:40:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Phase C0-quinquies Batch 2 CLOSED**. 14 dungeon Normal Track 3p + 2 raid introduttivi 5p lockati. PM decisions Q1-Q12 approvate in blocco. Prossimo step autorizzato: **Phase C0-sexies Batch 3 Lv31-45**.
+
+### File autoritativi C0-quinquies Batch 2 (tracked, SHA256 verified)
+
+| File | Path | SHA256 |
+|---|---|---|
+| Batch 2 Matrix (MD) | `/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md` | `f9d9a62d172e7f62ca6f89a7485b4702e3c5d76e66868b09745622c6e905fa5a` |
+| Batch 2 Matrix (JSON) | `/app/memory/r18_5_phase_c0quinquies_batch2_lv16_30_matrix.json` | `9a890af9a02a2b077e42d60a53b8c171cd7ac187b52227e0a80753b6c4f849e1` |
+
+**Auto-commit**: `e059b66` (`+861` insertions, 3 file, zero source/sealed touched).
+
+### 🎯 14 dungeon Batch 2 approvati (Lv16-30, Normal Track, party_size=3)
+
+**2 LIVE head — drift `required_level=6` accepted PM4** (nessuna re-creation, `name_it` DB validato):
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 1 | `dragons-hoard` | Tesoro del Drago | Lv16 | **Draco** (nuova standalone) |
+| 2 | `storm-spire` | Guglia della Tempesta | Lv17 | Ambash |
+
+**12 NEW DRAFT approvati** (design proposto, NO creation live, naming IT PM-approved in blocco Q2):
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 3 | `blackpine-thicket` | Boschetto del Pino Nero | Lv17-19 | Greatwood/Elfwood |
+| 4 | `ironhold-keep` | Forte di Ferro | Lv18-19 | **Krastlov** (multi-bracket) |
+| 5 | `worldroot-hollow` | Cavità delle Radici del Mondo | Lv20-22 | Alberi della Vita |
+| 6 | `veiled-forge` | Fucina Velata | Lv21-23 | Ambash (sub-tag `fucina`) |
+| 7 | `tidebound-cove` | Insenatura della Marea Vincolata | Lv22-24 | **Mare** (nuova standalone) |
+| 8 | `hollow-monastery` | Monastero Cavo | Lv23-25 | **Memoria** (nuova standalone) |
+| 9 | `wild-hunt-lair` | Tana della Caccia Selvaggia | Lv24-25 | Soe |
+| 10 | `frostbound-vault` | Cripta Legata al Gelo | Lv26-27 | Halodi + **Krastlov** (co-source) |
+| 11 | `sunken-shipyard` | Cantiere Sommerso | Lv27-28 | Velur + **Mare** (co-source) |
+| 12 | `emberlord-hideout` | Nascondiglio del Signore delle Braci | Lv28-29 | Aveol |
+| 13 | `stormcaller-vault` | Cripta dell'Evocatempesta | Lv28-30 | **Draco** (secondo dungeon Draco Batch 2) |
+| 14 | `bonefall-crypt` | Cripta della Caduta d'Ossa | Lv29-30 | **Krastlov** |
+
+### 🐉 2 raid introduttivi Batch 2 approvati (Lv20-30, party_size=5p verbatim Q1)
+
+| # | Slug | Nome IT | Lv range | Party size | Lore source | Boss |
+|:---:|---|---|:---:|:---:|:---:|---|
+| R1 | `krastlov-siege` | Assedio delle Torri Gemelle di Krastlov | Lv22-25 | **5** | **Krastlov** (fonte orfana Batch 1) | Comandante Senza Memoria (lich minore, 2 fasi) |
+| R2 | `bloodgrove-uprising` | Rivolta del Bosco Sanguigno | Lv28-30 | **5** | Alberi della Vita + Greatwood/Elfwood | Il Cuore Corrotto degli Alberi della Vita (spirito-radice, 3 fasi) |
+
+**Regola party size lockata (PM decision Q1)**: **Normal=3p · Elite=5p · Raid=5p**. No 6p/4p, no conversione a 3p.
+
+### 🌿 Krastlov overlap accepted (multi-bracket coerente)
+
+**PM decision Q9 LOCKED** — Krastlov usata 4× cumulative senza ridistribuzione:
+
+| Dungeon/Raid | Bracket | Ruolo Krastlov |
+|---|:---:|---|
+| `frozen-vigil-hall` | Batch 1 Lv8-11 | Uso Batch 1 |
+| `ironhold-keep` | Batch 2 Lv18-19 | Uso Batch 2 |
+| `frostbound-vault` | Batch 2 Lv26-27 | Co-source Batch 2 |
+| `bonefall-crypt` | Batch 2 Lv29-30 | Uso Batch 2 |
+| `krastlov-siege` (raid) | Batch 2 Lv22-25 | Raid Batch 2 |
+
+**Rationale**: coerenza narrativa multi-bracket (Krastlov = territorio esteso con siti multipli). No lore drift.
+
+### 🎨 Naming player-facing Batch 2 approved in blocco (PM decision Q2-Q7)
+
+- **12 nomi IT nuovi dungeon**: approvati verbatim (nessuna rinomina selettiva).
+- **2 nomi IT raid**: approvati verbatim.
+- **Slug lock**: 14 dungeon + 2 raid slug PM-locked.
+- **Bracket naming**: "Batch 2 Normal Track Lv16-30" + "Batch 2 Raid Intro Lv20-30" ufficiali.
+- **`stormcaller-vault` "Cripta dell'Evocatempesta"** — accepted (Q4), NO drift Wizard.
+
+### 🎁 Loot target Batch 2 rispettato
+
+**Tier distribution**:
+- **T1** — Coda residua (accessori occasionali)
+- **T2** — **Prevalente ovunque** ✅
+- **T3** — Introduttivo su boss mid+ (dungeon #5+, raid) ✅
+- **T4** — Assente (riservato Batch 3+) ✅
+- **T5** — Assente (riservato Batch 4/5) ✅
+
+**Rarity distribution**:
+- **Common** — Regolare ovunque
+- **Uncommon** — Prevalente (shift vs Common prevalente Batch 1)
+- **Rare** — Regolare boss mid+
+- **Epic** — Solo boss finale `bonefall-crypt` + boss finale raid `bloodgrove-uprising` (2-3 slot totali max) — direzionale, drop rate numerici differiti (PM Q8 accepted)
+- **Legendary** — **Assente ✅** (T5 only, riservato Batch 5 endgame)
+
+### 🛡️ Governance state Batch 2 CLOSED
+
+- ✅ **36 sigilli byte-identical** (`pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6 passed 0.39s)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` / `.ts` intatti)
+- ✅ **Zero DB writes** — `dungeons` (24), `raid_dungeons` (3), `expeditions` (3) invariati
+- ✅ **Zero migrations / apply scripts / hard delete**
+- ✅ **Zero dungeon/raid creation live** (12 nuovi dungeon + 2 raid = design docs only)
+- ✅ **`lore_meta.py` invariato**
+- ✅ **NO party_size rewrite** (5p raid verbatim, Elite Track drift `voidspire-5p` / `infernal-pit-5p` / `celestial-citadel-5p` **not touched Batch 2** — resta known drift no-rewrite)
+- ✅ **NO required_level rewrite** (drift `dragons-hoard`/`storm-spire` Lv6 vs bracket Lv16-17 documentato risk_3 LOW)
+- ✅ **Aritmetica verificata**: 14 dungeon Batch 2 (2 LIVE + 12 NEW), 2 raid (0 LIVE + 2 NEW), 11/22 lore sources usate, 4 orphan Batch 1 covered, 11 risks (2 MEDIUM + 9 LOW), 12 Open Questions PM Q1-Q12 **ALL LOCKED**
+
+### 📊 R18.5 catalogo dungeon cumulative post-Batch 2
+
+| Track | Batch 1 | Batch 2 | Batch 3+ | Total design |
+|---|:---:|:---:|:---:|:---:|
+| **Normal 3p** | 12 (8 LIVE + 4 NEW) | 14 (2 LIVE + 12 NEW) | 26 residui (Lv31-60) | ~52 |
+| **Elite 5p** | 5 LIVE | 3 LIVE | 4 LIVE (B3+B4+B5) | 12 LIVE |
+| **Raid 5p** | — | 2 NEW | 1 LIVE B3 + 2 NEW B3 + 6 futuri | 12 total |
+
+### 🎯 Handoff — Phase C0-sexies Batch 3 AUTHORIZED
+
+**Prossimo step autorizzato**: **Phase C0-sexies** — Batch 3 (Lv31-45) Normal Track = **16 dungeon 3-player** (mix live + new) + **3 raid intermedi Lv31-45** (1 LIVE `broken-bastion-siege` + 2 NEW DRAFT, party size **5p verbatim**).
+
+**Regole design Batch 3 (PM lockate)**:
+- **T3 prevalente + T4 introduttivo raro** (solo boss dungeon o raid)
+- **Rare prevalenti + Epic peso significativo** (drop rate più alto vs Batch 1-2)
+- **Legendary assenti**
+- Dungeon più tecnici, main stat più rilevante, armor/weapon proficiency peso maggiore
+- Primi **gear check seri** (min ILVL suggerito, non enforced runtime)
+- Utility item più rilevanti, materiali più specifici
+- Raid intermedi non banali
+
+**Elite Track già assegnato Batch 3**: `world-tree-roots-5p` (traccia parallela, NON conteggiato nei 16 normal).
+
+**Deliverable Batch 3 attesi**:
+- `/app/memory/r18_5_phase_c0sexies_batch3_lv31_45_matrix.md`
+- `/app/memory/r18_5_phase_c0sexies_batch3_lv31_45_matrix.json`
+
+**Batch 4-5 + Phase C tech dry-run + Item table 1500**: 🔒 **BLOCCATI** fino a nuovo gate PM.
+
+**Files chiave R18.5 (cumulativo aggiornato)**:
+- Predecessori: `phase_a_discovery`, `phase_b1_design_lock`, `phase_b2_implementation_plan`, `gate1_pm_decisions`, `phase_c0_item_table_drafting_support`, `phase_c0bis_progression_dungeon_raid_matrix`, `pm_workspace_master`, `gate2_pm_decisions`, `phase_c0ter_live_class_matrix`
+- C0-quater: `phase_c0quater_live_dungeon_audit`, `phase_c0quater_batch1_informed_final`
+- **C0-quinquies** (nuovo): `r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md/.json`
+
+**R18.5 status flow (aggiornato)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → **`Phase C0-quinquies Batch 2`** ✅ **CLOSED** → *`Phase C0-sexies Batch 3`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
+
