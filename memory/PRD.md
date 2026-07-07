@@ -1019,3 +1019,163 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow (aggiornato)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → **`Phase C0-quinquies Batch 2`** ✅ **CLOSED** → *`Phase C0-sexies Batch 3`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
 
+## R18.5 Phase C0-sexies Batch 3 Lv31-45 — CLOSED (2026-07-07T08:35:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Phase C0-sexies Batch 3 CLOSED**. 16 dungeon Normal Track 3p + 3 raid intermedi 5p (1 LIVE + 2 NEW DRAFT) lockati. PM decisions Q1-Q16 approvate in blocco (Q1/Q2/Q5/Q15/Q16 verbatim). Prossimo step autorizzato: **Phase C0-septies Batch 4 Lv46-55** (NO Phase C tech dry-run, NO item table 1500 ora).
+
+### File autoritativi C0-sexies Batch 3 (SHA256 verified)
+
+| File | Path | SHA256 |
+|---|---|---|
+| Batch 3 Matrix (MD) | `/app/memory/r18_5_phase_c0sexies_batch3_lv31_45_matrix.md` | `6deb0890d943d963eb19abc152dff6602192f18e034b4273daea7005450c1061` |
+| Batch 3 Matrix (JSON) | `/app/memory/r18_5_phase_c0sexies_batch3_lv31_45_matrix.json` | `e9045a1d6d6b4cbbfbd4830a81e278de107d1b23181719d8da27d3d9dbe72963` |
+
+### 🎯 16 dungeon Batch 3 approvati (Lv31-45, Normal Track, party_size=3, tutti NEW DRAFT)
+
+**Gap analysis critical**: gli 11 dungeon 3p live sono già tutti allocati (8 in Batch 1 + 2 in Batch 2 + `training-yard` escluso). **0 LIVE disponibili** in Batch 3 → tutti **NEW DRAFT** (PM Q1 approved).
+
+#### Early Lv31-35 (5 dungeon)
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 1 | `bastion-of-alevora` | Bastione di Alevora | Lv31-32 | **Alevora** (orfana B1 coperta) |
+| 2 | `arcane-fault-line` | Faglia Arcana | Lv32-33 | **Faglie arcane** (orfana B1 coperta) |
+| 3 | `moonwake-abbey` | Abbazia della Veglia Lunare | Lv33-34 | **Luna Morta** (orfana B1 coperta) |
+| 4 | `soulforge-crucible` | Crogiolo della Forgia d'Anime | Lv34-35 | **Ciclo delle anime** (orfana B1 coperta) |
+| 5 | `hollow-crown-halls` | Sale della Corona Cava | Lv34-35 | Aveol |
+
+#### Mid Lv36-40 (5 dungeon)
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 6 | `ashborn-ravine` | Gola delle Braci Nate | Lv36-37 | **Infernale** (nuova standalone) |
+| 7 | `stygian-reach` | Landa di Stigia | Lv37-38 | Ciclo delle anime |
+| 8 | `sundered-observatory` | Osservatorio Frantumato | Lv38-39 | Faglie arcane |
+| 9 | `mercenary-holdfast` | Roccaforte dei Mercenari | Lv39-40 | Alevora |
+| 10 | `wyrmscale-pass` | Passo delle Scaglie di Vermeide | Lv40 | Draco |
+
+#### Late Lv41-45 (6 dungeon)
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 11 | `necropolis-approach` | Approccio alla Necropoli | Lv41-42 | Luna Morta |
+| 12 | `starfall-basilica` | Basilica della Stella Caduta | Lv42-43 | **Celeste** (nuova standalone) |
+| 13 | `iron-legion-outpost` | Avamposto della Legione di Ferro | Lv43-44 | **Krastlov** (5× cum ACCEPTED) |
+| 14 | `wraithbound-ossuary` | Ossario dei Vincolati Spettrali | Lv44-45 | Ciclo delle anime |
+| 15 | `heretic-cathedral` | Cattedrale degli Eretici | Lv44-45 | Aveol |
+| 16 | `black-forge-of-ergolat` | Fucina Nera di Ergolat | Lv45 | **Ergolat** (orfana B1 coperta) |
+
+### 🐉 3 raid intermedi Batch 3 approvati (Lv31-45, party_size=5p verbatim)
+
+| # | Slug | Nome IT | Lv range | Party | Status | Lore source | Boss |
+|:---:|---|---|:---:|:---:|:---:|:---:|---|
+| R1 | `arcane-schism` | Scisma Arcano | Lv33-36 | **5** | NEW DRAFT | Faglie arcane | Il Rift-Overseer Anonimo (3 fase) |
+| R2 | `broken-bastion-siege` | Assedio al Bastione Spezzato | Lv37-40 | **5** | **LIVE** | **Ergolat** (orfana B1 coperta) | Comandante del Bastione (LIVE DB) |
+| R3 | `souldrain-abyss` | Abisso della Drenaggio d'Anime | Lv42-45 | **5** | NEW DRAFT | Ciclo delle anime | L'Antenato Divoratore (3 fase) |
+
+**`broken-bastion-siege` LIVE drift**: **known drift, NO rewrite ora** — potenziali drift `required_level` / `required_team_size` / meccaniche live-vs-design accettati as-is (governance PM verbatim).
+
+### 🌿 Krastlov 5× cumulative ACCEPTED (Q5 verbatim)
+
+**PM decision Q5 verbatim**: Krastlov **5× cumulative accettato** — macro-regione multi-bracket con identità, scala, nemici, meccaniche e reward diversi. **NO cap, NO redistribuzione**. Regola futura: **da Batch 4 monitorare varietà lore** (raccomandazione PM, non blocco rigido).
+
+| Dungeon/Raid | Bracket | Lv | Ruolo Krastlov |
+|---|:---:|:---:|---|
+| `frozen-vigil-hall` | B1 | Lv8-11 | Uso Batch 1 |
+| `ironhold-keep` | B2 | Lv18-19 | Uso Batch 2 |
+| `frostbound-vault` | B2 | Lv26-27 | Co-source Batch 2 |
+| `bonefall-crypt` | B2 | Lv29-30 | Uso Batch 2 |
+| `krastlov-siege` (raid) | B2 | Lv22-25 | Raid Batch 2 |
+| `iron-legion-outpost` | B3 | Lv43-44 | Uso Batch 3 (5° cumulative) |
+
+### 🎁 Loot target Batch 3 rispettato (design mid-game serio)
+
+**Tier distribution**:
+- **T1** — Assente (fuori bracket)
+- **T2** — Coda residua (accessori early Lv31-35)
+- **T3** — **Prevalente ovunque** ✅
+- **T4** — **Raro / introduttivo** — solo boss dungeon #5, #6+, #16 + tutti i raid ✅
+- **T5** — Assente (riservato Batch 4/5) ✅
+
+**Rarity distribution**:
+- **Common** — Coda residua early Lv31-35
+- **Uncommon** — Regolare ovunque
+- **Rare** — **Prevalente** ovunque ✅
+- **Epic** — **Peso alto** — **~20 slot** (12 boss finale dungeon #5-16 + 4 pre-boss late + 6 raid Epic slot) ✅
+- **Legendary** — **Assente ✅** (solo 2 hint crafting no-drop: `frammento di aureola` #12, `frammento di Ciclo` R3)
+
+### 🛡️ Gear check seri Batch 3 (documentali, non enforced runtime)
+
+- **Min ILVL range**: 31-45 (dungeon) · 34-43 (raid)
+- Ogni encounter documenta `min_ilvl`, `role_required`, `proficiency_required`, `utility_recommended`
+- **Proficiency runtime enforcement**: 🔒 **BLOCCATO** (governance PM)
+- Main stat peso significativo: STR (#1, #9, #13), INT (#2, #8), WIS (#3, #11), DEX (#4, #7)
+- Utility item peso maggiore: fire-resist obbligatoria #6, soul-veil obbligatoria #14/R3, siege-focus banner obbligatoria R2
+
+### 📚 Lore coverage Batch 3 (9 su 22 usate, 5 orfane B1 finalmente coperte)
+
+**5 orfane Batch 1 coperte in Batch 3**:
+- **Alevora** (2× #1, #9)
+- **Ergolat** (dungeon #16 + raid R2 LIVE)
+- **Faglie arcane** (3× #2, #8, R1)
+- **Luna Morta** (2× #3, #11)
+- **Ciclo delle anime** (4× #4, #7, #14, R3)
+
+**Nuove standalone introdotte**: Infernale (#6), Celeste (#12).
+**Multi-bracket accepted**: Draco (3× cum), Aveol (4× cum), Krastlov (5× cum PM Q5 verbatim).
+
+### 🛡️ Governance state Batch 3 CLOSED
+
+- ✅ **36 sigilli byte-identical** (`pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6 passed 0.38-0.43s)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` / `.ts` intatti)
+- ✅ **Zero DB writes** — `dungeons` (24), `raid_dungeons` (3), `expeditions` (3) invariati
+- ✅ **Zero migrations** / apply scripts / hard delete
+- ✅ **Zero dungeon/raid creation live** (16 nuovi dungeon + 2 raid = design docs only)
+- ✅ **`lore_meta.py` invariato**
+- ✅ **Zero party_size rewrite** (5p raid verbatim, Elite Track drift not touched)
+- ✅ **Zero required_level rewrite** (R2 broken-bastion-siege drift known no-rewrite)
+- ✅ **Classi canoniche Warrior/Rogue/Mage/Priest/Ranger verbatim** — NO drift Wizard/Cleric
+- ✅ **Aritmetica**: 16 dungeon (0 LIVE + 16 NEW), 3 raid (1 LIVE + 2 NEW), 9/22 lore usate, ~20 slot Epic, 0 Legendary drop
+
+### 📊 R18.5 catalogo dungeon cumulative post-Batch 3
+
+| Track | B1 | B2 | B3 | Sub-total post-B3 | Riservato B4/B5 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Normal 3p** | 12 (8L+4N) | 14 (2L+12N) | 16 (0L+16N) | **42** | ~10-19 |
+| **Elite 5p LIVE** | 5 | 3 | 1 (world-tree-roots-5p) | **9** | 3 (1 B4 + 2 B5) |
+| **Raid 5p** | — | 2 NEW | 3 (1L+2N) | **5** | 7 futuri |
+
+### 🎯 Handoff — Phase C0-septies Batch 4 AUTHORIZED (PM Q16 = A)
+
+**Prossimo step autorizzato**: **Phase C0-septies** — Batch 4 (Lv46-55) Normal + Elite Track + Raid late-game.
+
+**Scope Batch 4 (PM verbatim)**:
+- **10 dungeon totali Lv46-55** (Normal 3p + Elite 5p, distinzione esplicita richiesta)
+- **3 raid late-game Lv46-55**: 1 LIVE `necropolis-bells` + 1-2 NEW DRAFT (party_size=5 verbatim)
+- Target macro cumulativo: **60 dungeon totali + 12 raid totali** (documentare aritmetica trasparente)
+
+**Regole design Batch 4 (PM verbatim)**:
+- **T4 prevalente + T5 raro / hint**
+- **Epic peso alto + Rare meno centrale**
+- **NO Legendary drop finale** (solo hint narrativo/no-drop consentito)
+- Gear check **forti** · Main stat **importante** · Proficiency **obbligatoria nel design** (no runtime)
+- Utility item più frequenti, materiali rari, boss riconoscibili, achievement/ranking seri
+- Preparazione al Batch 5 / Lv60 endgame
+
+**Lore guidance Batch 4 (PM raccomandazione)**: **aumentare varietà, ridurre Krastlov se non necessario**. Candidate preferenziali: Ergolat, Luna Morta, Infernale, Celeste, Memoria, Draco, Faglie arcane, Irthe, Halodi, Alevora.
+
+**Deliverable Batch 4 attesi**:
+- `/app/memory/r18_5_phase_c0septies_batch4_lv46_55_matrix.md`
+- `/app/memory/r18_5_phase_c0septies_batch4_lv46_55_matrix.json`
+
+**Batch 5 + Phase C tech dry-run + Item table 1500**: 🔒 **BLOCCATI** fino a gate PM formale (Q16 verbatim: no tech dry-run/item table ora).
+
+**Files chiave R18.5 (cumulativo aggiornato)**:
+- Predecessori: `phase_a_discovery`, `phase_b1_design_lock`, `phase_b2_implementation_plan`, `gate1_pm_decisions`, `phase_c0_item_table_drafting_support`, `phase_c0bis_progression_dungeon_raid_matrix`, `pm_workspace_master`, `gate2_pm_decisions`, `phase_c0ter_live_class_matrix`
+- C0-quater: `phase_c0quater_live_dungeon_audit`, `phase_c0quater_batch1_informed_final`
+- C0-quinquies: `r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md/.json`
+- **C0-sexies** (nuovo): `r18_5_phase_c0sexies_batch3_lv31_45_matrix.md/.json`
+
+**R18.5 status flow (aggiornato)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → **`Phase C0-sexies Batch 3`** ✅ **CLOSED** → *`Phase C0-septies Batch 4`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
+
