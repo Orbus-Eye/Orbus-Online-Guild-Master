@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "C0-octies — Batch 5 ENDGAME (Lv56-60) — Vetta Normal + Elite + Raid Capstone",
+    "locked_at_utc": "2026-07-07T08:45:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "BATCH 5 DRAFT / PENDING PM approval",
+    "authority": "PM Orchestrator — Batch 4 CLOSED + Q18=A Phase C0-octies AUTHORIZED endgame",
+    "q1_b4_resolved": "D — 60 = SOLO Normal Dungeon Track 3p",
+    "authoritative_predecessors": [
+      "/app/memory/PRD.md (Batch 4 CLOSED, Q1=D)",
+      "r18_5_phase_c0quater/quinquies/sexies/septies_* (matrix B1-B4)",
+      "r18_5_phase_c0quater_live_dungeon_audit.md/.json"
+    ],
+    "party_size_locked": {"normal": 3, "elite": 5, "raid": 5}
+  },
+  "executive_summary_batch5": {
+    "normal_dungeon_3p_new_batch5": 9,
+    "normal_dungeon_3p_live_batch5": 0,
+    "target_60_60_completed": true,
+    "elite_5p_live_parallel_batch5": 2,
+    "elite_5p_slugs": ["voidspire-5p", "celestial-citadel-5p"],
+    "elite_track_out_of_60": true,
+    "raid_total_batch5": 4,
+    "raid_live_batch5": 1,
+    "raid_new_batch5": 3,
+    "target_12_12_completed": true,
+    "bracket_identity": "vetta Lv56-60 — T5 prevalente, Epic dominante, Legendary drop introduction RARISSIMA",
+    "lore_coverage_final": "22/22 (Vuoto introdotta B5 copre orfana residua)",
+    "legendary_candidate_b5": {"primari": 4, "secondari": 3, "total_potenziali": 7, "catalog_max_pm": 15, "margin_future_gate": "8-11 slot"}
+  },
+  "verifica_normal_track_60_60": {
+    "B1": 12, "B2": 14, "B3": 16, "B4": 9, "B5_proposta": 9,
+    "cumulative_finale": 60, "target": 60, "status": "RAGGIUNTO"
+  },
+  "verifica_raid_12_12": {
+    "B1_live": 0, "B1_new": 0, "B2_live": 0, "B2_new": 2, "B3_live": 1, "B3_new": 2, "B4_live": 1, "B4_new": 2,
+    "B5_live_proposta": 1, "B5_live_slug": "dragon-vault",
+    "B5_new_proposta": 3, "B5_new_slugs": ["void-cathedral", "celestial-conclave", "world-tree-collapse"],
+    "cumulative_finale": 12, "target": 12, "status": "RAGGIUNTO",
+    "cumulative_live": 3, "cumulative_new": 9
+  },
+  "elite_track_parallel_batch5_out_of_60": [
+    {"slug": "voidspire-5p", "name_it_pending_pm": "Guglia del Vuoto", "lv_range": "Lv56-60", "party_size": 5, "lore_source": "Vuoto", "status": "LIVE", "drift": "required_level=11 known no-rewrite (PRD B1 CLOSED)"},
+    {"slug": "celestial-citadel-5p", "name_it_pending_pm": "Cittadella Celeste", "lv_range": "Lv56-60", "party_size": 5, "lore_source": "Celeste", "status": "LIVE", "drift": "required_level=13 known no-rewrite (PRD B1 CLOSED)"}
+  ],
+  "elite_track_cumulative_finale_r18_5": {"B1": 5, "B2": 3, "B3": 1, "B4": 1, "B5": 2, "total": 12, "status": "ALLOCATO catalog LIVE"},
+  "dungeons_normal_3p_batch5": [
+    {"index": 1, "slug": "void-touched-outpost", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Avamposto Toccato dal Vuoto", "lv_range": "Lv56", "lore_source": "Vuoto", "lore_notes": "NUOVA STANDALONE — prima copertura, completa 22/22", "enemy_family": "Aberrazioni del Vuoto + eco-cultisti + Sacerdote del Vuoto", "main_mechanic": "All-class endgame — void-corrupt debuff cleanse + reality-tear positioning", "gear_check": {"min_ilvl": 56, "role_required": ["Tank", "Healer", "DPS"], "proficiency": ["cloth/leather T5", "mix T5"], "utility": ["void-ward trinket obbligatoria"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary drop RARISSIMO 1%", "materials_pending_pm": ["essenza del Vuoto T5", "eco-frammento", "corona di aberrazione"], "boss_pending_pm": "Il Sacerdote del Vuoto (3 fase)", "itemization_notes": "Bridge verso voidspire-5p Elite + void-cathedral raid", "achievement_hint": "Prima Vittoria Void-Touched — no-corrupt leaderboard"},
+    {"index": 2, "slug": "starforged-approach", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Approccio della Forgia Stellare", "lv_range": "Lv56-57", "lore_source": "Celeste", "lore_notes": "3° uso cumulative (B3 + B4 + B5)", "enemy_family": "Serafini forgiatori + costrutti d'aureola + Fabbro-Serafino Cieco", "main_mechanic": "Mage/Priest advanced — light-forge positioning + star-alignment interrupt", "gear_check": {"min_ilvl": 56, "role_required": ["Mage/Priest", "Tank", "Healer"], "proficiency": ["staff/mace T5", "light_resist T4+"], "utility": ["light-focus trinket"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary RARISSIMO", "boss_pending_pm": "Il Fabbro-Serafino Cieco (2 fase)", "itemization_notes": "Bridge verso celestial-citadel-5p + celestial-conclave raid", "achievement_hint": "Prima Vittoria Starforged — light-focus leaderboard"},
+    {"index": 3, "slug": "tower-of-adalan-summit", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Vetta della Torre di Adalan", "lv_range": "Lv57", "lore_source": "Adalan", "lore_notes": "3° uso cumulative (B1×2 + B5) — riuso endgame arcane", "enemy_family": "Arci-Maghi supremi + costrutti arcani elite + Adalan il Redivivo", "main_mechanic": "Mage advanced endgame — polymorph mass + interrupt cascade + reality-warp", "gear_check": {"min_ilvl": 57, "role_required": ["Mage", "Tank", "Healer", "DPS"], "proficiency": ["staff T5", "cloth_armor T5"], "utility": ["mana T5", "interrupt-focus obbligatori"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary RARISSIMO", "boss_pending_pm": "Adalan il Redivivo (3 fase)", "itemization_notes": "Capstone narrativo Adalan (bridge da B1 broken-tower)", "achievement_hint": "Prima Vittoria Adalan Summit"},
+    {"index": 4, "slug": "alevoran-warlord-throne", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Trono del Signore della Guerra di Alevora", "lv_range": "Lv58", "lore_source": "Alevora", "lore_notes": "3° uso cumulative (B3×2 + B5) — riservata B5 PM verbatim", "enemy_family": "Warlord-Re Alevora + guardia reale + Alevora il Perpetuo", "main_mechanic": "Warrior/Tank advanced endgame — dueling + summon adds + royal-execution", "gear_check": {"min_ilvl": 58, "role_required": ["Warrior/Tank primary", "Healer", "2 DPS"], "proficiency": ["2h_weapon T5", "heavy_armor T5", "parry advanced"], "utility": ["banner", "royal-focus"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary RARISSIMO", "boss_pending_pm": "Alevora il Perpetuo (3 fase)", "itemization_notes": "Capstone narrativo Alevora — chiude bracket militare", "achievement_hint": "Prima Vittoria Alevoran Throne"},
+    {"index": 5, "slug": "efreto-cursed-nexus", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Nexus Maledetto di Efreto", "lv_range": "Lv58-59", "lore_source": "Efreto", "lore_notes": "3° uso cumulative (B1 + B4 + B5)", "enemy_family": "Aberrazioni arcane supreme + gestori nexus + Efreto il Corrotto", "main_mechanic": "All-class endgame — curse-cleanse chain + nexus-drain + boss transformation", "gear_check": {"min_ilvl": 58, "role_required": ["Multi-role T+H+2DPS"], "proficiency": ["mix T5", "curse-resist advanced"], "utility": ["curse-cleanse potion T5 obbligatoria"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary RARISSIMO", "boss_pending_pm": "Efreto il Corrotto (3 fase)", "itemization_notes": "Capstone narrativo Efreto", "achievement_hint": "Prima Vittoria Efreto Nexus"},
+    {"index": 6, "slug": "ambash-legendary-forge", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Fucina Leggendaria di Ambash", "lv_range": "Lv59", "lore_source": "Ambash", "lore_notes": "3° uso cumulative (B2×2 + B5) — capstone crafting", "enemy_family": "Fabbri leggendari + costrutti mitici + Maestro Fabbro delle Leggende", "main_mechanic": "Warrior + all-class capstone — forge-hammer wave + reforge weapon + legendary-summon", "gear_check": {"min_ilvl": 59, "role_required": ["Warrior primary", "Multi-role"], "proficiency": ["2h_weapon T5", "heavy_armor T5", "reforge"], "utility": ["forge kit T5 obbligatorio"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop RARISSIMO 1%", "rarity_range": "Epic dominante, 1 Legendary candidate drop boss finale", "boss_pending_pm": "Il Maestro Fabbro delle Leggende (3 fase)", "itemization_notes": "PRIMO dungeon B5 con Legendary candidate drop (ambash-forge-hammer)", "achievement_hint": "Prima Vittoria Ambash Forge — legendary-drop leaderboard"},
+    {"index": 7, "slug": "void-heart-sanctum", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Santuario del Cuore del Vuoto", "lv_range": "Lv59-60", "lore_source": "Vuoto", "lore_notes": "2° uso (B5×2)", "enemy_family": "Aberrazioni supreme + Il Cuore Silente + eco-guardiani", "main_mechanic": "All-class capstone endgame — void-corrupt chain + reality-tear + heart-silence", "gear_check": {"min_ilvl": 59, "role_required": ["Multi-role capstone T+H+2DPS"], "proficiency": ["mix T5", "void-ward obbligatoria"], "utility": ["void-ward T5 obbligatoria", "full potion T5"]}, "loot_tier": "T4 residuo + T5 prevalente", "rarity_range": "Epic dominante, hint Legendary RARISSIMO", "boss_pending_pm": "Il Cuore Silente del Vuoto (3 fase)", "itemization_notes": "Capstone narrativo Vuoto", "achievement_hint": "Prima Vittoria Void Heart"},
+    {"index": 8, "slug": "elder-wyrm-descent", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Discesa del Verme Ancestrale", "lv_range": "Lv60", "lore_source": "Draco", "lore_notes": "5° uso cumulative (B2×2 + B3 + B4 + B5) — bridge dragon-vault", "enemy_family": "Draghi ancestrali + servi elite + Draco l'Ancestrale (mito)", "main_mechanic": "All-class capstone endgame — dragon-breath multi-direction + tail-sweep mass + descent phase", "gear_check": {"min_ilvl": 60, "role_required": ["Multi-role capstone T+H+2DPS"], "proficiency": ["mix T5", "dragon-scale resist obbligatoria"], "utility": ["dragon-focus trinket", "full potion T5"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop RARISSIMO 1%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (dragon-elder-scale)", "boss_pending_pm": "Draco l'Ancestrale (3 fase)", "itemization_notes": "Bridge diretto verso dragon-vault capstone raid", "achievement_hint": "Prima Vittoria Elder Wyrm — no-breath-hit leaderboard"},
+    {"index": 9, "slug": "pantheon-of-fallen-suns", "status": "NEW DRAFT", "party_size": 3, "name_it_pending_pm": "Pantheon dei Soli Caduti", "lv_range": "Lv60", "lore_source": "Celeste", "lore_notes": "4° uso cumulative (B3 + B4 + B5×2) — capstone finale endgame", "enemy_family": "Divinità cadute + arcangeli neri + Il Sole Nero", "main_mechanic": "All-class capstone finale — divine-purge + fallen-god transformation + light/void alternate + finale multi-role", "gear_check": {"min_ilvl": 60, "role_required": ["Multi-role capstone finale T+H+2DPS"], "proficiency": ["mix T5", "light_resist T5", "void-ward T5"], "utility": ["light/void potion set T5", "full obbligatoria"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop RARISSIMO 1%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (sole-nero-diadem)", "boss_pending_pm": "Il Sole Nero (3 fase)", "itemization_notes": "CAPSTONE FINALE Normal Track B5 — chiude 60/60", "achievement_hint": "Prima Vittoria Pantheon (world/server first, ILVL 60 leaderboard)"}
+  ],
+  "raids_batch5_endgame": [
+    {"index": "R1", "slug": "dragon-vault", "status": "LIVE", "status_notes": "PM lock B1, capstone endgame B5", "name_it_live": "Volta del Drago Addormentato", "lv_range": "Lv56-60", "party_size": 5, "party_size_source": "verbatim PM Q1 B2 — verificare live DB", "lore_source": "Draco", "lore_notes": "6° uso cumulative post-B5 (record R18.5) — capstone narrativo finale", "content_family": "arcane + draconic", "narrative_theme_live": "Il Drago Primordiale dorme nella Volta. Ogni respiro cambia il mondo.", "enemy_family_live": "Draghi supremi ancestrali + servi mitici + Il Drago Primordiale (LIVE DB)", "main_mechanic": "Team 5p endgame capstone — dragon-immunity + reality-warp + wake-up transformation + primordial-breath", "gear_check": {"min_ilvl": 58, "role_required": ["Tank", "Healer", "3 DPS mix T5"], "proficiency": ["mix T5 endgame", "dragon-scale resist T5 obbligatoria"], "utility": ["dragon-focus", "full potion T5 obbligatori"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop RARISSIMO 2%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (dragonlord-crown)", "boss_live": "Il Drago Primordiale (3 fase)", "itemization_notes": "CAPSTONE RAID FINALE R18.5. Legendary candidate dragonlord-crown drop 2%. NO required_level rewrite.", "achievement_hint": "First Kill Dragon Vault (world/server first, ILVL 60 leaderboard, legendary-drop leaderboard)", "live_drift": "potenziali drift, known no-rewrite"},
+    {"index": "R2", "slug": "void-cathedral", "status": "NEW DRAFT", "name_it_pending_pm": "Cattedrale del Vuoto", "lv_range": "Lv56-58", "party_size": 5, "lore_source": "Vuoto", "lore_notes": "3° uso — coerente con #1 + #7", "content_family": "void + endgame", "narrative_theme_pending_pm": "La Cattedrale del Vuoto non dovrebbe esistere. Chi vi entra scopre di non essere mai esistito.", "enemy_family_pending_pm": "Aberrazioni supreme + Sacerdoti-Zero + Il Silenzio Primordiale", "main_mechanic": "Team 5p — void-corrupt mass cascade + reality-collapse + Silence finale", "gear_check": {"min_ilvl": 57, "role_required": ["Tank", "Healer", "3 DPS mixed"], "proficiency": ["void-ward T5 obbligatoria", "mix T5"], "utility": ["void-ward T5", "mana T5 obbligatori"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop 2%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (void-touched-blade)", "boss_pending_pm": "Il Silenzio Primordiale (3 fase)", "itemization_notes": "Legendary candidate void-touched-blade drop 2%. Bridge voidspire-5p Elite.", "achievement_hint": "First Kill Void Cathedral"},
+    {"index": "R3", "slug": "celestial-conclave", "status": "NEW DRAFT", "name_it_pending_pm": "Conclave Celeste", "lv_range": "Lv58-60", "party_size": 5, "lore_source": "Celeste", "lore_notes": "5° uso cumulative post-B5", "content_family": "celestial + endgame", "narrative_theme_pending_pm": "Il Conclave dei Serafini decide il destino del mondo. Chi interrompe il Conclave, decide con loro. O muore.", "enemy_family_pending_pm": "Arcangeli-Conclavi + serafini decision-maker + Il Primo Serafino", "main_mechanic": "Team 5p — divine-conclave decision + light-purge cascade + primo-serafino transformation", "gear_check": {"min_ilvl": 58, "role_required": ["Tank", "Healer", "3 DPS (Priest raccom.)"], "proficiency": ["light_resist T5 obbligatoria", "holy T5"], "utility": ["light-focus", "divine-shield T5 obbligatori"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop 2%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (seraph-halo-crown)", "boss_pending_pm": "Il Primo Serafino (3 fase)", "itemization_notes": "Legendary candidate seraph-halo-crown drop 2%. Bridge celestial-citadel-5p Elite.", "achievement_hint": "First Kill Celestial Conclave"},
+    {"index": "R4", "slug": "world-tree-collapse", "status": "NEW DRAFT", "name_it_pending_pm": "Crollo dell'Albero del Mondo", "lv_range": "Lv60", "party_size": 5, "lore_source": "Alberi della Vita", "lore_notes": "2° uso cumulative (B2 + B5 raid) — capstone lore", "content_family": "nature + endgame + apocalyptic", "narrative_theme_pending_pm": "L'Albero del Mondo sta cadendo. Chi le sostiene, muore con loro. Chi le lascia cadere, muore dopo.", "enemy_family_pending_pm": "Spiriti-radice antichi + treant primordiali + Il Cuore dell'Albero del Mondo", "main_mechanic": "Team 5p endgame ultimo — root-collapse timing + treant-swarm waves + heart-of-tree finale multi-role obbligatorio", "gear_check": {"min_ilvl": 60, "role_required": ["Multi-role obbligatorio T+H+3DPS"], "proficiency": ["mix T5 endgame", "nature-focus"], "utility": ["full potion T5", "nature-shield obbligatori"]}, "loot_tier": "T4 residuo + T5 prevalente + Legendary drop 2%", "rarity_range": "Epic dominante, 1 Legendary candidate drop (worldroot-scepter)", "boss_pending_pm": "Il Cuore dell'Albero del Mondo (3 fase)", "itemization_notes": "RAID FINALE ULTIMO R18.5 12/12. Legendary candidate worldroot-scepter drop 2%.", "achievement_hint": "First Kill World Tree Collapse (world/server first, apocalypse-survivor leaderboard, ILVL 60 endgame)"}
+  ],
+  "legendary_candidate_batch5": {
+    "pm_rules_strict_verbatim": {
+      "only_T5": true,
+      "max_catalog_15": true,
+      "utility_unique_lore_strong": true,
+      "no_generic_stat": true,
+      "no_shop": true,
+      "no_craft_normal": true,
+      "drop_rarissima": "1-2% direzionale"
+    },
+    "primari_4_drop_2pct_raid_boss_finale": [
+      {"legendary_slug": "dragonlord-crown", "source": "R1 dragon-vault", "lore": "Draco", "utility_unique": "Command Draconic — leadership temporanea su 1 drago giovane ostile in encounter draconic"},
+      {"legendary_slug": "void-touched-blade", "source": "R2 void-cathedral", "lore": "Vuoto", "utility_unique": "Void-Pierce — attacchi ignorano armor % probabilità"},
+      {"legendary_slug": "seraph-halo-crown", "source": "R3 celestial-conclave", "lore": "Celeste", "utility_unique": "Divine Resurrect — resurrect fallen ally 1× per encounter"},
+      {"legendary_slug": "worldroot-scepter", "source": "R4 world-tree-collapse", "lore": "Alberi della Vita", "utility_unique": "Nature's Blessing — AoE heal-over-time in aree naturali"}
+    ],
+    "secondari_3_drop_1pct_dungeon_endgame": [
+      {"legendary_slug": "ambash-forge-hammer", "source": "#6 ambash-legendary-forge", "lore": "Ambash", "utility_unique": "Reforge weapon slot mid-encounter"},
+      {"legendary_slug": "dragon-elder-scale", "source": "#8 elder-wyrm-descent", "lore": "Draco", "utility_unique": "Temporary dragon-scale armor buff"},
+      {"legendary_slug": "sole-nero-diadem", "source": "#9 pantheon-of-fallen-suns", "lore": "Celeste", "utility_unique": "Swap light/void resist mid-encounter"}
+    ],
+    "total_candidate_b5": 7,
+    "catalog_max_pm": 15,
+    "margin_future_gate": 8,
+    "pm_final_selection_gate_b5_q13": true
+  },
+  "lore_distribution_batch5": {
+    "sources_used_7_of_22": {
+      "Vuoto": {"encounters": ["void-touched-outpost", "void-heart-sanctum", "void-cathedral raid"], "cumulative": 3, "notes": "NUOVA STANDALONE — completa coverage 22/22"},
+      "Celeste": {"encounters": ["starforged-approach", "pantheon-of-fallen-suns", "celestial-conclave raid"], "cumulative_r18_5": 5, "notes": "B3 + B4 + B5×3"},
+      "Adalan": {"encounters": ["tower-of-adalan-summit"], "cumulative_r18_5": 3, "notes": "B1×2 + B5"},
+      "Alevora": {"encounters": ["alevoran-warlord-throne"], "cumulative_r18_5": 3, "notes": "B3×2 + B5"},
+      "Efreto": {"encounters": ["efreto-cursed-nexus"], "cumulative_r18_5": 3, "notes": "B1 + B4 + B5"},
+      "Ambash": {"encounters": ["ambash-legendary-forge"], "cumulative_r18_5": 3, "notes": "B2×2 + B5"},
+      "Draco": {"encounters": ["elder-wyrm-descent", "dragon-vault LIVE raid"], "cumulative_r18_5": 6, "notes": "B2×2 + B3 + B4 + B5×2 — RECORD (Q9 aperta)"},
+      "Alberi della Vita": {"encounters": ["world-tree-collapse raid"], "cumulative_r18_5": 2, "notes": "B2 raid + B5 raid — capstone lore"}
+    },
+    "sources_NOT_used_batch5_variety_watch_verbatim": ["Krastlov (5× stop-cum B3)", "Infernale (4× stop-cum B4)", "Memoria (4× stop-cum B4)", "Irthe (4× stop-cum B4)", "Aveol (4× stop-cum B3)", "Faglie arcane (3× saturata B3)", "Ciclo delle anime (4× saturata B3)", "Luna Morta (3× post-B4)", "Ergolat (3× post-B4)", "Halodi (3× post-B4)", "Greatwood/Elfwood, Mare, Velur, Soe (non usate)"],
+    "coverage_cumulativa_post_b5_22_of_22": "raggiunta con Vuoto — 17ª Gate 1 cross-check PENDING Q17"
+  },
+  "loot_target_batch5": {
+    "tier_distribution": {"T1-T3": "Assenti", "T4": "Coda residua early Lv56-57", "T5": "Prevalente ovunque"},
+    "rarity_distribution": {"Common/Uncommon": "Assenti", "Rare": "Residuale secondary", "Epic": "Dominante — guaranteed su 9 boss finale + Elite 2× + raid 2-3×", "Legendary": "Drop RARISSIMO 1-2% direzionale su 4 raid + 3-4 dungeon endgame"}
+  },
+  "gear_check_summary_batch5_endgame": {"min_ilvl_range_normal": "56-60", "min_ilvl_elite": 58, "min_ilvl_raid": "57-60", "note": "documentali, non enforced runtime"},
+  "proficiency_teaching_batch5_endgame": {
+    "canonical_classes_verbatim": ["Warrior", "Rogue", "Mage", "Priest", "Ranger"],
+    "no_drift": "Wizard/Cleric assenti",
+    "Warrior_STR": ["alevoran-warlord-throne", "ambash-legendary-forge"],
+    "Mage_INT": ["starforged-approach", "tower-of-adalan-summit"],
+    "Priest_WIS": ["starforged-approach", "celestial-conclave raid"],
+    "All_class_capstone_multi_role": ["void-touched-outpost", "efreto-cursed-nexus", "void-heart-sanctum", "elder-wyrm-descent", "pantheon-of-fallen-suns", "dragon-vault", "void-cathedral", "world-tree-collapse"],
+    "endgame_focus": "8/13 encounter multi-role capstone (vs single-class B1-B4)"
+  },
+  "continuity_b1_to_b5": {
+    "loot_tier_prevalente": {"B1": "T1-T2", "B2": "T2", "B3": "T3", "B4": "T4", "B5": "T5"},
+    "rarity_prevalente": {"B1": "Common", "B2": "Uncommon", "B3": "Rare", "B4": "Epic peso alto", "B5": "Epic dominante"},
+    "legendary": {"B1": "Assente", "B2": "Assente", "B3": "Hint × 2", "B4": "Hint × 7 (NO drop)", "B5": "Drop 1-2% direzionale (4-7 candidate)"},
+    "bracket_identity": {"B1": "onboarding", "B2": "early-mid", "B3": "mid-game serio", "B4": "late game vero", "B5": "vetta endgame"},
+    "governance": "Nessuna ridistribuzione retroattiva B1-B4"
+  },
+  "preparazione_endgame_post_b5": {
+    "ilvl_endgame": "range 56-60 lockato",
+    "raid_farming": "4 raid endgame + drop tabellare direzionale (rate PENDING PM)",
+    "utility_item": "void-ward, dragon-focus, light-focus, curse-cleanse T5",
+    "signature_item_future": "Legendary candidate (4-7) come base per signature future",
+    "ranking": "achievement/leaderboard per ogni B5 encounter",
+    "mercato": "Legendary NO shop verbatim",
+    "gear_optimization": "multi-role balance obbligatoria 8/13 encounter",
+    "governance": "design docs only"
+  },
+  "live_drift_batch5": {
+    "dragon_vault_raid_live": "known drift, NO runtime rewrite",
+    "voidspire_5p_elite_live": "required_level=11 drift known no-rewrite (PRD B1 CLOSED)",
+    "celestial_citadel_5p_elite_live": "required_level=13 drift known no-rewrite (PRD B1 CLOSED)"
+  },
+  "risks_batch5": [
+    {"id": "risk_1", "severity": "MEDIUM", "topic": "9 Normal 3p + 3 raid + Vuoto nuova fonte richiedono future DB creation", "mitigation": "Design docs only"},
+    {"id": "risk_2", "severity": "MEDIUM", "topic": "Introduzione Vuoto — PM candidate verbatim (non autonoma)", "mitigation": "Q4 aperta per validazione formale"},
+    {"id": "risk_3", "severity": "MEDIUM", "topic": "Draco 6× cumulative supera Krastlov 5× (record R18.5)", "mitigation": "Capstone dragon-vault, Q9 aperta"},
+    {"id": "risk_4", "severity": "MEDIUM", "topic": "Legendary drop introduction (4-7 candidate) — primo drop Legendary R18.5", "mitigation": "PM strict rules rispettate, direzionale"},
+    {"id": "risk_5", "severity": "MEDIUM", "topic": "3 raid nuovi (R2,R3,R4) + 1 LIVE drift (dragon-vault)", "mitigation": "Known drift no-rewrite"},
+    {"id": "risk_6", "severity": "LOW", "topic": "Celeste 5× cumulative post-B5", "mitigation": "Coerente endgame + bridge celestial-citadel"},
+    {"id": "risk_7", "severity": "LOW", "topic": "Alberi della Vita 2× solo — sottouso", "mitigation": "Accettabile"},
+    {"id": "risk_8", "severity": "LOW", "topic": "Coverage 22/22 con Vuoto — 17ª Gate 1 cross-check PENDING", "mitigation": "Q17 aperta"},
+    {"id": "risk_9", "severity": "LOW", "topic": "4 raid B5 vs 3 batch precedenti — anomalia count", "mitigation": "Necessaria per 12/12 target"},
+    {"id": "risk_10", "severity": "LOW", "topic": "7 candidate Legendary B5 vicino cap 15 catalogo", "mitigation": "Margine 8 slot future, PM Q13 decide selection finale"},
+    {"id": "risk_11", "severity": "LOW", "topic": "Nomi IT/slug/boss/materiali specifici", "mitigation": "Tutti PENDING PM"},
+    {"id": "risk_12", "severity": "LOW", "topic": "Elite voidspire/celestial-citadel drift storico", "mitigation": "Documentato B1 CLOSED"},
+    {"id": "risk_13", "severity": "LOW", "topic": "Multi-role capstone 8/13 B5 vs single-class B1-B4", "mitigation": "Bilanciamento endgame giustificato"}
+  ],
+  "open_questions_pm_batch5": [
+    {"id": "Q1", "topic": "BATCH 5 KEY — Approvare 9 Normal 3p Lv56-60 verbatim (completa 60/60)?"},
+    {"id": "Q2", "topic": "Approvare 4 raid endgame (R1 dragon-vault LIVE + R2/R3/R4 NEW tutti 5p, completa 12/12)?"},
+    {"id": "Q3", "topic": "Approvare 2 Elite 5p LIVE (voidspire-5p, celestial-citadel-5p) FUORI conteggio 60?"},
+    {"id": "Q4", "topic": "Approvare Vuoto come fonte standalone endgame (copre orfana 22/22)?"},
+    {"id": "Q5", "topic": "Naming IT 9 dungeon + 3 raid nuovi verbatim o rinomina?"},
+    {"id": "Q6", "topic": "Slug PM-lock o iterazione?"},
+    {"id": "Q7", "topic": "Boss narrative verbatim o iterare?"},
+    {"id": "Q8", "topic": "Materiali PENDING vs loot_tables.py SEALED — solo naming direzionale?"},
+    {"id": "Q9", "topic": "Draco 6× cumulative (record R18.5) — accettabile capstone o ridistribuire?"},
+    {"id": "Q10", "topic": "Celeste 5× cumulative accettabile endgame?"},
+    {"id": "Q11", "topic": "Alberi della Vita 2× sottouso accettabile o forzare copertura?"},
+    {"id": "Q12", "topic": "LEGENDARY 4 primari (dragonlord-crown, void-touched-blade, seraph-halo-crown, worldroot-scepter) drop 2% raid — approvare?"},
+    {"id": "Q13", "topic": "LEGENDARY SECONDARI 3 (ambash-forge-hammer, dragon-elder-scale, sole-nero-diadem) dungeon drop 1% — mantenere o rimuovere?"},
+    {"id": "Q14", "topic": "Regole Legendary strict verbatim rispettate — validazione formale?"},
+    {"id": "Q15", "topic": "Epic dominante — direzionale o rate numerici?"},
+    {"id": "Q16", "topic": "Bracket naming ufficiale?"},
+    {"id": "Q17", "topic": "Coverage 22/22 con Vuoto — cross-check formale 17ª Gate 1 originale?"},
+    {"id": "Q18", "topic": "dragon-vault LIVE drift — accettare known drift no-rewrite?"},
+    {"id": "Q19", "topic": "Preparazione endgame direzionale accettabile o approfondire?"},
+    {"id": "Q20", "topic": "Post-decisions Q1-Q19, PRD append 'Batch 5 CLOSED' + 'CATALOGO 60/60 + 12/12 COMPLETO'?"},
+    {"id": "Q21", "topic": "Autorizzare Phase C tech dry-run / Phase D Item Table 1500 / pausa gate PM?"}
+  ],
+  "governance_check_final_batch5": {
+    "sealed_files_integrity_36_hash": "byte-identical",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "dungeon_creation_live": "ZERO",
+    "raid_creation_live": "ZERO",
+    "party_size_rewrite": "ZERO (5p verbatim)",
+    "required_level_rewrite": "ZERO (voidspire/celestial-citadel/dragon-vault known no-rewrite)",
+    "economy_changes": "ZERO",
+    "drop_table_apply": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration": "ZERO",
+    "proficiency_runtime_enforcement": "ZERO",
+    "item_table_live_creation": "ZERO (Legendary design only)",
+    "phase_c_tech_dry_run": "NOT INITIATED (Q21 aperta)",
+    "canonical_classes": "Warrior/Rogue/Mage/Priest/Ranger verbatim",
+    "naming_slug_boss_materials_legendary": "Tutti PENDING PM approval",
+    "aritmetica_normal_3p": "60/60 RAGGIUNTO",
+    "aritmetica_raid": "12/12 RAGGIUNTO",
+    "aritmetica_elite_live": "12/12 ALLOCATO catalog",
+    "lore_sources_b5": "7 su 22",
+    "lore_variety_watch_verbatim_rispettata": "Krastlov/Infernale/Memoria/Irthe NON usate B5",
+    "coverage_lore_finale": "22/22 con Vuoto (17ª cross-check Q17)",
+    "loot_target": "T5 prevalente + Epic dominante + Legendary RARISSIMO 1-2%",
+    "legendary_rules_pm_strict": "solo T5 · max 15 · utility unica + lore forte · NO generic +stat · NO shop · NO craft normale",
+    "legendary_count_b5": "4 primari + 3 secondari = 7 (margine 8 future)",
+    "pm_autonomous_decision_new": "ZERO (Vuoto = PM candidate verbatim)",
+    "continuita_b1_b5": "Nessuna ridistribuzione retroattiva",
+    "files_deliverable": "2 file (.md + .json)"
+  },
+  "handoff_r18_5_catalogo_completo": {
+    "post_b5_closure_status": {
+      "normal_3p_60_of_60": "RAGGIUNTO",
+      "elite_5p_live_12_of_12": "ALLOCATO",
+      "raid_12_of_12": "RAGGIUNTO",
+      "lore_22_of_22": "RAGGIUNTO (con Vuoto)",
+      "legendary_candidate": "4-7 (margine 8-11 catalog)"
+    },
+    "next_steps_candidate_blocked_gate_pm_q21": ["Phase C tech dry-run (proficiency + class_slug + ILVL runtime)", "Phase D Item Table Drafting 1500", "Pausa gate PM"],
+    "r18_5_status_flow": "Phase A ✅ → B.1/B.2 ✅ → Gate 1 ✅ → C0 ✅ → C0-bis ✅ → Gate 2 + C0-ter ✅ → C0-quater B1 ✅ CLOSED → C0-quinquies B2 ✅ CLOSED → C0-sexies B3 ✅ CLOSED → C0-septies B4 ✅ CLOSED → C0-octies B5 ENDGAME 🟡 DRAFT PENDING PM / Phase C tech dry-run + Phase D 🔒 BLOCKED gate PM (Q21)"
+  }
+}

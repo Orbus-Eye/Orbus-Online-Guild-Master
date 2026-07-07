@@ -1179,3 +1179,192 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow (aggiornato)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → **`Phase C0-sexies Batch 3`** ✅ **CLOSED** → *`Phase C0-septies Batch 4`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
 
+## R18.5 Phase C0-septies Batch 4 Lv46-55 — CLOSED (2026-07-07T08:40:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Phase C0-septies Batch 4 CLOSED**. 10 dungeon totali Lv46-55 (9 Normal 3p NEW + 1 Elite 5p LIVE) + 3 raid late-game 5p (1 LIVE + 2 NEW) lockati. PM decisions Q1-Q18 approvate in blocco (Q1=D chiarimento definitivo, Q17 GO, Q18=A Batch 5 endgame). Prossimo step autorizzato: **Phase C0-octies Batch 5 Lv56-60 ENDGAME**.
+
+### 🎯 Q1 RESOLVED — Chiarimento definitivo target macro dungeon (PM verbatim)
+
+**Il target macro "60 dungeon totali" = SOLO Normal Dungeon Track 3p.**
+
+| Traccia | Conteggio 60 | Status |
+|---|:---:|---|
+| **Normal Dungeon 3p** | ✅ **DENTRO 60** | 51/60 post-B4 |
+| **Elite/Group 5p** | ❌ **FUORI 60** | contenuto parallelo storico |
+| **Raid 5p** | ❌ **FUORI dungeon** | target separato 12 raid |
+
+**Aritmetica cumulativa Normal 3p** (verificata):
+
+| Batch | Normal 3p | Cumulative | Missing to 60 |
+|---|:---:|:---:|:---:|
+| B1 | 12 (8L + 4N) | 12 | 48 |
+| B2 | 14 (2L + 12N) | 26 | 34 |
+| B3 | 16 (0L + 16N) | 42 | 18 |
+| **B4** | **9 (0L + 9N)** | **51** | **9** |
+| **B5 endgame (target)** | **9** | **60** | **0** ✅ |
+
+**Batch 5 deve completare 9 Normal 3p** per raggiungere **60/60**.
+
+### File autoritativi C0-septies Batch 4 (SHA256 verified)
+
+| File | Path | SHA256 |
+|---|---|---|
+| Batch 4 Matrix (MD) | `/app/memory/r18_5_phase_c0septies_batch4_lv46_55_matrix.md` | `e5f776b1d3f5e60d00f359e5949e7f2cb56ad86bd2a36e48220de5400ad9b2bd` |
+| Batch 4 Matrix (JSON) | `/app/memory/r18_5_phase_c0septies_batch4_lv46_55_matrix.json` | `d7b416a04bc91783a77903885cabcc095064c1680c0b21f4f94eb3b5db037737` |
+
+### 🎯 10 dungeon Batch 4 approvati (Lv46-55)
+
+#### 9 Normal 3p NEW DRAFT — DENTRO conteggio 60
+
+| # | Slug | Nome IT | Lv range | Lore source |
+|:---:|---|---|:---:|:---:|
+| 1 | `ashen-warcamp` | Accampamento delle Ceneri | Lv46-47 | Ergolat |
+| 2 | `moonveil-shrine` | Santuario del Velo Lunare | Lv46-48 | Luna Morta |
+| 3 | `hollow-flame-pit` | Fossa della Fiamma Cava | Lv47-48 | Infernale |
+| 4 | `crimson-forge-outpost` | Avamposto della Forgia Cremisi | Lv48-49 | Halodi |
+| 5 | `sepulcher-of-echoes` | Sepolcro degli Echi | Lv49-50 | Memoria |
+| 6 | `black-lantern-conclave` | Conclave della Lanterna Nera | Lv50-51 | Irthe |
+| 7 | `sunfallen-basilica` | Basilica del Sole Caduto | Lv51-52 | Celeste |
+| 8 | `blightborn-caverns` | Caverne dei Nati dal Marciume | Lv53-54 | Efreto |
+| 9 | `wyrmking-antechamber` | Anticamera del Re dei Vermi | Lv54-55 | **Draco** (bridge B5) |
+
+#### 1 Elite 5p LIVE — FUORI conteggio 60 (traccia parallela)
+
+| # | Slug | Nome IT | Lv range | Party | Lore | Status |
+|:---:|---|---|:---:|:---:|:---:|:---:|
+| — | `infernal-pit-5p` | Pozzo Infernale (proposta) | Lv46-55 | **5** | Infernale | **LIVE** (drift `required_level=12` known no-rewrite) |
+
+### 🐉 3 raid late-game Batch 4 approvati (Lv46-55, party_size=5 verbatim) — FUORI conteggio dungeon
+
+| # | Slug | Nome IT | Lv range | Party | Status | Lore | Boss |
+|:---:|---|---|:---:|:---:|:---:|:---:|---|
+| R1 | `necropolis-bells` | Necropoli delle Mille Campane | Lv46-50 | **5** | **LIVE** | Irthe | Il Campanaro dell'Aldilà (LIVE DB) |
+| R2 | `emberking-siege` | Assedio del Re delle Braci | Lv50-53 | **5** | NEW DRAFT | Infernale | Il Re delle Braci Ardenti (3 fase) |
+| R3 | `memoria-vault` | Volta della Memoria | Lv53-55 | **5** | NEW DRAFT | Memoria | Il Guardiano-Archivista dell'Oblio (3 fase) |
+
+**Raid cumulative post-B4**: 8/12 (B5 = 1 LIVE `dragon-vault` + 3 NEW = 4 finale, target 12 ✅ aligned).
+
+**`necropolis-bells` LIVE drift**: **known drift, NO rewrite ora** — potenziali drift `required_level` / `required_team_size` / meccaniche live-vs-design accettati as-is (analogo policy `broken-bastion-siege` B3).
+
+### 🌿 Lore recurrence 4× ACCEPTED (Q6-Q9 verbatim)
+
+**PM decision Q6-Q9 verbatim**: recurrence 4× per Infernale, Memoria, Irthe, Draco **ACCEPTED** (analogo Krastlov 5×). **NO cap rigido**, ma **B5 variety watch OBBLIGATORIA**.
+
+| Fonte | Cumulative post-B4 | Justification |
+|---|:---:|---|
+| **Infernale** | 4× (B3 + B4 dungeon + Elite + raid) | Nazione ostile late-game |
+| **Memoria** | 4× (B1 + B2 + B4 dungeon + raid) | Biblioteca cosmica multi-bracket |
+| **Irthe** | 4× (B1×2 + B4 dungeon + raid) | Undead late-game |
+| **Draco** | 4× (B2×2 + B3 + B4) | Bridge verso `dragon-vault` capstone B5 |
+
+**B5 variety watch OBBLIGATORIA**: evitare ulteriore concentrazione su queste 4 fonti + Krastlov (già 5×).
+
+### 🎨 Naming player-facing Batch 4 approved in blocco (Q5, Q12, Q15 verbatim)
+
+- **9 nomi IT nuovi dungeon**: approvati verbatim
+- **2 nomi IT nuovi raid**: approvati verbatim
+- **Slug lock**: 9 dungeon + 2 raid slug PM-locked
+- **Bracket naming**: "Batch 4 Late Game Lv46-55" + "Batch 4 Raid Late-Game" ufficiali
+- **Boss narrative** proposta: approvata verbatim
+
+### 🎁 Loot target Batch 4 rispettato (design "late game vero")
+
+**Tier distribution**:
+- **T1-T2** — Assenti (fuori bracket)
+- **T3** — Coda residua (accessori occasionali early Lv46-49)
+- **T4** — **Prevalente ovunque** ✅
+- **T5** — **Raro / hint crafting only** — NO drop diretto (allineato Q11 B3 accepted) ✅
+
+**Rarity distribution**:
+- **Common** — Assente
+- **Uncommon** — Coda residua early Lv46-49
+- **Rare** — Regolare (meno centrale vs Batch 3)
+- **Epic** — **Peso alto** — **~30-32 slot** (Epic guaranteed su 9 boss finale + 4 pre-boss late + Elite Epic 2× + raid Epic 2-3×) ✅
+- **Legendary** — **Assente drop ✅** — solo 7 hint crafting material (no drop): #5, #7, #9, `infernal-pit-5p`, R1, R2, R3
+
+### 🛡️ Gear check forti Batch 4 (documentali, non enforced runtime)
+
+- **Min ILVL range**: 46-54 (Normal 3p) · 48 (Elite 5p LIVE) · 47-53 (raid)
+- **Proficiency obbligatoria nel design**: fire_resist T4 obbligatoria #3/#10/R2 · undead-slaying weapon obbligatoria #6/R1 · soul-veil T4 obbligatoria — **NO runtime enforcement** (governance PM)
+- Main stat gate check serio: STR (#1, #4, R2), INT (#3, #5, R3), WIS (#2, #6, R1), DEX (#5, #8), mix (#7, #9, #10)
+- Utility item peso maggiore: fire-resist potion, moon-veil, memory-lens, undead-slaying, light/shadow potion, poison-cleanse, siege banner, bell-ward trinket
+
+### 📚 Lore coverage post-Batch 4 (~21/22 fonti)
+
+**Fonti usate B4 (9 di 22)**: Ergolat, Luna Morta, Infernale, Halodi, Memoria, Irthe, Celeste, Efreto, Draco.
+
+**Fonti NON usate B4 (PM guidance "varietà, ridurre Krastlov" rispettata)** ✅:
+- Krastlov (5× stop-cumulative B3), Aveol (4× stop-cumulative B3), Faglie arcane (3× saturata B3), Ciclo delle anime (4× saturata B3), Alevora (riservata B5)
+
+**Coverage cumulativa post-B4**: **~21 su 22 fonti** — **1 orfana residua** riservata **Batch 5 endgame** (nomi PENDING sync definitivo audit).
+
+### 🛡️ Governance state Batch 4 CLOSED
+
+- ✅ **36 sigilli byte-identical** (`pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6 passed 0.37-0.38s)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` / `.ts` intatti)
+- ✅ **Zero DB writes** — `dungeons` (24), `raid_dungeons` (3), `expeditions` (3) invariati
+- ✅ **Zero migrations** / apply scripts / hard delete
+- ✅ **Zero dungeon/raid creation live** (9 Normal + 2 raid nuovi = design docs only)
+- ✅ **`lore_meta.py` invariato**
+- ✅ **Zero party_size rewrite** (5p Elite+Raid verbatim)
+- ✅ **Zero required_level rewrite** (`infernal-pit-5p` + `necropolis-bells` drift known no-rewrite)
+- ✅ **Item table live creation ZERO** (target 1500 items BLOCCATO gate PM Q18=A verbatim)
+- ✅ **Phase C tech dry-run NOT INITIATED** (Q18=A verbatim)
+- ✅ **Classi canoniche Warrior/Rogue/Mage/Priest/Ranger verbatim** — NO drift
+- ✅ **PM autonomous decision new = ZERO** (rispetto precisazione governance PM ribadita)
+
+### 📊 R18.5 catalogo dungeon cumulative post-Batch 4 (Q1=D chiarimento)
+
+| Track | B1 | B2 | B3 | B4 | Sub-total post-B4 | Riservato B5 | **Target macro** |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Normal 3p (DENTRO 60)** | 12 | 14 | 16 | **9** | **51** | 9 | **60** ✅ |
+| Elite 5p LIVE (FUORI 60) | 5 | 3 | 1 (world-tree-roots-5p) | 1 (infernal-pit-5p) | 10 | 2 (voidspire-5p, celestial-citadel-5p) | 12 parallel |
+| Raid 5p (FUORI dungeon) | 0 | 2 | 3 | 3 | 8 | 4 (1L+3N) | 12 ✅ |
+
+### 🎯 Handoff — Phase C0-octies Batch 5 ENDGAME AUTHORIZED (PM Q18=A verbatim)
+
+**Prossimo step autorizzato**: **Phase C0-octies** — Batch 5 (Lv56-60) ENDGAME vetta.
+
+**Scope Batch 5 (PM verbatim)**:
+- **9 Normal Dungeon 3p Lv56-60** (per raggiungere **60/60** cumulativo target macro)
+- **Elite/Group 5p paralleli** se necessari, FUORI conteggio 60 (2 Elite LIVE: `voidspire-5p`, `celestial-citadel-5p`)
+- **4 raid endgame Lv56-60** (per raggiungere **12/12** raid target): 1 LIVE `dragon-vault` + 3 NEW DRAFT (party_size=5 verbatim)
+
+**Regole design Batch 5 (PM verbatim)**:
+- **T5 prevalente + T4 ancora presente**
+- **Epic dominante**
+- **Legendary drop introduction consentita ma RARISSIMA**
+
+**Regole LEGENDARY (PM strict verbatim)**:
+- Legendary solo T5
+- Massimo **15 nel catalogo reale** da 1500 items
+- Batch 5 può introdurre alcuni **Legendary candidate** (indicativamente 3-5, con margine per gli altri in future gate)
+- Ogni Legendary deve avere **utility unica** e **lore source forte**
+- **NO Legendary generico +stat** · **NO Legendary shop** · **NO Legendary craft normale**
+
+**Preparazione endgame (Batch 5 deve iniziare a preparare)**: ILVL endgame · raid farming · utility item · signature item future · ranking · mercato · gear optimization.
+
+**Lore guidance Batch 5 (PM verbatim)**:
+- Coprire **l'ultima lore source orfana residua** (1/22 residua post-B4)
+- **Motivare ogni recurrence alta** (variety watch obbligatoria)
+- Usare fonti adatte a endgame
+- **Evitare altra concentrazione Krastlov** se non indispensabile
+
+**Candidate forti B5**: Ergolat, Luna Morta, Infernale, Celeste, Memoria, Draco, Faglie arcane, Irthe, Halodi, Alevora, **Vuoto** (nuova candidata endgame introdotta dal PM).
+
+**Deliverable Batch 5 attesi**:
+- `/app/memory/r18_5_phase_c0octies_batch5_lv56_60_matrix.md`
+- `/app/memory/r18_5_phase_c0octies_batch5_lv56_60_matrix.json`
+
+**Phase C tech dry-run + Item table 1500**: 🔒 **BLOCCATI** fino a gate PM formale (Q18=A verbatim: no tech/no item table ora).
+
+**Files chiave R18.5 (cumulativo aggiornato)**:
+- Predecessori: `phase_a_discovery`, `phase_b1_design_lock`, `phase_b2_implementation_plan`, `gate1_pm_decisions`, `phase_c0_item_table_drafting_support`, `phase_c0bis_progression_dungeon_raid_matrix`, `pm_workspace_master`, `gate2_pm_decisions`, `phase_c0ter_live_class_matrix`
+- C0-quater: `phase_c0quater_live_dungeon_audit`, `phase_c0quater_batch1_informed_final`
+- C0-quinquies: `r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md/.json`
+- C0-sexies: `r18_5_phase_c0sexies_batch3_lv31_45_matrix.md/.json`
+- **C0-septies** (nuovo): `r18_5_phase_c0septies_batch4_lv46_55_matrix.md/.json`
+
+**R18.5 status flow (aggiornato)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → **`Phase C0-septies Batch 4`** ✅ **CLOSED** → *`Phase C0-octies Batch 5 ENDGAME`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
+
