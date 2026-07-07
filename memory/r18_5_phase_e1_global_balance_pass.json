@@ -1,0 +1,1563 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "E1 — Global Balance Pass (STEP 20)",
+    "step": "STEP 20",
+    "locked_at_utc": "2026-07-07T18:07:46.104548+00:00",
+    "governance": "DOCUMENTAL ONLY — ANALYSIS-ONLY, NO FIX AUTOMATICO",
+    "status": "DRAFT — PENDING PM approval (post-milestone 1500/1500)",
+    "authority": "PM Orchestrator — STEP 20 catena autorizzata post-STEP 19 D5 CLOSED + milestone 1500/1500",
+    "scope": "Analisi cross-tier 1500 items (T1-T5). Identifica outlier/drift/inconsistenze. Propone recommended_fixes. NO modifica autonoma dei file item table.",
+    "deliverable_md": "/app/memory/r18_5_phase_e1_global_balance_pass.md",
+    "deliverable_json": "/app/memory/r18_5_phase_e1_global_balance_pass.json",
+    "predecessors": [
+      "/app/memory/PRD.md (R18.5 Phase D5 CLOSED + milestone 1500/1500 COMPLETE post-STEP 19)",
+      "/app/memory/r18_5_phase_d1_t1_item_table.json (300 items T1 CLOSED)",
+      "/app/memory/r18_5_phase_d2_t2_item_table.json (350 items T2 CLOSED)",
+      "/app/memory/r18_5_phase_d3_t3_item_table.json (350 items T3 CLOSED post-Q6 fix)",
+      "/app/memory/r18_5_phase_d4_t4_item_table.json (300 items T4 CLOSED)",
+      "/app/memory/r18_5_phase_d5_t5_item_table.json (200 items T5 CLOSED)",
+      "/app/memory/r18_5_craft_npcs_directory.md/.json (5 NPC LOCKED)",
+      "/app/memory/r18_5_legendary_discovery_chain.md/.json (7 Legendary APPROVED chain)",
+      "/app/memory/r18_5_iconic_starter_items.md/.json (15 iconic starter)"
+    ]
+  },
+  "executive_summary": {
+    "catalog_total": 1500,
+    "catalog_target": 1500,
+    "catalog_status": "1500/1500 EXACT",
+    "rarity_cumulative_verbatim": "400/450/400/235/15",
+    "rarity_status": "EXACT",
+    "tier_status": "EXACT",
+    "proficiency_hard_block_design_intent_status": "VIOLATIONS_DETECTED",
+    "proficiency_violations_count": 4,
+    "armor_naming_drift_e2_count": 151,
+    "armor_naming_drift_e2_note": "Naming drift EN → IT-specific D1-D3 legacy — NOT proficiency violation, E2 naming pass concern",
+    "anti_p2w_status": "PASSED",
+    "anti_p2w_violations_count": 0,
+    "weapon_backlog_reserved_status": "PASSED",
+    "npc_craft_5_locked_only": "PASSED",
+    "legendary_15_15_status": "EXACT",
+    "legendary_utility_narrative_present": 15,
+    "legendary_generic_only_violations": 0,
+    "outliers_power_creep_intra_tier_count": 2,
+    "outliers_underpowered_intra_tier_count": 9,
+    "outliers_cross_tier_power_creep_count": 11,
+    "recommended_fixes_total": 31,
+    "recommended_fixes_by_priority": {
+      "MEDIUM": 23,
+      "HIGH": 4,
+      "LOW": 4
+    },
+    "catalog_health_summary": "REVIEW_NEEDED"
+  },
+  "check_1_stat_scaling_per_tier": {
+    "T1": {
+      "items_count": 300,
+      "main_stat_count": 268,
+      "main_stat_min": 1,
+      "main_stat_max": 5,
+      "main_stat_mean": 2.38,
+      "main_stat_median": 2.0,
+      "main_stat_stdev": 0.92,
+      "damage_avg_mean": 5.49,
+      "damage_avg_min": 3.0,
+      "damage_avg_max": 10.0,
+      "crit_mean": 1.93,
+      "crit_min": 1,
+      "crit_max": 3,
+      "armor_mean": 2.12
+    },
+    "T2": {
+      "items_count": 350,
+      "main_stat_count": 342,
+      "main_stat_min": 2,
+      "main_stat_max": 14,
+      "main_stat_mean": 7.09,
+      "main_stat_median": 7.0,
+      "main_stat_stdev": 2.68,
+      "damage_avg_mean": 11.07,
+      "damage_avg_min": 5.0,
+      "damage_avg_max": 21.0,
+      "crit_mean": 4.23,
+      "crit_min": 2,
+      "crit_max": 8,
+      "armor_mean": 4.41
+    },
+    "T3": {
+      "items_count": 350,
+      "main_stat_count": 343,
+      "main_stat_min": 6,
+      "main_stat_max": 26,
+      "main_stat_mean": 13.24,
+      "main_stat_median": 12,
+      "main_stat_stdev": 4.93,
+      "damage_avg_mean": 28.05,
+      "damage_avg_min": 15.0,
+      "damage_avg_max": 41.5,
+      "crit_mean": 4.42,
+      "crit_min": 1,
+      "crit_max": 9,
+      "armor_mean": 11.25
+    },
+    "T4": {
+      "items_count": 300,
+      "main_stat_count": 298,
+      "main_stat_min": 12,
+      "main_stat_max": 32,
+      "main_stat_mean": 22.3,
+      "main_stat_median": 23.0,
+      "main_stat_stdev": 5.53,
+      "damage_avg_mean": 39.86,
+      "damage_avg_min": 29.0,
+      "damage_avg_max": 51.5,
+      "crit_mean": 5.85,
+      "crit_min": 3,
+      "crit_max": 8,
+      "armor_mean": 18.29
+    },
+    "T5": {
+      "items_count": 200,
+      "main_stat_count": 200,
+      "main_stat_min": 18,
+      "main_stat_max": 55,
+      "main_stat_mean": 33.98,
+      "main_stat_median": 34.0,
+      "main_stat_stdev": 9.05,
+      "damage_avg_mean": 64.29,
+      "damage_avg_min": 54.0,
+      "damage_avg_max": 81.0,
+      "crit_mean": 8.68,
+      "crit_min": 6,
+      "crit_max": 12,
+      "armor_mean": 45.44
+    }
+  },
+  "check_2_stat_scaling_per_rarity": {
+    "Common": {
+      "items_count": 400,
+      "main_stat_count": 367,
+      "main_stat_min": 1,
+      "main_stat_max": 10,
+      "main_stat_mean": 3.51,
+      "main_stat_median": 3,
+      "main_stat_stdev": 1.98
+    },
+    "Uncommon": {
+      "items_count": 450,
+      "main_stat_count": 440,
+      "main_stat_min": 2,
+      "main_stat_max": 20,
+      "main_stat_mean": 9.49,
+      "main_stat_median": 8.0,
+      "main_stat_stdev": 4.63
+    },
+    "Rare": {
+      "items_count": 400,
+      "main_stat_count": 394,
+      "main_stat_min": 8,
+      "main_stat_max": 34,
+      "main_stat_mean": 18.87,
+      "main_stat_median": 17.5,
+      "main_stat_stdev": 6.49
+    },
+    "Epic": {
+      "items_count": 235,
+      "main_stat_count": 235,
+      "main_stat_min": 14,
+      "main_stat_max": 42,
+      "main_stat_mean": 31.74,
+      "main_stat_median": 30,
+      "main_stat_stdev": 7.5
+    },
+    "Legendary": {
+      "items_count": 15,
+      "main_stat_count": 15,
+      "main_stat_min": 33,
+      "main_stat_max": 55,
+      "main_stat_mean": 45.87,
+      "main_stat_median": 40,
+      "main_stat_stdev": 8.98
+    }
+  },
+  "check_3_stat_scaling_per_class": {
+    "Warrior": {
+      "main_stat": "STR",
+      "items_count": 300,
+      "main_stat_count": 272,
+      "main_stat_mean": 14.37,
+      "main_stat_min": 1,
+      "main_stat_max": 55,
+      "main_stat_median": 12.0
+    },
+    "Rogue": {
+      "main_stat": "AGI",
+      "items_count": 300,
+      "main_stat_count": 295,
+      "main_stat_mean": 14.23,
+      "main_stat_min": 1,
+      "main_stat_max": 55,
+      "main_stat_median": 10
+    },
+    "Mage": {
+      "main_stat": "INT",
+      "items_count": 300,
+      "main_stat_count": 294,
+      "main_stat_mean": 14.51,
+      "main_stat_min": 1,
+      "main_stat_max": 55,
+      "main_stat_median": 12.0
+    },
+    "Priest": {
+      "main_stat": "WIS",
+      "items_count": 300,
+      "main_stat_count": 295,
+      "main_stat_mean": 14.46,
+      "main_stat_min": 1,
+      "main_stat_max": 55,
+      "main_stat_median": 12
+    },
+    "Ranger": {
+      "main_stat": "AGI",
+      "items_count": 300,
+      "main_stat_count": 295,
+      "main_stat_mean": 14.94,
+      "main_stat_min": 1,
+      "main_stat_max": 55,
+      "main_stat_median": 11
+    }
+  },
+  "check_4_main_stat_scaling_by_class": {
+    "Warrior": {
+      "main_stat": "STR",
+      "mean_across_all_tiers": 14.37,
+      "min": 1,
+      "max": 55
+    },
+    "Rogue": {
+      "main_stat": "AGI",
+      "mean_across_all_tiers": 14.23,
+      "min": 1,
+      "max": 55
+    },
+    "Mage": {
+      "main_stat": "INT",
+      "mean_across_all_tiers": 14.51,
+      "min": 1,
+      "max": 55
+    },
+    "Priest": {
+      "main_stat": "WIS",
+      "mean_across_all_tiers": 14.46,
+      "min": 1,
+      "max": 55
+    },
+    "Ranger": {
+      "main_stat": "AGI",
+      "mean_across_all_tiers": 14.94,
+      "min": 1,
+      "max": 55
+    }
+  },
+  "check_5_ilvl_scaling_1_60": {
+    "ilvl_bracket_stats": {
+      "T1": {
+        "bracket": "Lv1-15",
+        "items_count": 300,
+        "ilvl_min_actual": 1,
+        "ilvl_max_actual": 15
+      },
+      "T2": {
+        "bracket": "Lv16-30",
+        "items_count": 350,
+        "ilvl_min_actual": 16,
+        "ilvl_max_actual": 30
+      },
+      "T3": {
+        "bracket": "Lv31-45",
+        "items_count": 350,
+        "ilvl_min_actual": 31,
+        "ilvl_max_actual": 45
+      },
+      "T4": {
+        "bracket": "Lv46-55",
+        "items_count": 300,
+        "ilvl_min_actual": 46,
+        "ilvl_max_actual": 55
+      },
+      "T5": {
+        "bracket": "Lv56-60",
+        "items_count": 200,
+        "ilvl_min_actual": 56,
+        "ilvl_max_actual": 60
+      }
+    },
+    "ilvl_out_of_range_count": 0,
+    "ilvl_out_of_range_items": [],
+    "linearity_check": "Tier bracket coerenti: T1(1-15) → T2(16-30) → T3(31-45) → T4(46-55) → T5(56-60). Nessun gap. T4 e T5 hanno bracket più stretti (10 e 5 livelli), coerente con blueprint D0."
+  },
+  "check_6_outliers_power_creep_intra_tier": {
+    "count": 2,
+    "threshold": "z-score > 2.5 vs pool (tier, rarity)",
+    "items": [
+      {
+        "item_id": "warrior-ironrecruit-warblade",
+        "tier": "T1",
+        "rarity": "Common",
+        "ilvl": 7,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 4,
+        "pool_mean": 2,
+        "pool_stdev": 0.7,
+        "z_score": 2.87
+      },
+      {
+        "item_id": "warrior-guard-halberd",
+        "tier": "T1",
+        "rarity": "Uncommon",
+        "ilvl": 14,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 5,
+        "pool_mean": 3.36,
+        "pool_stdev": 0.65,
+        "z_score": 2.5
+      }
+    ]
+  },
+  "check_7_outliers_underpowered_intra_tier": {
+    "count": 9,
+    "threshold": "z-score < -2.5 vs pool (tier, rarity)",
+    "items": [
+      {
+        "item_id": "warrior-heavy-belt-t2",
+        "tier": "T2",
+        "rarity": "Common",
+        "ilvl": 20,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 2,
+        "pool_mean": 4.67,
+        "pool_stdev": 0.9,
+        "z_score": -2.97
+      },
+      {
+        "item_id": "warrior-ergolat-siege-commander-plate",
+        "tier": "T3",
+        "rarity": "Epic",
+        "ilvl": 40,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 14,
+        "pool_mean": 23.3,
+        "pool_stdev": 2.52,
+        "z_score": -3.69
+      },
+      {
+        "item_id": "warrior-t4-emberking-siege-boss",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 52,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 19,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -2.78
+      },
+      {
+        "item_id": "warrior-t4-legendary-emberking-crown-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "warrior-t4-legendary-void-touched-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "rogue-t4-legendary-soul-abyss-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Rogue",
+        "main_stat": "AGI",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "mage-t4-legendary-void-warlock-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Mage",
+        "main_stat": "INT",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "priest-t4-legendary-celestial-halo-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Priest",
+        "main_stat": "WIS",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "priest-t4-legendary-resurrect-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Priest",
+        "main_stat": "WIS",
+        "main_stat_val": 17,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.35
+      }
+    ]
+  },
+  "check_8_epic_legendary_outliers": {
+    "epic_count": 235,
+    "legendary_count": 15,
+    "epic_outliers": [
+      {
+        "item_id": "warrior-ergolat-siege-commander-plate",
+        "tier": "T3",
+        "rarity": "Epic",
+        "ilvl": 40,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 14,
+        "pool_mean": 23.3,
+        "pool_stdev": 2.52,
+        "z_score": -3.69
+      },
+      {
+        "item_id": "warrior-t4-emberking-siege-boss",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 52,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 19,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -2.78
+      },
+      {
+        "item_id": "warrior-t4-legendary-emberking-crown-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "warrior-t4-legendary-void-touched-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Warrior",
+        "main_stat": "STR",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "rogue-t4-legendary-soul-abyss-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Rogue",
+        "main_stat": "AGI",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "mage-t4-legendary-void-warlock-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Mage",
+        "main_stat": "INT",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "priest-t4-legendary-celestial-halo-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Priest",
+        "main_stat": "WIS",
+        "main_stat_val": 18,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.06
+      },
+      {
+        "item_id": "priest-t4-legendary-resurrect-hint",
+        "tier": "T4",
+        "rarity": "Epic",
+        "ilvl": 55,
+        "classe": "Priest",
+        "main_stat": "WIS",
+        "main_stat_val": 17,
+        "pool_mean": 28.67,
+        "pool_stdev": 3.48,
+        "z_score": -3.35
+      }
+    ],
+    "legendary_outliers": []
+  },
+  "check_9_legendary_utility_balance": {
+    "compliance": {
+      "total": 15,
+      "target": 15,
+      "status": "EXACT",
+      "utility_narrative_present": 15,
+      "generic_only_violations": 0,
+      "lore_source_forte_or_progressive_placeholder": 15,
+      "progressive_placeholders_pending": 4,
+      "approved_7_from_chain_count": 7,
+      "hybrid_4_pre_allocated_count": 4,
+      "progressive_4_placeholders_count": 4
+    },
+    "detail_per_legendary": [
+      {
+        "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+        "classe": "Warrior",
+        "lore_source": "Ambash",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L5)"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragon-elder-scale",
+        "classe": "Warrior",
+        "lore_source": "Draco",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L6)"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragonlord-crown",
+        "classe": "Warrior",
+        "lore_source": "Draco",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L1)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+        "classe": "Rogue",
+        "lore_source": "Irthe",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "HYBRID-4 (H2 Irthe)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+        "classe": "Rogue",
+        "lore_source": "PENDING PM (lore source proposta: Ciclo delle anime — sanctum-of-fading-souls capstone Rogue soul-bind)",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": false,
+        "pending_pm_placeholder": true,
+        "chain_tag": "PROGRESSIVE-4 (P3)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-void-touched-blade",
+        "classe": "Rogue",
+        "lore_source": "Vuoto",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L2)"
+      },
+      {
+        "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+        "classe": "Mage",
+        "lore_source": "Ergolat",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "HYBRID-4 (H3 Ergolat/Vuoto — Ergolat selezionato per no-repeat Vuoto)"
+      },
+      {
+        "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+        "classe": "Mage",
+        "lore_source": "PENDING PM (lore source proposta: Memoria — echi cristallizzati endgame Mage)",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": false,
+        "pending_pm_placeholder": true,
+        "chain_tag": "PROGRESSIVE-4 (P1)"
+      },
+      {
+        "item_id": "mage-t5-legendary-sole-nero-diadem",
+        "classe": "Mage",
+        "lore_source": "Celeste",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L7)"
+      },
+      {
+        "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+        "classe": "Priest",
+        "lore_source": "Celeste",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "HYBRID-4 (H1 Celeste)"
+      },
+      {
+        "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+        "classe": "Priest",
+        "lore_source": "PENDING PM (lore source proposta: Luna Morta — resurrection endgame Priest, capstone Ciclo delle anime)",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": false,
+        "pending_pm_placeholder": true,
+        "chain_tag": "PROGRESSIVE-4 (P2)"
+      },
+      {
+        "item_id": "priest-t5-legendary-seraph-halo-crown",
+        "classe": "Priest",
+        "lore_source": "Celeste",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L3)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+        "classe": "Ranger",
+        "lore_source": "Halodi",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "HYBRID-4 (H4 Halodi)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+        "classe": "Ranger",
+        "lore_source": "PENDING PM (lore source proposta: Greatwood/Elfwood — capstone Ranger nature-bond endgame)",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": false,
+        "pending_pm_placeholder": true,
+        "chain_tag": "PROGRESSIVE-4 (P4)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-worldroot-scepter",
+        "classe": "Ranger",
+        "lore_source": "Alberi della Vita",
+        "has_utility_narrative": true,
+        "has_generic_only": false,
+        "lore_source_forte": true,
+        "pending_pm_placeholder": false,
+        "chain_tag": "APPROVED-7 (L4)"
+      }
+    ],
+    "notes": "Utility narrative descriptors present in 15/15 (7 APPROVED + 4 HYBRID + 4 PROGRESSIVE placeholders con PENDING). Numeric finals (cooldown, %, scaling) PENDING PM Phase D-post gate (documented risk_3 D5)."
+  },
+  "check_10_proficiency_hard_block_1500_1500": {
+    "total_items": 1500,
+    "proficiency_violations_count": 4,
+    "priest_hard_violations_count": 0,
+    "weapon_backlog_reserved_used_count": 0,
+    "armor_naming_drift_e2_count": 151,
+    "armor_naming_drift_e2_note": "EN generic naming (light/medium/heavy) usato in D1-D3 legacy → design intent proficiency-valid dopo normalizzazione IT-specific (piastre/maglia/cuoio/stoffa). Non è proficiency violation, è naming drift E2 concern.",
+    "violations_detail": [
+      {
+        "item_id": "priest-blessed-dagger",
+        "tier": "T1",
+        "classe": "Priest",
+        "issue": "weapon_family 'pugnale' not in Priest proficiency ['bastone', 'focus', 'martello', 'reliquia', 'tomo']"
+      },
+      {
+        "item_id": "priest-blessed-dagger-t2",
+        "tier": "T2",
+        "classe": "Priest",
+        "issue": "weapon_family 'pugnale' not in Priest proficiency ['bastone', 'focus', 'martello', 'reliquia', 'tomo']"
+      },
+      {
+        "item_id": "rogue-soulforged-shortbow",
+        "tier": "T3",
+        "classe": "Rogue",
+        "issue": "weapon_family 'arco' not in Rogue proficiency ['balestra', 'pugnale', 'spada']"
+      },
+      {
+        "item_id": "rogue-soulforged-shortbow-master",
+        "tier": "T3",
+        "classe": "Rogue",
+        "issue": "weapon_family 'arco' not in Rogue proficiency ['balestra', 'pugnale', 'spada']"
+      }
+    ],
+    "priest_violations_detail": [],
+    "weapon_backlog_violations_detail": [],
+    "armor_naming_drift_e2_detail_sample": [
+      {
+        "item_id": "warrior-ironhelm-starter",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "rogue-leathercraft-cloak",
+        "tier": "T1",
+        "classe": "Rogue",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Rogue proficiency"
+      },
+      {
+        "item_id": "ranger-scout-leather-jerkin",
+        "tier": "T1",
+        "classe": "Ranger",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Ranger proficiency"
+      },
+      {
+        "item_id": "warrior-ironhelm-visored",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-ironhelm-greathelm",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-plate-chest-novice",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-mail-leggings",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "rogue-leathercraft-hood",
+        "tier": "T1",
+        "classe": "Rogue",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Rogue proficiency"
+      },
+      {
+        "item_id": "rogue-leathercraft-boots",
+        "tier": "T1",
+        "classe": "Rogue",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Rogue proficiency"
+      },
+      {
+        "item_id": "rogue-leathercraft-gloves",
+        "tier": "T1",
+        "classe": "Rogue",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Rogue proficiency"
+      },
+      {
+        "item_id": "rogue-leather-leggings-shadow",
+        "tier": "T1",
+        "classe": "Rogue",
+        "armor_type_raw": "light",
+        "armor_type_normalized_intent": "cuoio",
+        "issue": "armor_type 'light' EN generic naming (D1-D3 legacy) — design intent maps to 'cuoio' per Rogue proficiency"
+      },
+      {
+        "item_id": "ranger-scout-leather-cap",
+        "tier": "T1",
+        "classe": "Ranger",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Ranger proficiency"
+      },
+      {
+        "item_id": "ranger-scout-leather-boots",
+        "tier": "T1",
+        "classe": "Ranger",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Ranger proficiency"
+      },
+      {
+        "item_id": "ranger-scout-leather-gloves",
+        "tier": "T1",
+        "classe": "Ranger",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Ranger proficiency"
+      },
+      {
+        "item_id": "ranger-scout-mail-chest",
+        "tier": "T1",
+        "classe": "Ranger",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Ranger proficiency"
+      },
+      {
+        "item_id": "warrior-recruit-chestpiece",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-chainmail-cuirass",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-full-plate-cuirass",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-recruit-leggings",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-chainmail-leggings",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-plate-legguards",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-open-face-helm",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-full-plate-helm",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-hooded-cowl-iron",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-plate-legguards-adorned",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-recruit-gloves",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-chainmail-gloves",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-plate-gauntlets",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-recruit-boots",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "heavy",
+        "armor_type_normalized_intent": "piastre",
+        "issue": "armor_type 'heavy' EN generic naming (D1-D3 legacy) — design intent maps to 'piastre' per Warrior proficiency"
+      },
+      {
+        "item_id": "warrior-chainmail-boots",
+        "tier": "T1",
+        "classe": "Warrior",
+        "armor_type_raw": "medium",
+        "armor_type_normalized_intent": "maglia",
+        "issue": "armor_type 'medium' EN generic naming (D1-D3 legacy) — design intent maps to 'maglia' per Warrior proficiency"
+      }
+    ],
+    "status": "VIOLATIONS_DETECTED",
+    "naming_pass_e2_status": "151 armor_type EN→IT naming drift items — deferred to E2 naming pass"
+  },
+  "check_11_anti_p2w_review_1500_1500": {
+    "total_items": 1500,
+    "can_be_sold_for_real_money_false_count": 1500,
+    "p2w_violations_count": 0,
+    "p2w_field_inconsistency_count": 0,
+    "p2w_violations_detail": [],
+    "p2w_field_inconsistency_detail": [],
+    "status": "PASSED 1500/1500"
+  },
+  "check_12_class_distribution_cumulative": {
+    "total_per_class": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "per_tier": {
+      "T1": {
+        "Warrior": 60,
+        "Rogue": 60,
+        "Mage": 60,
+        "Priest": 60,
+        "Ranger": 60
+      },
+      "T2": {
+        "Warrior": 70,
+        "Rogue": 70,
+        "Mage": 70,
+        "Priest": 70,
+        "Ranger": 70
+      },
+      "T3": {
+        "Warrior": 70,
+        "Rogue": 70,
+        "Mage": 70,
+        "Priest": 70,
+        "Ranger": 70
+      },
+      "T4": {
+        "Warrior": 60,
+        "Rogue": 60,
+        "Mage": 60,
+        "Priest": 60,
+        "Ranger": 60
+      },
+      "T5": {
+        "Warrior": 40,
+        "Rogue": 40,
+        "Mage": 40,
+        "Priest": 40,
+        "Ranger": 40
+      }
+    },
+    "blueprint_d0_target": {
+      "Warrior": 300,
+      "Rogue": 290,
+      "Mage": 280,
+      "Priest": 280,
+      "Ranger": 250,
+      "Universal": 100,
+      "note": "Sezione 13 D0 blueprint approssimativo, tolleranza ±30 accettabile"
+    }
+  },
+  "check_13_source_distribution_dungeon_raid_craft": {
+    "source_type_cumulative": {
+      "other/unclassified": 772,
+      "crafting": 142,
+      "elite_drop": 115,
+      "dungeon_drop": 274,
+      "vendor_special": 27,
+      "achievement": 17,
+      "quest": 14,
+      "raid_drop": 125,
+      "ranking": 14
+    },
+    "dungeon_drop_pct": 18.3,
+    "raid_drop_pct": 8.3,
+    "crafting_pct": 9.5
+  },
+  "check_14_crafting_npc_consistency": {
+    "npc_5_locked": [
+      "conciatore-elfwood",
+      "cuoiaia-elfwood",
+      "fabbro-bulwark",
+      "sarto-sacro",
+      "tessitrice-arcana"
+    ],
+    "npc_usage_per_tier": {
+      "T1": {},
+      "T2": {},
+      "T3": {
+        "fabbro-bulwark": 15,
+        "conciatore-elfwood": 16,
+        "tessitrice-arcana": 12,
+        "sarto-sacro": 13,
+        "cuoiaia-elfwood": 8
+      },
+      "T4": {
+        "fabbro-bulwark": 4,
+        "conciatore-elfwood": 6,
+        "tessitrice-arcana": 5,
+        "sarto-sacro": 4,
+        "cuoiaia-elfwood": 5
+      },
+      "T5": {
+        "fabbro-bulwark": 4,
+        "conciatore-elfwood": 4,
+        "tessitrice-arcana": 4,
+        "sarto-sacro": 4,
+        "cuoiaia-elfwood": 4
+      }
+    },
+    "new_npc_autonomous_count": 0,
+    "new_npc_autonomous_detail": [],
+    "status": "PASSED (5 LOCKED only, 0 autonomi)"
+  },
+  "check_15_balance_risks_before_tech_dry_run": {
+    "blockers_before_phase_c": [
+      {
+        "id": "br_1",
+        "topic": "Proficiency violations cumulative",
+        "count": 4,
+        "blocker": false
+      },
+      {
+        "id": "br_2",
+        "topic": "Anti-P2W violations cumulative",
+        "count": 0,
+        "blocker": false
+      },
+      {
+        "id": "br_3",
+        "topic": "Weapon backlog RESERVED used",
+        "count": 0,
+        "blocker": false
+      },
+      {
+        "id": "br_4",
+        "topic": "NPC autonomous violations",
+        "count": 0,
+        "blocker": false
+      },
+      {
+        "id": "br_5",
+        "topic": "Legendary progressive placeholders PENDING PM finalization",
+        "count": 4,
+        "blocker": true,
+        "blocker_note": "Blocca Phase C tech runtime apply — Legendary utility numeric finals mancanti"
+      },
+      {
+        "id": "br_6",
+        "topic": "Cross-tier power creep",
+        "count": 11,
+        "blocker": false,
+        "blocker_note": "Non blocca ma richiede review pre-registry"
+      },
+      {
+        "id": "br_7",
+        "topic": "Iconic family naming drift D1-D5",
+        "count": "pending E2 naming pass",
+        "blocker": true,
+        "blocker_note": "Blocca Phase C tech registry pre-E2 naming pass"
+      },
+      {
+        "id": "br_8",
+        "topic": "D4 slug drift 9 dungeon (naming-only)",
+        "count": "9 slug drift documented",
+        "blocker": true,
+        "blocker_note": "Blocca Phase C tech pre-E2 naming pass"
+      },
+      {
+        "id": "br_9",
+        "topic": "17a Gate 1 lore-source audit cross-check PENDING",
+        "count": 1,
+        "blocker": false,
+        "blocker_note": "Verifica audit sync pre-Phase C, non blocca E1/E2"
+      },
+      {
+        "id": "br_10",
+        "topic": "Legendary utility numeric finals PENDING PM (7 approved + 4 hybrid)",
+        "count": 11,
+        "blocker": true,
+        "blocker_note": "Cooldown, %, scaling PENDING PM decision — blocca runtime apply Phase C"
+      }
+    ],
+    "summary": {
+      "blocker_count": 4,
+      "non_blocker_count": 6,
+      "phase_c_gate_ready": false,
+      "phase_c_gate_ready_note": "Phase C Tech Dry-Run BLOCKED until E1 recommended_fixes approved + E2 naming pass done + Legendary utility numeric finals + progressive placeholders finalization"
+    }
+  },
+  "recommended_fixes": [
+    {
+      "priority": "MEDIUM",
+      "category": "armor_naming_drift_e2",
+      "item_id": "BULK: 151 items D1-D3",
+      "tier": "T1/T2/T3",
+      "issue": "151 items usano armor_type EN generic (light/medium/heavy) invece di IT-specific (piastre/maglia/cuoio/stoffa). Design intent proficiency-valid dopo normalizzazione. NON è proficiency violation.",
+      "recommended_action": "E2 Naming Pass: normalizzare armor_type da EN generic a IT-specific per coerenza cross-tier con D4-D5. Mapping design intent già documentato in `ARMOR_NAMING_DRIFT_EN_IT`."
+    },
+    {
+      "priority": "HIGH",
+      "category": "proficiency_violation",
+      "item_id": "priest-blessed-dagger",
+      "tier": "T1",
+      "issue": "weapon_family 'pugnale' not in Priest proficiency ['bastone', 'focus', 'martello', 'reliquia', 'tomo']",
+      "recommended_action": "Ricontrollare proficiency, forse cambiare weapon_family/armor_type per rispettare classe. Se intenzionale, richiedere override PM esplicito."
+    },
+    {
+      "priority": "HIGH",
+      "category": "proficiency_violation",
+      "item_id": "priest-blessed-dagger-t2",
+      "tier": "T2",
+      "issue": "weapon_family 'pugnale' not in Priest proficiency ['bastone', 'focus', 'martello', 'reliquia', 'tomo']",
+      "recommended_action": "Ricontrollare proficiency, forse cambiare weapon_family/armor_type per rispettare classe. Se intenzionale, richiedere override PM esplicito."
+    },
+    {
+      "priority": "HIGH",
+      "category": "proficiency_violation",
+      "item_id": "rogue-soulforged-shortbow",
+      "tier": "T3",
+      "issue": "weapon_family 'arco' not in Rogue proficiency ['balestra', 'pugnale', 'spada']",
+      "recommended_action": "Ricontrollare proficiency, forse cambiare weapon_family/armor_type per rispettare classe. Se intenzionale, richiedere override PM esplicito."
+    },
+    {
+      "priority": "HIGH",
+      "category": "proficiency_violation",
+      "item_id": "rogue-soulforged-shortbow-master",
+      "tier": "T3",
+      "issue": "weapon_family 'arco' not in Rogue proficiency ['balestra', 'pugnale', 'spada']",
+      "recommended_action": "Ricontrollare proficiency, forse cambiare weapon_family/armor_type per rispettare classe. Se intenzionale, richiedere override PM esplicito."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_intra_tier",
+      "item_id": "warrior-ironrecruit-warblade",
+      "tier": "T1",
+      "issue": "main_stat STR=4 z-score 2.87 vs pool (T1,Common) mean=2 stdev=0.7",
+      "recommended_action": "Rivedere main_stat_val da 4 verso mean 2 (target range: mean±2σ = 0.6 — 3.4)."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_intra_tier",
+      "item_id": "warrior-guard-halberd",
+      "tier": "T1",
+      "issue": "main_stat STR=5 z-score 2.5 vs pool (T1,Uncommon) mean=3.36 stdev=0.65",
+      "recommended_action": "Rivedere main_stat_val da 5 verso mean 3.36 (target range: mean±2σ = 2.06 — 4.66)."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "warrior-heavy-belt-t2",
+      "tier": "T2",
+      "issue": "main_stat STR=2 z-score -2.97 vs pool (T2,Common) mean=4.67 stdev=0.9",
+      "recommended_action": "Rivedere main_stat_val da 2 verso mean 4.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "warrior-ergolat-siege-commander-plate",
+      "tier": "T3",
+      "issue": "main_stat STR=14 z-score -3.69 vs pool (T3,Epic) mean=23.3 stdev=2.52",
+      "recommended_action": "Rivedere main_stat_val da 14 verso mean 23.3."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "warrior-t4-emberking-siege-boss",
+      "tier": "T4",
+      "issue": "main_stat STR=19 z-score -2.78 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 19 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "warrior-t4-legendary-emberking-crown-hint",
+      "tier": "T4",
+      "issue": "main_stat STR=18 z-score -3.06 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 18 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "warrior-t4-legendary-void-touched-hint",
+      "tier": "T4",
+      "issue": "main_stat STR=18 z-score -3.06 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 18 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "rogue-t4-legendary-soul-abyss-hint",
+      "tier": "T4",
+      "issue": "main_stat AGI=18 z-score -3.06 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 18 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "mage-t4-legendary-void-warlock-hint",
+      "tier": "T4",
+      "issue": "main_stat INT=18 z-score -3.06 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 18 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "priest-t4-legendary-celestial-halo-hint",
+      "tier": "T4",
+      "issue": "main_stat WIS=18 z-score -3.06 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 18 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "item_id": "priest-t4-legendary-resurrect-hint",
+      "tier": "T4",
+      "issue": "main_stat WIS=17 z-score -3.35 vs pool (T4,Epic) mean=28.67 stdev=3.48",
+      "recommended_action": "Rivedere main_stat_val da 17 verso mean 28.67."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "warrior-black-forge-master-hammer",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "rogue-wraith-warden-boss-dagger",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "rogue-soul-abyss-ancestral-dagger",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 26 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "mage-observatory-blind-astronomer-staff",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "mage-celestial-seraph-staff",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 26 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "priest-necropolis-guardian-mace",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "priest-heretic-archbishop-mace",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 26 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "priest-souldrain-ancestor-mace",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "ranger-wyrmscale-vermeide-bow",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 26 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "ranger-wraith-warden-boss-bow",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 25 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "item_id": "ranger-souldrain-ancestor-bow",
+      "tier": "T3",
+      "issue": "T3 item has main_stat 26 > next_tier T4 mean 22.3 * 1.10 = 24.53",
+      "recommended_action": "Ridurre main_stat_val a valore compatibile con T3 mean, o promuovere item a T4 se lo scaling è coerente con quel tier."
+    },
+    {
+      "priority": "LOW",
+      "category": "legendary_progressive_pending_pm",
+      "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+      "tier": "T5",
+      "issue": "Progressive Legendary placeholder — lore_source/source/utility_unique PENDING PM finalization",
+      "recommended_action": "PM finalize: lore-source proposta (Memoria/Luna Morta/Ciclo delle anime/Greatwood-Elfwood), source specifica (raid/dungeon endgame), utility_unique numerica finale."
+    },
+    {
+      "priority": "LOW",
+      "category": "legendary_progressive_pending_pm",
+      "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+      "tier": "T5",
+      "issue": "Progressive Legendary placeholder — lore_source/source/utility_unique PENDING PM finalization",
+      "recommended_action": "PM finalize: lore-source proposta (Memoria/Luna Morta/Ciclo delle anime/Greatwood-Elfwood), source specifica (raid/dungeon endgame), utility_unique numerica finale."
+    },
+    {
+      "priority": "LOW",
+      "category": "legendary_progressive_pending_pm",
+      "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+      "tier": "T5",
+      "issue": "Progressive Legendary placeholder — lore_source/source/utility_unique PENDING PM finalization",
+      "recommended_action": "PM finalize: lore-source proposta (Memoria/Luna Morta/Ciclo delle anime/Greatwood-Elfwood), source specifica (raid/dungeon endgame), utility_unique numerica finale."
+    },
+    {
+      "priority": "LOW",
+      "category": "legendary_progressive_pending_pm",
+      "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+      "tier": "T5",
+      "issue": "Progressive Legendary placeholder — lore_source/source/utility_unique PENDING PM finalization",
+      "recommended_action": "PM finalize: lore-source proposta (Memoria/Luna Morta/Ciclo delle anime/Greatwood-Elfwood), source specifica (raid/dungeon endgame), utility_unique numerica finale."
+    }
+  ],
+  "recommended_fixes_summary": {
+    "total": 31,
+    "by_priority": {
+      "MEDIUM": 23,
+      "HIGH": 4,
+      "LOW": 4
+    },
+    "by_category": {
+      "armor_naming_drift_e2": 1,
+      "proficiency_violation": 4,
+      "power_creep_intra_tier": 2,
+      "underpowered_intra_tier": 9,
+      "power_creep_cross_tier": 11,
+      "legendary_progressive_pending_pm": 4
+    }
+  },
+  "no_automatic_modifications_statement": {
+    "declaration": "E1 è ANALISI DOCUMENTALE. Nessun file item table (D1/D2/D3/D4/D5) modificato. Nessun valore stat/rarity/tier/ilvl corretto autonomamente.",
+    "files_touched_in_step20": [
+      "/app/memory/r18_5_phase_e1_global_balance_pass.md (NUOVO deliverable)",
+      "/app/memory/r18_5_phase_e1_global_balance_pass.json (NUOVO deliverable)"
+    ],
+    "files_untouched_in_step20": [
+      "/app/memory/r18_5_phase_d1_t1_item_table.md/.json",
+      "/app/memory/r18_5_phase_d2_t2_item_table.md/.json",
+      "/app/memory/r18_5_phase_d3_t3_item_table.md/.json",
+      "/app/memory/r18_5_phase_d4_t4_item_table.md/.json",
+      "/app/memory/r18_5_phase_d5_t5_item_table.md/.json",
+      "/app/memory/r18_5_craft_npcs_directory.md/.json",
+      "/app/memory/r18_5_iconic_starter_items.md/.json",
+      "/app/memory/r18_5_legendary_discovery_chain.md/.json",
+      "/app/memory/r18_5_phase_d0_item_table_blueprint.md/.json"
+    ],
+    "governance": "Read-only sui dati input. Nessuna decisione creativa autonoma. Recommended_fixes sono PROPOSTE al PM, NON applicate."
+  },
+  "open_questions_pm_post_e1_for_e2_gate": [
+    {
+      "id": "Q1",
+      "topic": "Approvare recommended_fixes HIGH in blocco (proficiency + anti-P2W + weapon backlog + new NPC), o rivedere case-by-case?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Approvare recommended_fixes MEDIUM (power creep intra-tier + underpowered + cross-tier power creep) in blocco, o iterare selettivamente?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Approvare recommended_fixes LOW (progressive Legendary PENDING + ilvl out of range) come backlog per Phase C tech gate?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Post E1 approvazione fixes: procedere con E2 (Global Naming Pass) o rework E1 prima?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Balance risks pre-Phase C (br_1..br_10): quali risolvere in E1 approval, quali in E2, quali in Phase C tech gate?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Legendary utility numeric finals (cooldown, %, scaling): finalizzare in E1 gate PM decision o rimandare a Phase C tech gate?"
+    },
+    {
+      "id": "Q7",
+      "topic": "4 progressive Legendary placeholders: finalizzare lore/source/utility ORA (in E1 gate) o mantenere PENDING per Phase C tech gate?"
+    },
+    {
+      "id": "Q8",
+      "topic": "17a Gate 1 lore-source audit cross-check (br_9): eseguire audit sync ORA in E1 o rimandare a Phase C?"
+    },
+    {
+      "id": "Q9",
+      "topic": "D4 slug drift 9 dungeon (naming-only, br_8): risolvere in E2 naming pass o mantenere come drift accettato PM?"
+    },
+    {
+      "id": "Q10",
+      "topic": "Class distribution cumulative vs blueprint D0 target: accettare distribuzione attuale o richiedere ridistribuzione parziale?"
+    },
+    {
+      "id": "Q11",
+      "topic": "Source distribution cumulative (dungeon/raid/craft): accettare pesi attuali o richiedere ribilanciamento pre-Phase C?"
+    },
+    {
+      "id": "Q12",
+      "topic": "Post E1+E2 CLOSED: autorizzare Phase C Tech Dry-Run (proficiency runtime + class_slug migration + ILVL endgame implementation)?"
+    },
+    {
+      "id": "Q13",
+      "topic": "Balance pass considera stat scaling narrativi (damage, crit, armor, block) OK o richiede analisi dedicata anche su queste dimensioni secondarie?"
+    },
+    {
+      "id": "Q14",
+      "topic": "Autorizzare PRD.md append 'R18.5 Phase E1 CLOSED' post-review + GO E2 (NON auto-eseguito)?"
+    },
+    {
+      "id": "Q15",
+      "topic": "R18.6 Class Halls kickoff: mantenere PLANNED / HOLD UNTIL E1+E2+Phase C CLOSED?"
+    }
+  ],
+  "governance_check_step20": {
+    "sealed_files_36_hash_byte_identical": "VERIFIED (pytest 6/6 pre-write; da ri-verificare post-write)",
+    "db_writes": "ZERO",
+    "code_changes_py_js_jsx_tsx_ts": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "item_table_d1_d5_modification": "ZERO (E1 read-only sui dati input)",
+    "hard_delete": "ZERO",
+    "runtime_bridge_activation": "ZERO",
+    "class_slug_migration": "ZERO",
+    "proficiency_runtime_enforcement": "ZERO",
+    "anti_p2w_runtime_validator": "ZERO",
+    "e2_auto_start": "BLOCKED (STOP after E1, PM review required)",
+    "phase_c_auto_start": "BLOCKED (HOLD UNTIL E1+E2 CLOSED)",
+    "r18_6_auto_start": "BLOCKED (PLANNED, HOLD UNTIL R18.5 COMPLETE)",
+    "marketing_brief_auto_start": "BLOCKED (DEFERRED)",
+    "recommended_fixes_auto_apply": "BLOCKED (NO auto-apply, PM approval required in blocco or case-by-case)",
+    "classi_canoniche_verbatim": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "pm_autonomous_decision_new": "ZERO (recommended_fixes sono PROPOSTE, no auto-apply)",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_e1": {
+    "auto_transition_next_gate": false,
+    "prd_append_e1_closed_auto": false,
+    "note": "STOP dopo E1. Attendo PM review recommended_fixes + GO esplicito prima di E2 Naming Pass. Post-E1 NON parte automaticamente: E2 (HOLD UNTIL E1 REVIEW), Phase C (HOLD UNTIL E1+E2 CLOSED), R18.6 (PLANNED), Marketing (DEFERRED)."
+  }
+}

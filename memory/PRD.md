@@ -1645,3 +1645,80 @@ Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere
 **R18.5 status flow (aggiornato post-STEP 17)**:
 `Phase A→C0-octies Batch 5` ✅ CLOSED → `STEP 8-16` ✅ CLOSED → **`Phase D4 T4×300 (STEP 17)`** ✅ **CLOSED (slug drift documented, deferred naming pass post-D5)** → **`Phase D5 T5×200 ENDGAME (STEP 18)`** 🟡 **IN AGENDA (chain autorizzata)** → `Post-D5 gates` 🔒 PENDING PM decision (balance pass · naming pass globale · Phase C tech dry-run · R18.6 kickoff · Marketing brief) / `R18.6 Class Halls` 🔒 HOLD UNTIL R18.5 COMPLETE
 
+
+---
+
+## R18.5 Phase D5 CLOSED + 🎉 CATALOGO 1500/1500 COMPLETE (2026-07-07T18:00:00Z)
+
+**Milestone**: **R18.5 CATALOGO ITEMS 1500/1500 COMPLETO** ✅ — chiusura ciclo Phase D0-D5 (T1-T5) verbatim PM-locked.
+
+**Deliverables**:
+- `/app/memory/r18_5_phase_d5_t5_item_table.md` (508 righe · SHA256 `a38eb2615546a2c2d6cb713b9f7b706c9dacfb885d010193ec0f38182b758379`)
+- `/app/memory/r18_5_phase_d5_t5_item_table.json` (5832 righe · SHA256 `58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e`)
+
+**Decisioni PM verbatim (post-STEP 18)**:
+- **Q1=A**: Ergolat accepted per HYBRID H3 (`ergolat-obelisk-focus`). Vuoto retained via L2 `void-touched-blade`.
+- **Q2=A**: 200 items T5 APPROVED in blocco (i 4 progressive Legendary placeholders sono APPROVED come slot narrativi/documentali, versioni finali PENDING PM).
+- **Q3=A**: 15 Open Questions D5 approved as documented.
+- **PRD append D5 CLOSED**: GO now (questo blocco).
+- **NEXT GATE strategy**: **A→B→C** (Balance → Naming → Tech Dry-Run). GO immediato solo E1.
+
+**Numeri finali D5**:
+- 200 items T5 Lv56-60 · Rarity **0/0/70/115/15** (Common/Uncommon/Rare/Epic/Legendary) EXACT MATCH
+- 40 items per classe (Warrior/Rogue/Mage/Priest/Ranger) · 23 Epic per classe · 3 Legendary per classe · 14 Rare per classe
+- 15 Legendary APPROVED as design candidates:
+  - **7 chain** (dragonlord-crown W, void-touched-blade R, seraph-halo-crown P, worldroot-scepter Ra, ambash-forge-hammer W, dragon-elder-scale W, sole-nero-diadem M)
+  - **4 HYBRID pre-allocated** (celestial-conclave-mantle P Celeste, irthe-price-shroud R Irthe, ergolat-obelisk-focus M **Ergolat accepted per Q1=A no-repeat Vuoto**, halodi-fate-quiver Ra Halodi)
+  - **4 PROGRESSIVE placeholders APPROVED as narrative/documental slots** — versioni finali PENDING PM (progressive-slot-01 M Memoria, 02 P Luna Morta, 03 R Ciclo delle anime, 04 Ra Greatwood/Elfwood)
+- **Ergolat accepted for H3** (`ergolat-obelisk-focus`), Vuoto retained through L2 `void-touched-blade` (no-repeat lore-source su Legendary)
+- 20 items craft NPC (5 LOCKED × 4) · 0 nuovi NPC autonomi · 24 achievement/ranking/quest/vendor · 85 dungeon B5 drop · 61 raid drop · 10 Elite drop
+- **Proficiency HARD verified 200/200** inclusi Legendary (Priest scudo/piastre/cuoio/maglia = 0 usi propagato post-Q6 D3 lesson)
+- **Anti-P2W verified 200/200** (`can_be_sold_for_real_money=false`)
+- **Weapon backlog RESERVED**: `strumento`/`falce`/`trinket_backlog` = 0 usi
+- **Legendary bind-on-pickup 15/15**, `is_tradeable=false` 15/15, `can_be_sold_for_gold=false` 15/15
+- Lore capstone T5: **22/22 lore coverage** (11 LIVE capstone T5, 4 progressive PENDING PM, 7 chiuse pre-D5 con variety watch rispettata)
+- Iconic-family split 3-way: 69 pure_evolutions T4→T5 · 0 intra-extensions · 131 free/new T5 endgame
+
+### 🎉 R18.5 CATALOGO ITEMS 1500/1500 COMPLETE — Aritmetica cumulative EXACT
+
+| Rarity | D1 (300) | D2 (350) | D3 (350) | D4 (300) | D5 (200) | **Totale** | Target |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Common | 220 | 150 | 30 | 0 | 0 | **400** | 400 ✅ |
+| Uncommon | 80 | 150 | 160 | 60 | 0 | **450** | 450 ✅ |
+| Rare | 0 | 50 | 130 | 150 | 70 | **400** | 400 ✅ |
+| Epic | 0 | 0 | 30 | 90 | 115 | **235** | 235 ✅ |
+| Legendary | 0 | 0 | 0 | 0 | 15 | **15** | 15 ✅ (cap catalog RAGGIUNTO) |
+| **TOTALE tier** | 300 | 350 | 350 | 300 | 200 | **1500** | 1500 ✅ **EXACT** |
+
+**Rarity cumulative EXACT verbatim PM-locked**: **400/450/400/235/15** ✅
+
+### Governance R18.5 Phase D5 CLOSED
+
+- **36 seals byte-identical** (pytest 6/6 PASSED pre + post write)
+- **Zero DB writes** / **zero code changes** `.py/.js/.jsx/.tsx/.ts` / **zero migrations** / **zero drop table apply** / **zero economy changes** / `lore_meta.py` **invariato** / **zero sealed file modification** / **zero hard delete** / **zero runtime bridge** / **zero class_slug migration** / **zero proficiency runtime enforcement** / **zero anti-P2W runtime validator implementation**
+- **Proficiency HARD verified 200/200** inclusi 15 Legendary (post-Q6 D3 lesson propagata)
+- **Zero R18.6 code implementation** (roadmap docs only)
+- Balance pass deferred **next step E1** (AUTHORIZED post-STEP 19). Naming pass deferred **next step E2** (PLANNED / HOLD UNTIL E1 REVIEW). Phase C Tech Dry-Run **HOLD UNTIL E1+E2 CLOSED**.
+
+### File touch D5
+
+- `r18_5_phase_d5_t5_item_table.md/.json` (NUOVI)
+- `PRD.md` (append CLOSED + milestone 1500/1500, questo aggiornamento)
+
+### NEXT GATE strategy (PM lockato post-D5 approval)
+
+| Gate | Status |
+|---|---|
+| **R18.5 Phase E1 Global Balance Pass** | 🟡 **AUTHORIZED** (in progress after STEP 19 — STEP 20 catena) |
+| **R18.5 Phase E2 Global Naming Pass** | 🔒 **PLANNED / HOLD UNTIL E1 REVIEW** |
+| **R18.5 Phase C Tech Dry-Run** (proficiency runtime + class_slug migration + ILVL endgame implementation) | 🔒 **HOLD UNTIL E1+E2 CLOSED** |
+| **R18.6 Class Halls, Classless Start & Adventurer Identity** | 🔒 **PLANNED** (invariato, hold until R18.5 complete inclusi E1+E2+C) |
+| **Marketing Brief** | 🔒 **DEFERRED** |
+
+**Rationale strategy A→B→C (PM verbatim)**: Balance pass (E1) prima di Naming pass (E2) — outlier stat/scaling identificati devono essere risolti prima di consolidare naming; entrambi obbligatori prima di aprire Phase C tech dry-run (registry/apply/drop table); R18.6 hold until R18.5 tutto completato.
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 19)**:
+`Phase A→C0-octies Batch 5` ✅ CLOSED → `STEP 8-16` ✅ CLOSED → `Phase D4 T4×300 (STEP 17)` ✅ CLOSED → `Phase D5 T5×200 ENDGAME (STEP 18)` ✅ **CLOSED (Q1-Q3=A approved)** → **`🎉 R18.5 CATALOGO 1500/1500 COMPLETE`** ✅ **MILESTONE (STEP 19)** → **`Phase E1 Global Balance Pass (STEP 20)`** 🟡 **AUTHORIZED (chain autorizzata, in progress)** → `Phase E2 Global Naming Pass` 🔒 PLANNED / HOLD UNTIL E1 REVIEW → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E1+E2 CLOSED / `R18.6 Class Halls` 🔒 PLANNED (invariato) / `Marketing Brief` 🔒 DEFERRED
+
