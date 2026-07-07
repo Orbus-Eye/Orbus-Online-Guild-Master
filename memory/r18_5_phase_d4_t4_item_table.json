@@ -2374,7 +2374,7 @@
       "rarity": "Epic",
       "tier": "T4",
       "main_stat_target": "STR",
-      "stat_principali": "STR +19, END +18, fire res +14%, armor +24, ember-throne-teaser +1",
+      "stat_principali": "STR +27, END +18, fire res +14%, armor +24, ember-throne-teaser +1",
       "lore_source": "Infernale",
       "source": "emberking-siege raid: Guardiano Trono boss drop",
       "affects_combat": true,

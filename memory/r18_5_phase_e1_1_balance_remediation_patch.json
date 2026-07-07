@@ -1,0 +1,842 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "E1.1 — Balance Remediation Patch (STEP 21)",
+    "step": "STEP 21",
+    "locked_at_utc": "2026-07-07T18:47:55.905619+00:00",
+    "governance": "DOCUMENTAL ONLY — micro-eccezione autorizzata PM su file item table D1-D4 (.json). Preserva 1500/1500, rarity, class, anti-P2W, tier, source. NO code/DB/migrations/sealed.",
+    "status": "APPLIED",
+    "authority": "PM Orchestrator — STEP 21 catena autorizzata post-E1 approval",
+    "deliverable_md": "/app/memory/r18_5_phase_e1_1_balance_remediation_patch.md",
+    "deliverable_json": "/app/memory/r18_5_phase_e1_1_balance_remediation_patch.json"
+  },
+  "sezione_1_high_fixes_4": [
+    {
+      "item_id": "priest-blessed-dagger",
+      "phase": "D1",
+      "before": {
+        "weapon_family": "pugnale",
+        "nome_it": "Pugnale Benedetto",
+        "stat_principali": "WIS +2, damage 3-5, heal +2"
+      },
+      "after": {
+        "weapon_family": "reliquia",
+        "nome_it": "Reliquia Benedetta",
+        "stat_principali": "WIS +2, heal +3, mana +4"
+      },
+      "note": "HIGH#1 (T1): Priest pugnale non in proficiency -> reliquia (PM preferenza esplicita, mantiene identità sacra). Drop damage (reliquia non è arma da colpo), aggiungo mana. Item_id preservato per tracking."
+    },
+    {
+      "item_id": "priest-blessed-dagger-t2",
+      "phase": "D2",
+      "before": {
+        "weapon_family": "pugnale",
+        "nome_it": "Pugnale Benedetto T2",
+        "stat_principali": "WIS +4, damage 4-7, heal +3"
+      },
+      "after": {
+        "weapon_family": "reliquia",
+        "nome_it": "Reliquia Benedetta T2",
+        "stat_principali": "WIS +4, heal +5, mana +7"
+      },
+      "note": "HIGH#2 (T2): idem propagato T2."
+    },
+    {
+      "item_id": "rogue-soulforged-shortbow",
+      "phase": "D3",
+      "before": {
+        "weapon_family": "arco",
+        "nome_it": "Arco Corto Forgiato d'Anima",
+        "stat_principali": "AGI +12, damage 18-23, crit +3%"
+      },
+      "after": {
+        "weapon_family": "balestra",
+        "nome_it": "Balestra Forgiata d'Anima",
+        "stat_principali": "AGI +12, damage 18-23, range +3, crit +3%"
+      },
+      "note": "HIGH#3 (T3): Rogue arco non in proficiency -> balestra (mantiene identità ombra/ranged, no shift a Ranger). Aggiungo range (pattern balestra). Item_id preservato."
+    },
+    {
+      "item_id": "rogue-soulforged-shortbow-master",
+      "phase": "D3",
+      "before": {
+        "weapon_family": "arco",
+        "nome_it": "Arco Corto Forgiato d'Anima Maestro",
+        "stat_principali": "AGI +18, damage 26-33, crit +5%, soul res +4%"
+      },
+      "after": {
+        "weapon_family": "balestra",
+        "nome_it": "Balestra Forgiata d'Anima Maestro",
+        "stat_principali": "AGI +18, damage 26-33, range +4, crit +5%, soul res +4%"
+      },
+      "note": "HIGH#4 (T3): idem propagato variante master."
+    }
+  ],
+  "sezione_2_medium_outlier_fixes_16": [
+    {
+      "item_id": "warrior-ironrecruit-warblade",
+      "phase": "D1",
+      "category": "power_creep_intra_tier",
+      "before": {
+        "stat_principali": "STR +4, damage 6-10"
+      },
+      "after": {
+        "stat_principali": "STR +3, damage 6-10"
+      },
+      "note": "MEDIUM#1 (T1 Common Warrior): STR 4->3 (verso pool_mean 2, z<2.5)."
+    },
+    {
+      "item_id": "warrior-guard-halberd",
+      "phase": "D1",
+      "category": "power_creep_intra_tier",
+      "before": {
+        "stat_principali": "STR +5, damage 8-12, reach +1"
+      },
+      "after": {
+        "stat_principali": "STR +4, damage 8-12, reach +1"
+      },
+      "note": "MEDIUM#2 (T1 Uncommon Warrior): STR 5->4 (verso pool_mean 3.36, z<2.5)."
+    },
+    {
+      "item_id": "warrior-heavy-belt-t2",
+      "phase": "D2",
+      "category": "underpowered_intra_tier",
+      "before": {
+        "stat_principali": "STR +2, END +3, hp +10"
+      },
+      "after": {
+        "stat_principali": "STR +4, END +3, hp +10"
+      },
+      "note": "MEDIUM#3 (T2 Common Warrior): STR 2->4 (verso pool_mean 4.67)."
+    },
+    {
+      "item_id": "warrior-ergolat-siege-commander-plate",
+      "phase": "D3",
+      "category": "underpowered_intra_tier",
+      "before": {
+        "stat_principali": "STR +14, END +13, armor +17, siege banner +1"
+      },
+      "after": {
+        "stat_principali": "STR +22, END +13, armor +17, siege banner +1"
+      },
+      "note": "MEDIUM#4 (T3 Epic Warrior): STR 14->22 (verso pool_mean 23.3, no cambio siege banner utility)."
+    },
+    {
+      "item_id": "warrior-t4-emberking-siege-boss",
+      "phase": "D4",
+      "category": "underpowered_intra_tier",
+      "before": {
+        "stat_principali": "STR +19, END +18, fire res +14%, armor +24, ember-throne-teaser +1"
+      },
+      "after": {
+        "stat_principali": "STR +27, END +18, fire res +14%, armor +24, ember-throne-teaser +1"
+      },
+      "note": "MEDIUM#5 (T4 Epic Warrior): STR 19->27 (verso pool_mean 28.67)."
+    },
+    {
+      "item_id": "warrior-black-forge-master-hammer",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "STR +25, damage 37-46, armor pierce +8%, forge-summon +1"
+      },
+      "after": {
+        "stat_principali": "STR +24, damage 37-46, armor pierce +8%, forge-summon +1"
+      },
+      "note": "MEDIUM#6 (T3 Epic Warrior): STR 25->24 (rientra sotto T4 mean*1.10=24.53)."
+    },
+    {
+      "item_id": "rogue-wraith-warden-boss-dagger",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "AGI +25, damage 34-44, crit +8%, soul res +12%, dispell-chain +1"
+      },
+      "after": {
+        "stat_principali": "AGI +24, damage 34-44, crit +8%, soul res +12%, dispell-chain +1"
+      },
+      "note": "MEDIUM#7 (T3 Epic Rogue): AGI 25->24."
+    },
+    {
+      "item_id": "rogue-soul-abyss-ancestral-dagger",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "AGI +26, damage 35-45, crit +9%, soul res +12%, mass-soulbind-release +1"
+      },
+      "after": {
+        "stat_principali": "AGI +24, damage 35-45, crit +9%, soul res +12%, mass-soulbind-release +1"
+      },
+      "note": "MEDIUM#8 (T3 Epic Rogue): AGI 26->24."
+    },
+    {
+      "item_id": "mage-observatory-blind-astronomer-staff",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "INT +25, magic damage 34-44, arcane +14, interrupt +6, star-alignment-teaser +1"
+      },
+      "after": {
+        "stat_principali": "INT +24, magic damage 34-44, arcane +14, interrupt +6, star-alignment-teaser +1"
+      },
+      "note": "MEDIUM#9 (T3 Epic Mage): INT 25->24."
+    },
+    {
+      "item_id": "mage-celestial-seraph-staff",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "INT +26, magic damage 35-45, light +14, mana +33, light-shadow-alternate-teaser +1"
+      },
+      "after": {
+        "stat_principali": "INT +24, magic damage 35-45, light +14, mana +33, light-shadow-alternate-teaser +1"
+      },
+      "note": "MEDIUM#10 (T3 Epic Mage): INT 26->24."
+    },
+    {
+      "item_id": "priest-necropolis-guardian-mace",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "WIS +25, heal +20, mana +30, holy +13, undead-slaying +10, resurrect-phase-teaser +1"
+      },
+      "after": {
+        "stat_principali": "WIS +24, heal +20, mana +30, holy +13, undead-slaying +10, resurrect-phase-teaser +1"
+      },
+      "note": "MEDIUM#11 (T3 Epic Priest): WIS 25->24."
+    },
+    {
+      "item_id": "priest-heretic-archbishop-mace",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "WIS +26, heal +21, mana +30, holy +14, dispell +8, dispell-phase-teaser +1"
+      },
+      "after": {
+        "stat_principali": "WIS +24, heal +21, mana +30, holy +14, dispell +8, dispell-phase-teaser +1"
+      },
+      "note": "MEDIUM#12 (T3 Epic Priest): WIS 26->24."
+    },
+    {
+      "item_id": "priest-souldrain-ancestor-mace",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "WIS +25, heal +19, mana +29, soul res +14%, dispell +9, mass-soulbind-release-teaser +1"
+      },
+      "after": {
+        "stat_principali": "WIS +24, heal +19, mana +29, soul res +14%, dispell +9, mass-soulbind-release-teaser +1"
+      },
+      "note": "MEDIUM#13 (T3 Epic Priest): WIS 25->24."
+    },
+    {
+      "item_id": "ranger-wyrmscale-vermeide-bow",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "AGI +26, damage 35-45, fire +14, range +5, dragon-roar-teaser +1"
+      },
+      "after": {
+        "stat_principali": "AGI +24, damage 35-45, fire +14, range +5, dragon-roar-teaser +1"
+      },
+      "note": "MEDIUM#14 (T3 Epic Ranger): AGI 26->24."
+    },
+    {
+      "item_id": "ranger-wraith-warden-boss-bow",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "AGI +25, damage 34-44, soul res +12%, range +5, chain-dispell-teaser +1"
+      },
+      "after": {
+        "stat_principali": "AGI +24, damage 34-44, soul res +12%, range +5, chain-dispell-teaser +1"
+      },
+      "note": "MEDIUM#15 (T3 Epic Ranger): AGI 25->24."
+    },
+    {
+      "item_id": "ranger-souldrain-ancestor-bow",
+      "phase": "D3",
+      "category": "power_creep_cross_tier",
+      "before": {
+        "stat_principali": "AGI +26, damage 35-45, soul res +13%, range +5, mass-soulbind-release-teaser +1"
+      },
+      "after": {
+        "stat_principali": "AGI +24, damage 35-45, soul res +13%, range +5, mass-soulbind-release-teaser +1"
+      },
+      "note": "MEDIUM#16 (T3 Epic Ranger): AGI 26->24."
+    }
+  ],
+  "sezione_2_bis_pending_pm_6_progressive_hint": [
+    {
+      "item_id": "warrior-t4-legendary-emberking-crown-hint",
+      "phase": "T4",
+      "classe": "Warrior",
+      "reason": "STR=18 vs pool_mean 28.67, z=-3.06. Design intent: \"LEGENDARY-hint teaser emberking-crown\" progressive marker sub-Epic voluto per anticipare Legendary T5 (bracket Infernale saturato in D4). Fix richiederebbe rework utility (rimuovere sub-Epic tag) o promozione rarity Rare -> creativa. Marca PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    },
+    {
+      "item_id": "warrior-t4-legendary-void-touched-hint",
+      "phase": "T4",
+      "classe": "Warrior",
+      "reason": "STR=18 sub-Epic, hint T4 progressive verso L2 void-touched-blade T5 Rogue Legendary approved. Sub-Epic voluto per anticipare narrative Legendary T5. PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    },
+    {
+      "item_id": "rogue-t4-legendary-soul-abyss-hint",
+      "phase": "T4",
+      "classe": "Rogue",
+      "reason": "AGI=18 sub-Epic, hint T4 progressive verso soul-bind Rogue Legendary future (P3 D5 progressive placeholder). Sub-Epic voluto. PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    },
+    {
+      "item_id": "mage-t4-legendary-void-warlock-hint",
+      "phase": "T4",
+      "classe": "Mage",
+      "reason": "INT=18 sub-Epic, hint T4 progressive verso L2 void-touched-blade T5 Rogue Legendary approved (cross-class hint). Sub-Epic voluto. PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    },
+    {
+      "item_id": "priest-t4-legendary-celestial-halo-hint",
+      "phase": "T4",
+      "classe": "Priest",
+      "reason": "WIS=18 sub-Epic, hint T4 progressive verso L3 seraph-halo-crown T5 Priest Legendary approved. Sub-Epic voluto. PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    },
+    {
+      "item_id": "priest-t4-legendary-resurrect-hint",
+      "phase": "T4",
+      "classe": "Priest",
+      "reason": "WIS=17 sub-Epic, hint T4 progressive verso P2 progressive-slot-02 T5 Priest Legendary resurrection future. Sub-Epic voluto. PENDING PM.",
+      "status": "PENDING PM — decisione creativa richiesta (design intent progressive marker sub-Epic)"
+    }
+  ],
+  "sezione_3_item_table_files_modified": {
+    "files_modified": [
+      "D1",
+      "D2",
+      "D3",
+      "D4"
+    ],
+    "sha256_before": {
+      "D1": "2ac54bed298b1562902a8264f7094fcce0a152eed699b26c0e1152fc4c10721d",
+      "D2": "bb0db9ca28d5b954c2f8e6d9ecdb13eb7d307586c30ee49b3bb948a49a4344e2",
+      "D3": "27cf0003da4fba1c510786d224bcff0e0b97d075093da44b2b16e0c07f248cf1",
+      "D4": "1dc870fad0fd4fe71e9f6fd76f8b10990ee45e9bef5d4d9b486925199965edc0",
+      "D5": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e"
+    },
+    "sha256_after": {
+      "D1": "6058ae78b337c596d6ae3a94550dda90e20b4b5da284724e1481c3ffd8b1ddff",
+      "D2": "e246f2773b8584772766124cd323358d3a750a1be853d0777d92eead3a2de6d5",
+      "D3": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44",
+      "D4": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb",
+      "D5": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e"
+    },
+    "sha256_changed_only": {
+      "D3": {
+        "before": "27cf0003da4fba1c510786d224bcff0e0b97d075093da44b2b16e0c07f248cf1",
+        "after": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44"
+      },
+      "D2": {
+        "before": "bb0db9ca28d5b954c2f8e6d9ecdb13eb7d307586c30ee49b3bb948a49a4344e2",
+        "after": "e246f2773b8584772766124cd323358d3a750a1be853d0777d92eead3a2de6d5"
+      },
+      "D4": {
+        "before": "1dc870fad0fd4fe71e9f6fd76f8b10990ee45e9bef5d4d9b486925199965edc0",
+        "after": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb"
+      },
+      "D1": {
+        "before": "2ac54bed298b1562902a8264f7094fcce0a152eed699b26c0e1152fc4c10721d",
+        "after": "6058ae78b337c596d6ae3a94550dda90e20b4b5da284724e1481c3ffd8b1ddff"
+      }
+    }
+  },
+  "sezione_4_item_count_post_fix": {
+    "total": 1500,
+    "target": 1500,
+    "status": "EXACT 1500/1500",
+    "per_phase": {
+      "D1": 300,
+      "D2": 350,
+      "D3": 350,
+      "D4": 300,
+      "D5": 200
+    }
+  },
+  "sezione_5_rarity_post_fix": {
+    "counts": {
+      "common": 400,
+      "uncommon": 450,
+      "rare": 400,
+      "epic": 235,
+      "legendary": 15
+    },
+    "target": {
+      "common": 400,
+      "uncommon": 450,
+      "rare": 400,
+      "epic": 235,
+      "legendary": 15
+    },
+    "status": "EXACT 400/450/400/235/15"
+  },
+  "sezione_6_class_distribution_post_fix": {
+    "counts": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "target": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "status": "EXACT 300x5"
+  },
+  "sezione_7_proficiency_violations_post_fix": {
+    "violations": [],
+    "count": 0,
+    "target": 0,
+    "status": "CLEAN 0 violations"
+  },
+  "sezione_8_anti_p2w_post_fix": {
+    "violations": [],
+    "count": 0,
+    "target": 0,
+    "status": "PASSED 1500/1500"
+  },
+  "sezione_9_sha256_files_modified_detail": {
+    "D1": {
+      "path": "/app/memory/r18_5_phase_d1_t1_item_table.json",
+      "sha256_before_e1_1": "2ac54bed298b1562902a8264f7094fcce0a152eed699b26c0e1152fc4c10721d",
+      "sha256_after_e1_1": "6058ae78b337c596d6ae3a94550dda90e20b4b5da284724e1481c3ffd8b1ddff",
+      "changed": true
+    },
+    "D2": {
+      "path": "/app/memory/r18_5_phase_d2_t2_item_table.json",
+      "sha256_before_e1_1": "bb0db9ca28d5b954c2f8e6d9ecdb13eb7d307586c30ee49b3bb948a49a4344e2",
+      "sha256_after_e1_1": "e246f2773b8584772766124cd323358d3a750a1be853d0777d92eead3a2de6d5",
+      "changed": true
+    },
+    "D3": {
+      "path": "/app/memory/r18_5_phase_d3_t3_item_table.json",
+      "sha256_before_e1_1": "27cf0003da4fba1c510786d224bcff0e0b97d075093da44b2b16e0c07f248cf1",
+      "sha256_after_e1_1": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44",
+      "changed": true
+    },
+    "D4": {
+      "path": "/app/memory/r18_5_phase_d4_t4_item_table.json",
+      "sha256_before_e1_1": "1dc870fad0fd4fe71e9f6fd76f8b10990ee45e9bef5d4d9b486925199965edc0",
+      "sha256_after_e1_1": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb",
+      "changed": true
+    },
+    "D5": {
+      "path": "/app/memory/r18_5_phase_d5_t5_item_table.json",
+      "sha256_before_e1_1": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "sha256_after_e1_1": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "changed": false
+    }
+  },
+  "sezione_10_sealed_integrity_result": "PENDING external pytest run (STEP 21 verify post-write)",
+  "sezione_11_git_status": "PENDING external git status (STEP 21 verify post-write)",
+  "sezione_12_pending_pm_residuals": {
+    "total_pending": 6,
+    "items": [
+      {
+        "item_id": "warrior-t4-legendary-emberking-crown-hint",
+        "phase": "T4",
+        "classe": "Warrior",
+        "reason": "STR=18 vs pool_mean 28.67, z=-3.06. Design intent: \"LEGENDARY-hint teaser emberking-crown\" progressive marker sub-Epic voluto per anticipare Legendary T5 (bracket Infernale saturato in D4). Fix richiederebbe rework utility (rimuovere sub-Epic tag) o promozione rarity Rare -> creativa. Marca PENDING PM."
+      },
+      {
+        "item_id": "warrior-t4-legendary-void-touched-hint",
+        "phase": "T4",
+        "classe": "Warrior",
+        "reason": "STR=18 sub-Epic, hint T4 progressive verso L2 void-touched-blade T5 Rogue Legendary approved. Sub-Epic voluto per anticipare narrative Legendary T5. PENDING PM."
+      },
+      {
+        "item_id": "rogue-t4-legendary-soul-abyss-hint",
+        "phase": "T4",
+        "classe": "Rogue",
+        "reason": "AGI=18 sub-Epic, hint T4 progressive verso soul-bind Rogue Legendary future (P3 D5 progressive placeholder). Sub-Epic voluto. PENDING PM."
+      },
+      {
+        "item_id": "mage-t4-legendary-void-warlock-hint",
+        "phase": "T4",
+        "classe": "Mage",
+        "reason": "INT=18 sub-Epic, hint T4 progressive verso L2 void-touched-blade T5 Rogue Legendary approved (cross-class hint). Sub-Epic voluto. PENDING PM."
+      },
+      {
+        "item_id": "priest-t4-legendary-celestial-halo-hint",
+        "phase": "T4",
+        "classe": "Priest",
+        "reason": "WIS=18 sub-Epic, hint T4 progressive verso L3 seraph-halo-crown T5 Priest Legendary approved. Sub-Epic voluto. PENDING PM."
+      },
+      {
+        "item_id": "priest-t4-legendary-resurrect-hint",
+        "phase": "T4",
+        "classe": "Priest",
+        "reason": "WIS=17 sub-Epic, hint T4 progressive verso P2 progressive-slot-02 T5 Priest Legendary resurrection future. Sub-Epic voluto. PENDING PM."
+      }
+    ],
+    "governance": "Nessuna decisione autonoma. Fix richiederebbero rework utility o promozione rarity (decisione creativa PM). Documentati come PENDING per gate futuro."
+  },
+  "audit_log_apply": [
+    {
+      "item_id": "warrior-ironrecruit-warblade",
+      "phase": "D1",
+      "severity": "MEDIUM",
+      "category": "power_creep_intra_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +4, damage 6-10",
+          "STR +3, damage 6-10"
+        ]
+      },
+      "note": "MEDIUM#1 (T1 Common Warrior): STR 4->3 (verso pool_mean 2, z<2.5).",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "warrior-guard-halberd",
+      "phase": "D1",
+      "severity": "MEDIUM",
+      "category": "power_creep_intra_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +5, damage 8-12, reach +1",
+          "STR +4, damage 8-12, reach +1"
+        ]
+      },
+      "note": "MEDIUM#2 (T1 Uncommon Warrior): STR 5->4 (verso pool_mean 3.36, z<2.5).",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "priest-blessed-dagger",
+      "phase": "D1",
+      "severity": "HIGH",
+      "category": "HIGH_proficiency",
+      "field_changes": {
+        "weapon_family": [
+          "pugnale",
+          "reliquia"
+        ],
+        "nome_it": [
+          "Pugnale Benedetto",
+          "Reliquia Benedetta"
+        ],
+        "stat_principali": [
+          "WIS +2, damage 3-5, heal +2",
+          "WIS +2, heal +3, mana +4"
+        ]
+      },
+      "note": "HIGH#1 (T1): Priest pugnale non in proficiency -> reliquia (PM preferenza esplicita, mantiene identità sacra). Drop damage (reliquia non è arma da colpo), aggiungo mana. Item_id preservato per tracking.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "warrior-heavy-belt-t2",
+      "phase": "D2",
+      "severity": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +2, END +3, hp +10",
+          "STR +4, END +3, hp +10"
+        ]
+      },
+      "note": "MEDIUM#3 (T2 Common Warrior): STR 2->4 (verso pool_mean 4.67).",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "priest-blessed-dagger-t2",
+      "phase": "D2",
+      "severity": "HIGH",
+      "category": "HIGH_proficiency",
+      "field_changes": {
+        "weapon_family": [
+          "pugnale",
+          "reliquia"
+        ],
+        "nome_it": [
+          "Pugnale Benedetto T2",
+          "Reliquia Benedetta T2"
+        ],
+        "stat_principali": [
+          "WIS +4, damage 4-7, heal +3",
+          "WIS +4, heal +5, mana +7"
+        ]
+      },
+      "note": "HIGH#2 (T2): idem propagato T2.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "warrior-black-forge-master-hammer",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +25, damage 37-46, armor pierce +8%, forge-summon +1",
+          "STR +24, damage 37-46, armor pierce +8%, forge-summon +1"
+        ]
+      },
+      "note": "MEDIUM#6 (T3 Epic Warrior): STR 25->24 (rientra sotto T4 mean*1.10=24.53).",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "warrior-ergolat-siege-commander-plate",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +14, END +13, armor +17, siege banner +1",
+          "STR +22, END +13, armor +17, siege banner +1"
+        ]
+      },
+      "note": "MEDIUM#4 (T3 Epic Warrior): STR 14->22 (verso pool_mean 23.3, no cambio siege banner utility).",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "rogue-soulforged-shortbow",
+      "phase": "D3",
+      "severity": "HIGH",
+      "category": "HIGH_proficiency",
+      "field_changes": {
+        "weapon_family": [
+          "arco",
+          "balestra"
+        ],
+        "nome_it": [
+          "Arco Corto Forgiato d'Anima",
+          "Balestra Forgiata d'Anima"
+        ],
+        "stat_principali": [
+          "AGI +12, damage 18-23, crit +3%",
+          "AGI +12, damage 18-23, range +3, crit +3%"
+        ]
+      },
+      "note": "HIGH#3 (T3): Rogue arco non in proficiency -> balestra (mantiene identità ombra/ranged, no shift a Ranger). Aggiungo range (pattern balestra). Item_id preservato.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "rogue-soulforged-shortbow-master",
+      "phase": "D3",
+      "severity": "HIGH",
+      "category": "HIGH_proficiency",
+      "field_changes": {
+        "weapon_family": [
+          "arco",
+          "balestra"
+        ],
+        "nome_it": [
+          "Arco Corto Forgiato d'Anima Maestro",
+          "Balestra Forgiata d'Anima Maestro"
+        ],
+        "stat_principali": [
+          "AGI +18, damage 26-33, crit +5%, soul res +4%",
+          "AGI +18, damage 26-33, range +4, crit +5%, soul res +4%"
+        ]
+      },
+      "note": "HIGH#4 (T3): idem propagato variante master.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "rogue-wraith-warden-boss-dagger",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "AGI +25, damage 34-44, crit +8%, soul res +12%, dispell-chain +1",
+          "AGI +24, damage 34-44, crit +8%, soul res +12%, dispell-chain +1"
+        ]
+      },
+      "note": "MEDIUM#7 (T3 Epic Rogue): AGI 25->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "rogue-soul-abyss-ancestral-dagger",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "AGI +26, damage 35-45, crit +9%, soul res +12%, mass-soulbind-release +1",
+          "AGI +24, damage 35-45, crit +9%, soul res +12%, mass-soulbind-release +1"
+        ]
+      },
+      "note": "MEDIUM#8 (T3 Epic Rogue): AGI 26->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "mage-observatory-blind-astronomer-staff",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "INT +25, magic damage 34-44, arcane +14, interrupt +6, star-alignment-teaser +1",
+          "INT +24, magic damage 34-44, arcane +14, interrupt +6, star-alignment-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#9 (T3 Epic Mage): INT 25->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "mage-celestial-seraph-staff",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "INT +26, magic damage 35-45, light +14, mana +33, light-shadow-alternate-teaser +1",
+          "INT +24, magic damage 35-45, light +14, mana +33, light-shadow-alternate-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#10 (T3 Epic Mage): INT 26->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "priest-necropolis-guardian-mace",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "WIS +25, heal +20, mana +30, holy +13, undead-slaying +10, resurrect-phase-teaser +1",
+          "WIS +24, heal +20, mana +30, holy +13, undead-slaying +10, resurrect-phase-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#11 (T3 Epic Priest): WIS 25->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "priest-heretic-archbishop-mace",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "WIS +26, heal +21, mana +30, holy +14, dispell +8, dispell-phase-teaser +1",
+          "WIS +24, heal +21, mana +30, holy +14, dispell +8, dispell-phase-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#12 (T3 Epic Priest): WIS 26->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "priest-souldrain-ancestor-mace",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "WIS +25, heal +19, mana +29, soul res +14%, dispell +9, mass-soulbind-release-teaser +1",
+          "WIS +24, heal +19, mana +29, soul res +14%, dispell +9, mass-soulbind-release-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#13 (T3 Epic Priest): WIS 25->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "ranger-wyrmscale-vermeide-bow",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "AGI +26, damage 35-45, fire +14, range +5, dragon-roar-teaser +1",
+          "AGI +24, damage 35-45, fire +14, range +5, dragon-roar-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#14 (T3 Epic Ranger): AGI 26->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "ranger-wraith-warden-boss-bow",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "AGI +25, damage 34-44, soul res +12%, range +5, chain-dispell-teaser +1",
+          "AGI +24, damage 34-44, soul res +12%, range +5, chain-dispell-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#15 (T3 Epic Ranger): AGI 25->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "ranger-souldrain-ancestor-bow",
+      "phase": "D3",
+      "severity": "MEDIUM",
+      "category": "power_creep_cross_tier",
+      "field_changes": {
+        "stat_principali": [
+          "AGI +26, damage 35-45, soul res +13%, range +5, mass-soulbind-release-teaser +1",
+          "AGI +24, damage 35-45, soul res +13%, range +5, mass-soulbind-release-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#16 (T3 Epic Ranger): AGI 26->24.",
+      "status": "APPLIED"
+    },
+    {
+      "item_id": "warrior-t4-emberking-siege-boss",
+      "phase": "D4",
+      "severity": "MEDIUM",
+      "category": "underpowered_intra_tier",
+      "field_changes": {
+        "stat_principali": [
+          "STR +19, END +18, fire res +14%, armor +24, ember-throne-teaser +1",
+          "STR +27, END +18, fire res +14%, armor +24, ember-throne-teaser +1"
+        ]
+      },
+      "note": "MEDIUM#5 (T4 Epic Warrior): STR 19->27 (verso pool_mean 28.67).",
+      "status": "APPLIED"
+    }
+  ],
+  "governance_check_step21": {
+    "sealed_files_36_hash_byte_identical": "PENDING pytest verify",
+    "db_writes": "ZERO",
+    "code_changes_py_js_jsx_tsx_ts": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO (nessun nuovo item)",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "item_table_modification_authorized": "AUTHORIZED (D1/D2/D3/D4 .json micro-eccezione PM)",
+    "item_id_changes": "ZERO (tutti gli item_id preservati)",
+    "rarity_changes": "ZERO",
+    "class_changes": "ZERO",
+    "tier_changes": "ZERO",
+    "lore_source_changes": "ZERO",
+    "source_changes": "ZERO (dungeon/raid/craft invariati)",
+    "anti_p2w_field_changes": "ZERO",
+    "utility_changes_new": "ZERO (utility esistenti preservate, no new utility introdotte)",
+    "catalog_1500_1500_preserved": true,
+    "e2_auto_start": "BLOCKED (STEP 22+23 catena PM approved solo)",
+    "phase_c_auto_start": "BLOCKED",
+    "r18_6_auto_start": "BLOCKED",
+    "classi_canoniche_verbatim": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "next_step_prep_step22": {
+    "action": "PRD.md append 'R18.5 Phase E1 CLOSED' post-STEP 21 OK",
+    "content_verbatim_pm": [
+      "E1 Global Balance Pass CLOSED",
+      "1500/1500 catalog verified post-remediation",
+      "4 HIGH proficiency violations fixed",
+      "22 stat outliers: 16 fixed + 6 tracked as PENDING PM",
+      "151 naming drift items deferred to E2",
+      "Progressive Legendary placeholders deferred to Phase C Tech Dry-Run / drop-table gate",
+      "Anti-P2W 1500/1500 preserved",
+      "Proficiency HARD BLOCK clean after fix (0 residual violations)",
+      "36 seals byte-identical",
+      "Zero DB/code/migrations"
+    ]
+  }
+}

@@ -1,0 +1,553 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "E2 — Global Naming Pass (STEP 23)",
+    "step": "STEP 23",
+    "locked_at_utc": "2026-07-07T18:53:13.649626+00:00",
+    "governance": "DOCUMENTAL ONLY — micro-eccezione autorizzata PM su file item table D1-D5 (.json) SOLO per fix naming (armor_type EN->IT). Preserva stat/balance (no changes unless typo-only), 1500/1500, rarity, class, anti-P2W, tier, source.",
+    "status": "APPLIED",
+    "authority": "PM Orchestrator — STEP 23 catena autorizzata post-STEP 22 E1 CLOSED",
+    "deliverable_md": "/app/memory/r18_5_phase_e2_global_naming_pass.md",
+    "deliverable_json": "/app/memory/r18_5_phase_e2_global_naming_pass.json"
+  },
+  "sezione_1_naming_drift_en_it_fixes": {
+    "total_fixes": 151,
+    "target_from_e1": 151,
+    "status": "EXACT MATCH",
+    "distribution_before_e2": {
+      "heavy Warrior -> piastre": 38,
+      "medium Warrior -> maglia": 17,
+      "medium Ranger -> maglia": 35,
+      "light Rogue -> cuoio": 50,
+      "light Ranger -> cuoio": 11,
+      "total_expected": 151
+    },
+    "distribution_after_e2": {
+      "piastre": 88,
+      "cuoio": 152,
+      "stoffa": 208,
+      "maglia": 100
+    },
+    "detail_by_class": {
+      "Warrior heavy->piastre": 38,
+      "Warrior medium->maglia": 17,
+      "Ranger medium->maglia": 35,
+      "Rogue light->cuoio": 50,
+      "Ranger light->cuoio": 11
+    },
+    "sample_fixes_first_20": [
+      {
+        "item_id": "warrior-ironhelm-starter",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "rogue-leathercraft-cloak",
+        "phase": "D1",
+        "classe": "Rogue",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "ranger-scout-leather-jerkin",
+        "phase": "D1",
+        "classe": "Ranger",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "warrior-ironhelm-visored",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-ironhelm-greathelm",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-plate-chest-novice",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-mail-leggings",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "rogue-leathercraft-hood",
+        "phase": "D1",
+        "classe": "Rogue",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "rogue-leathercraft-boots",
+        "phase": "D1",
+        "classe": "Rogue",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "rogue-leathercraft-gloves",
+        "phase": "D1",
+        "classe": "Rogue",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "rogue-leather-leggings-shadow",
+        "phase": "D1",
+        "classe": "Rogue",
+        "armor_type_before": "light",
+        "armor_type_after": "cuoio"
+      },
+      {
+        "item_id": "ranger-scout-leather-cap",
+        "phase": "D1",
+        "classe": "Ranger",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "ranger-scout-leather-boots",
+        "phase": "D1",
+        "classe": "Ranger",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "ranger-scout-leather-gloves",
+        "phase": "D1",
+        "classe": "Ranger",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "ranger-scout-mail-chest",
+        "phase": "D1",
+        "classe": "Ranger",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "warrior-recruit-chestpiece",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-chainmail-cuirass",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      },
+      {
+        "item_id": "warrior-full-plate-cuirass",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-recruit-leggings",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "heavy",
+        "armor_type_after": "piastre"
+      },
+      {
+        "item_id": "warrior-chainmail-leggings",
+        "phase": "D1",
+        "classe": "Warrior",
+        "armor_type_before": "medium",
+        "armor_type_after": "maglia"
+      }
+    ]
+  },
+  "sezione_2_slug_consistency_fixes": {
+    "slug_drift_e1_1_post_high_fixes": [
+      {
+        "item_id": "priest-blessed-dagger",
+        "weapon_family": "reliquia",
+        "issue": "item_id contains 'dagger' but weapon_family=reliquia (post-E1.1 fix). Item_id preserved for tracking (governance).",
+        "recommended_action": "OPTION A: leave as-is (governance preservation). OPTION B: rename item_id (breaks tracking). Default: OPTION A."
+      },
+      {
+        "item_id": "priest-blessed-dagger-t2",
+        "weapon_family": "reliquia",
+        "issue": "item_id contains 'dagger' but weapon_family=reliquia (post-E1.1 fix). Item_id preserved for tracking (governance).",
+        "recommended_action": "OPTION A: leave as-is (governance preservation). OPTION B: rename item_id (breaks tracking). Default: OPTION A."
+      },
+      {
+        "item_id": "rogue-soulforged-shortbow",
+        "weapon_family": "balestra",
+        "issue": "item_id contains 'shortbow' but weapon_family=balestra (post-E1.1 fix). Item_id preserved for tracking.",
+        "recommended_action": "OPTION A: leave as-is (governance preservation). OPTION B: rename item_id (breaks tracking). Default: OPTION A."
+      },
+      {
+        "item_id": "rogue-soulforged-shortbow-master",
+        "weapon_family": "balestra",
+        "issue": "item_id contains 'shortbow' but weapon_family=balestra (post-E1.1 fix). Item_id preserved for tracking.",
+        "recommended_action": "OPTION A: leave as-is (governance preservation). OPTION B: rename item_id (breaks tracking). Default: OPTION A."
+      }
+    ],
+    "resolution_governance": "Item_id preservati per tracking (Option A). Slug naming drift accettato governance PM. Documentato per naming pass future o Phase C tech gate se richiesta rinomina.",
+    "d4_slug_drift_9_dungeon": "9 slug drift dungeon D4 documentati in D4 CLOSED (STEP 17). Governance: accettato PM, deferred a naming pass. Nessun rework in E2 su slug D4 (governance preservation)."
+  },
+  "sezione_3_naming_it_consistency_fixes": {
+    "action_taken": "Verificato che nomi IT già in italiano (es. 'Corazza a Piastre del Novizio', 'Mantello di Cuoio Grezzo', 'Veste Arcana del Novizio'). Solo campo `armor_type` era EN generic. Nomi IT NON modificati (già consistenti).",
+    "typo_only_stat_fixes": [],
+    "status": "PASSED - nomi IT già consistenti"
+  },
+  "sezione_4_family_naming_consistency": {
+    "iconic_families_count": 180,
+    "iconic_families_top_20": {
+      "free": 544,
+      "moon-vigil": 31,
+      "elders": 23,
+      "arcane-apprentice": 21,
+      "shadowweaver": 19,
+      "gladiator": 18,
+      "elfwood-woodsman": 18,
+      "ironrecruit": 16,
+      "heretic-slayer": 15,
+      "soulforged": 15,
+      "alevoran-warlord": 14,
+      "rift-touched": 14,
+      "bulwark": 13,
+      "dragonscale-ranger": 13,
+      "alevoran-hunter": 12,
+      "iron-legion": 11,
+      "soulforged-ranger": 11,
+      "stygian-rogue": 10,
+      "observatory": 10,
+      "ashborn-mage": 10
+    },
+    "governance": "Iconic families cross-tier verificate. Cumulative ridondanze T4/T5 (dragonhunter, elder-wyrm-hunter, ambash-forge-warrior, alevoran-perpetual) documentate in D5 Sezione 14 e E1 risk_6. Nessuna rework autonoma (richiederebbe decisione creativa PM)."
+  },
+  "sezione_5_duplicate_near_duplicate_resolution": {
+    "duplicate_nome_it_count": 14,
+    "duplicates_detail": {
+      "Reliquia di Adalan": 2,
+      "Corazza Radice del Mondo": 2,
+      "Mantello del Signore Braci": 3,
+      "Anello Radice del Mondo": 2,
+      "Focus Radice del Mondo": 2,
+      "Scettro Minore Radice del Mondo": 2,
+      "Orecchino Radice del Mondo": 2,
+      "Stivali del Signore Braci": 2,
+      "Cappuccio Forgiato d'Anima": 2,
+      "Guanti Forgiati d'Anima": 2,
+      "Stivali Forgiati d'Anima": 2,
+      "Cappuccio della Stella Caduta": 2,
+      "Stivali Conciati Elfwood Maestri": 2,
+      "Cappuccio delle Campane": 2
+    },
+    "governance": "Se >0 duplicate: documentato per PM decision. Nessun rework autonomo (rename richiede decisione creativa)."
+  },
+  "sezione_6_legendary_naming_review_15_15": {
+    "count": 15,
+    "target": 15,
+    "status": "EXACT",
+    "names_15": [
+      {
+        "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+        "nome_it": "Martello della Fucina di Ambash",
+        "classe": "Warrior",
+        "lore_source": "Ambash"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragon-elder-scale",
+        "nome_it": "Scaglia del Verme Ancestrale",
+        "classe": "Warrior",
+        "lore_source": "Draco"
+      },
+      {
+        "item_id": "warrior-t5-legendary-dragonlord-crown",
+        "nome_it": "Corona del Signore dei Draghi",
+        "classe": "Warrior",
+        "lore_source": "Draco"
+      },
+      {
+        "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+        "nome_it": "Sudario del Prezzo di Irthe",
+        "classe": "Rogue",
+        "lore_source": "Irthe"
+      },
+      {
+        "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+        "nome_it": "Legendary Progressive Slot 03 — Rogue (PENDING PM)",
+        "classe": "Rogue",
+        "lore_source": "PENDING PM (lore source proposta: Ciclo delle anime — sanctum-of-fading-souls capstone Rogue soul-bind)"
+      },
+      {
+        "item_id": "rogue-t5-legendary-void-touched-blade",
+        "nome_it": "Lama Toccata dal Vuoto",
+        "classe": "Rogue",
+        "lore_source": "Vuoto"
+      },
+      {
+        "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+        "nome_it": "Focus dell'Obelisco di Ergolat",
+        "classe": "Mage",
+        "lore_source": "Ergolat"
+      },
+      {
+        "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+        "nome_it": "Legendary Progressive Slot 01 — Mage (PENDING PM)",
+        "classe": "Mage",
+        "lore_source": "PENDING PM (lore source proposta: Memoria — echi cristallizzati endgame Mage)"
+      },
+      {
+        "item_id": "mage-t5-legendary-sole-nero-diadem",
+        "nome_it": "Diadema del Sole Nero",
+        "classe": "Mage",
+        "lore_source": "Celeste"
+      },
+      {
+        "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+        "nome_it": "Manto del Conclave Celeste",
+        "classe": "Priest",
+        "lore_source": "Celeste"
+      },
+      {
+        "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+        "nome_it": "Legendary Progressive Slot 02 — Priest (PENDING PM)",
+        "classe": "Priest",
+        "lore_source": "PENDING PM (lore source proposta: Luna Morta — resurrection endgame Priest, capstone Ciclo delle anime)"
+      },
+      {
+        "item_id": "priest-t5-legendary-seraph-halo-crown",
+        "nome_it": "Corona d'Aureola del Serafino",
+        "classe": "Priest",
+        "lore_source": "Celeste"
+      },
+      {
+        "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+        "nome_it": "Faretra del Fato di Halodi",
+        "classe": "Ranger",
+        "lore_source": "Halodi"
+      },
+      {
+        "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+        "nome_it": "Legendary Progressive Slot 04 — Ranger (PENDING PM)",
+        "classe": "Ranger",
+        "lore_source": "PENDING PM (lore source proposta: Greatwood/Elfwood — capstone Ranger nature-bond endgame)"
+      },
+      {
+        "item_id": "ranger-t5-legendary-worldroot-scepter",
+        "nome_it": "Scettro della Radice del Mondo",
+        "classe": "Ranger",
+        "lore_source": "Alberi della Vita"
+      }
+    ],
+    "review": "Legendary naming EXACT verified. Nomi IT memorabili + lore forte per 11 approved+hybrid + 4 progressive PENDING PM placeholder marked explicitly."
+  },
+  "sezione_7_npc_naming_cross_tier_consistency": {
+    "npc_5_locked_slug_it_pair": {
+      "fabbro-bulwark": "Fabbro Bulwark",
+      "cuoiaia-elfwood": "Cuoiaia Elfwood",
+      "sarto-sacro": "Sarto Sacro",
+      "tessitrice-arcana": "Tessitrice Arcana",
+      "conciatore-elfwood": "Conciatore Elfwood"
+    },
+    "npc_usage_per_tier": {
+      "T1": {},
+      "T2": {},
+      "T3": {
+        "fabbro-bulwark": 15,
+        "conciatore-elfwood": 16,
+        "tessitrice-arcana": 12,
+        "sarto-sacro": 13,
+        "cuoiaia-elfwood": 8
+      },
+      "T4": {
+        "fabbro-bulwark": 4,
+        "conciatore-elfwood": 6,
+        "tessitrice-arcana": 5,
+        "sarto-sacro": 4,
+        "cuoiaia-elfwood": 5
+      },
+      "T5": {
+        "fabbro-bulwark": 4,
+        "conciatore-elfwood": 4,
+        "tessitrice-arcana": 4,
+        "sarto-sacro": 4,
+        "cuoiaia-elfwood": 4
+      }
+    },
+    "consistency_status": "PASSED - 5 NPC slug + IT names verified consistent cross-tier D1-D5. No autonomous new NPC."
+  },
+  "sezione_8_typo_only_stat_fixes": {
+    "count": 0,
+    "detail": [],
+    "note": "Nessun typo stat evidente rilevato in scan bulk. Se PM ha riferimenti specifici a typo, Q per iterazione E2.1."
+  },
+  "sezione_9_item_count_post_fix": {
+    "total": 1500,
+    "target": 1500,
+    "status": "EXACT 1500/1500",
+    "per_phase": {
+      "D1": 300,
+      "D2": 350,
+      "D3": 350,
+      "D4": 300,
+      "D5": 200
+    }
+  },
+  "sezione_10_rarity_post_fix": {
+    "counts": {
+      "common": 400,
+      "uncommon": 450,
+      "rare": 400,
+      "epic": 235,
+      "legendary": 15
+    },
+    "target": {
+      "common": 400,
+      "uncommon": 450,
+      "rare": 400,
+      "epic": 235,
+      "legendary": 15
+    },
+    "status": "EXACT 400/450/400/235/15"
+  },
+  "sezione_11_class_distribution_post_fix": {
+    "counts": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "target": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "status": "EXACT 300x5"
+  },
+  "sezione_12_sha256_files_modified": {
+    "D1": {
+      "path": "/app/memory/r18_5_phase_d1_t1_item_table.json",
+      "sha256_before_e2": "6058ae78b337c596d6ae3a94550dda90e20b4b5da284724e1481c3ffd8b1ddff",
+      "sha256_after_e2": "e529922a510d9ec43af2f6d12b9404626f06ae85f9916712931c0131eeae984b",
+      "changed": true
+    },
+    "D2": {
+      "path": "/app/memory/r18_5_phase_d2_t2_item_table.json",
+      "sha256_before_e2": "e246f2773b8584772766124cd323358d3a750a1be853d0777d92eead3a2de6d5",
+      "sha256_after_e2": "e647a0babcd7f884794920be68895d8bc702b639d4f21e799cef0e20cc6d7069",
+      "changed": true
+    },
+    "D3": {
+      "path": "/app/memory/r18_5_phase_d3_t3_item_table.json",
+      "sha256_before_e2": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44",
+      "sha256_after_e2": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44",
+      "changed": false
+    },
+    "D4": {
+      "path": "/app/memory/r18_5_phase_d4_t4_item_table.json",
+      "sha256_before_e2": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb",
+      "sha256_after_e2": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb",
+      "changed": false
+    },
+    "D5": {
+      "path": "/app/memory/r18_5_phase_d5_t5_item_table.json",
+      "sha256_before_e2": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "sha256_after_e2": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "changed": false
+    }
+  },
+  "sezione_13_sealed_integrity_result": "PENDING external pytest run (STEP 23 verify post-write)",
+  "sezione_14_git_status": "PENDING external git status (STEP 23 verify post-write)",
+  "sezione_15_pm_open_questions_post_e2_for_phase_c_tech_dry_run_gate": [
+    {
+      "id": "Q1",
+      "topic": "Approvare E2 CLOSED (151 armor naming drift EN->IT fixed, 0 stat changes, 0 typo, 1500/1500 preserved)?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Approvare slug preservation post-E1.1 (blessed-dagger + soulforged-shortbow item_id preservati per tracking, weapon_family cambiato)? OR autorizzare rinomina item_id in Phase C tech gate?"
+    },
+    {
+      "id": "Q3",
+      "topic": "D4 slug drift 9 dungeon (accepted D4 CLOSED): mantenere accettato per governance o autorizzare rinomina in E2.1 pre-Phase C?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Iconic family cumulative ridondanze (T4/T5 pure evolutions): accettare governance preservation o autorizzare rework naming families in E2.1?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Autorizzare PRD.md append 'R18.5 Phase E2 CLOSED' post-review (NON auto-eseguito, pattern D3/D4/D5/E1 verbatim)?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Post E2 approval: autorizzare Phase C Tech Dry-Run (proficiency runtime + class_slug migration + ILVL endgame implementation)?"
+    },
+    {
+      "id": "Q7",
+      "topic": "Legendary utility numeric finals (cooldown, %, scaling per 15 Legendary): finalizzare pre-Phase C tech gate o durante Phase C?"
+    },
+    {
+      "id": "Q8",
+      "topic": "4 progressive Legendary placeholders (P1-P4): finalizzare lore/source/utility in Phase C tech gate o iterazione E3?"
+    },
+    {
+      "id": "Q9",
+      "topic": "6 hint T4 PENDING PM (sub-Epic voluto): accettare come design intent finale o iterazione E1.2 rework?"
+    },
+    {
+      "id": "Q10",
+      "topic": "R18.6 Class Halls kickoff: mantenere PLANNED / HOLD UNTIL Phase C tech dry-run CLOSED?"
+    },
+    {
+      "id": "Q11",
+      "topic": "Marketing Brief: mantenere DEFERRED?"
+    }
+  ],
+  "governance_check_step23": {
+    "sealed_files_36_hash_byte_identical": "PENDING pytest verify",
+    "db_writes": "ZERO",
+    "code_changes_py_js_jsx_tsx_ts": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "item_table_modification_authorized": "AUTHORIZED (D1/D2/D3/D4 .json naming-only micro-eccezione PM)",
+    "stat_balance_changes": "ZERO (E2 non ha toccato stat_principali/rarity/tier/class/lore/source)",
+    "typo_only_fixes": 0,
+    "utility_changes_new": "ZERO",
+    "item_id_changes": "ZERO (tutti gli item_id preservati)",
+    "catalog_1500_1500_preserved": true,
+    "phase_c_auto_start": "BLOCKED (STOP after E2, PM review required)",
+    "r18_6_auto_start": "BLOCKED (PLANNED, HOLD UNTIL Phase C CLOSED)",
+    "prd_append_e2_closed_auto": "BLOCKED (rinviato a post-PM-approval, pattern D3/D4/D5/E1 verbatim)",
+    "classi_canoniche_verbatim": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_e2": {
+    "auto_transition_next_gate": false,
+    "prd_append_e2_closed_auto": false,
+    "note": "STOP dopo E2. Attendo PM review Q1-Q11 + GO esplicito prima di Phase C Tech Dry-Run."
+  }
+}

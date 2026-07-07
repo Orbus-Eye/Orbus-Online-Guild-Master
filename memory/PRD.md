@@ -1722,3 +1722,68 @@ Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere
 **R18.5 status flow (aggiornato post-STEP 19)**:
 `Phase A→C0-octies Batch 5` ✅ CLOSED → `STEP 8-16` ✅ CLOSED → `Phase D4 T4×300 (STEP 17)` ✅ CLOSED → `Phase D5 T5×200 ENDGAME (STEP 18)` ✅ **CLOSED (Q1-Q3=A approved)** → **`🎉 R18.5 CATALOGO 1500/1500 COMPLETE`** ✅ **MILESTONE (STEP 19)** → **`Phase E1 Global Balance Pass (STEP 20)`** 🟡 **AUTHORIZED (chain autorizzata, in progress)** → `Phase E2 Global Naming Pass` 🔒 PLANNED / HOLD UNTIL E1 REVIEW → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E1+E2 CLOSED / `R18.6 Class Halls` 🔒 PLANNED (invariato) / `Marketing Brief` 🔒 DEFERRED
 
+
+---
+
+## R18.5 Phase E1 CLOSED (2026-07-07T18:35:00Z)
+
+**Milestone**: **R18.5 Phase E1 Global Balance Pass + Phase E1.1 Balance Remediation Patch CLOSED** ✅
+
+**Deliverables E1** (analysis-only, read-only sui dati input):
+- `/app/memory/r18_5_phase_e1_global_balance_pass.md` (432 righe · SHA256 `f460fb6b9d8ffbf7c65bf86aed74b790ec59914d8c78aba986206036590a9b05`)
+- `/app/memory/r18_5_phase_e1_global_balance_pass.json` (1562 righe · SHA256 `a79d37b9021f44ae5606bad6f00c2dae50a1821cdbc05a28d0f30fe8a8f6a162`)
+
+**Deliverables E1.1** (remediation patch, micro-eccezione autorizzata PM):
+- `/app/memory/r18_5_phase_e1_1_balance_remediation_patch.md`
+- `/app/memory/r18_5_phase_e1_1_balance_remediation_patch.json` (841 righe · SHA256 `3e3f0ae7e3589be36e831cc1a8c53dd4720a2d0c4f1f0dcd10f3325262c8d3c3`)
+
+**Item table files modificati in E1.1** (nuovi SHA256):
+- D1 `.json`: `6058ae78b337c596d6ae3a94550dda90e20b4b5da284724e1481c3ffd8b1ddff`
+- D2 `.json`: `e246f2773b8584772766124cd323358d3a750a1be853d0777d92eead3a2de6d5`
+- D3 `.json`: `b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44`
+- D4 `.json`: `6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb`
+- D5 `.json`: `58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e` (unchanged)
+
+**E1 CLOSED — Decisioni PM verbatim rispettate**:
+- **E1 Global Balance Pass CLOSED**
+- **1500/1500 catalog verified post-remediation** (aritmetica cumulativa invariata)
+- **4 HIGH proficiency violations fixed** (Priest pugnale→reliquia ×2 · Rogue arco→balestra ×2, item_id preservati per tracking)
+- **22 stat outliers**: 16 fixed (2 power creep T1 + 3 underpowered legit + 11 cross-tier T3) or explicitly tracked as PENDING PM (6 hint T4 design intent progressive marker sub-Epic voluto)
+- **151 naming drift EN→IT items deferred to E2** (STEP 23 catena autorizzata)
+- **Progressive Legendary placeholders (4 P1-P4)** deferred to Phase C Tech Dry-Run / drop-table gate
+- **Anti-P2W 1500/1500 preserved** (`can_be_sold_for_real_money=false` invariato)
+- **Proficiency HARD BLOCK clean after fix (0 residual violations)** — Priest scudo/piastre/cuoio/maglia = 0 usi confermato · Weapon backlog RESERVED = 0 usi confermato
+- **36 seals byte-identical** (pytest 6/6 PASSED pre + post write E1 + E1.1)
+- **Zero DB/code/migrations**
+
+**Governance E1 CLOSED**:
+- E1 (STEP 20) = ANALYSIS-ONLY read-only sui dati input; nessun item table modificato
+- E1.1 (STEP 21) = REMEDIATION-PATCH con micro-eccezione DOCUMENTAL autorizzata PM su file item table D1-D4 (.json) SOLO per 4 HIGH + 16 MEDIUM fixes; preservati item count/rarity/class/tier/lore/source/anti-P2W/utility/item_id
+- `lore_meta.py` invariato · Nessun sealed file toccato · Zero `.py`/`.js`/`.jsx`/`.tsx`/`.ts` modificato
+- Class distribution invariata 300×5 (Warrior/Rogue/Mage/Priest/Ranger)
+
+**Aritmetica cumulativa post-E1.1** (invariata):
+- Common 400 · Uncommon 450 · Rare 400 · Epic 235 · Legendary 15 = **1500** ✅
+- T1 300 · T2 350 · T3 350 · T4 300 · T5 200 = **1500** ✅
+- Warrior 300 · Rogue 300 · Mage 300 · Priest 300 · Ranger 300 = **1500** ✅
+
+**File touch E1 + E1.1**:
+- `r18_5_phase_e1_global_balance_pass.md/.json` (NUOVI, E1)
+- `r18_5_phase_e1_1_balance_remediation_patch.md/.json` (NUOVI, E1.1)
+- `r18_5_phase_d1_t1_item_table.json` (MODIFICATO E1.1 HIGH#1 + MEDIUM#1-2)
+- `r18_5_phase_d2_t2_item_table.json` (MODIFICATO E1.1 HIGH#2 + MEDIUM#3)
+- `r18_5_phase_d3_t3_item_table.json` (MODIFICATO E1.1 HIGH#3-4 + MEDIUM#4, M6-M16)
+- `r18_5_phase_d4_t4_item_table.json` (MODIFICATO E1.1 MEDIUM#5)
+- `PRD.md` (append CLOSED, questo aggiornamento)
+
+**NEXT GATE (post-STEP 22)**:
+- STEP 23 (E2 Global Naming Pass) 🟡 **AUTHORIZED** (chain immediata post-STEP 22 OK)
+- Phase C Tech Dry-Run 🔒 HOLD UNTIL E2 CLOSED
+- R18.6 Class Halls 🔒 PLANNED (HOLD UNTIL R18.5 COMPLETE)
+- Marketing Brief 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 22)**:
+`Phase D5 (STEP 18)` ✅ CLOSED → `🎉 CATALOGO 1500/1500 (STEP 19)` ✅ MILESTONE → `Phase E1 Global Balance Pass (STEP 20)` ✅ CLOSED → `Phase E1.1 Balance Remediation Patch (STEP 21)` ✅ **CLOSED** → **`PRD append E1 CLOSED (STEP 22)`** ✅ **CLOSED (questo append)** → **`Phase E2 Global Naming Pass (STEP 23)`** 🟡 **AUTHORIZED (chain immediata)** → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E2 CLOSED / `R18.6 Class Halls` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
