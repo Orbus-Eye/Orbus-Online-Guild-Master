@@ -1368,3 +1368,100 @@ Item PENDING PM che restano aperti dopo Gate 2, **NON bloccanti** per l'expansio
 **R18.5 status flow (aggiornato)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → **`Phase C0-septies Batch 4`** ✅ **CLOSED** → *`Phase C0-octies Batch 5 ENDGAME`* 🟡 *AUTHORIZED — pending write* / *Phase C tech dry-run + Item table 1500* 🔒 *BLOCKED gate PM*
 
+
+---
+
+## R18.5 Phase C0-octies Batch 5 Lv56-60 ENDGAME — CLOSED (2026-07-07T11:00:00Z) — DOCUMENTAL ONLY
+
+**Stato**: 🟢 **Phase C0-octies Batch 5 ENDGAME CLOSED**. 9 Normal Dungeon 3p Lv56-60 NEW + 4 raid endgame 5p (1 LIVE `dragon-vault` + 3 NEW DRAFT: `void-cathedral`, `celestial-conclave`, `world-tree-collapse`) + 2 Elite/Group 5p LIVE paralleli fuori conteggio 60 (`voidspire-5p`, `celestial-citadel-5p`) lockati. PM decisioni Q1-Q21 approvate in blocco (Q1-Q4 GO in blocco, Q9 accept Draco 6× cumulative, Q13=A 7 Legendary approved, Q17 Vuoto approved come 17ª lore source, Q21 D→B sequenza Mini-Gate Legendary Discovery Chain → Phase D Item Table Drafting). Prossimo step autorizzato: **Mini-Gate Legendary Discovery Chain (STEP 8) → Phase D0 Item Table Blueprint (STEP 9)** in sequenza automatica. Phase C tech dry-run **NON in agenda ora**.
+
+### 🎯 R18.5 Aritmetica catalogo — FINAL LOCK (60/60 + 12/12 + 12/12 + 22/22)
+
+| Track | B1 | B2 | B3 | B4 | B5 | **Cumulative finale** | **Target macro** | **Status** |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Normal 3p** | 12 | 14 | 16 | 9 | **9** | **60** | 60 | ✅ **RAGGIUNTO** |
+| **Elite/Group 5p (LIVE, fuori 60)** | 5 | 3 | 1 | 1 | **2** | **12** | 12 parallel | ✅ **ALLOCATO** |
+| **Raid 5p** (LIVE + NEW) | 0 | 2 | 3 | 3 | **4** | **12** (3L+9N) | 12 | ✅ **RAGGIUNTO** |
+
+- **Normal 3p Track**: 60/60 chiuso definitivo (12+14+16+9+9)
+- **Elite/Group Track**: 12/12 allocated (Batch 5 include `voidspire-5p` + `celestial-citadel-5p` LIVE fuori conteggio 60)
+- **Raid Track**: 12/12 chiuso (3 LIVE + 9 NEW): `broken-bastion-siege` (B3) LIVE + `necropolis-bells` (B4) LIVE + `dragon-vault` (B5) LIVE + 9 NEW `arcane-schism`, `souldrain-abyss` (B2/B3), `emberking-siege`, `memoria-vault` (B4), `void-cathedral`, `celestial-conclave`, `world-tree-collapse` (B5), più i 2 B2 NEW iniziali)
+
+### 🏛️ Q17 Vuoto APPROVED — Lore coverage cumulativa 22/22
+
+**Vuoto** confermata come **17ª lore source valida R18.5** (integrata Batch 5 su 3 encounter: `void-touched-outpost`, `void-heart-sanctum`, `void-cathedral raid`). Coverage lore finale **22/22 fonti utilizzate**. Gate 1 cross-check accettato PM.
+
+### 🐉 Q9 Draco 6× cumulative ACCEPTED (record R18.5)
+
+**Draco 6× cumulative post-B5** (B2×2 + B3 + B4 + B5×2 = 6) **APPROVED** come macro-lore endgame — identità/scala/meccaniche/boss/reward tutti distinti tra i 6 encounter. **NO cap retroattivo**. **NO ridistribuzione**. Nota futura: evitare ulteriore sovraccarico Draco salvo forte motivazione narrativa.
+
+### ⚔️ Q13=A — 7 Legendary Candidate APPROVED (design-only)
+
+**PM Rules Strict verbatim**: solo T5 · max 15 catalog · utility unica + lore forte · NO generic +stat · NO shop · NO craft normale · drop RARISSIMO 1-2% direzionale.
+
+**Primari 4 (drop 2% raid boss finale)**:
+| Slug candidate | Source | Lore | Utility unique |
+|---|---|---|---|
+| `dragonlord-crown` | R1 `dragon-vault` LIVE | Draco | Command Draconic |
+| `void-touched-blade` | R2 `void-cathedral` NEW | Vuoto | Void-Pierce |
+| `seraph-halo-crown` | R3 `celestial-conclave` NEW | Celeste | Divine Resurrect |
+| `worldroot-scepter` | R4 `world-tree-collapse` NEW | Alberi della Vita | Nature's Blessing HoT |
+
+**Secondari 3 (drop 1% dungeon endgame)**:
+| Slug candidate | Source | Lore | Utility unique |
+|---|---|---|---|
+| `ambash-forge-hammer` | #6 `ambash-legendary-forge` | Ambash | Reforge weapon mid-encounter |
+| `dragon-elder-scale` | #8 `elder-wyrm-descent` | Draco | Dragon-scale armor buff |
+| `sole-nero-diadem` | #9 `pantheon-of-fallen-suns` | Celeste | Swap light/void resist |
+
+**Cap catalog PM = 15** invariato. **Legendary approvati B5 = 7** (4 primari raid + 3 secondari dungeon). **Margine future gate = 8/15**. **NON live**. **NON DB creation**. **NON craftabile normalmente**. **NON shop**. **NON P2W**.
+
+### 🎯 Q21 D→B — Next sequence AUTHORIZED (skip Phase C tech dry-run)
+
+**Sequenza autorizzata post-B5**:
+1. **STEP 8 — R18.5 Mini-Gate Legendary Discovery Chain** (documental only, 7 hook narrativi per i 7 Legendary candidate)
+2. **STEP 9 — R18.5 Phase D0 Item Table Schema + 1500 Distribution Blueprint** (documental only, blueprint distributivo NON catalogo completo)
+3. Phase D1-D5 successive: item table drafting per tier (T1×300 → T2×350 → T3×350 → T4×300 → T5×200 = 1500)
+
+**Phase C tech dry-run**: 🔒 **NON in agenda ora** — riservato dopo consolidamento base creativa items (PM verbatim).
+
+### 🛡️ Governance state Batch 5 CLOSED
+
+- ✅ **36 sigilli byte-identical** (`pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → 6 passed 0.40s, verificato 2× pre + post closure)
+- ✅ **Zero code changes** (`.py` / `.js` / `.jsx` / `.tsx` / `.ts` intatti)
+- ✅ **Zero DB writes** — `dungeons`, `raid_dungeons`, `expeditions`, `items`, `recipes` invariati
+- ✅ **Zero migrations** / apply scripts / hard delete
+- ✅ **Zero dungeon/raid creation live** (9 Normal + 3 raid nuovi = design docs only)
+- ✅ **`lore_meta.py` invariato**
+- ✅ **Zero party_size rewrite** (5p Elite+Raid verbatim)
+- ✅ **Zero required_level rewrite** (`voidspire-5p`, `celestial-citadel-5p`, `dragon-vault` drift known no-rewrite)
+- ✅ **Zero item table live creation** (7 Legendary candidate = design docs only)
+- ✅ **Zero drop table apply**
+- ✅ **Zero economy changes**
+- ✅ **Zero runtime bridge / class_slug migration / proficiency runtime enforcement**
+- ✅ **Phase C tech dry-run NOT INITIATED** (Q21=D→B verbatim: sequenza D0 blueprint prima)
+- ✅ **Classi canoniche Warrior/Rogue/Mage/Priest/Ranger verbatim** — NO drift
+- ✅ **PM autonomous decision new = ZERO** (Vuoto = PM candidate verbatim, ora approved Q17)
+
+### 📚 Lore coverage finale R18.5 (22/22)
+
+**Fonti utilizzate B1-B5 cumulative**: Adalan, Ambash, Aveol, Krastlov, Efreto, Draco, Alberi della Vita, Halodi, Faglie arcane, Ciclo delle anime, Alevora, Irthe, Memoria, Infernale, Luna Morta, Ergolat, Celeste, **Vuoto (17ª nuova B5)** — 18/22 attive nei dungeon/raid Batch 1-5.
+
+**Fonti restanti 4/22** (non utilizzate nel catalogo dungeon/raid ma incluse in coverage lore R18.5 tramite altre pipeline: signature/materials/quest — Greatwood/Elfwood, Mare, Velur, Soe).
+
+### 📊 Handoff — STEP 8 + STEP 9 AUTHORIZED (sequenza automatica PM verbatim)
+
+- **STEP 8**: `/app/memory/r18_5_legendary_discovery_chain.md/.json` — 7 Legendary Discovery hook per i candidate approvati (utility numeriche finali PENDING PM D-phase, solo narrative + design)
+- **STEP 9**: `/app/memory/r18_5_phase_d0_item_table_blueprint.md/.json` — schema tabella item + blueprint distribuzione 1500 (NON catalogo completo — 15 sezioni obbligatorie)
+
+**Files chiave R18.5 (cumulativo aggiornato Batch 5)**:
+- Predecessori: `phase_a_discovery`, `phase_b1_design_lock`, `phase_b2_implementation_plan`, `gate1_pm_decisions`, `phase_c0_item_table_drafting_support`, `phase_c0bis_progression_dungeon_raid_matrix`, `pm_workspace_master`, `gate2_pm_decisions`, `phase_c0ter_live_class_matrix`
+- C0-quater: `phase_c0quater_live_dungeon_audit`, `phase_c0quater_batch1_informed_final`
+- C0-quinquies: `r18_5_phase_c0quinquies_batch2_lv16_30_matrix.md/.json`
+- C0-sexies: `r18_5_phase_c0sexies_batch3_lv31_45_matrix.md/.json`
+- C0-septies: `r18_5_phase_c0septies_batch4_lv46_55_matrix.md/.json`
+- **C0-octies** (nuovo): `r18_5_phase_c0octies_batch5_lv56_60_matrix.md/.json` + `r18_5_batch5_closure_report.md`
+
+**R18.5 status flow (aggiornato Batch 5 CLOSED)**:
+`Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → `Phase C0-septies Batch 4` ✅ CLOSED → **`Phase C0-octies Batch 5 ENDGAME`** ✅ **CLOSED** → *`Mini-Gate Legendary Discovery Chain (STEP 8)`* 🟡 *AUTHORIZED chain* → *`Phase D0 Item Table Blueprint (STEP 9)`* 🟡 *AUTHORIZED chain* → *`Phase D1-D5 item table drafting`* 🔒 *pending D0* / *Phase C tech dry-run* 🔒 *NOT IN AGENDA*
+

@@ -1,0 +1,189 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "Mini-Gate post-Batch 5 — Legendary Discovery Chain (STEP 8)",
+    "locked_at_utc": "2026-07-07T11:15:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "DRAFT (design layer only, no runtime effects)",
+    "authority": "PM Orchestrator — Q13=A verbatim + Q21 D→B verbatim",
+    "scope": "7 Legendary candidate approvati Batch 5 — narrative discovery hook + design rationale",
+    "utility_numeric_finals": "PENDING PM (Phase D)",
+    "authoritative_predecessors": [
+      "/app/memory/PRD.md (Batch 5 CLOSED, Q13=A, Q17, Q21 D→B)",
+      "/app/memory/r18_5_phase_c0octies_batch5_lv56_60_matrix.md/.json",
+      "/app/memory/r18_5_batch5_closure_report.md"
+    ]
+  },
+  "pm_rules_strict_verbatim": {
+    "only_T5": true,
+    "max_catalog_15": true,
+    "utility_unique_lore_strong": true,
+    "no_generic_stat": true,
+    "no_shop": true,
+    "no_craft_normal": true,
+    "drop_rate_direzionale": "2% raid boss finale primari · 1% dungeon endgame secondari",
+    "active_candidates": 7,
+    "catalog_margin_future": 8
+  },
+  "legendary_primari_raid_2pct": [
+    {
+      "id": "L1",
+      "legendary_slug": "dragonlord-crown",
+      "source_slug": "dragon-vault",
+      "source_type": "raid",
+      "source_status": "LIVE",
+      "lore_source": "Draco",
+      "lore_source_notes": "Macro-lore endgame R18.5 — 6× cumulative approved Q9",
+      "narrative_hook": "Corona forgiata dall'ultimo re draconico caduto nell'Era della Fiamma, custodita nel cuore del Dragon Vault. Comanda i draghi con la voce del sangue reale draconico, non con la forza.",
+      "first_quest_reveal": "Frammento della corona (item narrativo, non funzionale) reward guaranteed alla prima clear di dragon-vault → sblocca lore text → quest chain reveal artefatto completo drop 2% dal boss finale del raid.",
+      "utility_fantasy_proposed": "Command Draconic — 1× per encounter, guida temporaneamente un drago giovane ostile trasformandolo in alleato per una fase.",
+      "why_rare_2pct": "Artefatto UNICO nella narrazione — corona esistente in una sola forma. Il 2% rappresenta la difficoltà mitologica di 'meritare' la corona, non un artificio matematico.",
+      "why_not_craftable_normally": "Il forging richiedeva sangue draconico reale, tecniche perdute, benedizione di un drago-re. Nessun forgiatore vivente ha accesso a queste condizioni.",
+      "why_not_shop_p2w": "Simbolo di legittimità draconica, non merce. I draghi non obbedirebbero a chi la ha 'comprata'. Anti-P2W R18: can_be_sold_for_real_money = false obbligatorio.",
+      "drop_source_design_only": "2% boss finale dragon-vault — NON runtime, NON applicato, NON DB entry"
+    },
+    {
+      "id": "L2",
+      "legendary_slug": "void-touched-blade",
+      "source_slug": "void-cathedral",
+      "source_type": "raid",
+      "source_status": "NEW DRAFT",
+      "lore_source": "Vuoto",
+      "lore_source_notes": "17ª fonte approved Q17 Batch 5 (coverage 22/22)",
+      "narrative_hook": "Nel Vuoto i confini della realtà si assottigliano. La Void-Touched Blade non è forgiata — è emersa. Alcuni sostengono sia la manifestazione fisica della Void Cathedral stessa, un frammento di realtà che ha assunto forma di lama.",
+      "first_quest_reveal": "Hint iniziale in void-touched-outpost (Lv56-57 B5) come 'eco spettrale' — frammento di lama semi-materiale che scompare al tocco. Quest chain → Void Cathedral raid → lama piena manifesta al 2% al defeat boss finale.",
+      "utility_fantasy_proposed": "Void-Pierce — con probabilità % gli attacchi ignorano l'armor del target, come se la lama passasse 'tra le realtà' invece che attraverso la difesa fisica.",
+      "why_rare_2pct": "Il Vuoto non 'dona' — cede solo quando le condizioni cosmiche sono allineate. Il 2% rappresenta la sincronia rara tra defeat del boss e manifestazione del Vuoto stesso.",
+      "why_not_craftable_normally": "Il Vuoto non è materia. Nessun forgiatore può craftare ciò che esiste per assenza. Ogni tentativo standard fallisce per definizione narrativa.",
+      "why_not_shop_p2w": "Vendere un frammento di Vuoto è concettualmente impossibile — non ha 'valore in oro' perché non appartiene alla materia commerciabile.",
+      "drop_source_design_only": "2% boss finale void-cathedral — NON runtime"
+    },
+    {
+      "id": "L3",
+      "legendary_slug": "seraph-halo-crown",
+      "source_slug": "celestial-conclave",
+      "source_type": "raid",
+      "source_status": "NEW DRAFT",
+      "lore_source": "Celeste",
+      "lore_source_notes": "5× cumulative post-B5, bridge con celestial-citadel-5p Elite LIVE",
+      "narrative_hook": "Nel Celestial Conclave i Serafini decaduti hanno lasciato le loro aureole prima di cadere. La Seraph Halo Crown non è indossata — è concessa quando il portatore mostra misericordia narrativamente riconosciuta.",
+      "first_quest_reveal": "Durante starforged-approach (Lv57-58 B5) incontro Serafino morente che offre benedizione (item narrativo). Benedizione = chiave di reveal per Celestial Conclave → corona manifesta al 2% con condizione narrativa attiva.",
+      "utility_fantasy_proposed": "Divine Resurrect — 1× per encounter, resurrect di un fallen ally in party endgame. Simbolizza la compassione dei Serafini caduti.",
+      "why_rare_2pct": "Richiede sia vittoria SIA condizione narrativa (misericordia dimostrata). Il 2% incorpora entrambi i requisiti, non pura RNG.",
+      "why_not_craftable_normally": "Aureole seraphiche esistono in numero fisso (Serafini caduti contati nella lore). Nessun forgiatore mortale può crearne di nuove — sarebbero false, non funzionanti narrativamente.",
+      "why_not_shop_p2w": "La misericordia non si compra. Vendere Divine Resurrect romperebbe coerenza morale lore Celeste (attivazione richiede intenzione autentica).",
+      "drop_source_design_only": "2% boss finale celestial-conclave — NON runtime"
+    },
+    {
+      "id": "L4",
+      "legendary_slug": "worldroot-scepter",
+      "source_slug": "world-tree-collapse",
+      "source_type": "raid",
+      "source_status": "NEW DRAFT",
+      "lore_source": "Alberi della Vita",
+      "lore_source_notes": "2× cumulative R18.5 — B2 raid + B5 raid capstone",
+      "narrative_hook": "L'Albero della Vita centrale sta collassando (evento endgame R18.5). Prima del crollo definitivo, una singola radice si è cristallizzata in scettro — ultimo dono vivente della foresta.",
+      "first_quest_reveal": "Hint da druido morente in dungeon Lv58-59 (candidate B5) che parla della 'voce delle radici che tacerà per sempre'. Quest chain → World Tree Collapse raid → scettro manifesta al 2%.",
+      "utility_fantasy_proposed": "Nature's Blessing — AoE Heal-over-Time in aree naturali (terrain lore-defined). Utility riflette natura simbiotica del Legendary con l'ambiente.",
+      "why_rare_2pct": "Scettro UNICO — deriva dall'ultima radice viva dell'Albero centrale. Il 2% rappresenta difficoltà di essere presenti al momento esatto della cristallizzazione.",
+      "why_not_craftable_normally": "Dopo il raid, non ci sarà più fonte per craftare uno scettro simile. Forging narrativamente impossibile perché materia prima finita.",
+      "why_not_shop_p2w": "Scettro parte del ciclo naturale — non merce. Vendere Nature's Blessing = commercializzare residuo di una vita cosmica, contrario lore Alberi della Vita.",
+      "drop_source_design_only": "2% boss finale world-tree-collapse — NON runtime"
+    }
+  ],
+  "legendary_secondari_dungeon_1pct": [
+    {
+      "id": "L5",
+      "legendary_slug": "ambash-forge-hammer",
+      "source_slug": "ambash-legendary-forge",
+      "source_type": "normal_dungeon_3p",
+      "source_batch": "B5",
+      "lore_source": "Ambash",
+      "lore_source_notes": "3× cumulative post-B5",
+      "narrative_hook": "La Ambash Forge è la fucina mitologica dove sono stati forgiati alcuni degli artefatti perduti dell'Era Ambash. Il Forge Hammer è lo strumento personale del Maestro Forgiatore caduto — non forgia, ma RE-forgia.",
+      "first_quest_reveal": "Hint 'eco del martello' nei dungeon Lv54-55 (candidate B4 endgame preview). Quest chain → ambash-legendary-forge (B5) → martello manifesta con drop 1% dal boss del dungeon.",
+      "utility_fantasy_proposed": "Reforge weapon slot mid-encounter — attivazione singola per encounter che permette al portatore di rimodellare temporaneamente la propria arma o quella di un alleato.",
+      "why_rare_1pct": "Artefatto personale — solo il legittimo erede spirituale del Maestro può farlo apparire. Il 1% riflette rarità dell'allineamento narrativo.",
+      "why_not_craftable_normally": "Forging del martello richiede la Ambash Forge originale — usare la forgia per craftare il proprio 'martello superiore' è paradosso narrativo.",
+      "why_not_shop_p2w": "Reforge è arte, non commercio. Vendere Reforge weapon svaluta l'unicità del Maestro.",
+      "drop_source_design_only": "1% boss finale ambash-legendary-forge — NON runtime"
+    },
+    {
+      "id": "L6",
+      "legendary_slug": "dragon-elder-scale",
+      "source_slug": "elder-wyrm-descent",
+      "source_type": "normal_dungeon_3p",
+      "source_batch": "B5",
+      "lore_source": "Draco",
+      "lore_source_notes": "6× cumulative post-B5 — record, accepted Q9",
+      "narrative_hook": "Gli Elder Wyrm dell'Era Draconica portano cicatrici di battaglie millenarie sulla pelle. Una singola scala può, se strappata durante il defeat dell'Elder, mantenere l'essenza protettiva del drago originale.",
+      "first_quest_reveal": "Conoscenza da vecchio cacciatore di draghi (NPC narrativo) in dungeon Lv57-58 (candidate B5). Quest chain → elder-wyrm-descent → scala ottenuta al defeat con drop 1%.",
+      "utility_fantasy_proposed": "Temporary Dragon-scale Armor Buff — armor buff con natura draconica (resistenza elementale + physical), durata definita in D-phase.",
+      "why_rare_1pct": "Scala mantiene essenza SOLO se strappata nell'istante esatto del defeat — momento narrativo raro e non replicabile. Il 1% riflette questa finestra temporale.",
+      "why_not_craftable_normally": "Scale draconiche standard del mercato sono 'morte' — no essenza. Solo quelle strappate al defeat mantengono la potenza. Craftare una scala 'viva' impossibile per definizione.",
+      "why_not_shop_p2w": "Vendere scala viva richiederebbe farm continuo Elder Wyrm, ognuno ha una sola scala viva. Il market crolla narrativamente.",
+      "drop_source_design_only": "1% boss finale elder-wyrm-descent — NON runtime"
+    },
+    {
+      "id": "L7",
+      "legendary_slug": "sole-nero-diadem",
+      "source_slug": "pantheon-of-fallen-suns",
+      "source_type": "normal_dungeon_3p",
+      "source_batch": "B5",
+      "lore_source": "Celeste",
+      "lore_source_notes": "5× cumulative post-B5, capstone endgame narrativo",
+      "narrative_hook": "Nel Pantheon of Fallen Suns riposano i 'soli caduti' — divinità solari-celesti che hanno perso la loro forma di luce diventando ombra. Il Sole Nero Diadem è la corona di uno di questi soli, cristallizzata nel momento della caduta: metà luce, metà void.",
+      "first_quest_reveal": "Durante Lv58-59 (candidate B5) frammenti di 'diadem cracks' (item narrativo) accennano al Pantheon. Quest chain → pantheon-of-fallen-suns (Lv60 vetta) → diadem manifesta al drop 1%.",
+      "utility_fantasy_proposed": "Swap light/void resist mid-encounter — attivazione che permette di cambiare la propria resistenza tra light e void durante un encounter.",
+      "why_rare_1pct": "Diadem esiste solo nell'ultimo Sole Caduto — un singolo esemplare per boss narrativo. Il 1% rappresenta difficoltà di ottenerlo integro (spesso si frantuma nel defeat).",
+      "why_not_craftable_normally": "Nessun forgiatore mortale può bilanciare light e void nello stesso oggetto — richiede natura duale intrinseca di un Sole Caduto. Craft standard = fallimento narrativo.",
+      "why_not_shop_p2w": "Dualità light/void = qualità metafisica, non commerciabile. Vendere Swap light/void resist romperebbe bilanciamento cosmico lore Celeste.",
+      "drop_source_design_only": "1% boss finale pantheon-of-fallen-suns — NON runtime"
+    }
+  ],
+  "anti_p2w_policy_r18_coherence": {
+    "policy_scope": "Tutti i 7 Legendary candidate",
+    "is_cosmetic": false,
+    "affects_combat": true,
+    "affects_economy": false,
+    "affects_ranking": true,
+    "is_tradeable": false,
+    "can_be_sold_for_gold": false,
+    "can_be_sold_for_real_money": false,
+    "item_binding_policy": "Bind-on-Pickup",
+    "drop_source_type": "design-only (non runtime, non applicato)",
+    "obligatory_rule_R18": "can_be_sold_for_real_money = false obbligatorio per item con affects_combat OR affects_economy OR affects_ranking = true. Tutti 7 Legendary candidate ricadono e sono NON monetizzabili real-money by design."
+  },
+  "utility_numeric_finals_pending_pm_phase_d": [
+    "Valori numerici esatti di ogni utility (es. % armor ignore, HoT tick rate)",
+    "Cooldown effettivi (1× per encounter vs 1× per boss vs 1× per day)",
+    "Interazioni con altri gear pieces",
+    "Scaling con ILVL del portatore",
+    "Sinergie di party con altri Legendary"
+  ],
+  "governance_check_mini_gate": {
+    "sealed_files_36_hash_byte_identical": "OK (pytest verificato pre + post append PRD)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "legendary_runtime_effects": "ZERO",
+    "legendary_numeric_utility_finals": "PENDING PM (Phase D)",
+    "anti_p2w_policy_coherence": "7/7 items covered",
+    "pm_autonomous_decision_new": "ZERO (tutti hook derivati da lore sources approvate)",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "handoff_step9": {
+    "next_step": "STEP 9 — R18.5 Phase D0 Item Table Schema + 1500 Distribution Blueprint",
+    "deliverable_paths": [
+      "/app/memory/r18_5_phase_d0_item_table_blueprint.md",
+      "/app/memory/r18_5_phase_d0_item_table_blueprint.json"
+    ],
+    "integration_notes": "I 7 Legendary Discovery Chain di questo file → integrati in D0 Sezione 11 (Legendary 7/15 candidate mapping)",
+    "r18_5_status_flow": "... → C0-octies B5 CLOSED → Mini-Gate Legendary Discovery Chain (STEP 8) ✅ DRAFT → Phase D0 Item Table Blueprint (STEP 9) 🟡 AUTHORIZED chain → Phase D1-D5 item table drafting 🔒 pending D0"
+  }
+}

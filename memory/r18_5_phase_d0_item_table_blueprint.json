@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "D0 — Item Table Schema + 1500 Distribution Blueprint (STEP 9)",
+    "locked_at_utc": "2026-07-07T11:30:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "DRAFT — 15 sezioni schema + blueprint distributivo, item finals PENDING D1-D5",
+    "authority": "PM Orchestrator — Q21 D→B verbatim (skip Phase C tech dry-run)",
+    "scope": "schema tabella item finale + distribuzione strategica 1500 item",
+    "distribution_target": "T1×300, T2×350, T3×350, T4×300, T5×200 = 1500",
+    "authoritative_predecessors": [
+      "/app/memory/PRD.md (Batch 5 CLOSED, Q13=A, Q17, Q21 D→B)",
+      "/app/memory/r18_5_phase_c0octies_batch5_lv56_60_matrix.md/.json",
+      "/app/memory/r18_5_legendary_discovery_chain.md/.json (STEP 8)"
+    ]
+  },
+  "sezione_1_schema_finale_item_table": {
+    "target_collection_design_only": "items_r18_5",
+    "note": "Blueprint schema — NOT created in DB, design layer only",
+    "fields": {
+      "item_id": {"type": "string uuid4", "unique": true, "public_reference": true},
+      "item_slug": {"type": "string kebab-case", "unique": true},
+      "name_it": {"type": "string", "constraint": "3-60 char"},
+      "name_en": {"type": "string", "required": false},
+      "description": {"type": "string"},
+      "utility_text": {"type": "string"},
+      "slot_type": {"type": "enum", "values": ["head", "chest", "legs", "hands", "feet", "main-hand", "off-hand", "ring", "amulet", "trinket", "consumable"]},
+      "item_type": {"type": "enum", "values": ["armor", "weapon", "accessory", "consumable", "material", "quest", "cosmetic"]},
+      "rarity": {"type": "enum", "values": ["common", "uncommon", "rare", "epic", "legendary"]},
+      "tier": {"type": "int", "range": "1-5"},
+      "ilvl": {"type": "int", "range": "1-60"},
+      "main_stat": {"type": "enum", "values": ["STR", "AGI", "INT", "END", "FAI"]},
+      "secondary_stats": {"type": "object", "note": "stat -> value map"},
+      "armor_type": {"type": "enum | null", "values": ["light", "medium", "heavy", null]},
+      "weapon_family": {"type": "enum | null", "values": ["sword", "dagger", "staff", "mace", "bow", "shield", "polearm", "wand", "hammer", "strumento", "falce", "trinket", null]},
+      "source_dungeon_slug": {"type": "string | null"},
+      "source_raid_slug": {"type": "string | null"},
+      "source_type": {"type": "enum", "values": ["dungeon_drop", "raid_drop", "crafting", "achievement", "ranking", "quest", "world_boss", "vendor_special"]},
+      "lore_source": {"type": "string referenced from lore_meta"},
+      "class_proficiency": {"type": "array enum", "values_per_element": ["warrior", "rogue", "mage", "priest", "ranger"], "min_length": 1},
+      "is_universal": {"type": "bool", "constraint": "XOR class_proficiency=[all 5]"},
+      "drop_rate": {"type": "float", "range": "0.0-1.0"},
+      "item_binding_policy": {"type": "enum", "values": ["bind-on-pickup", "bind-on-equip", "unbound"]},
+      "is_tradeable": {"type": "bool"},
+      "can_be_sold_for_gold": {"type": "bool"},
+      "can_be_sold_for_real_money": {"type": "bool", "anti_p2w_R18_constraint": true},
+      "is_cosmetic": {"type": "bool"},
+      "affects_combat": {"type": "bool"},
+      "affects_economy": {"type": "bool"},
+      "affects_ranking": {"type": "bool"},
+      "signature_capacity_slot": {"type": "bool"},
+      "created_at_utc": {"type": "ISO string", "value": "datetime.now(timezone.utc)"},
+      "updated_at_utc": {"type": "ISO string", "value": "datetime.now(timezone.utc)"}
+    }
+  },
+  "sezione_2_campi_obbligatori": {
+    "not_null_fields": [
+      "item_id", "item_slug", "name_it", "slot_type", "item_type",
+      "rarity", "tier", "ilvl", "main_stat", "source_type", "lore_source",
+      "class_proficiency", "is_universal", "item_binding_policy",
+      "is_tradeable", "can_be_sold_for_gold", "can_be_sold_for_real_money",
+      "is_cosmetic", "affects_combat", "affects_economy", "affects_ranking",
+      "created_at_utc", "updated_at_utc"
+    ],
+    "either_or_constraint": "armor_type OR weapon_family valorizzato per item_type=armor|weapon",
+    "anti_p2w_R18_rule_obbligatoria": {
+      "rule": "can_be_sold_for_real_money = false AUTOMATICO se affects_combat=true OR affects_economy=true OR affects_ranking=true",
+      "unica_eccezione": "is_cosmetic=true AND affects_combat=false AND affects_economy=false AND affects_ranking=false"
+    }
+  },
+  "sezione_3_distribuzione_tier_1500": {
+    "T1": {"level_bracket": "Lv1-15 B1", "count": 300, "percent": 20.0, "phase": "D1"},
+    "T2": {"level_bracket": "Lv16-30 B2", "count": 350, "percent": 23.3, "phase": "D2"},
+    "T3": {"level_bracket": "Lv31-45 B3", "count": 350, "percent": 23.3, "phase": "D3"},
+    "T4": {"level_bracket": "Lv46-55 B4", "count": 300, "percent": 20.0, "phase": "D4"},
+    "T5": {"level_bracket": "Lv56-60 B5", "count": 200, "percent": 13.3, "phase": "D5"},
+    "totale": 1500,
+    "rationale": [
+      "T2/T3 mid-game peso maggiore per leveling più esteso",
+      "T1 starter 300 per diversità classe iniziale",
+      "T4 late-game 300 con Elite/Raid introduction",
+      "T5 endgame 200 focus qualità (Epic dominante + 15 Legendary)"
+    ]
+  },
+  "sezione_4_distribuzione_rarity_1500": {
+    "common": {"count": 300, "percent": 20.0, "note": "Dominante T1, marginale T2"},
+    "uncommon": {"count": 400, "percent": 26.7, "note": "Peso alto T1-T2"},
+    "rare": {"count": 450, "percent": 30.0, "note": "Peso alto T2-T3"},
+    "epic": {"count": 335, "percent": 22.3, "note": "Peso alto T4-T5"},
+    "legendary": {"count": 15, "percent": 1.0, "note": "CAP PM invariato, solo T5"},
+    "totale": 1500,
+    "legendary_breakdown": {
+      "approved_batch5_step8": 7,
+      "future_gate_margin": 8
+    }
+  },
+  "sezione_5_crosswalk_tier_x_rarity": {
+    "matrix": {
+      "common":    {"T1": 180, "T2":  90, "T3":  30, "T4":   0, "T5":   0, "totale": 300},
+      "uncommon":  {"T1": 100, "T2": 180, "T3": 100, "T4":  20, "T5":   0, "totale": 400},
+      "rare":      {"T1":  20, "T2":  70, "T3": 170, "T4": 140, "T5":  50, "totale": 450},
+      "epic":      {"T1":   0, "T2":  10, "T3":  50, "T4": 140, "T5": 135, "totale": 335},
+      "legendary": {"T1":   0, "T2":   0, "T3":   0, "T4":   0, "T5":  15, "totale":  15}
+    },
+    "tier_totals": {"T1": 300, "T2": 350, "T3": 350, "T4": 300, "T5": 200, "totale": 1500},
+    "coerenza": [
+      "Common presente solo T1-T3",
+      "Uncommon massimo T2",
+      "Rare massimo T3-T4",
+      "Epic dominante T4-T5",
+      "Legendary ESCLUSIVO T5 (PM strict verbatim)"
+    ]
+  },
+  "sezione_6_distribuzione_slot": {
+    "head": {"count": 130, "percent": 8.7},
+    "chest": {"count": 150, "percent": 10.0},
+    "legs": {"count": 130, "percent": 8.7},
+    "hands": {"count": 120, "percent": 8.0},
+    "feet": {"count": 120, "percent": 8.0},
+    "main-hand": {"count": 240, "percent": 16.0},
+    "off-hand": {"count": 130, "percent": 8.7},
+    "ring": {"count": 130, "percent": 8.7},
+    "amulet": {"count": 120, "percent": 8.0},
+    "trinket": {"count": 100, "percent": 6.7},
+    "consumable": {"count": 80, "percent": 5.3},
+    "material": {"count": 50, "percent": 3.3},
+    "totale": 1500,
+    "note": "main-hand 16% per varietà weapon families (12 famiglie incluse 3 backlog)"
+  },
+  "sezione_7_distribuzione_armor_type": {
+    "armor_totale": 650,
+    "light": {"count": 220, "percent_armor": 33.8, "classi_primarie": ["Mage", "Rogue"], "classi_secondarie": ["Ranger"]},
+    "medium": {"count": 220, "percent_armor": 33.8, "classi_primarie": ["Rogue", "Ranger"], "classi_secondarie": ["Priest"]},
+    "heavy": {"count": 210, "percent_armor": 32.3, "classi_primarie": ["Warrior", "Priest"], "classi_secondarie": []},
+    "rationale": "Distribuzione equilibrata per non favorire archetipi"
+  },
+  "sezione_8_distribuzione_weapon_family": {
+    "weapon_totale": 370,
+    "sword": {"count": 55, "percent_weapon": 14.9, "class_proficiency_primaria": ["Warrior", "Rogue"]},
+    "dagger": {"count": 40, "percent_weapon": 10.8, "class_proficiency_primaria": ["Rogue"]},
+    "staff": {"count": 45, "percent_weapon": 12.2, "class_proficiency_primaria": ["Mage", "Priest"]},
+    "mace": {"count": 40, "percent_weapon": 10.8, "class_proficiency_primaria": ["Priest", "Warrior"]},
+    "bow": {"count": 40, "percent_weapon": 10.8, "class_proficiency_primaria": ["Ranger"]},
+    "shield": {"count": 60, "percent_weapon": 16.2, "class_proficiency_primaria": ["Warrior", "Priest"], "note": "off-hand"},
+    "polearm": {"count": 30, "percent_weapon": 8.1, "class_proficiency_primaria": ["Warrior", "Ranger"]},
+    "wand": {"count": 25, "percent_weapon": 6.8, "class_proficiency_primaria": ["Mage", "Priest"]},
+    "hammer": {"count": 20, "percent_weapon": 5.4, "class_proficiency_primaria": ["Warrior"]},
+    "strumento_backlog": {"count": 5, "percent_weapon": 1.4, "class_proficiency_primaria": "PENDING R18.P3"},
+    "falce_backlog": {"count": 5, "percent_weapon": 1.4, "class_proficiency_primaria": "PENDING R18.P3"},
+    "trinket_offhand_backlog": {"count": 5, "percent_weapon": 1.4, "class_proficiency_primaria": "PENDING R18.P3"},
+    "backlog_note": "3 unassigned da R18.P3 — mapping class proficiency PENDING PM D1 Q"
+  },
+  "sezione_9_distribuzione_dungeon_raid_source": {
+    "target_encounter_totali": "60 Normal 3p + 12 Raid 5p + 12 Elite 5p LIVE = 84",
+    "normal_dungeon_3p_drops": {
+      "T1_B1": {"dungeon_count": 12, "item_media_dungeon": 17, "sub_total": 200},
+      "T2_B2": {"dungeon_count": 14, "item_media_dungeon": 15, "sub_total": 210},
+      "T3_B3": {"dungeon_count": 16, "item_media_dungeon": 15, "sub_total": 240},
+      "T4_B4": {"dungeon_count": 9, "item_media_dungeon": 17, "sub_total": 150},
+      "T5_B5": {"dungeon_count": 9, "item_media_dungeon": 11, "sub_total": 100},
+      "totale_dungeon_drop": 900
+    },
+    "raid_5p_drops": {
+      "LIVE_3": {"slugs": ["broken-bastion-siege", "necropolis-bells", "dragon-vault"], "item_media_raid": 17, "sub_total": 50},
+      "NEW_9": {"item_media_raid": 14, "sub_total": 130},
+      "totale_raid_drop": 180
+    },
+    "elite_5p_live_out_of_60": {"count": 12, "item_media": 10, "totale_drop": 120},
+    "non_drop_sources": {
+      "crafting_recipes_endgame_midgame": 100,
+      "achievement_rewards": 60,
+      "ranking_seasonal_rewards": 40,
+      "quest_rewards": 60,
+      "world_boss_R16_3_integration": 30,
+      "vendor_special_T1_T2": 10,
+      "totale_non_drop": 300
+    },
+    "totale_approx": "900 dungeon + 180 raid + 120 elite + 300 non-drop = 1500"
+  },
+  "sezione_10_distribuzione_crafting_achievement_ranking_non_drop": {
+    "totale_non_drop": 300,
+    "percent_catalog": 20.0,
+    "breakdown": {
+      "crafting_recipes_T4_T5": {"count": 60, "note": "Peso alto endgame, NO Legendary craftabili"},
+      "crafting_recipes_T2_T3": {"count": 40, "note": "Mid-game crafting standard"},
+      "achievement_rewards": {"count": 60, "note": "Unique per achievement, Rare/Epic mix, NO Legendary"},
+      "ranking_seasonal_rewards": {"count": 40, "note": "PvP + PvE ranking, Epic dominant"},
+      "quest_rewards": {"count": 60, "note": "Main + side quest, T1-T5 spread"},
+      "world_boss_R16_3": {"count": 30, "note": "LIVE integration, no rewrite"},
+      "vendor_special_starter": {"count": 10, "note": "T1-T2 vendor iconic"}
+    },
+    "vincolo_pm_verbatim": "NO Legendary craftabile normalmente — nessuno dei 15 Legendary catalog è ottenibile via crafting/achievement/ranking/quest"
+  },
+  "sezione_11_legendary_7_of_15_candidate_mapping": {
+    "cap_catalog": 15,
+    "approved_batch5_step8": 7,
+    "future_gate_margin": 8,
+    "approved_7": [
+      {"id": "L1", "slug": "dragonlord-crown", "source": "dragon-vault (LIVE raid)", "lore": "Draco", "drop_rate": 0.02, "utility_fantasy": "Command Draconic"},
+      {"id": "L2", "slug": "void-touched-blade", "source": "void-cathedral (NEW raid)", "lore": "Vuoto", "drop_rate": 0.02, "utility_fantasy": "Void-Pierce"},
+      {"id": "L3", "slug": "seraph-halo-crown", "source": "celestial-conclave (NEW raid)", "lore": "Celeste", "drop_rate": 0.02, "utility_fantasy": "Divine Resurrect"},
+      {"id": "L4", "slug": "worldroot-scepter", "source": "world-tree-collapse (NEW raid)", "lore": "Alberi della Vita", "drop_rate": 0.02, "utility_fantasy": "Nature's Blessing HoT"},
+      {"id": "L5", "slug": "ambash-forge-hammer", "source": "ambash-legendary-forge (dungeon 3p B5)", "lore": "Ambash", "drop_rate": 0.01, "utility_fantasy": "Reforge weapon mid-encounter"},
+      {"id": "L6", "slug": "dragon-elder-scale", "source": "elder-wyrm-descent (dungeon 3p B5)", "lore": "Draco", "drop_rate": 0.01, "utility_fantasy": "Dragon-scale armor buff"},
+      {"id": "L7", "slug": "sole-nero-diadem", "source": "pantheon-of-fallen-suns (dungeon 3p B5 Lv60)", "lore": "Celeste", "drop_rate": 0.01, "utility_fantasy": "Swap light/void resist"}
+    ],
+    "future_8_slot_allocation_pending_pm": {
+      "underused_lore_sources_candidates": ["Alberi della Vita", "Halodi", "Luna Morta", "Ergolat", "Aveol"],
+      "class_specific_legendary_candidates": "2-3 slot",
+      "unpredicted_future_gate": "2-3 slot",
+      "target_gate": "Phase D5+"
+    }
+  },
+  "sezione_12_signature_capacity_planning": {
+    "signature_per_class": 5,
+    "canonical_classes": 5,
+    "signature_slot_totale": 25,
+    "counted_in_1500": false,
+    "collection_target_design": "signature_templates_r18_5",
+    "field_bridge_item_schema": "signature_capacity_slot = true",
+    "vincoli": [
+      "Signature NON conta come Legendary",
+      "Signature NON è shop / P2W",
+      "Signature è per-character, NON tradeable"
+    ]
+  },
+  "sezione_13_class_proficiency_coverage": {
+    "canonical_classes_verbatim": ["Warrior", "Rogue", "Mage", "Priest", "Ranger"],
+    "distribution": {
+      "Warrior": {"item_primari": 300, "percent": 20.0, "gear_primary": "Heavy armor + sword/mace/shield/hammer"},
+      "Rogue": {"item_primari": 290, "percent": 19.3, "gear_primary": "Light/medium armor + dagger/sword"},
+      "Mage": {"item_primari": 280, "percent": 18.7, "gear_primary": "Light armor + staff/wand"},
+      "Priest": {"item_primari": 280, "percent": 18.7, "gear_primary": "Heavy/medium armor + mace/staff/shield/wand"},
+      "Ranger": {"item_primari": 250, "percent": 16.7, "gear_primary": "Medium armor + bow/polearm"},
+      "Universal_is_universal_true": {"item_primari": 100, "percent": 6.7, "note": "Consumables, materials, cosmetics, accessories generici"}
+    },
+    "totale": 1500,
+    "coverage_check": "Tutte 5 classi canoniche >= 16% catalog. Nessuna discriminazione.",
+    "backlog_3_weapon_families": "mapping class proficiency PENDING PM D1 Q (strumento/falce/trinket)"
+  },
+  "sezione_14_main_stat_coverage": {
+    "distribution": {
+      "STR": {"count": 320, "percent": 21.3, "class_associate": ["Warrior", "Ranger (secondary)"]},
+      "AGI": {"count": 300, "percent": 20.0, "class_associate": ["Rogue", "Ranger (primary)"]},
+      "INT": {"count": 300, "percent": 20.0, "class_associate": ["Mage"]},
+      "END": {"count": 280, "percent": 18.7, "class_associate": ["Warrior", "Priest (tanking)"]},
+      "FAI": {"count": 300, "percent": 20.0, "class_associate": ["Priest", "Mage (secondary)"]}
+    },
+    "totale": 1500,
+    "notes": [
+      "STR leggermente più alto (21.3%) per warrior + weapon primary reliance",
+      "END dedicato a tanking (Warrior/Priest heavy armor)",
+      "FAI dedicato a casting divino (Priest primary, Mage secondary)"
+    ]
+  },
+  "sezione_15_open_questions_pm_d1_start": [
+    {"id": "Q1", "topic": "Naming/slug schema", "question": "Approvare naming convention IT + slug kebab-case verbatim?"},
+    {"id": "Q2", "topic": "Item ID vs slug primary", "question": "Confermare item_id uuid4 chiave pubblica, item_slug secondary unique?"},
+    {"id": "Q3", "topic": "Crosswalk TIER × RARITY (Sez 5)", "question": "Approvare matrice 5×5 300+400+450+335+15=1500?"},
+    {"id": "Q4", "topic": "Distribuzione slot (Sez 6)", "question": "Approvare 12-slot enum + count o iterare?"},
+    {"id": "Q5", "topic": "Armor type % (Sez 7)", "question": "Approvare 33.8/33.8/32.3 light/medium/heavy?"},
+    {"id": "Q6", "topic": "3 weapon backlog (strumento/falce/trinket)", "question": "Approvare mapping verbatim o deferire formalmente a R18.P3?"},
+    {"id": "Q7", "topic": "Distribuzione dungeon/raid source (Sez 9)", "question": "Approvare ~15 item medi/dungeon o iterare?"},
+    {"id": "Q8", "topic": "Non-drop 300 item breakdown (Sez 10)", "question": "Approvare 100 craft + 60 achievement + 40 ranking + 60 quest + 30 world boss + 10 vendor?"},
+    {"id": "Q9", "topic": "Legendary future 8 slot margine (Sez 11)", "question": "Approvare progressive discovery in Phase D5+ o pre-allocare 8 candidate ora?"},
+    {"id": "Q10", "topic": "Signature capacity 25 slot (Sez 12)", "question": "Approvare 5×5 signature separati da 1500 catalog?"},
+    {"id": "Q11", "topic": "Class proficiency distribution (Sez 13)", "question": "Approvare W20/R19.3/M18.7/P18.7/Ra16.7/Uni6.7% o iterare Ranger sotto media?"},
+    {"id": "Q12", "topic": "Main stat distribution (Sez 14)", "question": "Approvare STR21.3/AGI20/INT20/END18.7/FAI20% o iterare?"},
+    {"id": "Q13", "topic": "Anti-P2W policy fields", "question": "Approvare enforcement automatico can_be_sold_for_real_money=false su affects_*?"},
+    {"id": "Q14", "topic": "D1 start authorization", "question": "Autorizzare avvio Phase D1 (T1×300 drafting) dopo Q1-Q13?"},
+    {"id": "Q15", "topic": "R18.P3 shield slot mapping (Deferred Items)", "question": "R18.P3 shield slot resta separato da D1 o integrato?"}
+  ],
+  "governance_check_phase_d0_blueprint": {
+    "sealed_files_36_hash_byte_identical": "OK (pytest verificato pre + post append PRD)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO (blueprint design only)",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "item_table_live_creation": "ZERO",
+    "phase_c_tech_dry_run": "NOT INITIATED (Q21 D→B verbatim)",
+    "anti_p2w_policy_coverage": "OK (Sezione 2 obbligatoria)",
+    "pm_autonomous_decision_new": "ZERO (tutte distribuzioni ancorate a PM decisions precedenti)",
+    "files_deliverable": "2 (.md + .json)",
+    "class_proficiency_5_canoniche": "Warrior/Rogue/Mage/Priest/Ranger verbatim"
+  },
+  "handoff_phase_d1": {
+    "scope_d1": "300 item T1 (Lv1-15, bracket B1)",
+    "distribution_d1_rarity": "Common 180 + Uncommon 100 + Rare 20 + Epic 0 + Legendary 0 = 300",
+    "deliverable_d1": "file matrix + tabella items T1 completa (300 righe)",
+    "gate_d1": "risposte a Open Questions D0 Q1-Q15 obbligatorie",
+    "r18_5_status_flow": "... → C0-octies B5 CLOSED → Mini-Gate Legendary Discovery Chain (STEP 8) ✅ DRAFT → Phase D0 Item Table Blueprint (STEP 9) ✅ DRAFT → Phase D1 T1×300 🔒 pending PM Q1-Q15 → Phase D2-D5 → Phase C tech dry-run 🔒 NON IN AGENDA"
+  }
+}
