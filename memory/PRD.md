@@ -1787,3 +1787,81 @@ Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere
 **R18.5 status flow (aggiornato post-STEP 22)**:
 `Phase D5 (STEP 18)` ✅ CLOSED → `🎉 CATALOGO 1500/1500 (STEP 19)` ✅ MILESTONE → `Phase E1 Global Balance Pass (STEP 20)` ✅ CLOSED → `Phase E1.1 Balance Remediation Patch (STEP 21)` ✅ **CLOSED** → **`PRD append E1 CLOSED (STEP 22)`** ✅ **CLOSED (questo append)** → **`Phase E2 Global Naming Pass (STEP 23)`** 🟡 **AUTHORIZED (chain immediata)** → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E2 CLOSED / `R18.6 Class Halls` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
 
+
+---
+
+## R18.5 Phase E1 + E2 CLOSED (2026-07-07T18:55:00Z)
+
+**Milestone**: **R18.5 Phase E1 (Global Balance Pass) + Phase E1.1 (Balance Remediation Patch) + Phase E2 (Global Naming Pass) CLOSED IN BLOCCO** ✅
+
+**Deliverables**:
+- `/app/memory/r18_5_phase_e1_global_balance_pass.md/.json` (E1 analysis)
+- `/app/memory/r18_5_phase_e1_1_balance_remediation_patch.md/.json` (E1.1 patch)
+- `/app/memory/r18_5_phase_e2_global_naming_pass.md/.json` (E2 naming — 320 righe md · SHA256 `89d0be33271a19c0640180b2719cfdb357ae6ed7fca7c2ad7dbc520cadf673d6` · 552 righe json · SHA256 `d398df4c8b1819f23918c4c2e55a4f889fe502890614cdb18e0dc59a54f42337`)
+
+**Item table files finale post-E1.1+E2** (nuovi SHA256):
+- D1 `.json`: `e529922a510d9ec43af2f6d12b9404626f06ae85f9916712931c0131eeae984b`
+- D2 `.json`: `e647a0babcd7f884794920be68895d8bc702b639d4f21e799cef0e20cc6d7069`
+- D3 `.json`: `b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44`
+- D4 `.json`: `6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb`
+- D5 `.json`: `58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e`
+
+**E1 + E2 CLOSED — Decisioni PM verbatim rispettate**:
+
+- **E1 CLOSED** (analysis-only + E1.1 remediation patch applied)
+- **E2 CLOSED** (naming pass EN→IT + slug/family/NPC/Legendary review)
+- **Catalogo 1500/1500 balance-cleaned + naming-normalized** ✅
+- **4 HIGH proficiency violations fixed**:
+  - `priest-blessed-dagger` T1 pugnale → **reliquia**
+  - `priest-blessed-dagger-t2` T2 pugnale → **reliquia**
+  - `rogue-soulforged-shortbow` T3 arco → **balestra**
+  - `rogue-soulforged-shortbow-master` T3 arco → **balestra**
+- **16 stat outliers fixed**:
+  - 2 power creep intra-tier T1 (Warrior common/uncommon STR -1)
+  - 3 underpowered legit (Warrior heavy-belt-t2, ergolat-siege-commander-plate, t4-emberking-siege-boss toward mean)
+  - 11 cross-tier power creep T3 (Warrior/Rogue/Mage/Priest/Ranger boss finale main_stat -1/-2 sotto T4 mean*1.10=24.53)
+- **6 T4 progressive marker outliers ACCEPTED as design intent** (Q6=A PM verbatim, non toccare stat — transizione visiva/narrativa verso T5):
+  - `warrior-t4-legendary-emberking-crown-hint` (STR=18, hint→Legendary T5 emberking-crown, Infernale bracket saturato)
+  - `warrior-t4-legendary-void-touched-hint` (STR=18, hint→L2 void-touched-blade T5)
+  - `rogue-t4-legendary-soul-abyss-hint` (AGI=18, hint→P3 progressive-slot-03 Rogue soul-bind)
+  - `mage-t4-legendary-void-warlock-hint` (INT=18, hint→L2 void-touched-blade cross-class)
+  - `priest-t4-legendary-celestial-halo-hint` (WIS=18, hint→L3 seraph-halo-crown T5)
+  - `priest-t4-legendary-resurrect-hint` (WIS=17, hint→P2 progressive-slot-02 Priest resurrection)
+- **151 armor naming drift EN→IT fixed** (bulk normalization E2):
+  - `heavy` Warrior → **`piastre`** (38)
+  - `medium` Warrior → **`maglia`** (17)
+  - `medium` Ranger → **`maglia`** (35)
+  - `light` Rogue → **`cuoio`** (50)
+  - `light` Ranger → **`cuoio`** (11)
+- **14 duplicate nome_it deferred to E2.1** (STEP 25 catena immediata autorizzata, Q12=A PM)
+- **9 D4 slug drift ACCEPTED / documented / NO rename** (Q3=A PM verbatim, governance preservation)
+- **Family naming redundancy T4/T5 ACCEPTED as design intent** (Q4=A PM verbatim, design pattern progressione: dragonhunter/elder-wyrm/ambash-forge/alevoran-perpetual/emberking-endgame/efreto-purger/adalan-archmage)
+- **Anti-P2W 1500/1500 preserved**
+- **Proficiency HARD BLOCK clean 0 residue** (post-4 HIGH fix + armor naming normalization)
+- **36 seals byte-identical** (pytest 6/6 PASSED cross-STEP 20/21/22/23)
+- **Zero DB/code/migrations**
+
+**Governance E1+E2 CLOSED**:
+- Micro-eccezione DOCUMENTAL autorizzata PM per modifica item table D1-D4 `.json` SOLO per fix E1.1 (proficiency + stat outlier) + E2 (armor naming EN→IT). NO code changes / DB writes / migrations / sealed files.
+- Item_id preservati per tracking (Option A governance) — inclusi blessed-dagger + soulforged-shortbow post-E1.1 fix
+- Aritmetica cumulativa invariata: T1 300 · T2 350 · T3 350 · T4 300 · T5 200 = 1500
+- Rarity invariata: 400 C · 450 U · 400 R · 235 E · 15 L = 1500
+- Class invariata: Warrior 300 · Rogue 300 · Mage 300 · Priest 300 · Ranger 300 = 1500
+
+**NEXT GATE (PM lockato post-E1+E2 approval)**:
+- **R18.5 Phase E2.1 Duplicate Name Resolution Mini-Pass** 🟡 **AUTHORIZED** (STEP 25 catena immediata post-STEP 24)
+- **R18.5 Phase C Tech Dry-Run** 🔒 **HOLD UNTIL E2.1 CLOSED** (proficiency runtime + class_slug migration + ILVL endgame implementation)
+- **R18.6 Class Halls, Classless Start & Adventurer Identity** 🔒 **PLANNED / HOLD (SERIAL post-Phase C)** (Q10=B PM verbatim)
+- **Marketing Brief** 🔒 **DEFERRED** (Q11=B PM verbatim)
+
+**File touch E1 + E1.1 + E2**:
+- E1 analysis (STEP 20): `r18_5_phase_e1_global_balance_pass.md/.json` (NUOVI)
+- E1.1 remediation (STEP 21): `r18_5_phase_e1_1_balance_remediation_patch.md/.json` (NUOVI) + `r18_5_phase_d1_t1_item_table.json` + `r18_5_phase_d2_t2_item_table.json` + `r18_5_phase_d3_t3_item_table.json` + `r18_5_phase_d4_t4_item_table.json` (MODIFICATI)
+- E2 naming (STEP 23): `r18_5_phase_e2_global_naming_pass.md/.json` (NUOVI) + `r18_5_phase_d1_t1_item_table.json` + `r18_5_phase_d2_t2_item_table.json` (MODIFICATI naming-only)
+- PRD.md STEP 19 + STEP 22 + STEP 24 (questo append CLOSED)
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 24)**:
+`Phase D5 (STEP 18)` ✅ → `CATALOGO 1500/1500 (STEP 19)` ✅ → `Phase E1 (STEP 20)` ✅ → `Phase E1.1 (STEP 21)` ✅ → `PRD E1 CLOSED (STEP 22)` ✅ → `Phase E2 (STEP 23)` ✅ → **`PRD E1+E2 CLOSED (STEP 24)`** ✅ **CLOSED (questo append)** → **`Phase E2.1 Duplicate Name Resolution (STEP 25)`** 🟡 **AUTHORIZED (chain immediata)** → `Phase C Tech Dry-Run` 🔒 HOLD UNTIL E2.1 CLOSED / `R18.6 Class Halls` 🔒 PLANNED SERIAL post-Phase C / `Marketing Brief` 🔒 DEFERRED
+

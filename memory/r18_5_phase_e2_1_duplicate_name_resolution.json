@@ -1,0 +1,1723 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "E2.1 — Duplicate Name Resolution Mini-Pass (STEP 25)",
+    "step": "STEP 25",
+    "locked_at_utc": "2026-07-07T19:04:57.245890+00:00",
+    "governance": "DOCUMENTAL ONLY — micro-eccezione autorizzata PM su file item table D1-D4 (.json) SOLO per rename nome_it. NO stat/tier/rarity/classe/source/proficiency/anti-P2W changes.",
+    "status": "APPLIED",
+    "authority": "PM Orchestrator — STEP 25 catena autorizzata post-STEP 24 E1+E2 CLOSED",
+    "deliverable_md": "/app/memory/r18_5_phase_e2_1_duplicate_name_resolution.md",
+    "deliverable_json": "/app/memory/r18_5_phase_e2_1_duplicate_name_resolution.json"
+  },
+  "sezione_1_14_duplicates_before": {
+    "count": 14,
+    "list_before_rename": [
+      {
+        "nome_it": "Anello Radice del Mondo",
+        "occurrences": 2,
+        "items": [
+          "rogue-worldroot-ring (D2 T2 Uncommon Rogue)",
+          "mage-worldroot-ring-m (D2 T2 Uncommon Mage)"
+        ]
+      },
+      {
+        "nome_it": "Cappuccio Forgiato d'Anima",
+        "occurrences": 2,
+        "items": [
+          "rogue-soulforged-hood (D3 T3 Uncommon Rogue)",
+          "ranger-soulforged-hood (D3 T3 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Cappuccio della Stella Caduta",
+        "occurrences": 2,
+        "items": [
+          "mage-celestial-teaser-hood (D3 T3 Uncommon Mage)",
+          "ranger-starfall-ranger-hood (D3 T3 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Cappuccio delle Campane",
+        "occurrences": 2,
+        "items": [
+          "rogue-t4-necropolis-bells-hood (D4 T4 Rare Rogue)",
+          "ranger-t4-necropolis-bells-hood (D4 T4 Rare Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Corazza Radice del Mondo",
+        "occurrences": 2,
+        "items": [
+          "warrior-worldroot-plate (D2 T2 Uncommon Warrior)",
+          "ranger-worldroot-cuirass (D2 T2 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Focus Radice del Mondo",
+        "occurrences": 2,
+        "items": [
+          "mage-focus-worldroot (D2 T2 Uncommon Mage)",
+          "priest-worldroot-focus (D2 T2 Uncommon Priest)"
+        ]
+      },
+      {
+        "nome_it": "Guanti Forgiati d'Anima",
+        "occurrences": 2,
+        "items": [
+          "rogue-soulforged-gloves (D3 T3 Uncommon Rogue)",
+          "ranger-soulforged-gloves (D3 T3 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Mantello del Signore Braci",
+        "occurrences": 3,
+        "items": [
+          "warrior-emberlord-cloak (D2 T2 Uncommon Warrior)",
+          "rogue-emberlord-cloak (D2 T2 Rare Rogue)",
+          "ranger-emberlord-cloak (D2 T2 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Orecchino Radice del Mondo",
+        "occurrences": 2,
+        "items": [
+          "mage-worldroot-earring (D2 T2 Rare Mage)",
+          "priest-worldroot-earring (D2 T2 Uncommon Priest)"
+        ]
+      },
+      {
+        "nome_it": "Reliquia di Adalan",
+        "occurrences": 2,
+        "items": [
+          "priest-adalan-relic (D1 T1 Uncommon Priest)",
+          "priest-adalan-relic-b (D2 T2 Uncommon Priest)"
+        ]
+      },
+      {
+        "nome_it": "Scettro Minore Radice del Mondo",
+        "occurrences": 2,
+        "items": [
+          "mage-worldroot-scepter-lesser (D2 T2 Rare Mage)",
+          "priest-worldroot-scepter-lesser (D2 T2 Rare Priest)"
+        ]
+      },
+      {
+        "nome_it": "Stivali Conciati Elfwood Maestri",
+        "occurrences": 2,
+        "items": [
+          "ranger-conciatore-elfwood-master-boots (D3 T3 Rare Ranger)",
+          "rogue-t4-conciatore-elfwood-master-boots (D4 T4 Rare Rogue)"
+        ]
+      },
+      {
+        "nome_it": "Stivali Forgiati d'Anima",
+        "occurrences": 2,
+        "items": [
+          "rogue-soulforged-boots (D3 T3 Uncommon Rogue)",
+          "ranger-soulforged-boots (D3 T3 Uncommon Ranger)"
+        ]
+      },
+      {
+        "nome_it": "Stivali del Signore Braci",
+        "occurrences": 2,
+        "items": [
+          "rogue-emberlord-boots (D2 T2 Uncommon Rogue)",
+          "mage-emberlord-boots (D2 T2 Uncommon Mage)"
+        ]
+      }
+    ],
+    "total_items_involved": 29,
+    "total_renames_applied": 29
+  },
+  "sezione_2_rename_proposals": [
+    {
+      "item_id": "priest-adalan-relic",
+      "phase": "D1",
+      "nome_it_before": "Reliquia di Adalan",
+      "nome_it_after": "Reliquia di Adalan del Novizio",
+      "tier": "T1",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "warrior-worldroot-plate",
+      "phase": "D2",
+      "nome_it_before": "Corazza Radice del Mondo",
+      "nome_it_after": "Corazza Radice del Mondo del Guerriero",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Warrior",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "warrior-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci del Guerriero",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Warrior",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-worldroot-ring",
+      "phase": "D2",
+      "nome_it_before": "Anello Radice del Mondo",
+      "nome_it_after": "Anello Radice del Mondo del Vagabondo",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci dell'Ombra",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-focus-worldroot",
+      "phase": "D2",
+      "nome_it_before": "Focus Radice del Mondo",
+      "nome_it_after": "Focus Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-worldroot-ring-m",
+      "phase": "D2",
+      "nome_it_before": "Anello Radice del Mondo",
+      "nome_it_after": "Anello Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-worldroot-scepter-lesser",
+      "phase": "D2",
+      "nome_it_before": "Scettro Minore Radice del Mondo",
+      "nome_it_after": "Scettro Minore Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-worldroot-earring",
+      "phase": "D2",
+      "nome_it_before": "Orecchino Radice del Mondo",
+      "nome_it_after": "Orecchino Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "priest-adalan-relic-b",
+      "phase": "D2",
+      "nome_it_before": "Reliquia di Adalan",
+      "nome_it_after": "Reliquia di Adalan del Chierico",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "priest-worldroot-focus",
+      "phase": "D2",
+      "nome_it_before": "Focus Radice del Mondo",
+      "nome_it_after": "Focus Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "priest-worldroot-earring",
+      "phase": "D2",
+      "nome_it_before": "Orecchino Radice del Mondo",
+      "nome_it_after": "Orecchino Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "priest-worldroot-scepter-lesser",
+      "phase": "D2",
+      "nome_it_before": "Scettro Minore Radice del Mondo",
+      "nome_it_after": "Scettro Minore Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Priest",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-worldroot-cuirass",
+      "phase": "D2",
+      "nome_it_before": "Corazza Radice del Mondo",
+      "nome_it_after": "Corazza Radice del Mondo del Guardaboschi",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci del Cacciatore",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-emberlord-boots",
+      "phase": "D2",
+      "nome_it_before": "Stivali del Signore Braci",
+      "nome_it_after": "Stivali del Signore Braci dell'Ombra",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-emberlord-boots",
+      "phase": "D2",
+      "nome_it_before": "Stivali del Signore Braci",
+      "nome_it_after": "Stivali del Signore Braci dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-soulforged-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio Forgiato d'Anima",
+      "nome_it_after": "Cappuccio Forgiato d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-soulforged-gloves",
+      "phase": "D3",
+      "nome_it_before": "Guanti Forgiati d'Anima",
+      "nome_it_after": "Guanti Forgiati d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-soulforged-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Forgiati d'Anima",
+      "nome_it_after": "Stivali Forgiati d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "mage-celestial-teaser-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio della Stella Caduta",
+      "nome_it_after": "Cappuccio della Stella Caduta dell'Astronomo",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-soulforged-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio Forgiato d'Anima",
+      "nome_it_after": "Cappuccio Forgiato d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-soulforged-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Forgiati d'Anima",
+      "nome_it_after": "Stivali Forgiati d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-soulforged-gloves",
+      "phase": "D3",
+      "nome_it_before": "Guanti Forgiati d'Anima",
+      "nome_it_after": "Guanti Forgiati d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-starfall-ranger-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio della Stella Caduta",
+      "nome_it_after": "Cappuccio della Stella Caduta del Tiratore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "ranger-conciatore-elfwood-master-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Conciati Elfwood Maestri",
+      "nome_it_after": "Stivali Conciati Elfwood Maestri T3",
+      "tier": "T3",
+      "rarity": "Rare",
+      "classe": "Ranger",
+      "variant_style": "tier_suffix"
+    },
+    {
+      "item_id": "rogue-t4-necropolis-bells-hood",
+      "phase": "D4",
+      "nome_it_before": "Cappuccio delle Campane",
+      "nome_it_after": "Cappuccio delle Campane dell'Assassino",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "variant_style": "class_suffix"
+    },
+    {
+      "item_id": "rogue-t4-conciatore-elfwood-master-boots",
+      "phase": "D4",
+      "nome_it_before": "Stivali Conciati Elfwood Maestri",
+      "nome_it_after": "Stivali Conciati Elfwood Maestri T4",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "variant_style": "tier_suffix"
+    },
+    {
+      "item_id": "ranger-t4-necropolis-bells-hood",
+      "phase": "D4",
+      "nome_it_before": "Cappuccio delle Campane",
+      "nome_it_after": "Cappuccio delle Campane del Cacciatore",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Ranger",
+      "variant_style": "class_suffix"
+    }
+  ],
+  "sezione_3_nomi_finale_confermati_univoci": {
+    "duplicates_post_rename_count": 0,
+    "duplicates_post_rename_detail": {},
+    "status": "UNIQUE 1500/1500"
+  },
+  "sezione_4_no_stat_tier_rarity_class_source_prof_changes": {
+    "total_renames": 29,
+    "verification_per_rename": [
+      {
+        "item_id": "priest-adalan-relic",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "warrior-worldroot-plate",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "warrior-emberlord-cloak",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-worldroot-ring",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-emberlord-cloak",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-focus-worldroot",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-worldroot-ring-m",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-worldroot-scepter-lesser",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-worldroot-earring",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "priest-adalan-relic-b",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "priest-worldroot-focus",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "priest-worldroot-earring",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "priest-worldroot-scepter-lesser",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-worldroot-cuirass",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-emberlord-cloak",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-emberlord-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-emberlord-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-soulforged-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-soulforged-gloves",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-soulforged-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "mage-celestial-teaser-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-soulforged-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-soulforged-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-soulforged-gloves",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-starfall-ranger-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-conciatore-elfwood-master-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-t4-necropolis-bells-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "rogue-t4-conciatore-elfwood-master-boots",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      },
+      {
+        "item_id": "ranger-t4-necropolis-bells-hood",
+        "stat_principali_unchanged": true,
+        "weapon_family_unchanged": true,
+        "armor_type_unchanged": true,
+        "rarity_unchanged": true,
+        "tier_unchanged": true,
+        "classe_unchanged": true,
+        "source_unchanged": true,
+        "anti_p2w_unchanged": true,
+        "iconic_family_unchanged": true,
+        "affects_star_unchanged": true,
+        "all_other_fields_unchanged": true
+      }
+    ],
+    "status": "PASSED 29/29 renames — solo nome_it modificato"
+  },
+  "sezione_5_item_count_1500": {
+    "total": 1500,
+    "target": 1500,
+    "status": "EXACT 1500/1500"
+  },
+  "sezione_6_rarity_400_450_400_235_15": {
+    "counts": {
+      "common": 400,
+      "uncommon": 450,
+      "rare": 400,
+      "epic": 235,
+      "legendary": 15
+    },
+    "status": "EXACT 400/450/400/235/15"
+  },
+  "sezione_7_class_distribution_300x5": {
+    "counts": {
+      "Warrior": 300,
+      "Rogue": 300,
+      "Mage": 300,
+      "Priest": 300,
+      "Ranger": 300
+    },
+    "status": "EXACT 300x5"
+  },
+  "sezione_8_proficiency_violations_0": {
+    "count": 0,
+    "status": "CLEAN 0",
+    "detail": []
+  },
+  "sezione_9_anti_p2w_1500_1500": {
+    "count": 0,
+    "status": "PASSED 1500/1500"
+  },
+  "sezione_10_d4_slug_drift_9_documented_no_rename": {
+    "governance": "Q3=A PM verbatim — ACCEPTED / documented / NO rename",
+    "list_9_slug_drift": [
+      {
+        "slug": "necropolis-bells",
+        "note": "raid Lv50, drift naming-only accepted D4 CLOSED"
+      },
+      {
+        "slug": "starfall-basilica-t4",
+        "note": "dungeon 3p T4 variant, drift accepted"
+      },
+      {
+        "slug": "shadowreach-vault",
+        "note": "dungeon 3p T4, drift accepted"
+      },
+      {
+        "slug": "emberking-throne",
+        "note": "dungeon 3p T4 endgame Infernale, drift accepted"
+      },
+      {
+        "slug": "wyrmscale-crucible",
+        "note": "dungeon 3p T4 Draco early, drift accepted"
+      },
+      {
+        "slug": "ergolat-siege-nexus",
+        "note": "dungeon 3p T4 Ergolat, drift accepted"
+      },
+      {
+        "slug": "adalan-arcane-fortress",
+        "note": "dungeon 3p T4 Adalan, drift accepted"
+      },
+      {
+        "slug": "efreto-cursed-chapel",
+        "note": "dungeon 3p T4 Efreto, drift accepted"
+      },
+      {
+        "slug": "worldroot-heart",
+        "note": "dungeon 3p T4 Alberi della Vita, drift accepted"
+      }
+    ],
+    "resolution": "9 slug drift D4 dungeon documented in STEP 17 (D4 CLOSED). Governance preservation. NO rework autonomo. NO E2.1 action."
+  },
+  "sezione_11_family_naming_redundancy_accepted": {
+    "governance": "Q4=A PM verbatim — ACCEPTED as design intent per progressione",
+    "representative_examples": [
+      {
+        "family": "dragonhunter-endgame",
+        "note": "Draco progression T4→T5 endgame"
+      },
+      {
+        "family": "elder-wyrm-hunter/stalker/shepherd",
+        "note": "Draco endgame progression W/R/P"
+      },
+      {
+        "family": "ambash-forge-warrior/ambash-arcane-forge",
+        "note": "Ambash T3→T5 progression"
+      },
+      {
+        "family": "alevoran-perpetual",
+        "note": "Alevora T3→T5 progression"
+      },
+      {
+        "family": "emberking-endgame",
+        "note": "Infernale T3→T4→T5 progression"
+      },
+      {
+        "family": "efreto-corrupt-caster/purger/cursed-ranger",
+        "note": "Efreto multi-class endgame progression"
+      },
+      {
+        "family": "adalan-archmage-t5/adalan-arcane-thief",
+        "note": "Adalan T3→T5 progression"
+      },
+      {
+        "family": "worldroot-warden/worldroot-druid-priest/worldroot-loremaster",
+        "note": "Alberi della Vita multi-class endgame"
+      }
+    ],
+    "resolution": "Nessuna azione autonoma. Design intent per progressione cross-tier. NO E2.1 action."
+  },
+  "sezione_12_item_table_files_modified": {
+    "files_modified": [
+      "D1",
+      "D2",
+      "D3",
+      "D4"
+    ],
+    "delta_per_file": {
+      "D1": "renamed items in D1: 1",
+      "D2": "renamed items in D2: 16",
+      "D3": "renamed items in D3: 9",
+      "D4": "renamed items in D4: 3",
+      "D5": "renamed items in D5: 0"
+    }
+  },
+  "sezione_13_sha256_post_write": {
+    "D1": {
+      "path": "/app/memory/r18_5_phase_d1_t1_item_table.json",
+      "sha256_before_e2_1": "e529922a510d9ec43af2f6d12b9404626f06ae85f9916712931c0131eeae984b",
+      "sha256_after_e2_1": "40107a3e7cfd3cce4436a315036598bd93d84af7885cd9701d49bb4defbbc878",
+      "changed": true
+    },
+    "D2": {
+      "path": "/app/memory/r18_5_phase_d2_t2_item_table.json",
+      "sha256_before_e2_1": "e647a0babcd7f884794920be68895d8bc702b639d4f21e799cef0e20cc6d7069",
+      "sha256_after_e2_1": "f30f39f327db39e01983b50a10611c559b86319696d68220cc6a0b822ada7275",
+      "changed": true
+    },
+    "D3": {
+      "path": "/app/memory/r18_5_phase_d3_t3_item_table.json",
+      "sha256_before_e2_1": "b478ae641eec3f33e440cfec80a2e52da4a81c8fd76b7df9594234be09644d44",
+      "sha256_after_e2_1": "39e0f88fa7121c1d5fb3dff27abb1a6b7da8a20033778d48ded420edf76b8b35",
+      "changed": true
+    },
+    "D4": {
+      "path": "/app/memory/r18_5_phase_d4_t4_item_table.json",
+      "sha256_before_e2_1": "6d42a01983d6bcf37354f2b5ba99cff6a2b4d8b2c272819907a57dbfe9455acb",
+      "sha256_after_e2_1": "a6c24abfcb3c442b880a7509726af318a097ead1dd7ebc1f2d7396904d6fdf90",
+      "changed": true
+    },
+    "D5": {
+      "path": "/app/memory/r18_5_phase_d5_t5_item_table.json",
+      "sha256_before_e2_1": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "sha256_after_e2_1": "58e9f0ea86f7fb5eeaf00c53728fe15c4f4a40041c98e2639a339b873069ae6e",
+      "changed": false
+    }
+  },
+  "sezione_14_sealed_integrity_result": "PENDING external pytest run (STEP 25 verify post-write)",
+  "sezione_15_pm_open_questions_post_e2_1_for_phase_c_tech_gate": [
+    {
+      "id": "Q1",
+      "topic": "Approvare E2.1 CLOSED (29 rename applicati per risolvere 14 duplicate nome_it, 0 stat/tier/rarity/classe/source/proficiency/anti-P2W changes)?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Approvare variant style: class-suffix (del Guerriero/dell'Ombra/dell'Arcanista/del Druido Sacro/del Cacciatore/del Vagabondo/dell'Astronomo/del Tiratore/del Guardaboschi/del Novizio/del Chierico/dell'Assassino) + tier-suffix (T3/T4) per cross-tier case?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Autorizzare PRD.md append `R18.5 Phase E2.1 CLOSED` post-review (NON auto-eseguito, pattern D3/D4/D5/E1/E2 verbatim)?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Post E2.1 approval: autorizzare Phase C Tech Dry-Run (proficiency runtime + class_slug migration + ILVL endgame implementation)?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Phase C Tech Dry-Run scope: quali sub-steps prioritizzare? (proficiency runtime, class_slug migration, ILVL implementation, drop table apply gate, registry generation, anti-P2W runtime validator)?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Legendary utility numeric finals (cooldown, %, scaling per 15 Legendary): finalizzare pre-Phase C tech gate o durante Phase C?"
+    },
+    {
+      "id": "Q7",
+      "topic": "4 progressive Legendary placeholders (P1-P4): finalizzare lore/source/utility in Phase C tech gate o iterazione E3?"
+    },
+    {
+      "id": "Q8",
+      "topic": "6 hint T4 PENDING (Q6 PM accepted design intent): confermare come design intent finale per Phase C tech gate?"
+    },
+    {
+      "id": "Q9",
+      "topic": "R18.6 Class Halls kickoff: mantenere PLANNED SERIAL post-Phase C (Q10=B PM verbatim)?"
+    },
+    {
+      "id": "Q10",
+      "topic": "Marketing Brief: mantenere DEFERRED (Q11=B PM verbatim)?"
+    }
+  ],
+  "governance_check_step25": {
+    "sealed_files_36_hash_byte_identical": "PENDING pytest verify",
+    "db_writes": "ZERO",
+    "code_changes_py_js_jsx_tsx_ts": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO (nessun nuovo item)",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "item_table_modification_authorized": "AUTHORIZED (D1/D2/D3/D4 .json rename-only micro-eccezione PM)",
+    "stat_balance_changes": "ZERO",
+    "tier_changes": "ZERO",
+    "rarity_changes": "ZERO",
+    "class_changes": "ZERO",
+    "source_changes": "ZERO",
+    "proficiency_changes": "ZERO",
+    "anti_p2w_field_changes": "ZERO",
+    "utility_changes": "ZERO",
+    "iconic_family_changes": "ZERO",
+    "item_id_changes": "ZERO (tutti preservati)",
+    "slug_d4_rename": "ZERO (Q3=A accepted, no rename)",
+    "family_redundancy_rework": "ZERO (Q4=A accepted, no rework)",
+    "hint_t4_stat_changes": "ZERO (Q6=A accepted design intent, no changes)",
+    "catalog_1500_1500_preserved": true,
+    "phase_c_auto_start": "BLOCKED (STOP after E2.1, PM review required)",
+    "r18_6_auto_start": "BLOCKED (PLANNED SERIAL post-Phase C)",
+    "marketing_brief_auto_start": "BLOCKED (DEFERRED)",
+    "prd_append_e2_1_closed_auto": "BLOCKED (rinviato a post-PM-approval)",
+    "classi_canoniche_verbatim": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_e2_1": {
+    "auto_transition_next_gate": false,
+    "prd_append_e2_1_closed_auto": false,
+    "note": "STOP dopo E2.1. Attendo PM review Q1-Q10 + GO esplicito prima di Phase C Tech Dry-Run."
+  },
+  "rename_log_apply_audit": [
+    {
+      "item_id": "priest-adalan-relic",
+      "phase": "D1",
+      "nome_it_before": "Reliquia di Adalan",
+      "nome_it_after": "Reliquia di Adalan del Novizio",
+      "tier": "T1",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "source": "broken-tower-of-adalan: adalan relic",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "warrior-worldroot-plate",
+      "phase": "D2",
+      "nome_it_before": "Corazza Radice del Mondo",
+      "nome_it_after": "Corazza Radice del Mondo del Guerriero",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Warrior",
+      "source": "worldroot-hollow: guardian drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "warrior-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci del Guerriero",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Warrior",
+      "source": "emberlord-hideout: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-worldroot-ring",
+      "phase": "D2",
+      "nome_it_before": "Anello Radice del Mondo",
+      "nome_it_after": "Anello Radice del Mondo del Vagabondo",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci dell'Ombra",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "source": "emberlord-hideout: rare drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-focus-worldroot",
+      "phase": "D2",
+      "nome_it_before": "Focus Radice del Mondo",
+      "nome_it_after": "Focus Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-worldroot-ring-m",
+      "phase": "D2",
+      "nome_it_before": "Anello Radice del Mondo",
+      "nome_it_after": "Anello Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-worldroot-scepter-lesser",
+      "phase": "D2",
+      "nome_it_before": "Scettro Minore Radice del Mondo",
+      "nome_it_after": "Scettro Minore Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Mage",
+      "source": "worldroot-hollow: rare drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-worldroot-earring",
+      "phase": "D2",
+      "nome_it_before": "Orecchino Radice del Mondo",
+      "nome_it_after": "Orecchino Radice del Mondo dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Mage",
+      "source": "worldroot-hollow: rare drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "priest-adalan-relic-b",
+      "phase": "D2",
+      "nome_it_before": "Reliquia di Adalan",
+      "nome_it_after": "Reliquia di Adalan del Chierico",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "source": "hollow-monastery: chest",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "priest-worldroot-focus",
+      "phase": "D2",
+      "nome_it_before": "Focus Radice del Mondo",
+      "nome_it_after": "Focus Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "priest-worldroot-earring",
+      "phase": "D2",
+      "nome_it_before": "Orecchino Radice del Mondo",
+      "nome_it_after": "Orecchino Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Priest",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "priest-worldroot-scepter-lesser",
+      "phase": "D2",
+      "nome_it_before": "Scettro Minore Radice del Mondo",
+      "nome_it_after": "Scettro Minore Radice del Mondo del Druido Sacro",
+      "tier": "T2",
+      "rarity": "Rare",
+      "classe": "Priest",
+      "source": "worldroot-hollow: rare drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-worldroot-cuirass",
+      "phase": "D2",
+      "nome_it_before": "Corazza Radice del Mondo",
+      "nome_it_after": "Corazza Radice del Mondo del Guardaboschi",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "worldroot-hollow: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-emberlord-cloak",
+      "phase": "D2",
+      "nome_it_before": "Mantello del Signore Braci",
+      "nome_it_after": "Mantello del Signore Braci del Cacciatore",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "emberlord-hideout: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-emberlord-boots",
+      "phase": "D2",
+      "nome_it_before": "Stivali del Signore Braci",
+      "nome_it_after": "Stivali del Signore Braci dell'Ombra",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "source": "emberlord-hideout: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-emberlord-boots",
+      "phase": "D2",
+      "nome_it_before": "Stivali del Signore Braci",
+      "nome_it_after": "Stivali del Signore Braci dell'Arcanista",
+      "tier": "T2",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "source": "emberlord-hideout: drop",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-soulforged-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio Forgiato d'Anima",
+      "nome_it_after": "Cappuccio Forgiato d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-soulforged-gloves",
+      "phase": "D3",
+      "nome_it_before": "Guanti Forgiati d'Anima",
+      "nome_it_after": "Guanti Forgiati d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-soulforged-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Forgiati d'Anima",
+      "nome_it_after": "Stivali Forgiati d'Anima dell'Ombra",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Rogue",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "mage-celestial-teaser-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio della Stella Caduta",
+      "nome_it_after": "Cappuccio della Stella Caduta dell'Astronomo",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Mage",
+      "source": "starfall-basilica: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-soulforged-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio Forgiato d'Anima",
+      "nome_it_after": "Cappuccio Forgiato d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-soulforged-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Forgiati d'Anima",
+      "nome_it_after": "Stivali Forgiati d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-soulforged-gloves",
+      "phase": "D3",
+      "nome_it_before": "Guanti Forgiati d'Anima",
+      "nome_it_after": "Guanti Forgiati d'Anima del Cacciatore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "soulforge-crucible: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-starfall-ranger-hood",
+      "phase": "D3",
+      "nome_it_before": "Cappuccio della Stella Caduta",
+      "nome_it_after": "Cappuccio della Stella Caduta del Tiratore",
+      "tier": "T3",
+      "rarity": "Uncommon",
+      "classe": "Ranger",
+      "source": "starfall-basilica: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-conciatore-elfwood-master-boots",
+      "phase": "D3",
+      "nome_it_before": "Stivali Conciati Elfwood Maestri",
+      "nome_it_after": "Stivali Conciati Elfwood Maestri T3",
+      "tier": "T3",
+      "rarity": "Rare",
+      "classe": "Ranger",
+      "source": "conciatore-elfwood: craft T3 rare",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-t4-necropolis-bells-hood",
+      "phase": "D4",
+      "nome_it_before": "Cappuccio delle Campane",
+      "nome_it_after": "Cappuccio delle Campane dell'Assassino",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "source": "necropolis-bells raid: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "rogue-t4-conciatore-elfwood-master-boots",
+      "phase": "D4",
+      "nome_it_before": "Stivali Conciati Elfwood Maestri",
+      "nome_it_after": "Stivali Conciati Elfwood Maestri T4",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Rogue",
+      "source": "conciatore-elfwood: craft T4 rare",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    },
+    {
+      "item_id": "ranger-t4-necropolis-bells-hood",
+      "phase": "D4",
+      "nome_it_before": "Cappuccio delle Campane",
+      "nome_it_after": "Cappuccio delle Campane del Cacciatore",
+      "tier": "T4",
+      "rarity": "Rare",
+      "classe": "Ranger",
+      "source": "necropolis-bells raid: chest reward",
+      "stat_principali_unchanged": true,
+      "weapon_family_unchanged": true,
+      "armor_type_unchanged": true,
+      "rarity_unchanged": true,
+      "tier_unchanged": true,
+      "classe_unchanged": true,
+      "source_unchanged": true,
+      "anti_p2w_unchanged": true,
+      "proficiency_unchanged": true,
+      "iconic_family_unchanged": true,
+      "affects_star_unchanged": true,
+      "other_fields_unchanged_full_snapshot": true
+    }
+  ]
+}

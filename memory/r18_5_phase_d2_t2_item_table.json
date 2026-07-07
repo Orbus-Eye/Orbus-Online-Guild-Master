@@ -904,7 +904,7 @@
     },
     {
       "item_id": "warrior-worldroot-plate",
-      "nome_it": "Corazza Radice del Mondo",
+      "nome_it": "Corazza Radice del Mondo del Guerriero",
       "classe_orientata": "Warrior",
       "slot": "chest",
       "weapon_family": null,
@@ -1229,7 +1229,7 @@
     },
     {
       "item_id": "warrior-emberlord-cloak",
-      "nome_it": "Mantello del Signore Braci",
+      "nome_it": "Mantello del Signore Braci del Guerriero",
       "classe_orientata": "Warrior",
       "slot": "chest",
       "weapon_family": null,
@@ -2554,7 +2554,7 @@
     },
     {
       "item_id": "rogue-worldroot-ring",
-      "nome_it": "Anello Radice del Mondo",
+      "nome_it": "Anello Radice del Mondo del Vagabondo",
       "classe_orientata": "Rogue",
       "slot": "ring",
       "weapon_family": null,
@@ -2904,7 +2904,7 @@
     },
     {
       "item_id": "rogue-emberlord-cloak",
-      "nome_it": "Mantello del Signore Braci",
+      "nome_it": "Mantello del Signore Braci dell'Ombra",
       "classe_orientata": "Rogue",
       "slot": "chest",
       "weapon_family": null,
@@ -3904,7 +3904,7 @@
     },
     {
       "item_id": "mage-focus-worldroot",
-      "nome_it": "Focus Radice del Mondo",
+      "nome_it": "Focus Radice del Mondo dell'Arcanista",
       "classe_orientata": "Mage",
       "slot": "off-hand",
       "weapon_family": "focus",
@@ -4154,7 +4154,7 @@
     },
     {
       "item_id": "mage-worldroot-ring-m",
-      "nome_it": "Anello Radice del Mondo",
+      "nome_it": "Anello Radice del Mondo dell'Arcanista",
       "classe_orientata": "Mage",
       "slot": "ring",
       "weapon_family": null,
@@ -4354,7 +4354,7 @@
     },
     {
       "item_id": "mage-worldroot-scepter-lesser",
-      "nome_it": "Scettro Minore Radice del Mondo",
+      "nome_it": "Scettro Minore Radice del Mondo dell'Arcanista",
       "classe_orientata": "Mage",
       "slot": "main-hand",
       "weapon_family": "bastone",
@@ -4529,7 +4529,7 @@
     },
     {
       "item_id": "mage-worldroot-earring",
-      "nome_it": "Orecchino Radice del Mondo",
+      "nome_it": "Orecchino Radice del Mondo dell'Arcanista",
       "classe_orientata": "Mage",
       "slot": "amulet",
       "weapon_family": null,
@@ -5379,7 +5379,7 @@
     },
     {
       "item_id": "priest-adalan-relic-b",
-      "nome_it": "Reliquia di Adalan",
+      "nome_it": "Reliquia di Adalan del Chierico",
       "classe_orientata": "Priest",
       "slot": "off-hand",
       "weapon_family": "reliquia",
@@ -5429,7 +5429,7 @@
     },
     {
       "item_id": "priest-worldroot-focus",
-      "nome_it": "Focus Radice del Mondo",
+      "nome_it": "Focus Radice del Mondo del Druido Sacro",
       "classe_orientata": "Priest",
       "slot": "off-hand",
       "weapon_family": "focus",
@@ -5729,7 +5729,7 @@
     },
     {
       "item_id": "priest-worldroot-earring",
-      "nome_it": "Orecchino Radice del Mondo",
+      "nome_it": "Orecchino Radice del Mondo del Druido Sacro",
       "classe_orientata": "Priest",
       "slot": "amulet",
       "weapon_family": null,
@@ -5854,7 +5854,7 @@
     },
     {
       "item_id": "priest-worldroot-scepter-lesser",
-      "nome_it": "Scettro Minore Radice del Mondo",
+      "nome_it": "Scettro Minore Radice del Mondo del Druido Sacro",
       "classe_orientata": "Priest",
       "slot": "main-hand",
       "weapon_family": "bastone",
@@ -6954,7 +6954,7 @@
     },
     {
       "item_id": "ranger-worldroot-cuirass",
-      "nome_it": "Corazza Radice del Mondo",
+      "nome_it": "Corazza Radice del Mondo del Guardaboschi",
       "classe_orientata": "Ranger",
       "slot": "chest",
       "weapon_family": null,
@@ -7029,7 +7029,7 @@
     },
     {
       "item_id": "ranger-emberlord-cloak",
-      "nome_it": "Mantello del Signore Braci",
+      "nome_it": "Mantello del Signore Braci del Cacciatore",
       "classe_orientata": "Ranger",
       "slot": "chest",
       "weapon_family": null,
@@ -8029,7 +8029,7 @@
     },
     {
       "item_id": "rogue-emberlord-boots",
-      "nome_it": "Stivali del Signore Braci",
+      "nome_it": "Stivali del Signore Braci dell'Ombra",
       "classe_orientata": "Rogue",
       "slot": "feet",
       "weapon_family": null,
@@ -8229,7 +8229,7 @@
     },
     {
       "item_id": "mage-emberlord-boots",
-      "nome_it": "Stivali del Signore Braci",
+      "nome_it": "Stivali del Signore Braci dell'Arcanista",
       "classe_orientata": "Mage",
       "slot": "feet",
       "weapon_family": null,

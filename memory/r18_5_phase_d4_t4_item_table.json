@@ -3314,7 +3314,7 @@
     },
     {
       "item_id": "rogue-t4-necropolis-bells-hood",
-      "nome_it": "Cappuccio delle Campane",
+      "nome_it": "Cappuccio delle Campane dell'Assassino",
       "classe_orientata": "Rogue",
       "slot": "head",
       "weapon_family": null,
@@ -3489,7 +3489,7 @@
     },
     {
       "item_id": "rogue-t4-conciatore-elfwood-master-boots",
-      "nome_it": "Stivali Conciati Elfwood Maestri",
+      "nome_it": "Stivali Conciati Elfwood Maestri T4",
       "classe_orientata": "Rogue",
       "slot": "feet",
       "weapon_family": null,
@@ -7789,7 +7789,7 @@
     },
     {
       "item_id": "ranger-t4-necropolis-bells-hood",
-      "nome_it": "Cappuccio delle Campane",
+      "nome_it": "Cappuccio delle Campane del Cacciatore",
       "classe_orientata": "Ranger",
       "slot": "head",
       "weapon_family": null,

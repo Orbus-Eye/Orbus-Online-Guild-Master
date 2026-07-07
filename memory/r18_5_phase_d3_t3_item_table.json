@@ -2744,7 +2744,7 @@
     },
     {
       "item_id": "rogue-soulforged-hood",
-      "nome_it": "Cappuccio Forgiato d'Anima",
+      "nome_it": "Cappuccio Forgiato d'Anima dell'Ombra",
       "classe_orientata": "Rogue",
       "slot": "head",
       "weapon_family": null,
@@ -2769,7 +2769,7 @@
     },
     {
       "item_id": "rogue-soulforged-gloves",
-      "nome_it": "Guanti Forgiati d'Anima",
+      "nome_it": "Guanti Forgiati d'Anima dell'Ombra",
       "classe_orientata": "Rogue",
       "slot": "hands",
       "weapon_family": null,
@@ -2794,7 +2794,7 @@
     },
     {
       "item_id": "rogue-soulforged-boots",
-      "nome_it": "Stivali Forgiati d'Anima",
+      "nome_it": "Stivali Forgiati d'Anima dell'Ombra",
       "classe_orientata": "Rogue",
       "slot": "feet",
       "weapon_family": null,
@@ -4844,7 +4844,7 @@
     },
     {
       "item_id": "mage-celestial-teaser-hood",
-      "nome_it": "Cappuccio della Stella Caduta",
+      "nome_it": "Cappuccio della Stella Caduta dell'Astronomo",
       "classe_orientata": "Mage",
       "slot": "head",
       "weapon_family": null,
@@ -7969,7 +7969,7 @@
     },
     {
       "item_id": "ranger-soulforged-hood",
-      "nome_it": "Cappuccio Forgiato d'Anima",
+      "nome_it": "Cappuccio Forgiato d'Anima del Cacciatore",
       "classe_orientata": "Ranger",
       "slot": "head",
       "weapon_family": null,
@@ -7994,7 +7994,7 @@
     },
     {
       "item_id": "ranger-soulforged-boots",
-      "nome_it": "Stivali Forgiati d'Anima",
+      "nome_it": "Stivali Forgiati d'Anima del Cacciatore",
       "classe_orientata": "Ranger",
       "slot": "feet",
       "weapon_family": null,
@@ -8019,7 +8019,7 @@
     },
     {
       "item_id": "ranger-soulforged-gloves",
-      "nome_it": "Guanti Forgiati d'Anima",
+      "nome_it": "Guanti Forgiati d'Anima del Cacciatore",
       "classe_orientata": "Ranger",
       "slot": "hands",
       "weapon_family": null,
@@ -8294,7 +8294,7 @@
     },
     {
       "item_id": "ranger-starfall-ranger-hood",
-      "nome_it": "Cappuccio della Stella Caduta",
+      "nome_it": "Cappuccio della Stella Caduta del Tiratore",
       "classe_orientata": "Ranger",
       "slot": "head",
       "weapon_family": null,
@@ -8994,7 +8994,7 @@
     },
     {
       "item_id": "ranger-conciatore-elfwood-master-boots",
-      "nome_it": "Stivali Conciati Elfwood Maestri",
+      "nome_it": "Stivali Conciati Elfwood Maestri T3",
       "classe_orientata": "Ranger",
       "slot": "feet",
       "weapon_family": null,
