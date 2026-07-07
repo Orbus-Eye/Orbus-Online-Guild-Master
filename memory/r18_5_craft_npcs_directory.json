@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "round": "R18.5 — Itemization, ILVL & Gear Progression Rework",
+    "phase": "Pre-D2 Micro-step — Craft NPC Directory (STEP 12)",
+    "locked_at_utc": "2026-07-07T14:30:00Z",
+    "governance": "DOCUMENTAL ONLY",
+    "status": "DRAFT — 5 NPC LOCKED confermati, 0 nuovi PENDING",
+    "authority": "PM Orchestrator — Q3=C + Q5=GO verbatim",
+    "scope": "fonte unica dei Craft NPC cornerstone D1-D5",
+    "cap_totale_npc": 10,
+    "attivi_locked": 5,
+    "slot_residui_pending_pm": 5
+  },
+  "framework_12_campi_obbligatori": [
+    "npc_id","nome_it","ruolo_crafting","location_regione","lore_source",
+    "materiali_trattati","item_families_servite","tier_range_previsto","classi_piu_servite",
+    "note_narrative","anti_p2w_note","stato"
+  ],
+  "npc_locked_5": [
+    {
+      "npc_id": "fabbro-bulwark",
+      "nome_it": "Fabbro Bulwark",
+      "ruolo_crafting": "Fabbro armature pesanti + scudi ordinari",
+      "location_regione": "Krastlov Militia Camp — quartiere della forgia",
+      "lore_source": "Ambash (leggera — forgia base gilda Bulwark)",
+      "materiali_trattati": ["ferro grezzo","acciaio base","legno duro (per impugnature scudi)"],
+      "item_families_servite": ["bulwark","ironhelm (support)"],
+      "tier_range_previsto": ["T1","T2","T3+ (avanzamento gilda)"],
+      "classi_piu_servite": ["Warrior"],
+      "note_narrative": "Fabbro di lunga esperienza, ex-soldato Krastlov. Ha giurato di forgiare solo per chi difende. Suo padre fondò la gilda Bulwark. Non forgia armi elaborate — solo scudi solidi e armature pratiche.",
+      "anti_p2w_note": "NO premium vendor. NO P2W. Recipe unlockable via quest chain (starter-crafting D1 documentato). Materiali richiedono grind + gold ordinario. Nessuna variante 'instant unlock' per soldi reali.",
+      "stato": "LOCKED",
+      "d1_usage": {
+        "items_associati": 3,
+        "livelli": [3,5,7],
+        "slugs_esempio": ["warrior-bulwark-novice-shield","warrior-bulwark-roundshield","warrior-bulwark-towershield"]
+      }
+    },
+    {
+      "npc_id": "cuoiaia-elfwood",
+      "nome_it": "Cuoiaia Elfwood",
+      "ruolo_crafting": "Cuoiaia specializzata in armature leggere di cuoio",
+      "location_regione": "Elfwood Fringe — laboratorio all'aperto sotto grande quercia",
+      "lore_source": "Elfwood (bracket B1 leggera)",
+      "materiali_trattati": ["cuoio grezzo","pellame di cervo","corda vegetale","resina d'albero"],
+      "item_families_servite": ["leathercraft"],
+      "tier_range_previsto": ["T1","T2 (con materiali T2)"],
+      "classi_piu_servite": ["Rogue"],
+      "note_narrative": "Anziana elfa dei boschi, ha lavorato il cuoio per generazioni. Non tratta con maghi ('stoffa non ha vita, è morta'). Preferisce pelli di animali cacciati in modo rispettoso — no bracconieri, no shortcut.",
+      "anti_p2w_note": "NO premium vendor. NO P2W. Recipe via side-quest 'Prime Pellicce' (D1). Materiali richiedono caccia + tempo. Nessun instant-craft acquistabile.",
+      "stato": "LOCKED",
+      "d1_usage": {
+        "items_associati": 3,
+        "livelli": [3,4,6],
+        "slugs_esempio": ["rogue-leathercraft-cloak","rogue-leathercraft-hood","rogue-leathercraft-gloves"]
+      }
+    },
+    {
+      "npc_id": "sarto-sacro",
+      "nome_it": "Sarto Sacro",
+      "ruolo_crafting": "Sarto specializzato in vesti sacre + accessori cerimoniali",
+      "location_regione": "Halodi Sanctuary — atelier attiguo al monastero",
+      "lore_source": "Halodi (bracket B1 leggera, santuario)",
+      "materiali_trattati": ["stoffa bianca benedetta","lino sacro","filo d'oro cerimoniale","incenso solido (per finiture)"],
+      "item_families_servite": ["novice-holy"],
+      "tier_range_previsto": ["T1","T2","T3+ (con benedizioni maggiori)"],
+      "classi_piu_servite": ["Priest"],
+      "note_narrative": "Ex-novizio del monastero, ha rinunciato ai voti per servire attraverso l'arte del tessuto. Recita una preghiera per ogni cucitura. Non produce mai per chi non ha 'cuore benedetto' (reachable via achievement pathway).",
+      "anti_p2w_note": "NO premium vendor. NO P2W. Recipe via preghiera + reputation con santuario Halodi. Materiali cerimoniali richiedono quest chain religiosa. Nessuna scorciatoia real-money.",
+      "stato": "LOCKED",
+      "d1_usage": {
+        "items_associati": 2,
+        "livelli": [3,5],
+        "slugs_esempio": ["priest-novice-holy-vestments","priest-novice-holy-slippers"]
+      }
+    },
+    {
+      "npc_id": "tessitrice-arcana",
+      "nome_it": "Tessitrice Arcana",
+      "ruolo_crafting": "Tessitrice di vesti arcane e stoffe imbevute di mana",
+      "location_regione": "Torre Arcana degli Apprendisti — laboratorio piano terra",
+      "lore_source": "Faglie arcane (bracket B1 leggera)",
+      "materiali_trattati": ["stoffa magica base","filo di mana","polvere arcana (per rune)","seta lunare (per finiture)"],
+      "item_families_servite": ["novice-arcane"],
+      "tier_range_previsto": ["T1","T2","T3+ (con materiali arcani T3)"],
+      "classi_piu_servite": ["Mage"],
+      "note_narrative": "Maga anziana con affinità per il tessuto invece che per il combattimento. Ha lasciato la ricerca teorica per dedicarsi all'arte pratica dell'infondere mana nella stoffa. Vede ogni veste come un incantesimo permanente.",
+      "anti_p2w_note": "NO premium vendor. NO P2W. Recipe via quest 'Filo di Mana' (D1) + reputation con Torre Arcana. Materiali richiedono grind arcano + quest chain. Nessuna variante real-money.",
+      "stato": "LOCKED",
+      "d1_usage": {
+        "items_associati": 3,
+        "livelli": [3,5,6],
+        "slugs_esempio": ["mage-novice-arcane-robe","mage-novice-arcane-slippers","mage-tessitrice-arcana-T2-recipe (implicito)"]
+      }
+    },
+    {
+      "npc_id": "conciatore-elfwood",
+      "nome_it": "Conciatore Elfwood",
+      "ruolo_crafting": "Conciatore specializzato in cuoio medium + finiture per armature ranger",
+      "location_regione": "Elfwood Fringe — vicino a Cuoiaia Elfwood ma laboratorio separato",
+      "lore_source": "Elfwood (bracket B1 leggera, complementare a Cuoiaia)",
+      "materiali_trattati": ["cuoio conciato con linfa foresta","pellame di cinghiale","corno intagliato","resina d'albero"],
+      "item_families_servite": ["scout-leather"],
+      "tier_range_previsto": ["T1","T2 (con materiali forestali T2)"],
+      "classi_piu_servite": ["Ranger"],
+      "note_narrative": "Uomo di mezza età, ex-scout della Ranger Company. Ha perso l'occhio in caccia ed è tornato all'artigianato. Conosce ogni animale della foresta come fossero suoi figli — sa esattamente quale pelle serve per quale scopo. Non produce per bracconieri.",
+      "anti_p2w_note": "NO premium vendor. NO P2W. Recipe via quest 'Cuoio Forte' (D1) + reputation con Ranger Company. Materiali forestali richiedono caccia rispettosa. Nessuna scorciatoia real-money.",
+      "stato": "LOCKED",
+      "d1_usage": {
+        "items_associati": 3,
+        "livelli": [3,4,6],
+        "slugs_esempio": ["ranger-scout-leather-jerkin","ranger-scout-leather-cap","ranger-scout-leather-gloves"]
+      }
+    }
+  ],
+  "distribuzione_classi_servite": {
+    "Warrior": "Fabbro Bulwark (ferro/acciaio + legno duro)",
+    "Rogue": "Cuoiaia Elfwood (cuoio leggero + pellame cervo)",
+    "Mage": "Tessitrice Arcana (stoffa arcana + filo di mana)",
+    "Priest": "Sarto Sacro (stoffa sacra + lino cerimoniale)",
+    "Ranger": "Conciatore Elfwood (cuoio medium + pellame cinghiale)",
+    "coverage_check": "5/5 classi canoniche servite ✅"
+  },
+  "npc_pending_pm_new": [],
+  "npc_pending_pm_count": 0,
+  "slot_residui_disponibili": 5,
+  "rules_new_npc": [
+    "Segnalati come stato=PENDING PM nel report della Phase corrente",
+    "NON usati in item finalizzati fino ad approvazione esplicita PM",
+    "Coerenti con i 5 LOCKED (nessuna contraddizione narrativa/geografica/lore)",
+    "Compatibili con anti-P2W policy R18"
+  ],
+  "governance_check_step12": {
+    "sealed_files_36_hash_byte_identical": "OK (pytest atteso conferma)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "npc_creation_live": "ZERO (design only)",
+    "registry_generation": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "INVARIATO",
+    "sealed_file_modification": "ZERO",
+    "anti_p2w_policy_coverage": "5/5 NPC hanno anti_p2w_note esplicita",
+    "pm_autonomous_decision_new": "ZERO (5 NPC verbatim PM, 0 nuovi proposti)",
+    "coerenza_dati_d1_verificata": "OK — analisi 300 items D1 per estrarre materiali/famiglie/classi effettive",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "handoff_step13": {
+    "phase": "STEP 13 — Phase D2 (T2 × 350) IN CATENA AUTOMATICA",
+    "npc_cornerstone_locked": "5 (Fabbro Bulwark, Cuoiaia Elfwood, Sarto Sacro, Tessitrice Arcana, Conciatore Elfwood)",
+    "regola": "NON rinominare. NON contraddire. Nuovi NPC T2 → PENDING PM (segnalati in Sezione 13 del report D2)"
+  }
+}
