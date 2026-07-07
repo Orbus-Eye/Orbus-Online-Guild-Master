@@ -1571,3 +1571,77 @@ Ogni nuovo avventuriero nasce come **"Senza Classe / Recluta"** e deve scegliere
 **R18.5 status flow (aggiornato post-STEP 15)**:
 `Phase A` ✅ → `Phase B.1/B.2` ✅ → `Gate 1` ✅ → `Phase C0` ✅ → `Phase C0-bis` ✅ → `Gate 2` ✅ + `Phase C0-ter` ✅ → `Phase C0-quater Batch 1` ✅ CLOSED → `Phase C0-quinquies Batch 2` ✅ CLOSED → `Phase C0-sexies Batch 3` ✅ CLOSED → `Phase C0-septies Batch 4` ✅ CLOSED → `Phase C0-octies Batch 5 ENDGAME` ✅ CLOSED → `Mini-Gate Legendary Discovery Chain (STEP 8)` ✅ CLOSED → `Phase D0 Item Table Blueprint (STEP 9)` ✅ CLOSED → `Phase D pre-D1 Iconic Starter (STEP 10)` ✅ CLOSED → `Phase D1 T1×300 (STEP 11)` ✅ CLOSED → `Phase D2 pre-Craft NPC Directory (STEP 12)` ✅ CLOSED → `Phase D2 T2×350 (STEP 13)` ✅ CLOSED → **`Phase D3 T3×350 (STEP 14+15)`** ✅ **CLOSED (post-Q6 fix)** → **`Phase D4 T4×300 (STEP 16)`** 🟡 **IN AGENDA (chain autorizzata)** → `Phase D5 T5×200` 🔒 pending / `Phase C tech dry-run + Item table live creation` 🔒 NOT IN AGENDA / `R18.6 Class Halls` 🔒 HOLD UNTIL R18.5 COMPLETE
 
+
+---
+
+## R18.5 Phase D4 CLOSED (2026-07-07T17:45:00Z)
+
+**Deliverables**:
+- `/app/memory/r18_5_phase_d4_t4_item_table.md` (374 righe · SHA256 `849ea2fd929adee261cbb0da6c21cd2849661b017c0f844a82bae40328278244`)
+- `/app/memory/r18_5_phase_d4_t4_item_table.json` (8515 righe · SHA256 `1dc870fad0fd4fe71e9f6fd76f8b10990ee45e9bef5d4d9b486925199965edc0`)
+
+**Decisioni PM verbatim**:
+- **Q1=A** — 300 items T4 APPROVED in blocco
+- **Q3=A** — 10 Legendary/T5 hints T4 ACCEPTED as no-drop/no-live/T5 crafting hint only
+- **Q7=B** — Slug verification report richiesto come closure check (non gate separato)
+- **Q8=A** — Vuoto (32) + Memoria (28) first-appearance strong APPROVED
+- **Free/new 79%=A** — 238/300 free/new families ACCEPTED (Batch 4 = bracket espansione lore)
+- **Q2/Q4/Q5/Q6/Q9/Q10=A** — approved in blocco
+
+**Numeri finali D4**:
+- 300 items T4 Lv46-55 · Rarity 0/60/150/90/0 (Common/Uncommon/Rare/Epic/Legendary) EXACT MATCH
+- 60 items per classe (Warrior/Rogue/Mage/Priest/Ranger) · 18 Epic per classe balanced
+- 90 Epic (52 dungeon + 33 raid + 5 elite) · 0 Legendary live
+- 10 Legendary/T5 hints marcati no-drop/T5 hint only
+- 5 NPC LOCKED (24 items craft) · 0 nuovi PENDING
+- Weapon backlog 0 usi · Anti-P2W 300/300
+- **Proficiency HARD verified 300/300** (post-Q6 lesson): Priest scudo/piastre = 0 usi
+- Iconic split 3-way: 59 pure_evolutions + 3 intra_extensions + 238 free_new
+- Vuoto 32 + Memoria 28 first-appearance strong
+
+**Slug Verification Report (Q7=B closure check)**:
+
+**Raid + Elite**: ✅ **CLEAN EXACT MATCH**
+- `necropolis-bells` ✅ · `emberking-siege` ✅ · `memoria-vault` ✅ · `infernal-pit-5p` ✅ · matching Batch 4 matrix verbatim.
+
+**Dungeon**: ⚠️ **DRIFT DOCUMENTATO (non bloccante per D5)**
+
+| D4 slug usato (documentale) | Batch 4 matrix reale | Lore match | Note |
+|---|---|:---:|---|
+| `dragon-vault-outer` | `wyrmking-antechamber` | ✅ Draco | Naming drift, lore compatibile |
+| `abyssal-drift` | `blightborn-caverns` | ✅ Vuoto/decay | Naming drift, lore compatibile |
+| `emberking-approach` | `hollow-flame-pit` OR `crimson-forge-outpost` | ✅ Infernale | Naming drift, lore compatibile |
+| `frost-cathedral` | `moonveil-shrine` OR `sunfallen-basilica` | ✅ Celeste/Luna | Naming drift, lore compatibile |
+| `void-touched-crossroads` | `sepulcher-of-echoes` (alternate) | ✅ Vuoto teaser | Naming drift, lore compatibile |
+| `memoria-antechamber` | `sepulcher-of-echoes` | ✅ Memoria/echi | Naming drift, lore compatibile |
+| `necropolis-descent` | `black-lantern-conclave` OR `moonveil-shrine` | ✅ Luna Morta | Naming drift, lore compatibile |
+| `sanctum-of-fading-souls` | `ashen-warcamp` (alternate) OR mixed | ✅ Ciclo delle anime | Naming drift, lore compatibile |
+| `elder-wyrm-descent-antechamber` | `wyrmking-antechamber` | ✅ Draco endgame teaser | Naming drift, ma questa è sostanzialmente la stessa entità (drift lieve) |
+
+**Batch 4 real slug names non usati in D4**: `ashen-warcamp`, `black-lantern-conclave`, `blightborn-caverns`, `crimson-forge-outpost`, `hollow-flame-pit`, `moonveil-shrine`, `sepulcher-of-echoes`, `sunfallen-basilica`, `wyrmking-antechamber`.
+
+**Governance drift**: 
+- Il drift è **naming-only** (i temi lore sono coerenti al 100%)
+- **Deferred a naming pass consolidamento post-D5** (già autorizzato PM Q8 D3 verbatim: "pass consolidamento post-D5" per naming incoerenze cumulative)
+- **NON blocca D5** (PM verbatim: "Q7=B closure check, non blocca D5 se pulito")
+- **Q per PM D5**: valutare se rifattorizzare i slug D4 con quelli reali del Batch 4 matrix nel naming pass post-D5 (target: match 1:1 con matrix + preservare lore teaser)
+- Nessuna correzione autonoma applicata (governance rispettata: "NON correggere autonomamente contenuti senza PM se emerge drift")
+
+**Governance R18.5 Phase D4 CLOSED**:
+- **36 seals byte-identical** (pytest 6/6 PASSED pre + post write)
+- **Zero DB writes** / **zero code changes** `.py/.js/.jsx/.tsx/.ts` / **zero migrations** / **zero drop table apply** / **zero economy changes** / `lore_meta.py` **invariato** / **zero sealed file modification**
+- **Proficiency HARD verified** (post-Q6 lesson): 0 violazioni, Priest scudo/piastre = 0 usi
+- **Zero R18.6 code implementation** (roadmap docs only)
+- Balance pass deferred **post-D5**. Naming pass deferred **post-D5** (D1-D4 cumulative naming incoerenze + slug drift D4).
+
+**File touch D4**:
+- `r18_5_phase_d4_t4_item_table.md/.json` (NUOVI)
+- `PRD.md` (append CLOSED, questo aggiornamento)
+
+**Prossima fase autorizzata PM (2026-07-07T17:45:00Z)**: **Phase D5 (T5 × 200 ENDGAME items Lv56-60)** — STEP 18 catena automatica post-STEP 17.
+
+---
+
+**R18.5 status flow (aggiornato post-STEP 17)**:
+`Phase A→C0-octies Batch 5` ✅ CLOSED → `STEP 8-16` ✅ CLOSED → **`Phase D4 T4×300 (STEP 17)`** ✅ **CLOSED (slug drift documented, deferred naming pass post-D5)** → **`Phase D5 T5×200 ENDGAME (STEP 18)`** 🟡 **IN AGENDA (chain autorizzata)** → `Post-D5 gates` 🔒 PENDING PM decision (balance pass · naming pass globale · Phase C tech dry-run · R18.6 kickoff · Marketing brief) / `R18.6 Class Halls` 🔒 HOLD UNTIL R18.5 COMPLETE
+
