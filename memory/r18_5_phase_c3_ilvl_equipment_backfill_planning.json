@@ -1,0 +1,853 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C3 ILVL + Equipment Backfill Planning",
+    "step": "STEP 2 (post STEP 1 PRD append C2 CLOSED)",
+    "locked_at_utc": "2026-07-08T10:30:00Z",
+    "governance": "DOCUMENTAL ONLY — ILVL formula design + backfill plan design. NO backfill apply · NO ILVL implementation · NO migration · NO code · NO DB · NO drop table apply.",
+    "status": "APPLIED — planning documentale per PM review",
+    "authority": "PM Orchestrator — Phase C3 dispatch (Q8=GO C3)",
+    "constraints_hard": {
+      "MAX_ADVENTURER_LEVEL": 60,
+      "MAX_EQUIPMENT_REQUIRED_LEVEL": 60,
+      "no_levels_beyond_60": true,
+      "post_lv60_progression": "ILVL · rarity · utility · raid endgame source · optimization · market/ranking relevance"
+    }
+  },
+  "sezione_01_executive_summary": {
+    "obiettivo": "Definire in modalità solo-documentale la formula ILVL canonica, i bracket level→ilvl, i modifier di rarity, il trattamento Legendary, e il piano di backfill per campi equipment (armor_type, weapon_family, slot, required_level, ilvl, tier, rarity, main_stat_target, class_proficiency, runtime_apply_ready). NESSUNA implementazione, NESSUN backfill apply, NESSUNA migrazione.",
+    "scope_in": [
+      "ILVL formula design (data-driven da osservazione D1-D5)",
+      "level → ilvl bracket mapping Lv1-60",
+      "tier → ilvl range mapping T1-T5",
+      "rarity modifier design (Common/Uncommon/Rare/Epic/Legendary)",
+      "Legendary ILVL treatment (cap 60 endgame)",
+      "equipment backfill plan per 10 campi",
+      "existing live item compatibility plan (legacy items)",
+      "min_level vs required_level normalization plan",
+      "slot_type / item_type fallback handling",
+      "adventurer equipment migration readiness (design only)",
+      "class_slug=null interaction (compat C2 verbatim)",
+      "no-apply validation checklist",
+      "risk register",
+      "GO/HOLD recommendation for C4",
+      "PM open questions (8)"
+    ],
+    "scope_out": [
+      "Backfill apply (deferred a phase runtime enablement futura)",
+      "ILVL implementation (out-of-scope)",
+      "Migrazione live item / DB writes",
+      "Drop table apply (C4)",
+      "Class slug migration apply (C5)",
+      "Anti-P2W runtime validator implementation"
+    ],
+    "invariants_preserved": {
+      "item_count_total": 1500,
+      "rarity_distribution": {
+        "Common": 400,
+        "Uncommon": 450,
+        "Rare": 400,
+        "Epic": 235,
+        "Legendary": 15
+      },
+      "class_distribution": {
+        "Warrior": 300,
+        "Rogue": 300,
+        "Mage": 300,
+        "Priest": 300,
+        "Ranger": 300
+      },
+      "tier_ranges": {
+        "T1": "Lv1-15",
+        "T2": "Lv16-30",
+        "T3": "Lv31-45",
+        "T4": "Lv46-55",
+        "T5": "Lv56-60"
+      },
+      "no_modifications_to": [
+        "item count",
+        "rarity",
+        "tier",
+        "class distribution",
+        "stat",
+        "naming",
+        "source",
+        "proficiency",
+        "anti-P2W"
+      ]
+    }
+  },
+  "sezione_02_ilvl_formula_design": {
+    "principio": "Formula design-layer (NON implementazione). Deriva ILVL da (tier, required_level, rarity) con cap endgame 60.",
+    "formula_canonica_pseudologic": "ilvl(item) = min( max( required_level + rarity_offset[rarity], tier_min[tier] ), MAX_EQUIPMENT_REQUIRED_LEVEL )",
+    "constants": {
+      "tier_min": {
+        "T1": 1,
+        "T2": 16,
+        "T3": 31,
+        "T4": 46,
+        "T5": 56
+      },
+      "tier_max": {
+        "T1": 15,
+        "T2": 30,
+        "T3": 45,
+        "T4": 55,
+        "T5": 60
+      },
+      "rarity_offset": {
+        "Common": 0,
+        "Uncommon": 2,
+        "Rare": 3,
+        "Epic": 4,
+        "Legendary": 5
+      },
+      "MAX_EQUIPMENT_REQUIRED_LEVEL": 60,
+      "legendary_ilvl_flat_cap": 60
+    },
+    "data_driven_rationale": "Rarity offset derivati dall'osservazione delle mediane ILVL per (tier, rarity) sui 1500 items D1-D5: il gap fra ilvl_med e required_level_med aumenta con la rarità. Legendary hanno ilvl=60 fisso (osservato 15/15 = 60). Il min(..., 60) garantisce il cap gameplay. Il max(..., tier_min) garantisce che nessun item di tier alto scenda sotto la soglia del tier.",
+    "note_governance": "Formula usata SOLO per backfill design layer di eventuali item legacy o futuri. I 1500 items del catalogo D1-D5 hanno GIÀ ilvl valorizzato (0 missing) e NON devono essere modificati."
+  },
+  "sezione_03_level_ilvl_brackets": {
+    "note": "Mapping bracket Lv → ilvl range aspettato (design layer). Coerente con tier_ranges.",
+    "brackets": [
+      {
+        "lv_range": "Lv1-5",
+        "tier": "T1",
+        "ilvl_common": "1-5",
+        "ilvl_uncommon": "3-7",
+        "ilvl_rare": "n/a",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv6-10",
+        "tier": "T1",
+        "ilvl_common": "6-10",
+        "ilvl_uncommon": "8-12",
+        "ilvl_rare": "n/a",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv11-15",
+        "tier": "T1",
+        "ilvl_common": "9-15",
+        "ilvl_uncommon": "13-15",
+        "ilvl_rare": "n/a",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv16-20",
+        "tier": "T2",
+        "ilvl_common": "16-20",
+        "ilvl_uncommon": "18-22",
+        "ilvl_rare": "n/a",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv21-25",
+        "tier": "T2",
+        "ilvl_common": "21-25",
+        "ilvl_uncommon": "23-27",
+        "ilvl_rare": "n/a",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv26-30",
+        "tier": "T2",
+        "ilvl_common": "26-30",
+        "ilvl_uncommon": "28-30",
+        "ilvl_rare": "29-30",
+        "ilvl_epic": "n/a",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv31-35",
+        "tier": "T3",
+        "ilvl_common": "31-35",
+        "ilvl_uncommon": "33-37",
+        "ilvl_rare": "34-38",
+        "ilvl_epic": "35-39",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv36-40",
+        "tier": "T3",
+        "ilvl_common": "36-40",
+        "ilvl_uncommon": "38-42",
+        "ilvl_rare": "39-43",
+        "ilvl_epic": "40-44",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv41-45",
+        "tier": "T3",
+        "ilvl_common": "n/a",
+        "ilvl_uncommon": "43-45",
+        "ilvl_rare": "44-45",
+        "ilvl_epic": "45",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv46-50",
+        "tier": "T4",
+        "ilvl_common": "n/a",
+        "ilvl_uncommon": "48-52",
+        "ilvl_rare": "49-53",
+        "ilvl_epic": "50-54",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv51-55",
+        "tier": "T4",
+        "ilvl_common": "n/a",
+        "ilvl_uncommon": "53-55",
+        "ilvl_rare": "54-55",
+        "ilvl_epic": "55",
+        "ilvl_legendary": "n/a"
+      },
+      {
+        "lv_range": "Lv56-59",
+        "tier": "T5",
+        "ilvl_common": "n/a",
+        "ilvl_uncommon": "n/a",
+        "ilvl_rare": "58-60",
+        "ilvl_epic": "59-60",
+        "ilvl_legendary": "60"
+      },
+      {
+        "lv_range": "Lv60",
+        "tier": "T5",
+        "ilvl_common": "n/a",
+        "ilvl_uncommon": "n/a",
+        "ilvl_rare": "60",
+        "ilvl_epic": "60",
+        "ilvl_legendary": "60"
+      }
+    ],
+    "post_lv60_note": "Nessun item con required_level > 60. Post-Lv60 progression = ILVL/rarity/utility/raid endgame/optimization/market/ranking."
+  },
+  "sezione_04_tier_ilvl_ranges": {
+    "note": "Range ILVL per (tier, rarity) — VALIDATION MODE (osservato su 1500 items D1-D5) + BACKFILL MODE (target range design layer per futuri backfill di legacy/nuovi item).",
+    "validation_from_observed_D1_D5": {
+      "T1": {
+        "Common": {
+          "n": 220,
+          "min": 1,
+          "med": 5,
+          "max": 9
+        },
+        "Uncommon": {
+          "n": 80,
+          "min": 3,
+          "med": 10,
+          "max": 15
+        }
+      },
+      "T2": {
+        "Common": {
+          "n": 150,
+          "min": 16,
+          "med": 19,
+          "max": 25
+        },
+        "Uncommon": {
+          "n": 150,
+          "min": 20,
+          "med": 26,
+          "max": 30
+        },
+        "Rare": {
+          "n": 50,
+          "min": 26,
+          "med": 29,
+          "max": 30
+        }
+      },
+      "T3": {
+        "Common": {
+          "n": 30,
+          "min": 31,
+          "med": 33,
+          "max": 36
+        },
+        "Uncommon": {
+          "n": 160,
+          "min": 32,
+          "med": 36,
+          "max": 45
+        },
+        "Rare": {
+          "n": 130,
+          "min": 32,
+          "med": 40,
+          "max": 45
+        },
+        "Epic": {
+          "n": 30,
+          "min": 33,
+          "med": 42,
+          "max": 45
+        }
+      },
+      "T4": {
+        "Uncommon": {
+          "n": 60,
+          "min": 46,
+          "med": 50,
+          "max": 54
+        },
+        "Rare": {
+          "n": 150,
+          "min": 46,
+          "med": 50,
+          "max": 54
+        },
+        "Epic": {
+          "n": 90,
+          "min": 46,
+          "med": 52,
+          "max": 55
+        }
+      },
+      "T5": {
+        "Rare": {
+          "n": 70,
+          "min": 56,
+          "med": 58,
+          "max": 60
+        },
+        "Epic": {
+          "n": 115,
+          "min": 56,
+          "med": 59,
+          "max": 60
+        },
+        "Legendary": {
+          "n": 15,
+          "min": 60,
+          "med": 60,
+          "max": 60
+        }
+      }
+    },
+    "target_backfill_ranges_design": {
+      "T1": {
+        "Common": "1-15",
+        "Uncommon": "3-15"
+      },
+      "T2": {
+        "Common": "16-30",
+        "Uncommon": "20-30",
+        "Rare": "26-30"
+      },
+      "T3": {
+        "Common": "31-36",
+        "Uncommon": "32-45",
+        "Rare": "32-45",
+        "Epic": "33-45"
+      },
+      "T4": {
+        "Uncommon": "46-54",
+        "Rare": "46-55",
+        "Epic": "46-55"
+      },
+      "T5": {
+        "Rare": "56-60",
+        "Epic": "56-60",
+        "Legendary": "60"
+      }
+    },
+    "note_compat": "Le rarity distribution per tier NON contengono tutti i buckets: es. T1 non ha Rare/Epic/Legendary; T4 non ha Common; T5 non ha Common/Uncommon. Questa asimmetria è VOLUTA da design (progressione tier). Backfill design mantiene questa asimmetria."
+  },
+  "sezione_05_rarity_modifiers": {
+    "principio": "rarity_offset applicato in formula ilvl. Il gap ilvl vs required_level aumenta con la rarità.",
+    "modifiers": [
+      {
+        "rarity": "Common",
+        "offset": 0,
+        "note": "ilvl ≈ required_level; nessun bonus"
+      },
+      {
+        "rarity": "Uncommon",
+        "offset": 2,
+        "note": "ilvl leggermente sopra required_level (osservato med +2)"
+      },
+      {
+        "rarity": "Rare",
+        "offset": 3,
+        "note": "gap moderato (osservato med +3 vs required_level)"
+      },
+      {
+        "rarity": "Epic",
+        "offset": 4,
+        "note": "gap elevato (osservato med +4)"
+      },
+      {
+        "rarity": "Legendary",
+        "offset": 5,
+        "note": "gap max, ma cap flat 60 endgame (osservato ilvl=60 15/15)"
+      }
+    ],
+    "governance": "rarity_offset è design layer per BACKFILL FUTURI o normalizzazione LEGACY items. I 1500 D1-D5 sono già coerenti (0 items missing_ilvl)."
+  },
+  "sezione_06_legendary_ilvl_rules": {
+    "regola_1": "TUTTI i 15 Legendary hanno ilvl=60 (cap endgame, osservato 15/15).",
+    "regola_2": "Il flat cap 60 vale sia per 11 design-ready (7 approved + 4 hybrid) sia per 4 progressive placeholder (P1-P4).",
+    "regola_3": "Progressive placeholder P1-P4 mantengono ilvl=60 solo come design placeholder — restano `registry_status=reserved` e `runtime_apply_ready=false`.",
+    "regola_4": "Nessun item non-Legendary può avere ilvl > 60 (violation → HARD BLOCK design).",
+    "regola_5": "Nessuna promozione automatica a Legendary basata su ilvl (rarity resta invariante).",
+    "coerenza_c0_l_1": "C0.L.1 numeric finals confermano ilvl=60 per 11 design-ready + 4 progressive reserved (tutti 15/15)."
+  },
+  "sezione_07_equipment_backfill_plan": {
+    "principio": "Piano documentale per backfill futuro di 10 campi. NESSUN apply, NESSUNA migrazione, NESSUN DB write. Il catalogo D1-D5 attuale è già completo.",
+    "target_fields_10": [
+      {
+        "field": "armor_type",
+        "backfill_source_logic": "match slot in {head/chest/legs/feet/hands/shoulder/waist/wrist} + class_proficiency → armor whitelist C2",
+        "current_D1_D5_coverage": "1500/1500 present (o `null` per weapon slots)"
+      },
+      {
+        "field": "weapon_family",
+        "backfill_source_logic": "match slot in {main-hand/off-hand/two-hand} + class_proficiency → weapon whitelist C2",
+        "current_D1_D5_coverage": "1500/1500 present (o `null` per armor/trinket slots)"
+      },
+      {
+        "field": "slot",
+        "backfill_source_logic": "must be in canonical list: head, chest, legs, feet, hands, shoulder, waist, wrist, neck, ring, trinket, main-hand, off-hand, two-hand",
+        "current_D1_D5_coverage": "1500/1500 present"
+      },
+      {
+        "field": "required_level",
+        "backfill_source_logic": "tier → tier_range Lv (T1=1-15, T2=16-30, ...); item-specific interpolation optional",
+        "current_D1_D5_coverage": "1500/1500 present"
+      },
+      {
+        "field": "ilvl",
+        "backfill_source_logic": "ilvl_formula = min(max(required_level + rarity_offset[rarity], tier_min[tier]), 60)",
+        "current_D1_D5_coverage": "1500/1500 present (0 missing)"
+      },
+      {
+        "field": "tier",
+        "backfill_source_logic": "derive from required_level: 1-15→T1, 16-30→T2, 31-45→T3, 46-55→T4, 56-60→T5",
+        "current_D1_D5_coverage": "1500/1500 present"
+      },
+      {
+        "field": "rarity",
+        "backfill_source_logic": "NO auto-derive; rarity è invariante di design (400/450/400/235/15)",
+        "current_D1_D5_coverage": "1500/1500 present"
+      },
+      {
+        "field": "main_stat_target",
+        "backfill_source_logic": "derive from class_proficiency: Warrior→STR, Rogue→AGI, Mage→INT, Priest→WIS, Ranger→AGI; eccezione 13 Warrior gear END-based (documented E1)",
+        "current_D1_D5_coverage": "1500/1500 present"
+      },
+      {
+        "field": "class_proficiency",
+        "backfill_source_logic": "renamed from `classe_orientata` in C1 registry; canonical W/R/M/P/Ranger",
+        "current_D1_D5_coverage": "1500/1500 present (source_field=classe_orientata)"
+      },
+      {
+        "field": "runtime_apply_ready",
+        "backfill_source_logic": "false 1500/1500 nel dry-run corrente; true solo post runtime enablement pipeline (out-of-scope C3)",
+        "current_D1_D5_coverage": "1500/1500 = false (dry-run)"
+      }
+    ],
+    "no_apply_governance": "TUTTO documentale. Il backfill APPLY sarà oggetto di gate futuro (post-Phase C completion + PM approval)."
+  },
+  "sezione_08_legacy_item_compatibility": {
+    "principio": "Analisi di compat per item LIVE ESISTENTI in DB (legacy pre-R18.5). Solo design piano, no apply, no rottura inventari.",
+    "cases": [
+      {
+        "case": "legacy item senza `ilvl`",
+        "handling": "Backfill formula sezione 2. Fallback: `ilvl = required_level + 2` (safe default Uncommon-tier). NO overwrite se ilvl è già valorizzato."
+      },
+      {
+        "case": "legacy item senza `armor_type` o `weapon_family`",
+        "handling": "Derive from `slot` + `class_proficiency` C2 whitelist. Se ambiguità: mark `armor_type=UNKNOWN` (lock_state=`locked_unknown_item_type` C2). NO auto-guess."
+      },
+      {
+        "case": "`min_level` vs `required_level`",
+        "handling": "Normalize: `required_level = coalesce(required_level, min_level, 1)`. Preferenza campo canonical = `required_level`. NO drop di `min_level` (backwards-compat)."
+      },
+      {
+        "case": "legacy item senza `slot_type` (solo `slot`)",
+        "handling": "slot_type = derive category (armor/weapon/trinket/consumable/material). NO renaming di slot esistente."
+      },
+      {
+        "case": "legacy item con `item_type` mancante",
+        "handling": "item_type fallback: derive from (slot, weapon_family, armor_type). Se tutto null → `item_type=UNKNOWN` (lock_state=`locked_unknown_item_type`)."
+      },
+      {
+        "case": "legacy item con rarity non-canonical (es. 'legendary' lowercase)",
+        "handling": "Case-insensitive normalization → canonical form (`Legendary` capitalized). NO auto-promotion, NO auto-demotion."
+      },
+      {
+        "case": "legacy item nel roster inventario avventurieri",
+        "handling": "Backfill leggibile-only. Inventario esistente NON viene svuotato né riorganizzato. Ogni item ottiene ilvl/tier/rarity backfill in-place documentale."
+      },
+      {
+        "case": "legacy item premium/shop (se esistente)",
+        "handling": "Anti-P2W verification: se `can_be_sold_for_real_money=true` legacy → mark `p2w_legacy_flag=true` per audit; NO auto-conversion. PM review richiesta."
+      },
+      {
+        "case": "legacy item con class_proficiency lowercase o non-canonical",
+        "handling": "Case-insensitive normalization → Warrior/Rogue/Mage/Priest/Ranger canonical. NO drift, NO nuove classi (R10 rischio C2 tracked)."
+      },
+      {
+        "case": "legacy item con `slot=universal`",
+        "handling": "lock_state=`universal_allowed` (bypass proficiency check C2). Include consumable/material/cosmetic."
+      }
+    ],
+    "backwards_compat_note": "TUTTI i legacy items rimangono nell'inventario. Il backfill è additivo (fields aggiunti/normalizzati), NON distruttivo."
+  },
+  "sezione_09_class_slug_null_interaction": {
+    "regole_c2_verbatim": [
+      "class_slug=null NON auto-derivato (rule PM Q7=CONFIRMED)",
+      "NO runtime bridge · NO migration · NO apply",
+      "risoluzione differita a C5 (Class Slug Migration Prep / R18.3f Readiness) + R18.6 (Class Halls · Classless Start)"
+    ],
+    "impatto_c3": [
+      "Items possono ricevere ILVL documentale (ilvl è indipendente da class_slug)",
+      "Backfill ilvl NON richiede class_slug",
+      "Avventurieri con class_slug=null restano `locked_recruit_unassigned` o `locked_class_slug_null` (C2) → non equip-ready per gear specializzato",
+      "Backfill di `class_proficiency` sui items resta canonical W/R/M/P/Ranger (indipendente dalla migrazione slug lato adventurer)"
+    ],
+    "current_state": {
+      "class_slug_null_1500_1500": true,
+      "class_slug_resolution_status": "deferred_to_C5_R18_3f",
+      "adventurer_side_handling": "documentato in C2, risoluzione live in R18.6"
+    }
+  },
+  "sezione_10_slot_item_type_fallback": {
+    "canonical_slots": [
+      "head",
+      "chest",
+      "legs",
+      "feet",
+      "hands",
+      "shoulder",
+      "waist",
+      "wrist",
+      "neck",
+      "ring",
+      "trinket",
+      "main-hand",
+      "off-hand",
+      "two-hand"
+    ],
+    "canonical_item_types": [
+      "armor",
+      "weapon",
+      "trinket",
+      "accessory",
+      "consumable",
+      "material",
+      "cosmetic"
+    ],
+    "fallback_priority_order": [
+      "1. slot canonical valido → item_type derived",
+      "2. slot + weapon_family present → item_type=weapon",
+      "3. slot + armor_type present → item_type=armor",
+      "4. slot in {neck, ring, trinket} + no weapon/armor → item_type=trinket/accessory",
+      "5. no slot / null → item_type=UNKNOWN (lock_state=`locked_unknown_item_type`)"
+    ],
+    "note_universal_allowed": "consumable/material/cosmetic bypass proficiency check (lock_state=`universal_allowed` C2)"
+  },
+  "sezione_11_adventurer_equipment_migration_readiness": {
+    "principio": "Design layer per la futura migrazione runtime. Nessuna implementazione in C3.",
+    "phase_readiness_matrix": [
+      {
+        "adventurer_state": "class_slug valido + level valid + inventory populated",
+        "equipment_backfill_readiness": "READY (nominal path)"
+      },
+      {
+        "adventurer_state": "class_slug=null + class_proficiency canonical",
+        "equipment_backfill_readiness": "PARTIAL — items ricevono backfill; avventuriero non equip finché class_slug non risolto (C5/R18.3f)"
+      },
+      {
+        "adventurer_state": "recruit_unassigned (no classe)",
+        "equipment_backfill_readiness": "BLOCKED — deve completare Class Halls R18.6 prima di equip-ready"
+      },
+      {
+        "adventurer_state": "legacy senza required_level valorizzato",
+        "equipment_backfill_readiness": "PARTIAL — default level=1; PM review case-by-case"
+      },
+      {
+        "adventurer_state": "inventory con legacy item p2w flag",
+        "equipment_backfill_readiness": "AUDIT — mark p2w_legacy_flag=true; PM review"
+      }
+    ],
+    "no_migration_apply": "TUTTA la migrazione è deferita a phase runtime enablement post-C6. C3 documenta solo le rotte."
+  },
+  "sezione_12_no_apply_validation_checklist": [
+    {
+      "n": 1,
+      "check": "ILVL formula design layer only",
+      "status": "PASSED — formula documentale, nessun apply"
+    },
+    {
+      "n": 2,
+      "check": "Rarity distribution 400/450/400/235/15 preservata",
+      "status": "PASSED — no modifiche"
+    },
+    {
+      "n": 3,
+      "check": "Class distribution 300×5 preservata",
+      "status": "PASSED"
+    },
+    {
+      "n": 4,
+      "check": "Tier ranges T1-T5 preservati",
+      "status": "PASSED"
+    },
+    {
+      "n": 5,
+      "check": "MAX_ADVENTURER_LEVEL=60 rispettato",
+      "status": "PASSED — no items con required_level > 60"
+    },
+    {
+      "n": 6,
+      "check": "MAX_EQUIPMENT_REQUIRED_LEVEL=60 rispettato",
+      "status": "PASSED"
+    },
+    {
+      "n": 7,
+      "check": "Legendary ilvl flat cap 60",
+      "status": "PASSED — osservato 15/15 = 60"
+    },
+    {
+      "n": 8,
+      "check": "0 items D1-D5 modificati",
+      "status": "PASSED — read-only"
+    },
+    {
+      "n": 9,
+      "check": "class_slug=null 1500/1500 preservato",
+      "status": "PASSED — Q7 CONFIRMED"
+    },
+    {
+      "n": 10,
+      "check": "runtime_apply_ready=false 1500/1500 preservato",
+      "status": "PASSED — dry-run"
+    },
+    {
+      "n": 11,
+      "check": "progressive_marker count=10 preservato",
+      "status": "PASSED — Q4=B C1"
+    },
+    {
+      "n": 12,
+      "check": "Anti-P2W 1500/1500 preservato",
+      "status": "PASSED"
+    },
+    {
+      "n": 13,
+      "check": "36 seals byte-identical",
+      "status": "TO VERIFY post-write (pytest)"
+    },
+    {
+      "n": 14,
+      "check": "lore_meta.py invariato",
+      "status": "PASSED — no touch"
+    },
+    {
+      "n": 15,
+      "check": "Zero DB/code/migrations",
+      "status": "PASSED — DOCUMENTAL ONLY"
+    }
+  ],
+  "sezione_13_risk_register": [
+    {
+      "id": "R1",
+      "risk": "ILVL formula backfill non deterministico su legacy items con dati partial",
+      "severity": "MEDIUM",
+      "mitigation": "fallback safe: ilvl = required_level + 2; NO overwrite se già presente",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R2",
+      "risk": "Legacy item senza class_proficiency canonical (drift lowercase o custom)",
+      "severity": "MEDIUM",
+      "mitigation": "case-insensitive normalization + audit report pre-apply futuro",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R3",
+      "risk": "min_level vs required_level conflict in legacy items",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "coalesce(required_level, min_level, 1); preserve min_level as backwards-compat",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R4",
+      "risk": "Legendary progressive placeholder P1-P4 riceve ilvl backfill prematurely",
+      "severity": "MEDIUM",
+      "mitigation": "flat ilvl=60 (documentale placeholder) MA registry_status=reserved + runtime_apply_ready=false; NO promotion",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R5",
+      "risk": "T4 progressive_marker (10 items) confusi con Legendary durante backfill",
+      "severity": "LOW",
+      "mitigation": "progressive_marker=true flag preservato; rarity=Epic invariato; NO promozione",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R6",
+      "risk": "Legacy inventario avventurieri rotto da backfill (data-loss)",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "backfill = ADDITIVO, NON DISTRUTTIVO; PM review pre-apply obbligatoria futura",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R7",
+      "risk": "Anti-P2W legacy flag missed durante backfill (item premium residuo)",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "audit obbligatorio p2w_legacy_flag=true pre-apply; PM review case-by-case",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R8",
+      "risk": "class_slug=null interazione con adventurer inventory backfill",
+      "severity": "MEDIUM (C2 tracked)",
+      "mitigation": "class_slug=null NON blocca ilvl backfill sui items; blocca equip-readiness lato adventurer (C2 lock_state)",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R9",
+      "risk": "HYBRID drop rate 0.5% direzionale scambiato per finale durante backfill drop_table_ref",
+      "severity": "MEDIUM",
+      "mitigation": "drop_table_ref è REF (source token) non drop_rate; drop_rate PM final richiesto in C4",
+      "status": "TRACKED to C4"
+    },
+    {
+      "id": "R10",
+      "risk": "Slot canonical mismatch (es. 'main_hand' vs 'main-hand' vs 'mainhand')",
+      "severity": "MEDIUM",
+      "mitigation": "canonical list `main-hand`/`off-hand`/`two-hand`; normalization case-insensitive + separator-agnostic in audit",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R11",
+      "risk": "Post-Lv60 progression flow non chiaro senza raid endgame source cross-check",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "post-Lv60 progression = ILVL/rarity/utility/raid endgame source/optimization/market-ranking (cross-check con matrix Batch 1-5 in C4)",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R12",
+      "risk": "Backfill item_type UNKNOWN residuo dopo fallback",
+      "severity": "LOW",
+      "mitigation": "lock_state=`locked_unknown_item_type` C2 (safety net); PM review pre-apply",
+      "status": "DESIGNED"
+    }
+  ],
+  "sezione_14_go_hold_recommendation": {
+    "phase_c4_drop_table": {
+      "recommendation": "GO — soggetto a PM approval esplicito post-C3 review",
+      "rationale": "C3 ILVL + backfill plan fornisce input coerente per C4 Drop Table (drop_table_ref già mappato in C1). C4 dovrà finalizzare i drop_rate HYBRID (0.5% direzionale) e cross-checkare con matrix Batch 1-5.",
+      "conditions": [
+        "PM approval C3 (Q1-Q8)",
+        "HYBRID drop_rate PM final decision (0.5% direzionale confermato o differenziato)",
+        "Legendary drop rate approved 7 confermati (2% raid / 1% dungeon 3p, chain STEP 8)",
+        "Progressive drop rate 4 (P1-P4) restano PENDING PM oppure finalizzati in C4 mini-gate"
+      ],
+      "risks_if_go": [
+        "R9 HYBRID drop_rate confusion → mitigato via ref token vs rate numeric",
+        "R11 post-Lv60 progression flow → mitigato via cross-check matrix in C4"
+      ]
+    },
+    "phase_c5_class_slug_migration_prep": {
+      "status": "HOLD post-C4",
+      "note": "class_slug null resolution formalizzata qui (C2 rule + Q7 CONFIRMED)"
+    },
+    "phase_c6_final_closure": {
+      "status": "HOLD post-C5"
+    },
+    "phase_r18_6_class_halls": {
+      "status": "PLANNED post-Phase C",
+      "note": "recruit_unassigned + Class Halls implementation"
+    }
+  },
+  "sezione_15_pm_open_questions": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C3 ILVL formula design (min(max(required_level + rarity_offset, tier_min), 60)) come baseline documentale?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Rarity offset proposti (Common:0 · Uncommon:+2 · Rare:+3 · Epic:+4 · Legendary:+5 con cap 60): accettare o affinare?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Legendary ilvl flat cap 60 (osservato 15/15): confermare per progressive placeholder P1-P4 anche a livello documentale?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Backfill formula fallback per legacy items senza ilvl: `ilvl = required_level + 2` (safe Uncommon default) — accettare o preferire fallback diverso?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Legacy items premium/p2w flag: `p2w_legacy_flag=true` per audit (NO auto-conversion) — confermare policy PM review case-by-case?"
+    },
+    {
+      "id": "Q6",
+      "topic": "min_level vs required_level normalization: coalesce(required_level, min_level, 1) — preferenza campo canonical = `required_level`. Confermare?"
+    },
+    {
+      "id": "Q7",
+      "topic": "Slot canonical list (14 slots: head/chest/legs/feet/hands/shoulder/waist/wrist/neck/ring/trinket/main-hand/off-hand/two-hand): completa o richiede aggiunte (es. `back` per cloak, `belt` separato da waist)?"
+    },
+    {
+      "id": "Q8",
+      "topic": "Autorizzare Phase C4 Drop Table con condizioni GO documentate in `go_hold_recommendation.phase_c4_drop_table`?"
+    }
+  ],
+  "sezione_16_governance": {
+    "sealed": "VERIFIED pytest 6/6 (post STEP 1 PRD append + STEP 2 C3 draft)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "registry_apply": "ZERO",
+    "registry_generation_live": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "ZERO (invariato)",
+    "sealed_file_modification": "ZERO",
+    "hard_delete": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration_apply": "ZERO",
+    "class_slug_auto_derivation": "ZERO (Q7 CONFIRMED verbatim)",
+    "proficiency_runtime_enforcement_implementation": "ZERO (design only)",
+    "anti_p2w_runtime_validator_implementation": "ZERO (design only)",
+    "equipment_backfill_apply": "ZERO (design plan only)",
+    "ilvl_implementation": "ZERO (formula design only)",
+    "c4_auto_start": "BLOCKED (STOP after C3 per direttiva PM)",
+    "r18_6_kickoff": "BLOCKED (PLANNED)",
+    "marketing_brief": "BLOCKED (DEFERRED)",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "italian_language_output": "ENFORCED",
+    "documental_only_regime": "ENFORCED",
+    "files_deliverable": "2 (.md + .json)",
+    "invariants_preserved_count": {
+      "rarity_400_450_400_235_15": true,
+      "class_300x5": true,
+      "tier_ranges_T1_T5": true,
+      "MAX_ADVENTURER_LEVEL_60": true,
+      "class_slug_null_1500": true,
+      "runtime_apply_ready_0_1500": true,
+      "progressive_marker_10": true,
+      "anti_p2w_1500_1500": true
+    }
+  },
+  "stop_after_c3": {
+    "auto_transition_c4": false,
+    "note": "STOP dopo C3. Attendo PM review Q1-Q8 + GO esplicito prima di C4 Drop Table."
+  }
+}

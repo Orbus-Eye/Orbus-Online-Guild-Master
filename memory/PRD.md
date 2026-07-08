@@ -2083,3 +2083,67 @@ Phase C Tech Dry-Run continua con **C2 Proficiency Runtime Preparation** (DOCUME
 
 **R18.5 status flow (aggiornato)**:
 `Phase C0 (STEP 27)` ✅ CLOSED → `Phase C0.L (STEP 28+28-bis)` ✅ CLOSED → `PRD C0+C0.L CLOSED (STEP 29)` ✅ CLOSED → `Phase C0.L.1 (STEP 30)` ✅ CLOSED → `Phase C1 (STEP 31)` ✅ CLOSED → **`PRD C0.L.1+C1 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C2 Proficiency Runtime Preparation`** 🟢 **AUTHORIZED (chain immediata)** → `C3-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.5 Phase C2 CLOSED (STEP · 2026-07-08T10:30:00Z)
+
+**Milestone**: **R18.5 Phase C2 Proficiency Runtime Preparation CLOSED** ✅
+
+**Governance**: DOCUMENTAL ONLY append. Nessuna modifica code/DB/migrations/sealed/item table/lore_meta.py. 36 sigilli intatti (pytest 6/6 PASSED).
+
+**Deliverables C2**:
+- `/app/memory/r18_5_phase_c2_proficiency_runtime_preparation.md` (SHA256 `86cc0e61b634494125b26a64948c57a8371b83449f936f9cdc9d730775d3d789`, 408 righe)
+- `/app/memory/r18_5_phase_c2_proficiency_runtime_preparation.json` (SHA256 `7c7b83ef65d902e43d81d79d5418d198541abbce7a9cb701846d232bc9ce2bba`)
+
+**C2 CLOSED — Decisioni PM verbatim (Q1-Q8)**:
+
+- **Q1=APPROVED** — C2 Proficiency Runtime Preparation design approved come baseline documentale.
+- **Q2=ACCEPT 5/5** — 5 Legendary MEDIUM caps accettati come design baseline (non runtime-ready).
+- **Q3=DESIGN CONFIRMED** — Divine Resurrect (L3): design attuale confermato (encounter attivi permessi con cap design; no trivializzazione wipe/boss/raid; no implementazione runtime).
+- **Q4=OPT-IN OBBLIGATORIO** — Reforge (L5) cross-target: **opt-in obbligatorio**, NO auto-accept nemmeno per guild members; consent target sempre richiesto.
+- **Q5=50% DURATA** — Absence Distortion (H3) su elite dungeon 3p: **silence_effective_duration = 50%** (NO full immunity default).
+- **Q6=NO-OP FAIR (A)** — Fate Deflection (H4) boss single-target no-add: **A) no-op fair** (NO deflect boss self = immunity).
+- **Q7=CONFIRMED** — class_slug null handling confermato: NO auto-derive · NO runtime bridge · NO migration · risoluzione differita a C5/R18.3f + R18.6; recruit_unassigned non equip-ready per gear specializzato.
+- **Q8=GO C3** — GO su Phase C3 ILVL + Equipment Backfill Planning (DOCUMENTAL ONLY).
+
+**Approvazioni C2 dettagliate (design layer)**:
+
+- **Validator design APPROVED** (10-step decision flow + 10-case matrix)
+- **Lock-state matrix APPROVED (10 stati)**: `equippable` · `locked_class_slug_null` · `locked_recruit_unassigned` · `locked_proficiency_armor` · `locked_proficiency_weapon` · `locked_level` · `locked_reserved_placeholder` · `locked_runtime_not_ready` · `locked_unknown_item_type` · `universal_allowed`
+- **UI state mapping APPROVED** (10 badge/tooltip IT)
+- **class_slug null handling CONFIRMED** (NO auto-derive · phase resolution C5/R18.3f + R18.6)
+- **recruit_unassigned / classless handling CONFIRMED** (permessi: roster/visualizzazione/prompt-tutorial; vietati: equip gear specializzato, full-dungeon/raid readiness)
+- **progressive_marker count = 10 CONFIRMED** (source-of-truth C0.L Sezione 3.6)
+- **5 Legendary caps ACCEPTED as design baseline (non runtime-ready)**:
+  - Void-Pierce (L2): max 1 proc/round
+  - Divine Resurrect (L3): encounter attivi allowed as design (cap 1x/enc · target fallen ally same encounter)
+  - Reforge (L5): **opt-in obbligatorio** (consent target); consent-deny → cooldown NON consumato (fair)
+  - Absence Distortion (H3): boss immune · elite **50% duration**
+  - Fate Deflection (H4): boss single-target no-add = **no-op fair** (no deflect boss self immunity)
+
+**Governance C2 CLOSED**:
+- 36 seals byte-identical (pytest `backend_r18_4_sealed_integrity_test.py` 6/6 PASSED)
+- Zero DB writes / code changes / migrations / `lore_meta.py` touches
+- Zero item table D1-D5 modifications (read-only design layer)
+- Zero runtime apply / registry apply / drop table apply
+- Zero class_slug migration apply / auto-derivation
+- Zero proficiency runtime enforcement implementation
+- Zero anti-P2W runtime validator implementation
+- Classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (PM lockato post-C2 approval Q8=GO)**:
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C3 ILVL + Equipment Backfill Planning** | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 1 PRD append |
+| **C4 Drop Table** | 🔒 **HOLD** | PM review post-C3 (HYBRID drop rate PM final richiesto qui) |
+| **C5 Class Slug Migration Prep** | 🔒 **HOLD** | post-C4 (class_slug null resolution) |
+| **C6 Final Closure** | 🔒 **HOLD** | post-C5 |
+
+**R18.6 Class Halls / Classless Start**: 🔒 PLANNED / HOLD post-Phase C readiness
+**Marketing Brief**: 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato post-C2 CLOSED)**:
+`C0` ✅ → `C0.L` ✅ → `PRD C0+C0.L CLOSED` ✅ → `C0.L.1` ✅ → `C1` ✅ → `PRD C0.L.1+C1 CLOSED` ✅ → `C2 Proficiency Runtime Preparation` ✅ → **`PRD C2 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C3 ILVL + Equipment Backfill Planning`** 🟢 **AUTHORIZED (chain immediata)** → `C4-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
