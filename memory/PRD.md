@@ -2329,3 +2329,138 @@ Il mapping precedente `Warrior→warrior · Rogue→rogue · Mage→mage · Prie
 
 **R18.5 status flow (aggiornato post-C5 CLOSED)**:
 `C0-C4` ✅ → `C5 Class Slug + Slot + Source Migration Prep (double-track)` ✅ → **`PRD C5 CLOSED with slug errata (questo append)`** ✅ **CLOSED** → **`Phase C6 Final Closure Report + Registry v2 Dry-Run`** 🟢 **AUTHORIZED (chain immediata)** → `R18.3f` 🔒 HOLD / `R18.6` 🔒 PLANNED / `Future Apply Phase` 🔒 HOLD / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.6 Class Halls Design CLOSED (with PM final Q1-Q8 answers · 2026-07-08T15:30:00Z)
+
+**Milestone**: **R18.6 Class Halls · Classless Start · Adventurer Identity Design CLOSED** ✅ (with PM final answers Q1-Q8 verbatim)
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (SHA256 `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero modifiche code/DB/migrations/sealed/item table/R18.5 artifacts/R18.6 design files.
+
+**Deliverables R18.6 approvati**:
+- `/app/memory/r18_6_class_halls_classless_start_design.md` (SHA256 `9c866733928411499e1112f9f10815ddfbf84cba71a750abc61b965fa07566e0`)
+- `/app/memory/r18_6_class_halls_classless_start_design.json` (SHA256 `e90754214310778b16fc6c0010b87e4fefd3723354b5099ad3b4770374b49deb`)
+
+### R18.6 Design Completed — Scope 13 Sezioni
+
+1. Executive Summary
+2. Classless initial state (recruit_unassigned handling)
+3. Class Halls Design (5 Sale)
+4. Class Hall choice flow (onboarding → modal → conferma → lock post-scelta)
+5. Classless lock rules (derivati C2 lock_state matrix #3/#4/#5/#10 — NO nuovi lock_state)
+6. Class Hall → Class → Proficiency matrix (PM lockata verbatim)
+7. UI/UX player-facing (testuale minimalista Orbus)
+8. Italian copy prompts (welcome tooltip · roster badge · modal · warning · confirmation · log Gilda)
+9. R18.5 interaction notes (READ-ONLY reference · zero modifiche)
+10. R18.3f interaction notes (HOLD · handoff requisiti RQ1-RQ8 documentali)
+11. Risk register (12 rischi documentati)
+12. PM Open Questions Q1-Q8 (chiuse in questo append verbatim)
+13. GO/HOLD recommendation
+
+### 5 Class Halls Approved (with 5 Hall Masters verbatim Q2=A)
+
+| Class Hall | canonical_class_slug | canonical_class_name_it | Hall Master (Q2=A verbatim) |
+|---|---|---|---|
+| **Fortezza d'Acciaio** | `guerriero` | Guerriero | **Comandante Aldric del Ferro** |
+| **Loggia dei Sussurri** | `ladro` | Ladro | **Maestra dei Sussurri Selene** |
+| **Circolo dei Nove Sigilli** | `mago` | Mago | **Arcimago Vessel di Memoria** |
+| **Reliquiario della Luce Fissa** | `paladino` ⚠️ | **Paladino** (NON priest/prete) | **Custode Isabeau dell'Alba** |
+| **Capanno del Sentiero Selvaggio** | `cacciatore_di_mostri` | **Cacciatore di Mostri** | **Vecchio Falconiere Ovyr** |
+
+Hall Masters approvati come **NPC narrativi documentali** — nessun vendor/shop/premium collegato.
+
+### PM Final Answers Q1-Q8 (verbatim)
+
+- **Q1 = C** — **Rite of Rebirth** = **one-time high-cost future option**
+  - disponibile solo dopo soglia futura da definire · nessun real-money shortcut · nessun abuso continuo (una sola volta per adventurer)
+  - reset/riconversione equip → gate futuro dedicato
+  - **NON implementare ora** · design layer only in R18.6 · gate futuro separato
+
+- **Q2 = A** — Hall Masters **CONFERMATI VERBATIM** (5 NPC narrativi come da R18.6 design)
+
+- **Q3 = CUSTOM** — Recluta (`recruit_unassigned`) fate:
+  - ✅ **dismissal/congedo AMMESSO** (libera slot Gilda)
+  - ❌ **sell/vendita NON AMMESSO**
+  - ❌ **transfer/trasferimento NON AMMESSO**
+  - **Rationale PM**: liberare spazio ok, evitare mercato Reclute senza identità
+
+- **Q4 = A** — `recruit_unassigned.idle_xp_rate = 0%`
+  - Recluta senza classe **NON guadagna XP idle**
+  - tutorial/prompt ok, ma **NO progressione utile** fino a scelta Sala
+
+- **Q5 = A** — **1 prova safe-mode dedicata per ognuna delle 5 Sale** (design only ora)
+  - 5 encounter scripted (uno per Hall)
+  - ognuno mostra `main_stat` + `armor proficiency` + `weapon proficiency` + identità classe
+  - **evita scelta cieca** · design layer only · runtime deferred a R18.6 live
+
+- **Q6 = B** — `recruit_unassigned` **cap = 3** per Gilda (simultanee)
+  - evita overflow onboarding
+  - dismissal Q3 libera slot
+
+- **Q7 = A** — Rito di consacrazione = **istantaneo** (no timer reale)
+  - peso della scelta viene da: conferma esplicita + preview Sala + Rite of Rebirth una tantum (Q1)
+  - **no 8h reali · no tick in-game**
+
+- **Q8 = B** — Hall trait = **simbolico/narrativo/UI flavor**
+  - **NO stat bonus · NO combat bonus · NO economy bonus · NO ranking bonus · NO progression bonus**
+  - Ammessi: titolo descrittivo · badge narrativo · testo profilo · log Gilda · flavor tooltip
+  - **I talenti veri restano gate futuro separato** (non R18.6)
+
+### Approvazioni R18.6 CLOSED dettagliate
+
+- 5 Class Halls approved (Fortezza d'Acciaio · Loggia dei Sussurri · Circolo dei Nove Sigilli · Reliquiario della Luce Fissa · Capanno del Sentiero Selvaggio)
+- 5 Hall Masters approved verbatim (Aldric del Ferro · Selene · Vessel di Memoria · Isabeau dell'Alba · Ovyr)
+- Proficiency matrix PM-lockata verbatim (guerriero/ladro/mago/paladino/cacciatore_di_mostri)
+- Slug canonical usati verbatim (con slug errata Q1+Q5 di C5)
+- Terminologia critica confermata: **Paladino** (NON priest/prete) · **Cacciatore di Mostri** (underscore composto slug)
+- Lock_state reuse C2 (10 stati) — NO nuovi lock_state introdotti
+- UI badge C2 (ambra · icona porta) — riuso verbatim
+- 12 risk register entries documentate
+- 13 sezioni scope complete
+- **Rite of Rebirth** = one-time high-cost future option (non-premium, no real-money) — Q1=C
+- **`recruit_unassigned` dismissal** ammesso, sell/transfer NON ammesso — Q3=CUSTOM
+- **`recruit_unassigned` idle XP** = 0% — Q4=A
+- **1 Prova di Sala** per ognuna delle 5 Halls (design only) — Q5=A
+- **Cap `recruit_unassigned`** per Gilda = 3 — Q6=B
+- **Rito consacrazione** = istantaneo — Q7=A
+- **Hall trait** = simbolico UI flavor only (NO gameplay bonus) — Q8=B
+
+### Governance Constraints Confirmed R18.6 CLOSED
+
+- **R18.5 Phase C** rimane **CLOSED / LOCKED** — zero modifiche autorizzate
+- **R18.3f Class Slug Migration Readiness** rimane **🔒 HOLD** — no auto-start authorized, GO PM separato richiesto
+- **Apply Phase** rimane **🔒 HOLD** — 7 preconditions richieste (backup DB · dry-run tech · rollback · seal governance · migration order · failure recovery · PM approval)
+- **Progressive Discovery Legendary Finalization (P1-P4)** rimane **🔒 HOLD** — dedicated PM gate post-C6
+- **R18.6 live implementation** (UI + funnel + lock_state runtime) rimane **🔒 HOLD** — richiede R18.3f apply + Apply Phase
+- **Marketing Brief** rimane **⏸️ DEFERRED** — no priority
+- **R18.6 design files** dopo questo append CLOSED sono **🔒 LOCKED** — no re-write senza nuovo GO PM esplicito
+- **NO code · NO DB · NO migrations · NO item creation · NO registry apply · NO drop table apply · NO class_slug migration apply · NO class_slug auto-derivation · NO runtime bridge · NO proficiency runtime enforcement · NO Class Halls implementation · NO UI code · NO sealed file modification · NO hard delete**
+- **Sealed integrity**: pytest 6/6 passed post-append
+- **`lore_meta.py`**: SHA256 `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` — **INVARIATO**
+
+### Rationale PM per HOLD prossimo gate (verbatim)
+
+Prima di implementare Class Halls live, serve preparare bene:
+- `class_slug` schema (`adventurer.class_slug` · `adventurer.class_hall_id` · `adventurer.class_hall_assigned_at` · `adventurer.recruit_status`)
+- Bridge legacy EN → canonical IT (translation policy immutable lookup)
+- `recruit_unassigned` handling runtime (dismissal, cap=3, idle_xp=0%)
+- Migration script draft (retroattiva legacy adventurers)
+
+Tutto materiale **R18.3f**, che però rimane **HOLD** finché il PM non emette **GO esplicito separato**.
+
+### NEXT GATE STATE POST-R18.6 CLOSED
+
+| Track | Status | Trigger |
+|---|---|---|
+| **R18.3f Class Slug Migration Readiness** | 🔒 **HOLD** | GO PM esplicito separato (RACCOMANDATO come next gate, ma non ancora autorizzato) |
+| **Progressive Discovery Legendary Finalization (P1-P4)** | 🔒 **HOLD** | dedicated PM gate post-C6 · può procedere parallelo a R18.3f prep |
+| **Apply Phase** (Registry / Drop / Backfill / Class_slug / Runtime enforcement) | 🔒 **HOLD** | 7 preconditions + PM coordinated GO |
+| **R18.6 live** (Class Halls UI + funnel + lock_state runtime + Rite of Rebirth gate + Prova di Sala encounter) | 🔒 **HOLD** | richiede R18.3f apply + Apply Phase completata |
+| **Marketing Brief** | ⏸️ **DEFERRED** | no priority |
+
+---
+
+**R18.5 + R18.6 combined status flow (aggiornato post-R18.6 CLOSED)**:
+`R18.5 C0-C6` ✅ **CLOSED · LOCKED** → `R18.6 Class Halls Design (Q1-Q8 resolved)` ✅ **CLOSED · LOCKED (this append)** → `R18.3f` 🔒 HOLD / `Progressive Discovery` 🔒 HOLD / `Apply Phase` 🔒 HOLD / `R18.6 live` 🔒 HOLD / `Marketing Brief` ⏸️ DEFERRED
+
+🛑 **STOP dopo R18.6 CLOSED.** Sistema in **HOLD assoluto**. Nessun auto-start. Attendo GO PM esplicito per il prossimo gate.
