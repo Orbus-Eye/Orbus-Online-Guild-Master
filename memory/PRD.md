@@ -2200,3 +2200,61 @@ Phase C Tech Dry-Run continua con **C2 Proficiency Runtime Preparation** (DOCUME
 
 **R18.5 status flow (aggiornato post-C3 CLOSED)**:
 `C0-C2` ✅ → `C3 ILVL + Equipment Backfill Planning` ✅ → **`PRD C3 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C4 Drop Table Dry-Run Planning`** 🟢 **AUTHORIZED (chain immediata)** → `C5-C6` 🔒 HOLD / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.5 Phase C4 CLOSED (STEP · 2026-07-08T13:30:00Z)
+
+**Milestone**: **R18.5 Phase C4 Drop Table Dry-Run Planning CLOSED** ✅
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli intatti (pytest 6/6 PASSED). Zero modifiche code/DB/migrations/sealed/item table/`lore_meta.py`.
+
+**Deliverables C4**:
+- `/app/memory/r18_5_phase_c4_drop_table_dry_run_planning.md` (SHA256 `ffc75045c33935aed647db12ed2f5348f911b12df3d9c2310eb834df93e44199`, 582 righe)
+- `/app/memory/r18_5_phase_c4_drop_table_dry_run_planning.json` (SHA256 `05057ba7847436de7ccfc7674ed9e16a184dce9872ae201eb6d8ab6646a5e8e3`)
+
+**C4 CLOSED — Decisioni PM verbatim (Q1-Q8)**:
+
+- **Q1=APPROVED** — C4 design layer input per C5 (no drop table apply, no runtime).
+- **Q2=0.5% UNIFORME** — HYBRID H1-H4 drop rate final design recommendation **0.5% uniforme** (NON runtime; H2 NON differenziato a 0.3%).
+- **Q3=LOOT-LOCK APPROVED** — Loot-lock **1×/settimana** approvato per H3 `ergolat-obelisk-focus` + H4 `halodi-fate-quiver` (design only).
+- **Q4=A · trinket→accessory ADDITIVE** — `accessory` = slot canonico operativo · `trinket` = alias legacy/documentale RESERVED · in C5 mappare 68 items `slot=trinket` → `slot_canonical=accessory` · mantenere `slot_original=trinket` per audit · **NO 15° slot** · **NO sistema trinket** · NO cambio stat/tier/rarity/source/classe.
+- **Q5=DUNGEON=60** — Dungeon canonical count **RESTA 60**; token extra classificato `source_alias`/`secondary_source`, **NON 61° dungeon**.
+- **Q6=RAID=12** — Raid canonical count **RESTA 12**; **`hollow-monastery` classificato non-raid** (dungeon/secondary_source/source_alias); NO 13° raid.
+- **Q7=PROGRESSIVE POST-C6** — 4 Progressive Discovery source **PENDING PM post-C6** (NON finalizzare in C5); restano `reserved` · `runtime_apply_ready=false` · `registry_status=reserved/PENDING PM`.
+- **Q8=GO C5 DOUBLE-TRACK** — GO Phase C5 Class Slug Migration Prep **+ Slot Canonical Migration Planning (DOUBLE-TRACK)** DOCUMENTAL ONLY.
+
+**Approvazioni C4 dettagliate**:
+- Source non-null **1500/1500** ✅
+- Anti-P2W validation **8/8 PASSED** ✅
+- HYBRID H1-H4 drop rate design recommendation = **0.5% uniform** (design layer, no runtime)
+- H3/H4 loot-lock **1×/settimana** design approved
+- **`trinket → accessory` canonical alias approved** (additive, NO 15° slot, `slot_original` preservato per audit)
+- **Dungeon canonical count remains 60** (token extra = `source_alias`/`secondary_source`)
+- **Raid canonical count remains 12** (`hollow-monastery` classificato non-raid)
+- Progressive Discovery sources remain PENDING PM **post-C6**
+- Slot canonical drift documentato: 613 `main-hand` + 129 `off-hand` + 68 `trinket` + 57 `amulet` → alias additivi (migration C5)
+- Class coverage OK · no bracket sotto-servito
+- Legendary policy compliance: NO shop/premium/real-money/P2W/normal-craft/generic-stat 15/15 ✅
+
+**Governance C4 CLOSED**:
+- 36 seals byte-identical (pytest `backend_r18_4_sealed_integrity_test.py` 6/6 PASSED)
+- Zero DB writes / code changes / migrations / `lore_meta.py` touches
+- Zero item table D1-D5 modifications (read-only reverse-mapping)
+- Zero drop rate apply · zero drop table apply · zero economy changes
+- Zero class_slug migration / auto-derivation
+- Classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (post-C4 approval Q8=GO)**:
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C5 Class Slug Migration Prep + Slot Canonical + Source Canonicalization (DOUBLE-TRACK)** | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 1 PRD append |
+| **C6 Final Phase C Closure Report** | 🔒 **HOLD** | PM review post-C5 |
+
+**R18.6 Class Halls · Classless Start · Adventurer Identity**: 🔒 PLANNED (esecuzione class_slug migration + slot_canonical migration + progressive finalization)
+**Marketing Brief**: 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato post-C4 CLOSED)**:
+`C0-C3` ✅ → `C4 Drop Table Dry-Run Planning` ✅ → **`PRD C4 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C5 Migration Prep (DOUBLE-TRACK)`** 🟢 **AUTHORIZED (chain immediata)** → `C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED

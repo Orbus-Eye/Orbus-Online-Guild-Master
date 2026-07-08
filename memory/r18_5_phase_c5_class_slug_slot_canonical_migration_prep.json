@@ -1,0 +1,612 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C5 Class Slug Migration Prep + Slot Canonical Migration Planning (DOUBLE-TRACK)",
+    "step": "STEP 2 (post STEP 1 PRD append C4 CLOSED)",
+    "locked_at_utc": "2026-07-08T13:30:00Z",
+    "governance": "DOCUMENTAL ONLY — migration prep design layer (double-track A+B+C). NO migration apply · NO code/DB/migrations · NO auto-derive · NO runtime bridge.",
+    "status": "APPLIED — migration prep documental per PM review pre-C6",
+    "authority": "PM Orchestrator — Phase C5 dispatch (Q8=GO double-track)"
+  },
+  "executive_summary": {
+    "double_track_scope": [
+      "TRACK A · Class Slug Migration Prep (R18.3f readiness → R18.6 execute)",
+      "TRACK B · Slot Canonical Migration Planning (Q4=A trinket→accessory + 8 alias table)",
+      "TRACK C · Source Canonicalization (dungeon 61→60, raid 13→12, hollow-monastery non-raid)"
+    ],
+    "invariants_preserved": {
+      "item_count_1500": true,
+      "rarity_400_450_400_235_15": true,
+      "class_300x5": true,
+      "class_slug_null_1500_1500": true,
+      "runtime_apply_ready_0_1500": true,
+      "progressive_marker_10": true,
+      "anti_p2w_1500_1500": true,
+      "canonical_slot_count_14": true,
+      "canonical_dungeon_count_60": true,
+      "canonical_raid_count_12": true
+    }
+  },
+  "track_a_class_slug_migration_prep": {
+    "1_class_slug_null_gap_tracking": {
+      "current_state": "class_slug=null 1500/1500 (100% gap)",
+      "resolution_status_field": "class_slug_resolution_status = deferred_to_C5_R18_3f (1500/1500)",
+      "invariant": "In C5: `class_slug=null` **PRESERVATO** (no auto-derive · no apply)",
+      "target_state_post_r18_6": "class_slug valorizzato lato adventurer (item side rimane `class_proficiency` canonical W/R/M/P/Ranger)"
+    },
+    "2_class_slug_resolution_roadmap": {
+      "step_1_c5_prep_this_doc": "documentazione bridging + hook design (no apply)",
+      "step_2_r18_3f_readiness": "runtime prep for class_slug schema + adventurer.class_slug column · migration script design (no apply)",
+      "step_3_r18_6_execute": "Class Halls · Classless Start · adventurer.class_slug population via UI onboarding",
+      "step_4_post_r18_6": "runtime_apply_ready true per items applicable + class_slug non-null validator active"
+    },
+    "3_recruit_unassigned_handling_notes": {
+      "definition": "Adventurer senza classe assegnata (post-registration, pre-Class Hall selection)",
+      "permessi_c2_c5": [
+        "esistere nel roster",
+        "essere visualizzato in UI",
+        "ricevere prompt/tutorial onboarding",
+        "ricevere item universal_allowed (consumable/material/cosmetic)"
+      ],
+      "vietati_c2_c5": [
+        "equipaggiare gear specializzato (armor/weapon proficiency-locked)",
+        "essere considerato pienamente pronto per dungeon 3p/raid 5p",
+        "partecipare a Legendary drop encounter"
+      ],
+      "phase_di_risoluzione": [
+        "C5 (prep)",
+        "R18.3f (readiness)",
+        "R18.6 (execute Class Hall assignment)"
+      ]
+    },
+    "4_classless_start_r18_6_hooks": {
+      "narrative_hook": "Recluta arrivata alla Gilda senza classe definita; interagisce con Class Halls per scegliere il proprio Path (W/R/M/P/Ranger)",
+      "ui_hook": "Modal onboarding con 5 Class Hall cards + descrizione lore/utility",
+      "gameplay_hook": "Tutorial encounter pre-classe (universal_allowed items only)",
+      "post_selection_hook": "adventurer.class_slug = selected_class · runtime_apply_ready true per items W/R/M/P/Ranger applicable · class_proficiency lock enforcement attivo",
+      "note_c5": "hook design layer only · nessuna implementazione in C5"
+    },
+    "5_class_proficiency_bridging_design": {
+      "principio": "class_proficiency (canonical item-side W/R/M/P/Ranger) NON deve auto-derivare adventurer.class_slug",
+      "no_auto_derive": true,
+      "bridging_rule_pseudologic": "IF adventurer.class_slug != None AND adventurer.class_slug == item.class_proficiency THEN equippable (dopo altri check C2). ELSE lock_state = locked_class_slug_null OR locked_proficiency_class",
+      "canonical_form_map": {
+        "Warrior": "warrior",
+        "Rogue": "rogue",
+        "Mage": "mage",
+        "Priest": "priest",
+        "Ranger": "ranger"
+      },
+      "case_insensitive_normalization": "applicabile solo lato migration input (R18.3f); post-migration solo canonical lowercase per class_slug"
+    },
+    "6_validator_hooks_c2_integration": {
+      "validator_c2_flow_extended": "post class_slug population (R18.6), C2 validator step 3 (`class_slug is None + class_proficiency is None`) → step 4 (`class_slug is None but class_proficiency present`) sostituiti da: step 3' `class_slug != item.class_proficiency` → `locked_proficiency_class`",
+      "integration_points": [
+        "C2 lock_state matrix estesa con `locked_proficiency_class` post-R18.6",
+        "UI badge nuovo: 'rosso · icona classe barrata' per `locked_proficiency_class`",
+        "class_slug null resolution rimuove `locked_class_slug_null` da matrix runtime post-R18.6"
+      ]
+    }
+  },
+  "track_b_slot_canonical_migration": {
+    "7_slot_alias_mapping_additive": {
+      "principio": "Migration ADDITIVE · aggiunge `slot_canonical` a ogni item · preserva `slot_original` per audit · NO destructive rename",
+      "mapping_table": [
+        {
+          "slot_original": "trinket",
+          "slot_canonical": "accessory",
+          "count_D1_D5": 68,
+          "rationale": "Q4=A · trinket = alias legacy/documentale RESERVED; accessory = slot canonico operativo; migration additive, mantiene `slot_original=trinket` per audit"
+        },
+        {
+          "slot_original": "main-hand",
+          "slot_canonical": "main_hand",
+          "count_D1_D5": 613,
+          "rationale": "Q7 C3 · underscore canonical (dash-hyphen alias legacy display)"
+        },
+        {
+          "slot_original": "off-hand",
+          "slot_canonical": "off_hand",
+          "count_D1_D5": 129,
+          "rationale": "Q7 C3 · underscore canonical"
+        },
+        {
+          "slot_original": "amulet",
+          "slot_canonical": "neck",
+          "count_D1_D5": 57,
+          "rationale": "Q7 C3 · `neck` slot canonico; `amulet` = alias legacy display"
+        },
+        {
+          "slot_original": "belt",
+          "slot_canonical": "waist",
+          "count_D1_D5": 0,
+          "rationale": "Q7 C3 · canonical rule (0 items osservati D1-D5, ma alias documentale per compat futuri)"
+        },
+        {
+          "slot_original": "cloak",
+          "slot_canonical": "back",
+          "count_D1_D5": 0,
+          "rationale": "Q7 C3 · canonical rule (0 items osservati)"
+        },
+        {
+          "slot_original": "cape",
+          "slot_canonical": "back",
+          "count_D1_D5": 0,
+          "rationale": "Q7 C3 · canonical rule (0 items osservati)"
+        },
+        {
+          "slot_original": "weapon_main",
+          "slot_canonical": "main_hand",
+          "count_D1_D5": 0,
+          "rationale": "Q7 C3 · canonical rule (0 items osservati)"
+        },
+        {
+          "slot_original": "weapon_off",
+          "slot_canonical": "off_hand",
+          "count_D1_D5": 0,
+          "rationale": "Q7 C3 · canonical rule (0 items osservati)"
+        }
+      ],
+      "totals": {
+        "items_migrating_D1_D5": 867,
+        "items_universal_no_migration": 26,
+        "items_already_canonical": 607,
+        "total_check": 1500
+      }
+    },
+    "8_slot_canonical_slot_original_preservation": {
+      "rule_1_additive_only": "Ogni item riceve `slot_canonical` derivato dal mapping table · `slot_original` preservato invariato",
+      "rule_2_no_stat_change": "NO cambio stat/tier/rarity/source/classe/main_stat_target/ilvl",
+      "rule_3_no_registry_regeneration": "Registry v1 (C1) rimane valido · registry v2 post-C5 aggiunge `slot_canonical` + `slot_original` come nuovi campi",
+      "rule_4_audit_field": "`slot_original` diventa audit field per rollback/debug (backwards-compat)",
+      "rule_5_ui_display": "UI mostra `slot_canonical` (14 slot); tooltip advanced mode può mostrare `slot_original` per debugging"
+    },
+    "9_no_stat_tier_rarity_source_class_change": {
+      "verification": "Migration additive-only · 0 modifiche a: stat_principali · tier · rarity · source · classe_orientata · main_stat_target · ilvl · required_level · anti_p2w flags"
+    },
+    "10_universal_allowed_preservation": {
+      "slots": [
+        {
+          "slot_original": "consumable",
+          "count_D1_D5": 17,
+          "handling": "universal_allowed C2/C3 · bypass proficiency · NO migration"
+        },
+        {
+          "slot_original": "material",
+          "count_D1_D5": 9,
+          "handling": "universal_allowed C2/C3 · bypass proficiency · NO migration"
+        }
+      ],
+      "handling": "consumable/material bypass proficiency check (universal_allowed lock_state C2/C3) · NO migration · NO slot_canonical assignment (restano su `slot_original` che coincide)",
+      "total_items": 26
+    },
+    "11_slot_canonical_final_list_q7_c3": {
+      "canonical_14": [
+        "head",
+        "neck",
+        "shoulders",
+        "chest",
+        "back",
+        "hands",
+        "wrist",
+        "waist",
+        "legs",
+        "feet",
+        "main_hand",
+        "off_hand",
+        "ring",
+        "accessory"
+      ],
+      "note": "Confermato Q7 C3 · immutato in C5"
+    },
+    "12_trinket_reserved_alias_not_operational": {
+      "state": "trinket = alias legacy/documentale RESERVED · NON slot operativo",
+      "post_migration": "68 items ricevono `slot_canonical=accessory` · `slot_original=trinket` preservato per audit",
+      "no_15th_slot": true,
+      "no_trinket_system": true,
+      "future_r18_6_note": "`trinket` può essere riattivato in phase futura post-R18.6 come slot narrativo/cosmetic (fuori scope C5)"
+    }
+  },
+  "track_c_source_canonicalization": {
+    "13_dungeon_reconciliation_61_to_60": {
+      "observed_C4": 61,
+      "canonical_target_pm_q5": 60,
+      "delta": 1,
+      "dungeon_canonical_60": [
+        "wild-hunt-lair",
+        "druid-grove",
+        "stormcaller-vault",
+        "chapel-of-silent-vows",
+        "worldroot-hollow",
+        "bastion-of-alevora",
+        "blackpine-thicket",
+        "sanctum-of-fading-souls",
+        "abyssal-drift",
+        "forgotten-shrine-of-adalan",
+        "soulforge-crucible",
+        "dragon-vault-outer",
+        "frost-cathedral",
+        "void-touched-crossroads",
+        "conciatore-elfwood",
+        "memoria-antechamber",
+        "emberking-approach",
+        "ironhold-keep",
+        "sunken-library",
+        "emberlord-hideout",
+        "fabbro-bulwark",
+        "broken-tower-of-adalan",
+        "storm-spire",
+        "heretic-cathedral",
+        "mercenary-holdfast",
+        "sarto-sacro",
+        "tessitrice-arcana",
+        "frostbound-vault",
+        "starfall-basilica",
+        "wyrmscale-pass",
+        "bandit-hideout",
+        "bandit-warlord-hideout",
+        "infernal-pit-5p",
+        "necropolis-approach",
+        "pantheon-of-fallen-suns",
+        "shadow-crypts",
+        "cuoiaia-elfwood",
+        "moonwake-abbey",
+        "sewer-nest",
+        "wraithbound-ossuary",
+        "elder-wyrm-descent-antechamber",
+        "necropolis-descent",
+        "starforged-approach",
+        "arcane-fault-line",
+        "cursed-mines",
+        "elder-wyrm-descent",
+        "stygian-reach",
+        "world-tree-roots-5p",
+        "ambash-legendary-forge",
+        "ashborn-ravine",
+        "efreto-cursed-nexus",
+        "hollow-crown-halls",
+        "sundered-observatory",
+        "void-touched-outpost",
+        "black-forge-of-ergolat",
+        "bonefall-crypt",
+        "dragons-hoard",
+        "lich-sanctum",
+        "goblin-warrens",
+        "iron-legion-outpost"
+      ],
+      "extra_token_declassed_1": {
+        "token": "void-heart-sanctum",
+        "items_count": 8,
+        "classification": "source_alias",
+        "rationale": "Q5 verbatim: dungeon canonical count RESTA 60 · token extra (`void-heart-sanctum`, 8 items T5) classificato source_alias · NON 61° dungeon · governance-safe tiebreak: last per items DESC + alphabetical"
+      }
+    },
+    "14_raid_reconciliation_13_to_12": {
+      "observed_C4": 13,
+      "canonical_target_pm_q6": 12,
+      "delta": 1,
+      "raid_canonical_12": [
+        "krastlov-siege",
+        "necropolis-bells",
+        "emberking-siege",
+        "world-tree-collapse",
+        "memoria-vault",
+        "arcane-schism",
+        "void-cathedral",
+        "souldrain-abyss",
+        "celestial-conclave",
+        "dragon-vault",
+        "bloodgrove-uprising",
+        "broken-bastion-siege"
+      ],
+      "hollow_monastery_declassed": {
+        "token": "hollow-monastery",
+        "items_count": 53,
+        "prev_classification": "raid (C4 observed via `raid` keyword in source string)",
+        "new_classification": "secondary_source (Q6 verbatim: non-raid)",
+        "sub_classification_hint": "candidato dungeon 3p T2 large-encounter OR encounter narrativo secondary; PM può affinare in C6",
+        "rationale": "Q6 verbatim: `hollow-monastery` classificato non-raid · dungeon/secondary_source/source_alias · NO 13° raid"
+      }
+    },
+    "15_source_original_vs_canonical": {
+      "field_source_original": "preservato invariato (invariante D1-D5)",
+      "field_source_canonical_added": "documentale · derivato via matching primary token con dungeon_canonical_60 / raid_canonical_12 / source_alias / secondary_source",
+      "classification_categories_5": [
+        "dungeon_canonical",
+        "raid_canonical",
+        "source_alias",
+        "secondary_source",
+        "meta_source (vendor/quest/craft/etc)"
+      ],
+      "audit_field": "source_original = audit for rollback/debug"
+    },
+    "16_anti_drift_check": {
+      "checks": [
+        {
+          "n": 1,
+          "check": "dungeon canonical count == 60",
+          "status": "PASSED (60)"
+        },
+        {
+          "n": 2,
+          "check": "raid canonical count == 12",
+          "status": "PASSED (12)"
+        },
+        {
+          "n": 3,
+          "check": "1500/1500 non-null source preservato",
+          "status": "PASSED"
+        },
+        {
+          "n": 4,
+          "check": "hollow-monastery declassed to non-raid",
+          "status": "PASSED"
+        },
+        {
+          "n": 5,
+          "check": "1 extra dungeon token classificato source_alias",
+          "status": "PASSED (void-heart-sanctum)"
+        }
+      ]
+    }
+  },
+  "17_migration_validation_checklist": [
+    {
+      "n": 1,
+      "check": "Additive-only migration (no destructive rename)",
+      "status": "PASSED"
+    },
+    {
+      "n": 2,
+      "check": "slot_original preservato invariato",
+      "status": "PASSED"
+    },
+    {
+      "n": 3,
+      "check": "source_original preservato invariato",
+      "status": "PASSED"
+    },
+    {
+      "n": 4,
+      "check": "class_slug=null 1500/1500 preservato",
+      "status": "PASSED"
+    },
+    {
+      "n": 5,
+      "check": "runtime_apply_ready=false 1500/1500 preservato",
+      "status": "PASSED"
+    },
+    {
+      "n": 6,
+      "check": "0 modifiche a stat/tier/rarity/source-content/classe/ilvl",
+      "status": "PASSED"
+    },
+    {
+      "n": 7,
+      "check": "Universal_allowed (consumable/material) NO migration",
+      "status": "PASSED"
+    },
+    {
+      "n": 8,
+      "check": "Slot canonical 14 confermato Q7 C3",
+      "status": "PASSED"
+    },
+    {
+      "n": 9,
+      "check": "trinket RESERVED (NON 15° slot, NON sistema)",
+      "status": "PASSED"
+    },
+    {
+      "n": 10,
+      "check": "68 trinket items → slot_canonical=accessory (Q4=A)",
+      "status": "PASSED"
+    },
+    {
+      "n": 11,
+      "check": "Dungeon canonical count = 60 (61→60, 1 source_alias)",
+      "status": "PASSED"
+    },
+    {
+      "n": 12,
+      "check": "Raid canonical count = 12 (13→12, hollow-monastery non-raid)",
+      "status": "PASSED"
+    },
+    {
+      "n": 13,
+      "check": "1500/1500 items catalog invariante count",
+      "status": "PASSED"
+    },
+    {
+      "n": 14,
+      "check": "Progressive Discovery P1-P4 status PENDING PM post-C6 preservato",
+      "status": "PASSED"
+    },
+    {
+      "n": 15,
+      "check": "Anti-P2W 1500/1500 preservato",
+      "status": "PASSED"
+    },
+    {
+      "n": 16,
+      "check": "36 seals byte-identical",
+      "status": "TO VERIFY post-write"
+    },
+    {
+      "n": 17,
+      "check": "lore_meta.py invariato",
+      "status": "PASSED (no touch)"
+    },
+    {
+      "n": 18,
+      "check": "Zero DB/code/migrations",
+      "status": "PASSED"
+    }
+  ],
+  "18_risk_register": [
+    {
+      "id": "R1",
+      "risk": "class_slug null percentage rimane 100% fino a R18.6 · gap operativo lungo",
+      "severity": "MEDIUM",
+      "mitigation": "roadmap C5→R18.3f→R18.6 chiara · nessun blocker C6 (documentale)",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R2",
+      "risk": "slot alias collision post-migration (es. `trinket` runtime references residue)",
+      "severity": "MEDIUM",
+      "mitigation": "slot_original preservato · rollback path chiaro · pre-apply audit obbligatorio",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R3",
+      "risk": "68 items trinket→accessory potrebbero rompere UI legacy che si aspetta 'trinket' slot",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "UI display `slot_canonical`, tooltip advanced `slot_original`; pre-R18.6 UI update",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R4",
+      "risk": "Source misclassification (hollow-monastery secondary vs dungeon sub-type)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "PM può affinare classification in C6 · sub_classification_hint fornito",
+      "status": "TRACKED to C6"
+    },
+    {
+      "id": "R5",
+      "risk": "source_alias declassed token (void-heart-sanctum) potrebbe essere content narrativo importante",
+      "severity": "LOW",
+      "mitigation": "PM review C6 può ripristinare a dungeon canonical (delta +1 accettato)",
+      "status": "TRACKED to C6"
+    },
+    {
+      "id": "R6",
+      "risk": "R18.3f readiness richiede runtime schema class_slug pre-implementation",
+      "severity": "MEDIUM",
+      "mitigation": "C5 documenta hook · schema design in R18.3f (fuori scope C5)",
+      "status": "DEFERRED to R18.3f"
+    },
+    {
+      "id": "R7",
+      "risk": "Classless Start UI onboarding può frustrare user (extra step pre-gameplay)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "R18.6 UX polish · tutorial encounter pre-classe bilanciato",
+      "status": "TRACKED to R18.6"
+    },
+    {
+      "id": "R8",
+      "risk": "class_proficiency canonical case-insensitive normalization rimane latent",
+      "severity": "LOW",
+      "mitigation": "R18.3f runtime migration script normalizza input",
+      "status": "TRACKED to R18.3f"
+    },
+    {
+      "id": "R9",
+      "risk": "Progressive Discovery source PENDING PM post-C6 blocca 4/15 Legendary runtime enable",
+      "severity": "MEDIUM",
+      "mitigation": "documented Q7 · finalizzazione autonoma post-C6 · no blocker C6 closure",
+      "status": "TRACKED to post-C6"
+    },
+    {
+      "id": "R10",
+      "risk": "Anti-P2W runtime validator non implementato · dipende da runtime_apply_ready true",
+      "severity": "MEDIUM",
+      "mitigation": "C6 closure documenta gate pre-runtime · anti-P2W design 8/8 PASSED · implementation R18.6+",
+      "status": "DEFERRED to R18.6+"
+    }
+  ],
+  "19_go_hold_recommendation": {
+    "phase_c6_final_phase_c_closure_report": {
+      "recommendation": "GO — soggetto a PM approval esplicito post-C5 review",
+      "rationale": "C5 completa il triple-track migration prep (A: class_slug · B: slot canonical · C: source canonicalization). C6 sarà il Final Phase C Closure Report che aggrega tutto (C0→C5) e prepara handoff a R18.3f / R18.6 execution.",
+      "conditions": [
+        "PM approval C5 (Q1-Q8)",
+        "Progressive Discovery 4 (P1-P4) source PENDING PM finalizzato post-C6 (fuori scope C6 closure)",
+        "hollow-monastery sub_classification affinato in C6 (dungeon 3p T2 large-encounter vs secondary_source generico)",
+        "source_alias declassed token (void-heart-sanctum) può essere restore dungeon canonical (delta +1 accettato) — decisione PM in C6"
+      ],
+      "risks_if_go": [
+        "R6 R18.3f readiness dipendenza · non blocca C6 closure documental",
+        "R9 Progressive finalization post-C6 · non blocca C6 closure"
+      ]
+    },
+    "phase_r18_3f_readiness": {
+      "status": "PLANNED post-C6",
+      "note": "runtime schema class_slug + migration script design (execution R18.6)"
+    },
+    "phase_r18_6_class_halls_classless_start": {
+      "status": "PLANNED",
+      "note": "esecuzione live migration + Class Halls UI + adventurer identity"
+    },
+    "marketing_brief": {
+      "status": "DEFERRED"
+    }
+  },
+  "20_pm_open_questions": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C5 double-track migration prep (A class_slug · B slot canonical · C source canonicalization) come design layer input per C6 Final Closure?"
+    },
+    {
+      "id": "Q2",
+      "topic": "Slot alias mapping 9 entries (trinket→accessory 68 items + 4 alias con items D1-D5 + 5 canonical rule 0 items): conferma o affinare?"
+    },
+    {
+      "id": "Q3",
+      "topic": "hollow-monastery sub-classification: (A) `dungeon_3p T2 large-encounter` [53 items T2 · candidato dungeon canonico #61 alternativo] · (B) `secondary_source` generico [Q6 verbatim] · (C) split narrativo (raid alternate cancellato → dungeon)?"
+    },
+    {
+      "id": "Q4",
+      "topic": "source_alias declassed token = **`void-heart-sanctum`** (8 items T5): conferma declass o preferisci sostituire con altro token (indicare quale) o accettare 61 dungeon canonici?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Class Slug Roadmap C5→R18.3f→R18.6: confermare timing (post-C6 closure → R18.3f readiness → R18.6 execute) o accelerare/ritardare?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Classless Start UX (Class Halls modal onboarding): approvare hook design R18.6 o richiede design PM dedicato?"
+    },
+    {
+      "id": "Q7",
+      "topic": "Registry v2 post-C5 aggiungerà campi (`slot_canonical`, `slot_original`, `source_canonical`, `source_original`): timing per generation registry v2? (A) subito post-C5 approval · (B) in C6 Final Closure · (C) in R18.3f readiness"
+    },
+    {
+      "id": "Q8",
+      "topic": "Autorizzare Phase C6 Final Phase C Closure Report (aggregate C0→C5 + handoff R18.3f/R18.6)?"
+    }
+  ],
+  "governance": {
+    "sealed": "VERIFIED pytest 6/6 (post STEP 1 PRD append + STEP 2 C5 draft)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO (design prep only)",
+    "item_creation_live": "ZERO",
+    "registry_apply": "ZERO",
+    "drop_table_apply": "ZERO",
+    "drop_rate_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "ZERO",
+    "sealed_file_modification": "ZERO",
+    "hard_delete": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration_apply": "ZERO (prep only)",
+    "class_slug_auto_derivation": "ZERO",
+    "slot_migration_apply": "ZERO (mapping design only)",
+    "source_migration_apply": "ZERO (reconciliation design only)",
+    "proficiency_runtime_enforcement": "ZERO",
+    "anti_p2w_runtime_validator": "ZERO",
+    "equipment_backfill_apply": "ZERO",
+    "ilvl_implementation": "ZERO",
+    "c6_auto_start": "BLOCKED (STOP after C5)",
+    "r18_6_kickoff": "BLOCKED (PLANNED)",
+    "marketing_brief": "BLOCKED (DEFERRED)",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "italian_language_output": "ENFORCED",
+    "documental_only_regime": "ENFORCED",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_c5": {
+    "auto_transition_c6": false,
+    "note": "STOP dopo C5. Attendo PM review Q1-Q8 + GO esplicito prima di C6."
+  }
+}
