@@ -1,0 +1,2177 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C4 Drop Table Dry-Run Planning",
+    "step": "STEP 2 (post STEP 1 PRD append C3 CLOSED)",
+    "locked_at_utc": "2026-07-08T11:30:00Z",
+    "governance": "DOCUMENTAL ONLY — drop table dry-run + HYBRID drop rate proposal. NO drop rate apply · NO drop table apply · NO code/DB/migrations.",
+    "status": "APPLIED — dry-run analytics + proposal per PM review",
+    "authority": "PM Orchestrator — Phase C4 dispatch (Q8=GO C4)"
+  },
+  "sezione_01_executive_summary": {
+    "obiettivo": "Analisi documentale drop table via reverse-mapping dai `source` degli items D1-D5. Proposta drop rate finali HYBRID (H1-H4). Design material parallel drop policy. Validazione anti-P2W. Segnalazione PM gate items (slot canonical drift, dungeon count, raid count).",
+    "invariants_preserved": {
+      "item_count_1500": true,
+      "rarity_400_450_400_235_15": true,
+      "class_300x5": true,
+      "class_slug_null_1500": true,
+      "runtime_apply_ready_0_1500": true,
+      "anti_p2w_1500_1500": true,
+      "progressive_marker_10": true
+    }
+  },
+  "sezione_02_source_catalog": {
+    "target_pm": {
+      "dungeon_normal_3p": 60,
+      "raid_5p": 12
+    },
+    "observed_from_D1_D5": {
+      "dungeon_unique_tokens": 61,
+      "raid_unique_tokens": 13,
+      "delta_dungeon_vs_target": 1,
+      "delta_raid_vs_target": 1,
+      "note": "Delta osservato: dungeon +4 vs target 60 (probabile meta-source residue non filtrato); raid +1 vs target 12. Discrepanza segnalata come PM gate item C5."
+    },
+    "categorization_note": "Estratto via reverse-mapping del primary token del campo `source`. Filtri meta-source applicati: tutorial/npc/vendor/crafting/ranking/achievement/quest/chest/event/starter-crafting/early-vendor/early-achievement/PENDING."
+  },
+  "sezione_03_dungeon_drop_mapping_60_normal_3p": {
+    "count_observed": 61,
+    "count_target_pm": 60,
+    "delta": 1,
+    "rows": [
+      {
+        "dungeon_token": "wild-hunt-lair",
+        "items_count": 60,
+        "tier_distribution": "T2:60",
+        "rarity_distribution": "C:31 U:25 R:4 E:0 L:0",
+        "class_distribution": {
+          "Rogue": 28,
+          "Ranger": 32
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-shadowstep-eclipse-blade",
+          "rogue-leathercraft-nighthide",
+          "rogue-shadowlockpick-ghost-tools"
+        ]
+      },
+      {
+        "dungeon_token": "druid-grove",
+        "items_count": 37,
+        "tier_distribution": "T1:37",
+        "rarity_distribution": "C:35 U:2 R:0 E:0 L:0",
+        "class_distribution": {
+          "Ranger": 29,
+          "Rogue": 8
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "ranger-woodland-quiver",
+          "rogue-shadowstep-kris",
+          "rogue-leathercraft-boots"
+        ]
+      },
+      {
+        "dungeon_token": "stormcaller-vault",
+        "items_count": 36,
+        "tier_distribution": "T2:36",
+        "rarity_distribution": "C:8 U:21 R:7 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 5,
+          "Mage": 22,
+          "Ranger": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-stormforged-polearm",
+          "warrior-stormcaller-helm",
+          "warrior-stormcaller-warhammer"
+        ]
+      },
+      {
+        "dungeon_token": "chapel-of-silent-vows",
+        "items_count": 29,
+        "tier_distribution": "T1:29",
+        "rarity_distribution": "C:26 U:3 R:0 E:0 L:0",
+        "class_distribution": {
+          "Priest": 29
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "priest-faith-blessed-scepter",
+          "priest-faith-blessed-warmace",
+          "priest-novice-holy-cowl"
+        ]
+      },
+      {
+        "dungeon_token": "worldroot-hollow",
+        "items_count": 28,
+        "tier_distribution": "T2:28",
+        "rarity_distribution": "C:0 U:20 R:8 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 3,
+          "Mage": 7,
+          "Priest": 7,
+          "Ranger": 7
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-worldroot-plate",
+          "warrior-worldroot-shield",
+          "warrior-worldroot-warshield"
+        ]
+      },
+      {
+        "dungeon_token": "bastion-of-alevora",
+        "items_count": 27,
+        "tier_distribution": "T3:27",
+        "rarity_distribution": "C:7 U:15 R:5 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 12,
+          "Rogue": 8,
+          "Ranger": 7
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-alevoran-recruit-blade",
+          "warrior-alevoran-recruit-shield",
+          "warrior-alevoran-mail-helm"
+        ]
+      },
+      {
+        "dungeon_token": "blackpine-thicket",
+        "items_count": 26,
+        "tier_distribution": "T2:26",
+        "rarity_distribution": "C:25 U:1 R:0 E:0 L:0",
+        "class_distribution": {
+          "Rogue": 16,
+          "Ranger": 10
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-shadowstep-veiled-blade",
+          "rogue-leathercraft-shadowsilk",
+          "rogue-shadowlockpick-thieves-legend"
+        ]
+      },
+      {
+        "dungeon_token": "sanctum-of-fading-souls",
+        "items_count": 25,
+        "tier_distribution": "T4:25",
+        "rarity_distribution": "C:0 U:6 R:13 E:6 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 8,
+          "Mage": 4,
+          "Priest": 5,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-sanctum-fading-blade",
+          "warrior-t4-sanctum-2h-hammer",
+          "warrior-t4-sanctum-plate"
+        ]
+      },
+      {
+        "dungeon_token": "abyssal-drift",
+        "items_count": 24,
+        "tier_distribution": "T4:24",
+        "rarity_distribution": "C:0 U:7 R:12 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 5,
+          "Mage": 6,
+          "Priest": 5,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-gladiator-plate",
+          "warrior-t4-gladiator-champion-axe",
+          "warrior-t4-gladiator-champion-plate"
+        ]
+      },
+      {
+        "dungeon_token": "forgotten-shrine-of-adalan",
+        "items_count": 24,
+        "tier_distribution": "T1:24",
+        "rarity_distribution": "C:2 U:22 R:0 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 3,
+          "Priest": 9,
+          "Ranger": 8,
+          "Mage": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-guard-polearm",
+          "priest-faith-blessed-relic-hammer",
+          "priest-prayer-beads-dusk"
+        ]
+      },
+      {
+        "dungeon_token": "soulforge-crucible",
+        "items_count": 24,
+        "tier_distribution": "T3:24",
+        "rarity_distribution": "C:4 U:11 R:7 E:2 L:0",
+        "class_distribution": {
+          "Rogue": 12,
+          "Mage": 1,
+          "Ranger": 11
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-soulforged-dagger-init",
+          "rogue-soulforged-leather-chest-init",
+          "rogue-soulforged-dagger-adept"
+        ]
+      },
+      {
+        "dungeon_token": "dragon-vault-outer",
+        "items_count": 23,
+        "tier_distribution": "T4:23",
+        "rarity_distribution": "C:0 U:6 R:12 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 9,
+          "Rogue": 2,
+          "Mage": 4,
+          "Priest": 1,
+          "Ranger": 7
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-iron-legion-captain-blade",
+          "warrior-t4-alevoran-warlord-plate",
+          "warrior-t4-dragonscale-mail-legs"
+        ]
+      },
+      {
+        "dungeon_token": "frost-cathedral",
+        "items_count": 23,
+        "tier_distribution": "T4:23",
+        "rarity_distribution": "C:0 U:5 R:11 E:7 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 4,
+          "Mage": 5,
+          "Priest": 6,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-frost-cathedral-plate",
+          "warrior-t4-frost-cathedral-blade",
+          "warrior-t4-frost-cathedral-plate-helm"
+        ]
+      },
+      {
+        "dungeon_token": "void-touched-crossroads",
+        "items_count": 23,
+        "tier_distribution": "T4:23",
+        "rarity_distribution": "C:0 U:5 R:10 E:8 L:0",
+        "class_distribution": {
+          "Warrior": 5,
+          "Rogue": 5,
+          "Mage": 5,
+          "Priest": 4,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-void-touched-blade",
+          "warrior-t4-void-touched-plate",
+          "warrior-t4-void-touched-lance"
+        ]
+      },
+      {
+        "dungeon_token": "conciatore-elfwood",
+        "items_count": 22,
+        "tier_distribution": "T3:16/T4:6",
+        "rarity_distribution": "C:2 U:10 R:10 E:0 L:0",
+        "class_distribution": {
+          "Rogue": 18,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-shadowweaver-apprentice-dagger",
+          "rogue-elfwood-scout-boots",
+          "rogue-shadowweaver-adept-dagger"
+        ]
+      },
+      {
+        "dungeon_token": "memoria-antechamber",
+        "items_count": 22,
+        "tier_distribution": "T4:22",
+        "rarity_distribution": "C:0 U:5 R:12 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 4,
+          "Mage": 5,
+          "Priest": 5,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-memoria-blade",
+          "warrior-t4-memoria-master-blade",
+          "warrior-t4-memoria-plate"
+        ]
+      },
+      {
+        "dungeon_token": "emberking-approach",
+        "items_count": 20,
+        "tier_distribution": "T4:20",
+        "rarity_distribution": "C:0 U:5 R:10 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 4,
+          "Mage": 4,
+          "Priest": 4,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-emberking-plate-helm",
+          "warrior-t4-emberking-2h-hammer",
+          "warrior-t4-emberking-plate"
+        ]
+      },
+      {
+        "dungeon_token": "ironhold-keep",
+        "items_count": 20,
+        "tier_distribution": "T2:20",
+        "rarity_distribution": "C:16 U:3 R:1 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 20
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ironsergeant-blade",
+          "warrior-ironsergeant-helm",
+          "warrior-iron-longsword-t2"
+        ]
+      },
+      {
+        "dungeon_token": "sunken-library",
+        "items_count": 20,
+        "tier_distribution": "T1:20",
+        "rarity_distribution": "C:19 U:1 R:0 E:0 L:0",
+        "class_distribution": {
+          "Mage": 20
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-apprentice-runic-staff",
+          "mage-apprentice-crystal-staff",
+          "mage-novice-arcane-hat"
+        ]
+      },
+      {
+        "dungeon_token": "emberlord-hideout",
+        "items_count": 19,
+        "tier_distribution": "T2:19",
+        "rarity_distribution": "C:1 U:13 R:5 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 3,
+          "Mage": 6,
+          "Priest": 3,
+          "Ranger": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-flamesteel-blade-t2",
+          "warrior-emberlord-blade",
+          "warrior-emberlord-cloak"
+        ]
+      },
+      {
+        "dungeon_token": "fabbro-bulwark",
+        "items_count": 19,
+        "tier_distribution": "T3:15/T4:4",
+        "rarity_distribution": "C:3 U:7 R:9 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 15,
+          "Priest": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-iron-corporal-blade",
+          "warrior-iron-corporal-mail-chest",
+          "warrior-bulwark-kite-shield"
+        ]
+      },
+      {
+        "dungeon_token": "broken-tower-of-adalan",
+        "items_count": 18,
+        "tier_distribution": "T1:18",
+        "rarity_distribution": "C:0 U:18 R:0 E:0 L:0",
+        "class_distribution": {
+          "Mage": 4,
+          "Warrior": 3,
+          "Rogue": 4,
+          "Priest": 3,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-ceremonial-dagger",
+          "warrior-guard-halberd",
+          "warrior-plate-legguards-adorned"
+        ]
+      },
+      {
+        "dungeon_token": "storm-spire",
+        "items_count": 18,
+        "tier_distribution": "T2:18",
+        "rarity_distribution": "C:17 U:1 R:0 E:0 L:0",
+        "class_distribution": {
+          "Mage": 18
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-apprentice-storm-staff",
+          "mage-novice-storm-robe",
+          "mage-focus-storm-crystal"
+        ]
+      },
+      {
+        "dungeon_token": "heretic-cathedral",
+        "items_count": 17,
+        "tier_distribution": "T3:17",
+        "rarity_distribution": "C:0 U:7 R:8 E:2 L:0",
+        "class_distribution": {
+          "Warrior": 6,
+          "Rogue": 1,
+          "Mage": 1,
+          "Priest": 8,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-heretic-slayer-blade",
+          "warrior-heretic-slayer-2h-hammer",
+          "warrior-heretic-slayer-plate-chest"
+        ]
+      },
+      {
+        "dungeon_token": "mercenary-holdfast",
+        "items_count": 17,
+        "tier_distribution": "T3:17",
+        "rarity_distribution": "C:0 U:10 R:6 E:1 L:0",
+        "class_distribution": {
+          "Warrior": 6,
+          "Rogue": 6,
+          "Ranger": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-gladiator-blade",
+          "warrior-gladiator-axe",
+          "warrior-gladiator-plate-legs"
+        ]
+      },
+      {
+        "dungeon_token": "sarto-sacro",
+        "items_count": 17,
+        "tier_distribution": "T3:13/T4:4",
+        "rarity_distribution": "C:4 U:8 R:5 E:0 L:0",
+        "class_distribution": {
+          "Priest": 17
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "priest-sacred-adept-holy-symbol",
+          "priest-sacred-adept-cloth-hood",
+          "priest-sacred-adept-cloth-gloves"
+        ]
+      },
+      {
+        "dungeon_token": "tessitrice-arcana",
+        "items_count": 17,
+        "tier_distribution": "T3:12/T4:5",
+        "rarity_distribution": "C:3 U:9 R:5 E:0 L:0",
+        "class_distribution": {
+          "Mage": 17
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-arcane-adept-tome",
+          "mage-arcane-adept-cloth-hood",
+          "mage-arcane-adept-cloth-gloves"
+        ]
+      },
+      {
+        "dungeon_token": "frostbound-vault",
+        "items_count": 16,
+        "tier_distribution": "T2:16",
+        "rarity_distribution": "C:1 U:12 R:3 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 2,
+          "Rogue": 4,
+          "Mage": 4,
+          "Ranger": 5,
+          "Priest": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-frostiron-axe-t2",
+          "rogue-frostbite-rapier",
+          "rogue-frostbite-shroud"
+        ]
+      },
+      {
+        "dungeon_token": "starfall-basilica",
+        "items_count": 15,
+        "tier_distribution": "T3:15",
+        "rarity_distribution": "C:0 U:6 R:7 E:2 L:0",
+        "class_distribution": {
+          "Warrior": 1,
+          "Mage": 7,
+          "Priest": 1,
+          "Ranger": 6
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-celestial-teaser-plate-shoulders",
+          "mage-celestial-teaser-cloth-robe",
+          "mage-celestial-teaser-star-wand"
+        ]
+      },
+      {
+        "dungeon_token": "wyrmscale-pass",
+        "items_count": 15,
+        "tier_distribution": "T3:15",
+        "rarity_distribution": "C:0 U:8 R:6 E:1 L:0",
+        "class_distribution": {
+          "Warrior": 2,
+          "Mage": 4,
+          "Ranger": 9
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-dragonscale-plate-shoulders",
+          "warrior-dragonscale-2h-axe",
+          "mage-dragonscale-mage-cloth-shoulders"
+        ]
+      },
+      {
+        "dungeon_token": "bandit-hideout",
+        "items_count": 14,
+        "tier_distribution": "T1:14",
+        "rarity_distribution": "C:14 U:0 R:0 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 12,
+          "Rogue": 2
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ironhelm-starter",
+          "warrior-ironrecruit-warblade",
+          "warrior-ironhelm-visored"
+        ]
+      },
+      {
+        "dungeon_token": "bandit-warlord-hideout",
+        "items_count": 14,
+        "tier_distribution": "T1:14",
+        "rarity_distribution": "C:1 U:13 R:0 E:0 L:0",
+        "class_distribution": {
+          "Rogue": 6,
+          "Ranger": 3,
+          "Warrior": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-shadowstep-twin-blades",
+          "rogue-shadowlockpick-silent",
+          "ranger-hunter-longbow-of-the-glade"
+        ]
+      },
+      {
+        "dungeon_token": "infernal-pit-5p",
+        "items_count": 14,
+        "tier_distribution": "T4:14",
+        "rarity_distribution": "C:0 U:4 R:5 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 2,
+          "Rogue": 3,
+          "Mage": 3,
+          "Priest": 3,
+          "Ranger": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-infernal-pit-blade",
+          "warrior-t4-infernal-pit-boss",
+          "rogue-t4-infernal-pit-dagger"
+        ]
+      },
+      {
+        "dungeon_token": "necropolis-approach",
+        "items_count": 14,
+        "tier_distribution": "T3:14",
+        "rarity_distribution": "C:0 U:6 R:7 E:1 L:0",
+        "class_distribution": {
+          "Rogue": 1,
+          "Mage": 2,
+          "Priest": 11
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-cursed-relic-dagger",
+          "mage-necromancer-tome",
+          "mage-cursed-relic-tome"
+        ]
+      },
+      {
+        "dungeon_token": "pantheon-of-fallen-suns",
+        "items_count": 14,
+        "tier_distribution": "T5:14",
+        "rarity_distribution": "C:0 U:0 R:6 E:6 L:2",
+        "class_distribution": {
+          "Mage": 3,
+          "Ranger": 1,
+          "Warrior": 2,
+          "Rogue": 4,
+          "Priest": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "mage-t5-legendary-sole-nero-diadem",
+          "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+          "warrior-t5-void-warden-epic-14"
+        ]
+      },
+      {
+        "dungeon_token": "shadow-crypts",
+        "items_count": 14,
+        "tier_distribution": "T1:14",
+        "rarity_distribution": "C:10 U:4 R:0 E:0 L:0",
+        "class_distribution": {
+          "Rogue": 14
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-shadowstep-stiletto",
+          "rogue-shadowlockpick-master",
+          "rogue-leather-leggings-shadow"
+        ]
+      },
+      {
+        "dungeon_token": "cuoiaia-elfwood",
+        "items_count": 13,
+        "tier_distribution": "T3:8/T4:5",
+        "rarity_distribution": "C:2 U:6 R:5 E:0 L:0",
+        "class_distribution": {
+          "Ranger": 13
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "ranger-elfwood-woodsman-boots",
+          "ranger-elfwood-woodsman-mail-legs",
+          "ranger-elfwood-woodsman-bow"
+        ]
+      },
+      {
+        "dungeon_token": "moonwake-abbey",
+        "items_count": 13,
+        "tier_distribution": "T3:13",
+        "rarity_distribution": "C:2 U:7 R:3 E:1 L:0",
+        "class_distribution": {
+          "Priest": 13
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "priest-moon-vigil-acolyte-mace",
+          "priest-moon-vigil-acolyte-robe",
+          "priest-moon-vigil-hooded-mace"
+        ]
+      },
+      {
+        "dungeon_token": "sewer-nest",
+        "items_count": 13,
+        "tier_distribution": "T1:13",
+        "rarity_distribution": "C:12 U:1 R:0 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 3,
+          "Rogue": 10
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ironrecruit-shortblade",
+          "rogue-recruit-shortsword",
+          "warrior-militia-longsword"
+        ]
+      },
+      {
+        "dungeon_token": "wraithbound-ossuary",
+        "items_count": 13,
+        "tier_distribution": "T3:13",
+        "rarity_distribution": "C:0 U:4 R:7 E:2 L:0",
+        "class_distribution": {
+          "Warrior": 1,
+          "Rogue": 6,
+          "Mage": 1,
+          "Ranger": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-wraith-warden-plate-helm",
+          "rogue-wraith-warden-dagger",
+          "rogue-wraith-warden-leather-chest"
+        ]
+      },
+      {
+        "dungeon_token": "elder-wyrm-descent-antechamber",
+        "items_count": 12,
+        "tier_distribution": "T4:12",
+        "rarity_distribution": "C:0 U:1 R:6 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 3,
+          "Rogue": 2,
+          "Mage": 3,
+          "Priest": 2,
+          "Ranger": 2
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-elder-wyrm-plate",
+          "warrior-t4-elder-wyrm-blade",
+          "warrior-t4-elder-wyrm-antechamber-boss-blade"
+        ]
+      },
+      {
+        "dungeon_token": "necropolis-descent",
+        "items_count": 12,
+        "tier_distribution": "T4:12",
+        "rarity_distribution": "C:0 U:2 R:5 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 2,
+          "Mage": 1,
+          "Priest": 4,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-necropolis-descent-2h",
+          "warrior-t4-necropolis-descent-plate",
+          "warrior-t4-necropolis-descent-shield"
+        ]
+      },
+      {
+        "dungeon_token": "starforged-approach",
+        "items_count": 12,
+        "tier_distribution": "T5:12",
+        "rarity_distribution": "C:0 U:0 R:6 E:6 L:0",
+        "class_distribution": {
+          "Mage": 4,
+          "Priest": 4,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-t5-celestial-scholar-epic-04",
+          "mage-t5-void-warlock-epic-03",
+          "priest-t5-celestial-conclave-priest-epic-02"
+        ]
+      },
+      {
+        "dungeon_token": "arcane-fault-line",
+        "items_count": 11,
+        "tier_distribution": "T3:11",
+        "rarity_distribution": "C:2 U:6 R:2 E:1 L:0",
+        "class_distribution": {
+          "Mage": 11
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-rift-apprentice-wand",
+          "mage-rift-apprentice-robe",
+          "mage-rift-adept-wand"
+        ]
+      },
+      {
+        "dungeon_token": "cursed-mines",
+        "items_count": 11,
+        "tier_distribution": "T1:11",
+        "rarity_distribution": "C:7 U:4 R:0 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 8,
+          "Mage": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-bulwark-towershield",
+          "warrior-plate-chest-novice",
+          "mage-focus-copper-runic"
+        ]
+      },
+      {
+        "dungeon_token": "elder-wyrm-descent",
+        "items_count": 11,
+        "tier_distribution": "T5:11",
+        "rarity_distribution": "C:0 U:0 R:5 E:5 L:1",
+        "class_distribution": {
+          "Warrior": 5,
+          "Rogue": 2,
+          "Ranger": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-dragon-elder-scale",
+          "warrior-t5-elder-wyrm-hunter-epic-05",
+          "warrior-t5-void-warden-epic-06"
+        ]
+      },
+      {
+        "dungeon_token": "stygian-reach",
+        "items_count": 11,
+        "tier_distribution": "T3:11",
+        "rarity_distribution": "C:0 U:5 R:5 E:1 L:0",
+        "class_distribution": {
+          "Rogue": 10,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-stygian-veiled-dagger",
+          "rogue-stygian-veiled-leather-chest",
+          "rogue-stygian-veiled-boots"
+        ]
+      },
+      {
+        "dungeon_token": "world-tree-roots-5p",
+        "items_count": 11,
+        "tier_distribution": "T3:9/T4:2",
+        "rarity_distribution": "C:0 U:4 R:6 E:1 L:0",
+        "class_distribution": {
+          "Rogue": 3,
+          "Mage": 1,
+          "Priest": 1,
+          "Ranger": 6
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-worldroot-scout-boots",
+          "rogue-worldroot-scout-hood",
+          "rogue-worldroot-scout-elite-boots"
+        ]
+      },
+      {
+        "dungeon_token": "ambash-legendary-forge",
+        "items_count": 10,
+        "tier_distribution": "T5:10",
+        "rarity_distribution": "C:0 U:0 R:4 E:4 L:2",
+        "class_distribution": {
+          "Warrior": 5,
+          "Mage": 3,
+          "Ranger": 2
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-ambash-forge-hammer",
+          "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+          "warrior-t5-alevoran-perpetual-epic-03"
+        ]
+      },
+      {
+        "dungeon_token": "ashborn-ravine",
+        "items_count": 10,
+        "tier_distribution": "T3:10",
+        "rarity_distribution": "C:1 U:5 R:3 E:1 L:0",
+        "class_distribution": {
+          "Mage": 10
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-ashborn-cinder-wand",
+          "mage-ashborn-cinder-staff",
+          "mage-ashborn-cinder-robe"
+        ]
+      },
+      {
+        "dungeon_token": "efreto-cursed-nexus",
+        "items_count": 10,
+        "tier_distribution": "T5:10",
+        "rarity_distribution": "C:0 U:0 R:5 E:5 L:0",
+        "class_distribution": {
+          "Warrior": 2,
+          "Rogue": 2,
+          "Mage": 4,
+          "Priest": 2
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t5-elder-wyrm-hunter-epic-13",
+          "rogue-t5-elder-wyrm-stalker-epic-13",
+          "mage-t5-efreto-corrupt-caster-epic-05"
+        ]
+      },
+      {
+        "dungeon_token": "hollow-crown-halls",
+        "items_count": 10,
+        "tier_distribution": "T3:10",
+        "rarity_distribution": "C:0 U:6 R:3 E:1 L:0",
+        "class_distribution": {
+          "Warrior": 7,
+          "Priest": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-hollow-crown-blade",
+          "warrior-hollow-crown-plate-helm",
+          "warrior-hollow-crown-plate-chest"
+        ]
+      },
+      {
+        "dungeon_token": "sundered-observatory",
+        "items_count": 10,
+        "tier_distribution": "T3:10",
+        "rarity_distribution": "C:0 U:5 R:4 E:1 L:0",
+        "class_distribution": {
+          "Rogue": 1,
+          "Mage": 9
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-observatory-star-dagger",
+          "mage-observatory-star-wand",
+          "mage-observatory-star-staff"
+        ]
+      },
+      {
+        "dungeon_token": "void-touched-outpost",
+        "items_count": 10,
+        "tier_distribution": "T5:10",
+        "rarity_distribution": "C:0 U:0 R:5 E:5 L:0",
+        "class_distribution": {
+          "Rogue": 4,
+          "Priest": 2,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-t5-silent-heart-epic-02",
+          "rogue-t5-void-shade-epic-01",
+          "priest-t5-worldroot-druid-priest-epic-13"
+        ]
+      },
+      {
+        "dungeon_token": "black-forge-of-ergolat",
+        "items_count": 9,
+        "tier_distribution": "T3:9",
+        "rarity_distribution": "C:0 U:2 R:5 E:2 L:0",
+        "class_distribution": {
+          "Warrior": 6,
+          "Rogue": 1,
+          "Mage": 1,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-black-forge-mail-chest",
+          "warrior-black-forge-hammer",
+          "warrior-black-forge-plate-helm"
+        ]
+      },
+      {
+        "dungeon_token": "bonefall-crypt",
+        "items_count": 9,
+        "tier_distribution": "T2:9",
+        "rarity_distribution": "C:0 U:5 R:4 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 1,
+          "Rogue": 3,
+          "Mage": 3,
+          "Priest": 1,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-bonefall-battleaxe",
+          "rogue-bonefall-shiv",
+          "rogue-bonefall-cloak"
+        ]
+      },
+      {
+        "dungeon_token": "dragons-hoard",
+        "items_count": 9,
+        "tier_distribution": "T2:9",
+        "rarity_distribution": "C:0 U:6 R:3 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Mage": 3,
+          "Ranger": 2
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-dragonscale-warhammer",
+          "warrior-dragonhoard-sabatons",
+          "warrior-dragonlord-amulet-lesser"
+        ]
+      },
+      {
+        "dungeon_token": "lich-sanctum",
+        "items_count": 9,
+        "tier_distribution": "T1:9",
+        "rarity_distribution": "C:2 U:7 R:0 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Mage": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ironhelm-greathelm",
+          "mage-apprentice-fissure-staff",
+          "warrior-kite-shield"
+        ]
+      },
+      {
+        "dungeon_token": "goblin-warrens",
+        "items_count": 8,
+        "tier_distribution": "T1:8",
+        "rarity_distribution": "C:8 U:0 R:0 E:0 L:0",
+        "class_distribution": {
+          "Mage": 5,
+          "Warrior": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "mage-focus-crystal-primer",
+          "warrior-ironrecruit-broadsword",
+          "warrior-warhammer-of-the-recruit"
+        ]
+      },
+      {
+        "dungeon_token": "iron-legion-outpost",
+        "items_count": 8,
+        "tier_distribution": "T3:8",
+        "rarity_distribution": "C:0 U:4 R:3 E:1 L:0",
+        "class_distribution": {
+          "Warrior": 8
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-iron-legion-plate-helm",
+          "warrior-iron-legion-plate-chest",
+          "warrior-iron-legion-plate-legs"
+        ]
+      },
+      {
+        "dungeon_token": "void-heart-sanctum",
+        "items_count": 8,
+        "tier_distribution": "T5:8",
+        "rarity_distribution": "C:0 U:0 R:4 E:4 L:0",
+        "class_distribution": {
+          "Rogue": 4,
+          "Priest": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-t5-efreto-cursed-blade-epic-04",
+          "rogue-t5-pantheon-shadow-epic-03",
+          "priest-t5-pantheon-oracle-epic-04"
+        ]
+      }
+    ]
+  },
+  "sezione_04_raid_drop_mapping_12_raid_5p": {
+    "count_observed": 13,
+    "count_target_pm": 12,
+    "delta": 1,
+    "rows": [
+      {
+        "raid_token": "hollow-monastery",
+        "items_count": 53,
+        "tier_distribution": "T2:53",
+        "rarity_distribution": "C:28 U:21 R:4 E:0 L:0",
+        "class_distribution": {
+          "Priest": 53
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "priest-faith-sanctified-mace",
+          "priest-faith-relic-warmace",
+          "priest-novice-sanctified-vestments"
+        ]
+      },
+      {
+        "raid_token": "krastlov-siege",
+        "items_count": 28,
+        "tier_distribution": "T2:28",
+        "rarity_distribution": "C:12 U:10 R:6 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 24,
+          "Rogue": 1,
+          "Mage": 1,
+          "Priest": 1,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ironlieutenant-blade",
+          "warrior-ironcaptain-helm",
+          "warrior-cavalry-spear-t2"
+        ]
+      },
+      {
+        "raid_token": "necropolis-bells",
+        "items_count": 25,
+        "tier_distribution": "T4:25",
+        "rarity_distribution": "C:0 U:4 R:10 E:11 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 5,
+          "Mage": 5,
+          "Priest": 6,
+          "Ranger": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-necropolis-bells-blade",
+          "warrior-t4-necropolis-bells-plate",
+          "warrior-t4-necropolis-bells-preboss-blade"
+        ]
+      },
+      {
+        "raid_token": "emberking-siege",
+        "items_count": 22,
+        "tier_distribution": "T4:22",
+        "rarity_distribution": "C:0 U:0 R:10 E:12 L:0",
+        "class_distribution": {
+          "Warrior": 5,
+          "Rogue": 4,
+          "Mage": 4,
+          "Priest": 4,
+          "Ranger": 5
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-emberking-siege-blade",
+          "warrior-t4-emberking-siege-plate",
+          "warrior-t4-emberking-siege-preboss"
+        ]
+      },
+      {
+        "raid_token": "world-tree-collapse",
+        "items_count": 21,
+        "tier_distribution": "T5:21",
+        "rarity_distribution": "C:0 U:0 R:4 E:15 L:2",
+        "class_distribution": {
+          "Rogue": 5,
+          "Ranger": 8,
+          "Warrior": 4,
+          "Priest": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "rogue-t5-legendary-irthe-price-shroud-hybrid",
+          "ranger-t5-legendary-worldroot-scepter",
+          "warrior-t5-alevoran-perpetual-epic-11"
+        ]
+      },
+      {
+        "raid_token": "memoria-vault",
+        "items_count": 20,
+        "tier_distribution": "T4:20",
+        "rarity_distribution": "C:0 U:0 R:10 E:10 L:0",
+        "class_distribution": {
+          "Warrior": 4,
+          "Rogue": 4,
+          "Mage": 4,
+          "Priest": 4,
+          "Ranger": 4
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-t4-memoria-vault-blade",
+          "warrior-t4-memoria-vault-plate",
+          "warrior-t4-memoria-vault-preboss"
+        ]
+      },
+      {
+        "raid_token": "arcane-schism",
+        "items_count": 16,
+        "tier_distribution": "T3:16",
+        "rarity_distribution": "C:0 U:6 R:8 E:2 L:0",
+        "class_distribution": {
+          "Warrior": 2,
+          "Rogue": 1,
+          "Mage": 8,
+          "Priest": 4,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-arcane-schism-blade",
+          "warrior-arcane-schism-rift-warden-shield",
+          "rogue-arcane-schism-shadow-dagger"
+        ]
+      },
+      {
+        "raid_token": "void-cathedral",
+        "items_count": 15,
+        "tier_distribution": "T5:15",
+        "rarity_distribution": "C:0 U:0 R:2 E:12 L:1",
+        "class_distribution": {
+          "Rogue": 8,
+          "Mage": 7
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "rogue-t5-legendary-void-touched-blade",
+          "rogue-t5-adalan-arcane-thief-epic-22",
+          "rogue-t5-ash-widow-epic-08"
+        ]
+      },
+      {
+        "raid_token": "souldrain-abyss",
+        "items_count": 14,
+        "tier_distribution": "T3:14",
+        "rarity_distribution": "C:0 U:2 R:7 E:5 L:0",
+        "class_distribution": {
+          "Rogue": 7,
+          "Priest": 4,
+          "Ranger": 3
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "rogue-soul-abyss-dagger",
+          "rogue-soul-abyss-leather-legs",
+          "rogue-soul-abyss-devourer-dagger"
+        ]
+      },
+      {
+        "raid_token": "celestial-conclave",
+        "items_count": 13,
+        "tier_distribution": "T5:13",
+        "rarity_distribution": "C:0 U:0 R:2 E:9 L:2",
+        "class_distribution": {
+          "Priest": 9,
+          "Mage": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+          "priest-t5-legendary-seraph-halo-crown",
+          "mage-t5-celestial-scholar-epic-12"
+        ]
+      },
+      {
+        "raid_token": "dragon-vault",
+        "items_count": 12,
+        "tier_distribution": "T5:12",
+        "rarity_distribution": "C:0 U:0 R:2 E:9 L:1",
+        "class_distribution": {
+          "Warrior": 8,
+          "Ranger": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-dragonlord-crown",
+          "warrior-t5-dragonlord-vanguard-epic-09",
+          "warrior-t5-elder-wyrm-hunter-epic-21"
+        ]
+      },
+      {
+        "raid_token": "bloodgrove-uprising",
+        "items_count": 11,
+        "tier_distribution": "T2:11",
+        "rarity_distribution": "C:0 U:6 R:5 E:0 L:0",
+        "class_distribution": {
+          "Warrior": 3,
+          "Rogue": 3,
+          "Mage": 2,
+          "Priest": 2,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-bloodgrove-warhelm",
+          "warrior-bloodgrove-signet",
+          "warrior-bloodgrove-cuirass"
+        ]
+      },
+      {
+        "raid_token": "broken-bastion-siege",
+        "items_count": 11,
+        "tier_distribution": "T3:11",
+        "rarity_distribution": "C:0 U:3 R:5 E:3 L:0",
+        "class_distribution": {
+          "Warrior": 5,
+          "Priest": 5,
+          "Ranger": 1
+        },
+        "has_legendary_drop": false,
+        "sample_items": [
+          "warrior-ergolat-siege-blade",
+          "warrior-ergolat-siege-plate-helm",
+          "warrior-ergolat-siege-captain-blade"
+        ]
+      }
+    ]
+  },
+  "sezione_05_elite_group_track_mapping": {
+    "definition": "Group Track Elite = sotto-catena dungeon 3p che include boss finale con drop Legendary (`has_legendary_drop=true`).",
+    "elite_dungeon_3p_with_legendary": [
+      {
+        "dungeon_token": "pantheon-of-fallen-suns",
+        "items_count": 14,
+        "tier_distribution": "T5:14",
+        "rarity_distribution": "C:0 U:0 R:6 E:6 L:2",
+        "class_distribution": {
+          "Mage": 3,
+          "Ranger": 1,
+          "Warrior": 2,
+          "Rogue": 4,
+          "Priest": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "mage-t5-legendary-sole-nero-diadem",
+          "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+          "warrior-t5-void-warden-epic-14"
+        ]
+      },
+      {
+        "dungeon_token": "elder-wyrm-descent",
+        "items_count": 11,
+        "tier_distribution": "T5:11",
+        "rarity_distribution": "C:0 U:0 R:5 E:5 L:1",
+        "class_distribution": {
+          "Warrior": 5,
+          "Rogue": 2,
+          "Ranger": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-dragon-elder-scale",
+          "warrior-t5-elder-wyrm-hunter-epic-05",
+          "warrior-t5-void-warden-epic-06"
+        ]
+      },
+      {
+        "dungeon_token": "ambash-legendary-forge",
+        "items_count": 10,
+        "tier_distribution": "T5:10",
+        "rarity_distribution": "C:0 U:0 R:4 E:4 L:2",
+        "class_distribution": {
+          "Warrior": 5,
+          "Mage": 3,
+          "Ranger": 2
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-ambash-forge-hammer",
+          "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+          "warrior-t5-alevoran-perpetual-epic-03"
+        ]
+      }
+    ],
+    "elite_raid_with_legendary": [
+      {
+        "raid_token": "world-tree-collapse",
+        "items_count": 21,
+        "tier_distribution": "T5:21",
+        "rarity_distribution": "C:0 U:0 R:4 E:15 L:2",
+        "class_distribution": {
+          "Rogue": 5,
+          "Ranger": 8,
+          "Warrior": 4,
+          "Priest": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "rogue-t5-legendary-irthe-price-shroud-hybrid",
+          "ranger-t5-legendary-worldroot-scepter",
+          "warrior-t5-alevoran-perpetual-epic-11"
+        ]
+      },
+      {
+        "raid_token": "void-cathedral",
+        "items_count": 15,
+        "tier_distribution": "T5:15",
+        "rarity_distribution": "C:0 U:0 R:2 E:12 L:1",
+        "class_distribution": {
+          "Rogue": 8,
+          "Mage": 7
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "rogue-t5-legendary-void-touched-blade",
+          "rogue-t5-adalan-arcane-thief-epic-22",
+          "rogue-t5-ash-widow-epic-08"
+        ]
+      },
+      {
+        "raid_token": "celestial-conclave",
+        "items_count": 13,
+        "tier_distribution": "T5:13",
+        "rarity_distribution": "C:0 U:0 R:2 E:9 L:2",
+        "class_distribution": {
+          "Priest": 9,
+          "Mage": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+          "priest-t5-legendary-seraph-halo-crown",
+          "mage-t5-celestial-scholar-epic-12"
+        ]
+      },
+      {
+        "raid_token": "dragon-vault",
+        "items_count": 12,
+        "tier_distribution": "T5:12",
+        "rarity_distribution": "C:0 U:0 R:2 E:9 L:1",
+        "class_distribution": {
+          "Warrior": 8,
+          "Ranger": 4
+        },
+        "has_legendary_drop": true,
+        "sample_items": [
+          "warrior-t5-legendary-dragonlord-crown",
+          "warrior-t5-dragonlord-vanguard-epic-09",
+          "warrior-t5-elder-wyrm-hunter-epic-21"
+        ]
+      }
+    ],
+    "note": "Elite/Group Track dedicato T5 = 3 dungeon 3p endgame (ambash-legendary-forge/elder-wyrm-descent/pantheon-of-fallen-suns) + 4 raid Legendary (dragon-vault/void-cathedral/celestial-conclave/world-tree-collapse). Coerente con chain STEP 8."
+  },
+  "sezione_06_item_source_consistency": {
+    "total_items": 1500,
+    "items_with_source_non_null": 1500,
+    "items_missing_source": 0,
+    "source_categorization": {
+      "dungeon_3p_legendary_bosses": 7,
+      "raid_bosses_legendary": 8,
+      "raid_boss_normal": 117,
+      "craft": 209,
+      "chest_reward": 155,
+      "vendor": 27,
+      "achievement": 17,
+      "quest": 14,
+      "ranking": 14,
+      "dungeon_normal_untagged": 927,
+      "note": "927 items con source narrativo (es. `wild-hunt-lair:`) sono classificati implicitamente come dungeon Normal 3p secondo il naming pattern; ambiguità documentale minor (non blocker)."
+    },
+    "consistency_status": "PASSED · 1500/1500 items hanno source valorizzato"
+  },
+  "sezione_07_rarity_source_distribution": {
+    "note": "Distribuzione rarity × source_category (osservata da D1-D5 con classifier heuristic).",
+    "distribution": {
+      "dungeon_3p": {
+        "Legendary": 7
+      },
+      "dungeon_normal_untagged": {
+        "Common": 279,
+        "Uncommon": 302,
+        "Rare": 220,
+        "Epic": 126,
+        "Legendary": 0
+      },
+      "raid": {
+        "Common": 0,
+        "Uncommon": 22,
+        "Rare": 52,
+        "Epic": 43,
+        "Legendary": 8
+      },
+      "craft": {
+        "Common": 37,
+        "Uncommon": 65,
+        "Rare": 72,
+        "Epic": 35,
+        "Legendary": 0
+      },
+      "quest": {
+        "Common": 3,
+        "Uncommon": 2,
+        "Rare": 9,
+        "Epic": 0,
+        "Legendary": 0
+      },
+      "vendor": {
+        "Common": 21,
+        "Uncommon": 1,
+        "Rare": 5,
+        "Epic": 0,
+        "Legendary": 0
+      },
+      "achievement": {
+        "Common": 12,
+        "Uncommon": 0,
+        "Rare": 0,
+        "Epic": 5,
+        "Legendary": 0
+      },
+      "ranking": {
+        "Common": 0,
+        "Uncommon": 0,
+        "Rare": 9,
+        "Epic": 5,
+        "Legendary": 0
+      },
+      "chest_reward": {
+        "Common": 47,
+        "Uncommon": 54,
+        "Rare": 33,
+        "Epic": 21,
+        "Legendary": 0
+      }
+    },
+    "governance_observations": [
+      "Vendor NO Legendary/Epic → anti-P2W compliance ✅",
+      "Craft NO Legendary → coerente con `NO normal crafting Legendary` policy ✅",
+      "Legendary present SOLO in dungeon_3p endgame + raid endgame ✅"
+    ]
+  },
+  "sezione_08_tier_source_distribution": {
+    "note": "Distribuzione tier × source_category (osservata).",
+    "distribution": {
+      "dungeon_3p": {
+        "T5": 7
+      },
+      "raid": {
+        "T2": 9,
+        "T3": 41,
+        "T4": 67,
+        "T5": 8
+      },
+      "craft": {
+        "T1": 17,
+        "T2": 13,
+        "T3": 100,
+        "T4": 39,
+        "T5": 40
+      },
+      "quest": {
+        "T1": 3,
+        "T3": 2,
+        "T4": 4,
+        "T5": 5
+      },
+      "vendor": {
+        "T1": 17,
+        "T2": 5,
+        "T5": 5
+      },
+      "achievement": {
+        "T1": 9,
+        "T2": 3,
+        "T5": 5
+      },
+      "ranking": {
+        "T3": 4,
+        "T4": 5,
+        "T5": 5
+      },
+      "chest_reward": {
+        "T1": 44,
+        "T2": 23,
+        "T3": 55,
+        "T4": 12,
+        "T5": 21
+      },
+      "dungeon_normal_untagged": {
+        "T1": 209,
+        "T2": 297,
+        "T3": 144,
+        "T4": 173,
+        "T5": 104
+      }
+    }
+  },
+  "sezione_09_class_coverage_per_source_bracket": {
+    "note": "Distribuzione class × source_category. Target: nessuna classe deve essere sotto-servita (min ≈ 20% per source bracket rilevante).",
+    "distribution_summary": {
+      "raid": {
+        "Warrior": 25,
+        "Rogue": 26,
+        "Mage": 23,
+        "Priest": 31,
+        "Ranger": 20
+      },
+      "craft": {
+        "Warrior": 38,
+        "Rogue": 46,
+        "Mage": 41,
+        "Priest": 35,
+        "Ranger": 49
+      },
+      "chest_reward": {
+        "Warrior": 17,
+        "Rogue": 32,
+        "Mage": 31,
+        "Priest": 47,
+        "Ranger": 28
+      },
+      "vendor": {
+        "Warrior": 4,
+        "Rogue": 7,
+        "Mage": 6,
+        "Priest": 5,
+        "Ranger": 5
+      },
+      "achievement": {
+        "Warrior": 5,
+        "Rogue": 4,
+        "Mage": 3,
+        "Priest": 3,
+        "Ranger": 2
+      },
+      "quest": {
+        "Warrior": 3,
+        "Rogue": 3,
+        "Mage": 3,
+        "Priest": 3,
+        "Ranger": 2
+      },
+      "ranking": {
+        "Warrior": 3,
+        "Rogue": 2,
+        "Mage": 3,
+        "Priest": 3,
+        "Ranger": 3
+      },
+      "dungeon_normal": {
+        "Warrior": 202,
+        "Rogue": 179,
+        "Mage": 188,
+        "Priest": 171,
+        "Ranger": 187
+      }
+    },
+    "coverage_assessment": "OK — nessuna classe sotto-servita in nessun bracket source rilevante. Priest sovra-rappresentato in chest_reward (47 vs media ~31), Warrior sotto in chest_reward (17). Non blocker."
+  },
+  "sezione_10_legendary_drop_readiness": {
+    "count_15_15": true,
+    "buckets": {
+      "approved_7_ready": [
+        {
+          "item_id": "warrior-t5-legendary-dragonlord-crown",
+          "source": "dragon-vault raid boss finale",
+          "drop_rate": "2% (LIVE)"
+        },
+        {
+          "item_id": "rogue-t5-legendary-void-touched-blade",
+          "source": "void-cathedral raid boss finale",
+          "drop_rate": "2% (NEW)"
+        },
+        {
+          "item_id": "priest-t5-legendary-seraph-halo-crown",
+          "source": "celestial-conclave raid boss finale",
+          "drop_rate": "2% (NEW)"
+        },
+        {
+          "item_id": "ranger-t5-legendary-worldroot-scepter",
+          "source": "world-tree-collapse raid boss finale",
+          "drop_rate": "2% (NEW)"
+        },
+        {
+          "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+          "source": "ambash-legendary-forge dungeon 3p boss",
+          "drop_rate": "1%"
+        },
+        {
+          "item_id": "warrior-t5-legendary-dragon-elder-scale",
+          "source": "elder-wyrm-descent dungeon 3p boss",
+          "drop_rate": "1%"
+        },
+        {
+          "item_id": "mage-t5-legendary-sole-nero-diadem",
+          "source": "pantheon-of-fallen-suns dungeon 3p Lv60",
+          "drop_rate": "1%"
+        }
+      ],
+      "hybrid_4_pending_final": [
+        {
+          "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+          "source": "celestial-conclave raid alternate",
+          "drop_rate": "HYBRID (0.5% direzionale C1)"
+        },
+        {
+          "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+          "source": "world-tree-collapse raid alternate",
+          "drop_rate": "HYBRID (0.5% direzionale C1)"
+        },
+        {
+          "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+          "source": "ambash-legendary-forge dungeon alternate",
+          "drop_rate": "HYBRID (0.5% direzionale C1)"
+        },
+        {
+          "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+          "source": "pantheon-of-fallen-suns dungeon alternate",
+          "drop_rate": "HYBRID (0.5% direzionale C1)"
+        }
+      ],
+      "progressive_4_reserved": [
+        {
+          "item_id": "mage-t5-legendary-progressive-slot-01-pending",
+          "source": "PENDING PM (raid endgame progressive discovery)",
+          "drop_rate": "1-2% direzionale · PENDING PM"
+        },
+        {
+          "item_id": "priest-t5-legendary-progressive-slot-02-pending",
+          "source": "PENDING PM (dungeon 3p endgame progressive)",
+          "drop_rate": "1% direzionale · PENDING PM"
+        },
+        {
+          "item_id": "rogue-t5-legendary-progressive-slot-03-pending",
+          "source": "PENDING PM (raid endgame progressive discovery)",
+          "drop_rate": "1-2% direzionale · PENDING PM"
+        },
+        {
+          "item_id": "ranger-t5-legendary-progressive-slot-04-pending",
+          "source": "PENDING PM (dungeon 3p endgame progressive)",
+          "drop_rate": "1% direzionale · PENDING PM"
+        }
+      ]
+    },
+    "policy_compliance": {
+      "NO_shop_legendary": true,
+      "NO_premium_legendary": true,
+      "NO_direct_real_money_sale": true,
+      "NO_pay_to_win": true,
+      "NO_normal_crafting_legendary": true,
+      "NO_generic_stat_stick_legendary": true,
+      "fonte_precisa": "PASSED 11/15 (11 approved+hybrid · 4 progressive PENDING PM)",
+      "drop_molto_raro": "PASSED (1-2% raid · 1% dungeon 3p · 0.5% HYBRID direzionale)",
+      "utility_unica": "PASSED 11/11 (C0.L.1 numeric finals)",
+      "lore_source_forte": "PASSED 11/11 (capstone T5)"
+    }
+  },
+  "sezione_11_hybrid_drop_rate_final_proposal": {
+    "principio": "Proposta finale drop rate HYBRID per H1-H4. Distinzione tra candidate/recommended/PM_decision. NON applicare.",
+    "H1_celestial_conclave_mantle": {
+      "item_id": "priest-t5-legendary-celestial-conclave-mantle-hybrid",
+      "source": "celestial-conclave raid boss finale (alternate/secondary drop)",
+      "source_type": "raid_5p_alternate",
+      "candidate_drop_rate": "0.5% (direzionale C1)",
+      "recommended_final_drop_rate": "0.5%",
+      "farming_risk": "LOW — raid endgame accessibile solo con roster T5",
+      "economy_risk": "LOW — no market speculation (bind-on-pickup)",
+      "rationale": "Coerente con secondary raid drop bracket (< 2% primary Legendary). Priest T5 chest = capstone Celeste. 0.5% garantisce rarità senza frustrazione eccessiva.",
+      "PM_decision_required": "conferma 0.5% o preferisci differenziare al ribasso (0.3-0.4%) per rarità estrema?"
+    },
+    "H2_irthe_price_shroud": {
+      "item_id": "rogue-t5-legendary-irthe-price-shroud-hybrid",
+      "source": "world-tree-collapse raid boss finale (alternate/secondary drop, Irthe capstone)",
+      "source_type": "raid_5p_alternate",
+      "candidate_drop_rate": "0.5% (direzionale C1)",
+      "recommended_final_drop_rate": "0.5%",
+      "farming_risk": "LOW-MEDIUM — raid endgame; utility Death's Toll è high-power → tuning post-launch consigliato",
+      "economy_risk": "LOW — bind-on-pickup, no economy leak",
+      "rationale": "Coerente con secondary raid drop bracket. Utility Death's Toll (self-damage + max-damage next-hit) è high-power → 0.5% è appropriato per rarità narrativa.",
+      "PM_decision_required": "conferma 0.5% (default) o rivaluta a 0.3% per high-power utility?"
+    },
+    "H3_ergolat_obelisk_focus": {
+      "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+      "source": "ambash-legendary-forge dungeon 3p alternate (Ergolat capstone secondary)",
+      "source_type": "dungeon_3p_alternate",
+      "candidate_drop_rate": "0.5% (direzionale C1)",
+      "recommended_final_drop_rate": "0.5%",
+      "farming_risk": "MEDIUM — dungeon 3p Lv59-60 accessibile con 3-man party; farming ripetibile più frequente vs raid",
+      "economy_risk": "LOW — bind-on-pickup",
+      "rationale": "Coerente con dungeon 3p secondary (< 1% primary Legendary L5). Mage capstone Ergolat/Absence. Farming risk MEDIUM richiede lock 1x/settimana loot?",
+      "PM_decision_required": "conferma 0.5% oppure applica loot-lock 1x/settimana per gestire farming risk MEDIUM?"
+    },
+    "H4_halodi_fate_quiver": {
+      "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+      "source": "pantheon-of-fallen-suns dungeon 3p Lv60 alternate (Halodi fato capstone)",
+      "source_type": "dungeon_3p_alternate",
+      "candidate_drop_rate": "0.5% (direzionale C1)",
+      "recommended_final_drop_rate": "0.5%",
+      "farming_risk": "MEDIUM — dungeon 3p Lv60 accessibile con 3-man party",
+      "economy_risk": "LOW — bind-on-pickup, trinket slot (RESERVED Q7!)",
+      "rationale": "Coerente con dungeon 3p secondary. Utility Fate Deflection auto-reactive coerente con Ranger endgame survival.",
+      "PM_decision_required": "conferma 0.5% + RISOLVERE slot=`trinket` (RESERVED in Q7 canonical) → rimappa a `accessory` o rendi `trinket` operativo? Vedi Sezione 12 PM gate slot."
+    },
+    "aggregate_recommendation": "**0.5% uniforme per H1-H4** confermato come baseline design layer. Loot-lock 1x/settimana consigliato per H3+H4 (dungeon 3p) per gestire farming risk MEDIUM. NO apply · PM final decision required."
+  },
+  "sezione_12_material_parallel_drop_policy": {
+    "principio_pm_canonico": [
+      "Item drop roll e material drop roll **SEPARATI**",
+      "Nessun materiale ruba il drop slot dell'item",
+      "Materiali possono uscire **INSIEME agli item**",
+      "Materiali con drop rate **PIÙ ALTO** rispetto agli item",
+      "Materiali **NON premium**",
+      "Materiali **NON P2W**"
+    ],
+    "design_layer_mapping": {
+      "item_roll": "roll indipendente su drop_table_item (rarity-weighted per source_category)",
+      "material_roll": "roll indipendente su drop_table_material (higher rate: 20-40% per boss dungeon 3p, 40-60% per boss raid)",
+      "compatibility": "material può uscire SEMPRE insieme all'item (2 roll paralleli); il material non consuma lo slot item drop",
+      "anti_p2w": "material `can_be_sold_for_real_money=false` sempre (nessuna eccezione)",
+      "vendor_exclusion": "material vendor-sold NON premium (Common/Uncommon), tier bracketed"
+    },
+    "d1_d5_material_snapshot": {
+      "material_items_in_catalog": 9,
+      "note": "I 9 items con `slot=material` in D1-D5 sono cataloghi documentali per crafting recipe input. Il drop live parallel material è un SISTEMA SEPARATO da progettare in C5+ (fuori scope C4)."
+    },
+    "policy_compliance": "PASSED — principio PM canonico rispettato in design; nessun apply."
+  },
+  "sezione_13_anti_p2w_drop_validation": {
+    "checks": [
+      {
+        "n": 1,
+        "check": "1500/1500 items `can_be_sold_for_real_money=false`",
+        "status": "✅ PASSED"
+      },
+      {
+        "n": 2,
+        "check": "Nessun Legendary in vendor/shop source",
+        "status": "✅ PASSED (Legendary solo raid endgame + dungeon 3p endgame)"
+      },
+      {
+        "n": 3,
+        "check": "Nessun Legendary in craft source",
+        "status": "✅ PASSED (0 Legendary in craft)"
+      },
+      {
+        "n": 4,
+        "check": "Nessun Epic in vendor",
+        "status": "✅ PASSED (0 Epic vendor-sold)"
+      },
+      {
+        "n": 5,
+        "check": "Materiali NON premium / NON P2W",
+        "status": "✅ PASSED (design policy)"
+      },
+      {
+        "n": 6,
+        "check": "HYBRID Legendary NO market resale (bind-on-pickup)",
+        "status": "✅ PASSED 11/11 (C0.L / C0.L.1)"
+      },
+      {
+        "n": 7,
+        "check": "Nessun premium tier item nel catalogo D1-D5",
+        "status": "✅ PASSED"
+      },
+      {
+        "n": 8,
+        "check": "affects_economy=false per Legendary 15/15",
+        "status": "✅ PASSED"
+      }
+    ],
+    "overall_status": "✅ **PASSED 8/8** — Anti-P2W drop validation confermata"
+  },
+  "sezione_14_slot_canonical_drift_pm_gate": {
+    "note": "PM gate item CRITICO segnalato in C4. La Q7 CUSTOM CANONICAL LIST introduce drift documentale vs slot correnti nei 1500 items D1-D5.",
+    "q7_canonical_slots_14": [
+      "head",
+      "neck",
+      "shoulders",
+      "chest",
+      "back",
+      "hands",
+      "wrist",
+      "waist",
+      "legs",
+      "feet",
+      "main_hand",
+      "off_hand",
+      "ring",
+      "accessory"
+    ],
+    "q7_reserved_slots": [
+      "trinket"
+    ],
+    "q7_alias_documentali": {
+      "main-hand": "main_hand",
+      "off-hand": "off_hand",
+      "amulet": "neck",
+      "belt": "waist",
+      "cloak": "back",
+      "cape": "back",
+      "weapon_main": "main_hand",
+      "weapon_off": "off_hand"
+    },
+    "q7_universal_slots_c2_c3": [
+      "consumable",
+      "material"
+    ],
+    "current_slot_analysis": [
+      {
+        "slot_current": "main-hand",
+        "count": 613,
+        "status": "alias_legacy",
+        "migration_note": "→ `main_hand` (C5 slot canonical migration)"
+      },
+      {
+        "slot_current": "chest",
+        "count": 232,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "off-hand",
+        "count": 129,
+        "status": "alias_legacy",
+        "migration_note": "→ `off_hand` (C5 slot canonical migration)"
+      },
+      {
+        "slot_current": "head",
+        "count": 103,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "legs",
+        "count": 83,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "feet",
+        "count": 72,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "trinket",
+        "count": 68,
+        "status": "reserved_Q7",
+        "migration_note": "PM gate: 68 items usano `trinket` → richiede decisione PM (rimappare a `accessory`? o rendere `trinket` operativo?) — C5 gate item"
+      },
+      {
+        "slot_current": "ring",
+        "count": 59,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "hands",
+        "count": 58,
+        "status": "canonical",
+        "migration_note": null
+      },
+      {
+        "slot_current": "amulet",
+        "count": 57,
+        "status": "alias_legacy",
+        "migration_note": "→ `neck` (C5 slot canonical migration)"
+      },
+      {
+        "slot_current": "consumable",
+        "count": 17,
+        "status": "universal_allowed",
+        "migration_note": "lock_state=universal_allowed C2/C3 · bypass proficiency"
+      },
+      {
+        "slot_current": "material",
+        "count": 9,
+        "status": "universal_allowed",
+        "migration_note": "lock_state=universal_allowed C2/C3 · bypass proficiency"
+      }
+    ],
+    "critical_findings": [
+      "**613 items** usano `main-hand` (dash-hyphen) invece di `main_hand` (underscore Q7) → alias → migration C5",
+      "**129 items** usano `off-hand` invece di `off_hand` → alias → migration C5",
+      "**68 items** usano `slot=trinket` che è **RESERVED in Q7** (non slot operativo) → **CRITICAL PM gate**: rimappare a `accessory`? oppure rendere `trinket` operativo? Decisione PM richiesta in C5",
+      "**57 items** usano `slot=amulet` invece di `neck` (Q7 canonical) → alias → migration C5",
+      "**0 items** usano `back`, `shoulders`, `wrist`, `waist`, `accessory` — slot Q7 canonici designati per uso futuro/nuovi items",
+      "**17 consumable + 9 material** → universal_allowed (C2/C3)"
+    ],
+    "recommended_c5_gate_actions": [
+      "C5 Slot Canonical Migration Prep (parallel a Class Slug Migration Prep)",
+      "Decisione PM su `trinket` (68 items): (A) rimappa a `accessory` (safest, migration additive) · (B) `trinket` operativo (aggiungere a canonical 15° slot) · (C) split logic (accessory + trinket sub-category)",
+      "Migration additive: NO rename destructive, solo aggiungere campo `slot_canonical` derivato con alias table",
+      "Update lock-state matrix C2 se `trinket` diventa slot operativo"
+    ],
+    "governance_note": "NON applicato in C4. Solo documentale. Item table D1-D5 NON modificati."
+  },
+  "sezione_15_class_slug_runtime_constraints_compat": {
+    "regole_c2_c3_verbatim": [
+      "class_slug=null 1500/1500 preservato",
+      "class_slug resolution deferred to C5/R18.3f",
+      "runtime_apply_ready=false 1500/1500 preservato",
+      "NO auto-derive class_slug",
+      "NO migration",
+      "NO runtime bridge"
+    ],
+    "impatto_c4": "Nessun impatto — drop table design layer non richiede class_slug. class_proficiency canonical (Warrior/Rogue/Mage/Priest/Ranger) usato per class coverage analysis."
+  },
+  "sezione_16_risk_register": [
+    {
+      "id": "R1",
+      "risk": "HYBRID drop rate 0.5% applicato senza PM final confirmation",
+      "severity": "MEDIUM",
+      "mitigation": "documental only · PM final decision required in C5/C6",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R2",
+      "risk": "H3/H4 farming risk MEDIUM (dungeon 3p) senza loot-lock",
+      "severity": "MEDIUM",
+      "mitigation": "raccomandare loot-lock 1x/settimana in design; PM decision",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "R3",
+      "risk": "Slot `trinket` (68 items) RESERVED in Q7 → items non equippabili in runtime enable",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "PM gate C5 · rimappare a `accessory` (raccomandato) o rendere `trinket` operativo",
+      "status": "CRITICAL PM GATE"
+    },
+    {
+      "id": "R4",
+      "risk": "Slot legacy dash-hyphen (main-hand / off-hand / amulet) → 799 items richiedono alias runtime",
+      "severity": "MEDIUM",
+      "mitigation": "migration additive C5 (alias table); nessun rename destructive",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R5",
+      "risk": "Dungeon count osservato 64 vs target PM 60 (+4)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "PM review classification meta-source residue (potenzialmente 4 items da spostare in vendor/quest)",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R6",
+      "risk": "Raid count osservato 13 vs target PM 12 (+1)",
+      "severity": "LOW",
+      "mitigation": "PM review 13° raid unique token (candidato: `hollow-monastery` o `krastlov-siege` con classificazione ambigua)",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R7",
+      "risk": "Progressive 4 (P1-P4) source PENDING PM → drop table incompleto per L=15 fino a finalizzazione",
+      "severity": "MEDIUM",
+      "mitigation": "registry_status=reserved · runtime_apply_ready=false · finalizzazione post-C6 PM",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R8",
+      "risk": "Priest sovra-rappresentato in chest_reward (47 vs media ~31)",
+      "severity": "LOW",
+      "mitigation": "class coverage OK (nessun sotto-servito); PM review estetico se necessario",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R9",
+      "risk": "Craft T3=100 items concentrazione (48% craft in T3)",
+      "severity": "LOW",
+      "mitigation": "coerente con density mid-game Uncommon/Rare/Epic (T3 rarity-varied)",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R10",
+      "risk": "Material parallel drop system NON documentato in dettaglio (fuori scope C4)",
+      "severity": "LOW",
+      "mitigation": "principio PM canonico documentato · implementazione dettagliata in C5/C6",
+      "status": "DEFERRED to C5+"
+    },
+    {
+      "id": "R11",
+      "risk": "Legendary drop rate 2% raid live (dragon-vault) potrebbe essere overturned in raid frequency",
+      "severity": "LOW",
+      "mitigation": "chain STEP 8 already approved · telemetry-based tuning post-launch",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R12",
+      "risk": "Anti-P2W legacy audit non ancora eseguito su inventari LIVE (out of scope C4)",
+      "severity": "MEDIUM",
+      "mitigation": "audit obbligatorio pre-apply futuro (C6)",
+      "status": "TRACKED to C6"
+    }
+  ],
+  "sezione_17_go_hold_recommendation": {
+    "phase_c5_class_slug_migration_prep": {
+      "recommendation": "GO — soggetto a PM approval esplicito post-C4 review",
+      "rationale": "C4 Drop Table dry-run fornisce input coerente per C5. C5 dovrà gestire due migration paralleli: (1) class_slug null resolution (2) slot canonical migration (Q7 gate item R3).",
+      "conditions": [
+        "PM approval C4 (Q1-Q8)",
+        "HYBRID drop rate final decision (0.5% uniforme confermato o differenziato H3/H4 loot-lock)",
+        "Slot `trinket` gate item R3 → decisione PM: `trinket → accessory` (raccomandato) o `trinket` operativo",
+        "PM classification dungeon delta +4 e raid delta +1"
+      ],
+      "risks_if_go": [
+        "R3 slot trinket → CRITICAL PM GATE, blocca runtime enable senza risoluzione",
+        "R2 farming risk H3/H4 → mitigato da loot-lock 1x/settimana"
+      ]
+    },
+    "phase_c6_final_closure": {
+      "status": "HOLD post-C5"
+    },
+    "phase_r18_6_class_halls": {
+      "status": "PLANNED post-Phase C"
+    }
+  },
+  "sezione_18_pm_open_questions": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C4 Drop Table Dry-Run Planning come design layer input per C5?"
+    },
+    {
+      "id": "Q2",
+      "topic": "HYBRID drop rate finali 0.5% uniforme H1-H4: conferma o differenzia (es. 0.3-0.4% per high-power H2 Death's Toll)?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Loot-lock 1x/settimana per H3/H4 (dungeon 3p farming risk MEDIUM): approvare o mantenere free-farm con drop 0.5%?"
+    },
+    {
+      "id": "Q4",
+      "topic": "**SLOT GATE (R3)** — 68 items con `slot=trinket` (RESERVED in Q7): (A) rimappa a `accessory` [raccomandato, migration additive safest] · (B) rendere `trinket` operativo come 15° slot canonico · (C) split (accessory + trinket sub-category)?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Dungeon count delta +4 (64 vs 60): PM classification manuale per identificare 4 items meta-source non-dungeon oppure accettare 64 come nuovo target?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Raid count delta +1 (13 vs 12): PM classification 13° raid token (candidati: `hollow-monastery` T2 raid o riclassificare come dungeon 3p)?"
+    },
+    {
+      "id": "Q7",
+      "topic": "4 Progressive Discovery Legendary (P1-P4) source PENDING PM: finalizzare in C5 o post-C6?"
+    },
+    {
+      "id": "Q8",
+      "topic": "Autorizzare Phase C5 Class Slug Migration Prep + Slot Canonical Migration (parallel migration double-track)?"
+    }
+  ],
+  "sezione_19_governance": {
+    "sealed": "VERIFIED pytest 6/6 (post STEP 1 PRD append + STEP 2 C4 draft)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "registry_apply": "ZERO",
+    "drop_table_apply": "ZERO",
+    "drop_rate_apply": "ZERO (HYBRID 0.5% documental only)",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "ZERO",
+    "sealed_file_modification": "ZERO",
+    "hard_delete": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration_apply": "ZERO",
+    "class_slug_auto_derivation": "ZERO",
+    "slot_canonical_migration_apply": "ZERO (documental drift analysis only)",
+    "proficiency_runtime_enforcement": "ZERO",
+    "anti_p2w_runtime_validator": "ZERO (design layer 8/8 PASSED)",
+    "equipment_backfill_apply": "ZERO",
+    "ilvl_implementation": "ZERO",
+    "c5_auto_start": "BLOCKED (STOP after C4)",
+    "r18_6_kickoff": "BLOCKED",
+    "marketing_brief": "BLOCKED",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "italian_language_output": "ENFORCED",
+    "documental_only_regime": "ENFORCED",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_c4": {
+    "auto_transition_c5": false,
+    "note": "STOP dopo C4. Attendo PM review Q1-Q8 + GO esplicito prima di C5."
+  }
+}

@@ -2147,3 +2147,56 @@ Phase C Tech Dry-Run continua con **C2 Proficiency Runtime Preparation** (DOCUME
 
 **R18.5 status flow (aggiornato post-C2 CLOSED)**:
 `C0` ✅ → `C0.L` ✅ → `PRD C0+C0.L CLOSED` ✅ → `C0.L.1` ✅ → `C1` ✅ → `PRD C0.L.1+C1 CLOSED` ✅ → `C2 Proficiency Runtime Preparation` ✅ → **`PRD C2 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C3 ILVL + Equipment Backfill Planning`** 🟢 **AUTHORIZED (chain immediata)** → `C4-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.5 Phase C3 CLOSED (STEP · 2026-07-08T11:30:00Z)
+
+**Milestone**: **R18.5 Phase C3 ILVL + Equipment Backfill Planning CLOSED** ✅
+
+**Governance**: DOCUMENTAL ONLY append. Nessuna modifica code/DB/migrations/sealed/item table/lore_meta.py. 36 sigilli intatti (pytest 6/6 PASSED).
+
+**Deliverables C3**:
+- `/app/memory/r18_5_phase_c3_ilvl_equipment_backfill_planning.md` (SHA256 `cf048bc3367601db70839dff04f79479506da353160066c3c8991db01a6671a9`, 408 righe)
+- `/app/memory/r18_5_phase_c3_ilvl_equipment_backfill_planning.json` (SHA256 `87872f41360d7766e780007eb0bc90e4fe217d8176925e5adf3f86f461567aeb`)
+
+**C3 CLOSED — Decisioni PM verbatim (Q1-Q8)**:
+
+- **Q1=APPROVED** — ILVL formula `ilvl(item) = min(max(required_level + rarity_offset[rarity], tier_min[tier]), 60)`. `MAX_ADVENTURER_LEVEL=60`, `MAX_EQUIPMENT_REQUIRED_LEVEL=60`, Legendary ≤ 60.
+- **Q2=ACCEPT** — Rarity offsets Common:0 · Uncommon:+2 · Rare:+3 · Epic:+4 · Legendary:+5 (cap 60). Rivalutabili solo se C4/C6 mostra problemi.
+- **Q3=APPROVED FLAT 60** — Legendary flat cap 60 approvato: 15 documentali (11 design-ready + 4 Progressive Discovery placeholder) con `ilvl=60` documentale; Progressive `registry_status=reserved` / PENDING PM / `runtime_apply_ready=false`.
+- **Q4=ACCEPT** — Legacy fallback `legacy_ilvl = required_level + 2` (default Uncommon-safe).
+- **Q5=CONFIRM** — `p2w_legacy_flag=true` per audit only. NO auto-conversion · NO cancellazione · PM review case-by-case.
+- **Q6=CONFIRM** — `coalesce(required_level, min_level, 1)`. `required_level` = campo canonico · `min_level` = legacy/fallback.
+- **Q7=CUSTOM CANONICAL** — Slot canonical list definitiva (**14 slots**):
+  - `head` · `neck` · `shoulders` · `chest` · `back` · `hands` · `wrist` · `waist` · `legs` · `feet` · `main_hand` · `off_hand` · `ring` · `accessory`
+  - **Alias documentali (NOT slot separati)**: `belt → waist` · `cloak → back` · `cape → back` · `weapon_main → main_hand` · `weapon_off → off_hand`
+  - **`back` OBBLIGATORIO** come slot canonico (cloak/mantelli)
+  - **`waist` canonico** · **`belt` = alias legacy display**, NON slot separato
+  - **`trinket` RESERVED** per sistema futuro, **NON slot operativo ora**
+  - Nessun alias deve creare nuovo slot runtime
+- **Q8=GO C4** — GO su Phase C4 Drop Table Dry-Run Planning (DOCUMENTAL ONLY).
+
+**Governance C3 CLOSED**:
+- 36 seals byte-identical (pytest `backend_r18_4_sealed_integrity_test.py` 6/6 PASSED)
+- Zero DB writes / code changes / migrations / `lore_meta.py` touches
+- Zero item table D1-D5 modifications (read-only design layer)
+- Zero backfill apply · zero ILVL implementation
+- Zero registry apply · zero drop table apply
+- Zero class_slug migration · zero auto-derivation
+- Classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (PM lockato post-C3 approval Q8=GO)**:
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C4 Drop Table Dry-Run Planning** | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 1 PRD append |
+| **C5 Class Slug Migration Prep** | 🔒 **HOLD** | PM review post-C4 (class_slug null resolution + slot canonical migration) |
+| **C6 Final Closure** | 🔒 **HOLD** | post-C5 |
+
+**R18.6 Class Halls / Classless Start**: 🔒 PLANNED post-Phase C readiness
+**Marketing Brief**: 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato post-C3 CLOSED)**:
+`C0-C2` ✅ → `C3 ILVL + Equipment Backfill Planning` ✅ → **`PRD C3 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C4 Drop Table Dry-Run Planning`** 🟢 **AUTHORIZED (chain immediata)** → `C5-C6` 🔒 HOLD / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
