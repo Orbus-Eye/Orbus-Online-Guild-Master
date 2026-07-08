@@ -1,0 +1,511 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C6 Final Phase C Closure Report",
+    "step": "STEP 2 (post STEP 1 PRD append C5 CLOSED with slug errata)",
+    "locked_at_utc": "2026-07-08T14:30:00Z",
+    "governance": "DOCUMENTAL ONLY — final closure aggregate C0→C5 + Registry v2 dry-run. NO apply · NO code/DB/migrations · NO runtime enforcement.",
+    "status": "APPLIED — Phase C Final Closure Report + Registry v2 Dry-Run",
+    "authority": "PM Orchestrator — Phase C6 dispatch (Q8=GO C6 after slug errata)"
+  },
+  "slug_errata_verification": {
+    "principio_pm": "I 5 slug inglesi (warrior/rogue/mage/priest/ranger) NON sono canonical_class_slug — sono legacy_class_label / legacy_class_key. Canonical live slug targets sono in italiano (guerriero/ladro/mago/paladino/cacciatore_di_mostri).",
+    "4_field_taxonomy_obbligatoria": [
+      "legacy_class_label",
+      "legacy_class_key",
+      "canonical_class_slug",
+      "canonical_class_name_it"
+    ],
+    "mapping_authoritative": {
+      "Warrior": {
+        "legacy_class_key": "warrior",
+        "canonical_class_slug": "guerriero",
+        "canonical_class_name_it": "Guerriero"
+      },
+      "Rogue": {
+        "legacy_class_key": "rogue",
+        "canonical_class_slug": "ladro",
+        "canonical_class_name_it": "Ladro"
+      },
+      "Mage": {
+        "legacy_class_key": "mage",
+        "canonical_class_slug": "mago",
+        "canonical_class_name_it": "Mago"
+      },
+      "Priest": {
+        "legacy_class_key": "priest",
+        "canonical_class_slug": "paladino",
+        "canonical_class_name_it": "Paladino"
+      },
+      "Ranger": {
+        "legacy_class_key": "ranger",
+        "canonical_class_slug": "cacciatore_di_mostri",
+        "canonical_class_name_it": "Cacciatore di Mostri"
+      }
+    },
+    "special_note_priest": "⚠️ Priest → paladino (NON priest/prete). Il canonical slug italiano è **paladino**.",
+    "special_note_ranger": "Ranger → **cacciatore_di_mostri** (con underscore, forma composta).",
+    "italian_names_official": {
+      "Warrior": "Guerriero",
+      "Rogue": "Ladro",
+      "Mage": "Mago",
+      "Priest": "Paladino",
+      "Ranger": "Cacciatore di Mostri"
+    },
+    "usage_in_registry_v2": "Registry v2 popola tutti e 4 i campi per ogni item; class_slug_resolution_status='deferred_to_r18_3f' 1500/1500.",
+    "no_migration_apply": "Solo terminologia corretta nei documenti C6 e Registry v2. Nessuna migrazione live."
+  },
+  "phase_c_summary_aggregate_c0_c5": {
+    "c0_technical_readiness": {
+      "status": "CLOSED",
+      "recommendation": "GO",
+      "hard_blockers": 0,
+      "soft_blockers_deferred": 2
+    },
+    "c0_l_legendary_finalization": {
+      "status": "CLOSED",
+      "legendary_15": {
+        "approved": 7,
+        "hybrid": 4,
+        "progressive_reserved": 4
+      },
+      "pm_questions_resolved_8": 8
+    },
+    "c0_l_1_legendary_numeric_finals": {
+      "status": "CLOSED",
+      "legendary_11_numeric": "approved 7 + hybrid 4",
+      "medium_caps_accepted_5_5": true,
+      "risk_summary": {
+        "LOW": 6,
+        "MEDIUM": 5,
+        "HIGH": 0
+      }
+    },
+    "c1_item_registry_dry_run": {
+      "status": "CLOSED",
+      "aggregated": 1500,
+      "applicable": 1486,
+      "reserved": 4,
+      "progressive_marker": 10,
+      "runtime_apply_ready_1500_1500_false": true
+    },
+    "c2_proficiency_runtime_preparation": {
+      "status": "CLOSED",
+      "lock_states": 10,
+      "legendary_caps_approved_5_5": true,
+      "class_slug_null_confirmed": true,
+      "reforge_opt_in_confirmed": true,
+      "absence_50pct_confirmed": true,
+      "fate_no_op_confirmed": true
+    },
+    "c3_ilvl_equipment_backfill_planning": {
+      "status": "CLOSED",
+      "ilvl_formula_approved": true,
+      "rarity_offsets_accepted": {
+        "Common": 0,
+        "Uncommon": 2,
+        "Rare": 3,
+        "Epic": 4,
+        "Legendary": 5
+      },
+      "legendary_flat_60": true,
+      "canonical_slot_list_q7": 14
+    },
+    "c4_drop_table_dry_run_planning": {
+      "status": "CLOSED",
+      "dungeon_target_60": true,
+      "raid_target_12": true,
+      "hybrid_0_5pct_uniform": true,
+      "loot_lock_h3_h4_weekly": true,
+      "trinket_accessory_alias": true,
+      "anti_p2w_8_8": true
+    },
+    "c5_class_slug_slot_canonical_migration_prep": {
+      "status": "CLOSED (with mandatory slug errata)",
+      "double_track": "A+B+C",
+      "slug_errata_applied": true,
+      "canonical_dungeon_60": true,
+      "canonical_raid_12": true,
+      "slot_alias_9_entries": true,
+      "trinket_reserved_not_operational": true
+    }
+  },
+  "20_check_verification": [
+    {
+      "n": 1,
+      "check": "Catalogo 1500/1500",
+      "expected": 1500,
+      "actual": 1500,
+      "status": "✅"
+    },
+    {
+      "n": 2,
+      "check": "Rarity 400/450/400/235/15",
+      "expected": {
+        "Common": 400,
+        "Uncommon": 450,
+        "Rare": 400,
+        "Epic": 235,
+        "Legendary": 15
+      },
+      "actual": {
+        "Common": 400,
+        "Uncommon": 450,
+        "Rare": 400,
+        "Epic": 235,
+        "Legendary": 15
+      },
+      "status": "✅"
+    },
+    {
+      "n": 3,
+      "check": "Class distribution 300×5",
+      "expected": {
+        "Warrior": 300,
+        "Rogue": 300,
+        "Mage": 300,
+        "Priest": 300,
+        "Ranger": 300
+      },
+      "actual": {
+        "Warrior": 300,
+        "Rogue": 300,
+        "Mage": 300,
+        "Priest": 300,
+        "Ranger": 300
+      },
+      "status": "✅"
+    },
+    {
+      "n": 4,
+      "check": "Anti-P2W 1500/1500",
+      "expected": 1500,
+      "actual": 1500,
+      "status": "✅"
+    },
+    {
+      "n": 5,
+      "check": "runtime_apply_ready=false 1500/1500",
+      "expected": 0,
+      "actual": 0,
+      "status": "✅"
+    },
+    {
+      "n": 6,
+      "check": "class_slug unresolved/deferred correctly (class_slug_resolution_status='deferred_to_r18_3f' 1500/1500)",
+      "expected": 1500,
+      "actual": 1500,
+      "status": "✅"
+    },
+    {
+      "n": 7,
+      "check": "Legacy class labels separated from canonical class slugs (errata applied)",
+      "expected": "4-field taxonomy present 1500/1500",
+      "actual": "canonical_slug populated for 1500/1500",
+      "status": "✅"
+    },
+    {
+      "n": 8,
+      "check": "Slot canonicalization ready (slot_canonical field populated)",
+      "expected": 1500,
+      "actual": 1500,
+      "status": "✅"
+    },
+    {
+      "n": 9,
+      "check": "Source canonicalization ready (source_canonical field populated)",
+      "expected": 1500,
+      "actual": 1500,
+      "status": "✅"
+    },
+    {
+      "n": 10,
+      "check": "Dungeon canonical count = 60",
+      "expected": 60,
+      "actual": 60,
+      "status": "✅"
+    },
+    {
+      "n": 11,
+      "check": "Raid canonical count = 12",
+      "expected": 12,
+      "actual": 12,
+      "status": "✅"
+    },
+    {
+      "n": 12,
+      "check": "Legendary 15/15 status",
+      "expected": 15,
+      "actual": 15,
+      "status": "✅"
+    },
+    {
+      "n": 13,
+      "check": "11 Legendary design-ready (registry_status=applicable)",
+      "expected": 11,
+      "actual": 11,
+      "status": "✅"
+    },
+    {
+      "n": 14,
+      "check": "4 Progressive Discovery reserved/PENDING PM",
+      "expected": 4,
+      "actual": 4,
+      "status": "✅"
+    },
+    {
+      "n": 15,
+      "check": "10 progressive_marker T4",
+      "expected": 10,
+      "actual": 10,
+      "status": "✅"
+    },
+    {
+      "n": 16,
+      "check": "HYBRID H1-H4 0.5% uniform design recommendation (Q2 C4)",
+      "expected": "0.5%",
+      "actual": "0.5% design (documental)",
+      "status": "✅"
+    },
+    {
+      "n": 17,
+      "check": "H3/H4 loot-lock 1×/week design recommendation (Q3 C4)",
+      "expected": "1×/week",
+      "actual": "1×/week design (documental)",
+      "status": "✅"
+    },
+    {
+      "n": 18,
+      "check": "Material parallel drop policy (item roll + material roll separati)",
+      "expected": "policy documented",
+      "actual": "documented C4 Sezione 12",
+      "status": "✅"
+    },
+    {
+      "n": 19,
+      "check": "Unresolved PM gates post-C6 (elencare)",
+      "expected": "listed",
+      "actual": "listed in handoff",
+      "status": "✅"
+    },
+    {
+      "n": 20,
+      "check": "Handoff to R18.3f/R18.6/Apply Phase (elencare)",
+      "expected": "listed",
+      "actual": "listed in handoff",
+      "status": "✅"
+    }
+  ],
+  "registry_v2_aggregate_summary": {
+    "total_rows": 1500,
+    "registry_status_distribution": {
+      "applicable": 1486,
+      "progressive_marker": 10,
+      "reserved": 4
+    },
+    "canonical_class_slug_distribution": {
+      "guerriero": 300,
+      "ladro": 300,
+      "mago": 300,
+      "paladino": 300,
+      "cacciatore_di_mostri": 300
+    },
+    "slot_canonical_distribution": {
+      "main_hand": 613,
+      "off_hand": 129,
+      "head": 103,
+      "chest": 232,
+      "accessory": 68,
+      "neck": 57,
+      "legs": 83,
+      "feet": 72,
+      "hands": 58,
+      "ring": 59,
+      "consumable": 17,
+      "material": 9
+    },
+    "source_type_distribution": {
+      "meta_source": 191,
+      "dungeon_canonical": 1040,
+      "raid_canonical": 208,
+      "secondary_source": 53,
+      "source_alias": 8
+    },
+    "progressive_marker_count": 10,
+    "runtime_apply_ready_count": 0,
+    "anti_p2w_count": 1500,
+    "legendary_bucket": {
+      "total": 15,
+      "design_ready_11": 11,
+      "reserved_4": 4
+    },
+    "class_slug_resolution_deferred_1500_1500": true
+  },
+  "unresolved_pm_gates_post_c6": [
+    {
+      "id": "PG1",
+      "topic": "4 Progressive Discovery Legendary (P1-P4) source PENDING PM — finalization dedicated PM gate post-C6"
+    },
+    {
+      "id": "PG2",
+      "topic": "hollow-monastery sub-classification refinement (secondary_source generico vs dungeon 3p T2 large-encounter) — PM può affinare in Apply Phase"
+    },
+    {
+      "id": "PG3",
+      "topic": "void-heart-sanctum declass conferma (source_alias) — PM può restore dungeon canonical (delta +1 accettato)"
+    },
+    {
+      "id": "PG4",
+      "topic": "HYBRID H1-H4 drop rate finale 0.5% uniform — pre-Apply Phase PM final confirm o differenziazione"
+    },
+    {
+      "id": "PG5",
+      "topic": "Class Halls UX + Classless Start UI design PM dedicato (R18.6)"
+    },
+    {
+      "id": "PG6",
+      "topic": "R18.3f runtime schema class_slug + migration script design + Adventurer schema update"
+    },
+    {
+      "id": "PG7",
+      "topic": "Anti-P2W runtime validator implementation timing (post-Apply Phase)"
+    },
+    {
+      "id": "PG8",
+      "topic": "Apply Phase gate: registry_apply · slot_migration · source_migration · class_slug_migration · drop_rate_apply — sequenza e coordinamento PM"
+    }
+  ],
+  "handoff_proposal": {
+    "r18_3f_class_slug_migration_readiness": {
+      "status": "PROPOSED · HOLD (PM gate)",
+      "scope": [
+        "Runtime schema class_slug + adventurer.class_slug column design",
+        "Migration script pseudo-code (documental)",
+        "5 canonical_class_slug taxonomy live enforcement (guerriero/ladro/mago/paladino/cacciatore_di_mostri)",
+        "class_proficiency canonical mapping runtime",
+        "recruit_unassigned validator logic"
+      ]
+    },
+    "r18_6_class_halls_classless_start_adventurer_identity": {
+      "status": "PLANNED · HOLD (post-R18.3f)",
+      "scope": [
+        "Class Halls UI design (dedicated PM design, Q6 C5 deferral)",
+        "Classless Start onboarding modal + tutorial encounter",
+        "adventurer.class_slug population via UI",
+        "Adventurer Identity narrative hooks"
+      ]
+    },
+    "future_apply_phase_registry_drop_backfill_runtime_enforcement": {
+      "status": "PROPOSED · HOLD (PM gate coordinato)",
+      "scope": [
+        "Registry v2 apply (post PM confirm)",
+        "Slot canonical migration apply (additive, 867 items)",
+        "Source canonicalization apply (dungeon 60 + raid 12 + secondary + alias)",
+        "class_slug migration apply (5 canonical slug live enforcement)",
+        "Drop rate apply (HYBRID 0.5% + loot-lock H3/H4 + Progressive PM final)",
+        "ILVL backfill apply (formula + legacy fallback)",
+        "Proficiency runtime enforcement + lock-state matrix runtime",
+        "Anti-P2W runtime validator"
+      ]
+    },
+    "marketing_brief": {
+      "status": "DEFERRED · no priority"
+    },
+    "progressive_discovery_legendary_finalization_p1_p4": {
+      "status": "PROPOSED · HOLD (dedicated PM gate post-C6)",
+      "scope": [
+        "P1 Mage (Memoria) · P2 Priest→Paladino (Luna Morta) · P3 Rogue→Ladro (Ciclo delle anime) · P4 Ranger→Cacciatore di Mostri (Greatwood/Elfwood)",
+        "Finalizzare: lore_source · source · utility_unique numeric · nome_it · drop_rate numeric",
+        "Post-finalize: promote to registry_status=applicable · runtime_apply_ready still deferred fino ad Apply Phase gate"
+      ]
+    }
+  },
+  "risk_list_post_c6": [
+    {
+      "id": "R1",
+      "risk": "Slug errata retroattiva richiede sostituzione terminologica in R18.3f/R18.6 codice futuro (guerriero/ladro/mago/paladino/cacciatore_di_mostri)",
+      "severity": "HIGH-INFO",
+      "mitigation": "documentata in Registry v2 4-field taxonomy · PM avviso in R18.3f script design",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R2",
+      "risk": "Priest → paladino mapping potrebbe confondere legacy naming (priest/prete)",
+      "severity": "MEDIUM",
+      "mitigation": "special_note esplicita in C6 · uniforme in Registry v2 · documentazione R18.3f obbligatoria",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R3",
+      "risk": "Ranger → cacciatore_di_mostri (underscore composto) potrebbe rompere pattern matching semplici",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "canonical_slug documentato · runtime enforcement usa exact match, non pattern",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R4",
+      "risk": "4 Progressive Discovery source PENDING PM blocca 4/15 Legendary runtime enable",
+      "severity": "MEDIUM",
+      "mitigation": "dedicated PM gate post-C6 · non blocca C6 closure",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "R5",
+      "risk": "Apply Phase coordinamento complesso (8 track migrations)",
+      "severity": "MEDIUM",
+      "mitigation": "PM coordina sequenza in Apply Phase gate dedicato",
+      "status": "TRACKED PG8"
+    },
+    {
+      "id": "R6",
+      "risk": "R18.3f runtime schema class_slug richiede adventurer schema update non retro-compatibile",
+      "severity": "MEDIUM",
+      "mitigation": "R18.3f design gate include backwards-compat check",
+      "status": "DEFERRED to R18.3f"
+    },
+    {
+      "id": "R7",
+      "risk": "UI legacy potrebbe referenziare 'warrior/rogue/etc' invece di canonical italiani",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "audit UI pre-R18.6 · translation layer legacy_key → canonical_slug",
+      "status": "TRACKED to R18.6"
+    },
+    {
+      "id": "R8",
+      "risk": "trinket slot RESERVED potrebbe essere richiesto in future content post-R18.6",
+      "severity": "LOW",
+      "mitigation": "documental only · future PM design può riattivare come 15° slot narrative",
+      "status": "DEFERRED"
+    }
+  ],
+  "governance": {
+    "sealed": "VERIFIED pytest 6/6",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "registry_apply": "ZERO (v2 dry-run only)",
+    "drop_table_apply": "ZERO",
+    "drop_rate_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "ZERO",
+    "sealed_file_modification": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration_apply": "ZERO",
+    "class_slug_auto_derivation": "ZERO",
+    "slot_migration_apply": "ZERO",
+    "source_migration_apply": "ZERO",
+    "runtime_enforcement_implementation": "ZERO",
+    "r18_6_kickoff": "BLOCKED",
+    "marketing_brief": "BLOCKED",
+    "post_c6_auto_start": "BLOCKED",
+    "classi_canoniche_legacy_label": "Warrior/Rogue/Mage/Priest/Ranger",
+    "canonical_class_slug_live": "guerriero/ladro/mago/paladino/cacciatore_di_mostri",
+    "documental_only_regime": "ENFORCED",
+    "italian_language_output": "ENFORCED",
+    "files_deliverable": "4 (C6 .md + .json · Registry v2 .md + .json)"
+  },
+  "stop_after_c6": {
+    "auto_transition_r18_3f": false,
+    "note": "STOP dopo C6. Attendo PM review + GO esplicito prima di R18.3f · R18.6 · Marketing Brief · Apply Phase · Progressive Discovery finalization."
+  }
+}

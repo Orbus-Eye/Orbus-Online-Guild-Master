@@ -2258,3 +2258,74 @@ Phase C Tech Dry-Run continua con **C2 Proficiency Runtime Preparation** (DOCUME
 
 **R18.5 status flow (aggiornato post-C4 CLOSED)**:
 `C0-C3` ✅ → `C4 Drop Table Dry-Run Planning` ✅ → **`PRD C4 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C5 Migration Prep (DOUBLE-TRACK)`** 🟢 **AUTHORIZED (chain immediata)** → `C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.5 Phase C5 CLOSED (with mandatory slug errata · 2026-07-08T14:30:00Z)
+
+**Milestone**: **R18.5 Phase C5 Class Slug + Slot Canonical + Source Canonicalization Migration Prep CLOSED** ✅ (with mandatory slug errata Q1+Q5)
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli intatti. Zero modifiche code/DB/migrations/sealed/item table/`lore_meta.py`.
+
+**Deliverables C5**:
+- `/app/memory/r18_5_phase_c5_class_slug_slot_canonical_migration_prep.md` (SHA256 `71aa46c6b8415ceb4c2c70e8643b0bef4a41cc375f6a091fa050e2a6f5e1c1c2`)
+- `/app/memory/r18_5_phase_c5_class_slug_slot_canonical_migration_prep.json` (SHA256 `bc9fb2e6d85e5bbaa9703125ed217448a6f32b1ede1b7b4d2448eac02f3ebd57`)
+
+**C5 CLOSED — Decisioni PM verbatim (Q1-Q8)**:
+
+- **Q1=APPROVED with mandatory slug errata** — C5 approvata con obbligo di correzione terminologica su class_slug (vedi sotto).
+- **Q2=CONFIRM** — Slot alias mapping 9 entries (867 items migrating D1-D5 additive; NO 15° slot; `trinket` RESERVED).
+- **Q3=B** — `hollow-monastery` = **`secondary_source`** generico · **non-raid** · **non-13° raid** · **non-61° dungeon** · può restare fonte narrativa/secondaria T2 fuori dal conteggio canonico.
+- **Q4=CONFIRM DECLASS** — `void-heart-sanctum` (8 items T5) = `source_alias`/`secondary_source` · canonical dungeon count = **60**.
+- **Q5=CONFIRM roadmap + FIX canonical slug mapping** — C5→R18.3f→R18.6 confirmed + fix mandatory slug errata.
+- **Q6=DEFERRED** — Classless Start UX / Class Halls modal → **design PM dedicato in R18.6**; C6 riporta solo hook handoff (NO modal design dettagliato · NO UI · NO runtime enforcement).
+- **Q7=B** — Registry v2 dry-run **in C6 Final Closure** (non subito post-C5, non in R18.3f).
+- **Q8=GO C6** — Phase C6 Final Phase C Closure Report + Registry v2 Dry-Run authorized dopo slug errata.
+
+### 🚨 MANDATORY SLUG ERRATA (Q1+Q5 verbatim)
+
+Il mapping precedente `Warrior→warrior · Rogue→rogue · Mage→mage · Priest→priest · Ranger→ranger` era **ambiguo**. I 5 slug inglesi (`warrior/rogue/mage/priest/ranger`) NON sono `canonical_class_slug` — sono solo `legacy_class_label` / `legacy_class_key`.
+
+**Canonical live slug targets (obbligatori da C6 in poi)**:
+
+| legacy_class_label | legacy_class_key | canonical_class_slug | canonical_class_name_it |
+|---|---|---|---|
+| Warrior | `warrior` | **`guerriero`** | Guerriero |
+| Rogue | `rogue` | **`ladro`** | Ladro |
+| Mage | `mage` | **`mago`** | Mago |
+| Priest | `priest` | **`paladino`** ⚠️ NOTA: paladino, NON priest/prete | Paladino |
+| Ranger | `ranger` | **`cacciatore_di_mostri`** | Cacciatore di Mostri |
+
+**C6 deve distinguere sempre 4 campi** per ogni item/adventurer reference: `legacy_class_label` · `legacy_class_key` · `canonical_class_slug` · `canonical_class_name_it`.
+
+**Nessuna migrazione applicata ora.** Solo terminologia corretta nei documenti C6 e Registry v2.
+
+**Approvazioni C5 CLOSED dettagliate**:
+- Slot canonical migration plan approved (additive-only, 867 items migrating, 26 universal_allowed, 607 already canonical)
+- `trinket → accessory` approved (68 items, `slot_original=trinket` audit)
+- `main-hand → main_hand` normalization approved (613 items)
+- `off-hand → off_hand` normalization approved (129 items)
+- `amulet → neck` approved (57 items)
+- `hollow-monastery` = `secondary_source` non-raid
+- `void-heart-sanctum` = `source_alias`/`secondary_source` non-61° dungeon
+- Canonical **dungeon count = 60** · **raid count = 12**
+- class_slug roadmap confirmed (C5 prep → R18.3f readiness → R18.6 execute)
+- **Slug errata**: 4-field taxonomy obbligatoria (legacy_label · legacy_key · canonical_slug · canonical_name_it)
+- Registry v2 dry-run authorized **in C6 Final Closure**
+- R18.6 Class Halls UX **deferred to dedicated PM design**
+- 36 seals byte-identical · zero DB/code/migrations · classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (post-C5 approval Q8=GO C6)**:
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C6 Final Phase C Closure Report + Registry v2 Dry-Run** | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 1 PRD append |
+| **R18.3f Class Slug Migration Readiness** | 🔒 **HOLD** | PM review post-C6 |
+| **R18.6 Class Halls · Classless Start · Adventurer Identity** | 🔒 **PLANNED** | post-R18.3f |
+| **Future Apply Phase** (registry/drop/backfill/runtime enforcement) | 🔒 **HOLD** | PM gate dedicato |
+| **Progressive Discovery Legendary Finalization (P1-P4)** | 🔒 **HOLD** | PM gate dedicato post-C6 |
+| **Marketing Brief** | 🔒 **DEFERRED** | — |
+
+---
+
+**R18.5 status flow (aggiornato post-C5 CLOSED)**:
+`C0-C4` ✅ → `C5 Class Slug + Slot + Source Migration Prep (double-track)` ✅ → **`PRD C5 CLOSED with slug errata (questo append)`** ✅ **CLOSED** → **`Phase C6 Final Closure Report + Registry v2 Dry-Run`** 🟢 **AUTHORIZED (chain immediata)** → `R18.3f` 🔒 HOLD / `R18.6` 🔒 PLANNED / `Future Apply Phase` 🔒 HOLD / `Marketing Brief` 🔒 DEFERRED
