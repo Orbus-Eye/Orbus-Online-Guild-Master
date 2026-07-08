@@ -1,0 +1,452 @@
+{
+  "metadata": {
+    "round": "R18.6",
+    "phase": "Class Halls · Classless Start · Adventurer Identity — Design Documentale",
+    "step": "STEP 1 (R18.6 dedicated PM design)",
+    "locked_at_utc": "2026-07-08T15:00:00Z",
+    "authority": "PM Orchestrator — R18.6 GO esplicito post-Phase C ACK",
+    "regime": "DOCUMENTAL ONLY",
+    "scope_sections": 13,
+    "governance": "NO code · NO DB · NO migrations · NO Class Halls implementation · NO UI code · NO runtime enforcement · NO class_slug migration apply · NO Apply Phase · NO R18.5 modification (LOCKED) · NO R18.3f auto-start",
+    "language": "italian_only",
+    "dependencies_locked_reference_only": [
+      "/app/memory/r18_5_phase_c2_proficiency_runtime_preparation.md (lock_state matrix 10 stati)",
+      "/app/memory/r18_5_phase_c5_class_slug_slot_canonical_migration_prep.md (canonical class slug Q1+Q5)",
+      "/app/memory/r18_5_phase_c6_final_closure_report.json (Phase C ACK + Registry v2)",
+      "/app/memory/r18_5_registry_v2_dry_run.json (schema 23 fields · 1500 rows)"
+    ]
+  },
+
+  "classless_initial_state": {
+    "recruit_status_default": "recruit_unassigned",
+    "adventurer_fields_at_recruit": {
+      "adventurer_id": "UUID generato (invariato R18.5)",
+      "nome": "assegnato via narrative generator",
+      "level": 1,
+      "class_proficiency": null,
+      "class_slug": null,
+      "canonical_class_slug": null,
+      "class_hall_id": null,
+      "class_hall_assigned_at": null,
+      "hall_master_witness_npc": null,
+      "recruit_status": "recruit_unassigned",
+      "narrative_intro_shown": false
+    },
+    "auto_derive_policy": {
+      "class_slug_from_class_proficiency": "FORBIDDEN (regola PM C2 Q7 + R18.6)",
+      "class_proficiency_from_class_slug": "FORBIDDEN",
+      "fallback_silent": "FORBIDDEN",
+      "runtime_bridge": "FORBIDDEN"
+    },
+    "recluta_capacity_whitelist": {
+      "roster_display": true,
+      "receive_name_and_level_init": true,
+      "receive_tutorial_prompts": true,
+      "receive_class_hall_choice_quest": true,
+      "equip_universal_allowed_items": {
+        "allowed": true,
+        "categories": ["consumable", "material", "cosmetic", "trinket-universal"],
+        "reference_lock_state": "universal_allowed (C2 #5)"
+      },
+      "equip_gear_specialized": {
+        "allowed": false,
+        "reason": "locked_recruit_unassigned (C2 #3)"
+      },
+      "dungeon_raid_assignment_regular": {
+        "allowed": false,
+        "override_available": true,
+        "override_flow": "warning modal with explicit player confirmation"
+      },
+      "tutorial_prova_di_sala": {
+        "allowed": true,
+        "notes": "scripted safe-mode encounter · no reward gear · pending PM Q5"
+      },
+      "sold_dismissed_transferred": {
+        "status": "OPEN_PM_Q3"
+      },
+      "xp_tick_idle": {
+        "status": "OPEN_PM_Q4",
+        "design_default_proposal": "50% reduced"
+      }
+    }
+  },
+
+  "class_halls_design": [
+    {
+      "hall_id": "hall_guerriero",
+      "hall_name_it": "Fortezza d'Acciaio",
+      "canonical_class_slug": "guerriero",
+      "canonical_class_name_it": "Guerriero",
+      "legacy_class_label": "Warrior",
+      "main_stat": "Forza",
+      "armor_proficiency": ["maglia", "piastre"],
+      "weapon_proficiency": ["spada", "ascia", "martello", "scudo", "lancia", "arma_in_asta"],
+      "hall_master_npc": "Comandante Aldric del Ferro",
+      "narrative_position": "ala nord del Complesso, adiacente all'armeria",
+      "lore_hook": "L'acciaio non si spezza. Si tempra.",
+      "unlock_rite": "la Prova del Peso — il Recluta solleva l'ascia rituale e riceve il Sigillo del Ferro",
+      "narrative_micro_log_post_choice": "{nome} ha giurato fedeltà alla Fortezza d'Acciaio. Da oggi è un Guerriero."
+    },
+    {
+      "hall_id": "hall_ladro",
+      "hall_name_it": "Loggia dei Sussurri",
+      "canonical_class_slug": "ladro",
+      "canonical_class_name_it": "Ladro",
+      "legacy_class_label": "Rogue",
+      "main_stat": "Destrezza",
+      "armor_proficiency": ["cuoio"],
+      "weapon_proficiency": ["pugnale", "spada", "balestra"],
+      "hall_master_npc": "Maestra dei Sussurri Selene",
+      "narrative_position": "sottoscala del Complesso, corridoi di legno scuro senza torce",
+      "lore_hook": "L'ombra è alleata. Il rumore è nemico.",
+      "unlock_rite": "la Prova del Silenzio — il Recluta attraversa la Sala Buia senza far cadere il campanello · riceve il Marchio della Loggia",
+      "narrative_micro_log_post_choice": "{nome} ha attraversato la Sala Buia. Da oggi è un Ladro."
+    },
+    {
+      "hall_id": "hall_mago",
+      "hall_name_it": "Circolo dei Nove Sigilli",
+      "canonical_class_slug": "mago",
+      "canonical_class_name_it": "Mago",
+      "legacy_class_label": "Mage",
+      "main_stat": "Intelligenza",
+      "armor_proficiency": ["stoffa"],
+      "weapon_proficiency": ["bastone", "tomo", "focus", "pugnale"],
+      "hall_master_npc": "Arcimago Vessel di Memoria",
+      "narrative_position": "torre superiore, biblioteca a spirale, candele arcane sospese",
+      "lore_hook": "Ogni parola letta è una parola scagliata.",
+      "unlock_rite": "il Rito dei Nove Sigilli — il Recluta traccia il proprio sigillo personale su pergamena vergine · riceve la Chiave dei Nove",
+      "narrative_micro_log_post_choice": "{nome} ha tracciato il proprio sigillo. Da oggi è un Mago."
+    },
+    {
+      "hall_id": "hall_paladino",
+      "hall_name_it": "Reliquiario della Luce Fissa",
+      "canonical_class_slug": "paladino",
+      "canonical_class_name_it": "Paladino",
+      "legacy_class_label": "Priest",
+      "critical_terminology_note": "Paladino NON priest NON prete — canonical slug è 'paladino' in italiano",
+      "main_stat": "Saggezza",
+      "armor_proficiency": ["stoffa"],
+      "weapon_proficiency": ["bastone", "martello", "focus", "reliquia"],
+      "hall_master_npc": "Custode Isabeau dell'Alba",
+      "narrative_position": "cappella nella corte interna, vetrate ambrate, brace sempre accesa nell'altare",
+      "lore_hook": "La luce non chiede. La luce impone.",
+      "unlock_rite": "la Veglia della Brace — il Recluta veglia la brace per una notte · alla prima luce dell'alba riceve il Reliquiario Personale",
+      "narrative_micro_log_post_choice": "{nome} ha vegliato la brace fino all'alba. Da oggi è un Paladino."
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "hall_name_it": "Capanno del Sentiero Selvaggio",
+      "canonical_class_slug": "cacciatore_di_mostri",
+      "canonical_class_name_it": "Cacciatore di Mostri",
+      "legacy_class_label": "Ranger",
+      "critical_terminology_note": "Cacciatore di Mostri NON ranger NON cacciatore-generico — canonical slug è 'cacciatore_di_mostri' con underscore composto",
+      "main_stat": "Destrezza",
+      "armor_proficiency": ["cuoio", "maglia"],
+      "weapon_proficiency": ["arco", "balestra", "spada", "pugnale", "lancia"],
+      "hall_master_npc": "Vecchio Falconiere Ovyr",
+      "narrative_position": "capanno di legno grezzo sul limite del bosco della Gilda",
+      "lore_hook": "La bestia è vecchia. Il cacciatore, di più.",
+      "unlock_rite": "la Traccia del Primo Passo — il Recluta segue la traccia notturna di un cinghiale-fantasma fino all'alba · riceve la Faretra del Sentiero",
+      "narrative_micro_log_post_choice": "{nome} ha seguito la traccia fino all'alba. Da oggi è un Cacciatore di Mostri."
+    }
+  ],
+
+  "class_hall_choice_flow": {
+    "trigger_condition": "adventurer.class_slug IS NULL AND adventurer.class_proficiency IS NULL AND adventurer.recruit_status = 'recruit_unassigned'",
+    "corresponding_lock_state_c2": "#3 locked_recruit_unassigned",
+    "sequence_steps": [
+      {"step": 1, "phase": "Dashboard onboarding banner", "trigger": "primo reclutamento Recluta"},
+      {"step": 2, "phase": "Roster badge persistente", "detail": "ambra · icona porta · label 'Recluta · Senza Classe'"},
+      {"step": 3, "phase": "Scheda avventuriero", "detail": "CTA primario 'Assegna Sala di Classe'"},
+      {"step": 4, "phase": "Modal 'Le 5 Sale'", "detail": "lista testuale one-liner con 5 Sale + main_stat + lore hook"},
+      {"step": 5, "phase": "Preview Sala (drawer)", "detail": "dettagli completi rito + proficiency + hall_master"},
+      {"step": 6, "phase": "Dialogo di conferma", "detail": "checkbox esplicito 'Confermo. La scelta è definitiva.' + CTA 'Consacra'"},
+      {"step": 7, "phase": "Post-conferma", "detail": "narrative micro-log nel log Gilda + badge Recluta → nome classe IT + lock_state passa a equippable"}
+    ],
+    "reversibility": {
+      "live_initial_phase_post_apply": "irreversibile",
+      "future_rite_of_rebirth": {
+        "status": "HOLD",
+        "pending_pm_decision": "Q1 open questions",
+        "design_hint": "spesa risorse gilda + reset progression parziale + narrative resa dei conti"
+      }
+    },
+    "post_choice_pseudo_schema_updates": {
+      "class_hall_assigned_at": "timestamp UTC now",
+      "class_hall_id": "one of [hall_guerriero, hall_ladro, hall_mago, hall_paladino, hall_cacciatore_di_mostri]",
+      "class_proficiency": "one of [Warrior, Rogue, Mage, Priest, Ranger] (legacy label)",
+      "canonical_class_slug": "one of [guerriero, ladro, mago, paladino, cacciatore_di_mostri]",
+      "recruit_status": "class_assigned",
+      "narrative_intro_shown": true,
+      "governance_note": "PSEUDO-SCHEMA · nessuna scrittura DB in R18.6"
+    }
+  },
+
+  "classless_lock_rules": {
+    "reused_lock_states_from_c2": {
+      "lock_state_3_locked_recruit_unassigned": {
+        "condition": "class_slug=null AND class_proficiency=null",
+        "ui_badge": "ambra · icona porta",
+        "cta": "Assegna Sala di Classe",
+        "equip_behavior": "❌ blocca equip gear specializzato",
+        "roster_behavior": "⚠️ escluso da dungeon/raid roster picker default"
+      },
+      "lock_state_4_locked_class_slug_null": {
+        "condition": "class_slug=null AND class_proficiency populated canonical",
+        "ui_badge": "ambra · icona chiave",
+        "cta": "(bridge post-R18.3f)",
+        "equip_behavior": "⚠️ equip permesso via class_proficiency fallback (legacy runtime v1)",
+        "roster_behavior": "✅ operativo con warning 'aggiornamento identità pendente'"
+      },
+      "lock_state_5_universal_allowed": {
+        "condition": "is_cosmetic OR slot in {trinket-universal, consumable, material}",
+        "ui_badge": "verde · icona lente",
+        "cta": null,
+        "equip_behavior": "✅ bypass proficiency",
+        "roster_behavior": "✅ operativo per consumable/cosmetic"
+      },
+      "lock_state_10_equippable": {
+        "condition": "all checks passed",
+        "ui_badge": "verde · icona spunta",
+        "cta": null,
+        "equip_behavior": "✅ equip completo",
+        "roster_behavior": "✅ operativo pieno"
+      }
+    },
+    "no_new_lock_states_introduced_by_r18_6": true,
+    "dungeon_roster_picker_policy": {
+      "default_filter": "exclude(recruit_status='recruit_unassigned')",
+      "override_behavior": "warning modal + player explicit confirmation",
+      "override_consequence_gear_drop": "Recluta receives no assignable specialized loot; drop lands in guild inventory",
+      "override_consequence_xp": "tutorial-reduced XP",
+      "override_consequence_combat": "no auto-partecipazione"
+    },
+    "prova_di_sala_encounter": {
+      "status": "scripted safe-mode encounter",
+      "reward_gear": false,
+      "purpose": "tutorial pratico pre-scelta",
+      "pending_pm_decision": "Q5 open questions"
+    }
+  },
+
+  "class_hall_class_proficiency_matrix": {
+    "note": "Matrice PM lockata verbatim R18.6 GO. Nessuna eccezione implicita.",
+    "matrix": [
+      {"hall": "Fortezza d'Acciaio", "canonical_slug": "guerriero", "name_it": "Guerriero", "legacy": "Warrior", "main_stat": "Forza", "armor": ["maglia","piastre"], "weapon": ["spada","ascia","martello","scudo","lancia","arma_in_asta"]},
+      {"hall": "Loggia dei Sussurri", "canonical_slug": "ladro", "name_it": "Ladro", "legacy": "Rogue", "main_stat": "Destrezza", "armor": ["cuoio"], "weapon": ["pugnale","spada","balestra"]},
+      {"hall": "Circolo dei Nove Sigilli", "canonical_slug": "mago", "name_it": "Mago", "legacy": "Mage", "main_stat": "Intelligenza", "armor": ["stoffa"], "weapon": ["bastone","tomo","focus","pugnale"]},
+      {"hall": "Reliquiario della Luce Fissa", "canonical_slug": "paladino", "name_it": "Paladino", "legacy": "Priest", "main_stat": "Saggezza", "armor": ["stoffa"], "weapon": ["bastone","martello","focus","reliquia"]},
+      {"hall": "Capanno del Sentiero Selvaggio", "canonical_slug": "cacciatore_di_mostri", "name_it": "Cacciatore di Mostri", "legacy": "Ranger", "main_stat": "Destrezza", "armor": ["cuoio","maglia"], "weapon": ["arco","balestra","spada","pugnale","lancia"]}
+    ],
+    "runtime_enforcement": "design layer only · consumed by equip_eligibility_check validator (C2 #6 armor, #7 weapon) · runtime implementation deferred to Apply Phase"
+  },
+
+  "ui_ux_playerfacing_design": {
+    "style": "testuale minimalista Orbus (MMO gestionale testuale)",
+    "graphic_assets": "NONE (no sprite · no canvas · no illustrazioni)",
+    "components": [
+      {"name": "Dashboard banner", "placement": "top Dashboard Gilda", "dismissable": true, "cta": "Vai al Roster"},
+      {"name": "Roster row Recluta", "badge": "[Recluta · Senza Classe] ambra · icona porta", "action": "tap → scheda avventuriero"},
+      {"name": "Scheda avventuriero (Recluta)", "cta_primary": "Assegna Sala di Classe", "cta_secondary_disabled_with_tooltip": true},
+      {"name": "Modal 'Le 5 Sale'", "layout": "list-based one-liner per Sala"},
+      {"name": "Preview Sala (drawer)", "content": "armor · weapon · hall_master · rito · CTA Consacra"},
+      {"name": "Dialogo di conferma", "explicit_checkbox": true, "cta_disabled_until_checked": "Consacra"},
+      {"name": "Confirmation banner (toast)", "duration_s": 6},
+      {"name": "Log Gilda entry", "persistent": true},
+      {"name": "Tooltip lock_state", "trigger": "hover/tap-hold badge"},
+      {"name": "Dungeon roster picker", "default_filter": "exclude(recruit_unassigned)"},
+      {"name": "Warning modal override", "actions": ["Continua comunque", "Annulla"]}
+    ],
+    "accent_colors": {"locked_recruit_unassigned": "ambra", "equippable_universal_allowed": "verde", "hard_lock_proficiency_mismatch": "rosso"},
+    "icons": {"library": "Lucide/FontAwesome", "no_emoji_in_code": true, "icons_used": ["porta","chiave","spunta","lente"]},
+    "mobile_viewport_min": "≥ 320px · design testuale one-liner"
+  },
+
+  "italian_copy_prompts": {
+    "welcome_tooltip_first_time": {
+      "title": "Un nuovo Recluta si è unito alla tua Gilda.",
+      "body": "{nome} è arrivato senza una classe assegnata. Prima di poterlo mandare in dungeon o equipaggiare con armi e armature specializzate, dovrai portarlo in una delle Cinque Sale del Complesso della Gilda.",
+      "cta_primary": "Vai al Roster",
+      "cta_secondary": "Ho capito"
+    },
+    "roster_badge_tooltip_recluta": {
+      "title": "Recluta · Senza Classe",
+      "body": "Questo avventuriero non ha ancora scelto una Sala di Classe. Assegnagli una Sala per sbloccarne l'equipaggiamento e le assegnazioni.",
+      "cta": "Assegna Sala di Classe"
+    },
+    "modal_le_5_sale_subtitle": {
+      "title": "Cinque Sale. Cinque destini. Una scelta definitiva.",
+      "body": "Ogni Sala forgia una classe distinta. Ogni classe porta con sé una diversa arte del combattimento, una diversa armatura, un diverso incontro con il mondo. Scegli con cura: la scelta è irrevocabile."
+    },
+    "preview_sala_examples": {
+      "reliquiario_paladino": {
+        "title": "Reliquiario della Luce Fissa · Paladino",
+        "body": "\"La luce non chiede. La luce impone.\" — Sotto la Custode Isabeau dell'Alba, il tuo Recluta veglierà la brace fino all'alba. Alla prima luce, riceverà il Reliquiario Personale e diverrà un Paladino della Gilda.",
+        "cta": "Consacra {nome} come Paladino"
+      },
+      "capanno_cacciatore_di_mostri": {
+        "title": "Capanno del Sentiero Selvaggio · Cacciatore di Mostri",
+        "body": "\"La bestia è vecchia. Il cacciatore, di più.\" — Sotto il Vecchio Falconiere Ovyr, il tuo Recluta seguirà la traccia notturna di un cinghiale-fantasma fino all'alba. Al ritorno, riceverà la Faretra del Sentiero e diverrà un Cacciatore di Mostri della Gilda.",
+        "cta": "Consacra {nome} come Cacciatore di Mostri"
+      }
+    },
+    "warning_modal_override_roster_dungeon": {
+      "title": "⚠️ Recluta senza Sala",
+      "body": "{nome} non ha ancora scelto una Sala di Classe. Se lo mandi in dungeon adesso: non potrà equipaggiare gear specializzato; il loot che gli sarebbe destinato finirà nell'inventario della Gilda; la sua partecipazione al combattimento sarà limitata. Ti consigliamo di assegnargli prima una Sala.",
+      "cta_primary": "Assegna Sala di Classe",
+      "cta_secondary": "Manda comunque"
+    },
+    "block_equip_gear_specialized_lock_3": {
+      "title": "Assegna una Sala di Classe.",
+      "body": "{nome} è un Recluta senza classe: non può equipaggiare questo oggetto. Portalo in una delle Cinque Sale per sbloccare l'equipaggiamento.",
+      "cta": "Vai al Complesso della Gilda"
+    },
+    "block_equip_legacy_pending_lock_4": {
+      "title": "Identità in aggiornamento.",
+      "body": "Il sistema di identità di {nome} è in aggiornamento (bridge canonico). Puoi equipaggiare questo oggetto, ma alcune funzionalità saranno disponibili dopo la migrazione.",
+      "cta": "Ho capito"
+    },
+    "confirmation_banners_post_choice": {
+      "guerriero": "✨ {nome} ha giurato fedeltà alla Fortezza d'Acciaio. Da oggi è un Guerriero.",
+      "ladro": "✨ {nome} ha attraversato la Sala Buia. Da oggi è un Ladro.",
+      "mago": "✨ {nome} ha tracciato il proprio sigillo. Da oggi è un Mago.",
+      "paladino": "✨ {nome} ha vegliato la brace fino all'alba. Da oggi è un Paladino.",
+      "cacciatore_di_mostri": "✨ {nome} ha seguito la traccia fino all'alba. Da oggi è un Cacciatore di Mostri."
+    },
+    "log_gilda_entries_post_choice": {
+      "guerriero": "[timestamp] · Rito completato: {nome} ha giurato fedeltà alla Fortezza d'Acciaio. — Comandante Aldric del Ferro lo ha marchiato con il Sigillo del Ferro.",
+      "ladro": "[timestamp] · Rito completato: {nome} ha attraversato la Sala Buia in silenzio. — Maestra dei Sussurri Selene gli ha consegnato il Marchio della Loggia.",
+      "mago": "[timestamp] · Rito completato: {nome} ha tracciato il proprio sigillo su pergamena vergine. — Arcimago Vessel di Memoria gli ha affidato la Chiave dei Nove.",
+      "paladino": "[timestamp] · Rito completato: {nome} ha vegliato la brace fino all'alba. — Custode Isabeau dell'Alba lo ha benedetto nel Reliquiario della Luce Fissa.",
+      "cacciatore_di_mostri": "[timestamp] · Rito completato: {nome} ha seguito la traccia notturna del cinghiale-fantasma. — Vecchio Falconiere Ovyr gli ha consegnato la Faretra del Sentiero."
+    }
+  },
+
+  "r18_5_interaction_notes": {
+    "regime": "R18.5 Phase C CLOSED · PM APPROVED · LOCKED",
+    "modification_policy": "READ-ONLY reference · zero modifications",
+    "artifacts_consumed_by_r18_6": [
+      {"artifact": "Lock_state matrix C2 (10 stati)", "usage": "R18.6 utilizza #3 locked_recruit_unassigned, #4 locked_class_slug_null, #5 universal_allowed, #10 equippable", "modification": "NONE"},
+      {"artifact": "Proficiency matrix C2 (armor + weapon + main_stat per classe)", "usage": "R18.6 replica in Sezione 6, verbatim", "modification": "NONE"},
+      {"artifact": "Registry v2 23 fields", "usage": "input runtime del validator equip (class_proficiency, armor_type, weapon_family)", "modification": "NONE"},
+      {"artifact": "Canonical class slug C5/C6 (5 slug live)", "usage": "guerriero/ladro/mago/paladino/cacciatore_di_mostri usati verbatim + slug errata Q1+Q5", "modification": "NONE"},
+      {"artifact": "runtime_apply_ready=false 1500/1500", "usage": "R18.6 rispetta il dry-run regime · nessun equip runtime in R18.6", "modification": "NONE"},
+      {"artifact": "UI badge matrix C2 (ambra · icona porta)", "usage": "riuso esatto in R18.6 per locked_recruit_unassigned", "modification": "NONE"},
+      {"artifact": "C2 Q7 handling class_slug=null", "usage": "R18.6 conferma NO auto-derive, differisce a R18.3f", "modification": "NONE"}
+    ],
+    "no_modification_requested": true,
+    "no_gaps_requiring_r18_5_modification": true
+  },
+
+  "r18_3f_interaction_notes": {
+    "r18_3f_status": "HOLD",
+    "r18_6_action_on_r18_3f": "NO auto-start · NO migration script · NO class_slug apply",
+    "future_requirements_for_r18_3f_to_enable_r18_6_live": [
+      {"rq_id": "RQ-1", "requirement": "Schema adventurer.class_slug (nullable string, enum={guerriero,ladro,mago,paladino,cacciatore_di_mostri})"},
+      {"rq_id": "RQ-2", "requirement": "Schema adventurer.class_hall_id (nullable string, enum 5 hall_ids)"},
+      {"rq_id": "RQ-3", "requirement": "Schema adventurer.class_hall_assigned_at (nullable datetime UTC)"},
+      {"rq_id": "RQ-4", "requirement": "Schema adventurer.recruit_status (enum={recruit_unassigned, class_assigned})"},
+      {"rq_id": "RQ-5", "requirement": "Migration script per adventurer legacy pre-R18.6 · popolamento retroattivo class_slug da class_proficiency legacy · SCOPE R18.3f, non R18.6"},
+      {"rq_id": "RQ-6", "requirement": "Backwards-compat check · legacy client senza class_slug non devono rompersi"},
+      {"rq_id": "RQ-7", "requirement": "Translation layer legacy_class_label → canonical_class_slug (immutable lookup, no i18n runtime)"},
+      {"rq_id": "RQ-8", "requirement": "Validator equip_eligibility_check consuma canonical_class_slug primario · fallback su class_proficiency legacy"}
+    ],
+    "legacy_en_to_canonical_it_translation_policy": {
+      "Warrior": "guerriero",
+      "Rogue": "ladro",
+      "Mage": "mago",
+      "Priest": "paladino",
+      "Ranger": "cacciatore_di_mostri",
+      "policy": "immutable lookup table · no user-editable · no i18n runtime · terminologia canonica",
+      "critical_notes": ["Priest → paladino (NON priest NON prete)", "Ranger → cacciatore_di_mostri (underscore composto)"]
+    },
+    "no_cross_contamination": {
+      "r18_6_writes_db": false,
+      "r18_6_populates_class_slug": false,
+      "r18_6_alters_schema": false,
+      "r18_6_starts_r18_3f": false,
+      "r18_6_activates_class_halls_ui_live": false
+    }
+  },
+
+  "risk_register": [
+    {"id": "R1", "risk": "Player confonde 'Paladino' con 'priest/prete'", "severity": "MEDIUM", "mitigation": "UI copy sempre 'Paladino' · lore doc esplicito · tooltip disambiguazione al primo incontro · slug canonical 'paladino' obbligatorio in R18.3f", "status": "DOCUMENTED"},
+    {"id": "R2", "risk": "Player confonde 'Cacciatore di Mostri' con 'Ranger' o 'Cacciatore' generico", "severity": "MEDIUM", "mitigation": "UI copy sempre 'Cacciatore di Mostri' · slug canonical 'cacciatore_di_mostri' con underscore · immutable lookup no pattern match", "status": "DOCUMENTED"},
+    {"id": "R3", "risk": "Player si sente forzato a scegliere subito, abbandona onboarding", "severity": "LOW-MEDIUM", "mitigation": "Reclute possono restare classless a tempo indefinito · nessun countdown · dashboard banner dismissable", "status": "DESIGNED"},
+    {"id": "R4", "risk": "Player sceglie Sala sbagliata e la scelta è irreversibile", "severity": "MEDIUM", "mitigation": "Preview Sala esplicita · dialogo conferma checkbox · lore doc leggibile pre-scelta · Rite of Rebirth futuro come Q1", "status": "MITIGATED"},
+    {"id": "R5", "risk": "Roster picker dungeon include Reclute → loot sprecato", "severity": "LOW", "mitigation": "Filtro default exclude(recruit_unassigned) + warning modal override", "status": "DESIGNED"},
+    {"id": "R6", "risk": "Recluta perde XP tick idle → perdita valore percepito", "severity": "LOW", "mitigation": "Pending PM Q4 · design default 50% ridotto fino a scelta Sala", "status": "OPEN_PM_Q4"},
+    {"id": "R7", "risk": "Class Hall NPC hall_master conflitto con lore Orbus esistente", "severity": "LOW", "mitigation": "Nomi NPC scelti come new-additions · PM può rinominare in Q2", "status": "DOCUMENTED"},
+    {"id": "R8", "risk": "Legacy adventurer pre-R18.6 con class_proficiency populated ma class_slug=null → falsa Recluta", "severity": "HIGH-INFO", "mitigation": "lock_state C2 #4 (locked_class_slug_null) copre il caso · R18.6 li tratta come 'operativo con warning' · migration retroattiva in R18.3f RQ-5", "status": "DESIGNED"},
+    {"id": "R9", "risk": "Applicazione R18.6 senza R18.3f prep → schema drift + rollback difficile", "severity": "HIGH-BLOCK", "mitigation": "R18.6 vieta l'apply · Apply Phase richiede 7 preconditions PM esplicite", "status": "ENFORCED"},
+    {"id": "R10", "risk": "Terminologia UI localizzata (es. 'Priest' in log legacy) resiste al deploy", "severity": "MEDIUM", "mitigation": "R18.3f translation layer + audit UI copy pre-R18.6 live", "status": "TRACKED to R18.3f + R18.6-live"},
+    {"id": "R11", "risk": "4 Progressive Discovery Legendary (P1-P4) class-locked · interazione con Reclute non ovvia", "severity": "LOW", "mitigation": "Reclute non equipaggiano gear specializzato (C2 #3) · Progressive Discovery non li tocca · Progressive Discovery finalization resta HOLD (PG1 C6)", "status": "DESIGNED"},
+    {"id": "R12", "risk": "UI mobile stretta (< 400px) rende Modal 'Le 5 Sale' affollato", "severity": "LOW", "mitigation": "Design one-liner per riga · Preview Sala in drawer separato", "status": "DESIGNED"}
+  ],
+
+  "pm_open_questions": [
+    {"id": "Q1", "topic": "Rite of Rebirth (reversibilità scelta Sala)", "options": ["a) NO · scelta permanente", "b) SÌ · con costo risorse gilda + reset progression parziale", "c) SÌ · solo una volta per adventurer con costo elevato", "d) DEFER a post-launch metrics"]},
+    {"id": "Q2", "topic": "Nome/genere dei 5 hall_master NPC (Aldric · Selene · Vessel · Isabeau · Ovyr)", "options": ["a) confermo verbatim", "b) mantengo ruolo, cambio nomi", "c) rewrite completo PM"]},
+    {"id": "Q3", "topic": "Recluta può essere venduto/dismesso/trasferito pre-scelta?", "options": ["a) SÌ come qualunque adventurer", "b) NO · deve prima scegliere Sala", "c) SÌ con penalty (metà rimborso)"]},
+    {"id": "Q4", "topic": "XP tick idle Recluta", "options": ["a) 0% (nessun XP)", "b) 50% (design default proposto)", "c) 100% (nessuna penalty)"]},
+    {"id": "Q5", "topic": "Prova di Sala (encounter scripted safe-mode pre-scelta)", "options": ["a) SÌ · uno per Sala (5 tutorial opt-in)", "b) SÌ · uno generico 'prova le 5'", "c) NO · solo lore text"]},
+    {"id": "Q6", "topic": "Cap Reclute simultanei nella Gilda", "options": ["a) nessun cap", "b) cap = 3", "c) cap dinamico da livello gilda"]},
+    {"id": "Q7", "topic": "Durata narrativa rito consacrazione", "options": ["a) istantaneo (design default)", "b) 1 tick in-game", "c) 8 ore reali"]},
+    {"id": "Q8", "topic": "Adventurer Identity narrative hooks (tratti passivi per Sala)", "options": ["a) NO · solo proficiency (design default)", "b) SÌ · un tratto passivo simbolico per Sala", "c) SÌ · con impatto gameplay leggero"]}
+  ],
+
+  "go_hold_recommendation": {
+    "r18_6_design_status": "COMPLETE_PENDING_PM_REVIEW",
+    "next_phase_order_suggested": [
+      {"n": 1, "phase": "R18.6 PM review + ACK", "status": "PENDING"},
+      {"n": 2, "phase": "R18.3f Class Slug Migration Readiness", "status": "HOLD", "precondition": "GO PM esplicito post-R18.6 ACK"},
+      {"n": 3, "phase": "Progressive Discovery Legendary Finalization (P1-P4)", "status": "HOLD", "notes": "può procedere in parallelo a R18.3f prep"},
+      {"n": 4, "phase": "Apply Phase (Registry + Drop + Backfill + Class_slug + Runtime enforcement)", "status": "HOLD", "preconditions_required": ["backup DB", "dry-run tech operativo", "rollback plan", "seal governance aggiornata", "migration order definito", "failure recovery plan", "PM approval esplicita"]},
+      {"n": 5, "phase": "R18.6 live (Class Halls UI + funnel scelta + lock_state runtime)", "status": "HOLD", "precondition": "R18.3f apply + Apply Phase completata"},
+      {"n": 6, "phase": "Marketing Brief", "status": "DEFERRED"}
+    ],
+    "explicit_recommendation": [
+      "APPROVE R18.6 design documentale (13 sezioni · slug errata canonica · C2/C5/C6 reference locked)",
+      "HOLD su tutte le fasi successive",
+      "Rispondere a PM open questions Q1-Q8 in round dedicato prima di R18.3f GO",
+      "NO apply · NO R18.3f start · NO migration script · NO code · NO UI implementation · NO Marketing Brief"
+    ]
+  },
+
+  "governance": {
+    "documental_only_regime": "ENFORCED",
+    "italian_output": "ENFORCED",
+    "sealed_files_36_byte_identical": true,
+    "lore_meta_py_touch": false,
+    "lore_meta_py_sha256_baseline": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "db_writes": 0,
+    "code_changes": 0,
+    "migrations": 0,
+    "sealed_file_modification": 0,
+    "r18_5_modification": 0,
+    "r18_3f_auto_start": false,
+    "apply_phase_kickoff": false,
+    "class_halls_ui_implementation": false,
+    "marketing_brief": false,
+    "class_slug_auto_derivation": false,
+    "class_slug_migration_apply": 0,
+    "runtime_bridge": 0,
+    "runtime_enforcement_implementation": 0,
+    "item_creation_live": 0,
+    "registry_apply": 0,
+    "drop_table_apply": 0,
+    "hard_delete": 0,
+    "canonical_class_slug_live": ["guerriero", "ladro", "mago", "paladino", "cacciatore_di_mostri"],
+    "class_hall_ids": ["hall_guerriero", "hall_ladro", "hall_mago", "hall_paladino", "hall_cacciatore_di_mostri"],
+    "deliverable_files_count": 2,
+    "deliverable_paths": [
+      "/app/memory/r18_6_class_halls_classless_start_design.md",
+      "/app/memory/r18_6_class_halls_classless_start_design.json"
+    ]
+  },
+
+  "stop_after_r18_6": {
+    "auto_transition_next_phase": false,
+    "note": "STOP dopo R18.6. Attendo PM review + risposte a Q1-Q8 + GO esplicito prima di qualunque handoff verso R18.3f · Progressive Discovery finalization · Apply Phase · Marketing Brief."
+  }
+}
