@@ -1996,3 +1996,90 @@ Phase C Tech Dry-Run autorizzata come **CATENA STEP 29→30→31** (STOP obbliga
 
 **R18.5 status flow (aggiornato post-STEP 29)**:
 `Phase E2.1 (STEP 25)` ✅ CLOSED → `PRD E2.1 CLOSED + Catalogo STABILIZZATO (STEP 26)` ✅ CLOSED → `Phase C0 Technical Readiness (STEP 27)` ✅ CLOSED → `Phase C0.L Legendary Finalization (STEP 28+28-bis)` ✅ CLOSED → **`PRD C0+C0.L CLOSED (STEP 29)`** ✅ **CLOSED (questo append)** → `Phase C0.L.1 Legendary Numeric Finals (STEP 30)` 🟢 **AUTHORIZED (chain immediata)** → `Phase C1 Item Registry Dry-Run (STEP 31)` 🟢 **AUTHORIZED (chain immediata)** → `C2-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED
+
+
+## R18.5 Phase C0.L.1 + C1 CLOSED (STEP · 2026-07-07T20:45:00Z)
+
+**Milestone**: **R18.5 Phase C0.L.1 Legendary Numeric Finals + Phase C1 Item Registry Dry-Run CLOSED** ✅
+
+**Governance**: DOCUMENTAL ONLY append. Nessuna modifica code/DB/migrations/sealed/item table/lore_meta.py. 36 sigilli intatti (pytest 6/6 PASSED).
+
+**Deliverables C0.L.1 (STEP 30)**:
+- `/app/memory/r18_5_phase_c0_l_1_legendary_numeric_finals.md` (SHA256 `d824ad6e32f318137ac1d7c023191f81fb671001de77436d6c6ce6567bfee953`, 350 righe)
+- `/app/memory/r18_5_phase_c0_l_1_legendary_numeric_finals.json` (SHA256 `cf3b6496dfd463cec2dee04043d3a2d1dbb87217b09f9a9f9dcece176571e1e2`)
+
+**Deliverables C1 (STEP 31)**:
+- `/app/memory/r18_5_phase_c1_item_registry_dry_run.md` (SHA256 `9762cd8e896d4096fe0c3ddb521002610c64c6922998e78eb2efbb0adb20c0f0`, 199 righe)
+- `/app/memory/r18_5_phase_c1_item_registry_dry_run.json` (SHA256 `5e7860e427b0bf702c0664e9221d6de34efe18ee81279231061475a2664c551f`, 1500 registry rows)
+
+**C0.L.1 CLOSED — Decisioni PM verbatim**:
+- **C0.L.1 Legendary Numeric Finals CLOSED**
+- **11 Legendary numeric finals proposti** (7 APPROVED + 4 HYBRID) con 18 campi ciascuno
+- **4 Progressive Discovery** (P1-P4) = registry_reserved / PENDING PM / not_runtime_apply_ready
+- **Regole strict PASSED 11/11**: no-generic-stat · no-premium-shop · proficiency HARD BLOCK · anti-P2W · utility unica · lore capstone forte
+- **Risk summary**: LOW=6 · MEDIUM=5 · HIGH=0
+- **5 MEDIUM Legendary utility caps deferred to C2**:
+  1. Void-Pierce (L2) passive 15% chance on-hit — cap runtime C2
+  2. Divine Resurrect (L3) meta impact — validation C2
+  3. Reforge (L5) cross-target consent — runtime C2
+  4. Absence Distortion (H3) silence cap boss — C2
+  5. Fate Deflection (H4) auto-reactive lethal on raid boss — C2
+- **HYBRID drop rate 0.5% direzionale**: documental only candidate, non definitivo → **deferred to C4 Drop Table**
+
+**C1 CLOSED — Decisioni PM verbatim**:
+- **C1 Item Registry Dry-Run CLOSED**
+- **Registry aggregated**: 1500 rows (schema 24 campi canonici)
+- **Applicable**: **1486**
+- **Reserved** (P1-P4): **4**
+- **Progressive_marker count**: **10** — **CORRECTED / APPROVED at 10** (PM gate #1 risolto: source-of-truth `.json` C0.L Sezione 3.6 pattern `*-t4-legendary-*-hint`)
+- **runtime_apply_ready**: **0/1500** (dry-run design layer)
+- **class_slug**: **null 1500/1500**
+- **class_slug_resolution_status**: `deferred_to_C5_R18_3f` 1500/1500
+- **Anti-P2W**: **1500/1500** (`can_be_sold_for_real_money=false`)
+- **Rarity distribution**: 400/450/400/235/15 esatto (Common/Uncommon/Rare/Epic/Legendary)
+- **Class distribution**: 300×5 esatto (Warrior/Rogue/Mage/Priest/Ranger)
+- **item_id uniqueness**: 1500/1500 (0 duplicati)
+- **nome_it uniqueness**: 1500/1500 post-E2.1 (0 duplicati)
+- **Proficiency violations**: 0 (verified post-E1.1)
+- **Weapon backlog**: RESERVED (0 usi runtime)
+- **Legendary composition**: 11 design-ready + 4 registry_reserved (totale 15/15)
+
+**Differential C1 vs D1-D5 (nuovi campi registry canonical)**:
+- `class_proficiency` (rename da `classe_orientata`)
+- `drop_table_ref` (derivato da `source` primary token)
+- `progressive_marker` (bool, 10 T4 hint items)
+- `registry_status` (applicable / reserved / progressive_marker)
+- `runtime_apply_ready` (bool, false 1500/1500)
+- `class_slug` (null 1500/1500)
+- `class_slug_resolution_status` (deferred_to_C5_R18_3f 1500/1500)
+- `notes` (per-item residue PENDING / marker rationale)
+
+**Governance C0.L.1 + C1 CLOSED**:
+- 36 seals byte-identical (pytest `backend_r18_4_sealed_integrity_test.py` 6/6 PASSED)
+- Zero DB writes / code changes / migrations / `lore_meta.py` touches
+- Zero item table D1-D5 modifications (read-only aggregation)
+- Zero legendary stat semantic/utility/lore changes (numeric finals coerenti con D5)
+- Zero progressive placeholder finalization autonomous
+- Zero HYBRID drop_rate apply (0.5% direzionale documentale only)
+- Zero runtime apply / drop table apply / class_slug auto-derivation
+- Classi canoniche W/R/M/P/Ranger — NO drift
+
+**NEXT GATE (PM lockato post-C0.L.1+C1 approval)**:
+
+Phase C Tech Dry-Run continua con **C2 Proficiency Runtime Preparation** (DOCUMENTAL ONLY draft):
+
+| Sub-step | Status | Trigger |
+|---|---|---|
+| **C2 Proficiency Runtime Preparation** | 🟢 **AUTHORIZED (chain immediata)** | subito post-STEP 1 PRD append |
+| **C3 ILVL + Backfill** | 🔒 **HOLD** | PM review post-C2 |
+| **C4 Drop Table** | 🔒 **HOLD** | post-C3 (HYBRID drop rate PM final richiesto qui) |
+| **C5 Class Slug Migration Prep** | 🔒 **HOLD** | post-C4 (class_slug null resolution) |
+| **C6 Final Closure** | 🔒 **HOLD** | post-C5 |
+
+**R18.6 Class Halls / Classless Start**: 🔒 PLANNED / HOLD post-Phase C readiness (class_slug null e recruit_unassigned handling formalizzati qui)
+**Marketing Brief**: 🔒 DEFERRED
+
+---
+
+**R18.5 status flow (aggiornato)**:
+`Phase C0 (STEP 27)` ✅ CLOSED → `Phase C0.L (STEP 28+28-bis)` ✅ CLOSED → `PRD C0+C0.L CLOSED (STEP 29)` ✅ CLOSED → `Phase C0.L.1 (STEP 30)` ✅ CLOSED → `Phase C1 (STEP 31)` ✅ CLOSED → **`PRD C0.L.1+C1 CLOSED (questo append)`** ✅ **CLOSED** → **`Phase C2 Proficiency Runtime Preparation`** 🟢 **AUTHORIZED (chain immediata)** → `C3-C6` 🔒 HOLD post-PM review / `R18.6` 🔒 PLANNED / `Marketing Brief` 🔒 DEFERRED

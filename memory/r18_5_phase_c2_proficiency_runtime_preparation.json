@@ -1,0 +1,734 @@
+{
+  "meta": {
+    "round": "R18.5",
+    "phase": "C2 Proficiency Runtime Preparation",
+    "step": "STEP 2 (post STEP 1 PRD append C0.L.1+C1 CLOSED)",
+    "locked_at_utc": "2026-07-07T20:45:00Z",
+    "governance": "DOCUMENTAL ONLY — proficiency runtime preparation design. NO code/DB/migrations/runtime apply.",
+    "status": "APPLIED — design layer preparation per PM review",
+    "authority": "PM Orchestrator — Phase C2 dispatch"
+  },
+  "executive_summary": {
+    "obiettivo": "Preparare il design documentale per il futuro runtime enforcement di proficiency, anti-P2W, class_slug e Legendary utility caps. Nessuna implementazione runtime in questa fase.",
+    "scope_in": [
+      "Proficiency maps canoniche (5 classi)",
+      "Equip eligibility validator design (pseudo-logica)",
+      "Lock-state matrix 10 stati",
+      "UI state mapping",
+      "class_slug null handling design",
+      "recruit_unassigned handling design",
+      "progressive_marker handling (10 items)",
+      "Legendary runtime cap design (5 MEDIUM cases)",
+      "Risk register",
+      "GO/HOLD recommendation per C3",
+      "PM open questions"
+    ],
+    "scope_out": [
+      "Implementazione runtime engine (deferred)",
+      "class_slug migration apply (C5)",
+      "Anti-P2W runtime validator implementation (C-fase futura)",
+      "Drop table apply (C4)",
+      "Live DB writes / seed / migration"
+    ],
+    "output_key_metrics": {
+      "proficiency_maps_classes": 5,
+      "validator_decision_flow_steps": 10,
+      "validator_case_matrix_rows": 10,
+      "lock_states": 10,
+      "ui_state_mappings": 10,
+      "progressive_marker_items": 10,
+      "legendary_cap_cases": 5,
+      "risks_tracked": 10,
+      "pm_open_questions": 8
+    }
+  },
+  "proficiency_maps": {
+    "note": "Proficiency maps CANONICHE — verbatim da direttiva PM STEP 2. Nessuna eccezione implicita ammessa.",
+    "classes": {
+      "Warrior": {
+        "main_stat": "Forza (STR)",
+        "armor": [
+          "maglia",
+          "piastre"
+        ],
+        "weapon_families": [
+          "spada",
+          "ascia",
+          "martello",
+          "scudo",
+          "lancia",
+          "arma_in_asta"
+        ],
+        "italian_stat_label": "Forza"
+      },
+      "Rogue": {
+        "main_stat": "Destrezza (AGI)",
+        "armor": [
+          "cuoio"
+        ],
+        "weapon_families": [
+          "pugnale",
+          "spada",
+          "balestra"
+        ],
+        "italian_stat_label": "Destrezza"
+      },
+      "Mage": {
+        "main_stat": "Intelligenza (INT)",
+        "armor": [
+          "stoffa"
+        ],
+        "weapon_families": [
+          "bastone",
+          "tomo",
+          "focus",
+          "pugnale"
+        ],
+        "italian_stat_label": "Intelligenza"
+      },
+      "Priest": {
+        "main_stat": "Saggezza (WIS)",
+        "armor": [
+          "stoffa"
+        ],
+        "weapon_families": [
+          "bastone",
+          "martello",
+          "focus",
+          "reliquia"
+        ],
+        "italian_stat_label": "Saggezza"
+      },
+      "Ranger": {
+        "main_stat": "Destrezza (AGI)",
+        "armor": [
+          "cuoio",
+          "maglia"
+        ],
+        "weapon_families": [
+          "arco",
+          "balestra",
+          "spada",
+          "pugnale",
+          "lancia"
+        ],
+        "italian_stat_label": "Destrezza"
+      }
+    },
+    "invariants": [
+      "Priest NO scudo · NO piastre · NO cuoio · NO maglia (solo stoffa)",
+      "Rogue NO arco · NO piastre · NO maglia · NO stoffa (solo cuoio)",
+      "Warrior NO stoffa · NO cuoio (solo maglia/piastre)",
+      "Mage NO piastre · NO maglia · NO cuoio (solo stoffa)",
+      "Ranger NO piastre · NO stoffa (solo cuoio/maglia); arco esclusivo Ranger",
+      "focus off-hand condiviso Mage+Priest (main_stat filtra ownership)",
+      "spada condivisa Warrior+Rogue+Ranger (armor filtra ownership)",
+      "pugnale condiviso Rogue+Mage+Ranger (main_stat filtra ownership)",
+      "trinket = cross-class (main_stat_target Ranger-oriented per Legendary H4 Halodi)"
+    ]
+  },
+  "validator_design": {
+    "note": "Pseudo-logica documentale per la validazione equip-eligibility. NON è codice runtime.",
+    "input_contract": {
+      "adventurer": [
+        "adventurer_id",
+        "class_slug (nullable)",
+        "class_proficiency (canonical W/R/M/P/Ranger, nullable if recruit_unassigned)",
+        "level"
+      ],
+      "item": [
+        "item_id",
+        "class_proficiency",
+        "armor_type",
+        "weapon_family",
+        "slot",
+        "required_level",
+        "rarity",
+        "registry_status",
+        "progressive_marker",
+        "runtime_apply_ready",
+        "can_be_sold_for_real_money",
+        "is_cosmetic"
+      ]
+    },
+    "decision_flow_pseudologic": [
+      {
+        "step": 1,
+        "check": "runtime_apply_ready == false",
+        "action": "return lock_state=`locked_runtime_not_ready` — item is design layer only, blocca in dry-run.",
+        "note": "Attualmente TUTTI i 1500 items in questo stato (dry-run). C2 documenta la rotta post runtime enable."
+      },
+      {
+        "step": 2,
+        "check": "registry_status == 'reserved'",
+        "action": "return lock_state=`locked_reserved_placeholder` — Progressive Discovery P1-P4 non equipaggiabili."
+      },
+      {
+        "step": 3,
+        "check": "adventurer.class_slug is None AND adventurer.class_proficiency is None",
+        "action": "return lock_state=`locked_recruit_unassigned` — recruit senza classe assegnata (Sala di Classe R18.6)."
+      },
+      {
+        "step": 4,
+        "check": "adventurer.class_slug is None (ma class_proficiency canonical presente)",
+        "action": "return lock_state=`locked_class_slug_null` — bridge C5/R18.3f pending. NO auto-derivazione da class_proficiency."
+      },
+      {
+        "step": 5,
+        "check": "item.is_cosmetic == True OR slot in {'trinket-universal','consumable','material'}",
+        "action": "return lock_state=`universal_allowed` — bypass proficiency check (marker `universal_allowed` per registry v2 v_class_bindfree)."
+      },
+      {
+        "step": 6,
+        "check": "item.armor_type is not None AND item.armor_type not in PROFICIENCY_MAPS[class].armor",
+        "action": "return lock_state=`locked_proficiency_armor` — armor_type non in whitelist classe."
+      },
+      {
+        "step": 7,
+        "check": "item.weapon_family is not None AND item.weapon_family not in PROFICIENCY_MAPS[class].weapon_families",
+        "action": "return lock_state=`locked_proficiency_weapon` — weapon_family non in whitelist classe."
+      },
+      {
+        "step": 8,
+        "check": "adventurer.level < item.required_level",
+        "action": "return lock_state=`locked_level` — livello insufficiente."
+      },
+      {
+        "step": 9,
+        "check": "item.progressive_marker == True",
+        "action": "return lock_state=`equippable` MA con flag `narrative_marker=true` (marker T4 hint verso T5, gear normale Epic — no restrizioni extra)."
+      },
+      {
+        "step": 10,
+        "check": "all checks passed",
+        "action": "return lock_state=`equippable`."
+      }
+    ],
+    "10_case_matrix": [
+      {
+        "case_id": 1,
+        "condition": "class_slug null",
+        "lock_state": "locked_class_slug_null",
+        "severity": "HIGH-BLOCK",
+        "note": "NO auto-derive · bridge C5/R18.3f required"
+      },
+      {
+        "case_id": 2,
+        "condition": "class_slug valido + compatibile",
+        "lock_state": "equippable",
+        "severity": "OK",
+        "note": "flusso normale"
+      },
+      {
+        "case_id": 3,
+        "condition": "armor_type incompatibile",
+        "lock_state": "locked_proficiency_armor",
+        "severity": "HARD",
+        "note": "Priest no piastre, Rogue no maglia, ecc."
+      },
+      {
+        "case_id": 4,
+        "condition": "weapon_family incompatibile",
+        "lock_state": "locked_proficiency_weapon",
+        "severity": "HARD",
+        "note": "Rogue no arco, Warrior no bastone, ecc."
+      },
+      {
+        "case_id": 5,
+        "condition": "required_level > adventurer.level",
+        "lock_state": "locked_level",
+        "severity": "MEDIUM",
+        "note": "sblocco progressione naturale"
+      },
+      {
+        "case_id": 6,
+        "condition": "progressive_marker == true",
+        "lock_state": "equippable (narrative_marker)",
+        "severity": "OK",
+        "note": "T4 hint items = Epic gear normale, marker cosmetico/narrativo"
+      },
+      {
+        "case_id": 7,
+        "condition": "Legendary reserved placeholder (P1-P4)",
+        "lock_state": "locked_reserved_placeholder",
+        "severity": "HARD",
+        "note": "NOT in registry finché PM finalizza"
+      },
+      {
+        "case_id": 8,
+        "condition": "runtime_apply_ready == false",
+        "lock_state": "locked_runtime_not_ready",
+        "severity": "HARD",
+        "note": "STATO CORRENTE 1500/1500 in dry-run"
+      },
+      {
+        "case_id": 9,
+        "condition": "universal / material / consumable",
+        "lock_state": "universal_allowed",
+        "severity": "OK",
+        "note": "bypass proficiency check"
+      },
+      {
+        "case_id": 10,
+        "condition": "can_be_sold_for_real_money == false",
+        "lock_state": "n/a (invariante anti-P2W)",
+        "severity": "INFO",
+        "note": "1500/1500 already compliant; validator anti-P2W runtime separato (out-of-scope C2)"
+      }
+    ],
+    "no_runtime_bridge_note": "NO auto-bridge da class_proficiency a class_slug. NO fallback silente. NO migration on-the-fly. Ogni lock_state richiede risoluzione esplicita da C5/R18.3f/R18.6."
+  },
+  "lock_states": [
+    {
+      "state": "equippable",
+      "causa": "tutti i check passati",
+      "ui_message_it": "Equipaggiabile.",
+      "equip_behavior": "consenti equip",
+      "severita": "OK",
+      "future_phase": null
+    },
+    {
+      "state": "locked_class_slug_null",
+      "causa": "adventurer.class_slug è null (ma class_proficiency presente)",
+      "ui_message_it": "Classe non ancora migrata. Attendi aggiornamento sistema classi (R18.3f).",
+      "equip_behavior": "blocca; disabilita bottone Equipaggia",
+      "severita": "HIGH-BLOCK",
+      "future_phase": "C5 · R18.3f"
+    },
+    {
+      "state": "locked_recruit_unassigned",
+      "causa": "adventurer senza classe (Recluta / Senza Classe)",
+      "ui_message_it": "Assegna una Sala di Classe per poter equipaggiare questo oggetto.",
+      "equip_behavior": "blocca; propone tutorial R18.6 Class Halls",
+      "severita": "HIGH-BLOCK",
+      "future_phase": "R18.6"
+    },
+    {
+      "state": "locked_proficiency_armor",
+      "causa": "armor_type non in whitelist classe",
+      "ui_message_it": "La tua classe non può indossare questa tipologia di armatura.",
+      "equip_behavior": "blocca hard",
+      "severita": "HARD",
+      "future_phase": null
+    },
+    {
+      "state": "locked_proficiency_weapon",
+      "causa": "weapon_family non in whitelist classe",
+      "ui_message_it": "La tua classe non può impugnare quest'arma.",
+      "equip_behavior": "blocca hard",
+      "severita": "HARD",
+      "future_phase": null
+    },
+    {
+      "state": "locked_level",
+      "causa": "adventurer.level < item.required_level",
+      "ui_message_it": "Livello richiesto: {required_level}. Sali di livello per equipaggiare.",
+      "equip_behavior": "blocca; tooltip mostra gap",
+      "severita": "MEDIUM",
+      "future_phase": null
+    },
+    {
+      "state": "locked_reserved_placeholder",
+      "causa": "Progressive Discovery placeholder (P1-P4) — registry_reserved",
+      "ui_message_it": "Oggetto ancora in fase di scoperta. Contenuto futuro.",
+      "equip_behavior": "invisibile in inventario runtime (o mostrato come `?????` narrativo)",
+      "severita": "HARD",
+      "future_phase": "C0.L progressive finalization / post-review"
+    },
+    {
+      "state": "locked_runtime_not_ready",
+      "causa": "runtime_apply_ready=false (design layer)",
+      "ui_message_it": "N/A (invisibile all'utente in questa fase; è invariante di sistema mentre l'engine runtime non è abilitato)",
+      "equip_behavior": "l'item non viene proposto in inventario finché runtime non è enabled",
+      "severita": "HARD (invariante di fase)",
+      "future_phase": "C2/C3/C4 runtime enablement pipeline"
+    },
+    {
+      "state": "locked_unknown_item_type",
+      "causa": "item_id non nel registry o campi obbligatori mancanti",
+      "ui_message_it": "Oggetto non riconosciuto. Riporta il problema al Supporto.",
+      "equip_behavior": "blocca; log warning telemetry (design)",
+      "severita": "MEDIUM (safety net)",
+      "future_phase": null
+    },
+    {
+      "state": "universal_allowed",
+      "causa": "is_cosmetic=true OR slot=universal/material/consumable",
+      "ui_message_it": "Equipaggiabile / utilizzabile da qualsiasi classe.",
+      "equip_behavior": "consenti; bypass proficiency check",
+      "severita": "OK",
+      "future_phase": null
+    }
+  ],
+  "ui_state_mapping": [
+    {
+      "lock_state": "equippable",
+      "ui_badge": "verde · icona check",
+      "cta_visible": true,
+      "tooltip_it": "Equipaggiabile"
+    },
+    {
+      "lock_state": "locked_class_slug_null",
+      "ui_badge": "grigio · icona ingranaggio",
+      "cta_visible": false,
+      "tooltip_it": "In attesa di migrazione sistema classi"
+    },
+    {
+      "lock_state": "locked_recruit_unassigned",
+      "ui_badge": "ambra · icona porta",
+      "cta_visible": false,
+      "tooltip_it": "Assegna Sala di Classe"
+    },
+    {
+      "lock_state": "locked_proficiency_armor",
+      "ui_badge": "rosso · icona scudo barrato",
+      "cta_visible": false,
+      "tooltip_it": "Armatura non compatibile"
+    },
+    {
+      "lock_state": "locked_proficiency_weapon",
+      "ui_badge": "rosso · icona spada barrata",
+      "cta_visible": false,
+      "tooltip_it": "Arma non compatibile"
+    },
+    {
+      "lock_state": "locked_level",
+      "ui_badge": "giallo · icona livello",
+      "cta_visible": false,
+      "tooltip_it": "Livello richiesto: {required_level}"
+    },
+    {
+      "lock_state": "locked_reserved_placeholder",
+      "ui_badge": "viola · icona ?????",
+      "cta_visible": false,
+      "tooltip_it": "Contenuto futuro"
+    },
+    {
+      "lock_state": "locked_runtime_not_ready",
+      "ui_badge": "(nascosto in questa fase)",
+      "cta_visible": false,
+      "tooltip_it": "N/A (invariante dry-run)"
+    },
+    {
+      "lock_state": "locked_unknown_item_type",
+      "ui_badge": "grigio · icona warning",
+      "cta_visible": false,
+      "tooltip_it": "Oggetto non riconosciuto"
+    },
+    {
+      "lock_state": "universal_allowed",
+      "ui_badge": "blu · icona globo",
+      "cta_visible": true,
+      "tooltip_it": "Utilizzabile da qualsiasi classe"
+    }
+  ],
+  "class_slug_null_handling": {
+    "rule_pm_verbatim": "class_slug = null NON deve essere auto-derivato.",
+    "prohibitions": [
+      "nessuna auto-derivazione da class_proficiency",
+      "nessun runtime bridge",
+      "nessuna migration on-the-fly",
+      "nessun apply (né documentale né live)"
+    ],
+    "senza_classe_recluta_handling": {
+      "descrizione": "Avventurieri senza classe nel design 'Senza Classe / Recluta' (recruit_unassigned):",
+      "permessi": [
+        "può esistere nel roster",
+        "può essere visualizzato",
+        "può ricevere prompt/tutorial",
+        "può ricevere onboarding narrativo"
+      ],
+      "vietati": [
+        "non può equipaggiare gear specializzato",
+        "non può essere considerato pienamente pronto per dungeon/raid",
+        "deve scegliere una Sala di Classe in R18.6 prima di full-progression"
+      ],
+      "phase_di_risoluzione": [
+        "C5 — Class Slug Migration Prep / R18.3f Readiness",
+        "R18.6 — Class Halls · Classless Start · Adventurer Identity"
+      ]
+    },
+    "current_state_snapshot": {
+      "class_slug_null_count_1500_1500": true,
+      "class_slug_resolution_status": "deferred_to_C5_R18_3f",
+      "adventurer_side_recruit_unassigned_handling": "documentato qui in C2, risoluzione live in R18.6"
+    }
+  },
+  "progressive_marker_handling": {
+    "count_approved": 10,
+    "note_pm": "Q4=B risolto in C1 CLOSED review: `progressive_marker` count corrected/approved at **10** (source-of-truth C0.L Sezione 3.6, pattern `*-t4-legendary-*-hint`).",
+    "regole_c2": [
+      "NON trasformare i marker in Legendary — restano rarity=Epic invariata",
+      "NON promuovere a T5 — restano tier=T4",
+      "NON escluderli dal registry dry-run — sono `registry_status=progressive_marker`",
+      "NON renderli runtime_apply_ready — restano `runtime_apply_ready=false`",
+      "Trattarli come marker narrativi/meccanici verso T5 Legendary corrispondente (teaser design intent)",
+      "In validator: `equippable` con flag `narrative_marker=true` (Epic gear normale, no restrizioni extra proficiency)",
+      "UI: tooltip narrativo 'Anticipa un oggetto leggendario futuro' opzionale (design solo, no implementazione)"
+    ],
+    "10_items_flagged": [
+      "warrior-t4-legendary-emberking-crown-hint",
+      "warrior-t4-legendary-void-touched-hint",
+      "rogue-t4-legendary-void-touched-hint",
+      "rogue-t4-legendary-soul-abyss-hint",
+      "mage-t4-legendary-celestial-halo-hint",
+      "mage-t4-legendary-void-warlock-hint",
+      "priest-t4-legendary-celestial-halo-hint",
+      "priest-t4-legendary-resurrect-hint",
+      "ranger-t4-legendary-worldroot-hint",
+      "ranger-t4-legendary-emberking-crown-hint"
+    ]
+  },
+  "legendary_runtime_caps": {
+    "principio_governance": "Gli effetti Legendary sono APPROVATI come design ma NON sono runtime-ready. NESSUN cap deve essere applicato ora. C2 documenta il cap design per PM review e futura Phase runtime enablement.",
+    "5_medium_cases": [
+      {
+        "case_id": 1,
+        "utility_name": "Void-Pierce",
+        "item_id": "rogue-t5-legendary-void-touched-blade",
+        "chain_tag": "APPROVED-7 (L2)",
+        "utility_summary": "passive proc on-hit 15% chance di ignorare armor del target",
+        "cap_tecnico_proposto": "max 1 proc per round (anche se più attacchi vengono effettuati nel round)",
+        "cooldown_proposto": "N/A (passive) — cap round-based è il gate",
+        "stack_limit": "1 stack unico (nessun refresh se già proc'd nel round)",
+        "limitazione_pve": "attiva solo su target con `armor > 0` (bypass no-op su mob armor=0)",
+        "comportamento_boss": "attiva; boss raid endgame con armor >= threshold prendono damage bypass. NON overturned in tuning perché 15% chance già bilanciata.",
+        "failure_case": "attacchi off-hand / DoT non triggano proc (only main-hand hit)",
+        "ui_note_it": "Notifica 'Perforazione del Vuoto attiva' su proc; nessuna barra CD (passive).",
+        "rischio_exploit": "MEDIUM — potenziale con attack-speed boost + Focus Fire → cappato da round-based",
+        "recommendation_pm": "OK con cap 1 proc/round. Valutare telemetria proc rate nei primi raid endgame."
+      },
+      {
+        "case_id": 2,
+        "utility_name": "Divine Resurrect",
+        "item_id": "priest-t5-legendary-seraph-halo-crown",
+        "chain_tag": "APPROVED-7 (L3)",
+        "utility_summary": "1x/encounter resurrect di 1 fallen ally con 50% max HP, 3s cast time",
+        "cap_tecnico_proposto": "1 utilizzo per encounter · target = 1 fallen ally (last_death_ts within encounter window)",
+        "cooldown_proposto": "1x/encounter (rebirth cooldown ~3s cast time, no interrupt-safe)",
+        "stack_limit": "N/A (unique effect)",
+        "limitazione_pve": "solo party members within same encounter tag; NO cross-encounter (es. raid → dungeon 3p) revives",
+        "comportamento_boss": "attivo · nessuna restriction su boss raid; però meta-impact su encounter recovery — PM review meta obbligatoria",
+        "failure_case": "target fallen ma reset da wipe > 30s post-encounter-end = no target valido; NO auto-cast on self",
+        "ui_note_it": "Bottone 'Divina Resurrezione' visibile solo se >=1 fallen ally nel party; barra 3s cast con interrupt indicator.",
+        "rischio_exploit": "HIGH (design) — permette 'raid saves' e riduce wipe pressure endgame. PM può decidere gate su top-tier raid.",
+        "recommendation_pm": "MEDIUM RISK · consenti in encounter attivi PER ORA. Considerare in R18.6+ un ranking `raid_leaderboard` che tracci `divine_resurrect_used` per fairness competitive."
+      },
+      {
+        "case_id": 3,
+        "utility_name": "Reforge weapon slot mid-encounter",
+        "item_id": "warrior-t5-legendary-ambash-forge-hammer",
+        "chain_tag": "APPROVED-7 (L5)",
+        "utility_summary": "1x/encounter cambia damage type dell'arma di un alleato (physical↔elemental) per 3 turni",
+        "cap_tecnico_proposto": "1 utilizzo per encounter · target = 1 ally in party (raid o dungeon 3p) · target consent runtime opt-in",
+        "cooldown_proposto": "1x/encounter · durata effetto 3 turni",
+        "stack_limit": "1 stack unico su target (no double-reforge)",
+        "limitazione_pve": "target ally deve essere in same encounter; NO cross-target NPC/pet",
+        "comportamento_boss": "cambia damage type su weapon ally; utile contro boss con resistenza specifica. Nessun bypass elemental cap boss (resistance elemental sub-max)",
+        "failure_case": "target rifiuta consent (runtime opt-in flag) → utility fallita, cooldown consumato? OPEN QUESTION",
+        "ui_note_it": "Bottone 'Riforgia Arma Alleato' con target picker; tooltip 'l'alleato deve accettare'.",
+        "rischio_exploit": "MEDIUM — cross-target buff manipolabile (troll consent-deny). Cap consent-based è il gate.",
+        "recommendation_pm": "CONSENT REQUIRED. In runtime: se target rifiuta, cooldown NON consumato (design fair). PM review per default consent behavior (opt-in vs auto-accept in guild members)."
+      },
+      {
+        "case_id": 4,
+        "utility_name": "Absence Distortion",
+        "item_id": "mage-t5-legendary-ergolat-obelisk-focus-hybrid",
+        "chain_tag": "HYBRID-4 (H3)",
+        "utility_summary": "1x/encounter AoE silence area 8m per 2 turni",
+        "cap_tecnico_proposto": "1 utilizzo per encounter · durata 2 turni · target ground area 8m radius · boss/elite immune (silence-resistance)",
+        "cooldown_proposto": "1x/encounter · 2 turni durata",
+        "stack_limit": "N/A (unique AoE)",
+        "limitazione_pve": "trash mob = silence full; elite = silence 50% durata; boss = silence resistance flag = true (no-op)",
+        "comportamento_boss": "no-op su raid boss (silence resistance). Su dungeon 3p mini-boss = silence 50% durata (bilanciamento).",
+        "failure_case": "target ground senza mob in radius = utility fallita, cooldown consumato",
+        "ui_note_it": "Bottone 'Distorsione dell'Assenza' con AoE targeter 8m; tooltip 'inefficace su boss'.",
+        "rischio_exploit": "LOW dopo cap boss/elite immune (silence-resistance).",
+        "recommendation_pm": "OK con cap boss immune. PM decide se elite=50% durata o full immune. Preferenza design: 50% durata (utility ancora rilevante)."
+      },
+      {
+        "case_id": 5,
+        "utility_name": "Fate Deflection",
+        "item_id": "ranger-t5-legendary-halodi-fate-quiver-hybrid",
+        "chain_tag": "HYBRID-4 (H4)",
+        "utility_summary": "1x/encounter auto-reactive: next lethal hit deviato su bersaglio nemico casuale",
+        "cap_tecnico_proposto": "1 utilizzo per encounter · auto-triggered on damage that would reduce HP<=0 · target = random alive enemy in encounter",
+        "cooldown_proposto": "1x/encounter · auto-reactive next lethal hit",
+        "stack_limit": "N/A (auto-reactive single-shot)",
+        "limitazione_pve": "richiede almeno 1 alive enemy in encounter; se lethal source = boss single-target senza add → deflection no-op (auto-consumed but no effect on boss)",
+        "comportamento_boss": "raid boss single-target no-add: deflection auto-consumed, damage NON absorbed (Ranger muore). Con add presenti: deflect su random add. Alt design: deflect su boss self = 0 damage (immunity design intent).",
+        "failure_case": "encounter senza altre entità = deflection consumata ma nessun effetto; Ranger muore comunque",
+        "ui_note_it": "Barra 'Deviazione del Fato: pronta' → 'Deviazione del Fato: consumata' post-trigger; log encounter '{damage} deviato su {target}'.",
+        "rischio_exploit": "MEDIUM — permette 'survival save' endgame. Cap auto-reactive è naturale. Governance: no-op boss single-target è il gate contro exploit.",
+        "recommendation_pm": "CHOOSE: (A) deflection no-op se solo boss = Ranger muore; (B) deflection su boss self assorbita = immunity endgame (overturned?). Raccomandazione design: **A** (fair, non overturned)."
+      }
+    ]
+  },
+  "risk_register": [
+    {
+      "id": "R1",
+      "risk": "class_slug null auto-derivation temptation",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "regola PM verbatim NO auto-derive; risoluzione C5/R18.3f",
+      "status": "MITIGATED (documental)"
+    },
+    {
+      "id": "R2",
+      "risk": "recruit_unassigned adventurers senza classe possono equipaggiare gear specializzato",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "lock_state=locked_recruit_unassigned + R18.6 Class Halls gate",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R3",
+      "risk": "5 Legendary MEDIUM utility runtime senza cap causerebbero exploit/overturned",
+      "severity": "MEDIUM",
+      "mitigation": "cap tecnici proposti in `legendary_runtime_caps` (documental only, non applicati)",
+      "status": "DESIGNED per review PM"
+    },
+    {
+      "id": "R4",
+      "risk": "progressive_marker items scambiati per Legendary T5 dagli utenti",
+      "severity": "LOW",
+      "mitigation": "UI badge distinto + tooltip narrativo 'Anticipa un oggetto leggendario futuro'; registry_status=progressive_marker chiaro",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R5",
+      "risk": "runtime_apply_ready=false su 1500/1500 potrebbe confondere QA in dry-run",
+      "severity": "INFO",
+      "mitigation": "documentazione C2 chiarisce invariante di fase; QA in dry-run non tocca l'engine live",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R6",
+      "risk": "HYBRID drop_rate 0.5% direzionale non definitivo potrebbe essere applicato prematuramente in C4",
+      "severity": "MEDIUM",
+      "mitigation": "C4 Drop Table richiederà PM final decision su HYBRID drop_rate; C2 mantiene visibilità del pending",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R7",
+      "risk": "Reforge (L5) cross-target consent-deny troll",
+      "severity": "MEDIUM",
+      "mitigation": "design: consent-deny → cooldown NON consumato (fair)",
+      "status": "DESIGNED (PM review consent default)"
+    },
+    {
+      "id": "R8",
+      "risk": "Divine Resurrect (L3) altera meta raid competitive",
+      "severity": "MEDIUM",
+      "mitigation": "raid_leaderboard tracking `divine_resurrect_used` (R18.6+)",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R9",
+      "risk": "Fate Deflection (H4) su boss single-target no-add = feels bad",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "design chiaro (no-op fair) + UI log encounter",
+      "status": "DESIGNED (PM confirm A/B)"
+    },
+    {
+      "id": "R10",
+      "risk": "class_proficiency canonical (Warrior/Rogue/Mage/Priest/Ranger) NON allineato con eventuali runtime slugs esistenti (es. 'warrior' lowercase)",
+      "severity": "MEDIUM",
+      "mitigation": "C5 Class Slug Migration Prep gestirà la normalizzazione; C2 usa canonical form documentale",
+      "status": "DEFERRED to C5"
+    }
+  ],
+  "go_hold_recommendation": {
+    "phase_c3_ilvl_backfill": {
+      "recommendation": "GO — soggetto a PM approval esplicito post-C2 review",
+      "rationale": "C2 fornisce validator design + lock states + proficiency maps stabili. C3 ILVL backfill non richiede runtime enablement (rimane design layer). class_slug null non è blocker per ILVL (invariante indipendente).",
+      "conditions": [
+        "PM approval C2 (Q1-Q8)",
+        "5 Legendary utility caps approvati o soft-lock (design only, no apply)",
+        "progressive_marker=10 mantenuto",
+        "HYBRID drop_rate 0.5% direzionale confermato/differenziato pre-C4"
+      ],
+      "risks_if_go": [
+        "R10 (class_proficiency canonical vs runtime slugs) rimane in DEFERRED — nessun impatto C3",
+        "R6 (HYBRID drop_rate) non impatta C3 ILVL (drop_rate è C4-scope)"
+      ]
+    },
+    "phase_c4_drop_table": {
+      "status": "HOLD post-C3",
+      "note": "HYBRID drop_rate PM final decision richiesto qui"
+    },
+    "phase_c5_class_slug_migration_prep": {
+      "status": "HOLD post-C4",
+      "note": "class_slug null resolution formalizzata qui"
+    },
+    "phase_c6_final_closure": {
+      "status": "HOLD post-C5"
+    },
+    "phase_r18_6_class_halls": {
+      "status": "PLANNED post-Phase C",
+      "note": "recruit_unassigned + Class Halls implementation"
+    }
+  },
+  "pm_open_questions": [
+    {
+      "id": "Q1",
+      "topic": "Approvare C2 Proficiency Runtime Preparation design (validator + lock states + maps + Legendary caps) come design layer input per runtime enablement futuro?"
+    },
+    {
+      "id": "Q2",
+      "topic": "5 Legendary MEDIUM utility caps proposti: accettare ora come design baseline (5/5) o affinare specifici (indicare quali e come)?"
+    },
+    {
+      "id": "Q3",
+      "topic": "Divine Resurrect (L3): permettere in encounter attivi (design attuale) o gate su top-tier raid? Se gate, quale threshold?"
+    },
+    {
+      "id": "Q4",
+      "topic": "Reforge (L5) cross-target consent: default = opt-in (target deve accettare) o auto-accept per guild members?"
+    },
+    {
+      "id": "Q5",
+      "topic": "Absence Distortion (H3) su elite dungeon 3p: silence 50% durata (raccomandato) o full immune?"
+    },
+    {
+      "id": "Q6",
+      "topic": "Fate Deflection (H4) su boss single-target no-add: (A) no-op fair (raccomandato) o (B) deflect su boss self = immunity?"
+    },
+    {
+      "id": "Q7",
+      "topic": "class_slug null handling C2 documentato: confermare NO auto-derive + risoluzione differita a C5/R18.3f + recruit_unassigned differito a R18.6?"
+    },
+    {
+      "id": "Q8",
+      "topic": "Autorizzare Phase C3 ILVL + Backfill con condizioni GO documentate in `go_hold_recommendation.phase_c3_ilvl_backfill`?"
+    }
+  ],
+  "governance": {
+    "sealed": "VERIFIED pytest 6/6 (post STEP 1 PRD append + STEP 2 C2 draft)",
+    "db_writes": "ZERO",
+    "code_changes": "ZERO",
+    "migrations": "ZERO",
+    "item_creation_live": "ZERO",
+    "registry_apply": "ZERO",
+    "registry_generation_live": "ZERO",
+    "drop_table_apply": "ZERO",
+    "economy_changes": "ZERO",
+    "lore_meta_py_touch": "ZERO (invariato)",
+    "sealed_file_modification": "ZERO",
+    "hard_delete": "ZERO",
+    "runtime_bridge": "ZERO",
+    "class_slug_migration_apply": "ZERO",
+    "class_slug_auto_derivation": "ZERO (rule PM verbatim)",
+    "proficiency_runtime_enforcement_implementation": "ZERO (design only)",
+    "anti_p2w_runtime_validator_implementation": "ZERO (design only)",
+    "c3_auto_start": "BLOCKED (STOP after C2 per direttiva PM)",
+    "r18_6_kickoff": "BLOCKED (PLANNED)",
+    "marketing_brief": "BLOCKED (DEFERRED)",
+    "classi_canoniche": "Warrior/Rogue/Mage/Priest/Ranger — NO drift",
+    "italian_language_output": "ENFORCED",
+    "documental_only_regime": "ENFORCED",
+    "files_deliverable": "2 (.md + .json)"
+  },
+  "stop_after_c2": {
+    "auto_transition_c3": false,
+    "note": "STOP dopo C2. Attendo PM review Q1-Q8 + GO esplicito prima di C3 ILVL + Backfill."
+  }
+}
