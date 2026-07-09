@@ -1,0 +1,2472 @@
+{
+  "metadata": {
+    "round": "R18.6.1",
+    "phase": "Canonical 27 Class Halls Expansion",
+    "step": "STEP 1 · documental extension of R18.6 (LOCKED)",
+    "locked_at_utc": "2026-07-08T16:00:00Z",
+    "authority": "PM Orchestrator — R18.6.1 GO esplicito post-R18.6 CLOSED",
+    "regime": "DOCUMENTAL ONLY",
+    "governance": "NO code · NO DB · NO migrations · NO class_slug apply · NO runtime bridge · NO automatic class assignment · NO auto-derive class_slug · NO live Class Hall implementation · NO unlock 22 non-live · NO R18.5 modification (LOCKED) · NO R18.6 modification (LOCKED)",
+    "language": "italian_only",
+    "sealed_baseline": {
+      "lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "sealed_files_count": 36
+    },
+    "sections_scope": 13,
+    "dependencies_locked_reference_only": [
+      "/app/memory/PRD.md (R18.6 CLOSED verbatim)",
+      "/app/memory/r18_6_class_halls_classless_start_design.md/.json (5 Sale LOCKED · non modificare)",
+      "/app/memory/r18_5_registry_v2_dry_run.json (23 fields · 1500 rows)",
+      "/app/memory/r18_5_phase_c2_proficiency_runtime_preparation.md (lock_state matrix 10 stati · proficiency matrix)"
+    ]
+  },
+  "executive_summary": {
+    "principle_1_to_1": "1 classe canonica = 1 Sala di Classe canonica",
+    "total_classes": 27,
+    "total_halls": 27,
+    "no_shared_halls": true,
+    "active_design_ready": 5,
+    "planned_locked_until_class_ready": 22,
+    "extension_type": "canonical extension of R18.6 · NON riscrittura retroattiva",
+    "r18_6_status": "CLOSED · PM APPROVED · LOCKED (5 Sale iniziali diventano primo sottoinsieme operativo)",
+    "next_gate_state": "HOLD · attende GO PM esplicito per R18.3f (class_slug schema prep) / Apply Phase / R18.6 live implementation"
+  },
+  "canonical_class_list": [
+    {
+      "n": 1,
+      "classe_it": "Alchimista",
+      "class_slug": "alchimista",
+      "hall_id": "hall_alchimista"
+    },
+    {
+      "n": 2,
+      "classe_it": "Artificiere",
+      "class_slug": "artificiere",
+      "hall_id": "hall_artificiere"
+    },
+    {
+      "n": 3,
+      "classe_it": "Astrologo",
+      "class_slug": "astrologo",
+      "hall_id": "hall_astrologo"
+    },
+    {
+      "n": 4,
+      "classe_it": "Bardo",
+      "class_slug": "bardo",
+      "hall_id": "hall_bardo"
+    },
+    {
+      "n": 5,
+      "classe_it": "Burattinaio",
+      "class_slug": "burattinaio",
+      "hall_id": "hall_burattinaio"
+    },
+    {
+      "n": 6,
+      "classe_it": "Cacciatore del Sangue",
+      "class_slug": "cacciatore_del_sangue",
+      "hall_id": "hall_cacciatore_del_sangue"
+    },
+    {
+      "n": 7,
+      "classe_it": "Cacciatore del Vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "hall_id": "hall_cacciatore_del_vuoto"
+    },
+    {
+      "n": 8,
+      "classe_it": "Cacciatore di Mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "hall_id": "hall_cacciatore_di_mostri"
+    },
+    {
+      "n": 9,
+      "classe_it": "Cartografo",
+      "class_slug": "cartografo",
+      "hall_id": "hall_cartografo"
+    },
+    {
+      "n": 10,
+      "classe_it": "Cavaliere della Morte",
+      "class_slug": "cavaliere_della_morte",
+      "hall_id": "hall_cavaliere_della_morte"
+    },
+    {
+      "n": 11,
+      "classe_it": "Cavaliere di Draghi",
+      "class_slug": "cavaliere_di_draghi",
+      "hall_id": "hall_cavaliere_di_draghi"
+    },
+    {
+      "n": 12,
+      "classe_it": "Cronista",
+      "class_slug": "cronista",
+      "hall_id": "hall_cronista"
+    },
+    {
+      "n": 13,
+      "classe_it": "Druido",
+      "class_slug": "druido",
+      "hall_id": "hall_druido"
+    },
+    {
+      "n": 14,
+      "classe_it": "Fabbro Arcano",
+      "class_slug": "fabbro_arcano",
+      "hall_id": "hall_fabbro_arcano"
+    },
+    {
+      "n": 15,
+      "classe_it": "Giocatore d'Azzardo",
+      "class_slug": "giocatore_d_azzardo",
+      "hall_id": "hall_giocatore_d_azzardo"
+    },
+    {
+      "n": 16,
+      "classe_it": "Guerriero",
+      "class_slug": "guerriero",
+      "hall_id": "hall_guerriero"
+    },
+    {
+      "n": 17,
+      "classe_it": "Ladro",
+      "class_slug": "ladro",
+      "hall_id": "hall_ladro"
+    },
+    {
+      "n": 18,
+      "classe_it": "Mago",
+      "class_slug": "mago",
+      "hall_id": "hall_mago"
+    },
+    {
+      "n": 19,
+      "classe_it": "Mercante",
+      "class_slug": "mercante",
+      "hall_id": "hall_mercante"
+    },
+    {
+      "n": 20,
+      "classe_it": "Monaco",
+      "class_slug": "monaco",
+      "hall_id": "hall_monaco"
+    },
+    {
+      "n": 21,
+      "classe_it": "Negromante",
+      "class_slug": "negromante",
+      "hall_id": "hall_negromante"
+    },
+    {
+      "n": 22,
+      "classe_it": "Paladino",
+      "class_slug": "paladino",
+      "hall_id": "hall_paladino"
+    },
+    {
+      "n": 23,
+      "classe_it": "Parassita",
+      "class_slug": "parassita",
+      "hall_id": "hall_parassita"
+    },
+    {
+      "n": 24,
+      "classe_it": "Pittore",
+      "class_slug": "pittore",
+      "hall_id": "hall_pittore"
+    },
+    {
+      "n": 25,
+      "classe_it": "Runista",
+      "class_slug": "runista",
+      "hall_id": "hall_runista"
+    },
+    {
+      "n": 26,
+      "classe_it": "Sciamano",
+      "class_slug": "sciamano",
+      "hall_id": "hall_sciamano"
+    },
+    {
+      "n": 27,
+      "classe_it": "Sognatore",
+      "class_slug": "sognatore",
+      "hall_id": "hall_sognatore"
+    }
+  ],
+  "hall_status_matrix": {
+    "active_design_ready_5": [
+      "cacciatore_di_mostri",
+      "guerriero",
+      "ladro",
+      "mago",
+      "paladino"
+    ],
+    "planned_22": [
+      "alchimista",
+      "artificiere",
+      "astrologo",
+      "bardo",
+      "burattinaio",
+      "cacciatore_del_sangue",
+      "cacciatore_del_vuoto",
+      "cartografo",
+      "cavaliere_della_morte",
+      "cavaliere_di_draghi",
+      "cronista",
+      "druido",
+      "fabbro_arcano",
+      "giocatore_d_azzardo",
+      "mercante",
+      "monaco",
+      "negromante",
+      "parassita",
+      "pittore",
+      "runista",
+      "sciamano",
+      "sognatore"
+    ],
+    "status_definitions": {
+      "ACTIVE-DESIGN-READY": "Sala già collegata al sistema legacy (R18.6 · 5 classi live: guerriero, ladro, mago, paladino, cacciatore_di_mostri). Design completo con proficiency PM-lockata. Runtime enforcement deferred a R18.6 live.",
+      "PLANNED": "Sala canonicamente progettata (R18.6.1) ma NON runtime-live. main_stat/armor/weapon = PENDING_*. NO auto-unlock. Attende: stat definitive · proficiency definite · equip compatibile · identità gameplay · guida player-facing · readiness tecnica approvata.",
+      "LOCKED-UNTIL-CLASS-READY": "Fallback status per classi con readiness parziale. Non usato in R18.6.1 initial (tutte le 22 non-live sono PLANNED)."
+    }
+  },
+  "recruit_flow_extended": {
+    "step_0_initial_state": "class_slug=null · class_proficiency=null · recruit_status='recruit_unassigned' · classe=Senza Classe/Recluta",
+    "step_1_hall_entry": "Recluta entra in una delle 27 Sale (5 live opzionabili subito · 22 PLANNED non selezionabili finché non ACTIVE-DESIGN-READY)",
+    "step_2_safe_mode_trial": "Recluta affronta prova safe-mode dedicata (una per Sala · 27 concept documentali)",
+    "step_3_choice_confirmation": "Preview esplicita: nome classe · descrizione · main stat · armor prof · weapon prof · stile di gioco · punti forza · punti debole · equip tipico · ruolo indicativo · anteprima Sala · Maestro. Player-driven · gratuita · non premium · non casuale.",
+    "step_4_assegnazione_classe": "class_proficiency ← legacy label · canonical_class_slug ← slug canonico",
+    "step_5_class_slug_assignment": "class_slug ← slug canonico Sala · recruit_status ← 'class_assigned' · hall_master_witness_npc ← NPC Sala",
+    "step_6_unlock_identity": "Sblocco identità · proficiency · equip specializzato · lock_state passa da 'locked_recruit_unassigned' (C2 #3) a 'equippable' (C2 #10)",
+    "governance": {
+      "no_random_assignment": true,
+      "no_auto_class": true,
+      "no_auto_derive_from_equip_or_stat": true,
+      "no_choice_outside_halls": true,
+      "no_implicit_bridge": true
+    },
+    "rite_of_rebirth_flow": {
+      "purpose": "cambiamento classe una-tantum per adventurer",
+      "cost_type": "costo elevato non-premium · no real-money · no shortcut",
+      "frequency": "una sola volta per adventurer",
+      "sequence": [
+        {
+          "n": 1,
+          "phase": "Classe attuale (esistente)"
+        },
+        {
+          "n": 2,
+          "phase": "Rite of Rebirth (spesa risorse gilda elevata · one-time)"
+        },
+        {
+          "n": 3,
+          "phase": "Ritorno temporaneo a Senza Classe (recruit_unassigned re-attivato)"
+        },
+        {
+          "n": 4,
+          "phase": "Scelta di un'altra Sala disponibile (fra le ACTIVE-DESIGN-READY vigenti)"
+        },
+        {
+          "n": 5,
+          "phase": "Nuova prova/rituale"
+        },
+        {
+          "n": 6,
+          "phase": "Nuova classe · nuovo class_slug"
+        }
+      ],
+      "constraints_deferred_to_technical_gate": [
+        "equip incompatibile · reset/riconversione",
+        "progressione (level/talenti)",
+        "storico classe (log identity)"
+      ],
+      "status": "HOLD · gate tecnico futuro dedicato (non R18.6.1)"
+    }
+  },
+  "recruit_unassigned_rules": {
+    "state_definition": "adventurer con class_slug=null AND class_proficiency=null AND recruit_status='recruit_unassigned'",
+    "corresponding_lock_state_c2": "#3 locked_recruit_unassigned",
+    "forbidden_actions": {
+      "assign_class_automatically": false,
+      "gain_class_main_stat": false,
+      "gain_class_proficiency": false,
+      "equip_class_specialized_gear": false,
+      "run_normal_dungeon": false,
+      "run_raid": false,
+      "class_progression": false,
+      "idle_xp_gain": false,
+      "sell": false,
+      "transfer_to_other_guild": false,
+      "monetize_via_real_money": false
+    },
+    "allowed_actions": {
+      "remain_in_roster": true,
+      "be_dismissed_congedato": true,
+      "receive_tutorial": true,
+      "visit_class_halls": true,
+      "attempt_safe_mode_trial": true,
+      "equip_universal_allowed_items": true
+    },
+    "cap_per_guild": 3,
+    "idle_xp_rate": "0%",
+    "notes": "Restrizioni invariate rispetto a R18.6 · R18.6.1 conferma verbatim · dismissal ammesso (Q3 R18.6=CUSTOM) · sell/transfer non ammessi"
+  },
+  "class_slug_assignment_design": {
+    "trigger": "confirmation step 3 del flow · player explicit consent",
+    "validation_rules": [
+      "class_slug ∈ enum{27 canonical slug list}",
+      "class_slug ← slug canonico della Sala scelta (immutable mapping · no user override)",
+      "class_slug NON derivabile da class_proficiency automaticamente",
+      "class_slug NON derivabile da equip/stat automaticamente",
+      "class_slug NON scelto fuori dalle 27 Sale",
+      "class_slug NON assegnato tramite bridge legacy silente"
+    ],
+    "fields_updated_atomically": [
+      "class_slug",
+      "class_proficiency",
+      "canonical_class_slug",
+      "class_hall_id",
+      "class_hall_assigned_at",
+      "hall_master_witness_npc",
+      "recruit_status",
+      "narrative_intro_shown"
+    ],
+    "reversibility_via_rite_of_rebirth": {
+      "available": true,
+      "constraint": "one-time per adventurer · high-cost non-premium · gate tecnico futuro"
+    },
+    "runtime_apply_status": "DEFERRED to R18.3f + Apply Phase (HOLD)",
+    "no_operations_in_r18_6_1": [
+      "NO DB write",
+      "NO schema update",
+      "NO migration script",
+      "NO runtime bridge",
+      "NO auto-derive"
+    ]
+  },
+  "hall_profiles": [
+    {
+      "hall_id": "hall_alchimista",
+      "nome_ufficiale_it": "Distilleria del Vapore Verde",
+      "class_slug": "alchimista",
+      "classe_it": "Alchimista",
+      "regione_location": "sottotetto del Complesso · condotti di rame che scendono lungo le pareti",
+      "lore_source": "Fondata dopo il Vapore Verde che salvò la Prima Gilda dalla peste · un grammo separa cura e veleno (motto)",
+      "identita_architettonica": "Volta bassa con alambicchi ovali sospesi · pavimenti in mattonelle numerate · bilance rituali",
+      "atmosfera": "Umido dolciastro · vapore verde che ristagna nei corridoi · fischio costante degli alambicchi",
+      "simbolo": "Alambicco stilizzato dentro cerchio graduato",
+      "colori_descrittivi": "verde vetro · rame lucido · avorio",
+      "hall_master": {
+        "nome": "Maestra Distillatrice Ilyra Ottavia",
+        "titolo": "Titolo di rispetto per chi separa cure dai veleni",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Goccia — separare correttamente una goccia curativa da una tossica con la sola bilancia",
+      "rituale_di_assegnazione": "Ilyra siglia il grembiule del Recluta con la cera dell'alambicco · consegna della Bilancia Personale",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "supporto tattico · pozioni · buff/debuff · utility crafting",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Mano che Separa' · badge alambicco · flavor log 'L'Alchimista ha misurato e la Gilda è più leggera di un veleno'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_artificiere",
+      "nome_ufficiale_it": "Officina Fumante di Rame",
+      "class_slug": "artificiere",
+      "classe_it": "Artificiere",
+      "regione_location": "cortile interno del Complesso · tettoia aperta con camini bassi",
+      "lore_source": "Costruita dopo l'Ingranaggio Salvato che tenne aperta l'ultima cateratta · ciò che si rompe si rifà, ciò che si rifà migliora (motto)",
+      "identita_architettonica": "Officina a cielo semiaperto · morse ovunque · giranti e cinghie sui soffitti",
+      "atmosfera": "Fumo di carbone dolce · scintille ordinate · rumore continuo di martello leggero",
+      "simbolo": "Ingranaggio dentato dentro esagono di rame",
+      "colori_descrittivi": "rame acceso · nero fuliggine · giallo lampone",
+      "hall_master": {
+        "nome": "Capo Artificiere Nolan Vent",
+        "titolo": "Nome del meccanico che serve l'ingranaggio più che l'ordine",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova dell'Ingranaggio — rimontare un meccanismo composto da otto pezzi entro un giro di clessidra a sabbia rossa",
+      "rituale_di_assegnazione": "Nolan consegna il Cacciavite Firmato · marchio a fuoco piccolo sull'incavo del pollice",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "supporto tecnico · torrette · dispositivi · engineering utility",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Mano che Ripara' · badge ingranaggio · flavor log 'L'Artificiere ha stretto la vite e la Gilda ha respirato'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_astrologo",
+      "nome_ufficiale_it": "Osservatorio delle Costellazioni Fisse",
+      "class_slug": "astrologo",
+      "classe_it": "Astrologo",
+      "regione_location": "torre bassa gemellare del Circolo dei Nove Sigilli · terrazza aperta al cielo settentrionale",
+      "lore_source": "Eretto per leggere le Costellazioni Fisse che non tramontano · ciò che è scritto in alto è già accaduto in basso (motto)",
+      "identita_architettonica": "Cupola scorrevole in bronzo · pavimento in mattonelle di ardesia numerate · sedia rotante centrale",
+      "atmosfera": "Aria tersa notturna · odore lieve di ottone lucidato · silenzio della volta stellare",
+      "simbolo": "Cerchio zodiacale con dodici tacche e una tredicesima invisibile",
+      "colori_descrittivi": "blu profondo · argento notturno · nero indaco",
+      "hall_master": {
+        "nome": "Astrologo Maggiore Cassian Vale",
+        "titolo": "Nome del lettore di cieli senza casata",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Costellazione — riconoscere una costellazione fissa nell'orizzonte capovolto della cupola",
+      "rituale_di_assegnazione": "Cassian consegna il Compasso Celeste · segna il palmo con inchiostro di stella nera",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "supporto arcano · buff basati su fasi · previsione danni · debuff cosmici",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha visto il Tredicesimo' · badge zodiaco tacca · flavor log 'L'Astrologo ha guardato in alto e la Gilda ha camminato dritta'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_bardo",
+      "nome_ufficiale_it": "Taverna della Corda Spezzata",
+      "class_slug": "bardo",
+      "classe_it": "Bardo",
+      "regione_location": "ala ovest del Complesso · sala grande con palco basso e camino permanente",
+      "lore_source": "Nata dalla notte in cui una corda spezzata continuò a suonare da sola · una canzone rimasta a metà è un patto (motto)",
+      "identita_architettonica": "Sala unica con travi in legno scuro · palco basso a nord · gradinata di sedie disordinate",
+      "atmosfera": "Odore di birra ambrata · voci mescolate · una nota di liuto sempre presente in sottofondo",
+      "simbolo": "Liuto stilizzato con corda spezzata a metà",
+      "colori_descrittivi": "rosso vino · legno miele · giallo candela",
+      "hall_master": {
+        "nome": "Bardo Maggiore Ambroise",
+        "titolo": "Nome del cantore che ha finito la Canzone Interrotta",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Nota Mancante — completare la Canzone Interrotta trovando la nota giusta al primo tentativo",
+      "rituale_di_assegnazione": "Ambroise consegna la Fibbia della Corda · nome inciso sul retro del palco",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "supporto morale · buff di gruppo · debuff sonori · utility narrativa",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha completato la Canzone' · badge liuto e nota · flavor log 'Il Bardo ha cantato e la stanza ha smesso di temere'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_burattinaio",
+      "nome_ufficiale_it": "Teatro dei Fili di Ferro",
+      "class_slug": "burattinaio",
+      "classe_it": "Burattinaio",
+      "regione_location": "cortile ovest del Complesso · teatro a cielo aperto con sipario perpetuo",
+      "lore_source": "Costruito per il Primo Burattino che si mosse da solo · il filo che tiene è il filo che libera (motto)",
+      "identita_architettonica": "Palcoscenico rialzato · fondale nero · impalcatura di travi sopra il palco per i fili",
+      "atmosfera": "Silenzio da spettacolo appena finito · scricchiolii di legno · fili di ferro che vibrano appena",
+      "simbolo": "Marionetta stilizzata con fili convergenti a una sola mano",
+      "colori_descrittivi": "nero teatro · ferro brunito · rosso sipario",
+      "hall_master": {
+        "nome": "Prima Burattinaia Melisandre Corda",
+        "titolo": "Nome della donna che mosse il Primo Burattino",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Filo — muovere una marionetta di ferro attraverso il palco senza far cadere il campanello sospeso",
+      "rituale_di_assegnazione": "Melisandre consegna la Mano di Ferro · marchio a inchiostro sul dorso della mano dominante",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "controllo · summon marionette · debuff a distanza · pet management",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha mosso il Ferro' · badge marionetta · flavor log 'Il Burattinaio ha tirato il filo e la scena ha risposto'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_sangue",
+      "nome_ufficiale_it": "Ossario del Cinghiale Bianco",
+      "class_slug": "cacciatore_del_sangue",
+      "classe_it": "Cacciatore del Sangue",
+      "regione_location": "grotta al margine del bosco della Gilda · adiacente ma non affiliato al Capanno del Sentiero Selvaggio",
+      "lore_source": "Aperto dopo la Caccia del Cinghiale Bianco che sanguinò per tre notti · il sangue sa dove torna (motto)",
+      "identita_architettonica": "Grotta a volta bassa · ossa disposte in semicerchio · una vasca di pietra al centro",
+      "atmosfera": "Umido di roccia · odore metallico appena percettibile · goccia costante da una stalattite",
+      "simbolo": "Zanna di cinghiale bianco incastonata su goccia stilizzata",
+      "colori_descrittivi": "rosso scuro · osso · nero cavernoso",
+      "hall_master": {
+        "nome": "Cacciatore Solitario Grim Rohl",
+        "titolo": "Nome del cacciatore che segue tracce di sangue senza pietà",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Traccia Rossa — seguire una scia di sangue di cinghiale spirito fino al punto di caduta",
+      "rituale_di_assegnazione": "Grim segna la clavicola del Recluta con la Zanna del Bianco · nessun voto verbale, solo il gesto",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "melee bloody · self-sustain via emorragia inflitta · burst su prede ferite",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che segue il Rosso' · badge zanna e goccia · flavor log 'Il Cacciatore del Sangue ha trovato e la preda si è fermata'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_vuoto",
+      "nome_ufficiale_it": "Faro Rovesciato di Onirade",
+      "class_slug": "cacciatore_del_vuoto",
+      "classe_it": "Cacciatore del Vuoto",
+      "regione_location": "isolotto artificiale nel lago della Gilda · faro con la luce che punta verso il basso, verso l'acqua",
+      "lore_source": "Costruito dopo l'Ombra di Onirade che uscì dall'acqua e non tornò indietro · si caccia ciò che non ha peso (motto)",
+      "identita_architettonica": "Struttura di pietra rovesciata · lanterna verso il basso · scala a chiocciola discendente",
+      "atmosfera": "Aria salmastra · silenzio dell'acqua ferma · lanterna che oscilla appena senza vento",
+      "simbolo": "Lanterna rovesciata su cerchio interrotto",
+      "colori_descrittivi": "grigio nebbia · blu abisso · nero senza riflesso",
+      "hall_master": {
+        "nome": "Cacciatrice del Vuoto Nael di Onirade",
+        "titolo": "Nome della donna che ha visto oltre l'acqua e non ha parlato",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Riflesso Vuoto — riconoscere il proprio riflesso nella lanterna rovesciata e non distoglierlo",
+      "rituale_di_assegnazione": "Nael consegna la Lanterna Muta · nessuna parola, solo la lanterna",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "ranged void · dispel · anti-summon · counter contro incorporei",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che non ha distolto lo sguardo' · badge lanterna rovesciata · flavor log 'Il Cacciatore del Vuoto ha guardato e il vuoto ha guardato indietro'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "nome_ufficiale_it": "Capanno del Sentiero Selvaggio",
+      "class_slug": "cacciatore_di_mostri",
+      "classe_it": "Cacciatore di Mostri",
+      "regione_location": "Capanno di legno grezzo sul limite del bosco della Gilda · trofei alle pareti, focolare aperto",
+      "lore_source": "Costruito dal primo cacciatore che tornò con la testa del Cinghiale Bianco · la bestia è vecchia, il cacciatore di più (motto)",
+      "identita_architettonica": "Baita di tronchi · focolare al centro · rastrelliera di archi lungo la parete est",
+      "atmosfera": "Odore di legna bruciata e pelle conciata · fischi di rapaci notturni al di fuori",
+      "simbolo": "Faretra ricurva su corno di cinghiale",
+      "colori_descrittivi": "verde scuro · marrone corteccia · ocra",
+      "hall_master": {
+        "nome": "Vecchio Falconiere Ovyr",
+        "titolo": "Maestro del Capanno",
+        "status": "LOCKED"
+      },
+      "prova_safe_mode": "La Traccia del Primo Passo — seguire la traccia notturna di un cinghiale-fantasma fino all'alba",
+      "rituale_di_assegnazione": "Ovyr consegna la Faretra del Sentiero · marchio a inchiostro d'ontano sulla mano · voto di silenzio nel bosco",
+      "main_stat": "Destrezza",
+      "armor_proficiency": [
+        "cuoio",
+        "maglia"
+      ],
+      "weapon_proficiency": [
+        "arco",
+        "balestra",
+        "spada",
+        "pugnale",
+        "lancia"
+      ],
+      "stile_gameplay": "ranged agile · trappole · knowledge di bestie",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Voce del Sentiero' · badge faretra e corno · flavor log 'Il Cacciatore ha camminato e il bosco lo ha lasciato passare'",
+      "stato_operativo": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_cartografo",
+      "nome_ufficiale_it": "Camera delle Mappe Vive",
+      "class_slug": "cartografo",
+      "classe_it": "Cartografo",
+      "regione_location": "sala interna del Complesso · vicino all'Ufficio del Maestro Gilda",
+      "lore_source": "Aperta dopo la Prima Mappa che si aggiornò da sola · la mappa non descrive, la mappa ricorda (motto)",
+      "identita_architettonica": "Sala rettangolare con banconi lunghi · mappe appese al soffitto con corde tese · lenti d'ingrandimento sospese",
+      "atmosfera": "Odore di carta antica e inchiostro fresco · brusio di penne · pergamene che frusciano appena",
+      "simbolo": "Rosa dei venti con un punto cardinale in più",
+      "colori_descrittivi": "seppia · verde muschio · blu inchiostro",
+      "hall_master": {
+        "nome": "Capomastro Cartografo Odran il Mite",
+        "titolo": "Nome del cartografo che ricorda ciò che non ha ancora camminato",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Mappa Cieca — disegnare una mappa di una stanza percorsa a occhi chiusi",
+      "rituale_di_assegnazione": "Odran consegna il Compasso del Ricordo · marchio a inchiostro seppia sul polso",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "utility esplorativa · scouting · reveal · buff di movimento",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che disegna il Ricordo' · badge rosa dei venti · flavor log 'Il Cartografo ha inciso e la strada si è ricordata di sé'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cavaliere_della_morte",
+      "nome_ufficiale_it": "Cripta del Vessillo Nero",
+      "class_slug": "cavaliere_della_morte",
+      "classe_it": "Cavaliere della Morte",
+      "regione_location": "sottosuolo del Complesso · cripta murata sotto l'armeria",
+      "lore_source": "Fondata sul Vessillo che sventolò dopo la Caduta della Prima Legione · la morte è già passata, io la seguo (motto)",
+      "identita_architettonica": "Cripta a volta bassa · sarcofagi lungo le pareti · vessillo nero sospeso al centro",
+      "atmosfera": "Silenzio pesante · odore di cera vecchia e pietra fredda · una fiaccola sempre accesa in fondo",
+      "simbolo": "Elmo chiuso su vessillo triangolare",
+      "colori_descrittivi": "nero pece · argento freddo · rosso rappreso",
+      "hall_master": {
+        "nome": "Primo Cavaliere Nero Vaeric Rahn",
+        "titolo": "Nome del cavaliere che tornò dalla battaglia e non parlò più",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Vessillo — sostenere il Vessillo Nero per l'intero giro della cripta senza abbassarlo",
+      "rituale_di_assegnazione": "Vaeric consegna la Cintura del Vessillo · nessuna parola, solo un cenno dell'elmo chiuso",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "melee tank/DPS ibrido · self-heal via necroenergia · aura di paura",
+      "ruolo_indicativo": "Hybrid",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha portato il Vessillo' · badge elmo e vessillo · flavor log 'Il Cavaliere della Morte è passato e la carne dei nemici ha ricordato di essere carne'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cavaliere_di_draghi",
+      "nome_ufficiale_it": "Ariale del Signore delle Fiamme",
+      "class_slug": "cavaliere_di_draghi",
+      "classe_it": "Cavaliere di Draghi",
+      "regione_location": "torre sud del Complesso · piattaforma aperta sul cielo · gabbia dei draconi giovani al piano inferiore",
+      "lore_source": "Aperta dopo il Patto delle Fiamme che salvò la Gilda dall'assedio · il drago non si comanda, si accompagna (motto)",
+      "identita_architettonica": "Piattaforma di pietra basaltica · anelli di ferro per catene · gradinata verso la gabbia dei draconi",
+      "atmosfera": "Vento costante · odore di zolfo appena presente · ruggito basso da sotto",
+      "simbolo": "Testa di drago stilizzata su ala aperta",
+      "colori_descrittivi": "rosso brace · nero basalto · oro fuso",
+      "hall_master": {
+        "nome": "Signora delle Fiamme Aelor Draconis",
+        "titolo": "Nome della cavaliera che ha pattuito con il Drago Vecchio",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova dello Sguardo — reggere lo sguardo di un draconcello senza distogliere gli occhi per un giro completo",
+      "rituale_di_assegnazione": "Aelor consegna la Redine di Basalto · marchio a fuoco sul braccio non dominante",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "melee/ranged con montatura draconica · burst di fiamma · aura draconica",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha retto lo Sguardo' · badge drago e ala · flavor log 'Il Cavaliere di Draghi ha volato e il vento ha ricordato il suo nome'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cronista",
+      "nome_ufficiale_it": "Scriptorium del Presente Eterno",
+      "class_slug": "cronista",
+      "classe_it": "Cronista",
+      "regione_location": "biblioteca ovest del Complesso · adiacente al Circolo dei Nove Sigilli ma distinta",
+      "lore_source": "Fondato dopo il Giorno che non finì · ciò che viene scritto oggi accade oggi per sempre (motto)",
+      "identita_architettonica": "Sala lunga con banconi allineati · calamai di pietra fissi · pergamene stese su rulli sospesi",
+      "atmosfera": "Silenzio di studio · gratta di penne d'oca · odore di inchiostro e cera",
+      "simbolo": "Penna d'oca su clessidra ferma",
+      "colori_descrittivi": "seppia scuro · verde salvia · pergamena chiara",
+      "hall_master": {
+        "nome": "Cronista Maggiore Ambrose di Mnemos",
+        "titolo": "Nome del cronista che tiene la memoria del presente",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Trascrizione Esatta — copiare senza errori un frammento di cronaca al primo tentativo",
+      "rituale_di_assegnazione": "Ambrose consegna la Penna del Presente · marchio a inchiostro sul dorso della mano",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "supporto arcano/informativo · buff di narrativa · dispel via 'riscrittura' · utility investigativa",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha scritto senza cancellare' · badge penna e clessidra · flavor log 'Il Cronista ha inciso e la Gilda ha smesso di dimenticare'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_druido",
+      "nome_ufficiale_it": "Radura del Salice Millenario",
+      "class_slug": "druido",
+      "classe_it": "Druido",
+      "regione_location": "fuori dal Complesso · radura naturale nel bosco della Gilda · al centro un salice millenario",
+      "lore_source": "Consacrata dal Salice che parlò al Primo Druido · la foresta chiede prima di dare (motto)",
+      "identita_architettonica": "Radura circolare · salice al centro · pietre druidiche disposte a corona esterna",
+      "atmosfera": "Odore di corteccia bagnata · canto lento di uccelli · vento che passa sempre da est",
+      "simbolo": "Foglia di salice stilizzata su cerchio di pietre",
+      "colori_descrittivi": "verde bosco · marrone tronco · grigio pietra",
+      "hall_master": {
+        "nome": "Druido Anziano Bran del Salice",
+        "titolo": "Nome del druido che parla ancora al Salice Millenario",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Silenzio della Foresta — ascoltare il Salice per un giro di sole senza rispondere",
+      "rituale_di_assegnazione": "Bran incide una scaglia di corteccia sul braccio · nessun voto verbale, solo il gesto e il silenzio",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "hybrid caster/melee · shapeshift · healing naturale · elemental dot",
+      "ruolo_indicativo": "Hybrid",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha ascoltato il Salice' · badge foglia e pietra · flavor log 'Il Druido ha camminato e il bosco lo ha chiamato per nome'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_fabbro_arcano",
+      "nome_ufficiale_it": "Fucina degli Anelli Silenti",
+      "class_slug": "fabbro_arcano",
+      "classe_it": "Fabbro Arcano",
+      "regione_location": "sotterraneo del Complesso · adiacente all'armeria ma indipendente",
+      "lore_source": "Aperta dopo la Notte in cui un Anello suonò senza bocca · il metallo tace ma ricorda (motto)",
+      "identita_architettonica": "Fucina bassa e larga · incudini rune-incise · vasca di tempra piena di acqua argentata",
+      "atmosfera": "Rumore di martello · odore di metallo bagnato · rune che brillano appena nell'ombra",
+      "simbolo": "Anello circolare inciso di runa singola",
+      "colori_descrittivi": "argento freddo · blu runico · nero forgia",
+      "hall_master": {
+        "nome": "Fabbro Anziano Corvus Anello",
+        "titolo": "Nome del fabbro che ha temprato l'Anello Silente",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Runa — incidere una runa semplice su anello grezzo al primo colpo di martello",
+      "rituale_di_assegnazione": "Corvus consegna il Martello Personale · marchio a fuoco piccolo sull'incavo del gomito",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "crafting arcano · buff via infusion · gear enchant · utility runica",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha inciso al Primo Colpo' · badge anello runato · flavor log 'Il Fabbro Arcano ha battuto e il metallo ha ascoltato'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_giocatore_d_azzardo",
+      "nome_ufficiale_it": "Sala dei Dadi di Ossidiana",
+      "class_slug": "giocatore_d_azzardo",
+      "classe_it": "Giocatore d'Azzardo",
+      "regione_location": "ala est del Complesso · sala circolare bassa · tavoli neri di ossidiana",
+      "lore_source": "Aperta dopo il Lancio che salvò la Gilda con un tredici impossibile · la sorte è un patto scritto in nero (motto)",
+      "identita_architettonica": "Sala circolare · quattro tavoli di ossidiana disposti a cardinale · sedie basse senza spalliera",
+      "atmosfera": "Suono di dadi che rotolano · brusio contenuto · odore di brace e vino secco",
+      "simbolo": "Dado ottaedrico con tredicesima faccia invisibile",
+      "colori_descrittivi": "nero ossidiana · rosso patto · oro sfumato",
+      "hall_master": {
+        "nome": "Croupier Perpetuo Sylas Nod",
+        "titolo": "Nome del croupier che ha tirato il tredici impossibile",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Tredicesimo — lanciare un dado di ossidiana e leggere la faccia invisibile senza sbagliare",
+      "rituale_di_assegnazione": "Sylas consegna i Dadi Personali (due, mai tre) · marchio con inchiostro nero sul palmo",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "utility caotica · buff/debuff RNG-based · effetti percentuali · risk-reward",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha letto il Tredicesimo' · badge dado ottaedrico · flavor log 'Il Giocatore d'Azzardo ha lanciato e la Gilda non ha perso'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_guerriero",
+      "nome_ufficiale_it": "Fortezza d'Acciaio",
+      "class_slug": "guerriero",
+      "classe_it": "Guerriero",
+      "regione_location": "Ala nord del Complesso Gilda, adiacente all'armeria",
+      "lore_source": "Fondata al primo assedio della Gilda · l'acciaio non si spezza, si tempra (motto)",
+      "identita_architettonica": "Bastioni bassi in pietra grigia · piastre metalliche a soffitto · incudine centrale sempre accesa",
+      "atmosfera": "Rumore di incudini · ordini gridati · odore di ferro caldo e olio d'armi",
+      "simbolo": "Ascia rituale sopra sigillo circolare",
+      "colori_descrittivi": "grigio ferro · rosso brace · ottone spento",
+      "hall_master": {
+        "nome": "Comandante Aldric del Ferro",
+        "titolo": "Comandante della Fortezza",
+        "status": "LOCKED"
+      },
+      "prova_safe_mode": "La Prova del Peso — sollevare l'ascia rituale e mantenere la posizione per un giro completo del braciere",
+      "rituale_di_assegnazione": "Il Recluta impugna l'ascia · Aldric lo marchia con il Sigillo del Ferro sulla spalla · voto verbale di tempra",
+      "main_stat": "Forza",
+      "armor_proficiency": [
+        "maglia",
+        "piastre"
+      ],
+      "weapon_proficiency": [
+        "spada",
+        "ascia",
+        "martello",
+        "scudo",
+        "lancia",
+        "arma_in_asta"
+      ],
+      "stile_gameplay": "melee frontale · scudo/piastra · tempra sostenuta",
+      "ruolo_indicativo": "Tank",
+      "tratto_simbolico_non_combat": "Titolo 'Portatore del Sigillo del Ferro' · badge acciaio · flavor log 'La brace non si spegne finché il Guerriero veglia'",
+      "stato_operativo": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_ladro",
+      "nome_ufficiale_it": "Loggia dei Sussurri",
+      "class_slug": "ladro",
+      "classe_it": "Ladro",
+      "regione_location": "Sottoscala del Complesso Gilda · corridoi di legno scuro senza torce, solo candele",
+      "lore_source": "Fondata dalla prima spia entrata nella Gilda · l'ombra è alleata, il rumore è nemico (motto)",
+      "identita_architettonica": "Passaggi stretti · pannelli scorrevoli · pavimenti rivestiti in feltro · una sola sedia al centro",
+      "atmosfera": "Silenzio innaturale · candele lente · un campanello sospeso nel corridoio finale",
+      "simbolo": "Campanello immobile su cordone reciso",
+      "colori_descrittivi": "nero corvino · verde muschio · argento spento",
+      "hall_master": {
+        "nome": "Maestra dei Sussurri Selene",
+        "titolo": "Maestra della Loggia",
+        "status": "LOCKED"
+      },
+      "prova_safe_mode": "La Prova del Silenzio — attraversare la Sala Buia senza far tintinnare il campanello sospeso",
+      "rituale_di_assegnazione": "Selene consegna il Marchio della Loggia · giuramento sussurrato all'orecchio · nessun testimone se non l'ombra",
+      "main_stat": "Destrezza",
+      "armor_proficiency": [
+        "cuoio"
+      ],
+      "weapon_proficiency": [
+        "pugnale",
+        "spada",
+        "balestra"
+      ],
+      "stile_gameplay": "melee/ranged agile · critical strike · elusione",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Voce che non Cade' · badge campanello inciso · flavor log 'Il Ladro passa e la porta non lo ricorda'",
+      "stato_operativo": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_mago",
+      "nome_ufficiale_it": "Circolo dei Nove Sigilli",
+      "class_slug": "mago",
+      "classe_it": "Mago",
+      "regione_location": "Torre superiore del Complesso · biblioteca a spirale, candele arcane sospese",
+      "lore_source": "Fondato dai Nove che sopravvissero al Rogo delle Pergamene · ogni parola letta è una parola scagliata (motto)",
+      "identita_architettonica": "Torre a base ottagonale · nove nicchie con altrettanti sigilli · scala a spirale interna",
+      "atmosfera": "Aria fredda e ferma · pergamena vergine sempre pronta · candele che non sfrigolano",
+      "simbolo": "Nove sigilli disposti a ruota attorno a un occhio aperto",
+      "colori_descrittivi": "blu notte · oro pallido · viola violetta",
+      "hall_master": {
+        "nome": "Arcimago Vessel di Memoria",
+        "titolo": "Custode del Circolo",
+        "status": "LOCKED"
+      },
+      "prova_safe_mode": "Il Rito dei Nove Sigilli — tracciare il proprio sigillo personale su pergamena vergine sotto lo sguardo di Vessel",
+      "rituale_di_assegnazione": "Vessel apre l'ottava nicchia e vi ripone il sigillo tracciato · consegna la Chiave dei Nove · nome inciso sulla parete",
+      "main_stat": "Intelligenza",
+      "armor_proficiency": [
+        "stoffa"
+      ],
+      "weapon_proficiency": [
+        "bastone",
+        "tomo",
+        "focus",
+        "pugnale"
+      ],
+      "stile_gameplay": "caster puro · burst magico · controllo",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Nono Sigillo' · badge sigillo tracciato · flavor log 'Il Mago ha scritto e la parola è stata udita'",
+      "stato_operativo": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_mercante",
+      "nome_ufficiale_it": "Loggia del Bilico Onesto",
+      "class_slug": "mercante",
+      "classe_it": "Mercante",
+      "regione_location": "ala sud del Complesso · adiacente al mercato interno · loggia aperta a colonne",
+      "lore_source": "Fondata dal primo Bilico che pesò senza mentire · il prezzo giusto è quello che entrambi accettano (motto)",
+      "identita_architettonica": "Loggia rettangolare a colonne · bilance appese al soffitto · registri incatenati ai banconi",
+      "atmosfera": "Odore di spezie, cera e pergamena · brusio di trattative · tintinnio costante di monete",
+      "simbolo": "Bilancia in equilibrio perfetto su moneta stilizzata",
+      "colori_descrittivi": "oro brunito · marrone pergamena · verde smeraldo",
+      "hall_master": {
+        "nome": "Prima Mercatrice Yara della Bilancia",
+        "titolo": "Nome della mercatrice che ha stabilito il Prezzo Giusto",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Bilico Onesto — pesare due merci diverse e stabilirne il valore equo al primo tentativo",
+      "rituale_di_assegnazione": "Yara consegna la Bilancia Personale (piccola) · marchio a inchiostro d'oliva sul mignolo",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "utility economica · buff mercantili · dispel via 'contratto' · social utility",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha pesato senza mentire' · badge bilancia in equilibrio · flavor log 'Il Mercante ha contrattato e la Gilda ha guadagnato'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_monaco",
+      "nome_ufficiale_it": "Cortile della Corda di Cinabro",
+      "class_slug": "monaco",
+      "classe_it": "Monaco",
+      "regione_location": "cortile interno del Complesso · lastricato in pietra grigia · corda cinabrina tesa tra due pilastri",
+      "lore_source": "Aperto dal Primo Monaco che camminò sulla Corda senza cadere · il corpo è la prima disciplina (motto)",
+      "identita_architettonica": "Cortile quadrato · pilastri a nord e sud · corda cinabrina tesa a mezza altezza · pietre piatte disposte a spirale",
+      "atmosfera": "Silenzio spezzato solo dal passo · odore di pietra fredda · aria ferma",
+      "simbolo": "Corda cinabrina tesa tra due pilastri",
+      "colori_descrittivi": "rosso cinabro · grigio pietra · bianco osso",
+      "hall_master": {
+        "nome": "Monaco Anziano Ren Silenzio",
+        "titolo": "Nome del monaco che ha camminato sulla Corda al Primo Tentativo",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Corda — attraversare la Corda di Cinabro per l'intera lunghezza senza toccare terra",
+      "rituale_di_assegnazione": "Ren consegna il Nastro Personale di stoffa rossa · nessuna parola, solo il nastro annodato al polso",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "melee unarmed · burst da combo · self-heal via disciplina · mobility",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha camminato sulla Corda' · badge corda annodata · flavor log 'Il Monaco ha respirato e la stanza ha rallentato'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_negromante",
+      "nome_ufficiale_it": "Ossario del Cerchio Chiuso",
+      "class_slug": "negromante",
+      "classe_it": "Negromante",
+      "regione_location": "cripta profonda del Complesso · sotto la Cripta del Vessillo Nero ma indipendente",
+      "lore_source": "Aperto dopo il Cerchio che si chiuse da solo · ciò che è finito continua se sa il proprio nome (motto)",
+      "identita_architettonica": "Sala circolare · pareti rivestite di ossa disposte a mosaico · cerchio inciso al centro",
+      "atmosfera": "Aria stantia dolciastra · candele nere che non si consumano · silenzio pesante",
+      "simbolo": "Cerchio chiuso con teschio stilizzato al centro",
+      "colori_descrittivi": "nero pece · viola cadaverico · osso vecchio",
+      "hall_master": {
+        "nome": "Necromante Anziano Silas Nomeperduto",
+        "titolo": "Nome del negromante che ha chiamato l'Ultima Volta",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Nome — pronunciare correttamente il proprio nome specchiato senza sbagliare la cadenza",
+      "rituale_di_assegnazione": "Silas consegna l'Anello del Nome · nessuna parola udibile, solo il gesto e l'anello",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "caster necroenergia · summon undead pet · dot · self-drain sostenuto",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha pronunciato il Nome' · badge cerchio e teschio · flavor log 'Il Negromante ha chiamato e ciò che era finito ha risposto'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_paladino",
+      "nome_ufficiale_it": "Reliquiario della Luce Fissa",
+      "class_slug": "paladino",
+      "classe_it": "Paladino",
+      "regione_location": "Cappella nella corte interna del Complesso · vetrate ambrate, brace sempre accesa sull'altare",
+      "lore_source": "Consacrato dalla prima Custode all'alba della fondazione · la luce non chiede, la luce impone (motto)",
+      "identita_architettonica": "Aula a navata singola · altare centrale con brace perpetua · vetrate ambrate a occidente",
+      "atmosfera": "Silenzio sacro · odore di cera e reliquia · alba filtrata attraverso l'ambra",
+      "simbolo": "Brace stilizzata dentro reliquiario ovale",
+      "colori_descrittivi": "ambra profondo · bianco crema · oro brunito",
+      "hall_master": {
+        "nome": "Custode Isabeau dell'Alba",
+        "titolo": "Custode del Reliquiario",
+        "status": "LOCKED"
+      },
+      "prova_safe_mode": "La Veglia della Brace — vegliare la brace dell'altare per una notte intera senza lasciare che si spenga",
+      "rituale_di_assegnazione": "Alla prima luce Isabeau consegna il Reliquiario Personale · benedizione sull'ambra · voto di custodia",
+      "main_stat": "Saggezza",
+      "armor_proficiency": [
+        "stoffa"
+      ],
+      "weapon_proficiency": [
+        "bastone",
+        "martello",
+        "focus",
+        "reliquia"
+      ],
+      "stile_gameplay": "healer/support sacro · protezione · resurrezione",
+      "ruolo_indicativo": "Healer",
+      "tratto_simbolico_non_combat": "Titolo 'Vegliante dell'Alba' · badge brace incorniciata · flavor log 'Il Paladino veglia e la Gilda respira'",
+      "stato_operativo": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_parassita",
+      "nome_ufficiale_it": "Cripta della Radice Cava",
+      "class_slug": "parassita",
+      "classe_it": "Parassita",
+      "regione_location": "grotta ipogea del Complesso · sotto il giardino della Radura del Salice Millenario ma non collegata",
+      "lore_source": "Aperta dopo la Radice Cava che nutrì la Gilda mangiando qualcosa d'altro · si vive di ciò che si trova (motto)",
+      "identita_architettonica": "Grotta bassa · pareti coperte di radici cave color osso · una vasca centrale bassa di terra scura",
+      "atmosfera": "Odore terroso · gocciolio dalle radici · silenzio umido interrotto da fruscii",
+      "simbolo": "Radice cava avvolta su cerchio incompleto",
+      "colori_descrittivi": "grigio radice · marrone umido · verde muffa",
+      "hall_master": {
+        "nome": "Parassita Anziana Ada Cava",
+        "titolo": "Nome della donna che si nutrì delle Radici Cave e non morì",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Radice — riconoscere quale radice cava è viva e quale è già cava attraverso il solo tatto",
+      "rituale_di_assegnazione": "Ada segna il collo del Recluta con una goccia di linfa scura · nessun voto verbale",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "DPS bloody · leech · stat-steal su nemici · debuff drenanti",
+      "ruolo_indicativo": "DPS",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha toccato la Radice Cava' · badge radice avvolta · flavor log 'Il Parassita è passato e ciò che era vivo si è ricordato che poteva anche non esserlo'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_pittore",
+      "nome_ufficiale_it": "Atelier dei Pigmenti Insanguinati",
+      "class_slug": "pittore",
+      "classe_it": "Pittore",
+      "regione_location": "torretta sud-ovest del Complesso · luce zenitale · tetto a lucernario largo",
+      "lore_source": "Fondato dal Primo Pittore che dipinse con il proprio sangue e visse · il colore giusto costa (motto)",
+      "identita_architettonica": "Atelier ottagonale · cavalletti disposti a raggio · tavolozze in pietra levigata · lucernario centrale",
+      "atmosfera": "Odore di olio di lino, pigmento e vernice fresca · silenzio di concentrazione · luce zenitale ferma",
+      "simbolo": "Pennello incrociato con tavolozza forata",
+      "colori_descrittivi": "rosso sangue · bianco tela · oro pigmento",
+      "hall_master": {
+        "nome": "Prima Pittrice Genoveva Rosso",
+        "titolo": "Nome della pittrice che ha dipinto la Prima Immagine Viva",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Colore Vivo — mescolare il pigmento giusto perché una tela dipinta si muova appena",
+      "rituale_di_assegnazione": "Genoveva consegna il Pennello Personale · marchio a olio di lino sul mento",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "utility illusoria · buff via 'immagini viventi' · debuff via ritratto · summon di immagini",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha dipinto il Vivo' · badge pennello e tavolozza · flavor log 'Il Pittore ha steso il colore e il muro ha respirato'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_runista",
+      "nome_ufficiale_it": "Cerchio delle Pietre Incise",
+      "class_slug": "runista",
+      "classe_it": "Runista",
+      "regione_location": "prato aperto oltre il Complesso · nove pietre alte disposte in cerchio · una centrale sepolta",
+      "lore_source": "Consacrato dal Cerchio che si chiuse alla Prima Runa · la runa non descrive, la runa impone (motto)",
+      "identita_architettonica": "Cerchio di nove menhir · pietra centrale sepolta al bordo del cerchio · erba corta calpestata",
+      "atmosfera": "Aria aperta · odore di pietra bagnata · fischio del vento tra le rune quando le tocchi",
+      "simbolo": "Runa singola incisa dentro cerchio di pietre",
+      "colori_descrittivi": "grigio pietra · blu runico · verde erba",
+      "hall_master": {
+        "nome": "Runista Anziano Halvard Nove",
+        "titolo": "Nome del runista che ha inciso la Nona Runa",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova della Nona Runa — incidere una runa semplice sulla pietra centrale al primo colpo di scalpello",
+      "rituale_di_assegnazione": "Halvard consegna lo Scalpello Personale · marchio a inchiostro di pietra sull'indice",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "caster/support con rune permanenti · buff di area · trap runiche · dispel via 'runa rotta'",
+      "ruolo_indicativo": "Support",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha inciso la Nona' · badge runa e cerchio · flavor log 'Il Runista ha inciso e la terra ha ricordato la parola'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_sciamano",
+      "nome_ufficiale_it": "Capanna dei Tamburi Fermi",
+      "class_slug": "sciamano",
+      "classe_it": "Sciamano",
+      "regione_location": "fuori dal Complesso · su una collina bassa · capanna di legno grezzo circondata da tamburi appesi",
+      "lore_source": "Fondata dallo Sciamano Vecchio che fermò i Tamburi Rotti · lo spirito non parla, lo spirito ricorda (motto)",
+      "identita_architettonica": "Capanna circolare · tamburi appesi lungo il perimetro esterno · focolare centrale spento",
+      "atmosfera": "Odore di legna bruciata vecchia · silenzio dei tamburi fermi · vento che li tocca ma non li suona",
+      "simbolo": "Tamburo fermo dentro cerchio di piume",
+      "colori_descrittivi": "marrone terroso · rosso ocra · nero fumo",
+      "hall_master": {
+        "nome": "Sciamano Anziano Vaska Tamburo",
+        "titolo": "Nome dello sciamano che ha fermato i Tamburi Rotti",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Tamburo Fermo — battere un tamburo perché lo spirito risponda senza svegliare i Tamburi Rotti",
+      "rituale_di_assegnazione": "Vaska consegna la Piuma Personale · nessuna parola, solo la piuma legata al colletto",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "hybrid healer/caster elementale · summon spiriti · buff totemici · elemental dot/hot",
+      "ruolo_indicativo": "Hybrid",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha fermato il Tamburo' · badge tamburo e piuma · flavor log 'Lo Sciamano ha battuto una volta e lo spirito ha risposto'",
+      "stato_operativo": "PLANNED"
+    },
+    {
+      "hall_id": "hall_sognatore",
+      "nome_ufficiale_it": "Camera dei Sogni Aperti",
+      "class_slug": "sognatore",
+      "classe_it": "Sognatore",
+      "regione_location": "sottotetto del Complesso · camera con soffitto affrescato di stelle · una branda al centro",
+      "lore_source": "Aperta dopo il Sogno che continuò svegli · il sogno è già accaduto, solo non lo sappiamo (motto)",
+      "identita_architettonica": "Camera quadrata bassa · affresco di stelle sul soffitto · branda di legno al centro · finestra chiusa a ovest",
+      "atmosfera": "Silenzio di riposo · odore di lino e cera · aria appena tiepida",
+      "simbolo": "Stella con nove punte dentro cerchio aperto",
+      "colori_descrittivi": "blu notte · viola sogno · bianco lino",
+      "hall_master": {
+        "nome": "Sognatrice Anziana Elyrah dei Nove Sogni",
+        "titolo": "Nome della sognatrice che ha sognato il Nono Sogno e lo ha ricordato",
+        "status": "PENDING_PM"
+      },
+      "prova_safe_mode": "La Prova del Sogno Aperto — descrivere al risveglio un sogno guidato senza modificare alcun dettaglio",
+      "rituale_di_assegnazione": "Elyrah consegna la Coperta dei Nove Sogni · nessuna parola, solo la coperta stesa sulla branda",
+      "main_stat": "PENDING_STAT_DESIGN",
+      "armor_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "weapon_proficiency": "PENDING_PROFICIENCY_DESIGN",
+      "stile_gameplay": "caster onirico · debuff mentali · summon di sogni · utility psichica",
+      "ruolo_indicativo": "Utility",
+      "tratto_simbolico_non_combat": "Titolo 'Che ha sognato senza modificare' · badge stella nove punte · flavor log 'Il Sognatore ha dormito e la stanza ha ricordato ciò che non era ancora accaduto'",
+      "stato_operativo": "PLANNED"
+    }
+  ],
+  "hall_masters": [
+    {
+      "hall_id": "hall_alchimista",
+      "class_slug": "alchimista",
+      "classe_it": "Alchimista",
+      "nome": "Maestra Distillatrice Ilyra Ottavia",
+      "titolo": "Titolo di rispetto per chi separa cure dai veleni",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_artificiere",
+      "class_slug": "artificiere",
+      "classe_it": "Artificiere",
+      "nome": "Capo Artificiere Nolan Vent",
+      "titolo": "Nome del meccanico che serve l'ingranaggio più che l'ordine",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_astrologo",
+      "class_slug": "astrologo",
+      "classe_it": "Astrologo",
+      "nome": "Astrologo Maggiore Cassian Vale",
+      "titolo": "Nome del lettore di cieli senza casata",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_bardo",
+      "class_slug": "bardo",
+      "classe_it": "Bardo",
+      "nome": "Bardo Maggiore Ambroise",
+      "titolo": "Nome del cantore che ha finito la Canzone Interrotta",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_burattinaio",
+      "class_slug": "burattinaio",
+      "classe_it": "Burattinaio",
+      "nome": "Prima Burattinaia Melisandre Corda",
+      "titolo": "Nome della donna che mosse il Primo Burattino",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_sangue",
+      "class_slug": "cacciatore_del_sangue",
+      "classe_it": "Cacciatore del Sangue",
+      "nome": "Cacciatore Solitario Grim Rohl",
+      "titolo": "Nome del cacciatore che segue tracce di sangue senza pietà",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "classe_it": "Cacciatore del Vuoto",
+      "nome": "Cacciatrice del Vuoto Nael di Onirade",
+      "titolo": "Nome della donna che ha visto oltre l'acqua e non ha parlato",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "classe_it": "Cacciatore di Mostri",
+      "nome": "Vecchio Falconiere Ovyr",
+      "titolo": "Maestro del Capanno",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_cartografo",
+      "class_slug": "cartografo",
+      "classe_it": "Cartografo",
+      "nome": "Capomastro Cartografo Odran il Mite",
+      "titolo": "Nome del cartografo che ricorda ciò che non ha ancora camminato",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cavaliere_della_morte",
+      "class_slug": "cavaliere_della_morte",
+      "classe_it": "Cavaliere della Morte",
+      "nome": "Primo Cavaliere Nero Vaeric Rahn",
+      "titolo": "Nome del cavaliere che tornò dalla battaglia e non parlò più",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cavaliere_di_draghi",
+      "class_slug": "cavaliere_di_draghi",
+      "classe_it": "Cavaliere di Draghi",
+      "nome": "Signora delle Fiamme Aelor Draconis",
+      "titolo": "Nome della cavaliera che ha pattuito con il Drago Vecchio",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cronista",
+      "class_slug": "cronista",
+      "classe_it": "Cronista",
+      "nome": "Cronista Maggiore Ambrose di Mnemos",
+      "titolo": "Nome del cronista che tiene la memoria del presente",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_druido",
+      "class_slug": "druido",
+      "classe_it": "Druido",
+      "nome": "Druido Anziano Bran del Salice",
+      "titolo": "Nome del druido che parla ancora al Salice Millenario",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_fabbro_arcano",
+      "class_slug": "fabbro_arcano",
+      "classe_it": "Fabbro Arcano",
+      "nome": "Fabbro Anziano Corvus Anello",
+      "titolo": "Nome del fabbro che ha temprato l'Anello Silente",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_giocatore_d_azzardo",
+      "class_slug": "giocatore_d_azzardo",
+      "classe_it": "Giocatore d'Azzardo",
+      "nome": "Croupier Perpetuo Sylas Nod",
+      "titolo": "Nome del croupier che ha tirato il tredici impossibile",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_guerriero",
+      "class_slug": "guerriero",
+      "classe_it": "Guerriero",
+      "nome": "Comandante Aldric del Ferro",
+      "titolo": "Comandante della Fortezza",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_ladro",
+      "class_slug": "ladro",
+      "classe_it": "Ladro",
+      "nome": "Maestra dei Sussurri Selene",
+      "titolo": "Maestra della Loggia",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_mago",
+      "class_slug": "mago",
+      "classe_it": "Mago",
+      "nome": "Arcimago Vessel di Memoria",
+      "titolo": "Custode del Circolo",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_mercante",
+      "class_slug": "mercante",
+      "classe_it": "Mercante",
+      "nome": "Prima Mercatrice Yara della Bilancia",
+      "titolo": "Nome della mercatrice che ha stabilito il Prezzo Giusto",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_monaco",
+      "class_slug": "monaco",
+      "classe_it": "Monaco",
+      "nome": "Monaco Anziano Ren Silenzio",
+      "titolo": "Nome del monaco che ha camminato sulla Corda al Primo Tentativo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_negromante",
+      "class_slug": "negromante",
+      "classe_it": "Negromante",
+      "nome": "Necromante Anziano Silas Nomeperduto",
+      "titolo": "Nome del negromante che ha chiamato l'Ultima Volta",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_paladino",
+      "class_slug": "paladino",
+      "classe_it": "Paladino",
+      "nome": "Custode Isabeau dell'Alba",
+      "titolo": "Custode del Reliquiario",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_parassita",
+      "class_slug": "parassita",
+      "classe_it": "Parassita",
+      "nome": "Parassita Anziana Ada Cava",
+      "titolo": "Nome della donna che si nutrì delle Radici Cave e non morì",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_pittore",
+      "class_slug": "pittore",
+      "classe_it": "Pittore",
+      "nome": "Prima Pittrice Genoveva Rosso",
+      "titolo": "Nome della pittrice che ha dipinto la Prima Immagine Viva",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_runista",
+      "class_slug": "runista",
+      "classe_it": "Runista",
+      "nome": "Runista Anziano Halvard Nove",
+      "titolo": "Nome del runista che ha inciso la Nona Runa",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_sciamano",
+      "class_slug": "sciamano",
+      "classe_it": "Sciamano",
+      "nome": "Sciamano Anziano Vaska Tamburo",
+      "titolo": "Nome dello sciamano che ha fermato i Tamburi Rotti",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_sognatore",
+      "class_slug": "sognatore",
+      "classe_it": "Sognatore",
+      "nome": "Sognatrice Anziana Elyrah dei Nove Sogni",
+      "titolo": "Nome della sognatrice che ha sognato il Nono Sogno e lo ha ricordato",
+      "status": "PENDING_PM"
+    }
+  ],
+  "safe_mode_trials": [
+    {
+      "hall_id": "hall_alchimista",
+      "class_slug": "alchimista",
+      "classe_it": "Alchimista",
+      "concept": "La Prova della Goccia — separare correttamente una goccia curativa da una tossica con la sola bilancia",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_artificiere",
+      "class_slug": "artificiere",
+      "classe_it": "Artificiere",
+      "concept": "La Prova dell'Ingranaggio — rimontare un meccanismo composto da otto pezzi entro un giro di clessidra a sabbia rossa",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_astrologo",
+      "class_slug": "astrologo",
+      "classe_it": "Astrologo",
+      "concept": "La Prova della Costellazione — riconoscere una costellazione fissa nell'orizzonte capovolto della cupola",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_bardo",
+      "class_slug": "bardo",
+      "classe_it": "Bardo",
+      "concept": "La Prova della Nota Mancante — completare la Canzone Interrotta trovando la nota giusta al primo tentativo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_burattinaio",
+      "class_slug": "burattinaio",
+      "classe_it": "Burattinaio",
+      "concept": "La Prova del Filo — muovere una marionetta di ferro attraverso il palco senza far cadere il campanello sospeso",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_sangue",
+      "class_slug": "cacciatore_del_sangue",
+      "classe_it": "Cacciatore del Sangue",
+      "concept": "La Prova della Traccia Rossa — seguire una scia di sangue di cinghiale spirito fino al punto di caduta",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "classe_it": "Cacciatore del Vuoto",
+      "concept": "La Prova del Riflesso Vuoto — riconoscere il proprio riflesso nella lanterna rovesciata e non distoglierlo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "classe_it": "Cacciatore di Mostri",
+      "concept": "La Traccia del Primo Passo — seguire la traccia notturna di un cinghiale-fantasma fino all'alba",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_cartografo",
+      "class_slug": "cartografo",
+      "classe_it": "Cartografo",
+      "concept": "La Prova della Mappa Cieca — disegnare una mappa di una stanza percorsa a occhi chiusi",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cavaliere_della_morte",
+      "class_slug": "cavaliere_della_morte",
+      "classe_it": "Cavaliere della Morte",
+      "concept": "La Prova del Vessillo — sostenere il Vessillo Nero per l'intero giro della cripta senza abbassarlo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cavaliere_di_draghi",
+      "class_slug": "cavaliere_di_draghi",
+      "classe_it": "Cavaliere di Draghi",
+      "concept": "La Prova dello Sguardo — reggere lo sguardo di un draconcello senza distogliere gli occhi per un giro completo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_cronista",
+      "class_slug": "cronista",
+      "classe_it": "Cronista",
+      "concept": "La Prova della Trascrizione Esatta — copiare senza errori un frammento di cronaca al primo tentativo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_druido",
+      "class_slug": "druido",
+      "classe_it": "Druido",
+      "concept": "La Prova del Silenzio della Foresta — ascoltare il Salice per un giro di sole senza rispondere",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_fabbro_arcano",
+      "class_slug": "fabbro_arcano",
+      "classe_it": "Fabbro Arcano",
+      "concept": "La Prova della Runa — incidere una runa semplice su anello grezzo al primo colpo di martello",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_giocatore_d_azzardo",
+      "class_slug": "giocatore_d_azzardo",
+      "classe_it": "Giocatore d'Azzardo",
+      "concept": "La Prova del Tredicesimo — lanciare un dado di ossidiana e leggere la faccia invisibile senza sbagliare",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_guerriero",
+      "class_slug": "guerriero",
+      "classe_it": "Guerriero",
+      "concept": "La Prova del Peso — sollevare l'ascia rituale e mantenere la posizione per un giro completo del braciere",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_ladro",
+      "class_slug": "ladro",
+      "classe_it": "Ladro",
+      "concept": "La Prova del Silenzio — attraversare la Sala Buia senza far tintinnare il campanello sospeso",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_mago",
+      "class_slug": "mago",
+      "classe_it": "Mago",
+      "concept": "Il Rito dei Nove Sigilli — tracciare il proprio sigillo personale su pergamena vergine sotto lo sguardo di Vessel",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_mercante",
+      "class_slug": "mercante",
+      "classe_it": "Mercante",
+      "concept": "La Prova del Bilico Onesto — pesare due merci diverse e stabilirne il valore equo al primo tentativo",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_monaco",
+      "class_slug": "monaco",
+      "classe_it": "Monaco",
+      "concept": "La Prova della Corda — attraversare la Corda di Cinabro per l'intera lunghezza senza toccare terra",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_negromante",
+      "class_slug": "negromante",
+      "classe_it": "Negromante",
+      "concept": "La Prova del Nome — pronunciare correttamente il proprio nome specchiato senza sbagliare la cadenza",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_paladino",
+      "class_slug": "paladino",
+      "classe_it": "Paladino",
+      "concept": "La Veglia della Brace — vegliare la brace dell'altare per una notte intera senza lasciare che si spenga",
+      "status": "LOCKED"
+    },
+    {
+      "hall_id": "hall_parassita",
+      "class_slug": "parassita",
+      "classe_it": "Parassita",
+      "concept": "La Prova della Radice — riconoscere quale radice cava è viva e quale è già cava attraverso il solo tatto",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_pittore",
+      "class_slug": "pittore",
+      "classe_it": "Pittore",
+      "concept": "La Prova del Colore Vivo — mescolare il pigmento giusto perché una tela dipinta si muova appena",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_runista",
+      "class_slug": "runista",
+      "classe_it": "Runista",
+      "concept": "La Prova della Nona Runa — incidere una runa semplice sulla pietra centrale al primo colpo di scalpello",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_sciamano",
+      "class_slug": "sciamano",
+      "classe_it": "Sciamano",
+      "concept": "La Prova del Tamburo Fermo — battere un tamburo perché lo spirito risponda senza svegliare i Tamburi Rotti",
+      "status": "PENDING_PM"
+    },
+    {
+      "hall_id": "hall_sognatore",
+      "class_slug": "sognatore",
+      "classe_it": "Sognatore",
+      "concept": "La Prova del Sogno Aperto — descrivere al risveglio un sogno guidato senza modificare alcun dettaglio",
+      "status": "PENDING_PM"
+    }
+  ],
+  "symbolic_traits": [
+    {
+      "hall_id": "hall_alchimista",
+      "class_slug": "alchimista",
+      "classe_it": "Alchimista",
+      "trait_symbolic_non_combat": "Titolo 'Mano che Separa' · badge alambicco · flavor log 'L'Alchimista ha misurato e la Gilda è più leggera di un veleno'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_artificiere",
+      "class_slug": "artificiere",
+      "classe_it": "Artificiere",
+      "trait_symbolic_non_combat": "Titolo 'Mano che Ripara' · badge ingranaggio · flavor log 'L'Artificiere ha stretto la vite e la Gilda ha respirato'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_astrologo",
+      "class_slug": "astrologo",
+      "classe_it": "Astrologo",
+      "trait_symbolic_non_combat": "Titolo 'Che ha visto il Tredicesimo' · badge zodiaco tacca · flavor log 'L'Astrologo ha guardato in alto e la Gilda ha camminato dritta'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_bardo",
+      "class_slug": "bardo",
+      "classe_it": "Bardo",
+      "trait_symbolic_non_combat": "Titolo 'Che ha completato la Canzone' · badge liuto e nota · flavor log 'Il Bardo ha cantato e la stanza ha smesso di temere'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_burattinaio",
+      "class_slug": "burattinaio",
+      "classe_it": "Burattinaio",
+      "trait_symbolic_non_combat": "Titolo 'Che ha mosso il Ferro' · badge marionetta · flavor log 'Il Burattinaio ha tirato il filo e la scena ha risposto'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cacciatore_del_sangue",
+      "class_slug": "cacciatore_del_sangue",
+      "classe_it": "Cacciatore del Sangue",
+      "trait_symbolic_non_combat": "Titolo 'Che segue il Rosso' · badge zanna e goccia · flavor log 'Il Cacciatore del Sangue ha trovato e la preda si è fermata'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cacciatore_del_vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "classe_it": "Cacciatore del Vuoto",
+      "trait_symbolic_non_combat": "Titolo 'Che non ha distolto lo sguardo' · badge lanterna rovesciata · flavor log 'Il Cacciatore del Vuoto ha guardato e il vuoto ha guardato indietro'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "classe_it": "Cacciatore di Mostri",
+      "trait_symbolic_non_combat": "Titolo 'Voce del Sentiero' · badge faretra e corno · flavor log 'Il Cacciatore ha camminato e il bosco lo ha lasciato passare'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cartografo",
+      "class_slug": "cartografo",
+      "classe_it": "Cartografo",
+      "trait_symbolic_non_combat": "Titolo 'Che disegna il Ricordo' · badge rosa dei venti · flavor log 'Il Cartografo ha inciso e la strada si è ricordata di sé'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cavaliere_della_morte",
+      "class_slug": "cavaliere_della_morte",
+      "classe_it": "Cavaliere della Morte",
+      "trait_symbolic_non_combat": "Titolo 'Che ha portato il Vessillo' · badge elmo e vessillo · flavor log 'Il Cavaliere della Morte è passato e la carne dei nemici ha ricordato di essere carne'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cavaliere_di_draghi",
+      "class_slug": "cavaliere_di_draghi",
+      "classe_it": "Cavaliere di Draghi",
+      "trait_symbolic_non_combat": "Titolo 'Che ha retto lo Sguardo' · badge drago e ala · flavor log 'Il Cavaliere di Draghi ha volato e il vento ha ricordato il suo nome'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_cronista",
+      "class_slug": "cronista",
+      "classe_it": "Cronista",
+      "trait_symbolic_non_combat": "Titolo 'Che ha scritto senza cancellare' · badge penna e clessidra · flavor log 'Il Cronista ha inciso e la Gilda ha smesso di dimenticare'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_druido",
+      "class_slug": "druido",
+      "classe_it": "Druido",
+      "trait_symbolic_non_combat": "Titolo 'Che ha ascoltato il Salice' · badge foglia e pietra · flavor log 'Il Druido ha camminato e il bosco lo ha chiamato per nome'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_fabbro_arcano",
+      "class_slug": "fabbro_arcano",
+      "classe_it": "Fabbro Arcano",
+      "trait_symbolic_non_combat": "Titolo 'Che ha inciso al Primo Colpo' · badge anello runato · flavor log 'Il Fabbro Arcano ha battuto e il metallo ha ascoltato'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_giocatore_d_azzardo",
+      "class_slug": "giocatore_d_azzardo",
+      "classe_it": "Giocatore d'Azzardo",
+      "trait_symbolic_non_combat": "Titolo 'Che ha letto il Tredicesimo' · badge dado ottaedrico · flavor log 'Il Giocatore d'Azzardo ha lanciato e la Gilda non ha perso'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_guerriero",
+      "class_slug": "guerriero",
+      "classe_it": "Guerriero",
+      "trait_symbolic_non_combat": "Titolo 'Portatore del Sigillo del Ferro' · badge acciaio · flavor log 'La brace non si spegne finché il Guerriero veglia'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_ladro",
+      "class_slug": "ladro",
+      "classe_it": "Ladro",
+      "trait_symbolic_non_combat": "Titolo 'Voce che non Cade' · badge campanello inciso · flavor log 'Il Ladro passa e la porta non lo ricorda'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_mago",
+      "class_slug": "mago",
+      "classe_it": "Mago",
+      "trait_symbolic_non_combat": "Titolo 'Nono Sigillo' · badge sigillo tracciato · flavor log 'Il Mago ha scritto e la parola è stata udita'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_mercante",
+      "class_slug": "mercante",
+      "classe_it": "Mercante",
+      "trait_symbolic_non_combat": "Titolo 'Che ha pesato senza mentire' · badge bilancia in equilibrio · flavor log 'Il Mercante ha contrattato e la Gilda ha guadagnato'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_monaco",
+      "class_slug": "monaco",
+      "classe_it": "Monaco",
+      "trait_symbolic_non_combat": "Titolo 'Che ha camminato sulla Corda' · badge corda annodata · flavor log 'Il Monaco ha respirato e la stanza ha rallentato'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_negromante",
+      "class_slug": "negromante",
+      "classe_it": "Negromante",
+      "trait_symbolic_non_combat": "Titolo 'Che ha pronunciato il Nome' · badge cerchio e teschio · flavor log 'Il Negromante ha chiamato e ciò che era finito ha risposto'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_paladino",
+      "class_slug": "paladino",
+      "classe_it": "Paladino",
+      "trait_symbolic_non_combat": "Titolo 'Vegliante dell'Alba' · badge brace incorniciata · flavor log 'Il Paladino veglia e la Gilda respira'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_parassita",
+      "class_slug": "parassita",
+      "classe_it": "Parassita",
+      "trait_symbolic_non_combat": "Titolo 'Che ha toccato la Radice Cava' · badge radice avvolta · flavor log 'Il Parassita è passato e ciò che era vivo si è ricordato che poteva anche non esserlo'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_pittore",
+      "class_slug": "pittore",
+      "classe_it": "Pittore",
+      "trait_symbolic_non_combat": "Titolo 'Che ha dipinto il Vivo' · badge pennello e tavolozza · flavor log 'Il Pittore ha steso il colore e il muro ha respirato'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_runista",
+      "class_slug": "runista",
+      "classe_it": "Runista",
+      "trait_symbolic_non_combat": "Titolo 'Che ha inciso la Nona' · badge runa e cerchio · flavor log 'Il Runista ha inciso e la terra ha ricordato la parola'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_sciamano",
+      "class_slug": "sciamano",
+      "classe_it": "Sciamano",
+      "trait_symbolic_non_combat": "Titolo 'Che ha fermato il Tamburo' · badge tamburo e piuma · flavor log 'Lo Sciamano ha battuto una volta e lo spirito ha risposto'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    },
+    {
+      "hall_id": "hall_sognatore",
+      "class_slug": "sognatore",
+      "classe_it": "Sognatore",
+      "trait_symbolic_non_combat": "Titolo 'Che ha sognato senza modificare' · badge stella nove punte · flavor log 'Il Sognatore ha dormito e la stanza ha ricordato ciò che non era ancora accaduto'",
+      "no_stat_bonus": true,
+      "no_combat_bonus": true,
+      "no_economy_bonus": true,
+      "no_ranking_bonus": true,
+      "no_progression_bonus": true
+    }
+  ],
+  "readiness_matrix": [
+    {
+      "hall_id": "hall_alchimista",
+      "class_slug": "alchimista",
+      "classe_it": "Alchimista",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_artificiere",
+      "class_slug": "artificiere",
+      "classe_it": "Artificiere",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_astrologo",
+      "class_slug": "astrologo",
+      "classe_it": "Astrologo",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_bardo",
+      "class_slug": "bardo",
+      "classe_it": "Bardo",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_burattinaio",
+      "class_slug": "burattinaio",
+      "classe_it": "Burattinaio",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_sangue",
+      "class_slug": "cacciatore_del_sangue",
+      "classe_it": "Cacciatore del Sangue",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_del_vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "classe_it": "Cacciatore del Vuoto",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cacciatore_di_mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "classe_it": "Cacciatore di Mostri",
+      "class_stats_ready": true,
+      "proficiency_ready": true,
+      "equip_ready": true,
+      "gameplay_ready": true,
+      "playerfacing_guide_ready": true,
+      "technical_readiness": true,
+      "overall_status": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_cartografo",
+      "class_slug": "cartografo",
+      "classe_it": "Cartografo",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cavaliere_della_morte",
+      "class_slug": "cavaliere_della_morte",
+      "classe_it": "Cavaliere della Morte",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cavaliere_di_draghi",
+      "class_slug": "cavaliere_di_draghi",
+      "classe_it": "Cavaliere di Draghi",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_cronista",
+      "class_slug": "cronista",
+      "classe_it": "Cronista",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_druido",
+      "class_slug": "druido",
+      "classe_it": "Druido",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_fabbro_arcano",
+      "class_slug": "fabbro_arcano",
+      "classe_it": "Fabbro Arcano",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_giocatore_d_azzardo",
+      "class_slug": "giocatore_d_azzardo",
+      "classe_it": "Giocatore d'Azzardo",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_guerriero",
+      "class_slug": "guerriero",
+      "classe_it": "Guerriero",
+      "class_stats_ready": true,
+      "proficiency_ready": true,
+      "equip_ready": true,
+      "gameplay_ready": true,
+      "playerfacing_guide_ready": true,
+      "technical_readiness": true,
+      "overall_status": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_ladro",
+      "class_slug": "ladro",
+      "classe_it": "Ladro",
+      "class_stats_ready": true,
+      "proficiency_ready": true,
+      "equip_ready": true,
+      "gameplay_ready": true,
+      "playerfacing_guide_ready": true,
+      "technical_readiness": true,
+      "overall_status": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_mago",
+      "class_slug": "mago",
+      "classe_it": "Mago",
+      "class_stats_ready": true,
+      "proficiency_ready": true,
+      "equip_ready": true,
+      "gameplay_ready": true,
+      "playerfacing_guide_ready": true,
+      "technical_readiness": true,
+      "overall_status": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_mercante",
+      "class_slug": "mercante",
+      "classe_it": "Mercante",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_monaco",
+      "class_slug": "monaco",
+      "classe_it": "Monaco",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_negromante",
+      "class_slug": "negromante",
+      "classe_it": "Negromante",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_paladino",
+      "class_slug": "paladino",
+      "classe_it": "Paladino",
+      "class_stats_ready": true,
+      "proficiency_ready": true,
+      "equip_ready": true,
+      "gameplay_ready": true,
+      "playerfacing_guide_ready": true,
+      "technical_readiness": true,
+      "overall_status": "ACTIVE-DESIGN-READY"
+    },
+    {
+      "hall_id": "hall_parassita",
+      "class_slug": "parassita",
+      "classe_it": "Parassita",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_pittore",
+      "class_slug": "pittore",
+      "classe_it": "Pittore",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_runista",
+      "class_slug": "runista",
+      "classe_it": "Runista",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_sciamano",
+      "class_slug": "sciamano",
+      "classe_it": "Sciamano",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    },
+    {
+      "hall_id": "hall_sognatore",
+      "class_slug": "sognatore",
+      "classe_it": "Sognatore",
+      "class_stats_ready": false,
+      "proficiency_ready": false,
+      "equip_ready": false,
+      "gameplay_ready": false,
+      "playerfacing_guide_ready": false,
+      "technical_readiness": false,
+      "overall_status": "PLANNED"
+    }
+  ],
+  "risk_register": [
+    {
+      "id": "R1",
+      "risk": "22 Hall Masters con nomi PENDING PM diventano canonici senza review",
+      "severity": "MEDIUM",
+      "mitigation": "Status esplicito PENDING_PM su tutti · nessun nome è finale finché PM non dà ACK per Sala",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R2",
+      "risk": "Player tenta di scegliere una delle 22 Sale PLANNED prima del readiness",
+      "severity": "MEDIUM",
+      "mitigation": "hall_status_matrix distingue ACTIVE-DESIGN-READY (5 selezionabili) vs PLANNED (22 non selezionabili UI-live) · R18.6 live implementation enforcement",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R3",
+      "risk": "Naming collision tra 'Cacciatore di Mostri' (live) e 'Cacciatore del Sangue' / 'Cacciatore del Vuoto' (planned)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "3 slug canonici distinti (cacciatore_di_mostri · cacciatore_del_sangue · cacciatore_del_vuoto) · UI copy sempre nome IT completo · immutable lookup",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R4",
+      "risk": "'Paladino' confuso con 'priest/prete' o 'Monaco' confuso con religione",
+      "severity": "MEDIUM",
+      "mitigation": "Slug canonico paladino verbatim · Monaco = disciplina fisica (unarmed), NON religione · UI copy sempre nome IT",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R5",
+      "risk": "Rite of Rebirth abuso via multi-account o farming risorse",
+      "severity": "MEDIUM",
+      "mitigation": "one-time hard cap per adventurer · costo elevato non-premium · gate tecnico futuro definisce constraint aggiuntivi",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R6",
+      "risk": "27 classi = complessità UI/balancing",
+      "severity": "HIGH-INFO",
+      "mitigation": "5 live subito (proficiency matrix già lockata) · 22 planned rilasciate progressivamente via GO PM per Sala · design gradualista",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7",
+      "risk": "Hall trait simbolico Q8 R18.6 (no gameplay bonus) confuso con talenti veri",
+      "severity": "LOW",
+      "mitigation": "R18.6.1 conferma verbatim: no stat/combat/economy/ranking/progression bonus · talenti gate futuro separato",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R8",
+      "risk": "Naming NPC hall_master planned può collidere con lore Orbus esistente",
+      "severity": "LOW",
+      "mitigation": "Nomi proposti come new-additions · PENDING_PM · review PM esplicito per ognuno",
+      "status": "OPEN_PM"
+    },
+    {
+      "id": "R9",
+      "risk": "Player si sente forzato a scegliere Sala live (5) senza attesa realistica per 22 planned",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Communication: 5 Sale live sono complete · 22 in arrivo rispettando readiness · nessuna FOMO artificiale · dismissal ammesso",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R10",
+      "risk": "Registry v2 (1500 items) tocca solo 5 classi live (300×5=1500) · 22 planned senza gear canonico",
+      "severity": "MEDIUM",
+      "mitigation": "R18.6.1 rispetta Registry v2 LOCKED · future item table extension per 22 classi è gate futuro (Registry v3?) fuori scope R18.6.1",
+      "status": "TRACKED"
+    },
+    {
+      "id": "R11",
+      "risk": "Cap 3 Reclute per Gilda troppo stretto se 27 classi disponibili",
+      "severity": "LOW",
+      "mitigation": "Cap = 3 confermato Q6 R18.6 · dismissal libera slot · design bilanciato tra onboarding e velocità decisione",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R12",
+      "risk": "Prova safe-mode design 27 concept può richiedere risorse UI/asset elevate",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Design testuale MMO gestionale (no sprite, no canvas) · ogni prova è micro-encounter descrittivo · minimal asset burden",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R13",
+      "risk": "22 Sale planned senza gameplay identity chiara → player choice paralysis quando andranno live",
+      "severity": "MEDIUM",
+      "mitigation": "Ogni Sala planned ha stile_gameplay + ruolo_indicativo documentati anche se main_stat=PENDING · gameplay identity emerge da design PM successivo per Sala",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "R14",
+      "risk": "Rite of Rebirth applica a classi legacy (5) verso planned (22) prima che PLANNED siano live",
+      "severity": "MEDIUM",
+      "mitigation": "Rite of Rebirth constraint: target Sala DEVE essere ACTIVE-DESIGN-READY al momento del rito · no rebirth verso PLANNED",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "R15",
+      "risk": "R18.6 design file modification accidentale (contro governance)",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "R18.6.1 è estensione canonica NON riscrittura · R18.6 file LOCKED · sealed integrity test copre memoria zone protette",
+      "status": "ENFORCED"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "Q1",
+      "topic": "22 Hall Masters PENDING PM · confermo verbatim o rewrite?",
+      "options": [
+        "a) confermo tutti verbatim (22 nomi accettati)",
+        "b) confermo alcuni + rewrite altri (PM specifica quali)",
+        "c) rewrite completo (PM propone lista alternativa)"
+      ]
+    },
+    {
+      "id": "Q2",
+      "topic": "Ordine di readiness delle 22 Sale planned (quale classe passa a ACTIVE-DESIGN-READY per prima?)",
+      "options": [
+        "a) roadmap PM ordinata (specificare ordine)",
+        "b) release parallela in batch da 5-7 per volta",
+        "c) release event-driven (feedback player + priorità narrative)"
+      ]
+    },
+    {
+      "id": "Q3",
+      "topic": "Rite of Rebirth: quale costo elevato non-premium (risorse gilda specifiche · timer cooldown · trade-off progression)?",
+      "options": [
+        "a) risorse gilda alte + reset livello parziale",
+        "b) risorse gilda alte + reset equip specializzato",
+        "c) risorse gilda alte + narrativa penalty (Log Gilda pubblico)",
+        "d) design tecnico dedicato futuro"
+      ]
+    },
+    {
+      "id": "Q4",
+      "topic": "Prova safe-mode 27 concept · confermo storyline/mechanic o richiedo iterazione?",
+      "options": [
+        "a) confermo tutti",
+        "b) confermo 5 live + itero 22 planned",
+        "c) confermo alcuni + rewrite mirato"
+      ]
+    },
+    {
+      "id": "Q5",
+      "topic": "Cavaliere di Draghi (montatura draconica) · come integra con sistema stables esistente (Round 16.3 Phase 8)?",
+      "options": [
+        "a) draconi = subtype narrativo del sistema stables · no schema change",
+        "b) draconi = collection separata · gate tecnico futuro",
+        "c) draconi = flavor-only in R18.6.1 (no gameplay bond runtime)"
+      ]
+    },
+    {
+      "id": "Q6",
+      "topic": "Cacciatore del Sangue vs Parassita vs Negromante · overlap tematico da chiarire?",
+      "options": [
+        "a) 3 classi distinte con overlap accettato (design gradual differentiation)",
+        "b) merge di 2 di queste in un unica classe (PM specifica quali)",
+        "c) attesa iterazione dedicata di design bilanciamento"
+      ]
+    },
+    {
+      "id": "Q7",
+      "topic": "Sognatore / Pittore / Bardo (classi 'creative') · come si distinguono a livello gameplay?",
+      "options": [
+        "a) Sognatore=onirico/mentale · Pittore=illusioni visive · Bardo=sonoro/morale (design tripartito)",
+        "b) iterazione dedicata post-R18.6.1 con matrice comparativa",
+        "c) unificazione parziale (PM specifica)"
+      ]
+    },
+    {
+      "id": "Q8",
+      "topic": "27 Sale · design layout Complesso Gilda accomoda tutte fisicamente o alcune sono off-site?",
+      "options": [
+        "a) mix on-site (Complesso principale) + off-site (bosco/lago/collina/isolotto/etc)",
+        "b) tutte on-site (Complesso espansione futura)",
+        "c) 27 Sale sono narrative-only · location generica"
+      ]
+    }
+  ],
+  "implementation_recommendation": {
+    "phase_current_status": "R18.6.1 design documentale COMPLETE · pending PM review",
+    "next_gates_ordered_suggested": [
+      {
+        "n": 1,
+        "phase": "R18.6.1 PM review + ACK",
+        "status": "PENDING",
+        "notes": "PM legge deliverable + risponde a Q1-Q8"
+      },
+      {
+        "n": 2,
+        "phase": "R18.3f Class Slug Migration Readiness",
+        "status": "HOLD",
+        "precondition": "GO PM esplicito"
+      },
+      {
+        "n": 3,
+        "phase": "R18.6 live implementation (5 Sale)",
+        "status": "HOLD",
+        "precondition": "R18.3f apply + Apply Phase precondition satisfied"
+      },
+      {
+        "n": 4,
+        "phase": "22 Sale planned progressive activation (una alla volta o batch)",
+        "status": "HOLD",
+        "precondition": "GO PM per Sala · stat/prof/equip/gameplay design completato"
+      },
+      {
+        "n": 5,
+        "phase": "Rite of Rebirth technical gate",
+        "status": "HOLD",
+        "precondition": "gate tecnico dedicato post R18.6 live"
+      },
+      {
+        "n": 6,
+        "phase": "Progressive Discovery Legendary Finalization (P1-P4)",
+        "status": "HOLD",
+        "notes": "parallelo · gate PM dedicato"
+      },
+      {
+        "n": 7,
+        "phase": "Apply Phase (Registry / Drop / Backfill / Runtime enforcement)",
+        "status": "HOLD",
+        "preconditions": [
+          "backup DB",
+          "dry-run tech",
+          "rollback",
+          "seal governance",
+          "migration order",
+          "failure recovery",
+          "PM approval"
+        ]
+      },
+      {
+        "n": 8,
+        "phase": "Marketing Brief",
+        "status": "DEFERRED"
+      }
+    ],
+    "explicit_recommendation": [
+      "APPROVE R18.6.1 design (27 halls canonical · 5 ACTIVE-DESIGN-READY + 22 PLANNED · slug errata canonica applicata)",
+      "HOLD assoluto su implementazione live e su unlock automatico 22 planned",
+      "Rispondere a PM open questions Q1-Q8 in round dedicato prima di prossimo gate",
+      "NO code · NO DB · NO migrations · NO runtime enforcement · NO R18.5/R18.6 modification"
+    ]
+  },
+  "governance": {
+    "documental_only_regime": "ENFORCED",
+    "italian_output": "ENFORCED",
+    "sealed_files_36_byte_identical": true,
+    "lore_meta_py_touch": false,
+    "lore_meta_py_sha256_baseline": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "db_writes": 0,
+    "code_changes": 0,
+    "migrations": 0,
+    "sealed_file_modification": 0,
+    "r18_5_modification": 0,
+    "r18_6_modification": 0,
+    "r18_3f_auto_start": false,
+    "apply_phase_kickoff": false,
+    "class_halls_live_implementation": false,
+    "auto_unlock_22_planned": false,
+    "marketing_brief": false,
+    "class_slug_auto_derivation": false,
+    "class_slug_migration_apply": 0,
+    "runtime_bridge": 0,
+    "runtime_enforcement_implementation": 0,
+    "item_creation_live": 0,
+    "registry_apply": 0,
+    "drop_table_apply": 0,
+    "hard_delete": 0,
+    "canonical_class_slug_live_5": [
+      "guerriero",
+      "ladro",
+      "mago",
+      "paladino",
+      "cacciatore_di_mostri"
+    ],
+    "canonical_class_slug_planned_22": [
+      "alchimista",
+      "artificiere",
+      "astrologo",
+      "bardo",
+      "burattinaio",
+      "cacciatore_del_sangue",
+      "cacciatore_del_vuoto",
+      "cartografo",
+      "cavaliere_della_morte",
+      "cavaliere_di_draghi",
+      "cronista",
+      "druido",
+      "fabbro_arcano",
+      "giocatore_d_azzardo",
+      "mercante",
+      "monaco",
+      "negromante",
+      "parassita",
+      "pittore",
+      "runista",
+      "sciamano",
+      "sognatore"
+    ],
+    "total_class_slug_canonical": 27,
+    "total_hall_ids_canonical": 27,
+    "hall_ids": [
+      "hall_alchimista",
+      "hall_artificiere",
+      "hall_astrologo",
+      "hall_bardo",
+      "hall_burattinaio",
+      "hall_cacciatore_del_sangue",
+      "hall_cacciatore_del_vuoto",
+      "hall_cacciatore_di_mostri",
+      "hall_cartografo",
+      "hall_cavaliere_della_morte",
+      "hall_cavaliere_di_draghi",
+      "hall_cronista",
+      "hall_druido",
+      "hall_fabbro_arcano",
+      "hall_giocatore_d_azzardo",
+      "hall_guerriero",
+      "hall_ladro",
+      "hall_mago",
+      "hall_mercante",
+      "hall_monaco",
+      "hall_negromante",
+      "hall_paladino",
+      "hall_parassita",
+      "hall_pittore",
+      "hall_runista",
+      "hall_sciamano",
+      "hall_sognatore"
+    ],
+    "deliverable_files_count": 2,
+    "deliverable_paths": [
+      "/app/memory/r18_6_1_canonical_27_class_halls_expansion.md",
+      "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+    ]
+  },
+  "stop_after_r18_6_1": {
+    "auto_transition_next_phase": false,
+    "note": "STOP dopo R18.6.1. Attendo PM review + risposte a Q1-Q8 + GO esplicito per prossimo gate (R18.3f raccomandato). Nessun auto-start · nessun unlock 22 planned · nessuna modifica R18.5/R18.6 (LOCKED)."
+  }
+}
