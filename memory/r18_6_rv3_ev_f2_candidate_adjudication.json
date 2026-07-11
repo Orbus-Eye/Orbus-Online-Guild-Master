@@ -1,0 +1,460 @@
+{
+  "metadata": {
+    "document_id": "R18.6.RV3-EV-F2",
+    "title": "Candidate Adjudication & Coverage Reconciliation",
+    "parent_gates": ["R18.6.RV3-EV", "R18.6.RV3-EV-F1"],
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_ITALIAN",
+    "sealed_integrity_expected": "36/36",
+    "lore_meta_sha256_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "cacciatore_del_vuoto_status": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "language": "italian",
+    "total_sections_md": 43
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "item_creation_authorized": false,
+    "registry_apply_authorized": false,
+    "field_addition_authorized": false,
+    "backfill_authorized": false,
+    "class_slug_write_count": 0,
+    "db_write_count": 0,
+    "mutation_forbidden": true,
+    "sealed_files_immutability": true,
+    "verdict_rule": "mutation_required=true => NOT REUSE_VALID",
+    "retro_branding_forbidden": true,
+    "cacciatore_di_mostri_strict_separation": true
+  },
+  "ev_baseline_reconciliation": {
+    "total_items_live": 178,
+    "rarity_distribution_corrected": {
+      "Common": 52,
+      "Uncommon": 37,
+      "Rare": 39,
+      "Epic": 39,
+      "Legendary": 11,
+      "note": "RV3-EV stima Epic=14/Legendary=3 era approssimazione non misurata. EV-F2 sostituisce con misurazione live authoritative."
+    },
+    "levels_distinct_live": [1, 3, 5, 8, 9, 12],
+    "max_level_live": 12,
+    "tier_coverage_live": {
+      "T1_Aspirante_L1_15": 178,
+      "T2_Cacciatore_L16_30": 0,
+      "T3_Iniziato_L31_45": 0,
+      "T4_Rituale_L46_55": 0,
+      "T5_Vuoto_L56_60": 0
+    },
+    "l12_equals_t1_lock": true,
+    "l12_equals_t5_finding_preserved_as_rejected": true,
+    "armor_tags_populated": 46,
+    "weapon_tags_populated": 61,
+    "can_be_sold_for_real_money_populated": 128,
+    "affix_pool_tag_populated_all_null": 178,
+    "populations_adjudicated": {
+      "18_warlock_plus_intellect": 18,
+      "49_soft_plus_intellect_not_warlock": 49,
+      "6_lore_vuoto_or_oblio": 6,
+      "overlap_49_and_6lore": 2,
+      "total_unique_adjudicated": 71
+    }
+  },
+  "reuse_valid_18_review": {
+    "population_criteria": "class_tags:warlock AND stat_tags:intellect",
+    "count": 18,
+    "all_have_rec_classes_cacciatore_del_vuoto": true,
+    "adjudication_per_item": [
+      {"n": 1, "slug": "warlock_apprentice_tome", "class_tags": ["warlock"], "stat_tags": ["intellect"], "slot_type": "weapon", "rarity": "Common", "required_adventurer_level": 1, "item_type": "weapon", "item_binding_policy": "soft", "armor_tags": null, "weapon_tags": ["tome", "arcane"], "lore_tags": ["mundane"], "identity_risk": "LOW", "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "weapon proficiency mismatch: tome!=focus/crossbow/dagger; semantic caster overlap", "confidence": "HIGH"},
+      {"n": 2, "slug": "warlock_hex_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
+      {"n": 3, "slug": "warlock_shadowbound_grimoire", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
+      {"n": 4, "slug": "warlock_witchking_codex", "slot_type": "weapon", "rarity": "Epic", "required_adventurer_level": 8, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
+      {"n": 5, "slug": "warlock_novice_robe", "slot_type": "armor", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": ["robe", "cloth", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "armor proficiency stoffa+light OK", "confidence": "HIGH"},
+      {"n": 6, "slug": "warlock_shadowweave_robe", "slot_type": "armor", "rarity": "Rare", "required_adventurer_level": 5, "armor_tags": ["robe", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
+      {"n": 7, "slug": "warlock_coven_mantle", "slot_type": "armor", "rarity": "Epic", "required_adventurer_level": 8, "armor_tags": ["robe", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
+      {"n": 8, "slug": "warlock_cursed_pendant", "slot_type": "accessory", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": null, "weapon_tags": null, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal accessory slot", "confidence": "HIGH"},
+      {"n": 9, "slug": "warlock_hex_sigil", "slot_type": "accessory", "rarity": "Rare", "required_adventurer_level": 5, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
+      {"n": 10, "slug": "warlock_patron_seal", "slot_type": "accessory", "rarity": "Epic", "required_adventurer_level": 8, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
+      {"n": 11, "slug": "warlock_apprentice_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch", "confidence": "HIGH"},
+      {"n": 12, "slug": "warlock_pact_binder", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch", "confidence": "HIGH"},
+      {"n": 13, "slug": "warlock_hex_focus_robe", "slot_type": "armor", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": ["cloth", "arcane", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
+      {"n": 14, "slug": "warlock_shadow_mail", "slot_type": "armor", "rarity": "Uncommon", "required_adventurer_level": 3, "armor_tags": ["cloth", "dark", "medium"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+medium (cuoio semantic) OK", "confidence": "HIGH"},
+      {"n": 15, "slug": "warlock_covenant_robe", "slot_type": "armor", "rarity": "Rare", "required_adventurer_level": 5, "armor_tags": ["cloth", "arcane", "medium"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+medium OK", "confidence": "HIGH"},
+      {"n": 16, "slug": "warlock_fetish_charm", "slot_type": "accessory", "rarity": "Common", "required_adventurer_level": 1, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
+      {"n": 17, "slug": "warlock_imp_collar", "slot_type": "accessory", "rarity": "Uncommon", "required_adventurer_level": 3, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
+      {"n": 18, "slug": "warlock_black_ring", "slot_type": "accessory", "rarity": "Rare", "required_adventurer_level": 5, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"}
+    ],
+    "totals": {
+      "VALIDATED_REUSE_VALID": 12,
+      "DOWNGRADED_REUSE_CONDITIONAL": 6,
+      "REJECTED_NOT_COMPATIBLE": 0,
+      "REQUIRES_NEW_ITEM_FUTURE": 0,
+      "REMAINS_PM_REVIEW": 0
+    }
+  },
+  "zero_reuse_statement_reconciliation": {
+    "ev_f1_claim_6_lore": "0 REUSE_VALID out of 6 lore items vuoto/oblio",
+    "rv3_ev_claim_18": "18 REUSE_VALID from warlock+intellect population",
+    "overlap_18_and_6lore": 0,
+    "verdict": "STATEMENTS_ARE_COMPATIBLE_ON_DIFFERENT_POPULATIONS",
+    "corrected_frase": "0 lore-identity items Vuoto/Oblio riutilizzabili + 12 items warlock+intellect riutilizzabili come baseline Vuoto",
+    "post_ev_f2_6_lore_verdicts": {
+      "REUSE_VALID": 0,
+      "IDENTITY_CONFLICT": 5,
+      "PM_REVIEW": 1
+    }
+  },
+  "pm_review_49_inventory": {
+    "population_criteria": "item_binding_policy:soft AND stat_tags:intellect AND class_tags NOT warlock",
+    "count": 49,
+    "class_tags_distribution": {
+      "mage": 29, "necromancer": 29, "bard": 26, "paladin": 19,
+      "alchemist": 17, "druid": 16, "priest": 14, "warrior": 5,
+      "berserker": 5, "rogue": 4, "ranger": 4, "assassin": 4, "monk": 3
+    },
+    "slot_distribution": {"weapon": 18, "accessory": 16, "armor": 11, "amulet": 4},
+    "rarity_distribution": {"Rare": 16, "Common": 11, "Epic": 11, "Uncommon": 8, "Legendary": 3},
+    "lore_distribution_relevant": {"memoria": 16, "veglie": 15, "mundane": 11, "filo_spezzato": 11, "frontiera": 8, "vuoto": 2, "oblio": 1, "oracolo": 1},
+    "all_missing_cacciatore_del_vuoto_in_rec_classes": true,
+    "overlap_with_6_lore": 2
+  },
+  "per_item_adjudication_method": {
+    "steps": [
+      "1. class_tags include warlock OR cacciatore_del_vuoto? if not -> mutation to add",
+      "2. cacciatore_del_vuoto in recommended_classes? if not -> mutation additive",
+      "3. stat_tags include intellect? if not -> NOT_COMPATIBLE",
+      "4. item_binding_policy soft/universal? if hard -> NOT_COMPATIBLE",
+      "5. armor: armor_tags intersect {cloth,robe,light,medium,leather}?",
+      "6. weapon: weapon_tags intersect {focus,crossbow,dagger} OR semantic {arcane,tome/grimoire/wand}?",
+      "7. lore_tags vuoto/oblio -> identity check rec_classes",
+      "8. retro-branding rule: no name-based reuse promotion"
+    ],
+    "verdicts_admitted": [
+      "REUSE_VALID",
+      "REUSE_CONDITIONAL",
+      "NOT_COMPATIBLE",
+      "REQUIRES_NEW_ITEM_FUTURE",
+      "PM_REVIEW"
+    ],
+    "mutation_required_true_forbids_reuse_valid": true
+  },
+  "arcane_adept_orb_review": {
+    "slug": "arcane_adept_orb",
+    "name": "Arcane Adept Orb",
+    "item_type": "accessory",
+    "slot_type": "amulet",
+    "rarity": "Legendary",
+    "required_adventurer_level": 12,
+    "class_tags": ["mage", "necromancer", "bard"],
+    "stat_tags": ["intellect"],
+    "lore_tags": ["oblio", "vuoto"],
+    "item_binding_policy": "soft",
+    "recommended_classes": ["mage", "necromancer", "bard"],
+    "cacciatore_del_vuoto_in_class_tags": false,
+    "cacciatore_del_vuoto_in_rec_classes": false,
+    "mutation_required": true,
+    "verdict": "REMAINS_PM_REVIEW",
+    "reason": "Lore vuoto/oblio identity + intellect + soft + Legendary => Vuoto-naturally aligned; but adding cacciatore_del_vuoto to class_tags/rec_classes = mutation forbidden now.",
+    "confidence": "HIGH",
+    "identity_risk_toward_vuoto": "LOW",
+    "identity_risk_toward_mage_necromancer_bard": "MEDIUM",
+    "next_gate_recommendation": "R18.6.RV3-EV-F3 or post-AFX1 dedicated review; alternative: create new Vuoto-specific item"
+  },
+  "second_lore_pm_review_reconciliation": {
+    "ev_f1_pm_review_count_out_of_6_lore": 2,
+    "ev_f1_pm_review_items": ["arcane_adept_orb", "voidpiercer-bow"],
+    "ev_f2_pm_review_count_out_of_6_lore": 1,
+    "ev_f2_pm_review_items": ["arcane_adept_orb"],
+    "voidpiercer_bow_migration": "PM_REVIEW -> REJECTED_NOT_COMPATIBLE (IDENTITY_CONFLICT finale)",
+    "reason_migration": "PM directive: 'voidpiercer-bow final exclusion, IDENTITY_CONFLICT, NOT REUSE_VALID, NO retro-branding'"
+  },
+  "voidpiercer_bow_final_exclusion": {
+    "slug": "voidpiercer-bow",
+    "name": "Voidpiercer Bow",
+    "item_type": "weapon",
+    "slot_type": "weapon",
+    "rarity": "Epic",
+    "required_adventurer_level": 8,
+    "class_tags": ["rogue", "ranger", "assassin", "monk", "mage", "necromancer"],
+    "stat_tags": ["agility", "intellect"],
+    "lore_tags": ["vuoto", "filo-spezzato"],
+    "weapon_tags": ["bow", "ranged"],
+    "item_binding_policy": "soft",
+    "recommended_classes": ["rogue", "ranger", "assassin", "monk", "mage", "necromancer", "cacciatore_di_mostri"],
+    "mutation_required": true,
+    "verdict": "REJECTED_NOT_COMPATIBLE",
+    "reason": "weapon_tags bow != Vuoto proficiency focus/crossbow/dagger; rec_classes assegnato a cacciatore_di_mostri (rival class); Vuoto retro-branding VIETATO",
+    "confidence": "HIGH",
+    "identity_risk": "HIGH_retro_brand_and_cross_class",
+    "no_retro_branding_lock": true,
+    "cacciatore_di_mostri_strict_separation": true
+  },
+  "armor_tags_distinct": {
+    "populated_count": 46,
+    "populated_percent": 25.8,
+    "not_populated_count": 132,
+    "distinct_values": ["arcane", "artisan", "cloth", "dark", "heavy", "leather", "light", "mail", "medium", "natural", "plate", "robe", "scale", "shield"],
+    "vuoto_compatible_stoffa_aligned": ["cloth", "robe", "light"],
+    "vuoto_compatible_cuoio_aligned": ["leather", "medium"],
+    "vuoto_not_compatible": ["heavy", "plate", "mail", "scale", "shield"],
+    "vuoto_neutral_cosmetic": ["arcane", "dark", "natural", "artisan"],
+    "coverage_verdict_ev_f1_confirmed": "EXISTS_ALIAS with partial coverage (46/178)"
+  },
+  "weapon_tags_distinct": {
+    "populated_count": 61,
+    "populated_percent": 34.3,
+    "not_populated_count": 117,
+    "distinct_values": ["alchemical_flask", "arcane", "axe", "bow", "dagger", "finesse", "focus", "grimoire", "instrument", "mace", "ranged", "sonic", "spear", "staff", "sword", "tome", "two_handed", "wand"],
+    "vuoto_literal_proficiency": ["focus", "dagger"],
+    "vuoto_semantic_caster_overlap": ["tome", "grimoire", "wand", "staff", "arcane"],
+    "vuoto_not_compatible": ["sword", "axe", "mace", "spear", "two_handed", "bow", "instrument", "sonic", "alchemical_flask"],
+    "focus_literal_sub_materialized": true,
+    "crossbow_balestra_missing_from_live": true
+  },
+  "slot_type_distinct": {
+    "distinct_values": ["accessory", "amulet", "armor", "chest", "helm", "ring", "weapon", "weapon_main", null],
+    "counts": {"weapon": 54, "armor": 44, "accessory": 42, "None": 21, "weapon_main": 7, "amulet": 5, "chest": 3, "helm": 1, "ring": 1},
+    "canonical_14_target": ["head", "neck", "shoulders", "chest", "back", "hands", "wrist", "waist", "legs", "feet", "main_hand", "off_hand", "ring", "accessory"],
+    "live_taxonomy_coarser": true,
+    "back_slot_missing_from_live": true,
+    "slot_none_data_quality_gap": 21,
+    "canonical_remapping_deferred_to_future_gate": true
+  },
+  "level_field_completeness": {
+    "required_adventurer_level_populated": 178,
+    "level_required_populated": 119,
+    "min_level_populated": 5,
+    "sot_order": ["required_adventurer_level", "level_required", "min_level", "1_default"],
+    "deprecation_in_ev_f2": false,
+    "tier_mapping_g5_lock": {
+      "T1_Aspirante": "1-15",
+      "T2_Cacciatore": "16-30",
+      "T3_Iniziato": "31-45",
+      "T4_Rituale": "46-55",
+      "T5_Vuoto": "56-60"
+    },
+    "l12_equals_t1_preserved": true,
+    "l12_equals_t5_finding_rejected": true
+  },
+  "rarity_values": {
+    "distinct": ["Common", "Uncommon", "Rare", "Epic", "Legendary"],
+    "live_distribution_measured": {
+      "Common": 52, "Uncommon": 37, "Rare": 39, "Epic": 39, "Legendary": 11
+    },
+    "sum": 178,
+    "delta_vs_rv3_ev_estimate": {
+      "Common": "-11", "Uncommon": "-12", "Rare": "-10", "Epic": "+25", "Legendary": "+8"
+    },
+    "verdict": "EV-F2_measurements_authoritative_supersedes_RV3EV_estimate"
+  },
+  "can_be_sold_for_real_money_audit": {
+    "field_present": 128,
+    "field_missing": 50,
+    "count_true": 0,
+    "count_false": 128,
+    "count_truthy_or_ambiguous": 0,
+    "anti_p2w_verdict": "PASS_documental_no_marketable_items",
+    "data_quality_gap_missing_50": true,
+    "backend_fallback_default_false": true,
+    "no_correction_authorized": true
+  },
+  "tier_derivation_preview": {
+    "formula": "tier = f(required_adventurer_level) with T1:1-15, T2:16-30, T3:31-45, T4:46-55, T5:56-60",
+    "readiness_verdict_ev_f1_confirmed": "DERIVABLE_HIGH_CONFIDENCE",
+    "confidence": "HIGH",
+    "apply_authorized": false,
+    "live_preview_all_t1": true
+  },
+  "ilvl_derivation_preview": {
+    "rarity_offset_lock": {"Common": 0, "Uncommon": 2, "Rare": 3, "Epic": 4, "Legendary": 5},
+    "formula": "ilvl(item) = min( max( required_level + rarity_offset[rarity], tier_min[tier] ), 60 )",
+    "tier_min_lock": {"T1": 1, "T2": 16, "T3": 31, "T4": 46, "T5": 56},
+    "legendary_ilvl_anchor": 60,
+    "readiness_verdict_upgraded": "DERIVABLE_HIGH_CONFIDENCE",
+    "ev_f1_proposal_deprecated": true,
+    "apply_authorized": false
+  },
+  "tier_coverage": {
+    "T1": {"live_materialized": 178, "vuoto_usable_baseline": 65, "gap": "partial_slot_incomplete"},
+    "T2": {"live_materialized": 0, "vuoto_need_estimate": "22-35", "gap": "COMPLETE"},
+    "T3": {"live_materialized": 0, "vuoto_need_estimate": "22-35", "gap": "COMPLETE"},
+    "T4": {"live_materialized": 0, "vuoto_need_estimate": "22-35", "gap": "COMPLETE"},
+    "T5": {"live_materialized": 0, "vuoto_need_estimate": "22-35", "gap": "COMPLETE"}
+  },
+  "slot_coverage": {
+    "head_helm": {"live": 1, "vuoto_usable": 0, "gap": "COMPLETE"},
+    "back": {"live": 0, "vuoto_usable": 0, "gap": "COMPLETE_slot_canonical_missing"},
+    "ring": {"live": 2, "vuoto_usable": 1, "gap_t2_t5": "COMPLETE"},
+    "armor_group": {"live_vuoto_usable_t1": 5, "gap_t2_t5": "COMPLETE"},
+    "weapon_group": {"live_vuoto_conditional_t1": 6, "focus_literal_gap": true, "crossbow_gap": true, "gap_t2_t5": "COMPLETE"},
+    "accessory_group": {"live_vuoto_usable_t1": 7, "gap_t2_t5": "COMPLETE"}
+  },
+  "class_identity_risk": {
+    "overall_severity": "MEDIUM_mitigable",
+    "risks": [
+      {"vs": "mago", "overlap_count": 29, "severity": "MEDIUM", "mitigation": "selective rec_classes bridge"},
+      {"vs": "negromante", "overlap_count": 29, "severity": "MEDIUM", "mitigation": "distinct lore identity"},
+      {"vs": "bardo", "overlap_count": 26, "severity": "LOW", "mitigation": "distinct role"},
+      {"vs": "cacciatore_di_mostri", "overlap_count": 2, "severity": "LOW-MEDIUM", "mitigation": "strict separation"},
+      {"vs": "retro_branding_voidpiercer", "severity": "HIGH_mitigated", "mitigation": "REJECTED_NOT_COMPATIBLE finale"},
+      {"vs": "warlock_bridge_legacy", "severity": "LOW", "mitigation": "R18.3e sealed bridge accepted"}
+    ]
+  },
+  "overlap_mago": {
+    "count_49_subset": 29,
+    "mago_exclusive_estimate": "5-8",
+    "mago_multi_caster_estimate": "~20",
+    "identity_delta": "Mago high magic classic vs Vuoto forbidden void magic",
+    "adjudication_pattern": "REUSE_CONDITIONAL_via_registry_v3_additive"
+  },
+  "overlap_rogue": {
+    "count_49_subset": 4,
+    "identity_severity": "LOW",
+    "reason": "stat and role mismatch (agility melee vs intellect caster); dual-stat items only"
+  },
+  "overlap_cacciatore_di_mostri": {
+    "shared_items_in_rec_classes": 2,
+    "shared_items_slugs": ["voidpiercer-bow", "goblin_hunter_ring"],
+    "verdict": "STRICT_SEPARATION_required",
+    "shared_reuse_authorized": false
+  },
+  "reuse_final_totals": {
+    "REUSE_VALID": 12,
+    "REUSE_CONDITIONAL": 53,
+    "NOT_COMPATIBLE_IDENTITY_CONFLICT": 5,
+    "REMAINS_PM_REVIEW": 1,
+    "REQUIRES_NEW_ITEM_FUTURE": 0,
+    "total_unique_adjudicated": 71
+  },
+  "conditional_totals": {
+    "weapon_warlock_tome_arcane": 6,
+    "caster_multi_class_mage_necro_bard": 24,
+    "caster_single_class_lore_neutral": 15,
+    "caster_lore_vuoto_adjacent": 8,
+    "total": 53,
+    "condition_unlock_prereq": "Registry_v3_additive_apply AND AFX1_vocabulary_lock"
+  },
+  "rejected_totals": {
+    "identity_conflict_6_lore_subset": [
+      {"slug": "drake_slayer_helm", "reason": "wrong stat + hard binding"},
+      {"slug": "drake_slayer_chest", "reason": "wrong stat + hard binding"},
+      {"slug": "drake_slayer_blade", "reason": "wrong stat + hard binding + sword proficiency mismatch"},
+      {"slug": "goblin_hunter_ring", "reason": "wrong stat + cacciatore_di_mostri rec_classes"},
+      {"slug": "voidpiercer-bow", "reason": "bow proficiency mismatch + cacciatore_di_mostri rec + retro-branding forbidden"}
+    ],
+    "not_compatible_out_of_scope_estimate": 110,
+    "total_rejected_or_out_of_scope": 115
+  },
+  "unresolved_totals": {
+    "remains_pm_review_count": 1,
+    "items": [
+      {"slug": "arcane_adept_orb", "reason": "lore-perfect but class_tags mutation forbidden", "confidence": "HIGH", "next_gate": "R18.6.RV3-EV-F3_or_post_AFX1"}
+    ]
+  },
+  "future_item_estimate_normalized": {
+    "envelope_baseline": {"min": 110, "max": 130, "center": 120, "status": "official_planning_baseline"},
+    "max_scenario_estimate": {"min": 180, "max": 220, "status": "advisory_non_binding"},
+    "decomposition": {
+      "vuoto_specific_T1_completion": "15-25",
+      "vuoto_specific_T2": "22-35",
+      "vuoto_specific_T3": "22-35",
+      "vuoto_specific_T4": "22-35",
+      "vuoto_specific_T5_endgame": "22-35",
+      "shared_caster_items": "15-25",
+      "universal_slot_back_shoulders": "15-25",
+      "legendary_vuoto_identity": "5-15"
+    },
+    "interpretation": "D_and_E_hybrid_class_specific_plus_shared_plus_universal_max_scenario",
+    "status": {
+      "non_binding": true,
+      "pm_approved": false,
+      "item_creation_authorization": false
+    }
+  },
+  "coverage_envelope_reconciliation": {
+    "envelope_110_130": "baseline_playable_vuoto_single_rarity_slot_tier",
+    "planning_center_120": "median_target",
+    "estimate_180_220": "max_scenario_multi_rarity_plus_universal_plus_legendary_depth",
+    "delta_explanation": "envelope+50-100 items for multi-rarity expansion + universal slots + legendary depth",
+    "envelope_status": "LOCK_design_baseline",
+    "estimate_status": "advisory_non_binding"
+  },
+  "affix_vocabulary_gate_prerequisites_afx1": {
+    "gate_id": "R18.6.RV3-AFX1",
+    "gate_title": "Affix Vocabulary and Pool Contract",
+    "status": "HOLD_DO_NOT_START",
+    "prerequisites_documented": [
+      "affix_pool_tag_vocabulary_base_T1_to_T5",
+      "schema_validation_rules_min_max_stacking_exclusion",
+      "compatibility_mapping_class_tier_rarity_slot",
+      "null_handling_policy_no_backfill_versioning",
+      "afx_applicability_audit_on_178_items",
+      "pm_ratify_vocabulary_lock",
+      "registry_v3_additive_design_only_no_field_addition"
+    ],
+    "do_not_start": true,
+    "do_not_create_artifacts": true,
+    "do_not_append_prd": true
+  },
+  "risk_register_f2": [
+    {"id": "F2-R1", "risk": "rarity_distribution_rv3ev_under_estimate", "severity": "HIGH_mitigated", "status": "RESOLVED"},
+    {"id": "F2-R2", "risk": "retro_branding_voidpiercer", "severity": "HIGH", "status": "MITIGATED"},
+    {"id": "F2-R3", "risk": "identity_conflict_mago_necromante_overlap", "severity": "MEDIUM", "status": "HOLD"},
+    {"id": "F2-R4", "risk": "cross_class_cacciatore_di_mostri_contamination", "severity": "MEDIUM", "status": "MITIGATED"},
+    {"id": "F2-R5", "risk": "coverage_t2_t5_zero_live", "severity": "HIGH_design", "status": "HOLD"},
+    {"id": "F2-R6", "risk": "armor_tags_partial_coverage_46_of_178", "severity": "LOW", "status": "ACCEPTED"},
+    {"id": "F2-R7", "risk": "50_items_missing_can_be_sold_for_real_money", "severity": "LOW_MEDIUM", "status": "ACCEPTED"},
+    {"id": "F2-R8", "risk": "21_items_slot_type_none", "severity": "LOW", "status": "ACCEPTED"},
+    {"id": "F2-R9", "risk": "slot_taxonomy_live_coarse_vs_canonical_14", "severity": "MEDIUM", "status": "HOLD"},
+    {"id": "F2-R10", "risk": "focus_weapon_literal_sub_materialized", "severity": "HIGH_design", "status": "HOLD"},
+    {"id": "F2-R11", "risk": "ilvl_formula_ev_f1_vs_ev_f2_divergence", "severity": "LOW_mitigated", "status": "RESOLVED"},
+    {"id": "F2-R12", "risk": "class_slug_bridge_r18_3e_legacy", "severity": "LOW", "status": "ACCEPTED"}
+  ],
+  "pm_open_questions_f2": [
+    {"id": "F2-Q1", "question": "6 REUSE_CONDITIONAL weapon warlock (tome/arcane) promuovibili a REUSE_VALID se G2 include tome?", "recommendation": "HOLD_until_AFX1_vocabulary_lock"},
+    {"id": "F2-Q2", "question": "47 REUSE_CONDITIONAL dei 49 richiedono Registry v3 additive bulk o item-by-item?", "recommendation": "bulk_in_dedicated_gate_post_AFX1_with_exclusion_list"},
+    {"id": "F2-Q3", "question": "arcane_adept_orb: creare nuovo item o autorizzare additive class_tags?", "recommendation": "create_new_vuoto_specific_item"},
+    {"id": "F2-Q4", "question": "Rarity distribution corrected: aggiornare RV3-EV.json?", "recommendation": "NO_rv3_ev_is_immutable_correction_tracked_in_ev_f1_ev_f2"},
+    {"id": "F2-Q5", "question": "ILVL formula EV-F2 sostituisce EV-F1 proposal: verdict?", "recommendation": "ev_f2_formula_ratified_ev_f1_deprecated_as_suggestion"},
+    {"id": "F2-Q6", "question": "Slot taxonomy remapping timing?", "recommendation": "dedicated_gate_post_AFX1"},
+    {"id": "F2-Q7", "question": "50 missing can_be_sold_for_real_money: fix now?", "recommendation": "defer_dedicated_data_quality_gate_post_ev_chain"},
+    {"id": "F2-Q8", "question": "21 slot_type=None: backfill?", "recommendation": "keep_as_is_document_for_future_audit"},
+    {"id": "F2-Q9", "question": "focus weapon literal sub-materialized: T1 Vuoto weapon gap?", "recommendation": "YES_focus_materialization_needed_in_registry_v3"},
+    {"id": "F2-Q10", "question": "envelope vs estimate: official target?", "recommendation": "envelope_110_130_baseline_estimate_180_220_advisory"},
+    {"id": "F2-Q11", "question": "Cacciatore di Mostri strict separation preserve?", "recommendation": "YES"},
+    {"id": "F2-Q12", "question": "AFX1 kickoff timing?", "recommendation": "post_ev_chain_closure"}
+  ],
+  "go_hold_recommendation_rv3_ev_f2": {
+    "rv3_ev_closure": "HOLD_pending_pm_review_ev_f2",
+    "ev_f1_status": "PM_APPROVED",
+    "ev_f2_status": "DRAFT_GENERATED_pending_pm",
+    "registry_v3_additive_metadata_gate": "HOLD_post_ev_closure",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "field_addition": "NOT_AUTHORIZED",
+    "field_deprecation": "HOLD",
+    "affix_pool_tag_backfill": "HOLD_afx1_prereq",
+    "item_creation_registry_v3": "NOT_AUTHORIZED",
+    "pm_review_49_adjudication": "COMPLETED_in_this_document",
+    "pm_review_residual_count": 1,
+    "six_lore_final_adjudication": "COMPLETED_0_reuse_5_identity_conflict_1_pm_review",
+    "voidpiercer_bow_final": "REJECTED_NOT_COMPATIBLE",
+    "arcane_adept_orb_final": "REMAINS_PM_REVIEW",
+    "afx1_kickoff": "HOLD_DO_NOT_START",
+    "gate_11": "NOT_AUTHORIZED",
+    "wave_1_kickoff": "HOLD",
+    "cacciatore_del_vuoto_live_selectable": "NOT_LIVE_NOT_SELECTABLE"
+  },
+  "explicit_stop": {
+    "rv3_ev": "OPEN",
+    "ev_f2": "DRAFT_GENERATED",
+    "afx1": "HOLD",
+    "item_creation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "field_backfill": "NOT_AUTHORIZED",
+    "gate_11": "HOLD",
+    "monaco_wave_1": "HOLD",
+    "cacciatore_del_vuoto": "NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "prd_appended": false,
+    "sealed_integrity_pending_final_check": "36/36_pytest",
+    "lore_meta_sha_expected": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "backend_frontend_openapi_touch_count": 0,
+    "next_action": "await_pm_directive_on_ev_f2"
+  }
+}
