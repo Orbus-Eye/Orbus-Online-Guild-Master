@@ -469,7 +469,7 @@ Aumenta l'efficacia del passo Drain (canalizzazione post-Mark). Modula: danno de
 |---|---|
 | Canonical namespace | `void.payoff.dispel` |
 | Internal tag | `AFX_DISPEL_QUALITY` |
-| Player-facing label (IT) | "Qualità del Dispel" |
+| Player-facing label (IT) | "Qualità della Dissipazione" |
 | Player-facing label (EN) | "Dispel Quality" |
 | Version | `v1.0` |
 
@@ -589,7 +589,7 @@ Modula generazione, retention e chain bonus dei Frammenti di Onirade. Cap totale
 |---|---|
 | Canonical namespace | `void.payoff.efficacy` |
 | Internal tag | `AFX_PAYOFF_EFFICACY` |
-| Player-facing label (IT) | "Efficacia del Risolvente" |
+| Player-facing label (IT) | "Efficacia della Risoluzione" |
 | Player-facing label (EN) | "Payoff Efficacy" |
 | Version | `v1.0` |
 
@@ -1235,6 +1235,277 @@ TOTAL            = 178
 ---
 
 ## 🛑 EXPLICIT STOP FINALE · AFX1 DRAFT GENERATED · PENDING PM VALIDATION
+
+---
+
+## ADDENDUM · PM MICRO-FIX APPLICATI (dispatch 2)
+
+**Stato**: PM APPROVED WITH REQUIRED MICRO-FIX · CLOSURE = HOLD
+**Regola**: micro-fix applicati in-place (label §33 e §43) + addendum contrattuale in questa sezione. Le 85 sezioni originali restano intatte per numerazione.
+
+### Micro-fix 1 · Player-facing terminology IT (APPLICATO in-place)
+
+- **Famiglia 4** (`void.payoff.dispel` · `AFX_DISPEL_QUALITY`):
+  - Label IT: `Qualità del Dispel` → **`Qualità della Dissipazione`**
+  - Namespace/tag INVARIATI · EN INVARIATO
+- **Famiglia 6** (`void.payoff.efficacy` · `AFX_PAYOFF_EFFICACY`):
+  - Label IT: `Efficacia del Risolvente` → **`Efficacia della Risoluzione`**
+  - Namespace/tag INVARIATI · EN INVARIATO
+- Termine interno `Payoff` resta in metadata tecnici; testo player-facing sempre italiano.
+
+### Micro-fix 2 · Chiarimento family_namespace ≠ affix_pool_tag
+
+**Disclaimer esplicito**: I 10 namespace canonici (§17-66) sono `family_namespace`, **NON** valori di `affix_pool_tag`.
+
+Elenco famiglia (family_namespace):
+- `void.mark.power` · `void.mark.duration` · `void.drain.efficacy` · `void.payoff.dispel` · `void.fragment.interaction` · `void.payoff.efficacy` · `void.antitype.incorporeal` · `void.antitype.summon` · `void.channel.mobility` · `void.ritual.protection`
+
+Il termine `family_namespace` identifica la **classificazione tassonomica dell'affix** (family), non il **selettore di pool eleggibile** per l'item (pool_tag).
+
+### Micro-fix 3 · Contratto CORRETTO `affix_pool_tag`
+
+Per il futuro record item Registry v3:
+
+| Field | Value |
+|---|---|
+| `field` | `affix_pool_tag` |
+| `type` | `string` |
+| `cardinality` | **single-value** |
+| `version` | `1` |
+| `canonical value proposto (Vuoto)` | **`void.cacciatore_del_vuoto.pool.v1`** |
+| `status` | **CONTRACT LOCK · NOT POPULATED · NOT APPLIED** |
+
+**Significato canonico**:
+- `void.cacciatore_del_vuoto.pool.v1` = "L'item è eleggibile al pool affix v1 del Cacciatore del Vuoto."
+- **NON** significa: "L'item possiede una sola famiglia affix."
+- Un item può avere: **1 pool selector** + **più affix assegnati** entro budget tier/rarity.
+
+**Correzione claim §80**: la formulazione "tutte le 10 famiglie AFX1 class-specific · 0 shared/universal" era corretta per la **classificazione delle famiglie** (family ownership) ma **non** definiva il pool. Il pool class-specific di Vuoto è **uno solo**: `void.cacciatore_del_vuoto.pool.v1`. Le 10 famiglie restano class-specific per Vuoto in v1, ma sono FAMILY, non POOL.
+
+### Micro-fix 4 · Affix definition schema contract (schema only, no creation)
+
+Ogni futura definizione affix dovrà possedere:
+
+| Field | Type | Notes |
+|---|---|---|
+| `affix_id` | string | future_value, NO creation in AFX1 |
+| `family_namespace` | string enum (10 canonical) | §17-66 |
+| `internal_tag` | string enum (10 canonical) | AFX_MARK_POWER etc |
+| `player_label_key` | string i18n key | localization deferred |
+| `description_key` | string i18n key | localization deferred |
+| `effect_scope` | string enum | Mark/Drain/Payoff/etc |
+| `eligible_item_families` | list[string] | focus/pugnale/armor/accessory etc |
+| `eligible_tiers` | list[string] | subset T1-T5 |
+| `eligible_rarities` | list[string] | subset Common-Legendary |
+| `stacking_rule` | string enum | additive_intra_slot_max_1 etc |
+| `hard_cap_rule` | string / number | family-specific cap |
+| `conflict_group` | string enum | e.g. MARK_MAGNITUDE_GROUP |
+| `version` | integer | v1 for AFX1 |
+
+**Esempio concettuale SCHEMA ONLY** (nessuna creazione):
+```
+affix_id         = future_value
+family_namespace = void.mark.power
+internal_tag     = AFX_MARK_POWER
+pool             = void.cacciatore_del_vuoto.pool.v1
+```
+
+**VIETATO** creare: affix_id reali · righe affix · item · DB field · Registry v3 module.
+
+### Micro-fix 5 · Multi-affix slot budget T1..T5 (LOCK v1)
+
+**Slot policy contratto (design-only, non popolato)**:
+
+| Tier | Affix slots per item |
+|---|---|
+| T1 Aspirante | **1** |
+| T2 Cacciatore | **2** |
+| T3 Iniziato | **3** |
+| T4 Rituale | **4** |
+| T5 Vuoto | **5** |
+
+**Contratto**:
+- Un item → un `affix_pool_tag` (single-value) → **più affix** appartenenti a **famiglie differenti**
+- Entro: slot budget tier · rarity budget (Common minor / Legendary maggiore) · conflict rules (§21/§26/etc conflict_group) · hard cap (§67-70) · mutual exclusion (conflict group)
+- **NON** usare "un `affix_pool_tag` diverso per ogni famiglia" nel modello v1.
+
+Slot policy marcata: **`LOCK v1 · design contract only · non popolata`**.
+
+### Micro-fix 6 · Shared / Universal pool = reserved_future_contract
+
+**Conferma per AFX1 v1**:
+
+| Pool tier | Status v1 |
+|---|---|
+| **Class-specific pool (Vuoto)** | **DEFINITO** · `void.cacciatore_del_vuoto.pool.v1` |
+| **Shared pool** | **NON DEFINITO** · `reserved_future_contract` (gate dedicato futuro) |
+| **Universal pool** | **NON DEFINITO** · `reserved_future_contract` (gate dedicato futuro) |
+
+**Rule**: **NON** inventare valori come `shared.pool.v1` o `universal.pool.v1` in AFX1 v1. Un futuro gate dedicato potrà definirli.
+
+### Micro-fix 7 · Null / Unknown / Invalid handling (3 casi distinti, sostituisce §79)
+
+**Contratto separato per tre casi distinti** (design-only, no runtime apply):
+
+**A · Null**:
+- `affix_pool_tag = null`
+- Significato: **assenza valida di pool**
+- Comportamento: nessun affix class-specific assegnabile
+- Errore: **NO** (stato ammesso)
+- Auto-derive: **NO** (mai auto-inferire pool da nome/lore/keyword)
+
+**B · Unknown**:
+- Valore **sintatticamente valido** MA non presente nel registry/versione conosciuta (es. `void.somebody.pool.v99`)
+- Comportamento: **VALIDATION ERROR**
+- Runtime posture: **FAIL CLOSED**
+- Apply: **NO APPLY**
+
+**C · Invalid**:
+- Tipo errato · formato errato · namespace errato · versione invalida (es. `123` · `POOL_ABC` · `""` · non-string)
+- Comportamento: **VALIDATION ERROR**
+- Runtime posture: **FAIL CLOSED**
+- Apply: **NO APPLY**
+
+**Regola esplicita**: **NON convertire silentemente unknown/invalid in null** durante authoring, validation o apply.
+
+**Nota runtime fallback futuro (non progettato in AFX1)**:
+Un eventuale runtime fallback difensivo dovrà (a) **negare** gli effetti affix, (b) **loggare** l'anomalia, (c) **NON** correggere il dato. AFX1 NON progetta operativamente questo fallback (design-only).
+
+---
+
+## ADDENDUM · AFX1-Qn VERBATIM EXTRACTION (§84 → questa appendice)
+
+Estrazione testuale delle **12 PM open questions** presenti nel §84 del MD/JSON AFX1 (draft dispatch 1). Format: testo verbatim + recommendation e1_dev verbatim + sezione correlata + impatto + default proposto + blocking.
+
+```
+=== AFX1-Q1 ===
+Testo: Approvare i 10 canonical namespace `void.<family>.<sub>`?
+Recommendation e1_dev: APPROVE (nomi coerenti con G3/G4 loop)
+Sezione correlata: §17-66 · 10 famiglie affix + §78 affix_pool_tag data contract
+Impatto: closure / Registry v3
+Default proposto: APPROVE (con chiarimento family_namespace ≠ affix_pool_tag applicato in micro-fix 2)
+Blocking: false (default proceed)
+
+=== AFX1-Q2 ===
+Testo: Confermare combined proc hard cap = 45%?
+Recommendation e1_dev: CONFIRM (§70 mechanical safety)
+Sezione correlata: §70 · combined proc hard cap
+Impatto: closure / affix creation
+Default proposto: CONFIRM
+Blocking: false
+
+=== AFX1-Q3 ===
+Testo: Confermare Fragment cap = 5, active marks = 5, duration = 10?
+Recommendation e1_dev: CONFIRM (G4 + G3 loop)
+Sezione correlata: §67-69 · vincoli meccanici
+Impatto: closure / affix creation
+Default proposto: CONFIRM
+Blocking: false
+
+=== AFX1-Q4 ===
+Testo: Approvare Focus channel bonus +1 Frammento + segment cap 2?
+Recommendation e1_dev: APPROVE (§71 G2 focus lock)
+Sezione correlata: §71 · Focus channel bonus + segment cap
+Impatto: closure / affix creation
+Default proposto: APPROVE
+Blocking: false
+
+=== AFX1-Q5 ===
+Testo: Approvare Pugnale ritual-close bonus +1 Frammento max 1x per Marchio?
+Recommendation e1_dev: APPROVE (§72 G2 pugnale lock)
+Sezione correlata: §72 · Pugnale ritual-close bonus + refresh eligibility
+Impatto: closure / affix creation
+Default proposto: APPROVE
+Blocking: false
+
+=== AFX1-Q6 ===
+Testo: Boss safeguard 3F/5F/immune/valid add come attuale?
+Recommendation e1_dev: CONFIRM (§75)
+Sezione correlata: §75 · boss safeguard
+Impatto: closure / affix creation / gameplay
+Default proposto: CONFIRM
+Blocking: false
+
+=== AFX1-Q7 ===
+Testo: `affix_pool_tag` single-value con estensione multi-value in v2?
+Recommendation e1_dev: APPROVE (§78)
+Sezione correlata: §78 · affix_pool_tag data contract (aggiornata via micro-fix 3)
+Impatto: Registry v3 / affix creation
+Default proposto: APPROVE single-value v1 · multi-value v2 futuro (PM directive dedicata)
+Blocking: false
+
+=== AFX1-Q8 ===
+Testo: Class-specific ownership all 10 famiglie AFX1? Shared/Universal in gate futuri?
+Recommendation e1_dev: APPROVE (§80)
+Sezione correlata: §80 · class-specific/shared/universal semantics (aggiornata via micro-fix 6)
+Impatto: closure / Registry v3
+Default proposto: APPROVE class-specific v1 · Shared/Universal = reserved_future_contract
+Blocking: false
+
+=== AFX1-Q9 ===
+Testo: Registry v3 additive `rec_classes: cacciatore_del_vuoto` come mechanism unlock 32 REUSE_CONDITIONAL?
+Recommendation e1_dev: APPROVE (§83, F2-Q2 constraints)
+Sezione correlata: §83 · condition code catalog per i 32 REUSE_CONDITIONAL
+Impatto: Registry v3 apply gate futuro
+Default proposto: APPROVE con F2-Q2 constraints (explicit allowlist + per-item verdict + dry-run + snapshot + PM GO)
+Blocking: false
+
+=== AFX1-Q10 ===
+Testo: Localization readiness IT/EN in AFX1, altri lingue in Registry v3 futuro?
+Recommendation e1_dev: APPROVE
+Sezione correlata: §21/§26/§31/§36/§41/§46/§51/§56/§61/§66 · localization sub-sections
+Impatto: cosmetic / localization pipeline futuro
+Default proposto: APPROVE (IT/EN v1; FR/DE/ES/JP/BR/etc in gate localizzazione futuro)
+Blocking: false
+
+=== AFX1-Q11 ===
+Testo: AFX1 → NC1 → Gate 11 sequence ratified?
+Recommendation e1_dev: CONFIRM (§85)
+Sezione correlata: §85 · GO/HOLD recommendation + NC1 dependency chain
+Impatto: closure / NC1 / Gate 11 timing
+Default proposto: CONFIRM (NC1 mandatory pre-migration; Gate 11 downstream)
+Blocking: false
+
+=== AFX1-Q12 ===
+Testo: AFX1 closure gate follow-up (AFX2 vocabulary v2 vs Registry v3 architecture)?
+Recommendation e1_dev: HOLD PM directive futura
+Sezione correlata: §85 · GO/HOLD recommendation
+Impatto: closure follow-up
+Default proposto: HOLD (attende PM directive dedicata; potrebbe essere IC1 come proposed next gate)
+Blocking: false
+```
+
+**AFX1-Q verbatim count**: **12** domande estratte (1..12).
+
+---
+
+## ADDENDUM · Roadmap state post micro-fix (record only)
+
+| Item | Stato |
+|---|---|
+| Cacciatore del Vuoto | ACTIVE-DESIGN-READY |
+| RV3-EV / EV-F1 / EV-F2 | CLOSED / RATIFIED / IMMUTABLE |
+| **AFX1** | **PM APPROVED WITH MICRO-FIX APPLIED · CLOSURE = HOLD** |
+| **IC1** (Item Coverage & Content Blueprint) | **HOLD** (proposed next gate, NOT AUTHORIZED) |
+| R18.3f-NC1 | HOLD (mandatory pre-migration, non blocca ramo item/affix) |
+| Registry v3 item generation | NOT AUTHORIZED |
+| Registry v3 apply | NOT AUTHORIZED |
+| Gate 11 | HOLD |
+| Monaco / Wave 1 | HOLD |
+
+**Sequenza autorizzata**:
+1. ✅ 7 micro-fix contrattuali (this dispatch)
+2. ✅ Estrazione verbatim AFX1-Qn (this dispatch)
+3. 🛑 STOP · attende PM sign-off conclusivo su AFX1
+
+**NON autorizzato in questo dispatch**:
+- AFX1 closure · closure report · closure manifest · PRD append
+- IC1 kickoff · NC1 kickoff · Gate 11 · Registry v3 · item creation · affix creation
+- Marcare AFX1 = CLOSED
+
+---
+
+## 🛑 EXPLICIT STOP FINALE · AFX1 MICRO-FIX APPLIED · PENDING PM CONCLUSIVE SIGN-OFF
 
 Governance locks:
 - `apply_authorized = false`

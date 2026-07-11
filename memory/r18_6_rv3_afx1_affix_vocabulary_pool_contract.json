@@ -128,7 +128,7 @@
     },
     {
       "family_id": 4, "sec_range": "32-36", "canonical_namespace": "void.payoff.dispel", "internal_tag": "AFX_DISPEL_QUALITY",
-      "label_it": "Qualita del Dispel", "label_en": "Dispel Quality", "version": "v1.0",
+      "label_it": "Qualita della Dissipazione", "label_en": "Dispel Quality", "version": "v1.0",
       "description": "Aumenta qualita Payoff dispel; boss diretto IMMUNE (safeguard sec 75); 3F area dispel valido; 5F anti-summon valido",
       "item_family_eligibility": ["focus", "accessory_neck", "armor_chest_back"],
       "tier_eligibility": ["T2", "T3", "T4", "T5"],
@@ -160,7 +160,7 @@
     },
     {
       "family_id": 6, "sec_range": "42-46", "canonical_namespace": "void.payoff.efficacy", "internal_tag": "AFX_PAYOFF_EFFICACY",
-      "label_it": "Efficacia del Risolvente", "label_en": "Payoff Efficacy", "version": "v1.0",
+      "label_it": "Efficacia della Risoluzione", "label_en": "Payoff Efficacy", "version": "v1.0",
       "description": "Modula magnitudo Payoff (burst/dispel/ritual outcome); scala con Frammenti consumati 1-5; boss safeguard preserved",
       "item_family_eligibility": ["focus", "pugnale", "accessory_neck_ring", "armor_chest"],
       "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
@@ -420,8 +420,156 @@
       "sequence": "afx1_draft_this_dispatch_pm_verdict_afx1_closed_no_auto_start_next_gates"
     }
   },
+  "pm_micro_fix_addendum": {
+    "review_status": "PM_APPROVED_WITH_REQUIRED_MICRO_FIX_APPLIED",
+    "closure": "HOLD",
+    "closure_report": "NOT_CREATED_IN_THIS_DISPATCH",
+    "closure_manifest": "NOT_CREATED_IN_THIS_DISPATCH",
+    "prd_append": "NOT_PERFORMED_IN_THIS_DISPATCH",
+    "afx1_marked_closed": false,
+    "micro_fix_1_player_facing_terminology": {
+      "family_4_label_it_before": "Qualita del Dispel",
+      "family_4_label_it_after": "Qualita della Dissipazione",
+      "family_6_label_it_before": "Efficacia del Risolvente",
+      "family_6_label_it_after": "Efficacia della Risoluzione",
+      "namespace_tag_invariati": true,
+      "en_invariato": true,
+      "payoff_metadata_technical_preserved": true
+    },
+    "micro_fix_2_family_namespace_vs_affix_pool_tag_disclaimer": {
+      "clarification": "10_canonical_namespaces_are_family_namespace_NOT_affix_pool_tag_values",
+      "family_namespaces_list": ["void.mark.power", "void.mark.duration", "void.drain.efficacy", "void.payoff.dispel", "void.fragment.interaction", "void.payoff.efficacy", "void.antitype.incorporeal", "void.antitype.summon", "void.channel.mobility", "void.ritual.protection"],
+      "family_namespace_definition": "taxonomic_classification_of_affix",
+      "affix_pool_tag_definition": "pool_selector_for_item_eligibility",
+      "these_are_distinct_concepts": true
+    },
+    "micro_fix_3_affix_pool_tag_correct_contract": {
+      "field": "affix_pool_tag",
+      "type": "string",
+      "cardinality": "single-value",
+      "version": 1,
+      "canonical_value_vuoto": "void.cacciatore_del_vuoto.pool.v1",
+      "status": "CONTRACT_LOCK_NOT_POPULATED_NOT_APPLIED",
+      "canonical_meaning": "Item is eligible to Vuoto class affix pool v1",
+      "does_not_mean_one_family_per_item": true,
+      "item_can_have_1_pool_selector_plus_multiple_affix_within_tier_rarity_budget": true,
+      "sec_80_correction": "10_families_still_class_specific_but_they_are_FAMILY_not_POOL_pool_class_specific_vuoto_is_one_only"
+    },
+    "micro_fix_4_affix_definition_schema_contract": {
+      "schema_only_no_creation": true,
+      "required_fields": [
+        "affix_id",
+        "family_namespace",
+        "internal_tag",
+        "player_label_key",
+        "description_key",
+        "effect_scope",
+        "eligible_item_families",
+        "eligible_tiers",
+        "eligible_rarities",
+        "stacking_rule",
+        "hard_cap_rule",
+        "conflict_group",
+        "version"
+      ],
+      "conceptual_example_schema_only": {
+        "affix_id": "future_value",
+        "family_namespace": "void.mark.power",
+        "internal_tag": "AFX_MARK_POWER",
+        "pool": "void.cacciatore_del_vuoto.pool.v1"
+      },
+      "forbidden": ["real_affix_id_creation", "affix_rows_creation", "item_creation", "db_field_creation", "registry_module_creation"]
+    },
+    "micro_fix_5_multi_affix_slot_budget_lock_v1": {
+      "T1_Aspirante_slots": 1,
+      "T2_Cacciatore_slots": 2,
+      "T3_Iniziato_slots": 3,
+      "T4_Rituale_slots": 4,
+      "T5_Vuoto_slots": 5,
+      "contract_allows": "one_item_one_affix_pool_tag_multiple_affix_from_different_families_within_tier_rarity_budget",
+      "does_not_use_one_pool_tag_per_family": true,
+      "status": "LOCK_v1_design_contract_only_non_popolata"
+    },
+    "micro_fix_6_shared_universal_pool_reserved_future_contract": {
+      "class_specific_pool_vuoto": {"status": "DEFINED", "value": "void.cacciatore_del_vuoto.pool.v1"},
+      "shared_pool": {"status": "NOT_DEFINED", "reserved_future_contract": true},
+      "universal_pool": {"status": "NOT_DEFINED", "reserved_future_contract": true},
+      "no_shared_pool_v1_invention_in_afx1": true,
+      "no_universal_pool_v1_invention_in_afx1": true,
+      "future_gate_dedicated_can_define": true
+    },
+    "micro_fix_7_null_unknown_invalid_handling_three_distinct_cases": {
+      "sec_79_replaced": true,
+      "null_case": {
+        "affix_pool_tag_value": "null",
+        "meaning": "valid_absence_of_pool",
+        "runtime_behavior": "no_class_specific_affix_assignable",
+        "error": false,
+        "auto_derive_forbidden": true
+      },
+      "unknown_case": {
+        "definition": "syntactically_valid_but_not_in_registry_known_version",
+        "example": "void.somebody.pool.v99",
+        "behavior": "VALIDATION_ERROR",
+        "runtime_posture": "FAIL_CLOSED",
+        "apply": "NO_APPLY"
+      },
+      "invalid_case": {
+        "definition": "wrong_type_wrong_format_wrong_namespace_invalid_version",
+        "examples": ["integer_123", "POOL_ABC_uppercase", "empty_string", "non_string"],
+        "behavior": "VALIDATION_ERROR",
+        "runtime_posture": "FAIL_CLOSED",
+        "apply": "NO_APPLY"
+      },
+      "explicit_rule": "NO_silent_conversion_unknown_or_invalid_to_null_during_authoring_validation_or_apply",
+      "future_runtime_fallback_note_not_designed_in_afx1": "defensive_fallback_must_deny_affix_effects_log_anomaly_NOT_correct_data"
+    }
+  },
+  "pm_open_questions_verbatim_extract": [
+    {"id": "AFX1-Q1", "testo_verbatim": "Approvare i 10 canonical namespace `void.<family>.<sub>`?", "recommendation_e1_dev_verbatim": "APPROVE (nomi coerenti con G3/G4 loop)", "sezione_correlata": "§17-66 · 10 famiglie affix + §78 affix_pool_tag data contract", "impatto": "closure / Registry v3", "default_proposto": "APPROVE con chiarimento family_namespace != affix_pool_tag applicato in micro-fix 2", "blocking": false},
+    {"id": "AFX1-Q2", "testo_verbatim": "Confermare combined proc hard cap = 45%?", "recommendation_e1_dev_verbatim": "CONFIRM (§70 mechanical safety)", "sezione_correlata": "§70 · combined proc hard cap", "impatto": "closure / affix creation", "default_proposto": "CONFIRM", "blocking": false},
+    {"id": "AFX1-Q3", "testo_verbatim": "Confermare Fragment cap = 5, active marks = 5, duration = 10?", "recommendation_e1_dev_verbatim": "CONFIRM (G4 + G3 loop)", "sezione_correlata": "§67-69 · vincoli meccanici", "impatto": "closure / affix creation", "default_proposto": "CONFIRM", "blocking": false},
+    {"id": "AFX1-Q4", "testo_verbatim": "Approvare Focus channel bonus +1 Frammento + segment cap 2?", "recommendation_e1_dev_verbatim": "APPROVE (§71 G2 focus lock)", "sezione_correlata": "§71 · Focus channel bonus + segment cap", "impatto": "closure / affix creation", "default_proposto": "APPROVE", "blocking": false},
+    {"id": "AFX1-Q5", "testo_verbatim": "Approvare Pugnale ritual-close bonus +1 Frammento max 1x per Marchio?", "recommendation_e1_dev_verbatim": "APPROVE (§72 G2 pugnale lock)", "sezione_correlata": "§72 · Pugnale ritual-close bonus + refresh eligibility", "impatto": "closure / affix creation", "default_proposto": "APPROVE", "blocking": false},
+    {"id": "AFX1-Q6", "testo_verbatim": "Boss safeguard 3F/5F/immune/valid add come attuale?", "recommendation_e1_dev_verbatim": "CONFIRM (§75)", "sezione_correlata": "§75 · boss safeguard", "impatto": "closure / affix creation / gameplay", "default_proposto": "CONFIRM", "blocking": false},
+    {"id": "AFX1-Q7", "testo_verbatim": "`affix_pool_tag` single-value con estensione multi-value in v2?", "recommendation_e1_dev_verbatim": "APPROVE (§78)", "sezione_correlata": "§78 · affix_pool_tag data contract (aggiornata via micro-fix 3)", "impatto": "Registry v3 / affix creation", "default_proposto": "APPROVE single-value v1 · multi-value v2 futuro (PM directive dedicata)", "blocking": false},
+    {"id": "AFX1-Q8", "testo_verbatim": "Class-specific ownership all 10 famiglie AFX1? Shared/Universal in gate futuri?", "recommendation_e1_dev_verbatim": "APPROVE (§80)", "sezione_correlata": "§80 · class-specific/shared/universal semantics (aggiornata via micro-fix 6)", "impatto": "closure / Registry v3", "default_proposto": "APPROVE class-specific v1 · Shared/Universal = reserved_future_contract", "blocking": false},
+    {"id": "AFX1-Q9", "testo_verbatim": "Registry v3 additive `rec_classes: cacciatore_del_vuoto` come mechanism unlock 32 REUSE_CONDITIONAL?", "recommendation_e1_dev_verbatim": "APPROVE (§83, F2-Q2 constraints)", "sezione_correlata": "§83 · condition code catalog per i 32 REUSE_CONDITIONAL", "impatto": "Registry v3 apply gate futuro", "default_proposto": "APPROVE con F2-Q2 constraints (explicit allowlist + per-item verdict + dry-run + snapshot + PM GO)", "blocking": false},
+    {"id": "AFX1-Q10", "testo_verbatim": "Localization readiness IT/EN in AFX1, altri lingue in Registry v3 futuro?", "recommendation_e1_dev_verbatim": "APPROVE", "sezione_correlata": "§21/§26/§31/§36/§41/§46/§51/§56/§61/§66 · localization sub-sections", "impatto": "cosmetic / localization pipeline futuro", "default_proposto": "APPROVE (IT/EN v1; FR/DE/ES/JP/BR/etc in gate localizzazione futuro)", "blocking": false},
+    {"id": "AFX1-Q11", "testo_verbatim": "AFX1 -> NC1 -> Gate 11 sequence ratified?", "recommendation_e1_dev_verbatim": "CONFIRM (§85)", "sezione_correlata": "§85 · GO/HOLD recommendation + NC1 dependency chain", "impatto": "closure / NC1 / Gate 11 timing", "default_proposto": "CONFIRM (NC1 mandatory pre-migration; Gate 11 downstream)", "blocking": false},
+    {"id": "AFX1-Q12", "testo_verbatim": "AFX1 closure gate follow-up (AFX2 vocabulary v2 vs Registry v3 architecture)?", "recommendation_e1_dev_verbatim": "HOLD PM directive futura", "sezione_correlata": "§85 · GO/HOLD recommendation", "impatto": "closure follow-up", "default_proposto": "HOLD (attende PM directive dedicata; potrebbe essere IC1 come proposed next gate)", "blocking": false}
+  ],
+  "roadmap_post_micro_fix": {
+    "cacciatore_del_vuoto": "ACTIVE-DESIGN-READY",
+    "rv3_ev_ev_f1_ev_f2": "CLOSED_ratified_immutable",
+    "afx1": "PM_APPROVED_WITH_MICRO_FIX_APPLIED_CLOSURE_HOLD",
+    "ic1_item_coverage_content_blueprint": "HOLD_proposed_next_gate_NOT_AUTHORIZED",
+    "r18_3f_nc1": "HOLD_mandatory_pre_migration_does_not_block_item_affix_branch",
+    "registry_v3_item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "gate_11": "HOLD",
+    "monaco_wave_1": "HOLD",
+    "authorized_sequence": [
+      "seven_micro_fix_applied_this_dispatch",
+      "afx1_qn_verbatim_extraction_applied_this_dispatch",
+      "STOP_awaiting_pm_conclusive_signoff_on_afx1"
+    ],
+    "not_authorized_this_dispatch": [
+      "afx1_closure",
+      "closure_report",
+      "closure_manifest",
+      "prd_append",
+      "ic1_kickoff",
+      "nc1_kickoff",
+      "gate_11",
+      "registry_v3",
+      "item_creation",
+      "affix_creation",
+      "marking_afx1_closed"
+    ]
+  },
   "explicit_stop": {
-    "afx1": "DRAFT_GENERATED_PENDING_PM_VALIDATION",
+    "afx1": "PM_APPROVED_WITH_MICRO_FIX_APPLIED_CLOSURE_HOLD",
     "rv3_ev": "CLOSED_ratified_immutable",
     "ev_f1": "CLOSED_ratified_immutable",
     "ev_f2": "CLOSED_ratified_immutable_ledger_12_32_134_0",
