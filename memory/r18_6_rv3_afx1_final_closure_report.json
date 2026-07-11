@@ -1,0 +1,533 @@
+{
+  "metadata": {
+    "gate_id": "R18.6.RV3-AFX1",
+    "gate_title": "Affix Vocabulary & Pool Contract",
+    "class_pilot": "cacciatore_del_vuoto",
+    "state": "CLOSED",
+    "pm_locked": true,
+    "immutable_after_this_dispatch": true,
+    "closure_date_utc": "2026-07-11",
+    "regime": "DOCUMENTAL_ONLY",
+    "authors": ["e1_dev"],
+    "ratifier": "PM_Orbus_Online",
+    "regime_constraints": {
+      "no_code": true,
+      "no_db_write": true,
+      "no_migration": true,
+      "no_schema_change": true,
+      "no_field_backfill": true,
+      "no_item_creation": true,
+      "no_affix_creation": true,
+      "no_registry_v3_module_generation": true,
+      "no_registry_apply": true,
+      "no_openapi_change": true,
+      "no_backend_change": true,
+      "no_frontend_change": true,
+      "no_test_file_creation": true,
+      "sealed_integrity_must_hold": "36_of_36",
+      "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    }
+  },
+  "sec_01_pm_verdict": {
+    "verdict": "GO_FORMAL_CLOSURE",
+    "draft_status": "PM_APPROVED_POST_7_MICRO_FIX_AND_AFX1Q_EXTRACTION",
+    "further_micro_fix_required": false,
+    "afx1_questions_ratified": "12_of_12",
+    "kickoff_ic1_in_this_dispatch": false,
+    "dispatch_scope": "closure_report_md_and_json_plus_manifest_plus_prd_append_plus_validation",
+    "tracked_commits": {
+      "draft_dispatch_1": "0812f7a",
+      "dispatch_2_7_micro_fix_and_verbatim": "2333d43"
+    }
+  },
+  "sec_02_afx1_closed": {
+    "gate_id": "R18.6.RV3-AFX1",
+    "state": "CLOSED",
+    "pm_locked": true,
+    "immutable_after_this_dispatch": true,
+    "reopen_authorization": "NOT_AUTHORIZED",
+    "future_modification_path": "OPEN_NEW_GATE_CANDIDATE_AFX2",
+    "closed_contracts": [
+      "affix_vocabulary_v1",
+      "class_specific_pool_selector_v1",
+      "affix_definition_schema_v1",
+      "slot_budget_v1",
+      "mechanical_hard_caps_v1",
+      "boss_safeguard_policy_v1",
+      "18_hard_prohibitions_v1"
+    ]
+  },
+  "sec_03_85_of_85_sections": {
+    "source_md_path": "/app/memory/r18_6_rv3_afx1_affix_vocabulary_pool_contract.md",
+    "source_md_section_count": 85,
+    "source_md_line_count": 1525,
+    "source_md_full_file_sha256": "6600273d8a2412a9ed373e229e168d69c21b231b3d8ada48f3e5016dc7ee86df",
+    "source_json_path": "/app/memory/r18_6_rv3_afx1_affix_vocabulary_pool_contract.json",
+    "source_json_line_count": 596,
+    "source_json_full_file_sha256": "7b4cc068e2cd69f24591b49b8a3c960985ae298df52cc6b78cc513ac9fe1d08e",
+    "source_json_root_keys_count": 14,
+    "source_json_parse": "VALID",
+    "block_coverage": {
+      "block_A_governance_precedenza": "sec_1_8",
+      "block_B_class_identity_lock": "sec_9_16",
+      "block_C_10_affix_families": "sec_17_66",
+      "block_D_vincoli_meccanici": "sec_67_72",
+      "block_E_divieti_boss_safeguard": "sec_73_77",
+      "block_F_affix_pool_tag_contract": "sec_78_80",
+      "block_G_ev_f2_interaction_item_specifics": "sec_81_83",
+      "block_H_risk_register_closure": "sec_84_85"
+    }
+  },
+  "sec_04_10_affix_families": {
+    "count_locked": 10,
+    "ownership": "class_specific_cacciatore_del_vuoto",
+    "families": [
+      {"idx": 1, "namespace": "void.mark.power", "internal_tag": "AFX_MARK_POWER", "label_it": "Potenza del Marchio"},
+      {"idx": 2, "namespace": "void.mark.duration", "internal_tag": "AFX_MARK_DURATION", "label_it": "Durata del Marchio"},
+      {"idx": 3, "namespace": "void.fragment.yield", "internal_tag": "AFX_FRAG_YIELD", "label_it": "Resa Frammenti"},
+      {"idx": 4, "namespace": "void.dispel.quality", "internal_tag": "AFX_DISPEL_QUALITY", "label_it": "Qualità della Dissipazione"},
+      {"idx": 5, "namespace": "void.focus.channel", "internal_tag": "AFX_FOCUS_CHANNEL", "label_it": "Focus Channel Bonus"},
+      {"idx": 6, "namespace": "void.resolution.efficacy", "internal_tag": "AFX_RESOLUTION_EFFICACY", "label_it": "Efficacia della Risoluzione"},
+      {"idx": 7, "namespace": "void.dagger.close", "internal_tag": "AFX_DAGGER_CLOSE", "label_it": "Ritual-Close Pugnale"},
+      {"idx": 8, "namespace": "void.summon.suppression", "internal_tag": "AFX_SUMMON_SUPPRESSION", "label_it": "Soppressione Summon"},
+      {"idx": 9, "namespace": "void.proc.stability", "internal_tag": "AFX_PROC_STABILITY", "label_it": "Stabilità Procs"},
+      {"idx": 10, "namespace": "void.consistency.guard", "internal_tag": "AFX_CONSISTENCY_GUARD", "label_it": "Consistency Guard"}
+    ]
+  },
+  "sec_05_namespace_ratified": {
+    "pattern": "void.<family>.<sub>",
+    "pattern_immutable_v1": true,
+    "all_10_conform": true,
+    "invented_namespace_out_of_set": "FORBIDDEN",
+    "future_namespace_extension_path": "OPEN_NEW_GATE"
+  },
+  "sec_06_player_facing_labels_corrected": {
+    "micro_fix_1_applied": true,
+    "corrections": [
+      {"family": "void.dispel.quality", "old_label_it": "Qualità del Dispel", "new_label_it": "Qualità della Dissipazione"},
+      {"family": "void.resolution.efficacy", "old_label_it": "Efficacia del Risolvente", "new_label_it": "Efficacia della Risoluzione"}
+    ],
+    "localization_scope": {
+      "it_primary": true,
+      "en_readiness": true,
+      "other_languages": "DEFERRED_TO_REGISTRY_V3_FUTURE",
+      "current_player_facing_content_language": "IT_ONLY"
+    }
+  },
+  "sec_07_family_namespace_distinct_from_affix_pool_tag": {
+    "micro_fix_2_applied": true,
+    "disclaimer": "family_namespace != affix_pool_tag",
+    "definitions": {
+      "family_namespace": "10 canonical semantic family identifiers (void.<family>.<sub>)",
+      "affix_pool_tag": "single-value pool selector on item, defines which affix set is eligible"
+    },
+    "chain": "1_item -> 1_pool_tag -> N_affix (from different families)",
+    "corrected_claim_sec_80": "10 class-specific FAMILIES but only 1 class-specific POOL for Vuoto v1"
+  },
+  "sec_08_pool_v1_canonical": {
+    "micro_fix_3_applied": true,
+    "canonical_value": "void.cacciatore_del_vuoto.pool.v1",
+    "status": "CONTRACT_LOCK | NOT_POPULATED | NOT_APPLIED",
+    "ownership": "class_specific_cacciatore_del_vuoto",
+    "cardinality_v1": "SINGLE_POOL",
+    "population_authorized": false,
+    "runtime_apply_authorized": false,
+    "registry_v3_write_authorized": false
+  },
+  "sec_09_single_value_pool_selector": {
+    "ratification_source": "AFX1-Q7",
+    "v1_pool_selector_cardinality": "single_value",
+    "v2_multi_value_extension": "reserved_future_gate_dedicata",
+    "afx1_multi_value_implementation": "FORBIDDEN"
+  },
+  "sec_10_multi_affix_item_contract": {
+    "micro_fix_5_applied": true,
+    "contract_chain": "1_item -> 1_affix_pool_tag_single_value -> N_affix_of_different_families",
+    "additive_constraints": [
+      "slot_budget_by_tier",
+      "rarity_budget",
+      "conflict_rules_conflict_group",
+      "mechanical_hard_caps",
+      "mutual_exclusion_conflict_group_match"
+    ],
+    "afx1_actual_affix_creation": "ZERO"
+  },
+  "sec_11_slot_budget_t1_t5": {
+    "micro_fix_5_applied": true,
+    "lock_v1_design_contract_only_non_popolata": true,
+    "budget": {
+      "T1_aspirante": 1,
+      "T2_cacciatore": 2,
+      "T3_iniziato": 3,
+      "T4_rituale": 4,
+      "T5_vuoto": 5
+    },
+    "monotonic_growth": "linear_+1_per_tier",
+    "runtime_enforcement_deferred_to": "registry_v3_apply_future_gate"
+  },
+  "sec_12_affix_definition_contract_13_13": {
+    "micro_fix_4_applied": true,
+    "field_count": 13,
+    "schema": [
+      {"idx": 1, "field": "affix_id", "type": "string", "note": "future_value_no_creation_in_afx1"},
+      {"idx": 2, "field": "family_namespace", "type": "string_enum_10_canonical", "note": "sec_17_66"},
+      {"idx": 3, "field": "internal_tag", "type": "string_enum_10_canonical", "note": "AFX_MARK_POWER etc"},
+      {"idx": 4, "field": "player_label_key", "type": "i18n_key", "note": "localization_deferred"},
+      {"idx": 5, "field": "description_key", "type": "i18n_key", "note": "localization_deferred"},
+      {"idx": 6, "field": "effect_scope", "type": "string_enum", "note": "Mark/Drain/Payoff/etc"},
+      {"idx": 7, "field": "eligible_item_families", "type": "list[string]", "note": "focus/pugnale/armor/accessory/etc"},
+      {"idx": 8, "field": "eligible_tiers", "type": "list[string]", "note": "subset T1-T5"},
+      {"idx": 9, "field": "eligible_rarities", "type": "list[string]", "note": "subset Common-Legendary"},
+      {"idx": 10, "field": "stacking_rule", "type": "string_enum", "note": "e.g. additive_intra_slot_max_1"},
+      {"idx": 11, "field": "hard_cap_rule", "type": "string_or_number", "note": "family_specific_cap"},
+      {"idx": 12, "field": "conflict_group", "type": "string_enum", "note": "e.g. MARK_MAGNITUDE_GROUP"},
+      {"idx": 13, "field": "version", "type": "integer", "note": "v1_per_afx1"}
+    ],
+    "forbidden_in_afx1": ["affix_id_reali", "righe_affix", "item", "db_field", "registry_v3_module"]
+  },
+  "sec_13_shared_pool_reserved": {
+    "micro_fix_6_applied": true,
+    "status_v1": "NON_DEFINITO",
+    "future_contract_key": "reserved_future_contract",
+    "invented_shared_pool_forbidden": true,
+    "activation_path": "OPEN_FUTURE_GATE",
+    "blocks_ic1": false
+  },
+  "sec_14_universal_pool_reserved": {
+    "micro_fix_6_applied": true,
+    "status_v1": "NON_DEFINITO",
+    "future_contract_key": "reserved_future_contract",
+    "invented_universal_pool_forbidden": true,
+    "activation_path": "OPEN_FUTURE_GATE",
+    "pool_tiers_hierarchy": ["class_specific_defined_v1", "shared_reserved", "universal_reserved"]
+  },
+  "sec_15_null_handling": {
+    "micro_fix_7_case_a_applied": true,
+    "definition": "affix_pool_tag = null",
+    "semantics": "valid_absence_of_pool",
+    "error": false,
+    "auto_derive": false,
+    "silent_conversion": "FORBIDDEN",
+    "usage_scenarios": ["legacy_items_transitional", "cosmetic_non_equippable", "future_vuoto_native_draft_state"]
+  },
+  "sec_16_unknown_fail_closed": {
+    "micro_fix_7_case_b_applied": true,
+    "definition": "syntactically_valid_but_not_in_registry_or_version",
+    "example": ["void.somebody.pool.v99", "void.unregistered_pool.v1"],
+    "behavior": "VALIDATION_ERROR",
+    "runtime_posture": "FAIL_CLOSED",
+    "apply": "NO_APPLY",
+    "silent_conversion_to_null": "FORBIDDEN"
+  },
+  "sec_17_invalid_fail_closed": {
+    "micro_fix_7_case_c_applied": true,
+    "definition": "wrong_type_or_format_or_namespace_or_version",
+    "example": ["123", "POOL_ABC", "\"\"", "void.pool.v-1"],
+    "behavior": "VALIDATION_ERROR",
+    "runtime_posture": "FAIL_CLOSED",
+    "apply": "NO_APPLY",
+    "silent_conversion": "FORBIDDEN",
+    "hard_reject_layer": "schema_json_or_pydantic_equivalent_future_gate"
+  },
+  "sec_18_no_silent_conversion": {
+    "rule": "NEVER convert unknown or invalid to null during authoring/validation/apply",
+    "additional_prohibitions": [
+      "no_auto_correct_mistyped_namespace",
+      "no_default_fallback_substitution",
+      "no_silent_registry_extension"
+    ],
+    "runtime_defensive_fallback_not_designed_in_afx1": true,
+    "runtime_fallback_future_expected_behavior": ["deny_effects", "log_anomaly", "no_data_correction"]
+  },
+  "sec_19_18_hard_prohibitions": {
+    "count": 18,
+    "list": [
+      "NO_direct_boss_cleanse",
+      "NO_direct_boss_nullification",
+      "NO_instant_kill_affix",
+      "NO_life_steal_via_affix_bypass",
+      "NO_permanent_debuff_on_boss",
+      "NO_player_agency_bypass",
+      "NO_boss_safeguard_bypass",
+      "NO_random_full_resource_waste_without_player_agency",
+      "NO_improvised_shared_or_universal_pool",
+      "NO_auto_derive_pool_from_name_or_lore",
+      "NO_silent_conversion_unknown_to_null",
+      "NO_silent_conversion_invalid_to_null",
+      "NO_invented_namespace_out_of_10_canonical_set",
+      "NO_multi_value_affix_pool_tag_in_v1",
+      "NO_shared_or_universal_populated_in_v1",
+      "NO_fragment_cap_gt_5",
+      "NO_combined_proc_cap_gt_45pct",
+      "NO_retroactive_edit_of_afx1_post_closure"
+    ]
+  },
+  "sec_20_mechanical_hard_caps": {
+    "caps": {
+      "fragment_cap": {"value": 5, "sec_ref": 67, "afx1_q": "Q3", "status": "CONFIRMED"},
+      "active_marks_cap": {"value": 5, "sec_ref": 68, "afx1_q": "Q3", "status": "CONFIRMED"},
+      "mark_duration_cap_turns": {"value": 10, "sec_ref": 69, "afx1_q": "Q3", "status": "CONFIRMED"},
+      "combined_proc_hard_cap_pct": {"value": 45, "sec_ref": 70, "afx1_q": "Q2", "status": "CONFIRMED"},
+      "focus_channel_bonus_frammento": {"value": "+1", "sec_ref": 71, "afx1_q": "Q4", "status": "APPROVED"},
+      "focus_segment_cap_frammenti_per_resource_segment": {"value": 2, "sec_ref": 71, "afx1_q": "Q4", "status": "APPROVED"},
+      "pugnale_ritual_close_bonus_frammento": {"value": "+1", "sec_ref": 72, "afx1_q": "Q5", "status": "APPROVED"},
+      "pugnale_ritual_close_cap_per_marchio_application": {"value": 1, "sec_ref": 72, "afx1_q": "Q5", "status": "APPROVED"}
+    },
+    "hard_enforcement": "no_affix_item_buff_event_can_exceed",
+    "extension_path": "future_gate_with_explicit_balance_justification"
+  },
+  "sec_21_boss_safeguards": {
+    "ratification_source": "AFX1-Q6",
+    "status": "CONFIRMED",
+    "sec_ref": 75,
+    "policy": {
+      "three_fragment_area_dispel": "consentito_su_target_non_boss",
+      "five_fragment_annullamento_summon_valida": "consentito_su_valid_boss_summoned_add_con_safeguard",
+      "boss_directo": "IMMUNE_to_direct_cleanse_or_nullify",
+      "valid_boss_summoned_add": "consentito_con_safeguard_type_summon",
+      "random_non_boss_summoned_adds": "fully_targetable"
+    },
+    "correlated_prohibitions": [
+      "no_affix_bypass_boss_immune_true",
+      "no_affix_force_cleanse_boss_direct",
+      "no_combo_loophole_replicating_boss_cleanse"
+    ]
+  },
+  "sec_22_anti_p2w": {
+    "contract_preserved": true,
+    "no_affix_p2w_flagged": true,
+    "no_affix_generated_for_real_money_market": true,
+    "live_catalog_178_items": {
+      "can_be_sold_for_real_money_false_or_absent": 128,
+      "can_be_sold_for_real_money_missing_field": 50,
+      "backfill_authorization_in_afx1": "NOT_AUTHORIZED_deferred_to_future_data_quality_gate"
+    },
+    "auto_p2w_detection_designed_in_afx1": false
+  },
+  "sec_23_ev_f2_ledger_immutability": {
+    "ledger_state": "IMMUTABLE",
+    "total_live_items": 178,
+    "verdicts": {
+      "REUSE_VALID": 12,
+      "REUSE_CONDITIONAL": 32,
+      "NOT_COMPATIBLE": 134,
+      "PM_REVIEW": 0
+    },
+    "afx1_q9_ratified": {
+      "reuse_conditional_handling_future_constraints": [
+        "explicit_allowlist",
+        "per_item_pm_approval",
+        "condition_code_catalog_sec_83",
+        "dry_run_mandatory",
+        "snapshot_pre_post",
+        "explicit_pm_go"
+      ],
+      "no_dynamic_inclusion_by_keyword_tag_intelligenza_caster_warlock": true
+    }
+  },
+  "sec_24_12_of_12_pm_questions": {
+    "total_questions": 12,
+    "ratified_count": 12,
+    "pending_count": 0,
+    "questions": [
+      {"id": "AFX1-Q1", "recommendation_e1_dev": "APPROVE (nomi coerenti G3/G4 loop)", "pm_ratification": "APPROVED", "state": "RATIFIED"},
+      {"id": "AFX1-Q2", "recommendation_e1_dev": "CONFIRM (sec_70)", "pm_ratification": "CONFIRMED 45%", "state": "RATIFIED"},
+      {"id": "AFX1-Q3", "recommendation_e1_dev": "CONFIRM (G4+G3 loop)", "pm_ratification": "CONFIRMED 5/5/10", "state": "RATIFIED"},
+      {"id": "AFX1-Q4", "recommendation_e1_dev": "APPROVE (sec_71 G2 focus lock)", "pm_ratification": "APPROVED +1F cap 2F", "state": "RATIFIED"},
+      {"id": "AFX1-Q5", "recommendation_e1_dev": "APPROVE (sec_72 G2 pugnale lock)", "pm_ratification": "APPROVED +1F 1x per Marchio", "state": "RATIFIED"},
+      {"id": "AFX1-Q6", "recommendation_e1_dev": "CONFIRM (sec_75)", "pm_ratification": "CONFIRMED 3F/5F/immune/valid_add", "state": "RATIFIED"},
+      {"id": "AFX1-Q7", "recommendation_e1_dev": "APPROVE (sec_78)", "pm_ratification": "APPROVED single_value_v1", "state": "RATIFIED"},
+      {"id": "AFX1-Q8", "recommendation_e1_dev": "APPROVE (sec_80)", "pm_ratification": "APPROVED class_specific_v1", "state": "RATIFIED"},
+      {"id": "AFX1-Q9", "recommendation_e1_dev": "APPROVE (sec_83 F2-Q2 constraints)", "pm_ratification": "APPROVED allowlist_per_item_pm_go", "state": "RATIFIED"},
+      {"id": "AFX1-Q10", "recommendation_e1_dev": "APPROVE", "pm_ratification": "APPROVED IT_primary_EN_readiness", "state": "RATIFIED"},
+      {"id": "AFX1-Q11", "recommendation_e1_dev": "CONFIRM (sec_85)", "pm_ratification": "REDEFINED sequenza_non_lineare (see sec_25)", "state": "RATIFIED"},
+      {"id": "AFX1-Q12", "recommendation_e1_dev": "HOLD PM directive futura", "pm_ratification": "RESOLVED AFX2_reserved_future (see sec_25)", "state": "RATIFIED"}
+    ]
+  },
+  "sec_25_q12_resolution": {
+    "resolution": "AFX2_NOT_REQUIRED_NOW_RESERVED_FUTURE",
+    "afx2_status": {
+      "not_required_now": true,
+      "reserved_future": true,
+      "not_authorized": true,
+      "not_required_for_ic1": true
+    },
+    "motivation": "AFX1_v1_already_defines_all_v1_gate_requirements",
+    "afx2_activation_triggers": [
+      "shared_affix_pool_definition_needed",
+      "universal_affix_pool_definition_needed",
+      "multi_pool_architecture_needed",
+      "multi_value_affix_pool_tag_needed",
+      "affix_vocabulary_v2_new_families_needed",
+      "cross_class_affix_contracts_needed"
+    ],
+    "current_trigger_status_all_six": "NOT_NEEDED_NOW"
+  },
+  "sec_26_afx2_reserved_future": {
+    "status": "RESERVED_FUTURE | NOT_AUTHORIZED | NOT_REQUIRED_FOR_IC1",
+    "activation_preconditions": [
+      "afx1_closed_true",
+      "ic1_advanced_or_completed_recommended_not_strict",
+      "pm_explicit_open_directive"
+    ],
+    "does_not_block": ["ic1", "registry_v3_content_dry_run", "nc1", "gate_11"],
+    "additive_not_replacement": true
+  },
+  "sec_27_ic1_next_planned_gate": {
+    "gate_id_proposed": "R18.6.RV3-IC1",
+    "gate_title": "Item Coverage & Content Blueprint",
+    "status": "HOLD_PROPOSED_NEXT_GATE_NOT_AUTHORIZED_IN_THIS_DISPATCH",
+    "scope_draft": [
+      "item_distribution_t1_t5_for_cacciatore_del_vuoto",
+      "coverage_per_slot_type_focus_dagger_armor_accessory",
+      "coverage_per_rarity_common_to_legendary",
+      "content_blueprint_for_registry_v3_design_only_no_apply",
+      "mapping_12_reuse_valid_and_32_reuse_conditional_into_blueprint"
+    ],
+    "preconditions_met": ["rv3_ev_closed", "afx1_closed", "cacciatore_pilot_active_design_ready"],
+    "preconditions_pending": ["explicit_pm_kickoff_directive"],
+    "afx1_dispatch_kickoff": "NOT_STARTED"
+  },
+  "sec_28_item_generation_disabled": {
+    "item_generation_authorized": false,
+    "items_created_in_afx1": 0,
+    "registry_v3_item_modules_generated": 0,
+    "db_item_collection_writes": 0,
+    "live_catalog_178_items_unchanged": true,
+    "activation_preconditions_future": [
+      "ic1_closed",
+      "registry_v3_content_gate_closed",
+      "pm_explicit_go",
+      "dry_run_diff_review",
+      "snapshot_pre_apply",
+      "fail_closed_rollback_plan"
+    ]
+  },
+  "sec_29_registry_v3_apply_disabled": {
+    "registry_v3_apply_authorized": false,
+    "registry_v3_content_generation_authorized": false,
+    "registry_v3_modules_created_in_afx1": 0,
+    "affix_pool_tag_population_authorized": false,
+    "rec_classes_field_update_authorized": false,
+    "backfill_50_items_can_be_sold_authorized": false,
+    "backfill_21_items_slot_type_authorized": false,
+    "activation_preconditions_future": [
+      "afx1_closed_true",
+      "ic1_closed",
+      "nc1_closed",
+      "explicit_allowlist_per_item",
+      "condition_code_catalog_compiled",
+      "dry_run_diff_pm_approved",
+      "snapshot_pre_post",
+      "explicit_pm_go"
+    ]
+  },
+  "sec_30_governance_evidence": {
+    "pytest_sealed_integrity_result": "6_passed_in_0_37s",
+    "sealed_seals_byte_identical": "36_of_36",
+    "lore_meta_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "backend_source_changes": 0,
+    "frontend_source_changes": 0,
+    "openapi_schema_changes": 0,
+    "db_writes": 0,
+    "migrations": 0,
+    "item_creations": 0,
+    "affix_creations": 0,
+    "affix_backfill": 0,
+    "registry_apply": 0,
+    "prd_operation": "append_only_no_rewrite_of_existing_sections",
+    "new_seals_added": 0,
+    "documental_only_regime_preserved": "100_pct"
+  },
+  "sec_31_sha_policy_clarification": {
+    "policy_ratified_by_pm": true,
+    "canonical_names": {
+      "full_file_sha256": {
+        "definition": "sha256_of_complete_file_on_disk_byte_for_byte",
+        "usage": ["integrity_check", "closure_manifest", "audit_comparison", "filesystem_verification", "source_of_truth"]
+      },
+      "content_body_sha256": {
+        "definition": "sha256_of_body_excluding_footer_or_declared_content_portion",
+        "usage": ["internal_alternative_for_stable_content_portion"]
+      }
+    },
+    "self_referential_rule": {
+      "prohibition": "NEVER write own full_file_sha256 final value inside the file itself as if byte-identical verifiable",
+      "reason": "paradox_after_writing_the_hash_string_the_true_file_sha_changes",
+      "impact_if_violated": "false_negative_integrity_check_by_external_verifier"
+    },
+    "best_practice": [
+      "do_not_embed_own_full_file_sha256_final",
+      "track_sha_in_external_closure_manifest",
+      "content_body_sha256_allowed_with_declared_perimeter",
+      "declaring_sha_of_other_files_allowed",
+      "pre_append_sha_declaration_allowed_but_no_post_append_sha_embed"
+    ],
+    "retro_application_to_prd": {
+      "sha_pre_append_rv3_ev": "5049a978785d888dad155fb2746fcaf534efca0444b7ecbd1cbbd13f7e5653e3",
+      "sha_embedded_pre_footer_historical_internal_ledger_value": "b7e81beac6dcc61258e547a3327f9f90f07ba1b7ec2476cb1a8bcbf5a378baf9",
+      "sha_full_file_real_on_disk_post_rv3_ev_pre_afx1_append": "b8a9f54fc96428ed18a95ccf09c7adaf4712486ac4b31b03dd47a64f26bca47f",
+      "retroactive_correction_of_prd_rv3_ev_footer": "NOT_APPLIED_kept_as_historical",
+      "policy_applied_only_to_future_gates": true
+    },
+    "afx1_gate_application": {
+      "prd_full_file_sha256_post_afx1_append": "NOT_WRITTEN_INSIDE_PRD",
+      "tracked_exclusively_in": "r18_6_rv3_afx1_closure_manifest.json_and_pm_output_message",
+      "closure_report_md_and_json_do_not_contain_own_sha": true
+    },
+    "binding_for_future_gates": ["IC1", "AFX2", "NC1", "Gate_11", "Registry_v3", "any_future_gate"]
+  },
+  "sec_32_final_stop": {
+    "afx1_state": "CLOSED_PM_LOCKED_IMMUTABLE",
+    "governance_locks": {
+      "apply_authorized": false,
+      "item_creation_authorized": false,
+      "affix_creation_authorized": false,
+      "registry_v3_apply_authorized": false,
+      "registry_v3_module_generation_authorized": false,
+      "field_addition_authorized": false,
+      "backfill_authorized": false,
+      "affix_population_authorized": false,
+      "openapi_change_authorized": false,
+      "backend_change_authorized": false,
+      "frontend_change_authorized": false,
+      "db_write_count": 0,
+      "sealed_integrity_intact": true,
+      "sealed_integrity_ratio": "36_of_36_byte_identical",
+      "lore_meta_sha_invariant": true,
+      "afx1_closed": true,
+      "afx1_reopen_authorized": false
+    },
+    "next_proposed_gate": "IC1_HOLD_NOT_AUTHORIZED_IN_THIS_DISPATCH",
+    "not_authorized_in_this_dispatch": [
+      "ic1_kickoff",
+      "ic1_draft",
+      "ic1_pre_work",
+      "nc1_kickoff",
+      "nc1_draft",
+      "nc1_pre_work",
+      "gate_11_kickoff",
+      "registry_v3_apply",
+      "item_creation",
+      "affix_creation",
+      "prd_modifications_beyond_afx1_closed_append",
+      "afx1_source_md_or_json_modifications_post_closure",
+      "rv3_ev_or_ev_f1_or_ev_f2_reopen"
+    ],
+    "roadmap_post_closure": {
+      "cacciatore_del_vuoto": "ACTIVE_DESIGN_READY",
+      "r18_3f": "CLOSED",
+      "rv3_ev": "CLOSED",
+      "afx1": "CLOSED_THIS_DISPATCH",
+      "ic1": "HOLD_PROPOSED_NEXT_GATE",
+      "afx2": "RESERVED_FUTURE",
+      "nc1": "HOLD",
+      "registry_v3_item_generation": "NOT_AUTHORIZED",
+      "registry_v3_apply": "NOT_AUTHORIZED",
+      "gate_11": "HOLD",
+      "monaco_wave_1": "HOLD"
+    },
+    "explicit_stop": true,
+    "awaiting_next_pm_verdict_for_next_gate": true
+  }
+}

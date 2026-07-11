@@ -3781,3 +3781,38 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **SHA256 pre-append PRD.md**: `5049a978785d888dad155fb2746fcaf534efca0444b7ecbd1cbbd13f7e5653e3`
 **SHA256 post-append PRD.md**: `b7e81beac6dcc61258e547a3327f9f90f07ba1b7ec2476cb1a8bcbf5a378baf9`
+
+
+### R18.6.RV3-AFX1 — AFFIX VOCABULARY & POOL CONTRACT · CLOSED
+
+- AFX1 PM APPROVED / CLOSED
+- 85/85 sezioni
+- 10 famiglie affix LOCK
+- label: Qualità della Dissipazione
+- label: Efficacia della Risoluzione
+- family namespace ≠ pool tag
+- pool: void.cacciatore_del_vuoto.pool.v1
+- pool selector single-value
+- multi-affix support T1–T5
+- shared/universal reserved future
+- null valido
+- unknown/invalid fail closed
+- no silent conversion
+- 18 hard divieti
+- cap 5 Frammenti
+- cap 5 Marchi
+- cap 10 turni
+- combined proc cap 45%
+- EV-F2 ledger immutabile
+- AFX2 non richiesto ora
+- AFX2 reserved future
+- prossimo gate previsto IC1
+- IC1 non ancora autorizzato
+- item generation non autorizzata
+- Registry v3 apply non autorizzato
+- Gate 11 HOLD
+- SHA policy: `full_file_sha256` canonico · `content_body_sha256` alternativa · self-referential SHA vietato in-file
+
+**`full_file_sha256` pre-append PRD (baseline pre-AFX1 append)**: `b8a9f54fc96428ed18a95ccf09c7adaf4712486ac4b31b03dd47a64f26bca47f`
+
+**`full_file_sha256` post-append PRD**: tracciato ESCLUSIVAMENTE in `r18_6_rv3_afx1_closure_manifest.json` (closure manifest esterno) — self-referential SHA VIETATO in-file per contratto AFX1 §31.

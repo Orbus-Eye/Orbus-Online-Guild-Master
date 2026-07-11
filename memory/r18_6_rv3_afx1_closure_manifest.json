@@ -1,0 +1,190 @@
+{
+  "manifest_metadata": {
+    "manifest_id": "R18.6.RV3-AFX1-closure-manifest",
+    "gate_id": "R18.6.RV3-AFX1",
+    "gate_title": "Affix Vocabulary & Pool Contract",
+    "class_pilot": "cacciatore_del_vuoto",
+    "state": "CLOSED",
+    "pm_locked": true,
+    "immutable": true,
+    "manifest_creation_date_utc": "2026-07-11",
+    "regime": "DOCUMENTAL_ONLY",
+    "sha_policy_canonical_field": "full_file_sha256",
+    "sha_policy_note": "Self-referential SHA VIETATO in-file (cfr AFX1 sec_31). Tutti gli SHA in questo manifest sono full_file_sha256 reali on-disk calcolati dopo la scrittura di ciascun file, tramite sha256sum esterno."
+  },
+  "artifacts": [
+    {
+      "idx": 1,
+      "path": "/app/memory/r18_6_rv3_afx1_affix_vocabulary_pool_contract.md",
+      "full_file_sha256": "6600273d8a2412a9ed373e229e168d69c21b231b3d8ada48f3e5016dc7ee86df",
+      "size_bytes": 56001,
+      "line_count": 1525,
+      "role": "AFX1_source_MD",
+      "role_description": "Documento sorgente Affix Vocabulary and Pool Contract - 85 sezioni, 10 famiglie affix class-specific Vuoto v1, 7 micro-fix applicati, 12 PM open questions estratte verbatim",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 2,
+      "path": "/app/memory/r18_6_rv3_afx1_affix_vocabulary_pool_contract.json",
+      "full_file_sha256": "7b4cc068e2cd69f24591b49b8a3c960985ae298df52cc6b78cc513ac9fe1d08e",
+      "size_bytes": 41394,
+      "line_count": 596,
+      "role": "AFX1_source_JSON",
+      "role_description": "JSON companion del documento AFX1 - 14 root keys inclusi 8 blocchi (A-H), pm_micro_fix_addendum con 7 micro-fix, pm_open_questions_verbatim_extract con 12 domande, governance_locks, explicit_stop, roadmap_post_micro_fix",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 3,
+      "path": "/app/memory/r18_6_rv3_afx1_final_closure_report.md",
+      "full_file_sha256": "1f65af040af5bed65df8aba140c9c6186d41299c188e20e2fc4f20137936e7d6",
+      "size_bytes": 32273,
+      "line_count": 675,
+      "role": "AFX1_closure_report_MD",
+      "role_description": "Report formale di chiusura AFX1 - 32 sezioni obbligatorie (PM verdict, ratifiche, evidenze, governance, SHA policy, final STOP). Sezione dedicata SHA policy (sec_31) definisce full_file_sha256 vs content_body_sha256 e regola self-referential permanente.",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 4,
+      "path": "/app/memory/r18_6_rv3_afx1_final_closure_report.json",
+      "full_file_sha256": "0a0b2f5ecbe553697784008fb6dff5a9bfb1227c9aabd9f31870cd8cbc8ea40c",
+      "size_bytes": 24075,
+      "line_count": 533,
+      "role": "AFX1_closure_report_JSON",
+      "role_description": "JSON companion strutturato del closure report - 33 root keys (metadata + sec_01 ... sec_32). Mirror strutturato del MD per audit programmatico.",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 5,
+      "path": "/app/memory/PRD.md",
+      "full_file_sha256_pre_afx1_append": "b8a9f54fc96428ed18a95ccf09c7adaf4712486ac4b31b03dd47a64f26bca47f",
+      "full_file_sha256_post_afx1_append": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74",
+      "size_bytes_post_afx1_append": 255502,
+      "line_count_post_afx1_append": 3818,
+      "line_count_pre_afx1_append": 3783,
+      "lines_appended": 35,
+      "role": "PRD_post_afx1_append",
+      "role_description": "Product Requirements Document con nuova sezione '### R18.6.RV3-AFX1 — AFFIX VOCABULARY & POOL CONTRACT · CLOSED' contenente 27 bullet verbatim + baseline SHA pre-append (embedded valido, riferimento a stato pregresso). Il full_file_sha256 post-append NON e' stato scritto all'interno del PRD (self-referential vietato per contratto AFX1 sec_31); e' tracciato ESCLUSIVAMENTE in questo manifest.",
+      "status": "APPENDED",
+      "pm_locked": false,
+      "modification_authorization_post_closure": "APPEND_ONLY_FOR_FUTURE_GATE_CLOSURES",
+      "operation_performed": "append_only_no_rewrite",
+      "section_title_appended": "### R18.6.RV3-AFX1 — AFFIX VOCABULARY & POOL CONTRACT · CLOSED",
+      "bullet_count_appended": 27
+    }
+  ],
+  "governance_evidence": {
+    "pytest_sealed_integrity_test": {
+      "path": "backend/tests/backend_r18_4_sealed_integrity_test.py",
+      "result": "6_passed",
+      "duration_seconds": 0.37,
+      "seals_byte_identical_ratio": "36_of_36",
+      "regression_count": 0
+    },
+    "lore_meta_anchor_hash": {
+      "path": "backend/app/content/lore_meta.py",
+      "expected_full_file_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "actual_full_file_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "invariant": true
+    },
+    "backend_changes": 0,
+    "frontend_changes": 0,
+    "openapi_changes": 0,
+    "db_writes": 0,
+    "migrations": 0,
+    "item_generation_operations": 0,
+    "affix_creation_operations": 0,
+    "affix_backfill_operations": 0,
+    "registry_v3_apply_operations": 0,
+    "registry_v3_module_generation_operations": 0,
+    "new_seals_added": 0,
+    "test_files_created": 0,
+    "documental_only_regime_preserved_pct": 100
+  },
+  "sha_policy": {
+    "canonical_field_name": "full_file_sha256",
+    "canonical_field_definition": "sha256_of_complete_file_on_disk_byte_for_byte",
+    "canonical_field_usage": [
+      "integrity_check",
+      "closure_manifest",
+      "audit_comparison",
+      "filesystem_verification",
+      "source_of_truth_validation"
+    ],
+    "alternative_field_name": "content_body_sha256",
+    "alternative_field_definition": "sha256_of_body_excluding_footer_or_declared_content_portion",
+    "alternative_field_usage": [
+      "internal_alternative_for_stable_content_portion_when_footer_auto_updates"
+    ],
+    "self_referential_policy": {
+      "rule": "NEVER_write_own_full_file_sha256_final_value_inside_the_file_itself_as_if_byte_identical_verifiable",
+      "reason": "paradox_after_writing_the_hash_string_the_true_file_sha_changes_leading_to_false_negative_integrity_check_by_external_verifier",
+      "enforcement": "MANDATORY_for_all_future_gates",
+      "preferred_practice": "track_sha_in_external_closure_manifest_calculated_after_writing_the_main_file"
+    },
+    "retro_application_to_prd": {
+      "sha_pre_append_rv3_ev": {
+        "value": "5049a978785d888dad155fb2746fcaf534efca0444b7ecbd1cbbd13f7e5653e3",
+        "classification": "embedded_valid_referring_to_pre_append_state",
+        "self_referential": false
+      },
+      "sha_embedded_pre_footer_historical_internal_ledger_value": {
+        "value": "b7e81beac6dcc61258e547a3327f9f90f07ba1b7ec2476cb1a8bcbf5a378baf9",
+        "classification": "embedded_pre_footer_hash_historical_internal_ledger_value",
+        "is_full_file_sha256_real": false,
+        "note": "This value was computed BEFORE writing the footer that declares it, causing self-referential paradox. NOT the real full_file_sha256 of PRD post-append RV3-EV closure."
+      },
+      "sha_full_file_real_on_disk_post_rv3_ev_pre_afx1_append": {
+        "value": "b8a9f54fc96428ed18a95ccf09c7adaf4712486ac4b31b03dd47a64f26bca47f",
+        "classification": "full_file_sha256_canonical_baseline_for_afx1_gate",
+        "self_referential": false
+      },
+      "sha_full_file_real_on_disk_post_afx1_append": {
+        "value": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74",
+        "classification": "full_file_sha256_canonical_current_state_post_afx1",
+        "self_referential": false,
+        "tracked_only_in": "this_manifest_and_pm_output_message"
+      },
+      "retroactive_correction_of_prd_rv3_ev_footer": "NOT_APPLIED_kept_as_historical_per_pm_directive"
+    },
+    "binding_for_future_gates": [
+      "R18.6.RV3-IC1_Item_Coverage_and_Content_Blueprint",
+      "R18.6.RV3-AFX2_hypothetical_gate",
+      "R18.3f-NC1_Null_Conflict_Remediation_Planning",
+      "Gate_11",
+      "Registry_v3_content_and_apply_future_gates",
+      "any_future_orbus_gate"
+    ]
+  },
+  "final_state": {
+    "cacciatore_del_vuoto": "ACTIVE-DESIGN-READY",
+    "r18_3f": "CLOSED",
+    "rv3_ev": "CLOSED",
+    "afx1": "CLOSED",
+    "ic1": "HOLD",
+    "afx2": "RESERVED_FUTURE",
+    "nc1": "HOLD",
+    "registry_v3_item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "gate_11": "HOLD",
+    "monaco": "HOLD",
+    "wave_1": "HOLD",
+    "next_proposed_gate": "R18.6.RV3-IC1_Item_Coverage_and_Content_Blueprint",
+    "next_gate_kickoff_authorized_in_this_dispatch": false,
+    "next_gate_awaits": "explicit_pm_verdict"
+  },
+  "explicit_stop": {
+    "afx1_closed": true,
+    "afx1_pm_locked": true,
+    "afx1_immutable": true,
+    "next_action_authorized_in_this_dispatch": "none",
+    "awaiting": "pm_verdict_for_next_gate_selection"
+  }
+}
