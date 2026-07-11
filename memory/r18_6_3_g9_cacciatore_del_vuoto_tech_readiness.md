@@ -89,7 +89,7 @@ I campi runtime **richiesti dalla feature Sala+Prova+Confirmation** (`trial_stat
 | Idempotency guard | assente | request_id + retry-safe pattern | ALTA |
 | Anti-farming safeguards | N/A (runtime assente) | policy safeguards in servizio | MEDIA |
 | Rite of Rebirth compat | N/A | verifica compat modello storico class change | MEDIA |
-| Feature flag runtime | esistono `R18_REWORK_ENABLED`, `R18_TALENT_ENGINE_ENABLED` (env) | nuovo flag proposal `HALL_CLASS_ASSIGN_ENABLED` | ALTA |
+| Feature flag runtime | esistono `R18_REWORK_ENABLED`, `R18_TALENT_ENGINE_ENABLED` (env) | nuovo flag proposal `CLASS_HALL_ASSIGNMENT_ENABLED` | ALTA |
 
 ## 7 · Target state machine
 
@@ -118,10 +118,17 @@ AWAITING_EXPLICIT_CONFIRMATION
     │  (Recluta sceglie: CONFERMA IL CAMMINO / NON SONO PRONTO)
     ▼
 CLASS_ASSIGNMENT_PENDING
-    │  (regola critica AND-8 verificata · feature flag on · Hall ACTIVE · readiness approved)
+    │  (regola critica AND-10 verificata · flag globale on · per-Hall enabled · Hall ACTIVE · readiness approved · target canonico)
     ▼
 CLASS_ASSIGNED
 ```
+
+**Stati tecnici di recovery aggiunti (FIX 9 G10)** — NON stati di gameplay · NON mostrati con codici tecnici al giocatore · NON autorizzano assegnazioni manuali:
+
+- `CLASS_ASSIGNMENT_FAILED_RETRYABLE` — errore **pre-commit** recuperabile (validation fail, timeout DB pre-write, race condition risolvibile). Il giocatore vede messaggio UI IT futuro: *"Impossibile completare la conferma. La tua scelta non è andata persa. Riprova."* Retry idempotente autorizzato.
+- `CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED` — commit di `class_slug` è **valido** ma side-effect/audit/history secondari sono incompleti. Il giocatore vede messaggio UI IT futuro: *"La classe è stata assegnata. Alcuni dati sono in aggiornamento."* Reconcile-forward > rollback distruttivo (FIX 8 G10).
+
+**Totale stati state machine documentati: 11** (9 happy-path + 2 recovery tecnici).
 
 Gate 9 deve **verificare** che questi stati siano: **sufficienti · idempotenti · auditabili · recuperabili dopo errore**. Non li implementa.
 
@@ -167,30 +174,35 @@ Gate 9 deve **verificare** che questi stati siano: **sufficienti · idempotenti 
 
 ## 13 · Class assignment state (CLASS_ASSIGNMENT_PENDING → CLASS_ASSIGNED)
 
-- Trigger: `confirmation_choice = confirm_path` **AND** regola critica AND-8 (sez 14)
-- Proposal DB: `class_assignment_status ∈ { pending, applied, rolled_back, failed }` · `class_slug` (set solo se applied) · `class_assignment_at` · `class_assignment_source = "trial_confirmation_flow"`
-- Proposal endpoint: `POST /api/class-halls/{hall_id}/class/apply` (PROPOSAL ONLY · gated dietro feature flag `HALL_CLASS_ASSIGN_ENABLED`)
-- **Stato attuale runtime**: feature flag `HALL_CLASS_ASSIGN_ENABLED` = **disabled** → `apply` sempre respinto in fase attuale
-- L'endpoint proposal ritorna 403 finché feature flag disabled (comportamento tecnico documentale)
+- Trigger: `confirmation_choice = confirm_path` **AND** regola critica AND-10 (sez 14 · esteso FIX 3+8+G10)
+- Proposal DB: `class_assignment_status ∈ { pending, applied, rolled_back, failed, reconciliation_required }` · `class_slug` (set solo se applied · scritto sul **documento canonico avventuriero**, FIX 2 G10) · `class_assignment_at` · `class_assignment_source = "trial_confirmation_flow"` · `class_assignment_id` (univoco per domain-level idempotency, FIX 4 G10)
+- **Internal service operation** (FIX 6 G10): `apply_class_assignment()` — **NOT PUBLIC ROUTE**. Invocata solo dal servizio dopo `class/confirm` valida i prerequisiti.
+- **Stato attuale runtime**: feature flag `CLASS_HALL_ASSIGNMENT_ENABLED` = **disabled** AND `hall_cacciatore_del_vuoto.assignment_enabled` = **disabled** → nessuna transazione avviabile in fase attuale
+- L'operazione interna respinge la richiesta se anche una sola delle 10 condizioni AND è false (comportamento tecnico documentale)
 
-## 14 · class_slug write requirements (regola critica AND-8)
+## 14 · class_slug write requirements (regola critica AND-10 · esteso G10)
 
-La classe può essere assegnata (write di `class_slug` sul profilo Recluta) **SOLO se tutte le 8 condizioni sono `true` contemporaneamente**:
+La classe può essere assegnata (write di `class_slug` sul **documento canonico avventuriero** · FIX 2 G10) **SOLO se tutte le 10 condizioni sono `true` contemporaneamente**:
 
 1. `status corrente = recruit_unassigned`
 2. `Hall = ACTIVE e selezionabile`
 3. `Trial = completed`
 4. `explicit_confirmation = true`
-5. `target class_slug = cacciatore_del_vuoto` (o altra classe nel Wave attivo)
+5. `target class_slug canonico` (validato server-side contro `r18_6_1_canonical_27_class_halls_expansion.json` · es. `cacciatore_del_vuoto`) — **FIX 8 G10**
 6. `class readiness = approved`
-7. `feature flag HALL_CLASS_ASSIGN_ENABLED = enabled`
-8. tutte le altre validazioni pre-write = PASS (auth valid · guild valid · no duplicate assignment · no concurrent write)
+7. `feature flag CLASS_HALL_ASSIGNMENT_ENABLED = enabled` (kill switch globale · FIX 3 G10)
+8. `hall.assignment_enabled = true` (per-Hall allowlist · FIX 3 G10)
+9. `class_slug` corrente sul documento avventuriero = `null` (atomic compare-and-set · FIX 8 G10)
+10. tutte le altre validazioni pre-write = PASS (auth valid · adventurer ownership · no duplicate assignment · no concurrent write)
+
+**Nessun singolo flag bypassa le altre condizioni.** Verifica AND completa in server-side operation `apply_class_assignment()`.
 
 **Stato attuale del sistema** (2026-07-11):
 
 - Hall ACTIVE = **false**
 - class readiness final = **false**
-- feature flag `HALL_CLASS_ASSIGN_ENABLED` = **disabled** (non ancora esistente in env)
+- feature flag `CLASS_HALL_ASSIGNMENT_ENABLED` = **disabled** (non ancora esistente in env)
+- `hall_cacciatore_del_vuoto.assignment_enabled` = **disabled**
 - runtime apply = **prohibited**
 - → **nessuna assegnazione possibile ORA**
 
@@ -214,11 +226,13 @@ La classe può essere assegnata (write di `class_slug` sul profilo Recluta) **SO
 | `POST` | `/api/class-halls/{hall_id}/trial/checkpoint` | registra checkpoint di fase | PROPOSAL ONLY |
 | `POST` | `/api/class-halls/{hall_id}/trial/complete` | segna Prova completata | PROPOSAL ONLY |
 | `POST` | `/api/class-halls/{hall_id}/trial/abandon` | segna Prova abbandonata | PROPOSAL ONLY |
-| `POST` | `/api/class-halls/{hall_id}/class/confirm` | registra scelta esplicita CONFERMA/NON SONO PRONTO | PROPOSAL ONLY |
-| `POST` | `/api/class-halls/{hall_id}/class/apply` | applica `class_slug` (gated feature flag) | PROPOSAL ONLY · CRITICAL GATED |
+| `POST` | `/api/class-halls/{hall_id}/class/confirm` | registra scelta esplicita CONFERMA/NON SONO PRONTO · **termina il flusso pubblico** · avvia internamente la transazione di assegnazione (FIX 6 G10) | PROPOSAL ONLY |
+| ~~`POST`~~ | ~~`/api/class-halls/{hall_id}/class/apply`~~ | ~~applica `class_slug` (gated feature flag)~~ **RIMOSSO** dalle proposte pubbliche (FIX 6 G10) | **INTERNAL SERVICE OPERATION · NOT PUBLIC ROUTE · NOT CLIENT-CALLABLE** |
 | `GET` | `/api/class-halls/{hall_id}/trial/state` | stato corrente Prova per la Recluta | PROPOSAL ONLY |
 
-**TUTTE le proposal**: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI`. **Nessuna modifica a OpenAPI in Gate 9.**
+**TUTTE le proposal pubbliche** (visit, trial/start, trial/checkpoint, trial/complete, trial/abandon, class/confirm, trial/state): `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI`. **Nessuna modifica a OpenAPI in Gate 9.**
+
+**`class/apply` è internal service operation** (nome tecnico non runtime-lockato es. `apply_class_assignment()`), invocata **solo dal servizio** dopo `class/confirm` valida tutti i prerequisiti. Non è client-callable. Non compare in OpenAPI pubblico. Il flusso pubblico termina con `class/confirm`.
 
 ## 17 · Request schemas (proposal only)
 
@@ -253,7 +267,7 @@ La classe può essere assegnata (write di `class_slug` sul profilo Recluta) **SO
 ## 20 · Authorization requirements
 
 - Tutti gli endpoint proposal richiedono JWT auth (`get_current_user` dependency esistente)
-- `class/apply` richiede in aggiunta: `user_guild_or_404` (dep esistente) + feature flag `HALL_CLASS_ASSIGN_ENABLED = enabled` + admin approval opzionale per prima Wave
+- `class/apply` richiede in aggiunta: `user_guild_or_404` (dep esistente) + feature flag `CLASS_HALL_ASSIGNMENT_ENABLED = enabled` + admin approval opzionale per prima Wave
 - Nessun endpoint proposal deve essere accessibile senza auth
 - Nessuna elevazione di privilegio implicita
 
@@ -329,7 +343,7 @@ Ogni transizione di stato Recluta rispetto a class_slug deve produrre audit log:
 - Ogni Sala ha uno stato: `PLANNED` (design_only) · `ACTIVE` (runtime disponibile) · `DEPRECATED`
 - Attualmente **tutte le Sale Wave 1** (Cacciatore del Vuoto incluso) sono in stato `PLANNED`
 - Proposal campo DB: `class_halls.availability_state ∈ { planned, active, deprecated }`
-- Trigger di attivazione futura: PM approval Wave 1 + feature flag `HALL_CLASS_ASSIGN_ENABLED = enabled`
+- Trigger di attivazione futura: PM approval Wave 1 + feature flag `CLASS_HALL_ASSIGNMENT_ENABLED = enabled`
 - Gate 9 NON attiva alcuna Sala
 
 ## 29 · PLANNED vs ACTIVE state
@@ -549,7 +563,7 @@ Per attivare (in futuro Gate 10+) la Sala Cacciatore del Vuoto in ambiente prod:
 1. R18.3f applied (class_slug schema migration)
 2. Registry v3 applied
 3. Sala availability_state = `active` (approvata PM)
-4. Feature flag `HALL_CLASS_ASSIGN_ENABLED` = enabled (env var)
+4. Feature flag `CLASS_HALL_ASSIGNMENT_ENABLED` = enabled (env var)
 5. class readiness final = approved
 6. Test suite Gate 10 = 100% pass
 7. Sealed integrity 36/36 = byte-identical
@@ -561,11 +575,11 @@ Per attivare (in futuro Gate 10+) la Sala Cacciatore del Vuoto in ambiente prod:
 
 ## 56 · Feature flag strategy
 
-- Nuovo flag proposto: `HALL_CLASS_ASSIGN_ENABLED` (env-based · default `false`)
+- Nuovo flag proposto: `CLASS_HALL_ASSIGNMENT_ENABLED` (env-based · default `false`)
 - Attivazione: solo dopo Gate 10 readiness + PM approval
 - Rollout: gradual (canary) · monitorato via metrics sez 46
-- Kill switch: setting `HALL_CLASS_ASSIGN_ENABLED = false` disabilita instant · idempotency keys restano validi
-- Coexistence: `HALL_CLASS_ASSIGN_ENABLED` è **ortogonale** a `R18_REWORK_ENABLED` e `R18_TALENT_ENGINE_ENABLED` esistenti · nessun conflitto
+- Kill switch: setting `CLASS_HALL_ASSIGNMENT_ENABLED = false` disabilita instant · idempotency keys restano validi
+- Coexistence: `CLASS_HALL_ASSIGNMENT_ENABLED` è **ortogonale** a `R18_REWORK_ENABLED` e `R18_TALENT_ENGINE_ENABLED` esistenti · nessun conflitto
 
 ## 57 · Rollback criteria
 
@@ -577,7 +591,7 @@ Se dopo activation Wave 1 (futuro) si rilevano:
 - Data corruption
 - Perdite anomale di risorse Recluta
 
-→ **Kill switch feature flag** immediato (`HALL_CLASS_ASSIGN_ENABLED = false`)
+→ **Kill switch feature flag** immediato (`CLASS_HALL_ASSIGNMENT_ENABLED = false`)
 → Playbook rollback: restore DB pre-activation · disable endpoint routes · audit event `rollback_triggered` · comunicazione utenti
 
 **Gate 9 NON esegue** alcun rollback (nulla da rollbackare · nessuna attivazione).
@@ -590,7 +604,7 @@ Checklist da valutare in Gate 10 PM_REVIEW (**Gate 9 NON tick nulla**):
 - [ ] Registry v3 applied
 - [ ] R18.6.RV3-EV applied
 - [ ] Sala availability_state = active
-- [ ] `HALL_CLASS_ASSIGN_ENABLED` env var configurata (default off)
+- [ ] `CLASS_HALL_ASSIGNMENT_ENABLED` env var configurata (default off)
 - [ ] Unit test Gate 10 = 100% pass
 - [ ] Integration test Gate 10 = 100% pass
 - [ ] E2E test Gate 10 = 100% pass
@@ -623,7 +637,7 @@ Checklist da valutare in Gate 10 PM_REVIEW (**Gate 9 NON tick nulla**):
 
 - **TR9-Q1** · *Nuova collection `trial_sessions` separata o embed in `users`?* → **a) LOCK collection separata** · b) embed in users · c) altra proposta PM
 - **TR9-Q2** · *`class_slug` field location: `users` o nuova collection `characters`?* → **a) LOCK `users.class_slug`** · b) nuova collection `characters` · c) altra proposta PM
-- **TR9-Q3** · *Naming feature flag: `HALL_CLASS_ASSIGN_ENABLED` conferma?* → **a) LOCK naming** · b) rinomina proposta PM
+- **TR9-Q3** · *Naming feature flag: `CLASS_HALL_ASSIGNMENT_ENABLED` conferma?* → **a) LOCK naming** · b) rinomina proposta PM
 - **TR9-Q4** · *Idempotency window 24h conferma?* → **a) LOCK 24h** · b) 1h · c) 7 giorni · d) configurabile
 - **TR9-Q5** · *Retry Prova: nuovo `trial_session_id` per ogni retry o riuso stesso?* → **a) LOCK nuovo id per audit** · b) riuso stesso · c) configurabile
 - **TR9-Q6** · *Rate limit anti-abuse su `/class/apply` (max N/day)?* → **a) LOCK 5/day** · b) 10/day · c) 1/day · d) unlimited
@@ -638,6 +652,51 @@ Checklist da valutare in Gate 10 PM_REVIEW (**Gate 9 NON tick nulla**):
 - **NO Gate 10 auto-start** · **NO Wave 1 auto-start** · **NO class unlock auto-start** · **NO Hall activation auto-start**
 - **NO implementation** ha luogo in Gate 10 · Gate 10 è review
 - **Recommended next step**: PM review G9 TECH_READINESS + risposte TR9-Q1..TR9-Q8 → G9 CLOSED verdict → GO Gate 10 PM_REVIEW
+
+## 62 · Nota consolidata Micro-fix G10 (10 chiarimenti PM)
+
+Applicati come chiarimenti documentali post PM-review Gate 9:
+
+- **FIX 1 · Storage ibrido**: identità permanente Recluta → **documento canonico avventuriero** (campi `class_slug`, `class_assignment_status`, `class_assignment_source`, `class_assignment_at`, `class_assignment_id`, `class_assignment_history`, `class_readiness_version`). Sessioni Trial temporanee → collection separata proposta `class_hall_trial_sessions` (nome non runtime-lockato) · `PROPOSAL ONLY · NO CREATION · NO MIGRATION · NO DB WRITE`. Nessun checkpoint nel documento avventuriero. Nessun `class_slug` nella sessione come source of truth. Riutilizzare campi equivalenti esistenti se presenti (verifica read-only pre-implementation).
+- **FIX 2 · class_slug location**: `class_slug` su **root del documento canonico dell'avventuriero** (source of truth). NON su root account/user · NON su Trial session · NON su Hall document · NON su collection tecnica separata. Utente/account può avere più avventurieri → nessuna classe globale su account. Pre-implementation: verificare schema live per riutilizzare campo canonico già presente (nessun duplicato).
+- **FIX 3 · Feature flag a due livelli**: `CLASS_HALL_ASSIGNMENT_ENABLED` (kill switch globale · default `false`) **AND** `hall.assignment_enabled` (per-Hall allowlist · default `false`). Regola AND: entrambi `true` + `hall.status=ACTIVE` + `class_readiness=approved`. Nessun singolo flag bypassa altre condizioni. Stato attuale: entrambi disabled.
+- **FIX 4 · Idempotency a due livelli**: **L1 Request replay** (`Idempotency-Key` UUID · chiave concettuale `authenticated_user_id + adventurer_id + hall_id + trial_version + idempotency_key` · finestra **24h**). **L2 Idempotenza di dominio** (`class_assignment_id` univoco + atomic conditional update + `class_slug=null` + `status=recruit_unassigned`). Dopo assegnazione valida: duplicati restituiscono stato già assegnato · NO seconda write. Scadenza cache L1 NON deve permettere seconda write (L2 permanente).
+- **FIX 5 · Checkpoint server-authoritative**: client-driven request · server-authoritative state. Il client può richiedere transizione, inviare input, mostrare checkpoint, richiedere ripresa. Il client NON può dichiarare autonomamente fase completata, Trial completata, Payoff superato, classe eleggibile. Server valida sessione attiva, fase corrente, transizione consentita, stato precedente, versione Prova, completion evidence prevista. Checkpoint idempotenti, ordinati, recuperabili, NON saltabili tramite payload client.
+- **FIX 6 · `/class/apply` rimosso da API pubbliche**: `POST /api/class-halls/{hall_id}/class/apply` **rimosso** dalle proposal pubbliche. Documentato come `internal operation: apply_class_assignment()` (nome non runtime-lockato) · marker `INTERNAL SERVICE OPERATION · NOT PUBLIC ROUTE · NOT CLIENT-CALLABLE`. Flusso pubblico termina con `POST /api/class-halls/{hall_id}/class/confirm` che valida prerequisiti, registra intento esplicito, avvia internamente la transazione.
+- **FIX 7 · Rate limit `/class/confirm`**: baseline **3 req/min per adventurer_id · 10 req/min per account autenticato**. Replay identiche con stessa `Idempotency-Key` → NO nuove write. Limite superato → HTTP 429 futuro · NO mutazione · NO perdita Trial · NO reset · NO consumo. Rate limit NON sostituisce idempotenza né controllo atomico.
+- **FIX 8 · Atomic compare-and-set + reconcile-forward**: pre-write validation AND-10 (sez 14). Write futura: singola mutazione atomica sul documento canonico avventuriero con condizione `class_slug ancora null`. **Failure pre-commit**: nessuna mutazione permanente · stato recuperabile · retry idempotente. **Post-commit valido**: NO rollback automatico distruttivo verso `recruit_unassigned`. Se falliscono log/audit/operazioni secondarie: classe assegnata resta source of truth · sistema entra in riconciliazione · si riparano effetti secondari. **Principio: reconcile-forward > rollback distruttivo.**
+- **FIX 9 · Due failure states tecnici**: `CLASS_ASSIGNMENT_FAILED_RETRYABLE` (pre-commit) + `CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED` (post-commit reconcile). NON stati gameplay · NON mostrati con codici tecnici · NON autorizzano assegnazioni manuali. Messaggi UI futuri in italiano definiti in sez 7. Totale stati state machine: **11** (9 happy + 2 recovery).
+- **FIX 10 · Admin reconcile INTERNAL-ONLY**: necessario ma `INTERNAL ONLY · ADMIN ONLY · NOT PLAYER API · NOT PUBLIC OPENAPI`. Preferire comando amministrativo interno o endpoint amministrativo isolato. NON aggiunto ora. Caratteristiche future obbligatorie: `dry_run=true` default, role-based authorization, audit completo, reason obbligatoria, correlation_id, prima/dopo, no hard delete. **Azioni consentite**: ispezionare assegnazioni bloccate, ripristinare side-effect mancanti, ricostruire audit, riconciliare stato pending, chiudere transazione già validamente committata. **Azioni vietate**: scegliere classe arbitraria, bypassare Prova, bypassare conferma esplicita, bypassare feature flag, bypassare readiness, forzare `class_slug` senza evidenza valida. Reconcile ripara coerenza tecnica · NON è scorciatoia di assegnazione.
+
+### Class assignment transaction — 13 step obbligatori (esteso G10)
+
+1. autenticazione (JWT valido)
+2. autorizzazione su avventuriero (ownership)
+3. verifica `status = recruit_unassigned`
+4. verifica `hall.status = ACTIVE`
+5. verifica `trial_status = completed`
+6. verifica `explicit_confirmation = true`
+7. verifica `class_readiness = approved`
+8. verifica feature flag globale `CLASS_HALL_ASSIGNMENT_ENABLED = true`
+9. verifica per-Hall enable `hall.assignment_enabled = true`
+10. verifica `target_slug` canonico (registry check)
+11. **atomic compare-and-set** su `class_slug` (condition `class_slug IS NULL`)
+12. scrittura `class_assignment_history` + audit event `class_applied`
+13. risposta idempotente (usa `class_assignment_id` per response cache)
+
+Failure step 1-10 → `CLASS_ASSIGNMENT_FAILED_RETRYABLE` · idempotent retry autorizzato.
+Failure step 11 (race condition CAS lost) → `CLASS_ASSIGNMENT_FAILED_RETRYABLE` · nessuna mutazione persistita.
+Failure step 12-13 con step 11 committato → `CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED` · reconcile-forward.
+
+### Dipendenze ancora aperte (Gate 10 NON può dichiarare implicite)
+
+- R18.3f Class Slug Migration Readiness
+- R18.6.RV3-EV Eligibility Validation
+- Registry v3 (architecture approved, apply not authorized)
+- Feature flag implementation (`CLASS_HALL_ASSIGNMENT_ENABLED` + `hall.assignment_enabled`)
+- Hall activation approval (per-Hall)
+- Runtime implementation gate futuro
+- Deployment approval
 
 ---
 

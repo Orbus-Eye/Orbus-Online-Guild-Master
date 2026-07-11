@@ -3391,3 +3391,87 @@ Approvate con:
 - **R18.6.3-G9 TECH_READINESS = AUTHORIZED** 🟢
 - **R18.6.3-G10 PM_REVIEW = HOLD** 🔒
 - **Wave 1 successors = HOLD** 🔒
+
+
+## R18.6.3-G9 TECH_READINESS CLOSED (Cacciatore del Vuoto · PM APPROVED WITH TECHNICAL CLARIFICATIONS · with binding answers TR9-Q1..TR9-Q8 + 10 micro-fix documentali · 2026-07-11T16:37:02Z)
+
+### Decisioni PM verbatim (TR9-Q1..TR9-Q8) + micro-fix G10
+
+- **TR9-Q1 LOCK — Storage ibrido**: identità permanente avventuriero → **documento canonico avventuriero** (campi `class_slug`, `class_assignment_status`, `class_assignment_source`, `class_assignment_at`, `class_assignment_id`, `class_assignment_history`, `class_readiness_version`). Sessioni Trial temporanee → collection separata proposta `class_hall_trial_sessions` (nome non runtime-lockato) · marker `PROPOSAL ONLY · NO CREATION · NO MIGRATION · NO DB WRITE`. Regola: identità permanente → adventurer doc · sessione temporanea → Trial collection. NO checkpoint nel documento avventuriero · NO `class_slug` nella sessione come source of truth · riutilizzare campi equivalenti esistenti (verifica read-only).
+- **TR9-Q2 LOCK — class_slug location**: `class_slug` → **root del documento canonico dell'avventuriero** (source of truth). NON su root account/user · NON su Trial session · NON su Hall document · NON su collection tecnica separata. Baseline: `adventurer.class_slug = source of truth`. Utente/account può avere più avventurieri → NO classe globale su account. Pre-implementation: verificare schema live per riutilizzare campo canonico già presente.
+- **TR9-Q3 LOCK — Feature flag a due livelli**: nome LOCK `CLASS_HALL_ASSIGNMENT_ENABLED` (kill switch globale · default `false`) + secondo controllo `hall.assignment_enabled` (per-Hall allowlist · default `false`). Regola AND: `CLASS_HALL_ASSIGNMENT_ENABLED=true AND hall.assignment_enabled=true AND hall.status=ACTIVE AND class_readiness=approved`. Nessun singolo flag bypassa altre condizioni. Stato attuale: `CLASS_HALL_ASSIGNMENT_ENABLED=false`, `hall_cacciatore_del_vuoto.assignment_enabled=false` → nessuna attivazione autorizzata.
+- **TR9-Q4 LOCK — Idempotency a due livelli**: L1 Request replay (`Idempotency-Key` UUID · chiave concettuale `authenticated_user_id + adventurer_id + hall_id + trial_version + idempotency_key` · finestra **24h**). L2 Idempotenza di dominio permanente (`class_assignment_id` univoco + atomic conditional update + `class_slug=null` + `status=recruit_unassigned`). Duplicati post-assegnazione → stato già assegnato · NO seconda write. Scadenza cache L1 NON permette seconda write (L2 permanente).
+- **TR9-Q5 LOCK — Checkpoint server-authoritative**: policy `client-driven request · server-authoritative state`. Client può richiedere transizione, inviare input, mostrare checkpoint, richiedere ripresa. Client NON può dichiarare autonomamente fase/Trial completata, Payoff superato, classe eleggibile. Server valida sessione attiva, fase corrente, transizione consentita, stato precedente, versione Prova, completion evidence. Checkpoint idempotenti, ordinati, recuperabili, NON saltabili tramite payload client.
+- **TR9-Q6 LOCK — `/class/apply` rimosso da API pubbliche**: `POST /api/class-halls/{hall_id}/class/apply` **rimosso** dalle proposal pubbliche. Documentato come `internal service operation: apply_class_assignment()` (nome non runtime-lockato) · marker `INTERNAL SERVICE OPERATION · NOT PUBLIC ROUTE · NOT CLIENT-CALLABLE · NOT IN OPENAPI`. Flusso pubblico termina con `POST /class/confirm`. Rate limit `/class/confirm` baseline: 3 req/min per adventurer_id · 10 req/min per account autenticato · replay con stessa Idempotency-Key → NO nuove write · 429 futuro su superamento · NO mutazione · NO perdita Trial.
+- **TR9-Q7 LOCK — Atomic compare-and-set + reconcile-forward**: pre-write validation AND-10 esteso (FIX 3+8): `class_slug=null · status=recruit_unassigned · Trial=completed · explicit_confirmation=true · hall=ACTIVE · assignment_flag=enabled (globale AND per-Hall) · class_readiness=approved · target_slug=cacciatore_del_vuoto canonico`. Write futura: singola mutazione atomica sul documento canonico avventuriero con condizione `class_slug ancora null`. **Failure pre-commit**: nessuna mutazione permanente · retry idempotente. **Post-commit valido**: NO rollback automatico distruttivo · classe resta source of truth · sistema entra in **reconciliation** · effetti secondari riparati. **Principio: reconcile-forward > rollback distruttivo**. Aggiunti 2 stati tecnici recovery alla state machine: `CLASS_ASSIGNMENT_FAILED_RETRYABLE` (pre-commit) + `CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED` (post-commit reconcile). Totale stati: **11** (9 happy + 2 recovery). Messaggi UI IT futuri: *"Impossibile completare la conferma. La tua scelta non è andata persa. Riprova."* / *"La classe è stata assegnata. Alcuni dati sono in aggiornamento."*
+- **TR9-Q8 LOCK — Admin reconcile INTERNAL-ONLY**: necessario ma `INTERNAL ONLY · ADMIN ONLY · NOT PLAYER API · NOT PUBLIC OPENAPI` · preferire comando amministrativo interno o endpoint amministrativo isolato · NON aggiunto ora. Proprietà future obbligatorie: `dry_run=true` default · role-based authorization · audit completo · reason obbligatoria · correlation_id · prima/dopo · no hard delete. Azioni consentite: ispezionare assegnazioni bloccate, ripristinare side-effect mancanti, ricostruire audit, riconciliare stato pending, chiudere transazione già validamente committata. Azioni vietate: scegliere classe arbitraria, bypassare Prova, bypassare conferma esplicita, bypassare feature flag, bypassare readiness, forzare class_slug senza evidenza valida. Reconcile ripara coerenza tecnica · NON è scorciatoia di assegnazione.
+
+### API baseline finale G9 (aggiornata dopo FIX 6)
+
+**7 endpoint pubblici proposal + 2 esistenti out-of-scope**:
+
+- `GET /api/class-halls` (EXISTS · out of G9 scope)
+- `GET /api/class-halls/{hall_id}` (EXISTS · out of G9 scope)
+- `POST /api/class-halls/{hall_id}/visit` (PROPOSAL ONLY)
+- `POST /api/class-halls/{hall_id}/trial/start` (PROPOSAL ONLY)
+- `POST /api/class-halls/{hall_id}/trial/checkpoint` (PROPOSAL ONLY)
+- `POST /api/class-halls/{hall_id}/trial/complete` (PROPOSAL ONLY)
+- `POST /api/class-halls/{hall_id}/trial/abandon` (PROPOSAL ONLY)
+- `GET /api/class-halls/{hall_id}/trial/state` (PROPOSAL ONLY)
+- `POST /api/class-halls/{hall_id}/class/confirm` (PROPOSAL ONLY · termina flusso pubblico)
+- ~~`POST /api/class-halls/{hall_id}/class/apply`~~ **RIMOSSO** dalle proposte pubbliche → `internal service operation: apply_class_assignment()`
+
+Tutti i proposal: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI`.
+
+### Class assignment transaction · 13 step obbligatori
+
+1. autenticazione · 2. autorizzazione su avventuriero · 3. verifica `recruit_unassigned` · 4. verifica Hall ACTIVE · 5. verifica Trial completed · 6. verifica conferma esplicita · 7. verifica class readiness · 8. verifica feature flag globale · 9. verifica enable per-Hall · 10. verifica target slug canonico · 11. atomic compare-and-set · 12. scrittura history/audit · 13. risposta idempotente
+
+### Dipendenze ancora aperte (Gate 10 NON può dichiararle implicite)
+
+- R18.3f Class Slug Migration Readiness
+- R18.6.RV3-EV Eligibility Validation
+- Registry v3 (architecture approved · apply not authorized)
+- Feature flag implementation (`CLASS_HALL_ASSIGNMENT_ENABLED` + `hall.assignment_enabled`)
+- Hall activation approval (per-Hall)
+- Runtime implementation gate futuro
+- Deployment approval
+
+### Baseline finale G9
+
+- **Gate**: R18.6.3-G9 TECH_READINESS
+- **Stato**: SPECIFICA TECNICA DOCUMENTALE · PROPOSAL ONLY · NOT IMPLEMENTED
+- **State machine**: 11 stati (9 happy + 2 recovery tecnici)
+- **API pubbliche proposal**: 7 (con `/class/apply` rimosso · internal-only)
+- **DB schema proposal**: 14 field · `PROPOSAL ONLY · NO DB WRITE · NO MIGRATION`
+- **Regola critica**: AND-10 (esteso da AND-8) su 10 condizioni AND
+- **Feature flag**: `CLASS_HALL_ASSIGNMENT_ENABLED` (globale) + `hall.assignment_enabled` (per-Hall) · entrambi `disabled`
+- **Idempotency**: 2 livelli (L1 request replay 24h · L2 domain permanente)
+- **Rollback strategy**: reconcile-forward · NO distruttivo automatico
+- **Admin reconcile**: INTERNAL-ONLY · NOT public API
+- **Micro-fix G10**: 10 chiarimenti applicati
+- **OpenAPI runtime**: INVARIATO (nessuna nuova route registrata)
+- **Gate 10 FINAL PM_REVIEW**: autorizzato
+
+**Approvazione riguarda**: specifica tecnica · state machine · contratti concettuali · schema proposto · sicurezza · idempotenza · rollback/recovery · test strategy · dipendenze.
+
+**NON autorizza**: codice · route · OpenAPI · DB write · migration · feature flag enable · Hall activation · Trial activation · class assignment · class_slug apply · Registry v3 apply · deployment.
+
+### Files locked
+
+- `/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.md` **LOCKED**
+- `/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4/G5/RV3/G6/G7/G8 (tutti LOCKED post-approval)
+- Catalogo R18.5 = **INVARIATO** (1500/1500 preserved)
+- `lore_meta.py` anchor = **INVARIATO** (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`)
+- Sealed integrity 36/36 = **BYTE-IDENTICAL**
+- OpenAPI runtime = **INVARIATO**
+- backend/frontend diff = **0**
+
+### PM verdict
+
+- **R18.6.3-G9 = CLOSED · PM APPROVED WITH TECHNICAL CLARIFICATIONS** ✅
+- **R18.6.3-G10 FINAL PM_REVIEW = AUTHORIZED** 🟢
+- **Gate 11 = NOT AUTHORIZED** 🔒
+- **Wave 1 successors = HOLD** 🔒
+- **Runtime implementation = NOT AUTHORIZED** 🔒

@@ -28,7 +28,9 @@
       "R18.6.3-G6",
       "R18.6.3-G7",
       "R18.6.3-G8"
-    ]
+    ],
+    "feature_flag_class_hall_assignment_enabled": "disabled",
+    "per_hall_assignment_enabled_cacciatore_del_vuoto": "disabled"
   },
   "executive_summary": {
     "scope": "specifica tecnica documentale per implementazione futura Sala + Prova + conferma + assegnazione classe iniziale + integrazione proficiency/equip/XP",
@@ -106,7 +108,7 @@
       "field users.hall_discovery_state",
       "field users.hall_onboarding_state",
       "field users.explicit_confirmation_at",
-      "feature flag HALL_CLASS_ASSIGN_ENABLED"
+      "feature flag CLASS_HALL_ASSIGNMENT_ENABLED (FIX 3 G10 · new name lock · + per-Hall hall.assignment_enabled)"
     ]
   },
   "target_state_machine": {
@@ -175,7 +177,19 @@
       "auditabili",
       "recuperabili dopo errore"
     ],
-    "gate_9_does_not_implement": true
+    "gate_9_does_not_implement": true,
+    "states_recovery_technical": [
+      "CLASS_ASSIGNMENT_FAILED_RETRYABLE",
+      "CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED"
+    ],
+    "total_states_including_recovery": 11,
+    "happy_path_states": 9,
+    "recovery_technical_states": 2,
+    "recovery_states_are_not_gameplay": true,
+    "recovery_states_ui_messages_it": {
+      "CLASS_ASSIGNMENT_FAILED_RETRYABLE": "Impossibile completare la conferma. La tua scelta non è andata persa. Riprova.",
+      "CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED": "La classe è stata assegnata. Alcuni dati sono in aggiornamento."
+    }
   },
   "class_slug_write_and8": {
     "conditions_all_required_true": [
@@ -194,7 +208,9 @@
       "feature_flag_hall_class_assign_enabled": false,
       "runtime_apply": "prohibited",
       "assignment_possible_now": false
-    }
+    },
+    "deprecated_by": "class_slug_write_and10 (FIX G10)",
+    "superseded": true
   },
   "api_contract_proposal": {
     "marker_all_endpoints": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI",
@@ -231,11 +247,6 @@
         "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
       },
       {
-        "method": "POST",
-        "path": "/api/class-halls/{hall_id}/class/apply",
-        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI · CRITICAL GATED"
-      },
-      {
         "method": "GET",
         "path": "/api/class-halls/{hall_id}/trial/state",
         "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
@@ -257,6 +268,23 @@
         "path": "/api/class-halls/{class_slug}/unlock-specialization",
         "status": "EXISTS"
       }
+    ],
+    "removed_from_public_proposals": [
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/class/apply",
+        "reason": "FIX 6 G10 · rimosso dalle proposte pubbliche · flusso pubblico termina con /class/confirm",
+        "marker": "REMOVED FROM PUBLIC PROPOSALS"
+      }
+    ],
+    "internal_service_operations": [
+      {
+        "name": "apply_class_assignment",
+        "marker": "INTERNAL SERVICE OPERATION · NOT PUBLIC ROUTE · NOT CLIENT-CALLABLE",
+        "invoked_by": "servizio interno · dopo class/confirm valida i prerequisiti",
+        "runtime_lockato": false,
+        "not_in_public_openapi": true
+      }
     ]
   },
   "db_schema_proposal": {
@@ -266,8 +294,11 @@
       {
         "name": "class_slug",
         "type": "string",
-        "location_proposed": "users",
-        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION · verify existence first"
+        "location_proposed": "adventurer document (documento canonico avventuriero · source of truth · FIX 2 G10)",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION · verify existence first · adventurer-scoped",
+        "not_on_user_root": true,
+        "not_on_trial_session": true,
+        "not_on_hall_document": true
       },
       {
         "name": "class_assignment_status",
@@ -363,7 +394,8 @@
       "required_before_item_creation": true
     },
     "feature_flags": {
-      "HALL_CLASS_ASSIGN_ENABLED": "disabled",
+      "CLASS_HALL_ASSIGNMENT_ENABLED": "disabled",
+      "hall.assignment_enabled (per-Hall)": "disabled",
       "R18_REWORK_ENABLED": "existing · env",
       "R18_TALENT_ENGINE_ENABLED": "existing · env"
     },
@@ -392,7 +424,7 @@
     "future_implementation_cannot_bypass_seals": true
   },
   "feature_flag_strategy": {
-    "new_flag_proposed": "HALL_CLASS_ASSIGN_ENABLED",
+    "new_flag_proposed": "CLASS_HALL_ASSIGNMENT_ENABLED",
     "default_value": "false",
     "activation_condition": "solo dopo Gate 10 readiness + PM approval",
     "kill_switch": true,
@@ -400,7 +432,11 @@
     "coexisting_flags": [
       "R18_REWORK_ENABLED",
       "R18_TALENT_ENGINE_ENABLED"
-    ]
+    ],
+    "per_hall_flag_proposed": "hall.assignment_enabled",
+    "per_hall_default": "false",
+    "and_rule": "CLASS_HALL_ASSIGNMENT_ENABLED=true AND hall.assignment_enabled=true AND hall.status=ACTIVE AND class_readiness=approved",
+    "no_single_flag_bypasses_other_conditions": true
   },
   "test_strategy": {
     "gate_9_writes_tests": false,
@@ -713,10 +749,266 @@
       "R18.6.3-G8"
     ]
   },
+  "pm_micro_fix_g10": {
+    "applied_at": "2026-07-11T16:03:41Z (documental)",
+    "authorized_by": "PM DISPATCH G9 MICRO-FIX (10 documentali)",
+    "total_fixes": 10,
+    "fixes": [
+      {
+        "id": "FIX-1",
+        "topic": "Storage ibrido (TR9-Q1)",
+        "resolution": "identità permanente → documento canonico avventuriero (class_slug, class_assignment_status, class_assignment_source, class_assignment_at, class_assignment_id, class_assignment_history, class_readiness_version). Sessioni Trial temporanee → collection separata proposta 'class_hall_trial_sessions' (nome NON runtime-lockato).",
+        "marker": "PROPOSAL ONLY · NO CREATION · NO MIGRATION · NO DB WRITE",
+        "no_checkpoint_in_adventurer_doc": true,
+        "no_class_slug_in_session_as_source_of_truth": true,
+        "reuse_existing_equivalent_if_present": true
+      },
+      {
+        "id": "FIX-2",
+        "topic": "class_slug location (TR9-Q2)",
+        "resolution": "class_slug su root del documento canonico dell'avventuriero (source of truth).",
+        "not_on_user_or_account_root": true,
+        "not_on_trial_session": true,
+        "not_on_hall_document": true,
+        "not_on_separate_tech_collection": true,
+        "account_can_have_multiple_adventurers_no_global_class_on_account": true,
+        "verify_schema_live_before_impl": true,
+        "no_duplicate_class_slug": true
+      },
+      {
+        "id": "FIX-3",
+        "topic": "Feature flag a due livelli (TR9-Q3)",
+        "global_flag_name_lock": "CLASS_HALL_ASSIGNMENT_ENABLED",
+        "global_default": false,
+        "per_hall_flag": "hall.assignment_enabled",
+        "per_hall_default": false,
+        "and_rule": "CLASS_HALL_ASSIGNMENT_ENABLED=true AND hall.assignment_enabled=true AND hall.status=ACTIVE AND class_readiness=approved",
+        "no_single_flag_bypasses_other_conditions": true,
+        "current_state": {
+          "CLASS_HALL_ASSIGNMENT_ENABLED": false,
+          "hall_cacciatore_del_vuoto.assignment_enabled": false,
+          "activation_authorized": false
+        }
+      },
+      {
+        "id": "FIX-4",
+        "topic": "Idempotency a due livelli (TR9-Q4)",
+        "level_1_request_replay": {
+          "client_sends": "Idempotency-Key (UUID)",
+          "conceptual_key": "authenticated_user_id + adventurer_id + hall_id + trial_version + idempotency_key",
+          "window_hours": 24,
+          "same_key_same_payload": "same response",
+          "same_key_different_payload": "conflict error"
+        },
+        "level_2_domain_idempotency_permanent": {
+          "class_assignment_id": "univoco",
+          "atomic_conditional_update": true,
+          "condition_class_slug_null": true,
+          "condition_status_recruit_unassigned": true,
+          "duplicate_submit_after_assignment_returns_current_state": true,
+          "no_second_assignment_ever": true,
+          "l1_cache_expiry_does_not_allow_second_write": true
+        }
+      },
+      {
+        "id": "FIX-5",
+        "topic": "Checkpoint server-authoritative (TR9-Q5)",
+        "client_can": [
+          "request transition",
+          "send input",
+          "show checkpoint",
+          "request resume"
+        ],
+        "client_cannot_declare_autonomously": [
+          "phase completed",
+          "trial completed",
+          "payoff superato",
+          "class eligible"
+        ],
+        "server_validates": [
+          "sessione attiva",
+          "fase corrente",
+          "transizione consentita",
+          "stato precedente",
+          "versione Prova",
+          "completion evidence prevista"
+        ],
+        "policy": "client-driven request · server-authoritative state",
+        "checkpoint_properties": [
+          "idempotenti",
+          "ordinati",
+          "recuperabili",
+          "NON saltabili tramite payload client"
+        ]
+      },
+      {
+        "id": "FIX-6",
+        "topic": "/class/apply rimosso da route pubbliche (TR9-Q6)",
+        "removed_public_route": "POST /api/class-halls/{hall_id}/class/apply",
+        "documented_as_internal_operation": "apply_class_assignment()",
+        "runtime_name_lockato": false,
+        "marker": "INTERNAL SERVICE OPERATION · NOT PUBLIC ROUTE · NOT CLIENT-CALLABLE",
+        "public_flow_terminates_with": "POST /api/class-halls/{hall_id}/class/confirm",
+        "class_confirm_responsibilities": [
+          "valida prerequisiti",
+          "registra intento esplicito",
+          "avvia internamente la transazione"
+        ]
+      },
+      {
+        "id": "FIX-7",
+        "topic": "Rate limit /class/confirm",
+        "baseline": "3 req/min per adventurer_id · 10 req/min per account autenticato",
+        "identical_replay_same_idempotency_key": "NO nuove write",
+        "limit_exceeded_response": "HTTP 429 futuro",
+        "no_mutation_on_limit_exceeded": true,
+        "no_trial_loss": true,
+        "no_reset": true,
+        "no_consumption": true,
+        "does_not_replace_idempotency_or_atomic_control": true
+      },
+      {
+        "id": "FIX-8",
+        "topic": "Atomic compare-and-set + reconcile-forward (TR9-Q7)",
+        "pre_write_validation_conditions": 8,
+        "pre_write_conditions_list": [
+          "class_slug=null",
+          "status=recruit_unassigned",
+          "Trial=completed",
+          "explicit_confirmation=true",
+          "hall=ACTIVE",
+          "assignment_flag=enabled (both global AND per-Hall)",
+          "class_readiness=approved",
+          "target_slug canonical (server-validated)"
+        ],
+        "write_type": "singola mutazione atomica sul documento canonico avventuriero con condizione class_slug ancora null",
+        "on_pre_commit_failure": {
+          "permanent_mutation": false,
+          "state_recoverable": true,
+          "retry_idempotent": true
+        },
+        "on_post_commit_valid": {
+          "automatic_destructive_rollback": false,
+          "assigned_class_remains_source_of_truth": true,
+          "system_enters_reconciliation": true,
+          "secondary_effects_repaired_forward": true
+        },
+        "principle": "reconcile-forward > rollback distruttivo"
+      },
+      {
+        "id": "FIX-9",
+        "topic": "Due failure states tecnici (state machine)",
+        "states_added": [
+          "CLASS_ASSIGNMENT_FAILED_RETRYABLE",
+          "CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED"
+        ],
+        "state_semantics": {
+          "CLASS_ASSIGNMENT_FAILED_RETRYABLE": "errore pre-commit recuperabile",
+          "CLASS_ASSIGNMENT_RECONCILIATION_REQUIRED": "commit valido ma side-effect/audit incompleto"
+        },
+        "not_gameplay_states": true,
+        "not_shown_to_player_with_tech_codes": true,
+        "not_authorizing_manual_assignments": true,
+        "ui_messages_it": {
+          "pre_commit_fail": "Impossibile completare la conferma. La tua scelta non è andata persa. Riprova.",
+          "post_commit_reconcile": "La classe è stata assegnata. Alcuni dati sono in aggiornamento."
+        },
+        "total_state_machine_states": 11,
+        "happy_path": 9,
+        "recovery_technical": 2
+      },
+      {
+        "id": "FIX-10",
+        "topic": "Admin reconcile INTERNAL-ONLY (TR9-Q8)",
+        "necessity": "necessario ma NON aggiunto ora",
+        "markers": [
+          "INTERNAL ONLY",
+          "ADMIN ONLY",
+          "NOT PLAYER API",
+          "NOT PUBLIC OPENAPI"
+        ],
+        "preferred_form": "comando amministrativo interno o endpoint amministrativo isolato",
+        "future_mandatory_properties": {
+          "dry_run_default_true": true,
+          "role_based_authorization": true,
+          "audit_completo": true,
+          "reason_mandatory": true,
+          "correlation_id": true,
+          "before_after_diff": true,
+          "no_hard_delete": true
+        },
+        "allowed_actions": [
+          "ispezionare assegnazioni bloccate",
+          "ripristinare side-effect mancanti",
+          "ricostruire audit",
+          "riconciliare stato pending",
+          "chiudere transazione già validamente committata"
+        ],
+        "forbidden_actions": [
+          "scegliere classe arbitraria",
+          "bypassare Prova",
+          "bypassare conferma esplicita",
+          "bypassare feature flag",
+          "bypassare readiness",
+          "forzare class_slug senza evidenza valida"
+        ],
+        "principle": "reconcile ripara coerenza tecnica · NON è scorciatoia di assegnazione"
+      }
+    ],
+    "class_assignment_transaction_13_steps": [
+      "01 autenticazione (JWT valido)",
+      "02 autorizzazione su avventuriero (ownership)",
+      "03 verifica status = recruit_unassigned",
+      "04 verifica hall.status = ACTIVE",
+      "05 verifica trial_status = completed",
+      "06 verifica explicit_confirmation = true",
+      "07 verifica class_readiness = approved",
+      "08 verifica feature flag globale CLASS_HALL_ASSIGNMENT_ENABLED = true",
+      "09 verifica per-Hall enable hall.assignment_enabled = true",
+      "10 verifica target_slug canonico (registry check)",
+      "11 atomic compare-and-set su class_slug (condition class_slug IS NULL)",
+      "12 scrittura class_assignment_history + audit event class_applied",
+      "13 risposta idempotente (usa class_assignment_id per response cache)"
+    ],
+    "dependencies_still_open": [
+      "R18.3f Class Slug Migration Readiness",
+      "R18.6.RV3-EV Eligibility Validation",
+      "Registry v3 (architecture approved, apply not authorized)",
+      "Feature flag implementation (CLASS_HALL_ASSIGNMENT_ENABLED + hall.assignment_enabled)",
+      "Hall activation approval (per-Hall)",
+      "Runtime implementation gate futuro",
+      "Deployment approval"
+    ],
+    "gate_10_cannot_declare_dependencies_implicitly_completed": true
+  },
   "stop_after_g9": {
     "action": "STOP · attendo PM verdict G9 (CLOSED/REWORK) + risposte TR9-Q1..TR9-Q8 · Gate 10 HOLD · Wave 1 successors HOLD",
     "no_auto_start_gate_10": true,
     "no_auto_start_wave_1": true,
     "explicit_stop": true
+  },
+  "class_slug_write_and10": {
+    "conditions_all_required_true": [
+      "status corrente = recruit_unassigned",
+      "Hall = ACTIVE e selezionabile",
+      "Trial = completed",
+      "explicit_confirmation = true",
+      "target class_slug canonico (server-side validated contro r18_6_1_canonical_27_class_halls_expansion.json)",
+      "class readiness = approved",
+      "feature flag CLASS_HALL_ASSIGNMENT_ENABLED = enabled (kill switch globale)",
+      "hall.assignment_enabled = true (per-Hall allowlist)",
+      "class_slug corrente sul documento avventuriero = null (atomic compare-and-set)",
+      "tutte le altre validazioni pre-write = PASS (auth valid · adventurer ownership · no duplicate assignment · no concurrent write)"
+    ],
+    "current_system_state": {
+      "hall_active": false,
+      "class_readiness_final": false,
+      "feature_flag_class_hall_assignment_enabled": false,
+      "per_hall_assignment_enabled_cacciatore_del_vuoto": false,
+      "runtime_apply": "prohibited",
+      "assignment_possible_now": false
+    },
+    "supersedes_and8": true,
+    "note_fix_g10": "AND-8 esteso a AND-10 con per-Hall enable (FIX 3) + canonical target validation (FIX 8) + atomic CAS condition (FIX 8)"
   }
 }

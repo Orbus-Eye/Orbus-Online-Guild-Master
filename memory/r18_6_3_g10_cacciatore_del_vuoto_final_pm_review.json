@@ -1,0 +1,690 @@
+{
+  "metadata": {
+    "gate_id": "R18.6.3-G10",
+    "gate_name": "FINAL_PM_REVIEW",
+    "gate_nature": "DOCUMENTAL REVIEW ONLY · consolidamento pilot",
+    "class_slug": "cacciatore_del_vuoto",
+    "class_display_name": "Cacciatore del Vuoto",
+    "hall_name": "Faro Rovesciato di Onirade",
+    "hall_master": "Nael di Onirade",
+    "trial_name": "La Prova del Riflesso Vuoto",
+    "language": "italiano_only",
+    "governance": "DOCUMENTAL REVIEW ONLY · ITALIANO ONLY · NO code · NO implementation · NO DB schema · NO migration · NO route · NO OpenAPI · NO feature flag enable · NO Hall activation · NO Trial activation · NO class assignment · NO class_slug apply · NO Registry v3 apply · NO item creation · NO Wave 1 successor kickoff · NO Gate 11 auto-start",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7",
+      "R18.6.3-G8",
+      "R18.6.3-G9"
+    ]
+  },
+  "executive_verdict": {
+    "verdict_proposed": "ACTIVE-DESIGN-READY",
+    "pm_confirmation": "pending",
+    "allowed_verdicts": [
+      "A) ACTIVE-DESIGN-READY",
+      "B) CONDITIONAL DESIGN READY",
+      "C) REWORK REQUIRED",
+      "D) HOLD"
+    ],
+    "implementation_authorized": false,
+    "wave_1_successors_authorized": false,
+    "gate_11_authorized": false,
+    "class_final_state_even_if_active_design_ready": {
+      "live": false,
+      "selectable": false,
+      "implemented": false,
+      "hall_active": false,
+      "trial_active": false,
+      "class_slug_apply": "disabled"
+    }
+  },
+  "gate_reviews": [
+    {
+      "id": "G1",
+      "name": "STAT_DESIGN",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "46df9db9de1b316e863aac1f5b2eef060a132001913d6803ee758e2998639bd7",
+      "json_sha256": "d8a088a219097bc56c20c589c3c36299fe709200f60ce2b62c7484a94db549cd",
+      "key_locks": [
+        "main stat = Intelligenza",
+        "priorità secondaria: Costituzione + Destrezza",
+        "no dual scaling Int/Dex",
+        "no bonus stat fuori budget canonico"
+      ],
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G2",
+      "name": "PROFICIENCY_DESIGN",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "a9f9961f7e48d7224c4b619888d5395c05a3a9788db14ebd33eacf0d0e92be19",
+      "json_sha256": "d018af9f2bba26a10724de7054a637fb90c02a4f9dd0d0c34ac08286d91eb578",
+      "key_locks": [
+        "armor stoffa + cuoio",
+        "weapon focus + balestra + pugnale",
+        "Lanterna weapon family = reserved_future_review",
+        "nessuna proficiency non canonica"
+      ],
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G3",
+      "name": "GAMEPLAY_LOOP",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "5c714e8f59498f5443a4ad20d837c50bc42a6122771473d85723e6f3ca40591c",
+      "json_sha256": "ecd06c1dbb8f2145fa5ceaf316ed0a829bf9676c1470e35daca6a426a38f4c24",
+      "key_locks": [
+        "loop canonico Identify → Mark → Drain → Payoff",
+        "Frammenti generation rate (NON drop rate)",
+        "canonical drift Cavaliere di Mezzanotte risolto",
+        "combined proc ceiling 45%"
+      ],
+      "micro_fix_applied": "canonical drift resolution",
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G4",
+      "name": "RESOURCE_MECHANIC",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "ecdb91bebe285920118924554769b3b90579f91ef84214e3988c306f7221b79c",
+      "json_sha256": "58c9cfed2006846ec89e61801df4159ac999765a8f8888802fbb84d4570c82b5",
+      "key_locks": [
+        "Frammenti max 5",
+        "Marchi 3/4@Int50/5@Int90",
+        "Payoff 3F dispel area · Payoff 5F annullamento summon (non boss)",
+        "no XP / drop numerici"
+      ],
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G5",
+      "name": "EQUIP_DESIGN",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "e5b7c60d3ceb0ed26319dae5cf87cb2fa0284bb055bea80ae2d8bb14bf624ed6",
+      "json_sha256": "2a57cc21f8d2cd3515178db9b88a9578f0a8d3a668d4a6b723bafdfcbb4f4061",
+      "key_locks": [
+        "Legendary ILVL = 60 canonico",
+        "tier boundaries micro-fix applicati",
+        "focus/balestra/pugnale ILVL scaling",
+        "stoffa/cuoio ILVL scaling"
+      ],
+      "micro_fix_applied": "tier boundary micro-fix",
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "RV3",
+      "name": "Registry v3 Additive Planning",
+      "status": "CLOSED · PM APPROVED (apply NOT authorized)",
+      "md_sha256": "a13ec49bf6678ad569896e6246bf39fb151d51ffd76df8a8886fd487bf38325a",
+      "json_sha256": "e344f8bb60091dfe438f38ccdcdd74fafbddad3f6c328f00d54f38fa8842a594",
+      "key_locks": [
+        "architecture approved · apply NOT authorized",
+        "Lanterna weapon family esclusa dal pilot",
+        "backward compatibility R18.5 catalog LOCKED",
+        "no rewrite Registry v2"
+      ],
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G6",
+      "name": "PLAYER_GUIDE",
+      "status": "CLOSED · PM APPROVED",
+      "md_sha256": "f9ffa37ab6a978ec6f486c57ff2631ee891e9fdf50fd1c24b0c4ed3aa6d4a7df",
+      "json_sha256": "7d575bfacd154b6785f082327ff4d2507751b0d02eb5b16c9ae9ff944b547791",
+      "key_locks": [
+        "italiano only · i18n-ready",
+        "8 decisioni PG-Q1..PG-Q8 lockate",
+        "class differentiation esplicita",
+        "marker GUIDA DI DESIGN"
+      ],
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G7",
+      "name": "HALL_COMPLETION",
+      "status": "CLOSED · PM APPROVED WITH SEMANTIC GUARD",
+      "md_sha256": "510495a08fb178fd733efbae18063d4d0de4891a18b4b1ef7234916d20ad71a2",
+      "json_sha256": "603be60869ad70dbacae0f3b08331bc674e7dab967ad162df8fe25e700e09c2e",
+      "key_locks": [
+        "9 decisioni HC-Q1..HC-Q9",
+        "traversata 1-2 min",
+        "portale rapido Gilda",
+        "layout unico + galleria",
+        "conferma post-Prova (HC-Q5 CRITICAL)",
+        "marker SALA DI DESIGN"
+      ],
+      "micro_fix_applied": "semantic guard HC-Q9 (lanterna architettonica)",
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G8",
+      "name": "SAFE_MODE_TRIAL",
+      "status": "CLOSED · PM APPROVED WITH MICRO-FIX",
+      "md_sha256": "1c0323cd6c976441361e4917dd678c84af1ab26399792c1943f80c267fb04780",
+      "json_sha256": "dc77d3fabbb0aa82c6c27b7661e947fbcfc9f74358003a2b80d067d422a2a1bf",
+      "key_locks": [
+        "8 decisioni TR-Q1..TR-Q8",
+        "9 fasi FASE 0-8",
+        "retry unlimited · cooldown 0 · zero reward",
+        "entità didattiche marcate",
+        "CONFERMA IL CAMMINO / NON SONO PRONTO"
+      ],
+      "micro_fix_applied": "dialogo FASE 5 (Con cinque, bandisci un'evocazione. Non il boss stesso.)",
+      "documental_only_compliant": true,
+      "conflicts": 0
+    },
+    {
+      "id": "G9",
+      "name": "TECH_READINESS",
+      "status": "CLOSED · PM APPROVED WITH TECHNICAL CLARIFICATIONS",
+      "md_sha256": "bb275dea5385ce795ab4eb8705463c6a04ea5cd60c25b7ea454a6de488a17722",
+      "json_sha256": "425c5ec1b526e7bbd6b1cab4887e33b7c5e78727dbe9abb46bb44290ef86838c",
+      "key_locks": [
+        "8 decisioni TR9-Q1..TR9-Q8 + 10 micro-fix G10",
+        "state machine 11 stati (9+2)",
+        "AND-10 regola critica",
+        "/class/apply rimosso · internal operation",
+        "feature flag CLASS_HALL_ASSIGNMENT_ENABLED + per-Hall disabled",
+        "reconcile-forward > rollback distruttivo",
+        "OpenAPI runtime INVARIATO"
+      ],
+      "micro_fix_applied": "10 micro-fix documentali G10",
+      "documental_only_compliant": true,
+      "conflicts": 0
+    }
+  ],
+  "consistency_checks": {
+    "canonical": {
+      "non_canonical_class_references": 0,
+      "no_new_divinita": true,
+      "no_new_regione": true,
+      "no_new_fazione": true,
+      "no_new_classe": true,
+      "no_new_hall_master": true,
+      "pass": true
+    },
+    "class_identity": {
+      "main_stat": "Intelligenza",
+      "fantasy": "lettore del velo · non frontline",
+      "nael_tone_coherent": true,
+      "pass": true
+    },
+    "stat": {
+      "int_max": 90,
+      "marks_available": "3/4@Int50/5@Int90",
+      "no_hidden_multiplier": true,
+      "pass": true
+    },
+    "proficiency": {
+      "armor": [
+        "stoffa",
+        "cuoio"
+      ],
+      "weapon": [
+        "focus",
+        "balestra",
+        "pugnale"
+      ],
+      "lanterna_reserved": true,
+      "namespace_architettura_faro_separated": true,
+      "pass": true
+    },
+    "gameplay": {
+      "loop": "Identify → Mark → Drain → Payoff",
+      "combined_proc_ceiling": "45%",
+      "no_boss_banishing": true,
+      "pass": true
+    },
+    "resource": {
+      "frammenti_max": 5,
+      "marchio_applicable_every_combat": true,
+      "no_p2w_resource": true,
+      "anti_farming": true,
+      "pass": true
+    },
+    "equip": {
+      "legendary_ilvl": 60,
+      "tier_boundaries_micro_fix_applied": true,
+      "registry_v3_excludes_lanterna": true,
+      "r18_5_catalog_invariato": true,
+      "pass": true
+    },
+    "hall": {
+      "sala": "Faro Rovesciato di Onirade",
+      "layout": "spazio unico + galleria",
+      "access": "Atrio → traversata 1-2 min → portale rapido gilda",
+      "marker": "SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO",
+      "semantic_guard_lanterna": true,
+      "pass": true
+    },
+    "trial": {
+      "nome": "La Prova del Riflesso Vuoto",
+      "fasi": 9,
+      "safe_mode": "retry unlimited · cooldown 0 · zero reward",
+      "conferma": "CONFERMA IL CAMMINO / NON SONO PRONTO",
+      "marker": "PROVA DI DESIGN — NON ANCORA DISPONIBILE IN GIOCO",
+      "pass": true
+    },
+    "technical": {
+      "state_machine_states": 11,
+      "and_conditions": 10,
+      "feature_flag_global": "CLASS_HALL_ASSIGNMENT_ENABLED",
+      "feature_flag_per_hall": "hall.assignment_enabled",
+      "api_public_endpoints_proposal": 7,
+      "class_apply_removed_public": true,
+      "idempotency_levels": 2,
+      "reconcile_forward": true,
+      "openapi_runtime_invariato": true,
+      "pass": true
+    },
+    "player_guide": {
+      "italiano_only": true,
+      "class_differentiation_documented": true,
+      "no_undefined_items": true,
+      "no_lanterna_item_reference": true,
+      "pass": true
+    },
+    "anti_power_creep": {
+      "no_bonus_over_budget": true,
+      "combined_proc_ceiling_45": true,
+      "no_dual_scaling": true,
+      "payoff_capped_by_frammenti_max": true,
+      "pass": true
+    },
+    "anti_p2w": {
+      "no_purchase_form": true,
+      "r18_5_read_only": true,
+      "no_premium_item": true,
+      "no_trial_paid_shortcut": true,
+      "pass": true
+    },
+    "class_differentiation": {
+      "vs_mago": "anti-arcano/anti-summon",
+      "vs_cacciatore_di_mostri": "anti-velo/anti-incorporeo",
+      "vs_paladino": "non-frontline vs frontline sacro",
+      "vs_guerriero": "lettura tattica vs engagement diretto",
+      "pass": true
+    }
+  },
+  "preservation_checks": {
+    "registry_v2": {
+      "status": "FROZEN",
+      "rewrite": 0,
+      "changes": 0,
+      "pass": true
+    },
+    "r18_5_catalog": {
+      "status": "LOCKED",
+      "items_preserved": "1500/1500",
+      "changes": 0,
+      "pass": true
+    },
+    "legacy_bridge_warlock": {
+      "mapped_design_only": true,
+      "apply_authorized": false,
+      "gate_10_activates": false,
+      "pass": true
+    },
+    "sealed_integrity": {
+      "seals_total": 36,
+      "byte_identical": true,
+      "lore_meta_py_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "pass": true
+    }
+  },
+  "final_status": {
+    "class_slug_status": "DISABLED · runtime apply prohibited · 0 users assigned",
+    "hall_activation_status": "NOT ACTIVE · availability_state=PLANNED · assignment_enabled=false",
+    "trial_activation_status": "NOT ACTIVE · trial_status field not present in DB · trial_available_flag=false",
+    "implementation_status": "NOT AUTHORIZED · zero code · zero DB · zero OpenAPI · sealed integrity 36/36 · backend/frontend diff=0"
+  },
+  "dependency_matrix": {
+    "blocking_for_implementation": [
+      {
+        "name": "R18.3f Class Slug Migration Readiness",
+        "status": "HOLD",
+        "blocking": true,
+        "note": "required_before_class_apply"
+      },
+      {
+        "name": "R18.6.RV3 Registry v3",
+        "status": "architecture approved · apply NOT authorized",
+        "blocking": true,
+        "note": "required_before_hall_active"
+      },
+      {
+        "name": "R18.6.RV3-EV Eligibility Validation",
+        "status": "HOLD",
+        "blocking": true,
+        "note": "required_before_item_creation"
+      },
+      {
+        "name": "Feature flag CLASS_HALL_ASSIGNMENT_ENABLED",
+        "status": "disabled · not in env",
+        "blocking": true,
+        "note": "flag globale"
+      },
+      {
+        "name": "Per-Hall hall.assignment_enabled",
+        "status": "disabled · not in DB",
+        "blocking": true,
+        "note": "flag per-Hall"
+      },
+      {
+        "name": "Hall activation approval",
+        "status": "prohibited",
+        "blocking": true,
+        "note": "required per-Hall"
+      },
+      {
+        "name": "Runtime implementation gate futuro (Gate 11+)",
+        "status": "NOT AUTHORIZED",
+        "blocking": true,
+        "note": "scope: code + schema + route"
+      },
+      {
+        "name": "Deployment approval",
+        "status": "not requested",
+        "blocking": true,
+        "note": "prerequisito prod"
+      }
+    ],
+    "unresolved_count": 8,
+    "blocking_count": 8,
+    "non_blocking_future_work": [
+      "Wave 1 successors: Monaco · Druido · Alchimista · Bardo · Negromante (HOLD)",
+      "R18.6.RB1 Rite of Rebirth",
+      "R18.6.LTN Lanterna weapon family (reserved_future_review)",
+      "Ulteriori Wave post-Wave 1"
+    ]
+  },
+  "risk_consolidation": {
+    "per_gate_summary": [
+      {
+        "gate": "G1",
+        "severity_prevalent": "LOW-MEDIUM",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G2",
+        "severity_prevalent": "LOW-MEDIUM",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G3",
+        "severity_prevalent": "MEDIUM",
+        "status": "DESIGNED (canonical drift risolto)"
+      },
+      {
+        "gate": "G4",
+        "severity_prevalent": "MEDIUM",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G5",
+        "severity_prevalent": "LOW-MEDIUM",
+        "status": "DESIGNED (tier boundary micro-fix)"
+      },
+      {
+        "gate": "RV3",
+        "severity_prevalent": "LOW-MEDIUM",
+        "status": "DESIGNED (architecture approved)"
+      },
+      {
+        "gate": "G6",
+        "severity_prevalent": "LOW",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G7",
+        "risks_count": 15,
+        "severity_prevalent": "LOW-MEDIUM",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G8",
+        "risks_count": 15,
+        "severity_prevalent": "MEDIUM",
+        "status": "DESIGNED"
+      },
+      {
+        "gate": "G9",
+        "risks_count": 15,
+        "severity_prevalent": "HIGH (implementation)",
+        "status": "DESIGNED"
+      }
+    ],
+    "high_severity_residual_all_mitigated": [
+      "Race condition doppio submit /class/apply (mitigato: idempotency 2 livelli + optimistic locking)",
+      "Rollback DB inconsistente (mitigato: reconcile-forward · G9 FIX 8)",
+      "Feature flag enable accidentale (mitigato: default false + AND-10)",
+      "Hall availability modificato senza PM approval (mitigato: workflow approval documentato)",
+      "Class assignment applied a class_slug non canonico (mitigato: server-side canonical validation · G9 FIX 8)",
+      "Sealed integrity breach (mitigato: 36 sigilli · PM approval required)",
+      "XP/gold accidentalmente emessi da trial complete (mitigato: enforcement architetturale · G9 sez 36)"
+    ],
+    "no_open_high_risk": true
+  },
+  "readiness_checklist": {
+    "design_readiness": {
+      "total": 23,
+      "passed": 23,
+      "percent": 100
+    },
+    "implementation_readiness": {
+      "total": 6,
+      "passed": 0,
+      "percent": 0,
+      "note": "6 blocking dependencies unresolved · non richiesto per ACTIVE-DESIGN-READY"
+    }
+  },
+  "active_design_ready_assessment": {
+    "verdict": "ACTIVE-DESIGN-READY",
+    "criteria_verified": {
+      "all_10_gates_closed_pm_approved": true,
+      "inter_gate_coherence": true,
+      "canonical_purity_zero_non_canonical": true,
+      "anti_power_creep_pass": true,
+      "anti_p2w_pass": true,
+      "class_differentiation_pass": true,
+      "registry_v2_preserved": true,
+      "r18_5_preserved": true,
+      "legacy_bridge_documented": true,
+      "risk_consolidated_no_high_open": true,
+      "design_readiness_checklist_full": true
+    },
+    "class_state_even_if_ready": {
+      "live": false,
+      "selectable": false,
+      "implemented": false,
+      "hall_active": false,
+      "trial_active": false,
+      "class_slug_apply": "disabled"
+    }
+  },
+  "implementation_authorization_assessment": {
+    "authorized": false,
+    "denied_because": [
+      "R18.3f: HOLD",
+      "Registry v3: apply not authorized",
+      "R18.6.RV3-EV: HOLD",
+      "Feature flag CLASS_HALL_ASSIGNMENT_ENABLED: not implemented",
+      "Per-Hall hall.assignment_enabled: not implemented",
+      "Hall activation approval: prohibited",
+      "Gate 11 implementativo: NOT AUTHORIZED",
+      "Deployment approval: not requested"
+    ],
+    "conditions_required_and_status": "8/8 blocking non soddisfatte · nessuna implementazione autorizzata",
+    "single_condition_resolved_not_sufficient": true,
+    "requires_all_8_and": true
+  },
+  "wave_1_successor_assessment": {
+    "framework_replicable_identified": true,
+    "framework_components": [
+      "struttura gate G1-STAT · G2-PROFICIENCY · G3-GAMEPLAY_LOOP · G4-RESOURCE · G5-EQUIP · [RV3] · G6-PLAYER_GUIDE · G7-HALL_COMPLETION · G8-SAFE_MODE_TRIAL · G9-TECH_READINESS · G10-FINAL_PM_REVIEW",
+      "sezioni consolidate G7=44 · G8=49 · G9=62 · G10=44",
+      "vincoli DOCUMENTAL ONLY replicabili",
+      "PM open questions LOCK pattern (HC-Q / TR-Q / TR9-Q / FR-Q)",
+      "micro-fix pattern chirurgico",
+      "state machine 11 stati generici",
+      "AND-10 regola critica riutilizzabile con class_slug diverso",
+      "feature flag pattern globale + per-Hall",
+      "risk register template G7-G8-G9 replicabile"
+    ],
+    "wave_1_successors_status": "HOLD",
+    "wave_1_successors_list": [
+      "Monaco",
+      "Druido",
+      "Alchimista",
+      "Bardo",
+      "Negromante"
+    ],
+    "auto_start": false,
+    "requires_explicit_pm_dispatch": true
+  },
+  "pm_final_questions": [
+    {
+      "id": "FR-Q1",
+      "question": "Confermi verdict ACTIVE-DESIGN-READY per pilot Cacciatore del Vuoto?",
+      "proposed": "a) LOCK ACTIVE-DESIGN-READY",
+      "alternatives": [
+        "b) CONDITIONAL DESIGN READY",
+        "c) REWORK REQUIRED",
+        "d) HOLD"
+      ]
+    },
+    {
+      "id": "FR-Q2",
+      "question": "Approvi il framework replicabile per Wave 1 successors?",
+      "proposed": "a) LOCK framework confermato",
+      "alternatives": [
+        "b) modifiche PM richieste prima di applicare a successor",
+        "c) HOLD Wave 1 kickoff"
+      ]
+    },
+    {
+      "id": "FR-Q3",
+      "question": "Documenti G1..G9 tutti LOCKED post G10 CLOSED?",
+      "proposed": "a) LOCK",
+      "alternatives": [
+        "b) permetti hotfix documentali",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "FR-Q4",
+      "question": "SHA256 corrente confermano stato canonico?",
+      "proposed": "a) LOCK SHA256 attuali",
+      "alternatives": [
+        "b) rerun sha256sum required",
+        "c) altra verifica PM"
+      ]
+    },
+    {
+      "id": "FR-Q5",
+      "question": "Prossimo passo dopo G10 CLOSED: Wave 1 kickoff o holding pattern?",
+      "proposed": "a) LOCK holding pattern",
+      "alternatives": [
+        "b) autorizza Wave 1 kickoff (dispatch separato PM)",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "FR-Q6",
+      "question": "Implementation Gate 11+ autorizzazione: NOT AUTHORIZED confermato?",
+      "proposed": "a) LOCK NOT AUTHORIZED",
+      "alternatives": [
+        "b) riservato a dispatch futuro esplicito",
+        "c) altra proposta PM"
+      ]
+    }
+  ],
+  "final_go_hold_recommendation": {
+    "gate_10_status_proposed": "CLOSED · ACTIVE-DESIGN-READY (in attesa conferma PM)",
+    "gate_11_status": "NOT AUTHORIZED",
+    "wave_1_successors_status": "HOLD",
+    "implementation_runtime_status": "NOT AUTHORIZED",
+    "pilot_status": "completato in fase documentale · framework replicabile disponibile",
+    "recommended_next_step": "PM verdict conclusivo Gate 10 + risposte FR-Q1..FR-Q6 → G10 CLOSED con assessment ACTIVE-DESIGN-READY → holding pattern in attesa dispatch successivo"
+  },
+  "canonical_validation": {
+    "canonical_registry": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "entities_used": [
+      "Faro Rovesciato di Onirade",
+      "Nael di Onirade",
+      "Cacciatore del Vuoto",
+      "Marchio del Vuoto",
+      "Frammenti di Onirade",
+      "Prova del Riflesso Vuoto",
+      "Atrio delle Vocazioni"
+    ],
+    "no_new_divinita": true,
+    "no_new_regione": true,
+    "no_new_fazione": true,
+    "no_new_classe": true,
+    "no_new_hall_master": true,
+    "non_canonical_class_references": 0
+  },
+  "governance": {
+    "documental_review_only": true,
+    "italiano_only": true,
+    "no_code": true,
+    "no_implementation": true,
+    "no_db_schema_change": true,
+    "no_migration": true,
+    "no_route": true,
+    "no_openapi_modification": true,
+    "no_feature_flag_enable": true,
+    "no_hall_activation": true,
+    "no_trial_activation": true,
+    "no_class_assignment": true,
+    "no_class_slug_apply": true,
+    "no_registry_v3_apply": true,
+    "no_item_creation": true,
+    "no_wave_1_kickoff": true,
+    "no_gate_11_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7",
+      "R18.6.3-G8",
+      "R18.6.3-G9"
+    ]
+  },
+  "stop_after_g10": {
+    "action": "STOP FINALE · pilot Cacciatore del Vuoto completato in fase documentale · attendo PM verdict conclusivo Gate 10 + risposte FR-Q1..FR-Q6 · Gate 11 NOT AUTHORIZED · Wave 1 successors HOLD",
+    "no_auto_start_gate_11": true,
+    "no_auto_start_wave_1": true,
+    "no_implementation": true,
+    "explicit_stop": true
+  }
+}
