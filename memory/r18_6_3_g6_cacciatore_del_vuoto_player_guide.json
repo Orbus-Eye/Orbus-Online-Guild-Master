@@ -1,0 +1,521 @@
+{
+  "metadata": {
+    "gate": "R18.6.3-G6",
+    "scope": "PLAYER_GUIDE",
+    "class_pilot": "Cacciatore del Vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "generated_at": "2026-07-08T22:15:00Z",
+    "status": "DRAFT_PENDING_PM_REVIEW",
+    "governance": "DOCUMENTAL ONLY · ITALIANO ONLY · no code · no DB · no migrations · no Registry v3 apply · no item creation · no tutorial implementation · no UI implementation",
+    "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3"
+    ],
+    "successor_gate": "R18.6.3-G7 HALL_COMPLETION (HOLD · attende G6 CLOSED + PM GO)",
+    "canonical_class_validation": "PASS",
+    "non_canonical_class_references": 0,
+    "canonical_classes_referenced": [
+      "Mago",
+      "Cacciatore di Mostri",
+      "Paladino"
+    ],
+    "class_liveness_status": "PLANNED · NOT LIVE · NOT SELECTABLE",
+    "guide_marker_visible": "GUIDA DI DESIGN — CLASSE NON ANCORA DISPONIBILE",
+    "language": "italiano_only",
+    "no_english_translations_present": true,
+    "no_bilingual_text": true
+  },
+  "nome_classe": "Cacciatore del Vuoto",
+  "descrizione_breve": "Rituale specializzato nell'identificare, marchiare e annullare evocazioni, entità incorporee e distorsioni arcane. Non un mago da battaglia diretta: un cacciatore paziente che accumula progresso rituale (i Frammenti di Onirade) e lo spende in momenti decisivi.",
+  "fantasy_classe": "Il Cacciatore del Vuoto pattuglia il velo tra i mondi. Riconosce le forme che gli altri non vedono, marchia il loro passaggio, e le annulla prima che possano radicarsi. È un rituale in movimento: legge il vuoto, lo interroga, lo dissolve. La sua identità è anti-arcano ma non anti-magia: la sua magia è di controllo, di silenziamento, di cancellazione.",
+  "ruolo_gruppo": {
+    "descrizione": "DPS specialistico anti-evocazione · anti-incorporeo · anti-distorsione arcana. In gruppo copre le minacce arcane che gli altri ruoli non riescono a gestire.",
+    "posizionamento": "media distanza · dietro la prima linea · davanti ai supporti puri",
+    "priority_targets": "evocazioni > incorporei > castatori nemici > mischia"
+  },
+  "main_stat": "Intelligenza",
+  "priorita_stat": {
+    "primaria": "Intelligenza",
+    "secondaria": "Costituzione",
+    "terziaria": "Destrezza",
+    "note_saggezza": "La Saggezza NON è statistica offensiva per il Cacciatore del Vuoto. Non aumenta né la generazione dei Frammenti né l'efficacia dei rituali. Può essere utile su equipaggiamento universale, ma non è priorità.",
+    "note_forza": "La Forza è ininfluente per questa classe. Non usa armi pesanti né armatura pesante."
+  },
+  "armor_proficiency": {
+    "consentiti": [
+      "stoffa",
+      "cuoio"
+    ],
+    "non_consentiti": [
+      "maglia",
+      "piastre"
+    ],
+    "consiglio": "La stoffa è la scelta rituale principale: canalizza meglio i Marchi. Il cuoio è alternativa per chi vuole più mobilità e protezione leggera."
+  },
+  "weapon_proficiency": {
+    "consentiti": [
+      "focus",
+      "balestra",
+      "pugnale"
+    ],
+    "non_consentiti": [
+      "arco",
+      "spada",
+      "bastone",
+      "tomo",
+      "martello",
+      "reliquia (come arma)",
+      "ascia",
+      "scudo",
+      "lancia",
+      "arma in asta"
+    ],
+    "consiglio_generale": "Il Cacciatore del Vuoto è un rituale, non un guerriero. Le sue armi sono strumenti di canalizzazione: canalizzano Marchi, generano Frammenti, chiudono rituali."
+  },
+  "arma_primaria_raccomandata": {
+    "nome": "Focus",
+    "motivo": "È l'arma con la migliore canalizzazione arcana. Applica il Marchio del Vuoto in modo efficiente, spinge il Drain al massimo, e permette di attivare i Payoff senza penalità di posa. Solo un Focus alla volta può essere equipaggiato.",
+    "combinazione_ideale": "Focus in mano principale + Pugnale nella secondaria. Alternativa: Balestra a due mani (blocca la secondaria)."
+  },
+  "loop_gioco": {
+    "descrizione_breve": "Ogni scontro segue quattro passi: individua il bersaglio, marchialo, drenalo, poi decidi come spendere i Frammenti raccolti.",
+    "passi": [
+      {
+        "nome": "Identifica",
+        "descrizione": "Riconosci il bersaglio giusto. Priorità: evocazioni e incorporei > castatori > mischia. Non tutti i nemici valgono lo stesso in questo loop."
+      },
+      {
+        "nome": "Marchia",
+        "descrizione": "Applica il Marchio del Vuoto sul bersaglio scelto. Il Marchio silenzia le evocazioni, indebolisce gli incorporei nel tempo, e prepara il terreno per il Drain."
+      },
+      {
+        "nome": "Drena",
+        "descrizione": "Colpisci il bersaglio marchiato con Focus, Balestra o Pugnale. Ogni colpo valido genera un Frammento di Onirade. Continua finché puoi."
+      },
+      {
+        "nome": "Paga",
+        "descrizione": "Quando hai abbastanza Frammenti, spendili in un Payoff. È qui che decidi la partita: dispel di area (3 Frammenti) o annullamento di un'evocazione nemica (5 Frammenti)."
+      }
+    ]
+  },
+  "marchio_del_vuoto": {
+    "descrizione": "Il Marchio del Vuoto è un sigillo rituale che imprimi su un bersaglio. Silenzia le evocazioni, indebolisce gli incorporei nel tempo, e trasforma quel bersaglio in una fonte di Frammenti quando lo colpisci.",
+    "quanti_attivi": "3 di base · sale a 4 quando la tua Intelligenza raggiunge 50 · sale a 5 quando raggiunge 90 · massimo assoluto 5",
+    "durata": "3 turni di base · cresce con l'Intelligenza fino a un massimo pratico di 8 turni · limite assoluto 10 turni (nessun potenziamento può superarlo)",
+    "regola_refresh": "Riapplicare il Marchio sopra un Marchio esistente sullo stesso bersaglio azzera la durata. Non si accumulano: c'è sempre un Marchio solo per bersaglio.",
+    "consiglio": "Non sprecare il tempo di lancio riapplicando troppo presto. Aspetta la finestra corretta per rinnovare."
+  },
+  "frammenti_di_onirade": {
+    "descrizione": "I Frammenti di Onirade sono la risorsa unica del Cacciatore del Vuoto. Non sono oggetti, non finiscono nell'inventario, non si vendono, non si scambiano. Sono un progresso rituale che accumuli durante uno scontro e spendi in quello scontro.",
+    "come_si_ottengono": "Colpendo un bersaglio Marchiato con Focus, Balestra o Pugnale. Ogni colpo valido genera un Frammento. L'Intelligenza alta aumenta la probabilità di generare un Frammento bonus sul colpo.",
+    "quando_si_perdono": "Alla fine dello scontro, alla morte del personaggio, o quando un incontro passa a una fase maggiore successiva. Non attraversano tra scontri.",
+    "regola_semplice": "Se il tuo bersaglio non è Marchiato, non generi Frammenti da lui. Il Marchio è la porta d'ingresso al Drain."
+  },
+  "cap_frammenti": {
+    "valore": 5,
+    "regola": "Non puoi accumulare più di 5 Frammenti alla volta. Se sei già a 5 e colpisci ancora un Marchiato, il Frammento extra non viene generato: usa un Payoff per liberare spazio.",
+    "principio_di_design": "Il cap 5 è definitivo. Nessun equipaggiamento, nessun Leggendario, nessuna combinazione può superarlo. Serve a mantenere una scelta reale tra Payoff intermedio e Payoff massimo."
+  },
+  "payoff_3f": {
+    "nome_azione": "Dissolvenza rituale (Payoff minore)",
+    "costo": "3 Frammenti di Onirade",
+    "effetto": "Attivi una dissolvenza arcana ad area: rimuove effetti arcani sospesi intorno al bersaglio e libera i tuoi alleati da eventuali maledizioni arcane in raggio.",
+    "quando_usarlo": "Quando due o più alleati sono colpiti da un debuff arcano · quando c'è un'area piena di residui rituali · quando serve un vantaggio subito, non più tardi.",
+    "reliability": "Alta contro effetti comuni. Con Intelligenza elevata copre anche effetti più rari. Contro incantesimi leggendari lanciati dai boss serve la versione più costosa (5 Frammenti) o una meccanica dedicata."
+  },
+  "payoff_5f": {
+    "nome_azione": "Bando del Vuoto (Payoff massimo)",
+    "costo": "5 Frammenti di Onirade",
+    "effetto_primario": "Annulla un'evocazione nemica standard: l'evocazione scompare dal campo. Contro un'evocazione richiamata da un boss, l'effetto passa attraverso le protezioni del boss ma può essere ridotto.",
+    "effetto_alternativo_incorporei": "Bandisce un bersaglio incorporeo singolo dal campo.",
+    "effetto_fallback": "Se non c'è un bersaglio valido, il Payoff non si attiva e i Frammenti non vengono consumati. Il gioco ti dirà: 'Nessuna evocazione valida da annullare.'",
+    "immunità_boss_diretto": "I boss stessi non possono essere bandi né annullati. Puoi solo colpire le loro evocazioni.",
+    "safeguard_deterministico": "Contro un'evocazione standard, l'annullamento è certo. Non c'è probabilità di fallimento casuale. Contro le evocazioni protette da un boss l'efficacia varia, ma la meccanica non si trasforma mai in una roulette."
+  },
+  "contro_summon": "Le evocazioni sono il tuo bersaglio principale. Marchiale subito: il Marchio le silenzia per alcuni turni, bloccando le loro abilità (ma non il movimento). Quando hai 5 Frammenti, il Bando del Vuoto le rimuove del tutto.",
+  "contro_incorporei": "Le entità incorporee vengono indebolite dal Marchio nel tempo (dispel-over-time). Genera Frammenti su di loro leggermente più facilmente: sono target rituali per definizione. A 5 Frammenti puoi bandirle come un'evocazione.",
+  "contro_boss": "I boss possono essere marchiati (ma solo con un Marchio alla volta, e con effetto ridotto). Non puoi bandirli né annullarli. Puoi però annullare le loro evocazioni ed è lì che decidi la partita: risparmia i Frammenti per la fase con le evocazioni critiche.",
+  "senza_bersagli_speciali": "In uno scontro dove non ci sono evocazioni né incorporei, il tuo loop è ridotto ma funziona ancora. Marchia i bersagli normali, drena, e usa i Payoff in modo utile: la dissolvenza rituale libera i tuoi alleati da debuff arcani anche in questi contesti. Non resti mai senza qualcosa da fare.",
+  "focus_dettaglio": {
+    "ruolo": "Arma primaria a mano principale. La scelta standard.",
+    "punti_forza": "Miglior canalizzazione arcana · massima efficacia sull'applicazione del Marchio · può canalizzare un turno intero per ottenere un Frammento bonus (massimo 2 canalizzazioni per segmento di risorsa)",
+    "punti_deboli": "Richiede posizionamento a media distanza · non ottimo in mischia stretta",
+    "consiglio": "Se non sei sicuro, scegli Focus. È la scelta bilanciata."
+  },
+  "balestra_dettaglio": {
+    "ruolo": "Opzione a distanza sicura. Occupa entrambe le mani (a due mani).",
+    "punti_forza": "Range esteso · sicurezza posizionale in incontri pericolosi in prima linea · applica il Marchio anche a bersagli difficili da raggiungere",
+    "punti_deboli": "Occupa la mano secondaria: non puoi usare il Pugnale · efficacia arcana leggermente inferiore rispetto al Focus · nessun bonus di canalizzazione",
+    "importante": "La Balestra del Cacciatore del Vuoto è una balestra di canalizzazione arcana. Non è la balestra fisica del Cacciatore di Mostri: usa la tua Intelligenza, non la Destrezza."
+  },
+  "pugnale_dettaglio": {
+    "ruolo": "Arma rituale opportunistica. Ideale come mano secondaria affiancata a un Focus.",
+    "punti_forza": "Chiude i rituali: se colpisci un bersaglio Marchiato con il Pugnale nell'ultima finestra prima che il Marchio scada, generi un Frammento bonus (una volta per Marchio) · finisher opportunistico",
+    "punti_deboli": "Danno sostenuto minore delle altre armi · richiede vicinanza al bersaglio",
+    "consiglio": "Il Pugnale premia la lettura del tempo. Colpisci al momento giusto, non subito."
+  },
+  "stoffa_dettaglio": {
+    "identita": "La scelta rituale principale. Massimizza la canalizzazione dei Marchi e del Drain.",
+    "quando_scegliere": "Sempre come default, salvo esigenze specifiche di mobilità o protezione fisica."
+  },
+  "cuoio_dettaglio": {
+    "identita": "Alternativa per chi vuole più mobilità e una protezione leggera migliore. Resta comunque una scelta con Intelligenza come statistica principale.",
+    "quando_scegliere": "In incontri dove il posizionamento è più difficile e serve reagire velocemente.",
+    "chiarimento_importante": "Il cuoio del Cacciatore del Vuoto è un cuoio arcano. Non è un cuoio da ladro né da cacciatore fisico. Anche col cuoio, la tua statistica primaria resta l'Intelligenza."
+  },
+  "punti_di_forza": [
+    "Unico in grado di annullare evocazioni nemiche in modo affidabile",
+    "Controlla incorporei e distorsioni arcane meglio di qualsiasi altra classe",
+    "Loop chiaro e appagante: costruzione + spesa decisiva",
+    "Skill ceiling alto: la lettura del tempo e la scelta del Payoff premiano il giocatore esperto",
+    "Buon posizionamento a distanza media, versatile tra ranged e ritualista in mischia",
+    "Sinergia forte in gruppo con classi che fanno danno diretto: il Cacciatore del Vuoto crea le finestre"
+  ],
+  "punti_deboli": [
+    "Fragile: stoffa e cuoio non reggono colpi diretti prolungati",
+    "Non è una classe da mischia: se ti trovi accerchiato, hai poche opzioni",
+    "AoE limitata: non è un caster di bruciature a raffica come il Mago",
+    "Depende dal Marchio: se non riesci a marchiare, non generi Frammenti",
+    "Contro i boss diretti non annulli nulla: devi lavorare sulle loro evocazioni",
+    "Skill floor più alto della media: chi non impara il loop resta indietro"
+  ],
+  "errori_comuni": [
+    "Colpire bersagli non Marchiati sperando di generare Frammenti (non succede)",
+    "Sprecare Payoff da 5 Frammenti su boss diretti (sono immuni all'annullamento)",
+    "Riapplicare il Marchio troppo presto perdendo tempo di lancio",
+    "Accumulare Frammenti fino al massimo senza mai spenderli (arrivi al cap e non generi più)",
+    "Ignorare le evocazioni per colpire il boss (invertire priorità = perdere l'incontro)",
+    "Usare Balestra e aspettarsi lo stesso danno del Cacciatore di Mostri (armi diverse, gameplay diverso)",
+    "Sperare che la Saggezza aiuti (non è la tua statistica)"
+  ],
+  "consigli_nuovi": [
+    "Inizia con Focus in mano principale. È la scelta più chiara e insegna il loop.",
+    "Marchia sempre prima di colpire. Se il bersaglio non ha il Marchio, non hai la porta d'ingresso al Drain.",
+    "Non aver paura di usare il Payoff a 3 Frammenti quando è utile. Non aspettare sempre il massimo.",
+    "Impara a leggere la barra dei Frammenti: quando sei vicino al cap, prepara il Payoff.",
+    "Se il tuo Marchio scade e non hai spesa Frammenti, non è un dramma: i Frammenti restano finché lo scontro non termina.",
+    "In gruppo, comunica: 'ho i Frammenti pronti', 'la prossima ondata è mia'."
+  ],
+  "consigli_avanzati": [
+    "Contro un boss con fasi di evocazione, risparmia i 5 Frammenti per la fase critica.",
+    "Con Focus, sfrutta la canalizzazione (fino a 2 volte per segmento di risorsa) prima che il Marchio scada.",
+    "Con Pugnale in secondaria, il colpo finale prima della scadenza del Marchio ti regala un Frammento bonus: cronometra bene.",
+    "Il cambio arma durante lo scontro è consentito ma costa un turno: pianifica in anticipo il loadout.",
+    "In raid, coordina le tue evocazioni annullate con i cast del Mago: le tue finestre proteggono i suoi burst.",
+    "La Balestra sacrifica il Pugnale ma ti dà distanza: usala su incontri con AoE pesante in prima linea.",
+    "Quando raggiungi Intelligenza 50 sblocchi il quarto Marchio attivo · a 90 il quinto. Costruisci l'equipaggiamento verso queste soglie."
+  ],
+  "compatibilita_gruppo": {
+    "gruppo_3": "Con un Paladino che cura e un Guerriero (o un Cacciatore di Mostri) come frontline, il Cacciatore del Vuoto copre l'asse arcano: annulla evocazioni, banda incorporei, libera gli alleati da debuff. Le tre classi si completano.",
+    "raid_5": "Ruolo: DPS specialistico anti-evocazione. Sinergia forte con Mago (il Cacciatore del Vuoto elimina le evocazioni che rompono i burst del Mago) e con Paladino (cura). Il Guerriero tiene la threat, il quinto ruolo è flessibile.",
+    "solo": "Il loop funziona anche in solitaria. Contro nemici standard il tuo ritmo è più lento del solito, ma i Payoff diventano utility (dispel dei tuoi stessi debuff) e non resti mai senza opzioni."
+  },
+  "differenza_mago": {
+    "canonical_class_ref": "Mago",
+    "differenza_riassuntiva": "Il Mago è un caster di bruciature dirette e aree elementali. Colpisce forte e ovunque. Il Cacciatore del Vuoto accumula progresso rituale e lo spende in momenti decisivi. Sono entrambi DPS con Intelligenza, ma occupano nicchie diverse.",
+    "quando_scegliere_vuoto": "Se ami il ritmo costruzione → spesa, la scelta strategica sui Payoff, e vuoi essere quello che gestisce le evocazioni.",
+    "quando_scegliere_mago": "Se vuoi bruciare tutto subito, con danno diretto e AoE massimizzata."
+  },
+  "differenza_cacciatore_di_mostri": {
+    "canonical_class_ref": "Cacciatore di Mostri",
+    "differenza_riassuntiva": "Il Cacciatore di Mostri caccia le creature del mondo fisico: bestie, mostri corporei, prede da tracciare. Usa la Destrezza, armi fisiche, e una balestra fisica. Il Cacciatore del Vuoto caccia le forme del non-mondo: evocazioni, incorporei, distorsioni. Usa l'Intelligenza, il rituale, e una balestra di canalizzazione arcana.",
+    "balestra_condivisa": "Entrambe le classi possono usare una balestra, ma sono balestre diverse. Il Cacciatore di Mostri usa la sua per abbattere corpi. Il Cacciatore del Vuoto usa la sua per canalizzare Marchi. L'aspetto della balestra è simile; il gameplay è opposto.",
+    "quando_scegliere_vuoto": "Se ti interessa la caccia rituale, il controllo arcano, la sensazione di 'chiudere una crepa nel velo'.",
+    "quando_scegliere_cacciatore_di_mostri": "Se ti interessa la caccia fisica, la mobilità, l'inseguimento e l'abbattimento diretto."
+  },
+  "differenza_paladino": {
+    "canonical_class_ref": "Paladino",
+    "differenza_riassuntiva": "Il Paladino è un supporto sacro che cura, protegge e sostiene il gruppo. Il Cacciatore del Vuoto è un DPS anti-arcano che elimina minacce specifiche. Ruoli opposti che coesistono benissimo in gruppo: uno mantiene vivi gli alleati, l'altro toglie di mezzo le evocazioni prima che facciano danno.",
+    "sinergia_gruppo": "Uno dei duetti più efficaci: il Paladino cura mentre il Cacciatore del Vuoto neutralizza le fonti di threat arcano."
+  },
+  "penalita_xp_futura": {
+    "descrizione": "È previsto un sistema che penalizzi l'esperienza guadagnata se la statistica principale di classe è troppo bassa rispetto al livello del personaggio. Per il Cacciatore del Vuoto la statistica principale è l'Intelligenza: chi la lascia indietro sacrifica progressione XP.",
+    "stato_liveness": "SISTEMA PREVISTO · NON ANCORA LIVE · in progettazione in un gate futuro",
+    "note_al_giocatore": "Al momento questa penalità NON è attiva. La sto documentando in anticipo per orientare le scelte di build. Quando verrà introdotta, riceverai comunicazioni chiare in gioco.",
+    "no_attuale_impatto_gameplay": true
+  },
+  "sala_di_classe": {
+    "nome": "Faro Rovesciato di Onirade",
+    "descrizione_breve": "Il luogo dove i Cacciatori del Vuoto imparano a leggere il velo. Non è un faro che illumina il mare: è un faro che riflette all'indietro, verso il mondo dietro il mondo. La sua luce non guida le navi: guida i rituali.",
+    "atmosfera": "Silenziosa, ordinata, illuminata in modo strano. Il pavimento riflette come uno specchio d'acqua ferma. Al centro, uno spazio aperto per la prova."
+  },
+  "hall_master": {
+    "nome": "Nael di Onirade",
+    "titolo": "Maestro del Faro Rovesciato",
+    "descrizione_breve": "Nael non è un maestro d'armi. È un lettore del velo. Parla poco, osserva molto. Chi vuole diventare Cacciatore del Vuoto deve prima farsi guardare da lui.",
+    "ruolo_narrativo": "Guida narrativa dell'onboarding di classe · non combatte con l'aspirante · osserva e riflette"
+  },
+  "prova_safe_mode_teaser": {
+    "nome_prova": "La Prova del Riflesso Vuoto",
+    "teaser": "Nel Faro Rovesciato attende una prova per chi vuole diventare Cacciatore del Vuoto. Non richiede combattimento pericoloso: è un esercizio guidato in cui Nael insegna a riconoscere ciò che l'occhio comune non vede.",
+    "scope_note": "I dettagli di come si affronta la Prova del Riflesso Vuoto saranno definiti in un gate successivo. Questa guida ne anticipa solo l'esistenza."
+  },
+  "tooltip_italiani": {
+    "note": "Tooltip player-facing · italiano puro · nessun codice tecnico visibile · nessuno slug",
+    "esempi": [
+      "Frammenti di Onirade: {n}/5 · usa i Frammenti per attivare rituali del Vuoto",
+      "Payoff pronto: dissolvenza rituale (spesa 3 Frammenti)",
+      "Payoff massimo pronto: bando del Vuoto (spesa 5 Frammenti)",
+      "Frammenti al massimo · spendi un Payoff per continuare a generare",
+      "Frammento di Onirade catturato",
+      "Dissolvenza rituale attivata · effetti arcani rimossi",
+      "Evocazione annullata · bersaglio bandito dal campo",
+      "Bersaglio incorporeo bandito",
+      "Barriera arcana attivata · autoprotezione temporanea",
+      "Rituale interrotto · Frammenti conservati",
+      "Nessun bersaglio marchiabile · applica prima un Marchio del Vuoto",
+      "Marchio del Vuoto svanito · nuovo Marchio richiesto per il Drain",
+      "Nessuna evocazione valida da annullare.",
+      "La distorsione cambia forma. I Frammenti di Onirade si dissolvono."
+    ]
+  },
+  "glossary": {
+    "Cacciatore del Vuoto": "La classe pilota: rituale anti-evocazione, anti-incorporeo, anti-distorsione arcana.",
+    "Marchio del Vuoto": "Sigillo rituale applicato a un bersaglio · silenzia evocazioni · indebolisce incorporei · abilita il Drain.",
+    "Frammenti di Onirade": "Risorsa unica di classe · si accumula colpendo bersagli Marchiati · si spende nei Payoff.",
+    "Drain": "L'atto di colpire un bersaglio Marchiato per generare Frammenti.",
+    "Payoff": "L'attivazione rituale che spende Frammenti per un effetto decisivo (dispel di area a 3 Frammenti · bando a 5 Frammenti).",
+    "Dissolvenza rituale": "Payoff da 3 Frammenti · dispel arcano di area.",
+    "Bando del Vuoto": "Payoff da 5 Frammenti · annullamento evocazione o bando incorporeo.",
+    "Segmento di risorsa": "Uno scontro standard oppure una fase maggiore di un incontro complesso · reset dei Frammenti tra un segmento e l'altro.",
+    "Faro Rovesciato di Onirade": "La Sala di Classe del Cacciatore del Vuoto.",
+    "Nael di Onirade": "Maestro della Sala · guida narrativa dell'onboarding di classe.",
+    "Prova del Riflesso Vuoto": "Prova di ingresso della Sala · dettagli in gate futuro."
+  },
+  "i18n_key_structure": {
+    "language_lock": "italiano",
+    "no_english_translations": true,
+    "no_bilingual_text": true,
+    "note": "La struttura è pensata per essere estesa in futuro con altre lingue, MA in questa fase è disponibile SOLO in italiano. Nessuna traduzione inglese è presente in questo documento. La chiave i18n è futura e non attiva.",
+    "key_pattern_concept": "class.cacciatore_del_vuoto.<sezione>.<chiave> (concept per gate futuro i18n implementation)",
+    "current_language_delivered": "it-IT",
+    "future_languages_placeholder": "reserved · nessuna traduzione live · nessun testo bilingue nel documento corrente"
+  },
+  "risk_register": [
+    {
+      "id": "PG-R1",
+      "risk": "Player nuovo pensa che la classe sia già giocabile (marker non chiaro)",
+      "severity": "MEDIUM",
+      "mitigation": "Marker 'GUIDA DI DESIGN — CLASSE NON ANCORA DISPONIBILE' visibile all'inizio e in coda · liveness status esplicito",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R2",
+      "risk": "Nuovo giocatore confonde balestra Vuoto (arcana) con balestra Cacciatore di Mostri (fisica)",
+      "severity": "MEDIUM",
+      "mitigation": "Sezione dedicata alla differenza · tooltip esplicita 'canalizzazione arcana · scaling Intelligenza'",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R3",
+      "risk": "Player spera che la Saggezza aiuti la classe",
+      "severity": "LOW",
+      "mitigation": "Nota esplicita 'Saggezza NON è statistica offensiva' in sezione priorità stat",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R4",
+      "risk": "Player usa Payoff 5F su boss diretti e resta deluso",
+      "severity": "MEDIUM",
+      "mitigation": "Errori comuni · immunità boss esplicita · tooltip 'Nessuna evocazione valida da annullare'",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R5",
+      "risk": "Aspettative sulla penalità XP creano frustrazione (system futuro descritto come presente)",
+      "severity": "MEDIUM",
+      "mitigation": "Sezione dedicata: 'SISTEMA PREVISTO · NON ANCORA LIVE' + 'no attuale impatto gameplay'",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R6",
+      "risk": "Menzione di weapon family riservata (excluded from pilot) nel testo player-facing · drift risk",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Weapon family riservate NON menzionate nel corpo del documento player-facing · zero occorrenze nel body · guard rule attiva",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R7",
+      "risk": "Player aspetta dettagli della Prova del Riflesso Vuoto (gate futuro)",
+      "severity": "LOW",
+      "mitigation": "Teaser esplicito · nota 'dettagli in gate successivo'",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R8",
+      "risk": "Nomi classi non canonici entrano nel documento (hallucination)",
+      "severity": "LOW",
+      "mitigation": "Solo classi canoniche referenziate · validation contro r18_6_1_canonical_27_class_halls_expansion.json · verify PASS",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R9",
+      "risk": "Tooltip player-facing contengono codici tecnici visibili",
+      "severity": "LOW",
+      "mitigation": "Tooltip revisionati manualmente · italiano puro · zero slug o codici tecnici",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R10",
+      "risk": "Nuovi giocatori non capiscono cap 5 e sprecano generazione a overcap",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Sezione cap 5 esplicita · tooltip 'Frammenti al massimo · spendi un Payoff' · sezione errori comuni",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PG-R11",
+      "risk": "Playtest futuro rivela che loop 4-step è complesso da comunicare · guida non basta",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Tutorial in-game dedicato sarà progettato in gate futuro · guida player = base testuale, non tutorial completo",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "PG-R12",
+      "risk": "Traduzioni inglesi accidentali nel testo",
+      "severity": "LOW",
+      "mitigation": "Language lock italiano_only · zero inglese nel documento · no_english_translations_present=true verificato",
+      "status": "DESIGNED"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "PG-Q1",
+      "question": "Marker 'GUIDA DI DESIGN — CLASSE NON ANCORA DISPONIBILE' formulazione conferma o rivedi?",
+      "options": [
+        "a) LOCK formulazione attuale",
+        "b) alternativa più esplicita ('BOZZA DI DESIGN')",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q2",
+      "question": "Tono guida player-facing conferma (chiaro, non tecnico, doppio pubblico nuovo+esperto)?",
+      "options": [
+        "a) LOCK tono attuale",
+        "b) più tecnico (per veterani MMO)",
+        "c) più semplificato (nuovi giocatori assoluti)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q3",
+      "question": "Numeri player-facing autorizzati (Frammenti 5 · Payoff 3F/5F · Marchi 3/4/5 · Marchio 3-8T max 10T · Focus max 2/segmento) conferma?",
+      "options": [
+        "a) LOCK numeri esposti come da direttiva PM",
+        "b) espandi (esporre soft cap Int 100 · linear-flattening)",
+        "c) restringi (nascondi Focus max 2/segmento come dettaglio avanzato)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q4",
+      "question": "Sezione penalità XP futura descritta come 'sistema previsto NON ancora live' conferma?",
+      "options": [
+        "a) LOCK formulazione",
+        "b) rimuovi sezione (troppo prematura)",
+        "c) espandi con dettagli meccanici"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q5",
+      "question": "Teaser 'Prova del Riflesso Vuoto' con soli 2-3 righe conferma o espandi?",
+      "options": [
+        "a) LOCK teaser breve",
+        "b) espandi (rischio di anticipare gate 8)",
+        "c) rimuovi teaser interamente"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q6",
+      "question": "i18n key structure documentata come 'italiano only · no traduzioni EN' conferma?",
+      "options": [
+        "a) LOCK italiano only",
+        "b) predisponi placeholder EN per traduzioni future esplicite",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q7",
+      "question": "Wave 1 successors HOLD confermato fino a G6+G7+G8+G9+G10 CLOSED?",
+      "options": [
+        "a) LOCK HOLD Wave 1",
+        "b) authorize Monaco parallel post-G6 CLOSED",
+        "c) roadmap dedicated"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "PG-Q8",
+      "question": "Sinergia party section (Paladino heal · Guerriero tank · Cacciatore di Mostri anti-fisico · Mago burst) conferma?",
+      "options": [
+        "a) LOCK sinergia descritta",
+        "b) espandi ad altre classi canoniche (Chierico/Bardo/etc)",
+        "c) restringi"
+      ],
+      "recommendation": "a"
+    }
+  ],
+  "go_hold_recommendation_gate_7": {
+    "gate_6_status": "DRAFT · pending PM review + risposte PG-Q1..PG-Q8",
+    "gate_7_status": "HOLD · attende PM ACK Gate 6 + GO esplicito Gate 7",
+    "gate_7_scope_preview": "HALL_COMPLETION · finalizza layout della Sala del Faro Rovesciato di Onirade · Nael dialoghi onboarding · flow entry class · quest chain minimal · SOLO documentazione della Sala · NO tutorial implementation · NO Prova del Riflesso Vuoto gameplay (gate 8) · NO class unlock · NO Hall activation runtime",
+    "gate_7_input_from_g6": "player guide (fantasy · role · loop · stats · equip · weapon dettaglio · errori comuni · consigli · Sala nome · Hall Master nome · Prova teaser · tooltip · glossary · i18n structure)",
+    "no_gate_7_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "recommended_next_step": "PM review G6 PLAYER_GUIDE + risposte PG-Q1..PG-Q8 → G6 CLOSED verdict → GO Gate 7 HALL_COMPLETION"
+  },
+  "governance": {
+    "documental_only": true,
+    "italiano_only": true,
+    "no_code_touch": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_registry_v3_apply": true,
+    "no_item_creation": true,
+    "no_item_rows": true,
+    "no_catalog_changes": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_tutorial_implementation": true,
+    "no_ui_implementation": true,
+    "no_gate_7_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3"
+    ]
+  },
+  "stop_after_g6": {
+    "action": "STOP · attendo PM verdict G6 (CLOSED/REWORK) + risposte PG-Q1..PG-Q8 · Gate 7 HOLD · Wave 1 successors HOLD",
+    "no_auto_start_gate_7": true,
+    "no_auto_start_wave_1": true,
+    "explicit_stop": true
+  }
+}

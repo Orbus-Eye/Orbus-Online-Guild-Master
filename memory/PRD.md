@@ -3111,3 +3111,98 @@ Cacciatore del Vuoto readiness pilot equip architecture LOCKED: budget T1-T5 mul
 - **R18.6.3-G5 = CLOSED · PM APPROVED** ✅
 - **R18.6.RV3 Registry v3 Additive Planning = AUTHORIZED** 🟢
 - **R18.6.3-G6 PLAYER_GUIDE = HOLD** 🔒 (attende RV3 review + PM GO esplicito)
+
+
+## R18.6.RV3 Registry v3 Additive Planning CLOSED (PM APPROVED · with binding answers RV3-Q1..RV3-Q8 · 2026-07-08T22:00:00Z)
+
+**Milestone**: **R18.6.RV3 = PM APPROVED = CLOSED** ✅ · R18.6.3-G6 PLAYER_GUIDE **AUTHORIZED** 🟢 · Gate 7 HALL_COMPLETION **HOLD** 🔒 · Wave 1 successors **HOLD** 🔒
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations · zero registry apply · zero item creation · zero item rows · zero catalog changes · zero modifica catalogo R18.5 LOCKED.
+
+### RV3 Approved Summary (verbatim PM decisions RV3-Q1..RV3-Q8)
+
+#### RV3-Q1 · Scenario B balanced_reuse APPROVED
+- Sotto-range 65-80 / 20-28 / 15-22 / 8-12 = **stime NON vincolanti** · NON quote minime · NON somma meccanica
+- Intervallo esplorativo 108-142 = incertezza pre-validazione · NON sostituisce baseline PM
+- **Baseline finale coverage envelope**: **110-130** · **planning center ≈120**
+- Post Eligibility Validation:
+  - coverage <110 → documentare gap e motivazione
+  - coverage 110-130 → fascia target
+  - coverage >130 → richiede giustificazione PM + verifica anti-duplicazione
+- **NO creazione item solo per raggiungere 120**
+
+#### RV3-Q2 · Planning target ≈120 LOCK
+- Copertura complessiva utile · **NON 120 nuove righe obbligatorie**
+- Include: nuovi class-specific futuri + nuovi shared-family futuri + universal references esistenti + gear esistente realmente compatibile
+- **Regola**: `riuso valido > duplicazione artificiale` **MA** `identità classe > riuso eccessivo`
+
+#### RV3-Q3 · Eligibility Validation Gate LOCK OBBLIGATORIO
+- Creare gate futuro **`R18.6.RV3-EV`** PRIMA di qualsiasi Item Creation
+- Validare per ogni candidato: `item_id · tier · required_level · ilvl · rarity · slot · armor_type · weapon_family · main_stat compat · class proficiency compat · universal eligibility · affix compat · anti-P2W · duplicate risk · reuse verdict`
+- **Verdict ammessi**: `REUSE_VALID` · `REUSE_CONDITIONAL` · `NOT_COMPATIBLE` · `REQUIRES_NEW_ITEM_FUTURE` · `PM_REVIEW`
+- **Regole ferree**: NO modifica item esistenti · NO conversione automatica Dex→Int · NO aggiunta retroattiva affix Vuoto · NO cambio class_slug su item R18.5 · NO mutation catalogo base
+- **Un item esistente referenziabile SOLO se già compatibile senza riscrittura record R18.5**
+
+#### RV3-Q4 · Legacy bridge LOCK
+- `warlock → cacciatore_del_vuoto`
+- `bridge_status = mapped_design_only`
+- `migration_status = not_applied`
+- `runtime_bridge_status = disabled`
+- **NO assegnazione automatica · NO auto-derive · NO migrazione · NO attivazione Sala · NO conversione utenti · NO runtime fallback**
+- **R18.3f = gate futuro competente**
+
+#### RV3-Q5 · Versioning LOCK
+- **semver + no retroactive breaking changes**
+- Registry v2 = base immutabile R18.5
+- Registry v3 = layer additivo versionato
+- **major** = breaking schema change
+- **minor** = nuovo class-extension module o campo additivo compatibile
+- **patch** = correzione documentale/metadata/validazione non-breaking
+- **NO modifica retroattiva significato campi Registry v2**
+
+#### RV3-Q6 · Slot LOCK
+- **`canonical slot = accessory`**
+- **`legacy alias = trinket` → accessory**
+- **NO nuovo slot operativo trinket · NO 15° slot · NO doppia posizione accessorio implicita**
+- Preservare `slot_original = trinket` **SOLO** per audit storico
+
+#### RV3-Q7 · Wave 1 successors HOLD
+- Monaco · Druido · Alchimista · Bardo · Negromante = 🔒 **HOLD**
+- Chiusura completa pilot Vuoto richiede: **G6 + G7 + G8 + G9 + G10**
+- **Chiusura RV3 ≠ chiusura pilot** · nessun auto-kickoff Wave 1
+
+#### RV3-Q8 · Read-only contract IRON-CLAD
+- R18.5 + Registry v2 = **READ-ONLY · LOCKED · NON riscrivibili · NON mutabili**
+- Registry v3 **può**: referenziare · estendere · versionare · aggiungere moduli futuri
+- Registry v3 **NON può**: riscrivere · rinominare · riclassificare · ribilanciare · eliminare · sovrascrivere i 1500 item R18.5
+
+### Sintesi baseline finale RV3
+
+- **architecture**: additive
+- **versioning**: semver + no-retroactive-breaking
+- **base**: Registry v2 read-only
+- **pilot class**: cacciatore_del_vuoto
+- **scenario**: B balanced_reuse
+- **coverage envelope**: 110-130
+- **planning center**: ≈120
+- **exact item rows**: UNDEFINED
+- **item generation**: NO
+- **runtime_apply_ready**: false
+- **migration_status**: planning_only
+- **Lanterna**: excluded / reserved_future_review
+- **legacy bridge**: mapped_design_only / not_applied / runtime_disabled
+- **Gate 6 PLAYER_GUIDE**: **autorizzato** 🟢
+
+### Files locked
+
+- `/app/memory/r18_6_rv3_registry_v3_additive_planning.md` **LOCKED**
+- `/app/memory/r18_6_rv3_registry_v3_additive_planning.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4/G5 (tutti LOCKED post-approval)
+- Catalogo R18.5 = **INVARIATO** (1500/1500 items preserved · can_be_sold_for_real_money=false invariato)
+
+### PM verdict
+
+- **R18.6.RV3 = CLOSED · PM APPROVED** ✅
+- **R18.6.3-G6 PLAYER_GUIDE = AUTHORIZED** 🟢
+- **R18.6.3-G7 HALL_COMPLETION = HOLD** 🔒 (attende G6 CLOSED)
+- **Wave 1 successors = HOLD** 🔒 (attende Vuoto pilot closure G6+G7+G8+G9+G10)
