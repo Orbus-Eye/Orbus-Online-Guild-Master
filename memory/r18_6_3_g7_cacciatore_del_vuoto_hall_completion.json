@@ -1,0 +1,605 @@
+{
+  "metadata": {
+    "gate": "R18.6.3-G7",
+    "scope": "HALL_COMPLETION",
+    "hall_name": "Faro Rovesciato di Onirade",
+    "hall_master": "Nael di Onirade",
+    "class_pilot": "Cacciatore del Vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "generated_at": "2026-07-08T23:15:00Z",
+    "status": "DRAFT_PENDING_PM_REVIEW",
+    "governance": "DOCUMENTAL ONLY · ITALIANO ONLY · no code · no DB · no migrations · no UI implementation · no tutorial implementation · no quest implementation · no item · no reward · no XP · no drop · no class unlock · no Hall activation · no class_slug apply · no bridge apply · no auto-derive",
+    "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6"
+    ],
+    "successor_gate": "R18.6.3-G8 SAFE_MODE_TRIAL (HOLD · attende G7 CLOSED + PM GO)",
+    "canonical_class_validation": "PASS",
+    "non_canonical_class_references": 0,
+    "canonical_classes_referenced": [
+      "Mago",
+      "Cacciatore di Mostri"
+    ],
+    "hall_liveness_status": "PLANNED · NOT LIVE · NOT INSTANTIATED",
+    "hall_marker_visible": "SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO",
+    "language": "italiano_only",
+    "no_english_translations_present": true
+  },
+  "identita_sala": {
+    "nome": "Faro Rovesciato di Onirade",
+    "essenza": "Un faro che non illumina il mare ma il mondo dietro il mondo. Non guida le navi: guida i rituali del velo.",
+    "identita_narrativa": "Il Faro Rovesciato è il luogo dove i Cacciatori del Vuoto imparano a leggere ciò che l'occhio comune non vede. È una struttura di soglia: sta al confine tra Onirade e il vuoto stesso.",
+    "distintivita": "Distinto da qualsiasi altra Sala di Classe · unico nel suo genere · nessuna confusione visiva con Sale di altre classi arcane"
+  },
+  "funzione_sistema_class_halls": {
+    "ruolo": "Onboarding narrativo + design canonico della Sala del Cacciatore del Vuoto",
+    "non_dungeon": true,
+    "non_shop": true,
+    "non_farming_hub": true,
+    "non_loot_source": true,
+    "non_menu_semplice": true,
+    "non_copia_altre_sale": true,
+    "funzione_positiva": "spazio narrativo dedicato · introduzione classe · dialogo con Hall Master · preparazione alla Prova safe-mode (design)"
+  },
+  "collocazione": {
+    "regione": "Onirade",
+    "sotto_regione": "arcipelago di isole minori · approdo sud-est",
+    "coordinate_narrative": "il Faro sorge su un isolotto separato dalla terraferma di Onirade da un breve tratto d'acqua ferma",
+    "collegamento_atrio_vocazioni": "raggiungibile dal portale ubicato nell'Atrio delle Vocazioni (hub centralizzato di accesso alle Sale delle 27 classi canoniche)"
+  },
+  "accesso_iniziale": {
+    "sequenza": [
+      "Recluta entra nell'Atrio delle Vocazioni",
+      "Seleziona 'Cacciatore del Vuoto' tra le vocazioni disponibili nell'Atrio",
+      "Attiva il portale di approdo Onirade",
+      "Breve traversata narrativa in barca (guidata · non interattiva)",
+      "Sbarco sull'isolotto",
+      "Ingresso al Faro Rovesciato"
+    ],
+    "traversata_note": "La traversata è ambient e narrativa · NO valuta richiesta · NO equip richiesto · NO combattimento obbligatorio · NON può fallire · NON ripetibile obbligatoriamente",
+    "durata_concept": "1-2 minuti di scoperta narrativa · pacing lento intenzionale · introduce l'atmosfera prima del dialogo con Nael"
+  },
+  "accesso_rapido_successivo": {
+    "meccanica_concept": "portale della Gilda con destinazione 'Faro Rovesciato di Onirade' disponibile una volta completato il primo accesso",
+    "no_traversata_ripetuta": "la traversata in barca è un'esperienza narrativa singola · non ripetuta ad ogni ritorno",
+    "consistenza_con_altre_sale": "coerente con il modello Class Halls: accesso rapido tramite gilda dopo il primo ingresso completato",
+    "no_costi_ripetuti": true
+  },
+  "struttura_esterna": {
+    "forma": "torre snella di pietra chiara · non altissima · proporzioni verticali eleganti",
+    "orientamento": "la lanterna sommitale è capovolta rispetto a un faro tradizionale · la luce sembra scendere verso l'acqua invece che espandersi verso il mare",
+    "colonna_luminosa": "un filo di luce sottile si estende dalla lanterna verso il basso · come una goccia infinita che non tocca mai il suolo",
+    "acqua_circostante": "l'isolotto è circondato da acqua ferma · nessuna onda percettibile · riflette il cielo in modo perfetto (specchio)",
+    "no_bandiere_stemmi_visibili": "nessun simbolo di gilda esterno · l'identità della Sala emerge dall'atmosfera, non dal branding visivo"
+  },
+  "layout_interno": {
+    "livelli": "singolo grande spazio interno + galleria superiore accessibile",
+    "pianta": "circolare · asse verticale marcato · lettura naturale dallo spazio centrale verso l'alto",
+    "pavimento": "riflette come uno specchio d'acqua ferma · non è acqua · è un materiale rituale che assorbe la luce e la restituisce all'indietro",
+    "soffitto": "aperto verso una cupola trasparente che mostra il cielo di Onirade · di notte si vedono le forme oltre le stelle",
+    "no_stanze_multiple_confuse": "layout leggibile · Recluta non si perde · UX chiara"
+  },
+  "aree_principali": {
+    "atrio_ingresso": "piccolo spazio di soglia · panca in pietra · vista sull'acqua ferma",
+    "spazio_centrale_rituale": "cuore della Sala · cerchio inciso a pavimento · destinato al dialogo con Nael e alla Prova (in gate futuro)",
+    "galleria_riflesso": "livello superiore accessibile da scale laterali · balcone circolare che permette di guardare lo spazio rituale dall'alto",
+    "nicchia_di_nael": "angolo dedicato a Nael · non un trono · una seduta bassa in pietra · vicino al cerchio rituale",
+    "no_negozi_no_forge_no_stash": "nessuna funzione economica presente"
+  },
+  "percorso_guidato_recluta": {
+    "sequenza_narrativa": [
+      "ingresso dall'atrio",
+      "avvicinamento allo spazio centrale rituale",
+      "primo sguardo verso l'alto (cupola trasparente)",
+      "avvicinamento a Nael",
+      "dialogo di primo incontro",
+      "esplorazione libera guidata (Nael indica punti di interesse)",
+      "invito alla Prova del Riflesso Vuoto (teaser · dettagli in G8)"
+    ],
+    "non_lineare_strict": "il percorso è guidato ma la Recluta può soffermarsi · non è un corridoio forzato",
+    "no_time_pressure": "nessun timer · nessuna pressione temporale in Sala"
+  },
+  "punti_di_interesse": {
+    "cerchio_rituale_centrale": "l'incisione a pavimento che rappresenta il Marchio del Vuoto in forma simbolica · Nael la spiega brevemente",
+    "specchio_di_onirade": "elemento decorativo · un piccolo bacino di acqua ferma sul pavimento laterale · non riflette la Recluta ma qualcos'altro (dettaglio narrativo)",
+    "colonna_di_luce_discendente": "attraversa il centro della Sala · non tocca il pavimento · è il tramite tra la lanterna rovesciata e il cerchio rituale",
+    "libri_di_soglia": "piccola libreria laterale · non interattiva in Gate 7 · design solo · possibile utilizzo lore/journal in gate futuro",
+    "no_forziere_no_loot_marker": true
+  },
+  "atmosfera": "silenziosa · ordinata · leggermente sovrannaturale ma non minacciosa · un luogo dove il tempo sembra rallentato · sensazione di essere osservati da qualcosa oltre le pareti (non ostile · attenta)",
+  "luci": {
+    "colonna_centrale": "luce fredda · azzurro-argento tenue · costante · non pulsa",
+    "cupola_soffitto": "luce del cielo di Onirade filtrata · di giorno tenue diurna · di notte stellare con forme oltre le stelle",
+    "pavimento_specchio": "riflette la colonna centrale in modo distorto · come se la luce arrivasse da sotto",
+    "no_effetti_epilepsy": true,
+    "no_flash_aggressivi": true
+  },
+  "suono": {
+    "ambient": "riverbero sottile · come uno spazio molto più grande di quello che sembra · gocce d'acqua distanti (invisibili) · sussurro arcano appena percepibile ai limiti dell'udito",
+    "no_musica_marziale": true,
+    "no_musica_epica": true,
+    "audio_nael": "voce misurata · timbro medio-basso · pause studiate · nessun eco artificiale · caratterizza Nael come lettore, non oratore",
+    "accessibility": "tutti i suoni ambient hanno equivalenti sottotitolati per accessibilità (design principle · implementazione gate futuro)"
+  },
+  "simboli": {
+    "marchio_del_vuoto_stilizzato": "cerchio rituale a pavimento centrale · icona canonica della classe · design gate futuro finalizzerà rendering",
+    "faro_rovesciato_logo_narrativo": "usato come emblema di Sala in materiali narrativi · non branding di gilda",
+    "specchio_di_onirade": "piccolo bacino d'acqua ferma laterale · richiama la lettura del velo",
+    "no_simboli_altre_classi": "nessuna iconografia di Mago/Paladino/Cacciatore di Mostri/altre classi canoniche visibile in Sala"
+  },
+  "elementi_di_onirade": {
+    "acqua_ferma": "elemento identitario di Onirade · presente esternamente (mare) e internamente (specchio bacino)",
+    "cielo_stratificato_sopra_stelle": "cielo di Onirade caratterizzato da forme visibili oltre le stelle · leggibile dalla cupola superiore",
+    "luce_discendente": "motivo ricorrente di Onirade · qui espresso come colonna centrale della Sala",
+    "coerenza_con_lore_r18_5": "elementi coerenti con lore Onirade pre-esistente · nessuna deviazione dal canon storicizzato"
+  },
+  "presenza_di_nael": {
+    "posizione_default": "nicchia laterale vicino al cerchio rituale · seduto in una seduta bassa di pietra",
+    "movimento": "raro · quando parla si alza · quando indica un punto di interesse cammina lentamente verso di esso",
+    "non_omnipresente": "non appare ovunque · la Recluta lo cerca inizialmente · Nael attende",
+    "non_pursues": "Nael non insegue la Recluta · non la ferma · la Recluta si avvicina di sua iniziativa"
+  },
+  "ruolo_di_nael": {
+    "identita": "Maestro del Faro Rovesciato · lettore del velo · non maestro d'armi",
+    "funzione_narrativa": "guida narrativa dell'onboarding · introduce Marchio · Frammenti · Payoff · atmosfera anti-arcana",
+    "non_combatte_con_recluta": true,
+    "non_villain": true,
+    "non_profeta_onnisciente": true,
+    "non_comico": true,
+    "non_copia_di_altri_npc_canonici_o_hall_master": "Nael è distintivo · NON copia stilistica di altri NPC canonici già presenti in altre Sale · caratterizzazione originale",
+    "caratterizzazione_target": [
+      "competente",
+      "enigmatico",
+      "misurato",
+      "non ostile",
+      "non caricaturale"
+    ]
+  },
+  "dialogo_primo_incontro": {
+    "trigger": "prima volta che la Recluta entra nella Sala",
+    "linee": [
+      "Nael: 'Hai attraversato l'acqua ferma. Bene.'",
+      "Nael: 'Non ti sei affrettato. Anche questo va notato.'",
+      "Nael: 'Io sono Nael. Il Faro è mio, o forse io sono suo. La differenza non conta.'",
+      "Nael: 'Prima di tutto, guarda in alto.'"
+    ],
+    "tono": "asciutto · sereno · osservante · fa notare senza giudicare"
+  },
+  "dialogo_introduzione_classe": {
+    "trigger": "Recluta chiede 'cosa fa un Cacciatore del Vuoto?'",
+    "linee": [
+      "Nael: 'Il Vuoto non è il nulla. È lo spazio dove le cose che non dovrebbero esistere provano a esistere comunque.'",
+      "Nael: 'Il Cacciatore del Vuoto le riconosce. Le marchia. Le drena. Poi decide se lasciarle andare o cancellarle del tutto.'",
+      "Nael: 'Non siamo maghi da battaglia. Siamo lettori. E chi legge bene, decide bene.'"
+    ]
+  },
+  "dialogo_spiegazione_intelligenza": {
+    "trigger": "Recluta chiede quale statistica conti di più",
+    "linee": [
+      "Nael: 'Intelligenza. Sempre. Tutto ciò che facciamo passa da lì.'",
+      "Nael: 'Non è la forza a chiudere una crepa nel velo. È la comprensione.'",
+      "Nael: 'Costituzione ti serve a restare in piedi mentre osservi. Destrezza a muoverti nel momento giusto. Ma è l'Intelligenza che decide se il rituale ha effetto.'"
+    ]
+  },
+  "dialogo_armor": {
+    "trigger": "Recluta chiede cosa indossare",
+    "linee": [
+      "Nael: 'Stoffa. Cuoio. Nulla di più.'",
+      "Nael: 'Le armature pesanti soffocano il rituale. Non è vanità, è fisica del velo.'",
+      "Nael: 'La stoffa canalizza meglio. Il cuoio ti dà più spazio per muoverti. La scelta è tua.'"
+    ]
+  },
+  "dialogo_weapon": {
+    "trigger": "Recluta chiede quale arma prendere",
+    "linee": [
+      "Nael: 'Focus. Balestra. Pugnale.'",
+      "Nael: 'Il Focus è la voce. La Balestra è la distanza. Il Pugnale è la chiusura.'",
+      "Nael: 'Inizia con il Focus. Chi sceglie subito la Balestra spesso non ha capito.'"
+    ]
+  },
+  "dialogo_marchio": {
+    "trigger": "Recluta chiede del Marchio del Vuoto",
+    "linee": [
+      "Nael: 'Il Marchio è la porta. Senza Marchio, niente passa.'",
+      "Nael: 'Lo imprimi sul bersaglio. Da quel momento, ogni colpo che gli assesti lascia un Frammento nel tuo circolo.'",
+      "Nael: 'Non è veloce. Non è forte. È preciso. E il preciso, alla fine, vince.'"
+    ]
+  },
+  "dialogo_frammenti": {
+    "trigger": "Recluta chiede dei Frammenti di Onirade",
+    "linee": [
+      "Nael: 'I Frammenti non sono oggetti. Non li puoi vendere. Non li puoi conservare tra un rito e l'altro.'",
+      "Nael: 'Sono il tuo progresso, dentro uno scontro. Cinque, al massimo. Nessuno mai porta a casa il sesto.'",
+      "Nael: 'Cinque è abbastanza. Cinque ti costringe a decidere.'"
+    ]
+  },
+  "dialogo_payoff": {
+    "trigger": "Recluta chiede come si spendono i Frammenti",
+    "linee": [
+      "Nael: 'Con tre, dissolvi. Un'area intorno a te si libera dagli effetti arcani.'",
+      "Nael: 'Con cinque, bandisci. Un'evocazione nemica scompare. Un incorporeo se ne va.'",
+      "Nael: 'I boss? I boss restano. Non li scacci. Ma le loro evocazioni sì. Ricordalo.'"
+    ]
+  },
+  "avviso_punti_deboli": {
+    "trigger": "prima che la Recluta lasci la Sala",
+    "linee": [
+      "Nael: 'Sei fragile. La stoffa e il cuoio non fermano una spada.'",
+      "Nael: 'Se ti trovi in mezzo, sei morto. Se ti trovi al posto giusto al momento giusto, hai vinto.'",
+      "Nael: 'Non correre. Non stare mai fermo troppo a lungo. Il velo premia chi legge il tempo.'"
+    ]
+  },
+  "avviso_classe_non_frontline": {
+    "trigger": "se la Recluta chiede se può fare da tank/frontline",
+    "linee": [
+      "Nael: 'No.'",
+      "Nael: 'Il Cacciatore del Vuoto non regge la prima linea. Non è debolezza: è specializzazione.'",
+      "Nael: 'Lascia che siano altri a incassare. Tu leggi le crepe.'"
+    ]
+  },
+  "conferma_interesse": {
+    "trigger": "Recluta esprime interesse a continuare come Cacciatore del Vuoto",
+    "linee": [
+      "Nael: 'Bene. Non ti do ancora la classe. Ti do la possibilità di provarla.'",
+      "Nael: 'La Prova del Riflesso Vuoto è breve. Sicura. Non morirai. Ma ti dirà molto di te.'",
+      "Nael: 'Se vuoi affrontarla, avvicinati al cerchio.'"
+    ]
+  },
+  "transizione_alla_prova": {
+    "trigger": "Recluta accetta la Prova",
+    "linee": [
+      "Nael: 'Metti i piedi dentro il cerchio.'",
+      "Nael: 'Non ti muoverai da qui. Il Faro farà il resto.'",
+      "Nael: 'Guarda in alto quando ti sentirai pronta. La prova inizia con lo sguardo, non con la voce.'"
+    ],
+    "note": "Il gameplay della Prova NON è definito in Gate 7 · sarà finalizzato in Gate 8 SAFE_MODE_TRIAL"
+  },
+  "ritorno_dopo_la_prova": {
+    "trigger": "Recluta ha completato la Prova (design · runtime deferred a G8+)",
+    "linee": [
+      "Nael: 'Sei tornata. Bene.'",
+      "Nael: 'Hai visto. Ora sai cosa significa vedere.'",
+      "Nael: 'Se vuoi confermare, il cerchio è ancora qui.'"
+    ],
+    "note": "il dialogo di ritorno esiste in design MA runtime dipende da G8 (Prova gameplay) + gate tecnici successivi"
+  },
+  "punto_di_conferma_classe": {
+    "meccanica_concept": "dopo la Prova completata, la Recluta si avvicina al cerchio rituale · Nael pone la domanda finale · Recluta conferma o rinuncia",
+    "no_assegnazione_automatica_su_ingresso": true,
+    "no_assegnazione_automatica_pre_prova": true,
+    "solo_conferma_esplicita": true,
+    "design_only_no_runtime": "in Gate 7 = SOLO design · runtime class assignment = assente · gate tecnico futuro implementa"
+  },
+  "flow_completo": {
+    "sequenza": [
+      "Recluta entra nell'Atrio delle Vocazioni",
+      "seleziona vocazione 'Cacciatore del Vuoto'",
+      "portale approdo Onirade attivato",
+      "traversata narrativa in barca",
+      "ingresso Faro Rovesciato",
+      "percorso guidato Sala",
+      "dialoghi con Nael (introduzione · classe · stat · armor · weapon · Marchio · Frammenti · Payoff)",
+      "avvisi punti deboli e non-frontline",
+      "conferma interesse esplicita",
+      "invito alla Prova del Riflesso Vuoto",
+      "Prova safe-mode (design deferred a G8)",
+      "ritorno in Sala dopo la Prova",
+      "punto di conferma classe (esplicito · post-prova)",
+      "futura assegnazione classe (deferred a gate tecnici successivi)"
+    ],
+    "no_shortcut_pre_prova": true,
+    "no_class_slug_apply_gate_7": true
+  },
+  "comportamento_se_rinuncia": {
+    "scenario_1_rinuncia_pre_prova": "la Recluta può lasciare la Sala prima della Prova · nessuna penalità · nessun class assignment applicato · ritorno all'Atrio delle Vocazioni disponibile",
+    "scenario_2_rinuncia_post_prova": "la Recluta può rifiutare la conferma post-Prova · nessuna penalità · nessun class assignment applicato · ritorno all'Atrio delle Vocazioni disponibile",
+    "no_penalita_narrative": "Nael accoglie la rinuncia senza giudizio: *'Non tutti leggono il velo. Non è una colpa.'*",
+    "no_lock_out_futuro": "la Recluta può tornare in una sessione futura e ripetere il percorso · non è una scelta permanente"
+  },
+  "comportamento_se_riprova": {
+    "scenario_ritorno": "la Recluta che rinuncia può tornare · il flow riprende dall'ingresso Sala · la traversata iniziale è già stata fatta (accesso rapido via portale gilda disponibile)",
+    "dialoghi_alternativi": "Nael riconosce chi torna · dialoghi ambient leggermente diversi per il ritorno (opzionale · gate futuro finalizza)",
+    "no_progresso_perso": "nessun progresso perso · il Faro non punisce chi torna"
+  },
+  "accessibilita_ux": {
+    "sottotitoli_dialoghi_nael": "tutti i dialoghi hanno sottotitoli · font leggibile · timing regolabile (design gate futuro)",
+    "audio_ambient_sottotitoli": "suoni ambient importanti hanno equivalenti testuali per accessibilità",
+    "no_time_pressure_dialoghi": "il giocatore può leggere al proprio ritmo · nessun timer sui dialoghi",
+    "colorblind_safe": "elementi visivi chiave leggibili senza dipendere solo dal colore (colonna luce · cerchio rituale · specchio)",
+    "reduce_motion_toggle": "flusso della colonna di luce può essere ridotto/statico via toggle (design gate futuro)",
+    "no_epilepsy_triggers": true
+  },
+  "marker_classe_non_disponibile": {
+    "visibilita": "il marker *'SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO'* è visibile in header + metadata + footer della documentazione Gate 7",
+    "coerenza_con_g6": "coerente con marker G6 'GUIDA DI DESIGN — CLASSE NON ANCORA DISPONIBILE'",
+    "player_facing_note": "quando la Sala sarà istanziata runtime, il marker verrà rimosso · fino ad allora, i tester capiscono che è design pre-implementation"
+  },
+  "stato_sala_planned": {
+    "status": "PLANNED · NOT LIVE · NOT INSTANTIATED",
+    "runtime_status": "non presente · nessun asset 3D · nessuna scena Unity/Unreal · nessuna mesh · nessun audio bundle",
+    "documental_status": "canonicamente approvato in design · pronto per implementation gate tecnico futuro",
+    "no_class_unlock": true,
+    "no_hall_activation_runtime": true
+  },
+  "integrazione_atrio_delle_vocazioni": {
+    "atrio_ruolo": "hub centralizzato di accesso alle 27 Sale canoniche · ogni classe ha un ingresso proprio",
+    "voce_dedicata_vuoto": "voce 'Cacciatore del Vuoto' presente tra le 27 vocazioni · attualmente flaggata 'PLANNED · non ancora selezionabile in runtime'",
+    "portale_approdo_onirade": "portale dedicato che attiva la sequenza narrativa di accesso al Faro Rovesciato",
+    "consistenza_con_r18_6": "coerente con architettura Class Halls R18.6 LOCKED · non introduce nuovi meccanismi di navigazione hub",
+    "no_modifica_atrio_esistente": "l'Atrio delle Vocazioni resta invariato · G7 aggiunge SOLO la voce Vuoto in stato PLANNED (design only)"
+  },
+  "rischio_confusione_mago": {
+    "canonical_class_ref": "Mago",
+    "descrizione_rischio": "entrambe classi Int-focus · stoffa condivisa · focus condiviso · rischio che nuovi giocatori confondano Sale o pensino che Vuoto sia una specializzazione del Mago",
+    "mitigazione_sala": [
+      "atmosfera del Faro Rovesciato distintiva (acqua ferma · luce discendente · specchio · velo)",
+      "iconografia rituale specifica (cerchio del Marchio · non runes elementali)",
+      "Nael caratterizzato in modo distinto dai Maestri delle Sale arcane tradizionali (lettore · non oratore)",
+      "il Circolo del Mago (Sala canonica del Mago) ha identità visiva propria · nessuna sovrapposizione stilistica"
+    ],
+    "no_visual_overlap": "Faro Rovesciato di Onirade e Circolo del Mago sono immediatamente distinguibili"
+  },
+  "rischio_confusione_cacciatore_di_mostri": {
+    "canonical_class_ref": "Cacciatore di Mostri",
+    "descrizione_rischio": "entrambe classi condividono la parola 'Cacciatore' nel nome · rischio confusione semantica in nuovi giocatori · balestra weapon family condivisa",
+    "mitigazione_sala": [
+      "atmosfera del Faro Rovesciato NON evoca caccia fisica/tracciamento bestie · l'esperienza è rituale e contemplativa, non di outdoor hunting",
+      "Nael è un lettore del velo · non un tracciatore · caratterizzazione opposta al Maestro del Cacciatore di Mostri",
+      "iconografia della Sala non contiene elementi di caccia fisica (trofei bestie · archi · trappole)",
+      "collocazione Onirade (isolotto · acqua ferma) è opposto a un ambiente da caccia tradizionale"
+    ],
+    "no_confusion_narrative": "Sala differenziata narrativamente · nuovo giocatore capisce immediatamente che sta entrando in un contesto rituale, non venatorio"
+  },
+  "risk_register": [
+    {
+      "id": "HC-R1",
+      "risk": "Traversata iniziale in barca percepita come troppo lenta · frustration onboarding",
+      "severity": "MEDIUM",
+      "mitigation": "traversata 1-2 min concept · pacing intenzionale · design gate futuro può ottimizzare velocità/durata post-playtest",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R2",
+      "risk": "Layout interno confuso per nuovi giocatori · Recluta si perde",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "layout circolare leggibile · Nael visibile dall'ingresso · percorso guidato non lineare ma orientato",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R3",
+      "risk": "Dialoghi Nael troppo criptici · Recluta non capisce concetti chiave (Marchio · Frammenti · Payoff)",
+      "severity": "MEDIUM",
+      "mitigation": "dialoghi progressivi · concetti spiegati un passo alla volta · glossario in G6 già disponibile · design gate futuro può aggiungere tooltip inline",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R4",
+      "risk": "Confusione stilistica con Circolo del Mago (entrambe classi Int/stoffa)",
+      "severity": "MEDIUM",
+      "mitigation": "atmosfera dedicata (acqua ferma · luce discendente · velo) · iconografia rituale specifica · Nael distintivo",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R5",
+      "risk": "Confusione semantica con Cacciatore di Mostri (parola 'Cacciatore' condivisa)",
+      "severity": "MEDIUM",
+      "mitigation": "Sala Vuoto NON ha elementi di caccia fisica · Nael non è tracciatore · contesto Onirade completamente diverso",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R6",
+      "risk": "Recluta pensa che la classe venga assegnata all'ingresso (non alla conferma post-Prova)",
+      "severity": "MEDIUM",
+      "mitigation": "flow esplicito · dialoghi Nael chiariscono più volte · marker 'non ti do ancora la classe' verbatim",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R7",
+      "risk": "Traversata NON ripetibile percepita come limitazione · richiesta di poter rifare",
+      "severity": "LOW",
+      "mitigation": "traversata narrativa singola · accesso rapido via portale gilda documentato · design gate futuro può aggiungere replay narrativo opzionale",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R8",
+      "risk": "Nael caratterizzato come troppo distaccato · Recluta non si sente accolta",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "linee di dialogo bilanciano competenza con osservazione · Nael non è ostile · dialoghi ambient possono essere aggiunti gate futuro",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R9",
+      "risk": "Simboli rituali visivamente pesanti · rischio dark aesthetic non voluto",
+      "severity": "LOW",
+      "mitigation": "palette azzurro-argento tenue · luci non aggressive · atmosfera 'silenziosa' non 'oscura'",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R10",
+      "risk": "Rinuncia post-ingresso percepita come 'fallimento' anche se dialogo Nael la accoglie",
+      "severity": "LOW",
+      "mitigation": "linea di Nael verbatim: *'Non tutti leggono il velo. Non è una colpa.'* · no penalty · no lock-out",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R11",
+      "risk": "Aspettative sulla Prova post-teaser (Recluta vuole affrontarla subito)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "teaser breve · design Prova deferred a G8 · comunicazione trasparente 'implementazione gate futuro'",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "HC-R12",
+      "risk": "Weapon family riservata non attiva menzionata accidentalmente in dialoghi Nael o layout",
+      "severity": "LOW",
+      "mitigation": "revisione dialoghi · assenza totale di riferimenti a weapon family excluded from pilot · guard rule attiva",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R13",
+      "risk": "Copia stilistica accidentale di altri NPC canonici (Vessel/Ovyr/altri Hall Master)",
+      "severity": "LOW",
+      "mitigation": "Nael distinctive characterization LOCK · lettore del velo · non oratore · non tracciatore · unique voice",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R14",
+      "risk": "Marker 'SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO' non abbastanza visibile · tester crede Sala live",
+      "severity": "MEDIUM",
+      "mitigation": "marker in header + metadata + footer · triple visibility · runtime_status esplicito",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "HC-R15",
+      "risk": "Class assignment runtime accidentalmente attivato prima della Prova (bug futuro)",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "gate 7 = design only · runtime assignment deferred a gate tecnico futuro · check esplicito in gate tecnico",
+      "status": "TRACKED PG2"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "HC-Q1",
+      "question": "Traversata in barca 1-2 min conferma o modifica pacing?",
+      "options": [
+        "a) LOCK 1-2 min",
+        "b) accorcia a 30-60 sec",
+        "c) espandi a 3-4 min (più immersivo)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q2",
+      "question": "Layout singolo spazio + galleria superiore conferma?",
+      "options": [
+        "a) LOCK layout",
+        "b) singolo spazio senza galleria",
+        "c) più livelli (2-3 piani)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q3",
+      "question": "Dialoghi Nael tono asciutto/misurato/enigmatico conferma?",
+      "options": [
+        "a) LOCK tono attuale",
+        "b) più caldo/accogliente",
+        "c) più criptico/distante"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q4",
+      "question": "Sequenza 8 dialoghi Nael (primo incontro → introduzione → Int → armor → weapon → Marchio → Frammenti → Payoff) conferma?",
+      "options": [
+        "a) LOCK sequenza 8 dialoghi",
+        "b) unifica dialoghi (meno frammentazione)",
+        "c) espandi (aggiungi dialoghi ambient extra)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q5",
+      "question": "Flow conferma classe post-Prova (non pre-Prova) LOCK?",
+      "options": [
+        "a) LOCK conferma post-Prova",
+        "b) conferma pre-Prova permessa (Recluta 'accetta la classe' prima di provarla)",
+        "c) doppia conferma (pre-Prova + post-Prova)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q6",
+      "question": "Rinuncia con dialogo Nael verbatim 'Non tutti leggono il velo. Non è una colpa.' conferma?",
+      "options": [
+        "a) LOCK linea",
+        "b) linea alternativa più neutra",
+        "c) rimuovi linea (rinuncia silenziosa)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q7",
+      "question": "Accesso rapido via portale gilda dopo primo ingresso conferma?",
+      "options": [
+        "a) LOCK portale gilda",
+        "b) traversata sempre ripetuta",
+        "c) altro meccanismo (waypoint dedicato Sala)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "HC-Q8",
+      "question": "Marker 'SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO' formulazione conferma?",
+      "options": [
+        "a) LOCK formulazione",
+        "b) alternativa 'BOZZA DI SALA'",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    }
+  ],
+  "go_hold_recommendation_gate_8": {
+    "gate_7_status": "DRAFT · pending PM review + risposte HC-Q1..HC-Q8",
+    "gate_8_status": "HOLD · attende PM ACK Gate 7 + GO esplicito Gate 8",
+    "gate_8_scope_preview": "SAFE_MODE_TRIAL · definisce gameplay completo della Prova del Riflesso Vuoto · nemici · valori combat · failure state · retry policy · flow di prova safe-mode (non ostile) · verifica competenza aspirante · SOLO design gameplay · NO tutorial implementation · NO UI implementation · NO class assignment runtime",
+    "gate_8_input_from_g7": "identità Sala · Nael dialoghi · flow onboarding · transizione alla prova · ritorno dopo la prova · punto di conferma · accessibility principles",
+    "no_gate_8_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "no_class_unlock_auto_start": true,
+    "recommended_next_step": "PM review G7 HALL_COMPLETION + risposte HC-Q1..HC-Q8 → G7 CLOSED verdict → GO Gate 8 SAFE_MODE_TRIAL"
+  },
+  "governance": {
+    "documental_only": true,
+    "italiano_only": true,
+    "no_code_touch": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_ui_implementation": true,
+    "no_tutorial_implementation": true,
+    "no_quest_implementation": true,
+    "no_item": true,
+    "no_reward": true,
+    "no_xp": true,
+    "no_drop": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_gate_8_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6"
+    ]
+  },
+  "stop_after_g7": {
+    "action": "STOP · attendo PM verdict G7 (CLOSED/REWORK) + risposte HC-Q1..HC-Q8 · Gate 8 HOLD · Wave 1 successors HOLD",
+    "no_auto_start_gate_8": true,
+    "no_auto_start_wave_1": true,
+    "explicit_stop": true
+  }
+}

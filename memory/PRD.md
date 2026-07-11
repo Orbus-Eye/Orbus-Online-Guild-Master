@@ -3206,3 +3206,75 @@ Cacciatore del Vuoto readiness pilot equip architecture LOCKED: budget T1-T5 mul
 - **R18.6.3-G6 PLAYER_GUIDE = AUTHORIZED** 🟢
 - **R18.6.3-G7 HALL_COMPLETION = HOLD** 🔒 (attende G6 CLOSED)
 - **Wave 1 successors = HOLD** 🔒 (attende Vuoto pilot closure G6+G7+G8+G9+G10)
+
+
+## R18.6.3-G6 PLAYER_GUIDE CLOSED (Cacciatore del Vuoto · PM APPROVED · with binding answers PG-Q1..PG-Q8 · 2026-07-08T23:00:00Z)
+
+**Milestone**: **R18.6.3 Gate 6 PLAYER_GUIDE = PM APPROVED = CLOSED** ✅ · R18.6.3-G7 HALL_COMPLETION **AUTHORIZED** 🟢 · Gate 8 SAFE_MODE_TRIAL **HOLD** 🔒 · Wave 1 successors **HOLD** 🔒
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations · zero UI implementation · zero tutorial implementation · zero quest implementation · zero item · zero reward · zero XP · zero drop · zero modifica catalogo R18.5 LOCKED.
+
+### G6 Approved Summary (verbatim PM decisions PG-Q1..PG-Q8)
+
+#### PG-Q1 · Marker LOCK
+"**GUIDA DI DESIGN — CLASSE NON ANCORA DISPONIBILE**" visibile in header + metadata + riepilogo finale. Non ambiguo. Cacciatore del Vuoto = **design canonico approvato MA ≠ classe live**.
+
+#### PG-Q2 · Tono LOCK
+Doppio livello lettura (nuovo giocatore + esperto). **Evitare**: linguaggio DB · schema tecnico · formule non implementate · acronimi non spiegati · riferimenti Registry · migrazioni · codici interni.
+
+#### PG-Q3 · Numeri player-facing LOCK
+- Frammenti max **5**
+- Payoff minore **3F**
+- Payoff max **5F**
+- Marchi **3 base / 4 con Int 50 / 5 con Int 90**
+- Marchio durata **3 turni base / fino 8 / hard cap 10**
+- Focus bonus **max 2 per segmento risorsa**
+
+Presentati come **baseline di design approvata · NON runtime già disponibile**. **NO** coefficienti danno · **NO** % item · **NO** multiplier Registry · **NO** formule interne · **NO** probabilità come promessa live.
+
+#### PG-Q4 · Penalità XP LOCK
+"**SISTEMA PREVISTO — NON ANCORA LIVE**". Descrizione consentita: *"mantenere buona Intelligenza sarà importante per progressione efficiente"*. **NO** soglie XP attive · **NO** % · **NO** penalità automatiche · **NO** warning runtime. Policy tiered = **design futuro**.
+
+#### PG-Q5 · Teaser Prova LOCK
+"**La Prova del Riflesso Vuoto**" — descrizione breve e atmosferica. **NO** flow completo · **NO** meccaniche non approvate · **NO** fasi anticipate · **NO** ricompense inventate · **NO** failure state definitivo. Gameplay completo → **G8 SAFE_MODE_TRIAL**.
+
+#### PG-Q6 · i18n LOCK
+**Italiano only**. `no_english_translations=true` · `no_bilingual_text=true`. Struttura i18n-ready via chiavi organizzate MA senza: testo inglese · placeholder tradotti · doppia lingua · naming EN player-facing.
+
+#### PG-Q7 · Wave 1 HOLD LOCK
+Monaco · Druido · Alchimista · Bardo · Negromante = **sospesi**. Chiusura G6 **NON autorizza** nuova classe · parallelizzazione · Wave 1 multipla. Restano da completare: **G7 + G8 + G9 + G10**.
+
+#### PG-Q8 · Sinergie party LOCK
+Approvate con:
+- **Paladino** (sostegno/resilienza + Vuoto controlla summon/distorsioni)
+- **Guerriero** (frontline + Vuoto posizione sicura)
+- **Cacciatore di Mostri** (pressione fisica + complementare identità anti-arcana)
+- **Mago** (burst/controllo arcano + complementare specializzazione anti-summon/incorporei)
+
+**NO** dipendenza obbligatoria da una classe · **NO** bonus di gruppo esclusivi non approvati · **NO** composizioni meta obbligatorie · **NO** power bonus non definiti.
+
+### Baseline finale G6
+
+- **Classe**: Cacciatore del Vuoto
+- **Stato**: **PLANNED / NOT LIVE / NOT SELECTABLE**
+- **Guida**: APPROVED / ITALIANO ONLY / i18n-ready
+- **Main stat**: Intelligenza · **Priorità**: Int → Cost → Dex
+- **Armor**: stoffa · cuoio · **Weapon**: focus · balestra · pugnale
+- **Loop**: Identify → Mark → Drain → Payoff
+- **Sala**: Faro Rovesciato di Onirade · **Hall Master**: Nael di Onirade
+- **Prova**: La Prova del Riflesso Vuoto (teaser only)
+- **Weapon family riservata non attiva**: non presente nel kit attivo del pilot
+
+### Files locked
+
+- `/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.md` **LOCKED**
+- `/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4/G5/RV3 (tutti LOCKED post-approval)
+- Catalogo R18.5 = **INVARIATO** (1500/1500 preserved)
+
+### PM verdict
+
+- **R18.6.3-G6 = CLOSED · PM APPROVED** ✅
+- **R18.6.3-G7 HALL_COMPLETION = AUTHORIZED** 🟢
+- **R18.6.3-G8 SAFE_MODE_TRIAL = HOLD** 🔒
+- **Wave 1 successors = HOLD** 🔒
