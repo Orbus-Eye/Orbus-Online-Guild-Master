@@ -2617,3 +2617,125 @@ R18.6.2 proporrà: main_stat + armor prof + weapon prof + gameplay loop + resour
 `R18.5 C0-C6` ✅ CLOSED · LOCKED → `R18.6 (5 Sale)` ✅ CLOSED · LOCKED → **`R18.6.1 (27 Sale canonical)` ✅ CLOSED · LOCKED (this append)** → `R18.6.2 Class Readiness Framework (Vuoto pilot)` 🟢 **DISPATCHED (documental only, no live activation)** → `R18.3f` 🔒 HOLD / `Wave 1-4 progressive activation` 🔒 HOLD / `R18.6 live` 🔒 HOLD / `Apply Phase` 🔒 HOLD / `Progressive Discovery` 🔒 HOLD / `Marketing Brief` ⏸️ DEFERRED
 
 🛑 **STOP dopo R18.6.1 CLOSED + R18.6.2 dispatch.** Sistema in **HOLD assoluto** post-R18.6.2 design. Nessun auto-start. Attendo GO PM esplicito per il prossimo gate.
+
+
+## R18.6.2 Class Readiness Framework APPROVED + R18.6.3 Cacciatore del Vuoto Pilot STARTED (2026-07-08T17:00:00Z)
+
+**Milestone**: **R18.6.2 Framework PM APPROVED** ✅ + **R18.6.3 Pilot STARTED · current gate=G1 STAT_DESIGN** 🟢
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations/sealed/R18.5/R18.6/R18.6.1/R18.6.2 modifiche (tutti LOCKED post-approval).
+
+### Framework 10-Gate APPROVED (F-Q1 verbatim · NO merge)
+
+Sequenza obbligatoria · ogni gate produce **deliverable separato e verificabile** · nessun bypass · nessun accorpamento:
+
+1. **STAT_DESIGN** → main_stat + rationale
+2. **PROFICIENCY_DESIGN** → armor + weapon whitelist
+3. **GAMEPLAY_LOOP** → loop 4-step base
+4. **RESOURCE_MECHANIC** → risorsa canonica + generazione/consumo/scope
+5. **EQUIP_DESIGN** → equip base + gap analysis Registry v2
+6. **PLAYER_GUIDE** → guida IT canonical (15 fields structured schema)
+7. **HALL_COMPLETION** → verifica 20 campi hall profile + hall_master LOCKED
+8. **SAFE_MODE_TRIAL** → prova tecnica (obiettivi/restrizioni/fallback/esiti)
+9. **TECH_READINESS** → schema DB delta + validator equip + lock_state integration + migration path READINESS-ONLY
+10. **PM_REVIEW** → explicit GO PLANNED → ACTIVE-DESIGN-READY
+
+### Wave 1 Progression Policy (F-Q2 verbatim)
+
+- **Wave 1 SERIALE durante pilot Vuoto** (NO parallelization)
+- **Monaco = next candidate** ma **NON ancora autorizzato**
+- Dopo **PM_REVIEW Vuoto** completo si valuterà parallelizzazione classi Wave 1 successive
+- No wave skip · Wave 2 dispatch solo dopo Wave 1 completamente ACTIVE (6/6)
+
+### Registry v3 HOLD (F-Q3 + V-Q5 verbatim)
+
+- Dispatch **DOPO EQUIP_DESIGN Vuoto** · gate futuro dedicato **`R18.6.RV3 — Registry v3 Additive Planning`**
+- **Additivo · modulare · separato da R18.5 LOCKED**
+- Stima 80-100 items resta **stima, NON target**
+- R18.5 Registry v2 LOCKED · zero modifiche
+
+### Sigillo di Rinascita Design HOLD (F-Q4 verbatim)
+
+- Gate dedicato futuro **`R18.6.RB1 — Rite of Rebirth & Sigillo di Rinascita Design`**
+- **Timing**: DOPO PM_REVIEW Vuoto · PRIMA implementazione seconda classe (Monaco)
+- **NON integrare in R18.3f** · gate dedicato separato
+
+### Player-Facing Guide 15 Fields Schema (F-Q5 verbatim)
+
+**Italiano canonical + struttura i18n-ready** · NO traduzioni ora · schema campi strutturati:
+
+```
+class_name · class_slug · summary · main_stat · armor_proficiency ·
+weapon_proficiency · gameplay_style · strengths · weaknesses ·
+resource · core_loop · recommended_equipment · hall_name ·
+hall_master · safe_mode_trial
+```
+
+### Cacciatore del Vuoto — Pilot Locks (V-Q1..V-Q8 verbatim)
+
+- **V-Q1 · main_stat = `Intelligenza` LOCKED**
+  - Rationale PM: unica primaria · balestra = canalizzazione arcana **NON** gear Rogue/Ranger riciclato
+  - Penalità XP main stat insufficiente si applica **senza eccezioni**
+- **V-Q2 · armor = `cuoio` + `stoffa`** (NO maglia · NO piastre) · entrambi devono privilegiare Intelligenza (no doppia identità statistica)
+- **V-Q3 · weapon = `focus` + `pugnale` + `balestra`** · **`lanterna` RESERVED FUTURE**
+  - NO in catalogo R18.5 · NO runtime-ready · valutabile in EQUIP_DESIGN
+  - NO arco · NO bastone · NO tomo · NO spada
+- **V-Q4 · resource = `Frammenti di Onirade`** LOCKED
+  - Cap iniziale **5** · scope **encounter-local** · reset a fine dungeon/raid/prova
+  - **NON mana alternativo · NON valuta · NON crafting · NON premium · NON trasferibile**
+  - Generazione/consumo numerico definiti nel gate **RESOURCE_MECHANIC** (Gate 4)
+- **V-Q5**: come F-Q3 · Registry v3 solo dopo EQUIP_DESIGN
+- **V-Q6 · access mix**: primo accesso **Atrio delle Vocazioni → portale approdo di Onirade → breve traversata barca** (no combat obbligatorio · no valuta · no equip · no fail · no block Recluta) → **Faro Rovesciato**. Successivi accessi: **portale rapido Gilda**.
+- **V-Q7 · retry safe-mode ILLIMITATO**: cooldown=0 · death_penalty=none · resource_loss=none
+  - **Anti-farming**: NO drop · NO XP · NO valuta · NO materiali · NO achievement farmabile
+  - Fail produce spiegazione + suggerimento + reset rapido + nuovo tentativo
+- **V-Q8 · framework 10-gate CONFERMATO** per Monaco e tutte le classi successive · eventuali modifiche framework solo dopo PM_REVIEW Vuoto completo
+
+### ⚠️ CORREZIONE OBBLIGATORIA — Legacy Bridge Cacciatore del Vuoto
+
+Il report R18.6.2 conteneva errore di classificazione (`bridge_legacy=NONE / canonical-new`). **Correzione canonica**:
+
+```yaml
+legacy_bridge_source: warlock
+canonical_target_slug: cacciatore_del_vuoto
+bridge_status: mapped_design_only
+migration_status: not_applied
+runtime_bridge_status: disabled
+```
+
+**Mapping canonico**: `warlock → cacciatore_del_vuoto`
+
+**Regole enforced**:
+- **NO** auto-derive
+- **NO** migration apply
+- **NO** runtime bridge attivo
+- **NO** modifica dati live
+- **NO** assegnazione automatica classe
+
+**Il bridge serve per readiness/migrazione futura**, NON per assegnare la classe ai nuovi avventurieri. **I nuovi avventurieri continuano a nascere `class_slug=null · status=recruit_unassigned`** (regola R18.6/R18.6.1 invariata).
+
+### R18.6.3 Pilot Cacciatore del Vuoto STARTED
+
+- **Status**: 🟢 STARTED (pilot Wave 1 · #1)
+- **Current gate**: **G1 STAT_DESIGN** (dispatched)
+- **Deliverable G1**:
+  - `/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.md`
+  - `/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.json`
+- **Vincolo Gate 1**: SOLO stat design · NO proficiency (Gate 2) · NO gameplay loop (Gate 3) · NO resource (Gate 4)
+- **NO Gate 2 auto-start**
+
+### Governance Constraints Confirmed R18.6.2 APPROVED + R18.6.3 STARTED
+
+- **R18.5 / R18.6 / R18.6.1 / R18.6.2** = **CLOSED · LOCKED** · zero modifiche
+- **R18.3f · Apply Phase · Progressive Discovery · R18.6 live · 22 Sale PLANNED activation · Marketing Brief** = **🔒 HOLD / ⏸️ DEFERRED**
+- **R18.6.RV3 · R18.6.RB1** = **🔒 HOLD** · gate futuri dedicati
+- **Zero code · zero DB · zero migrations · zero item creation · zero registry apply · zero class_slug apply · zero runtime bridge · zero sealed touch · zero `lore_meta.py` touch**
+- **Sealed integrity**: pytest 6/6 passed post-append
+- **`lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · **INVARIATO**
+
+---
+
+**Combined status flow (aggiornato)**:
+`R18.5 C0-C6 LOCKED` → `R18.6 LOCKED` → `R18.6.1 LOCKED` → `R18.6.2 Framework LOCKED` → **`R18.6.3 Cacciatore del Vuoto Pilot STARTED · G1 STAT_DESIGN 🟢`** → G2 PROFICIENCY_DESIGN 🔒 HOLD → G3..G10 🔒 HOLD → `R18.6.RV3 Registry v3` 🔒 HOLD → `R18.6.RB1 Rite of Rebirth` 🔒 HOLD → `Wave 1 successivi (Monaco/Druido/Alchimista/Bardo/Negromante)` 🔒 HOLD → `Wave 2/3/4` 🔒 HOLD → `R18.3f` 🔒 HOLD → `Apply Phase` 🔒 HOLD → `Marketing Brief` ⏸️ DEFERRED
+
+🛑 **STOP dopo R18.6.3-G1 STAT_DESIGN dispatch.** Nessun auto-start Gate 2. Attendo PM review Gate 1 + GO esplicito per Gate 2.

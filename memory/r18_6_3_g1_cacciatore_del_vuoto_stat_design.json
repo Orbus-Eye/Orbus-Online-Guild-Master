@@ -1,0 +1,424 @@
+{
+  "metadata": {
+    "round": "R18.6.3",
+    "phase": "Gate 1 · STAT_DESIGN",
+    "pilot_class": "cacciatore_del_vuoto",
+    "hall_id": "hall_cacciatore_del_vuoto",
+    "hall_master": "Nael di Onirade",
+    "locked_at_utc": "2026-07-08T17:15:00Z",
+    "authority": "PM Orchestrator — R18.6.3-G1 STAT_DESIGN GO esplicito · Intelligenza LOCKED verbatim",
+    "regime": "DOCUMENTAL ONLY",
+    "governance": "NO code · NO DB · NO migrations · NO Registry v3 · NO nuovi item · NO modifica catalogo R18.5 · NO class unlock · NO Hall activation · NO class_slug apply · NO legacy bridge apply · NO auto-derive · NO proficiency implementation (Gate 2) · NO gameplay implementation (Gate 3) · NO resource implementation (Gate 4) · NO Gate 2 auto-start · NO modifica R18.5/R18.6/R18.6.1/R18.6.2 (LOCKED)",
+    "language": "italian_only",
+    "sealed_baseline": {
+      "lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "sealed_files_count": 36
+    },
+    "gate_isolation_policy": "Gate 1 definisce SOLO stat design. Proficiency/gameplay/resource menzionati come reference/dipendenza · MAI come design output di questo gate.",
+    "sections_scope": 20,
+    "dependencies_locked_reference_only": [
+      "/app/memory/PRD.md (R18.6.2 APPROVED + R18.6.3 STARTED verbatim)",
+      "/app/memory/r18_6_2_class_readiness_framework.md/.json (framework LOCKED · 10-gate)",
+      "/app/memory/r18_6_1_canonical_27_class_halls_expansion.md/.json (LOCKED · Hall Vuoto)",
+      "/app/memory/r18_5_phase_c2_proficiency_runtime_preparation.md (lock_state matrix · main stat penalty XP context)",
+      "/app/memory/r18_5_phase_c3_ilvl_equipment_backfill_planning.md (ILVL formula · rarity offsets 0/2/3/4/5 · Legendary flat +60)"
+    ],
+    "legacy_bridge_correction": {
+      "legacy_bridge_source": "warlock",
+      "canonical_target_slug": "cacciatore_del_vuoto",
+      "bridge_status": "mapped_design_only",
+      "migration_status": "not_applied",
+      "runtime_bridge_status": "disabled"
+    }
+  },
+  "stat_identity": {
+    "class_slug": "cacciatore_del_vuoto",
+    "classe_it": "Cacciatore del Vuoto",
+    "identity_summary": "Il Cacciatore del Vuoto è una classe caster-ranged anti-incorporei che si distingue per l'uso arcano di focus, pugnale e balestra come strumenti di canalizzazione. La sua identità statistica poggia interamente su Intelligenza come stat driver unico: precisione arcana, marchi dispel, drenaggio di essenza (Frammenti di Onirade). Non è un cacciatore agile (Cacciatore di Mostri · Destrezza) né un caster puro (Mago · Intelligenza ma con arsenale diverso) né un supporter sacro (Paladino · Saggezza). La sua identità statistica è l'anti-arcano di precisione contro summon e incorporei.",
+    "hall_context": "Faro Rovesciato di Onirade · Nael di Onirade · lore 'si caccia ciò che non ha peso'",
+    "role_indicativo_from_r18_6_1": "DPS ranged/melee ibrido con specializzazione dispel/anti-summon"
+  },
+  "main_stat_lock": {
+    "main_stat": "Intelligenza",
+    "locked_by_pm": true,
+    "lock_source": "V-Q1 PM directive · PRD append R18.6.2 APPROVED · verbatim",
+    "rationale_pm_verbatim": [
+      "Unica primaria · non condivisa scaling con Destrezza/Saggezza/Costituzione per il ruolo primario",
+      "Balestra = canalizzazione arcana · NON gear Rogue/Ranger riciclato",
+      "Penalità XP main stat insufficiente si applica al Cacciatore del Vuoto senza eccezioni"
+    ],
+    "no_dual_main_stat": true,
+    "no_hybrid_scaling": true,
+    "alternatives_rejected": {
+      "Saggezza": "REJECTED · overlap con Paladino · Vuoto non è sacro né healer/support",
+      "Destrezza": "REJECTED · overlap con Cacciatore di Mostri e Ladro · Vuoto non è agile fisico",
+      "Forza": "REJECTED · incoerente con lore anti-incorporeo e canalizzazione arcana"
+    }
+  },
+  "stat_priority_order": {
+    "primary": "Intelligenza (main_stat · scaling driver principale)",
+    "secondary_recommended": "Costituzione (survivability minima in melee opportunistico con pugnale · resistenza dispel-backlash narrativo)",
+    "tertiary_recommended": "Destrezza (mobilità nel Faro Rovesciato + accuracy balestra secondaria · NON scaling di danno)",
+    "dump_stats_recommended": "Forza (nessun ruolo per Cacciatore del Vuoto) · Saggezza (nessun ruolo scaling · può essere dump con eccezione di eventuali resistenze specifiche gate futuro)",
+    "notes": "Priorità Int → Cos → Dex → dump(Str, Wis) è raccomandazione design · non hard-lock oltre a main_stat=Intelligenza · gate futuro EQUIP_DESIGN valuterà secondari via item affix"
+  },
+  "stat_relations": {
+    "intelligenza_role": "Scaling driver PRIMARIO su damage focus/pugnale/balestra · potenza Marchio del Vuoto · generazione Frammenti di Onirade · payoff dispel/annullamento",
+    "destrezza_role": "Contribuisce ad accuracy balestra secondaria (design gate PROFICIENCY_DESIGN futuro) · MAI scaling di danno primario",
+    "costituzione_role": "Survivability base · resistenze dispel-backlash narrativo (concept design futuro) · NO scaling danno",
+    "saggezza_role": "Nessun ruolo diretto · possibile utility su interazioni sacre/anti-Vuoto (design gate futuro se emergono meccaniche)",
+    "forza_role": "Nessun ruolo · dump stat raccomandato",
+    "cross_stat_no_hybrid": "Il Cacciatore del Vuoto NON ha hybrid scaling (Int+Wis o Int+Dex) sulla base danno. Il main_stat è unico e locked."
+  },
+  "scaling_lv1_60": {
+    "note": "Curva design layer · numeri finali locked nel gate TECH_READINESS · questa sezione documenta principi",
+    "level_tier_mapping": [
+      {
+        "level_range": "1-15",
+        "tier": "T1",
+        "int_expected_range": "10-25",
+        "gear_context": "starter · Common/Uncommon prevalente"
+      },
+      {
+        "level_range": "16-30",
+        "tier": "T2",
+        "int_expected_range": "25-45",
+        "gear_context": "Uncommon/Rare prevalente"
+      },
+      {
+        "level_range": "31-45",
+        "tier": "T3",
+        "int_expected_range": "45-70",
+        "gear_context": "Rare/Epic prevalente"
+      },
+      {
+        "level_range": "46-55",
+        "tier": "T4",
+        "int_expected_range": "70-90",
+        "gear_context": "Epic (T4 progressive_marker 10 items)"
+      },
+      {
+        "level_range": "56-60",
+        "tier": "T5",
+        "int_expected_range": "90-115",
+        "gear_context": "Epic/Legendary (Legendary flat +60 R18.5 C3 Q7)"
+      }
+    ],
+    "rarity_offsets_reference_r18_5": {
+      "Common": 0,
+      "Uncommon": 2,
+      "Rare": 3,
+      "Epic": 4,
+      "Legendary": 5
+    },
+    "legendary_flat_bonus": "+60 (C3 Q7 lockato) · applicato su Int scaling per item Legendary Cacciatore del Vuoto (futuri)",
+    "curve_type": "linear con soft cap oltre tier T4-T5 · anti-power-creep",
+    "gating_via_ilvl": "ILVL formula C3 approvata · Cacciatore del Vuoto gear scaling Int deve rispettare rarity offsets · no overshoot"
+  },
+  "stat_to_damage_formula_design": {
+    "note": "Formula design layer · valori numerici in TECH_READINESS gate futuro",
+    "focus_damage": "base_focus_dmg × (1 + int_scaling_focus × Int) · int_scaling_focus alto (weapon primaria arcana)",
+    "pugnale_damage": "base_pugnale_dmg × (1 + int_scaling_pugnale × Int) · int_scaling_pugnale ridotto (melee opportunistico · NON specializzazione primaria)",
+    "balestra_damage": "base_balestra_dmg × (1 + int_scaling_balestra × Int) · int_scaling_balestra medio-alto (canalizzazione arcana a distanza)",
+    "no_dex_scaling_damage": true,
+    "no_str_scaling_damage": true,
+    "no_hybrid_scaling": true,
+    "diminishing_returns_soft_cap": "oltre Int ≈ 90 (T4-T5 boundary) scaling multiplier si riduce · previene power creep",
+    "critical_hit_design_note": "critical multiplier gate TECH_READINESS futuro · non design output G1"
+  },
+  "stat_to_marchio_del_vuoto": {
+    "concept_source": "R18.6.2 pilot gameplay loop step 2 (Mark)",
+    "note": "Meccanica Marchio è design output gate GAMEPLAY_LOOP (Gate 3) · questa sezione documenta SOLO come Int scala la meccanica futura",
+    "durata_dispel_over_time": "durata Marchio scala con Int (linear · soft cap Int ≈ 100)",
+    "potenza_silenziamento_summon": "potenza silence su summon nemici scala con Int (linear · soft cap Int ≈ 100)",
+    "max_marchi_attivi_simultanei": "cap iniziale design raccomandato = 3 · scalabile con Int a soglie (es. +1 marchio a Int 50, +1 a Int 90) · numeri finali gate futuro",
+    "resistance_check_scaling": "target con resistenze arcane richiedono soglia Int minima per applicare Marchio · design gate futuro"
+  },
+  "stat_to_drain": {
+    "concept_source": "R18.6.2 pilot gameplay loop step 3 (Drain)",
+    "note": "Meccanica Drain è output gate GAMEPLAY_LOOP + RESOURCE_MECHANIC · G1 documenta scaling Int",
+    "frammenti_per_colpo_su_marchiato": "1 Frammento base · +1 bonus a soglia Int (es. Int ≥ 60) · gate RESOURCE_MECHANIC finalizza numeri",
+    "bonus_frammenti_da_dispel_summon": "+1 · non scala direttamente con Int (evita farming Int-heavy)",
+    "bonus_frammenti_da_annullamento_boss_summon": "+2 · non scala direttamente con Int (evita farming boss)",
+    "anti_abuse_cap": "cap Frammenti per encounter = 5 (V-Q4 LOCKED R18.6.2) · Int NON aumenta cap"
+  },
+  "stat_to_payoff": {
+    "concept_source": "R18.6.2 pilot gameplay loop step 4 (Payoff)",
+    "note": "Meccanica Payoff è output gate GAMEPLAY_LOOP + RESOURCE_MECHANIC · G1 documenta scaling Int",
+    "dispel_area_3_frammenti": "raggio dispel area scala con Int (linear con soft cap Int ≈ 100) · potenza dispel scala con Int",
+    "annullamento_boss_summon_5_frammenti": "chance di successo scala con Int fino a soft cap Int ≈ 100 (es. 50% Int 30, 90% Int 100) · una-tantum per encounter",
+    "duration_of_dispel_effect": "durata effetto post-dispel scala con Int (design layer · numeri finali gate futuro)",
+    "no_int_beyond_soft_cap_reward": "oltre Int 100 nessun beneficio significativo su Payoff · anti-power-creep"
+  },
+  "power_creep_risks": {
+    "risk_1_int_stacking_via_items": "Int stacking via multi-item Int-boost potrebbe rompere scaling · mitigazione: soft cap Int ≈ 100 su tutte le meccaniche · rarity offset R18.5 (0/2/3/4/5) enforced · anti-P2W preserved (no premium boost Int)",
+    "risk_2_legendary_flat_60_bonus": "Legendary flat +60 (C3 Q7) può portare Int a 115+ · mitigazione: soft cap 100 su scaling · Legendary offre solo utility_unique + affix rari, NON overrides scaling design",
+    "risk_3_diminishing_returns_absence": "assenza diminishing returns porterebbe a scaling lineare unbounded · mitigazione: soft cap 100 · linear con curve flattening",
+    "risk_4_synergy_with_progressive_discovery": "4 Progressive Discovery Legendary (P1-P4 attualmente HOLD) potrebbero includere effetti class-locked per Vuoto · mitigazione: PG1 tracked · Progressive Discovery gate dedicato · no anticipazione design G1",
+    "risk_5_secondary_stat_bleed": "Costituzione/Destrezza secondari via item affix potrebbero creare hybrid inaspettato · mitigazione: gate EQUIP_DESIGN limita affix multi-stat · Int primary preserved",
+    "risk_6_soft_cap_evasion_via_buff_stack": "buff temporanei potrebbero superare soft cap · mitigazione: soft cap si applica anche a buff temporanei · gate TECH_READINESS enforcement",
+    "risk_7_anti_p2w_preservation": "premium items o real-money boost potrebbero rompere design · mitigazione: R18.5 anti-P2W lockato (can_be_sold_for_real_money=false 1500/1500) · nessuna eccezione per Vuoto"
+  },
+  "differentiation_from_mago": {
+    "shared_main_stat": "Intelligenza (condivisa · unico caso tra 5 live + Vuoto)",
+    "diff_1_weapon_family": "Mago: bastone · tomo · focus · pugnale · Vuoto: focus · pugnale · balestra · NO bastone · NO tomo. Overlap solo su focus (canalizzazione arcana generica) + pugnale (opportunistico). Balestra è unica del Vuoto.",
+    "diff_2_gameplay_style": "Mago = burst caster puro con AoE elemental · Vuoto = anti-summon/dispel con Marchi + Frammenti pool + drain-based payoff. Ruoli DPS distinti.",
+    "diff_3_armor": "Mago: solo stoffa · Vuoto: cuoio + stoffa. Cuoio è unica del Vuoto (mobility nel Faro).",
+    "diff_4_resource": "Mago: mana/spell system (design R18.5 non specificato in G1) · Vuoto: Frammenti di Onirade (encounter-local · cap 5). Risorse ortogonali · no competition item.",
+    "diff_5_target_priority": "Mago: bersagli generici arcani/elementali · Vuoto: incorporei > summon nemici > caster > melee (specializzazione anti-arcano)",
+    "diff_6_role_indicativo": "Mago R18.6: DPS puro · Vuoto R18.6.1: DPS con specializzazione dispel/anti-summon (utility hybrid)",
+    "no_item_competition_expected": "Progressive Discovery Legendary Vuoto (futuri) sono distinti da Mago's · gate PG1 tracked"
+  },
+  "differentiation_from_cacciatore_di_mostri": {
+    "shared_main_stat": "NONE (CdM=Destrezza · Vuoto=Intelligenza)",
+    "diff_1_stat_driver_fundamentally_different": "CdM scala su Dex (precisione fisica · accuracy · dodge) · Vuoto scala su Int (precisione arcana · dispel · Marchi). Non c'è competizione statistica.",
+    "diff_2_weapon_family": "CdM: arco · balestra · spada · pugnale · lancia · Vuoto: focus · pugnale · balestra. Overlap: balestra + pugnale. Ma balestra CdM=ranged fisico agile · balestra Vuoto=canalizzazione arcana (design divergente EQUIP_DESIGN gate futuro).",
+    "diff_3_gameplay_style": "CdM: ranged agile · trappole · knowledge bestie · Vuoto: ranged arcano · Marchi · anti-incorporei. Ruoli DPS distinti (bestie fisiche vs incorporei/summon).",
+    "diff_4_target_priority": "CdM: bestie · mostri fisici · Vuoto: incorporei · summon · anti-arcano. Zero overlap target.",
+    "diff_5_armor": "CdM: cuoio + maglia · Vuoto: cuoio + stoffa. Overlap solo cuoio. Maglia CdM unica · stoffa Vuoto unica.",
+    "diff_6_resource": "CdM: nessuna risorsa unica documentata R18.6 · Vuoto: Frammenti di Onirade",
+    "narrative_diff": "CdM: 'La bestia è vecchia, il cacciatore di più' · Vuoto: 'Si caccia ciò che non ha peso'. Semantica cacciatore condivisa · sostanza cacciata fondamentalmente diversa."
+  },
+  "differentiation_from_paladino": {
+    "shared_main_stat": "NONE (Paladino=Saggezza · Vuoto=Intelligenza)",
+    "diff_1_role": "Paladino: Healer/Support sacro · Vuoto: DPS anti-arcano. Ruoli opposti nel team.",
+    "diff_2_thematic_axis": "Paladino: 'La luce non chiede, la luce impone' (sacro affermativo) · Vuoto: 'Si caccia ciò che non ha peso' (arcano negativo/dispel). Assi opposti.",
+    "diff_3_weapon_family": "Paladino: bastone · martello · focus · reliquia · Vuoto: focus · pugnale · balestra. Overlap solo focus (weapon condivisa tra caster/anti-caster). Reliquia Paladino unica · balestra + pugnale Vuoto unici.",
+    "diff_4_armor": "Paladino: solo stoffa · Vuoto: cuoio + stoffa. Cuoio Vuoto unico.",
+    "diff_5_gameplay_focus": "Paladino: protezione + resurrezione + heal · Vuoto: Marchi + drain + dispel. Nessuna sovrapposizione meccanica.",
+    "diff_6_target_priority": "Paladino: alleati (heal) + nemici sacri (light burst) · Vuoto: incorporei/summon (dispel/annullamento). Zero overlap.",
+    "no_cross_class_bleed": "Paladino e Vuoto potrebbero coesistere nello stesso raid come healer + anti-summon DPS · complementari · no competition item/role"
+  },
+  "armor_compatibility_notes": {
+    "note": "SOLO note di compatibilità stat-armor · design proficiency è output Gate 2 PROFICIENCY_DESIGN",
+    "stoffa_int_focus": "stoffa items dovrebbero privilegiare Int come stat primaria (coerente con caster tradition) · gate EQUIP_DESIGN futuro conferma affix Int-heavy",
+    "cuoio_int_focus": "cuoio items del Cacciatore del Vuoto dovrebbero privilegiare Int (NO doppia identità Dex-focus tipica cuoio Ladro/CdM) · gate EQUIP_DESIGN valida design distinto",
+    "no_double_stat_identity": "V-Q2 PM lock: entrambi armor devono privilegiare Intelligenza · no hybrid Int+Dex o Int+Cos",
+    "future_set_bonus_hint": "set bonus 2/4/6 pezzi (design gate EQUIP_DESIGN futuro) può includere Int scaling amplification · design layer only ora"
+  },
+  "weapon_compatibility_notes": {
+    "note": "SOLO note di compatibilità stat-weapon · design proficiency è output Gate 2",
+    "focus_int_scaling": "focus è weapon primaria arcana · scaling Int alto (int_scaling_focus alto)",
+    "pugnale_int_scaling": "pugnale è weapon opportunistica melee · scaling Int ridotto rispetto a focus (int_scaling_pugnale ridotto) · NO Dex scaling di danno",
+    "balestra_int_scaling": "balestra è weapon canalizzazione ranged · scaling Int medio-alto (int_scaling_balestra medio-alto) · NO Dex scaling di danno · Dex può contribuire ad accuracy ma NON al danno base",
+    "lanterna_reserved_future": "weapon family lanterna RESERVED · valutabile in EQUIP_DESIGN · potenziale scaling Int primary · NO in catalogo R18.5",
+    "no_bastone_no_tomo_no_arco_no_spada": "esclusioni verbatim V-Q3 PM lock · design proficiency Gate 2 enforcerà"
+  },
+  "main_stat_penalty_xp_interaction": {
+    "rule_pm_verbatim": "Penalità XP per main stat insufficiente si applica al Cacciatore del Vuoto senza eccezioni.",
+    "applies_to_cacciatore_del_vuoto": true,
+    "no_exceptions": true,
+    "trigger_condition": "adventurer con class_slug=cacciatore_del_vuoto che equipaggia gear il cui main_stat_target != Intelligenza subisce XP penalty (design layer · valori numerici gate futuro)",
+    "purpose": "enforcement dell'identità statistica · previene reroll silente stat-focus via gear · anti-cheese",
+    "lock_state_interaction": "possibile nuovo lock_state warning (design gate TECH_READINESS) o riuso lock_state esistenti C2 con badge XP-penalty",
+    "no_soft_bypass": true,
+    "no_premium_bypass": true
+  },
+  "readiness_checklist_r01": {
+    "item_id": "R-01",
+    "check_description": "main_stat definitivo (uno di Forza/Destrezza/Intelligenza/Saggezza · con rationale narrativo/gameplay)",
+    "result": {
+      "main_stat_defined": "Intelligenza",
+      "rationale_documented": true,
+      "pm_lock_verified": true,
+      "no_dual_main_stat": true,
+      "no_hybrid_scaling": true,
+      "differentiation_from_5_live_classes_documented": true,
+      "power_creep_protections_documented": true
+    },
+    "checklist_status": "COMPLETED ✅ (per R-01 · altre R-02..R-13 restano PENDING gate successivi)"
+  },
+  "risk_register": [
+    {
+      "id": "SD-R1",
+      "risk": "Int stacking via multi-item Int-boost rompe scaling",
+      "severity": "MEDIUM",
+      "mitigation": "soft cap Int ≈ 100 · rarity offset R18.5 · anti-P2W preserved",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "SD-R2",
+      "risk": "Legendary flat +60 porta Int oltre 115 · scaling break",
+      "severity": "MEDIUM",
+      "mitigation": "soft cap 100 su tutte le meccaniche · Legendary via utility_unique non overrides scaling",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "SD-R3",
+      "risk": "Assenza diminishing returns · scaling lineare unbounded",
+      "severity": "MEDIUM",
+      "mitigation": "linear con curve flattening oltre Int 90 · soft cap 100 documentato",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "SD-R4",
+      "risk": "Progressive Discovery Legendary Vuoto (futuri) rompe design G1",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Progressive Discovery gate dedicato · G1 documenta constraints non anticipa design",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "SD-R5",
+      "risk": "Secondary stat affix (Cos/Dex) creano hybrid inaspettato",
+      "severity": "MEDIUM",
+      "mitigation": "gate EQUIP_DESIGN limita affix multi-stat · Int primary preserved",
+      "status": "DEFERRED to EQUIP_DESIGN"
+    },
+    {
+      "id": "SD-R6",
+      "risk": "Buff temporanei superano soft cap Int",
+      "severity": "LOW",
+      "mitigation": "soft cap si applica a buff temporanei · gate TECH_READINESS enforcement",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "SD-R7",
+      "risk": "Player interpreta 'Int shared con Mago' come 'stessa classe diversa skin'",
+      "severity": "MEDIUM",
+      "mitigation": "differentiation matrix esplicita (6 diff punti) · player guide gate PLAYER_GUIDE comunica differenze",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "SD-R8",
+      "risk": "Penalità XP main stat insufficiente confonde player nuovi",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "regola PM applicata a tutte le classi (non solo Vuoto) · tutorial + tooltip UI communication · design gate PLAYER_GUIDE",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "SD-R9",
+      "risk": "Bridge legacy warlock → cacciatore_del_vuoto crea confusione per player Round 16.x che avevano 'warlock' concept",
+      "severity": "LOW",
+      "mitigation": "bridge status mapped_design_only · NOT applied · communication chiara: nuovi avventurieri class_slug=null · warlock legacy non attivi runtime",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "SD-R10",
+      "risk": "Int-only scaling considerato 'noioso' rispetto a hybrid systems altri MMO",
+      "severity": "LOW",
+      "mitigation": "identità classe forte · Marchi + Frammenti + Payoff meccaniche distintive · design gate GAMEPLAY_LOOP + RESOURCE_MECHANIC compensano semplicità stat",
+      "status": "DESIGNED"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "SD-Q1",
+      "topic": "Soft cap Int ≈ 100 confermato o alternativo (es. 90, 110, adaptive per tier)?",
+      "options": [
+        "a) confermo 100 fisso",
+        "b) 90 (più stretto)",
+        "c) 110 (più permissivo)",
+        "d) adaptive per tier T1-T5 (curve tier-based)"
+      ]
+    },
+    {
+      "id": "SD-Q2",
+      "topic": "Secondary stat priority Cos → Dex confermata o Dex → Cos (mobilità prima di survivability)?",
+      "options": [
+        "a) confermo Cos → Dex",
+        "b) Dex → Cos",
+        "c) tie (Cos ≡ Dex · player choice)"
+      ]
+    },
+    {
+      "id": "SD-Q3",
+      "topic": "Diminishing returns curve type: linear-flattening vs logarithmic vs step-function?",
+      "options": [
+        "a) linear con soft cap 100 (design raccomandato)",
+        "b) logarithmic (smoother)",
+        "c) step-function (stat breakpoints a soglie 30/60/90)"
+      ]
+    },
+    {
+      "id": "SD-Q4",
+      "topic": "Bridge legacy warlock → cacciatore_del_vuoto · gate futuro dedicato o gestione in R18.3f (Class Slug Migration Readiness)?",
+      "options": [
+        "a) R18.3f handling (integrato con class_slug migration)",
+        "b) gate dedicato R18.6.LB1 (Legacy Bridge Design)",
+        "c) documental only forever (nessun apply · nessuna migration)"
+      ]
+    },
+    {
+      "id": "SD-Q5",
+      "topic": "Penalità XP main stat: hard-block (XP=0) o soft (XP ridotta)?",
+      "options": [
+        "a) soft (XP ridotta · es. -50%)",
+        "b) hard (XP=0)",
+        "c) tiered (soft T1-T3 · hard T4-T5)"
+      ]
+    },
+    {
+      "id": "SD-Q6",
+      "topic": "Stat Saggezza dump vs preserve per future utility (es. anti-Vuoto resistenze)?",
+      "options": [
+        "a) dump raccomandato (design attuale)",
+        "b) preserve utility bassa (per resistenze future)",
+        "c) preserve utility media (design gate futuro rivalutazione)"
+      ]
+    },
+    {
+      "id": "SD-Q7",
+      "topic": "Balestra Vuoto scaling: int_scaling_balestra medio-alto vs alto (parificato a focus)?",
+      "options": [
+        "a) medio-alto (design attuale · differenzia focus come primaria)",
+        "b) alto (parificato a focus)",
+        "c) alto ma con penalty accuracy senza Dex secondario"
+      ]
+    }
+  ],
+  "go_hold_recommendation_gate_2": {
+    "gate_1_stat_design_status": "COMPLETED · pending PM review + risposte SD-Q1..SD-Q7",
+    "gate_2_proficiency_design_status": "🔒 HOLD · attende PM ACK Gate 1 + GO esplicito Gate 2",
+    "recommendation": [
+      "APPROVE Gate 1 STAT_DESIGN (Intelligenza LOCKED · scaling design Lv1-60 · power creep protections · differentiation matrix)",
+      "HOLD Gate 2 PROFICIENCY_DESIGN in attesa PM ACK",
+      "Rispondere a SD-Q1..SD-Q7 in round dedicato prima di Gate 2 dispatch",
+      "NO auto-transition · NO gate skip · NO parallel gate execution"
+    ],
+    "post_gate_1_ack_next_steps": {
+      "gate_2_input_from_gate_1": "Intelligenza main_stat + soft cap 100 + priority order Cos/Dex → input per PROFICIENCY_DESIGN Gate 2",
+      "gate_2_scope": "armor whitelist (cuoio + stoffa) + weapon whitelist (focus + pugnale + balestra) + lanterna RESERVED valuation · SOLO proficiency, no gameplay/resource"
+    }
+  },
+  "governance": {
+    "documental_only_regime": "ENFORCED",
+    "italian_output": "ENFORCED",
+    "sealed_files_36_byte_identical": true,
+    "lore_meta_py_touch": false,
+    "lore_meta_py_sha256_baseline": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "db_writes": 0,
+    "code_changes": 0,
+    "migrations": 0,
+    "sealed_file_modification": 0,
+    "r18_5_modification": 0,
+    "r18_6_modification": 0,
+    "r18_6_1_modification": 0,
+    "r18_6_2_modification": 0,
+    "registry_v3_dispatched": false,
+    "cacciatore_del_vuoto_live_activation": false,
+    "class_slug_apply": 0,
+    "legacy_bridge_apply": 0,
+    "runtime_bridge_status": "disabled",
+    "class_slug_auto_derivation": false,
+    "auto_derive_from_warlock": false,
+    "runtime_enforcement_implementation": 0,
+    "item_generation": 0,
+    "item_table_modification": 0,
+    "hard_delete": 0,
+    "anti_p2w_preserved": true,
+    "gate_2_auto_start": false,
+    "gate_3_auto_start": false,
+    "gate_4_auto_start": false,
+    "gate_isolation_enforced": true,
+    "sections_covered": 20,
+    "deliverable_files_count": 2,
+    "deliverable_paths": [
+      "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.md",
+      "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.json"
+    ]
+  },
+  "stop_after_g1": {
+    "auto_transition_gate_2": false,
+    "note": "STOP dopo Gate 1 STAT_DESIGN. Attendo PM review + risposte SD-Q1..SD-Q7 + GO esplicito Gate 2 PROFICIENCY_DESIGN. Nessun auto-start · nessuna modifica R18.5/R18.6/R18.6.1/R18.6.2 (LOCKED)."
+  }
+}
