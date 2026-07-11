@@ -3475,3 +3475,74 @@ Tutti i proposal: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPEN
 - **Gate 11 = NOT AUTHORIZED** 🔒
 - **Wave 1 successors = HOLD** 🔒
 - **Runtime implementation = NOT AUTHORIZED** 🔒
+
+
+## R18.6.3-G10 FINAL PM_REVIEW CLOSED (Cacciatore del Vuoto · PM APPROVED · ACTIVE-DESIGN-READY LOCK · with binding answers FR-Q1..FR-Q6 · 2026-07-11T17:07:31Z)
+
+### 🏆 VERDICT FINALE PM
+
+**ACTIVE-DESIGN-READY** ✅ LOCK — Prima classe delle 22 PLANNED a raggiungere questo stato.
+
+### Stato runtime obbligatorio (invariato · lock)
+
+- `class_design_status = ACTIVE-DESIGN-READY`
+- `runtime_status = NOT_IMPLEMENTED`
+- `availability = NOT_SELECTABLE`
+- `Hall = NOT_ACTIVE`
+- `Trial = NOT_ACTIVE`
+- `class_assignment = DISABLED`
+- `class_slug_apply = DISABLED`
+- `CLASS_HALL_ASSIGNMENT_ENABLED = false`
+- `per-Hall assignment = false`
+- `Registry v3 apply = NOT_AUTHORIZED`
+
+### Decisioni PM verbatim (FR-Q1..FR-Q6)
+
+- **FR-Q1 LOCK — Verdict finale**: **ACTIVE-DESIGN-READY**. 23/23 readiness criteria PASS · 0 HIGH blocker di design aperti · G1-G9 CLOSED · RV3 CLOSED · G10 CLOSED · design completo (identità statistica · proficiency · gameplay · risorsa · equip · guida · Sala · Prova · specifiche tecniche · review finale — tutti definiti). Classe **NON live · NON selezionabile · Sala NON attiva · Prova NON attiva · feature flag false · class_slug apply disabilitato.**
+- **FR-Q2 LOCK — Framework Wave 1**: **G1→G10 APPROVED come template REPLICABILE**. Sequenza standard: G1 STAT_DESIGN → G2 PROFICIENCY_DESIGN → G3 GAMEPLAY_LOOP → G4 RESOURCE_MECHANIC → G5 EQUIP_DESIGN → [Registry Extension Planning opzionale] → G6 PLAYER_GUIDE → G7 HALL_COMPLETION → G8 SAFE_MODE_TRIAL → G9 TECH_READINESS → G10 FINAL PM REVIEW. Framework = **template di readiness** · NON generatore automatico · NON autorizzazione cumulativa · NON auto-dispatch. Ogni classe richiede: GO PM individuale · gate individuali · review individuale · readiness individuale. Monaco/Druido/Alchimista/Bardo/Negromante = **HOLD** · NO kickoff automatico.
+- **FR-Q3 LOCK — PM-LOCKED, NOT YET SEALED**: G1-G9 + RV3 + G10 = **PM-LOCKED**. Modifica futura richiede: (1) explicit PM reopen · (2) motivazione · (3) impact analysis · (4) diff documentale · (5) nuova review · (6) aggiornamento manifest. File **NON aggiunti al seal system ora** (richiede gate separato dopo G10 closure + manifest verificato). 36 sigilli esistenti restano invariati. Stato: `pm_locked = true`, `sealed_in_seal_system = false`.
+- **FR-Q4 LOCK — GO Pilot Completion Certificate + SHA256 manifest**: Certificate (MD 29 sezioni + JSON) e SHA256 Manifest generati con questo dispatch (STEP 2).
+- **FR-Q5 LOCK — NEXT: R18.3f Class Slug Migration Readiness**: draft documentale generato con questo dispatch (STEP 3). Read-only discovery · zero DB write · zero migration · zero apply.
+- **FR-Q6 LOCK — Gate 11 HOLD**: autorizzabile SOLO dopo completamento delle **20 precondizioni obbligatorie** (P1..P20 · documentate in R18.3f e nel Completion Certificate). Nessuna precondizione può essere considerata implicita.
+
+### Baseline finale roadmap
+
+- **R18.5** = CLOSED / LOCKED
+- **R18.6** = CLOSED / LOCKED
+- **R18.6.1** = CLOSED
+- **R18.6.2** = CLOSED
+- **R18.6.3 Cacciatore del Vuoto** = **ACTIVE-DESIGN-READY** ✅
+- **Pilot documentale** = **100% COMPLETATO**
+- **Runtime implementation** = **0%** = **NON AUTORIZZATA**
+- **Next gate** = **R18.3f Class Slug Migration Readiness**
+- **RV3-EV** = HOLD
+- **Gate 11** = HOLD (20 precondizioni obbligatorie)
+- **Monaco** = HOLD
+- **Wave 1 successors** = HOLD
+
+### Stato P1..P20 (20 precondizioni Gate 11) all'apertura R18.3f
+
+- **P1** ✅ CLOSED (G10 CLOSED ACTIVE-DESIGN-READY · con questo dispatch)
+- **P2** 🔄 IN PROGRESS (R18.3f start ora)
+- **P3-P20** 🔒 HOLD / NOT STARTED
+
+### Files locked (post G10)
+
+- `/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.md` **LOCKED**
+- `/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.json` **LOCKED**
+- Tutti i gate G1-G9 + RV3 = **LOCKED · PM APPROVED**
+- Catalogo R18.5 = **INVARIATO** (1500/1500 preserved)
+- `lore_meta.py` anchor = **INVARIATO** (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`)
+- Sealed integrity 36/36 = **BYTE-IDENTICAL**
+- OpenAPI runtime = **INVARIATO**
+- backend/frontend diff = **0**
+
+### PM verdict conclusivo pilot
+
+- **R18.6.3 Cacciatore del Vuoto Pilot = ACTIVE-DESIGN-READY · PM APPROVED · CLOSED** ✅ 🏆
+- **Prima classe delle 22 PLANNED a raggiungere questo stato**
+- **Framework G1→G10 = APPROVED come template REPLICABILE**
+- **R18.3f Class Slug Migration Readiness = AUTHORIZED** 🟢
+- **Gate 11 = NOT AUTHORIZED** 🔒 (20 precondizioni P1..P20 obbligatorie)
+- **Wave 1 successors = HOLD** 🔒 (GO PM individuale richiesto per ciascuna classe)
+- **Runtime implementation = NOT AUTHORIZED** 🔒

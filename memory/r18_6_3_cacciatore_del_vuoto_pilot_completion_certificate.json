@@ -1,0 +1,372 @@
+{
+  "metadata": {
+    "artifact": "Pilot Completion Certificate",
+    "gate_scope": "R18.6.3 Cacciatore del Vuoto Pilot (G1-G9 + RV3 + G10)",
+    "verdict": "ACTIVE-DESIGN-READY",
+    "verdict_lock": true,
+    "pm_approved": true,
+    "closure_timestamp": "2026-07-11T17:07:31Z",
+    "language": "italiano_only",
+    "governance": "DOCUMENTAL ONLY · NO implementation · NO runtime · NO code · NO DB · NO OpenAPI · NO migration · NO test"
+  },
+  "runtime_status_lock": {
+    "class_design_status": "ACTIVE-DESIGN-READY",
+    "runtime_status": "NOT_IMPLEMENTED",
+    "availability": "NOT_SELECTABLE",
+    "hall_status": "NOT_ACTIVE",
+    "trial_status": "NOT_ACTIVE",
+    "class_assignment": "DISABLED",
+    "class_slug_apply": "DISABLED",
+    "CLASS_HALL_ASSIGNMENT_ENABLED": false,
+    "per_hall_assignment_enabled": false,
+    "registry_v3_apply": "NOT_AUTHORIZED"
+  },
+  "readiness_criteria": {
+    "total": 23,
+    "passed": 23,
+    "high_blockers_open": 0
+  },
+  "deliverables": {
+    "gates_total": 11,
+    "files_md_json_total": 22,
+    "prd_md_included": true,
+    "canonical_registry_used": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+  },
+  "artifact_sha256_snapshot": [
+    {
+      "path": "/app/memory/PRD.md",
+      "sha256": "6abebfaf9da6021550c5526c12e39465117138097a19f643fff160a6e25d4ecb",
+      "bytes": 241647,
+      "lines": 3548,
+      "role": "prd",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.md",
+      "sha256": "46df9db9de1b316e863aac1f5b2eef060a132001913d6803ee758e2998639bd7",
+      "bytes": 21079,
+      "lines": 295,
+      "role": "gate",
+      "gate": "G1",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.json",
+      "sha256": "d8a088a219097bc56c20c589c3c36299fe709200f60ce2b62c7484a94db549cd",
+      "bytes": 26257,
+      "lines": 423,
+      "role": "gate",
+      "gate": "G1",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.md",
+      "sha256": "a9f9961f7e48d7224c4b619888d5395c05a3a9788db14ebd33eacf0d0e92be19",
+      "bytes": 22346,
+      "lines": 327,
+      "role": "gate",
+      "gate": "G2",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.json",
+      "sha256": "d018af9f2bba26a10724de7054a637fb90c02a4f9dd0d0c34ac08286d91eb578",
+      "bytes": 31933,
+      "lines": 694,
+      "role": "gate",
+      "gate": "G2",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.md",
+      "sha256": "5c714e8f59498f5443a4ad20d837c50bc42a6122771473d85723e6f3ca40591c",
+      "bytes": 21212,
+      "lines": 263,
+      "role": "gate",
+      "gate": "G3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.json",
+      "sha256": "ecd06c1dbb8f2145fa5ceaf316ed0a829bf9676c1470e35daca6a426a38f4c24",
+      "bytes": 32245,
+      "lines": 579,
+      "role": "gate",
+      "gate": "G3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.md",
+      "sha256": "ecdb91bebe285920118924554769b3b90579f91ef84214e3988c306f7221b79c",
+      "bytes": 18121,
+      "lines": 326,
+      "role": "gate",
+      "gate": "G4",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.json",
+      "sha256": "58c9cfed2006846ec89e61801df4159ac999765a8f8888802fbb84d4570c82b5",
+      "bytes": 36727,
+      "lines": 730,
+      "role": "gate",
+      "gate": "G4",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.md",
+      "sha256": "e5b7c60d3ceb0ed26319dae5cf87cb2fa0284bb055bea80ae2d8bb14bf624ed6",
+      "bytes": 18872,
+      "lines": 324,
+      "role": "gate",
+      "gate": "G5",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.json",
+      "sha256": "2a57cc21f8d2cd3515178db9b88a9578f0a8d3a668d4a6b723bafdfcbb4f4061",
+      "bytes": 43521,
+      "lines": 905,
+      "role": "gate",
+      "gate": "G5",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_registry_v3_additive_planning.md",
+      "sha256": "a13ec49bf6678ad569896e6246bf39fb151d51ffd76df8a8886fd487bf38325a",
+      "bytes": 19857,
+      "lines": 340,
+      "role": "gate",
+      "gate": "RV3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_registry_v3_additive_planning.json",
+      "sha256": "e344f8bb60091dfe438f38ccdcdd74fafbddad3f6c328f00d54f38fa8842a594",
+      "bytes": 39570,
+      "lines": 839,
+      "role": "gate",
+      "gate": "RV3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.md",
+      "sha256": "f9ffa37ab6a978ec6f486c57ff2631ee891e9fdf50fd1c24b0c4ed3aa6d4a7df",
+      "bytes": 24014,
+      "lines": 353,
+      "role": "gate",
+      "gate": "G6",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.json",
+      "sha256": "7d575bfacd154b6785f082327ff4d2507751b0d02eb5b16c9ae9ff944b547791",
+      "bytes": 32031,
+      "lines": 520,
+      "role": "gate",
+      "gate": "G6",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.md",
+      "sha256": "510495a08fb178fd733efbae18063d4d0de4891a18b4b1ef7234916d20ad71a2",
+      "bytes": 23011,
+      "lines": 392,
+      "role": "gate",
+      "gate": "G7",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.json",
+      "sha256": "603be60869ad70dbacae0f3b08331bc674e7dab967ad162df8fe25e700e09c2e",
+      "bytes": 33163,
+      "lines": 639,
+      "role": "gate",
+      "gate": "G7",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.md",
+      "sha256": "1c0323cd6c976441361e4917dd678c84af1ab26399792c1943f80c267fb04780",
+      "bytes": 23728,
+      "lines": 441,
+      "role": "gate",
+      "gate": "G8",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.json",
+      "sha256": "dc77d3fabbb0aa82c6c27b7661e947fbcfc9f74358003a2b80d067d422a2a1bf",
+      "bytes": 25595,
+      "lines": 754,
+      "role": "gate",
+      "gate": "G8",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.md",
+      "sha256": "bb275dea5385ce795ab4eb8705463c6a04ea5cd60c25b7ea454a6de488a17722",
+      "bytes": 49086,
+      "lines": 708,
+      "role": "gate",
+      "gate": "G9",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.json",
+      "sha256": "425c5ec1b526e7bbd6b1cab4887e33b7c5e78727dbe9abb46bb44290ef86838c",
+      "bytes": 36652,
+      "lines": 1014,
+      "role": "gate",
+      "gate": "G9",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.md",
+      "sha256": "a5bfb92a75566ddf75b78f8e3da3bb9e30bbd7e6fc0b523400faa2625362cfda",
+      "bytes": 29182,
+      "lines": 578,
+      "role": "gate",
+      "gate": "G10",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.json",
+      "sha256": "a4a644f90710c783d34e1b5a572388a27c89f1de149d48f3ff04d38e1874b3b1",
+      "bytes": 23028,
+      "lines": 690,
+      "role": "gate",
+      "gate": "G10",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    }
+  ],
+  "canonical_validation": {
+    "non_canonical_class_references": 0,
+    "no_new_divinita": true,
+    "no_new_regione": true,
+    "no_new_fazione": true,
+    "no_new_classe": true,
+    "no_new_hall_master": true,
+    "entities_used": [
+      "Faro Rovesciato di Onirade",
+      "Nael di Onirade",
+      "Cacciatore del Vuoto",
+      "Marchio del Vuoto",
+      "Frammenti di Onirade",
+      "Prova del Riflesso Vuoto",
+      "Atrio delle Vocazioni"
+    ],
+    "bridge_legacy_warlock": {
+      "mapped_design_only": true,
+      "apply_authorized": false
+    }
+  },
+  "sealed_integrity": {
+    "pytest_result": "6/6 PASSED",
+    "aggregate_sealed_files": 36,
+    "byte_identical": true,
+    "lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "lore_meta_py_invariant": true
+  },
+  "preservation": {
+    "r18_5_catalog_locked": true,
+    "r18_5_items_preserved": "1500/1500",
+    "registry_v2_frozen": true,
+    "openapi_runtime_unchanged": true,
+    "backend_diff": 0,
+    "frontend_diff": 0
+  },
+  "unresolved_implementation_dependencies": [
+    "R18.3f Class Slug Migration Readiness (IN PROGRESS)",
+    "R18.6.RV3-EV Eligibility Validation (HOLD)",
+    "Registry v3 apply (NOT_AUTHORIZED)",
+    "Feature flag CLASS_HALL_ASSIGNMENT_ENABLED (not in env)",
+    "Per-Hall hall.assignment_enabled (not in DB)",
+    "Hall activation approval (prohibited)",
+    "Runtime implementation Gate 11+ (NOT_AUTHORIZED)",
+    "Deployment approval (not requested)"
+  ],
+  "pm_lock_policy": {
+    "gates_pm_locked": true,
+    "sealed_in_seal_system": false,
+    "reopen_requires": [
+      "explicit PM reopen",
+      "motivazione",
+      "impact analysis",
+      "diff documentale",
+      "nuova review",
+      "aggiornamento manifest"
+    ],
+    "seal_system_addition_deferred": "gate separato dopo G10 closure + manifest verificato"
+  },
+  "gate_11_preconditions_p1_p20": {
+    "P1_g10_closed_active_design_ready": "CLOSED",
+    "P2_r18_3f_closed": "IN_PROGRESS",
+    "P3_rv3_ev_closed": "HOLD",
+    "P4_registry_v3_apply_plan_pm_approved": "HOLD",
+    "P5_schema_live_verified": "HOLD",
+    "P6_migration_plan_approved": "HOLD",
+    "P7_snapshot_and_rollback_plan_approved": "HOLD",
+    "P8_feature_flag_globale_defined_default_false": "HOLD",
+    "P9_per_hall_enable_defined_default_false": "HOLD",
+    "P10_api_contract_finale_approved": "HOLD",
+    "P11_openapi_diff_review_approved": "HOLD",
+    "P12_db_schema_diff_review_approved": "HOLD",
+    "P13_security_review": "HOLD",
+    "P14_privacy_review": "HOLD",
+    "P15_idempotency_design_finalized": "HOLD",
+    "P16_atomic_assignment_design_finalized": "HOLD",
+    "P17_test_plan_approved": "HOLD",
+    "P18_sealed_impact_review": "HOLD",
+    "P19_deployment_plan": "HOLD",
+    "P20_explicit_pm_go_gate_11": "HOLD",
+    "no_implicit_precondition": true,
+    "all_required_and": true
+  },
+  "framework_replicable_for_wave_1": {
+    "approved": true,
+    "sequence": "G1 STAT_DESIGN → G2 PROFICIENCY_DESIGN → G3 GAMEPLAY_LOOP → G4 RESOURCE_MECHANIC → G5 EQUIP_DESIGN → [Registry Extension Planning] → G6 PLAYER_GUIDE → G7 HALL_COMPLETION → G8 SAFE_MODE_TRIAL → G9 TECH_READINESS → G10 FINAL_PM_REVIEW",
+    "template_readiness_not_automatic_generator": true,
+    "requires_individual_pm_go_per_class": true,
+    "wave_1_successors": [
+      "Monaco",
+      "Druido",
+      "Alchimista",
+      "Bardo",
+      "Negromante"
+    ],
+    "wave_1_status": "HOLD"
+  },
+  "governance_statement": "Il pilot documentale R18.6.3 Cacciatore del Vuoto è certificato ACTIVE-DESIGN-READY. Governance DOCUMENTAL ONLY mantenuta 100%. Sealed integrity intatta. Runtime implementation NOT AUTHORIZED. Nessun Gate 11 · nessun Wave 1 kickoff · nessuna modifica runtime.",
+  "stop_after_certification": {
+    "action": "STOP · attendo PM directive per (a) R18.3f review · (b) Wave 1 successor kickoff · (c) Gate 11 authorization dopo P1..P20",
+    "no_implementation": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true,
+    "explicit_stop": true
+  }
+}

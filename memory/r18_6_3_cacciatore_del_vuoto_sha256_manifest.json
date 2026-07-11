@@ -1,0 +1,298 @@
+{
+  "metadata": {
+    "artifact": "R18.6.3 Cacciatore del Vuoto SHA256 Manifest",
+    "generated_at": "2026-07-11T17:07:31Z",
+    "governance": "DOCUMENTAL ONLY · READ-ONLY snapshot",
+    "note": "Manifest records current SHA256 of all pilot artifacts. Self-reference is placeholder (pre-generation) per dispatch policy."
+  },
+  "canonical_registry_reference": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+  "sealed_integrity": {
+    "aggregate_sealed_files": 36,
+    "byte_identical": true,
+    "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "artifacts": [
+    {
+      "file_path": "/app/memory/PRD.md",
+      "sha256": "6abebfaf9da6021550c5526c12e39465117138097a19f643fff160a6e25d4ecb",
+      "size_bytes": 241647,
+      "line_count": 3548,
+      "artifact_role": "prd",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.md",
+      "sha256": "46df9db9de1b316e863aac1f5b2eef060a132001913d6803ee758e2998639bd7",
+      "size_bytes": 21079,
+      "line_count": 295,
+      "artifact_role": "gate",
+      "gate": "G1",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g1_cacciatore_del_vuoto_stat_design.json",
+      "sha256": "d8a088a219097bc56c20c589c3c36299fe709200f60ce2b62c7484a94db549cd",
+      "size_bytes": 26257,
+      "line_count": 423,
+      "artifact_role": "gate",
+      "gate": "G1",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.md",
+      "sha256": "a9f9961f7e48d7224c4b619888d5395c05a3a9788db14ebd33eacf0d0e92be19",
+      "size_bytes": 22346,
+      "line_count": 327,
+      "artifact_role": "gate",
+      "gate": "G2",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.json",
+      "sha256": "d018af9f2bba26a10724de7054a637fb90c02a4f9dd0d0c34ac08286d91eb578",
+      "size_bytes": 31933,
+      "line_count": 694,
+      "artifact_role": "gate",
+      "gate": "G2",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.md",
+      "sha256": "5c714e8f59498f5443a4ad20d837c50bc42a6122771473d85723e6f3ca40591c",
+      "size_bytes": 21212,
+      "line_count": 263,
+      "artifact_role": "gate",
+      "gate": "G3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.json",
+      "sha256": "ecd06c1dbb8f2145fa5ceaf316ed0a829bf9676c1470e35daca6a426a38f4c24",
+      "size_bytes": 32245,
+      "line_count": 579,
+      "artifact_role": "gate",
+      "gate": "G3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.md",
+      "sha256": "ecdb91bebe285920118924554769b3b90579f91ef84214e3988c306f7221b79c",
+      "size_bytes": 18121,
+      "line_count": 326,
+      "artifact_role": "gate",
+      "gate": "G4",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.json",
+      "sha256": "58c9cfed2006846ec89e61801df4159ac999765a8f8888802fbb84d4570c82b5",
+      "size_bytes": 36727,
+      "line_count": 730,
+      "artifact_role": "gate",
+      "gate": "G4",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.md",
+      "sha256": "e5b7c60d3ceb0ed26319dae5cf87cb2fa0284bb055bea80ae2d8bb14bf624ed6",
+      "size_bytes": 18872,
+      "line_count": 324,
+      "artifact_role": "gate",
+      "gate": "G5",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.json",
+      "sha256": "2a57cc21f8d2cd3515178db9b88a9578f0a8d3a668d4a6b723bafdfcbb4f4061",
+      "size_bytes": 43521,
+      "line_count": 905,
+      "artifact_role": "gate",
+      "gate": "G5",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_rv3_registry_v3_additive_planning.md",
+      "sha256": "a13ec49bf6678ad569896e6246bf39fb151d51ffd76df8a8886fd487bf38325a",
+      "size_bytes": 19857,
+      "line_count": 340,
+      "artifact_role": "gate",
+      "gate": "RV3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_rv3_registry_v3_additive_planning.json",
+      "sha256": "e344f8bb60091dfe438f38ccdcdd74fafbddad3f6c328f00d54f38fa8842a594",
+      "size_bytes": 39570,
+      "line_count": 839,
+      "artifact_role": "gate",
+      "gate": "RV3",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.md",
+      "sha256": "f9ffa37ab6a978ec6f486c57ff2631ee891e9fdf50fd1c24b0c4ed3aa6d4a7df",
+      "size_bytes": 24014,
+      "line_count": 353,
+      "artifact_role": "gate",
+      "gate": "G6",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.json",
+      "sha256": "7d575bfacd154b6785f082327ff4d2507751b0d02eb5b16c9ae9ff944b547791",
+      "size_bytes": 32031,
+      "line_count": 520,
+      "artifact_role": "gate",
+      "gate": "G6",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.md",
+      "sha256": "510495a08fb178fd733efbae18063d4d0de4891a18b4b1ef7234916d20ad71a2",
+      "size_bytes": 23011,
+      "line_count": 392,
+      "artifact_role": "gate",
+      "gate": "G7",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.json",
+      "sha256": "603be60869ad70dbacae0f3b08331bc674e7dab967ad162df8fe25e700e09c2e",
+      "size_bytes": 33163,
+      "line_count": 639,
+      "artifact_role": "gate",
+      "gate": "G7",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.md",
+      "sha256": "1c0323cd6c976441361e4917dd678c84af1ab26399792c1943f80c267fb04780",
+      "size_bytes": 23728,
+      "line_count": 441,
+      "artifact_role": "gate",
+      "gate": "G8",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.json",
+      "sha256": "dc77d3fabbb0aa82c6c27b7661e947fbcfc9f74358003a2b80d067d422a2a1bf",
+      "size_bytes": 25595,
+      "line_count": 754,
+      "artifact_role": "gate",
+      "gate": "G8",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.md",
+      "sha256": "bb275dea5385ce795ab4eb8705463c6a04ea5cd60c25b7ea454a6de488a17722",
+      "size_bytes": 49086,
+      "line_count": 708,
+      "artifact_role": "gate",
+      "gate": "G9",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g9_cacciatore_del_vuoto_tech_readiness.json",
+      "sha256": "425c5ec1b526e7bbd6b1cab4887e33b7c5e78727dbe9abb46bb44290ef86838c",
+      "size_bytes": 36652,
+      "line_count": 1014,
+      "artifact_role": "gate",
+      "gate": "G9",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.md",
+      "sha256": "a5bfb92a75566ddf75b78f8e3da3bb9e30bbd7e6fc0b523400faa2625362cfda",
+      "size_bytes": 29182,
+      "line_count": 578,
+      "artifact_role": "gate",
+      "gate": "G10",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_g10_cacciatore_del_vuoto_final_pm_review.json",
+      "sha256": "a4a644f90710c783d34e1b5a572388a27c89f1de149d48f3ff04d38e1874b3b1",
+      "size_bytes": 23028,
+      "line_count": 690,
+      "artifact_role": "gate",
+      "gate": "G10",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    }
+  ],
+  "certificate_files_pending_sha": [
+    {
+      "file_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.md",
+      "sha256_placeholder": "TBD_POST_WRITE",
+      "artifact_role": "certificate",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.json",
+      "sha256_placeholder": "TBD_POST_WRITE",
+      "artifact_role": "certificate",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    }
+  ],
+  "manifest_self_reference": {
+    "file_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_sha256_manifest.json",
+    "sha256_placeholder": "TBD_POST_WRITE (self-reference · pre-generation)",
+    "artifact_role": "manifest",
+    "gate": "final",
+    "status": "PM_APPROVED",
+    "pm_locked": true
+  },
+  "total_artifacts_registered": 23,
+  "total_including_certificate_and_manifest": 26,
+  "governance_lock": {
+    "pm_locked_all_artifacts": true,
+    "no_modification_allowed_without_pm_reopen": true,
+    "sealed_in_seal_system": false,
+    "seal_system_addition_deferred": true
+  },
+  "certificate_files_computed_sha": [
+    {
+      "file_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.md",
+      "sha256": "2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2",
+      "artifact_role": "certificate",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    },
+    {
+      "file_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.json",
+      "sha256": "87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c",
+      "artifact_role": "certificate",
+      "gate": "final",
+      "status": "PM_APPROVED",
+      "pm_locked": true
+    }
+  ]
+}
