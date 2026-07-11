@@ -1,0 +1,840 @@
+{
+  "metadata": {
+    "gate": "R18.6.RV3",
+    "scope": "Registry v3 Additive Planning",
+    "class_pilot": "Cacciatore del Vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "generated_at": "2026-07-08T21:30:00Z",
+    "status": "DRAFT_PENDING_PM_REVIEW",
+    "governance": "DOCUMENTAL ONLY · no code · no DB · no migrations · NO Registry v3 apply · NO Registry v3 runtime generation · NO item rows · NO item mocks · NO CSV · NO modifica catalogo R18.5 LOCKED",
+    "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5"
+    ],
+    "successor_gate": "R18.6.3-G6 PLAYER_GUIDE (HOLD · attende RV3 review + PM GO)",
+    "canonical_class_validation": "PASS",
+    "non_canonical_class_references": 0,
+    "planning_target_coverage": "≈120 items · design envelope 110-130",
+    "runtime_apply_ready": false,
+    "migration_status": "planning_only · no execution"
+  },
+  "executive_summary": {
+    "purpose": "Architettura Registry v3 additiva/modulare per estendere il Cacciatore del Vuoto senza modificare il catalogo R18.5 LOCKED e senza generare item reali",
+    "principle_1": "additive: Registry v3 aggiunge moduli class-extension SOPRA Registry v2 · MAI riscrive · MAI modifica R18.5",
+    "principle_2": "versioned: ogni class-extension module ha version tag + backward-compatibility contract",
+    "principle_3": "modular: ogni classe canonica ha proprio modulo isolato · zero cross-class pollution",
+    "principle_4": "class-extension-ready: schema permette estensione a Monaco/Druido/Alchimista/Bardo/Negromante etc senza rewrite",
+    "principle_5": "backward-compatible: R18.5 items continuano a funzionare invariati · zero rewrite/rigenerazione",
+    "principle_6": "auditable: ogni field additivo tracciabile · SHA256 module snapshot · diff traceable",
+    "principle_7": "read-only vs R18.5: separation contract iron-clad · Registry v3 NON può alterare R18.5",
+    "output_deliverable": "SOLO architettura + schema + dependencies · NO item rows · NO CSV · NO apply · NO runtime · NO mock",
+    "target_class_pilot": "cacciatore_del_vuoto (canonical class G1-G5 LOCKED)"
+  },
+  "architectural_objectives": {
+    "obj_1": "Definire additive module schema Registry v3 che consumi output G1-G5 senza modificarli",
+    "obj_2": "Preservare integrità Registry v2 + R18.5 catalog LOCKED (1500 items · zero rewrite)",
+    "obj_3": "Fornire class-extension model scalabile per 27 classi canoniche · pilot Vuoto è template",
+    "obj_4": "Definire deduplication methodology per riuso universal/shared references vs new class-specific rows",
+    "obj_5": "Enforcere hard-cap policy G1-G5 via metadata flags (resource_cap=5 · marchi_max=5 · durata_max=10T · proc_max=45% · reliability_max=98%)",
+    "obj_6": "Legendary semantic handling: Legendary ILVL=60 · utility_unique senza overrides scaling",
+    "obj_7": "Class_slug + bridge handling: warlock legacy → cacciatore_del_vuoto (mapped_design_only · not_applied · runtime_disabled)",
+    "obj_8": "Versioning strategy: registry_version · module_version · backward-compatibility guarantee",
+    "obj_9": "Rollback/read-only strategy: RV3 modules read-only vs R18.5 · rollback = disable module · no data loss",
+    "obj_10": "Future class scalability: schema template per Monaco/Druido/etc readiness gates futuri",
+    "constraint_absolute_1": "MAI generare item rows",
+    "constraint_absolute_2": "MAI modificare catalogo R18.5",
+    "constraint_absolute_3": "MAI applicare runtime",
+    "constraint_absolute_4": "MAI PvP untested effect (G4 HOLD)"
+  },
+  "registry_v2_preservation_strategy": {
+    "preservation_lock": "Registry v2 = FROZEN · zero rewrite · zero rigenerazione item esistenti · zero modifiche schema esistente",
+    "r18_5_catalog_lock": "1500 items catalog LOCKED (1500/1500 can_be_sold_for_real_money=false R18.5 conforme) · nessun item alterato · nessuna proprietà modificata",
+    "separation_contract": {
+      "read_only_from_r18_5": true,
+      "no_write_to_r18_5": true,
+      "no_delete_from_r18_5": true,
+      "no_schema_modification_r18_5": true,
+      "reference_only_universal_eligible": true,
+      "reference_only_shared_gear_candidates": true
+    },
+    "backward_compatibility_guarantee": "player esistenti · item R18.5 continuano a funzionare invariati · Registry v3 modules opzionali · disable module = fallback a Registry v2 comportamento",
+    "audit_trail": "ogni reference da Registry v3 a Registry v2 item tracciata · SHA256 snapshot module · diff auditabile",
+    "conflict_resolution": "in caso di conflitto Registry v3 vs v2 · Registry v2 vince (v2 = source of truth per item esistenti · v3 = additive extensions only)"
+  },
+  "registry_v3_additive_module_model": {
+    "module_structure": {
+      "module_id": "class_extension:<class_slug> (es. class_extension:cacciatore_del_vuoto)",
+      "module_version": "semver-like · v1.0.0 initial · additive patches +.0.1 · breaking +1.0.0 (mai retroactive)",
+      "module_scope": "single class canonical",
+      "module_dependencies": "Registry v2 base + G1-G5 LOCK schemas",
+      "module_output": "class-extension metadata + references + coverage plan (NO item rows)"
+    },
+    "additive_module_contract": {
+      "rule_1_additive_only": "MAI modificare v2 · SOLO aggiungere reference/metadata",
+      "rule_2_isolated_per_class": "un modulo per class_slug · zero cross-class overlap",
+      "rule_3_version_locked_dependencies": "dependency version LOCK · aggiornamento dep richiede module version bump",
+      "rule_4_read_only_shared": "shared item references sono read-only vs Registry v2",
+      "rule_5_no_conflict_pollution": "un modulo non altera comportamento di altre classi/moduli",
+      "rule_6_disable_reversible": "disable module = fallback Registry v2 · zero data loss · zero corruption"
+    },
+    "pilot_module_cacciatore_del_vuoto": {
+      "module_id": "class_extension:cacciatore_del_vuoto",
+      "module_version": "v1.0.0-draft",
+      "status": "PLANNING_ONLY",
+      "runtime_status": "disabled"
+    }
+  },
+  "schema_field_proposal": {
+    "registry_version": "v3.x semver · additive iterations",
+    "base_registry_reference": "Registry v2 (frozen · read-only)",
+    "class_extension_modules": "array<module_id> · uno per class_slug canonical",
+    "shared_item_references": "array<ref> · pointer read-only a Registry v2 items eligible per shared use",
+    "universal_eligibility_references": "array<ref> · pointer read-only a Registry v2 items universali (back/neck/ring/accessory con affix universale)",
+    "new_class_specific_items_future": "array<planning_ref> · SLOT PLANNING ONLY · NO item rows generate · da consumare in gate futuro Item Creation",
+    "new_shared_family_items_future": "array<planning_ref> · SLOT PLANNING ONLY · NO item rows",
+    "class_proficiency": "ref → G2 whitelist (armor stoffa/cuoio · weapon focus/balestra/pugnale)",
+    "main_stat_target": "ref → G1 (Intelligenza primary · soft cap 100 non-minimum · linear-flattening)",
+    "armor_whitelist": "['stoffa', 'cuoio'] · LOCK G2",
+    "weapon_whitelist": "['focus', 'balestra', 'pugnale'] · LOCK G2",
+    "resource_ref": "Frammenti di Onirade (cap 5 · class-exclusive · encounter-local · G4 LOCK)",
+    "affix_family_refs": "array<family_id> · 10 famiglie class-specific G5 LOCK",
+    "budget_profile_ref": "ref → G5 budget per tier T1-T5 (multiplier 1.0→2.7)",
+    "tier_profile_ref": "ref → G5 tier definition (T1 Lv1-15 · T2 Lv16-30 · T3 Lv31-45 · T4 Lv46-55 · T5 Lv56-60)",
+    "rarity_profile_ref": "ref → G5 rarity (Common 1.00 · Uncommon 1.15 · Rare 1.35 · Epic 1.60 · Legendary 1.85)",
+    "ilvl_policy_ref": "ref → G1 formula min(max(required_level + rarity_offset, tier_min), 60) · hard cap 60",
+    "hard_cap_policy_refs": {
+      "resource_cap_max": 5,
+      "marchi_active_max": 5,
+      "marchio_duration_max_turns": 10,
+      "proc_combined_max_percent": 45,
+      "reliability_max_percent": 98,
+      "legendary_ilvl_lock": 60
+    },
+    "legendary_semantic_rules": "Legendary ILVL=60 · utility_unique senza overrides scaling · nessun bonus Intelligenza pari a 60 aggiunto (G1 semantic correction LOCK)",
+    "runtime_apply_ready": false,
+    "migration_status": "planning_only · no execution · no runtime apply"
+  },
+  "class_extension_module": {
+    "template_structure": {
+      "module_id": "class_extension:<class_slug>",
+      "class_slug": "canonical from /app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+      "readiness_gates_refs": "array of gate refs (G1..G5 LOCKED for class pilot)",
+      "proficiency_refs": "armor + weapon whitelist refs",
+      "resource_ref": "class-exclusive resource identifier",
+      "affix_family_refs": "array of affix family IDs from G5",
+      "coverage_plan_ref": "reference to deduplication scenario (A/B/C)",
+      "hard_cap_metadata_refs": "hard cap policy IDs enforced",
+      "legendary_semantic_ref": "Legendary ILVL=60 utility_unique",
+      "runtime_status": "disabled (planning-only)"
+    },
+    "pilot_instance_cacciatore_del_vuoto": {
+      "module_id": "class_extension:cacciatore_del_vuoto",
+      "class_slug": "cacciatore_del_vuoto",
+      "readiness_gates_refs": [
+        "G1-STAT_DESIGN",
+        "G2-PROFICIENCY_DESIGN",
+        "G3-GAMEPLAY_LOOP",
+        "G4-RESOURCE_MECHANIC",
+        "G5-EQUIP_DESIGN"
+      ],
+      "proficiency_refs": {
+        "armor": [
+          "stoffa",
+          "cuoio"
+        ],
+        "weapon": [
+          "focus",
+          "balestra",
+          "pugnale"
+        ]
+      },
+      "resource_ref": "Frammenti di Onirade",
+      "affix_family_refs": [
+        "potenza_marchio",
+        "durata_marchio",
+        "efficacia_drain",
+        "qualita_dispel",
+        "interazione_frammenti",
+        "efficacia_payoff",
+        "anti_incorporeo",
+        "anti_summon",
+        "mobilita_canalizzazione",
+        "protezione_rituali"
+      ],
+      "coverage_plan_ref": "scenario_B_bilanciato (recommended)",
+      "hard_cap_metadata_refs": [
+        "resource_cap_5",
+        "marchi_max_5",
+        "durata_max_10T",
+        "proc_combined_max_45",
+        "reliability_max_98",
+        "legendary_ilvl_60"
+      ],
+      "legendary_semantic_ref": "utility_unique_no_stat_override",
+      "runtime_status": "disabled",
+      "status": "planning_draft"
+    }
+  },
+  "shared_item_reference_model": {
+    "definition": "shared item = item Registry v2 esistente eligible per uso da parte di cacciatore_del_vuoto senza modifiche · reference read-only",
+    "eligibility_criteria": [
+      "armor_type match whitelist Vuoto (stoffa/cuoio)",
+      "main_stat compatible (Intelligenza primary o universal stats)",
+      "class_requirement absent or includes cacciatore_del_vuoto (o vuoto proficiency compatible)",
+      "no forbidden affix presente (list G5 · 14 rules)"
+    ],
+    "reference_only": true,
+    "no_modification_r18_5": true,
+    "shared_family_examples_concept_only": [
+      "stoffa T2 Common Chest generic (Registry v2 R18.5 · Int-focus · universal-usable) → shared reference",
+      "cuoio T3 Uncommon Boots generic Int-focus → shared reference",
+      "pugnale T2 Uncommon generic Int-focus (se presente in Registry v2) → shared reference",
+      "focus T3 Common Int-focus (se presente in Registry v2) → shared reference"
+    ],
+    "no_item_creation_at_rv3": true,
+    "future_item_planning_refs_only": true
+  },
+  "universal_eligibility_model": {
+    "definition": "universal item = item su slot universal (back/neck/ring/accessory) con affix universale (vitalità/mana/regen/movement/generic) eligible cross-class",
+    "universal_slots_g5": [
+      "back",
+      "neck",
+      "ring",
+      "accessory"
+    ],
+    "affix_universal_types": [
+      "vitalita",
+      "mana_arcana",
+      "regen",
+      "movement_speed",
+      "generic_defensive"
+    ],
+    "eligibility_shared_across_classes": true,
+    "no_class_specific_affix_on_universal": "affix class-specific Vuoto MAI su slot universal (anti-monopolio · G5 LOCK)",
+    "reference_only_from_registry_v2": true,
+    "no_new_universal_rows_needed": "il grosso dei universal items sono già in Registry v2 · RV3 fornisce solo eligibility references",
+    "universal_reference_count_scenario_estimates": "vedi three_numeric_coverage_scenarios"
+  },
+  "deduplication_methodology": {
+    "principle": "massimizzare coverage utile · minimizzare duplicazione artificiale",
+    "avoid_duplication_of": [
+      "universal items già esistenti in Registry v2 (usa reference, non nuove righe)",
+      "shared family items compatible in Registry v2 (usa reference)",
+      "item creati SOLO per raggiungere target numerico 120 (violazione EQ-Q1 · anti-artificial-inflation)"
+    ],
+    "prioritize_creation_of": [
+      "item class-specific con affix families 1-10 non replicabili altrove",
+      "weapon focus/balestra/pugnale class-specific per Vuoto (non condivisibili con altre classi Int)",
+      "Legendary utility_unique T5 (2 trinket + 4 weapon slot filled)",
+      "trinket rituali class-specific (reliquia Vuoto)"
+    ],
+    "deduplication_formula_concept": "total_coverage = new_class_specific + new_shared_family + existing_shared + existing_universal · target ≈120 (envelope 110-130)",
+    "gap_tolerance": "gap 0-10 accettabile · gap ≥10 richiede rework scenario",
+    "no_padding_with_fillers": "MAI creare item filler per raggiungere target · qualità > quantità · EQ-Q1 LOCK"
+  },
+  "three_numeric_coverage_scenarios": {
+    "note_all_scenarios": "TUTTE le stime marcate NON-BINDING · PENDING PM · NO ITEM GENERATION · SOLO planning",
+    "scenario_A_conservative_reuse": {
+      "description": "riuso conservativo · pochi shared/universal references · più nuove righe class-specific",
+      "new_class_specific_rows_estimate": "95-105",
+      "new_shared_family_rows_estimate": "10-15",
+      "existing_universal_references_estimate": "5-10",
+      "existing_gear_candidate_references": "3-5",
+      "total_coverage_estimate": "113-135",
+      "coverage_gap_estimate": "0-5 (rispetto envelope 110-130)",
+      "risk_level": "HIGH · rischio inflation item · budget balancing oneroso · Registry v3 module bloat",
+      "pro": "maggiore identity class-specific · minimo dependency su Registry v2 items shared quality",
+      "contro": "onere item creation elevato · duplicazione con altre classi Int-focus (Mago) potenziale · budget review costoso",
+      "runtime_apply_ready": false,
+      "pending_pm": true
+    },
+    "scenario_B_balanced_reuse": {
+      "description": "riuso bilanciato · shared/universal references equilibrati con nuove righe · RACCOMANDATO",
+      "new_class_specific_rows_estimate": "65-80",
+      "new_shared_family_rows_estimate": "20-28",
+      "existing_universal_references_estimate": "15-22",
+      "existing_gear_candidate_references": "8-12",
+      "total_coverage_estimate": "108-142",
+      "coverage_gap_estimate": "0-5",
+      "risk_level": "MEDIUM · trade-off design intended · Registry v2 shared items validated via eligibility_criteria",
+      "pro": "onere item creation gestibile · identity preserved via class-specific 65-80 rows · riuso strategico universal · budget review sostenibile",
+      "contro": "dependency medium su Registry v2 sharing model · richiede eligibility_criteria validation robust",
+      "runtime_apply_ready": false,
+      "pending_pm": true,
+      "recommended": true
+    },
+    "scenario_C_maximum_reuse": {
+      "description": "riuso massimo compatibile · minimo nuove righe · maximizza references shared/universal Registry v2",
+      "new_class_specific_rows_estimate": "40-55",
+      "new_shared_family_rows_estimate": "30-40",
+      "existing_universal_references_estimate": "25-35",
+      "existing_gear_candidate_references": "12-18",
+      "total_coverage_estimate": "107-148",
+      "coverage_gap_estimate": "0-10",
+      "risk_level": "LOW-MEDIUM · dependency HIGH su Registry v2 sharing model quality · eligibility validation critica",
+      "pro": "onere item creation minimo · Registry v2 preserved fully · quick pilot readiness",
+      "contro": "identity class-specific meno pronunciata · rischio gear sharing Mago (Int shared) più visibile · richiede affix trinket class-specific compensare",
+      "runtime_apply_ready": false,
+      "pending_pm": true
+    },
+    "pm_recommendation": "Scenario B · balanced_reuse · gestibile onere + identity preserved + Registry v2 preservation robust",
+    "no_fixed_ratio_invented": true,
+    "target_coverage_envelope": "110-130 · planning center ≈120"
+  },
+  "tier_coverage_analysis": {
+    "note": "stime NON-BINDING per tier · pending PM · da consumare in gate futuro Item Creation",
+    "T1_Lv_1_15": {
+      "stoffa_int_coverage": "~4-5 armor pieces class-specific (helmet/chest/legs/boots partial)",
+      "cuoio_int_coverage": "~3-4 armor pieces",
+      "focus_class_specific": "1 (Common T1)",
+      "balestra_class_specific": "1 (Common T1)",
+      "pugnale_class_specific": "1 (Common T1)",
+      "universal_back_neck_ring_accessory_reused": "3-4 references Registry v2",
+      "affix_families_active": [
+        "potenza_marchio_lite",
+        "efficacia_drain_lite"
+      ],
+      "gap_notes": "affix limitati · onboarding tier"
+    },
+    "T2_Lv_16_30": {
+      "stoffa_int_coverage": "~7-8 armor pieces (Common+Uncommon)",
+      "cuoio_int_coverage": "~6-7 armor pieces",
+      "focus_class_specific": "2 (Common+Uncommon)",
+      "balestra_class_specific": "2",
+      "pugnale_class_specific": "2",
+      "universal_reused": "5-7 references",
+      "affix_families_active": "3-4 families",
+      "gap_notes": "onboarding continued · proc Int 10-20% attivo"
+    },
+    "T3_Lv_31_45": {
+      "stoffa_int_coverage": "~8-9 armor pieces (Uncommon+Rare)",
+      "cuoio_int_coverage": "~5-6 armor pieces",
+      "focus_class_specific": "2 (Uncommon+Rare)",
+      "balestra_class_specific": "2",
+      "pugnale_class_specific": "2",
+      "universal_reused": "6-8 references",
+      "trinket_class_specific": "1 (Rare Rituale)",
+      "affix_families_active": "5-7 families",
+      "gap_notes": "affix class-specific pieno · Marchi cap 4 (Int50)"
+    },
+    "T4_Lv_46_55": {
+      "stoffa_int_coverage": "~9-10 armor pieces (Rare+Epic)",
+      "cuoio_int_coverage": "~5 armor pieces",
+      "focus_class_specific": "2 (Rare+Epic)",
+      "balestra_class_specific": "2",
+      "pugnale_class_specific": "2",
+      "universal_reused": "6-8 references",
+      "trinket_class_specific": "1 (Epic Rituale)",
+      "affix_families_active": "8-10 families",
+      "gap_notes": "endgame rituale emerging · Marchi cap 5 (Int90)"
+    },
+    "T5_Lv_56_60": {
+      "stoffa_int_coverage": "~10 armor pieces (Epic+Legendary)",
+      "cuoio_int_coverage": "~4 armor pieces (30% share)",
+      "focus_class_specific": "2 (Epic + 1 Legendary utility_unique 'Focus di Onirade')",
+      "balestra_class_specific": "2 (Epic + 1 Legendary utility_unique)",
+      "pugnale_class_specific": "2 (Epic + 1 Legendary utility_unique)",
+      "universal_reused": "6-8 references",
+      "trinket_class_specific": "2 (Epic + 2 Legendary utility_unique 'Sigillo del Vuoto' + 'Cuore di Onirade')",
+      "affix_families_active": "10 families full",
+      "gap_notes": "endgame · Int soft cap 100 target · knee point · Legendary utility_unique per weapon+trinket"
+    }
+  },
+  "slot_coverage_analysis": {
+    "canonical_slots_approved_eq_q6": [
+      "back",
+      "neck",
+      "ring",
+      "accessory"
+    ],
+    "canonical_class_specific_slots": [
+      "helmet",
+      "shoulders",
+      "chest",
+      "gloves",
+      "belt",
+      "legs",
+      "boots",
+      "main_hand",
+      "off_hand"
+    ],
+    "trinket_alias_note": "'trinket' = alias legacy documentale → riferisce slot canonico 'accessory' (NON nuovo slot operativo · EQ-Q6 LOCK)",
+    "ring_positions": "'ring A' e 'ring B' sono POSIZIONI equip · slot canonico è 'ring' unico · NO ring1/ring2 come slot canonici (EQ-Q6 LOCK)",
+    "class_specific_slots_coverage": "10 slot × 5 tier × ~2 rarity = ~100 potential coverage (subset actually populated per Scenario B ~65-80 new class-specific rows)",
+    "universal_slots_coverage": "4 slot × 5 tier × ~2 rarity = ~40 potential coverage · maggior parte via references Registry v2 (Scenario B ~15-22 references + eventuali new_shared_family additions)"
+  },
+  "armor_coverage_analysis": {
+    "stoffa_int_focus_distribution_g5": {
+      "T1": 0.55,
+      "T2": 0.55,
+      "T3": 0.6,
+      "T4": 0.65,
+      "T5": 0.7
+    },
+    "cuoio_int_focus_distribution_g5": {
+      "T1": 0.45,
+      "T2": 0.45,
+      "T3": 0.4,
+      "T4": 0.35,
+      "T5": 0.3
+    },
+    "stoffa_identity_lock_eq_q3": "canalizzazione · Marchio · Drain · Intelligenza primaria",
+    "cuoio_identity_lock_eq_q3": "mobilità · posizionamento · protezione leggera · Intelligenza primaria (MAI Destrezza hybrid)",
+    "coverage_estimates_scenario_B": {
+      "stoffa_new_class_specific_rows": "35-45",
+      "cuoio_new_class_specific_rows": "20-30",
+      "shared_family_stoffa_int_references": "10-15",
+      "shared_family_cuoio_int_references": "5-10"
+    },
+    "no_dex_alternative_build": "confermato · G2 + EQ-Q3 LOCK · cuoio è Int-focus"
+  },
+  "weapon_coverage_analysis": {
+    "weapon_whitelist_g2": [
+      "focus",
+      "balestra",
+      "pugnale"
+    ],
+    "weapon_coefficients_direzionali_eq_q7": {
+      "focus": {
+        "baseline_relative": 1.0,
+        "identity": "primary_main_hand_arcane_throughput"
+      },
+      "balestra": {
+        "baseline_relative": "0.85-0.90",
+        "identity": "ranged_arcane_2h"
+      },
+      "pugnale": {
+        "baseline_relative": "0.70-0.80",
+        "identity": "ritual_opportunistic_off_hand"
+      }
+    },
+    "no_scaling_destrezza_lock": true,
+    "no_runtime_formula_lock": true,
+    "coverage_estimates_scenario_B": {
+      "focus_new_class_specific": "10 (5 tier × 2 rarity) + 1 Legendary utility_unique T5",
+      "balestra_new_class_specific": "10 + 1 Legendary utility_unique T5",
+      "pugnale_new_class_specific": "10 + 1 Legendary utility_unique T5",
+      "total_weapon_new_rows": "~33 class-specific",
+      "shared_weapon_references": "0-5 (pugnale generic Int-focus se presente Registry v2)"
+    },
+    "cross_class_weapon_note": "balestra family condivisa con Cacciatore di Mostri (fisica scaling Dex) · pugnale family condiviso con Ladro (Dex) · sharing SOLO via family name · scaling e affix distinti (Int-focus Vuoto vs Dex altre classi)"
+  },
+  "affix_reference_architecture": {
+    "affix_families_g5_lock": {
+      "family_1_potenza_marchio": {
+        "slots_eligible": [
+          "helmet",
+          "chest",
+          "accessory",
+          "main_hand"
+        ],
+        "hard_cap_alignment": "no bypass durata 10T · no bypass Marchi cap 5"
+      },
+      "family_2_durata_marchio": {
+        "slots_eligible": [
+          "helmet",
+          "shoulders",
+          "chest",
+          "accessory"
+        ],
+        "hard_cap_alignment": "hard cap 10T LOCK · sommato Int scale non oltrepassa"
+      },
+      "family_3_efficacia_drain": {
+        "slots_eligible": [
+          "gloves",
+          "main_hand",
+          "off_hand",
+          "accessory"
+        ],
+        "hard_cap_alignment": "combined proc ceiling 45% LOCK EQ-Q5"
+      },
+      "family_4_qualita_dispel": {
+        "slots_eligible": [
+          "main_hand",
+          "off_hand",
+          "accessory",
+          "back"
+        ],
+        "hard_cap_alignment": "boss arcane leggendario preserved G4"
+      },
+      "family_5_interazione_frammenti": {
+        "slots_eligible": [
+          "belt",
+          "accessory",
+          "off_hand"
+        ],
+        "hard_cap_alignment": "resource_cap 5 LOCK · no bypass"
+      },
+      "family_6_efficacia_payoff": {
+        "slots_eligible": [
+          "chest",
+          "accessory",
+          "main_hand"
+        ],
+        "hard_cap_alignment": "anti-random-waste safeguard G4 · summon standard 100% preserved"
+      },
+      "family_7_anti_incorporeo": {
+        "slots_eligible": [
+          "gloves",
+          "main_hand",
+          "accessory"
+        ],
+        "hard_cap_alignment": "identity anti-arcano"
+      },
+      "family_8_anti_summon": {
+        "slots_eligible": [
+          "shoulders",
+          "back",
+          "accessory"
+        ],
+        "hard_cap_alignment": "boss diretto MAI silenziato G4 LOCK"
+      },
+      "family_9_mobilita_canalizzazione": {
+        "slots_eligible": [
+          "boots",
+          "legs",
+          "belt"
+        ],
+        "hard_cap_alignment": "no free move · anti-cheese knockback"
+      },
+      "family_10_protezione_rituali": {
+        "slots_eligible": [
+          "chest",
+          "shoulders",
+          "back"
+        ],
+        "hard_cap_alignment": "MAI immunità hard-CC boss enrage/stun leggendario"
+      }
+    },
+    "affix_forbidden_rules_g5_ref": "14 rules · vedi G5 sezione 8 · tutte enforced via hard_cap_policy_refs"
+  },
+  "hard_cap_enforcement_metadata": {
+    "cap_flags": {
+      "resource_cap_max_frammenti": 5,
+      "marchi_active_max": 5,
+      "marchio_duration_max_turns": 10,
+      "proc_combined_max_percent": 45,
+      "reliability_max_percent": 98,
+      "legendary_ilvl_lock": 60
+    },
+    "enforcement_rule": "ogni class-extension module DEVE enforcer questi cap · violazione = module rejection al planning gate",
+    "audit_check_g5_forbidden_rules": "14 rules G5 · elenco esteso · rispetto integrale G1-G4 LOCK",
+    "no_bypass_via_affix": true,
+    "no_bypass_via_legendary": true,
+    "no_bypass_via_set_bonus_futuri": "set bonus gate futuro rispetterà cap · design gate isolation preserved"
+  },
+  "legendary_semantic_handling": {
+    "semantic_lock_g1": "Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto · utility_unique senza overrides scaling · G1 semantic correction LOCK preserved",
+    "utility_unique_examples_concept_g5_ref": [
+      "Focus di Onirade T5 Legendary: Payoff 5F cast time 0.5T (quality-of-life · MAI stat override)",
+      "Sigillo del Vuoto T5 Legendary Accessory: Marchio applicato applica silence +0.5T (rispetta hard cap 10T)",
+      "Cuore di Onirade T5 Legendary Accessory: Payoff 3F feedback visual/audio esteso (QoL · no stat)"
+    ],
+    "legendary_multiplier_1_85x_scope_eq_q4": "budget TOTALE inclusa utility_unique · MAI 1.85× stat grezze · utility unica consuma parte del budget · MAI stat-stick generico",
+    "no_stat_scaling_override": true,
+    "no_cap_bypass": true,
+    "no_progressive_discovery_stat_leak": "Progressive Discovery Legendary P1-P4 gate futuro (HOLD) rispetterà semantic LOCK"
+  },
+  "class_slug_bridge_handling": {
+    "canonical_class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "snake_case_lowercase_lock": true,
+    "legacy_bridge_warlock": {
+      "mapping_direction": "warlock → cacciatore_del_vuoto",
+      "status": "mapped_design_only",
+      "runtime_status": "not_applied · runtime_disabled",
+      "auto_derive": false,
+      "note": "bridge esiste come mapping documentale · MAI applicato runtime · MAI attivo · gate futuro dedicated per applicazione"
+    },
+    "no_non_canonical_class_references": true,
+    "canonical_validation_status": "PASS"
+  },
+  "versioning_strategy": {
+    "registry_version": "v3.<x>.<y> semver-like · additive iterations",
+    "module_version": "v<major>.<minor>.<patch> per class-extension module · additive patches +.0.1 · breaking +1.0.0",
+    "backward_compatibility_guarantee": "additive patches MAI rompono v2 · minor bump SOLO se nuovo affix family/slot canonical · major bump SOLO se schema breaking (mai retroactive)",
+    "module_snapshot_sha256": true,
+    "diff_traceability": "ogni module patch produce diff auditabile · SHA256 snapshot module + registry_version",
+    "no_retroactive_breaking_changes": true
+  },
+  "rollback_read_only_strategy": {
+    "rollback_mechanism": "disable class-extension module · fallback automatico Registry v2 comportamento",
+    "no_data_loss_on_rollback": true,
+    "no_r18_5_corruption_on_rollback": true,
+    "read_only_contract_vs_r18_5": true,
+    "read_only_contract_vs_registry_v2": true,
+    "audit_trail_on_disable": "disable action loggata · reason · timestamp · reversibile con enable",
+    "safe_disable_ready": "planning-only · NON attivato runtime · NO rollback attualmente necessario",
+    "emergency_disable_capability": "gate futuro implementation deve garantire disable-in-1-op"
+  },
+  "future_class_scalability": {
+    "template_ready_for_27_classes": true,
+    "canonical_classes_covered_currently": 1,
+    "canonical_classes_pending_readiness": 26,
+    "class_extension_module_template_reusable": true,
+    "per_class_gate_sequence": "G1 STAT_DESIGN → G2 PROFICIENCY_DESIGN → G3 GAMEPLAY_LOOP → G4 RESOURCE_MECHANIC → G5 EQUIP_DESIGN → RV3 class-extension module planning",
+    "roadmap_next_class_pilots_wave_1": [
+      "Monaco",
+      "Druido",
+      "Alchimista",
+      "Bardo",
+      "Negromante"
+    ],
+    "wave_1_status": "HOLD · attende Vuoto pilot closure completa (RV3 + Gate 6 PLAYER_GUIDE + eventuale playtest)",
+    "cross_class_shared_resources_no_pollution": true,
+    "isolation_per_class_module": true
+  },
+  "risk_register": [
+    {
+      "id": "RV3-R1",
+      "risk": "Scenario B eligibility_criteria mal calibrati · shared references includono item non-Vuoto-suitable",
+      "severity": "MEDIUM",
+      "mitigation": "eligibility_criteria enforcement rigido (armor_type + main_stat + class_requirement + forbidden affix) · validation gate futuro pre-Item Creation",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R2",
+      "risk": "Scenario A (conservative) → item inflation · budget balance oneroso · rischio Registry v3 module bloat",
+      "severity": "MEDIUM",
+      "mitigation": "Scenario B recommended · A opzione fallback solo se PM richiede identity massimale · gate futuro Item Creation review budget",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R3",
+      "risk": "Scenario C (max reuse) → identity Vuoto attenuata · gear sharing Mago Int-share più visibile",
+      "severity": "MEDIUM",
+      "mitigation": "trinket class-specific 5 tier compensa identity · affix families 1-10 targettate Marchio/Drain/Frammenti/Payoff",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R4",
+      "risk": "Backward compatibility break se schema Registry v3 evolve breaking",
+      "severity": "MEDIUM",
+      "mitigation": "versioning strategy LOCK · major bump MAI retroactive · disable module = fallback v2 · audit trail",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R5",
+      "risk": "R18.5 catalog accidentally modified da RV3 runtime (future)",
+      "severity": "HIGH",
+      "mitigation": "read_only_contract vs R18.5 iron-clad · runtime layer futuro deve rispettare · gate futuro Item Creation review lock",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "RV3-R6",
+      "risk": "Universal references duplicated across class modules · inflation universal slots",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "universal references shared read-only vs Registry v2 · NO duplicazione universali per target artificiale (EQ-Q1 LOCK)",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R7",
+      "risk": "Affix combined proc 45% bypass via combinazione class-extension modules multipli (multi-class scenarios)",
+      "severity": "MEDIUM",
+      "mitigation": "combined proc ceiling 45% LOCK EQ-Q5 · runtime enforcement gate futuro · Vuoto single-class scenario baseline (multi-class HOLD)",
+      "status": "TRACKED PG2"
+    },
+    {
+      "id": "RV3-R8",
+      "risk": "Class extension module version drift · Vuoto module non allineato con G1-G5 patch futuri",
+      "severity": "LOW",
+      "mitigation": "dependency version LOCK · aggiornamento G1-G5 richiede module version bump esplicito · SHA256 snapshot audit",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R9",
+      "risk": "Lanterna reserved_future_review revocato → richiede rework RV3 schema",
+      "severity": "LOW",
+      "mitigation": "Lanterna excluded_from_registry_v3_pilot=true · sub-gate R18.6.LTN futuro dedicato · rework additivo non retroactive",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R10",
+      "risk": "PvP effect HOLD (G4 RM-Q7) potrebbe richiedere RV3 module extension futura",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "PvP normalization gate futuro dedicato · module version bump additivo · runtime disabled fino a gate futuro",
+      "status": "TRACKED PG2"
+    },
+    {
+      "id": "RV3-R11",
+      "risk": "Wave 1 successors (Monaco/Druido/etc) potrebbero introdurre affix family collision con Vuoto",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "isolation per class module LOCK · affix families class-specific namespace per class_slug · zero cross-class pollution",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R12",
+      "risk": "Item quantity envelope 110-130 riesaminato al ribasso dal PM post-RV3 review",
+      "severity": "LOW",
+      "mitigation": "3 scenari propongono range 107-148 · flessibilità PM · Scenario B centro recommended · aggiustamento planning target ≈120 valid",
+      "status": "OPEN_FOR_PM"
+    },
+    {
+      "id": "RV3-R13",
+      "risk": "Legendary utility_unique implementation drift (stat sneak) in gate futuro",
+      "severity": "MEDIUM",
+      "mitigation": "semantic_lock_g1 iron-clad · esempi utility_unique concept documentati · gate futuro review obbligatoria",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "RV3-R14",
+      "risk": "Slot canonical `accessory` vs alias legacy `trinket` confusione in gate futuro",
+      "severity": "LOW",
+      "mitigation": "alias mapping esplicito in schema · documentazione EQ-Q6 LOCK · migration path documentato per legacy code (se applicato in futuro)",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RV3-R15",
+      "risk": "Playtest post-Gate 6 rivela item quantity insufficient · richiede RV3 scenario re-eval",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "scenari NON-BINDING · Scenario B ha flessibilità gap 0-5 · gate futuro playtest → RV3 minor version bump additivo",
+      "status": "TRACKED PG3"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "RV3-Q1",
+      "question": "Scenario recommended (B balanced_reuse) conferma o preferisci A/C?",
+      "options": [
+        "a) LOCK Scenario B",
+        "b) Scenario A conservative (item inflation trade-off)",
+        "c) Scenario C max reuse (identity trade-off)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q2",
+      "question": "Planning target ≈120 conferma o rivedi al ribasso/rialzo?",
+      "options": [
+        "a) LOCK ≈120 target",
+        "b) abbassa a ≈100 (T1-T3 mainstream)",
+        "c) alza a ≈140 (T4-T5 espansione)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q3",
+      "question": "Eligibility_criteria shared references validation gate futuro conferma?",
+      "options": [
+        "a) LOCK · validation gate pre-Item Creation obbligatoria",
+        "b) validation solo in Item Creation gate diretto (skip extra gate)",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q4",
+      "question": "Bridge legacy warlock → cacciatore_del_vuoto: mapped_design_only + runtime_disabled conferma?",
+      "options": [
+        "a) LOCK mapped_design_only · runtime_disabled",
+        "b) prepara runtime enable in gate futuro Bridge Apply dedicato",
+        "c) rimuovi mapping (Vuoto è NEW, no bridge)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q5",
+      "question": "Versioning strategy semver (major.minor.patch) con no-retroactive-breaking conferma?",
+      "options": [
+        "a) LOCK semver + no-retroactive-breaking",
+        "b) versioning date-based (2026.07.x)",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q6",
+      "question": "Slot canonical `accessory` con alias legacy `trinket` mapping conferma?",
+      "options": [
+        "a) LOCK · trinket = alias legacy → accessory",
+        "b) rimuovi alias · trinket separate slot",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q7",
+      "question": "Wave 1 successors (Monaco/Druido/Alchimista/Bardo/Negromante) HOLD fino a Vuoto pilot closure completa conferma?",
+      "options": [
+        "a) LOCK HOLD Wave 1 fino Vuoto Gate 6 + playtest",
+        "b) authorize Monaco parallel post-RV3 CLOSED (accelerazione)",
+        "c) roadmap dedicated"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RV3-Q8",
+      "question": "Read-only contract vs R18.5 + Registry v2 iron-clad in schema RV3 conferma?",
+      "options": [
+        "a) LOCK iron-clad",
+        "b) permessa write additiva controllata (gate futuro)",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    }
+  ],
+  "go_hold_recommendation": {
+    "rv3_status": "DRAFT · PLANNING ONLY · pending PM review + risposte RV3-Q1..RV3-Q8",
+    "runtime_status": "disabled · NO apply · NO item generation · NO CSV · NO mock",
+    "gate_6_player_guide_status": "HOLD · attende PM ACK RV3 + GO esplicito Gate 6",
+    "wave_1_successors_status": "HOLD · attende Vuoto pilot closure completa (RV3 CLOSED + Gate 6 CLOSED + eventuale playtest)",
+    "no_gate_6_auto_start": true,
+    "no_monaco_kickoff": true,
+    "no_r18_3f_kickoff": true,
+    "no_item_creation_auto_start": true,
+    "recommended_next_step": "PM review RV3 architecture + risposte RV3-Q1..RV3-Q8 → RV3 CLOSED verdict → GO Gate 6 PLAYER_GUIDE"
+  },
+  "governance": {
+    "documental_only": true,
+    "no_code_touch": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_registry_v3_apply": true,
+    "no_registry_v3_runtime_generation": true,
+    "no_item_rows": true,
+    "no_item_mocks": true,
+    "no_item_csv": true,
+    "no_r18_5_catalog_modification": true,
+    "no_new_items_live": true,
+    "no_drop_tables": true,
+    "no_crafting_tables": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_legacy_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_gate_6_auto_start": true,
+    "no_monaco_kickoff": true,
+    "no_r18_3f_kickoff": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5"
+    ]
+  },
+  "stop_after_rv3": {
+    "action": "STOP · attendo PM verdict RV3 (CLOSED/REWORK) + risposte RV3-Q1..RV3-Q8 · Gate 6 PLAYER_GUIDE HOLD · Wave 1 successors HOLD",
+    "no_auto_start_gate_6": true,
+    "no_auto_start_monaco": true,
+    "no_auto_start_r18_3f": true,
+    "no_auto_start_item_creation": true,
+    "explicit_stop": true
+  }
+}

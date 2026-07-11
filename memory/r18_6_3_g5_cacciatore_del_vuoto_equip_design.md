@@ -18,7 +18,7 @@
 | **T2 Cacciatore** | 16-30 | 1.35 | 25-45 | 0 | 2 | Int + vit sec · Int proc 10-20% |
 | **T3 Iniziato** | 31-45 | 1.75 | 45-70 | 0-1 | 3 | Int dominante · Int 50 = +1 Marchio · proc 20-30% |
 | **T4 Rituale** | 46-55 | 2.20 | 70-100 | 1-2 | 4 | Int 90 = +1 Marchio (cap 5) · proc 30-40% |
-| **T5 Vuoto** | 55-60 | 2.70 | 100+ soft cap | 2-3 | 5 | Int knee point · proc 45% cap · Marchio 8T (hard cap 10T) |
+| **T5 Vuoto** | 56-60 | 2.70 | 90-115 (soft cap Int=100 non-minimum · linear-flattening) | 2-3 | 5 | Int soft cap 100 target progressione + diminishing returns · proc 45% cap · Marchio 8T (hard cap 10T) |
 
 **Note gate isolation**: Budget direzionale · NO formule runtime · G6+ finalizza display · Registry v3 (HOLD) consumerà.
 
@@ -32,7 +32,7 @@
 | Epic | 1.60 | 3-4 | 1-2 | No |
 | **Legendary** | **1.85** | 4-5 | 2-3 | **YES** · ILVL=60 lock · utility_unique NO overrides |
 
-**Rationale**: multiplier progression smooth · no step function · Legendary utility_unique senza overrides stat · anti-power-creep preservato · Legendary semantic G1 LOCK: `Legendary ILVL = 60 · NON +60 Intelligenza`.
+**Rationale**: multiplier progression smooth · no step function · Legendary utility_unique senza overrides stat · anti-power-creep preservato · Legendary semantic G1 LOCK: `Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (utility_unique NON stat scaling override)`.
 
 ## Sezione 3 · Scaling qualitativo weapon
 
@@ -232,20 +232,20 @@
 | Epic | +10 |
 | Legendary | +15 |
 
-**Tier min**: T1=1 · T2=16 · T3=31 · T4=46 · T5=55 · **ILVL hard cap: 60**
+**Tier min**: T1=1 · T2=16 · T3=31 · T4=46 · T5=56 · **ILVL hard cap: 60**
 
-**Legendary ILVL LOCK**: **60** · semantic `Legendary ILVL = 60 · NON +60 Intelligenza` · utility_unique senza overrides · affix non può alterare ILVL Legendary (resta 60)
+**Legendary ILVL LOCK**: **60** · semantic `Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (utility_unique NON stat scaling override)` · affix non può alterare ILVL Legendary (resta 60)
 
 **Esempi**:
 - T2 Common lvl 20 → `min(max(20+0, 16), 60)` = **20**
 - T3 Rare lvl 40 → `min(max(40+5, 31), 60)` = **45**
-- T5 Legendary lvl 55 → `min(max(55+15, 55), 60)` = **60** (hard cap)
+- T5 Legendary lvl 60 → `min(max(60+15, 56), 60)` = **60** (hard cap · Legendary ILVL=60 semantic LOCK)
 
 **No runtime execution G5**.
 
 ## Sezione 15 · Legendary utility interaction
 
-**Semantic LOCK G1 preserved**: `Legendary ILVL = 60 · NON +60 Intelligenza`
+**Semantic LOCK G1 preserved**: `Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (utility_unique NON stat scaling override)`
 
 **Utility_unique examples concept** (quality-of-life · MAI stat overrides):
 - **Legendary Focus T5 "Focus di Onirade"**: Payoff 5F cast time 0.5T invece di 1T (utility quality)

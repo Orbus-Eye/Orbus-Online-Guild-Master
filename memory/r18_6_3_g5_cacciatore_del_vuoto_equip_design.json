@@ -6,7 +6,7 @@
     "class_slug": "cacciatore_del_vuoto",
     "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
     "generated_at": "2026-07-08T20:15:00Z",
-    "status": "DRAFT_PENDING_PM_REVIEW",
+    "status": "PM_APPROVED_CLOSED",
     "governance": "DOCUMENTAL ONLY · no code · no DB · no migrations · no Registry v3 generation · no item rows · no drop tables · no crafting",
     "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
     "predecessor_gates_locked": [
@@ -22,7 +22,9 @@
     "successor_gate": "R18.6.3-G6 PLAYER_GUIDE (HOLD · attende G5 CLOSED)",
     "canonical_class_validation": "PASS",
     "non_canonical_class_references": 0,
-    "terminology_note": "budget · rarity · affix · slot · tier · ILVL · gear sharing (nessun uso improprio di termini loot-related come 'd.r.rate')"
+    "terminology_note": "budget · rarity · affix · slot · tier · ILVL · gear sharing (nessun uso improprio di termini loot-related come 'd.r.rate')",
+    "micro_fix_applied": "2026-07-08T21:00:00Z",
+    "micro_fix_scope": "T5 tier boundaries updated (T5 primo livello ora Lv56 · T5 ultimo livello Lv60 · lv precedente boundary superiore T4=55 corretto) · Int T5 direction updated (100+ → 90-115 · soft cap Intelligenza=100 non-minimum · linear-flattening preserved) · ILVL example calc updated · progression_buckets endgame updated"
   },
   "budget_per_tier": {
     "concept": "budget statistico relativo · valori direzionali · NO formule runtime",
@@ -63,13 +65,22 @@
       "note": "soglia Int 90 = +1 Marchio (cap 5) · proc 30-40% · durata 6-7T"
     },
     "T5_Vuoto": {
-      "level_range": "55-60",
+      "level_range": "56-60",
       "power_baseline_relative": 2.7,
-      "int_budget_direction": "100+ (soft cap linear-flattening applica)",
+      "int_budget_direction": "90-115 (soft cap Intelligenza=100 non-minimum · linear-flattening · target progressione + diminishing returns · NON requisito minimo T5, NON requisito equip, NON hard cap)",
       "sockets": "2-3",
       "affix_slots_max": 5,
       "primary_stat_focus": "Intelligenza al soft cap · secondari a scelta build",
-      "note": "endgame · knee point Int 100 · proc 45% cap · durata Marchio 8T (+0.5 per 50 Int oltre) · hard cap 10T"
+      "note": "endgame · soft cap Int 100 = target progressione + diminishing returns (linear-flattening) · Int expected range 90-115 · NON requisito minimo T5 · proc 45% cap · durata Marchio 8T (+0.5 per 50 Int oltre 100) · hard cap 10T",
+      "int_soft_cap_semantics": {
+        "soft_cap_Intelligenza": 100,
+        "diminishing_returns": "linear-flattening",
+        "expected_int_range_t5": "90-115",
+        "int_100_role": "target progressione + diminishing returns knee point",
+        "not_minimum_requirement_t5": true,
+        "not_equip_requirement": true,
+        "not_hard_cap": true
+      }
     },
     "note_gate_isolation": "Budget direzionale · G5 NON fornisce formule runtime · G6+ finalizza player-facing display · Registry v3 (HOLD) consumerà questo budget"
   },
@@ -108,7 +119,7 @@
       "sockets_max": "2-3",
       "legendary_utility": true,
       "legendary_ilvl_lock": 60,
-      "legendary_semantic": "Legendary ILVL = 60 · NON +60 Intelligenza · utility_unique senza overrides scaling design (G1 semantic correction)",
+      "legendary_semantic": "Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (utility_unique senza overrides scaling design · G1 semantic correction)",
       "note": "T5 · utility_unique (es. estende loop Marchio in modo qualitativo, non stat +) · anti-power-creep preservato"
     },
     "rationale": "multiplier progression evita step function · Legendary utility_unique = no overrides · budget compatibile con Int soft cap 100"
@@ -529,7 +540,7 @@
       "T2_Cacciatore_16_30": "2 armor set (stoffa Common+Uncommon · cuoio Common+Uncommon) = 14 · + 3 weapon × 2 rarity = 6 · + 4 accessory (cloak/neck/ring x2 universal) = 4 · totale T2 ≈ 24",
       "T3_Iniziato_31_45": "2 armor set (Uncommon+Rare stoffa/cuoio) = 14 · + 3 weapon × 2 rarity = 6 · + 4 accessory + 1 trinket class-specific = 5 · totale T3 ≈ 25",
       "T4_Rituale_46_55": "2 armor set (Rare+Epic) = 14 · + 3 weapon × 2 rarity = 6 · + 5 accessory/trinket = 5 · totale T4 ≈ 25",
-      "T5_Vuoto_55_60": "2 armor set (Epic+Legendary) = 14 · + 3 weapon × 2 rarity = 6 · + 6 accessory/trinket (incluso 2 Legendary trinket utility_unique) = 6 · totale T5 ≈ 26"
+      "T5_Vuoto_56_60": "2 armor set (Epic+Legendary) = 14 · + 3 weapon × 2 rarity = 6 · + 6 accessory/trinket (incluso 2 Legendary trinket utility_unique) = 6 · totale T5 ≈ 26"
     },
     "estimated_total_range": "≈ 110-130 items",
     "rationale": [
@@ -562,7 +573,7 @@
     "progression_buckets": {
       "onboarding_T1_T2": "focus + stoffa base + universal accessory · loop learning 4-step",
       "midgame_T3_T4": "affix class-specific attivi · Marchi cap 4 (Int50) · rituale identity emerging",
-      "endgame_T5": "Legendary utility_unique · Marchi cap 5 (Int90) · Int soft cap 100 · knee point"
+      "endgame_T5": "Legendary utility_unique · Marchi cap 5 (Int90) · Int soft cap 100 target progressione (non minimum requirement) · Int expected range 90-115"
     }
   },
   "lanterna_necessity_decision": {
@@ -600,23 +611,23 @@
       "T2": 16,
       "T3": 31,
       "T4": 46,
-      "T5": 55
+      "T5": 56
     },
     "ilvl_hard_cap": 60,
     "legendary_ilvl_lock": {
       "value": 60,
-      "semantic": "Legendary ILVL = 60 · NON +60 Intelligenza · utility_unique senza overrides scaling (G1 semantic correction LOCK)",
+      "semantic": "Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (utility_unique senza overrides scaling · G1 semantic correction LOCK)",
       "affix_forbidden_note": "affix non può alterare Legendary ILVL · resta 60 per tutte le pieces Legendary"
     },
     "example_calc": [
       "T2 Common lvl 20: min(max(20 + 0, 16), 60) = 20",
       "T3 Rare lvl 40: min(max(40 + 5, 31), 60) = 45",
-      "T5 Legendary lvl 55: min(max(55 + 15, 55), 60) = 60 (hard cap)"
+      "T5 Legendary lvl 60: min(max(60 + 15, 56), 60) = 60 (hard cap · Legendary ILVL=60 semantic LOCK)"
     ],
     "no_runtime_execution_at_g5": true
   },
   "legendary_utility_interaction": {
-    "semantic_lock": "Legendary ILVL = 60 · NON +60 Intelligenza (G1 semantic correction LOCK preserved through G5)",
+    "semantic_lock": "Legendary ILVL = 60 · nessun bonus Intelligenza pari a 60 aggiunto (G1 semantic correction LOCK preserved through G5)",
     "utility_unique_examples_concept": [
       "Legendary Focus T5: 'Focus di Onirade' · utility unique: Payoff 5F cast time 0.5T invece di 1T (utility qualitative · MAI stat overrides)",
       "Legendary Trinket T5 A: 'Sigillo del Vuoto' · utility unique: Marchio applicato applica silenziamento anti-cast +0.5T (soft-scaling che rispetta hard cap 10T non alterato)",

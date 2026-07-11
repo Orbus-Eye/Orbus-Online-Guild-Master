@@ -3032,3 +3032,82 @@ Item condiviso per weapon/armor family **NON è automaticamente ottimale** per t
 - **R18.6.3-G4 = CLOSED** ✅
 - **R18.6.3-G5 EQUIP_DESIGN = AUTHORIZED** 🟢
 - **R18.6.3-G6 PLAYER_GUIDE = HOLD** 🔒 (attende G5 CLOSED)
+
+
+## R18.6.3-G5 EQUIP_DESIGN CLOSED (Cacciatore del Vuoto · PM APPROVED · with binding answers EQ-Q1..EQ-Q8 + micro-fix T5/Int · 2026-07-08T21:15:00Z)
+
+**Milestone**: **R18.6.3 Gate 5 EQUIP_DESIGN = PM APPROVED = CLOSED** ✅ · R18.6.RV3 Registry v3 Additive Planning **AUTHORIZED** 🟢 · Gate 6 PLAYER_GUIDE **HOLD** 🔒
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations · zero item generation · zero Registry v3 apply · zero CSV · zero mock · zero modifica catalogo R18.5 LOCKED.
+
+### G5 Micro-Fix Applied (pre-closure)
+
+- **T5 tier boundaries corretti**: T5 = Lv56-60 (era Lv55-60) · Lv55 appartiene esclusivamente a T4 · Lv56 primo livello T5
+- **Int T5 direction aggiornata**: `expected Int range = 90-115` (era `100+`) · **soft cap Intelligenza = 100 NON-MINIMUM · linear-flattening preserved** · Int 100 = target progressione + diminishing returns · NON requisito minimo T5 · NON requisito equip · NON hard cap
+- **ILVL example calc aggiornato**: esempio T5 Legendary aggiornato a lv 60 (hard cap) · rimosso esempio lv 55 (non più T5)
+- **NON modificato**: main stat · priorità stat · coefficienti qualitativi · affix · budget tier · rarity multiplier · proficiency
+
+### G5 Approved Summary (verbatim PM decisions EQ-Q1..EQ-Q8)
+
+#### EQ-Q1 · Quantità item — LOCK
+- **Design envelope**: 110-130 items
+- **Planning target**: ≈120 items
+- **Registry v3 deve distinguere**: `new_class_specific_rows` · `new_shared_family_rows` · `existing_universal_eligible_references`
+- **NO duplicazione universali per target artificiale**
+
+#### EQ-Q2 · Lanterna — LOCK
+- **Status**: `reserved_future_review` (NON `NON_NECESSARIA_forever`)
+- **NO proficiency** · **NO Registry v3 row** · **NO item** · **NO sub-gate R18.6.LTN**
+- **Rivalutabile SOLO con futuro GO PM esplicito**
+
+#### EQ-Q3 · Stoffa/Cuoio T5 — LOCK
+- **Distribuzione T5**: 70% stoffa · 30% cuoio
+- **stoffa identity**: canalizzazione · Marchio · Drain · Intelligenza primaria
+- **cuoio identity**: mobilità · posizionamento · protezione leggera · Intelligenza primaria
+- **NO build Destrezza alternativa** · cuoio Vuoto è Int-focus, MAI Dex hybrid
+
+#### EQ-Q4 · Legendary multiplier — LOCK
+- **1.85× budget TOTALE** (inclusa utility_unique)
+- **NO 1.85× su stat grezze** · **NO utility su budget già massimizzato** · **NO stat-stick generico**
+- **Utility unica consuma parte del budget** · Legendary ILVL=60 · nessun bonus Intelligenza pari a 60 aggiunto (semantic G1 correction LOCK)
+
+#### EQ-Q5 · Combined proc ceiling — LOCK
+- **45% hard cap** (Int + affix + set + Legendary + combinazioni tutte)
+- **NO stacking bypass** via affix/set/Legendary/combinazioni
+- **Coerente con G4 limite** (Int 45% cap Int 100+ soft cap linear-flattening)
+
+#### EQ-Q6 · Universal equipment coverage — LOCK
+- **4 posizioni universali equip**: `back` · `neck` · `ring A` · `ring B`
+- **Slot canonico**: `ring` (ring A e ring B sono POSIZIONI equip, NON nuovi slot canonici)
+- **Slot canonici approvati**: `back` · `neck` · `ring` · `accessory`
+- **`trinket` = alias legacy documentale** → riferisce lo slot canonico **`accessory`** (NON nuovo slot operativo)
+- **NO `ring1`/`ring2` come slot canonici** salvo futuro gate
+
+#### EQ-Q7 · Weapon coefficients — LOCK (design direction only)
+- **Order LOCK**: focus > balestra > pugnale
+- **focus** = **1.00 baseline**
+- **balestra** = **0.85-0.90 direzionale**
+- **pugnale** = **0.70-0.80 direzionale**
+- **SOLO DESIGN DIRECTION** · NON formula runtime · NON coefficienti live
+- **NO scaling Destrezza**
+
+#### EQ-Q8 · Registry v3 — GO
+- **GO R18.6.RV3 Registry v3 Additive Planning**
+- **Timing**: dopo G5 CLOSED, PRIMA di Gate 6 PLAYER_GUIDE
+- **Gate 6 HOLD fino review RV3**
+
+### Sintesi finale G5 CLOSED
+
+Cacciatore del Vuoto readiness pilot equip architecture LOCKED: budget T1-T5 multiplier 1.0→2.7 · rarity Common-Legendary 1.0-1.85 · weapon focus/balestra/pugnale direzionali (focus baseline · balestra 0.85-0.90 · pugnale 0.70-0.80) · armor stoffa/cuoio 55/45→70/30 · 4 slot universali (back/neck/ring×2) · 10 affix families class-specific · 14 affix vietati · gear sharing analysis vs Mago/Ladro/Cacciatore di Mostri LOCKED · Lanterna `reserved_future_review` · item quantity envelope 110-130 planning target ≈120 · Registry v3 Additive Planning authorized · Gate 6 HOLD. Zero code/DB touch · 36 seals intact · Legendary ILVL=60 semantic preserved · Int soft cap 100 non-minimum · linear-flattening preserved · slot canonici formalizzati (back/neck/ring/accessory · trinket=alias→accessory).
+
+### Files locked
+
+- `/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.md` **LOCKED post-micro-fix**
+- `/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.json` **LOCKED post-micro-fix**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4 (tutti LOCKED post-approval)
+
+### PM verdict
+
+- **R18.6.3-G5 = CLOSED · PM APPROVED** ✅
+- **R18.6.RV3 Registry v3 Additive Planning = AUTHORIZED** 🟢
+- **R18.6.3-G6 PLAYER_GUIDE = HOLD** 🔒 (attende RV3 review + PM GO esplicito)
