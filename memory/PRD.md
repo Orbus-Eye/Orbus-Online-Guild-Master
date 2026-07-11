@@ -2464,3 +2464,156 @@ Tutto materiale **R18.3f**, che però rimane **HOLD** finché il PM non emette *
 `R18.5 C0-C6` ✅ **CLOSED · LOCKED** → `R18.6 Class Halls Design (Q1-Q8 resolved)` ✅ **CLOSED · LOCKED (this append)** → `R18.3f` 🔒 HOLD / `Progressive Discovery` 🔒 HOLD / `Apply Phase` 🔒 HOLD / `R18.6 live` 🔒 HOLD / `Marketing Brief` ⏸️ DEFERRED
 
 🛑 **STOP dopo R18.6 CLOSED.** Sistema in **HOLD assoluto**. Nessun auto-start. Attendo GO PM esplicito per il prossimo gate.
+
+
+## R18.6.1 Canonical 27 Class Halls Expansion CLOSED (with PM final Q1-Q8 · 2026-07-08T16:30:00Z)
+
+**Milestone**: **R18.6.1 Canonical 27 Class Halls Expansion CLOSED** ✅ (with PM final answers Q1-Q8 verbatim + 2 mandatory hall_master renames)
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (SHA256 `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero modifiche code/DB/migrations/sealed/item table/R18.5 artifacts/R18.6 files/R18.6.1 files (LOCKED dopo questo append).
+
+**Deliverables R18.6.1 approved**:
+- `/app/memory/r18_6_1_canonical_27_class_halls_expansion.md` (SHA256 `58cbeb02d2c41603007494b549a78f46b3c7ce03e97babe662ff677494c438bc`)
+- `/app/memory/r18_6_1_canonical_27_class_halls_expansion.json` (SHA256 `5eeaeab62fb016f712945cbcf8266854d73f2d64871a9187c3f4abe0e08b189d`)
+
+### Principle 1:1 Canonical
+
+**27 classi = 27 Sale canoniche**. NO Sale condivise. Ogni nuovo avventuriero nasce **Senza Classe / `recruit_unassigned`** (`class_slug=null`). Classe ottenibile SOLO tramite: Sala → prova safe-mode → conferma → assegnazione classe → `class_slug` → sblocco identità/proficiency/equip.
+
+**5 Sale ACTIVE-DESIGN-READY**: `guerriero · ladro · mago · paladino · cacciatore_di_mostri` (verbatim R18.6 LOCKED).
+**22 Sale PLANNED / LOCKED-UNTIL-CLASS-READY**: le altre 22 classi.
+
+### 27 Hall Names (approved)
+
+Fortezza d'Acciaio · Loggia dei Sussurri · Circolo dei Nove Sigilli · Reliquiario della Luce Fissa · Capanno del Sentiero Selvaggio · Distilleria del Vapore Verde · Officina Fumante di Rame · Osservatorio delle Costellazioni Fisse · Taverna della Corda Spezzata · Teatro dei Fili di Ferro · Ossario del Cinghiale Bianco · Faro Rovesciato di Onirade · Camera delle Mappe Vive · Cripta del Vessillo Nero · Ariale del Signore delle Fiamme · Scriptorium del Presente Eterno · Radura del Salice Millenario · Fucina degli Anelli Silenti · Sala dei Dadi di Ossidiana · Loggia del Bilico Onesto · Cortile della Corda di Cinabro · Ossario del Cerchio Chiuso · Cripta della Radice Cava · Atelier dei Pigmenti Insanguinati · Cerchio delle Pietre Incise · Capanna dei Tamburi Fermi · Camera dei Sogni Aperti.
+
+### 27 Hall Masters PM APPROVED (Q1 verbatim · 5 LOCKED + 22 approved incl. 2 mandatory renames)
+
+**5 LOCKED (R18.6 Q2=A · invariati)**:
+- Guerriero → **Comandante Aldric del Ferro**
+- Ladro → **Maestra dei Sussurri Selene**
+- Mago → **Arcimago Vessel di Memoria**
+- Paladino → **Custode Isabeau dell'Alba**
+- Cacciatore di Mostri → **Vecchio Falconiere Ovyr**
+
+**22 approved (20 verbatim + 2 RENAMES obbligatorie anti-collisione)**:
+
+⚠️ **2 RENAMES MANDATORY**:
+- **Cronista**: Ambrose di Mnemos → **`Orien di Mnemos`** (evita collisione con **Ambroise** Bardo)
+- **Giocatore d'Azzardo**: Sylas Nod → **`Marek Nod`** (evita collisione con **Silas** Nomeperduto Negromante)
+
+**20 verbatim confermati**: Ilyra Ottavia · Nolan Vent · Cassian Vale · Ambroise · Melisandre Corda · Grim Rohl · Nael di Onirade · Odran il Mite · Vaeric Rahn · Aelor Draconis · Bran del Salice · Corvus Anello · Yara della Bilancia · Ren Silenzio · Silas Nomeperduto · Ada Cava · Genoveva Rosso · Halvard Nove · Vaska Tamburo · Elyrah dei Nove Sogni.
+
+**Totale**: **27/27 Hall Masters PM APPROVED · 0 PENDING**.
+
+**Nota governance**: le 2 rinomine sono canonizzate in questo PRD append. I file R18.6.1 `.md/.json` restano con la nomenclatura originale (Ambrose/Sylas) come snapshot documentale del design pre-review. Da questo punto in avanti la **fonte di verità canonica** per hall_master naming è questo PRD append (Orien di Mnemos · Marek Nod).
+
+### Roadmap Readiness in 4 Wave (Q2 verbatim · nessun auto-unlock · gate PM individuale per classe)
+
+**Wave 1** (bridge/riuso tecnico favorevole):
+1. **Cacciatore del Vuoto** ⭐ PRIMO PILOTA (R18.6.2 dispatched)
+2. Monaco
+3. Druido
+4. Alchimista
+5. Bardo
+6. Negromante
+
+**Wave 2** (tecniche/rituali/supporto): 7. Runista · 8. Sciamano · 9. Astrologo · 10. Fabbro Arcano · 11. Artificiere · 12. Cronista
+
+**Wave 3** (marziali avanzate/dark): 13. Cacciatore del Sangue · 14. Cavaliere della Morte · 15. Cavaliere di Draghi · 16. Burattinaio · 17. Parassita
+
+**Wave 4** (sistemiche/creative alta complessità): 18. Cartografo · 19. Mercante · 20. Giocatore d'Azzardo · 21. Pittore · 22. Sognatore
+
+**Ogni passaggio PLANNED → ACTIVE richiede**: `main_stat` · `armor_proficiency` · `weapon_proficiency` · gameplay loop · risorsa/meccanica di classe · equip dedicato sufficiente · guida player-facing · Sala completa · prova safe-mode tecnica · readiness tecnica · review PM.
+
+### Rite of Rebirth Cost Model APPROVED (Q3 verbatim)
+
+- Una tantum per avventuriero · **ISTANTANEO** (no timer reale)
+- Non premium · non real-money · non acquistabile con valuta esterna
+- **Costo ibrido (4 componenti)**:
+  1. Contributo elevato di risorse Gilda
+  2. **Sigillo di Rinascita account-bound** (ottenibile via achievement/progressione · non tradabile · non vendibile)
+  3. Perdita progressione specifica classe precedente (talenti · abilità di classe)
+  4. Equip incompatibile rimosso automaticamente → inviato all'inventario personale (non distrutto)
+- **Livello generale dell'avventuriero preservato**
+- **Flusso**: classe attuale rimossa → `class_slug=null` temporaneo → Senza Classe → accesso SOLO Sale ACTIVE-DESIGN-READY (mai Sale PLANNED) → nuova prova safe-mode → nuova assegnazione classe
+- **Storico classi precedenti conservato** per audit + achievement futuri (log identity persistente)
+
+### 27 Safe-Mode Trial Concepts APPROVED as Baseline (Q4 verbatim)
+
+- Ogni prova sarà **rivista tecnicamente al readiness gate** della singola classe
+- **Regole comuni safe-mode**:
+  - Insegna il loop base della classe (fair intro gameplay)
+  - **NO morte permanente**
+  - **NO consumo risorse rare**
+  - **NO drop endgame**
+  - **NO farmabile** (una-tantum per Recluta · dismissal libera)
+  - **NON sostituisce dungeon/tutorial generale della Gilda**
+  - Permette al player di **capire se la classe gli piace prima della conferma**
+
+### Cavaliere di Draghi ↔ Stables Integration (Q5 verbatim)
+
+- **Class Hall ≠ Stables** · Class Hall **INTEGRA** Stables · Class Hall **NON sostituisce** Stables
+- **Hall gestisce**: identità classe · addestramento · prova safe-mode · legame cavaliere-drago · abilità/progressione classe
+- **Stables gestisce (Round 16.3 Phase 8, invariato)**: proprietà drago · custodia · allevamento · cura · gestione · cavalcature · inventario/stato drago
+- **Selezione Cavaliere di Draghi**:
+  - NON concede drago raro automaticamente
+  - NON crea un secondo inventario draghi
+  - NON duplica breeding
+  - Può sbloccare legame iniziale o prova con drago temporaneo safe-mode
+  - **Richiede integrazione tecnica dedicata** al readiness gate (Wave 3, gate PM separato)
+
+### Dark Class Identities LOCKED (Q6 canonical differentiation)
+
+- **Cacciatore del Sangue** = *il proprio sangue come arma* (caccia · marchi di sangue · sacrificio personale controllato · duello/inseguimento preda). **NO** evoca morti · **NO** cadaveri · **NO** ospite · **NO** parassita
+- **Parassita** = *il corpo vivente come ecosistema* (simbiosi · infestazione · adattamento · assorbimento · trasferimento risorse/condizioni). **NO** necromanzia · **NO** comando anime · **NO** sacrificio sangue
+- **Negromante** = *morte, anime, servitori* (morte · anime · cadaveri · evocazioni · controllo campo tramite servitori). **NO** emomanzia · **NO** simbiosi con ospiti vivi · **NO** marchi Sangue
+
+### Creative Class Identities LOCKED (Q7 canonical differentiation)
+
+- **Bardo** = *esegue* (performance · ritmo · sequenze musicali · supporto gruppo · tempo di esecuzione · weapon family futura `strumento` **RESERVED**)
+- **Pittore** = *crea* (pigmenti · segni · tele · forme create · zone dipinte sul campo · combinare colori per effetti/zone/forme temporanee). **NO** ritmo · **NO** sogni
+- **Sognatore** = *altera possibilità e percezione* (sogno · possibilità · previsione · stati alterati · effetti ritardati · realtà alternative). **NO** pigmenti · **NO** performance
+
+### Architettura HUB + Satelliti / Off-Site (Q8 verbatim)
+
+- **Modello**: **Complesso Gilda → Atrio delle Vocazioni → 27 accessi/portali/percorsi → Sale locali o satellitari**
+- Ogni Sala è **distinta** · può essere:
+  - interna Gilda (es. Fortezza d'Acciaio, Loggia dei Sussurri)
+  - adiacente (es. Capanno del Sentiero Selvaggio sul limite del bosco)
+  - regione specifica (es. Faro Rovesciato di Onirade su isolotto artificiale del lago)
+  - spazio istanziato (es. Camera dei Sogni Aperti)
+  - raggiungibile via portale
+- **Tutte 27 visibili dal sistema centrale (Atrio delle Vocazioni)**, ma NON tutte nello stesso edificio fisico
+- **5 ACTIVE-DESIGN-READY**: accesso immediato dall'Atrio
+- **22 PLANNED**: appaiono **sigillate · non disponibili · in preparazione · classe non ancora sbloccata** (NO selection)
+
+### Zero-Touch Governance Confirmed R18.6.1 CLOSED
+
+- **R18.5 Phase C** rimane **CLOSED / LOCKED** — zero modifiche
+- **R18.6 Class Halls Design (5 Sale)** rimane **CLOSED / LOCKED** — zero modifiche
+- **R18.6.1 Canonical 27 Halls** rimane **CLOSED / LOCKED** dopo questo append — zero modifiche future
+- **R18.3f Class Slug Migration Readiness** rimane **🔒 HOLD** — no auto-start
+- **Apply Phase** rimane **🔒 HOLD** — 7 preconditions
+- **Progressive Discovery (P1-P4)** rimane **🔒 HOLD**
+- **R18.6 live implementation** rimane **🔒 HOLD**
+- **22 Sale PLANNED activation** rimane **🔒 HOLD** — Wave 1-4 gate PM individuale per classe
+- **Marketing Brief** rimane **⏸️ DEFERRED**
+- **Zero code · zero DB · zero migrations · zero item creation · zero registry apply · zero drop table apply · zero class_slug migration · zero class_slug auto-derivation · zero runtime bridge · zero proficiency runtime enforcement · zero Class Halls implementation · zero UI code · zero sealed file modification · zero hard delete · zero auto-unlock 22 classi PLANNED**
+- **Sealed integrity**: pytest 6/6 passed post-append
+- **`lore_meta.py`**: SHA256 `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` — **INVARIATO**
+
+### First Readiness Candidate: Cacciatore del Vuoto (Wave 1 · #1)
+
+**R18.6.2 Class Readiness Framework dispatched (documental only)** — pilota **Cacciatore del Vuoto** (`class_slug=cacciatore_del_vuoto` · `hall_id=hall_cacciatore_del_vuoto` · Sala: Faro Rovesciato di Onirade · Hall Master: Nael di Onirade).
+
+R18.6.2 proporrà: main_stat + armor prof + weapon prof + gameplay loop + resource mechanic (candidati: Marchi del Vuoto / Void Essence / Onirade Fragments) + bridge legacy analysis + prova safe-mode detailed + impact registry v2 + rischi.
+
+**R18.6.2 NON attiva Cacciatore del Vuoto live** — solo piano documentale in attesa di gate PM successivo.
+
+---
+
+**Combined status flow (aggiornato post-R18.6.1 CLOSED)**:
+`R18.5 C0-C6` ✅ CLOSED · LOCKED → `R18.6 (5 Sale)` ✅ CLOSED · LOCKED → **`R18.6.1 (27 Sale canonical)` ✅ CLOSED · LOCKED (this append)** → `R18.6.2 Class Readiness Framework (Vuoto pilot)` 🟢 **DISPATCHED (documental only, no live activation)** → `R18.3f` 🔒 HOLD / `Wave 1-4 progressive activation` 🔒 HOLD / `R18.6 live` 🔒 HOLD / `Apply Phase` 🔒 HOLD / `Progressive Discovery` 🔒 HOLD / `Marketing Brief` ⏸️ DEFERRED
+
+🛑 **STOP dopo R18.6.1 CLOSED + R18.6.2 dispatch.** Sistema in **HOLD assoluto** post-R18.6.2 design. Nessun auto-start. Attendo GO PM esplicito per il prossimo gate.
