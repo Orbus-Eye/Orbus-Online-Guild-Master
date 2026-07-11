@@ -3747,3 +3747,37 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 🛑 **EXPLICIT STOP post-R18.3f-closure**. Attesa dispatch RV3-EV STEP 3.
 
+
+
+---
+
+### R18.6.RV3-EV — ELIGIBILITY VALIDATION · CLOSED
+
+- EV-F1 PM approved
+- EV-F2 PM approved
+- ledger 178/178 ratificato
+- REUSE_VALID = 12
+- REUSE_CONDITIONAL = 32
+- NOT_COMPATIBLE = 134
+- PM_REVIEW = 0
+- 6 warlock tome non compatibili
+- G2 proficiency literal preservata (focus · balestra · pugnale)
+- arcane_adept_orb preservato e non riutilizzato
+- Futuro item Vuoto-native richiesto (successor)
+- voidpiercer-bow NOT_COMPATIBLE finale
+- anti-P2W true = 0
+- anti-P2W missing = 50
+- catalogo live T1 = 178
+- T2–T5 live = 0
+- envelope 110–130 LOCK
+- 180–220 advisory only
+- alias-first metadata strategy
+- Nessuna field addition
+- Nessun backfill
+- Nessun item creato
+- Registry v3 apply NON autorizzato
+- AFX1 resta HOLD
+- Gate 11 HOLD
+
+**SHA256 pre-append PRD.md**: `5049a978785d888dad155fb2746fcaf534efca0444b7ecbd1cbbd13f7e5653e3`
+**SHA256 post-append PRD.md**: `b7e81beac6dcc61258e547a3327f9f90f07ba1b7ec2476cb1a8bcbf5a378baf9`

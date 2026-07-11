@@ -1,0 +1,448 @@
+{
+  "metadata": {
+    "document_id": "R18.6.RV3-EV.CLOSURE",
+    "title": "Eligibility Validation · Final Closure Report",
+    "parent_gate": "R18.6.RV3-EV",
+    "chain": ["R18.6.RV3-EV (baseline)", "R18.6.RV3-EV-F1 (corrective/additive)", "R18.6.RV3-EV-F2 (final adjudication)", "R18.6.RV3-EV CLOSED"],
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_ITALIAN",
+    "sealed_integrity_expected": "36/36",
+    "lore_meta_sha256_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "cacciatore_del_vuoto_status": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "language": "italian",
+    "sections_md_total": 36
+  },
+  "section_1_pm_verdict": {
+    "ev_f1_pm": "APPROVED",
+    "ev_f2_pm": "APPROVED_WITH_ACCOUNTING_MICRO_FIX_APPLIED",
+    "rv3_ev_pm": "FORMAL_CLOSURE_AUTHORIZED",
+    "pm_review_residual": 0,
+    "unresolved_adjudication": 0,
+    "afx1_status": "HOLD_post_closure_pm_directive",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "item_creation": "NOT_AUTHORIZED",
+    "gate_11_wave_1_monaco": "HOLD"
+  },
+  "section_2_rv3_ev_closed": {
+    "gate_id": "R18.6.RV3-EV",
+    "status": "CLOSED",
+    "sub_gates": {
+      "ev_f1_live_catalog_metadata_readiness": "CLOSED",
+      "ev_f2_candidate_adjudication_coverage_reconciliation": "CLOSED"
+    },
+    "pm_locked": true,
+    "apply_authorized": false,
+    "mutation_forbidden": true,
+    "auto_start_forbidden": true
+  },
+  "section_3_rv3_ev_original_preserved": {
+    "md_sha256_locked": "41450c4fa770efd57a15c302958c20e2826f33ac668aba5eaeb2e6743f9fd09e",
+    "json_sha256_locked": "c4ed0af9bedd7ad343c038b9520cf9aa3c0fcfc4d32779edff9364dfcf1e0f35",
+    "role": "baseline_historic_immutable",
+    "rewrite_forbidden": true,
+    "retroactive_correction_forbidden": true
+  },
+  "section_4_ev_f1_corrective_additive_audit": {
+    "md_sha256": "2031be1abda2aa5eea00822e68d6d1aa17cd8be7f35ce211b10e2f0d354961fe",
+    "json_sha256": "44f6ec686eb6a59ecaaba938d86bbe10a73c34bb4d7626cb0235c92dce29a5bb",
+    "role": "corrective_additive_audit",
+    "status": "CLOSED",
+    "key_contributions": [
+      "canonical_1500_planning_vs_live_178_separation",
+      "L12_equals_T1_correction",
+      "5_field_readiness_verdict_enum",
+      "14_slot_canonical_plus_4_alias",
+      "6_lore_initial_audit_0_reuse_4_conflict_2_pm_review",
+      "42_sections_md_19_root_keys_json"
+    ]
+  },
+  "section_5_ev_f2_final_adjudication": {
+    "md_sha256": "37a4963a10515a6cee9726e680e7dc70731bfbca4b9a5f4aa7206f2c5148fcf9",
+    "json_sha256": "093061698600880e5833a9a3387631fda2c3beab3dae2f97877eb42cae32389a",
+    "role": "final_adjudication",
+    "status": "CLOSED",
+    "key_contributions": [
+      "canonical_ledger_178_178_disjoint_exhaustive",
+      "12_reuse_valid_32_reuse_conditional_134_not_compatible_0_pm_review",
+      "6_warlock_tome_declassed_famiglia_esclusa_da_G2",
+      "arcane_adept_orb_preserved_opzione_A",
+      "voidpiercer_bow_final_exclusion_no_retro_branding",
+      "rarity_distribution_live_measured_authoritative",
+      "anti_p2w_pass_documental_50_missing_data_quality_gap",
+      "ilvl_formula_lock_+0_+2_+3_+4_+5_legendary_60_anchor",
+      "coverage_t2_t5_zero_confirmed",
+      "f2q_verbatim_extraction_12_blocks",
+      "47_sections_md_39_root_keys_json_post_micro_fix"
+    ]
+  },
+  "section_6_precedence_rule": {
+    "rule": "In case of documental divergence, most recent in chain prevails per contested aspect. Baseline never rewritten.",
+    "precedence_map": {
+      "ledger_final_adjudication": "EV-F2",
+      "metadata_readiness_L12_T1_lock_catalog_lineage": "EV-F1",
+      "baseline_historic_target_profile_verdicts_admitted": "RV3-EV_original",
+      "ilvl_formula_rarity_distribution_live": "EV-F2",
+      "governance_locks_immutability": "concordant_across_all_three"
+    }
+  },
+  "section_7_live_universe_178": {
+    "collection": "items",
+    "db": "orbus_r16",
+    "count_unique": 178,
+    "adjudicated": 178,
+    "unadjudicated": 0,
+    "canonical_1500_planning_separated": true,
+    "no_id_based_missing_quantification": true
+  },
+  "section_8_ledger_12_32_134_0": {
+    "REUSE_VALID": 12,
+    "REUSE_CONDITIONAL": 32,
+    "NOT_COMPATIBLE": 134,
+    "PM_REVIEW": 0,
+    "TOTAL": 178,
+    "disjoint_pass": true,
+    "exhaustive_pass": true,
+    "reuse_conditional_composition": {"weapon_literal_G2": 2, "armor_stoffa_cuoio": 11, "accessory_universal": 19},
+    "not_compatible_composition": {"6_warlock_tome": 6, "5_lore_identity_conflict": 5, "1_arcane_adept_orb_preserved": 1, "15_of_47_declassed": 15, "107_out_of_scope": 107},
+    "out_of_scope_breakdown": {"stat_mismatch_non_intellect": 81, "stat_missing": 21, "hard_binding_non_warlock": 5}
+  },
+  "section_9_primary_verdict_uniqueness": {
+    "invariant": "one_item_one_primary_verdict",
+    "verdicts_admitted": ["REUSE_VALID", "REUSE_CONDITIONAL", "NOT_COMPATIBLE", "PM_REVIEW"],
+    "secondary_attributes_non_counting": ["out_of_scope", "lore_reviewed", "identity_conflict", "mutation_required", "triggers_future_void_native_item", "retro_branding_forbidden"],
+    "double_count": 0,
+    "unadjudicated": 0,
+    "disjoint_total_178": true,
+    "requires_new_item_future_separated": true
+  },
+  "section_10_18_initial_reuse_valid_reconciliation": {
+    "population_criterion": "class_tags:warlock AND stat_tags:intellect",
+    "count": 18,
+    "validated_reuse_valid": 12,
+    "downgraded_not_compatible": 6,
+    "rejected_baseline": 0,
+    "pm_review_residual": 0,
+    "declassment_reason": "tome_univocally_determined_not_in_focus_balestra_pugnale_G2_not_extended",
+    "pm_ratification": "FINAL"
+  },
+  "section_11_49_pm_review_reconciliation": {
+    "population_criterion": "item_binding_policy:soft AND stat_tags:intellect AND class_tags NOT warlock",
+    "count": 49,
+    "reuse_conditional_confirmed": 32,
+    "not_compatible_declassed_famiglia_esclusa": 15,
+    "overlap_with_6_lore_arcane_orb_voidpiercer": 2,
+    "pm_review_residual": 0
+  },
+  "section_12_weapon_proficiency_literal_lock": {
+    "g2_proficiency_lock": ["focus", "balestra", "pugnale"],
+    "db_weapon_tags_mapping": {"focus": "focus", "dagger": "pugnale", "crossbow_balestra": "complete_gap_live"},
+    "families_excluded_when_univocally_determined": ["staff", "grimoire", "wand", "rod", "tome", "bow", "instrument", "sonic", "alchemical_flask"],
+    "arcane_is_modifier_not_family": true,
+    "semantic_caster_overlap_forbidden_for_reuse_conditional": true,
+    "afx1_consumes_g2_no_reopen": true,
+    "afx1_no_new_proficiency_ratification": true
+  },
+  "section_13_6_warlock_tome_rejected": {
+    "count": 6,
+    "items": [
+      {"slug": "warlock_apprentice_tome", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"},
+      {"slug": "warlock_hex_grimoire", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"},
+      {"slug": "warlock_shadowbound_grimoire", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"},
+      {"slug": "warlock_witchking_codex", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"},
+      {"slug": "warlock_apprentice_grimoire", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"},
+      {"slug": "warlock_pact_binder", "weapon_family": "tome", "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2"}
+    ],
+    "pm_ratified_final": true
+  },
+  "section_14_arcane_adept_orb_final_disposition": {
+    "slug": "arcane_adept_orb",
+    "primary_verdict": "NOT_COMPATIBLE",
+    "opzione_A_preserved": true,
+    "class_tags_mutation": false,
+    "rec_classes_mutation": false,
+    "retro_branding": "forbidden",
+    "reassignment_to_cacciatore_del_vuoto": "none",
+    "secondary_attributes": {"lore_reviewed": true, "identity_conflict": false, "mutation_required": true, "triggers_future_void_native_item": true},
+    "future_coverage_gap_entry": "arcane_adept_orb_void_native_successor",
+    "successor_constraints": {"new_item_id_required": true, "proficiency_focus_balestra_pugnale": true, "stat_intelligence": true, "weapon_family_valid": true, "no_name_copy": true, "no_duplication": true, "no_creation_now": true}
+  },
+  "section_15_voidpiercer_bow_final_disposition": {
+    "slug": "voidpiercer-bow",
+    "primary_verdict": "NOT_COMPATIBLE_FINAL",
+    "item_preserved": true,
+    "identity_conflict": true,
+    "mutation_required": true,
+    "retro_branding_forbidden": true,
+    "warlock_retro_tag_forbidden": true,
+    "cacciatore_del_vuoto_tag_forbidden": true,
+    "stat_mutation_forbidden": true,
+    "identity_rewrite_forbidden": true,
+    "weapon_tags": ["bow", "ranged"],
+    "rec_classes_locked_to_cacciatore_di_mostri": true,
+    "strict_separation_applied": true
+  },
+  "section_16_anti_p2w_findings": {
+    "field": "can_be_sold_for_real_money",
+    "population": 178,
+    "field_present": 128,
+    "field_missing": 50,
+    "count_true": 0,
+    "count_false": 128,
+    "count_ambiguous": 0,
+    "verdict": "PASS_documental",
+    "fallback_missing_to_false_is_code_config_not_materialized_value": true,
+    "pre_creation_verification_required": true,
+    "pre_apply_verification_required": true,
+    "post_apply_snapshot_required": true
+  },
+  "section_17_50_missing_data_quality_gap": {
+    "count": 50,
+    "status": "OPEN",
+    "no_backfill_now": true,
+    "no_auto_derive": true,
+    "fallback_is_code_config": true,
+    "no_materialized_default": true,
+    "deferred_to_dedicated_gate_post_ev_chain_post_afx1": true,
+    "does_not_block_rv3_ev_closure": true
+  },
+  "section_18_t1_materialized_catalog": {
+    "tier": "T1_Aspirante",
+    "level_range": "1-15",
+    "live_items": 178,
+    "level_distinct": [1, 3, 5, 8, 9, 12],
+    "max_level": 12,
+    "vuoto_baseline_usable": {"reuse_valid": 12, "reuse_conditional": 32, "total": 44},
+    "coverage_partial": true,
+    "slot_canonical_incomplete": true,
+    "focus_literal_sub_materialized": true
+  },
+  "section_19_t2_t5_zero_materialization": {
+    "T2_L16_30": 0,
+    "T3_L31_45": 0,
+    "T4_L46_55": 0,
+    "T5_L56_60": 0,
+    "progression_incomplete_confirmed": true,
+    "L12_equals_T1_lock": true,
+    "L12_equals_T5_finding_rejected": true,
+    "cacciatore_del_vuoto_active_design_ready_not_live": true,
+    "materialization_progressive_t1_to_t5_future_gates_post_afx1": true
+  },
+  "section_20_slot_gaps": {
+    "canonical_14_slots": ["head", "neck", "shoulders", "chest", "back", "hands", "wrist", "waist", "legs", "feet", "main_hand", "off_hand", "ring", "accessory"],
+    "alias_standard": {"belt": "waist", "cloak_cape": "back", "trinket": "accessory", "weapon_main": "main_hand", "weapon_off": "off_hand", "main_hand_dash": "main_hand", "off_hand_dash": "off_hand", "amulet": "neck"},
+    "no_ring1_ring2": true,
+    "no_trinket_as_15th_slot": true,
+    "no_db_remapping_now": true,
+    "back_slot_missing_live": true,
+    "slot_type_null_21_items_data_quality_gap": true,
+    "live_taxonomy_coarser_than_canonical_14": true
+  },
+  "section_21_armor_gaps": {
+    "vuoto_g2_armor_proficiency": ["stoffa_cloth_robe_light", "cuoio_leather_medium"],
+    "live_coverage_vuoto_usable_t1": 16,
+    "armor_tags_partial_coverage": "46/178",
+    "t1_slot_completeness": "partial_aggregate",
+    "t2_t5_gap": "complete",
+    "future_need_estimate": "48-72_armor_vuoto_t2_t5"
+  },
+  "section_22_weapon_gaps": {
+    "vuoto_g2_weapon_proficiency_lock": ["focus", "balestra", "pugnale"],
+    "live_coverage_vuoto_usable": 2,
+    "focus_literal_sub_materialized": "0-2_items_t1",
+    "crossbow_balestra_complete_gap": true,
+    "pugnale_warlock_vuoto_identity_minimal": true,
+    "t2_t5_gap": "complete",
+    "future_need_estimate": "24-36_weapon_vuoto_t1_t5"
+  },
+  "section_23_accessory_gaps": {
+    "universal_slot_no_proficiency_constraint": true,
+    "live_coverage_vuoto_usable_t1": 26,
+    "t1_sufficient": true,
+    "t2_t5_gap": "complete",
+    "ring_neck_trinket_sub_materialized": true,
+    "future_need_estimate": "30-45_accessory_vuoto_t2_t5"
+  },
+  "section_24_focus_t1_gap": {
+    "gap_literal_confirmed": true,
+    "g2_not_modifiable": true,
+    "retro_branding_forbidden": true,
+    "no_promotion_tome_wand_staff_grimoire_to_focus": true,
+    "tracked_in_future_coverage_gap": true,
+    "no_item_creation_authorization_from_this_gate": true,
+    "materialization_deferred_to_post_afx1_gate": true
+  },
+  "section_25_canonical_110_130_envelope": {
+    "range": "110-130",
+    "planning_center": 120,
+    "status": "LOCK_design_baseline",
+    "pm_ratified": true,
+    "interpretation": "single_rarity_per_canonical_slot_per_tier_plus_shared_universal",
+    "no_update_authorized_without_pm_directive": true
+  },
+  "section_26_advisory_180_220_interpretation": {
+    "range": "180-220",
+    "status": "NON_BINDING_NOT_LOCKED_NOT_TARGET_PM",
+    "interpretation": "max_scenario_multi_rarity_shared_universal_legendary",
+    "delta_from_envelope": "+50_to_+100_items",
+    "does_not_authorize_item_creation": true,
+    "does_not_authorize_registry_apply": true,
+    "does_not_modify_envelope_g2_proficiency_stat_slot": true
+  },
+  "section_27_alias_first_metadata_strategy": {
+    "strategy": "alias_first_design_only_no_field_addition_no_rename_no_backfill",
+    "mappings": {
+      "armor_type": {"alias_source": "armor_tags_list", "coverage_live": "46/178"},
+      "weapon_family": {"alias_source": "weapon_tags_list", "coverage_live": "61/178"},
+      "tier": {"derived_from": "required_adventurer_level", "confidence": "HIGH"},
+      "ilvl": {"derived_from": "rarity_offset_plus_required_level", "confidence": "HIGH_post_pm_lock"},
+      "slot_canonical": {"mapping": "alias_standard_no_db_remapping"}
+    },
+    "afx1_will_document_alias_contracts_design_only_not_now": true
+  },
+  "section_28_ilvl_canonical_formula": {
+    "rarity_offset_lock": {"Common": 0, "Uncommon": 2, "Rare": 3, "Epic": 4, "Legendary": 5},
+    "formula": "ilvl(item) = min( max( required_level + rarity_offset[rarity], tier_min[tier] ), 60 )",
+    "tier_min_lock": {"T1": 1, "T2": 16, "T3": 31, "T4": 46, "T5": 56},
+    "legendary_anchor": 60,
+    "no_C3_reopen": true,
+    "applicability": "design_only_this_closure",
+    "runtime_apply_dedicated_gate_post_afx1": true
+  },
+  "section_29_slot_taxonomy": {
+    "canonical_14_lock": ["head", "neck", "shoulders", "chest", "back", "hands", "wrist", "waist", "legs", "feet", "main_hand", "off_hand", "ring", "accessory"],
+    "alias_standard": {"belt": "waist", "cloak_cape": "back", "trinket": "accessory", "weapon_main": "main_hand", "weapon_off": "off_hand", "main_hand_dash": "main_hand", "off_hand_dash": "off_hand", "amulet": "neck"},
+    "prohibitions": ["ring1_ring2_forbidden", "trinket_as_15th_slot_forbidden", "db_remapping_now_forbidden", "rename_backfill_migration_via_afx1_forbidden"],
+    "afx1_documents_alias_contracts_design_only": true,
+    "read_only_until_dedicated_canonicalization_gate_post_afx1": true
+  },
+  "section_30_future_coverage_gap": {
+    "separated_from_live_ledger_178": true,
+    "entries": [
+      {"gap": "T2_Cacciatore_Vuoto", "estimate": "22-35"},
+      {"gap": "T3_Iniziato_Vuoto", "estimate": "22-35"},
+      {"gap": "T4_Rituale_Vuoto", "estimate": "22-35"},
+      {"gap": "T5_Vuoto_endgame", "estimate": "22-35"},
+      {"gap": "arcane_adept_orb_void_native_successor", "estimate": 1},
+      {"gap": "slot_canonical_materialization_back_shoulders_hands_wrist_waist_legs_feet_T1_T5", "estimate": "20-30"},
+      {"gap": "focus_literal_weapon_materialization_T1_T5", "estimate": "8-12"},
+      {"gap": "crossbow_balestra_weapon_materialization_T1_T5", "estimate": "8-12"},
+      {"gap": "legendary_vuoto_identity_items", "estimate": "5-15"},
+      {"gap": "shared_caster_items", "estimate": "15-25"},
+      {"gap": "universal_slot_expansion", "estimate": "15-25"}
+    ],
+    "envelope_baseline_pm_lock": {"min": 110, "max": 130, "center": 120},
+    "advisory_max_scenario_non_binding": {"min": 180, "max": 220},
+    "governance_locks": {"item_creation_authorized": false, "registry_v3_apply_authorized": false, "field_addition_authorized": false, "no_backfill": true, "no_copy_of_existing_names": true},
+    "materialization_deferred_to_post_afx1_gates": true
+  },
+  "section_31_afx1_dependency": {
+    "gate_id": "R18.6.RV3-AFX1",
+    "title": "Affix Vocabulary and Pool Contract",
+    "status": "HOLD_post_closure_pm_directive_dedicated",
+    "prerequisites_from_ev_f1_sec_40": [
+      "vocabulary_base_T1_to_T5",
+      "schema_validation_rules",
+      "compatibility_mapping",
+      "null_handling_policy_no_backfill",
+      "applicability_audit_readonly_178_items",
+      "pm_ratify_vocabulary_lock",
+      "registry_v3_additive_design_only_no_field_addition"
+    ],
+    "afx1_consumes_g2_no_reopen": true,
+    "afx1_no_ev_f2_reopen": true,
+    "afx1_no_new_weapon_family_ratification": true,
+    "afx1_documents_alias_contracts_for_future_registry_v3_additive": true,
+    "afx1_does_not_start_in_this_dispatch": true
+  },
+  "section_32_registry_v3_apply_status": {
+    "status": "NOT_AUTHORIZED",
+    "field_addition_apply": "NOT_AUTHORIZED",
+    "rec_classes_bulk_apply_constraints_f2q2": [
+      "explicit_item_allowlist",
+      "per_item_verdict",
+      "condition_code",
+      "homogeneity",
+      "no_mutation",
+      "no_dynamic_keyword_selection",
+      "dry_run",
+      "snapshot",
+      "explicit_pm_go"
+    ],
+    "slot_canonicalization_apply": "NOT_AUTHORIZED",
+    "alias_documentation_runtime_apply": "NOT_AUTHORIZED",
+    "ilvl_formula_runtime_apply": "NOT_AUTHORIZED",
+    "registry_v3_architecture_stays_documental_design_only": true,
+    "apply_gate_dedicated_future_post_afx1": true
+  },
+  "section_33_item_creation_status": {
+    "status": "NOT_AUTHORIZED",
+    "no_vuoto_native_created": true,
+    "no_arcane_adept_orb_successor_created": true,
+    "no_focus_t1_t5_created": true,
+    "no_t2_t5_vuoto_created": true,
+    "no_crossbow_balestra_created": true,
+    "no_universal_slot_back_shoulders_created": true,
+    "creation_deferred_to_post_afx1_gates": true
+  },
+  "section_34_risk_register": [
+    {"id": "CLR-R1", "risk": "retro_branding_voidpiercer_arcane_adept_orb", "severity": "HIGH_mitigated", "status": "MITIGATED"},
+    {"id": "CLR-R2", "risk": "identity_contamination_mago_necromante_bardo", "severity": "MEDIUM", "status": "HOLD_registry_v3_additive_selective"},
+    {"id": "CLR-R3", "risk": "cross_class_cacciatore_di_mostri_overlap", "severity": "MEDIUM", "status": "MITIGATED_strict_separation_lock"},
+    {"id": "CLR-R4", "risk": "coverage_t2_t5_zero_live", "severity": "HIGH_design", "status": "HOLD_future_coverage_gap"},
+    {"id": "CLR-R5", "risk": "armor_tags_coverage_partial", "severity": "LOW", "status": "ACCEPTED"},
+    {"id": "CLR-R6", "risk": "50_missing_can_be_sold_for_real_money", "severity": "LOW_MEDIUM", "status": "ACCEPTED_data_quality_gap_open"},
+    {"id": "CLR-R7", "risk": "21_items_slot_type_none", "severity": "LOW", "status": "ACCEPTED_keep_as_is"},
+    {"id": "CLR-R8", "risk": "slot_taxonomy_live_coarse", "severity": "MEDIUM", "status": "HOLD_dedicated_gate"},
+    {"id": "CLR-R9", "risk": "focus_literal_sub_materialized", "severity": "HIGH_design", "status": "HOLD_future_coverage_gap"},
+    {"id": "CLR-R10", "risk": "legacy_warlock_bridge_r18_3e", "severity": "LOW", "status": "ACCEPTED_bridge_sealed"},
+    {"id": "CLR-R11", "risk": "afx1_pressure_reopen_g2", "severity": "HIGH_governance", "status": "MITIGATED_g2_literal_lock_afx1_consumes"},
+    {"id": "CLR-R12", "risk": "registry_v3_apply_pressure", "severity": "HIGH_governance", "status": "MITIGATED_not_authorized_lock"}
+  ],
+  "section_35_governance_evidence": {
+    "pytest_sealed_integrity": "6_passed_36_of_36_byte_identical",
+    "lore_meta_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "backend_changes": 0,
+    "frontend_changes": 0,
+    "scripts_changes": 0,
+    "tests_changes": 0,
+    "openapi_changes": 0,
+    "db_writes": 0,
+    "migration_files": 0,
+    "item_creation": 0,
+    "registry_v3_apply": 0,
+    "field_addition": 0,
+    "backfill": 0,
+    "class_slug_write": 0,
+    "mutation_on_178_items": 0,
+    "immutability_preserved": {
+      "rv3_ev_original": true,
+      "ev_f1": true,
+      "ev_f2": true,
+      "pilot_certificate_manifest_r18_6_3": true,
+      "r18_3f_corpus": true,
+      "sealed_36_byte_identical": true
+    }
+  },
+  "section_36_final_stop_state": {
+    "cacciatore_del_vuoto": "ACTIVE-DESIGN-READY_NOT_LIVE",
+    "r18_3f": "CLOSED",
+    "r18_6_rv3_ev": "CLOSED",
+    "r18_6_rv3_ev_f1": "CLOSED",
+    "r18_6_rv3_ev_f2": "CLOSED",
+    "r18_6_rv3_afx1": "HOLD_post_closure_pm_directive",
+    "registry_v3_item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "field_addition": "NOT_AUTHORIZED",
+    "field_backfill": "NOT_AUTHORIZED",
+    "item_creation": "NOT_AUTHORIZED",
+    "gate_11": "HOLD",
+    "monaco_wave_1": "HOLD",
+    "druido_alchimista_bardo_negromante_wave_1": "HOLD",
+    "sealed_integrity": "36_of_36_PASS",
+    "lore_meta_anchor": "INVARIATO",
+    "backend_frontend_openapi_touch_count": 0,
+    "db_writes": 0,
+    "prd_append_section": "RV3-EV_CLOSED_only",
+    "auto_start_on_next_gate": "FORBIDDEN",
+    "next_action": "await_pm_directive_dedicated_for_next_gate"
+  }
+}
