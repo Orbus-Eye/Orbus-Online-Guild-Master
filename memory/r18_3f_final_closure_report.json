@@ -1,0 +1,310 @@
+{
+  "metadata": {
+    "artifact": "R18.3f Final Closure Report",
+    "document_type": "gate_closure_report",
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY",
+    "language": "italian_only",
+    "closure_status": "CLOSED · PM APPROVED · PM-LOCKED · NOT APPLIED · NOT SEALED",
+    "parent_pilot_gate": "R18.6.3 Cacciatore del Vuoto",
+    "parent_pilot_status": "ACTIVE-DESIGN-READY",
+    "gate_11_precondition_ids_closed": ["P1", "P2", "P3"],
+    "gate_11_precondition_ids_open": ["P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16","P17","P18","P19","P20"],
+    "sealed_integrity_expected": "36_of_36_PASS",
+    "lore_meta_anchor_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "canonical_bridge_registry_reference": "/app/memory/r18_3e_bridge_registry.json",
+    "canonical_halls_registry_reference": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+  },
+  "precedence_rule": {
+    "r18_3f_r1_prevails_on": [
+      "14_mapping_baseline",
+      "bridge_status_categories_r18_3e",
+      "268_null_conflict_reclassification",
+      "anomalies_a6_a14",
+      "risk_register_r13_r18",
+      "paladin_reconciliation"
+    ],
+    "r18_3f_original_valid_historical_on": [
+      "governance_sections_1_3",
+      "scope",
+      "source_of_truth",
+      "dry_run_architecture",
+      "idempotency",
+      "snapshot",
+      "rollback",
+      "audit_trail",
+      "conflict_handling",
+      "compatibility_class_halls",
+      "compatibility_rite_of_rebirth",
+      "api_impact",
+      "openapi_impact",
+      "db_impact",
+      "prerequisites_p1_p20",
+      "go_hold_recommendation"
+    ],
+    "no_retroactive_rewrite_of_original": true,
+    "historical_errors_registered_in_r18_3f_r1_audit_and_this_closure_report": [
+      "semantic_error_11_mapping_labelled_canonical_native",
+      "quantitative_error_missing_paladin_mapping",
+      "classification_error_268_null_as_classless_recruit"
+    ]
+  },
+  "artifacts_immutability": {
+    "r18_3f_draft_original": {
+      "md": { "path": "/app/memory/r18_3f_class_slug_migration_readiness.md", "sha256": "746ad94f7f186684f08c4d5ab4268ab719a2287b3dfc078b5d3e0a8f53b69668", "status": "PRESERVED_HISTORICAL" },
+      "json": { "path": "/app/memory/r18_3f_class_slug_migration_readiness.json", "sha256": "d79401ebcbad376149a5ccb819fa8ead06cf180ad6b386022a94efe358ce3389", "status": "PRESERVED_HISTORICAL" },
+      "manifest": { "path": "/app/memory/r18_3f_class_slug_migration_readiness_manifest.json", "sha256": "bc603ff8892f84efdafb6bdd1b6ddbe7c4b35b06eb165f2dc2c930c16debe63b", "status": "PRESERVED_HISTORICAL" }
+    },
+    "r18_3f_r1_audit": {
+      "md": { "path": "/app/memory/r18_3f_mapping_null_reconciliation_audit.md", "sha256": "cc2dc8e60422a61a2ab67221a632623059b46410a9e4c1a1657b6fa4b1b11e39", "status": "AUTHORITATIVE_CORRECTIVE" },
+      "json": { "path": "/app/memory/r18_3f_mapping_null_reconciliation_audit.json", "sha256": "9e15dfbcb2c057bf37ecb8dfda1153260f2f4ce10e10fd2234eec30926ae5cdc", "status": "AUTHORITATIVE_CORRECTIVE" }
+    },
+    "pilot_certificate": {
+      "md_sha256": "2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2",
+      "json_sha256": "87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c",
+      "status": "IMMUTABLE"
+    },
+    "pilot_manifest": {
+      "sha256": "c364100912aaca946492f460f3a6a79ba1efcac3e13ac38d4e3eb9628e5d8ff3",
+      "status": "IMMUTABLE"
+    }
+  },
+  "mapping_baseline_14_legacy_source": {
+    "mapped_canonical_9": [
+      { "id": 1, "legacy_source": "warrior",     "canonical_target": "guerriero",             "confidence": "HIGH",   "adventurers_live": 331 },
+      { "id": 2, "legacy_source": "rogue",       "canonical_target": "ladro",                 "confidence": "HIGH",   "adventurers_live": 302 },
+      { "id": 3, "legacy_source": "mage",        "canonical_target": "mago",                  "confidence": "HIGH",   "adventurers_live": 281 },
+      { "id": 4, "legacy_source": "monk",        "canonical_target": "monaco",                "confidence": "HIGH",   "adventurers_live": 327 },
+      { "id": 5, "legacy_source": "paladin",     "canonical_target": "paladino",              "confidence": "HIGH",   "adventurers_live": 303 },
+      { "id": 6, "legacy_source": "druid",       "canonical_target": "druido",                "confidence": "HIGH",   "adventurers_live": 311 },
+      { "id": 7, "legacy_source": "alchemist",   "canonical_target": "alchimista",            "confidence": "HIGH",   "adventurers_live": 299 },
+      { "id": 8, "legacy_source": "bard",        "canonical_target": "bardo",                 "confidence": "HIGH",   "adventurers_live": 324 },
+      { "id": 9, "legacy_source": "necromancer", "canonical_target": "negromante",            "confidence": "MEDIUM", "adventurers_live": 0 }
+    ],
+    "mapped_alias_3": [
+      { "id": 10, "legacy_source": "priest",  "canonical_target": "paladino",             "confidence": "MEDIUM", "adventurers_live": 278 },
+      { "id": 11, "legacy_source": "ranger",  "canonical_target": "cacciatore_di_mostri", "confidence": "MEDIUM", "adventurers_live": 299 },
+      { "id": 12, "legacy_source": "warlock", "canonical_target": "cacciatore_del_vuoto", "confidence": "MEDIUM", "adventurers_live": 305 }
+    ],
+    "deprecated_alias_2": [
+      { "id": 13, "legacy_source": "assassin",  "canonical_target": "ladro",     "confidence": "MEDIUM", "adventurers_live": 0 },
+      { "id": 14, "legacy_source": "berserker", "canonical_target": "guerriero", "confidence": "MEDIUM", "adventurers_live": 0 }
+    ]
+  },
+  "registry_entries_18_totals": {
+    "mapping_source_14": 14,
+    "canonical_native_2": ["cacciatore_di_mostri", "cacciatore_del_vuoto"],
+    "technical_placeholder_1": ["recruit_unassigned"],
+    "test_artifact_1": ["test-class-5e0064"],
+    "total": 18,
+    "matches_adventurer_classes_catalog_docs": true
+  },
+  "bridge_status_enum_r18_3e_locked_7": [
+    "mapped_canonical",
+    "mapped_alias",
+    "deprecated_alias",
+    "technical_placeholder",
+    "test_artifact",
+    "canonical_native",
+    "ambiguous_pending_pm"
+  ],
+  "semantic_rule_lock": {
+    "legacy_en_with_canonical_target_is_not_canonical_native": true,
+    "canonical_native_reserved_for": "records_already_valued_with_canonical_it_slug_in_class_slug_field",
+    "mapped_canonical_for": "legacy_en_source_with_canonical_it_target_confidence_HIGH",
+    "mapped_alias_for": "legacy_en_source_alias_target_shared_confidence_MEDIUM",
+    "deprecated_alias_for": "legacy_en_source_adventurers_live_0_destined_removal"
+  },
+  "paladin_reconciliation": {
+    "paladin_live": 303,
+    "paladin_catalog_present": true,
+    "paladin_catalog_bridge_status": "mapped_canonical",
+    "paladin_catalog_canonical_slug": "paladino",
+    "paladin_bridge_source_round": "R18.3e Phase B",
+    "paladin_registry_confidence": "HIGH",
+    "paladin_registry_adventurers_live": 303,
+    "canonical_target": "paladino",
+    "stop_mismatch": false,
+    "reconciliation_ok": true
+  },
+  "priest_paladin_many_to_one": {
+    "priest_target": { "canonical": "paladino", "bridge_status": "mapped_alias", "confidence": "MEDIUM", "live": 278 },
+    "paladin_target": { "canonical": "paladino", "bridge_status": "mapped_canonical", "confidence": "HIGH", "live": 303 },
+    "reverse_map_paladino_from": ["paladin", "priest"],
+    "many_to_one_ratified": true,
+    "safeguard_lock": "priest_cohort_and_paladin_cohort_MUST_migrate_as_SEPARATE_cohorts_NEVER_same_batch",
+    "safeguard_rationale": "different_bridge_semantics_different_confidence_avoid_target_collision_avoid_rollback_ambiguity"
+  },
+  "null_conflict_lock": {
+    "total_null_cohort": 268,
+    "classless_confirmed": 0,
+    "null_unresolved": 0,
+    "null_conflict": 268,
+    "no_action": 0,
+    "class_evidence_via_alternative_fields": true,
+    "class_slug_null_not_equal_recruit_unassigned": true,
+    "no_auto_conversion": true,
+    "no_implicit_fill": true,
+    "no_runtime_auto_derive": true
+  },
+  "a1_diagnostic_resolved_data_open": {
+    "diagnostic_status": "RESOLVED",
+    "data_status": "STILL_OPEN",
+    "data_open_reason": "field class_slug remains null in 268 records",
+    "future_gate": "R18.3f-NC1 Null Conflict Remediation Planning",
+    "future_gate_status": "NOT_AUTHORIZED_NOW",
+    "mandatory_pre_apply_dependency": true,
+    "requirements": ["explicit", "deterministic", "versioned", "audited", "snapshot_backed", "pm_approved"],
+    "forbidden": ["runtime_auto_derive", "generic_auto_conversion", "implicit_fallback", "recruit_unassigned_fill"]
+  },
+  "anomalies_a1_a14_status_finale": {
+    "A1": { "severity": "MEDIUM", "status": "RESOLVED_diagnostic_STILL_OPEN_data_R18_3f_NC1_gate" },
+    "A2": { "severity": "MEDIUM", "status": "CONFIRMED_archive_only_non_blocking" },
+    "A3": { "severity": "LOW",    "status": "CONFIRMED_catalog_18_vs_live_11_delta_7_expected" },
+    "A4": { "severity": "INFO",   "status": "CONFIRMED_class_halls_aligned" },
+    "A5": { "severity": "MEDIUM", "status": "UPGRADED_parent_class_slug_dormant_do_not_create_gate_11_review" },
+    "A6": { "severity": "MEDIUM", "status": "268_batch_seed_uniform_2026_07_05T15_55_48_9_pre_hotfix" },
+    "A7": { "severity": "LOW",    "status": "phase13_unbaked_true_all_268" },
+    "A8": { "severity": "INFO",   "status": "career_history_collection_VUOTA_zero_docs_NOT_USABLE_AS_EVIDENCE_NO_retroactive_reconstruction_NO_backfill_NO_inference" },
+    "A9": { "severity": "MEDIUM", "status": "parent_class_slug_zero_distinct_all_collections_dormant" },
+    "A10": { "severity": "MEDIUM", "status": "268_reconstructable_via_class_name_class_role_adventurer_class_id_but_NO_auto_derive" },
+    "A11": { "severity": "LOW",   "status": "created_at_STRING_type_OUT_OF_SCOPE_R18_3f_data_hygiene_technical_debt_gate_11_prerequisite_review" },
+    "A12": { "severity": "LOW",   "status": "268_missing_11_fields_status_grade_xp_hp_is_retired_r18_reset1b" },
+    "A13": { "severity": "INFO",  "status": "previous_class_slug_only_zero_leak_metadata_filter_guilds_routes_py_135" },
+    "A14": { "severity": "INFO",  "status": "ambiguous_pending_pm_safety_hatch_unused" }
+  },
+  "risk_register_consolidato": {
+    "critical": [
+      { "id": "R9",  "severity": "CRITICAL", "risk": "sealed_integrity_violated_during_future_apply", "mitigation": "sealed_apply_package_pre_apply_manifest_snapshot_dry_run_cohort_boundary_post_batch_integrity_manual_stop_gate" }
+    ],
+    "high": [
+      { "id": "R1",  "severity": "HIGH", "risk": "migration_partial_state_inconsistent" },
+      { "id": "R2",  "severity": "HIGH", "risk": "auto_derive_drift" },
+      { "id": "R6",  "severity": "HIGH", "risk": "api_breaking_change_consumer" },
+      { "id": "R7",  "severity": "HIGH", "risk": "class_halls_out_of_sync" },
+      { "id": "R10", "severity": "HIGH", "risk": "rollback_failed" },
+      { "id": "R14", "severity": "HIGH", "risk": "auto_derive_268_null_conflict_to_recruit_unassigned_VIETATO", "mitigation": "null_conflict_verdict_explicit_no_auto_derive_R18_3f_NC1_gate_mandatory" }
+    ],
+    "medium": [
+      { "id": "R3",  "severity": "MEDIUM", "risk": "test_artifact_propagation" },
+      { "id": "R4",  "severity": "MEDIUM", "risk": "conflict_record_ui_mismatch" },
+      { "id": "R5",  "severity": "MEDIUM", "risk": "268_null_ambiguity_classification_resolved_data_open" },
+      { "id": "R11", "severity": "MEDIUM", "risk": "idempotency_key_collision" },
+      { "id": "R13", "severity": "MEDIUM", "risk": "null_conflict_vs_classless_confirmed_misuse" },
+      { "id": "R16", "severity": "MEDIUM", "risk": "created_at_string_type_breaks_temporal" }
+    ],
+    "low": [
+      { "id": "R8",  "severity": "LOW", "risk": "career_history_frammentato_mitigated_by_a8_empty" },
+      { "id": "R12", "severity": "LOW", "risk": "performance_batch_3628" },
+      { "id": "R15", "severity": "LOW", "risk": "parent_class_slug_dormant_read_none" },
+      { "id": "R18", "severity": "LOW", "risk": "bridge_paladin_priest_many_to_one_collision_mitigated_by_cohort_separation" }
+    ],
+    "info": [
+      { "id": "R17", "severity": "INFO", "risk": "career_history_empty_snapshot_only_rollback_strategy" }
+    ],
+    "total_tracked_risks": 18
+  },
+  "migration_strategy_staged_per_cohort": {
+    "not_one_shot": true,
+    "not_wave_1_design_order_bound": true,
+    "sequence_10_steps": [
+      "registry_validation",
+      "full_dry_run_read_only",
+      "snapshot_verified",
+      "cohort_count_freeze",
+      "canary_controlled_10_50_records",
+      "source_mapping_cohort_full_batch_one_at_time",
+      "post_batch_validation",
+      "integrity_check_sealed_and_lore_meta",
+      "explicit_stop_gate",
+      "next_cohort"
+    ],
+    "cohorts_separate_lock": {
+      "warlock_to_cacciatore_del_vuoto": 305,
+      "priest_to_paladino": 278,
+      "paladin_to_paladino": 303,
+      "warrior_to_guerriero": 331,
+      "rogue_to_ladro": 302,
+      "mage_to_mago": 281,
+      "monk_to_monaco": 327,
+      "druid_to_druido": 311,
+      "alchemist_to_alchimista": 299,
+      "bard_to_bardo": 324,
+      "ranger_to_cacciatore_di_mostri": 299,
+      "necromancer_to_negromante": 0,
+      "assassin_to_ladro": 0,
+      "berserker_to_guerriero": 0
+    },
+    "priest_paladin_never_same_batch_lock": true
+  },
+  "null_remediation_dependency_r18_3f_nc1": {
+    "gate_name": "R18.3f-NC1 Null Conflict Remediation Planning",
+    "status": "NOT_AUTHORIZED_NOW",
+    "mandatory_pre_apply_dependency": true,
+    "scope": "define_backfill_criteria_for_268_null_conflict_records_deterministic_versioned_audited_snapshot_backed_pm_approved",
+    "out_of_scope_r18_3f_nc1": ["item_creation", "r18_5_catalog_mutation", "registry_v3_apply", "class_slug_apply_for_other_3360_non_null"]
+  },
+  "no_auto_derive_policy_lock": {
+    "class_name_to_class_slug_auto_derive": false,
+    "adventurer_class_id_to_class_slug_auto_derive": false,
+    "null_to_recruit_unassigned_auto_convert": false,
+    "runtime_fallback_lookup_on_null": false,
+    "archive_to_live_retro_propagation": false,
+    "each_conversion_requires": ["pm_directive", "dry_run", "snapshot", "audit_trail", "rollback_plan"]
+  },
+  "runtime_bridge_disabled": {
+    "runtime_bridge_status": "disabled",
+    "kill_switch_global_class_slug_migration_enabled": false,
+    "per_cohort_flag_migration_cohort_enabled": false,
+    "two_level_flag_required_before_apply": true
+  },
+  "migration_not_applied": {
+    "class_slug_write_count_total_r18_3f_r1_closure": 0,
+    "db_writes_count": 0,
+    "collections_touched": 0,
+    "migration_bridge_apply_status": "NOT_AUTHORIZED"
+  },
+  "pm_lock_policy": {
+    "r18_3f_status": "PM_LOCKED_NOT_YET_SEALED",
+    "future_modification_requirements": [
+      "explicit_pm_reopen",
+      "motivation",
+      "impact_analysis",
+      "diff_documentale",
+      "new_review",
+      "manifest_update"
+    ],
+    "not_added_to_seal_system_yet": true,
+    "sealing_deferred_two_phase": [
+      "apply_package_sealed_before_execution",
+      "closure_manifest_sealed_after_apply_final_review"
+    ],
+    "existing_36_seals_invariant": true
+  },
+  "governance_result": {
+    "r18_3f": "PM_APPROVED_CLOSED_PM_LOCKED_NOT_APPLIED_NOT_SEALED",
+    "r18_3f_r1": "corrective_audit_acquired_authoritative_on_corrected_facts",
+    "r18_3f_original_draft": "preserved_historical_immutable",
+    "gate_11_precondition_p2": "CLOSED_draft_generated_r1_audit_closure",
+    "gate_11_precondition_p3": "CLOSED_pm_review_completed",
+    "gate_11_preconditions_p4_p20": "HOLD_NOT_STARTED",
+    "gate_11": "NOT_AUTHORIZED",
+    "wave_1_kickoff": "HOLD",
+    "rv3_ev": "AUTHORIZED_parallel_dispatch",
+    "r18_3f_nc1": "HOLD_pre_apply_dependency",
+    "monaco": "HOLD",
+    "rite_of_rebirth_r18_6_rb1": "HOLD",
+    "runtime_implementation": "NOT_AUTHORIZED"
+  },
+  "explicit_stop": {
+    "action": "STOP · R18.3f CLOSED · attendo dispatch RV3-EV STEP 3 di questo PM dispatch",
+    "no_apply": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true,
+    "no_monaco_kickoff": true,
+    "no_rite_of_rebirth_activation": true,
+    "no_class_slug_writes": true,
+    "no_runtime_activation": true,
+    "no_item_creation": true,
+    "no_registry_apply": true
+  }
+}

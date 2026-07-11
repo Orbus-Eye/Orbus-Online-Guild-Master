@@ -1,0 +1,319 @@
+{
+  "metadata": {
+    "artifact": "R18.6.RV3-EV Eligibility Validation",
+    "document_type": "eligibility_validation_draft",
+    "regime": "READ_ONLY_DISCOVERY_DOCUMENTAL_ONLY",
+    "language": "italian_only",
+    "target_class": "cacciatore_del_vuoto",
+    "class_slug_legacy_source": "warlock",
+    "parent_pilot_gate": "R18.6.3 Cacciatore del Vuoto (ACTIVE-DESIGN-READY)",
+    "parent_architecture": "R18.6.RV3 Registry v3 Additive Planning (CLOSED)",
+    "not_item_creation_gate": true,
+    "governance_status": "PM_LOCKED_PENDING_REVIEW",
+    "sealed_integrity_expected": "36_of_36_PASS",
+    "lore_meta_anchor_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "registry_v2_r18_5_reference": "planned_1500_items_documentale_live_178",
+    "canonical_registry_reference": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_item_creation": true,
+    "no_item_row": true,
+    "no_csv_item": true,
+    "no_mock_item": true,
+    "no_registry_v2_mutation": true,
+    "no_registry_v3_apply": true,
+    "no_r18_5_catalog_mutation": true,
+    "no_affix_addition": true,
+    "no_stat_change": true,
+    "no_proficiency_change": true,
+    "no_slot_change": true,
+    "no_class_slug_write": true,
+    "db_writes_count": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0
+  },
+  "scope": {
+    "in_scope": [
+      "read_only_discovery_catalog_live",
+      "classification_5_verdicts",
+      "coverage_per_slot_tier_rarity_family",
+      "gap_analysis",
+      "risk_register",
+      "pm_open_questions"
+    ],
+    "out_of_scope": [
+      "item_creation",
+      "catalog_writes",
+      "registry_v2_mutation",
+      "registry_v3_apply",
+      "affix_pool_modification",
+      "stat_tags_modification",
+      "class_tags_modification",
+      "slot_type_modification",
+      "rarity_modification",
+      "required_adventurer_level_modification",
+      "new_collections_creation",
+      "migration"
+    ]
+  },
+  "cacciatore_del_vuoto_target_profile": {
+    "main_stat": "intelligenza",
+    "main_stat_db_proxy": "stat_tags: intellect",
+    "armor_proficiency": ["stoffa", "cuoio"],
+    "weapon_proficiency": ["focus", "balestra", "pugnale"],
+    "class_alignment_legacy": "warlock",
+    "class_alignment_canonical": "cacciatore_del_vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "class_role": ["dps_caster", "support"]
+  },
+  "verdicts_admitted_5": [
+    "REUSE_VALID",
+    "REUSE_CONDITIONAL",
+    "NOT_COMPATIBLE",
+    "REQUIRES_NEW_ITEM_FUTURE",
+    "PM_REVIEW"
+  ],
+  "item_population_overview": {
+    "live_items_total": 178,
+    "planned_r18_5_registry_v2_total": 1500,
+    "materialization_ratio_live_vs_planned": "178/1500=11.87%",
+    "item_type_distinct_8": ["accessory","armor","consumable","material","material_continental","material_event","shield","weapon"],
+    "slot_type_distinct_9": [null,"accessory","amulet","armor","chest","helm","ring","weapon","weapon_main"],
+    "rarity_distinct_5": ["Common","Uncommon","Rare","Epic","Legendary"],
+    "item_binding_policy_counts": { "soft": 146, "universal": 21, "hard": 11 },
+    "affix_pool_tag_status": "None_all_178_items_feature_not_materialized",
+    "required_adventurer_level_buckets": { "L1": 63, "L3": 37, "L5": 36, "L8": 35, "L9": 2, "L12": 5 }
+  },
+  "class_tags_distribution": {
+    "paladin": 92,
+    "warrior": 69,
+    "berserker": 64,
+    "necromancer": 34,
+    "druid": 34,
+    "mage": 34,
+    "priest": 32,
+    "rogue": 31,
+    "ranger": 31,
+    "assassin": 31,
+    "bard": 29,
+    "monk": 24,
+    "alchemist": 18,
+    "warlock": 18
+  },
+  "stat_tags_distribution": {
+    "intellect": 72,
+    "endurance": 57,
+    "faith": 45,
+    "strength": 40,
+    "agility": 40
+  },
+  "lore_tags_distribution_relevant": {
+    "vuoto": 6,
+    "oblio": 5,
+    "vuoto_or_oblio_either": 6
+  },
+  "recommended_classes_distribution": {
+    "cacciatore_del_vuoto": 18,
+    "cacciatore_di_mostri": 31,
+    "warlock": 18
+  },
+  "armor_analysis": {
+    "armor_slot_type_count": 42,
+    "chest_slot_count": 3,
+    "helm_slot_count": 1,
+    "armor_total_46_plus_2_shields": 48,
+    "armor_intellect_18": 18,
+    "armor_warlock_intellect_6": 6,
+    "armor_type_field_present": false,
+    "armor_type_stoffa_discriminable": false,
+    "armor_type_cuoio_discriminable": false
+  },
+  "weapon_analysis": {
+    "weapon_slot_count": 54,
+    "weapon_main_slot_count": 7,
+    "weapon_total_61": 61,
+    "weapon_intellect_28": 28,
+    "weapon_warlock_intellect_6": 6,
+    "weapon_family_field_present": false,
+    "weapon_family_focus_discriminable": false,
+    "weapon_family_balestra_discriminable": false,
+    "weapon_family_pugnale_discriminable": false
+  },
+  "universal_slot_analysis": {
+    "back_slot_live_count": 0,
+    "neck_amulet_live_count": 5,
+    "ring_live_count": 1,
+    "accessory_live_count": 42,
+    "trinket_alias_rule": "trinket_maps_to_accessory_no_new_slot_created"
+  },
+  "verdict_distribution_finale": {
+    "REUSE_VALID": {
+      "count": 18,
+      "percentage_of_live_catalog": 10.1,
+      "criterion": "class_tags_warlock_AND_stat_tags_intellect",
+      "breakdown_by_slot_type": {
+        "armor": 6,
+        "accessory": 6,
+        "weapon": 6
+      }
+    },
+    "REUSE_CONDITIONAL": {
+      "count": 0,
+      "percentage_of_live_catalog": 0.0,
+      "criterion": "item_binding_policy_universal_AND_stat_tags_intellect",
+      "note": "universal_binding_items_21_are_material_or_consumable_slot_None_not_equip"
+    },
+    "PM_REVIEW": {
+      "count": 49,
+      "percentage_of_live_catalog": 27.5,
+      "criterion": "item_binding_policy_soft_AND_stat_tags_intellect_AND_class_tags_not_include_warlock",
+      "note": "ambiguous_intellect_soft_binding_potentially_shareable_but_class_tag_review_needed"
+    },
+    "NOT_COMPATIBLE": {
+      "count": 106,
+      "percentage_of_live_catalog": 59.6,
+      "criterion": "stat_tags_no_intellect"
+    },
+    "REQUIRES_NEW_ITEM_FUTURE": {
+      "count_estimated_range": "43_to_63",
+      "note": "design_only_registry_v3_additive_not_authorized",
+      "gaps_categories": [
+        "slot_back_missing",
+        "slot_ring_underpopulated",
+        "slot_gloves_legs_boots_not_live",
+        "tier_t5_endgame_only_1_intellect_L12",
+        "legendary_vuoto_identity_only_3_legendary_intellect",
+        "focus_balestra_pugnale_not_discriminable_no_field",
+        "armor_stoffa_vs_cuoio_not_discriminable_no_field",
+        "affix_pool_tags_not_materialized"
+      ]
+    },
+    "total_live_analyzed": 178,
+    "total_addressable_max_reuse_valid_plus_reuse_conditional_plus_pm_review": 67
+  },
+  "coverage_by_tier": {
+    "T1_L1": { "intellect_items": 16, "warlock_intellect_est": 4, "coverage_status": "acceptable" },
+    "T2_L3": { "intellect_items": 12, "warlock_intellect_est": 3, "coverage_status": "acceptable" },
+    "T3_L5": { "intellect_items": 23, "warlock_intellect_est": 5, "coverage_status": "acceptable" },
+    "T4_L8": { "intellect_items": 19, "warlock_intellect_est": 4, "coverage_status": "acceptable" },
+    "T5_L9_L12": { "intellect_items": 2, "warlock_intellect_est": 1, "coverage_status": "GAP_endgame_critical" }
+  },
+  "coverage_by_slot": {
+    "armor_chest_legs": { "live_intellect": 18, "warlock_intellect": 6, "design_target": "30_40", "gap": "24_34" },
+    "weapon_focus_balestra_pugnale": { "live_intellect": 28, "warlock_intellect": 6, "design_target": "15_25", "gap": "9_19" },
+    "accessory": { "live_intellect": 22, "warlock_intellect": 6, "design_target": "15_25", "gap": "9_19" },
+    "amulet_neck": { "live_intellect": 4, "warlock_intellect": "unknown", "design_target": "5_8", "gap": "1_4" },
+    "ring": { "live_intellect": 0, "warlock_intellect": 0, "design_target": "8_15", "gap": "8_15" },
+    "helm": { "live_intellect": 0, "warlock_intellect": 0, "design_target": "5_8", "gap": "5_8" },
+    "back": { "live_intellect": 0, "warlock_intellect": 0, "design_target": "5_8", "gap": "5_8" }
+  },
+  "envelope_target": {
+    "min": 110,
+    "max": 130,
+    "planning_center": 120,
+    "current_reuse_valid_plus_addressable_max": 67,
+    "gap_min": 43,
+    "gap_max": 63,
+    "gap_note": "43_to_63_new_items_needed_to_reach_envelope_center_120_design_only_not_authorized"
+  },
+  "gap_analysis": {
+    "field_missing": ["armor_type", "weapon_family", "tier", "ILVL", "affix_pool_tag_populated"],
+    "slot_missing_or_underpopulated": ["back", "gloves", "legs", "boots", "ring", "helm"],
+    "coverage_endgame_gap": "T5_L12_only_1_intellect_item",
+    "identity_vuoto_gap": "only_6_items_lore_vuoto_or_oblio_insufficient",
+    "reuse_conditional_gap": "0_universal_binding_equip_items"
+  },
+  "future_item_estimate": {
+    "envelope_min_110_gap_from_current_67": 43,
+    "envelope_center_120_gap_from_current_67": 53,
+    "envelope_max_130_gap_from_current_67": 63,
+    "recommended_distribution_design_only": {
+      "armor_stoffa_cuoio": "20_25",
+      "weapon_focus_balestra_pugnale": "15_20",
+      "accessory_ring_amulet_back": "15_20",
+      "legendary_vuoto_identity_endgame": "5_10",
+      "utility_transitional_shared_universal": "5_10"
+    },
+    "authorization_status": "NOT_AUTHORIZED_design_only"
+  },
+  "registry_v2_preservation": {
+    "collection_items_docs_pre_ev": 178,
+    "collection_items_docs_post_ev": 178,
+    "documents_modified": 0,
+    "documents_created": 0,
+    "documents_deleted": 0,
+    "field_added": 0,
+    "field_modified": 0
+  },
+  "anti_p2w_validation": {
+    "hard_binding_items": 11,
+    "hard_binding_prevents_marketable_high_power_leak": true,
+    "legendary_intellect_count": 3,
+    "legendary_intellect_below_p2w_threshold": true,
+    "verdict": "PASS_documentale"
+  },
+  "affix_compatibility": {
+    "affix_pool_tag_populated_in_178_items": 0,
+    "affix_feature_status": "not_materialized_in_db",
+    "compat_evaluation_deferred_to_registry_v3_additive_futuro": true
+  },
+  "class_identity_risk": {
+    "lore_tags_vuoto_or_oblio_count": 6,
+    "identity_baseline_healthy_range": "60_to_100_lore_tagged_items_per_class",
+    "identity_gap_severity": "MEDIUM_underpowered"
+  },
+  "duplicate_risk": {
+    "duplicate_slug_in_178_items": 0,
+    "future_registry_v3_add_duplicate_risk": "mitigable_via_naming_convention_and_slug_uniqueness_check"
+  },
+  "risk_register_rv3_ev": [
+    { "id": "EV-R1",  "severity": "HIGH",   "risk": "Coverage Vuoto sotto envelope 110 · classe non giocabile senza gap fill", "mitigation": "Registry v3 additive futuro 60_90 items new" },
+    { "id": "EV-R2",  "severity": "MEDIUM", "risk": "Identita Vuoto lore-thin 6 items vuoto oblio",                            "mitigation": "aggiungere lore_tags vuoto oblio a items nuovi registry v3" },
+    { "id": "EV-R3",  "severity": "MEDIUM", "risk": "Endgame T5 vuoto ~1 item intellect L12",                                  "mitigation": "priority endgame items nuovi" },
+    { "id": "EV-R4",  "severity": "MEDIUM", "risk": "Field armor_type weapon_family tier mancanti · impossibile discriminare", "mitigation": "field additive registry v3 design_only" },
+    { "id": "EV-R5",  "severity": "HIGH",   "risk": "PM_REVIEW 49 items ambigui · potenziale contaminazione class identity",   "mitigation": "review record_by_record · policy strict class_tag" },
+    { "id": "EV-R6",  "severity": "LOW",    "risk": "Duplicate name risk in registry v3 add",                                  "mitigation": "naming convention + slug uniqueness enforce" },
+    { "id": "EV-R7",  "severity": "MEDIUM", "risk": "Anti-P2W drift · Legendary intellect solo 3",                             "mitigation": "anti-P2W audit prima di Legendary Vuoto add" },
+    { "id": "EV-R8",  "severity": "LOW",    "risk": "Trinket confusion alias vs new slot",                                     "mitigation": "LOCK alias trinket → accessory · no new slot trinket" },
+    { "id": "EV-R9",  "severity": "HIGH",   "risk": "Sealed integrity violation durante registry v3 apply futuro",             "mitigation": "sealed apply package + snapshot + dry-run mandatory" },
+    { "id": "EV-R10", "severity": "MEDIUM", "risk": "Coverage stimata via proxy · field discriminanti mancanti possono cambiare classifica", "mitigation": "reclassify dopo apply field additive" }
+  ],
+  "pm_open_questions": [
+    { "id": "EV-Q1",  "question": "REUSE_CONDITIONAL=0 · accettare gap o creare 5-10 universal-intellect equip pre-Registry v3?", "recommendation": "gap accettato · Registry v3 additive copre" },
+    { "id": "EV-Q2",  "question": "PM_REVIEW 49 items: review record_by_record ora o attendere Registry v3 apply?",              "recommendation": "review dopo Registry v3 field additive (armor_type weapon_family)" },
+    { "id": "EV-Q3",  "question": "Envelope 110-130 · center ≈120 confirmed?",                                                    "recommendation": "si target center 120" },
+    { "id": "EV-Q4",  "question": "Priorita items Registry v3: armor stoffa cuoio · weapon focus · endgame T5 · lore identity?", "recommendation": "ordine armor → weapon → endgame → identity" },
+    { "id": "EV-Q5",  "question": "class_tag warlock legacy vs cacciatore_del_vuoto canonical: migration pre-Registry v3 apply o coexist?", "recommendation": "coexist con compat window minimum 4 settimane aligned R3f-Q5" },
+    { "id": "EV-Q6",  "question": "Field additive armor_type weapon_family tier ILVL: quale timing?",                             "recommendation": "pre-Registry v3 apply · single gate dedicato Field Additive Migration" },
+    { "id": "EV-Q7",  "question": "Slot additive back gloves legs boots off_hand: tutti insieme o incremental?",                  "recommendation": "incremental per Wave 1-4 aligned R18.6.RV3 architecture" },
+    { "id": "EV-Q8",  "question": "Affix pool tags: popolare pre o post Registry v3?",                                            "recommendation": "pre Registry v3 base tag pool · Registry v3 aggiunge Vuoto-specific" },
+    { "id": "EV-Q9",  "question": "6 items lore vuoto/oblio: equip Vuoto o generici?",                                            "recommendation": "verificare per-item · potrebbero essere lore npc/quest non equip Vuoto" },
+    { "id": "EV-Q10", "question": "Anti-P2W audit: quando eseguire su Registry v3 additive?",                                     "recommendation": "pre-apply + post-apply verification obbligatoria" }
+  ],
+  "go_hold_recommendation": {
+    "rv3_ev_draft_documentale": "DRAFT_GENERATED",
+    "pm_review_rv3_ev": "PENDING",
+    "registry_v3_additive_apply": "HOLD",
+    "field_additive_migration_gate": "HOLD",
+    "slot_additive_back_gloves_legs_boots": "HOLD",
+    "anti_p2w_audit_registry_v3": "HOLD",
+    "pm_review_49_items_record_by_record": "HOLD_post_field_additive",
+    "item_creation_registry_v3": "HOLD_NOT_AUTHORIZED",
+    "gate_11": "NOT_AUTHORIZED",
+    "wave_1_kickoff_monaco_druido_alchimista_bardo_negromante": "HOLD",
+    "recommendation_to_pm": "procedere_con_review_rv3_ev_draft · confermare_envelope_110_130_center_120 · autorizzare_in_gate_futuro_dedicato_field_additive_registry_v3_come_prerequisito · nessun_item_creation_nessun_registry_v3_apply_nessun_gate_11_senza_pm_directive_esplicita"
+  },
+  "explicit_stop": {
+    "action": "STOP · RV3-EV draft generato · attendo PM verdict finale (CLOSE/REWORK/HOLD)",
+    "no_item_creation": true,
+    "no_registry_v3_apply": true,
+    "no_registry_v2_mutation": true,
+    "no_class_slug_writes": true,
+    "no_field_additive_apply": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true
+  }
+}

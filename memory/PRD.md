@@ -3624,3 +3624,126 @@ Tutti i proposal: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPEN
 
 🛑 **EXPLICIT STOP post-R18.3f-draft**. Attesa PM review.
 
+
+---
+
+## R18.3f · Class Slug Migration Readiness · PM APPROVED · CLOSED
+
+- **Timestamp append**: post R18.3f-R1 corrective audit · post PM final verdict
+- **status**: **PM APPROVED · CLOSED · PM-LOCKED · NOT APPLIED · NOT SEALED**
+- **P2 (Gate 11 precondition)** = **CLOSED** (draft generato + R1 audit + closure)
+- **P3 (Gate 11 precondition)** = **CLOSED** (PM review completata)
+- **P4-P20** = HOLD / NOT_STARTED
+
+### Regola di precedenza documentale (LOCK)
+
+- **R18.3f-R1** = autoritativo per fatti corretti dalla discovery (14 mapping baseline · categorie bridge_status R18.3e · 268 NULL_CONFLICT · anomalie A6-A14 · rischi R13-R18 · paladin reconciliation).
+- **R18.3f originale** = preservato storicamente per sezioni governance, scope, source of truth, dry-run architecture, idempotency, snapshot, rollback, audit trail, conflict handling, compatibility Class Halls/Rite of Rebirth, API/OpenAPI/DB impact, prerequisites P1-P20, GO/HOLD recommendation.
+- **NON riscrivere retroattivamente** il draft originale · errori storici (semantic canonical_native, quantitative paladin mancante, classification 268 come classless recruit) restano registrati in R18.3f-R1 + closure report.
+
+### 14 mapping legacy-source validati (18 registry entries totali)
+
+**9 mapped_canonical**: warrior→guerriero · rogue→ladro · mage→mago · monk→monaco · paladin→paladino · druid→druido · alchemist→alchimista · bard→bardo · necromancer→negromante
+
+**3 mapped_alias**: priest→paladino · ranger→cacciatore_di_mostri · warlock→cacciatore_del_vuoto
+
+**2 deprecated_alias** (live=0): assassin→ladro · berserker→guerriero
+
+**2 canonical_native**: cacciatore_di_mostri · cacciatore_del_vuoto
+**1 technical_placeholder**: recruit_unassigned
+**1 test_artifact**: test-class-5e0064
+**Totale bridge_entries** = 18 (matches `adventurer_classes` catalog)
+
+### Paladin reconciliation · priest/paladin many-to-one (LOCK)
+
+- `paladin → paladino` (mapped_canonical HIGH · 303 live) CONFERMATO
+- `priest → paladino` (mapped_alias MEDIUM · 278 live) CONFERMATO
+- Many-to-one ratificato dal registry R18.3e
+- **Safeguard LOCK**: priest cohort e paladin cohort **DEVONO essere migrate come cohort SEPARATE** · **MAI nello stesso batch**
+
+### 268 NULL_CONFLICT · CLASSLESS_CONFIRMED = 0
+
+- 268 record con `class_slug=null` MA classe assegnata via `class_name`+`class_role`+`adventurer_class_id`
+- **NON sono Reclute**. `class_slug=null ≠ recruit_unassigned`
+- **VIETATO** convertire 268 in `recruit_unassigned` (regola PM R14 HIGH)
+- **VIETATO** auto-derive da `class_name` a `class_slug`
+- Origine: batch seed uniforme `2026-07-05T15:55:48.9...` pre-R16.5.4c ADJ-9 + pre-R18-reset1b hotfix
+- **R18.3f-NC1 Null Conflict Remediation Planning** = **MANDATORY PRE-APPLY DEPENDENCY** · **NOT AUTHORIZED NOW**
+- Rimediazione futura obbligatoriamente: esplicita · deterministica · versionata · auditata · snapshot-backed · PM-approved
+- A1 diagnostic = **RESOLVED** · A1 data = **STILL OPEN** (rimediazione differita a R18.3f-NC1)
+
+### Anomalie A1-A14 · status finale
+
+- A1 diagnostic RESOLVED / data STILL OPEN (R18.3f-NC1)
+- A2 CONFIRMED archive-only non-blocking
+- A3 CONFIRMED catalog delta 7 expected
+- A4 CONFIRMED class_halls aligned
+- A5 UPGRADED MEDIUM · parent_class_slug dormant · **NON creare** · review Gate 11
+- A6 MEDIUM · 268 batch uniforme pre-hotfix
+- A7 LOW · phase13_unbaked=True
+- A8 INFO · `career_history` VUOTA · **NON utilizzabile come evidence** · NO retroactive reconstruction · NO backfill · NO inference
+- A9 MEDIUM · parent_class_slug 0 distinct
+- A10 MEDIUM · 268 reconstructable via 3 field alternativi (ma NO auto-derive)
+- A11 LOW · created_at STRING · **OUT OF SCOPE R18.3f** · data hygiene technical debt · Gate 11 prerequisite review
+- A12 LOW · 11 field missing sui 268
+- A13 INFO · previous_class_slug solo Zero-leak metadata filter
+- A14 INFO · ambiguous_pending_pm safety hatch
+
+### Risk register consolidato (R1-R18)
+
+- **CRITICAL**: R9 sealed integrity violation during future apply
+- **HIGH**: R1, R2, R6, R7, R10, R14 (auto-derive 268 → recruit_unassigned VIETATO)
+- **MEDIUM**: R3, R4, R5, R11, R13, R16
+- **LOW**: R8, R12, R15, R18
+- **INFO**: R17
+
+### Strategia migrazione futura (staged per cohort · NOT AUTHORIZED NOW)
+
+Sequenza 10-step obbligatoria: registry validation → full dry-run read-only → snapshot verified → cohort count freeze → canary controlled (N=10-50) → source mapping cohort full batch → post-batch validation → integrity check → explicit stop gate → cohort successiva.
+
+**Cohort separate obbligatorie** (LOCK): 14 cohort ciascuna migrate una alla volta. `priest → paladino` MAI nello stesso batch di `paladin → paladino`.
+
+**NOT one-shot** · **NOT Wave 1 design order bound**.
+
+### Governance R18.3f
+
+- **Migration status** = `NOT_APPLIED` · **Runtime bridge status** = `disabled`
+- `class_slug write count` = 0 · `db writes` = 0
+- **NO auto-derive** (class_name/adventurer_class_id → class_slug · null → recruit_unassigned · archive → live retro-propagation)
+- **PM-LOCKED · NOT YET SEALED** · sealing 2-phase (apply package pre-execution + closure manifest post-apply final review)
+- Modifiche future: explicit PM reopen + motivazione + impact analysis + diff documentale + new review + manifest update
+
+### File artifact R18.3f closure
+
+- `/app/memory/r18_3f_final_closure_report.md` — SHA256 `ae8ebf31b0c3a474dbab78e2c4de160c4b5be1ffd0ba286fbba28dbe0f916bea` (275 righe · 21 sezioni)
+- `/app/memory/r18_3f_final_closure_report.json` — SHA256 `386bace50b3e29243dceafd11a64be619ee53c135c32640b72635e34d4e3b153` (310 righe)
+- `/app/memory/r18_3f_closure_manifest.json` — SHA256 TBD_POST_WRITE (registra 8 artifact)
+
+### Immutabilità
+
+- R18.3f originale (3 file) · R18.3f-R1 audit (2 file) · Pilot Certificate + Pilot Manifest = **SHA IMMUTATI**
+- Sealed integrity 36/36 = **BYTE-IDENTICAL** · `lore_meta.py` = `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`
+- backend/frontend/OpenAPI diff = **0** · Catalogo R18.5 = INVARIATO
+
+### Stato Gate 11 · Wave 1 · R18.3f-NC1
+
+- **RV3-EV Eligibility Validation** = **AUTHORIZED** 🟢 (dispatch parallelo con questo closure)
+- **R18.3f-NC1 Null Conflict Remediation Planning** = **HOLD** 🔒 (pre-apply dependency)
+- **Gate 11** = **NOT AUTHORIZED** 🔒 (14 precondizioni residue P4-P20)
+- **Wave 1 successors** (Monaco/Druido/Alchimista/Bardo/Negromante) = **HOLD** 🔒
+- **Rite of Rebirth** (R18.6.RB1) = **HOLD** 🔒
+- **Monaco** = **HOLD** 🔒
+- **Runtime implementation** = **NOT AUTHORIZED** 🔒
+
+### Baseline aggiornata
+
+- **R18.6.3 Cacciatore del Vuoto** = **ACTIVE-DESIGN-READY** ✅ (invariato)
+- **R18.3f** = **PM APPROVED · CLOSED · PM-LOCKED · NOT APPLIED · NOT SEALED** ✅ 🏆 (nuovo stato)
+- **R18.3f-R1** = corrective audit acquisito (autoritativo)
+- **RV3-EV** = **AUTHORIZED**
+- **R18.3f-NC1** = HOLD
+- **Gate 11** = NOT AUTHORIZED (14 P residue)
+- **Wave 1** = HOLD
+
+🛑 **EXPLICIT STOP post-R18.3f-closure**. Attesa dispatch RV3-EV STEP 3.
+

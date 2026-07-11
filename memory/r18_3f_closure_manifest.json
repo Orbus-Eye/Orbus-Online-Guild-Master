@@ -1,0 +1,139 @@
+{
+  "metadata": {
+    "artifact": "R18.3f Closure Manifest",
+    "manifest_type": "closure_manifest_dedicated",
+    "regime": "DOCUMENTAL_ONLY",
+    "language": "italian_only",
+    "closure_status": "CLOSED · PM APPROVED · PM-LOCKED · NOT APPLIED · NOT SEALED",
+    "precedence_rule": "R18.3f-R1 prevails on discovery-corrected facts · R18.3f original remains historical",
+    "pilot_manifest_immutability": "confirmed_not_touched",
+    "governance_lock": true,
+    "separation_note": "Manifest CLOSURE separato dal Pilot Manifest e dal Manifest R18.3f originale."
+  },
+  "r18_3f_original": {
+    "md": {
+      "path": "/app/memory/r18_3f_class_slug_migration_readiness.md",
+      "sha256": "746ad94f7f186684f08c4d5ab4268ab719a2287b3dfc078b5d3e0a8f53b69668",
+      "size_bytes": 30508,
+      "line_count": 500,
+      "artifact_role": "readiness_draft_md_historical",
+      "gate": "R18.3f",
+      "status": "PRESERVED_HISTORICAL",
+      "pm_locked": true,
+      "immutable": true
+    },
+    "json": {
+      "path": "/app/memory/r18_3f_class_slug_migration_readiness.json",
+      "sha256": "d79401ebcbad376149a5ccb819fa8ead06cf180ad6b386022a94efe358ce3389",
+      "size_bytes": 21803,
+      "line_count": 407,
+      "artifact_role": "readiness_draft_json_historical",
+      "gate": "R18.3f",
+      "status": "PRESERVED_HISTORICAL",
+      "pm_locked": true,
+      "immutable": true
+    },
+    "manifest": {
+      "path": "/app/memory/r18_3f_class_slug_migration_readiness_manifest.json",
+      "sha256": "bc603ff8892f84efdafb6bdd1b6ddbe7c4b35b06eb165f2dc2c930c16debe63b",
+      "size_bytes": 3717,
+      "artifact_role": "readiness_draft_manifest_historical",
+      "gate": "R18.3f",
+      "status": "PRESERVED_HISTORICAL",
+      "pm_locked": true,
+      "immutable": true
+    }
+  },
+  "r18_3f_r1_audit": {
+    "md": {
+      "path": "/app/memory/r18_3f_mapping_null_reconciliation_audit.md",
+      "sha256": "cc2dc8e60422a61a2ab67221a632623059b46410a9e4c1a1657b6fa4b1b11e39",
+      "size_bytes": 21874,
+      "line_count": 416,
+      "artifact_role": "corrective_audit_md",
+      "gate": "R18.3f-R1",
+      "status": "AUTHORITATIVE_CORRECTIVE",
+      "pm_locked": true,
+      "immutable": true
+    },
+    "json": {
+      "path": "/app/memory/r18_3f_mapping_null_reconciliation_audit.json",
+      "sha256": "9e15dfbcb2c057bf37ecb8dfda1153260f2f4ce10e10fd2234eec30926ae5cdc",
+      "size_bytes": 24183,
+      "line_count": 463,
+      "artifact_role": "corrective_audit_json",
+      "gate": "R18.3f-R1",
+      "status": "AUTHORITATIVE_CORRECTIVE",
+      "pm_locked": true,
+      "immutable": true
+    }
+  },
+  "r18_3f_closure_report": {
+    "md": {
+      "path": "/app/memory/r18_3f_final_closure_report.md",
+      "sha256": "ae8ebf31b0c3a474dbab78e2c4de160c4b5be1ffd0ba286fbba28dbe0f916bea",
+      "size_bytes": null,
+      "line_count": 275,
+      "sections_numbered_count": 21,
+      "artifact_role": "closure_report_md",
+      "gate": "R18.3f",
+      "status": "PM_APPROVED_CLOSED",
+      "pm_locked": true
+    },
+    "json": {
+      "path": "/app/memory/r18_3f_final_closure_report.json",
+      "sha256": "386bace50b3e29243dceafd11a64be619ee53c135c32640b72635e34d4e3b153",
+      "size_bytes": null,
+      "line_count": 310,
+      "artifact_role": "closure_report_json",
+      "gate": "R18.3f",
+      "status": "PM_APPROVED_CLOSED",
+      "pm_locked": true
+    }
+  },
+  "prd_reference": {
+    "path": "/app/memory/PRD.md",
+    "sha256_pre_r18_3f_closure_append": "97ff7b52ecab5f01a18979021f76ee0991703bad7288f05bbdf9c94c7a8d7ee3",
+    "sha256_post_r18_3f_closure_append": "TBD_POST_APPEND_STEP2",
+    "line_count_pre": 3626,
+    "line_count_post": "TBD_POST_APPEND_STEP2"
+  },
+  "pilot_manifest_immutability_reference": {
+    "path": "/app/memory/r18_6_3_cacciatore_del_vuoto_sha256_manifest.json",
+    "sha256_expected_invariant": "c364100912aaca946492f460f3a6a79ba1efcac3e13ac38d4e3eb9628e5d8ff3",
+    "modified_by_r18_3f_closure": false
+  },
+  "pilot_certificate_immutability_reference": {
+    "md_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.md",
+    "md_sha256_expected_invariant": "2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2",
+    "json_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.json",
+    "json_sha256_expected_invariant": "87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c",
+    "modified_by_r18_3f_closure": false
+  },
+  "sealed_integrity": {
+    "aggregate_sealed_files": 36,
+    "byte_identical_expected": true,
+    "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "artifacts_registered_total": 8,
+  "artifacts_registered_breakdown": {
+    "r18_3f_original_3": ["md", "json", "manifest"],
+    "r18_3f_r1_audit_2": ["md", "json"],
+    "r18_3f_closure_report_2": ["md", "json"],
+    "prd_1": ["PRD.md_reference_only_not_full_registration_here"],
+    "total": 8
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_migration_applied": true,
+    "class_slug_write_count": 0,
+    "db_writes_count": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0,
+    "sealed_in_seal_system": false,
+    "sealing_deferred_two_phase": true,
+    "explicit_stop_post_closure": true
+  }
+}
