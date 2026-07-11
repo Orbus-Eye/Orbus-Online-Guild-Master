@@ -1,0 +1,895 @@
+{
+  "metadata": {
+    "gate": "R18.6.3-G5",
+    "scope": "EQUIP_DESIGN",
+    "class_pilot": "Cacciatore del Vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "generated_at": "2026-07-08T20:15:00Z",
+    "status": "DRAFT_PENDING_PM_REVIEW",
+    "governance": "DOCUMENTAL ONLY · no code · no DB · no migrations · no Registry v3 generation · no item rows · no drop tables · no crafting",
+    "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4"
+    ],
+    "successor_gate": "R18.6.3-G6 PLAYER_GUIDE (HOLD · attende G5 CLOSED)",
+    "canonical_class_validation": "PASS",
+    "non_canonical_class_references": 0,
+    "terminology_note": "budget · rarity · affix · slot · tier · ILVL · gear sharing (nessun uso improprio di termini loot-related come 'd.r.rate')"
+  },
+  "budget_per_tier": {
+    "concept": "budget statistico relativo · valori direzionali · NO formule runtime",
+    "T1_Aspirante": {
+      "level_range": "1-15",
+      "power_baseline_relative": 1.0,
+      "int_budget_direction": "10-25 range concept",
+      "sockets": 0,
+      "affix_slots_max": 1,
+      "primary_stat_focus": "Intelligenza dominante",
+      "note": "onboarding · loop 4-step learning · no channel bonus focus (Int troppo basso per proc)"
+    },
+    "T2_Cacciatore": {
+      "level_range": "16-30",
+      "power_baseline_relative": 1.35,
+      "int_budget_direction": "25-45 range concept",
+      "sockets": 0,
+      "affix_slots_max": 2,
+      "primary_stat_focus": "Intelligenza dominante · sec: destrezza minore (movement) · vitalità secondaria",
+      "note": "onboarding rituale · Int proc 10-20% attivo · Marchi cap 3"
+    },
+    "T3_Iniziato": {
+      "level_range": "31-45",
+      "power_baseline_relative": 1.75,
+      "int_budget_direction": "45-70 range concept",
+      "sockets": "0-1",
+      "affix_slots_max": 3,
+      "primary_stat_focus": "Intelligenza dominante · sec: vitalità · destrezza minore",
+      "note": "soglia Int 50 = +1 Marchio attivo (cap 4) · proc 20-30% · durata Marchio 5-6T"
+    },
+    "T4_Rituale": {
+      "level_range": "46-55",
+      "power_baseline_relative": 2.2,
+      "int_budget_direction": "70-100 range concept",
+      "sockets": "1-2",
+      "affix_slots_max": 4,
+      "primary_stat_focus": "Intelligenza dominante · vitalità/destrezza secondari",
+      "note": "soglia Int 90 = +1 Marchio (cap 5) · proc 30-40% · durata 6-7T"
+    },
+    "T5_Vuoto": {
+      "level_range": "55-60",
+      "power_baseline_relative": 2.7,
+      "int_budget_direction": "100+ (soft cap linear-flattening applica)",
+      "sockets": "2-3",
+      "affix_slots_max": 5,
+      "primary_stat_focus": "Intelligenza al soft cap · secondari a scelta build",
+      "note": "endgame · knee point Int 100 · proc 45% cap · durata Marchio 8T (+0.5 per 50 Int oltre) · hard cap 10T"
+    },
+    "note_gate_isolation": "Budget direzionale · G5 NON fornisce formule runtime · G6+ finalizza player-facing display · Registry v3 (HOLD) consumerà questo budget"
+  },
+  "budget_per_rarity": {
+    "Common": {
+      "multiplier": 1.0,
+      "affix_count_range": "0-1",
+      "sockets_max": 0,
+      "legendary_utility": false,
+      "note": "baseline · vendor · quest reward T1-T2"
+    },
+    "Uncommon": {
+      "multiplier": 1.15,
+      "affix_count_range": "1-2",
+      "sockets_max": 0,
+      "legendary_utility": false,
+      "note": "T2-T4 mid drop · light class affix"
+    },
+    "Rare": {
+      "multiplier": 1.35,
+      "affix_count_range": "2-3",
+      "sockets_max": 1,
+      "legendary_utility": false,
+      "note": "T3-T5 · class-specific affix garantito"
+    },
+    "Epic": {
+      "multiplier": 1.6,
+      "affix_count_range": "3-4",
+      "sockets_max": "1-2",
+      "legendary_utility": false,
+      "note": "T4-T5 · multi class-affix · endgame rituale"
+    },
+    "Legendary": {
+      "multiplier": 1.85,
+      "affix_count_range": "4-5",
+      "sockets_max": "2-3",
+      "legendary_utility": true,
+      "legendary_ilvl_lock": 60,
+      "legendary_semantic": "Legendary ILVL = 60 · NON +60 Intelligenza · utility_unique senza overrides scaling design (G1 semantic correction)",
+      "note": "T5 · utility_unique (es. estende loop Marchio in modo qualitativo, non stat +) · anti-power-creep preservato"
+    },
+    "rationale": "multiplier progression evita step function · Legendary utility_unique = no overrides · budget compatibile con Int soft cap 100"
+  },
+  "weapon_scaling_qualitative": {
+    "concept": "scaling qualitativo · direzione relativa · NO runtime formulas · NO Destrezza scaling · NO parificazione balestra/focus",
+    "int_dominance_confirmed": true,
+    "int_scaling_note": "Int principale scaling · linear-flattening Int 100+ (G1 SD-Q1 LOCK)",
+    "no_dex_scaling_confirmed": true,
+    "no_secondary_stat_override": true
+  },
+  "weapon_coefficients_directional": {
+    "focus": {
+      "role": "primary_main_hand_arcane_throughput",
+      "throughput_baseline_relative": 1.0,
+      "identity": "throughput arcano primario · applicazione Marchio · Drain principale · Payoff channeling · max 1 focus (PD-Q1 LOCK)",
+      "advantages": [
+        "throughput arcano baseline (highest)",
+        "channel bonus +1F max 2/segmento risorsa",
+        "Payoff channeling privilegiato",
+        "no 2H penalty"
+      ],
+      "trade_off": "richiede posizionamento mid-range · fragile (armor cuoio/stoffa)",
+      "note": "focus è baseline · NO formule runtime · direzione qualitativa"
+    },
+    "balestra": {
+      "role": "ranged_arcane_2h",
+      "throughput_baseline_relative": "0.85-0.90 (inferiore al Focus)",
+      "identity": "canalizzazione arcana ranged · applicazione Marchio a distanza · Drain ranged · 2H",
+      "advantages": [
+        "range esteso · sicurezza posizionale",
+        "target inaccessibile in melee",
+        "safety baseline per encounter high-threat frontline"
+      ],
+      "trade_off_compensation": "throughput arcano inferiore · compensato da range + sicurezza · NO parificazione con focus (LOCK)",
+      "opportunity_cost_2h": "blocca off_hand · no pugnale off_hand · no ritual close bonus disponibile",
+      "no_dex_scaling_confirmed": true,
+      "note": "balestra arcana ≠ balestra fisica del Cacciatore di Mostri · gameplay distinto (G3 differentiation LOCK)"
+    },
+    "pugnale": {
+      "role": "ritual_opportunistic_off_hand",
+      "throughput_baseline_relative": "0.70-0.80 (inferiore nel danno sostenuto)",
+      "identity": "rituale · off_hand default con focus main · Payoff ravvicinato · chiude rituali",
+      "advantages": [
+        "ritual close +1F max 1× per applicazione Marchio",
+        "off_hand ideal loadout focus+pugnale (PD-Q1 default)",
+        "opportunistic finisher"
+      ],
+      "trade_off_compensation": "damage sostenuto ridotto · compensato da ritual close + opportunità burst · gestione multi-Marchio in melee window",
+      "no_dex_scaling_confirmed": true,
+      "note": "pugnale = ritual rune blade · gameplay ritualistico · NO parificazione con altre weapon"
+    },
+    "relative_order_locked": "focus > balestra > pugnale (throughput arcano sostenuto)",
+    "identity_asymmetry_locked": "ogni weapon ha identity distinta · nessuna weapon è flat superior · trade-off design mantiene meaningful choice",
+    "gate_5_boundary": "SOLO direzione qualitativa · NO coefficienti numerici runtime · Registry v3 (HOLD) consumerà direzione"
+  },
+  "armor_distribution": {
+    "whitelist_lock_g2": [
+      "stoffa",
+      "cuoio"
+    ],
+    "excluded_lock_g2": [
+      "maglia",
+      "piastre"
+    ],
+    "distribution_by_tier": {
+      "T1": {
+        "stoffa_share": 0.55,
+        "cuoio_share": 0.45
+      },
+      "T2": {
+        "stoffa_share": 0.55,
+        "cuoio_share": 0.45
+      },
+      "T3": {
+        "stoffa_share": 0.6,
+        "cuoio_share": 0.4,
+        "note": "shift verso stoffa · Int focus emerge"
+      },
+      "T4": {
+        "stoffa_share": 0.65,
+        "cuoio_share": 0.35,
+        "note": "endgame rituale · stoffa dominante"
+      },
+      "T5": {
+        "stoffa_share": 0.7,
+        "cuoio_share": 0.3,
+        "note": "Legendary stoffa 3-4 · cuoio niche per hybrid movement builds"
+      }
+    },
+    "stoffa_identity": "armor rituale · Int scaling primario · Marchi/Drain efficacy bonus tendenziale · fragilità accepted",
+    "cuoio_identity": "armor hybrid · Int scaling primario ma con secondary movement/positioning · niche per builds che sacrificano throughput per survivability",
+    "no_dual_stat_identity_g2_lock": true,
+    "no_int_dex_hybrid": "confermato · anche cuoio è Int-focus, NON hybrid Int/Dex",
+    "note": "distribuzione direzionale · NO formule · NO runtime · G5 boundary preserved"
+  },
+  "slot_identity": {
+    "canonical_14_slots": {
+      "helmet": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "cappuccio arcano · elmo rituale"
+      },
+      "shoulders": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "mantello spalle"
+      },
+      "chest": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "veste rituale core"
+      },
+      "gloves": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "guanti focus canalizzazione"
+      },
+      "belt": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "cintura runica"
+      },
+      "legs": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "gambali rituali"
+      },
+      "boots": {
+        "class_specific_allowed": true,
+        "armor_type": [
+          "stoffa",
+          "cuoio"
+        ],
+        "note": "stivali silenziosi"
+      },
+      "cloak": {
+        "class_specific_allowed": false,
+        "universal_allowed": true,
+        "note": "mantello · slot universal (accetta item cross-class)"
+      },
+      "main_hand": {
+        "class_specific_allowed": true,
+        "weapon_type": [
+          "focus",
+          "balestra_2h",
+          "pugnale"
+        ],
+        "note": "focus default · balestra 2H blocca off_hand · pugnale main secondaria"
+      },
+      "off_hand": {
+        "class_specific_allowed": true,
+        "weapon_type": [
+          "pugnale"
+        ],
+        "note": "solo pugnale off · bloccato se balestra 2H equipaggiata"
+      },
+      "neck": {
+        "class_specific_allowed": false,
+        "universal_allowed": true,
+        "note": "amuleto · slot universal"
+      },
+      "ring1": {
+        "class_specific_allowed": false,
+        "universal_allowed": true,
+        "note": "anello · slot universal"
+      },
+      "ring2": {
+        "class_specific_allowed": false,
+        "universal_allowed": true,
+        "note": "anello · slot universal"
+      },
+      "trinket": {
+        "class_specific_allowed": true,
+        "note": "reliquia/rune focus · slot che PUÒ ospitare item class-specific o universal"
+      }
+    },
+    "total_slots": 14,
+    "universal_allowed_count": 4,
+    "class_specific_slot_count": 10,
+    "note_lanterna_slot": "Lanterna NON assegnata a slot (decisione G5: Lanterna NON necessaria - vedi sezione lanterna_necessity_decision)"
+  },
+  "affix_class_specific_families": {
+    "family_1_mark_potency": {
+      "name": "Potenza Marchio",
+      "effect_concept": "aumenta rank arcano del Marchio (dispel-over-time DoT intensity qualitativa · silenziamento robustezza)",
+      "slots_eligible": [
+        "helmet",
+        "chest",
+        "trinket",
+        "main_hand"
+      ],
+      "stack_cap": "max 3 stack qualitativi tra tutte le pieces (anti-power-creep)",
+      "boss_interaction": "Marchio DoT ridotto 50% su boss preservato (G4 LOCK) · potency non bypassa immunity parziale",
+      "hard_cap_alignment": "NON supera hard cap 10T durata · NON aumenta stack cap Marchi 5"
+    },
+    "family_2_mark_duration": {
+      "name": "Durata Marchio",
+      "effect_concept": "estende durata base Marchio in modo qualitativo/direzionale",
+      "slots_eligible": [
+        "helmet",
+        "shoulders",
+        "chest",
+        "trinket"
+      ],
+      "hard_cap_lock": "hard cap assoluto 10T Marchio · nessun affix può superare (G4 RM-Q5 LOCK)",
+      "int_synergy": "affix additivo alla scala Int base (3T→8T) · sommato può raggiungere hard cap 10T ma MAI oltre"
+    },
+    "family_3_drain_efficacy": {
+      "name": "Efficacia Drain",
+      "effect_concept": "aumenta qualità del Drain (proc chance +1F leggermente elevato in stack cap · NON supera 45% Int cap combined)",
+      "slots_eligible": [
+        "gloves",
+        "main_hand",
+        "off_hand",
+        "trinket"
+      ],
+      "proc_hard_cap_alignment": "proc totale combined Int+affix ≤ 50% ceiling assoluto (piccola tolleranza oltre Int 45% ma con soft cap flat · non lineare)",
+      "no_uncapped_scaling": true
+    },
+    "family_4_dispel_quality": {
+      "name": "Qualità Dispel (rank)",
+      "effect_concept": "eleva rank arcano rimosso da Payoff 3F (T5 Legendary può portare fino a soglia leggendaria altrimenti gated dietro Int 100+)",
+      "slots_eligible": [
+        "main_hand",
+        "off_hand",
+        "trinket",
+        "cloak"
+      ],
+      "boss_arcane_immunity_lock": "effetti arcani boss rank leggendario preservano richiesta 5F o mechanic dedicata (G4 LOCK) · affix NON bypassa"
+    },
+    "family_5_fragments_interaction": {
+      "name": "Interazione Frammenti",
+      "effect_concept": "modifica QUALITATIVA della gestione Frammenti (es. tint UI · flavor · shortening cast time di 0.1T concept · MAI cap increase)",
+      "slots_eligible": [
+        "belt",
+        "trinket",
+        "off_hand"
+      ],
+      "forbidden": "NON aumenta resource_cap · NON crea Frammenti passive · NON permette Frammenti da target unmarked",
+      "cap_lock": "resource_cap 5 LOCK indipendente (G4 RM-Q1 LOCK)"
+    },
+    "family_6_payoff_efficacy": {
+      "name": "Efficacia Payoff",
+      "effect_concept": "aumenta reliability effetto Payoff (3F dispel · 5F nullification vs summon boss-invocate) in modo qualitativo · MAI 100% forzato se non gia deterministico",
+      "slots_eligible": [
+        "chest",
+        "trinket",
+        "main_hand"
+      ],
+      "deterministic_lock": "summon standard = 100% deterministico G4 LOCK · affix non downgrade · summon boss-invocate = Int + affix ≤ 98% ceiling · boss diretto sempre immune"
+    },
+    "family_7_anti_incorporeo_bonus": {
+      "name": "Bonus anti-incorporeo",
+      "effect_concept": "aumenta gen extra su incorporei marchiati (+0.05→+0.10 proc modifier situationalmente) · durata effetto dispel-over-time incorporei",
+      "slots_eligible": [
+        "gloves",
+        "main_hand",
+        "trinket"
+      ],
+      "int_scaling_dependent": true,
+      "note": "identity anti-arcano rituale · specializzazione tematica"
+    },
+    "family_8_anti_summon_bonus": {
+      "name": "Bonus anti-summon",
+      "effect_concept": "aumenta durata silenziamento summon (+0.5T concept) · aumenta reliability annullamento summon standard (già 100% deterministico · aumento su summon boss-invocate)",
+      "slots_eligible": [
+        "shoulders",
+        "cloak",
+        "trinket"
+      ],
+      "boss_direct_immune_lock": "boss diretto MAI silenziato completamente · affix non bypassa (G4 LOCK)"
+    },
+    "family_9_channel_mobility": {
+      "name": "Mobilità durante canalizzazione",
+      "effect_concept": "permette movement limitato (slow move) durante focus channel · riduce penalità posizionamento",
+      "slots_eligible": [
+        "boots",
+        "legs",
+        "belt"
+      ],
+      "trade_off": "no free movement · slow move solo · anti-cheese vs raid mechanic knockback"
+    },
+    "family_10_ritual_protection": {
+      "name": "Protezione durante rituali",
+      "effect_concept": "riduce danno subito durante Payoff cast 1T · riduce chance interrupt CC (short-CC only · MAI hard-CC boss)",
+      "slots_eligible": [
+        "chest",
+        "shoulders",
+        "cloak"
+      ],
+      "hard_cc_immunity_lock": "MAI immunità hard-CC boss enrage/stun leggendario · affix scope limitato a short-CC"
+    }
+  },
+  "affix_forbidden": {
+    "rule_1_cap_frammenti": "❌ +resource_cap · Frammenti oltre 5 vietato · G4 RM-Q1 LOCK",
+    "rule_2_cap_marchi": "❌ Marchi attivi oltre hard cap 5 · G4 RM-Q5 LOCK",
+    "rule_3_marchio_duration": "❌ Durata Marchio oltre hard cap 10T · G4 RM-Q5 LOCK",
+    "rule_4_unmarked_gen": "❌ Proc genera Frammenti da target NON Marchiati · G4 anti-cheese LOCK",
+    "rule_5_boss_bypass": "❌ Bypass boss safeguard (dispel immunity · silenziamento hard-cast · enrage cancellation · annullamento boss diretto)",
+    "rule_6_boss_direct_nullify": "❌ Annullamento boss diretto · IMMUNE lock G4 RM-Q4",
+    "rule_7_p2w_bonuses": "❌ Bonus P2W (real-money advantages) · can_be_sold_for_real_money=false obbligatorio per tutti gli item Vuoto",
+    "rule_8_dual_scaling": "❌ Doppio scaling Int/Dex · Vuoto è Int single-stat · G1 SD-Q1 LOCK",
+    "rule_9_cross_class_optimal": "❌ Affix che rendono il gear migliore per Mago/Rogue/Ranger · gear sharing preserved solo per bonus universal (vitalità/mana/regen generici)",
+    "rule_10_channel_bonus_bypass": "❌ Affix che aumenta channel bonus focus oltre max 2 per segmento risorsa · G4 RM-Q2 LOCK",
+    "rule_11_ritual_close_bypass": "❌ Affix che permette ritual close pugnale oltre 1× per Marchio · G4 RM-Q3 LOCK",
+    "rule_12_pvp_untested_effect": "❌ Affix con effetto PvP untested · PvP status HOLD G4 RM-Q7",
+    "rule_13_phase_reset_bypass": "❌ Affix che preserva Frammenti cross-fase maggiore · G4 RM-Q6 LOCK",
+    "rule_14_random_waste_5f": "❌ Affix che introduce chance fallimento casuale su summon standard (anti-random-waste safeguard G4 RM-Q4 LOCK)",
+    "note": "elenco esteso oltre 8 minimo · anti-power-creep totale · rispetto integrale G1-G4 LOCK"
+  },
+  "gear_sharing_analysis": {
+    "vs_mago_int_shared_stat": {
+      "shared_stat": "Intelligenza",
+      "shared_armor_type": "stoffa (Mago è stoffa dominante · Vuoto ha stoffa 55-70%)",
+      "shared_weapon_family": "focus (Mago usa focus/tomo/bastone/reliquia · Vuoto usa focus/balestra/pugnale)",
+      "overlap_risk": "MEDIUM-HIGH · Int-share è massimo · stoffa condivisa · focus condiviso",
+      "mitigation_layers": [
+        "class_proficiency lock G2 (Mago non ha weapon balestra/pugnale · Vuoto non ha tomo/bastone/reliquia)",
+        "affix class-specific families 1-10 targettate su Marchio/Drain/Frammenti/Payoff (Mago non usa questi loop)",
+        "class-specific set bonus futuri (gate futuro) che richiedono class_slug match",
+        "trinket class-specific per class hall rituale (Vuoto trinket = reliquia rituale · Mago trinket = grimorio)"
+      ],
+      "shared_bonus_acceptance": "vitalità/mana/regen generici SI condivisi (universal_allowed slots) · anti-monopolio Vuoto/Mago accettato · design MMO tradition",
+      "affix_forbidden_note": "gear che rende Vuoto migliore per Mago = rule_9 forbidden LOCK"
+    },
+    "vs_ladro_rogue_dex_diverso": {
+      "shared_stat": "nessuno (Ladro = Destrezza · Vuoto = Intelligenza)",
+      "shared_armor_type": "cuoio (entrambi cuoio-eligible · Ladro cuoio dominante · Vuoto cuoio 30-45%)",
+      "shared_weapon_family": "pugnale (Ladro pugnale primario · Vuoto pugnale off_hand rituale)",
+      "overlap_risk": "LOW · stat scaling completamente diverso · Ladro non usa Marchi/Drain",
+      "mitigation_layers": [
+        "main_stat divergence Int vs Dex = affix Int-scaling non utile per Ladro",
+        "class_proficiency lock G2 · Ladro non ha focus/balestra proficiency Vuoto-style",
+        "pugnale famiglia weapon condivisa MA gameplay divergente (Ladro = bleed/finisher · Vuoto = ritual close)"
+      ],
+      "shared_bonus_acceptance": "vitalità/regen universali SI · Dex vs Int affix mai crossover"
+    },
+    "vs_cacciatore_di_mostri_ranger_dex_diverso": {
+      "shared_stat": "nessuno (Ranger = Destrezza · Vuoto = Intelligenza)",
+      "shared_armor_type": "cuoio (Ranger cuoio+maglia · Vuoto cuoio+stoffa · cuoio share T1-T5 30-45%)",
+      "shared_weapon_family": "balestra + pugnale (Ranger balestra fisica scaling Dex · Vuoto balestra arcana scaling Int)",
+      "overlap_risk": "LOW · G3 canonical differentiation LOCK · balestra semantic split fisica vs canalizzazione arcana",
+      "mitigation_layers": [
+        "main_stat divergence LOCK G3 (Dex vs Int)",
+        "balestra weapon family condivisa MA gameplay non condiviso: physical hunting vs arcane channeling",
+        "affix Int-scaling class-specific Vuoto non utili per Ranger",
+        "canonical differentiation preserved: caccia bestie fisiche vs caccia summon/incorporei/distorsioni"
+      ],
+      "shared_bonus_acceptance": "cuoio armor universal share SI (vitalità/mobility generici) · Int-scaling affix mai per Ranger",
+      "canonical_source_lock": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+    },
+    "shared_slot_universal_allowed": {
+      "slots": [
+        "cloak",
+        "neck",
+        "ring1",
+        "ring2"
+      ],
+      "note": "4 slot universal = accettano item cross-class con affix universali (vitalità/mana/regen/movement generici) · NO class-specific affix su universal slots (anti-monopolio)"
+    }
+  },
+  "registry_v3_requirements": {
+    "status": "HOLD",
+    "gate_5_produces_only_requirements": true,
+    "gate_5_does_not_generate_items": true,
+    "gate_5_does_not_modify_r18_5_catalog": true,
+    "dependencies": [
+      "class_proficiency schema (armor whitelist · weapon whitelist) — G2 LOCK",
+      "class_stat_scaling schema (Int primary · soft cap 100 linear-flattening) — G1 LOCK",
+      "resource_mechanic schema (Frammenti cap 5 · Marchio hard cap 10T · Marchi max 5 · Payoff 3F/5F) — G4 LOCK",
+      "gameplay_loop schema (4-step Identify/Mark/Drain/Payoff · weapon roles focus/balestra/pugnale) — G3 LOCK",
+      "canonical_class_registry (27 classi) — R18.6.1 LOCK"
+    ],
+    "additive_fields_needed": [
+      "class_slug (`cacciatore_del_vuoto` · snake_case lowercase)",
+      "armor_whitelist array (`[\"stoffa\", \"cuoio\"]`)",
+      "weapon_whitelist array (`[\"focus\", \"balestra\", \"pugnale\"]`)",
+      "resource_ref (`Frammenti di Onirade` · class-exclusive)",
+      "affix_class_specific_families array (10 famiglie · vedi sezione 7)",
+      "affix_forbidden_rules array (13 regole · vedi sezione 8)",
+      "budget_per_tier_ref (T1-T5)",
+      "budget_per_rarity_ref (Common-Legendary)",
+      "ilvl_formula_ref (G1 formula)",
+      "legendary_semantic_ref (`Legendary ILVL = 60 non +60 Int`)",
+      "hard_cap_lock_flags (resource_cap=5 · marchi_max=5 · durata_max=10T · proc_max=45-50% · reliability_max=98%)"
+    ],
+    "no_new_registry_rows": true,
+    "no_new_item_ids": true,
+    "no_bridge_apply": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "roadmap_next_step_after_g5_closure": "R18.6.RV3 Registry v3 Additive Planning Gate (currently HOLD · authorization dopo G5 CLOSED + PM ACK)"
+  },
+  "item_quantity_proposal": {
+    "proposal_total": "≈ 110-130 items class-specific + universal-eligible",
+    "target_note_pm": "NON è 80-100 target lockato · è proposta motivata basata su copertura tier×rarity×slot completa MA con selezione responsabile per readiness pilot",
+    "breakdown_by_tier": {
+      "T1_Aspirante_15": "1 armor set completo (7 armor pieces stoffa OR cuoio) × 1 rarity Common = 7 armor · + 3 weapon (focus 1 · balestra 1 · pugnale 1) Common = 3 · totale T1 ≈ 10",
+      "T2_Cacciatore_16_30": "2 armor set (stoffa Common+Uncommon · cuoio Common+Uncommon) = 14 · + 3 weapon × 2 rarity = 6 · + 4 accessory (cloak/neck/ring x2 universal) = 4 · totale T2 ≈ 24",
+      "T3_Iniziato_31_45": "2 armor set (Uncommon+Rare stoffa/cuoio) = 14 · + 3 weapon × 2 rarity = 6 · + 4 accessory + 1 trinket class-specific = 5 · totale T3 ≈ 25",
+      "T4_Rituale_46_55": "2 armor set (Rare+Epic) = 14 · + 3 weapon × 2 rarity = 6 · + 5 accessory/trinket = 5 · totale T4 ≈ 25",
+      "T5_Vuoto_55_60": "2 armor set (Epic+Legendary) = 14 · + 3 weapon × 2 rarity = 6 · + 6 accessory/trinket (incluso 2 Legendary trinket utility_unique) = 6 · totale T5 ≈ 26"
+    },
+    "estimated_total_range": "≈ 110-130 items",
+    "rationale": [
+      "copertura minima ma completa per tier × rarity mix (non tutti T×R popolati per anti-inflation)",
+      "3 weapon type (focus/balestra/pugnale) × 5 tier × 2 rarity min per tier = 30 weapon total (parte di 110-130)",
+      "armor 7 slot × 5 tier × ~2 rarity mix = ~70 armor (stoffa+cuoio combinati)",
+      "accessory universal slots 4 × 5 tier × 2 rarity = ~40 (parzialmente cross-class)",
+      "trinket class-specific 5 tier × ~2 rarity = 10 · include 2 Legendary utility_unique T5"
+    ],
+    "cross_class_partial_share": "gli slots universal (cloak/neck/ring1/ring2) parzialmente condivisi con altre classi Int-focused · quantità dedicata Vuoto ridotta grazie a share",
+    "quantity_flex_note": "proposta è flessibile · PM può richiedere restringimento a T1-T3 per readiness ridotta OR espansione T4-T5 · design accetta scaling",
+    "no_target_lock_pm_directive": "80-100 NON è target lockato · 110-130 è proposta motivata pilot Vuoto · PM può rivedere"
+  },
+  "item_families": {
+    "armor_families": {
+      "stoffa_rituale": "veste rituale · Int scaling primario · slots helmet-chest-legs-boots-gloves-shoulders-belt (7 slot × 5 tier × 2 rarity ~ 70/2)",
+      "cuoio_hybrid_movement": "armor hybrid · Int scaling primario ma sec movement/positioning · 7 slot × 5 tier × 2 rarity (part della quota 70)"
+    },
+    "weapon_families": {
+      "focus": "focus rune · reliquia arcana primaria · main_hand · 5 tier × 2 rarity + 2 Legendary utility_unique T5 = ~12 items",
+      "balestra_arcana": "balestra di canalizzazione · 2H · main_hand · 5 tier × 2 rarity + 1 Legendary utility_unique T5 = ~11 items",
+      "pugnale_rituale": "pugnale rune blade · off_hand default · 5 tier × 2 rarity + 1 Legendary utility_unique T5 = ~11 items"
+    },
+    "accessory_families": {
+      "cloak_universal": "mantello · universal_allowed · 5 tier × 2 rarity = 10 items (share cross-class)",
+      "neck_universal": "amuleto · universal_allowed · 5 tier × 2 rarity = 10 items (share)",
+      "ring_universal": "anello × 2 · universal_allowed · 5 tier × 2 rarity × 2 slots (partial share) = ~10 items dedicated",
+      "trinket_class_specific": "reliquia rituale Vuoto · class-specific · 5 tier × 2 rarity + 2 Legendary utility_unique = ~12 items"
+    },
+    "progression_buckets": {
+      "onboarding_T1_T2": "focus + stoffa base + universal accessory · loop learning 4-step",
+      "midgame_T3_T4": "affix class-specific attivi · Marchi cap 4 (Int50) · rituale identity emerging",
+      "endgame_T5": "Legendary utility_unique · Marchi cap 5 (Int90) · Int soft cap 100 · knee point"
+    }
+  },
+  "lanterna_necessity_decision": {
+    "decision": "NON_NECESSARIA",
+    "verdict": "Lanterna NON necessaria per Cacciatore del Vuoto readiness pilot",
+    "consequence": "Lanterna resta RESERVED permanente · rimossa da roadmap readiness Vuoto · no sub-gate R18.6.LTN attivato",
+    "rationale": [
+      "G2 weapon whitelist LOCKED su focus/balestra/pugnale · aggiungere Lanterna richiederebbe rework G2 non giustificato",
+      "loop 4-step Identify/Mark/Drain/Payoff (G3 LOCK) è coperto dai 3 weapon esistenti · focus=rituale primary · balestra=ranged safety · pugnale=melee ritual close",
+      "3 axis weapon copertura completa: throughput arcano (focus) · range/sicurezza (balestra) · finisher rituale melee (pugnale) · nessun gap gameplay identificato",
+      "anti-power-creep principle: più weapon family = più gear pool = più budget bilanciamento · NO ROI positivo per Lanterna dato che 3 weapon già coprono asse identity",
+      "distinctness da altre classi: Lanterna potrebbe collidere con concetti future Mago/Chierico (holy/light themes) · Vuoto identity anti-arcano si esprime meglio con focus/balestra/pugnale rituali",
+      "no PM directive esplicita che richiede Lanterna · G5 decision-space delegato per readiness pilot"
+    ],
+    "future_reactivation_conditions": [
+      "gate futuro dedicato PvP class effect normalization potrebbe rivedere weapon family per PvP-only utility",
+      "PM directive esplicita post-launch che introduce identity gap non coperto",
+      "Legendary utility_unique T5 gate futuro potrebbe considerare Lanterna come slot esoterico dedicato (ma NON T1-T5 mainstream)"
+    ],
+    "sub_gate_R18_6_LTN_status": "NOT_OPENED · reserved for future PM directive · NON pre-Registry v3 requirement",
+    "roadmap_action": "rimuovere Lanterna da roadmap readiness Vuoto · mantenere RESERVED permanent per uso futuro non-Vuoto o out-of-scope"
+  },
+  "ilvl_compatibility": {
+    "formula_g1_reference": "min(max(required_level + rarity_offset, tier_min), 60)",
+    "formula_lock": true,
+    "rarity_offset_direction": {
+      "Common": 0,
+      "Uncommon": 2,
+      "Rare": 5,
+      "Epic": 10,
+      "Legendary": 15
+    },
+    "tier_min_map": {
+      "T1": 1,
+      "T2": 16,
+      "T3": 31,
+      "T4": 46,
+      "T5": 55
+    },
+    "ilvl_hard_cap": 60,
+    "legendary_ilvl_lock": {
+      "value": 60,
+      "semantic": "Legendary ILVL = 60 · NON +60 Intelligenza · utility_unique senza overrides scaling (G1 semantic correction LOCK)",
+      "affix_forbidden_note": "affix non può alterare Legendary ILVL · resta 60 per tutte le pieces Legendary"
+    },
+    "example_calc": [
+      "T2 Common lvl 20: min(max(20 + 0, 16), 60) = 20",
+      "T3 Rare lvl 40: min(max(40 + 5, 31), 60) = 45",
+      "T5 Legendary lvl 55: min(max(55 + 15, 55), 60) = 60 (hard cap)"
+    ],
+    "no_runtime_execution_at_g5": true
+  },
+  "legendary_utility_interaction": {
+    "semantic_lock": "Legendary ILVL = 60 · NON +60 Intelligenza (G1 semantic correction LOCK preserved through G5)",
+    "utility_unique_examples_concept": [
+      "Legendary Focus T5: 'Focus di Onirade' · utility unique: Payoff 5F cast time 0.5T invece di 1T (utility qualitative · MAI stat overrides)",
+      "Legendary Trinket T5 A: 'Sigillo del Vuoto' · utility unique: Marchio applicato applica silenziamento anti-cast +0.5T (soft-scaling che rispetta hard cap 10T non alterato)",
+      "Legendary Trinket T5 B: 'Cuore di Onirade' · utility unique: 3F Payoff dispel area ha visual/audio feedback esteso · quality of life senza stat overrides"
+    ],
+    "no_stat_scaling_overrides": true,
+    "no_cap_bypass": true,
+    "no_hard_cap_alteration": true,
+    "no_p2w_advantage": true,
+    "progressive_discovery_alignment": "Legendary P1-P4 gate futuro (HOLD) rispetterà semantic LOCK · nessun affix può romperlo"
+  },
+  "anti_power_creep": {
+    "int_soft_cap_100_linear_flattening_preserved": true,
+    "frammenti_cap_5_hard_locked_no_affix_bypass": true,
+    "marchi_cap_5_hard_locked_no_affix_bypass": true,
+    "marchio_duration_10T_hard_cap_no_affix_bypass": true,
+    "proc_50_percent_ceiling_combined_int_affix": true,
+    "reliability_98_percent_ceiling": true,
+    "legendary_utility_unique_no_overrides": true,
+    "no_dual_scaling_int_dex": true,
+    "no_boss_bypass_affix": true,
+    "no_cross_class_optimal_gear": true,
+    "channel_bonus_max_2_per_segment_locked": true,
+    "ritual_close_max_1_per_mark_application_locked": true,
+    "no_phase_reset_bypass_affix": true,
+    "no_random_waste_5f_introduction": true,
+    "budget_progression_smooth": "T1→T5 multiplier 1.0→2.7 · rarity Common→Legendary multiplier 1.0→1.85 · combined max ~5.0x baseline (accettabile MMO tradition)",
+    "safeguards_summary_15_rules": true
+  },
+  "anti_p2w": {
+    "can_be_sold_for_real_money_lock": false,
+    "lock_value": "false 1500/1500 (R18.5 lockato)",
+    "no_exception_vuoto": true,
+    "no_premium_boost": true,
+    "no_paywall_endgame": true,
+    "no_energy_purchase_advantage": true,
+    "no_cosmetic_that_gives_stat": true,
+    "cosmetic_only_pay_allowed": "solo cosmetic pure NO-stat (design R18.5 conforme)",
+    "affix_forbidden_rule_7_reference": "rule_7_p2w_bonuses LOCK"
+  },
+  "risk_register": [
+    {
+      "id": "EQ-R1",
+      "risk": "Budget T5 troppo generoso vs T4 · endgame trivial",
+      "severity": "MEDIUM",
+      "mitigation": "multiplier T5=2.70 vs T4=2.20 = +23% smooth · Legendary utility_unique NON stat override · playtest richiesto post-G5",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R2",
+      "risk": "Item quantity 110-130 troppo alta per readiness pilot · fabbricazione onerosa",
+      "severity": "MEDIUM",
+      "mitigation": "proposta flessibile · PM può ridurre a T1-T3 mainstream + T4-T5 minimal · quantità direzionale · Registry v3 finalizzerà",
+      "status": "OPEN_FOR_PM"
+    },
+    {
+      "id": "EQ-R3",
+      "risk": "Affix family 3 (Drain efficacy) proc 50% ceiling combined Int+affix percepito come stat check",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "soft cap flat oltre 45% Int · affix aggiunge fino a +5% cumulato · nessuno oltre 50% · tooltip trasparente",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R4",
+      "risk": "Gear sharing con Mago (Int+stoffa+focus) percepito come 'clone' visivo",
+      "severity": "MEDIUM",
+      "mitigation": "affix class-specific 1-10 targettate loop Vuoto · trinket class-specific · set bonus futuri class-slug lock",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "EQ-R5",
+      "risk": "Cross-class weapon balestra (Vuoto arcana vs Ranger fisica) confonde player nuovi",
+      "severity": "LOW",
+      "mitigation": "G3 canonical differentiation LOCK · tooltip esplicita 'balestra di canalizzazione arcana' · gameplay non condiviso",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R6",
+      "risk": "Legendary utility_unique implementation ambigua · rischio di stat override sneaking",
+      "severity": "MEDIUM",
+      "mitigation": "semantic G1 LOCK preserved · esempi concept esplicitano quality-of-life non stat · progressive discovery gate futuro rispetterà",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "EQ-R7",
+      "risk": "Universal slots (cloak/neck/ring/ring) affix universale mal calibrati favoriscono classi altre",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "vitalità/mana/regen/movement generici solo · NO class-specific affix su universal · affix_forbidden_rule_9 LOCK",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R8",
+      "risk": "Distribuzione stoffa/cuoio T5 70/30 rende cuoio niche/underused",
+      "severity": "MEDIUM",
+      "mitigation": "cuoio niche per hybrid movement builds design intended · playtest T5 richiesto · G6 PLAYER_GUIDE spiegherà trade-off",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R9",
+      "risk": "Lanterna NON necessaria decision potrebbe essere revocata post-launch se identity gap emerge",
+      "severity": "LOW",
+      "mitigation": "condizioni reactivation esplicitate · sub-gate R18.6.LTN reserved · rimozione da roadmap non definitiva forever · design flessibile",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R10",
+      "risk": "Registry v3 additive fields consumption error se schema requirements incomplete",
+      "severity": "MEDIUM",
+      "mitigation": "elenco additive_fields_needed esplicitato · dependencies G1-G4 esplicitate · Registry v3 planning gate reviewer",
+      "status": "TRACKED PG2"
+    },
+    {
+      "id": "EQ-R11",
+      "risk": "Rarity progression Legendary 1.85x + affix 4-5 percepito come mandatory endgame",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Legendary utility_unique NON stat override · Epic ~92% del power Legendary · viable senza Legendary · design non-mandatory",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R12",
+      "risk": "Affix family 10 (Ritual protection) short-CC only percepito come debole",
+      "severity": "LOW",
+      "mitigation": "hard-CC boss enrage/leggendario deliberatamente immune · design intended · G6 spiegherà positioning skill importance",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R13",
+      "risk": "Set bonus futuri (Registry v3+) potrebbero rompere anti-power-creep",
+      "severity": "MEDIUM",
+      "mitigation": "set bonus gate futuro rispetterà semantic LOCK G1-G5 · design gate isolation preserved",
+      "status": "TRACKED PG3"
+    },
+    {
+      "id": "EQ-R14",
+      "risk": "Item quantity 110-130 non copre replay farming loop endgame (poco loot per grind)",
+      "severity": "LOW",
+      "mitigation": "readiness pilot NON è endgame farming design · endgame loop TBD gate futuro · quantità sufficient per launch",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "EQ-R15",
+      "risk": "PvP effect HOLD potrebbe frenare adozione player competitive",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "PvP gate futuro dedicato preserva design integrity · comunicazione trasparente al player · G6 spiegherà scope PvE-only iniziale",
+      "status": "TRACKED PG3"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "EQ-Q1",
+      "question": "Item quantity 110-130 accettato o preferisci riduzione readiness pilot a T1-T3 mainstream?",
+      "options": [
+        "a) LOCK 110-130 proposta",
+        "b) restringi a T1-T3 (~60-75 items)",
+        "c) altro range"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "EQ-Q2",
+      "question": "Lanterna decision NON_NECESSARIA confermata come LOCK definitivo (sub-gate R18.6.LTN chiuso permanent)?",
+      "options": [
+        "a) LOCK NON_NECESSARIA",
+        "b) NON_NECESSARIA now · reserved future review",
+        "c) apri sub-gate LTN comunque"
+      ],
+      "recommendation": "b"
+    },
+    {
+      "id": "EQ-Q3",
+      "question": "Distribuzione stoffa/cuoio T5 70/30 conferma o rivedi?",
+      "options": [
+        "a) LOCK 70/30",
+        "b) 60/40 (cuoio più presente)",
+        "c) 75/25 (stoffa più dominante)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "EQ-Q4",
+      "question": "Rarity multiplier Legendary 1.85x conferma o rivedi (rischio mandatory endgame)?",
+      "options": [
+        "a) LOCK 1.85x",
+        "b) abbassa a 1.75x (Epic 92%→95% Legendary)",
+        "c) 1.90x"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "EQ-Q5",
+      "question": "Affix family 3 (Drain efficacy) proc combined 50% ceiling conferma o soft cap 48%?",
+      "options": [
+        "a) LOCK 50% ceiling",
+        "b) soft cap 48% più conservativo",
+        "c) LOCK 45% (nessun affix bypass Int cap)"
+      ],
+      "recommendation": "c"
+    },
+    {
+      "id": "EQ-Q6",
+      "question": "Universal_allowed slots (cloak/neck/ring/ring) conferma 4 slot o rivedi?",
+      "options": [
+        "a) LOCK 4 slot universal",
+        "b) 3 slot (rimuovi cloak da universal)",
+        "c) 5 slot (aggiungi trinket a universal)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "EQ-Q7",
+      "question": "Weapon coefficient direzionali (focus 1.00 · balestra 0.85-0.90 · pugnale 0.70-0.80) conferma o rivedi?",
+      "options": [
+        "a) LOCK direzione qualitativa",
+        "b) restringi range (balestra 0.88-0.92 · pugnale 0.75-0.82)",
+        "c) espandi (balestra 0.80-0.92 · pugnale 0.65-0.85)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "EQ-Q8",
+      "question": "Registry v3 Additive Planning Gate authorization post-G5 CLOSED o HOLD ulteriore?",
+      "options": [
+        "a) authorize post-G5 CLOSED",
+        "b) HOLD ulteriore fino a G6 CLOSED",
+        "c) roadmap dedicated"
+      ],
+      "recommendation": "a"
+    }
+  ],
+  "go_hold_recommendation_gate_6": {
+    "gate_5_status": "DRAFT · pending PM review + risposte EQ-Q1..EQ-Q8",
+    "gate_6_status": "HOLD · attende PM ACK Gate 5 + GO esplicito Gate 6",
+    "gate_6_scope_preview": "PLAYER_GUIDE onboarding · tooltip italiano · tutorial concept · UX flow · pedagogy loop 4-step · fallback state guidance · SOLO player-facing documentation · NO gameplay implementation · NO Registry v3 · NO drop tables",
+    "gate_6_input_from_g5": "budget T1-T5 · rarity · weapon coefficient direzionali · armor distribution · slot identity · affix families · gear sharing analysis · Lanterna decision · Registry v3 requirements",
+    "no_gate_6_auto_start": true,
+    "no_registry_v3_auto_start": true
+  },
+  "governance": {
+    "documental_only": true,
+    "no_code_touch": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_registry_v3_generation": true,
+    "no_item_rows": true,
+    "no_new_items_live": true,
+    "no_r18_5_catalog_modification": true,
+    "no_drop_tables": true,
+    "no_crafting_tables": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_equip_implementation": true,
+    "no_scaling_destrezza": true,
+    "no_gate_6_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4"
+    ]
+  },
+  "stop_after_g5": {
+    "action": "STOP · attendo PM verdict G5 (CLOSED/REWORK) e GO esplicito G6 PLAYER_GUIDE · Registry v3 Additive Planning HOLD",
+    "no_auto_start_gate_6": true,
+    "no_auto_start_registry_v3": true,
+    "explicit_stop": true
+  }
+}

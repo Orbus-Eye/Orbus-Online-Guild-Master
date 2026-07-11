@@ -2964,3 +2964,71 @@ Item condiviso per weapon/armor family **NON è automaticamente ottimale** per t
 - **R18.6.3-G3 = CLOSED** ✅
 - **R18.6.3-G4 RESOURCE_MECHANIC = AUTHORIZED** 🟢
 - **R18.6.3-G5 EQUIP_DESIGN = HOLD** 🔒 (attende G4 CLOSED)
+
+
+## R18.6.3-G4 RESOURCE_MECHANIC CLOSED (Cacciatore del Vuoto · with PM binding answers RM-Q1..RM-Q7 · 2026-07-08T20:00:00Z)
+
+**Milestone**: **R18.6.3 Gate 4 RESOURCE_MECHANIC CLOSED** ✅ · Gate 5 EQUIP_DESIGN **AUTHORIZED** 🟢
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations/sealed/R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3 modifiche (tutti LOCKED post-approval).
+
+### G4 Approved Summary
+
+- **Resource**: **Frammenti di Onirade** · class-exclusive `cacciatore_del_vuoto` · encounter-local · non loot · non inventory · non tradeable · non currency
+- **Cap**: **5 LOCK DEFINITIVO** · **indipendente da Intelligenza**
+- **Cap indipendenza Int**: LOCK · Int scala su generation probability · payoff reliability · durata Marchio · dispel efficacy · summon nullification chance — MAI su cap
+- **Generation**: 1F base per hit su target Marchiato · target non marchiato = 0F · unmarked = zero income · no passive gen
+- **Int proc scale**: 0%→10%→20%→30%→40%→45% cap (Int 100+) · linear-flattening
+- **Weapon generation matrix LOCK**:
+  - **focus**: 1F/hit + Int proc + **channel bonus +1F max 2 attivazioni per SEGMENTO RISORSA**
+  - **balestra**: 1F/hit + Int proc (-0.05 penalty) · no channel · 2H = opportunity cost off_hand
+  - **pugnale**: 1F/hit + Int proc + **ritual close +1F max 1× per applicazione Marchio** · refresh Marchio NON resetta idoneità bonus
+- **Consumption**: atomico · indivisibile · 3F dispel area · 5F annullamento summon boss-invocate
+- **Reset condition**: end_of_encounter · end_of_dungeon_room · end_of_raid_phase · player_death · party_wipe · logout/disconnect
+- **Reset per fase maggiore boss multi-fase**: NUOVO set abilità · nuovo obiettivo meccanico · nuovo stato boss · nuova arena · transizione narrativa esplicita. **NO reset** su: soglia HP senza cambio meccanico · breve invulnerabilità · wave secondaria · cambio target · animazione · intermezzo minimo · micro-fase · cambio postura
+- **UI reset fase**: "La distorsione cambia forma. I Frammenti di Onirade si dissolvono."
+- **Payoff 3F (dispel area)**: cast 1T · re-castable senza cooldown · Int reliability 80-98% · effetti arcani validi = deterministico contro effetti dispellabili (Int modifica efficacia/rank, non chance base)
+- **Payoff 5F (summon nullification)**:
+  - Target **summon STANDARD valida**: **annullamento 100% DETERMINISTICO** (anti-random-waste safeguard LOCK)
+  - Target **summon boss-invocata**: efficacia soggetta a safeguard boss + Int scaling (affidabilità vs add-boss · qualità dispel · effetti secondari) — MAI trasformata in "spendo 5F → 2% fallimento casuale"
+  - Target **boss diretto**: **IMMUNE** · cast **BLOCCATO** UI se no target valido · **no consumo** · messaggio player: *"Nessuna evocazione valida da annullare."*
+  - **5F NON può**: annullare boss · annullare fase · interrompere enrage · cancellare hard mechanic · rimuovere cast letali non-summon · CC totale al boss
+- **Marchio del Vuoto LOCK**:
+  - **Durata scaling Int**: 3T → 4 → 5 → 6 → 7 → **8T** (Int 100+) · **+0.5T per 50 Int oltre 100** · **hard cap assoluto 10T**
+  - **Nessun affix G5 può superare hard cap 10T**
+  - **Marchi attivi**: base 3 · +1 Int50 · +1 Int90 · **hard cap 5**
+  - **G5 NON può aumentare max Marchi oltre 5**
+  - Refresh Marchio: durata reset · NO overlap stacking · **refresh NON crea nuovo Marchio · NON riattiva bonus Pugnale ritual close**
+- **PvE silenziamento summon**: 3T (summon standard) · durata ridotta su boss/add protette · boss diretto MAI silenziamento totale
+- **PvP effect**: **HOLD** · `effect_status=undefined · runtime_status=disabled` · richiede gate futuro "PvP Class Effect Normalization"
+- **Anti-stall clarification (PM verbatim)**: "Generazione minima ≥3F garantita" = **target accessibilità loop dopo Marchio+Drain corretti** · **NON** significa 3 Frammenti gratuiti · **NON** generazione passiva · **NON** Frammenti senza bersaglio Marchiato. Bersaglio non marchiato = 0F LOCK. Loop degradato senza summon/incorporei resta funzionale via bersagli standard Marchiati.
+- **Boss safeguards LOCK**: Marchio stack cap 1 su boss · dispel immunity parziale (DoT -50%) · silenziamento SOLO ability non-lethal MAI enrage/hard-cast · 5F annullamento IMMUNE · gen proc bonus 0% su boss (anti-farm) · Int bonus cap +5% max · no boss softlock · no perma-stun (silence cap 1T) · no dispel-spam
+- **Gate 5 EQUIP_DESIGN authorized**: input da G4 = cap 5 LOCK · generation matrix weapon · Int 5-axis scaling · Marchio durata + max cap · Payoff 3F/5F deterministic vs summon standard · boss safeguards · reset policy fase maggiore → G5 EQUIP_DESIGN
+
+### PM Binding Answers RM-Q1..RM-Q7 (LOCKED · verbatim distillate)
+
+- **RM-Q1**: cap 5 LOCK indipendente da Int · G5 vietato: `+resource_cap` affix · Legendary cap 6 · bonus temporanei >5 · overcap nascosto
+- **RM-Q2**: Focus channel bonus LOCK · max 2 per SEGMENTO RISORSA (encounter single-phase OR fase maggiore boss multi-fase con reset RM-Q6) · NO reset via cambio target/wave minore/micro-fase/cambio postura/transizione visiva · NO rigenerazione via uscita-rientro combat/cambio equip/refresh Marchio
+- **RM-Q3**: Pugnale ritual close LOCK · +1F max 1× per applicazione Marchio · refresh durata stesso Marchio NON resetta idoneità · nuovo bonus solo dopo Marchio precedente terminato/rimosso + nuova applicazione valida
+- **RM-Q4**: Boss add-summon priority LOCK · 5F opera su summon boss-invocate · Boss diretto IMMUNE + cast bloccato + no consumo + messaggio "Nessuna evocazione valida da annullare" · **anti-random-waste safeguard**: summon standard = 100% deterministico · summon boss-invocata = safeguard boss + Int scaling
+- **RM-Q5**: Marchio durata scaling Int 3T→8T LOCK · hard cap assoluto 10T · nessun Marchio >10T · refresh NON crea nuovo · nessun affix G5 supera · Marchi attivi hard cap 5 · G5 non può aumentare
+- **RM-Q6**: Reset per FASE MAGGIORE · nuovo set abilità/obiettivo meccanico/stato boss/arena/transizione narrativa · NO soglie HP/invulnerabilità/wave secondaria/cambio target/animazione/micro-fase · reset = Frammenti 0 · contatori gen reset · bonus Focus max 2 disponibile · no carry-over cross-phase
+- **RM-Q7**: Silenziamento summon PvE-only LOCK · PvP HOLD · no copia auto PvE · no valore provvisorio · richiede gate futuro dedicato
+
+### Gate isolation preservata
+
+- G4 ha definito **meccanica risorsa numerica** (cap · generation matrix · Int scaling 5 assi · Payoff · reset · boss safeguards)
+- G4 NON ha definito coefficienti danno finali weapon · budget statistico item · ILVL scaling · affix design · Registry v3 → **Gate 5 EQUIP_DESIGN**
+- G4 NON ha definito PvP effect normalization → **gate futuro PvP dedicato (HOLD)**
+
+### Files locked
+
+- `/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.md` **LOCKED**
+- `/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3 (tutti LOCKED post-approval)
+
+### PM verdict
+
+- **R18.6.3-G4 = CLOSED** ✅
+- **R18.6.3-G5 EQUIP_DESIGN = AUTHORIZED** 🟢
+- **R18.6.3-G6 PLAYER_GUIDE = HOLD** 🔒 (attende G5 CLOSED)
