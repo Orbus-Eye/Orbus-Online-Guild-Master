@@ -3502,7 +3502,7 @@ Tutti i proposal: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPEN
 - **FR-Q2 LOCK — Framework Wave 1**: **G1→G10 APPROVED come template REPLICABILE**. Sequenza standard: G1 STAT_DESIGN → G2 PROFICIENCY_DESIGN → G3 GAMEPLAY_LOOP → G4 RESOURCE_MECHANIC → G5 EQUIP_DESIGN → [Registry Extension Planning opzionale] → G6 PLAYER_GUIDE → G7 HALL_COMPLETION → G8 SAFE_MODE_TRIAL → G9 TECH_READINESS → G10 FINAL PM REVIEW. Framework = **template di readiness** · NON generatore automatico · NON autorizzazione cumulativa · NON auto-dispatch. Ogni classe richiede: GO PM individuale · gate individuali · review individuale · readiness individuale. Monaco/Druido/Alchimista/Bardo/Negromante = **HOLD** · NO kickoff automatico.
 - **FR-Q3 LOCK — PM-LOCKED, NOT YET SEALED**: G1-G9 + RV3 + G10 = **PM-LOCKED**. Modifica futura richiede: (1) explicit PM reopen · (2) motivazione · (3) impact analysis · (4) diff documentale · (5) nuova review · (6) aggiornamento manifest. File **NON aggiunti al seal system ora** (richiede gate separato dopo G10 closure + manifest verificato). 36 sigilli esistenti restano invariati. Stato: `pm_locked = true`, `sealed_in_seal_system = false`.
 - **FR-Q4 LOCK — GO Pilot Completion Certificate + SHA256 manifest**: Certificate (MD 29 sezioni + JSON) e SHA256 Manifest generati con questo dispatch (STEP 2).
-- **FR-Q5 LOCK — NEXT: R18.3f Class Slug Migration Readiness**: draft documentale generato con questo dispatch (STEP 3). Read-only discovery · zero DB write · zero migration · zero apply.
+- **FR-Q5 LOCK — NEXT: R18.3f Class Slug Migration Readiness**: **status = AUTHORIZED** · `artifact_status = NOT_YET_GENERATED` · `execution_status = PENDING` · `runtime_status = NOT_APPLICABLE` · `migration_status = NOT_STARTED`. NEXT PRIORITY confermata. Read-only discovery · zero DB write · zero migration · zero apply. **Audit correction (neutra)**: l'autorizzazione R18.3f era stata registrata, ma i relativi artifact non erano ancora stati materializzati. Lo stato è stato riallineato al filesystem verificato.
 - **FR-Q6 LOCK — Gate 11 HOLD**: autorizzabile SOLO dopo completamento delle **20 precondizioni obbligatorie** (P1..P20 · documentate in R18.3f e nel Completion Certificate). Nessuna precondizione può essere considerata implicita.
 
 ### Baseline finale roadmap
@@ -3546,3 +3546,81 @@ Tutti i proposal: `PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPEN
 - **Gate 11 = NOT AUTHORIZED** 🔒 (20 precondizioni P1..P20 obbligatorie)
 - **Wave 1 successors = HOLD** 🔒 (GO PM individuale richiesto per ciascuna classe)
 - **Runtime implementation = NOT AUTHORIZED** 🔒
+
+---
+
+## R18.3f · Class Slug Migration Readiness · Status Update
+
+- **Timestamp append**: post pilot ACTIVE-DESIGN-READY closure · post PRD truth correction FR-Q5
+- **artifact_status** = `DRAFT_GENERATED`
+- **review_status** = `PENDING_PM`
+- **migration_status** = `NOT_APPLIED`
+- **runtime_status** = `DISABLED`
+- **apply_authorized** = `false`
+- **class_slug_write_count** = `0`
+- **db_writes_count** = `0`
+- **openapi_changes** = `false`
+- **backend_changes** = `false`
+- **frontend_changes** = `false`
+- **test_files_created** = `0`
+
+### Artifact R18.3f generati (P2 · precondizione Gate 11)
+
+- `/app/memory/r18_3f_class_slug_migration_readiness.md` — 500 righe · 43 sezioni numerate · SHA256 `746ad94f7f186684f08c4d5ab4268ab719a2287b3dfc078b5d3e0a8f53b69668`
+- `/app/memory/r18_3f_class_slug_migration_readiness.json` — 407 righe · 30 root keys · SHA256 `d79401ebcbad376149a5ccb819fa8ead06cf180ad6b386022a94efe358ce3389`
+- `/app/memory/r18_3f_class_slug_migration_readiness_manifest.json` — manifest **dedicato** (separato dal Pilot Manifest)
+
+### Contenuto sintetico R18.3f draft
+
+- 13 bridge canonical IT ↔ legacy EN (11 canonical_native + 2 mapped_legacy) · design_only · apply_authorized=false
+- 4 categorie speciali: `canonical_native`, `mapped_legacy`, `technical_placeholder`, `test_artifact`
+- 8 verdict ammessi: `CANONICAL_NATIVE`, `MAPPED_LEGACY`, `TECHNICAL_PLACEHOLDER`, `TEST_ARTIFACT`, `CLASSLESS_RECRUIT`, `UNKNOWN_VALUE`, `CONFLICT`, `NO_ACTION`
+- 20 precondizioni Gate 11 (P1..P20) documentate · P1 CLOSED · P2 IN_PROGRESS · P3-P20 NOT_STARTED/HOLD
+- 12 rischi identificati (risk register R1..R12) · 1 CRITICAL (R9 sealed integrity) · 4 HIGH · 4 MEDIUM · 2 LOW · 1 INFO-level
+- 10 domande PM aperte (R3f-Q1..R3f-Q10) con recommendation
+- 5 anomalie discovery (A1-A5) · nessuna HIGH · 2 MEDIUM · 2 LOW · 1 INFO
+- Schema live discovery read-only su MongoDB: 3628 adventurers live · 268 class_slug=null · 100% legacy EN live · archive contiene 2 canonical IT + 1 placeholder
+
+### Immutabilità Pilot Certificate + Pilot Manifest
+
+- `/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.md` = **NON TOCCATO** · SHA `2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2`
+- `/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.json` = **NON TOCCATO** · SHA `87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c`
+- `/app/memory/r18_6_3_cacciatore_del_vuoto_sha256_manifest.json` = **NON TOCCATO** · SHA `c364100912aaca946492f460f3a6a79ba1efcac3e13ac38d4e3eb9628e5d8ff3`
+- **R18.3f NON aggiunto al Pilot Manifest**. Motivo: R18.3f è dipendenza tecnica post-pilot, non gate del pilot G1-G10, non appartiene al certificato di completamento della classe.
+
+### Governance R18.3f
+
+- **NON dichiarato**: CLOSED / COMPLETED / APPROVED (attesa review PM)
+- **Modifiche future** richiedono: PM reopen · motivazione · impact analysis · diff documentale · nuova review
+- **Sealing R18.3f** = differito post-apply completo (R3f-Q10 recommendation)
+
+### Sealed integrity post-R18.3f-generation
+
+- pytest `backend/tests/backend_r18_4_sealed_integrity_test.py` = **PASS 6/6** (36 seal aggregate) · byte-identical
+- `lore_meta.py` SHA = `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · invariato
+- backend/frontend/OpenAPI diff = **0**
+- Catalogo R18.5 (1500/1500) = invariato
+
+### Stato P1..P20 post-generazione R18.3f draft
+
+- **P1** ✅ CLOSED
+- **P2** 🔄 IN_PROGRESS → **draft generato · PENDING_PM review**
+- **P3-P20** 🔒 HOLD / NOT_STARTED
+
+### PM verdict richiesto
+
+- Review R18.3f draft (MD + JSON)
+- Risposta alle 10 domande R3f-Q1..R3f-Q10
+- Decisione su HOLD vs advance P3 (R18.3f review CLOSED)
+- Nessun apply, nessun Gate 11 kickoff, nessun Wave 1 successor kickoff senza PM directive esplicita
+
+### Baseline aggiornata
+
+- **R18.6.3 Cacciatore del Vuoto** = **ACTIVE-DESIGN-READY** ✅ (invariato)
+- **R18.3f** = **DRAFT_GENERATED · PENDING_PM** 🕐 (nuovo stato materializzato)
+- **Gate 11** = **NOT AUTHORIZED** 🔒 (invariato)
+- **Wave 1 successors** = **HOLD** 🔒 (invariato)
+- **Runtime implementation** = **NOT AUTHORIZED** 🔒 (invariato)
+
+🛑 **EXPLICIT STOP post-R18.3f-draft**. Attesa PM review.
+

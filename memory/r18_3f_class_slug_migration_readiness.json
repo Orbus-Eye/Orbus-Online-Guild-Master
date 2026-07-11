@@ -1,0 +1,407 @@
+{
+  "metadata": {
+    "artifact": "R18.3f Class Slug Migration Readiness",
+    "document_type": "readiness_gate_draft",
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY",
+    "language": "italian_only",
+    "parent_gate": "R18.6.3 Cacciatore del Vuoto",
+    "parent_gate_status": "ACTIVE-DESIGN-READY",
+    "gate_11_precondition_id": "P2",
+    "artifact_status": "DRAFT_GENERATED",
+    "review_status": "PENDING_PM",
+    "governance_status": "PM_LOCKED_PENDING_REVIEW",
+    "pm_approval_ref": "FR-Q5 LOCK (R18.6.3-G10)",
+    "canonical_registry_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_migration_applied": true,
+    "runtime_apply_ready": false,
+    "runtime_bridge_status": "disabled",
+    "class_slug_write_count_in_r18_3f": 0,
+    "db_writes_in_r18_3f": 0,
+    "collections_touched_in_r18_3f": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0,
+    "sealed_integrity_expected_36_of_36": true,
+    "lore_meta_py_anchor_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "scope": {
+    "in_scope": [
+      "schema_live_discovery",
+      "mapping_legacy_to_canonical",
+      "categorization_records",
+      "dry_run_contract",
+      "snapshot_rollback_contract",
+      "idempotency_contract",
+      "audit_trail_schema",
+      "risk_register",
+      "pm_open_questions",
+      "gate_11_preconditions_p1_p20"
+    ],
+    "out_of_scope": [
+      "apply_bridge_live",
+      "class_slug_db_writes",
+      "adventurers_migration",
+      "users_migration",
+      "class_halls_migration",
+      "class_specializations_migration",
+      "hall_runtime_activation",
+      "trial_runtime_activation",
+      "feature_flag_enable",
+      "openapi_changes",
+      "backend_route_changes",
+      "frontend_ui_changes",
+      "test_file_creation",
+      "registry_v3_apply",
+      "gate_11_execution",
+      "wave_1_kickoff"
+    ]
+  },
+  "schema_live_discovery": {
+    "mode": "read_only",
+    "queries_used": ["count_documents", "distinct", "find_one_no_projection_mutation"],
+    "no_write_operations": true,
+    "no_aggregation_side_effects": true,
+    "collections": {
+      "adventurers": {
+        "role": "source_of_truth_avventuriero",
+        "docs_live": 3628,
+        "class_related_fields": ["adventurer_class_id", "class_name", "class_role", "class_slug"],
+        "class_slug_distinct_live_11": [
+          "alchemist", "bard", "druid", "mage", "monk",
+          "paladin", "priest", "ranger", "rogue", "warlock", "warrior"
+        ],
+        "class_slug_null_count": 268,
+        "class_slug_missing_count": 268,
+        "class_slug_recruit_unassigned_count": 0,
+        "class_slug_test_artifact_regex_count": 0,
+        "class_slug_empty_string_count": 0,
+        "canonical_it_live_count": 0
+      },
+      "adventurers_r18_archive": {
+        "role": "archive_immutable",
+        "docs": 3415,
+        "class_slug_distinct_11": [
+          "alchemist", "bard", "cacciatore_del_vuoto", "cacciatore_di_mostri",
+          "druid", "mage", "monk", "paladin", "recruit_unassigned", "rogue", "warrior"
+        ],
+        "immutability_policy": "do_not_touch"
+      },
+      "adventurer_classes": {
+        "role": "catalog",
+        "docs": 18,
+        "slugs": [
+          "alchemist", "assassin", "bard", "berserker",
+          "cacciatore_del_vuoto", "cacciatore_di_mostri", "druid",
+          "mage", "monk", "necromancer", "paladin", "priest",
+          "ranger", "recruit_unassigned", "rogue", "test-class-5e0064",
+          "warlock", "warrior"
+        ],
+        "bridge_fields_observed": [
+          "canonical_slug", "alias_target", "bridge_status",
+          "bridge_source_round", "bridge_applied_at", "is_base_class"
+        ]
+      },
+      "class_halls": {
+        "role": "hall_runtime_reference",
+        "docs_live": 11,
+        "class_slug_field_present": true
+      },
+      "users": {
+        "role": "account_layer",
+        "docs": 391,
+        "class_slug_field_present": false,
+        "note": "users_layer_non_source_of_truth_for_class_slug"
+      }
+    },
+    "code_references_class_slug_backend_count": 302,
+    "code_files_containing_class_slug_count_gte": 32
+  },
+  "source_of_truth_policy": {
+    "class_slug_source_of_truth": "documento_canonico_avventuriero (adventurers.class_slug)",
+    "account_user_class_slug_source_of_truth": false,
+    "trial_session_class_slug_source_of_truth": false,
+    "duplicate_schema_avoidance": true,
+    "verify_equivalent_fields_before_new_field_proposal": true
+  },
+  "canonical_bridge_13_mapping": [
+    { "id": "R18_3F_BRIDGE_01", "legacy_source": "warrior",     "canonical_target": "guerriero",              "category": "canonical_native", "notes": "classe base" },
+    { "id": "R18_3F_BRIDGE_02", "legacy_source": "rogue",       "canonical_target": "ladro",                  "category": "canonical_native", "notes": "classe base" },
+    { "id": "R18_3F_BRIDGE_03", "legacy_source": "mage",        "canonical_target": "mago",                   "category": "canonical_native", "notes": "classe base" },
+    { "id": "R18_3F_BRIDGE_04", "legacy_source": "priest",      "canonical_target": "paladino",               "category": "canonical_native", "notes": "rimappato R18.6" },
+    { "id": "R18_3F_BRIDGE_05", "legacy_source": "ranger",      "canonical_target": "cacciatore_di_mostri",   "category": "canonical_native", "notes": "rinominata R18.6.1" },
+    { "id": "R18_3F_BRIDGE_06", "legacy_source": "warlock",     "canonical_target": "cacciatore_del_vuoto",   "category": "canonical_native", "notes": "pilot R18.6.3" },
+    { "id": "R18_3F_BRIDGE_07", "legacy_source": "monk",        "canonical_target": "monaco",                 "category": "canonical_native", "notes": "Wave 1 HOLD" },
+    { "id": "R18_3F_BRIDGE_08", "legacy_source": "druid",       "canonical_target": "druido",                 "category": "canonical_native", "notes": "Wave 1 HOLD" },
+    { "id": "R18_3F_BRIDGE_09", "legacy_source": "bard",        "canonical_target": "bardo",                  "category": "canonical_native", "notes": "Wave 1 HOLD" },
+    { "id": "R18_3F_BRIDGE_10", "legacy_source": "alchemist",   "canonical_target": "alchimista",             "category": "canonical_native", "notes": "Wave 1 HOLD" },
+    { "id": "R18_3F_BRIDGE_11", "legacy_source": "necromancer", "canonical_target": "negromante",             "category": "canonical_native", "notes": "Wave 1 HOLD" },
+    { "id": "R18_3F_BRIDGE_12", "legacy_source": "assassin",    "canonical_target": "ladro",                  "category": "mapped_legacy",    "notes": "alias verso ladro" },
+    { "id": "R18_3F_BRIDGE_13", "legacy_source": "berserker",   "canonical_target": "guerriero",              "category": "mapped_legacy",    "notes": "alias verso guerriero" }
+  ],
+  "bridge_count_totals": {
+    "total_mappings": 13,
+    "canonical_native_count": 11,
+    "mapped_legacy_count": 2,
+    "self_map_count": 0,
+    "ambiguous_target_count": 0
+  },
+  "special_categories_4": {
+    "canonical_native": {
+      "description": "valori canonical IT già target",
+      "examples": ["cacciatore_del_vuoto", "cacciatore_di_mostri", "guerriero", "ladro", "mago", "paladino", "monaco", "druido", "bardo", "alchimista", "negromante"]
+    },
+    "mapped_legacy": {
+      "description": "valori legacy EN mappati verso canonical target",
+      "examples_bridge_ids": ["R18_3F_BRIDGE_01","R18_3F_BRIDGE_02","R18_3F_BRIDGE_03","R18_3F_BRIDGE_04","R18_3F_BRIDGE_05","R18_3F_BRIDGE_06","R18_3F_BRIDGE_07","R18_3F_BRIDGE_08","R18_3F_BRIDGE_09","R18_3F_BRIDGE_10","R18_3F_BRIDGE_11","R18_3F_BRIDGE_12","R18_3F_BRIDGE_13"]
+    },
+    "technical_placeholder": {
+      "description": "placeholder tecnici non mappabili",
+      "examples": ["recruit_unassigned"],
+      "null_handling": "class_slug_null_is_classless_recruit_not_placeholder"
+    },
+    "test_artifact": {
+      "description": "artifact di test esclusi da produzione",
+      "examples": ["test-class-5e0064"]
+    }
+  },
+  "cacciatore_del_vuoto_bridge_state": {
+    "legacy_source": "warlock",
+    "canonical_target": "cacciatore_del_vuoto",
+    "bridge_status": "mapped_design_only",
+    "migration_status": "not_applied",
+    "runtime_bridge_status": "disabled",
+    "apply_authorized": false,
+    "live_adventurers_with_warlock_slug_count": "subset_of_3628_TBD_in_future_preview",
+    "live_adventurers_with_cacciatore_del_vuoto_slug_count": 0,
+    "archive_contains_cacciatore_del_vuoto": true,
+    "pm_approval_ref": "R18.6.3-G10 FR-Q5 LOCK"
+  },
+  "no_auto_derive_policy": {
+    "class_name_to_class_slug_auto_derive": false,
+    "adventurer_class_id_to_class_slug_auto_derive": false,
+    "null_to_recruit_unassigned_auto_convert": false,
+    "runtime_fallback_lookup_on_null": false,
+    "each_conversion_requires": ["pm_directive", "dry_run", "snapshot", "audit_trail", "rollback_plan"]
+  },
+  "migration_candidate_model": {
+    "fields": {
+      "adventurer_id": "string_uuid",
+      "current_class_slug": "string_or_null",
+      "current_class_name": "string_or_null",
+      "current_adventurer_class_id": "string_uuid_or_null",
+      "proposed_verdict": "enum_8_values",
+      "proposed_target_class_slug": "string_or_null",
+      "bridge_reason": "string_verbatim_reference",
+      "applied": false,
+      "dry_run": true,
+      "snapshot_pre_hash": "string_or_null",
+      "timestamp_generated": "datetime_utc",
+      "pm_approval_required": true
+    },
+    "collection_created_in_mongo": false,
+    "index_created_in_mongo": false
+  },
+  "verdicts_admitted_8": [
+    "CANONICAL_NATIVE",
+    "MAPPED_LEGACY",
+    "TECHNICAL_PLACEHOLDER",
+    "TEST_ARTIFACT",
+    "CLASSLESS_RECRUIT",
+    "UNKNOWN_VALUE",
+    "CONFLICT",
+    "NO_ACTION"
+  ],
+  "dry_run_contract": {
+    "read_only": true,
+    "operations_allowed": ["count_documents", "distinct", "find_limit_N"],
+    "operations_forbidden": ["update", "insert", "delete", "aggregation_with_out", "aggregation_with_merge"],
+    "candidate_classification": true,
+    "preview_report": true,
+    "conflict_report": true,
+    "unknown_report": true,
+    "no_mutation": true,
+    "snapshot_prerequisite_for_touch_gt_zero": true,
+    "explicit_apply_gate_future": true
+  },
+  "idempotency_contract": {
+    "dry_run_idempotent_by_definition": true,
+    "apply_future_requires_idempotency_key": true,
+    "idempotency_key_ttl_hours_suggested": 24,
+    "idempotency_key_hash_recipe": "hash(target_batch_id + timestamp_intent)",
+    "replay_safe_single_effect": true
+  },
+  "snapshot_requirements": {
+    "snapshot_pre_apply_mandatory": true,
+    "snapshot_collection_name_design_only": "adventurers_r18_3f_snapshot_pre_apply",
+    "snapshot_created_in_mongo": false,
+    "snapshot_metadata_fields": ["snapshot_id", "snapshot_hash_sha256", "record_count", "generated_at_utc", "pm_approval_ref"],
+    "retention_days_minimum": 30
+  },
+  "rollback_strategy": {
+    "trigger_types": ["pm_verdict_explicit", "error_rate_above_threshold", "integrity_check_violation"],
+    "rollback_contract_overwrite_from_snapshot": true,
+    "rollback_audit_log_entry": "rollback_applied",
+    "rollback_idempotent": true,
+    "post_rollback_snapshot_mandatory": true,
+    "implemented_in_r18_3f": false
+  },
+  "audit_trail_schema": {
+    "collection_target": "audit_log",
+    "new_collection_required": false,
+    "event_types": [
+      "r18_3f.dry_run.started",
+      "r18_3f.dry_run.completed",
+      "r18_3f.apply.started",
+      "r18_3f.apply.record_migrated",
+      "r18_3f.apply.completed",
+      "r18_3f.rollback.started",
+      "r18_3f.rollback.completed"
+    ],
+    "event_fields": ["event_id", "event_type", "actor", "target_adventurer_id", "before_state", "after_state", "verdict", "timestamp_utc", "pm_approval_ref", "snapshot_id"]
+  },
+  "conflict_handling": {
+    "conflict_conditions": [
+      "class_slug_legacy_but_class_name_incoerente_col_bridge",
+      "class_slug_canonical_but_adventurer_class_id_punta_a_legacy_entry_o_viceversa",
+      "class_slug_non_null_ma_adventurer_class_id_missing",
+      "parent_class_slug_diverge_da_class_slug"
+    ],
+    "handling_policy": "no_auto_fix_report_to_pm_wait_directive",
+    "resolution_scope": "record_by_record_or_batch"
+  },
+  "anomalies_detected": [
+    { "id": "A1", "severity": "MEDIUM", "description": "268 adventurers live con class_slug=null senza recruit_unassigned associato" },
+    { "id": "A2", "severity": "MEDIUM", "description": "Discrepanza live (100% legacy EN) vs archive (mix legacy + canonical IT); archive contiene già cacciatore_del_vuoto e cacciatore_di_mostri" },
+    { "id": "A3", "severity": "LOW", "description": "Catalog 18 slug vs live 11 slug distinct (delta 7 slug catalog-only)" },
+    { "id": "A4", "severity": "INFO", "description": "class_halls.class_slug allineato ai 11 valori live" },
+    { "id": "A5", "severity": "LOW", "description": "parent_class_slug referenziato in services.py:169 ma distinct non verificato in discovery corrente" }
+  ],
+  "compatibility_class_halls": {
+    "class_halls_docs_live": 11,
+    "class_slug_field_present": true,
+    "sync_required_on_apply": true,
+    "in_scope_r18_3f": false,
+    "propagation_gate": "future_sub_step_or_apply_phase"
+  },
+  "compatibility_rite_of_rebirth": {
+    "r18_6_rb1_status": "HOLD",
+    "class_slug_dependency": "consuma_canonical_it_dopo_apply",
+    "current_compatibility": "legacy_en_ok",
+    "r18_6_rb1_blocked_by_r18_3f_apply": false
+  },
+  "career_history_impact": {
+    "collection_present": true,
+    "class_slug_fields_verified": "follow_up_discovery_required",
+    "immutability_policy": "storico_legacy_preserved_as_audit",
+    "current_rewrite_decision": "pm_decision_required"
+  },
+  "api_impact": {
+    "runtime_apis_touching_class_slug": [
+      "/adventurers (list/detail)",
+      "/pvp_continental/*",
+      "/training/*",
+      "/equipment/*",
+      "/inventory/*",
+      "/forge/*",
+      "/guilds/*"
+    ],
+    "breaking_change_on_apply": true,
+    "compat_strategy_design_only": {
+      "phase_1_pre_apply": "legacy_en_only",
+      "phase_2_post_apply": "canonical_it_plus_class_slug_legacy_compat_field",
+      "phase_3_post_n_weeks": "remove_compat_field"
+    },
+    "changes_applied_in_r18_3f": false
+  },
+  "openapi_impact": {
+    "openapi_runtime_diff_in_r18_3f": 0,
+    "new_endpoints_defined": 0,
+    "apply_endpoint_defined": false,
+    "openapi_baseline_snapshot_required_pre_apply": true
+  },
+  "db_impact": {
+    "db_writes_in_r18_3f": 0,
+    "collections_touched": 0,
+    "indexes_modified": 0,
+    "aggregations_with_side_effects": 0,
+    "new_collections_created": 0,
+    "future_apply_targets_design_only": [
+      "adventurers.class_slug (batch update)",
+      "class_halls.class_slug (sync)",
+      "audit_log (append events)",
+      "adventurers_r18_3f_snapshot_pre_apply (snapshot write)"
+    ]
+  },
+  "gate_11_preconditions_p1_p20": [
+    { "id": "P1",  "label": "Pilot R18.6.3 Cacciatore del Vuoto = ACTIVE-DESIGN-READY", "status": "CLOSED" },
+    { "id": "P2",  "label": "R18.3f Class Slug Migration Readiness draft generato", "status": "IN_PROGRESS" },
+    { "id": "P3",  "label": "R18.3f review PM completata + verdict CLOSED", "status": "NOT_STARTED" },
+    { "id": "P4",  "label": "Snapshot pre-apply architecture approvata", "status": "NOT_STARTED" },
+    { "id": "P5",  "label": "Idempotency contract approvato", "status": "NOT_STARTED" },
+    { "id": "P6",  "label": "Rollback plan approvato", "status": "NOT_STARTED" },
+    { "id": "P7",  "label": "Audit trail schema approvato", "status": "NOT_STARTED" },
+    { "id": "P8",  "label": "API compatibility strategy approvata", "status": "NOT_STARTED" },
+    { "id": "P9",  "label": "Frontend consumer impact assessment completato", "status": "NOT_STARTED" },
+    { "id": "P10", "label": "R18.6.RV3-EV Eligibility Validation Gate completato", "status": "HOLD" },
+    { "id": "P11", "label": "Feature flag CLASS_SLUG_MIGRATION_ENABLED definito (design_only)", "status": "NOT_STARTED" },
+    { "id": "P12", "label": "Conflict handling verdict tree PM-approved", "status": "NOT_STARTED" },
+    { "id": "P13", "label": "Unknown value escalation policy PM-approved", "status": "NOT_STARTED" },
+    { "id": "P14", "label": "Test data isolation policy (test-class-5e0064) confermata", "status": "NOT_STARTED" },
+    { "id": "P15", "label": "Class Halls sync strategy approvata", "status": "NOT_STARTED" },
+    { "id": "P16", "label": "Class Specializations sync strategy approvata", "status": "NOT_STARTED" },
+    { "id": "P17", "label": "career_history preservation strategy approvata", "status": "NOT_STARTED" },
+    { "id": "P18", "label": "archive immutability confermata (adventurers_r18_archive read-only)", "status": "NOT_STARTED" },
+    { "id": "P19", "label": "Sealed integrity 36/36 verificata pre-Gate 11", "status": "NOT_STARTED" },
+    { "id": "P20", "label": "PM directive esplicita di autorizzazione Gate 11", "status": "NOT_STARTED" }
+  ],
+  "risk_register": [
+    { "id": "R1",  "severity": "HIGH",     "risk": "Migration parziale (subset record migrato, altri no) → stato inconsistente", "mitigation": "Batch atomici · snapshot pre-batch · rollback batch-level · idempotency" },
+    { "id": "R2",  "severity": "HIGH",     "risk": "Auto-derive da class_name senza approvazione PM → drift semantico", "mitigation": "No-auto-derive policy · verdict NO_ACTION default" },
+    { "id": "R3",  "severity": "MEDIUM",   "risk": "Propagazione test-class-5e0064 in produzione", "mitigation": "Escludere in preview · quarantine · alert" },
+    { "id": "R4",  "severity": "MEDIUM",   "risk": "Conflict record (class_slug ≠ class_name) → mismatch UI", "mitigation": "Verdict CONFLICT · PM review record-by-record" },
+    { "id": "R5",  "severity": "MEDIUM",   "risk": "268 record class_slug=null → ambiguità classless recruit vs bug", "mitigation": "Verdict CLASSLESS_RECRUIT · PM decision" },
+    { "id": "R6",  "severity": "HIGH",     "risk": "Breaking change API consumer (frontend, integrazioni)", "mitigation": "Fase compat doppio field N settimane" },
+    { "id": "R7",  "severity": "HIGH",     "risk": "class_halls out-of-sync post-migration", "mitigation": "Sync coerente contestuale" },
+    { "id": "R8",  "severity": "LOW",      "risk": "career_history storico frammentato tra legacy e canonical", "mitigation": "Immutable audit · nessun rewrite storico" },
+    { "id": "R9",  "severity": "CRITICAL", "risk": "Sealed integrity violata durante apply", "mitigation": "Verifica seal pre + post ogni operazione · abort su drift" },
+    { "id": "R10", "severity": "HIGH",     "risk": "Rollback fallito → stato irrecuperabile", "mitigation": "Snapshot multipli · rollback testato staging · dry-run rollback pre-apply" },
+    { "id": "R11", "severity": "MEDIUM",   "risk": "Idempotency key collision → apply doppio", "mitigation": "UUID4 key · TTL 24h · state check pre-apply" },
+    { "id": "R12", "severity": "LOW",      "risk": "Impatto performance batch update su 3628 record", "mitigation": "Batch size 500/batch · rate limit interno" }
+  ],
+  "pm_open_questions": [
+    { "id": "R3f-Q1",  "question": "268 record class_slug=null: verdict target CLASSLESS_RECRUIT (null) o migrazione auto a recruit_unassigned?", "recommendation": "Mantenere null finché UX placeholder non confermato" },
+    { "id": "R3f-Q2",  "question": "paladin osservato live ma non nel bridge legacy_source: già canonical target o mapping supplementare?", "recommendation": "Verificare catalog + eventuale row bridge paladin → paladino" },
+    { "id": "R3f-Q3",  "question": "Archive contiene 2 canonical IT già bridged: propagazione retroattiva o archive-only?", "recommendation": "Archive-only per consistenza storica" },
+    { "id": "R3f-Q4",  "question": "Timing apply migration: pre-Wave 1 (one-shot) o per-Wave (batch per classe)?", "recommendation": "Batch per Wave" },
+    { "id": "R3f-Q5",  "question": "API compatibility phase: quante settimane N doppio field?", "recommendation": "N=4 settimane minimum + consumer confirm" },
+    { "id": "R3f-Q6",  "question": "Feature flag CLASS_SLUG_MIGRATION_ENABLED: globale o per-classe?", "recommendation": "Per-classe (Wave rollout)" },
+    { "id": "R3f-Q7",  "question": "Frontend refactor bridge: preventivo o post-apply?", "recommendation": "Preventivo (accetta entrambi) per hot-swap safe" },
+    { "id": "R3f-Q8",  "question": "test-class-5e0064: rimuovere dal catalog o preservare test-only?", "recommendation": "Preservare + guard runtime blocca selezione live" },
+    { "id": "R3f-Q9",  "question": "Rollback timing: automatico su threshold o solo manuale post-PM?", "recommendation": "Threshold automatico + manual override double-gate" },
+    { "id": "R3f-Q10", "question": "Sealing R18.3f (aggiunta al 36-seal): ora o post-apply?", "recommendation": "Post-apply completo per evitare mutable pre-apply" }
+  ],
+  "go_hold_recommendation": {
+    "r18_3f_draft_documentale": "DRAFT_GENERATED",
+    "r18_3f_pm_review": "PENDING",
+    "r18_3f_apply_migration": "HOLD",
+    "gate_11_p1_p20": "NOT_AUTHORIZED",
+    "rv3_ev_eligibility_validation": "HOLD",
+    "wave_1_kickoff_monaco_druido_alchimista_bardo_negromante": "HOLD",
+    "runtime_bridge_activation": "DISABLED",
+    "openapi_backend_frontend_changes": "NOT_AUTHORIZED",
+    "recommendation_to_pm": "Procedere con review R18.3f draft. Nessun apply, nessuna migration, nessun Gate 11 kickoff prima di PM directive esplicita post-review."
+  },
+  "explicit_stop": {
+    "stop_after_generation": true,
+    "no_apply": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true,
+    "no_runtime_activation": true,
+    "no_class_slug_writes": true,
+    "action": "STOP · attendo PM directive per review R18.3f"
+  }
+}

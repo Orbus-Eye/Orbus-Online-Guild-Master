@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "artifact": "R18.3f Class Slug Migration Readiness Manifest",
+    "manifest_type": "dedicated_r18_3f_manifest",
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY",
+    "language": "italian_only",
+    "parent_gate": "R18.6.3 Cacciatore del Vuoto",
+    "gate_11_precondition_id": "P2",
+    "governance": "PM_LOCKED_PENDING_REVIEW",
+    "separation_note": "Manifest DEDICATO separato dal Pilot Completion Manifest (r18_6_3_cacciatore_del_vuoto_sha256_manifest.json). Il Pilot Manifest resta IMMUTABILE.",
+    "canonical_registry_reference": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json"
+  },
+  "md_file": {
+    "path": "/app/memory/r18_3f_class_slug_migration_readiness.md",
+    "sha256": "746ad94f7f186684f08c4d5ab4268ab719a2287b3dfc078b5d3e0a8f53b69668",
+    "size_bytes": 30508,
+    "line_count": 500,
+    "sections_numbered_count": 43,
+    "artifact_role": "readiness_draft_md",
+    "gate": "R18.3f",
+    "status": "DRAFT_GENERATED",
+    "pm_locked": true
+  },
+  "json_file": {
+    "path": "/app/memory/r18_3f_class_slug_migration_readiness.json",
+    "sha256": "d79401ebcbad376149a5ccb819fa8ead06cf180ad6b386022a94efe358ce3389",
+    "size_bytes": 21803,
+    "line_count": 407,
+    "root_keys_count": 30,
+    "artifact_role": "readiness_draft_json",
+    "gate": "R18.3f",
+    "status": "DRAFT_GENERATED",
+    "pm_locked": true
+  },
+  "prd_sha256_post_correction": "59012b009445d248ed7e85ae5260b51b8993b413f9aa76cb4049acbf4c318140",
+  "prd_line_count_post_correction": 3548,
+  "prd_path": "/app/memory/PRD.md",
+  "pilot_manifest_immutability": {
+    "path": "/app/memory/r18_6_3_cacciatore_del_vuoto_sha256_manifest.json",
+    "sha256_pre_r18_3f_generation": "c364100912aaca946492f460f3a6a79ba1efcac3e13ac38d4e3eb9628e5d8ff3",
+    "sha256_post_r18_3f_generation_expected": "c364100912aaca946492f460f3a6a79ba1efcac3e13ac38d4e3eb9628e5d8ff3",
+    "r18_3f_added_to_pilot_manifest": false,
+    "note": "R18.3f e' dipendenza tecnica post-pilot, NON e' gate del pilot G1-G10, NON appartiene al Pilot Completion Certificate del Cacciatore del Vuoto."
+  },
+  "pilot_completion_certificate_immutability": {
+    "md_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.md",
+    "md_sha256_pre_r18_3f_generation": "2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2",
+    "md_sha256_post_r18_3f_generation_expected": "2917eda16838d1e5f7baa7b2a10d5441157519f1d3c23ef476eb3918d299e7c2",
+    "json_path": "/app/memory/r18_6_3_cacciatore_del_vuoto_pilot_completion_certificate.json",
+    "json_sha256_pre_r18_3f_generation": "87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c",
+    "json_sha256_post_r18_3f_generation_expected": "87ab7119420e2b3d1536b55c5d8fba46301b02fcdca3dc2807873ecf2ffa426c"
+  },
+  "sealed_integrity": {
+    "aggregate_sealed_files": 36,
+    "byte_identical_expected": true,
+    "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "artifact_status": "DRAFT_GENERATED",
+  "governance_status": "PM_LOCKED_PENDING_REVIEW",
+  "runtime_apply_ready": false,
+  "migration_status": "planning_only",
+  "review_status": "PENDING_PM",
+  "manifest_self_reference": {
+    "path": "/app/memory/r18_3f_class_slug_migration_readiness_manifest.json",
+    "note": "SHA256 di questo manifest calcolabile post-write; non incluso self-referenzialmente per evitare loop."
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_migration_applied": true,
+    "class_slug_write_count": 0,
+    "db_writes_count": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0,
+    "explicit_stop_post_draft": true
+  }
+}
