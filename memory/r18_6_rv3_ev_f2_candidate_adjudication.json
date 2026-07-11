@@ -61,19 +61,23 @@
     "population_criteria": "class_tags:warlock AND stat_tags:intellect",
     "count": 18,
     "all_have_rec_classes_cacciatore_del_vuoto": true,
+    "post_pm_strict_g2_review": {
+      "6_weapon_warlock_strict_verdict": "NOT_COMPATIBLE_famiglia_esclusa_da_G2",
+      "note": "PM directive strict: tome univocamente determinato, tome NOT in {focus,balestra,pugnale}. G2 non ampliata. Semantic caster overlap non sufficiente per REUSE_CONDITIONAL."
+    },
     "adjudication_per_item": [
-      {"n": 1, "slug": "warlock_apprentice_tome", "class_tags": ["warlock"], "stat_tags": ["intellect"], "slot_type": "weapon", "rarity": "Common", "required_adventurer_level": 1, "item_type": "weapon", "item_binding_policy": "soft", "armor_tags": null, "weapon_tags": ["tome", "arcane"], "lore_tags": ["mundane"], "identity_risk": "LOW", "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "weapon proficiency mismatch: tome!=focus/crossbow/dagger; semantic caster overlap", "confidence": "HIGH"},
-      {"n": 2, "slug": "warlock_hex_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
-      {"n": 3, "slug": "warlock_shadowbound_grimoire", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
-      {"n": 4, "slug": "warlock_witchking_codex", "slot_type": "weapon", "rarity": "Epic", "required_adventurer_level": 8, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch tome/arcane", "confidence": "HIGH"},
+      {"n": 1, "slug": "warlock_apprentice_tome", "class_tags": ["warlock"], "stat_tags": ["intellect"], "slot_type": "weapon", "rarity": "Common", "required_adventurer_level": 1, "item_type": "weapon", "item_binding_policy": "soft", "armor_tags": null, "weapon_tags": ["tome", "arcane"], "lore_tags": ["mundane"], "weapon_family": "tome", "identity_risk": "LOW", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "reason": "tome univocamente determinato, tome NOT in {focus,balestra,pugnale}. G2 not extended.", "confidence": "HIGH"},
+      {"n": 2, "slug": "warlock_hex_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "weapon_family": "tome", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "confidence": "HIGH"},
+      {"n": 3, "slug": "warlock_shadowbound_grimoire", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "weapon_family": "tome", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "confidence": "HIGH"},
+      {"n": 4, "slug": "warlock_witchking_codex", "slot_type": "weapon", "rarity": "Epic", "required_adventurer_level": 8, "weapon_tags": ["tome", "arcane"], "weapon_family": "tome", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "confidence": "HIGH"},
       {"n": 5, "slug": "warlock_novice_robe", "slot_type": "armor", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": ["robe", "cloth", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "armor proficiency stoffa+light OK", "confidence": "HIGH"},
       {"n": 6, "slug": "warlock_shadowweave_robe", "slot_type": "armor", "rarity": "Rare", "required_adventurer_level": 5, "armor_tags": ["robe", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
       {"n": 7, "slug": "warlock_coven_mantle", "slot_type": "armor", "rarity": "Epic", "required_adventurer_level": 8, "armor_tags": ["robe", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
       {"n": 8, "slug": "warlock_cursed_pendant", "slot_type": "accessory", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": null, "weapon_tags": null, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal accessory slot", "confidence": "HIGH"},
       {"n": 9, "slug": "warlock_hex_sigil", "slot_type": "accessory", "rarity": "Rare", "required_adventurer_level": 5, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
       {"n": 10, "slug": "warlock_patron_seal", "slot_type": "accessory", "rarity": "Epic", "required_adventurer_level": 8, "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "universal", "confidence": "HIGH"},
-      {"n": 11, "slug": "warlock_apprentice_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch", "confidence": "HIGH"},
-      {"n": 12, "slug": "warlock_pact_binder", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "mutation_required": false, "verdict": "DOWNGRADED_REUSE_CONDITIONAL", "reason": "proficiency mismatch", "confidence": "HIGH"},
+      {"n": 11, "slug": "warlock_apprentice_grimoire", "slot_type": "weapon", "rarity": "Uncommon", "required_adventurer_level": 3, "weapon_tags": ["tome", "arcane"], "weapon_family": "tome", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "confidence": "HIGH"},
+      {"n": 12, "slug": "warlock_pact_binder", "slot_type": "weapon", "rarity": "Rare", "required_adventurer_level": 5, "weapon_tags": ["tome", "arcane"], "weapon_family": "tome", "mutation_required": true, "verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "confidence": "HIGH"},
       {"n": 13, "slug": "warlock_hex_focus_robe", "slot_type": "armor", "rarity": "Common", "required_adventurer_level": 1, "armor_tags": ["cloth", "arcane", "light"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+light OK", "confidence": "HIGH"},
       {"n": 14, "slug": "warlock_shadow_mail", "slot_type": "armor", "rarity": "Uncommon", "required_adventurer_level": 3, "armor_tags": ["cloth", "dark", "medium"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+medium (cuoio semantic) OK", "confidence": "HIGH"},
       {"n": 15, "slug": "warlock_covenant_robe", "slot_type": "armor", "rarity": "Rare", "required_adventurer_level": 5, "armor_tags": ["cloth", "arcane", "medium"], "mutation_required": false, "verdict": "VALIDATED_REUSE_VALID", "reason": "stoffa+medium OK", "confidence": "HIGH"},
@@ -83,10 +87,11 @@
     ],
     "totals": {
       "VALIDATED_REUSE_VALID": 12,
-      "DOWNGRADED_REUSE_CONDITIONAL": 6,
-      "REJECTED_NOT_COMPATIBLE": 0,
+      "DOWNGRADED_REUSE_CONDITIONAL": 0,
+      "REJECTED_NOT_COMPATIBLE": 6,
       "REQUIRES_NEW_ITEM_FUTURE": 0,
-      "REMAINS_PM_REVIEW": 0
+      "REMAINS_PM_REVIEW": 0,
+      "note_pm_strict_g2": "6 weapon warlock tome/arcane declassed from DOWNGRADED_REUSE_CONDITIONAL to NOT_COMPATIBLE (famiglia_esclusa_da_G2) post PM strict G2 review"
     }
   },
   "zero_reuse_statement_reconciliation": {
@@ -149,13 +154,19 @@
     "recommended_classes": ["mage", "necromancer", "bard"],
     "cacciatore_del_vuoto_in_class_tags": false,
     "cacciatore_del_vuoto_in_rec_classes": false,
-    "mutation_required": true,
-    "verdict": "REMAINS_PM_REVIEW",
-    "reason": "Lore vuoto/oblio identity + intellect + soft + Legendary => Vuoto-naturally aligned; but adding cacciatore_del_vuoto to class_tags/rec_classes = mutation forbidden now.",
+    "primary_verdict_post_pm_option_A": "NOT_COMPATIBLE",
+    "secondary_attributes": {
+      "lore_reviewed": true,
+      "identity_conflict": false,
+      "mutation_required": true,
+      "triggers_future_void_native_item": true,
+      "retro_branding_forbidden": true
+    },
+    "preserved": true,
+    "no_mutation": true,
+    "future_coverage_gap_entry": "arcane_adept_orb_void_native_successor",
     "confidence": "HIGH",
-    "identity_risk_toward_vuoto": "LOW",
-    "identity_risk_toward_mage_necromancer_bard": "MEDIUM",
-    "next_gate_recommendation": "R18.6.RV3-EV-F3 or post-AFX1 dedicated review; alternative: create new Vuoto-specific item"
+    "note": "PM Opzione A applicata: item preserved (no mutation); trigger nuovo item Vuoto-native futuro con nuovo item_id, proficiency focus/balestra/pugnale, stat Intelligenza, weapon family valida (NO copia nome NO duplicazione diretta)"
   },
   "second_lore_pm_review_reconciliation": {
     "ev_f1_pm_review_count_out_of_6_lore": 2,
@@ -317,36 +328,75 @@
   },
   "reuse_final_totals": {
     "REUSE_VALID": 12,
-    "REUSE_CONDITIONAL": 53,
-    "NOT_COMPATIBLE_IDENTITY_CONFLICT": 5,
-    "REMAINS_PM_REVIEW": 1,
-    "REQUIRES_NEW_ITEM_FUTURE": 0,
-    "total_unique_adjudicated": 71
+    "REUSE_CONDITIONAL": 32,
+    "NOT_COMPATIBLE": 134,
+    "PM_REVIEW": 0,
+    "TOTAL_LIVE_LEDGER": 178,
+    "canonical_disjoint_exhaustive": true,
+    "REQUIRES_NEW_ITEM_FUTURE_separated_from_ledger": true,
+    "note_post_pm_micro_fix": "Post PM accounting micro-fix: totals mutuamente esclusivi ed esaustivi, no approssimazione ~110, conteggio esatto item-by-item, arcane_adept_orb migrato a NOT_COMPATIBLE con secondary attrs, 6 weapon warlock declassed to NOT_COMPATIBLE, 15 dei 47 declassed to NOT_COMPATIBLE (famiglia_esclusa)"
   },
   "conditional_totals": {
-    "weapon_warlock_tome_arcane": 6,
-    "caster_multi_class_mage_necro_bard": 24,
-    "caster_single_class_lore_neutral": 15,
-    "caster_lore_vuoto_adjacent": 8,
-    "total": 53,
-    "condition_unlock_prereq": "Registry_v3_additive_apply AND AFX1_vocabulary_lock"
+    "post_pm_strict_g2_review": true,
+    "weapon_literal_g2_focus_dagger": 2,
+    "armor_stoffa_cuoio": 11,
+    "accessory_universal": 19,
+    "total": 32,
+    "condition_unlock_prereq": "Registry_v3_additive_apply_rec_classes_atomic_append_AND_AFX1_vocabulary_lock",
+    "non_mutation_guarantee": "additive apply rec_classes = array append atomic, no rewrite, no class_tags/stat/slot/proficiency mutation"
   },
   "rejected_totals": {
     "identity_conflict_6_lore_subset": [
-      {"slug": "drake_slayer_helm", "reason": "wrong stat + hard binding"},
-      {"slug": "drake_slayer_chest", "reason": "wrong stat + hard binding"},
-      {"slug": "drake_slayer_blade", "reason": "wrong stat + hard binding + sword proficiency mismatch"},
-      {"slug": "goblin_hunter_ring", "reason": "wrong stat + cacciatore_di_mostri rec_classes"},
-      {"slug": "voidpiercer-bow", "reason": "bow proficiency mismatch + cacciatore_di_mostri rec + retro-branding forbidden"}
+      {"slug": "drake_slayer_helm", "primary_verdict": "NOT_COMPATIBLE", "secondary": {"identity_conflict": true, "mutation_required": true}, "reason": "wrong stat + hard binding"},
+      {"slug": "drake_slayer_chest", "primary_verdict": "NOT_COMPATIBLE", "secondary": {"identity_conflict": true, "mutation_required": true}, "reason": "wrong stat + hard binding"},
+      {"slug": "drake_slayer_blade", "primary_verdict": "NOT_COMPATIBLE", "secondary": {"identity_conflict": true, "mutation_required": true}, "reason": "wrong stat + hard binding + sword proficiency mismatch"},
+      {"slug": "goblin_hunter_ring", "primary_verdict": "NOT_COMPATIBLE", "secondary": {"identity_conflict": true, "mutation_required": true}, "reason": "wrong stat + cacciatore_di_mostri rec_classes"},
+      {"slug": "voidpiercer-bow", "primary_verdict": "NOT_COMPATIBLE", "secondary": {"identity_conflict": true, "mutation_required": true, "retro_branding_forbidden": true}, "reason": "bow proficiency mismatch + cacciatore_di_mostri rec + retro-branding forbidden - FINAL"}
     ],
-    "not_compatible_out_of_scope_estimate": 110,
-    "total_rejected_or_out_of_scope": 115
+    "six_weapon_warlock_declassed": [
+      {"slug": "warlock_apprentice_tome", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"},
+      {"slug": "warlock_hex_grimoire", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"},
+      {"slug": "warlock_shadowbound_grimoire", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"},
+      {"slug": "warlock_witchking_codex", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"},
+      {"slug": "warlock_apprentice_grimoire", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"},
+      {"slug": "warlock_pact_binder", "primary_verdict": "NOT_COMPATIBLE", "condition": "famiglia_esclusa_da_G2", "weapon_family": "tome"}
+    ],
+    "arcane_adept_orb_preserved": {
+      "slug": "arcane_adept_orb", "primary_verdict": "NOT_COMPATIBLE",
+      "secondary": {"lore_reviewed": true, "identity_conflict": false, "mutation_required": true, "triggers_future_void_native_item": true}
+    },
+    "fifteen_of_47_declassed_famiglia_esclusa_da_G2": [
+      {"slug": "cracked-staff", "weapon_family": "staff"},
+      {"slug": "spiritglass-staff", "weapon_family": "staff"},
+      {"slug": "embermind-focus", "weapon_family": "wand"},
+      {"slug": "apprentice-wand", "weapon_family": "wand"},
+      {"slug": "hex-rod", "weapon_family": "staff"},
+      {"slug": "moonsilver-bow", "weapon_family": "bow"},
+      {"slug": "warlocks-grimoire", "weapon_family": "grimoire"},
+      {"slug": "archmagi-staff", "weapon_family": "staff"},
+      {"slug": "songsteel-flute", "weapon_family": "instrument_sonic"},
+      {"slug": "apprentice_staff", "weapon_family": "staff"},
+      {"slug": "legendary_staff_efreto", "weapon_family": "staff"},
+      {"slug": "alchemist_apprentice_flask", "weapon_family": "alchemical_flask"},
+      {"slug": "alchemist_elemental_flask", "weapon_family": "alchemical_flask"},
+      {"slug": "alchemist_transmuters_tome", "weapon_family": "tome"},
+      {"slug": "alchemist_philosophers_flask", "weapon_family": "alchemical_flask"}
+    ],
+    "out_of_scope_107_items": {
+      "count": 107,
+      "secondary_attribute": "out_of_scope=true",
+      "breakdown": {
+        "stat_mismatch_non_intellect": 81,
+        "stat_missing_materials_consumables_misc": 21,
+        "hard_binding_non_warlock": 5
+      }
+    },
+    "grand_total_not_compatible": 134
   },
   "unresolved_totals": {
-    "remains_pm_review_count": 1,
-    "items": [
-      {"slug": "arcane_adept_orb", "reason": "lore-perfect but class_tags mutation forbidden", "confidence": "HIGH", "next_gate": "R18.6.RV3-EV-F3_or_post_AFX1"}
-    ]
+    "remains_pm_review_count": 0,
+    "items": [],
+    "note_post_pm_micro_fix": "arcane_adept_orb migrated from REMAINS_PM_REVIEW to NOT_COMPATIBLE (Opzione A). No residual PM_REVIEW items."
   },
   "future_item_estimate_normalized": {
     "envelope_baseline": {"min": 110, "max": 130, "center": 120, "status": "official_planning_baseline"},
@@ -441,9 +491,192 @@
     "wave_1_kickoff": "HOLD",
     "cacciatore_del_vuoto_live_selectable": "NOT_LIVE_NOT_SELECTABLE"
   },
+  "live_item_adjudication_ledger": {
+    "universe_total": 178,
+    "categories_mutually_exclusive_exhaustive": true,
+    "REUSE_VALID": 12,
+    "REUSE_CONDITIONAL": 32,
+    "NOT_COMPATIBLE": 134,
+    "PM_REVIEW": 0,
+    "sum_check": 178,
+    "sum_valid": true,
+    "each_record_one_primary_verdict": true,
+    "secondary_attributes_allowed": ["out_of_scope", "lore_reviewed", "identity_conflict", "mutation_required", "triggers_future_void_native_item", "retro_branding_forbidden"],
+    "requires_new_item_future_separated": true,
+    "no_approximation_used": true,
+    "reuse_conditional_composition": {
+      "weapon_literal_G2_focus_dagger": 2,
+      "armor_stoffa_cuoio": 11,
+      "accessory_universal": 19,
+      "condition_all": "Registry_v3_additive_rec_classes_atomic_append_non_mutation"
+    },
+    "not_compatible_composition": {
+      "six_weapon_warlock_tome_arcane_famiglia_esclusa_da_G2": 6,
+      "five_lore_items_identity_conflict": 5,
+      "one_arcane_adept_orb_preserved_opzione_A": 1,
+      "fifteen_of_47_declassed_famiglia_esclusa_da_G2": 15,
+      "one_hundred_seven_out_of_scope": 107,
+      "sum": 134
+    }
+  },
+  "future_coverage_gap": {
+    "separated_from_live_ledger_178": true,
+    "status": "design_only_NOT_pm_approved_NOT_authorized",
+    "governance_locks": {
+      "item_creation_authorized": false,
+      "registry_v3_apply_authorized": false,
+      "field_addition_authorized": false,
+      "no_backfill": true,
+      "no_apply": true,
+      "no_copy_of_existing_names": true
+    },
+    "envelope_baseline_pm_locked": {"min": 110, "max": 130, "center": 120},
+    "advisory_max_scenario_non_binding": {"min": 180, "max": 220},
+    "entries": [
+      {"gap": "T2_Cacciatore_L16_30_Vuoto_items", "estimate": "22-35"},
+      {"gap": "T3_Iniziato_L31_45_Vuoto_items", "estimate": "22-35"},
+      {"gap": "T4_Rituale_L46_55_Vuoto_items", "estimate": "22-35"},
+      {"gap": "T5_Vuoto_L56_60_endgame_items", "estimate": "22-35"},
+      {"gap": "arcane_adept_orb_void_native_successor", "estimate": 1, "note": "nuovo item Vuoto-native, nuovo item_id, proficiency focus/balestra/pugnale, stat Intelligenza, weapon family valida, NO copia nome NO duplicazione diretta"},
+      {"gap": "slot_canonical_materialization_back_shoulders_hands_wrist_waist_legs_feet_T1_T5", "estimate": "20-30"},
+      {"gap": "focus_literal_weapon_materialization_T1_T5", "estimate": "8-12"},
+      {"gap": "crossbow_balestra_weapon_materialization_T1_T5", "estimate": "8-12"},
+      {"gap": "legendary_vuoto_identity_items", "estimate": "5-15"},
+      {"gap": "shared_caster_items", "estimate": "15-25"},
+      {"gap": "universal_slot_expansion", "estimate": "15-25"}
+    ]
+  },
+  "pm_open_questions_verbatim_extract": [
+    {
+      "id": "F2-Q1",
+      "testo_verbatim": "I 6 REUSE_CONDITIONAL weapon warlock (tome/arcane) sono promuovibili a REUSE_VALID se G2 profile Vuoto include `tome` come semantic proficiency?",
+      "recommendation_e1_dev_verbatim": "HOLD fino a AFX1 vocabulary lock — decidere in gate dedicato se weapon proficiency Vuoto è literal (`focus + crossbow + dagger`) OR semantic (include `tome/grimoire/wand`).",
+      "sezione_origine": "§42 · PM open questions F2-Q1..F2-Q12 (derivata da §4 REUSE_VALID 18 review e §12 weapon_tags distinct)",
+      "impatto": "AFX1 + REUSE_CONDITIONAL classification",
+      "default_proposto": "literal G2 (post PM micro-fix strict interpretation applicata): 6 warlock weapon tome/arcane → NOT_COMPATIBLE (famiglia_esclusa_da_G2). Domanda resta aperta per validazione formale AFX1."
+    },
+    {
+      "id": "F2-Q2",
+      "testo_verbatim": "I 47 REUSE_CONDITIONAL dei 49 PM_REVIEW richiedono Registry v3 additive `recommended_classes` bulk. Autorizzare in gate dedicato o item-by-item?",
+      "recommendation_e1_dev_verbatim": "bulk in gate dedicato post AFX1, con exclusion list per items lore-conflicting.",
+      "sezione_origine": "§42 · PM open questions (derivata da §6 PM_REVIEW 49 inventory)",
+      "impatto": "registry v3 apply gate futuro",
+      "default_proposto": "bulk apply in gate dedicato post-AFX1 con exclusion list (drake_slayer trilogy + goblin_hunter_ring + voidpiercer-bow + arcane_adept_orb esclusi)."
+    },
+    {
+      "id": "F2-Q3",
+      "testo_verbatim": "arcane_adept_orb REMAINS_PM_REVIEW: creare nuovo item Legendary Vuoto-specific similare O autorizzare additive `class_tags` in gate dedicato?",
+      "recommendation_e1_dev_verbatim": "creare nuovo item Vuoto-specific (evita mutation su item Legendary esistente).",
+      "sezione_origine": "§42 · PM open questions (derivata da §8 arcane_adept_orb review)",
+      "impatto": "item creation futuro",
+      "default_proposto": "creare nuovo item arcane_adept_orb_void_native_successor in FUTURE COVERAGE GAP (PM ha già scelto Opzione A: item preserved + nuovo successor futuro)."
+    },
+    {
+      "id": "F2-Q4",
+      "testo_verbatim": "Rarity distribution RV3-EV corrected: aggiornare RV3-EV.json con misurazioni live?",
+      "recommendation_e1_dev_verbatim": "NO — RV3-EV.json è IMMUTABLE post approval; correzione tracciata in EV-F1 + EV-F2 come corrective/additive audit.",
+      "sezione_origine": "§42 · PM open questions (derivata da §3 EV baseline reconciliation e §15 Rarity values)",
+      "impatto": "cosmetico / traceability",
+      "default_proposto": "NO update RV3-EV.json (immutable); correzione preservata in EV-F1/EV-F2 come corrective/additive audit."
+    },
+    {
+      "id": "F2-Q5",
+      "testo_verbatim": "ILVL formula EV-F2 (+0/+2/+3/+4/+5) sostituisce EV-F1 proposal: verdict finale?",
+      "recommendation_e1_dev_verbatim": "EV-F2 formula è ratificata; EV-F1 proposal deprecata a livello suggestion (nessun apply avvenuto).",
+      "sezione_origine": "§42 · PM open questions (derivata da §18 ILVL derivation preview)",
+      "impatto": "registry apply (ILVL calculation runtime futuro)",
+      "default_proposto": "PM ha CONFIRMATO EV-F2 formula (+0/+2/+3/+4/+5, Legendary=60 anchor). Nessuna riapertura C3."
+    },
+    {
+      "id": "F2-Q6",
+      "testo_verbatim": "Slot taxonomy live coarse (weapon/armor/accessory) vs canonical 14: quando remapping?",
+      "recommendation_e1_dev_verbatim": "gate dedicato post AFX1 (slot canonical remapping = mutation schema, richiede Registry v3 additive field `slot_canonical` alias).",
+      "sezione_origine": "§42 · PM open questions (derivata da §13 slot_type distinct)",
+      "impatto": "registry v3 additive slot alias",
+      "default_proposto": "PM ha CONFIRMATO 14 slot canonici + alias standard (belt→waist, cloak/cape→back, trinket→accessory, weapon_main→main_hand, weapon_off→off_hand, main-hand→main_hand, off-hand→off_hand, amulet→neck). NO ring1/ring2. NO trinket come 15° slot. Nessun remapping DB ora. Gate dedicato futuro per alias documentation."
+    },
+    {
+      "id": "F2-Q7",
+      "testo_verbatim": "Anti-P2W: 50 items missing `can_be_sold_for_real_money` — data quality followup ora o defer?",
+      "recommendation_e1_dev_verbatim": "defer a gate dedicato data quality (post-EV chain).",
+      "sezione_origine": "§42 · PM open questions (derivata da §16 can_be_sold_for_real_money audit)",
+      "impatto": "data quality gate futuro",
+      "default_proposto": "DEFER a data quality gate; PM ha CONFIRMATO fallback missing→false comportamento codice/config effettivo (verifica read-only, senza materializzare). I 50 missing restano DATA QUALITY GAP tracciato."
+    },
+    {
+      "id": "F2-Q8",
+      "testo_verbatim": "21 items `slot_type = None`: data quality gap. Backfill o keep as-is?",
+      "recommendation_e1_dev_verbatim": "keep as-is (no backfill); documentare per audit futuro.",
+      "sezione_origine": "§42 · PM open questions (derivata da §13 slot_type distinct)",
+      "impatto": "data quality",
+      "default_proposto": "keep as-is · documentare · nessuna correzione ora."
+    },
+    {
+      "id": "F2-Q9",
+      "testo_verbatim": "`focus` weapon literal sub-materialized (0-1 items): T1 Vuoto weapon proficiency ha gap literal?",
+      "recommendation_e1_dev_verbatim": "YES, T1 Vuoto weapon proficiency `focus` è gap → serve materializzazione focus items T1 in Registry v3 (gate futuro).",
+      "sezione_origine": "§42 · PM open questions (derivata da §12 weapon_tags distinct + §28 weapon gap)",
+      "impatto": "FUTURE COVERAGE GAP (item creation futuro post-AFX1)",
+      "default_proposto": "YES gap literal · materializzazione focus/balestra/pugnale in gate futuro dedicato · tracciato in FUTURE COVERAGE GAP (§45)."
+    },
+    {
+      "id": "F2-Q10",
+      "testo_verbatim": "Coverage envelope 110-130 (planning center 120) vs future estimate 180-220: quale è \"official planning target\"?",
+      "recommendation_e1_dev_verbatim": "envelope 110-130 è official baseline; estimate 180-220 è advisory max scenario NON-binding.",
+      "sezione_origine": "§42 · PM open questions (derivata da §38 future item estimate + §39 coverage envelope reconciliation)",
+      "impatto": "planning target lock",
+      "default_proposto": "PM ha CONFIRMATO — envelope 110-130 (center ~120) = baseline PM · estimate 180-220 = ADVISORY MAX SCENARIO NOT LOCKED NOT TARGET PM."
+    },
+    {
+      "id": "F2-Q11",
+      "testo_verbatim": "Cacciatore di Mostri strict separation: preservare \"no shared items\"?",
+      "recommendation_e1_dev_verbatim": "YES, strict separation confermata.",
+      "sezione_origine": "§42 · PM open questions (derivata da §33 overlap Cacciatore di Mostri)",
+      "impatto": "class identity governance",
+      "default_proposto": "YES strict separation preservata · nessun item shared tra Vuoto e Cacciatore di Mostri."
+    },
+    {
+      "id": "F2-Q12",
+      "testo_verbatim": "AFX1 kickoff timing: post-EV chain closure O in parallel?",
+      "recommendation_e1_dev_verbatim": "post-EV chain (EV → EV-F1 → EV-F2 → EV closure) prima di AFX1 kickoff.",
+      "sezione_origine": "§42 · PM open questions (derivata da §40 Affix Vocabulary Gate prerequisites)",
+      "impatto": "AFX1 gate timing",
+      "default_proposto": "post-EV chain closure · AFX1 HOLD fino a RV3-EV chiuso."
+    }
+  ],
+  "pm_micro_fix_acknowledgment": {
+    "ev_f2_status": "APPROVED_WITH_MANDATORY_ACCOUNTING_MICRO_FIX_APPLIED",
+    "technical_findings": "ACCEPTED",
+    "candidate_adjudication": "ACCEPTED",
+    "rv3_ev_status": "STILL_OPEN_awaiting_F2Q_verdicts",
+    "afx1_status": "HOLD",
+    "confirmations_registered": {
+      "ilvl_formula_confirmed": "Common+0 · Uncommon+2 · Rare+3 · Epic+4 · Legendary+5 · Legendary_ilvl=60_anchor",
+      "no_C3_reopen": true,
+      "slot_taxonomy_confirmed": "14_canonical + standard_aliases (belt->waist, cloak/cape->back, trinket->accessory, weapon_main->main_hand, weapon_off->off_hand, main-hand->main_hand, off-hand->off_hand, amulet->neck)",
+      "no_ring1_ring2": true,
+      "no_trinket_as_15th_slot": true,
+      "no_db_remapping_now": true,
+      "anti_p2w_accepted_with_note": "verify read-only if missing->false is code/config fallback behavior (without materializing); 50 missing remain DATA QUALITY GAP tracked",
+      "t1_t5_progression_incomplete_confirmed": true,
+      "cacciatore_del_vuoto_active_design_ready_not_live_confirmed": true,
+      "estimate_180_220_advisory_max_scenario_not_locked_not_target": true,
+      "envelope_110_130_center_120_baseline_pm_confirmed": true
+    },
+    "micro_fix_applied": [
+      "sec_1_executive_summary_canonical_totals_12_32_134_0_178",
+      "sec_8_arcane_adept_orb_opzione_A_NOT_COMPATIBLE_secondary_attrs_successor_entry",
+      "sec_34_37_canonical_ledger_no_approximation",
+      "sec_44_LIVE_ITEM_ADJUDICATION_LEDGER_canonical_complete",
+      "sec_45_FUTURE_COVERAGE_GAP_separated",
+      "sec_46_F2Q_verbatim_extraction_12_blocks",
+      "sec_47_PM_directive_acknowledgment"
+    ]
+  },
   "explicit_stop": {
     "rv3_ev": "OPEN",
-    "ev_f2": "DRAFT_GENERATED",
+    "ev_f2": "APPROVED_WITH_ACCOUNTING_MICRO_FIX_APPLIED",
+    "ev_f2_pending": "F2Q1_to_F2Q12_verdicts",
     "afx1": "HOLD",
     "item_creation": "NOT_AUTHORIZED",
     "registry_v3_apply": "NOT_AUTHORIZED",
@@ -452,9 +685,9 @@
     "monaco_wave_1": "HOLD",
     "cacciatore_del_vuoto": "NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
     "prd_appended": false,
-    "sealed_integrity_pending_final_check": "36/36_pytest",
+    "sealed_integrity_verified": "36/36_pytest_pass",
     "lore_meta_sha_expected": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
     "backend_frontend_openapi_touch_count": 0,
-    "next_action": "await_pm_directive_on_ev_f2"
+    "next_action": "await_pm_directive_on_F2Q1_to_F2Q12"
   }
 }

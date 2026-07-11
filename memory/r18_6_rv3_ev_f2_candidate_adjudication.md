@@ -15,14 +15,17 @@ EV-F2 è il gate di **adjudication record-by-record** dei candidati identificati
 - **49 PM_REVIEW candidates** (population: `item_binding_policy:soft` ∩ `stat_tags:intellect` ∩ `class_tags∉warlock`)
 - **6 lore-identity items** (population: `lore_tags∈{vuoto,oblio}`)
 
-Verdict finali EV-F2 (post record-by-record adjudication):
-- **REUSE_VALID**: **12** (7 accessory + 5 armor light/cloth-medium, tutti bridged `rec_classes: cacciatore_del_vuoto`)
-- **REUSE_CONDITIONAL**: **53** (6 weapon tome+arcane su warlock legacy + 47 items caster soft-binding via Registry v3 additive rec_classes)
-- **NOT_COMPATIBLE / IDENTITY_CONFLICT**: **5** (3 drake_slayer trilogy + goblin_hunter_ring + voidpiercer-bow)
-- **REMAINS_PM_REVIEW**: **1** (arcane_adept_orb, class_tags addition = mutation = future gate)
-- **REQUIRES_NEW_ITEM_FUTURE**: **0** (nessun candidato adjudicato ricade qui; scenario T2-T5 gap tracciato separatamente)
+Verdict finali EV-F2 **post accounting micro-fix PM** (ledger canonico 178/178, categorie mutuamente esclusive ed esaustive):
+- **REUSE_VALID**: **12** (5 armor stoffa/cuoio + 7 accessory universal, tutti bridged `rec_classes: cacciatore_del_vuoto`)
+- **REUSE_CONDITIONAL**: **32** (2 weapon literal G2 focus/dagger + 11 armor stoffa/cuoio + 19 accessory universal · tutti via Registry v3 additive `rec_classes`)
+- **NOT_COMPATIBLE**: **134** (6 warlock weapon tome/arcane `famiglia_esclusa_da_G2` + 5 lore identity_conflict + 1 arcane_adept_orb PRESERVED + 15 dei 47 declassati per famiglia esclusa + 107 out-of-scope)
+- **PM_REVIEW**: **0** (arcane_adept_orb migrato a NOT_COMPATIBLE con secondary attributes; nessun residuo)
 
-Total unique adjudicated: **71 items** (18 + 49 + 6 − 2 overlap 49∩6lore).
+**TOTAL LIVE LEDGER**: **178 ✅** (categorie disjoint · nessun double count · nessun approssimazione)
+
+**FUTURE COVERAGE GAP (separato dal ledger 178)**:
+- REQUIRES_NEW_ITEM_FUTURE (envelope 110-130, advisory max 180-220)
+- Include: T2/T3/T4/T5 gap + arcane_adept_orb_void_native_successor
 
 ---
 
@@ -226,14 +229,21 @@ Metodologia (deterministic, read-only):
 - Adding `cacciatore_del_vuoto` to `class_tags` OR `recommended_classes` = **mutation** (field content change on existing item)
 - Regola PM: mutation_required = true → NON REUSE_VALID
 
-**Verdict EV-F2**: **REMAINS_PM_REVIEW**
-**Motivation**: Item ha identità lore Vuoto+Oblio + stat intellect + binding soft + rarity Legendary → è un candidato **naturale** per Vuoto identity endgame. Tuttavia:
-- Aggiungere `cacciatore_del_vuoto` a class_tags = mutation su item pre-esistente → **VIETATO ora**
-- Registry v3 additive apply potrebbe autorizzare estensione `recommended_classes` in gate futuro dedicato (post AFX1)
-- Nessuna promozione automatica; PM review dedicato in futuro F2-successor gate
+**Verdict EV-F2 (post PM micro-fix, Opzione A)**: **NOT_COMPATIBLE** (primary)
+**Secondary attributes**:
+- `lore_reviewed = true`
+- `identity_conflict = false` (lore vuoto/oblio è **compatibile** — non conflict, ma item preservato senza mutation)
+- `mutation_required = true`
+- `triggers_future_void_native_item = true`
 
-**Confidence**: HIGH (lore identity + mechanical stat compatibility + universal slot)
-**Identity risk**: **LOW** verso Vuoto (lore-perfect match) · **MEDIUM** verso mage/necromancer/bard (shared identity)
+**Motivation**:
+- Item PRESERVED — nessuna mutation su class_tags, rec_classes, stat, slot
+- NO retro-branding · NO reassignment a Cacciatore del Vuoto
+- Poiché per riuso servirebbe mutation (aggiungere `cacciatore_del_vuoto` a class_tags/rec_classes), l'item **non viene riutilizzato** per Vuoto
+- Entry associato in **FUTURE COVERAGE GAP**: `arcane_adept_orb_void_native_successor` (nuovo item Vuoto-native futuro, nuovo `item_id`, proficiency focus/balestra/pugnale coerente, stat Intelligenza, weapon family valida)
+
+**Confidence**: HIGH
+**PM_REVIEW residuo**: **0** (nessun item residuo in categoria PM_REVIEW dopo micro-fix)
 
 ---
 
@@ -738,62 +748,115 @@ tier_min:
 
 ## 34 · Reuse final totals
 
-**Adjudication finale EV-F2**:
+**Adjudication finale EV-F2 (post PM micro-fix)** — ledger canonico live universe 178:
 
 | Verdict | Count | Population source |
 |---|---|---|
-| **REUSE_VALID** | **12** | 18 warlock+intellect: 5 armor + 7 accessory |
-| **REUSE_CONDITIONAL** | **53** | 6 weapon warlock (tome/arcane) + 47 dei 49 PM_REVIEW (bridge additive) |
-| **NOT_COMPATIBLE / IDENTITY_CONFLICT** | **5** | 6 lore items: drake_slayer_helm + drake_slayer_chest + drake_slayer_blade + goblin_hunter_ring + voidpiercer-bow |
-| **REMAINS_PM_REVIEW** | **1** | arcane_adept_orb |
-| **REQUIRES_NEW_ITEM_FUTURE** | **0** | (categoria applicata a coverage gap T2-T5, non a candidati esistenti) |
-| **Total unique adjudicated** | **71** | 18 + 49 + 6 − 2 overlap 49∩6lore |
+| **REUSE_VALID** | **12** | 18 warlock+intellect: 5 armor + 7 accessory (nessuna mutation) |
+| **REUSE_CONDITIONAL** | **32** | 2 dei 47 (weapon focus/dagger literal G2) + 11 dei 47 (armor stoffa/cuoio) + 19 dei 47 (accessory universal) — tutti via Registry v3 additive `rec_classes: cacciatore_del_vuoto` (non-mutation atomica) |
+| **NOT_COMPATIBLE** | **134** | 6 weapon warlock tome/arcane (famiglia_esclusa_da_G2) + 5 lore identity_conflict + 1 arcane_adept_orb PRESERVED + 15 dei 47 declassati per famiglia_esclusa_da_G2 + 107 out-of-scope |
+| **PM_REVIEW** | **0** | (arcane_adept_orb migrato a NOT_COMPATIBLE; nessun residuo) |
+| **TOTAL LIVE LEDGER** | **178** | ✅ Categorie mutuamente esclusive ed esaustive |
+
+**REQUIRES_NEW_ITEM_FUTURE**: **SEPARATO dal ledger 178** (design coverage gap T2-T5 + arcane_adept_orb_void_native_successor) — vedi §45 FUTURE COVERAGE GAP.
 
 ---
 
 ## 35 · Conditional totals
 
-**REUSE_CONDITIONAL breakdown**:
+**REUSE_CONDITIONAL breakdown (post PM strict G2 review)** — Total: **32 items**:
 
-| Sub-group | Count | Condition |
-|---|---|---|
-| Weapon warlock tome/arcane | 6 | Proficiency review G2: tome/grimoire = focus semantic? (AFX1 dependency) |
-| Caster multi-class (mage+necromancer+bard) senza warlock | ~24 | Registry v3 additive: append `cacciatore_del_vuoto` a `recommended_classes` |
-| Caster single-class con lore neutral | ~15 | Registry v3 additive + PM class isolation review |
-| Caster con lore Vuoto-adjacent (veglie/memoria/filo-spezzato) | ~8 | Registry v3 additive + lore alignment review |
-| **Total** | **53** | Tutti richiedono ≥1 additive apply futuro (NON auto-approved) |
+| Sub-group | Count | Condition | Non-mutation guarantee |
+|---|---|---|---|
+| Weapon literal G2 (focus/dagger) | 2 | `weapon_family_literal_G2_via_rec_classes_additive` | Additive `rec_classes: cacciatore_del_vuoto` (array append atomic, no rewrite) |
+| Armor stoffa/cuoio proficient | 11 | `armor_proficiency_stoffa_cuoio_via_rec_classes_additive` | Additive `rec_classes` |
+| Accessory universal slot | 19 | `universal_accessory_slot_via_rec_classes_additive` | Additive `rec_classes` |
+| **Total REUSE_CONDITIONAL** | **32** | Tutti richiedono Registry v3 additive apply futuro | Nessuna mutation su class_tags/stat/slot/proficiency |
 
-**Condition unlock prerequisite**: Registry v3 additive apply + AFX1 Affix Vocabulary lock (entrambi HOLD).
+**Note strict G2**: la PM directive strict richiede weapon family literal ∈ {focus, balestra, pugnale}. Semantic caster overlap (tome/grimoire/wand/staff) **NON** giustifica REUSE_CONDITIONAL → tutti gli item con weapon_tags `tome/grimoire/wand/staff/instrument/sonic/alchemical_flask/bow/etc` declassati a NOT_COMPATIBLE (famiglia_esclusa_da_G2).
+
+**Condition unlock prerequisite**: Registry v3 additive apply (rec_classes atomic append) + AFX1 Affix Vocabulary lock (entrambi HOLD, apply NOT authorized ora).
 
 ---
 
 ## 36 · Rejected totals
 
-**IDENTITY_CONFLICT (5 items dai 6 lore)**:
+**NOT_COMPATIBLE breakdown (post PM micro-fix)** — Total: **134 items**:
 
-| slug | Reason | Confidence |
+### 36.1 — 6 weapon warlock tome/arcane (strict G2 review)
+
+| slug | weapon_family | rarity | lvl | Verdict | Condition |
+|---|---|---|---|---|---|
+| warlock_apprentice_tome | tome | Common | 1 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+| warlock_hex_grimoire | tome | Uncommon | 3 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+| warlock_shadowbound_grimoire | tome | Rare | 5 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+| warlock_witchking_codex | tome | Epic | 8 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+| warlock_apprentice_grimoire | tome | Uncommon | 3 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+| warlock_pact_binder | tome | Rare | 5 | NOT_COMPATIBLE | famiglia_esclusa_da_G2 |
+
+**PM directive strict**: weapon family `tome` è univocamente determinata, `tome ∉ {focus, balestra, pugnale}` → NOT_COMPATIBLE (primary verdict). `arcane` è modifier, non famiglia. G2 non ampliata.
+
+### 36.2 — 5 lore items IDENTITY_CONFLICT
+
+| slug | Primary verdict | Secondary attributes | Reason |
+|---|---|---|---|
+| drake_slayer_helm | NOT_COMPATIBLE | identity_conflict=true, mutation_required=true | strength/endurance + hard binding warrior/paladin/berserker |
+| drake_slayer_chest | NOT_COMPATIBLE | identity_conflict=true, mutation_required=true | strength/endurance + hard binding |
+| drake_slayer_blade | NOT_COMPATIBLE | identity_conflict=true, mutation_required=true | strength/agility + hard + sword proficiency |
+| goblin_hunter_ring | NOT_COMPATIBLE | identity_conflict=true, mutation_required=true | strength/agility + rec_classes cacciatore_di_mostri |
+| voidpiercer-bow | NOT_COMPATIBLE | identity_conflict=true, mutation_required=true, retro_branding_forbidden=true | bow ≠ focus/crossbow/dagger + cacciatore_di_mostri rec + retro-branding VIETATO |
+
+### 36.3 — 1 arcane_adept_orb PRESERVED
+
+| slug | Primary verdict | Secondary attributes | Reason |
+|---|---|---|---|
+| arcane_adept_orb | NOT_COMPATIBLE | lore_reviewed=true, identity_conflict=false, mutation_required=true, triggers_future_void_native_item=true | Item preserved (no mutation); trigger successor void-native item in FUTURE COVERAGE GAP |
+
+### 36.4 — 15 dei 47 declassati per famiglia_esclusa_da_G2 (strict weapon review)
+
+| slug | weapon_family | Condition |
 |---|---|---|
-| drake_slayer_helm | Wrong stat (strength/endurance) + hard binding (warrior/paladin/berserker) | HIGH |
-| drake_slayer_chest | Wrong stat (strength/endurance) + hard binding | HIGH |
-| drake_slayer_blade | Wrong stat (strength/agility) + hard binding + sword proficiency mismatch | HIGH |
-| goblin_hunter_ring | Wrong stat (strength/agility) + rec_classes cacciatore_di_mostri (rival class) | HIGH |
-| voidpiercer-bow | Weapon type mismatch (bow ≠ focus/crossbow/dagger) + rec_classes cacciatore_di_mostri + retro-branding VIETATO | HIGH |
+| cracked-staff | staff | famiglia_esclusa_da_G2 |
+| spiritglass-staff | staff | famiglia_esclusa_da_G2 |
+| embermind-focus | wand | famiglia_esclusa_da_G2 |
+| apprentice-wand | wand | famiglia_esclusa_da_G2 |
+| hex-rod | staff | famiglia_esclusa_da_G2 |
+| moonsilver-bow | bow | famiglia_esclusa_da_G2 |
+| warlocks-grimoire | grimoire | famiglia_esclusa_da_G2 |
+| archmagi-staff | staff | famiglia_esclusa_da_G2 |
+| songsteel-flute | instrument/sonic | famiglia_esclusa_da_G2 |
+| apprentice_staff | staff | famiglia_esclusa_da_G2 |
+| legendary_staff_efreto | staff | famiglia_esclusa_da_G2 |
+| alchemist_apprentice_flask | alchemical_flask | famiglia_esclusa_da_G2 |
+| alchemist_elemental_flask | alchemical_flask | famiglia_esclusa_da_G2 |
+| alchemist_transmuters_tome | tome | famiglia_esclusa_da_G2 |
+| alchemist_philosophers_flask | alchemical_flask | famiglia_esclusa_da_G2 |
 
-**NOT_COMPATIBLE (items non nei 71 adjudicated)**:
-- Items non-intellect stat (~110 items): NOT_COMPATIBLE per Vuoto main stat mismatch
-- Items hard-binding non-warlock: NOT_COMPATIBLE per identity lock
+### 36.5 — 107 out-of-scope items (secondary attribute `out_of_scope=true`)
 
-**Total rejected**: 5 + ~110 out-of-scope = ~115 items non riutilizzabili come baseline Vuoto.
+| Sub-reason | Count |
+|---|---|
+| stat_mismatch_non_intellect (strength/agility/faith/endurance) | 81 |
+| stat_missing (materials/consumables/misc) | 21 |
+| hard_binding_non_warlock | 5 |
+| **Total out-of-scope** | **107** |
+
+Tutti classificati **NOT_COMPATIBLE (primary)** con secondary `out_of_scope=true`. Non double-count nel ledger.
+
+**Grand total NOT_COMPATIBLE**: 6 + 5 + 1 + 15 + 107 = **134** ✅
 
 ---
 
 ## 37 · Unresolved totals
 
-**REMAINS_PM_REVIEW (1 item)**:
+**REMAINS_PM_REVIEW (post PM micro-fix)**: **0 items** ✅
 
-| slug | Reason | Confidence | Next gate |
-|---|---|---|---|
-| arcane_adept_orb | Lore vuoto/oblio identity + intellect + soft + Legendary → naturally Vuoto-aligned MA class_tags = mage/necromancer/bard senza warlock/cacciatore_del_vuoto → addition = mutation | HIGH lore-fit · MEDIUM classification | R18.6.RV3-EV-F3 (or post AFX1) — decisione se: (a) autorizzare additive apply a recommended_classes O (b) keep as-is e creare item Vuoto-specific similare |
+Il precedente residuo (arcane_adept_orb) è stato adjudicato dalla PM directive (Opzione A):
+- Primary verdict: **NOT_COMPATIBLE** (preserved, no mutation)
+- Secondary: `lore_reviewed=true`, `mutation_required=true`, `triggers_future_void_native_item=true`
+- FUTURE COVERAGE GAP entry: `arcane_adept_orb_void_native_successor`
+
+Nessun altro item residuo ambiguo nel ledger live 178.
 
 ---
 
@@ -954,6 +1017,206 @@ Acquisire EV-F2 come **adjudication finale + coverage reconciliation**. Riconosc
 ---
 
 ## 🛑 STOP FINALE · EV-F2 DRAFT GENERATO · PENDING PM
+
+---
+
+## 44 · Live Item Adjudication Ledger (post PM accounting micro-fix)
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║       LIVE ITEM ADJUDICATION LEDGER (universe = 178 items)       ║
+╠══════════════════════════════════════════════════════════════════╣
+║   REUSE_VALID          =  12  (7 accessory + 5 armor)            ║
+║   REUSE_CONDITIONAL    =  32  (2 weapon G2 + 11 armor + 19 acc) ║
+║   NOT_COMPATIBLE       = 134  (6+5+1+15+107 disjoint)            ║
+║   PM_REVIEW            =   0                                     ║
+║   TOTAL                = 178  ✅ CANONICAL DISJOINT EXHAUSTIVE   ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Regole rispettate**:
+- Ogni record ha **UN SOLO primary verdict** ∈ {REUSE_VALID, REUSE_CONDITIONAL, NOT_COMPATIBLE, PM_REVIEW}
+- Categorie **mutuamente esclusive ed esaustive** su universe 178
+- Attributi secondari (non double-count): `out_of_scope`, `lore_reviewed`, `identity_conflict`, `mutation_required`, `triggers_future_void_native_item`, `retro_branding_forbidden`
+- `REQUIRES_NEW_ITEM_FUTURE` è **separato** dal ledger 178 (vedi §45)
+- Nessuna approssimazione "~110" — conteggio esatto item-by-item
+- Nessuna mutation su record R18.5/live
+
+**Composition NOT_COMPATIBLE (134)**:
+| Component | Count | Secondary flag |
+|---|---|---|
+| 6 weapon warlock tome/arcane (famiglia_esclusa_da_G2) | 6 | mutation_required=true |
+| 5 lore items IDENTITY_CONFLICT | 5 | identity_conflict=true, mutation_required=true |
+| 1 arcane_adept_orb PRESERVED (Opzione A) | 1 | lore_reviewed=true, mutation_required=true, triggers_future_void_native_item=true |
+| 15 dei 47 declassati (famiglia_esclusa_da_G2) | 15 | mutation_required=true |
+| 107 out-of-scope items | 107 | out_of_scope=true |
+| **Total** | **134** | |
+
+**Composition REUSE_CONDITIONAL (32)**:
+| Component | Count | Condition |
+|---|---|---|
+| Weapon literal G2 (focus/dagger) | 2 | weapon_family_literal_G2_via_rec_classes_additive |
+| Armor stoffa/cuoio | 11 | armor_proficiency_stoffa_cuoio_via_rec_classes_additive |
+| Accessory universal | 19 | universal_accessory_slot_via_rec_classes_additive |
+| **Total** | **32** | Registry v3 additive `rec_classes` (atomic array append, non-mutation) |
+
+---
+
+## 45 · Future Coverage Gap (separato dal ledger 178)
+
+**Status**: NON conta nei 178 live · progettuale · design-only
+
+```
+REQUIRES_NEW_ITEM_FUTURE (design coverage gap, NOT PM-approved, NOT authorized)
+├── T2 Cacciatore (L16-30) Vuoto items                    ~22-35
+├── T3 Iniziato (L31-45) Vuoto items                      ~22-35
+├── T4 Rituale (L46-55) Vuoto items                       ~22-35
+├── T5 Vuoto (L56-60) endgame items                       ~22-35
+├── arcane_adept_orb_void_native_successor (new item)      1  (nuovo item_id, proficiency focus/balestra/pugnale, stat Intelligenza, weapon family valida - NO copia nome)
+├── Slot canonical materialization (back/shoulders/hands/wrist/waist/legs/feet) T1-T5   ~20-30
+├── focus literal weapon materialization (T1-T5)           ~8-12
+├── crossbow/balestra weapon materialization (T1-T5)       ~8-12
+├── Legendary Vuoto identity items                         ~5-15
+├── Shared caster items                                    ~15-25
+└── Universal slot expansion                               ~15-25
+```
+
+**Envelope PM baseline**: **110-130 items** (planning center ~120) — LOCK design baseline
+**Advisory max scenario**: **180-220 items** — NON-BINDING · NOT PM-APPROVED · NOT ITEM-CREATION AUTHORIZATION
+
+**Governance FUTURE COVERAGE GAP**:
+- `item_creation_authorized = false`
+- `registry_v3_apply_authorized = false`
+- `field_addition_authorized = false`
+- `no_backfill`
+- `no_apply`
+- `no_copy_of_existing_names`
+- Nessuna materializzazione ora; gate dedicato futuro post-AFX1
+
+---
+
+## 46 · F2-Q1 → F2-Q12 · Verbatim Extraction
+
+Estrazione testuale delle 12 domande PM open questions dal MD §42 e JSON `pm_open_questions_f2`. Format: testo verbatim + recommendation e1_dev + sezione origine + impatto + default proposto.
+
+```
+=== F2-Q1 ===
+Testo: I 6 REUSE_CONDITIONAL weapon warlock (tome/arcane) sono promuovibili a REUSE_VALID se G2 profile Vuoto include `tome` come semantic proficiency?
+Recommendation e1_dev: HOLD fino a AFX1 vocabulary lock — decidere in gate dedicato se weapon proficiency Vuoto è literal (`focus + crossbow + dagger`) OR semantic (include `tome/grimoire/wand`).
+Sezione di origine: §42 · PM open questions F2-Q1..F2-Q12 (derivata da §4 REUSE_VALID 18 review e §12 weapon_tags distinct)
+Impatto: AFX1 + REUSE_CONDITIONAL classification
+Default proposto: literal G2 (post PM micro-fix strict interpretation applicata): 6 warlock weapon tome/arcane → NOT_COMPATIBLE (famiglia_esclusa_da_G2). Domanda resta aperta per validazione formale AFX1.
+
+=== F2-Q2 ===
+Testo: I 47 REUSE_CONDITIONAL dei 49 PM_REVIEW richiedono Registry v3 additive `recommended_classes` bulk. Autorizzare in gate dedicato o item-by-item?
+Recommendation e1_dev: bulk in gate dedicato post AFX1, con exclusion list per items lore-conflicting.
+Sezione di origine: §42 · PM open questions (derivata da §6 PM_REVIEW 49 inventory)
+Impatto: registry v3 apply gate futuro
+Default proposto: bulk apply in gate dedicato post-AFX1 con exclusion list (drake_slayer trilogy + goblin_hunter_ring + voidpiercer-bow + arcane_adept_orb esclusi).
+
+=== F2-Q3 ===
+Testo: arcane_adept_orb REMAINS_PM_REVIEW: creare nuovo item Legendary Vuoto-specific similare O autorizzare additive `class_tags` in gate dedicato?
+Recommendation e1_dev: creare nuovo item Vuoto-specific (evita mutation su item Legendary esistente).
+Sezione di origine: §42 · PM open questions (derivata da §8 arcane_adept_orb review)
+Impatto: item creation futuro
+Default proposto: creare nuovo item `arcane_adept_orb_void_native_successor` in FUTURE COVERAGE GAP (PM ha già scelto Opzione A: item preserved + nuovo successor futuro).
+
+=== F2-Q4 ===
+Testo: Rarity distribution RV3-EV corrected: aggiornare RV3-EV.json con misurazioni live?
+Recommendation e1_dev: NO — RV3-EV.json è IMMUTABLE post approval; correzione tracciata in EV-F1 + EV-F2 come corrective/additive audit.
+Sezione di origine: §42 · PM open questions (derivata da §3 EV baseline reconciliation e §15 Rarity values)
+Impatto: cosmetico / traceability
+Default proposto: NO update RV3-EV.json (immutable); correzione preservata in EV-F1/EV-F2 come corrective/additive audit.
+
+=== F2-Q5 ===
+Testo: ILVL formula EV-F2 (+0/+2/+3/+4/+5) sostituisce EV-F1 proposal: verdict finale?
+Recommendation e1_dev: EV-F2 formula è ratificata; EV-F1 proposal deprecata a livello suggestion (nessun apply avvenuto).
+Sezione di origine: §42 · PM open questions (derivata da §18 ILVL derivation preview)
+Impatto: registry apply (ILVL calculation runtime futuro)
+Default proposto: PM ha CONFIRMATO EV-F2 formula (+0/+2/+3/+4/+5, Legendary=60 anchor). Nessuna riapertura C3.
+
+=== F2-Q6 ===
+Testo: Slot taxonomy live coarse (weapon/armor/accessory) vs canonical 14: quando remapping?
+Recommendation e1_dev: gate dedicato post AFX1 (slot canonical remapping = mutation schema, richiede Registry v3 additive field `slot_canonical` alias).
+Sezione di origine: §42 · PM open questions (derivata da §13 slot_type distinct)
+Impatto: registry v3 additive slot alias
+Default proposto: PM ha CONFIRMATO 14 slot canonici + alias standard (belt→waist, cloak/cape→back, trinket→accessory, weapon_main→main_hand, weapon_off→off_hand, main-hand→main_hand, off-hand→off_hand, amulet→neck). NO ring1/ring2. NO trinket come 15° slot. Nessun remapping DB ora. Gate dedicato futuro per alias documentation.
+
+=== F2-Q7 ===
+Testo: Anti-P2W: 50 items missing `can_be_sold_for_real_money` — data quality followup ora o defer?
+Recommendation e1_dev: defer a gate dedicato data quality (post-EV chain).
+Sezione di origine: §42 · PM open questions (derivata da §16 can_be_sold_for_real_money audit)
+Impatto: data quality gate futuro
+Default proposto: DEFER a data quality gate; PM ha CONFIRMATO fallback missing→false comportamento codice/config effettivo (verifica read-only, senza materializzare). I 50 missing restano DATA QUALITY GAP tracciato.
+
+=== F2-Q8 ===
+Testo: 21 items `slot_type = None`: data quality gap. Backfill o keep as-is?
+Recommendation e1_dev: keep as-is (no backfill); documentare per audit futuro.
+Sezione di origine: §42 · PM open questions (derivata da §13 slot_type distinct)
+Impatto: data quality
+Default proposto: keep as-is · documentare · nessuna correzione ora.
+
+=== F2-Q9 ===
+Testo: `focus` weapon literal sub-materialized (0-1 items): T1 Vuoto weapon proficiency ha gap literal?
+Recommendation e1_dev: **YES**, T1 Vuoto weapon proficiency `focus` è gap → serve materializzazione focus items T1 in Registry v3 (gate futuro).
+Sezione di origine: §42 · PM open questions (derivata da §12 weapon_tags distinct + §28 weapon gap)
+Impatto: FUTURE COVERAGE GAP (item creation futuro post-AFX1)
+Default proposto: YES gap literal · materializzazione focus/balestra/pugnale in gate futuro dedicato · tracciato in FUTURE COVERAGE GAP (§45).
+
+=== F2-Q10 ===
+Testo: Coverage envelope 110-130 (planning center 120) vs future estimate 180-220: quale è "official planning target"?
+Recommendation e1_dev: envelope 110-130 è **official baseline**; estimate 180-220 è **advisory max scenario** NON-binding.
+Sezione di origine: §42 · PM open questions (derivata da §38 future item estimate + §39 coverage envelope reconciliation)
+Impatto: planning target lock
+Default proposto: PM ha CONFIRMATO — envelope 110-130 (center ~120) = baseline PM · estimate 180-220 = ADVISORY MAX SCENARIO NOT LOCKED NOT TARGET PM.
+
+=== F2-Q11 ===
+Testo: Cacciatore di Mostri strict separation: preservare "no shared items"?
+Recommendation e1_dev: YES, strict separation confermata.
+Sezione di origine: §42 · PM open questions (derivata da §33 overlap Cacciatore di Mostri)
+Impatto: class identity governance
+Default proposto: YES strict separation preservata · nessun item shared tra Vuoto e Cacciatore di Mostri.
+
+=== F2-Q12 ===
+Testo: AFX1 kickoff timing: post-EV chain closure O in parallel?
+Recommendation e1_dev: post-EV chain (EV → EV-F1 → EV-F2 → EV closure) prima di AFX1 kickoff.
+Sezione di origine: §42 · PM open questions (derivata da §40 Affix Vocabulary Gate prerequisites)
+Impatto: AFX1 gate timing
+Default proposto: post-EV chain closure · AFX1 HOLD fino a RV3-EV chiuso.
+```
+
+**Blocco F2-Q verbatim COMPLETATO · 12/12 domande estratte**.
+
+---
+
+## 47 · PM Directive micro-fix acknowledgment
+
+**PM verdict registrato**:
+- EV-F2 = **APPROVED WITH MANDATORY ACCOUNTING MICRO-FIX** — applicato in questa revisione
+- Technical findings = ACCEPTED
+- Candidate adjudication = ACCEPTED
+- RV3-EV = STILL OPEN (attende verdict F2-Q1..F2-Q12)
+- AFX1 = HOLD
+
+**Conferme PM registrate (nessuna azione richiesta)**:
+- ILVL formula CONFERMATA: Common+0 · Uncommon+2 · Rare+3 · Epic+4 · Legendary+5 · Legendary ILVL=60. Nessuna riapertura C3.
+- Slot taxonomy CONFERMATA: 14 slot canonici + alias standard (belt→waist, cloak/cape→back, trinket→accessory, weapon_main→main_hand, weapon_off→off_hand, main-hand→main_hand, off-hand→off_hand, amulet→neck). NO ring1/ring2. NO trinket come 15° slot. Nessun remapping DB ora.
+- Anti-P2W finding ACCEPTED con nota: verificare read-only se il fallback missing→false è comportamento codice/config effettivo (senza materializzare); i 50 missing restano DATA QUALITY GAP.
+- T1-T5 progression materialization = INCOMPLETE (confermato). Cacciatore del Vuoto resta ACTIVE-DESIGN-READY (non live).
+- Stima 180-220 = ADVISORY MAX SCENARIO NOT LOCKED NOT TARGET PM. Envelope 110-130 (center ~120) resta baseline PM.
+
+**Micro-fix applicati in EV-F2**:
+1. §1 Executive summary → totali canonici 12/32/134/0=178
+2. §8 arcane_adept_orb → Opzione A (NOT_COMPATIBLE + secondary attrs + successor entry in §45)
+3. §34-37 → ledger canonico 178, no ~110 approssimazione
+4. §44 → LIVE ITEM ADJUDICATION LEDGER canonico completo
+5. §45 → FUTURE COVERAGE GAP separato dal ledger 178
+6. §46 → F2-Q1..F2-Q12 verbatim extraction
+7. §47 → PM directive acknowledgment (this section)
+
+---
+
+## 🛑 EXPLICIT STOP FINALE · EV-F2 · ACCOUNTING MICRO-FIX APPLICATO · PENDING F2-Q VERDICTS
 
 - **RV3-EV**: OPEN
 - **EV-F2**: DRAFT GENERATED
