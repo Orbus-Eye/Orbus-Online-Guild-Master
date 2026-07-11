@@ -1,0 +1,497 @@
+{
+  "metadata": {
+    "round": "R18.6.3",
+    "phase": "Gate 3 · GAMEPLAY_LOOP",
+    "pilot_class": "cacciatore_del_vuoto",
+    "hall_id": "hall_cacciatore_del_vuoto",
+    "locked_at_utc": "2026-07-08T18:15:00Z",
+    "authority": "PM Orchestrator — G3 GAMEPLAY_LOOP GO esplicito post-G2 ACK",
+    "regime": "DOCUMENTAL ONLY",
+    "governance": "NO code · NO DB · NO migrations · NO Registry v3 · NO nuovi item · NO modifica catalogo R18.5 · NO class unlock · NO Hall activation · NO class_slug apply · NO bridge apply · NO auto-derive · NO resource numeric finalization (Gate 4) · NO damage coefficient finalization (Gate 5) · NO affix design (Gate 5) · NO Gate 4 auto-start · NO modifica R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 (LOCKED)",
+    "language": "italian_only",
+    "sealed_baseline": {
+      "lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "sealed_files_count": 36
+    },
+    "gate_isolation_policy": "Gate 3 definisce SOLO 'come si gioca la classe'. Numeri Frammenti/Marchi/Payoff sono CONCEPTUAL ONLY · numeri finali appartengono a Gate 4 (resource) e Gate 5 (damage/affix).",
+    "sections_scope": 32,
+    "input_from_g1_g2": {
+      "main_stat": "Intelligenza (soft cap 100 linear-flattening)",
+      "armor": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon": [
+        "focus",
+        "pugnale",
+        "balestra"
+      ],
+      "weapon_scaling_qualitative": {
+        "focus": "ALTO",
+        "balestra": "MEDIO-ALTO",
+        "pugnale": "RIDOTTO"
+      },
+      "loadout_rules": "focus max 1 · balestra 2H blocca off_hand · dual-focus REJECTED",
+      "class_proficiency_label": "cacciatore_del_vuoto (lowercase snake_case)"
+    }
+  },
+  "fantasy_gameplay": "Il Cacciatore del Vuoto è un caster-ranged anti-incorporei che caccia ciò che non ha peso. Il suo mestiere è marchiare ciò che non dovrebbe esistere, drenarne l'essenza in Frammenti di Onirade, e scaricare quei Frammenti in un colpo definitivo (dispel di area o annullamento di boss summon). Non è un mago che scaglia esplosioni · non è un cacciatore fisico che insegue prede · è un anti-arcano di precisione che identifica, marca, drena e chiude. La fantasy è quella del ricercatore-cacciatore che porta luce nella nebbia del Faro Rovesciato, non con la spada, ma con focus, dardo arcano e pugnale rituale.",
+  "pve_role": {
+    "primary_role": "DPS anti-arcano · specializzazione dispel/anti-summon",
+    "secondary_role": "Utility (silenziamento summon · annullamento boss summon · rivelazione incorporei · debuff via Marchi)",
+    "not_a_tank": true,
+    "not_a_healer": true,
+    "team_position": "Ranged-mid range · si tiene distante dai melee heavy · vicino ai target incorporei/summon",
+    "encounter_priority": "target incorporeo > summon nemico > caster arcano > melee generico"
+  },
+  "single_target_flow": {
+    "concept_source": "R18.6.2 pilot gameplay loop 4-step",
+    "steps": [
+      {
+        "n": 1,
+        "phase": "Identify",
+        "action": "Individuare target incorporeo/summon nel campo · priorità target (incorporeo > summon > caster > melee)"
+      },
+      {
+        "n": 2,
+        "phase": "Mark",
+        "action": "Applicare Marchio del Vuoto (dispel-over-time + silenziamento summon) · focus canaliza il Marchio"
+      },
+      {
+        "n": 3,
+        "phase": "Drain",
+        "action": "Colpire target marchiato con focus/balestra/pugnale · ogni colpo genera Frammenti di Onirade · accumulo verso il cap encounter"
+      },
+      {
+        "n": 4,
+        "phase": "Payoff",
+        "action": "Spendere Frammenti per Payoff: dispel di area (3F) o annullamento boss summon (5F)"
+      }
+    ],
+    "single_target_optimal_weapon": "focus (Int ALTO) · massimizza applicazione Marchio e Drain",
+    "single_target_secondary_weapon": "balestra (se target ranged/inaccessibile in melee)"
+  },
+  "multi_target_flow": {
+    "description": "Contro più target incorporei/summon simultanei · Cacciatore del Vuoto NON è AoE caster puro · gestisce Marchi multipli e sceglie priorità",
+    "steps": [
+      {
+        "n": 1,
+        "action": "Marchiare 1 target principale (highest-value: boss summon > summon minore > incorporeo > caster)"
+      },
+      {
+        "n": 2,
+        "action": "Se soglie Int permettono (design gate futuro), applicare Marchio secondario"
+      },
+      {
+        "n": 3,
+        "action": "Drenare bersaglio con più HP marchiato · accumulare Frammenti"
+      },
+      {
+        "n": 4,
+        "action": "Payoff dispel area 3F: colpisce zona con più target marchiati · massimizza valore Frammenti spesi"
+      }
+    ],
+    "no_infinite_aoe": "Cacciatore del Vuoto NON ha AoE illimitato · Payoff area = 3 Frammenti (encounter-local cap 5) · una-tantum per encounter",
+    "priority_when_overwhelmed": "Marchi vengono investiti sul target più pericoloso · Frammenti conservati per Payoff area coordinato con team",
+    "cap_reference": "cap Frammenti 5 (V-Q4 LOCKED) · Int NON aumenta cap"
+  },
+  "opening_rotation": {
+    "concept": "Design layer only · rotation base concettuale · sequenze numeriche NON progettate in G3",
+    "sequence_base": [
+      "Turn 1: Identify target primario · applicare Marchio del Vuoto (focus main_hand)",
+      "Turn 2-3: Drain con focus (colpi generano 1F ciascuno · +1F soglia Int se ≥60 · design gate futuro)",
+      "Turn 4-5: continuare Drain · accumulare verso cap 5F",
+      "Turn 6+: decidere Payoff (3F dispel area vs 5F annullamento boss summon) in base al contesto encounter"
+    ],
+    "target_priority": "incorporeo · summon boss · summon minore · caster · melee (in ordine)",
+    "no_hardcoded_sequence": "player può adattare rotation al contesto · design non forza sequenza rigida"
+  },
+  "mark_maintenance": {
+    "principle": "Marchio del Vuoto è dispel-over-time · durata scala con Int (G1) · deve essere mantenuto per continuare Drain",
+    "refresh_policy": "Marchio si riapplica sopra un Marchio esistente sullo stesso target · durata reset · NO overlap stacking (evita farm cheese)",
+    "overlap_rule": "1 Marchio per target · anti-cheese",
+    "anti_waste": "reapply Marchio troppo presto = spreco casting time · troppo tardi = Drain interrotto · skill window",
+    "max_marchi_simultanei_concept": "cap iniziale 3 (G1 · design gate futuro finalizza soglie Int per +1 marchio a Int 50, Int 90)"
+  },
+  "drain_windows": {
+    "principle": "Ogni colpo su target marchiato genera Frammenti · Drain è la fase più lunga del loop",
+    "when_to_drain": "target marchiato attivo · Frammenti sotto cap 5 · encounter in corso · payoff non ancora deciso",
+    "when_to_conserve": "target boss in fase critica · Payoff imminente (accumulare 5F per annullamento) · switch target imminente (Frammenti persi se encounter cambia? design gate 4)",
+    "drain_priority": "focus > balestra > pugnale (in base a scaling Int)"
+  },
+  "payoff_decision": {
+    "principle": "Payoff è la decisione strategica del Cacciatore del Vuoto · 3F vs 5F · una-tantum per encounter",
+    "option_a_dispel_area_3f": {
+      "cost": 3,
+      "effect_concept": "dispel di area · potenza scala Int (G1) · raggio scala Int",
+      "when_to_use": "gruppo di summon/incorporei · encounter multi-target · Payoff efficiente"
+    },
+    "option_b_annullamento_boss_summon_5f": {
+      "cost": 5,
+      "effect_concept": "annullamento boss summon · chance successo scala Int fino soft cap 100 (G1)",
+      "when_to_use": "boss encounter con summon evocata · single high-value target · Payoff decisivo"
+    },
+    "trade_off": "3F = maggiore utility area · più flessibilità · 5F = kill-lock su boss summon · più decisivo ma costoso",
+    "one_time_per_encounter": true,
+    "no_double_payoff": "una sola scelta per encounter · reset a fine encounter"
+  },
+  "behavior_vs_summons": {
+    "primary_kit_target": true,
+    "concept": "Cacciatore del Vuoto è progettato PRIMA di tutto contro summon nemici · Marchio silenzia summon · Payoff annulla summon boss",
+    "expected_uptime": "alto (summon frequenti in encounter dungeon/raid Onirade-themed)"
+  },
+  "behavior_vs_incorporei": {
+    "primary_kit_target": true,
+    "concept": "Incorporei (spettri, riflessi ostili, ombre del Vuoto) sono target ideale · Marchio + Drain particolarmente efficaci",
+    "expected_uptime": "alto (incorporei frequenti in encounter Onirade-themed · anche in altri dungeon)"
+  },
+  "behavior_vs_boss": {
+    "concept": "Boss senza summon: Vuoto usa Marchio + Drain + Payoff 3F area (utility) o 5F single-target (se boss è Vuoto-themed)",
+    "boss_with_summons": "Marchio sul summon boss primario · Payoff 5F annullamento decisivo · utility massima",
+    "boss_incorporeo_special_case": "boss incorporeo = target ideale · Marchi + Drain + Payoff = kill-lock parziale"
+  },
+  "behavior_no_special_targets": {
+    "principle": "Encounter senza incorporei/summon → Cacciatore del Vuoto in ruolo DEGRADATO ma FUNZIONALE",
+    "degraded_loop": "focus colpisce target generico · Marchi applicati a caster/melee ma con efficacia ridotta (design gate futuro) · Frammenti generati più lentamente",
+    "fallback_dps": "non è AoE puro né burst puro · può sostenere DPS ridotto ma non concorre con Mago in encounter no-summon",
+    "no_empty_combat": "sempre in grado di partecipare · nessun encounter blocca la classe · loop degradato ma non nullo"
+  },
+  "weapon_role_in_loop": {
+    "focus": {
+      "role": "PRIMARIA main_hand · applicazione Marchio · Drain principale · Payoff channeling",
+      "when_to_use": "quasi sempre · standard rotation",
+      "loadout_note": "max 1 focus (PD-Q1 LOCK) · no dual-focus"
+    },
+    "balestra": {
+      "role": "RANGED ARCANA · 2H · applicazione Marchio a distanza · Drain ranged",
+      "when_to_use": "target inaccessibile in melee · encounter ranged-focused · switch da focus quando serve distanza",
+      "loadout_note": "2H · blocca off_hand · switch da focus+pugnale a balestra 2H costa 1 turno concettuale (design gate futuro)"
+    },
+    "pugnale": {
+      "role": "RITUALE/opportunistica off_hand · chiude rituali · Payoff ravvicinato",
+      "when_to_use": "in melee opportunistico · rituale post-Marchio · off_hand con focus main",
+      "loadout_note": "off_hand default · main secondaria in build alternative (PD-Q1 loadout Pugnale+Focus inversione futura)"
+    },
+    "rotation_switch_concept": "player può switchare weapon durante encounter · design gate 4/5 valuterà cooldown switch"
+  },
+  "mobility": {
+    "level": "MEDIA-BASSA",
+    "description": "Cacciatore del Vuoto NON è agile fisico (CdM/Rogue) · richiede posizionamento pensato · movimento tra fasi encounter · non teleport, non dash",
+    "positioning_requirement": "ranged mid-range · vicino a target incorporei/summon ma fuori da AoE nemiche · Faro Rovesciato = ambiente con visibilità limitata (design gate futuro considera penalità/bonus terreno)",
+    "no_teleport": true,
+    "no_dash_ability_confirmed_now": true
+  },
+  "risk_positioning": {
+    "armor_fragility": "cuoio+stoffa · low armor · fragile burst · richiede awareness",
+    "anti_brainless_design": "player NON può ignorare posizionamento · encounter difficili puniscono cattivo posizionamento",
+    "positioning_reward": "buon posizionamento = target incorporei/summon accessibili · Marchi facili · Frammenti massimi · Payoff decisivo",
+    "positioning_punish": "cattivo posizionamento = fuori range Marchio · Frammenti persi · Payoff wasted"
+  },
+  "failure_states": {
+    "mark_lost": "Marchio scade prima di Drain sufficiente · Frammenti non generati · loop interrotto",
+    "fragments_wasted": "Payoff attivato senza target ottimale · effetto sub-ottimale · encounter loss",
+    "drain_interrupted": "target eliminato da altro DPS prima che Vuoto completi Drain · Frammenti persi (se encounter cambia · design gate 4)",
+    "payoff_off_target": "Payoff 3F area senza target multiple · Payoff 5F annullamento su summon non-boss · risorse sprecate"
+  },
+  "recovery_loop": {
+    "mark_lost_recovery": "riapplicare Marchio · costo casting time · loop ritorna a Drain fase",
+    "fragments_wasted_recovery": "no full recovery in-encounter · attendere Payoff reset a fine encounter · design accetta cost of learning",
+    "drain_interrupted_recovery": "switch target · nuovo Marchio · accumulare Frammenti da capo",
+    "payoff_off_target_recovery": "impossibile · Payoff one-time · learning experience per encounter successivi"
+  },
+  "skill_floor": {
+    "accessibility": "loop 4-step Identify → Mark → Drain → Payoff è COMPRENSIBILE al nuovo player",
+    "minimum_viable_play": "player nuovo può eseguire loop base con focus + Marchio + Drain lineare + Payoff 3F area quando comodo",
+    "tutorial_via_prova_del_riflesso_vuoto": "safe-mode trial (Faro Rovesciato) insegna: identificazione target · Marchio base · distraction resistance"
+  },
+  "skill_ceiling": {
+    "expert_domain": "rotation ottimale · target prioritization avanzata · Payoff timing decisivo · switch weapon dinamico · Marchio management multi-target",
+    "high_skill_reward": "player esperto massimizza Frammenti · usa 5F Payoff su boss summon in fase critica · gestisce Marchi multipli in raid",
+    "no_infinite_ceiling": "soft cap Int 100 e Frammenti cap 5 limitano cheese esperto · anti-power-creep"
+  },
+  "differentiation_mago_cdm_paladino": {
+    "vs_mago": "Vuoto = Mark-based drain-payoff (accumulo → burst decisivo) · Mago = burst caster AoE elemental (spell puro · no accumulo). Ruoli DPS distinti · non competition-ready sugli stessi encounter (Mago meglio in AoE puro · Vuoto meglio in anti-summon/incorporei).",
+    "vs_cacciatore_di_mostri": "Vuoto = anti-arcano ranged/rituale (Int · caccia incorporei/summon) · CdM = anti-fisico ranged/melee agile (Dex · caccia bestie fisiche). Zero overlap target · complementari in raid.",
+    "vs_paladino": "Vuoto = DPS anti-Vuoto (offensivo) · Paladino = Healer/Support sacro (difensivo/curativo). Ruoli opposti · coesistono in raid (Paladino cura, Vuoto elimina summon)."
+  },
+  "anti_power_creep": {
+    "payoff_cap_5f": "Payoff hard cap 5 Frammenti (V-Q4 LOCKED) · Int NON aumenta cap",
+    "marchi_max_3_plus_2": "cap iniziale 3 · +1 a soglia Int 50 · +1 a soglia Int 90 · max 5 marchi simultanei · design gate futuro finalizza soglie",
+    "scaling_soft_cap_int_100": "linear-flattening oltre Int 100 · diminishing returns · anti-scaling infinito (G1 SD-Q1 LOCK)",
+    "no_overrides_from_legendary": "Legendary ILVL=60 (non +60 Int) · Legendary offre utility_unique senza overrides scaling design (G1 semantic correction)",
+    "no_premium_boost": "anti-P2W · can_be_sold_for_real_money=false 1500/1500 (R18.5 lockato) · nessuna eccezione Vuoto"
+  },
+  "anti_stall": {
+    "principle": "Encounter senza summon/incorporei non blocca il Cacciatore del Vuoto · loop degradato ma non nullo (behavior_no_special_targets)",
+    "degraded_dps_fallback": "focus + Marchio ridotto + Drain lento · sostiene partecipazione encounter · no empty combat",
+    "no_infinite_grief": "player non forzato a switchare classe per encounter no-summon · classe resta viable ovunque"
+  },
+  "party_raid_compatibility": {
+    "team_3p_dungeon": "Vuoto in team 3p con Paladino (heal) + Guerriero/CdM (tank/DPS fisico) · Vuoto copre anti-arcano · sinergia forte in dungeon Onirade-themed",
+    "team_5p_raid": "Vuoto DPS anti-summon in raid 5p · sinergia con Mago (Vuoto elimina summon, Mago fa burst target rimanenti) · Paladino cura · Guerriero tank",
+    "no_replace_healer_tank": "Vuoto NON sostituisce healer né tank · resta DPS anti-arcano · complementare",
+    "sinergy_paladino_mago_cdm": "Paladino heal · Mago burst target · CdM anti-fisico · Vuoto anti-arcano · quattro ruoli distinti"
+  },
+  "marchi_conceptual_interaction": {
+    "concept": "Marchio del Vuoto = dispel-over-time + silenziamento summon · applicato via focus/balestra",
+    "duration_concept": "scala con Intelligenza (G1 · numeri gate futuro)",
+    "silence_power_concept": "scala con Intelligenza (G1 · numeri gate futuro)",
+    "max_marchi_simultanei_concept": "3 base · +1 a Int 50 · +1 a Int 90 · max 5 (design gate futuro finalizza soglie)",
+    "no_numbers_finalization_in_g3": true,
+    "gate_4_will_finalize": [
+      "durata precisa in secondi/turni",
+      "tick damage numerico",
+      "silence duration numerico",
+      "resistance check formula"
+    ]
+  },
+  "frammenti_conceptual_interaction": {
+    "concept": "Frammenti di Onirade generati on-hit su target marchiato · encounter-local · cap 5 · reset fine dungeon/raid/prova",
+    "generation_concept": "1 Frammento per colpo su marchiato · +1 bonus soglia Int (Int ≥ 60 · design gate 4) · +1 dispel summon · +2 annullamento boss summon (bonus NON scala con Int)",
+    "consumption_concept": "3F dispel area · 5F annullamento boss summon · one-time per encounter",
+    "scope": "encounter-local · non trasferibile · non mana alternativo · non valuta · non crafting · non premium (V-Q4 LOCKED)",
+    "no_numbers_finalization_in_g3": true,
+    "gate_4_will_finalize": [
+      "generazione numerica esatta",
+      "consumo numerico esatto",
+      "cap scaling per progressione classe",
+      "reset trigger boundaries"
+    ]
+  },
+  "payoff_conceptual_interaction": {
+    "concept": "Payoff = spesa Frammenti per effetto decisivo · 3F dispel area · 5F annullamento boss summon",
+    "trade_off_concept": "3F più flessibile ma meno decisivo · 5F più decisivo ma costoso",
+    "one_time_per_encounter": true,
+    "no_double_payoff": true,
+    "scaling_int_concept": "raggio dispel area scala Int · chance successo annullamento scala Int fino soft cap 100 (G1)",
+    "no_numbers_finalization_in_g3": true,
+    "gate_4_5_will_finalize": [
+      "raggio dispel numerico",
+      "chance successo percentuale formula",
+      "duration effetto post-dispel",
+      "interaction con boss summon HP threshold"
+    ]
+  },
+  "readiness_checklist_r04": {
+    "item_id": "R-04",
+    "check": "gameplay loop base (identify → act → payoff → cooldown) definito",
+    "result": {
+      "loop_4_step_defined": true,
+      "single_target_flow_documented": true,
+      "multi_target_flow_documented": true,
+      "opening_rotation_concept": true,
+      "mark_maintenance_designed": true,
+      "drain_windows_designed": true,
+      "payoff_decision_designed": true,
+      "behavior_vs_targets_documented": true,
+      "failure_states_and_recovery_documented": true,
+      "skill_floor_and_ceiling_documented": true,
+      "differentiation_matrix_locked": true,
+      "anti_power_creep_documented": true,
+      "anti_stall_documented": true,
+      "party_raid_compatibility_documented": true,
+      "no_numbers_finalization_in_gate_3": true
+    },
+    "status": "COMPLETED ✅"
+  },
+  "risk_register": [
+    {
+      "id": "GL-R1",
+      "risk": "Loop 4-step percepito come 'lento' rispetto a burst caster Mago",
+      "severity": "MEDIUM",
+      "mitigation": "Payoff 5F annullamento boss summon = burst decisivo · fantasy dell'accumulo strategica · skill ceiling alto premia player expert",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R2",
+      "risk": "Encounter no-summon/no-incorporei rende classe underpowered",
+      "severity": "MEDIUM",
+      "mitigation": "loop degradato ma funzionale (anti_stall) · Marchio applicabile a caster/melee con efficacia ridotta · no empty combat",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R3",
+      "risk": "Player abbandona Marchi in favore di Drain diretto (skip fase Mark)",
+      "severity": "MEDIUM",
+      "mitigation": "senza Marchio, Drain non genera Frammenti (design gate 4) · Payoff impossibile · loop forza rispetto Mark → Drain",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R4",
+      "risk": "Marchio multipli tracking troppo complesso per player casuale",
+      "severity": "MEDIUM",
+      "mitigation": "cap iniziale 3 marchi (design gate 4) · UI cue chiara design gate PLAYER_GUIDE (G6) · tutorial via Prova del Riflesso Vuoto",
+      "status": "TRACKED to G6"
+    },
+    {
+      "id": "GL-R5",
+      "risk": "Payoff one-time per encounter frustra player in encounter lunghi",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "design intenzionale: Payoff è decisivo, non spammabile · encounter design deve fornire Payoff-worthy moments · gate 5-8 valuterà encounter tuning",
+      "status": "TRACKED"
+    },
+    {
+      "id": "GL-R6",
+      "risk": "Switch weapon dinamico durante encounter troppo micro per player casuale",
+      "severity": "MEDIUM",
+      "mitigation": "focus main_hand default sufficiente per skill floor · balestra switch è opzione per skill ceiling · non forzato",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R7",
+      "risk": "Balestra 2H blocca off_hand · confusione player abituati a dual-wield",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "UI tooltip italiano puro PD-Q5: 'Balestra impegna entrambe le mani. Off-hand non disponibile.' · design gate G6 comunicazione",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "GL-R8",
+      "risk": "Overlap gameplay con Cacciatore di Mostri (entrambi 'cacciatori')",
+      "severity": "LOW",
+      "mitigation": "differentiation matrix locked (G1+G3) · CdM=fisico Dex vs Vuoto=arcano Int · target diversi (bestie vs incorporei/summon)",
+      "status": "ENFORCED"
+    },
+    {
+      "id": "GL-R9",
+      "risk": "Anti-P2W confuso con anti-difficoltà · player pensa gioco troppo grindy",
+      "severity": "LOW",
+      "mitigation": "Cacciatore del Vuoto skill ceiling premia gioco preciso · non richiede grinding · no premium boost · fair skill progression",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R10",
+      "risk": "Gate 4 RESOURCE_MECHANIC finalizzerà numeri divergenti da concept G3",
+      "severity": "MEDIUM",
+      "mitigation": "G3 documenta CONCEPT only · G4 può iterare numeri senza rompere design gameplay · gate isolation policy enforced",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "GL-R11",
+      "risk": "Progressive Discovery Legendary P1-P4 (HOLD) può introdurre meccaniche che rompono loop G3",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "Progressive Discovery gate dedicato post-C6 · loop G3 documentato come baseline · gate futuro può estendere senza rompere baseline",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "GL-R12",
+      "risk": "Bridge legacy warlock (R18.3f handling) potrebbe importare gameplay warlock che confligge con Vuoto design",
+      "severity": "LOW",
+      "mitigation": "bridge mapped_design_only · runtime_disabled · nessuna migration gameplay attiva · R18.3f gestisce solo class_slug mapping",
+      "status": "DESIGNED"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "GL-Q1",
+      "topic": "Marchi multipli cap: 3+1 a Int 50 +1 a Int 90 (max 5) confermato o alternative?",
+      "options": [
+        "a) confermo 3+1@50+1@90=5",
+        "b) 2+1@60+1@100=4 (più conservative)",
+        "c) 3+2@70=5 (soglia singola più alta)"
+      ]
+    },
+    {
+      "id": "GL-Q2",
+      "topic": "Drain interrotto (target eliminato da altro DPS) · Frammenti persi o preservati?",
+      "options": [
+        "a) Frammenti persi (design cost of encounter chaos)",
+        "b) Frammenti preservati (skill floor più accessibile)",
+        "c) 50% preservati (compromesso)"
+      ]
+    },
+    {
+      "id": "GL-Q3",
+      "topic": "Loop degradato no-summon: Marchio applicabile a caster/melee con efficacia ridotta · quanto ridotta?",
+      "options": [
+        "a) 50% efficacia (loop degradato ma competitivo)",
+        "b) 25% efficacia (design punitivo · forza player a scegliere encounter Vuoto-friendly)",
+        "c) 0% (Marchio non applicabile · fallback su balestra ranged puro)"
+      ]
+    },
+    {
+      "id": "GL-Q4",
+      "topic": "Switch weapon durante encounter · cooldown o istantaneo?",
+      "options": [
+        "a) istantaneo (skill ceiling alto · micro-management)",
+        "b) cooldown breve (es. 2 turni concettuali)",
+        "c) cooldown medio (es. 5 turni · switch strategico)"
+      ]
+    },
+    {
+      "id": "GL-Q5",
+      "topic": "Payoff reset fine encounter · Frammenti conservati tra encounter dungeon multipli o reset?",
+      "options": [
+        "a) reset a fine encounter (V-Q4 LOCK · design attuale)",
+        "b) preserved tra encounter stesso dungeon (skill floor più accessibile)",
+        "c) reset a fine dungeon (compromesso)"
+      ]
+    },
+    {
+      "id": "GL-Q6",
+      "topic": "Encounter design (post-Gate 3): dungeon Onirade dovrebbero avere summon/incorporei prevalenti per Vuoto o mix bilanciato?",
+      "options": [
+        "a) prevalenti (Vuoto specialista Onirade-themed)",
+        "b) mix bilanciato (Vuoto viable ovunque · no specialization forzata)",
+        "c) design encounter-per-encounter (gate futuro encounter design)"
+      ]
+    }
+  ],
+  "go_hold_recommendation_gate_4": {
+    "gate_3_status": "COMPLETED · pending PM review + risposte GL-Q1..GL-Q6",
+    "gate_4_resource_mechanic_status": "🔒 HOLD · attende PM ACK Gate 3 + GO esplicito Gate 4",
+    "recommendation": [
+      "APPROVE Gate 3 GAMEPLAY_LOOP (loop 4-step Identify/Mark/Drain/Payoff · single/multi target flows · behavior vs summons/incorporei/boss/no-special · weapon role · mobility · risk/positioning · failure/recovery · skill floor/ceiling · differentiation · anti-power-creep · anti-stall · party/raid)",
+      "HOLD Gate 4 RESOURCE_MECHANIC in attesa PM ACK",
+      "Rispondere a GL-Q1..GL-Q6 in round dedicato prima di Gate 4 dispatch",
+      "NO auto-transition · NO gate skip · NO parallel gate"
+    ],
+    "gate_4_input_from_g3": "loop 4-step + Marchi/Frammenti/Payoff conceptual interactions + max marchi cap concept + generation/consumption concept → input per RESOURCE_MECHANIC numeric finalization",
+    "gate_4_scope_preview": "Frammenti di Onirade: generazione numerica esatta · consumo numerico · cap scaling · reset trigger boundaries · Marchi durata secondi/turni · tick damage · silence duration · resistance check formula · Payoff numeric · SOLO resource · NO damage weapon coefficient (Gate 5)"
+  },
+  "governance": {
+    "documental_only_regime": "ENFORCED",
+    "italian_output": "ENFORCED",
+    "sealed_files_36_byte_identical": true,
+    "lore_meta_py_touch": false,
+    "lore_meta_py_sha256_baseline": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "db_writes": 0,
+    "code_changes": 0,
+    "migrations": 0,
+    "sealed_file_modification": 0,
+    "r18_5_modification": 0,
+    "r18_6_modification": 0,
+    "r18_6_1_modification": 0,
+    "r18_6_2_modification": 0,
+    "r18_6_3_g1_modification": 0,
+    "r18_6_3_g2_modification": 0,
+    "registry_v3_dispatched": false,
+    "cacciatore_del_vuoto_live_activation": false,
+    "class_slug_apply": 0,
+    "legacy_bridge_apply": 0,
+    "runtime_bridge_status": "disabled",
+    "class_slug_auto_derivation": false,
+    "auto_derive_from_warlock": false,
+    "runtime_enforcement_implementation": 0,
+    "item_generation": 0,
+    "item_table_modification": 0,
+    "hard_delete": 0,
+    "anti_p2w_preserved": true,
+    "gate_4_auto_start": false,
+    "gate_5_auto_start": false,
+    "gate_isolation_enforced": true,
+    "lanterna_unlock": false,
+    "resource_numeric_finalization": false,
+    "damage_coefficient_finalization": false,
+    "affix_design_in_g3": false,
+    "sections_covered": 32,
+    "deliverable_files_count": 2,
+    "deliverable_paths": [
+      "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.md",
+      "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.json"
+    ]
+  },
+  "stop_after_g3": {
+    "auto_transition_gate_4": false,
+    "note": "STOP dopo Gate 3 GAMEPLAY_LOOP. Attendo PM review + risposte GL-Q1..GL-Q6 + GO esplicito Gate 4 RESOURCE_MECHANIC. Nessun auto-start · nessuna modifica R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 (LOCKED)."
+  }
+}

@@ -2834,3 +2834,88 @@ runtime_bridge_status: disabled
 `R18.5 → R18.6 → R18.6.1 → R18.6.2 LOCKED` → `R18.6.3 Cacciatore del Vuoto Pilot STARTED` → **`G1 STAT_DESIGN ✅ CLOSED (this append)`** → **`G2 PROFICIENCY_DESIGN 🟢 AUTHORIZED (dispatched)`** → G3..G10 🔒 HOLD → `R18.6.RV3` 🔒 HOLD → `R18.6.RB1` 🔒 HOLD → `Wave 1 successivi` 🔒 HOLD → `R18.3f` 🔒 HOLD (bridge warlock handling) → `Apply Phase` 🔒 HOLD → `Marketing Brief` ⏸️ DEFERRED
 
 🛑 **STOP dopo R18.6.3-G2 PROFICIENCY_DESIGN dispatch.** Nessun auto-start Gate 3. Attendo PM review G2 + GO esplicito Gate 3.
+
+
+## R18.6.3-G2 PROFICIENCY_DESIGN CLOSED (with PM final PD-Q1..PD-Q6 · 2026-07-08T18:00:00Z)
+
+**Milestone**: **R18.6.3 Gate 2 PROFICIENCY_DESIGN CLOSED** ✅ · Gate 3 GAMEPLAY_LOOP **AUTHORIZED** 🟢
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations/sealed/R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 modifiche (tutti LOCKED post-approval).
+
+### G2 Approved Summary
+
+- **armor whitelist**: `cuoio` + `stoffa` LOCKED (entrambi Int-focus · no dual stat identity)
+- **weapon whitelist**: `focus` + `pugnale` + `balestra` LOCKED
+- **armor excluded**: `maglia` · `piastre`
+- **weapon excluded**: `arco` · `spada` · `bastone` · `tomo` · `martello` · `reliquia` · `ascia` · `scudo` · `lancia` · `arma_in_asta`
+
+### PM Answers PD-Q1..PD-Q6 (verbatim locked)
+
+- **PD-Q1 · NO dual-focus · max 1 focus equipaggiato**
+  - **Focus**: weapon primaria · preferenza main_hand · **max 1**
+  - **Pugnale**: off_hand rituale o main_hand secondaria in build dedicate future
+  - **Balestra**: **two-handed** · occupa main_hand · **BLOCCA off_hand**
+  - **Loadout consentiti**: Focus+Pugnale · Focus singolo · Pugnale+Focus (inversione mano futura) · Balestra 2H · Pugnale singolo
+  - Regola: focus resta weapon primaria · pugnale **NON può sostituirlo** come miglior scaling
+  - NO regole slot runtime ora (documental only)
+
+- **PD-Q2 · Soglia numerica balestra DEFERRED a Gate 5 EQUIP_DESIGN**
+  - G3 mantiene SOLO gerarchia qualitativa: Focus=ALTO · Balestra=MEDIO-ALTO · Pugnale=RIDOTTO
+  - Coefficienti finali richiedono: budget item · ILVL · rarity · affix · velocità weapon · slot occupancy · confronto Focus/Pugnale
+  - **NON definire coefficienti finali in GAMEPLAY_LOOP (Gate 3)**
+
+- **PD-Q3 · Sub-gate dedicato futuro `R18.6.LTN — Lanterna Weapon Family Readiness`**
+  - **Timing**: DOPO Gate 5 EQUIP_DESIGN · PRIMA Registry v3 (solo se Gate 5 conferma necessità lanterna)
+  - Lanterna resta: **RESERVED FUTURE · NOT EQUIPPABLE · NOT REGISTRY-READY · NOT RUNTIME-READY**
+  - NO item lanterna · NO slot · NO family live · NO registry entry · NO proficiency operativa ora
+
+- **PD-Q4 · `class_proficiency = "cacciatore_del_vuoto"` (lowercase snake_case)**
+  - **NON usare**: `CacciatoreDelVuoto` · `VoidHunter` · `Warlock`
+  - `warlock` resta esclusivamente: `legacy_bridge_source=warlock · canonical_target_slug=cacciatore_del_vuoto · mapped_design_only · not_applied · runtime_disabled`
+
+- **PD-Q5 · Tooltip UI player-facing = italiano puro**
+  - **NO codici come `[C2#7]`, `ERR-PROF-04`, `LOCK_12`** nell'UI standard
+  - Esempi approvati:
+    - "Non puoi equipaggiare questo oggetto: la tua classe non possiede la proficiency richiesta."
+    - "Richiede la classe Cacciatore del Vuoto."
+    - "Richiede il livello 42."
+    - "Scegli una Sala di Classe prima di equipaggiare oggetti specializzati."
+  - Codici tecnici (es. `error_code="LOCKED_PROFICIENCY_WEAPON"`) SOLO in log/telemetria/debug, MAI in UI standard
+
+- **PD-Q6 · Affix class-specific integrati in Gate 5 EQUIP_DESIGN**
+  - **NO sub-doc separato `R18.6.AFX` ora**
+  - Gate 5 DEVE includere sezione obbligatoria "Cacciatore del Vuoto — Class-Specific Affix Design"
+  - Esempi affix da progettare in Gate 5: potenza Marchio · durata Marchio · efficacia Drain · generazione Frammenti · efficacia Payoff · bonus contro incorporei · bonus contro summon/distorsioni Vuoto
+  - Vincoli: NO affix generici che rendano gear migliore per Mago/Rogue/Ranger · NO doppio scaling Int/Dex · NO modifica catalogo R18.5 · NO item generation prima Gate 5
+  - Post Gate 5: affix approvati → Registry v3 Planning · sub-gate AFX aperto solo se volume/complessità richiedono
+
+### Gear Sharing Policy Chiarita (verbatim PM)
+
+Item condiviso per weapon/armor family **NON è automaticamente ottimale** per tutte le classi:
+- Cuoio Dex → adatto Rogue/Ranger · **NON** ottimale per Vuoto
+- Cuoio Int + affix Marchio → identità Vuoto
+- Balestra Dex → identità fisica Ranger/Rogue
+- Balestra Int + affix Vuoto → identità Vuoto
+
+**Mitigation stack**: `class_proficiency + main_stat_target + affix class-specific + XP/main-stat messaging` · **NO nuove eccezioni alla proficiency**
+
+### Gate 3 GAMEPLAY_LOOP AUTHORIZED
+
+- **Status**: 🟢 AUTHORIZED (dispatch in questo append)
+- **Scope**: SOLO gameplay loop · COME si gioca la classe
+- **Vincoli**: NO resource numeric finalization (Gate 4) · NO damage coefficient finalization (Gate 5) · NO affix design (Gate 5) · NO Gate 4 auto-start
+
+### Governance Constraints Confirmed G2 CLOSED
+
+- **R18.5 / R18.6 / R18.6.1 / R18.6.2 / G1 / G2** = **CLOSED · LOCKED** · zero modifiche
+- **R18.6.3-G4..G10** · **R18.6.LTN** · **R18.6.RV3** · **R18.6.RB1** · **R18.3f** · **Apply Phase** · **Progressive Discovery** · **Wave 1 successivi** · **Wave 2-4** · **Marketing Brief** = **🔒 HOLD / ⏸️ DEFERRED**
+- **Zero code · zero DB · zero migrations · zero item creation · zero registry apply · zero class_slug apply · zero legacy bridge apply · zero runtime bridge · zero sealed touch · zero lanterna unlock**
+- **Sealed integrity**: pytest 6/6 passed
+- **`lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · **INVARIATO**
+
+---
+
+**Combined status flow (aggiornato)**:
+`R18.5 → R18.6 → R18.6.1 → R18.6.2 LOCKED` → `R18.6.3 Vuoto Pilot` → G1 ✅ CLOSED → **G2 ✅ CLOSED (this append)** → **G3 GAMEPLAY_LOOP 🟢 AUTHORIZED (dispatched)** → G4..G10 🔒 HOLD → `R18.6.LTN` 🔒 HOLD → `R18.6.RV3` 🔒 HOLD → `R18.6.RB1` 🔒 HOLD → altri gate/wave 🔒 HOLD
+
+🛑 **STOP dopo R18.6.3-G3 GAMEPLAY_LOOP dispatch.** Nessun auto-start Gate 4. Attendo PM review G3 + GO esplicito Gate 4.
