@@ -596,6 +596,40 @@
       "R18.6.3-G6"
     ]
   },
+  "architectural_semantic_guard": {
+    "term": "lanterna",
+    "namespace": "architettura_faro",
+    "architectural_element": true,
+    "item": false,
+    "weapon_family": false,
+    "equipment": false,
+    "inventory_object": false,
+    "loot": false,
+    "registry_entry": false,
+    "runtime_feature": false,
+    "reserved_weapon_relation": "none",
+    "hc_question_id": "HC-Q9",
+    "meaning": "elemento architettonico sommitale del Faro Rovesciato che convoglia la luce verso il basso",
+    "narrative_occurrences_preserved": 6,
+    "narrative_occurrences_md": 3,
+    "narrative_occurrences_json": 3,
+    "grants_proficiency": false,
+    "reserved_lanterna_weapon_status_preserved": {
+      "lanterna_weapon_status": "reserved_future_review",
+      "required_for_cacciatore_del_vuoto": false,
+      "included_in_active_proficiency": false,
+      "included_in_registry_v3_pilot": false,
+      "item_generation_authorized": false,
+      "namespace_separated": true
+    },
+    "guard_does_not_reopen": [
+      "R18.6.LTN",
+      "proficiency",
+      "Registry v3",
+      "equip",
+      "item creation"
+    ]
+  },
   "stop_after_g7": {
     "action": "STOP · attendo PM verdict G7 (CLOSED/REWORK) + risposte HC-Q1..HC-Q8 · Gate 8 HOLD · Wave 1 successors HOLD",
     "no_auto_start_gate_8": true,

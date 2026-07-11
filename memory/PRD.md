@@ -3278,3 +3278,48 @@ Approvate con:
 - **R18.6.3-G7 HALL_COMPLETION = AUTHORIZED** 🟢
 - **R18.6.3-G8 SAFE_MODE_TRIAL = HOLD** 🔒
 - **Wave 1 successors = HOLD** 🔒
+
+
+## R18.6.3-G7 HALL_COMPLETION CLOSED (Cacciatore del Vuoto · PM APPROVED WITH SEMANTIC GUARD · with binding answers HC-Q1..HC-Q9 · 2026-07-11T15:46:26Z)
+
+### Decisioni PM verbatim (HC-Q1..HC-Q9)
+
+- **HC-Q1 LOCK**: Traversata iniziale in barca 1-2 minuti.
+- **HC-Q2 LOCK**: Layout spazio principale unico + galleria superiore. NO dungeon, NO hub commerciale, NO farming, NO labirinto, NO copia Circolo dei Nove Sigilli.
+- **HC-Q3 LOCK**: Nael tono asciutto, sereno, osservante, misurato, enigmatico, non ostile. NON villain, NON profeta onnisciente, NON comico, NON copia Vessel, NON copia Ovyr.
+- **HC-Q4 LOCK**: Sequenza 8 dialoghi Nael — Identità → Classe → Statistica → Armatura → Armi → Marchio → Frammenti → Payoff. Italiano only, non enciclopedico.
+- **HC-Q5 LOCK CRITICAL**: Conferma classe ESCLUSIVAMENTE dopo la Prova. Flow: Recluta → entra Sala → incontra Nael → comprende → manifesta interesse → accetta Prova → completa Prova del Riflesso Vuoto → riepilogo → conferma esplicita → futura assegnazione. Gate 7: `class_assignment=design_only`, `class_slug_apply=false`, `runtime_assignment=absent`. NO conferma automatica all'ingresso, NO assegnazione dopo il solo dialogo, NO class_slug prima della prova, NO scelta implicita.
+- **HC-Q6 LOCK**: Linea rinuncia *"Non tutti leggono il velo. Non è una colpa."* — non penalizza, non consuma risorse, non blocca future visite, non assegna classe, riporta all'Atrio.
+- **HC-Q7 LOCK**: Portale rapido Gilda dopo primo ingresso (traversata iniziale preservata come rituale del primo accesso).
+- **HC-Q8 LOCK**: Marker *"SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO"* (header + footer).
+- **HC-Q9 NEW LOCK — Semantic Namespace Guard**: Separazione obbligatoria tra terminologia architettonica e namespace item/equip. Le 6 occorrenze narrative di "lanterna" (sommitale/rovesciata/luce dalla lanterna) sono preservate come termini architettonici italiani naturali del faro. Aggiunto guard esplicito: `lanterna architettonica ≠ item/weapon/equip/inventory/loot/registry/runtime/proficiency`. Lanterna weapon family resta `reserved_future_review` in namespace distinto (nessun conflitto funzionale).
+
+### Baseline finale G7
+
+- **Sala**: Faro Rovesciato di Onirade
+- **Hall Master**: Nael di Onirade
+- **Stato**: PLANNED · Runtime: ASSENTE
+- **Marker**: SALA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO
+- **Accesso iniziale**: Atrio delle Vocazioni → portale approdo Onirade → traversata narrativa in barca 1-2 min → Faro Rovesciato
+- **Accesso successivo**: portale rapido della Gilda
+- **Traversata**: NO costo · NO equip richiesto · NO combattimento · NO fallimento · NO ripetizione obbligatoria
+- **Conferma classe**: ESCLUSIVAMENTE post-Prova del Riflesso Vuoto (design_only in G7, runtime deferred)
+- **Semantic guard**: `lanterna` in Sala = namespace `architettura_faro` · `item=false` · `weapon_family=false` · `equipment=false` · `inventory_object=false` · `loot=false` · `registry_entry=false` · `runtime_feature=false` · `grants_proficiency=false`
+- **Lanterna weapon family**: `reserved_future_review` · `required_for_cacciatore_del_vuoto=false` · `included_in_active_proficiency=false` · `included_in_registry_v3_pilot=false` · `item_generation_authorized=false`
+- **Gate 8 SAFE_MODE_TRIAL**: autorizzato
+
+### Files locked
+
+- `/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.md` **LOCKED**
+- `/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4/G5/RV3/G6 (tutti LOCKED post-approval)
+- Catalogo R18.5 = **INVARIATO** (1500/1500 preserved)
+- `lore_meta.py` anchor = **INVARIATO** (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`)
+- Sealed integrity 36/36 = **BYTE-IDENTICAL**
+
+### PM verdict
+
+- **R18.6.3-G7 = CLOSED · PM APPROVED WITH SEMANTIC GUARD** ✅
+- **R18.6.3-G8 SAFE_MODE_TRIAL = AUTHORIZED** 🟢
+- **R18.6.3-G9 TECH_READINESS = HOLD** 🔒
+- **Wave 1 successors = HOLD** 🔒

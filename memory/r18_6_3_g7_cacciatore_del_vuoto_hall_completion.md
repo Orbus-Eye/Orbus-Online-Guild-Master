@@ -361,6 +361,27 @@ Entrambe classi condividono la parola *"Cacciatore"* nel nome · rischio confusi
 - **NO Gate 8 auto-start · NO Wave 1 auto-start · NO class unlock auto-start**
 - **Recommended next step**: PM review G7 HALL_COMPLETION + risposte HC-Q1..HC-Q8 → G7 CLOSED verdict → GO Gate 8 SAFE_MODE_TRIAL
 
+## 44 · Nota terminologica — Drift Guard (HC-Q9)
+
+> **Nota terminologica — Drift Guard**
+> In questa Sala, "lanterna" indica esclusivamente la struttura luminosa sommitale del faro. Non rappresenta un oggetto, una weapon family, un equip o una funzionalità runtime.
+>
+> - `termine = lanterna`
+> - `semantic_namespace = architettura_faro`
+> - `meaning = elemento architettonico sommitale del Faro Rovesciato che convoglia la luce verso il basso`
+> - `is_item = false` · `is_weapon_family = false` · `is_equipment = false` · `is_inventory_object = false` · `is_loot = false` · `is_registry_entry = false` · `is_runtime_feature = false` · `grants_proficiency = false`
+> - `relation_to_reserved_lanterna_weapon = none`
+
+Preservazione dello stato riservato della weapon family Lanterna (namespace distinto, invariato):
+
+- `lanterna_weapon_status = reserved_future_review`
+- `required_for_cacciatore_del_vuoto = false`
+- `included_in_active_proficiency = false`
+- `included_in_registry_v3_pilot = false`
+- `item_generation_authorized = false`
+
+Il guard terminologico **NON riapre**: R18.6.LTN · proficiency · Registry v3 · equip · item creation.
+
 ---
 
 ## 🛑 STOP obbligatorio a fine G7 · Non procedere a Gate 8 senza nuovo GO PM

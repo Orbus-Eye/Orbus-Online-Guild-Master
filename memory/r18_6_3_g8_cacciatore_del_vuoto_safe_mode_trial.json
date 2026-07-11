@@ -1,0 +1,754 @@
+{
+  "metadata": {
+    "gate_id": "R18.6.3-G8",
+    "gate_name": "SAFE_MODE_TRIAL",
+    "class_slug": "cacciatore_del_vuoto",
+    "class_display_name": "Cacciatore del Vuoto",
+    "trial_name": "La Prova del Riflesso Vuoto",
+    "hall_name": "Faro Rovesciato di Onirade",
+    "hall_master": "Nael di Onirade",
+    "status": "DESIGN ONLY · NOT LIVE · NOT IMPLEMENTED",
+    "language": "italiano_only",
+    "governance": "DOCUMENTAL ONLY · ITALIANO ONLY · no code · no DB · no migrations · no UI implementation · no tutorial implementation · no trial implementation · no combat implementation · no enemy creation live · no bestiary write · no item · no reward · no XP · no gold · no material · no drop · no achievement farmabile · no class unlock · no Hall activation · no class_slug apply · no bridge apply · no auto-derive · no Gate 9 auto-start",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7"
+    ],
+    "canonical_sources": [
+      "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+      "/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.json",
+      "/app/memory/r18_6_3_g4_cacciatore_del_vuoto_resource_mechanic.json",
+      "/app/memory/r18_6_3_g5_cacciatore_del_vuoto_equip_design.json",
+      "/app/memory/r18_6_3_g6_cacciatore_del_vuoto_player_guide.json",
+      "/app/memory/r18_6_3_g7_cacciatore_del_vuoto_hall_completion.json"
+    ]
+  },
+  "obiettivo_pedagogico": {
+    "goals": [
+      "comprendere identità classe Cacciatore del Vuoto",
+      "imparare loop canonico Identify → Mark → Drain → Payoff",
+      "generare Frammenti di Onirade in scontro",
+      "scegliere Payoff 3F (dispel area) o Payoff 5F (annullamento summon)",
+      "comprendere punti di forza e limiti",
+      "decidere consapevolmente se confermare la classe o rinunciare"
+    ],
+    "prova_is_not": [
+      "dungeon",
+      "sfida endgame",
+      "test punitivo",
+      "fonte farming",
+      "verifica equip",
+      "gara DPS"
+    ]
+  },
+  "fantasy_della_prova": {
+    "definition": "rito di lettura del velo · manifestazioni controllate che chiedono di essere lette, marchiate e sciolte",
+    "dominant_fantasy": "non combatto per vincere, comprendo per decidere",
+    "tone": "rituale · misurato · lettura del velo · nessun trionfalismo",
+    "not_a_boss_fight": true,
+    "not_a_race": true
+  },
+  "collocazione": {
+    "where": "cerchio rituale al centro della Sala Faro Rovesciato di Onirade",
+    "activation_trigger": "la Recluta entra nel cerchio dopo il dialogo di transizione G7 sez 29",
+    "instance_scope": "personale · non condivisa · non PvP · non gruppo",
+    "exit": "ritorno alla Sala · nessun'altra location",
+    "not_accessible_elsewhere": true
+  },
+  "ingresso": {
+    "prerequisites": [
+      "presenza dentro il Faro Rovesciato",
+      "dialoghi G7 completati"
+    ],
+    "entry_cost": null,
+    "equip_check": null,
+    "gold_check": null,
+    "material_check": null,
+    "xp_check": null,
+    "rinuncia_possibile_in_ogni_momento": true
+  },
+  "ruolo_di_nael": {
+    "posizione": "galleria superiore · non entra nel cerchio",
+    "interventi": "brevi guide vocali · mai monologhi · mai comandi diretti",
+    "tone_lock_from_g7": "asciutto · sereno · osservante · misurato · enigmatico · non ostile",
+    "not_villain": true,
+    "not_prophet": true,
+    "not_comic": true,
+    "not_vessel_copy": true,
+    "not_ovyr_copy": true,
+    "max_lines_per_fase": 2
+  },
+  "regole_safe_mode_lock": {
+    "retry_limit": "unlimited",
+    "cooldown": 0,
+    "death_penalty": "none",
+    "resource_loss": "none",
+    "rare_resource_cost": "none",
+    "entry_cost": "none",
+    "xp_reward": 0,
+    "gold_reward": 0,
+    "item_reward": 0,
+    "material_reward": 0,
+    "drop_table": "assente",
+    "achievement_farmabile": "none",
+    "class_assignment": "NOT IMPLEMENTED",
+    "class_slug_apply": false,
+    "runtime_assignment": "absent",
+    "produce_valuta_di_gioco": false,
+    "registra_progressione_persistente": false
+  },
+  "struttura_per_fasi": {
+    "total_fasi": 9,
+    "fase_range": "FASE 0 → FASE 8",
+    "fasi": [
+      {
+        "id": "FASE 0",
+        "name": "Ingresso e orientamento",
+        "focus": "riconoscere la Sala, il cerchio, il ruolo di Nael",
+        "fail_soft": "N/A"
+      },
+      {
+        "id": "FASE 1",
+        "name": "Identify",
+        "focus": "riconoscere il bersaglio o fenomeno corretto",
+        "fail_soft": "suggerimento di Nael"
+      },
+      {
+        "id": "FASE 2",
+        "name": "Mark",
+        "focus": "applicare il Marchio del Vuoto al bersaglio giusto",
+        "fail_soft": "reset pacifico · riprova"
+      },
+      {
+        "id": "FASE 3",
+        "name": "Drain",
+        "focus": "interagire con il bersaglio Marchiato · generare Frammenti",
+        "fail_soft": "reset pacifico · riprova"
+      },
+      {
+        "id": "FASE 4",
+        "name": "Payoff 3F",
+        "focus": "comprendere il dispel di un'area arcana",
+        "fail_soft": "chiarimento vocale"
+      },
+      {
+        "id": "FASE 5",
+        "name": "Payoff 5F",
+        "focus": "comprendere l'annullamento di una summon valida",
+        "fail_soft": "chiarimento vocale"
+      },
+      {
+        "id": "FASE 6",
+        "name": "Scenario degradato",
+        "focus": "gestire un bersaglio standard senza perdere il loop",
+        "fail_soft": "suggerimento se stallo"
+      },
+      {
+        "id": "FASE 7",
+        "name": "Riepilogo di Nael",
+        "focus": "sintesi delle scelte fatte · nessun voto numerico",
+        "fail_soft": "N/A"
+      },
+      {
+        "id": "FASE 8",
+        "name": "Conferma esplicita o rinuncia",
+        "focus": "scelta finale: CONFERMA IL CAMMINO / NON SONO PRONTO",
+        "fail_soft": "rinuncia sempre disponibile"
+      }
+    ],
+    "ogni_fase_ripetibile_illimitatamente": true,
+    "no_timer_forzato": true
+  },
+  "identify_tutorial": {
+    "fase": "FASE 1",
+    "goal": "distinguere il bersaglio corretto (arcano/velo) da distrattori (neutri)",
+    "nael_line": "Osserva. Non tutto ciò che si muove va marchiato.",
+    "feedback": "entità corretta pulsa con la luce discendente del Faro",
+    "on_error": "nessuna penalità · reset visivo · nuovo tentativo"
+  },
+  "mark_tutorial": {
+    "fase": "FASE 2",
+    "goal": "applicare il Marchio del Vuoto al bersaglio identificato",
+    "feedback": "sigillo silenzioso sul bersaglio Marchiato",
+    "nael_line": "Il Marchio è la porta. Senza Marchio, niente passa.",
+    "no_mana_consumption": true,
+    "no_cooldown": true,
+    "no_application_limit": true
+  },
+  "drain_tutorial": {
+    "fase": "FASE 3",
+    "goal": "generare Frammenti di Onirade con azioni contro il bersaglio Marchiato",
+    "nael_line": "Ogni colpo che gli assesti lascia un Frammento nel tuo circolo.",
+    "feedback": "piccole luci discendenti nel circolo rituale della Recluta",
+    "counter_live_implementation": false
+  },
+  "frammenti_tutorial": {
+    "max_frammenti": 5,
+    "canonical_source_g3": true,
+    "not_items": true,
+    "not_sellable": true,
+    "not_persistable_across_battles": true,
+    "nael_line": "Cinque, al massimo. Cinque ti costringe a decidere.",
+    "overflow_behavior": "i Frammenti oltre 5 non si generano"
+  },
+  "payoff_3f_tutorial": {
+    "fase": "FASE 4",
+    "trigger_soglia": 3,
+    "effect": "dispel di un'area arcana attorno alla Recluta",
+    "nael_line": "Con tre, dissolvi. Un'area intorno a te si libera dagli effetti arcani.",
+    "no_numeric_damage": true,
+    "no_xp": true,
+    "no_reward": true
+  },
+  "payoff_5f_tutorial": {
+    "fase": "FASE 5",
+    "trigger_soglia": 5,
+    "effect": "annullamento di una summon valida o rimozione di un incorporeo",
+    "nael_line": "Con cinque, bandisci. Un'evocazione nemica scompare. Un incorporeo se ne va.",
+    "boss_immunity_lock": true,
+    "boss_immunity_line": "I boss? I boss restano. Non li scacci. Ma le loro evocazioni sì."
+  },
+  "summon_valida": {
+    "entity_type": "summon simulata · didattica · temporanea",
+    "markers": {
+      "trial_only": true,
+      "non_persistent": true,
+      "no_loot": true,
+      "no_xp": true,
+      "not_bestiary_live": true
+    },
+    "reacts_to_payoff_5f": "scomparsa (design_only)",
+    "not_bestiary_record": true,
+    "not_saved_in_db": true,
+    "not_reused_elsewhere": true
+  },
+  "incorporeo": {
+    "entity_type": "incorporeo simulato · didattico · temporaneo",
+    "markers": {
+      "trial_only": true,
+      "non_persistent": true,
+      "no_loot": true,
+      "no_xp": true,
+      "not_bestiary_live": true
+    },
+    "banishable_with_5f": true,
+    "feedback": "dissolvenza silenziosa",
+    "not_canonical_bestiary_incorporeo": true
+  },
+  "bersaglio_standard": {
+    "entity_type": "fenomeno del velo · non-boss · non-summon · non-incorporeo",
+    "markers": {
+      "trial_only": true,
+      "non_persistent": true,
+      "no_loot": true,
+      "no_xp": true,
+      "not_bestiary_live": true
+    },
+    "purpose": "insegnare che non tutto va bandito · a volte basta drenare e chiudere",
+    "not_enemy_live": true,
+    "no_game_statistics": true
+  },
+  "scenario_senza_bersagli_speciali": {
+    "fase": "FASE 6",
+    "goal": "mantenere il loop anche quando Payoff massimale non è applicabile",
+    "nael_line": "Non sempre c'è qualcosa da bandire. A volte devi solo leggere e chiudere.",
+    "insight": "il loop funziona anche senza summon · 3F resta utile per dispel area"
+  },
+  "focus_tutorial": {
+    "weapon_family": "focus",
+    "canonical_source_g5": true,
+    "fantasy": "la voce che marchia",
+    "nael_line": "Il Focus è la voce. Inizia da qui."
+  },
+  "balestra_tutorial": {
+    "weapon_family": "balestra",
+    "canonical_source_g5": true,
+    "fantasy": "la distanza che protegge",
+    "nael_line": "La Balestra è la distanza. Chi la sceglie subito spesso non ha capito."
+  },
+  "pugnale_tutorial": {
+    "weapon_family": "pugnale",
+    "canonical_source_g5": true,
+    "fantasy": "il colpo che chiude",
+    "nael_line": "Il Pugnale è la chiusura. Serve mano ferma."
+  },
+  "posizionamento": {
+    "principle": "non stare mai al centro degli scontri · il Cacciatore del Vuoto legge dai margini",
+    "nael_line": "Non correre. Non stare mai fermo troppo a lungo.",
+    "feedback": "vicino al bersaglio → la lettura del velo si sfoca"
+  },
+  "mobilita": {
+    "principle": "movimento ritmico · non frenetico",
+    "veil_rewards": "chi legge il tempo · non chi corre"
+  },
+  "fragilita_classe": {
+    "principle": "stoffa + cuoio non fermano una spada",
+    "in_trial_safe_mode": "la Recluta non muore mai · feedback concettuale sulla posizione sbagliata",
+    "nael_line": "Se ti trovi in mezzo, sei morto. Nella Prova no. Fuori dalla Prova sì."
+  },
+  "warning_non_frontline": {
+    "nael_line": "Il Cacciatore del Vuoto non regge la prima linea. Non è debolezza: è specializzazione.",
+    "not_hidden": true
+  },
+  "errori_comuni": [
+    "marchiare distrattori neutri",
+    "attaccare senza aver Marchiato",
+    "attivare Payoff 5F su un boss (non funziona)",
+    "restare troppo vicino al bersaglio",
+    "cercare DPS massimo invece del loop",
+    "ignorare la generazione di Frammenti",
+    "aspettarsi ricompense (non esistono in Prova)"
+  ],
+  "suggerimenti_dinamici": {
+    "trigger": "Recluta ferma > 30 secondi concettuali senza agire",
+    "style": "brevi · mai imperativi",
+    "examples": [
+      "Guarda meglio",
+      "Prima il Marchio",
+      "Non tutto va marchiato"
+    ],
+    "no_auto_close_phase": true
+  },
+  "fail_soft": {
+    "no_error_closes_trial": true,
+    "no_permanent_damage": true,
+    "every_error_recoverable_immediately": true,
+    "term_fallimento": "non esiste in Prova · esiste solo riprova"
+  },
+  "reset_rapido": {
+    "trigger": "interazione col cerchio",
+    "resets": [
+      "fase corrente allo stato iniziale",
+      "Frammenti in circolo azzerati",
+      "summon simulate riemesse"
+    ],
+    "no_cooldown": true
+  },
+  "retry_illimitato": {
+    "retry_limit": "unlimited",
+    "no_attempt_counter": true,
+    "no_retry_threshold_unlock": true
+  },
+  "zero_cooldown": {
+    "between_attempts": 0,
+    "between_phases": 0,
+    "for_actions_mark_drain_payoff": 0
+  },
+  "zero_reward": {
+    "xp": 0,
+    "gold": 0,
+    "item": 0,
+    "material": 0,
+    "drop": 0,
+    "achievement_farmabile": 0,
+    "progressione_registrata": false,
+    "sblocchi_runtime": false,
+    "unica_ricompensa_concettuale": "comprensione (pedagogica · non farmabile)"
+  },
+  "anti_farming": {
+    "no_repeatable_metric_optimizable": true,
+    "no_threshold_bonus_counter": true,
+    "no_resources_to_farm": true,
+    "multiple_completion_produces_no_stackable_advantage": true
+  },
+  "nessuna_morte_permanente": {
+    "death_penalty": "none",
+    "no_data_loss": true,
+    "no_progression_loss": true,
+    "no_item_loss": true,
+    "no_gold_loss": true,
+    "no_xp_loss": true,
+    "no_reputation_loss": true
+  },
+  "nessuna_perdita_risorse": {
+    "resource_loss": "none",
+    "rare_resource_cost": "none",
+    "no_mana_persistente": true,
+    "no_pozioni_consumate": true,
+    "no_reagenti_consumati": true,
+    "frammenti_prova_interni_al_singolo_scontro": true
+  },
+  "durata_attesa": {
+    "per_fase": "pochi minuti concettuali (indicativi · non-lock)",
+    "totale_prova": "breve · non è un dungeon",
+    "no_timer_forzato": true,
+    "no_scadenza": true,
+    "design_goal": "la Recluta esce con comprensione · non con stanchezza"
+  },
+  "accessibilita": {
+    "accessible_to_all_recluta_who_completed_hall_entry": true,
+    "no_level_requirement": true,
+    "no_equip_prerequisite": true,
+    "no_other_hall_dependency": true,
+    "design_goal": "prima esperienza pratica con la classe"
+  },
+  "leggibilita_ui_concettuale": {
+    "ui_implemented": false,
+    "concept_only": true,
+    "indicators": [
+      "Marchio applicato",
+      "conteggio Frammenti in circolo",
+      "Payoff disponibile 3F/5F",
+      "fase corrente"
+    ],
+    "no_complex_hud": true,
+    "no_hp_bar": true,
+    "no_persistent_progression_bar": true
+  },
+  "feedback_visivi": {
+    "marchio_applicato": "sigillo silenzioso sul bersaglio",
+    "frammento_generato": "piccola luce discendente che si posa nel circolo",
+    "payoff_3f": "alone chiaro che si espande, poi si contrae",
+    "payoff_5f": "dissolvenza controllata dell'entità target",
+    "errore": "assenza di feedback (nessuna reazione) · nessun lampo punitivo"
+  },
+  "feedback_audio": {
+    "marchio": "nota bassa · breve · ferma",
+    "drain": "nota reiterata · pulsante",
+    "payoff_3f": "riverbero ampio · corto",
+    "payoff_5f": "silenzio momentaneo · poi risonanza chiusa",
+    "nael_parla": "tono asciutto · volume basso · mai gridato"
+  },
+  "dialoghi_nael_per_fase": {
+    "max_lines_per_fase": 2,
+    "tone_lock_from_g7": true,
+    "italiano_only": true,
+    "not_encyclopedic": true,
+    "dialoghi": {
+      "FASE_0": "Il cerchio è tuo. Non io.",
+      "FASE_1": "Osserva. Non tutto ciò che si muove va marchiato.",
+      "FASE_2": "Il Marchio è la porta. Senza Marchio, niente passa.",
+      "FASE_3": "Ogni colpo che gli assesti lascia un Frammento nel tuo circolo.",
+      "FASE_4": "Con tre, dissolvi. Un'area intorno a te si libera dagli effetti arcani.",
+      "FASE_5": "Con cinque, bandisci. Ma non i boss. I boss restano.",
+      "FASE_6": "Non sempre c'è qualcosa da bandire. A volte devi solo leggere e chiudere.",
+      "FASE_7": "Hai visto abbastanza. Adesso pensa.",
+      "FASE_8": "Non è una firma di sangue. È una firma di comprensione. Decidi."
+    },
+    "prohibitions": {
+      "not_villain": true,
+      "not_prophet": true,
+      "not_comic": true,
+      "not_vessel_copy": true,
+      "not_ovyr_copy": true
+    }
+  },
+  "riepilogo_finale": {
+    "fase": "FASE 7",
+    "contents": [
+      "Marchi applicati (correttamente/erroneamente)",
+      "Frammenti generati (ritmo medio)",
+      "Payoff scelti (3F vs 5F)",
+      "Posizionamento (dai margini o dal centro)",
+      "Errori comuni incontrati"
+    ],
+    "descriptive_not_numeric": true,
+    "no_score": true,
+    "no_ranking": true,
+    "no_bonus": true
+  },
+  "conferma_classe_post_prova": {
+    "fase": "FASE 8",
+    "options": [
+      {
+        "label": "CONFERMA IL CAMMINO",
+        "effect": "intenzione registrata come design_intent_only · nessuna assegnazione runtime · nessun class_slug apply · nessun class unlock · nessuna Hall activation"
+      },
+      {
+        "label": "NON SONO PRONTO",
+        "effect": "ritorno all'Atrio delle Vocazioni · nessuna penalità · nessun consumo"
+      }
+    ],
+    "nael_line": "Non è una firma di sangue. È una firma di comprensione. Decidi.",
+    "gate_8_flags": {
+      "class_assignment": "NOT IMPLEMENTED",
+      "class_slug_apply": false,
+      "runtime_assignment": "absent"
+    },
+    "runtime_assignment_deferred_to": "Gate 9 TECH_READINESS (HOLD)"
+  },
+  "rinuncia": {
+    "when": "in qualsiasi momento",
+    "canonical_line_from_g7_hcq6": "Non tutti leggono il velo. Non è una colpa.",
+    "penalty": null,
+    "consumption": null,
+    "future_visits_blocked": false,
+    "returns_to": "Atrio delle Vocazioni"
+  },
+  "comportamento_retry": {
+    "cumulative_progress": false,
+    "no_shortcut": true,
+    "nael_line_on_return": "Torni. Va bene.",
+    "flow_identical_from_fase_0": true,
+    "no_retry_count_unlock": true
+  },
+  "comportamento_abbandono": {
+    "before_fase_8": true,
+    "class_assignment_attempted": false,
+    "persistent_trial_record": false,
+    "returns_via": "Atrio delle Vocazioni · in seguito",
+    "no_forced_abandon_timer": true
+  },
+  "nessuna_assegnazione_automatica": {
+    "hcq5_g7_lock_critical": true,
+    "conferma_esplicita_manuale_volontaria": true,
+    "no_implicit_choice": true,
+    "no_confirm_timer": true,
+    "no_narrative_drift_assignment": true,
+    "gate_8_flags": {
+      "class_slug_apply": false,
+      "runtime_assignment": "absent",
+      "class_assignment": "design_only"
+    }
+  },
+  "risk_register": [
+    {
+      "id": "TR-R1",
+      "risk": "Recluta percepisce la Prova come punitiva",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (safe-mode LOCK)"
+    },
+    {
+      "id": "TR-R2",
+      "risk": "Recluta cerca farm di risorse in Prova",
+      "severity": "LOW",
+      "status": "DESIGNED (anti-farming sez 32)"
+    },
+    {
+      "id": "TR-R3",
+      "risk": "Retry illimitato genera loop compulsivo",
+      "severity": "LOW-MEDIUM",
+      "status": "DESIGNED (nessun sblocco su retry)"
+    },
+    {
+      "id": "TR-R4",
+      "risk": "Feedback visivi confusi con altri UX di gioco",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (linguaggio visivo Sala-specifico)"
+    },
+    {
+      "id": "TR-R5",
+      "risk": "Nael troppo distaccato durante la Prova",
+      "severity": "LOW-MEDIUM",
+      "status": "DESIGNED (1-2 righe per fase)"
+    },
+    {
+      "id": "TR-R6",
+      "risk": "Confusione con dungeon",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (marker + fantasy rituale)"
+    },
+    {
+      "id": "TR-R7",
+      "risk": "Aspettativa di reward",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (marker zero reward)"
+    },
+    {
+      "id": "TR-R8",
+      "risk": "Recluta confonde bersagli didattici con bestiario canonico",
+      "severity": "LOW-MEDIUM",
+      "status": "DESIGNED (marker trial_only)"
+    },
+    {
+      "id": "TR-R9",
+      "risk": "Class assignment runtime accidentalmente attivato",
+      "severity": "LOW",
+      "status": "DESIGNED (LOCK CRITICAL HC-Q5 G7)"
+    },
+    {
+      "id": "TR-R10",
+      "risk": "Payoff 5F applicato a boss senza feedback chiaro",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (Nael avvisa esplicitamente)"
+    },
+    {
+      "id": "TR-R11",
+      "risk": "Fragilità classe percepita come bug invece di feature",
+      "severity": "LOW-MEDIUM",
+      "status": "DESIGNED (Nael la spiega)"
+    },
+    {
+      "id": "TR-R12",
+      "risk": "Confusione con Prova del Mago",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (fantasy rituale distintivo)"
+    },
+    {
+      "id": "TR-R13",
+      "risk": "Confusione con Cacciatore di Mostri",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (semantic guard G7 + lore differente)"
+    },
+    {
+      "id": "TR-R14",
+      "risk": "Frammenti confusi con item inventariabili",
+      "severity": "LOW",
+      "status": "DESIGNED (Nael: non sono oggetti)"
+    },
+    {
+      "id": "TR-R15",
+      "risk": "Recluta si aspetta boss finale",
+      "severity": "LOW",
+      "status": "DESIGNED (fantasy pedagogico · non gara)"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "TR-Q1",
+      "question": "Struttura 9 fasi (FASE 0 → FASE 8) conferma?",
+      "proposed": "a) LOCK 9 fasi",
+      "alternatives": [
+        "b) collassare FASE 4+5 in un'unica fase",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "TR-Q2",
+      "question": "Payoff 5F fallisce su boss con feedback esplicito da Nael (non silenzioso)?",
+      "proposed": "a) LOCK feedback esplicito",
+      "alternatives": [
+        "b) silenzioso + suggerimento dopo 30s",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "TR-Q3",
+      "question": "Suggerimenti dinamici Nael dopo 30s di stallo conferma?",
+      "proposed": "a) LOCK 30s",
+      "alternatives": [
+        "b) 15s",
+        "c) 60s",
+        "d) disattivare suggerimenti"
+      ]
+    },
+    {
+      "id": "TR-Q4",
+      "question": "Entità didattiche marcate trial_only/non_persistent/no_loot/no_xp/not_bestiary_live conferma naming?",
+      "proposed": "a) LOCK naming attuale",
+      "alternatives": [
+        "b) rinomina proposta PM"
+      ]
+    },
+    {
+      "id": "TR-Q5",
+      "question": "Conferma classe FASE 8 con 2 opzioni CONFERMA IL CAMMINO / NON SONO PRONTO conferma?",
+      "proposed": "a) LOCK 2 opzioni",
+      "alternatives": [
+        "b) aggiungere terza opzione RIPETI LA PROVA esplicita"
+      ]
+    },
+    {
+      "id": "TR-Q6",
+      "question": "Reset rapido interazione col cerchio conferma?",
+      "proposed": "a) LOCK reset rapido",
+      "alternatives": [
+        "b) reset solo a fine fase"
+      ]
+    },
+    {
+      "id": "TR-Q7",
+      "question": "Riepilogo finale descrittivo (nessun voto) conferma?",
+      "proposed": "a) LOCK descrittivo",
+      "alternatives": [
+        "b) aggiungere metriche non-numeriche (es. cauto/veloce)"
+      ]
+    },
+    {
+      "id": "TR-Q8",
+      "question": "Marker SALA DI DESIGN esteso alla Prova o marker specifico PROVA DI DESIGN?",
+      "proposed": "a) LOCK marker esteso",
+      "alternatives": [
+        "b) marker specifico PROVA DI DESIGN — NON ANCORA ISTANZIATA IN GIOCO"
+      ]
+    }
+  ],
+  "canonical_validation": {
+    "canonical_registry": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "entities_used": [
+      "Faro Rovesciato di Onirade",
+      "Nael di Onirade",
+      "Cacciatore del Vuoto",
+      "Marchio del Vuoto",
+      "Frammenti di Onirade",
+      "Prova del Riflesso Vuoto",
+      "Atrio delle Vocazioni"
+    ],
+    "no_new_divinita": true,
+    "no_new_regione": true,
+    "no_new_fazione": true,
+    "no_new_classe": true,
+    "no_new_hall_master": true,
+    "no_new_lore_sources_non_approved": true,
+    "non_canonical_class_references": 0,
+    "classes_mentioned_all_canonical": true
+  },
+  "go_hold_recommendation_gate_9": {
+    "gate_8_status": "DRAFT · pending PM review + risposte TR-Q1..TR-Q8",
+    "gate_9_status": "HOLD",
+    "gate_9_scope_preview": "definizione requisiti tecnici runtime (endpoint API · schema DB · flow attivazione · class_slug apply · Hall activation · bridge apply) per Sala + Prova. Nessuna implementazione in Gate 9: solo specifica tecnica preparatoria.",
+    "no_gate_9_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "no_class_unlock_auto_start": true,
+    "no_hall_activation_auto_start": true,
+    "recommended_next_step": "PM review G8 SAFE_MODE_TRIAL + risposte TR-Q1..TR-Q8 → G8 CLOSED verdict → GO Gate 9 TECH_READINESS"
+  },
+  "governance": {
+    "documental_only": true,
+    "italiano_only": true,
+    "no_code": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_trial_implementation": true,
+    "no_combat_implementation": true,
+    "no_ui_implementation": true,
+    "no_tutorial_implementation": true,
+    "no_enemy_creation_live": true,
+    "no_bestiary_write": true,
+    "no_xp": true,
+    "no_gold": true,
+    "no_item": true,
+    "no_material": true,
+    "no_drop": true,
+    "no_achievement_farmabile": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_gate_9_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7"
+    ]
+  },
+  "stop_after_g8": {
+    "action": "STOP · attendo PM verdict G8 (CLOSED/REWORK) + risposte TR-Q1..TR-Q8 · Gate 9 HOLD · Wave 1 successors HOLD",
+    "no_auto_start_gate_9": true,
+    "no_auto_start_wave_1": true,
+    "explicit_stop": true
+  }
+}
