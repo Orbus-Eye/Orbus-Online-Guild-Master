@@ -90,7 +90,7 @@ Design layer only · rotation base concettuale · sequenze numeriche NON progett
 
 ## Sezione 14-15 · Mobilità e Rischio/Posizionamento
 
-- **Mobility**: MEDIA-BASSA · Cacciatore del Vuoto NON è agile fisico (CdM/Rogue) · richiede posizionamento pensato · movimento tra fasi encounter · non teleport, non dash
+- **Mobility**: MEDIA-BASSA · Cacciatore del Vuoto NON è agile fisico (Cacciatore di Mostri/Ladro) · richiede posizionamento pensato · movimento tra fasi encounter · non teleport, non dash
 - **Positioning**: ranged mid-range · vicino a target incorporei/summon ma fuori da AoE nemiche · Faro Rovesciato = ambiente con visibilità limitata (design gate futuro considera penalità/bonus terreno)
 - **No teleport · no dash** ✅
 - **Armor fragility**: cuoio+stoffa · low armor · fragile burst · richiede awareness
@@ -121,7 +121,12 @@ Design layer only · rotation base concettuale · sequenze numeriche NON progett
 ## Sezione 20-22 · Differenziazione
 
 - **vs Mago**: Vuoto = Mark-based drain-payoff (accumulo → burst decisivo) · Mago = burst caster AoE elemental (spell puro · no accumulo). Ruoli DPS distinti · non competition-ready sugli stessi encounter (Mago meglio in AoE puro · Vuoto meglio in anti-summon/incorporei).
-- **vs Cacciatore di Mostri**: Vuoto = anti-arcano ranged/rituale (Int · caccia incorporei/summon) · CdM = anti-fisico ranged/melee agile (Dex · caccia bestie fisiche). Zero overlap target · complementari in raid.
+- **vs Cacciatore di Mostri (canonical Ranger · nome_it lock · class_slug `cacciatore_di_mostri` · legacy live label = `Ranger`)**:
+  - Cacciatore di Mostri: **main_stat Destrezza** · armor cuoio+maglia · weapon arco/balestra/spada/pugnale/lancia · identità = cacciatore fisico e agile · tracciamento e abbattimento creature · pressione ranged/melee · preparazione contro bersagli specifici.
+  - Cacciatore del Vuoto: **main_stat Intelligenza** · armor stoffa+cuoio · weapon focus/balestra/pugnale · identità = cacciatore anti-arcano e rituale · Marchi del Vuoto · Drain · Frammenti di Onirade · dispel · controllo summon/incorporei/distorsioni.
+  - **Balestra condivisa · gameplay non condiviso**: Cacciatore di Mostri = balestra fisica · scaling Destrezza · ranged hunting weapon · Cacciatore del Vuoto = balestra di canalizzazione arcana · scaling Intelligenza medio-alto · applicazione precisa dei Marchi. Regola: weapon family condivisa ≠ gameplay condiviso · mitigation via `main_stat_target + class_proficiency + affix di classe futuri + gameplay loop + risorsa di classe`.
+  - **Sintesi**: Cacciatore di Mostri = individua e abbatte creature attraverso Destrezza, mobilità e armi fisiche · Cacciatore del Vuoto = identifica e annulla anomalie, summon ed entità incorporee attraverso Intelligenza, Marchi e Frammenti di Onirade.
+  - Zero overlap target · complementari in raid.
 - **vs Paladino**: Vuoto = DPS anti-Vuoto (offensivo) · Paladino = Healer/Support sacro (difensivo/curativo). Ruoli opposti · coesistono in raid (Paladino cura, Vuoto elimina summon).
 
 ## Sezione 23-25 · Anti-Power-Creep + Anti-Stall + Party/Raid
@@ -136,9 +141,9 @@ Design layer only · rotation base concettuale · sequenze numeriche NON progett
 **Anti-stall**: Encounter senza summon/incorporei non blocca il Cacciatore del Vuoto · loop degradato ma non nullo (behavior_no_special_targets) · focus + Marchio ridotto + Drain lento · sostiene partecipazione encounter · no empty combat
 
 **Party/Raid**:
-- Team 3p: Vuoto in team 3p con Paladino (heal) + Guerriero/CdM (tank/DPS fisico) · Vuoto copre anti-arcano · sinergia forte in dungeon Onirade-themed
+- Team 3p: Vuoto in team 3p con Paladino (heal) + Guerriero/Cacciatore di Mostri (tank/DPS fisico) · Vuoto copre anti-arcano · sinergia forte in dungeon Onirade-themed
 - Team 5p: Vuoto DPS anti-summon in raid 5p · sinergia con Mago (Vuoto elimina summon, Mago fa burst target rimanenti) · Paladino cura · Guerriero tank
-- Synergy: Paladino heal · Mago burst target · CdM anti-fisico · Vuoto anti-arcano · quattro ruoli distinti
+- Synergy: Paladino heal · Mago burst target · Cacciatore di Mostri anti-fisico · Vuoto anti-arcano · quattro ruoli distinti
 
 ## Sezione 26-28 · Marchi/Frammenti/Payoff Conceptual Interaction
 
@@ -233,6 +238,21 @@ Design layer only · rotation base concettuale · sequenze numeriche NON progett
 - **Gate 4 status**: 🔒 HOLD · attende PM ACK Gate 3 + GO esplicito Gate 4
 - **Gate 4 input from G3**: loop 4-step + Marchi/Frammenti/Payoff conceptual interactions + max marchi cap concept + generation/consumption concept → input per RESOURCE_MECHANIC numeric finalization
 - **Gate 4 scope preview**: Frammenti di Onirade: generazione numerica esatta · consumo numerico · cap scaling · reset trigger boundaries · Marchi durata secondi/turni · tick damage · silence duration · resistance check formula · Payoff numeric · SOLO resource · NO damage weapon coefficient (Gate 5)
+
+---
+
+## Sezione 33 · Canonical Class Validation (drift guard)
+
+- **canonical_class_validation**: **PASS** ✅
+- **non_canonical_class_references**: **0**
+- **canonical_source**: `/app/memory/r18_6_1_canonical_27_class_halls_expansion.json` (27 classi canoniche LOCKED · R18.6.1 CLOSED)
+- **Non-canonical hallucinated ref occurrences**: **0** (post-compaction hallucination scrubbed integralmente · nome allucinato non è classe canonica delle 27 · citazione letterale evitata per anti-drift guard)
+- **Cacciatore di Mostri differentiation section**: **PRESENT** (Sezione 20-22 con baseline verbatim PM · main_stat Destrezza · armor cuoio+maglia · weapon arco/balestra/spada/pugnale/lancia · legacy live label = Ranger)
+- **CdM abbreviation cleanup**: espansa integralmente a `Cacciatore di Mostri` per eliminare ambiguità con eventuali hallucination future
+- **Slug compliance**: `cacciatore_del_vuoto` (pilot readiness) · `cacciatore_di_mostri` (canonical Ranger) · snake_case lowercase · zero drift
+- **Class references in G3 (whitelist verified)**: Mago · Cacciatore di Mostri · Paladino · Guerriero · Ladro · Cacciatore del Vuoto — tutte canonical R18.6.1
+- **Bridge legacy note**: `warlock` compare solo come rischio bridge legacy (GL-R12 · `auto_derive_from_warlock: false`) · **NON** come identità classe
+- **Guard rule**: qualsiasi futura menzione di classe in G-x deve essere validata contro `r18_6_1_canonical_27_class_halls_expansion.json` prima del commit al PRD
 
 ---
 

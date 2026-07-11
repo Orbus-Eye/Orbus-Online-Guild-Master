@@ -33,7 +33,10 @@
       },
       "loadout_rules": "focus max 1 · balestra 2H blocca off_hand · dual-focus REJECTED",
       "class_proficiency_label": "cacciatore_del_vuoto (lowercase snake_case)"
-    }
+    },
+    "canonical_correction_applied": "2026-07-08T18:30:00Z",
+    "correction_scope": "targeted · non-canonical hallucinated class ref scrubbed → Cacciatore di Mostri · CdM abbreviation expansion · canonical_class_validation block added",
+    "status": "READY_FOR_PM_CLOSURE"
   },
   "fantasy_gameplay": "Il Cacciatore del Vuoto è un caster-ranged anti-incorporei che caccia ciò che non ha peso. Il suo mestiere è marchiare ciò che non dovrebbe esistere, drenarne l'essenza in Frammenti di Onirade, e scaricare quei Frammenti in un colpo definitivo (dispel di area o annullamento di boss summon). Non è un mago che scaglia esplosioni · non è un cacciatore fisico che insegue prede · è un anti-arcano di precisione che identifica, marca, drena e chiude. La fantasy è quella del ricercatore-cacciatore che porta luce nella nebbia del Faro Rovesciato, non con la spada, ma con focus, dardo arcano e pugnale rituale.",
   "pve_role": {
@@ -176,7 +179,7 @@
   },
   "mobility": {
     "level": "MEDIA-BASSA",
-    "description": "Cacciatore del Vuoto NON è agile fisico (CdM/Rogue) · richiede posizionamento pensato · movimento tra fasi encounter · non teleport, non dash",
+    "description": "Cacciatore del Vuoto NON è agile fisico (Cacciatore di Mostri/Ladro) · richiede posizionamento pensato · movimento tra fasi encounter · non teleport, non dash",
     "positioning_requirement": "ranged mid-range · vicino a target incorporei/summon ma fuori da AoE nemiche · Faro Rovesciato = ambiente con visibilità limitata (design gate futuro considera penalità/bonus terreno)",
     "no_teleport": true,
     "no_dash_ability_confirmed_now": true
@@ -209,11 +212,6 @@
     "high_skill_reward": "player esperto massimizza Frammenti · usa 5F Payoff su boss summon in fase critica · gestisce Marchi multipli in raid",
     "no_infinite_ceiling": "soft cap Int 100 e Frammenti cap 5 limitano cheese esperto · anti-power-creep"
   },
-  "differentiation_mago_cdm_paladino": {
-    "vs_mago": "Vuoto = Mark-based drain-payoff (accumulo → burst decisivo) · Mago = burst caster AoE elemental (spell puro · no accumulo). Ruoli DPS distinti · non competition-ready sugli stessi encounter (Mago meglio in AoE puro · Vuoto meglio in anti-summon/incorporei).",
-    "vs_cacciatore_di_mostri": "Vuoto = anti-arcano ranged/rituale (Int · caccia incorporei/summon) · CdM = anti-fisico ranged/melee agile (Dex · caccia bestie fisiche). Zero overlap target · complementari in raid.",
-    "vs_paladino": "Vuoto = DPS anti-Vuoto (offensivo) · Paladino = Healer/Support sacro (difensivo/curativo). Ruoli opposti · coesistono in raid (Paladino cura, Vuoto elimina summon)."
-  },
   "anti_power_creep": {
     "payoff_cap_5f": "Payoff hard cap 5 Frammenti (V-Q4 LOCKED) · Int NON aumenta cap",
     "marchi_max_3_plus_2": "cap iniziale 3 · +1 a soglia Int 50 · +1 a soglia Int 90 · max 5 marchi simultanei · design gate futuro finalizza soglie",
@@ -227,10 +225,10 @@
     "no_infinite_grief": "player non forzato a switchare classe per encounter no-summon · classe resta viable ovunque"
   },
   "party_raid_compatibility": {
-    "team_3p_dungeon": "Vuoto in team 3p con Paladino (heal) + Guerriero/CdM (tank/DPS fisico) · Vuoto copre anti-arcano · sinergia forte in dungeon Onirade-themed",
+    "team_3p_dungeon": "Vuoto in team 3p con Paladino (heal) + Guerriero/Cacciatore di Mostri (tank/DPS fisico) · Vuoto copre anti-arcano · sinergia forte in dungeon Onirade-themed",
     "team_5p_raid": "Vuoto DPS anti-summon in raid 5p · sinergia con Mago (Vuoto elimina summon, Mago fa burst target rimanenti) · Paladino cura · Guerriero tank",
     "no_replace_healer_tank": "Vuoto NON sostituisce healer né tank · resta DPS anti-arcano · complementare",
-    "sinergy_paladino_mago_cdm": "Paladino heal · Mago burst target · CdM anti-fisico · Vuoto anti-arcano · quattro ruoli distinti"
+    "sinergy_paladino_mago_cacciatore_di_mostri": "Paladino heal · Mago burst target · Cacciatore di Mostri anti-fisico · Vuoto anti-arcano · quattro ruoli distinti"
   },
   "marchi_conceptual_interaction": {
     "concept": "Marchio del Vuoto = dispel-over-time + silenziamento summon · applicato via focus/balestra",
@@ -348,7 +346,7 @@
       "id": "GL-R8",
       "risk": "Overlap gameplay con Cacciatore di Mostri (entrambi 'cacciatori')",
       "severity": "LOW",
-      "mitigation": "differentiation matrix locked (G1+G3) · CdM=fisico Dex vs Vuoto=arcano Int · target diversi (bestie vs incorporei/summon)",
+      "mitigation": "differentiation matrix locked (G1+G3) · Cacciatore di Mostri=fisico Dex vs Cacciatore del Vuoto=arcano Int · target diversi (bestie vs incorporei/summon)",
       "status": "ENFORCED"
     },
     {
@@ -493,5 +491,90 @@
   "stop_after_g3": {
     "auto_transition_gate_4": false,
     "note": "STOP dopo Gate 3 GAMEPLAY_LOOP. Attendo PM review + risposte GL-Q1..GL-Q6 + GO esplicito Gate 4 RESOURCE_MECHANIC. Nessun auto-start · nessuna modifica R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 (LOCKED)."
+  },
+  "differentiation_mago_cacciatore_di_mostri_paladino": {
+    "vs_mago": "Vuoto = Mark-based drain-payoff (accumulo → burst decisivo) · Mago = burst caster AoE elemental (spell puro · no accumulo). Ruoli DPS distinti · non competition-ready sugli stessi encounter (Mago meglio in AoE puro · Vuoto meglio in anti-summon/incorporei).",
+    "vs_cacciatore_di_mostri": {
+      "canonical_name_it": "Cacciatore di Mostri",
+      "class_slug": "cacciatore_di_mostri",
+      "legacy_live_label": "Ranger",
+      "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+      "cacciatore_di_mostri_profile": {
+        "main_stat": "Destrezza",
+        "armor": [
+          "cuoio",
+          "maglia"
+        ],
+        "weapon": [
+          "arco",
+          "balestra",
+          "spada",
+          "pugnale",
+          "lancia"
+        ],
+        "identita": "cacciatore fisico e agile · tracciamento e abbattimento creature · pressione ranged/melee · preparazione contro bersagli specifici"
+      },
+      "cacciatore_del_vuoto_profile": {
+        "main_stat": "Intelligenza",
+        "armor": [
+          "stoffa",
+          "cuoio"
+        ],
+        "weapon": [
+          "focus",
+          "balestra",
+          "pugnale"
+        ],
+        "identita": "cacciatore anti-arcano e rituale · Marchi del Vuoto · Drain · Frammenti di Onirade · dispel · controllo summon/incorporei/distorsioni"
+      },
+      "balestra_shared_weapon_family": {
+        "cacciatore_di_mostri": "balestra fisica · scaling Destrezza · ranged hunting weapon",
+        "cacciatore_del_vuoto": "balestra di canalizzazione arcana · scaling Intelligenza medio-alto · applicazione precisa dei Marchi",
+        "rule": "Weapon family condivisa NON implica gameplay condiviso",
+        "mitigation": "main_stat_target + class_proficiency + affix di classe futuri + gameplay loop + risorsa di classe"
+      },
+      "sintesi_finale": {
+        "cacciatore_di_mostri": "individua e abbatte creature attraverso Destrezza, mobilità e armi fisiche",
+        "cacciatore_del_vuoto": "identifica e annulla anomalie, summon ed entità incorporee attraverso Intelligenza, Marchi e Frammenti di Onirade"
+      },
+      "target_overlap": "zero",
+      "raid_synergy": "complementari · Cacciatore di Mostri copre bestie fisiche · Cacciatore del Vuoto copre summon/incorporei/distorsioni arcane"
+    },
+    "vs_paladino": "Vuoto = DPS anti-Vuoto (offensivo) · Paladino = Healer/Support sacro (difensivo/curativo). Ruoli opposti · coesistono in raid (Paladino cura, Vuoto elimina summon)."
+  },
+  "canonical_class_validation": {
+    "status": "PASS",
+    "non_canonical_class_references": 0,
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "canonical_total_classes": 27,
+    "hallucination_scrub": {
+      "note": "post-compaction hallucination · nome allucinato non è classe canonica delle 27 · rimosso integralmente da ogni riferimento G3 · citazione letterale evitata per anti-drift guard",
+      "non_canonical_hallucinated_ref_occurrences": 0
+    },
+    "canonical_differentiation_present": {
+      "cacciatore_di_mostri_section": true,
+      "section_reference": "differentiation_mago_cacciatore_di_mostri_paladino.vs_cacciatore_di_mostri",
+      "baseline_verbatim_pm_locked": true
+    },
+    "cdm_abbreviation_cleanup": {
+      "action": "expanded_to_full_name",
+      "reason": "elimina ambiguità con hallucination non-canonica scrubbata",
+      "expansion_target": "Cacciatore di Mostri"
+    },
+    "slug_compliance": {
+      "cacciatore_del_vuoto": "pilot readiness · snake_case lowercase",
+      "cacciatore_di_mostri": "canonical Ranger · snake_case lowercase",
+      "warlock": "solo come bridge legacy risk (GL-R12) · auto_derive_from_warlock=false · NOT class identity"
+    },
+    "class_references_whitelist_verified": [
+      "Mago",
+      "Cacciatore di Mostri",
+      "Paladino",
+      "Guerriero",
+      "Ladro",
+      "Cacciatore del Vuoto"
+    ],
+    "guard_rule": "qualsiasi futura menzione di classe in G-x DEVE essere validata contro r18_6_1_canonical_27_class_halls_expansion.json prima del commit al PRD",
+    "post_compaction_anti_drift_directive": "Il name_it canonico Cacciatore di Mostri sostituisce integralmente qualsiasi riferimento hallucinated non-canonico in tutti i documenti Gate 3+ · citazione letterale del nome allucinato evitata per compliance strict occurrences=0"
   }
 }
