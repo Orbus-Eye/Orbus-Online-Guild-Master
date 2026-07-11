@@ -1,0 +1,423 @@
+{
+  "metadata": {
+    "artifact": "R18.6.RV3-EV-F1 Live Catalog Reconciliation and Additive Metadata Readiness",
+    "document_type": "conditional_hold_corrective_audit",
+    "regime": "READ_ONLY_DISCOVERY_DOCUMENTAL_ONLY",
+    "language": "italian_only",
+    "trigger": "PM verdict RV3-EV = VALIDATION PARTIAL CONDITIONAL HOLD",
+    "parent_rv3_ev_files": {
+      "md_path": "/app/memory/r18_6_rv3_ev_eligibility_validation.md",
+      "md_sha256_invariant": "41450c4fa770efd57a15c302958c20e2826f33ac668aba5eaeb2e6743f9fd09e",
+      "json_path": "/app/memory/r18_6_rv3_ev_eligibility_validation.json",
+      "json_sha256_invariant": "c4ed0af9bedd7ad343c038b9520cf9aa3c0fcfc4d32779edff9364dfcf1e0f35"
+    },
+    "pilot_status": "ACTIVE-DESIGN-READY (invariato)",
+    "governance_status": "PM_LOCKED_PENDING_VERDICT",
+    "not_field_addition_gate": true,
+    "not_backfill_gate": true,
+    "not_item_mutation_gate": true,
+    "sealed_integrity_expected": "36_of_36_PASS",
+    "lore_meta_anchor_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_field_addition": true,
+    "no_backfill": true,
+    "no_item_creation": true,
+    "no_item_mutation": true,
+    "no_registry_v2_mutation": true,
+    "no_registry_v3_apply": true,
+    "no_r18_5_mutation": true,
+    "no_affix_population": true,
+    "no_class_slug_write": true,
+    "no_schema_change": true,
+    "no_migration": true,
+    "db_writes_count": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0
+  },
+  "catalog_lineage_separation": {
+    "canonical_r18_5_design_catalog": {
+      "count_planning_lock": 1500,
+      "status": "PRESERVED",
+      "type": "planning_numeric_target",
+      "source": "r18_5_phase_a_b_c_files_documentale",
+      "id_based_manifest_exists": false,
+      "mentions_1500_in_r18_5_files_count": 284
+    },
+    "live_materialized_catalog": {
+      "collection": "items",
+      "count": 178,
+      "status": "INCOMPLETE_OR_PARTIAL",
+      "materialization_percentage_of_1500_planning": "11.87%_arithmetic_only",
+      "no_id_manifest_link_to_canonical_1500": true
+    },
+    "catalog_layer_mismatch": "CONFIRMED",
+    "id_overlap_live_intersect_canonical": 0,
+    "slug_overlap_live_intersect_canonical": 0,
+    "assumption_1322_missing_forbidden": true,
+    "assumption_1322_missing_rationale": "no_id_manifest_available_delta_is_planning_numeric_not_id_verified"
+  },
+  "schema_live_item_47_fields_union": [
+    "_id", "affects_combat", "affects_economy", "affects_ranking", "affix_pool_tag",
+    "agility_bonus", "armor_tags", "can_be_sold_for_gold", "can_be_sold_for_real_money",
+    "class_tags", "created_at", "description", "display_name_en", "display_name_it",
+    "enchant_slots", "endurance_bonus", "faith_bonus", "flavor_text_it", "id",
+    "intellect_bonus", "is_active", "is_cosmetic", "is_tradeable", "item_binding_policy",
+    "item_type", "level_required", "lore_reviewed", "lore_reviewed_at", "lore_source",
+    "lore_tags", "max_refinement", "min_level", "name", "power_score", "rarity",
+    "recommended_classes", "required_adventurer_level", "required_class_optional",
+    "role_tags", "set_id", "slot", "slot_type", "slug", "spoiler_level", "stat_tags",
+    "strength_bonus", "updated_at", "weapon_tags"
+  ],
+  "aliases_existing": {
+    "armor_type_alias": "armor_tags",
+    "weapon_family_alias": "weapon_tags",
+    "slot_duplicate": ["slot", "slot_type"],
+    "level_triple": ["required_adventurer_level", "level_required", "min_level"],
+    "class_alignment": ["class_tags", "recommended_classes", "required_class_optional"],
+    "slot_canonical_alias": {
+      "trinket": "accessory",
+      "belt": "waist",
+      "cloak_cape": "back"
+    }
+  },
+  "slot_canonical_14_locked": [
+    "head", "neck", "shoulders", "chest", "back",
+    "hands", "wrist", "waist", "legs", "feet",
+    "main_hand", "off_hand", "ring", "accessory"
+  ],
+  "no_15th_slot": true,
+  "field_readiness_verdict_5_fields": {
+    "armor_type": {
+      "verdict": "EXISTS_ALIAS",
+      "alias_field": "armor_tags",
+      "field_present_live": true,
+      "note": "no_field_addition_required"
+    },
+    "weapon_family": {
+      "verdict": "EXISTS_ALIAS",
+      "alias_field": "weapon_tags",
+      "field_present_live": true,
+      "note": "no_field_addition_required"
+    },
+    "tier": {
+      "verdict": "DERIVABLE_HIGH_CONFIDENCE",
+      "derivation_rule": "tier_from_required_adventurer_level_via_g5_mapping",
+      "g5_mapping": {
+        "T1_Aspirante": "1-15",
+        "T2_Cacciatore": "16-30",
+        "T3_Iniziato": "31-45",
+        "T4_Rituale": "46-55",
+        "T5_Vuoto": "56-60"
+      },
+      "note": "no_field_needed_derivable"
+    },
+    "ilvl": {
+      "verdict": "DERIVABLE_CONDITIONAL",
+      "derivation_rule": "min_max_required_level_plus_rarity_offset_tier_min_60",
+      "proxy_fields": ["power_score", "rarity", "required_adventurer_level"],
+      "pm_ratify_required": ["rarity_offset_values_common_uncommon_rare_epic_legendary"]
+    },
+    "affix_pool_tag": {
+      "verdict": "REQUIRES_FUTURE_BACKFILL",
+      "field_present_live": true,
+      "populated_count_of_178": 0,
+      "backfill_prerequisites": [
+        "vocabulary_lock_design_only",
+        "schema_validation_rules",
+        "compatibility_mapping",
+        "null_handling_preserve",
+        "versioning_optional"
+      ]
+    }
+  },
+  "6_lore_vuoto_oblio_audit_per_item": [
+    {
+      "position": 1,
+      "slug": "drake_slayer_helm",
+      "display_it": "Elmo Cacciadrago",
+      "slot_type": "helm",
+      "item_type": "armor",
+      "rarity": "Legendary",
+      "required_adventurer_level": 12,
+      "class_tags": ["warrior", "paladin", "berserker"],
+      "stat_tags": ["strength", "endurance"],
+      "role_tags": ["tank", "dps_melee", "frontline"],
+      "lore_tags": ["oblio", "vuoto"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "hard",
+      "verdict": "IDENTITY_CONFLICT",
+      "rationale": "STR_class_non_caster_no_intellect"
+    },
+    {
+      "position": 2,
+      "slug": "drake_slayer_chest",
+      "display_it": "Corazza Cacciadrago",
+      "slot_type": "chest",
+      "item_type": "armor",
+      "rarity": "Legendary",
+      "required_adventurer_level": 12,
+      "class_tags": ["warrior", "paladin", "berserker"],
+      "stat_tags": ["strength", "endurance"],
+      "role_tags": ["tank", "dps_melee", "frontline"],
+      "lore_tags": ["oblio", "vuoto"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "hard",
+      "verdict": "IDENTITY_CONFLICT",
+      "rationale": "STR_class_non_caster"
+    },
+    {
+      "position": 3,
+      "slug": "drake_slayer_blade",
+      "display_it": "Lama Cacciadrago",
+      "slot_type": "weapon_main",
+      "item_type": "weapon",
+      "rarity": "Legendary",
+      "required_adventurer_level": 12,
+      "class_tags": ["warrior", "paladin", "berserker", "rogue", "ranger", "assassin"],
+      "stat_tags": ["strength", "agility"],
+      "role_tags": ["tank", "dps_melee", "dps_ranged", "stealth"],
+      "lore_tags": ["oblio", "vuoto"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "hard",
+      "verdict": "IDENTITY_CONFLICT",
+      "rationale": "melee_STR_AGI_no_intellect_no_caster"
+    },
+    {
+      "position": 4,
+      "slug": "arcane_adept_orb",
+      "display_it": "Orbe del Maestro Arcano",
+      "slot_type": "amulet",
+      "item_type": "accessory",
+      "rarity": "Legendary",
+      "required_adventurer_level": 12,
+      "class_tags": ["mage", "necromancer", "bard"],
+      "stat_tags": ["intellect"],
+      "role_tags": ["dps_caster", "support"],
+      "lore_tags": ["oblio", "vuoto"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "soft",
+      "verdict": "PM_REVIEW",
+      "rationale": "intellect_caster_but_no_warlock_class_tag_potential_reuse_with_class_tag_addition"
+    },
+    {
+      "position": 5,
+      "slug": "goblin_hunter_ring",
+      "display_it": "Anello del Cacciatore di Goblin",
+      "slot_type": "ring",
+      "item_type": "accessory",
+      "rarity": "Legendary",
+      "required_adventurer_level": 12,
+      "class_tags": ["warrior", "paladin", "berserker", "rogue", "ranger", "assassin"],
+      "stat_tags": ["strength", "agility"],
+      "role_tags": ["tank", "dps_melee", "dps_ranged", "stealth"],
+      "lore_tags": ["oblio", "vuoto"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "soft",
+      "verdict": "IDENTITY_CONFLICT",
+      "rationale": "STR_AGI_class_no_intellect_no_caster"
+    },
+    {
+      "position": 6,
+      "slug": "voidpiercer-bow",
+      "display_it": "Arco Trafittore del Vuoto",
+      "slot_type": "weapon",
+      "item_type": "weapon",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "class_tags": ["rogue", "ranger", "assassin", "monk", "mage", "necromancer"],
+      "stat_tags": ["agility", "intellect"],
+      "role_tags": ["dps_melee", "dps_ranged", "stealth", "dps_caster", "support"],
+      "lore_tags": ["vuoto", "filo-spezzato"],
+      "lore_source": "orbus_lore_book_v1",
+      "binding": "soft",
+      "verdict": "PM_REVIEW",
+      "rationale": "name_vuoto_but_weapon_ranger_assassin_dominant_class_tags_no_warlock"
+    }
+  ],
+  "6_lore_audit_summary": {
+    "LORE_COMPATIBLE_REUSE_CANDIDATE": 0,
+    "LORE_ONLY_NOT_EQUIP_COMPATIBLE": 0,
+    "IDENTITY_CONFLICT": 4,
+    "INSUFFICIENT_METADATA": 0,
+    "PM_REVIEW": 2,
+    "total": 6,
+    "conclusion": "presence_of_lore_tags_vuoto_oblio_does_not_guarantee_vuoto_compatibility"
+  },
+  "t5_endgame_separation": {
+    "g5_tier_mapping_verified": {
+      "T1_Aspirante": {"level_range": "1-15"},
+      "T2_Cacciatore": {"level_range": "16-30"},
+      "T3_Iniziato": {"level_range": "31-45"},
+      "T4_Rituale": {"level_range": "46-55"},
+      "T5_Vuoto": {"level_range": "56-60"}
+    },
+    "correction_from_rv3_ev": {
+      "previous_claim": "1_item_intellect_L12_in_T5",
+      "corrected": "L12_is_T1_Aspirante_NOT_T5",
+      "reason": "g5_mapping_ratifies_T1_covers_1_15"
+    },
+    "live_coverage_per_real_tier": {
+      "T1_Aspirante_1_15": {"total_items": 178, "intellect": 72, "warlock_intellect": 18, "percentage_of_live": 100},
+      "T2_Cacciatore_16_30": {"total_items": 0, "intellect": 0, "warlock_intellect": 0},
+      "T3_Iniziato_31_45": {"total_items": 0, "intellect": 0, "warlock_intellect": 0},
+      "T4_Rituale_46_55": {"total_items": 0, "intellect": 0, "warlock_intellect": 0},
+      "T5_Vuoto_56_60": {"total_items": 0, "intellect": 0, "warlock_intellect": 0}
+    },
+    "critical_finding": "live_catalog_completely_in_T1_zero_items_T2_T3_T4_T5",
+    "valid_live_T5_candidates": 0,
+    "conditional_T5_candidates": 0,
+    "missing_T5_armor": "full_set_7_slots_x_multi_rarity_plus_legendary",
+    "missing_T5_weapon": "focus_balestra_arcana_pugnale_rituale_plus_legendary_utility_unique",
+    "missing_T5_universal_slots": "back_ring_amulet_universal_t5",
+    "future_T5_item_estimate": 26
+  },
+  "missing_slot_assessment": {
+    "canonical_slots_14": ["head", "neck", "shoulders", "chest", "back", "hands", "wrist", "waist", "legs", "feet", "main_hand", "off_hand", "ring", "accessory"],
+    "live_status_per_slot": {
+      "head": {"live_count": 1, "status": "UNDERPOPULATED"},
+      "neck": {"live_count": 5, "status": "LOW"},
+      "shoulders": {"live_count": 0, "status": "MISSING"},
+      "chest": {"live_count": 45, "status": "AGGREGATED_NON_DISTINCT_via_slot_armor_catch_all"},
+      "back": {"live_count": 0, "status": "MISSING"},
+      "hands": {"live_count": 0, "status": "MISSING"},
+      "wrist": {"live_count": 0, "status": "MISSING"},
+      "waist": {"live_count": 0, "status": "MISSING"},
+      "legs": {"live_count": 0, "status": "MISSING"},
+      "feet": {"live_count": 0, "status": "MISSING"},
+      "main_hand": {"live_count": 7, "status": "LOW"},
+      "off_hand": {"live_count": 0, "status": "MISSING"},
+      "ring": {"live_count": 1, "status": "UNDERPOPULATED"},
+      "accessory": {"live_count": 42, "status": "ADEQUATE_CATCH_ALL"}
+    },
+    "missing_or_underpopulated_count": 9,
+    "missing_or_underpopulated_percentage": "64%"
+  },
+  "future_item_gap_estimate_revised": {
+    "priority_1_T5_endgame_minimum_viability": 26,
+    "priority_2_armor_core_stoffa_cuoio_T1_T4": 28,
+    "priority_3_weapon_core_focus_balestra_pugnale_T1_T4": 18,
+    "priority_4_missing_slots_head_back_ring_shoulders_hands_wrist_waist_legs_feet_off_hand": "50_to_70",
+    "priority_5_T1_T4_progression_complete": "40_to_50",
+    "priority_6_affix_and_identity_specific_vuoto": "15_to_25",
+    "total_future_items_estimated_design_only_range": "180_to_220",
+    "envelope_vuoto_specific_110_130": "confirmed_as_subset_of_total_future"
+  },
+  "implementation_dependency_matrix": {
+    "sequence": [
+      { "step": 1,  "name": "R18.3f",                         "status": "CLOSED" },
+      { "step": 2,  "name": "R18.3f-NC1 Null Conflict Remediation Planning", "status": "HOLD" },
+      { "step": 3,  "name": "R18.6.RV3-EV",                   "status": "CONDITIONAL_HOLD" },
+      { "step": 4,  "name": "R18.6.RV3-EV-F1 (this document)","status": "DRAFT_GENERATED_PENDING_PM" },
+      { "step": 5,  "name": "R18.6.RV3-EV-F2 PM_REVIEW record-by-record (tentative)", "status": "HOLD" },
+      { "step": 6,  "name": "R18.6.RV3-Additive-Metadata gate (tentative)",           "status": "HOLD" },
+      { "step": 7,  "name": "R18.6.RV3-Field-Deprecation gate (tentative)",           "status": "HOLD" },
+      { "step": 8,  "name": "R18.6.RV3 Registry v3 apply",    "status": "HOLD" },
+      { "step": 9,  "name": "R18.6.RV3-EV close",             "status": "HOLD" },
+      { "step": 10, "name": "R18.3f-NC1 close",               "status": "HOLD" },
+      { "step": 11, "name": "R18.6.RB1 Rite of Rebirth",      "status": "HOLD" },
+      { "step": 12, "name": "Gate 11",                        "status": "HOLD_14_P_residue" },
+      { "step": 13, "name": "Wave 1 kickoff",                 "status": "HOLD" }
+    ],
+    "no_auto_authorization": true
+  },
+  "read_only_enrichment_simulation_example": {
+    "example_item_id": "<uuid>",
+    "example_slug": "<slug>",
+    "metadata_view": {
+      "derived_tier": {
+        "source": "G5_mapping",
+        "confidence": "HIGH",
+        "derivation_rule": "required_adventurer_level_in_1_15_maps_T1_16_30_T2_31_45_T3_46_55_T4_56_60_T5",
+        "conflict_status": "none",
+        "apply_authorized": false
+      },
+      "derived_ilvl": {
+        "source": "formula_g5",
+        "confidence": "CONDITIONAL",
+        "derivation_rule": "min_max_required_level_plus_rarity_offset_tier_min_60",
+        "conflict_status": "rarity_offset_pm_ratify_required",
+        "apply_authorized": false
+      },
+      "armor_type_alias": {
+        "source": "existing_alias_armor_tags",
+        "confidence": "HIGH",
+        "derivation_rule": "read_armor_tags_list_directly",
+        "conflict_status": "none",
+        "apply_authorized": false
+      },
+      "weapon_family_alias": {
+        "source": "existing_alias_weapon_tags",
+        "confidence": "HIGH",
+        "derivation_rule": "read_weapon_tags_list_directly",
+        "conflict_status": "none",
+        "apply_authorized": false
+      },
+      "affix_pool_tag_status": {
+        "source": "field_present_null",
+        "confidence": "N_A",
+        "derivation_rule": "not_derivable_requires_vocabulary_lock_backfill",
+        "conflict_status": "empty_all_178_items",
+        "apply_authorized": false
+      }
+    },
+    "no_db_write": true,
+    "no_item_mutation": true,
+    "no_registry_write": true,
+    "no_csv_apply": true,
+    "no_generated_item_rows": true
+  },
+  "risk_register_f1": [
+    { "id": "F1-R1",  "severity": "HIGH",   "risk": "Assunzione 1322 item mancanti errata no id manifest", "mitigation": "separazione formale canonical planning vs live materialized LOCK non quantificabile per ID" },
+    { "id": "F1-R2",  "severity": "HIGH",   "risk": "Tier mapping erroneo L12 not T5 is T1 propagation errore RV3-EV", "mitigation": "correzione documentale g5 mapping ratificato" },
+    { "id": "F1-R3",  "severity": "HIGH",   "risk": "Live catalog completamente T1 zero items T2 T5 classe non giocabile", "mitigation": "requires ~180-220 items nuovi per full catalog design_only" },
+    { "id": "F1-R4",  "severity": "MEDIUM", "risk": "Tripla ridondanza level field required_adventurer_level level_required min_level", "mitigation": "normalization gate futuro dedicato" },
+    { "id": "F1-R5",  "severity": "MEDIUM", "risk": "Duplicazione slot slot_type SoT ambiguo", "mitigation": "deprecation slot gate futuro BC preserved" },
+    { "id": "F1-R6",  "severity": "MEDIUM", "risk": "affix_pool_tag None 178/178 feature non materializzata", "mitigation": "backfill dopo vocabulary lock design_only" },
+    { "id": "F1-R7",  "severity": "LOW",    "risk": "6 lore vuoto items 4 IDENTITY_CONFLICT 2 PM_REVIEW identity Vuoto ~zero live", "mitigation": "registry v3 additive item generation futuro" },
+    { "id": "F1-R8",  "severity": "MEDIUM", "risk": "class_tags vs recommended_classes potenzialmente inconsistente per item", "mitigation": "verifica per-item F2 futuro" },
+    { "id": "F1-R9",  "severity": "HIGH",   "risk": "Assumption alias esistenti armor_tags weapon_tags popolati con vocabolario G2 coerente", "mitigation": "verifica distinct values F1 followup" },
+    { "id": "F1-R10", "severity": "LOW",    "risk": "Registry v3 apply potrebbe introdurre duplicati slug se nome conflict", "mitigation": "slug uniqueness enforcement pre-apply" }
+  ],
+  "pm_open_questions_f1": [
+    { "id": "F1-Q1",  "question": "Alias armor_tags authoritative source per armor_type o rename graceful?", "recommendation": "alias-first_no_rename_design_only_mapping_documentato" },
+    { "id": "F1-Q2",  "question": "Alias weapon_tags authoritative source per weapon_family?", "recommendation": "alias-first_no_rename" },
+    { "id": "F1-Q3",  "question": "Deprecation slot vs slot_type timing?", "recommendation": "gate_futuro_dedicato_dopo_affix_pool_tag_lock" },
+    { "id": "F1-Q4",  "question": "Normalization triplo level field SoT?", "recommendation": "SoT=required_adventurer_level_deprecate_altri_in_gate_dedicato" },
+    { "id": "F1-Q5",  "question": "rarity_offset per ILVL formula valori PM ratified?", "recommendation": "Common=0_Uncommon=+1_Rare=+2_Epic=+3_Legendary=+5_proposta_g5_pm_ratify_richiesto" },
+    { "id": "F1-Q6",  "question": "Affix pool tag vocabulary quale set base T1-T5?", "recommendation": "vocabulary_lock_gate_dedicato_design_only_prima_backfill" },
+    { "id": "F1-Q7",  "question": "Live catalog T1-only 0 items T2-T5 confermare roadmap dev materializzazione progressive per tier?", "recommendation": "yes_materialization_progressive_T1_T5" },
+    { "id": "F1-Q8",  "question": "voidpiercer-bow PM_REVIEW warlock class_tag mancante ma nome/lore Vuoto aggiungere warlock a class_tags?", "recommendation": "keep_out_item_design_pre_vuoto_pilot_evitare_retro_branding" },
+    { "id": "F1-Q9",  "question": "arcane_adept_orb PM_REVIEW aggiungere warlock/cacciatore_del_vuoto a class_tags?", "recommendation": "valutare_in_F2_gate_dedicato_dopo_registry_v3_field_additive" },
+    { "id": "F1-Q10", "question": "can_be_sold_for_real_money=false audit per-item 178 items live tutti compliant?", "recommendation": "verificare_distinct_in_F1_followup_probabile_100_false_ma_da_confermare" }
+  ],
+  "go_hold_recommendation_rv3_ev": {
+    "rv3_ev_closure": "HOLD_attende_pm_review_ev_f1",
+    "ev_f1_draft_documentale": "DRAFT_GENERATED",
+    "ev_f1_pm_review": "PENDING",
+    "registry_v3_additive_metadata_gate": "HOLD_post_ev_f1",
+    "registry_v3_apply": "HOLD",
+    "field_addition_new_fields": "NOT_AUTHORIZED_alias_sufficienti",
+    "field_deprecation_slot_level": "HOLD_gate_dedicato_futuro",
+    "affix_pool_tag_backfill": "HOLD_vocabulary_lock_prerequisito",
+    "item_creation_registry_v3": "HOLD_NOT_AUTHORIZED",
+    "pm_review_49_items_record_by_record": "HOLD_F2_gate_dedicato_futuro",
+    "lore_vuoto_oblio_review_6_items": "COMPLETED_in_this_document",
+    "gate_11": "NOT_AUTHORIZED",
+    "wave_1_kickoff": "HOLD",
+    "recommendation_to_pm": "acquisire_ev_f1_come_corrective_additive_audit_rv3_ev · confermare_separazione_canonical_vs_live · confermare_tier_mapping_L12_T1_not_T5 · confermare_0_reuse_tra_6_lore_vuoto_items · autorizzare_gate_dedicato_futuro_additive_metadata_documentation_vocabulary_lock_affix_pool_tag_prerequisiti_registry_v3"
+  },
+  "explicit_stop": {
+    "action": "STOP · EV-F1 draft generato · attendo PM verdict finale su RV3-EV (CLOSE integrativo/REWORK/HOLD)",
+    "no_field_addition": true,
+    "no_backfill": true,
+    "no_item_creation": true,
+    "no_registry_apply": true,
+    "no_class_slug_writes": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true
+  }
+}
