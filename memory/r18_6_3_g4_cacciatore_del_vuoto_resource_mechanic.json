@@ -1,0 +1,731 @@
+{
+  "metadata": {
+    "gate": "R18.6.3-G4",
+    "scope": "RESOURCE_MECHANIC",
+    "class_pilot": "Cacciatore del Vuoto",
+    "class_slug": "cacciatore_del_vuoto",
+    "canonical_source": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "generated_at": "2026-07-08T19:15:00Z",
+    "status": "DRAFT_PENDING_PM_REVIEW",
+    "governance": "DOCUMENTAL ONLY · no code · no DB · no migrations · no Registry v3 · no drop tables · no loot",
+    "seals_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3"
+    ],
+    "successor_gate": "R18.6.3-G5 EQUIP_DESIGN (HOLD · attende G4 CLOSED)",
+    "canonical_class_validation": "PASS",
+    "non_canonical_class_references": 0,
+    "terminology_note": "resource generation rate · Frammenti NON sono loot · nessun uso di termini loot-related (anti-drift guard)"
+  },
+  "resource_identity": {
+    "name": "Frammenti di Onirade",
+    "class_owner": "cacciatore_del_vuoto",
+    "class_exclusive": true,
+    "type": "class_resource",
+    "loot_status": false,
+    "inventory_persistence": false,
+    "tradeable": false,
+    "sellable_for_gold": false,
+    "sellable_for_real_money": false,
+    "material_status": false,
+    "currency_status": false,
+    "scope": "encounter-local",
+    "lore_semantics": "frammenti di sostanza onirica arcana estratti da target marchiati durante il Drain · non fisici · non persistono oltre l'encounter · rappresentano il progresso rituale del Cacciatore contro l'anomalia",
+    "clarification": "Frammenti NON sono materiali · NON entrano nell'inventario · NON droppano · NON si vendono · NON persistono come valuta"
+  },
+  "resource_cap_proposal": {
+    "proposed_cap": 5,
+    "review_outcome": "VALIDATED",
+    "rationale": "Cap 5 valida ritmo encounter: (a) genera ≥1 scelta reale tra Payoff intermedio 3F e Payoff max 5F · (b) evita accumulo eccessivo che porti a stall (fill trivial) · (c) evita cap troppo basso che collassi tutte le scelte su un solo Payoff · (d) coerente con G3 hard cap V-Q4 LOCK",
+    "alternatives_considered": {
+      "cap_3": "REJECTED · collassa Payoff intermedio e max sullo stesso valore · no meaningful choice",
+      "cap_4": "REJECTED · gap 3F→4F troppo stretto · Payoff max si sente sempre come 'quasi 3F rifatto'",
+      "cap_6": "REJECTED · aumenta stall (grinding Drain lungo) · dilata payoff frequency oltre soglie encounter tipiche",
+      "cap_7_plus": "REJECTED · genera burst potential eccessivo · anti-power-creep violato · encounter cheese risk"
+    },
+    "cap_independent_from_int": true,
+    "cap_independent_from_int_rationale": "Int influenza probability/reliability/duration/dispel/nullification MA NON cap · anti-power-creep · linear-flattening oltre Int 100 preservato · scaling risorsa scala su generation, non su containment"
+  },
+  "generation_rules": {
+    "trigger_primary": "colpo su target Marchiato",
+    "base_generation_per_marked_hit": {
+      "value": 1,
+      "unit": "Frammento",
+      "condition": "target ha Marchio del Vuoto attivo al momento dell'impatto · colpo diretto (no missing)"
+    },
+    "generation_from_unmarked_target": {
+      "value": 0,
+      "rationale": "Drain funziona SOLO su target marchiato · anti-generation-cheese"
+    },
+    "int_probability_modifier": {
+      "int_lt_30": {
+        "proc_chance": "0.0",
+        "note": "base 1F flat · no bonus proc"
+      },
+      "int_30_49": {
+        "proc_chance": "0.10",
+        "bonus_on_proc": 1,
+        "note": "10% chance +1F bonus (totale 2F sul colpo)"
+      },
+      "int_50_69": {
+        "proc_chance": "0.20",
+        "bonus_on_proc": 1,
+        "note": "20% chance +1F bonus"
+      },
+      "int_70_89": {
+        "proc_chance": "0.30",
+        "bonus_on_proc": 1,
+        "note": "30% chance +1F bonus"
+      },
+      "int_90_99": {
+        "proc_chance": "0.40",
+        "bonus_on_proc": 1,
+        "note": "40% chance +1F bonus"
+      },
+      "int_100_plus": {
+        "proc_chance": "0.45",
+        "bonus_on_proc": 1,
+        "note": "soft cap linear-flattening · 40→45% da Int 100 a Int 200 · diminishing returns"
+      }
+    },
+    "max_gen_per_hit": 2,
+    "min_time_between_hits_concept": "1 turn concept · gate 5 finalizzerà se ci sono internal weapon cooldown",
+    "silence_bonus_gen": {
+      "value": 0,
+      "note": "Il silenziamento summon è utility del Marchio · NON aggiunge generation extra · anti-double-dipping"
+    },
+    "critical_hit_generation": {
+      "value": 0,
+      "note": "Crit fisico/arcano NON genera Frammenti extra · Frammenti = risorsa da rituale, non da danno · Gate 5 finalizza crit damage separately"
+    }
+  },
+  "consumption_rules": {
+    "payoff_intermediate_3f_cost": 3,
+    "payoff_max_5f_cost": 5,
+    "consumption_indivisible": true,
+    "consumption_atomic": true,
+    "partial_consumption_allowed": false,
+    "partial_consumption_rationale": "Il Payoff è un rituale definitivo · consumo atomico · anti-cheese frazionale · genera scelta netta 3F vs 5F",
+    "consumption_out_of_encounter": {
+      "value": false,
+      "rationale": "Frammenti scope encounter-local · fine encounter = reset · consumo solo IN encounter"
+    }
+  },
+  "reset_conditions": {
+    "end_of_encounter": true,
+    "end_of_dungeon_room": true,
+    "end_of_raid_phase": true,
+    "player_death": true,
+    "party_wipe": true,
+    "logout_disconnect": true,
+    "cross_encounter_persistence": false,
+    "reset_technical_hook": "meccanica reset delegata al layer runtime · G4 definisce SOLO scope logico · implementation gate futuro",
+    "manual_reset_by_player": false,
+    "manual_reset_by_admin": true
+  },
+  "weapon_generation_matrix": {
+    "focus": {
+      "role": "primary_main_hand",
+      "base_gen_per_marked_hit": 1,
+      "proc_bonus_int_scale": "as generation_rules.int_probability_modifier",
+      "channel_bonus": {
+        "condition": "canalizzazione completa (turno intero focus channel)",
+        "bonus_gen": 1,
+        "note": "focus può canalizzare un turno intero → +1F extra oltre base · massimo 2 canalizzazioni consecutive per encounter (anti-spam · anti-turtle)"
+      },
+      "generation_efficiency": "highest",
+      "expected_gen_per_turn_int_60": "1.0-1.4 (base + proc 20-30%)"
+    },
+    "balestra": {
+      "role": "ranged_arcana_2h",
+      "base_gen_per_marked_hit": 1,
+      "proc_bonus_int_scale": "as generation_rules.int_probability_modifier · con -0.05 penalty proc (balestra meno rituale del focus)",
+      "channel_bonus": {
+        "value": 0,
+        "note": "balestra NON canalizza · anti-double-dipping vs focus"
+      },
+      "ranged_bonus": {
+        "condition": "target inaccessibile in melee (rooted · distant)",
+        "bonus_gen": 0,
+        "note": "no bonus generation ranged · balestra offre utility posizionale, non gen extra"
+      },
+      "two_handed_penalty": {
+        "value": 0,
+        "note": "blocca off_hand · penalty è opportunity cost (no pugnale off_hand · no Payoff ravvicinato) · NON penalty numerica alla generation"
+      },
+      "generation_efficiency": "high",
+      "expected_gen_per_turn_int_60": "0.9-1.3 (base + proc 15-25%)"
+    },
+    "pugnale": {
+      "role": "ritual_opportunistic_off_hand",
+      "base_gen_per_marked_hit": 1,
+      "proc_bonus_int_scale": "as generation_rules.int_probability_modifier",
+      "channel_bonus": {
+        "value": 0,
+        "note": "pugnale NON canalizza · off_hand rituale"
+      },
+      "ritual_close_bonus": {
+        "condition": "colpo che porta il target a Marchio expiry finestra chiusa (last hit finestra)",
+        "bonus_gen": 1,
+        "note": "chiusura rituale · +1F extra su ultimo hit prima di Marchio expiry · una tantum per Marchio"
+      },
+      "generation_efficiency": "medium-high (situational)",
+      "expected_gen_per_turn_int_60": "0.8-1.2 (base + proc 20-30% + ritual close situational)"
+    },
+    "loadout_focus_pugnale_default": {
+      "expected_gen_per_turn_int_60": "1.5-2.2 combined (focus main + pugnale off_hand ritual close)",
+      "note": "loadout PD-Q1 LOCK default · massimizza gen media/turno"
+    },
+    "loadout_balestra_2h": {
+      "expected_gen_per_turn_int_60": "0.9-1.3 (balestra alone · pugnale bloccato)",
+      "note": "opportunity cost accettato per ranged utility · trade-off design gate 5 finalizzerà weapon coeff"
+    }
+  },
+  "target_interactions": {
+    "target_marchiato": {
+      "generation": "base + proc int + channel/ritual bonuses",
+      "note": "unica condizione per Drain to generate Frammenti"
+    },
+    "summon": {
+      "marking_allowed": true,
+      "silence_on_mark": true,
+      "silence_duration_turns": 3,
+      "silence_note": "silenziamento anti-cast dei summon (impedisce ability, non movement) · 3 turni concettuali · gate futuro finalizza in secondi runtime",
+      "generation_on_marked_summon_hit": "1F base · come standard",
+      "payoff_5f_effect": "annullamento definitivo del summon (unsummon · target rimosso dal campo)",
+      "boss_summon_priority_flag": true
+    },
+    "incorporei": {
+      "marking_allowed": true,
+      "dispel_over_time_on_mark": true,
+      "dispel_ticks_concept": "3 tick su durata Marchio · gate futuro finalizza tick rate",
+      "generation_on_marked_incorporeo_hit": "1F base · come standard · +0.05 proc modifier (incorporei sono target rituale primario)",
+      "payoff_3f_effect": "dispel area (rimuove effetti arcani sospesi in AoE 3m concept · gate 5 finalizzerà raggio)",
+      "payoff_5f_effect": "banish target incorporeo (rimosso dal campo)"
+    },
+    "boss": {
+      "marking_allowed": true,
+      "boss_marchio_stack_cap": 1,
+      "boss_dispel_immunity_partial": {
+        "value": true,
+        "note": "boss ha immunità parziale a dispel · Marchio applica tick DoT ridotto (50% concept · gate futuro finalizza) · silenziamento boss = solo se ability non-lethal · NEVER silenzia boss enrage/hard-cast"
+      },
+      "boss_generation": "1F base · NO proc bonus su boss (boss safeguard anti-farm) · Int bonus limitato a +5% chance max",
+      "payoff_5f_on_boss": {
+        "effect": "annullamento SOLO su summon boss-invocati (add-summons) · MAI su boss stesso · Payoff su boss = dispel del proprio buff arcano attivo, non annullamento boss",
+        "boss_immune_to_annullment": true
+      }
+    },
+    "no_special_targets": {
+      "loop_state": "degraded_functional",
+      "marking_allowed_on_normal_targets": true,
+      "generation_on_marked_normal_hit": "1F base · NO channel bonus · NO ritual close bonus (target normali non triggerano rituale completo)",
+      "payoff_utility_mode": "3F Payoff diventa utility (dispel debuff alleati · rimuove hex arcani su party) · 5F Payoff diventa self-heal arcano concept (design gate 5) · no empty combat",
+      "note": "anti-stall design LOCK · loop non blocca mai · resource sostenibile ma ridotta ~50%"
+    }
+  },
+  "payoff_frequency_expected": {
+    "encounter_short_5_10_turn": {
+      "expected_payoffs": 1,
+      "typical_choice": "1x Payoff 3F o skip",
+      "note": "encounter breve → single meaningful choice"
+    },
+    "encounter_medium_15_25_turn": {
+      "expected_payoffs": "1-2",
+      "typical_choice": "1x 5F max OR 2x 3F intermedio",
+      "note": "trade-off vero: burst decisivo vs sostained utility"
+    },
+    "encounter_long_boss_30_50_turn": {
+      "expected_payoffs": "2-3",
+      "typical_choice": "mix 3F/5F basato su fasi boss",
+      "note": "boss phase awareness · Payoff timing decisivo skill ceiling"
+    },
+    "raid_multi_encounter": {
+      "expected_payoffs_per_encounter": "1-2",
+      "reset_between_encounter": true,
+      "note": "NO accumulazione cross-encounter · ogni encounter è resource-independent"
+    },
+    "threshold_analysis_3f_vs_5f": {
+      "3f_dispel_area": "utility · rimuove effetti arcani in AoE · situazionale (encounter con debuff arcani sui party) · ROI alto se ≥2 alleati affetti",
+      "5f_annullamento_boss_summon": "burst decisivo · rimuove permanentemente add-summon boss · ROI massimo se add-summon = threat critico (heal boss · burst raid)",
+      "opportunity_cost": "5F preclude 3F+3F sequential (2x 3F costerebbe 6F ma cap è 5F · quindi 5F = 1x uso vs potenziali 2x 3F distribuiti su encounter medio)",
+      "decision_matrix": "player esperto valuta: (a) presenza debuff arcani su ≥2 alleati → 3F · (b) presenza boss-summon add threat critico → 5F · (c) encounter breve senza summon → skip · (d) encounter lungo con mix → mix 3F/5F"
+    }
+  },
+  "payoff_intermediate_3f": {
+    "cost": 3,
+    "primary_effect": "dispel area · rimuove effetti arcani sospesi in AoE (raggio concept 3m · gate 5 finalizza)",
+    "secondary_effect_no_special_targets": "dispel debuff arcani su alleati party (fallback utility mode)",
+    "cast_time_concept": "1 turno · non instant · window skill",
+    "cooldown_between_payoff_3f": "0 turni · può essere ricastato appena Frammenti risalgono a 3",
+    "int_reliability_scale": {
+      "int_lt_50": "efficacia dispel 80% (rimuove effetti fino a rank arcano medio)",
+      "int_50_79": "efficacia dispel 90% (rimuove effetti fino a rank arcano alto)",
+      "int_80_99": "efficacia dispel 95%",
+      "int_100_plus": "efficacia dispel 98% (soft cap linear-flattening)"
+    },
+    "boss_arcane_effect_immunity": {
+      "value": true,
+      "note": "effetti arcani boss-cast di rank leggendario sono immuni a 3F dispel · richiedono 5F o mechanic dedicata"
+    }
+  },
+  "payoff_max_5f": {
+    "cost": 5,
+    "primary_effect": "annullamento boss summon · rimuove permanentemente add-summon evocato da boss (banish · unsummon)",
+    "secondary_effect_incorporei": "banish target incorporeo (single target · rimosso dal campo)",
+    "tertiary_effect_no_special_targets": "self-heal arcano concept (fallback · gate 5 finalizza numeric)",
+    "cast_time_concept": "1 turno · non instant · window skill critical",
+    "cooldown_between_payoff_5f": "0 turni logici · ma richiede fill completo cap 5 → naturally rate-limited",
+    "int_nullification_chance_scale": {
+      "int_lt_50": "annullamento reliability 80% (fallito = summon resta ma silenziato 5 turni)",
+      "int_50_79": "annullamento reliability 90%",
+      "int_80_99": "annullamento reliability 95%",
+      "int_100_plus": "annullamento reliability 98% (soft cap linear-flattening)"
+    },
+    "boss_immune_to_5f_direct": true,
+    "boss_5f_effect": "5F cast su boss = self-buff arcano (dispel proprio debuff arcano attivo o barriera arcana temp) · MAI annullamento boss stesso",
+    "boss_summon_priority_flag": "5F opera SOLO su add-summon boss · MAI su boss target primario"
+  },
+  "immediate_vs_stockpile_decision": {
+    "immediate_3f_use_case": "encounter con debuff arcani party · alleati in threat · utility immediata · risparmio Frammenti per prossimo threshold non conveniente",
+    "stockpile_toward_5f_use_case": "boss encounter con add-summon phase noto · risparmio 5F per fase critica · burst decisivo",
+    "skip_payoff_use_case": "encounter breve senza summon/incorporei · Frammenti reset a fine encounter senza spesa · skill window: skip = risparmio ma spreco",
+    "cheese_prevention": "cap 5 hard · NO overcap accumulation · NO cross-encounter · anti-hoarding · skip = perdita netta"
+  },
+  "overcap_handling": {
+    "hard_cap": 5,
+    "overcap_generation": "IGNORED · nessun Frammento eccedente generato oltre cap · display UI mostra `5/5` fisso",
+    "overcap_display_feedback": "UI segnala `Frammenti al cap · spendi per generare` · tooltip italiano avvisa player",
+    "overcap_wasted_generation_counter": {
+      "tracked": false,
+      "note": "no wasted counter shown to player · anti-anxiety design · player esperto capisce implicitamente"
+    },
+    "anti_frustration": "overcap = signal chiaro di 'usa Payoff' · no punizione hidden · design player-friendly"
+  },
+  "failure_state": {
+    "marchio_expiry_wasted": {
+      "description": "Marchio scade prima di generare Frammenti sufficienti (Drain window mancata)",
+      "consequence": "Frammenti generati fino a expiry preservati · nessun bonus perso",
+      "recovery_hint": "reapply Marchio · attenzione a Marchio uptime"
+    },
+    "marchio_overwritten_early": {
+      "description": "reapply Marchio sopra Marchio esistente stesso target prima di scadenza (spreco casting time)",
+      "consequence": "durata reset · NO overlap stacking (anti-cheese)",
+      "recovery_hint": "attendere near-expiry per refresh · skill window"
+    },
+    "target_death_before_payoff": {
+      "description": "target Marchiato muore prima di spesa Frammenti",
+      "consequence": "Frammenti restano nel pool encounter · applicabili a nuovo target Marchiato",
+      "recovery_hint": "shift focus a next priority target"
+    },
+    "payoff_missed_encounter": {
+      "description": "encounter finisce con Frammenti >0 non spesi",
+      "consequence": "reset totale · Frammenti persi · skip Payoff = spreco",
+      "recovery_hint": "next encounter · pianificare Payoff timing meglio"
+    },
+    "cast_interrupt_on_payoff": {
+      "description": "Payoff cast (1 turno) interrotto da CC nemico",
+      "consequence": "Frammenti NON spesi · pool preservato · nessuna perdita",
+      "recovery_hint": "attendere CC clear · retry Payoff"
+    }
+  },
+  "recovery_state": {
+    "after_marchio_expiry": "reapply Marchio (1 turno focus cast) · Drain resume · Frammenti pool preservato",
+    "after_wipe_or_death": "reset completo · nessuna recovery in-encounter · next encounter start-fresh",
+    "after_payoff_wasted": "no recovery · encounter reset porta pool 0 · lesson learned per next encounter",
+    "after_cast_interrupt": "Frammenti preservati · retry Payoff appena CC clear · no cooldown extra"
+  },
+  "anti_stall": {
+    "no_special_targets_loop": "degraded functional (weapon_generation_matrix ridotto · Payoff utility mode)",
+    "min_gen_per_encounter_medium": "≥3F (soglia Payoff 3F sempre raggiungibile in encounter medio 15+ turn)",
+    "boss_marchio_immunity_edge": "boss NON marchiabile scenario impossibile per design · tutti boss hanno Marchio hitbox valido",
+    "empty_combat_prevention": "no encounter dove Vuoto è inutile · loop always funzionale"
+  },
+  "anti_spam": {
+    "marchio_max_active": 3,
+    "marchio_max_soft_int_50": 4,
+    "marchio_max_soft_int_90": 5,
+    "marchio_overlap_stacking": false,
+    "channel_bonus_max_per_encounter": 2,
+    "ritual_close_bonus_per_marchio": 1,
+    "proc_bonus_hard_ceiling": "45% da Int 100+ (linear-flattening)",
+    "no_burst_gen_chains": "focus channel + ritual close consecutivi disallowed su stesso target (anti-cheese loop)"
+  },
+  "anti_burst": {
+    "cap_5_hard": true,
+    "cap_independent_from_int": true,
+    "payoff_5f_boss_immune": true,
+    "payoff_5f_cast_time_1_turn": true,
+    "no_instant_cast": true,
+    "no_stockpile_cross_encounter": true,
+    "no_burst_chain_5f_3f_immediate": "impossibile · 5F consuma tutto cap · 3F richiede rifill",
+    "boss_add_summon_priority_flag": "5F Payoff prioritizza add-summon over generic targets · anti-cheese boss-cheese"
+  },
+  "intelligenza_interaction": {
+    "axis_1_probability_generation": {
+      "description": "Int aumenta proc chance +1F bonus su Drain hit",
+      "scale": "0% (Int<30) → 10% (30-49) → 20% (50-69) → 30% (70-89) → 40% (90-99) → 45% cap (100+)",
+      "linear_flattening": "sì · Int 100 = knee point"
+    },
+    "axis_2_payoff_reliability": {
+      "description": "Int aumenta reliability effetto Payoff (dispel efficacy · annullamento chance)",
+      "scale_3f": "80% (Int<50) → 90% (50-79) → 95% (80-99) → 98% cap (100+)",
+      "scale_5f": "80% (Int<50) → 90% (50-79) → 95% (80-99) → 98% cap (100+)",
+      "linear_flattening": "sì"
+    },
+    "axis_3_marchio_duration": {
+      "description": "Int aumenta durata base Marchio",
+      "scale_turns_concept": {
+        "int_lt_30": 3,
+        "int_30_49": 4,
+        "int_50_69": 5,
+        "int_70_89": 6,
+        "int_90_99": 7,
+        "int_100_plus": 8
+      },
+      "linear_flattening": "sì · Int 100+ soft cap · +0.5 turn ogni 50 Int oltre 100",
+      "hard_cap_turns": 10,
+      "unit_note": "turni concettuali · gate 5 finalizzerà in secondi runtime"
+    },
+    "axis_4_dispel_efficacy": {
+      "description": "Int aumenta rank arcano rimosso da dispel (Payoff 3F)",
+      "rank_scale": {
+        "int_lt_50": "rank comune-non_comune",
+        "int_50_79": "fino a rank raro",
+        "int_80_99": "fino a rank epico",
+        "int_100_plus": "fino a rank leggendario (soft cap linear-flattening applica)"
+      }
+    },
+    "axis_5_summon_nullification_chance": {
+      "description": "Int aumenta chance annullamento definitivo summon (Payoff 5F)",
+      "scale": "80% (Int<50) → 90% (50-79) → 95% (80-99) → 98% cap (100+)",
+      "boss_summon_extra_resistance": "-10% chance su boss add-summon (add-summon boss ha resist arcana intrinseca) · Int 100+ = 88% effective su boss add-summon",
+      "linear_flattening": "sì"
+    },
+    "consolidated_note": "5 assi Int scaling tutti linear-flattening oltre Int 100 · anti-power-creep coerente G1 SD-Q1 LOCK",
+    "cap_frammenti_independence": "Int NON aumenta resource_cap · cap 5 hard indipendente"
+  },
+  "soft_cap_int_100_linear_flattening": {
+    "knee_point": 100,
+    "scaling_type": "linear_flattening",
+    "post_knee_slope_ratio": "≈0.15-0.25x pre-knee slope (variable per axis)",
+    "reference_lock": "G1 SD-Q1 · R18.6.3-G1 CLOSED",
+    "diminishing_returns_confirmed": true,
+    "anti_scaling_infinite": true,
+    "legendary_ilvl_semantic": "Legendary ILVL = 60 · NON +60 Intelligenza · Legendary offre utility_unique senza overrides scaling (G1 semantic correction)"
+  },
+  "resource_cap_independent_from_int_baseline": {
+    "baseline_locked": true,
+    "rationale": "Int scala su probability/payoff/durata/dispel/annullamento MA cap resta 5 fisso · anti-power-creep · resource containment invariante · design G4 LOCK salvo revoca PM esplicita"
+  },
+  "ui_resource_display": {
+    "widget_type": "counter_barrino_visivo",
+    "position": "sotto barra HP · sopra weapon quickbar (concept)",
+    "state_representation": {
+      "empty": "0/5 · barra vuota grigio scuro",
+      "partial": "1-4/5 · barra riempita proporzionalmente · tint viola-arcano",
+      "at_3f": "3/5 · glow sottile sul segmento 3 · segnala Payoff intermedio pronto",
+      "at_5f": "5/5 · full barra brillante · pulse leggero · segnala Payoff max pronto e cap raggiunto",
+      "overcap": "5/5 fisso con indicator 'cap' · nessuna barra oltre",
+      "cooldown_cast": "barra dimmed during Payoff cast (1 turn window)"
+    },
+    "no_number_animation_spam": "conteggio incrementale · niente flying number sopra HP (anti-clutter)",
+    "colorblind_safe": "tint viola-arcano abbinato a shape indicator segmentato · non solo colore"
+  },
+  "italian_tooltips": {
+    "resource_name_display": "Frammenti di Onirade",
+    "counter_tooltip": "Frammenti di Onirade: {n}/5 · usa i Frammenti per attivare rituali del Vuoto",
+    "at_3f_tooltip": "Payoff pronto: dispel area (spesa 3 Frammenti)",
+    "at_5f_tooltip": "Payoff massimo pronto: annullamento evocazione (spesa 5 Frammenti)",
+    "at_cap_tooltip": "Frammenti al massimo · spendi un Payoff per continuare a generare",
+    "generation_confirm": "Frammento di Onirade catturato",
+    "payoff_3f_confirm": "Dispel area attivato · effetti arcani rimossi",
+    "payoff_5f_boss_summon": "Evocazione annullata · bersaglio bandito dal campo",
+    "payoff_5f_incorporeo": "Bersaglio incorporeo bandito",
+    "payoff_5f_no_special": "Barriera arcana attivata · autoprotezione temporanea",
+    "cast_interrupt": "Rituale interrotto · Frammenti conservati",
+    "no_target_marked": "Nessun bersaglio marchiabile · applica prima un Marchio del Vuoto",
+    "marchio_expired": "Marchio del Vuoto svanito · nuovo Marchio richiesto per il Drain",
+    "no_technical_codes": true,
+    "language_lock": "italiano puro · zero token [Gx#y] · zero slug visibili al player"
+  },
+  "feedback_concept": {
+    "visual_generation": "flash breve viola-arcano sul segmento riempito · particella accennata sopra target Marchiato",
+    "visual_payoff_3f": "onda arcana AoE viola tenue · impatto suave · no screen shake",
+    "visual_payoff_5f": "flash arcano intenso su target + swirl banish 0.5s concept · screen tint 0.2s",
+    "audio_generation": "click arcano sottile · non intrusivo · 40ms",
+    "audio_payoff_3f": "chord dispel breve · dolce",
+    "audio_payoff_5f": "sussurro arcano + banish sfx · più drammatico",
+    "audio_cap_reached": "chime discreto una tantum quando cap 5 raggiunto",
+    "haptic_note": "N/A web-first (mobile futuro potrebbe usare vibrazione leggera al Payoff 5F)",
+    "accessibility_option": "toggle reduce_motion · toggle reduce_audio",
+    "no_epilepsy_triggers": true
+  },
+  "party_raid_compat": {
+    "solo": {
+      "resource_functional": true,
+      "note": "loop 4-step funzionale solo · Payoff 3F self-utility scenarios · Payoff 5F anti-summon self"
+    },
+    "party_3p_dungeon": {
+      "resource_functional": true,
+      "synergy_paladino_heal": "Paladino cura · Vuoto libera slot dispel su party via 3F Payoff",
+      "synergy_guerriero_tank": "Guerriero tank · Vuoto genera Frammenti in mid-range senza rubare threat (posizionamento ranged)",
+      "synergy_cacciatore_di_mostri": "Cacciatore di Mostri anti-fisico · Vuoto anti-arcano · target diversi · zero contesa risorse"
+    },
+    "raid_5p": {
+      "resource_functional": true,
+      "role": "DPS anti-summon · Payoff 5F prioritario su add-summon boss critical phase",
+      "synergy_mago": "Mago burst target primario · Vuoto elimina add-summon → burst Mago non interrotto",
+      "phase_awareness": "player deve conoscere boss add-summon timing · Payoff 5F stockpile in preparation phase",
+      "no_resource_contention": "Frammenti class-exclusive · nessuna contesa con altre classi resources"
+    }
+  },
+  "boss_safeguards": {
+    "boss_marchio_stack_cap": 1,
+    "boss_dispel_immunity_partial": true,
+    "boss_dispel_immunity_note": "Marchio DoT ridotto 50% su boss · silenziamento boss solo su ability non-lethal · MAI su enrage/hard-cast",
+    "boss_5f_annullamento_immunity": true,
+    "boss_5f_annullamento_note": "boss MAI annullabile · 5F su boss = self-buff arcano (fallback)",
+    "boss_generation_proc_bonus": "0% · NO Int proc bonus su boss (anti-farm)",
+    "boss_int_bonus_cap": "+5% chance max Int scaling su boss (dispel · silence · durata) · anti-power-creep",
+    "boss_add_summon_priority_flag": "5F Payoff opera SOLO su add-summon boss-invocati · MAI su boss target",
+    "boss_arcane_effect_immunity_legendary": "effetti arcani boss-cast rank leggendario immuni a 3F dispel · richiedono 5F o mechanic dedicata",
+    "no_boss_softlock": "meccanica Vuoto NON può softlockare un boss (annullamento non applica al boss stesso)",
+    "no_boss_perma_stun": "silenziamento boss cap 1 turno · no chain-silence",
+    "no_boss_infinite_dispel": "3F cooldown implicito via generation rate · no dispel-spam"
+  },
+  "risk_register": [
+    {
+      "id": "RM-R1",
+      "risk": "Cap 5 percepito come 'troppo lento' da player casual · encounter breve senza Payoff",
+      "severity": "MEDIUM",
+      "mitigation": "tutorial spiega skip Payoff = accettabile · encounter breve non richiede Payoff · gate 5 valuterà encounter design tuning",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R2",
+      "risk": "Int proc bonus 45% cap percepito come 'stat check' hard barrier",
+      "severity": "LOW",
+      "mitigation": "linear-flattening comunicato via tooltip · knee point Int 100 = design chiaro · no hidden scaling",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R3",
+      "risk": "5F Payoff su boss = disappointment (boss immune ad annullamento)",
+      "severity": "MEDIUM",
+      "mitigation": "tooltip esplicito boss-immunity · 5F self-buff fallback documentato · UI segnala boss target non-annullabile",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R4",
+      "risk": "Marchio expiry frequente = spreco casting time · frustration",
+      "severity": "MEDIUM",
+      "mitigation": "Int scaling aumenta durata Marchio · tutorial spiega refresh window · UI mostra Marchio timer",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R5",
+      "risk": "Overcap wasted generation percepito come punizione hidden",
+      "severity": "LOW",
+      "mitigation": "UI segnala 'cap raggiunto' · no counter wasted · design player-friendly",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R6",
+      "risk": "Encounter no-summon/no-incorporei = loop degradato disorienta player",
+      "severity": "MEDIUM",
+      "mitigation": "fallback utility mode chiaro · tooltip spiega 3F dispel debuff alleati · 5F self-heal · loop sempre funzionale",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R7",
+      "risk": "Boss add-summon priority flag può essere confusa in encounter con multi-summon-source",
+      "severity": "MEDIUM",
+      "mitigation": "UI evidenzia target eligible per 5F · gate 5 finalizza priority visual cue · playtest richiesto",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "RM-R8",
+      "risk": "Balestra 2H opportunity cost mal percepito · player pensa balestra sia weak",
+      "severity": "LOW",
+      "mitigation": "trade-off documentato in G3 · balestra offre ranged utility · gate 5 finalizza weapon coefficients bilanciando trade-off",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R9",
+      "risk": "Focus channel bonus 2/encounter cap percepito come artificial gate",
+      "severity": "LOW",
+      "mitigation": "cap è anti-spam design · tooltip spiega '2 canalizzazioni per encounter' esplicitamente",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R10",
+      "risk": "Reset encounter-local senza persistenza porta a hoarding-then-reset frustration",
+      "severity": "LOW",
+      "mitigation": "reset design è LOCK G4 · skip Payoff = spreco è messaggio design consapevole (no accumulation-farming)",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R11",
+      "risk": "Progressive Discovery Legendary P1-P4 (HOLD) potrebbe introdurre affix che rompono cap 5",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "cap indipendente da Int = anchor LOCK · Legendary utility_unique senza overrides (G1) · guard rule attiva",
+      "status": "TRACKED PG1"
+    },
+    {
+      "id": "RM-R12",
+      "risk": "Bridge legacy warlock → cacciatore_del_vuoto potrebbe importare resource mechanic warlock",
+      "severity": "LOW",
+      "mitigation": "auto_derive_from_warlock=false · Frammenti di Onirade NEW resource · bridge legacy R18.3f handling separato",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R13",
+      "risk": "Silenziamento summon 3 turni percepito come broken vs summon builders di altre classi",
+      "severity": "MEDIUM",
+      "mitigation": "silenziamento anti-cast solo · movement libero · gate 5 finalizzerà PvP-vs-PvE differentiation se necessaria",
+      "status": "TRACKED PG2"
+    },
+    {
+      "id": "RM-R14",
+      "risk": "Payoff cast 1 turno interrompibile → frustration su CC-heavy encounter",
+      "severity": "MEDIUM",
+      "mitigation": "Frammenti preservati su interrupt · nessuna perdita · tooltip spiega comportamento",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "RM-R15",
+      "risk": "Cross-class balance vs Mago burst / Cacciatore di Mostri sustained DPS",
+      "severity": "MEDIUM",
+      "mitigation": "gate 5 EQUIP_DESIGN finalizza weapon coefficients · playtest cross-class TBD · Vuoto non compete su AoE puro (design accepted)",
+      "status": "TRACKED PG3"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "RM-Q1",
+      "question": "Conferma cap 5 hard indipendente da Int come LOCK definitivo G4?",
+      "options": [
+        "a) YES cap 5 LOCK",
+        "b) revisita cap in playtest post-Gate 5",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q2",
+      "question": "Focus channel bonus (+1F su turno canalizzato · max 2/encounter): conferma o aggiusta cap 2?",
+      "options": [
+        "a) LOCK cap 2/encounter",
+        "b) alza a 3/encounter",
+        "c) rimuovi channel bonus"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q3",
+      "question": "Pugnale ritual close bonus (+1F su ultimo hit prima Marchio expiry, una tantum per Marchio): conferma?",
+      "options": [
+        "a) LOCK",
+        "b) rimuovi (troppo skill-check)",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q4",
+      "question": "Boss add-summon priority flag su Payoff 5F: conferma comportamento?",
+      "options": [
+        "a) LOCK · 5F opera solo su add-summon boss-invocati",
+        "b) permetti 5F self-buff anche in presenza di add-summon (player choice)",
+        "c) altro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q5",
+      "question": "Marchio durata scaling Int (3→8 turni con hard cap 10): conferma scala o rivedi?",
+      "options": [
+        "a) LOCK scala 3-8 hard cap 10",
+        "b) comprimi (4-6 hard cap 7)",
+        "c) espandi (3-10 hard cap 12)"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q6",
+      "question": "Reset condition player_death vs cross-phase-persistence boss encounter: single boss multi-phase → reset per phase o preserva pool?",
+      "options": [
+        "a) reset per phase (LOCK · design semplice)",
+        "b) preserva pool cross-phase (skill ceiling più alto)",
+        "c) design phase-per-phase gate futuro"
+      ],
+      "recommendation": "a"
+    },
+    {
+      "id": "RM-Q7",
+      "question": "Silenziamento summon 3 turni: conferma o adatta per PvP futuro?",
+      "options": [
+        "a) LOCK 3 turni PvE-only per ora",
+        "b) diversifica PvP (1 turno) vs PvE (3 turni) da subito",
+        "c) HOLD questione PvP fino a gate PvP dedicato"
+      ],
+      "recommendation": "c"
+    }
+  ],
+  "go_hold_recommendation_gate_5": {
+    "gate_4_status": "DRAFT · pending PM review + risposte RM-Q1..RM-Q7",
+    "gate_5_status": "HOLD · attende PM ACK Gate 4 + GO esplicito Gate 5",
+    "gate_5_input_from_g4": "resource cap 5 LOCK · generation matrix per weapon · Int 5-axis scaling · Marchio durata + max cap · Payoff 3F/5F reliability · boss safeguards · reset policy → input per EQUIP_DESIGN (weapon coefficients · affix · budget statistico · ILVL)",
+    "gate_5_scope_preview": "weapon damage coefficients · weapon affix design · armor budget statistico · ILVL scaling · Legendary utility_unique overrides · slot allocation · rarity distribution · SOLO equip · NO gameplay implementation · NO Registry v3 · NO drop tables",
+    "gate_5_explicitly_out_of_scope_now": true
+  },
+  "governance": {
+    "documental_only": true,
+    "no_code_touch": true,
+    "no_db_writes": true,
+    "no_migrations": true,
+    "no_registry_v3": true,
+    "no_new_items": true,
+    "no_r18_5_catalog_modification": true,
+    "no_class_unlock": true,
+    "no_hall_activation": true,
+    "no_class_slug_apply": true,
+    "no_bridge_apply": true,
+    "no_auto_derive": true,
+    "no_gameplay_implementation": true,
+    "no_resource_implementation": true,
+    "no_drop_tables": true,
+    "no_drop_rate_loot": true,
+    "no_gate_5_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3"
+    ]
+  },
+  "stop_after_g4": {
+    "action": "STOP · attendo PM verdict G4 (CLOSED/REWORK) e GO esplicito G5 EQUIP_DESIGN",
+    "no_auto_start_gate_5": true,
+    "explicit_stop": true
+  },
+  "operational_compaction_guard_note": {
+    "scope": "session_snapshot_only · NOT appended to PRD",
+    "note": "prima di segnalare canonical drift al PM verificare separatamente: (1) contenuto effettivo dei file · (2) contenuto del summary chat · (3) discrepanza tra i due",
+    "rule": "chat summary ≠ source of truth · file deliverable + SHA256 + validation = source of truth",
+    "reference_event": "R18.6.3-G3 targeted canonical correction · lesson learned",
+    "prd_append_status": "EXCLUDED_FROM_PRD_PER_PM_DIRECTIVE"
+  }
+}

@@ -2919,3 +2919,48 @@ Item condiviso per weapon/armor family **NON è automaticamente ottimale** per t
 `R18.5 → R18.6 → R18.6.1 → R18.6.2 LOCKED` → `R18.6.3 Vuoto Pilot` → G1 ✅ CLOSED → **G2 ✅ CLOSED (this append)** → **G3 GAMEPLAY_LOOP 🟢 AUTHORIZED (dispatched)** → G4..G10 🔒 HOLD → `R18.6.LTN` 🔒 HOLD → `R18.6.RV3` 🔒 HOLD → `R18.6.RB1` 🔒 HOLD → altri gate/wave 🔒 HOLD
 
 🛑 **STOP dopo R18.6.3-G3 GAMEPLAY_LOOP dispatch.** Nessun auto-start Gate 4. Attendo PM review G3 + GO esplicito Gate 4.
+
+
+## R18.6.3-G3 GAMEPLAY_LOOP CLOSED (Cacciatore del Vuoto · 2026-07-08T19:00:00Z)
+
+**Milestone**: **R18.6.3 Gate 3 GAMEPLAY_LOOP CLOSED** ✅ · Gate 4 RESOURCE_MECHANIC **AUTHORIZED** 🟢
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations/sealed/R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 modifiche (tutti LOCKED post-approval).
+
+### G3 Approved Summary
+
+- **Gameplay Loop**: 4-step **Identify → Mark → Drain → Payoff** LOCKED
+  - **Identify**: priorità target (incorporeo > summon > caster > melee)
+  - **Mark**: applicazione Marchio del Vuoto (dispel-over-time + silenziamento summon) tramite focus canaliza
+  - **Drain**: colpi focus/balestra/pugnale su target marchiato → generano Frammenti di Onirade → accumulo verso cap encounter
+  - **Payoff**: consumo Frammenti (3F dispel area / 5F annullamento boss summon)
+- **Identity anti-summon/anti-incorporeo**: Cacciatore del Vuoto è specialista contro summon, incorporei, distorsioni arcane. Anti-arcano e rituale.
+- **Anti-stall (loop degradato)**: senza summon/incorporei il loop rimane funzionale (Drain diretto su target normali · Payoff utility) · no empty combat
+- **Weapon roles**:
+  - **focus** = primaria main_hand · applicazione Marchio · Drain principale · Payoff channeling · max 1 (PD-Q1 LOCK) · no dual-focus
+  - **balestra** = 2H · ranged arcana · applicazione Marchio a distanza · Drain ranged · blocca off_hand
+  - **pugnale** = rituale/opportunistica off_hand · chiude rituali · Payoff ravvicinato
+- **Differentiation Mago**: Mago = burst caster AoE elemental (spell puro, no accumulo) · Vuoto = Mark-based drain-payoff (accumulo → burst decisivo). Ruoli DPS distinti. Non competition-ready sugli stessi encounter.
+- **Differentiation Cacciatore di Mostri**: main_stat Destrezza vs Intelligenza · armor cuoio+maglia vs stoffa+cuoio · weapon arco/balestra/spada/pugnale/lancia vs focus/balestra/pugnale. Balestra weapon family condivisa MA gameplay non condiviso: balestra fisica scaling Destrezza (ranged hunting) vs balestra di canalizzazione arcana scaling Intelligenza medio-alto (applicazione Marchi). Zero overlap target · complementari in raid.
+- **Differentiation Paladino**: Paladino = Healer/Support sacro (difensivo/curativo) vs Vuoto = DPS anti-Vuoto (offensivo). Ruoli opposti · coesistono in raid.
+- **Canonical class validation**: **PASS** · non-canonical class references = 0 · guard rule attiva contro `/app/memory/r18_6_1_canonical_27_class_halls_expansion.json`
+- **Semantic anchors preservati**: `Legendary ILVL = 60 (non +60 Int)` · slug `cacciatore_del_vuoto` snake_case · tooltip UI italiano puro · zero code `[Cx#y]` player-facing
+- **Gate 4 RESOURCE_MECHANIC authorized**: input da G3 = loop 4-step + Marchi/Frammenti/Payoff conceptual interactions + cap concept 5 + generation/consumption concept → G4 numeric finalization
+
+### Gate isolation preservata
+
+- G3 ha definito **flussi, ruoli, differentiation, anti-stall, anti-power-creep, interazioni concettuali, UX language**
+- G3 NON ha definito coefficienti numerici finali (danno per colpo, drop rate, soglie Int esatte, durata Marchio in turni) → **Gate 4 RESOURCE_MECHANIC**
+- G3 NON ha definito slot/rarity/stat allocation equip → **Gate 5 EQUIP_DESIGN**
+
+### Files locked
+
+- `/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.md` LOCKED
+- `/app/memory/r18_6_3_g3_cacciatore_del_vuoto_gameplay_loop.json` LOCKED
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2 (tutti LOCKED post-approval)
+
+### PM verdict
+
+- **R18.6.3-G3 = CLOSED** ✅
+- **R18.6.3-G4 RESOURCE_MECHANIC = AUTHORIZED** 🟢
+- **R18.6.3-G5 EQUIP_DESIGN = HOLD** 🔒 (attende G4 CLOSED)
