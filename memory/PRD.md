@@ -3323,3 +3323,71 @@ Approvate con:
 - **R18.6.3-G8 SAFE_MODE_TRIAL = AUTHORIZED** 🟢
 - **R18.6.3-G9 TECH_READINESS = HOLD** 🔒
 - **Wave 1 successors = HOLD** 🔒
+
+
+## R18.6.3-G8 SAFE_MODE_TRIAL CLOSED (Cacciatore del Vuoto · PM APPROVED WITH MICRO-FIX · with binding answers TR-Q1..TR-Q8 · 2026-07-11T16:03:41Z)
+
+### Decisioni PM verbatim (TR-Q1..TR-Q8)
+
+- **TR-Q1 LOCK — Struttura 9 fasi**: FASE 0 (Ingresso/orientamento) → FASE 1 (Identify) → FASE 2 (Mark) → FASE 3 (Drain) → FASE 4 (Payoff 3F) → FASE 5 (Payoff 5F) → FASE 6 (Scenario degradato) → FASE 7 (Riepilogo Nael) → FASE 8 (Conferma/rinuncia). Progressione: osservazione → applicazione → generazione → scelta → adattamento → decisione finale. NO fase DPS, NO boss tutorial, NO verifica equip, NO prova a tempo, NO punteggio.
+
+- **TR-Q2 LOCK — Feedback Payoff 5F**:
+  - 5F annullano UNA evocazione valida
+  - 5F NON annullano il boss stesso
+  - Tooltip player-facing: *"Il rituale può annullare un'evocazione valida, ma non il boss che l'ha generata."*
+  - Su bersaglio non valido: *"Nessuna evocazione valida da annullare."* → cast bloccato, Frammenti non consumati, nessuna penalità, suggerimento immediato
+  - NO fallimento casuale contro summon didattiche valide
+
+- **TR-Q3 LOCK — Hint progressivi**:
+  - 1° errore: feedback visivo/UI breve
+  - 2° errore consecutivo stessa fase: Nael suggerimento diretto
+  - 3° errore e successivi: guida completa opzionale disponibile
+  - Esempi: *"Il bersaglio non è ancora Marchiato."* → *"Prima leggilo. Poi incidilo."* → *"Usa Identify, applica il Marchio e colpisci il bersaglio Marchiato per generare Frammenti."*
+  - NO umiliazione, NO penalità, NO riduzione ricompense, NO aumento difficoltà, NO blocco progressione
+  - Giocatore può ignorare guida e riprovare autonomamente
+
+- **TR-Q4 LOCK — Marcature entità didattiche**: `trial_only=true`, `non_persistent=true`, `no_loot=true`, `no_xp=true`, `not_bestiary_live=true`. Aggiunti (se non presenti): `runtime_enemy_record=false`, `catalog_entry=false`. Entità NON sono mostri canonici live, NON entrano nel bestiario, NON hanno drop table, NON persistono fuori dalla Prova. Metadata interni, NON mostrare al giocatore.
+
+- **TR-Q5 LOCK — Scelte finali**: SOLO **CONFERMA IL CAMMINO** e **NON SONO PRONTO**. NO "Scegli casualmente", NO "Decidi più tardi ma assegna la classe", NO conferma implicita, NO countdown, NO scelta automatica. CONFERMA IL CAMMINO: `design_intent_only=true`, `class_assignment=false`, `class_slug_apply=false`. NON SONO PRONTO: nessuna penalità, nessun costo, nessun cooldown, nessun blocco futuro, ritorno Sala/Atrio secondo futuro flow UX.
+
+- **TR-Q6 LOCK — Reset rapido**: `reset_delay = minimo tecnico futuro` · `cooldown = 0` · `retry_limit = unlimited`. Reset ripristina fase corrente, ricrea solo entità trial necessarie, azzera Frammenti fase quando richiesto, NON riavvia obbligatoriamente tutta la Prova. Errore locale → reset locale · abbandono volontario → uscita sicura · nuovo ingresso → ripartenza secondo checkpoint futuro. Policy checkpoint precisa = specifica tecnica futura (Gate 9).
+
+- **TR-Q7 LOCK — Riepilogo Nael**: descrittivo, qualitativo, non competitivo. Può richiamare: hai riconosciuto, hai Marchiato, hai generato Frammenti, hai scelto quando spenderli, hai compreso che non sei una classe frontline. NO voto, NO stelle, NO grado, NO punteggio, NO tempo record, NO % precisione, NO classifica. La Prova valuta **comprensione**, non prestazione.
+
+- **TR-Q8 LOCK — Marker Prova**: *"PROVA DI DESIGN — NON ANCORA DISPONIBILE IN GIOCO"*. Presente in: header + metadata + riepilogo finale. `trial_status = design_only`, `runtime_status = not_implemented`, `availability = unavailable`.
+
+### Micro-fix dialogo FASE 5 applicato
+
+- **DA**: *"Con cinque, bandisci. Ma non i boss. I boss restano."*
+- **A**: *"Con cinque, bandisci un'evocazione. Non il boss stesso."*
+- **Motivazione**: chiarezza semantica sulla regola boss/evocazione. Boss diretto **NON bersagliabile** dal Payoff 5F; evocazione standard valida **annullabile**; evocazione generata dal boss **bersaglio valido** soggetto alle safeguard boss.
+
+### Baseline finale G8
+
+- **Nome**: La Prova del Riflesso Vuoto
+- **Stato**: DESIGN ONLY · NOT LIVE · NOT IMPLEMENTED
+- **Fasi**: 9 (FASE 0 → FASE 8)
+- **Retry**: illimitato · **Cooldown**: 0
+- **Zero**: morte permanente · perdita risorse · XP · oro · item · materiali · drop · achievement farmabili
+- **Class assignment automatica**: NO · **class_slug apply**: false
+- **Entità didattiche**: `summon_valida` · `incorporeo` · `bersaglio_standard` — tutte `trial_only` · `non_persistent` · `no_loot` · `no_xp` · `not_bestiary_live` · `runtime_enemy_record=false` · `catalog_entry=false`
+- **Conferma FASE 8**: solo `CONFERMA IL CAMMINO` / `NON SONO PRONTO`
+- **Marker**: *"PROVA DI DESIGN — NON ANCORA DISPONIBILE IN GIOCO"*
+- **Micro-fix dialogo FASE 5**: applicato
+- **Gate 9 TECH_READINESS**: autorizzato
+
+### Files locked
+
+- `/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.md` **LOCKED**
+- `/app/memory/r18_6_3_g8_cacciatore_del_vuoto_safe_mode_trial.json` **LOCKED**
+- Zero modifiche a R18.5/R18.6/R18.6.1/R18.6.2/G1/G2/G3/G4/G5/RV3/G6/G7 (tutti LOCKED post-approval)
+- Catalogo R18.5 = **INVARIATO** (1500/1500 preserved)
+- `lore_meta.py` anchor = **INVARIATO** (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`)
+- Sealed integrity 36/36 = **BYTE-IDENTICAL**
+
+### PM verdict
+
+- **R18.6.3-G8 = CLOSED · PM APPROVED WITH MICRO-FIX** ✅
+- **R18.6.3-G9 TECH_READINESS = AUTHORIZED** 🟢
+- **R18.6.3-G10 PM_REVIEW = HOLD** 🔒
+- **Wave 1 successors = HOLD** 🔒

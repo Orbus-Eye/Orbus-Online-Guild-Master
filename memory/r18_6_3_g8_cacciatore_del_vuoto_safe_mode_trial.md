@@ -333,7 +333,7 @@ Nael parla **al massimo 1-2 righe per fase**, coerenti col tono G7:
 **FASE 2** · *"Il Marchio è la porta. Senza Marchio, niente passa."*
 **FASE 3** · *"Ogni colpo che gli assesti lascia un Frammento nel tuo circolo."*
 **FASE 4** · *"Con tre, dissolvi. Un'area intorno a te si libera dagli effetti arcani."*
-**FASE 5** · *"Con cinque, bandisci. Ma non i boss. I boss restano."*
+**FASE 5** · *"Con cinque, bandisci un'evocazione. Non il boss stesso."*
 **FASE 6** · *"Non sempre c'è qualcosa da bandire. A volte devi solo leggere e chiudere."*
 **FASE 7** · *"Hai visto abbastanza. Adesso pensa."*
 **FASE 8** · *"Non è una firma di sangue. È una firma di comprensione. Decidi."*

@@ -1,0 +1,722 @@
+{
+  "metadata": {
+    "gate_id": "R18.6.3-G9",
+    "gate_name": "TECH_READINESS",
+    "class_slug": "cacciatore_del_vuoto",
+    "class_display_name": "Cacciatore del Vuoto",
+    "hall_name": "Faro Rovesciato di Onirade",
+    "hall_master": "Nael di Onirade",
+    "trial_name": "La Prova del Riflesso Vuoto",
+    "status": "SPECIFICA TECNICA DOCUMENTALE · PROPOSAL ONLY · NOT IMPLEMENTED",
+    "language": "italiano_only",
+    "governance": "DOCUMENTAL ONLY · ITALIANO ONLY · READ-ONLY DISCOVERY · NO code · NO backend change · NO frontend change · NO API creation · NO OpenAPI modification · NO DB writes · NO schema migration · NO class_slug apply · NO class assignment · NO Hall activation · NO Trial activation · NO feature flag enable · NO bridge apply · NO Registry v3 apply · NO item creation · NO test file creation · NO deployment · NO Gate 10 auto-start",
+    "hall_runtime_state": "inactive",
+    "trial_runtime_state": "not_implemented",
+    "feature_flag_hall_class_assign_enabled": "disabled",
+    "class_assignment_runtime": "prohibited",
+    "predecessor_gates_locked": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7",
+      "R18.6.3-G8"
+    ]
+  },
+  "executive_summary": {
+    "scope": "specifica tecnica documentale per implementazione futura Sala + Prova + conferma + assegnazione classe iniziale + integrazione proficiency/equip/XP",
+    "non_scope": [
+      "implementazione endpoint",
+      "creazione route",
+      "modifica OpenAPI",
+      "scrittura DB",
+      "migration",
+      "creazione test file",
+      "attivazione feature flag",
+      "activation Hall",
+      "activation Trial"
+    ]
+  },
+  "current_runtime_inventory": {
+    "backend_existing": {
+      "class_halls_module": {
+        "path": "/app/backend/app/class_halls/",
+        "router_prefix": "/api/class-halls",
+        "endpoints_existing": [
+          {
+            "method": "GET",
+            "path": "/api/class-halls",
+            "purpose": "list halls per user guild"
+          },
+          {
+            "method": "GET",
+            "path": "/api/class-halls/{class_slug}",
+            "purpose": "get single hall"
+          },
+          {
+            "method": "POST",
+            "path": "/api/class-halls/{class_slug}/unlock-specialization",
+            "purpose": "unlock specialization (NON è class assignment iniziale)"
+          }
+        ],
+        "services_functions": [
+          "seed_class_halls_for_guild",
+          "list_class_halls",
+          "enrich_halls_for_ui",
+          "get_class_hall",
+          "unlock_specialization"
+        ],
+        "collection": "class_halls",
+        "pk_pattern": "{guild_id}::{class_slug}"
+      },
+      "onboarding_module": "/app/backend/app/onboarding/",
+      "auth_module": "/app/backend/app/auth/",
+      "audit_module": "/app/backend/app/audit/log.py",
+      "existing_feature_flags_env": [
+        "R18_REWORK_ENABLED",
+        "R18_TALENT_ENGINE_ENABLED"
+      ]
+    },
+    "frontend_existing": {
+      "class_halls_page": "/app/frontend/src/pages/ClassHalls.jsx",
+      "nav_menu": "/app/frontend/src/components/navMenu.js"
+    },
+    "runtime_missing": [
+      "endpoint POST /class-halls/{hall_id}/visit",
+      "endpoint POST /class-halls/{hall_id}/trial/start",
+      "endpoint POST /class-halls/{hall_id}/trial/checkpoint",
+      "endpoint POST /class-halls/{hall_id}/trial/complete",
+      "endpoint POST /class-halls/{hall_id}/trial/abandon",
+      "endpoint POST /class-halls/{hall_id}/class/confirm",
+      "endpoint POST /class-halls/{hall_id}/class/apply",
+      "endpoint GET /class-halls/{hall_id}/trial/state",
+      "collection trial_sessions",
+      "field users.class_slug",
+      "field users.class_assignment_status",
+      "field users.class_assignment_source",
+      "field users.class_assignment_at",
+      "field users.class_assignment_history",
+      "field users.hall_discovery_state",
+      "field users.hall_onboarding_state",
+      "field users.explicit_confirmation_at",
+      "feature flag HALL_CLASS_ASSIGN_ENABLED"
+    ]
+  },
+  "target_state_machine": {
+    "states": [
+      "RECRUIT_UNASSIGNED",
+      "HALL_DISCOVERED",
+      "HALL_ONBOARDING_STARTED",
+      "TRIAL_AVAILABLE",
+      "TRIAL_IN_PROGRESS",
+      "TRIAL_COMPLETED",
+      "AWAITING_EXPLICIT_CONFIRMATION",
+      "CLASS_ASSIGNMENT_PENDING",
+      "CLASS_ASSIGNED"
+    ],
+    "total_states": 9,
+    "transitions": [
+      {
+        "from": "RECRUIT_UNASSIGNED",
+        "to": "HALL_DISCOVERED",
+        "trigger": "hall visit"
+      },
+      {
+        "from": "HALL_DISCOVERED",
+        "to": "HALL_ONBOARDING_STARTED",
+        "trigger": "atrium selection + hall entry"
+      },
+      {
+        "from": "HALL_ONBOARDING_STARTED",
+        "to": "TRIAL_AVAILABLE",
+        "trigger": "G7 dialogues completed"
+      },
+      {
+        "from": "TRIAL_AVAILABLE",
+        "to": "TRIAL_IN_PROGRESS",
+        "trigger": "enter circle · G8 sez 4"
+      },
+      {
+        "from": "TRIAL_IN_PROGRESS",
+        "to": "TRIAL_COMPLETED",
+        "trigger": "FASE 7 recap delivered"
+      },
+      {
+        "from": "TRIAL_COMPLETED",
+        "to": "AWAITING_EXPLICIT_CONFIRMATION",
+        "trigger": "user reaches FASE 8"
+      },
+      {
+        "from": "AWAITING_EXPLICIT_CONFIRMATION",
+        "to": "CLASS_ASSIGNMENT_PENDING",
+        "trigger": "confirmation_choice = confirm_path"
+      },
+      {
+        "from": "CLASS_ASSIGNMENT_PENDING",
+        "to": "CLASS_ASSIGNED",
+        "trigger": "AND-8 regola critica verificata + feature flag enabled"
+      },
+      {
+        "from": "AWAITING_EXPLICIT_CONFIRMATION",
+        "to": "RECRUIT_UNASSIGNED",
+        "trigger": "confirmation_choice = not_ready · nessuna penalità"
+      }
+    ],
+    "gate_9_verifies": [
+      "sufficienti",
+      "idempotenti",
+      "auditabili",
+      "recuperabili dopo errore"
+    ],
+    "gate_9_does_not_implement": true
+  },
+  "class_slug_write_and8": {
+    "conditions_all_required_true": [
+      "status corrente = recruit_unassigned",
+      "Hall = ACTIVE e selezionabile",
+      "Trial = completed",
+      "explicit_confirmation = true",
+      "target class_slug canonico (es. cacciatore_del_vuoto)",
+      "class readiness = approved",
+      "feature flag HALL_CLASS_ASSIGN_ENABLED = enabled",
+      "tutte le altre validazioni pre-write = PASS"
+    ],
+    "current_system_state": {
+      "hall_active": false,
+      "class_readiness_final": false,
+      "feature_flag_hall_class_assign_enabled": false,
+      "runtime_apply": "prohibited",
+      "assignment_possible_now": false
+    }
+  },
+  "api_contract_proposal": {
+    "marker_all_endpoints": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI",
+    "openapi_modification": false,
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/visit",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/trial/start",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/trial/checkpoint",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/trial/complete",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/trial/abandon",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/class/confirm",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{hall_id}/class/apply",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI · CRITICAL GATED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/class-halls/{hall_id}/trial/state",
+        "marker": "PROPOSAL ONLY · NOT IMPLEMENTED · NOT ROUTED · NOT IN OPENAPI"
+      }
+    ],
+    "existing_endpoints_out_of_g9_scope": [
+      {
+        "method": "GET",
+        "path": "/api/class-halls",
+        "status": "EXISTS"
+      },
+      {
+        "method": "GET",
+        "path": "/api/class-halls/{class_slug}",
+        "status": "EXISTS"
+      },
+      {
+        "method": "POST",
+        "path": "/api/class-halls/{class_slug}/unlock-specialization",
+        "status": "EXISTS"
+      }
+    ]
+  },
+  "db_schema_proposal": {
+    "marker_all_fields": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION",
+    "pre_check_required": "verificare via read-only inspection se equivalent field già esiste prima di duplicare schema",
+    "fields": [
+      {
+        "name": "class_slug",
+        "type": "string",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION · verify existence first"
+      },
+      {
+        "name": "class_assignment_status",
+        "type": "enum{pending,applied,rolled_back,failed}",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "class_assignment_source",
+        "type": "string",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "class_assignment_at",
+        "type": "ISODate",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "class_assignment_history",
+        "type": "array<object>",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "hall_discovery_state",
+        "type": "object",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "hall_onboarding_state",
+        "type": "object",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "trial_status",
+        "type": "enum{in_progress,completed,abandoned}",
+        "location_proposed": "trial_sessions (new)",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "trial_attempt_count",
+        "type": "int",
+        "location_proposed": "trial_sessions",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "trial_completed_at",
+        "type": "ISODate",
+        "location_proposed": "trial_sessions",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "trial_version",
+        "type": "string",
+        "location_proposed": "trial_sessions",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "explicit_confirmation_at",
+        "type": "ISODate",
+        "location_proposed": "users",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "class_readiness_version",
+        "type": "string",
+        "location_proposed": "global config",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      },
+      {
+        "name": "idempotency_keys (collection)",
+        "type": "{user_id,endpoint,key,response_hash,created_at TTL}",
+        "location_proposed": "new collection",
+        "marker": "PROPOSAL ONLY · NO DB WRITE · NO MIGRATION"
+      }
+    ]
+  },
+  "dependencies": {
+    "R18_3f_class_slug_migration_readiness": {
+      "status": "HOLD",
+      "required_before_class_apply": true
+    },
+    "R18_6_RV3": {
+      "status": "architecture approved · apply NOT authorized",
+      "required_before_hall_active": true
+    },
+    "R18_6_RV3_EV_eligibility_validation": {
+      "status": "HOLD",
+      "required_before_item_creation": true
+    },
+    "feature_flags": {
+      "HALL_CLASS_ASSIGN_ENABLED": "disabled",
+      "R18_REWORK_ENABLED": "existing · env",
+      "R18_TALENT_ENGINE_ENABLED": "existing · env"
+    },
+    "hall_activation_approval": {
+      "status": "prohibited",
+      "required_pm_approval": true
+    },
+    "gate_10_pm_review": {
+      "status": "HOLD"
+    },
+    "no_dependency_implicitly_completed": true
+  },
+  "bridge_legacy_warlock_to_cacciatore_del_vuoto": {
+    "mapped_design_only": true,
+    "apply_authorized": false,
+    "gated_by": "R18.3f applied",
+    "gate_9_may_reference": true,
+    "gate_9_may_activate": false
+  },
+  "sealed_integrity_impact": {
+    "sealed_files_count": 36,
+    "sealed_test_path": "backend/tests/backend_r18_4_sealed_integrity_test.py",
+    "anchor_file": "backend/app/content/lore_meta.py",
+    "anchor_hash": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "modification_requires_pm_approval": true,
+    "future_implementation_cannot_bypass_seals": true
+  },
+  "feature_flag_strategy": {
+    "new_flag_proposed": "HALL_CLASS_ASSIGN_ENABLED",
+    "default_value": "false",
+    "activation_condition": "solo dopo Gate 10 readiness + PM approval",
+    "kill_switch": true,
+    "orthogonal_to_existing_flags": true,
+    "coexisting_flags": [
+      "R18_REWORK_ENABLED",
+      "R18_TALENT_ENGINE_ENABLED"
+    ]
+  },
+  "test_strategy": {
+    "gate_9_writes_tests": false,
+    "unit_test_plan_documental": [
+      "test_and8_all_conditions_true_allows_apply",
+      "test_and8_any_condition_false_denies_apply_403",
+      "test_idempotency_duplicate_returns_cached",
+      "test_concurrency_double_submit_returns_409",
+      "test_rollback_on_partial_failure_restores_state",
+      "test_feature_flag_disabled_denies_apply_403",
+      "test_hall_planned_denies_apply_403",
+      "test_class_slug_not_canonical_denies_400"
+    ],
+    "integration_test_plan_documental": [
+      "test_visit_creates_hall_discovery_state",
+      "test_trial_start_creates_trial_session",
+      "test_trial_checkpoint_appends_snapshot",
+      "test_trial_complete_transitions_status",
+      "test_trial_complete_emits_zero_reward",
+      "test_class_confirm_records_choice",
+      "test_class_apply_gated_feature_flag_off",
+      "test_class_apply_full_flow_end_to_end_with_flag_on_and_hall_active"
+    ],
+    "e2e_test_plan_documental": [
+      "E2E-1: PLANNED marker visible · no trial available (STATO ATTUALE)",
+      "E2E-2: ACTIVE full flow with feature flag on (Gate 10+)",
+      "E2E-3: renuncia FASE 8 → return Atrium (Gate 10+)",
+      "E2E-4: retry unlimited (Gate 10+)",
+      "E2E-5: idempotency double submit (Gate 10+)"
+    ]
+  },
+  "observability_requirements": {
+    "metrics_proposal": [
+      "hall_visits_total{hall_id,class_slug}",
+      "trial_sessions_started_total{hall_id,class_slug}",
+      "trial_sessions_completed_total{hall_id,class_slug}",
+      "trial_sessions_abandoned_total{hall_id,class_slug}",
+      "class_assignments_applied_total{class_slug}",
+      "class_apply_denied_total{reason}"
+    ],
+    "no_new_infrastructure_in_gate_9": true
+  },
+  "logging_requirements": {
+    "levels": {
+      "info": "state transitions",
+      "warn": "recoverable failures",
+      "error": "non-recoverable"
+    },
+    "structured_json": true,
+    "prohibited_fields_in_logs": [
+      "password",
+      "jwt_full_token",
+      "email_verbatim"
+    ],
+    "allowed_id": "user_id"
+  },
+  "privacy_requirements": {
+    "identifier_used": "user_id",
+    "no_email_in_audit": true,
+    "trial_logs_no_pii": true,
+    "gdpr_via_existing_auth_apis": true,
+    "no_gate_9_modification": true
+  },
+  "security_requirements": {
+    "all_endpoints_require_jwt": true,
+    "class_apply_additional": [
+      "rate_limit_per_user_per_day",
+      "no_class_slug_from_payload_bypasses_and8"
+    ],
+    "server_side_enforcement": true,
+    "no_cross_user_access": true,
+    "hall_id_public": true,
+    "trial_session_id_per_user_secret": true
+  },
+  "risk_register": [
+    {
+      "id": "TR9-R1",
+      "risk": "Ambiguità schema class_slug vs class_slug adventurers legacy",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (namespace separati · Recluta ≠ adventurer)"
+    },
+    {
+      "id": "TR9-R2",
+      "risk": "Race condition doppio submit /class/apply",
+      "severity": "HIGH",
+      "status": "DESIGNED (idempotency + optimistic locking)"
+    },
+    {
+      "id": "TR9-R3",
+      "risk": "Rollback parziale lascia DB inconsistente",
+      "severity": "HIGH",
+      "status": "DESIGNED (compensating actions + audit)"
+    },
+    {
+      "id": "TR9-R4",
+      "risk": "Feature flag enable accidentale",
+      "severity": "HIGH",
+      "status": "DESIGNED (default false · env var esplicita)"
+    },
+    {
+      "id": "TR9-R5",
+      "risk": "Hall availability_state modificato senza PM approval",
+      "severity": "HIGH",
+      "status": "DESIGNED (workflow approval documentato)"
+    },
+    {
+      "id": "TR9-R6",
+      "risk": "Trial checkpoint spam anti-farming saturazione DB",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (rate limit soft + TTL su snapshots)"
+    },
+    {
+      "id": "TR9-R7",
+      "risk": "Class assignment applied a class_slug non canonico",
+      "severity": "HIGH",
+      "status": "DESIGNED (server-side canonical validation)"
+    },
+    {
+      "id": "TR9-R8",
+      "risk": "Bridge legacy warlock → cacciatore_del_vuoto attivato per errore",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (dipende da R18.3f · mapped_design_only=true)"
+    },
+    {
+      "id": "TR9-R9",
+      "risk": "Sealed integrity breach in future implementation",
+      "severity": "HIGH",
+      "status": "DESIGNED (36 sigilli · PM approval required)"
+    },
+    {
+      "id": "TR9-R10",
+      "risk": "XP/gold accidentalmente emessi da trial complete",
+      "severity": "HIGH",
+      "status": "DESIGNED (enforcement architetturale)"
+    },
+    {
+      "id": "TR9-R11",
+      "risk": "Rite of Rebirth path bypass class_assignment_transaction",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (unified transaction)"
+    },
+    {
+      "id": "TR9-R12",
+      "risk": "Concurrency guard non copre replica set failover",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (transactions Mongo replica-aware)"
+    },
+    {
+      "id": "TR9-R13",
+      "risk": "UI polling /trial/state genera carico eccessivo",
+      "severity": "LOW",
+      "status": "DESIGNED (cache lato server + polling rate limit)"
+    },
+    {
+      "id": "TR9-R14",
+      "risk": "Discovery leaks internal state a utente",
+      "severity": "MEDIUM",
+      "status": "DESIGNED (server-side filtering)"
+    },
+    {
+      "id": "TR9-R15",
+      "risk": "Dipendenza Gate 9 cross-team (frontend UX design) non allineata",
+      "severity": "MEDIUM",
+      "status": "TRACKED (Gate 10 sync UX team)"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "TR9-Q1",
+      "question": "Nuova collection trial_sessions separata o embed in users?",
+      "proposed": "a) LOCK collection separata",
+      "alternatives": [
+        "b) embed in users",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "TR9-Q2",
+      "question": "class_slug field location: users o nuova collection characters?",
+      "proposed": "a) LOCK users.class_slug",
+      "alternatives": [
+        "b) nuova collection characters",
+        "c) altra proposta PM"
+      ]
+    },
+    {
+      "id": "TR9-Q3",
+      "question": "Naming feature flag HALL_CLASS_ASSIGN_ENABLED conferma?",
+      "proposed": "a) LOCK naming",
+      "alternatives": [
+        "b) rinomina proposta PM"
+      ]
+    },
+    {
+      "id": "TR9-Q4",
+      "question": "Idempotency window 24h conferma?",
+      "proposed": "a) LOCK 24h",
+      "alternatives": [
+        "b) 1h",
+        "c) 7 giorni",
+        "d) configurabile"
+      ]
+    },
+    {
+      "id": "TR9-Q5",
+      "question": "Retry Prova: nuovo trial_session_id per ogni retry o riuso stesso?",
+      "proposed": "a) LOCK nuovo id per audit",
+      "alternatives": [
+        "b) riuso stesso",
+        "c) configurabile"
+      ]
+    },
+    {
+      "id": "TR9-Q6",
+      "question": "Rate limit anti-abuse su /class/apply max N/day?",
+      "proposed": "a) LOCK 5/day",
+      "alternatives": [
+        "b) 10/day",
+        "c) 1/day",
+        "d) unlimited"
+      ]
+    },
+    {
+      "id": "TR9-Q7",
+      "question": "Rollback strategy: replica set transactions o compensating actions?",
+      "proposed": "a) LOCK replica set transactions",
+      "alternatives": [
+        "b) compensating",
+        "c) hybrid"
+      ]
+    },
+    {
+      "id": "TR9-Q8",
+      "question": "Admin path /api/admin/class-assignment/reconcile incluso Gate 10 o deferred?",
+      "proposed": "a) LOCK deferred (Gate 11+)",
+      "alternatives": [
+        "b) incluso Gate 10",
+        "c) mai"
+      ]
+    }
+  ],
+  "canonical_validation": {
+    "canonical_registry": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "entities_used": [
+      "Faro Rovesciato di Onirade",
+      "Nael di Onirade",
+      "Cacciatore del Vuoto",
+      "Marchio del Vuoto",
+      "Frammenti di Onirade",
+      "Prova del Riflesso Vuoto",
+      "Atrio delle Vocazioni"
+    ],
+    "no_new_divinita": true,
+    "no_new_regione": true,
+    "no_new_fazione": true,
+    "no_new_classe": true,
+    "no_new_hall_master": true,
+    "no_new_lore_sources_non_approved": true,
+    "non_canonical_class_references": 0
+  },
+  "go_hold_recommendation_gate_10": {
+    "gate_9_status": "DRAFT · pending PM review + risposte TR9-Q1..TR9-Q8",
+    "gate_10_status": "HOLD",
+    "gate_10_nature": "PM_REVIEW · gate di review finale · NON è gate implementativo",
+    "gate_10_scope_preview": "review specifica G9 + risposte TR9-Q + approvazione go/no-go per Gate 11 (eventuale primo gate implementativo, se autorizzato)",
+    "no_gate_10_auto_start": true,
+    "no_wave_1_auto_start": true,
+    "no_class_unlock_auto_start": true,
+    "no_hall_activation_auto_start": true,
+    "no_implementation_in_gate_10": true,
+    "recommended_next_step": "PM review G9 TECH_READINESS + risposte TR9-Q1..TR9-Q8 → G9 CLOSED verdict → GO Gate 10 PM_REVIEW"
+  },
+  "governance": {
+    "documental_only": true,
+    "italiano_only": true,
+    "read_only_discovery": true,
+    "no_code": true,
+    "no_backend_change": true,
+    "no_frontend_change": true,
+    "no_api_creation": true,
+    "no_openapi_modification": true,
+    "no_db_writes": true,
+    "no_schema_migration": true,
+    "no_class_slug_apply": true,
+    "no_class_assignment": true,
+    "no_hall_activation": true,
+    "no_trial_activation": true,
+    "no_feature_flag_enable": true,
+    "no_bridge_apply": true,
+    "no_registry_v3_apply": true,
+    "no_item_creation": true,
+    "no_test_file_creation": true,
+    "no_deployment": true,
+    "no_gate_10_auto_start": true,
+    "seals_36_byte_identical": true,
+    "lore_meta_py_anchor_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "locked_predecessors": [
+      "R18.5",
+      "R18.6",
+      "R18.6.1",
+      "R18.6.2",
+      "R18.6.3-G1",
+      "R18.6.3-G2",
+      "R18.6.3-G3",
+      "R18.6.3-G4",
+      "R18.6.3-G5",
+      "R18.6.RV3",
+      "R18.6.3-G6",
+      "R18.6.3-G7",
+      "R18.6.3-G8"
+    ]
+  },
+  "stop_after_g9": {
+    "action": "STOP · attendo PM verdict G9 (CLOSED/REWORK) + risposte TR9-Q1..TR9-Q8 · Gate 10 HOLD · Wave 1 successors HOLD",
+    "no_auto_start_gate_10": true,
+    "no_auto_start_wave_1": true,
+    "explicit_stop": true
+  }
+}
