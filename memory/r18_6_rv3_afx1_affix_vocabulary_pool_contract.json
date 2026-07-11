@@ -1,0 +1,448 @@
+{
+  "metadata": {
+    "document_id": "R18.6.RV3-AFX1",
+    "title": "Affix Vocabulary and Pool Contract",
+    "parent_gates": ["R18.6.RV3-EV_CLOSED", "R18.6.RV3-EV-F1_CLOSED", "R18.6.RV3-EV-F2_CLOSED"],
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_ITALIAN_CONTRACT_DESIGN_GATE",
+    "sealed_integrity_expected": "36/36",
+    "lore_meta_sha256_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "cacciatore_del_vuoto_status": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "language": "italian",
+    "sections_md_total": 85,
+    "draft_generated": true,
+    "pm_approval_pending": true
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "item_creation_authorized": false,
+    "registry_v3_apply_authorized": false,
+    "field_addition_authorized": false,
+    "backfill_authorized": false,
+    "affix_population_authorized": false,
+    "db_write_count": 0,
+    "mutation_forbidden": true,
+    "sealed_files_immutability": true,
+    "no_new_seals_added_during_afx1": true,
+    "no_prd_append_in_this_dispatch": true,
+    "no_auto_start_on_next_gate": true
+  },
+  "block_A_governance_precedenza_sec_1_8": {
+    "sec_1_executive_summary": {
+      "gate_type": "CONTRACT_DESIGN",
+      "deliverable": ["10_families_affix_vocabulary", "namespace_tag_label", "eligibility_matrix", "mechanical_caps_lock", "affix_pool_tag_contract", "anti_p2w_rules", "boss_safeguard_preservation"],
+      "not_delivered": ["item_creation", "affix_backfill", "registry_v3_apply", "module_generation", "openapi_backend_frontend_db_changes", "ledger_178_reopening"]
+    },
+    "sec_2_governance": {
+      "seal_check_pre": "6_passed_36_of_36",
+      "seal_check_post_required": true,
+      "no_new_seals": true
+    },
+    "sec_3_regime_documental_only": {
+      "only_memory_written": true,
+      "no_code_migration": true,
+      "no_mongodb_side_effects": true,
+      "language": "italian_only"
+    },
+    "sec_4_precedenza_documentale": {
+      "ledger_178_authoritative": "EV-F2",
+      "metadata_readiness_L12_T1": "EV-F1",
+      "baseline_historic": "RV3-EV_original",
+      "afx1_no_reopen_rule": true
+    },
+    "sec_5_source_of_truth_consumption": {
+      "consumed": ["G1_STAT_DESIGN_Int_Con_Dex", "G2_PROFICIENCY_focus_balestra_pugnale", "G3_GAMEPLAY_LOOP", "G4_RESOURCE_MECHANIC_Frammenti_5", "G5_EQUIP_stoffa_cuoio", "RV3_ADDITIVE_PLANNING", "RV3-EV_CLOSED", "EV-F1_CLOSED", "EV-F2_CLOSED"]
+    },
+    "sec_6_sealed_integrity_baseline": {
+      "pytest": "6_passed",
+      "byte_identical": "36/36",
+      "lore_meta_sha": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    "sec_7_non_authorization_inventory": [
+      "no_item_creation", "no_item_id_assignment", "no_final_item_names", "no_csv",
+      "no_178_items_modification", "no_registry_v2_modification", "no_affix_pool_tag_population",
+      "no_backfill", "no_registry_v3_apply", "no_backend_module", "no_openapi_change",
+      "no_hall_activation", "no_trial_activation", "no_class_slug_migration",
+      "no_gate_11_start", "no_wave_1_start", "no_nc1_start",
+      "no_ev_f1_ev_f2_rv3ev_reopen", "no_g1_g5_modification",
+      "no_g2_proficiency_expansion", "no_new_stat_scaling", "no_new_armor_family"
+    ],
+    "sec_8_afx1_scope_declaration": {
+      "in_scope": ["vocabulary", "namespace", "eligibility_matrix", "caps", "anti_p2w", "boss_safeguard", "ev_f2_consumption", "condition_code_catalog", "risk_register", "pm_open_questions", "go_hold_recommendation"],
+      "out_of_scope_ref_sec_7": true
+    }
+  },
+  "block_B_class_identity_lock_sec_9_16": {
+    "sec_9_class_slug": "cacciatore_del_vuoto",
+    "sec_10_gameplay_loop_lock": ["Identify", "Mark", "Drain", "Payoff"],
+    "sec_11_resource_mechanic_lock": {"resource": "Frammenti_di_Onirade", "hard_cap": 5, "generation_from_marked_only": true, "consumption_step": "Payoff", "cross_phase_persistence": false, "passive_free_forbidden": true},
+    "sec_12_stat_priority_lock": {"primary": "Intelligenza", "secondary": "Costituzione", "tertiary": "Destrezza", "damage_scaling_only_intelligenza": true, "dex_dmg_scaling_forbidden": true, "forza_dmg_scaling_forbidden": true, "dual_int_dex_forbidden": true},
+    "sec_13_armor_lock": {"proficient": ["stoffa_cloth_robe_light", "cuoio_leather_medium"], "excluded": ["heavy", "plate", "mail", "scale", "shield"]},
+    "sec_14_weapon_proficiency_lock": {"literal_G2": ["focus", "balestra", "pugnale"], "db_mapping": {"focus": "focus", "balestra": "crossbow_complete_gap_live", "pugnale": "dagger"}, "afx1_consumes_g2_no_reopen": true, "afx1_no_new_proficiency_ratification": true},
+    "sec_15_proficiency_exclusion_list": ["tome", "staff", "wand", "rod", "grimoire", "bow", "instrument", "sonic", "alchemical_flask", "sword", "axe", "mace", "spear", "two_handed"],
+    "sec_16_afx1_non_expansion_policy": {"expand_g2": "forbidden", "new_weapon_family": "forbidden", "semantic_overlap_promotion": "forbidden", "new_armor_family": "forbidden", "new_stat_scaling": "forbidden", "reopen_loop_resource_class_slug_boss_safeguard_ledger": "forbidden"}
+  },
+  "block_C_10_affix_families_sec_17_66": [
+    {
+      "family_id": 1, "sec_range": "17-21", "canonical_namespace": "void.mark.power", "internal_tag": "AFX_MARK_POWER",
+      "label_it": "Potenza del Marchio", "label_en": "Mark Power", "version": "v1.0",
+      "description": "Incrementa potenza applicativa Marchio; NO modifica durata/generazione Frammenti",
+      "item_family_eligibility": ["focus", "pugnale", "accessory_neck_ring_back", "armor_chest_proc_slot"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Common", "Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "Marchio_Mark_step", "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+30%", "soft_cap": "+20%", "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "45%_global", "conflict_group": "MARK_MAGNITUDE_GROUP",
+      "validation_rule": "Identified_before_Mark_or_idle", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 2, "sec_range": "22-26", "canonical_namespace": "void.mark.duration", "internal_tag": "AFX_MARK_DURATION",
+      "label_it": "Durata del Marchio", "label_en": "Mark Duration", "version": "v1.0",
+      "description": "Estende durata Marchio in turni combat; cap 10 turni; refresh non resetta eligibility Frammenti",
+      "item_family_eligibility": ["focus", "accessory_neck_back", "armor_chest", "pugnale"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "mark_duration_turns", "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "10_turni_max_immutable", "soft_cap": "8_turni", "diminishing_returns": "x0.3_over_soft_cap",
+      "combined_proc_cap": "45%", "conflict_group": "MARK_TEMPORAL_GROUP",
+      "validation_rule": "duration_at_mark_apply_refresh_no_extend_over_10", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 3, "sec_range": "27-31", "canonical_namespace": "void.drain.efficacy", "internal_tag": "AFX_DRAIN_EFFICACY",
+      "label_it": "Efficacia del Drenaggio", "label_en": "Drain Efficacy", "version": "v1.0",
+      "description": "Aumenta efficacia Drain step: dmg channel, tick rate, fragment gen bonus soggetto a cap fragment=5 e segment cap=2",
+      "item_family_eligibility": ["focus_primary", "balestra", "pugnale", "accessory_ring_back"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Common", "Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "drain_channel_dmg_tick_fragment_gen",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+40%", "soft_cap": "+25%", "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "45%", "segment_cap": "max_2_fragments_per_segment",
+      "conflict_group": "DRAIN_EFFICACY_GROUP",
+      "validation_rule": "target_must_be_marked_active_else_idle", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 4, "sec_range": "32-36", "canonical_namespace": "void.payoff.dispel", "internal_tag": "AFX_DISPEL_QUALITY",
+      "label_it": "Qualita del Dispel", "label_en": "Dispel Quality", "version": "v1.0",
+      "description": "Aumenta qualita Payoff dispel; boss diretto IMMUNE (safeguard sec 75); 3F area dispel valido; 5F anti-summon valido",
+      "item_family_eligibility": ["focus", "accessory_neck", "armor_chest_back"],
+      "tier_eligibility": ["T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "payoff_dispel_step",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+50%", "soft_cap": "+30%", "diminishing_returns": "x0.4_over_soft_cap",
+      "combined_proc_cap": "45%", "boss_safeguard": "no_direct_boss_cleanse",
+      "conflict_group": "PAYOFF_DISPEL_GROUP",
+      "validation_rule": "requires_min_1_fragment_consumed_no_boss_direct", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 5, "sec_range": "37-41", "canonical_namespace": "void.fragment.interaction", "internal_tag": "AFX_FRAGMENT_INTERACTION",
+      "label_it": "Sinergia Frammenti", "label_en": "Fragment Synergy", "version": "v1.0",
+      "description": "Modula generation/retention/chain bonus Frammenti; fragment cap=5 IMMUTABILE; +1 focus channel; +1 pugnale ritual-close max 1x per Marchio; chain >=3 fragments boost Payoff",
+      "item_family_eligibility": ["focus_channel_bonus", "pugnale_ritual_close_bonus", "accessory_back_neck", "armor_chest_waist_alias"],
+      "tier_eligibility": ["T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "fragment_gen_retention_chain",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap_fragment_total": 5, "segment_cap_per_resource": 2, "ritual_close_bonus_max_per_mark_apply": 1,
+      "combined_proc_cap": "45%",
+      "conflict_group": "FRAGMENT_INTERACTION_GROUP",
+      "validation_rule": "fragments_only_from_marked_active_overcap_waste", "generation_from_non_marked_forbidden": true,
+      "localization_readiness": ["IT", "EN"], "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 6, "sec_range": "42-46", "canonical_namespace": "void.payoff.efficacy", "internal_tag": "AFX_PAYOFF_EFFICACY",
+      "label_it": "Efficacia del Risolvente", "label_en": "Payoff Efficacy", "version": "v1.0",
+      "description": "Modula magnitudo Payoff (burst/dispel/ritual outcome); scala con Frammenti consumati 1-5; boss safeguard preserved",
+      "item_family_eligibility": ["focus", "pugnale", "accessory_neck_ring", "armor_chest"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Common", "Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "payoff_step_burst_dispel_ritual",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+45%_aligned_combined_proc", "soft_cap": "+30%", "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "45%", "boss_safeguard": "no_direct_boss_nullification",
+      "conflict_group": "PAYOFF_EFFICACY_GROUP",
+      "validation_rule": "requires_min_1_fragment_scale_1x_5x_soft", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 7, "sec_range": "47-51", "canonical_namespace": "void.antitype.incorporeal", "internal_tag": "AFX_ANTI_INCORPOREAL",
+      "label_it": "Contro Incorporei", "label_en": "Anti-Incorporeal", "version": "v1.0",
+      "description": "Aumenta efficacia vs target type incorporeal (spectre/shade/wraith/ombra); Vuoto void-caster aligned",
+      "item_family_eligibility": ["focus", "balestra", "pugnale", "accessory_ring_back"],
+      "tier_eligibility": ["T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "dmg_vs_incorporeal_type_only",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+60%_dmg_vs_incorporeal", "soft_cap": "+40%", "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "45%", "type_validation_required": true,
+      "conflict_group": "ANTITYPE_INCORPOREAL_GROUP",
+      "validation_rule": "target_validated_with_incorporeal_tag_or_idle", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 8, "sec_range": "52-56", "canonical_namespace": "void.antitype.summon", "internal_tag": "AFX_ANTI_SUMMON",
+      "label_it": "Contro Evocazioni", "label_en": "Anti-Summon", "version": "v1.0",
+      "description": "Aumenta efficacia vs target type summon; 5F anti-summon valido; boss-summoned valid add ok; boss diretto NO",
+      "item_family_eligibility": ["focus", "pugnale", "accessory_ring_back"],
+      "tier_eligibility": ["T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "dmg_dispel_vs_summon_boss_add_ok_boss_direct_no",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "+55%", "soft_cap": "+35%", "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "45%", "boss_safeguard": "no_direct_boss_nullification",
+      "conflict_group": "ANTITYPE_SUMMON_GROUP",
+      "validation_rule": "target_validated_summon_boss_immune_boss_add_valid", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 9, "sec_range": "57-61", "canonical_namespace": "void.channel.mobility", "internal_tag": "AFX_CHANNEL_MOBILITY",
+      "label_it": "Mobilita in Canalizzazione", "label_en": "Channel Mobility", "version": "v1.0",
+      "description": "Movimento parziale/completo durante Drain channel; utility affix Dex tertiary; NO dmg increase; NO fragment gen boost",
+      "item_family_eligibility": ["armor_feet_legs_waist_alias", "accessory_back", "pugnale"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "movement_during_drain_channel_only",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "100%_movement_retention_legendary_t5", "soft_cap": "60%",
+      "diminishing_returns": "flat_cap_over_60_requires_epic_plus_t3_plus",
+      "combined_proc_cap": "N_A_utility_no_proc", "damage_impact": 0,
+      "conflict_group": "CHANNEL_MOBILITY_GROUP",
+      "validation_rule": "applies_during_drain_channel_only_idle_on_mark_payoff", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    },
+    {
+      "family_id": 10, "sec_range": "62-66", "canonical_namespace": "void.ritual.protection", "internal_tag": "AFX_RITUAL_PROTECTION",
+      "label_it": "Protezione Rituale", "label_en": "Ritual Protection", "version": "v1.0",
+      "description": "Aumenta dmg reduction e CC resistance durante Payoff ritual step; Costituzione secondary; NO HP total increase",
+      "item_family_eligibility": ["armor_chest_cloth_medium_leather", "accessory_neck_back", "shield_not_applicable"],
+      "tier_eligibility": ["T1", "T2", "T3", "T4", "T5"],
+      "rarity_eligibility": ["Common", "Uncommon", "Rare", "Epic", "Legendary"],
+      "class_specific": true, "shared": false, "universal": false,
+      "effect_scope": "dmg_reduction_cc_resist_during_payoff_ritual_step",
+      "stacking_rule": "additive_intra_slot_max_1_per_item",
+      "hard_cap": "minus_50pct_dmg_taken_plus_40pct_cc_resist", "soft_cap": "minus_30pct_dmg_plus_25pct_cc",
+      "diminishing_returns": "x0.5_over_soft_cap",
+      "combined_proc_cap": "N_A_defensive_utility",
+      "conflict_group": "RITUAL_PROTECTION_GROUP",
+      "validation_rule": "active_only_during_payoff_ritual_idle_elsewhere", "localization_readiness": ["IT", "EN"],
+      "pvp_validation_required": true, "anti_p2w_can_be_sold": false
+    }
+  ],
+  "block_D_vincoli_meccanici_sec_67_72": {
+    "sec_67_fragment_cap_lock": {"fragment_hard_cap": 5, "overcap_behavior": "waste_no_stack", "no_affix_can_alter_hard_cap": true, "cross_phase_persistence": false, "random_full_resource_waste_forbidden": true},
+    "sec_68_active_marks_hard_cap": {"active_marks_max_per_player": 5, "overcap_apply_behavior": "silent_fail_no_bonus", "refresh_no_increment_counter": true, "expired_marks_free_slot_next_tick": true},
+    "sec_69_mark_duration_hard_cap": {"mark_duration_max_turni": 10, "affix_afx_mark_duration_can_extend_up_to_10_never_beyond": true, "refresh_no_extend_beyond_10": true, "refresh_no_reset_fragment_eligibility": true},
+    "sec_70_combined_proc_hard_cap": {"combined_proc_max": "45pct", "clamped_hard_ceiling": true, "diminishing_returns_x0_5_over_soft_cap": true, "combined_proc_over_45_forbidden": true},
+    "sec_71_focus_channel_bonus_segment_cap": {"focus_channel_bonus": "+1_fragment", "segment_cap_per_resource": "max_2_fragments", "applicable_only_if_weapon_focus_tag": true, "not_stackable_multiple_focus": true},
+    "sec_72_pugnale_ritual_close_bonus_refresh_eligibility": {"pugnale_ritual_close_bonus": "+1_fragment", "max_per_mark_apply": 1, "applicable_only_if_weapon_dagger_tag": true, "not_stackable_multiple_pugnali": true, "refresh_same_mark_no_reset_eligibility_bonus_already_consumed": true}
+  },
+  "block_E_divieti_boss_safeguard_sec_73_77": {
+    "sec_73_divieti_affix_enumeration": {
+      "count": 18,
+      "list": [
+        "fragment_cap_greater_than_5", "active_marks_greater_than_5", "mark_duration_greater_than_10",
+        "fragment_generation_from_non_marked", "passive_free_fragments", "direct_boss_nullification",
+        "boss_safeguard_bypass", "cross_phase_fragment_persistence", "random_full_resource_waste",
+        "dual_int_dex_scaling", "dex_damage_scaling", "forza_damage_scaling",
+        "pvp_effect_non_validated", "p2w_can_be_sold_true", "retro_branding_existing_items",
+        "g2_proficiency_amplification", "mutation_of_178_live_items", "ev_f2_ledger_modification"
+      ]
+    },
+    "sec_74_anti_p2w_contract": {
+      "can_be_sold_for_real_money_required": false,
+      "applicable_to": ["T1_T5", "Common_Legendary", "class_specific", "shared", "universal", "utility_unique"],
+      "no_exceptions": true,
+      "fallback_default_false_if_missing": true,
+      "pre_creation_verification_required": true,
+      "pre_apply_verification_required": true,
+      "post_apply_snapshot_required": true
+    },
+    "sec_75_boss_safeguard": {
+      "3F_area_dispel": "valid",
+      "5F_anti_summon_valid_add": "valid",
+      "boss_direct": "IMMUNE",
+      "boss_summoned_valid_add": "allowed_with_safeguard",
+      "direct_boss_nullification_forbidden": true,
+      "boss_phase_enrage_cancellation_forbidden": true,
+      "target_validation_bypass_forbidden": true
+    },
+    "sec_76_retro_branding_forbidden": {
+      "rule_pm_ratified_ev_f2_closure": true,
+      "name_based_promotion_forbidden": true,
+      "lore_based_promotion_forbidden": true,
+      "warlock_legacy_association_without_mechanical_compat_forbidden": true,
+      "voidpiercer_bow_not_compatible_final_preserved": true,
+      "arcane_adept_orb_not_compatible_preserved_opzione_A": true
+    },
+    "sec_77_cross_phase_persistence_forbidden": {
+      "fragments_combat_scoped": true,
+      "cross_phase_persistence": false,
+      "cross_instance_persistence": false,
+      "persistence_between_encounters": false,
+      "reset_via_wipe_logout_applied": true
+    }
+  },
+  "block_F_affix_pool_tag_contract_sec_78_80": {
+    "sec_78_data_contract": {
+      "data_type": "string_or_list_string_multi_v2_future",
+      "single_vs_multi": "single_value_primary_with_multi_value_extension_v2_future",
+      "namespace_pattern": "void.<family>.<sub>",
+      "namespace_examples": ["void.mark.power", "void.drain.efficacy", "void.payoff.dispel"],
+      "version": "v1.0_locked_afx1_draft",
+      "enum_vocabulary": "closed_10_namespace_canonical_sec_17_66",
+      "format": "lowercase_dot_separator_no_spaces_ascii_only",
+      "length_min": 8, "length_max": 64,
+      "no_population_178_items": true,
+      "backfill_future_dedicated_gate_pm_verdict_required": true
+    },
+    "sec_79_null_unknown_invalid_handling": {
+      "null": {"meaning": "no_affix_pool_assigned_yet", "runtime": "item_has_no_affix", "design_default_t1_baseline": true, "not_p2w_trigger": true},
+      "unknown": {"runtime": "log_warning_treat_as_null", "validation": "fail_item_creation_attempt", "post_apply": "audit_alert"},
+      "invalid": {"runtime": "log_error_treat_as_null", "validation": "fail_apply", "test": "rejected"},
+      "missing_field": {"fallback": "null_via_config_no_materialized_default"},
+      "no_auto_derive_from_name_lore_keyword": true
+    },
+    "sec_80_class_specific_shared_universal_semantics": {
+      "class_specific": {"semantics": "only_cacciatore_del_vuoto_class_slug_can_equip_benefit", "vuoto_affix_count_afx1": 10},
+      "shared": {"semantics": "multi_class_caster_group_compat", "vuoto_afx1_count": 0, "note": "design_only_future_shared_gate"},
+      "universal": {"semantics": "any_class_can_equip_utility_neutral", "vuoto_afx1_count": 0, "note": "design_only_future_universal_gate"},
+      "class_specific_affix_requires_class_slug_match_runtime": true,
+      "shared_universal_requires_dedicated_validation_gate_outside_afx1": true,
+      "all_10_afx1_families_class_specific_this_version": true
+    }
+  },
+  "block_G_ev_f2_interaction_item_specifics_sec_81_83": {
+    "sec_81_ev_f2_ledger_consumption": {
+      "REUSE_VALID": 12,
+      "REUSE_CONDITIONAL": 32,
+      "NOT_COMPATIBLE": 134,
+      "PM_REVIEW": 0,
+      "TOTAL": 178,
+      "immutable": true,
+      "afx1_can_define": ["affix_eligibility", "condition_code", "pool_compatibility", "future_registry_v3_behavior_design_only"],
+      "afx1_cannot": ["change_primary_verdict", "reopen_ev_f2", "promote_not_compatible", "declass_reuse_valid", "introduce_new_verdict_enum"],
+      "any_ledger_modification_requires_explicit_pm_ev_f2_reopen_forbidden_in_afx1": true
+    },
+    "sec_82_arcane_orb_voidpiercer_preservation": {
+      "arcane_adept_orb": {"verdict": "NOT_COMPATIBLE", "mutation": "forbidden", "successor_future": "arcane_adept_orb_void_native_successor", "retro_branding": "forbidden", "successor_creation_in_afx1": false},
+      "voidpiercer_bow": {"verdict": "NOT_COMPATIBLE_FINAL", "mutation": "forbidden", "successor_future": "none_bow_not_vuoto_proficiency", "retro_branding": "forbidden"}
+    },
+    "sec_83_condition_code_catalog_32_reuse_conditional": {
+      "codes": [
+        {"code": "weapon_family_literal_G2_via_rec_classes_additive", "description": "weapon focus/dagger literal G2", "count": 2},
+        {"code": "armor_proficiency_stoffa_cuoio_via_rec_classes_additive", "description": "armor stoffa/cuoio proficient", "count": 11},
+        {"code": "universal_accessory_slot_via_rec_classes_additive", "description": "accessory universal slot", "count": 19}
+      ],
+      "total": 32,
+      "condition_unlock_prereq": [
+        "registry_v3_additive_apply_rec_classes_atomic_append_non_mutation",
+        "afx1_vocabulary_lock_this_document_pm_approval",
+        "explicit_item_allowlist_per_item_verdict_dry_run_snapshot_pm_go_f2q2_constraints",
+        "no_dynamic_keyword_selection",
+        "no_bulk_apply_without_allowlist"
+      ],
+      "afx1_no_apply": true
+    }
+  },
+  "block_H_risk_register_closure_sec_84_85": {
+    "sec_84_risk_register": [
+      {"id": "AFX1-R1", "risk": "pressure_expand_g2_proficiency", "severity": "HIGH_governance", "mitigation": "g2_lock_afx1_non_expansion_policy", "status": "MITIGATED"},
+      {"id": "AFX1-R2", "risk": "retro_branding_pressure_voidpiercer_arcane_orb", "severity": "HIGH", "mitigation": "sec_76_forbidden", "status": "MITIGATED"},
+      {"id": "AFX1-R3", "risk": "cross_class_contamination_mago_necromante_bardo", "severity": "MEDIUM", "mitigation": "class_specific_ownership_sec_80", "status": "ACCEPTED"},
+      {"id": "AFX1-R4", "risk": "combined_proc_over_45_via_multi_slot_stacking", "severity": "HIGH_mechanical", "mitigation": "hard_cap_sec_70_clamped", "status": "MITIGATED"},
+      {"id": "AFX1-R5", "risk": "fragment_overcap_via_affix_synergy", "severity": "HIGH_mechanical", "mitigation": "hard_cap_sec_67_immutable", "status": "MITIGATED"},
+      {"id": "AFX1-R6", "risk": "mark_duration_over_10", "severity": "MEDIUM", "mitigation": "hard_cap_sec_69", "status": "MITIGATED"},
+      {"id": "AFX1-R7", "risk": "boss_safeguard_bypass", "severity": "HIGH_gameplay", "mitigation": "sec_75_preserved", "status": "MITIGATED"},
+      {"id": "AFX1-R8", "risk": "anti_p2w_bypass_on_affix", "severity": "HIGH_governance", "mitigation": "contract_sec_74_mandatory", "status": "MITIGATED"},
+      {"id": "AFX1-R9", "risk": "pvp_unvalidated_effect", "severity": "MEDIUM", "mitigation": "require_explicit_pm_validation_gate", "status": "HOLD"},
+      {"id": "AFX1-R10", "risk": "afx1_vocabulary_drift_in_registry_v3_apply", "severity": "MEDIUM", "mitigation": "contract_lock_sec_78_80", "status": "ACCEPTED"},
+      {"id": "AFX1-R11", "risk": "item_creation_impulse_via_afx1", "severity": "HIGH_governance", "mitigation": "sec_7_non_authorization_inventory", "status": "MITIGATED"},
+      {"id": "AFX1-R12", "risk": "nc1_dependency_bypass_attempt", "severity": "HIGH_governance", "mitigation": "nc1_hold_mandatory_pre_migration_sec_5", "status": "ACCEPTED"}
+    ],
+    "pm_open_questions_afx1": [
+      {"id": "AFX1-Q1", "question": "approvare_10_canonical_namespace_void_family_sub", "recommendation": "APPROVE_names_coherent_with_g3_g4_loop"},
+      {"id": "AFX1-Q2", "question": "confermare_combined_proc_hard_cap_45pct", "recommendation": "CONFIRM_sec_70_mechanical_safety"},
+      {"id": "AFX1-Q3", "question": "confermare_fragment_cap_5_active_marks_5_duration_10", "recommendation": "CONFIRM_g4_g3_loop"},
+      {"id": "AFX1-Q4", "question": "approvare_focus_channel_bonus_plus_1_fragment_segment_cap_2", "recommendation": "APPROVE_sec_71_g2_focus_lock"},
+      {"id": "AFX1-Q5", "question": "approvare_pugnale_ritual_close_bonus_plus_1_fragment_max_1x_per_mark", "recommendation": "APPROVE_sec_72_g2_pugnale_lock"},
+      {"id": "AFX1-Q6", "question": "boss_safeguard_3f_5f_immune_valid_add_as_current", "recommendation": "CONFIRM_sec_75"},
+      {"id": "AFX1-Q7", "question": "affix_pool_tag_single_value_with_multi_v2_extension", "recommendation": "APPROVE_sec_78"},
+      {"id": "AFX1-Q8", "question": "class_specific_ownership_all_10_families_shared_universal_future", "recommendation": "APPROVE_sec_80"},
+      {"id": "AFX1-Q9", "question": "registry_v3_additive_rec_classes_cacciatore_del_vuoto_as_mechanism_unlock_32_conditional", "recommendation": "APPROVE_sec_83_f2q2_constraints"},
+      {"id": "AFX1-Q10", "question": "localization_it_en_afx1_other_langs_registry_v3_future", "recommendation": "APPROVE"},
+      {"id": "AFX1-Q11", "question": "afx1_to_nc1_to_gate_11_sequence_ratified", "recommendation": "CONFIRM_sec_85"},
+      {"id": "AFX1-Q12", "question": "afx1_closure_follow_up_afx2_vocabulary_v2_vs_registry_v3_architecture", "recommendation": "HOLD_pm_future_directive"}
+    ],
+    "sec_85_go_hold_recommendation_stop_state": {
+      "afx1_draft": "DRAFT_GENERATED",
+      "afx1_pm_review": "PENDING",
+      "afx1_closure": "HOLD_draft_only_pm_validate_before_closed",
+      "registry_v3_module_generation": "NOT_AUTHORIZED",
+      "registry_v3_apply": "NOT_AUTHORIZED",
+      "affix_backfill": "NOT_AUTHORIZED",
+      "affix_pool_tag_population": "NOT_AUTHORIZED",
+      "item_creation": "NOT_AUTHORIZED",
+      "arcane_adept_orb_successor_creation": "NOT_AUTHORIZED",
+      "focus_balestra_weapon_materialization": "NOT_AUTHORIZED",
+      "t2_t5_vuoto_item_materialization": "NOT_AUTHORIZED",
+      "r18_3f_nc1": "HOLD_mandatory_pre_migration_not_required_for_afx1",
+      "gate_11": "HOLD",
+      "wave_1_monaco_druido_alchimista_bardo_negromante": "HOLD",
+      "cacciatore_del_vuoto_live_selectable": "NOT_LIVE_NOT_SELECTABLE",
+      "registry_v3_dependency_chain": [
+        "afx1_draft_pm_verdict_afx1_closed",
+        "registry_v3_architecture_gate_design_only_not_authorized_now",
+        "rec_classes_additive_apply_gate_with_f2q2_constraints",
+        "affix_pool_tag_backfill_gate_with_afx1_vocabulary_lock",
+        "item_creation_gate_t2_t5_vuoto_plus_successor",
+        "registry_v3_apply_gate"
+      ],
+      "nc1_dependency_chain": [
+        "r18_3f_nc1_kickoff_post_pm_verdict_dedicated",
+        "null_cohort_remediation_planning",
+        "class_slug_apply_gate",
+        "hall_trial_activation_gate",
+        "gate_11_kickoff"
+      ],
+      "sequence": "afx1_draft_this_dispatch_pm_verdict_afx1_closed_no_auto_start_next_gates"
+    }
+  },
+  "explicit_stop": {
+    "afx1": "DRAFT_GENERATED_PENDING_PM_VALIDATION",
+    "rv3_ev": "CLOSED_ratified_immutable",
+    "ev_f1": "CLOSED_ratified_immutable",
+    "ev_f2": "CLOSED_ratified_immutable_ledger_12_32_134_0",
+    "r18_3f": "CLOSED",
+    "r18_3f_nc1": "HOLD",
+    "gate_11": "HOLD",
+    "wave_1": "HOLD",
+    "monaco": "HOLD",
+    "cacciatore_del_vuoto": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "registry_v3_item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "affix_backfill": "NOT_AUTHORIZED",
+    "field_addition": "NOT_AUTHORIZED",
+    "field_backfill": "NOT_AUTHORIZED",
+    "item_creation": "NOT_AUTHORIZED",
+    "sealed_integrity": "36_of_36_PASS",
+    "lore_meta_anchor": "INVARIATO",
+    "backend_frontend_openapi_touch_count": 0,
+    "db_writes": 0,
+    "prd_append_in_this_dispatch": false,
+    "auto_start_next_gate_forbidden": true,
+    "next_action": "await_pm_directive_on_afx1_draft"
+  }
+}
