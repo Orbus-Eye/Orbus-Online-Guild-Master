@@ -1,0 +1,463 @@
+{
+  "metadata": {
+    "artifact": "R18.3f-R1 Canonical Mapping and Null Cohort Reconciliation Audit",
+    "document_type": "conditional_draft_micro_rework_audit",
+    "regime": "READ_ONLY_DISCOVERY_DOCUMENTAL_ONLY",
+    "language": "italian_only",
+    "trigger": "PM verdict R18.3f = CONDITIONAL_DRAFT_MICRO_REWORK_REQUIRED",
+    "parent_draft_r18_3f_files": {
+      "md_path": "/app/memory/r18_3f_class_slug_migration_readiness.md",
+      "md_sha256_invariant": "746ad94f7f186684f08c4d5ab4268ab719a2287b3dfc078b5d3e0a8f53b69668",
+      "json_path": "/app/memory/r18_3f_class_slug_migration_readiness.json",
+      "json_sha256_invariant": "d79401ebcbad376149a5ccb819fa8ead06cf180ad6b386022a94efe358ce3389",
+      "manifest_path": "/app/memory/r18_3f_class_slug_migration_readiness_manifest.json",
+      "manifest_sha256_invariant": "bc603ff8892f84efdafb6bdd1b6ddbe7c4b35b06eb165f2dc2c930c16debe63b"
+    },
+    "closure_status_r18_3f": "HOLD",
+    "governance_status": "PM_LOCKED_PENDING_VERDICT",
+    "canonical_bridge_registry_reference": "/app/memory/r18_3e_bridge_registry.json",
+    "canonical_halls_registry_reference": "/app/memory/r18_6_1_canonical_27_class_halls_expansion.json",
+    "sealed_integrity_expected": "36_of_36_PASS",
+    "lore_meta_anchor_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "no_migration_applied": true,
+    "class_slug_write_count": 0,
+    "db_writes_count": 0,
+    "openapi_changes": false,
+    "backend_changes": false,
+    "frontend_changes": false,
+    "test_files_created": 0,
+    "r18_3f_original_files_modified": false,
+    "pilot_certificate_modified": false,
+    "pilot_manifest_modified": false,
+    "prd_modified_by_r18_3f_r1": false
+  },
+  "blocco_a_paladin_reconciliation": {
+    "verifica_1_paladin_live_count": 303,
+    "verifica_2_conteggio_esatto": {
+      "class_slug_paladin_live": 303,
+      "class_slug_paladino_live": 0,
+      "class_slug_priest_live": 278
+    },
+    "verifica_3_paladin_catalog_present": true,
+    "verifica_3_paladin_catalog_entry": {
+      "slug": "paladin",
+      "canonical_slug": "paladino",
+      "alias_target": null,
+      "bridge_status": "mapped_canonical",
+      "bridge_source_round": "R18.3e Phase B",
+      "display_name_it": "Paladino",
+      "is_base_class": true,
+      "is_active": true
+    },
+    "verifica_4_paladin_bridge_registry_r18_3e_present": true,
+    "verifica_4_bridge_entry": {
+      "slug": "paladin",
+      "canonical_slug": "paladino",
+      "alias_target": null,
+      "bridge_status": "mapped_canonical",
+      "bridge_source_round": "R18.3e Phase B",
+      "confidence": "HIGH",
+      "adventurers_live": 303,
+      "display_name_it_live": "Paladino"
+    },
+    "verifica_4_paladin_r18_6_1_halls_registry": "paladin_legacy_not_present_correct_r18_6_1_has_only_canonical_it_paladino",
+    "verifica_5_paladin_canonical_target": "paladino",
+    "verifica_6_many_to_one_priest_paladin": {
+      "priest_to_paladino": {
+        "bridge_status": "mapped_alias",
+        "confidence": "MEDIUM",
+        "adventurers_live": 278
+      },
+      "paladin_to_paladino": {
+        "bridge_status": "mapped_canonical",
+        "confidence": "HIGH",
+        "adventurers_live": 303
+      },
+      "reverse_map_r18_3e_paladino_from": ["paladin", "priest"],
+      "many_to_one_ratificato_dal_registry": true,
+      "combined_live_count_to_paladino_target": 581
+    },
+    "verifica_7_total_mapping_source_count": 14,
+    "verifica_7_stop_mismatch": false,
+    "verifica_7_bridge_source_breakdown": {
+      "mapped_canonical_count": 9,
+      "mapped_alias_count": 3,
+      "deprecated_alias_count": 2,
+      "canonical_native_count": 2,
+      "technical_placeholder_count": 1,
+      "test_artifact_count": 1,
+      "ambiguous_pending_pm_count": 0,
+      "total_bridge_entries": 18
+    }
+  },
+  "blocco_b_mapping_category_correction": {
+    "verifica_8_correzione_semantica_obbligatoria_applicata": true,
+    "verifica_8_errore_semantico_draft_originale": "11 mapping legacy classificati erroneamente come canonical_native nel draft R18.3f §17",
+    "verifica_8_categoria_corretta_secondo_r18_3e_bridge_status_enum": [
+      "mapped_canonical",
+      "mapped_alias",
+      "deprecated_alias",
+      "technical_placeholder",
+      "test_artifact",
+      "canonical_native",
+      "ambiguous_pending_pm"
+    ],
+    "bridge_registry_18_entries_corrected": [
+      { "id": 1,  "legacy_source": "warrior",              "canonical_target": "guerriero",             "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 331 },
+      { "id": 2,  "legacy_source": "rogue",                "canonical_target": "ladro",                 "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 302 },
+      { "id": 3,  "legacy_source": "mage",                 "canonical_target": "mago",                  "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 281 },
+      { "id": 4,  "legacy_source": "priest",               "canonical_target": "paladino",              "bridge_status": "mapped_alias",         "confidence": "MEDIUM", "adventurers_live": 278 },
+      { "id": 5,  "legacy_source": "ranger",               "canonical_target": "cacciatore_di_mostri",  "bridge_status": "mapped_alias",         "confidence": "MEDIUM", "adventurers_live": 299 },
+      { "id": 6,  "legacy_source": "monk",                 "canonical_target": "monaco",                "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 327 },
+      { "id": 7,  "legacy_source": "paladin",              "canonical_target": "paladino",              "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 303 },
+      { "id": 8,  "legacy_source": "druid",                "canonical_target": "druido",                "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 311 },
+      { "id": 9,  "legacy_source": "alchemist",            "canonical_target": "alchimista",            "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 299 },
+      { "id": 10, "legacy_source": "bard",                 "canonical_target": "bardo",                 "bridge_status": "mapped_canonical",     "confidence": "HIGH",   "adventurers_live": 324 },
+      { "id": 11, "legacy_source": "warlock",              "canonical_target": "cacciatore_del_vuoto",  "bridge_status": "mapped_alias",         "confidence": "MEDIUM", "adventurers_live": 305 },
+      { "id": 12, "legacy_source": "necromancer",          "canonical_target": "negromante",            "bridge_status": "mapped_canonical",     "confidence": "MEDIUM", "adventurers_live": 0   },
+      { "id": 13, "legacy_source": "assassin",             "canonical_target": "ladro",                 "bridge_status": "deprecated_alias",     "confidence": "MEDIUM", "adventurers_live": 0   },
+      { "id": 14, "legacy_source": "berserker",            "canonical_target": "guerriero",             "bridge_status": "deprecated_alias",     "confidence": "MEDIUM", "adventurers_live": 0   },
+      { "id": 15, "legacy_source": "cacciatore_di_mostri", "canonical_target": "cacciatore_di_mostri",  "bridge_status": "canonical_native",     "confidence": "HIGH",   "adventurers_live": 0   },
+      { "id": 16, "legacy_source": "cacciatore_del_vuoto", "canonical_target": "cacciatore_del_vuoto",  "bridge_status": "canonical_native",     "confidence": "HIGH",   "adventurers_live": 0   },
+      { "id": 17, "legacy_source": "recruit_unassigned",   "canonical_target": null,                    "bridge_status": "technical_placeholder","confidence": "HIGH",   "adventurers_live": 0   },
+      { "id": 18, "legacy_source": "test-class-5e0064",    "canonical_target": null,                    "bridge_status": "test_artifact",        "confidence": "HIGH",   "adventurers_live": 0   }
+    ],
+    "correction_summary": {
+      "canonical_native_correct_count": 2,
+      "canonical_native_draft_original_count_wrong": 11,
+      "mapped_canonical_correct_count": 9,
+      "mapped_alias_correct_count": 3,
+      "deprecated_alias_correct_count": 2,
+      "technical_placeholder_correct_count": 1,
+      "test_artifact_correct_count": 1,
+      "ambiguous_pending_pm_correct_count": 0,
+      "total_entries": 18,
+      "total_mapping_source_legacy_to_canonical": 14
+    }
+  },
+  "blocco_c_null_cohort_reconciliation": {
+    "verifica_9_total_null_cohort": 268,
+    "verifica_10_schema_null_docs": {
+      "field_present_in_30_of_30_sample": [
+        "_id", "id", "guild_id", "name", "adventurer_class_id", "class_name",
+        "class_role", "rarity", "level", "experience", "strength", "agility",
+        "intellect", "endurance", "faith", "stamina", "morale", "traits",
+        "is_available", "is_starter", "created_at", "updated_at", "phase13_unbaked"
+      ],
+      "field_absent_in_null_cohort_vs_non_null_3360": [
+        "status", "grade", "xp", "hp_max", "hp_current", "is_retired",
+        "r18_reset1b_seed_source", "r18_reset1b_starter", "r18_reset1b_stat_source",
+        "r18_reset1b_hotfix_v1_2", "r18_reset1b_hotfix_v1_3"
+      ]
+    },
+    "verifica_11_recruit_state_evidence": {
+      "is_starter_distinct": [true],
+      "is_available_distinct": [true],
+      "is_retired_field_present": false,
+      "phase13_unbaked_distinct": [true],
+      "level_distinct": [1],
+      "rarity_distinct": ["Common"],
+      "status_field_present": false,
+      "grade_field_present": false,
+      "is_recruit_field_present": false
+    },
+    "verifica_12_class_history_evidence": {
+      "class_history_field_present": false,
+      "previous_class_field_present": false,
+      "previous_class_slug_field_present_in_docs": false,
+      "previous_class_slug_referenced_only_in_guilds_routes_py_135_zero_leak_metadata": true,
+      "career_events_field_present": false,
+      "career_started_field_present": false,
+      "career_history_collection_docs_count": 0
+    },
+    "verifica_13_null_conflict_candidates": {
+      "class_slug_null_and_class_name_not_null_count": 268,
+      "class_slug_null_and_adventurer_class_id_not_null_count": 268,
+      "class_name_distinct_in_null_cohort_11": [
+        "Alchemist", "Bard", "Druid", "Mage", "Monk",
+        "Paladin", "Priest", "Ranger", "Rogue", "Warlock", "Warrior"
+      ],
+      "class_role_distinct_in_null_cohort_4": ["DPS", "Healer", "Support", "Tank"],
+      "adventurer_class_id_distinct_in_null_cohort_count": 11
+    },
+    "verifica_14_documents_schema_anomaly": {
+      "batch_pre_r16_5_4c_adj_9_class_slug_write_path": true,
+      "batch_pre_r18_reset1b_hotfix": true,
+      "missing_fields_common_to_all_268": [
+        "status", "grade", "xp", "hp_max", "hp_current", "is_retired",
+        "r18_reset1b_seed_source", "r18_reset1b_starter", "r18_reset1b_stat_source",
+        "r18_reset1b_hotfix_v1_2", "r18_reset1b_hotfix_v1_3"
+      ]
+    },
+    "verifica_15_status_distribution": {
+      "status_none_count": 268,
+      "status_field_never_populated": true
+    },
+    "verifica_16_temporal_distribution": {
+      "batch_temporal_uniform": true,
+      "batch_time_prefix_utc": "2026-07-05T15:55:48.9",
+      "created_at_bson_type_observed": "string",
+      "date_aggregation_failure": "PlanExecutor error can't convert from BSON type string to Date",
+      "sample_timestamps": [
+        "2026-07-05T15:55:48.919796+00:00",
+        "2026-07-05T15:55:48.920356+00:00",
+        "2026-07-05T15:55:48.920777+00:00",
+        "2026-07-05T15:55:48.921300+00:00",
+        "2026-07-05T15:55:48.921794+00:00"
+      ]
+    },
+    "verifica_17_creation_source": {
+      "creation_source_field_present": false,
+      "created_by_field_present": false,
+      "source_field_present": false,
+      "inferred_origin": "single_seed_batch_pre_hotfix_2026_07_05_15_55_48"
+    },
+    "verifica_18_career_evidence": {
+      "career_history_collection_present": true,
+      "career_history_docs_total": 0,
+      "career_history_linked_to_null_ids_count": 0,
+      "xp_gt_0_count_in_null_cohort": 0,
+      "experience_gt_0_count_in_null_cohort": 0,
+      "level_gt_1_count_in_null_cohort": 0
+    },
+    "reclassification_4_sub_cohorts": {
+      "CLASSLESS_CONFIRMED": { "count": 0, "percentage": 0.0, "criteria_satisfied": false },
+      "NULL_UNRESOLVED":     { "count": 0, "percentage": 0.0, "criteria_satisfied": false },
+      "NULL_CONFLICT":       { "count": 268, "percentage": 100.0, "criteria_satisfied": true,
+                               "criteria": "class_slug_null_but_class_name_class_role_adventurer_class_id_all_populated" },
+      "NO_ACTION":           { "count": 0, "percentage": 0.0, "criteria_satisfied": false },
+      "sum_check": 268,
+      "sum_check_valid": true
+    },
+    "null_conflict_breakdown_by_class_name": {
+      "Alchemist": { "count": 27, "inferable_canonical_target": "alchimista" },
+      "Bard":      { "count": 26, "inferable_canonical_target": "bardo" },
+      "Druid":     { "count": 28, "inferable_canonical_target": "druido" },
+      "Mage":      { "count": 22, "inferable_canonical_target": "mago" },
+      "Monk":      { "count": 22, "inferable_canonical_target": "monaco" },
+      "Paladin":   { "count": 27, "inferable_canonical_target": "paladino" },
+      "Priest":    { "count": 17, "inferable_canonical_target": "paladino" },
+      "Ranger":    { "count": 28, "inferable_canonical_target": "cacciatore_di_mostri" },
+      "Rogue":     { "count": 20, "inferable_canonical_target": "ladro" },
+      "Warlock":   { "count": 23, "inferable_canonical_target": "cacciatore_del_vuoto" },
+      "Warrior":   { "count": 28, "inferable_canonical_target": "guerriero" },
+      "total_check": 268,
+      "note_pm_rule_r3f_q1_custom": "NO_auto_derive · inferability_documented_only · verdict_stays_NULL_CONFLICT"
+    }
+  },
+  "blocco_d_parent_class_slug_and_anomalies": {
+    "verifica_19_parent_class_slug_discovery": {
+      "adventurers_parent_class_slug_distinct_count": 0,
+      "adventurers_parent_class_slug_exists_count": 0,
+      "adventurers_parent_class_slug_notnull_count": 0,
+      "adventurer_classes_parent_class_slug_distinct_count": 0,
+      "class_specializations_parent_class_slug_distinct_count": 0,
+      "field_exists_live": false,
+      "code_reference_backend_app_adventurers_services_py_line_169": true,
+      "code_status": "dormant_no_live_data",
+      "severity_upgrade_from_original_a5": "LOW_to_MEDIUM"
+    },
+    "verifica_20_anomalies_updated": {
+      "original_anomalies_a1_a5_status": {
+        "A1": { "severity": "MEDIUM", "status": "RESOLVED_by_null_conflict_reclassification" },
+        "A2": { "severity": "MEDIUM", "status": "CONFIRMED_archive_only_policy" },
+        "A3": { "severity": "LOW",    "status": "CONFIRMED_catalog_delta_7_expected" },
+        "A4": { "severity": "INFO",   "status": "CONFIRMED_class_halls_aligned" },
+        "A5": { "severity": "MEDIUM", "status": "UPGRADED_from_LOW_parent_class_slug_dormant" }
+      },
+      "new_anomalies_a6_a14": [
+        { "id": "A6",  "severity": "MEDIUM", "description": "268 null cohort e batch uniforme 2026-07-05T15:55:48.9 single seed pre-hotfix", "impact": "batch_identifiable_migration_can_be_targettizzata" },
+        { "id": "A7",  "severity": "LOW",    "description": "phase13_unbaked=True per tutti 268", "impact": "phase_13_pending_flag" },
+        { "id": "A8",  "severity": "INFO",   "description": "career_history collection VUOTA 0 docs", "impact": "no_gameplay_history_any_adventurer" },
+        { "id": "A9",  "severity": "MEDIUM", "description": "parent_class_slug 0 distinct in tutte le collection · services.py:169 dormant", "impact": "possible_safe_refactor_out_of_scope_r18_3f" },
+        { "id": "A10", "severity": "MEDIUM", "description": "class_slug=null reconstructable via class_name+adventurer_class_id+class_role per tutti 268", "impact": "null_conflict_not_classless" },
+        { "id": "A11", "severity": "LOW",    "description": "created_at STRING type in Mongo not ISO Date · aggregation temporal fails", "impact": "future_query_performance_and_type_normalization_needed" },
+        { "id": "A12", "severity": "LOW",    "description": "268 null cohort manca status/grade/xp/hp_max/hp_current/is_retired/r18_reset1b_* · presenti negli altri 3360", "impact": "batch_pre_reset1b_pre_hotfix_schema_drift" },
+        { "id": "A13", "severity": "INFO",   "description": "previous_class_slug referenziato solo in guilds/routes.py:135 come Zero-leak metadata da filtrare · non memorizzato", "impact": "coherent_with_zero_leak_audit_r18_5" },
+        { "id": "A14", "severity": "INFO",   "description": "bridge_status_enum R18.3e ha 7 valori · 7 valore ambiguous_pending_pm safety escape hatch", "impact": "no_current_ambiguous_entries" }
+      ]
+    },
+    "risk_register_updates": {
+      "original_r1_r12_status": "invariati_ereditati_da_draft_originale",
+      "new_risks_r13_r18": [
+        { "id": "R13", "severity": "MEDIUM", "risk": "268 NULL_CONFLICT · classificazione errata come CLASSLESS_CONFIRMED",                                          "mitigation": "R18_3f_R1_riclassifica_in_NULL_CONFLICT · no_auto_derive" },
+        { "id": "R14", "severity": "HIGH",   "risk": "Migration futura potrebbe erroneamente creare class_slug=recruit_unassigned sui 268 null · regola PM violata", "mitigation": "null_to_recruit_unassigned_auto_derive_VIETATO · verdict_NULL_CONFLICT_esplicito" },
+        { "id": "R15", "severity": "LOW",    "risk": "parent_class_slug dormant referenced in services.py:169 potrebbe leggere None in produzione",                    "mitigation": "codice_safe_doc_get_no_crash · monitoring_suggerito" },
+        { "id": "R16", "severity": "MEDIUM", "risk": "created_at STRING type breaks temporal aggregations · future migration potrebbe assumere Date",                 "mitigation": "normalizzazione_dati_fuori_scope_R18_3f · flag_rischio_Gate_11_sub_plan" },
+        { "id": "R17", "severity": "INFO",   "risk": "career_history VUOTA · nessun rollback storico via history",                                                     "mitigation": "snapshot_pre_apply_unica_strategia_rollback_design_originale" },
+        { "id": "R18", "severity": "LOW",    "risk": "Bridge paladin_paladino mapped_canonical many-to-one con priest_paladino mapped_alias · collision futura",       "mitigation": "documented · staged_per_cohort_migration_r3f_q4_custom" }
+      ]
+    }
+  },
+  "pm_custom_rules_acknowledged": {
+    "R3f_Q1_CUSTOM_null_policy": {
+      "preserve_null": true,
+      "no_auto_convert_to_recruit_unassigned": true,
+      "recruit_unassigned_stays_technical_placeholder": true,
+      "268_records_reclassified_via_independent_evidence": true,
+      "classless_confirmed_criteria_documented_all_5_required": true
+    },
+    "R3f_Q2_paladin_reconciliation": {
+      "baseline_pm_expected": "paladin_to_paladino_mapped_legacy",
+      "registry_verification_result": "CONFIRMED_paladin_present_in_r18_3e_bridge_registry",
+      "stop_mismatch_triggered": false,
+      "total_mapping_source_count": 14
+    },
+    "R3f_Q3_archive_only": {
+      "archive_canonical_values_as_historical_evidence": true,
+      "no_retro_propagation": true,
+      "no_mutation_archive": true,
+      "no_copia_automatica_verso_live": true,
+      "archive_not_source_of_truth_for_live_migration": true
+    },
+    "R3f_Q4_staged_per_mapping_cohort": {
+      "not_one_shot": true,
+      "not_wave_bound_to_class_design": true,
+      "future_sequence_documented": [
+        "full_dry_run_read_only",
+        "snapshot_verified",
+        "mapping_validation",
+        "canary_controlled",
+        "one_source_mapping_at_a_time",
+        "post_batch_verification",
+        "stop_gate",
+        "next_mapping"
+      ],
+      "cohort_schema_fields": [
+        "source_slug", "target_slug", "candidate_count", "excluded_count",
+        "conflict_count", "unknown_count", "planned_batch_size",
+        "idempotency_key", "snapshot_reference", "rollback_reference",
+        "apply_authorized_false"
+      ]
+    },
+    "R3f_Q5_min_4_weeks_compat": {
+      "not_auto_terminating_at_day_28": true,
+      "exit_conditions_cumulative_7_gates": [
+        "zero_legacy_writes_gt_14_days",
+        "zero_legacy_only_consumers_known",
+        "frontend_compatible",
+        "backend_compatible",
+        "api_contract_validated",
+        "telemetry_no_drift",
+        "pm_approval"
+      ],
+      "strategy_canonical_write_plus_temporary_dual_read": true,
+      "implemented_in_r18_3f_r1": false
+    },
+    "R3f_Q6_feature_flag_two_levels": {
+      "kill_switch_global": "CLASS_SLUG_MIGRATION_ENABLED = false",
+      "per_cohort_flag": "migration_cohort_enabled[source_slug, target_slug] = false",
+      "example": "warlock_to_cacciatore_del_vuoto_enabled_false",
+      "no_single_flag_authorizes_whole_migration": true
+    },
+    "R3f_Q7_preventive_compatibility_review": {
+      "required_before_any_apply": true,
+      "blocking_condition_for_gate_11": true
+    },
+    "R3f_Q8_test_artifact_preserve": {
+      "slug": "test-class-5e0064",
+      "migration_eligible": false,
+      "auto_map": false,
+      "runtime_propagation": false,
+      "do_not_delete": true,
+      "do_not_convert": true,
+      "exclude_from_player_facing_stats": true,
+      "explicit_guard_required": true
+    },
+    "R3f_Q9_snapshot_stop_rollback_double_gate": {
+      "prerequisites_documented": [
+        "snapshot_completo",
+        "conteggi_pre_apply",
+        "hash_manifest",
+        "batch_boundaries",
+        "audit_id",
+        "mapping_version",
+        "dry_run_PASS",
+        "explicit_pm_go"
+      ],
+      "stop_triggers_immediate": [
+        "sealed_FAIL",
+        "mapping_registry_mismatch",
+        "unexpected_slug",
+        "write_out_of_cohort",
+        "write_on_unauthorized_collection",
+        "candidate_count_change_no_explanation",
+        "idempotency_failure",
+        "wrong_canonical_target",
+        "user_account_collection_modified",
+        "archive_modified"
+      ],
+      "rollback_manual_double_gate_technical_plus_pm": true,
+      "no_hard_delete": true,
+      "batch_restore_from_own_snapshot": true
+    },
+    "R3f_Q10_pm_lock_at_closure": {
+      "sealing_in_two_phases": [
+        "apply_package_sealed_before_execution",
+        "closure_manifest_sealed_after_apply_final_review"
+      ],
+      "no_new_seal_added_now": true
+    }
+  },
+  "verdict_summary": {
+    "blocco_a_paladin": {
+      "paladin_live_303": true,
+      "paladin_catalog_present": true,
+      "paladin_bridge_r18_3e_present": true,
+      "many_to_one_confirmed": true,
+      "mapping_source_count": 14,
+      "stop_mismatch": false
+    },
+    "blocco_b_category_correction": {
+      "canonical_native_correct": 2,
+      "canonical_native_draft_wrong": 11,
+      "mapped_canonical": 9,
+      "mapped_alias": 3,
+      "deprecated_alias": 2,
+      "technical_placeholder": 1,
+      "test_artifact": 1,
+      "ambiguous_pending_pm": 0,
+      "total_bridge_entries": 18
+    },
+    "blocco_c_null_cohort": {
+      "classless_confirmed": 0,
+      "null_unresolved": 0,
+      "null_conflict": 268,
+      "no_action": 0,
+      "total": 268,
+      "sum_valid": true
+    },
+    "blocco_d_parent_class_slug": {
+      "parent_class_slug_distinct_all_collections": 0,
+      "code_status": "dormant",
+      "severity": "MEDIUM_upgraded_from_LOW",
+      "new_anomalies_count": 9,
+      "new_risks_count": 6
+    }
+  },
+  "governance": {
+    "closure_r18_3f_status": "HOLD",
+    "prd_appended": false,
+    "r18_3f_original_files_untouched": true,
+    "pilot_certificate_untouched": true,
+    "pilot_manifest_untouched": true,
+    "gate_11": "NOT_AUTHORIZED",
+    "wave_1_kickoff": "HOLD",
+    "rv3_ev": "HOLD",
+    "monaco_kickoff": "HOLD",
+    "runtime_implementation": "NOT_AUTHORIZED"
+  },
+  "explicit_stop": {
+    "stop_after_r18_3f_r1_audit": true,
+    "no_apply": true,
+    "no_gate_11": true,
+    "no_wave_1_kickoff": true,
+    "no_runtime_activation": true,
+    "no_class_slug_writes": true,
+    "no_prd_closure_append": true,
+    "action": "STOP · attendo PM verdict finale su R18.3f (CLOSE/REWORK/HOLD)"
+  }
+}
