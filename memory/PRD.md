@@ -2739,3 +2739,98 @@ runtime_bridge_status: disabled
 `R18.5 C0-C6 LOCKED` → `R18.6 LOCKED` → `R18.6.1 LOCKED` → `R18.6.2 Framework LOCKED` → **`R18.6.3 Cacciatore del Vuoto Pilot STARTED · G1 STAT_DESIGN 🟢`** → G2 PROFICIENCY_DESIGN 🔒 HOLD → G3..G10 🔒 HOLD → `R18.6.RV3 Registry v3` 🔒 HOLD → `R18.6.RB1 Rite of Rebirth` 🔒 HOLD → `Wave 1 successivi (Monaco/Druido/Alchimista/Bardo/Negromante)` 🔒 HOLD → `Wave 2/3/4` 🔒 HOLD → `R18.3f` 🔒 HOLD → `Apply Phase` 🔒 HOLD → `Marketing Brief` ⏸️ DEFERRED
 
 🛑 **STOP dopo R18.6.3-G1 STAT_DESIGN dispatch.** Nessun auto-start Gate 2. Attendo PM review Gate 1 + GO esplicito per Gate 2.
+
+
+## R18.6.3-G1 STAT_DESIGN CLOSED (with PM final SD-Q1..SD-Q7 · 2026-07-08T17:30:00Z)
+
+**Milestone**: **R18.6.3 Gate 1 STAT_DESIGN CLOSED** ✅ · Gate 2 PROFICIENCY_DESIGN **AUTHORIZED** 🟢
+
+**Governance**: DOCUMENTAL ONLY append. 36 sigilli byte-identical. `lore_meta.py` invariato (`a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`). Zero code/DB/migrations/sealed/R18.5/R18.6/R18.6.1/R18.6.2/G1 modifiche (tutti LOCKED post-approval).
+
+### ⚠️ PRECISAZIONE SEMANTICA OBBLIGATORIA — Legendary ILVL
+
+- **"Legendary flat +60"** era **ERRATO** semanticamente e viene **corretto in tutti i documenti futuri**
+- **Corretto**: **"Legendary ILVL = 60"**
+- **NON significa "+60 Intelligenza"**
+- **ILVL e valore statistica primaria sono sistemi DISTINTI**
+- Nessun Legendary riceve automaticamente `+60 Intelligenza`
+- Budget statistico Legendary futuro deve rispettare: T5 · rarity budget · soft cap Int 100 · balance classe · utility unica · anti-power-creep
+
+### PM Answers SD-Q1..SD-Q7 (verbatim locked in G1)
+
+- **SD-Q1 · Soft cap Intelligenza = 100 (linear-flattening, NON hard cap)**
+  - Int 1-90 → crescita piena
+  - Int 91-100 → crescita ancora rilevante
+  - Int >100 → diminishing returns progressivi
+  - NO blocco artificiale · NO azzeramento bonus · NO step bruschi · NO scaling infinito lineare
+
+- **SD-Q2 · Secondary=Costituzione · Tertiary=Destrezza**
+  - Rationale: Vuoto deve restare esposto durante Marchio/Drain/Payoff senza diventare fragile burst puro
+  - Dex terziaria · NON aumenta danno principale · NON sostituisce Int · NO build Dex equivalente · NO balestra weapon fisica Ranger/Rogue
+
+- **SD-Q3 · Diminishing returns curve = linear-flattening continua e leggibile**
+  - Fino Int 90 → rendimento pieno
+  - Int 91-100 → appiattimento leggero
+  - Oltre Int 100 → appiattimento progressivo
+  - NO curva logaritmica opaca · NO step rigidi 30/60/90 · NO soglie con salti improvvisi
+  - Formula numerica definitiva resta futura, NON implementare ora
+
+- **SD-Q4 · Bridge legacy warlock gestito in R18.3f**
+  - **NON** creare gate duplicato `R18.6.LB1` (rejected)
+  - Bridge canonico: `warlock → cacciatore_del_vuoto` · `bridge_status=mapped_design_only · migration_status=not_applied · runtime_bridge_status=disabled`
+  - Nuovi avventurieri restano `class_slug=null · recruit_unassigned` · ottengono classe SOLO tramite Faro Rovesciato
+
+- **SD-Q5 · Tiered soft XP penalty · XP MAI = 0 (hard-block rejected)**
+  - Baseline direzionale su rapporto `main_stat_effettiva / main_stat_raccomandata`:
+    - ≥85% → 100% XP
+    - 70-84% → 90% XP
+    - 55-69% → 75% XP
+    - <55% → 50% XP
+  - **XP minimum = 50%** · non può scendere a 0 per sola carenza main stat
+  - Policy globale futura (non esclusiva Vuoto) · G1 documenta solo che Vuoto usa Intelligenza come stat di riferimento futuro
+
+- **SD-Q6 · Saggezza = non prioritaria, preservata per utility difensiva futura**
+  - **NON usare termine "dump" come lock definitivo**
+  - Saggezza NON aumenta: danno principale · Marchio · generazione Frammenti · Drain · Payoff
+  - Può in futuro contribuire a: resistenza al Vuoto · resistenza distorsioni mentali · durata ridotta stati onirici ostili · utility difensiva secondaria
+  - NO build Wisdom alternativa
+
+- **SD-Q7 · Balestra scaling MEDIO-ALTO confermato**
+  - Focus → Int **ALTO** (canalizzazione/controllo)
+  - Balestra → Int **MEDIO-ALTO** (applicazione precisa Marchi)
+  - Pugnale → Int **RIDOTTO** (opportunità ravvicinata/rituale/payoff)
+  - NO parificare balestra al focus · NO scaling Dex · NO penalty accuracy senza Dex · NO requisito Dex nascosto · NO build ranged fisica
+  - Balestra Vuoto = strumento di canalizzazione arcana a distanza (**NON** weapon Ranger/Rogue)
+
+### G1 STAT_DESIGN Approved Summary
+
+- **main_stat = Intelligenza 🔒 LOCKED**
+- **soft_cap_Int = 100** · linear-flattening
+- **priority order**: Intelligenza → Costituzione → Destrezza · Saggezza non core (utility difensiva futura) · Forza no role
+- **Damage profile**: Focus ALTO · Balestra MEDIO-ALTO · Pugnale RIDOTTO · NO Dex/Str damage scaling
+- **XP main-stat penalty**: tiered soft (min 50%, mai 0) · policy globale
+- **Bridge warlock → cacciatore_del_vuoto**: `mapped_design_only · not_applied · disabled` · gestito in R18.3f (no LB1 duplicato)
+- **Legendary ILVL = 60** (NON "+60 Int") · Legendary budget rispetta soft cap Int 100
+
+### Gate 2 PROFICIENCY_DESIGN AUTHORIZED
+
+- **Status**: 🟢 AUTHORIZED (dispatch in questo append)
+- **Scope**: SOLO armor whitelist (cuoio + stoffa) + weapon whitelist (focus + pugnale + balestra) + `lanterna` RESERVED valuation
+- **Vincolo**: SOLO proficiency · NO gameplay loop (Gate 3) · NO resource (Gate 4) · NO equip base (Gate 5)
+- **NO Gate 3 auto-start**
+
+### Governance Constraints Confirmed G1 CLOSED
+
+- **R18.5 / R18.6 / R18.6.1 / R18.6.2 / R18.6.3-G1** = **CLOSED · LOCKED** · zero modifiche
+- **R18.6.3-G3..G10** = **🔒 HOLD** (gate PM individuale)
+- **R18.6.RV3 · R18.6.RB1 · R18.3f · Apply Phase · Progressive Discovery · R18.6 live · Wave 1 successivi · Wave 2-4 · Marketing Brief** = **🔒 HOLD / ⏸️ DEFERRED**
+- **Zero code · zero DB · zero migrations · zero item creation · zero registry apply · zero class_slug apply · zero legacy bridge apply · zero runtime bridge · zero sealed touch**
+- **Sealed integrity**: pytest 6/6 passed
+- **`lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · **INVARIATO**
+
+---
+
+**Combined status flow (aggiornato)**:
+`R18.5 → R18.6 → R18.6.1 → R18.6.2 LOCKED` → `R18.6.3 Cacciatore del Vuoto Pilot STARTED` → **`G1 STAT_DESIGN ✅ CLOSED (this append)`** → **`G2 PROFICIENCY_DESIGN 🟢 AUTHORIZED (dispatched)`** → G3..G10 🔒 HOLD → `R18.6.RV3` 🔒 HOLD → `R18.6.RB1` 🔒 HOLD → `Wave 1 successivi` 🔒 HOLD → `R18.3f` 🔒 HOLD (bridge warlock handling) → `Apply Phase` 🔒 HOLD → `Marketing Brief` ⏸️ DEFERRED
+
+🛑 **STOP dopo R18.6.3-G2 PROFICIENCY_DESIGN dispatch.** Nessun auto-start Gate 3. Attendo PM review G2 + GO esplicito Gate 3.

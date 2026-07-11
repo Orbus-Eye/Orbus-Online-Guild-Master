@@ -1,0 +1,695 @@
+{
+  "metadata": {
+    "round": "R18.6.3",
+    "phase": "Gate 2 · PROFICIENCY_DESIGN",
+    "pilot_class": "cacciatore_del_vuoto",
+    "hall_id": "hall_cacciatore_del_vuoto",
+    "locked_at_utc": "2026-07-08T17:45:00Z",
+    "authority": "PM Orchestrator — G2 PROFICIENCY_DESIGN GO esplicito post-G1 ACK",
+    "regime": "DOCUMENTAL ONLY",
+    "governance": "NO code · NO DB · NO migrations · NO Registry v3 · NO nuovi item · NO modifica catalogo R18.5 · NO class unlock · NO Hall activation · NO class_slug apply · NO bridge apply · NO auto-derive · NO gameplay implementation (Gate 3) · NO resource implementation (Gate 4) · NO equip base implementation (Gate 5) · NO Gate 3 auto-start · NO modifica R18.5/R18.6/R18.6.1/R18.6.2/G1 (LOCKED)",
+    "language": "italian_only",
+    "sealed_baseline": {
+      "lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "sealed_files_count": 36
+    },
+    "gate_isolation_policy": "Gate 2 definisce SOLO proficiency. Gameplay/resource/equip menzionati come reference/dipendenza · MAI come design output.",
+    "sections_scope": 25,
+    "input_from_g1": {
+      "main_stat_locked": "Intelligenza",
+      "soft_cap_int": 100,
+      "priority_order": [
+        "Intelligenza",
+        "Costituzione",
+        "Destrezza"
+      ],
+      "damage_profile": {
+        "focus": "ALTO",
+        "balestra": "MEDIO-ALTO",
+        "pugnale": "RIDOTTO"
+      },
+      "legendary_ilvl_semantic": "Legendary ILVL = 60 (NON +60 Intelligenza)"
+    },
+    "legacy_bridge_reference": {
+      "legacy_bridge_source": "warlock",
+      "canonical_target_slug": "cacciatore_del_vuoto",
+      "bridge_status": "mapped_design_only",
+      "migration_status": "not_applied",
+      "runtime_bridge_status": "disabled",
+      "handling_phase": "R18.3f"
+    }
+  },
+  "executive_summary": "Gate 2 PROFICIENCY_DESIGN definisce le whitelist obbligatorie di armor e weapon per la classe Cacciatore del Vuoto e le regole di eligibility associate. **Armor**: cuoio + stoffa (entrambe Int-focus, no doppia identità stat). **Weapon**: focus (PRIMARIA, scaling Int ALTO) · balestra (RANGED ARCANA, scaling Int MEDIO-ALTO) · pugnale (RITUALE/opportunistica, scaling Int RIDOTTO). **Lanterna** = RESERVED FUTURE (no unlock, no item, no registry entry). Esclusi: maglia · piastre · arco · spada · bastone · tomo · martello · reliquia. Il gate non progetta gameplay loop, resource, o equip base (deferiti a Gate 3-5).",
+  "armor_whitelist": {
+    "allowed": [
+      "cuoio",
+      "stoffa"
+    ],
+    "rationale": {
+      "cuoio": "mobility narrativa nel Faro Rovesciato (accesso via barca, movimento tra riflessi) · consistente con hall lore 'si caccia ciò che non ha peso' · Int-focus enforced (no Dex-cuoio Rogue-style)",
+      "stoffa": "canalizzazione arcana per Marchi/dispel · condivisa con Mago ma con identità diversa (Vuoto anti-arcano, Mago caster puro) · Int-focus enforced"
+    },
+    "no_dual_stat_identity": "Entrambi armor DEVONO privilegiare Intelligenza · NO cuoio Dex-focused (Rogue/CdM style) · NO stoffa Wis-focused",
+    "coverage": "cuoio + stoffa copre tutti gli slot armor (head/chest/legs/feet/hands/wrist/waist · off-hand quando applicabile · back)",
+    "future_set_bonus_hint": "set bonus 2/4/6 pezzi documenteranno in EQUIP_DESIGN (Gate 5) · amplification Int scaling"
+  },
+  "weapon_whitelist": {
+    "allowed": [
+      "focus",
+      "pugnale",
+      "balestra"
+    ],
+    "rationale": {
+      "focus": "weapon PRIMARIA arcana · scaling Int ALTO (canalizzazione/controllo) · main-hand principale",
+      "pugnale": "weapon RITUALE/opportunistica · scaling Int RIDOTTO (rituale/payoff ravvicinato) · main-hand secondaria o off-hand",
+      "balestra": "weapon RANGED ARCANA · scaling Int MEDIO-ALTO (applicazione precisa Marchi a distanza) · NON weapon fisica Ranger/Rogue"
+    },
+    "no_scaling_alternative_stat": "TUTTI e 3 scalano su Intelligenza · NO Dex scaling per pugnale/balestra · NO Str scaling",
+    "notes_verbatim_pm": "Balestra Vuoto = strumento canalizzazione arcana a distanza · NON weapon Ranger/Rogue · nessun requisito Dex nascosto"
+  },
+  "exclusions": {
+    "armor_excluded": [
+      "maglia",
+      "piastre"
+    ],
+    "armor_exclusion_rationale": "maglia/piastre incoerenti con identità caster-arcana · incompatibili con canalizzazione focus/balestra · overlap indesiderato con Guerriero (piastre) e CdM (maglia)",
+    "weapon_excluded": [
+      "arco",
+      "spada",
+      "bastone",
+      "tomo",
+      "martello",
+      "reliquia",
+      "ascia",
+      "scudo",
+      "lancia",
+      "arma_in_asta"
+    ],
+    "weapon_exclusion_rationale": {
+      "arco": "troppo Cacciatore di Mostri (ranged fisico Dex)",
+      "spada": "melee marziale · incoerente con canalizzazione arcana",
+      "bastone": "troppo Mago (caster puro)",
+      "tomo": "troppo Mago (scholarly caster)",
+      "martello": "melee sacro (Paladino) · incoerente",
+      "reliquia": "identità sacra Paladino · incompatibile con Vuoto",
+      "ascia_scudo_lancia_arma_in_asta": "troppo Guerriero · melee heavy · nessun ruolo per Cacciatore del Vuoto"
+    }
+  },
+  "weapon_identity": {
+    "focus": {
+      "role": "PRIMARIA",
+      "stat_scaling": "Int ALTO",
+      "narrative_identity": "canalizzatore arcano · epicentro dei Marchi del Vuoto · strumento principale del Cacciatore",
+      "typical_slot": "main_hand",
+      "narrative_material_hint": "cristallo scuro · specchio piccolo · reliquiario rovesciato (design gate futuro)"
+    },
+    "balestra": {
+      "role": "RANGED ARCANA",
+      "stat_scaling": "Int MEDIO-ALTO",
+      "narrative_identity": "applicazione precisa Marchi a distanza · dardi come veicoli arcani · NON strumento fisico agile",
+      "typical_slot": "main_hand (ranged) o off-hand (accessorio) · design regola main-hand/off-hand sotto",
+      "narrative_material_hint": "legno annerito · corda argentea · dardo con rune (design gate futuro)"
+    },
+    "pugnale": {
+      "role": "RITUALE / OPPORTUNISTICA",
+      "stat_scaling": "Int RIDOTTO",
+      "narrative_identity": "chiude i rituali · applica payoff ravvicinato · momento intimo di caccia · NON specializzazione primaria melee",
+      "typical_slot": "off_hand o main_hand secondaria",
+      "narrative_material_hint": "lama nera opaca · impugnatura in stoffa · rune leggere (design gate futuro)"
+    }
+  },
+  "slot_compatibility_matrix": {
+    "main_hand": {
+      "armor_compatible": "N/A",
+      "weapon_compatible": [
+        "focus",
+        "balestra",
+        "pugnale"
+      ],
+      "notes": "focus prevalente · balestra alternativa ranged · pugnale opzione secondaria"
+    },
+    "off_hand": {
+      "armor_compatible": "N/A",
+      "weapon_compatible": [
+        "pugnale",
+        "focus (variant secondaria)"
+      ],
+      "notes": "pugnale prevalente in off-hand · focus off-hand possibile per dual-cast concept futuro (design gate futuro)"
+    },
+    "chest": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "legs": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "head": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "hands": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "feet": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "wrist": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "waist": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A"
+    },
+    "neck": {
+      "armor_compatible": "universal (accessory)",
+      "weapon_compatible": "N/A"
+    },
+    "ring": {
+      "armor_compatible": "universal (accessory)",
+      "weapon_compatible": "N/A",
+      "notes": "2 slot ring · universal_allowed"
+    },
+    "accessory": {
+      "armor_compatible": "universal",
+      "weapon_compatible": "N/A"
+    },
+    "back": {
+      "armor_compatible": [
+        "cuoio",
+        "stoffa"
+      ],
+      "weapon_compatible": "N/A",
+      "notes": "cape narrativa · slot back documentato in C3 slot canonical"
+    }
+  },
+  "main_hand_off_hand_rules": {
+    "main_hand_primary_weapon": "focus (raccomandato · Int ALTO scaling)",
+    "main_hand_alternative_weapons": [
+      "balestra (ranged)",
+      "pugnale (opzione ravvicinata)"
+    ],
+    "off_hand_primary": "pugnale (ritual/payoff)",
+    "off_hand_alternative": "focus variant secondaria (dual-cast concept futuro)",
+    "dual_wield_policy": "dual-wield NON obbligatorio · design layer per player choice · focus main-hand + pugnale off-hand = combo canonica raccomandata · focus main-hand + focus off-hand = dual-cast (design gate futuro se emerge meccanica)",
+    "no_shield": "scudo NON in weapon whitelist Vuoto · off-hand è arma o accessorio, mai scudo",
+    "ranged_and_melee_swap": "player può switchare tra balestra ranged e focus/pugnale melee · design gate GAMEPLAY_LOOP futuro valuta cooldown swap"
+  },
+  "equip_eligibility_matrix": {
+    "note": "Matrice design layer · applicata al validator equip_eligibility_check (C2 #6 armor · #7 weapon)",
+    "sample_rows": [
+      {
+        "item_slot": "main_hand",
+        "item_family": "focus",
+        "class_proficiency": "CacciatoreDelVuoto (or VoidHunter · gate PROFICIENCY_DESIGN future decision)",
+        "equipable": true,
+        "reason": "focus in weapon whitelist · Int scaling"
+      },
+      {
+        "item_slot": "main_hand",
+        "item_family": "arco",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": false,
+        "reason": "locked_proficiency_weapon (C2 #7) · arco NOT in whitelist Vuoto"
+      },
+      {
+        "item_slot": "chest",
+        "item_family": "armor_type=cuoio, main_stat_target=Intelligenza",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": true,
+        "reason": "cuoio in armor whitelist · Int-focus preservato"
+      },
+      {
+        "item_slot": "chest",
+        "item_family": "armor_type=cuoio, main_stat_target=Destrezza",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": true,
+        "reason": "cuoio in whitelist · MA XP penalty tiered soft (main_stat != Int) · SD-Q5 policy globale"
+      },
+      {
+        "item_slot": "chest",
+        "item_family": "armor_type=maglia",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": false,
+        "reason": "locked_proficiency_armor (C2 #6) · maglia NOT in whitelist Vuoto"
+      },
+      {
+        "item_slot": "chest",
+        "item_family": "armor_type=piastre",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": false,
+        "reason": "locked_proficiency_armor (C2 #6) · piastre NOT in whitelist Vuoto"
+      },
+      {
+        "item_slot": "off_hand",
+        "item_family": "pugnale",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": true,
+        "reason": "pugnale in weapon whitelist · off-hand allowed"
+      },
+      {
+        "item_slot": "off_hand",
+        "item_family": "scudo",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": false,
+        "reason": "locked_proficiency_weapon · scudo NOT in whitelist · off-hand = arma o accessorio"
+      },
+      {
+        "item_slot": "main_hand",
+        "item_family": "balestra",
+        "class_proficiency": "CacciatoreDelVuoto",
+        "equipable": true,
+        "reason": "balestra in whitelist · Int scaling medio-alto"
+      },
+      {
+        "item_slot": "consumable",
+        "item_family": "any",
+        "class_proficiency": "any",
+        "equipable": true,
+        "reason": "universal_allowed (C2 #5)"
+      },
+      {
+        "item_slot": "material",
+        "item_family": "any",
+        "class_proficiency": "any",
+        "equipable": true,
+        "reason": "universal_allowed (C2 #5)"
+      }
+    ]
+  },
+  "lock_states_extension": {
+    "note": "R18.6.3-G2 NON introduce nuovi lock_state · riusa esattamente i 10 stati C2 · documenta come si applicano al Vuoto",
+    "reused_states_relevant": [
+      {
+        "state": "#3 locked_recruit_unassigned",
+        "when": "Recluta senza classe assegnata · gear Vuoto specializzato bloccato · CTA Assegna Sala"
+      },
+      {
+        "state": "#4 locked_class_slug_null",
+        "when": "adventurer con class_proficiency=CacciatoreDelVuoto ma class_slug=null · bridge C5/R18.3f · warning UI"
+      },
+      {
+        "state": "#5 universal_allowed",
+        "when": "consumable/material/cosmetic · bypass proficiency · Vuoto può equipaggiare universal come qualsiasi altra classe"
+      },
+      {
+        "state": "#6 locked_proficiency_armor",
+        "when": "armor_type in {maglia, piastre} + class_proficiency=CacciatoreDelVuoto → blocca"
+      },
+      {
+        "state": "#7 locked_proficiency_weapon",
+        "when": "weapon_family in {arco, spada, bastone, tomo, martello, reliquia, ascia, scudo, lancia, arma_in_asta} + class_proficiency=CacciatoreDelVuoto → blocca"
+      },
+      {
+        "state": "#8 locked_level",
+        "when": "level < required_level · applica come per tutte le classi"
+      },
+      {
+        "state": "#10 equippable",
+        "when": "tutti i check passed · item Vuoto-compatible equipaggiabile"
+      }
+    ],
+    "no_new_lock_state_introduced": true,
+    "xp_penalty_hook_reference": "XP penalty tiered soft (SD-Q5) NON è un lock_state · è policy XP separata · applicata post-equip · potenziale badge UI 'main_stat_below_recommended' senza blocco"
+  },
+  "ui_messages_it": {
+    "note": "Copy italiano canonical · tooltip · error messages · lock reason per player · deferred final translation layer a Gate PLAYER_GUIDE",
+    "block_armor_maglia_piastre": "**Armatura non compatibile** — Il Cacciatore del Vuoto non veste maglia né piastre. Preferisce cuoio o stoffa per non ostacolare la canalizzazione del Vuoto.",
+    "block_weapon_arco": "**Arma non compatibile** — L'arco è strumento del Cacciatore di Mostri. Il Cacciatore del Vuoto usa focus, balestra o pugnale.",
+    "block_weapon_bastone_tomo": "**Arma non compatibile** — Bastoni e tomi appartengono al Mago. Il Cacciatore del Vuoto canalizza con focus arcani e balestre di canalizzazione.",
+    "block_weapon_spada_ascia_martello_lancia": "**Arma non compatibile** — Le armi marziali pesanti sono estranee al Cacciatore del Vuoto. Preferisce strumenti di canalizzazione.",
+    "block_weapon_reliquia": "**Arma non compatibile** — Le reliquie appartengono al Paladino. Il Cacciatore del Vuoto cerca ciò che non ha peso, non ciò che pesa nella luce.",
+    "block_shield_off_hand": "**Off-hand non compatibile** — Il Cacciatore del Vuoto non impugna scudo. Preferisce un pugnale rituale o un focus secondario in off-hand.",
+    "warning_recruit_unassigned": "**Assegna una Sala di Classe** — Questo avventuriero è un Recluta senza classe. Portalo al Faro Rovesciato di Onirade per farne un Cacciatore del Vuoto.",
+    "warning_class_slug_null": "**Identità in aggiornamento** — Il sistema di identità è in fase di aggiornamento (bridge canonico). Puoi equipaggiare questo oggetto, ma alcune funzionalità saranno disponibili dopo la migrazione.",
+    "warning_main_stat_below_recommended": "**Statistica principale sotto la soglia raccomandata** — Questo Cacciatore del Vuoto trarrebbe più esperienza con equipaggiamento incentrato sull'Intelligenza. XP corrente ridotta (mai sotto 50%)."
+  },
+  "class_slug_null_interaction": {
+    "rule": "Se `adventurer.class_slug=null` (Recluta), l'avventuriero NON può equipaggiare gear Vuoto specializzato (armor cuoio/stoffa Int-focus · weapon focus/pugnale/balestra) tramite normale flusso equip.",
+    "lock_state": "#3 locked_recruit_unassigned",
+    "cta": "Assegna Sala di Classe (Faro Rovesciato di Onirade)",
+    "no_auto_assignment": true,
+    "no_bridge_from_warlock": true,
+    "reference": "R18.6/R18.6.1 · Recluta invariato"
+  },
+  "recruit_unassigned_interaction": {
+    "lock_state_3_preserved": true,
+    "gear_specialized_equip_blocked": true,
+    "universal_allowed_still_ok": true,
+    "dismissal_allowed": true,
+    "sell_transfer_blocked": true,
+    "cap_per_guild": 3,
+    "idle_xp": "0%",
+    "reference_r18_6_1": "Recruta rules invariati · R18.6.3-G2 non modifica R18.6.1 (LOCKED)"
+  },
+  "lanterna_reserved_valuation": {
+    "status": "RESERVED FUTURE",
+    "identity_future": "candidate weapon family unica del Cacciatore del Vuoto · strumento di rivelazione + canalizzazione · alternativa/completamento al focus",
+    "main_hand_off_hand_candidate": "potenziale main-hand OR off-hand (design gate futuro decide)",
+    "difference_from_focus": {
+      "focus": "canalizzazione arcana pura · Marchi + dispel + payoff",
+      "lanterna_proposta": "rivelazione (illumina incorporei/nascosti) + canalizzazione secondaria · non replica focus"
+    },
+    "risks_new_weapon_type": [
+      "Registry v3 required (nuovi item · nuovo weapon family in slot_canonical map)",
+      "class_proficiency validator update (C2 #7)",
+      "affix design dedicato (main_stat_target=Intelligenza · illumination-based utility)",
+      "possibile confusione player 'perché due weapon primarie?' · design gate valuterà se lanterna sostituisce focus o coesiste"
+    ],
+    "requires_registry_v3": true,
+    "gameplay_value_hypothesis": "lanterna può abilitare interazioni gameplay uniche (rivela summon invisibili, marca zone d'ombra) · differenziazione ulteriore da Mago",
+    "operations_forbidden_now": {
+      "unlock": false,
+      "item_generation": 0,
+      "registry_entry": 0,
+      "implementation": 0,
+      "runtime_available": false,
+      "in_r18_5_catalog": false
+    },
+    "valuation_conclusion": "Design layer only ora · valutare al gate EQUIP_DESIGN (G5) se lanterna diventa canonical weapon family o resta narrative-only. Nessuna decisione forzata in G2."
+  },
+  "differentiation_vs_mago": {
+    "shared_armor": [
+      "stoffa"
+    ],
+    "vuoto_unique_armor": [
+      "cuoio"
+    ],
+    "mago_unique_armor": [],
+    "shared_weapon": [
+      "focus",
+      "pugnale"
+    ],
+    "vuoto_unique_weapon": [
+      "balestra"
+    ],
+    "mago_unique_weapon": [
+      "bastone",
+      "tomo"
+    ],
+    "slot_competition_analysis": "stoffa items condivisi · MA affix `main_stat_target=Intelligenza` uguale · possibile competizione item generico stoffa-Int · mitigazione: item Mago spesso avrà affix caster-burst (spell power/mana), item Vuoto affix dispel/mark efficacy (design gate EQUIP_DESIGN)",
+    "focus_shared_stat_shared": "focus è weapon condivisa · Int scaling condiviso · MA item focus può avere affix class-specific (Marchi effectiveness per Vuoto vs Spell burst per Mago) · design gate futuro",
+    "pugnale_shared_but_diff_role": "Mago: pugnale opzione secondaria caster · Vuoto: pugnale ritual/payoff · same weapon, different role"
+  },
+  "differentiation_vs_rogue": {
+    "shared_armor": [
+      "cuoio"
+    ],
+    "shared_weapon": [
+      "pugnale"
+    ],
+    "critical_diff_main_stat": "Rogue: Destrezza · Vuoto: Intelligenza · cuoio+pugnale Rogue è Dex-focused, Vuoto è Int-focused",
+    "cuoio_item_split_by_main_stat_target": "cuoio con main_stat_target=Destrezza → Rogue/CdM primario · cuoio con main_stat_target=Intelligenza → Vuoto primario · SD-Q5 policy XP penalty enforce",
+    "pugnale_split_by_main_stat": "pugnale scaling è determinato da class_proficiency · same item, different scaling behavior per class",
+    "vuoto_no_rogue_weapons": "Vuoto NON usa spada (Rogue whitelist) né balestra Dex-style · balestra Vuoto è arcana",
+    "no_direct_item_competition_when_affix_correct": "se affix `main_stat_target` corretto, item non ha ambiguità"
+  },
+  "differentiation_vs_ranger": {
+    "shared_armor": [
+      "cuoio"
+    ],
+    "shared_weapon": [
+      "balestra",
+      "pugnale"
+    ],
+    "critical_diff_main_stat": "Ranger (Cacciatore di Mostri): Destrezza · Vuoto: Intelligenza",
+    "balestra_semantic_split": "Ranger balestra = weapon fisica Dex (ranged agile) · Vuoto balestra = strumento canalizzazione arcana Int · same item family, opposite scaling",
+    "cuoio_shared_but_diff_main_stat_target": "cuoio Ranger main_stat_target=Destrezza vs cuoio Vuoto main_stat_target=Intelligenza · split by affix",
+    "vuoto_no_ranger_weapons": "Vuoto NON usa arco (Ranger primary) · NO lancia · NO spada",
+    "no_maglia_vuoto": "Ranger cuoio+maglia · Vuoto cuoio+stoffa · maglia esclusivo Ranger",
+    "narrative_diff": "Ranger caccia bestie fisiche del bosco · Vuoto caccia incorporei/summon del Faro Rovesciato · zero overlap target"
+  },
+  "gear_sharing_risk": {
+    "risk_summary": "Cuoio e pugnale condivisi con Rogue/Ranger · stoffa/focus condivisi con Mago · item generici potrebbero apparire compatibili con più classi",
+    "mitigation_1_class_proficiency_primary": "class_proficiency è il primary discriminator · validator C2 #7 verifica esattamente questo",
+    "mitigation_2_main_stat_target_affix": "affix `main_stat_target` (già in Registry v2 schema C1 · 23 fields) discrimina ulteriormente · main_stat_target=Intelligenza favorisce Vuoto/Mago vs Destrezza favorisce Rogue/Ranger",
+    "mitigation_3_class_specific_affix": "gate EQUIP_DESIGN (G5) può introdurre affix class-specific · es. `mark_effectiveness` (Vuoto-only) · `spell_burst` (Mago-only) · design layer futuro",
+    "mitigation_4_xp_penalty_signal_ux": "XP penalty tiered soft (SD-Q5) segnala al player 'questo item non è ottimale per la tua classe' senza bloccare",
+    "no_hard_block_on_shared_items": "item shared armor_type + weapon_family sono EQUIPABILI da più classi (se class_proficiency e whitelist match) · la stat scaling e XP penalty gestiscono il resto",
+    "residual_risk_level": "MEDIUM · gestibile via mitigation stack · gate EQUIP_DESIGN + PLAYER_GUIDE completeranno UX"
+  },
+  "dual_armor_proficiency_risk": {
+    "risk_summary": "cuoio + stoffa doppia armor proficiency potrebbe creare 'due identità stat' se stoffa fosse Wis-focus e cuoio Dex-focus (come tradizionale MMO)",
+    "mitigation_verbatim_pm": "V-Q2 PM LOCK: entrambi armor DEVONO privilegiare Intelligenza · NO doppia identità stat",
+    "enforcement_via_affix": "affix `main_stat_target=Intelligenza` obbligatorio su tutti gli item armor Vuoto (cuoio + stoffa) · gate EQUIP_DESIGN (G5) enforcement",
+    "no_hybrid_int_dex": "NO cuoio Dex-secondary hybrid · NO stoffa Wis-secondary hybrid · Int primary con Cos/Dex come secondary/tertiary via affix minor",
+    "no_dual_build_paths": "no build 'cuoio Vuoto' vs 'stoffa Vuoto' distinta · entrambi supportano lo stesso design",
+    "residual_risk_level": "LOW · enforcement design + gate EQUIP_DESIGN"
+  },
+  "readiness_checklist_r02_r03": {
+    "R-02": {
+      "check": "armor_proficiency whitelist + rationale",
+      "result": {
+        "whitelist": [
+          "cuoio",
+          "stoffa"
+        ],
+        "rationale_documented": true,
+        "no_dual_stat_identity_locked": true,
+        "exclusions_documented": [
+          "maglia",
+          "piastre"
+        ]
+      },
+      "status": "COMPLETED ✅"
+    },
+    "R-03": {
+      "check": "weapon_proficiency whitelist + RESERVED families flagged",
+      "result": {
+        "whitelist": [
+          "focus",
+          "pugnale",
+          "balestra"
+        ],
+        "rationale_documented": true,
+        "identity_documented": true,
+        "exclusions_documented": [
+          "arco",
+          "spada",
+          "bastone",
+          "tomo",
+          "martello",
+          "reliquia",
+          "ascia",
+          "scudo",
+          "lancia",
+          "arma_in_asta"
+        ],
+        "reserved_future_flagged": [
+          "lanterna"
+        ]
+      },
+      "status": "COMPLETED ✅"
+    },
+    "checklist_status_overall": "R-02 + R-03 COMPLETED · altre R-01 (G1 done) · R-04..R-13 PENDING gate successivi"
+  },
+  "risk_register": [
+    {
+      "id": "PD-R1",
+      "risk": "Cuoio Vuoto (Int-focus) confusion con cuoio Rogue/CdM (Dex-focus)",
+      "severity": "MEDIUM",
+      "mitigation": "affix main_stat_target discriminator + XP penalty soft SD-Q5",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PD-R2",
+      "risk": "Stoffa Vuoto (Int-focus) competition con stoffa Mago",
+      "severity": "MEDIUM",
+      "mitigation": "affix class-specific gate EQUIP_DESIGN + differentiation UI",
+      "status": "DEFERRED to EQUIP_DESIGN"
+    },
+    {
+      "id": "PD-R3",
+      "risk": "Focus shared weapon Mago/Vuoto genera 'stesso item stesso ruolo' feeling",
+      "severity": "MEDIUM",
+      "mitigation": "affix mark_effectiveness (Vuoto) vs spell_burst (Mago) · design G5",
+      "status": "DEFERRED to EQUIP_DESIGN"
+    },
+    {
+      "id": "PD-R4",
+      "risk": "Pugnale shared con Rogue crea overlap gameplay confuso",
+      "severity": "LOW-MEDIUM",
+      "mitigation": "pugnale scaling Int RIDOTTO per Vuoto vs Dex ALTO per Rogue · role diverso (rituale vs precisione)",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PD-R5",
+      "risk": "Balestra Vuoto confusa con balestra Ranger fisica",
+      "severity": "MEDIUM",
+      "mitigation": "UI copy IT esplicito: 'strumento canalizzazione arcana' · NO Dex scaling · affix class-specific",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PD-R6",
+      "risk": "Dual armor proficiency (cuoio+stoffa) genera 'due identità stat'",
+      "severity": "LOW",
+      "mitigation": "V-Q2 PM LOCK: entrambi armor Int-focus · affix enforcement G5",
+      "status": "ENFORCED"
+    },
+    {
+      "id": "PD-R7",
+      "risk": "Player crede lanterna sia già weapon Vuoto (RESERVED confusion)",
+      "severity": "LOW",
+      "mitigation": "RESERVED FUTURE status esplicito · UI copy 'in valutazione · non disponibile'",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "PD-R8",
+      "risk": "Off-hand policy (pugnale/focus/no scudo) confusa dai player abituati a scudo off-hand",
+      "severity": "LOW",
+      "mitigation": "UI tooltip esplicito 'off-hand = arma o accessorio, mai scudo per Cacciatore del Vuoto'",
+      "status": "DOCUMENTED"
+    },
+    {
+      "id": "PD-R9",
+      "risk": "Weapon whitelist 3-family (focus+pugnale+balestra) percepita come 'stretta' rispetto a Guerriero (6 weapon)",
+      "severity": "LOW",
+      "mitigation": "identità classe forte · scaling differenziato per weapon · lanterna RESERVED potenziale espansione futura",
+      "status": "DESIGNED"
+    },
+    {
+      "id": "PD-R10",
+      "risk": "Modifica accidentale R18.6.3-G1 (LOCKED) durante G2 writing",
+      "severity": "HIGH-BLOCK",
+      "mitigation": "G1 file read-only reference · sealed integrity test copre memoria zone",
+      "status": "ENFORCED"
+    }
+  ],
+  "pm_open_questions": [
+    {
+      "id": "PD-Q1",
+      "topic": "Focus in off-hand (dual-cast concept) confermato come design gate futuro o rimuovere possibilità?",
+      "options": [
+        "a) confermo dual focus off-hand come opzione gate futuro (design layer)",
+        "b) rimuovere · off-hand solo pugnale",
+        "c) valutare con Gate 3 GAMEPLAY_LOOP"
+      ]
+    },
+    {
+      "id": "PD-Q2",
+      "topic": "Balestra Vuoto scaling Int MEDIO-ALTO conferma soglia numerica in Gate 3 o Gate 5?",
+      "options": [
+        "a) Gate 3 GAMEPLAY_LOOP (contesto gameplay)",
+        "b) Gate 5 EQUIP_DESIGN (contesto item stat)",
+        "c) sub-doc dedicato scaling numerico"
+      ]
+    },
+    {
+      "id": "PD-Q3",
+      "topic": "Lanterna RESERVED · timeline gate valutazione (Gate 5 EQUIP_DESIGN o sub-gate dedicato R18.6.LTN)?",
+      "options": [
+        "a) Gate 5 EQUIP_DESIGN (integrato)",
+        "b) sub-gate R18.6.LTN dedicato",
+        "c) documental-only forever · no future implementation"
+      ]
+    },
+    {
+      "id": "PD-Q4",
+      "topic": "Class_proficiency label finale: 'CacciatoreDelVuoto' vs 'VoidHunter' vs altro?",
+      "options": [
+        "a) CacciatoreDelVuoto (canonical IT · consistent con canonical_class_slug)",
+        "b) VoidHunter (English label · consistent con legacy Warrior/Rogue/etc)",
+        "c) proponi terza opzione (es. cacciatore_del_vuoto direct slug)"
+      ]
+    },
+    {
+      "id": "PD-Q5",
+      "topic": "UI tooltip lock reason: italiano puro (come da G2 copy) o hybrid con codici lock_state visibili per debug?",
+      "options": [
+        "a) italiano puro (player-facing)",
+        "b) italiano + tooltip debug per QA/PM",
+        "c) italiano + optional advanced info toggle"
+      ]
+    },
+    {
+      "id": "PD-Q6",
+      "topic": "Affix class-specific (mark_effectiveness · spell_burst · etc) · dispatch al gate EQUIP_DESIGN o sub-doc affix dedicato?",
+      "options": [
+        "a) integrato in Gate 5 EQUIP_DESIGN",
+        "b) sub-doc R18.6.AFX (affix system dedicato)",
+        "c) parte di Registry v3 dispatch"
+      ]
+    }
+  ],
+  "go_hold_recommendation_gate_3": {
+    "gate_2_status": "COMPLETED · pending PM review + risposte PD-Q1..PD-Q6",
+    "gate_3_gameplay_loop_status": "🔒 HOLD · attende PM ACK Gate 2 + GO esplicito Gate 3",
+    "recommendation": [
+      "APPROVE Gate 2 PROFICIENCY_DESIGN (armor cuoio+stoffa · weapon focus/pugnale/balestra · lanterna RESERVED · exclusions locked · differentiation matrix vs Mago/Rogue/Ranger)",
+      "HOLD Gate 3 GAMEPLAY_LOOP in attesa PM ACK",
+      "Rispondere a PD-Q1..PD-Q6 in round dedicato prima di Gate 3 dispatch",
+      "NO auto-transition · NO gate skip · NO parallel gate"
+    ],
+    "gate_3_input_from_g2": "armor whitelist + weapon whitelist + slot compatibility + main_hand/off_hand rules + lock_states extension → input per GAMEPLAY_LOOP",
+    "gate_3_scope_preview": "loop 4-step (Identify → Mark → Drain → Payoff) · cooldown swap main/ranged · target priority · integration con Marchi + Frammenti pool (Gate 4 finalizza risorsa) · NO resource design output in G3"
+  },
+  "governance": {
+    "documental_only_regime": "ENFORCED",
+    "italian_output": "ENFORCED",
+    "sealed_files_36_byte_identical": true,
+    "lore_meta_py_touch": false,
+    "lore_meta_py_sha256_baseline": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "db_writes": 0,
+    "code_changes": 0,
+    "migrations": 0,
+    "sealed_file_modification": 0,
+    "r18_5_modification": 0,
+    "r18_6_modification": 0,
+    "r18_6_1_modification": 0,
+    "r18_6_2_modification": 0,
+    "r18_6_3_g1_modification": 0,
+    "registry_v3_dispatched": false,
+    "cacciatore_del_vuoto_live_activation": false,
+    "class_slug_apply": 0,
+    "legacy_bridge_apply": 0,
+    "runtime_bridge_status": "disabled",
+    "class_slug_auto_derivation": false,
+    "auto_derive_from_warlock": false,
+    "runtime_enforcement_implementation": 0,
+    "item_generation": 0,
+    "item_table_modification": 0,
+    "hard_delete": 0,
+    "anti_p2w_preserved": true,
+    "gate_3_auto_start": false,
+    "gate_4_auto_start": false,
+    "gate_5_auto_start": false,
+    "gate_isolation_enforced": true,
+    "lanterna_unlock": false,
+    "lanterna_item_generation": 0,
+    "lanterna_registry_entry": 0,
+    "sections_covered": 25,
+    "deliverable_files_count": 2,
+    "deliverable_paths": [
+      "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.md",
+      "/app/memory/r18_6_3_g2_cacciatore_del_vuoto_proficiency_design.json"
+    ]
+  },
+  "stop_after_g2": {
+    "auto_transition_gate_3": false,
+    "note": "STOP dopo Gate 2 PROFICIENCY_DESIGN. Attendo PM review + risposte PD-Q1..PD-Q6 + GO esplicito Gate 3 GAMEPLAY_LOOP. Nessun auto-start · nessuna modifica R18.5/R18.6/R18.6.1/R18.6.2/G1 (LOCKED)."
+  }
+}
