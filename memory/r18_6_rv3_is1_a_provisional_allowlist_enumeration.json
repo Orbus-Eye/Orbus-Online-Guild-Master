@@ -15,8 +15,12 @@
     "cacciatore_del_vuoto_status": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
     "language": "italian",
     "generated_at_utc": "2026-07-12T06:51:18.260136+00:00",
-    "is1_roster_generation_status": "PAUSED_pending_pm_verdict_on_IS1_A",
-    "sha_policy_31_compliance": "no_self_referential_sha_embedded_in_this_file"
+    "is1_roster_generation_status": "GO_RESUME_authorized_by_pm_verdict",
+    "sha_policy_31_compliance": "no_self_referential_sha_embedded_in_this_file",
+    "is1_a_status_post_pm_adjudication": "CLOSED_PM_LOCKED",
+    "pm_adjudicated_at_utc": "2026-07-12T07:14:56.019695+00:00",
+    "pm_dispatch_reference": "PM_VERDICT_IS1_A_ADJUDICATED_FALLBACK_3X_ACTIVATED_GO_RESUME_IS1_ROSTER",
+    "ic1_status": "CLOSED_LOCKED_NO_REOPEN"
   },
   "governance_locks": {
     "apply_authorized": false,
@@ -2338,10 +2342,14 @@
     "duplicate_source_binding_eq_0": true,
     "slot_mismatch_eq_0_strict": false,
     "family_mismatch_eq_0": true,
-    "slot_mismatch_systemic_acknowledged": "chest/legs bindings live slot_type=armor generic — sub-slot canonical remapping deferred (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Not a candidate defect."
+    "slot_mismatch_systemic_acknowledged": "chest/legs bindings live slot_type=armor generic — sub-slot canonical remapping deferred (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Not a candidate defect.",
+    "pm_adjudication_completed": true,
+    "fallback_3x_activated": true,
+    "is1_a_status_closed_pm_locked": true,
+    "standby_29_recorded": true
   },
   "explicit_stop": {
-    "is1_roster_generation": "PAUSED_by_pm_dispatch_R18_6_RV3_IS1_A_directive",
+    "is1_roster_generation": "GO_RESUME_authorized_by_PM_VERDICT_IS1_A",
     "is1_source_artifacts_absent": true,
     "is1_a_status": "DRAFT_GENERATED_pending_PM_verdict",
     "structural_gaps_blocking_full_binding": [
@@ -2354,14 +2362,446 @@
       "ratification_of_4_bindable_recommended_bindings",
       "authorization_or_denial_to_proceed_with_is1_roster_after_gaps_resolved"
     ],
-    "next_action": "await_pm_verdict_on_IS1_A_including_gap_mitigation",
+    "next_action": "generate_IS1_roster_120_120_and_STOP_before_IS1_closure_pending_pm_review",
     "afx1_status": "CLOSED_LOCKED",
     "ic1_status": "CLOSED_LOCKED",
     "is1_status": "IN_PROGRESS_BLOCKED_ON_IS1_A",
-    "is1_a_status_final": "PROPOSED_PENDING_PM",
+    "is1_a_status_final": "CLOSED_PM_LOCKED",
     "nc1_status": "HOLD",
     "gate_11_status": "HOLD",
     "wave_1_status": "HOLD",
-    "registry_v3_apply_status": "NOT_AUTHORIZED"
+    "registry_v3_apply_status": "NOT_AUTHORIZED",
+    "fallback_3x_activated": [
+      "ring_GAP-2",
+      "focus_rejection_alchimista_identity",
+      "pugnale_GAP-1"
+    ],
+    "is1_a_referenced_in_is1_as_dependency": true
+  },
+  "pm_adjudication_verbatim": {
+    "adjudication_id": "PM_VERDICT_IS1_A_2026_02",
+    "state": "ADJUDICATED",
+    "candidate_enumeration_status": "ACCEPTED_as_COMPLETE_CANDIDATE_ENUMERATION",
+    "candidate_enumeration_note": "32/32 ratificati come universe candidate NOT come 32 riusi automatici approvati",
+    "binding_adjudication": {
+      "binding_1_chest_apprentice_robe": {
+        "verdict": "PM_RATIFIED_PROVISIONAL_BINDING",
+        "condition_code": "COND_STAT_NEUTRAL_INT",
+        "mutation_required": false,
+        "approval_status": "provisional",
+        "future_dry_run_required": true,
+        "future_snapshot_required": true,
+        "future_pm_go_required": true,
+        "note": "NON equivale a runtime reuse approved. Resta riuso condizionale."
+      },
+      "binding_2_legs_initiate_robe": {
+        "verdict": "PM_RATIFIED_PROVISIONAL_BINDING",
+        "condition_code": "COND_STAT_NEUTRAL_INT",
+        "mutation_required": false,
+        "approval_status": "provisional",
+        "future_dry_run_required": true,
+        "future_snapshot_required": true,
+        "future_pm_go_required": true,
+        "note": "Soggetto a futura validazione per-item · dry-run · snapshot · PM GO applicativo."
+      },
+      "binding_3_accessory_apprentice_handbook": {
+        "verdict": "PM_RATIFIED_PROVISIONAL_BINDING",
+        "condition_code": "COND_ACCESSORY_NEUTRAL",
+        "mutation_required": false,
+        "approval_status": "provisional",
+        "future_dry_run_required": true,
+        "future_snapshot_required": true,
+        "future_pm_go_required": true,
+        "note": "NON aggiungere: identità Vuoto retroattiva · class tag · affix pool tag · lore Cacciatore del Vuoto."
+      },
+      "binding_4_ring_unbindable_gap2": {
+        "verdict": "UNBINDABLE_GAP_2_FALLBACK_C_ACTIVATED",
+        "gap_id": "GAP-2",
+        "reason": "ring_slot_absent, eligible live ring = 0",
+        "forbidden": [
+          "slot_mismatch",
+          "accessory_as_ring",
+          "ring_to_accessory_remap",
+          "new_condition_code"
+        ],
+        "blueprint_allocation_preserved": {
+          "slot": "ring",
+          "tier": "preserved_from_ic1",
+          "rarity_intent": "preserved",
+          "identity_class": "preserved",
+          "affix_eligibility": "preserved",
+          "stat_budget_band": "preserved",
+          "totale_slot_ring": 12
+        },
+        "source_type_change": "REUSE_CONDITIONAL -> NEW_FUTURE (source_type only)",
+        "not_a_new_slot": true,
+        "not_a_new_alias": true
+      },
+      "binding_5_main_hand_focus_rejected": {
+        "verdict": "BINDING_REJECTED",
+        "reason": "identity_classification=class_specific_non_caster · source_identity=Alchimista · identity_neutral=false",
+        "pm_rule": "proficiency_compatibility_NON_annulla_class_identity_conflict",
+        "record_status": "unmodified_ev_f2_primary_verdict_preserved",
+        "candidate_universe_status": "remains_in_REUSE_CONDITIONAL_candidate_universe_classified_NOT_SELECTED_FOR_IS1_BLUEPRINT",
+        "not_transformable_to_NOT_COMPATIBLE_FINAL_without_ev_f2_reopen": true,
+        "ev_f2_reopen_forbidden": true,
+        "fallback_activated": true,
+        "fallback_c_activated": true,
+        "blueprint_allocation_preserved": {
+          "slot": "main_hand",
+          "weapon_family": "focus",
+          "tier": "preserved_from_ic1",
+          "rarity": "preserved",
+          "identity": "preserved",
+          "affix_eligibility": "preserved",
+          "stat_budget_band": "preserved",
+          "totale_focus": 10
+        },
+        "source_type_change": "REUSE_CONDITIONAL -> NEW_FUTURE (source_type only)",
+        "auto_substitute_forbidden": true,
+        "note_alchemist_catalyst_flask": "alchemist_catalyst_flask NON usato come sostituzione automatica. Entrambi i candidati focus Alchimista restano NON selezionati."
+      },
+      "binding_6_pugnale_unbindable_gap1": {
+        "verdict": "UNBINDABLE_GAP_1_FALLBACK_C_ACTIVATED",
+        "gap_id": "GAP-1",
+        "reason": "pugnale_family_absent, live Int-compatible dagger = 0",
+        "forbidden": [
+          "family_mismatch",
+          "focus_as_pugnale",
+          "new_condition_code",
+          "override_proficiency"
+        ],
+        "blueprint_allocation_preserved": {
+          "slot": "main_hand",
+          "weapon_family": "pugnale",
+          "tier": "preserved_from_ic1",
+          "rarity_intent": "preserved",
+          "identity_class": "preserved",
+          "affix_eligibility": "preserved",
+          "stat_budget_band": "preserved",
+          "totale_pugnale": 4
+        },
+        "source_type_change": "REUSE_CONDITIONAL -> NEW_FUTURE (source_type only)"
+      }
+    }
+  },
+  "active_source_accounting_post_fallback_3x": {
+    "committed_reuse_valid": 12,
+    "active_provisional_reuse_conditional": 3,
+    "active_new_future": 105,
+    "note_new_future": "102 baseline + 3 fallback activated (ring + focus + pugnale)",
+    "total": 120,
+    "formula": "12 + 3 + 105 = 120",
+    "match_ic1_blueprint_total_120": true
+  },
+  "standby_conditional_candidates_29": {
+    "count_expected": 29,
+    "count_actual": 29,
+    "match": true,
+    "status_per_record": "NOT_SELECTED_FOR_IS1_BLUEPRINT",
+    "not_promoted_automatically": true,
+    "not_a_blueprint_unit": true,
+    "not_a_reuse_approved": true,
+    "records": [
+      {
+        "candidate_index": 1,
+        "source_item_id": "72c4f06f-55c0-4d44-a6c2-b40ad1443196",
+        "slug": "alchemist_glass_wand",
+        "bucket": "weapon_literal_G2",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "binding_5_pm_rejected_identity_conflict_alchimista"
+      },
+      {
+        "candidate_index": 2,
+        "source_item_id": "164d4575-5188-4615-9b01-79d84815c161",
+        "slug": "alchemist_catalyst_flask",
+        "bucket": "weapon_literal_G2",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "binding_5_pm_rejected_identity_conflict_alchimista"
+      },
+      {
+        "candidate_index": 4,
+        "source_item_id": "c6c89f1e-437e-4044-92b7-b4e6b9b7793d",
+        "slug": "aether-weave-robe",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 6,
+        "source_item_id": "a86520a8-5bc2-41eb-a89d-8ef769e05846",
+        "slug": "alchemist_apron",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 7,
+        "source_item_id": "2a163db4-753d-471b-9881-d53cffa5f56c",
+        "slug": "alchemist_ember_lined_vest",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 8,
+        "source_item_id": "f87b2ddd-7353-4221-a14b-809427e1a60d",
+        "slug": "alchemist_quintessence_robe",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 9,
+        "source_item_id": "60d202f4-c324-4132-80b6-c336b5e23897",
+        "slug": "druid_grovewarden_mantle",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 10,
+        "source_item_id": "2931f2b3-0630-4c9c-a7f5-0b44c69c9f8b",
+        "slug": "druid_elder_vestments",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 11,
+        "source_item_id": "e8a57ea9-8209-4d46-8dc1-d5738108662e",
+        "slug": "alchemist_brewers_apron",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 12,
+        "source_item_id": "7ad70e1d-bd5e-421f-ada2-c8868e43f4d6",
+        "slug": "alchemist_quicksilver_vest",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 13,
+        "source_item_id": "67a6f0e5-570e-4dc4-9ad3-a6751d09727c",
+        "slug": "alchemist_philosophers_plate",
+        "bucket": "armor_stoffa_cuoio",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 14,
+        "source_item_id": "265db775-259b-488f-b15a-30f69ea823fe",
+        "slug": "relic-signet",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 15,
+        "source_item_id": "36add57c-6f53-46d6-9003-7adaba7ac701",
+        "slug": "hoardlords-seal",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 16,
+        "source_item_id": "0bc1d330-8b05-4fc0-946f-e994f33539b7",
+        "slug": "herbalist-pouch",
+        "bucket": "accessory_universal",
+        "identity_classification": "shared_family_multi_caster",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 17,
+        "source_item_id": "89309769-fb51-4f95-94b4-f4c61972c8bc",
+        "slug": "scholars-spectacles",
+        "bucket": "accessory_universal",
+        "identity_classification": "shared_family_multi_caster",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 18,
+        "source_item_id": "770e6f4f-af58-4e29-a585-6ffa6bfe2db6",
+        "slug": "seers-monocle",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 19,
+        "source_item_id": "57906a5e-6644-4edd-8ad1-ddd7168ae4fe",
+        "slug": "oracle-pendant",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 20,
+        "source_item_id": "f93ad143-df97-492e-910f-305c8c683361",
+        "slug": "crown-of-stillness",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 22,
+        "source_item_id": "a8d89758-c34f-46e5-a58c-8594ea919505",
+        "slug": "wanderer_amulet",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 23,
+        "source_item_id": "e260b599-ca87-4a38-b099-1842cc48d241",
+        "slug": "minor_sigil",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 24,
+        "source_item_id": "spec_signature_sacred_chalice",
+        "slug": "spec_signature_sacred_chalice",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 25,
+        "source_item_id": "spec_signature_battle_standard",
+        "slug": "spec_signature_battle_standard",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 26,
+        "source_item_id": "spec_signature_runed_focus",
+        "slug": "spec_signature_runed_focus",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 27,
+        "source_item_id": "bb23ee48-5959-4d28-b0bc-30327b5f33c6",
+        "slug": "legendary_amulet_nathos",
+        "bucket": "accessory_universal",
+        "identity_classification": "multi_role_wide",
+        "identity_risk": "LOW",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 28,
+        "source_item_id": "9684d81a-238f-4f90-8e42-9804f4897881",
+        "slug": "alchemist_reagent_pouch",
+        "bucket": "accessory_universal",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 29,
+        "source_item_id": "93b8fc54-411d-45b1-8347-b4fddf7b50f5",
+        "slug": "alchemist_alembic_pendant",
+        "bucket": "accessory_universal",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 30,
+        "source_item_id": "1aad80f8-fe95-4809-90af-3763bc7326f4",
+        "slug": "alchemist_transmutation_medallion",
+        "bucket": "accessory_universal",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 31,
+        "source_item_id": "e1ac0940-a7bb-4d2e-a023-9cbbe9210aed",
+        "slug": "alchemist_catalyst_ring",
+        "bucket": "accessory_universal",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      },
+      {
+        "candidate_index": 32,
+        "source_item_id": "c089bf70-08c7-485e-a78c-c873002c1877",
+        "slug": "alchemist_golden_vial",
+        "bucket": "accessory_universal",
+        "identity_classification": "class_specific_non_caster",
+        "identity_risk": "MEDIUM",
+        "reason_not_selected": "not_selected_by_deterministic_ranking_alternatives_pool"
+      }
+    ]
+  },
+  "remaining_conditional_fallback_reserve": {
+    "original_ic1_fallback_reserve": 6,
+    "activated_in_is1_a": 3,
+    "remaining_reserve_outside_roster": 3,
+    "note": "Non sono blueprint unit aggiuntive. Non aumentano il totale 120. Non promossi automaticamente.",
+    "worst_case_envelope": {
+      "reuse_valid": 12,
+      "new_future_worst_case": 108,
+      "total_max": 120,
+      "note": "REUSE_VALID 12 + NEW_FUTURE 108 = 120 max se tutti i 6 conditional falliscono in future validation gates. Envelope NON modificato."
+    }
+  },
+  "is1_resume_authorization": {
+    "is1_status": "GO_RESUME_FULL_ROSTER_GENERATION",
+    "authorized_by": "PM_VERDICT_IS1_A_ADJUDICATED",
+    "authorized_at_utc": "2026-07-12T07:14:56.019695+00:00",
+    "next_gate_artifacts_expected": [
+      "/app/memory/r18_6_rv3_is1_item_specification_roster_contract.md",
+      "/app/memory/r18_6_rv3_is1_item_specification_roster_contract.json"
+    ],
+    "is1_a_referenced_as_dependency_in_is1": true,
+    "is1_closure_authorized": false,
+    "is1_closure_hold": true,
+    "prd_append_hold": true
+  },
+  "focus_binding_5_rejection_rationale": {
+    "binding_index": 5,
+    "rejected_recommended_slug": "alchemist_glass_wand",
+    "rejected_alternative_slug": "alchemist_catalyst_flask",
+    "primary_reason": "identity_classification=class_specific_non_caster + source_identity=Alchimista",
+    "pm_rule_verbatim": "proficiency compatibility NON annulla class identity conflict",
+    "record_preservation": "EV-F2 primary verdict preservato · nessuna modifica al record live · candidate universe status invariato",
+    "ev_f2_reopen": "VIETATA",
+    "not_compatible_final_status": "NOT authorized without EV-F2 reopen",
+    "both_focus_candidates_status": "NOT_SELECTED_FOR_IS1_BLUEPRINT (standby audit)",
+    "fallback_activation": "1:1 NEW_FUTURE FALLBACK ACTIVATED per la unit blueprint T1 focus",
+    "auto_substitute_from_alt": "FORBIDDEN by PM (alchemist_catalyst_flask NON usato come sostituzione)"
   }
 }

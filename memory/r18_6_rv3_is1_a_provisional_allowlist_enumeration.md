@@ -415,4 +415,141 @@ _NB · Il tie-break NON trasforma la proposta in approvazione (`PM_authoritative
 
 ---
 
-_Fine documento R18.6.RV3-IS1-A · DOCUMENTAL ONLY · READ-ONLY DISCOVERY · Italiano_
+---
+
+# PART 2 · PM Adjudication · IS1-A CLOSED · PM-LOCKED
+
+**Adjudicato**: 2026-07-12T07:14:56.019695+00:00
+**Dispatch reference**: `PM_VERDICT_IS1_A_ADJUDICATED_FALLBACK_3X_ACTIVATED_GO_RESUME_IS1_ROSTER`
+**IS1 roster status**: `GO_RESUME_authorized_by_pm_verdict`
+**IC1**: `CLOSED_LOCKED_NO_REOPEN`
+
+## §15 · PM Adjudication Verbatim
+
+- `adjudication_id` = `PM_VERDICT_IS1_A_2026_02`
+- `state` = `ADJUDICATED`
+- `candidate_enumeration_status` = `ACCEPTED_as_COMPLETE_CANDIDATE_ENUMERATION`
+- `note` = 32/32 ratificati come universe candidate NOT come 32 riusi automatici approvati
+
+## §16 · 3 PM_RATIFIED_PROVISIONAL_BINDING (attivi)
+
+| # | provisional_code | slot | family | source_slug | condition_code | verdict |
+|---:|---|---|---|---|---|---|
+| 1 | `cond_reuse_caster_stat_neutral_01` | chest | armor_stoffa | `apprentice-robe` | `COND_STAT_NEUTRAL_INT` | `PM_RATIFIED_PROVISIONAL_BINDING` |
+| 2 | `cond_reuse_caster_stat_neutral_02` | legs | armor_stoffa | `initiate_robe` | `COND_STAT_NEUTRAL_INT` | `PM_RATIFIED_PROVISIONAL_BINDING` |
+| 3 | `cond_reuse_caster_stat_neutral_03` | accessory | universal_neutral | `apprentice-handbook` | `COND_ACCESSORY_NEUTRAL` | `PM_RATIFIED_PROVISIONAL_BINDING` |
+
+Tutti e 3 con: `mutation_required=false` · `approval_status=provisional` · `future_dry_run_required=true` · `future_snapshot_required=true` · `future_pm_go_required=true`.
+
+**Nota PM**: NON equivale a runtime reuse approved. Restano riusi condizionali. NON aggiungere identità Vuoto retroattiva · class tag · affix pool tag · lore Cacciatore del Vuoto ai record live.
+
+## §17 · 3× Fallback Activation (source_type change only)
+
+| # | provisional_code | slot | family | gap/reason | source_type_change |
+|---:|---|---|---|---|---|
+| 4 | `cond_reuse_caster_stat_neutral_04` | ring | universal_neutral | GAP-2 `ring_slot_absent` | REUSE_CONDITIONAL → **NEW_FUTURE** |
+| 5 | `cond_reuse_focus_mechanism_compat_01` | main_hand | focus | Binding rejected · identity_conflict_Alchimista | REUSE_CONDITIONAL → **NEW_FUTURE** |
+| 6 | `cond_reuse_pugnale_mechanism_compat_01` | main_hand | pugnale | GAP-1 `pugnale_family_absent` | REUSE_CONDITIONAL → **NEW_FUTURE** |
+
+**Blueprint allocation preservata per tutte 3 fallback**: slot · tier · rarity intent · identity class · affix eligibility · stat-budget band. Cambia SOLO `source_type`. Nessun nuovo slot · nessun nuovo alias · nessun override proficiency · nessun family_mismatch · nessun slot_mismatch.
+
+**Vincoli PM verbatim**:
+- Ring: VIETATO slot_mismatch · accessory usato come ring · ring→accessory remap · nuovo condition_code · quindicesimo slot · nuovo alias
+- Focus: `alchemist_catalyst_flask` NON usato come sostituzione automatica · entrambi i candidati focus Alchimista restano NON selezionati · EV-F2 reopen VIETATA
+- Pugnale: VIETATO family_mismatch · focus usato come pugnale · nuovo condition_code · override proficiency
+
+## §18 · Focus Binding #5 · Rejection Rationale (dedicated)
+
+- **Rejected recommended slug**: `alchemist_glass_wand`
+- **Rejected alternative slug**: `alchemist_catalyst_flask`
+- **Primary reason**: identity_classification=class_specific_non_caster + source_identity=Alchimista
+- **PM rule verbatim**: *"proficiency compatibility NON annulla class identity conflict"*
+- **Record preservation**: EV-F2 primary verdict preservato · nessuna modifica al record live · candidate universe status invariato
+- **EV-F2 reopen**: `VIETATA`
+- **NOT_COMPATIBLE FINAL status**: NOT authorized without EV-F2 reopen
+- **Both focus candidates status**: `NOT_SELECTED_FOR_IS1_BLUEPRINT (standby audit)`
+- **Fallback activation**: 1:1 NEW_FUTURE FALLBACK ACTIVATED per la unit blueprint T1 focus
+- **Auto substitute from alt**: `FORBIDDEN by PM (alchemist_catalyst_flask NON usato come sostituzione)`
+
+## §19 · Active Source Accounting (post-fallback 3×)
+
+| source_type | count | note |
+|---|---:|---|
+| COMMITTED REUSE_VALID | 12 | 12 warlock+intellect slug live · Fase 1 discovery |
+| ACTIVE PROVISIONAL REUSE_CONDITIONAL | 3 | chest apprentice-robe + legs initiate_robe + accessory apprentice-handbook |
+| ACTIVE NEW_FUTURE | 105 | 102 baseline + 3 fallback activated (ring + focus + pugnale) |
+| **TOTAL** | **120** | Formula: `12 + 3 + 105 = 120` ✅ match IC1 blueprint total 120 |
+
+## §20 · Standby Audit · 29 Conditional Candidates NOT_SELECTED_FOR_IS1_BLUEPRINT
+
+- Count expected: **29** · Count actual: **29** · Match: `True`
+- Status per record: `NOT_SELECTED_FOR_IS1_BLUEPRINT`
+- **Non promossi automaticamente · non sono blueprint unit aggiuntive · non riusi approvati · non aumentano totale 120**
+
+| candidate_index | source_item_id | slug | bucket | id_class | risk | reason_not_selected |
+|---:|---|---|---|---|:-:|---|
+| 1 | `72c4f06f-55c0-4d44-a6c2-b40ad1443196` | `alchemist_glass_wand` | `weapon_literal_G2` | `class_specific_non_caster` | `MEDIUM` | `binding_5_pm_rejected_identity_conflict_alchimista` |
+| 2 | `164d4575-5188-4615-9b01-79d84815c161` | `alchemist_catalyst_flask` | `weapon_literal_G2` | `class_specific_non_caster` | `MEDIUM` | `binding_5_pm_rejected_identity_conflict_alchimista` |
+| 4 | `c6c89f1e-437e-4044-92b7-b4e6b9b7793d` | `aether-weave-robe` | `armor_stoffa_cuoio` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 6 | `a86520a8-5bc2-41eb-a89d-8ef769e05846` | `alchemist_apron` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 7 | `2a163db4-753d-471b-9881-d53cffa5f56c` | `alchemist_ember_lined_vest` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 8 | `f87b2ddd-7353-4221-a14b-809427e1a60d` | `alchemist_quintessence_robe` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 9 | `60d202f4-c324-4132-80b6-c336b5e23897` | `druid_grovewarden_mantle` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 10 | `2931f2b3-0630-4c9c-a7f5-0b44c69c9f8b` | `druid_elder_vestments` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 11 | `e8a57ea9-8209-4d46-8dc1-d5738108662e` | `alchemist_brewers_apron` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 12 | `7ad70e1d-bd5e-421f-ada2-c8868e43f4d6` | `alchemist_quicksilver_vest` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 13 | `67a6f0e5-570e-4dc4-9ad3-a6751d09727c` | `alchemist_philosophers_plate` | `armor_stoffa_cuoio` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 14 | `265db775-259b-488f-b15a-30f69ea823fe` | `relic-signet` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 15 | `36add57c-6f53-46d6-9003-7adaba7ac701` | `hoardlords-seal` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 16 | `0bc1d330-8b05-4fc0-946f-e994f33539b7` | `herbalist-pouch` | `accessory_universal` | `shared_family_multi_caster` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 17 | `89309769-fb51-4f95-94b4-f4c61972c8bc` | `scholars-spectacles` | `accessory_universal` | `shared_family_multi_caster` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 18 | `770e6f4f-af58-4e29-a585-6ffa6bfe2db6` | `seers-monocle` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 19 | `57906a5e-6644-4edd-8ad1-ddd7168ae4fe` | `oracle-pendant` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 20 | `f93ad143-df97-492e-910f-305c8c683361` | `crown-of-stillness` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 22 | `a8d89758-c34f-46e5-a58c-8594ea919505` | `wanderer_amulet` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 23 | `e260b599-ca87-4a38-b099-1842cc48d241` | `minor_sigil` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 24 | `spec_signature_sacred_chalice` | `spec_signature_sacred_chalice` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 25 | `spec_signature_battle_standard` | `spec_signature_battle_standard` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 26 | `spec_signature_runed_focus` | `spec_signature_runed_focus` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 27 | `bb23ee48-5959-4d28-b0bc-30327b5f33c6` | `legendary_amulet_nathos` | `accessory_universal` | `multi_role_wide` | `LOW` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 28 | `9684d81a-238f-4f90-8e42-9804f4897881` | `alchemist_reagent_pouch` | `accessory_universal` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 29 | `93b8fc54-411d-45b1-8347-b4fddf7b50f5` | `alchemist_alembic_pendant` | `accessory_universal` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 30 | `1aad80f8-fe95-4809-90af-3763bc7326f4` | `alchemist_transmutation_medallion` | `accessory_universal` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 31 | `e1ac0940-a7bb-4d2e-a023-9cbbe9210aed` | `alchemist_catalyst_ring` | `accessory_universal` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+| 32 | `c089bf70-08c7-485e-a78c-c873002c1877` | `alchemist_golden_vial` | `accessory_universal` | `class_specific_non_caster` | `MEDIUM` | `not_selected_by_deterministic_ranking_alternatives_pool` |
+
+## §21 · Remaining Conditional Fallback Reserve (outside roster)
+
+- Original IC1 fallback reserve: `6`
+- Activated in IS1-A: `3`
+- **Remaining reserve outside roster**: `3`
+- Note: Non sono blueprint unit aggiuntive. Non aumentano il totale 120. Non promossi automaticamente.
+
+**Worst case envelope invariato**:
+- REUSE_VALID `12` + NEW_FUTURE max `108` = `120` (envelope NON modificato)
+
+## §22 · IS1 Resume Authorization
+
+- `is1_status` = `GO_RESUME_FULL_ROSTER_GENERATION`
+- `authorized_by` = `PM_VERDICT_IS1_A_ADJUDICATED`
+- `authorized_at_utc` = `2026-07-12T07:14:56.019695+00:00`
+- **Next gate artifacts expected**:
+  - `/app/memory/r18_6_rv3_is1_item_specification_roster_contract.md`
+  - `/app/memory/r18_6_rv3_is1_item_specification_roster_contract.json`
+- `is1_a_referenced_as_dependency_in_is1` = `True`
+- `is1_closure_authorized` = `False`
+- `is1_closure_hold` = `True`
+- `prd_append_hold` = `True`
+
+## §23 · IS1-A Final Status
+
+- **`is1_a_status_final = CLOSED_PM_LOCKED`**
+- **`pm_adjudication_completed = true`**
+- **`fallback_3x_activated = true`**
+- **`standby_29_recorded = true`**
+- **`is1_a_referenced_in_is1_as_dependency = true`**
+- No closure report · No closure manifest · No PRD append (per PM verdict)
+
+---
+
+_Fine documento R18.6.RV3-IS1-A · CLOSED · PM-LOCKED · DOCUMENTAL ONLY · Italiano_
