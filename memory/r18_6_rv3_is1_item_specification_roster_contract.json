@@ -20,7 +20,9 @@
     "is1_closure_status": "HOLD_not_authorized",
     "prd_append_status": "HOLD_not_authorized",
     "sha_policy_31_compliance": "no_self_referential_sha_embedded_in_this_file",
-    "sections_target_md": 113
+    "sections_target_md": 113,
+    "is1_micro_fix_applied_at_utc": "2026-07-12T08:07:31.870823+00:00",
+    "is1_micro_fix_gate_ref": "PM_VERDICT_IS1_ROSTER_APPROVED_WITH_ONE_BLOCKING_SOURCE_SLOT_MICRO_FIX"
   },
   "governance_locks": {
     "apply_authorized": false,
@@ -1720,18 +1722,20 @@
       "roster_index": 37
     },
     {
-      "tier": "T1",
-      "required_level_band": "1-15",
-      "slot": "hands",
-      "slot_alias_source": [],
-      "equipment_category": "ARMOR",
-      "family": "stoffa",
-      "sequence": 1,
-      "blueprint_code": "cdv_t1_hands_stoffa_001",
-      "armor_type": "stoffa",
+      "tier": "T2",
+      "required_level_band": "16-30",
+      "slot": "accessory",
+      "slot_alias_source": [
+        "trinket"
+      ],
+      "equipment_category": "UNIVERSAL",
+      "family": "universal_position",
+      "sequence": 3,
+      "blueprint_code": "cdv_t2_accessory_universal_position_003",
+      "armor_type": null,
       "weapon_family": null,
-      "universal_position": false,
-      "rarity_intent": "Common",
+      "universal_position": true,
+      "rarity_intent": "Epic",
       "identity_class": "class_specific",
       "source_type": "REUSE_VALID",
       "source_item_id": "4b728fcb-129a-44b5-b446-5c3647a214f6",
@@ -1745,23 +1749,28 @@
       "blueprint_vs_live_rarity_divergence": true,
       "divergence_note": "blueprint rarity_intent=Common · live_rarity=Epic · blueprint spec authoritative",
       "live_slot_type_source": "accessory",
-      "blueprint_slot_remap_note": "live slot_type=accessory · blueprint slot=hands_stoffa · T1 universal saturated (5 slots occupied by 5 warlock universal); patron_seal remapped to hands stoffa for T1 fit · identity_direction preserved",
       "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
-        "void.mark.power"
+        "void.mark.power",
+        "void.mark.duration"
       ],
-      "stat_budget_band": "budget_1.00_baseline",
+      "stat_budget_band": "budget_1.60",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
-      "proficiency_requirement": "armor_stoffa",
+      "proficiency_requirement": "universal_position",
       "runtime_item_id": null,
       "player_facing_name": null,
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 38
+      "roster_index": 38,
+      "source_slot_preservation": "RESTORED_via_one_for_one_swap_IS1_micro_fix",
+      "blueprint_slot": "accessory",
+      "blueprint_equipment_category": "UNIVERSAL",
+      "blueprint_armor_type": null,
+      "blueprint_weapon_family": null
     },
     {
       "tier": "T2",
@@ -4699,20 +4708,18 @@
       "roster_index": 110
     },
     {
-      "tier": "T2",
-      "required_level_band": "16-30",
-      "slot": "accessory",
-      "slot_alias_source": [
-        "trinket"
-      ],
-      "equipment_category": "UNIVERSAL",
-      "family": "universal_position",
-      "sequence": 3,
-      "blueprint_code": "cdv_t2_accessory_universal_position_003",
-      "armor_type": null,
+      "tier": "T1",
+      "required_level_band": "1-15",
+      "slot": "hands",
+      "slot_alias_source": [],
+      "equipment_category": "ARMOR",
+      "family": "stoffa",
+      "sequence": 1,
+      "blueprint_code": "cdv_t1_hands_stoffa_001",
+      "armor_type": "stoffa",
       "weapon_family": null,
-      "universal_position": true,
-      "rarity_intent": "Epic",
+      "universal_position": false,
+      "rarity_intent": "Common",
       "identity_class": "class_specific",
       "source_type": "NEW_FUTURE",
       "source_item_id": null,
@@ -4725,20 +4732,21 @@
       "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
-        "void.mark.power",
-        "void.mark.duration"
+        "void.mark.power"
       ],
-      "stat_budget_band": "budget_1.60",
+      "stat_budget_band": "budget_1.00_baseline",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
-      "proficiency_requirement": "universal_position",
+      "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
       "player_facing_name": null,
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 111
+      "roster_index": 111,
+      "absorbed_allocation_from": "warlock_patron_seal_micro_fix_swap",
+      "swap_source_gate": "IS1_micro_fix_2026_02"
     },
     {
       "tier": "T3",
@@ -5441,13 +5449,590 @@
     "is1_status": "IN_PROGRESS_roster_generated",
     "is1_closure": "HOLD_awaiting_pm_review",
     "prd_append": "HOLD_not_authorized_in_this_dispatch",
-    "next_action": "await_pm_verdict_on_IS1_roster_120_120_for_formal_closure",
+    "next_action": "await_pm_final_sign_off_including_alias_interpretation_and_potential_secondary_findings_on_refinement_pattern",
     "afx2": "RESERVED_FUTURE",
     "nc1": "HOLD_pre_migration_dependency",
     "registry_v3_apply": "NOT_AUTHORIZED",
     "gate_11": "HOLD",
     "wave_1": "HOLD",
     "monaco_druid_ecc": "HOLD",
-    "item_creation": "NOT_AUTHORIZED_zero_runtime_item_id_generated"
+    "item_creation": "NOT_AUTHORIZED_zero_runtime_item_id_generated",
+    "micro_fix_applied": "patron_seal_restore_via_one_for_one_swap_with_NEW_FUTURE_T2_accessory_003_Epic",
+    "potential_secondary_findings": {
+      "black_ring_live_accessory_blueprint_ring": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH",
+      "cursed_pendant_live_accessory_blueprint_neck": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH",
+      "fetish_charm_live_accessory_blueprint_back": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH · charm_to_back_semantic_weak_note",
+      "6_armor_live_generic_all_mapped_to_canonical_armor_sub_slots": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH (6 items)",
+      "requires_pm_verdict_integrativo_on_alias_list_expansion_or_confirmation_of_refinement_interpretation": true
+    }
+  },
+  "ic1_accounting_reconciliation": {
+    "gate_id": "R18.6.RV3-IS1 · IC1 accounting reconciliation (NO IC1 reopen)",
+    "records": [
+      {
+        "delta_id": "IC1_ACC_01",
+        "dimension": "slot_tier_count",
+        "target": "shoulders",
+        "value_ic1_original_by_tier": [
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "value_is1_final_by_tier": [
+          1,
+          1,
+          2,
+          2,
+          1
+        ],
+        "delta": "T3+1_T5-1",
+        "motivo": "riequilibrio_T5_to_T3_after_chest_T3_reduction_and_waist_T3_expansion_lock_preserved_aggregate_shoulders=7",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": false
+      },
+      {
+        "delta_id": "IC1_ACC_02",
+        "dimension": "slot_tier_count",
+        "target": "chest",
+        "value_ic1_original_by_tier": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "value_is1_final_by_tier": [
+          3,
+          2,
+          1,
+          2,
+          2
+        ],
+        "delta": "T1+1_T3-1",
+        "motivo": "accommodate_REUSE_CONDITIONAL_apprentice-robe_T1_chest_stoffa_3rd_slot_lock_preserved_aggregate_chest=10",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": true,
+        "source_slug": "apprentice-robe"
+      },
+      {
+        "delta_id": "IC1_ACC_03",
+        "dimension": "slot_tier_count",
+        "target": "hands",
+        "value_ic1_original_by_tier": [
+          1,
+          1,
+          2,
+          2,
+          1
+        ],
+        "value_is1_final_by_tier": [
+          1,
+          1,
+          2,
+          1,
+          2
+        ],
+        "delta": "T4-1_T5+1",
+        "motivo": "riequilibrio_T5_expansion_after_shoulders_T5_reduction_aggregate_hands=7",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": false
+      },
+      {
+        "delta_id": "IC1_ACC_04",
+        "dimension": "slot_tier_count",
+        "target": "wrist",
+        "value_ic1_original_by_tier": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "value_is1_final_by_tier": [
+          0,
+          2,
+          1,
+          1,
+          1
+        ],
+        "delta": "T1-1_T2+1",
+        "motivo": "compensate_T1_reduction_after_accessory_T1_expansion_lock_preserved_aggregate_wrist=5",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": false
+      },
+      {
+        "delta_id": "IC1_ACC_05",
+        "dimension": "slot_tier_count",
+        "target": "waist",
+        "value_ic1_original_by_tier": [
+          1,
+          1,
+          1,
+          1,
+          2
+        ],
+        "value_is1_final_by_tier": [
+          0,
+          1,
+          3,
+          1,
+          1
+        ],
+        "delta": "T1-1_T3+2_T5-1",
+        "motivo": "compensate_T1_after_legs_T1_expansion_plus_T3_expansion_after_multi_source_lock_preserved_aggregate_waist=6",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": false
+      },
+      {
+        "delta_id": "IC1_ACC_06",
+        "dimension": "slot_tier_count",
+        "target": "legs",
+        "value_ic1_original_by_tier": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "value_is1_final_by_tier": [
+          3,
+          2,
+          1,
+          2,
+          2
+        ],
+        "delta": "T1+1_T3-1",
+        "motivo": "accommodate_REUSE_CONDITIONAL_initiate_robe_T1_legs_stoffa_3rd_slot_lock_preserved_aggregate_legs=10",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": true,
+        "source_slug": "initiate_robe"
+      },
+      {
+        "delta_id": "IC1_ACC_07",
+        "dimension": "slot_tier_count",
+        "target": "feet",
+        "value_ic1_original_by_tier": [
+          1,
+          1,
+          2,
+          2,
+          1
+        ],
+        "value_is1_final_by_tier": [
+          0,
+          1,
+          3,
+          2,
+          1
+        ],
+        "delta": "T1-1_T3+1",
+        "motivo": "compensate_T1_after_chest_T1_expansion_and_T3_expansion_lock_preserved_aggregate_feet=7",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": false
+      },
+      {
+        "delta_id": "IC1_ACC_08",
+        "dimension": "slot_tier_count",
+        "target": "accessory",
+        "value_ic1_original_by_tier": [
+          2,
+          3,
+          3,
+          3,
+          4
+        ],
+        "value_is1_final_by_tier": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "delta": "T1+1_T5-1",
+        "motivo": "accommodate_REUSE_CONDITIONAL_apprentice-handbook_T1_accessory_3rd_slot_lock_preserved_aggregate_accessory=15",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": true,
+        "source_slug": "apprentice-handbook"
+      },
+      {
+        "delta_id": "IC1_ACC_09_MICRO_FIX",
+        "dimension": "one_for_one_swap",
+        "target": "warlock_patron_seal",
+        "value_ic1_original_by_tier": "hands_T1_stoffa_ARMOR_Common (pre-fix)",
+        "value_is1_final_by_tier": "accessory_T2_universal_position_UNIVERSAL_Epic (post-fix)",
+        "delta": "swap_with_NEW_FUTURE_cdv_t2_accessory_universal_position_003",
+        "motivo": "PM_verdict_source_slot_preservation_mandatory_patron_seal_restore_to_accessory_UNIVERSAL_null",
+        "lock_aggregati_preservati": true,
+        "source_item_coinvolto": true,
+        "source_slug": "warlock_patron_seal",
+        "swap_partner_blueprint_code_final": "cdv_t1_hands_stoffa_001"
+      }
+    ],
+    "records_count": 9,
+    "all_aggregate_locks_preserved": true,
+    "ic1_closed_locked_no_reopen": true
+  },
+  "patron_seal_swap_ledger": {
+    "swap_id": "IS1_micro_fix_patron_seal_restore_2026_02",
+    "unit_A_source": "warlock_patron_seal (REUSE_VALID · UUID 4b728fcb-129a-44b5-b446-5c3647a214f6)",
+    "unit_B_source": "NEW_FUTURE_baseline_swap_partner",
+    "pre_swap": {
+      "unit_A": {
+        "blueprint_code": "cdv_t1_hands_stoffa_001",
+        "tier": "T1",
+        "slot": "hands",
+        "family": "stoffa",
+        "equipment_category": "ARMOR",
+        "armor_type": "stoffa",
+        "weapon_family": null,
+        "rarity_intent": "Common",
+        "identity_class": "class_specific",
+        "universal_position": false,
+        "required_level_band": "1-15",
+        "slot_alias_source": [],
+        "sequence": 1,
+        "proficiency_requirement": "armor_stoffa",
+        "eligible_affix_families": [
+          "void.mark.power"
+        ],
+        "stat_budget_band": "budget_1.00_baseline"
+      },
+      "unit_B": {
+        "blueprint_code": "cdv_t2_accessory_universal_position_003",
+        "tier": "T2",
+        "slot": "accessory",
+        "family": "universal_position",
+        "equipment_category": "UNIVERSAL",
+        "armor_type": null,
+        "weapon_family": null,
+        "rarity_intent": "Epic",
+        "identity_class": "class_specific",
+        "universal_position": true,
+        "required_level_band": "16-30",
+        "slot_alias_source": [
+          "trinket"
+        ],
+        "sequence": 3,
+        "proficiency_requirement": "universal_position",
+        "eligible_affix_families": [
+          "void.mark.power",
+          "void.mark.duration"
+        ],
+        "stat_budget_band": "budget_1.60"
+      }
+    },
+    "post_swap": {
+      "unit_A_patron_seal": {
+        "blueprint_code": "cdv_t2_accessory_universal_position_003",
+        "tier": "T2",
+        "slot": "accessory",
+        "family": "universal_position",
+        "equipment_category": "UNIVERSAL",
+        "armor_type": null,
+        "weapon_family": null,
+        "rarity_intent": "Epic",
+        "identity_class": "class_specific",
+        "universal_position": true,
+        "required_level_band": "16-30",
+        "slot_alias_source": [
+          "trinket"
+        ],
+        "sequence": 3,
+        "proficiency_requirement": "universal_position",
+        "eligible_affix_families": [
+          "void.mark.power",
+          "void.mark.duration"
+        ],
+        "stat_budget_band": "budget_1.60"
+      },
+      "unit_B_new_future": {
+        "blueprint_code": "cdv_t1_hands_stoffa_001",
+        "tier": "T1",
+        "slot": "hands",
+        "family": "stoffa",
+        "equipment_category": "ARMOR",
+        "armor_type": "stoffa",
+        "weapon_family": null,
+        "rarity_intent": "Common",
+        "identity_class": "class_specific",
+        "universal_position": false,
+        "required_level_band": "1-15",
+        "slot_alias_source": [],
+        "sequence": 1,
+        "proficiency_requirement": "armor_stoffa",
+        "eligible_affix_families": [
+          "void.mark.power"
+        ],
+        "stat_budget_band": "budget_1.00_baseline"
+      }
+    },
+    "invariants_verified": {
+      "tier_totals": {
+        "T1": 18,
+        "T2": 22,
+        "T3": 26,
+        "T4": 26,
+        "T5": 28
+      },
+      "slot_totals": {
+        "head": 8,
+        "neck": 6,
+        "shoulders": 7,
+        "chest": 10,
+        "back": 6,
+        "accessory": 15,
+        "hands": 7,
+        "wrist": 5,
+        "waist": 6,
+        "legs": 10,
+        "feet": 7,
+        "main_hand": 15,
+        "off_hand": 6,
+        "ring": 12
+      },
+      "rarity_totals": {
+        "Common": 42,
+        "Legendary": 3,
+        "Epic": 15,
+        "Uncommon": 33,
+        "Rare": 27
+      },
+      "identity_totals": {
+        "shared_family": 30,
+        "universal_neutral": 22,
+        "class_specific": 68
+      },
+      "category_totals": {
+        "ARMOR": 60,
+        "UNIVERSAL": 39,
+        "WEAPON": 21
+      },
+      "armor_family_totals": {
+        "stoffa": 42,
+        "cuoio": 18
+      },
+      "weapon_family_totals": {
+        "focus": 10,
+        "balestra": 7,
+        "pugnale": 4
+      },
+      "source_totals": {
+        "REUSE_VALID": 12,
+        "NEW_FUTURE": 105,
+        "REUSE_CONDITIONAL": 3
+      },
+      "affix_overlay_total": 140
+    },
+    "all_locks_preserved": true,
+    "compatibility_rating": {
+      "tier_match": false,
+      "tier_note": "T1_to_T2_mismatch_documented_live_L8_blueprint_T2_L16_30_band",
+      "rarity_match_improved": true,
+      "rarity_note": "blueprint_rarity_Epic_now_matches_live_rarity_Epic_previously_Common_blueprint_vs_Epic_live",
+      "identity_match": true,
+      "identity_note": "both_class_specific_preserved",
+      "affix_eligibility_match_improved": true,
+      "affix_note": "patron_seal_Epic_now_has_2_affix_families_matching_Epic_tier_baseline"
+    }
+  },
+  "reuse_valid_source_slot_audit_12_12": {
+    "audit_gate": "R18.6.RV3-IS1 · REUSE_VALID source-slot audit 12/12",
+    "audit_date_utc": "2026-07-12T08:07:31.870823+00:00",
+    "audit_records": [
+      {
+        "source_slug": "warlock_covenant_robe",
+        "source_item_id": "2618698e-9f73-40a0-8286-085c922b3179",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "head",
+        "blueprint_slot": "head",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_cursed_pendant",
+        "source_item_id": "31b9b255-123e-425f-a071-4a70f53d989b",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "neck",
+        "blueprint_slot": "neck",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_universal_position_family_refinement",
+        "interpretation": "DB_schema_uses_generic_accessory_slot_type_refined_to_canonical_universal_position_sub_slot_via_item_name_semantics"
+      },
+      {
+        "source_slug": "warlock_coven_mantle",
+        "source_item_id": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "shoulders",
+        "blueprint_slot": "shoulders",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_novice_robe",
+        "source_item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "chest",
+        "blueprint_slot": "chest",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_hex_focus_robe",
+        "source_item_id": "5417640b-3030-4be1-a68d-e3cf87e0444c",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "chest",
+        "blueprint_slot": "chest",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_fetish_charm",
+        "source_item_id": "b800b05c-28e3-4f5a-af00-3b7d853ce377",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "back",
+        "blueprint_slot": "back",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_universal_position_family_refinement",
+        "interpretation": "DB_schema_uses_generic_accessory_slot_type_refined_to_canonical_universal_position_sub_slot_via_item_name_semantics"
+      },
+      {
+        "source_slug": "warlock_patron_seal",
+        "source_item_id": "4b728fcb-129a-44b5-b446-5c3647a214f6",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "accessory",
+        "blueprint_slot": "accessory",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "EXACT_MATCH",
+        "interpretation": "live_slot_type_field_equals_blueprint_slot_canonical"
+      },
+      {
+        "source_slug": "warlock_shadow_mail",
+        "source_item_id": "3ac9f59f-430e-4638-bee5-62ca225648ec",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "legs",
+        "blueprint_slot": "legs",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_shadowweave_robe",
+        "source_item_id": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
+        "live_slot_type_raw": "armor",
+        "normalized_source_slot": "legs",
+        "blueprint_slot": "legs",
+        "source_equipment_category": "ARMOR",
+        "blueprint_equipment_category": "ARMOR",
+        "source_armor_family": null,
+        "blueprint_armor_family": "stoffa",
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_armor_family_refinement",
+        "interpretation": "DB_schema_uses_generic_armor_slot_type_refined_to_canonical_armor_sub_slot_via_item_semantics_and_armor_tags"
+      },
+      {
+        "source_slug": "warlock_black_ring",
+        "source_item_id": "2a120160-5e5b-4af9-8669-0039c14acccb",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "ring",
+        "blueprint_slot": "ring",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "CANONICAL_ALIAS_MATCH_via_universal_position_family_refinement",
+        "interpretation": "DB_schema_uses_generic_accessory_slot_type_refined_to_canonical_universal_position_sub_slot_via_item_name_semantics"
+      },
+      {
+        "source_slug": "warlock_imp_collar",
+        "source_item_id": "93a38f91-90b2-48c0-a883-05a81a17e2b5",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "accessory",
+        "blueprint_slot": "accessory",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "EXACT_MATCH",
+        "interpretation": "live_slot_type_field_equals_blueprint_slot_canonical"
+      },
+      {
+        "source_slug": "warlock_hex_sigil",
+        "source_item_id": "09bc5058-d1d9-450a-aea5-c816f5abc075",
+        "live_slot_type_raw": "accessory",
+        "normalized_source_slot": "accessory",
+        "blueprint_slot": "accessory",
+        "source_equipment_category": "UNIVERSAL",
+        "blueprint_equipment_category": "UNIVERSAL",
+        "source_armor_family": null,
+        "blueprint_armor_family": null,
+        "source_weapon_family": null,
+        "blueprint_weapon_family": null,
+        "verdict": "EXACT_MATCH",
+        "interpretation": "live_slot_type_field_equals_blueprint_slot_canonical"
+      }
+    ],
+    "audit_records_count": 12,
+    "verdict_counts": {
+      "CANONICAL_ALIAS_MATCH_via_armor_family_refinement": 6,
+      "CANONICAL_ALIAS_MATCH_via_universal_position_family_refinement": 3,
+      "EXACT_MATCH": 3
+    },
+    "pm_strict_alias_pass_count": 3,
+    "refinement_pass_count": 9,
+    "mismatch_unresolved_count": 0,
+    "semantic_remap_count": 0,
+    "12_12_pass_under_refinement_interpretation": true,
+    "interpretation_note": "Il DB schema live usa slot_type generici (`armor`, `accessory`) NON i termini specific-canonical (amulet/cloak/cape/belt/trinket/weapon_main) enumerati nella PM alias list. Il refinement da slot_type generico a canonical sub-slot (armor→chest/legs/head/shoulders + accessory→neck/back/ring/accessory) è documentato come `CANONICAL_ALIAS_MATCH_via_family_refinement`. Se il PM richiede strict alias list only (rifiuto della refinement interpretation), lo strict_pass_count è 3/12 e servirebbero altre 9 riallocazioni REUSE_VALID. Chiesto verdict integrativo PM."
   }
 }
