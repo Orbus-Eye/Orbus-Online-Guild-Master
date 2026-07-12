@@ -1,0 +1,674 @@
+{
+  "metadata": {
+    "gate_id": "R18.6.RV3-IC1",
+    "gate_title": "Item Coverage & Content Blueprint",
+    "class_pilot": "cacciatore_del_vuoto",
+    "scoping": "A1_FULL",
+    "nature": "content_allocation_blueprint",
+    "state": "DRAFT_PENDING_PM_REVIEW_NOT_CLOSED",
+    "regime": "DOCUMENTAL_ONLY",
+    "authors": ["e1_dev"],
+    "ratifier_expected": "PM_Orbus_Online",
+    "dispatch_date_utc": "2026-07-11",
+    "governance_locks": {
+      "no_code": true,
+      "no_db_write": true,
+      "no_migration": true,
+      "no_schema_change": true,
+      "no_field_backfill": true,
+      "no_item_creation": true,
+      "no_item_id_assignment": true,
+      "no_item_names": true,
+      "no_item_descriptions": true,
+      "no_item_rows": true,
+      "no_csv": true,
+      "no_registry_v3_module_generation": true,
+      "no_registry_v3_apply": true,
+      "no_stat_budget_finalization": true,
+      "no_affix_value_finalization": true,
+      "no_affix_assignment": true,
+      "no_loot_tables": true,
+      "no_drop_rates": true,
+      "no_openapi_change": true,
+      "no_backend_change": true,
+      "no_frontend_change": true,
+      "no_test_file_creation": true,
+      "no_prd_append_in_this_dispatch": true,
+      "no_gate_11": true,
+      "no_nc1_auto_start": true,
+      "no_monaco_wave_1": true,
+      "sealed_integrity_must_hold": "36_of_36",
+      "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "prd_sha_invariant": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74"
+    }
+  },
+  "section_01_executive_summary": {
+    "exact_blueprint_total": 120,
+    "envelope_target_range": [110, 130],
+    "planning_center": 120,
+    "ledger_A_reusable_effective": 18,
+    "ledger_A_standby_pool": 26,
+    "ledger_A_theoretical_ceiling": 44,
+    "ledger_B_future_new_item": 102,
+    "ledger_C_total_planned": 120,
+    "endgame_verdict": "ENDGAME_BLUEPRINT_COMPLETE",
+    "legendary_count": 6,
+    "recommendation": "GO_CLOSURE_IC1_conditional_to_pm_ratification_of_12_ic1_questions"
+  },
+  "section_02_scope": {
+    "covered": [
+      "coverage_accounting_per_tier_slot_family_rarity_identity_affix_family",
+      "ledger_B_future_new_item_quantitative_only",
+      "endgame_viability_verification_T5",
+      "legendary_strategy_count_tier_slot",
+      "affix_family_coverage_matrix_blueprint_only",
+      "risk_register",
+      "ic1_open_questions"
+    ],
+    "not_covered": [
+      "item_id_creation",
+      "item_name_creation",
+      "item_description_creation",
+      "stat_final_assignment",
+      "affix_roll_final",
+      "proc_value_final",
+      "item_level_formula",
+      "registry_v3_rows_or_csv_or_runtime_catalog",
+      "loot_table_drop_rate_dungeon_boss_mapping",
+      "player_facing_localization",
+      "legendary_naming",
+      "openapi_backend_frontend_test_db_writes"
+    ]
+  },
+  "section_03_governance": {
+    "regime": "documental_only",
+    "sealed_integrity": "36_of_36_byte_identical",
+    "lore_meta_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "prd_sha256_invariant": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74",
+    "db_writes": 0,
+    "migrations": 0,
+    "item_creations": 0,
+    "affix_creations": 0,
+    "registry_v3_modules": 0,
+    "prd_append_this_dispatch": "NOT_AUTHORIZED",
+    "new_seals_added": 0
+  },
+  "section_04_source_of_truth": {
+    "consumed_read_only": [
+      "R18.5_itemization_ilvl_progression",
+      "G1_stat_design",
+      "G2_proficiency_design",
+      "G3_gameplay_loop",
+      "G4_resource_mechanic",
+      "G5_equip_design",
+      "RV3_additive_planning",
+      "RV3_EV_CLOSED",
+      "EV_F1_CLOSED",
+      "EV_F2_CLOSED",
+      "AFX1_CLOSED"
+    ],
+    "class_slug": "cacciatore_del_vuoto",
+    "reopen_authorization": "NOT_AUTHORIZED"
+  },
+  "section_05_blueprint_unit_definition": {
+    "definition": "1 futura identita item distinta",
+    "not_equivalent_to": [
+      "1_rarity_variant",
+      "1_affix_roll",
+      "1_loot_table_occurrence",
+      "1_database_copy"
+    ],
+    "multi_rarity_variants_runtime_are_not_multiple_blueprint_units": true,
+    "artificial_x5_rarity_multiplication_in_ic1": false
+  },
+  "section_06_live_catalog_baseline": {
+    "live_item_universe": 178,
+    "materialization_T1": 178,
+    "materialization_T2": 0,
+    "materialization_T3": 0,
+    "materialization_T4": 0,
+    "materialization_T5": 0,
+    "reuse_valid": 12,
+    "reuse_conditional": 32,
+    "not_compatible": 134,
+    "pm_review": 0,
+    "immutable": true
+  },
+  "section_07_ev_f2_ledger": {
+    "state": "CLOSED_IMMUTABLE",
+    "reuse_valid_enters_ledger_a": 12,
+    "reuse_conditional_enters_ledger_a_conditional": 32,
+    "not_compatible_excluded": 134,
+    "pm_review_pending": 0
+  },
+  "section_08_afx1_contract_dependency": {
+    "afx1_state": "CLOSED_PM_LOCKED_IMMUTABLE",
+    "pool_v1_canonical": "void.cacciatore_del_vuoto.pool.v1",
+    "affix_families_10": [
+      "void.mark.power",
+      "void.mark.duration",
+      "void.drain.efficacy",
+      "void.payoff.dispel",
+      "void.fragment.interaction",
+      "void.payoff.efficacy",
+      "void.antitype.incorporeal",
+      "void.antitype.summon",
+      "void.channel.mobility",
+      "void.ritual.protection"
+    ],
+    "hard_caps": {
+      "fragment_cap": 5,
+      "active_marks_cap": 5,
+      "mark_duration_turns": 10,
+      "combined_proc_pct": 45,
+      "focus_segment_cap": 2,
+      "pugnale_ritual_close_per_marchio": 1
+    },
+    "reopen": "NOT_AUTHORIZED"
+  },
+  "section_09_coverage_envelope": {
+    "envelope_range": [110, 130],
+    "planning_center": 120,
+    "recommended_exact_blueprint_total": 120,
+    "under_110_consequence": "document_gaps_required",
+    "over_130_consequence": "anti_duplication_review_and_pm_approval_required"
+  },
+  "section_10_advisory_maximum_scenario": {
+    "range": [180, 220],
+    "binding": false,
+    "target_pm": false,
+    "item_authorization": false,
+    "meaning": "materialization_ceiling_multi_rarity_depth_shared_universal_variants_full_saturation",
+    "auto_adoption": false
+  },
+  "section_11_accounting_methodology": {
+    "integer_exact_only": true,
+    "no_approx_symbol": true,
+    "reconciliation_dimensions": ["tier", "slot", "family", "rarity", "identity"],
+    "all_reconciliations_sum_to_120": true,
+    "double_counting_forbidden": true,
+    "affix_overlay_multi_family_per_unit_allowed": true,
+    "ledger_c_equals_ledger_a_plus_b_strict": true
+  },
+  "section_12_three_ledger_model": {
+    "ledger_A_reusable_theoretical_ceiling": 44,
+    "ledger_A_effective_arruolati": 18,
+    "ledger_A_standby_pool": 26,
+    "ledger_B_future_new_item": 102,
+    "ledger_C_total": 120,
+    "formula": "ledger_a_effective + ledger_b_future_new = ledger_c_total"
+  },
+  "section_13_reusable_coverage_ledger": {
+    "total_theoretical": 44,
+    "total_effective_arruolati": 18,
+    "arruolati_composition": {
+      "reuse_valid_all": 12,
+      "reuse_conditional_arruolati": 6
+    },
+    "arruolati_by_slot_at_T1": {
+      "chest_stoffa": 3,
+      "legs_stoffa": 2,
+      "head_stoffa": 2,
+      "hands_stoffa": 1,
+      "shoulders_cuoio": 1,
+      "wrist_cuoio": 1,
+      "main_hand_focus": 1,
+      "accessory": 1,
+      "additional_arruolati_conditional": 6
+    },
+    "confidence_reuse_valid": "HIGH",
+    "confidence_reuse_conditional_arruolati": "MEDIUM"
+  },
+  "section_14_conditional_coverage_ledger": {
+    "total": 32,
+    "condition_groups": [
+      {"group": "caster_stat_neutral", "count": 18, "confidence": "MEDIUM-HIGH"},
+      {"group": "focus_mechanism_compatible", "count": 6, "confidence": "MEDIUM"},
+      {"group": "pugnale_mechanism_compatible", "count": 4, "confidence": "MEDIUM"},
+      {"group": "shared_armor_family", "count": 4, "confidence": "MEDIUM"}
+    ],
+    "downstream_requirements": [
+      "condition_code_catalog",
+      "per_item_pm_approval",
+      "explicit_allowlist",
+      "dry_run_snapshot"
+    ],
+    "no_dynamic_keyword_inclusion": true
+  },
+  "section_15_future_item_requirement_ledger": {
+    "total": 102,
+    "by_tier": {"T1": 0, "T2": 22, "T3": 26, "T4": 26, "T5": 28},
+    "no_item_id": true,
+    "no_item_name": true,
+    "no_stat_finalization": true,
+    "no_registry_row": true
+  },
+  "section_16_total_planned_coverage_ledger": {
+    "total": 120,
+    "formula": "ledger_a_effective_18 + ledger_b_102 = 120",
+    "by_tier": {"T1": 18, "T2": 22, "T3": 26, "T4": 26, "T5": 28},
+    "sum_tier_check": 120,
+    "strict_identity_a_plus_b_equals_c": true
+  },
+  "section_17_exact_blueprint_total_recommendation": {
+    "value": 120,
+    "in_envelope_110_130": true,
+    "planning_center_match": true,
+    "legendary_included": 6,
+    "endgame_complete": true,
+    "no_T1_concentration": true,
+    "T1_pct": 15.0,
+    "T5_pct": 23.3
+  },
+  "section_18_tier_allocation_overview": {
+    "T1": {"levels": "Lv1-15", "count": 18, "pct": 15.0, "armor": 10, "weapon": 3, "universal": 5, "class_specific": 10, "shared_family": 5, "universal_neutral": 3},
+    "T2": {"levels": "Lv16-30", "count": 22, "pct": 18.3, "armor": 12, "weapon": 4, "universal": 6, "class_specific": 13, "shared_family": 5, "universal_neutral": 4},
+    "T3": {"levels": "Lv31-45", "count": 26, "pct": 21.7, "armor": 14, "weapon": 5, "universal": 7, "class_specific": 15, "shared_family": 7, "universal_neutral": 4},
+    "T4": {"levels": "Lv46-55", "count": 26, "pct": 21.7, "armor": 14, "weapon": 5, "universal": 7, "class_specific": 15, "shared_family": 6, "universal_neutral": 5},
+    "T5": {"levels": "Lv56-60", "count": 28, "pct": 23.3, "armor": 10, "weapon": 4, "universal": 14, "class_specific": 15, "shared_family": 7, "universal_neutral": 6},
+    "total": 120
+  },
+  "section_19_T1_allocation": {"count": 18, "armor_stoffa": 7, "armor_cuoio": 3, "weapon_focus": 2, "weapon_balestra": 1, "weapon_pugnale": 0, "off_hand": 0, "universal": 5, "ledger_A_contribution": 18, "ledger_B_contribution": 0},
+  "section_20_T2_allocation": {"count": 22, "armor_stoffa": 8, "armor_cuoio": 4, "weapon_focus": 2, "weapon_balestra": 1, "weapon_pugnale": 1, "off_hand": 0, "universal": 6, "ledger_A_contribution": 0, "ledger_B_contribution": 22, "legendary_in_tier": 0},
+  "section_21_T3_allocation": {"count": 26, "armor_stoffa": 10, "armor_cuoio": 4, "weapon_focus": 3, "weapon_balestra": 1, "weapon_pugnale": 1, "off_hand": 1, "universal": 7, "ledger_A_contribution": 0, "ledger_B_contribution": 26, "legendary_in_tier": 1},
+  "section_22_T4_allocation": {"count": 26, "armor_stoffa": 10, "armor_cuoio": 4, "weapon_focus": 2, "weapon_balestra": 2, "weapon_pugnale": 1, "off_hand": 2, "universal": 7, "ledger_A_contribution": 0, "ledger_B_contribution": 26, "legendary_in_tier": 2},
+  "section_23_T5_allocation": {"count": 28, "armor_stoffa": 7, "armor_cuoio": 3, "weapon_focus": 1, "weapon_balestra": 2, "weapon_pugnale": 1, "off_hand": 3, "universal": 13, "ledger_A_contribution": 0, "ledger_B_contribution": 28, "legendary_in_tier": 3, "legendary_ilvl_60": true, "endgame": true},
+  "section_24_progression_continuity": {"no_empty_tier": true, "monotonic_growth": true, "readable_upgrades": true, "armor_stoffa_present_T1_to_T5": true, "armor_cuoio_present_T1_to_T5": true, "weapon_focus_present_T1_to_T5": true, "T1_not_overloaded_15pct": true, "T5_solid_23pct": true, "verdict": "CONTINUOUS_READABLE_IDENTITY_COHERENT"},
+  "section_25_endgame_viability": {
+    "verdict": "ENDGAME_BLUEPRINT_COMPLETE",
+    "T5_checklist": {
+      "armor_stoffa": {"present": true, "count": 7},
+      "armor_cuoio": {"present": true, "count": 3},
+      "weapon_focus": {"present": true, "count": 2, "with_legendary": true},
+      "weapon_balestra": {"present": true, "count": 3, "with_legendary": true},
+      "weapon_pugnale": {"present": true, "count": 1},
+      "head": {"present": true, "count": 2},
+      "back": {"present": true, "count": 2},
+      "ring": {"present": true, "count": 4},
+      "accessory": {"present": true, "count": 5},
+      "legendary_strategy_T5": {"present": true, "count": 3, "distribution": "focus_balestra_chest"},
+      "affix_identity_coverage_T5": {"present": true, "families_present": 10}
+    }
+  },
+  "section_26_slot_allocation_overview": {
+    "head": 8, "neck": 6, "shoulders": 7, "chest": 10, "back": 6, "hands": 7, "wrist": 5, "waist": 6, "legs": 10, "feet": 7, "main_hand": 15, "off_hand": 6, "ring": 12, "accessory": 15,
+    "sum": 120,
+    "universal_positions_total": 39
+  },
+  "section_27_head_allocation": {"count": 8, "stoffa": 6, "cuoio": 2, "by_tier": {"T1": 1, "T2": 2, "T3": 2, "T4": 2, "T5": 1}, "class_specific": 5, "shared_family": 2, "universal_neutral": 1},
+  "section_28_neck_allocation": {"count": 6, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 1, "T5": 2}, "class_specific": 1, "shared_family": 2, "universal_neutral": 3, "universal_position": true, "alias": ["amulet"]},
+  "section_29_shoulders_allocation": {"count": 7, "stoffa": 5, "cuoio": 2, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 2, "T5": 2}, "class_specific": 4, "shared_family": 2, "universal_neutral": 1},
+  "section_30_chest_allocation": {"count": 10, "stoffa": 7, "cuoio": 3, "by_tier": {"T1": 2, "T2": 2, "T3": 2, "T4": 2, "T5": 2}, "class_specific": 6, "shared_family": 2, "universal_neutral": 2, "legendary": 1, "legendary_tier": "T5"},
+  "section_31_back_allocation": {"count": 6, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 1, "T5": 2}, "class_specific": 1, "shared_family": 1, "universal_neutral": 4, "universal_position": true, "alias": ["cloak", "cape"]},
+  "section_32_hands_allocation": {"count": 7, "stoffa": 5, "cuoio": 2, "by_tier": {"T1": 1, "T2": 1, "T3": 2, "T4": 2, "T5": 1}, "class_specific": 5, "shared_family": 1, "universal_neutral": 1},
+  "section_33_wrist_allocation": {"count": 5, "stoffa": 3, "cuoio": 2, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 1, "T5": 1}, "class_specific": 3, "shared_family": 1, "universal_neutral": 1},
+  "section_34_waist_allocation": {"count": 6, "stoffa": 4, "cuoio": 2, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 1, "T5": 2}, "class_specific": 4, "shared_family": 1, "universal_neutral": 1, "alias": ["belt"]},
+  "section_35_legs_allocation": {"count": 10, "stoffa": 7, "cuoio": 3, "by_tier": {"T1": 2, "T2": 2, "T3": 2, "T4": 2, "T5": 2}, "class_specific": 7, "shared_family": 2, "universal_neutral": 1, "legendary": 1, "legendary_tier": "T4"},
+  "section_36_feet_allocation": {"count": 7, "stoffa": 5, "cuoio": 2, "by_tier": {"T1": 1, "T2": 1, "T3": 2, "T4": 2, "T5": 1}, "class_specific": 5, "shared_family": 1, "universal_neutral": 1},
+  "section_37_main_hand_allocation": {"count": 15, "focus": 8, "balestra": 5, "pugnale": 2, "by_tier": {"T1": 3, "T2": 3, "T3": 3, "T4": 3, "T5": 3}, "legendary_main_hand": 4, "alias": ["weapon_main", "main-hand"]},
+  "section_38_off_hand_allocation": {"count": 6, "focus": 2, "balestra": 2, "pugnale": 2, "by_tier": {"T1": 0, "T2": 0, "T3": 1, "T4": 2, "T5": 3}, "class_specific": 4, "shared_family": 2, "universal_neutral": 0, "alias": ["weapon_off", "off-hand"]},
+  "section_39_ring_allocation": {"count": 12, "by_tier": {"T1": 1, "T2": 2, "T3": 2, "T4": 3, "T5": 4}, "class_specific": 3, "shared_family": 4, "universal_neutral": 5, "ring1_ring2_separate_slots_forbidden": true},
+  "section_40_accessory_allocation": {"count": 15, "by_tier": {"T1": 2, "T2": 3, "T3": 3, "T4": 3, "T5": 4}, "class_specific": 5, "shared_family": 4, "universal_neutral": 6, "legendary": 1, "legendary_tier": "T4_but_reassigned_epic_in_final_pass", "alias": ["trinket"], "trinket_15th_slot_forbidden": true},
+  "section_41_slot_alias_handling": {
+    "aliases": {
+      "belt": "waist",
+      "cloak": "back",
+      "cape": "back",
+      "trinket": "accessory",
+      "weapon_main": "main_hand",
+      "main-hand": "main_hand",
+      "weapon_off": "off_hand",
+      "off-hand": "off_hand",
+      "amulet": "neck"
+    },
+    "forbidden": ["ring1_as_separate_slot", "ring2_as_separate_slot", "trinket_as_15th_slot", "new_slot_classes_in_ic1"],
+    "canonical_slot_count": 14
+  },
+  "section_42_armor_allocation_overview": {"total": 60, "stoffa": 42, "cuoio": 18, "proficiency_primary": "stoffa", "proficiency_secondary": "cuoio", "forbidden": ["maglia", "piastre"], "slots_covered": 8},
+  "section_43_stoffa_allocation": {"total": 42, "by_tier": {"T1": 7, "T2": 8, "T3": 10, "T4": 10, "T5": 7}, "by_slot": {"head": 6, "shoulders": 5, "chest": 7, "hands": 5, "wrist": 3, "waist": 4, "legs": 7, "feet": 5}, "by_rarity": {"Common": 15, "Uncommon": 12, "Rare": 9, "Epic": 4, "Legendary": 2}},
+  "section_44_cuoio_allocation": {"total": 18, "by_tier": {"T1": 3, "T2": 4, "T3": 4, "T4": 4, "T5": 3}, "by_slot": {"head": 2, "shoulders": 2, "chest": 3, "hands": 2, "wrist": 2, "waist": 2, "legs": 3, "feet": 2}, "by_rarity": {"Common": 7, "Uncommon": 6, "Rare": 4, "Epic": 1, "Legendary": 0}},
+  "section_45_T5_70_30_armor_distribution": {"armor_T5_total": 10, "stoffa_T5": 7, "cuoio_T5": 3, "ratio_stoffa_pct": 70, "ratio_cuoio_pct": 30, "exact_70_30": true, "cross_check_global_armor_ratio": true},
+  "section_46_weapon_allocation_overview": {"total": 21, "focus": 10, "balestra": 7, "pugnale": 4, "focus_coeff_g5": 1.00, "balestra_coeff_g5_range": [0.85, 0.90], "pugnale_coeff_g5_range": [0.70, 0.80], "identity_order": ["focus", "balestra", "pugnale"], "forbidden_families": ["tomo", "bastone", "wand", "rod", "grimoire", "arco", "strumento"]},
+  "section_47_focus_allocation": {"total": 10, "by_tier": {"T1": 2, "T2": 2, "T3": 3, "T4": 2, "T5": 1}, "legendary_by_tier": {"T3": 1, "T4": 1, "T5": 1}, "legendary_total": 3, "main_hand": 8, "off_hand": 2, "primary_family": true, "pct_of_weapon_pool": 47.6},
+  "section_48_balestra_allocation": {"total": 7, "by_tier": {"T1": 1, "T2": 1, "T3": 1, "T4": 2, "T5": 2}, "legendary_by_tier": {"T5": 1}, "legendary_total": 1, "main_hand": 5, "off_hand": 2, "pct_of_weapon_pool": 33.3},
+  "section_49_pugnale_allocation": {"total": 4, "by_tier": {"T1": 0, "T2": 1, "T3": 1, "T4": 1, "T5": 1}, "legendary_by_tier": {}, "legendary_total": 0, "main_hand": 2, "off_hand": 2, "pct_of_weapon_pool": 19.0},
+  "section_50_focus_primary_identity": {"focus_count_gt_balestra_gt_pugnale": true, "focus_legendary_count": 3, "focus_T5_legendary_present": true, "focus_tier_presence_T1_T5": true, "focus_off_hand_present_T4_T5": true, "verdict": "CONFIRMED", "no_compensation_from_forbidden_families": true},
+  "section_51_universal_position_allocation": {"total": 39, "pct_of_blueprint": 32.5, "by_slot": {"back": 6, "neck": 6, "ring": 12, "accessory": 15}, "by_tier": {"T1": 5, "T2": 7, "T3": 7, "T4": 8, "T5": 12}},
+  "section_52_class_specific_allocation": {"total": 68, "pct": 56.7, "by_tier": {"T1": 10, "T2": 13, "T3": 15, "T4": 15, "T5": 15}, "supports": ["marchio", "drain", "frammenti", "payoff", "anti_incorporeo", "anti_summon", "ritualita_vuoto"]},
+  "section_53_shared_family_allocation": {"total": 30, "pct": 25.0, "by_tier": {"T1": 5, "T2": 5, "T3": 7, "T4": 6, "T5": 7}, "eligible": ["armor_int_shareable", "focus_caster_compatible", "pugnale_caster_compatible", "accessory_caster_neutral"], "forbidden": "borrow_identity_from_other_class"},
+  "section_54_universal_neutral_allocation": {"total": 22, "pct": 18.3, "by_tier": {"T1": 3, "T2": 4, "T3": 4, "T4": 5, "T5": 6}, "eligibility_rules": ["identity_neutral", "main_stat_compatible", "proficiency_not_violated", "mutation_required_false"], "forbidden_references": ["mago", "paladino", "cacciatore_di_mostri", "warlock_legacy"]},
+  "section_55_identity_balance": {"class_specific_pct": 56.7, "shared_family_pct": 25.0, "universal_neutral_pct": 18.3, "class_specific_dominant": true, "no_category_over_60_pct": true, "no_category_below_15_pct": true, "identity_order_preserved": true},
+  "section_56_rarity_allocation_overview": {"Common": 42, "Uncommon": 32, "Rare": 26, "Epic": 14, "Legendary": 6, "sum": 120, "budget_multipliers": {"Common": 1.00, "Uncommon": 1.15, "Rare": 1.35, "Epic": 1.60, "Legendary": 1.85}, "legendary_1_85_includes_utility_unique": true, "no_x5_artificial_multiplication": true},
+  "section_57_common_allocation": {"total": 42, "by_tier": {"T1": 8, "T2": 8, "T3": 9, "T4": 9, "T5": 8}, "by_slot_mix": {"armor": 22, "weapon": 5, "universal": 15}, "multiplier": 1.00},
+  "section_58_uncommon_allocation": {"total": 32, "by_tier": {"T1": 5, "T2": 8, "T3": 8, "T4": 6, "T5": 5}, "by_slot_mix": {"armor": 18, "weapon": 5, "universal": 9}, "multiplier": 1.15},
+  "section_59_rare_allocation": {"total": 26, "by_tier": {"T1": 3, "T2": 5, "T3": 6, "T4": 6, "T5": 6}, "by_slot_mix": {"armor": 13, "weapon": 5, "universal": 8}, "multiplier": 1.35},
+  "section_60_epic_allocation": {"total": 14, "by_tier": {"T1": 2, "T2": 1, "T3": 2, "T4": 6, "T5": 3}, "by_slot_mix": {"armor": 5, "weapon": 3, "universal": 6}, "multiplier": 1.60},
+  "section_61_legendary_allocation": {"total": 6, "by_tier": {"T1": 0, "T2": 0, "T3": 1, "T4": 2, "T5": 3}, "by_slot": {"main_hand_focus": 2, "main_hand_balestra": 1, "chest_stoffa_T5": 1, "legs_stoffa_T4": 1, "accessory_T4_reassigned_epic": 0, "main_hand_focus_T3_T4_T5_recomputation": 3, "chest_T5": 1, "legs_T4": 1, "main_hand_balestra_T5": 1}, "budget_multiplier": 1.85, "utility_included_in_budget": true, "legendary_ilvl_T5": 60},
+  "section_62_rarity_by_tier_matrix": {
+    "matrix": {
+      "Common":    {"T1": 8, "T2": 8, "T3": 9, "T4": 9, "T5": 8, "sum": 42},
+      "Uncommon":  {"T1": 5, "T2": 8, "T3": 8, "T4": 6, "T5": 5, "sum": 32},
+      "Rare":      {"T1": 3, "T2": 5, "T3": 6, "T4": 6, "T5": 6, "sum": 26},
+      "Epic":      {"T1": 2, "T2": 1, "T3": 2, "T4": 6, "T5": 3, "sum": 14},
+      "Legendary": {"T1": 0, "T2": 0, "T3": 1, "T4": 2, "T5": 3, "sum": 6}
+    },
+    "tier_sum": {"T1": 18, "T2": 22, "T3": 26, "T4": 26, "T5": 28},
+    "grand_total": 120
+  },
+  "section_63_rarity_by_slot_matrix": {
+    "note": "matrix_approximation_reconciled_via_section_62_tier_by_rarity_which_is_exact",
+    "reconciliation_target": {"Common": 42, "Uncommon": 32, "Rare": 26, "Epic": 14, "Legendary": 6}
+  },
+  "section_64_anti_duplication_rules": {
+    "no_x5_rarity_multiplication_automatic": true,
+    "one_blueprint_unit_equals_one_identity_one_primary_rarity": true,
+    "multi_rarity_variants_downstream_decision": true,
+    "no_semantic_duplicates": true,
+    "no_aggregate_accounting": true,
+    "advisory_180_220_scenario_available_without_ic1_modification": true
+  },
+  "section_65_legendary_strategy": {
+    "count_total": 6,
+    "rarity_depth": "single_per_identity",
+    "identity_functions": [
+      "focus_T3_marchio_power_identity_boost",
+      "focus_T4_frammento_generation_catalyst",
+      "focus_T5_endgame_full_ritual_completion_signature_weapon",
+      "balestra_T5_endgame_long_range_payoff_dispel_signature",
+      "chest_T5_endgame_full_set_ritual_protection",
+      "legs_T4_movement_consistency_guard_signature"
+    ],
+    "legendary_ilvl_T5": 60,
+    "legendary_ilvl_T3_T4_native_tier": true,
+    "forbidden_in_ic1": ["names", "effect_finalization", "item_rows", "progressive_discovery_utility_roll"]
+  },
+  "section_66_legendary_count_recommendation": {"value": 6, "pct_of_blueprint": 5.0, "tier_distribution_moderate": true, "progressive_discovery_utility_4_globals_pending": true},
+  "section_67_legendary_slot_recommendation": {
+    "distribution": {
+      "main_hand_focus": {"count": 3, "tiers": ["T3", "T4", "T5"]},
+      "main_hand_balestra": {"count": 1, "tiers": ["T5"]},
+      "chest_armor_stoffa": {"count": 1, "tiers": ["T5"]},
+      "legs_armor_stoffa": {"count": 1, "tiers": ["T4"]}
+    },
+    "total": 6,
+    "not_covered_in_ic1": ["accessory_legendary", "ring_legendary", "back_legendary", "off_hand_legendary"],
+    "deferred_to_hypothetical_ic_legendary_or_registry_v3": true
+  },
+  "section_68_legendary_utility_constraints": {
+    "budget_1_85_includes_utility_unique": true,
+    "not_1_85_raw_plus_free_utility": true,
+    "afx1_hard_caps_preserved": true,
+    "no_direct_boss_cleanse": true,
+    "no_antip2w_bypass": true,
+    "no_utility_value_finalization_in_ic1": true
+  },
+  "section_69_affix_family_coverage_overview": {
+    "families_10_locked": true,
+    "coverage_matrix_blueprint_only": true,
+    "no_runtime_no_affix_creation": true,
+    "total_overlay_coverage": 140,
+    "overlay_multi_family_per_unit_legitimate": true,
+    "families": [
+      {"idx": 1, "namespace": "void.mark.power", "coverage_target": 22, "tier_presence": "T1..T5", "identity_priority": "HIGH"},
+      {"idx": 2, "namespace": "void.mark.duration", "coverage_target": 18, "tier_presence": "T1..T5", "identity_priority": "HIGH"},
+      {"idx": 3, "namespace": "void.drain.efficacy", "coverage_target": 16, "tier_presence": "T2..T5", "identity_priority": "HIGH"},
+      {"idx": 4, "namespace": "void.payoff.dispel", "coverage_target": 14, "tier_presence": "T2..T5", "identity_priority": "HIGH"},
+      {"idx": 5, "namespace": "void.fragment.interaction", "coverage_target": 20, "tier_presence": "T1..T5", "identity_priority": "HIGH"},
+      {"idx": 6, "namespace": "void.payoff.efficacy", "coverage_target": 14, "tier_presence": "T3..T5", "identity_priority": "MEDIUM"},
+      {"idx": 7, "namespace": "void.antitype.incorporeal", "coverage_target": 8, "tier_presence": "T3..T5", "identity_priority": "MEDIUM"},
+      {"idx": 8, "namespace": "void.antitype.summon", "coverage_target": 8, "tier_presence": "T3..T5", "identity_priority": "MEDIUM"},
+      {"idx": 9, "namespace": "void.channel.mobility", "coverage_target": 10, "tier_presence": "T2..T5", "identity_priority": "MEDIUM"},
+      {"idx": 10, "namespace": "void.ritual.protection", "coverage_target": 10, "tier_presence": "T3..T5", "identity_priority": "MEDIUM"}
+    ]
+  },
+  "section_70_mark_power_coverage": {"family": "void.mark.power", "target": 22, "by_tier": {"T1": 3, "T2": 4, "T3": 5, "T4": 5, "T5": 5}, "eligible_slots": ["main_hand_focus", "main_hand_balestra", "chest", "accessory"], "rarity_floor": "Common", "conflict_group": "MARK_MAGNITUDE_GROUP"},
+  "section_71_mark_duration_coverage": {"family": "void.mark.duration", "target": 18, "by_tier": {"T1": 2, "T2": 3, "T3": 4, "T4": 4, "T5": 5}, "eligible_slots": ["focus", "head", "chest", "accessory"], "rarity_floor": "Uncommon", "conflict_group": "MARK_DURATION_GROUP"},
+  "section_72_drain_efficacy_coverage": {"family": "void.drain.efficacy", "target": 16, "by_tier": {"T2": 3, "T3": 4, "T4": 4, "T5": 5}, "eligible_slots": ["focus", "balestra", "hands", "accessory"], "rarity_floor": "Uncommon", "conflict_group": "DRAIN_MAGNITUDE_GROUP", "cap_safeguard": "fragment_cap_5"},
+  "section_73_dispel_quality_coverage": {"family": "void.payoff.dispel", "player_label_it": "Qualita della Dissipazione", "target": 14, "by_tier": {"T2": 2, "T3": 3, "T4": 4, "T5": 5}, "eligible_slots": ["focus", "balestra", "main_hand", "off_hand"], "rarity_floor": "Rare", "conflict_group": "DISPEL_QUALITY_GROUP", "boss_safeguard": "no_direct_boss_dispel_afx1_sec_75"},
+  "section_74_fragment_interaction_coverage": {"family": "void.fragment.interaction", "target": 20, "by_tier": {"T1": 2, "T2": 3, "T3": 5, "T4": 5, "T5": 5}, "eligible_slots": ["focus", "pugnale", "ring", "accessory"], "rarity_floor": "Common", "conflict_group": "FRAGMENT_GENERATION_GROUP", "cap_safeguard": "fragment_cap_5_segment_cap_2"},
+  "section_75_payoff_efficacy_coverage": {"family": "void.payoff.efficacy", "player_label_it": "Efficacia della Risoluzione", "target": 14, "by_tier": {"T3": 3, "T4": 5, "T5": 6}, "eligible_slots": ["focus", "main_hand", "chest", "back"], "rarity_floor": "Rare", "conflict_group": "RESOLUTION_EFFICACY_GROUP", "cap_safeguard": "combined_proc_45pct"},
+  "section_76_anti_incorporeal_coverage": {"family": "void.antitype.incorporeal", "target": 8, "by_tier": {"T3": 2, "T4": 3, "T5": 3}, "eligible_slots": ["focus", "main_hand", "ring", "accessory"], "rarity_floor": "Rare", "conflict_group": "ANTITYPE_INCORPOREAL_GROUP"},
+  "section_77_anti_summon_coverage": {"family": "void.antitype.summon", "target": 8, "by_tier": {"T3": 2, "T4": 3, "T5": 3}, "eligible_slots": ["focus", "main_hand", "hands", "accessory"], "rarity_floor": "Rare", "conflict_group": "ANTITYPE_SUMMON_GROUP", "boss_safeguard": "5F_annullamento_summon_valida_only_on_valid_boss_summoned_add"},
+  "section_78_channel_mobility_coverage": {"family": "void.channel.mobility", "target": 10, "by_tier": {"T2": 2, "T3": 3, "T4": 3, "T5": 2}, "eligible_slots": ["legs", "feet", "back", "ring"], "rarity_floor": "Common", "conflict_group": "MOBILITY_CHANNEL_GROUP"},
+  "section_79_ritual_protection_coverage": {"family": "void.ritual.protection", "target": 10, "by_tier": {"T3": 3, "T4": 3, "T5": 4}, "eligible_slots": ["chest", "back", "neck", "waist"], "rarity_floor": "Uncommon", "conflict_group": "RITUAL_PROTECTION_GROUP"},
+  "section_80_affix_by_tier_matrix": {
+    "matrix": {
+      "mark.power":            {"T1": 3, "T2": 4, "T3": 5, "T4": 5, "T5": 5, "sum": 22},
+      "mark.duration":         {"T1": 2, "T2": 3, "T3": 4, "T4": 4, "T5": 5, "sum": 18},
+      "drain.efficacy":        {"T1": 0, "T2": 3, "T3": 4, "T4": 4, "T5": 5, "sum": 16},
+      "payoff.dispel":         {"T1": 0, "T2": 2, "T3": 3, "T4": 4, "T5": 5, "sum": 14},
+      "fragment.interaction":  {"T1": 2, "T2": 3, "T3": 5, "T4": 5, "T5": 5, "sum": 20},
+      "payoff.efficacy":       {"T1": 0, "T2": 0, "T3": 3, "T4": 5, "T5": 6, "sum": 14},
+      "antitype.incorporeal":  {"T1": 0, "T2": 0, "T3": 2, "T4": 3, "T5": 3, "sum": 8},
+      "antitype.summon":       {"T1": 0, "T2": 0, "T3": 2, "T4": 3, "T5": 3, "sum": 8},
+      "channel.mobility":      {"T1": 0, "T2": 2, "T3": 3, "T4": 3, "T5": 2, "sum": 10},
+      "ritual.protection":     {"T1": 0, "T2": 0, "T3": 3, "T4": 3, "T5": 4, "sum": 10}
+    },
+    "tier_sum": {"T1": 7, "T2": 17, "T3": 34, "T4": 39, "T5": 43},
+    "grand_total_overlay": 140
+  },
+  "section_81_affix_by_slot_matrix": {
+    "note": "compact_indicative_matrix_eligibility_flags",
+    "eligibility": {
+      "mark.power": ["chest", "main_hand", "accessory"],
+      "mark.duration": ["head", "chest", "main_hand", "accessory"],
+      "drain.efficacy": ["hands", "main_hand", "accessory"],
+      "payoff.dispel": ["main_hand", "off_hand"],
+      "fragment.interaction": ["main_hand", "ring", "accessory"],
+      "payoff.efficacy": ["chest", "back", "main_hand"],
+      "antitype.incorporeal": ["main_hand", "ring", "accessory"],
+      "antitype.summon": ["hands", "main_hand", "accessory"],
+      "channel.mobility": ["back", "legs", "feet", "ring"],
+      "ritual.protection": ["neck", "chest", "back", "waist"]
+    }
+  },
+  "section_82_ev_f2_reuse_valid_integration": {"count": 12, "all_T1": true, "slot_mix": {"chest": 3, "legs": 2, "head": 2, "hands": 1, "shoulders": 1, "wrist": 1, "main_hand_focus": 1, "accessory": 1}, "confidence": "HIGH", "no_transformation_required": true},
+  "section_83_ev_f2_reuse_conditional_integration": {
+    "total_conditional": 32,
+    "arruolati_in_ledger_a_effective": 6,
+    "standby_pool": 26,
+    "arruolati_breakdown": {"caster_stat_neutral": 4, "focus_mechanism_compatible": 1, "pugnale_mechanism_compatible": 1},
+    "standby_breakdown": {"caster_stat_neutral_rest": 14, "focus_mechanism_compatible_rest": 5, "pugnale_mechanism_compatible_rest": 3, "shared_armor_family": 4},
+    "downstream_requirements": ["condition_code_catalog", "per_item_pm_approval", "explicit_allowlist", "dry_run_snapshot"]
+  },
+  "section_84_not_compatible_exclusion": {
+    "count": 134,
+    "excluded_from_ic1": true,
+    "no_reactivation": true,
+    "no_retroactive_ev_f2_revision": true,
+    "no_salvage_loophole": true,
+    "exclusion_reason_categories": ["warlock_tome_family", "voidpiercer_bow_identity", "arcane_adept_orb_progressive_discovery_global", "6_warlock_tome_dedicated", "armor_non_caster_maglia_piastre", "weapon_non_vuoto_bastone_wand_rod_tomo_grimoire_arco_strumento"]
+  },
+  "section_85_arcane_adept_orb_future_successor_need": {
+    "item_ref": "arcane_adept_orb",
+    "ev_f2_verdict": "NOT_COMPATIBLE",
+    "reason": "progressive_discovery_utility_global_not_reactivatable_for_vuoto",
+    "future_successor_need": {
+      "type": "future_new_focus_T3+_legendary",
+      "identity": "vuoto_marchio_power_or_frammento_catalyst",
+      "progressive_discovery_utility_new_not_reactivate_old": true,
+      "count": 1,
+      "already_included_in_T3_legendary_focus": true
+    },
+    "naming_effect_roll_in_ic1": "NOT_AUTHORIZED_deferred_to_registry_v3_future_gate"
+  },
+  "section_86_voidpiercer_bow_exclusion": {
+    "item_ref": "voidpiercer-bow",
+    "ev_f2_verdict": "NOT_COMPATIBLE",
+    "reason_weapon_family_arco_not_vuoto": true,
+    "legacy_name_not_reactivatable": true,
+    "no_successor_need_for_arco_family": true,
+    "ranged_substitution": "balestra_family_7_units_across_T1_T5",
+    "definitively_excluded_from_ic1": true
+  },
+  "section_87_focus_T1_gap": {"focus_T1_count": 2, "reuse_valid_focus_T1_arruolato": 1, "reuse_conditional_focus_compatible_T1_arruolato": 1, "gap": 0, "off_hand_focus_T1": 0, "verdict": "COVERED"},
+  "section_88_T2_gap": {"live_T2": 0, "ledger_A_contribution_T2": 0, "ledger_B_T2_requirement": 22, "gap_composition": {"weapon_focus": 2, "weapon_balestra": 1, "weapon_pugnale": 1, "armor": 12, "universal": 6}, "verdict": "BLUEPRINT_COVERAGE_PLANNED_NO_CURRENT_LIVE"},
+  "section_89_T3_gap": {"live_T3": 0, "ledger_B_T3_requirement": 26, "gap_composition": {"weapon_focus": 3, "weapon_balestra": 1, "weapon_pugnale": 1, "off_hand": 1, "armor": 14, "universal": 7}, "legendary_T3": 1, "verdict": "BLUEPRINT_COVERAGE_PLANNED"},
+  "section_90_T4_gap": {"live_T4": 0, "ledger_B_T4_requirement": 26, "gap_composition": {"weapon_focus": 2, "weapon_balestra": 2, "weapon_pugnale": 1, "off_hand": 2, "armor": 14, "universal": 7}, "legendary_T4": 2, "verdict": "BLUEPRINT_COVERAGE_PLANNED"},
+  "section_91_T5_gap": {"live_T5": 0, "ledger_B_T5_requirement": 28, "gap_composition": {"weapon_focus": 1, "weapon_balestra": 2, "weapon_pugnale": 1, "off_hand": 3, "armor": 10, "universal": 13}, "legendary_T5": 3, "verdict": "BLUEPRINT_COVERAGE_PLANNED_ENDGAME_BLUEPRINT_COMPLETE"},
+  "section_92_missing_slot_gaps": {
+    "slots_with_gap_zero": true,
+    "all_14_slots_covered": true,
+    "minimum_slot_count": {"wrist": 5},
+    "no_missing_canonical_slots": true
+  },
+  "section_93_endgame_gap": {
+    "T5_armor_present": true,
+    "T5_focus_present": true,
+    "T5_balestra_present": true,
+    "T5_pugnale_present": true,
+    "T5_legendary_pugnale_gap": true,
+    "T5_legendary_ring_gap": true,
+    "T5_legendary_accessory_gap": true,
+    "endgame_core_coverage_complete": true,
+    "gap_severity": "LOW_deferred_to_hypothetical_ic_legendary_or_registry_v3",
+    "overall_endgame_verdict": "ENDGAME_BLUEPRINT_COMPLETE"
+  },
+  "section_94_future_content_workload": {
+    "milestones": [
+      {"name": "registry_v3_content_module_generation", "effort": "HIGH", "gate_dependency": "future_dedicated_gate"},
+      {"name": "item_id_assignment", "effort": "MEDIUM", "gate_dependency": "post_ic1_closure"},
+      {"name": "item_naming_it_primary_en_readiness", "effort": "HIGH", "gate_dependency": "future_localization_gate"},
+      {"name": "stat_budget_finalization", "effort": "HIGH", "gate_dependency": "future_stat_budget_gate"},
+      {"name": "affix_assignment_per_item", "effort": "HIGH", "gate_dependency": "future_affix_assignment_gate"},
+      {"name": "drop_table_loot_table", "effort": "HIGH", "gate_dependency": "future_loot_gate"},
+      {"name": "legendary_utility_finalization", "effort": "MEDIUM", "gate_dependency": "future_legendary_gate"}
+    ],
+    "no_item_level_workload_in_ic1": true
+  },
+  "section_95_registry_v3_content_dependency": {
+    "item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "registry_v3_module_generation": "NOT_AUTHORIZED",
+    "downstream_requirements": ["explicit_allowlist", "condition_code_catalog_compiled", "dry_run_diff_pm_approved", "snapshot_pre_post", "explicit_pm_go"]
+  },
+  "section_96_future_item_specification_dependency": {
+    "specification_finale": "DEFERRED",
+    "includes": ["stat_roll", "affix_roll", "item_level_formula", "base_name", "description", "flavor_text"],
+    "specifications_generated_in_ic1": 0
+  },
+  "section_97_future_naming_dependency": {
+    "item_names_it_primary": "DEFERRED",
+    "en_readiness_structure_only": true,
+    "legendary_names": "DEFERRED_never_in_ic1",
+    "lore_reference_read_only": true
+  },
+  "section_98_future_stat_budget_dependency": {
+    "budget_multipliers_locked_by_rarity": true,
+    "stat_distribution_per_item": "DEFERRED",
+    "g1_stat_design_read_only_reference": true,
+    "no_stat_final_numbers_in_ic1": true
+  },
+  "section_99_future_affix_assignment_dependency": {
+    "affix_pool_selector_locked": "void.cacciatore_del_vuoto.pool.v1",
+    "affix_id_assignment": "DEFERRED_afx1_sec_12_schema_only",
+    "affix_roll_formula": "DEFERRED",
+    "affix_stacking_runtime": "DEFERRED",
+    "no_affix_assignment_executed_in_ic1": true
+  },
+  "section_100_anti_p2w_requirements": {
+    "future_blueprint_units_require_can_be_sold_for_real_money_false": true,
+    "applies_to_all_tiers_T1_T5": true,
+    "applies_to_all_rarities_C_to_L": true,
+    "applies_to_all_identities_cs_sf_un": true,
+    "applies_to_ledger_A_and_B": true,
+    "backfill_50_missing_field_ic1_authorization": "NOT_AUTHORIZED_deferred_to_data_quality_gate",
+    "auto_p2w_detection_designed_in_ic1": false
+  },
+  "section_101_validation_rules": {
+    "rules": [
+      "total_blueprint_equals_120_exact",
+      "ledger_A_effective_plus_ledger_B_equals_120",
+      "sum_tier_totals_equals_120",
+      "sum_slot_totals_equals_120",
+      "sum_rarity_totals_equals_120",
+      "sum_identity_totals_equals_120",
+      "sum_armor_totals_equals_60",
+      "sum_weapon_totals_equals_21",
+      "armor_T5_stoffa_cuoio_ratio_70_30_exact",
+      "focus_gt_balestra_gt_pugnale",
+      "legendary_count_equals_6",
+      "legendary_ilvl_T5_equals_60",
+      "afx1_hard_caps_preserved",
+      "boss_safeguard_preserved",
+      "endgame_verdict_endgame_blueprint_complete",
+      "not_compatible_134_excluded",
+      "no_maglia_no_piastre",
+      "no_arco_no_tomo_no_bastone_no_wand_no_rod_no_grimoire_no_strumento",
+      "canonical_slot_count_14"
+    ]
+  },
+  "section_102_accounting_validation": {
+    "per_tier_sum_check": {"formula": "18+22+26+26+28", "result": 120, "pass": true},
+    "per_slot_sum_check": {"formula": "8+6+7+10+6+7+5+6+10+7+15+6+12+15", "result": 120, "pass": true},
+    "per_rarity_sum_check": {"formula": "42+32+26+14+6", "result": 120, "pass": true},
+    "per_identity_sum_check": {"formula": "68+30+22", "result": 120, "pass": true},
+    "ledger_reconciliation": {"formula": "18+102", "result": 120, "pass": true},
+    "armor_split_check": {"formula": "42+18", "result": 60, "pass": true},
+    "weapon_split_check": {"formula": "10+7+4", "result": 21, "pass": true},
+    "T5_armor_70_30_check": {"stoffa": 7, "cuoio": 3, "ratio_pct": [70, 30], "pass": true},
+    "no_approx_symbol": true,
+    "no_range_finale": true,
+    "no_double_count": true,
+    "reconciliation_pass": true
+  },
+  "section_103_risk_register": {
+    "risks": [
+      {"idx": 1, "risk": "ledger_b_102_new_workload_high", "severity": "HIGH", "mitigation": "per_tier_registry_v3_content_gate_escalation"},
+      {"idx": 2, "risk": "legendary_count_6_possibly_low_for_extended_endgame", "severity": "MEDIUM", "mitigation": "hypothetical_ic_legendary_gate_future"},
+      {"idx": 3, "risk": "32_reuse_conditional_require_per_item_pm_approval", "severity": "MEDIUM", "mitigation": "downstream_condition_code_catalog"},
+      {"idx": 4, "risk": "50_live_items_missing_can_be_sold_for_real_money", "severity": "LOW", "mitigation": "deferred_data_quality_gate"},
+      {"idx": 5, "risk": "21_live_items_slot_type_null", "severity": "LOW", "mitigation": "deferred_canonicalization_gate"},
+      {"idx": 6, "risk": "legendary_pugnale_ring_accessory_endgame_gap", "severity": "LOW", "mitigation": "accettabile_ic1_v1_deferred"},
+      {"idx": 7, "risk": "multi_rarity_depth_not_planned_in_ic1", "severity": "LOW", "mitigation": "advisory_180_220_scenario_documented"},
+      {"idx": 8, "risk": "off_hand_appears_only_from_T3", "severity": "LOW", "mitigation": "design_identity_progression"},
+      {"idx": 9, "risk": "focus_channel_pugnale_ritual_interaction_complex", "severity": "MEDIUM", "mitigation": "afx1_sec71_72_caps_preserved"},
+      {"idx": 10, "risk": "auto_p2w_detection_absent", "severity": "LOW", "mitigation": "manual_field_required_no_runtime_enforcement_design"}
+    ]
+  },
+  "section_104_pm_open_questions": {
+    "count": 12,
+    "questions": [
+      {"id": "IC1-Q1", "testo": "Approvare exact blueprint total = 120?", "recommendation_e1_dev": "APPROVE (planning center, envelope 110-130)", "sec_ref": "sec_09_sec_17", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q2", "testo": "Approvare split Ledger A_effective=18 / Ledger B=102 (invece di A=44 / B=76)?", "recommendation_e1_dev": "APPROVE (16+6 arruolati + 26 standby realistico)", "sec_ref": "sec_13_sec_16_sec_17", "impatto": "closure_ic1_downstream_registry_v3", "default_proposto": "APPROVE con nota 26_STANDBY_pool", "blocking": false},
+      {"id": "IC1-Q3", "testo": "Approvare tier allocation 18/22/26/26/28?", "recommendation_e1_dev": "APPROVE (crescita monotona, no T1-heavy)", "sec_ref": "sec_18_23", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q4", "testo": "Approvare Legendary count = 6, tier T3/T4/T5 = 1/2/3?", "recommendation_e1_dev": "APPROVE", "sec_ref": "sec_65_68", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q5", "testo": "Approvare armor split stoffa 42 / cuoio 18 (70/30 globale + T5)?", "recommendation_e1_dev": "APPROVE (identity caster + T5 70/30 preservato)", "sec_ref": "sec_42_45", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q6", "testo": "Approvare weapon split focus 10 / balestra 7 / pugnale 4?", "recommendation_e1_dev": "APPROVE (focus-primary preservato)", "sec_ref": "sec_46_50", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q7", "testo": "Approvare identity split class_specific 68 / shared_family 30 / universal_neutral 22?", "recommendation_e1_dev": "APPROVE (class_specific dominante 56.7%)", "sec_ref": "sec_52_55", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q8", "testo": "Approvare rarity split 42/32/26/14/6?", "recommendation_e1_dev": "APPROVE (no x5 multiplication artificiale)", "sec_ref": "sec_56_64", "impatto": "closure_ic1", "default_proposto": "APPROVE", "blocking": false},
+      {"id": "IC1-Q9", "testo": "Accettare gap Legendary pugnale/ring/accessory endgame come DEFERRED accettabile IC1 v1?", "recommendation_e1_dev": "APPROVE (endgame core resta COMPLETE)", "sec_ref": "sec_93", "impatto": "closure_ic1_ic_legendary_hypothetical_future", "default_proposto": "APPROVE con nota deferred_to_ic_legendary_hypothetical", "blocking": false},
+      {"id": "IC1-Q10", "testo": "Confermare 26 REUSE_CONDITIONAL in STANDBY pool (non blueprint unit)?", "recommendation_e1_dev": "CONFIRM (disponibili per rarity variants downstream)", "sec_ref": "sec_14_sec_83", "impatto": "registry_v3_content_generation_downstream", "default_proposto": "CONFIRM", "blocking": false},
+      {"id": "IC1-Q11", "testo": "Approvare next gate = Registry v3 content generation dedicato (post-IC1 closure)?", "recommendation_e1_dev": "APPROVE con NC1 in parallelo (non blocking)", "sec_ref": "sec_95_sec_105", "impatto": "roadmap_post_ic1", "default_proposto": "APPROVE Registry_v3_content_gate_come_prossimo_NC1_in_parallelo_HOLD_authorized", "blocking": false},
+      {"id": "IC1-Q12", "testo": "Endgame verdict ENDGAME_BLUEPRINT_COMPLETE accettato dal PM?", "recommendation_e1_dev": "CONFIRM (sec_25 sec_91 sec_93)", "sec_ref": "sec_25", "impatto": "closure_ic1", "default_proposto": "CONFIRM", "blocking": false}
+    ]
+  },
+  "section_105_go_hold_recommendation": {
+    "recommendation_e1_dev": "GO_CLOSURE_IC1_conditional_to_pm_ratification_of_12_ic1_questions",
+    "dispatch_status": {
+      "ic1_draft_complete_105_sections": true,
+      "three_ledger_reconciled": true,
+      "endgame_verdict_endgame_blueprint_complete": true,
+      "no_item_creation": true,
+      "no_affix_creation": true,
+      "no_registry_v3_module": true,
+      "no_db_write": true
+    },
+    "pm_next_steps": [
+      "ratify_ic1_q1_to_q12",
+      "authorize_closure_ic1_producing_closure_report_manifest_prd_append_afx1_style",
+      "select_next_gate_option_a_registry_v3_content_generation_or_option_b_nc1_parallel_or_option_c_ic_legendary_hypothetical_or_option_d_pm_directive"
+    ],
+    "hold_locks_preserved": {
+      "afx2": "RESERVED_FUTURE",
+      "nc1": "HOLD",
+      "registry_v3_apply": "NOT_AUTHORIZED",
+      "gate_11": "HOLD",
+      "monaco_wave_1": "HOLD"
+    },
+    "explicit_stop": true,
+    "no_ic1_closure_in_this_dispatch": true,
+    "no_prd_append_in_this_dispatch": true,
+    "awaiting_pm_verdict": true
+  }
+}
