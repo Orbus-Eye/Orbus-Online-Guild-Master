@@ -1,0 +1,2367 @@
+{
+  "metadata": {
+    "document_id": "R18.6.RV3-IS1-A",
+    "title": "Provisional Allowlist Enumeration & Binding Review",
+    "parent_gates": [
+      "R18.6.RV3-EV",
+      "R18.6.RV3-EV-F1",
+      "R18.6.RV3-EV-F2",
+      "R18.6.RV3-AFX1",
+      "R18.6.RV3-IC1"
+    ],
+    "regime": "DOCUMENTAL_ONLY_READ_ONLY_ITALIAN",
+    "sealed_integrity_expected": "36/36",
+    "lore_meta_sha256_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "cacciatore_del_vuoto_status": "ACTIVE-DESIGN-READY_NOT_LIVE_NOT_SELECTABLE_NOT_IMPLEMENTED",
+    "language": "italian",
+    "generated_at_utc": "2026-07-12T06:51:18.260136+00:00",
+    "is1_roster_generation_status": "PAUSED_pending_pm_verdict_on_IS1_A",
+    "sha_policy_31_compliance": "no_self_referential_sha_embedded_in_this_file"
+  },
+  "governance_locks": {
+    "apply_authorized": false,
+    "item_creation_authorized": false,
+    "registry_apply_authorized": false,
+    "field_addition_authorized": false,
+    "backfill_authorized": false,
+    "class_slug_write_count": 0,
+    "db_write_count": 0,
+    "mutation_forbidden": true,
+    "sealed_files_immutability": true,
+    "backend_frontend_openapi_change_count": 0,
+    "prd_appended_in_this_dispatch": false,
+    "is1_source_artifacts_created": false,
+    "auto_binding_authorized": false,
+    "auto_promotion_authorized": false
+  },
+  "discovery_criteria_pm_verbatim": {
+    "common_filters": {
+      "item_binding_policy": "soft",
+      "stat_tags_must_include": "intellect",
+      "class_tags_must_not_include": "warlock",
+      "lore_tags_must_not_include": [
+        "vuoto",
+        "oblio"
+      ],
+      "mutation_required": false,
+      "excluded_by_EV_F2": false
+    },
+    "weapon_literal_G2": {
+      "expected_count": 2,
+      "allowed_families": [
+        "focus",
+        "dagger",
+        "pugnale (semantic alias)"
+      ],
+      "forbidden_families": [
+        "tome",
+        "staff",
+        "grimoire",
+        "wand",
+        "rod",
+        "flask",
+        "bow",
+        "instrument",
+        "flute"
+      ],
+      "slot_types": [
+        "weapon",
+        "weapon_main"
+      ]
+    },
+    "armor_stoffa_cuoio": {
+      "expected_count": 11,
+      "armor_tag_pool": [
+        "cloth",
+        "robe",
+        "light",
+        "leather",
+        "medium"
+      ],
+      "separation_mandatory": [
+        "stoffa",
+        "cuoio"
+      ],
+      "slot_types": [
+        "armor",
+        "chest",
+        "helm"
+      ]
+    },
+    "accessory_universal": {
+      "expected_count": 19,
+      "slot_types": [
+        "accessory",
+        "amulet",
+        "ring"
+      ],
+      "identity_check_manual": true,
+      "note": "accessory with other-class identity (Mago/Paladino/Cacciatore di Mostri) is NOT auto-universal-neutral"
+    },
+    "derivation_source": "PM dispatch R18.6.RV3-IS1-A verbatim criteria",
+    "derivation_rule": "candidate_discovery_filters_NOT_auto_approval",
+    "PM_approval": "pending",
+    "confidence": "HIGH"
+  },
+  "exclusion_ledger_28": [
+    {
+      "track_idx": 1,
+      "slug": "drake_slayer_helm",
+      "source_item_id": null,
+      "reason": "identity_conflict",
+      "ev_f2_verdict": "NOT_COMPATIBLE_wrong_stat_hard_binding",
+      "bucket_class": "lore_identity"
+    },
+    {
+      "track_idx": 2,
+      "slug": "drake_slayer_chest",
+      "source_item_id": null,
+      "reason": "identity_conflict",
+      "ev_f2_verdict": "NOT_COMPATIBLE_wrong_stat_hard_binding",
+      "bucket_class": "lore_identity"
+    },
+    {
+      "track_idx": 3,
+      "slug": "drake_slayer_blade",
+      "source_item_id": null,
+      "reason": "identity_conflict + sword_proficiency",
+      "ev_f2_verdict": "NOT_COMPATIBLE_wrong_stat_hard_binding_sword",
+      "bucket_class": "lore_identity"
+    },
+    {
+      "track_idx": 4,
+      "slug": "goblin_hunter_ring",
+      "source_item_id": "856e4cd6-f4b6-496a-9dee-8a0372cc0471",
+      "reason": "identity_conflict + cacciatore_di_mostri",
+      "ev_f2_verdict": "NOT_COMPATIBLE_wrong_stat_cross_class",
+      "bucket_class": "lore_identity"
+    },
+    {
+      "track_idx": 5,
+      "slug": "voidpiercer-bow",
+      "source_item_id": null,
+      "reason": "identity_conflict + retro_branding_forbidden + bow_family_excluded",
+      "ev_f2_verdict": "REJECTED_NOT_COMPATIBLE_FINAL",
+      "bucket_class": "lore_identity_AND_weapon_family_excluded",
+      "overlap_note": "double-classified: appears in identity_conflict (§36) and semantically also weapon_family_bow_excluded"
+    },
+    {
+      "track_idx": 6,
+      "slug": "arcane_adept_orb",
+      "source_item_id": null,
+      "reason": "preserved_opzione_A + triggers_future_void_native_successor",
+      "ev_f2_verdict": "NOT_COMPATIBLE_preserved_Opzione_A",
+      "bucket_class": "preserved_no_mutation"
+    },
+    {
+      "track_idx": 7,
+      "slug": "warlock_apprentice_tome",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 8,
+      "slug": "warlock_hex_grimoire",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 9,
+      "slug": "warlock_shadowbound_grimoire",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 10,
+      "slug": "warlock_witchking_codex",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 11,
+      "slug": "warlock_apprentice_grimoire",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 12,
+      "slug": "warlock_pact_binder",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_post_strict_G2",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 13,
+      "slug": "cracked-staff",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 14,
+      "slug": "spiritglass-staff",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 15,
+      "slug": "embermind-focus",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (wand)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_wand"
+    },
+    {
+      "track_idx": 16,
+      "slug": "apprentice-wand",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (wand)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_wand"
+    },
+    {
+      "track_idx": 17,
+      "slug": "hex-rod",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 18,
+      "slug": "moonsilver-bow",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (bow)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_bow"
+    },
+    {
+      "track_idx": 19,
+      "slug": "warlocks-grimoire",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (grimoire)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_grimoire"
+    },
+    {
+      "track_idx": 20,
+      "slug": "archmagi-staff",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 21,
+      "slug": "songsteel-flute",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (instrument_sonic)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_instrument"
+    },
+    {
+      "track_idx": 22,
+      "slug": "apprentice_staff",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 23,
+      "slug": "legendary_staff_efreto",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (staff)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_staff"
+    },
+    {
+      "track_idx": 24,
+      "slug": "alchemist_apprentice_flask",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (alchemical_flask)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_flask"
+    },
+    {
+      "track_idx": 25,
+      "slug": "alchemist_elemental_flask",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (alchemical_flask)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_flask"
+    },
+    {
+      "track_idx": 26,
+      "slug": "alchemist_transmuters_tome",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (tome)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_tome"
+    },
+    {
+      "track_idx": 27,
+      "slug": "alchemist_philosophers_flask",
+      "source_item_id": null,
+      "reason": "famiglia_esclusa_da_G2 (alchemical_flask)",
+      "ev_f2_verdict": "NOT_COMPATIBLE_declassed",
+      "bucket_class": "weapon_family_excluded_flask"
+    },
+    {
+      "track_idx": 28,
+      "slug": "voidpiercer-bow",
+      "source_item_id": null,
+      "reason": "SECONDARY_TRACKING · weapon_family_bow_excluded (semantic overlap with identity_conflict at track_idx=5)",
+      "ev_f2_verdict": "REJECTED_NOT_COMPATIBLE_FINAL (dual-classified)",
+      "bucket_class": "weapon_family_excluded_bow",
+      "overlap_note": "same slug as track_idx=5; unique_count=27 · tracked_count=28 per PM instruction"
+    }
+  ],
+  "exclusion_ledger_summary": {
+    "tracked_count": 28,
+    "unique_slug_count": 27,
+    "overlap_note": "voidpiercer-bow tracked twice (track_idx=5 identity_conflict, track_idx=28 weapon_family_excluded_bow) — same slug, dual-classification per PM instruction",
+    "excluded_hits_within_bucket_queries": [],
+    "excluded_hits_count_within_queries": 0,
+    "note": "Zero exclusions matched inside the 3 bucket queries because common_filters (item_binding_policy=soft, stat_tags=intellect, class_tags nin warlock, lore_tags nin [vuoto,oblio]) already pre-filtered the 27 unique excluded slugs."
+  },
+  "discovery_counts": {
+    "raw_bucket_counts": {
+      "weapon_literal_G2": 2,
+      "armor_stoffa_cuoio": 11,
+      "accessory_universal": 19
+    },
+    "final_unique_candidates": 32,
+    "weapon": 2,
+    "armor": 11,
+    "accessory": 19,
+    "match_pm_expectation_2_11_19_32": true
+  },
+  "armor_breakdown": {
+    "stoffa_count": 10,
+    "cuoio_count": 1,
+    "total": 11,
+    "stoffa_slugs": [
+      "apprentice-robe",
+      "initiate_robe",
+      "aether-weave-robe",
+      "alchemist_apron",
+      "alchemist_brewers_apron",
+      "alchemist_quicksilver_vest",
+      "alchemist_ember_lined_vest",
+      "druid_grovewarden_mantle",
+      "alchemist_quintessence_robe",
+      "druid_elder_vestments"
+    ],
+    "cuoio_slugs": [
+      "alchemist_philosophers_plate"
+    ]
+  },
+  "accessory_slot_breakdown": {
+    "slot_accessory": 16,
+    "slot_amulet_alias_neck": 3,
+    "slot_ring": 0,
+    "total": 19
+  },
+  "weapon_family_breakdown": {
+    "focus": 2,
+    "pugnale_dagger": 0,
+    "total": 2
+  },
+  "structural_gaps_detected": [
+    {
+      "gap_id": "GAP-1",
+      "gap": "pugnale_family_absent_from_intellect_eligible_pool",
+      "evidence": "3 items with weapon_tags=dagger exist in DB (goblin-dagger, hunting-knife, balanced_dagger) but all have stat_tags=[agility|strength] — zero dagger with stat_tags=intellect",
+      "impact_binding": "cond_reuse_pugnale_mechanism_compat_01",
+      "severity": "HIGH_structural",
+      "mitigation_options_pm_decides": [
+        "A: Drop pugnale binding from IC1 §14 (roster becomes 5 conditional binds)",
+        "B: Rebind cond_reuse_pugnale_mechanism_compat_01 to focus family (with explicit family_mismatch note) — VIOLATES PM validation family_mismatch=0",
+        "C: Escalate to FUTURE_ITEM_NEW pugnale-intellect creation in Registry v3 (post AFX1) — cond_reuse_pugnale becomes REQUIRES_NEW_ITEM_FUTURE, removed from IS1 conditional pool",
+        "D: Rethink IC1 §14 mapping — PM proposes alternative slot/family target"
+      ]
+    },
+    {
+      "gap_id": "GAP-2",
+      "gap": "ring_slot_absent_from_intellect_eligible_neutral_pool",
+      "evidence": "Only 1 slot_type=ring exists in DB (goblin_hunter_ring) — excluded by EV-F2 identity_conflict (lore=oblio+vuoto, stat=agility, cacciatore_di_mostri rec_classes)",
+      "impact_binding": "cond_reuse_caster_stat_neutral_04",
+      "severity": "HIGH_structural",
+      "mitigation_options_pm_decides": [
+        "A: Drop ring binding from IC1 §14 (roster becomes 5 conditional binds if GAP-1 too)",
+        "B: Rebind cond_reuse_caster_stat_neutral_04 to accessory slot generic (with explicit slot_mismatch note) — VIOLATES PM validation slot_mismatch=0",
+        "C: Escalate to FUTURE_ITEM_NEW ring-intellect-neutral creation in Registry v3 — cond_reuse_caster_stat_neutral_04 becomes REQUIRES_NEW_ITEM_FUTURE, removed from IS1 conditional pool",
+        "D: Rethink IC1 §14 mapping — PM proposes alternative slot (e.g. remap to amulet/neck given amulet pool has 3 candidates)"
+      ]
+    }
+  ],
+  "allowlist_candidates_32": [
+    {
+      "candidate_index": 1,
+      "source_item_id": "72c4f06f-55c0-4d44-a6c2-b40ad1443196",
+      "slug": "alchemist_glass_wand",
+      "name": "Bacchetta di Vetro",
+      "item_type": "weapon",
+      "slot_type": "weapon",
+      "normalized_slot": "main_hand",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": [
+        "focus",
+        "arcane"
+      ],
+      "normalized_weapon_family": "focus",
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "frontiera"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_FOCUS_MECHANISM_OK",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=weapon_literal_G2 + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "weapon_literal_G2",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 2,
+      "source_item_id": "164d4575-5188-4615-9b01-79d84815c161",
+      "slug": "alchemist_catalyst_flask",
+      "name": "Fiala del Catalizzatore",
+      "item_type": "weapon",
+      "slot_type": "weapon",
+      "normalized_slot": "main_hand",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": [
+        "focus",
+        "arcane"
+      ],
+      "normalized_weapon_family": "focus",
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_FOCUS_MECHANISM_OK",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=weapon_literal_G2 + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "weapon_literal_G2",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 3,
+      "source_item_id": "8efacc3f-3afc-490d-b5e2-c140f8cf5b3d",
+      "slug": "apprentice-robe",
+      "name": "Apprentice Robe",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "light",
+        "robe"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "shared_family_multi_caster",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 4,
+      "source_item_id": "c6c89f1e-437e-4044-92b7-b4e6b9b7793d",
+      "slug": "aether-weave-robe",
+      "name": "Aether-Weave Robe",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "light",
+        "robe"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 5,
+      "source_item_id": "794e89a3-59c0-4ea3-9eef-0e0e31fe7761",
+      "slug": "initiate_robe",
+      "name": "Initiate Robe",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "light",
+        "robe"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 6,
+      "source_item_id": "a86520a8-5bc2-41eb-a89d-8ef769e05846",
+      "slug": "alchemist_apron",
+      "name": "Grembiule dell'Alchimista",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "light",
+        "robe"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 7,
+      "source_item_id": "2a163db4-753d-471b-9881-d53cffa5f56c",
+      "slug": "alchemist_ember_lined_vest",
+      "name": "Panciotto dalla Fodera d'Ember",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "light"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 8,
+      "source_item_id": "f87b2ddd-7353-4221-a14b-809427e1a60d",
+      "slug": "alchemist_quintessence_robe",
+      "name": "Veste della Quintessenza",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "robe",
+        "light"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 9,
+      "source_item_id": "60d202f4-c324-4132-80b6-c336b5e23897",
+      "slug": "druid_grovewarden_mantle",
+      "name": "Manto del Guardiano del Bosco",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "leather",
+        "natural",
+        "light"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "faith",
+        "intellect"
+      ],
+      "rec_classes": [
+        "druid"
+      ],
+      "class_tags": [
+        "druid"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 10,
+      "source_item_id": "2931f2b3-0630-4c9c-a7f5-0b44c69c9f8b",
+      "slug": "druid_elder_vestments",
+      "name": "Paramenti dell'Anziano Druido",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "natural",
+        "light"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "faith",
+        "intellect"
+      ],
+      "rec_classes": [
+        "druid"
+      ],
+      "class_tags": [
+        "druid"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 11,
+      "source_item_id": "e8a57ea9-8209-4d46-8dc1-d5738108662e",
+      "slug": "alchemist_brewers_apron",
+      "name": "Grembiule del Distillatore",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "artisan",
+        "light"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 12,
+      "source_item_id": "7ad70e1d-bd5e-421f-ada2-c8868e43f4d6",
+      "slug": "alchemist_quicksilver_vest",
+      "name": "Corpetto Mercuriale",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "cloth",
+        "artisan",
+        "medium"
+      ],
+      "normalized_armor_type": "stoffa",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "frontiera"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 13,
+      "source_item_id": "67a6f0e5-570e-4dc4-9ad3-a6751d09727c",
+      "slug": "alchemist_philosophers_plate",
+      "name": "Placca del Filosofo",
+      "item_type": "armor",
+      "slot_type": "armor",
+      "normalized_slot": "chest",
+      "armor_tags": [
+        "leather",
+        "artisan",
+        "medium"
+      ],
+      "normalized_armor_type": "cuoio",
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_STAT_NEUTRAL_INT",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=armor_stoffa_cuoio + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "armor_stoffa_cuoio",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 14,
+      "source_item_id": "265db775-259b-488f-b15a-30f69ea823fe",
+      "slug": "relic-signet",
+      "name": "Relic Signet",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 15,
+      "source_item_id": "36add57c-6f53-46d6-9003-7adaba7ac701",
+      "slug": "hoardlords-seal",
+      "name": "Hoardlord's Seal",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "strength",
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "warrior",
+        "paladin",
+        "berserker",
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "class_tags": [
+        "warrior",
+        "paladin",
+        "berserker",
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 16,
+      "source_item_id": "0bc1d330-8b05-4fc0-946f-e994f33539b7",
+      "slug": "herbalist-pouch",
+      "name": "Herbalist's Pouch",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "shared_family_multi_caster",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 17,
+      "source_item_id": "89309769-fb51-4f95-94b4-f4c61972c8bc",
+      "slug": "scholars-spectacles",
+      "name": "Scholar's Spectacles",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "lore_tags": [
+        "frontiera"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "identity_classification": "shared_family_multi_caster",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 18,
+      "source_item_id": "770e6f4f-af58-4e29-a585-6ffa6bfe2db6",
+      "slug": "seers-monocle",
+      "name": "Seer's Monocle",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 19,
+      "source_item_id": "57906a5e-6644-4edd-8ad1-ddd7168ae4fe",
+      "slug": "oracle-pendant",
+      "name": "Oracle Pendant",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "memoria",
+        "oracolo"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 20,
+      "source_item_id": "f93ad143-df97-492e-910f-305c8c683361",
+      "slug": "crown-of-stillness",
+      "name": "Crown of Stillness",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 21,
+      "source_item_id": "77147f82-6b36-4bb2-85a7-7ec817ee43f3",
+      "slug": "apprentice-handbook",
+      "name": "Apprentice Handbook",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "shared_family_multi_caster",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 22,
+      "source_item_id": "a8d89758-c34f-46e5-a58c-8594ea919505",
+      "slug": "wanderer_amulet",
+      "name": "Wanderer's Amulet",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "strength",
+        "agility",
+        "intellect",
+        "endurance",
+        "faith"
+      ],
+      "rec_classes": [
+        "warrior",
+        "paladin",
+        "berserker",
+        "rogue",
+        "ranger",
+        "assassin",
+        "cacciatore_di_mostri"
+      ],
+      "class_tags": [
+        "warrior",
+        "paladin",
+        "berserker",
+        "rogue",
+        "ranger",
+        "assassin"
+      ],
+      "lore_tags": [
+        "frontiera"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 23,
+      "source_item_id": "e260b599-ca87-4a38-b099-1842cc48d241",
+      "slug": "minor_sigil",
+      "name": "Minor Sigil",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 24,
+      "source_item_id": "spec_signature_sacred_chalice",
+      "slug": "spec_signature_sacred_chalice",
+      "name": "Calice Sacro",
+      "item_type": "accessory",
+      "slot_type": "amulet",
+      "normalized_slot": "neck",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 25,
+      "source_item_id": "spec_signature_battle_standard",
+      "slug": "spec_signature_battle_standard",
+      "name": "Stendardo da Battaglia",
+      "item_type": "accessory",
+      "slot_type": "amulet",
+      "normalized_slot": "neck",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 26,
+      "source_item_id": "spec_signature_runed_focus",
+      "slug": "spec_signature_runed_focus",
+      "name": "Focus Runico",
+      "item_type": "accessory",
+      "slot_type": "amulet",
+      "normalized_slot": "neck",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "faith"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "priest",
+        "druid",
+        "paladin"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 27,
+      "source_item_id": "bb23ee48-5959-4d28-b0bc-30327b5f33c6",
+      "slug": "legendary_amulet_nathos",
+      "name": "Amuleto di Nathos",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "class_tags": [
+        "mage",
+        "necromancer",
+        "bard",
+        "warrior",
+        "paladin",
+        "berserker"
+      ],
+      "lore_tags": [],
+      "item_binding_policy": "soft",
+      "rarity": "Legendary",
+      "required_adventurer_level": 8,
+      "identity_classification": "multi_role_wide",
+      "identity_risk": "LOW",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 28,
+      "source_item_id": "9684d81a-238f-4f90-8e42-9804f4897881",
+      "slug": "alchemist_reagent_pouch",
+      "name": "Borsa dei Reagenti",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "mundane"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Common",
+      "required_adventurer_level": 1,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 29,
+      "source_item_id": "93b8fc54-411d-45b1-8347-b4fddf7b50f5",
+      "slug": "alchemist_alembic_pendant",
+      "name": "Pendente dell'Alambicco",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "agility",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 30,
+      "source_item_id": "1aad80f8-fe95-4809-90af-3763bc7326f4",
+      "slug": "alchemist_transmutation_medallion",
+      "name": "Medaglione della Trasmutazione",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "filo-spezzato"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Epic",
+      "required_adventurer_level": 8,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 31,
+      "source_item_id": "e1ac0940-a7bb-4d2e-a023-9cbbe9210aed",
+      "slug": "alchemist_catalyst_ring",
+      "name": "Anello Catalitico",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "frontiera"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Uncommon",
+      "required_adventurer_level": 3,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    },
+    {
+      "candidate_index": 32,
+      "source_item_id": "c089bf70-08c7-485e-a78c-c873002c1877",
+      "slug": "alchemist_golden_vial",
+      "name": "Fiala d'Oro",
+      "item_type": "accessory",
+      "slot_type": "accessory",
+      "normalized_slot": "accessory",
+      "armor_tags": null,
+      "normalized_armor_type": null,
+      "weapon_tags": null,
+      "normalized_weapon_family": null,
+      "stat_tags": [
+        "intellect",
+        "endurance"
+      ],
+      "rec_classes": [
+        "alchemist"
+      ],
+      "class_tags": [
+        "alchemist"
+      ],
+      "lore_tags": [
+        "veglie",
+        "memoria"
+      ],
+      "item_binding_policy": "soft",
+      "rarity": "Rare",
+      "required_adventurer_level": 5,
+      "identity_classification": "class_specific_non_caster",
+      "identity_risk": "MEDIUM",
+      "condition_code_candidate": "COND_ACCESSORY_NEUTRAL",
+      "mutation_required": false,
+      "selection_eligible": true,
+      "selection_reason": "passes_common_filters + bucket=accessory_universal + not_in_exclusion_ledger",
+      "evidence_source": "orbus_r16.items read-only find() 2026-02 · EV-F2 aggregate reconciliation",
+      "confidence": "HIGH",
+      "bucket": "accessory_universal",
+      "affix_pool_tag": null
+    }
+  ],
+  "proposed_bindings_6": [
+    {
+      "binding_index": 1,
+      "provisional_code": "cond_reuse_caster_stat_neutral_01",
+      "slot_target": "chest",
+      "family_target": "armor_stoffa",
+      "condition_code": "COND_STAT_NEUTRAL_INT",
+      "pool_source": "armor_stoffa",
+      "pool_size": 11,
+      "recommended_source_item_id": "8efacc3f-3afc-490d-b5e2-c140f8cf5b3d",
+      "recommended_slug": "apprentice-robe",
+      "recommended_reason": "ranking: risk=LOW · id_class=shared_family_multi_caster · rarity=Common L1 · slug tie-break asc",
+      "alternatives": [
+        {
+          "source_item_id": "794e89a3-59c0-4ea3-9eef-0e0e31fe7761",
+          "slug": "initiate_robe",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "c6c89f1e-437e-4044-92b7-b4e6b9b7793d",
+          "slug": "aether-weave-robe",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "a86520a8-5bc2-41eb-a89d-8ef769e05846",
+          "slug": "alchemist_apron",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "e8a57ea9-8209-4d46-8dc1-d5738108662e",
+          "slug": "alchemist_brewers_apron",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "7ad70e1d-bd5e-421f-ada2-c8868e43f4d6",
+          "slug": "alchemist_quicksilver_vest",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Uncommon",
+          "required_adventurer_level": 3
+        },
+        {
+          "source_item_id": "2a163db4-753d-471b-9881-d53cffa5f56c",
+          "slug": "alchemist_ember_lined_vest",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "60d202f4-c324-4132-80b6-c336b5e23897",
+          "slug": "druid_grovewarden_mantle",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "f87b2ddd-7353-4221-a14b-809427e1a60d",
+          "slug": "alchemist_quintessence_robe",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "2931f2b3-0630-4c9c-a7f5-0b44c69c9f8b",
+          "slug": "druid_elder_vestments",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        }
+      ],
+      "binding_status": "PROPOSED_PENDING_PM",
+      "unbindable": false,
+      "unbindable_reason": null,
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": true,
+      "family_mismatch": false,
+      "slot_mismatch_note": "recommended live slot_type='armor' (generic) · sub-slot chest/legs derivation deferred to future taxonomy gate (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Systemic, not a candidate defect."
+    },
+    {
+      "binding_index": 2,
+      "provisional_code": "cond_reuse_caster_stat_neutral_02",
+      "slot_target": "legs",
+      "family_target": "armor_stoffa",
+      "condition_code": "COND_STAT_NEUTRAL_INT",
+      "pool_source": "armor_stoffa",
+      "pool_size": 10,
+      "recommended_source_item_id": "794e89a3-59c0-4ea3-9eef-0e0e31fe7761",
+      "recommended_slug": "initiate_robe",
+      "recommended_reason": "ranking: risk=LOW · id_class=multi_role_wide · rarity=Common L1 · slug tie-break asc",
+      "alternatives": [
+        {
+          "source_item_id": "c6c89f1e-437e-4044-92b7-b4e6b9b7793d",
+          "slug": "aether-weave-robe",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "a86520a8-5bc2-41eb-a89d-8ef769e05846",
+          "slug": "alchemist_apron",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "e8a57ea9-8209-4d46-8dc1-d5738108662e",
+          "slug": "alchemist_brewers_apron",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "7ad70e1d-bd5e-421f-ada2-c8868e43f4d6",
+          "slug": "alchemist_quicksilver_vest",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Uncommon",
+          "required_adventurer_level": 3
+        },
+        {
+          "source_item_id": "2a163db4-753d-471b-9881-d53cffa5f56c",
+          "slug": "alchemist_ember_lined_vest",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "60d202f4-c324-4132-80b6-c336b5e23897",
+          "slug": "druid_grovewarden_mantle",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "f87b2ddd-7353-4221-a14b-809427e1a60d",
+          "slug": "alchemist_quintessence_robe",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "2931f2b3-0630-4c9c-a7f5-0b44c69c9f8b",
+          "slug": "druid_elder_vestments",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        }
+      ],
+      "binding_status": "PROPOSED_PENDING_PM",
+      "unbindable": false,
+      "unbindable_reason": null,
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": true,
+      "family_mismatch": false,
+      "slot_mismatch_note": "recommended live slot_type='armor' (generic) · sub-slot chest/legs derivation deferred to future taxonomy gate (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Systemic, not a candidate defect."
+    },
+    {
+      "binding_index": 3,
+      "provisional_code": "cond_reuse_caster_stat_neutral_03",
+      "slot_target": "accessory",
+      "family_target": "universal_neutral",
+      "condition_code": "COND_ACCESSORY_NEUTRAL",
+      "pool_source": "accessory_slot_accessory",
+      "pool_size": 17,
+      "recommended_source_item_id": "77147f82-6b36-4bb2-85a7-7ec817ee43f3",
+      "recommended_slug": "apprentice-handbook",
+      "recommended_reason": "ranking: risk=LOW · id_class=shared_family_multi_caster · rarity=Common L1 · slug tie-break asc",
+      "alternatives": [
+        {
+          "source_item_id": "0bc1d330-8b05-4fc0-946f-e994f33539b7",
+          "slug": "herbalist-pouch",
+          "identity_classification": "shared_family_multi_caster",
+          "identity_risk": "LOW",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "89309769-fb51-4f95-94b4-f4c61972c8bc",
+          "slug": "scholars-spectacles",
+          "identity_classification": "shared_family_multi_caster",
+          "identity_risk": "LOW",
+          "rarity": "Uncommon",
+          "required_adventurer_level": 3
+        },
+        {
+          "source_item_id": "a8d89758-c34f-46e5-a58c-8594ea919505",
+          "slug": "wanderer_amulet",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Uncommon",
+          "required_adventurer_level": 3
+        },
+        {
+          "source_item_id": "e260b599-ca87-4a38-b099-1842cc48d241",
+          "slug": "minor_sigil",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "57906a5e-6644-4edd-8ad1-ddd7168ae4fe",
+          "slug": "oracle-pendant",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "265db775-259b-488f-b15a-30f69ea823fe",
+          "slug": "relic-signet",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "770e6f4f-af58-4e29-a585-6ffa6bfe2db6",
+          "slug": "seers-monocle",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "f93ad143-df97-492e-910f-305c8c683361",
+          "slug": "crown-of-stillness",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "36add57c-6f53-46d6-9003-7adaba7ac701",
+          "slug": "hoardlords-seal",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "bb23ee48-5959-4d28-b0bc-30327b5f33c6",
+          "slug": "legendary_amulet_nathos",
+          "identity_classification": "multi_role_wide",
+          "identity_risk": "LOW",
+          "rarity": "Legendary",
+          "required_adventurer_level": 8
+        },
+        {
+          "source_item_id": "9684d81a-238f-4f90-8e42-9804f4897881",
+          "slug": "alchemist_reagent_pouch",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Common",
+          "required_adventurer_level": 1
+        },
+        {
+          "source_item_id": "e1ac0940-a7bb-4d2e-a023-9cbbe9210aed",
+          "slug": "alchemist_catalyst_ring",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Uncommon",
+          "required_adventurer_level": 3
+        },
+        {
+          "source_item_id": "93b8fc54-411d-45b1-8347-b4fddf7b50f5",
+          "slug": "alchemist_alembic_pendant",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "c089bf70-08c7-485e-a78c-c873002c1877",
+          "slug": "alchemist_golden_vial",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        },
+        {
+          "source_item_id": "1aad80f8-fe95-4809-90af-3763bc7326f4",
+          "slug": "alchemist_transmutation_medallion",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Epic",
+          "required_adventurer_level": 8
+        }
+      ],
+      "binding_status": "PROPOSED_PENDING_PM",
+      "unbindable": false,
+      "unbindable_reason": null,
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": false,
+      "family_mismatch": false
+    },
+    {
+      "binding_index": 4,
+      "provisional_code": "cond_reuse_caster_stat_neutral_04",
+      "slot_target": "ring",
+      "family_target": "universal_neutral",
+      "condition_code": "COND_ACCESSORY_NEUTRAL",
+      "pool_source": "accessory_slot_ring",
+      "pool_size": 0,
+      "recommended_source_item_id": null,
+      "recommended_slug": null,
+      "recommended_reason": null,
+      "alternatives": [],
+      "binding_status": "PROPOSED_PENDING_PM_UNBINDABLE_STRUCTURAL_GAP",
+      "unbindable": true,
+      "unbindable_reason": "Zero candidates in pool `accessory_slot_ring` — structural gap in DB (see structural_gaps_detected)",
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": false,
+      "family_mismatch": false
+    },
+    {
+      "binding_index": 5,
+      "provisional_code": "cond_reuse_focus_mechanism_compat_01",
+      "slot_target": "main_hand",
+      "family_target": "focus",
+      "condition_code": "COND_FOCUS_MECHANISM_OK",
+      "pool_source": "weapon_focus",
+      "pool_size": 3,
+      "recommended_source_item_id": "72c4f06f-55c0-4d44-a6c2-b40ad1443196",
+      "recommended_slug": "alchemist_glass_wand",
+      "recommended_reason": "ranking: risk=MEDIUM · id_class=class_specific_non_caster · rarity=Uncommon L3 · slug tie-break asc",
+      "alternatives": [
+        {
+          "source_item_id": "164d4575-5188-4615-9b01-79d84815c161",
+          "slug": "alchemist_catalyst_flask",
+          "identity_classification": "class_specific_non_caster",
+          "identity_risk": "MEDIUM",
+          "rarity": "Rare",
+          "required_adventurer_level": 5
+        }
+      ],
+      "binding_status": "PROPOSED_PENDING_PM",
+      "unbindable": false,
+      "unbindable_reason": null,
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": false,
+      "family_mismatch": false
+    },
+    {
+      "binding_index": 6,
+      "provisional_code": "cond_reuse_pugnale_mechanism_compat_01",
+      "slot_target": "main_hand",
+      "family_target": "pugnale",
+      "condition_code": "COND_PUGNALE_MECHANISM_OK",
+      "pool_source": "weapon_pugnale",
+      "pool_size": 0,
+      "recommended_source_item_id": null,
+      "recommended_slug": null,
+      "recommended_reason": null,
+      "alternatives": [],
+      "binding_status": "PROPOSED_PENDING_PM_UNBINDABLE_STRUCTURAL_GAP",
+      "unbindable": true,
+      "unbindable_reason": "Zero candidates in pool `weapon_pugnale` — structural gap in DB (see structural_gaps_detected)",
+      "PM_authoritative": false,
+      "apply_authorized": false,
+      "registry_authorized": false,
+      "slot_mismatch": false,
+      "family_mismatch": false
+    }
+  ],
+  "ambiguity_report": [
+    {
+      "binding_index": 1,
+      "provisional_code": "cond_reuse_caster_stat_neutral_01",
+      "ambiguity_type": "multiple_valid_candidates",
+      "alternatives_count": 9,
+      "note": "recommended live slot_type='armor' (generic) · sub-slot chest/legs derivation deferred to future taxonomy gate (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Systemic, not a candidate defect."
+    },
+    {
+      "binding_index": 2,
+      "provisional_code": "cond_reuse_caster_stat_neutral_02",
+      "ambiguity_type": "multiple_valid_candidates",
+      "alternatives_count": 8,
+      "note": "recommended live slot_type='armor' (generic) · sub-slot chest/legs derivation deferred to future taxonomy gate (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Systemic, not a candidate defect."
+    },
+    {
+      "binding_index": 3,
+      "provisional_code": "cond_reuse_caster_stat_neutral_03",
+      "ambiguity_type": "multiple_valid_candidates",
+      "alternatives_count": 15,
+      "note": "recommended_selected_via_deterministic_ranking"
+    },
+    {
+      "binding_index": 4,
+      "provisional_code": "cond_reuse_caster_stat_neutral_04",
+      "ambiguity_type": "structural_gap_unbindable",
+      "alternatives_count": 0,
+      "note": "Zero candidates in pool `accessory_slot_ring` — structural gap in DB (see structural_gaps_detected)"
+    },
+    {
+      "binding_index": 5,
+      "provisional_code": "cond_reuse_focus_mechanism_compat_01",
+      "ambiguity_type": "multiple_valid_candidates",
+      "alternatives_count": 1,
+      "note": "recommended_selected_via_deterministic_ranking"
+    },
+    {
+      "binding_index": 6,
+      "provisional_code": "cond_reuse_pugnale_mechanism_compat_01",
+      "ambiguity_type": "structural_gap_unbindable",
+      "alternatives_count": 0,
+      "note": "Zero candidates in pool `weapon_pugnale` — structural gap in DB (see structural_gaps_detected)"
+    }
+  ],
+  "duplicate_checks": {
+    "duplicate_source_item_id_in_allowlist": [],
+    "duplicate_source_id_count": 0,
+    "duplicate_slug_in_allowlist": [],
+    "duplicate_recommended_binding_uuid": [],
+    "recommended_uuids_set_size": 4
+  },
+  "condition_code_validation": {
+    "approved_codes": [
+      "COND_STAT_NEUTRAL_INT",
+      "COND_ACCESSORY_NEUTRAL",
+      "COND_FOCUS_MECHANISM_OK",
+      "COND_PUGNALE_MECHANISM_OK"
+    ],
+    "used_codes_distinct": [
+      "COND_ACCESSORY_NEUTRAL",
+      "COND_FOCUS_MECHANISM_OK",
+      "COND_STAT_NEUTRAL_INT"
+    ],
+    "unauthorized_codes_detected": [],
+    "pass": true
+  },
+  "governance_validations": {
+    "candidate_universe_eq_32": true,
+    "unique_candidate_uuid_eq_32": true,
+    "weapon_candidates_eq_2": true,
+    "armor_candidates_eq_11": true,
+    "accessory_candidates_eq_19": true,
+    "duplicate_uuid_eq_0": true,
+    "excluded_item_included_eq_0": true,
+    "mutation_required_true_eq_0": true,
+    "unknown_source_id_eq_0": true,
+    "proposed_bindings_eq_6": true,
+    "duplicate_source_binding_eq_0": true,
+    "slot_mismatch_eq_0_strict": false,
+    "family_mismatch_eq_0": true,
+    "slot_mismatch_systemic_acknowledged": "chest/legs bindings live slot_type=armor generic — sub-slot canonical remapping deferred (EV-F2 §slot_type_distinct.canonical_remapping_deferred_to_future_gate=true). Not a candidate defect."
+  },
+  "explicit_stop": {
+    "is1_roster_generation": "PAUSED_by_pm_dispatch_R18_6_RV3_IS1_A_directive",
+    "is1_source_artifacts_absent": true,
+    "is1_a_status": "DRAFT_GENERATED_pending_PM_verdict",
+    "structural_gaps_blocking_full_binding": [
+      "GAP-1",
+      "GAP-2"
+    ],
+    "pm_directive_required_on": [
+      "GAP-1_pugnale_family_absent_mitigation_ABCD",
+      "GAP-2_ring_slot_absent_mitigation_ABCD",
+      "ratification_of_4_bindable_recommended_bindings",
+      "authorization_or_denial_to_proceed_with_is1_roster_after_gaps_resolved"
+    ],
+    "next_action": "await_pm_verdict_on_IS1_A_including_gap_mitigation",
+    "afx1_status": "CLOSED_LOCKED",
+    "ic1_status": "CLOSED_LOCKED",
+    "is1_status": "IN_PROGRESS_BLOCKED_ON_IS1_A",
+    "is1_a_status_final": "PROPOSED_PENDING_PM",
+    "nc1_status": "HOLD",
+    "gate_11_status": "HOLD",
+    "wave_1_status": "HOLD",
+    "registry_v3_apply_status": "NOT_AUTHORIZED"
+  }
+}
