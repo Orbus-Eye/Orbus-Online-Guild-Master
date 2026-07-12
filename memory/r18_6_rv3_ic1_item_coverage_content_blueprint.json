@@ -46,14 +46,16 @@
     "exact_blueprint_total": 120,
     "envelope_target_range": [110, 130],
     "planning_center": 120,
-    "ledger_A_reusable_effective": 18,
-    "ledger_A_standby_pool": 26,
-    "ledger_A_theoretical_ceiling": 44,
-    "ledger_B_future_new_item": 102,
-    "ledger_C_total_planned": 120,
+    "committed_reuse": 12,
+    "provisional_conditional_allocation": 6,
+    "future_new_item_base_allocation": 102,
+    "conditional_fallback_reserve_outside_blueprint": 6,
+    "worst_case_future_new_item_need": 108,
     "endgame_verdict": "ENDGAME_BLUEPRINT_COMPLETE",
-    "legendary_count": 6,
-    "recommendation": "GO_CLOSURE_IC1_conditional_to_pm_ratification_of_12_ic1_questions"
+    "legendary_count": 3,
+    "legendary_tier_policy": "T5_ONLY",
+    "rarity_distribution": {"Common": 42, "Uncommon": 33, "Rare": 27, "Epic": 15, "Legendary": 3},
+    "recommendation": "GO_CLOSURE_IC1_post_pm_micro_fix_this_dispatch"
   },
   "section_02_scope": {
     "covered": [
@@ -191,12 +193,16 @@
     "ledger_c_equals_ledger_a_plus_b_strict": true
   },
   "section_12_three_ledger_model": {
-    "ledger_A_reusable_theoretical_ceiling": 44,
-    "ledger_A_effective_arruolati": 18,
-    "ledger_A_standby_pool": 26,
-    "ledger_B_future_new_item": 102,
-    "ledger_C_total": 120,
-    "formula": "ledger_a_effective + ledger_b_future_new = ledger_c_total"
+    "committed_reuse": 12,
+    "provisional_conditional_allocation": 6,
+    "future_new_item_base_allocation": 102,
+    "blueprint_total": 120,
+    "conditional_fallback_reserve_outside_blueprint": 6,
+    "worst_case_future_new_item_need": 108,
+    "formula": "12_committed_reuse + 6_provisional_conditional_allocation + 102_future_new_item_allocation = 120_blueprint_unit",
+    "fallback_rule": "if_provisional_fails_validation_replaced_1_to_1_by_1_future_new_item_total_stays_120",
+    "prohibited_phrase": "18_riusi_garantiti_VIETATO_use",
+    "pm_micro_fix_1_applied": true
   },
   "section_13_reusable_coverage_ledger": {
     "total_theoretical": 44,
@@ -233,7 +239,18 @@
       "explicit_allowlist",
       "dry_run_snapshot"
     ],
-    "no_dynamic_keyword_inclusion": true
+    "no_dynamic_keyword_inclusion": true,
+    "provisional_conditional_allocation_enumeration": [
+      {"idx": 1, "item_id": "cond_reuse_caster_stat_neutral_01", "slot": "chest", "family": "armor_stoffa", "condition_code": "COND_STAT_NEUTRAL_INT", "reason": "main_stat_int_compatibile_no_mutation", "identity_risk": "MEDIUM", "mutation_required": false, "approval_status": "provisional"},
+      {"idx": 2, "item_id": "cond_reuse_caster_stat_neutral_02", "slot": "legs", "family": "armor_stoffa", "condition_code": "COND_STAT_NEUTRAL_INT", "reason": "main_stat_int_compatibile_allocation_t1_legs", "identity_risk": "MEDIUM", "mutation_required": false, "approval_status": "provisional"},
+      {"idx": 3, "item_id": "cond_reuse_caster_stat_neutral_03", "slot": "accessory", "family": "universal_neutral", "condition_code": "COND_ACCESSORY_NEUTRAL", "reason": "identity_neutral_int_compatibile", "identity_risk": "LOW", "mutation_required": false, "approval_status": "provisional"},
+      {"idx": 4, "item_id": "cond_reuse_caster_stat_neutral_04", "slot": "ring", "family": "universal_neutral", "condition_code": "COND_ACCESSORY_NEUTRAL", "reason": "identity_neutral_no_class_borrowing", "identity_risk": "LOW", "mutation_required": false, "approval_status": "provisional"},
+      {"idx": 5, "item_id": "cond_reuse_focus_mechanism_compat_01", "slot": "main_hand", "family": "focus", "condition_code": "COND_FOCUS_MECHANISM_OK", "reason": "proficiency_focus_compatibile_no_anti_lore", "identity_risk": "MEDIUM", "mutation_required": false, "approval_status": "provisional"},
+      {"idx": 6, "item_id": "cond_reuse_pugnale_mechanism_compat_01", "slot": "main_hand", "family": "pugnale", "condition_code": "COND_PUGNALE_MECHANISM_OK", "reason": "proficiency_pugnale_compatibile_mechanism_scope_ok", "identity_risk": "MEDIUM", "mutation_required": false, "approval_status": "provisional"}
+    ],
+    "provisional_item_id_note": "codici_blueprint_provisional_non_item_id_runtime_registry_v3_associazione_demandata_a_is1_allowlist_gate_futuro",
+    "fallback_reserve_outside_blueprint": 6,
+    "pm_micro_fix_2_applied": true
   },
   "section_15_future_item_requirement_ledger": {
     "total": 102,
@@ -338,22 +355,23 @@
   "section_53_shared_family_allocation": {"total": 30, "pct": 25.0, "by_tier": {"T1": 5, "T2": 5, "T3": 7, "T4": 6, "T5": 7}, "eligible": ["armor_int_shareable", "focus_caster_compatible", "pugnale_caster_compatible", "accessory_caster_neutral"], "forbidden": "borrow_identity_from_other_class"},
   "section_54_universal_neutral_allocation": {"total": 22, "pct": 18.3, "by_tier": {"T1": 3, "T2": 4, "T3": 4, "T4": 5, "T5": 6}, "eligibility_rules": ["identity_neutral", "main_stat_compatible", "proficiency_not_violated", "mutation_required_false"], "forbidden_references": ["mago", "paladino", "cacciatore_di_mostri", "warlock_legacy"]},
   "section_55_identity_balance": {"class_specific_pct": 56.7, "shared_family_pct": 25.0, "universal_neutral_pct": 18.3, "class_specific_dominant": true, "no_category_over_60_pct": true, "no_category_below_15_pct": true, "identity_order_preserved": true},
-  "section_56_rarity_allocation_overview": {"Common": 42, "Uncommon": 32, "Rare": 26, "Epic": 14, "Legendary": 6, "sum": 120, "budget_multipliers": {"Common": 1.00, "Uncommon": 1.15, "Rare": 1.35, "Epic": 1.60, "Legendary": 1.85}, "legendary_1_85_includes_utility_unique": true, "no_x5_artificial_multiplication": true},
+  "section_56_rarity_allocation_overview": {"Common": 42, "Uncommon": 33, "Rare": 27, "Epic": 15, "Legendary": 3, "sum": 120, "budget_multipliers": {"Common": 1.00, "Uncommon": 1.15, "Rare": 1.35, "Epic": 1.60, "Legendary": 1.85}, "legendary_1_85_includes_utility_unique": true, "no_x5_artificial_multiplication": true, "pm_micro_fix_4_applied": true},
   "section_57_common_allocation": {"total": 42, "by_tier": {"T1": 8, "T2": 8, "T3": 9, "T4": 9, "T5": 8}, "by_slot_mix": {"armor": 22, "weapon": 5, "universal": 15}, "multiplier": 1.00},
-  "section_58_uncommon_allocation": {"total": 32, "by_tier": {"T1": 5, "T2": 8, "T3": 8, "T4": 6, "T5": 5}, "by_slot_mix": {"armor": 18, "weapon": 5, "universal": 9}, "multiplier": 1.15},
-  "section_59_rare_allocation": {"total": 26, "by_tier": {"T1": 3, "T2": 5, "T3": 6, "T4": 6, "T5": 6}, "by_slot_mix": {"armor": 13, "weapon": 5, "universal": 8}, "multiplier": 1.35},
-  "section_60_epic_allocation": {"total": 14, "by_tier": {"T1": 2, "T2": 1, "T3": 2, "T4": 6, "T5": 3}, "by_slot_mix": {"armor": 5, "weapon": 3, "universal": 6}, "multiplier": 1.60},
-  "section_61_legendary_allocation": {"total": 6, "by_tier": {"T1": 0, "T2": 0, "T3": 1, "T4": 2, "T5": 3}, "by_slot": {"main_hand_focus": 2, "main_hand_balestra": 1, "chest_stoffa_T5": 1, "legs_stoffa_T4": 1, "accessory_T4_reassigned_epic": 0, "main_hand_focus_T3_T4_T5_recomputation": 3, "chest_T5": 1, "legs_T4": 1, "main_hand_balestra_T5": 1}, "budget_multiplier": 1.85, "utility_included_in_budget": true, "legendary_ilvl_T5": 60},
+  "section_58_uncommon_allocation": {"total": 33, "by_tier": {"T1": 5, "T2": 8, "T3": 8, "T4": 7, "T5": 5}, "by_slot_mix": {"armor": 19, "weapon": 5, "universal": 9}, "multiplier": 1.15, "pm_micro_fix_4_applied": true},
+  "section_59_rare_allocation": {"total": 27, "by_tier": {"T1": 3, "T2": 5, "T3": 6, "T4": 7, "T5": 6}, "by_slot_mix": {"armor": 14, "weapon": 5, "universal": 8}, "multiplier": 1.35, "pm_micro_fix_4_applied": true},
+  "section_60_epic_allocation": {"total": 15, "by_tier": {"T1": 2, "T2": 1, "T3": 3, "T4": 3, "T5": 6}, "by_slot_mix": {"armor": 5, "weapon": 3, "universal": 7}, "multiplier": 1.60, "pm_micro_fix_4_applied": true},
+  "section_61_legendary_allocation": {"total": 3, "by_tier": {"T1": 0, "T2": 0, "T3": 0, "T4": 0, "T5": 3}, "by_slot": {"main_hand_focus_T5": 1, "main_hand_balestra_T5": 1, "chest_stoffa_T5": 1}, "legendary_tier_policy": "T5_ONLY", "removed_post_micro_fix_3": ["T3_main_hand_focus", "T4_main_hand_focus", "T4_legs_stoffa"], "budget_multiplier": 1.85, "utility_included_in_budget": true, "legendary_ilvl_T5": 60, "pm_micro_fix_3_applied": true},
   "section_62_rarity_by_tier_matrix": {
     "matrix": {
       "Common":    {"T1": 8, "T2": 8, "T3": 9, "T4": 9, "T5": 8, "sum": 42},
-      "Uncommon":  {"T1": 5, "T2": 8, "T3": 8, "T4": 6, "T5": 5, "sum": 32},
-      "Rare":      {"T1": 3, "T2": 5, "T3": 6, "T4": 6, "T5": 6, "sum": 26},
-      "Epic":      {"T1": 2, "T2": 1, "T3": 2, "T4": 6, "T5": 3, "sum": 14},
-      "Legendary": {"T1": 0, "T2": 0, "T3": 1, "T4": 2, "T5": 3, "sum": 6}
+      "Uncommon":  {"T1": 5, "T2": 8, "T3": 8, "T4": 7, "T5": 5, "sum": 33},
+      "Rare":      {"T1": 3, "T2": 5, "T3": 6, "T4": 7, "T5": 6, "sum": 27},
+      "Epic":      {"T1": 2, "T2": 1, "T3": 3, "T4": 3, "T5": 6, "sum": 15},
+      "Legendary": {"T1": 0, "T2": 0, "T3": 0, "T4": 0, "T5": 3, "sum": 3}
     },
     "tier_sum": {"T1": 18, "T2": 22, "T3": 26, "T4": 26, "T5": 28},
-    "grand_total": 120
+    "grand_total": 120,
+    "pm_micro_fix_3_and_4_applied": true
   },
   "section_63_rarity_by_slot_matrix": {
     "note": "matrix_approximation_reconciled_via_section_62_tier_by_rarity_which_is_exact",
@@ -368,31 +386,32 @@
     "advisory_180_220_scenario_available_without_ic1_modification": true
   },
   "section_65_legendary_strategy": {
-    "count_total": 6,
+    "count_total": 3,
+    "tier_policy_lock": "T5_ONLY",
     "rarity_depth": "single_per_identity",
     "identity_functions": [
-      "focus_T3_marchio_power_identity_boost",
-      "focus_T4_frammento_generation_catalyst",
-      "focus_T5_endgame_full_ritual_completion_signature_weapon",
-      "balestra_T5_endgame_long_range_payoff_dispel_signature",
-      "chest_T5_endgame_full_set_ritual_protection",
-      "legs_T4_movement_consistency_guard_signature"
+      "T5_main_hand_focus_full_ritual_completion_signature_primary",
+      "T5_main_hand_balestra_long_range_payoff_dispel_signature_ranged",
+      "T5_chest_stoffa_full_set_ritual_protection_armor_endgame"
     ],
     "legendary_ilvl_T5": 60,
-    "legendary_ilvl_T3_T4_native_tier": true,
-    "forbidden_in_ic1": ["names", "effect_finalization", "item_rows", "progressive_discovery_utility_roll"]
+    "no_legendary_T3_or_T4": true,
+    "removed_post_micro_fix_3": ["T3_main_hand_focus", "T4_main_hand_focus", "T4_legs_stoffa"],
+    "reason_removal": "density_5pct_vs_baseline_r18_5_1pct_power_creep_risk",
+    "forbidden_in_ic1": ["names", "effect_finalization", "item_rows", "progressive_discovery_utility_roll"],
+    "pm_micro_fix_3_applied": true
   },
-  "section_66_legendary_count_recommendation": {"value": 6, "pct_of_blueprint": 5.0, "tier_distribution_moderate": true, "progressive_discovery_utility_4_globals_pending": true},
+  "section_66_legendary_count_recommendation": {"value": 3, "pct_of_blueprint": 2.5, "tier_policy": "T5_ONLY", "aligned_with_r18_5_baseline": true, "progressive_discovery_utility_4_globals_pending": true, "pm_micro_fix_3_applied": true},
   "section_67_legendary_slot_recommendation": {
     "distribution": {
-      "main_hand_focus": {"count": 3, "tiers": ["T3", "T4", "T5"]},
-      "main_hand_balestra": {"count": 1, "tiers": ["T5"]},
-      "chest_armor_stoffa": {"count": 1, "tiers": ["T5"]},
-      "legs_armor_stoffa": {"count": 1, "tiers": ["T4"]}
+      "main_hand_focus_T5": {"count": 1, "function": "primary_identity"},
+      "main_hand_balestra_T5": {"count": 1, "function": "ranged_signature"},
+      "chest_armor_stoffa_T5": {"count": 1, "function": "endgame_armor_signature"}
     },
-    "total": 6,
-    "not_covered_in_ic1": ["accessory_legendary", "ring_legendary", "back_legendary", "off_hand_legendary"],
-    "deferred_to_hypothetical_ic_legendary_or_registry_v3": true
+    "total": 3,
+    "not_covered_in_ic1": ["pugnale_legendary", "legs_legendary", "accessory_legendary", "ring_legendary", "back_legendary", "off_hand_legendary"],
+    "deferred_to_hypothetical_ic_legendary_or_registry_v3": true,
+    "pm_micro_fix_3_applied": true
   },
   "section_68_legendary_utility_constraints": {
     "budget_1_85_includes_utility_unique": true,
@@ -537,10 +556,16 @@
     "no_item_level_workload_in_ic1": true
   },
   "section_95_registry_v3_content_dependency": {
+    "next_planned_gate": "R18.6.RV3-IS1_Item_Specification_and_Roster_Contract",
+    "is1_status": "HOLD_NOT_AUTHORIZED_IN_THIS_DISPATCH",
+    "is1_regime_future": "DOCUMENTAL_ONLY_no_item_generation_no_registry_module_no_apply",
+    "is1_scope_future": ["roster_120_units", "codice_blueprint_per_unit", "tier_slot_family_identity_rarity_intent", "affix_pool_eligibility_without_affix_id", "stat_budget_band_without_final_numbers", "source_reuse_or_new_condition_code_for_6_provisional"],
+    "is1_forbidden": ["item_id_runtime", "db_records", "loot_table", "apply_script", "effect_finalization"],
     "item_generation": "NOT_AUTHORIZED",
     "registry_v3_apply": "NOT_AUTHORIZED",
     "registry_v3_module_generation": "NOT_AUTHORIZED",
-    "downstream_requirements": ["explicit_allowlist", "condition_code_catalog_compiled", "dry_run_diff_pm_approved", "snapshot_pre_post", "explicit_pm_go"]
+    "downstream_requirements": ["explicit_allowlist", "condition_code_catalog_compiled", "dry_run_diff_pm_approved", "snapshot_pre_post", "explicit_pm_go"],
+    "pm_micro_fix_5_applied": true
   },
   "section_96_future_item_specification_dependency": {
     "specification_finale": "DEFERRED",
@@ -601,16 +626,21 @@
   "section_102_accounting_validation": {
     "per_tier_sum_check": {"formula": "18+22+26+26+28", "result": 120, "pass": true},
     "per_slot_sum_check": {"formula": "8+6+7+10+6+7+5+6+10+7+15+6+12+15", "result": 120, "pass": true},
-    "per_rarity_sum_check": {"formula": "42+32+26+14+6", "result": 120, "pass": true},
+    "per_rarity_sum_check": {"formula": "42+33+27+15+3", "result": 120, "pass": true},
     "per_identity_sum_check": {"formula": "68+30+22", "result": 120, "pass": true},
-    "ledger_reconciliation": {"formula": "18+102", "result": 120, "pass": true},
+    "blueprint_composition_check": {"formula": "12_committed + 6_provisional + 102_future", "result": 120, "pass": true},
+    "worst_case_check": {"formula": "12_validated_reuse + 108_future_new_item", "result": 120, "pass": true},
+    "conditional_fallback_reserve_outside_blueprint": 6,
     "armor_split_check": {"formula": "42+18", "result": 60, "pass": true},
     "weapon_split_check": {"formula": "10+7+4", "result": 21, "pass": true},
     "T5_armor_70_30_check": {"stoffa": 7, "cuoio": 3, "ratio_pct": [70, 30], "pass": true},
+    "legendary_total_check": {"formula": "0+0+0+0+3_T5_ONLY", "result": 3, "pass": true},
+    "legendary_slot_check": {"formula": "focus_T5(1)+balestra_T5(1)+chest_stoffa_T5(1)", "result": 3, "pass": true},
     "no_approx_symbol": true,
     "no_range_finale": true,
     "no_double_count": true,
-    "reconciliation_pass": true
+    "reconciliation_pass": true,
+    "pm_micro_fix_1_2_3_4_5_applied": true
   },
   "section_103_risk_register": {
     "risks": [
@@ -644,31 +674,32 @@
     ]
   },
   "section_105_go_hold_recommendation": {
-    "recommendation_e1_dev": "GO_CLOSURE_IC1_conditional_to_pm_ratification_of_12_ic1_questions",
+    "recommendation_e1_dev": "GO_CLOSURE_IC1_post_pm_micro_fix_this_dispatch",
     "dispatch_status": {
       "ic1_draft_complete_105_sections": true,
-      "three_ledger_reconciled": true,
+      "accounting_canonical_ratified_committed_12_provisional_6_future_102": true,
+      "fallback_reserve_6_outside_blueprint": true,
+      "legendary_3_T5_only_focus_balestra_chest_stoffa": true,
+      "rarity_42_33_27_15_3_reconciled": true,
       "endgame_verdict_endgame_blueprint_complete": true,
       "no_item_creation": true,
       "no_affix_creation": true,
       "no_registry_v3_module": true,
-      "no_db_write": true
+      "no_db_write": true,
+      "pm_micro_fix_all_6_applied": true
     },
-    "pm_next_steps": [
-      "ratify_ic1_q1_to_q12",
-      "authorize_closure_ic1_producing_closure_report_manifest_prd_append_afx1_style",
-      "select_next_gate_option_a_registry_v3_content_generation_or_option_b_nc1_parallel_or_option_c_ic_legendary_hypothetical_or_option_d_pm_directive"
-    ],
+    "next_planned_gate": "R18.6.RV3-IS1_Item_Specification_and_Roster_Contract_HOLD_NOT_AUTHORIZED_IN_THIS_DISPATCH",
     "hold_locks_preserved": {
       "afx2": "RESERVED_FUTURE",
       "nc1": "HOLD",
+      "is1": "HOLD",
       "registry_v3_apply": "NOT_AUTHORIZED",
       "gate_11": "HOLD",
       "monaco_wave_1": "HOLD"
     },
     "explicit_stop": true,
-    "no_ic1_closure_in_this_dispatch": true,
-    "no_prd_append_in_this_dispatch": true,
-    "awaiting_pm_verdict": true
+    "closure_formale_ic1_in_this_dispatch": true,
+    "no_is1_kickoff": true,
+    "no_prd_append_beyond_ic1_closed": true
   }
 }

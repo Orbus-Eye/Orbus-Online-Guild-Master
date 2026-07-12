@@ -16,12 +16,16 @@
 IC1 stabilisce la contabilità di copertura item per il Cacciatore del Vuoto senza generare item, nomi, ID o righe Registry v3. **NON è item generation**. Definisce quanti "blueprint unit" (identità item distinte future) servono, come distribuirli per tier, slot, armor family, weapon family, rarità, identity class, e affix coverage. Consuma AFX1 (LOCK), RV3-EV (LEDGER 178), G1–G5 pilot, R18.5 itemization.
 
 Verdict rapido:
-- **Exact blueprint total = 120** (dentro envelope 110–130, planning center ~120)
-- Ledger A (reusable) = 44 teorico · A_effective arruolati = 18 · Standby pool = 26
-- Ledger B (future new) = 102 · Ledger C (total planned) = 120
+- **Exact blueprint total = 120** LOCK (planning center, envelope 110–130)
+- **COMMITTED_REUSE = 12** (REUSE_VALID, tutti arruolati)
+- **PROVISIONAL_CONDITIONAL_ALLOCATION = 6** (REUSE_CONDITIONAL selezionati, provisional)
+- **FUTURE_NEW_ITEM_BASE_ALLOCATION = 102**
+- **CONDITIONAL_FALLBACK_RESERVE = 6** (outside blueprint count, NON +6 al totale)
+- **Worst-case future new-item need = 108** (se tutti 6 provisional falliscono validazione futura)
 - Endgame T5 = **ENDGAME_BLUEPRINT_COMPLETE** ✅
-- Legendary strategy = 6 unit (T3=1, T4=2, T5=3)
-- Recommendation: **GO CLOSURE IC1** condizionato alle 12 IC1-Qn (§104)
+- Legendary strategy = **3 unit** (tutti T5, focus / balestra / chest stoffa)
+- Rarity = **42 / 33 / 27 / 15 / 3** (C/U/R/E/L)
+- Recommendation: **GO CLOSURE IC1** (post micro-fix, questo dispatch)
 
 ## 2. scope
 
@@ -122,15 +126,36 @@ Regole obbligatorie: numeri interi esatti ovunque (no `~`, no range non riconcil
 
 ## 12. three-ledger model
 
-Modello obbligatorio a 3 tabelle:
+Modello contabile canonico (post micro-fix 1):
 
-| Ledger | Contenuto | Totale |
+| Categoria | Contenuto | Totale |
 |---|---|---|
-| **A · Reusable coverage** | REUSE_VALID + REUSE_CONDITIONAL (fonte EV-F2) — arruolati | **18 effective** (44 teorico) |
-| **B · Future new-item requirement** | Gap allocation (nuova identità blueprint) | **102** |
-| **C · Total planned coverage** | A_effective + B | **120** |
+| **COMMITTED_REUSE** | 12 REUSE_VALID (tutti arruolati) | **12** |
+| **PROVISIONAL_CONDITIONAL_ALLOCATION** | 6 REUSE_CONDITIONAL selezionati (provisional) | **6** |
+| **FUTURE_NEW_ITEM_BASE_ALLOCATION** | Gap allocation (nuova identità blueprint) | **102** |
+| **BLUEPRINT TOTAL** | Somma delle 3 categorie in blueprint | **120** |
+| **CONDITIONAL_FALLBACK_RESERVE** | 26 REUSE_CONDITIONAL non selezionati (**outside blueprint count**) | **6 di riserva contingency + 20 non arruolabili** |
 
-Formula esatta: `A_effective (18) + B (102) = C (120)`. Riconciliazione a §16, §17, §102.
+**Formula blueprint**:
+```
+12 committed reuse
++ 6 provisional conditional allocation
++ 102 future new-item allocation
+= 120 blueprint unit
+```
+
+**Regola fallback**: se un provisional fallisce futura validazione → sostituito **1:1** da 1 future new-item unit. Totale blueprint resta **120** (`CONDITIONAL_FALLBACK_RESERVE` copre fino a 6 sostituzioni).
+
+**Worst-case futuro**:
+```
+validated reuse         = 12
+future new-item need    = 108
+total                   = 120
+```
+
+**⚠ VIETATO** usare la frase "18 riusi garantiti". Solo i **12 committed** sono garantiti; i 6 provisional restano subject to future validation.
+
+Riconciliazione a §16, §17, §102.
 
 ## 13. reusable coverage ledger
 
@@ -158,7 +183,7 @@ Standby (26/44): 26 REUSE_CONDITIONAL non arruolati, disponibili come rarity var
 
 ## 14. conditional coverage ledger
 
-Sub-ledger dei 32 REUSE_CONDITIONAL (parte di Ledger A):
+Sub-ledger dei 32 REUSE_CONDITIONAL (parte del ledger reusable):
 
 - Condition code catalog required (§83 AFX1)
 - Per-item PM approval mandatory
@@ -176,6 +201,25 @@ Confidence per condition group:
 | **Total** | **32** | — | — |
 
 **Nessuna inclusione dinamica** per keyword/tag/Intelligenza/caster/warlock (AFX1-Q9 ratified).
+
+### 14.1 · Enumerazione esplicita dei 6 PROVISIONAL_CONDITIONAL_ALLOCATION (micro-fix 2)
+
+I 6 REUSE_CONDITIONAL selezionati per allocation provisional nel blueprint 120 (**VIETATA selezione via keyword/query dinamica/tag generico**):
+
+| # | `item_id` | `slot` | `family` | `condition_code` | `reason` | `identity_risk` | `mutation_required` | `approval_status` |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `cond_reuse_caster_stat_neutral_01` | chest | armor_stoffa | `COND_STAT_NEUTRAL_INT` | main-stat Int già compatibile con Cacciatore Vuoto, no mutation | MEDIUM | false | provisional |
+| 2 | `cond_reuse_caster_stat_neutral_02` | legs | armor_stoffa | `COND_STAT_NEUTRAL_INT` | main-stat Int già compatibile, allocation T1 legs stoffa | MEDIUM | false | provisional |
+| 3 | `cond_reuse_caster_stat_neutral_03` | accessory | universal_neutral | `COND_ACCESSORY_NEUTRAL` | accessory identity neutral, main-stat Int compatibile | LOW | false | provisional |
+| 4 | `cond_reuse_caster_stat_neutral_04` | ring | universal_neutral | `COND_ACCESSORY_NEUTRAL` | ring identity neutral, no class borrowing | LOW | false | provisional |
+| 5 | `cond_reuse_focus_mechanism_compat_01` | main_hand | focus | `COND_FOCUS_MECHANISM_OK` | proficiency focus compatibile, no anti-lore | MEDIUM | false | provisional |
+| 6 | `cond_reuse_pugnale_mechanism_compat_01` | main_hand | pugnale | `COND_PUGNALE_MECHANISM_OK` | proficiency pugnale compatibile, mechanism-scope OK | MEDIUM | false | provisional |
+
+**⚠ Nota su `item_id`**: gli identificatori riportati sopra sono **codici blueprint provisional** (non item_id runtime Registry v3). L'associazione item_id ↔ item live viene demandata a IS1/allowlist gate futuro con dry-run + PM per-item approval. Nessuna scrittura DB, nessuna creazione runtime.
+
+I 6 restano soggetti a: **allowlist** · **validazione per-item** · **dry-run** · **snapshot** · **futuro GO PM** (F2-Q2 policy AFX1-Q9).
+
+**Regola fallback** (§12): se un provisional fallisce validazione → sostituito 1:1 da 1 future new-item unit. `CONDITIONAL_FALLBACK_RESERVE = 6` copre worst-case totale.
 
 ## 15. future item requirement ledger
 
@@ -266,21 +310,21 @@ Armor stoffa 8 · Armor cuoio 4 · Weapon focus 2 · Weapon balestra 1 · Weapon
 
 Tier 3 · Lv31–45 · **26 blueprint unit** (100% Ledger B):
 
-Armor stoffa 10 · Armor cuoio 4 · Weapon focus 3 · Weapon balestra 1 · Weapon pugnale 1 · Off-hand 1 · Universal 7 · Sum T3 = **26**. Legendary T3 = **1** (main_hand focus). Rarity: C 9, U 8, R 6, E 2, L 1.
+Armor stoffa 10 · Armor cuoio 4 · Weapon focus 3 · Weapon balestra 1 · Weapon pugnale 1 · Off-hand 1 · Universal 7 · Sum T3 = **26**. **Legendary T3 = 0** (post micro-fix 3, Legendary Vuoto v1 = T5 ONLY). Rarity: C 9, U 8, R 6, E 3, L 0.
 
 ## 22. T4 allocation
 
 Tier 4 · Lv46–55 · **26 blueprint unit** (100% Ledger B):
 
-Armor stoffa 10 · Armor cuoio 4 · Weapon focus 2 · Weapon balestra 2 · Weapon pugnale 1 · Off-hand 2 · Universal 7 · Sum T4 = **26**. Legendary T4 = **2** (main_hand focus + legs stoffa). Rarity: C 9, U 6, R 6, E 3, L 2.
+Armor stoffa 10 · Armor cuoio 4 · Weapon focus 2 · Weapon balestra 2 · Weapon pugnale 1 · Off-hand 2 · Universal 7 · Sum T4 = **26**. **Legendary T4 = 0** (post micro-fix 3, Legendary Vuoto v1 = T5 ONLY). Rarity: C 9, U 7, R 7, E 3, L 0.
 
 ## 23. T5 allocation
 
 Tier 5 · Lv56–60 · **28 blueprint unit** (100% Ledger B) · **ENDGAME**:
 
-Armor stoffa 7 · Armor cuoio 3 · Weapon focus 1 · Weapon balestra 2 · Weapon pugnale 1 · Off-hand 3 · Universal 13 · Sum T5 = **28**. Legendary T5 = **3** (main_hand focus + main_hand balestra + chest). Rarity: C 8, U 5, R 6, E 6, L 3.
+Armor stoffa 7 · Armor cuoio 3 · Weapon focus 1 · Weapon balestra 2 · Weapon pugnale 1 · Off-hand 3 · Universal 13 · Sum T5 = **28**. **Legendary T5 = 3** (main_hand focus + main_hand balestra + chest stoffa). Rarity: C 8, U 5, R 6, E 6, L 3.
 
-**T5 ILVL**: Legendary T5 = ILVL 60 (preservato da R18.5). Non-Legendary T5 = ILVL 56–59.
+**T5 ILVL**: Legendary T5 = ILVL 60 (preservato da R18.5, Legendary tier policy LOCK = T5 ONLY). Non-Legendary T5 = ILVL 56–59.
 
 ## 24. progression continuity
 
@@ -366,7 +410,7 @@ Somma verificata: 8+6+7+10+6+7+5+6+10+7+15+6+12+15 = **120** ✅. Universal posi
 
 ## 35. legs allocation
 
-`legs` · **10 blueprint unit**: stoffa 7, cuoio 3. Tier T1=2, T2=2, T3=2, T4=2, T5=2. Identity CS 7, SF 2, UN 1. Rarity C 3, U 3, R 2, E 1, L 1 (T4).
+`legs` · **10 blueprint unit**: stoffa 7, cuoio 3. Tier T1=2, T2=2, T3=2, T4=2, T5=2. Identity CS 7, SF 2, UN 1. Rarity C 3, U 3, R 3, E 1, L 0 (Legendary T4 rimosso post micro-fix 3, +1 Rare).
 
 ## 36. feet allocation
 
@@ -374,7 +418,7 @@ Somma verificata: 8+6+7+10+6+7+5+6+10+7+15+6+12+15 = **120** ✅. Universal posi
 
 ## 37. main_hand allocation
 
-`main_hand` · **15 blueprint unit**: focus 8, balestra 5, pugnale 2. Tier T1=3, T2=3, T3=3, T4=3, T5=3. Legendary main_hand = 4 (T3 focus, T4 focus, T5 focus, T5 balestra). Alias: `weapon_main / main-hand` → `main_hand`.
+`main_hand` · **15 blueprint unit**: focus 8, balestra 5, pugnale 2. Tier T1=3, T2=3, T3=3, T4=3, T5=3. **Legendary main_hand = 2** (T5 focus + T5 balestra; post micro-fix 3 rimossi T3 focus e T4 focus Legendary). Alias: `weapon_main / main-hand` → `main_hand`.
 
 ## 38. off_hand allocation
 
@@ -386,7 +430,7 @@ Somma verificata: 8+6+7+10+6+7+5+6+10+7+15+6+12+15 = **120** ✅. Universal posi
 
 ## 40. accessory allocation
 
-`accessory` · **15 blueprint unit** (universal position, highest count): Tier T1=2, T2=3, T3=3, T4=3, T5=4. Identity CS 5, SF 4, UN 6. Rarity C 5, U 4, R 3, E 2, L 1 (T4). Alias: `trinket` → `accessory` (NON creare 15° slot).
+`accessory` · **15 blueprint unit** (universal position, highest count): Tier T1=2, T2=3, T3=3, T4=3, T5=4. Identity CS 5, SF 4, UN 6. Rarity C 5, U 4, R 3, E 3, L 0 (Legendary rimosso post micro-fix 3, +1 Epic). Alias: `trinket` → `accessory` (NON creare 15° slot).
 
 ## 41. slot alias handling
 
@@ -420,7 +464,7 @@ Armor stoffa · **42 blueprint unit**:
 | T5 | 7 |
 | **Total** | **42** |
 
-Per slot: head 6, shoulders 5, chest 7, hands 5, wrist 3, waist 4, legs 7, feet 5 = **42** ✅. Rarity: C 15, U 12, R 9, E 4, L 2 (T5 chest, T4 legs).
+Per slot: head 6, shoulders 5, chest 7, hands 5, wrist 3, waist 4, legs 7, feet 5 = **42** ✅. Rarity: C 15, U 13, R 10, E 3, L 1 (T5 chest Legendary; T4 legs Legendary rimosso post micro-fix 3).
 
 ## 44. cuoio allocation
 
@@ -456,7 +500,7 @@ Ordine identitario: **focus > balestra > pugnale** ✅. **Vietato**: tomo · bas
 
 ## 47. focus allocation
 
-Focus · **10 blueprint unit**: Tier T1=2, T2=2, T3=3, T4=2, T5=1. Legendary T3=1, T4=1, T5=1 (Legendary total = 3). Slot mix: main_hand 8, off_hand 2 (T4-T5). Focus = famiglia **primaria** ✅.
+Focus · **10 blueprint unit**: Tier T1=2, T2=2, T3=3, T4=2, T5=1. **Legendary T5=1 (total = 1)**; T3/T4 Legendary rimossi post micro-fix 3. Slot mix: main_hand 8, off_hand 2 (T4-T5). Focus = famiglia **primaria** ✅.
 
 ## 48. balestra allocation
 
@@ -468,7 +512,7 @@ Pugnale · **4 blueprint unit**: Tier T1=0, T2=1, T3=1, T4=1, T5=1. Nessun Legen
 
 ## 50. focus-primary identity
 
-Verifica focus-primary (G5): focus count 10 > balestra 7 > pugnale 4 ✅; focus Legendary = 3 (di cui T5=1) ✅; focus tier presence T1..T5 = 100% ✅; focus off_hand present T4-T5 ✅. **Verdict**: **CONFIRMED** ✅. Nessuna famiglia non-Vuoto usata come compensazione.
+Verifica focus-primary (G5): focus count 10 > balestra 7 > pugnale 4 ✅; focus Legendary = 1 (solo T5, post micro-fix 3) ✅; focus tier presence T1..T5 = 100% ✅; focus off_hand present T4-T5 ✅. **Verdict**: **CONFIRMED** ✅. Nessuna famiglia non-Vuoto usata come compensazione.
 
 ## 51. universal position allocation
 
@@ -500,15 +544,15 @@ Verifica: class_specific 68 (56.7%, dominante) ✅; shared_family 30 (25.0%, rag
 
 ## 56. rarity allocation overview
 
-Rarity totale · 120 blueprint unit:
+Rarity totale · 120 blueprint unit (post micro-fix 4):
 
 | Rarity | Count | % | Multiplier budget |
 |---|---|---|---|
 | Common | 42 | 35.0% | 1.00 |
-| Uncommon | 32 | 26.7% | 1.15 |
-| Rare | 26 | 21.7% | 1.35 |
-| Epic | 14 | 11.7% | 1.60 |
-| Legendary | 6 | 5.0% | 1.85 |
+| Uncommon | 33 | 27.5% | 1.15 |
+| Rare | 27 | 22.5% | 1.35 |
+| Epic | 15 | 12.5% | 1.60 |
+| Legendary | 3 | 2.5% | 1.85 |
 | **Total** | **120** | 100% | — |
 
 **No moltiplicazione artificiale x5 rarity**: ogni unit = 1 identità 1 rarità primaria. Multi-rarity depth downstream (decisione Registry v3 gate futuro).
@@ -519,38 +563,38 @@ Common · **42 blueprint unit**: Tier T1=8, T2=8, T3=9, T4=9, T5=8. Slot mix: ar
 
 ## 58. Uncommon allocation
 
-Uncommon · **32 blueprint unit**: Tier T1=5, T2=8, T3=8, T4=6, T5=5. Slot mix: armor 18 (stoffa 12, cuoio 6), weapon 5, universal 9. Multiplier: 1.15.
+Uncommon · **33 blueprint unit** (post micro-fix 4): Tier T1=5, T2=8, T3=8, T4=7, T5=5. Slot mix: armor 19 (stoffa 13, cuoio 6), weapon 5, universal 9. Multiplier: 1.15.
 
 ## 59. Rare allocation
 
-Rare · **26 blueprint unit**: Tier T1=3, T2=5, T3=6, T4=6, T5=6. Slot mix: armor 13 (stoffa 9, cuoio 4), weapon 5, universal 8. Multiplier: 1.35.
+Rare · **27 blueprint unit** (post micro-fix 4): Tier T1=3, T2=5, T3=6, T4=7, T5=6. Slot mix: armor 14 (stoffa 10, cuoio 4), weapon 5, universal 8. Multiplier: 1.35.
 
 ## 60. Epic allocation
 
-Epic · **14 blueprint unit**: Tier T1=2, T2=1, T3=2, T4=6, T5=3. Slot mix: armor 5 (stoffa 4, cuoio 1), weapon 3, universal 6. Multiplier: 1.60.
+Epic · **15 blueprint unit** (post micro-fix 4): Tier T1=2, T2=1, T3=3, T4=3, T5=6. Slot mix: armor 5 (stoffa 4, cuoio 1), weapon 3, universal 7. Multiplier: 1.60.
 
 ## 61. Legendary allocation
 
-Legendary · **6 blueprint unit**: Tier T1=0, T2=0, T3=1, T4=2, T5=3. Slot mix: main_hand focus (T3, T4, T5) = 3; main_hand balestra (T5) = 1; chest armor stoffa (T5) = 1; legs armor stoffa (T4) = 1. **Total = 6** ✅. Multiplier: 1.85 (utility_unique inclusa nel totale).
+Legendary · **3 blueprint unit** (post micro-fix 3, Legendary Vuoto v1 = T5 ONLY): Tier T1=0, T2=0, T3=0, T4=0, T5=3. Slot mix: main_hand focus (T5) = 1; main_hand balestra (T5) = 1; chest armor stoffa (T5) = 1. **Total = 3** ✅. Multiplier: 1.85 (utility_unique inclusa nel totale, NON 1.85 raw stats + utility gratuita). Legendary ILVL T5 = **60** (LOCK).
 
 ## 62. rarity-by-tier matrix
 
-Matrice rarity × tier (esatta):
+Matrice rarity × tier (esatta, post micro-fix 4):
 
 | Rarity | T1 | T2 | T3 | T4 | T5 | **Total** |
 |---|---|---|---|---|---|---|
 | Common | 8 | 8 | 9 | 9 | 8 | 42 |
-| Uncommon | 5 | 8 | 8 | 6 | 5 | 32 |
-| Rare | 3 | 5 | 6 | 6 | 6 | 26 |
-| Epic | 2 | 1 | 2 | 6 | 3 | 14 |
-| Legendary | 0 | 0 | 1 | 2 | 3 | 6 |
+| Uncommon | 5 | 8 | 8 | 7 | 5 | 33 |
+| Rare | 3 | 5 | 6 | 7 | 6 | 27 |
+| Epic | 2 | 1 | 3 | 3 | 6 | 15 |
+| Legendary | 0 | 0 | 0 | 0 | 3 | 3 |
 | **Total tier** | **18** | **22** | **26** | **26** | **28** | **120** |
 
-Sum per tier: 18/22/26/26/28 ✅. Sum per rarity: 42/32/26/14/6 ✅.
+Sum per tier: 18/22/26/26/28 ✅. Sum per rarity: 42/33/27/15/3 ✅. Grand total: 120 ✅.
 
 ## 63. rarity-by-slot matrix
 
-Matrice compact (indicative, reconciled at grand total = 120 via §62):
+Matrice compact (indicative, reconciled at grand total = 120 via §62 tier×rarity esatta post micro-fix 4):
 
 - head 8 (C 3, U 3, R 1, E 1, L 0)
 - neck 6 (C 2, U 1, R 2, E 1, L 0)
@@ -560,14 +604,14 @@ Matrice compact (indicative, reconciled at grand total = 120 via §62):
 - hands 7 (C 2, U 2, R 2, E 1, L 0)
 - wrist 5 (C 2, U 1, R 1, E 1, L 0)
 - waist 6 (C 2, U 2, R 1, E 1, L 0)
-- legs 10 (C 3, U 3, R 2, E 1, L 1)
+- legs 10 (C 3, U 3, R 3, E 1, L 0)
 - feet 7 (C 2, U 2, R 2, E 1, L 0)
-- main_hand 15 (C 5, U 4, R 2, E 1, L 3)
+- main_hand 15 (C 5, U 4, R 3, E 1, L 2)
 - off_hand 6 (C 2, U 2, R 1, E 1, L 0)
 - ring 12 (C 4, U 3, R 3, E 2, L 0)
-- accessory 15 (C 5, U 4, R 3, E 2, L 1)
+- accessory 15 (C 5, U 4, R 3, E 3, L 0)
 
-Sum Legendary: 1+1+3+1 = 6 ✅. Riconciliazione finale a §102 (via §62 tier×rarity esatta).
+Sum Legendary per slot: 1 (chest) + 2 (main_hand focus+balestra) = **3** ✅. Grand total via §62 = **120** ✅.
 
 ## 64. anti-duplication rules
 
@@ -801,7 +845,18 @@ Nessun workload item-level in IC1. Solo count.
 
 ## 95. Registry v3 content dependency
 
-Item generation = **NOT AUTHORIZED**; Registry v3 apply = **NOT AUTHORIZED**; Registry v3 module generation = **NOT AUTHORIZED**. Ogni Ledger B unit richiederà futuro gate content generation con: explicit allowlist (per REUSE_CONDITIONAL) o new item spec (per Ledger B pure), condition code catalog compilato (§14, §83), dry-run diff PM-approved, snapshot pre/post, explicit PM GO per apply.
+**NEXT PLANNED GATE = R18.6.RV3-IS1 · Item Specification & Roster Contract** (post-IC1 closure, HOLD).
+
+Regime futuro IS1: DOCUMENTAL ONLY · NO item generation · NO Registry module · NO apply. IS1 dovrà trasformare le 120 blueprint unit in specifiche strutturate (roster · codice blueprint · tier · slot · family · identity · rarity intent · affix pool eligibility · stat-budget band · source reuse/new · condition code per i 6 provisional). IS1 NON definirà: item_id runtime · record DB · loot table · apply script · effect finalization.
+
+**Stato IS1**: **HOLD · NOT AUTHORIZED IN THIS DISPATCH**.
+
+Registry v3 content generation resta **downstream a IS1 CLOSED**:
+- Item generation = **NOT AUTHORIZED**
+- Registry v3 apply = **NOT AUTHORIZED**
+- Registry v3 module generation = **NOT AUTHORIZED**
+
+Ogni Ledger B unit (102 base + fino a 6 fallback replacement) richiederà futuro gate content generation con: explicit allowlist · condition code catalog compilato · dry-run diff PM-approved · snapshot pre/post · explicit PM GO per apply.
 
 ## 96. future item specification dependency
 
@@ -847,20 +902,24 @@ Ogni futura blueprint unit richiederà `can_be_sold_for_real_money = false`. App
 
 ## 102. accounting validation
 
-Cross-check (tutte le somme):
+Cross-check (tutte le somme, post micro-fix 1-5):
 
 | Vista | Formula | Totale | Verifica |
 |---|---|---|---|
 | Per tier | 18+22+26+26+28 | 120 | ✅ |
 | Per slot | 8+6+7+10+6+7+5+6+10+7+15+6+12+15 | 120 | ✅ |
-| Per rarity | 42+32+26+14+6 | 120 | ✅ |
+| Per rarity | 42+33+27+15+3 | 120 | ✅ |
 | Per identity | 68+30+22 | 120 | ✅ |
-| Ledger A_eff + B | 18+102 | 120 | ✅ |
+| Blueprint = 12 committed + 6 provisional + 102 future | 12+6+102 | 120 | ✅ |
+| Worst-case future new-item | 12+108 | 120 | ✅ |
+| Fallback reserve (outside blueprint) | — | 6 (outside) | ✅ |
 | Armor stoffa + cuoio | 42+18 | 60 | ✅ |
 | Weapon focus + balestra + pugnale | 10+7+4 | 21 | ✅ |
 | T5 armor 70/30 | stoffa 7 / cuoio 3 | 70/30 | ✅ |
+| Legendary total | 0+0+0+0+3 (T5 ONLY) | 3 | ✅ |
+| Legendary slots | focus 1 + balestra 1 + chest stoffa 1 | 3 | ✅ |
 
-Reconciliazione: **PASS** ✅. Nessun `~`, nessun range non riconciliato, nessun doppio conteggio.
+Reconciliazione: **PASS** ✅. Nessun `~`, nessun range non riconciliato, nessun doppio conteggio, nessun aggregate accounting. `CONDITIONAL_FALLBACK_RESERVE = 6` **outside blueprint count** (non sommato al 120).
 
 ## 103. risk register
 
@@ -983,23 +1042,19 @@ Blocking: false
 
 ## 105. GO/HOLD recommendation
 
-**Recommendation e1_dev**: **GO CLOSURE IC1** condizionato alla ratifica delle 12 IC1-Qn.
+**Recommendation e1_dev**: **GO CLOSURE IC1** (post applicazione dei 6 micro-fix PM in questo dispatch).
 
-Stato dispatch:
-- IC1 draft completo (105/105 sezioni) ✅
-- 3 ledger riconciliati (A_eff + B = C exact) ✅
+Stato dispatch (post micro-fix):
+- IC1 draft complete 105/105 sezioni ✅
+- Contabilità canonica ratificata: 12 committed + 6 provisional + 102 future = **120** ✅
+- Fallback reserve 6 outside blueprint (worst-case 12+108=120) ✅
+- Legendary 3 (T5 ONLY: focus / balestra / chest stoffa) ✅
+- Rarity 42/33/27/15/3 riconciliato ✅
 - Endgame verdict `ENDGAME_BLUEPRINT_COMPLETE` ✅
 - Nessun item/affix creato · Nessuna Registry v3 module · Nessun DB write ✅
 
-**Prossimi step attesi dal PM**:
-1. Ratifica IC1-Q1..Q12
-2. Autorizzazione closure IC1 (produrre closure report + manifest + PRD append AFX1-style)
-3. Selezione next gate:
-   - Opzione A: Registry v3 content generation gate dedicato
-   - Opzione B: NC1 (Null Conflict Remediation Planning) in parallelo
-   - Opzione C: IC-Legendary hypothetical gate
-   - Opzione D: PM directive alternativa
+**Next planned gate** (post-IC1 closure): **R18.6.RV3-IS1 · Item Specification & Roster Contract** → **HOLD · NOT AUTHORIZED IN THIS DISPATCH**.
 
-**HOLD locks preservati**: AFX2 = RESERVED FUTURE · NC1 = HOLD · Registry v3 apply = NOT AUTHORIZED · Gate 11 = HOLD · Monaco / Wave 1 = HOLD.
+**HOLD locks preservati**: AFX2 = RESERVED FUTURE · NC1 = HOLD · Registry v3 apply = NOT AUTHORIZED · Gate 11 = HOLD · Monaco / Wave 1 = HOLD · IS1 = HOLD.
 
-**🛑 EXPLICIT STOP**: fermo qui, attendo verdict PM. Nessun kickoff closure IC1 in questo dispatch. Nessun kickoff altri gate. Nessun append PRD.
+**🛑 EXPLICIT STOP**: fermo qui, closure formale IC1 procederà nello stesso dispatch (3 artifact + PRD append). Nessun kickoff IS1. Nessun kickoff NC1/Gate 11/Wave 1. Nessuna item generation.

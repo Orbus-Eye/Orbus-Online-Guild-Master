@@ -1,0 +1,156 @@
+{
+  "manifest_metadata": {
+    "manifest_id": "R18.6.RV3-IC1-closure-manifest",
+    "gate_id": "R18.6.RV3-IC1",
+    "gate_title": "Item Coverage & Content Blueprint",
+    "class_pilot": "cacciatore_del_vuoto",
+    "scoping": "A1_FULL",
+    "state": "CLOSED",
+    "pm_locked": true,
+    "immutable": true,
+    "manifest_creation_date_utc": "2026-07-11",
+    "regime": "DOCUMENTAL_ONLY",
+    "sha_policy_canonical_field": "full_file_sha256",
+    "sha_policy_source": "AFX1_closure_sec_31_ratified_by_pm",
+    "sha_policy_note": "Self-referential SHA VIETATO in-file. Tutti gli SHA in questo manifest sono full_file_sha256 reali on-disk calcolati dopo la scrittura di ciascun file, tramite sha256sum esterno."
+  },
+  "artifacts": [
+    {
+      "idx": 1,
+      "path": "/app/memory/r18_6_rv3_ic1_item_coverage_content_blueprint.md",
+      "full_file_sha256": "6421fb7396574dc04878febd17b05c057e8daed3e2f1effe95e88c7b4111f2df",
+      "size_bytes": 52392,
+      "line_count": 1060,
+      "role": "IC1_source_MD_post_micro_fix",
+      "role_description": "Documento sorgente Item Coverage & Content Blueprint post 6 micro-fix PM (terminologia ledger canonica, enumerazione 6 provisional, Legendary 6→3 T5 ONLY, rarity 42/33/27/15/3, next gate IS1, contabilita finale verificata) - 105 sezioni, 120 blueprint unit LOCK",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 2,
+      "path": "/app/memory/r18_6_rv3_ic1_item_coverage_content_blueprint.json",
+      "full_file_sha256": "0e18a0063bbfd75acb23faa70728642ddcb135efdaf124fef4ac75392dd6258e",
+      "size_bytes": 49261,
+      "line_count": 705,
+      "role": "IC1_source_JSON_post_micro_fix",
+      "role_description": "JSON companion post 6 micro-fix - 106 root keys inclusi metadata + section_01..section_105 + enumerazione 6 provisional in section_14 + policy micro-fix applied flags",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 3,
+      "path": "/app/memory/r18_6_rv3_ic1_final_closure_report.md",
+      "full_file_sha256": "048cf41f57a24424ba1df893a6e5534b85d0881b2f297d40e79f7c7b604c0f12",
+      "size_bytes": 18806,
+      "line_count": 412,
+      "role": "IC1_closure_report_MD",
+      "role_description": "Report formale di chiusura IC1 - 32 sezioni obbligatorie (PM verdict, ratifiche, evidenze, governance, SHA policy compliance, IS1 next gate, explicit STOP)",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 4,
+      "path": "/app/memory/r18_6_rv3_ic1_final_closure_report.json",
+      "full_file_sha256": "e3c6d920898bb60907ebcb73bb72e22b8950c6a8ca68092df8e589f568e631f4",
+      "size_bytes": 14780,
+      "line_count": 122,
+      "role": "IC1_closure_report_JSON",
+      "role_description": "JSON companion strutturato del closure report - 33 root keys (metadata + sec_01..sec_32)",
+      "status": "CLOSED",
+      "pm_locked": true,
+      "modification_authorization_post_closure": "NOT_AUTHORIZED"
+    },
+    {
+      "idx": 5,
+      "path": "/app/memory/PRD.md",
+      "full_file_sha256_pre_ic1_append": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74",
+      "full_file_sha256_post_ic1_append": "8129b676bd316d41b0ed852f9803c4a5978eeead2307887b78557a4ae00db042",
+      "size_bytes_post_ic1_append": 256570,
+      "line_count_post_ic1_append": 3849,
+      "line_count_pre_ic1_append": 3818,
+      "lines_appended": 31,
+      "role": "PRD_post_ic1_append",
+      "role_description": "Product Requirements Document con nuova sezione '### R18.6.RV3-IC1 — ITEM COVERAGE & CONTENT BLUEPRINT · CLOSED' contenente 23 bullet verbatim + baseline SHA pre-append (embedded valido, non self-referential). Il full_file_sha256 post-append NON e' stato scritto all'interno del PRD (self-referential vietato per contratto AFX1 sec_31); e' tracciato ESCLUSIVAMENTE in questo manifest.",
+      "status": "APPENDED",
+      "pm_locked": false,
+      "modification_authorization_post_closure": "APPEND_ONLY_FOR_FUTURE_GATE_CLOSURES",
+      "operation_performed": "append_only_no_rewrite",
+      "section_title_appended": "### R18.6.RV3-IC1 — ITEM COVERAGE & CONTENT BLUEPRINT · CLOSED",
+      "bullet_count_appended": 23
+    }
+  ],
+  "governance_evidence": {
+    "pytest_sealed_integrity_test": {
+      "path": "backend/tests/backend_r18_4_sealed_integrity_test.py",
+      "result_expected": "6_passed",
+      "seals_byte_identical_ratio": "36_of_36",
+      "regression_count_expected": 0
+    },
+    "lore_meta_anchor_hash": {
+      "path": "backend/app/content/lore_meta.py",
+      "expected_full_file_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "invariant": true
+    },
+    "backend_changes": 0,
+    "frontend_changes": 0,
+    "openapi_changes": 0,
+    "db_writes": 0,
+    "migrations": 0,
+    "item_generation_operations": 0,
+    "affix_creation_operations": 0,
+    "affix_backfill_operations": 0,
+    "registry_v3_apply_operations": 0,
+    "registry_v3_module_generation_operations": 0,
+    "new_seals_added": 0,
+    "test_files_created": 0,
+    "documental_only_regime_preserved_pct": 100
+  },
+  "sha_policy": {
+    "compliance_source": "AFX1_closure_sec_31_ratified_by_pm",
+    "canonical_field_name": "full_file_sha256",
+    "canonical_field_definition": "sha256_of_complete_file_on_disk_byte_for_byte",
+    "alternative_field_name": "content_body_sha256",
+    "alternative_field_definition": "sha256_of_body_excluding_footer_or_declared_content_portion",
+    "self_referential_policy": {
+      "rule": "NEVER_write_own_full_file_sha256_final_value_inside_the_file_itself",
+      "enforcement": "MANDATORY_for_all_future_gates",
+      "preferred_practice": "track_sha_in_external_closure_manifest_calculated_after_writing_the_main_file"
+    },
+    "ic1_gate_application": {
+      "prd_full_file_sha256_pre_ic1_append": "516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74",
+      "prd_full_file_sha256_post_ic1_append": "8129b676bd316d41b0ed852f9803c4a5978eeead2307887b78557a4ae00db042",
+      "prd_full_file_sha256_post_ic1_append_written_inside_prd": false,
+      "prd_full_file_sha256_post_ic1_append_tracked_in": ["this_manifest", "pm_output_message"],
+      "closure_report_md_and_json_do_not_contain_own_sha": true
+    },
+    "compliance_pct": 100
+  },
+  "final_state": {
+    "cacciatore_del_vuoto": "ACTIVE-DESIGN-READY",
+    "r18_3f": "CLOSED",
+    "rv3_ev": "CLOSED",
+    "afx1": "CLOSED",
+    "ic1": "CLOSED",
+    "is1": "HOLD",
+    "afx2": "RESERVED_FUTURE",
+    "nc1": "HOLD",
+    "registry_v3_item_generation": "NOT_AUTHORIZED",
+    "registry_v3_apply": "NOT_AUTHORIZED",
+    "gate_11": "HOLD",
+    "monaco": "HOLD",
+    "wave_1": "HOLD",
+    "next_planned_gate": "R18.6.RV3-IS1_Item_Specification_and_Roster_Contract",
+    "next_gate_kickoff_authorized_in_this_dispatch": false,
+    "next_gate_awaits": "explicit_pm_verdict"
+  },
+  "explicit_stop": {
+    "ic1_closed": true,
+    "ic1_pm_locked": true,
+    "ic1_immutable": true,
+    "next_action_authorized_in_this_dispatch": "none",
+    "awaiting": "pm_verdict_for_next_gate_selection"
+  }
+}

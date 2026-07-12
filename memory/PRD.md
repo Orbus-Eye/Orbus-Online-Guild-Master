@@ -3816,3 +3816,34 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **`full_file_sha256` pre-append PRD (baseline pre-AFX1 append)**: `b8a9f54fc96428ed18a95ccf09c7adaf4712486ac4b31b03dd47a64f26bca47f`
 
 **`full_file_sha256` post-append PRD**: tracciato ESCLUSIVAMENTE in `r18_6_rv3_afx1_closure_manifest.json` (closure manifest esterno) — self-referential SHA VIETATO in-file per contratto AFX1 §31.
+
+### R18.6.RV3-IC1 — ITEM COVERAGE & CONTENT BLUEPRINT · CLOSED
+
+- Blueprint total 120 LOCK
+- 12 committed REUSE_VALID
+- 6 provisional REUSE_CONDITIONAL
+- 26 conditional standby
+- 102 future new-item base allocation
+- contingency replacement fino a 6
+- worst-case future new-item need 108
+- tier split 18/22/26/26/28
+- armor 42 stoffa / 18 cuoio
+- weapon 10 focus / 7 balestra / 4 pugnale
+- identity 68/30/22
+- rarity 42/33/27/15/3
+- Legendary count 3
+- Legendary T5 only
+- Legendary slots: focus / balestra / chest stoffa
+- endgame blueprint complete
+- affix overlay 140 non-item count
+- item generation non autorizzata
+- Registry v3 apply non autorizzato
+- next planned gate IS1
+- IS1 HOLD
+- NC1 HOLD
+- Gate 11 HOLD
+
+**`full_file_sha256` pre-append PRD (baseline pre-IC1 append)**: `516b6ebe891fe38634b09ec2a59115b06fe8670b43324f7444aa0efff64a7b74`
+
+**`full_file_sha256` post-append PRD**: tracciato ESCLUSIVAMENTE in `r18_6_rv3_ic1_closure_manifest.json` (closure manifest esterno) — self-referential SHA VIETATO in-file per contratto AFX1 §31 (SHA policy).
+
