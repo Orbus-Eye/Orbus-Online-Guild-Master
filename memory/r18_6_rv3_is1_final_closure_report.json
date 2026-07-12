@@ -1,0 +1,259 @@
+{
+  "gate_id": "R18.6.RV3-IS1",
+  "gate_name": "Item Specification & Roster Contract",
+  "closure_date_utc": "2026-07-12",
+  "pm_final_verdict_verbatim": "R18.6.RV3-IS1 · PM APPROVED · GO FORMAL CLOSURE",
+  "regime": "DOCUMENTAL_ONLY",
+  "closure_report": {
+    "point_1_pm_final_verdict": {
+      "verbatim": "R18.6.RV3-IS1 · PM APPROVED · GO FORMAL CLOSURE",
+      "authority": "PM_VERDICT_R18_6_RV3_IS1_APPROVED_GO_FORMAL_CLOSURE"
+    },
+    "point_2_is1_closed": {
+      "gate_status": "CLOSED / PM-LOCKED",
+      "pm_locked": true,
+      "closure_type": "governance_semantic_lock",
+      "not_sealed_technical_lock": true
+    },
+    "point_3_roster_120_120": {
+      "roster_total_units": 120,
+      "verification_source": "roster_120_units array in r18_6_rv3_is1_item_specification_roster_contract.json"
+    },
+    "point_4_122_section_final_source": {
+      "is1_source_md_path": "memory/r18_6_rv3_is1_item_specification_roster_contract.md",
+      "line_count": 1111,
+      "sections_count": 122,
+      "sha256": "cdfc2303c74a0fc94a03861b5ae377f7e1da65800c974fde887ff962ed97c485",
+      "invariato_in_this_turn": true
+    },
+    "point_5_md_json_semantic_parity": {
+      "verdict": "PASS",
+      "sections_aligned": [
+        "source_slot_authority_policy",
+        "reuse_valid_strict_audit",
+        "six_coarse_armor_binding_fallbacks",
+        "three_accessory_slot_reallocations",
+        "reuse_valid_unbound_standby_ledger",
+        "patron_seal_swap_ledger",
+        "source_realization_accounting",
+        "ic1_accounting_reconciliation",
+        "blueprint_code_semantic_audit"
+      ]
+    },
+    "point_6_blueprint_code_contract": {
+      "unique_blueprint_codes": 120,
+      "tier_token_match": 120,
+      "slot_token_match": 120,
+      "family_token_match": 120,
+      "outliers": 0,
+      "collisions": 0,
+      "stale_semantic_codes": 0,
+      "audit_result": "120/120 CLEAN"
+    },
+    "point_7_source_slot_authority_policy": {
+      "slot_type_granular_authoritative_values": ["head","neck","shoulders","chest","back","hands","wrist","waist","legs","feet","main_hand","off_hand","ring","accessory"],
+      "canonical_slot_count": 14,
+      "pm_approved_aliases": {
+        "amulet": "neck",
+        "belt": "waist",
+        "cloak": "back",
+        "cape": "back",
+        "trinket": "accessory",
+        "weapon_main": "main_hand",
+        "weapon_off": "off_hand",
+        "main-hand": "main_hand",
+        "off-hand": "off_hand"
+      },
+      "pm_approved_aliases_count": 9
+    },
+    "point_8_armor_tags_authority_boundary": {
+      "authoritative_for": "armor_family (stoffa|cuoio)",
+      "not_authoritative_for_slot": true
+    },
+    "point_9_weapon_tags_authority_boundary": {
+      "authoritative_for": "weapon_family (focus|balestra|pugnale)",
+      "not_slot_substitute": true,
+      "note": "equipment contract decides"
+    },
+    "point_10_alias_policy_preserved": {
+      "authorized_aliases_count": 9,
+      "forbidden_mappings": [
+        "armor -> chest/legs/hands/feet/shoulders/wrist/waist",
+        "accessory -> ring/neck/back",
+        "focus -> pugnale"
+      ]
+    },
+    "point_11_ev_f2_reuse_valid_universe": {
+      "size": 12,
+      "immutable": true
+    },
+    "point_12_is1_active_reuse_valid_exact_bound": {
+      "count": 6,
+      "slugs": ["warlock_patron_seal","warlock_imp_collar","warlock_hex_sigil","warlock_black_ring","warlock_cursed_pendant","warlock_fetish_charm"],
+      "note": "3 original EXACT_MATCH + 3 via accessory swap"
+    },
+    "point_13_unbound_reuse_valid_standby": {
+      "count": 6,
+      "slugs": ["warlock_covenant_robe","warlock_coven_mantle","warlock_novice_robe","warlock_hex_focus_robe","warlock_shadow_mail","warlock_shadowweave_robe"],
+      "standby_reason": "no_authoritative_granular_slot"
+    },
+    "point_14_active_reuse_conditional": {
+      "count": 3,
+      "slugs": ["apprentice-robe","initiate_robe","apprentice-handbook"],
+      "status": "PM_RATIFIED_IS1_A"
+    },
+    "point_15_conditional_standby": {
+      "count": 29,
+      "status": "PM_LOCKED",
+      "source_gate": "IS1-A"
+    },
+    "point_16_new_future": {
+      "total": 111,
+      "baseline_original": 105,
+      "armor_fallback_absorbed": 6
+    },
+    "point_17_worst_case_new_future": {
+      "value": 114,
+      "condition": "all_3_reuse_conditional_fail",
+      "documented_not_applied": true
+    },
+    "point_18_six_coarse_armor_fallback_decisions": {
+      "policy": "MIT-D SOURCE-BINDING FALLBACK",
+      "rejected_options": ["MIT-A","MIT-B","MIT-C"],
+      "records": [
+        {"slug":"warlock_covenant_robe","source_item_id":"2618698e-9f73-40a0-8286-085c922b3179","blueprint_code_absorbed":"cdv_t1_head_stoffa_001","tier":"T1","slot":"head","armor_type":"stoffa","rarity":"Common","identity":"shared_family"},
+        {"slug":"warlock_coven_mantle","source_item_id":"dca4edbd-616d-4ce3-9c2a-29c7b78784ac","blueprint_code_absorbed":"cdv_t1_shoulders_stoffa_001","tier":"T1","slot":"shoulders","armor_type":"stoffa","rarity":"Common","identity":"shared_family"},
+        {"slug":"warlock_novice_robe","source_item_id":"3a6cc600-8316-46f1-8431-fd4281840623","blueprint_code_absorbed":"cdv_t1_chest_stoffa_001","tier":"T1","slot":"chest","armor_type":"stoffa","rarity":"Common","identity":"shared_family"},
+        {"slug":"warlock_hex_focus_robe","source_item_id":"5417640b-3030-4be1-a68d-e3cf87e0444c","blueprint_code_absorbed":"cdv_t1_chest_stoffa_002","tier":"T1","slot":"chest","armor_type":"stoffa","rarity":"Common","identity":"shared_family"},
+        {"slug":"warlock_shadow_mail","source_item_id":"3ac9f59f-430e-4638-bee5-62ca225648ec","blueprint_code_absorbed":"cdv_t1_legs_stoffa_001","tier":"T1","slot":"legs","armor_type":"stoffa","rarity":"Uncommon","identity":"class_specific"},
+        {"slug":"warlock_shadowweave_robe","source_item_id":"c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9","blueprint_code_absorbed":"cdv_t1_legs_stoffa_002","tier":"T1","slot":"legs","armor_type":"stoffa","rarity":"Uncommon","identity":"class_specific"}
+      ],
+      "records_count": 6,
+      "lineage_fields": ["replaces_unbound_reuse_valid_source_item_id","replaces_unbound_reuse_valid_slug","source_binding_fallback","source_binding_fallback_reason","source_binding_fallback_gate"],
+      "runtime_items_created": 0
+    },
+    "point_19_three_accessory_swaps": {
+      "swaps": [
+        {"slug":"warlock_black_ring","previous_bp":"cdv_t1_ring_universal_position_001","new_bp":"cdv_t2_accessory_universal_position_001","partner_previous_bp":"cdv_t2_accessory_universal_position_001","swap_reason":"accessory_source_slot_realignment_IS1"},
+        {"slug":"warlock_cursed_pendant","previous_bp":"cdv_t1_neck_universal_position_001","new_bp":"cdv_t2_accessory_universal_position_002","partner_previous_bp":"cdv_t2_accessory_universal_position_002","swap_reason":"accessory_source_slot_realignment_IS1"},
+        {"slug":"warlock_fetish_charm","previous_bp":"cdv_t1_back_universal_position_001","new_bp":"cdv_t3_accessory_universal_position_001","partner_previous_bp":"cdv_t3_accessory_universal_position_001","swap_reason":"accessory_source_slot_realignment_IS1"}
+      ],
+      "swaps_executed": 3,
+      "impossible_swaps": 0,
+      "cascading_used": false,
+      "new_alias_policy_invented": false,
+      "charm_to_back_rule_introduced": false
+    },
+    "point_20_warlock_patron_seal_correction": {
+      "final_slot": "accessory",
+      "final_equipment_category": "UNIVERSAL",
+      "final_armor_type": null,
+      "final_weapon_family": null,
+      "final_blueprint_code": "cdv_t2_accessory_universal_position_003",
+      "final_strict_verdict": "EXACT_MATCH",
+      "source_item_id": "4b728fcb-129a-44b5-b446-5c3647a214f6",
+      "active_stale_hands_stoffa_mappings_to_patron_seal": 0,
+      "residual_hands_stoffa_references_note": "all legitimate: refer to NEW_FUTURE partner that inherited the blueprint_code, never to patron_seal"
+    },
+    "point_21_zero_active_source_slot_mismatch": {
+      "ACTIVE_MISMATCH": 0,
+      "CONFLICTING_SOURCE_METADATA": 0,
+      "ACTIVE_EXACT_MATCH": 6,
+      "ACTIVE_CANONICAL_ALIAS_MATCH": 0,
+      "UNBOUND_COARSE_SOURCE": 6,
+      "formulation_final": "12/12 adjudicated · 6 exact-bound active · 6 eligibility-valid but granular-slot unbound"
+    },
+    "point_22_blueprint_code_semantic_audit": {
+      "verdict": "120/120 CLEAN",
+      "outliers": 0,
+      "collisions": 0,
+      "stale_semantic_codes": 0,
+      "swap_lineage_present_for": ["patron_seal_micro_fix","black_ring_accessory_realignment","cursed_pendant_accessory_realignment","fetish_charm_accessory_realignment"]
+    },
+    "point_23_ic1_aggregate_locks_preserved": {
+      "delta": {
+        "blueprint_total": 0,
+        "tier": {"T1":0,"T2":0,"T3":0,"T4":0,"T5":0},
+        "slot": {"head":0,"neck":0,"shoulders":0,"chest":0,"back":0,"hands":0,"wrist":0,"waist":0,"legs":0,"feet":0,"main_hand":0,"off_hand":0,"ring":0,"accessory":0},
+        "rarity": {"Common":0,"Uncommon":0,"Rare":0,"Epic":0,"Legendary":0},
+        "identity": {"class_specific":0,"shared_family":0,"universal_neutral":0},
+        "armor_family": {"stoffa":0,"cuoio":0},
+        "weapon_family": {"focus":0,"balestra":0,"pugnale":0},
+        "affix_overlay": 0,
+        "legendary_allocation": 0
+      },
+      "ic1_status": "CLOSED_LOCKED · NO REOPEN",
+      "modification_class": "IS1_SOURCE_BINDING_REALIZATION (not blueprint coverage change)"
+    },
+    "point_24_legendary_3_t5_only": {
+      "legendary_total": 3,
+      "tier_distribution": {"T5": 3},
+      "non_t5_legendary_count": 0
+    },
+    "point_25_affix_overlay_140": {
+      "sum_eligible_affix_families": 140
+    },
+    "point_26_anti_p2w_intent": {
+      "runtime_items_created": 0,
+      "economy_altered": false,
+      "drop_rate_altered": false,
+      "rng_altered": false,
+      "shop_price_altered": false,
+      "competitive_parameters_altered": false
+    },
+    "point_27_item_naming_deferred": {
+      "deferred_to": "IS2-A",
+      "is2_a_status": "HOLD"
+    },
+    "point_28_final_lore_deferred": {
+      "deferred_to": "IS2-A / lore finalization gate"
+    },
+    "point_29_stat_numbers_deferred": {
+      "deferred_to": "IS2-B",
+      "is2_b_status": "PLANNED / HOLD"
+    },
+    "point_30_registry_generation_deferred": {
+      "registry_v3_generation": "NOT_AUTHORIZED",
+      "runtime_item_ids_generated": 0
+    },
+    "point_31_implementation_apply_disabled": {
+      "runtime_item_creation": 0,
+      "runtime_item_id_all_null": true,
+      "registry_apply": false,
+      "apply_authorized_on_mit_d_fallbacks": false
+    },
+    "point_32_governance_evidence": {
+      "pytest_backend_r18_4_sealed_integrity_test": "6 passed · 36/36 byte-identical",
+      "lore_meta_py_hash_observed": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "lore_meta_py_hash_expected": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "lore_meta_py_verdict": "INVARIATO",
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_writes": 0,
+      "migration": 0,
+      "item_generation": 0,
+      "registry_module": 0,
+      "registry_apply": 0,
+      "sealed_artifacts_total": 36,
+      "sealed_artifacts_byte_identical": true,
+      "new_seals_added": 0
+    },
+    "point_33_final_stop": {
+      "IS1": "CLOSED / PM-LOCKED",
+      "IS1_patch": "FROZEN",
+      "IS1_closure": "APPROVED · ARTIFACT WRITTEN",
+      "PRD_append": "APPLIED",
+      "IS2_A": "HOLD",
+      "IS2_B": "PLANNED / HOLD",
+      "AFX2": "RESERVED FUTURE",
+      "NC1": "HOLD",
+      "Registry_v3_gen": "NOT_AUTHORIZED",
+      "Registry_v3_app": "NOT_AUTHORIZED",
+      "Gate_11": "HOLD",
+      "Monaco": "HOLD",
+      "Wave_1": "HOLD",
+      "next_action": "ATTENDO VERDICT PM"
+    }
+  }
+}

@@ -3847,3 +3847,52 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **`full_file_sha256` post-append PRD**: tracciato ESCLUSIVAMENTE in `r18_6_rv3_ic1_closure_manifest.json` (closure manifest esterno) — self-referential SHA VIETATO in-file per contratto AFX1 §31 (SHA policy).
 
+
+
+## R18.6.RV3-IS1 · Item Specification & Roster Contract · CLOSED · 2026-07-12T11:33:56.047929+00:00
+
+**Gate**: `R18.6.RV3-IS1`
+**PM final verdict**: `R18.6.RV3-IS1 · PM APPROVED · GO FORMAL CLOSURE`
+**Regime**: DOCUMENTAL ONLY · zero code · zero DB · zero nuovi sigilli
+**Closure type**: `governance_semantic_lock` (non sealed technical lock)
+
+- IS1 = PM APPROVED · CLOSED / PM-LOCKED
+- roster 120/120
+- blueprint code unique 120/120
+- source-slot authority policy LOCK (`slot_type` = authoritative granular · 14 canonici + 9 alias PM autorizzati)
+- `armor_tags` NON determina lo slot (authoritative solo per armor_family: stoffa/cuoio)
+- `weapon_tags` NON sostituisce lo slot (authoritative solo per weapon_family: focus/balestra/pugnale)
+- EV-F2 REUSE_VALID universe = 12 (IMMUTABLE)
+- IS1 active exact-bound REUSE_VALID = 6 (`patron_seal`, `imp_collar`, `hex_sigil` + 3 accessory riallocati via swap: `black_ring`, `cursed_pendant`, `fetish_charm`)
+- REUSE_VALID unbound standby = 6 (6 record armor coarse: `covenant_robe`, `coven_mantle`, `novice_robe`, `hex_focus_robe`, `shadow_mail`, `shadowweave_robe`)
+- active provisional REUSE_CONDITIONAL = 3 (`apprentice-robe`, `initiate_robe`, `apprentice-handbook`)
+- conditional standby = 29 (IS1-A ledger · invariato)
+- active NEW_FUTURE = 111 (105 baseline + 6 armor MIT-D fallback absorbed)
+- worst-case NEW_FUTURE = 114 (scenario tutti 3 conditional fail · documentato · non applicato)
+- source total = 120 (6 + 3 + 111)
+- tier lock preserved (T1=18 · T2=22 · T3=26 · T4=26 · T5=28)
+- slot lock preserved (14 canonical slots · aggregati invariati)
+- category lock preserved (ARMOR=60 · WEAPON=21 · UNIVERSAL=39)
+- identity lock preserved (class_specific=68 · shared_family=30 · universal_neutral=22)
+- rarity lock preserved (Common=42 · Uncommon=33 · Rare=27 · Epic=15 · Legendary=3)
+- armor lock preserved (stoffa=42 · cuoio=18)
+- weapon lock preserved (focus=10 · balestra=7 · pugnale=4)
+- Legendary = 3 T5-only
+- affix overlay = 140
+- item naming deferred (IS2-A · HOLD)
+- lore finalization deferred (IS2-A / lore gate)
+- stat finalization deferred (IS2-B · PLANNED / HOLD)
+- Registry v3 generation NOT AUTHORIZED
+- Registry v3 apply NOT AUTHORIZED
+- IS2-A remains HOLD
+- NC1 remains HOLD
+- Gate 11 remains HOLD
+
+**Artifact IS1 tracciati (PM_LOCKED)**:
+- `memory/r18_6_rv3_is1_item_specification_roster_contract.md`
+- `memory/r18_6_rv3_is1_item_specification_roster_contract.json`
+- `memory/r18_6_rv3_is1_final_closure_report.md`
+- `memory/r18_6_rv3_is1_final_closure_report.json`
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 artifacts UNCHANGED.
+**Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.

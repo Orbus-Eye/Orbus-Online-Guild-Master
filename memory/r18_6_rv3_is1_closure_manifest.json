@@ -1,0 +1,81 @@
+{
+  "manifest_id": "R18.6.RV3-IS1_closure_manifest",
+  "manifest_purpose": "Deterministic tracking of the 5 artifacts locked/appended for R18.6.RV3-IS1 formal closure",
+  "created_utc": "2026-07-12T11:35:00.000028+00:00",
+  "pm_verdict_ref": "R18.6.RV3-IS1 · PM APPROVED · GO FORMAL CLOSURE",
+  "closure_type": "governance_semantic_lock",
+  "sealed_technical_lock": false,
+  "sha_policy_note": "Manifest self-hash is intentionally NOT included in this file (SHA policy §31). The real on-disk SHA of this manifest is reported in the closure chat message.",
+  "line_count_convention": "POSIX wc -l (count of newline bytes)",
+  "artifacts": [
+    {
+      "path": "memory/r18_6_rv3_is1_item_specification_roster_contract.md",
+      "full_file_sha256": "cdfc2303c74a0fc94a03861b5ae377f7e1da65800c974fde887ff962ed97c485",
+      "size_bytes": 48214,
+      "line_count": 1111,
+      "role": "IS1_SOURCE_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is1_item_specification_roster_contract.json",
+      "full_file_sha256": "1b0d3ea057b36362fd779ee2d1f5f0e6af1f0b64abdc4a00b7aefd745a616f6b",
+      "size_bytes": 245203,
+      "line_count": 6982,
+      "role": "IS1_SOURCE_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is1_final_closure_report.md",
+      "full_file_sha256": "01c9fcd52b0ebc2c09b875bc3dc5ea885956bcf88eb171677d4c81a741d6603f",
+      "size_bytes": 12726,
+      "line_count": 284,
+      "role": "IS1_CLOSURE_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is1_final_closure_report.json",
+      "full_file_sha256": "4cfa39689afc494b0206dcf5a7beba7b1d7a63e234c11a3656ce51f9655fcc19",
+      "size_bytes": 11791,
+      "line_count": 259,
+      "role": "IS1_CLOSURE_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/PRD.md",
+      "full_file_sha256": "fa4bf41667b6bce77bc48c245aa34fe1fc390698f22e8bbe5e161ca8a8bde746",
+      "size_bytes": 259415,
+      "line_count": 3898,
+      "role": "PRD_MASTER",
+      "status": "PM_APPENDED",
+      "pm_locked": false
+    }
+  ],
+  "anchor_reference": {
+    "path": "backend/app/content/lore_meta.py",
+    "expected_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "observed_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "verdict": "INVARIATO",
+    "sealed_artifact": true,
+    "modification_permitted": false
+  },
+  "final_gate_status": {
+    "IS1": "CLOSED / PM-LOCKED",
+    "IS1_patch": "FROZEN",
+    "IS1_closure": "APPROVED · ARTIFACT WRITTEN",
+    "PRD_append": "APPLIED",
+    "IS2_A": "HOLD",
+    "IS2_B": "PLANNED / HOLD",
+    "AFX2": "RESERVED FUTURE",
+    "NC1": "HOLD",
+    "Registry_v3_gen": "NOT_AUTHORIZED",
+    "Registry_v3_app": "NOT_AUTHORIZED",
+    "Gate_11": "HOLD",
+    "Monaco": "HOLD",
+    "Wave_1": "HOLD",
+    "next_action": "ATTENDO VERDICT PM"
+  }
+}
