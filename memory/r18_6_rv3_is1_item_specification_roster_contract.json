@@ -22,7 +22,9 @@
     "sha_policy_31_compliance": "no_self_referential_sha_embedded_in_this_file",
     "sections_target_md": 113,
     "is1_micro_fix_applied_at_utc": "2026-07-12T08:07:31.870823+00:00",
-    "is1_micro_fix_gate_ref": "PM_VERDICT_IS1_ROSTER_APPROVED_WITH_ONE_BLOCKING_SOURCE_SLOT_MICRO_FIX"
+    "is1_micro_fix_gate_ref": "PM_VERDICT_IS1_ROSTER_APPROVED_WITH_ONE_BLOCKING_SOURCE_SLOT_MICRO_FIX",
+    "is1_synchronized_source_binding_patch_applied_at_utc": "2026-07-12T09:07:35.278375+00:00",
+    "is1_synchronized_source_binding_patch_gate_ref": "R18.6.RV3-IS1 · SYNCHRONIZED SOURCE-BINDING PATCH · PM GO"
   },
   "governance_locks": {
     "apply_authorized": false,
@@ -246,24 +248,18 @@
       "universal_position": false,
       "rarity_intent": "Common",
       "identity_class": "shared_family",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "2618698e-9f73-40a0-8286-085c922b3179",
-      "source_slug": "warlock_covenant_robe",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Rare",
       "blueprint_vs_live_rarity_divergence": true,
-      "divergence_note": "blueprint rarity_intent=Common · live_rarity=Rare · blueprint spec authoritative",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.00_baseline",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -271,8 +267,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 1
+      "roster_index": 1,
+      "replaces_unbound_reuse_valid_source_item_id": "2618698e-9f73-40a0-8286-085c922b3179",
+      "replaces_unbound_reuse_valid_slug": "warlock_covenant_robe",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T2",
@@ -548,21 +548,21 @@
       "roster_index": 8
     },
     {
-      "tier": "T1",
-      "required_level_band": "1-15",
-      "slot": "neck",
+      "tier": "T2",
+      "required_level_band": "16-30",
+      "slot": "accessory",
       "slot_alias_source": [
-        "amulet"
+        "trinket"
       ],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
-      "sequence": 1,
-      "blueprint_code": "cdv_t1_neck_universal_position_001",
+      "sequence": 2,
+      "blueprint_code": "cdv_t2_accessory_universal_position_002",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
-      "rarity_intent": "Common",
-      "identity_class": "universal_neutral",
+      "rarity_intent": "Rare",
+      "identity_class": "class_specific",
       "source_type": "REUSE_VALID",
       "source_item_id": "31b9b255-123e-425f-a071-4a70f53d989b",
       "source_slug": "warlock_cursed_pendant",
@@ -577,7 +577,7 @@
       "eligible_affix_families": [
         "void.mark.power"
       ],
-      "stat_budget_band": "budget_1.00_baseline",
+      "stat_budget_band": "budget_1.35",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "universal_position",
@@ -587,7 +587,14 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 9
+      "roster_index": 9,
+      "previous_blueprint_code": "cdv_t1_neck_universal_position_001",
+      "new_blueprint_code": "cdv_t2_accessory_universal_position_002",
+      "swap_partner_blueprint_code_previous": "cdv_t2_accessory_universal_position_002",
+      "swap_partner_new_holds_blueprint_code": "cdv_t1_neck_universal_position_001",
+      "swap_reason": "accessory_source_slot_realignment_IS1",
+      "swap_gate": "IS1_accessory_realignment_2026_02",
+      "source_slot_status": "REALIGNED_EXACT_MATCH_via_one_for_one_swap"
     },
     {
       "tier": "T2",
@@ -808,24 +815,18 @@
       "universal_position": false,
       "rarity_intent": "Common",
       "identity_class": "shared_family",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
-      "source_slug": "warlock_coven_mantle",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Epic",
       "blueprint_vs_live_rarity_divergence": true,
-      "divergence_note": "blueprint rarity_intent=Common · live_rarity=Epic · blueprint spec authoritative",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.00_baseline",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -833,8 +834,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 15
+      "roster_index": 15,
+      "replaces_unbound_reuse_valid_source_item_id": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
+      "replaces_unbound_reuse_valid_slug": "warlock_coven_mantle",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T2",
@@ -1084,22 +1089,17 @@
       "universal_position": false,
       "rarity_intent": "Common",
       "identity_class": "shared_family",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
-      "source_slug": "warlock_novice_robe",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Common",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.00_baseline",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -1107,8 +1107,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 22
+      "roster_index": 22,
+      "replaces_unbound_reuse_valid_source_item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
+      "replaces_unbound_reuse_valid_slug": "warlock_novice_robe",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T1",
@@ -1124,22 +1128,17 @@
       "universal_position": false,
       "rarity_intent": "Common",
       "identity_class": "shared_family",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "5417640b-3030-4be1-a68d-e3cf87e0444c",
-      "source_slug": "warlock_hex_focus_robe",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Common",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.00_baseline",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -1147,8 +1146,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 23
+      "roster_index": 23,
+      "replaces_unbound_reuse_valid_source_item_id": "5417640b-3030-4be1-a68d-e3cf87e0444c",
+      "replaces_unbound_reuse_valid_slug": "warlock_hex_focus_robe",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T1",
@@ -1469,22 +1472,21 @@
       "roster_index": 31
     },
     {
-      "tier": "T1",
-      "required_level_band": "1-15",
-      "slot": "back",
+      "tier": "T3",
+      "required_level_band": "31-45",
+      "slot": "accessory",
       "slot_alias_source": [
-        "cloak",
-        "cape"
+        "trinket"
       ],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
       "sequence": 1,
-      "blueprint_code": "cdv_t1_back_universal_position_001",
+      "blueprint_code": "cdv_t3_accessory_universal_position_001",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
-      "rarity_intent": "Common",
-      "identity_class": "universal_neutral",
+      "rarity_intent": "Epic",
+      "identity_class": "class_specific",
       "source_type": "REUSE_VALID",
       "source_item_id": "b800b05c-28e3-4f5a-af00-3b7d853ce377",
       "source_slug": "warlock_fetish_charm",
@@ -1497,9 +1499,10 @@
       "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
-        "void.mark.power"
+        "void.mark.power",
+        "void.mark.duration"
       ],
-      "stat_budget_band": "budget_1.00_baseline",
+      "stat_budget_band": "budget_1.60",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "universal_position",
@@ -1509,7 +1512,14 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 32
+      "roster_index": 32,
+      "previous_blueprint_code": "cdv_t1_back_universal_position_001",
+      "new_blueprint_code": "cdv_t3_accessory_universal_position_001",
+      "swap_partner_blueprint_code_previous": "cdv_t3_accessory_universal_position_001",
+      "swap_partner_new_holds_blueprint_code": "cdv_t1_back_universal_position_001",
+      "swap_reason": "accessory_source_slot_realignment_IS1",
+      "swap_gate": "IS1_accessory_realignment_2026_02",
+      "source_slot_status": "REALIGNED_EXACT_MATCH_via_one_for_one_swap"
     },
     {
       "tier": "T2",
@@ -2461,22 +2471,17 @@
       "universal_position": false,
       "rarity_intent": "Uncommon",
       "identity_class": "class_specific",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "3ac9f59f-430e-4638-bee5-62ca225648ec",
-      "source_slug": "warlock_shadow_mail",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Uncommon",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.15",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -2484,8 +2489,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 56
+      "roster_index": 56,
+      "replaces_unbound_reuse_valid_source_item_id": "3ac9f59f-430e-4638-bee5-62ca225648ec",
+      "replaces_unbound_reuse_valid_slug": "warlock_shadow_mail",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T1",
@@ -2501,24 +2510,18 @@
       "universal_position": false,
       "rarity_intent": "Uncommon",
       "identity_class": "class_specific",
-      "source_type": "REUSE_VALID",
-      "source_item_id": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
-      "source_slug": "warlock_shadowweave_robe",
+      "source_type": "NEW_FUTURE",
+      "source_item_id": null,
+      "source_slug": null,
       "source_verdict": "EV-F2_REUSE_VALID",
-      "binding_status": "COMMITTED_REUSE_VALID",
       "fallback_activated": false,
       "identity_direction": "caster_warlock_bridge_to_cacciatore_del_vuoto",
-      "lore_status": "IDENTITY_DIRECTION_ONLY",
-      "live_rarity_source": "Rare",
       "blueprint_vs_live_rarity_divergence": true,
-      "divergence_note": "blueprint rarity_intent=Uncommon · live_rarity=Rare · blueprint spec authoritative",
-      "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
         "void.mark.power"
       ],
       "stat_budget_band": "budget_1.15",
-      "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "armor_stoffa",
       "runtime_item_id": null,
@@ -2526,8 +2529,12 @@
       "registry_status": "not_generated",
       "apply_authorized": false,
       "anti_p2w_required": true,
-      "mutation_required": false,
-      "roster_index": 57
+      "roster_index": 57,
+      "replaces_unbound_reuse_valid_source_item_id": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
+      "replaces_unbound_reuse_valid_slug": "warlock_shadowweave_robe",
+      "source_binding_fallback": true,
+      "source_binding_fallback_reason": "coarse_armor_slot_without_granular_authority",
+      "source_binding_fallback_gate": "IS1"
     },
     {
       "tier": "T1",
@@ -4014,14 +4021,16 @@
       "roster_index": 93
     },
     {
-      "tier": "T1",
-      "required_level_band": "1-15",
-      "slot": "ring",
-      "slot_alias_source": [],
+      "tier": "T2",
+      "required_level_band": "16-30",
+      "slot": "accessory",
+      "slot_alias_source": [
+        "trinket"
+      ],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
       "sequence": 1,
-      "blueprint_code": "cdv_t1_ring_universal_position_001",
+      "blueprint_code": "cdv_t2_accessory_universal_position_001",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
@@ -4051,7 +4060,14 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 94
+      "roster_index": 94,
+      "previous_blueprint_code": "cdv_t1_ring_universal_position_001",
+      "new_blueprint_code": "cdv_t2_accessory_universal_position_001",
+      "swap_partner_blueprint_code_previous": "cdv_t2_accessory_universal_position_001",
+      "swap_partner_new_holds_blueprint_code": "cdv_t1_ring_universal_position_001",
+      "swap_reason": "accessory_source_slot_realignment_IS1",
+      "swap_gate": "IS1_accessory_realignment_2026_02",
+      "source_slot_status": "REALIGNED_EXACT_MATCH_via_one_for_one_swap"
     },
     {
       "tier": "T2",
@@ -4626,16 +4642,14 @@
       "roster_index": 108
     },
     {
-      "tier": "T2",
-      "required_level_band": "16-30",
-      "slot": "accessory",
-      "slot_alias_source": [
-        "trinket"
-      ],
+      "tier": "T1",
+      "required_level_band": "1-15",
+      "slot": "ring",
+      "slot_alias_source": [],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
       "sequence": 1,
-      "blueprint_code": "cdv_t2_accessory_universal_position_001",
+      "blueprint_code": "cdv_t1_ring_universal_position_001",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
@@ -4664,24 +4678,28 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 109
+      "roster_index": 109,
+      "absorbed_allocation_from": "warlock_black_ring_accessory_swap",
+      "swap_source_gate": "IS1_accessory_realignment_2026_02",
+      "previous_blueprint_code": "cdv_t2_accessory_universal_position_001",
+      "new_blueprint_code": "cdv_t1_ring_universal_position_001"
     },
     {
-      "tier": "T2",
-      "required_level_band": "16-30",
-      "slot": "accessory",
+      "tier": "T1",
+      "required_level_band": "1-15",
+      "slot": "neck",
       "slot_alias_source": [
-        "trinket"
+        "amulet"
       ],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
-      "sequence": 2,
-      "blueprint_code": "cdv_t2_accessory_universal_position_002",
+      "sequence": 1,
+      "blueprint_code": "cdv_t1_neck_universal_position_001",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
-      "rarity_intent": "Rare",
-      "identity_class": "class_specific",
+      "rarity_intent": "Common",
+      "identity_class": "universal_neutral",
       "source_type": "NEW_FUTURE",
       "source_item_id": null,
       "source_slug": null,
@@ -4695,7 +4713,7 @@
       "eligible_affix_families": [
         "void.mark.power"
       ],
-      "stat_budget_band": "budget_1.35",
+      "stat_budget_band": "budget_1.00_baseline",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "universal_position",
@@ -4705,7 +4723,11 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 110
+      "roster_index": 110,
+      "absorbed_allocation_from": "warlock_cursed_pendant_accessory_swap",
+      "swap_source_gate": "IS1_accessory_realignment_2026_02",
+      "previous_blueprint_code": "cdv_t2_accessory_universal_position_002",
+      "new_blueprint_code": "cdv_t1_neck_universal_position_001"
     },
     {
       "tier": "T1",
@@ -4749,21 +4771,22 @@
       "swap_source_gate": "IS1_micro_fix_2026_02"
     },
     {
-      "tier": "T3",
-      "required_level_band": "31-45",
-      "slot": "accessory",
+      "tier": "T1",
+      "required_level_band": "1-15",
+      "slot": "back",
       "slot_alias_source": [
-        "trinket"
+        "cloak",
+        "cape"
       ],
       "equipment_category": "UNIVERSAL",
       "family": "universal_position",
       "sequence": 1,
-      "blueprint_code": "cdv_t3_accessory_universal_position_001",
+      "blueprint_code": "cdv_t1_back_universal_position_001",
       "armor_type": null,
       "weapon_family": null,
       "universal_position": true,
-      "rarity_intent": "Epic",
-      "identity_class": "class_specific",
+      "rarity_intent": "Common",
+      "identity_class": "universal_neutral",
       "source_type": "NEW_FUTURE",
       "source_item_id": null,
       "source_slug": null,
@@ -4775,10 +4798,9 @@
       "affix_pool_eligibility": true,
       "affix_pool_tag": "void.cacciatore_del_vuoto.pool.v1",
       "eligible_affix_families": [
-        "void.mark.power",
-        "void.mark.duration"
+        "void.mark.power"
       ],
-      "stat_budget_band": "budget_1.60",
+      "stat_budget_band": "budget_1.00_baseline",
       "main_stat_target": "Intelligenza",
       "secondary_stat_direction": "Costituzione->Destrezza",
       "proficiency_requirement": "universal_position",
@@ -4788,7 +4810,11 @@
       "apply_authorized": false,
       "anti_p2w_required": true,
       "mutation_required": false,
-      "roster_index": 112
+      "roster_index": 112,
+      "absorbed_allocation_from": "warlock_fetish_charm_accessory_swap",
+      "swap_source_gate": "IS1_accessory_realignment_2026_02",
+      "previous_blueprint_code": "cdv_t3_accessory_universal_position_001",
+      "new_blueprint_code": "cdv_t1_back_universal_position_001"
     },
     {
       "tier": "T3",
@@ -5446,25 +5472,17 @@
     ]
   },
   "explicit_stop": {
-    "is1_status": "IN_PROGRESS_roster_generated",
-    "is1_closure": "HOLD_awaiting_pm_review",
-    "prd_append": "HOLD_not_authorized_in_this_dispatch",
-    "next_action": "await_pm_final_sign_off_including_alias_interpretation_and_potential_secondary_findings_on_refinement_pattern",
-    "afx2": "RESERVED_FUTURE",
-    "nc1": "HOLD_pre_migration_dependency",
+    "gate_status": "IS1 patch = APPLIED (MD+JSON synchronized)",
+    "is1_closure": "HOLD",
+    "prd_append": "HOLD",
+    "is2_a": "HOLD",
+    "nc1": "HOLD",
+    "registry_v3_generation": "NOT_AUTHORIZED",
     "registry_v3_apply": "NOT_AUTHORIZED",
     "gate_11": "HOLD",
-    "wave_1": "HOLD",
-    "monaco_druid_ecc": "HOLD",
-    "item_creation": "NOT_AUTHORIZED_zero_runtime_item_id_generated",
-    "micro_fix_applied": "patron_seal_restore_via_one_for_one_swap_with_NEW_FUTURE_T2_accessory_003_Epic",
-    "potential_secondary_findings": {
-      "black_ring_live_accessory_blueprint_ring": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH",
-      "cursed_pendant_live_accessory_blueprint_neck": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH",
-      "fetish_charm_live_accessory_blueprint_back": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH · charm_to_back_semantic_weak_note",
-      "6_armor_live_generic_all_mapped_to_canonical_armor_sub_slots": "under_refinement_interpretation_PASS · under_strict_alias_only_MISMATCH (6 items)",
-      "requires_pm_verdict_integrativo_on_alias_list_expansion_or_confirmation_of_refinement_interpretation": true
-    }
+    "next_action": "await_pm_final_sign_off",
+    "no_closure_artifact_generated": true,
+    "patch_applied_utc": "2026-07-12T09:07:35.278375+00:00"
   },
   "ic1_accounting_reconciliation": {
     "gate_id": "R18.6.RV3-IS1 · IC1 accounting reconciliation (NO IC1 reopen)",
@@ -5672,7 +5690,150 @@
     ],
     "records_count": 9,
     "all_aggregate_locks_preserved": true,
-    "ic1_closed_locked_no_reopen": true
+    "ic1_closed_locked_no_reopen": true,
+    "is1_source_binding_realization_vs_ic1_coverage": {
+      "modification_type": "IS1_SOURCE_BINDING_REALIZATION (not blueprint coverage change)",
+      "blueprint_total_delta": 0,
+      "tier_delta": {
+        "T1": 0,
+        "T2": 0,
+        "T3": 0,
+        "T4": 0,
+        "T5": 0
+      },
+      "slot_delta": {
+        "accessory": 0,
+        "back": 0,
+        "chest": 0,
+        "feet": 0,
+        "hands": 0,
+        "head": 0,
+        "legs": 0,
+        "main_hand": 0,
+        "neck": 0,
+        "off_hand": 0,
+        "ring": 0,
+        "shoulders": 0,
+        "waist": 0,
+        "wrist": 0
+      },
+      "rarity_delta": {
+        "Common": 0,
+        "Uncommon": 0,
+        "Rare": 0,
+        "Epic": 0,
+        "Legendary": 0
+      },
+      "identity_delta": {
+        "class_specific": 0,
+        "shared_family": 0,
+        "universal_neutral": 0
+      },
+      "armor_family_delta": {
+        "stoffa": 0,
+        "cuoio": 0
+      },
+      "weapon_family_delta": {
+        "focus": 0,
+        "balestra": 0,
+        "pugnale": 0
+      },
+      "affix_overlay_delta": 0,
+      "legendary_delta": 0,
+      "conclusion": "IC1 aggregate coverage UNCHANGED · IC1 CLOSED_LOCKED preserved · no IC1 reopen"
+    },
+    "locks_verification_post_patch": {
+      "tier": {
+        "expected": {
+          "T1": 18,
+          "T2": 22,
+          "T3": 26,
+          "T4": 26,
+          "T5": 28
+        },
+        "observed": {
+          "T1": 18,
+          "T2": 22,
+          "T3": 26,
+          "T4": 26,
+          "T5": 28
+        },
+        "match": true
+      },
+      "rarity": {
+        "expected": {
+          "Common": 42,
+          "Uncommon": 33,
+          "Rare": 27,
+          "Epic": 15,
+          "Legendary": 3
+        },
+        "observed": {
+          "Common": 42,
+          "Rare": 27,
+          "Legendary": 3,
+          "Epic": 15,
+          "Uncommon": 33
+        },
+        "match": true
+      },
+      "identity": {
+        "expected": {
+          "class_specific": 68,
+          "shared_family": 30,
+          "universal_neutral": 22
+        },
+        "observed": {
+          "shared_family": 30,
+          "class_specific": 68,
+          "universal_neutral": 22
+        },
+        "match": true
+      },
+      "category": {
+        "expected": {
+          "ARMOR": 60,
+          "WEAPON": 21,
+          "UNIVERSAL": 39
+        },
+        "observed": {
+          "ARMOR": 60,
+          "UNIVERSAL": 39,
+          "WEAPON": 21
+        },
+        "match": true
+      },
+      "armor_family": {
+        "expected": {
+          "stoffa": 42,
+          "cuoio": 18
+        },
+        "observed": {
+          "stoffa": 42,
+          "cuoio": 18
+        },
+        "match": true
+      },
+      "weapon_family": {
+        "expected": {
+          "focus": 10,
+          "balestra": 7,
+          "pugnale": 4
+        },
+        "observed": {
+          "focus": 10,
+          "balestra": 7,
+          "pugnale": 4
+        },
+        "match": true
+      },
+      "affix_overlay": {
+        "expected": 140,
+        "observed": 140,
+        "match": true
+      }
+    },
+    "locks_all_preserved_post_patch": true
   },
   "patron_seal_swap_ledger": {
     "swap_id": "IS1_micro_fix_patron_seal_restore_2026_02",
@@ -5835,7 +5996,10 @@
       "identity_note": "both_class_specific_preserved",
       "affix_eligibility_match_improved": true,
       "affix_note": "patron_seal_Epic_now_has_2_affix_families_matching_Epic_tier_baseline"
-    }
+    },
+    "pm_verdict": "RATIFIED_R18_6_RV3_IS1_SYNCHRONIZED_SOURCE_BINDING_PATCH",
+    "ratification_utc": "2026-07-12T09:07:35.278375+00:00",
+    "stale_hands_stoffa_reference_to_patron_seal": "ELIMINATED"
   },
   "reuse_valid_source_slot_audit_12_12": {
     "audit_gate": "R18.6.RV3-IS1 · REUSE_VALID source-slot audit 12/12",
@@ -6034,5 +6198,786 @@
     "semantic_remap_count": 0,
     "12_12_pass_under_refinement_interpretation": true,
     "interpretation_note": "Il DB schema live usa slot_type generici (`armor`, `accessory`) NON i termini specific-canonical (amulet/cloak/cape/belt/trinket/weapon_main) enumerati nella PM alias list. Il refinement da slot_type generico a canonical sub-slot (armor→chest/legs/head/shoulders + accessory→neck/back/ring/accessory) è documentato come `CANONICAL_ALIAS_MATCH_via_family_refinement`. Se il PM richiede strict alias list only (rifiuto della refinement interpretation), lo strict_pass_count è 3/12 e servirebbero altre 9 riallocazioni REUSE_VALID. Chiesto verdict integrativo PM."
+  },
+  "source_slot_authority_policy": {
+    "gate_id": "R18.6.RV3-IS1 · source_slot_authority_policy (PM ratified)",
+    "policy_version": "1.0",
+    "adopted_utc": "2026-07-12T09:07:35.278375+00:00",
+    "slot_type_field": {
+      "authority": "AUTHORITATIVE_FOR_SLOT_SEMANTICS",
+      "granular_values": [
+        "head",
+        "neck",
+        "shoulders",
+        "chest",
+        "back",
+        "hands",
+        "wrist",
+        "waist",
+        "legs",
+        "feet",
+        "main_hand",
+        "off_hand",
+        "ring",
+        "accessory"
+      ],
+      "granular_values_count": 14,
+      "granular_authority": "AUTHORITATIVE_GRANULAR_SLOT",
+      "coarse_values": [
+        "armor",
+        "weapon"
+      ],
+      "coarse_authority": "EQUIPMENT_CATEGORY_ONLY (NOT authoritative for granular slot)",
+      "coarse_disallowed_inferences": [
+        "armor -> chest/legs/hands/feet/shoulders/wrist/waist  (NOT alias)",
+        "accessory -> ring/neck/back  (NOT alias)"
+      ]
+    },
+    "pm_approved_aliases": {
+      "amulet": "neck",
+      "belt": "waist",
+      "cloak": "back",
+      "cape": "back",
+      "trinket": "accessory",
+      "weapon_main": "main_hand",
+      "weapon_off": "off_hand",
+      "main-hand": "main_hand",
+      "off-hand": "off_hand"
+    },
+    "armor_tags_field": {
+      "authority": "AUTHORITATIVE_FOR_ARMOR_FAMILY",
+      "authoritative_values": [
+        "stoffa",
+        "cuoio"
+      ],
+      "not_authoritative_for_slot": true
+    },
+    "weapon_tags_field": {
+      "authority": "AUTHORITATIVE_FOR_WEAPON_FAMILY",
+      "authoritative_values": [
+        "focus",
+        "balestra",
+        "pugnale"
+      ],
+      "not_automatically_authoritative_for_slot": true,
+      "note": "equipment contract decides"
+    },
+    "non_authoritative_evidence": {
+      "fields": [
+        "slug",
+        "name",
+        "lore",
+        "description"
+      ],
+      "keywords": [
+        "robe",
+        "mantle",
+        "ring",
+        "seal",
+        "charm",
+        "pendant"
+      ],
+      "note": "solo indizi lessicali · non ammessi come autorità di binding"
+    }
+  },
+  "reuse_valid_strict_audit": {
+    "gate_id": "R18.6.RV3-IS1 · reuse_valid_strict_audit",
+    "vocabulary": [
+      "EXACT_MATCH",
+      "CANONICAL_ALIAS_MATCH",
+      "COARSE_SOURCE_ONLY",
+      "MISMATCH",
+      "CONFLICTING_SOURCE_METADATA"
+    ],
+    "records": [
+      {
+        "index": 1,
+        "source_slug": "warlock_covenant_robe",
+        "source_item_id": "2618698e-9f73-40a0-8286-085c922b3179",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "head",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 2,
+        "source_slug": "warlock_cursed_pendant",
+        "source_item_id": "31b9b255-123e-425f-a071-4a70f53d989b",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "neck",
+        "strict_verdict": "MISMATCH",
+        "adjudication_disposition": "RESOLVED_VIA_ACCESSORY_SWAP",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND (via swap)"
+      },
+      {
+        "index": 3,
+        "source_slug": "warlock_coven_mantle",
+        "source_item_id": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "shoulders",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 4,
+        "source_slug": "warlock_novice_robe",
+        "source_item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "chest",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 5,
+        "source_slug": "warlock_hex_focus_robe",
+        "source_item_id": "5417640b-3030-4be1-a68d-e3cf87e0444c",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "chest",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 6,
+        "source_slug": "warlock_fetish_charm",
+        "source_item_id": "b800b05c-28e3-4f5a-af00-3b7d853ce377",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "back",
+        "strict_verdict": "MISMATCH",
+        "adjudication_disposition": "RESOLVED_VIA_ACCESSORY_SWAP",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND (via swap)"
+      },
+      {
+        "index": 7,
+        "source_slug": "warlock_patron_seal",
+        "source_item_id": "4b728fcb-129a-44b5-b446-5c3647a214f6",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "accessory",
+        "strict_verdict": "EXACT_MATCH",
+        "adjudication_disposition": "ACTIVE_EXACT_BOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND"
+      },
+      {
+        "index": 8,
+        "source_slug": "warlock_shadow_mail",
+        "source_item_id": "3ac9f59f-430e-4638-bee5-62ca225648ec",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "legs",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 9,
+        "source_slug": "warlock_shadowweave_robe",
+        "source_item_id": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted_pre_patch": "legs",
+        "strict_verdict": "COARSE_SOURCE_ONLY",
+        "adjudication_disposition": "DECLASSED_TO_STANDBY_UNBOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "UNBOUND_COARSE_SOURCE (standby)"
+      },
+      {
+        "index": 10,
+        "source_slug": "warlock_black_ring",
+        "source_item_id": "2a120160-5e5b-4af9-8669-0039c14acccb",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "ring",
+        "strict_verdict": "MISMATCH",
+        "adjudication_disposition": "RESOLVED_VIA_ACCESSORY_SWAP",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND (via swap)"
+      },
+      {
+        "index": 11,
+        "source_slug": "warlock_imp_collar",
+        "source_item_id": "93a38f91-90b2-48c0-a883-05a81a17e2b5",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "accessory",
+        "strict_verdict": "EXACT_MATCH",
+        "adjudication_disposition": "ACTIVE_EXACT_BOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND"
+      },
+      {
+        "index": 12,
+        "source_slug": "warlock_hex_sigil",
+        "source_item_id": "09bc5058-d1d9-450a-aea5-c816f5abc075",
+        "live_slot_type_raw": "accessory",
+        "blueprint_slot_originally_targeted_pre_patch": "accessory",
+        "strict_verdict": "EXACT_MATCH",
+        "adjudication_disposition": "ACTIVE_EXACT_BOUND",
+        "authoritative_field": "items.slot_type (live DB collection)",
+        "post_patch_binding": "ACTIVE_EXACT_BOUND"
+      }
+    ],
+    "records_count": 12,
+    "pre_patch_verdict_aggregates": {
+      "COARSE_SOURCE_ONLY": 6,
+      "MISMATCH": 3,
+      "EXACT_MATCH": 3
+    },
+    "post_patch_active_binding_aggregates": {
+      "ACTIVE_EXACT_MATCH": 6,
+      "ACTIVE_CANONICAL_ALIAS_MATCH": 0,
+      "UNBOUND_COARSE_SOURCE": 6,
+      "ACTIVE_MISMATCH": 0,
+      "CONFLICTING_SOURCE_METADATA": 0,
+      "total_adjudicated": 12,
+      "formulation_note": "12/12 adjudicated · 6 exact-bound active · 6 eligibility-valid but granular-slot unbound"
+    },
+    "formulation_note_final": "12/12 adjudicated · 6 exact-bound active · 6 eligibility-valid but granular-slot unbound"
+  },
+  "six_coarse_armor_binding_fallbacks": {
+    "gate_id": "R18.6.RV3-IS1 · six_coarse_armor_binding_fallbacks (MIT-D)",
+    "policy": "MIT-A/MIT-B/MIT-C rejected · MIT-D applied · zero items created",
+    "records": [
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_covenant_robe",
+        "source_item_id_declassified": "2618698e-9f73-40a0-8286-085c922b3179",
+        "blueprint_code_preserved": "cdv_t1_head_stoffa_001",
+        "tier_preserved": "T1",
+        "slot_preserved": "head",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "shared_family",
+        "rarity_intent_preserved": "Common",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.00_baseline"
+      },
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_coven_mantle",
+        "source_item_id_declassified": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
+        "blueprint_code_preserved": "cdv_t1_shoulders_stoffa_001",
+        "tier_preserved": "T1",
+        "slot_preserved": "shoulders",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "shared_family",
+        "rarity_intent_preserved": "Common",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.00_baseline"
+      },
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_novice_robe",
+        "source_item_id_declassified": "3a6cc600-8316-46f1-8431-fd4281840623",
+        "blueprint_code_preserved": "cdv_t1_chest_stoffa_001",
+        "tier_preserved": "T1",
+        "slot_preserved": "chest",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "shared_family",
+        "rarity_intent_preserved": "Common",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.00_baseline"
+      },
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_hex_focus_robe",
+        "source_item_id_declassified": "5417640b-3030-4be1-a68d-e3cf87e0444c",
+        "blueprint_code_preserved": "cdv_t1_chest_stoffa_002",
+        "tier_preserved": "T1",
+        "slot_preserved": "chest",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "shared_family",
+        "rarity_intent_preserved": "Common",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.00_baseline"
+      },
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_shadow_mail",
+        "source_item_id_declassified": "3ac9f59f-430e-4638-bee5-62ca225648ec",
+        "blueprint_code_preserved": "cdv_t1_legs_stoffa_001",
+        "tier_preserved": "T1",
+        "slot_preserved": "legs",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "class_specific",
+        "rarity_intent_preserved": "Uncommon",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.15"
+      },
+      {
+        "slug_of_declassified_reuse_valid_source": "warlock_shadowweave_robe",
+        "source_item_id_declassified": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
+        "blueprint_code_preserved": "cdv_t1_legs_stoffa_002",
+        "tier_preserved": "T1",
+        "slot_preserved": "legs",
+        "equipment_category_preserved": "ARMOR",
+        "armor_type_preserved": "stoffa",
+        "identity_class_preserved": "class_specific",
+        "rarity_intent_preserved": "Uncommon",
+        "affix_eligibility_preserved": [
+          "void.mark.power"
+        ],
+        "stat_budget_band_preserved": "budget_1.15"
+      }
+    ],
+    "records_count": 6,
+    "ev_f2_verdict_mutation": "NO (EV-F2 REUSE_VALID immutable)",
+    "roster_effect": "6 blueprint units transformed REUSE_VALID -> NEW_FUTURE with lineage · roster identity/tier/slot/rarity/category unchanged"
+  },
+  "three_accessory_slot_reallocations": {
+    "gate_id": "R18.6.RV3-IS1 · three_accessory_slot_reallocations",
+    "policy": "MISMATCH · accessory→neck/back/ring NOT alias · one-for-one blueprint slot swap",
+    "swaps_planned": 3,
+    "swaps_executed": 3,
+    "swaps": [
+      {
+        "reuse_valid_slug": "warlock_black_ring",
+        "source_item_id": "2a120160-5e5b-4af9-8669-0039c14acccb",
+        "swap_partner_new_future_previous_bp": "cdv_t2_accessory_universal_position_001",
+        "unit_A_pre": {
+          "blueprint_code": "cdv_t1_ring_universal_position_001",
+          "tier": "T1",
+          "slot": "ring",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "unit_A_post": {
+          "blueprint_code": "cdv_t2_accessory_universal_position_001",
+          "tier": "T2",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "16-30",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "unit_B_pre": {
+          "blueprint_code": "cdv_t2_accessory_universal_position_001",
+          "tier": "T2",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "16-30",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "unit_B_post": {
+          "blueprint_code": "cdv_t1_ring_universal_position_001",
+          "tier": "T1",
+          "slot": "ring",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "strict_verdict_post_swap": "EXACT_MATCH",
+        "reasoning": "REUSE_VALID warlock_black_ring moved to blueprint accessory (matches live slot_type=accessory); NEW_FUTURE partner absorbed the previous granular slot"
+      },
+      {
+        "reuse_valid_slug": "warlock_cursed_pendant",
+        "source_item_id": "31b9b255-123e-425f-a071-4a70f53d989b",
+        "swap_partner_new_future_previous_bp": "cdv_t2_accessory_universal_position_002",
+        "unit_A_pre": {
+          "blueprint_code": "cdv_t1_neck_universal_position_001",
+          "tier": "T1",
+          "slot": "neck",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Common",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [
+            "amulet"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.00_baseline"
+        },
+        "unit_A_post": {
+          "blueprint_code": "cdv_t2_accessory_universal_position_002",
+          "tier": "T2",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "class_specific",
+          "universal_position": true,
+          "required_level_band": "16-30",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 2,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "unit_B_pre": {
+          "blueprint_code": "cdv_t2_accessory_universal_position_002",
+          "tier": "T2",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Rare",
+          "identity_class": "class_specific",
+          "universal_position": true,
+          "required_level_band": "16-30",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 2,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.35"
+        },
+        "unit_B_post": {
+          "blueprint_code": "cdv_t1_neck_universal_position_001",
+          "tier": "T1",
+          "slot": "neck",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Common",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [
+            "amulet"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.00_baseline"
+        },
+        "strict_verdict_post_swap": "EXACT_MATCH",
+        "reasoning": "REUSE_VALID warlock_cursed_pendant moved to blueprint accessory (matches live slot_type=accessory); NEW_FUTURE partner absorbed the previous granular slot"
+      },
+      {
+        "reuse_valid_slug": "warlock_fetish_charm",
+        "source_item_id": "b800b05c-28e3-4f5a-af00-3b7d853ce377",
+        "swap_partner_new_future_previous_bp": "cdv_t3_accessory_universal_position_001",
+        "unit_A_pre": {
+          "blueprint_code": "cdv_t1_back_universal_position_001",
+          "tier": "T1",
+          "slot": "back",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Common",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [
+            "cloak",
+            "cape"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.00_baseline"
+        },
+        "unit_A_post": {
+          "blueprint_code": "cdv_t3_accessory_universal_position_001",
+          "tier": "T3",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Epic",
+          "identity_class": "class_specific",
+          "universal_position": true,
+          "required_level_band": "31-45",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power",
+            "void.mark.duration"
+          ],
+          "stat_budget_band": "budget_1.60"
+        },
+        "unit_B_pre": {
+          "blueprint_code": "cdv_t3_accessory_universal_position_001",
+          "tier": "T3",
+          "slot": "accessory",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Epic",
+          "identity_class": "class_specific",
+          "universal_position": true,
+          "required_level_band": "31-45",
+          "slot_alias_source": [
+            "trinket"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power",
+            "void.mark.duration"
+          ],
+          "stat_budget_band": "budget_1.60"
+        },
+        "unit_B_post": {
+          "blueprint_code": "cdv_t1_back_universal_position_001",
+          "tier": "T1",
+          "slot": "back",
+          "family": "universal_position",
+          "equipment_category": "UNIVERSAL",
+          "armor_type": null,
+          "weapon_family": null,
+          "rarity_intent": "Common",
+          "identity_class": "universal_neutral",
+          "universal_position": true,
+          "required_level_band": "1-15",
+          "slot_alias_source": [
+            "cloak",
+            "cape"
+          ],
+          "sequence": 1,
+          "proficiency_requirement": "universal_position",
+          "eligible_affix_families": [
+            "void.mark.power"
+          ],
+          "stat_budget_band": "budget_1.00_baseline"
+        },
+        "strict_verdict_post_swap": "EXACT_MATCH",
+        "reasoning": "REUSE_VALID warlock_fetish_charm moved to blueprint accessory (matches live slot_type=accessory); NEW_FUTURE partner absorbed the previous granular slot"
+      }
+    ],
+    "impossible_swaps": [],
+    "cascading_used": false,
+    "new_alias_policy_invented": false,
+    "fetish_charm_specific_verification": {
+      "post_swap_slot": "accessory",
+      "post_swap_equipment_category": "UNIVERSAL",
+      "post_swap_armor_type": null,
+      "post_swap_weapon_family": null,
+      "post_swap_family": "universal_position",
+      "charm_to_back_rule_introduced": false
+    }
+  },
+  "reuse_valid_unbound_standby_ledger": {
+    "gate_id": "R18.6.RV3-IS1 · reuse_valid_unbound_standby_ledger",
+    "records": [
+      {
+        "source_slug": "warlock_covenant_robe",
+        "source_item_id": "2618698e-9f73-40a0-8286-085c922b3179",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "head",
+        "blueprint_code_originally_targeted": "cdv_t1_head_stoffa_001",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      },
+      {
+        "source_slug": "warlock_coven_mantle",
+        "source_item_id": "dca4edbd-616d-4ce3-9c2a-29c7b78784ac",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "shoulders",
+        "blueprint_code_originally_targeted": "cdv_t1_shoulders_stoffa_001",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      },
+      {
+        "source_slug": "warlock_novice_robe",
+        "source_item_id": "3a6cc600-8316-46f1-8431-fd4281840623",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "chest",
+        "blueprint_code_originally_targeted": "cdv_t1_chest_stoffa_001",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      },
+      {
+        "source_slug": "warlock_hex_focus_robe",
+        "source_item_id": "5417640b-3030-4be1-a68d-e3cf87e0444c",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "chest",
+        "blueprint_code_originally_targeted": "cdv_t1_chest_stoffa_002",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      },
+      {
+        "source_slug": "warlock_shadow_mail",
+        "source_item_id": "3ac9f59f-430e-4638-bee5-62ca225648ec",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "legs",
+        "blueprint_code_originally_targeted": "cdv_t1_legs_stoffa_001",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      },
+      {
+        "source_slug": "warlock_shadowweave_robe",
+        "source_item_id": "c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9",
+        "live_slot_type_raw": "armor",
+        "blueprint_slot_originally_targeted": "legs",
+        "blueprint_code_originally_targeted": "cdv_t1_legs_stoffa_002",
+        "ev_f2_primary_verdict": "REUSE_VALID",
+        "is1_active_binding": "NOT_VALIDATED",
+        "binding_status": "UNBOUND_COARSE_SOURCE",
+        "active_roster_source": false,
+        "standby_reason": "no_authoritative_granular_slot",
+        "eligibility_history": "EV-F2 primary REUSE_VALID (immutable); IS1 source-slot review declassed to standby"
+      }
+    ],
+    "records_count": 6,
+    "immutable_ev_f2_universe_size": 12,
+    "active_exact_bound_count": 6,
+    "standby_unbound_count": 6,
+    "policy_note": "EV-F2 primary REUSE_VALID verdict immutable; IS1 declassation applies only to source-slot binding for active roster"
+  },
+  "source_realization_accounting": {
+    "active_reuse_valid_exact_bound": 6,
+    "active_reuse_valid_slugs": [
+      "warlock_black_ring",
+      "warlock_cursed_pendant",
+      "warlock_fetish_charm",
+      "warlock_hex_sigil",
+      "warlock_imp_collar",
+      "warlock_patron_seal"
+    ],
+    "active_reuse_conditional": 3,
+    "active_reuse_conditional_slugs": [
+      "apprentice-handbook",
+      "apprentice-robe",
+      "initiate_robe"
+    ],
+    "new_future_total": 111,
+    "new_future_baseline_original": 105,
+    "new_future_armor_fallback_absorbed": 6,
+    "unbound_reuse_valid_standby": 6,
+    "ev_f2_reuse_valid_universe_immutable": 12,
+    "conditional_standby_pool": 29,
+    "conditional_fallback_reserve_remaining": 3,
+    "worst_case_scenario_all_conditional_fail": {
+      "active_exact_reuse": 6,
+      "new_future_total": 114,
+      "total_roster": 120
+    },
+    "roster_total": 120,
+    "identity_confirmation": true
+  },
+  "blueprint_code_semantic_audit": {
+    "roster_rows": 120,
+    "unique_blueprint_codes": 120,
+    "tier_token_match_count": 120,
+    "slot_token_match_count": 120,
+    "family_token_match_count": 120,
+    "stale_semantic_code_count": 0,
+    "outliers_detail": [],
+    "audit_result": "120/120 CLEAN",
+    "swap_lineage_present": {
+      "patron_seal_micro_fix_pregresso": true,
+      "three_accessory_realignments": [
+        "warlock_black_ring",
+        "warlock_cursed_pendant",
+        "warlock_fetish_charm"
+      ]
+    }
   }
 }

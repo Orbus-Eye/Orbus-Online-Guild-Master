@@ -553,168 +553,198 @@
 - `mutation_required = false` per tutte le 120 unit
 - Nessuna mutation su item live · nessuna alterazione schema · Registry additive-only future gate
 
-## §92 · REUSE_VALID Row #1 · `warlock_covenant_robe`
+## §92 · Row #1 · `warlock_covenant_robe` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_head_stoffa_001`
-- `source_item_id` = `2618698e-9f73-40a0-8286-085c922b3179` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable · EV-F2 verdict mutation = NO)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `2618698e-9f73-40a0-8286-085c922b3179` (UUID reale live catalog · standby)
 - `source_slug` = `warlock_covenant_robe`
-- `tier` = `T1` · `slot` = `head` · `family` = `stoffa`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Rare`
-- `identity_class` = `shared_family` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Common · live_rarity=Rare · blueprint spec authoritative
+- `live_slot_type_raw` = `armor` (coarse · equipment category only · non authoritative for granular slot)
+- `blueprint_slot_originally_targeted` = `head`
+- `blueprint_code_declassation_target` = `cdv_t1_head_stoffa_001` (blueprint preserved · assorbita da NEW_FUTURE via MIT-D fallback)
+- `authoritative_field` = `items.slot_type` (live DB collection · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §93 · REUSE_VALID Row #2 · `warlock_cursed_pendant`
+## §93 · Row #2 · `warlock_cursed_pendant` · ACTIVE_EXACT_BOUND (via accessory swap)
 
-- `blueprint_code` = `cdv_t1_neck_universal_position_001`
-- `source_item_id` = `31b9b255-123e-425f-a071-4a70f53d989b` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict_pre_patch` = `MISMATCH` (live `accessory` → blueprint `neck` non alias)
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND` (post accessory swap)
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `strict_verdict_post_swap` = `EXACT_MATCH`
+- `active_roster_source` = `True`
+- `source_item_id` = `31b9b255-123e-425f-a071-4a70f53d989b`
 - `source_slug` = `warlock_cursed_pendant`
-- `tier` = `T1` · `slot` = `neck` · `family` = `universal_position`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Common`
-- `identity_class` = `universal_neutral` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `previous_blueprint_code` = `cdv_t1_neck_universal_position_001`
+- `new_blueprint_code` = `cdv_t2_accessory_universal_position_002`
+- `swap_partner_previous_bp` = `cdv_t2_accessory_universal_position_002` (NEW_FUTURE assorbe `cdv_t1_neck_universal_position_001`)
+- `swap_reason` = `accessory_source_slot_realignment_IS1`
+- `tier_post_swap` = `T2` · `slot_post_swap` = `accessory` · `rarity_intent_post_swap` = `Rare` · `identity_post_swap` = `class_specific`
+- `authoritative_field` = `items.slot_type` = `accessory` (granular · post-swap match)
 
-## §94 · REUSE_VALID Row #3 · `warlock_coven_mantle`
+## §94 · Row #3 · `warlock_coven_mantle` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_shoulders_stoffa_001`
-- `source_item_id` = `dca4edbd-616d-4ce3-9c2a-29c7b78784ac` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `dca4edbd-616d-4ce3-9c2a-29c7b78784ac`
 - `source_slug` = `warlock_coven_mantle`
-- `tier` = `T1` · `slot` = `shoulders` · `family` = `stoffa`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Epic`
-- `identity_class` = `shared_family` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Common · live_rarity=Epic · blueprint spec authoritative
+- `live_slot_type_raw` = `armor` (coarse)
+- `blueprint_slot_originally_targeted` = `shoulders`
+- `blueprint_code_declassation_target` = `cdv_t1_shoulders_stoffa_001` (assorbita da NEW_FUTURE via MIT-D)
+- `authoritative_field` = `items.slot_type` (live DB · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §95 · REUSE_VALID Row #4 · `warlock_novice_robe`
+## §95 · Row #4 · `warlock_novice_robe` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_chest_stoffa_001`
-- `source_item_id` = `3a6cc600-8316-46f1-8431-fd4281840623` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `3a6cc600-8316-46f1-8431-fd4281840623`
 - `source_slug` = `warlock_novice_robe`
-- `tier` = `T1` · `slot` = `chest` · `family` = `stoffa`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Common`
-- `identity_class` = `shared_family` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `live_slot_type_raw` = `armor` (coarse)
+- `blueprint_slot_originally_targeted` = `chest`
+- `blueprint_code_declassation_target` = `cdv_t1_chest_stoffa_001` (assorbita da NEW_FUTURE via MIT-D)
+- `authoritative_field` = `items.slot_type` (live DB · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §96 · REUSE_VALID Row #5 · `warlock_hex_focus_robe`
+## §96 · Row #5 · `warlock_hex_focus_robe` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_chest_stoffa_002`
-- `source_item_id` = `5417640b-3030-4be1-a68d-e3cf87e0444c` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `5417640b-3030-4be1-a68d-e3cf87e0444c`
 - `source_slug` = `warlock_hex_focus_robe`
-- `tier` = `T1` · `slot` = `chest` · `family` = `stoffa`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Common`
-- `identity_class` = `shared_family` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `live_slot_type_raw` = `armor` (coarse)
+- `blueprint_slot_originally_targeted` = `chest`
+- `blueprint_code_declassation_target` = `cdv_t1_chest_stoffa_002` (assorbita da NEW_FUTURE via MIT-D)
+- `authoritative_field` = `items.slot_type` (live DB · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §97 · REUSE_VALID Row #6 · `warlock_fetish_charm`
+## §97 · Row #6 · `warlock_fetish_charm` · ACTIVE_EXACT_BOUND (via accessory swap)
 
-- `blueprint_code` = `cdv_t1_back_universal_position_001`
-- `source_item_id` = `b800b05c-28e3-4f5a-af00-3b7d853ce377` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict_pre_patch` = `MISMATCH` (live `accessory` → blueprint `back` non alias · `charm→back` NOT introduced as rule)
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND` (post accessory swap)
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `strict_verdict_post_swap` = `EXACT_MATCH`
+- `active_roster_source` = `True`
+- `source_item_id` = `b800b05c-28e3-4f5a-af00-3b7d853ce377`
 - `source_slug` = `warlock_fetish_charm`
-- `tier` = `T1` · `slot` = `back` · `family` = `universal_position`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Common`
-- `identity_class` = `universal_neutral` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `previous_blueprint_code` = `cdv_t1_back_universal_position_001`
+- `new_blueprint_code` = `cdv_t3_accessory_universal_position_001`
+- `swap_partner_previous_bp` = `cdv_t3_accessory_universal_position_001` (NEW_FUTURE assorbe `cdv_t1_back_universal_position_001`)
+- `swap_reason` = `accessory_source_slot_realignment_IS1`
+- `tier_post_swap` = `T3` · `slot_post_swap` = `accessory` · `rarity_intent_post_swap` = `Epic` · `identity_post_swap` = `class_specific`
+- `post_swap_verified_attributes`: `equipment_category = UNIVERSAL` · `armor_type = null` · `weapon_family = null` · `family = universal_position`
+- `charm_to_back_rule_introduced` = `False`
 
-## §98 · REUSE_VALID Row #7 · `warlock_patron_seal`
+## §98 · Row #7 · `warlock_patron_seal` · ACTIVE_EXACT_BOUND (PM RATIFIED · micro-fix pregresso)
 
-- `blueprint_code` = `cdv_t1_hands_stoffa_001`
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `EXACT_MATCH`
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND`
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `active_roster_source` = `True`
 - `source_item_id` = `4b728fcb-129a-44b5-b446-5c3647a214f6` (UUID reale live catalog)
 - `source_slug` = `warlock_patron_seal`
-- `tier` = `T1` · `slot` = `hands` · `family` = `stoffa`
-- `rarity_intent` = `Common` · `live_rarity_source` = `Epic`
-- `identity_class` = `class_specific` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.00_baseline` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Common · live_rarity=Epic · blueprint spec authoritative
-- ⚠️ `blueprint_slot_remap_note`: live slot_type=accessory · blueprint slot=hands_stoffa · T1 universal saturated (5 slots occupied by 5 warlock universal); patron_seal remapped to hands stoffa for T1 fit · identity_direction preserved
+- `blueprint_code_final` = `cdv_t2_accessory_universal_position_003`
+- `tier` = `T2` · `slot` = `accessory` · `family` = `universal_position`
+- `equipment_category` = `UNIVERSAL` · `armor_type` = `null` · `weapon_family` = `null`
+- `rarity_intent` = `Epic` · `identity_class` = `class_specific`
+- `source_slot_preservation` = `RESTORED_via_one_for_one_swap_IS1_micro_fix (PM RATIFIED)`
+- `stale_hands_stoffa_reference_to_patron_seal` = `ELIMINATED`
+- **Nota storica**: la mappatura ante micro-fix `warlock_patron_seal → cdv_t1_hands_stoffa_001` è stata ELIMINATA. Il blueprint code `cdv_t1_hands_stoffa_001` è ora assorbito dal partner NEW_FUTURE dello swap (vedi patron_seal_swap_ledger). Ogni riferimento residuo a `hands_stoffa` in questo documento riguarda esclusivamente il partner NEW_FUTURE, MAI patron_seal.
 
-## §99 · REUSE_VALID Row #8 · `warlock_shadow_mail`
+## §99 · Row #8 · `warlock_shadow_mail` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_legs_stoffa_001`
-- `source_item_id` = `3ac9f59f-430e-4638-bee5-62ca225648ec` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `3ac9f59f-430e-4638-bee5-62ca225648ec`
 - `source_slug` = `warlock_shadow_mail`
-- `tier` = `T1` · `slot` = `legs` · `family` = `stoffa`
-- `rarity_intent` = `Uncommon` · `live_rarity_source` = `Uncommon`
-- `identity_class` = `class_specific` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.15` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `live_slot_type_raw` = `armor` (coarse)
+- `blueprint_slot_originally_targeted` = `legs`
+- `blueprint_code_declassation_target` = `cdv_t1_legs_stoffa_001` (assorbita da NEW_FUTURE via MIT-D)
+- `authoritative_field` = `items.slot_type` (live DB · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §100 · REUSE_VALID Row #9 · `warlock_shadowweave_robe`
+## §100 · Row #9 · `warlock_shadowweave_robe` · UNBOUND_COARSE_SOURCE (standby)
 
-- `blueprint_code` = `cdv_t1_legs_stoffa_002`
-- `source_item_id` = `c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `COARSE_SOURCE_ONLY`
+- `is1_active_binding` = `NOT_VALIDATED`
+- `binding_status` = `UNBOUND_COARSE_SOURCE`
+- `active_roster_source` = `False`
+- `standby_reason` = `no_authoritative_granular_slot`
+- `source_item_id` = `c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9`
 - `source_slug` = `warlock_shadowweave_robe`
-- `tier` = `T1` · `slot` = `legs` · `family` = `stoffa`
-- `rarity_intent` = `Uncommon` · `live_rarity_source` = `Rare`
-- `identity_class` = `class_specific` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.15` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Uncommon · live_rarity=Rare · blueprint spec authoritative
+- `live_slot_type_raw` = `armor` (coarse)
+- `blueprint_slot_originally_targeted` = `legs`
+- `blueprint_code_declassation_target` = `cdv_t1_legs_stoffa_002` (assorbita da NEW_FUTURE via MIT-D)
+- `authoritative_field` = `items.slot_type` (live DB · valore `armor` coarse)
+- `mitigation_applied` = `MIT-D SOURCE-BINDING FALLBACK`
 
-## §101 · REUSE_VALID Row #10 · `warlock_black_ring`
+## §101 · Row #10 · `warlock_black_ring` · ACTIVE_EXACT_BOUND (via accessory swap)
 
-- `blueprint_code` = `cdv_t1_ring_universal_position_001`
-- `source_item_id` = `2a120160-5e5b-4af9-8669-0039c14acccb` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict_pre_patch` = `MISMATCH` (live `accessory` → blueprint `ring` non alias)
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND` (post accessory swap)
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `strict_verdict_post_swap` = `EXACT_MATCH`
+- `active_roster_source` = `True`
+- `source_item_id` = `2a120160-5e5b-4af9-8669-0039c14acccb`
 - `source_slug` = `warlock_black_ring`
-- `tier` = `T1` · `slot` = `ring` · `family` = `universal_position`
-- `rarity_intent` = `Rare` · `live_rarity_source` = `Rare`
-- `identity_class` = `universal_neutral` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.35` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
+- `previous_blueprint_code` = `cdv_t1_ring_universal_position_001`
+- `new_blueprint_code` = `cdv_t2_accessory_universal_position_001`
+- `swap_partner_previous_bp` = `cdv_t2_accessory_universal_position_001` (NEW_FUTURE assorbe `cdv_t1_ring_universal_position_001`)
+- `swap_reason` = `accessory_source_slot_realignment_IS1`
+- `tier_post_swap` = `T2` · `slot_post_swap` = `accessory` · `rarity_intent_post_swap` = `Rare` · `identity_post_swap` = `universal_neutral`
+- `authoritative_field` = `items.slot_type` = `accessory` (granular · post-swap match)
 
-## §102 · REUSE_VALID Row #11 · `warlock_imp_collar`
+## §102 · Row #11 · `warlock_imp_collar` · ACTIVE_EXACT_BOUND (invariato)
 
-- `blueprint_code` = `cdv_t1_accessory_universal_position_001`
-- `source_item_id` = `93a38f91-90b2-48c0-a883-05a81a17e2b5` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `EXACT_MATCH`
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND`
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `active_roster_source` = `True`
+- `source_item_id` = `93a38f91-90b2-48c0-a883-05a81a17e2b5`
 - `source_slug` = `warlock_imp_collar`
+- `blueprint_code` = `cdv_t1_accessory_universal_position_001`
 - `tier` = `T1` · `slot` = `accessory` · `family` = `universal_position`
-- `rarity_intent` = `Rare` · `live_rarity_source` = `Uncommon`
-- `identity_class` = `universal_neutral` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.35` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Rare · live_rarity=Uncommon · blueprint spec authoritative
+- `equipment_category` = `UNIVERSAL` · `rarity_intent` = `Rare` · `identity_class` = `universal_neutral`
+- `authoritative_field` = `items.slot_type` = `accessory` (granular)
 
-## §103 · REUSE_VALID Row #12 · `warlock_hex_sigil`
+## §103 · Row #12 · `warlock_hex_sigil` · ACTIVE_EXACT_BOUND (invariato)
 
-- `blueprint_code` = `cdv_t1_accessory_universal_position_002`
-- `source_item_id` = `09bc5058-d1d9-450a-aea5-c816f5abc075` (UUID reale live catalog)
+- `ev_f2_primary_verdict` = `REUSE_VALID` (immutable)
+- `is1_strict_verdict` = `EXACT_MATCH`
+- `is1_active_binding` = `ACTIVE_EXACT_BOUND`
+- `binding_status` = `ACTIVE_REUSE_VALID_EXACT_BOUND`
+- `active_roster_source` = `True`
+- `source_item_id` = `09bc5058-d1d9-450a-aea5-c816f5abc075`
 - `source_slug` = `warlock_hex_sigil`
+- `blueprint_code` = `cdv_t1_accessory_universal_position_002`
 - `tier` = `T1` · `slot` = `accessory` · `family` = `universal_position`
-- `rarity_intent` = `Epic` · `live_rarity_source` = `Rare`
-- `identity_class` = `universal_neutral` · `identity_direction` = `caster_warlock_bridge_to_cacciatore_del_vuoto`
-- `binding_status` = `COMMITTED_REUSE_VALID` · `mutation_required` = `False`
-- `stat_budget_band` = `budget_1.60` · `main_stat_target` = `Intelligenza`
-- `affix_pool_eligibility` = `True` · `eligible_affix_families` = `['void.mark.power', 'void.mark.duration']`
-- `lore_status` = `IDENTITY_DIRECTION_ONLY` · `registry_status` = `not_generated`
-- ⚠️ `divergence_note`: blueprint rarity_intent=Epic · live_rarity=Rare · blueprint spec authoritative
+- `equipment_category` = `UNIVERSAL` · `rarity_intent` = `Epic` · `identity_class` = `universal_neutral`
+- `authoritative_field` = `items.slot_type` = `accessory` (granular)
 
 ## §104 · REUSE_CONDITIONAL Row #1 · `apprentice-robe` (PM_RATIFIED)
 
@@ -823,22 +853,259 @@
 - 3 ratified provisional bindings: ['chest_apprentice_robe', 'legs_initiate_robe', 'accessory_apprentice_handbook']
 - 3 fallback activations: ['ring_GAP-2', 'focus_rejection_alchimista', 'pugnale_GAP-1']
 
-## §113 · Explicit STOP · IS1 Closure HOLD · Next Action
+## §113 · Explicit STOP · IS1 Synchronized Source-Binding Patch Applied · Closure HOLD
 
-- `is1_status` = `IN_PROGRESS_roster_generated`
-- `is1_closure` = `HOLD_awaiting_pm_review`
-- `prd_append` = `HOLD_not_authorized_in_this_dispatch`
-- `next_action` = `await_pm_verdict_on_IS1_roster_120_120_for_formal_closure`
+- **IS1 patch** = APPLIED (MD+JSON synchronized · same semantic baseline · no "JSON authoritative + MD stale")
+- **IS1 closure** = HOLD
+- **PRD append** = HOLD
+- **IS2-A** = HOLD
+- **NC1** = HOLD
+- **Registry v3 generation** = NOT AUTHORIZED
+- **Registry v3 apply** = NOT AUTHORIZED
+- **Gate 11** = HOLD
+- **Next Action** = await_pm_final_sign_off
+- **No closure artifact generated** = True
 
-**Hold su gate successivi**:
-- AFX2 = `RESERVED_FUTURE`
-- NC1 = `HOLD_pre_migration_dependency`
-- Registry v3 apply = `NOT_AUTHORIZED`
-- Gate 11 = `HOLD`
-- Wave 1 = `HOLD`
-- Monaco/Druido/ecc = `HOLD`
-- Item creation = `NOT_AUTHORIZED_zero_runtime_item_id_generated`
+Patch applicata: R18.6.RV3-IS1 SYNCHRONIZED SOURCE-BINDING PATCH · gate ref `PM_VERDICT_IS1_SYNCHRONIZED_SOURCE_BINDING_PATCH_GO` · UTC 2026-07-12T09:11:00.753996+00:00
 
----
+**ATTENDO VERDICT PM.**
 
-_Fine documento R18.6.RV3-IS1 · IN PROGRESS · Roster 120/120 generated · Closure HOLD pending PM review · DOCUMENTAL ONLY · Italiano_
+## §114 · source_slot_authority_policy (Punto A · PM ratified)
+
+- `slot_type` = **AUTHORITATIVE FOR SLOT SEMANTICS** con distinzione obbligatoria:
+  - **AUTHORITATIVE GRANULAR SLOT** quando `slot_type ∈ {head, neck, shoulders, chest, back, hands, wrist, waist, legs, feet, main_hand, off_hand, ring, accessory}` (14 canonici).
+  - **Alias PM approvati** (unici validi):
+    - `amulet → neck` · `belt → waist` · `cloak → back` · `cape → back` · `trinket → accessory`
+    - `weapon_main → main_hand` · `weapon_off → off_hand` · `main-hand → main_hand` · `off-hand → off_hand`
+  - **Valori coarse** `slot_type ∈ {armor, weapon}` = **EQUIPMENT CATEGORY ONLY**. `armor ≠ chest/legs/hands/feet/shoulders/wrist/waist`. `accessory ≠ ring/neck/back`. Non sono alias.
+- `armor_tags` = **AUTHORITATIVE FOR ARMOR FAMILY** (`stoffa`, `cuoio`) · **NOT AUTHORITATIVE FOR SLOT**.
+- `weapon_tags` = **AUTHORITATIVE FOR WEAPON FAMILY** (`focus`, `balestra`, `pugnale`) · **NOT AUTOMATICALLY AUTHORITATIVE FOR SLOT** (contratto equipaggiamento decide).
+- **Evidenze non autoritative**: `slug`, `name`, `lore`, `description`, keyword `robe/mantle/ring/seal/charm/pendant`. Solo indizi.
+
+Policy version: `1.0` · adopted UTC: `2026-07-12T09:11:00.753996+00:00`
+
+## §115 · reuse_valid_strict_audit · 12 record adjudication (Punto B)
+
+**Aggregate strict verdict (pre-patch)**: `EXACT_MATCH=3` · `CANONICAL_ALIAS_MATCH=0` · `COARSE_SOURCE_ONLY=6` · `MISMATCH=3` · `CONFLICTING_SOURCE_METADATA=0`
+
+| # | slug | src_slot | target_slot pre-patch | strict_verdict | adjudication_disposition |
+|---|---|---|---|---|---|
+| 1 | `warlock_covenant_robe` | armor | head | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 2 | `warlock_cursed_pendant` | accessory | neck | `MISMATCH` | RESOLVED_VIA_ACCESSORY_SWAP |
+| 3 | `warlock_coven_mantle` | armor | shoulders | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 4 | `warlock_novice_robe` | armor | chest | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 5 | `warlock_hex_focus_robe` | armor | chest | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 6 | `warlock_fetish_charm` | accessory | back | `MISMATCH` | RESOLVED_VIA_ACCESSORY_SWAP |
+| 7 | `warlock_patron_seal` | accessory | accessory | `EXACT_MATCH` | ACTIVE_EXACT_BOUND |
+| 8 | `warlock_shadow_mail` | armor | legs | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 9 | `warlock_shadowweave_robe` | armor | legs | `COARSE_SOURCE_ONLY` | DECLASSED_TO_STANDBY_UNBOUND |
+| 10 | `warlock_black_ring` | accessory | ring | `MISMATCH` | RESOLVED_VIA_ACCESSORY_SWAP |
+| 11 | `warlock_imp_collar` | accessory | accessory | `EXACT_MATCH` | ACTIVE_EXACT_BOUND |
+| 12 | `warlock_hex_sigil` | accessory | accessory | `EXACT_MATCH` | ACTIVE_EXACT_BOUND |
+
+**Formulazione finale (Punto K)**:
+```
+12/12 adjudicated
+  ├─ 6 exact-bound active     (patron_seal + imp_collar + hex_sigil + 3 accessory riallocati)
+  └─ 6 eligibility-valid but granular-slot unbound (6 armor coarse standby)
+```
+
+Aggregates post-patch:
+- `ACTIVE_EXACT_MATCH = 6`
+- `ACTIVE_CANONICAL_ALIAS_MATCH = 0`
+- `UNBOUND_COARSE_SOURCE = 6`
+- `ACTIVE_MISMATCH = 0`
+- `CONFLICTING_SOURCE_METADATA = 0`
+
+## §116 · six_coarse_armor_binding_fallbacks (Punto C · MIT-D)
+
+**Policy**: `MIT-A / MIT-B / MIT-C = REJECTED`. Applied: `MIT-D SOURCE-BINDING FALLBACK`. Zero item creati.
+
+| slug declassed | source_item_id | bp preserved | tier | slot | armor_type | rarity | identity |
+|---|---|---|---|---|---|---|---|
+| `warlock_covenant_robe` | `2618698e-9f73-40a0-8286-085c922b3179` | `cdv_t1_head_stoffa_001` | T1 | head | stoffa | Common | shared_family |
+| `warlock_coven_mantle` | `dca4edbd-616d-4ce3-9c2a-29c7b78784ac` | `cdv_t1_shoulders_stoffa_001` | T1 | shoulders | stoffa | Common | shared_family |
+| `warlock_novice_robe` | `3a6cc600-8316-46f1-8431-fd4281840623` | `cdv_t1_chest_stoffa_001` | T1 | chest | stoffa | Common | shared_family |
+| `warlock_hex_focus_robe` | `5417640b-3030-4be1-a68d-e3cf87e0444c` | `cdv_t1_chest_stoffa_002` | T1 | chest | stoffa | Common | shared_family |
+| `warlock_shadow_mail` | `3ac9f59f-430e-4638-bee5-62ca225648ec` | `cdv_t1_legs_stoffa_001` | T1 | legs | stoffa | Uncommon | class_specific |
+| `warlock_shadowweave_robe` | `c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9` | `cdv_t1_legs_stoffa_002` | T1 | legs | stoffa | Uncommon | class_specific |
+
+Su ciascuna blueprint unit corrispondente (nel `roster_120_units`) sono stati impostati:
+- `source_type = NEW_FUTURE`
+- `source_item_id = null` · `source_slug = null` · `runtime_item_id = null`
+- `registry_status = not_generated` · `apply_authorized = false`
+- `replaces_unbound_reuse_valid_source_item_id = <UUID originale>`
+- `replaces_unbound_reuse_valid_slug = <slug originale>`
+- `source_binding_fallback = true`
+- `source_binding_fallback_reason = coarse_armor_slot_without_granular_authority`
+- `source_binding_fallback_gate = IS1`
+
+`ev_f2_verdict_mutation` = **NO** (EV-F2 REUSE_VALID verdict immutable).
+`roster_effect` = 6 blueprint transformate da REUSE_VALID → NEW_FUTURE preservando blueprint identity (tier/slot/family/category/rarity/identity/armor_type/affix/budget). Nessun aggregate lock violato.
+
+## §117 · three_accessory_slot_reallocations (Punto D · one-for-one swap)
+
+**Metodo**: swap 1:1 REUSE_VALID accessory ↔ NEW_FUTURE accessory · nessuna catena · nessuna cascata · nessun charm→back rule introdotto.
+
+### Swap #1 · `warlock_black_ring` (score partner = 7.5)
+
+| campo | Unit_A (REUSE_VALID) PRE | Unit_A POST | Unit_B (NEW_FUTURE partner) PRE | Unit_B POST |
+|---|---|---|---|---|
+| blueprint_code | `cdv_t1_ring_universal_position_001` | `cdv_t2_accessory_universal_position_001` | `cdv_t2_accessory_universal_position_001` | `cdv_t1_ring_universal_position_001` |
+| tier | T1 | T2 | T2 | T1 |
+| slot | ring | accessory | accessory | ring |
+| rarity_intent | Rare | Rare | Rare | Rare |
+| identity_class | universal_neutral | universal_neutral | universal_neutral | universal_neutral |
+| family | universal_position | universal_position | universal_position | universal_position |
+| equipment_category | UNIVERSAL | UNIVERSAL | UNIVERSAL | UNIVERSAL |
+
+`swap_reason` = `accessory_source_slot_realignment_IS1` · `strict_verdict_post_swap` = `EXACT_MATCH`
+
+### Swap #2 · `warlock_cursed_pendant`
+
+| campo | Unit_A PRE | Unit_A POST | Unit_B PRE | Unit_B POST |
+|---|---|---|---|---|
+| blueprint_code | `cdv_t1_neck_universal_position_001` | `cdv_t2_accessory_universal_position_002` | `cdv_t2_accessory_universal_position_002` | `cdv_t1_neck_universal_position_001` |
+| tier | T1 | T2 | T2 | T1 |
+| slot | neck | accessory | accessory | neck |
+| rarity_intent | Common | Rare | Rare | Common |
+| identity_class | universal_neutral | class_specific | class_specific | universal_neutral |
+
+`swap_reason` = `accessory_source_slot_realignment_IS1` · `strict_verdict_post_swap` = `EXACT_MATCH`
+
+### Swap #3 · `warlock_fetish_charm` (post-swap verification esplicita)
+
+| campo | Unit_A PRE | Unit_A POST | Unit_B PRE | Unit_B POST |
+|---|---|---|---|---|
+| blueprint_code | `cdv_t1_back_universal_position_001` | `cdv_t3_accessory_universal_position_001` | `cdv_t3_accessory_universal_position_001` | `cdv_t1_back_universal_position_001` |
+| tier | T1 | T3 | T3 | T1 |
+| slot | back | **accessory** ✅ | accessory | back |
+| equipment_category | UNIVERSAL | **UNIVERSAL** ✅ | UNIVERSAL | UNIVERSAL |
+| armor_type | null | **null** ✅ | null | null |
+| weapon_family | null | **null** ✅ | null | null |
+| family | universal_position | **universal_position** ✅ | universal_position | universal_position |
+| rarity_intent | Common | Epic | Epic | Common |
+| identity_class | universal_neutral | class_specific | class_specific | universal_neutral |
+
+`charm_to_back_rule_introduced` = **False** · `swap_reason` = `accessory_source_slot_realignment_IS1` · `strict_verdict_post_swap` = `EXACT_MATCH`
+
+**Vincoli osservati**: 2 record modificati per swap (1 REUSE_VALID + 1 NEW_FUTURE) · zero cascade · zero alias policy inventata · impossible_swaps = 0 · tutti i 3 swap eseguiti.
+
+## §118 · reuse_valid_unbound_standby_ledger (Punto E · 6 record armor)
+
+| slug | source_item_id | ev_f2_primary_verdict | is1_active_binding | binding_status | active_roster_source | standby_reason |
+|---|---|---|---|---|---|---|
+| `warlock_covenant_robe` | `2618698e-9f73-40a0-8286-085c922b3179` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+| `warlock_coven_mantle` | `dca4edbd-616d-4ce3-9c2a-29c7b78784ac` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+| `warlock_novice_robe` | `3a6cc600-8316-46f1-8431-fd4281840623` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+| `warlock_hex_focus_robe` | `5417640b-3030-4be1-a68d-e3cf87e0444c` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+| `warlock_shadow_mail` | `3ac9f59f-430e-4638-bee5-62ca225648ec` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+| `warlock_shadowweave_robe` | `c8d5f2e3-b4ca-4b2a-a90e-2cb69a81c3c9` | REUSE_VALID (immutable) | NOT_VALIDATED | UNBOUND_COARSE_SOURCE | False | no_authoritative_granular_slot |
+
+`immutable_ev_f2_universe_size = 12` · `active_exact_bound_count = 6` · `standby_unbound_count = 6`
+
+## §119 · patron_seal_swap_ledger (Punto F · PM RATIFIED micro-fix pregresso)
+
+- `swap_id` = `IS1_micro_fix_patron_seal_restore_2026_02`
+- `pm_verdict` = `RATIFIED_R18_6_RV3_IS1_SYNCHRONIZED_SOURCE_BINDING_PATCH`
+- `ratification_utc` = `2026-07-12T09:11:00.753996+00:00`
+- Unit_A (`warlock_patron_seal` REUSE_VALID) POST-swap: `blueprint_code = cdv_t2_accessory_universal_position_003` · slot=accessory · tier=T2 · rarity=Epic
+- Unit_B (NEW_FUTURE partner) POST-swap: `blueprint_code = cdv_t1_hands_stoffa_001` · slot=hands · tier=T1 · rarity=Common · armor_type=stoffa
+- `absorbed_allocation_from` = `warlock_patron_seal_micro_fix_swap`
+- `all_locks_preserved` = `True`
+- `stale_hands_stoffa_reference_to_patron_seal` = **ELIMINATED**
+- **Nota importante**: ogni riferimento a `hands_stoffa` presente in questo documento post-patch riguarda esclusivamente il partner NEW_FUTURE che ha ereditato quel blueprint code, MAI `warlock_patron_seal`.
+
+## §120 · source_realization_accounting (Punto G)
+
+```
+ACTIVE REUSE_VALID (exact-bound)                        = 6
+  ├─ 3 strict EXACT_MATCH originali:
+  │     · warlock_patron_seal (T2 accessory)
+  │     · warlock_imp_collar  (T1 accessory)
+  │     · warlock_hex_sigil   (T1 accessory)
+  └─ 3 accessory riallocati via swap:
+        · warlock_cursed_pendant (ora T2 accessory · ex-neck)
+        · warlock_fetish_charm   (ora T3 accessory · ex-back)
+        · warlock_black_ring     (ora T2 accessory · ex-ring)
+
+ACTIVE REUSE_CONDITIONAL                                = 3   (invariato · PM_RATIFIED IS1-A)
+NEW_FUTURE                                              = 111 (= 105 originali + 6 armor MIT-D fallback)
+── TOTALE ─────────────────────────────────────────── = 120
+```
+
+**Ledger EV-F2** (immutabili):
+```
+EV-F2 REUSE_VALID universe                              = 12   (IMMUTABLE)
+  ├─ IS1 active exact-bound REUSE_VALID                 = 6
+  └─ IS1 REUSE_VALID unbound standby                    = 6
+```
+
+**Conditional ledger**:
+```
+active provisional REUSE_CONDITIONAL                    = 3
+conditional standby pool                                = 29
+remaining conditional fallback reserve                  = 3
+```
+
+**Worst case** (documentato · non applicato):
+```
+Se falliscono tutti i 3 conditional:
+active exact reuse = 6 · NEW_FUTURE = 114 · TOTAL = 120
+```
+
+## §121 · ic1_accounting_reconciliation (Punto H · IC1 NOT REOPENED)
+
+La modifica `source realization` da `12 active reuse → 6 active exact-bound reuse` **NON modifica alcun aggregate lock IC1**. È **IS1 SOURCE-BINDING REALIZATION**, non blueprint coverage change.
+
+**Delta IC1 verificati post-patch (tutti 0)**:
+
+| dimensione | delta |
+|---|---|
+| blueprint_total | 0 |
+| tier (T1..T5) | 0/0/0/0/0 |
+| slot (14 canonical) | 0 su tutti |
+| rarity (Common..Legendary) | 0/0/0/0/0 |
+| identity (class_specific/shared_family/universal_neutral) | 0/0/0 |
+| armor_family (stoffa/cuoio) | 0/0 |
+| weapon_family (focus/balestra/pugnale) | 0/0/0 |
+| affix_overlay | 0 |
+| Legendary allocation | 0 |
+
+**Conclusione**: IC1 aggregate coverage UNCHANGED · IC1 `CLOSED_LOCKED` preserved · no IC1 reopen.
+
+**Aggregate locks verified post-patch** (Punto I):
+```
+roster total     = 120     ✅
+tier             = 18 / 22 / 26 / 26 / 28   ✅
+category         = 60 / 21 / 39             ✅
+identity         = 68 / 30 / 22             ✅
+rarity           = 42 / 33 / 27 / 15 / 3    ✅
+armor            = 42 stoffa / 18 cuoio     ✅
+weapon           = 10 focus / 7 balestra / 4 pugnale   ✅
+Legendary        = 3 T5-only                ✅
+affix overlay    = 140                       ✅
+```
+
+## §122 · blueprint_code_semantic_audit (Punto J · 120/120)
+
+Convenzione naming: `cdv_t{1-5}_{slot_canonical}_{family}_{sequence:03d}`
+- `slot_canonical` ∈ 14 canonici (multi-word aware: `main_hand`, `off_hand`)
+- `family` ∈ `{stoffa, cuoio, focus, balestra, pugnale, universal_position}` (6)
+
+Requisiti post-patch:
+```
+roster rows            = 120  ✅
+unique blueprint_code  = 120  ✅
+tier-token match       = 120/120  ✅
+slot-token match       = 120/120  ✅
+family-token match     = 120/120  ✅
+stale semantic code    = 0    ✅
+```
+
+**Swap lineage present** (Punto J):
+- micro-fix pregresso (`patron_seal`): swap partner blueprint_code = `cdv_t1_hands_stoffa_001` ereditato da NEW_FUTURE (documentato in `§119 patron_seal_swap_ledger`).
+- 3 accessory realignment IS1: swap partner blueprints tracciati in `§117 three_accessory_slot_reallocations` (previous_blueprint_code / new_blueprint_code / swap_partner esplicitati per ciascuna coppia).
+
+**Parser di validazione**: family come suffisso (`stoffa|cuoio|focus|balestra|pugnale|universal_position`), slot come token/i prima della family, tier prefisso. Zero outlier reali.
+
