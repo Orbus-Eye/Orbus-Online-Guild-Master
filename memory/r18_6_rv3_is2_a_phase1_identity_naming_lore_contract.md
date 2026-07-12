@@ -1,10 +1,12 @@
-# R18.6.RV3-IS2-A · Item Identity, Naming & Lore Contract · Phase 1
+# R18.6.RV3-IS2-A · Item Identity, Naming & Lore Contract · Phase 1 (PATCHED)
 
 **Gate**: `R18.6.RV3-IS2-A`  
 **Phase**: `Phase 1 · Identity/Naming/Lore Contract only`  
-**Status**: `CONTRACT_DRAFTED · AWAITING_PM_VERDICT`  
+**Status**: `PATCHED_WITH_PM_VERDICTS · READY_FOR_FORMAL_CLOSURE`  
 **Regime**: `DOCUMENTAL_ONLY · READ_ONLY_DISCOVERY`  
 **Created UTC**: `2026-07-12T13:20:24.152224+00:00`  
+**Patch applied UTC**: `2026-07-12T13:45:53.640054+00:00`  
+**Patch PM verdict**: `R18.6.RV3-IS2-A Phase 1 · APPROVED WITH PATCH + FORMAL CLOSURE`  
 **Class slug**: `cacciatore_del_vuoto`  
 **Fixed anchors**: Hall = `Faro Rovesciato di Onirade` · Master = `Nael di Onirade` · Loop = `Identify → Mark → Drain → Payoff`  
 **Phase 2 status**: `HOLD · NOT_AUTHORIZED`  
@@ -240,6 +242,7 @@
 
 ## §17 · Status Taxonomy
 
+- **title**: `Status Taxonomy`
 - **naming_status**:
   - `PRESERVE_EXISTING`
   - `DRAFT_REQUIRED`
@@ -254,6 +257,13 @@
   - `LORE_PROPOSAL_PENDING_PM`
   - `PM_APPROVED`
   - `CANONICAL_LOCKED`
+- **vocabulary_status_6**:
+  - `CANONICAL_UNRESTRICTED`
+  - `CANONICAL_RESTRICTED`
+  - `CHARACTER_NAME_RESTRICTED`
+  - `INTERNAL_ONLY`
+  - `LEGACY_PRESERVED_ONLY`
+  - `NEW_ITEM_FORBIDDEN`
 - **phase_1_constraint**: `no_name_can_be_PM_APPROVED_or_CANONICAL_LOCKED`
 
 ## §18 · T1 Tone
@@ -443,8 +453,10 @@
   - `laboratorio`
   - `transmutazione chimica`
 
-## §44 · Legacy Warlock Policy
+## §44 · Legacy Warlock Policy (Q4 · PM RATIFIED)
 
+- **title**: `Legacy Warlock Policy (Q4 · PM RATIFIED)`
+- **vocabulary_status**: `LEGACY_PRESERVED_ONLY`
 - **status**: `SOURCE_HISTORY · NON nuova identità canonica`
 - **forbidden_reuse_for_new_items**:
   - `Warlock`
@@ -452,10 +464,20 @@
   - `Patto demoniaco`
   - `Coven`
   - `Hex`
-- **exception**: `un termine può essere riesaminato solo se possiede significato canonico indipendente (soggetto a PM verdict)`
+- **existing_reuse_valid_slugs_preserved**:
+  - `warlock_patron_seal`
+  - `warlock_imp_collar`
+  - `warlock_hex_sigil`
+  - `warlock_black_ring`
+  - `warlock_cursed_pendant`
+  - `warlock_fetish_charm`
+- **existing_reuse_valid_count**: `6`
+- **existing_item_rule_note**: `un termine legacy già presente su un item riutilizzato NON autorizza nuovi item CdV a copiarlo`
+- **exception**: `un termine può essere riesaminato solo se possiede significato canonico indipendente (soggetto a PM verdict caso per caso)`
 
-## §45 · Existing Reuse Preservation
+## §45 · Existing Reuse Preservation (Q4 · PM RATIFIED)
 
+- **title**: `Existing Reuse Preservation (Q4 · PM RATIFIED)`
 - **count**: `6`
 - **slugs**:
   - `warlock_patron_seal`
@@ -464,22 +486,31 @@
   - `warlock_black_ring`
   - `warlock_cursed_pendant`
   - `warlock_fetish_charm`
-- **rules**:
-  - `existing source identity PRESERVED`
-  - `base item rename = NO`
-  - `retro-branding Vuoto = NO`
-  - `new lore replacement = NO`
-  - `no new names generated in Phase 1`
+- **per_item_state**:
+  - **identity_status**: `IDENTITY_PRESERVED_EXISTING`
+  - **naming_status**: `PRESERVE_EXISTING`
+  - **localization_action**: `DEFERRED_TO_SEPARATE_LEGACY_LOCALIZATION_GATE`
+- **phase_2_forbidden_actions**:
+  - `nuovo display_name_it`
+  - `traduzione italiana sostitutiva`
+  - `rename canonico Vuoto`
+  - `nome alternativo`
+  - `retro-branding`
+- **future_localization_boundary**: `la futura localizzazione legacy NON appartiene a IS2-A · richiederà gate separato con audit UI/salvataggi/compatibilità slug/ricerca/inventario/tooltip/localizzazione`
 
-## §46 · Conditional Identity Policy
+## §46 · Conditional Identity Policy (Q4 aligned · PM RATIFIED)
 
+- **title**: `Conditional Identity Policy (Q4 aligned · PM RATIFIED)`
 - **count**: `3`
 - **slugs**:
   - `apprentice-robe`
   - `initiate_robe`
   - `apprentice-handbook`
 - **identity_status**: `IDENTITY_SOURCE_PRESERVED_PENDING_VALIDATION`
-- **fallback_rule**: `if conditional fails → 1:1 NEW_FUTURE fallback → new identity/name required (not generated now)`
+- **naming_status**: `PRESERVE_EXISTING`
+- **localization_action**: `DEFERRED_TO_SEPARATE_LEGACY_LOCALIZATION_GATE`
+- **fallback_rule**: `se conditional fallisce → 1:1 NEW_FUTURE fallback → nuova identità/nome richiesti (non generati ora)`
+- **phase_1_state**: `no_final_names · no_final_lore`
 
 ## §47 · New Future Identity Policy
 
@@ -487,157 +518,323 @@
 - **identity_status**: `NEW_CANONICAL_IDENTITY_REQUIRED · PLAYER_NAME_REQUIRED · LORE_DIRECTION_REQUIRED`
 - **phase_1_action**: `no_final_names_no_final_lore`
 
-## §48 · Contingency Identity Policy
+## §48 · Contingency Identity Policy (Q8 · PM RATIFIED)
 
+- **title**: `Contingency Identity Policy (Q8 · PM RATIFIED)`
 - **count**: `3`
-- **scope**: `outside active roster of 120`
+- **state**: `DECLARED · DORMANT · OUTSIDE_ACTIVE_ROSTER`
+- **active_new_future_count**: `111`
+- **contingency_capacity**: `3`
+- **maximum_possible_new_identities**: `114`
 - **trigger**: `worst_case_all_3_reuse_conditional_fail`
-- **phase_1_action**: `no_final_names_no_final_lore`
-- **naming_capacity_total_supported_by_contract**: `114`
+- **phase_1_state**: `name_candidate=null · lore_text=null`
+- **phase_2_state**: `NON generare nomi contingency finché non attivato fallback tramite verdict dedicato`
+- **schema_status**: `ready · content empty`
 
-## §49 · Legendary Identity Contract
+## §49 · Legendary Identity Contract (Q6 · PM RATIFIED)
 
+- **title**: `Legendary Identity Contract (Q6 · PM RATIFIED)`
 - **count**: `3`
 - **tier**: `T5-only`
+- **allowed_name_structures_candidates**:
+  - `PROPER_NOUN`
+  - `RITUAL_TITLE`
+  - `HYBRID_FORM`
+- **phase_2_proposal_slots_per_legendary**:
+  - **proper_noun_candidate**: `1`
+  - **ritual_title_candidate**: `1`
+  - **hybrid_candidate**: `1`
+- **auto_canonical_authorized**: `False`
+- **new_proper_name_default_flag**: `LORE_PROPOSAL_PENDING_PM`
 - **units**:
   -
     - **role**: `T5 main_hand focus`
     - **narrative_role**: `signature_weapon_of_the_Cacciatore`
-    - **identity_pillar**: `faro_riflesso_marchio_canalizzazione`
+    - **identity_pillar**: `faro · riflesso · marchio · canalizzazione`
     - **forbidden_overlap**:
       - `bacchetta arcana generica`
       - `tomo epico`
       - `staff Mago`
-    - **name_structure**: `proper_noun_or_titolo_ritualee_singolare`
+    - **allowed_structures**:
+      - `PROPER_NOUN`
+      - `RITUAL_TITLE`
+      - `HYBRID_FORM`
     - **lore_density**: `HIGH_but_no_final_lore_phase1`
-    - **future_utility_theme_boundary**: `Payoff_climax_Vuoto`
+    - **future_utility_theme_boundary**: `climax_Vuoto`
   -
     - **role**: `T5 main_hand balestra`
     - **narrative_role**: `ranged_ritual_signature`
-    - **identity_pillar**: `proiezione_Vuoto_precisione_ritualea_distanza`
+    - **identity_pillar**: `proiezione_Vuoto · precisione_rituale_a_distanza`
     - **forbidden_overlap**:
       - `arco Cacciatore di Mostri`
       - `arma militare generica`
-    - **name_structure**: `proper_noun_or_designazione_rituale`
+    - **allowed_structures**:
+      - `PROPER_NOUN`
+      - `RITUAL_TITLE`
+      - `HYBRID_FORM`
     - **lore_density**: `HIGH_but_no_final_lore_phase1`
-    - **future_utility_theme_boundary**: `Marchio_a_distanza_dissipazione_mirata`
+    - **future_utility_theme_boundary**: `Marchio_a_distanza · dissipazione_mirata`
   -
     - **role**: `T5 chest stoffa`
     - **narrative_role**: `apogee_of_ritual_channeling`
-    - **identity_pillar**: `canalizzazione_totale_Onirade_Faro_Rovesciato`
+    - **identity_pillar**: `canalizzazione_totale · Onirade · Faro_Rovesciato`
     - **forbidden_overlap**:
       - `mantello Mago generico`
       - `robe Negromante`
-    - **name_structure**: `nome_proprio_o_titolo_rituale_apice`
+    - **allowed_structures**:
+      - `PROPER_NOUN`
+      - `RITUAL_TITLE`
+      - `HYBRID_FORM`
     - **lore_density**: `HIGH_but_no_final_lore_phase1`
-    - **future_utility_theme_boundary**: `assenza_dissipazione_endgame`
+    - **future_utility_theme_boundary**: `assenza · dissipazione_endgame`
 - **phase_1_state**: `NO_NAMES_GENERATED · NO_STATS · NO_EFFECTS · NO_LORE_FINAL`
 
-## §50 · Canonical Vocabulary
+## §50 · Canonical Vocabulary (Q7 · 6-status taxonomy PM RATIFIED)
 
-- **core**:
-  - `Vuoto`
-  - `Onirade`
-  - `Marchio`
-  - `Frammento`
-  - `Faro Rovesciato`
-  - `Drenaggio`
-  - `Dissipazione`
-  - `Riflesso`
-  - `Assenza`
-  - `Rituale`
-  - `Canalizzazione`
+- **title**: `Canonical Vocabulary (Q7 · 6-status taxonomy PM RATIFIED)`
+- **taxonomy_6_status**:
+  - `CANONICAL_UNRESTRICTED`
+  - `CANONICAL_RESTRICTED`
+  - `CHARACTER_NAME_RESTRICTED`
+  - `INTERNAL_ONLY`
+  - `LEGACY_PRESERVED_ONLY`
+  - `NEW_ITEM_FORBIDDEN`
+- **CANONICAL_UNRESTRICTED**:
+  - **terms**:
+    - `Vuoto`
+    - `Marchio`
+    - `Frammento`
+    - `Drenaggio`
+    - `Dissipazione`
+    - `Riflesso`
+    - `Assenza`
+    - `Rituale`
+    - `Canalizzazione`
+  - **constraint**: `consentiti entro le soglie Q1 (§53) · consentiti != obbligatori`
+- **CANONICAL_RESTRICTED**:
+  - **Onirade**: `class-specific only · Epic/Legendary display names · PM_REVIEW · cap ≤4`
+  - **Faro_Rovesciato**: `class-specific only · Epic/Legendary display names · PM_REVIEW · cap ≤2`
+- **CHARACTER_NAME_RESTRICTED**:
+  - **Nael**: `display name FORBIDDEN · Legendary lore proposal solo con PM review`
+- **INTERNAL_ONLY**:
+  - **Payoff**: `no player-facing usage · reserved AFX1/IS2-B internal only`
+- **LEGACY_PRESERVED_ONLY**:
+  - **terms**:
+    - `Warlock`
+    - `Patrono`
+    - `Patto`
+    - `Coven`
+    - `Hex`
+  - **constraint**: `existing source identity preserved · new item identity FORBIDDEN`
+  - **note**: `un termine legacy già presente su un item riutilizzato NON autorizza nuovi item a copiarlo`
+- **NEW_ITEM_FORBIDDEN**:
+  - **terms**:
+    - `Sacro`
+    - `Luce`
+    - `Ossa`
+    - `Bestia`
+    - `Alchimia`
+    - `Bacchetta`
+    - `Tomo`
+    - `Grimorio`
+    - `Ladro`
+    - `Assassino`
+  - **constraint**: `class-overlap forbidden in new display names CdV`
+  - **exception_scope**: `possono apparire in documentazione tecnica o contesti generici quando non usati per nominare un nuovo item CdV · qualsiasi eccezione player-facing richiede PM review esplicita`
 - **usage_note**: `non tutti gli item devono contenere il vocabolario canonico · anti-saturazione obbligatoria`
+- **status**: `PM_RATIFIED_VOCABULARY_TAXONOMY_LOCKED`
 
-## §51 · Restricted Vocabulary
+## §51 · Restricted Vocabulary (Q2 · Q3 · Q7 · PM RATIFIED)
 
-- **requires_pm_review**:
-  - `Nael`
-  - `Onirade come luogo proprio nei nomi`
-  - `Faro Rovesciato in nome item vs solo lore`
-  - `Payoff (dominio meccanico riservato AFX1/IS2-B)`
-- **note**: `restricted != forbidden · caso per caso PM adjudication`
+- **title**: `Restricted Vocabulary (Q2 · Q3 · Q7 · PM RATIFIED)`
+- **Nael**:
+  - **vocabulary_status**: `CHARACTER_NAME_RESTRICTED`
+  - **display_name_status**: `FORBIDDEN`
+  - **forbidden_in**:
+    - `Common`
+    - `Uncommon`
+    - `Rare`
+    - `Epic`
+    - `Legendary`
+    - `SHARED_FAMILY`
+    - `UNIVERSAL_NEUTRAL`
+    - `all_slots`
+    - `all_rarities`
+  - **lore_status**: `RESTRICTED_PM_REVIEW`
+  - **lore_allowed_scope**: `solo su proposta Legendary con PM review individuale`
+- **Onirade**:
+  - **vocabulary_status**: `CANONICAL_RESTRICTED`
+  - **display_name_allowed_scope**: `CLASS_SPECIFIC AND (Epic OR Legendary) AND PM_REVIEW obbligatoria`
+  - **display_name_hard_cap_active**: `4`
+  - **forbidden_in_names**:
+    - `SHARED_FAMILY`
+    - `UNIVERSAL_NEUTRAL`
+  - **lore_scope**:
+    - **Rare_class_specific**: `consentito_con_moderazione`
+    - **Epic_class_specific**: `consentito`
+    - **Legendary_class_specific**: `consentito`
+    - **shared_family**: `vietato`
+    - **universal_neutral**: `vietato`
+- **Faro_Rovesciato**:
+  - **vocabulary_status**: `CANONICAL_RESTRICTED`
+  - **display_name_allowed_scope**: `Epic OR Legendary · CLASS_SPECIFIC only · PM_REVIEW obbligatoria`
+  - **display_name_hard_cap_active**: `2`
+  - **forbidden_in_names**:
+    - `Common`
+    - `Uncommon`
+    - `SHARED_FAMILY`
+    - `UNIVERSAL_NEUTRAL`
+- **Payoff**:
+  - **vocabulary_status**: `INTERNAL_ONLY`
+  - **player_facing**: `FORBIDDEN`
+  - **reserved_for**:
+    - `AFX1_technical_language`
+    - `IS2_B_technical_language`
+    - `internal_documentation`
+    - `mechanical_metadata`
+  - **forbidden_in**:
+    - `display_name_it`
+    - `description_it`
+    - `flavour_text`
+    - `lore_player_facing`
+    - `localization_key_semantic_visible`
+  - **italian_player_facing_alternative_examples_non_normative**:
+    - `Risoluzione`
+    - `esito`
+    - `compimento rituale`
+  - **italian_alternative_note**: `termine italiano player-facing sarà scelto in Phase 2 in base al contesto · senza promettere meccaniche`
+- **status**: `PM_RATIFIED`
 
-## §52 · Forbidden Vocabulary
+## §52 · Forbidden Vocabulary (Q7 · aligned with 6-status taxonomy)
 
-- **class_overlap_forbidden**:
+- **title**: `Forbidden Vocabulary (Q7 · aligned with 6-status taxonomy)`
+- **NEW_ITEM_FORBIDDEN_class_overlap**:
   - `Sacro`
   - `Luce`
-  - `Giuramento`
-  - `Non-morto`
   - `Ossa`
   - `Bestia`
-  - `Trofeo`
   - `Alchimia`
   - `Bacchetta`
   - `Tomo`
   - `Grimorio`
   - `Ladro`
   - `Assassino`
-- **legacy_warlock_forbidden_for_new_items**:
+- **LEGACY_PRESERVED_ONLY_forbidden_for_new_items**:
   - `Warlock`
   - `Patrono`
-  - `Patto demoniaco`
+  - `Patto`
   - `Coven`
   - `Hex`
 - **promise_forbidden**:
   - `+Intelligenza N`
-  - `proc`
+  - `proc esplicito`
   - `% chance`
   - `immunità totale`
   - `ignora boss`
   - `annulla ogni evocazione`
+  - `durate esplicite`
+  - `cap numerici`
+  - `danno numerico`
+- **policy_note**: `'Forbidden' qui è specifico al display name di new item CdV · vedi §50 per eccezioni tecniche`
+- **status**: `PM_RATIFIED`
 
-## §53 · Repetition Control Proposal
+## §53 · Repetition Control (Q1 · PM RATIFIED)
 
-- **principle**: `no more than X% of items can contain the same canonical token`
-- **proposed_soft_thresholds_pending_pm**:
-  - **Vuoto_in_name**: `≤ 25% del roster`
-  - **Onirade_in_name**: `≤ 10% del roster`
-  - **Marchio_in_name**: `≤ 20% del roster`
-  - **Frammento_in_name**: `≤ 15% del roster`
-  - **Faro_Rovesciato_in_name**: `≤ 5% del roster (preferibile solo Legendary/T5)`
-- **status**: `PM_REVIEW · NO_AUTO_LOCK`
+- **title**: `Repetition Control (Q1 · PM RATIFIED)`
+- **scope_note**: `hard caps applicati ai 111 ACTIVE NEW_FUTURE identity packages · le 3 contingency NON incluse finché non attivate`
+- **normalization_rules**:
+  - **case_insensitive**: `True`
+  - **accent_insensitive**: `True`
+  - **singular_plural_aggregated**: `True`
+  - **morphological_forms_aggregated**: `True`
+  - **examples**:
+    - `Frammento + Frammenti = stessa famiglia lessicale`
+    - `Rituale + Rituali = stessa famiglia lessicale`
+- **global_hard_caps_phase_2_draft**:
+  - **Vuoto**: `10`
+  - **Onirade**: `4`
+  - **Marchio**: `8`
+  - **Frammento_Frammenti_family**: `8`
+  - **Faro_Rovesciato**: `2`
+  - **Drenaggio**: `6`
+  - **Dissipazione**: `6`
+  - **Riflesso**: `8`
+  - **Assenza**: `8`
+  - **Rituale_Rituali_family**: `10`
+  - **Canalizzazione**: `6`
+- **cap_semantics**: `hard caps NON impongono che ogni termine raggiunga il massimo`
+- **anti_repetition_rules**:
+  - **exact_duplicate_full_name_allowed**: `0`
+  - **same_normalized_phrase_2plus_words_max_occurrences**: `2`
+  - **same_head_noun_dominant_max_global**: `8`
+  - **same_head_noun_dominant_max_same_slot**: `3`
+  - **same_naming_pattern_max_active_units**: `12`
+  - **no_nominal_family_artificial_saturation**: `True`
+- **rarity_density_strong_canonical_terms**:
+  - **Common**:
+    - **max**: `1`
+    - **preferred**: `0`
+  - **Uncommon**:
+    - **max**: `1`
+  - **Rare**:
+    - **max**: `2`
+  - **Epic**:
+    - **max**: `2`
+  - **Legendary**:
+    - **max**: `2`
+    - **note**: `salvo eccezione PM esplicita`
+- **anti_example_forbidden**: `Focus del Vuoto di Onirade del Marchio dei Frammenti (densità lessicale ≠ qualità narrativa)`
+- **status**: `PM_RATIFIED_LOCK_FOR_PHASE_2_DRAFT`
 
-## §54 · Naming Pattern Catalog
+## §54 · Naming Pattern Catalog (Q5 + Q10 · PM RATIFIED)
 
-- **patterns**:
+- **title**: `Naming Pattern Catalog (Q5 + Q10 · PM RATIFIED)`
+- **cohesive_naming_families_allowed**: `True`
+- **cohesive_family_size_range**:
+  - **min**: `2`
+  - **max**: `4`
+- **cohesive_family_rules**:
+  - `ogni item conserva nome completo distinto`
+  - `ogni item conserva slot semanticamente leggibile`
+  - `ogni item conserva funzione narrativa propria`
+- **cohesive_family_forbidden**:
+  - `Nome Base I / II / III`
+  - `5 copie differenziate solo da tier/rarità/colore/numero`
+  - `gameplay set / set bonus / 2-4-6 piece bonus`
+- **set_mechanics_authorized**: `False`
+- **patterns_template_only_no_instantiation**:
   -
     - **id**: `NP_STOFFA_T1`
     - **template**: `[funzionale-descrittore] di [scuola/rito iniziale]`
-    - **example_placeholder**: `None`
   -
     - **id**: `NP_STOFFA_T2_T3`
-    - **template**: `[titolo tecnico] del [Vuoto/Marchio/Onirade]`
-    - **example_placeholder**: `None`
+    - **template**: `[titolo tecnico] del [Vuoto/Marchio/Onirade con vincoli Q2/Q7]`
   -
     - **id**: `NP_STOFFA_T4_T5`
-    - **template**: `[titolo rituale] di [nome canonico/riferimento faro]`
-    - **example_placeholder**: `None`
+    - **template**: `[titolo rituale] di [nome canonico/riferimento faro con cap Q1]`
   -
     - **id**: `NP_CUOIO`
-    - **template**: `[abito/protezione] del [rito/caccia rituale]`
-    - **example_placeholder**: `None`
+    - **template**: `[abito/protezione] del [rito/caccia rituale · anti-CdM]`
   -
     - **id**: `NP_FOCUS`
     - **template**: `[oggetto strumentale] del [riflesso/faro/frammento]`
-    - **example_placeholder**: `None`
   -
     - **id**: `NP_BALESTRA`
     - **template**: `[strumento a distanza] del [Marchio/dissipazione]`
-    - **example_placeholder**: `None`
   -
     - **id**: `NP_PUGNALE`
     - **template**: `[lama rituale] del [rito ravvicinato]`
-    - **example_placeholder**: `None`
   -
     - **id**: `NP_UNIVERSAL`
     - **template**: `[oggetto neutro] [descrittore magico non-classe-specifico]`
-    - **example_placeholder**: `None`
+- **armor_tags_role**: `semantic_family_hint (NON authoritative for slot/tier/rarity/identity_class/source_verdict)`
+- **weapon_tags_role**: `weapon_identity_hint (NON authoritative for slot/tier/rarity/identity_class/source_verdict)`
+- **conflict_resolution**: `IS1 canonical specification WINS · log conflict · no silent reinterpretation`
 - **phase_1_note**: `template only · zero example instantiation · zero final names`
 
-## §55 · Slot Semantics
+## §55 · Slot Semantics (Q10 · PM RATIFIED with authority hierarchy)
 
+- **title**: `Slot Semantics (Q10 · PM RATIFIED with authority hierarchy)`
 - **14_canonical_slots**:
   - `head`
   - `neck`
@@ -658,6 +855,13 @@
   - `vietato: nome di anello su chest`
   - `vietato: nome di mantello su accessorio`
   - `vietato: nome di lama su focus`
+- **authority_hierarchy_for_naming**:
+  - **IS1_blueprint_slot**: `authoritative for slot naming`
+  - **IS1_equipment_category**: `authoritative for category`
+  - **IS1_armor_type**: `authoritative for armor identity`
+  - **IS1_weapon_family**: `authoritative for weapon identity`
+  - **armor_tags_weapon_tags**: `supporting semantic hints only`
+- **conflict_resolution**: `IS1 canonical specification WINS · log conflict · no silent reinterpretation`
 
 ## §56 · Name Slot Validation
 
@@ -710,6 +914,23 @@
 - **total_live_items**: `178`
 - **unique_live_names_lowercased**: `178`
 - **unique_live_slugs_lowercased**: `178`
+- **voidpiercer_bow_final_treatment**:
+  - **status**: `NOT_COMPATIBLE · FINAL`
+  - **successor_requirement**: `False`
+  - **name_reusable_for_new_void_items**: `False`
+  - **existing_mutation_allowed**: `False`
+- **arcane_adept_orb_final_treatment**:
+  - **status**: `NOT_COMPATIBLE · FINAL`
+  - **existing_item_mutation**: `NO`
+  - **class_tags_mutation**: `NO`
+  - **rename**: `NO`
+  - **retro_branding**: `NO`
+  - **void_native_successor**: `REQUIRED_FUTURE_COVERAGE`
+  - **phase_1_name_generated**: `False`
+  - **phase_1_identity_canonized**: `False`
+  - **item_row_created**: `False`
+  - **successor_requirement_reopens_existing_record**: `False`
+  - **modifies_EV_F2**: `False`
 
 ## §62 · Lore Collision Audit
 
@@ -720,6 +941,7 @@
   - `Nael di Onirade`
 - **collision_scope_phase_1**: `baseline_only`
 - **warning_forbidden_reuse_for_new_items**: `18`
+- **arcane_adept_orb_note**: `NOT_COMPATIBLE FINAL · void-native successor REQUIRED FUTURE COVERAGE · no impact on EV-F2 immutability`
 
 ## §63 · Class Collision Audit
 
@@ -730,6 +952,7 @@
   - `Negromante`
   - `Alchimista`
   - `Assassino/Ladro`
+- **arcane_adept_orb_note**: `existing arcane_adept_orb (Mago class historical) preserved · not reused for CdV successor · new CdV item required with distinct identity`
 
 ## §64 · Duplicate Prevention
 
@@ -746,12 +969,14 @@
   - `normalized name distance ≥ threshold PM_DEFINE`
   - `semantic distinct pillar per item`
 
-## §66 · Set Name Policy
+## §66 · Set Name Policy (Q5 · PM RATIFIED)
 
+- **title**: `Set Name Policy (Q5 · PM RATIFIED)`
 - **set_mechanics_authorized**: `False`
 - **set_bonuses_authorized**: `False`
 - **set_completion_2_4_6_pieces**: `NOT_AUTHORIZED`
-- **cohesive_naming_family_without_gameplay_set_mechanics**: `ALLOWED_ONLY_AS_NARRATIVE_COHESION`
+- **cohesive_naming_family_without_gameplay_set_mechanics**: `ALLOWED · 2-4 items per family · narrative_cohesion_only`
+- **note**: `IS2-A può definire narrativa coesa · zero meccaniche di set`
 
 ## §67 · Affix Language Relationship
 
@@ -905,6 +1130,7 @@
     - **impact**: `HIGH`
     - **default_proposal**: `soglie §53 as-is`
     - **blocking**: `False`
+    - **status**: `APPROVED_WITH_PM_THRESHOLDS`
   -
     - **question_id**: `Q2`
     - **verbatim_question**: `L'uso del termine 'Nael' o 'Onirade' è ammesso solo in lore o anche in item name (non-Legendary)?`
@@ -912,6 +1138,7 @@
     - **impact**: `HIGH`
     - **default_proposal**: `restrizione Legendary-only`
     - **blocking**: `True`
+    - **status**: `RESOLVED`
   -
     - **question_id**: `Q3`
     - **verbatim_question**: `Il termine 'Payoff' (meccanica AFX1) può apparire in nomi player-facing?`
@@ -919,6 +1146,7 @@
     - **impact**: `MEDIUM`
     - **default_proposal**: `forbid_in_names`
     - **blocking**: `True`
+    - **status**: `RESOLVED`
   -
     - **question_id**: `Q4`
     - **verbatim_question**: `I 6 REUSE_VALID warlock preservano il nome legacy in localizzazione italiana futura o richiedono display_name_it distinto?`
@@ -926,6 +1154,7 @@
     - **impact**: `HIGH`
     - **default_proposal**: `defer_to_phase_2_per_item_PM`
     - **blocking**: `True`
+    - **status**: `RESOLVED`
   -
     - **question_id**: `Q5`
     - **verbatim_question**: `È autorizzato definire 'cohesive naming family' narrativi anche senza set-mechanic in Phase 1?`
@@ -933,6 +1162,7 @@
     - **impact**: `LOW`
     - **default_proposal**: `contract_only_no_names`
     - **blocking**: `False`
+    - **status**: `APPROVED`
   -
     - **question_id**: `Q6`
     - **verbatim_question**: `Le 3 unità Legendary T5 richiedono narrative_role di tipo 'nome proprio' oppure 'titolo rituale' o entrambi?`
@@ -940,6 +1170,7 @@
     - **impact**: `MEDIUM`
     - **default_proposal**: `both_structures_allowed`
     - **blocking**: `False`
+    - **status**: `APPROVED`
   -
     - **question_id**: `Q7`
     - **verbatim_question**: `Il verdict PM su §51 restricted_vocabulary (Faro Rovesciato, Payoff) è richiesto prima di Phase 2 kickoff?`
@@ -947,6 +1178,7 @@
     - **impact**: `HIGH`
     - **default_proposal**: `PM_adjudicate_before_phase_2`
     - **blocking**: `True`
+    - **status**: `RESOLVED_VOCABULARY_RATIFIED`
   -
     - **question_id**: `Q8`
     - **verbatim_question**: `La contingency di 3 unità entra nel naming contract con capacity 114 o resta fuori fino al trigger?`
@@ -954,6 +1186,7 @@
     - **impact**: `LOW`
     - **default_proposal**: `capacity_declared_but_dormant`
     - **blocking**: `False`
+    - **status**: `APPROVED`
   -
     - **question_id**: `Q9`
     - **verbatim_question**: `L'esistente `arcane_adept_orb` (Legendary amulet) può essere considerato pre-existing successor blueprint o resta NOT_COMPATIBLE definitivamente?`
@@ -961,6 +1194,7 @@
     - **impact**: `MEDIUM`
     - **default_proposal**: `NOT_COMPATIBLE_final`
     - **blocking**: `True`
+    - **status**: `CONFIRMED_FINAL`
   -
     - **question_id**: `Q10`
     - **verbatim_question**: `Autorizzare l'inclusione di `armor_tags`/`weapon_tags` come semantic hint in naming_pattern_catalog Phase 2?`
@@ -968,24 +1202,34 @@
     - **impact**: `LOW`
     - **default_proposal**: `allow_as_hint_only`
     - **blocking**: `False`
+    - **status**: `APPROVED`
+- **blocking_pm_questions**: `0`
+- **all_questions_adjudicated**: `True`
 
 ## §79 · Phase 2 Readiness
 
-- **prerequisites_before_phase_2_kickoff**:
-  - `PM adjudication of §78 blocking questions (Q2,Q3,Q4,Q7,Q9)`
-  - `PM ratification of §53 repetition thresholds (Q1)`
-  - `PM verdict on §51 restricted vocabulary (Q7)`
-  - `PM verdict on legacy warlock names localization strategy (Q4)`
-- **phase_2_scope_hint**: `full naming/lore roster generation for 111 NEW_FUTURE + 3 Legendary T5 contract fulfillment · localization pass · PM review cycles · collision audit vs live 178 + Phase-2-generated names`
+- **title**: `Phase 2 Readiness`
+- **prerequisites_before_phase_2_kickoff**: `ALL_PM_ADJUDICATIONS_COMPLETE (Q1-Q10 resolved · blocking=0)`
+- **phase_2_scope_hint**: `full naming/lore roster generation for 111 NEW_FUTURE + fulfillment 3 Legendary T5 contract · localization pass · PM review cycles · collision audit vs live 178 + Phase-2-generated names`
+- **current_recommendation**: `HOLD · PM must explicitly authorize Phase 2 kickoff`
+- **vocabulary_taxonomy_locked**: `True`
+- **repetition_caps_locked**: `True`
+- **cohesive_family_policy_locked**: `True`
+- **legendary_structure_locked**: `True`
+- **arcane_adept_orb_final**: `True`
+- **voidpiercer_bow_final**: `True`
+- **authority_hierarchy_locked**: `True`
 
-## §80 · Go Hold Recommendation
+## §80 · Go/Hold Recommendation
 
+- **title**: `Go/Hold Recommendation`
+- **phase_1_status**: `READY_FOR_FORMAL_CLOSURE`
 - **phase_2_recommendation**: `HOLD`
 - **phase_2_authorization_required**: `True`
-- **current_state**: `IS2-A Phase 1 CONTRACT WRITTEN · awaiting PM verdict on §78 blocking questions and on §51 restricted vocabulary`
-- **next_action**: `await_PM_verdict`
+- **current_state**: `IS2-A Phase 1 CONTRACT PATCHED WITH PM VERDICTS Q1-Q10 · blocking=0 · awaiting formal closure and Phase 2 authorization`
+- **next_action**: `await_PM_verdict_for_phase_2_kickoff`
 
-## Identity Matrix · 120 Units (Phase 1 · all name_candidate=null · lore_text=null)
+## Identity Matrix · 120 Units (Phase 1 PATCHED · all name_candidate=null · lore_text=null)
 
 Rows: **120** · Unique blueprint_code: **120** · Existing identity preserve: **9** · New identity required: **111** · Contingency: **3** · Naming capacity supported: **114**
 
@@ -1112,9 +1356,7 @@ Rows: **120** · Unique blueprint_code: **120** · Existing identity preserve: *
 | 119 | `cdv_t5_accessory_universal_position_002` | NF | T5 | accessory | Epic | class_specific | universal_position | `NEW_CANONICAL_IDENTITY_REQUIRED` | `DRAFT_REQUIRED` | `DIRECTION_ONLY` | `Vuoto_Marchio_Onirade` |
 | 120 | `cdv_t5_accessory_universal_position_003` | NF | T5 | accessory | Epic | class_specific | universal_position | `NEW_CANONICAL_IDENTITY_REQUIRED` | `DRAFT_REQUIRED` | `DIRECTION_ONLY` | `Vuoto_Marchio_Onirade` |
 
-**Nota Phase 1**: tutti i campi `name_candidate`, `lore_text`, `display_name_it`, `display_name_en_future`, `description_it`, `description_en_future`, `localization_key` sono impostati a `null`/None. Fare riferimento al JSON per la matrice completa.
-
-## Accounting Summary
+## Accounting Summary (post-patch)
 
 - **identity_matrix_rows**: `120`
 - **unique_blueprint_codes**: `120`

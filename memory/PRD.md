@@ -3896,3 +3896,51 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 artifacts UNCHANGED.
 **Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
+
+
+## R18.6.RV3-IS2-A Phase 1 · Item Identity, Naming & Lore Contract · CLOSED · 2026-07-12T13:48:20.696181+00:00
+
+**Gate**: `R18.6.RV3-IS2-A Phase 1`
+**PM final verdict**: `R18.6.RV3-IS2-A Phase 1 · APPROVED WITH PATCH + FORMAL CLOSURE`
+**Regime**: DOCUMENTAL ONLY · zero code · zero DB · zero nuovi sigilli
+**Closure type**: `governance_semantic_lock`
+
+- Phase 1 = PM APPROVED · CLOSED / PM-LOCKED
+- 80/80 sections
+- identity matrix 120
+- preserve-existing identity 9 (6 REUSE_VALID + 3 REUSE_CONDITIONAL)
+- active NEW_FUTURE identity requirement 111
+- dormant contingency capacity 3
+- maximum identity capacity 114
+- final names generated = 0
+- final lore generated = 0
+- Italian player-facing primary
+- vocabulary taxonomy LOCK (6-status: CANONICAL_UNRESTRICTED · CANONICAL_RESTRICTED · CHARACTER_NAME_RESTRICTED · INTERNAL_ONLY · LEGACY_PRESERVED_ONLY · NEW_ITEM_FORBIDDEN)
+- repetition thresholds LOCK for Phase 2 draft (Vuoto≤10 · Onirade≤4 · Marchio≤8 · Frammento_family≤8 · Faro Rovesciato≤2 · Drenaggio≤6 · Dissipazione≤6 · Riflesso≤8 · Assenza≤8 · Rituale_family≤10 · Canalizzazione≤6)
+- Nael forbidden in display names (RESTRICTED_PM_REVIEW in lore only)
+- Onirade restricted to class-specific Epic/Legendary (cap ≤4)
+- Faro Rovesciato restricted to class-specific Epic/Legendary (cap ≤2)
+- Payoff internal-only (player-facing forbidden)
+- legacy Warlock terms preserved-existing only (Warlock/Patrono/Patto/Coven/Hex forbidden for new items)
+- no legacy item rename (6 REUSE_VALID Warlock)
+- no legacy localization in IS2-A (deferred to separate gate)
+- cohesive naming families allowed without set mechanics (2-4 items per family)
+- Legendary naming patterns remain candidate-only (PROPER_NOUN / RITUAL_TITLE / HYBRID_FORM · LORE_PROPOSAL_PENDING_PM)
+- arcane_adept_orb NOT_COMPATIBLE FINAL (void-native successor REQUIRED FUTURE COVERAGE)
+- voidpiercer-bow NOT_COMPATIBLE FINAL (no successor requirement)
+- armor_tags/weapon_tags hint-only (IS1 canonical specification WINS in conflict)
+- Phase 2 HOLD
+- IS2-B HOLD
+- Registry v3 generation NOT AUTHORIZED
+- Registry v3 apply NOT AUTHORIZED
+- NC1 HOLD
+- Gate 11 HOLD
+
+**Artifact IS2-A Phase 1 tracciati (PM_LOCKED)**:
+- `memory/r18_6_rv3_is2_a_phase1_identity_naming_lore_contract.md` (post-patch)
+- `memory/r18_6_rv3_is2_a_phase1_identity_naming_lore_contract.json` (post-patch)
+- `memory/r18_6_rv3_is2_a_phase1_final_closure_report.md`
+- `memory/r18_6_rv3_is2_a_phase1_final_closure_report.json`
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+**Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
