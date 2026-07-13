@@ -1,0 +1,508 @@
+{
+  "document_type": "stat_budget_mechanical_effect_contract",
+  "gate_id": "R18.6.RV3-IS2-B_Phase_1",
+  "gate_title": "Stat Budget & Mechanical Effect Contract",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "artifact_status": "ARTIFACT_WRITTEN",
+  "pm_adjudication_required": true,
+  "formal_closure": "HOLD",
+  "source_of_truth_read_only": [
+    "R18.5_Itemization_baseline",
+    "CdV_G1_G5",
+    "AFX1",
+    "IC1",
+    "IS1",
+    "IS2-A_Phase_1",
+    "IS2-A_Phase_2_Rev4_PM_LOCKED",
+    "IS2-A-L1_CLOSED_PM_LOCKED"
+  ],
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "sections": {
+    "1_executive_summary": "Contratto di stat budget e taxonomy meccanica per il corpus attivo 111 (108 non-Leg + 3 Leg PM-selected). Definisce COME allocare (contract), non QUANTO (item-by-item numerici = null in Phase 1). Le 5 aree residue PM_REVIEW (coefficient balestra/pugnale, slot budget bands, stacking, rounding, Legendary direction) sono raccolte come PM open questions (§55).",
+    "2_scope": {
+      "in_scope": ["main_stat_contract", "secondary_stat_contract", "tier_budget_architecture", "rarity_budget_architecture", "affix_budget_boundary", "utility_budget_boundary", "effect_budget_boundary", "anti_double_counting", "slot_budget_proposal", "armor_budget_stoffa_cuoio", "weapon_coefficient_architecture_focus_balestra_pugnale", "effect_taxonomy_13_families", "effect_status_vocabulary", "AFX1_relationship", "Mark_Drain_Fragment_Dispel_boundaries", "anti_incorporeal_anti_summon_boundaries", "channel_mobility_ritual_protection_boundaries", "boss_safeguards", "proc_caps", "hard_cap_protections", "forbidden_mechanics", "anti_P2W", "Legendary_boundary_per_3_PM_selected", "future_per_item_schema", "validation_rules", "rounding_stacking_conflict_fallback_policy_proposals", "risk_register", "PM_open_questions"],
+      "out_of_scope_phase_1": ["item_by_item_numeric_values", "final_effect_values", "affix_assignment", "final_Legendary_effect", "Registry_generation", "Registry_apply", "migration", "DB_writes", "runtime_item", "sealed_test_refactor"]
+    },
+    "3_governance": {
+      "documental_only": true,
+      "read_only": true,
+      "no_apply": true,
+      "backend_frontend_openapi_db_registry_test_env_seals_modifications": 0,
+      "sealed_scripts_byte_identical": "36/36",
+      "lore_meta_py_anchor_invariante": true,
+      "sha_policy_31_compliance": true,
+      "is2_a_branch_locked_immutable": ["Phase_1", "Phase_2_Rev4", "L1"]
+    },
+    "4_source_of_truth": {
+      "R18.5_Itemization_baseline": "ratificata",
+      "CdV_G1_G5": "ratificati",
+      "AFX1": "ratificato",
+      "IC1": "ratificato",
+      "IS1": "IS1_SEALED",
+      "IS2-A_Phase_1": "CLOSED",
+      "IS2-A_Phase_2_Rev4": "PM_LOCKED",
+      "IS2-A-L1": "CLOSED_PM_LOCKED"
+    },
+    "5_is2_a_dependency": {
+      "corpus_attivo": 111,
+      "non_legendary_selected": 108,
+      "legendary_pm_selected": 3,
+      "preserved_identities": 9,
+      "dormant_contingency": 3,
+      "legendary_trio": ["Veste di Onirade", "Occhio del Faro Rovesciato", "Balestra della Traiettoria certa"]
+    },
+    "6_active_roster_baseline": {
+      "total_active_new_design_names": 111,
+      "non_legendary_selected": 108,
+      "legendary_pm_selected": 3,
+      "preserved_identities": 9,
+      "dormant_contingency": 3,
+      "generated_names_from_dormant": 0
+    },
+    "7_main_stat_contract": {
+      "class_pilot": "Cacciatore_del_Vuoto",
+      "main_stat": "Intelligenza",
+      "priority_order": ["Intelligenza", "Costituzione", "Destrezza"],
+      "soft_cap_intelligenza": 100,
+      "item_level_assignment_phase_1": null,
+      "default_item_main_stat_cdv": "Intelligenza"
+    },
+    "8_secondary_stat_contract": {
+      "costituzione": "secondary_defensive_priority",
+      "destrezza": "tertiary_utility_opportunistic_priority",
+      "forbidden": ["destrezza_main_stat_cdv", "dual_primary_int_dex", "retroactive_dex_to_int_conversion", "cdv_dex_primary_builds"]
+    },
+    "9_tier_budget_architecture": {
+      "T1": {"intelligenza_band_min": 10, "intelligenza_band_max": 25},
+      "T2": {"intelligenza_band_min": 25, "intelligenza_band_max": 45},
+      "T3": {"intelligenza_band_min": 45, "intelligenza_band_max": 70},
+      "T4": {"intelligenza_band_min": 70, "intelligenza_band_max": 90},
+      "T5": {"intelligenza_band_min": 90, "intelligenza_band_max": 115},
+      "item_level_value_phase_1": null
+    },
+    "10_rarity_budget_architecture": {
+      "common": 1.00,
+      "uncommon": 1.15,
+      "rare": 1.35,
+      "epic": 1.60,
+      "legendary": 1.85,
+      "semantics": "total_budget_multiplier_incl_utility_uniques",
+      "not_additive_bonus_over_complete_effects": true,
+      "not_separate_multiplier_per_subbudget": true
+    },
+    "11_affix_budget_boundary": {
+      "T1_slots": 1,
+      "T2_slots": 2,
+      "T3_slots": 3,
+      "T4_slots": 4,
+      "T5_slots": 5,
+      "overlay_family_occurrences": 140,
+      "overlay_blueprint_units": 120,
+      "contract_type": "eligibility_not_assignment",
+      "assignment_phase": "Phase_2_PM_REVIEW"
+    },
+    "12_utility_budget_boundary": {
+      "included_families": ["PAYOFF_UTILITY", "DISPEL_UTILITY", "CHANNEL_MOBILITY", "RITUAL_PROTECTION"],
+      "sub_portion_of_total_post_multiplier": true,
+      "anti_double_counting_with_effect_budget": true
+    },
+    "13_effect_budget_boundary": {
+      "included_families": ["PASSIVE_STAT", "CONDITIONAL_STAT", "MARK_INTERACTION", "DRAIN_INTERACTION", "FRAGMENT_INTERACTION", "ANTI_INCORPOREAL", "ANTI_SUMMON", "WEAPON_IDENTITY_EFFECT", "LEGENDARY_UNIQUE_EFFECT"],
+      "effect_value_phase_1": null,
+      "effect_status_default": "DIRECTION_ONLY"
+    },
+    "14_anti_double_counting_rule": {
+      "rarity_multiplier_scope": "global_on_total_budget",
+      "sub_budgets_not_re_multiplied": ["utility", "effect", "affix"],
+      "single_category_per_effect": true,
+      "no_affix_replication_across_families": true
+    },
+    "15_slot_budget_proposal_pm_review": {
+      "head": "high-budget_armor",
+      "neck": "medium-budget_accessory",
+      "shoulders": "medium-budget_armor",
+      "chest": "high-budget_armor",
+      "back": "medium-budget_armor",
+      "hands": "medium-budget_armor",
+      "wrist": "low-budget_utility",
+      "waist": "medium-budget_accessory",
+      "legs": "high-budget_armor",
+      "feet": "medium-budget_armor",
+      "main_hand": "high-budget_weapon",
+      "off_hand": "medium-budget_utility",
+      "ring": "low-budget_utility",
+      "accessory": "low-budget_utility",
+      "pm_open_question_ref": "IS2B_P1_Q03"
+    },
+    "16_armor_budget": {
+      "formula_direction": "slot_budget_class * rarity_multiplier * tier_band_reference",
+      "output_type": "range_reference_not_single_value_phase_1",
+      "compliant_armor_types_cdv": ["stoffa", "cuoio"]
+    },
+    "17_stoffa_budget": {
+      "direction": ["potenza_rituale", "canalizzazione", "Marchio", "Drenaggio", "dissipazione"],
+      "costituzione_profile": "basso_medio",
+      "no_primary_mobility_direction": true,
+      "no_thief_identity_overlap": true,
+      "no_monster_hunter_identity_overlap": true
+    },
+    "18_cuoio_budget": {
+      "direction": ["mobilità", "Costituzione", "protezione_rituale", "opportunità", "controllo_distanza"],
+      "costituzione_profile": "medio_alto",
+      "forbidden_dex_primary_on_cdv_cuoio": true,
+      "forbidden_thief_identity": true,
+      "forbidden_monster_hunter_identity": true
+    },
+    "19_weapon_coefficient_architecture": {
+      "focus": {"coefficient": 1.00, "status": "DESIGN_LOCKED"},
+      "balestra": {"coefficient_band_min": 0.85, "coefficient_band_max": 0.90, "status": "PM_REVIEW", "pm_open_question_ref": "IS2B_P1_Q01"},
+      "pugnale": {"coefficient_band_min": 0.70, "coefficient_band_max": 0.80, "status": "PM_REVIEW", "pm_open_question_ref": "IS2B_P1_Q02"}
+    },
+    "20_focus_contract": {
+      "role": "primary_class_weapon",
+      "coefficient": 1.00,
+      "can_authorize": ["greater_direct_power", "better_channeling_efficiency", "better_mark_drain_coherence"],
+      "cannot_authorize": ["resource_cap_increase", "fragments_over_5", "focus_bonus_over_2_per_resource_segment", "boss_safeguard_bypass"]
+    },
+    "21_balestra_contract": {
+      "role": "ranged_ritual_signature",
+      "coefficient_band": [0.85, 0.90],
+      "budget_direction": ["precisione", "distanza", "proiezione", "dissipazione_mirata"],
+      "forbidden": ["dex_primary_transformation", "bow_family_drift", "generic_weapon_family"]
+    },
+    "22_pugnale_contract": {
+      "role": "ritual_opportunistic_weapon",
+      "coefficient_band": [0.70, 0.80],
+      "budget_direction": ["prossimità", "incisione", "opportunità", "rischio_maggiore"],
+      "ritual_close_bonus_cap": {"max_per_mark_application": 1, "refresh_does_not_reset": true},
+      "forbidden_thief_identity": true
+    },
+    "23_effect_taxonomy_13": ["PASSIVE_STAT", "CONDITIONAL_STAT", "MARK_INTERACTION", "DRAIN_INTERACTION", "FRAGMENT_INTERACTION", "PAYOFF_UTILITY", "DISPEL_UTILITY", "ANTI_INCORPOREAL", "ANTI_SUMMON", "CHANNEL_MOBILITY", "RITUAL_PROTECTION", "WEAPON_IDENTITY_EFFECT", "LEGENDARY_UNIQUE_EFFECT"],
+    "24_effect_status_taxonomy": ["DIRECTION_ONLY", "BUDGET_CLASSIFIED", "DRAFT_REQUIRED", "PM_REVIEW", "PM_APPROVED", "DESIGN_LOCKED"],
+    "25_afx1_relationship": {
+      "consumption_mode": "read_only",
+      "no_afx1_modification": true,
+      "no_new_affix_family_introduced_phase_1": true,
+      "eligibility_matrix": "140_family_occurrences_on_120_blueprint_units"
+    },
+    "26_mark_boundaries": {"active_marks_hard_cap": 5, "mark_duration_hard_cap": 10, "compliance": "all_MARK_INTERACTION_effects_must_respect_caps"},
+    "27_drain_boundaries": {"marked_target_required": true, "no_unmarked_resource_generation": true, "no_permanent_cross_phase_drain": true, "boss_safeguard_required": true},
+    "28_fragment_boundaries": {"fragments_hard_cap": 5, "no_cap_increase_effects": true, "focus_bonus_per_resource_segment_cap": 2},
+    "29_dispel_boundaries": {"target_definition_required": true, "no_unconditional_boss_buff_dispel": true, "boss_safeguard_required": true},
+    "30_anti_incorporeal_boundaries": {"valid_incorporeal_targets_only": true, "budget_classification": ["utility_budget", "weapon_identity_effect"], "no_boss_safeguard_bypass_combo": true},
+    "31_anti_summon_boundaries": {"valid_boss_summoned_add_only": true, "safeguard_condition_budget_required": true, "forbidden_unconditional_summon_deletion": true, "forbidden_boss_immunity_bypass": true},
+    "32_channel_mobility_boundaries": {"mobility_during_channel_only": true, "no_class_mobility_primary_drift": true, "must_stay_compatible_with_focus_balestra_pugnale_identity": true},
+    "33_ritual_protection_boundaries": {"defensive_ritual_only": true, "no_tank_healer_role_overlap": true, "combined_proc_cap_respected": true},
+    "34_boss_safeguards": {
+      "forbidden": ["direct_boss_nullification", "boss_immunity_bypass", "unconditional_summon_deletion", "ignore_boss_safeguard"],
+      "future_allowed_direction_only_for": "valid_boss_summoned_add_with_safeguard_condition_budget",
+      "schema_flag_required": "boss_safeguard_required=true_on_ANTI_SUMMON_DISPEL_UTILITY_ANTI_INCORPOREAL"
+    },
+    "35_proc_cap_rules": {
+      "combined_proc_cap": 0.45,
+      "single_effect_max_proc_rate": 0.45,
+      "multi_effect_stacking_policy": "PM_REVIEW_IS2B_P1_Q05"
+    },
+    "36_hard_cap_protections_immutabili": {
+      "fragments_cap": 5,
+      "mark_duration_hard_cap": 10,
+      "active_marks_hard_cap": 5,
+      "combined_proc_cap": 0.45,
+      "focus_bonus_per_resource_segment": 2,
+      "pugnale_ritual_close_bonus_per_mark_application": 1,
+      "violability_by_any_item_affix_legendary": false
+    },
+    "37_forbidden_mechanics": ["resource_cap_increase", "active_marks_gt_5", "mark_duration_gt_10", "unmarked_resource_generation", "direct_boss_nullification", "boss_safeguard_bypass", "p2w", "dual_int_dex_primary", "cross_class_optimal_item", "focus_bonus_gt_2_per_segment", "ritual_close_bonus_gt_1_per_mark", "untested_pvp_effects", "cross_phase_persistence", "random_full_resource_waste"],
+    "38_anti_p2w": {
+      "can_be_sold_for_real_money": false,
+      "applies_to": ["combat_item", "progression_item", "ranking_item", "economy_impacting_item"],
+      "power_from_real_money_purchase_forbidden": true,
+      "monetization_conflict_resolution": "gameplay_integrity_wins"
+    },
+    "39_legendary_chest_boundary_veste_di_onirade": {
+      "blueprint_id": "cdv_t5_chest_stoffa_002",
+      "slot": "chest",
+      "subtype": "stoffa",
+      "mechanical_identity_pillar_direction": "canalizzazione_e_dissipazione_rituale",
+      "budget_class": "high-budget_armor",
+      "rarity": "Legendary",
+      "rarity_multiplier": 1.85,
+      "unique_effect_boundary": {"family": "LEGENDARY_UNIQUE_EFFECT", "status_phase_1": "DIRECTION_ONLY"},
+      "forbidden_overlap": ["boss_safeguard_bypass", "active_marks_gt_5", "mark_duration_gt_10", "dex_primary_drift"],
+      "future_validation_requirements": "PM_REVIEW_direction_meccanica_definitiva_IS2B_P1_Q06a",
+      "effect_final_phase_1": null
+    },
+    "40_legendary_focus_boundary_occhio_del_faro_rovesciato": {
+      "blueprint_id": "cdv_t5_main_hand_focus_001",
+      "slot": "main_hand",
+      "subtype": "focus",
+      "mechanical_identity_pillar_direction": "coerenza_loop_Identify_Mark_Drain_Payoff",
+      "budget_class": "high-budget_weapon",
+      "rarity": "Legendary",
+      "rarity_multiplier": 1.85,
+      "weapon_coefficient": 1.00,
+      "unique_effect_boundary": {"families": ["LEGENDARY_UNIQUE_EFFECT", "WEAPON_IDENTITY_EFFECT"], "status_phase_1": "DIRECTION_ONLY"},
+      "forbidden_overlap": ["resource_cap_increase", "fragments_gt_5", "focus_bonus_gt_2_per_segment", "boss_safeguard_bypass"],
+      "future_validation_requirements": "PM_REVIEW_direction_meccanica_definitiva_IS2B_P1_Q06b",
+      "effect_final_phase_1": null
+    },
+    "41_legendary_balestra_boundary_balestra_della_traiettoria_certa": {
+      "blueprint_id": "cdv_t5_main_hand_balestra_001",
+      "slot": "main_hand",
+      "subtype": "balestra",
+      "mechanical_identity_pillar_direction": "precisione_narrativa_aspirazionale_no_hit_crit_accuracy_guarantee",
+      "budget_class": "high-budget_weapon",
+      "rarity": "Legendary",
+      "rarity_multiplier": 1.85,
+      "weapon_coefficient_band": [0.85, 0.90],
+      "weapon_coefficient_status": "PM_REVIEW_IS2B_P1_Q01",
+      "unique_effect_boundary": {"families": ["LEGENDARY_UNIQUE_EFFECT", "WEAPON_IDENTITY_EFFECT"], "status_phase_1": "DIRECTION_ONLY"},
+      "forbidden_overlap": ["dex_primary_drift", "bow_family_transformation", "boss_safeguard_bypass", "ranged_safeguard_bypass"],
+      "future_validation_requirements": "PM_REVIEW_direction_meccanica_definitiva_IS2B_P1_Q06c",
+      "effect_final_phase_1": null
+    },
+    "42_shared_family_limits": {
+      "no_identical_replication_across_weapon_families": true,
+      "afx1_shared_family_coherence_preserved": true,
+      "combined_proc_cap_not_bypassable_via_stacking": true
+    },
+    "43_universal_neutral_limits": {
+      "neutral_effect_budget_cap": "baseline_utility_budget",
+      "neutral_vs_class_specific_balance": "biased_toward_class_specific_for_identity_preservation"
+    },
+    "44_class_specific_limits": {
+      "cdv_effects_scope": "coherent_with_Mark_Drain_Fragment_loop",
+      "forbidden": ["necromancer_drift", "thief_identity", "monster_hunter_identity", "retroactive_dex_to_int_conversion"]
+    },
+    "45_future_per_item_schema": {
+      "fields": [
+        {"name": "blueprint_code", "type": "string", "populated_phase": "IS2-A"},
+        {"name": "tier", "type": "int_1_to_5", "populated_phase": "IS2-A"},
+        {"name": "rarity", "type": "enum", "populated_phase": "IS2-A"},
+        {"name": "slot", "type": "enum_14", "populated_phase": "IS2-A"},
+        {"name": "equipment_category", "type": "enum_weapon_armor_accessory", "populated_phase": "IS2-A"},
+        {"name": "armor_type", "type": "enum_stoffa_cuoio_null", "populated_phase": "IS2-A"},
+        {"name": "weapon_family", "type": "enum_focus_balestra_pugnale_null", "populated_phase": "IS2-A"},
+        {"name": "identity_class", "type": "string", "populated_phase": "IS2-A"},
+        {"name": "stat_budget_class", "type": "enum_high_medium_low", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "main_stat", "type": "enum", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "main_stat_band", "type": "enum_tier_band", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "main_stat_value", "type": "int", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "secondary_stat_profile", "type": "dict", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "weapon_coefficient_status", "type": "enum_locked_pm_review", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "weapon_coefficient_value", "type": "float", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "base_budget", "type": "float", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "rarity_multiplier", "type": "float", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "utility_budget", "type": "float", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "effect_budget", "type": "float", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "affix_budget", "type": "int_slots", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "eligible_effect_families", "type": "list_enum", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "effect_direction", "type": "list_string", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "effect_status", "type": "enum", "populated_phase": "IS2-B_Phase_1", "phase_1_default": "DIRECTION_ONLY"},
+        {"name": "effect_value", "type": "numeric", "populated_phase": "IS2-B_Phase_2", "phase_1_value": null},
+        {"name": "mechanic_boundary_flags", "type": "dict", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "boss_safeguard_required", "type": "bool", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "anti_p2w", "type": "bool_true", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "validation_status", "type": "enum", "populated_phase": "IS2-B_Phase_1"},
+        {"name": "PM_status", "type": "enum", "populated_phase": "IS2-B_Phase_1"}
+      ]
+    },
+    "46_validation_rules": [
+      "main_stat_default_intelligenza_for_cdv_or_justified",
+      "main_stat_band_must_belong_to_tier_bands_section_9",
+      "rarity_multiplier_must_match_section_10",
+      "affix_budget_must_match_section_11_tier",
+      "each_effect_must_declare_status_and_family",
+      "ANTI_SUMMON_DISPEL_UTILITY_ANTI_INCORPOREAL_must_boss_safeguard_required_true",
+      "anti_p2w_true_for_combat_progression_ranking_economy_items",
+      "no_item_may_violate_hard_cap_protections",
+      "no_dual_int_dex_primary"
+    ],
+    "47_rounding_policy_proposal_pm_review": {
+      "main_stat_rounding": "round_half_to_even",
+      "coefficient_rounding_decimals": 2,
+      "budget_total_decimals": 1,
+      "proc_cap_rounding": "round_down_conservative",
+      "pm_open_question_ref": "IS2B_P1_Q04"
+    },
+    "48_stacking_policy_proposal_pm_review": {
+      "multi_item_effect_stacking": "sub_additive_intra_family",
+      "combined_proc_cap_not_bypassable": true,
+      "cross_phase_persistence_forbidden": true,
+      "set_bonuses_scope": "out_of_scope_phase_1_IS2B_P1_Q08",
+      "pm_open_question_ref": "IS2B_P1_Q05"
+    },
+    "49_conflict_resolution_policy": {
+      "same_family_two_effects": "most_restrictive_safeguard_oriented_wins",
+      "item_level_vs_class_level": "class_level_wins_identity_lock",
+      "phase_1_contract_vs_is2_a_output": "is2_a_wins_locked_immutable",
+      "contract_vs_sealed_scripts": "sealed_scripts_win_36_of_36_byte_identical"
+    },
+    "50_fallback_policy": {
+      "non_decided_pm_open_question_by_phase_2_opening": "apply_default_proposal",
+      "fallback_hard_cap_violation": "STOP_re_escalate_no_autonomous_decision",
+      "fallback_forbidden_mechanic": "STOP_re_escalate_no_autonomous_decision"
+    },
+    "51_migration_boundary": {
+      "migrations_phase_1": 0,
+      "db_rewrites_phase_1": 0,
+      "schema_alterations_phase_1": 0,
+      "runtime_data_mutations_phase_1": 0,
+      "migration_to_111_names_phase": "IS2-B_Phase_2_with_registry_v3_apply_separately_NOT_AUTHORIZED"
+    },
+    "52_registry_boundary": {
+      "registry_status_corpus_111": "NOT_GENERATED",
+      "registry_v3_item_generation_and_apply": "NOT_AUTHORIZED",
+      "registry_entries_created": 0,
+      "runtime_items_created": 0
+    },
+    "53_implementation_boundary": {
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "test_suite_modifications": 0,
+      "sealed_scripts_new_or_modified": 0,
+      "sealed_scripts_byte_identical": "36/36",
+      "lore_meta_py_sha256_invariante": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    "54_risk_register": [
+      {"id": "R1", "risk": "balestra_pugnale_coefficient_scelta_suboptimal", "impact": "alto", "mitigation": "pm_review_IS2B_P1_Q01_Q02"},
+      {"id": "R2", "risk": "slot_budget_bands_sbilanciate", "impact": "alto", "mitigation": "pm_review_IS2B_P1_Q03"},
+      {"id": "R3", "risk": "stacking_policy_leaks_su_proc_cap", "impact": "alto", "mitigation": "policy_conservativa_section_48_proc_cap_section_35"},
+      {"id": "R4", "risk": "rounding_boundary_ambigua", "impact": "medio", "mitigation": "round_half_to_even_baseline_section_47"},
+      {"id": "R5", "risk": "legendary_direction_troppo_forte_o_debole", "impact": "alto", "mitigation": "pm_review_IS2B_P1_Q06a_Q06b_Q06c"},
+      {"id": "R6", "risk": "afx1_family_drift_durante_phase_2", "impact": "medio", "mitigation": "afx1_read_only_section_25"},
+      {"id": "R7", "risk": "cross_phase_persistence_unintended", "impact": "alto", "mitigation": "section_37_forbidden_section_49_conflict_resolution"},
+      {"id": "R8", "risk": "boss_safeguard_bypass_via_combo", "impact": "alto", "mitigation": "section_34_boss_safeguard_required_schema_section_45"},
+      {"id": "R9", "risk": "dex_primary_drift_cdv", "impact": "medio", "mitigation": "section_8_18_37"},
+      {"id": "R10", "risk": "item_by_item_numeric_leak_in_phase_1", "impact": "medio", "mitigation": "vincolo_hard_item_level_numeric_null_phase_1"}
+    ],
+    "55_pm_open_questions": [
+      {
+        "question_id": "IS2B_P1_Q01",
+        "verbatim_question": "Il weapon coefficient finale della balestra deve essere 0.85 o 0.90 all'interno della banda contract-level 0.85–0.90?",
+        "agent_recommendation": "0.88 compromesso weapon readability vs non-overtaking focus baseline; alternativa 0.85 se PM preferisce gap netto vs focus 1.00",
+        "impact": "alto",
+        "default_proposal": 0.85,
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q02",
+        "verbatim_question": "Il weapon coefficient finale del pugnale deve essere 0.70 o 0.80 all'interno della banda contract-level 0.70–0.80?",
+        "agent_recommendation": "0.75 intermedio coerente con identity ritual/opportunistic; alternativa 0.70 se PM enfatizza rischio maggiore",
+        "impact": "alto",
+        "default_proposal": 0.75,
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q03",
+        "verbatim_question": "Le classificazioni proposte in section 15 (high/medium/low per i 14 slot) sono ratificate? Se sì, quali valori di budget max/min per ciascuna classificazione?",
+        "agent_recommendation": "ratifica section 15 con rapporti high:medium:low = 1.00:0.70:0.45",
+        "impact": "alto",
+        "default_proposal": {"high": 1.00, "medium": 0.70, "low": 0.45},
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q04",
+        "verbatim_question": "La policy di rounding per stat, tier, budget deve essere round-half-to-even, round-half-up, o nearest-with-configurable-tiebreak?",
+        "agent_recommendation": "round-half-to-even per stat/tier/budget; round-down per proc cap",
+        "impact": "medio",
+        "default_proposal": "round_half_to_even_for_stat_tier_budget_round_down_for_proc_cap",
+        "blocking": false
+      },
+      {
+        "question_id": "IS2B_P1_Q05",
+        "verbatim_question": "La stacking policy multi-item per effect family deve essere additive, sub-additive, oppure diminishing-returns esplicito (formula da PM)?",
+        "agent_recommendation": "sub-additive intra-family, no cross-phase stacking, combined proc cap section 35 non bypassabile",
+        "impact": "alto",
+        "default_proposal": "sub_additive_intra_family_proc_cap_45_invariato",
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q06a",
+        "verbatim_question": "Qual è il pillar meccanico finale (direction, non valore) per «Veste di Onirade»? Canalizzazione+dissipazione, protezione rituale enhanced, o altro?",
+        "agent_recommendation": "canalizzazione+dissipazione rituale come pillar primario, LEGENDARY_UNIQUE_EFFECT DIRECTION_ONLY in Phase 1",
+        "impact": "alto",
+        "default_proposal": "canalizzazione_e_dissipazione_rituale",
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q06b",
+        "verbatim_question": "Qual è il pillar meccanico finale (direction, non valore) per «Occhio del Faro Rovesciato»? Marchio efficiency, identify support, drain synergy, o altro?",
+        "agent_recommendation": "identify/mark/drain synergy come pillar, LEGENDARY_UNIQUE_EFFECT + WEAPON_IDENTITY_EFFECT DIRECTION_ONLY in Phase 1",
+        "impact": "alto",
+        "default_proposal": "identify_mark_drain_synergy_pillar",
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q06c",
+        "verbatim_question": "Qual è il pillar meccanico finale (direction, non valore) per «Balestra della Traiettoria certa»? Precisione narrativa senza hit-guarantee, dissipazione mirata, o altro?",
+        "agent_recommendation": "precisione narrativa aspirazionale + dissipazione mirata senza garanzia hit/crit/accuracy quantificata",
+        "impact": "alto",
+        "default_proposal": "precisione_narrativa_e_dissipazione_mirata_no_mechanic_promise",
+        "blocking": true
+      },
+      {
+        "question_id": "IS2B_P1_Q07",
+        "verbatim_question": "Il rapporto proposto utility_budget : effect_budget dentro il budget totale (post-multiplier) è auto-ratificato dal contratto, o richiede PM adjudication?",
+        "agent_recommendation": "PM adjudication su ratio baseline; default 30% utility / 70% effect per weapon, 40% utility / 60% effect per armor",
+        "impact": "medio",
+        "default_proposal": {"weapon_utility_pct": 30, "weapon_effect_pct": 70, "armor_utility_pct": 40, "armor_effect_pct": 60},
+        "blocking": false
+      },
+      {
+        "question_id": "IS2B_P1_Q08",
+        "verbatim_question": "Sono ammessi in futuro set bonuses (two-piece / four-piece) per il corpus 111, o restano fuori scope permanente?",
+        "agent_recommendation": "fuori scope Phase 1; PM adjudication per Phase 2+ o gate separato",
+        "impact": "medio",
+        "default_proposal": "out_of_scope_phase_1_hold_decision_phase_2_plus",
+        "blocking": false
+      }
+    ],
+    "56_phase_2_readiness": {
+      "phase_2_open_conditions_all_required": [
+        "IS2B_P1_Q01_ratified",
+        "IS2B_P1_Q02_ratified",
+        "IS2B_P1_Q03_ratified",
+        "IS2B_P1_Q05_ratified",
+        "IS2B_P1_Q06a_ratified",
+        "IS2B_P1_Q06b_ratified",
+        "IS2B_P1_Q06c_ratified",
+        "contract_sections_7_to_54_pm_ratified_immutable_baseline",
+        "no_hard_cap_violation_emergent_in_review",
+        "registry_v3_apply_separately_authorized_when_phase_ready"
+      ],
+      "phase_2_focus": [
+        "item_by_item_main_stat_value_assignment",
+        "coefficient_value_assignment",
+        "base_budget_assignment",
+        "utility_budget_assignment",
+        "effect_budget_assignment",
+        "effect_value_assignment",
+        "affix_assignment",
+        "validation_full_corpus",
+        "draft_legendary_unique_effect_finali",
+        "migration_boundary_review"
+      ]
+    },
+    "57_go_hold_recommendation": {
+      "agent_recommendation": "HOLD",
+      "rationale": "Phase 1 draft completo come artifact written. Richiede PM adjudication su §55 open questions prima di DESIGN_LOCKED e apertura Phase 2. Nessuna auto-ratifica su balestra/pugnale coefficient finali, slot budget bands, stacking, rounding, Legendary effect direction.",
+      "final_status": {
+        "R18.6.RV3-IS2-B_Phase_1": "ARTIFACT_WRITTEN",
+        "pm_adjudication": "REQUIRED",
+        "formal_closure": "HOLD",
+        "R18.6.RV3-IS2-B_Phase_2": "HOLD_NOT_AUTHORIZED",
+        "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+        "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+        "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+        "Monaco": "HOLD_NOT_AUTHORIZED",
+        "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+        "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
+        "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+        "awaiting_pm_verdict": true
+      }
+    }
+  }
+}
