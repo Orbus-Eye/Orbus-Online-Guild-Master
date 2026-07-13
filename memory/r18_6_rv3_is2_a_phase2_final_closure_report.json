@@ -1,0 +1,287 @@
+{
+  "document_type": "final_closure_report",
+  "gate_id": "R18.6.RV3-IS2-A_Phase_2",
+  "gate_title": "Item Identity, Naming & Lore Contract",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "ratified_baseline": {
+    "md": "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.md",
+    "json": "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+    "sha256_md": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d",
+    "sha256_json": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635"
+  },
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "closure_points": {
+    "1_scope": "Chiusura formale del Gate R18.6.RV3-IS2-A Phase 2 con baseline canonica Rev-4. Nessuna modifica a backend, frontend, OpenAPI, DB, Registry, sealed scripts. Anchor lore_meta.py invariato.",
+    "2_baseline_metrics": {
+      "roster_rows_total": 120,
+      "preserved_is1": 9,
+      "new_future_total": 111,
+      "candidate_name_strings_non_legendary": 108,
+      "candidate_name_strings_legendary": 9,
+      "candidate_name_strings_total": 117,
+      "contingency_dormant": 3,
+      "pm_selected_legendary": 0
+    },
+    "3_composition_breakdown": {
+      "preserved_is1_sealed": 9,
+      "new_future_non_legendary": 108,
+      "new_future_legendary_candidate": 9,
+      "new_future_contingency_dormant": 3,
+      "logical_slots_total": 129,
+      "tabular_rows_total": 120,
+      "note": "3 contingency dormant sono contati come slot logici ma non generano nome candidate visibile in Rev-4"
+    },
+    "4_lore_count_semantic_clarification": {
+      "identity_packages": {
+        "value": 111,
+        "definition": "Pacchetti identity NEW_FUTURE distinti (108 non-Leg + 3 contingency)"
+      },
+      "identity_packages_incl_legendary": {
+        "value": 120,
+        "definition": "111 + 9 Preserved oppure equivalente conteggio slot logici raggruppati"
+      },
+      "candidate_name_strings": {
+        "value": 117,
+        "definition": "Stringhe nome candidate = 108 non-Legendary + 9 Legendary candidate"
+      },
+      "lore_identity_rows": {
+        "value": 111,
+        "definition": "Righe con almeno un campo lore/identity popolato in Rev-4 (esclude contingency dormant)"
+      },
+      "preserved_identity_rows": {
+        "value": 9,
+        "definition": "Ereditate da IS1 (identity locked, lore invariato)"
+      },
+      "pm_selected_legendary": {
+        "value": 0,
+        "definition": "Legendary ratificati dal PM in Phase 2 (nessuno; scelta rimandata a IS2-A-L1)"
+      },
+      "incorrect_phrases_to_avoid": [
+        "117 lore identity drafts (senza evidenza)"
+      ],
+      "correct_phrases": [
+        "117 candidate name strings (108 non-Legendary + 9 Legendary candidate)",
+        "111 identity packages NEW_FUTURE",
+        "111 lore identity rows populated in Rev-4"
+      ]
+    },
+    "5_governance_constraints_respected": [
+      "zero_modifiche_backend",
+      "zero_modifiche_frontend",
+      "openapi_invariato",
+      "db_collections_zero_scritture",
+      "registry_zero_apply",
+      "sealed_scripts_36_of_36_byte_identical",
+      "lore_meta_anchor_sha_invariato",
+      "sha_policy_31_rispettata_no_self_embed"
+    ],
+    "6_tracked_artifacts_13": [
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster.md",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster.json",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev1.md",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev1.json",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev2.md",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev2.json",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev3.md",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev3.json",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.md",
+      "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+      "r18_6_rv3_is2_a_phase2_final_closure_report.md",
+      "r18_6_rv3_is2_a_phase2_final_closure_report.json",
+      "PRD.md"
+    ],
+    "7_anchor_shas_expected": {
+      "phase2_r0_md": "ef487f1cfffdf7b7d27d7457591047be253840548b4584cf23342d544e4a7d6d",
+      "phase2_r0_json": "4a0e04a46be1381261848bbdf7d427ec54ab482d94ed57fb4b9db3c333fd54c1",
+      "phase2_rev1_md": "302c67d75d7979ef1247bdc8819eb92359359e10f2750c038f86bdf5c1bf6cd8",
+      "phase2_rev1_json": "32add8cec5f2a3155a91227d8e870c45055437375cb9d32aae483e33c90c1ce3",
+      "phase2_rev2_md": "4466a674471bc980527246bdb5d85c1ac6a58f39971c55de79a3ff8872122e0f",
+      "phase2_rev2_json": "cd0be793b79f40d7c3b52f1de34efd9a96d4039025b682715e5d650136e0ca12",
+      "phase2_rev3_md": "4a669ad3fe249f3c73c3d501b01699b5124f6abb6c6c9fdd043636b6e3ebccf9",
+      "phase2_rev3_json": "22851819e35ad655adf22d925eeac1bd9731bc679cbcf6d1192e69cbcdfe232f",
+      "phase2_rev4_md_pm_locked": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d",
+      "phase2_rev4_json_pm_locked": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635",
+      "lore_meta_py_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    "8_validator_gap_remediation_history_verbatim_10_points": [
+      {
+        "n": 1,
+        "text": "Gap emerso: Rev-2 ha superato il validator automatico con verdetto PASS, ma un audit manuale successivo ha rilevato che il head-noun 'Lanterna' ricorreva ×4 in uno stesso slot, superando il cap di vocabolario per-slot imposto dal PM."
+      },
+      {
+        "n": 2,
+        "text": "Classificazione: false negative del validator Rev-2 su vocabulary cap per-slot."
+      },
+      {
+        "n": 3,
+        "text": "Root cause tecnica: incomplete_per_slot_head_noun_breakdown — il validator normalizzava e conteggiava i head-noun a livello globale e non applicava una breakdown per-slot completa, rendendo invisibile la clusterizzazione locale di 'Lanterna' nello slot interessato."
+      },
+      {
+        "n": 4,
+        "text": "Impatto: nessuna violazione lore-integrity strutturale, ma violazione del vincolo di diversità semantica per-slot ratificato dal PM."
+      },
+      {
+        "n": 5,
+        "text": "Remediation chain step 1 — Rev-3 (patch PM 2 stringhe): sostituzione di 2 occorrenze di 'Lanterna' → 'Torcia' in slot mirati, più 3 fix deterministici collaterali per mantenere il vocabulary cap globale entro budget."
+      },
+      {
+        "n": 6,
+        "text": "Verifica Rev-3: validator automatico + audit head-noun per-slot completo → PASS, ma PM richiede un ulteriore polish micro-linguistico per 2 stringhe residue con head-noun ancora sub-ottimale."
+      },
+      {
+        "n": 7,
+        "text": "Remediation chain step 2 — Rev-4 (micro-patch two-name): sostituzione finale «Torcia» → «Torcia del Marchio» (naming pattern qualificato) in 2 stringhe, per raggiungere zero violazioni e diversificazione head-noun completa."
+      },
+      {
+        "n": 8,
+        "text": "Verifica Rev-4: audit head-noun per-slot completo → zero violazioni, vocabulary cap rispettato in ogni slot; PM Verdict RATIFIED."
+      },
+      {
+        "n": 9,
+        "text": "Chain di remediation deterministica: Lanterna → Torcia → «Torcia del Marchio» (documentata per ogni riga interessata nei diff Rev-2→Rev-3 e Rev-3→Rev-4)."
+      },
+      {
+        "n": 10,
+        "text": "Lesson learned & correttivo di processo: il validator deve implementare per_slot_head_noun_breakdown completo prima di certificare PASS su vocabulary cap; task correttivo tracciato come backlog validator (non parte dello scope Phase 2 di closure — pianificato per fase strumentale successiva)."
+      }
+    ],
+    "9_deltas_rev3_to_rev4": {
+      "changes": "2 stringhe (slot con head-noun 'Torcia' residuo) → riscritte in pattern qualificato «Torcia del Marchio»",
+      "identity_packages": "invariato",
+      "candidate_name_strings": "invariato",
+      "lore_rows": "invariato",
+      "preserved_is1": "invariato (9)",
+      "contingency_dormant": "invariato (3)",
+      "legendary_candidate": "invariato (9)",
+      "sha_byte_differences_confirmed": true
+    },
+    "10_legendary_status": {
+      "candidate_strings_present": 9,
+      "pm_selected": 0,
+      "selection_authorized": false,
+      "next_gate": "R18.6.RV3-IS2-A-L1 Legendary Candidate Selection",
+      "next_gate_status": "PLANNED_HOLD_NOT_AUTHORIZED"
+    },
+    "11_contingency_dormant": {
+      "slots": 3,
+      "state": "dormant",
+      "name_candidate_visible": false,
+      "lore_populated": false,
+      "purpose": "Riserva strategica per future estensioni identity senza ri-apertura del roster"
+    },
+    "12_vocabulary_cap_compliance": {
+      "per_slot_head_noun_cap_respected": true,
+      "clustering_ge_3_identical_head_noun_per_slot": 0,
+      "validator_manual_audit_status": "PASS"
+    },
+    "13_lore_contract_adherence": {
+      "fields_populated_for_new_future": ["lore_snippet", "identity_theme", "naming_style"],
+      "preserved_is1_lore_invariato": true,
+      "contingency_lore_intentionally_empty": true
+    },
+    "14_naming_style_compliance": {
+      "pattern": "qualified_noun_plus_lore_qualifier",
+      "bare_noun_residuals": 0,
+      "remediation_chain": "Lanterna → Torcia → «Torcia del Marchio»"
+    },
+    "15_identity_lock_preservation_is1": {
+      "preserved_rows": 9,
+      "byte_identical_vs_is1_sealed": true
+    },
+    "16_no_runtime_modifications": {
+      "items_generated_in_db": 0,
+      "mongo_writes": 0,
+      "registry_applies": 0,
+      "openapi_modifications": 0,
+      "tests_added_or_modified": 0
+    },
+    "17_no_new_seals": {
+      "new_seal_policy": "NO",
+      "active_seals": "36/36 invariati"
+    },
+    "18_anchor_hash_invariato": {
+      "file": "backend/app/content/lore_meta.py",
+      "sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "verified_pre_closure": true,
+      "verified_post_closure": true
+    },
+    "19_prd_append": {
+      "target_file": "PRD.md",
+      "operation": "append_only_no_overwrite",
+      "section_added": "R18.6.RV3-IS2-A Phase 2 · Formal Closure",
+      "sha_pre_append": "1542915119c0ef47cb0d44511705d449b15ddd49141763d4394c0256d61c50f9",
+      "sha_post_append_reference": "see_closure_manifest_json"
+    },
+    "20_manifest_13_artifact": {
+      "manifest_file": "r18_6_rv3_is2_a_phase2_closure_manifest.json",
+      "fields": ["path", "full_file_sha256", "size_bytes", "line_count", "role", "revision_status", "pm_locked"],
+      "self_hash_embedded": false,
+      "sha_policy_31_compliance": true
+    },
+    "21_sealed_integrity_verification": {
+      "test": "pytest backend/tests/backend_r18_4_sealed_integrity_test.py",
+      "result": "6_passed",
+      "sealed_files": "36/36_byte_identical",
+      "re_run_post_closure": true
+    },
+    "22_governance_evidence": {
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_writes": 0,
+      "registry_applies": 0,
+      "tests_added": 0,
+      "env_modifications": 0
+    },
+    "23_rejection_verdict_chain": [
+      {"revision": "R0", "pm_verdict": "REJECTED_FOR_COMPLIANCE", "next_action": "Rev-1 globale"},
+      {"revision": "Rev-1", "pm_verdict": "STRUCTURAL_COMPLIANCE_PASS", "next_action": "Rev-2 targeted polish"},
+      {"revision": "Rev-2", "pm_verdict": "AUTOMATED_PASS_FALSE_NEGATIVE", "next_action": "Rev-3 minimal PM content patch"},
+      {"revision": "Rev-3", "pm_verdict": "TECHNICAL_PASS_RESIDUAL_POLISH", "next_action": "Rev-4 final two-name micro patch"},
+      {"revision": "Rev-4", "pm_verdict": "RATIFIED", "next_action": "Formal Closure GO"}
+    ],
+    "24_explicit_stop_status": {
+      "R18.6.RV3-IS2-A_Phase_2": "CLOSED_PM_LOCKED",
+      "R18.6.RV3-IS2-A-L1_Legendary_Candidate_Selection": "PLANNED_HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-IS2-B_Stat_Budget_Mechanical_Effect": "HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-NC1_Null_Conflict_Remediation_Planning": "HOLD_NOT_AUTHORIZED",
+      "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+      "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+      "Monaco": "HOLD_NOT_AUTHORIZED",
+      "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED"
+    },
+    "25_files_delivered_in_closure": [
+      "/app/memory/r18_6_rv3_is2_a_phase2_final_closure_report.md",
+      "/app/memory/r18_6_rv3_is2_a_phase2_final_closure_report.json",
+      "/app/memory/r18_6_rv3_is2_a_phase2_closure_manifest.json",
+      "/app/memory/PRD.md (append only)"
+    ],
+    "26_no_implicit_unlock": "La chiusura Phase 2 non autorizza automaticamente IS2-A-L1, IS2-B, NC1, Registry v3, Gate 11, Monaco, AFX2. Ogni Gate successivo richiede autorizzazione PM esplicita.",
+    "27_audit_references": {
+      "canonical_baseline": "rev4",
+      "superseded_revisions_archived_for_audit": ["r0", "rev1", "rev2", "rev3"]
+    },
+    "28_sha_policy_31_compliance": {
+      "no_self_hash_in_closure_report_md": true,
+      "no_self_hash_in_closure_report_json": true,
+      "no_self_hash_in_closure_manifest_json": true,
+      "no_self_hash_in_prd_md": true,
+      "self_hashes_disclosed_only_in_chat_report": true
+    },
+    "29_language_and_format": {
+      "language": "it",
+      "md_format": "markdown",
+      "json_encoding": "utf-8",
+      "sha_algorithm": "sha256sum_gnu_coreutils",
+      "hash_case": "lowercase_hex_64_char"
+    },
+    "30_chain_of_custody": "R0 → Rev-1 → Rev-2 → Rev-3 → Rev-4 (RATIFIED) → Closure. Ogni transizione documentata da messaggio PM in-thread + SHA byte-differenti tra revisioni consecutive. Nessun rewind, nessuna riscrittura post-ratifica.",
+    "31_recoverability": "La baseline Rev-4 è recuperabile in qualsiasi momento via SHA verifica. Manifest fornisce ground truth per ogni artefatto tracciato. File superseded restano disponibili per referenza storica.",
+    "32_formal_closure_statement": "Con questo report la fase R18.6.RV3-IS2-A Phase 2 · Item Identity, Naming & Lore Contract è formalmente CHIUSA e PM-LOCKED. Ogni ulteriore modifica al roster Phase 2 richiederebbe l'apertura di un Gate correttivo esplicito autorizzato dal PM. In assenza di tale autorizzazione, la baseline Rev-4 è immutabile."
+  },
+  "final_verdict": "CLOSED_PM_LOCKED",
+  "next_gate_authorized": null,
+  "awaiting_pm_verdict": true
+}

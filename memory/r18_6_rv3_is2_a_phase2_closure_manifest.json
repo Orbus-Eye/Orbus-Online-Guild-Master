@@ -1,0 +1,165 @@
+{
+  "manifest_type": "r18_6_rv3_is2_a_phase2_closure_manifest",
+  "gate_id": "R18.6.RV3-IS2-A_Phase_2",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY",
+  "language": "it",
+  "sha_algorithm": "sha256sum_gnu_coreutils",
+  "hash_case": "lowercase_hex_64_char",
+  "encoding": "utf-8",
+  "sha_policy_31_compliance": {
+    "manifest_self_hash_embedded": false,
+    "note": "Il SHA di questo manifest viene disclosed esclusivamente nel chat report finale, mai embedded nel file stesso."
+  },
+  "artifacts_tracked_count": 13,
+  "artifacts": [
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster.md",
+      "full_file_sha256": "ef487f1cfffdf7b7d27d7457591047be253840548b4584cf23342d544e4a7d6d",
+      "size_bytes": 81848,
+      "line_count": 2114,
+      "role": "IS2A_PHASE2_R0_MD",
+      "revision_status": "REJECTED_FOR_COMPLIANCE",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster.json",
+      "full_file_sha256": "4a0e04a46be1381261848bbdf7d427ec54ab482d94ed57fb4b9db3c333fd54c1",
+      "size_bytes": 261681,
+      "line_count": 7308,
+      "role": "IS2A_PHASE2_R0_JSON",
+      "revision_status": "REJECTED_FOR_COMPLIANCE",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev1.md",
+      "full_file_sha256": "302c67d75d7979ef1247bdc8819eb92359359e10f2750c038f86bdf5c1bf6cd8",
+      "size_bytes": 77015,
+      "line_count": 2020,
+      "role": "IS2A_PHASE2_REV1_MD",
+      "revision_status": "SUPERSEDED_STRUCTURAL_COMPLIANCE_PASS",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev1.json",
+      "full_file_sha256": "32add8cec5f2a3155a91227d8e870c45055437375cb9d32aae483e33c90c1ce3",
+      "size_bytes": 245350,
+      "line_count": 6273,
+      "role": "IS2A_PHASE2_REV1_JSON",
+      "revision_status": "SUPERSEDED_STRUCTURAL_COMPLIANCE_PASS",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev2.md",
+      "full_file_sha256": "4466a674471bc980527246bdb5d85c1ac6a58f39971c55de79a3ff8872122e0f",
+      "size_bytes": 67902,
+      "line_count": 2057,
+      "role": "IS2A_PHASE2_REV2_MD",
+      "revision_status": "SUPERSEDED_VALIDATOR_GAP_RECORDED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev2.json",
+      "full_file_sha256": "cd0be793b79f40d7c3b52f1de34efd9a96d4039025b682715e5d650136e0ca12",
+      "size_bytes": 332144,
+      "line_count": 8700,
+      "role": "IS2A_PHASE2_REV2_JSON",
+      "revision_status": "SUPERSEDED_VALIDATOR_GAP_RECORDED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev3.md",
+      "full_file_sha256": "4a669ad3fe249f3c73c3d501b01699b5124f6abb6c6c9fdd043636b6e3ebccf9",
+      "size_bytes": 64907,
+      "line_count": 2002,
+      "role": "IS2A_PHASE2_REV3_MD",
+      "revision_status": "SUPERSEDED_TECHNICAL_PASS",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev3.json",
+      "full_file_sha256": "22851819e35ad655adf22d925eeac1bd9731bc679cbcf6d1192e69cbcdfe232f",
+      "size_bytes": 329616,
+      "line_count": 8510,
+      "role": "IS2A_PHASE2_REV3_JSON",
+      "revision_status": "SUPERSEDED_TECHNICAL_PASS",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.md",
+      "full_file_sha256": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d",
+      "size_bytes": 63342,
+      "line_count": 2005,
+      "role": "IS2A_PHASE2_REV4_MD",
+      "revision_status": "PM_RATIFIED_FINAL_DRAFT",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+      "full_file_sha256": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635",
+      "size_bytes": 328767,
+      "line_count": 8505,
+      "role": "IS2A_PHASE2_REV4_JSON",
+      "revision_status": "PM_RATIFIED_FINAL_DRAFT",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_final_closure_report.md",
+      "full_file_sha256": "5111a12f0378fe129af9a1f3b3dd68fd9208f6fd2a6e1be6aa37cdf27919cd8a",
+      "size_bytes": 15956,
+      "line_count": 265,
+      "role": "IS2A_PHASE2_CLOSURE_MD",
+      "revision_status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_phase2_final_closure_report.json",
+      "full_file_sha256": "8f83564410f8a2380e90b3c3e886893121beffcfb97e9201ff13a8f791679a51",
+      "size_bytes": 14428,
+      "line_count": 287,
+      "role": "IS2A_PHASE2_CLOSURE_JSON",
+      "revision_status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/PRD.md",
+      "full_file_sha256": "8c67fc03a539412300eca2e3949cf05cd7e068aa7a0fc3abb542a10d9e73c642",
+      "size_bytes": 263934,
+      "line_count": 3992,
+      "role": "PRD_MASTER",
+      "revision_status": "PM_APPENDED",
+      "pm_locked": false
+    }
+  ],
+  "anchor_lore_meta_py": {
+    "path": "backend/app/content/lore_meta.py",
+    "expected_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "note": "Anchor invariato; verificato pre e post closure. Non conteggiato tra i 13 artefatti tracciati (fuori dallo scope documentale)."
+  },
+  "sealed_scripts": {
+    "total": 36,
+    "byte_identical": 36,
+    "test_command": "pytest backend/tests/backend_r18_4_sealed_integrity_test.py",
+    "expected_result": "6_passed"
+  },
+  "governance_evidence": {
+    "backend_modifications": 0,
+    "frontend_modifications": 0,
+    "openapi_modifications": 0,
+    "db_writes": 0,
+    "registry_applies": 0,
+    "tests_added_or_modified": 0,
+    "new_seals_added": 0,
+    "env_modifications": 0
+  },
+  "closure_stop_status": {
+    "R18.6.RV3-IS2-A_Phase_2": "CLOSED_PM_LOCKED",
+    "R18.6.RV3-IS2-A-L1_Legendary_Candidate_Selection": "PLANNED_HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-IS2-B": "HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+    "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+    "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+    "Monaco": "HOLD_NOT_AUTHORIZED",
+    "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED"
+  }
+}

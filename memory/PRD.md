@@ -3944,3 +3944,49 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 **Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
+
+
+## R18.6.RV3-IS2-A Phase 2 · Full Identity, Naming & Lore Draft Roster · CLOSED · 2026-07-13T05:46:28Z
+
+**Gate**: `R18.6.RV3-IS2-A Phase 2`
+**PM final verdict**: `R18.6.RV3-IS2-A Phase 2 · PM RATIFIED · FINAL PHASE 2 DRAFT BASELINE`
+**Regime**: DOCUMENTAL ONLY · zero code · zero DB · zero nuovi sigilli
+**Closure type**: `governance_semantic_lock` (non sealed technical lock)
+
+- Phase 2 PM RATIFIED / CLOSED
+- Rev-4 final draft baseline
+- 120 active roster units
+- 9 preserved identities
+- 111 NEW_FUTURE identity packages
+- 108 non-Legendary primary draft names
+- 3 Legendary packages
+- 9 Legendary candidate strings
+- total candidate strings = 117
+- PM_SELECTED Legendary = 0
+- Legendary selection deferred
+- dormant contingency names = 0
+- all blocking validators = 0
+- PM_REVIEW unresolved = 0
+- vocabulary locks preserved
+- repetition caps preserved
+- slot semantics preserved
+- weapon-family semantics preserved
+- R0 rejected
+- Rev-1 superseded
+- Rev-2 validator false-negative documented
+- Rev-3 superseded
+- Rev-4 ratified
+- Validator Gap & Remediation History recorded
+- no item generation
+- no Registry generation
+- no Registry apply
+- no DB writes
+- IS2-B HOLD
+- NC1 HOLD
+- Gate 11 HOLD
+- R18.6.RV3-IS2-A-L1 Legendary Candidate Selection = PLANNED / HOLD / NOT AUTHORIZED
+
+**Artifact Phase 2 tracciati (PM_LOCKED · audit chain a 10 file)**: R0 MD/JSON · Rev-1 MD/JSON · Rev-2 MD/JSON · Rev-3 MD/JSON · Rev-4 MD/JSON + closure MD/JSON (semantic lock).
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+**Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
