@@ -3990,3 +3990,37 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 **Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
+
+
+## R18.6.RV3-IS2-A-L1 · Legendary Candidate Selection · CLOSED · 2026-07-13T10:10:35Z
+
+**Gate**: `R18.6.RV3-IS2-A-L1`
+**PM final verdict**: `PM APPROVED · Legendary selection design-locked · CLEAN RESUME`
+**Regime**: DOCUMENTAL ONLY · zero code · zero DB · zero nuovi sigilli
+**Closure type**: `governance_semantic_lock` (non sealed technical lock)
+
+- IS2-A-L1 PM APPROVED / CLOSED
+- Legendary packages = 3
+- candidates reviewed = 9
+- PM_SELECTED = 3
+- non-selected alternatives = 6
+- chest: Veste di Onirade
+- focus: Occhio del Faro Rovesciato
+- balestra: Balestra della Traiettoria certa
+- design status = LOCKED
+- runtime implementation = false
+- localization implementation = false
+- Registry generation = not authorized
+- Registry apply = not authorized
+- IS2-B = HOLD
+- NC1 = HOLD
+- Gate 11 = HOLD
+
+**Post-L1 nominal accounting**: non-Legendary selected 108 + Legendary PM-selected 3 = **111 active new design names** · 9 preserved · 3 contingency dormant (0 generated).
+
+**Audit lessicale L1 (read-only)**: exact_duplicate=0 · normalized_duplicate=0 · forbidden_vocab=0 · restricted_vocab=0 · slot-semantic=0 · weapon-family=0 · mechanic-promise=0 · stat-promise=0.
+
+**Restricted terms uso post-L1**: «Onirade»=1 attivo (in «Veste di Onirade», CLASS_SPECIFIC Legendary) · «Faro Rovesciato»=1 attivo (in «Occhio del Faro Rovesciato», CLASS_SPECIFIC Legendary).
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+**Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.

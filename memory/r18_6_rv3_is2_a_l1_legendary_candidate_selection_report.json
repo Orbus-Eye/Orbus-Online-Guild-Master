@@ -1,0 +1,174 @@
+{
+  "document_type": "legendary_candidate_selection_report",
+  "gate_id": "R18.6.RV3-IS2-A-L1",
+  "gate_title": "Legendary Candidate Selection",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "timestamp_closure_l1": "2026-07-13T10:10:35Z",
+  "baseline_reference": {
+    "md": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.md",
+    "json": "memory/r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+    "sha256_md": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d",
+    "sha256_json": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635",
+    "status": "PM_LOCKED_UNCHANGED"
+  },
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "closure_points": {
+    "1_pm_recovery_verdict": "Il PM ha ratificato il diagnostic post Bad-Gateway con verdetto CLEAN RESUME AUTORIZZATO. Rollback NOT REQUIRED, Targeted repair NOT REQUIRED, Clean restart SAFE. Il precedente errore di trasporto è classificato come execution_interruption_with_filesystem_impact=none.",
+    "2_clean_resume_classification": "L'esecuzione IS2-A-L1 è ripartita ex-novo dalla baseline post-Phase-2. Nessun tentativo di recupero di file inesistenti. Nessun lineage fittizio. Contenuti deterministici e riproducibili. §31 rispettato (no self-hash embedded).",
+    "3_is2_a_l1_closed": "CLOSED_PM_LOCKED. L'esito L1 non abilita IS2-B, NC1, Gate 11, Registry v3, Monaco, AFX2. Legendary selection su tier diversi da T5 pilot: NOT AUTHORIZED.",
+    "4_three_legendary_packages": [
+      {"blueprint_id": "cdv_t5_chest_stoffa_002",       "slot": "chest",     "subtype": "stoffa"},
+      {"blueprint_id": "cdv_t5_main_hand_focus_001",    "slot": "main_hand", "subtype": "focus"},
+      {"blueprint_id": "cdv_t5_main_hand_balestra_001", "slot": "main_hand", "subtype": "balestra"}
+    ],
+    "5_nine_candidates_reviewed": {
+      "cdv_t5_chest_stoffa_002": {
+        "A": "Sudario del Faro Rovesciato",
+        "B": "Manto della Grande Canalizzazione",
+        "C": "Veste di Onirade"
+      },
+      "cdv_t5_main_hand_focus_001": {
+        "A": "Occhio del Faro Rovesciato",
+        "B": "Focus dell'Assenza profonda",
+        "C": "Voce di Onirade"
+      },
+      "cdv_t5_main_hand_balestra_001": {
+        "A": "Scatto dei Frammenti",
+        "B": "Balestra della Traiettoria certa",
+        "C": "Voce dei Bersagli assenti"
+      }
+    },
+    "6_three_pm_selections": [
+      {
+        "blueprint_id": "cdv_t5_chest_stoffa_002",
+        "pm_selected_letter": "C",
+        "display_name_it": "Veste di Onirade",
+        "selection_status": "PM_SELECTED",
+        "design_status": "DESIGN_LOCKED",
+        "runtime_status": "NOT_IMPLEMENTED",
+        "localization_status": "NOT_IMPLEMENTED",
+        "registry_status": "NOT_GENERATED",
+        "apply_status": false
+      },
+      {
+        "blueprint_id": "cdv_t5_main_hand_focus_001",
+        "pm_selected_letter": "A",
+        "display_name_it": "Occhio del Faro Rovesciato",
+        "selection_status": "PM_SELECTED",
+        "design_status": "DESIGN_LOCKED",
+        "runtime_status": "NOT_IMPLEMENTED",
+        "localization_status": "NOT_IMPLEMENTED",
+        "registry_status": "NOT_GENERATED",
+        "apply_status": false
+      },
+      {
+        "blueprint_id": "cdv_t5_main_hand_balestra_001",
+        "pm_selected_letter": "B",
+        "display_name_it": "Balestra della Traiettoria certa",
+        "selection_status": "PM_SELECTED",
+        "design_status": "DESIGN_LOCKED",
+        "runtime_status": "NOT_IMPLEMENTED",
+        "localization_status": "NOT_IMPLEMENTED",
+        "registry_status": "NOT_GENERATED",
+        "apply_status": false
+      }
+    ],
+    "7_six_non_selected_alternatives_pm_verbatim": {
+      "cdv_t5_chest_stoffa_002": [
+        {"letter": "A", "name": "Sudario del Faro Rovesciato",       "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "sfumatura funebre non necessaria / possibile deriva Negromante / leggibilità chest inferiore"},
+        {"letter": "B", "name": "Manto della Grande Canalizzazione", "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "interpretabile come slot back / identità meno distintiva / costruzione descrittiva"}
+      ],
+      "cdv_t5_main_hand_focus_001": [
+        {"letter": "B", "name": "Focus dell'Assenza profonda", "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "head noun tecnico e generico / minore Legendary signature weapon"},
+        {"letter": "C", "name": "Voce di Onirade",             "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "troppo astratto per arma primaria / minore leggibilità come focus"}
+      ],
+      "cdv_t5_main_hand_balestra_001": [
+        {"letter": "A", "name": "Scatto dei Frammenti",      "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "più leggibile come azione che oggetto / identità balestra meno immediata"},
+        {"letter": "C", "name": "Voce dei Bersagli assenti", "status": "NOT_SELECTED", "audit_reference_only": true, "pm_rationale_verbatim": "troppo astratto / leggibilità arma inferiore"}
+      ]
+    },
+    "8_rationale_chest_veste_di_onirade": "slot readability forte · stoffa identity forte · Legendary identity forte · canonical lore connection chiara · linguistic naturalness alta",
+    "9_rationale_focus_occhio_del_faro_rovesciato": "focus identity forte · class signature forte · Faro identity coerente · memorizzabilità alta · weapon-family conflict assente · coerente con loop Identify→Mark→Drain→Payoff senza promettere meccanica",
+    "10_rationale_balestra_della_traiettoria_certa": "weapon readability massima · balestra identity esplicita · ranged ritual identity coerente · precision theme forte · class overlap assente · «certa» = tono narrativo, non garanzia meccanica",
+    "11_slot_semantic_validation": {"violations": 0, "notes": "Veste→chest, Occhio→focus (metaforico), Balestra→balestra: coerenti"},
+    "12_weapon_family_validation": {"violations": 0, "notes": "Balestra usata solo nel blueprint balestra; Occhio (focus) e Veste (chest) senza overlap con weapon-family concrete"},
+    "13_vocabulary_validation": {
+      "forbidden_vocabulary_violations": 0,
+      "restricted_vocabulary_violations": 0,
+      "notes": "Verifica contro forbidden vocab list Phase 1 (ereditata da IS1-SEALED) e restricted cap CLASS_SPECIFIC 1x rispettati"
+    },
+    "14_restricted_term_validation": {
+      "Onirade": {"active_occurrences_post_l1": 1, "identity": "CLASS_SPECIFIC", "rarity": "Legendary", "pm_review": "completed", "compliant": true, "used_in": "Veste di Onirade"},
+      "Faro_Rovesciato": {"active_occurrences_post_l1": 1, "identity": "CLASS_SPECIFIC", "rarity": "Legendary", "pm_review": "completed", "compliant": true, "used_in": "Occhio del Faro Rovesciato"},
+      "audit_methodology_note": "Le occorrenze grezze di grep su Rev-4 MD (Onirade=18, Faro Rovesciato=17) includono tabelle vocab, alternative NOT_SELECTED, agent_recommendation e roster metadata — fuori dal corpus attivo 111 post-selezione. Nel corpus attivo, ciascun termine restricted appare esattamente 1 volta."
+    },
+    "15_lexical_cap_validation": {
+      "per_slot_head_noun_cap_respected": true,
+      "global_head_noun_cap_unchanged_vs_rev4": true,
+      "exact_duplicate": 0,
+      "normalized_duplicate": 0,
+      "corpus_size_active_post_l1": 111,
+      "violations": 0
+    },
+    "16_mechanic_promise_validation": {"violations": 0, "notes": "Nessun nome promette meccanica quantificabile; «certa» narrativo/aspirazionale"},
+    "17_stat_promise_validation": {"violations": 0, "notes": "Nessun numero, percentuale o riferimento stat esplicito nei 3 nomi PM_SELECTED"},
+    "18_selected_name_accounting": {
+      "non_legendary_selected_draft_names": 108,
+      "legendary_pm_selected_names": 3,
+      "total_active_new_design_names": 111,
+      "pre_l1_candidate_strings": 117,
+      "delta_alternatives_archived_not_selected": 6
+    },
+    "19_preserved_identity_accounting": {
+      "preserved_identity_rows": 9,
+      "is1_chain_identity_locks": "IS1-SEALED_UNCHANGED"
+    },
+    "20_contingency_exclusion": {
+      "dormant_contingency_packages": 3,
+      "generated_names_from_dormant": 0
+    },
+    "21_runtime_disabled": {
+      "runtime_status_all_three_pm_selected": "NOT_IMPLEMENTED",
+      "localization_status_all_three_pm_selected": "NOT_IMPLEMENTED",
+      "db_writes": 0,
+      "forbidden_phrases": ["item live", "record DB", "Registry entry", "runtime localization"]
+    },
+    "22_registry_disabled": {
+      "registry_status_all_three_pm_selected": "NOT_GENERATED",
+      "apply_status_all_three_pm_selected": false,
+      "registry_v3_generation_and_apply_gate": "NOT_AUTHORIZED"
+    },
+    "23_governance_evidence": {
+      "sealed_scripts_total": 36,
+      "sealed_scripts_byte_identical": 36,
+      "sealed_test_result": "6_passed",
+      "lore_meta_py_sha256_invariato": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_writes": 0,
+      "registry_applies": 0,
+      "tests_added_or_modified": 0,
+      "new_seals_added": 0,
+      "env_modifications": 0,
+      "rev4_md_json_modified": 0,
+      "phase2_closure_files_modified": 0,
+      "is1_chain_modified": 0,
+      "is2_a_phase1_modified": 0,
+      "self_hash_embedded_files": 0
+    },
+    "24_explicit_stop": {
+      "R18.6.RV3-IS2-A-L1_Legendary_Candidate_Selection": "CLOSED_PM_LOCKED",
+      "R18.6.RV3-IS2-B_Stat_Budget_Mechanical_Effect": "HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-NC1_Null_Conflict_Remediation_Planning": "HOLD_NOT_AUTHORIZED",
+      "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+      "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+      "Monaco": "HOLD_NOT_AUTHORIZED",
+      "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+      "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+      "awaiting_pm_verdict": true
+    }
+  }
+}

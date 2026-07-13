@@ -1,0 +1,126 @@
+{
+  "manifest_type": "r18_6_rv3_is2_a_l1_closure_manifest",
+  "gate_id": "R18.6.RV3-IS2-A-L1",
+  "gate_title": "Legendary Candidate Selection",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY",
+  "language": "it",
+  "sha_algorithm": "sha256sum_gnu_coreutils",
+  "hash_case": "lowercase_hex_64_char",
+  "encoding": "utf-8",
+  "timestamp_closure_l1": "2026-07-13T10:10:35Z",
+  "sha_policy_31_compliance": {
+    "manifest_self_hash_embedded": false,
+    "note": "Il SHA di questo manifest viene disclosed esclusivamente nel chat report finale, mai embedded nel file stesso."
+  },
+  "artifacts_tracked_count": 3,
+  "artifacts": [
+    {
+      "path": "memory/r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.md",
+      "full_file_sha256": "355b261e40082d90fd1450b44f79f58eede38e2cd3a7abbe51881984df3b3e20",
+      "size_bytes": 12606,
+      "line_count": 240,
+      "role": "IS2A_L1_REPORT_MD",
+      "revision_status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.json",
+      "full_file_sha256": "a97e64a4f8e4fc1212dc28b15d65059067cd80550c1b3d73eec9f0df15556849",
+      "size_bytes": 10190,
+      "line_count": 174,
+      "role": "IS2A_L1_REPORT_JSON",
+      "revision_status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "memory/PRD.md",
+      "full_file_sha256": "955ccdc962cb5962094a6fe8424e2d69eda1011f9dd1f822c206f31d64c2559c",
+      "size_bytes": 265594,
+      "line_count": 4026,
+      "role": "PRD_MASTER",
+      "revision_status": "PM_APPENDED",
+      "pm_locked": false
+    }
+  ],
+  "chain_references": {
+    "prd_pre_l1_sha256": "8c67fc03a539412300eca2e3949cf05cd7e068aa7a0fc3abb542a10d9e73c642",
+    "prd_pre_l1_size_bytes": 263934,
+    "prd_pre_l1_line_count": 3992,
+    "rev4_baseline_md_sha256": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d",
+    "rev4_baseline_json_sha256": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635",
+    "phase2_closure_report_md_sha256": "5111a12f0378fe129af9a1f3b3dd68fd9208f6fd2a6e1be6aa37cdf27919cd8a",
+    "phase2_closure_report_json_sha256": "8f83564410f8a2380e90b3c3e886893121beffcfb97e9201ff13a8f791679a51",
+    "phase2_closure_manifest_sha256": "8e4f3c66c38aceaccc103bc75e7ed75e43df43d303f2faeb065d4a7f35a1fb6d",
+    "note": "Tutti i riferimenti chain sono INVARIATI post-L1. Baseline Phase 2 PM_LOCKED preservata byte-identical."
+  },
+  "anchor_lore_meta_py": {
+    "path": "backend/app/content/lore_meta.py",
+    "expected_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "note": "Anchor invariato pre e post L1. Non conteggiato tra gli artefatti tracciati (fuori dallo scope documentale)."
+  },
+  "legendary_pm_selections_summary": {
+    "packages_total": 3,
+    "candidates_reviewed_total": 9,
+    "pm_selected_total": 3,
+    "not_selected_total": 6,
+    "selections": [
+      {"blueprint_id": "cdv_t5_chest_stoffa_002",       "pm_selected_letter": "C", "display_name_it": "Veste di Onirade"},
+      {"blueprint_id": "cdv_t5_main_hand_focus_001",    "pm_selected_letter": "A", "display_name_it": "Occhio del Faro Rovesciato"},
+      {"blueprint_id": "cdv_t5_main_hand_balestra_001", "pm_selected_letter": "B", "display_name_it": "Balestra della Traiettoria certa"}
+    ]
+  },
+  "audit_summary": {
+    "exact_duplicate": 0,
+    "normalized_duplicate": 0,
+    "forbidden_vocabulary_violation": 0,
+    "restricted_vocabulary_violation": 0,
+    "slot_semantic_violation": 0,
+    "weapon_family_violation": 0,
+    "mechanic_promise_violation": 0,
+    "stat_promise_violation": 0,
+    "restricted_term_usage_post_l1": {
+      "Onirade": {"active_occurrences": 1, "compliant": true},
+      "Faro_Rovesciato": {"active_occurrences": 1, "compliant": true}
+    }
+  },
+  "nominal_accounting_post_l1": {
+    "non_legendary_selected_draft_names": 108,
+    "legendary_pm_selected_names": 3,
+    "total_active_new_design_names": 111,
+    "preserved_identity_rows": 9,
+    "dormant_contingency_packages": 3,
+    "generated_names_from_dormant": 0
+  },
+  "sealed_scripts": {
+    "total": 36,
+    "byte_identical": 36,
+    "test_command": "pytest backend/tests/backend_r18_4_sealed_integrity_test.py",
+    "expected_result": "6_passed"
+  },
+  "governance_evidence": {
+    "backend_modifications": 0,
+    "frontend_modifications": 0,
+    "openapi_modifications": 0,
+    "db_writes": 0,
+    "registry_applies": 0,
+    "tests_added_or_modified": 0,
+    "new_seals_added": 0,
+    "env_modifications": 0,
+    "rev4_md_json_modified": 0,
+    "phase2_closure_files_modified": 0,
+    "is1_chain_modified": 0,
+    "is2_a_phase1_modified": 0,
+    "self_hash_embedded_files": 0
+  },
+  "closure_stop_status": {
+    "R18.6.RV3-IS2-A-L1": "CLOSED_PM_LOCKED",
+    "R18.6.RV3-IS2-B": "HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+    "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+    "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+    "Monaco": "HOLD_NOT_AUTHORIZED",
+    "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+    "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only"
+  }
+}
