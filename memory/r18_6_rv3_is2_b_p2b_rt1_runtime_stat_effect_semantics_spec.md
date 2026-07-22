@@ -1,334 +1,533 @@
-# R18.6.RV3-IS2-B-P2B-RT1 · Runtime Stat & Effect Semantics Specification
+# R18.6.RV3-IS2-B-P2B-RT1 · Runtime Stat & Effect Semantics Specification (PATCHED · PM VERDICTS INTEGRATED)
 
 **Gate ID:** R18.6.RV3-IS2-B-P2B-RT1  
 **Regime:** DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only  
-**Artifact Status:** `ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION`  
-**Closure Manifest Authorized:** `False` · **PRD Append Authorized:** `False`  
+**Artifact Status:** `PATCHED_PM_VERDICTS_INTEGRATED_RTQ01_RTQ15_RESOLVED_FAILSTOPS_CLOSED`  
 **Anchor `lore_meta.py` SHA256:** `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · **INVARIANT**  
-**Created UTC:** 2026-07-22T15:00:23.393274+00:00  
-**PM Dispatch:** P2B-1 SIGN-OFF · GO su P2B-RT1
+**Created UTC (patch):** 2026-07-22T19:04:18.030905+00:00  
+**PM Dispatch:** Msg #113 · same-dispatch PATCH + FORMAL CLOSURE
 
-> **RT1 definisce il comportamento atteso · NON lo implementa.** Nessun codice, nessuno schema DB, nessuna migration, nessun endpoint.
+> **RT1 definisce il comportamento atteso · NON lo implementa.** Nessun codice, nessuno schema DB, nessuna migration, nessun endpoint. RTQ01-RTQ15 APPLIED (15/15). Fail-stop `CLASS_MECHANIC_RUNTIME_UNDERDEFINED` = RESOLVED_BY_RT1_EVENT_CONTRACT · `PERSISTENCE_MIGRATION_UNDERDEFINED` = RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE. Runtime gaps rimangono PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED.
 
 ---
 
 ## 01 · Executive Summary
-Specifica deterministica del comportamento atteso runtime per stat loadout evaluation, Int soft-cap, proc, duration, cooldown, expected uptime, stacking/refresh, Mark/Drain/Fragment hooks, Dispel/anti-summon, boss safeguards, Legendary boundaries, PvP eligibility, lifecycle, validation e observability. **RT1 definisce il comportamento atteso · NON lo implementa.** Nessun codice, nessuno schema DB, nessuna migration, nessun endpoint. 15 RTQ emesse (12 blocking). 2 blocker fail-stop identificati contingenti (CLASS_MECHANIC_RUNTIME_UNDERDEFINED · PERSISTENCE_MIGRATION_UNDERDEFINED) come warning · nessuna auto-ratifica. Stato = ARTIFACT WRITTEN.
+Specifica deterministica runtime PATCHED con verdetti PM Msg #113. RTQ01-RTQ15 = 15/15 APPLIED · fail-stop `CLASS_MECHANIC_RUNTIME_UNDERDEFINED` = RESOLVED_BY_RT1_EVENT_CONTRACT · fail-stop `PERSISTENCE_MIGRATION_UNDERDEFINED` = RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE. Non e' dichiarato che i...
 
 ## 02 · Scope
-- **`in_scope`**: ["stat_loadout_evaluation_expected_behavior", "int_soft_cap_behavior_candidate", "proc_semantics_candidate", "duration_and_cooldown_semantics_candidate", "effect_activation_conditions", "expected_u...
-- **`out_of_scope`**: ["actual_code_implementation", "actual_db_schema", "actual_migration_scripts", "actual_endpoints", "actual_seed_data", "item_level_numeric_assignments", "effect_family_assignment_per_item", "regist...
+
+  - **`in_scope`**: `stat_loadout_evaluation_expected_behavior` · `int_soft_cap_behavior_candidate` · `proc_semantics_candidate` · `duration_and_cooldown_semantics_candidate` · `effect_activation_conditions` · `expected_uptime_formula_candidate` · `stacking_refresh_extension_rules` · `mark_drain_fragment_hooks_specification` · `dispel_and_anti_summon_hooks` · `boss_safeguards_specification` · `legendary_effect_execution_boundaries` · `pvp_eligibility_categories` · `effect_lifecycle_states` · `deterministic_execution_order_candidate` · `failure_policy_defaults` · `observability_events_minimum` · `test_contract_matrix_for_rt2` · `compatibility_with_legacy_items` · `persistence_classification_candidate` · `api_boundary_no_openapi_mods` (+3 more)
+  - **`out_of_scope`**: `actual_code_implementation` · `actual_db_schema` · `actual_migration_scripts` · `actual_endpoints` · `actual_seed_data` · `item_level_numeric_assignments` · `effect_family_assignment_per_item` · `registry_generation_or_apply` · `sealed_scripts_modification` · `openapi_modification` · `closure_manifest_emission` · `prd_append_emission` · `phase_2b_authorization` · `rt2_authorization` · `hard_cap_alteration` · `tier_scale_alteration`
 
 ## 03 · Governance
-- **`documental_only`**: `True`
-- **`read_only_discovery`**: `True`
-- **`no_apply`**: `True`
-- **`backend_frontend_openapi_db_registry_test_env_seals_modifications`**: `0`
-- **`sealed_scripts_byte_identical_expected`**: `36/36`
-- **`lore_meta_py_anchor_invariante`**: `True`
-- **`sha_policy_31_compliance`**: `True`
-- **`chain_immutable_25_files`**: `True`
-- **`artifact_status`**: `ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION`
+
+  - **`documental_only`**: `True`
+  - **`read_only_discovery`**: `True`
+  - **`no_apply`**: `True`
+  - **`backend_frontend_openapi_db_registry_test_env_seals_modifications`**: `0`
+  - **`sealed_scripts_byte_identical_expected`**: 36/36
+  - **`lore_meta_py_anchor_invariante`**: `True`
+  - **`sha_policy_31_compliance`**: `True`
+  - **`chain_immutable_25_files`**: `True`
+  - **`artifact_status`**: ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION
 
 ## 04 · Source Chain
-- **`phase_1`**: `r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json`
-- **`addendum_p1_n1`**: `r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json`
-- **`phase_2a_envelope`**: `r18_6_rv3_is2_b_phase2a_per_item_budget_envelope_projection.json`
-- **`phase_2a_closure`**: `r18_6_rv3_is2_b_phase2a_final_closure_report.json`
-- **`p2b_1_contract_patched`**: `r18_6_rv3_is2_b_p2b_1_budget_conversion_contract_options.json`
-- **`p2b_1_closure`**: `r18_6_rv3_is2_b_p2b_1_final_closure_report.json`
-- **`is2_a_rev4`**: `r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json`
-- **`is2_a_l1`**: `r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.json`
-- **`is1_corpus`**: `r18_6_rv3_is1_item_specification_roster_contract.json`
+
+  - **`phase_1`**: r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json
+  - **`addendum_p1_n1`**: r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json
+  - **`phase_2a_envelope`**: r18_6_rv3_is2_b_phase2a_per_item_budget_envelope_projection.json
+  - **`phase_2a_closure`**: r18_6_rv3_is2_b_phase2a_final_closure_report.json
+  - **`p2b_1_contract_patched`**: r18_6_rv3_is2_b_p2b_1_budget_conversion_contract_options.json
+  - **`p2b_1_closure`**: r18_6_rv3_is2_b_p2b_1_final_closure_report.json
+  - **`is2_a_rev4`**: r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json
+  - **`is2_a_l1`**: r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.json
+  - **`is1_corpus`**: r18_6_rv3_is1_item_specification_roster_contract.json
 
 ## 05 · Runtime Discovery
-- **`files_examined_read_only`**: ["/app/backend/app/expeditions/formulas.py", "/app/backend/app/equipment/services.py", "/app/backend/app/equipment/auto_equip.py", "/app/backend/app/adventurers/{common,services,generator}.py", "/a...
-- **`canonical_stats_runtime`**: ["strength", "agility", "intellect", "endurance", "faith"]
-- **`power_formula_verbatim`**: `int(str)+int(agi)+int(int)+int(end)+int(fai) + level*2`
-- **`item_power_formula_verbatim`**: `Σ(5_bonus_fields) + power_score`
-- **`cooldown_evidence_scoped_to`**: ["pvp_continental_challenges", "trade_pacts_between_guilds", "raid_15min_cooldown"]
-- **`cooldown_evidence_scope_note`**: `cooldown esiste come concetto feature-level (PvP/trade/raid), NON come proprieta' di item effect`
-- **`audit_log_module_present_but_no_effect_events`**: `/app/backend/app/audit/log.py`
-- **`content_directory_only_lore_meta`**: `True`
 
-## 06 · Current Runtime Gaps
-- **`gaps_confirmed`**: ["no_soft_cap_intelligence_logic", "no_proc_engine_item_side", "no_duration_engine_item_side", "no_cooldown_engine_item_side", "no_mark_hook", "no_drain_hook", "no_fragment_hook", "no_dispel_hook",...
-- **`gaps_status`**: `PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED`
-- **`note`**: `Nessun gap dichiarato risolto in RT1. RT1 definisce l'atteso, non implementa.`
+  - **`files_examined_read_only`**: `/app/backend/app/expeditions/formulas.py` · `/app/backend/app/equipment/services.py` · `/app/backend/app/equipment/auto_equip.py` · `/app/backend/app/adventurers/{common,services,generator}.py` · `/app/backend/app/stats/public_catalog.py` · `/app/backend/app/items/services.py` · `/app/backend/app/inventory/services.py` · `/app/backend/app/shared/constants.py` · `/app/backend/app/content/lore_meta.py` · `/app/backend/app/audit/log.py` · `/app/backend/app/pvp_continental/services.py` · `/app/backend/app/trade_pacts/__init__.py`
+  - **`canonical_stats_runtime`**: `strength` · `agility` · `intellect` · `endurance` · `faith`
+  - **`power_formula_verbatim`**: int(str)+int(agi)+int(int)+int(end)+int(fai) + level*2
+  - **`item_power_formula_verbatim`**: Σ(5_bonus_fields) + power_score
+  - **`cooldown_evidence_scoped_to`**: `pvp_continental_challenges` · `trade_pacts_between_guilds` · `raid_15min_cooldown`
+  - **`cooldown_evidence_scope_note`**: cooldown esiste come concetto feature-level (PvP/trade/raid), NON come proprieta' di item effect
+  - **`audit_log_module_present_but_no_effect_events`**: /app/backend/app/audit/log.py
+  - **`content_directory_only_lore_meta`**: `True`
+
+## 06 · Current Runtime Gaps · Fail-Stops RESOLVED
+
+  - **`gaps_confirmed`**: `no_soft_cap_intelligence_logic` · `no_proc_engine_item_side` · `no_duration_engine_item_side` · `no_cooldown_engine_item_side` · `no_mark_hook` · `no_drain_hook` · `no_fragment_hook` · `no_dispel_hook` · `no_anti_summon_hook` · `no_channel_hook` · `no_effect_instance_schema` · `no_effect_family_taxonomy` · `no_trigger_taxonomy` · `no_expected_uptime_calculation` · `no_stacking_engine` · `no_refresh_extension_engine` · `no_boss_safeguard_metadata` · `no_pvp_effect_boundary` · `no_effect_lifecycle_state_machine` · `no_stat_specific_damage_or_mitigation_formulas` (+2 more)
+  - **`gaps_status`**: PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED
+  - **`note`**: Nessun gap dichiarato risolto in RT1. RT1 definisce l'atteso, non implementa.
+  - **`failstops_resolution`**:
+  - **`CLASS_MECHANIC_RUNTIME_UNDERDEFINED`**: RESOLVED_BY_RT1_EVENT_CONTRACT
+  - **`PERSISTENCE_MIGRATION_UNDERDEFINED`**: RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE
+  - **`note_do_not_declare_implementation`**: runtime gaps rimangono PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED; RT1 definisce l'atteso, non implementa.
 
 ## 07 · Stat Bridge
-- **`italian_to_runtime_locked_p2b_1`**: {"Intelligenza": "intelligence/int", "Costituzione": "endurance/end", "Destrezza": "agility/agi"}
-- **`ineligible_for_cdv`**: ["strength", "faith"]
-- **`aggregation_order_candidate`**: ["base_stats_from_class", "+equipment_bonuses", "+trait_modifiers", "+specialization_modifiers", "level_multiplier"]
-- **`missing_negative_values_policy_candidate`**: `max(0, int(round(x)))`
-- **`snapshot_loadout_semantics`**: `loadout snapshot captured at expedition start; subsequent equip/unequip does not change snapshot`
-- **`post_equip_unequip_update_pre_expedition`**: `recompute loadout view`
-- **`consistency_during_running_expedition_candidate`**: `immutable snapshot; changes take effect next expedition`
 
-## 08 · Loadout Evaluation
-- **`rules_candidate`**: ["adventurer_effective_stats = clamp_non_neg(round(base + trait_mods + specialization_mods))", "item_bonuses = Σ(equipped_5_fields) + power_score", "loadout_total_stat_pre_soft_cap = adventurer_eff...
-- **`rounding_final_int_precision`**: `4`
-- **`rounding_method`**: `ROUND_HALF_UP`
-- **`expedition_snapshot`**: `captured at expedition_start; all subsequent computations use snapshot`
+  - **`italian_to_runtime_locked_p2b_1`**:
+  - **`Intelligenza`**: intelligence/int
+  - **`Costituzione`**: endurance/end
+  - **`Destrezza`**: agility/agi
+  - **`ineligible_for_cdv`**: `strength` · `faith`
+  - **`aggregation_order_candidate`**: `base_stats_from_class` · `+equipment_bonuses` · `+trait_modifiers` · `+specialization_modifiers` · `level_multiplier`
+  - **`missing_negative_values_policy_candidate`**: max(0, int(round(x)))
+  - **`snapshot_loadout_semantics`**: loadout snapshot captured at expedition start; subsequent equip/unequip does not change snapshot
+  - **`post_equip_unequip_update_pre_expedition`**: recompute loadout view
+  - **`consistency_during_running_expedition_candidate`**: immutable snapshot; changes take effect next expedition
 
-## 09 · Intelligence Soft Cap
-- **`phase_1_soft_cap_value`**: `100`
-- **`candidate_effective_intelligence_function`**: `effective_intelligence(x) = x if x<=100 else 100 + (x-100)*0.50`
-- **`candidate_domain`**: `loadout_total_intelligence_pre_soft_cap in Z >= 0`
-- **`candidate_codomain`**: `loadout_total_intelligence_effective in R+ (rounded per RTQ01)`
-- **`adjudication_required_from_pm`**: ["RTQ01_effective_rounding", "RTQ02_buff_debuff_order", "internal_decimals_precision", "application_moment_snapshot_vs_realtime", "nominal_vs_effective_display", "external_modifier_stacking_order"]
-- **`specification_status`**: `SPECIFICATION_CANDIDATE`
-- **`runtime_status`**: `NOT_IMPLEMENTED`
+## 08 · Loadout Evaluation · RTQ02 order applied
+
+  - **`rules_candidate`**: `adventurer_effective_stats = clamp_non_neg(round(base + trait_mods + specialization_mods))` · `item_bonuses = Σ(equipped_5_fields) + power_score` · `loadout_total_stat_pre_soft_cap = adventurer_effective + item_bonuses` · `loadout_total_intelligence_effective = soft_cap_function(loadout_total_intelligence_pre)`
+  - **`rounding_final_int_precision`**: `4`
+  - **`rounding_method`**: ROUND_HALF_UP
+  - **`expedition_snapshot`**: captured at expedition_start; all subsequent computations use snapshot
+  - **`pm_verdict_RTQ02_order`**: `1_base_character_stat` · `2_equipment_flat_stat` · `3_permanent_flat_modifiers` · `4_temporary_flat_buffs_debuffs` · `5_percentage_stat_modifiers` · `6_clamp_nominal_stat_ge_0` · `7_soft_cap_transformation` · `8_derived_power_calculation` · `9_direct_power_modifiers`
+  - **`active_expedition_loadout`**: SNAPSHOT_LOCKED_AT_EXPEDITION_START
+
+## 09 · Intelligence Soft Cap · RTQ01 applied
+
+  - **`phase_1_soft_cap_value`**: `100`
+  - **`candidate_effective_intelligence_function`**: effective_intelligence(x) = x if x<=100 else 100 + (x-100)*0.50
+  - **`candidate_domain`**: loadout_total_intelligence_pre_soft_cap in Z >= 0
+  - **`candidate_codomain`**: loadout_total_intelligence_effective in R+ (rounded per RTQ01)
+  - **`adjudication_required_from_pm`**: `RTQ01_effective_rounding` · `RTQ02_buff_debuff_order` · `internal_decimals_precision` · `application_moment_snapshot_vs_realtime` · `nominal_vs_effective_display` · `external_modifier_stacking_order`
+  - **`specification_status`**: SPECIFICATION_CANDIDATE
+  - **`runtime_status`**: NOT_IMPLEMENTED
+  - **`pm_verdict_RTQ01`**:
+  - **`soft_cap`**: `100`
+  - **`effective_return_above_100`**: `0.5`
+  - **`internal_precision_decimals`**: `4`
+  - **`intermediate_rounding`**: NONE
+  - **`effective_intelligence_display_decimals`**: `1`
+  - **`final_derived_power_rounding`**: ROUND_HALF_UP
+  - **`function_verbatim`**: effective_intelligence(x) = x if x<=100 else 100 + (x-100)*0.50
+  - **`status`**: DESIGN_LOCKED
 
 ## 10 · Constitution Semantics
-- **`current_status_from_p2b_1`**: `generic_base_power_contribution_only`
-- **`candidate_extensions_not_selected`**: ["health_scaling", "mitigation_scaling", "stability_or_interruption_resistance", "stoffa_cuoio_differential"]
-- **`rules_if_extension_authorized_by_pm`**: {"health_scaling": "hp_bonus = f(endurance) requires formula+cap", "mitigation_scaling": "mitigation_pct = g(endurance) requires cap and stacking order", "interruption_resistance": "requires channe...
-- **`risk_flags`**: ["cuoio_compulsory_if_endurance_gives_defensive_scaling", "legendary_veste_onirade_viability_check_required"]
-- **`pm_verdict_required_before_any_extension`**: `True`
-- **`default_runtime_semantics`**: `generic_base_power_contribution_only`
 
-## 11 · Dexterity Semantics
-- **`current_status_from_p2b_1`**: `TRANSITIONAL_DESIGN_LOCK_generic_base_power_only`
-- **`options_to_compare_do_not_select`**: ["no_utility", "mobility_bonus", "precision_bonus", "channeling_time_reduction_limited", "pugnale_reliability_bonus", "distance_control_bonus"]
-- **`forbidden_attributions`**: ["dex_primary_cdv_FORBIDDEN", "dex_damage_scaling_primary_FORBIDDEN", "balestra_dex_primary_FORBIDDEN", "pugnale_dex_primary_FORBIDDEN", "free_critical_FORBIDDEN", "free_proc_chance_FORBIDDEN"]
-- **`conservative_fallback_if_no_supportable_model`**: `DEX_RUNTIME_SEMANTICS = BASE_POWER_ONLY`
-- **`identity_safeguards_from_p2b_1`**: {"dex_share_max_pct_of_flat_stat_budget": 20, "dex_budget_lt_int_budget_per_item_class_specific": true}
-- **`pm_verdict_required`**: `True`
+  - **`current_status_from_p2b_1`**: generic_base_power_contribution_only
+  - **`candidate_extensions_not_selected`**: `health_scaling` · `mitigation_scaling` · `stability_or_interruption_resistance` · `stoffa_cuoio_differential`
+  - **`rules_if_extension_authorized_by_pm`**:
+  - **`health_scaling`**: hp_bonus = f(endurance) requires formula+cap
+  - **`mitigation_scaling`**: mitigation_pct = g(endurance) requires cap and stacking order
+  - **`interruption_resistance`**: requires channel context and cost
+  - **`stoffa_cuoio_runtime_diff`**: risks cuoio compulsory · impacts Veste di Onirade viability
+  - **`risk_flags`**: `cuoio_compulsory_if_endurance_gives_defensive_scaling` · `legendary_veste_onirade_viability_check_required`
+  - **`pm_verdict_required_before_any_extension`**: `True`
+  - **`default_runtime_semantics`**: generic_base_power_contribution_only
+
+## 11 · Dexterity Semantics · RTQ03 applied
+
+  - **`current_status_from_p2b_1`**: TRANSITIONAL_DESIGN_LOCK_generic_base_power_only
+  - **`options_to_compare_do_not_select`**: `no_utility` · `mobility_bonus` · `precision_bonus` · `channeling_time_reduction_limited` · `pugnale_reliability_bonus` · `distance_control_bonus`
+  - **`forbidden_attributions`**: `dex_primary_cdv_FORBIDDEN` · `dex_damage_scaling_primary_FORBIDDEN` · `balestra_dex_primary_FORBIDDEN` · `pugnale_dex_primary_FORBIDDEN` · `free_critical_FORBIDDEN` · `free_proc_chance_FORBIDDEN`
+  - **`conservative_fallback_if_no_supportable_model`**: APPLIED_BASE_POWER_ONLY
+  - **`identity_safeguards_from_p2b_1`**:
+  - **`dex_share_max_pct_of_flat_stat_budget`**: `20`
+  - **`dex_budget_lt_int_budget_per_item_class_specific`**: `True`
+  - **`pm_verdict_required`**: `True`
+  - **`pm_verdict_RTQ03`**:
+  - **`runtime_mapping`**: agility
+  - **`runtime_semantics`**: GENERIC_BASE_POWER_ONLY
+  - **`dex_share_max_pct_of_flat_stat_budget`**: `20`
+  - **`dex_budget_lt_intelligence_budget`**: `True`
+  - **`dex_primary_cdv`**: FORBIDDEN
+  - **`dual_primary_int_dex`**: FORBIDDEN
+  - **`forbidden_attributions`**: `precisione` · `critico` · `velocita` · `schivata` · `proc_chance`
+  - **`status`**: DESIGN_LOCKED_RUNTIME_TRANSITIONAL
 
 ## 12 · Effect Instance Model
-- **`conceptual_contract_no_db`**: `True`
-- **`fields`**: ["effect_instance_id", "source_item_blueprint", "source_adventurer_id", "effect_family", "trigger_event", "target_scope", "magnitude", "proc_chance", "duration", "cooldown", "internal_cooldown", "s...
-- **`runtime_status_enum_from_lifecycle`**: ["CREATED", "ELIGIBLE", "TRIGGERED", "ACTIVE", "REFRESHED", "EXPIRED", "REMOVED", "REJECTED", "COOLDOWN"]
-- **`all_per_item_numeric_values_null_in_rt1`**: `True`
+
+  - **`conceptual_contract_no_db`**: `True`
+  - **`fields`**: `effect_instance_id` · `source_item_blueprint` · `source_adventurer_id` · `effect_family` · `trigger_event` · `target_scope` · `magnitude` · `proc_chance` · `duration` · `cooldown` · `internal_cooldown` · `stacking_mode` · `refresh_mode` · `application_count` · `boss_safeguard_required` · `PvP_allowed` · `created_at` · `expires_at` · `runtime_status`
+  - **`runtime_status_enum_from_lifecycle`**: `CREATED` · `ELIGIBLE` · `TRIGGERED` · `ACTIVE` · `REFRESHED` · `EXPIRED` · `REMOVED` · `REJECTED` · `COOLDOWN`
+  - **`all_per_item_numeric_values_null_in_rt1`**: `True`
 
 ## 13 · Trigger Taxonomy
-- **`minimum_triggers_14`**: ["ON_EQUIP", "ON_EXPEDITION_START", "ON_MARK_APPLIED", "ON_MARK_REFRESHED", "ON_DRAIN_STARTED", "ON_DRAIN_COMPLETED", "ON_FRAGMENT_GAINED", "ON_FRAGMENT_SPENT", "ON_DISPEL_ATTEMPT", "ON_VALID_SUMMO...
-- **`per_trigger_spec_required`**: ["payload_minimum", "validation_rules", "frequency_max", "idempotency_key", "valid_targets", "boss_safeguard", "target_vanished_behavior"]
-- **`not_auto_authorized_all`**: `True`
-- **`pm_verdict_required`**: `True`
 
-## 14 · Proc Semantics
-- **`combined_cap_pct_hard_immutable`**: `45`
-- **`candidate_range`**: `decimal 0.0000-0.4500`
-- **`candidate_roll_per_valid_trigger`**: `True`
-- **`candidate_cap_applied_before_execution`**: `True`
-- **`adjudication_required`**: ["RTQ04_rng_model_seeded_or_not", "RTQ05_roll_scope_per_event_vs_per_target", "roll_timing", "multi_proc_order", "cap_before_or_after_modifier", "internal_cooldown_default", "bad_luck_protection_ye...
-- **`no_proc_assignment_per_item_in_rt1`**: `True`
+  - **`minimum_triggers_14`**: `ON_EQUIP` · `ON_EXPEDITION_START` · `ON_MARK_APPLIED` · `ON_MARK_REFRESHED` · `ON_DRAIN_STARTED` · `ON_DRAIN_COMPLETED` · `ON_FRAGMENT_GAINED` · `ON_FRAGMENT_SPENT` · `ON_DISPEL_ATTEMPT` · `ON_VALID_SUMMON_TARGET` · `ON_CHANNEL_STARTED` · `ON_CHANNEL_INTERRUPTED` · `ON_DAMAGE_TAKEN` · `ON_TARGET_DEFEATED`
+  - **`per_trigger_spec_required`**: `payload_minimum` · `validation_rules` · `frequency_max` · `idempotency_key` · `valid_targets` · `boss_safeguard` · `target_vanished_behavior`
+  - **`not_auto_authorized_all`**: `True`
+  - **`pm_verdict_required`**: `True`
+
+## 14 · Proc Semantics · RTQ04+RTQ05 applied
+
+  - **`combined_cap_pct_hard_immutable`**: `45`
+  - **`candidate_range`**: decimal 0.0000-0.4500
+  - **`candidate_roll_per_valid_trigger`**: `True`
+  - **`candidate_cap_applied_before_execution`**: `True`
+  - **`adjudication_required`**: `RTQ04_rng_model_seeded_or_not` · `RTQ05_roll_scope_per_event_vs_per_target` · `roll_timing` · `multi_proc_order` · `cap_before_or_after_modifier` · `internal_cooldown_default` · `bad_luck_protection_yes_no` · `refresh_behavior_on_proc`
+  - **`no_proc_assignment_per_item_in_rt1`**: `True`
+  - **`pm_verdict_RTQ04`**:
+  - **`rng_model`**: SERVER_AUTHORITATIVE_EXPEDITION_SCOPED_PRNG
+  - **`seed_scope`**: server_side
+  - **`seed_api_exposure`**: FORBIDDEN
+  - **`production_predictability`**: FORBIDDEN
+  - **`test_seed_injection`**: ALLOWED
+  - **`pm_verdict_RTQ05`**:
+  - **`roll_rule`**: one_roll_per_source_effect_instance_per_valid_trigger_event
+  - **`default_PER_TARGET`**: `False`
+  - **`combined_cap_sigma_effective_proc_chance_max`**: `0.45`
+  - **`if_raw_sum_gt_0_45_normalization`**: PROPORTIONAL
 
 ## 15 · Duration Semantics
-- **`unit_seconds`**: `True`
-- **`internal_precision_decimals`**: `1`
-- **`min_seconds_candidate`**: `1.0`
-- **`max_seconds_hard_cap_mark_duration`**: `10.0`
-- **`ticking_vs_non_ticking_pm_review`**: `True`
-- **`expiration_behavior`**: `REMOVED`
-- **`refresh_default`**: `REFRESH_no_auto_extend`
-- **`extension_default`**: `NOT_ALLOWED_unless_declared_EXTEND_WITHIN_HARD_CAP`
-- **`early_removal_default`**: `ALLOWED_via_dispel_or_source_removal`
-- **`cross_expedition_persistence_default`**: `False`
-- **`cross_phase_persistence_default`**: `False`
 
-## 16 · Cooldown Semantics
-- **`cooldown_kinds_distinguished`**: ["ability_cooldown", "item_effect_cooldown", "internal_proc_cooldown", "per_target_cooldown", "per_source_cooldown"]
-- **`cooldown_metadata_candidate`**: ["start_timestamp", "reset_rules", "equip_unequip_behavior", "item_swap_during_expedition", "duplicate_effect", "restart_process", "persistence"]
-- **`conservative_default_scope`**: `source_adventurer_plus_effect_family`
-- **`unequip_default`**: `effect_disabled`
-- **`reequip_during_active_expedition_default`**: `cooldown_NOT_reset`
-- **`pm_verdict_required_RTQ06`**: `True`
+  - **`unit_seconds`**: `True`
+  - **`internal_precision_decimals`**: `1`
+  - **`min_seconds_candidate`**: `1.0`
+  - **`max_seconds_hard_cap_mark_duration`**: `10.0`
+  - **`ticking_vs_non_ticking_pm_review`**: `True`
+  - **`expiration_behavior`**: REMOVED
+  - **`refresh_default`**: REFRESH_no_auto_extend
+  - **`extension_default`**: NOT_ALLOWED_unless_declared_EXTEND_WITHIN_HARD_CAP
+  - **`early_removal_default`**: ALLOWED_via_dispel_or_source_removal
+  - **`cross_expedition_persistence_default`**: `False`
+  - **`cross_phase_persistence_default`**: `False`
 
-## 17 · Expected Uptime
-- **`formula_candidate`**: `expected_uptime = expected_active_time / observation_window`
-- **`observation_window_baseline_seconds`**: `30`
-- **`factors_to_consider`**: ["proc_chance", "valid_trigger_frequency", "duration", "cooldown", "internal_cooldown", "condition_availability", "target_availability"]
-- **`not_ratifying_budget_costs_in_rt1`**: `True`
-- **`pm_verdict_required_RTQ10`**: `True`
+## 16 · Cooldown Semantics · RTQ06 applied
+
+  - **`cooldown_kinds_distinguished`**: `ability_cooldown` · `item_effect_cooldown` · `internal_proc_cooldown` · `per_target_cooldown` · `per_source_cooldown`
+  - **`cooldown_metadata_candidate`**: `start_timestamp` · `reset_rules` · `equip_unequip_behavior` · `item_swap_during_expedition` · `duplicate_effect` · `restart_process` · `persistence`
+  - **`conservative_default_scope`**: source_adventurer_plus_effect_family
+  - **`unequip_default`**: effect_disabled
+  - **`reequip_during_active_expedition_default`**: cooldown_NOT_reset
+  - **`pm_verdict_required_RTQ06`**: `True`
+  - **`pm_verdict_RTQ06`**:
+  - **`default_key`**: source_adventurer_id + effect_family + effect_version
+  - **`per_target_key_suffix`**: + target_id
+  - **`unequip_disables_triggers`**: `True`
+  - **`unequip_resets_cooldown`**: `False`
+  - **`reequip_during_same_expedition_resets_cooldown`**: `False`
+  - **`expedition_end_action`**: DISCARD_COOLDOWN_STATE
+
+## 17 · Expected Uptime · RTQ10 applied
+
+  - **`formula_candidate`**: expected_uptime = expected_active_time / observation_window
+  - **`observation_window_baseline_seconds`**: `30`
+  - **`factors_to_consider`**: `proc_chance` · `valid_trigger_frequency` · `duration` · `cooldown` · `internal_cooldown` · `condition_availability` · `target_availability`
+  - **`not_ratifying_budget_costs_in_rt1`**: `True`
+  - **`pm_verdict_required_RTQ10`**: `True`
+  - **`pm_verdict_RTQ10`**:
+  - **`rate_formula`**: r = min(lambda * p, 1/c)  · if c==0 then r = lambda * p
+  - **`non_refresh_uptime`**: min(1, r*d) * A * T
+  - **`refreshable_uptime`**: (1 - exp(-r*d)) * A * T
+  - **`clamp`**: 0_to_1
+  - **`budget_cost_assignment_in_rt1`**: `False`
 
 ## 18 · Stacking
-- **`policy_from_phase_1_s48_preserved`**: `True`
-- **`flat_stats`**: `ADDITIVE_within_budget_soft_cap_system_cap`
-- **`same_unique_effect_nominal`**: `NON_STACKING_HIGHEST_EFFECTIVE_VALUE_WINS`
-- **`same_family_default`**: `NON_STACKING`
-- **`additional_rt1_specs_required`**: ["effective_value_determination_algorithm", "tie_break_deterministic", "ordering", "two_source_behavior", "stacking_within_cap", "source_removal_promotion"]
-- **`pm_verdict_required`**: `True`
 
-## 19 · Refresh & Extension
-- **`refresh_default`**: `REFRESH_no_auto_extend`
-- **`extend_within_hard_cap_only_if_declared`**: `True`
-- **`mark_refresh_does_not_reset_ritual_close_usage`**: `True`
-- **`ritual_close_bonus_max_per_mark_application`**: `1`
+  - **`policy_from_phase_1_s48_preserved`**: `True`
+  - **`flat_stats`**: ADDITIVE_within_budget_soft_cap_system_cap
+  - **`same_unique_effect_nominal`**: NON_STACKING_HIGHEST_EFFECTIVE_VALUE_WINS
+  - **`same_family_default`**: NON_STACKING
+  - **`additional_rt1_specs_required`**: `effective_value_determination_algorithm` · `tie_break_deterministic` · `ordering` · `two_source_behavior` · `stacking_within_cap` · `source_removal_promotion`
+  - **`pm_verdict_required`**: `True`
 
-## 20 · Mark Hooks
-- **`spec_required`**: ["application_event", "ownership", "refresh_event", "expiration_event", "active_mark_count_per_scope", "per_target_state", "multi_cdv_interaction"]
-- **`hard_caps_preserved`**: {"active_marks_max": 5, "mark_duration_hard_cap_seconds": 10}
-- **`pm_review_scope_of_active_marks_cap`**: `per_adventurer_or_per_team_or_per_target_or_global_expedition`
-- **`pm_verdict_required_RTQ07_RTQ08`**: `True`
+## 19 · Refresh & Extension · RTQ09 applied
 
-## 21 · Drain Hooks
-- **`spec_required`**: ["mark_requirement", "start_event", "complete_event", "interrupt_event", "target_invalidation", "reward", "valid_item_hook", "double_resolution_protection"]
-- **`forbidden`**: ["drain_without_valid_mark", "duplicate_completion_reward", "free_fragment_generation", "boss_safeguard_bypass"]
+  - **`refresh_default`**: REFRESH_no_auto_extend
+  - **`extend_within_hard_cap_only_if_declared`**: `True`
+  - **`mark_refresh_does_not_reset_ritual_close_usage`**: `True`
+  - **`ritual_close_bonus_max_per_mark_application`**: `1`
+  - **`pm_verdict_RTQ09_mark_refresh`**:
+  - **`resets_duration`**: `True`
+  - **`new_application_id`**: `False`
+  - **`ritual_close_used_reset`**: `False`
 
-## 22 · Fragment Hooks
-- **`cap_max_fragments`**: `5`
-- **`spec_required`**: ["ownership", "gain_event", "spend_event", "overflow_behavior", "loss_on_death", "end_of_expedition", "double_trigger_protection", "resource_segment_binding", "focus_bonus_per_segment_le_2"]
-- **`overflow_default`**: `discard_without_extra_proc`
-- **`no_overflow_to_free_power`**: `True`
-- **`pm_verdict_required_RTQ09`**: `True`
+## 20 · Mark Hooks · RTQ07+RTQ08 applied
+
+  - **`spec_required`**: `application_event` · `ownership` · `refresh_event` · `expiration_event` · `active_mark_count_per_scope` · `per_target_state` · `multi_cdv_interaction`
+  - **`hard_caps_preserved`**:
+  - **`active_marks_max`**: `5`
+  - **`mark_duration_hard_cap_seconds`**: `10`
+  - **`pm_review_scope_of_active_marks_cap`**: per_adventurer_or_per_team_or_per_target_or_global_expedition
+  - **`pm_verdict_required_RTQ07_RTQ08`**: `True`
+  - **`pm_verdict_RTQ07`**:
+  - **`active_marks_max_per_source_adventurer`**: `5`
+  - **`marks_per_source_target_pair_max`**: `1`
+  - **`sixth_mark`**: REJECTED
+  - **`automatic_eviction`**: `False`
+  - **`mark_duration_max_seconds`**: `10`
+  - **`pm_verdict_RTQ08_multi_cdv`**:
+  - **`mark_ownership`**: source_adventurer
+  - **`allied_mark_consumption`**: FORBIDDEN
+  - **`allied_mark_refresh`**: FORBIDDEN
+  - **`ownership_transfer`**: FORBIDDEN
+  - **`multiple_cdv_can_maintain_separate_marks_on_same_target`**: `True`
+
+## 21 · Drain Hooks · RTQ09 applied
+
+  - **`spec_required`**: `mark_requirement` · `start_event` · `complete_event` · `interrupt_event` · `target_invalidation` · `reward` · `valid_item_hook` · `double_resolution_protection`
+  - **`forbidden`**: `drain_without_valid_mark` · `duplicate_completion_reward` · `free_fragment_generation` · `boss_safeguard_bypass`
+  - **`pm_verdict_RTQ09_identify_mark_drain_contract`**:
+  - **`identify_valid_context_only`**: `True`
+  - **`mark_source_owned`**: `True`
+  - **`drain_requires_own_active_mark_at_start_and_completion`**: `True`
+  - **`drain_consumes_mark`**: `False`
+  - **`invalid_completion_no_reward`**: `True`
+  - **`one_resolution_per_drain_execution_id`**: `True`
+
+## 22 · Fragment Hooks · RTQ09 applied
+
+  - **`cap_max_fragments`**: `5`
+  - **`spec_required`**: `ownership` · `gain_event` · `spend_event` · `overflow_behavior` · `loss_on_death` · `end_of_expedition` · `double_trigger_protection` · `resource_segment_binding` · `focus_bonus_per_segment_le_2`
+  - **`overflow_default`**: discard_without_extra_proc
+  - **`no_overflow_to_free_power`**: `True`
+  - **`pm_verdict_required_RTQ09`**: `True`
+  - **`pm_verdict_RTQ09`**:
+  - **`owner`**: source_adventurer
+  - **`cap`**: `5`
+  - **`combat_phase_start_value`**: `0`
+  - **`combat_phase_end_value`**: `0`
+  - **`expedition_end_value`**: `0`
+  - **`overflow`**: DISCARDED
+  - **`overflow_proc`**: FORBIDDEN
+  - **`cross_phase_persistence`**: `False`
+  - **`focus_bonus_per_resource_segment_max`**: `2`
 
 ## 23 · Dispel Hooks
-- **`spec_required`**: ["dispellable_effects_list", "valid_target_criteria", "success_failure", "immunity", "priority", "single_vs_multi", "triggering_item", "cooldown", "boss_behavior"]
-- **`forbidden`**: ["unconditional_dispel_success", "boss_immunity_bypass", "free_mass_dispel"]
+
+  - **`spec_required`**: `dispellable_effects_list` · `valid_target_criteria` · `success_failure` · `immunity` · `priority` · `single_vs_multi` · `triggering_item` · `cooldown` · `boss_behavior`
+  - **`forbidden`**: `unconditional_dispel_success` · `boss_immunity_bypass` · `free_mass_dispel`
 
 ## 24 · Anti-Summon Hooks
-- **`target_taxonomy`**: ["boss", "boss_summoned_add", "normal_summon", "environmental", "illusion", "incorporeal"]
-- **`effect_valid_only_on`**: ["boss_summoned_add"]
-- **`forbidden`**: ["direct_boss_deletion", "unconditional_summon_deletion", "boss_safeguard_bypass"]
+
+  - **`target_taxonomy`**: `boss` · `boss_summoned_add` · `normal_summon` · `environmental` · `illusion` · `incorporeal`
+  - **`effect_valid_only_on`**: `boss_summoned_add`
+  - **`forbidden`**: `direct_boss_deletion` · `unconditional_summon_deletion` · `boss_safeguard_bypass`
 
 ## 25 · Boss Safeguards
-- **`families_requiring_flag`**: ["ANTI_SUMMON", "DISPEL_UTILITY", "ANTI_INCORPOREAL", "MARK_INTERACTION", "DRAIN_INTERACTION"]
-- **`spec_required`**: ["target_validation", "fallback", "diagnostic_log", "behavior_on_missing_metadata"]
-- **`default_missing_metadata`**: `effect_rejected_safely`
+
+  - **`families_requiring_flag`**: `ANTI_SUMMON` · `DISPEL_UTILITY` · `ANTI_INCORPOREAL` · `MARK_INTERACTION` · `DRAIN_INTERACTION`
+  - **`spec_required`**: `target_validation` · `fallback` · `diagnostic_log` · `behavior_on_missing_metadata`
+  - **`default_missing_metadata`**: effect_rejected_safely
 
 ## 26 · Legendary Chest Boundary
-- **`blueprint`**: `cdv_t5_chest_stoffa_001`
-- **`name`**: `Veste di Onirade`
-- **`pillar`**: `RITUAL_CHANNEL_PROTECTION`
-- **`compatible_hooks`**: ["channel_started", "channel_active", "channel_interruption", "damage_taken_during_channel"]
-- **`forbidden_effects`**: ["invulnerability", "complete_immunity", "absolute_channel_interruption_immunity"]
-- **`budget_envelope_ratified_phase_2a`**: `342.25`
-- **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
+
+  - **`blueprint`**: cdv_t5_chest_stoffa_001
+  - **`name`**: Veste di Onirade
+  - **`pillar`**: RITUAL_CHANNEL_PROTECTION
+  - **`compatible_hooks`**: `channel_started` · `channel_active` · `channel_interruption` · `damage_taken_during_channel`
+  - **`forbidden_effects`**: `invulnerability` · `complete_immunity` · `absolute_channel_interruption_immunity`
+  - **`budget_envelope_ratified_phase_2a`**: `342.25`
+  - **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
+  - **`per_item_numeric_lock`**:
+  - **`final_effect`**: `None`
+  - **`magnitude`**: `None`
+  - **`proc`**: `None`
+  - **`duration`**: `None`
+  - **`cooldown`**: `None`
 
 ## 27 · Legendary Focus Boundary
-- **`blueprint`**: `cdv_t5_main_hand_focus_001`
-- **`name`**: `Occhio del Faro Rovesciato`
-- **`pillar`**: `IDENTIFY_MARK_ORCHESTRATION`
-- **`compatible_hooks`**: ["identify_event", "mark_application", "valid_marked_target_condition", "controlled_drain", "fragment_interaction_within_cap"]
-- **`forbidden_effects`**: ["mark_count_gt_5", "fragment_count_gt_5", "mark_duration_gt_10", "generation_without_mark"]
-- **`budget_envelope_ratified_phase_2a`**: `342.25`
-- **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
+
+  - **`blueprint`**: cdv_t5_main_hand_focus_001
+  - **`name`**: Occhio del Faro Rovesciato
+  - **`pillar`**: IDENTIFY_MARK_ORCHESTRATION
+  - **`compatible_hooks`**: `identify_event` · `mark_application` · `valid_marked_target_condition` · `controlled_drain` · `fragment_interaction_within_cap`
+  - **`forbidden_effects`**: `mark_count_gt_5` · `fragment_count_gt_5` · `mark_duration_gt_10` · `generation_without_mark`
+  - **`budget_envelope_ratified_phase_2a`**: `342.25`
+  - **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
+  - **`per_item_numeric_lock`**:
+  - **`final_effect`**: `None`
+  - **`magnitude`**: `None`
+  - **`proc`**: `None`
+  - **`duration`**: `None`
+  - **`cooldown`**: `None`
 
 ## 28 · Legendary Balestra Boundary
-- **`blueprint`**: `cdv_t5_main_hand_balestra_001`
-- **`name`**: `Balestra della Traiettoria certa`
-- **`pillar`**: `RANGED_PRECISION_DISPEL`
-- **`compatible_hooks`**: ["valid_ranged_target", "distant_mark_application", "selective_dispel", "valid_summoned_add"]
-- **`forbidden_effects`**: ["guaranteed_hit", "guaranteed_dispel", "automatic_summon_deletion", "boss_bypass"]
-- **`budget_envelope_ratified_phase_2a`**: `301.18`
-- **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
 
-## 29 · PvP Boundary
-- **`categories_4`**: ["PvE_ONLY", "PvP_ALLOWED", "PvP_REQUIRES_TUNING", "PvP_FORBIDDEN"]
-- **`default_for_new_cdv_effects`**: `PvP_REQUIRES_TUNING`
-- **`no_new_effect_automatically_active_in_pvp`**: `True`
-- **`pm_verdict_required_RTQ12`**: `True`
+  - **`blueprint`**: cdv_t5_main_hand_balestra_001
+  - **`name`**: Balestra della Traiettoria certa
+  - **`pillar`**: RANGED_PRECISION_DISPEL
+  - **`compatible_hooks`**: `valid_ranged_target` · `distant_mark_application` · `selective_dispel` · `valid_summoned_add`
+  - **`forbidden_effects`**: `guaranteed_hit` · `guaranteed_dispel` · `automatic_summon_deletion` · `boss_bypass`
+  - **`budget_envelope_ratified_phase_2a`**: `301.18`
+  - **`legendary_unique_effect_max_pct_of_gross_p2b_1`**: `30`
+  - **`per_item_numeric_lock`**:
+  - **`final_effect`**: `None`
+  - **`magnitude`**: `None`
+  - **`proc`**: `None`
+  - **`duration`**: `None`
+  - **`cooldown`**: `None`
+
+## 29 · PvP Boundary · RTQ12 applied
+
+  - **`categories_4`**: `PvE_ONLY` · `PvP_ALLOWED` · `PvP_REQUIRES_TUNING` · `PvP_FORBIDDEN`
+  - **`default_for_new_cdv_effects`**: PvP_REQUIRES_TUNING
+  - **`no_new_effect_automatically_active_in_pvp`**: `True`
+  - **`pm_verdict_required_RTQ12`**: `True`
+  - **`pm_verdict_RTQ12`**:
+  - **`design_default`**: PvP_REQUIRES_TUNING
+  - **`runtime_enabled_default`**: `False`
+  - **`unknown_or_missing_status`**: PvP_FORBIDDEN
 
 ## 30 · Effect Lifecycle
-- **`states_9`**: ["CREATED", "ELIGIBLE", "TRIGGERED", "ACTIVE", "REFRESHED", "EXPIRED", "REMOVED", "REJECTED", "COOLDOWN"]
-- **`per_transition_spec`**: ["condition", "side_effect", "log", "idempotency_key", "failure_behavior"]
 
-## 31 · Deterministic Execution Order
-- **`candidate_steps_13`**: ["validate_source_item", "validate_source_adventurer", "validate_target", "validate_trigger", "validate_hard_caps", "validate_boss_safeguards", "validate_cooldown", "calculate_combined_proc_cap", "...
-- **`final_order_pm_review`**: `True`
-- **`pm_verdict_required_RTQ11`**: `True`
+  - **`states_9`**: `CREATED` · `ELIGIBLE` · `TRIGGERED` · `ACTIVE` · `REFRESHED` · `EXPIRED` · `REMOVED` · `REJECTED` · `COOLDOWN`
+  - **`per_transition_spec`**: `condition` · `side_effect` · `log` · `idempotency_key` · `failure_behavior`
+
+## 31 · Deterministic Execution Order · RTQ11 applied (17 step)
+
+  - **`candidate_steps_13`**: `validate_source_item` · `validate_source_adventurer` · `validate_target` · `validate_trigger` · `validate_hard_caps` · `validate_boss_safeguards` · `validate_cooldown` · `calculate_combined_proc_cap` · `perform_proc_roll` · `resolve_stacking` · `apply_effect` · `persist_transient_state` · `emit_audit_event`
+  - **`final_order_pm_review`**: `True`
+  - **`pm_verdict_required_RTQ11`**: `True`
+  - **`pm_verdict_RTQ11_steps_17`**: `1_resolve_expedition_loadout_snapshot` · `2_deduplicate_event_id` · `3_validate_source_adventurer` · `4_validate_source_item_effect_version` · `5_validate_trigger_payload` · `6_validate_target_ownership` · `7_validate_lifecycle_pvp` · `8_validate_hard_caps` · `9_validate_boss_safeguards` · `10_validate_cooldown` · `11_collect_eligible_proc_instances` · `12_enforce_combined_proc_cap` · `13_perform_ordered_proc_rolls` · `14_resolve_stacking_refresh` · `15_atomically_apply_state_changes` · `16_start_update_cooldown` · `17_emit_audit_event`
+  - **`partial_application`**: FORBIDDEN
+  - **`partial_reward`**: FORBIDDEN
 
 ## 32 · Failure Policy
-- **`defaults`**: {"invalid_item_metadata": "rejected", "missing_target": "no_effect", "missing_boss_metadata": "safeguarded_rejection", "duplicate_event": "idempotent_no_op", "runtime_exception": "no_partial_reward...
-- **`no_permissive_fallback`**: `True`
 
-## 33 · Observability
-- **`min_events`**: ["effect_trigger_evaluated", "effect_proc_rolled", "effect_applied", "effect_rejected", "effect_refreshed", "effect_expired", "effect_stack_resolved", "hard_cap_blocked", "boss_safeguard_blocked", ...
-- **`min_fields`**: ["timestamp_utc", "effect_instance_id_if_applicable", "source_blueprint", "source_adventurer_id", "target_id_if_applicable", "reason_code", "expedition_correlation_id"]
-- **`no_pii`**: `True`
-- **`pm_verdict_required_RTQ15`**: `True`
+  - **`defaults`**:
+  - **`invalid_item_metadata`**: rejected
+  - **`missing_target`**: no_effect
+  - **`missing_boss_metadata`**: safeguarded_rejection
+  - **`duplicate_event`**: idempotent_no_op
+  - **`runtime_exception`**: no_partial_reward
+  - **`unknown_effect_family`**: rejected
+  - **`no_permissive_fallback`**: `True`
+
+## 33 · Observability · RTQ15 applied (TIERED_BY_SEVERITY)
+
+  - **`min_events`**: `effect_trigger_evaluated` · `effect_proc_rolled` · `effect_applied` · `effect_rejected` · `effect_refreshed` · `effect_expired` · `effect_stack_resolved` · `hard_cap_blocked` · `boss_safeguard_blocked` · `duplicate_event_suppressed`
+  - **`min_fields`**: `timestamp_utc` · `effect_instance_id_if_applicable` · `source_blueprint` · `source_adventurer_id` · `target_id_if_applicable` · `reason_code` · `expedition_correlation_id`
+  - **`no_pii`**: `True`
+  - **`pm_verdict_required_RTQ15`**: `True`
+  - **`pm_verdict_RTQ15`**:
+  - **`level`**: TIERED_BY_SEVERITY
+  - **`DEBUG`**: `trigger_evaluated` · `proc_rolled` · `stack_resolved`
+  - **`INFO`**: `effect_applied` · `refreshed` · `expired`
+  - **`WARNING`**: `hard_cap_blocked` · `boss_safeguard_blocked` · `duplicate_suppressed` · `invalid_metadata`
+  - **`ERROR`**: `execution_failed` · `atomic_rollback` · `unknown_effect_family`
+  - **`do_not_log`**: `seed_rng` · `sensitive_data` · `server_only_boss_metadata`
 
 ## 34 · Test Contract (for RT2)
-- **`matrix_categories_for_rt2_no_test_in_rt1`**: ["unit", "property_based", "boundary", "idempotency", "stacking", "hard_cap", "boss_safeguard", "multi_cdv", "equip_unequip", "expedition_lifecycle", "failure_recovery"]
-- **`no_tests_written_in_rt1`**: `True`
+
+  - **`matrix_categories_for_rt2_no_test_in_rt1`**: `unit` · `property_based` · `boundary` · `idempotency` · `stacking` · `hard_cap` · `boss_safeguard` · `multi_cdv` · `equip_unequip` · `expedition_lifecycle` · `failure_recovery`
+  - **`no_tests_written_in_rt1`**: `True`
 
 ## 35 · Compatibility
-- **`legacy_items_no_effect_metadata_remain_valid`**: `True`
-- **`effect_schema_absent_means_no_effect`**: `True`
-- **`no_retroactivity`**: `True`
-- **`no_rename`**: `True`
-- **`no_retro_branding`**: `True`
-- **`nine_preserved_items_no_cdv_effect_without_dedicated_gate`**: `True`
 
-## 36 · Persistence Classification
-- **`classifications_candidate`**: ["STATIC_DESIGN_DATA", "TRANSIENT_EXPEDITION_STATE", "PERSISTENT_CHARACTER_STATE", "AUDIT_ONLY_DATA"]
-- **`defaults`**: {"cooldown_active_effects": "TRANSIENT_EXPEDITION_STATE", "item_definition": "STATIC_DESIGN_DATA", "fragments": "TRANSIENT_EXPEDITION_STATE", "effect_audit": "AUDIT_ONLY_DATA", "cross_expedition_ef...
-- **`pm_verdict_required_RTQ13`**: `True`
+  - **`legacy_items_no_effect_metadata_remain_valid`**: `True`
+  - **`effect_schema_absent_means_no_effect`**: `True`
+  - **`no_retroactivity`**: `True`
+  - **`no_rename`**: `True`
+  - **`no_retro_branding`**: `True`
+  - **`nine_preserved_items_no_cdv_effect_without_dedicated_gate`**: `True`
+
+## 36 · Persistence Classification · RTQ13 applied
+
+  - **`classifications_candidate`**: `STATIC_DESIGN_DATA` · `TRANSIENT_EXPEDITION_STATE` · `PERSISTENT_CHARACTER_STATE` · `AUDIT_ONLY_DATA`
+  - **`defaults`**:
+  - **`cooldown_active_effects`**: TRANSIENT_EXPEDITION_STATE
+  - **`item_definition`**: STATIC_DESIGN_DATA
+  - **`fragments`**: TRANSIENT_EXPEDITION_STATE
+  - **`effect_audit`**: AUDIT_ONLY_DATA
+  - **`cross_expedition_effect_state`**: NOT_ALLOWED_default
+  - **`pm_verdict_required_RTQ13`**: `True`
+  - **`pm_verdict_RTQ13`**:
+  - **`effect_definitions`**: STATIC_DESIGN_DATA
+  - **`active_effects_cooldowns_marks_rng_loadout`**: TRANSIENT_EXPEDITION_STATE
+  - **`fragments_resource_segments`**: TRANSIENT_COMBAT_PHASE_STATE
+  - **`effect_events`**: AUDIT_ONLY_DATA
+  - **`new_persistent_character_fields`**: NONE
 
 ## 37 · API Boundary
-- **`no_openapi_modifications`**: `True`
-- **`no_new_endpoints`**: `True`
-- **`no_rng_internals_exposure`**: `True`
-- **`no_hidden_boss_safeguard_metadata_exposure`**: `True`
-- **`no_server_only_proc_seed_exposure`**: `True`
-- **`future_potential_read_only_needs`**: ["effect_state_read_only", "equipment_effect_metadata", "expedition_diagnostic_summary"]
+
+  - **`no_openapi_modifications`**: `True`
+  - **`no_new_endpoints`**: `True`
+  - **`no_rng_internals_exposure`**: `True`
+  - **`no_hidden_boss_safeguard_metadata_exposure`**: `True`
+  - **`no_server_only_proc_seed_exposure`**: `True`
+  - **`future_potential_read_only_needs`**: `effect_state_read_only` · `equipment_effect_metadata` · `expedition_diagnostic_summary`
 
 ## 38 · Data Schema Candidate
-- **`candidate_fields`**: ["effect_family", "effect_version", "trigger", "magnitude_type", "magnitude_value", "proc_chance", "duration_seconds", "cooldown_seconds", "internal_cooldown_seconds", "target_scope", "stacking_mod...
-- **`per_item_all_values_null_in_rt1`**: `True`
 
-## 39 · Migration Boundary
-- **`candidate_classes`**: ["NO_DB_MIGRATION", "BACKWARD_COMPATIBLE_SCHEMA_EXTENSION", "DATA_BACKFILL_REQUIRED", "RUNTIME_ONLY_TRANSIENT"]
-- **`no_selection_without_evidence`**: `True`
-- **`pm_verdict_required_RTQ14`**: `True`
+  - **`candidate_fields`**: `effect_family` · `effect_version` · `trigger` · `magnitude_type` · `magnitude_value` · `proc_chance` · `duration_seconds` · `cooldown_seconds` · `internal_cooldown_seconds` · `target_scope` · `stacking_mode` · `refresh_mode` · `hard_cap_flags` · `boss_safeguard_required` · `PvP_status` · `runtime_status`
+  - **`per_item_all_values_null_in_rt1`**: `True`
+
+## 39 · Migration Boundary · RTQ14 applied
+
+  - **`candidate_classes`**: `NO_DB_MIGRATION` · `BACKWARD_COMPATIBLE_SCHEMA_EXTENSION` · `DATA_BACKFILL_REQUIRED` · `RUNTIME_ONLY_TRANSIENT`
+  - **`no_selection_without_evidence`**: `True`
+  - **`pm_verdict_required_RTQ14`**: `True`
+  - **`pm_verdict_RTQ14`**:
+  - **`runtime_state`**: RUNTIME_ONLY_TRANSIENT
+  - **`effect_metadata`**: BACKWARD_COMPATIBLE_OPTIONAL_SCHEMA_EXTENSION
+  - **`db_backfill`**: NOT_REQUIRED
+  - **`legacy_item_without_metadata`**: VALID_ITEM_WITH_NO_EFFECT
+  - **`baseline_migration_class`**: NO_DB_MIGRATION_REQUIRED
+  - **`if_cross_expedition_persistence_emerges`**: STOP_NEW_PM_MIGRATION_ADJUDICATION_REQUIRED
 
 ## 40 · Security & Abuse
-- **`abuse_vectors_identified`**: ["duplicate_event_replay", "source_forgery", "target_forgery", "cooldown_bypass_via_reequip", "RNG_manipulation_client_side", "mass_dispel_griefing", "summon_deletion_griefing"]
-- **`mitigation_principles`**: ["idempotency_key", "server_side_rng_only", "audit_correlation", "conservative_defaults", "hard_cap_enforcement", "boss_safeguard_enforcement"]
+
+  - **`abuse_vectors_identified`**: `duplicate_event_replay` · `source_forgery` · `target_forgery` · `cooldown_bypass_via_reequip` · `RNG_manipulation_client_side` · `mass_dispel_griefing` · `summon_deletion_griefing`
+  - **`mitigation_principles`**: `idempotency_key` · `server_side_rng_only` · `audit_correlation` · `conservative_defaults` · `hard_cap_enforcement` · `boss_safeguard_enforcement`
 
 ## 41 · Performance Risks
-- **`risks`**: ["proc_roll_per_trigger_high_frequency_events", "stacking_resolution_worst_case_N_squared", "audit_log_volume_expedition_correlated", "mark_state_scan_per_adventurer", "fragment_state_scan_per_adve...
-- **`mitigation_principles`**: ["batch_evaluation_per_frame_or_per_tick", "precomputed_valid_target_lists", "bounded_state_by_hard_caps", "audit_sampling_thresholds_pm_review"]
+
+  - **`risks`**: `proc_roll_per_trigger_high_frequency_events` · `stacking_resolution_worst_case_N_squared` · `audit_log_volume_expedition_correlated` · `mark_state_scan_per_adventurer` · `fragment_state_scan_per_adventurer`
+  - **`mitigation_principles`**: `batch_evaluation_per_frame_or_per_tick` · `precomputed_valid_target_lists` · `bounded_state_by_hard_caps` · `audit_sampling_thresholds_pm_review`
 
 ## 42 · Risk Register
-- **RTR1**: {"risk": "class_mechanic_runtime_underdefined", "impact": "critical", "mitigation": "fail_stop_flag_CLASS_MECHANIC_RUNTIME_UNDERDEFINED · pm_specify_mark_drain_fragment_semantics"}
-- **RTR2**: {"risk": "persistence_migration_underdefined", "impact": "high", "mitigation": "fail_stop_flag_PERSISTENCE_MIGRATION_UNDERDEFINED · pm_choose_migration_class"}
-- **RTR3**: {"risk": "soft_cap_ordering_ambiguous", "impact": "high", "mitigation": "pm_ratify_order_via_RTQ02"}
-- **RTR4**: {"risk": "dex_semantics_still_open", "impact": "medium-high", "mitigation": "conservative_fallback_BASE_POWER_ONLY_if_no_evidence"}
-- **RTR5**: {"risk": "rng_reproducibility_concerns", "impact": "medium", "mitigation": "pm_ratify_seeded_vs_unseeded_via_RTQ04"}
-- **RTR6**: {"risk": "pvp_default_over_or_under_permissive", "impact": "medium", "mitigation": "default_PvP_REQUIRES_TUNING_conservative"}
-- **RTR7**: {"risk": "legendary_effect_scope_creep", "impact": "high", "mitigation": "boundary_hooks_locked_per_pillar · 30pct_cap_from_p2b_1"}
-- **RTR8**: {"risk": "stacking_tie_break_nondeterministic", "impact": "medium", "mitigation": "pm_specify_deterministic_tie_break"}
-- **RTR9**: {"risk": "observability_gap_hides_abuse", "impact": "medium", "mitigation": "minimum_10_events_specified_pm_review_level_via_RTQ15"}
-- **RTR10**: {"risk": "cooldown_bypass_via_equip_unequip_cycle", "impact": "high", "mitigation": "default_reequip_does_NOT_reset_cooldown"}
-- **RTR11**: {"risk": "fragment_overflow_to_free_power", "impact": "high", "mitigation": "default_overflow_discard_no_extra_proc"}
-- **RTR12**: {"risk": "boss_bypass_via_missing_metadata", "impact": "critical", "mitigation": "default_effect_rejected_safely_on_missing_metadata"}
 
-## 43 · PM Open Questions (15 RTQ)
-- **RTQ01**: {"topic": "int_soft_cap_effective_rounding", "evidence": "candidate function 100+(x-100)*0.50 produces fractional values", "options": ["round_half_up_to_int", "floor", "ceil", "truncate", "keep_1_decimal"], "agent_recommendation": "round_half_up_to_int at display; internal 4 decimals", "runtime_impact": "stat display and downstream calculation consistency", "migration_impact": "none if not persisted", "test_impact": "boundary tests around 100", "blocking": true}
-- **RTQ02**: {"topic": "buff_debuff_order_around_int_soft_cap", "evidence": "buff/debuff modifiers may be flat or percent", "options": ["apply_before_soft_cap", "apply_after_soft_cap", "apply_around_snapshot"], "agent_recommendation": "apply_before_soft_cap (soft cap is final gate)", "runtime_impact": "critical for effective Int display and cost", "migration_impact": "none", "test_impact": "multi-order tests", "blocking": true}
-- **RTQ03**: {"topic": "dex_runtime_semantics_final", "evidence": "P2B-1 defers to RT1; runtime has no dex-specific mechanics", "options": ["BASE_POWER_ONLY_conservative", "mobility_bonus", "precision_bonus", "channeling_time_reduction_limited"], "agent_recommendation": "BASE_POWER_ONLY_conservative until runtime extension provides mechanics", "runtime_impact": "determines CdV identity coherence", "migration_impact": "none", "test_impact": "identity tests · Dex-primary FORBIDDEN checks", "blocking": true}
-- **RTQ04**: {"topic": "proc_rng_model", "evidence": "no rng engine present", "options": ["unseeded_per_call", "seeded_expedition_scope", "seeded_encounter_scope", "hybrid"], "agent_recommendation": "seeded_expedition_scope for reproducibility+audit", "runtime_impact": "reproducibility and diagnostics", "migration_impact": "audit schema", "test_impact": "determinism tests", "blocking": true}
-- **RTQ05**: {"topic": "proc_roll_scope", "evidence": "multi-target and multi-effect cases undefined", "options": ["per_event", "per_target", "per_effect", "per_event_per_target"], "agent_recommendation": "per_event_per_target for fairness", "runtime_impact": "probabilistic exposure", "migration_impact": "none", "test_impact": "aoe_proc tests", "blocking": true}
-- **RTQ06**: {"topic": "cooldown_scope", "evidence": "cooldown feature-level in runtime; item-effect cooldown absent", "options": ["source_adventurer_plus_effect_family", "source_adventurer_only", "effect_family_only", "per_target", "global"], "agent_recommendation": "source_adventurer_plus_effect_family (conservative)", "runtime_impact": "balance and abuse prevention", "migration_impact": "none if transient", "test_impact": "cooldown persistence tests across equip cycles", "blocking": true}
-- **RTQ07**: {"topic": "mark_active_cap_scope", "evidence": "phase_1 says active_marks<=5; scope undefined", "options": ["per_adventurer", "per_team", "per_target", "global_expedition"], "agent_recommendation": "per_adventurer (baseline)", "runtime_impact": "balance mark orchestration", "migration_impact": "none", "test_impact": "scope tests", "blocking": true}
-- **RTQ08**: {"topic": "multi_cdv_mark_interaction", "evidence": "multi-CdV team not yet ratified", "options": ["marks_shared_pool", "marks_independent_per_cdv", "marks_merged_by_target"], "agent_recommendation": "marks_independent_per_cdv (respecting per_adventurer cap)", "runtime_impact": "team composition dynamics", "migration_impact": "none", "test_impact": "multi_cdv tests", "blocking": true}
-- **RTQ09**: {"topic": "fragment_lifecycle_ownership", "evidence": "cap 5; ownership and cross-encounter undefined", "options": ["per_adventurer_transient_to_end_of_expedition", "per_adventurer_transient_to_end_of_encounter", "persistent_character"], "agent_recommendation": "per_adventurer_transient_to_end_of_expedition", "runtime_impact": "resource cycle balance", "migration_impact": "none if transient", "test_impact": "lifecycle tests", "blocking": true}
-- **RTQ10**: {"topic": "expected_uptime_formula_final", "evidence": "candidate provided but constants not ratified", "options": ["formula_as_candidate_baseline_30s", "longer_window", "shorter_window", "context_specific"], "agent_recommendation": "candidate 30s baseline for engineering; encounter-specific may be tuned later", "runtime_impact": "future effect_cost calibration", "migration_impact": "none", "test_impact": "uptime property tests", "blocking": true}
-- **RTQ11**: {"topic": "effect_execution_order_final", "evidence": "13-step candidate proposed", "options": ["order_as_proposed", "reorder_stacking_before_proc", "reorder_cooldown_before_hard_caps", "other"], "agent_recommendation": "order_as_proposed", "runtime_impact": "determinism critical", "migration_impact": "none", "test_impact": "execution_order tests", "blocking": true}
-- **RTQ12**: {"topic": "pvp_default_for_new_cdv_effects", "evidence": "conservative default proposed", "options": ["PvP_REQUIRES_TUNING", "PvE_ONLY", "PvP_ALLOWED_case_by_case", "PvP_FORBIDDEN_default"], "agent_recommendation": "PvP_REQUIRES_TUNING", "runtime_impact": "pvp balance", "migration_impact": "none", "test_impact": "pvp_tuning tests", "blocking": true}
-- ... (+3 altre voci nel JSON §43)
+  - `id`=RTR1 · `risk`=class_mechanic_runtime_underdefined · `impact`=critical · `mitigation`=fail_stop_flag_CLASS_MECHANIC_RUNTIME_UNDERDEFINED · pm_specify_mark_drain_fragment_semantics
+  - `id`=RTR2 · `risk`=persistence_migration_underdefined · `impact`=high · `mitigation`=fail_stop_flag_PERSISTENCE_MIGRATION_UNDERDEFINED · pm_choose_migration_class
+  - `id`=RTR3 · `risk`=soft_cap_ordering_ambiguous · `impact`=high · `mitigation`=pm_ratify_order_via_RTQ02
+  - `id`=RTR4 · `risk`=dex_semantics_still_open · `impact`=medium-high · `mitigation`=conservative_fallback_BASE_POWER_ONLY_if_no_evidence
+  - `id`=RTR5 · `risk`=rng_reproducibility_concerns · `impact`=medium · `mitigation`=pm_ratify_seeded_vs_unseeded_via_RTQ04
+  - `id`=RTR6 · `risk`=pvp_default_over_or_under_permissive · `impact`=medium · `mitigation`=default_PvP_REQUIRES_TUNING_conservative
+  - `id`=RTR7 · `risk`=legendary_effect_scope_creep · `impact`=high · `mitigation`=boundary_hooks_locked_per_pillar · 30pct_cap_from_p2b_1
+  - `id`=RTR8 · `risk`=stacking_tie_break_nondeterministic · `impact`=medium · `mitigation`=pm_specify_deterministic_tie_break
+
+## 43 · PM Open Questions (15 RTQ · APPLIED)
+
+  - `question_id`=RTQ01 · `topic`=int_soft_cap_effective_rounding · `evidence`=candidate function 100+(x-100)*0.50 produces fractional values · `options`=`round_half_up_to_int` · `floor` · `ceil` · `truncate` · `keep_1_decimal` · `agent_recommendation`=round_half_up_to_int at display; internal 4 decimals · `runtime_impact`=stat display and downstream calculation consistency
+  - `question_id`=RTQ02 · `topic`=buff_debuff_order_around_int_soft_cap · `evidence`=buff/debuff modifiers may be flat or percent · `options`=`apply_before_soft_cap` · `apply_after_soft_cap` · `apply_around_snapshot` · `agent_recommendation`=apply_before_soft_cap (soft cap is final gate) · `runtime_impact`=critical for effective Int display and cost
+  - `question_id`=RTQ03 · `topic`=dex_runtime_semantics_final · `evidence`=P2B-1 defers to RT1; runtime has no dex-specific mechanics · `options`=`BASE_POWER_ONLY_conservative` · `mobility_bonus` · `precision_bonus` · `channeling_time_reduction_limited` · `agent_recommendation`=BASE_POWER_ONLY_conservative until runtime extension provides mechanics · `runtime_impact`=determines CdV identity coherence
+  - `question_id`=RTQ04 · `topic`=proc_rng_model · `evidence`=no rng engine present · `options`=`unseeded_per_call` · `seeded_expedition_scope` · `seeded_encounter_scope` · `hybrid` · `agent_recommendation`=seeded_expedition_scope for reproducibility+audit · `runtime_impact`=reproducibility and diagnostics
+  - `question_id`=RTQ05 · `topic`=proc_roll_scope · `evidence`=multi-target and multi-effect cases undefined · `options`=`per_event` · `per_target` · `per_effect` · `per_event_per_target` · `agent_recommendation`=per_event_per_target for fairness · `runtime_impact`=probabilistic exposure
+  - `question_id`=RTQ06 · `topic`=cooldown_scope · `evidence`=cooldown feature-level in runtime; item-effect cooldown absent · `options`=`source_adventurer_plus_effect_family` · `source_adventurer_only` · `effect_family_only` · `per_target` · `global` · `agent_recommendation`=source_adventurer_plus_effect_family (conservative) · `runtime_impact`=balance and abuse prevention
+  - `question_id`=RTQ07 · `topic`=mark_active_cap_scope · `evidence`=phase_1 says active_marks<=5; scope undefined · `options`=`per_adventurer` · `per_team` · `per_target` · `global_expedition` · `agent_recommendation`=per_adventurer (baseline) · `runtime_impact`=balance mark orchestration
+  - `question_id`=RTQ08 · `topic`=multi_cdv_mark_interaction · `evidence`=multi-CdV team not yet ratified · `options`=`marks_shared_pool` · `marks_independent_per_cdv` · `marks_merged_by_target` · `agent_recommendation`=marks_independent_per_cdv (respecting per_adventurer cap) · `runtime_impact`=team composition dynamics
 
 ## 44 · RT2 Readiness
-- **`rt2_status_current`**: `HOLD_NOT_AUTHORIZED`
-- **`rt2_focus_expected`**: ["implementation_of_runtime_stat_and_effect_semantics_from_rt1", "backward_compatible_schema_extension_if_required", "test_suite_matrix_from_section_34", "observability_events_implementation_from_s...
-- **`rt2_prerequisites`**: ["RT1_pm_verdict_all_15_RTQ_resolved", "RT1_conservative_defaults_confirmed_or_replaced", "migration_class_selected_via_RTQ14", "pvp_default_ratified_via_RTQ12", "persistence_model_ratified_via_RTQ...
 
-## 45 · GO/HOLD Recommendation
-- **`agent_recommendation`**: `HOLD_PENDING_PM_ADJUDICATION_15_RTQ`
-- **`artifact_status`**: `ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION`
-- **`closure_manifest_emission`**: `False`
-- **`prd_append_emission`**: `False`
-- **`next_action`**: `PM_VERDICT_ON_RT1_15_RTQ_AND_RT2_AUTHORIZATION`
-- **`downstream_phase_on_pm_go`**: `R18.6.RV3-IS2-B-P2B-RT2_HOLD_UNTIL_AUTHORIZED`
-- **`blockers_emitted_count`**: `2`
-- **`blockers_emitted`**: [{"id": "CLASS_MECHANIC_RUNTIME_UNDERDEFINED", "impact": "critical", "scope": "Mark/Drain/Fragment runtime hooks not defined by any existing G4/G5 gate", "action": "PM specify or authorize dedicate...
-- **`blockers_not_triggered`**: ["RUNTIME_SEMANTICS_SOURCE_CONFLICT"]
-- **`final_status`**: {"R18.6.RV3-IS2-B-P2B-RT1": "ARTIFACT_WRITTEN_PM_ADJUDICATION_REQUIRED", "R18.6.RV3-IS2-B-P2B-RT2": "HOLD_NOT_AUTHORIZED", "R18.6.RV3-IS2-B-P2B-1": "CLOSED_PM_LOCKED_IMMUTABLE", "R18.6.RV3-IS2-B_Ph...
+  - **`rt2_status_current`**: HOLD_NOT_AUTHORIZED
+  - **`rt2_focus_expected`**: `implementation_of_runtime_stat_and_effect_semantics_from_rt1` · `backward_compatible_schema_extension_if_required` · `test_suite_matrix_from_section_34` · `observability_events_implementation_from_section_33` · `migration_class_execution_per_RTQ14`
+  - **`rt2_prerequisites`**: `RT1_pm_verdict_all_15_RTQ_resolved` · `RT1_conservative_defaults_confirmed_or_replaced` · `migration_class_selected_via_RTQ14` · `pvp_default_ratified_via_RTQ12` · `persistence_model_ratified_via_RTQ13`
+
+## 45 · GO/HOLD · CLOSURE READY
+
+  - **`agent_recommendation`**: CLOSURE_READY_PM_VERDICTS_INTEGRATED_RTQ01_RTQ15_APPLIED
+  - **`artifact_status`**: PATCHED_PM_VERDICTS_INTEGRATED
+  - **`closure_manifest_emission`**: `True`
+  - **`prd_append_emission`**: `True`
+  - **`next_action`**: PM_VERDICT_ON_RT1_15_RTQ_AND_RT2_AUTHORIZATION
+  - **`downstream_phase_on_pm_go`**: R18.6.RV3-IS2-B-P2B-RT2_HOLD_UNTIL_AUTHORIZED
+  - **`blockers_emitted_count`**: `2`
+  - **`blockers_emitted`**:
+  - `id`=CLASS_MECHANIC_RUNTIME_UNDERDEFINED · `impact`=critical · `status`=RESOLVED_BY_RT1_EVENT_CONTRACT
+  - `id`=PERSISTENCE_MIGRATION_UNDERDEFINED · `impact`=high · `status`=RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE
+  - **`blockers_not_triggered`**: `RUNTIME_SEMANTICS_SOURCE_CONFLICT`
+  - **`final_status`**:
+  - **`R18.6.RV3-IS2-B-P2B-RT1`**: CLOSED_PM_LOCKED
+  - **`R18.6.RV3-IS2-B-P2B-RT2`**: HOLD_NOT_AUTHORIZED
+  - **`R18.6.RV3-IS2-B-P2B-1`**: CLOSED_PM_LOCKED_IMMUTABLE
+  - **`R18.6.RV3-IS2-B_Phase_2A`**: CLOSED_PM_LOCKED_IMMUTABLE
+  - **`R18.6.RV3-IS2-B-Phase-1-N1`**: DESIGN_LOCKED_IMMUTABLE
+  - **`R18.6.RV3-IS2-B_Phase_1`**: IMMUTABLE_UNCHANGED
+  - **`R18.6.RV3-IS2-B_Phase_2B`**: HOLD_NOT_AUTHORIZED
+  - **`R18.6.RV3-NC1`**: HOLD_NOT_AUTHORIZED
+  - **`R18.6_Gate_11`**: HOLD_NOT_AUTHORIZED
+  - **`Monaco`**: HOLD_NOT_AUTHORIZED
+  - **`Registry_v3_Item_Generation_And_Apply`**: NOT_AUTHORIZED
+  - **`AFX2`**: RESERVED_FUTURE_NOT_AUTHORIZED
+  - **`IS2-A_branch`**: LOCKED_IMMUTABLE
+  - **`Cacciatore_del_Vuoto`**: ACTIVE-DESIGN-READY_design_layer_only
+  - **`runtime_gaps_status`**: PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED
 
 ---
 
-**ATTENDO VERDICT PM.**
+**PM VERDICTS INTEGRATED · RTQ01-RTQ15 APPLIED · FAIL-STOPS RESOLVED · READY FOR FORMAL CLOSURE.**

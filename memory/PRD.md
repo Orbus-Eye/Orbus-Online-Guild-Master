@@ -4199,3 +4199,39 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 
 **Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · registry=0 · test=0 · env=0 · new_seals=0 · db_writes=0 · item_generation=0 · registry_apply=0. Runtime gaps rimangono PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT1 · Runtime Stat & Effect Semantics Specification · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only
+**Gate Status**: `R18.6.RV3-IS2-B-P2B-RT1 · RUNTIME STAT & EFFECT SEMANTICS SPECIFICATION · CLOSED`
+**PM Dispatch**: Msg #113 · same-dispatch PATCH + FORMAL CLOSURE
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- RT1 PM APPROVED / CLOSED
+- RTQ01-RTQ15 = APPLIED (15/15)
+- Fail-stop `CLASS_MECHANIC_RUNTIME_UNDERDEFINED` = RESOLVED_BY_RT1_EVENT_CONTRACT
+- Fail-stop `PERSISTENCE_MIGRATION_UNDERDEFINED` = RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE
+- Runtime not declared implemented · PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED
+- Legendary boundaries preserved · per_item null (final_effect/magnitude/proc/duration/cooldown)
+- Baseline migration class = NO_DB_MIGRATION_REQUIRED
+- Runtime state = RUNTIME_ONLY_TRANSIENT · Effect metadata = BACKWARD_COMPATIBLE_OPTIONAL_SCHEMA_EXTENSION
+- Persistence: STATIC/TRANSIENT_EXPEDITION/TRANSIENT_COMBAT_PHASE/AUDIT_ONLY · no new persistent character fields
+- P2B-RT2 = HOLD / NOT AUTHORIZED
+- IS2-B Phase 2B HOLD
+- NC1 HOLD
+- Gate 11 HOLD
+- Monaco HOLD
+- Registry v3 NOT AUTHORIZED
+
+**Closure artefatti nuovi (3)** · SHA riportati SOLO in chat (SHA Policy §31):
+- `r18_6_rv3_is2_b_p2b_rt1_final_closure_report.md` · role IS2B_P2B_RT1_CLOSURE_MD · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_rt1_final_closure_report.json` · role IS2B_P2B_RT1_CLOSURE_JSON · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_rt1_closure_manifest.json` · SHA Policy §31 compliant (no self-hash embedded)
+
+**Baseline invariance (verificata)**: IS2-A chain (8) · Phase 1 (4) · P1-N1 (3) · Phase 2A envelope (2) · Phase 2A closure (3) · P2B-1 (5) = **25/25 byte-identical**.
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+
+**Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · migrations=0 · registry_generation=0 · registry_apply=0 · item_generation=0 · db_writes=0 · new_seals=0.

@@ -1,0 +1,94 @@
+{
+  "document_type": "closure_manifest",
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT1",
+  "gate_title": "Runtime Stat & Effect Semantics Specification · Closure Manifest",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "created_utc": "2026-07-22T19:04:18.030905+00:00",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "sha_policy_31_compliance": {
+    "manifest_self_hash_embedded": false,
+    "note": "Manifest DOES NOT embed its own final SHA256. The manifest final SHA256 is reported ONLY in the dispatch chat channel.",
+    "prd_master_self_hash_embedded_in_prd": false,
+    "prd_master_sha_chat_only": true
+  },
+  "artifacts": [
+    {
+      "path": "r18_6_rv3_is2_b_p2b_rt1_runtime_stat_effect_semantics_spec.md",
+      "full_file_sha256": "63eb829f62f5c82ac0000bb8e6fa65ae2af864d79419d83767109146929a5d84",
+      "size_bytes": 36322,
+      "line_count": 533,
+      "role": "IS2B_P2B_RT1_SPEC_MD_PATCHED",
+      "status": "PM_APPROVED_RTQ01_RTQ15_INTEGRATED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_rt1_runtime_stat_effect_semantics_spec.json",
+      "full_file_sha256": "748a7567e273080ee9afbd8492163769557be54f861fb94fe17c153173699e82",
+      "size_bytes": 47784,
+      "line_count": 1344,
+      "role": "IS2B_P2B_RT1_SPEC_JSON_PATCHED",
+      "status": "PM_APPROVED_RTQ01_RTQ15_INTEGRATED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_rt1_final_closure_report.md",
+      "full_file_sha256": "87753302a54642a4b4ebe25178a9e6baa552ee14622e0dfbc31c2f831eae1c3f",
+      "size_bytes": 5347,
+      "line_count": 83,
+      "role": "IS2B_P2B_RT1_CLOSURE_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_rt1_final_closure_report.json",
+      "full_file_sha256": "ed4908d5f2003cdea634ccc3d95d74ba5aaa5573b0b1c575b0ed7223426912d4",
+      "size_bytes": 6434,
+      "line_count": 148,
+      "role": "IS2B_P2B_RT1_CLOSURE_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "PRD.md",
+      "full_file_sha256": "PENDING_POST_APPEND_REPORTED_CHAT_ONLY",
+      "size_bytes": null,
+      "line_count": null,
+      "role": "PRD_MASTER",
+      "status": "PM_APPENDED",
+      "pm_locked": false,
+      "note": "PRD SHA/size/line_count computed AFTER idempotent append and reported CHAT-ONLY per SHA Policy §31 (avoid PRD self-hash embedding)."
+    }
+  ],
+  "anchor_expected_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "governance_evidence": {
+    "backend_modifications": 0,
+    "frontend_modifications": 0,
+    "openapi_modifications": 0,
+    "db_registry_modifications": 0,
+    "test_suite_modifications": 0,
+    "env_secrets_modifications": 0,
+    "sealed_set_modifications": 0,
+    "new_seals_created": 0,
+    "db_writes": 0,
+    "runtime_item_id_generated_count": 0,
+    "item_generation": 0,
+    "registry_generation": 0,
+    "registry_apply": 0,
+    "migrations": 0
+  },
+  "sealed_scripts": "36/36_byte_identical",
+  "closure_stop_status": {
+    "R18.6.RV3-IS2-B-P2B-RT1": "CLOSED_PM_LOCKED",
+    "R18.6.RV3-IS2-B-P2B-RT2": "HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+    "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+    "Monaco": "HOLD_NOT_AUTHORIZED",
+    "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+    "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+    "IS2-A_branch": "LOCKED_IMMUTABLE",
+    "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only"
+  }
+}

@@ -4,14 +4,14 @@
   "gate_title": "Runtime Stat & Effect Semantics Specification",
   "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY_NO_APPLY",
   "language": "it",
-  "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
+  "artifact_status": "PATCHED_PM_VERDICTS_INTEGRATED_RTQ01_RTQ15_RESOLVED_FAILSTOPS_CLOSED",
   "closure_manifest_authorized": false,
   "prd_append_authorized": false,
   "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
   "created_utc": "2026-07-22T15:00:23.393274+00:00",
   "pm_dispatch_reference": "P2B_1_SIGN_OFF_GO_P2B_RT1",
   "sections": {
-    "01_executive_summary": "Specifica deterministica del comportamento atteso runtime per stat loadout evaluation, Int soft-cap, proc, duration, cooldown, expected uptime, stacking/refresh, Mark/Drain/Fragment hooks, Dispel/anti-summon, boss safeguards, Legendary boundaries, PvP eligibility, lifecycle, validation e observability. **RT1 definisce il comportamento atteso · NON lo implementa.** Nessun codice, nessuno schema DB, nessuna migration, nessun endpoint. 15 RTQ emesse (12 blocking). 2 blocker fail-stop identificati contingenti (CLASS_MECHANIC_RUNTIME_UNDERDEFINED · PERSISTENCE_MIGRATION_UNDERDEFINED) come warning · nessuna auto-ratifica. Stato = ARTIFACT WRITTEN.",
+    "01_executive_summary": "Specifica deterministica runtime PATCHED con verdetti PM Msg #113. RTQ01-RTQ15 = 15/15 APPLIED · fail-stop `CLASS_MECHANIC_RUNTIME_UNDERDEFINED` = RESOLVED_BY_RT1_EVENT_CONTRACT · fail-stop `PERSISTENCE_MIGRATION_UNDERDEFINED` = RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE. Non e' dichiarato che i sistemi runtime sottostanti siano implementati. Baseline migration = NO_DB_MIGRATION_REQUIRED. Runtime effect definitions = STATIC · active state = TRANSIENT · Fragments/segments = TRANSIENT combat-phase · events = AUDIT-ONLY. Legendary boundaries preservate (per_item numeric = null). Formal closure autorizzata nello stesso dispatch.",
     "02_scope": {
       "in_scope": [
         "stat_loadout_evaluation_expected_behavior",
@@ -138,7 +138,12 @@
         "no_class_specific_stat_multipliers_in_combat_math"
       ],
       "gaps_status": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED",
-      "note": "Nessun gap dichiarato risolto in RT1. RT1 definisce l'atteso, non implementa."
+      "note": "Nessun gap dichiarato risolto in RT1. RT1 definisce l'atteso, non implementa.",
+      "failstops_resolution": {
+        "CLASS_MECHANIC_RUNTIME_UNDERDEFINED": "RESOLVED_BY_RT1_EVENT_CONTRACT",
+        "PERSISTENCE_MIGRATION_UNDERDEFINED": "RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE"
+      },
+      "note_do_not_declare_implementation": "runtime gaps rimangono PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED; RT1 definisce l'atteso, non implementa."
     },
     "07_stat_bridge": {
       "italian_to_runtime_locked_p2b_1": {
@@ -171,7 +176,19 @@
       ],
       "rounding_final_int_precision": 4,
       "rounding_method": "ROUND_HALF_UP",
-      "expedition_snapshot": "captured at expedition_start; all subsequent computations use snapshot"
+      "expedition_snapshot": "captured at expedition_start; all subsequent computations use snapshot",
+      "pm_verdict_RTQ02_order": [
+        "1_base_character_stat",
+        "2_equipment_flat_stat",
+        "3_permanent_flat_modifiers",
+        "4_temporary_flat_buffs_debuffs",
+        "5_percentage_stat_modifiers",
+        "6_clamp_nominal_stat_ge_0",
+        "7_soft_cap_transformation",
+        "8_derived_power_calculation",
+        "9_direct_power_modifiers"
+      ],
+      "active_expedition_loadout": "SNAPSHOT_LOCKED_AT_EXPEDITION_START"
     },
     "09_int_soft_cap": {
       "phase_1_soft_cap_value": 100,
@@ -187,7 +204,17 @@
         "external_modifier_stacking_order"
       ],
       "specification_status": "SPECIFICATION_CANDIDATE",
-      "runtime_status": "NOT_IMPLEMENTED"
+      "runtime_status": "NOT_IMPLEMENTED",
+      "pm_verdict_RTQ01": {
+        "soft_cap": 100,
+        "effective_return_above_100": 0.5,
+        "internal_precision_decimals": 4,
+        "intermediate_rounding": "NONE",
+        "effective_intelligence_display_decimals": 1,
+        "final_derived_power_rounding": "ROUND_HALF_UP",
+        "function_verbatim": "effective_intelligence(x) = x if x<=100 else 100 + (x-100)*0.50",
+        "status": "DESIGN_LOCKED"
+      }
     },
     "10_constitution_semantics": {
       "current_status_from_p2b_1": "generic_base_power_contribution_only",
@@ -228,12 +255,28 @@
         "free_critical_FORBIDDEN",
         "free_proc_chance_FORBIDDEN"
       ],
-      "conservative_fallback_if_no_supportable_model": "DEX_RUNTIME_SEMANTICS = BASE_POWER_ONLY",
+      "conservative_fallback_if_no_supportable_model": "APPLIED_BASE_POWER_ONLY",
       "identity_safeguards_from_p2b_1": {
         "dex_share_max_pct_of_flat_stat_budget": 20,
         "dex_budget_lt_int_budget_per_item_class_specific": true
       },
-      "pm_verdict_required": true
+      "pm_verdict_required": true,
+      "pm_verdict_RTQ03": {
+        "runtime_mapping": "agility",
+        "runtime_semantics": "GENERIC_BASE_POWER_ONLY",
+        "dex_share_max_pct_of_flat_stat_budget": 20,
+        "dex_budget_lt_intelligence_budget": true,
+        "dex_primary_cdv": "FORBIDDEN",
+        "dual_primary_int_dex": "FORBIDDEN",
+        "forbidden_attributions": [
+          "precisione",
+          "critico",
+          "velocita",
+          "schivata",
+          "proc_chance"
+        ],
+        "status": "DESIGN_LOCKED_RUNTIME_TRANSITIONAL"
+      }
     },
     "12_effect_instance_model": {
       "conceptual_contract_no_db": true,
@@ -315,7 +358,20 @@
         "bad_luck_protection_yes_no",
         "refresh_behavior_on_proc"
       ],
-      "no_proc_assignment_per_item_in_rt1": true
+      "no_proc_assignment_per_item_in_rt1": true,
+      "pm_verdict_RTQ04": {
+        "rng_model": "SERVER_AUTHORITATIVE_EXPEDITION_SCOPED_PRNG",
+        "seed_scope": "server_side",
+        "seed_api_exposure": "FORBIDDEN",
+        "production_predictability": "FORBIDDEN",
+        "test_seed_injection": "ALLOWED"
+      },
+      "pm_verdict_RTQ05": {
+        "roll_rule": "one_roll_per_source_effect_instance_per_valid_trigger_event",
+        "default_PER_TARGET": false,
+        "combined_cap_sigma_effective_proc_chance_max": 0.45,
+        "if_raw_sum_gt_0_45_normalization": "PROPORTIONAL"
+      }
     },
     "15_duration_semantics": {
       "unit_seconds": true,
@@ -350,7 +406,15 @@
       "conservative_default_scope": "source_adventurer_plus_effect_family",
       "unequip_default": "effect_disabled",
       "reequip_during_active_expedition_default": "cooldown_NOT_reset",
-      "pm_verdict_required_RTQ06": true
+      "pm_verdict_required_RTQ06": true,
+      "pm_verdict_RTQ06": {
+        "default_key": "source_adventurer_id + effect_family + effect_version",
+        "per_target_key_suffix": "+ target_id",
+        "unequip_disables_triggers": true,
+        "unequip_resets_cooldown": false,
+        "reequip_during_same_expedition_resets_cooldown": false,
+        "expedition_end_action": "DISCARD_COOLDOWN_STATE"
+      }
     },
     "17_expected_uptime": {
       "formula_candidate": "expected_uptime = expected_active_time / observation_window",
@@ -365,7 +429,14 @@
         "target_availability"
       ],
       "not_ratifying_budget_costs_in_rt1": true,
-      "pm_verdict_required_RTQ10": true
+      "pm_verdict_required_RTQ10": true,
+      "pm_verdict_RTQ10": {
+        "rate_formula": "r = min(lambda * p, 1/c)  · if c==0 then r = lambda * p",
+        "non_refresh_uptime": "min(1, r*d) * A * T",
+        "refreshable_uptime": "(1 - exp(-r*d)) * A * T",
+        "clamp": "0_to_1",
+        "budget_cost_assignment_in_rt1": false
+      }
     },
     "18_stacking": {
       "policy_from_phase_1_s48_preserved": true,
@@ -386,7 +457,12 @@
       "refresh_default": "REFRESH_no_auto_extend",
       "extend_within_hard_cap_only_if_declared": true,
       "mark_refresh_does_not_reset_ritual_close_usage": true,
-      "ritual_close_bonus_max_per_mark_application": 1
+      "ritual_close_bonus_max_per_mark_application": 1,
+      "pm_verdict_RTQ09_mark_refresh": {
+        "resets_duration": true,
+        "new_application_id": false,
+        "ritual_close_used_reset": false
+      }
     },
     "20_mark_hooks": {
       "spec_required": [
@@ -403,7 +479,21 @@
         "mark_duration_hard_cap_seconds": 10
       },
       "pm_review_scope_of_active_marks_cap": "per_adventurer_or_per_team_or_per_target_or_global_expedition",
-      "pm_verdict_required_RTQ07_RTQ08": true
+      "pm_verdict_required_RTQ07_RTQ08": true,
+      "pm_verdict_RTQ07": {
+        "active_marks_max_per_source_adventurer": 5,
+        "marks_per_source_target_pair_max": 1,
+        "sixth_mark": "REJECTED",
+        "automatic_eviction": false,
+        "mark_duration_max_seconds": 10
+      },
+      "pm_verdict_RTQ08_multi_cdv": {
+        "mark_ownership": "source_adventurer",
+        "allied_mark_consumption": "FORBIDDEN",
+        "allied_mark_refresh": "FORBIDDEN",
+        "ownership_transfer": "FORBIDDEN",
+        "multiple_cdv_can_maintain_separate_marks_on_same_target": true
+      }
     },
     "21_drain_hooks": {
       "spec_required": [
@@ -421,7 +511,15 @@
         "duplicate_completion_reward",
         "free_fragment_generation",
         "boss_safeguard_bypass"
-      ]
+      ],
+      "pm_verdict_RTQ09_identify_mark_drain_contract": {
+        "identify_valid_context_only": true,
+        "mark_source_owned": true,
+        "drain_requires_own_active_mark_at_start_and_completion": true,
+        "drain_consumes_mark": false,
+        "invalid_completion_no_reward": true,
+        "one_resolution_per_drain_execution_id": true
+      }
     },
     "22_fragment_hooks": {
       "cap_max_fragments": 5,
@@ -438,7 +536,18 @@
       ],
       "overflow_default": "discard_without_extra_proc",
       "no_overflow_to_free_power": true,
-      "pm_verdict_required_RTQ09": true
+      "pm_verdict_required_RTQ09": true,
+      "pm_verdict_RTQ09": {
+        "owner": "source_adventurer",
+        "cap": 5,
+        "combat_phase_start_value": 0,
+        "combat_phase_end_value": 0,
+        "expedition_end_value": 0,
+        "overflow": "DISCARDED",
+        "overflow_proc": "FORBIDDEN",
+        "cross_phase_persistence": false,
+        "focus_bonus_per_resource_segment_max": 2
+      }
     },
     "23_dispel_hooks": {
       "spec_required": [
@@ -508,7 +617,14 @@
         "absolute_channel_interruption_immunity"
       ],
       "budget_envelope_ratified_phase_2a": 342.25,
-      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30
+      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30,
+      "per_item_numeric_lock": {
+        "final_effect": null,
+        "magnitude": null,
+        "proc": null,
+        "duration": null,
+        "cooldown": null
+      }
     },
     "27_legendary_focus_boundary": {
       "blueprint": "cdv_t5_main_hand_focus_001",
@@ -528,7 +644,14 @@
         "generation_without_mark"
       ],
       "budget_envelope_ratified_phase_2a": 342.25,
-      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30
+      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30,
+      "per_item_numeric_lock": {
+        "final_effect": null,
+        "magnitude": null,
+        "proc": null,
+        "duration": null,
+        "cooldown": null
+      }
     },
     "28_legendary_balestra_boundary": {
       "blueprint": "cdv_t5_main_hand_balestra_001",
@@ -547,7 +670,14 @@
         "boss_bypass"
       ],
       "budget_envelope_ratified_phase_2a": 301.18,
-      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30
+      "legendary_unique_effect_max_pct_of_gross_p2b_1": 30,
+      "per_item_numeric_lock": {
+        "final_effect": null,
+        "magnitude": null,
+        "proc": null,
+        "duration": null,
+        "cooldown": null
+      }
     },
     "29_pvp_boundary": {
       "categories_4": [
@@ -558,7 +688,12 @@
       ],
       "default_for_new_cdv_effects": "PvP_REQUIRES_TUNING",
       "no_new_effect_automatically_active_in_pvp": true,
-      "pm_verdict_required_RTQ12": true
+      "pm_verdict_required_RTQ12": true,
+      "pm_verdict_RTQ12": {
+        "design_default": "PvP_REQUIRES_TUNING",
+        "runtime_enabled_default": false,
+        "unknown_or_missing_status": "PvP_FORBIDDEN"
+      }
     },
     "30_effect_lifecycle": {
       "states_9": [
@@ -597,7 +732,28 @@
         "emit_audit_event"
       ],
       "final_order_pm_review": true,
-      "pm_verdict_required_RTQ11": true
+      "pm_verdict_required_RTQ11": true,
+      "pm_verdict_RTQ11_steps_17": [
+        "1_resolve_expedition_loadout_snapshot",
+        "2_deduplicate_event_id",
+        "3_validate_source_adventurer",
+        "4_validate_source_item_effect_version",
+        "5_validate_trigger_payload",
+        "6_validate_target_ownership",
+        "7_validate_lifecycle_pvp",
+        "8_validate_hard_caps",
+        "9_validate_boss_safeguards",
+        "10_validate_cooldown",
+        "11_collect_eligible_proc_instances",
+        "12_enforce_combined_proc_cap",
+        "13_perform_ordered_proc_rolls",
+        "14_resolve_stacking_refresh",
+        "15_atomically_apply_state_changes",
+        "16_start_update_cooldown",
+        "17_emit_audit_event"
+      ],
+      "partial_application": "FORBIDDEN",
+      "partial_reward": "FORBIDDEN"
     },
     "32_failure_policy": {
       "defaults": {
@@ -633,7 +789,36 @@
         "expedition_correlation_id"
       ],
       "no_pii": true,
-      "pm_verdict_required_RTQ15": true
+      "pm_verdict_required_RTQ15": true,
+      "pm_verdict_RTQ15": {
+        "level": "TIERED_BY_SEVERITY",
+        "DEBUG": [
+          "trigger_evaluated",
+          "proc_rolled",
+          "stack_resolved"
+        ],
+        "INFO": [
+          "effect_applied",
+          "refreshed",
+          "expired"
+        ],
+        "WARNING": [
+          "hard_cap_blocked",
+          "boss_safeguard_blocked",
+          "duplicate_suppressed",
+          "invalid_metadata"
+        ],
+        "ERROR": [
+          "execution_failed",
+          "atomic_rollback",
+          "unknown_effect_family"
+        ],
+        "do_not_log": [
+          "seed_rng",
+          "sensitive_data",
+          "server_only_boss_metadata"
+        ]
+      }
     },
     "34_test_contract": {
       "matrix_categories_for_rt2_no_test_in_rt1": [
@@ -673,7 +858,14 @@
         "effect_audit": "AUDIT_ONLY_DATA",
         "cross_expedition_effect_state": "NOT_ALLOWED_default"
       },
-      "pm_verdict_required_RTQ13": true
+      "pm_verdict_required_RTQ13": true,
+      "pm_verdict_RTQ13": {
+        "effect_definitions": "STATIC_DESIGN_DATA",
+        "active_effects_cooldowns_marks_rng_loadout": "TRANSIENT_EXPEDITION_STATE",
+        "fragments_resource_segments": "TRANSIENT_COMBAT_PHASE_STATE",
+        "effect_events": "AUDIT_ONLY_DATA",
+        "new_persistent_character_fields": "NONE"
+      }
     },
     "37_api_boundary": {
       "no_openapi_modifications": true,
@@ -716,7 +908,15 @@
         "RUNTIME_ONLY_TRANSIENT"
       ],
       "no_selection_without_evidence": true,
-      "pm_verdict_required_RTQ14": true
+      "pm_verdict_required_RTQ14": true,
+      "pm_verdict_RTQ14": {
+        "runtime_state": "RUNTIME_ONLY_TRANSIENT",
+        "effect_metadata": "BACKWARD_COMPATIBLE_OPTIONAL_SCHEMA_EXTENSION",
+        "db_backfill": "NOT_REQUIRED",
+        "legacy_item_without_metadata": "VALID_ITEM_WITH_NO_EFFECT",
+        "baseline_migration_class": "NO_DB_MIGRATION_REQUIRED",
+        "if_cross_expedition_persistence_emerges": "STOP_NEW_PM_MIGRATION_ADJUDICATION_REQUIRED"
+      }
     },
     "40_security_and_abuse": {
       "abuse_vectors_identified": [
@@ -842,7 +1042,8 @@
         "runtime_impact": "stat display and downstream calculation consistency",
         "migration_impact": "none if not persisted",
         "test_impact": "boundary tests around 100",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ02",
@@ -857,7 +1058,8 @@
         "runtime_impact": "critical for effective Int display and cost",
         "migration_impact": "none",
         "test_impact": "multi-order tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ03",
@@ -873,7 +1075,8 @@
         "runtime_impact": "determines CdV identity coherence",
         "migration_impact": "none",
         "test_impact": "identity tests · Dex-primary FORBIDDEN checks",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ04",
@@ -889,7 +1092,8 @@
         "runtime_impact": "reproducibility and diagnostics",
         "migration_impact": "audit schema",
         "test_impact": "determinism tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ05",
@@ -905,7 +1109,8 @@
         "runtime_impact": "probabilistic exposure",
         "migration_impact": "none",
         "test_impact": "aoe_proc tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ06",
@@ -922,7 +1127,8 @@
         "runtime_impact": "balance and abuse prevention",
         "migration_impact": "none if transient",
         "test_impact": "cooldown persistence tests across equip cycles",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ07",
@@ -938,7 +1144,8 @@
         "runtime_impact": "balance mark orchestration",
         "migration_impact": "none",
         "test_impact": "scope tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ08",
@@ -953,7 +1160,8 @@
         "runtime_impact": "team composition dynamics",
         "migration_impact": "none",
         "test_impact": "multi_cdv tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ09",
@@ -968,7 +1176,8 @@
         "runtime_impact": "resource cycle balance",
         "migration_impact": "none if transient",
         "test_impact": "lifecycle tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ10",
@@ -984,7 +1193,8 @@
         "runtime_impact": "future effect_cost calibration",
         "migration_impact": "none",
         "test_impact": "uptime property tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ11",
@@ -1000,7 +1210,8 @@
         "runtime_impact": "determinism critical",
         "migration_impact": "none",
         "test_impact": "execution_order tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ12",
@@ -1016,7 +1227,8 @@
         "runtime_impact": "pvp balance",
         "migration_impact": "none",
         "test_impact": "pvp_tuning tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ13",
@@ -1031,7 +1243,8 @@
         "runtime_impact": "session boundary integrity",
         "migration_impact": "transient by default = no db writes",
         "test_impact": "persistence boundary tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ14",
@@ -1047,7 +1260,8 @@
         "runtime_impact": "critical for RT2",
         "migration_impact": "decisive",
         "test_impact": "migration idempotency tests",
-        "blocking": true
+        "blocking": false,
+        "status": "APPLIED"
       },
       {
         "question_id": "RTQ15",
@@ -1063,7 +1277,8 @@
         "runtime_impact": "operability and abuse detection",
         "migration_impact": "audit schema",
         "test_impact": "observability tests",
-        "blocking": false
+        "blocking": false,
+        "status": "APPLIED"
       }
     ],
     "44_rt2_readiness": {
@@ -1084,10 +1299,10 @@
       ]
     },
     "45_go_hold_recommendation": {
-      "agent_recommendation": "HOLD_PENDING_PM_ADJUDICATION_15_RTQ",
-      "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
-      "closure_manifest_emission": false,
-      "prd_append_emission": false,
+      "agent_recommendation": "CLOSURE_READY_PM_VERDICTS_INTEGRATED_RTQ01_RTQ15_APPLIED",
+      "artifact_status": "PATCHED_PM_VERDICTS_INTEGRATED",
+      "closure_manifest_emission": true,
+      "prd_append_emission": true,
       "next_action": "PM_VERDICT_ON_RT1_15_RTQ_AND_RT2_AUTHORIZATION",
       "downstream_phase_on_pm_go": "R18.6.RV3-IS2-B-P2B-RT2_HOLD_UNTIL_AUTHORIZED",
       "blockers_emitted_count": 2,
@@ -1095,21 +1310,19 @@
         {
           "id": "CLASS_MECHANIC_RUNTIME_UNDERDEFINED",
           "impact": "critical",
-          "scope": "Mark/Drain/Fragment runtime hooks not defined by any existing G4/G5 gate",
-          "action": "PM specify or authorize dedicated class-mechanic gate"
+          "status": "RESOLVED_BY_RT1_EVENT_CONTRACT"
         },
         {
           "id": "PERSISTENCE_MIGRATION_UNDERDEFINED",
           "impact": "high",
-          "scope": "migration class selection pending RTQ14",
-          "action": "PM ratify RTQ14 (recommendation: RUNTIME_ONLY_TRANSIENT baseline)"
+          "status": "RESOLVED_BY_RUNTIME_ONLY_TRANSIENT_BASELINE"
         }
       ],
       "blockers_not_triggered": [
         "RUNTIME_SEMANTICS_SOURCE_CONFLICT"
       ],
       "final_status": {
-        "R18.6.RV3-IS2-B-P2B-RT1": "ARTIFACT_WRITTEN_PM_ADJUDICATION_REQUIRED",
+        "R18.6.RV3-IS2-B-P2B-RT1": "CLOSED_PM_LOCKED",
         "R18.6.RV3-IS2-B-P2B-RT2": "HOLD_NOT_AUTHORIZED",
         "R18.6.RV3-IS2-B-P2B-1": "CLOSED_PM_LOCKED_IMMUTABLE",
         "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED_IMMUTABLE",
@@ -1118,14 +1331,14 @@
         "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
         "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
         "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
-        "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
         "Monaco": "HOLD_NOT_AUTHORIZED",
+        "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
         "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
         "IS2-A_branch": "LOCKED_IMMUTABLE",
         "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
-        "runtime_gaps_status": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED",
-        "awaiting_pm_verdict": true
+        "runtime_gaps_status": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED"
       }
     }
-  }
+  },
+  "pm_verdict_reference": "PM_MSG_113_VERDICT_INTEGRATION_SAME_DISPATCH"
 }
