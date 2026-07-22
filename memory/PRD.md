@@ -4150,3 +4150,52 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 
 **Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · registry=0 · test=0 · env=0 · new_seals=0 · db_writes=0 · item_generation=0 · registry_apply=0.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-1 · Budget Conversion Discovery & Contract Options · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only
+**Gate Status**: `CLOSED_PM_LOCKED_MODEL_A_T`
+**Model Selected**: `MODEL A-T · EQUAL-COST TRANSITIONAL · DESIGN-LOCKED`
+**Q01-Q12**: 12/12 RESOLVED · 0 blocking · 0 open
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- P2B-1 PM APPROVED / CLOSED
+- Model A-T selected
+- Int cost = 1.00
+- Constitution cost = 1.00
+- Dexterity cost = 1.00
+- Int ↔ intelligence
+- Constitution ↔ endurance
+- Dexterity ↔ agility
+- Int soft cap = 100
+- effective Int return above cap = 0.50
+- proc conversion deferred to runtime semantics
+- duration/cooldown conversion deferred
+- affix eligibility cost = 0
+- over-budget tolerance = 0
+- acceptable unspent budget ≤ 5%
+- Legendary unique effect ≤ 30% gross budget
+- runtime extension required before effect assignment
+- item-level assignments = 0
+- Phase 2B HOLD
+- Registry generation not authorized
+- Registry apply not authorized
+
+**Closure artefatti nuovi (3)** · SHA riportati SOLO in chat (SHA Policy §31):
+- `r18_6_rv3_is2_b_p2b_1_final_closure_report.md` · role IS2B_P2B1_CLOSURE_MD · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_1_final_closure_report.json` · role IS2B_P2B1_CLOSURE_JSON · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_1_closure_manifest.json` · SHA Policy §31 compliant (no self-hash embedded)
+
+**Contract options PATCHED (2)** · Q01-Q12 verdetti integrati · Model A-T DESIGN-LOCKED · Model B NOT_SELECTED · Model C BLOCKED_BY_EVIDENCE.
+
+**Future gates registered (non aperti)**:
+- `R18.6.RV3-IS2-B-P2B-RT1` · RUNTIME STAT & EFFECT SEMANTICS SPECIFICATION · DOCUMENTAL_ONLY · PLANNED_HOLD_NOT_AUTHORIZED
+- `R18.6.RV3-IS2-B-P2B-RT2` · RUNTIME IMPLEMENTATION (code/test/migration) · REQUIRES_SEPARATE_PM_AUTHORIZATION · NOT_AUTHORIZED
+
+**Baseline invariance (verificata)**: Phase 2A closure (3) INVARIATI · Phase 2A envelope (2) INVARIATI · P1-N1 (3) INVARIATI · Phase 1 Contract (4) INVARIATI · IS2-A chain (8) LOCKED_IMMUTABLE.
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+
+**Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · registry=0 · test=0 · env=0 · new_seals=0 · db_writes=0 · item_generation=0 · registry_apply=0. Runtime gaps rimangono PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED.

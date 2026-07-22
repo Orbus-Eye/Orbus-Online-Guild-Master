@@ -4,14 +4,14 @@
   "gate_title": "Budget Conversion Discovery & Contract Options",
   "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY_NO_APPLY",
   "language": "it",
-  "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
+  "artifact_status": "PATCHED_PM_VERDICTS_INTEGRATED_Q01_Q12_RESOLVED_MODEL_AT_LOCKED",
   "closure_manifest_authorized": false,
   "prd_append_authorized": false,
   "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
   "created_utc": "2026-07-22T13:59:42.754277+00:00",
   "pm_dispatch_reference": "IS2B_P2A_SIGN_OFF_GO_P2B_1",
   "sections": {
-    "01_executive_summary": "Discovery read-only del runtime esistente per determinare come le ABSTRACT_ITEM_BUDGET_UNITS Phase 2A (envelope 17.5000-342.2500) possano essere convertite in costi comparabili per Intelligenza · Costituzione · Destrezza · effetti (13 categorie) · proc · durate · cooldown · utility · affix · Legendary. Il runtime esistente usa un modello 5-stat INGLESE (strength/agility/intellect/endurance/faith) con formula power LINEARE (sommatoria 1:1 + level*2). NON esistono runtime: soft-cap 100, proc_chance su item, duration, cooldown item-driven, mark/drain/fragment interaction, taxonomy 13 categorie, weapon coefficient. Il gate propone tre modelli (A/B/C), simula 5 casi rappresentativi + 2 casi estremi, identifica 4 blocker fail-stop critici e 12 PM open questions (9 alto/critical). L'agente raccomanda Model A come baseline transitorio in attesa di ratifica PM su design layer runtime esteso.",
+    "01_executive_summary": "Discovery read-only del runtime completata. PM VERDICT integrato: **MODEL A-T · EQUAL-COST TRANSITIONAL** SELECTED e DESIGN-LOCKED (flat-stat scope). Q01-Q12 tutte RESOLVED · 0 blocking open questions residue. Costi unitari DESIGN-LOCKED: Intelligenza=1.00 · Costituzione=1.00 · Destrezza=1.00 budget unit/point. Mapping IT↔runtime DESIGN-LOCKED: Intelligenza↔intellect · Costituzione↔endurance · Destrezza↔agility · Strength/Faith INELIGIBLE per CdV. Soft-cap Int 100 con effective_return=0.50 oltre cap (loadout-level, NOT_IMPLEMENTED runtime). Proc/durata/cooldown = DEFERRED (`PROC_COST_RUNTIME_DEPENDENT`, `UPTIME_MODEL_RUNTIME_DEPENDENT`). Affix eligibility cost=0. Over-budget tolerance=0 · unspent ≤5%. Legendary unique-effect ≤30% gross (derivazione 0.50×0.60). Model B NOT_SELECTED (evidence-insufficient); Model C BLOCKED_BY_EVIDENCE. Runtime extension REQUIRED prima di effect assignment: gate futuro RT1 PLANNED/HOLD/NOT_AUTHORIZED. Runtime gaps rimangono prerequisiti espliciti, NON dichiarati implementati.",
     "02_scope": {
       "in_scope": [
         "runtime_read_only_discovery_backend_python_code",
@@ -231,7 +231,23 @@
         "hard_cap_no_overflow"
       ],
       "post_soft_cap_policy_ratified": false,
-      "pm_review_required": true
+      "pm_review_required": false,
+      "pm_verdict_Q01_pre_soft_cap": {
+        "point_cost_verbatim": 1.0,
+        "unit": "budget_unit_per_nominal_point",
+        "equipped_total_intelligence_range_max": 100,
+        "status": "DESIGN_LOCKED"
+      },
+      "pm_verdict_Q02_post_soft_cap": {
+        "nominal_item_point_cost_above_100": 1.0,
+        "effective_contribution_per_nominal_point_above_100": 0.5,
+        "effective_cost_per_effective_intelligence_above_100_budget_units": 2.0,
+        "clarification": "L'item acquista punti nominali a 1.00, ma il loadout riceve solo 0.50 effettivo per punto oltre 100. Scaling post-cap = LOADOUT-LEVEL, NON item-level.",
+        "runtime_status": "NOT_IMPLEMENTED",
+        "live_readiness": "nessun item pronto per live finche' non implementato+testato",
+        "status": "DESIGN_LOCKED"
+      },
+      "cost_model_A_T_selected": 1.0
     },
     "10_costituzione_valuation": {
       "role_phase_1": "secondary_defensive_priority",
@@ -246,7 +262,21 @@
       "cost_model_B_role_weighted_hypothesis": 1.0,
       "cost_model_C_marginal_effectiveness_calibrated": "BLOCKED_INSUFFICIENT_RUNTIME_EVIDENCE",
       "cost_relative_to_intelligenza_recommended": "≤_intelligenza (secondary role) but ≥_destrezza (main defensive priority for cuoio profile)",
-      "pm_review_required": true
+      "pm_review_required": false,
+      "pm_verdict_Q03": {
+        "point_cost_verbatim": 1.0,
+        "unit": "budget_unit_per_point",
+        "runtime_mapping_verbatim": "Endurance",
+        "assumptions_forbidden": [
+          "health_scaling",
+          "mitigation_scaling",
+          "stoffa_cuoio_runtime_differential",
+          "interruption_resistance"
+        ],
+        "assumptions_forbidden_note": "richiedono evidence o implementazione futura",
+        "status": "DESIGN_LOCKED"
+      },
+      "cost_model_A_T_selected": 1.0
     },
     "11_destrezza_valuation": {
       "role_phase_1": "tertiary_utility_opportunistic_priority",
@@ -262,17 +292,45 @@
       "cost_model_A_equal": 1.0,
       "cost_model_B_role_weighted_hypothesis": 0.7,
       "cost_model_C_marginal_effectiveness_calibrated": "BLOCKED_INSUFFICIENT_RUNTIME_EVIDENCE",
-      "blocker_dex_conversion_underdefined": true,
+      "blocker_dex_conversion_underdefined": false,
       "blocker_id": "DEX_CONVERSION_UNDERDEFINED",
       "blocker_rationale": "Il runtime non declara una utility specifica per Destrezza differenziata da agility generico. La semantica CdV richiede che Destrezza fornisca 'utility opportunistica' NON dex-primary. Nessuna evidenza runtime per: dodge, crit, evasion, initiative, movement. Il costo unitario Destrezza in CdV non e' derivabile da runtime; richiede design layer ratifica PM.",
-      "pm_review_required": true
+      "pm_review_required": false,
+      "pm_verdict_Q04": {
+        "point_cost_verbatim": 1.0,
+        "unit": "budget_unit_per_point",
+        "runtime_mapping_verbatim": "Agility",
+        "status": "TRANSITIONAL_DESIGN_LOCK",
+        "current_semantics": "generic_base_power_contribution_only",
+        "forbidden_attributions": [
+          "precisione",
+          "critico",
+          "velocita",
+          "schivata",
+          "proc_chance",
+          "potenza_balestra",
+          "potenza_pugnale"
+        ],
+        "forbidden_attributions_reason": "non_implementate_runtime",
+        "preserved_forbiddens": [
+          "dex_primary_cdv_FORBIDDEN",
+          "dual_primary_int_dex_FORBIDDEN"
+        ],
+        "identity_safeguards": {
+          "dexterity_share_max_pct_of_flat_stat_budget": 20,
+          "dexterity_budget_lt_intelligence_budget_per_class_specific_cdv_item": true,
+          "note": "limite di identita', NON prova di efficacia runtime"
+        }
+      },
+      "cost_model_A_T_selected": 1.0,
+      "blocker_resolution": "RESOLVED_TRANSITIONALLY_via_Q04_mapping_Agility_and_identity_safeguards"
     },
     "12_model_A_equal_cost_baseline": {
       "description": "Equal-cost baseline: 1 unita' budget = 1 punto stat per Int, Cost, Dex.",
       "cost_per_int_unit": 1.0,
       "cost_per_cost_unit": 1.0,
       "cost_per_dex_unit": 1.0,
-      "soft_cap_treatment": "PENDING_PM (default proposto: hard_cap_no_overflow oltre 100)",
+      "soft_cap_treatment": "loadout_level_effective_return_0_50_above_100 · runtime NOT_IMPLEMENTED",
       "advantages": [
         "coherent_with_runtime_power_formula_lineare_1_to_1",
         "trivial_deterministic_computation",
@@ -288,7 +346,20 @@
       "runtime_compatibility": "HIGH",
       "low_envelope_impact": "MAYBE_PROBLEMATIC · vedi §16",
       "high_envelope_impact": "OVER_ABUNDANT · vedi §18",
-      "agent_recommendation_score_0_10": 6
+      "agent_recommendation_score_0_10": 6,
+      "pm_verdict": "SELECTED_AS_MODEL_A_T_EQUAL_COST_TRANSITIONAL_DESIGN_LOCKED",
+      "renamed_to": "Model_A_T_Equal_Cost_Transitional",
+      "status": "DESIGN_LOCKED_TRANSITIONAL_FLAT_STAT_SCOPE",
+      "scope_final_for_current_design_baseline": "flat_stat_only",
+      "scope_incomplete_runtime_dependent": [
+        "effects",
+        "proc",
+        "duration",
+        "cooldown",
+        "mark",
+        "drain",
+        "fragment"
+      ]
     },
     "13_model_B_role_weighted": {
       "description": "Role-weighted stat costs: Intelligenza (main) costa piu'; Costituzione (secondary) costa medio; Destrezza (tertiary) costa meno.",
@@ -310,7 +381,11 @@
       "runtime_compatibility": "MEDIUM (fitness function evidence)",
       "low_envelope_impact": "HIGH_RISK · vedi §16",
       "high_envelope_impact": "BALANCED · vedi §18",
-      "agent_recommendation_score_0_10": 5
+      "agent_recommendation_score_0_10": 5,
+      "pm_verdict": "NOT_SELECTED",
+      "not_selected_reason_verbatim": "ROLE_WEIGHTS_NON_SUPPORTATI_DA_EVIDENZA_RUNTIME",
+      "preserved_in_report_as_analyzed_option": true,
+      "do_not_apply": true
     },
     "14_model_C_marginal_effectiveness_calibrated": {
       "description": "Marginal-effectiveness calibrated: costo unitario proporzionale all'effetto meccanico marginale nel runtime.",
@@ -340,7 +415,15 @@
       "runtime_compatibility": "BLOCKED",
       "low_envelope_impact": "NON_COMPUTABLE",
       "high_envelope_impact": "NON_COMPUTABLE",
-      "agent_recommendation_score_0_10": 0
+      "agent_recommendation_score_0_10": 0,
+      "pm_verdict": "BLOCKED_BY_EVIDENCE",
+      "blocker_status": "ACKNOWLEDGED_RESOLVED_BY_TRANSITIONAL_MODEL_AND_RUNTIME_HOLD",
+      "reevaluable_only_after": [
+        "stat_specific_formulas",
+        "telemetry",
+        "simulations",
+        "runtime_implementation_dedicated"
+      ]
     },
     "15_model_comparison": {
       "matrix": [
@@ -393,7 +476,9 @@
           "C": "BLOCKING"
         }
       ],
-      "conclusion": "A resta baseline safe. B ha valore concettuale ma richiede ratifica multipliers. C blocked."
+      "conclusion": "A resta baseline safe. B ha valore concettuale ma richiede ratifica multipliers. C blocked.",
+      "pm_final_selection": "MODEL_A_T",
+      "notes_post_verdict": "Model A rinominato Model A-T (Equal-Cost Transitional). Model B preservato ma NOT_SELECTED. Model C BLOCKED_BY_EVIDENCE preservato."
     },
     "16_low_envelope_simulation_T1_Band_C_Common": {
       "case": {
@@ -879,7 +964,22 @@
         "utility_proc": "PM_REVIEW"
       },
       "interaction_with_cooldown": "internally accounted via expected_uptime_factor · non double-counting",
-      "no_proc_assignment_to_items_phase_p2b_1": true
+      "no_proc_assignment_to_items_phase_p2b_1": true,
+      "pm_verdict_Q05": {
+        "numeric_proc_conversion_ratified": false,
+        "item_level_proc_assignment": "FORBIDDEN",
+        "reason_missing_runtime_elements": [
+          "proc_trigger_frequency",
+          "event_rate",
+          "internal_cooldown",
+          "target_eligibility",
+          "runtime_execution_semantics"
+        ],
+        "combined_proc_cap_pct_hard_immutable": 45,
+        "combined_cap_status": "DESIGN_LOCKED_INSUFFICIENT_FOR_PER_POINT_COST",
+        "classification_verbatim": "PROC_COST_RUNTIME_DEPENDENT",
+        "action": "DEFERRED_MANDATORY_NO_INVENTED_VALUES"
+      }
     },
     "23_duration_costing": {
       "hard_cap_mark_duration_seconds": 10,
@@ -888,14 +988,34 @@
       "interaction_note": "durata × cooldown × magnitude MUST NOT be paid separately if expected_uptime_factor already accounts for the combined fraction. Use expected_uptime_calculation, not raw addition.",
       "expected_uptime_calculation_required": true,
       "refresh_semantics_from_phase_1_s48": "REFRESH_no_auto_extend",
-      "no_extension_beyond_hard_cap": true
+      "no_extension_beyond_hard_cap": true,
+      "pm_verdict_Q06": {
+        "duration_cooldown_uptime_conversion_ratified": false,
+        "required_missing_evidence": [
+          "expected_uptime",
+          "trigger_frequency",
+          "proc_chance",
+          "duration",
+          "cooldown",
+          "refresh_behavior",
+          "stack_behavior"
+        ],
+        "item_level_fields_locked_null": [
+          "duration",
+          "cooldown",
+          "proc_chance"
+        ],
+        "classification_verbatim": "UPTIME_MODEL_RUNTIME_DEPENDENT",
+        "action": "DEFERRED_MANDATORY_NO_INVENTED_VALUES"
+      }
     },
     "24_cooldown_costing": {
       "proposed_semantics": "cooldown is inversely related to expected_uptime_factor; longer cooldown → lower uptime → lower cost per magnitude unit.",
       "proposed_cost_per_second_cooldown_saved_below_baseline": "PM_REVIEW · proposta: -0.1 unita' budget × secondo saved",
       "cooldown_never_zero_hard_floor_seconds": "PM_REVIEW · proposta: 3s minimo",
       "interaction_with_duration_and_magnitude_via_uptime_factor_only": true,
-      "no_separate_flat_cost_double_counting": true
+      "no_separate_flat_cost_double_counting": true,
+      "pm_verdict_Q06_shared": "SEE_23_DURATION_COSTING · UPTIME_MODEL_RUNTIME_DEPENDENT · cooldown=null"
     },
     "25_scope_and_reliability_factors": {
       "scope_factor_semantics": "multiplier reflecting target scope: SELF=1.0 · SINGLE_TARGET=1.0 · AOE_SMALL=1.5 · AOE_LARGE=2.0 · BOSS_ONLY=0.8",
@@ -963,7 +1083,20 @@
       "duplicate_family_penalty_recommended": "-20% effectiveness per duplicated affix family on same item",
       "affix_eligibility_ne_assignment_preserved": true,
       "no_affix_assignment_in_p2b_1": true,
-      "no_afx1_modification": true
+      "no_afx1_modification": true,
+      "pm_verdict_Q07": {
+        "affix_eligibility_cost_verbatim": 0,
+        "reason": "uno_slot_affix_disponibile_NON_consuma_budget_da_solo",
+        "future_content_will_consume_by_nature": [
+          "flat_stat",
+          "effect",
+          "utility"
+        ],
+        "affix_eligibility_ne_assignment_preserved": true,
+        "affix_budget_reserved": null,
+        "do_not_apply_fixed_tax_per_slot": true,
+        "do_not_select_affix_in_p2b_1": true
+      }
     },
     "30_legendary_costing_methodology_3_pillar": {
       "Veste_di_Onirade": {
@@ -992,6 +1125,16 @@
         "legendary_final_effect_consumes_legendary_total_budget": true,
         "not_additive_over_rarity_multiplier": true,
         "duplication_across_legendaries_forbidden_by_identity_lock": true
+      },
+      "pm_verdict_Q12": {
+        "legendary_unique_effect_max_pct_of_gross_item_budget": 30,
+        "derivation_verbatim": "0.50 (Legendary combined effect+utility ceiling) × 0.60 (unique effect share of combined) = 0.30 gross",
+        "unique_effect_included_in_combined_ceiling": true,
+        "not_external_bonus": true,
+        "no_pm_selected_surcharge": true,
+        "not_surpassable_via_affix": true,
+        "per_legendary_final_effect_null": true,
+        "per_legendary_effect_value_null": true
       }
     },
     "31_rounding_and_residue": {
@@ -1018,7 +1161,17 @@
       "over_budget_tolerance_recommended": 0.0,
       "rounding_tolerance_recommended_units": 0.5,
       "notes": "over_budget_tolerance > 0 → PM_REVIEW required (bypass hard total budget). unspent_budget non diventa mai potere esterno (Phase 1 §13).",
-      "pm_review_required": true
+      "pm_review_required": false,
+      "pm_verdict_Q08": {
+        "over_budget_tolerance_verbatim": 0,
+        "target_future_spend_ratio": "95%-100%",
+        "unspent_budget_lte_5pct": "ACCEPTABLE",
+        "unspent_budget_gt_5pct": "PM_REVIEW",
+        "rounding_residue_lt_1_budget_unit": "ROUNDING_RESIDUE_ALLOWED",
+        "residue_not_transferred_to_other_items": true,
+        "residue_does_not_generate_free_power": true,
+        "residue_may_remain_unused": true
+      }
     },
     "33_anti_double_counting": {
       "reference_phase_1_section": "14_anti_double_counting_rule",
@@ -1037,7 +1190,8 @@
         "id": "R1",
         "risk": "runtime_stat_marginal_evidence_missing",
         "impact": "critical",
-        "mitigation": "blocker_RUNTIME_STAT_VALUE_EVIDENCE_MISSING · Model C blocked · PM design layer extension required"
+        "mitigation": "blocker_RUNTIME_STAT_VALUE_EVIDENCE_MISSING · Model C blocked · PM design layer extension required",
+        "status": "ACKNOWLEDGED_RESOLVED_BY_TRANSITIONAL_MODEL_AND_RUNTIME_HOLD"
       },
       {
         "id": "R2",
@@ -1061,7 +1215,8 @@
         "id": "R5",
         "risk": "dex_semantics_underdefined_for_cdv",
         "impact": "medium",
-        "mitigation": "blocker_DEX_CONVERSION_UNDERDEFINED · pm ratify dex utility scope for CdV"
+        "mitigation": "blocker_DEX_CONVERSION_UNDERDEFINED · pm ratify dex utility scope for CdV",
+        "status": "RESOLVED_TRANSITIONALLY_via_agility_mapping_and_identity_safeguards"
       },
       {
         "id": "R6",
@@ -1120,7 +1275,9 @@
           "17.5-342.25 (all)"
         ],
         "impact": "critical",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "Intelligenza point_cost=1.00 budget_unit · range equipped_total_intelligence<=100 · DESIGN_LOCKED"
       },
       {
         "question_id": "P2B1_Q02",
@@ -1141,7 +1298,9 @@
           "high (>200)"
         ],
         "impact": "critical",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "nominal cost above 100 = 1.00 · effective_return above 100 = 0.50 · effective_cost = 2.00/effective Int · loadout-level · NOT_IMPLEMENTED runtime · DESIGN_LOCKED"
       },
       {
         "question_id": "P2B1_Q03",
@@ -1161,7 +1320,9 @@
           "all"
         ],
         "impact": "critical",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "Costituzione point_cost=1.00 · runtime mapping=Endurance · assumptions forbidden (health/mitigation/stoffa-cuoio-diff/interruption) · DESIGN_LOCKED"
       },
       {
         "question_id": "P2B1_Q04",
@@ -1181,8 +1342,10 @@
           "all"
         ],
         "impact": "high",
-        "blocking": true,
-        "blocker_id_ref": "DEX_CONVERSION_UNDERDEFINED"
+        "blocking": false,
+        "blocker_id_ref": "DEX_CONVERSION_UNDERDEFINED",
+        "status": "RESOLVED",
+        "resolution_summary": "Destrezza point_cost=1.00 · runtime mapping=Agility · TRANSITIONAL_DESIGN_LOCK · generic base-power only · Dex-primary FORBIDDEN · dual-primary FORBIDDEN · Dex_share <=20% flat-stat budget · Dex budget < Int budget class-specific"
       },
       {
         "question_id": "P2B1_Q05",
@@ -1202,7 +1365,9 @@
           "mid-high"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "proc numeric conversion NOT_RATIFIED · item-level proc assignment FORBIDDEN · combined_proc_cap 45% DESIGN_LOCKED · classification PROC_COST_RUNTIME_DEPENDENT · deferred"
       },
       {
         "question_id": "P2B1_Q06",
@@ -1222,7 +1387,9 @@
           "mid-high"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "duration/cooldown/uptime conversion NOT_RATIFIED · duration=null · cooldown=null · proc_chance=null tutti item · classification UPTIME_MODEL_RUNTIME_DEPENDENT · deferred"
       },
       {
         "question_id": "P2B1_Q07",
@@ -1242,7 +1409,9 @@
           "all"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "affix eligibility cost=0 · content future consuma per natura · affix_eligibility != assignment · affix_budget_reserved=null · no fixed tax per slot · no affix selection"
       },
       {
         "question_id": "P2B1_Q08",
@@ -1262,7 +1431,9 @@
           "all"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "over_budget_tolerance=0 · target 95%-100% · unspent <=5% ACCEPTABLE · rounding_residue<1.00 ALLOWED · residue non trasferibile · non genera potenza"
       },
       {
         "question_id": "P2B1_Q09",
@@ -1282,7 +1453,9 @@
           "all"
         ],
         "impact": "critical",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "Model A-T SELECTED · flat-stat scope FINAL for current design baseline · effect scope INCOMPLETE/RUNTIME-DEPENDENT · non 'fully calibrated'"
       },
       {
         "question_id": "P2B1_Q10",
@@ -1302,7 +1475,9 @@
           "all"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "italian↔runtime bridge APPROVED DESIGN-LOCKED · Int↔intelligence/int · Cost↔endurance/end · Dex↔agility/agi · Str/Faith INELIGIBLE per CdV · no fallback impliciti"
       },
       {
         "question_id": "P2B1_Q11",
@@ -1322,8 +1497,10 @@
           "all"
         ],
         "impact": "critical",
-        "blocking": true,
-        "blocker_id_ref": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING"
+        "blocking": false,
+        "blocker_id_ref": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING",
+        "status": "RESOLVED",
+        "resolution_summary": "Runtime extension REQUIRED · gate futuri RT1 (documental) + RT2 (code) SEPARATI · P2B-1 non autorizza codice"
       },
       {
         "question_id": "P2B1_Q12",
@@ -1343,7 +1520,9 @@
           "342.25 · 301.18 (Legendary)"
         ],
         "impact": "high",
-        "blocking": true
+        "blocking": false,
+        "status": "RESOLVED",
+        "resolution_summary": "Legendary unique_effect <=30% gross (0.50 x 0.60) · incluso in combined ceiling · no external bonus · no surcharge · non superabile via affix · per 3 Legendary final_effect=null effect_value=null"
       }
     ],
     "36_recommended_model": {
@@ -1359,7 +1538,19 @@
         "empirical calibration evidence from simulated encounters",
         "PM ratify calibration constants"
       ],
-      "pm_review_required": true
+      "pm_review_required": true,
+      "pm_final_selection": "MODEL_A_T_EQUAL_COST_TRANSITIONAL_DESIGN_LOCKED",
+      "agent_recommendation_upheld": true,
+      "scope_final": "flat_stat_only",
+      "scope_incomplete_runtime_dependent": [
+        "proc",
+        "duration",
+        "cooldown",
+        "mark",
+        "drain",
+        "fragment",
+        "legendary_final_effect"
+      ]
     },
     "37_phase_2b_readiness": {
       "phase_2b_status_current": "HOLD_NOT_AUTHORIZED",
@@ -1380,17 +1571,44 @@
         "PM ratify runtime extension boundary or defer (Q11)",
         "PM ratify legendary unique effect envelope share (Q12)"
       ],
-      "phase_2b_go_condition": "PM adjudication all 12 P2B-1 open questions resolved OR PM explicit accept-and-proceed with transitional Model A"
+      "phase_2b_go_condition": "PM adjudication all 12 P2B-1 open questions resolved OR PM explicit accept-and-proceed with transitional Model A",
+      "runtime_extension_required_before_effect_assignment": true,
+      "future_gates_planned_hold_not_authorized": [
+        {
+          "gate_id": "R18.6.RV3-IS2-B-P2B-RT1",
+          "title": "RUNTIME STAT & EFFECT SEMANTICS SPECIFICATION",
+          "regime": "DOCUMENTAL_ONLY",
+          "status": "PLANNED_HOLD_NOT_AUTHORIZED",
+          "scope_future": [
+            "soft_cap_runtime_behavior",
+            "proc_trigger_semantics",
+            "duration_cooldown_engine",
+            "expected_uptime_model",
+            "mark_drain_fragment_item_hooks",
+            "boss_safeguards",
+            "effect_stacking",
+            "legendary_effect_execution_boundary"
+          ]
+        },
+        {
+          "gate_id": "R18.6.RV3-IS2-B-P2B-RT2",
+          "title": "RUNTIME IMPLEMENTATION (code/test/migration)",
+          "regime": "REQUIRES_SEPARATE_PM_AUTHORIZATION",
+          "status": "NOT_AUTHORIZED"
+        }
+      ]
     },
     "38_go_hold_recommendation": {
-      "agent_recommendation": "HOLD_PENDING_PM_ADJUDICATION",
-      "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
-      "closure_manifest_emission": false,
-      "prd_append_emission": false,
-      "next_action": "PM_VERDICT_ON_P2B_1_MODELS_AND_UNIT_COSTS",
+      "agent_recommendation": "CLOSURE_READY_PM_APPROVED_Q01_Q12_RESOLVED",
+      "artifact_status": "PATCHED_PM_VERDICTS_INTEGRATED_MODEL_A_T_LOCKED",
+      "closure_manifest_emission": true,
+      "prd_append_emission": true,
+      "next_action": "R18.6.RV3-IS2-B-P2B-1_FORMAL_CLOSURE_SAME_DISPATCH",
       "downstream_phase_on_pm_go": "R18.6.RV3-IS2-B_Phase_2B",
       "final_status": {
-        "R18.6.RV3-IS2-B-P2B-1": "ARTIFACT_WRITTEN_PM_ADJUDICATION_REQUIRED",
+        "R18.6.RV3-IS2-B-P2B-1": "CLOSED_PM_LOCKED_MODEL_A_T",
+        "R18.6.RV3-IS2-B-P2B-RT1": "PLANNED_HOLD_NOT_AUTHORIZED",
+        "R18.6.RV3-IS2-B-P2B-RT2": "NOT_AUTHORIZED",
         "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED_IMMUTABLE",
         "R18.6.RV3-IS2-B-Phase-1-N1": "DESIGN_LOCKED_PM_APPROVED_IMMUTABLE",
         "R18.6.RV3-IS2-B_Phase_1": "IMMUTABLE_UNCHANGED",
@@ -1402,21 +1620,20 @@
         "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
         "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
         "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
-        "awaiting_pm_verdict": true
+        "runtime_gaps_status": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED",
+        "awaiting_pm_verdict": false
       },
       "blockers_emitted_count": 2,
       "blockers_emitted": [
         {
           "id": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING",
           "impact": "critical",
-          "scope": "Model C · proc/duration/cooldown/mark/drain/fragment",
-          "action": "PM ratify runtime extension boundary or accept Model A transitional"
+          "status": "ACKNOWLEDGED_RESOLVED_BY_TRANSITIONAL_MODEL_AND_RUNTIME_HOLD"
         },
         {
           "id": "DEX_CONVERSION_UNDERDEFINED",
           "impact": "medium-high",
-          "scope": "Destrezza semantics per CdV",
-          "action": "PM ratify dex utility scope for CdV or accept 0.7 discount"
+          "status": "RESOLVED_TRANSITIONALLY_via_agility_mapping_and_identity_safeguards"
         }
       ],
       "blockers_not_triggered": [
@@ -1425,5 +1642,7 @@
         "PHASE2A_ENVELOPE_CONTRACT_CONFLICT"
       ]
     }
-  }
+  },
+  "pm_verdict_reference": "PM_VERDICT_MSG_P2B1_ADJUDICATION",
+  "model_selected": "MODEL_A_T_EQUAL_COST_TRANSITIONAL_DESIGN_LOCKED"
 }

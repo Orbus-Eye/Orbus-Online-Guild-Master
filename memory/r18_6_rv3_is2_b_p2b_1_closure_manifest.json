@@ -1,0 +1,97 @@
+{
+  "document_type": "closure_manifest",
+  "gate_id": "R18.6.RV3-IS2-B-P2B-1",
+  "gate_title": "Budget Conversion Discovery & Contract Options · Closure Manifest",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "created_utc": "2026-07-22T14:39:42.459953+00:00",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "sha_policy_31_compliance": {
+    "manifest_self_hash_embedded": false,
+    "note": "Manifest DOES NOT embed its own final SHA256. The manifest final SHA256 is reported ONLY in the dispatch chat channel.",
+    "prd_master_self_hash_embedded_in_prd": false,
+    "prd_master_sha_chat_only": true
+  },
+  "artifacts": [
+    {
+      "path": "r18_6_rv3_is2_b_p2b_1_budget_conversion_contract_options.md",
+      "full_file_sha256": "2114038f78cb2d6ae66802a957df5e6cc069931f795ef3bc1cdf80d88c930910",
+      "size_bytes": 15165,
+      "line_count": 223,
+      "role": "IS2B_P2B1_CONTRACT_MD_PATCHED",
+      "status": "PM_APPROVED_Q01_Q12_INTEGRATED_MODEL_AT_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_1_budget_conversion_contract_options.json",
+      "full_file_sha256": "b58a0eb763b4df639d9522851d477f6de5535d2c28cb099f4e26db7084259df5",
+      "size_bytes": 70946,
+      "line_count": 1648,
+      "role": "IS2B_P2B1_CONTRACT_JSON_PATCHED",
+      "status": "PM_APPROVED_Q01_Q12_INTEGRATED_MODEL_AT_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_1_final_closure_report.md",
+      "full_file_sha256": "eecc096d9eebe320947913f8140f4f93d67f6338c4884242546cdc28d6d96534",
+      "size_bytes": 8599,
+      "line_count": 144,
+      "role": "IS2B_P2B1_CLOSURE_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "r18_6_rv3_is2_b_p2b_1_final_closure_report.json",
+      "full_file_sha256": "1d41cee22c70231dce28d9644680adacab9dcacb7da0d96051d633993a3706c4",
+      "size_bytes": 9108,
+      "line_count": 256,
+      "role": "IS2B_P2B1_CLOSURE_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "PRD.md",
+      "full_file_sha256": "PENDING_POST_APPEND_REPORTED_CHAT_ONLY",
+      "size_bytes": null,
+      "line_count": null,
+      "role": "PRD_MASTER",
+      "status": "PM_APPENDED",
+      "pm_locked": false,
+      "note": "PRD SHA/size/line_count computed AFTER idempotent append and reported CHAT-ONLY per SHA Policy §31 (avoid PRD self-hash embedding)."
+    }
+  ],
+  "anchor_expected_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "governance_evidence": {
+    "backend_modifications": 0,
+    "frontend_modifications": 0,
+    "openapi_modifications": 0,
+    "db_registry_modifications": 0,
+    "test_suite_modifications": 0,
+    "env_secrets_modifications": 0,
+    "sealed_set_modifications": 0,
+    "new_seals_created": 0,
+    "db_writes": 0,
+    "runtime_item_id_generated_count": 0,
+    "item_generation": 0,
+    "registry_generation": 0,
+    "registry_apply": 0
+  },
+  "sealed_scripts": "36/36_byte_identical",
+  "closure_stop_status": {
+    "R18.6.RV3-IS2-B-P2B-1": "CLOSED_PM_LOCKED_MODEL_A_T",
+    "R18.6.RV3-IS2-B-P2B-RT1": "PLANNED_HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-IS2-B-P2B-RT2": "NOT_AUTHORIZED",
+    "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED_IMMUTABLE",
+    "R18.6.RV3-IS2-B-Phase-1-N1": "DESIGN_LOCKED_PM_APPROVED_IMMUTABLE",
+    "R18.6.RV3-IS2-B_Phase_1": "IMMUTABLE_UNCHANGED",
+    "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
+    "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+    "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+    "Monaco": "HOLD_NOT_AUTHORIZED",
+    "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+    "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+    "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
+    "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only"
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "document_type": "final_closure_report",
+  "gate_id": "R18.6.RV3-IS2-B-P2B-1",
+  "gate_title": "Budget Conversion Discovery & Contract Options · Final Closure",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "created_utc": "2026-07-22T14:39:42.459953+00:00",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "sections": {
+    "01_discovery_evidence": {
+      "backend_files_examined_read_only": 11,
+      "key_formulas_found": [
+        "adventurer_base_power=Σ(str,agi,int,end,faith)+level*2",
+        "item_equip_power=Σ(5_bonus_fields)+power_score",
+        "success_chance=50+(team-recommended) clamp [10,95]"
+      ],
+      "runtime_gaps": [
+        "no_soft_cap",
+        "no_proc_engine_item",
+        "no_duration_cooldown_item",
+        "no_mark_drain_fragment",
+        "no_weapon_coefficient_runtime",
+        "no_slot_band_multiplier_runtime",
+        "no_stat_specific_damage_mitigation"
+      ]
+    },
+    "02_pm_verdict": {
+      "model_selected": "MODEL_A_T_EQUAL_COST_TRANSITIONAL_DESIGN_LOCKED",
+      "questions_adjudicated": "Q01_Q12_ALL_RESOLVED",
+      "runtime_extension_required_before_effect_assignment": true,
+      "future_gates": [
+        "R18.6.RV3-IS2-B-P2B-RT1",
+        "R18.6.RV3-IS2-B-P2B-RT2"
+      ]
+    },
+    "03_p2b_1_closed": {
+      "status": "CLOSED_PM_LOCKED_MODEL_A_T",
+      "same_dispatch_closure_authorized": true
+    },
+    "04_model_a_t_selected": {
+      "name": "MODEL_A_T_EQUAL_COST_TRANSITIONAL",
+      "status": "DESIGN_LOCKED",
+      "flat_stat_scope": "FINAL",
+      "effect_scope": "INCOMPLETE_RUNTIME_DEPENDENT"
+    },
+    "05_equal_flat_stat_cost": {
+      "cost_per_int_unit": 1.0,
+      "cost_per_cost_unit": 1.0,
+      "cost_per_dex_unit": 1.0,
+      "unit": "budget_unit_per_nominal_point"
+    },
+    "06_int_soft_cap_design_treatment": {
+      "soft_cap": 100,
+      "nominal_cost_above_100": 1.0,
+      "effective_return_above_100": 0.5,
+      "effective_cost_per_effective_intelligence_above_100": 2.0,
+      "scope": "LOADOUT_LEVEL_NOT_ITEM_LEVEL",
+      "runtime_status": "NOT_IMPLEMENTED",
+      "live_readiness": "not_ready_until_implemented_and_tested"
+    },
+    "07_constitution_mapping": {
+      "point_cost": 1.0,
+      "runtime_mapping": "Endurance",
+      "forbidden_assumptions": [
+        "health_scaling",
+        "mitigation_scaling",
+        "stoffa_cuoio_runtime_differential",
+        "interruption_resistance"
+      ],
+      "status": "DESIGN_LOCKED"
+    },
+    "08_dexterity_mapping_safeguard": {
+      "point_cost": 1.0,
+      "runtime_mapping": "Agility",
+      "status": "TRANSITIONAL_DESIGN_LOCK",
+      "current_semantics": "generic_base_power_contribution_only",
+      "preserved_forbiddens": [
+        "dex_primary_cdv_FORBIDDEN",
+        "dual_primary_int_dex_FORBIDDEN"
+      ],
+      "identity_safeguards": {
+        "dex_share_max_pct_flat_stat_budget": 20,
+        "dex_budget_lt_int_budget_class_specific_cdv": true
+      }
+    },
+    "09_italian_runtime_bridge": {
+      "mapping_design_locked": true,
+      "Intelligenza": "intelligence / int",
+      "Costituzione": "endurance / end",
+      "Destrezza": "agility / agi",
+      "Strength_for_cdv": "INELIGIBLE",
+      "Faith_for_cdv": "INELIGIBLE",
+      "runtime_localization": "NOT_IMPLEMENTED",
+      "fallback_impliciti_vietati": true
+    },
+    "10_model_b_not_selected": {
+      "status": "NOT_SELECTED",
+      "reason_verbatim": "ROLE_WEIGHTS_NON_SUPPORTATI_DA_EVIDENZA_RUNTIME",
+      "preserved_in_report_as_analyzed_option": true,
+      "do_not_apply": true
+    },
+    "11_model_c_blocked": {
+      "status": "BLOCKED_BY_EVIDENCE",
+      "blocker_id": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING",
+      "resolution_by": "ACKNOWLEDGED_TRANSITIONAL_MODEL_A_T_AND_RUNTIME_HOLD",
+      "reevaluable_only_after": [
+        "stat_specific_formulas",
+        "telemetry",
+        "simulations",
+        "runtime_implementation_dedicated"
+      ]
+    },
+    "12_proc_conversion_deferred": {
+      "classification": "PROC_COST_RUNTIME_DEPENDENT",
+      "numeric_conversion_ratified": false,
+      "item_level_proc_assignment": "FORBIDDEN",
+      "missing_runtime_elements": [
+        "proc_trigger_frequency",
+        "event_rate",
+        "internal_cooldown",
+        "target_eligibility",
+        "runtime_execution_semantics"
+      ],
+      "combined_proc_cap_pct": 45,
+      "combined_cap_status": "DESIGN_LOCKED_INSUFFICIENT_FOR_PER_POINT_COST"
+    },
+    "13_duration_cooldown_conversion_deferred": {
+      "classification": "UPTIME_MODEL_RUNTIME_DEPENDENT",
+      "conversion_ratified": false,
+      "missing_runtime_elements": [
+        "expected_uptime",
+        "trigger_frequency",
+        "proc_chance",
+        "duration",
+        "cooldown",
+        "refresh_behavior",
+        "stack_behavior"
+      ],
+      "all_items_locked_null": [
+        "duration",
+        "cooldown",
+        "proc_chance"
+      ]
+    },
+    "14_affix_eligibility_cost_zero": {
+      "affix_eligibility_cost": 0,
+      "affix_budget_reserved": null,
+      "affix_eligibility_ne_assignment_preserved": true,
+      "no_fixed_tax_per_slot": true,
+      "no_affix_selection_in_p2b_1": true
+    },
+    "15_spend_tolerance": {
+      "over_budget_tolerance": 0,
+      "target_future_spend_ratio": "95%-100%",
+      "unspent_budget_lte_5pct": "ACCEPTABLE",
+      "unspent_budget_gt_5pct": "PM_REVIEW",
+      "rounding_residue_lt_1_budget_unit": "ROUNDING_RESIDUE_ALLOWED",
+      "residue_transferable": false,
+      "residue_generates_free_power": false,
+      "residue_may_remain_unused": true
+    },
+    "16_legendary_unique_effect_ceiling": {
+      "max_pct_of_gross": 30,
+      "derivation": "0.50 (combined effect+utility ceiling Legendary) x 0.60 (unique effect share of combined) = 0.30 gross",
+      "included_in_combined_ceiling": true,
+      "external_bonus": false,
+      "pm_selected_surcharge": false,
+      "not_surpassable_via_affix": true,
+      "legendary_triplet_final_effect_null": [
+        "cdv_t5_chest_stoffa_001",
+        "cdv_t5_main_hand_focus_001",
+        "cdv_t5_main_hand_balestra_001"
+      ]
+    },
+    "17_runtime_extension_boundary": {
+      "future_gates_registered_not_opened": [
+        {
+          "gate_id": "R18.6.RV3-IS2-B-P2B-RT1",
+          "title": "RUNTIME STAT & EFFECT SEMANTICS SPECIFICATION",
+          "regime": "DOCUMENTAL_ONLY",
+          "status": "PLANNED_HOLD_NOT_AUTHORIZED"
+        },
+        {
+          "gate_id": "R18.6.RV3-IS2-B-P2B-RT2",
+          "title": "RUNTIME IMPLEMENTATION (code/test/migration)",
+          "regime": "REQUIRES_SEPARATE_PM_AUTHORIZATION",
+          "status": "NOT_AUTHORIZED"
+        }
+      ],
+      "p2b_1_authorizes_code": false
+    },
+    "18_pm_questions_all_resolved": {
+      "count": 12,
+      "blocking_open": 0,
+      "unresolved_discovery": 0,
+      "runtime_gaps_status": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED"
+    },
+    "19_item_level_assignments_zero": {
+      "proc_chance": 0,
+      "duration": 0,
+      "cooldown": 0,
+      "effect_value": 0,
+      "main_stat_value": 0,
+      "constitution_value": 0,
+      "dexterity_value": 0,
+      "other_stat_value": 0,
+      "selected_affix": 0,
+      "affix_value": 0,
+      "effect_family_selected": 0,
+      "final_effect": 0,
+      "total_units_locked_null_state": 120
+    },
+    "20_phase_2b_hold": {
+      "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
+      "prerequisites_from_p2b_1": [
+        "runtime_extension_RT1_documental_ratification",
+        "runtime_extension_RT2_implementation_pm_authorization"
+      ]
+    },
+    "21_governance_evidence_zero": {
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_registry_modifications": 0,
+      "test_suite_modifications": 0,
+      "env_secrets_modifications": 0,
+      "sealed_set_modifications": 0,
+      "new_seals_created": 0,
+      "db_writes": 0,
+      "runtime_item_id_generated_count": 0,
+      "item_generation": 0,
+      "registry_generation": 0,
+      "registry_apply": 0,
+      "sealed_scripts_byte_identical": "36/36",
+      "lore_meta_py_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    "22_explicit_stop": {
+      "R18.6.RV3-IS2-B-P2B-1": "CLOSED_PM_LOCKED_MODEL_A_T",
+      "R18.6.RV3-IS2-B-P2B-RT1": "PLANNED_HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-IS2-B-P2B-RT2": "NOT_AUTHORIZED",
+      "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED_IMMUTABLE",
+      "R18.6.RV3-IS2-B-Phase-1-N1": "DESIGN_LOCKED_PM_APPROVED_IMMUTABLE",
+      "R18.6.RV3-IS2-B_Phase_1": "IMMUTABLE_UNCHANGED",
+      "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-NC1": "HOLD",
+      "R18.6_Gate_11": "HOLD",
+      "Monaco": "HOLD",
+      "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+      "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+      "IS2-A_branch": "LOCKED_IMMUTABLE",
+      "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+      "runtime_gaps": "PREREQUISITE_EXPLICIT_NOT_IMPLEMENTED"
+    }
+  }
+}
