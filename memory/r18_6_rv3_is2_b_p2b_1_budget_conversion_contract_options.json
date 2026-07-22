@@ -1,0 +1,1429 @@
+{
+  "document_type": "budget_conversion_discovery_contract_options",
+  "gate_id": "R18.6.RV3-IS2-B-P2B-1",
+  "gate_title": "Budget Conversion Discovery & Contract Options",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_DISCOVERY_NO_APPLY",
+  "language": "it",
+  "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
+  "closure_manifest_authorized": false,
+  "prd_append_authorized": false,
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "created_utc": "2026-07-22T13:59:42.754277+00:00",
+  "pm_dispatch_reference": "IS2B_P2A_SIGN_OFF_GO_P2B_1",
+  "sections": {
+    "01_executive_summary": "Discovery read-only del runtime esistente per determinare come le ABSTRACT_ITEM_BUDGET_UNITS Phase 2A (envelope 17.5000-342.2500) possano essere convertite in costi comparabili per Intelligenza · Costituzione · Destrezza · effetti (13 categorie) · proc · durate · cooldown · utility · affix · Legendary. Il runtime esistente usa un modello 5-stat INGLESE (strength/agility/intellect/endurance/faith) con formula power LINEARE (sommatoria 1:1 + level*2). NON esistono runtime: soft-cap 100, proc_chance su item, duration, cooldown item-driven, mark/drain/fragment interaction, taxonomy 13 categorie, weapon coefficient. Il gate propone tre modelli (A/B/C), simula 5 casi rappresentativi + 2 casi estremi, identifica 4 blocker fail-stop critici e 12 PM open questions (9 alto/critical). L'agente raccomanda Model A come baseline transitorio in attesa di ratifica PM su design layer runtime esteso.",
+    "02_scope": {
+      "in_scope": [
+        "runtime_read_only_discovery_backend_python_code",
+        "runtime_read_only_discovery_backend_content_seed",
+        "runtime_read_only_discovery_openapi_conceptual",
+        "conversion_models_A_B_C_comparison",
+        "representative_simulations_5_cases",
+        "extreme_case_simulations_2_cases",
+        "effect_taxonomy_13_costing_methodology_proposal",
+        "affix_costing_methodology_proposal",
+        "legendary_costing_methodology_proposal_pillar_only",
+        "pm_open_questions_extraction",
+        "fail_stop_blocker_identification",
+        "recommended_model_with_rationale"
+      ],
+      "out_of_scope": [
+        "item_level_cost_assignment_to_120_blueprints",
+        "stat_effect_affix_specific_selection",
+        "legendary_final_effect_magnitude_proc_duration_cooldown",
+        "runtime_code_modification",
+        "db_writes",
+        "registry_generation_or_apply",
+        "sealed_scripts_modification",
+        "closure_manifest_emission",
+        "prd_append_emission",
+        "hard_cap_alteration",
+        "tier_reference_budget_alteration",
+        "slot_bands_weapon_coefficient_rarity_multiplier_alteration"
+      ]
+    },
+    "03_governance": {
+      "documental_only": true,
+      "read_only_discovery": true,
+      "no_apply": true,
+      "backend_frontend_openapi_db_registry_test_env_seals_modifications": 0,
+      "sealed_scripts_byte_identical_expected": "36/36",
+      "lore_meta_py_anchor_invariante": true,
+      "sha_policy_31_compliance": true,
+      "phase_2a_closure_immutable": true,
+      "phase_2a_envelope_immutable": true,
+      "addendum_p1_n1_immutable": true,
+      "phase_1_contract_immutable": true,
+      "is2_a_chain_locked_immutable": true
+    },
+    "04_source_chain": {
+      "phase_1_contract": "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json",
+      "addendum_p1_n1": "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json",
+      "phase_2a_envelope": "r18_6_rv3_is2_b_phase2a_per_item_budget_envelope_projection.json",
+      "phase_2a_closure": "r18_6_rv3_is2_b_phase2a_final_closure_report.json",
+      "phase_2a_closure_manifest": "r18_6_rv3_is2_b_phase2a_closure_manifest.json",
+      "is2_a_rev4": "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+      "is2_a_l1": "r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.json",
+      "is1_corpus": "r18_6_rv3_is1_item_specification_roster_contract.json"
+    },
+    "05_runtime_discovery": {
+      "files_examined_read_only": [
+        {
+          "path": "/app/backend/app/expeditions/formulas.py",
+          "role": "power_and_success_chance_formulas"
+        },
+        {
+          "path": "/app/backend/app/equipment/services.py",
+          "role": "equipment_load_snapshot_service"
+        },
+        {
+          "path": "/app/backend/app/equipment/auto_equip.py",
+          "role": "auto_equip_fitness_and_selection"
+        },
+        {
+          "path": "/app/backend/app/adventurers/common.py",
+          "role": "adventurer_stat_generation_baseline"
+        },
+        {
+          "path": "/app/backend/app/adventurers/services.py",
+          "role": "adventurer_public_shape_and_class_meta"
+        },
+        {
+          "path": "/app/backend/app/adventurers/generator.py",
+          "role": "adventurer_creation_from_class_catalog"
+        },
+        {
+          "path": "/app/backend/app/stats/public_catalog.py",
+          "role": "public_stat_metadata_catalog_5_stats"
+        },
+        {
+          "path": "/app/backend/app/items/services.py",
+          "role": "item_public_shape_5_bonus_fields"
+        },
+        {
+          "path": "/app/backend/app/inventory/services.py",
+          "role": "inventory_row_shape_including_affixes_list"
+        },
+        {
+          "path": "/app/backend/app/shared/constants.py",
+          "role": "gameplay_constants_rarity_weights_slots"
+        },
+        {
+          "path": "/app/backend/app/content/lore_meta.py",
+          "role": "lore_meta_anchor_immutable_read_only"
+        }
+      ],
+      "runtime_stat_model": {
+        "canonical_stats_5": [
+          "strength",
+          "agility",
+          "intellect",
+          "endurance",
+          "faith"
+        ],
+        "italian_stats_cdv_design_layer": [
+          "Intelligenza",
+          "Costituzione",
+          "Destrezza"
+        ],
+        "mapping_runtime_to_italian_evidence": "NOT_EXPLICITLY_DECLARED_IN_RUNTIME",
+        "presumed_mapping_by_semantics_only": {
+          "Intelligenza": "intellect",
+          "Costituzione": "endurance",
+          "Destrezza": "agility"
+        },
+        "presumed_mapping_ratified_by_pm": false
+      },
+      "italian_ui_labels_evidence": {
+        "found_in": "/app/backend/app/equipment/auto_equip.py::198+",
+        "note": "Italian class labels are used when adventurer_classes doc lacks a name; stat canonicals remain English."
+      }
+    },
+    "06_stat_formula_discovery": {
+      "power_formula_verbatim_source": "/app/backend/app/expeditions/formulas.py::adventurer_base_power(adv)",
+      "power_formula_expression": "int(adv['strength']) + int(adv['agility']) + int(adv['intellect']) + int(adv['endurance']) + int(adv['faith']) + int(adv.get('level',1)) * 2",
+      "marginal_cost_per_stat_point_in_power_runtime": 1.0,
+      "level_multiplier_per_level": 2,
+      "item_power_formula_verbatim_source": "/app/backend/app/expeditions/formulas.py::item_equip_power(item)",
+      "item_power_formula_expression": "int(item.get('strength_bonus',0)) + int(item.get('agility_bonus',0)) + int(item.get('intellect_bonus',0)) + int(item.get('endurance_bonus',0)) + int(item.get('faith_bonus',0)) + int(item.get('power_score',0))",
+      "team_power_formula": "Σ(members_total_power) + role_bonus (Tank+5, Healer+5, DPS+5, all-three+10)",
+      "success_chance_formula": "50 + (team_power - recommended_power)  clamp [SUCCESS_CHANCE_MIN=10, SUCCESS_CHANCE_MAX=95]",
+      "auto_equip_fitness_weights_source": "/app/backend/app/equipment/auto_equip.py::46-48",
+      "auto_equip_fitness_weights": {
+        "PRIMARY_WEIGHT": 3.0,
+        "SECONDARY_WEIGHT": 1.5,
+        "POWER_WEIGHT": 1.0
+      },
+      "auto_equip_fitness_scope": "ITEM_RANKING_ONLY_NOT_POWER_FORMULA",
+      "trait_stacking_flat_additive_then_percent_additive": true,
+      "trait_percent_composition": "(base+flat) * (1 + Σpct/100)",
+      "trait_result_clamp": "max(0, int(round(effective)))",
+      "no_soft_cap_in_power_formula": true,
+      "no_diminishing_returns_in_power_formula": true,
+      "no_stat_specific_damage_or_mitigation_derivation": true
+    },
+    "07_existing_item_distribution_discovery": {
+      "item_bonus_fields_5": [
+        "strength_bonus",
+        "agility_bonus",
+        "intellect_bonus",
+        "endurance_bonus",
+        "faith_bonus"
+      ],
+      "item_composite_field": "power_score",
+      "additional_item_metadata_seen": [
+        "rarity",
+        "item_type",
+        "slot_via_SLOT_TO_ITEM_TYPE",
+        "affixes (list, mostly empty)"
+      ],
+      "runtime_rarity_bonus_from_constants": {
+        "Common": 0,
+        "Uncommon": 0,
+        "Rare": 1,
+        "Epic": 2,
+        "Legendary": 3
+      },
+      "runtime_rarity_bonus_semantics": "adventurer_generation_stat_bonus_at_recruit_time",
+      "runtime_rarity_bonus_vs_phase_1_rarity_multiplier": "SEMANTIC_MISMATCH · runtime rarity_bonus is a flat additive at recruit; Phase 1 rarity_multiplier (1.00..1.85) is a design-layer envelope scalar for item budgets",
+      "no_evidence_of_proc_chance_field_on_item": true,
+      "no_evidence_of_duration_field_on_item": true,
+      "no_evidence_of_cooldown_field_on_item": true,
+      "no_evidence_of_mark_drain_fragment_taxonomy_field": true,
+      "no_evidence_of_weapon_coefficient_field": true,
+      "no_evidence_of_slot_band_multiplier_field": true
+    },
+    "08_soft_cap_discovery": {
+      "phase_1_contract_soft_cap_intelligenza_value": 100,
+      "phase_1_contract_section_reference": "7_main_stat_contract",
+      "runtime_evidence_soft_cap_implementation": "NONE",
+      "runtime_evidence_diminishing_returns_over_100": "NONE",
+      "runtime_evidence_stat_hard_cap_over_100": "NONE",
+      "runtime_evidence_marginal_cost_shift_over_100": "NONE",
+      "conclusion": "Soft cap 100 is a design-layer constraint. Runtime accepts arbitrary int stats; power=Σ is linear over all integer values. Any post-soft-cap treatment MUST be added as a new mechanic when applied, and requires PM ratification of a `post_soft_cap_cost` policy."
+    },
+    "09_intelligenza_valuation": {
+      "role_phase_1": "main_stat_cdv",
+      "presumed_runtime_field": "intellect",
+      "runtime_power_marginal_cost_per_point": 1.0,
+      "runtime_auto_equip_ranking_weight": 3.0,
+      "phase_1_band_ranges": {
+        "T1": 10,
+        "T2": 25,
+        "T3": 45,
+        "T4": 70,
+        "T5": 90
+      },
+      "phase_1_band_ranges_max": {
+        "T1": 25,
+        "T2": 45,
+        "T3": 70,
+        "T4": 90,
+        "T5": 115
+      },
+      "cost_model_A_equal": 1.0,
+      "cost_model_B_role_weighted_hypothesis": 1.5,
+      "cost_model_C_marginal_effectiveness_calibrated": "BLOCKED_INSUFFICIENT_RUNTIME_EVIDENCE",
+      "post_soft_cap_cost_policy_options": [
+        "identical_to_pre_cap_no_diminishing",
+        "double_cost_over_100",
+        "quadratic_over_100",
+        "hard_cap_no_overflow"
+      ],
+      "post_soft_cap_policy_ratified": false,
+      "pm_review_required": true
+    },
+    "10_costituzione_valuation": {
+      "role_phase_1": "secondary_defensive_priority",
+      "presumed_runtime_field": "endurance",
+      "runtime_power_marginal_cost_per_point": 1.0,
+      "runtime_auto_equip_ranking_weight_when_secondary": 1.5,
+      "no_direct_mitigation_or_hp_scaling_in_runtime": true,
+      "stoffa_vs_cuoio_differential_in_runtime": "NONE_EXPLICITLY_DECLARED",
+      "phase_1_stoffa_profile": "basso_medio",
+      "phase_1_cuoio_profile": "medio_alto",
+      "cost_model_A_equal": 1.0,
+      "cost_model_B_role_weighted_hypothesis": 1.0,
+      "cost_model_C_marginal_effectiveness_calibrated": "BLOCKED_INSUFFICIENT_RUNTIME_EVIDENCE",
+      "cost_relative_to_intelligenza_recommended": "≤_intelligenza (secondary role) but ≥_destrezza (main defensive priority for cuoio profile)",
+      "pm_review_required": true
+    },
+    "11_destrezza_valuation": {
+      "role_phase_1": "tertiary_utility_opportunistic_priority",
+      "presumed_runtime_field": "agility",
+      "runtime_power_marginal_cost_per_point": 1.0,
+      "runtime_utility_evidence_specific_to_cdv": "NONE_DECLARED",
+      "phase_1_forbidden": [
+        "dex_primary_cdv",
+        "dual_int_dex_primary",
+        "balestra_dex_primary",
+        "pugnale_dex_primary"
+      ],
+      "cost_model_A_equal": 1.0,
+      "cost_model_B_role_weighted_hypothesis": 0.7,
+      "cost_model_C_marginal_effectiveness_calibrated": "BLOCKED_INSUFFICIENT_RUNTIME_EVIDENCE",
+      "blocker_dex_conversion_underdefined": true,
+      "blocker_id": "DEX_CONVERSION_UNDERDEFINED",
+      "blocker_rationale": "Il runtime non declara una utility specifica per Destrezza differenziata da agility generico. La semantica CdV richiede che Destrezza fornisca 'utility opportunistica' NON dex-primary. Nessuna evidenza runtime per: dodge, crit, evasion, initiative, movement. Il costo unitario Destrezza in CdV non e' derivabile da runtime; richiede design layer ratifica PM.",
+      "pm_review_required": true
+    },
+    "12_model_A_equal_cost_baseline": {
+      "description": "Equal-cost baseline: 1 unita' budget = 1 punto stat per Int, Cost, Dex.",
+      "cost_per_int_unit": 1.0,
+      "cost_per_cost_unit": 1.0,
+      "cost_per_dex_unit": 1.0,
+      "soft_cap_treatment": "PENDING_PM (default proposto: hard_cap_no_overflow oltre 100)",
+      "advantages": [
+        "coherent_with_runtime_power_formula_lineare_1_to_1",
+        "trivial_deterministic_computation",
+        "no_new_runtime_evidence_required",
+        "compatible_with_existing_item_bonus_5_field_shape"
+      ],
+      "risks": [
+        "does_not_reflect_role_hierarchy_int_gt_cost_gt_dex",
+        "allows_stat_dumping_into_secondary_or_tertiary_ohne_penalty",
+        "no_natural_disincentive_for_dex_primary_cdv_drift",
+        "no_distinction_stoffa_vs_cuoio_costituzione_profile"
+      ],
+      "runtime_compatibility": "HIGH",
+      "low_envelope_impact": "MAYBE_PROBLEMATIC · vedi §16",
+      "high_envelope_impact": "OVER_ABUNDANT · vedi §18",
+      "agent_recommendation_score_0_10": 6
+    },
+    "13_model_B_role_weighted": {
+      "description": "Role-weighted stat costs: Intelligenza (main) costa piu'; Costituzione (secondary) costa medio; Destrezza (tertiary) costa meno.",
+      "cost_per_int_unit_hypothesis": 1.5,
+      "cost_per_cost_unit_hypothesis": 1.0,
+      "cost_per_dex_unit_hypothesis": 0.7,
+      "soft_cap_treatment": "PENDING_PM (default proposto: double_cost_over_100 su Int)",
+      "advantages": [
+        "reflects_phase_1_priority_order_int_cost_dex",
+        "makes_dex_primary_drift_more_expensive_indirectly_via_secondary_stat_investment_pricing",
+        "aligns_with_auto_equip_fitness_weights_3_1_5_1_0_partially"
+      ],
+      "risks": [
+        "requires_pm_ratification_of_multipliers_1_5_1_0_0_7_verbatim",
+        "no_runtime_evidence_for_role_differentiated_marginal_effect",
+        "may_over_price_int_making_low_envelope_infeasible",
+        "makes_dex_underpowered_but_still_purchasable_below_1_unit_cost"
+      ],
+      "runtime_compatibility": "MEDIUM (fitness function evidence)",
+      "low_envelope_impact": "HIGH_RISK · vedi §16",
+      "high_envelope_impact": "BALANCED · vedi §18",
+      "agent_recommendation_score_0_10": 5
+    },
+    "14_model_C_marginal_effectiveness_calibrated": {
+      "description": "Marginal-effectiveness calibrated: costo unitario proporzionale all'effetto meccanico marginale nel runtime.",
+      "requires_runtime_evidence_for": [
+        "damage_formula_per_stat_specific",
+        "mitigation_formula_per_stat_specific",
+        "hp_scaling_per_endurance_specific",
+        "proc_chance_engine",
+        "duration_engine",
+        "cooldown_engine",
+        "dodge_crit_evasion_engine",
+        "class_role_dps_healer_tank_scaling"
+      ],
+      "runtime_evidence_present": [],
+      "runtime_evidence_missing": [
+        "damage_per_intellect_point",
+        "hp_or_defense_per_endurance_point",
+        "dodge_or_evasion_per_agility_point",
+        "any_proc_engine",
+        "any_duration_or_cooldown_engine_item_side",
+        "class_specific_stat_multipliers_in_combat_math"
+      ],
+      "blocker": true,
+      "blocker_id": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING",
+      "blocker_impact": "critical",
+      "blocker_note": "Il runtime attuale usa Σ lineare come power formula; NON esistono formule di damage/mitigation/proc/duration/cooldown stat-specifiche. Model C non e' calibrabile senza estensione del runtime o dichiarazione PM di formule intermedie di design.",
+      "runtime_compatibility": "BLOCKED",
+      "low_envelope_impact": "NON_COMPUTABLE",
+      "high_envelope_impact": "NON_COMPUTABLE",
+      "agent_recommendation_score_0_10": 0
+    },
+    "15_model_comparison": {
+      "matrix": [
+        {
+          "criterion": "coherence_with_runtime_power_formula",
+          "A": "HIGH",
+          "B": "MEDIUM",
+          "C": "N/A"
+        },
+        {
+          "criterion": "aligns_with_phase_1_role_hierarchy",
+          "A": "LOW",
+          "B": "HIGH",
+          "C": "TBD"
+        },
+        {
+          "criterion": "no_extra_runtime_evidence_required",
+          "A": "TRUE",
+          "B": "FALSE",
+          "C": "FALSE"
+        },
+        {
+          "criterion": "low_envelope_feasibility",
+          "A": "OK_WARN",
+          "B": "AT_RISK",
+          "C": "N/A"
+        },
+        {
+          "criterion": "high_envelope_control",
+          "A": "OVER_ABUNDANT",
+          "B": "BALANCED",
+          "C": "N/A"
+        },
+        {
+          "criterion": "dex_primary_drift_disincentive",
+          "A": "NONE",
+          "B": "PARTIAL",
+          "C": "TBD"
+        },
+        {
+          "criterion": "stoffa_vs_cuoio_profile_differentiation",
+          "A": "NONE",
+          "B": "NONE",
+          "C": "TBD"
+        },
+        {
+          "criterion": "pm_open_questions_needed",
+          "A": "MANY",
+          "B": "MORE",
+          "C": "BLOCKING"
+        }
+      ],
+      "conclusion": "A resta baseline safe. B ha valore concettuale ma richiede ratifica multipliers. C blocked."
+    },
+    "16_low_envelope_simulation_T1_Band_C_Common": {
+      "case": {
+        "label": "T1 Band C Common (non-weapon)",
+        "tier": "T1",
+        "band": "C",
+        "wcoef": "none",
+        "rarity": "Common"
+      },
+      "envelope_computed": 13.75,
+      "model_A": {
+        "envelope": 13.75,
+        "combined_eff_util_ceiling_abs": 1.375,
+        "stat_envelope_max_abs": 12.375,
+        "main_stat_band_min_required": 10,
+        "main_stat_band_max": 25,
+        "cost_per_int_unit": 1.0,
+        "cost_per_cost_unit": 1.0,
+        "cost_per_dex_unit": 1.0,
+        "cost_locked_to_reach_band_min": 10.0,
+        "budget_residual_for_secondary_after_band_min": 2.375,
+        "int_headroom_from_min_to_band_max": 15.0,
+        "cost_to_saturate_band_max": 25.0,
+        "band_min_reachable": true,
+        "band_max_reachable": false,
+        "negative_budget_risk": false
+      },
+      "model_B": {
+        "envelope": 13.75,
+        "combined_eff_util_ceiling_abs": 1.375,
+        "stat_envelope_max_abs": 12.375,
+        "main_stat_band_min_required": 10,
+        "main_stat_band_max": 25,
+        "cost_per_int_unit": 1.5,
+        "cost_per_cost_unit": 1.0,
+        "cost_per_dex_unit": 0.7,
+        "cost_locked_to_reach_band_min": 15.0,
+        "budget_residual_for_secondary_after_band_min": -2.625,
+        "int_headroom_from_min_to_band_max": 22.5,
+        "cost_to_saturate_band_max": 37.5,
+        "band_min_reachable": false,
+        "band_max_reachable": false,
+        "negative_budget_risk": true
+      },
+      "model_C": {
+        "envelope": 13.75,
+        "combined_eff_util_ceiling_abs": 1.375,
+        "stat_envelope_max_abs": 12.375,
+        "main_stat_band_min_required": 10,
+        "main_stat_band_max": 25,
+        "cost_per_int_unit": null,
+        "cost_per_cost_unit": null,
+        "cost_per_dex_unit": null,
+        "cost_locked_to_reach_band_min": null,
+        "budget_residual_for_secondary_after_band_min": null,
+        "int_headroom_from_min_to_band_max": null,
+        "cost_to_saturate_band_max": null,
+        "band_min_reachable": null,
+        "band_max_reachable": null,
+        "negative_budget_risk": null
+      },
+      "note_MIN_extreme_included": {
+        "case": {
+          "label": "MIN extreme · T1 Band B Common non-weapon",
+          "tier": "T1",
+          "band": "B",
+          "wcoef": "none",
+          "rarity": "Common"
+        },
+        "envelope_computed": 17.5,
+        "model_A": {
+          "envelope": 17.5,
+          "combined_eff_util_ceiling_abs": 1.75,
+          "stat_envelope_max_abs": 15.75,
+          "main_stat_band_min_required": 10,
+          "main_stat_band_max": 25,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 10.0,
+          "budget_residual_for_secondary_after_band_min": 5.75,
+          "int_headroom_from_min_to_band_max": 15.0,
+          "cost_to_saturate_band_max": 25.0,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 17.5,
+          "combined_eff_util_ceiling_abs": 1.75,
+          "stat_envelope_max_abs": 15.75,
+          "main_stat_band_min_required": 10,
+          "main_stat_band_max": 25,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 15.0,
+          "budget_residual_for_secondary_after_band_min": 0.75,
+          "int_headroom_from_min_to_band_max": 22.5,
+          "cost_to_saturate_band_max": 37.5,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        }
+      }
+    },
+    "17_mid_envelope_simulation": {
+      "T2_Band_A_Uncommon": {
+        "case": {
+          "label": "T2 Band A Uncommon (non-weapon)",
+          "tier": "T2",
+          "band": "A",
+          "wcoef": "none",
+          "rarity": "Uncommon"
+        },
+        "envelope_computed": 53.7625,
+        "model_A": {
+          "envelope": 53.7625,
+          "combined_eff_util_ceiling_abs": 10.7525,
+          "stat_envelope_max_abs": 43.01,
+          "main_stat_band_min_required": 25,
+          "main_stat_band_max": 45,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 25.0,
+          "budget_residual_for_secondary_after_band_min": 18.01,
+          "int_headroom_from_min_to_band_max": 20.0,
+          "cost_to_saturate_band_max": 45.0,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 53.7625,
+          "combined_eff_util_ceiling_abs": 10.7525,
+          "stat_envelope_max_abs": 43.01,
+          "main_stat_band_min_required": 25,
+          "main_stat_band_max": 45,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 37.5,
+          "budget_residual_for_secondary_after_band_min": 5.51,
+          "int_headroom_from_min_to_band_max": 30.0,
+          "cost_to_saturate_band_max": 67.5,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        }
+      },
+      "T3_Band_S_Rare": {
+        "case": {
+          "label": "T3 Band S Rare (non-weapon)",
+          "tier": "T3",
+          "band": "S",
+          "wcoef": "none",
+          "rarity": "Rare"
+        },
+        "envelope_computed": 128.25,
+        "model_A": {
+          "envelope": 128.25,
+          "combined_eff_util_ceiling_abs": 38.475,
+          "stat_envelope_max_abs": 89.775,
+          "main_stat_band_min_required": 45,
+          "main_stat_band_max": 70,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 45.0,
+          "budget_residual_for_secondary_after_band_min": 44.775,
+          "int_headroom_from_min_to_band_max": 25.0,
+          "cost_to_saturate_band_max": 70.0,
+          "band_min_reachable": true,
+          "band_max_reachable": true,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 128.25,
+          "combined_eff_util_ceiling_abs": 38.475,
+          "stat_envelope_max_abs": 89.775,
+          "main_stat_band_min_required": 45,
+          "main_stat_band_max": 70,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 67.5,
+          "budget_residual_for_secondary_after_band_min": 22.275,
+          "int_headroom_from_min_to_band_max": 37.5,
+          "cost_to_saturate_band_max": 105.0,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        }
+      }
+    },
+    "18_high_envelope_simulation": {
+      "T4_Band_B_Epic": {
+        "case": {
+          "label": "T4 Band B Epic (non-weapon)",
+          "tier": "T4",
+          "band": "B",
+          "wcoef": "none",
+          "rarity": "Epic"
+        },
+        "envelope_computed": 162.4,
+        "model_A": {
+          "envelope": 162.4,
+          "combined_eff_util_ceiling_abs": 64.96,
+          "stat_envelope_max_abs": 97.44,
+          "main_stat_band_min_required": 70,
+          "main_stat_band_max": 90,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 70.0,
+          "budget_residual_for_secondary_after_band_min": 27.44,
+          "int_headroom_from_min_to_band_max": 20.0,
+          "cost_to_saturate_band_max": 90.0,
+          "band_min_reachable": true,
+          "band_max_reachable": true,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 162.4,
+          "combined_eff_util_ceiling_abs": 64.96,
+          "stat_envelope_max_abs": 97.44,
+          "main_stat_band_min_required": 70,
+          "main_stat_band_max": 90,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 105.0,
+          "budget_residual_for_secondary_after_band_min": -7.56,
+          "int_headroom_from_min_to_band_max": 30.0,
+          "cost_to_saturate_band_max": 135.0,
+          "band_min_reachable": false,
+          "band_max_reachable": false,
+          "negative_budget_risk": true
+        }
+      },
+      "T5_Band_S_Legendary": {
+        "case": {
+          "label": "T5 Band S Legendary (focus/chest)",
+          "tier": "T5",
+          "band": "S",
+          "wcoef": "none",
+          "rarity": "Legendary"
+        },
+        "envelope_computed": 342.25,
+        "model_A": {
+          "envelope": 342.25,
+          "combined_eff_util_ceiling_abs": 171.125,
+          "stat_envelope_max_abs": 171.125,
+          "main_stat_band_min_required": 90,
+          "main_stat_band_max": 115,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 90.0,
+          "budget_residual_for_secondary_after_band_min": 81.125,
+          "int_headroom_from_min_to_band_max": 25.0,
+          "cost_to_saturate_band_max": 115.0,
+          "band_min_reachable": true,
+          "band_max_reachable": true,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 342.25,
+          "combined_eff_util_ceiling_abs": 171.125,
+          "stat_envelope_max_abs": 171.125,
+          "main_stat_band_min_required": 90,
+          "main_stat_band_max": 115,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 135.0,
+          "budget_residual_for_secondary_after_band_min": 36.125,
+          "int_headroom_from_min_to_band_max": 37.5,
+          "cost_to_saturate_band_max": 172.5,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        }
+      },
+      "MAX_extreme": {
+        "case": {
+          "label": "MAX extreme · T5 Band S Legendary non-weapon (focus/chest)",
+          "tier": "T5",
+          "band": "S",
+          "wcoef": "none",
+          "rarity": "Legendary"
+        },
+        "envelope_computed": 342.25,
+        "model_A": {
+          "envelope": 342.25,
+          "combined_eff_util_ceiling_abs": 171.125,
+          "stat_envelope_max_abs": 171.125,
+          "main_stat_band_min_required": 90,
+          "main_stat_band_max": 115,
+          "cost_per_int_unit": 1.0,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 1.0,
+          "cost_locked_to_reach_band_min": 90.0,
+          "budget_residual_for_secondary_after_band_min": 81.125,
+          "int_headroom_from_min_to_band_max": 25.0,
+          "cost_to_saturate_band_max": 115.0,
+          "band_min_reachable": true,
+          "band_max_reachable": true,
+          "negative_budget_risk": false
+        },
+        "model_B": {
+          "envelope": 342.25,
+          "combined_eff_util_ceiling_abs": 171.125,
+          "stat_envelope_max_abs": 171.125,
+          "main_stat_band_min_required": 90,
+          "main_stat_band_max": 115,
+          "cost_per_int_unit": 1.5,
+          "cost_per_cost_unit": 1.0,
+          "cost_per_dex_unit": 0.7,
+          "cost_locked_to_reach_band_min": 135.0,
+          "budget_residual_for_secondary_after_band_min": 36.125,
+          "int_headroom_from_min_to_band_max": 37.5,
+          "cost_to_saturate_band_max": 172.5,
+          "band_min_reachable": true,
+          "band_max_reachable": false,
+          "negative_budget_risk": false
+        }
+      }
+    },
+    "19_effect_taxonomy_costing_methodology_13_categories": {
+      "categories": [
+        "PASSIVE_STAT",
+        "CONDITIONAL_STAT",
+        "MARK_INTERACTION",
+        "DRAIN_INTERACTION",
+        "FRAGMENT_INTERACTION",
+        "PAYOFF_UTILITY",
+        "DISPEL_UTILITY",
+        "ANTI_INCORPOREAL",
+        "ANTI_SUMMON",
+        "CHANNEL_MOBILITY",
+        "RITUAL_PROTECTION",
+        "WEAPON_IDENTITY_EFFECT",
+        "LEGENDARY_UNIQUE_EFFECT"
+      ],
+      "internal_only_no_player_facing": [
+        "PAYOFF_UTILITY"
+      ],
+      "proposed_formula_conceptual": "effect_cost = base_magnitude_cost × expected_uptime_factor × reliability_factor × scope_factor × stacking_factor",
+      "per_category_factors": {
+        "PASSIVE_STAT": {
+          "magnitude": true,
+          "uptime": "PERMANENT_1.0",
+          "reliability": 1.0,
+          "scope": "SELF",
+          "stacking": "ADDITIVE"
+        },
+        "CONDITIONAL_STAT": {
+          "magnitude": true,
+          "uptime": "PARTIAL_lt1",
+          "reliability": "PM_REVIEW",
+          "scope": "SELF",
+          "stacking": "NON_STACKING_family"
+        },
+        "MARK_INTERACTION": {
+          "magnitude": true,
+          "uptime": "MARK_ACTIVE_LIFETIME_HARDCAP_10s",
+          "reliability": "PM_REVIEW",
+          "scope": "TARGET",
+          "stacking": "REFRESH",
+          "boss_safeguard_required": false
+        },
+        "DRAIN_INTERACTION": {
+          "magnitude": true,
+          "uptime": "MARKED_ONLY",
+          "reliability": "PM_REVIEW",
+          "scope": "TARGET_MARKED",
+          "stacking": "NON_STACKING",
+          "boss_safeguard_required": true
+        },
+        "FRAGMENT_INTERACTION": {
+          "magnitude": true,
+          "uptime": "FRAGMENT_HARDCAP_5",
+          "reliability": "PM_REVIEW",
+          "scope": "SELF",
+          "stacking": "NON_STACKING",
+          "focus_bonus_segment_cap": 2
+        },
+        "PAYOFF_UTILITY": {
+          "magnitude": true,
+          "uptime": "TRIGGERED",
+          "reliability": "PROC_ADDITIVE_BEFORE_CAP_45",
+          "scope": "SELF",
+          "stacking": "NON_STACKING"
+        },
+        "DISPEL_UTILITY": {
+          "magnitude": true,
+          "uptime": "TARGETED",
+          "reliability": "PM_REVIEW",
+          "scope": "TARGET",
+          "stacking": "NON_STACKING",
+          "boss_safeguard_required": true
+        },
+        "ANTI_INCORPOREAL": {
+          "magnitude": true,
+          "uptime": "VALID_INCORPOREAL_ONLY",
+          "reliability": "PM_REVIEW",
+          "scope": "TARGET_INCORPOREAL",
+          "stacking": "NON_STACKING",
+          "boss_safeguard_required": true
+        },
+        "ANTI_SUMMON": {
+          "magnitude": true,
+          "uptime": "VALID_BOSS_SUMMONED_ADD_ONLY",
+          "reliability": "PM_REVIEW",
+          "scope": "TARGET_SUMMON",
+          "stacking": "NON_STACKING",
+          "boss_safeguard_required": true
+        },
+        "CHANNEL_MOBILITY": {
+          "magnitude": true,
+          "uptime": "DURING_CHANNEL_ONLY",
+          "reliability": "PM_REVIEW",
+          "scope": "SELF",
+          "stacking": "NON_STACKING"
+        },
+        "RITUAL_PROTECTION": {
+          "magnitude": true,
+          "uptime": "PROC_OR_CHANNEL",
+          "reliability": "PROC_ADDITIVE_BEFORE_CAP_45",
+          "scope": "SELF",
+          "stacking": "NON_STACKING"
+        },
+        "WEAPON_IDENTITY_EFFECT": {
+          "magnitude": true,
+          "uptime": "WEAPON_TIED",
+          "reliability": "PM_REVIEW",
+          "scope": "SELF",
+          "stacking": "NON_STACKING_family"
+        },
+        "LEGENDARY_UNIQUE_EFFECT": {
+          "magnitude": true,
+          "uptime": "UNIQUE",
+          "reliability": "PM_REVIEW",
+          "scope": "SELF",
+          "stacking": "NON_STACKING",
+          "direction_only_phase_1": true
+        }
+      },
+      "pm_review_required": true
+    },
+    "20_magnitude_costing": {
+      "proposed_semantics": "base_magnitude_cost is the internal budget cost per canonical unit of magnitude (e.g., 1% damage boost, 1 flat stat, 1 defense point). Units MUST be normalized per category.",
+      "recommended_default_per_flat_stat": 1.0,
+      "recommended_default_per_percent_bonus_stat": "PM_REVIEW · proposta: 3.0-5.0 per 1%",
+      "recommended_default_per_flat_damage_point": "PM_REVIEW · proposta: 2.0",
+      "recommended_default_per_flat_defense_point": "PM_REVIEW · proposta: 2.0",
+      "residual_precision_4_decimals_internal": true
+    },
+    "21_uptime_costing": {
+      "proposed_semantics": "expected_uptime_factor scales cost by expected active-time fraction of the effect during 30s combat window baseline.",
+      "recommended_uptime_defaults": {
+        "PASSIVE_STAT": 1.0,
+        "MARK_INTERACTION_default_5s_over_30s": 0.17,
+        "DRAIN_INTERACTION_marked_5s_over_30s": 0.17,
+        "PROC_UTILITY_conservative_15pct_over_30s": 0.15,
+        "CHANNEL_MOBILITY_channel_3s_over_30s": 0.1,
+        "TRIGGERED_ONCE_PER_ENCOUNTER_30s": 0.03
+      },
+      "no_extension_beyond_hard_caps": true,
+      "mark_duration_hard_cap_10s_respected": true
+    },
+    "22_proc_costing": {
+      "combined_proc_cap_pct_hard_immutable": 45,
+      "combination_mode": "ADDITIVE_BEFORE_CAP",
+      "no_multiplicative_bypass": true,
+      "proposed_cost_per_percent_point_below_cap": "PM_REVIEW · proposta: 0.5 unita' budget × %",
+      "proposed_non_linear_curve_near_cap": "PM_REVIEW · proposta: quadratica sopra 30% per disincentivare accumulo",
+      "differentials": {
+        "offensive_proc": "PM_REVIEW",
+        "defensive_proc": "PM_REVIEW",
+        "utility_proc": "PM_REVIEW"
+      },
+      "interaction_with_cooldown": "internally accounted via expected_uptime_factor · non double-counting",
+      "no_proc_assignment_to_items_phase_p2b_1": true
+    },
+    "23_duration_costing": {
+      "hard_cap_mark_duration_seconds": 10,
+      "default_encounter_baseline_seconds": 30,
+      "proposed_cost_per_second_duration_below_hardcap": "PM_REVIEW · proposta: 0.2 unita' budget × secondo",
+      "interaction_note": "durata × cooldown × magnitude MUST NOT be paid separately if expected_uptime_factor already accounts for the combined fraction. Use expected_uptime_calculation, not raw addition.",
+      "expected_uptime_calculation_required": true,
+      "refresh_semantics_from_phase_1_s48": "REFRESH_no_auto_extend",
+      "no_extension_beyond_hard_cap": true
+    },
+    "24_cooldown_costing": {
+      "proposed_semantics": "cooldown is inversely related to expected_uptime_factor; longer cooldown → lower uptime → lower cost per magnitude unit.",
+      "proposed_cost_per_second_cooldown_saved_below_baseline": "PM_REVIEW · proposta: -0.1 unita' budget × secondo saved",
+      "cooldown_never_zero_hard_floor_seconds": "PM_REVIEW · proposta: 3s minimo",
+      "interaction_with_duration_and_magnitude_via_uptime_factor_only": true,
+      "no_separate_flat_cost_double_counting": true
+    },
+    "25_scope_and_reliability_factors": {
+      "scope_factor_semantics": "multiplier reflecting target scope: SELF=1.0 · SINGLE_TARGET=1.0 · AOE_SMALL=1.5 · AOE_LARGE=2.0 · BOSS_ONLY=0.8",
+      "reliability_factor_semantics": "1.0 for guaranteed effects · < 1.0 for chance-gated (already accounted via proc_costing) · > 1.0 for effects that resist common counters",
+      "no_scope_factor_amplifies_beyond_hard_caps": true,
+      "reliability_factor_default_baseline": 1.0,
+      "pm_review_required": true
+    },
+    "26_stacking_interaction": {
+      "policy_source_phase_1_section": "48_stacking_policy_Q05_design_locked",
+      "passive_flat_stats": "ADDITIVE within item_budget/soft_cap/system_cap",
+      "same_unique_effect_nominal": "NON_STACKING · HIGHEST_EFFECTIVE_VALUE_WINS",
+      "same_family_default": "NON_STACKING (ADD_WITHIN_CAP only if future record declares it)",
+      "durations_default": "REFRESH no_auto_extend",
+      "proc_chance": "ADDITIVE_BEFORE_CAP · combined_cap 45%",
+      "legendary_same_identity": "NON_STACKING",
+      "stacking_factor_default_baseline": 1.0,
+      "stacking_penalty_for_multiple_items_same_family": "PM_REVIEW · proposta: -20% budget per replicated family occurrence"
+    },
+    "27_boss_safeguard_costing": {
+      "categories_requiring_boss_safeguard_flag": [
+        "ANTI_SUMMON",
+        "DISPEL_UTILITY",
+        "ANTI_INCORPOREAL"
+      ],
+      "boss_safeguard_condition_budget_cost": "PM_REVIEW · proposta: dedicated 5-15% del combined_effect_utility_ceiling",
+      "forbidden": [
+        "direct_boss_nullification",
+        "boss_immunity_bypass",
+        "unconditional_summon_deletion",
+        "ignore_boss_safeguard"
+      ],
+      "schema_flag_required": true,
+      "future_allowed_direction_only_for_valid_boss_summoned_add": true
+    },
+    "28_utility_costing": {
+      "included_families_phase_1_s12": [
+        "PAYOFF_UTILITY",
+        "DISPEL_UTILITY",
+        "CHANNEL_MOBILITY",
+        "RITUAL_PROTECTION"
+      ],
+      "utility_share_internal_max_pct": {
+        "non_legendary": 40,
+        "legendary": 50
+      },
+      "utility_share_of_combined_effect_utility_ceiling": true,
+      "anti_double_counting_with_effect_budget": true,
+      "utility_residue_disposition": "to_effect_or_base_stat_never_extra_external",
+      "utility_cost_methodology_baseline": "same as effect_cost formula scaled by utility_share_internal_max_pct within ceiling"
+    },
+    "29_affix_costing": {
+      "affix_slots_per_tier_from_phase_1_s11": {
+        "T1": 1,
+        "T2": 2,
+        "T3": 3,
+        "T4": 4,
+        "T5": 5
+      },
+      "affix_budget_unit_semantics": "PM_REVIEW · proposta: each slot consumes a fixed % of total item budget (e.g., 5% per slot up to 25% at T5)",
+      "affix_tier_or_grade_cost_semantics": "PM_REVIEW · proposta: grade multiplier 1.0/1.5/2.0/3.0",
+      "flat_stat_affix_cost_default_baseline": "same as PASSIVE_STAT cost",
+      "conditional_affix_cost_default_baseline": "PASSIVE_STAT_cost × conditional_uptime_factor",
+      "utility_affix_cost_default_baseline": "PAYOFF_UTILITY_cost × utility_share_cap",
+      "duplicate_family_penalty_recommended": "-20% effectiveness per duplicated affix family on same item",
+      "affix_eligibility_ne_assignment_preserved": true,
+      "no_affix_assignment_in_p2b_1": true,
+      "no_afx1_modification": true
+    },
+    "30_legendary_costing_methodology_3_pillar": {
+      "Veste_di_Onirade": {
+        "blueprint_code": "cdv_t5_chest_stoffa_002_or_001_pending_pm_confirm",
+        "pillar": "RITUAL_CHANNEL_PROTECTION",
+        "envelope_from_phase_2a": 342.25,
+        "cost_methodology": "5-15% envelope reserved for LEGENDARY_UNIQUE_EFFECT budget + Costituzione-heavy passive_stat within stoffa profile · protection during channel · ritual stability · resilience via Costituzione · reduced risk during Drain · DIRECTION_ONLY Phase 1",
+        "final_effect_magnitude_proc_duration_cooldown": "NOT_DEFINED_PHASE_P2B_1 · direction only"
+      },
+      "Occhio_del_Faro_Rovesciato": {
+        "blueprint_code": "cdv_t5_main_hand_focus_001",
+        "pillar": "IDENTIFY_MARK_ORCHESTRATION",
+        "envelope_from_phase_2a": 342.25,
+        "cost_methodology": "5-15% envelope reserved for LEGENDARY_UNIQUE_EFFECT + WEAPON_IDENTITY_EFFECT · better Identify→Mark orchestration · controlled Drain efficiency · conditional interaction with Fragments · target readability · DIRECTION_ONLY Phase 1",
+        "final_effect_magnitude_proc_duration_cooldown": "NOT_DEFINED_PHASE_P2B_1"
+      },
+      "Balestra_della_Traiettoria_certa": {
+        "blueprint_code": "cdv_t5_main_hand_balestra_001",
+        "pillar": "RANGED_PRECISION_DISPEL",
+        "envelope_from_phase_2a": 301.18,
+        "cost_methodology": "5-15% envelope reserved for LEGENDARY_UNIQUE_EFFECT + WEAPON_IDENTITY_EFFECT · ranged ritual precision · targeted Mark · selective dispel · anti-summon interaction on valid targets · DIRECTION_ONLY Phase 1",
+        "final_effect_magnitude_proc_duration_cooldown": "NOT_DEFINED_PHASE_P2B_1"
+      },
+      "shared_rules": {
+        "legendary_unique_effect_status_phase_1": "DIRECTION_ONLY",
+        "legendary_final_effect_consumes_legendary_total_budget": true,
+        "not_additive_over_rarity_multiplier": true,
+        "duplication_across_legendaries_forbidden_by_identity_lock": true
+      }
+    },
+    "31_rounding_and_residue": {
+      "internal_precision_decimal_places": 4,
+      "no_intermediate_rounding": true,
+      "final_rounding_method": "ROUND_HALF_UP",
+      "output_precisions_from_phase_1_s47": {
+        "flat_stats": "integer",
+        "percentages_decimals": 1,
+        "durations_decimals_seconds": 1,
+        "coefficients_decimals": 2,
+        "internal_budget_decimals": 4
+      },
+      "rounding_residues_assignment_order": [
+        "first_to_main_stat_intelligenza",
+        "then_to_secondary_defensive_stat_costituzione"
+      ],
+      "no_extra_budget_from_residues": true
+    },
+    "32_spend_tolerance": {
+      "minimum_spend_ratio_recommended": 0.95,
+      "maximum_spend_ratio_recommended": 1.0,
+      "acceptable_unspent_budget_recommended_max_pct": 5.0,
+      "over_budget_tolerance_recommended": 0.0,
+      "rounding_tolerance_recommended_units": 0.5,
+      "notes": "over_budget_tolerance > 0 → PM_REVIEW required (bypass hard total budget). unspent_budget non diventa mai potere esterno (Phase 1 §13).",
+      "pm_review_required": true
+    },
+    "33_anti_double_counting": {
+      "reference_phase_1_section": "14_anti_double_counting_rule",
+      "reaffirmed_rules": [
+        "single_source_of_power",
+        "rarity_multiplier_applied_once_at_total_level",
+        "each_component_consumes_same_total",
+        "no_affix_replication_across_families",
+        "unspent_budget_does_not_become_extra_external_power"
+      ],
+      "budget_split_disjoint_pools_stat_effect_utility_affix_within_total": true,
+      "no_component_outside_gross_total_item_budget": true
+    },
+    "34_risk_register": [
+      {
+        "id": "R1",
+        "risk": "runtime_stat_marginal_evidence_missing",
+        "impact": "critical",
+        "mitigation": "blocker_RUNTIME_STAT_VALUE_EVIDENCE_MISSING · Model C blocked · PM design layer extension required"
+      },
+      {
+        "id": "R2",
+        "risk": "italian_to_runtime_mapping_unratified",
+        "impact": "high",
+        "mitigation": "pm_open_question_ratify_or_add_localization_layer"
+      },
+      {
+        "id": "R3",
+        "risk": "soft_cap_100_no_runtime_implementation",
+        "impact": "high",
+        "mitigation": "pm_ratify_post_soft_cap_policy_or_hard_cap_100_in_design_layer"
+      },
+      {
+        "id": "R4",
+        "risk": "low_envelope_infeasibility_under_model_B",
+        "impact": "high",
+        "mitigation": "prefer_model_A_or_ratify_model_B_multipliers_with_low_envelope_safety_margin"
+      },
+      {
+        "id": "R5",
+        "risk": "dex_semantics_underdefined_for_cdv",
+        "impact": "medium",
+        "mitigation": "blocker_DEX_CONVERSION_UNDERDEFINED · pm ratify dex utility scope for CdV"
+      },
+      {
+        "id": "R6",
+        "risk": "proc_duration_cooldown_double_counting_leak",
+        "impact": "medium",
+        "mitigation": "expected_uptime_calculation_required_before_summing"
+      },
+      {
+        "id": "R7",
+        "risk": "affix_selection_semantic_drift_from_afx1",
+        "impact": "medium",
+        "mitigation": "afx1_read_only · no_new_affix_family · affix_eligibility_ne_assignment_preserved"
+      },
+      {
+        "id": "R8",
+        "risk": "legendary_final_effect_scope_creep_toward_hard_cap_bypass",
+        "impact": "high",
+        "mitigation": "phase_1_hard_caps_reaffirmed · legendary status DIRECTION_ONLY · no proc/duration/cooldown assignment"
+      },
+      {
+        "id": "R9",
+        "risk": "spend_tolerance_positive_bypasses_total_budget",
+        "impact": "medium",
+        "mitigation": "default over_budget_tolerance=0 · positive → PM_REVIEW"
+      },
+      {
+        "id": "R10",
+        "risk": "rarity_semantic_mismatch_runtime_vs_design",
+        "impact": "medium",
+        "mitigation": "design_layer_rarity_multiplier_only_in_envelope_computation · runtime rarity_bonus is a separate recruit-time additive"
+      },
+      {
+        "id": "R11",
+        "risk": "phase_2a_envelope_contract_conflict",
+        "impact": "critical (if triggered)",
+        "mitigation": "blocker_PHASE2A_ENVELOPE_CONTRACT_CONFLICT · currently NOT_TRIGGERED · envelope preserved 17.5000-342.2500"
+      }
+    ],
+    "35_pm_open_questions": [
+      {
+        "question_id": "P2B1_Q01",
+        "topic": "cost_per_intelligenza_unit_pre_soft_cap",
+        "evidence": "runtime power formula lineare 1:1 (formulas.py::adventurer_base_power) · auto_equip fitness PRIMARY_WEIGHT=3.0 · Phase 1 §7 main_stat cdv=Intelligenza",
+        "candidate_options": [
+          "1.0 (Model A)",
+          "1.5 (Model B hypothesis)",
+          "calibrated (Model C, blocked)"
+        ],
+        "agent_recommendation": "Model A · 1.0 · pending design-layer runtime extension",
+        "affected_systems": [
+          "envelope_projection",
+          "future_registry_generation",
+          "power_formula_semantic"
+        ],
+        "affected_envelope_ranges": [
+          "17.5-342.25 (all)"
+        ],
+        "impact": "critical",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q02",
+        "topic": "cost_per_intelligenza_unit_post_soft_cap",
+        "evidence": "Phase 1 §7 soft_cap_intelligenza=100 · runtime no cap · runtime no diminishing returns",
+        "candidate_options": [
+          "identical_to_pre (no soft cap effect)",
+          "double_cost_over_100",
+          "quadratic_over_100",
+          "hard_cap_no_overflow"
+        ],
+        "agent_recommendation": "hard_cap_no_overflow at 100 pending PM design layer",
+        "affected_systems": [
+          "envelope_projection_upper_bound",
+          "legendary_budgets"
+        ],
+        "affected_envelope_ranges": [
+          "high (>200)"
+        ],
+        "impact": "critical",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q03",
+        "topic": "cost_per_costituzione_unit",
+        "evidence": "runtime endurance formula lineare · Phase 1 §8 secondary defensive priority · §17 stoffa basso_medio §18 cuoio medio_alto",
+        "candidate_options": [
+          "1.0 (equal)",
+          "1.0 (role weighted keeps parity)",
+          "differentiated stoffa/cuoio"
+        ],
+        "agent_recommendation": "1.0 uniforme · stoffa/cuoio differential via distribution rule (not cost)",
+        "affected_systems": [
+          "envelope_projection",
+          "class_role_scaling"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "critical",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q04",
+        "topic": "cost_per_destrezza_unit_and_semantic_scope_cdv",
+        "evidence": "runtime agility linear · Phase 1 §8 tertiary utility opportunistic · §37 forbidden dex-primary drift · runtime no dex-specific utility",
+        "candidate_options": [
+          "1.0 (equal)",
+          "0.7 (role weighted discount)",
+          "BLOCKED pending dex semantic ratify"
+        ],
+        "agent_recommendation": "0.7 discount factor + PM ratify dex utility scope",
+        "affected_systems": [
+          "dex_conversion",
+          "cdv_identity_integrity"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "high",
+        "blocking": true,
+        "blocker_id_ref": "DEX_CONVERSION_UNDERDEFINED"
+      },
+      {
+        "question_id": "P2B1_Q05",
+        "topic": "cost_per_proc_percent_point_and_curve_near_cap",
+        "evidence": "Phase 1 §35 combined_proc_cap 45% ADDITIVE_BEFORE_CAP · runtime no proc engine on items",
+        "candidate_options": [
+          "0.5 unit × pct linear",
+          "0.3-0.5 linear then quadratic near cap",
+          "PM specify"
+        ],
+        "agent_recommendation": "linear 0.5 below 30% · quadratic above 30%",
+        "affected_systems": [
+          "effect_costing",
+          "proc_taxonomy"
+        ],
+        "affected_envelope_ranges": [
+          "mid-high"
+        ],
+        "impact": "high",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q06",
+        "topic": "cost_per_duration_second_and_cooldown_second_interaction",
+        "evidence": "Phase 1 §36 mark_duration_hard_cap=10 · §48 REFRESH · runtime no duration/cooldown on items",
+        "candidate_options": [
+          "0.2/sec duration + -0.1/sec cooldown saved · single_source via uptime_factor",
+          "separate flat costs",
+          "PM specify"
+        ],
+        "agent_recommendation": "single_source via expected_uptime_factor · avoid double-counting",
+        "affected_systems": [
+          "effect_costing",
+          "stacking_taxonomy"
+        ],
+        "affected_envelope_ranges": [
+          "mid-high"
+        ],
+        "impact": "high",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q07",
+        "topic": "affix_cost_per_slot_and_family_grade",
+        "evidence": "Phase 1 §11 T1..T5 → 1..5 slots · afx1 read-only · Phase 1 §29 eligibility_ne_assignment",
+        "candidate_options": [
+          "5% budget per slot flat",
+          "grade multiplier 1.0/1.5/2.0/3.0",
+          "hybrid"
+        ],
+        "agent_recommendation": "hybrid: 5% base × grade multiplier × family_duplication_penalty(-20% per replicated)",
+        "affected_systems": [
+          "affix_costing",
+          "budget_split"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "high",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q08",
+        "topic": "spend_tolerance_minimum_maximum_over_budget",
+        "evidence": "Phase 1 §14 no_extra_component_outside_total · §37 forbidden power leaks",
+        "candidate_options": [
+          "min 0.95 max 1.00 over_budget 0.00",
+          "min 0.90 max 1.00 over_budget 0.00",
+          "allow positive over_budget → PM"
+        ],
+        "agent_recommendation": "min 0.95 · max 1.00 · over_budget = 0.00 (strict)",
+        "affected_systems": [
+          "envelope_enforcement",
+          "validation"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "high",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q09",
+        "topic": "final_recommended_model_A_B_C_or_hybrid",
+        "evidence": "Model A high runtime coherence · Model B partial evidence via fitness weights · Model C blocked",
+        "candidate_options": [
+          "Model A pure",
+          "Model B ratified",
+          "hybrid A-baseline+B-secondary-weighted",
+          "hold pending runtime extension"
+        ],
+        "agent_recommendation": "Model A as transitional baseline; ratify Model B multipliers later once dex semantic locked",
+        "affected_systems": [
+          "all"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "critical",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q10",
+        "topic": "italian_to_runtime_stat_mapping_ratification",
+        "evidence": "runtime 5-stat English canonical · design layer 3-stat Italian CdV · no explicit mapping declared",
+        "candidate_options": [
+          "ratify presumed Intelligenza=intellect Costituzione=endurance Destrezza=agility",
+          "introduce localization layer",
+          "introduce new stat schema"
+        ],
+        "agent_recommendation": "ratify presumed mapping · localization only (no schema change)",
+        "affected_systems": [
+          "all runtime access",
+          "future registry generation"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "high",
+        "blocking": true
+      },
+      {
+        "question_id": "P2B1_Q11",
+        "topic": "runtime_extension_for_proc_duration_cooldown_mark_drain_fragment",
+        "evidence": "runtime has NO engine for proc/duration/cooldown item-driven, mark, drain, fragment · Phase 1 §23 taxonomy 13 categories not implemented",
+        "candidate_options": [
+          "defer runtime implementation, keep design-only budgets",
+          "dedicated runtime extension gate (post-P2B-1)",
+          "hybrid stubbed field placeholders"
+        ],
+        "agent_recommendation": "defer runtime implementation · dedicated extension gate later · design-only budgets in envelope contract",
+        "affected_systems": [
+          "all downstream effect costing",
+          "legendary final effect declaration"
+        ],
+        "affected_envelope_ranges": [
+          "all"
+        ],
+        "impact": "critical",
+        "blocking": true,
+        "blocker_id_ref": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING"
+      },
+      {
+        "question_id": "P2B1_Q12",
+        "topic": "legendary_unique_effect_envelope_share_percent",
+        "evidence": "Phase 1 §39/40/41 status DIRECTION_ONLY · §13 combined_effect_utility_ceiling Legendary=50%",
+        "candidate_options": [
+          "5-15% envelope reserved for LEGENDARY_UNIQUE_EFFECT",
+          "15-25%",
+          "PM specify per legendary"
+        ],
+        "agent_recommendation": "10% envelope baseline reserved for LEGENDARY_UNIQUE_EFFECT · per-item PM verdict downstream",
+        "affected_systems": [
+          "legendary_costing",
+          "boss_safeguard"
+        ],
+        "affected_envelope_ranges": [
+          "342.25 · 301.18 (Legendary)"
+        ],
+        "impact": "high",
+        "blocking": true
+      }
+    ],
+    "36_recommended_model": {
+      "recommended_model": "Model A · Equal-cost baseline",
+      "rationale": "Coherent con runtime power formula lineare (Σ+level*2). Nessuna evidenza runtime richiesta oltre a quella gia' esistente. Compatibile con low envelope (T1 Band C Common). Trasparente e deterministic. Trasferibile a Model B in dispatch futuro senza rework degli envelope. Model B rimane concettualmente valido ma richiede ratifica PM su multipliers e non ha benefici runtime immediati; Model C e' BLOCKED.",
+      "conditions_for_upgrade_to_model_B": [
+        "PM ratify Int=1.5 · Cost=1.0 · Dex=0.7 multipliers verbatim",
+        "PM ratify DEX_CONVERSION scope for CdV",
+        "verify low-envelope T1 Band C Common not infeasible with 1.5 Int cost"
+      ],
+      "conditions_for_upgrade_to_model_C": [
+        "runtime extension gate that adds damage/mitigation/proc/duration/cooldown engines",
+        "empirical calibration evidence from simulated encounters",
+        "PM ratify calibration constants"
+      ],
+      "pm_review_required": true
+    },
+    "37_phase_2b_readiness": {
+      "phase_2b_status_current": "HOLD_NOT_AUTHORIZED",
+      "phase_2b_focus_expected": [
+        "per_item_stat_effect_utility_affix_final_assignment_120_blueprints",
+        "legendary_final_effect_magnitude_proc_duration_cooldown_declaration",
+        "validation_full_corpus_with_ratified_costs",
+        "draft_migration_boundary_review"
+      ],
+      "phase_2b_prerequisites_from_p2b_1": [
+        "PM ratify model A/B/C or hybrid (Q09)",
+        "PM ratify Int Cost Dex unit costs (Q01 Q03 Q04)",
+        "PM ratify post_soft_cap policy (Q02)",
+        "PM ratify proc/duration/cooldown costing (Q05 Q06)",
+        "PM ratify affix costing (Q07)",
+        "PM ratify spend tolerance (Q08)",
+        "PM ratify italian↔runtime mapping (Q10)",
+        "PM ratify runtime extension boundary or defer (Q11)",
+        "PM ratify legendary unique effect envelope share (Q12)"
+      ],
+      "phase_2b_go_condition": "PM adjudication all 12 P2B-1 open questions resolved OR PM explicit accept-and-proceed with transitional Model A"
+    },
+    "38_go_hold_recommendation": {
+      "agent_recommendation": "HOLD_PENDING_PM_ADJUDICATION",
+      "artifact_status": "ARTIFACT_WRITTEN_PENDING_PM_ADJUDICATION",
+      "closure_manifest_emission": false,
+      "prd_append_emission": false,
+      "next_action": "PM_VERDICT_ON_P2B_1_MODELS_AND_UNIT_COSTS",
+      "downstream_phase_on_pm_go": "R18.6.RV3-IS2-B_Phase_2B",
+      "final_status": {
+        "R18.6.RV3-IS2-B-P2B-1": "ARTIFACT_WRITTEN_PM_ADJUDICATION_REQUIRED",
+        "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED_IMMUTABLE",
+        "R18.6.RV3-IS2-B-Phase-1-N1": "DESIGN_LOCKED_PM_APPROVED_IMMUTABLE",
+        "R18.6.RV3-IS2-B_Phase_1": "IMMUTABLE_UNCHANGED",
+        "R18.6.RV3-IS2-B_Phase_2B": "HOLD_NOT_AUTHORIZED",
+        "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+        "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+        "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+        "Monaco": "HOLD_NOT_AUTHORIZED",
+        "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+        "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
+        "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+        "awaiting_pm_verdict": true
+      },
+      "blockers_emitted_count": 2,
+      "blockers_emitted": [
+        {
+          "id": "RUNTIME_STAT_VALUE_EVIDENCE_MISSING",
+          "impact": "critical",
+          "scope": "Model C · proc/duration/cooldown/mark/drain/fragment",
+          "action": "PM ratify runtime extension boundary or accept Model A transitional"
+        },
+        {
+          "id": "DEX_CONVERSION_UNDERDEFINED",
+          "impact": "medium-high",
+          "scope": "Destrezza semantics per CdV",
+          "action": "PM ratify dex utility scope for CdV or accept 0.7 discount"
+        }
+      ],
+      "blockers_not_triggered": [
+        "STAT_CONVERSION_SOURCE_CONFLICT",
+        "LOW_ENVELOPE_CONVERSION_FAILURE",
+        "PHASE2A_ENVELOPE_CONTRACT_CONFLICT"
+      ]
+    }
+  }
+}
