@@ -1,0 +1,295 @@
+{
+  "document_type": "final_closure_report",
+  "gate_id": "R18.6.RV3-IS2-B_Phase_2A",
+  "gate_title": "Per-Item Budget Envelope Projection · Final Closure",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "created_utc": "2026-07-22T13:08:59.244963+00:00",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "sections": {
+    "01_pm_correction_verdict_citation": {
+      "classification": "DUPLICATE_DISPATCH / NO-OP / SUPERSEDED",
+      "authorized_action_exclusive": "FORMAL_CLOSURE_PHASE_2A_ONLY",
+      "envelope_regeneration": "NOT_REQUIRED",
+      "recalculation": "NOT_REQUIRED",
+      "wording_normalization_scope": "DOCUMENTATION_NORMALIZATION_ONLY"
+    },
+    "02_phase_2a_ratification_corpus_120": {
+      "active_blueprint_rows": 120,
+      "dormant_contingency_rows_in_active": 0,
+      "duplicate_blueprint_codes": 0,
+      "missing_blueprint_codes": 0,
+      "corpus_source_of_truth": "r18_6_rv3_is1_item_specification_roster_contract.json::roster_120_units",
+      "tier_distribution": {
+        "T1": 18,
+        "T2": 22,
+        "T3": 26,
+        "T4": 26,
+        "T5": 28
+      },
+      "rarity_distribution": {
+        "Common": 42,
+        "Uncommon": 33,
+        "Rare": 27,
+        "Epic": 15,
+        "Legendary": 3
+      },
+      "slot_bands": {
+        "S": 35,
+        "A": 29,
+        "B": 24,
+        "C": 32
+      },
+      "categories": {
+        "ARMOR": 60,
+        "UNIVERSAL": 39,
+        "WEAPON": 21
+      },
+      "weapon_coefficient_distribution": {
+        "1.00": 109,
+        "0.88": 7,
+        "0.78": 4
+      }
+    },
+    "03_formula_ratified_invariant": {
+      "formula": "tier_reference_budget × slot_band_multiplier × weapon_coefficient_if_applicable × rarity_multiplier = gross_total_item_budget",
+      "each_multiplier_applied_once": true,
+      "internal_precision_decimal_places": 4,
+      "no_intermediate_rounding": true,
+      "final_rounding_method": "ROUND_HALF_UP",
+      "application_order_locked": [
+        "base_budget",
+        "slot_multiplier",
+        "weapon_coefficient",
+        "rarity_multiplier",
+        "budget_split",
+        "final_rounding"
+      ]
+    },
+    "04_tier_scale_addendum_p1_n1_design_locked": {
+      "T1": 25,
+      "T2": 55,
+      "T3": 95,
+      "T4": 145,
+      "T5": 185
+    },
+    "05_envelope_extremes_ratified": {
+      "min_gross_total_item_budget": 17.5,
+      "max_gross_total_item_budget": 342.25,
+      "no_external_bonus_authorized": true,
+      "legendary_triplet": [
+        {
+          "blueprint_code": "cdv_t5_chest_stoffa_001",
+          "name": "Veste di Onirade",
+          "envelope": 342.25
+        },
+        {
+          "blueprint_code": "cdv_t5_main_hand_focus_001",
+          "name": "Occhio del Faro Rovesciato",
+          "envelope": 342.25
+        },
+        {
+          "blueprint_code": "cdv_t5_main_hand_balestra_001",
+          "name": "Balestra della Traiettoria certa",
+          "envelope": 301.18
+        }
+      ]
+    },
+    "06_feasibility_wording_normalization": {
+      "ratified_wording_verbatim": "minimum_stat_budget >= main_stat_band_min",
+      "classification": "DOCUMENTATION_NORMALIZATION_ONLY",
+      "envelope_recalculation": "NOT_REQUIRED",
+      "rationale": "Il proof P1-N1 garantisce sostenibilita' del minimo della banda stat per ciascun tier, non necessariamente del massimo.",
+      "deprecated_wording": "budget >= main_stat_band_max",
+      "per_tier_feasibility_normalized": {
+        "T1": {
+          "tier_reference_budget": 25,
+          "main_stat_band_min": 10,
+          "feasible": true
+        },
+        "T2": {
+          "tier_reference_budget": 55,
+          "main_stat_band_min": 25,
+          "feasible": true
+        },
+        "T3": {
+          "tier_reference_budget": 95,
+          "main_stat_band_min": 45,
+          "feasible": true
+        },
+        "T4": {
+          "tier_reference_budget": 145,
+          "main_stat_band_min": 70,
+          "feasible": true
+        },
+        "T5": {
+          "tier_reference_budget": 185,
+          "main_stat_band_min": 90,
+          "feasible": true
+        }
+      },
+      "envelope_min_covers_lowest_tier_band_min": true,
+      "envelope_max_covers_highest_tier_band_min": true
+    },
+    "07_phase_2a_envelope_artifact_refs": {
+      "md": {
+        "path": "r18_6_rv3_is2_b_phase2a_per_item_budget_envelope_projection.md",
+        "sha256": "957df620c4c7030bcf02d7fbc22cae9218a1d10a03ca2531c8c8e570e7d2e2fb",
+        "role": "IS2B_PHASE2A_ENVELOPE_MD"
+      },
+      "json": {
+        "path": "r18_6_rv3_is2_b_phase2a_per_item_budget_envelope_projection.json",
+        "sha256": "7bf8275fa0cf42a38a3ac3bd9f319bd781c4661cd9617417fa5bf3a868178713",
+        "role": "IS2B_PHASE2A_ENVELOPE_JSON"
+      }
+    },
+    "08_addendum_p1_n1_artifact_refs": {
+      "md": {
+        "path": "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.md",
+        "sha256": "f96f363fd5b3ae77ddce2a48ecc6a9a32cdac11ca2c925207b4c63fde4579667"
+      },
+      "json": {
+        "path": "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json",
+        "sha256": "be378cabda97be24fd2bdd53c0321240f29f3d3cc7610dc0cfa4fdb7662ca193"
+      },
+      "manifest": {
+        "path": "r18_6_rv3_is2_b_phase1_n1_closure_manifest.json",
+        "sha256": "89ef2408ead697e286d9bf050c317badcc7529331aba6af50f2cdc6fb152a234"
+      }
+    },
+    "09_phase_1_contract_artifact_refs_immutable": {
+      "contract_md": {
+        "path": "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.md",
+        "sha256": "a9f411bf1c3efd834ff543a432de00bbb12ed865088e4bb2e8b4330fe49e2dac"
+      },
+      "contract_json": {
+        "path": "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json",
+        "sha256": "167d6e92fd6002343dd24095d22ab9fd1a49446cf277691216bef22990ebb4b8"
+      },
+      "closure_md": {
+        "path": "r18_6_rv3_is2_b_phase1_final_closure_report.md",
+        "sha256": "4d185cb0efbe484055c2cbac56f5ecb034fa64b337073be43c2bc5c61dfafaf9"
+      },
+      "closure_json": {
+        "path": "r18_6_rv3_is2_b_phase1_final_closure_report.json",
+        "sha256": "b8163b9c4bd70d1562ecd8acf721ce0d96cd4f5387d2b7545df6a186cde28de8"
+      }
+    },
+    "10_is2a_chain_locked_immutable": {
+      "rev4_md": {
+        "path": "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.md",
+        "sha256": "eb3165fd958113fcf346a049d9f745605bf9971ceb711a689d8fd35048519d1d"
+      },
+      "rev4_json": {
+        "path": "r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json",
+        "sha256": "0d3d4d9b1b704ed8a06276fbc1928802bc9ecf07e21cf59fc99b482439ec4635"
+      },
+      "phase2_closure_md": {
+        "path": "r18_6_rv3_is2_a_phase2_final_closure_report.md",
+        "sha256": "5111a12f0378fe129af9a1f3b3dd68fd9208f6fd2a6e1be6aa37cdf27919cd8a"
+      },
+      "phase2_closure_json": {
+        "path": "r18_6_rv3_is2_a_phase2_final_closure_report.json",
+        "sha256": "8f83564410f8a2380e90b3c3e886893121beffcfb97e9201ff13a8f791679a51"
+      },
+      "phase2_closure_manifest": {
+        "path": "r18_6_rv3_is2_a_phase2_closure_manifest.json",
+        "sha256": "8e4f3c66c38aceaccc103bc75e7ed75e43df43d303f2faeb065d4a7f35a1fb6d"
+      },
+      "l1_report_md": {
+        "path": "r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.md",
+        "sha256": "355b261e40082d90fd1450b44f79f58eede38e2cd3a7abbe51881984df3b3e20"
+      },
+      "l1_report_json": {
+        "path": "r18_6_rv3_is2_a_l1_legendary_candidate_selection_report.json",
+        "sha256": "a97e64a4f8e4fc1212dc28b15d65059067cd80550c1b3d73eec9f0df15556849"
+      },
+      "l1_closure_manifest": {
+        "path": "r18_6_rv3_is2_a_l1_closure_manifest.json",
+        "sha256": "907f1ef99d9086b0f8edb47e2a40b860d73f5bfd2e0b691497b691400da597bd"
+      }
+    },
+    "11_null_field_lock_120_units": {
+      "null_fields": [
+        "main_stat_value",
+        "constitution_value",
+        "dexterity_value",
+        "other_stat_value",
+        "selected_affix",
+        "affix_value",
+        "effect_family_selected",
+        "final_effect",
+        "effect_value",
+        "proc_chance",
+        "duration",
+        "cooldown"
+      ],
+      "null_count_per_field": 120,
+      "locked_null_cells_total": 1440
+    },
+    "12_item_level_assignments_counters_zero": {
+      "item_level_stat_assignments": 0,
+      "item_level_effect_assignments": 0,
+      "item_level_affix_assignments": 0,
+      "item_level_legendary_final_effect_assignments": 0
+    },
+    "13_runtime_localization_registry_apply": {
+      "runtime_implementation": false,
+      "localization_implementation": false,
+      "registry_v3_item_generation": "NOT_AUTHORIZED",
+      "registry_v3_item_apply": "NOT_AUTHORIZED",
+      "db_writes": 0,
+      "runtime_item_id_generated_count": 0,
+      "mutation_forbidden": true
+    },
+    "14_governance_evidence_zero": {
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_registry_modifications": 0,
+      "test_suite_modifications": 0,
+      "env_secrets_modifications": 0,
+      "sealed_set_modifications": 0,
+      "new_seals_created": 0,
+      "sealed_scripts_byte_identical": "36/36",
+      "lore_meta_py_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    "15_sealed_integrity_result": {
+      "pre_closure": "6 passed · 36/36 byte-identical",
+      "post_closure": "6 passed · 36/36 byte-identical",
+      "command": "pytest backend/tests/backend_r18_4_sealed_integrity_test.py"
+    },
+    "16_sha_policy_31_compliance": {
+      "closure_manifest_embeds_self_hash": false,
+      "closure_manifest_self_sha_chat_only": true,
+      "prd_embeds_self_hash": false,
+      "prd_self_sha_chat_only": true
+    },
+    "17_prd_idempotence_expected": {
+      "^## R18.6.RV3-IS2-B · Phase 2A": 1,
+      "^## R18.6.RV3-IS2-B-Phase-1-N1": 1,
+      "^## R18.6.RV3-IS2-B · Phase 1": 1,
+      "^## R18.6.RV3-IS2-A Phase 1": 1,
+      "^## R18.6.RV3-IS2-A Phase 2": 1,
+      "^## R18.6.RV3-IS2-A-L1": 1
+    },
+    "18_explicit_stop_block_roadmap": {
+      "R18.6.RV3-IS2-B_Phase_2A": "CLOSED_PM_LOCKED",
+      "R18.6.RV3-IS2-B-P2B-1": "PLANNED_HOLD",
+      "R18.6.RV3-IS2-B_Phase_2B": "HOLD",
+      "R18.6.RV3-NC1": "HOLD",
+      "R18.6_Gate_11": "HOLD",
+      "Monaco": "HOLD",
+      "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+      "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+      "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
+      "Phase_1_Contract": "IMMUTABLE_UNCHANGED",
+      "Addendum_P1_N1": "DESIGN_LOCKED_PM_APPROVED_INVARIANT",
+      "Phase_2A_envelope_artifacts": "PM_APPROVED_pm_locked_INVARIANT",
+      "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+      "sealed_scripts": "36/36_byte_identical",
+      "lore_meta_py_anchor": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    }
+  }
+}

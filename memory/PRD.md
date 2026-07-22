@@ -4104,3 +4104,49 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 
 **Phase 2A authorization**: `GRANTED_CONDITIONAL_ON_ADDENDUM_APPLIED` · esecuzione Fase 2A prevista nello stesso dispatch. Nessun closure manifest e nessun PRD append per Fase 2A (stato: `ARTIFACT WRITTEN` pending PM adjudication).
+
+---
+
+## R18.6.RV3-IS2-B · Phase 2A · Per-Item Budget Envelope Projection · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · READ_ONLY · NO_APPLY · Italian_only
+**Gate Status**: `CLOSED_PM_LOCKED`
+**PM Correction Verdict Classification**: `DUPLICATE_DISPATCH / NO-OP / SUPERSEDED` · azione autorizzata esclusiva = `FORMAL_CLOSURE_PHASE_2A_ONLY`
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO
+
+- Phase 2A PM APPROVED / CLOSED
+- active blueprint rows = 120
+- dormant contingency rows = 0
+- tier distribution = 18 / 22 / 26 / 26 / 28
+- rarity distribution = 42 / 33 / 27 / 15 / 3
+- slot bands: S=35, A=29, B=24, C=32
+- categories: ARMOR=60, UNIVERSAL=39, WEAPON=21
+- weapon coefficients: 1.00=109, 0.88=7, 0.78=4
+- formula: tier_reference_budget × slot_band × weapon_coefficient × rarity_multiplier = gross_total_item_budget
+- scala tier: T1=25 / T2=55 / T3=95 / T4=145 / T5=185
+- MIN envelope = 17.5000
+- MAX envelope = 342.2500
+- Legendary: Veste di Onirade = 342.2500 / Occhio del Faro Rovesciato = 342.2500 / Balestra della Traiettoria certa = 301.1800
+- feasibility wording normalized: minimum_stat_budget ≥ main_stat_band_min
+- envelope recalculation = NOT REQUIRED
+- all item-level final assignments = 0
+- runtime implementation = false
+- localization implementation = false
+- Registry generation = not authorized
+- Registry apply = not authorized
+- IS2-B-P2B-1 = PLANNED / HOLD
+- IS2-B Phase 2B = HOLD
+- NC1 = HOLD
+- Gate 11 = HOLD
+
+**Closure artefatti nuovi (3)** · SHA riportati SOLO in chat (SHA Policy §31):
+- `r18_6_rv3_is2_b_phase2a_final_closure_report.md` · role IS2B_PHASE2A_CLOSURE_MD · PM_LOCKED
+- `r18_6_rv3_is2_b_phase2a_final_closure_report.json` · role IS2B_PHASE2A_CLOSURE_JSON · PM_LOCKED
+- `r18_6_rv3_is2_b_phase2a_closure_manifest.json` · SHA Policy §31 compliant (no self-hash embedded)
+
+**Baseline invariance (verificata)**:
+- P1-N1 (3 file) INVARIATI · Phase 2A envelope (2 file) INVARIATI · Phase 1 Contract (4 file) INVARIATI · IS2-A chain LOCKED_IMMUTABLE
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+
+**Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · registry=0 · test=0 · env=0 · new_seals=0 · db_writes=0 · item_generation=0 · registry_apply=0.
