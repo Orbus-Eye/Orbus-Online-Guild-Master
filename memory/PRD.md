@@ -4064,3 +4064,43 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 **Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
+
+---
+
+## R18.6.RV3-IS2-B-Phase-1-N1 · Tier Reference Budget Addendum · CLOSED_PM_VERBATIM_SAME_DISPATCH
+
+**Regime**: DOCUMENTAL_ONLY · READ_ONLY · NO_APPLY · Italian_only
+**Parent Gate**: R18.6.RV3-IS2-B_Phase_1 (IMMUTABLE · unchanged)
+**PM Dispatch Reference**: Message 92 · Verdict §16 (Resume Conditional Phase 2A)
+**Blocker Resolved**: `IS2B_P2A_BLOCKER_01`
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO
+
+**Purpose**: Aggiunta della sola scala numerica di riferimento `tier_reference_budget` alla sezione 9 (implicita) del Contratto Phase 1. Nessuna modifica ad alcuna sezione del Contratto Phase 1. Sblocca esclusivamente l'esecuzione della Fase 2A.
+
+**PM dispatched scale (verbatim)**:
+- T1 = 25 · DESIGN_LOCKED · derivation = WORST_CASE_MAIN_STAT_FEASIBILITY
+- T2 = 55 · DESIGN_LOCKED · derivation = WORST_CASE_MAIN_STAT_FEASIBILITY
+- T3 = 95 · DESIGN_LOCKED · derivation = WORST_CASE_MAIN_STAT_FEASIBILITY
+- T4 = 145 · DESIGN_LOCKED · derivation = WORST_CASE_MAIN_STAT_FEASIBILITY
+- T5 = 185 · DESIGN_LOCKED · derivation = WORST_CASE_MAIN_STAT_FEASIBILITY
+
+**Invariants asserted**:
+- Monotonicity: `25 < 55 < 95 < 145 < 185` · PASS
+- Worst-case main_stat feasibility per tier (band_max Phase 1 §9): T1 25≥25 · T2 55≥45 · T3 95≥70 · T4 145≥90 · T5 185≥115 · ALL_FEASIBLE
+- Formula Phase 1 §16: `tier_reference_budget × slot_band_multiplier × weapon_coefficient_if_applicable × rarity_multiplier = TOTAL_ITEM_BUDGET` · unchanged
+- Rounding policy Q04 (Phase 1 §47): unchanged · `ROUND_HALF_UP_final_only` · 4 dec internal
+- Anti-double-counting (Phase 1 §14): reaffirmed · single_source_of_power
+- Hard caps immutabili (Phase 1 §36): reaffirmed · violability_by_addendum = False
+- Combined proc cap: 45% · ADDITIVE_BEFORE_CAP · no multiplicative bypass
+
+**Change ledger**:
+- Phase 1 Contract MD/JSON: UNCHANGED
+- Phase 1 Closure Report MD/JSON: UNCHANGED
+- Addendum files created (3): 
+  - `r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.md`
+  - `r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json`
+  - `r18_6_rv3_is2_b_phase1_n1_closure_manifest.json` (SHA Policy §31 compliant · no self-hash embedded)
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+
+**Phase 2A authorization**: `GRANTED_CONDITIONAL_ON_ADDENDUM_APPLIED` · esecuzione Fase 2A prevista nello stesso dispatch. Nessun closure manifest e nessun PRD append per Fase 2A (stato: `ARTIFACT WRITTEN` pending PM adjudication).

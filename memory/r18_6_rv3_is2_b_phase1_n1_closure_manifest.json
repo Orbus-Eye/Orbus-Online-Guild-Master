@@ -1,0 +1,35 @@
+{
+  "document_type": "closure_manifest",
+  "gate_id": "R18.6.RV3-IS2-B-Phase-1-N1",
+  "gate_title": "Tier Reference Budget Addendum · Closure Manifest",
+  "parent_gate_id": "R18.6.RV3-IS2-B_Phase_1",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_VERBATIM_SAME_DISPATCH",
+  "created_utc": "2026-07-22T09:03:29.030844+00:00",
+  "sha_policy_31_compliance": true,
+  "sha_policy_31_note": "Manifest DOES NOT embed its own final SHA256. The manifest final SHA256 is reported ONLY in the dispatch chat channel.",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "artifacts": [
+    {
+      "path": "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.md",
+      "sha256": "f96f363fd5b3ae77ddce2a48ecc6a9a32cdac11ca2c925207b4c63fde4579667"
+    },
+    {
+      "path": "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json",
+      "sha256": "be378cabda97be24fd2bdd53c0321240f29f3d3cc7610dc0cfa4fdb7662ca193"
+    }
+  ],
+  "phase_1_contract_immutability_asserted": true,
+  "phase_1_contract_files_baseline_expected_unchanged": [
+    "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.md",
+    "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json",
+    "r18_6_rv3_is2_b_phase1_final_closure_report.md",
+    "r18_6_rv3_is2_b_phase1_final_closure_report.json"
+  ],
+  "sealed_scripts_expected": "36/36_byte_identical",
+  "next_action": "R18.6.RV3-IS2-B_Phase_2A_per_item_budget_envelope_projection_execution",
+  "phase_2a_closure_manifest_authorized": false,
+  "phase_2a_prd_append_authorized": false,
+  "pm_dispatch_reference": "Message_92"
+}

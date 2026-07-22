@@ -1,0 +1,268 @@
+{
+  "document_type": "tier_reference_budget_addendum",
+  "gate_id": "R18.6.RV3-IS2-B-Phase-1-N1",
+  "gate_title": "Tier Reference Budget Addendum (Numeric Scale)",
+  "parent_gate_id": "R18.6.RV3-IS2-B_Phase_1",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "artifact_status": "ADDENDUM_DESIGN_LOCKED_PM_VERBATIM",
+  "supersedes_phase_1_contract": false,
+  "phase_1_contract_immutable": true,
+  "additive_only": true,
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "created_utc": "2026-07-22T09:03:29.030844+00:00",
+  "pm_dispatch_reference": "Message_92_Verdict_16_Resume_Conditional_Phase_2A",
+  "blocker_resolved": "IS2B_P2A_BLOCKER_01",
+  "sections": {
+    "01_executive_summary": "Addendum P1-N1 al Contratto R18.6.RV3-IS2-B_Phase_1. Introduce ESCLUSIVAMENTE la scala numerica di riferimento `tier_reference_budget` (T1..T5) precedentemente lasciata implicita nella sezione 9 del Contratto Phase 1. Nessun altro campo del Contratto Phase 1 viene modificato o rivalutato. L'Addendum sblocca esclusivamente l'esecuzione della Fase 2A (Per-Item Budget Envelope Projection) risolvendo il Blocker IS2B_P2A_BLOCKER_01.",
+    "02_scope": {
+      "in_scope": [
+        "numeric_scale_tier_reference_budget_T1_T2_T3_T4_T5",
+        "design_lock_status_per_tier",
+        "derivation_rationale_worst_case_main_stat_feasibility",
+        "compatibility_with_phase_1_contract_sections_9_10_15_16_19_47",
+        "phase_2a_readiness_certification"
+      ],
+      "out_of_scope": [
+        "modification_of_phase_1_contract_sections",
+        "per_item_numeric_assignment",
+        "affix_assignment",
+        "legendary_final_effect_values",
+        "registry_generation",
+        "runtime_apply",
+        "db_writes",
+        "sealed_scripts_modifications"
+      ]
+    },
+    "03_governance": {
+      "documental_only": true,
+      "read_only": true,
+      "no_apply": true,
+      "backend_frontend_openapi_db_registry_test_env_seals_modifications": 0,
+      "sealed_scripts_byte_identical_expected": "36/36",
+      "lore_meta_py_anchor_invariante": true,
+      "sha_policy_31_compliance": true,
+      "phase_1_contract_files_immutable": [
+        "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.md",
+        "r18_6_rv3_is2_b_phase1_stat_budget_mechanical_effect_contract.json",
+        "r18_6_rv3_is2_b_phase1_final_closure_report.md",
+        "r18_6_rv3_is2_b_phase1_final_closure_report.json"
+      ]
+    },
+    "04_source_of_truth": {
+      "PM_verdict_reference": "Message_92_Section_16_Resume_Conditional_Phase_2A",
+      "PM_dispatched_scale_verbatim": {
+        "T1": 25,
+        "T2": 55,
+        "T3": 95,
+        "T4": 145,
+        "T5": 185
+      },
+      "PM_derivation_label_verbatim": "WORST_CASE_MAIN_STAT_FEASIBILITY",
+      "PM_status_per_tier_verbatim": "DESIGN_LOCKED"
+    },
+    "05_blocker_reference": {
+      "blocker_id": "IS2B_P2A_BLOCKER_01",
+      "blocker_description": "Absent numeric scale for `tier_reference_budget` prevented deterministic per-item envelope calculation for Phase 2A.",
+      "status": "RESOLVED_VIA_ADDENDUM_P1_N1",
+      "resolution_dispatch": "PM_Message_92"
+    },
+    "06_tier_reference_budget_scale": {
+      "T1": {
+        "tier_reference_budget": 25,
+        "status": "DESIGN_LOCKED",
+        "derivation": "WORST_CASE_MAIN_STAT_FEASIBILITY"
+      },
+      "T2": {
+        "tier_reference_budget": 55,
+        "status": "DESIGN_LOCKED",
+        "derivation": "WORST_CASE_MAIN_STAT_FEASIBILITY"
+      },
+      "T3": {
+        "tier_reference_budget": 95,
+        "status": "DESIGN_LOCKED",
+        "derivation": "WORST_CASE_MAIN_STAT_FEASIBILITY"
+      },
+      "T4": {
+        "tier_reference_budget": 145,
+        "status": "DESIGN_LOCKED",
+        "derivation": "WORST_CASE_MAIN_STAT_FEASIBILITY"
+      },
+      "T5": {
+        "tier_reference_budget": 185,
+        "status": "DESIGN_LOCKED",
+        "derivation": "WORST_CASE_MAIN_STAT_FEASIBILITY"
+      }
+    },
+    "07_monotonicity_invariant": {
+      "rule": "T1 < T2 < T3 < T4 < T5",
+      "observed": "25 < 55 < 95 < 145 < 185",
+      "pass": true
+    },
+    "08_worst_case_main_stat_feasibility_certification": {
+      "rule": "Per ciascun tier, `tier_reference_budget >= main_stat_band_max` del tier stesso, garantendo la fattibilita' del worst-case main_stat (Common · slot_band S · weapon_coefficient_if_applicable=1.00 · rarity_multiplier=1.00).",
+      "phase_1_bands_reference": {
+        "T1_band_max": 25,
+        "T2_band_max": 45,
+        "T3_band_max": 70,
+        "T4_band_max": 90,
+        "T5_band_max": 115
+      },
+      "feasibility_check": {
+        "T1": {
+          "budget": 25,
+          "band_max": 25,
+          "residual": 0,
+          "feasible": true
+        },
+        "T2": {
+          "budget": 55,
+          "band_max": 45,
+          "residual": 10,
+          "feasible": true
+        },
+        "T3": {
+          "budget": 95,
+          "band_max": 70,
+          "residual": 25,
+          "feasible": true
+        },
+        "T4": {
+          "budget": 145,
+          "band_max": 90,
+          "residual": 55,
+          "feasible": true
+        },
+        "T5": {
+          "budget": 185,
+          "band_max": 115,
+          "residual": 70,
+          "feasible": true
+        }
+      },
+      "all_tiers_feasible": true
+    },
+    "09_relationship_to_phase_1_contract": {
+      "phase_1_sections_referenced_read_only": [
+        "9_tier_budget_architecture",
+        "10_rarity_budget_architecture",
+        "15_slot_budget_bands_Q03_design_locked",
+        "16_armor_budget_formula",
+        "19_weapon_coefficient_architecture_Q01_Q02_design_locked",
+        "47_rounding_policy_Q04_design_locked"
+      ],
+      "phase_1_sections_modified": [],
+      "phase_1_verdicts_modified": [],
+      "phase_1_contract_status": "IMMUTABLE_PATCHED_PM_VERDICTS_INTEGRATED_Q01_TO_Q08_RESOLVED",
+      "addendum_relation": "ADDITIVE_NON_INVASIVE"
+    },
+    "10_application_scope": {
+      "corpus_target": "R18.6.RV3-IS2-B_Phase_2A_per_item_envelope_projection",
+      "corpus_units": 120,
+      "corpus_composition": {
+        "non_legendary_new_future": 108,
+        "preserved_reuse_valid": 6,
+        "preserved_reuse_conditional": 3,
+        "legendary_pm_selected": 3
+      },
+      "corpus_source_of_truth": "r18_6_rv3_is1_item_specification_roster_contract.json::roster_120_units",
+      "excluded_from_active_projection": {
+        "count": 3,
+        "reason": "DORMANT_CONTINGENCY_OUTSIDE_ACTIVE_ROSTER",
+        "documentation": "Reference r18_6_rv3_is2_a_phase2_full_identity_naming_lore_roster_rev4.json section 10_contingency_exclusion (count=3, content_status=DORMANT_NOT_GENERATED)"
+      }
+    },
+    "11_formula_recap_phase_1_section_16": {
+      "formula_verbatim": "tier_reference_budget × slot_band_multiplier × weapon_coefficient_if_applicable × rarity_multiplier = TOTAL_ITEM_BUDGET",
+      "each_multiplier_applied_once": true,
+      "internal_precision_decimal_places": 4,
+      "no_intermediate_rounding": true,
+      "final_rounding_method": "ROUND_HALF_UP_final_only",
+      "distribution_targets_downstream": [
+        "stat",
+        "effetti",
+        "utility",
+        "affix"
+      ],
+      "no_extra_component_outside_total": true
+    },
+    "12_anti_double_counting_reaffirmation": {
+      "phase_1_section_reference": "14_anti_double_counting_rule",
+      "reaffirmed_rules": [
+        "single_source_of_power",
+        "rarity_multiplier_applied_once_at_total_level",
+        "each_component_consumes_same_total",
+        "no_affix_replication_across_families",
+        "unspent_budget_does_not_become_extra_external_power"
+      ],
+      "tier_reference_budget_role": "SOLE_NUMERIC_BASE_OF_TOTAL_ITEM_BUDGET_FORMULA"
+    },
+    "13_rounding_policy_reaffirmation_Q04": {
+      "phase_1_section_reference": "47_rounding_policy_Q04_design_locked",
+      "internal_precision": 4,
+      "method": "ROUND_HALF_UP",
+      "not_banker_rounding": true,
+      "output_precisions": {
+        "flat_stats": "integer",
+        "percentages_decimals": 1,
+        "durations_decimals_seconds": 1,
+        "coefficients_decimals": 2,
+        "internal_budget_decimals": 4
+      },
+      "application_order_locked": [
+        "base_budget",
+        "slot_multiplier",
+        "weapon_coefficient",
+        "rarity_multiplier",
+        "budget_split",
+        "final_rounding"
+      ]
+    },
+    "14_stacking_and_proc_cap_reaffirmation_Q05": {
+      "phase_1_section_reference_1": "48_stacking_policy_Q05_design_locked",
+      "phase_1_section_reference_2": "35_proc_cap_rules",
+      "combined_proc_cap_pct": 45,
+      "combination_mode_procs": "ADDITIVE_BEFORE_CAP",
+      "no_multiplicative_composition_bypass": true,
+      "tier_reference_budget_does_not_authorize_bypass": true
+    },
+    "15_hard_cap_protections_immutabili_reaffirmation": {
+      "phase_1_section_reference": "36_hard_cap_protections_immutabili",
+      "fragments_cap": 5,
+      "mark_duration_hard_cap": 10,
+      "active_marks_hard_cap": 5,
+      "combined_proc_cap_pct": 45,
+      "focus_bonus_per_resource_segment": 2,
+      "pugnale_ritual_close_bonus_per_mark_application": 1,
+      "violability_by_tier_reference_budget_or_addendum_p1_n1": false
+    },
+    "16_fail_stop_conditions": {
+      "any_tier_reference_budget_value_deviation_from_25_55_95_145_185": "STOP_addendum_invalid",
+      "any_change_to_phase_1_contract_files": "STOP_immutability_violation",
+      "any_formula_alteration": "STOP_scope_violation",
+      "any_hard_cap_violation": "STOP_re_escalate_no_autonomous_decision",
+      "sealed_scripts_deviation_from_36_36_byte_identical": "STOP_integrity_violation",
+      "lore_meta_py_sha256_deviation": "STOP_anchor_violation"
+    },
+    "17_change_ledger": {
+      "phase_1_contract_md_changed": false,
+      "phase_1_contract_json_changed": false,
+      "phase_1_closure_report_md_changed": false,
+      "phase_1_closure_report_json_changed": false,
+      "addendum_files_created": [
+        "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.md",
+        "r18_6_rv3_is2_b_phase1_n1_tier_reference_budget_addendum.json",
+        "r18_6_rv3_is2_b_phase1_n1_closure_manifest.json"
+      ],
+      "prd_append_required": true
+    },
+    "18_closure_conditions": {
+      "addendum_status": "DESIGN_LOCKED_PM_VERBATIM_SAME_DISPATCH",
+      "phase_2a_authorization": "GRANTED_CONDITIONAL_ON_ADDENDUM_APPLIED",
+      "next_action": "R18.6.RV3-IS2-B_Phase_2A_per_item_budget_envelope_projection_execution",
+      "phase_2a_closure_manifest_authorized": false,
+      "phase_2a_prd_append_authorized": false,
+      "awaiting_pm_verdict": true
+    }
+  }
+}
