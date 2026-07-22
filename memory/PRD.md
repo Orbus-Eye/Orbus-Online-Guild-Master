@@ -4024,3 +4024,43 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 **Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.
+
+
+## R18.6.RV3-IS2-B · Phase 1 · Stat Budget & Mechanical Effect Contract · CLOSED · 2026-07-22T08:21:48Z
+
+**Gate**: `R18.6.RV3-IS2-B Phase 1`
+**PM final verdict**: `PM APPROVED · Q01-Q08 RESOLVED (10/10) · Phase 1 DESIGN_LOCKED via CLOSURE ARTIFACTS`
+**Regime**: DOCUMENTAL ONLY · zero code · zero DB · zero nuovi sigilli
+**Closure type**: `governance_semantic_lock` (non sealed technical lock)
+
+- IS2-B Phase 1 PM APPROVED / CLOSED
+- 57/57 sections
+- main stat = Intelligenza
+- secondary priority = Costituzione then Destrezza
+- focus coefficient = 1.00
+- balestra coefficient = 0.88
+- pugnale coefficient = 0.78
+- slot bands = 1.00 / 0.85 / 0.70 / 0.55
+- rarity multipliers preserved
+- round-half-up final-only
+- stacking policy locked
+- combined proc cap = 45%
+- hard caps preserved
+- utility/effect ceilings locked
+- anti-double-counting locked
+- mechanical set bonuses forbidden
+- Veste Legendary direction locked
+- Occhio Legendary direction locked
+- Balestra Legendary direction locked
+- item-level numeric assignments = 0
+- item-level final effects = 0
+- Phase 2 HOLD
+- Registry generation not authorized
+- Registry apply not authorized
+- NC1 HOLD
+- Gate 11 HOLD
+
+**Post-closure nominal accounting**: corpus attivo 111 (108 non-Leg + 3 Leg PM-selected) · 9 preserved · 3 dormant contingency (0 generated). Nessun valore numerico item-by-item introdotto.
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+**Anchor `lore_meta.py`**: hash `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIATO.

@@ -1,0 +1,172 @@
+{
+  "document_type": "is2_b_phase1_final_closure_report",
+  "gate_id": "R18.6.RV3-IS2-B_Phase_1",
+  "gate_title": "Stat Budget & Mechanical Effect Contract",
+  "regime": "DOCUMENTAL_ONLY_READ_ONLY_NO_APPLY",
+  "language": "it",
+  "closure_status": "CLOSED_PM_LOCKED",
+  "timestamp_closure": "2026-07-22T08:21:48Z",
+  "anchor_lore_meta_py_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "closure_points_31": {
+    "1_pm_verdict": "PM ha adjudicato Q01-Q08 (10 sub-questions) in same-dispatch. Blocking residue=0. Artefatto Phase 1 patchato deterministicamente, chiusura formale in questo report.",
+    "2_phase_1_closed": "CLOSED_PM_LOCKED. Nessuna riapertura senza Gate correttivo. Phase 2 NON avviata.",
+    "3_section_count": {"md_sections": 57, "json_sections": 57, "preserved_after_patch": true},
+    "4_main_stat_contract": {"main_stat": "Intelligenza", "priority": ["Intelligenza", "Costituzione", "Destrezza"], "soft_cap": 100, "tier_bands": {"T1": [10,25], "T2": [25,45], "T3": [45,70], "T4": [70,90], "T5": [90,115]}, "item_level_value_phase_1": null},
+    "5_secondary_stat_priority": {"costituzione": "secondary_defensive", "destrezza": "tertiary_utility_opportunistic", "forbidden": ["dex_main_cdv", "dual_int_dex", "retroactive_dex_to_int"]},
+    "6_tier_stat_bands": {"T1": [10,25], "T2": [25,45], "T3": [45,70], "T4": [70,90], "T5": [90,115]},
+    "7_slot_budget_bands_Q03_DESIGN_LOCKED": {
+      "S_primary_1.00": ["main_hand", "chest", "legs"],
+      "A_major_0.85": ["head", "shoulders", "hands", "feet"],
+      "B_standard_0.70": ["neck", "back", "waist", "off_hand"],
+      "C_utility_0.55": ["wrist", "ring", "accessory"]
+    },
+    "8_rarity_multipliers": {"common": 1.00, "uncommon": 1.15, "rare": 1.35, "epic": 1.60, "legendary": 1.85},
+    "9_focus_coefficient": {"value": 1.00, "status": "DESIGN_LOCKED"},
+    "10_balestra_coefficient_Q01": {"value": 0.88, "status": "DESIGN_LOCKED", "band_ratified": [0.85, 0.90], "pm_rationale_verbatim": "identità a distanza · sicurezza posizionale · precisione/dissipazione mirata · minore potenza vs focus · nessuna deriva Dex-primary"},
+    "11_pugnale_coefficient_Q02": {"value": 0.78, "status": "DESIGN_LOCKED", "band_ratified": [0.70, 0.80], "pm_rationale_verbatim": "rischio da prossimità · identità rituale/opportunistica · minore potenza strutturale vs focus · compensazione parziale per rischio ravvicinato · nessuna conversione Dex-primary", "ritual_close_bonus_cap_per_mark_application": 1, "refresh_does_not_reset": true},
+    "12_rounding_policy_Q04": {
+      "method": "ROUND_HALF_UP",
+      "not_banker_rounding": true,
+      "internal_precision_decimal_places": 4,
+      "no_intermediate_rounding": true,
+      "application_order": ["base_budget", "slot_multiplier", "weapon_coefficient", "rarity_multiplier", "budget_split", "final_rounding"],
+      "output_precisions": {"flat_stats": "integer", "percentages_decimals": 1, "durations_decimals_seconds": 1, "coefficients_decimals": 2, "internal_budget_decimals": 4},
+      "residues_first_to_main_stat_then_secondary_defensive": true
+    },
+    "13_stacking_policy_Q05": {
+      "passive_flat_stats": "ADDITIVE_within_budget_soft_cap_system_cap",
+      "same_unique_effect_nominal": "NON_STACKING_HIGHEST_EFFECTIVE_VALUE_WINS",
+      "same_family_default": "NON_STACKING_additive_only_with_ADD_WITHIN_CAP",
+      "durations_default": "REFRESH_no_auto_extension_EXTEND_WITHIN_HARD_CAP_optin",
+      "proc_chance": "ADDITIVE_BEFORE_CAP_45pct",
+      "legendary_same_identity": "NON_STACKING_highest_wins_no_multiplicative_synergy"
+    },
+    "14_utility_effect_budget_ceilings_Q07": {
+      "combined_ceiling_per_rarity_pct_MAXIMUM_CAPS": {"common": 10, "uncommon": 20, "rare": 30, "epic": 40, "legendary": 50},
+      "statistical_minimum_per_rarity_pct": {"common": 90, "uncommon": 80, "rare": 70, "epic": 60, "legendary": 50},
+      "utility_share_internal_non_legendary_max_pct": 40,
+      "utility_share_internal_legendary_max_pct": 50,
+      "unspent_budget_does_not_become_extra_external_power": true
+    },
+    "15_anti_double_counting_rule": {
+      "total_item_budget_single_source": true,
+      "components": ["base_stats", "mechanical_effects", "utility", "affix_contribution", "unique_legendary_contribution"],
+      "rarity_multiplier_applied_once_at_total_level": true,
+      "forbidden_formula": "rarity_multiplier + full_stat + full_effect + full_affix + free_unique_utility"
+    },
+    "16_affix_eligibility_boundary": {
+      "T1_slots": 1, "T2_slots": 2, "T3_slots": 3, "T4_slots": 4, "T5_slots": 5,
+      "overlay_family_occurrences": 140, "overlay_blueprint_units": 120,
+      "contract_type": "eligibility_not_assignment"
+    },
+    "17_effect_taxonomy_13": ["PASSIVE_STAT", "CONDITIONAL_STAT", "MARK_INTERACTION", "DRAIN_INTERACTION", "FRAGMENT_INTERACTION", "PAYOFF_UTILITY", "DISPEL_UTILITY", "ANTI_INCORPOREAL", "ANTI_SUMMON", "CHANNEL_MOBILITY", "RITUAL_PROTECTION", "WEAPON_IDENTITY_EFFECT", "LEGENDARY_UNIQUE_EFFECT"],
+    "18_mechanic_hard_caps_immutabili": {
+      "fragments_cap": 5, "mark_duration": 10, "active_marks": 5,
+      "combined_proc_cap_pct": 45,
+      "focus_bonus_per_resource_segment_max": 2,
+      "pugnale_ritual_close_bonus_per_mark_max": 1,
+      "violability": false
+    },
+    "19_boss_safeguards": {
+      "forbidden": ["direct_boss_nullification", "boss_immunity_bypass", "unconditional_summon_deletion", "ignore_boss_safeguard"],
+      "future_direction_only_for": "valid_boss_summoned_add_with_safeguard_condition_budget",
+      "schema_flag_required": "boss_safeguard_required=true_on_ANTI_SUMMON_DISPEL_UTILITY_ANTI_INCORPOREAL"
+    },
+    "20_forbidden_mechanics_incl_Q08": ["resource_cap_increase", "active_marks_gt_5", "mark_duration_gt_10", "unmarked_resource_generation", "direct_boss_nullification", "boss_safeguard_bypass", "p2w", "dual_int_dex_primary", "cross_class_optimal_item", "focus_bonus_gt_2_per_segment", "ritual_close_bonus_gt_1_per_mark", "untested_pvp_effects", "cross_phase_persistence", "random_full_resource_waste", "mechanical_set_bonuses_Q08_DESIGN_LOCKED"],
+    "21_anti_p2w": {
+      "can_be_sold_for_real_money": false,
+      "applies_to": ["combat_item", "progression_item", "ranking_item", "economy_impacting_item"],
+      "power_from_real_money_forbidden": true,
+      "conflict_resolution": "gameplay_integrity_wins"
+    },
+    "22_veste_direction_Q06a": {
+      "mechanical_identity_pillar": "RITUAL_CHANNEL_PROTECTION",
+      "budget_class": "LEGENDARY_DEFENSIVE_RITUAL",
+      "direzione_autorizzata_verbatim": ["protezione durante canalizzazione", "stabilità rituale", "resilienza tramite Costituzione", "riduzione rischio durante Drain"],
+      "vietato_verbatim": ["invulnerabilità", "immunità completa", "assorbimento illimitato", "annullamento totale delle interruzioni", "persistenza cross-phase", "superamento di cap"],
+      "status_phase_1": "DIRECTION_ONLY",
+      "effect_final": null, "effect_value": null, "proc_chance": null, "duration": null, "cooldown": null
+    },
+    "23_occhio_direction_Q06b": {
+      "mechanical_identity_pillar": "IDENTIFY_MARK_ORCHESTRATION",
+      "budget_class": "LEGENDARY_PRIMARY_CONTROL",
+      "direzione_autorizzata_verbatim": ["migliore orchestrazione Identify→Mark", "efficienza controllata del Drain", "interazione condizionale con Frammenti", "leggibilità bersaglio prioritario"],
+      "vietato_verbatim": ["aumento cap Frammenti oltre 5", "generazione Frammenti senza Marchio", "focus bonus oltre 2 per segment", "Marchi attivi oltre 5", "durata Marchio oltre 10", "proc combinato oltre 45%", "boss safeguard bypass"],
+      "balancing_note": "focus_resta_arma_primaria_legendary_non_deve_rendere_altre_famiglie_inutilizzabili",
+      "status_phase_1": "DIRECTION_ONLY",
+      "effect_final": null, "effect_value": null, "proc_chance": null, "duration": null, "cooldown": null
+    },
+    "24_balestra_direction_Q06c": {
+      "mechanical_identity_pillar": "RANGED_PRECISION_DISPEL",
+      "budget_class": "LEGENDARY_RANGED_UTILITY",
+      "direzione_autorizzata_verbatim": ["precisione rituale a distanza", "Marchio mirato", "dissipazione selettiva", "interazione anti-summon su bersagli validi"],
+      "vietato_verbatim": ["colpo garantito", "precisione assoluta", "eliminazione automatica evocazioni", "nullificazione diretta boss", "bypass immunità boss", "trasformazione in arma Dex-primary"],
+      "anti_summon_future_only_on": "valid_boss_summoned_add_with_safeguard_condition_budget",
+      "status_phase_1": "DIRECTION_ONLY",
+      "effect_final": null, "effect_value": null, "proc_chance": null, "duration": null, "cooldown": null
+    },
+    "25_set_bonus_prohibition_Q08": {
+      "mechanical_set_bonuses": "FORBIDDEN_DESIGN_LOCKED",
+      "not_authorized": ["2p_4p_6p_bonus", "effetto_per_equipaggiamento_multiplo", "set_progression", "set_exclusive_proc"],
+      "permitted": "cohesive_naming_families_without_mechanical_link_or_cumulative_bonus_or_joint_equipment_requirement"
+    },
+    "26_item_level_numeric_values_still_null": {
+      "main_stat_value": null,
+      "weapon_coefficient_value_item_level": null,
+      "base_budget": null,
+      "utility_budget": null,
+      "effect_budget": null,
+      "effect_value": null
+    },
+    "27_item_level_effects_still_null": {
+      "veste_effect_final": null,
+      "occhio_effect_final": null,
+      "balestra_leg_effect_final": null,
+      "proc_chance_all": null,
+      "duration_all": null,
+      "cooldown_all": null
+    },
+    "28_phase_2_remains_hold": {
+      "R18.6.RV3-IS2-B_Phase_2": "HOLD_NOT_AUTHORIZED",
+      "closure_phase_1_does_not_auto_authorize_phase_2": true,
+      "phase_2_requires_explicit_pm_authorization": true
+    },
+    "29_registry_generation_disabled": {
+      "registry_status_corpus_111": "NOT_GENERATED",
+      "registry_v3_item_generation_and_apply": "NOT_AUTHORIZED",
+      "registry_entries_created": 0,
+      "runtime_items_created": 0
+    },
+    "30_governance_evidence": {
+      "sealed_scripts_total": 36,
+      "sealed_scripts_byte_identical": 36,
+      "sealed_test_result": "6_passed",
+      "lore_meta_py_sha256_invariato": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "db_writes": 0,
+      "registry_applies": 0,
+      "tests_added_or_modified": 0,
+      "new_seals_added": 0,
+      "env_modifications": 0,
+      "rev4_md_json_modified": 0,
+      "phase2_closure_files_modified": 0,
+      "l1_closure_files_modified": 0,
+      "is1_chain_modified": 0,
+      "self_hash_embedded_files": 0
+    },
+    "31_explicit_stop": {
+      "R18.6.RV3-IS2-B_Phase_1": "CLOSED_PM_LOCKED",
+      "R18.6.RV3-IS2-B_Phase_2": "HOLD_NOT_AUTHORIZED",
+      "R18.6.RV3-NC1": "HOLD_NOT_AUTHORIZED",
+      "R18.6_Gate_11": "HOLD_NOT_AUTHORIZED",
+      "Registry_v3_Item_Generation_And_Apply": "NOT_AUTHORIZED",
+      "Monaco": "HOLD_NOT_AUTHORIZED",
+      "AFX2": "RESERVED_FUTURE_NOT_AUTHORIZED",
+      "IS2-A_branch": "LOCKED_IMMUTABLE_Phase_1_Phase_2_Rev4_L1",
+      "Cacciatore_del_Vuoto": "ACTIVE-DESIGN-READY_design_layer_only",
+      "awaiting_pm_verdict": true
+    }
+  }
+}
