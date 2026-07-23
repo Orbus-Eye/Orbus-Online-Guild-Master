@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-1",
+    "gate_name": "LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION",
+    "regime": "LOCAL ISOLATED ONLY · NO SHARED ENV APPLY · SHA §31 · Italian only · Phase 2",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "predecessor_locked": {"id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0", "status": "CLOSED · PM-LOCKED", "prd_sha_ref": "0012b0f83cbede393be205480306a2323615b17aff22144031aba2871fea0e93"},
+    "status": "IMPLEMENTED · READY-FOR-PM-CLOSURE",
+    "prd_delta": 0,
+    "sha_policy": "§31 · no self-hash embedded"
+  },
+  "scope_executed_vs_authorized": {
+    "authorized_items": 12,
+    "executed_items": 12,
+    "coverage_percent": 100,
+    "items": [
+      {"id": 1, "name": "idempotent provisioning command", "covered_by": ["provisioning_command.py::ProvisioningCommand.apply", "CLI --apply"], "tests": "test_provisioning_idempotency.py"},
+      {"id": 2, "name": "read-only verification command", "covered_by": [".verify", "CLI --verify"], "tests": "test_verification.py"},
+      {"id": 3, "name": "guarded rollback command", "covered_by": [".rollback", "CLI --rollback", "guardrail re-check"], "tests": "test_rollback.py"},
+      {"id": 4, "name": "collection creation in orbus_r16_rt2b_test", "covered_by": ["create_collection idempotent"], "tests": "test_provisioning_idempotency.py::test_apply_creates_collection_and_ttl_index"},
+      {"id": 5, "name": "TTL index creation on expires_at", "covered_by": ["create_index expireAfterSeconds=0"], "tests": "test_provisioning_idempotency.py + test_verification.py::test_verify_reports_healthy_state"},
+      {"id": 6, "name": "schema/field validation in test fixtures", "covered_by": ["provisioned_unique_db fixture", "MongoExpeditionRuntimeStateStore"], "tests": "test_cas_real.py · test_lease_real.py · test_dedup_real.py"},
+      {"id": 7, "name": "real Mongo adapter integration tests", "covered_by": ["MongoExpeditionRuntimeStateStore against Motor AsyncIOMotorClient"], "tests": "all test_*_real.py"},
+      {"id": 8, "name": "CAS tests", "covered_by": ["success + version conflict + fencing mismatch"], "tests": "test_cas_real.py (6 tests)"},
+      {"id": 9, "name": "lease/fencing tests", "covered_by": ["acquire + renew + release + reacquire"], "tests": "test_lease_real.py (4 tests)"},
+      {"id": 10, "name": "deduplication tests", "covered_by": ["idempotent no-op + EVENT_ID_PAYLOAD_MISMATCH + 10-retry"], "tests": "test_dedup_real.py (3 tests)"},
+      {"id": 11, "name": "concurrent mutation tests", "covered_by": ["asyncio.gather 4-way CAS + 3-way lease + 5-way isolation"], "tests": "test_concurrent_real.py (3 tests)"},
+      {"id": 12, "name": "cleanup and rollback verification", "covered_by": ["teardown DB residues = 0 + full-cycle apply/rollback/apply"], "tests": "test_cleanup.py (4) + test_rollback.py::test_full_cycle_*"}
+    ],
+    "scope_expansion": "none"
+  },
+  "files_added": {
+    "code_new": [
+      {"path": "/app/backend/app/stats/runtime/state_store/provisioning/__init__.py", "sha256": "df123a77acd3282cc1a440697753d2857ebbb5c0800e6b9f5a8a9a05b4ae4d5d", "lines": 50, "size_bytes": 1545, "role": "package_reexports", "change_type": "NEW_MODULE", "new_file": true, "existing_file_modified": false},
+      {"path": "/app/backend/app/stats/runtime/state_store/provisioning/guards.py", "sha256": "1a54479fad41cec8571c3bdb4b99d87d25b9a28937fe3282882ce54a62b95599", "lines": 114, "size_bytes": 3925, "role": "host_db_allowlist_guards", "change_type": "NEW_MODULE · VALIDATION_CHANGE", "new_file": true, "existing_file_modified": false},
+      {"path": "/app/backend/app/stats/runtime/state_store/provisioning/unique_run_id.py", "sha256": "1906abbd13dc92b8f0645e0ee38e15ed2ade80532193eb0ba900b5fa224bceac", "lines": 47, "size_bytes": 1379, "role": "unique_run_id_generator", "change_type": "NEW_MODULE", "new_file": true, "existing_file_modified": false},
+      {"path": "/app/backend/app/stats/runtime/state_store/provisioning/provisioning_command.py", "sha256": "8333a52e87007d152bf9d7d674eff9a6556254be087219f436e9c6b40986e817", "lines": 308, "size_bytes": 12263, "role": "idempotent_cli_provisioning", "change_type": "NEW_MODULE", "new_file": true, "existing_file_modified": false}
+    ],
+    "test_new": [
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/__init__.py", "sha256": "295158254785e7ff32ccea9b0de45ebb4e8272b48987ce17c7a8f9df204ad6d3", "lines": 12, "size_bytes": 479, "role": "package_marker", "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/conftest.py", "sha256": "2df5bfcb537152401b6653c8d639b168527cc501392014f5b54a74278eb61855", "lines": 121, "size_bytes": 3905, "role": "fixtures_string_only_no_client_leak", "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_guards.py", "sha256": "0a7e72200d860f24b4595ca2138b29031339efce8daae23c7af2fb627eed2fb2", "lines": 113, "size_bytes": 4619, "role": "test_only", "test_count": 18, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_provisioning_idempotency.py", "sha256": "a664b45ce6906d2b98276ec624023c08bc5bf4c17bf51ab641ec9664f344e330", "lines": 110, "size_bytes": 3719, "role": "test_only", "test_count": 4, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_verification.py", "sha256": "183d79a7f88fc7ff5e518e4b001e30302d0e729ce964e93879cedec0dd23c7eb", "lines": 68, "size_bytes": 2123, "role": "test_only", "test_count": 3, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_rollback.py", "sha256": "74ef39f53589ccc2d18b29311f1cb1ca313f340e458f7662840f2da9fc5beec4", "lines": 115, "size_bytes": 3596, "role": "test_only", "test_count": 6, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_cas_real.py", "sha256": "483984538fcdd649fc93615a1fb0f7b3e386d4ed688a641377668ba8289e85b7", "lines": 161, "size_bytes": 6044, "role": "test_only", "test_count": 6, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_lease_real.py", "sha256": "3eac9be71725ad9b4329809b905daf7d5ad8d7016eac4f6aaf9def14e3b29b42", "lines": 99, "size_bytes": 3457, "role": "test_only", "test_count": 4, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_dedup_real.py", "sha256": "e7311f439bbee056f85812c5a3b7e62342bd92f841b54982d2e91d4e1df3c4a5", "lines": 142, "size_bytes": 5168, "role": "test_only", "test_count": 3, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_concurrent_real.py", "sha256": "1a681c6124c201ab0e76c7868231f47db079e0daab76711a610ccfc38daa8eb2", "lines": 102, "size_bytes": 3598, "role": "test_only", "test_count": 3, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_cleanup.py", "sha256": "1daf1004c5f889384b57ffd7587d9421182f68c59db34425e87303899b0d911c", "lines": 69, "size_bytes": 2108, "role": "test_only", "test_count": 4, "new_file": true},
+      {"path": "/app/backend/tests/effect_engine/state_store/integration_real_mongo/test_performance.py", "sha256": "66d5914b2e7fb821c8824fc5e8a6931fda4e0d1c0bf6b10eb3ef96c8daa9b74f", "lines": 171, "size_bytes": 6460, "role": "test_only", "test_count": 4, "new_file": true}
+    ],
+    "counts": {"code": 4, "test": 12, "total": 16}
+  },
+  "files_existing_modified": {
+    "count": 0,
+    "list": []
+  },
+  "provisioning_cli": {
+    "entrypoint": "python -m app.stats.runtime.state_store.provisioning.provisioning_command",
+    "flags": ["--dry-run", "--apply", "--verify", "--rollback", "--host <uri>", "--db <name>", "--confirm"],
+    "mutually_exclusive_modes": ["--dry-run", "--apply", "--verify", "--rollback"],
+    "default_host": "mongodb://localhost:27017",
+    "explicit_target_output": ["[GUARD] Mongo host verified: localhost", "[GUARD] Database verified: <db>", "TARGET: host=<uri> db=<db>"],
+    "report_format": "JSON stdout with success/collection_created/ttl_index_created/ttl_index_verified/indexes_before/indexes_after"
+  },
+  "verification_cli": {
+    "mode": "--verify",
+    "dry_run": true,
+    "checks": ["collection presence", "TTL index name = expedition_runtime_states_expires_at_ttl", "expireAfterSeconds = 0", "key = {expires_at: 1}"],
+    "test_of_no_writes": "test_verification.py::test_verify_does_not_write"
+  },
+  "rollback_cli": {
+    "mode": "--rollback",
+    "dry_run_capable": true,
+    "guardrail_recheck_at_boundary": true,
+    "action": "dropCollection expedition_runtime_states (never dropDatabase from CLI)",
+    "idempotent": true,
+    "refuses_non_allowlisted_target": true
+  },
+  "guards": {
+    "verify_host_localhost": {"loopback_hosts": ["localhost", "127.0.0.1", "::1"], "fail_stop": "TARGET_ENVIRONMENT_REJECTED"},
+    "verify_not_orbus_r16": {"forbidden": ["orbus_r16"], "fail_stop": "FORBIDDEN_DATABASE_ORBUS_R16"},
+    "verify_database_allowlist": {"stable": "orbus_r16_rt2b_test", "it_regex": "^orbus_r16_rt2b_it_[a-z0-9_-]+$", "fail_stop": "TARGET_DATABASE_REJECTED"},
+    "test_coverage_test_count": 18,
+    "path_coverage_percent": 100
+  },
+  "idempotency_evidence": {
+    "test_apply_is_idempotent": "PASS",
+    "run_1": {"collection_created": true, "ttl_index_created": true, "ttl_index_verified": true},
+    "run_2": {"collection_created": false, "ttl_index_created": false, "ttl_index_verified": true},
+    "index_signature_stability_across_3_runs": "identical (test_apply_three_times_stable PASS)",
+    "PROVISIONING_IDEMPOTENCY_UNDERDEFINED_status": "RESOLVED_BY_INTEGRATION_TESTS"
+  },
+  "collection_creation_evidence_orbus_r16_rt2b_test": {
+    "collection_present_post_apply": true,
+    "ttl_index": {"name": "expedition_runtime_states_expires_at_ttl", "key": {"expires_at": 1}, "expireAfterSeconds": 0},
+    "additional_indexes": []
+  },
+  "ttl_index_verification": {
+    "index_count": 2,
+    "indexes": ["_id_ (native, key _id)", "expedition_runtime_states_expires_at_ttl (key {expires_at: 1}, expireAfterSeconds=0)"]
+  },
+  "real_mongo_adapter_integration_tests": {
+    "adapter_used": "MongoExpeditionRuntimeStateStore (from RT2-B-1A, non-wired)",
+    "backend": "motor.motor_asyncio.AsyncIOMotorClient",
+    "target_dbs": ["orbus_r16_rt2b_it_<unique_run_id>"],
+    "total_adapter_tests": 16,
+    "pass_count": 16,
+    "fail_count": 0
+  },
+  "test_suite_breakdown": {
+    "CAS": {"path": "test_cas_real.py", "count": 6, "pass": 6},
+    "lease_fencing": {"path": "test_lease_real.py", "count": 4, "pass": 4},
+    "deduplication": {"path": "test_dedup_real.py", "count": 3, "pass": 3},
+    "concurrent": {"path": "test_concurrent_real.py", "count": 3, "pass": 3},
+    "guards": {"path": "test_guards.py", "count": 18, "pass": 18},
+    "idempotency": {"path": "test_provisioning_idempotency.py", "count": 4, "pass": 4},
+    "verification": {"path": "test_verification.py", "count": 3, "pass": 3},
+    "rollback": {"path": "test_rollback.py", "count": 6, "pass": 6},
+    "cleanup": {"path": "test_cleanup.py", "count": 4, "pass": 4},
+    "performance": {"path": "test_performance.py", "count": 4, "pass": 4},
+    "total": {"count": 57, "pass": 57, "duration_seconds": 2.10}
+  },
+  "cleanup_verification": {
+    "teardown_pattern": "drop_database(<orbus_r16_rt2b_it_*>) in dedicated asyncio.run()",
+    "post_suite_it_db_residues": 0,
+    "no_orbus_r16_writes": true,
+    "no_orbus_r16_test_writes": true,
+    "all_it_databases_match_allowlist_regex": true
+  },
+  "performance_metrics": {
+    "sample_count_per_op": 50,
+    "environment": "localhost Mongo (no fsync durability)",
+    "measurements": {
+      "single_state_read": {"p50_ms": 0.17, "p95_ms": 0.21, "p99_ms": 0.45, "budget_p95_ms": 25, "status": "PASS"},
+      "cas_mutation": {"p50_ms": 0.25, "p95_ms": 0.30, "p99_ms": 0.33, "budget_p95_ms": 35, "status": "PASS"},
+      "lease_acquire": {"p50_ms": 0.62, "p95_ms": 0.68, "p99_ms": 0.98, "budget_p95_ms": 35, "status": "PASS"},
+      "lease_renew": {"p50_ms": 0.35, "p95_ms": 0.39, "p99_ms": 0.41, "budget_p95_ms": 35, "status": "PASS"},
+      "dedup_retry": {"p50_ms": 0.25, "p95_ms": 0.27, "p99_ms": 0.30, "budget_p95_ms": 25, "status": "PASS"}
+    },
+    "caveat": "local metrics do NOT authorize shared or live rollout"
+  },
+  "compatibility_evidence": {
+    "runtime_adapter_wiring": false,
+    "cdv_transient_state_enabled": false,
+    "feature_flags_activated": 0,
+    "expedition_service_changes": 0,
+    "adventurer_service_changes": 0,
+    "inventory_service_changes": 0,
+    "combat_service_changes": 0,
+    "mongo_client_singleton_unchanged": true,
+    "lifespan_changes": 0,
+    "app_factory_changes": 0,
+    "indexes_py_changes": 0,
+    "database_py_changes": 0
+  },
+  "governance_evidence": {
+    "sealed_integrity_tests": "6 passed",
+    "sealed_artifacts": "36/36 byte-identical",
+    "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "lore_meta_status": "invariant",
+    "baseline_chain_11_of_11_byte_identical": ["IS2-A", "IS2-B-P1", "IS2-B-P1-N1", "IS2-B-P2A", "IS2-B-P2B-1", "IS2-B-P2B-RT1", "IS2-B-P2B-RT2-P0", "IS2-B-P2B-RT2-A", "IS2-B-P2B-RT2-B-P0", "IS2-B-P2B-RT2-B-1A", "IS2-B-P2B-RT2-B-1B-P0"],
+    "rt2_a_files_unchanged_count": 38,
+    "rt2_b_1a_files_unchanged_count": 14,
+    "prd_sha_invariant": "0012b0f83cbede393be205480306a2323615b17aff22144031aba2871fea0e93",
+    "prd_delta": 0,
+    "new_seal": "NO"
+  },
+  "application_status": {
+    "application_code_modified_existing_files": 0,
+    "frontend_modifications": 0,
+    "openapi_modifications": 0,
+    "feature_flag_activation": 0,
+    "runtime_wiring": 0,
+    "registry_changes": 0,
+    "item_generation": 0,
+    "db_writes_outside_allowlist": 0,
+    "writes_to_orbus_r16": 0,
+    "writes_to_orbus_r16_test": 0,
+    "network_outside_localhost": 0,
+    "unbounded_receipt_growth": 0
+  },
+  "fail_stop_detection": {
+    "TARGET_ENVIRONMENT_REJECTED_tested": true,
+    "TARGET_DATABASE_REJECTED_tested": true,
+    "FORBIDDEN_DATABASE_ORBUS_R16_tested": true,
+    "MONGO_INDEX_OR_SCHEMA_CONFLICT_tested": "N/A (no incompatible pre-existing collection)",
+    "DB_SCOPE_VIOLATION_tested": true,
+    "PROVISIONING_NOT_IDEMPOTENT_tested": "no fail triggered (idempotency verified)",
+    "ROLLBACK_VALIDATION_FAILED_tested": "no fail triggered",
+    "RT2_A_REGRESSION": "none (136/136 PASS)",
+    "RT2_B_1A_REGRESSION": "none (91/91 PASS · 0 skip)",
+    "SCOPE_EXPANSION": "none"
+  },
+  "critical_status_updates": {
+    "PROVISIONING_IDEMPOTENCY_UNDERDEFINED": "RESOLVED_BY_INTEGRATION_TESTS",
+    "TARGET_DATABASE_UNDERDEFINED": "RESOLVED (local allowlist only)",
+    "MONGO_PERMISSION_MODEL_UNDERDEFINED": "RESOLVED_TRANSITIONALLY (LOCAL_TEST_ONLY)",
+    "MONITORING_BASELINE_MISSING": "ACKNOWLEDGED (non-blocking local)"
+  },
+  "recommendation": "RT2-B-1B-1 READY-FOR-PM-CLOSURE",
+  "explicit_stop": true
+}
