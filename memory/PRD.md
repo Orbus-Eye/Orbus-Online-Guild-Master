@@ -4307,3 +4307,35 @@ Classification: `LIBRARY_IMPLEMENTED · TESTED · DEFAULT-OFF · NOT_RUNTIME_WIR
 Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `35/35 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0). SHA di manifest, closure MD/JSON e PRD post dichiarati solo nel chat report (SHA Policy §31).
 
 Next gate: `RT2-B-P0 = PLANNED / HOLD / NOT AUTHORIZED`.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-P0 · TRANSIENT CLASS STATE STORE & MULTI-WORKER ARCHITECTURE · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · Italian_only · SHA Policy §31 · STRICT STOP · Phase 1
+**Gate Status**: `R18.6.RV3-IS2-B-P2B-RT2-B-P0 · CLOSED · PM-LOCKED`
+**PM Dispatch**: RT2-B-P0 PATCH + Formal Closure (Phase 1)
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- RT2-B-P0 PM APPROVED / CLOSED
+- PM questions resolved = 12/12
+- state store = dedicated Mongo collection
+- writer model = distributed lease + fencing token
+- consistency = atomic per expedition
+- event ordering = server authoritative
+- state mutation = CAS/versioned
+- gameplay state remains transient
+- new Mongo collection and TTL index are required
+- NO_DB_MIGRATION baseline is invalid for RT2-B
+- data backfill is not required
+- RT2-B-1A is the first code slice
+- collection/index provisioning is deferred to RT2-B-1B
+- no runtime wiring authorized
+- RT2-A remains default-OFF and unwired
+- RT2-C/D/E remain HOLD
+- Phase 2B assignment remains HOLD
+- Registry generation/apply not authorized
+
+Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `8/8 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A). SHA di manifest, closure MD/JSON, P0 patched MD/JSON, e PRD post dichiarati solo nel chat report (SHA Policy §31).
+
+Next gate: `RT2-B-1A = CONDITIONAL_GO_AWAITING_PHASE_2_DISPATCH` · `RT2-B-1B = PLANNED / HOLD / NOT AUTHORIZED`.

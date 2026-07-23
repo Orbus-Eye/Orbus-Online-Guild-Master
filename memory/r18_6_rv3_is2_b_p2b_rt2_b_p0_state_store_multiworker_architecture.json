@@ -1,55 +1,327 @@
 {
   "meta": {
     "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-P0",
-    "artifact_role": "STATE_STORE_MULTI_WORKER_ARCHITECTURE_JSON",
+    "artifact_role": "STATE_STORE_MULTI_WORKER_ARCHITECTURE_JSON_PATCHED",
     "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only · SHA Policy §31 · STRICT STOP",
-    "emission_date_utc": "2026-02",
+    "patch_date_utc": "2026-02",
     "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
-    "prd_reference_sha256_post_rt2_a": "240801dccfe046eda8673178a76ee78eab59d03cfee2f549a43e87af2fe1da6b",
+    "prd_reference_pre_p0_append": "240801dccfe046eda8673178a76ee78eab59d03cfee2f549a43e87af2fe1da6b",
     "sections_count": 40,
     "auto_ratified_pm_questions": false,
+    "pm_verdicts_applied_count": 12,
     "explicit_stop": true
+  },
+  "pm_verdict_applied_2026_02": {
+    "policy_note": "12/12 B0Q resolved verbatim by PM · integrated in sections 16/17/18/20/22/23/24/25/28/33/34/36/37",
+    "b0q_verdicts": {
+      "B0Q01": {
+        "title": "store technology",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "selected_option": "OPTION_2 · dedicated Mongo runtime-state collection",
+          "canonical_collection_name": "expedition_runtime_states",
+          "existing_expedition_document_extension": "NOT_SELECTED",
+          "redis_external_ephemeral_store": "NOT_SELECTED",
+          "process_local_production_store": "FORBIDDEN (fake process-local allowed only for unit and contract tests)"
+        }
+      },
+      "B0Q02": {
+        "title": "single-authoritative-writer",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "writer_model": "MODEL_A · distributed lease per expedition",
+          "stale_writer_protection": "fencing token MANDATORY",
+          "one_writer_per_expedition_at_a_time": true,
+          "atomic_mutation_filters": [
+            "expedition_id",
+            "state_version",
+            "lease_id",
+            "fencing_token",
+            "lease_expires_at"
+          ],
+          "stale_writer_after_pause_or_partition": "REJECTED (cannot mutate even after resume)",
+          "permanent_worker_expedition_affinity_required": false
+        }
+      },
+      "B0Q03": {
+        "title": "state ownership",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "ownership_scope": "one runtime-state document per expedition",
+          "adventurer_class_states": "keyed by adventurer_id",
+          "separated_ownership_for": [
+            "Marks",
+            "Drain executions",
+            "Fragments",
+            "resource_segment",
+            "focus_bonus_usage"
+          ],
+          "forbidden": [
+            "global class state cross-expedition",
+            "consumption of another adventurer's state",
+            "persistent state on character document"
+          ]
+        }
+      },
+      "B0Q04": {
+        "title": "CAS and versioning",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "state_version_type": "monotonic integer",
+          "initial_state_version": 1,
+          "successful_mutation_increment": 1,
+          "mutation_filter_min": [
+            "_id = expedition_id",
+            "state_version = expected",
+            "fencing_token = expected"
+          ],
+          "outcomes": {
+            "match": "atomic mutation",
+            "version_mismatch": "STATE_VERSION_CONFLICT",
+            "fencing_mismatch": "STALE_WRITER_REJECTED",
+            "partial_mutation": "FORBIDDEN"
+          },
+          "maximum_automatic_cas_retries": 3,
+          "retry_requires_fresh_state_read": true,
+          "no_automatic_retry_on": [
+            "invalid payload",
+            "invalid ownership",
+            "cap exceeded",
+            "expired fencing token",
+            "same event_id with different payload"
+          ]
+        }
+      },
+      "B0Q05": {
+        "title": "event ordering",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "state_changing_events_ordering": "total ordered per expedition (server-authoritative)",
+          "event_sequence_assignment": "atomic via accepted mutation",
+          "client_can_choose_authoritative_sequence": false,
+          "sequence_increment_on_accepted_mutation": "last_event_sequence + 1",
+          "retry_same_event_id_behavior": "no new sequence · returns prior result · no re-mutation",
+          "concurrent_events_serialization": "via CAS on expedition document"
+        }
+      },
+      "B0Q06": {
+        "title": "deduplication",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "dedup_key": "expedition_id + event_id",
+          "receipt_minimum_fields": [
+            "event_id",
+            "event_type",
+            "source_adventurer_id",
+            "payload_hash",
+            "assigned_event_sequence",
+            "result_code",
+            "state_version_after",
+            "processed_at"
+          ],
+          "same_event_id_same_payload_hash": "IDEMPOTENT_PRIOR_RESULT_RESPONSE",
+          "same_event_id_different_payload_hash": "EVENT_ID_PAYLOAD_MISMATCH · REJECT",
+          "receipt_retention": "same lifetime as expedition runtime-state document",
+          "receipt_bounded": true,
+          "receipt_max_per_expedition": "configurable · validate with benchmark BEFORE runtime integration",
+          "at_limit_behavior": "FAIL_CLOSED · no receipt eviction during active expedition"
+        }
+      },
+      "B0Q07": {
+        "title": "TTL & cleanup (baseline · not live authorization)",
+        "resolution": "SELECTED · BASELINE_ONLY",
+        "verdict_verbatim": {
+          "active_state_inactivity_ttl_hours": 6,
+          "completed_expedition_retention_hours": 24,
+          "cancelled_expedition_retention_hours": 24,
+          "deduplication_retention": "until state-document expiry",
+          "every_valid_mutation_updates": [
+            "updated_at",
+            "expires_at"
+          ],
+          "cleanup_policy": {
+            "normal_completion_or_cancellation": "terminal status + 24h TTL",
+            "orphan": "TTL cleanup",
+            "manual": "exceptional recovery only"
+          },
+          "values_note": "to be re-examined after real measurements"
+        }
+      },
+      "B0Q08": {
+        "title": "restart & failover",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "lease_duration_seconds": 30,
+          "renewal_interval_seconds": 10,
+          "grace_period_seconds": 5,
+          "each_valid_acquisition_increments_fencing_token": true,
+          "scenarios": {
+            "worker_crash_before_mutation": "no state change",
+            "worker_crash_after_atomic_mutation": "retry deduplicated by event_id",
+            "lease_expiry": "another worker may acquire with higher fencing_token",
+            "stale_worker_resumes": "mutation rejected"
+          },
+          "application_clock_alone_insufficient": true,
+          "acquisition_renewal_via_atomic_store_mutation": true
+        }
+      },
+      "B0Q09": {
+        "title": "migration classification (CRITICAL)",
+        "resolution": "TRIGGERED_AND_ADJUDICATED",
+        "verdict_verbatim": {
+          "no_db_migration_baseline_invalid_for_rt2_b": "TRIGGERED",
+          "clarification": {
+            "gameplay_state_semantics": "transient",
+            "physical_storage": "Mongo persistent collection with TTL",
+            "note": "Transient describes lifecycle, not absence of Mongo writes"
+          },
+          "classification": {
+            "NEW_TRANSIENT_COLLECTION_REQUIRED": true,
+            "NEW_TTL_INDEX_REQUIRED": true,
+            "DATA_BACKFILL_REQUIRED": false,
+            "PERSISTENT_CHARACTER_SCHEMA_CHANGE": false
+          },
+          "change_nature": "DB INFRASTRUCTURE / SCHEMA PROVISIONING CHANGE (not traditional data migration)",
+          "provisioning_gate": "RT2-B-1B (SEPARATE FUTURE GATE)",
+          "does_not_reopen": [
+            "RT1",
+            "RT2-A"
+          ],
+          "invalidates_only": "NO_DB_MIGRATION_REQUIRED hypothesis for stateful RT2-B/C branch"
+        }
+      },
+      "B0Q10": {
+        "title": "first RT2-B code slice",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-1A · STATE STORE CONTRACT & NON-WIRED ADAPTER FOUNDATION",
+          "authorized_scope": [
+            "ExpeditionRuntimeStateStore interface",
+            "state schemas",
+            "lease schemas",
+            "fencing-token validation",
+            "CAS result types",
+            "event receipt schemas",
+            "fake in-memory test store",
+            "Mongo adapter implementation with injected collection (NOT wired to runtime)",
+            "shared contract-test suite",
+            "unit tests with mocked Mongo collection",
+            "security and validation tests"
+          ],
+          "excluded_deferred_to_1B_or_later": [
+            "Mongo collection creation",
+            "TTL index creation",
+            "real DB integration tests",
+            "runtime wiring",
+            "expedition service changes",
+            "feature flag activation",
+            "Mark/Drain/Fragment gameplay execution",
+            "RT2-A wiring",
+            "public API changes"
+          ],
+          "hard_rule": "Mongo adapter MAY be implemented but MUST NOT be instantiated by runtime application"
+        }
+      },
+      "B0Q11": {
+        "title": "performance criteria",
+        "resolution": "SELECTED · TIERED",
+        "verdict_verbatim": {
+          "rt2_b_1a_criteria": {
+            "database_calls_in_tests": 0,
+            "network_calls_in_tests": 0,
+            "unbounded_memory_growth": 0,
+            "contract_test_behavior": "deterministic"
+          },
+          "rt2_b_1b_future_criteria": {
+            "single_state_read_p95_ms_max": 25,
+            "successful_cas_mutation_p95_ms_max": 35,
+            "lease_acquire_or_renew_p95_ms_max": 35,
+            "deduplicated_retry_p95_ms_max": 25,
+            "state_document_size_kib_max": 256,
+            "mongo_document_hard_limit_approach": "FORBIDDEN",
+            "unbounded_processed_event_growth": "FORBIDDEN"
+          },
+          "unreproducible_metrics_action": "STATE_STORE_PERFORMANCE_BASELINE_MISSING = BLOCKING for RT2-B-1B CLOSURE",
+          "thresholds_authorize_live_traffic": false
+        }
+      },
+      "B0Q12": {
+        "title": "operational dependency",
+        "resolution": "APPROVED_IN_PRINCIPLE · OPERATIONAL_APPROVAL_DEFERRED",
+        "verdict_verbatim": {
+          "reuse_existing_mongo_deployment": "APPROVED_IN_PRINCIPLE",
+          "new_external_service": "NOT_APPROVED",
+          "redis_required": false,
+          "message_broker_required": false,
+          "actual_operational_approval_for_new_collection": "DEFERRED_TO_RT2-B-1B (naming, permissions, backup policy, TTL behavior, monitoring, capacity, rollback, target env verification)"
+        }
+      }
+    },
+    "fail_stop_status": {
+      "SHARED_STATE_INFRASTRUCTURE_MISSING": "NOT_TRIGGERED (Mongo available)",
+      "ATOMIC_STATE_MUTATION_UNAVAILABLE": "NOT_TRIGGERED (find_one_and_update supports CAS via filters)",
+      "AUTHORITATIVE_WRITER_UNRESOLVED": "RESOLVED (lease + fencing token)",
+      "EVENT_ORDERING_UNDERDEFINED": "RESOLVED (CAS + server-authoritative sequence)",
+      "NO_DB_MIGRATION_BASELINE_INVALID": "TRIGGERED_AND_ADJUDICATED (resolved via separate RT2-B-1B provisioning gate; no apply in this gate)"
+    },
+    "architecture_summary": {
+      "store_technology": "OPTION_2 · Mongo dedicated collection expedition_runtime_states",
+      "writer_strategy": "MODEL_A · distributed lease + fencing token",
+      "consistency_model": "ATOMIC_PER_EXPEDITION",
+      "source_of_truth": "Mongo shared state document"
+    }
   },
   "section_01_executive_summary": {
     "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-P0",
     "title": "TRANSIENT CLASS STATE STORE & MULTI-WORKER COORDINATION ARCHITECTURE",
-    "outcome": "ARTIFACT_WRITTEN · PM_ADJUDICATION_REQUIRED · formal_closure=HOLD",
-    "state_store_recommended": "OPTION_2 · Mongo shared runtime-state documents · NEW_TRANSIENT_COLLECTION_REQUIRED",
-    "authoritative_writer_recommended": "MODEL_A · distributed lease via Mongo CAS + fencing token",
-    "consistency_model_default": "ATOMIC_PER_EXPEDITION for state-changing operations",
-    "migration_classification": "NEW_TRANSIENT_COLLECTION_REQUIRED (blocker for NO_DB_MIGRATION_REQUIRED baseline · PM decision required)",
-    "fail_stops_detected": [
-      "NO_DB_MIGRATION_BASELINE_INVALID (candidate blocker, PM adjudication)"
-    ],
-    "pm_open_questions": 12,
+    "outcome": "PATCHED · PM_VERDICTS_APPLIED · CLOSED_AT_PHASE_1_END",
+    "state_store_selected": "OPTION_2 · Mongo dedicated collection expedition_runtime_states",
+    "authoritative_writer_selected": "MODEL_A · distributed lease + fencing token",
+    "consistency_model_selected": "ATOMIC_PER_EXPEDITION",
+    "migration_classification": "NEW_TRANSIENT_COLLECTION_REQUIRED + NEW_TTL_INDEX_REQUIRED · DB SCHEMA PROVISIONING CHANGE · no data backfill",
+    "fail_stops_status": {
+      "SHARED_STATE_INFRASTRUCTURE_MISSING": "NOT_TRIGGERED (Mongo available)",
+      "ATOMIC_STATE_MUTATION_UNAVAILABLE": "NOT_TRIGGERED (find_one_and_update supports CAS via filters)",
+      "AUTHORITATIVE_WRITER_UNRESOLVED": "RESOLVED (lease + fencing token)",
+      "EVENT_ORDERING_UNDERDEFINED": "RESOLVED (CAS + server-authoritative sequence)",
+      "NO_DB_MIGRATION_BASELINE_INVALID": "TRIGGERED_AND_ADJUDICATED (resolved via separate RT2-B-1B provisioning gate; no apply in this gate)"
+    },
+    "pm_open_questions_resolved": "12/12",
     "rt2_a_wiring_status": "NOT_WIRED_UNCHANGED",
     "code_changes_this_gate": 0,
     "db_writes_this_gate": 0,
+    "collection_creation_this_gate": 0,
+    "index_creation_this_gate": 0,
     "runtime_wiring_this_gate": 0,
     "feature_flag_activation_this_gate": 0,
-    "openapi_changes_this_gate": 0
+    "openapi_changes_this_gate": 0,
+    "registry_changes_this_gate": 0,
+    "item_generation_this_gate": 0,
+    "next_gate_recommended": "R18.6.RV3-IS2-B-P2B-RT2-B-1A · STATE STORE CONTRACT & NON-WIRED ADAPTER FOUNDATION"
   },
   "section_02_scope": {
-    "included": [
-      "runtime-state schema definition (transient, non-persistent character state)",
-      "single-authoritative-writer architecture (4 models compared)",
-      "store technology options (4 options compared)",
-      "consistency / atomicity / CAS / versioning contract",
-      "event ordering & deduplication contract",
-      "TTL / cleanup / restart / recovery policy",
+    "included_documental": [
+      "runtime-state schema (transient)",
+      "single-authoritative-writer architecture (SELECTED = MODEL A)",
+      "store technology (SELECTED = OPTION 2)",
+      "consistency/atomicity/CAS/versioning contract",
+      "event ordering + deduplication contract",
+      "TTL/cleanup/restart/recovery policy",
       "failure matrix",
-      "migration classification (baseline sustainability)",
+      "migration reclassification (SCHEMA PROVISIONING CHANGE · split to RT2-B-1B)",
       "compatibility boundary (RT2-A remains unwired)",
-      "security & abuse analysis",
-      "observability event catalogue",
-      "test architecture plan (no code)",
-      "performance discovery",
-      "PM open questions (12)",
-      "first code-slice proposal (RT2-B-1)"
+      "security & abuse",
+      "observability catalogue",
+      "test architecture (planned · RT2-B-1A brings code)",
+      "performance discovery (tiered 1A/1B)",
+      "12 B0Q resolved verbatim",
+      "first code-slice proposal RT2-B-1A"
     ],
     "excluded_this_gate": [
       "any implementation code",
-      "any database write",
+      "any DB write",
+      "any collection creation",
+      "any index creation",
       "any migration",
       "any Registry change",
       "any OpenAPI change",
@@ -57,7 +329,7 @@
       "any runtime wiring of RT2-A library",
       "any infrastructure/config modification",
       "any new sealed artifact (NEW SEAL = NO)",
-      "any PRD append"
+      "any new unresolved B0Q"
     ]
   },
   "section_03_governance": {
@@ -67,7 +339,8 @@
     "explicit_stop": true,
     "sealed_integrity_required": "6 passed · 36/36 byte-identical",
     "anchor_invariant_required": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
-    "prd_invariant_required": "240801dccfe046eda8673178a76ee78eab59d03cfee2f549a43e87af2fe1da6b",
+    "prd_pre_append_reference": "240801dccfe046eda8673178a76ee78eab59d03cfee2f549a43e87af2fe1da6b",
+    "prd_append_idempotent_target_occurrence": 1,
     "baseline_chain_invariant_required": [
       "IS2-A",
       "IS2-B-P1",
@@ -82,24 +355,29 @@
   "section_04_source_chain": {
     "predecessors": [
       {
-        "gate": "R18.6.RV3-IS2-B-P2B-RT2-A",
-        "status": "CLOSED · PM-LOCKED",
-        "role": "stateless foundation library"
+        "gate": "RT2-A",
+        "status": "CLOSED · PM-LOCKED · IMMUTABLE"
       },
       {
-        "gate": "R18.6.RV3-IS2-B-P2B-RT2-P0",
-        "status": "CLOSED",
-        "role": "implementation readiness plan"
+        "gate": "RT2-P0",
+        "status": "CLOSED"
       },
       {
-        "gate": "R18.6.RV3-IS2-B-P2B-RT1",
-        "status": "CLOSED",
-        "role": "power calculation invariance baseline"
+        "gate": "RT1",
+        "status": "CLOSED"
       }
     ],
-    "successors_hold": [
+    "successors": [
       {
-        "gate": "RT2-B-1",
+        "gate": "RT2-B-1A",
+        "status": "CONDITIONAL_GO · awaiting Phase 2 dispatch"
+      },
+      {
+        "gate": "RT2-B-1B",
+        "status": "PLANNED · HOLD · NOT_AUTHORIZED"
+      },
+      {
+        "gate": "RT2-B gameplay integration",
         "status": "HOLD"
       },
       {
@@ -120,52 +398,39 @@
     "container_definition": {
       "dockerfile_present": false,
       "docker_compose_present": false,
-      "kubernetes_manifests_present": false,
-      "evidence": "no Dockerfile / docker-compose.y*ml / k8s manifest in /app tree"
+      "kubernetes_manifests_present": false
     },
-    "supervisor_config": {
-      "path": "/etc/supervisor/conf.d/supervisord.conf",
-      "backend_program": "backend",
-      "command_verbatim": "/root/.venv/bin/uvicorn server:app --host 0.0.0.0 --port 8001 --workers 1 --reload",
-      "workers_declared": 1,
-      "hot_reload": true
-    },
-    "external_url_env": "APP_URL=https://cc39e638-4b77-4974-85e8-2c6d820bc691.preview.emergentagent.com",
-    "kubernetes_ingress": "assumed (routing /api → 8001 by convention documented in project rules)",
-    "horizontal_scalability_status": "NOT_DETERMINED_IN_REPO · PM must clarify production topology"
+    "supervisor_backend_command_verbatim": "/root/.venv/bin/uvicorn server:app --host 0.0.0.0 --port 8001 --workers 1 --reload",
+    "workers_declared_preview": 1,
+    "hot_reload_preview": true,
+    "preview_single_worker_is_not_production_guarantee": true,
+    "horizontal_scalability_status": "NOT_DETERMINED_IN_REPO · lease+fencing design survives future scaling"
   },
   "section_06_worker_topology": {
-    "current_preview": {
-      "workers": 1,
-      "single_worker_environment": true,
-      "hot_reload": true,
-      "process_restarts_expected_frequency": "on code reload · during preview"
-    },
-    "production_topology_evidence": "NOT_EVIDENT_IN_REPO",
-    "workers_stateless": "UNKNOWN — assumed stateless-by-design (FastAPI + Motor async, no worker-local state visible)",
-    "requests_may_move_between_workers": "TRUE if workers>1 (Kubernetes Service or L4 LB round-robin default)",
+    "current_preview_workers": 1,
+    "workers_stateless_assumed": true,
+    "requests_may_move_between_workers_if_scaled": true,
     "expedition_spans_multiple_requests": true,
-    "worker_affinity_present": false
+    "worker_expedition_permanent_affinity_required": false,
+    "single_worker_degrades_to_trivial_single_writer": true
   },
   "section_07_available_shared_infrastructure": {
     "mongo": {
       "available": true,
-      "driver": "motor 3.3.1 (async) + pymongo 4.6.3",
+      "driver": "motor 3.3.1 + pymongo 4.6.3",
       "connection_env": "MONGO_URL",
       "ttl_indexes_used": true,
-      "atomic_operations_used": "find_one_and_update (68 occurrences in /app/backend/app)",
-      "transactions_used": "NONE (0 occurrences of start_session/start_transaction/with_transaction)",
-      "replica_set_confirmed": "UNKNOWN (transactions require RS; not currently exploited)"
+      "atomic_operations_used_count": 68,
+      "transactions_used_count": 0,
+      "replica_set_confirmed": "PM confirmation pending for RT2-B-1B"
     },
     "redis": {
-      "available": false,
-      "in_requirements": false,
-      "env_url_present": false
+      "available": false
     },
     "celery_or_rq_or_arq": {
       "available": false
     },
-    "message_broker_kafka_rabbit_nats": {
+    "message_broker": {
       "available": false
     },
     "apscheduler_or_cron_inside_app": {
@@ -173,665 +438,332 @@
     },
     "object_storage_tigris_s3_compat": {
       "available": true,
-      "role": "NOT_APPLICABLE_TO_STATE_STORE (large blob storage)"
+      "role": "NOT_APPLICABLE"
     },
-    "existing_shared_stores_used_by_app": [
-      "MongoDB (single primary infra)"
-    ]
+    "unique_shared_store_selected_as_source_of_truth": "MongoDB"
   },
   "section_08_expedition_lifecycle": {
     "current_endpoints": [
-      {
-        "method": "POST",
-        "route": "/api/expeditions",
-        "role": "start expedition"
-      },
-      {
-        "method": "POST",
-        "route": "/api/expeditions/preview",
-        "role": "preview"
-      },
-      {
-        "method": "GET",
-        "route": "/api/expeditions/last-completed",
-        "role": "read last"
-      },
-      {
-        "method": "POST",
-        "route": "/api/expeditions/... (replay)",
-        "role": "replay-eligibility"
-      },
-      {
-        "method": "GET",
-        "route": "/api/expeditions",
-        "role": "list"
-      },
-      {
-        "method": "GET",
-        "route": "/api/expeditions/{expedition_id}",
-        "role": "detail"
-      }
-    ],
-    "current_services": [
-      "start_expedition",
-      "_dispatch_expedition",
-      "_complete_one_expedition",
-      "complete_due_expeditions",
-      "_check_replay_eligibility",
-      "get_expedition"
+      "POST /api/expeditions",
+      "POST /api/expeditions/preview",
+      "GET /api/expeditions/last-completed",
+      "POST /api/expeditions/... (replay)",
+      "GET /api/expeditions",
+      "GET /api/expeditions/{expedition_id}"
     ],
     "current_persistence": [
       "db.expeditions",
       "db.expedition_members"
     ],
     "combat_phase_infrastructure_present": false,
-    "combat_phase_evidence": "grep combat_phase|combat_round|phase_id|round_id|turn_number = 0 matches",
-    "completion_model_current": "on-visit / polled via complete_due_expeditions (no external scheduler)",
     "class_event_submission_endpoint_present": false,
-    "class_event_endpoint_evidence": "NOT_PRESENT (RT2-B target)"
+    "current_completion_model": "on-visit via complete_due_expeditions (no external scheduler)"
   },
   "section_09_runtime_state_requirements": {
     "state_scope": [
-      "Marks (Marchi) per source adventurer",
-      "Drain (Drenaggio) execution runtime state",
-      "Fragments (Frammenti) per source adventurer",
-      "Resource segment id per source adventurer",
-      "Event deduplication keys",
-      "Class-state version per adventurer",
-      "Expedition ownership / writer identity"
+      "Marks",
+      "Drain executions",
+      "Fragments",
+      "resource_segment",
+      "event deduplication",
+      "class-state version",
+      "expedition ownership"
     ],
     "state_scope_excluded": [
       "final item effect values",
       "persistent character progression",
       "cross-expedition class state"
     ],
+    "cross_expedition_class_state": false,
     "cross_request_state_required": true,
-    "cross_worker_state_required": "TRUE (if production topology workers>1)",
+    "cross_worker_state_required": true,
     "state_ttl_bounded": true,
     "state_deletable_without_touching_character": true
   },
   "section_10_state_store_interface": {
-    "interface_name_candidate": "ExpeditionRuntimeStateStore (abstract)",
+    "interface_name": "ExpeditionRuntimeStateStore (abstract)",
+    "operations_count": 11,
     "operations": [
-      {
-        "name": "create_state",
-        "inputs": [
-          "expedition_id",
-          "initial_state",
-          "owner_lease_id"
-        ],
-        "outputs": [
-          "state_document",
-          "state_version=0"
-        ],
-        "atomicity": "INSERT_IF_NOT_EXISTS",
-        "idempotency": "duplicate create → return existing_state_reference no-op",
-        "conflict_result": "AlreadyExistsError",
-        "audit_event": "runtime_state_created",
-        "failure_code": "STATE_CREATE_CONFLICT"
-      },
-      {
-        "name": "get_state",
-        "inputs": [
-          "expedition_id"
-        ],
-        "outputs": [
-          "state_document"
-        ],
-        "atomicity": "SINGLE_READ",
-        "idempotency": "read-only",
-        "conflict_result": "NotFoundError if missing",
-        "audit_event": "runtime_state_read (sampled)",
-        "failure_code": "STATE_READ_FAILED"
-      },
-      {
-        "name": "compare_and_update",
-        "inputs": [
-          "expedition_id",
-          "expected_state_version",
-          "mutation_delta"
-        ],
-        "outputs": [
-          "new_state_version"
-        ],
-        "atomicity": "ATOMIC_CAS (single-document)",
-        "idempotency": "same-event guard via processed_event_keys (see apply_event_once)",
-        "conflict_result": "VersionConflictError (state_version mismatch)",
-        "audit_event": "runtime_state_updated | runtime_state_conflict",
-        "failure_code": "STATE_CAS_CONFLICT"
-      },
-      {
-        "name": "apply_event_once",
-        "inputs": [
-          "expedition_id",
-          "event_id",
-          "expected_state_version",
-          "state_mutation"
-        ],
-        "outputs": [
-          "applied=bool",
-          "new_state_version"
-        ],
-        "atomicity": "ATOMIC (dedup + CAS in single find_one_and_update)",
-        "idempotency": "duplicate event_id → no-op with prior result reference",
-        "conflict_result": "DuplicateEventNoOp | VersionConflictError",
-        "audit_event": "duplicate_event_suppressed | runtime_state_updated",
-        "failure_code": "STATE_DEDUP_NOOP | STATE_CAS_CONFLICT"
-      },
-      {
-        "name": "reserve_writer",
-        "inputs": [
-          "expedition_id",
-          "writer_worker_id",
-          "lease_ttl_seconds"
-        ],
-        "outputs": [
-          "lease_id",
-          "fencing_token",
-          "lease_expires_at"
-        ],
-        "atomicity": "ATOMIC (CAS on lease_holder=None OR lease_expired)",
-        "idempotency": "same writer re-acquires successfully",
-        "conflict_result": "LeaseHeldByOtherError",
-        "audit_event": "writer_lease_acquired | writer_lease_rejected",
-        "failure_code": "WRITER_LEASE_CONFLICT"
-      },
-      {
-        "name": "renew_writer_lease",
-        "inputs": [
-          "expedition_id",
-          "lease_id",
-          "fencing_token"
-        ],
-        "outputs": [
-          "new_lease_expires_at"
-        ],
-        "atomicity": "ATOMIC (CAS on lease_id+fencing_token match + not_expired)",
-        "idempotency": "renewal is idempotent within lease window",
-        "conflict_result": "LeaseInvalidatedError",
-        "audit_event": "writer_lease_renewed | writer_lease_rejected",
-        "failure_code": "WRITER_LEASE_INVALIDATED"
-      },
-      {
-        "name": "release_writer",
-        "inputs": [
-          "expedition_id",
-          "lease_id",
-          "fencing_token"
-        ],
-        "outputs": [
-          "released=bool"
-        ],
-        "atomicity": "ATOMIC (CAS)",
-        "idempotency": "duplicate release → no-op",
-        "conflict_result": "LeaseInvalidatedError (fencing mismatch → reject silently)",
-        "audit_event": "writer_lease_released",
-        "failure_code": "WRITER_LEASE_RELEASE_MISMATCH"
-      },
-      {
-        "name": "expire_state",
-        "inputs": [
-          "expedition_id"
-        ],
-        "outputs": [
-          "expired=bool"
-        ],
-        "atomicity": "ATOMIC (CAS on status)",
-        "idempotency": "duplicate expire → no-op",
-        "conflict_result": "StateNotFoundError | StateAlreadyExpired",
-        "audit_event": "runtime_state_expired",
-        "failure_code": "STATE_EXPIRE_NOOP"
-      },
-      {
-        "name": "delete_state",
-        "inputs": [
-          "expedition_id"
-        ],
-        "outputs": [
-          "deleted=bool"
-        ],
-        "atomicity": "SINGLE_DELETE",
-        "idempotency": "duplicate delete → no-op",
-        "conflict_result": "StateNotFoundError (silent)",
-        "audit_event": "runtime_state_deleted",
-        "failure_code": "STATE_DELETE_NOOP"
-      },
-      {
-        "name": "get_version",
-        "inputs": [
-          "expedition_id"
-        ],
-        "outputs": [
-          "state_version"
-        ],
-        "atomicity": "SINGLE_READ_PROJECTION",
-        "idempotency": "read-only",
-        "conflict_result": "NotFoundError",
-        "audit_event": "n/a",
-        "failure_code": "STATE_VERSION_NOT_FOUND"
-      },
-      {
-        "name": "health_check",
-        "inputs": [],
-        "outputs": [
-          "ok=bool",
-          "latency_ms"
-        ],
-        "atomicity": "SINGLE_PING",
-        "idempotency": "read-only",
-        "conflict_result": "InfrastructureUnavailable",
-        "audit_event": "runtime_state_infrastructure_unhealthy (rate-limited)",
-        "failure_code": "STATE_INFRA_UNAVAILABLE"
-      }
+      "create_state",
+      "get_state",
+      "compare_and_update",
+      "apply_event_once",
+      "reserve_writer",
+      "renew_writer_lease",
+      "release_writer",
+      "expire_state",
+      "delete_state",
+      "get_version",
+      "health_check"
     ],
-    "return_value_policy": "no raw database document exposure · sanitized DTOs only · state_version always exposed"
+    "mutation_side_filter_min": [
+      "expedition_id",
+      "state_version",
+      "lease_id",
+      "fencing_token"
+    ],
+    "adapter_authorized_in_rt2_b_1a": "Mongo adapter with INJECTED collection · NOT instantiated by runtime",
+    "return_value_policy": "no raw MongoDB document exposure · sanitized DTOs only · state_version always exposed"
   },
   "section_11_expedition_state_schema": {
-    "collection_name_candidate": "expedition_runtime_states",
-    "primary_key_candidate": "expedition_id (unique)",
+    "collection_name_canonical": "expedition_runtime_states",
+    "primary_key": "expedition_id (unique)",
     "fields": {
-      "expedition_id": {
-        "type": "string",
-        "required": true,
-        "unique_index": true
-      },
-      "state_version": {
-        "type": "int",
-        "monotonic": true,
-        "initial_value": 0
-      },
-      "owner_worker_or_lease_id": {
-        "type": "string | null",
-        "role": "writer identity"
-      },
-      "fencing_token": {
-        "type": "int (monotonic)",
-        "role": "invalidates stale writers"
-      },
-      "lease_expires_at": {
-        "type": "datetime UTC | null"
-      },
-      "created_at": {
-        "type": "datetime UTC"
-      },
-      "updated_at": {
-        "type": "datetime UTC"
-      },
-      "expires_at": {
-        "type": "datetime UTC (TTL index candidate)"
-      },
-      "runtime_status": {
-        "type": "enum {active, completing, completed, expired, cancelled}",
-        "sticky": true
-      },
-      "loadout_snapshot_version": {
-        "type": "int",
-        "cross_ref": "RT2-A LoadoutSnapshot"
-      },
-      "adventurer_class_states": {
-        "type": "map<adventurer_id, ClassStateDoc>"
-      },
-      "processed_event_keys": {
-        "type": "set<event_id> (bounded ring)",
-        "eviction": "sliding window"
-      }
+      "expedition_id": "string · unique index",
+      "state_version": "int monotonic · initial=1",
+      "owner_worker_or_lease_id": "string | null",
+      "fencing_token": "int monotonic",
+      "lease_expires_at": "datetime UTC | null",
+      "created_at": "datetime UTC",
+      "updated_at": "datetime UTC",
+      "expires_at": "datetime UTC · TTL index candidate",
+      "runtime_status": "enum {active, completing, completed, expired, cancelled}",
+      "loadout_snapshot_version": "int · reserved for future RT2-A wiring",
+      "adventurer_class_states": "map<adventurer_id, ClassStateDoc>",
+      "processed_event_keys": "bounded ring (B0Q06 · fail-closed)"
     },
     "field_final_item_effect_values": {
-      "included": false,
-      "note": "excluded by mandate §7"
+      "included": false
     },
-    "size_bounds_estimate": {
-      "per_expedition_kilobytes": "1..8 KB estimated · scales with adventurer count and active_marks / drain executions"
-    }
+    "size_bound_kib_max": 256
   },
   "section_12_cdv_class_state_schema": {
     "map_key": "adventurer_id",
     "fields_per_adventurer": {
       "adventurer_id": "string",
-      "active_marks": "list[MarkDoc] (cap ≤ 5)",
+      "active_marks": "list[MarkDoc] · cap ≤ 5",
       "active_drain_executions": "list[DrainDoc]",
-      "fragment_count": "int (cap ≤ 5)",
+      "fragment_count": "int · cap ≤ 5",
       "resource_segment_id": "string | null",
-      "focus_bonus_usage": "int per resource_segment_id (cap ≤ 2)",
-      "class_state_version": "int (monotonic)"
+      "focus_bonus_usage": "map<segment, int> · cap ≤ 2",
+      "class_state_version": "int monotonic"
     },
-    "invariants": [
+    "invariants_verbatim": [
       "cross_expedition_class_state = false",
-      "phase_end reset = fragment_count → 0",
-      "expedition_end reset = fragment_count → 0",
+      "phase_end reset → fragment_count = 0",
+      "expedition_end reset → fragment_count = 0",
       "overflow = discarded"
     ]
   },
   "section_13_mark_state": {
-    "doc_shape": {
-      "mark_id": "string",
-      "application_id": "string (unique per application)",
-      "source_adventurer_id": "string",
-      "target_id": "string",
-      "created_at": "datetime UTC",
-      "expires_at": "datetime UTC (created_at + 10s)",
-      "ritual_close_used": "bool (default false)",
-      "mark_version": "int"
-    },
     "hard_locks_verbatim": [
       "active Marks ≤ 5 per source adventurer",
       "Mark per source-target ≤ 1",
       "duration ≤ 10 seconds",
       "automatic eviction = false"
     ],
-    "responsibilities": {
-      "cap_5_enforcement": "store-side CAS on adventurer_class_states.active_marks length (single-document CAS on state_version)",
-      "unique_source_target": "store-side check within adventurer_class_states.active_marks pre-append",
-      "refresh_behavior": "refresh replaces prior application_id atomically; expiry timestamp reset; expires_at = now+10s",
-      "duplicate_simultaneous_over_cap": "second CAS attempt fails on state_version mismatch → retry sees updated cap and refuses if cap==5",
-      "expiration_handling": "on-read: expired marks filtered by expires_at < now (soft-eviction on read); on-write: pruned atomically before append",
-      "retry_handling": "same event_id via apply_event_once → no-op with prior result"
-    }
+    "enforcement_mechanism": "single find_one_and_update with CAS on {state_version, fencing_token} · pre-write pruning of expired + append",
+    "refresh_behavior": "atomically replaces application_id · resets expires_at to now+10s",
+    "retry_dedup": "same event_id → apply_event_once no-op (B0Q06)"
   },
   "section_14_drain_state": {
-    "doc_shape": {
-      "drain_execution_id": "string",
-      "source_adventurer_id": "string",
-      "target_id": "string",
-      "required_mark_application_id": "string",
-      "started_at": "datetime UTC",
-      "completed_at": "datetime UTC | null",
-      "runtime_status": "enum {in_progress, resolved, cancelled, expired}",
-      "resolution_version": "int",
-      "reward_resolved": "bool (default false)"
-    },
     "rt1_verbatim_preserved": [
       "own active Mark required at start = true",
       "own active Mark required at completion = true",
       "Drain consumes Mark = false",
       "one resolution per execution id = true"
     ],
-    "double_prevention": {
-      "double_completion": "CAS on {drain_execution_id, runtime_status: in_progress, completed_at: null} → transition to resolved atomically",
-      "double_reward": "reward_resolved=true set atomically in the same CAS transition; retry sees reward_resolved=true and no-ops",
-      "completion_after_mark_expiry": "at CAS time, check required_mark_application_id present in adventurer_class_states.active_marks AND (mark.expires_at > now) → else reject as MarkExpiredAtCompletion",
-      "retry_new_resolution": "apply_event_once with event_id keyed on drain_execution_id → duplicate no-op with prior result"
-    }
+    "double_completion_prevention": "CAS on {drain_execution_id, runtime_status: in_progress, completed_at: null, state_version, fencing_token}",
+    "double_reward_prevention": "reward_resolved=true set atomically in the same CAS transition",
+    "post_mark_expiry_completion": "rejected at CAS as MarkExpiredAtCompletion"
   },
   "section_15_fragment_state": {
-    "invariants": {
+    "invariants_verbatim": {
       "owner": "source adventurer",
       "cap": 5,
       "phase_start_reset": 0,
       "phase_end_reset": 0,
       "expedition_end_reset": 0,
       "overflow_policy": "discarded",
-      "focus_bonus_max_per_resource_segment": 2
+      "focus_bonus_cap_per_resource_segment": 2
     },
-    "atomicity": {
-      "gain": "CAS on adventurer_class_states.fragment_count with min(current+delta, 5)",
-      "spend": "CAS with precondition fragment_count>=cost · reject if insufficient",
-      "reset": "unconditional set fragment_count=0 within CAS on state_version",
-      "resource_segment_opening": "CAS set resource_segment_id + zero focus_bonus_usage[new_segment]",
-      "resource_segment_closing": "CAS clear resource_segment_id · retain historical focus_bonus_usage until phase_end reset",
-      "focus_bonus_usage": "CAS increment focus_bonus_usage[segment] up to 2 · reject if already 2"
-    }
+    "atomicity_via_cas_with_state_version_and_fencing": true
   },
   "section_16_authoritative_writer_models": {
-    "MODEL_A_distributed_lease_per_expedition": {
-      "source_of_truth": "shared store (Mongo document with lease_holder + fencing_token)",
-      "writer_selection": "first successful CAS on lease_holder=None|expired",
-      "lease_behavior": "TTL-based · renewal by CAS on fencing_token match",
-      "failover": "expired lease is claimable by next worker · fencing_token guards stale writers",
-      "retry_handling": "retry acquires new lease if prior fencing_token invalidated",
-      "ordering_guarantee": "per-expedition serial (only lease-holder mutates)",
-      "infrastructure_dependency": "Mongo CAS + Mongo clock or app-server clock (with skew tolerance)",
-      "operational_complexity": "MEDIUM",
-      "performance_impact": "1 CAS per acquire + 1 CAS per renewal + 1 CAS per mutation (well within Mongo p95)",
-      "data_loss_risk": "LOW (fencing_token prevents stale-writer partial writes)",
-      "migration_impact": "requires new collection with lease fields OR extension of existing expedition doc",
-      "agent_recommendation": "RECOMMENDED_PRIMARY (subject to PM decision on B0Q02)"
+    "pm_selected": "MODEL_A",
+    "MODEL_A_distributed_lease_plus_fencing": {
+      "selected": true,
+      "lease_ttl_seconds": 30,
+      "renewal_interval_seconds": 10,
+      "grace_period_seconds": 5,
+      "fencing_token_mandatory": true,
+      "acquisition_via_atomic_store_mutation": true,
+      "one_writer_per_expedition_at_a_time": true
     },
-    "MODEL_B_shared_atomic_state_no_persistent_writer": {
-      "source_of_truth": "shared Mongo document",
-      "writer_selection": "any worker with valid expected_state_version → optimistic concurrency",
-      "lease_behavior": "N/A",
-      "failover": "trivial (any worker can proceed)",
-      "retry_handling": "bounded retries on VersionConflictError",
-      "ordering_guarantee": "per-document serial via state_version (contention may cause more retries)",
-      "infrastructure_dependency": "Mongo CAS only",
-      "operational_complexity": "LOW",
-      "performance_impact": "higher retry churn under contention · acceptable if per-expedition contention is low (single-user driven)",
-      "data_loss_risk": "LOW (CAS prevents lost updates)",
-      "migration_impact": "requires state_version field on state document",
-      "agent_recommendation": "STRONG_ALTERNATIVE (may be sufficient if lease overhead is unwarranted · B0Q02 decision)"
+    "MODEL_B_shared_atomic_state_no_lease": {
+      "selected": false,
+      "reason_not_selected": "fencing token is required invariant per PM verdict"
     },
-    "MODEL_C_queue_actor_ownership_per_expedition": {
-      "source_of_truth": "queue/broker-managed actor",
-      "writer_selection": "single actor instance per expedition_id partition key",
-      "lease_behavior": "actor lifecycle",
-      "failover": "actor supervisor rehydrates from persisted checkpoint",
-      "retry_handling": "at-least-once delivery + idempotent event handling",
-      "ordering_guarantee": "STRONG per-partition (per-expedition)",
-      "infrastructure_dependency": "message broker + actor runtime (Kafka, RabbitMQ, NATS, or custom)",
-      "operational_complexity": "HIGH",
-      "performance_impact": "very low steady-state, but adds hop latency",
-      "data_loss_risk": "MEDIUM (depends on broker durability + actor checkpoint discipline)",
-      "migration_impact": "requires broker introduction — NOT AVAILABLE IN CURRENT STACK",
-      "agent_recommendation": "REJECTED_FOR_THIS_GATE · violates §12 principle (no new tech without evidence)"
+    "MODEL_C_queue_actor_ownership": {
+      "selected": false,
+      "reason_not_selected": "no broker in stack"
     },
-    "MODEL_D_single_worker_affinity_with_recovery": {
-      "source_of_truth": "worker-local memory + persistent recovery checkpoint",
-      "writer_selection": "sticky routing by expedition_id → single worker",
-      "lease_behavior": "N/A (worker owns partition)",
-      "failover": "worker crash → recovery loads checkpoint into new worker",
-      "retry_handling": "in-flight requests replayed from checkpoint",
-      "ordering_guarantee": "STRONG within worker",
-      "infrastructure_dependency": "L7 routing with consistent hashing OR ingress annotation for session affinity",
-      "operational_complexity": "MEDIUM_HIGH (requires infra config)",
-      "performance_impact": "low (local memory access)",
-      "data_loss_risk": "MEDIUM (worker crash window between checkpoints)",
-      "migration_impact": "requires ingress config + checkpoint collection",
-      "agent_recommendation": "REJECTED_FOR_PRIMARY · viable only if PM confirms ingress supports consistent hashing AND accepts checkpoint cadence risk (documented as B0Q02 option)"
+    "MODEL_D_single_worker_affinity": {
+      "selected": false,
+      "reason_not_selected": "additive infra dependency not present"
     }
   },
   "section_17_store_technology_options": {
-    "OPTION_1_redis_shared_ephemeral": {
-      "availability_in_current_stack": false,
-      "atomic_cas_support": true,
-      "ttl_support": true,
-      "deduplication_support": true,
-      "multi_worker_safety": true,
-      "restart_recovery": "requires Redis persistence config (AOF/RDB) — not present",
-      "db_migration_requirement": false,
-      "new_collection_requirement": false,
-      "operational_dependency": "NEW infrastructure (Redis server + connection env + monitoring)",
-      "rollback_difficulty": "LOW (drop dependency)",
-      "production_suitability": "HIGH_IF_INTRODUCED · but violates §12 (no new tech without evidence justifying introduction)",
-      "recommendation": "REJECTED_THIS_GATE · reconsider only if PM authorizes stack expansion"
+    "pm_selected": "OPTION_2",
+    "OPTION_1_redis": {
+      "selected": false,
+      "reason": "not available in stack"
     },
-    "OPTION_2_mongo_shared_runtime_state_documents": {
-      "availability_in_current_stack": true,
-      "atomic_cas_support": true,
-      "ttl_support": true,
-      "deduplication_support": "yes, via processed_event_keys bounded set + application_id uniqueness",
-      "multi_worker_safety": true,
-      "restart_recovery": "state persists across restarts; TTL cleans stale states",
-      "db_migration_requirement": "NEW_COLLECTION_REQUIRED (expedition_runtime_states) + TTL index",
-      "new_collection_requirement": true,
-      "operational_dependency": "Mongo (already primary infra)",
-      "rollback_difficulty": "LOW (drop collection + code)",
-      "production_suitability": "HIGH (Mongo CAS pattern already used 68× in codebase)",
-      "recommendation": "RECOMMENDED_PRIMARY · aligns with §12"
+    "OPTION_2_mongo_dedicated_collection": {
+      "selected": true,
+      "canonical_collection_name": "expedition_runtime_states",
+      "ttl_index_required": true,
+      "cas_via_find_one_and_update": true
     },
     "OPTION_3_existing_expedition_document_extension": {
-      "availability_in_current_stack": true,
-      "atomic_cas_support": true,
-      "ttl_support": "partial (would require expedition TTL contract change · currently not TTL'd)",
-      "deduplication_support": "yes (embedded processed_event_keys)",
-      "multi_worker_safety": true,
-      "restart_recovery": "persists with expedition lifecycle",
-      "db_migration_requirement": "BACKWARD_COMPATIBLE_EXISTING_DOCUMENT_EXTENSION (additive fields · no schema break)",
-      "new_collection_requirement": false,
-      "operational_dependency": "Mongo",
-      "rollback_difficulty": "MEDIUM (embedded fields harder to remove cleanly than dropping a collection)",
-      "production_suitability": "MEDIUM_HIGH · concerns: document size growth, index contention on hot fields, mixing transient + persistent semantics on a single doc",
-      "recommendation": "STRONG_ALTERNATIVE · viable if PM prefers zero-new-collection (B0Q01)"
+      "selected": false,
+      "reason": "PM prefers separation between transient state and persistent character/expedition documents"
     },
-    "OPTION_4_process_local_fake_store_test_only": {
-      "availability_in_current_stack": true,
-      "atomic_cas_support": "in-process only",
-      "ttl_support": "in-memory timer",
-      "deduplication_support": "in-memory set",
-      "multi_worker_safety": false,
-      "restart_recovery": false,
-      "db_migration_requirement": false,
-      "new_collection_requirement": false,
-      "operational_dependency": "none",
-      "rollback_difficulty": "N/A",
-      "production_suitability": "TEST_ONLY (mandated §3 · process-local NOT production safe)",
-      "recommendation": "APPROVED_FOR_TEST_FIXTURES_ONLY"
+    "OPTION_4_process_local_fake_store": {
+      "selected_for_tests_only": true
     }
   },
   "section_18_recommended_architecture": {
-    "state_store": "OPTION_2 (Mongo shared runtime-state documents) · alternative OPTION_3 (existing expedition doc extension) contingent on PM B0Q01",
-    "authoritative_writer": "MODEL_A (distributed lease with Mongo CAS + fencing token) · alternative MODEL_B (pure CAS optimistic concurrency) contingent on PM B0Q02",
-    "consistency_model": "ATOMIC_PER_EXPEDITION for: Fragment gain/spend · Drain completion · Mark cap validation · event deduplication",
-    "atomicity_primitive": "Mongo find_one_and_update with filter including expected_state_version and fencing_token",
-    "event_ordering": "TOTAL ORDER PER EXPEDITION via monotonic state_version",
-    "event_deduplication": "apply_event_once via processed_event_keys ring · size-bounded · TTL-bound",
-    "ttl_cleanup": "TTL index on expires_at · retention windows configurable per PM approval",
-    "migration_classification": "NEW_TRANSIENT_COLLECTION_REQUIRED (Option 2) OR BACKWARD_COMPATIBLE_EXISTING_DOCUMENT_EXTENSION (Option 3) · B0Q09",
-    "rt2_a_wiring": "NOT_IN_THIS_GATE · loadout_snapshot_version field reserved for future integration",
-    "justification_summary": "Mongo is the only shared infra present · already uses find_one_and_update 68× · TTL indexes already in use · zero new tech introduced."
+    "selected_architecture": "OPTION_2 + MODEL_A + ATOMIC_PER_EXPEDITION",
+    "atomic_primitive": "find_one_and_update with filter {_id: expedition_id, state_version: expected, fencing_token: expected} + $inc state_version + $set mutation + $currentDate updated_at",
+    "event_ordering": "TOTAL ORDER PER EXPEDITION via monotonic state_version + server-authoritative event_sequence",
+    "event_deduplication": "receipt (event_id · payload_hash · sequence · result_code · state_version_after · processed_at)",
+    "ttl": "index on expires_at",
+    "rt2_a_wiring": "NOT_IN_THIS_GATE",
+    "loadout_snapshot_version_reserved": true
   },
   "section_19_consistency_model": {
-    "classification": [
-      {
-        "operation": "Fragment gain/spend",
-        "class": "ATOMIC_PER_EXPEDITION"
-      },
-      {
-        "operation": "Drain completion",
-        "class": "ATOMIC_PER_EXPEDITION"
-      },
-      {
-        "operation": "Mark application + cap validation",
-        "class": "ATOMIC_PER_EXPEDITION"
-      },
-      {
-        "operation": "event deduplication",
-        "class": "ATOMIC_PER_EXPEDITION"
-      },
-      {
-        "operation": "runtime_state_read (get_state, get_version)",
-        "class": "READ_ONLY_STALE_ALLOWED (sub-second staleness tolerated in read paths)"
-      },
-      {
-        "operation": "writer_lease_acquire / renew / release",
-        "class": "STRONG_CONSISTENCY (single lease holder)"
-      },
-      {
-        "operation": "state_expiry via TTL",
-        "class": "EVENTUAL_CONSISTENCY_ACCEPTABLE (Mongo TTL background thread every ~60s)"
-      },
-      {
-        "operation": "audit event emission",
-        "class": "EVENTUAL_CONSISTENCY_ACCEPTABLE"
-      }
+    "atomic_per_expedition_ops": [
+      "Fragment gain/spend",
+      "Drain completion",
+      "Mark application + cap validation",
+      "event deduplication"
     ],
-    "atomic_per_expedition_operations_count": 4,
-    "atomic_per_expedition_operations_confirmed_mandatory": true
+    "atomic_per_expedition_ops_count": 4,
+    "strong_consistency_ops": [
+      "writer_lease acquire/renew/release"
+    ],
+    "read_only_stale_allowed_ops": [
+      "get_state",
+      "get_version"
+    ],
+    "eventual_consistency_acceptable_ops": [
+      "TTL expiry sweep",
+      "audit event emission"
+    ]
   },
   "section_20_atomicity_and_cas": {
-    "contract": {
-      "expected_state_version": "int (client-declared before mutation)",
-      "candidate_state_version": "int (server-computed post-mutation = expected+1)",
-      "atomic_op": "find_one_and_update({expedition_id, state_version=expected}, {$inc: {state_version:1}, $set: mutation, $currentDate: {updated_at:true}})",
-      "conflict_response": "return None from find_one_and_update → raise VersionConflictError",
-      "bounded_retry_default": {
-        "max_attempts": 3,
-        "backoff_ms_base": 25,
-        "backoff_strategy": "exponential jitter"
-      }
+    "contract_verbatim_b0q04": {
+      "state_version_type": "monotonic integer",
+      "initial_state_version": 1,
+      "successful_mutation_increment": 1,
+      "mutation_filter_min": [
+        "_id = expedition_id",
+        "state_version = expected",
+        "fencing_token = expected"
+      ],
+      "outcomes": {
+        "match": "atomic mutation",
+        "version_mismatch": "STATE_VERSION_CONFLICT",
+        "fencing_mismatch": "STALE_WRITER_REJECTED",
+        "partial_mutation": "FORBIDDEN"
+      },
+      "maximum_automatic_cas_retries": 3,
+      "retry_requires_fresh_state_read": true,
+      "no_automatic_retry_on": [
+        "invalid payload",
+        "invalid ownership",
+        "cap exceeded",
+        "expired fencing token",
+        "same event_id with different payload"
+      ]
     },
-    "monotonic_state_version": true,
-    "successful_mutation_increments_by_1": true,
-    "version_mismatch_yields_no_partial_mutation": true,
-    "max_retry_default_pm_reviewable": true,
-    "backoff_strategy_default": "exponential-jitter",
-    "non_retryable_events": [
-      "explicit integrity violations (same event_id with different payload)",
-      "cross-adventurer state mutations",
-      "cross-expedition mutation attempts"
-    ],
-    "worker_interrupted_mid_mutation": "Mongo single-document CAS is atomic; if the client dies before receiving ack, the mutation may still commit — subsequent apply_event_once with the same event_id is a no-op reflecting the applied result."
+    "no_partial_mutation_on_conflict": true,
+    "worker_interrupted_mid_mutation": "single-document CAS is atomic; if client dies before ack, mutation may commit; apply_event_once with same event_id is a no-op with prior result"
   },
   "section_21_versioning": {
-    "state_version_type": "monotonic integer",
-    "starts_at": 0,
+    "state_version": "monotonic integer · initial=1",
     "class_state_version_per_adventurer": true,
     "loadout_snapshot_version_reserved": true,
     "resolution_version_on_drain": true,
     "mark_version_on_mark": true
   },
   "section_22_event_ordering": {
-    "guarantee_per_expedition": "TOTAL ORDER via monotonic state_version",
-    "guarantee_per_adventurer": "TOTAL ORDER within adventurer_class_states via class_state_version",
-    "guarantee_per_target": "N/A (target is a read-only reference)",
-    "guarantee_per_event_type": "N/A (types interleave under expedition ordering)",
-    "state_changing_events_total_ordered_per_expedition_required": true,
-    "weaker_model_rejected_reason": "Marks/Drain/Fragments determinism cannot be proven under weaker-than-total ordering without adding vector clocks or CRDTs · out of scope"
+    "contract_verbatim_b0q05": {
+      "state_changing_events_ordering": "total ordered per expedition (server-authoritative)",
+      "event_sequence_assignment": "atomic via accepted mutation",
+      "client_can_choose_authoritative_sequence": false,
+      "sequence_increment_on_accepted_mutation": "last_event_sequence + 1",
+      "retry_same_event_id_behavior": "no new sequence · returns prior result · no re-mutation",
+      "concurrent_events_serialization": "via CAS on expedition document"
+    },
+    "weaker_ordering_rejected": true
   },
   "section_23_event_deduplication": {
-    "event_shape": {
-      "event_id": "string (client or server generated; server-generated preferred for security)",
-      "expedition_id": "string",
-      "source_adventurer_id": "string",
-      "event_type": "enum (mark_apply, mark_refresh, drain_start, drain_complete, fragment_gain, fragment_spend, phase_end, expedition_end, resource_segment_open, resource_segment_close, focus_bonus_use)",
-      "event_sequence": "int (per-expedition monotonic)",
-      "created_at": "datetime UTC"
-    },
-    "deduplication_key": "event_id",
-    "retention_period_default": "expedition lifetime + 5 minutes (subject to B0Q06)",
-    "duplicate_response": "IDEMPOTENT_NOOP with prior result reference",
-    "replay_response": "IDEMPOTENT_NOOP",
-    "out_of_order_response": "reject with EventSequenceRejectedError if event_sequence < last_applied_sequence",
-    "sequence_gap_response": "buffered up to bounded window OR rejected depending on B0Q05",
-    "same_event_id_different_payload_response": "INTEGRITY_VIOLATION_REJECT"
+    "contract_verbatim_b0q06": {
+      "dedup_key": "expedition_id + event_id",
+      "receipt_minimum_fields": [
+        "event_id",
+        "event_type",
+        "source_adventurer_id",
+        "payload_hash",
+        "assigned_event_sequence",
+        "result_code",
+        "state_version_after",
+        "processed_at"
+      ],
+      "same_event_id_same_payload_hash": "IDEMPOTENT_PRIOR_RESULT_RESPONSE",
+      "same_event_id_different_payload_hash": "EVENT_ID_PAYLOAD_MISMATCH · REJECT",
+      "receipt_retention": "same lifetime as expedition runtime-state document",
+      "receipt_bounded": true,
+      "receipt_max_per_expedition": "configurable · validate with benchmark BEFORE runtime integration",
+      "at_limit_behavior": "FAIL_CLOSED · no receipt eviction during active expedition"
+    }
   },
   "section_24_lease_and_ownership": {
-    "included_if_model_a": true,
-    "lease_shape": {
-      "lease_id": "string (uuid4)",
-      "owner_id": "string (worker id / request id)",
-      "acquired_at": "datetime UTC",
-      "expires_at": "datetime UTC (acquired_at + lease_ttl_seconds)",
-      "renewed_at": "datetime UTC | null",
-      "lease_version": "int monotonic",
-      "fencing_token": "int monotonic (increments on every acquisition or renewal that resets ownership)"
+    "contract_verbatim_b0q08": {
+      "lease_duration_seconds": 30,
+      "renewal_interval_seconds": 10,
+      "grace_period_seconds": 5,
+      "each_valid_acquisition_increments_fencing_token": true,
+      "scenarios": {
+        "worker_crash_before_mutation": "no state change",
+        "worker_crash_after_atomic_mutation": "retry deduplicated by event_id",
+        "lease_expiry": "another worker may acquire with higher fencing_token",
+        "stale_worker_resumes": "mutation rejected"
+      },
+      "application_clock_alone_insufficient": true,
+      "acquisition_renewal_via_atomic_store_mutation": true
     },
-    "default_lease_ttl_seconds_proposal": 30,
-    "renewal_before_expiry_percentage_proposal": "50%",
-    "grace_period_proposal_seconds": 3,
-    "fencing_token_required": true,
-    "expired_lease_behavior": "claimable by next worker; expired holder's fencing_token becomes invalid",
-    "double_writer_prevention": "every mutation CAS includes fencing_token match; stale writer's mutation rejected",
-    "clock_skew_tolerance_pm_reviewable": true,
-    "recovery": "no persistence needed beyond lease document itself; on worker crash, lease expires naturally"
+    "fencing_token_mandatory": true
   },
   "section_25_ttl_and_cleanup": {
-    "state_ttl_default_seconds": "expedition_completion_at + 300 (5 min post-completion)",
-    "completed_expedition_retention_seconds": 300,
-    "cancelled_expedition_retention_seconds": 300,
-    "deduplication_key_retention": "aligned with state TTL",
-    "orphan_cleanup": "TTL index on expires_at drives cleanup · no scheduler",
-    "restart_cleanup": "N/A (state persists via Mongo)",
-    "manual_recovery_operation": "documented — admin endpoint HOLD until RT2-B code slice",
-    "cross_expedition_class_state_persistence": false
+    "contract_verbatim_b0q07": {
+      "active_state_inactivity_ttl_hours": 6,
+      "completed_expedition_retention_hours": 24,
+      "cancelled_expedition_retention_hours": 24,
+      "deduplication_retention": "until state-document expiry",
+      "every_valid_mutation_updates": [
+        "updated_at",
+        "expires_at"
+      ],
+      "cleanup_policy": {
+        "normal_completion_or_cancellation": "terminal status + 24h TTL",
+        "orphan": "TTL cleanup",
+        "manual": "exceptional recovery only"
+      },
+      "values_note": "to be re-examined after real measurements"
+    },
+    "cross_expedition_class_state_persistence": false,
+    "note": "baseline only · not live authorization · re-examine post real measurements"
   },
   "section_26_restart_and_recovery": {
-    "worker_crash_before_mutation": "no state change · client retry sees prior state_version · idempotent no-op",
-    "worker_crash_after_mutation_before_response": "state change committed atomically · client retry via apply_event_once sees duplicate event · no-op with prior result",
-    "process_restart_expected": "hot-reload in preview · production topology TBD",
     "state_survives_process_restart": true,
     "checkpoint_infrastructure_required": false,
-    "recovery_playbook_placeholder": "documented in RT2-B code slice deliverable"
+    "worker_crash_before_mutation": "no state change",
+    "worker_crash_after_atomic_mutation": "retry deduplicated by event_id",
+    "lease_expiry": "other worker acquires with higher fencing_token",
+    "stale_worker_resume": "mutation rejected · STALE_WRITER_REJECTED"
   },
   "section_27_failure_matrix": [
     {
@@ -839,345 +771,175 @@
       "expected_behavior": "no state change",
       "retry_permitted": true,
       "state_mutation_result": "no-op",
-      "player_visible_result": "operation retried transparently",
+      "player_visible_result": "silent retry",
       "audit_event": "n/a",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
-      "scenario": "worker crash after mutation before response",
-      "expected_behavior": "state committed",
+      "scenario": "worker crash after atomic mutation",
+      "expected_behavior": "committed",
       "retry_permitted": true,
-      "state_mutation_result": "committed once, retry no-op",
-      "player_visible_result": "operation acknowledged on retry",
-      "audit_event": "duplicate_event_suppressed on retry",
+      "state_mutation_result": "committed once · retry no-op",
+      "player_visible_result": "ack on retry",
+      "audit_event": "duplicate_event_suppressed",
       "manual_recovery_required": false,
-      "data_loss_risk": "NONE (idempotent contract)"
+      "data_loss_risk": "NONE"
     },
     {
       "scenario": "duplicate HTTP request",
-      "expected_behavior": "second request → no-op",
+      "expected_behavior": "second → no-op with prior result",
       "retry_permitted": true,
-      "state_mutation_result": "no-op with prior result reference",
-      "player_visible_result": "same result echoed",
+      "state_mutation_result": "no-op",
+      "player_visible_result": "echo",
       "audit_event": "duplicate_event_suppressed",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
       "scenario": "message redelivery",
-      "expected_behavior": "same as duplicate request",
+      "expected_behavior": "same as duplicate",
       "retry_permitted": true,
       "state_mutation_result": "no-op",
-      "player_visible_result": "same result",
+      "player_visible_result": "echo",
       "audit_event": "duplicate_event_suppressed",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
-      "scenario": "lease expiration during mutation",
-      "expected_behavior": "next mutation rejected via fencing_token mismatch",
+      "scenario": "lease expiration mid-mutation",
+      "expected_behavior": "STALE_WRITER_REJECTED via fencing mismatch",
       "retry_permitted": true,
       "state_mutation_result": "rejected",
-      "player_visible_result": "retry against fresh lease succeeds or fails deterministically",
+      "player_visible_result": "retry with fresh lease deterministic",
       "audit_event": "writer_lease_expired",
       "manual_recovery_required": false,
       "data_loss_risk": "LOW"
     },
     {
       "scenario": "shared-store timeout",
-      "expected_behavior": "operation aborts before commit",
+      "expected_behavior": "abort before commit",
       "retry_permitted": true,
       "state_mutation_result": "no-op",
-      "player_visible_result": "temporary failure surfaced with retry-safe error",
-      "audit_event": "runtime_state_read_failed | runtime_state_infrastructure_unhealthy",
+      "player_visible_result": "retry-safe error",
+      "audit_event": "runtime_state_read_failed",
       "manual_recovery_required": false,
       "data_loss_risk": "LOW"
     },
     {
       "scenario": "state version conflict",
-      "expected_behavior": "bounded retry with fresh version read",
+      "expected_behavior": "STATE_VERSION_CONFLICT · bounded retry (max 3)",
       "retry_permitted": true,
-      "state_mutation_result": "eventually succeeds or exhaust retries",
-      "player_visible_result": "success or safe error",
+      "state_mutation_result": "eventually succeed or safe error",
+      "player_visible_result": "ok or safe error",
       "audit_event": "runtime_state_conflict",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
       "scenario": "missing expedition state",
-      "expected_behavior": "reject as StateNotFoundError",
+      "expected_behavior": "StateNotFoundError",
       "retry_permitted": false,
       "state_mutation_result": "no-op",
-      "player_visible_result": "explicit not-found error",
+      "player_visible_result": "explicit not-found",
       "audit_event": "runtime_state_read_failed",
-      "manual_recovery_required": "MAYBE (if unexpected)",
+      "manual_recovery_required": "MAYBE",
       "data_loss_risk": "PM_INVESTIGATION"
     },
     {
       "scenario": "corrupted state document",
-      "expected_behavior": "reject read + emit alert · block mutations",
+      "expected_behavior": "read reject + alert · block mutations",
       "retry_permitted": false,
       "state_mutation_result": "no-op",
       "player_visible_result": "explicit corruption error",
-      "audit_event": "runtime_state_read_failed with corruption_reason_code",
+      "audit_event": "runtime_state_read_failed(corruption)",
       "manual_recovery_required": true,
-      "data_loss_risk": "SESSION_ONLY (transient state, character persistent state unaffected)"
+      "data_loss_risk": "SESSION_ONLY"
     },
     {
       "scenario": "expedition cancellation race",
       "expected_behavior": "runtime_status CAS to cancelled · subsequent mutations rejected",
       "retry_permitted": false,
       "state_mutation_result": "no-op post-cancel",
-      "player_visible_result": "cancellation acknowledged",
+      "player_visible_result": "cancel ack",
       "audit_event": "runtime_state_cancelled",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
       "scenario": "phase-end reset race",
-      "expected_behavior": "phase-end event is total-ordered · subsequent fragment_gain rejected until next phase_start",
+      "expected_behavior": "phase-end totally ordered · post-reset fragment_gain rejected until next phase_start",
       "retry_permitted": true,
       "state_mutation_result": "reset applied atomically",
-      "player_visible_result": "reset visible next state read",
+      "player_visible_result": "reset visible next read",
       "audit_event": "class_state_reset",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     },
     {
       "scenario": "two simultaneous Drain completions",
-      "expected_behavior": "first CAS wins · second rejected as DuplicateEventNoOp OR VersionConflict → retry sees resolved=true → no-op",
+      "expected_behavior": "first CAS wins · second → DuplicateEventNoOp or VersionConflict → retry sees reward_resolved=true → no-op",
       "retry_permitted": true,
       "state_mutation_result": "single resolution · single reward",
-      "player_visible_result": "single reward emitted",
+      "player_visible_result": "single reward",
       "audit_event": "duplicate_event_suppressed",
       "manual_recovery_required": false,
       "data_loss_risk": "NONE"
     }
   ],
   "section_28_migration_classification": {
-    "candidate_classifications": [
-      "RUNTIME_ONLY_SHARED_EPHEMERAL",
-      "BACKWARD_COMPATIBLE_EXISTING_DOCUMENT_EXTENSION",
-      "NEW_TRANSIENT_COLLECTION_REQUIRED",
-      "EXTERNAL_SHARED_STORE_REQUIRED"
-    ],
-    "selected_classification_agent_recommendation": "NEW_TRANSIENT_COLLECTION_REQUIRED (Option 2 path)",
-    "alternative_classification_if_pm_prefers": "BACKWARD_COMPATIBLE_EXISTING_DOCUMENT_EXTENSION (Option 3 path)",
-    "no_db_migration_baseline_conflict": true,
-    "no_db_migration_baseline_action": "REGISTER_AS_FAIL_STOP_CANDIDATE_NO_DB_MIGRATION_BASELINE_INVALID · report_completed · implementation_halted · migration_not_created_in_this_gate",
-    "collection_name_proposal": "expedition_runtime_states",
-    "ttl_index_proposal": {
-      "field": "expires_at",
-      "expireAfterSeconds": 0,
-      "note": "already a proven pattern in codebase — /app/backend/app/core/indexes.py"
+    "verdict_verbatim_b0q09": {
+      "no_db_migration_baseline_invalid_for_rt2_b": "TRIGGERED",
+      "clarification": {
+        "gameplay_state_semantics": "transient",
+        "physical_storage": "Mongo persistent collection with TTL",
+        "note": "Transient describes lifecycle, not absence of Mongo writes"
+      },
+      "classification": {
+        "NEW_TRANSIENT_COLLECTION_REQUIRED": true,
+        "NEW_TTL_INDEX_REQUIRED": true,
+        "DATA_BACKFILL_REQUIRED": false,
+        "PERSISTENT_CHARACTER_SCHEMA_CHANGE": false
+      },
+      "change_nature": "DB INFRASTRUCTURE / SCHEMA PROVISIONING CHANGE (not traditional data migration)",
+      "provisioning_gate": "RT2-B-1B (SEPARATE FUTURE GATE)",
+      "does_not_reopen": [
+        "RT1",
+        "RT2-A"
+      ],
+      "invalidates_only": "NO_DB_MIGRATION_REQUIRED hypothesis for stateful RT2-B/C branch"
     },
+    "collection_name_canonical": "expedition_runtime_states",
+    "ttl_index_field": "expires_at",
+    "ttl_index_pattern_reference": "already proven in /app/backend/app/core/indexes.py",
     "backfill_required": false,
-    "persistent_field_addition_required": false
+    "persistent_character_schema_change": false,
+    "provisioning_gate_name": "R18.6.RV3-IS2-B-P2B-RT2-B-1B (separate future gate · NOT AUTHORIZED IN THIS DISPATCH)"
   },
   "section_29_compatibility_boundary": {
-    "class_state_feature_flags_all_disabled_current_behavior_unchanged": true,
-    "rt2_a_library_remains_unwired": true,
+    "cdv_transient_state_enabled_current": false,
+    "item_effect_engine_enabled_current": false,
+    "rt2_a_runtime_wiring_current": false,
+    "current_runtime_behavior_unchanged_when_flags_off": true,
     "legacy_expeditions_no_state_store_dependency": true,
     "legacy_items_no_class_state_hooks": true,
     "rt1_baseline_power_calculation_unchanged": true,
-    "rt2_a_and_rt2_b_wired_in_p0": false
+    "rt2_a_and_rt2_b_wired_in_phase_1": false
   },
   "section_30_security_and_abuse": {
-    "threats_analyzed": [
-      {
-        "threat": "client-forged event IDs",
-        "mitigation": "server-generated event_id (uuid4) · never trust client-provided ID for state mutation"
-      },
-      {
-        "threat": "event replay",
-        "mitigation": "processed_event_keys ring + apply_event_once idempotency"
-      },
-      {
-        "threat": "event sequence manipulation",
-        "mitigation": "server assigns event_sequence · client cannot inject arbitrary values"
-      },
-      {
-        "threat": "cross-adventurer state mutation",
-        "mitigation": "authorization check: source_adventurer_id ∈ expedition.member_ids AND owned by requesting guild"
-      },
-      {
-        "threat": "cross-expedition state access",
-        "mitigation": "expedition_id lookup + owner_guild_id ownership check"
-      },
-      {
-        "threat": "lease theft",
-        "mitigation": "fencing_token per acquisition; lease_id must match owner_id + fencing_token"
-      },
-      {
-        "threat": "state version tampering",
-        "mitigation": "state_version is server-authoritative · client-supplied expected_state_version compared but never written verbatim"
-      },
-      {
-        "threat": "over-cap Fragment injection",
-        "mitigation": "CAS with min(current+delta, 5) enforced server-side · client-declared cap ignored"
-      },
-      {
-        "threat": "foreign Mark consumption",
-        "mitigation": "required_mark_application_id must belong to same source_adventurer_id · CAS pre-check"
-      },
-      {
-        "threat": "duplicate Drain reward",
-        "mitigation": "reward_resolved boolean set atomically in the same CAS transition"
-      }
-    ],
-    "all_mutations_server_authoritative": true
+    "threats_mitigated_count": 10,
+    "all_mutations_server_authoritative": true,
+    "server_generated_event_id": true,
+    "cross_adventurer_mutation_blocked": true,
+    "cross_expedition_access_blocked": true,
+    "lease_theft_blocked_by_fencing_token": true,
+    "state_version_tampering_blocked": true,
+    "over_cap_fragment_injection_blocked": true,
+    "foreign_mark_consumption_blocked": true,
+    "duplicate_drain_reward_blocked": true
   },
   "section_31_observability": {
-    "events_catalogue": [
-      {
-        "event_id": "runtime_state_created",
-        "severity": "INFO",
-        "sampling": "100% (bounded frequency)",
-        "min_fields": [
-          "expedition_id",
-          "created_at",
-          "owner_lease_id"
-        ],
-        "reason_codes": []
-      },
-      {
-        "event_id": "runtime_state_read_failed",
-        "severity": "ERROR",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "reason_code"
-        ],
-        "reason_codes": [
-          "STATE_NOT_FOUND",
-          "STATE_CORRUPTED",
-          "STATE_INFRA_UNAVAILABLE"
-        ]
-      },
-      {
-        "event_id": "runtime_state_conflict",
-        "severity": "WARN",
-        "sampling": "tiered (per RTQ15 verdict)",
-        "min_fields": [
-          "expedition_id",
-          "expected_version",
-          "actual_version"
-        ],
-        "reason_codes": [
-          "VERSION_MISMATCH"
-        ]
-      },
-      {
-        "event_id": "runtime_state_updated",
-        "severity": "INFO",
-        "sampling": "tiered",
-        "min_fields": [
-          "expedition_id",
-          "state_version",
-          "event_type"
-        ],
-        "reason_codes": []
-      },
-      {
-        "event_id": "writer_lease_acquired",
-        "severity": "INFO",
-        "sampling": "tiered",
-        "min_fields": [
-          "expedition_id",
-          "lease_id",
-          "fencing_token"
-        ],
-        "reason_codes": []
-      },
-      {
-        "event_id": "writer_lease_rejected",
-        "severity": "WARN",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "reason_code"
-        ],
-        "reason_codes": [
-          "LEASE_HELD_BY_OTHER",
-          "LEASE_INVALIDATED"
-        ]
-      },
-      {
-        "event_id": "writer_lease_expired",
-        "severity": "WARN",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "lease_id"
-        ],
-        "reason_codes": []
-      },
-      {
-        "event_id": "duplicate_event_suppressed",
-        "severity": "INFO",
-        "sampling": "tiered",
-        "min_fields": [
-          "expedition_id",
-          "event_id"
-        ],
-        "reason_codes": [
-          "IDEMPOTENT_REPLAY"
-        ]
-      },
-      {
-        "event_id": "event_sequence_rejected",
-        "severity": "WARN",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "attempted_sequence",
-          "last_applied_sequence"
-        ],
-        "reason_codes": [
-          "OUT_OF_ORDER"
-        ]
-      },
-      {
-        "event_id": "class_state_cap_blocked",
-        "severity": "WARN",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "adventurer_id",
-          "cap_type"
-        ],
-        "reason_codes": [
-          "MARK_CAP_EXCEEDED",
-          "FRAGMENT_CAP_EXCEEDED",
-          "FOCUS_BONUS_CAP_EXCEEDED"
-        ]
-      },
-      {
-        "event_id": "runtime_state_expired",
-        "severity": "INFO",
-        "sampling": "sampled 10%",
-        "min_fields": [
-          "expedition_id"
-        ],
-        "reason_codes": [
-          "TTL_EXPIRED"
-        ]
-      },
-      {
-        "event_id": "runtime_state_recovered",
-        "severity": "INFO",
-        "sampling": "100%",
-        "min_fields": [
-          "expedition_id",
-          "reason_code"
-        ],
-        "reason_codes": [
-          "MANUAL_RECOVERY",
-          "AUTO_RECOVERY"
-        ]
-      }
-    ],
+    "events_count": 12,
     "no_sensitive_data_policy": [
       "no email",
       "no token",
@@ -1186,46 +948,71 @@
       "no boss metadata payload",
       "no full loadout"
     ],
-    "sampling_alignment": "tiered per RTQ15 verdict (agent-preserved verbatim)"
+    "sampling_alignment": "tiered per RTQ15 verdict verbatim",
+    "events": [
+      "runtime_state_created",
+      "runtime_state_read_failed",
+      "runtime_state_conflict",
+      "runtime_state_updated",
+      "writer_lease_acquired",
+      "writer_lease_rejected",
+      "writer_lease_expired",
+      "duplicate_event_suppressed",
+      "event_sequence_rejected",
+      "class_state_cap_blocked",
+      "runtime_state_expired",
+      "runtime_state_recovered"
+    ]
   },
   "section_32_test_architecture_planned_no_code_in_p0": {
-    "planned_categories": [
-      "contract tests per store implementation (Mongo, in-memory fake)",
-      "multi-worker concurrency (simulate ≥2 workers writing same expedition)",
+    "code_written_this_gate": 0,
+    "test_categories_planned_for_rt2_b_1a": [
+      "contract tests per store implementation (Mongo mock + in-memory fake)",
+      "multi-worker concurrency via pytest-xdist",
       "CAS conflict + bounded retry exhaustion",
       "lease failover + fencing token validity",
       "duplicate-event idempotency",
       "event reordering rejection",
       "worker-crash simulation mid-mutation",
-      "phase-reset race (fragment_gain during phase_end)",
-      "Mark cap race (2 simultaneous mark_apply hitting cap=5)",
+      "phase-reset race",
+      "Mark cap race",
       "Drain double-resolution prevention",
       "Fragment gain/spend race",
-      "TTL / cleanup verification",
+      "TTL / cleanup verification (mocked)",
       "store-timeout fallback rejection",
-      "fallback rejection when infrastructure unhealthy"
-    ],
-    "code_written_this_gate": 0
+      "security and validation tests"
+    ]
   },
   "section_33_performance_discovery": {
-    "state_mutations_per_expedition_estimate": "20..200 (depends on RT2-B scope: marks + drains + fragments + phase transitions)",
-    "peak_concurrent_expeditions_estimate": "UNKNOWN — no baseline available in repo",
-    "expected_state_size_kb": "1..8 KB per expedition",
-    "deduplication_key_volume_estimate": "one entry per event ≈ 20..200 keys per expedition",
-    "ttl_record_volume_estimate": "N active expeditions + 5-min retention buffer",
-    "read_write_latency_requirement": "p95 < 20ms end-to-end per state operation (agent proposal · PM to ratify)",
-    "cleanup_volume_estimate": "TTL-driven; Mongo TTL background thread ~60s sweep",
-    "baseline_status": "STATE_STORE_PERFORMANCE_BASELINE_MISSING · registered as PM_REVIEW (not blocker · benchmark planned in RT2-B code slice)"
+    "verdict_verbatim_b0q11": {
+      "rt2_b_1a_criteria": {
+        "database_calls_in_tests": 0,
+        "network_calls_in_tests": 0,
+        "unbounded_memory_growth": 0,
+        "contract_test_behavior": "deterministic"
+      },
+      "rt2_b_1b_future_criteria": {
+        "single_state_read_p95_ms_max": 25,
+        "successful_cas_mutation_p95_ms_max": 35,
+        "lease_acquire_or_renew_p95_ms_max": 35,
+        "deduplicated_retry_p95_ms_max": 25,
+        "state_document_size_kib_max": 256,
+        "mongo_document_hard_limit_approach": "FORBIDDEN",
+        "unbounded_processed_event_growth": "FORBIDDEN"
+      },
+      "unreproducible_metrics_action": "STATE_STORE_PERFORMANCE_BASELINE_MISSING = BLOCKING for RT2-B-1B CLOSURE",
+      "thresholds_authorize_live_traffic": false
+    }
   },
   "section_34_operational_requirements": {
-    "monitoring": [
+    "monitoring_categories": [
       "runtime_state_conflict rate",
       "writer_lease_rejected rate",
       "runtime_state_read_failed rate",
       "TTL sweep latency",
       "state_version distribution"
     ],
-    "alerting": [
+    "alerting_categories": [
       "corrupted_state count > 0 → page",
       "lease_rejected rate spike → warn",
       "conflict_rate > SLA threshold → warn"
@@ -1236,336 +1023,361 @@
       "TTL-index rebuild",
       "collection rollback procedure"
     ],
-    "new_operational_dependencies_beyond_mongo": "NONE (Mongo already primary infra)"
+    "operational_approval_verdict_b0q12": {
+      "reuse_existing_mongo_deployment": "APPROVED_IN_PRINCIPLE",
+      "new_external_service": "NOT_APPROVED",
+      "redis_required": false,
+      "message_broker_required": false,
+      "actual_operational_approval_for_new_collection": "DEFERRED_TO_RT2-B-1B (naming, permissions, backup policy, TTL behavior, monitoring, capacity, rollback, target env verification)"
+    },
+    "new_operational_dependencies_beyond_mongo": "NONE"
   },
   "section_35_risk_register": [
     {
       "risk_id": "R01",
-      "description": "Mongo replica-set / transactions unavailable (single-document CAS sufficient · but confirm topology)",
+      "description": "Mongo replica-set / topology confirmation",
       "severity": "MEDIUM",
-      "mitigation": "single-document CAS pattern requires no transactions · confirmed pattern used 68× already",
-      "pm_review": true
+      "status": "OPEN · PM confirmation pre-1B"
     },
     {
       "risk_id": "R02",
       "description": "Production worker count unknown",
       "severity": "MEDIUM",
-      "mitigation": "architecture designed for N≥1 workers · single-worker degrades to single-writer trivially",
-      "pm_review": true
+      "status": "MITIGATED · lease-based design survives N≥1"
     },
     {
       "risk_id": "R03",
-      "description": "NO_DB_MIGRATION baseline invalidated by Option 2",
+      "description": "NO_DB_MIGRATION baseline invalidated",
       "severity": "HIGH",
-      "mitigation": "PM adjudication B0Q09 · Option 3 available as fallback with existing-document-extension classification",
-      "pm_review": true
+      "status": "RESOLVED via B0Q09 (split RT2-B-1B)"
     },
     {
       "risk_id": "R04",
       "description": "Performance baseline missing",
       "severity": "LOW",
-      "mitigation": "benchmark bundled in RT2-B code slice",
-      "pm_review": false
+      "status": "PLANNED · benchmark in RT2-B-1B"
     },
     {
       "risk_id": "R05",
-      "description": "Clock skew across workers affecting lease TTL",
+      "description": "Clock skew on lease TTL",
       "severity": "LOW_MEDIUM",
-      "mitigation": "use Mongo server time via $$NOW aggregation OR add grace period",
-      "pm_review": true
+      "status": "MITIGATED via fencing_token + atomic acquire"
     },
     {
       "risk_id": "R06",
       "description": "processed_event_keys unbounded growth",
       "severity": "MEDIUM",
-      "mitigation": "ring buffer with capacity + TTL retention",
-      "pm_review": true
+      "status": "RESOLVED via B0Q06 fail-closed cap"
     },
     {
       "risk_id": "R07",
-      "description": "hot-reload single-worker preview may hide multi-worker bugs",
+      "description": "hot-reload single-worker preview hides multi-worker bugs",
       "severity": "MEDIUM",
-      "mitigation": "contract tests + fake-store multi-worker simulation in RT2-B code slice",
-      "pm_review": false
+      "status": "MITIGATED via pytest-xdist multi-worker contract tests in RT2-B-1A"
     },
     {
       "risk_id": "R08",
-      "description": "state document size growth under long expeditions",
+      "description": "state document > 256 KiB",
       "severity": "LOW",
-      "mitigation": "cap on active_marks, active_drain_executions, processed_event_keys ring size",
-      "pm_review": true
+      "status": "BOUND · hard cap per B0Q11"
     }
   ],
-  "section_36_pm_open_questions": [
-    {
-      "question_id": "B0Q01",
-      "text": "Selected state-store technology",
-      "evidence": "OPTION_2 recommended (Mongo new collection); OPTION_3 viable (existing doc extension); OPTION_1 rejected (Redis absent); OPTION_4 test-only",
-      "options": [
-        "OPTION_1_REDIS",
-        "OPTION_2_MONGO_NEW_COLLECTION",
-        "OPTION_3_MONGO_EXISTING_DOC",
-        "OPTION_4_TEST_ONLY"
-      ],
-      "agent_recommendation": "OPTION_2",
-      "affected_components": [
-        "state schema",
-        "TTL policy",
-        "migration classification"
-      ],
-      "infrastructure_impact": "no new tech (Option 2 / 3)",
-      "migration_impact": "NEW_COLLECTION (Option 2) or ADDITIVE_FIELDS (Option 3)",
-      "operational_impact": "monitoring + TTL sweeping",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q02",
-      "text": "Single-authoritative-writer strategy",
-      "evidence": "MODEL_A recommended (lease+fencing); MODEL_B viable (CAS-only optimistic); MODEL_C rejected (no broker); MODEL_D rejected (needs ingress affinity)",
-      "options": [
-        "MODEL_A",
-        "MODEL_B",
-        "MODEL_C",
-        "MODEL_D"
-      ],
-      "agent_recommendation": "MODEL_A",
-      "affected_components": [
-        "state document lease fields",
-        "worker crash recovery"
-      ],
-      "infrastructure_impact": "none beyond Mongo",
-      "migration_impact": "additional lease fields",
-      "operational_impact": "lease monitoring",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q03",
-      "text": "State ownership scope (per-expedition · per-guild · per-region)",
-      "evidence": "per-expedition is minimum · lease document keyed on expedition_id",
-      "options": [
-        "PER_EXPEDITION",
-        "PER_GUILD",
-        "PER_REGION"
-      ],
-      "agent_recommendation": "PER_EXPEDITION",
-      "affected_components": [
-        "lease key structure",
-        "sharding strategy future"
-      ],
-      "infrastructure_impact": "none this gate",
-      "migration_impact": "none",
-      "operational_impact": "minor",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q04",
-      "text": "CAS/versioning policy (monotonic integer default)",
-      "evidence": "monotonic integer is Mongo-native + widely adopted · alternative vector clocks add complexity",
-      "options": [
-        "MONOTONIC_INTEGER",
-        "VECTOR_CLOCK",
-        "TIMESTAMP_BASED"
-      ],
-      "agent_recommendation": "MONOTONIC_INTEGER",
-      "affected_components": [
-        "state_version field"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "none",
-      "operational_impact": "none",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q05",
-      "text": "Event ordering policy (per-expedition total order)",
-      "evidence": "per-expedition total ordering required by Marchi/Drenaggio/Frammenti determinism",
-      "options": [
-        "TOTAL_ORDER_PER_EXPEDITION",
-        "TOTAL_ORDER_PER_ADVENTURER",
-        "PARTIAL_ORDER"
-      ],
-      "agent_recommendation": "TOTAL_ORDER_PER_EXPEDITION",
-      "affected_components": [
-        "event_sequence enforcement"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "none",
-      "operational_impact": "none",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q06",
-      "text": "Deduplication retention window",
-      "evidence": "expedition lifetime + 5 min proposed",
-      "options": [
-        "EXPEDITION_LIFETIME_ONLY",
-        "EXPEDITION_LIFETIME_PLUS_5_MIN",
-        "EXPEDITION_LIFETIME_PLUS_1_HOUR"
-      ],
-      "agent_recommendation": "EXPEDITION_LIFETIME_PLUS_5_MIN",
-      "affected_components": [
-        "TTL policy",
-        "processed_event_keys ring size"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "TTL index",
-      "operational_impact": "TTL sweep frequency",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q07",
-      "text": "State TTL and cleanup default",
-      "evidence": "expedition_completion + 300s proposed; TTL index on expires_at",
-      "options": [
-        "300_SEC",
-        "600_SEC",
-        "1800_SEC",
-        "3600_SEC"
-      ],
-      "agent_recommendation": "300_SEC",
-      "affected_components": [
-        "TTL index",
-        "recovery window"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "TTL index",
-      "operational_impact": "manual recovery window sizing",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q08",
-      "text": "Restart and failover behavior",
-      "evidence": "state persists via Mongo; lease TTL handles worker crash",
-      "options": [
-        "LEASE_TTL_ONLY",
-        "LEASE_TTL_PLUS_CHECKPOINT",
-        "SESSION_AFFINITY_PLUS_CHECKPOINT"
-      ],
-      "agent_recommendation": "LEASE_TTL_ONLY (aligned with MODEL_A)",
-      "affected_components": [
-        "lease_expires_at",
-        "grace period"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "none",
-      "operational_impact": "lease TTL alerting",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q09",
-      "text": "Migration classification (NO_DB_MIGRATION_REQUIRED baseline sustainability)",
-      "evidence": "Option 2 requires NEW_TRANSIENT_COLLECTION; Option 3 requires BACKWARD_COMPATIBLE_EXTENSION",
-      "options": [
-        "ACCEPT_NEW_COLLECTION",
-        "ACCEPT_DOCUMENT_EXTENSION",
-        "REJECT_AND_INVOKE_FAIL_STOP",
-        "REDIS_INTRODUCTION_AUTHORIZED"
-      ],
-      "agent_recommendation": "ACCEPT_NEW_COLLECTION (aligned Option 2) OR ACCEPT_DOCUMENT_EXTENSION (aligned Option 3)",
-      "affected_components": [
-        "expedition_runtime_states collection OR expeditions doc"
-      ],
-      "infrastructure_impact": "none new",
-      "migration_impact": "one-time additive migration OR none (Option 3)",
-      "operational_impact": "monitoring",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q10",
-      "text": "First RT2-B code slice scope",
-      "evidence": "recommended: (a) collection creation + TTL index, (b) ExpeditionRuntimeStateStore Mongo implementation, (c) fake in-memory store for tests, (d) contract test suite, (e) NO wiring to expedition services",
-      "options": [
-        "A_ONLY",
-        "A_PLUS_B",
-        "A_PLUS_B_PLUS_C",
-        "A_PLUS_B_PLUS_C_PLUS_D",
-        "INCLUDE_WIRING"
-      ],
-      "agent_recommendation": "A_PLUS_B_PLUS_C_PLUS_D (no wiring)",
-      "affected_components": [
-        "expedition_runtime_states collection",
-        "store module",
-        "test suite"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "TTL index if Option 2",
-      "operational_impact": "none",
-      "blocking": true
-    },
-    {
-      "question_id": "B0Q11",
-      "text": "Performance acceptance criteria (p95 target)",
-      "evidence": "STATE_STORE_PERFORMANCE_BASELINE_MISSING · agent proposal p95<20ms per state op",
-      "options": [
-        "P95_LT_10MS",
-        "P95_LT_20MS",
-        "P95_LT_50MS",
-        "PM_TO_DEFINE_LATER"
-      ],
-      "agent_recommendation": "P95_LT_20MS",
-      "affected_components": [
-        "monitoring thresholds",
-        "alerting"
-      ],
-      "infrastructure_impact": "none",
-      "migration_impact": "none",
-      "operational_impact": "SLA definition",
-      "blocking": false
-    },
-    {
-      "question_id": "B0Q12",
-      "text": "Operational dependency approval (Mongo replica-set + TTL indexes)",
-      "evidence": "Mongo already primary infra · TTL indexes already used",
-      "options": [
-        "APPROVED_AS_IS",
-        "REQUIRE_REPLICA_SET_CONFIRMATION",
-        "REQUIRE_ADDITIONAL_HA_TIER"
-      ],
-      "agent_recommendation": "APPROVED_AS_IS (with PM confirmation of replica-set availability)",
-      "affected_components": [
-        "Mongo topology"
-      ],
-      "infrastructure_impact": "none new",
-      "migration_impact": "none",
-      "operational_impact": "existing",
-      "blocking": true
+  "section_36_pm_open_questions": {
+    "count": 12,
+    "resolution": "12/12 RESOLVED",
+    "auto_ratified_by_agent": false,
+    "resolutions": {
+      "B0Q01": {
+        "title": "store technology",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "selected_option": "OPTION_2 · dedicated Mongo runtime-state collection",
+          "canonical_collection_name": "expedition_runtime_states",
+          "existing_expedition_document_extension": "NOT_SELECTED",
+          "redis_external_ephemeral_store": "NOT_SELECTED",
+          "process_local_production_store": "FORBIDDEN (fake process-local allowed only for unit and contract tests)"
+        }
+      },
+      "B0Q02": {
+        "title": "single-authoritative-writer",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "writer_model": "MODEL_A · distributed lease per expedition",
+          "stale_writer_protection": "fencing token MANDATORY",
+          "one_writer_per_expedition_at_a_time": true,
+          "atomic_mutation_filters": [
+            "expedition_id",
+            "state_version",
+            "lease_id",
+            "fencing_token",
+            "lease_expires_at"
+          ],
+          "stale_writer_after_pause_or_partition": "REJECTED (cannot mutate even after resume)",
+          "permanent_worker_expedition_affinity_required": false
+        }
+      },
+      "B0Q03": {
+        "title": "state ownership",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "ownership_scope": "one runtime-state document per expedition",
+          "adventurer_class_states": "keyed by adventurer_id",
+          "separated_ownership_for": [
+            "Marks",
+            "Drain executions",
+            "Fragments",
+            "resource_segment",
+            "focus_bonus_usage"
+          ],
+          "forbidden": [
+            "global class state cross-expedition",
+            "consumption of another adventurer's state",
+            "persistent state on character document"
+          ]
+        }
+      },
+      "B0Q04": {
+        "title": "CAS and versioning",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "state_version_type": "monotonic integer",
+          "initial_state_version": 1,
+          "successful_mutation_increment": 1,
+          "mutation_filter_min": [
+            "_id = expedition_id",
+            "state_version = expected",
+            "fencing_token = expected"
+          ],
+          "outcomes": {
+            "match": "atomic mutation",
+            "version_mismatch": "STATE_VERSION_CONFLICT",
+            "fencing_mismatch": "STALE_WRITER_REJECTED",
+            "partial_mutation": "FORBIDDEN"
+          },
+          "maximum_automatic_cas_retries": 3,
+          "retry_requires_fresh_state_read": true,
+          "no_automatic_retry_on": [
+            "invalid payload",
+            "invalid ownership",
+            "cap exceeded",
+            "expired fencing token",
+            "same event_id with different payload"
+          ]
+        }
+      },
+      "B0Q05": {
+        "title": "event ordering",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "state_changing_events_ordering": "total ordered per expedition (server-authoritative)",
+          "event_sequence_assignment": "atomic via accepted mutation",
+          "client_can_choose_authoritative_sequence": false,
+          "sequence_increment_on_accepted_mutation": "last_event_sequence + 1",
+          "retry_same_event_id_behavior": "no new sequence · returns prior result · no re-mutation",
+          "concurrent_events_serialization": "via CAS on expedition document"
+        }
+      },
+      "B0Q06": {
+        "title": "deduplication",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "dedup_key": "expedition_id + event_id",
+          "receipt_minimum_fields": [
+            "event_id",
+            "event_type",
+            "source_adventurer_id",
+            "payload_hash",
+            "assigned_event_sequence",
+            "result_code",
+            "state_version_after",
+            "processed_at"
+          ],
+          "same_event_id_same_payload_hash": "IDEMPOTENT_PRIOR_RESULT_RESPONSE",
+          "same_event_id_different_payload_hash": "EVENT_ID_PAYLOAD_MISMATCH · REJECT",
+          "receipt_retention": "same lifetime as expedition runtime-state document",
+          "receipt_bounded": true,
+          "receipt_max_per_expedition": "configurable · validate with benchmark BEFORE runtime integration",
+          "at_limit_behavior": "FAIL_CLOSED · no receipt eviction during active expedition"
+        }
+      },
+      "B0Q07": {
+        "title": "TTL & cleanup (baseline · not live authorization)",
+        "resolution": "SELECTED · BASELINE_ONLY",
+        "verdict_verbatim": {
+          "active_state_inactivity_ttl_hours": 6,
+          "completed_expedition_retention_hours": 24,
+          "cancelled_expedition_retention_hours": 24,
+          "deduplication_retention": "until state-document expiry",
+          "every_valid_mutation_updates": [
+            "updated_at",
+            "expires_at"
+          ],
+          "cleanup_policy": {
+            "normal_completion_or_cancellation": "terminal status + 24h TTL",
+            "orphan": "TTL cleanup",
+            "manual": "exceptional recovery only"
+          },
+          "values_note": "to be re-examined after real measurements"
+        }
+      },
+      "B0Q08": {
+        "title": "restart & failover",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "lease_duration_seconds": 30,
+          "renewal_interval_seconds": 10,
+          "grace_period_seconds": 5,
+          "each_valid_acquisition_increments_fencing_token": true,
+          "scenarios": {
+            "worker_crash_before_mutation": "no state change",
+            "worker_crash_after_atomic_mutation": "retry deduplicated by event_id",
+            "lease_expiry": "another worker may acquire with higher fencing_token",
+            "stale_worker_resumes": "mutation rejected"
+          },
+          "application_clock_alone_insufficient": true,
+          "acquisition_renewal_via_atomic_store_mutation": true
+        }
+      },
+      "B0Q09": {
+        "title": "migration classification (CRITICAL)",
+        "resolution": "TRIGGERED_AND_ADJUDICATED",
+        "verdict_verbatim": {
+          "no_db_migration_baseline_invalid_for_rt2_b": "TRIGGERED",
+          "clarification": {
+            "gameplay_state_semantics": "transient",
+            "physical_storage": "Mongo persistent collection with TTL",
+            "note": "Transient describes lifecycle, not absence of Mongo writes"
+          },
+          "classification": {
+            "NEW_TRANSIENT_COLLECTION_REQUIRED": true,
+            "NEW_TTL_INDEX_REQUIRED": true,
+            "DATA_BACKFILL_REQUIRED": false,
+            "PERSISTENT_CHARACTER_SCHEMA_CHANGE": false
+          },
+          "change_nature": "DB INFRASTRUCTURE / SCHEMA PROVISIONING CHANGE (not traditional data migration)",
+          "provisioning_gate": "RT2-B-1B (SEPARATE FUTURE GATE)",
+          "does_not_reopen": [
+            "RT1",
+            "RT2-A"
+          ],
+          "invalidates_only": "NO_DB_MIGRATION_REQUIRED hypothesis for stateful RT2-B/C branch"
+        }
+      },
+      "B0Q10": {
+        "title": "first RT2-B code slice",
+        "resolution": "SELECTED",
+        "verdict_verbatim": {
+          "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-1A · STATE STORE CONTRACT & NON-WIRED ADAPTER FOUNDATION",
+          "authorized_scope": [
+            "ExpeditionRuntimeStateStore interface",
+            "state schemas",
+            "lease schemas",
+            "fencing-token validation",
+            "CAS result types",
+            "event receipt schemas",
+            "fake in-memory test store",
+            "Mongo adapter implementation with injected collection (NOT wired to runtime)",
+            "shared contract-test suite",
+            "unit tests with mocked Mongo collection",
+            "security and validation tests"
+          ],
+          "excluded_deferred_to_1B_or_later": [
+            "Mongo collection creation",
+            "TTL index creation",
+            "real DB integration tests",
+            "runtime wiring",
+            "expedition service changes",
+            "feature flag activation",
+            "Mark/Drain/Fragment gameplay execution",
+            "RT2-A wiring",
+            "public API changes"
+          ],
+          "hard_rule": "Mongo adapter MAY be implemented but MUST NOT be instantiated by runtime application"
+        }
+      },
+      "B0Q11": {
+        "title": "performance criteria",
+        "resolution": "SELECTED · TIERED",
+        "verdict_verbatim": {
+          "rt2_b_1a_criteria": {
+            "database_calls_in_tests": 0,
+            "network_calls_in_tests": 0,
+            "unbounded_memory_growth": 0,
+            "contract_test_behavior": "deterministic"
+          },
+          "rt2_b_1b_future_criteria": {
+            "single_state_read_p95_ms_max": 25,
+            "successful_cas_mutation_p95_ms_max": 35,
+            "lease_acquire_or_renew_p95_ms_max": 35,
+            "deduplicated_retry_p95_ms_max": 25,
+            "state_document_size_kib_max": 256,
+            "mongo_document_hard_limit_approach": "FORBIDDEN",
+            "unbounded_processed_event_growth": "FORBIDDEN"
+          },
+          "unreproducible_metrics_action": "STATE_STORE_PERFORMANCE_BASELINE_MISSING = BLOCKING for RT2-B-1B CLOSURE",
+          "thresholds_authorize_live_traffic": false
+        }
+      },
+      "B0Q12": {
+        "title": "operational dependency",
+        "resolution": "APPROVED_IN_PRINCIPLE · OPERATIONAL_APPROVAL_DEFERRED",
+        "verdict_verbatim": {
+          "reuse_existing_mongo_deployment": "APPROVED_IN_PRINCIPLE",
+          "new_external_service": "NOT_APPROVED",
+          "redis_required": false,
+          "message_broker_required": false,
+          "actual_operational_approval_for_new_collection": "DEFERRED_TO_RT2-B-1B (naming, permissions, backup policy, TTL behavior, monitoring, capacity, rollback, target env verification)"
+        }
+      }
     }
-  ],
+  },
   "section_37_first_code_slice_proposal": {
-    "gate_target": "RT2-B-1",
-    "scope_proposed": [
-      "collection creation script (expedition_runtime_states) + TTL index (idempotent)",
-      "ExpeditionRuntimeStateStore Mongo implementation (create_state, get_state, apply_event_once, reserve_writer, renew_writer_lease, release_writer, expire_state, delete_state, get_version, health_check)",
-      "in-memory fake store for test fixtures",
-      "contract test suite (multi-worker simulation via pytest-xdist, CAS conflict, lease failover, duplicate-event, ordering, TTL)"
-    ],
-    "explicitly_excluded_from_rt2_b_1": [
-      "wiring to expedition services",
-      "class-state feature flag activation",
-      "Marchi/Drenaggio/Frammenti logic (RT2-B-2..N)",
-      "RT2-A library wiring",
-      "OpenAPI additions",
-      "public API changes"
-    ],
-    "authorization_required": "PM_ADJUDICATION_OF_B0Q01_B0Q02_B0Q09_B0Q10_MINIMUM"
+    "verdict_verbatim_b0q10": {
+      "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-1A · STATE STORE CONTRACT & NON-WIRED ADAPTER FOUNDATION",
+      "authorized_scope": [
+        "ExpeditionRuntimeStateStore interface",
+        "state schemas",
+        "lease schemas",
+        "fencing-token validation",
+        "CAS result types",
+        "event receipt schemas",
+        "fake in-memory test store",
+        "Mongo adapter implementation with injected collection (NOT wired to runtime)",
+        "shared contract-test suite",
+        "unit tests with mocked Mongo collection",
+        "security and validation tests"
+      ],
+      "excluded_deferred_to_1B_or_later": [
+        "Mongo collection creation",
+        "TTL index creation",
+        "real DB integration tests",
+        "runtime wiring",
+        "expedition service changes",
+        "feature flag activation",
+        "Mark/Drain/Fragment gameplay execution",
+        "RT2-A wiring",
+        "public API changes"
+      ],
+      "hard_rule": "Mongo adapter MAY be implemented but MUST NOT be instantiated by runtime application"
+    },
+    "state": "PM_APPROVED · CONDITIONAL_GO · awaiting Phase 2 dispatch"
   },
   "section_38_rt2_b_readiness": {
-    "state": "HOLD_PENDING_PM_DECISIONS",
-    "blocked_by": [
-      "B0Q01",
-      "B0Q02",
-      "B0Q09",
-      "B0Q10",
-      "B0Q12"
-    ],
-    "unblocked_upon": "PM verdict on the 5 blocking B0Q questions above"
+    "rt2_b_p0_state": "CLOSED_PM_LOCKED_AT_PHASE_1_END",
+    "rt2_b_1a_state": "CONDITIONAL_GO_AWAITING_PHASE_2_DISPATCH",
+    "rt2_b_1b_state": "PLANNED_HOLD_NOT_AUTHORIZED",
+    "rt2_b_gameplay_integration_state": "HOLD",
+    "rt2_c_state": "HOLD",
+    "rt2_d_state": "HOLD",
+    "rt2_e_state": "HOLD"
   },
   "section_39_go_hold_recommendation": {
-    "recommendation": "HOLD-PENDING-PM-DECISIONS",
-    "rationale": "12 B0Q emitted (5 blocking). Recommended architecture (Option 2 · Model A) fits within existing Mongo stack with no new tech; however NO_DB_MIGRATION baseline is invalidated by Option 2 which is why B0Q09 is required. No fail-stop deterministic auto-detected in read-only discovery; NO_DB_MIGRATION_BASELINE_INVALID surfaces as PM adjudication (not auto-blocker)."
+    "rt2_b_p0_recommendation": "CLOSE_AND_LOCK",
+    "rt2_b_1a_recommendation": "CONDITIONAL_GO",
+    "rationale": "12/12 B0Q resolved verbatim · architecture ratified · critical fail-stop (B0Q09) adjudicated via split gate · no new infrastructure required for RT2-B-1A code slice · compatibility boundary invariants preserved"
   },
   "section_40_explicit_stop": {
-    "stop": true,
-    "reason": "Documental deliverables written · PM adjudication required · no code · no migration · no wiring · PRD unchanged · sealed set unchanged (36) · anchor invariant."
+    "stop_phase_1": true,
+    "reason": "PATCH complete · closure emitted · PRD append idempotent (1) · governance verified · sealed set unchanged (36) · anchor invariant · baseline chain 8/8 invariant · RT2-A files unchanged · awaiting Phase 2 dispatch for RT2-B-1A code"
   }
 }
