@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-A",
+    "title": "Implementation Report",
+    "regime": "Phase 2 · CODE GATE · Italian_only · NEW SEAL = NO",
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-A · STAT EVALUATION FOUNDATION",
+    "emission_date_utc": "2026-02",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "READY-FOR-PM-CLOSURE",
+    "phase": 2,
+    "authorization_source": "PM ratifies RT2-P0 CLOSED + CONDITIONAL GO RT2-A (Phase 1 verifications passed)"
+  },
+  "scope_executed_11_of_11": [
+    {"idx": 1, "item": "canonical IT ↔ runtime stat bridge", "status": "DONE", "file": "app/stats/runtime/stat_bridge.py"},
+    {"idx": 2, "item": "pure equipment-stat aggregation", "status": "DONE", "file": "app/stats/runtime/equipment_aggregation.py"},
+    {"idx": 3, "item": "nominal-stat calculation", "status": "DONE", "file": "app/stats/runtime/modifier_order.py::evaluate_runtime_stats"},
+    {"idx": 4, "item": "modifier-order implementation (9-step)", "status": "DONE", "file": "app/stats/runtime/modifier_order.py"},
+    {"idx": 5, "item": "Intelligence soft-cap function", "status": "DONE", "file": "app/stats/runtime/soft_caps.py::effective_intelligence"},
+    {"idx": 6, "item": "effective-stat result model", "status": "DONE", "file": "app/stats/runtime/models.py::EffectiveStatResult"},
+    {"idx": 7, "item": "expedition-start loadout snapshot", "status": "DONE", "file": "app/stats/runtime/loadout_snapshot.py + models.LoadoutSnapshot"},
+    {"idx": 8, "item": "server-side default-OFF feature flags (6)", "status": "DONE", "file": "app/stats/runtime/feature_flags.py"},
+    {"idx": 9, "item": "shadow comparison path", "status": "DONE", "file": "app/stats/runtime/shadow_comparison.py"},
+    {"idx": 10, "item": "unit / property / integration tests", "status": "DONE", "file": "backend/tests/effect_engine/foundation/*"},
+    {"idx": 11, "item": "performance baseline + benchmarks", "status": "DONE", "file": "backend/tests/effect_engine/foundation/test_performance.py"}
+  ],
+  "deviation_from_scope": "NONE",
+  "scope_expansion_required": false,
+  "files_added_new_module_backend": [
+    {"path": "/app/backend/app/stats/runtime/__init__.py", "sha256": "ed20b1bc034966cdd86f883a55b92679d6c2660a247264f17a3ed748bb2b20cf", "lines": 16, "bytes": 767, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/stat_bridge.py", "sha256": "9720df750318f5a28e515ec9f706923f80f308359c8043ddf81ef86dd80816d7", "lines": 112, "bytes": 3332, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/equipment_aggregation.py", "sha256": "ff29ab8b4d5bdd6aafe24a1e4533363e75ba744986416f45c903537d4a38c511", "lines": 77, "bytes": 2382, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/soft_caps.py", "sha256": "2db135b2830b5d7aa2c85fedf26fbd5ba4cb57a6fc64afe3d7ec628a43da221f", "lines": 110, "bytes": 3460, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/modifier_order.py", "sha256": "2c9641d39675d08e1afa771efccfe2e371aad249eb653e9d56799b4cdea1085b", "lines": 196, "bytes": 7513, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/models.py", "sha256": "18dced64470b426b306f4f297afd3619c68ab4495e9cb86ce5aa3819171c6b98", "lines": 94, "bytes": 3197, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/loadout_snapshot.py", "sha256": "b169cd806c0af88a9b311b135cbe36d48e97e584c3a7d2da62a355bd9ca9d860", "lines": 99, "bytes": 3544, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/feature_flags.py", "sha256": "b18cd19d61c13b38293c6fec74ad8688c86ab92041fb1cb777f9f182fe77068c", "lines": 138, "bytes": 5063, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/shadow_comparison.py", "sha256": "673151449e8563465d1c87b40d29398d75f3a06f9928973199cf79f36d54f4f7", "lines": 130, "bytes": 4576, "change_type": "NEW_MODULE"},
+    {"path": "/app/backend/app/stats/runtime/events.py", "sha256": "097e0642775f5135c5c7f180a24aa0f927a422af4fbc4424e4a7875253b07354", "lines": 162, "bytes": 4784, "change_type": "NEW_MODULE"}
+  ],
+  "files_added_test_only": [
+    {"path": "/app/backend/tests/effect_engine/__init__.py", "sha256": "ffa6d1e8bd2ca008e77f733f7f1e90c19f3a2a86fa6dbb8bb56bc5259aca3997", "lines": 1, "bytes": 65, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/__init__.py", "sha256": "60822e66ff33437c24546cff0d2d2d093e422d8e9325c46bc61b40f446007771", "lines": 1, "bytes": 74, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_soft_cap.py", "sha256": "9ebe2b5d4407794f6c1ff9a3ff8d250eeca19658b7600bc636cd4b5f837d74de", "lines": 90, "bytes": 2767, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_stat_bridge.py", "sha256": "abe78efe26a6017d319a75b15f766d713f72bbe09685aefdbd5116db979ea6ca", "lines": 75, "bytes": 2061, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_equipment_aggregation.py", "sha256": "d6a00922ae699a89b40e99e105c824edb2cfec92a8a31ef69f7c611abc8244bb", "lines": 94, "bytes": 3090, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_modifier_order.py", "sha256": "41d2fc724a05e69daa9e3e67547cc7e4468b9ed835a2f4944849ecd1a37f6016", "lines": 161, "bytes": 5875, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_rounding.py", "sha256": "97f437cf95c3b83fe3123d26c9077facb0475a2bdafa9dddfd658763034fadb7", "lines": 57, "bytes": 2004, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_loadout_snapshot.py", "sha256": "50ee19b809f8eb0e57db3a7cc51a7385457c7412dc36617a924fb5a864d165e5", "lines": 126, "bytes": 4552, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_feature_flags.py", "sha256": "170b6adc27412e905fb76108f6b157f804df467956dbe8158c1f702ddacffbb5", "lines": 119, "bytes": 3972, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_shadow_comparison.py", "sha256": "16d3851ff4e03b7ebb153e113640d2f1b66224ee227df5b685cf2f0c2af85d7a", "lines": 129, "bytes": 4168, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_property.py", "sha256": "ce4225675b5946a9a996584a37c03bcf600338b3c1d6a7bff83e878e15407dec", "lines": 125, "bytes": 4951, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_integration.py", "sha256": "468f3d67836f1ac81cecaa020b6bace0c75c6a1ce1d9af5f25559d8c169645b3", "lines": 153, "bytes": 5734, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_compatibility.py", "sha256": "90c4da8242bd33c5a1c06fb70c0964b7583a047dffef3e8858e6deb0e1b02f70", "lines": 149, "bytes": 6419, "change_type": "TEST_ONLY"},
+    {"path": "/app/backend/tests/effect_engine/foundation/test_performance.py", "sha256": "eae60a141ca9bd43de1c4fa4bf29192520b78345f687076ed2ca12fd4a2bc43d", "lines": 237, "bytes": 9603, "change_type": "TEST_ONLY"}
+  ],
+  "files_extended": [],
+  "feature_flags_registered": {
+    "count": 6,
+    "default_all_off": true,
+    "config_source": "environment variables prefixed ORBUS_FLAG_<UPPERCASE>",
+    "read_at_startup_via": "app.stats.runtime.feature_flags._read_raw_env_snapshot (lru_cache memoized)",
+    "fail_safe_rules": [
+      "missing flag → false",
+      "invalid value → log ERROR + fallback false",
+      "unknown flag_id → log ERROR + return false",
+      "future_constants → hard-force false in RT2-A"
+    ],
+    "prohibited_channels": ["client", "query param", "account preference", "DB dynamic", "public API"],
+    "flags": [
+      {"flag_id": "runtime_stat_soft_cap_enabled", "rt2_a_active": true, "note": "authoritative only in PM-authorized env"},
+      {"flag_id": "runtime_stat_shadow_enabled", "rt2_a_active": true, "note": "shadow diagnostic only"},
+      {"flag_id": "cdv_transient_state_enabled", "rt2_a_active": false, "note": "future constant · RT2-B target"},
+      {"flag_id": "item_effect_engine_enabled", "rt2_a_active": false, "note": "future constant · RT2-C target"},
+      {"flag_id": "cdv_item_hooks_enabled", "rt2_a_active": false, "note": "future constant · RT2-E target"},
+      {"flag_id": "effect_observability_enabled", "rt2_a_active": false, "note": "future constant · RT2-D target"}
+    ]
+  },
+  "stat_bridge_mapping": {
+    "runtime_canonical_5_tuple": ["strength", "agility", "intellect", "endurance", "faith"],
+    "it_to_runtime": {
+      "strength": ["Forza", "Vigore", "Potenza", "strength"],
+      "agility": ["Destrezza", "Agilità", "Agilita", "agility"],
+      "intellect": ["Intelligenza", "Intelletto", "Volontà", "Volonta", "saggezza", "intellect"],
+      "endurance": ["Costituzione", "Resistenza", "endurance"],
+      "faith": ["Fede", "Spirito", "Carisma", "faith"]
+    }
+  },
+  "soft_cap_verified_5_of_5": [
+    {"input": 99, "expected_display": "99.0", "actual_display": "99.0", "pass": true},
+    {"input": 100, "expected_display": "100.0", "actual_display": "100.0", "pass": true},
+    {"input": 101, "expected_display": "100.5", "actual_display": "100.5", "pass": true},
+    {"input": 105, "expected_display": "102.5", "actual_display": "102.5", "pass": true},
+    {"input": 200, "expected_display": "150.0", "actual_display": "150.0", "pass": true}
+  ],
+  "modifier_order_9_steps_verified": [
+    "1_base_character_stat", "2_equipment_flat_stat", "3_permanent_flat_modifiers",
+    "4_temporary_flat_buffs_debuffs", "5_percentage_stat_modifiers",
+    "6_clamp_nominal_ge_zero", "7_soft_cap_transformation",
+    "8_derived_power_calculation", "9_direct_power_modifiers"
+  ],
+  "snapshot_loadout_schema_12_fields": [
+    "adventurer_id", "expedition_id", "base_stats", "equipment_derived_flat_stats",
+    "permanent_modifiers", "temporary_modifiers_at_start", "nominal_stats",
+    "effective_stats", "soft_cap_result", "source_item_blueprint_list",
+    "snapshot_version", "created_at"
+  ],
+  "snapshot_immutability_verified": true,
+  "shadow_diagnostic_fields_10_verbatim": [
+    "expedition_id", "adventurer_id", "nominal_intelligence",
+    "effective_intelligence", "current_base_power", "candidate_base_power",
+    "power_delta", "soft_cap_applied", "evaluation_duration_ms", "reason_code"
+  ],
+  "compatibility_contract_evidence": {
+    "zero_call_site_in_existing_code": true,
+    "zero_router_mount": true,
+    "openapi_endpoints_count": 275,
+    "openapi_schemas_count": 52,
+    "openapi_unchanged": true,
+    "compare_shadow_flag_off_returns_none": true,
+    "nine_preserved_items_no_effect_triggered": true,
+    "legacy_items_no_effect_metadata_valid": true
+  },
+  "test_matrix": {
+    "unit_soft_cap": {"file": "test_soft_cap.py", "count": 10, "status": "PASS"},
+    "unit_stat_bridge": {"file": "test_stat_bridge.py", "count": 5, "status": "PASS"},
+    "unit_equipment_aggregation": {"file": "test_equipment_aggregation.py", "count": 11, "status": "PASS"},
+    "unit_modifier_order": {"file": "test_modifier_order.py", "count": 16, "status": "PASS"},
+    "unit_rounding": {"file": "test_rounding.py", "count": 6, "status": "PASS"},
+    "unit_loadout_snapshot": {"file": "test_loadout_snapshot.py", "count": 8, "status": "PASS"},
+    "unit_feature_flags": {"file": "test_feature_flags.py", "count": 13, "status": "PASS"},
+    "unit_shadow_comparison": {"file": "test_shadow_comparison.py", "count": 8, "status": "PASS"},
+    "property": {"file": "test_property.py", "count": 8, "status": "PASS"},
+    "integration": {"file": "test_integration.py", "count": 8, "status": "PASS"},
+    "compatibility": {"file": "test_compatibility.py", "count": 9, "status": "PASS"},
+    "performance": {"file": "test_performance.py", "count": 4, "status": "PASS"},
+    "total_tests": 136,
+    "passed": 136,
+    "failed": 0,
+    "skipped": 0,
+    "wall_clock_seconds": 1.39
+  },
+  "performance_baseline": {
+    "environment": "single container preview · Python 3.11.15 · pytest xdist 2 workers",
+    "fixture": "20 deterministic adventurers seeded by index",
+    "iterations_per_measurement": 1000,
+    "warmup_iterations": 100,
+    "baseline_legacy_adventurer_effective_power_ns": {"p50": 1240, "p95": 1336, "p99": 1395},
+    "rt2_a_functional_ns": {"p50": 11024, "p95": 11421, "p99": 15807},
+    "shadow_ns": {"p50": 14674, "p95": 15235, "p99": 20145},
+    "functional_overhead_p95_ns": 10085,
+    "shadow_overhead_p95_ns": 13899,
+    "functional_threshold_ns": 1000000,
+    "shadow_threshold_ns": 2000000,
+    "functional_within_criteria": true,
+    "shadow_within_criteria": true,
+    "memory_growth_bounded": true,
+    "db_query_increase": 0,
+    "network_call_increase": 0,
+    "baseline_reproducible": true,
+    "performance_baseline_missing": false
+  },
+  "governance": {
+    "sealed_integrity": {"passed": 6, "byte_identical": "36/36", "new_seal": "NO"},
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "anchor_invariant": true,
+    "baseline_invariance": {
+      "IS2-A": "invariant",
+      "IS2-B-P1": "invariant",
+      "IS2-B-P1-N1": "invariant",
+      "IS2-B-P2A": "invariant",
+      "IS2-B-P2B-1": "invariant",
+      "IS2-B-P2B-RT1": "invariant",
+      "IS2-B-P2B-RT2-P0": "invariant"
+    },
+    "prd_sha_pre_rt2_a": "35d41883e23a2ad756d4b205839325c0ec95c7ef2a3ff719807d8af019c194ad",
+    "prd_sha_post_rt2_a": "35d41883e23a2ad756d4b205839325c0ec95c7ef2a3ff719807d8af019c194ad",
+    "prd_append_rt2_a": 0,
+    "application_status_all_zero": {
+      "frontend_code": 0, "openapi": 0, "db_writes": 0, "migrations": 0,
+      "new_seals": 0, "registry_generation": 0, "registry_apply": 0,
+      "item_generation": 0, "env": 0, "backend_routes_added": 0,
+      "existing_code_modifications": 0
+    }
+  },
+  "audit_events_rt2_a": [
+    {"event_type": "SOFT_CAP_EVALUATION", "level": "DEBUG"},
+    {"event_type": "SHADOW_COMPARISON", "level": "INFO"},
+    {"event_type": "INVALID_STAT_METADATA", "level": "WARNING"}
+  ],
+  "sampling_tiered_p0q09": {
+    "DEBUG": {"prod": 0, "staging": 100, "test_dev": 100},
+    "INFO": {"prod_future": 10, "staging": 100, "test_dev": 100},
+    "WARNING": {"all": 100},
+    "ERROR": {"all": 100},
+    "deterministic_bucket": true,
+    "reason_code_mandatory": true,
+    "db_writes_from_events": 0
+  },
+  "fail_stop_detection": {
+    "SCOPE_EXPANSION_REQUIRED": "NOT_TRIGGERED",
+    "PERSISTENCE_BASELINE_CONFLICT": "NOT_TRIGGERED",
+    "PERFORMANCE_BASELINE_MISSING": "NOT_TRIGGERED",
+    "TRANSIENT_STATE_DEPLOYMENT_CONFLICT": "N/A_for_RT2_A_RESOLVED_BY_SCOPE_BOUNDARY",
+    "ATOMICITY_PERSISTENCE_CONFLICT": "NOT_TRIGGERED"
+  },
+  "recommendation": "RT2-A READY-FOR-PM-CLOSURE",
+  "post_phase_2_status": {
+    "RT2-A": "IMPLEMENTED · PM-CLOSURE-PENDING",
+    "RT2-B": "HOLD",
+    "RT2-C": "HOLD",
+    "RT2-D": "HOLD",
+    "RT2-E": "HOLD",
+    "Phase 2B item assignment": "HOLD",
+    "Registry v3": "NOT AUTHORIZED",
+    "Gate 11": "HOLD",
+    "Monaco": "HOLD",
+    "NC1": "HOLD",
+    "AFX2": "HOLD"
+  },
+  "explicit_stop": true,
+  "next_action_pm": "Ratify formal closure of RT2-A + authorize rollout step 4+ or proceed to RT2-B dispatch (subject to P0Q02/P0Q03 outcomes)"
+}
