@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-1",
+    "artifact_role": "FINAL_CLOSURE_REPORT_JSON_PHASE_1",
+    "regime": "DOCUMENTAL_ONLY · Italian_only · SHA §31 · STRICT STOP · LOCAL ISOLATED ONLY",
+    "closure_date_utc": "2026-02",
+    "sha_policy": "§31 · no self-hash embedded",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+    "closure_requirements_count": 25,
+    "prd_pre_append_sha256": "0012b0f83cbede393be205480306a2323615b17aff22144031aba2871fea0e93"
+  },
+  "closure_requirements": {
+    "req_01_pm_ratification": "PM VERDICT · LOCAL_MONGO_PROVISIONING_IMPLEMENTED · REAL_ADAPTER_TESTED · ALLOWLIST-GUARDED · IDEMPOTENT · ROLLBACK-VERIFIED · LOCALHOST-ONLY · NOT_RUNTIME_WIRED · NOT_PLAYER-AFFECTING",
+    "req_02_gate_closed": "RT2-B-1B-1 CLOSED · PM-LOCKED",
+    "req_03_scope_coverage": {
+      "authorized": 12,
+      "executed": 12
+    },
+    "req_04_new_files_and_zero_existing_modified": {
+      "new_files": 16,
+      "existing_files_modified": 0,
+      "code_new": 4,
+      "test_new": 12
+    },
+    "req_05_real_mongo_tests": {
+      "pass": 57,
+      "fail": 0,
+      "duration_seconds": 2.1
+    },
+    "req_06_combined_regression": {
+      "rt2_a": 136,
+      "rt2_b_1a": 91,
+      "rt2_b_1b_1": 57,
+      "total": 284,
+      "regression": 0
+    },
+    "req_07_idempotency_validated": {
+      "tests_pass": true,
+      "fail_stop_status": "PROVISIONING_IDEMPOTENCY_UNDERDEFINED = RESOLVED_BY_REAL_MONGO_INTEGRATION_TESTS"
+    },
+    "req_08_rollback_validated_residual_zero": {
+      "rollback_tests_pass": true,
+      "residual_it_databases_post_suite": 0
+    },
+    "req_09_guardrails_active": [
+      "TARGET_ENVIRONMENT_REJECTED",
+      "TARGET_DATABASE_REJECTED",
+      "FORBIDDEN_DATABASE_ORBUS_R16",
+      "DB_SCOPE_VIOLATION"
+    ],
+    "req_10_collection_and_identity": {
+      "collection": "expedition_runtime_states",
+      "identity": "native _id = expedition_id (no duplicate field)"
+    },
+    "req_11_ttl_index": {
+      "name": "expedition_runtime_states_expires_at_ttl",
+      "field": "expires_at",
+      "expireAfterSeconds": 0
+    },
+    "req_12_cas_validation": {
+      "tests": 6,
+      "pass": 6
+    },
+    "req_13_lease_and_fencing_validation": {
+      "tests": 4,
+      "pass": 4
+    },
+    "req_14_deduplication_validation": {
+      "tests": 3,
+      "pass": 3
+    },
+    "req_15_concurrency_validation": {
+      "tests": 3,
+      "pass": 3
+    },
+    "req_16_performance_results": {
+      "single_state_read": {
+        "p95_ms": 0.21,
+        "budget_ms": 25
+      },
+      "cas_mutation": {
+        "p95_ms": 0.3,
+        "budget_ms": 35
+      },
+      "lease_acquire": {
+        "p95_ms": 0.68,
+        "budget_ms": 35
+      },
+      "lease_renew": {
+        "p95_ms": 0.39,
+        "budget_ms": 35
+      },
+      "dedup_retry": {
+        "p95_ms": 0.27,
+        "budget_ms": 25
+      },
+      "caveat": "local metrics do NOT authorize shared or live rollout"
+    },
+    "req_17_writes_limited_to_allowlist": [
+      "orbus_r16_rt2b_test",
+      "orbus_r16_rt2b_it_<unique_run_id>"
+    ],
+    "req_18_no_writes_out_of_scope": {
+      "orbus_r16_writes": 0,
+      "orbus_r16_test_writes": 0,
+      "network_outside_localhost": 0
+    },
+    "req_19_residual_databases_zero": {
+      "orbus_r16_rt2b_it_star_residues_post_suite": 0
+    },
+    "req_20_runtime_wiring_zero": {
+      "runtime_adapter_wiring": false,
+      "expedition_service_touched": false,
+      "backend_singleton_unchanged": true
+    },
+    "req_21_feature_flags_off": [
+      "cdv_transient_state_enabled=false",
+      "runtime_stat_soft_cap_enabled=false",
+      "runtime_stat_shadow_enabled=false",
+      "item_effect_engine_enabled=false",
+      "cdv_item_hooks_enabled=false",
+      "effect_observability_enabled=false"
+    ],
+    "req_22_shared_env_hold_blockers": [
+      "authenticated identities missing",
+      "environment boundary not approved",
+      "monitoring baseline missing",
+      "alerting missing",
+      "backup policy not adjudicated"
+    ],
+    "req_23_local_isolated_config_approved_only_for_local_env": true,
+    "req_24_governance_evidence": {
+      "sealed_integrity_tests": "6 passed",
+      "sealed_artifacts": "36/36 byte-identical",
+      "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "lore_meta_status": "invariant",
+      "baseline_chain_11_of_11_byte_identical": [
+        "IS2-A",
+        "IS2-B-P1",
+        "IS2-B-P1-N1",
+        "IS2-B-P2A",
+        "IS2-B-P2B-1",
+        "IS2-B-P2B-RT1",
+        "IS2-B-P2B-RT2-P0",
+        "IS2-B-P2B-RT2-A",
+        "IS2-B-P2B-RT2-B-P0",
+        "IS2-B-P2B-RT2-B-1A",
+        "IS2-B-P2B-RT2-B-1B-P0"
+      ],
+      "rt2_a_files_unchanged_count": 38,
+      "rt2_b_1a_files_unchanged_count": 14,
+      "prd_pre_append_sha256": "0012b0f83cbede393be205480306a2323615b17aff22144031aba2871fea0e93",
+      "prd_delta": "1 append RT2-B-1B-1 block (idempotent)",
+      "application_code_modified_existing_files": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "registry_changes": 0,
+      "item_generation": 0,
+      "feature_flag_activation": 0,
+      "runtime_wiring": 0
+    },
+    "req_25_explicit_stop": {
+      "phase_1": true,
+      "next_action": "Phase 2 dispatch RT2-B-2-P0 Local Runtime Wiring Readiness Plan",
+      "strict_stop": true
+    }
+  }
+}
