@@ -1,0 +1,227 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2-P0",
+  "canonical_name": "LOCAL RUNTIME WIRING & CLASS-STATE INTEGRATION READINESS PLAN",
+  "regime": "DOCUMENTAL_ONLY · Italian_only · SHA §31 · STRICT STOP",
+  "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+  "closure_date_utc": "2026-02",
+  "anchor_lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "prd_sha_pre_append": "0eb7477abdcda64ac1ca3c6d3272a04a089bad186b260f62ff7f13a1cb9a089b",
+  "requirements": [
+    {
+      "id": 1,
+      "name": "PM verdict",
+      "status": "APPLIED_VERBATIM_2026_02",
+      "detail": "12/12 B2Q ratificati verbatim"
+    },
+    {
+      "id": 2,
+      "name": "P0 CLOSED",
+      "status": "CLOSED_PM_LOCKED",
+      "detail": "Nessuna modifica ulteriore autorizzata"
+    },
+    {
+      "id": 3,
+      "name": "34/34 sections",
+      "status": "PRESERVED",
+      "detail": "MD e JSON companion mantengono 34 sezioni. JSON parse = PASS"
+    },
+    {
+      "id": 4,
+      "name": "B2Q resolved = 12/12",
+      "status": "PM_RATIFIED_VERBATIM_2026_02",
+      "detail": "Auto-ratification count = 0"
+    },
+    {
+      "id": 5,
+      "name": "Wiring layer = expedition service orchestration",
+      "status": "RATIFIED_B2Q01",
+      "detail": "EXPEDITION SERVICE ORCHESTRATION LAYER · 11-step order"
+    },
+    {
+      "id": 6,
+      "name": "Current calculation remains authoritative",
+      "status": "RATIFIED_B2Q01",
+      "detail": "compute_team_power/success_chance/XP/loot resta autoritativo"
+    },
+    {
+      "id": 7,
+      "name": "First integration mode = local shadow only",
+      "status": "RATIFIED_B2Q02_B2Q10",
+      "detail": "cdv_transient_state_enabled + is_test_user + Mongo target localhost allowlisted"
+    },
+    {
+      "id": 8,
+      "name": "Test-user eligibility = server-side is_test_user, fail-closed",
+      "status": "RATIFIED_B2Q06",
+      "detail": "authenticated server-side user record, no client control, fail-closed on missing/invalid"
+    },
+    {
+      "id": 9,
+      "name": "FF remain default OFF",
+      "status": "RATIFIED_B2Q07",
+      "detail": "server-side startup FF frozen per operation, activation only local/test env"
+    },
+    {
+      "id": 10,
+      "name": "State created after expedition validation",
+      "status": "RATIFIED_B2Q02",
+      "detail": "dopo dungeon gate / team size / guards / level gate, prima lazy sweep"
+    },
+    {
+      "id": 11,
+      "name": "State lifecycle only, no class transitions",
+      "status": "RATIFIED_B2Q09",
+      "detail": "shell vuoto, transitions in RT2-B-2B PLANNED / HOLD"
+    },
+    {
+      "id": 12,
+      "name": "Adapter = application-scoped dependency",
+      "status": "RATIFIED_B2Q11",
+      "detail": "one adapter per process, injected collection, no per-request client"
+    },
+    {
+      "id": 13,
+      "name": "Public API changes = 0 · Frontend changes = 0",
+      "status": "RATIFIED_B2Q12_EXCLUSIONS",
+      "detail": "OpenAPI scope invariante vs RT2-B-1B-1"
+    },
+    {
+      "id": 14,
+      "name": "Shared environment activation = forbidden",
+      "status": "RATIFIED_B2Q10",
+      "detail": "orbus_r16 / orbus_r16_test / preview / staging / production vietati"
+    },
+    {
+      "id": 15,
+      "name": "Tester gameplay activation = not authorized",
+      "status": "RATIFIED_B2Q12",
+      "detail": "deferita a step successivo con dispatch orchestrator dedicato"
+    },
+    {
+      "id": 16,
+      "name": "First code gate = RT2-B-2A",
+      "status": "RATIFIED_B2Q12",
+      "detail": "R18.6.RV3-IS2-B-P2B-RT2-B-2A · LOCAL SHADOW WIRING & STATE LIFECYCLE FOUNDATION"
+    },
+    {
+      "id": 17,
+      "name": "Exclusions RT2-B-2A (verbatim)",
+      "status": "RATIFIED_B2Q12",
+      "detail_list": [
+        "authoritative soft-cap",
+        "Mark / Drain / Fragment transitions",
+        "class rewards",
+        "effect engine",
+        "proc / duration / cooldown",
+        "item hooks",
+        "Legendary",
+        "public API changes",
+        "frontend",
+        "shared-env writes",
+        "tester gameplay activation"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "No Mongo writes during P0",
+      "status": "VERIFIED",
+      "detail": "0 collections created, 0 indices created, 0 provisioning executed, 0 apply executed"
+    },
+    {
+      "id": 19,
+      "name": "No code changes during P0",
+      "status": "VERIFIED",
+      "detail": "0 file .py applicativi modificati"
+    },
+    {
+      "id": 20,
+      "name": "No runtime wiring during P0",
+      "status": "VERIFIED",
+      "detail": "MongoExpeditionRuntimeStateStore non istanziato dal runtime; 0 import fuori namespace"
+    },
+    {
+      "id": 21,
+      "name": "RT2-B-2B (transitions) = PLANNED / HOLD",
+      "status": "SCHEDULED",
+      "detail": "R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION"
+    },
+    {
+      "id": 22,
+      "name": "Governance evidence",
+      "status": "VERIFIED",
+      "detail": {
+        "sealed_integrity_tests_passed": 6,
+        "sealed_artifacts_byte_identical": "36/36",
+        "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+        "baseline_chain_length": 12,
+        "prd_sha_pre_append": "0eb7477abdcda64ac1ca3c6d3272a04a089bad186b260f62ff7f13a1cb9a089b",
+        "prd_delta_phase1_closure": 1,
+        "new_seal": "NO"
+      }
+    },
+    {
+      "id": 23,
+      "name": "RT2-A + RT2-B-1A + RT2-B-1B-1 files unchanged",
+      "status": "VERIFIED",
+      "detail": {
+        "rt2a_files": 38,
+        "rt2b1a_files": 14,
+        "rt2b1b1_files": 16,
+        "total_upstream_files": 68,
+        "unchanged": "68/68"
+      }
+    },
+    {
+      "id": 24,
+      "name": "Combined effect-engine regression = 284/284 PASS",
+      "status": "VERIFIED",
+      "detail": {
+        "rt2a_tests": 136,
+        "rt2b1a_tests": 91,
+        "rt2b1b1_tests": 57,
+        "total_combined": 284,
+        "passed": 284,
+        "failed": 0,
+        "regression": 0
+      }
+    },
+    {
+      "id": 25,
+      "name": "Explicit STOP",
+      "status": "APPLIED",
+      "detail": "STRICT STOP · Phase 1 documentale · fine"
+    }
+  ],
+  "baseline_chain_12_verbatim": [
+    "IS2-A",
+    "IS2-B-P1",
+    "IS2-B-P1-N1",
+    "IS2-B-P2A",
+    "IS2-B-P2B-1",
+    "IS2-B-P2B-RT1",
+    "IS2-B-P2B-RT2-P0",
+    "IS2-B-P2B-RT2-A",
+    "IS2-B-P2B-RT2-B-P0",
+    "IS2-B-P2B-RT2-B-1A",
+    "IS2-B-P2B-RT2-B-1B-P0",
+    "IS2-B-P2B-RT2-B-1B-1"
+  ],
+  "fail_stops_status": [
+    {"id": "EXPEDITION_LIFECYCLE_WIRING_UNDERDEFINED", "status": "NOT_TRIGGERED"},
+    {"id": "TEST_USER_ELIGIBILITY_UNDERDEFINED", "status": "NOT_TRIGGERED"},
+    {"id": "RUNTIME_ADAPTER_TARGET_CONFLICT", "status": "NOT_TRIGGERED"},
+    {"id": "PUBLIC_API_SCOPE_EXPANSION_REQUIRED", "status": "NOT_TRIGGERED"}
+  ],
+  "next_dispatch": {
+    "gate": "R18.6.RV3-IS2-B-P2B-RT2-B-2A",
+    "canonical_name": "LOCAL SHADOW WIRING & STATE LIFECYCLE FOUNDATION",
+    "status": "READY-TO-DISPATCH",
+    "phase": "Phase 2 orchestrator dispatch separato"
+  },
+  "hold_gates": {
+    "RT2-B-2B": "PLANNED / HOLD (verdict B2Q09)",
+    "shared_env_activation": "LOCK · NOT_AUTHORIZED",
+    "tester_gameplay_activation": "NOT_AUTHORIZED"
+  },
+  "explicit_stop": "STRICT STOP · Phase 1 documentale · fine"
+}

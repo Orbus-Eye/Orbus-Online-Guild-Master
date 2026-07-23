@@ -4434,3 +4434,25 @@ Next gate: `RT2-B-1B-1 · CONDITIONAL GO (LOCAL ISOLATED ONLY)` · awaiting Phas
 Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `11/11 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A · RT2-B-1B-P0) · RT2-A 38 file unchanged · RT2-B-1A 14 file unchanged. SHA di manifest, closure MD/JSON, implementation reports, e PRD post dichiarati solo nel chat report (SHA Policy §31).
 
 Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2-P0 · Local Runtime Wiring Readiness Plan · GO DOCUMENTAL` · awaiting Phase 2 dispatch da orchestrator.
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-2-P0 · LOCAL RUNTIME WIRING & CLASS-STATE INTEGRATION READINESS · CLOSED
+
+- B2Q resolved = 12/12
+- wiring layer = expedition service orchestration
+- current calculation remains authoritative
+- first integration mode = local shadow only
+- test-user eligibility = server-side is_test_user
+- missing eligibility fails closed
+- feature flags remain default OFF
+- state created after expedition validation
+- state lifecycle only, no class transitions
+- adapter = application-scoped dependency
+- public API changes = 0
+- frontend changes = 0
+- shared environment activation = forbidden
+- tester gameplay activation = not authorized
+- first code gate = RT2-B-2A
+
+Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `12/12 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A · RT2-B-1B-P0 · RT2-B-1B-1) · RT2-A 38 file unchanged · RT2-B-1A 14 file unchanged · RT2-B-1B-1 16 file unchanged · combined effect-engine tests = 284 PASS · application code / DB / OpenAPI / FF activation / runtime wiring / Registry / item-gen / Mongo writes = 0. SHA dei 2 artefatti P0 patchati, dei 3 closure artifact (MD/JSON/manifest §31) e del PRD post-append dichiarati esclusivamente nel chat report finale (SHA Policy §31).
+
+Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2A · Local Shadow Wiring & State Lifecycle Foundation` · READY-TO-DISPATCH (Phase 2 orchestrator).
