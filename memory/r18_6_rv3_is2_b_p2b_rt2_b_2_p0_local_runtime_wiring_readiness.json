@@ -1,0 +1,605 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2-P0",
+  "canonical_name": "LOCAL RUNTIME WIRING & CLASS-STATE INTEGRATION READINESS PLAN",
+  "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA Policy §31 · STRICT STOP",
+  "status": "DRAFT · READ-ONLY · PM_OPEN_QUESTIONS_EMITTED · NO AUTO-RATIFICATION",
+  "date_utc": "2026-02",
+  "anchors": {
+    "lore_meta_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "prd_sha256_pre_append_invariant": "0eb7477abdcda64ac1ca3c6d3272a04a089bad186b260f62ff7f13a1cb9a089b",
+    "baseline_chain_length": 12,
+    "baseline_chain_status": "BYTE_IDENTICAL_12_OF_12",
+    "sealed_integrity_tests_passed": 6,
+    "sealed_artifacts_byte_identical": "36/36",
+    "effect_engine_tests_passed": 284,
+    "new_seal": "NO",
+    "prd_delta_in_p0": 0
+  },
+  "sections": {
+    "section_1_executive_summary": {
+      "title": "Executive Summary",
+      "gate_output": "2 deliverable (.md + .json) + 12 PM Open Questions non-auto-ratificate",
+      "recommendation_p0": "RT2-B-2-P0 CLOSED / PM-LOCKED dopo ratifica di 12/12 B2Q",
+      "recommendation_rt2b2a": "HOLD / CONDITIONAL_GO_AFTER_ADJUDICATION",
+      "state_store_wiring_status": "STAND_ALONE_NON_WIRED"
+    },
+    "section_2_scope": {
+      "in_scope": [
+        "mappatura lifecycle spedizione live",
+        "identificazione touchpoint per shadow-wire state store",
+        "caratterizzazione test-user boundary server-authoritative",
+        "class-state semantics per CdV",
+        "proposta rollout 4-step FF invarianti",
+        "4 fail-stop",
+        "12 B2Q non-auto-ratificate",
+        "failure matrix runtime-wiring",
+        "risk register",
+        "scope canonico + esclusioni RT2-B-2A"
+      ],
+      "out_of_scope": [
+        "modifica file .py applicativi",
+        "nuova collection/index/provisioning",
+        "nuova rotta /api/*",
+        "OpenAPI mutation",
+        "FF activation",
+        "Registry v3",
+        "item-gen",
+        "Mongo write shared env",
+        "shadow read/write live",
+        "code slicing RT2-B-2A",
+        "closure manifest P0",
+        "PRD append P0"
+      ]
+    },
+    "section_3_governance": {
+      "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only",
+      "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "baseline_chain_12_verbatim": [
+        "IS2-A",
+        "IS2-B-P1",
+        "IS2-B-P1-N1",
+        "IS2-B-P2A",
+        "IS2-B-P2B-1",
+        "IS2-B-P2B-RT1",
+        "IS2-B-P2B-RT2-P0",
+        "IS2-B-P2B-RT2-A",
+        "IS2-B-P2B-RT2-B-P0",
+        "IS2-B-P2B-RT2-B-1A",
+        "IS2-B-P2B-RT2-B-1B-P0",
+        "IS2-B-P2B-RT2-B-1B-1"
+      ],
+      "sealed_integrity_tests_passed": 6,
+      "sealed_artifacts_byte_identical": "36/36",
+      "effect_engine_tests_passed": 284,
+      "prd_sha_pre_append": "0eb7477abdcda64ac1ca3c6d3272a04a089bad186b260f62ff7f13a1cb9a089b",
+      "sha_policy_31_enforcement": "NO_OWN_SHA_EMBEDDING_IN_DELIVERABLES",
+      "new_seal": "NO"
+    },
+    "section_4_source_chain": [
+      {"index": 1, "artifact": "RT2-B-P0 State Store & Multi-Worker Architecture", "status": "PM-LOCKED"},
+      {"index": 2, "artifact": "RT2-B-1A Store Contract & Non-Wired Adapter Foundation", "status": "PM-LOCKED"},
+      {"index": 3, "artifact": "RT2-B-1B-P0 Mongo Provisioning Readiness Plan", "status": "PM-LOCKED"},
+      {"index": 4, "artifact": "RT2-B-1B-1 Local Isolated Provisioning & Real Adapter Validation", "status": "PM-LOCKED"},
+      {"index": 5, "artifact": "RT2-A CdV & Effect Engine", "status": "PM-LOCKED"},
+      {"index": 6, "artifact": "RT1 Runtime Stat & Effect Semantics Specification", "status": "PM-LOCKED"},
+      {"index": 7, "artifact": "app/expeditions/routes.py (139 righe)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 8, "artifact": "app/expeditions/services.py (1378 righe)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 9, "artifact": "app/auth/services.py (324 righe)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 10, "artifact": "app/admin/services.py (is_test_user CAS toggle)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 11, "artifact": "app/stats/runtime/state_store/* (7 file · 1653 righe)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 12, "artifact": "app/stats/runtime/feature_flags.py (138 righe)", "status": "READ-ONLY_EVIDENCE"},
+      {"index": 13, "artifact": "PM Dispatch RT2-B-2-P0", "status": "RATIFYING_DIRECTIVE"}
+    ],
+    "section_5_discovery_methodology": {
+      "queries_executed": 7,
+      "tools_used": ["grep", "cat", "read-only view", "pytest (integrity + effect_engine only)", "sha256sum"],
+      "db_writes": 0,
+      "runtime_toggles": 0,
+      "new_collections": 0,
+      "new_runtime_imports": 0
+    },
+    "section_6_expedition_lifecycle_discovery": {
+      "phases_count": 3,
+      "phase_a_dispatch": {
+        "location": "app/expeditions/services.py:799-1076",
+        "key_ops": ["validate dungeon gate", "team size validation", "class-slug whitelist R18.1.2", "snapshot immutabile", "compute_team_power", "compute_success_chance", "threat resolution", "insert_one expedition + members", "lock is_available=false", "sticky max_team_power_ever"]
+      },
+      "phase_b_completion_sweep": {
+        "location": "app/expeditions/services.py:316-711",
+        "key_ops": ["CAS claim status:completing", "final_score random roll", "success roll", "XP application (traits + class multiplier + leader bonus)", "loot roll", "materials roll", "update adventurers/guilds/inventory", "achievement/quest/contract/seasonal hooks"]
+      },
+      "phase_c_read_report": {
+        "location": "app/expeditions/services.py:1090-1354",
+        "key_ops": ["lazy sweep trigger", "build_expedition_report", "guild_prestige_delta derivation", "milestones derivation"]
+      },
+      "architectural_constraint": "NO_COMBAT_PHASE_ROUND_INFRASTRUCTURE_EXISTING · SPEDIZIONE_MODELLATA_COME_SINGLE_ROLL_AT_COMPLETION"
+    },
+    "section_7_runtime_wiring_touchpoints": [
+      {
+        "id": "T1",
+        "location": "_dispatch_expedition:989-1023 (post insert_one)",
+        "op": "store.create_state(expedition_id, initial_state)",
+        "read_write": "shadow_write",
+        "player_affecting": false,
+        "boundary_note": "is_test_user=True AND FF cdv_transient_state_enabled=on"
+      },
+      {
+        "id": "T2",
+        "location": "_complete_one_expedition:540-558 (post status=completed)",
+        "op": "store.expire_state(expedition_id)",
+        "read_write": "shadow_write",
+        "player_affecting": false,
+        "boundary_note": "TTL 24h retention post-completion"
+      },
+      {
+        "id": "T3",
+        "location": "get_expedition:1136-1174",
+        "op": "store.get_state(expedition_id)",
+        "read_write": "shadow_read",
+        "player_affecting": false,
+        "boundary_note": "diagnostic only, non esposta in payload player-facing"
+      },
+      {
+        "id": "T4",
+        "location": "complete_due_expeditions:719-732",
+        "op": "coperto naturalmente da T2",
+        "read_write": "n/a",
+        "player_affecting": false
+      },
+      {
+        "id": "T5",
+        "location": "replay_last:1115-1132",
+        "op": "identico a T1 con is_replay=true",
+        "read_write": "shadow_write",
+        "player_affecting": false
+      }
+    ],
+    "section_8_test_user_boundary": {
+      "server_authoritative": true,
+      "source_of_truth": "app/auth/services.py:161-173",
+      "derivation": "email.lower().endswith('@orbus.test')",
+      "persisted_field": "users.is_test_user",
+      "admin_toggle": "app/admin/services.py:365-379 (CAS guard)",
+      "client_control_surface": "NONE (no body/query/header)",
+      "consumers_server_side": [
+        "app/guilds/services.py:75-83",
+        "app/chronicle/services.py:95",
+        "app/chat/services.py:130-137",
+        "app/admin/tester_tools.py:51-91"
+      ],
+      "fail_stop_TEST_USER_ELIGIBILITY_UNDERDEFINED": "NOT_TRIGGERED"
+    },
+    "section_9_feature_flag_invariance": {
+      "flags_status": [
+        {"flag_id": "runtime_stat_soft_cap_enabled", "default": false, "rt2a_runtime_attivabile": true, "hard_force_false": false},
+        {"flag_id": "runtime_stat_shadow_enabled", "default": false, "rt2a_runtime_attivabile": true, "hard_force_false": false},
+        {"flag_id": "cdv_transient_state_enabled", "default": false, "rt2a_runtime_attivabile": false, "hard_force_false": true},
+        {"flag_id": "item_effect_engine_enabled", "default": false, "rt2a_runtime_attivabile": false, "hard_force_false": true},
+        {"flag_id": "cdv_item_hooks_enabled", "default": false, "rt2a_runtime_attivabile": false, "hard_force_false": true},
+        {"flag_id": "effect_observability_enabled", "default": false, "rt2a_runtime_attivabile": false, "hard_force_false": true}
+      ],
+      "rollout_4_step_proposed_non_ratified": [
+        "STEP 1 · RT2-B-2A · shadow read/write test-only",
+        "STEP 2 · RT2-B-2B · rimozione hard-force cdv_transient_state_enabled",
+        "STEP 3 · RT2-B-2C · Marks/Drain/Fragments cablati mock test",
+        "STEP 4 · RT2-B-2D · tester gameplay activation isolated"
+      ]
+    },
+    "section_10_rt1_hard_lock_preservation_verbatim": {
+      "marks": {
+        "active_marks_per_source_max": 5,
+        "mark_per_source_target_max": 1,
+        "duration_seconds_max": 10,
+        "automatic_eviction": false
+      },
+      "drain": {
+        "own_active_mark_required_at_start": true,
+        "own_active_mark_required_at_completion": true,
+        "Drain_consumes_Mark": false,
+        "one_resolution_per_execution_id": true
+      },
+      "fragments": {
+        "fragment_count_cap": 5,
+        "overflow": "discarded",
+        "phase_start_reset": 0,
+        "phase_end_reset": 0,
+        "expedition_end_reset": 0,
+        "focus_bonus_usage_per_segment_max": 2
+      },
+      "codified_in": "app/stats/runtime/state_store/models.py:19-23"
+    },
+    "section_11_class_state_integration_semantics_CdV": {
+      "slug": "cacciatore_del_vuoto",
+      "is_playable_current": false,
+      "migration_target_only": true,
+      "adventurer_population_migrated_from_warlock": 128,
+      "expedition_whitelist_R18_1_2_guard": "app/expeditions/services.py:887-890",
+      "runtime_consumers_outside_state_store_namespace": 0,
+      "proposed_integration": {
+        "adventurer_class_states_keyed_by": "adventurer_id (verdict PM B0Q03)",
+        "initial_state_version": 1,
+        "initial_fencing_token": 0,
+        "initial_runtime_status": "ACTIVE",
+        "ttl_active_hours": 6,
+        "ttl_post_completion_hours": 24
+      }
+    },
+    "section_12_local_shadow_wiring_model": {
+      "T1_pseudocode_summary": "if _shadow_wire_allowed: try create_state; except log warn",
+      "T2_pseudocode_summary": "if _shadow_wire_allowed_by_expedition: try expire_state; except pass",
+      "T3_pseudocode_summary": "optional, gated by runtime_stat_shadow_enabled",
+      "constraints_verbatim": [
+        "try/except non-blocking",
+        "nessuna nuova dipendenza sync/blocking",
+        "nessuna nuova rotta pubblica",
+        "expedition_public invariante",
+        "user_public invariante"
+      ]
+    },
+    "section_13_state_lifecycle_foundation": [
+      {"transition": "CREATE", "trigger": "_dispatch_expedition post insert_one", "store_op": "create_state", "state_version": 1, "fencing_token": 0},
+      {"transition": "ATTACH", "trigger": "reserved RT2-B-2C", "store_op": "reserve_writer", "state_version": "invariato", "fencing_token": "+1"},
+      {"transition": "MUTATE", "trigger": "reserved RT2-B-2C", "store_op": "apply_event_once", "state_version": "+1 per event", "fencing_token": "invariato"},
+      {"transition": "RELEASE", "trigger": "reserved RT2-B-2C", "store_op": "release_writer", "state_version": "invariato", "fencing_token": "invariato"},
+      {"transition": "EXPIRE", "trigger": "_complete_one_expedition post status=completed", "store_op": "expire_state", "state_version": "invariato", "fencing_token": "invariato"},
+      {"transition": "DELETE", "trigger": "manual op only", "store_op": "delete_state"}
+    ],
+    "section_14_store_adapter_selection": {
+      "primary_selected": "MongoExpeditionRuntimeStateStore",
+      "fake_marker": "PRODUCTION_USE = FORBIDDEN (fake_store.py:2-3)",
+      "instantiation_options": [
+        {"option": "A", "name": "lifespan-based singleton injection", "recommendation": true},
+        {"option": "B", "name": "lazy factory per-request", "recommendation": false},
+        {"option": "C", "name": "module-level singleton", "recommendation": false}
+      ]
+    },
+    "section_15_fencing_token_state_version_recap": {
+      "rt2b2a_scope": "only create_state + expire_state",
+      "cas_retry_loop_applicativo_required": false,
+      "possible_outcomes_create_state": ["SUCCESS", "ALREADY_EXISTS (silent noop)"],
+      "possible_outcomes_expire_state": ["SUCCESS", "DEDUPLICATED_NO_OP"]
+    },
+    "section_16_event_sequencing_at_runtime": {
+      "rt2b2a_scope": "apply_event_once NON chiamato",
+      "rt2b2c_future_scope": "event bus in-memory per-process; event_id = expedition_id + adventurer_id + phase_id + type + payload_hash",
+      "b2q08_adjudication_required": true
+    },
+    "section_17_idempotency_retry_at_runtime": {
+      "create_state_idempotent": true,
+      "expire_state_idempotent": true,
+      "retry_loop_applicativo": "NONE (non-blocking failure)"
+    },
+    "section_18_failure_matrix": [
+      {"id": "F01", "scenario": "create_state Mongo down", "player_impact": "NONE", "recovery": "log warn, procede"},
+      {"id": "F02", "scenario": "expire_state Mongo down", "player_impact": "NONE", "recovery": "TTL sweep interno"},
+      {"id": "F03", "scenario": "create_state timeout", "player_impact": "NONE", "recovery": "log warn, procede"},
+      {"id": "F04", "scenario": "duplicate create_state (retry HTTP)", "player_impact": "NONE", "recovery": "ALREADY_EXISTS silent"},
+      {"id": "F05", "scenario": "test-user boundary Mongo query fallisce", "player_impact": "NONE", "recovery": "fail-closed (default False)"},
+      {"id": "F06", "scenario": "FF toggled off mid-expedition", "player_impact": "NONE", "recovery": "shadow write skipped"},
+      {"id": "F07", "scenario": "state expires mid-expedition (TTL 6h)", "player_impact": "NONE in RT2-B-2A", "recovery": "n/a"},
+      {"id": "F08", "scenario": "boundary check divergence", "player_impact": "NONE", "recovery": "owner check coerente"},
+      {"id": "F09", "scenario": "admin flips is_test_user mid-flight", "player_impact": "NONE", "recovery": "expedition completa"},
+      {"id": "F10", "scenario": "non-test-user erroneamente marcato test-user", "player_impact": "CRITICAL in shared prod (N/A local)", "recovery": "fail-closed + audit alerting"},
+      {"id": "F11", "scenario": "state document orphan (create ok, no expire)", "player_impact": "NONE", "recovery": "TTL 6h + 24h cleanup"},
+      {"id": "F12", "scenario": "concurrent lazy-sweep + report call", "player_impact": "NONE", "recovery": "CAS store-safe"}
+    ],
+    "section_19_compatibility_boundary": {
+      "invariants": [
+        "cdv_transient_state_enabled = false in prod fino a RT2-B-2C ratificato",
+        "runtime_stat_shadow_enabled = false in shared prod",
+        "expedition_public output invariante",
+        "_dispatch_expedition output invariante",
+        "_complete_one_expedition output invariante",
+        "user_public output invariante",
+        "no sync blocking dependency on MongoExpeditionRuntimeStateStore"
+      ]
+    },
+    "section_20_public_api_scope": {
+      "new_public_routes_in_rt2b2a": 0,
+      "new_admin_routes_in_rt2b2a": 0,
+      "openapi_scope_invariant_vs_rt2b1b1": true,
+      "fail_stop_PUBLIC_API_SCOPE_EXPANSION_REQUIRED": "NOT_TRIGGERED"
+    },
+    "section_21_observability_plan": [
+      {"event_id": "runtime_state_created", "severity": "INFO", "sampling_pct": 100},
+      {"event_id": "runtime_state_shadow_write_failed", "severity": "WARN", "sampling_pct": 100},
+      {"event_id": "runtime_state_expired", "severity": "INFO", "sampling_pct": 100},
+      {"event_id": "runtime_state_shadow_expire_failed", "severity": "WARN", "sampling_pct": 100}
+    ],
+    "section_22_security_abuse_surface": [
+      {"threat": "client-forged shadow wiring", "mitigation": "server-side _shadow_wire_allowed, no client parameter"},
+      {"threat": "test-user impersonation", "mitigation": "email suffix @orbus.test + admin CAS toggle"},
+      {"threat": "cross-guild shadow state write", "mitigation": "user_guild_or_404 ownership check"},
+      {"threat": "state document poisoning via forged event_id", "mitigation": "N/A in RT2-B-2A (no apply_event_once runtime)"},
+      {"threat": "FF override via env manipulation", "mitigation": "lru_cache + hard-force in feature_flags.py:113-115"}
+    ],
+    "section_23_test_architecture_planned": [
+      {"id": "T-2A-01", "type": "unit", "description": "_shadow_wire_allowed True solo se FF=on + is_test_user=True"},
+      {"id": "T-2A-02", "type": "unit", "description": "boundary fail-closed su Mongo error"},
+      {"id": "T-2A-03", "type": "integration", "description": "dispatch con test-user + FF on → documento creato"},
+      {"id": "T-2A-04", "type": "integration", "description": "dispatch con is_test_user=False → nessun documento"},
+      {"id": "T-2A-05", "type": "integration", "description": "completion con test-user → runtime_status=EXPIRED"},
+      {"id": "T-2A-06", "type": "integration", "description": "FF off → 0 documenti"},
+      {"id": "T-2A-07", "type": "regression", "description": "284 test effect_engine + spedizione existing invariati"},
+      {"id": "T-2A-08", "type": "chaos", "description": "Mongo down durante shadow write → expedition player-visible unchanged"},
+      {"id": "T-2A-09", "type": "concurrency", "description": "2 dispatch paralleli test-user → 2 documenti isolati"},
+      {"id": "T-2A-10", "type": "boundary", "description": "admin toggle is_test_user off mid-flight → expedition procede"}
+    ],
+    "section_24_performance_considerations": {
+      "create_state_p95_ms_local_isolated_measured": 0.21,
+      "create_state_p95_budget_verdict_pm": 25,
+      "expire_state_p95_estimated_ms": 25,
+      "boundary_check_p95_estimated_ms": 5,
+      "total_critical_path_overhead_estimated_ms": 30,
+      "player_impact": "TRASCURABILE"
+    },
+    "section_25_rollback_recovery": {
+      "strategies": [
+        "FF-off rollback (env var + restart)",
+        "code rollback (revert commit RT2-B-2A)",
+        "DB rollback locale isolated (db.expedition_runtime_states.drop())"
+      ],
+      "data_loss_risk": "ZERO (state document transient)"
+    },
+    "section_26_rollout_ordering_4_step": [
+      {"step": 1, "gate": "RT2-B-2A", "scope": "shadow read/write test env"},
+      {"step": 2, "gate": "RT2-B-2B", "scope": "rimozione hard-force cdv_transient_state_enabled"},
+      {"step": 3, "gate": "RT2-B-2C", "scope": "CdV combat semantics runtime test-only"},
+      {"step": 4, "gate": "RT2-B-2D", "scope": "tester gameplay activation isolated"}
+    ],
+    "section_27_first_code_slice_scope_rt2b2a_proposed": {
+      "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-2A · LOCAL SHADOW WIRING & STATE LIFECYCLE FOUNDATION",
+      "authorized_scope": [
+        "nuovo modulo app/expeditions/runtime_shadow_hooks.py",
+        "3 call site modifications in app/expeditions/services.py (_dispatch_expedition, _complete_one_expedition, replay_last)",
+        "lifespan-based injection dello store singleton",
+        "suite test T-2A-01→T-2A-10 (10 test)",
+        "audit event registration"
+      ],
+      "file_touched_estimate": "3-5 nuovi + 2-3 esistenti modificati",
+      "instantiation_recommendation": "OPTION A (lifespan-based)"
+    },
+    "section_28_explicit_exclusions_from_rt2b2a": [
+      "Marks/Drain/Fragments live semantics",
+      "Combat phase/round infrastructure",
+      "Event bus / event emission runtime",
+      "apply_event_once runtime",
+      "reserve_writer/renew_writer_lease/release_writer runtime",
+      "Public API expansion",
+      "Player-facing UI su runtime state",
+      "Shared-environment provisioning",
+      "Registry v3 / item-gen",
+      "CdV re-activation (is_playable=true)"
+    ],
+    "section_29_fail_stop_register": [
+      {
+        "fail_stop_id": "EXPEDITION_LIFECYCLE_WIRING_UNDERDEFINED",
+        "status": "NOT_TRIGGERED",
+        "rationale": "Lifecycle 3-fasi mappato con 5 touchpoint candidati (Sezione 7). Boundary shadow-only definito."
+      },
+      {
+        "fail_stop_id": "TEST_USER_ELIGIBILITY_UNDERDEFINED",
+        "status": "NOT_TRIGGERED",
+        "rationale": "is_test_user server-authoritative (email suffix @orbus.test a registration, admin CAS toggle, persistito in users). No client parameter/header/query-string. 4 servizi consumer coerenti."
+      },
+      {
+        "fail_stop_id": "RUNTIME_ADAPTER_TARGET_CONFLICT",
+        "status": "NOT_TRIGGERED",
+        "rationale": "MongoExpeditionRuntimeStateStore unica implementazione autorizzata. FakeExpeditionRuntimeStateStore marker FORBIDDEN. B2Q02 richiede solo adjudication su instantiation pattern."
+      },
+      {
+        "fail_stop_id": "PUBLIC_API_SCOPE_EXPANSION_REQUIRED",
+        "status": "NOT_TRIGGERED",
+        "rationale": "RT2-B-2A non richiede nuove rotte pubbliche. OpenAPI scope invariante vs RT2-B-1B-1."
+      }
+    ],
+    "section_30_risk_register": [
+      {"id": "R01", "risk": "Mongo down su shadow write durante dispatch", "severity": "LOW", "mitigation": "try/except non-blocking"},
+      {"id": "R02", "risk": "test-user boundary bypass in prod shared", "severity": "MEDIUM", "mitigation": "RT2-B-2A confinato a local isolated"},
+      {"id": "R03", "risk": "FF hard-force removal accidentale in prod", "severity": "MEDIUM", "mitigation": "adjudication PM esplicito per STEP 2"},
+      {"id": "R04", "risk": "state document orphan buildup", "severity": "LOW", "mitigation": "TTL 6h + 24h"},
+      {"id": "R05", "risk": "performance overhead peggiora player latency", "severity": "LOW", "mitigation": "p95 < 30ms su path critico"},
+      {"id": "R06", "risk": "OPZIONE A introduce lifespan tightening", "severity": "LOW_MEDIUM", "mitigation": "adjudication B2Q02, analogo db singleton"},
+      {"id": "R07", "risk": "CdV runtime state contiene PII sensibile", "severity": "RESOLVED", "mitigation": "schema esclude PII/JWT/RNG (contract RT2-B-P0 §30)"},
+      {"id": "R08", "risk": "concurrent replay double-create", "severity": "LOW", "mitigation": "ALREADY_EXISTS silent idempotent"},
+      {"id": "R09", "risk": "test-user toggle race mid-flight", "severity": "LOW", "mitigation": "boundary check al dispatch, non retro-influisce"},
+      {"id": "R10", "risk": "runtime wiring gap coverage test", "severity": "MEDIUM", "mitigation": "suite T-2A-01→10 richiesta"}
+    ],
+    "section_31_governance_evidence_snapshot": {
+      "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "baseline_chain_length": 12,
+      "sealed_integrity_tests_passed": 6,
+      "sealed_artifacts_byte_identical": "36/36",
+      "effect_engine_tests_passed": 284,
+      "application_code_modifications": 0,
+      "openapi_changes": 0,
+      "registry_changes": 0,
+      "item_gen_changes": 0,
+      "ff_activation": 0,
+      "runtime_wiring": 0,
+      "mongo_writes": 0,
+      "new_collections": 0,
+      "new_indices": 0,
+      "frontend_changes": 0,
+      "prd_delta_in_p0": 0,
+      "prd_sha_invariant": "0eb7477abdcda64ac1ca3c6d3272a04a089bad186b260f62ff7f13a1cb9a089b",
+      "new_seal": "NO"
+    },
+    "section_32_pm_open_questions": [
+      {
+        "question_id": "B2Q01",
+        "topic": "Instantiation pattern del MongoExpeditionRuntimeStateStore runtime",
+        "evidence": "app/core/database.py:9 singleton AsyncIOMotorClient. app/core/lifespan.py esistente. mongo_adapter accepts collection injected.",
+        "options": ["A · lifespan-based singleton injection", "B · lazy factory per-request", "C · module-level singleton"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/core/lifespan.py", "app/expeditions/runtime_shadow_hooks.py (nuovo)"],
+        "gameplay_impact": "NONE con FF off",
+        "DB_impact": "NONE in RT2-B-2-P0; RT2-B-2A dipende da provisioning locale",
+        "test_impact": ["T-2A-03", "T-2A-06", "T-2A-09"],
+        "blocking": "SI per RT2-B-2A dispatch"
+      },
+      {
+        "question_id": "B2Q02",
+        "topic": "Boundary check semantics: fail-closed vs fail-open su Mongo error",
+        "evidence": "app/guilds/services.py:75-83 pattern esistente",
+        "options": ["A · fail-closed (return False)", "B · fail-open (return True)", "C · fail-open + audit WARN"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/expeditions/runtime_shadow_hooks.py"],
+        "gameplay_impact": "NONE",
+        "DB_impact": "NONE",
+        "test_impact": ["T-2A-02"],
+        "blocking": "SI per RT2-B-2A dispatch"
+      },
+      {
+        "question_id": "B2Q03",
+        "topic": "guild owner_user_id vs current_user['id'] check",
+        "evidence": "app/guilds/services.py:75 usa owner_user_id",
+        "options": ["A · guild['owner_user_id']", "B · current_user['id']", "C · entrambi coincidano"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/expeditions/runtime_shadow_hooks.py"],
+        "gameplay_impact": "NONE con FF off",
+        "DB_impact": "NONE",
+        "test_impact": ["T-2A-01"],
+        "blocking": "SI"
+      },
+      {
+        "question_id": "B2Q04",
+        "topic": "Shadow write asincrono vs sincrono nel critical path",
+        "evidence": "_dispatch_expedition è async. Overhead p95 ≤ 25ms.",
+        "options": ["A · async await inline", "B · asyncio.create_task fire-and-forget", "C · task queue"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/expeditions/services.py"],
+        "gameplay_impact": "+25ms p95 trascurabile",
+        "DB_impact": "1 create per dispatch (test-user only)",
+        "test_impact": ["T-2A-03", "T-2A-08"],
+        "blocking": "SI"
+      },
+      {
+        "question_id": "B2Q05",
+        "topic": "Shadow write al replay_last (is_replay=true)",
+        "evidence": "_dispatch_expedition(is_replay=True) produce nuovo exp_id",
+        "options": ["A · trattare come dispatch normale", "B · skip shadow write per replay"],
+        "agent_recommendation": "A",
+        "affected_files": [],
+        "gameplay_impact": "NONE",
+        "DB_impact": "1 create per replay",
+        "test_impact": ["potenziale T-2A-11"],
+        "blocking": "NO"
+      },
+      {
+        "question_id": "B2Q06",
+        "topic": "Expire timing: subito dopo status=completed o dopo tutti gli hooks",
+        "evidence": "_complete_one_expedition:540-558 update status, hooks successivi try/except best-effort",
+        "options": ["A · expire dopo status=completed", "B · expire dopo tutti gli hooks", "C · expire alla prima read"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/expeditions/services.py"],
+        "gameplay_impact": "NONE",
+        "DB_impact": "1 update per completion",
+        "test_impact": ["T-2A-05"],
+        "blocking": "SI"
+      },
+      {
+        "question_id": "B2Q07",
+        "topic": "Activation ordering 4-step",
+        "evidence": "FF invarianti attuali. 4 step proposti Sezione 26.",
+        "options": ["A · 4-step come proposto", "B · 3-step (fusione 2+3)", "C · 5-step (aggiungere step 0)"],
+        "agent_recommendation": "A",
+        "affected_files": [],
+        "gameplay_impact": "STEP 4 produce first player-facing side-effect",
+        "DB_impact": "STEP 1 avvia writes locali test-only",
+        "test_impact": "10 test per RT2-B-2A, TBD per successivi",
+        "blocking": "SI per rollout roadmap"
+      },
+      {
+        "question_id": "B2Q08",
+        "topic": "Event bus architecture (deferred a RT2-B-2C, decisione ora?)",
+        "evidence": "nessun event bus esistente. apply_event_once contract-only.",
+        "options": ["A · in-memory event bus per-process", "B · Mongo change stream", "C · library esterna"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/stats/runtime/event_bus.py (nuovo in RT2-B-2C)"],
+        "gameplay_impact": "NONE in RT2-B-2A",
+        "DB_impact": "NONE diretto",
+        "test_impact": "TBD RT2-B-2C",
+        "blocking": "NO per RT2-B-2A · BLOCKING per RT2-B-2C"
+      },
+      {
+        "question_id": "B2Q09",
+        "topic": "TTL 6h inactivity vs completion timing",
+        "evidence": "verdict PM B0Q07 = 6h inactivity + 24h post-completion",
+        "options": ["A · 6h + 24h verdict PM", "B · TTL = expedition.completes_at", "C · 24h flat"],
+        "agent_recommendation": "A",
+        "affected_files": ["app/expeditions/runtime_shadow_hooks.py"],
+        "gameplay_impact": "NONE",
+        "DB_impact": "TTL index sweep interno Mongo",
+        "test_impact": ["T-2A-07"],
+        "blocking": "SI (verdict PM upstream)"
+      },
+      {
+        "question_id": "B2Q10",
+        "topic": "Admin diagnostic endpoint su runtime state",
+        "evidence": "nessun endpoint esistente",
+        "options": ["A · nessun endpoint in RT2-B-2A", "B · GET /api/admin/runtime-state/{expedition_id}", "C · dev-only gated APP_ENV"],
+        "agent_recommendation": "A",
+        "affected_files": [],
+        "gameplay_impact": "NONE",
+        "DB_impact": "NONE",
+        "test_impact": "NONE",
+        "blocking": "NO"
+      },
+      {
+        "question_id": "B2Q11",
+        "topic": "Performance acceptance threshold per RT2-B-2A",
+        "evidence": "baseline create_state = 0.21ms local isolated (RT2-B-1B-1)",
+        "options": ["A · p95 ≤ 25ms (verdict PM)", "B · p95 ≤ 10ms", "C · p95 ≤ 5ms"],
+        "agent_recommendation": "A",
+        "affected_files": ["test suite T-2A-*"],
+        "gameplay_impact": "latency delta trascurabile",
+        "DB_impact": "NONE diretto",
+        "test_impact": "1 test perf-benchmark",
+        "blocking": "NO se A verbatim"
+      },
+      {
+        "question_id": "B2Q12",
+        "topic": "Test-user gameplay activation (STEP 4) — quando?",
+        "evidence": "tester@orbus.test seedato. Nessuna attivazione runtime CdV.",
+        "options": ["A · STEP 4 solo dopo RT2-B-2C stable", "B · STEP 4 dopo RT2-B-2A per validare shadow flow", "C · STEP 4 skip"],
+        "agent_recommendation": "A",
+        "affected_files": [],
+        "gameplay_impact": "STEP 4 produce first player-facing CdV activation",
+        "DB_impact": "db.adventurer_classes update is_playable=True (isolated env)",
+        "test_impact": "end-to-end tester suite",
+        "blocking": "NO per RT2-B-2A · BLOCKING per activation roadmap"
+      }
+    ],
+    "section_33_go_hold_recommendation": {
+      "rt2b2p0_status": "READY_FOR_PM_ADJUDICATION",
+      "b2q_emitted": 12,
+      "b2q_auto_ratified": 0,
+      "fail_stops_total": 4,
+      "fail_stops_triggered": 0,
+      "governance_invariant": true,
+      "baseline_chain_status": "12/12 BYTE_IDENTICAL_PRESERVED",
+      "rt2b2a_status": "HOLD · CONDITIONAL_GO_AFTER_ADJUDICATION",
+      "rt2b2a_conditions": [
+        "Ratifica PM di 12/12 B2Q",
+        "Chiusura formale RT2-B-2-P0 con closure manifest §31 esterno",
+        "PRD append idempotente 1 blocco RT2-B-2-P0 CLOSED",
+        "baseline chain 13/13 byte-identical dopo closure"
+      ],
+      "shared_environment_provisioning": "LOCK · NOT_AUTHORIZED_UNTIL_RT2-B-2D+"
+    },
+    "section_34_explicit_stop": {
+      "status": "STRICT_STOP · Phase P0 documentale · fine",
+      "no_write_operations_authorized": true,
+      "no_ff_toggle_authorized": true,
+      "no_new_routes_authorized": true,
+      "no_closure_manifest_in_p0": true,
+      "no_prd_append_in_p0": true,
+      "awaiting": [
+        "Ratifica PM verbatim 12 B2Q",
+        "Dispatch orchestrator per formal closure RT2-B-2-P0",
+        "Dispatch orchestrator per RT2-B-2A Phase 2"
+      ]
+    }
+  }
+}
