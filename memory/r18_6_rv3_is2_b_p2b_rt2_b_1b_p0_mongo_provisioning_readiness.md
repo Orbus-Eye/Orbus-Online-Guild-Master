@@ -1,26 +1,31 @@
-# R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0 · Mongo Runtime-State Provisioning Readiness & Isolated Integration Plan
+# R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0 · Mongo Runtime-State Provisioning Readiness & Isolated Integration Plan (PATCHED · POST-B1BQ RATIFICATION)
 
 **Regime**: `DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA Policy §31 · STRICT STOP`
 **Gate ID**: `R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0 · MONGO PROVISIONING READINESS PLAN`
 **Ancoraggio invariante**: `lore_meta.py` SHA256 = `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`
-**Fonte upstream**: `R18.6.RV3-IS2-B-P2B-RT2-B-1A · CLOSED · PM-LOCKED` (Store Contract & non-wired adapter foundation)
-**Status**: `ARTIFACT WRITTEN · PM ADJUDICATION REQUIRED · FORMAL CLOSURE HOLD`
+**Fonte upstream**: `R18.6.RV3-IS2-B-P2B-RT2-B-1A · CLOSED · PM-LOCKED`
+**Patch dispatch**: 12/12 verdetti B1BQ ratificati dal PM + `RT2-B-1B-1 CONDITIONAL GO — LOCAL ISOLATED ONLY`
+**Status**: `PATCHED · PM-RATIFIED · READY FOR FORMAL CLOSURE`
 
 ---
 
 ## Section 1 · Executive Summary
 
-Il gate `RT2-B-1B-P0` produce un piano documentale, evidence-based e read-only, per il **provisioning fisico** della collection Mongo che ospiterà lo stato di runtime delle spedizioni (`expedition_runtime_states`), il set di indici (identity + TTL + recovery), il modello permessi in 3 profili (provisioning · runtime · diagnostic), l'ambiente di integration-test isolato, la procedura di rollback e la matrice di failure. Il gate **non crea alcuna collection, alcun indice, alcun documento**; non modifica alcun servizio applicativo; non attiva alcun feature flag; non collega la libreria RT2-B-1A al runtime.
+Il gate `RT2-B-1B-P0` produce, e ora integra con i verdetti PM ratificati, il piano documentale evidence-based e read-only per il **provisioning fisico** della collection `expedition_runtime_states`. Il PM ha ratificato tutte le 12 B1BQ e autorizzato uno slice successore condizionale — `RT2-B-1B-1 · LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION` — confinato a `LOCALHOST-ONLY / ISOLATED INTEGRATION`.
 
-**Raccomandazione**: `HOLD-PENDING-PM-DECISIONS`. Le 12 domande `B1BQ01..B1BQ12` richiedono adjudication PM prima di autorizzare `RT2-B-1B (apply)`. Due aree presentano indeterminatezza operativa **elevata** (evidence-based) che il PM deve chiarire: (a) target database prod vs dev boundary (`B1BQ02`) e (b) modello di identità Mongo con separazione dei privilegi (`B1BQ04`/`B1BQ05`).
+**Principio ambientale (lock architetturale)**:
+- `LOCAL ISOLATED VALIDATION` → potenzialmente autorizzato in `RT2-B-1B-1` (dispatch Phase 2 separato).
+- `SHARED ENVIRONMENT PROVISIONING` (preview / staging / production) → **VIETATO**.
+
+**Recommendation**: `RT2-B-1B-P0 CLOSED / PM-LOCKED · RT2-B-1B-1 READY-TO-DISPATCH (LOCAL ISOLATED ONLY)`.
 
 ---
 
 ## Section 2 · Scope
 
-**In scope (documentale)**: piano di provisioning, index set, TTL semantics, identity model, isolated integration-test env, rollback, failure matrix, capacity envelope, PM open questions, GO/HOLD recommendation.
+**In scope (documentale, Phase 1)**: patch del piano P0 con verdetti B1BQ; integrazione performance acceptance p95; boundary `LOCAL` vs `SHARED`; scope canonico dello slice `RT2-B-1B-1`; procedura rollback 10-step; failure matrix; PM open questions ratificate.
 
-**Out of scope (proibito in questo gate)**: Mongo collection creation · index creation · TTL index creation · DB writes · provisioning script execution · migration execution · runtime adapter wiring · expedition service modification · feature flag activation · real integration-test writes su Mongo · uso di credenziali production · OpenAPI / frontend / Registry / item generation.
+**Out of scope (proibito in Phase 1)**: Mongo collection creation · index creation · TTL index creation · DB writes · provisioning script execution · migration execution · runtime adapter wiring · expedition service modification · feature flag activation · real integration-test writes su Mongo · uso di credenziali production · OpenAPI / frontend / Registry / item generation. `RT2-B-1B-1` code/apply è **out of scope in Phase 1** — dispatch separato Phase 2.
 
 ---
 
@@ -29,702 +34,571 @@ Il gate `RT2-B-1B-P0` produce un piano documentale, evidence-based e read-only, 
 - Regime `DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only`.
 - `lore_meta.py` invariant · anchor SHA `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`.
 - Baseline chain `10/10 byte-identical`: IS2-A · IS2-B-P1 · IS2-B-P1-N1 · IS2-B-P2A · IS2-B-P2B-1 · IS2-B-P2B-RT1 · IS2-B-P2B-RT2-P0 · IS2-B-P2B-RT2-A · IS2-B-P2B-RT2-B-P0 · IS2-B-P2B-RT2-B-1A.
-- `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` (verificato post-scrittura).
+- `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical`.
 - `NEW SEAL = NO`.
-- PRD **invariato** (SHA riferimento post-RT2-B-1A `53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9`): nessun append RT2-B-1B-P0 in questo gate.
-- Nessun closure manifest in fase P0 (draft state).
-- SHA Policy §31: nessuno SHA embedded nei propri artefatti — dichiarati solo nel chat report finale.
+- PRD SHA riferimento pre-append: `53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9` (post-RT2-B-1A). In questa Phase 1 verrà appeso 1 blocco `RT2-B-1B-P0` (idempotente).
+- Closure manifest §31: manifest own SHA `NOT_EMBEDDED` — dichiarato SOLO nel chat report finale.
 
 ---
 
 ## Section 4 · Source Chain
 
-Provenienza documentale del gate `RT2-B-1B-P0`:
-
 | # | Upstream artifact | Status |
 |---|---|---|
 | 1 | `RT2-B-P0` — Foundation Runtime Discovery Report | PM-LOCKED |
-| 2 | `RT2-A` — CDV & Effect Engine · 24 code + 14 test | PM-LOCKED |
+| 2 | `RT2-A` — CDV & Effect Engine (24 code + 14 test = 38 file) | PM-LOCKED |
 | 3 | `RT2-B-1A` — Store Contract & non-wired adapter (14 file) | PM-LOCKED |
 | 4 | `RT2-B-1A` — Implementation Report MD (`77dc4172…`) | INVARIANT |
 | 5 | `RT2-B-1A` — Implementation Report JSON (`bc92e363…`) | INVARIANT |
-| 6 | `RT2-B-1A` — Final Closure MD/JSON + Manifest (`e0fc5adb…` / `4bbb1daf…` / `d848bc0e…`) | PM-LOCKED |
+| 6 | `RT2-B-1A` — Final Closure MD / JSON / Manifest (`e0fc5adb…` / `4bbb1daf…` / `d848bc0e…`) | PM-LOCKED |
 | 7 | Backend Mongo client init (`app/core/database.py:9`) | READ-ONLY EVIDENCE |
-| 8 | Index provisioning (`app/core/indexes.py`) | READ-ONLY EVIDENCE |
+| 8 | Existing index provisioning (`app/core/indexes.py`) | READ-ONLY EVIDENCE |
 | 9 | Startup lifespan (`app/core/lifespan.py`) | READ-ONLY EVIDENCE |
 | 10 | Pytest DB isolation policy (`/app/memory/pytest_db_isolation_policy.md`) | READ-ONLY EVIDENCE |
+| 11 | RT2-B-1B-P0 Draft (pre-patch) | SUPERSEDED BY THIS PATCH |
+| 12 | PM Dispatch RT2-B-1B-P0 Patch (12 B1BQ verdicts + CONDITIONAL GO for RT2-B-1B-1) | RATIFYING DIRECTIVE |
 
 ---
 
 ## Section 5 · Mongo Environment Discovery
 
-**Evidenza empirica raccolta in sola lettura**:
+Evidenza empirica invariata dal draft. Sintesi:
 
-### 5.1 Client initialization
-- File: `/app/backend/app/core/database.py:9`
-- Riga: `mongo_client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URL)`
-- Pattern: **singleton top-level** istanziato all'import; condiviso via `db = mongo_client[DB_NAME]`.
-- Consequenza: **un solo profilo credenziali** attivo per l'intero backend. Nessuna separazione runtime/provisioning/diagnostic implementata a livello di connection pool.
-
-### 5.2 Environment variables (`/app/backend/.env`)
-- `MONGO_URL="mongodb://localhost:27017"` — **senza autenticazione**, **senza TLS**, host locale.
-- `DB_NAME=orbus_r16` — database dev/preview.
-- `APP_ENV="development"`.
-- **Nessun secret store** referenziato (Vault/KMS/AWS SM) nel codice esplorato.
-
-### 5.3 Naming conventions
-Collection esistenti (estratto da `indexes.py` + moduli ensure_*): `users · guilds · adventurer_classes · adventurer_traits · adventurers · recruitment_offers · dungeons · items · expeditions · expedition_members · inventory_items · equipped_items · login_attempts · refresh_tokens · password_reset_tokens · squads · guild_structures · audit_log · market_* · consortium_* · chat_* · shop_* · seasons · pvp_* · rewards · achievements · class_halls · dashboard_* · world_boss · world · world_events · site_income_* · resources · legendary_forge · arfus_forge · trade_pacts · guild_specialization · pvp_season · stables · mounts_* · continent_events` · ecc.
-- Pattern: `snake_case`, plural nouns.
-- **`expedition_runtime_states`** aderisce alla convenzione.
-
-### 5.4 Existing provisioning path
-- Model **C attualmente attivo**: `app/core/lifespan.py` invoca `create_all_indexes(db)` + oltre 20 `ensure_*_indexes()` domain-scoped al boot.
-- `create_index` di pymongo/motor è **idempotente** (no-op se spec matches).
-- Pattern osservato: **implicit collection creation** via primo `create_index()` o primo write; nessun `db.create_collection(...)` esplicito nella codebase applicativa.
-
-### 5.5 Existing TTL indexes (evidenza)
-- `login_attempts.last_attempt_at` · `expireAfterSeconds = LOGIN_ATTEMPTS_TTL_SECONDS` (constante da `app.shared.constants`).
-- `refresh_tokens.expires_at` · `expireAfterSeconds = 0` (Date-driven).
-- `password_reset_tokens.expires_at` · `expireAfterSeconds = 0` (Date-driven).
-- **Il pattern `expireAfterSeconds=0` con campo `expires_at` BSON `Date`** è già in produzione e riusabile per il design candidato.
-
-### 5.6 Application Mongo permissions
-- `MONGO_URL` locale senza credenziali → runtime process ha **root-equivalent** su Mongo locale.
-- **Nessuna evidenza di `createUser`/`role`/`grantRolesToUser`** nel codice applicativo.
-- **Nessuna evidenza empirica di production Mongo boundary** (credenziali separate, cluster remoto, TLS). Il preview URL `guild-master-5.preview.emergentagent.com` è definito, ma non c'è mapping esplicito a un `MONGO_URL` prod separato in `.env`.
-
-### 5.7 Deployment environment configuration
-- Supervisor configs: `/etc/supervisor/conf.d/supervisord.conf` (backend/frontend), `supervisord_code_server.conf`, `supervisord_nginx_proxy.conf`, `webhook-crond.conf`.
-- **Nessun Dockerfile, nessun docker-compose, nessun manifest Kubernetes** nel repository esplorato (`/app`).
-- **Nessuna CI directory** (`.github/`, `.gitlab-ci.yml` assenti).
-
-### 5.8 Preview vs production database boundary
-- `.env` corrente indica `APP_ENV="development"` con `DB_NAME=orbus_r16`.
-- **Non è determinabile in questo P0**, dalla sola evidenza codice, l'ambiente di produzione con certezza — configurazione probabilmente iniettata a deployment-time. **PM_REVIEW → `B1BQ02`**.
-
-### 5.9 Backup configuration
-- Dump manuali in `/app/_mongo_dumps/` (evidenza: `adventurers_deprecated_pre_migrate_20260701_*.json`, `fresh_20260701_120426/`).
-- Script applicativi con `_backup_snapshot()` in `app/scripts/round18_reset1b_apply_v1_1.py:256` (backup verso `/app/backend/backups/…`).
-- **Nessun backup automatico schedulato · nessun PITR configurato · nessun cross-region snapshot** individuato.
-
-### 5.10 Monitoring infrastructure
-- `grep prometheus|grafana|datadog|newrelic|sentry` sul codebase applicativo → **zero risultati significativi** (una menzione in `security.py:183` come metric-hash placeholder, non integrazione).
-- **`MONITORING_BASELINE_MISSING`** — nessuna infrastruttura di metriche/traccia integrata.
-
-### 5.11 Alerting infrastructure
-- **Nessuna evidenza empirica** di regole alert configurate (né Prometheus AlertManager, né PagerDuty/OpsGenie).
-
-### 5.12 Test Mongo fixtures
-- `/app/backend/tests/conftest.py:11-49` — **hard guard-rail** al conftest import time: rifiuta esecuzione pytest se `DB_NAME` non contiene `test` o `APP_ENV` non è `test/testing/ci`.
-- `/app/backend/tests/.env.test` — override di `backend/.env` per test (linea 25 conftest).
-- `_ISOLATED_BACKEND_PORT = 8002` — fixture `isolated_backend_url` che spawna un uvicorn subprocess con `DB_NAME=orbus_r16_test` + `APP_ENV=test` (conftest linee 296-340).
-
-### 5.13 Local Mongo (dev)
-- Mongo locale in ascolto su `localhost:27017` (evidenza `MONGO_URL`).
-- Presenza `orbus_r16` (dev) e — implicitamente disponibile per il pattern isolated fixture — `orbus_r16_test`.
+- **Client init**: `AsyncIOMotorClient(MONGO_URL)` singleton top-level in `/app/backend/app/core/database.py:9`. Un solo profilo credenziali.
+- **Env**: `MONGO_URL="mongodb://localhost:27017"` (no auth, no TLS) · `DB_NAME=orbus_r16` · `APP_ENV="development"`.
+- **Naming convention**: `snake_case` + plural nouns. `expedition_runtime_states` compatibile.
+- **Provisioning path attuale**: Model C (startup ensure via `lifespan.py`).
+- **TTL riusabili**: `expireAfterSeconds=0` su `refresh_tokens.expires_at` e `password_reset_tokens.expires_at`.
+- **Permissions**: root-equivalent su Mongo locale (no auth).
+- **Preview vs prod boundary**: nessuna evidenza empirica di prod DB in `.env`.
+- **Deployment**: no Dockerfile / no docker-compose / no k8s manifest / no `.github/`.
+- **Backup**: dump manuali in `/app/_mongo_dumps/`; no PITR / auto-backup.
+- **Monitoring/alerting**: nessuna integrazione.
+- **Test fixtures**: guard-rail hard `conftest.py:11-49` + isolated backend fixture porta `8002` + database di test `orbus_r16_test`.
 
 ---
 
 ## Section 6 · Naming Conventions
 
-- Collection candidate name: **`expedition_runtime_states`** — `snake_case`, plural noun, allineata al pattern osservato.
-- Index naming candidate (proposto, PM_REVIEW): `expedition_runtime_states_id_unique`, `expedition_runtime_states_expires_at_ttl`, `expedition_runtime_states_status_expires_idx` (opzionale, recovery), `expedition_runtime_states_lease_expires_idx` (opzionale).
-- Nessuna collisione lessicale con collection esistenti.
-- **`player-facing export inclusion = forbidden`** (la collezione NON deve comparire in export cliente, leaderboard, chronicle player-facing).
+- Collection name: **`expedition_runtime_states`** — `PM_RATIFIED (B1BQ01)`.
+- `_id = expedition_id` (indice `_id` nativo) — nessun campo duplicato `expedition_id` salvo necessità futura dimostrata.
+- Index naming (post-ratifica):
+  - Nativo: `_id` (implicito).
+  - TTL: `expedition_runtime_states_expires_at_ttl` con `expireAfterSeconds=0` su campo `expires_at` (BSON Date).
+- Indici recovery/monitoring **DEFERRED** — non creare nel primo slice.
+- `player-facing export inclusion = FORBIDDEN`.
+- `analytics ingestion = DISABLED_BY_DEFAULT`.
 
 ---
 
-## Section 7 · Candidate Collection
+## Section 7 · Candidate Collection (DESIGN-LOCKED)
 
-- **Nome candidato**: `expedition_runtime_states` · `PM_REVIEW` per adjudication finale (`B1BQ01`).
-- **Naming collision**: `NONE` (grep evidence: 3 riferimenti trovati nel codebase — tutti dentro il package RT2-B-1A o test schema, nessuno in `indexes.py`/`lifespan.py`).
-- **Existing collection**: `NOT PRESENT` in nessuna path di provisioning applicativa.
-- **Database target proposto**: `orbus_r16` (dev/preview) + `orbus_r16_test` (test isolato). `PM_REVIEW → B1BQ02` per production DB name.
-- **Environment scope**: dev + preview + test isolato. Production **PM_REVIEW**.
-- **Player-facing export**: `FORBIDDEN` (runtime-only state, no chronicle/leaderboard/export inclusion).
-- **Analytics ingestion**: `DISABLED_BY_DEFAULT` (nessuna pipeline analytics documentata al momento; nessun requisito imposto in RT2-B-1A).
+- **Nome**: `expedition_runtime_states` — **`DESIGN-LOCKED · PM_RATIFIED (B1BQ01)`**.
+- **Naming collision**: `NONE` (verificato in fase discovery).
+- **Existing collection**: `NOT PRESENT`.
+- **Database target ratificati**:
+  - **Provisioning manuale + verifica idempotente**: **`orbus_r16_rt2b_test`** su `LOCALHOST-ONLY / LOCAL DEVELOPMENT · ISOLATED INTEGRATION` — `PM_RATIFIED (B1BQ02)`.
+  - **Integration-test automatizzati per-run**: **`orbus_r16_rt2b_it_<unique_run_id>`** — `PM_RATIFIED (B1BQ10)`.
+- **Database VIETATI per il primo apply**: `orbus_r16`, `orbus_r16_test`, `preview`, `staging`, `production`. `SHARED ENVIRONMENT APPLY = FORBIDDEN`.
+- **Fail-stop**:
+  - `Mongo host != localhost` → `TARGET_ENVIRONMENT_REJECTED`
+  - `database name != orbus_r16_rt2b_test` (per verifica manuale) o `!= orbus_r16_rt2b_it_<unique_run_id>` (per test) → `TARGET_DATABASE_REJECTED`
+- **Provisioning stop**: se collection esiste con schema/indici incompatibili → stop, non modificare, richiedere adjudication.
 
 ---
 
 ## Section 8 · Document Lifecycle
 
-Schema documento candidato (già validato dai contratti frozen dataclass in `models.py`):
+Schema documento (invariato rispetto al draft, sotto contratto RT2-B-1A):
 
 | Campo | Tipo | Note |
 |---|---|---|
-| `_id` / `expedition_id` | string | UUID4; `_id = expedition_id` (dedup index nativo) |
-| `state_version` | int64 | Monotonic; initial `1`; incrementato a ogni CAS mutation |
-| `runtime_status` | string enum | `active` · `completed` · `cancelled` · `expired` |
-| `owner_lease_id` | string \| null | Writer lease ID corrente |
-| `fencing_token` | int64 | Incrementa a ogni nuova acquisizione lease |
-| `lease_expires_at` | Date (BSON) | Scadenza lease writer |
-| `last_event_sequence` | int64 | Sequence server-authoritative |
-| `loadout_snapshot_version` | int32 | Riferimento snapshot loadout |
-| `adventurer_class_states` | array of subdocs | Marks/Drains/FragmentUsage per adventurer_id |
-| `processed_event_receipts` | array bounded (`RECEIPT_RING_CAP`) | Ring-buffer con fail-closed su cap |
-| `created_at` | Date (BSON) | UTC · immutable |
-| `updated_at` | Date (BSON) | UTC · aggiornato ad ogni mutation |
-| `expires_at` | Date (BSON) | UTC · **TTL driver** · aggiornato ad ogni mutation attiva; ricalcolato a `now + retention` su terminal state |
+| `_id` | string (= `expedition_id`) | UUID4 · nativa dedup |
+| `state_version` | int64 | Monotonic; initial `1` |
+| `runtime_status` | enum | `active` · `completed` · `cancelled` · `expired` |
+| `owner_lease_id` | string \| null | Writer lease |
+| `fencing_token` | int64 | Increment su nuova acquisizione lease |
+| `lease_expires_at` | BSON Date | Scadenza lease writer |
+| `last_event_sequence` | int64 | Server-authoritative |
+| `loadout_snapshot_version` | int32 | Riferimento snapshot |
+| `adventurer_class_states` | array subdocs | Marks/Drains/FragmentUsage per adventurer |
+| `processed_event_receipts` | bounded ring (`RECEIPT_RING_CAP`) | Fail-closed su cap |
+| `created_at` | BSON Date UTC | Immutable |
+| `updated_at` | BSON Date UTC | Per-mutation |
+| `expires_at` | BSON Date UTC | **TTL driver** · aggiornato a ogni mutation attiva; ricalcolato su terminal state |
 
-**Lifecycle stati**:
-- `active` → `expires_at = now + active_inactivity_ttl` (default candidate: 6h)
-- `completed` / `cancelled` → `expires_at = terminal_transition_time + terminal_retention_ttl` (default candidate: 24h)
-- TTL monitor rimuove il documento quando `expires_at <= now`.
-
-**Rischio Mongo 16 MB**:
-- `processed_event_receipts` è bounded → nessuna crescita illimitata.
-- `adventurer_class_states` limitato dal numero di adventurer per squad (≤ 4-6 per party attesa) × sub-strutture bounded → **envelope << 1 MB atteso**.
-- Nessun payload denormalizzato di dungeon/item catalog nel documento.
+**Requisito test state document**: `< 256 KiB` (performance acceptance §17). **Unbounded receipt growth = 0**.
 
 ---
 
-## Section 9 · Index Requirements
+## Section 9 · Index Requirements (RATIFIED · B1BQ06)
 
-Set indici valutato (ciascuno con giudizio evidence-based):
+Set indici **iniziale autorizzabile** (in `RT2-B-1B-1`):
 
-| # | Nome candidato | Chiave | Tipo | Required | Query servita | Cardinality | Write amp | Note |
-|---|---|---|---|---|---|---|---|---|
-| I1 | (native `_id`) | `_id` | native | REQUIRED | `find_one_and_update`, `find_one` per expedition_id | 1:1 | 0 | `_id = expedition_id`; nessun campo duplicato richiesto |
-| I2 | `expedition_runtime_states_expires_at_ttl` | `expires_at` | TTL (`expireAfterSeconds=0`) | REQUIRED | Cleanup automatico documenti scaduti | high (equal to doc count) | +1 per update | Pattern identico a `refresh_tokens_ttl`/`password_reset_ttl` |
-| I3 | `expedition_runtime_states_status_expires_idx` | `runtime_status, expires_at` | compound | OPTIONAL — `PM_REVIEW` | Query recovery per stati attivi vicini a expiry | medium | +1 per update | Serve solo se recovery-scan diventa una feature |
-| I4 | `expedition_runtime_states_lease_expires_idx` | `lease_expires_at` | single | OPTIONAL — `PM_REVIEW` | Lease reaper (scavenger job) | medium | +1 per update | Serve solo se implementiamo lease reaper esplicito. In assenza → TTL fa già cleanup |
-| I5 | `expedition_runtime_states_updated_at_idx` | `updated_at` | single | OPTIONAL — `PM_REVIEW` | Analytics/diagnostic | medium | +1 per update | Non giustificato senza query dimostrabile |
+| # | Nome | Chiave | Tipo | Required | Note |
+|---|---|---|---|---|---|
+| I1 | (native `_id`) | `_id` | native | **REQUIRED** | `_id = expedition_id`; nessun indice aggiuntivo su expedition_id |
+| I2 | `expedition_runtime_states_expires_at_ttl` | `expires_at` | TTL (`expireAfterSeconds=0`) | **REQUIRED** | Pattern identico a `refresh_tokens_ttl` esistente |
 
-**Raccomandazione baseline (minima)**: `I1 + I2`. `I3/I4/I5` richiedono query dimostrata per essere autorizzati — evitare indici "per sicurezza". `PM_REVIEW → B1BQ06`.
+**Indici DEFERRED (NON creare nel primo slice)**:
+- `runtime_status + expires_at` (recovery)
+- `lease_expires_at` (lease reaper)
+- `updated_at` (analytics)
 
-**Note tecniche indice TTL**:
-- Tipo BSON `Date` obbligatorio per `expires_at` (Mongo TTL monitor ignora stringhe ISO).
-- Aggiornamento a **ogni mutation** (parte del CAS filter update payload).
-- Comportamento su documenti terminali: `expires_at` ricalcolato a `terminal_transition_time + retention_ttl`.
-- **TTL monitor lag**: Mongo esegue il TTL sweep ogni 60s in media, **non deterministico**. `NO immediate deletion expectation`.
-- **Nessuna aspettativa di eliminazione entro un tempo garantito**.
+Autorizzazione condizionata a query dimostrata + PM adjudication successiva.
 
 ---
 
-## Section 10 · TTL Semantics
+## Section 10 · TTL Semantics (DESIGN-LOCKED · B1BQ07)
 
-Baseline candidate (non APPLY-LOCKED in P0, `PM_REVIEW → B1BQ07`):
+Valori TTL **PM_RATIFIED per validazione locale**:
 
-| Stato | TTL default | Meccanismo |
+| Stato | TTL | Calcolo `expires_at` |
 |---|---|---|
-| `active` (inactivity) | **6 hours** dall'ultima mutation | `expires_at = updated_at + 6h` |
-| `completed` (terminal) | **24 hours** dal transition | `expires_at = terminal_ts + 24h` |
-| `cancelled` (terminal) | **24 hours** dal transition | `expires_at = terminal_ts + 24h` |
-| `expired` (grace) | **0** (immediate cleanup on next TTL sweep) | Documento eligibile a rimozione al prossimo sweep |
+| `active` (inactivity) | **6 hours** | `expires_at = last_valid_mutation_ts + 6h` |
+| `completed` (terminal) | **24 hours** | `expires_at = completion_ts + 24h` |
+| `cancelled` (terminal) | **24 hours** | `expires_at = cancellation_ts + 24h` |
+| `expired` (grace) | **0** | Eligibile a rimozione al prossimo TTL sweep |
 
-**Calcolo `expires_at`**:
-- Owner: **runtime writer** (store adapter) sotto CAS filter.
-- Update trigger: ogni `compare_and_update` / `apply_event_once` / `renew_writer_lease` aggiorna `expires_at`.
-- Terminal states: `expires_at = terminal_transition_ts + terminal_retention_ttl`.
-
-**Distinzione active vs terminal**:
-- Il campo `runtime_status` è la source of truth.
-- Recovery: uno stato `active` con `expires_at` in prossimità della scadenza può essere resurrezionato da un writer che re-acquire il lease.
-- Un writer non può ripristinare uno stato `expired` (fail-closed).
-
-**Interazione con backup**: vedere Section 19.
+**Chiarimento critico (PM)**:
+- `Mongo TTL deletion = asynchronous`
+- `Exact deletion time = not guaranteed`
+- **Nessuna logica applicativa deve dipendere dalla cancellazione esatta al secondo**.
+- TTL monitor Mongo esegue sweep periodici (~60s cadence, non deterministico).
 
 ---
 
-## Section 11 · Permissions
+## Section 11 · Permissions (RATIFIED · B1BQ04 + B1BQ05)
 
-Modello identity a **3 profili distinti**, non ancora implementato empiricamente (`MONGO_PERMISSION_MODEL_UNDERDEFINED` → `PM_REVIEW`):
+Modello identity **stratificato per environment class**:
 
-### 11.1 Provisioning identity
-- Ruolo Mongo: `dbAdmin` scoped al database target OPPURE ruolo custom `provisioning_role`.
-- Grants richiesti: `createCollection`, `createIndex`, `dropIndex`, `dropCollection`, `listCollections`, `listIndexes`.
-- Presenza: **SOLO durante provisioning/rollback autorizzato**. Credenziali NON caricate nel processo applicativo runtime.
-- Rotazione: prima e dopo ogni finestra provisioning.
+### 11.1 LOCAL isolated apply (RT2-B-1B-1 · deroga confinata)
+- **Provisioning identity**: **current localhost no-auth Mongo connection**.
+- **Runtime identity**: `runtime_adapter_wiring = false` → nessuna runtime identity effettivamente usata. Coincidenza temporanea provisioning/runtime **accettata** solo per LOCAL_TEST_ONLY.
+- **Deroga**: `LOCAL_TEST_ONLY` confinata.
+- **Guardrail obbligatori** (fail-stop se violati):
+  - URI **esattamente** `localhost`
+  - database name **esattamente** in allowlist (`orbus_r16_rt2b_test` OR `orbus_r16_rt2b_it_<unique_run_id>`)
+  - **no wildcard** su database name
+  - **no accesso** a `orbus_r16`, `orbus_r16_test`, o altri DB fuori allowlist
+  - **no credenziali di produzione** loadate nel processo
+  - output esplicito del target (URI + DB) **prima** dell'apply
 
-### 11.2 Runtime identity
-- Ruolo Mongo: custom `runtime_role`.
-- Grants richiesti: `find`, `insert`, `update`, `findAndModify` (per CAS), `delete` — **limitati alla collection `expedition_runtime_states`** (`{db: <target>, collection: "expedition_runtime_states"}`).
-- **NON deve avere**: `createCollection`, `createIndex`, `dropCollection`, admin database-wide, `dropDatabase`.
-- Caricato nel processo applicativo attraverso env var scoped (es. `RUNTIME_MONGO_URL`) — NON deve coincidere con `MONGO_URL` legacy.
-
-### 11.3 Diagnostic identity
-- Ruolo Mongo: `read` scoped alla collection `expedition_runtime_states`.
-- Grants richiesti: `find`, `listIndexes` (solo la collection target).
-- **Nessun accesso** a payload sensibili o credenziali applicative.
-- Uso: dashboard operativi, incident response, forensic replay read-only.
-
-**Attuale stato empirico**: **un unico profilo** (`MONGO_URL="mongodb://localhost:27017"` senza credenziali) → `MONGO_PERMISSION_MODEL_UNDERDEFINED`. `PM_REVIEW → B1BQ04` + `B1BQ05`.
+### 11.2 SHARED environments (futuro — HOLD)
+- **Provisioning identity**: `dedicated authenticated provisioning identity = MANDATORY`, ruolo custom con `createCollection · createIndex · dropIndex · dropCollection` limitati a **db+collection autorizzati**.
+- **Runtime identity**: `dedicated authenticated runtime identity = MANDATORY`, ruolo custom con `find · insert · findOneAndUpdate · update · delete` limitati alla sola `expedition_runtime_states`; **NON deve possedere** `createCollection · createIndex · dropCollection · admin-wide`.
+- **Diagnostic identity**: read-only scoped alla collection.
 
 ---
 
-## Section 12 · Provisioning Models
+## Section 12 · Provisioning Models (RATIFIED · B1BQ03)
 
-### 12.1 Model A · Explicit idempotent administrative command
-- Descrizione: script CLI eseguito da operator con `provisioning identity`; idempotente; esce con report.
-- Pro: **massima auditabilità**, credenziali provisioning isolate temporalmente, rollback-friendly.
-- Contro: richiede runbook operator; non-automatic per environment neonati.
-- **PM baseline preference**: SÌ.
+### 12.1 Model A · EXPLICIT IDEMPOTENT ADMINISTRATIVE COMMAND — **RATIFICATO**
+- Comando separato per `--dry-run · --apply · --verify · --rollback`.
+- `--apply` e `--rollback` richiedono **target esplicito** (URI + DB name esatti).
+- Idempotente: re-run deve essere no-op se già consistente.
+- Runbook con audit log obbligatorio.
 
-### 12.2 Model B · Deployment migration/provisioning step
-- Descrizione: step CI/CD (es. `helm hook`, `k8s Job`) eseguito una tantum al deploy.
-- Pro: automatico, tracciabile via pipeline.
-- Contro: **richiede infrastruttura CI/CD** attualmente **non presente** nel repo (vedere §5.7); mescola provisioning e deploy artifacts.
-- Fattibilità: bassa nel P0 corrente.
+### 12.2 Model B · Deployment migration step — **NON AUTORIZZATO**
+- Nessuna infrastruttura CI/CD nel repo.
 
-### 12.3 Model C · Application startup ensure-collection/indexes
-- Descrizione: `lifespan.py` invoca `create_index()` idempotenti al boot con **runtime identity**.
-- Pro: pattern **attualmente in uso** per tutte le collection esistenti.
-- Contro: **incompatibile con il modello permessi §11** — richiede al runtime `createIndex` (e implicitamente `createCollection` al primo write), violando least-privilege.
-- Aggravante: startup provisioning writes = **NOT RECOMMENDED** dal PM baseline.
+### 12.3 Model C · Application startup ensure — **ESPLICITAMENTE VIETATO**
+Testo verbatim del verdict PM:
+- `application startup provisioning = NOT AUTHORIZED`
+- `implicit collection creation during runtime = NOT AUTHORIZED`
+- `automatic index creation on service startup = NOT AUTHORIZED`
 
-### 12.4 Raccomandazione
-**Model A** (explicit idempotent administrative command + separate read-only verification command) con verifica idempotente + report SHA-tracked. **PM_REVIEW → B1BQ03**.
+### 12.4 Comando complementare
+`READ-ONLY VERIFICATION COMMAND` separato dal provisioning (idempotente, diagnostic identity o local no-auth in deroga LOCAL_TEST_ONLY).
 
 ---
 
-## Section 13 · Recommended Provisioning
+## Section 13 · Recommended Provisioning (RATIFIED)
 
-**Design candidate** (documentale, no exec in P0):
+Script paths canonici (**DA CREARE in Phase 2 RT2-B-1B-1**, non in Phase 1):
 
-1. **Provisioning script** `scripts/rt2_b_1b_provision_expedition_runtime_states.py`:
-   - Input: `--env=<dev|preview|prod>` + credenziali provisioning identity via env var separato (`PROVISIONING_MONGO_URL`).
-   - Actions idempotenti (in ordine): `listCollections` → se assente, `createCollection` → `createIndex` I1 (native, no-op) → `createIndex` I2 (TTL) → optional I3/I4/I5 solo se autorizzati da `B1BQ06`.
-   - Output: JSON report con `collection_created: bool`, `indexes_created: [...]`, `indexes_verified: [...]`, `elapsed_ms`.
+1. **`scripts/rt2_b_1b_provision_expedition_runtime_states.py`** — idempotent administrative provisioning command.
+   - Flags: `--dry-run · --apply · --verify · --rollback`
+   - Input: `--target-uri=mongodb://localhost:27017 · --target-db=<allowlisted>`
+   - Guardrail fail-stop: host != localhost, DB non in allowlist.
+   - Output: JSON report con `collection_created`, `indexes_created`, `indexes_verified`, `elapsed_ms`, `target_uri`, `target_db`.
 
-2. **Verification script** `scripts/rt2_b_1b_verify_expedition_runtime_states.py`:
-   - Read-only con diagnostic identity.
-   - Verifica: collection existence, index spec match (name + key + options), TTL `expireAfterSeconds` value, sampling di 1 documento (se presente) per validare campo `expires_at` type = BSON Date.
+2. **`scripts/rt2_b_1b_verify_expedition_runtime_states.py`** — read-only verification.
+   - Verifica: collection existence, `expedition_runtime_states_expires_at_ttl` spec match, sample doc `expires_at` BSON Date type.
 
-3. **Rollback script** `scripts/rt2_b_1b_rollback_expedition_runtime_states.py`:
-   - Precondition asserts: feature flags OFF, no active runtime state, no runtime wiring, no active writers.
-   - Actions ordinate (vedere §24).
+3. **`scripts/rt2_b_1b_rollback_expedition_runtime_states.py`** — 10-step guarded rollback (§24).
 
-**Nessuna esecuzione in questo gate**. Design solo. `PM_REVIEW → B1BQ03 + B1BQ12`.
+**NON creare in Phase 1**. Nessuna esecuzione in Phase 1.
 
 ---
 
 ## Section 14 · Runtime Driver Boundary
 
-- Il **runtime process** (uvicorn + FastAPI application) NON deve istanziare `MongoExpeditionRuntimeStateStore` in questo gate.
-- Motor client corrente (`AsyncIOMotorClient(MONGO_URL)`) rimane **shared singleton**. **Nessuna wiring**.
-- Dependency injection: se in futuro `RT2-B-1B (apply)` autorizzasse la wiring, la collection sarà iniettata come `runtime_collection = mongo_client[db_name].expedition_runtime_states` in un factory dedicato, MAI top-level import.
-- **Runtime process credentials** devono essere `runtime identity` (§11.2), non `provisioning identity`.
+- Runtime process (uvicorn + FastAPI) NON istanzia `MongoExpeditionRuntimeStateStore` in Phase 1 né in `RT2-B-1B-1`.
+- `runtime_adapter_wiring = false` — verificato staticamente.
+- `AsyncIOMotorClient(MONGO_URL)` singleton attuale rimane invariato per il resto del backend.
+- Futuro `RT2-B-1B-2` (o gate successivo) potrà autorizzare la wiring — MAI in Phase 1.
 
 ---
 
-## Section 15 · Isolated Test Environment
+## Section 15 · Isolated Test Environment (RATIFIED · B1BQ10)
 
-### 15.1 Opzioni valutate
+### 15.1 Target integration-test (per-run)
+- **`orbus_r16_rt2b_it_<unique_run_id>`** — database per esecuzione, non riusabile.
+- Requirements ratificati:
+  - `unique run identifier = MANDATORY` (es. UUID4 o timestamp + PID)
+  - `parallel isolation = MANDATORY` (compatibile con `pytest-xdist -n 2`)
+  - `cleanup after success = MANDATORY` (dropDatabase o dropCollection post-suite)
+  - `cleanup after failure = BEST-EFFORT MANDATORY`
+  - `live data access = FORBIDDEN`
+  - Mongo host = `localhost`
 
-| # | Opzione | Fattibilità corrente | Raccomandazione |
-|---|---|---|---|
-| 1 | CI Mongo service container | **NON disponibile** — nessuna CI infrastructure nel repo (§5.7) | ATTUALMENTE NON FATTIBILE |
-| 2 | Dedicated test database su Mongo non-production esistente | **DISPONIBILE** — `orbus_r16_test` già configurato (§5.12/§5.13) | **RACCOMANDATA** |
-| 3 | Local ephemeral Mongo container | Fattibile ma richiede setup docker mancante | POSSIBILE FALLBACK |
-| 4 | Mock-only validation | **INSUFFICIENTE** per chiudere RT2-B-1B | ESPLICITAMENTE ESCLUSA |
+### 15.2 Target verifica manuale / idempotenza provisioning
+- **`orbus_r16_rt2b_test`** — database fisso per verifica manuale (`--dry-run`, `--verify`, `--apply` in dry sequence, `--rollback`).
 
-### 15.2 Target raccomandato
-**Option 2**: dedicated test database `orbus_r16_test` sul Mongo dev.
-- Isolamento: guardrail conftest esistente (§5.12) rifiuta pytest run se `DB_NAME` non contiene `test`.
-- Collection isolata: `expedition_runtime_states` sul solo `orbus_r16_test`, MAI `orbus_r16`.
-- Credenziali: `runtime identity + provisioning identity` scoped al test DB, mai production.
-- Cleanup esplicito: `dropCollection` post-suite via teardown fixture; parallel-test isolation via `PYTEST_XDIST_WORKER` prefix nel nome collection oppure guard-rail su `-n 2`.
-- Unique run identifier: `test_run_id` fixture per parametrizzare `expedition_id` (evita cross-worker collisions).
-- **No access to live data**: guard-rail `_is_test_db()` (`conftest.py:107`).
+### 15.3 Opzioni pre-esistenti (draft)
+- **Option 1** CI service container — **NON APPLICABILE** (no CI infra).
+- **Option 2** `orbus_r16_test` — **NON UTILIZZABILE** per RT2-B (verdict PM `B1BQ02`: databases pre-esistenti vietati).
+- **Option 3** local ephemeral container — **NON RICHIESTA** (localhost Mongo dev sufficiente per RT2-B-1B-1).
+- **Option 4** mock-only — **ESCLUSA** (già in RT2-B-1A).
 
-`PM_REVIEW → B1BQ10`.
-
----
-
-## Section 16 · Integration-Test Matrix
-
-Piano test **NO EXEC in P0**. Sedici scenari canonici pre-definiti per la futura suite `RT2-B-1B (apply)`:
-
-| # | Scenario | Store variant | Verifica |
-|---|---|---|---|
-| 1 | Collection creation | provisioning | idempotente: seconda esecuzione no-op |
-| 2 | Idempotent re-provisioning | provisioning | script eseguito 2× → collection unchanged |
-| 3 | Index creation I1 (native `_id`) | provisioning | present after run |
-| 4 | Index creation I2 (TTL) | provisioning | present, `expireAfterSeconds=0`, key = `expires_at` |
-| 5 | Index definition verification | diagnostic | match spec vs declared |
-| 6 | TTL index type validation | provisioning | `expires_at` BSON Date on 1 sample doc |
-| 7 | CAS success | runtime | `state_version` bump + `fencing_token` preserved |
-| 8 | CAS conflict on `state_version` | runtime | rejected → `STATE_VERSION_CONFLICT` |
-| 9 | Stale fencing rejection | runtime | `STALE_WRITER_REJECTED` |
-| 10 | Lease acquire / renew / takeover | runtime | fencing token increment on takeover |
-| 11 | Duplicate-event suppression via receipt ring | runtime | `DEDUPLICATED_NO_OP` |
-| 12 | Payload mismatch rejection | runtime | `EVENT_ID_PAYLOAD_MISMATCH` |
-| 13 | Parallel mutation (2 writers race) | runtime | 1 wins, 1 rejected deterministically |
-| 14 | State-version monotonicity | runtime | never decreases across N mutations |
-| 15 | Terminal-state retention & TTL cleanup eligibility | runtime + diagnostic | TTL monitor eventually removes |
-| 16 | Rollback verification | rollback | collection dropped, feature flags OFF, no leftover indexes |
-
-**Nessun test che scriva su Mongo deve essere eseguito nel P0.**
+### 15.4 Isolated backend fixture esistente
+`isolated_backend_url` (conftest.py) rimane utilizzabile ma con `DB_NAME` override a `orbus_r16_rt2b_test`/`orbus_r16_rt2b_it_<unique_run_id>` — MAI `orbus_r16_test`.
 
 ---
 
-## Section 17 · Performance Baseline
+## Section 16 · Integration-Test Matrix (SCOPE for RT2-B-1B-1)
 
-Baseline attesa (candidate, `PM_REVIEW → B1BQ09`):
+**Scope canonico dello slice `RT2-B-1B-1`** (12 item verbatim dal verdict PM):
 
-| Metrica | Target |
+1. idempotent provisioning command
+2. read-only verification command
+3. guarded rollback command
+4. collection creation in `orbus_r16_rt2b_test`
+5. TTL index creation on `expires_at`
+6. schema/field validation in test fixtures
+7. real Mongo adapter integration tests
+8. CAS tests
+9. lease / fencing tests
+10. deduplication tests
+11. concurrent mutation tests
+12. cleanup and rollback verification
+
+**Esclusioni esplicite RT2-B-1B-1**:
+- `orbus_r16` writes (VIETATO)
+- preview / staging / production writes (VIETATO)
+- runtime wiring (`runtime_adapter_wiring = false` mantenuto)
+- expedition service changes
+- feature flag activation
+- RT2-A wiring
+- Marchio / Drenaggio / Frammenti gameplay
+- public API changes
+- frontend changes
+
+**Nessun test eseguito in Phase 1**. Design canonico solo.
+
+---
+
+## Section 17 · Performance Baseline (ACCEPTANCE · RT2-B-1B-1 locale)
+
+Soglie **PM_RATIFIED** per l'apply locale isolato:
+
+| Metrica | Target (p95) |
 |---|---|
-| `find_one({_id: expedition_id})` | < 5 ms p50 · < 20 ms p95 |
-| `findOneAndUpdate` (CAS) | < 15 ms p50 · < 50 ms p95 |
-| Lease acquisition round-trip | < 30 ms p95 |
-| TTL cleanup sweep lag | 0–120 s (Mongo TTL monitor cadence) |
-| Adapter error rate | < 0.1 % excluding client-forge rejects |
+| `single-state read p95` | `≤ 25 ms` |
+| `successful CAS mutation p95` | `≤ 35 ms` |
+| `lease acquire/renew p95` | `≤ 35 ms` |
+| `deduplicated retry p95` | `≤ 25 ms` |
+| `test state document size` | `< 256 KiB` |
+| `unbounded receipt growth` | `= 0` |
+| `DB outside allowlisted test databases` | `= 0` |
+| `network outside localhost` | `= 0` |
 
-Nessun benchmark eseguito in questo gate (no exec). I target sono candidati per la successiva P1 apply.
+**Caveat esplicito PM**: `local metrics do NOT authorize shared or live rollout`. Il superamento delle soglie locali non abilita alcun apply su preview/staging/production.
 
 ---
 
 ## Section 18 · Capacity
 
-Stime evidence-based per envelope planning (assunzioni esplicite):
+Stime invariate rispetto al draft (envelope planning per apply futuri):
 
-### 18.1 Assumptions
-- Peak concurrent expeditions attivi: `500` (envelope preview) · `5.000` (envelope prod prima fase).
-- State documents per expedition: `1` (uno-a-uno con expedition_id).
-- Adventurer class states per document: `≤ 6` sub-docs.
-- Processed event receipts per document: bounded by `RECEIPT_RING_CAP` (verifica in `mongo_adapter.py`; default env-configurable, atteso `20-50`).
-- Average class-state sub-doc size: `1-2 KB`.
-- Average total document size: `10-30 KB` (envelope).
+| Scenario | Concurrent active | Peak collection size | Daily new docs |
+|---|---|---|---|
+| Low | 100 | ~3 MB | ~500 |
+| Expected | 500 | ~15 MB | ~2.500 |
+| Stress | 5.000 | ~150 MB | ~25.000 |
 
-### 18.2 Estimate table
+Mongo document 16 MB limit risk: **LOW** (receipts bounded, class states bounded).
 
-| Scenario | Concurrent active | Peak collection size | Daily new docs (created + expired) | Notes |
-|---|---|---|---|---|
-| Low | 100 | ~3 MB | ~500 | envelope demo/QA |
-| Expected | 500 | ~15 MB | ~2.500 | envelope preview |
-| Stress | 5.000 | ~150 MB | ~25.000 | envelope prod fase 1 |
-
-Nessuna dimensione supera i limiti Mongo document/collection. TTL cleanup mantiene la crescita bounded. **`PM_REVIEW → B1BQ09`** per baseline definitiva.
+Le stime `Expected`/`Stress` **non sono autorizzate** per apply in Phase 1 né in `RT2-B-1B-1` (locale only, dati sintetici test).
 
 ---
 
-## Section 19 · Backup and Retention
+## Section 19 · Backup and Retention (RATIFIED · B1BQ08)
 
-**Classificazione**:
-- Gameplay source of truth **while expedition is active**: `YES`.
-- Long-term business record: `NO`.
-- Character progression record: `NO`.
-- Audit record: `NO` (l'audit trail persistente vive su `audit_log` esistente + emit di CDV a valle).
+### 19.1 LOCAL isolated (`orbus_r16_rt2b_test`, `orbus_r16_rt2b_it_<unique_run_id>`)
+- `backup = NOT REQUIRED`
+- `long-term retention = FORBIDDEN`
+- `archival = FORBIDDEN`
+- **Sacrificabile, eliminabile interamente**.
 
-**Trattamento**:
-- **Included in normal backup**: **SÌ** — collection inclusa per consistenza di ripristino di uno stato attivo interrotto.
-- **Excluded from long-term archival**: **SÌ** — snapshot > 7 giorni non necessari (documenti già TTL-cleaned).
-- **Point-in-time restore implications**:
-  - Restore che riattivi documenti in stato `expired` NON deve rimettere in circolazione spedizioni concluse.
-  - Guard-rail: restore procedure deve applicare un `updateMany({runtime_status: {$in: ["expired","completed","cancelled"]}}, {$set: {expires_at: now}})` per accelerare cleanup post-restore.
-- **Recovery after regional failure**: dipende dalla topologia Mongo prod (`PM_REVIEW → B1BQ08`).
-
-**Regola inderogabile**: **una restore non deve riattivare automaticamente spedizioni ormai terminate**. Procedura di restore deve prevedere una fase di **quarantena documentale** con verifica manuale prima di riabilitare i writer.
+### 19.2 SHARED environments (futuro — HOLD)
+- Adjudication operativa separata richiesta.
+- Baseline dichiarata:
+  - no long-term retention di runtime-state data
+  - no automatic reactivation di stati ripristinati
+  - stati recuperati da backup considerati sospetti/scaduti fino a **riconciliazione manuale**
+- Quarantine procedure obbligatoria (già §19 draft).
 
 ---
 
-## Section 20 · Monitoring
+## Section 20 · Monitoring (RATIFIED · B1BQ09)
 
-Metriche candidate (proposte, non configurate in P0):
+`MONITORING_BASELINE_MISSING = ACKNOWLEDGED`.
 
-| Metric | Type | Note |
-|---|---|---|
-| `expedition_runtime_states_document_count` | gauge | Total docs in collection |
-| `expedition_runtime_states_active_count` | gauge | `runtime_status = active` |
-| `expedition_runtime_states_terminal_count` | gauge | terminal states pending cleanup |
-| `expedition_runtime_states_storage_bytes` | gauge | via `collStats` |
-| `expedition_runtime_states_avg_doc_size_bytes` | gauge | via `collStats.avgObjSize` |
-| `expedition_runtime_states_p95_doc_size_bytes` | histogram | sampled |
-| `store_read_latency_ms` | histogram | `find_one` |
-| `store_cas_latency_ms` | histogram | `findOneAndUpdate` |
-| `store_lease_acquire_latency_ms` | histogram | end-to-end |
-| `cas_conflict_rate` | counter | per second |
-| `stale_writer_rejection_rate` | counter | per second |
-| `duplicate_event_suppression_rate` | counter | per second |
-| `ttl_cleanup_lag_seconds` | gauge | age of oldest expired doc still present |
-| `store_timeout_rate` | counter | per second |
-| `adapter_error_rate` | counter | per error class |
+### 20.1 Non bloccante per
+- provisioning locale isolato (RT2-B-1B-1)
+- test di integrazione locale
+- rollback locale
 
-**`MONITORING_BASELINE_MISSING`** — nessuna piattaforma di metriche/traccia integrata al codebase corrente. `PM_REVIEW → B1BQ09`.
+### 20.2 BLOCCANTE per
+- preview apply
+- staging apply
+- production apply
+- runtime wiring in shared environment
+
+### 20.3 Evidenza minima RT2-B-1B-1 (locale)
+- provisioning command output
+- verification command output
+- test report
+- collection stats before / after
+- index list before / after
+- cleanup verification
+
+### 20.4 SHARED environments (futuro — HOLD)
+Metriche minime richieste prima di apply condiviso:
+- error rate
+- CAS conflicts
+- lease failures
+- latency
+- document size
+- TTL cleanup lag
+- permission failures
+
+**Nessuna soglia production ratificata in questo gate**.
 
 ---
 
 ## Section 21 · Alerting
 
-Regole candidate (soglie **PM_REVIEW**, non definitive senza baseline empirica):
-
-| Alert | Trigger candidato | Severity |
-|---|---|---|
-| High CAS conflict rate | `cas_conflict_rate > 5 %` sustained 5m | warning |
-| Lease renewal failures | `> 10 fail/min` sustained 5m | warning |
-| Stale writer spikes | `> 20 stale/min` for 5m | warning |
-| Document size growth | `p95_doc_size > 500 KB` | warning |
-| TTL cleanup lag | `ttl_cleanup_lag_seconds > 300` sustained 10m | warning |
-| Store latency degradation | `cas_latency_p95 > 200 ms` sustained 5m | critical |
-| Unexpected terminal-state accumulation | `terminal_count > 10 %` of active for 15m | warning |
-| Mongo permission failures | `AUTH_FAIL_COUNT > 0` | critical |
-| Duplicate reward protection failure | `duplicate_reward_leak_count > 0` | critical |
-
-Se baseline assente: **`MONITORING_BASELINE_MISSING`** come `PM_REVIEW` per l'apply (non blocker per il piano P0). `PM_REVIEW → B1BQ09`.
+Regole candidate (`PM_REVIEW` esteso a `RT2-B-1B-2+` / shared environment gate). Invariate rispetto al draft. Nessuna configurazione in Phase 1.
 
 ---
 
 ## Section 22 · Security
 
-- Nessun payload PII nel documento (nessuna email, nessun IP, nessuna password).
-- `owner_lease_id` e `fencing_token` sono valori server-generated non-guessable.
-- Runtime identity ha grants scoped alla sola collection (§11.2) → nessuna esfiltrazione lateral su altre collezioni possibile via runtime credentials.
-- Diagnostic identity read-only (§11.3) → nessuna scrittura possibile.
-- Isolated test env (§15) → dati reali mai accessibili in test.
-- TLS: **PM_REVIEW** per il target prod (`B1BQ02`). Attuale localhost dev senza TLS.
-- Secret rotation: **PM_REVIEW → B1BQ04/B1BQ05**.
+- Nessun PII nel documento.
+- `owner_lease_id`, `fencing_token` server-generated.
+- LOCAL_TEST_ONLY deroga no-auth confinata (§11.1) — non estensibile.
+- SHARED environments: authenticated identities mandatory (§11.2), TLS mandatory in prod.
+- Secret rotation: parte di adjudication shared-env.
 
 ---
 
 ## Section 23 · Operational Ownership
 
-- Provisioning: operator identità dedicata, runbook manuale, audit log obbligatorio.
-- Runtime: backend service account.
-- Diagnostic: SRE / on-call read-only.
-- Rollback: operator + SRE approver.
-- Emergency drop: **PM approval required**.
-
-`PM_REVIEW → B1BQ11` per assegnazione formale ruoli.
+- **LOCAL RT2-B-1B-1**: `operator executing the PM-authorized provisioning dispatch` (autorità confinata al dispatch).
+- **SHARED environments (futuro)**: SRE + PM approval; runbook `rt2_b_1b_rollback_runbook.md`.
 
 ---
 
-## Section 24 · Rollback
+## Section 24 · Rollback (RATIFIED · B1BQ11 · 10-STEP)
 
-Procedura ordinata (**NO EXEC in P0**):
+Procedura **10-step** ratificata (autorità locale: `operator executing the PM-authorized provisioning dispatch`):
 
-1. **Verify all related feature flags OFF**: `runtime_stat_soft_cap_enabled`, `runtime_stat_shadow_enabled`, `cdv_transient_state_enabled`, `item_effect_engine_enabled`, `cdv_item_hooks_enabled`, `effect_observability_enabled` → tutti `false`.
-2. **Verify no runtime wiring active**: nessun servizio applicativo importa `MongoExpeditionRuntimeStateStore` in modo eager. Solo lazy DI opzionale.
-3. **Stop any isolated test writers**: kill uvicorn spawn su porta 8002, cleanup fixture pytest attive.
-4. **Verify no active production state**: `db.expedition_runtime_states.count({runtime_status: "active"}) == 0` con diagnostic identity.
-5. **Preserve required diagnostic evidence**: `mongodump --collection=expedition_runtime_states` verso `/app/_mongo_dumps/rollback_<ts>/`.
-6. **Drop optional indexes** (I3/I4/I5 se creati): `dropIndex` per ciascuno.
-7. **Drop TTL index** (I2): `dropIndex('expedition_runtime_states_expires_at_ttl')`.
-8. **Drop transient collection**: `dropCollection('expedition_runtime_states')`.
-9. **Verify legacy runtime unchanged**: `expeditions`, `expedition_members` invariati (indici pre-esistenti conservati).
+1. **Verify all feature flags OFF**: 6 flag RT2-A/RT2-B (`runtime_stat_soft_cap_enabled`, `runtime_stat_shadow_enabled`, `cdv_transient_state_enabled`, `item_effect_engine_enabled`, `cdv_item_hooks_enabled`, `effect_observability_enabled`).
+2. **Verify runtime wiring absent**: static grep + import assertion.
+3. **Verify Mongo host = localhost**: URI check.
+4. **Verify database allowlist**: DB name esattamente in `{orbus_r16_rt2b_test, orbus_r16_rt2b_it_<unique_run_id>}`.
+5. **Stop integration-test writers**: terminate isolated backend fixture, kill test processes.
+6. **Capture collection/index metadata**: `listCollections`, `listIndexes`, `collStats` → JSON snapshot in `/app/_mongo_dumps/rollback_<ts>/`.
+7. **Drop `expedition_runtime_states`**: `dropCollection` esplicito.
+8. **Optionally drop isolated test database**: `dropDatabase` **solo** se target DB nome termina con `_test` OR `_it_<unique_run_id>`.
+9. **Verify collection absent**: post-drop `listCollections` deve NON contenere `expedition_runtime_states`.
+10. **Rerun compatibility tests**: RT2-A `136/136` + RT2-B-1A `91/0` — verifica byte-identical baseline.
 
-**Nel futuro apply gate**: ogni drop deve essere **esplicitamente autorizzato**, **target-specifico** (database + collection nomi verificati), fail-stop su database inatteso (`if db_name != expected: raise`).
+**Proprietà rollback**:
+- Idempotente
+- Target-specifico (host + DB check obbligatorio)
+- Dry-run capable
+- Fail-stop su host o database inatteso
+- **VIETATI** comandi drop generici o senza allowlist
 
 ---
 
 ## Section 25 · Failure Matrix
 
-Tredici scenari analizzati con `detection · fail-stop · auto-recovery · manual-recovery · rollback · audit-evidence`:
+13 scenari invariati (draft) + 2 nuovi enforcement post-B1BQ:
 
-| # | Failure | Detection | Fail-stop | Auto recovery | Manual recovery | Rollback | Audit evidence |
-|---|---|---|---|---|---|---|---|
-| 1 | Collection already exists | `listCollections` pre-check | NO (idempotent) | continua | — | — | log JSON `already_exists=true` |
-| 2 | Wrong database selected | `db_name` assertion pre-provisioning | **YES** | — | env correction + rerun | drop only after `db_name` verify | provisioning_report.json `db_selected=<actual>` |
-| 3 | Insufficient provisioning permissions | Mongo error `Unauthorized` on `createCollection` | **YES** | — | grant provisioning role, rerun | — | Mongo error log + provisioning_report.json |
-| 4 | Index name collision | `listIndexes` pre-check | **YES** | — | manual index rename or drop-then-recreate | drop conflicting index | listIndexes snapshot pre/post |
-| 5 | Incompatible existing index | key/options mismatch | **YES** | — | drop-then-recreate under maintenance window | dropIndex + recreate | listIndexes diff |
-| 6 | TTL field wrong type | sample doc validation post-write | **YES** | — | data migration + type fix | dropCollection if safe | sample doc snapshot |
-| 7 | Partial index provisioning | provisioning report reads created list | **YES** | — | complete missing indexes | drop partial indexes | report step-by-step |
-| 8 | Provisioning interrupted (SIGTERM) | provisioning report incomplete | **YES** | — | rerun (idempotent) | — | interruption timestamp |
-| 9 | Verification command fails | verify script exit != 0 | **YES** | — | investigate + fix + reverify | — | verify_report.json |
-| 10 | Cleanup fails | teardown fixture exception | **YES** in test | — | manual cleanup | — | pytest logs + Mongo state |
-| 11 | Test database contains unrelated data | pre-suite guard-rail count | **YES** | — | drop test DB (autorizzato only if `test` in name) | — | conftest logs |
-| 12 | Rollback targets wrong collection | assertion `collection_name == 'expedition_runtime_states'` | **YES** | — | abort rollback | — | rollback log |
-| 13 | Backup restores expired documents | post-restore query for `runtime_status in [expired,completed,cancelled]` | **YES** | — | apply cleanup update | — | restore_report.json |
+| # | Failure | Detection | Fail-stop | Recovery |
+|---|---|---|---|---|
+| 1 | Collection already exists | `listCollections` | NO (idempotent) | continue |
+| 2 | Wrong database selected | DB name assertion | **YES** (`TARGET_DATABASE_REJECTED`) | env correction |
+| 3 | Wrong Mongo host | URI assertion | **YES** (`TARGET_ENVIRONMENT_REJECTED`) | fail-stop hard |
+| 4 | Insufficient provisioning permissions | Mongo Unauthorized | YES | grant role (shared env) |
+| 5 | Index name collision | `listIndexes` | YES | manual rename/drop-recreate |
+| 6 | Incompatible existing index | key/options mismatch | YES | drop-then-recreate |
+| 7 | TTL field wrong type | sample doc validation | YES | data migration |
+| 8 | Partial index provisioning | report reads created list | YES | complete missing |
+| 9 | Provisioning interrupted | report incomplete | YES | rerun idempotent |
+| 10 | Verification command fails | script exit != 0 | YES | investigate + reverify |
+| 11 | Cleanup fails | teardown exception | YES | manual cleanup |
+| 12 | Test database contains unrelated data | pre-suite guard-rail | YES | drop test DB (only if allowlisted) |
+| 13 | Rollback targets wrong collection | assertion collection name | YES | abort rollback |
+| 14 | Rollback targets wrong DB | assertion DB allowlist | YES | abort rollback |
+| 15 | Backup restores expired documents | post-restore query | YES | apply cleanup update |
 
 ---
 
 ## Section 26 · Compatibility
 
-- **RT2-A CDV & Effect Engine (24 code + 14 test)**: nessuna modifica, contract compatibility completa. RT2-B-1A adapter già consuma dati derivabili dall'output CDV senza scrittura DB.
-- **RT2-B-1A store contract**: pienamente compatibile — il design proposto qui riflette 1:1 il contract sotto test in `test_contract_shared.py`.
-- **Expedition service esistente**: **non toccato**. Continua a operare su `expeditions` + `expedition_members`. La collezione runtime-state è additiva.
-- **Legacy adventurers/items/inventory**: nessuna interazione, nessuna dipendenza incrociata.
-- **Feature flags**: rimangono OFF (§8 RT2-B-1A closure requirement 21).
+- RT2-A CDV & Effect Engine: nessuna modifica · contract compatibility completa.
+- RT2-B-1A store contract: 1:1 alignment.
+- Expedition service esistente: non toccato.
+- Feature flags: OFF invariate.
+- Backend Mongo client singleton: invariato.
 
 ---
 
 ## Section 27 · Risk Register
 
-| # | Risk | Impact | Likelihood | Mitigation | Owner |
-|---|---|---|---|---|---|
-| R1 | Prod DB target undefined | HIGH | MEDIUM | `B1BQ02` adjudication; provisioning wrapper con `--env` obbligatorio | PM + SRE |
-| R2 | Runtime identity con privilegi eccessivi | HIGH | HIGH (stato attuale) | `B1BQ04/05` — separare provisioning e runtime credentials | PM + SRE |
-| R3 | Nessuna baseline monitoring | MEDIUM | HIGH | `B1BQ09` — introdurre metrics endpoint prima dell'apply | PM |
-| R4 | TTL monitor non deterministico | LOW | HIGH | Alert su `ttl_cleanup_lag_seconds`; documentare aspettativa non-immediate | Backend team |
-| R5 | Restore riattiva spedizioni concluse | HIGH | LOW | Quarantine procedure + updateMany post-restore | SRE |
-| R6 | Test cross-worker collision (`pytest-xdist -n 2`) | MEDIUM | LOW | Prefix collection name via `PYTEST_XDIST_WORKER` env in test builder | Backend team |
-| R7 | Nessuna CI infrastructure | LOW | MEDIUM (per apply) | Option 2 (dedicated test DB) mitiga; option 1 richiede CI setup separato | PM |
-| R8 | Runtime wiring accidentale prima di PM approval | HIGH | LOW | Static grep in seal test + runtime import assertion | Governance |
+| # | Risk | Impact | Likelihood | Mitigation post-B1BQ |
+|---|---|---|---|---|
+| R1 | Prod DB target undefined | HIGH | MEDIUM | SHARED APPLY FORBIDDEN in Phase 2 |
+| R2 | Runtime identity over-privileged | HIGH | HIGH (dev only) | LOCAL_TEST_ONLY deroga; shared env identities mandatory |
+| R3 | No monitoring baseline | MEDIUM | HIGH | shared env apply BLOCKED until baseline |
+| R4 | TTL monitor non-deterministic | LOW | HIGH | esplicitato §10; nessuna dipendenza al secondo |
+| R5 | Restore reactivates terminated expeditions | HIGH | LOW | quarantine procedure §19.2 |
+| R6 | Test cross-worker collision | MEDIUM | LOW | `unique_run_id` per DB test (§15.1) |
+| R7 | No CI infrastructure | LOW | MEDIUM | localhost Mongo sufficient for RT2-B-1B-1 |
+| R8 | Accidental runtime wiring pre-authorization | HIGH | LOW | seal test + static import grep in RT2-B-1B-1 |
+| R9 | Provisioning idempotency not yet empirically verified | HIGH | MEDIUM | **TO BE VERIFIED IN RT2-B-1B-1** (real localhost run) |
 
 ---
 
-## Section 28 · PM Open Questions
+## Section 28 · PM Open Questions — RATIFIED
 
-12 domande aperte, **NESSUNA auto-ratificata**. Ogni domanda include: evidence attuale, opzioni, agent recommendation, security/operational/migration/rollback impact, blocking flag.
+**Stato**: `12/12 RATIFICATE`. Verdict PM verbatim (o semanticamente equivalenti).
 
-### B1BQ01 · Final collection name
-- Evidence: candidate `expedition_runtime_states` allineato a naming conventions; nessuna collision.
-- Options: (a) `expedition_runtime_states` (candidate), (b) alternative name con prefisso `rt_` o `runtime_`.
-- Agent recommendation: (a).
-- Security impact: minimal.
-- Operational impact: minimal.
-- Migration impact: minimal (nome fissato prima di apply).
-- Rollback impact: minimal.
-- Blocking: **YES per apply**.
+### B1BQ01 · Final collection name — `PM_RATIFIED`
+- `collection name = expedition_runtime_states`
+- `_id = expedition_id` (native index, no duplicate field)
+- provisioning stops on incompatible pre-existing schema/indexes
 
-### B1BQ02 · Target database and environments
-- Evidence: `DB_NAME=orbus_r16` (dev); `orbus_r16_test` (test); production DB **non presente in `.env` esplorato**.
-- Options: (a) usare `orbus_r16` per dev+preview, `orbus_r16_test` per test, `<PROD_DB_NAME>` per production (da fornire), (b) database dedicato `orbus_runtime` cross-env, (c) collection nel database corrente (a).
-- Agent recommendation: (a) — mantenere pattern esistente.
-- Security impact: **HIGH** — necessario TLS + auth in prod.
-- Operational impact: HIGH.
-- Migration impact: MEDIUM.
-- Rollback impact: MEDIUM.
-- Blocking: **YES per apply**.
+### B1BQ02 · Database ed ambiente target — `PM_RATIFIED`
+- Primo apply: **`orbus_r16_rt2b_test`** su `LOCALHOST-ONLY / LOCAL DEVELOPMENT · ISOLATED INTEGRATION`
+- **VIETATI**: `orbus_r16`, `orbus_r16_test`, preview, staging, production
+- Fail-stop: `Mongo host != localhost → TARGET_ENVIRONMENT_REJECTED`; `database name mismatch → TARGET_DATABASE_REJECTED`
 
-### B1BQ03 · Provisioning mechanism
-- Evidence: pattern attuale = Model C (§12.3); PM baseline preference = Model A.
-- Options: (a) Model A explicit idempotent command + verifier, (b) Model B deployment migration, (c) Model C startup ensure.
-- Agent recommendation: (a).
-- Security impact: HIGH (Model A separa temporalmente credenziali provisioning).
-- Operational impact: MEDIUM (richiede runbook).
-- Migration impact: MEDIUM.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ03 · Provisioning mechanism — `PM_RATIFIED`
+- `EXPLICIT IDEMPOTENT ADMINISTRATIVE COMMAND` + separate `READ-ONLY VERIFICATION COMMAND`
+- Application startup / implicit collection creation / automatic index creation on service startup **NON AUTORIZZATI**
+- Flags: `--dry-run · --apply · --verify · --rollback` con target esplicito
 
-### B1BQ04 · Provisioning identity permissions
-- Evidence: nessuna evidenza di ruoli configurati; `MONGO_PERMISSION_MODEL_UNDERDEFINED`.
-- Options: (a) ruolo custom `provisioning_role` scoped al DB target con `createCollection/createIndex/dropIndex/dropCollection`, (b) `dbAdmin` scoped.
-- Agent recommendation: (a).
-- Security impact: HIGH.
-- Operational impact: MEDIUM.
-- Migration impact: LOW.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ04 · Provisioning identity (deroga localhost) — `PM_RATIFIED`
+- Ambiente locale isolato: `current localhost no-auth Mongo connection`; `temporary coincidence with runtime identity = ACCEPTED`
+- Deroga confinata: `LOCAL_TEST_ONLY`
+- Guardrail obbligatori (§11.1)
+- Ambienti condivisi: `dedicated authenticated provisioning identity = MANDATORY`
 
-### B1BQ05 · Runtime identity permissions
-- Evidence: runtime attualmente con root-equivalent su Mongo locale.
-- Options: (a) ruolo custom `runtime_role` scoped alla sola collection con `find/insert/update/findAndModify/delete`, (b) ruolo `readWrite` DB-level (troppo ampio).
-- Agent recommendation: (a).
-- Security impact: HIGH.
-- Operational impact: MEDIUM.
-- Migration impact: LOW.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ05 · Runtime identity — `PM_RATIFIED`
+- Primo apply locale: `runtime_adapter_wiring = false` → nessuna runtime identity effettivamente usata
+- Ambienti condivisi: `dedicated authenticated runtime identity = MANDATORY` con privilegi scoped alla sola collection
 
-### B1BQ06 · Final index set
-- Evidence: I1 (`_id` native) + I2 (TTL) required; I3/I4/I5 optional senza query dimostrata.
-- Options: (a) minimal set `I1 + I2`, (b) include I3 (status+expires) per recovery, (c) full set I1..I5.
-- Agent recommendation: (a) — avoid indici "per sicurezza". Autorizzare I3 solo con query recovery dimostrata.
-- Security impact: minimal.
-- Operational impact: (b)/(c) = write amplification maggiore.
-- Migration impact: LOW.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ06 · Indici iniziali autorizzabili — `PM_RATIFIED`
+- Identità: `_id = expedition_id` (nativo, nessun indice aggiuntivo)
+- TTL: `field = expires_at`, `expireAfterSeconds = 0`, `required = TRUE`
+- Recovery/monitoring `DEFERRED` (NON creare nel primo slice)
 
-### B1BQ07 · TTL operational values
-- Evidence: baseline candidate `active=6h`, `completed/cancelled=24h`. Nessun valore in produzione.
-- Options: (a) baseline candidate, (b) `active=2h/completed=12h` (aggressive), (c) `active=24h/completed=7d` (conservative).
-- Agent recommendation: (a).
-- Security impact: (c) aumenta storage retention.
-- Operational impact: (b) maggiore rischio expired-mid-play.
-- Migration impact: LOW (parametrizzabile via env).
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ07 · TTL policy — `PM_RATIFIED (DESIGN-LOCKED per validazione)`
+- `active state inactivity = 6 hours`
+- `completed state retention = 24 hours`
+- `cancelled state retention = 24 hours`
+- `Mongo TTL deletion = asynchronous; exact deletion time = not guaranteed`
 
-### B1BQ08 · Backup and retention treatment
-- Evidence: dump manuali; nessun auto-backup/PITR/cross-region.
-- Options: (a) include in normal backup + exclude long-term archival + quarantine on restore, (b) exclude runtime-state from tutti backup (accept loss on incident).
-- Agent recommendation: (a).
-- Security impact: LOW.
-- Operational impact: MEDIUM.
-- Migration impact: LOW.
-- Rollback impact: MEDIUM (restore complexity).
-- Blocking: **YES per apply**.
+### B1BQ08 · Backup and retention (localhost) — `PM_RATIFIED`
+- `orbus_r16_rt2b_test`: `backup = NOT REQUIRED · long-term retention = FORBIDDEN · archival = FORBIDDEN · SACRIFICABILE`
+- Shared env futuri: adjudication separata
 
-### B1BQ09 · Monitoring and alert policy
-- Evidence: `MONITORING_BASELINE_MISSING` — nessuna piattaforma metrics.
-- Options: (a) introdurre `/api/admin/metrics` (Prometheus-format) prima dell'apply, (b) deferire monitoring a fase successiva.
-- Agent recommendation: (a) — almeno counter/gauge minimi (CAS conflict rate, TTL lag).
-- Security impact: metrics endpoint deve essere admin-only.
-- Operational impact: HIGH (visibilità mancante è un blocker operativo).
-- Migration impact: MEDIUM.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ09 · Monitoring & alerting — `PM_RATIFIED`
+- `MONITORING_BASELINE_MISSING = ACKNOWLEDGED`
+- Non bloccante: provisioning locale isolato, IT locale, rollback locale
+- Bloccante: preview, staging, production, runtime wiring in shared env
+- Evidenza minima RT2-B-1B-1 locale definita in §20.3
 
-### B1BQ10 · Isolated integration-test target
-- Evidence: Option 2 (`orbus_r16_test`) disponibile e in uso.
-- Options: (a) Option 2 (dedicated test DB), (b) Option 3 (ephemeral local container).
-- Agent recommendation: (a).
-- Security impact: LOW.
-- Operational impact: LOW.
-- Migration impact: LOW.
-- Rollback impact: LOW.
-- Blocking: **YES per apply**.
+### B1BQ10 · Integration-test target — `PM_RATIFIED`
+- Target IT: `local Mongo localhost:27017` · database `orbus_r16_rt2b_it_<unique_run_id>`
+- Requirements: unique_run_id mandatory · parallel isolation mandatory · cleanup after success mandatory · cleanup after failure best-effort · live data access forbidden
+- DB fisso `orbus_r16_rt2b_test` per verifica manuale/idempotente
 
-### B1BQ11 · Rollback authority and procedure
-- Evidence: nessuna procedura formalizzata; nessuna authority matrix.
-- Options: (a) SRE + PM approval per drop; runbook `rt2_b_1b_rollback_runbook.md`, (b) SRE-only authority.
-- Agent recommendation: (a).
-- Security impact: LOW.
-- Operational impact: MEDIUM.
-- Migration impact: LOW.
-- Rollback impact: **HIGH** (definisce il rollback).
-- Blocking: **YES per apply**.
+### B1BQ11 · Rollback — `PM_RATIFIED (10-STEP)`
+- Autorità locale: `operator executing the PM-authorized provisioning dispatch`
+- Procedura §24 (10 step)
+- Proprietà: idempotente · target-specifico · dry-run capable · fail-stop su host/DB inatteso
+- Comandi drop generici o senza allowlist: **VIETATI**
 
-### B1BQ12 · First provisioning/apply slice
-- Evidence: RT2-B-1A closed; RT2-B-1B (apply) HOLD.
-- Options: (a) slice minimale: provisioning `orbus_r16_test` only + integration-test matrix (Section 16) + verification script + rollback script, (b) full apply cross-env in un solo slice.
-- Agent recommendation: (a).
-- Security impact: LOW.
-- Operational impact: MEDIUM.
-- Migration impact: LOW.
-- Rollback impact: LOW (slice minimale = rollback minimale).
-- Blocking: **YES per apply**.
-
-**Nessuna auto-ratifica.**
+### B1BQ12 · First provisioning/apply slice — `PM_RATIFIED`
+- Nome canonico: `R18.6.RV3-IS2-B-P2B-RT2-B-1B-1 · LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION`
+- Scope 12 item (§16)
+- Esclusioni esplicite (§16)
 
 ---
 
-## Section 29 · Provisioning Readiness
+## Section 29 · Provisioning Readiness (POST-RATIFICATION)
 
-| Categoria | Ready | Note |
+| Categoria | Ready | Nota |
 |---|---|---|
-| Collection design | **YES** (PM_REVIEW `B1BQ01`) | naming + schema definiti |
-| Index design | **YES** (PM_REVIEW `B1BQ06`) | I1+I2 baseline chiara |
-| TTL design | **YES** (PM_REVIEW `B1BQ07`) | pattern esistente riusabile |
-| Permission model | **NO** — `MONGO_PERMISSION_MODEL_UNDERDEFINED` (`B1BQ04/05`) | credenziali attuali non separate |
-| Target DB boundary | **NO** — `TARGET_DATABASE_UNDERDEFINED` (`B1BQ02`) per prod | dev/preview OK, prod da chiarire |
-| Provisioning mechanism | **YES** — Model A raccomandato (PM_REVIEW `B1BQ03`) | idempotenza dimostrabile |
-| Isolated test env | **YES** — Option 2 disponibile (`B1BQ10`) | `orbus_r16_test` operativo |
-| Integration-test matrix | **YES** (design) | 16 scenari definiti |
-| Monitoring baseline | **NO** — `MONITORING_BASELINE_MISSING` (`B1BQ09`) | nessuna metrics platform |
-| Backup treatment | **YES** design (PM_REVIEW `B1BQ08`) | quarantine procedure definita |
-| Rollback procedure | **YES** design (PM_REVIEW `B1BQ11`) | 9 step ordinati |
-| Failure matrix | **YES** (13 scenari) | vedere Section 25 |
+| Collection design | **YES** | `PM_RATIFIED B1BQ01` |
+| Index design | **YES** | I1+I2 authorized · I3/I4/I5 DEFERRED |
+| TTL design | **YES** | 6h/24h/24h ratified |
+| Permission model | **YES (LOCAL_TEST_ONLY)** | shared env identities mandatory (deferred) |
+| Target DB boundary | **YES** | localhost isolated authorized · shared BLOCKED |
+| Provisioning mechanism | **YES** | Model A ratified |
+| Isolated test env | **YES** | `orbus_r16_rt2b_test` + `orbus_r16_rt2b_it_<run_id>` |
+| Integration-test matrix | **YES** | 12 item scope in RT2-B-1B-1 |
+| Monitoring baseline | **ACKNOWLEDGED MISSING** | non-blocking locally · blocking shared |
+| Backup treatment | **YES** | not required locally · quarantine shared |
+| Rollback procedure | **YES** | 10-step ratified |
+| Failure matrix | **YES** | 15 scenari |
+| Performance acceptance | **YES** | p95 targets ratified (§17) |
 
 ---
 
 ## Section 30 · GO/HOLD Recommendation
 
-**Recommendation**: `HOLD-PENDING-PM-DECISIONS`.
+**Recommendation**: `RT2-B-1B-P0 CLOSED / PM-LOCKED · RT2-B-1B-1 READY-TO-DISPATCH (LOCAL ISOLATED ONLY)`.
 
 **Rationale**:
-- Il piano documentale è **completo** (31 sezioni, 12 B1BQ, 13 failure scenarios, 16 integration-test cases, 3 identity profiles, 3 provisioning models, 4 isolated-test options).
-- **2 aree presentano indeterminatezza operativa alta** che il PM deve chiudere prima di autorizzare l'apply:
-  - `MONGO_PERMISSION_MODEL_UNDERDEFINED` (B1BQ04+B1BQ05) → nessun profilo credenziali separato oggi.
-  - `TARGET_DATABASE_UNDERDEFINED` in prod (B1BQ02) → nessuna evidenza empirica di prod Mongo boundary.
-- **1 area di visibilità** (`MONITORING_BASELINE_MISSING`, B1BQ09) → PM_REVIEW ma non blocker documentale.
-- Nessun fail-stop hard rilevato per il piano stesso (isolated test env presente, provisioning idempotency dimostrata da pattern esistente, nessuna index collision).
+- Piano documentale completo (31/31 sezioni).
+- 12/12 B1BQ ratificate dal PM.
+- 3 fail-stop iniziali risolti / risolti transitoriamente / acknowledged; 1 fail-stop residuo (`PROVISIONING_IDEMPOTENCY_UNDERDEFINED`) è **TO BE VERIFIED IN RT2-B-1B-1** — non pregiudica la chiusura P0.
+- Boundary architetturale chiaro: LOCAL isolated potenzialmente autorizzato · SHARED environments vietati.
+- Scope RT2-B-1B-1 canonico definito (12 item).
+- Rollback 10-step ratificato.
+- Performance acceptance p95 ratificati per apply locale.
 
-**Next action items**:
-1. PM adjudication di **tutte** le 12 B1BQ (priorità: B1BQ02 · B1BQ04 · B1BQ05 · B1BQ12).
-2. Alla ratifica PM, apertura gate `RT2-B-1B (apply)` — slice minimale su `orbus_r16_test` (Option 2).
-3. Nessuna scrittura Mongo prima della ratifica.
+**Next action (Phase 2, dispatch separato)**:
+1. `RT2-B-1B-1 · LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION` — code/apply gate.
+2. Nessuna scrittura Mongo in Phase 1.
 
 ---
 
 ## Section 31 · Explicit STOP
 
-Piano documentale `RT2-B-1B-P0` completato. Nessuna collection creata. Nessun indice creato. Nessun test Mongo reale eseguito. Nessuna wiring runtime attivata. Nessun feature flag attivato. Nessuna modifica applicativa. PRD invariato. `NEW SEAL = NO`.
+Piano documentale `RT2-B-1B-P0 (PATCHED · POST-B1BQ)` completato. Nessuna collection creata. Nessun indice creato. Nessuna scrittura Mongo eseguita. Nessuna wiring runtime attivata. Nessun feature flag attivato. Nessuna modifica applicativa.
 
-**STRICT STOP · Phase 0 documentale**. In attesa di adjudication PM delle 12 B1BQ prima di autorizzare `RT2-B-1B (apply)`.
+**STRICT STOP · Phase 1 documentale**. In attesa di dispatch separato Phase 2 (`RT2-B-1B-1`).
 
 ---
 
-**Fine documento** · Italian_only · DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · RT2-B-1B-P0 draft · SHA Policy §31 · STRICT STOP
+**Fine documento (PATCHED)** · Italian_only · DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · RT2-B-1B-P0 patched · SHA Policy §31 · STRICT STOP

@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0",
+    "artifact_role": "CLOSURE_MANIFEST_JSON",
+    "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA §31 · STRICT STOP",
+    "closure_date_utc": "2026-02",
+    "sha_policy": "§31 absolute — manifest own full_file_sha256 = NOT EMBEDDED (declared only in chat report)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "phase": 1
+  },
+  "records": [
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1b_p0_mongo_provisioning_readiness.md",
+      "full_file_sha256": "9b6491131a400ff866d6b163fe97bbc6e052ceef61b93681f829bae6b320ae6e",
+      "size_bytes": 29869,
+      "line_count": 604,
+      "role": "RT2_B_1B_P0_READINESS_MD_PATCHED",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1b_p0_mongo_provisioning_readiness.json",
+      "full_file_sha256": "90755222ee32430fc5aac8a45da183de9c814af0e9f7780b1fecf510a7ad3b78",
+      "size_bytes": 27180,
+      "line_count": 423,
+      "role": "RT2_B_1B_P0_READINESS_JSON_PATCHED",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1b_p0_final_closure_report.md",
+      "full_file_sha256": "c050cf8bde558b65cbfd0cc12e415cd756d35707d0ca5e986d7d5b97b86ebe14",
+      "size_bytes": 9963,
+      "line_count": 175,
+      "role": "RT2_B_1B_P0_CLOSURE_REPORT_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1b_p0_final_closure_report.json",
+      "full_file_sha256": "9a70b7c203db4582074c097e6d559948173fcc5149d5e232a0e138676533c658",
+      "size_bytes": 8632,
+      "line_count": 245,
+      "role": "RT2_B_1B_P0_CLOSURE_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true
+    },
+    {
+      "path": "/app/memory/PRD.md",
+      "full_file_sha256": "0012b0f83cbede393be205480306a2323615b17aff22144031aba2871fea0e93",
+      "size_bytes": 286195,
+      "line_count": 4405,
+      "role": "PRD_POST_APPEND_RT2_B_1B_P0",
+      "status": "APPENDED_IDEMPOTENT_1_BLOCK",
+      "pm_locked": true
+    }
+  ],
+  "records_count_expected": 5,
+  "manifest_own_sha_policy_31": "NOT_EMBEDDED",
+  "byte_exact_verification": "records SHAs recomputed post-write to match declared values"
+}

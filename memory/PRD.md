@@ -4372,3 +4372,34 @@ Next gate: `RT2-B-1A = CONDITIONAL_GO_AWAITING_PHASE_2_DISPATCH` · `RT2-B-1B = 
 Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `9/9 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0). SHA di manifest, closure MD/JSON, implementation report MD/JSON, e PRD post dichiarati solo nel chat report (SHA Policy §31).
 
 Next gate: `RT2-B-1B-P0 = CONDITIONALLY AUTHORIZED (documental only)` · awaiting Phase 2 dispatch.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0 · MONGO RUNTIME-STATE PROVISIONING READINESS · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA §31 · STRICT STOP · Phase 1
+**Gate Status**: `R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0 · CLOSED · PM-LOCKED`
+**PM Dispatch**: RT2-B-1B-P0 Patch (12/12 B1BQ ratified) + Formal Closure Phase 1
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- B1BQ resolved = 12/12
+- collection = `expedition_runtime_states`
+- first apply environment = localhost isolated only
+- provisioning database = `orbus_r16_rt2b_test`
+- automated test databases use unique run IDs (`orbus_r16_rt2b_it_<unique_run_id>`)
+- preview/staging/production provisioning remains forbidden
+- local no-auth exception approved only for isolated validation
+- future shared environments require authenticated identities
+- initial indexes = native `_id` + `expires_at` TTL (`expireAfterSeconds = 0`)
+- TTL baseline = 6h active / 24h terminal
+- local backup not required
+- monitoring missing blocks shared-environment rollout
+- first apply slice = RT2-B-1B-1
+- runtime wiring not authorized
+- feature flags remain OFF
+- RT2-C/D/E remain HOLD
+- Phase 2B assignment remains HOLD
+
+Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `10/10 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A) · RT2-A 38 file unchanged · RT2-B-1A 14 file unchanged. SHA di manifest, closure MD/JSON, deliverable P0 patched, e PRD post dichiarati solo nel chat report (SHA Policy §31).
+
+Next gate: `RT2-B-1B-1 · CONDITIONAL GO (LOCAL ISOLATED ONLY)` · awaiting Phase 2 dispatch da orchestrator.

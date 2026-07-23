@@ -2,24 +2,33 @@
   "meta": {
     "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0",
     "artifact_role": "MONGO_PROVISIONING_READINESS_PLAN_JSON",
+    "patch_marker": "PATCHED_POST_B1BQ_RATIFICATION",
     "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA §31 · STRICT STOP",
-    "gate_status": "ARTIFACT_WRITTEN · PM_ADJUDICATION_REQUIRED · FORMAL_CLOSURE_HOLD",
+    "gate_status": "PATCHED · PM_RATIFIED · READY_FOR_FORMAL_CLOSURE",
     "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
-    "prd_pre_state_sha256": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9",
-    "prd_delta": "0 (no append in P0)",
+    "prd_pre_append_sha256_reference": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9",
     "sha_policy": "§31 · no self-hash embedded",
     "section_count_expected": 31,
-    "recommendation": "HOLD-PENDING-PM-DECISIONS"
+    "b1bq_ratified": 12,
+    "recommendation": "RT2-B-1B-P0 CLOSED / PM-LOCKED · RT2-B-1B-1 READY-TO-DISPATCH (LOCAL ISOLATED ONLY)"
+  },
+  "environmental_principle_lock": {
+    "local_isolated_validation": "potentially_authorized",
+    "shared_environment_provisioning": "forbidden",
+    "preview_apply": "forbidden",
+    "staging_apply": "forbidden",
+    "production_apply": "forbidden",
+    "no_auth_tolerance_scope": "localhost + dedicated RT2-B test database + no runtime wiring + no real data + mandatory cleanup"
   },
   "sections": {
     "01_executive_summary": {
-      "goal": "Deliver documental Mongo provisioning readiness plan for expedition_runtime_states without any DB writes",
-      "recommendation": "HOLD-PENDING-PM-DECISIONS",
-      "critical_open_areas": ["TARGET_DATABASE_UNDERDEFINED (B1BQ02)", "MONGO_PERMISSION_MODEL_UNDERDEFINED (B1BQ04/B1BQ05)", "MONITORING_BASELINE_MISSING (B1BQ09)"]
+      "recommendation": "RT2-B-1B-P0 CLOSED / PM-LOCKED · RT2-B-1B-1 READY-TO-DISPATCH (LOCAL ISOLATED ONLY)",
+      "b1bq_status": "12/12 ratified",
+      "next_action_gate": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-1 (Phase 2 · dispatch separato)"
     },
     "02_scope": {
-      "in_scope": ["provisioning plan", "index set", "TTL semantics", "identity model", "isolated test env", "rollback", "failure matrix", "capacity", "PM open questions"],
-      "out_of_scope": ["collection creation", "index creation", "TTL index creation", "DB writes", "provisioning script execution", "runtime wiring", "expedition service modification", "feature flag activation", "real integration-test writes on Mongo", "production credentials use", "OpenAPI/frontend/Registry/item generation"]
+      "in_scope_phase_1": ["patch of P0 plan with B1BQ verdicts", "performance acceptance p95", "LOCAL vs SHARED boundary", "RT2-B-1B-1 canonical scope", "10-step rollback", "failure matrix", "ratified PM open questions"],
+      "out_of_scope_phase_1": ["Mongo collection creation", "index creation", "TTL creation", "DB writes", "provisioning script execution", "migration execution", "runtime adapter wiring", "expedition service modification", "feature flag activation", "real integration-test writes on Mongo", "production credentials use", "OpenAPI/frontend/Registry/item generation", "RT2-B-1B-1 code/apply"]
     },
     "03_governance": {
       "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only",
@@ -29,57 +38,62 @@
       "sealed_integrity_tests": "6 passed",
       "sealed_artifacts": "36/36 byte-identical",
       "new_seal": "NO",
-      "prd_invariant": true,
-      "prd_delta": "0 (no append)",
-      "closure_manifest": "NOT_APPLICABLE_IN_P0"
+      "prd_pre_append_sha256": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9",
+      "prd_delta_phase_1": "1 append RT2-B-1B-P0 block (idempotent)",
+      "closure_manifest_sha_policy": "§31 absolute — manifest own SHA NOT_EMBEDDED"
     },
     "04_source_chain": [
-      {"id": "RT2-B-P0", "role": "Foundation Runtime Discovery Report", "status": "PM_LOCKED"},
-      {"id": "RT2-A", "role": "CDV & Effect Engine", "files": 38, "status": "PM_LOCKED"},
-      {"id": "RT2-B-1A", "role": "Store Contract & non-wired adapter", "files": 14, "status": "PM_LOCKED"},
-      {"id": "RT2-B-1A implementation report MD", "sha256": "77dc4172e0c63d04a9536d73c2ead6e4b83ca1a9f5b9ddb0ea718c603fcf1dfa", "status": "invariant"},
-      {"id": "RT2-B-1A implementation report JSON", "sha256": "bc92e3633e1032b39bc404b6d46c2934e7c08f1899ecdc48c7a19f28edbc4248", "status": "invariant"},
+      {"id": "RT2-B-P0", "status": "PM_LOCKED"},
+      {"id": "RT2-A", "files": 38, "status": "PM_LOCKED"},
+      {"id": "RT2-B-1A", "files": 14, "status": "PM_LOCKED"},
+      {"id": "RT2-B-1A impl MD", "sha256": "77dc4172e0c63d04a9536d73c2ead6e4b83ca1a9f5b9ddb0ea718c603fcf1dfa", "status": "invariant"},
+      {"id": "RT2-B-1A impl JSON", "sha256": "bc92e3633e1032b39bc404b6d46c2934e7c08f1899ecdc48c7a19f28edbc4248", "status": "invariant"},
       {"id": "RT2-B-1A closure MD", "sha256": "e0fc5adb2e2bb1ec7c1c30f8252472ffdad077b20cc90c75f739c7a6e5967067", "status": "PM_LOCKED"},
       {"id": "RT2-B-1A closure JSON", "sha256": "4bbb1dafcd18245c016b348ee71b4bc5ac8fef5b34d919d47ad60060855a0297", "status": "PM_LOCKED"},
-      {"id": "RT2-B-1A closure manifest", "sha256": "d848bc0e666c2b911acf612150ad10562c4d3c02db73c018999e3bf98e403b4d", "status": "PM_LOCKED"}
+      {"id": "RT2-B-1A closure manifest", "sha256": "d848bc0e666c2b911acf612150ad10562c4d3c02db73c018999e3bf98e403b4d", "status": "PM_LOCKED"},
+      {"id": "RT2-B-1B-P0 draft (pre-patch)", "status": "SUPERSEDED_BY_THIS_PATCH"},
+      {"id": "PM dispatch RT2-B-1B-P0 patch", "status": "RATIFYING_DIRECTIVE"}
     ],
     "05_mongo_environment_discovery": {
-      "client_init": {"file": "/app/backend/app/core/database.py", "line": 9, "pattern": "top-level AsyncIOMotorClient singleton"},
+      "client_init": "AsyncIOMotorClient(MONGO_URL) singleton at /app/backend/app/core/database.py:9",
       "env": {"MONGO_URL": "mongodb://localhost:27017", "DB_NAME": "orbus_r16", "APP_ENV": "development", "auth": "none", "tls": "none"},
       "naming_convention": "snake_case_plural_nouns",
-      "existing_provisioning_path": {"model": "C", "entrypoint": "app/core/lifespan.py::lifespan", "index_creator": "app/core/indexes.py::create_all_indexes", "idempotency": "create_index no-op if spec matches"},
-      "existing_ttl_indexes": [
-        {"collection": "login_attempts", "field": "last_attempt_at", "expireAfterSeconds": "LOGIN_ATTEMPTS_TTL_SECONDS"},
-        {"collection": "refresh_tokens", "field": "expires_at", "expireAfterSeconds": 0},
-        {"collection": "password_reset_tokens", "field": "expires_at", "expireAfterSeconds": 0}
-      ],
-      "application_mongo_permissions": "root-equivalent (no auth on localhost) — MONGO_PERMISSION_MODEL_UNDERDEFINED",
-      "deployment": {"docker": "not_present", "kubernetes": "not_present", "ci_dir": "not_present", "supervisor_configs": ["supervisord.conf", "supervisord_code_server.conf", "supervisord_nginx_proxy.conf", "webhook-crond.conf"]},
-      "preview_vs_prod_boundary": "TARGET_DATABASE_UNDERDEFINED for prod — no evidence in .env",
-      "backup_configuration": {"auto_backup": "not_present", "pitr": "not_present", "manual_dumps_dir": "/app/_mongo_dumps/"},
-      "monitoring_infra": "MONITORING_BASELINE_MISSING — no prometheus/grafana/datadog/sentry integration",
-      "alerting_infra": "not_present",
-      "test_fixtures": {"guard_rail_file": "/app/backend/tests/conftest.py", "guard_rail_lines": "11-49", "isolated_backend_fixture_port": 8002, "test_db_name": "orbus_r16_test", "override_file": "/app/backend/tests/.env.test"}
+      "current_provisioning_model": "C (startup ensure via lifespan.py) — NOT AUTHORIZED for RT2-B",
+      "existing_ttl_reusable_pattern": {"expireAfterSeconds": 0, "field_type": "BSON Date", "examples": ["refresh_tokens.expires_at", "password_reset_tokens.expires_at"]},
+      "application_mongo_permissions_current": "root-equivalent on localhost (no auth)",
+      "prod_boundary_evidence": "none in .env",
+      "deployment_infra": {"docker": "not_present", "kubernetes": "not_present", "ci_dir": "not_present"},
+      "backup_infra": {"auto_backup": "not_present", "pitr": "not_present", "manual_dumps": "/app/_mongo_dumps/"},
+      "monitoring_infra": "MONITORING_BASELINE_MISSING",
+      "test_fixtures": {"guard_rail": "/app/backend/tests/conftest.py:11-49", "isolated_backend_port": 8002, "existing_test_db": "orbus_r16_test (NOT USABLE for RT2-B — see B1BQ02)"}
     },
     "06_naming_conventions": {
-      "collection_candidate": "expedition_runtime_states",
-      "adheres_to_snake_case_plural_pattern": true,
-      "index_naming_candidates": [
-        "expedition_runtime_states_expires_at_ttl",
-        "expedition_runtime_states_status_expires_idx (optional)",
-        "expedition_runtime_states_lease_expires_idx (optional)"
-      ],
-      "player_facing_export_inclusion": "FORBIDDEN"
+      "collection_name": "expedition_runtime_states",
+      "pm_status": "PM_RATIFIED_B1BQ01",
+      "id_strategy": "_id = expedition_id (native)",
+      "no_duplicate_expedition_id_field": true,
+      "index_names_authorized": ["<native _id>", "expedition_runtime_states_expires_at_ttl"],
+      "index_names_deferred": ["runtime_status+expires_at", "lease_expires_at", "updated_at"],
+      "player_facing_export_inclusion": "FORBIDDEN",
+      "analytics_ingestion": "DISABLED_BY_DEFAULT"
     },
     "07_candidate_collection": {
       "name": "expedition_runtime_states",
-      "pm_review": "B1BQ01",
+      "design_status": "DESIGN-LOCKED · PM_RATIFIED (B1BQ01)",
       "naming_collision": "NONE",
       "existing_collection": "NOT_PRESENT",
-      "database_target": {"dev": "orbus_r16", "test": "orbus_r16_test", "prod": "PM_REVIEW → B1BQ02"},
-      "environment_scope": "dev+preview+test isolated · prod PM_REVIEW",
-      "player_facing_export": "FORBIDDEN",
-      "analytics_ingestion": "DISABLED_BY_DEFAULT"
+      "database_target_ratified": {
+        "manual_verification_and_idempotency": "orbus_r16_rt2b_test",
+        "integration_tests_per_run": "orbus_r16_rt2b_it_<unique_run_id>",
+        "environment_scope": "LOCALHOST-ONLY / LOCAL DEVELOPMENT · ISOLATED INTEGRATION",
+        "pm_status": "PM_RATIFIED_B1BQ02"
+      },
+      "databases_forbidden_for_first_apply": ["orbus_r16", "orbus_r16_test", "<any preview>", "<any staging>", "<any production>"],
+      "fail_stops": {
+        "TARGET_ENVIRONMENT_REJECTED": "Mongo host != localhost",
+        "TARGET_DATABASE_REJECTED": "database name not in {orbus_r16_rt2b_test, orbus_r16_rt2b_it_<unique_run_id>}"
+      },
+      "provisioning_stop_on_incompatible_existing_schema_or_indexes": true
     },
     "08_document_lifecycle": {
       "schema": {
@@ -97,259 +111,295 @@
         "updated_at": "BSON Date UTC per-mutation",
         "expires_at": "BSON Date UTC — TTL driver"
       },
-      "lifecycle_states": {"active": "expires_at = now + active_inactivity_ttl (6h candidate)", "completed": "expires_at = terminal_ts + terminal_retention_ttl (24h candidate)", "cancelled": "same as completed", "expired": "immediate cleanup eligible on next TTL sweep"},
-      "mongo_16mb_risk": "LOW — receipts bounded + adventurer_class_states bounded ≤ 6 · envelope << 1MB"
+      "constraints_ratified": {
+        "test_state_document_size_max_KiB": 256,
+        "unbounded_receipt_growth": 0
+      }
     },
     "09_index_requirements": {
-      "baseline_minimal": ["I1 native _id (required)", "I2 TTL on expires_at (required)"],
-      "optional_pending_query_evidence": ["I3 runtime_status+expires_at", "I4 lease_expires_at", "I5 updated_at"],
-      "pm_review": "B1BQ06",
-      "recommendation": "Authorize I1+I2 only. I3/I4/I5 require demonstrated query."
+      "authorized_initial_set": [
+        {"id": "I1", "kind": "native _id", "required": true, "key": "_id", "notes": "no duplicate expedition_id field"},
+        {"id": "I2", "kind": "TTL", "required": true, "name": "expedition_runtime_states_expires_at_ttl", "key": "expires_at", "expireAfterSeconds": 0}
+      ],
+      "deferred_indexes_pm_review_future": [
+        {"id": "I3", "key": "runtime_status + expires_at", "purpose": "recovery"},
+        {"id": "I4", "key": "lease_expires_at", "purpose": "lease reaper"},
+        {"id": "I5", "key": "updated_at", "purpose": "analytics"}
+      ],
+      "pm_status": "PM_RATIFIED_B1BQ06"
     },
     "10_ttl_semantics": {
-      "baseline_candidate": {"active_inactivity_ttl_seconds": 21600, "completed_retention_ttl_seconds": 86400, "cancelled_retention_ttl_seconds": 86400, "expired_grace_seconds": 0},
-      "expires_at_owner": "runtime writer (store adapter) under CAS filter",
-      "ttl_monitor_lag": "0-120s (Mongo TTL sweep cadence, non-deterministic)",
-      "no_immediate_deletion_expectation": true,
-      "pm_review": "B1BQ07"
+      "values_ratified": {
+        "active_inactivity_hours": 6,
+        "completed_retention_hours": 24,
+        "cancelled_retention_hours": 24,
+        "expired_grace_seconds": 0
+      },
+      "expires_at_calculation": {
+        "active": "last_valid_mutation_ts + 6h",
+        "completed": "completion_ts + 24h",
+        "cancelled": "cancellation_ts + 24h"
+      },
+      "mongo_ttl_asynchronous": true,
+      "exact_deletion_time_guaranteed": false,
+      "no_second_level_dependency_allowed": true,
+      "ttl_sweep_cadence_approx_seconds": 60,
+      "pm_status": "PM_RATIFIED_B1BQ07 (DESIGN-LOCKED)"
     },
     "11_permissions": {
-      "current_state": "MONGO_PERMISSION_MODEL_UNDERDEFINED (single root-equivalent identity)",
-      "profiles_required": {
-        "provisioning_identity": {"role": "custom provisioning_role scoped to target DB", "grants": ["createCollection", "createIndex", "dropIndex", "dropCollection", "listCollections", "listIndexes"], "presence": "only during authorized provisioning/rollback"},
-        "runtime_identity": {"role": "custom runtime_role scoped to expedition_runtime_states", "grants": ["find", "insert", "update", "findAndModify (CAS)", "delete"], "must_not_have": ["createCollection", "createIndex", "dropCollection", "admin database-wide"], "env_var_candidate": "RUNTIME_MONGO_URL (separate from MONGO_URL)"},
-        "diagnostic_identity": {"role": "read scoped to expedition_runtime_states", "grants": ["find", "listIndexes"], "sensitive_payload_access": false}
+      "local_isolated_apply_rt2_b_1b_1": {
+        "provisioning_identity": "current localhost no-auth Mongo connection",
+        "runtime_identity": "not_used (runtime_adapter_wiring=false)",
+        "temporary_coincidence_accepted": true,
+        "scope": "LOCAL_TEST_ONLY",
+        "guardrails_mandatory": ["uri = localhost exactly", "db name in allowlist exactly", "no wildcard on db name", "no access to orbus_r16", "no production credentials loaded", "explicit target output before apply"],
+        "pm_status": "PM_RATIFIED_B1BQ04 (deroga confinata)"
       },
-      "pm_review": ["B1BQ04", "B1BQ05"]
+      "shared_environments_future_hold": {
+        "provisioning_identity": "dedicated authenticated identity MANDATORY",
+        "provisioning_grants": ["createCollection", "createIndex", "dropIndex", "dropCollection"],
+        "runtime_identity": "dedicated authenticated identity MANDATORY",
+        "runtime_grants": ["find", "insert", "findOneAndUpdate", "update", "delete"],
+        "runtime_forbidden_grants": ["createCollection", "createIndex", "dropCollection", "admin_database_wide"],
+        "diagnostic_identity": "read-only scoped to expedition_runtime_states",
+        "pm_status": "PM_RATIFIED_B1BQ05 (shared env HOLD)"
+      }
     },
     "12_provisioning_models": {
-      "model_a_explicit_idempotent_admin_command": {"pros": ["max auditability", "credentials time-isolated", "rollback-friendly"], "cons": ["requires runbook"], "pm_baseline_preference": true},
-      "model_b_deployment_migration_step": {"pros": ["automatic via pipeline"], "cons": ["requires CI/CD infrastructure not present in repo"], "feasibility": "low"},
-      "model_c_startup_ensure": {"pros": ["current pattern"], "cons": ["violates least-privilege (needs createIndex at runtime)", "PM baseline: NOT RECOMMENDED"]},
-      "recommendation": "Model A + separate verification command",
-      "pm_review": "B1BQ03"
+      "ratified_model": "A · EXPLICIT IDEMPOTENT ADMINISTRATIVE COMMAND",
+      "complementary_command": "READ-ONLY VERIFICATION COMMAND",
+      "flags": ["--dry-run", "--apply", "--verify", "--rollback"],
+      "apply_and_rollback_require_explicit_target": true,
+      "explicitly_forbidden": ["application startup provisioning", "implicit collection creation during runtime", "automatic index creation on service startup"],
+      "pm_status": "PM_RATIFIED_B1BQ03"
     },
     "13_recommended_provisioning": {
-      "provisioning_script_path_candidate": "scripts/rt2_b_1b_provision_expedition_runtime_states.py",
-      "verification_script_path_candidate": "scripts/rt2_b_1b_verify_expedition_runtime_states.py",
-      "rollback_script_path_candidate": "scripts/rt2_b_1b_rollback_expedition_runtime_states.py",
-      "execution": "NO EXEC in P0"
+      "scripts_canonical_paths_to_create_in_phase_2": [
+        "scripts/rt2_b_1b_provision_expedition_runtime_states.py",
+        "scripts/rt2_b_1b_verify_expedition_runtime_states.py",
+        "scripts/rt2_b_1b_rollback_expedition_runtime_states.py"
+      ],
+      "no_creation_in_phase_1": true
     },
     "14_runtime_driver_boundary": {
-      "current_singleton": "AsyncIOMotorClient(MONGO_URL) shared",
-      "rt2_b_1b_p0_wiring": "NONE — MongoExpeditionRuntimeStateStore not instantiated",
-      "future_apply_pattern": "factory-based DI, never top-level import",
-      "runtime_credentials_must_be": "runtime identity (not provisioning identity)"
+      "runtime_adapter_wiring_phase_1": false,
+      "runtime_adapter_wiring_rt2_b_1b_1": false,
+      "runtime_adapter_wiring_first_apply": false,
+      "mongo_client_singleton_unchanged": true,
+      "static_verification_required_in_rt2_b_1b_1": true
     },
     "15_isolated_test_environment": {
-      "options_evaluated": {
-        "option_1_ci_service_container": "NOT_FEASIBLE — no CI infra in repo",
-        "option_2_dedicated_test_db_on_nonprod_mongo": "AVAILABLE — orbus_r16_test + conftest guard-rail + isolated backend fixture",
-        "option_3_local_ephemeral_container": "POSSIBLE_FALLBACK — requires docker setup",
-        "option_4_mock_only": "EXCLUDED — insufficient for RT2-B-1B closure"
+      "integration_test_target_per_run": {
+        "database_pattern": "orbus_r16_rt2b_it_<unique_run_id>",
+        "host": "localhost",
+        "requirements": ["unique_run_id mandatory", "parallel isolation mandatory (pytest-xdist -n 2 compatible)", "cleanup after success mandatory", "cleanup after failure best-effort mandatory", "live data access forbidden"],
+        "pm_status": "PM_RATIFIED_B1BQ10"
       },
-      "recommended_option": 2,
-      "isolation_mechanisms": ["conftest guard-rail refuses non-test DB", "isolated backend fixture on port 8002", "PYTEST_XDIST_WORKER prefix for parallel isolation", "explicit dropCollection teardown"],
-      "pm_review": "B1BQ10"
+      "manual_verification_and_idempotency_target": {
+        "database": "orbus_r16_rt2b_test",
+        "host": "localhost",
+        "purpose": "manual --dry-run/--verify/--apply/--rollback sequences"
+      },
+      "pre_existing_options_status": {
+        "option_1_ci_service_container": "NOT_APPLICABLE (no CI infra)",
+        "option_2_orbus_r16_test": "NOT_USABLE_FOR_RT2_B (B1BQ02 forbids pre-existing DBs)",
+        "option_3_local_ephemeral_container": "NOT_REQUIRED (localhost Mongo dev sufficient)",
+        "option_4_mock_only": "EXCLUDED (already in RT2-B-1A)"
+      },
+      "isolated_backend_fixture_reusable_with_db_override": true
     },
     "16_integration_test_matrix": {
-      "scenarios_count": 16,
-      "scenarios": [
-        "collection creation (idempotent)",
-        "idempotent re-provisioning",
-        "index I1 creation",
-        "index I2 TTL creation",
-        "index definition verification",
-        "TTL index type validation",
-        "CAS success",
-        "CAS conflict on state_version",
-        "stale fencing rejection",
-        "lease acquire/renew/takeover",
-        "duplicate-event suppression via receipt ring",
-        "payload mismatch rejection",
-        "parallel mutation (2 writers race)",
-        "state-version monotonicity",
-        "terminal-state retention + TTL cleanup eligibility",
-        "rollback verification"
+      "canonical_scope_rt2_b_1b_1": [
+        "idempotent provisioning command",
+        "read-only verification command",
+        "guarded rollback command",
+        "collection creation in orbus_r16_rt2b_test",
+        "TTL index creation on expires_at",
+        "schema/field validation in test fixtures",
+        "real Mongo adapter integration tests",
+        "CAS tests",
+        "lease/fencing tests",
+        "deduplication tests",
+        "concurrent mutation tests",
+        "cleanup and rollback verification"
       ],
-      "execution": "NO EXEC in P0"
+      "scope_item_count": 12,
+      "exclusions_rt2_b_1b_1": [
+        "orbus_r16 writes",
+        "preview/staging/production writes",
+        "runtime wiring",
+        "expedition service changes",
+        "feature flag activation",
+        "RT2-A wiring",
+        "Marchio/Drenaggio/Frammenti gameplay",
+        "public API changes",
+        "frontend changes"
+      ],
+      "no_execution_in_phase_1": true,
+      "pm_status": "PM_RATIFIED_B1BQ12"
     },
     "17_performance_baseline": {
-      "find_one_by_id": {"p50_ms_target": 5, "p95_ms_target": 20},
-      "cas_findOneAndUpdate": {"p50_ms_target": 15, "p95_ms_target": 50},
-      "lease_acquisition_p95_ms_target": 30,
-      "ttl_cleanup_sweep_lag_seconds": "0-120",
-      "adapter_error_rate_target": "< 0.1 % excluding client-forge rejects",
-      "pm_review": "B1BQ09"
+      "acceptance_targets_local": {
+        "single_state_read_p95_ms": 25,
+        "cas_mutation_p95_ms": 35,
+        "lease_acquire_renew_p95_ms": 35,
+        "deduplicated_retry_p95_ms": 25,
+        "test_state_document_max_KiB": 256,
+        "unbounded_receipt_growth": 0,
+        "db_outside_allowlisted_test_databases": 0,
+        "network_outside_localhost": 0
+      },
+      "caveat": "local metrics do NOT authorize shared or live rollout",
+      "pm_status": "PM_RATIFIED"
     },
     "18_capacity": {
-      "assumptions": {"peak_concurrent_active_expeditions_preview": 500, "peak_concurrent_active_expeditions_prod_phase1": 5000, "state_docs_per_expedition": 1, "adventurer_class_states_per_doc_max": 6, "processed_receipts_bounded_by": "RECEIPT_RING_CAP", "avg_doc_size_kb": "10-30"},
-      "estimates": {
+      "envelope_estimates_planning_only": {
         "low": {"concurrent_active": 100, "peak_collection_size_mb": 3, "daily_new_docs": 500},
         "expected": {"concurrent_active": 500, "peak_collection_size_mb": 15, "daily_new_docs": 2500},
         "stress": {"concurrent_active": 5000, "peak_collection_size_mb": 150, "daily_new_docs": 25000}
       },
-      "mongo_document_limit_16mb_risk": "LOW",
-      "pm_review": "B1BQ09"
+      "authorized_for_phase_1_or_rt2_b_1b_1": false
     },
     "19_backup_and_retention": {
-      "gameplay_source_of_truth_while_active": true,
-      "long_term_business_record": false,
-      "character_progression_record": false,
-      "audit_record": false,
-      "included_in_normal_backup": true,
-      "excluded_from_long_term_archival": true,
-      "restore_must_not_reactivate_terminated_expeditions": true,
-      "quarantine_procedure_required": true,
-      "pm_review": "B1BQ08"
+      "local_isolated": {
+        "backup": "NOT REQUIRED",
+        "long_term_retention": "FORBIDDEN",
+        "archival": "FORBIDDEN",
+        "sacrificable": true,
+        "pm_status": "PM_RATIFIED_B1BQ08"
+      },
+      "shared_environments_future_hold": {
+        "adjudication": "separate operational adjudication required",
+        "no_long_term_retention_of_runtime_state": true,
+        "no_automatic_reactivation_of_restored_states": true,
+        "restored_states_treated_as_suspect_until_manual_reconciliation": true
+      }
     },
     "20_monitoring": {
-      "status": "MONITORING_BASELINE_MISSING",
-      "candidate_metrics": [
-        "expedition_runtime_states_document_count",
-        "expedition_runtime_states_active_count",
-        "expedition_runtime_states_terminal_count",
-        "expedition_runtime_states_storage_bytes",
-        "expedition_runtime_states_avg_doc_size_bytes",
-        "expedition_runtime_states_p95_doc_size_bytes",
-        "store_read_latency_ms",
-        "store_cas_latency_ms",
-        "store_lease_acquire_latency_ms",
-        "cas_conflict_rate",
-        "stale_writer_rejection_rate",
-        "duplicate_event_suppression_rate",
-        "ttl_cleanup_lag_seconds",
-        "store_timeout_rate",
-        "adapter_error_rate"
-      ],
-      "pm_review": "B1BQ09"
+      "baseline_status": "MONITORING_BASELINE_MISSING · ACKNOWLEDGED",
+      "not_blocking_for": ["local isolated provisioning (RT2-B-1B-1)", "local integration tests", "local rollback"],
+      "blocking_for": ["preview apply", "staging apply", "production apply", "runtime wiring in shared environment"],
+      "minimum_evidence_rt2_b_1b_1_local": ["provisioning command output", "verification command output", "test report", "collection stats before/after", "index list before/after", "cleanup verification"],
+      "shared_environments_future_minimum_metrics": ["error_rate", "cas_conflicts", "lease_failures", "latency", "document_size", "ttl_cleanup_lag", "permission_failures"],
+      "no_production_thresholds_ratified_in_this_gate": true,
+      "pm_status": "PM_RATIFIED_B1BQ09"
     },
     "21_alerting": {
-      "status": "PM_REVIEW",
-      "candidate_alerts": [
-        {"name": "high_cas_conflict_rate", "trigger": "> 5% sustained 5m", "severity": "warning"},
-        {"name": "lease_renewal_failures", "trigger": "> 10 fail/min sustained 5m", "severity": "warning"},
-        {"name": "stale_writer_spikes", "trigger": "> 20 stale/min for 5m", "severity": "warning"},
-        {"name": "document_size_growth", "trigger": "p95_doc_size > 500KB", "severity": "warning"},
-        {"name": "ttl_cleanup_lag", "trigger": "ttl_cleanup_lag_seconds > 300 sustained 10m", "severity": "warning"},
-        {"name": "store_latency_degradation", "trigger": "cas_latency_p95 > 200ms sustained 5m", "severity": "critical"},
-        {"name": "unexpected_terminal_state_accumulation", "trigger": "terminal_count > 10% of active for 15m", "severity": "warning"},
-        {"name": "mongo_permission_failures", "trigger": "AUTH_FAIL_COUNT > 0", "severity": "critical"},
-        {"name": "duplicate_reward_protection_failure", "trigger": "duplicate_reward_leak_count > 0", "severity": "critical"}
-      ],
-      "pm_review": "B1BQ09"
+      "phase_1_config": "no_configuration",
+      "future_shared_env_status": "PM_REVIEW at RT2-B-1B-2+"
     },
     "22_security": {
       "pii_in_document": "none",
       "server_generated_non_guessable_fields": ["owner_lease_id", "fencing_token"],
-      "runtime_identity_lateral_exfiltration_risk": "LOW when B1BQ05 authorized (scoped to single collection)",
-      "diagnostic_identity_write_capability": "none (read-only)",
-      "isolated_test_env_data_leakage_risk": "LOW (guard-rail + separate DB)",
-      "tls_prod": "PM_REVIEW → B1BQ02",
-      "secret_rotation": "PM_REVIEW → B1BQ04/B1BQ05"
+      "local_test_only_no_auth_derogation": "confined per §11.1",
+      "shared_env_tls_mandatory": true,
+      "shared_env_authenticated_identities_mandatory": true
     },
     "23_operational_ownership": {
-      "provisioning": "operator with dedicated identity + manual runbook + audit log",
-      "runtime": "backend service account",
-      "diagnostic": "SRE / on-call read-only",
-      "rollback": "operator + SRE approver",
-      "emergency_drop": "PM approval required",
-      "pm_review": "B1BQ11"
+      "local_rt2_b_1b_1": "operator executing the PM-authorized provisioning dispatch",
+      "shared_environments_future": "SRE + PM approval; runbook rt2_b_1b_rollback_runbook.md"
     },
     "24_rollback": {
-      "steps_ordered": [
-        "1. verify all related feature flags OFF (6 flags)",
-        "2. verify no runtime wiring active",
-        "3. stop isolated test writers (port 8002 uvicorn)",
-        "4. verify no active production state (active count == 0)",
-        "5. preserve diagnostic evidence (mongodump to /app/_mongo_dumps/rollback_<ts>/)",
-        "6. drop optional indexes (I3/I4/I5)",
-        "7. drop TTL index (I2)",
-        "8. drop collection expedition_runtime_states",
-        "9. verify legacy runtime unchanged (expeditions, expedition_members)"
+      "steps_ratified_10": [
+        "1. verify all feature flags OFF (6 flags)",
+        "2. verify runtime wiring absent",
+        "3. verify Mongo host = localhost",
+        "4. verify database allowlist",
+        "5. stop integration-test writers",
+        "6. capture collection/index metadata",
+        "7. drop expedition_runtime_states",
+        "8. optionally drop isolated test database",
+        "9. verify collection absent",
+        "10. rerun compatibility tests"
       ],
-      "future_apply_gate_authority": "explicit approval + target-specific asserts + fail-stop on unexpected DB"
+      "properties": ["idempotent", "target-specific", "dry-run capable", "fail-stop on host/db mismatch"],
+      "forbidden": ["generic drop commands", "drop without allowlist"],
+      "authority_local": "operator executing the PM-authorized provisioning dispatch",
+      "pm_status": "PM_RATIFIED_B1BQ11"
     },
     "25_failure_matrix": [
-      {"id": 1, "failure": "collection already exists", "detection": "listCollections pre-check", "fail_stop": false, "recovery": "continue idempotent"},
-      {"id": 2, "failure": "wrong database selected", "detection": "db_name assertion", "fail_stop": true, "recovery": "env correction + rerun"},
-      {"id": 3, "failure": "insufficient provisioning permissions", "detection": "Mongo Unauthorized on createCollection", "fail_stop": true, "recovery": "grant provisioning role"},
-      {"id": 4, "failure": "index name collision", "detection": "listIndexes pre-check", "fail_stop": true, "recovery": "manual rename or drop-then-recreate"},
-      {"id": 5, "failure": "incompatible existing index", "detection": "key/options mismatch", "fail_stop": true, "recovery": "drop-then-recreate under maintenance"},
-      {"id": 6, "failure": "TTL field wrong type", "detection": "sample doc validation post-write", "fail_stop": true, "recovery": "data migration + type fix"},
-      {"id": 7, "failure": "partial index provisioning", "detection": "provisioning report", "fail_stop": true, "recovery": "complete missing indexes"},
-      {"id": 8, "failure": "provisioning interrupted (SIGTERM)", "detection": "report incomplete", "fail_stop": true, "recovery": "rerun idempotent"},
-      {"id": 9, "failure": "verification command fails", "detection": "verify script exit != 0", "fail_stop": true, "recovery": "investigate + fix + reverify"},
-      {"id": 10, "failure": "cleanup fails", "detection": "teardown exception", "fail_stop": true, "recovery": "manual cleanup"},
-      {"id": 11, "failure": "test database contains unrelated data", "detection": "pre-suite guard-rail count", "fail_stop": true, "recovery": "drop test DB (only if 'test' in name)"},
-      {"id": 12, "failure": "rollback targets wrong collection", "detection": "collection_name assertion", "fail_stop": true, "recovery": "abort rollback"},
-      {"id": 13, "failure": "backup restores expired documents", "detection": "post-restore query for terminal states", "fail_stop": true, "recovery": "apply cleanup update"}
+      {"id": 1, "failure": "collection already exists", "detection": "listCollections", "fail_stop": false},
+      {"id": 2, "failure": "wrong database selected", "detection": "db name assertion", "fail_stop": true, "code": "TARGET_DATABASE_REJECTED"},
+      {"id": 3, "failure": "wrong Mongo host", "detection": "URI assertion", "fail_stop": true, "code": "TARGET_ENVIRONMENT_REJECTED"},
+      {"id": 4, "failure": "insufficient provisioning permissions", "detection": "Unauthorized", "fail_stop": true},
+      {"id": 5, "failure": "index name collision", "detection": "listIndexes", "fail_stop": true},
+      {"id": 6, "failure": "incompatible existing index", "detection": "key/options mismatch", "fail_stop": true},
+      {"id": 7, "failure": "TTL field wrong type", "detection": "sample doc validation", "fail_stop": true},
+      {"id": 8, "failure": "partial index provisioning", "detection": "report reads created list", "fail_stop": true},
+      {"id": 9, "failure": "provisioning interrupted", "detection": "report incomplete", "fail_stop": true},
+      {"id": 10, "failure": "verification command fails", "detection": "exit != 0", "fail_stop": true},
+      {"id": 11, "failure": "cleanup fails", "detection": "teardown exception", "fail_stop": true},
+      {"id": 12, "failure": "test database contains unrelated data", "detection": "pre-suite guard-rail", "fail_stop": true},
+      {"id": 13, "failure": "rollback targets wrong collection", "detection": "collection name assertion", "fail_stop": true},
+      {"id": 14, "failure": "rollback targets wrong DB", "detection": "DB allowlist assertion", "fail_stop": true},
+      {"id": 15, "failure": "backup restores expired documents", "detection": "post-restore query", "fail_stop": true}
     ],
     "26_compatibility": {
-      "rt2_a_cdv_effect_engine": "no modifications required · full contract compatibility",
-      "rt2_b_1a_store_contract": "1:1 alignment with contract tests",
+      "rt2_a": "unchanged · 24 code + 14 test · 136/136 pass",
+      "rt2_b_1a": "unchanged · 8 code + 6 test · 91/91 pass",
       "existing_expedition_service": "unchanged · additive collection",
-      "legacy_adventurers_items_inventory": "no cross-dependencies",
-      "feature_flags": "remain OFF (RT2-B-1A req 21)"
+      "feature_flags": "OFF invariant",
+      "mongo_client_singleton": "invariant"
     },
     "27_risk_register": [
-      {"id": "R1", "risk": "prod DB target undefined", "impact": "HIGH", "likelihood": "MEDIUM", "mitigation": "B1BQ02 adjudication + --env wrapper"},
-      {"id": "R2", "risk": "runtime identity over-privileged", "impact": "HIGH", "likelihood": "HIGH", "mitigation": "B1BQ04/05 separation"},
-      {"id": "R3", "risk": "no monitoring baseline", "impact": "MEDIUM", "likelihood": "HIGH", "mitigation": "B1BQ09 metrics endpoint pre-apply"},
-      {"id": "R4", "risk": "TTL monitor non-deterministic", "impact": "LOW", "likelihood": "HIGH", "mitigation": "alert on ttl_cleanup_lag; documented expectation"},
-      {"id": "R5", "risk": "restore reactivates terminated expeditions", "impact": "HIGH", "likelihood": "LOW", "mitigation": "quarantine + post-restore updateMany"},
-      {"id": "R6", "risk": "test cross-worker collision", "impact": "MEDIUM", "likelihood": "LOW", "mitigation": "PYTEST_XDIST_WORKER prefix"},
-      {"id": "R7", "risk": "no CI infrastructure", "impact": "LOW", "likelihood": "MEDIUM", "mitigation": "Option 2 dedicated test DB"},
-      {"id": "R8", "risk": "accidental runtime wiring pre-PM approval", "impact": "HIGH", "likelihood": "LOW", "mitigation": "seal test static grep + runtime import assertion"}
+      {"id": "R1", "risk": "prod DB target undefined", "impact": "HIGH", "likelihood": "MEDIUM", "mitigation": "SHARED APPLY FORBIDDEN in Phase 2"},
+      {"id": "R2", "risk": "runtime identity over-privileged (dev)", "impact": "HIGH", "likelihood": "HIGH", "mitigation": "LOCAL_TEST_ONLY deroga; shared env identities mandatory"},
+      {"id": "R3", "risk": "no monitoring baseline", "impact": "MEDIUM", "likelihood": "HIGH", "mitigation": "shared env apply BLOCKED"},
+      {"id": "R4", "risk": "TTL monitor non-deterministic", "impact": "LOW", "likelihood": "HIGH", "mitigation": "no second-level dependency; documented"},
+      {"id": "R5", "risk": "restore reactivates terminated expeditions", "impact": "HIGH", "likelihood": "LOW", "mitigation": "quarantine + manual reconciliation"},
+      {"id": "R6", "risk": "test cross-worker collision", "impact": "MEDIUM", "likelihood": "LOW", "mitigation": "unique_run_id per DB"},
+      {"id": "R7", "risk": "no CI infrastructure", "impact": "LOW", "likelihood": "MEDIUM", "mitigation": "localhost Mongo sufficient"},
+      {"id": "R8", "risk": "accidental runtime wiring pre-authorization", "impact": "HIGH", "likelihood": "LOW", "mitigation": "seal test + static import grep in RT2-B-1B-1"},
+      {"id": "R9", "risk": "provisioning idempotency not yet empirically verified", "impact": "HIGH", "likelihood": "MEDIUM", "mitigation": "TO BE VERIFIED IN RT2-B-1B-1"}
     ],
-    "28_pm_open_questions": {
-      "count": 12,
-      "auto_ratified": 0,
+    "28_pm_open_questions_ratified": {
+      "count_total": 12,
+      "count_ratified": 12,
       "questions": {
-        "B1BQ01": {"topic": "final collection name", "evidence": "candidate expedition_runtime_states, no collision", "options": ["expedition_runtime_states", "rt_/runtime_ prefix alternative"], "agent_recommendation": "expedition_runtime_states", "security_impact": "minimal", "operational_impact": "minimal", "migration_impact": "minimal", "rollback_impact": "minimal", "blocking": true},
-        "B1BQ02": {"topic": "target database and environments", "evidence": "dev=orbus_r16, test=orbus_r16_test, prod=undefined in .env", "options": ["existing pattern (a)", "dedicated orbus_runtime cross-env (b)", "collection in current DB (c)"], "agent_recommendation": "(a)", "security_impact": "HIGH (TLS+auth in prod)", "operational_impact": "HIGH", "migration_impact": "MEDIUM", "rollback_impact": "MEDIUM", "blocking": true},
-        "B1BQ03": {"topic": "provisioning mechanism", "evidence": "current=Model C, baseline=Model A", "options": ["Model A explicit admin command", "Model B deployment migration", "Model C startup ensure"], "agent_recommendation": "Model A", "security_impact": "HIGH", "operational_impact": "MEDIUM", "migration_impact": "MEDIUM", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ04": {"topic": "provisioning identity permissions", "evidence": "no roles configured; MONGO_PERMISSION_MODEL_UNDERDEFINED", "options": ["custom provisioning_role", "dbAdmin scoped"], "agent_recommendation": "custom provisioning_role", "security_impact": "HIGH", "operational_impact": "MEDIUM", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ05": {"topic": "runtime identity permissions", "evidence": "runtime root-equivalent today", "options": ["custom runtime_role scoped to single collection", "readWrite DB-level (too broad)"], "agent_recommendation": "custom runtime_role", "security_impact": "HIGH", "operational_impact": "MEDIUM", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ06": {"topic": "final index set", "evidence": "I1+I2 required; I3/I4/I5 optional without demonstrated query", "options": ["minimal I1+I2", "I1+I2+I3", "full I1..I5"], "agent_recommendation": "minimal I1+I2", "security_impact": "minimal", "operational_impact": "b/c = higher write amp", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ07": {"topic": "TTL operational values", "evidence": "candidate active=6h, terminal=24h", "options": ["baseline (a)", "aggressive 2h/12h (b)", "conservative 24h/7d (c)"], "agent_recommendation": "(a)", "security_impact": "c increases storage retention", "operational_impact": "b higher mid-play expiry risk", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ08": {"topic": "backup and retention treatment", "evidence": "manual dumps only; no PITR", "options": ["include+exclude-long-term+quarantine (a)", "exclude entirely (b)"], "agent_recommendation": "(a)", "security_impact": "LOW", "operational_impact": "MEDIUM", "migration_impact": "LOW", "rollback_impact": "MEDIUM", "blocking": true},
-        "B1BQ09": {"topic": "monitoring and alert policy", "evidence": "MONITORING_BASELINE_MISSING", "options": ["introduce /api/admin/metrics pre-apply (a)", "defer to later phase (b)"], "agent_recommendation": "(a)", "security_impact": "admin-only endpoint required", "operational_impact": "HIGH", "migration_impact": "MEDIUM", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ10": {"topic": "isolated integration-test target", "evidence": "Option 2 available (orbus_r16_test)", "options": ["Option 2 dedicated test DB (a)", "Option 3 ephemeral container (b)"], "agent_recommendation": "(a)", "security_impact": "LOW", "operational_impact": "LOW", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true},
-        "B1BQ11": {"topic": "rollback authority and procedure", "evidence": "no formal authority matrix", "options": ["SRE+PM approval + runbook (a)", "SRE-only authority (b)"], "agent_recommendation": "(a)", "security_impact": "LOW", "operational_impact": "MEDIUM", "migration_impact": "LOW", "rollback_impact": "HIGH", "blocking": true},
-        "B1BQ12": {"topic": "first provisioning/apply slice", "evidence": "RT2-B-1A closed; RT2-B-1B HOLD", "options": ["minimal slice on orbus_r16_test only (a)", "full cross-env apply (b)"], "agent_recommendation": "(a)", "security_impact": "LOW", "operational_impact": "MEDIUM", "migration_impact": "LOW", "rollback_impact": "LOW", "blocking": true}
+        "B1BQ01": {"topic": "final collection name", "verdict": "collection name = expedition_runtime_states; _id = expedition_id native; stop on incompatible existing schema/indexes", "status": "PM_RATIFIED"},
+        "B1BQ02": {"topic": "database and environment target", "verdict": "first apply on orbus_r16_rt2b_test on LOCALHOST-ONLY; orbus_r16/orbus_r16_test/preview/staging/production FORBIDDEN; fail-stop TARGET_ENVIRONMENT_REJECTED + TARGET_DATABASE_REJECTED", "status": "PM_RATIFIED"},
+        "B1BQ03": {"topic": "provisioning mechanism", "verdict": "EXPLICIT IDEMPOTENT ADMINISTRATIVE COMMAND + READ-ONLY VERIFICATION COMMAND; startup/implicit/automatic-on-startup NOT AUTHORIZED; flags --dry-run --apply --verify --rollback with explicit target", "status": "PM_RATIFIED"},
+        "B1BQ04": {"topic": "provisioning identity (localhost deroga)", "verdict": "current localhost no-auth accepted; temporary coincidence with runtime identity accepted; LOCAL_TEST_ONLY; guardrails mandatory; shared env authenticated identity mandatory", "status": "PM_RATIFIED"},
+        "B1BQ05": {"topic": "runtime identity", "verdict": "runtime_adapter_wiring=false for first apply → no runtime identity used; shared env authenticated runtime identity with grants scoped to expedition_runtime_states only", "status": "PM_RATIFIED"},
+        "B1BQ06": {"topic": "initial authorizable indexes", "verdict": "native _id + expires_at TTL (expireAfterSeconds=0); recovery/monitoring indexes DEFERRED", "status": "PM_RATIFIED"},
+        "B1BQ07": {"topic": "TTL policy", "verdict": "active=6h; completed=24h; cancelled=24h; Mongo TTL asynchronous; exact deletion time not guaranteed; no second-level dependency", "status": "PM_RATIFIED (DESIGN-LOCKED)"},
+        "B1BQ08": {"topic": "backup and retention (localhost)", "verdict": "orbus_r16_rt2b_test: backup NOT REQUIRED, long-term retention FORBIDDEN, archival FORBIDDEN, sacrificable; shared env separate operational adjudication", "status": "PM_RATIFIED"},
+        "B1BQ09": {"topic": "monitoring and alerting", "verdict": "MONITORING_BASELINE_MISSING ACKNOWLEDGED; not blocking local isolated apply/IT/rollback; blocking preview/staging/production/shared-env runtime wiring; minimum evidence RT2-B-1B-1 local specified", "status": "PM_RATIFIED"},
+        "B1BQ10": {"topic": "integration-test target", "verdict": "local Mongo localhost:27017 · orbus_r16_rt2b_it_<unique_run_id>; unique_run_id/parallel isolation/cleanup mandatory; live data access forbidden; fixed orbus_r16_rt2b_test for manual/idempotency verification", "status": "PM_RATIFIED"},
+        "B1BQ11": {"topic": "rollback", "verdict": "10-step procedure; idempotent, target-specific, dry-run capable, fail-stop on host/db mismatch; authority operator executing PM-authorized dispatch; generic drops FORBIDDEN", "status": "PM_RATIFIED"},
+        "B1BQ12": {"topic": "first provisioning/apply slice", "verdict": "RT2-B-1B-1 · LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION · scope 12 items · exclusions explicit", "status": "PM_RATIFIED"}
       }
     },
     "29_provisioning_readiness": {
-      "collection_design": {"ready": true, "pm_review": "B1BQ01"},
-      "index_design": {"ready": true, "pm_review": "B1BQ06"},
-      "ttl_design": {"ready": true, "pm_review": "B1BQ07"},
-      "permission_model": {"ready": false, "reason": "MONGO_PERMISSION_MODEL_UNDERDEFINED", "pm_review": ["B1BQ04", "B1BQ05"]},
-      "target_db_boundary": {"ready": false, "reason": "TARGET_DATABASE_UNDERDEFINED (prod)", "pm_review": "B1BQ02"},
-      "provisioning_mechanism": {"ready": true, "pm_review": "B1BQ03"},
-      "isolated_test_env": {"ready": true, "pm_review": "B1BQ10"},
-      "integration_test_matrix": {"ready": true, "scenarios": 16},
-      "monitoring_baseline": {"ready": false, "reason": "MONITORING_BASELINE_MISSING", "pm_review": "B1BQ09"},
-      "backup_treatment": {"ready": true, "pm_review": "B1BQ08"},
-      "rollback_procedure": {"ready": true, "pm_review": "B1BQ11"},
-      "failure_matrix": {"ready": true, "scenarios": 13}
+      "collection_design": {"ready": true, "pm_status": "PM_RATIFIED"},
+      "index_design": {"ready": true, "pm_status": "PM_RATIFIED"},
+      "ttl_design": {"ready": true, "pm_status": "PM_RATIFIED"},
+      "permission_model_local": {"ready": true, "pm_status": "PM_RATIFIED (LOCAL_TEST_ONLY)"},
+      "permission_model_shared": {"ready": false, "pm_status": "MANDATORY_HOLD"},
+      "target_db_boundary": {"ready": true, "pm_status": "PM_RATIFIED (local isolated only)"},
+      "provisioning_mechanism": {"ready": true, "pm_status": "PM_RATIFIED (Model A)"},
+      "isolated_test_env": {"ready": true, "pm_status": "PM_RATIFIED"},
+      "integration_test_matrix": {"ready": true, "scope_items": 12},
+      "monitoring_baseline": {"ready": false, "pm_status": "ACKNOWLEDGED_MISSING (non-blocking local · blocking shared)"},
+      "backup_treatment": {"ready": true, "pm_status": "PM_RATIFIED"},
+      "rollback_procedure": {"ready": true, "pm_status": "PM_RATIFIED (10-step)"},
+      "failure_matrix": {"ready": true, "scenarios": 15},
+      "performance_acceptance": {"ready": true, "pm_status": "PM_RATIFIED (p95 targets)"}
     },
     "30_go_hold_recommendation": {
-      "recommendation": "HOLD-PENDING-PM-DECISIONS",
+      "recommendation": "RT2-B-1B-P0 CLOSED / PM-LOCKED · RT2-B-1B-1 READY-TO-DISPATCH (LOCAL ISOLATED ONLY)",
       "rationale": [
-        "Plan is complete (31 sections, 12 B1BQ, 13 failure scenarios, 16 test cases, 3 identity profiles, 3 provisioning models, 4 isolated-test options)",
-        "2 high-uncertainty areas require PM adjudication: TARGET_DATABASE_UNDERDEFINED (B1BQ02) and MONGO_PERMISSION_MODEL_UNDERDEFINED (B1BQ04/B1BQ05)",
-        "1 visibility gap: MONITORING_BASELINE_MISSING (B1BQ09) — PM_REVIEW but not documental blocker",
-        "No hard fail-stop detected for the plan itself"
+        "12/12 B1BQ ratified by PM",
+        "environmental principle lock: LOCAL isolated potentially authorized · SHARED forbidden",
+        "canonical scope RT2-B-1B-1 defined (12 items)",
+        "10-step rollback ratified",
+        "performance acceptance p95 ratified",
+        "3 initial fail-stops RESOLVED/RESOLVED_TRANSITIONALLY/ACKNOWLEDGED; 1 residual PROVISIONING_IDEMPOTENCY_UNDERDEFINED TO BE VERIFIED IN RT2-B-1B-1"
       ],
-      "next_actions_ordered": [
-        "1. PM adjudication of all 12 B1BQ (priority: B1BQ02, B1BQ04, B1BQ05, B1BQ12)",
-        "2. On PM ratification, open RT2-B-1B (apply) gate — minimal slice on orbus_r16_test",
-        "3. No Mongo writes before ratification"
-      ]
+      "next_action_gate": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-1 (Phase 2 · dispatch separato)"
     },
     "31_explicit_stop": {
-      "phase": "P0 documental",
+      "phase": "P0 documental (PATCHED)",
       "collection_creation": 0,
       "index_creation": 0,
       "ttl_index_creation": 0,
@@ -357,17 +407,17 @@
       "runtime_wiring": 0,
       "feature_flag_activation": 0,
       "application_code_modification": 0,
-      "prd_modification": 0,
+      "prd_modification_phase_1": "1 append RT2-B-1B-P0 block (idempotent)",
       "new_seal": "NO",
-      "next_action": "PM adjudication of 12 B1BQ before RT2-B-1B apply authorization"
+      "next_action": "Phase 2 dispatch RT2-B-1B-1 LOCAL ISOLATED"
     }
   },
-  "fail_stops_detected": {
-    "TARGET_DATABASE_UNDERDEFINED": {"status": "flagged_as_pm_review", "pm_question": "B1BQ02", "blocks_p0_report": false, "blocks_apply": true},
-    "MONGO_PERMISSION_MODEL_UNDERDEFINED": {"status": "flagged_as_pm_review", "pm_question": ["B1BQ04", "B1BQ05"], "blocks_p0_report": false, "blocks_apply": true},
-    "ISOLATED_MONGO_TEST_ENV_MISSING": {"status": "not_triggered", "evidence": "orbus_r16_test available via Option 2"},
-    "PROVISIONING_IDEMPOTENCY_UNDERDEFINED": {"status": "not_triggered", "evidence": "existing create_index pattern demonstrates idempotency"},
-    "MONGO_INDEX_CONFLICT": {"status": "not_triggered", "evidence": "collection expedition_runtime_states not present in any provisioning path"},
-    "MONITORING_BASELINE_MISSING": {"status": "flagged_as_pm_review", "pm_question": "B1BQ09", "blocks_p0_report": false, "blocks_apply": true}
+  "critical_status_updates": {
+    "TARGET_DATABASE_UNDERDEFINED": "RESOLVED (target = local isolated databases only: orbus_r16_rt2b_test, orbus_r16_rt2b_it_<unique_run_id>)",
+    "MONGO_PERMISSION_MODEL_UNDERDEFINED": "RESOLVED_TRANSITIONALLY (no-auth coincidence accepted only on localhost isolated test; shared env authenticated identities mandatory)",
+    "MONITORING_BASELINE_MISSING": "ACKNOWLEDGED (local isolated apply NOT blocked; shared env apply BLOCKED)",
+    "PROVISIONING_IDEMPOTENCY_UNDERDEFINED": "TO_BE_VERIFIED_IN_RT2_B_1B_1 (not resolved before real tests)",
+    "ISOLATED_MONGO_TEST_ENV_MISSING": "NOT_TRIGGERED (orbus_r16_rt2b_test + orbus_r16_rt2b_it_<run_id> ratified)",
+    "MONGO_INDEX_CONFLICT": "NOT_TRIGGERED (collection not present)"
   }
 }

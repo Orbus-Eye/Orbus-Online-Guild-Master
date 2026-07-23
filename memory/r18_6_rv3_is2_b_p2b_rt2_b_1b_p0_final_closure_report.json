@@ -1,0 +1,245 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-P0",
+    "artifact_role": "FINAL_CLOSURE_REPORT_JSON_PHASE_1",
+    "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · SHA §31 · STRICT STOP",
+    "closure_date_utc": "2026-02",
+    "sha_policy": "§31 · no self-hash embedded",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+    "pm_locked": true,
+    "phase": 1,
+    "b1bq_ratified": 12,
+    "closure_requirements_count": 22,
+    "prd_pre_append_sha256": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9"
+  },
+  "closure_requirements": {
+    "req_01_pm_verdict": "PM dispatch RT2-B-1B-P0 Patch ratified 12/12 B1BQ + RT2-B-1B-1 CONDITIONAL GO (LOCAL ISOLATED ONLY) + Phase 1 formal closure",
+    "req_02_p0_closed": "RT2-B-1B-P0 CLOSED · PM-LOCKED",
+    "req_03_31_sections_preserved": {
+      "sections": 31,
+      "json_parse": "PASS"
+    },
+    "req_04_b1bq_resolved": {
+      "total": 12,
+      "ratified": 12
+    },
+    "req_05_collection_name": {
+      "name": "expedition_runtime_states",
+      "id_strategy": "_id = expedition_id native",
+      "no_duplicate_field": true,
+      "design_locked": true
+    },
+    "req_06_local_target_database": {
+      "manual_verification_db": "orbus_r16_rt2b_test",
+      "integration_tests_db_pattern": "orbus_r16_rt2b_it_<unique_run_id>",
+      "host": "localhost",
+      "environment": "LOCALHOST-ONLY / LOCAL DEVELOPMENT · ISOLATED INTEGRATION"
+    },
+    "req_07_shared_environment_prohibition": {
+      "forbidden_databases": [
+        "orbus_r16",
+        "orbus_r16_test",
+        "<any preview>",
+        "<any staging>",
+        "<any production>"
+      ],
+      "fail_stops": [
+        "TARGET_ENVIRONMENT_REJECTED",
+        "TARGET_DATABASE_REJECTED"
+      ]
+    },
+    "req_08_provisioning_command_model": {
+      "mechanism": "EXPLICIT IDEMPOTENT ADMINISTRATIVE COMMAND",
+      "complementary": "READ-ONLY VERIFICATION COMMAND",
+      "not_authorized": [
+        "application startup provisioning",
+        "implicit collection creation during runtime",
+        "automatic index creation on service startup"
+      ],
+      "flags": [
+        "--dry-run",
+        "--apply",
+        "--verify",
+        "--rollback"
+      ]
+    },
+    "req_09_no_auth_local_exception": {
+      "scope": "LOCAL_TEST_ONLY",
+      "combination": "localhost + orbus_r16_rt2b_test|orbus_r16_rt2b_it_<unique_run_id>",
+      "guardrails": [
+        "uri = localhost exactly",
+        "db name in allowlist exactly",
+        "no wildcard on db name",
+        "no access to orbus_r16",
+        "no production credentials",
+        "explicit target output before apply"
+      ],
+      "extensible_to_shared_env": false
+    },
+    "req_10_future_authenticated_identity_requirements": {
+      "provisioning_identity_shared_env": "dedicated authenticated MANDATORY with grants (createCollection, createIndex, dropIndex, dropCollection) scoped to authorized db+collection",
+      "runtime_identity_shared_env": "dedicated authenticated MANDATORY with grants (find, insert, findOneAndUpdate, update, delete) scoped to expedition_runtime_states only",
+      "runtime_forbidden_grants_shared_env": [
+        "createCollection",
+        "createIndex",
+        "dropCollection",
+        "admin database-wide"
+      ],
+      "diagnostic_identity_shared_env": "read-only scoped to expedition_runtime_states"
+    },
+    "req_11_initial_index_set": {
+      "authorized": [
+        "I1 native _id (required)",
+        "I2 expedition_runtime_states_expires_at_ttl on expires_at expireAfterSeconds=0 (required)"
+      ],
+      "deferred": [
+        "runtime_status+expires_at",
+        "lease_expires_at",
+        "updated_at"
+      ]
+    },
+    "req_12_ttl_values": {
+      "active_inactivity_hours": 6,
+      "completed_retention_hours": 24,
+      "cancelled_retention_hours": 24,
+      "mongo_ttl_asynchronous": true,
+      "exact_deletion_time_guaranteed": false,
+      "no_second_level_dependency": true
+    },
+    "req_13_backup_treatment_locale": {
+      "backup": "NOT REQUIRED",
+      "long_term_retention": "FORBIDDEN",
+      "archival": "FORBIDDEN",
+      "sacrificable": true,
+      "shared_env_baseline": {
+        "no_long_term_retention": true,
+        "no_automatic_reactivation": true,
+        "restored_states_treated_as_suspect_until_manual_reconciliation": true
+      }
+    },
+    "req_14_monitoring_boundary": {
+      "status": "MONITORING_BASELINE_MISSING · ACKNOWLEDGED",
+      "not_blocking_for": [
+        "local isolated provisioning",
+        "local IT",
+        "local rollback"
+      ],
+      "blocking_for": [
+        "preview",
+        "staging",
+        "production",
+        "shared env runtime wiring"
+      ],
+      "minimum_evidence_local": [
+        "provisioning command output",
+        "verification command output",
+        "test report",
+        "collection stats before/after",
+        "index list before/after",
+        "cleanup verification"
+      ],
+      "production_thresholds_ratified": false
+    },
+    "req_15_isolated_integration_test_target": {
+      "database_pattern": "orbus_r16_rt2b_it_<unique_run_id>",
+      "host": "localhost:27017",
+      "requirements": [
+        "unique_run_id mandatory",
+        "parallel isolation mandatory",
+        "cleanup after success mandatory",
+        "cleanup after failure best-effort mandatory",
+        "live data access forbidden"
+      ],
+      "manual_verification_db": "orbus_r16_rt2b_test"
+    },
+    "req_16_rollback_procedure": {
+      "steps": 10,
+      "authority": "operator executing the PM-authorized provisioning dispatch",
+      "properties": [
+        "idempotent",
+        "target-specific",
+        "dry-run capable",
+        "fail-stop on host/db mismatch"
+      ],
+      "forbidden": [
+        "generic drop commands",
+        "drop without allowlist"
+      ]
+    },
+    "req_17_first_apply_slice": {
+      "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-1B-1 · LOCAL ISOLATED MONGO PROVISIONING & REAL ADAPTER INTEGRATION VALIDATION",
+      "scope_items": 12,
+      "exclusions": [
+        "orbus_r16 writes",
+        "preview/staging/production writes",
+        "runtime wiring",
+        "expedition service changes",
+        "feature flag activation",
+        "RT2-A wiring",
+        "Marchio/Drenaggio/Frammenti gameplay",
+        "public API changes",
+        "frontend changes"
+      ]
+    },
+    "req_18_no_mongo_writes_p0": {
+      "mongo_collection_creation": 0,
+      "mongo_index_creation": 0,
+      "db_writes": 0,
+      "provisioning_script_execution": 0,
+      "real_integration_test_writes": 0
+    },
+    "req_19_no_collection_index_creation_p0": {
+      "createCollection_calls": 0,
+      "createIndex_calls": 0,
+      "mongo_runtime_interaction": 0
+    },
+    "req_20_no_runtime_wiring": {
+      "runtime_adapter_wiring": false,
+      "MongoExpeditionRuntimeStateStore_instantiated_by_runtime": false,
+      "backend_mongo_client_singleton_unchanged": true
+    },
+    "req_21_governance_evidence": {
+      "sealed_integrity_tests": "6 passed",
+      "sealed_artifacts": "36/36 byte-identical",
+      "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "lore_meta_status": "invariant",
+      "baseline_chain_10_of_10_byte_identical": [
+        "IS2-A",
+        "IS2-B-P1",
+        "IS2-B-P1-N1",
+        "IS2-B-P2A",
+        "IS2-B-P2B-1",
+        "IS2-B-P2B-RT1",
+        "IS2-B-P2B-RT2-P0",
+        "IS2-B-P2B-RT2-A",
+        "IS2-B-P2B-RT2-B-P0",
+        "IS2-B-P2B-RT2-B-1A"
+      ],
+      "rt2_a_files_unchanged_count": 38,
+      "rt2_b_1a_files_unchanged_count": 14,
+      "rt2_b_1a_artifacts_invariant_count": 5,
+      "prd_pre_append_sha256": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9",
+      "prd_delta": "1 append RT2-B-1B-P0 block (idempotent)",
+      "application_code_modified": 0,
+      "backend_modifications": 0,
+      "frontend_modifications": 0,
+      "openapi_modifications": 0,
+      "feature_flag_activation": 0,
+      "runtime_wiring": 0,
+      "registry_changes": 0,
+      "item_generation": 0
+    },
+    "req_22_explicit_stop": {
+      "phase_1": true,
+      "next_action": "Phase 2 dispatch RT2-B-1B-1 LOCAL ISOLATED",
+      "strict_stop": true
+    }
+  },
+  "critical_status": {
+    "TARGET_DATABASE_UNDERDEFINED": "RESOLVED",
+    "MONGO_PERMISSION_MODEL_UNDERDEFINED": "RESOLVED_TRANSITIONALLY",
+    "MONITORING_BASELINE_MISSING": "ACKNOWLEDGED",
+    "PROVISIONING_IDEMPOTENCY_UNDERDEFINED": "TO_BE_VERIFIED_IN_RT2_B_1B_1"
+  }
+}
