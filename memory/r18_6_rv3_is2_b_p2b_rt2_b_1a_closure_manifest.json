@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1A",
+    "artifact_role": "CLOSURE_MANIFEST_JSON",
+    "regime": "DOCUMENTAL_ONLY · Italian_only · SHA §31 · STRICT STOP",
+    "closure_date_utc": "2026-02",
+    "sha_policy": "§31 absolute — manifest own full_file_sha256 = NOT EMBEDDED (declared only in chat report)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "pm_authorized_remediation": "Option B · single-test rewrite"
+  },
+  "records": [
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/__init__.py",
+      "full_file_sha256": "a3f3575f5e6c033134948dce164945b4712ce2fee4f6c62163cf0541d2e8b486",
+      "size_bytes": 2961,
+      "line_count": 91,
+      "role": "PUBLIC_EXPORTS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/interface.py",
+      "full_file_sha256": "3a26342fbc03bfc08656371c844eacc157f14dc7a0cbe3d1e5a9bb7dcc276676",
+      "size_bytes": 11233,
+      "line_count": 263,
+      "role": "STATE_STORE_ABC_INTERFACE_11_OPS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/models.py",
+      "full_file_sha256": "d8d5f86444a38d3f73c857ff7ab0a30871038bf834da5e2cf3897c013c7e2f6f",
+      "size_bytes": 8281,
+      "line_count": 214,
+      "role": "STATE_LEASE_RECEIPT_SCHEMAS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/results.py",
+      "full_file_sha256": "15abd29060d5f4dba527907d6ec599cba992b6ec1ba936f28a8ce7d786ea585d",
+      "size_bytes": 3485,
+      "line_count": 99,
+      "role": "CAS_RESULT_ENUM_AND_RESULT_DATACLASSES",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/errors.py",
+      "full_file_sha256": "ec3745c4d731271ddbfc5f87ff4882d4ee20402a05500f201a78aa1e91f37a1b",
+      "size_bytes": 2482,
+      "line_count": 92,
+      "role": "EXCEPTION_HIERARCHY",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/fencing.py",
+      "full_file_sha256": "cf581462d0501bc3f23bd281a4f43ba0c0b0fae86ccabb018f9eaa49d95ae55c",
+      "size_bytes": 2530,
+      "line_count": 71,
+      "role": "FENCING_AND_VERSION_VALIDATION_LOGIC",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/fake_store.py",
+      "full_file_sha256": "b6c841438741698af973531785337ac7a95576861ec930356e01604899b4a5cc",
+      "size_bytes": 21871,
+      "line_count": 461,
+      "role": "FAKE_IN_MEMORY_STORE_TEST_ONLY",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/state_store/mongo_adapter.py",
+      "full_file_sha256": "21d5bc16a242fd700cf8913036b48a88a94f36939d476b5be69bd2b3d1d9ea41",
+      "size_bytes": 25711,
+      "line_count": 618,
+      "role": "MONGO_ADAPTER_DEPENDENCY_INJECTED_NON_WIRED",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/__init__.py",
+      "full_file_sha256": "91f91692d2f1b9d361526a5041ee8cddf3b6a61f1bf4c17b128facdc8d14dfaa",
+      "size_bytes": 62,
+      "line_count": 1,
+      "role": "TEST_PACKAGE_INIT",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/conftest.py",
+      "full_file_sha256": "af233d9077b0a6cbd0713a06df271aa2325deadce50cf2af25bcca80f3208a1b",
+      "size_bytes": 8687,
+      "line_count": 224,
+      "role": "PARAMETRIZED_FIXTURES_FAKE_MONGOMOCK",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/test_contract_shared.py",
+      "full_file_sha256": "c8f97985cb6bc891bfe27f701189a282f07e2796093c7a9ba0e68ac2fafa26ac",
+      "size_bytes": 12715,
+      "line_count": 318,
+      "role": "SHARED_CONTRACT_TESTS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/test_mongo_adapter_unit.py",
+      "full_file_sha256": "630b0d2247d098bdb0c4f8bed7a6eeef8043be7fc8fba53dc872eeb1cc831591",
+      "size_bytes": 7018,
+      "line_count": 166,
+      "role": "MONGO_ADAPTER_UNIT_TESTS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/test_security.py",
+      "full_file_sha256": "4c21bf47e700226fc64bfb6fa2ba578c0bd408398557591b0fbbef4b9b39e1a6",
+      "size_bytes": 15098,
+      "line_count": 306,
+      "role": "SECURITY_AND_ABUSE_TESTS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false,
+      "remediation_edited": true
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/state_store/test_schemas.py",
+      "full_file_sha256": "02c076ee6608947d073246cc0b372518af63b0839d5ed3c9b61d4485ec396d03",
+      "size_bytes": 7968,
+      "line_count": 203,
+      "role": "SCHEMA_AND_RESULT_TYPES_TESTS",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1a_implementation_report.md",
+      "full_file_sha256": "77dc4172e0c63d04a9536d73c2ead6e4b83ca1a9f5b9ddb0ea718c603fcf1dfa",
+      "size_bytes": 11008,
+      "line_count": 155,
+      "role": "RT2_B_1A_IMPLEMENTATION_REPORT_MD",
+      "status": "PM_LOCKED",
+      "new_file": false,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1a_implementation_report.json",
+      "full_file_sha256": "bc92e3633e1032b39bc404b6d46c2934e7c08f1899ecdc48c7a19f28edbc4248",
+      "size_bytes": 18260,
+      "line_count": 455,
+      "role": "RT2_B_1A_IMPLEMENTATION_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "new_file": false,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1a_final_closure_report.md",
+      "full_file_sha256": "e0fc5adb2e2bb1ec7c1c30f8252472ffdad077b20cc90c75f739c7a6e5967067",
+      "size_bytes": 8091,
+      "line_count": 145,
+      "role": "RT2_B_1A_CLOSURE_REPORT_MD",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_1a_final_closure_report.json",
+      "full_file_sha256": "4bbb1dafcd18245c016b348ee71b4bc5ac8fef5b34d919d47ad60060855a0297",
+      "size_bytes": 4895,
+      "line_count": 126,
+      "role": "RT2_B_1A_CLOSURE_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false
+    },
+    {
+      "path": "/app/memory/PRD.md",
+      "full_file_sha256": "53e57f14187ad67344b9af80ac5b78471b3a064faf1f7c6cdbdffd4bb93ba7b9",
+      "size_bytes": 284368,
+      "line_count": 4374,
+      "role": "PRD_POST_APPEND_RT2_B_1A",
+      "status": "APPENDED_IDEMPOTENT_1_BLOCK",
+      "new_file": false,
+      "existing_file_modified": true
+    }
+  ],
+  "records_count_expected": 19,
+  "manifest_own_sha_policy_31": "NOT_EMBEDDED",
+  "byte_exact_verification": "records SHAs recomputed post-write to match declared values"
+}

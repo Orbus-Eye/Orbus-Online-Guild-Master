@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1A",
+    "artifact_role": "FINAL_CLOSURE_REPORT_JSON",
+    "regime": "DOCUMENTAL_ONLY · Italian_only · SHA §31 · STRICT STOP",
+    "closure_date_utc": "2026-02",
+    "sha_policy": "§31 · no self-hash embedded",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+    "pm_locked": true,
+    "closure_requirements_count": 25,
+    "pm_authorized_remediation": "Option B · single-test rewrite (test_security.py only)",
+    "unexpected_test_skip_classification": "RESOLVED_BY_TEST_REWRITE"
+  },
+  "closure_requirements": {
+    "req_01_pm_ratification": "Msg #170 + Msg remediation · Option B",
+    "req_02_rt2_b_1a_closed": "CLOSED · PM-LOCKED",
+    "req_03_implementation_scope": "11/11 items delivered",
+    "req_04_new_files": 14,
+    "req_05_modified_test_files_during_remediation": {
+      "count": 1,
+      "file": "/app/backend/tests/effect_engine/state_store/test_security.py",
+      "remediation_type": "single-test rewrite (Option B) · monkeypatch strategy migrated to pytest.MonkeyPatch fixture",
+      "application_code_modified": 0,
+      "testability_contract_gap_triggered": false
+    },
+    "req_06_test_result_post_remediation": {
+      "passed": 91,
+      "skipped": 0,
+      "failed": 0,
+      "duration_seconds": 0.48
+    },
+    "req_07_unexpected_skip_resolution": {
+      "pre_remediation_unexpected_skip": 1,
+      "resolved": "yes",
+      "classification": "RESOLVED_BY_TEST_REWRITE"
+    },
+    "req_08_unexpected_skipped_tests_post_remediation": 0,
+    "req_09_planned_deferred_tests": 0,
+    "req_10_rt2_a_regression": {
+      "passed": 136,
+      "total": 136
+    },
+    "req_11_combined_pass_count": 227,
+    "req_12_store_abc_operations_count": 11,
+    "req_13_schemas": [
+      "ExpeditionRuntimeState",
+      "AdventurerClassState",
+      "MarkDoc",
+      "DrainDoc",
+      "FragmentUsage",
+      "WriterLease",
+      "EventReceipt"
+    ],
+    "req_14_cas_fencing_contract": "{_id: expedition_id, state_version: expected, fencing_token: expected}",
+    "req_15_fake_store_production_prohibition": "PRODUCTION_USE = FORBIDDEN",
+    "req_16_mongo_adapter_di_only": {
+      "dependency_injected": true,
+      "direct_motor_pymongo_imports": 0,
+      "instantiated_by_runtime": false
+    },
+    "req_17_mocked_mongo_validation": "InMemoryMongoCollectionMock replicates find_one_and_update / find_one / insert_one / delete_one",
+    "req_18_security_vectors": [
+      "event replay idempotent",
+      "EVENT_ID_PAYLOAD_MISMATCH",
+      "sequence server-authoritative",
+      "cross-expedition state isolated",
+      "lease theft blocked by fencing",
+      "state version tampering blocked",
+      "fragment cap schema-level",
+      "duplicate Drain reward via dedup",
+      "cross-adventurer attribution preserved",
+      "fake store PRODUCTION_USE=FORBIDDEN marker",
+      "no network/no DB in fake store",
+      "receipt ring bounded fail-closed (91st test · now active on both variants)"
+    ],
+    "req_19_db_and_network_calls": {
+      "db_calls": 0,
+      "network_calls": 0
+    },
+    "req_20_provisioning_and_wiring_zeros": {
+      "collection_creation": 0,
+      "index_creation": 0,
+      "runtime_wiring": 0
+    },
+    "req_21_feature_flags_status": {
+      "runtime_stat_soft_cap_enabled": false,
+      "runtime_stat_shadow_enabled": false,
+      "cdv_transient_state_enabled": false,
+      "item_effect_engine_enabled": false,
+      "cdv_item_hooks_enabled": false,
+      "effect_observability_enabled": false
+    },
+    "req_22_rt2_b_1b_provisioning": "SEPARATE GATE · HOLD · NOT AUTHORIZED IN THIS DISPATCH",
+    "req_23_rt2_b_1b_p0_status": "CONDITIONALLY AUTHORIZED post-closure (documental only) · awaiting Phase 2 dispatch",
+    "req_24_governance_evidence": {
+      "sealed_integrity_tests": "6 passed",
+      "sealed_artifacts": "36/36 byte-identical",
+      "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "lore_meta_status": "invariant",
+      "baseline_chain_9_of_9_byte_identical": [
+        "IS2-A",
+        "IS2-B-P1",
+        "IS2-B-P1-N1",
+        "IS2-B-P2A",
+        "IS2-B-P2B-1",
+        "IS2-B-P2B-RT1",
+        "IS2-B-P2B-RT2-P0",
+        "IS2-B-P2B-RT2-A",
+        "IS2-B-P2B-RT2-B-P0"
+      ],
+      "prd_pre_append_sha256": "dad2f48ab834f1c47cd385f08099b2a3f01b95689c3fa5b4ebbcd58f673a98bd",
+      "prd_delta": "1 append RT2-B-1A block (idempotent)",
+      "rt2_a_files_unchanged_count": 24,
+      "rt2_b_1a_files_unchanged_count": 13,
+      "rt2_b_1a_files_remediation_edited_count": 1,
+      "implementation_reports_unchanged": true,
+      "new_seal": "NO",
+      "sealed_set_size": 36
+    },
+    "req_25_explicit_stop": {
+      "stop_phase_1": true,
+      "next_action": "Phase 2 dispatch RT2-B-1B-P0"
+    }
+  }
+}

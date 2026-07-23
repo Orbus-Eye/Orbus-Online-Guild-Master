@@ -252,27 +252,55 @@ def test_no_network_no_db_calls_in_fake_store() -> None:
 
 
 # ═══════════════════════ 12. Receipt ring bounded fail-closed ═══════════════════════
-def test_receipt_ring_fail_closed(store: ExpeditionRuntimeStateStore) -> None:
-    """Al limite (MAX_PROCESSED_EVENTS) subsequent event → CAP_EXCEEDED (fail-closed).
+def test_receipt_ring_fail_closed(
+    store: ExpeditionRuntimeStateStore,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verifica fail-closed su `MAX_PROCESSED_EVENTS` (B0Q06 contract).
 
-    Testiamo con un limite artificialmente ridotto usando monkeypatch di
-    `MAX_PROCESSED_EVENTS`. NON è pratico raggiungere 500 in un test.
+    Al raggiungimento del cap, subsequent `apply_event_once` → `CAP_EXCEEDED`
+    (fail-closed · no eviction during active expedition).
+
+    Per non generare 500 event nel test (non pratico e non deterministic),
+    usiamo `pytest.monkeypatch` fixture (test-scoped, auto-cleanup al termine
+    del test, safe sotto `pytest-xdist` in cui ogni worker è un processo
+    separato e ogni test ha scope isolato). Riduciamo temporaneamente
+    `MAX_PROCESSED_EVENTS` a 2 solo per la durata di questo test.
+
+    Il monkeypatch di class-attribute su dataclass frozen è consentito:
+    `frozen=True` blocca solo `__setattr__` sulle istanze, non sulla classe.
+    Il fixture `monkeypatch` di pytest garantisce ripristino automatico
+    del valore originale al teardown, senza dipendenza da `try/finally`
+    esplicito e senza interazione con altri test paralleli/paramtrizzati.
+
+    Testato su entrambe le varianti (`fake` + `mongo_mock`) per verificare
+    che il contract di ring bounded fail-closed sia enforced identicamente
+    dallo state store layer indipendentemente dall'implementazione.
     """
     import app.stats.runtime.state_store.models as m
-    # Test only con variante fake (deterministic) — mongo_mock salta questo test
-    if not isinstance(store, FakeExpeditionRuntimeStateStore):
-        pytest.skip("ring bound test runs only under fake store variant (deterministic)")
-    orig = m.ExpeditionRuntimeState.MAX_PROCESSED_EVENTS
-    try:
-        # Uso type.__setattr__ per settare class attr (frozen dataclass blocca solo istanze)
-        type.__setattr__(m.ExpeditionRuntimeState, "MAX_PROCESSED_EVENTS", 2)
-        async def go():
-            await store.create_state("exp-ring", _make_state("exp-ring"))
-            lease = await store.reserve_writer("exp-ring", "w-A", 30)
-            await store.apply_event_once("exp-ring", "e-1", "t", "a", "h-1", 1, lease.fencing_token, {})
-            await store.apply_event_once("exp-ring", "e-2", "t", "a", "h-2", 2, lease.fencing_token, {})
-            r = await store.apply_event_once("exp-ring", "e-3", "t", "a", "h-3", 3, lease.fencing_token, {})
-            assert r.code == CasResultCode.CAP_EXCEEDED
-        _run(go())
-    finally:
-        type.__setattr__(m.ExpeditionRuntimeState, "MAX_PROCESSED_EVENTS", orig)
+
+    # Riduzione test-scoped del cap (auto-restored dal monkeypatch fixture)
+    monkeypatch.setattr(m.ExpeditionRuntimeState, "MAX_PROCESSED_EVENTS", 2)
+
+    async def go():
+        await store.create_state("exp-ring", _make_state("exp-ring"))
+        lease = await store.reserve_writer("exp-ring", "w-A", 30)
+        # Primi 2 event: OK (riempimento del ring fino al cap)
+        r1 = await store.apply_event_once(
+            "exp-ring", "e-1", "mark_apply", "adv-A", "h-1",
+            expected_state_version=1, expected_fencing_token=lease.fencing_token, mutation={},
+        )
+        assert r1.code == CasResultCode.SUCCESS
+        r2 = await store.apply_event_once(
+            "exp-ring", "e-2", "mark_apply", "adv-A", "h-2",
+            expected_state_version=2, expected_fencing_token=lease.fencing_token, mutation={},
+        )
+        assert r2.code == CasResultCode.SUCCESS
+        # 3° event: ring pieno · fail-closed atteso
+        r3 = await store.apply_event_once(
+            "exp-ring", "e-3", "mark_apply", "adv-A", "h-3",
+            expected_state_version=3, expected_fencing_token=lease.fencing_token, mutation={},
+        )
+        assert r3.code == CasResultCode.CAP_EXCEEDED
+
+    _run(go())
