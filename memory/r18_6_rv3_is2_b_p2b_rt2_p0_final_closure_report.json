@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-P0",
+    "artifact_role": "FINAL_CLOSURE_REPORT_JSON",
+    "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only",
+    "pm_dispatch_source": "Message 114 (Phase 1: Patch + Formal Closure + PRD Append)",
+    "emission_date_utc": "2026-02",
+    "sha_policy": "§31 (no self-hash embedded)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+    "pm_locked": true,
+    "phase": 1
+  },
+  "pm_verdicts_applied_10_of_10": [
+    {
+      "question_id": "P0Q01",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q02",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q03",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q04",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q05",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q06",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q07",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q08",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q09",
+      "verdict_status": "RESOLVED"
+    },
+    {
+      "question_id": "P0Q10",
+      "verdict_status": "RESOLVED"
+    }
+  ],
+  "closure_requirements_25_of_25": [
+    {
+      "requirement_id": "R01",
+      "topic": "PM verdict",
+      "evidence": "PM ratifies 10/10 P0Q verbatim via Message 114 (Phase 1 dispatch)"
+    },
+    {
+      "requirement_id": "R02",
+      "topic": "RT2-P0 CLOSED",
+      "evidence": "RT2-P0 = PM-RATIFIED · CLOSED · PM-LOCKED post-Phase 1"
+    },
+    {
+      "requirement_id": "R03",
+      "topic": "40/40 sections",
+      "evidence": "RT2-P0 plan MD H2 count = 40 · JSON sections keys count = 40 · invariant preserved through patch"
+    },
+    {
+      "requirement_id": "R04",
+      "topic": "28 change-map entries",
+      "evidence": "Change map with 28 entries: NEW_MODULE=15, SERVICE_EXTENSION=7, SERVICE_EXTENSION_or_NO_CHANGE=1, SCHEMA_EXTENSION=1, TEST_ONLY=1, NO_CHANGE=1, NO_CHANGE_RUNTIME=2, BREAKING_CHANGE=0. Distribution per gate: A=4·B=3·C=9·D=5·E=6·gov=1"
+    },
+    {
+      "requirement_id": "R05",
+      "topic": "10/10 P0Q resolved",
+      "evidence": "All 10 P0Q integrated verbatim: P0Q01/03/04/05/07/08/09/10 fully; P0Q02/06 fully. Zero auto-ratification."
+    },
+    {
+      "requirement_id": "R06",
+      "topic": "RT2 decomposition",
+      "evidence": "P0Q01 verbatim: sequence RT2-A→B→C→D→E; A independent; B requires state-store+multi-worker; C requires B+RNG/cooldown; D accompanies B/C; E requires B/C/D; do not combine A with B"
+    },
+    {
+      "requirement_id": "R07",
+      "topic": "RT2-A first code gate",
+      "evidence": "P0Q10 verbatim: RT2-A · STAT EVALUATION FOUNDATION as first authorized code gate with 11 scope items"
+    },
+    {
+      "requirement_id": "R08",
+      "topic": "Stateless/stateful separation",
+      "evidence": "RT2-A = STATELESS FOUNDATION (pure/deterministic/multi-worker-safe). RT2-B/C = STATEFUL EFFECT RUNTIME (production BLOCKED)"
+    },
+    {
+      "requirement_id": "R09",
+      "topic": "Transient-state storage boundary",
+      "evidence": "P0Q02 verbatim: RT2-A NOT REQUIRED (LoadoutSnapshot/EffectiveStatResult/SoftCapEvaluation/ShadowComparisonResult short-lived in-memory only); RT2-B/C ExpeditionRuntimeStateStore abstract contract (6 ops); production storage NOT_SELECTED"
+    },
+    {
+      "requirement_id": "R10",
+      "topic": "Multi-worker boundary",
+      "evidence": "P0Q03 verbatim: RT2-A multi-worker safe by design; RT2-B/C production activation BLOCKED; forbidden in prod: process-local dicts, worker-local cooldown/Mark/Fragment maps, single-worker locks"
+    },
+    {
+      "requirement_id": "R11",
+      "topic": "Feature flag mechanism",
+      "evidence": "P0Q04 verbatim: SERVER-SIDE CONFIGURATION APPROVED · env/centralized · startup read · default false · no DB · no client. 6 flags required (2 active in RT2-A: runtime_stat_soft_cap_enabled, runtime_stat_shadow_enabled). Fail-safe: missing→false; invalid→startup fail or false with ERROR; no prod auto-enable"
+    },
+    {
+      "requirement_id": "R12",
+      "topic": "Shadow-evaluation boundary",
+      "evidence": "P0Q05 verbatim: APPROVED FOR RT2-A ONLY. Computes current+candidate+delta+reason_codes+latency. Does NOT modify authoritative outcome. Non player-facing. 10 mandatory diagnostic fields verbatim"
+    },
+    {
+      "requirement_id": "R13",
+      "topic": "API boundary",
+      "evidence": "P0Q06 verbatim: RT2-A public API changes = NONE. OpenAPI mod = 0. New endpoints = 0. Response-field extension = 0. Shadow info: server-side audit only"
+    },
+    {
+      "requirement_id": "R14",
+      "topic": "Performance criteria",
+      "evidence": "P0Q07 verbatim: RELATIVE-BASELINE contract. Functional p95 <= max(5% baseline, 1 ms). Shadow p95 <= max(10% baseline, 2 ms). Bounded memory. Zero DB/network increase. Baseline missing = blocking for closure not for implementation"
+    },
+    {
+      "requirement_id": "R15",
+      "topic": "Rollout order",
+      "evidence": "P0Q08 verbatim: 8 phases design-locked. RT2-A authorizes only steps 1-3 (unit/property tests, local dev flags, automated integration env). Each next step requires PM verdict"
+    },
+    {
+      "requirement_id": "R16",
+      "topic": "Audit sampling",
+      "evidence": "P0Q09 verbatim: TIERED SAMPLING. DEBUG prod 0% (unless authorized); INFO staging 100% prod future 10%; WARNING/ERROR 100%; security/hard-cap/atomic rollback/boss safeguard 100%. Reason code observable required"
+    },
+    {
+      "requirement_id": "R17",
+      "topic": "RT2-A exact scope",
+      "evidence": "P0Q10 verbatim scope 11 items: (1) IT↔runtime bridge, (2) equipment aggregation, (3) nominal-stat calc, (4) modifier order, (5) Intelligence soft-cap function, (6) effective-stat result model, (7) expedition-start loadout snapshot, (8) server-side default-OFF flags, (9) shadow comparison path, (10) unit/property/integration tests, (11) performance baseline and benchmarks"
+    },
+    {
+      "requirement_id": "R18",
+      "topic": "RT2-A exclusions",
+      "evidence": "P0Q10 verbatim: Mark, Drain, Fragments, proc RNG, duration, cooldown, effect instances, stacking, boss safeguards, item hooks, Legendary effects, DB migration, public API — all EXCLUDED from RT2-A"
+    },
+    {
+      "requirement_id": "R19",
+      "topic": "Compatibility contract",
+      "evidence": "Both flags OFF → runtime behavior/formula/expedition/API unchanged. Shadow only true → new calc executed, compared, NOT AUTHORITATIVE. Soft cap true → authoritative only in PM-authorized env. First gate: production authoritative enablement = forbidden"
+    },
+    {
+      "requirement_id": "R20",
+      "topic": "Test matrix",
+      "evidence": "RT2-A mandatory test matrix verbatim: unit (bridge/aggregation/modifier order/soft-cap boundaries/rounding) + property (monotonicity/non-neg/deterministic/flag-off equivalence) + integration (equip agg/expedition start/snapshot immutability/shadow no-impact) + compatibility (legacy items/missing optional/flags off) + performance (baseline/authoritative/shadow). Soft-cap boundary cases: 99→99.0, 100→100.0, 101→100.5, 105→102.5, 200→150.0"
+    },
+    {
+      "requirement_id": "R21",
+      "topic": "No code executed in P0",
+      "evidence": "Zero source code modifications. Zero backend/frontend changes. Writes exclusively to /app/memory/. Sealed set 36 files UNCHANGED byte-identical"
+    },
+    {
+      "requirement_id": "R22",
+      "topic": "No DB or migrations",
+      "evidence": "Zero DB writes. Zero migrations. Zero Registry generation. Zero Registry apply. Zero item generation. Zero seed modifications"
+    },
+    {
+      "requirement_id": "R23",
+      "topic": "RT2-B/C remain HOLD",
+      "evidence": "RT2-B = HOLD (production activation BLOCKED). RT2-C = HOLD (dependent on B). Design abstract only. No code start authorized"
+    },
+    {
+      "requirement_id": "R24",
+      "topic": "Governance evidence",
+      "evidence": "Application status all zeros: backend=0, frontend=0, openapi=0, db_writes=0, migrations=0, new_seals=0, registry_generation=0, registry_apply=0, item_generation=0, env=0. Sealed integrity 6 passed / 36 byte-identical. Anchor lore_meta.py SHA invariant"
+    },
+    {
+      "requirement_id": "R25",
+      "topic": "Explicit STOP",
+      "evidence": "Phase 1 completes at Chat Report emission. NO Phase 2 (RT2-A code) anticipation. NO additional writes. Awaits orchestrator Phase 2 dispatch verbatim"
+    }
+  ],
+  "rt2_a_first_code_gate": {
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-A · STAT EVALUATION FOUNDATION",
+    "status": "CONDITIONAL_GO_awaiting_phase_2_dispatch",
+    "scope_11_items_verbatim": [
+      "canonical IT ↔ runtime stat bridge",
+      "pure equipment-stat aggregation",
+      "nominal-stat calculation",
+      "modifier-order implementation",
+      "Intelligence soft-cap function",
+      "effective-stat result model",
+      "expedition-start loadout snapshot",
+      "server-side default-OFF feature flags",
+      "shadow comparison path",
+      "unit/property/integration tests",
+      "performance baseline and benchmarks"
+    ],
+    "exclusions_verbatim": [
+      "Mark",
+      "Drain",
+      "Fragments",
+      "proc RNG",
+      "duration",
+      "cooldown",
+      "effect instances",
+      "stacking",
+      "boss safeguards",
+      "item hooks",
+      "Legendary effects",
+      "DB migration",
+      "public API"
+    ],
+    "soft_cap_boundary_cases_verbatim": [
+      {
+        "input": 99,
+        "expected": 99.0
+      },
+      {
+        "input": 100,
+        "expected": 100.0
+      },
+      {
+        "input": 101,
+        "expected": 100.5
+      },
+      {
+        "input": 105,
+        "expected": 102.5
+      },
+      {
+        "input": 200,
+        "expected": 150.0
+      }
+    ]
+  },
+  "stateless_stateful_separation": {
+    "rt2_a": "STATELESS FOUNDATION — implementable",
+    "rt2_bc": "STATEFUL EFFECT RUNTIME — NOT YET PRODUCTION-READY (BLOCKED)"
+  },
+  "feature_flags_server_side_config": {
+    "mechanism": "environment/centralized application settings; read at startup; server controlled; default false",
+    "prohibited": [
+      "local storage client",
+      "query parameter",
+      "account-editable preference",
+      "DB flag dinamico",
+      "feature flag via API pubblica"
+    ],
+    "flags_6_required": [
+      {
+        "flag_id": "runtime_stat_soft_cap_enabled",
+        "default": false,
+        "rt2_a_active": true
+      },
+      {
+        "flag_id": "runtime_stat_shadow_enabled",
+        "default": false,
+        "rt2_a_active": true
+      },
+      {
+        "flag_id": "cdv_transient_state_enabled",
+        "default": false,
+        "rt2_a_active": false
+      },
+      {
+        "flag_id": "item_effect_engine_enabled",
+        "default": false,
+        "rt2_a_active": false
+      },
+      {
+        "flag_id": "cdv_item_hooks_enabled",
+        "default": false,
+        "rt2_a_active": false
+      },
+      {
+        "flag_id": "effect_observability_enabled",
+        "default": false,
+        "rt2_a_active": false
+      }
+    ]
+  },
+  "governance_evidence_all_zero": {
+    "backend_code_delta": 0,
+    "frontend_code_delta": 0,
+    "openapi_delta": 0,
+    "db_writes": 0,
+    "migrations": 0,
+    "new_seals": 0,
+    "registry_generation": 0,
+    "registry_apply": 0,
+    "item_generation": 0,
+    "env_delta": 0
+  },
+  "post_phase_1_status": {
+    "RT2-P0": "CLOSED · PM-LOCKED",
+    "RT2-A": "CONDITIONAL GO — awaiting orchestrator Phase 2 dispatch",
+    "RT2-B": "HOLD",
+    "RT2-C": "HOLD",
+    "RT2-D": "HOLD",
+    "RT2-E": "HOLD",
+    "Phase 2B item assignment": "HOLD",
+    "Registry v3": "NOT AUTHORIZED",
+    "Gate 11": "HOLD",
+    "Monaco": "HOLD",
+    "NC1": "HOLD",
+    "AFX2": "HOLD"
+  },
+  "explicit_stop": true,
+  "do_not_anticipate_rt2_a_code": true
+}

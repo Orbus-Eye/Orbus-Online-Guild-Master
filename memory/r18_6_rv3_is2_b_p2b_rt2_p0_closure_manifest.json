@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-P0",
+    "artifact_role": "CLOSURE_MANIFEST_JSON",
+    "regime": "DOCUMENTAL_ONLY · Italian_only",
+    "pm_dispatch_source": "Message 114 (Phase 1)",
+    "emission_date_utc": "2026-02",
+    "sha_policy": "§31 absolute — manifest own full_file_sha256 = NOT EMBEDDED (declared only in chat report)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "phase": 1
+  },
+  "records": [
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_p0_implementation_readiness_plan.md",
+      "role": "RT2_P0_PLAN_MD_PATCHED",
+      "status": "PM_LOCKED",
+      "pm_locked": true,
+      "full_file_sha256": "07d80a0ebd8f1d8efe44bb00b1bfc945db91ae1f73c6361723720045e43fc15a",
+      "size_bytes": 32898,
+      "line_count": 822
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_p0_implementation_readiness_plan.json",
+      "role": "RT2_P0_PLAN_JSON_PATCHED",
+      "status": "PM_LOCKED",
+      "pm_locked": true,
+      "full_file_sha256": "b063a103a0576faf41eb9f5324744d8bfdcb5feffcf0049b35a8209e66859f8b",
+      "size_bytes": 34299,
+      "line_count": 985
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_p0_final_closure_report.md",
+      "role": "RT2_P0_CLOSURE_REPORT_MD",
+      "status": "PM_LOCKED",
+      "pm_locked": true,
+      "full_file_sha256": "ff2baa4e0620e240046cec07ee567834b54ac287fbd1b5366c3b449b5e460fb4",
+      "size_bytes": 7423,
+      "line_count": 126
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_p0_final_closure_report.json",
+      "role": "RT2_P0_CLOSURE_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "pm_locked": true,
+      "full_file_sha256": "2b6cd65181b004b55c6d89aab57ae11faa31bb81af5eafd6ff140aa609f08bed",
+      "size_bytes": 12062,
+      "line_count": 311
+    }
+  ],
+  "prd_post_append_record": {
+    "path": "/app/memory/PRD.md",
+    "role": "PRD_POST_APPEND",
+    "status": "APPENDED_IDEMPOTENT_1_BLOCK",
+    "pm_locked": false,
+    "full_file_sha256": "35d41883e23a2ad756d4b205839325c0ec95c7ef2a3ff719807d8af019c194ad",
+    "size_bytes": 279428,
+    "line_count": 4275,
+    "rt2_p0_marker_occurrence_count": 1,
+    "append_count_this_run": 0
+  },
+  "manifest_own_sha_policy_31": "NOT_EMBEDDED — declared only in chat report"
+}

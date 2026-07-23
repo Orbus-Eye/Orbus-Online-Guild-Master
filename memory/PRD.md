@@ -4235,3 +4235,41 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 
 **Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · migrations=0 · registry_generation=0 · registry_apply=0 · item_generation=0 · db_writes=0 · new_seals=0.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-P0 · RUNTIME IMPLEMENTATION READINESS & CHANGE PLAN · CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only
+**Gate Status**: `R18.6.RV3-IS2-B-P2B-RT2-P0 · RUNTIME IMPLEMENTATION READINESS & CHANGE PLAN · CLOSED`
+**PM Dispatch**: Msg #114 · Phase 1 · same-dispatch PATCH + FORMAL CLOSURE + PRD APPEND
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- RT2-P0 PM APPROVED / CLOSED
+- PM questions resolved = 10/10 verbatim
+- RT2 decomposed into A/B/C/D/E · sequence design-locked
+- first code gate = RT2-A · STAT EVALUATION FOUNDATION
+- RT2-A is stateless stat-evaluation foundation (pure/deterministic/multi-worker-safe)
+- RT2-B/C require multi-worker-safe shared state via ExpeditionRuntimeStateStore (abstract contract only)
+- process-local production state forbidden for RT2-B/C
+- feature flags are server-side and default OFF (6 flags · 2 active in RT2-A)
+- RT2-A public API changes = none · OpenAPI mod = 0
+- RT2-A production authoritative activation = not authorized
+- shadow evaluation approved for controlled environments only · non player-facing
+- performance contract is relative to measured baseline (functional p95 <= max(5% baseline, 1 ms); shadow p95 <= max(10% baseline, 2 ms))
+- audit sampling tiered by severity · security/hard-cap/rollback/safeguard = 100%
+- DB migrations = not authorized
+- RT2-B/C/D/E remain HOLD
+- Phase 2B item assignment remains HOLD
+- Registry generation/apply not authorized
+
+**Closure artefatti nuovi (3)** · SHA riportati SOLO in chat (SHA Policy §31):
+- `r18_6_rv3_is2_b_p2b_rt2_p0_final_closure_report.md` · role RT2_P0_CLOSURE_REPORT_MD · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_rt2_p0_final_closure_report.json` · role RT2_P0_CLOSURE_REPORT_JSON · PM_LOCKED
+- `r18_6_rv3_is2_b_p2b_rt2_p0_closure_manifest.json` · SHA Policy §31 compliant (no self-hash embedded)
+
+**Baseline invariance (verificata)**: IS2-A (8) · IS2-B P1 (4) · P1-N1 (3) · P2A (5) · P2B-1 (5) · P2B-RT1 (5) = **30/30 byte-identical**.
+
+**Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
+
+**Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · migrations=0 · registry_generation=0 · registry_apply=0 · item_generation=0 · db_writes=0 · new_seals=0.
