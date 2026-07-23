@@ -1,0 +1,455 @@
+{
+  "meta": {
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-1A",
+    "gate_title": "STATE STORE CONTRACT & NON-WIRED ADAPTER FOUNDATION",
+    "artifact_role": "IMPLEMENTATION_REPORT_JSON",
+    "regime": "NEW_MODULE code gate · Italian_only · SHA §31 · STRICT STOP · non-wired to runtime",
+    "date_utc": "2026-02",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "prd_reference_sha256": "dad2f48ab834f1c47cd385f08099b2a3f01b95689c3fa5b4ebbcd58f673a98bd",
+    "prd_appended_this_gate": false
+  },
+  "section_01_scope_executed_vs_authorized": {
+    "authorized_items_count": 11,
+    "executed_items_count": 11,
+    "mapping": [
+      {
+        "item": "ExpeditionRuntimeStateStore interface (11 ops)",
+        "delivered_in": "interface.py"
+      },
+      {
+        "item": "State schemas (Expedition + Adventurer class state)",
+        "delivered_in": "models.py"
+      },
+      {
+        "item": "Lease schemas (WriterLease + fencing_token)",
+        "delivered_in": "models.py"
+      },
+      {
+        "item": "Fencing-token validation (pure logic)",
+        "delivered_in": "fencing.py"
+      },
+      {
+        "item": "CAS result types (enum + dataclasses)",
+        "delivered_in": "results.py"
+      },
+      {
+        "item": "Event receipt schemas",
+        "delivered_in": "models.py (EventReceipt)"
+      },
+      {
+        "item": "Fake in-memory test store · PRODUCTION_USE=FORBIDDEN",
+        "delivered_in": "fake_store.py"
+      },
+      {
+        "item": "Mongo adapter with injected collection · NON-WIRED",
+        "delivered_in": "mongo_adapter.py"
+      },
+      {
+        "item": "Shared contract-test suite parametrized fake/mongo-mock",
+        "delivered_in": "test_contract_shared.py + conftest.py"
+      },
+      {
+        "item": "Unit tests with mocked Mongo collection",
+        "delivered_in": "test_mongo_adapter_unit.py"
+      },
+      {
+        "item": "Security and validation tests (≥10 vectors)",
+        "delivered_in": "test_security.py + test_schemas.py"
+      }
+    ]
+  },
+  "section_02_new_files_added": {
+    "code_files_count": 8,
+    "test_files_count": 6,
+    "code_files": [
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/__init__.py",
+        "full_file_sha256": "a3f3575f5e6c033134948dce164945b4712ce2fee4f6c62163cf0541d2e8b486",
+        "size_bytes": 2961,
+        "line_count": 91,
+        "role": "PUBLIC_EXPORTS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/interface.py",
+        "full_file_sha256": "3a26342fbc03bfc08656371c844eacc157f14dc7a0cbe3d1e5a9bb7dcc276676",
+        "size_bytes": 11233,
+        "line_count": 263,
+        "role": "STATE_STORE_ABC_INTERFACE_11_OPS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/models.py",
+        "full_file_sha256": "d8d5f86444a38d3f73c857ff7ab0a30871038bf834da5e2cf3897c013c7e2f6f",
+        "size_bytes": 8281,
+        "line_count": 214,
+        "role": "STATE_LEASE_RECEIPT_SCHEMAS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/results.py",
+        "full_file_sha256": "15abd29060d5f4dba527907d6ec599cba992b6ec1ba936f28a8ce7d786ea585d",
+        "size_bytes": 3485,
+        "line_count": 99,
+        "role": "CAS_RESULT_ENUM_AND_RESULT_DATACLASSES",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/errors.py",
+        "full_file_sha256": "ec3745c4d731271ddbfc5f87ff4882d4ee20402a05500f201a78aa1e91f37a1b",
+        "size_bytes": 2482,
+        "line_count": 92,
+        "role": "EXCEPTION_HIERARCHY",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/fencing.py",
+        "full_file_sha256": "cf581462d0501bc3f23bd281a4f43ba0c0b0fae86ccabb018f9eaa49d95ae55c",
+        "size_bytes": 2530,
+        "line_count": 71,
+        "role": "FENCING_AND_VERSION_VALIDATION_LOGIC",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/fake_store.py",
+        "full_file_sha256": "b6c841438741698af973531785337ac7a95576861ec930356e01604899b4a5cc",
+        "size_bytes": 21871,
+        "line_count": 461,
+        "role": "FAKE_IN_MEMORY_STORE_TEST_ONLY",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/app/stats/runtime/state_store/mongo_adapter.py",
+        "full_file_sha256": "21d5bc16a242fd700cf8913036b48a88a94f36939d476b5be69bd2b3d1d9ea41",
+        "size_bytes": 25711,
+        "line_count": 618,
+        "role": "MONGO_ADAPTER_DEPENDENCY_INJECTED_NON_WIRED",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      }
+    ],
+    "test_files": [
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/__init__.py",
+        "full_file_sha256": "91f91692d2f1b9d361526a5041ee8cddf3b6a61f1bf4c17b128facdc8d14dfaa",
+        "size_bytes": 62,
+        "line_count": 1,
+        "role": "TEST_PACKAGE_INIT",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/conftest.py",
+        "full_file_sha256": "af233d9077b0a6cbd0713a06df271aa2325deadce50cf2af25bcca80f3208a1b",
+        "size_bytes": 8687,
+        "line_count": 224,
+        "role": "PARAMETRIZED_FIXTURES_FAKE_MONGOMOCK",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/test_contract_shared.py",
+        "full_file_sha256": "c8f97985cb6bc891bfe27f701189a282f07e2796093c7a9ba0e68ac2fafa26ac",
+        "size_bytes": 12715,
+        "line_count": 318,
+        "role": "SHARED_CONTRACT_TESTS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/test_mongo_adapter_unit.py",
+        "full_file_sha256": "630b0d2247d098bdb0c4f8bed7a6eeef8043be7fc8fba53dc872eeb1cc831591",
+        "size_bytes": 7018,
+        "line_count": 166,
+        "role": "MONGO_ADAPTER_UNIT_TESTS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/test_security.py",
+        "full_file_sha256": "54fc33dfaf2ee6f4fdbc9fae2198d1ec892157077229cdcc823011705a8fd795",
+        "size_bytes": 14033,
+        "line_count": 278,
+        "role": "SECURITY_AND_ABUSE_TESTS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      },
+      {
+        "path": "/app/backend/tests/effect_engine/state_store/test_schemas.py",
+        "full_file_sha256": "02c076ee6608947d073246cc0b372518af63b0839d5ed3c9b61d4485ec396d03",
+        "size_bytes": 7968,
+        "line_count": 203,
+        "role": "SCHEMA_AND_RESULT_TYPES_TESTS",
+        "change_type": "NEW_MODULE",
+        "new_file": true,
+        "existing_file_modified": false
+      }
+    ]
+  },
+  "section_03_module_structure": {
+    "package_root": "/app/backend/app/stats/runtime/state_store/",
+    "public_exports_module": "__init__.py",
+    "interface_module": "interface.py (ExpeditionRuntimeStateStore ABC)",
+    "models_module": "models.py (immutable dataclasses)",
+    "results_module": "results.py (CasResultCode + CasResult + LeaseAcquireResult + ReadResult)",
+    "errors_module": "errors.py (StoreError hierarchy)",
+    "fencing_module": "fencing.py (pure validation)",
+    "fake_store_module": "fake_store.py (in-memory · TEST-ONLY)",
+    "mongo_adapter_module": "mongo_adapter.py (DI collection · NON-WIRED)"
+  },
+  "section_04_interface_operations": {
+    "abc_class": "ExpeditionRuntimeStateStore",
+    "operations_count": 11,
+    "operations": [
+      "create_state(expedition_id, initial_state) -> CasResult",
+      "get_state(expedition_id) -> ReadResult",
+      "compare_and_update(expedition_id, expected_state_version, expected_fencing_token, mutation) -> CasResult",
+      "apply_event_once(expedition_id, event_id, event_type, source_adventurer_id, payload_hash, expected_state_version, expected_fencing_token, mutation) -> CasResult",
+      "reserve_writer(expedition_id, writer_worker_id, lease_ttl_seconds=30) -> LeaseAcquireResult",
+      "renew_writer_lease(expedition_id, lease_id, fencing_token, extend_seconds=30) -> LeaseAcquireResult",
+      "release_writer(expedition_id, lease_id, fencing_token) -> CasResult",
+      "expire_state(expedition_id) -> CasResult",
+      "delete_state(expedition_id) -> CasResult",
+      "get_version(expedition_id) -> ReadResult",
+      "health_check() -> bool"
+    ]
+  },
+  "section_05_state_schema": {
+    "class_name": "ExpeditionRuntimeState (frozen dataclass)",
+    "fields": [
+      "expedition_id (PK, unique)",
+      "state_version (int, monotonic, initial=1)",
+      "created_at / updated_at / expires_at (ISO UTC)",
+      "runtime_status (enum: active/completing/completed/cancelled/expired)",
+      "owner_worker_or_lease_id (str|None)",
+      "lease (WriterLease|None)",
+      "loadout_snapshot_version (int, reserved for future RT2-A wiring)",
+      "adventurer_class_states (tuple<(adventurer_id, AdventurerClassState)>)",
+      "processed_event_keys (tuple<EventReceipt>, bounded ring MAX=500 default)",
+      "last_event_sequence (int, monotonic per expedition, server-authoritative)",
+      "fencing_token (int, monotonic, incremented on every new lease acquisition)"
+    ],
+    "immutability": "frozen dataclass · mutation via CAS + new instance"
+  },
+  "section_06_lease_schema": {
+    "class_name": "WriterLease (frozen dataclass)",
+    "fields": [
+      "lease_id",
+      "owner_id",
+      "acquired_at",
+      "expires_at",
+      "renewed_at",
+      "lease_version",
+      "fencing_token"
+    ],
+    "fencing_semantic": "monotonic int · +1 on every new acquisition · preserved on renewal",
+    "defaults_verbatim_b0q08": {
+      "lease_duration_seconds": 30,
+      "renewal_interval_seconds": 10,
+      "grace_period_seconds": 5
+    }
+  },
+  "section_07_cas_result_types": {
+    "enum": "CasResultCode",
+    "codes": [
+      "SUCCESS",
+      "STATE_VERSION_CONFLICT",
+      "STALE_WRITER_REJECTED",
+      "DEDUPLICATED_NO_OP",
+      "EVENT_ID_PAYLOAD_MISMATCH",
+      "OWNERSHIP_INVALID",
+      "CAP_EXCEEDED",
+      "LEASE_EXPIRED",
+      "NOT_FOUND",
+      "ALREADY_EXISTS"
+    ],
+    "result_dataclasses": [
+      "CasResult",
+      "LeaseAcquireResult",
+      "ReadResult"
+    ],
+    "partial_mutation_policy": "FORBIDDEN (all-or-nothing per CAS)"
+  },
+  "section_08_event_receipt_schema": {
+    "class_name": "EventReceipt (frozen dataclass)",
+    "fields_verbatim_b0q06_minimum": [
+      "event_id",
+      "event_type",
+      "source_adventurer_id",
+      "payload_hash",
+      "assigned_event_sequence",
+      "result_code",
+      "state_version_after",
+      "processed_at"
+    ],
+    "dedup_key": "(expedition_id, event_id)",
+    "retention": "aligned with state document lifetime",
+    "bounded": true,
+    "at_limit_behavior": "FAIL_CLOSED (CAP_EXCEEDED · no eviction during active expedition)"
+  },
+  "section_09_fake_store": {
+    "class_name": "FakeExpeditionRuntimeStateStore",
+    "implementation": "in-memory dict + asyncio.Lock (single-process)",
+    "clock_injectable": true,
+    "production_use_marker": "PRODUCTION_USE = 'FORBIDDEN' (module-level constant)",
+    "assertion_at_construction": "assert PRODUCTION_USE == 'FORBIDDEN'"
+  },
+  "section_10_mongo_adapter": {
+    "class_name": "MongoExpeditionRuntimeStateStore",
+    "dependency_injection": "collection injected at constructor · raises ValueError if None",
+    "cas_filter_verbatim": "{_id: expedition_id, state_version: expected_state_version, fencing_token: expected_fencing_token}",
+    "atomic_primitive": "find_one_and_update with $inc {state_version:1} + $set mutation + $currentDate-equivalent updated_at ISO",
+    "dedup_guard_in_apply_event_once": "processed_event_keys.event_id: {$ne: event_id} added to filter",
+    "error_mapping": "any adapter-level exception → StoreInfraError",
+    "runtime_instantiation": "NOT INSTANTIATED by application runtime (test-only path)",
+    "direct_db_imports_count": 0,
+    "direct_db_imports_verified_by_test": "test_no_direct_db_import_in_adapter (grep motor/pymongo = 0)"
+  },
+  "section_11_shared_contract_test_suite": {
+    "location": "/app/backend/tests/effect_engine/state_store/test_contract_shared.py",
+    "parametrization": "pytest fixture 'store' → ['fake', 'mongo_mock']",
+    "test_categories": [
+      "create + get + not_found",
+      "duplicate create (ALREADY_EXISTS)",
+      "lease acquire success",
+      "lease second acquire rejected while active",
+      "lease renewal preserves fencing_token",
+      "lease release + re-acquire bumps token",
+      "lease expiry produces new fencing_token",
+      "renew after grace → LEASE_EXPIRED",
+      "CAS success",
+      "CAS state_version conflict",
+      "CAS stale writer (fencing mismatch)",
+      "event idempotent no-op (DEDUPLICATED_NO_OP)",
+      "EVENT_ID_PAYLOAD_MISMATCH",
+      "event_sequence monotonicity",
+      "state_version monotonicity",
+      "expire + idempotent",
+      "delete + not_found",
+      "get_version + not_found",
+      "health_check"
+    ]
+  },
+  "section_12_unit_tests_mongo_adapter": {
+    "location": "/app/backend/tests/effect_engine/state_store/test_mongo_adapter_unit.py",
+    "test_cases": [
+      "injection contract: None → ValueError",
+      "injection contract: AsyncMock accepted",
+      "CAS filter includes _id + state_version + fencing_token",
+      "apply_event_once filter includes dedup guard $ne on processed_event_keys.event_id",
+      "find_one error → StoreInfraError",
+      "find_one_and_update error → StoreInfraError",
+      "insert_one duplicate → ALREADY_EXISTS",
+      "get_state reconstructs state from document",
+      "no direct motor/pymongo imports in adapter (source-level assert)"
+    ]
+  },
+  "section_13_security_tests": {
+    "location": "/app/backend/tests/effect_engine/state_store/test_security.py + test_schemas.py",
+    "vectors_covered": [
+      "event replay (idempotent)",
+      "forged payload (EVENT_ID_PAYLOAD_MISMATCH)",
+      "sequence manipulation impossible (server-authoritative)",
+      "cross-expedition state isolated",
+      "lease theft blocked by fencing",
+      "state version tampering blocked",
+      "over-cap Fragment injection (schema-level notes; enforcement at gameplay layer HOLD)",
+      "duplicate Drain reward via dedup",
+      "cross-adventurer attribution preserved",
+      "fake store PRODUCTION_USE=FORBIDDEN marker",
+      "no network no DB calls in fake store (source-level assert)",
+      "receipt ring fail-closed at MAX_PROCESSED_EVENTS"
+    ]
+  },
+  "section_14_test_count_and_outcome": {
+    "state_store_tests_passed": 90,
+    "state_store_tests_skipped": 1,
+    "state_store_total_items": 91,
+    "skipped_reason": "test_receipt_ring_fail_closed[mongo_mock] skipped for determinism (fake-only path)",
+    "rt2_a_foundation_tests_passed": 136,
+    "rt2_a_regression_count": 0,
+    "sealed_integrity_tests_passed": 6,
+    "sealed_artifacts_status": "36/36 byte-identical"
+  },
+  "section_15_compatibility_evidence": {
+    "runtime_wiring": "NONE (library reachable only from tests)",
+    "rt2_a_files_unchanged": true,
+    "rt2_a_files_count": 24,
+    "cdv_transient_state_enabled_flag_activated": false,
+    "existing_expedition_services_modified": 0,
+    "openapi_endpoints_added_or_modified": 0,
+    "frontend_modifications": 0
+  },
+  "section_16_governance": {
+    "sealed_integrity_tests": "6 passed",
+    "sealed_artifacts": "36/36 byte-identical",
+    "lore_meta_sha": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "lore_meta_status": "invariant",
+    "baseline_chain_9_of_9_invariant": [
+      "IS2-A",
+      "IS2-B-P1",
+      "IS2-B-P1-N1",
+      "IS2-B-P2A",
+      "IS2-B-P2B-1",
+      "IS2-B-P2B-RT1",
+      "IS2-B-P2B-RT2-P0",
+      "IS2-B-P2B-RT2-A",
+      "IS2-B-P2B-RT2-B-P0"
+    ],
+    "rt2_a_files_unchanged_count": 24,
+    "prd_appended": false,
+    "prd_reference_sha256": "dad2f48ab834f1c47cd385f08099b2a3f01b95689c3fa5b4ebbcd58f673a98bd",
+    "new_seal": "NO",
+    "sealed_set_size": 36
+  },
+  "section_17_application_status_zeros": {
+    "backend_code_wired_to_runtime": 0,
+    "frontend_modifications": 0,
+    "openapi_changes": 0,
+    "db_writes": 0,
+    "mongo_collection_creation": 0,
+    "mongo_index_creation": 0,
+    "migrations": 0,
+    "feature_flag_activation": 0,
+    "runtime_wiring": 0,
+    "registry_changes": 0,
+    "item_generation": 0,
+    "database_calls_in_tests": 0,
+    "network_calls_in_tests": 0,
+    "new_seal_added": 0
+  },
+  "section_18_fail_stop_detection": {
+    "detected": [],
+    "note": "no fail-stop triggered · scope stays within RT2-B-1A authorization"
+  },
+  "section_19_recommendation": {
+    "state": "READY-FOR-PM-CLOSURE",
+    "rationale": "11/11 authorized items delivered · 90 store tests PASS + 1 skipped (deterministic) · 136/136 RT2-A regressione 0 · 6/6 sealed integrity · adapter DI-only · zero wiring · zero DB · zero network · RT2-A intatto · baseline chain 9/9",
+    "next_gate": "R18.6.RV3-IS2-B-P2B-RT2-B-1B (Mongo collection + TTL index provisioning · NOT AUTHORIZED IN THIS GATE)"
+  },
+  "section_20_explicit_stop": {
+    "stop": true,
+    "reason": "code implementation complete · library stand-alone non-wired · awaiting PM formal closure verdict"
+  }
+}
