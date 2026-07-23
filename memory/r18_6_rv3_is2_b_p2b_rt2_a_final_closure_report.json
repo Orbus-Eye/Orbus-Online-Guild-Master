@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-A",
+    "artifact_role": "FINAL_CLOSURE_REPORT_JSON",
+    "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · NO_APPLY · Italian_only",
+    "emission_date_utc": "2026-02",
+    "sha_policy": "§31 (no self-hash embedded)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "status": "PM-RATIFIED · CLOSED · PM-LOCKED",
+    "pm_locked": true
+  },
+  "pm_verdict_ratification": {
+    "classification": [
+      "LIBRARY_IMPLEMENTED",
+      "TESTED",
+      "DEFAULT-OFF",
+      "NOT_RUNTIME_WIRED",
+      "NOT_PLAYER-AFFECTING",
+      "FOUNDATION_READY_FOR_FUTURE_INTEGRATION"
+    ],
+    "formal_closure": "GO",
+    "runtime_activation": "NOT AUTHORIZED"
+  },
+  "scope_ratified_11_of_11": [
+    {
+      "idx": 1,
+      "item": "canonical IT ↔ runtime stat bridge",
+      "module": "app/stats/runtime/stat_bridge.py"
+    },
+    {
+      "idx": 2,
+      "item": "pure equipment-stat aggregation",
+      "module": "app/stats/runtime/equipment_aggregation.py"
+    },
+    {
+      "idx": 3,
+      "item": "nominal-stat calculation",
+      "module": "app/stats/runtime/modifier_order.py::evaluate_runtime_stats"
+    },
+    {
+      "idx": 4,
+      "item": "modifier-order implementation (9-step)",
+      "module": "app/stats/runtime/modifier_order.py"
+    },
+    {
+      "idx": 5,
+      "item": "Intelligence soft-cap function",
+      "module": "app/stats/runtime/soft_caps.py::effective_intelligence"
+    },
+    {
+      "idx": 6,
+      "item": "effective-stat result model",
+      "module": "app/stats/runtime/models.py::EffectiveStatResult"
+    },
+    {
+      "idx": 7,
+      "item": "expedition-start loadout snapshot",
+      "module": "app/stats/runtime/loadout_snapshot.py + models.LoadoutSnapshot"
+    },
+    {
+      "idx": 8,
+      "item": "server-side default-OFF feature flags (6)",
+      "module": "app/stats/runtime/feature_flags.py"
+    },
+    {
+      "idx": 9,
+      "item": "shadow comparison path",
+      "module": "app/stats/runtime/shadow_comparison.py"
+    },
+    {
+      "idx": 10,
+      "item": "unit/property/integration tests",
+      "module": "backend/tests/effect_engine/foundation/*"
+    },
+    {
+      "idx": 11,
+      "item": "performance baseline + benchmarks",
+      "module": "backend/tests/effect_engine/foundation/test_performance.py"
+    }
+  ],
+  "evidences_accepted": {
+    "new_files": 24,
+    "existing_files_modified": 0,
+    "backend_runtime_modules": 10,
+    "test_files": 14,
+    "rt2_a_tests_result": "136/136 PASS",
+    "soft_cap_boundaries_result": "5/5 PASS",
+    "soft_cap_cases_verbatim": [
+      {
+        "input": 99,
+        "expected": "99.0"
+      },
+      {
+        "input": 100,
+        "expected": "100.0"
+      },
+      {
+        "input": 101,
+        "expected": "100.5"
+      },
+      {
+        "input": 105,
+        "expected": "102.5"
+      },
+      {
+        "input": 200,
+        "expected": "150.0"
+      }
+    ],
+    "modifier_order_result": "9/9 PASS",
+    "json_implementation_report_parse": "PASS"
+  },
+  "performance": {
+    "authoritative_candidate_p95_overhead": "10 μs",
+    "authoritative_allowed_threshold": "1 ms",
+    "authoritative_within_criteria": true,
+    "shadow_candidate_p95_overhead": "14 μs",
+    "shadow_allowed_threshold": "2 ms",
+    "shadow_within_criteria": true,
+    "memory_growth": "bounded",
+    "db_query_increase": 0,
+    "network_calls": 0,
+    "baseline_reproducible": true
+  },
+  "integration_boundary": {
+    "expedition_runtime_integration": "NOT IMPLEMENTED",
+    "existing_expedition_services_modified": 0,
+    "production_calculation_path_replaced": false,
+    "player_visible_behavior_changed": false,
+    "loadout_snapshot_current_status": "model available for future integration; no application service uses it at closure time"
+  },
+  "feature_flag_state_all_false": [
+    {
+      "flag_id": "runtime_stat_soft_cap_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": true
+    },
+    {
+      "flag_id": "runtime_stat_shadow_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": true
+    },
+    {
+      "flag_id": "cdv_transient_state_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": false,
+      "note": "future constant RT2-B, hard-force false"
+    },
+    {
+      "flag_id": "item_effect_engine_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": false,
+      "note": "future constant RT2-C, hard-force false"
+    },
+    {
+      "flag_id": "cdv_item_hooks_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": false,
+      "note": "future constant RT2-E, hard-force false"
+    },
+    {
+      "flag_id": "effect_observability_enabled",
+      "default": false,
+      "current_env_activation": false,
+      "rt2_a_activable": false,
+      "note": "future constant RT2-D, hard-force false"
+    }
+  ],
+  "rollout_status": [
+    {
+      "step": 1,
+      "name": "unit and property tests",
+      "status": "COMPLETE"
+    },
+    {
+      "step": 2,
+      "name": "local development flags enabled",
+      "status": "COMPLETE"
+    },
+    {
+      "step": 3,
+      "name": "automated integration environment",
+      "status": "COMPLETE OR TESTED AT LIBRARY LEVEL"
+    },
+    {
+      "step": 4,
+      "name": "test-user-only environment",
+      "status": "HOLD"
+    },
+    {
+      "step": 5,
+      "name": "controlled staging",
+      "status": "HOLD"
+    },
+    {
+      "step": 6,
+      "name": "production shadow evaluation",
+      "status": "HOLD"
+    },
+    {
+      "step": 7,
+      "name": "limited non-shadow activation",
+      "status": "HOLD"
+    },
+    {
+      "step": 8,
+      "name": "general availability",
+      "status": "HOLD"
+    }
+  ],
+  "stat_bridge_preservation": {
+    "Intelligenza_to_intelligence": true,
+    "Costituzione_to_endurance": true,
+    "Destrezza_to_agility": true,
+    "dex_semantics": "GENERIC_BASE_POWER_ONLY"
+  },
+  "sealed_set": {
+    "new_seal": "NO",
+    "sealed_artifact_total": 36,
+    "rt2_a_files_inserted_in_sealed_set": false
+  },
+  "governance_evidence_normalized": {
+    "sealed_integrity_tests": "6 passed",
+    "sealed_artifacts": "36/36 byte-identical",
+    "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "lore_meta_status": "invariant",
+    "baseline_chain": "35/35 byte-identical",
+    "baseline_chain_components": {
+      "IS2-A": 8,
+      "IS2-B-P1": 4,
+      "IS2-B-P1-N1": 3,
+      "IS2-B-P2A": 5,
+      "IS2-B-P2B-1": 5,
+      "IS2-B-P2B-RT1": 5,
+      "IS2-B-P2B-RT2-P0": 5
+    },
+    "existing_backend_files_unchanged": true,
+    "frontend_unchanged": true,
+    "openapi_unchanged": true,
+    "openapi_endpoints_count": 275,
+    "openapi_schemas_count": 52,
+    "db_writes": 0,
+    "migrations": 0,
+    "registry_changes": 0,
+    "item_generation": 0,
+    "environment_flag_activation": 0
+  },
+  "next_gate": {
+    "id": "R18.6.RV3-IS2-B-P2B-RT2-B-P0",
+    "name": "TRANSIENT CLASS STATE STORE & MULTI-WORKER COORDINATION ARCHITECTURE",
+    "status": "PLANNED / HOLD / NOT AUTHORIZED IN THIS DISPATCH"
+  },
+  "rt2_b_code_prohibitions_hold": [
+    "process-local production dictionaries",
+    "single-worker locks",
+    "Marks (Marchi) runtime",
+    "Fragments (Frammenti) runtime",
+    "Drain runtime",
+    "cooldown runtime",
+    "proc RNG",
+    "RNG server-authoritative expedition-scoped",
+    "effect engine",
+    "new DB collections",
+    "migrations"
+  ],
+  "fail_stop_deterministic": [],
+  "fail_stop_status": {
+    "SCOPE_EXPANSION_REQUIRED": "NOT_TRIGGERED",
+    "PERSISTENCE_BASELINE_CONFLICT": "NOT_TRIGGERED",
+    "PERFORMANCE_BASELINE_MISSING": "NOT_TRIGGERED",
+    "TRANSIENT_STATE_DEPLOYMENT_CONFLICT": "N/A for RT2-A",
+    "ATOMICITY_PERSISTENCE_CONFLICT": "NOT_TRIGGERED"
+  },
+  "recommendation": "RT2-A CLOSED / PM-LOCKED · runtime activation NOT AUTHORIZED · library ready for future wiring under future PM verdict",
+  "explicit_stop": true
+}

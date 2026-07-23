@@ -4273,3 +4273,37 @@ Sequenza 10-step obbligatoria: registry validation → full dry-run read-only �
 **Sealed integrity**: `pytest backend/tests/backend_r18_4_sealed_integrity_test.py` → `6 passed · 36/36 byte-identical` · sealed set 36 UNCHANGED.
 
 **Governance evidence (tutti zero)**: backend=0 · frontend=0 · openapi=0 · db=0 · migrations=0 · registry_generation=0 · registry_apply=0 · item_generation=0 · db_writes=0 · new_seals=0.
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-A · STAT EVALUATION FOUNDATION · IMPLEMENTED / CLOSED
+
+**Regime**: DOCUMENTAL_ONLY · Italian_only · SHA Policy §31 · STRICT STOP
+**Gate Status**: `R18.6.RV3-IS2-B-P2B-RT2-A · STAT EVALUATION FOUNDATION · CLOSED · PM-LOCKED`
+**PM Dispatch**: RT2-A Formal Closure
+**Anchor `lore_meta.py` SHA256**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` · INVARIANT
+
+- RT2-A PM RATIFIED / CLOSED
+- implementation type = standalone default-OFF library
+- new files = 24
+- existing files modified = 0
+- tests = 136/136 PASS
+- soft-cap boundary tests = 5/5 PASS
+- modifier-order validation = 9/9 PASS
+- performance contract = PASS
+- memory bounded
+- DB calls = 0
+- network calls = 0
+- runtime wiring = not implemented
+- production activation = not authorized
+- public API changes = 0
+- DB migrations = 0
+- RT2-B/C/D/E remain HOLD
+- Phase 2B item assignment remains HOLD
+- Registry generation/apply not authorized
+
+Classification: `LIBRARY_IMPLEMENTED · TESTED · DEFAULT-OFF · NOT_RUNTIME_WIRED · NOT_PLAYER-AFFECTING · FOUNDATION_READY_FOR_FUTURE_INTEGRATION`.
+
+Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `35/35 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0). SHA di manifest, closure MD/JSON e PRD post dichiarati solo nel chat report (SHA Policy §31).
+
+Next gate: `RT2-B-P0 = PLANNED / HOLD / NOT AUTHORIZED`.

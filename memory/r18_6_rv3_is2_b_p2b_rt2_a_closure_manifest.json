@@ -1,0 +1,305 @@
+{
+  "meta": {
+    "dispatch_id": "R18.6.RV3-IS2-B-P2B-RT2-A",
+    "artifact_role": "CLOSURE_MANIFEST_JSON",
+    "regime": "DOCUMENTAL_ONLY · Italian_only",
+    "emission_date_utc": "2026-02",
+    "sha_policy": "§31 absolute — manifest own full_file_sha256 = NOT EMBEDDED (declared only in chat report)",
+    "anchor_lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "records_count": 29
+  },
+  "records": [
+    {
+      "path": "/app/backend/app/stats/runtime/__init__.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "ed20b1bc034966cdd86f883a55b92679d6c2660a247264f17a3ed748bb2b20cf",
+      "size_bytes": 767,
+      "line_count": 16
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/stat_bridge.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "9720df750318f5a28e515ec9f706923f80f308359c8043ddf81ef86dd80816d7",
+      "size_bytes": 3332,
+      "line_count": 112
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/equipment_aggregation.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "ff29ab8b4d5bdd6aafe24a1e4533363e75ba744986416f45c903537d4a38c511",
+      "size_bytes": 2382,
+      "line_count": 77
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/soft_caps.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "2db135b2830b5d7aa2c85fedf26fbd5ba4cb57a6fc64afe3d7ec628a43da221f",
+      "size_bytes": 3460,
+      "line_count": 110
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/modifier_order.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "2c9641d39675d08e1afa771efccfe2e371aad249eb653e9d56799b4cdea1085b",
+      "size_bytes": 7513,
+      "line_count": 196
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/models.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "18dced64470b426b306f4f297afd3619c68ab4495e9cb86ce5aa3819171c6b98",
+      "size_bytes": 3197,
+      "line_count": 94
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/loadout_snapshot.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "b169cd806c0af88a9b311b135cbe36d48e97e584c3a7d2da62a355bd9ca9d860",
+      "size_bytes": 3544,
+      "line_count": 99
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/feature_flags.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "b18cd19d61c13b38293c6fec74ad8688c86ab92041fb1cb777f9f182fe77068c",
+      "size_bytes": 5063,
+      "line_count": 138
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/shadow_comparison.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "673151449e8563465d1c87b40d29398d75f3a06f9928973199cf79f36d54f4f7",
+      "size_bytes": 4576,
+      "line_count": 130
+    },
+    {
+      "path": "/app/backend/app/stats/runtime/events.py",
+      "role": "RT2_A_BACKEND_RUNTIME_MODULE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "097e0642775f5135c5c7f180a24aa0f927a422af4fbc4424e4a7875253b07354",
+      "size_bytes": 4784,
+      "line_count": 162
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/__init__.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "ffa6d1e8bd2ca008e77f733f7f1e90c19f3a2a86fa6dbb8bb56bc5259aca3997",
+      "size_bytes": 65,
+      "line_count": 1
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/__init__.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "60822e66ff33437c24546cff0d2d2d093e422d8e9325c46bc61b40f446007771",
+      "size_bytes": 74,
+      "line_count": 1
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_soft_cap.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "9ebe2b5d4407794f6c1ff9a3ff8d250eeca19658b7600bc636cd4b5f837d74de",
+      "size_bytes": 2767,
+      "line_count": 90
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_stat_bridge.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "abe78efe26a6017d319a75b15f766d713f72bbe09685aefdbd5116db979ea6ca",
+      "size_bytes": 2061,
+      "line_count": 75
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_equipment_aggregation.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "d6a00922ae699a89b40e99e105c824edb2cfec92a8a31ef69f7c611abc8244bb",
+      "size_bytes": 3090,
+      "line_count": 94
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_modifier_order.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "41d2fc724a05e69daa9e3e67547cc7e4468b9ed835a2f4944849ecd1a37f6016",
+      "size_bytes": 5875,
+      "line_count": 161
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_rounding.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "97f437cf95c3b83fe3123d26c9077facb0475a2bdafa9dddfd658763034fadb7",
+      "size_bytes": 2004,
+      "line_count": 57
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_loadout_snapshot.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "50ee19b809f8eb0e57db3a7cc51a7385457c7412dc36617a924fb5a864d165e5",
+      "size_bytes": 4552,
+      "line_count": 126
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_feature_flags.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "170b6adc27412e905fb76108f6b157f804df467956dbe8158c1f702ddacffbb5",
+      "size_bytes": 3972,
+      "line_count": 119
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_shadow_comparison.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "16d3851ff4e03b7ebb153e113640d2f1b66224ee227df5b685cf2f0c2af85d7a",
+      "size_bytes": 4168,
+      "line_count": 129
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_property.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "ce4225675b5946a9a996584a37c03bcf600338b3c1d6a7bff83e878e15407dec",
+      "size_bytes": 4951,
+      "line_count": 125
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_integration.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "468f3d67836f1ac81cecaa020b6bace0c75c6a1ce1d9af5f25559d8c169645b3",
+      "size_bytes": 5734,
+      "line_count": 153
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_compatibility.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "90c4da8242bd33c5a1c06fb70c0964b7583a047dffef3e8858e6deb0e1b02f70",
+      "size_bytes": 6419,
+      "line_count": 149
+    },
+    {
+      "path": "/app/backend/tests/effect_engine/foundation/test_performance.py",
+      "role": "RT2_A_TEST_FILE",
+      "status": "PM_LOCKED_AT_CLOSURE",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "eae60a141ca9bd43de1c4fa4bf29192520b78345f687076ed2ca12fd4a2bc43d",
+      "size_bytes": 9603,
+      "line_count": 237
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_a_implementation_report.md",
+      "role": "RT2_A_IMPLEMENTATION_REPORT_MD",
+      "status": "PM_LOCKED",
+      "new_file": false,
+      "existing_file_modified": false,
+      "full_file_sha256": "e7b79c7c2b6d51dde883bd5bdadca2f7fc5ffa952cf9031f9247d0729f3a9cd4",
+      "size_bytes": 17696,
+      "line_count": 381
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_a_implementation_report.json",
+      "role": "RT2_A_IMPLEMENTATION_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "new_file": false,
+      "existing_file_modified": false,
+      "full_file_sha256": "4ff1c9cf1459a864a6c6c16dcc966de8172ffae34309761a76386f6c32babd45",
+      "size_bytes": 15349,
+      "line_count": 222
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_a_final_closure_report.md",
+      "role": "RT2_A_CLOSURE_REPORT_MD",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "342a012e334a541c50ede9e928f231c2471383260fdd0e9e81bcff9119b1d843",
+      "size_bytes": 6924,
+      "line_count": 160
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_a_final_closure_report.json",
+      "role": "RT2_A_CLOSURE_REPORT_JSON",
+      "status": "PM_LOCKED",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "0dfe28dedfc109d29c87a725311ffa051db053a161db48400d175694dcbd09b2",
+      "size_bytes": 8094,
+      "line_count": 281
+    },
+    {
+      "path": "/app/memory/PRD.md",
+      "role": "PRD_POST_APPEND_RT2_A",
+      "status": "APPENDED_IDEMPOTENT_1_BLOCK",
+      "new_file": false,
+      "existing_file_modified": true,
+      "full_file_sha256": "240801dccfe046eda8673178a76ee78eab59d03cfee2f549a43e87af2fe1da6b",
+      "size_bytes": 280923,
+      "line_count": 4309
+    }
+  ],
+  "manifest_own_sha_policy_31": "NOT_EMBEDDED — declared only in chat report",
+  "byte_exact_verification": "records SHAs recomputed post-write to match declared values (see verification step)"
+}
