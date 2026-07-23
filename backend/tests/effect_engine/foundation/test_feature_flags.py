@@ -20,8 +20,10 @@ def _clean_env(monkeypatch):
 
 def test_all_flags_count_is_6():
     assert len(ff.ALL_FLAGS) == 6
+    # RT2-B-2A · 2026-02: `cdv_transient_state_enabled` è ora in
+    # RT2_B_RUNTIME_ATTIVABILE (attivabile solo test/local env via env var).
     assert ff.ALL_FLAGS == (
-        ff.RT2_A_RUNTIME_ATTIVABILE | ff.RT2_FUTURE_CONSTANTS
+        ff.RT2_A_RUNTIME_ATTIVABILE | ff.RT2_B_RUNTIME_ATTIVABILE | ff.RT2_FUTURE_CONSTANTS
     )
 
 
@@ -38,9 +40,18 @@ def test_rt2a_active_flags_are_two():
     })
 
 
-def test_rt2_future_constants_are_four():
-    assert ff.RT2_FUTURE_CONSTANTS == frozenset({
+def test_rt2b_active_flag_is_cdv_transient():
+    """RT2-B-2A · PM verdict B2Q07 verbatim (2026-02): cdv_transient_state_enabled
+    è ora attivabile via env var (solo test/local env)."""
+    assert ff.RT2_B_RUNTIME_ATTIVABILE == frozenset({
         "cdv_transient_state_enabled",
+    })
+
+
+def test_rt2_future_constants_are_three():
+    """Post-RT2-B-2A: `cdv_transient_state_enabled` è stato spostato a
+    RT2_B_RUNTIME_ATTIVABILE. Future constants residui = 3."""
+    assert ff.RT2_FUTURE_CONSTANTS == frozenset({
         "item_effect_engine_enabled",
         "cdv_item_hooks_enabled",
         "effect_observability_enabled",

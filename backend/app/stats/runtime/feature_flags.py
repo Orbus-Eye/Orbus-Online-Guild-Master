@@ -46,15 +46,26 @@ RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
     "runtime_stat_shadow_enabled",
 })
 
-RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
+# RT2-B-2A · PM verdict B2Q07 verbatim (2026-02):
+# `cdv_transient_state_enabled` è ora attivabile via env variable **solo in
+# test/local env**. Default OFF. In produzione shared l'env variable NON viene
+# settata → il flag resta OFF (fail-safe by default). Nessuna auto-attivazione
+# in produzione: la ratifica del PM autorizza esclusivamente activation locale
+# isolata per shadow wiring RT2-B-2A.
+RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
     "cdv_transient_state_enabled",
+})
+
+RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
     "item_effect_engine_enabled",
     "cdv_item_hooks_enabled",
     "effect_observability_enabled",
 })
 
-ALL_FLAGS: Final[frozenset[str]] = RT2_A_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
-assert len(ALL_FLAGS) == 6, "RT2-A must expose exactly 6 flags"
+ALL_FLAGS: Final[frozenset[str]] = (
+    RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
+)
+assert len(ALL_FLAGS) == 6, "RT2-A/B/future must expose exactly 6 flags total"
 
 DEFAULT_VALUE: Final[bool] = False
 
@@ -99,10 +110,16 @@ def _read_raw_env_snapshot() -> dict[str, bool]:
 def is_enabled(flag_id: str) -> bool:
     """Ritorna True se il flag è attivo. Fail-safe on unknown → False.
 
-    Enforcement RT2-A:
+    Enforcement:
     - flag ∉ ALL_FLAGS → log ERROR + return False
     - flag ∈ RT2_FUTURE_CONSTANTS → hard-force False (indipendente da env)
-    - flag ∈ RT2_A_RUNTIME_ATTIVABILE → ritorna valore letto da env (default False)
+    - flag ∈ RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE →
+      ritorna valore letto da env (default False)
+
+    RT2-B-2A · PM verdict B2Q07 verbatim (2026-02):
+    - `cdv_transient_state_enabled` è attivabile solo in test/local env via
+      env var `ORBUS_FLAG_CDV_TRANSIENT_STATE_ENABLED=true`. Default OFF.
+      In produzione shared l'env var non è settata → resta OFF (fail-safe).
     """
     if flag_id not in ALL_FLAGS:
         logger.error(
@@ -130,6 +147,7 @@ def all_flags_status() -> dict[str, bool]:
 __all__ = [
     "ALL_FLAGS",
     "RT2_A_RUNTIME_ATTIVABILE",
+    "RT2_B_RUNTIME_ATTIVABILE",
     "RT2_FUTURE_CONSTANTS",
     "DEFAULT_VALUE",
     "is_enabled",

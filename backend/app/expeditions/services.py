@@ -1070,6 +1070,22 @@ async def _dispatch_expedition(
         },
     )
 
+    # RT2-B-2A · Shadow wiring hook (T1) — PM verdict B2Q02 verbatim.
+    # Post-validation, pre-resolution. Doppio guardrail (FF + is_test_user).
+    # Never raises · gameplay preserved (B2Q08 fallback isolation).
+    try:
+        from app.stats.runtime.wiring import maybe_shadow_dispatch
+        # `current_user` non è in scope qui; il wiring hook lo prende via guild.owner.
+        _shadow_current_user = {"id": guild.get("owner_user_id") or guild.get("user_id")}
+        await maybe_shadow_dispatch(
+            db=db,
+            current_user=_shadow_current_user,
+            guild=guild,
+            expedition_doc=exp_doc,
+        )
+    except Exception:  # noqa: BLE001
+        pass
+
     return {
         "expedition": expedition_public(exp_doc),
         "members": [member_public(m) for m in members_docs],
