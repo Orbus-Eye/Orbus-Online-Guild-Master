@@ -709,6 +709,28 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         except Exception:
             pass
 
+    # RT2-B-2A · Shadow wiring hook (T2) — PM verdict B2Q04 verbatim.
+    # Post-completion terminalization. Doppio guardrail (FF + is_test_user).
+    # Outcome: COMPLETED (success=True) o COMPLETED_WITH_FAILURE (success=False).
+    # Never raises · gameplay preserved (B2Q08 fallback isolation).
+    try:
+        from app.stats.runtime.wiring import maybe_shadow_terminalize
+        _guild_doc = await db.guilds.find_one(
+            {"id": claimed["guild_id"]},
+            {"_id": 0, "owner_user_id": 1, "user_id": 1},
+        )
+        _owner_id = ((_guild_doc or {}).get("owner_user_id")
+                     or (_guild_doc or {}).get("user_id"))
+        _shadow_current_user = {"id": _owner_id} if _owner_id else {}
+        await maybe_shadow_terminalize(
+            db=db,
+            current_user=_shadow_current_user,
+            expedition_doc={"id": exp_id, "guild_id": claimed["guild_id"]},
+            success=bool(success),
+        )
+    except Exception:  # noqa: BLE001
+        pass
+
 
 from app.core.job_freeze import frozen_when_active as _frozen_when_active
 

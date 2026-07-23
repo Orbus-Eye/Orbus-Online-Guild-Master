@@ -4456,3 +4456,30 @@ Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2-P0 · Local Runtime Wiring Readiness Pla
 Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain `12/12 byte-identical` (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A · RT2-B-1B-P0 · RT2-B-1B-1) · RT2-A 38 file unchanged · RT2-B-1A 14 file unchanged · RT2-B-1B-1 16 file unchanged · combined effect-engine tests = 284 PASS · application code / DB / OpenAPI / FF activation / runtime wiring / Registry / item-gen / Mongo writes = 0. SHA dei 2 artefatti P0 patchati, dei 3 closure artifact (MD/JSON/manifest §31) e del PRD post-append dichiarati esclusivamente nel chat report finale (SHA Policy §31).
 
 Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2A · Local Shadow Wiring & State Lifecycle Foundation` · READY-TO-DISPATCH (Phase 2 orchestrator).
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-2A · LOCAL SHADOW WIRING & STATE LIFECYCLE FOUNDATION · IMPLEMENTED / CLOSED
+
+- RT2-B-2A PM RATIFIED · CLOSED · PM-LOCKED (Message 143)
+- files touched = 13 (new = 10 · modified = 3)
+- tests 320/320 PASS (baseline 284 + foundation +1 + wiring +35)
+- expedition service wiring implemented (hook T1 dispatch:1095-1104 · hook T2 completion:712-731)
+- runtime mode = shadow-only (audit only, no gameplay authority)
+- current gameplay authoritative (compute_team_power/success_chance/XP/loot invariante)
+- feature flags default OFF (cdv_transient_state_enabled in RT2_B_RUNTIME_ATTIVABILE via env var solo in test/local env)
+- eligibility server-side users.is_test_user fail-closed (missing user OR missing field OR != true → disabled)
+- flags OFF = 0 DB access & 0 audit emission (short-circuit guardrail verificato)
+- empty state lifecycle shell implemented (state_version=1 · fencing_token=0 · adventurer_class_states=() · processed_event_keys=() · last_event_sequence=0)
+- Mark / Drain / Fragment transitions NOT implemented (deferred RT2-B-2B)
+- public API paths 275 invariant · 0 nuove rotte
+- response contract invariant (expedition_public shape unchanged, no runtime_state_/shadow_/class_state_ keys)
+- rewards invariant (gold_reward/xp_reward/loot/materials/achievements/seasonal invariati)
+- Mongo shared/live writes = 0 · writes to orbus_r16 = 0 · writes outside allowlisted local Mongo = 0
+- runtime activation NOT authorized (shared/preview/staging/production forbidden)
+- tester gameplay activation NOT authorized (shared env forbidden)
+- RT2-B-2B HOLD (CLASS-STATE TRANSITION FOUNDATION)
+- RT2-C/D/E HOLD
+- Phase 2B item assignment HOLD
+
+Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain **13/13 byte-identical** (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A · RT2-B-1B-P0 · RT2-B-1B-1 · RT2-B-2-P0) · `lore_meta.py` SHA `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` invariante · effect_engine 320/320 PASS · Registry v3 changes = 0 · item generation runs = 0 · FF runtime activation = 0 · frontend changes = 0 · OpenAPI changes = 0 · persistent user schema unchanged · NEW SEAL = NO. SHA dei 10 nuovi file + 3 modificati + 4 artefatti closure (implementation report N/A questa fase · final_closure_report MD/JSON · closure_manifest §31) + PRD post-append dichiarati esclusivamente nel chat report finale (SHA Policy §31, manifest own SHA non embedded).
+
+Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION` · HOLD (attendere dispatch orchestrator).
