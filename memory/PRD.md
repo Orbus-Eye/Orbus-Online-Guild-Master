@@ -4588,3 +4588,59 @@ Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION` �
 - PRD append (idempotent · occurrence count = 1)
 
 **RT2-B-2B-1 CLOSED · PM-LOCKED · V1 INCORPORATED AS PARENT EVIDENCE · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-2-P0.**
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-P0 · DRAIN TRANSITION FOUNDATION READINESS & COMPLETION-TO-FRAGMENT CONTRACT · CLOSED
+
+**PM authority**: Message 168 (dispatch) · Message 170 (patch + adjudication + closure).
+**Regime**: DOCUMENTAL-ONLY · localhost isolated · default-OFF · test-user fail-closed · no shared-env · no human tester · no public API · no frontend.
+**Baseline chain**: pre 15/15 → post **16/16** (unico incremento · V1 futuro NON incrementa separatamente).
+
+### 16 · B2B2Q PM decisions (Message 170 verbatim · 0 agent auto-ratifications)
+- **B2B2Q01 · execution ID**: `drn-<UUIDv4 completo>` (non troncato · server-authoritative · replay stesso start → prior ID).
+- **B2B2Q02 · trusted event source**: reuse `trusted_context` (auth user · is_test_user · env · target Mongo · expedition identity · ownership · feature-flag snapshot).
+- **B2B2Q03 · Mark binding + refresh**: strict `application_id` invariance · refresh preserva Drain · reapplication invalida.
+- **B2B2Q04 · Mark validation at completion**: **15 rivalidazioni atomiche obbligatorie** (defense-in-depth).
+- **B2B2Q05 · Fragment amount**: `fragment_gain_requested = 1` **fisso** · vietati RNG/scaling/bonus/multipliers · variazioni future = nuovo balance verdict PM.
+- **B2B2Q06 · Fragment at cap**: Drain COMPLETED · `applied=0` · `overflow_discarded=1` · no cancel/reject/proc/alt reward.
+- **B2B2Q07 · Completion-to-Fragment atomic contract**: **15-field completion receipt EMBEDDED nel processed event receipt** · NO seconda slot capacità 512.
+- **B2B2Q08 · Cancellation reason codes**: **NO extensions** · 8 verbatim (`MARK_EXPIRED · MARK_OWNERSHIP_MISMATCH · MARK_APPLICATION_CHANGED · TARGET_INVALID · SOURCE_INVALID · PHASE_ENDED · EXPEDITION_TERMINAL · EXPLICIT_SERVER_CANCEL`).
+- **B2B2Q09 · Result codes canonici**: success 3 (`DRAIN_STARTED · DRAIN_COMPLETED · DRAIN_CANCELLED`) + start rejection 10 + state 3 (`DRAIN_NOT_STARTED · DRAIN_ALREADY_COMPLETED · DRAIN_ALREADY_CANCELLED`) + integrity/concurrency 5.
+- **B2B2Q10 · Race completion vs cancellation**: **first-committed-wins** (single writer · client clock non decide).
+- **B2B2Q11 · Race completion vs phase_end**: lifecycle batch precedence · **1 reserved lifecycle receipt per batch (NON per drain)** · simultaneous Drain hard cap **NOT INTRODUCED** · le 8 reserved receipt = 8 lifecycle batch.
+- **B2B2Q12 · Lease + retry**: 1 short lease per event batch · fencing+CAS+lease mandatory · retry max 3 · background renewer FORBIDDEN · 7 revalidations per retry.
+- **B2B2Q13 · Feature flag composition**: nuovo flag `cdv_drain_transitions_enabled` (default OFF) · **6-conditions gate** (normalizzazione PM: "quintuple-gate" DEPRECATO).
+- **B2B2Q14 · Receipt classification + folding**: lazy Mark-expiration cancellation durante comando Drain **FOLDED** nella receipt ordinaria del triggering event · NO seconda receipt `DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION`.
+- **B2B2Q15 · Audit contract**: 10 event ids · sampling INFO/WARN/ERROR 100% local isolated · min fields specificati · vietati Mongo doc completo/full payload/credentials/RNG seed/reward payload/dati sensibili.
+- **B2B2Q16 · First code-gate scope**: code gate `R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1 · DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION` + V1 subordinato `RT2-B-2B-2-1-V1 · REAL-MONGO DRAIN VERIFICATION` (V1 NON incrementa baseline · V1 non autonomous closure).
+
+### Hard-lock supplementari (PM §18)
+- `max active Drain per (source, target) = 1`
+- `max active Drain per Mark application = 1`
+- Violazione → `DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR`
+- Drain terminali (COMPLETED/CANCELLED/EXPIRED) restano bounded nello storico · NON bloccano nuovo Drain valido
+- Invarianti preservate: `Drain consumes Mark = false` · `Fragment amount per accepted completion = 1` · `Drain completion at Fragment cap = accepted with overflow discarded`
+
+### Governance
+- Combined `pytest tests/effect_engine/ tests/backend_r18_4_sealed_integrity_test.py` → **402 PASS · 0 FAIL · 1 warn benign · 3.10 s**
+- Sealed integrity **36/36 byte-identical** · `lore_meta.py` invariant SHA `a18f708b…65b8f`
+- OpenAPI **275** paths invariant · new routes 0 · frontend/`.env`/Registry changes 0 · flag activation 0 · non-allowlisted writes 0 · residual DBs 0
+- Fail-stop P0 count = **0/10** · NEW SEAL = **NO** · Design deviations = **0** · Auto-ratifications agent = **0**
+
+### HOLD attivi
+- `RT2-B-2B-2-1` (code gate DRAIN) · attende dispatch orchestrator
+- `RT2-B-2B-2-1-V1` (real-Mongo Drain verification · subordinato)
+- Human tester activation · NOT AUTHORIZED
+- Shared-env rollout · separate PM sign-off required
+- Feature flag `cdv_drain_transitions_enabled` · resta OFF
+- Focus bonus mutation · DEFERRED (RT2-C / RT2-E)
+- Damage/healing/XP/loot/guild XP/item effects/proc/cooldown · OUT OF SCOPE (RT2-C+)
+
+### Deliverable prodotti
+- Readiness draft MD/JSON (patched · 16/16 B2B2Q PM-adjudicated verbatim · 46/46 sezioni)
+- Final closure report MD/JSON (this closure)
+- Closure manifest JSON (external own SHA per PM §31)
+- PRD append (idempotent · occurrence count = 1)
+
+**RT2-B-2B-2-P0 CLOSED · PM-LOCKED · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-2-1 code gate.**

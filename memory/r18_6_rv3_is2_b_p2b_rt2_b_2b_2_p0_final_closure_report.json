@@ -1,0 +1,127 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-P0",
+  "canonical_name": "DRAIN TRANSITION FOUNDATION READINESS & COMPLETION-TO-FRAGMENT CONTRACT",
+  "status": "CLOSED · PM-LOCKED",
+  "closure_date_utc": "2026-02",
+  "pm_authority": {"dispatch_message": 168, "adjudication_and_closure_message": 170},
+  "regime": {
+    "kind": "documental_only_p0_closure",
+    "network_scope": "localhost_isolated",
+    "feature_flag_default": "OFF",
+    "test_user_fail_closed": true,
+    "shared_env_activation": "NOT_AUTHORIZED",
+    "human_tester_activation": "NOT_AUTHORIZED",
+    "public_api_frontend_env_change": 0,
+    "code_changes": 0,
+    "mongo_writes": 0,
+    "feature_flag_activation": 0,
+    "new_seal": false
+  },
+  "baseline_chain": {
+    "pre_closure": 15,
+    "post_closure": 16,
+    "increment": 1,
+    "new_element": "RT2-B-2B-2-P0",
+    "v1_future_separate_increment": false
+  },
+  "auto_ratifications_by_agent": 0,
+  "b2b2q_adjudication_summary_16_verbatim": [
+    {"id": "B2B2Q01", "title": "Drain execution ID generation",              "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "drn- + canonical UUIDv4 (non-truncated); replay returns prior ID."},
+    {"id": "B2B2Q02", "title": "START_DRAIN trusted event source",           "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "Reuse existing trusted_context signature."},
+    {"id": "B2B2Q03", "title": "Mark binding + refresh",                      "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "Strict application_id invariance; reapplication invalidates."},
+    {"id": "B2B2Q04", "title": "Mark validation at completion",               "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "15 atomic revalidations (defense-in-depth)."},
+    {"id": "B2B2Q05", "title": "Fragment amount",                             "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "Fixed = 1; RNG/scaling/bonus FORBIDDEN."},
+    {"id": "B2B2Q06", "title": "Fragment outcome at cap",                     "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "Drain completed; applied=0; overflow_discarded=1."},
+    {"id": "B2B2Q07", "title": "Completion-to-Fragment atomic contract",      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "15-field completion receipt EMBEDDED in processed event receipt (no second slot)."},
+    {"id": "B2B2Q08", "title": "Cancellation reason codes",                   "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "NO extensions; 8 codes verbatim."},
+    {"id": "B2B2Q09", "title": "Result codes canonical set",                  "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "Success 3 + start rejection 10 + state 3 + integrity 5."},
+    {"id": "B2B2Q10", "title": "Completion-vs-cancellation race",             "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "First-committed-wins; single writer."},
+    {"id": "B2B2Q11", "title": "Completion-vs-phase-end + reserved receipt",  "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "1 reserved receipt per lifecycle batch (not per drain); simultaneous Drain hard cap NOT INTRODUCED."},
+    {"id": "B2B2Q12", "title": "Lease and retry",                             "pm_verdict": "PM_RATIFIED",                 "option": "A", "note": "One lease per batch; retry max 3; 7 revalidations per retry."},
+    {"id": "B2B2Q13", "title": "Drain feature-flag composition · 6-conditions","pm_verdict": "PM_RATIFIED",                "option": "A", "note": "Dedicated flag default OFF; 6-conditions gate ('quintuple-gate' DEPRECATED)."},
+    {"id": "B2B2Q14", "title": "Receipt classification + folding",            "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "Lazy Mark-expiration cancel FOLDED into triggering ordinary receipt."},
+    {"id": "B2B2Q15", "title": "Audit contract",                              "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "10 event ids + min fields + 100% local sampling."},
+    {"id": "B2B2Q16", "title": "First code-gate scope + V1 subordinate",      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS", "option": "A", "note": "Code gate RT2-B-2B-2-1 + V1 subordinate; V1 no baseline increment."}
+  ],
+  "hard_locks_pm_message_170_step18": {
+    "max_active_drain_per_source_target_pair": 1,
+    "max_active_drain_per_mark_application": 1,
+    "start_rejection_code_when_violated": "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
+    "terminal_drains_history_bounded": true,
+    "terminal_drains_do_not_block_new_valid_application": true,
+    "preserved_invariants": {
+      "drain_consumes_mark": false,
+      "fragment_amount_per_accepted_completion": 1,
+      "drain_completion_at_fragment_cap": "accepted_with_overflow_discarded"
+    }
+  },
+  "lexical_normalization": {
+    "deprecated_term": "quintuple-gate",
+    "canonical_term": "6-conditions gate",
+    "residual_deprecated_mentions_in_draft_md": 2,
+    "residual_deprecated_mentions_context": "deprecation warnings only (no standalone canonical usage)"
+  },
+  "governance_final": {
+    "combined_effect_engine_and_sealed": {"cmd": "pytest tests/effect_engine/ tests/backend_r18_4_sealed_integrity_test.py", "passed": 402, "failed": 0, "warnings_benign": 1, "duration_s": 3.10},
+    "effect_engine_target_396_of_396": true,
+    "sealed_target_6_of_6_36_byte_identical": true,
+    "lore_meta_invariant_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "openapi_paths_invariant": 275,
+    "new_routes": 0,
+    "frontend_changes": 0,
+    "env_changes": 0,
+    "feature_flag_activation": 0,
+    "non_allowlisted_writes": 0,
+    "residual_integration_databases": 0,
+    "new_seal": false
+  },
+  "fail_stop_p0_10_items": {
+    "issued": 0,
+    "by_id": {
+      "FS-P0-01_DRAIN_REQUIRES_PUBLIC_API": false,
+      "FS-P0-02_DRAIN_REQUIRES_FRONTEND": false,
+      "FS-P0-03_DRAIN_REQUIRES_DAMAGE_OR_REWARD_IMPL": false,
+      "FS-P0-04_COMPLETION_TO_FRAGMENT_NOT_ATOMIC": false,
+      "FS-P0-05_MARK_BINDING_CANNOT_REVALIDATE": false,
+      "FS-P0-06_EXECUTION_ID_MUST_BE_CLIENT_AUTHORITATIVE": false,
+      "FS-P0-07_LEASE_FENCING_CAS_CONFLICT": false,
+      "FS-P0-08_RECEIPT_CAPACITY_REQUIRES_EVICTION": false,
+      "FS-P0-09_SHARED_ENVIRONMENT_REQUIRED": false,
+      "FS-P0-10_ITEM_OR_EFFECT_DEPENDENCY_REQUIRED": false
+    }
+  },
+  "deliverables_this_closure": {
+    "final_closure_report_md":   "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_p0_final_closure_report.md",
+    "final_closure_report_json": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_p0_final_closure_report.json",
+    "closure_manifest":          "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_p0_closure_manifest.json",
+    "manifest_own_sha_policy":   "NOT_EMBEDDED (external §31 · communicated only in chat report)",
+    "prd_append":                "/app/memory/PRD.md (idempotent occurrence = 1)"
+  },
+  "next_gates_authorized_pending_dispatch": {
+    "code_gate": {
+      "id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1",
+      "canonical_name": "DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION",
+      "status": "READY-TO-DISPATCH · awaits orchestrator dispatch"
+    },
+    "v1_subordinate": {
+      "id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1-V1",
+      "canonical_name": "REAL-MONGO DRAIN VERIFICATION",
+      "baseline_increment": false,
+      "standalone_closure": false
+    }
+  },
+  "verdict": {
+    "phase_verdict": "RT2-B-2B-2-P0 CLOSED · PM-LOCKED",
+    "recommendation": "RT2-B-2B-2-1 READY-TO-DISPATCH — awaits orchestrator dispatch (documental+code+V1 sequence analog to RT2-B-2B-1)",
+    "explicit_stop": true
+  },
+  "holds_active": [
+    "RT2-B-2B-2-1 code gate (awaits dispatch)",
+    "RT2-B-2B-2-1-V1 real-Mongo Drain verification (subordinate)",
+    "Human tester activation (NOT AUTHORIZED)",
+    "Shared-environment rollout (separate PM sign-off required)",
+    "Feature flag cdv_drain_transitions_enabled (remains OFF)",
+    "Focus bonus mutation (DEFERRED to RT2-C or RT2-E)",
+    "Damage/healing/XP/loot/guild XP/item effects/proc/cooldown (OUT OF SCOPE · RT2-C+)"
+  ]
+}

@@ -1,36 +1,41 @@
 {
   "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-P0",
   "canonical_name": "DRAIN TRANSITION FOUNDATION READINESS & COMPLETION-TO-FRAGMENT CONTRACT",
+  "status": "PATCHED · 16/16 B2B2Q PM-ADJUDICATED VERBATIM · AWAITS FORMAL CLOSURE",
   "regime": {
-    "kind": "documental_only",
+    "kind": "documental_only_post_adjudication_patch",
     "read_only_discovery": true,
     "code_change": false,
     "mongo_writes": false,
     "feature_flag_activation": false,
     "baseline_chain_increment": false
   },
-  "pm_authority_message": 168,
+  "pm_authority": {
+    "dispatch_message": 168,
+    "adjudication_message": 170
+  },
   "draft_date_utc": "2026-02",
+  "patch_date_utc": "2026-02",
   "parent_closed_gate": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1",
   "baseline_chain": {
-    "pre_draft": 15,
-    "during_draft": 15,
+    "pre_patch": 15,
+    "during_patch": 15,
     "post_p0_closure_expected": 16,
-    "note": "Chain increment authorized only on formal closure of P0 (this draft leaves 15/15 invariato)."
+    "note": "Chain increment authorized only on formal closure of P0 (this patch leaves 15/15 invariato)."
   },
+  "auto_ratifications_by_agent": 0,
   "governance_snapshot": {
-    "effect_engine_serial_n0":            {"passed": 396, "failed": 0, "warnings_benign": 1, "duration_s": 3.14, "combined_run_with_sealed": true},
-    "sealed_integrity":                   {"passed": 6, "failed": 0, "byte_identical_36_of_36": true},
-    "combined_402_passed":                {"passed": 402, "failed": 0},
-    "lore_meta_sha256_invariant":         "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
-    "parent_manifest_sha256":             "8c47b18bada7f255219f4afcca2dc0e0aea9e745833a52f0207815a0c346d2a5",
-    "prd_current_sha256":                 "133bad69a664b90b34202cab4e56ef6d728283094c092520db03552d74b51e0a",
-    "openapi_paths_invariant":            275,
-    "frontend_changes":                   0,
-    "env_changes":                        0,
-    "feature_flag_activation":            0,
-    "non_allowlisted_writes":             0,
-    "residual_integration_databases":     0
+    "effect_engine_and_sealed_combined_402_passed":     {"passed": 402, "failed": 0, "warnings_benign": 1},
+    "effect_engine_serial_target":                       {"passed": 396, "failed": 0},
+    "sealed_integrity_target":                           {"passed": 6, "failed": 0, "byte_identical_36_of_36": true},
+    "lore_meta_sha256_invariant":                        "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "parent_manifest_sha256":                            "8c47b18bada7f255219f4afcca2dc0e0aea9e745833a52f0207815a0c346d2a5",
+    "openapi_paths_invariant":                           275,
+    "frontend_changes":                                  0,
+    "env_changes":                                       0,
+    "feature_flag_activation":                           0,
+    "non_allowlisted_writes":                            0,
+    "residual_integration_databases":                    0
   },
   "sections_46": {
     "count": 46,
@@ -49,7 +54,19 @@
       "45_first_code_slice_proposal","46_explicit_stop"
     ]
   },
-  "cancellation_reason_codes_verbatim_reuse": [
+  "hard_locks_pm_message_170_step18": {
+    "max_active_drain_per_source_target_pair": 1,
+    "max_active_drain_per_mark_application": 1,
+    "start_rejection_code_when_violated": "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
+    "terminal_drains_history_bounded": true,
+    "terminal_drains_do_not_block_new_valid_application": true,
+    "preserved_invariants": {
+      "drain_consumes_mark": false,
+      "fragment_amount_per_accepted_completion": 1,
+      "drain_completion_at_fragment_cap": "accepted_with_overflow_discarded"
+    }
+  },
+  "cancellation_reason_codes_verbatim_reuse_8": [
     "MARK_EXPIRED",
     "MARK_OWNERSHIP_MISMATCH",
     "MARK_APPLICATION_CHANGED",
@@ -59,226 +76,292 @@
     "EXPEDITION_TERMINAL",
     "EXPLICIT_SERVER_CANCEL"
   ],
-  "drain_domain_model_baseline": {
-    "existing_dormant_types_in_state_store_models": ["DrainStatus", "DrainDoc"],
-    "existing_field_in_adventurer_class_state": "active_drain_executions: Tuple[DrainDoc, ...]",
-    "drain_doc_current_fields": ["drain_execution_id","source_adventurer_id","target_id","required_mark_application_id","started_at","completed_at","runtime_status","resolution_version","reward_resolved"],
-    "drain_doc_proposed_additions": ["mark_id","cancelled_at","cancellation_reason","drain_version"],
-    "drain_doc_proposed_removal_or_rename": ["reward_resolved (unused; rename candidate: fragment_gain_applied:bool)"]
+  "result_codes_canonical_pm_message_170_b2b2q09": {
+    "success": ["DRAIN_STARTED", "DRAIN_COMPLETED", "DRAIN_CANCELLED"],
+    "start_rejection": [
+      "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR", "MARK_NOT_FOUND", "MARK_EXPIRED",
+      "MARK_OWNERSHIP_MISMATCH", "MARK_APPLICATION_CHANGED", "TARGET_INVALID",
+      "SOURCE_INVALID", "EXPEDITION_TERMINAL_REJECTED", "PHASE_INACTIVE", "RECEIPT_CAP_REACHED"
+    ],
+    "state": ["DRAIN_NOT_STARTED", "DRAIN_ALREADY_COMPLETED", "DRAIN_ALREADY_CANCELLED"],
+    "integrity_concurrency": [
+      "EVENT_ID_PAYLOAD_MISMATCH", "STATE_VERSION_CONFLICT", "STALE_WRITER_REJECTED",
+      "LEASE_ACQUISITION_FAILED", "RETRY_LIMIT_REACHED"
+    ]
   },
-  "new_class_event_types_proposed": ["START_DRAIN","COMPLETE_DRAIN","CANCEL_DRAIN"],
+  "completion_receipt_field_set_15_verbatim_b2b2q07": [
+    "drain_execution_id","completion_event_id","source_adventurer_id","target_id",
+    "mark_id","application_id","result_code","mark_valid_at_completion",
+    "fragment_gain_requested","fragment_gain_applied","fragment_overflow_discarded",
+    "resource_segment_id","assigned_event_sequence","state_version_after","processed_at"
+  ],
+  "completion_receipt_storage_rule": "EMBEDDED_IN_PROCESSED_EVENT_RECEIPT · NO second slot in capacity 512",
+  "complete_drain_revalidation_15_checks_b2b2q04": [
+    "source","target","mark_id","application_id","mark_ownership",
+    "mark_active","mark_not_expired","drain_status_STARTED","not_cancelled","not_completed",
+    "phase_active","expedition_not_terminal","valid_lease","valid_fencing","expected_state_version"
+  ],
   "audit_event_ids_10": [
     "cdv_drain_started","cdv_drain_start_rejected","cdv_drain_completed","cdv_drain_completion_rejected",
     "cdv_drain_cancelled","cdv_drain_cancellation_rejected","cdv_drain_duplicate_completion",
     "cdv_drain_fragment_batch_applied","cdv_drain_fragment_overflow_discarded","cdv_drain_transition_conflict"
   ],
-  "feature_flag_new": {
+  "feature_flag_new_pm_message_170_b2b2q13": {
     "name": "cdv_drain_transitions_enabled",
     "default": false,
-    "quintuple_gate_composition": [
+    "six_conditions_gate_composition": [
       "cdv_transient_state_enabled",
       "cdv_class_transitions_enabled",
       "cdv_drain_transitions_enabled",
       "authenticated_user_is_test_user",
       "environment_localhost_isolated",
-      "mongo_target_allowlisted"
+      "mongo_target_allowlisted_database"
     ],
+    "normalization_note": "PM Message 170 §13: DEPRECATED nomenclature 'quintuple-gate'. USE '6-conditions gate' (6 logical eligibility conditions).",
     "flag_off_effects": {"db_calls": 0, "audit_events": 0, "mutations": 0, "mark_fragment_gate_behavior": "INVARIANT"}
   },
-  "receipt_capacity_baseline": {"total": 512, "ordinary": 504, "reserved": 8, "rolling_eviction_allowed": false},
-  "drain_receipt_classification_baseline": {
-    "START_DRAIN": "ORDINARY",
-    "COMPLETE_DRAIN": "ORDINARY",
-    "CANCEL_DRAIN_explicit": "ORDINARY",
-    "CANCEL_DRAIN_automatic_phase_or_terminal": "RESERVED (part of lifecycle batch)",
-    "DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION": "ORDINARY (agent recommendation) OR RESERVED (subject B2B2Q14)"
+  "receipt_capacity_and_folding_pm_message_170_b2b2q14": {
+    "total": 512, "ordinary": 504, "reserved": 8, "rolling_eviction_allowed": false,
+    "drain_classification": {
+      "START_DRAIN": "ORDINARY",
+      "COMPLETE_DRAIN": "ORDINARY (payload EMBEDDED in same slot)",
+      "CANCEL_DRAIN_explicit": "ORDINARY",
+      "LAZY_MARK_EXPIRATION_CANCELLATION_DURING_DRAIN_COMMAND": "FOLDED_INTO_TRIGGERING_ORDINARY_RECEIPT (no separate DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION receipt)",
+      "LIFECYCLE_CANCELLATION_PHASE_END_OR_EXPEDITION_TERMINAL": "AGGREGATE_IN_LIFECYCLE_BATCH · 1_RESERVED_RECEIPT_PER_BATCH (not per Drain)"
+    },
+    "simultaneous_drain_hard_cap": "NOT_INTRODUCED (per PM §11)",
+    "reserved_semantics": "8 reserved receipts = 8 lifecycle event batches (NOT 8 individual cancelled drains)"
   },
-  "test_matrix_minimum_32_cases_proposed": [
-    "valid_drain_start","start_without_own_mark","start_with_expired_mark","start_with_foreign_mark",
-    "start_with_wrong_application_id","duplicate_start_replay","valid_completion","completion_with_expired_mark",
-    "completion_after_mark_reapplication","completion_after_cancellation","completion_after_phase_end","completion_after_terminalization",
-    "duplicate_completion_same_event","duplicate_completion_different_event","payload_mismatch","explicit_cancellation",
-    "automatic_phase_end_cancellation","automatic_terminal_cancellation","completion_to_fragment_atomicity","fragment_cap_and_overflow",
-    "resource_segment_opening","single_winner_concurrency","lease_failure","stale_fencing",
-    "cas_conflict","three_retry_ceiling","receipt_cap_rejection","feature_flag_off",
-    "non_test_user_fail_closed","allowlist_rejection","legacy_response_invariance","legacy_reward_invariance"
-  ],
-  "pm_open_questions_b2b2q": [
+  "drain_execution_identity_pm_message_170_b2b2q01": {
+    "format": "drn-<canonical_UUIDv4>",
+    "example": "drn-550e8400-e29b-41d4-a716-446655440000",
+    "forbidden": ["UUID_truncated","client_provided","input_derived","reusable_post_cancel_or_complete"],
+    "replay_of_same_start_event_returns_prior_id": true,
+    "server_authoritative": true
+  },
+  "mark_binding_pm_message_170_b2b2q03": {
+    "drain_persists_fields": ["mark_id","required_mark_application_id"],
+    "refresh_preserves_drain": true,
+    "reapplication_after_expiration_invalidates_drain": true,
+    "application_id_semantics": "strict_invariance"
+  },
+  "fragment_amount_pm_message_170_b2b2q05": {
+    "fragment_gain_requested_per_accepted_completion": 1,
+    "forbidden": ["RNG","scaling_refresh_count","scaling_equip","bonus_item","bonus_legendary","phase_multipliers"],
+    "future_variation_requires": "new_balance_verdict_pm"
+  },
+  "fragment_outcome_at_cap_pm_message_170_b2b2q06": {
+    "drain_status_on_cap": "COMPLETED",
+    "fragment_gain_requested": 1,
+    "fragment_gain_applied": 0,
+    "fragment_overflow_discarded": 1,
+    "cancellation": false,
+    "rejection": false,
+    "future_credit": false,
+    "alternative_reward": false
+  },
+  "cancellation_and_race_precedence_pm_message_170_b2b2q10_b2b2q11": {
+    "b2b2q10_completion_vs_cancellation": "first_committed_wins",
+    "b2b2q11_completion_vs_phase_end": "lifecycle_batch_precedence",
+    "lifecycle_aggregate_receipt_content": ["count_drains_cancelled","bounded_list_of_drain_execution_ids","aggregate_cancellation_reason","state_version_after"],
+    "single_writer": true,
+    "client_clock_does_not_determine_precedence": true
+  },
+  "lease_and_retry_pm_message_170_b2b2q12": {
+    "one_short_request_scoped_lease_per_event_batch": true,
+    "valid_fencing_token_mandatory": true,
+    "cas_inside_lease_mandatory": true,
+    "cas_only_forbidden": true,
+    "retry_max_attempts": 3,
+    "background_renewer_forbidden": true,
+    "per_retry_revalidations_7": ["mark","application_binding","drain_status","expedition_phase_state","dedup_receipt","receipt_capacity","fencing_token"]
+  },
+  "audit_contract_pm_message_170_b2b2q15": {
+    "event_ids": 10,
+    "local_sampling": {"INFO": "100%", "WARN": "100%", "ERROR": "100%"},
+    "min_fields": [
+      "expedition_id","source_adventurer_id","target_id","drain_execution_id","event_id",
+      "mark_application_binding","result_code","cancellation_reason_if_present","sequence",
+      "state_version_before_and_after","fragment_requested_applied_discarded","duration"
+    ],
+    "forbidden": ["full_mongo_doc","full_payload","credentials","rng_seed","reward_payload","sensitive_data"]
+  },
+  "first_code_gate_scope_pm_message_170_b2b2q16": {
+    "code_gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1",
+    "code_gate_canonical_name": "DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION",
+    "scope_in": [
+      "START_DRAIN","COMPLETE_DRAIN","CANCEL_DRAIN","rejection_paths",
+      "server_generated_UUIDv4_execution_id","Mark_application_binding",
+      "completion_time_mark_revalidation_15_checks","completion_to_fragment_atomic_batch",
+      "resource_segment_opening","drain_receipts_ordinary_and_reserved_lifecycle_aggregate",
+      "lease_fencing_cas_8_step","ordering_races","dedup",
+      "dedicated_default_off_flag","test_user_fail_closed","audit_mappings_10_events",
+      "pure_fakestore_mocked_mongo_tests_32_cases_minimum"
+    ],
+    "v1_subordinate_gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1-V1",
+    "v1_subordinate_canonical_name": "REAL-MONGO DRAIN VERIFICATION",
+    "v1_scope": [
+      "functional_matrix","winner_only_concurrency","completion_to_fragment_atomicity",
+      "duplicate_completion","cancellation_races","receipt_capacity","bson_size","performance","allowlist","cleanup"
+    ],
+    "v1_baseline_chain_increment": false,
+    "v1_standalone_closure": false,
+    "scope_out": [
+      "damage","healing","XP","loot","guild_XP","item_effects","proc","cooldown_engine",
+      "focus_bonus_mutation","public_api","frontend","shared_environment","human_testers"
+    ]
+  },
+  "pm_open_questions_b2b2q_post_adjudication": [
     {
       "question_id": "B2B2Q01",
-      "question": "Drain execution ID generation: server-generated on START_DRAIN acceptance OR deterministically derived from trusted internal command?",
-      "evidence": "PM §8 verbatim: client-provided authoritative execution ID is FORBIDDEN. Two viable server-authoritative patterns exist (uuid4 vs sha256-derived deterministic).",
-      "options": [
-        "A. Server-generated at START_DRAIN acceptance: drn-<uuid4[:16]>. Returned in TransitionResult. Client subsequent commands reference the emitted ID.",
-        "B. Deterministically derived server-side: sha256(expedition_id · source · target · mark_id · application_id · phase_id · server_nonce)[0:20]. Replay-safe."
-      ],
-      "agent_recommendation": "Option A (uuid4-based) for dedup simplicity + audit clarity + no derivation-time coupling to Mark/phase state.",
-      "affected_modules": ["app/stats/runtime/transitions/state_machine.py","app/stats/runtime/transitions/dispatcher.py","app/stats/runtime/state_store/models.py"],
-      "state_impact": "DrainDoc.drain_execution_id source path.",
-      "security_impact": "Both options prevent client-authoritative forgery. Option A relies on server RNG; Option B is deterministic and audit-friendly for post-mortem replay.",
-      "test_impact": "Test cases must assert non-client-provided execution ID enforcement; Option B additionally requires collision-free assertions across boundary scenarios.",
+      "question": "Drain execution ID generation: server-generated UUIDv4 (complete) OR deterministically derived?",
+      "evidence": "PM Message 170 verbatim: Option A ratified with conditions. Format: 'drn-' + canonical UUIDv4 (non-truncated). Example: drn-550e8400-e29b-41d4-a716-446655440000. Replay of same start event returns prior assigned ID.",
+      "options": ["A. Server-generated UUIDv4 complete", "B. Deterministically derived from trusted internal command"],
+      "agent_recommendation": "Option A (agent had already recommended A)",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A + UUIDv4 completo (non truncated)",
+      "affected_modules": ["app/stats/runtime/transitions/dispatcher.py","app/stats/runtime/transitions/state_machine.py","app/stats/runtime/state_store/models.py"],
+      "state_impact": "DrainDoc.drain_execution_id populated from server-side uuid4() at START_DRAIN acceptance; dedup replay returns prior ID.",
+      "security_impact": "Forgery prevention: client cannot influence execution identity. Truncation forbidden to preserve UUIDv4 collision resistance.",
+      "test_impact": "Assertion: format 'drn-' + 8-4-4-4-12 hex; assertion of replay returning identical ID.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q02",
-      "question": "START_DRAIN trusted event source: same trusted_context path used by APPLY_MARK/GAIN_FRAGMENT (test-user-bounded) OR extended trusted-command source?",
-      "evidence": "RT2-B-2B-1 uses trusted_context with feature_enabled+test_user_verified+db_allowlisted. Drain introduces additional revalidation surface.",
-      "options": [
-        "A. Reuse existing trusted_context signature (no schema change).",
-        "B. Extend trusted_context with drain-specific fields (e.g., phase_id required, expected_state_version override policy)."
-      ],
-      "agent_recommendation": "Option A (reuse) for consistency; drain-specific fields can be part of ClassStateEvent payload rather than trusted_context.",
+      "question": "START_DRAIN trusted event source: reuse trusted_context OR extend?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. trusted_context contains authenticated user, is_test_user, environment, target Mongo, expedition identity, source-adventurer ownership, feature-flag snapshot. No client-derivable trusted fields.",
+      "options": ["A. Reuse existing trusted_context signature", "B. Extend with drain-specific fields"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A",
       "affected_modules": ["app/stats/runtime/transitions/dispatcher.py","app/stats/runtime/wiring/coordinator.py"],
-      "state_impact": "No schema change under A.",
-      "security_impact": "Reuse keeps single boundary surface; extension adds attack surface.",
-      "test_impact": "Reuse: existing 4 gating tests suffice + Drain-specific. Extension: additional gate tests.",
+      "state_impact": "No schema change to trusted_context.",
+      "security_impact": "Consistent single boundary surface.",
+      "test_impact": "Existing 4 gating tests + drain-specific under same trust surface.",
       "blocking": false
     },
     {
       "question_id": "B2B2Q03",
-      "question": "Mark binding and refresh behavior: refresh preserves Drain OR refresh invalidates Drain when application_id semantics change?",
-      "evidence": "PM §9: refresh keeping application_id preserves Drain; new application_id (post-expiration reapplication) invalidates. Ambiguity: is 'refresh' defined as strict application_id invariance?",
-      "options": [
-        "A. Refresh = same mark_id AND same application_id AND expires_at extended. Drain preserved.",
-        "B. Refresh = same mark_id, application_id may bump (semantic refresh). Drain invalidated."
-      ],
-      "agent_recommendation": "Option A. Strict application_id invariance keeps binding contract sharp and matches RT2-B-2B-1 REFRESH_MARK semantics.",
+      "question": "Mark binding and refresh: strict application_id invariance OR permissive?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. Drain persists mark_id + required_mark_application_id. Refresh preserving mark_id+application_id extends expires_at without invalidating Drain. Reapplication after expiration = new application_id → old Drain binding invalid.",
+      "options": ["A. Strict application_id invariance", "B. Permissive semantic refresh"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "MarkDoc.application_id semantics anchor Drain validity.",
-      "security_impact": "Option A prevents accidental Drain preservation under semantic reapplication.",
-      "test_impact": "Refresh-preserves-Drain test + reapplication-invalidates-Drain test required (test matrix §41 cases).",
+      "state_impact": "DrainDoc binding validated against MarkDoc.application_id equality.",
+      "security_impact": "Prevents accidental Drain preservation under semantic reapplication.",
+      "test_impact": "refresh_preserves_drain + reapplication_invalidates_drain cases.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q04",
-      "question": "Mark validation at completion: full revalidation OR reduced (only mark_id+application_id equality + not expired)?",
-      "evidence": "PM §4 verbatim requires full revalidation.",
-      "options": [
-        "A. Full revalidation: source · target · mark_id · application_id · not-expired · not-cancelled.",
-        "B. Reduced revalidation: mark_id+application_id + not-expired (skip source/target if stored in DrainDoc)."
-      ],
-      "agent_recommendation": "Option A (full). Defense-in-depth; DrainDoc could be tampered indirectly via state-doc corruption in future; independent revalidation adds redundancy.",
+      "question": "Mark validation at completion: full 15-check defense-in-depth OR reduced?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. 15 atomic revalidations mandatory: source · target · mark_id · application_id · Mark ownership · Mark active · Mark not expired · Drain status=STARTED · not cancelled · not completed · phase active · expedition not terminal · valid lease · valid fencing · expected state_version.",
+      "options": ["A. Full 15-check", "B. Reduced (mark_id+application_id+not-expired)"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A · defense-in-depth",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "No schema change.",
-      "security_impact": "Option A stronger.",
-      "test_impact": "16+ revalidation cases required.",
+      "state_impact": "No schema change; validation adds 15 assertions.",
+      "security_impact": "Maximum defense-in-depth.",
+      "test_impact": "16+ revalidation test cases required per validation dimension.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q05",
-      "question": "Fragment amount per accepted completion: fixed constant (1) OR variable via payload?",
-      "evidence": "PM §10: Fragment source = accepted Drain completion only, cap 5, overflow discarded. Amount not yet ratified.",
-      "options": [
-        "A. Fixed constant 1 per completion.",
-        "B. Variable amount (1..N) from trusted server-derived payload.",
-        "C. Variable amount via feature flag param (out of P0 scope)."
-      ],
-      "agent_recommendation": "Option A (fixed 1) for determinism, simpler test contract, RT1 baseline alignment.",
+      "question": "Fragment amount per accepted completion: fixed 1 OR variable?",
+      "evidence": "PM Message 170 verbatim: Option A ratified with conditions. fragment_gain_requested = 1 fisso. Forbidden: RNG, scaling refresh count, scaling equip, bonus item, bonus Legendary, phase multipliers. Future variation → new balance PM verdict.",
+      "options": ["A. Fixed 1", "B. Variable from trusted payload", "C. Variable via feature flag param"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A · fixed=1 · future variations require new balance verdict",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py"],
       "state_impact": "AdventurerClassState.fragment_count += 1 per completion (subject to cap).",
-      "security_impact": "Option A minimizes payload attack surface.",
-      "test_impact": "Overflow tests simpler with fixed amount.",
+      "security_impact": "Minimizes payload attack surface.",
+      "test_impact": "Overflow tests deterministic with fixed=1.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q06",
-      "question": "Fragment outcome when already at cap: Drain still completes OR Drain rejected?",
-      "evidence": "PM §10 verbatim: 'Drain completion may still complete (NOT annullata perché risorsa al cap). Fragment granted = 0. overflow_discarded recorded diagnostically.'",
-      "options": [
-        "A. Drain completes with fragment_granted=0, overflow_discarded=1 (or requested amount) — verbatim PM §10.",
-        "B. Drain rejected with FRAGMENT_CAP_REACHED (against PM §10 verbatim)."
-      ],
-      "agent_recommendation": "Option A (verbatim PM §10). Confirmation requested.",
+      "question": "Fragment outcome when already at cap: complete-with-overflow OR reject?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. fragment_count=5 → Drain COMPLETED, fragment_gain_requested=1, fragment_gain_applied=0, fragment_overflow_discarded=1. No cancellation/rejection/future credit/proc/alternative reward.",
+      "options": ["A. Complete + overflow discarded", "B. Reject with FRAGMENT_CAP_REACHED"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "fragment_count unchanged; overflow_discarded counter incremented in receipt.",
-      "security_impact": "None (audit-only diagnostic).",
-      "test_impact": "test_at_cap_completion_still_succeeds required.",
+      "state_impact": "fragment_count invariato; overflow_discarded counter incremented in receipt.",
+      "security_impact": "None.",
+      "test_impact": "test_at_cap_completion_still_succeeds.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q07",
-      "question": "completion-to-Fragment atomic result contract: single receipt vs multiple receipts per completion event?",
-      "evidence": "PM §16 defines completion receipt content. Segment opening and overflow discard could be either embedded fields OR separate receipts.",
-      "options": [
-        "A. Single completion receipt with embedded fields (fragment_gain_applied, fragment_overflow_discarded, resource_segment_id).",
-        "B. Multiple receipts: COMPLETE_DRAIN + DISCARD_FRAGMENT_OVERFLOW (if any) + OPEN_RESOURCE_SEGMENT (if any)."
-      ],
-      "agent_recommendation": "Option A. Reduces ordinary capacity consumption; keeps atomic-batch shape clear; receipt content still contains diagnostic fields for audit.",
+      "question": "Completion-to-Fragment atomic result contract: single embedded receipt OR multiple receipts?",
+      "evidence": "PM Message 170 verbatim: Option A ratified with conditions. 15-field completion receipt (see completion_receipt_field_set_15_verbatim_b2b2q07). Receipt storage rule: result payload EMBEDDED in the processed event receipt. NOT a second slot in capacity 512.",
+      "options": ["A. Single embedded receipt", "B. Multiple receipts (COMPLETE + OVERFLOW + SEGMENT_OPEN)"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A · EMBEDDED in single event receipt · no second slot",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py","app/stats/runtime/wiring/audit.py"],
-      "state_impact": "processed_event_keys usage per completion = 1 slot instead of up to 3.",
+      "state_impact": "processed_event_keys usage per completion = 1 slot.",
       "security_impact": "None.",
-      "test_impact": "Receipt content assertions richer; capacity math simpler.",
+      "test_impact": "Receipt content assertion tests richer; capacity math simpler.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q08",
-      "question": "cancellation reason-code extensions: baseline = 8 verbatim reuse, or extend with new codes?",
-      "evidence": "PM §7 verbatim: reuse 8 codes; extensions require real case + non-overlap + PM adjudication; NO auto-ratify.",
-      "options": [
-        "A. NO extensions (baseline recommended).",
-        "B. Add new code(s) supported by real case found in discovery."
-      ],
-      "agent_recommendation": "Option A (NO extensions). 8 codes cover all discovered scenarios in this P0.",
+      "question": "Cancellation reason-code extensions: NO extensions OR add new codes?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. 8 codes verbatim reuse. No alias/short versions. New needs in code gate → STOP · PM REVIEW.",
+      "options": ["A. NO extensions", "B. Add new codes"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A · NO extensions",
       "affected_modules": ["app/stats/runtime/transitions/models.ReasonCode"],
       "state_impact": "None.",
       "security_impact": "None.",
-      "test_impact": "Cancellation cases mapped to existing 8 codes.",
+      "test_impact": "Cancellation cases mapped to existing 8.",
       "blocking": false
     },
     {
       "question_id": "B2B2Q09",
-      "question": "completion/rejection result-code set: minimal (reuse RT2-B-2B-1 codes) OR add DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR + DRAIN_ALREADY_COMPLETED + DRAIN_CANCELLED?",
-      "evidence": "Existing TransitionResultCode covers general codes. Drain state machine requires 3 additional distinguishing codes.",
-      "options": [
-        "A. Add 3 new codes: DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR, DRAIN_ALREADY_COMPLETED, DRAIN_CANCELLED.",
-        "B. Reuse STATE_VERSION_CONFLICT / DEDUPLICATED_NO_OP with reason_code disambiguation."
-      ],
-      "agent_recommendation": "Option A. Clarity for audit + test assertions.",
+      "question": "Completion/rejection result-code set: canonical normalized set?",
+      "evidence": "PM Message 170 verbatim: Option A + canonical set ratified with conditions. See result_codes_canonical_pm_message_170_b2b2q09.",
+      "options": ["A. Add distinct Drain codes + canonical set", "B. Reuse STATE_VERSION_CONFLICT/DEDUPLICATED_NO_OP with reason_code disambiguation"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A + canonical normalized set (see field result_codes_canonical_pm_message_170_b2b2q09)",
       "affected_modules": ["app/stats/runtime/transitions/models.TransitionResultCode"],
       "state_impact": "None.",
       "security_impact": "None.",
-      "test_impact": "Cleaner test assertions.",
+      "test_impact": "Cleaner audit assertions across drain code paths.",
       "blocking": false
     },
     {
       "question_id": "B2B2Q10",
-      "question": "completion-vs-cancellation race precedence: first-committed-wins OR completion-precedence?",
-      "evidence": "PM §14 baseline: completion first → later cancellation returns ALREADY_COMPLETED; cancellation first → later completion returns DRAIN_CANCELLED.",
-      "options": [
-        "A. First-committed-wins (verbatim baseline).",
-        "B. Completion has semantic precedence (rare edge)."
-      ],
-      "agent_recommendation": "Option A (verbatim baseline). Single writer + CAS naturally enforces first-committed-wins.",
+      "question": "Completion vs cancellation race: first-committed-wins?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. Precedence via first validly committed event batch (lease/fencing/CAS). Completion first → cancellation returns DRAIN_ALREADY_COMPLETED (no mutation). Cancellation first → completion returns DRAIN_ALREADY_CANCELLED (no mutation, no Fragment). Single writer. Client clock does NOT determine precedence.",
+      "options": ["A. First-committed-wins", "B. Completion-precedence"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A",
       "affected_modules": ["app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "DrainDoc.runtime_status becomes sticky on first terminal write.",
+      "state_impact": "DrainDoc.runtime_status sticky on first terminal write.",
       "security_impact": "None.",
-      "test_impact": "Race tests deterministic under Option A.",
+      "test_impact": "Race tests deterministic.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q11",
-      "question": "completion-vs-phase-end precedence: phase_end terminalization cancels in-flight drains OR rejects them at completion time?",
-      "evidence": "PM §14 baseline: terminalization/phase-end committed first → later completion rejected. In-flight drains: auto-cancel via reserved-capacity batch OR mark them EXPIRED at next access?",
-      "options": [
-        "A. Bulk auto-cancel in-flight Drains during PHASE_END event batch (reserved capacity usage).",
-        "B. Leave Drains as IN_PROGRESS and reject subsequent completion attempts (lazy expiration analog)."
-      ],
-      "agent_recommendation": "Option A. Matches auto_close_on_phase_end semantics for resource_segment; keeps state consistent post-phase-end.",
-      "affected_modules": ["app/stats/runtime/transitions/phase.py","app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "Reserved receipt capacity consumption per phase-end.",
+      "question": "Completion vs phase-end: lifecycle batch precedence with aggregate reserved receipt?",
+      "evidence": "PM Message 170 verbatim: Option A ratified with conditions. Phase-end first → all STARTED Drains CANCELLED with PHASE_ENDED. Completion first → completion valid; subsequent phase-end cancels only STARTED. RESERVED policy: ONE reserved lifecycle receipt per entire atomic lifecycle batch (NOT per cancelled Drain). Lifecycle receipt: count_drains_cancelled + bounded list of execution IDs + aggregate reason + state_version_after. Simultaneous Drain hard cap = NOT INTRODUCED. 8 reserved receipts = 8 lifecycle event batches.",
+      "options": ["A. Lifecycle batch aggregate reserved receipt", "B. Per-drain reserved receipt"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A + aggregate reserved receipt per lifecycle batch",
+      "affected_modules": ["app/stats/runtime/transitions/phase.py","app/stats/runtime/transitions/state_machine.py","app/stats/runtime/wiring/coordinator.py"],
+      "state_impact": "Reserved receipt consumption = 1 per phase-end/terminal batch.",
       "security_impact": "None.",
-      "test_impact": "test_bulk_drain_cancel_on_phase_end required.",
+      "test_impact": "test_bulk_drain_cancel_on_phase_end_uses_single_reserved_receipt.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q12",
-      "question": "lease and retry boundary: retry max 3 (invariato) OR reduced for Drain due to atomic batch complexity?",
-      "evidence": "PM §13 baseline: automatic retries ≤ 3. Drain atomic batch has more validation steps than Mark/Fragment.",
-      "options": [
-        "A. Retry max 3 (invariato).",
-        "B. Retry max 2 for Drain completion (higher validation cost per retry)."
-      ],
-      "agent_recommendation": "Option A (invariato). Consistency with RT2-B-2B-1 contract; validation cost measured in real-Mongo tests.",
+      "question": "Lease and retry: existing policy (max 3 retries) invariant?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. One short request-scoped lease per event batch. Valid fencing token mandatory. CAS inside lease mandatory. CAS-only FORBIDDEN. Retry max 3. Background renewer FORBIDDEN. Every retry revalidates 7 dimensions.",
+      "options": ["A. Retry max 3 invariant", "B. Retry max 2 for Drain (higher cost)"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A",
       "affected_modules": ["app/stats/runtime/transitions/dispatcher.py"],
       "state_impact": "None.",
       "security_impact": "None.",
@@ -287,61 +370,53 @@
     },
     {
       "question_id": "B2B2Q13",
-      "question": "Drain feature-flag composition: separate flag AND-composed OR nested inside cdv_class_transitions_enabled?",
-      "evidence": "PM §6 baseline: separate flag cdv_drain_transitions_enabled AND-composed with existing flags (quintuple-gate).",
-      "options": [
-        "A. Separate flag AND-composed (verbatim baseline).",
-        "B. Nested inside cdv_class_transitions_enabled (single flag, wider blast radius)."
-      ],
-      "agent_recommendation": "Option A (verbatim baseline). Independent kill-switch for Drain runtime risks.",
+      "question": "Drain feature-flag composition: dedicated flag AND-composed?",
+      "evidence": "PM Message 170 verbatim: Option A ratified. cdv_drain_transitions_enabled = default false. Composite gate 6 conditions. PM normalization: 'quintuple-gate' DEPRECATED · use '6-conditions gate'. Flag OFF: 0 DB calls, 0 audit, 0 mutation. Mark/Fragment NOT disabled by Drain flag alone.",
+      "options": ["A. Separate flag AND-composed (6 conditions)", "B. Nested inside cdv_class_transitions_enabled"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED · Option A · 6-conditions gate normalization applied",
       "affected_modules": ["app/stats/runtime/feature_flags.py","app/stats/runtime/transitions/dispatcher.py"],
       "state_impact": "None.",
-      "security_impact": "Option A stronger (surgical kill-switch).",
-      "test_impact": "test_flag_off_zero_drain_writes + independent flag-composition tests.",
+      "security_impact": "Surgical kill-switch preserved.",
+      "test_impact": "test_flag_off_zero_drain_writes + composition tests.",
       "blocking": true
     },
     {
       "question_id": "B2B2Q14",
-      "question": "receipt classification: DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION category = ORDINARY or RESERVED? single completion receipt or split?",
-      "evidence": "PM §17 baseline: START/COMPLETE/CANCEL = ORDINARY; automatic phase_end/terminalization cancel = may use RESERVED batch. Mark expiration cascade not explicitly ratified.",
-      "options": [
-        "A. DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION = ORDINARY (individual event, not lifecycle).",
-        "B. DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION = RESERVED (attach to LAZY_MARK_EXPIRATION event batch)."
-      ],
-      "agent_recommendation": "Option A. Mark expiration cascade is per-Mark, not global lifecycle; keeps reserved capacity for phase-end/terminalization.",
+      "question": "Receipt classification with folding of lazy-expiration cancellation into triggering receipt?",
+      "evidence": "PM Message 170 verbatim: Option A + receipt folding ratified with conditions. Ordinary: START_DRAIN, COMPLETE_DRAIN, explicit CANCEL_DRAIN. Lazy Mark-expiration cancellation during Drain command: FOLDED INTO triggering ordinary event receipt. NO separate DRAIN_AUTO_CANCELLED_ON_MARK_EXPIRATION receipt. Lifecycle cancellation (phase_end / expedition_terminal): aggregate, 1 reserved receipt per batch. 512/504/8 preserved. No eviction.",
+      "options": ["A. Ordinary + folding + aggregate reserved", "B. Per-event receipts (no folding)"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A + folding + aggregate reserved",
       "affected_modules": ["app/stats/runtime/transitions/models.RESERVED_EVENT_TYPES","app/stats/runtime/transitions/state_machine.py"],
-      "state_impact": "Ordinary capacity consumption rate.",
+      "state_impact": "Ordinary consumption rate reduced (folding); reserved consumption at 1/batch.",
       "security_impact": "None.",
-      "test_impact": "test_ordinary_cap_saturation with drain events required.",
+      "test_impact": "test_receipt_folding_on_lazy_expiration + test_aggregate_reserved_on_phase_end.",
       "blocking": false
     },
     {
       "question_id": "B2B2Q15",
-      "question": "audit contract: 10 event ids sufficient OR add cdv_drain_bulk_cancelled for phase_end cascade?",
-      "evidence": "PM §18 baseline: 10 event ids listed. Phase_end cascade may emit N cancellations; single aggregate audit vs per-drain event?",
-      "options": [
-        "A. 10 event ids as listed (verbatim baseline); phase_end cascade emits N × cdv_drain_cancelled.",
-        "B. Add cdv_drain_bulk_cancelled aggregate event for phase_end cascade (11 total)."
-      ],
-      "agent_recommendation": "Option A (verbatim baseline). Individual cancellation events preserve traceability.",
+      "question": "Audit contract: 10 event ids + minimum fields?",
+      "evidence": "PM Message 170 verbatim: Option A ratified with conditions. 10 event ids (verbatim listed). Local sampling INFO/WARN/ERROR 100%. Min fields listed. Forbidden fields listed.",
+      "options": ["A. 10 event ids verbatim + min fields", "B. Aggregate cdv_drain_bulk_cancelled event (11 total)"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A (10 event ids + min fields)",
       "affected_modules": ["app/stats/runtime/wiring/coordinator.py","app/stats/runtime/wiring/audit.py"],
       "state_impact": "None.",
-      "security_impact": "None.",
+      "security_impact": "Forbidden fields whitelist enforced.",
       "test_impact": "Individual event assertions on cascade tests.",
       "blocking": false
     },
     {
       "question_id": "B2B2Q16",
-      "question": "first code-gate exact scope: full 3 events + atomic Fragment batch in single code gate OR sliced into 2 sub-gates?",
-      "evidence": "RT2-B-2B-1 single code gate delivered 37/37 FakeStore + 30/30 real-Mongo. Drain gate has more state complexity.",
-      "options": [
-        "A. Single code gate: START/COMPLETE/CANCEL + atomic Fragment batch + FakeStore tests. Real-Mongo V1 subordinate (analog to RT2-B-2B-1).",
-        "B. Two sub-gates: (1) START/CANCEL scaffolding; (2) COMPLETE + atomic Fragment batch."
-      ],
-      "agent_recommendation": "Option A (single gate, mirror RT2-B-2B-1). Coherence + reduced governance overhead.",
+      "question": "First code-gate exact scope: single code gate + V1 subordinate?",
+      "evidence": "PM Message 170 verbatim: Option A + subordinate V1 ratified with conditions. Code gate R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1. V1 subordinate RT2-B-2B-2-1-V1. V1 does not get autonomous baseline chain increment or closure. Scope in/out listed.",
+      "options": ["A. Single code gate + V1 subordinate (analog to RT2-B-2B-1)", "B. Two sub-gates"],
+      "agent_recommendation": "Option A",
+      "pm_verdict": "PM_RATIFIED_WITH_CONDITIONS · Option A · single code gate + V1 subordinate",
       "affected_modules": ["all transitions/ + wiring/coordinator.py + feature_flags.py + tests/"],
-      "state_impact": "One state_version schema uplift for DrainDoc field additions.",
-      "security_impact": "Larger single-gate blast radius; mitigated by feature flag OFF.",
+      "state_impact": "DrainDoc schema uplift (mark_id, cancellation_reason, drain_version) applied in single code gate.",
+      "security_impact": "Larger blast radius mitigated by flag OFF + test-user gate + allowlist.",
       "test_impact": "32+ FakeStore tests + 30+ real-Mongo V1 tests.",
       "blocking": true
     }
@@ -361,22 +436,13 @@
       "FS-P0-10_ITEM_OR_EFFECT_DEPENDENCY_REQUIRED": false
     }
   },
-  "deliverables_this_draft": [
+  "deliverables_this_patch": [
     "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_p0_drain_transition_readiness.md",
     "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_p0_drain_transition_readiness.json"
   ],
-  "deliverables_not_produced_by_design_p0_scope": [
-    "closure_manifest",
-    "final_closure_report",
-    "PRD append",
-    "baseline_chain_increment",
-    "code_changes",
-    "mongo_writes",
-    "feature_flag_activation"
-  ],
   "verdict": {
-    "phase_verdict": "READ-ONLY DRAFT COMPLETE · AWAITS PM ADJUDICATION",
-    "next_expected_step": "PM adjudication B2B2Q01..B2B2Q16 → formal closure P0 dispatch (baseline 15/15 → 16/16)",
+    "phase_verdict": "PATCH COMPLETE · 16/16 B2B2Q PM-ADJUDICATED VERBATIM · AWAITS FORMAL CLOSURE",
+    "next_expected_step": "PM formal closure dispatch → 3 closure artifacts + PRD append + baseline chain 15→16",
     "explicit_stop": true
   }
 }
