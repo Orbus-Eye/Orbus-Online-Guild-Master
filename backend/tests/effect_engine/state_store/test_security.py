@@ -51,7 +51,11 @@ def _make_state(exp_id: str = "exp-sec") -> ExpeditionRuntimeState:
 
 
 def _run(coro):
-    return asyncio.get_event_loop().run_until_complete(coro)
+    # RT2-B-2B-1-V1 fix: use `new_event_loop()` (matches `transitions/conftest.py`
+    # pattern). `get_event_loop()` raised `RuntimeError: There is no current event
+    # loop in thread 'MainThread'` on Python 3.11 after `asyncio.run()` calls in
+    # `integration_real_mongo/` fixtures consumed the default policy loop.
+    return asyncio.new_event_loop().run_until_complete(coro)
 
 
 # ═══════════════════════ 1. Event replay (idempotent) ═══════════════════════

@@ -37,6 +37,8 @@ from app.stats.runtime.state_store.models import (
     AdventurerClassState,
     EventReceipt,
     ExpeditionRuntimeState,
+    FragmentUsage as _FragmentUsage,
+    MarkDoc as _MarkDoc,
     RuntimeStatus,
     WriterLease,
 )
@@ -115,6 +117,51 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
         )
         for r in receipts_raw
     )
+    # RT2-B-2B-1-V1 · PM Message 153 §10: rehydrate adventurer_class_states
+    # dal dict-of-dicts Mongo. Necessario perché il dispatcher legge lo stato
+    # tra un event batch e il successivo (accumulated marks/fragments).
+    acs_raw = doc.get("adventurer_class_states", {}) or {}
+    adventurer_class_states: tuple = ()
+    if isinstance(acs_raw, dict):
+        entries = []
+        for aid, cs_dict in acs_raw.items():
+            if not isinstance(cs_dict, dict):
+                continue
+            marks_raw = cs_dict.get("active_marks", []) or []
+            active_marks = tuple(
+                _MarkDoc(
+                    mark_id=m.get("mark_id", ""),
+                    application_id=m.get("application_id", ""),
+                    source_adventurer_id=m.get("source_adventurer_id", ""),
+                    target_id=m.get("target_id", ""),
+                    created_at=m.get("created_at", ""),
+                    expires_at=m.get("expires_at", ""),
+                    ritual_close_used=bool(m.get("ritual_close_used", False)),
+                    mark_version=int(m.get("mark_version", 1)),
+                )
+                for m in marks_raw
+                if isinstance(m, dict)
+            )
+            focus_raw = cs_dict.get("focus_bonus_usage", []) or []
+            focus_usage = tuple(
+                _FragmentUsage(
+                    resource_segment_id=u.get("resource_segment_id", ""),
+                    focus_bonus_used=int(u.get("focus_bonus_used", 0)),
+                )
+                for u in focus_raw
+                if isinstance(u, dict)
+            )
+            drains_raw = cs_dict.get("active_drain_executions", []) or []
+            entries.append((aid, AdventurerClassState(
+                adventurer_id=cs_dict.get("adventurer_id", aid),
+                active_marks=active_marks,
+                active_drain_executions=tuple(drains_raw),
+                fragment_count=int(cs_dict.get("fragment_count", 0)),
+                resource_segment_id=cs_dict.get("resource_segment_id"),
+                focus_bonus_usage=focus_usage,
+                class_state_version=int(cs_dict.get("class_state_version", 0)),
+            )))
+        adventurer_class_states = tuple(entries)
     status_raw = doc.get("runtime_status", RuntimeStatus.ACTIVE.value)
     try:
         status = RuntimeStatus(status_raw)
@@ -130,7 +177,7 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
         owner_worker_or_lease_id=doc.get("owner_worker_or_lease_id"),
         lease=lease,
         loadout_snapshot_version=int(doc.get("loadout_snapshot_version", 0)),
-        adventurer_class_states=(),  # test-only path avoids re-hydrating adv states
+        adventurer_class_states=adventurer_class_states,
         processed_event_keys=receipts,
         last_event_sequence=int(doc.get("last_event_sequence", 0)),
         fencing_token=int(doc.get("fencing_token", 0)),
@@ -231,7 +278,11 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 "loadout_snapshot_version", "expires_at",
                 "last_event_sequence",
             ):
-                set_fields[k] = v
+                # RT2-B-2B-1-V1 · serialize dataclass tuple → BSON-friendly dict
+                if k == "adventurer_class_states" and isinstance(v, tuple):
+                    set_fields[k] = _serialize_class_states(v)
+                else:
+                    set_fields[k] = v
         update = {
             "$inc": {"state_version": 1},
             "$set": set_fields,
@@ -335,7 +386,11 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 "adventurer_class_states", "runtime_status",
                 "loadout_snapshot_version", "expires_at",
             ):
-                set_fields[k] = v
+                # RT2-B-2B-1-V1 · serialize dataclass tuple → BSON-friendly dict
+                if k == "adventurer_class_states" and isinstance(v, tuple):
+                    set_fields[k] = _serialize_class_states(v)
+                else:
+                    set_fields[k] = v
         # We use $inc for state_version and $push for the new receipt.
         # The new state_version_after is expected_state_version + 1.
         new_receipt = {
