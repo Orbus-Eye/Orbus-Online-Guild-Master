@@ -10,9 +10,9 @@ import pytest
 from app.stats.runtime import feature_flags
 
 
-def test_all_flags_still_six():
-    """T-2A-27: ALL_FLAGS conta esattamente 6 (invariante RT2-A/B/future)."""
-    assert len(feature_flags.ALL_FLAGS) == 6
+def test_all_flags_still_seven():
+    """T-2A-27 (updated RT2-B-2B-1): ALL_FLAGS conta esattamente 7 (RT2-A: 2, RT2-B: 2, future: 3)."""
+    assert len(feature_flags.ALL_FLAGS) == 7
 
 
 def test_rt2b_runtime_attivabile_contains_cdv():

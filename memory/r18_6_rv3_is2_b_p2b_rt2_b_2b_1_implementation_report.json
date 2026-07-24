@@ -1,0 +1,498 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1",
+  "canonical_name": "MARK & RESOURCE STATE TRANSITION FOUNDATION",
+  "status": "IMPLEMENTED · PM-CLOSURE-PENDING",
+  "regime": "CODE_IMPLEMENTATION · localhost isolated · default-OFF · test-user fail-closed",
+  "pm_adjudication_authority": "PM_MESSAGE_151",
+  "implementation_date_utc": "2026-02",
+  "scope_implemented": {
+    "mark": [
+      "APPLY_MARK",
+      "REFRESH_MARK",
+      "LAZY_MARK_EXPIRATION",
+      "OPPORTUNISTIC_MARK_CLEANUP",
+      "MARK_OWNERSHIP_VALIDATION",
+      "MARK_CAP_VALIDATION"
+    ],
+    "fragment": [
+      "GAIN_FRAGMENT (trusted-fixture only)",
+      "SPEND_FRAGMENT",
+      "RESET_FRAGMENTS",
+      "DISCARD_FRAGMENT_OVERFLOW"
+    ],
+    "resource_segment": [
+      "OPEN_RESOURCE_SEGMENT",
+      "CLOSE_RESOURCE_SEGMENT",
+      "AUTO_CLOSE_ON_ZERO",
+      "AUTO_CLOSE_ON_PHASE_END",
+      "AUTO_CLOSE_ON_EXPEDITION_TERMINAL"
+    ],
+    "phase_model": "SINGLE_EXPEDITION_PHASE_V1",
+    "event_entry_point": "ExpeditionRuntimeCoordinator.dispatch_class_state_event",
+    "lease_cas_retry": "short-lease per event batch · CAS inside lease · retry max 3 · no background renewer",
+    "receipt_policy": {
+      "total": 512,
+      "ordinary": 504,
+      "reserved": 8,
+      "eviction": "FORBIDDEN"
+    },
+    "feature_flag": {
+      "name": "cdv_class_transitions_enabled",
+      "default": "OFF",
+      "gate": "quadruple-composite"
+    },
+    "audit_events_min_11": [
+      "cdv_mark_applied",
+      "cdv_mark_refreshed",
+      "cdv_mark_expired",
+      "cdv_mark_rejected",
+      "cdv_fragment_gained",
+      "cdv_fragment_spent",
+      "cdv_fragment_reset",
+      "cdv_fragment_overflow_discarded",
+      "cdv_resource_segment_opened",
+      "cdv_resource_segment_closed",
+      "cdv_state_transition_conflict"
+    ]
+  },
+  "scope_excluded_verbatim": [
+    "Drain runtime transitions (deferred to RT2-B-2B-2)",
+    "damage/healing/XP/loot/guild XP",
+    "item effects/procs/cooldown",
+    "public API changes",
+    "frontend changes",
+    "shared environment",
+    "human tester activation"
+  ],
+  "modified_files": [
+    {
+      "path": "backend/app/stats/runtime/feature_flags.py",
+      "sha256": "ba27066a956d7e72ca31caca60411a87238930e50ec21e868f16d7549343d45d",
+      "lines_added": 7,
+      "lines_removed": 1
+    },
+    {
+      "path": "backend/app/stats/runtime/state_store/models.py",
+      "sha256": "f849fa87148c9b1e0b07ab5548b97d73f3c700eab4616786f454dc59452a183a",
+      "lines_added": 7,
+      "lines_removed": 1
+    },
+    {
+      "path": "backend/app/stats/runtime/wiring/audit.py",
+      "sha256": "7c344c49ba25b9489ce04a7f07505a11aa1362dd85fffccd760a551177b05469",
+      "lines_added": 18,
+      "lines_removed": 2
+    },
+    {
+      "path": "backend/app/stats/runtime/wiring/coordinator.py",
+      "sha256": "4ce05b28a480063090bf56e358b19b3e37924aaa0d3d385d7e3a94999b665164",
+      "lines_added": 169,
+      "lines_removed": 0
+    },
+    {
+      "path": "backend/tests/effect_engine/foundation/test_feature_flags.py",
+      "sha256": "dae77e3d6068a389c1a9d83e9200febd9edbfe71ef195c1df3c4c2b802e6327b",
+      "lines_added": 14,
+      "lines_removed": 8
+    },
+    {
+      "path": "backend/tests/effect_engine/wiring/test_response_invariance.py",
+      "sha256": "a530a7b602c08dd08369bfc829565699ef7ed7712222a9d1d7c9f9329ac1508c",
+      "lines_added": 3,
+      "lines_removed": 3
+    }
+  ],
+  "new_files": [
+    {
+      "path": "backend/app/stats/runtime/transitions/__init__.py",
+      "sha256": "899aa33a06647d39fc0335f4946ac9ff405c13f16c2e1c2e46e4bc21229ff863",
+      "size_bytes": 2579,
+      "lines": 89
+    },
+    {
+      "path": "backend/app/stats/runtime/transitions/models.py",
+      "sha256": "2150f08c02bd22f1d176d0a74a7cf1dcc7f1979a8b8ec6b4e8675a92f28c5aba",
+      "size_bytes": 9408,
+      "lines": 255
+    },
+    {
+      "path": "backend/app/stats/runtime/transitions/phase.py",
+      "sha256": "357493b021e1c56dba21176de3f170e2615ed4883b0feadeea90d7db578d034b",
+      "size_bytes": 3022,
+      "lines": 92
+    },
+    {
+      "path": "backend/app/stats/runtime/transitions/state_machine.py",
+      "sha256": "540173037c18491ca3b58a9e24e6b15e79b3ae7a05268a3af768aa53ac83afc5",
+      "size_bytes": 26192,
+      "lines": 720
+    },
+    {
+      "path": "backend/app/stats/runtime/transitions/dispatcher.py",
+      "sha256": "3ffb62f550f635e0daf863a2726388dbc90a408dbcf43c6a0813a49314549afe",
+      "size_bytes": 27564,
+      "lines": 642
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/__init__.py",
+      "sha256": "84c9c69410a38f8775c8c8d2564ed7153a577176a7a4e395d064fd66c7abef19",
+      "size_bytes": 644,
+      "lines": 12
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/conftest.py",
+      "sha256": "623cc693e6c298b92438cd7a2933cfb59eac83f43b388526d6d1054a0d614866",
+      "size_bytes": 4667,
+      "lines": 162
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/test_mark_transitions.py",
+      "sha256": "26ba35b0845c65a23d7a4ef618fc881f0a336b794306c2320208f8fca73fda2b",
+      "size_bytes": 7265,
+      "lines": 147
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/test_fragment_transitions.py",
+      "sha256": "564907c9bb086e1b9aa1eab53ddd129ddac90f55aba0b43b98205a2447c575f8",
+      "size_bytes": 5636,
+      "lines": 108
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/test_resource_segment.py",
+      "sha256": "c821d903264174ce1f12276c4379a24280090f0702e51e2be72577c9727f981c",
+      "size_bytes": 5819,
+      "lines": 119
+    },
+    {
+      "path": "backend/tests/effect_engine/transitions/test_atomicity_gating_invariance.py",
+      "sha256": "1007e52afde54586f07655f984989d31fad721c244e6018940b147a739301e1d",
+      "size_bytes": 12335,
+      "lines": 284
+    }
+  ],
+  "test_matrix_37": [
+    {
+      "item": 1,
+      "id": "item_01",
+      "status": "PASS"
+    },
+    {
+      "item": 2,
+      "id": "item_02",
+      "status": "PASS"
+    },
+    {
+      "item": 3,
+      "id": "item_03",
+      "status": "PASS"
+    },
+    {
+      "item": 4,
+      "id": "item_04",
+      "status": "PASS"
+    },
+    {
+      "item": 5,
+      "id": "item_05",
+      "status": "PASS"
+    },
+    {
+      "item": 6,
+      "id": "item_06",
+      "status": "PASS"
+    },
+    {
+      "item": 7,
+      "id": "item_07",
+      "status": "PASS"
+    },
+    {
+      "item": 8,
+      "id": "item_08",
+      "status": "PASS"
+    },
+    {
+      "item": 9,
+      "id": "item_09",
+      "status": "PASS"
+    },
+    {
+      "item": 10,
+      "id": "item_10",
+      "status": "PASS"
+    },
+    {
+      "item": 11,
+      "id": "item_11",
+      "status": "PASS"
+    },
+    {
+      "item": 12,
+      "id": "item_12",
+      "status": "PASS"
+    },
+    {
+      "item": 13,
+      "id": "item_13",
+      "status": "PASS"
+    },
+    {
+      "item": 14,
+      "id": "item_14",
+      "status": "PASS"
+    },
+    {
+      "item": 15,
+      "id": "item_15",
+      "status": "PASS"
+    },
+    {
+      "item": 16,
+      "id": "item_16",
+      "status": "PASS"
+    },
+    {
+      "item": 17,
+      "id": "item_17",
+      "status": "PASS"
+    },
+    {
+      "item": 18,
+      "id": "item_18",
+      "status": "PASS"
+    },
+    {
+      "item": 19,
+      "id": "item_19",
+      "status": "PASS"
+    },
+    {
+      "item": 20,
+      "id": "item_20",
+      "status": "PASS"
+    },
+    {
+      "item": 21,
+      "id": "item_21",
+      "status": "PASS"
+    },
+    {
+      "item": 22,
+      "id": "item_22",
+      "status": "PASS"
+    },
+    {
+      "item": 23,
+      "id": "item_23",
+      "status": "PASS"
+    },
+    {
+      "item": 24,
+      "id": "item_24",
+      "status": "PASS"
+    },
+    {
+      "item": 25,
+      "id": "item_25",
+      "status": "PASS"
+    },
+    {
+      "item": 26,
+      "id": "item_26",
+      "status": "PASS"
+    },
+    {
+      "item": 27,
+      "id": "item_27",
+      "status": "PASS"
+    },
+    {
+      "item": 28,
+      "id": "item_28",
+      "status": "PASS"
+    },
+    {
+      "item": 29,
+      "id": "item_29",
+      "status": "PASS"
+    },
+    {
+      "item": 30,
+      "id": "item_30",
+      "status": "PASS"
+    },
+    {
+      "item": 31,
+      "id": "item_31",
+      "status": "PASS"
+    },
+    {
+      "item": 32,
+      "id": "item_32",
+      "status": "PASS"
+    },
+    {
+      "item": 33,
+      "id": "item_33",
+      "status": "PASS"
+    },
+    {
+      "item": 34,
+      "id": "item_34",
+      "status": "PASS"
+    },
+    {
+      "item": 35,
+      "id": "item_35",
+      "status": "PASS"
+    },
+    {
+      "item": 36,
+      "id": "item_36",
+      "status": "PASS"
+    },
+    {
+      "item": 37,
+      "id": "item_37",
+      "status": "PASS"
+    }
+  ],
+  "test_summary": {
+    "transitions_suite": {
+      "passed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "xfail": 0
+    },
+    "effect_engine_full": {
+      "passed": 357,
+      "failed": 0,
+      "notes": "320 legacy + 37 new"
+    },
+    "sealed_integrity": {
+      "passed": 6,
+      "failed": 0,
+      "byte_identical": "36/36"
+    },
+    "combined_total": {
+      "passed": 363,
+      "failed": 0
+    }
+  },
+  "performance_p95_ms": {
+    "mark_batch": {
+      "target": 35.0,
+      "measured": 0.07,
+      "status": "PASS"
+    },
+    "fragment_batch": {
+      "target": 35.0,
+      "measured": 0.05,
+      "status": "PASS"
+    },
+    "resource_segment_batch": {
+      "target": 35.0,
+      "measured": 0.04,
+      "status": "PASS"
+    },
+    "dedup_retry": {
+      "target": 25.0,
+      "measured": 0.02,
+      "status": "PASS"
+    },
+    "flags_off_overhead": {
+      "target_max_pct_or_ms": "max(5%, 1ms)",
+      "measured_ms": 0.004,
+      "status": "PASS"
+    }
+  },
+  "state_document_size_at_cap": {
+    "receipts_populated": 512,
+    "size_bytes": 160959,
+    "size_kib": 157.19,
+    "budget_kib": 256,
+    "status": "PASS"
+  },
+  "feature_gating": {
+    "new_flag": "cdv_class_transitions_enabled",
+    "default": "OFF",
+    "verified_off_by_default": true,
+    "composite_gate": [
+      "cdv_transient_state_enabled=true",
+      "cdv_class_transitions_enabled=true",
+      "authenticated user.is_test_user=true",
+      "environment=localhost isolated",
+      "Mongo target=allowlisted"
+    ],
+    "test_user_boundary": "TEST_USER_BOUNDARY_VIOLATION on mismatch",
+    "db_allowlist": [
+      "orbus_r16_rt2b_test",
+      "orbus_r16_rt2b_it_<run_id>"
+    ],
+    "db_forbidden": [
+      "orbus_r16",
+      "orbus_r16_test",
+      "preview",
+      "staging",
+      "production"
+    ]
+  },
+  "audit": {
+    "event_ids": 11,
+    "sampling_localhost": {
+      "INFO": "100%",
+      "WARN": "100%",
+      "ERROR": "100%"
+    },
+    "not_recorded": [
+      "mongo_doc_full",
+      "payload_full",
+      "credentials",
+      "rng_seed",
+      "sensitive_data",
+      "reward_payload"
+    ]
+  },
+  "fail_stops": {
+    "total_active": 13,
+    "triggered": 0,
+    "count_status": "0/13"
+  },
+  "governance_invariants": {
+    "lore_meta_py_sha": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "rt2b2b_p0_manifest_sha": "4734761f337afe6b0385d4f780b15bb5319349fa486ffe99eda4f5c9997fcdd0",
+    "baseline_chain_length_pre": 14,
+    "baseline_chain_length_during_code_gate": 14,
+    "baseline_chain_status": "INVARIATA_DURANTE_CODE_GATE",
+    "sealed_integrity_tests_passed": 6,
+    "sealed_artifacts_byte_identical": "36/36",
+    "openapi_paths_total": 275,
+    "new_openapi_routes": 0,
+    "frontend_touches": 0,
+    "env_modifications": 0,
+    "mongo_writes_real": 0,
+    "feature_flag_activations": 0,
+    "registry_changes": 0,
+    "new_seal": false
+  },
+  "regressions": {
+    "effect_engine_legacy_passed": 320,
+    "effect_engine_legacy_regressions": 0,
+    "sealed_regressions": 0,
+    "openapi_shape_regressions": 0,
+    "flag_registry_regressions": 0
+  },
+  "next_gate_expected": {
+    "gate": "RT2-B-2B-1 FORMAL CLOSURE (via successive orchestrator dispatch)",
+    "not_created_in_this_dispatch": [
+      "closure_report",
+      "closure_manifest",
+      "prd_append"
+    ],
+    "hold_gates": [
+      "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION"
+    ]
+  },
+  "explicit_stop": true,
+  "orchestrator_dispatch_required_for_closure": true
+}

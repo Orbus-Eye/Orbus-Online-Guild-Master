@@ -196,8 +196,12 @@ class ExpeditionRuntimeState:
     last_event_sequence: int = 0
     fencing_token: int = 0  # writer's current fencing_token (0 if no writer)
 
-    # ── Bounded processed_event_keys ring (B0Q06) ───────────────────────
-    MAX_PROCESSED_EVENTS: int = 500
+    # ── Bounded processed_event_keys ring (B0Q06 · RT2-B-2B-1 PM verdict B2BQ14) ──
+    # RT2-B-2B-1 · PM Message 151 §9 verbatim: total receipt capacity = 512
+    # (504 ordinary + 8 reserved lifecycle/system). Application-level enforcement
+    # in transitions/state_machine.py distingue ordinary vs reserved. Il valore
+    # qui è il HARD CAP tecnico del ring bounded del store.
+    MAX_PROCESSED_EVENTS: int = 512
 
     def class_state_for(self, adventurer_id: str) -> Optional[AdventurerClassState]:
         """Read helper: ritorna lo stato classe per un avventuriero, o None."""

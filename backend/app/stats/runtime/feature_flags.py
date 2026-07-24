@@ -54,6 +54,12 @@ RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
 # isolata per shadow wiring RT2-B-2A.
 RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
     "cdv_transient_state_enabled",
+    # RT2-B-2B-1 · PM Message 151 B2BQ10 verbatim: nuovo flag dedicato per
+    # class-state transitions (Mark, Fragment, Resource Segment). Default OFF.
+    # Attivabile solo con quadruple-gate: transient=true AND class=true AND
+    # is_test_user=true AND environment=localhost isolated AND Mongo target
+    # allowlisted. In produzione l'env var non è settata → resta OFF.
+    "cdv_class_transitions_enabled",
 })
 
 RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
@@ -65,7 +71,7 @@ RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
 ALL_FLAGS: Final[frozenset[str]] = (
     RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
 )
-assert len(ALL_FLAGS) == 6, "RT2-A/B/future must expose exactly 6 flags total"
+assert len(ALL_FLAGS) == 7, "RT2-A/B/future must expose exactly 7 flags total"
 
 DEFAULT_VALUE: Final[bool] = False
 

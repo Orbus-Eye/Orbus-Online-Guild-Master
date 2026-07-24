@@ -29,22 +29,41 @@ from typing import Any, Optional
 logger = logging.getLogger("orbus.rt2_b_2a.wiring")
 
 
-# Whitelist campi consentiti nel payload audit (verbatim B2Q05).
+# Whitelist campi consentiti nel payload audit (verbatim B2Q05 + RT2-B-2B-1 extension).
 _ALLOWED_FIELDS: frozenset[str] = frozenset({
     "expedition_id",
     "adventurer_id",
+    "source_adventurer_id",
+    "target_id",
     "test_user_eligibility",
     "current_power",
     "candidate_power",
     "delta",
     "soft_cap_applied",
     "state_version",
+    "state_version_before",
+    "state_version_after",
     "fencing_token",
     "result_code",
     "duration_ms",
     "evaluation_hash",
     "test_user_id",
     "outcome",
+    # RT2-B-2B-1 class-transition additions (PM Message 151 §13)
+    "event_id",
+    "event_type",
+    "event_sequence",
+    "reason_code",
+    "mark_id",
+    "mark_application_id",
+    "resource_segment_id",
+    "fragment_count_after",
+    "active_marks_count_after",
+    "focus_bonus_used_after",
+    "overflow_discarded",
+    "retry_attempts",
+    "dedup_reference",
+    "phase_id",
 })
 
 # Blacklist esplicita — se rilevata, il record NON viene emesso (fail-closed).

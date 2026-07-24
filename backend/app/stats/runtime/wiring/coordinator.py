@@ -33,6 +33,15 @@ from app.stats.runtime.state_store import (
     ExpeditionRuntimeStateStore,
 )
 from app.stats.runtime.state_store.models import RuntimeStatus
+from app.stats.runtime.transitions.dispatcher import (
+    ClassTransitionDispatcher,
+    DispatchOutcome,
+)
+from app.stats.runtime.transitions.models import (
+    ClassStateEvent,
+    TransitionResult,
+    TransitionResultCode,
+)
 from app.stats.runtime.wiring.audit import (
     compute_evaluation_hash,
     emit_audit_event,
@@ -228,6 +237,166 @@ class ExpeditionRuntimeCoordinator:
             result["duration_ms"] = (time.monotonic() - t0) * 1000.0
             emit_audit_event("runtime_state_cleanup_deferred", result)
         return result
+
+    # ─── class-state event dispatch (RT2-B-2B-1 · PM §6-§13) ─────────────
+    async def dispatch_class_state_event(
+        self,
+        event: ClassStateEvent,
+        trusted_context: dict[str, Any],
+    ) -> DispatchOutcome:
+        """Dispatch di un class-state event (Mark / Fragment / Segment).
+
+        PM Message 151 verbatim (B2BQ02):
+        - Entry point interno backend, non esposto tramite route pubblica
+        - server-authoritative, gated PRIMA di qualsiasi DB access
+        - flag composite: cdv_transient_state_enabled AND cdv_class_transitions_enabled
+          AND user.is_test_user AND environment=localhost isolated AND
+          Mongo target allowlisted (`orbus_r16_rt2b_test` o `orbus_r16_rt2b_it_*`)
+
+        Args:
+            event: ClassStateEvent (client fields + payload_hash)
+            trusted_context: dict con `test_user_id`, `test_user_verified`,
+                `feature_enabled`, `phase_id`, `phase_ended`. Il flag
+                `db_allowlisted` viene forzato in base allo stato del coordinator.
+
+        Returns:
+            DispatchOutcome (never raises; failure isolation preservata).
+        """
+        t0 = time.monotonic()
+        outcome: DispatchOutcome
+        try:
+            # Enforce composite gate: db allowlist forzato server-side
+            ctx = dict(trusted_context)
+            ctx["db_allowlisted"] = self._db_allowlisted
+
+            dispatcher = ClassTransitionDispatcher(store=self._store)
+            outcome = await dispatcher.dispatch(event, trusted_context=ctx)
+
+            # Audit emission — mapping event_type → audit event id
+            audit_id = _class_event_audit_id(event.event_type, outcome.result.code)
+            emit_audit_event(
+                audit_id,
+                {
+                    "expedition_id": outcome.result.expedition_id,
+                    "source_adventurer_id": outcome.result.source_adventurer_id,
+                    "target_id": event.target_id,
+                    "event_id": outcome.result.event_id,
+                    "event_type": outcome.result.event_type,
+                    "event_sequence": outcome.result.assigned_event_sequence,
+                    "result_code": outcome.result.code.value,
+                    "state_version_before": outcome.result.state_version_before,
+                    "state_version_after": outcome.result.state_version_after,
+                    "duration_ms": outcome.result.duration_ms,
+                    "reason_code": outcome.result.reason_code,
+                    "mark_id": outcome.result.mark_id,
+                    "mark_application_id": outcome.result.mark_application_id,
+                    "resource_segment_id": outcome.result.resource_segment_id,
+                    "fragment_count_after": outcome.result.fragment_count_after,
+                    "active_marks_count_after": outcome.result.active_marks_count_after,
+                    "focus_bonus_used_after": outcome.result.focus_bonus_used_after,
+                    "overflow_discarded": outcome.result.overflow_discarded,
+                    "retry_attempts": outcome.result.retry_attempts,
+                    "dedup_reference": outcome.result.dedup_reference,
+                },
+            )
+            return outcome
+        except Exception as exc:  # noqa: BLE001
+            duration = (time.monotonic() - t0) * 1000.0
+            fallback = TransitionResult(
+                code=TransitionResultCode.NOT_FOUND,
+                event_id=event.event_id,
+                event_type=event.event_type,
+                expedition_id=event.expedition_id,
+                source_adventurer_id=event.source_adventurer_id,
+                duration_ms=duration,
+                reason_code="STORE_INFRA_ERROR",
+            )
+            emit_audit_event(
+                "cdv_state_transition_conflict",
+                {
+                    "expedition_id": event.expedition_id,
+                    "source_adventurer_id": event.source_adventurer_id,
+                    "event_id": event.event_id,
+                    "event_type": event.event_type,
+                    "result_code": "STORE_INFRA_ERROR",
+                    "duration_ms": duration,
+                },
+            )
+            return DispatchOutcome(
+                result=fallback,
+                lease_acquired=False,
+                total_duration_ms=duration,
+            )
+
+
+# ═══════════════════════ Audit event id mapping (11 event ids, PM §13) ═══════════════════════
+def _class_event_audit_id(event_type: str, result_code) -> str:
+    """Mappa (event_type, result_code) → audit event id (11 canonici + conflict).
+
+    PM Message 151 §13 verbatim.
+    """
+    code = getattr(result_code, "value", str(result_code))
+
+    # Conflict/rejection audit id
+    conflict_codes = {
+        "STATE_VERSION_CONFLICT",
+        "STALE_WRITER_REJECTED",
+        "EVENT_ID_PAYLOAD_MISMATCH",
+        "CAS_WITHOUT_VALID_LEASE",
+        "RETRY_CEILING_EXCEEDED",
+        "RECEIPT_CAP_REACHED",
+        "RESERVED_CAPACITY_EXHAUSTED",
+        "STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED",
+        "EVENT_POST_TERMINAL_REJECTED",
+    }
+    if code in conflict_codes:
+        return "cdv_state_transition_conflict"
+
+    rejected_codes = {
+        "MARK_ALREADY_ACTIVE_FOR_PAIR",
+        "MARK_CAP_EXCEEDED",
+        "MARK_EXPIRED",
+        "MARK_NOT_FOUND",
+        "FRAGMENT_CAP_REACHED",
+        "FRAGMENT_INSUFFICIENT",
+        "FRAGMENT_INVALID_AMOUNT",
+        "FRAGMENT_GAIN_UNAUTHORIZED",
+        "OWNERSHIP_INVALID",
+        "TARGET_INVALID",
+        "SOURCE_INVALID",
+        "SEGMENT_NOT_OPEN",
+        "FOCUS_BONUS_CAP_EXCEEDED",
+        "PHASE_ENDED",
+    }
+    if code == "FRAGMENT_OVERFLOW_DISCARDED":
+        return "cdv_fragment_overflow_discarded"
+    if code in rejected_codes:
+        return "cdv_mark_rejected"
+
+    if event_type == "APPLY_MARK":
+        return "cdv_mark_applied"
+    if event_type == "REFRESH_MARK":
+        return "cdv_mark_refreshed"
+    if event_type in ("LAZY_MARK_EXPIRATION", "OPPORTUNISTIC_MARK_CLEANUP"):
+        return "cdv_mark_expired"
+    if event_type == "GAIN_FRAGMENT":
+        return "cdv_fragment_gained"
+    if event_type == "SPEND_FRAGMENT":
+        return "cdv_fragment_spent"
+    if event_type == "RESET_FRAGMENTS":
+        return "cdv_fragment_reset"
+    if event_type == "DISCARD_FRAGMENT_OVERFLOW":
+        return "cdv_fragment_overflow_discarded"
+    if event_type in ("OPEN_RESOURCE_SEGMENT",):
+        return "cdv_resource_segment_opened"
+    if event_type in (
+        "CLOSE_RESOURCE_SEGMENT",
+        "AUTO_CLOSE_ON_ZERO",
+        "AUTO_CLOSE_ON_PHASE_END",
+        "AUTO_CLOSE_ON_EXPEDITION_TERMINAL",
+    ):
+        return "cdv_resource_segment_closed"
+    return "cdv_state_transition_conflict"
 
 
 __all__ = [
