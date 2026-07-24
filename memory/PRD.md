@@ -4540,3 +4540,51 @@ Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION` �
 - PRD delta P0: 1 (this append · idempotent occurrence = 1)
 
 **RT2-B-2B-P0 CLOSED · PM-LOCKED · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-1 code gate.**
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION · IMPLEMENTED / REAL-MONGO VERIFIED / CLOSED
+
+**PM authority**: Message 165 (formal closure ratification) · V1 subordinata (no standalone closure/PRD/baseline).
+**Regime**: localhost isolated · default-OFF · test-user fail-closed · no shared-env · no human tester · no public API change · no frontend.
+**Baseline chain**: pre 14/14 → post **15/15** (unico incremento da parent, V1 non incrementa separatamente).
+
+### CODE IMPLEMENTATION (17 file)
+- **Module `backend/app/stats/runtime/transitions/` (5 file nuovi)**: `__init__.py`, `models.py`, `phase.py`, `state_machine.py`, `dispatcher.py` · pure state machine + gated dispatcher (quadruple gate composito).
+- **Modified 6 file**: `feature_flags.py` (nuovo flag `cdv_class_transitions_enabled` default OFF · count 7), `state_store/models.py` (`MAX_PROCESSED_EVENTS` 500→512), `wiring/audit.py` (whitelist audit fields), `wiring/coordinator.py` (`dispatch_class_state_event` hook · audit event id map 11), `tests/foundation/test_feature_flags.py`, `tests/wiring/test_response_invariance.py`.
+- **New FakeStore tests (5 file, 37 casi)**: Mark 8 · Fragment 8 · Segment 7 · Atomicity/Gating/Invariance 14 · `test_atomicity_gating_invariance.py`.
+- **Invariants ratificati**: Mark cap 5/source · one-per-pair · TTL 10s · lazy expiration authoritative server time · no auto-eviction · opportunistic cleanup. Fragment cap 5 · overflow discarded · gain trusted-fixture only. Resource segment auto-open/close on 0/phase_end/expedition_terminal · focus_bonus ≤2 per segment.
+- **Lease/CAS**: short lease 30s per event batch · fencing monotonic on release+new_acquire · CAS 8-step atomic · retry max 3 · no partial mutation.
+- **Receipts**: 512 total = 504 ordinary + 8 reserved · no eviction · retention = state lifetime · fail-closed at cap.
+- **Audit**: 11 canonical event ids + `cdv_state_transition_conflict` (rejection routing) · sampling INFO/WARN/ERROR 100% LOCAL ISOLATED ONLY.
+- **Public API changes = 0** · Frontend touches = 0 · Feature flag activation = 0 · Mongo writes = 0 · `.env` changes = 0 · Registry changes = 0.
+- **Drain runtime**: NOT IMPLEMENTED (deferred a `RT2-B-2B-2`).
+
+### V1 REAL-MONGO VERIFICATION (30/30 real-Mongo · 3 file test patched · deterministic event-loop fix)
+- **New V1 tests (4 file)**: `tests/effect_engine/transitions/integration_real_mongo/` · `__init__.py`, `conftest.py`, `test_transitions_real_mongo.py` (30 item matrix), `test_atomicity_bson_perf_gating.py` (3 concurrency + 1 BSON + 1 perf + 4 gating).
+- **V1 production adapter patch**: `mongo_adapter.py` BSON serialization dell'`AdventurerClassState` dataclass (documentata in implementation report parent · unica modifica produzione V1).
+- **V1 test-layer patch (3 file)**: `_run()` helper — `asyncio.get_event_loop()` → `asyncio.new_event_loop()` in `test_mongo_adapter_unit.py`, `test_contract_shared.py`, `test_security.py`. Change reason: `PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX`. Failure category: `TEST_HARNESS_EVENT_LOOP_LIFECYCLE`. Pattern conforme a `transitions/conftest.py:28`.
+- **BSON size @ receipt cap 512**: **162 563 byte** (158.75 KiB) · target < 256 KiB · margine 37.98%.
+- **MongoStore p95** (integration, separata da FakeStore): Mark 2.34 ms · Fragment 2.44 ms · Segment 2.57 ms · Dedup 1.72 ms · Flags-OFF 0.009 ms · TUTTI ≤ target 35/25/1 ms.
+- **Feature gating adapter reale (4 casi PASS)**: flag OFF · non-test-user (`TEST_USER_BOUNDARY_VIOLATION`) · invalid ctx (empty) · non-allowlisted DB (`DB_NOT_ALLOWLISTED`).
+- **Allowlist correction (V1)**: initial proposed `orbus_r18_6_rt2b_test` = **REJECTED BEFORE USE** · writes to rejected = 0 · classification `ALLOWLIST_GUARD_PREVENTED_SCOPE_VIOLATION`. DB effettivamente usato: `orbus_r16_rt2b_it_<unique_run_id>`.
+- **Residual DBs = 0** · Network fuori localhost = 0.
+- **Deterministic failures = 1 · Production defects = 0 · Design deviations = 0**.
+
+### Governance Verification
+- **Governance suite**: `396 PASS serial + 396 PASS xdist + 6 sealed PASS` (NON dichiarare 792 combined-unique · PM §14).
+- **Sealed integrity**: 36/36 byte-identical (19 pre + 11 R18.4 + 6 followup).
+- **`lore_meta.py` invariant SHA**: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` (INVARIANT).
+- **OpenAPI paths**: 275 (invariant · 0 new routes).
+- **Frontend / `.env` / Registry / Mongo provisioning changes**: 0.
+- **Fail-stop count**: **0 / 18**.
+- **HOLD attivi**: `RT2-B-2B-2` (DRAIN TRANSITION FOUNDATION) · Human tester activation NOT AUTHORIZED · Shared-environment rollout requires separate PM sign-off · Feature flag activation 0.
+
+### Deliverable prodotti
+- Implementation report MD/JSON (parent · CODE phase)
+- Real-Mongo verification addendum MD/JSON (V1 subordinato)
+- Final closure report MD/JSON (this closure)
+- Closure manifest JSON (external own SHA per PM §31)
+- PRD append (idempotent · occurrence count = 1)
+
+**RT2-B-2B-1 CLOSED · PM-LOCKED · V1 INCORPORATED AS PARENT EVIDENCE · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-2-P0.**

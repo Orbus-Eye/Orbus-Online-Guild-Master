@@ -1,0 +1,256 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1",
+  "canonical_name": "MARK & RESOURCE STATE TRANSITION FOUNDATION",
+  "status": "CLOSED · PM-LOCKED",
+  "closure_date_utc": "2026-02",
+  "pm_authority_message": 165,
+  "regime": {
+    "kind": "code_gate_formal_closure",
+    "network_scope": "localhost_isolated",
+    "feature_flag_default": "OFF",
+    "test_user_fail_closed": true,
+    "shared_env_activation": "NOT_AUTHORIZED",
+    "human_tester_activation": "NOT_AUTHORIZED",
+    "public_api_frontend_env_change": 0
+  },
+  "v1_subordinate": {
+    "v1_gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1-V1",
+    "v1_status": "REAL-MONGO VERIFIED · INCORPORATED AS PARENT EVIDENCE",
+    "v1_standalone_closure_artifact": false,
+    "v1_standalone_prd_entry": false,
+    "v1_baseline_chain_increment": false
+  },
+  "baseline_chain": {
+    "pre_closure": 14,
+    "post_closure": 15,
+    "increment": 1,
+    "new_element": "RT2-B-2B-1",
+    "v1_separate_increment": false
+  },
+  "canonical_36_points": {
+    "01_pm_ratification": "Message 165 vincolante",
+    "02_parent_gate_closed": true,
+    "03_v1_incorporated_as_verification_evidence": true,
+    "04_code_and_test_files_count": {"new_code_gate": 11, "modified_code_gate": 6, "new_v1_real_mongo_tests": 4, "v1_adapter_production_patch": 1, "v1_test_layer_patches": 3},
+    "05_seventeen_initial_touched_files": 17,
+    "06_additional_test_layer_patches_v1": 3,
+    "07_transition_matrix_37_of_37": {"passed": 37, "target": 37},
+    "08_real_mongo_matrix_30_of_30": {"passed": 30, "target": 30},
+    "09_serial_suite_396_of_396": {"passed": 396, "warnings_benign": 1, "duration_s": 3.76},
+    "10_xdist_suite_396_of_396": {"passed": 396, "warnings_benign": 1, "duration_s": 2.91},
+    "11_sealed_integrity_6_of_6": {"passed": 6, "byte_identical_artifacts_36_of_36": true},
+    "12_mark_invariants": {
+      "cap_per_source": 5,
+      "one_per_pair": true,
+      "ttl_seconds": 10,
+      "expiration_authority": "lazy_validation_using_authoritative_server_time",
+      "auto_eviction": false,
+      "opportunistic_cleanup": true
+    },
+    "13_fragment_invariants": {
+      "cap": 5,
+      "overflow": "discarded_diagnostic_only",
+      "partial_credit": false,
+      "negative_allowed": false,
+      "gain_source": "trusted_fixture_drain_receipt_only"
+    },
+    "14_resource_segment_invariants": {
+      "auto_open_on_positive_from_zero": true,
+      "auto_close_on_zero_balance": true,
+      "auto_close_on_phase_end_reset": true,
+      "auto_close_on_expedition_terminal_reset": true,
+      "explicit_close_reason_code": "EXPLICIT_SERVER_CANCEL",
+      "focus_bonus_cap_per_segment": 2
+    },
+    "15_lease_fencing_cas_contract": {
+      "lease_ttl_seconds": 30,
+      "fencing_token_monotonic_on_release_new_acquire": true,
+      "cas_atomic_batch_steps": 8,
+      "retry_max_attempts": 3,
+      "partial_mutation_allowed": false
+    },
+    "16_concurrency_winner_only_3_cases": {
+      "mark_apply_single_winner": "PASS",
+      "fragment_spend_single_winner": "PASS",
+      "phase_reset_single_winner": "PASS"
+    },
+    "17_receipt_capacity_512_504_8": {
+      "total_cap": 512,
+      "ordinary_cap": 504,
+      "reserved_cap": 8,
+      "state_store_MAX_PROCESSED_EVENTS": 512
+    },
+    "18_no_receipt_eviction": {
+      "eviction_policy": "FAIL_CLOSED",
+      "ordinary_saturation_code": "RECEIPT_CAP_REACHED",
+      "reserved_saturation_code": "RESERVED_CAPACITY_EXHAUSTED",
+      "retention": "state_lifetime",
+      "rolling_eviction_forbidden": true
+    },
+    "19_bson_size_at_cap_512": {
+      "bytes": 162563,
+      "kib": 158.75,
+      "budget_kib": 256.0,
+      "margin_pct": 37.98,
+      "measured_via": "bson.encode(post_write_find_one) on localhost mongod"
+    },
+    "20_fakestore_metrics_unit_level": {"transition_tests_pass": 37, "network": 0, "db": 0},
+    "21_mongostore_metrics_integration_level_p95_ms": {
+      "APPLY_MARK":            {"mean_ms": 2.021, "p95_ms": 2.337, "target_ms": 35.0, "verdict": "PASS"},
+      "GAIN_FRAGMENT":         {"mean_ms": 2.034, "p95_ms": 2.437, "target_ms": 35.0, "verdict": "PASS"},
+      "CLOSE_RESOURCE_SEGMENT":{"mean_ms": 2.078, "p95_ms": 2.569, "target_ms": 35.0, "verdict": "PASS"},
+      "DEDUP_REPLAY":          {"mean_ms": 1.357, "p95_ms": 1.721, "target_ms": 25.0, "verdict": "PASS"},
+      "FLAGS_OFF_SHORTCIRCUIT":{"mean_ms": 0.008, "p95_ms": 0.009, "target_ms": 1.0,  "verdict": "PASS"}
+    },
+    "22_feature_flag_default_off": {"flag": "cdv_class_transitions_enabled", "default": false, "prod_activation_count": 0},
+    "23_test_user_fail_closed": {"gate_result_code_when_unverified": "TEST_USER_BOUNDARY_VIOLATION", "writes_when_failed": 0},
+    "24_allowlist_compliance": {
+      "uri": "mongodb://localhost:27017",
+      "allowlist": ["orbus_r16_rt2b_test", "orbus_r16_rt2b_it_<unique_run_id>"],
+      "non_allowlisted_writes": 0,
+      "residual_databases": 0,
+      "parallel_isolation": "per-fixture unique_run_id (uuid4-based)"
+    },
+    "25_rejected_db_proposal": {
+      "initial_proposed": "orbus_r18_6_rt2b_test",
+      "authorization_status": "REJECTED_BEFORE_USE",
+      "writes_to_rejected": 0,
+      "classification": "ALLOWLIST_GUARD_PREVENTED_SCOPE_VIOLATION"
+    },
+    "26_residual_databases_zero": true,
+    "27_event_loop_test_patch_3_files": {
+      "change_phase": "V1",
+      "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX",
+      "pattern": "asyncio.get_event_loop().run_until_complete(coro) -> asyncio.new_event_loop().run_until_complete(coro)",
+      "aligned_to": "tests/effect_engine/transitions/conftest.py:28 (run())"
+    },
+    "28_production_code_unchanged_during_v1": {
+      "files_verified_identical": [
+        "app/stats/runtime/transitions/state_machine.py",
+        "app/stats/runtime/transitions/dispatcher.py",
+        "app/stats/runtime/transitions/phase.py",
+        "app/stats/runtime/transitions/models.py",
+        "app/stats/runtime/transitions/__init__.py",
+        "app/stats/runtime/wiring/coordinator.py",
+        "app/stats/runtime/wiring/audit.py",
+        "app/stats/runtime/wiring/__init__.py",
+        "app/stats/runtime/wiring/shadow_hooks.py",
+        "app/stats/runtime/feature_flags.py",
+        "app/stats/runtime/state_store/models.py",
+        "app/content/lore_meta.py"
+      ],
+      "adapter_patch_note": "mongo_adapter.py BSON serialization patch registrata in implementation report parent (fase CODE) · invariata durante V1"
+    },
+    "29_no_drain_runtime": {
+      "grep_result": "0 occurrences of DRAIN_APPLY|def.*drain|DrainTransition in transitions/",
+      "deferred_to": "RT2-B-2B-2"
+    },
+    "30_no_gameplay_reward": true,
+    "31_no_public_api_frontend_change": {
+      "openapi_paths_pre": 275,
+      "openapi_paths_post": 275,
+      "new_routes": 0,
+      "frontend_touches": 0,
+      "env_changes": 0
+    },
+    "32_kill_switch": {
+      "condition": "cdv_class_transitions_enabled = false",
+      "effect": {"db_calls": 0, "audit_events": 0, "mutations": 0},
+      "verifying_test": "test_gating_01_flag_off_zero_mongo_writes"
+    },
+    "33_shared_environment_sign_off_required": true,
+    "34_human_tester_activation_not_authorized": true,
+    "35_governance_evidence": {
+      "lore_meta_invariant": "PASS",
+      "sealed_integrity": "36/36 byte-identical",
+      "baseline_chain_increment_authorized": "14->15",
+      "openapi_drift": 0,
+      "env_drift": 0,
+      "non_allowlisted_writes": 0,
+      "residual_dbs": 0,
+      "fail_stops_issued": "0/18"
+    },
+    "36_explicit_stop": true
+  },
+  "governance_final": {
+    "serial_suite":   {"cmd": "pytest tests/effect_engine/ -n 0",                          "passed": 396, "failed": 0, "warnings": 1, "duration_s": 3.76},
+    "xdist_suite":    {"cmd": "pytest tests/effect_engine/ (addopts -n 2 --dist loadscope)","passed": 396, "failed": 0, "warnings": 1, "duration_s": 2.91},
+    "sealed_suite":   {"cmd": "pytest tests/backend_r18_4_sealed_integrity_test.py",        "passed": 6,   "failed": 0, "duration_s": 0.36, "byte_identical_36_of_36": true},
+    "authorized_summary_string": "396 PASS serial + 396 PASS xdist + 6 sealed PASS",
+    "not_authorized_summary": "combined unique test count = 792 (FORBIDDEN per PM §14)"
+  },
+  "fail_stop_status_18": {
+    "issued": 0,
+    "by_id": {
+      "FS-01_PROD_DRIFT_V1": false,
+      "FS-02_MARK_INVARIANT": false,
+      "FS-03_FRAGMENT_INVARIANT": false,
+      "FS-04_SEGMENT_INVARIANT": false,
+      "FS-05_LEASE_FENCING_BYPASS": false,
+      "FS-06_CAS_PARTIAL_MUTATION": false,
+      "FS-07_RECEIPT_EVICTION_OBSERVED": false,
+      "FS-08_BSON_SIZE_BUDGET_EXCEEDED": false,
+      "FS-09_FEATURE_GATE_BYPASS": false,
+      "FS-10_TEST_USER_BYPASS": false,
+      "FS-11_ALLOWLIST_VIOLATION": false,
+      "FS-12_RESIDUAL_DATABASE": false,
+      "FS-13_DRAIN_RUNTIME_IMPLEMENTED": false,
+      "FS-14_RESPONSE_DRIFT": false,
+      "FS-15_REWARD_DRIFT": false,
+      "FS-16_PUBLIC_API_DRIFT": false,
+      "FS-17_FRONTEND_DRIFT": false,
+      "FS-18_TEST_REGRESSION": false
+    }
+  },
+  "normalizations_step4": {
+    "audit_sampling": "INFO 100% / WARN 100% / ERROR 100% · LOCAL ISOLATED ONLY",
+    "mark_expiration_authority": "lazy_validation_using_authoritative_server_time",
+    "background_mark_scheduler": "NOT_IMPLEMENTED",
+    "embedded_receipt_ttl": "NOT_IMPLEMENTED",
+    "receipt_retention": "state_lifetime",
+    "rolling_receipt_eviction": "FORBIDDEN",
+    "shared_environment_rollout": "requires_separate_pm_sign_off",
+    "human_tester_activation": "NOT_AUTHORIZED",
+    "kill_switch": "cdv_class_transitions_enabled=false -> no transition DB calls · no transition audit events · no transition mutation"
+  },
+  "v1_classification_step5": {
+    "deterministic_failures_discovered": 1,
+    "failure_category": "TEST_HARNESS_EVENT_LOOP_LIFECYCLE",
+    "production_defects_discovered": 0,
+    "design_deviations": 0,
+    "test_files_patched": 3,
+    "per_file": [
+      {"path": "backend/tests/effect_engine/state_store/test_mongo_adapter_unit.py", "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "02002d79bc6ad44a7a20db6b16469defed37a36bc33ded0aec250e1cb5765cf6", "lines_added": 5, "lines_removed": 1, "change_phase": "V1", "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"},
+      {"path": "backend/tests/effect_engine/state_store/test_contract_shared.py",   "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "7e1dabc7839f9e549746bca93e053777b93668f08c06b07f7b9c8c6ca7e0238e", "lines_added": 5, "lines_removed": 1, "change_phase": "V1", "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"},
+      {"path": "backend/tests/effect_engine/state_store/test_security.py",          "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "8d2c9349b466c75be33a3569a7d4e07d27e921b2d1745b845349049fefe073a6", "lines_added": 5, "lines_removed": 1, "change_phase": "V1", "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"}
+    ],
+    "allowlist_correction": {
+      "initial_proposed_database": "orbus_r18_6_rt2b_test",
+      "authorization_status": "REJECTED_BEFORE_USE",
+      "writes_to_rejected_database": 0,
+      "writes_to_orbus_r16": 0,
+      "writes_to_orbus_r16_test": 0,
+      "writes_outside_allowlist": 0,
+      "residual_integration_databases": 0,
+      "classification": "ALLOWLIST_GUARD_PREVENTED_SCOPE_VIOLATION"
+    }
+  },
+  "deliverables_this_closure": {
+    "final_closure_report_md":   "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_final_closure_report.md",
+    "final_closure_report_json": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_final_closure_report.json",
+    "closure_manifest":          "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_closure_manifest.json",
+    "manifest_own_sha_policy":   "NOT_EMBEDDED (external §31 · communicated only in chat report)",
+    "prd_append":                "/app/memory/PRD.md (idempotent occurrence = 1)"
+  },
+  "verdict": {
+    "phase_verdict": "RT2-B-2B-1 CLOSED · PM-LOCKED",
+    "recommendation": "RT2-B-2B-2-P0 READY-TO-DISPATCH (DOCUMENTAL) — awaits explicit orchestrator dispatch",
+    "explicit_stop": true
+  },
+  "holds_active": [
+    "RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION (planned)",
+    "Human tester activation (NOT AUTHORIZED)",
+    "Shared-environment rollout (separate PM sign-off required)",
+    "Feature flag activation (cdv_class_transitions_enabled remains OFF)"
+  ]
+}

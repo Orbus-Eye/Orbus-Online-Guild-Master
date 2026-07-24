@@ -1,0 +1,94 @@
+{
+  "manifest_gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1",
+  "manifest_canonical_name": "MARK & RESOURCE STATE TRANSITION FOUNDATION · FINAL CLOSURE MANIFEST",
+  "manifest_status": "CLOSED · PM-LOCKED",
+  "manifest_created_utc": "2026-02",
+  "pm_authority_message": 165,
+  "manifest_own_sha256_policy": "NOT_EMBEDDED · external (chat-report-only) per PM §31",
+  "baseline_chain": {
+    "pre_closure_length": 14,
+    "post_closure_length": 15,
+    "increment_authorized": true,
+    "new_element_id": "RT2-B-2B-1",
+    "v1_separate_increment": false
+  },
+  "records": {
+    "code_gate_new_files_11": [
+      {"path": "backend/app/stats/runtime/transitions/__init__.py",                              "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "899aa33a06647d39fc0335f4946ac9ff405c13f16c2e1c2e46e4bc21229ff863", "lines_added": 89,  "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "TRANSITIONS_MODULE_INIT"},
+      {"path": "backend/app/stats/runtime/transitions/models.py",                                 "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "2150f08c02bd22f1d176d0a74a7cf1dcc7f1979a8b8ec6b4e8675a92f28c5aba", "lines_added": 255, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "CLASS_EVENT_MODELS_TRUSTED_RECEIPT"},
+      {"path": "backend/app/stats/runtime/transitions/phase.py",                                  "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "357493b021e1c56dba21176de3f170e2615ed4883b0feadeea90d7db578d034b", "lines_added": 92,  "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "PHASE_RESET_TERMINAL_TRANSITIONS"},
+      {"path": "backend/app/stats/runtime/transitions/state_machine.py",                          "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "540173037c18491ca3b58a9e24e6b15e79b3ae7a05268a3af768aa53ac83afc5", "lines_added": 720, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "MARK_FRAGMENT_SEGMENT_PURE_STATE_MACHINE"},
+      {"path": "backend/app/stats/runtime/transitions/dispatcher.py",                             "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "3ffb62f550f635e0daf863a2726388dbc90a408dbcf43c6a0813a49314549afe", "lines_added": 642, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "CLASS_EVENT_DISPATCHER_GATED"},
+      {"path": "backend/tests/effect_engine/transitions/__init__.py",                             "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "84c9c69410a38f8775c8c8d2564ed7153a577176a7a4e395d064fd66c7abef19", "lines_added": 12,  "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "TEST_PACKAGE_MARKER"},
+      {"path": "backend/tests/effect_engine/transitions/conftest.py",                             "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "623cc693e6c298b92438cd7a2933cfb59eac83f43b388526d6d1054a0d614866", "lines_added": 162, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "FAKE_STORE_CONFTEST_FIXTURES"},
+      {"path": "backend/tests/effect_engine/transitions/test_mark_transitions.py",                "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "26ba35b0845c65a23d7a4ef618fc881f0a336b794306c2320208f8fca73fda2b", "lines_added": 147, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "MARK_TRANSITION_TESTS_8_CASES"},
+      {"path": "backend/tests/effect_engine/transitions/test_fragment_transitions.py",            "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "564907c9bb086e1b9aa1eab53ddd129ddac90f55aba0b43b98205a2447c575f8", "lines_added": 108, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "FRAGMENT_TRANSITION_TESTS_8_CASES"},
+      {"path": "backend/tests/effect_engine/transitions/test_resource_segment.py",                "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "c821d903264174ce1f12276c4379a24280090f0702e51e2be72577c9727f981c", "lines_added": 119, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "SEGMENT_TRANSITION_TESTS_7_CASES"},
+      {"path": "backend/tests/effect_engine/transitions/test_atomicity_gating_invariance.py",     "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "1007e52afde54586f07655f984989d31fad721c244e6018940b147a739301e1d", "lines_added": 284, "lines_removed": 0, "change_phase": ["CODE"], "change_reason": "ATOMICITY_GATING_INVARIANCE_14_CASES"}
+    ],
+    "code_gate_modified_files_6": [
+      {"path": "backend/app/stats/runtime/feature_flags.py",                              "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "ba27066a956d7e72ca31caca60411a87238930e50ec21e868f16d7549343d45d", "lines_added": 7,  "lines_removed": 1, "change_phase": ["CODE"], "change_reason": "ADD_FLAG_CDV_CLASS_TRANSITIONS_ENABLED_DEFAULT_OFF"},
+      {"path": "backend/app/stats/runtime/state_store/models.py",                         "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "f849fa87148c9b1e0b07ab5548b97d73f3c700eab4616786f454dc59452a183a", "lines_added": 7,  "lines_removed": 1, "change_phase": ["CODE"], "change_reason": "MAX_PROCESSED_EVENTS_500_TO_512_504_ORDINARY_8_RESERVED"},
+      {"path": "backend/app/stats/runtime/wiring/audit.py",                               "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "7c344c49ba25b9489ce04a7f07505a11aa1362dd85fffccd760a551177b05469", "lines_added": 18, "lines_removed": 2, "change_phase": ["CODE"], "change_reason": "AUDIT_FIELDS_WHITELIST_EXTENSION_TRANSITIONS"},
+      {"path": "backend/app/stats/runtime/wiring/coordinator.py",                         "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "4ce05b28a480063090bf56e358b19b3e37924aaa0d3d385d7e3a94999b665164", "lines_added": 169,"lines_removed": 0, "change_phase": ["CODE"], "change_reason": "DISPATCH_CLASS_STATE_EVENT_HOOK_AND_AUDIT_ID_MAP_11"},
+      {"path": "backend/tests/effect_engine/foundation/test_feature_flags.py",            "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "dae77e3d6068a389c1a9d83e9200febd9edbfe71ef195c1df3c4c2b802e6327b", "lines_added": 14, "lines_removed": 8, "change_phase": ["CODE"], "change_reason": "FEATURE_FLAG_COUNT_7_AND_RT2B_TWO_FLAG_ASSERTIONS"},
+      {"path": "backend/tests/effect_engine/wiring/test_response_invariance.py",          "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_LEGACY", "post_change_sha256": "a530a7b602c08dd08369bfc829565699ef7ed7712222a9d1d7c9f9329ac1508c", "lines_added": 3,  "lines_removed": 3, "change_phase": ["CODE"], "change_reason": "FEATURE_FLAG_COUNT_7_ASSERTION"}
+    ],
+    "v1_real_mongo_test_files_new_4": [
+      {"path": "backend/tests/effect_engine/transitions/integration_real_mongo/__init__.py",                          "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "2c649cb5c25e0c7833d2181a9e76365c908e444526172117e6e6b89fbe33945b", "lines_added": 11,  "lines_removed": 0, "change_phase": ["V1"], "change_reason": "REAL_MONGO_PACKAGE_MARKER"},
+      {"path": "backend/tests/effect_engine/transitions/integration_real_mongo/conftest.py",                           "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "97fbd5c69a7abb99f3d5e12da788b45bacb5d223dde188a941bf505fc5aa4f95", "lines_added": 72,  "lines_removed": 0, "change_phase": ["V1"], "change_reason": "REAL_MONGO_ALLOWLIST_SAFE_FIXTURES"},
+      {"path": "backend/tests/effect_engine/transitions/integration_real_mongo/test_transitions_real_mongo.py",        "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "bbc0bf629fdd8135a87b988fdfca358e19ec5467909ea8d3f6a6d07aef933006", "lines_added": 715, "lines_removed": 0, "change_phase": ["V1"], "change_reason": "REAL_MONGO_MATRIX_30_ITEMS"},
+      {"path": "backend/tests/effect_engine/transitions/integration_real_mongo/test_atomicity_bson_perf_gating.py",    "pre_change_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "post_change_sha256": "f39925e3498928acea9248afa89559876565838063cafa0734f9539ed1cc53cd", "lines_added": 383, "lines_removed": 0, "change_phase": ["V1"], "change_reason": "REAL_MONGO_CONCURRENCY_3_BSON_PERF_GATING_4"}
+    ],
+    "v1_production_adapter_patch_1": [
+      {"path": "backend/app/stats/runtime/state_store/mongo_adapter.py", "pre_change_sha256": "PRE_R18_6_RT2B_2B_1_V1_LEGACY", "post_change_sha256": "cafb968d41ce62b1934b99279f8f831467926af4a268a13bc9cf34428d4e0bde", "lines_added": null, "lines_removed": null, "change_phase": ["V1"], "change_reason": "BSON_SERIALIZATION_ADVENTURER_CLASS_STATE_DATACLASS_AS_DOCUMENTED_IN_IMPL_REPORT_PARENT"}
+    ],
+    "v1_test_layer_patches_3": [
+      {"path": "backend/tests/effect_engine/state_store/test_mongo_adapter_unit.py", "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "02002d79bc6ad44a7a20db6b16469defed37a36bc33ded0aec250e1cb5765cf6", "lines_added": 5, "lines_removed": 1, "change_phase": ["V1"], "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"},
+      {"path": "backend/tests/effect_engine/state_store/test_contract_shared.py",   "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "7e1dabc7839f9e549746bca93e053777b93668f08c06b07f7b9c8c6ca7e0238e", "lines_added": 5, "lines_removed": 1, "change_phase": ["V1"], "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"},
+      {"path": "backend/tests/effect_engine/state_store/test_security.py",          "pre_change_sha256": "PRE_V1_LEGACY", "post_change_sha256": "8d2c9349b466c75be33a3569a7d4e07d27e921b2d1745b845349049fefe073a6", "lines_added": 5, "lines_removed": 1, "change_phase": ["V1"], "change_reason": "PYTHON_3_11_EVENT_LOOP_TEST_HARNESS_FIX"}
+    ],
+    "documental_artifacts": [
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_implementation_report.md",                   "sha256": "f27bab7a7b9ab6666f17179cb2460bd5ea77d2f793a2e78358bb0b81ca46bbbc", "role": "PARENT_CODE_IMPLEMENTATION_REPORT_MD"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_implementation_report.json",                 "sha256": "bc6e2678e234ba8153bd6ffa8ee9f2bddb8e60450b3770e40fd1f397b751ebd0", "role": "PARENT_CODE_IMPLEMENTATION_REPORT_JSON"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_real_mongo_verification_addendum.md",        "sha256": "3b48b6fbc597b62d3a75e78f9da7ac5297951402410b656d92c9d4f47f0bb757", "role": "V1_REAL_MONGO_VERIFICATION_ADDENDUM_MD (subordinate)"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_real_mongo_verification_addendum.json",      "sha256": "bd28c616cf9347df91c9041e8ac2d2fc9a98bb14e9d7c5af129b4ed80e19ac96", "role": "V1_REAL_MONGO_VERIFICATION_ADDENDUM_JSON (subordinate)"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_final_closure_report.md",                    "sha256": "COMMUNICATED_IN_CHAT_REPORT_STEP_3",                                  "role": "FINAL_CLOSURE_REPORT_MD (this closure)"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_1_final_closure_report.json",                  "sha256": "COMMUNICATED_IN_CHAT_REPORT_STEP_3",                                  "role": "FINAL_CLOSURE_REPORT_JSON (this closure)"},
+      {"path": "/app/memory/PRD.md",                                                                     "pre_append_sha256": "e82cbb696166d55286ec6fd5dba46ce26e0cbbf9f74a44be9154c5ff27bbdbd0", "post_append_sha256": "COMMUNICATED_IN_CHAT_REPORT_STEP_5", "role": "PRD_APPEND_IDEMPOTENT_OCCURRENCE_1"}
+    ],
+    "governance_ancillary_evidence": [
+      {"path": "backend/app/content/lore_meta.py",                                    "sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f", "role": "R18_LORE_META_CANONICAL_INVARIANT"},
+      {"path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_closure_manifest.json",   "sha256_invariant": "4734761f337afe6b0385d4f780b15bb5319349fa486ffe99eda4f5c9997fcdd0", "role": "PARENT_P0_CLOSURE_MANIFEST_INVARIANT"}
+    ]
+  },
+  "record_counts": {
+    "code_gate_new_files_11": 11,
+    "code_gate_modified_files_6": 6,
+    "v1_real_mongo_test_files_new_4": 4,
+    "v1_production_adapter_patch_1": 1,
+    "v1_test_layer_patches_3": 3,
+    "documental_artifacts": 7,
+    "governance_ancillary_evidence": 2,
+    "total_unique_records": 34,
+    "policy_no_duplicate_multi_phase": "Files present in both CODE and V1 phases would carry change_phase=['CODE','V1']. In this closure, no file spans both phases (production files added in CODE were untouched during V1; test files added in CODE are distinct from V1 test additions)."
+  },
+  "governance_final_step9": {
+    "serial_effect_engine": {"passed": 396, "failed": 0, "warnings_benign": 1, "duration_s": 3.76},
+    "xdist_effect_engine":  {"passed": 396, "failed": 0, "warnings_benign": 1, "duration_s": 2.91},
+    "sealed_integrity":     {"passed": 6,   "failed": 0, "byte_identical_36_of_36": true, "duration_s": 0.36},
+    "authorized_summary":   "396 PASS serial + 396 PASS xdist + 6 sealed PASS",
+    "openapi_paths_invariant": 275,
+    "frontend_touches": 0,
+    "env_changes": 0,
+    "feature_flag_activation": 0,
+    "non_allowlisted_writes": 0,
+    "residual_integration_databases": 0
+  },
+  "fail_stop_status_18_items": {"issued": 0, "list_of_issued_ids": []},
+  "verdict": {
+    "phase_verdict": "RT2-B-2B-1 CLOSED · PM-LOCKED",
+    "recommendation_next": "RT2-B-2B-2-P0 READY-TO-DISPATCH DOCUMENTAL (awaits explicit orchestrator dispatch)",
+    "explicit_stop": true
+  }
+}
