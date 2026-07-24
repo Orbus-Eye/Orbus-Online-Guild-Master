@@ -1,0 +1,252 @@
+{
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-P0",
+  "canonical_name": "CLASS-STATE TRANSITION FOUNDATION · READINESS & STATE-MACHINE CONTRACT",
+  "status": "CLOSED · PM-LOCKED",
+  "closure_date_utc": "2026-02",
+  "regime": "DOCUMENTAL_ONLY · Italian · NO CODE · SHA_POLICY_31 · MANIFEST_OWN_SHA_NOT_EMBEDDED",
+  "pm_adjudication_authority": "PM_MESSAGE_149",
+  "b2bq_adjudicated": 14,
+  "b2bq_total": 14,
+  "agent_auto_ratifications": 0,
+  "fail_stops_total": 6,
+  "fail_stops_resolved": 2,
+  "fail_stops_still_triggered": 0,
+  "fail_stops_not_triggered": 4,
+  "fail_stops_resolution_map": {
+    "COMBAT_PHASE_BOUNDARY_UNDERDEFINED": {
+      "resolved_by": "B2BQ01",
+      "option": "B",
+      "resolution_model": "SINGLE_EXPEDITION_PHASE_V1_TRANSITIONAL"
+    },
+    "CLASS_EVENT_ENTRYPOINT_UNDERDEFINED": {
+      "resolved_by": "B2BQ02",
+      "option": "B",
+      "resolution_model": "COORDINATOR_INTERNAL_DISPATCH"
+    }
+  },
+  "ratified_state_machine_contract": {
+    "phase_model": "SINGLE_EXPEDITION_PHASE_V1",
+    "phase_id_format": "expedition:<expedition_id>:phase:1",
+    "event_entry_point": "ExpeditionRuntimeCoordinator.dispatch_class_state_event(event, trusted_context)",
+    "event_entry_point_visibility": "server_side_internal_only",
+    "mark_expiration_model": "hybrid_lazy_validation_plus_opportunistic_cleanup_no_scheduled",
+    "mark_refresh_timestamp_source": "server_authoritative",
+    "mark_duration_max_seconds": 10,
+    "drain_cancellation_terminal": true,
+    "drain_cancellation_reason_codes": [
+      "MARK_EXPIRED",
+      "MARK_OWNERSHIP_MISMATCH",
+      "MARK_APPLICATION_CHANGED",
+      "TARGET_INVALID",
+      "SOURCE_INVALID",
+      "PHASE_ENDED",
+      "EXPEDITION_TERMINAL",
+      "EXPLICIT_SERVER_CANCEL"
+    ],
+    "drain_completion_output_contract": "audit_only_no_gameplay_payload",
+    "drain_completion_fields_required": [
+      "drain_execution_id",
+      "status",
+      "result_code",
+      "mark_valid_at_completion",
+      "assigned_event_sequence",
+      "state_version_after",
+      "processed_at"
+    ],
+    "drain_completion_fields_forbidden": [
+      "damage",
+      "healing",
+      "xp",
+      "loot",
+      "fragment_reward_amount",
+      "combat_result"
+    ],
+    "fragment_gain_source": "accepted_drain_completion_only",
+    "fragment_gain_rt2b2b1_mode": "primitive_trusted_fixture_only",
+    "resource_segment_close_triggers": [
+      "fragment_count_zero",
+      "phase_end",
+      "expedition_terminal",
+      "explicit_server_close"
+    ],
+    "focus_bonus_usage_max_per_segment": 2,
+    "lease_model": "short_lease_per_server_authoritative_event_batch",
+    "cas_required_inside_lease": true,
+    "cas_only_without_lease_forbidden": true,
+    "retry_max": 3,
+    "background_lease_renewer": false,
+    "class_transition_flag_name": "cdv_class_transitions_enabled",
+    "class_transition_flag_default": "OFF",
+    "eligibility_gate_composite": {
+      "cdv_transient_state_enabled": true,
+      "cdv_class_transitions_enabled": true,
+      "is_test_user": true,
+      "environment": "localhost_isolated",
+      "mongo_target": "allowlisted"
+    },
+    "receipt_cap_total": 512,
+    "receipt_cap_ordinary": 504,
+    "receipt_cap_reserved": 8,
+    "receipt_eviction": "FORBIDDEN",
+    "receipt_overwrite": "FORBIDDEN",
+    "receipt_duplicate_removal": "FORBIDDEN",
+    "receipt_saturation_result_code": "RECEIPT_CAP_REACHED",
+    "state_document_size_max_bytes": 262144,
+    "audit_sampling_localhost": {
+      "INFO": "100%",
+      "WARN": "100%",
+      "ERROR": "100%"
+    },
+    "audit_prod_policy": "REQUIRES_NEW_PM_ADJUDICATION",
+    "test_strategy": "FakeStore + real Mongo localhost integration",
+    "test_dbs_allowed": [
+      "orbus_r16_rt2b_test",
+      "orbus_r16_rt2b_it_<unique_run_id>"
+    ],
+    "test_dbs_forbidden": [
+      "orbus_r16",
+      "orbus_r16_test",
+      "preview",
+      "staging",
+      "production"
+    ]
+  },
+  "hard_locks_preserved": {
+    "active_marks_max_per_source_adventurer": 5,
+    "marks_max_per_source_target_pair": 1,
+    "mark_duration_max_seconds": 10,
+    "sixth_mark_application_result": "REJECTED",
+    "automatic_eviction": false,
+    "fragments_max": 5,
+    "fragment_overflow_action": "DISCARDED_DIAGNOSTIC_ONLY",
+    "focus_bonus_usage_max_per_segment": 2,
+    "drain_requires_own_active_mark": true,
+    "drain_consumes_mark": false,
+    "one_resolution_per_drain_execution_id": true,
+    "allied_mark_consume_refresh_transfer": "FORBIDDEN",
+    "state_document_expected_fixture_load_kib_max": 256
+  },
+  "next_gate_authorization": {
+    "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1",
+    "canonical_name": "MARK & RESOURCE STATE TRANSITION FOUNDATION",
+    "status": "CONDITIONAL_GO · READY-TO-DISPATCH",
+    "code_gate_open": false,
+    "orchestrator_dispatch_required": true,
+    "drain_deferred_to": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2",
+    "drain_status": "HOLD · PLANNED"
+  },
+  "governance_invariants": {
+    "lore_meta_py_sha_canonical": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "baseline_chain_length_post": 14,
+    "baseline_chain_status": "BYTE_IDENTICAL_14_OF_14_POST_RT2B2B_P0_CLOSURE",
+    "sealed_integrity_tests_passed": 6,
+    "sealed_artifacts_byte_identical": "36/36",
+    "effect_engine_tests_passed": 320,
+    "openapi_paths_total": 275,
+    "new_openapi_routes": 0,
+    "backend_code_changes": 0,
+    "frontend_touches": 0,
+    "mongo_writes": 0,
+    "feature_flag_activations": 0,
+    "registry_changes": 0,
+    "new_seal": false,
+    "prd_delta_p0": 1,
+    "manifest_own_sha_embedded": false
+  },
+  "b2bq_verdicts_summary": [
+    {
+      "id": "B2BQ01",
+      "option": "B",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "expedition-as-single-phase (transitional)"
+    },
+    {
+      "id": "B2BQ02",
+      "option": "B",
+      "status": "PM_RATIFIED",
+      "summary": "extend ExpeditionRuntimeCoordinator"
+    },
+    {
+      "id": "B2BQ03",
+      "option": "C",
+      "status": "PM_RATIFIED",
+      "summary": "hybrid lazy + opportunistic cleanup"
+    },
+    {
+      "id": "B2BQ04",
+      "option": "A",
+      "status": "PM_RATIFIED",
+      "summary": "server-authoritative timestamp"
+    },
+    {
+      "id": "B2BQ05",
+      "option": "A+reason_code",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "CANCELLED terminal + mandatory reason code"
+    },
+    {
+      "id": "B2BQ06",
+      "option": "C",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "result_code + assigned_event_sequence · no gameplay payload"
+    },
+    {
+      "id": "B2BQ07",
+      "option": "A",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "accepted Drain completion only · trusted fixture in RT2-B-2B-1"
+    },
+    {
+      "id": "B2BQ08",
+      "option": "C+auto",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "phase_end + explicit + expedition_terminal + fragment_count→0"
+    },
+    {
+      "id": "B2BQ09",
+      "option": "B",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "short lease per event batch + CAS"
+    },
+    {
+      "id": "B2BQ10",
+      "option": "A",
+      "status": "PM_RATIFIED",
+      "summary": "new cdv_class_transitions_enabled default OFF"
+    },
+    {
+      "id": "B2BQ11",
+      "option": "A",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "Mark+Fragment+Segment first · Drain deferred"
+    },
+    {
+      "id": "B2BQ12",
+      "option": "C",
+      "status": "PM_RATIFIED",
+      "summary": "FakeStore + MongoStore isolated"
+    },
+    {
+      "id": "B2BQ13",
+      "option": "A",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "INFO+WARN+ERROR 100% localhost · prod needs new adjudication"
+    },
+    {
+      "id": "B2BQ14",
+      "option": "fixed_bounded",
+      "status": "PM_RATIFIED_WITH_CONDITIONS",
+      "summary": "512 total / 504 ordinary / 8 reserved · no eviction"
+    }
+  ],
+  "closure_deliverables": [
+    "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_class_state_transition_readiness.md",
+    "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_class_state_transition_readiness.json",
+    "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_final_closure_report.md",
+    "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_final_closure_report.json",
+    "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_closure_manifest.json",
+    "/app/memory/PRD.md"
+  ],
+  "explicit_stop": true,
+  "orchestrator_dispatch_required_to_open_code_gate": true
+}

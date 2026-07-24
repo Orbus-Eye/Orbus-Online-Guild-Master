@@ -2,20 +2,20 @@
   "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-P0",
   "canonical_name": "CLASS-STATE TRANSITION FOUNDATION · READINESS & STATE-MACHINE CONTRACT",
   "regime": "DOCUMENTAL_ONLY · READ-ONLY DISCOVERY · Italian_only · NO APPLY · NO CODE · SHA §31 · STRICT STOP",
-  "status": "DRAFT · READ-ONLY · PM_OPEN_QUESTIONS_EMITTED · NO AUTO-RATIFICATION · 2 FAIL-STOP TRIGGERED",
+  "status": "CLOSED · PM-LOCKED · 14/14 B2BQ RATIFIED · 2 FAIL-STOP RESOLVED · READ-ONLY POST-CLOSURE",
   "date_utc": "2026-02",
   "anchors": {
     "lore_meta_sha_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
     "upstream_manifest_sha": "da6eb1216bbc86f01941372ea2faa1ab6a39f408880427f8a53e6ea367747d89",
     "prd_sha_pre": "795d3b448c879d1db3b904e4c33bae6897e92071060cc310b50bc6656722c5eb",
-    "baseline_chain_length": 13,
-    "baseline_chain_status": "BYTE_IDENTICAL_13_OF_13_INVARIATO",
+    "baseline_chain_length": 14,
+    "baseline_chain_status": "BYTE_IDENTICAL_14_OF_14_POST_RT2B2B_P0_CLOSURE",
     "sealed_integrity_tests_passed": 6,
     "sealed_artifacts_byte_identical": "36/36",
     "effect_engine_tests_passed": 320,
     "openapi_paths_total": 275,
     "new_seal": "NO",
-    "prd_delta_p0": 0
+    "prd_delta_p0": 1
   },
   "sections": {
     "section_1_executive_summary": {
@@ -70,17 +70,61 @@
       "new_seal": "NO"
     },
     "section_4_source_chain": [
-      {"index": 1, "artifact": "RT2-B-P0 State Store & Multi-Worker Architecture", "status": "PM-LOCKED"},
-      {"index": 2, "artifact": "RT2-B-1A Store Contract & Non-Wired Adapter Foundation", "status": "PM-LOCKED"},
-      {"index": 3, "artifact": "RT2-B-1B-P0/1 Mongo Provisioning", "status": "PM-LOCKED"},
-      {"index": 4, "artifact": "RT2-B-2-P0 Local Runtime Wiring Readiness", "status": "PM-LOCKED"},
-      {"index": 5, "artifact": "RT2-B-2A Shadow Wiring & Lifecycle Foundation", "status": "CLOSED / PM-LOCKED"},
-      {"index": 6, "artifact": "RT1 Runtime Stat & Effect Semantics Specification", "status": "PM-LOCKED"},
-      {"index": 7, "artifact": "RT2-A CdV & Effect Engine", "status": "PM-LOCKED"},
-      {"index": 8, "artifact": "app/stats/runtime/state_store/*", "status": "READ-ONLY_EVIDENCE"},
-      {"index": 9, "artifact": "app/stats/runtime/wiring/*", "status": "READ-ONLY_EVIDENCE"},
-      {"index": 10, "artifact": "app/expeditions/services.py", "status": "READ-ONLY_EVIDENCE"},
-      {"index": 11, "artifact": "PM Dispatch RT2-B-2B-P0 (Message 144)", "status": "RATIFYING_DIRECTIVE"}
+      {
+        "index": 1,
+        "artifact": "RT2-B-P0 State Store & Multi-Worker Architecture",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 2,
+        "artifact": "RT2-B-1A Store Contract & Non-Wired Adapter Foundation",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 3,
+        "artifact": "RT2-B-1B-P0/1 Mongo Provisioning",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 4,
+        "artifact": "RT2-B-2-P0 Local Runtime Wiring Readiness",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 5,
+        "artifact": "RT2-B-2A Shadow Wiring & Lifecycle Foundation",
+        "status": "CLOSED / PM-LOCKED"
+      },
+      {
+        "index": 6,
+        "artifact": "RT1 Runtime Stat & Effect Semantics Specification",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 7,
+        "artifact": "RT2-A CdV & Effect Engine",
+        "status": "PM-LOCKED"
+      },
+      {
+        "index": 8,
+        "artifact": "app/stats/runtime/state_store/*",
+        "status": "READ-ONLY_EVIDENCE"
+      },
+      {
+        "index": 9,
+        "artifact": "app/stats/runtime/wiring/*",
+        "status": "READ-ONLY_EVIDENCE"
+      },
+      {
+        "index": 10,
+        "artifact": "app/expeditions/services.py",
+        "status": "READ-ONLY_EVIDENCE"
+      },
+      {
+        "index": 11,
+        "artifact": "PM Dispatch RT2-B-2B-P0 (Message 144)",
+        "status": "RATIFYING_DIRECTIVE"
+      }
     ],
     "section_5_current_runtime_wiring": {
       "post_rt2b2a": true,
@@ -88,15 +132,26 @@
       "hook_t2_line": "expeditions/services.py:712-731 (terminalization)",
       "coordinator": "request-scoped wiring/coordinator.py",
       "store": "application-scoped MongoExpeditionRuntimeStateStore",
-      "target_db_allowlist": ["orbus_r16_rt2b_test", "orbus_r16_rt2b_it_<pattern>"],
+      "target_db_allowlist": [
+        "orbus_r16_rt2b_test",
+        "orbus_r16_rt2b_it_<pattern>"
+      ],
       "ff_cdv_transient_state_enabled": "default OFF",
       "class_transitions_runtime_executed": 0
     },
     "section_6_existing_state_store_contract": {
       "operations": [
-        "create_state", "get_state", "compare_and_update", "apply_event_once",
-        "reserve_writer", "renew_writer_lease", "release_writer",
-        "expire_state", "delete_state", "get_version", "health_check"
+        "create_state",
+        "get_state",
+        "compare_and_update",
+        "apply_event_once",
+        "reserve_writer",
+        "renew_writer_lease",
+        "release_writer",
+        "expire_state",
+        "delete_state",
+        "get_version",
+        "health_check"
       ],
       "cas_semantics": "expedition_id + state_version + fencing_token + event_id; success → state_version+=1; mismatch → STATE_VERSION_CONFLICT/STALE_WRITER_REJECTED",
       "dedup_semantics": "apply_event_once guard processed_event_keys.event_id != <id>; duplicate → SUCCESS idempotent; payload mismatch → EVENT_ID_PAYLOAD_MISMATCH"
@@ -114,28 +169,116 @@
       ]
     },
     "section_8_event_model": {
-      "client_fields": ["event_id", "event_type", "expedition_id", "source_adventurer_id", "target_id?", "payload_version", "payload_hash", "requested_at", "expected_state_version"],
-      "server_derived_fields": ["event_sequence", "fencing_token", "owner_worker_or_lease_id", "processed_at", "result_code"],
+      "client_fields": [
+        "event_id",
+        "event_type",
+        "expedition_id",
+        "source_adventurer_id",
+        "target_id?",
+        "payload_version",
+        "payload_hash",
+        "requested_at",
+        "expected_state_version"
+      ],
+      "server_derived_fields": [
+        "event_sequence",
+        "fencing_token",
+        "owner_worker_or_lease_id",
+        "processed_at",
+        "result_code"
+      ],
       "event_types_whitelist": [
-        "mark_apply", "mark_refresh", "drain_start", "drain_complete", "drain_cancel",
-        "fragment_gain", "fragment_spend", "fragment_reset",
-        "resource_segment_open", "resource_segment_close",
-        "phase_start", "phase_end", "expedition_terminalize"
+        "mark_apply",
+        "mark_refresh",
+        "drain_start",
+        "drain_complete",
+        "drain_cancel",
+        "fragment_gain",
+        "fragment_spend",
+        "fragment_reset",
+        "resource_segment_open",
+        "resource_segment_close",
+        "phase_start",
+        "phase_end",
+        "expedition_terminalize"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ02",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "extend ExpeditionRuntimeCoordinator",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "entry point method: dispatch_class_state_event(event, trusted_context)",
+            "server-side only · non-esposto come route pubblica · non-importato frontend",
+            "server-authoritative · flag-gated · is_test_user=true · Mongo localhost allowlisted",
+            "VIETATO: public Mark/Drain/Fragment endpoint",
+            "VIETATO: admin gameplay route",
+            "VIETATO: client-controlled event_sequence / fencing_token",
+            "fail-stop CLASS_EVENT_ENTRYPOINT_UNDERDEFINED = RESOLVED_BY_INTERNAL_COORDINATOR_DISPATCH"
+          ]
+        }
       ]
     },
     "section_9_mark_state_machine": {
-      "states": ["INACTIVE", "ACTIVE", "EXPIRED", "REMOVED_ON_TERMINAL"],
-      "transitions": [
-        {"from": "INACTIVE", "to": "ACTIVE", "trigger": "mark_apply", "preconds": ["cap≤5 per source", "(source,target) no active Mark", "expedition non-terminal"]},
-        {"from": "ACTIVE", "to": "ACTIVE", "trigger": "mark_refresh", "preconds": ["stesso (source,target)", "expires_at > requested_at"]},
-        {"from": "ACTIVE", "to": "EXPIRED", "trigger": "lazy on state access (Model C hybrid PM baseline)"},
-        {"from": "ACTIVE", "to": "REMOVED_ON_TERMINAL", "trigger": "expedition terminal transition atomica"}
+      "states": [
+        "INACTIVE",
+        "ACTIVE",
+        "EXPIRED",
+        "REMOVED_ON_TERMINAL"
       ],
-      "reject_codes": ["MARK_CAP_EXCEEDED", "MARK_DUPLICATE_ACTIVE", "MARK_OWNERSHIP_VIOLATION"]
+      "transitions": [
+        {
+          "from": "INACTIVE",
+          "to": "ACTIVE",
+          "trigger": "mark_apply",
+          "preconds": [
+            "cap≤5 per source",
+            "(source,target) no active Mark",
+            "expedition non-terminal"
+          ]
+        },
+        {
+          "from": "ACTIVE",
+          "to": "ACTIVE",
+          "trigger": "mark_refresh",
+          "preconds": [
+            "stesso (source,target)",
+            "expires_at > requested_at"
+          ]
+        },
+        {
+          "from": "ACTIVE",
+          "to": "EXPIRED",
+          "trigger": "lazy on state access (Model C hybrid PM baseline)"
+        },
+        {
+          "from": "ACTIVE",
+          "to": "REMOVED_ON_TERMINAL",
+          "trigger": "expedition terminal transition atomica"
+        }
+      ],
+      "reject_codes": [
+        "MARK_CAP_EXCEEDED",
+        "MARK_DUPLICATE_ACTIVE",
+        "MARK_OWNERSHIP_VIOLATION"
+      ]
     },
     "section_10_mark_ownership": {
       "identity_minimum": "expedition_id + source_adventurer_id + target_id",
-      "mark_doc_fields": ["mark_id", "application_id", "source_adventurer_id", "target_id", "created_at", "updated_at", "expires_at", "ritual_close_used", "mark_version", "state"],
+      "mark_doc_fields": [
+        "mark_id",
+        "application_id",
+        "source_adventurer_id",
+        "target_id",
+        "created_at",
+        "updated_at",
+        "expires_at",
+        "ritual_close_used",
+        "mark_version",
+        "state"
+      ],
       "ownership_rules": [
         "solo source_adventurer_id può refresh/expire/reject",
         "allied consumption/refresh/transfer FORBIDDEN",
@@ -151,20 +294,84 @@
     },
     "section_12_mark_expiration": {
       "models_compared": [
-        {"model": "A", "name": "lazy", "trigger": "next state access", "latency": "alta", "complexity": "bassa", "conflicts": "nessuno"},
-        {"model": "B", "name": "explicit scheduled", "trigger": "server scheduler", "latency": "bassa", "complexity": "alta", "conflicts": "molti"},
-        {"model": "C", "name": "hybrid lazy+cleanup", "trigger": "lazy + optional cleanup", "latency": "media bounded", "complexity": "media", "conflicts": "ridotti", "pm_baseline_recommended": true}
+        {
+          "model": "A",
+          "name": "lazy",
+          "trigger": "next state access",
+          "latency": "alta",
+          "complexity": "bassa",
+          "conflicts": "nessuno"
+        },
+        {
+          "model": "B",
+          "name": "explicit scheduled",
+          "trigger": "server scheduler",
+          "latency": "bassa",
+          "complexity": "alta",
+          "conflicts": "molti"
+        },
+        {
+          "model": "C",
+          "name": "hybrid lazy+cleanup",
+          "trigger": "lazy + optional cleanup",
+          "latency": "media bounded",
+          "complexity": "media",
+          "conflicts": "ridotti",
+          "pm_baseline_recommended": true
+        }
       ],
-      "adjudication_required": "B2BQ03"
+      "adjudication_required": "B2BQ03",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ03",
+          "chosen_option": "C",
+          "chosen_option_verbatim": "hybrid (lazy validation obbligatoria + opportunistic cleanup)",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "validita': expires_at > authoritative_server_time",
+            "lazy validation OBBLIGATORIA su ogni accesso rilevante (apply, refresh, drain gate, hook check)",
+            "opportunistic cleanup CONSENTITO durante mutation/read/terminalization",
+            "scheduled expiration NON richiesta",
+            "nessun background scheduler in RT2-B-2B-1",
+            "Mark scaduto -> no Drain, no refresh, no hook, no ritual-close eligibility"
+          ]
+        }
+      ]
     },
     "section_13_mark_refresh": {
       "policy_candidate": {
-        "precond": ["Mark ACTIVE", "stesso (source,target)", "expires_at > requested_at"],
-        "mutation": ["expires_at = requested_at + duration_seconds (max 10s)", "mark_version += 1"],
+        "precond": [
+          "Mark ACTIVE",
+          "stesso (source,target)",
+          "expires_at > requested_at"
+        ],
+        "mutation": [
+          "expires_at = requested_at + duration_seconds (max 10s)",
+          "mark_version += 1"
+        ],
         "idempotency": "event_id duplicate → previous result",
         "timestamp_policy": "server-authoritative (requested_at ignorato per timestamp, usato per validazione window)"
       },
-      "adjudication_required": "B2BQ04"
+      "adjudication_required": "B2BQ04",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ04",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "server-authoritative timestamp",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "refresh timestamp source = authoritative server clock",
+            "new expires_at = server_now + configured_mark_duration",
+            "configured_mark_duration <= 10 seconds",
+            "refresh mantiene mark_id/application_id/ownership",
+            "refresh NON ripristina ritual_close_used",
+            "refresh incrementa mark_version + state_version",
+            "Mark gia' scaduto -> REFRESH_MARK -> MARK_EXPIRED -> rejected (richiede APPLY_MARK nuovo)"
+          ]
+        }
+      ]
     },
     "section_14_multi_cdv_interaction": {
       "per_source_bucket_active_marks": "cap 5 per source",
@@ -174,105 +381,477 @@
       "gameplay_synergy_p0": "NONE (deferred)"
     },
     "section_15_drain_state_machine": {
-      "states": ["INACTIVE", "REQUESTED", "ACTIVE", "COMPLETED", "CANCELLED", "REJECTED"],
-      "transitions": [
-        {"from": "INACTIVE", "to": "REQUESTED", "trigger": "drain_start", "preconds": ["own active Mark", "expedition non-terminal"]},
-        {"from": "REQUESTED", "to": "ACTIVE", "trigger": "server post-CAS immediate"},
-        {"from": "ACTIVE", "to": "COMPLETED", "trigger": "drain_complete", "preconds": ["own Mark ACTIVE at completion"]},
-        {"from": "ACTIVE", "to": "CANCELLED", "trigger": "drain_cancel OR expedition terminal"},
-        {"from": "INACTIVE", "to": "REJECTED", "trigger": "drain_start without Mark", "reason": "DRAIN_MARK_MISSING_AT_START"},
-        {"from": "ACTIVE", "to": "REJECTED", "trigger": "drain_complete without Mark", "reason": "DRAIN_MARK_MISSING_AT_COMPLETION"}
+      "states": [
+        "INACTIVE",
+        "REQUESTED",
+        "ACTIVE",
+        "COMPLETED",
+        "CANCELLED",
+        "REJECTED"
       ],
-      "one_resolution_per_drain_execution_id": true
+      "transitions": [
+        {
+          "from": "INACTIVE",
+          "to": "REQUESTED",
+          "trigger": "drain_start",
+          "preconds": [
+            "own active Mark",
+            "expedition non-terminal"
+          ]
+        },
+        {
+          "from": "REQUESTED",
+          "to": "ACTIVE",
+          "trigger": "server post-CAS immediate"
+        },
+        {
+          "from": "ACTIVE",
+          "to": "COMPLETED",
+          "trigger": "drain_complete",
+          "preconds": [
+            "own Mark ACTIVE at completion"
+          ]
+        },
+        {
+          "from": "ACTIVE",
+          "to": "CANCELLED",
+          "trigger": "drain_cancel OR expedition terminal"
+        },
+        {
+          "from": "INACTIVE",
+          "to": "REJECTED",
+          "trigger": "drain_start without Mark",
+          "reason": "DRAIN_MARK_MISSING_AT_START"
+        },
+        {
+          "from": "ACTIVE",
+          "to": "REJECTED",
+          "trigger": "drain_complete without Mark",
+          "reason": "DRAIN_MARK_MISSING_AT_COMPLETION"
+        }
+      ],
+      "one_resolution_per_drain_execution_id": true,
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ05",
+          "chosen_option": "A + mandatory reason code",
+          "chosen_option_verbatim": "CANCELLED terminal + reason_code obbligatorio",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "STARTED -> CANCELLED terminale per stesso drain_execution_id · NON riapribile",
+            "reason_code obbligatorio in {MARK_EXPIRED, MARK_OWNERSHIP_MISMATCH, MARK_APPLICATION_CHANGED, TARGET_INVALID, SOURCE_INVALID, PHASE_ENDED, EXPEDITION_TERMINAL, EXPLICIT_SERVER_CANCEL}",
+            "nuovo Drain richiede nuovo drain_execution_id + tutte precondizioni ri-valide",
+            "completion su vecchio ID -> result_code=DRAIN_ALREADY_CANCELLED · no mutation · no reward · no Fragment"
+          ]
+        },
+        {
+          "question_id": "B2BQ06",
+          "chosen_option": "C",
+          "chosen_option_verbatim": "result_code + assigned_event_sequence (senza gameplay payload)",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "output interno obbligatorio: drain_execution_id, status, result_code, mark_valid_at_completion, assigned_event_sequence, state_version_after, processed_at",
+            "ESCLUSIONI: damage=absent · healing=absent · XP=absent · loot=absent · fragment_reward_amount=absent · combat_result=absent",
+            "output interno auditabile · NON aggiunto alla response pubblica",
+            "public API contract invariato"
+          ]
+        }
+      ]
     },
     "section_16_drain_validation": {
-      "drain_start_preconds": ["own active Mark su target_id", "expedition non-terminal", "no Drain ACTIVE con stesso drain_execution_id"],
-      "drain_complete_preconds": ["Drain ACTIVE stesso drain_execution_id", "own active Mark at completion", "Drain non ancora resolved"],
-      "drain_consumes_mark": false
+      "drain_start_preconds": [
+        "own active Mark su target_id",
+        "expedition non-terminal",
+        "no Drain ACTIVE con stesso drain_execution_id"
+      ],
+      "drain_complete_preconds": [
+        "Drain ACTIVE stesso drain_execution_id",
+        "own active Mark at completion",
+        "Drain non ancora resolved"
+      ],
+      "drain_consumes_mark": false,
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ05",
+          "chosen_option": "A + mandatory reason code",
+          "chosen_option_verbatim": "CANCELLED terminal + reason_code obbligatorio",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "STARTED -> CANCELLED terminale per stesso drain_execution_id · NON riapribile",
+            "reason_code obbligatorio in {MARK_EXPIRED, MARK_OWNERSHIP_MISMATCH, MARK_APPLICATION_CHANGED, TARGET_INVALID, SOURCE_INVALID, PHASE_ENDED, EXPEDITION_TERMINAL, EXPLICIT_SERVER_CANCEL}",
+            "nuovo Drain richiede nuovo drain_execution_id + tutte precondizioni ri-valide",
+            "completion su vecchio ID -> result_code=DRAIN_ALREADY_CANCELLED · no mutation · no reward · no Fragment"
+          ]
+        }
+      ]
     },
     "section_17_drain_idempotency": {
       "one_resolution_per_execution_id": true,
       "duplicate_drain_start": "previous state, no mutation",
       "duplicate_drain_complete": "previous result, no re-execution",
-      "cancellation_reopen": "B2BQ05 adjudication (default NO)"
+      "cancellation_reopen": "B2BQ05 adjudication (default NO)",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ05",
+          "chosen_option": "A + mandatory reason code",
+          "chosen_option_verbatim": "CANCELLED terminal + reason_code obbligatorio",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "STARTED -> CANCELLED terminale per stesso drain_execution_id · NON riapribile",
+            "reason_code obbligatorio in {MARK_EXPIRED, MARK_OWNERSHIP_MISMATCH, MARK_APPLICATION_CHANGED, TARGET_INVALID, SOURCE_INVALID, PHASE_ENDED, EXPEDITION_TERMINAL, EXPLICIT_SERVER_CANCEL}",
+            "nuovo Drain richiede nuovo drain_execution_id + tutte precondizioni ri-valide",
+            "completion su vecchio ID -> result_code=DRAIN_ALREADY_CANCELLED · no mutation · no reward · no Fragment"
+          ]
+        }
+      ]
     },
     "section_18_fragment_state_machine": {
-      "counter_range": [0, 5],
-      "transitions": ["fragment_gain (+1)", "fragment_spend (-1)", "fragment_reset (=0)"],
+      "counter_range": [
+        0,
+        5
+      ],
+      "transitions": [
+        "fragment_gain (+1)",
+        "fragment_spend (-1)",
+        "fragment_reset (=0)"
+      ],
       "overflow_at_6": "discarded diagnostic-only (RT1 hard-lock, NO reward/proc/conversion/credit)",
-      "reset_triggers_candidati_B2BQ08": ["phase_end", "expedition_terminal", "resource_segment_close", "explicit event"]
+      "reset_triggers_candidati_B2BQ08": [
+        "phase_end",
+        "expedition_terminal",
+        "resource_segment_close",
+        "explicit event"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ07",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "accepted Drain completion only",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "GAIN_FRAGMENT valido richiede: accepted drain_execution_id + accepted Drain completion receipt",
+            "verifica: ownership CdV · stessa expedition · stessa fase · completion non gia' usata per gain · Mark valido al completion",
+            "in RT2-B-2B-1: primitive testata con trusted fixture, NON collegata al gameplay runtime",
+            "VIETATO: client grant · admin grant · gain da Mark apply · gain da item · gain da overflow · gain da spedizione completata"
+          ]
+        }
+      ]
     },
     "section_19_fragment_gain": {
       "preconds": "fragment_count < 5",
       "gain_source_boundary_B2BQ07": "PM decide Drain complete only vs multi-source",
-      "overflow_behavior": "at count=5 gain → transition fragment_overflow_discarded audit-only"
+      "overflow_behavior": "at count=5 gain → transition fragment_overflow_discarded audit-only",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ07",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "accepted Drain completion only",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "GAIN_FRAGMENT valido richiede: accepted drain_execution_id + accepted Drain completion receipt",
+            "verifica: ownership CdV · stessa expedition · stessa fase · completion non gia' usata per gain · Mark valido al completion",
+            "in RT2-B-2B-1: primitive testata con trusted fixture, NON collegata al gameplay runtime",
+            "VIETATO: client grant · admin grant · gain da Mark apply · gain da item · gain da overflow · gain da spedizione completata"
+          ]
+        }
+      ]
     },
     "section_20_fragment_spend": {
-      "preconds": ["fragment_count > 0", "focus_bonus_usage per-segment ≤ 2 (RT1)"],
-      "spend_authorized_events_baseline_candidate": ["mark_apply_focused", "drain_start_focused (deferred RT2-C)"],
-      "post_spend": ["fragment_count -= 1", "focus_bonus_usage incrementato per current segment"]
+      "preconds": [
+        "fragment_count > 0",
+        "focus_bonus_usage per-segment ≤ 2 (RT1)"
+      ],
+      "spend_authorized_events_baseline_candidate": [
+        "mark_apply_focused",
+        "drain_start_focused (deferred RT2-C)"
+      ],
+      "post_spend": [
+        "fragment_count -= 1",
+        "focus_bonus_usage incrementato per current segment"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ08",
+          "chosen_option": "C + mandatory automatic closes",
+          "chosen_option_verbatim": "phase_end + explicit close + expedition_terminal + fragment_count->0",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "chiusure obbligatorie: fragment_count -> 0 · phase ends · expedition terminal · explicit server-side CLOSE_RESOURCE_SEGMENT",
+            "spesa parziale con Frammenti positivi -> mantiene stesso resource_segment_id",
+            "nuovo segmento apre solo quando fragment_count: 0 -> positive",
+            "preservare hard-lock: focus_bonus_usage <= 2 per segment",
+            "chiusura esplicita NON converte ne' rimborsa Frammenti"
+          ]
+        }
+      ]
     },
     "section_21_fragment_overflow": {
       "verdict_rt1_hard_lock": "overflow = discarded",
       "audit_event": "cdv_fragment_overflow_discarded",
-      "reward_proc_conversion_credit_forbidden": true
+      "reward_proc_conversion_credit_forbidden": true,
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ08",
+          "chosen_option": "C + mandatory automatic closes",
+          "chosen_option_verbatim": "phase_end + explicit close + expedition_terminal + fragment_count->0",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "chiusure obbligatorie: fragment_count -> 0 · phase ends · expedition terminal · explicit server-side CLOSE_RESOURCE_SEGMENT",
+            "spesa parziale con Frammenti positivi -> mantiene stesso resource_segment_id",
+            "nuovo segmento apre solo quando fragment_count: 0 -> positive",
+            "preservare hard-lock: focus_bonus_usage <= 2 per segment",
+            "chiusura esplicita NON converte ne' rimborsa Frammenti"
+          ]
+        }
+      ]
     },
     "section_22_resource_segments": {
       "resource_segment_id": "per-adventurer nel class state",
-      "transitions": ["resource_segment_open (new id)", "resource_segment_close (terminal per segment)"],
-      "close_conditions_B2BQ08_candidates": ["phase_end", "expedition_terminal", "explicit close event", "fragment_reset trigger"],
-      "focus_bonus_reset_at_close": "per-adventurer for next segment"
+      "transitions": [
+        "resource_segment_open (new id)",
+        "resource_segment_close (terminal per segment)"
+      ],
+      "close_conditions_B2BQ08_candidates": [
+        "phase_end",
+        "expedition_terminal",
+        "explicit close event",
+        "fragment_reset trigger"
+      ],
+      "focus_bonus_reset_at_close": "per-adventurer for next segment",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ08",
+          "chosen_option": "C + mandatory automatic closes",
+          "chosen_option_verbatim": "phase_end + explicit close + expedition_terminal + fragment_count->0",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "chiusure obbligatorie: fragment_count -> 0 · phase ends · expedition terminal · explicit server-side CLOSE_RESOURCE_SEGMENT",
+            "spesa parziale con Frammenti positivi -> mantiene stesso resource_segment_id",
+            "nuovo segmento apre solo quando fragment_count: 0 -> positive",
+            "preservare hard-lock: focus_bonus_usage <= 2 per segment",
+            "chiusura esplicita NON converte ne' rimborsa Frammenti"
+          ]
+        }
+      ]
     },
     "section_23_phase_lifecycle": {
       "fail_stop_status": "TRIGGERED",
       "fail_stop_id": "COMBAT_PHASE_BOUNDARY_UNDERDEFINED",
       "discovery_evidence": "grep combat_phase|phase_id|phase_start|phase_end|CombatPhase in /app/backend/app = 0 risultati",
       "options": [
-        {"option": "A", "name": "introdurre concept combat_phase server-side in RT2-B-2B code slice o gate dedicato"},
-        {"option": "B", "name": "trattare expedition intera come singola phase (phase_start=dispatch, phase_end=terminalize)"},
-        {"option": "C", "name": "deferire class-state transition fino a introduzione infrastruttura combat"}
+        {
+          "option": "A",
+          "name": "introdurre concept combat_phase server-side in RT2-B-2B code slice o gate dedicato"
+        },
+        {
+          "option": "B",
+          "name": "trattare expedition intera come singola phase (phase_start=dispatch, phase_end=terminalize)"
+        },
+        {
+          "option": "C",
+          "name": "deferire class-state transition fino a introduzione infrastruttura combat"
+        }
       ],
       "adjudication_required": "B2BQ01",
-      "invention_forbidden_verbatim": "NON inventare phase boundary basato su singola request"
+      "invention_forbidden_verbatim": "NON inventare phase boundary basato su singola request",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ01",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "expedition-as-single-phase",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "phase_model = SINGLE_EXPEDITION_PHASE_V1",
+            "phase_id deterministico = expedition:<expedition_id>:phase:1",
+            "phase start: dopo validazione + inizializzazione expedition state",
+            "phase end: immediatamente prima terminalizzazione expedition",
+            "stato iniziale: Fragments=0, resource_segment=inactive",
+            "stato finale: Fragments->0, resource_segment->closed, active Drains->cancelled",
+            "modello TRANSITORIO: real combat-phase richiede version bump + dedicated PM adjudication",
+            "fail-stop COMBAT_PHASE_BOUNDARY_UNDERDEFINED = RESOLVED_BY_TRANSITIONAL_SINGLE_PHASE_MODEL"
+          ]
+        }
+      ]
     },
     "section_24_expedition_terminalization": {
-      "terminal_states": ["COMPLETED", "COMPLETED_WITH_FAILURE", "CANCELLED"],
+      "terminal_states": [
+        "COMPLETED",
+        "COMPLETED_WITH_FAILURE",
+        "CANCELLED"
+      ],
       "post_terminal_actions": [
         "active_marks → REMOVED_ON_TERMINAL",
         "active_drain_executions non-completed → CANCELLED",
         "resource segments aperti → close implicito",
         "fragment_count non azzerato (audit-only), TTL cleanup 24h",
         "post-terminal class events → REJECTED (EXPEDITION_TERMINAL_LOCKED)"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ01",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "expedition-as-single-phase",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "phase_model = SINGLE_EXPEDITION_PHASE_V1",
+            "phase_id deterministico = expedition:<expedition_id>:phase:1",
+            "phase start: dopo validazione + inizializzazione expedition state",
+            "phase end: immediatamente prima terminalizzazione expedition",
+            "stato iniziale: Fragments=0, resource_segment=inactive",
+            "stato finale: Fragments->0, resource_segment->closed, active Drains->cancelled",
+            "modello TRANSITORIO: real combat-phase richiede version bump + dedicated PM adjudication",
+            "fail-stop COMBAT_PHASE_BOUNDARY_UNDERDEFINED = RESOLVED_BY_TRANSITIONAL_SINGLE_PHASE_MODEL"
+          ]
+        }
       ]
     },
     "section_25_cas_and_atomicity": {
       "cas_filter_verbatim": "expedition_id + state_version=expected + fencing_token=expected + processed_event_keys.event_id != <id>",
       "mutation_atomic": "state_version += 1, updated_at = now, processed_event_keys += (event_id, event_sequence)",
-      "mismatch_codes": ["STATE_VERSION_CONFLICT", "STALE_WRITER_REJECTED"],
+      "mismatch_codes": [
+        "STATE_VERSION_CONFLICT",
+        "STALE_WRITER_REJECTED"
+      ],
       "retry_max": 3,
       "partial_mutation_forbidden": true,
-      "fail_stop_CLASS_STATE_ATOMICITY_CONFLICT": "NOT_TRIGGERED (single-document per-expedition)"
+      "fail_stop_CLASS_STATE_ATOMICITY_CONFLICT": "NOT_TRIGGERED (single-document per-expedition)",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ09",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "short lease per server-authoritative event batch",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "ogni evento server-authoritative = event batch atomico",
+            "batch APPLY_MARK = 1 batch",
+            "batch COMPLETE_DRAIN + future Fragment gain = 1 batch",
+            "batch END_PHASE + reset resources + cancel Drains = 1 batch",
+            "sequenza: (1) acquire short request-scoped lease (2) obtain/validate fencing token (3) read expected state_version (4) apply mutations atomically (5) increment state_version once (6) persist event receipt (7) release/expire lease",
+            "CAS obbligatorio DENTRO il lease",
+            "CAS-only senza lease valido = FORBIDDEN",
+            "retry max 3 · ogni retry rilettura stato + verifica lease/fencing validi",
+            "nessun background lease renewer in RT2-B-2B-1"
+          ]
+        }
+      ]
     },
     "section_26_lease_strategy": {
       "models_compared": [
-        {"model": "A", "name": "per transition", "latency": "alta", "conflicts": "bassa", "complexity": "media", "fencing": "ogni event", "retry": "complesso"},
-        {"model": "B", "name": "per event batch", "latency": "media", "conflicts": "media", "complexity": "alta", "fencing": "per batch", "retry": "medio"},
-        {"model": "C", "name": "CAS-only for simple mutations", "latency": "bassa", "conflicts": "alta (retry stress)", "complexity": "bassa", "fencing": "solo CAS", "retry": "semplice"}
+        {
+          "model": "A",
+          "name": "per transition",
+          "latency": "alta",
+          "conflicts": "bassa",
+          "complexity": "media",
+          "fencing": "ogni event",
+          "retry": "complesso"
+        },
+        {
+          "model": "B",
+          "name": "per event batch",
+          "latency": "media",
+          "conflicts": "media",
+          "complexity": "alta",
+          "fencing": "per batch",
+          "retry": "medio"
+        },
+        {
+          "model": "C",
+          "name": "CAS-only for simple mutations",
+          "latency": "bassa",
+          "conflicts": "alta (retry stress)",
+          "complexity": "bassa",
+          "fencing": "solo CAS",
+          "retry": "semplice"
+        }
       ],
       "no_new_ownership_contradicts_rt2b_p0": true,
-      "adjudication_required": "B2BQ09"
+      "adjudication_required": "B2BQ09",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ09",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "short lease per server-authoritative event batch",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "ogni evento server-authoritative = event batch atomico",
+            "batch APPLY_MARK = 1 batch",
+            "batch COMPLETE_DRAIN + future Fragment gain = 1 batch",
+            "batch END_PHASE + reset resources + cancel Drains = 1 batch",
+            "sequenza: (1) acquire short request-scoped lease (2) obtain/validate fencing token (3) read expected state_version (4) apply mutations atomically (5) increment state_version once (6) persist event receipt (7) release/expire lease",
+            "CAS obbligatorio DENTRO il lease",
+            "CAS-only senza lease valido = FORBIDDEN",
+            "retry max 3 · ogni retry rilettura stato + verifica lease/fencing validi",
+            "nessun background lease renewer in RT2-B-2B-1"
+          ]
+        }
+      ]
     },
     "section_27_event_ordering": {
       "verdict_verbatim": "state-changing class events = total ordered per expedition",
       "event_sequence_server_authoritative": true,
       "terminal_wins": true,
       "post_terminal_rejection": "EXPEDITION_TERMINAL_LOCKED",
-      "concurrent_event_cas_retry": true
+      "concurrent_event_cas_retry": true,
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ09",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "short lease per server-authoritative event batch",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "ogni evento server-authoritative = event batch atomico",
+            "batch APPLY_MARK = 1 batch",
+            "batch COMPLETE_DRAIN + future Fragment gain = 1 batch",
+            "batch END_PHASE + reset resources + cancel Drains = 1 batch",
+            "sequenza: (1) acquire short request-scoped lease (2) obtain/validate fencing token (3) read expected state_version (4) apply mutations atomically (5) increment state_version once (6) persist event receipt (7) release/expire lease",
+            "CAS obbligatorio DENTRO il lease",
+            "CAS-only senza lease valido = FORBIDDEN",
+            "retry max 3 · ogni retry rilettura stato + verifica lease/fencing validi",
+            "nessun background lease renewer in RT2-B-2B-1"
+          ]
+        }
+      ]
     },
     "section_28_deduplication": {
       "same_event_id_same_payload_hash": "previous result, no mutation",
       "same_event_id_different_payload_hash": "EVENT_ID_PAYLOAD_MISMATCH REJECT",
-      "processed_event_keys_bound_B2BQ14": true
+      "processed_event_keys_bound_B2BQ14": true,
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ14",
+          "chosen_option": "fixed bounded receipt set, NO rolling eviction",
+          "chosen_option_verbatim": "hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "hard cap: total receipt capacity = 512",
+            "ordinary class-event ceiling = 504",
+            "reserved lifecycle/system = 8",
+            "slot riservati per: phase end · expedition terminalization · cancellation · cleanup-critical lifecycle",
+            "saturazione (504 ordinarie): new ordinary event -> RECEIPT_CAP_REACHED · fail closed · no mutation",
+            "PRESERVARE: active receipt eviction=FORBIDDEN · old receipt overwrite=FORBIDDEN · duplicate receipt removal=FORBIDDEN",
+            "receipt restano fino a scadenza stato",
+            "size guard: 512 receipt + fixture stress -> state document < 256 KiB DIMOSTRATO",
+            "se superato -> STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED · STOP · no automatic cap increase",
+            "NON usare TTL per singole chiavi embedded"
+          ]
+        }
+      ]
     },
     "section_29_feature_flags": {
       "cdv_transient_state_enabled": "default OFF (invariato post RT2-B-2A)",
@@ -282,14 +861,49 @@
         "activation_conditions": "cdv_transient_state_enabled=true AND cdv_class_transitions_enabled=true AND is_test_user=true AND localhost allowlist",
         "pm_baseline_recommended": true
       },
-      "adjudication_required": "B2BQ10"
+      "adjudication_required": "B2BQ10",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ10",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "nuovo flag cdv_class_transitions_enabled default OFF",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "nuovo flag: cdv_class_transitions_enabled default OFF",
+            "gate composito ELEGGIBILITA': cdv_transient_state_enabled=true AND cdv_class_transitions_enabled=true AND is_test_user=true AND environment=localhost isolated AND Mongo target=allowlisted",
+            "valore mancante/invalido -> false",
+            "flag OFF: 0 DB calls · 0 audit events · 0 state mutation"
+          ]
+        }
+      ]
     },
     "section_30_test_user_boundary_invariance": {
       "invariance_post_rt2b2a": true,
       "source_of_truth": "users.is_test_user",
-      "fail_closed_conditions": ["missing user", "missing field", "value != true", "DB error"],
+      "fail_closed_conditions": [
+        "missing user",
+        "missing field",
+        "value != true",
+        "DB error"
+      ],
       "no_expansion_in_rt2b2b_code_slice": true,
-      "triple_gate_with_new_flag": "cdv_transient_state_enabled + cdv_class_transitions_enabled + is_test_user"
+      "triple_gate_with_new_flag": "cdv_transient_state_enabled + cdv_class_transitions_enabled + is_test_user",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ10",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "nuovo flag cdv_class_transitions_enabled default OFF",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "nuovo flag: cdv_class_transitions_enabled default OFF",
+            "gate composito ELEGGIBILITA': cdv_transient_state_enabled=true AND cdv_class_transitions_enabled=true AND is_test_user=true AND environment=localhost isolated AND Mongo target=allowlisted",
+            "valore mancante/invalido -> false",
+            "flag OFF: 0 DB calls · 0 audit events · 0 state mutation"
+          ]
+        }
+      ]
     },
     "section_31_api_boundary": {
       "public_api_changes_verdict_verbatim": "none",
@@ -301,7 +915,25 @@
       "fail_stop_status": "TRIGGERED",
       "fail_stop_id": "CLASS_EVENT_ENTRYPOINT_UNDERDEFINED",
       "discovery_evidence": "grep process_class_event|class_event|event_bus|EventBus outside state_store namespace = 0 risultati",
-      "adjudication_required": "B2BQ02"
+      "adjudication_required": "B2BQ02",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ02",
+          "chosen_option": "B",
+          "chosen_option_verbatim": "extend ExpeditionRuntimeCoordinator",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "entry point method: dispatch_class_state_event(event, trusted_context)",
+            "server-side only · non-esposto come route pubblica · non-importato frontend",
+            "server-authoritative · flag-gated · is_test_user=true · Mongo localhost allowlisted",
+            "VIETATO: public Mark/Drain/Fragment endpoint",
+            "VIETATO: admin gameplay route",
+            "VIETATO: client-controlled event_sequence / fencing_token",
+            "fail-stop CLASS_EVENT_ENTRYPOINT_UNDERDEFINED = RESOLVED_BY_INTERNAL_COORDINATOR_DISPATCH"
+          ]
+        }
+      ]
     },
     "section_32_audit_and_observability": {
       "events_16_minimi_verbatim": [
@@ -322,15 +954,42 @@
         "cdv_resource_segment_closed",
         "cdv_state_transition_conflict"
       ],
-      "sampling_policy_B2BQ13": {"INFO": "100%", "WARN": "100%"},
-      "forbidden_payload_fields": ["sensitive PII", "Mongo dump", "seed RNG", "rewards"]
+      "sampling_policy_B2BQ13": {
+        "INFO": "100%",
+        "WARN": "100%"
+      },
+      "forbidden_payload_fields": [
+        "sensitive PII",
+        "Mongo dump",
+        "seed RNG",
+        "rewards"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ13",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "INFO 100% + WARN 100% + ERROR 100% (all-log locale)",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "localhost integration: INFO transition=100% · WARN rejection/conflict=100% · ERROR integrity/security=100%",
+            "NON registrare: intero doc Mongo · full payload · credenziali · RNG seed · dati sensibili · reward payload non ratificati",
+            "prima di shared env -> audit sampling+retention richiede NEW PM ADJUDICATION",
+            "100% locale NON diventa automaticamente policy produzione"
+          ]
+        }
+      ]
     },
     "section_33_failure_isolation": {
       "invariance_post_B2Q08": true,
       "transition_failure_behavior": "previous state preserved, no partial mutation, audit warn",
       "store_infra_error_behavior": "STORE_INFRA_ERROR result_code, no reward linked",
       "lease_cas_conflict_retry_max": 3,
-      "forbidden_verbatim": ["duplicate reward", "partial new-runtime reward", "silent granting fallback"]
+      "forbidden_verbatim": [
+        "duplicate reward",
+        "partial new-runtime reward",
+        "silent granting fallback"
+      ]
     },
     "section_34_compatibility": {
       "with_class_transitions_off": "behavior identico a post-RT2-B-2A (shell only)",
@@ -339,61 +998,655 @@
       "legacy_path_authoritative_invariant": true
     },
     "section_35_security_and_abuse": [
-      {"threat": "client-forged event_id/payload", "mitigation": "EVENT_ID_PAYLOAD_MISMATCH reject + rate-limit audit"},
-      {"threat": "client-forged fencing_token/event_sequence", "mitigation": "server-derived, client input ignored"},
-      {"threat": "cross-expedition state poisoning", "mitigation": "ownership + CAS su expedition_id"},
-      {"threat": "post-terminal event replay", "mitigation": "REJECTED terminal-wins"},
-      {"threat": "allied Mark consumption/refresh/transfer", "mitigation": "MARK_OWNERSHIP_VIOLATION reject"},
-      {"threat": "fragment overflow abuse", "mitigation": "discarded diagnostic (no reward path)"},
-      {"threat": "cross-env leak", "mitigation": "B2Q10 allowlist locale only"}
+      {
+        "threat": "client-forged event_id/payload",
+        "mitigation": "EVENT_ID_PAYLOAD_MISMATCH reject + rate-limit audit"
+      },
+      {
+        "threat": "client-forged fencing_token/event_sequence",
+        "mitigation": "server-derived, client input ignored"
+      },
+      {
+        "threat": "cross-expedition state poisoning",
+        "mitigation": "ownership + CAS su expedition_id"
+      },
+      {
+        "threat": "post-terminal event replay",
+        "mitigation": "REJECTED terminal-wins"
+      },
+      {
+        "threat": "allied Mark consumption/refresh/transfer",
+        "mitigation": "MARK_OWNERSHIP_VIOLATION reject"
+      },
+      {
+        "threat": "fragment overflow abuse",
+        "mitigation": "discarded diagnostic (no reward path)"
+      },
+      {
+        "threat": "cross-env leak",
+        "mitigation": "B2Q10 allowlist locale only"
+      }
     ],
-    "section_36_test_architecture_planned": [
-      "state-machine transitions unit per Mark/Drain/Fragment/Resource/Phase/Terminalization",
-      "integration apply_event_once end-to-end FakeStore + MongoStore isolated",
-      "CAS conflict / retry ≤ 3 / fencing enforced",
-      "dedup: duplicate event_id previous result; mismatch reject",
-      "ordering: concurrent event linearizzabilità per-expedition",
-      "anti-P2W: no reward/proc/conversion",
-      "regression: 320 baseline invariati",
-      "local integration-test strategy B2BQ12 TBD"
-    ],
+    "section_36_test_architecture_planned": {
+      "original_content": [
+        "state-machine transitions unit per Mark/Drain/Fragment/Resource/Phase/Terminalization",
+        "integration apply_event_once end-to-end FakeStore + MongoStore isolated",
+        "CAS conflict / retry ≤ 3 / fencing enforced",
+        "dedup: duplicate event_id previous result; mismatch reject",
+        "ordering: concurrent event linearizzabilità per-expedition",
+        "anti-P2W: no reward/proc/conversion",
+        "regression: 320 baseline invariati",
+        "local integration-test strategy B2BQ12 TBD"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ12",
+          "chosen_option": "C",
+          "chosen_option_verbatim": "both FakeStore + MongoStore isolated",
+          "pm_status": "PM_RATIFIED",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "test layers: pure state-machine · FakeStore contract · mocked Mongo adapter · real Mongo localhost integration",
+            "DB consentiti: orbus_r16_rt2b_test · orbus_r16_rt2b_it_<unique_run_id>",
+            "DB vietati: orbus_r16 · orbus_r16_test · preview · staging · production",
+            "ogni suite Mongo: unique run ID · cleanup · parallel isolation · zero DB residui"
+          ]
+        }
+      ]
+    },
     "section_37_performance_risks": {
       "apply_event_once_p95_estimated_ms": 25,
       "state_document_size_cap_kib": 256,
       "processed_event_keys_unbound_risk": "MEDIUM (B2BQ14)",
-      "concurrent_stress_conflict_retry_impact": "monitored via cdv_state_transition_conflict"
+      "concurrent_stress_conflict_retry_impact": "monitored via cdv_state_transition_conflict",
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ14",
+          "chosen_option": "fixed bounded receipt set, NO rolling eviction",
+          "chosen_option_verbatim": "hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "hard cap: total receipt capacity = 512",
+            "ordinary class-event ceiling = 504",
+            "reserved lifecycle/system = 8",
+            "slot riservati per: phase end · expedition terminalization · cancellation · cleanup-critical lifecycle",
+            "saturazione (504 ordinarie): new ordinary event -> RECEIPT_CAP_REACHED · fail closed · no mutation",
+            "PRESERVARE: active receipt eviction=FORBIDDEN · old receipt overwrite=FORBIDDEN · duplicate receipt removal=FORBIDDEN",
+            "receipt restano fino a scadenza stato",
+            "size guard: 512 receipt + fixture stress -> state document < 256 KiB DIMOSTRATO",
+            "se superato -> STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED · STOP · no automatic cap increase",
+            "NON usare TTL per singole chiavi embedded"
+          ]
+        }
+      ]
     },
     "section_38_risk_register": [
-      {"id": "R01", "risk": "Combat phase inesistente", "severity": "HIGH", "mitigation": "Fail-stop TRIGGERED · B2BQ01"},
-      {"id": "R02", "risk": "Class event entry point mancante", "severity": "HIGH", "mitigation": "Fail-stop TRIGGERED · B2BQ02"},
-      {"id": "R03", "risk": "Mark refresh timestamp race", "severity": "MEDIUM", "mitigation": "server-authoritative timestamp (B2BQ04)"},
-      {"id": "R04", "risk": "Drain cancellation race", "severity": "MEDIUM", "mitigation": "one_resolution_per_execution_id (B2BQ05)"},
-      {"id": "R05", "risk": "Fragment overflow abuse", "severity": "LOW", "mitigation": "discarded diagnostic (RT1)"},
-      {"id": "R06", "risk": "Focus bonus > 2 per segment", "severity": "MEDIUM", "mitigation": "Cap CAS + resource_segment_close reset"},
-      {"id": "R07", "risk": "State doc size overflow", "severity": "MEDIUM", "mitigation": "Receipt bound (B2BQ14) + TTL cleanup"},
-      {"id": "R08", "risk": "Post-terminal event replay", "severity": "LOW", "mitigation": "REJECTED terminal-wins"},
-      {"id": "R09", "risk": "Cross-expedition state poisoning", "severity": "RESOLVED", "mitigation": "CAS ownership"},
-      {"id": "R10", "risk": "Allied Mark manipulation", "severity": "RESOLVED", "mitigation": "MARK_OWNERSHIP_VIOLATION"},
-      {"id": "R11", "risk": "Retry storm on conflict", "severity": "MEDIUM", "mitigation": "cap retry 3 + audit"},
-      {"id": "R12", "risk": "Lease deadlock (A/B)", "severity": "MEDIUM", "mitigation": "TBD B2BQ09"},
-      {"id": "R13", "risk": "Public API scope creep", "severity": "LOW", "mitigation": "verdict verbatim"},
-      {"id": "R14", "risk": "Item effect scope dependency", "severity": "RESOLVED", "mitigation": "Item hooks HOLD (RT2-E)"}
+      {
+        "id": "R01",
+        "risk": "Combat phase inesistente",
+        "severity": "HIGH",
+        "mitigation": "Fail-stop TRIGGERED · B2BQ01"
+      },
+      {
+        "id": "R02",
+        "risk": "Class event entry point mancante",
+        "severity": "HIGH",
+        "mitigation": "Fail-stop TRIGGERED · B2BQ02"
+      },
+      {
+        "id": "R03",
+        "risk": "Mark refresh timestamp race",
+        "severity": "MEDIUM",
+        "mitigation": "server-authoritative timestamp (B2BQ04)"
+      },
+      {
+        "id": "R04",
+        "risk": "Drain cancellation race",
+        "severity": "MEDIUM",
+        "mitigation": "one_resolution_per_execution_id (B2BQ05)"
+      },
+      {
+        "id": "R05",
+        "risk": "Fragment overflow abuse",
+        "severity": "LOW",
+        "mitigation": "discarded diagnostic (RT1)"
+      },
+      {
+        "id": "R06",
+        "risk": "Focus bonus > 2 per segment",
+        "severity": "MEDIUM",
+        "mitigation": "Cap CAS + resource_segment_close reset"
+      },
+      {
+        "id": "R07",
+        "risk": "State doc size overflow",
+        "severity": "MEDIUM",
+        "mitigation": "Receipt bound (B2BQ14) + TTL cleanup"
+      },
+      {
+        "id": "R08",
+        "risk": "Post-terminal event replay",
+        "severity": "LOW",
+        "mitigation": "REJECTED terminal-wins"
+      },
+      {
+        "id": "R09",
+        "risk": "Cross-expedition state poisoning",
+        "severity": "RESOLVED",
+        "mitigation": "CAS ownership"
+      },
+      {
+        "id": "R10",
+        "risk": "Allied Mark manipulation",
+        "severity": "RESOLVED",
+        "mitigation": "MARK_OWNERSHIP_VIOLATION"
+      },
+      {
+        "id": "R11",
+        "risk": "Retry storm on conflict",
+        "severity": "MEDIUM",
+        "mitigation": "cap retry 3 + audit"
+      },
+      {
+        "id": "R12",
+        "risk": "Lease deadlock (A/B)",
+        "severity": "MEDIUM",
+        "mitigation": "TBD B2BQ09"
+      },
+      {
+        "id": "R13",
+        "risk": "Public API scope creep",
+        "severity": "LOW",
+        "mitigation": "verdict verbatim"
+      },
+      {
+        "id": "R14",
+        "risk": "Item effect scope dependency",
+        "severity": "RESOLVED",
+        "mitigation": "Item hooks HOLD (RT2-E)"
+      }
     ],
     "section_39_pm_open_questions": [
-      {"question_id": "B2BQ01", "topic": "combat phase boundary source", "evidence": "grep 0 risultati per combat_phase/phase_id/phase_start/phase_end/CombatPhase in /app/backend/app", "options": ["A · introdurre concept server-side", "B · expedition-as-single-phase", "C · deferire fino a combat infrastructure"], "agent_recommendation": "B come minimo viable per RT2-B-2B-1 (fase = spedizione); adjudicate PM", "affected_modules": ["wiring/coordinator.py", "expeditions/services.py"], "gameplay_impact": "NONE con flag off", "state_impact": "phase_id keyed on expedition_id in Option B", "security_impact": "N/A", "test_impact": "1 unit + 1 integration test", "blocking": "SI · FAIL-STOP TRIGGERED"},
-      {"question_id": "B2BQ02", "topic": "class event internal entry point", "evidence": "grep 0 risultati per process_class_event/class_event/event_bus/EventBus outside state_store namespace", "options": ["A · nuovo modulo app/stats/runtime/wiring/event_dispatcher.py", "B · estensione ExpeditionRuntimeCoordinator", "C · rotta admin interna gated FF"], "agent_recommendation": "B (estensione coordinator, coerente con B2Q03 request-scoped)", "affected_modules": ["wiring/coordinator.py"], "gameplay_impact": "NONE con flag off", "state_impact": "coordinator.dispatch_class_event(event) method", "security_impact": "server-side only, no public API", "test_impact": "10+ tests", "blocking": "SI · FAIL-STOP TRIGGERED"},
-      {"question_id": "B2BQ03", "topic": "Mark expiration model", "evidence": "3 modelli documentati sezione 12", "options": ["A · lazy only", "B · explicit scheduled", "C · hybrid PM baseline"], "agent_recommendation": "C (PM baseline)", "affected_modules": ["state_store/models.py", "wiring/coordinator.py"], "gameplay_impact": "NONE con flag off", "state_impact": "lazy check on state access + optional cleanup pass", "security_impact": "N/A", "test_impact": "3 test (lazy + cleanup + hybrid)", "blocking": "SI"},
-      {"question_id": "B2BQ04", "topic": "Mark refresh timestamp policy", "evidence": "sezione 13", "options": ["A · server-authoritative timestamp", "B · client-provided timestamp con clock skew check", "C · min(server, client)"], "agent_recommendation": "A", "affected_modules": ["wiring/coordinator.py"], "gameplay_impact": "NONE con flag off", "state_impact": "expires_at server-computed", "security_impact": "impedisce clock manipulation", "test_impact": "2 test (refresh + skew)", "blocking": "SI"},
-      {"question_id": "B2BQ05", "topic": "Drain cancellation policy", "evidence": "sezione 15-17", "options": ["A · CANCELLED terminal, no re-open", "B · CANCELLED può re-open con nuovo execution_id", "C · CANCELLED con reason code"], "agent_recommendation": "A (terminal no re-open, coerente con RT1 one_resolution_per_execution_id)", "affected_modules": ["state_store/models.py"], "gameplay_impact": "NONE", "state_impact": "cancellation terminal", "security_impact": "impedisce loop cancellation", "test_impact": "3 test cancellation", "blocking": "SI"},
-      {"question_id": "B2BQ06", "topic": "Drain completion output contract", "evidence": "sezione 15", "options": ["A · result_code + drain_execution_id (audit-only)", "B · result_code + payload gameplay (deferred a RT2-C)", "C · result_code + assigned_event_sequence"], "agent_recommendation": "A (audit-only per RT2-B-2B, gameplay payload deferred)", "affected_modules": ["state_store/results.py"], "gameplay_impact": "NONE", "state_impact": "output contract minimal", "security_impact": "no leak", "test_impact": "2 test", "blocking": "SI"},
-      {"question_id": "B2BQ07", "topic": "Fragment gain source boundary", "evidence": "sezione 19", "options": ["A · Drain complete only", "B · Multi-source (drain complete + mark refresh + phase_end trigger)", "C · adjudicate per-event"], "agent_recommendation": "A (Drain complete only, semantica minimale per RT2-B-2B-1)", "affected_modules": ["wiring/coordinator.py"], "gameplay_impact": "NONE con flag off", "state_impact": "fragment_gain trigger sole", "security_impact": "N/A", "test_impact": "2 test", "blocking": "SI"},
-      {"question_id": "B2BQ08", "topic": "Resource segment close conditions", "evidence": "sezione 22", "options": ["A · phase_end only", "B · phase_end + expedition_terminal", "C · phase_end + explicit close + expedition_terminal"], "agent_recommendation": "C (most robust)", "affected_modules": ["wiring/coordinator.py"], "gameplay_impact": "NONE", "state_impact": "close triggers multi", "security_impact": "N/A", "test_impact": "3 test", "blocking": "SI"},
-      {"question_id": "B2BQ09", "topic": "Lease strategy per transition", "evidence": "sezione 26", "options": ["A · per transition", "B · per event batch", "C · CAS-only"], "agent_recommendation": "C (CAS-only per RT2-B-2B-1, semplicità+performance; escalate a A se conflict rate elevato)", "affected_modules": ["wiring/coordinator.py", "state_store/mongo_adapter.py"], "gameplay_impact": "NONE con flag off", "state_impact": "no lease overhead", "security_impact": "fencing invariato via state_version", "test_impact": "3 test conflict + retry", "blocking": "SI"},
-      {"question_id": "B2BQ10", "topic": "class-transition feature flag", "evidence": "sezione 29", "options": ["A · nuovo flag cdv_class_transitions_enabled default OFF", "B · riuso cdv_transient_state_enabled (no nuovo flag)", "C · flag composite"], "agent_recommendation": "A (nuovo flag, PM baseline SI)", "affected_modules": ["stats/runtime/feature_flags.py"], "gameplay_impact": "NONE con flag off", "state_impact": "triple-gate", "security_impact": "granularità superiore", "test_impact": "5 test flag registry", "blocking": "SI"},
-      {"question_id": "B2BQ11", "topic": "first transition code slice", "evidence": "sezione 40", "options": ["A · Mark + Fragment + Segment first (Drain rinviato a RT2-B-2B-2)", "B · full set (Mark + Drain + Fragment + Segment) in RT2-B-2B-1", "C · Mark only in RT2-B-2B-1"], "agent_recommendation": "A (Mark+Fragment+Segment first; Drain deferred per contenere scope)", "affected_modules": ["nuovo modulo transitions/"], "gameplay_impact": "NONE con flag off", "state_impact": "scope contained", "security_impact": "N/A", "test_impact": "~25 test", "blocking": "SI"},
-      {"question_id": "B2BQ12", "topic": "local integration-test strategy", "evidence": "sezione 36", "options": ["A · FakeStore only", "B · MongoStore real isolated only", "C · both FakeStore + MongoStore"], "agent_recommendation": "C (both, coerente con RT2-B-1B-1 pattern)", "affected_modules": ["tests/effect_engine/transitions/"], "gameplay_impact": "NONE", "state_impact": "N/A", "security_impact": "N/A", "test_impact": "duplicate coverage layers", "blocking": "SI"},
-      {"question_id": "B2BQ13", "topic": "audit sampling", "evidence": "sezione 32", "options": ["A · INFO 100% WARN 100%", "B · INFO 50% WARN 100%", "C · INFO 100% WARN 100% ERROR 100% (all-log)"], "agent_recommendation": "A (PM baseline)", "affected_modules": ["wiring/audit.py"], "gameplay_impact": "NONE", "state_impact": "N/A", "security_impact": "no PII", "test_impact": "1 test", "blocking": "NO"},
-      {"question_id": "B2BQ14", "topic": "state-document receipt bound", "evidence": "sezione 28 + 37", "options": ["A · unbound (rely on TTL sweep expire_state)", "B · cap N eventi rolling (es. N=1000)", "C · TTL bound su processed_event_keys entries"], "agent_recommendation": "B (cap rolling per prevenire growth unbounded)", "affected_modules": ["state_store/models.py", "state_store/mongo_adapter.py"], "gameplay_impact": "NONE", "state_impact": "doc size bounded < 256 KiB", "security_impact": "N/A", "test_impact": "2 test overflow", "blocking": "SI"}
+      {
+        "question_id": "B2BQ01",
+        "topic": "combat phase boundary source",
+        "evidence": "grep 0 risultati per combat_phase/phase_id/phase_start/phase_end/CombatPhase in /app/backend/app",
+        "options": [
+          "A · introdurre concept server-side",
+          "B · expedition-as-single-phase",
+          "C · deferire fino a combat infrastructure"
+        ],
+        "agent_recommendation": "B come minimo viable per RT2-B-2B-1 (fase = spedizione); adjudicate PM",
+        "affected_modules": [
+          "wiring/coordinator.py",
+          "expeditions/services.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "phase_id keyed on expedition_id in Option B",
+        "security_impact": "N/A",
+        "test_impact": "1 unit + 1 integration test",
+        "blocking": "SI · FAIL-STOP TRIGGERED",
+        "question": "combat phase boundary source",
+        "chosen_option": "B",
+        "chosen_option_verbatim": "expedition-as-single-phase",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Modello TRANSITORIO SINGLE_EXPEDITION_PHASE_V1. Combat-phase reale richiede version bump + PM adjudication dedicata futura.",
+        "conditions": [
+          "phase_model = SINGLE_EXPEDITION_PHASE_V1",
+          "phase_id deterministico = expedition:<expedition_id>:phase:1",
+          "phase start: dopo validazione + inizializzazione expedition state",
+          "phase end: immediatamente prima terminalizzazione expedition",
+          "stato iniziale: Fragments=0, resource_segment=inactive",
+          "stato finale: Fragments->0, resource_segment->closed, active Drains->cancelled",
+          "modello TRANSITORIO: real combat-phase richiede version bump + dedicated PM adjudication",
+          "fail-stop COMBAT_PHASE_BOUNDARY_UNDERDEFINED = RESOLVED_BY_TRANSITIONAL_SINGLE_PHASE_MODEL"
+        ],
+        "agent_auto_ratified": false,
+        "resolves_fail_stop": "COMBAT_PHASE_BOUNDARY_UNDERDEFINED"
+      },
+      {
+        "question_id": "B2BQ02",
+        "topic": "class event internal entry point",
+        "evidence": "grep 0 risultati per process_class_event/class_event/event_bus/EventBus outside state_store namespace",
+        "options": [
+          "A · nuovo modulo app/stats/runtime/wiring/event_dispatcher.py",
+          "B · estensione ExpeditionRuntimeCoordinator",
+          "C · rotta admin interna gated FF"
+        ],
+        "agent_recommendation": "B (estensione coordinator, coerente con B2Q03 request-scoped)",
+        "affected_modules": [
+          "wiring/coordinator.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "coordinator.dispatch_class_event(event) method",
+        "security_impact": "server-side only, no public API",
+        "test_impact": "10+ tests",
+        "blocking": "SI · FAIL-STOP TRIGGERED",
+        "question": "class event internal entry point",
+        "chosen_option": "B",
+        "chosen_option_verbatim": "extend ExpeditionRuntimeCoordinator",
+        "pm_status": "PM_RATIFIED",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Estensione coordinator interno, coerente con architettura RT2-B-2A shadow wiring.",
+        "conditions": [
+          "entry point method: dispatch_class_state_event(event, trusted_context)",
+          "server-side only · non-esposto come route pubblica · non-importato frontend",
+          "server-authoritative · flag-gated · is_test_user=true · Mongo localhost allowlisted",
+          "VIETATO: public Mark/Drain/Fragment endpoint",
+          "VIETATO: admin gameplay route",
+          "VIETATO: client-controlled event_sequence / fencing_token",
+          "fail-stop CLASS_EVENT_ENTRYPOINT_UNDERDEFINED = RESOLVED_BY_INTERNAL_COORDINATOR_DISPATCH"
+        ],
+        "agent_auto_ratified": false,
+        "resolves_fail_stop": "CLASS_EVENT_ENTRYPOINT_UNDERDEFINED"
+      },
+      {
+        "question_id": "B2BQ03",
+        "topic": "Mark expiration model",
+        "evidence": "3 modelli documentati sezione 12",
+        "options": [
+          "A · lazy only",
+          "B · explicit scheduled",
+          "C · hybrid PM baseline"
+        ],
+        "agent_recommendation": "C (PM baseline)",
+        "affected_modules": [
+          "state_store/models.py",
+          "wiring/coordinator.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "lazy check on state access + optional cleanup pass",
+        "security_impact": "N/A",
+        "test_impact": "3 test (lazy + cleanup + hybrid)",
+        "blocking": "SI",
+        "question": "Mark expiration model",
+        "chosen_option": "C",
+        "chosen_option_verbatim": "hybrid (lazy validation obbligatoria + opportunistic cleanup)",
+        "pm_status": "PM_RATIFIED",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Modello hybrid PM-baseline; nessun background scheduler introdotto in RT2-B-2B-1.",
+        "conditions": [
+          "validita': expires_at > authoritative_server_time",
+          "lazy validation OBBLIGATORIA su ogni accesso rilevante (apply, refresh, drain gate, hook check)",
+          "opportunistic cleanup CONSENTITO durante mutation/read/terminalization",
+          "scheduled expiration NON richiesta",
+          "nessun background scheduler in RT2-B-2B-1",
+          "Mark scaduto -> no Drain, no refresh, no hook, no ritual-close eligibility"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ04",
+        "topic": "Mark refresh timestamp policy",
+        "evidence": "sezione 13",
+        "options": [
+          "A · server-authoritative timestamp",
+          "B · client-provided timestamp con clock skew check",
+          "C · min(server, client)"
+        ],
+        "agent_recommendation": "A",
+        "affected_modules": [
+          "wiring/coordinator.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "expires_at server-computed",
+        "security_impact": "impedisce clock manipulation",
+        "test_impact": "2 test (refresh + skew)",
+        "blocking": "SI",
+        "question": "Mark refresh timestamp policy",
+        "chosen_option": "A",
+        "chosen_option_verbatim": "server-authoritative timestamp",
+        "pm_status": "PM_RATIFIED",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Server-authoritative clock impedisce clock-skew manipulation da client.",
+        "conditions": [
+          "refresh timestamp source = authoritative server clock",
+          "new expires_at = server_now + configured_mark_duration",
+          "configured_mark_duration <= 10 seconds",
+          "refresh mantiene mark_id/application_id/ownership",
+          "refresh NON ripristina ritual_close_used",
+          "refresh incrementa mark_version + state_version",
+          "Mark gia' scaduto -> REFRESH_MARK -> MARK_EXPIRED -> rejected (richiede APPLY_MARK nuovo)"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ05",
+        "topic": "Drain cancellation policy",
+        "evidence": "sezione 15-17",
+        "options": [
+          "A · CANCELLED terminal, no re-open",
+          "B · CANCELLED può re-open con nuovo execution_id",
+          "C · CANCELLED con reason code"
+        ],
+        "agent_recommendation": "A (terminal no re-open, coerente con RT1 one_resolution_per_execution_id)",
+        "affected_modules": [
+          "state_store/models.py"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "cancellation terminal",
+        "security_impact": "impedisce loop cancellation",
+        "test_impact": "3 test cancellation",
+        "blocking": "SI",
+        "question": "Drain cancellation policy",
+        "chosen_option": "A + mandatory reason code",
+        "chosen_option_verbatim": "CANCELLED terminal + reason_code obbligatorio",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Terminale coerente con RT1 one_resolution_per_execution_id; reason_code richiesto per auditability.",
+        "conditions": [
+          "STARTED -> CANCELLED terminale per stesso drain_execution_id · NON riapribile",
+          "reason_code obbligatorio in {MARK_EXPIRED, MARK_OWNERSHIP_MISMATCH, MARK_APPLICATION_CHANGED, TARGET_INVALID, SOURCE_INVALID, PHASE_ENDED, EXPEDITION_TERMINAL, EXPLICIT_SERVER_CANCEL}",
+          "nuovo Drain richiede nuovo drain_execution_id + tutte precondizioni ri-valide",
+          "completion su vecchio ID -> result_code=DRAIN_ALREADY_CANCELLED · no mutation · no reward · no Fragment"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ06",
+        "topic": "Drain completion output contract",
+        "evidence": "sezione 15",
+        "options": [
+          "A · result_code + drain_execution_id (audit-only)",
+          "B · result_code + payload gameplay (deferred a RT2-C)",
+          "C · result_code + assigned_event_sequence"
+        ],
+        "agent_recommendation": "A (audit-only per RT2-B-2B, gameplay payload deferred)",
+        "affected_modules": [
+          "state_store/results.py"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "output contract minimal",
+        "security_impact": "no leak",
+        "test_impact": "2 test",
+        "blocking": "SI",
+        "question": "Drain completion output contract",
+        "chosen_option": "C",
+        "chosen_option_verbatim": "result_code + assigned_event_sequence (senza gameplay payload)",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Output audit-only; gameplay payload deferred a RT2-C. Nessuna esposizione pubblica.",
+        "conditions": [
+          "output interno obbligatorio: drain_execution_id, status, result_code, mark_valid_at_completion, assigned_event_sequence, state_version_after, processed_at",
+          "ESCLUSIONI: damage=absent · healing=absent · XP=absent · loot=absent · fragment_reward_amount=absent · combat_result=absent",
+          "output interno auditabile · NON aggiunto alla response pubblica",
+          "public API contract invariato"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ07",
+        "topic": "Fragment gain source boundary",
+        "evidence": "sezione 19",
+        "options": [
+          "A · Drain complete only",
+          "B · Multi-source (drain complete + mark refresh + phase_end trigger)",
+          "C · adjudicate per-event"
+        ],
+        "agent_recommendation": "A (Drain complete only, semantica minimale per RT2-B-2B-1)",
+        "affected_modules": [
+          "wiring/coordinator.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "fragment_gain trigger sole",
+        "security_impact": "N/A",
+        "test_impact": "2 test",
+        "blocking": "SI",
+        "question": "Fragment gain source boundary",
+        "chosen_option": "A",
+        "chosen_option_verbatim": "accepted Drain completion only",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "In RT2-B-2B-1 (Drain rinviato): primitive Fragment gain implementata + testata con trusted fixture equivalente a Drain completion receipt valida.",
+        "conditions": [
+          "GAIN_FRAGMENT valido richiede: accepted drain_execution_id + accepted Drain completion receipt",
+          "verifica: ownership CdV · stessa expedition · stessa fase · completion non gia' usata per gain · Mark valido al completion",
+          "in RT2-B-2B-1: primitive testata con trusted fixture, NON collegata al gameplay runtime",
+          "VIETATO: client grant · admin grant · gain da Mark apply · gain da item · gain da overflow · gain da spedizione completata"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ08",
+        "topic": "Resource segment close conditions",
+        "evidence": "sezione 22",
+        "options": [
+          "A · phase_end only",
+          "B · phase_end + expedition_terminal",
+          "C · phase_end + explicit close + expedition_terminal"
+        ],
+        "agent_recommendation": "C (most robust)",
+        "affected_modules": [
+          "wiring/coordinator.py"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "close triggers multi",
+        "security_impact": "N/A",
+        "test_impact": "3 test",
+        "blocking": "SI",
+        "question": "Resource segment close conditions",
+        "chosen_option": "C + mandatory automatic closes",
+        "chosen_option_verbatim": "phase_end + explicit close + expedition_terminal + fragment_count->0",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Massima robustezza; chiusura esplicita non converte/rimborsa Frammenti.",
+        "conditions": [
+          "chiusure obbligatorie: fragment_count -> 0 · phase ends · expedition terminal · explicit server-side CLOSE_RESOURCE_SEGMENT",
+          "spesa parziale con Frammenti positivi -> mantiene stesso resource_segment_id",
+          "nuovo segmento apre solo quando fragment_count: 0 -> positive",
+          "preservare hard-lock: focus_bonus_usage <= 2 per segment",
+          "chiusura esplicita NON converte ne' rimborsa Frammenti"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ09",
+        "topic": "Lease strategy per transition",
+        "evidence": "sezione 26",
+        "options": [
+          "A · per transition",
+          "B · per event batch",
+          "C · CAS-only"
+        ],
+        "agent_recommendation": "C (CAS-only per RT2-B-2B-1, semplicità+performance; escalate a A se conflict rate elevato)",
+        "affected_modules": [
+          "wiring/coordinator.py",
+          "state_store/mongo_adapter.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "no lease overhead",
+        "security_impact": "fencing invariato via state_version",
+        "test_impact": "3 test conflict + retry",
+        "blocking": "SI",
+        "question": "Lease strategy per transition",
+        "chosen_option": "B",
+        "chosen_option_verbatim": "short lease per server-authoritative event batch",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Ogni event server-authoritative = batch atomico. CAS obbligatorio DENTRO il lease.",
+        "conditions": [
+          "ogni evento server-authoritative = event batch atomico",
+          "batch APPLY_MARK = 1 batch",
+          "batch COMPLETE_DRAIN + future Fragment gain = 1 batch",
+          "batch END_PHASE + reset resources + cancel Drains = 1 batch",
+          "sequenza: (1) acquire short request-scoped lease (2) obtain/validate fencing token (3) read expected state_version (4) apply mutations atomically (5) increment state_version once (6) persist event receipt (7) release/expire lease",
+          "CAS obbligatorio DENTRO il lease",
+          "CAS-only senza lease valido = FORBIDDEN",
+          "retry max 3 · ogni retry rilettura stato + verifica lease/fencing validi",
+          "nessun background lease renewer in RT2-B-2B-1"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ10",
+        "topic": "class-transition feature flag",
+        "evidence": "sezione 29",
+        "options": [
+          "A · nuovo flag cdv_class_transitions_enabled default OFF",
+          "B · riuso cdv_transient_state_enabled (no nuovo flag)",
+          "C · flag composite"
+        ],
+        "agent_recommendation": "A (nuovo flag, PM baseline SI)",
+        "affected_modules": [
+          "stats/runtime/feature_flags.py"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "triple-gate",
+        "security_impact": "granularità superiore",
+        "test_impact": "5 test flag registry",
+        "blocking": "SI",
+        "question": "class-transition feature flag",
+        "chosen_option": "A",
+        "chosen_option_verbatim": "nuovo flag cdv_class_transitions_enabled default OFF",
+        "pm_status": "PM_RATIFIED",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Nuovo flag dedicato PM baseline; gate composito quadruple-check.",
+        "conditions": [
+          "nuovo flag: cdv_class_transitions_enabled default OFF",
+          "gate composito ELEGGIBILITA': cdv_transient_state_enabled=true AND cdv_class_transitions_enabled=true AND is_test_user=true AND environment=localhost isolated AND Mongo target=allowlisted",
+          "valore mancante/invalido -> false",
+          "flag OFF: 0 DB calls · 0 audit events · 0 state mutation"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ11",
+        "topic": "first transition code slice",
+        "evidence": "sezione 40",
+        "options": [
+          "A · Mark + Fragment + Segment first (Drain rinviato a RT2-B-2B-2)",
+          "B · full set (Mark + Drain + Fragment + Segment) in RT2-B-2B-1",
+          "C · Mark only in RT2-B-2B-1"
+        ],
+        "agent_recommendation": "A (Mark+Fragment+Segment first; Drain deferred per contenere scope)",
+        "affected_modules": [
+          "nuovo modulo transitions/"
+        ],
+        "gameplay_impact": "NONE con flag off",
+        "state_impact": "scope contained",
+        "security_impact": "N/A",
+        "test_impact": "~25 test",
+        "blocking": "SI",
+        "question": "first transition code slice",
+        "chosen_option": "A",
+        "chosen_option_verbatim": "Mark + Fragment + Resource Segment (Drain rinviato a RT2-B-2B-2)",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Scope contained; Fragment gain testata via trusted fixture (Drain runtime deferred).",
+        "conditions": [
+          "gate name: R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION",
+          "scope: Mark apply/refresh/lazy expiration/opportunistic cleanup/ownership+cap validation · Fragment gain primitive/spend/reset/overflow discard · resource segment open/close · event ordering · event receipt generation · lease+fencing+CAS event batches · flag default-OFF · test-user fail-closed · FakeStore + real-Mongo local tests",
+          "Fragment condition: GAIN_FRAGMENT implementata SENZA sorgente gameplay reale · test usa trusted fixture Drain completion receipt",
+          "ESCLUSO: Drain runtime transitions · damage · healing · XP · loot · guild XP · item effects · proc · cooldown engine · public API · frontend · shared environment · human tester activation",
+          "Drain rinviato a RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION · status PLANNED / HOLD"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ12",
+        "topic": "local integration-test strategy",
+        "evidence": "sezione 36",
+        "options": [
+          "A · FakeStore only",
+          "B · MongoStore real isolated only",
+          "C · both FakeStore + MongoStore"
+        ],
+        "agent_recommendation": "C (both, coerente con RT2-B-1B-1 pattern)",
+        "affected_modules": [
+          "tests/effect_engine/transitions/"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "N/A",
+        "security_impact": "N/A",
+        "test_impact": "duplicate coverage layers",
+        "blocking": "SI",
+        "question": "local integration-test strategy",
+        "chosen_option": "C",
+        "chosen_option_verbatim": "both FakeStore + MongoStore isolated",
+        "pm_status": "PM_RATIFIED",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Coverage duplicata FakeStore+MongoStore, pattern coerente con RT2-B-1B-1.",
+        "conditions": [
+          "test layers: pure state-machine · FakeStore contract · mocked Mongo adapter · real Mongo localhost integration",
+          "DB consentiti: orbus_r16_rt2b_test · orbus_r16_rt2b_it_<unique_run_id>",
+          "DB vietati: orbus_r16 · orbus_r16_test · preview · staging · production",
+          "ogni suite Mongo: unique run ID · cleanup · parallel isolation · zero DB residui"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ13",
+        "topic": "audit sampling",
+        "evidence": "sezione 32",
+        "options": [
+          "A · INFO 100% WARN 100%",
+          "B · INFO 50% WARN 100%",
+          "C · INFO 100% WARN 100% ERROR 100% (all-log)"
+        ],
+        "agent_recommendation": "A (PM baseline)",
+        "affected_modules": [
+          "wiring/audit.py"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "N/A",
+        "security_impact": "no PII",
+        "test_impact": "1 test",
+        "blocking": "NO",
+        "question": "audit sampling",
+        "chosen_option": "A",
+        "chosen_option_verbatim": "INFO 100% + WARN 100% + ERROR 100% (all-log locale)",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "100% locale non diventa automaticamente policy produzione; shared env richiede nuova adjudication.",
+        "conditions": [
+          "localhost integration: INFO transition=100% · WARN rejection/conflict=100% · ERROR integrity/security=100%",
+          "NON registrare: intero doc Mongo · full payload · credenziali · RNG seed · dati sensibili · reward payload non ratificati",
+          "prima di shared env -> audit sampling+retention richiede NEW PM ADJUDICATION",
+          "100% locale NON diventa automaticamente policy produzione"
+        ],
+        "agent_auto_ratified": false
+      },
+      {
+        "question_id": "B2BQ14",
+        "topic": "state-document receipt bound",
+        "evidence": "sezione 28 + 37",
+        "options": [
+          "A · unbound (rely on TTL sweep expire_state)",
+          "B · cap N eventi rolling (es. N=1000)",
+          "C · TTL bound su processed_event_keys entries"
+        ],
+        "agent_recommendation": "B (cap rolling per prevenire growth unbounded)",
+        "affected_modules": [
+          "state_store/models.py",
+          "state_store/mongo_adapter.py"
+        ],
+        "gameplay_impact": "NONE",
+        "state_impact": "doc size bounded < 256 KiB",
+        "security_impact": "N/A",
+        "test_impact": "2 test overflow",
+        "blocking": "SI",
+        "question": "state-document receipt bound",
+        "chosen_option": "fixed bounded receipt set, NO rolling eviction",
+        "chosen_option_verbatim": "hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite",
+        "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+        "pm_adjudication_authority": "PM_MESSAGE_149",
+        "rationale": "Cap statico deterministico; TTL su singole chiavi embedded escluso.",
+        "conditions": [
+          "hard cap: total receipt capacity = 512",
+          "ordinary class-event ceiling = 504",
+          "reserved lifecycle/system = 8",
+          "slot riservati per: phase end · expedition terminalization · cancellation · cleanup-critical lifecycle",
+          "saturazione (504 ordinarie): new ordinary event -> RECEIPT_CAP_REACHED · fail closed · no mutation",
+          "PRESERVARE: active receipt eviction=FORBIDDEN · old receipt overwrite=FORBIDDEN · duplicate receipt removal=FORBIDDEN",
+          "receipt restano fino a scadenza stato",
+          "size guard: 512 receipt + fixture stress -> state document < 256 KiB DIMOSTRATO",
+          "se superato -> STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED · STOP · no automatic cap increase",
+          "NON usare TTL per singole chiavi embedded"
+        ],
+        "agent_auto_ratified": false
+      }
     ],
     "section_40_first_code_slice_proposal_rt2b2b1": {
       "canonical_name": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION",
@@ -408,7 +1661,7 @@
         "Flags default-OFF (nuovo flag TBD B2BQ10)",
         "Test-user fail-closed invariato"
       ],
-      "drain_status": "PM_REVIEW (incluso RT2-B-2B-1 OR rinviato a RT2-B-2B-2 · B2BQ11)",
+      "drain_status": "DEFERRED_TO_RT2-B-2B-2 · PM_RATIFIED · Option A",
       "exclusions_verbatim": [
         "combat damage",
         "healing",
@@ -425,61 +1678,170 @@
         "frontend",
         "public API changes",
         "shared-env writes"
+      ],
+      "pm_decisions": [
+        {
+          "question_id": "B2BQ11",
+          "chosen_option": "A",
+          "chosen_option_verbatim": "Mark + Fragment + Resource Segment (Drain rinviato a RT2-B-2B-2)",
+          "pm_status": "PM_RATIFIED_WITH_CONDITIONS",
+          "authority": "PM_MESSAGE_149",
+          "conditions": [
+            "gate name: R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION",
+            "scope: Mark apply/refresh/lazy expiration/opportunistic cleanup/ownership+cap validation · Fragment gain primitive/spend/reset/overflow discard · resource segment open/close · event ordering · event receipt generation · lease+fencing+CAS event batches · flag default-OFF · test-user fail-closed · FakeStore + real-Mongo local tests",
+            "Fragment condition: GAIN_FRAGMENT implementata SENZA sorgente gameplay reale · test usa trusted fixture Drain completion receipt",
+            "ESCLUSO: Drain runtime transitions · damage · healing · XP · loot · guild XP · item effects · proc · cooldown engine · public API · frontend · shared environment · human tester activation",
+            "Drain rinviato a RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION · status PLANNED / HOLD"
+          ]
+        }
+      ],
+      "pm_ratified_scope": [
+        "Mark apply/refresh/lazy expiration/opportunistic cleanup/ownership+cap validation",
+        "Fragment gain primitive (with trusted-fixture only) / spend / reset / overflow discard",
+        "Resource segment open/close",
+        "Event ordering + event receipt generation (cap 512/504+8)",
+        "Lease per event batch + fencing + CAS",
+        "Flag default-OFF quadruple-gate",
+        "Test-user fail-closed",
+        "FakeStore + real-Mongo localhost integration tests"
+      ],
+      "exclusions_pm_ratified": [
+        "Drain runtime transitions (deferred RT2-B-2B-2)",
+        "damage · healing · XP · loot · guild XP",
+        "item effects · procs · cooldown engine",
+        "public API changes · frontend touches",
+        "shared environment · human tester activation"
       ]
     },
     "section_41_readiness": [
-      {"aspect": "State-store contract", "status": "READY"},
-      {"aspect": "Shell state lifecycle", "status": "READY"},
-      {"aspect": "Class-state schema", "status": "READY"},
-      {"aspect": "Event schema", "status": "READY"},
-      {"aspect": "Combat phase boundary", "status": "NOT_READY (fail-stop TRIGGERED B2BQ01)"},
-      {"aspect": "Class event entry point", "status": "NOT_READY (fail-stop TRIGGERED B2BQ02)"},
-      {"aspect": "Mark state machine", "status": "READY (design)"},
-      {"aspect": "Drain state machine", "status": "READY (design)"},
-      {"aspect": "Fragment state machine", "status": "READY (design)"},
-      {"aspect": "Resource segments", "status": "READY (design)"},
-      {"aspect": "Feature flag scope", "status": "PENDING B2BQ10"},
-      {"aspect": "Lease strategy", "status": "PENDING B2BQ09"},
-      {"aspect": "First code slice scope", "status": "PENDING B2BQ11"},
-      {"aspect": "Integration test strategy", "status": "PENDING B2BQ12"}
+      {
+        "aspect": "State-store contract",
+        "status": "READY"
+      },
+      {
+        "aspect": "Shell state lifecycle",
+        "status": "READY"
+      },
+      {
+        "aspect": "Class-state schema",
+        "status": "READY"
+      },
+      {
+        "aspect": "Event schema",
+        "status": "READY"
+      },
+      {
+        "aspect": "Combat phase boundary",
+        "status": "NOT_READY (fail-stop TRIGGERED B2BQ01)"
+      },
+      {
+        "aspect": "Class event entry point",
+        "status": "NOT_READY (fail-stop TRIGGERED B2BQ02)"
+      },
+      {
+        "aspect": "Mark state machine",
+        "status": "READY (design)"
+      },
+      {
+        "aspect": "Drain state machine",
+        "status": "READY (design)"
+      },
+      {
+        "aspect": "Fragment state machine",
+        "status": "READY (design)"
+      },
+      {
+        "aspect": "Resource segments",
+        "status": "READY (design)"
+      },
+      {
+        "aspect": "Feature flag scope",
+        "status": "PENDING B2BQ10"
+      },
+      {
+        "aspect": "Lease strategy",
+        "status": "PENDING B2BQ09"
+      },
+      {
+        "aspect": "First code slice scope",
+        "status": "PENDING B2BQ11"
+      },
+      {
+        "aspect": "Integration test strategy",
+        "status": "PENDING B2BQ12"
+      }
     ],
     "section_42_go_hold_recommendation": {
-      "rt2b2b_p0_status": "READY FOR PM ADJUDICATION",
+      "rt2b2b_p0_status": "CLOSED · PM-LOCKED",
       "b2bq_emitted": 14,
       "b2bq_auto_ratified": 0,
       "fail_stops_total": 6,
       "fail_stops_triggered": 2,
       "fail_stops_not_triggered": 4,
-      "rt2b2b1_status": "HOLD · CONDITIONAL_GO_AFTER_ADJUDICATION",
+      "rt2b2b1_status": "CONDITIONAL_GO · READY-TO-DISPATCH",
       "rt2b2b1_conditions": [
-        "Ratifica PM 14/14 B2BQ",
-        "Risoluzione 2 fail-stop triggered",
-        "Formal closure RT2-B-2B-P0 post-adjudication"
+        "RT2-B-2B-P0 formally CLOSED (this closure)",
+        "14/14 B2BQ ratified verbatim (PM Message 149)",
+        "2/2 fail-stops resolved (COMBAT_PHASE_BOUNDARY, CLASS_EVENT_ENTRYPOINT)",
+        "Await orchestrator dispatch to open RT2-B-2B-1 code gate"
       ],
       "shared_env_activation": "LOCK · NOT_AUTHORIZED",
-      "tester_gameplay_activation": "LOCK · NOT_AUTHORIZED"
+      "tester_gameplay_activation": "LOCK · NOT_AUTHORIZED",
+      "b2bq_ratified": 14,
+      "b2bq_auto_ratified_by_agent": 0,
+      "fail_stops_resolved": 2,
+      "rt2b2b2_status": "HOLD · Drain transition foundation"
     },
     "section_43_explicit_stop": {
-      "status": "STRICT STOP · Phase P0 documental only · fine",
+      "status": "STRICT STOP · Phase P0 CLOSED post-PM adjudication (Message 149) · fine",
       "no_code_changes": true,
       "no_db_writes": true,
       "no_ff_toggle": true,
       "no_new_routes": true,
-      "no_closure_manifest_in_p0_draft": true,
-      "no_prd_append_in_p0_draft": true,
+      "no_closure_manifest_in_p0_draft": false,
+      "no_prd_append_in_p0_draft": false,
       "awaiting": [
-        "PM verbatim ratifica 14 B2BQ",
-        "PM adjudication 2 fail-stop triggered",
-        "Dispatch orchestrator per formal closure RT2-B-2B-P0 post-adjudication"
-      ]
+        "Orchestrator dispatch to authorize RT2-B-2B-1 code gate"
+      ],
+      "closure_completed": true
     }
   },
   "fail_stops_evaluation": [
-    {"id": "COMBAT_PHASE_BOUNDARY_UNDERDEFINED", "status": "TRIGGERED", "evidence": "grep 0 risultati", "adjudication": "B2BQ01"},
-    {"id": "CLASS_EVENT_ENTRYPOINT_UNDERDEFINED", "status": "TRIGGERED", "evidence": "grep 0 risultati outside state_store namespace", "adjudication": "B2BQ02"},
-    {"id": "CLASS_STATE_ATOMICITY_CONFLICT", "status": "NOT_TRIGGERED", "evidence": "single-document per-expedition, CAS sufficiente"},
-    {"id": "PUBLIC_API_SCOPE_EXPANSION_REQUIRED", "status": "NOT_TRIGGERED", "evidence": "verdict verbatim public API = none, code slice usa event interni"},
-    {"id": "SHARED_ENVIRONMENT_REQUIRED", "status": "NOT_TRIGGERED", "evidence": "attivazione locale isolated only (B2Q10)"},
-    {"id": "ITEM_EFFECT_SCOPE_DEPENDENCY", "status": "NOT_TRIGGERED", "evidence": "item hooks in RT2-E HOLD, zero dependency"}
-  ]
+    {
+      "id": "COMBAT_PHASE_BOUNDARY_UNDERDEFINED",
+      "status": "RESOLVED",
+      "evidence": "grep 0 risultati",
+      "adjudication": "B2BQ01",
+      "resolution": "B2BQ01 · Option B ratified · SINGLE_EXPEDITION_PHASE_V1 transitional model"
+    },
+    {
+      "id": "CLASS_EVENT_ENTRYPOINT_UNDERDEFINED",
+      "status": "RESOLVED",
+      "evidence": "grep 0 risultati outside state_store namespace",
+      "adjudication": "B2BQ02",
+      "resolution": "B2BQ02 · Option B ratified · ExpeditionRuntimeCoordinator internal dispatch method"
+    },
+    {
+      "id": "CLASS_STATE_ATOMICITY_CONFLICT",
+      "status": "NOT_TRIGGERED",
+      "evidence": "single-document per-expedition, CAS sufficiente"
+    },
+    {
+      "id": "PUBLIC_API_SCOPE_EXPANSION_REQUIRED",
+      "status": "NOT_TRIGGERED",
+      "evidence": "verdict verbatim public API = none, code slice usa event interni"
+    },
+    {
+      "id": "SHARED_ENVIRONMENT_REQUIRED",
+      "status": "NOT_TRIGGERED",
+      "evidence": "attivazione locale isolated only (B2Q10)"
+    },
+    {
+      "id": "ITEM_EFFECT_SCOPE_DEPENDENCY",
+      "status": "NOT_TRIGGERED",
+      "evidence": "item hooks in RT2-E HOLD, zero dependency"
+    }
+  ],
+  "pm_adjudication_source": "PM_MESSAGE_149",
+  "closure_regime": "DOCUMENTAL_ONLY · Italian · NO CODE · SHA_POLICY_31 · MANIFEST_OWN_SHA_NOT_EMBEDDED"
 }

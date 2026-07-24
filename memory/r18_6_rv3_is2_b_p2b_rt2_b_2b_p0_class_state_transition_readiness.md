@@ -114,6 +114,8 @@ Event schema minimo (verbatim §Dispatch):
 
 ---
 
+> **PM Decision (B2BQ02, Message 149)**: `B` · `PM_RATIFIED` · `extend ExpeditionRuntimeCoordinator`
+
 ## Sezione 9 · Mark State Machine
 
 Stati: `INACTIVE → ACTIVE → EXPIRED | REMOVED_ON_TERMINAL`.
@@ -164,6 +166,8 @@ Hard-lock RT1 preservati verbatim:
 
 ---
 
+> **PM Decision (B2BQ03, Message 149)**: `C` · `PM_RATIFIED` · `hybrid (lazy validation obbligatoria + opportunistic cleanup)`
+
 ## Sezione 13 · Mark Refresh
 
 `mark_refresh` policy candidata:
@@ -176,6 +180,8 @@ Hard-lock RT1 preservati verbatim:
 **Adjudication PM richiesta**: B2BQ04.
 
 ---
+
+> **PM Decision (B2BQ04, Message 149)**: `A` · `PM_RATIFIED` · `server-authoritative timestamp`
 
 ## Sezione 14 · Multi-CdV Interaction
 
@@ -202,6 +208,10 @@ Stati: `INACTIVE → REQUESTED → ACTIVE → COMPLETED | CANCELLED | REJECTED`.
 
 ---
 
+> **PM Decision (B2BQ05, Message 149)**: `A + mandatory reason code` · `PM_RATIFIED_WITH_CONDITIONS` · `CANCELLED terminal + reason_code obbligatorio`
+
+> **PM Decision (B2BQ06, Message 149)**: `C` · `PM_RATIFIED_WITH_CONDITIONS` · `result_code + assigned_event_sequence (senza gameplay payload)`
+
 ## Sezione 16 · Drain Validation
 
 Precondizioni `drain_start`:
@@ -218,6 +228,8 @@ Precondizioni `drain_complete`:
 
 ---
 
+> **PM Decision (B2BQ05, Message 149)**: `A + mandatory reason code` · `PM_RATIFIED_WITH_CONDITIONS` · `CANCELLED terminal + reason_code obbligatorio`
+
 ## Sezione 17 · Drain Idempotency
 
 Guarantees:
@@ -227,6 +239,8 @@ Guarantees:
 - Cancellation policy (B2BQ05): PM-adjudicate se `CANCELLED` è terminal ammette re-open (default: NO).
 
 ---
+
+> **PM Decision (B2BQ05, Message 149)**: `A + mandatory reason code` · `PM_RATIFIED_WITH_CONDITIONS` · `CANCELLED terminal + reason_code obbligatorio`
 
 ## Sezione 18 · Fragment State Machine
 
@@ -238,6 +252,8 @@ Fragment counter per-adventurer:
 
 ---
 
+> **PM Decision (B2BQ07, Message 149)**: `A` · `PM_RATIFIED_WITH_CONDITIONS` · `accepted Drain completion only`
+
 ## Sezione 19 · Fragment Gain
 
 Precondizioni:
@@ -246,6 +262,8 @@ Precondizioni:
 - Se `fragment_count == 5` at gain → transition `fragment_overflow_discarded` (audit only, no state change nel counter).
 
 ---
+
+> **PM Decision (B2BQ07, Message 149)**: `A` · `PM_RATIFIED_WITH_CONDITIONS` · `accepted Drain completion only`
 
 ## Sezione 20 · Fragment Spend
 
@@ -258,11 +276,15 @@ Post-spend: `fragment_count -= 1`, `focus_bonus_usage` incrementato per segment 
 
 ---
 
+> **PM Decision (B2BQ08, Message 149)**: `C + mandatory automatic closes` · `PM_RATIFIED_WITH_CONDITIONS` · `phase_end + explicit close + expedition_terminal + fragment_count->0`
+
 ## Sezione 21 · Fragment Overflow
 
 Verdict RT1 hard-lock: `overflow = discarded`. Audit event `cdv_fragment_overflow_discarded` emesso. **Nessun reward · nessun proc · nessuna conversione · nessun credito differito**. Solo diagnostica.
 
 ---
+
+> **PM Decision (B2BQ08, Message 149)**: `C + mandatory automatic closes` · `PM_RATIFIED_WITH_CONDITIONS` · `phase_end + explicit close + expedition_terminal + fragment_count->0`
 
 ## Sezione 22 · Resource Segments
 
@@ -273,6 +295,8 @@ Verdict RT1 hard-lock: `overflow = discarded`. Audit event `cdv_fragment_overflo
 - Fragment reset policy: PM adjudica se close ↔ fragment_reset o transitions indipendenti.
 
 ---
+
+> **PM Decision (B2BQ08, Message 149)**: `C + mandatory automatic closes` · `PM_RATIFIED_WITH_CONDITIONS` · `phase_end + explicit close + expedition_terminal + fragment_count->0`
 
 ## Sezione 23 · Phase Lifecycle
 
@@ -291,6 +315,8 @@ Discovery evidence:
 
 ---
 
+> **PM Decision (B2BQ01, Message 149)**: `B` · `PM_RATIFIED_WITH_CONDITIONS` · `expedition-as-single-phase`
+
 ## Sezione 24 · Expedition Terminalization
 
 Transitions terminali (verdict B2Q04 upstream verbatim):
@@ -307,6 +333,8 @@ Post-terminal:
 
 ---
 
+> **PM Decision (B2BQ01, Message 149)**: `B` · `PM_RATIFIED_WITH_CONDITIONS` · `expedition-as-single-phase`
+
 ## Sezione 25 · CAS and Atomicity
 
 CAS filter (verbatim §Dispatch + `mongo_adapter.py:272`):
@@ -319,6 +347,8 @@ CAS filter (verbatim §Dispatch + `mongo_adapter.py:272`):
 **Fail-Stop candidato**: `CLASS_STATE_ATOMICITY_CONFLICT` se transition richiede mutation multi-document → **NOT TRIGGERED** in P0 (schema è single-document per-expedition).
 
 ---
+
+> **PM Decision (B2BQ09, Message 149)**: `B` · `PM_RATIFIED_WITH_CONDITIONS` · `short lease per server-authoritative event batch`
 
 ## Sezione 26 · Lease Strategy
 
@@ -336,6 +366,8 @@ Trade-off analizzati. Nessun nuovo ownership model contraddice `RT2-B-P0` (verdi
 
 ---
 
+> **PM Decision (B2BQ09, Message 149)**: `B` · `PM_RATIFIED_WITH_CONDITIONS` · `short lease per server-authoritative event batch`
+
 ## Sezione 27 · Event Ordering
 
 Verdict verbatim §Dispatch: **state-changing class events = total ordered per expedition**.
@@ -346,6 +378,8 @@ Verdict verbatim §Dispatch: **state-changing class events = total ordered per e
 
 ---
 
+> **PM Decision (B2BQ09, Message 149)**: `B` · `PM_RATIFIED_WITH_CONDITIONS` · `short lease per server-authoritative event batch`
+
 ## Sezione 28 · Deduplication
 
 Verdict verbatim §Dispatch:
@@ -355,6 +389,8 @@ Verdict verbatim §Dispatch:
 - TTL: `processed_event_keys` bound (B2BQ14 · state-document receipt bound).
 
 ---
+
+> **PM Decision (B2BQ14, Message 149)**: `fixed bounded receipt set, NO rolling eviction` · `PM_RATIFIED_WITH_CONDITIONS` · `hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite`
 
 ## Sezione 29 · Feature Flags
 
@@ -367,6 +403,8 @@ Preservazione verbatim §Dispatch:
 
 ---
 
+> **PM Decision (B2BQ10, Message 149)**: `A` · `PM_RATIFIED` · `nuovo flag cdv_class_transitions_enabled default OFF`
+
 ## Sezione 30 · Test-User Boundary
 
 Invarianza post RT2-B-2A:
@@ -376,6 +414,8 @@ Invarianza post RT2-B-2A:
 - Class transitions eseguiti solo se boundary passa (double-gate `cdv_transient_state_enabled` + `is_test_user`; con nuovo flag `cdv_class_transitions_enabled` → triple-gate).
 
 ---
+
+> **PM Decision (B2BQ10, Message 149)**: `A` · `PM_RATIFIED` · `nuovo flag cdv_class_transitions_enabled default OFF`
 
 ## Sezione 31 · API Boundary
 
@@ -391,6 +431,8 @@ Verdict verbatim §Dispatch: `public API changes = none` in P0 e in RT2-B-2B-1 c
 **Adjudication PM richiesta**: B2BQ02 (class event internal entry point).
 
 ---
+
+> **PM Decision (B2BQ02, Message 149)**: `B` · `PM_RATIFIED` · `extend ExpeditionRuntimeCoordinator`
 
 ## Sezione 32 · Audit and Observability
 
@@ -415,6 +457,8 @@ Verdict verbatim §Dispatch: `public API changes = none` in P0 e in RT2-B-2B-1 c
 Sampling policy candidata (B2BQ13): INFO 100% · WARN 100%. Nessun payload sensibile, Mongo dump, seed, rewards.
 
 ---
+
+> **PM Decision (B2BQ13, Message 149)**: `A` · `PM_RATIFIED_WITH_CONDITIONS` · `INFO 100% + WARN 100% + ERROR 100% (all-log locale)`
 
 ## Sezione 33 · Failure Isolation
 
@@ -462,6 +506,8 @@ Threat surface class transitions:
 
 ---
 
+> **PM Decision (B2BQ12, Message 149)**: `C` · `PM_RATIFIED` · `both FakeStore + MongoStore isolated`
+
 ## Sezione 37 · Performance Risks
 
 - `apply_event_once` p95 stimato ≤ 25ms (baseline `create_state = 0.21ms` misurato). Overhead trascurabile per shadow.
@@ -470,6 +516,8 @@ Threat surface class transitions:
 - Concurrent event stress → CAS conflict retry può degradare p95; monitoring via `cdv_state_transition_conflict`.
 
 ---
+
+> **PM Decision (B2BQ14, Message 149)**: `fixed bounded receipt set, NO rolling eviction` · `PM_RATIFIED_WITH_CONDITIONS` · `hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite`
 
 ## Sezione 38 · Risk Register
 
@@ -511,7 +559,191 @@ Ogni domanda: `question_id · evidence · options · agent_recommendation · aff
 - **B2BQ13** · Audit sampling (INFO 100% · WARN 100%).
 - **B2BQ14** · State-document receipt bound (TTL o cap N eventi).
 
-**Auto-ratification count = 0**.
+**Agent auto-ratification count = 0** · **PM adjudication (Message 149) applied verbatim = 14/14**.
+### PM Adjudication (Message 149) · 14/14 VERBATIM VERDICTS · Agent auto-ratifications = 0
+
+
+**B2BQ01 · combat phase boundary source**
+- chosen_option: `B` (expedition-as-single-phase)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Modello TRANSITORIO SINGLE_EXPEDITION_PHASE_V1. Combat-phase reale richiede version bump + PM adjudication dedicata futura.
+- conditions:
+  - phase_model = SINGLE_EXPEDITION_PHASE_V1
+  - phase_id deterministico = expedition:<expedition_id>:phase:1
+  - phase start: dopo validazione + inizializzazione expedition state
+  - phase end: immediatamente prima terminalizzazione expedition
+  - stato iniziale: Fragments=0, resource_segment=inactive
+  - stato finale: Fragments->0, resource_segment->closed, active Drains->cancelled
+  - modello TRANSITORIO: real combat-phase richiede version bump + dedicated PM adjudication
+  - fail-stop COMBAT_PHASE_BOUNDARY_UNDERDEFINED = RESOLVED_BY_TRANSITIONAL_SINGLE_PHASE_MODEL
+- resolves_fail_stop: `COMBAT_PHASE_BOUNDARY_UNDERDEFINED`
+
+**B2BQ02 · class event internal entry point**
+- chosen_option: `B` (extend ExpeditionRuntimeCoordinator)
+- pm_status: `PM_RATIFIED`
+- authority: PM_MESSAGE_149
+- rationale: Estensione coordinator interno, coerente con architettura RT2-B-2A shadow wiring.
+- conditions:
+  - entry point method: dispatch_class_state_event(event, trusted_context)
+  - server-side only · non-esposto come route pubblica · non-importato frontend
+  - server-authoritative · flag-gated · is_test_user=true · Mongo localhost allowlisted
+  - VIETATO: public Mark/Drain/Fragment endpoint
+  - VIETATO: admin gameplay route
+  - VIETATO: client-controlled event_sequence / fencing_token
+  - fail-stop CLASS_EVENT_ENTRYPOINT_UNDERDEFINED = RESOLVED_BY_INTERNAL_COORDINATOR_DISPATCH
+- resolves_fail_stop: `CLASS_EVENT_ENTRYPOINT_UNDERDEFINED`
+
+**B2BQ03 · Mark expiration model**
+- chosen_option: `C` (hybrid (lazy validation obbligatoria + opportunistic cleanup))
+- pm_status: `PM_RATIFIED`
+- authority: PM_MESSAGE_149
+- rationale: Modello hybrid PM-baseline; nessun background scheduler introdotto in RT2-B-2B-1.
+- conditions:
+  - validita': expires_at > authoritative_server_time
+  - lazy validation OBBLIGATORIA su ogni accesso rilevante (apply, refresh, drain gate, hook check)
+  - opportunistic cleanup CONSENTITO durante mutation/read/terminalization
+  - scheduled expiration NON richiesta
+  - nessun background scheduler in RT2-B-2B-1
+  - Mark scaduto -> no Drain, no refresh, no hook, no ritual-close eligibility
+
+**B2BQ04 · Mark refresh timestamp policy**
+- chosen_option: `A` (server-authoritative timestamp)
+- pm_status: `PM_RATIFIED`
+- authority: PM_MESSAGE_149
+- rationale: Server-authoritative clock impedisce clock-skew manipulation da client.
+- conditions:
+  - refresh timestamp source = authoritative server clock
+  - new expires_at = server_now + configured_mark_duration
+  - configured_mark_duration <= 10 seconds
+  - refresh mantiene mark_id/application_id/ownership
+  - refresh NON ripristina ritual_close_used
+  - refresh incrementa mark_version + state_version
+  - Mark gia' scaduto -> REFRESH_MARK -> MARK_EXPIRED -> rejected (richiede APPLY_MARK nuovo)
+
+**B2BQ05 · Drain cancellation policy**
+- chosen_option: `A + mandatory reason code` (CANCELLED terminal + reason_code obbligatorio)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Terminale coerente con RT1 one_resolution_per_execution_id; reason_code richiesto per auditability.
+- conditions:
+  - STARTED -> CANCELLED terminale per stesso drain_execution_id · NON riapribile
+  - reason_code obbligatorio in {MARK_EXPIRED, MARK_OWNERSHIP_MISMATCH, MARK_APPLICATION_CHANGED, TARGET_INVALID, SOURCE_INVALID, PHASE_ENDED, EXPEDITION_TERMINAL, EXPLICIT_SERVER_CANCEL}
+  - nuovo Drain richiede nuovo drain_execution_id + tutte precondizioni ri-valide
+  - completion su vecchio ID -> result_code=DRAIN_ALREADY_CANCELLED · no mutation · no reward · no Fragment
+
+**B2BQ06 · Drain completion output contract**
+- chosen_option: `C` (result_code + assigned_event_sequence (senza gameplay payload))
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Output audit-only; gameplay payload deferred a RT2-C. Nessuna esposizione pubblica.
+- conditions:
+  - output interno obbligatorio: drain_execution_id, status, result_code, mark_valid_at_completion, assigned_event_sequence, state_version_after, processed_at
+  - ESCLUSIONI: damage=absent · healing=absent · XP=absent · loot=absent · fragment_reward_amount=absent · combat_result=absent
+  - output interno auditabile · NON aggiunto alla response pubblica
+  - public API contract invariato
+
+**B2BQ07 · Fragment gain source boundary**
+- chosen_option: `A` (accepted Drain completion only)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: In RT2-B-2B-1 (Drain rinviato): primitive Fragment gain implementata + testata con trusted fixture equivalente a Drain completion receipt valida.
+- conditions:
+  - GAIN_FRAGMENT valido richiede: accepted drain_execution_id + accepted Drain completion receipt
+  - verifica: ownership CdV · stessa expedition · stessa fase · completion non gia' usata per gain · Mark valido al completion
+  - in RT2-B-2B-1: primitive testata con trusted fixture, NON collegata al gameplay runtime
+  - VIETATO: client grant · admin grant · gain da Mark apply · gain da item · gain da overflow · gain da spedizione completata
+
+**B2BQ08 · Resource segment close conditions**
+- chosen_option: `C + mandatory automatic closes` (phase_end + explicit close + expedition_terminal + fragment_count->0)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Massima robustezza; chiusura esplicita non converte/rimborsa Frammenti.
+- conditions:
+  - chiusure obbligatorie: fragment_count -> 0 · phase ends · expedition terminal · explicit server-side CLOSE_RESOURCE_SEGMENT
+  - spesa parziale con Frammenti positivi -> mantiene stesso resource_segment_id
+  - nuovo segmento apre solo quando fragment_count: 0 -> positive
+  - preservare hard-lock: focus_bonus_usage <= 2 per segment
+  - chiusura esplicita NON converte ne' rimborsa Frammenti
+
+**B2BQ09 · Lease strategy per transition**
+- chosen_option: `B` (short lease per server-authoritative event batch)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Ogni event server-authoritative = batch atomico. CAS obbligatorio DENTRO il lease.
+- conditions:
+  - ogni evento server-authoritative = event batch atomico
+  - batch APPLY_MARK = 1 batch
+  - batch COMPLETE_DRAIN + future Fragment gain = 1 batch
+  - batch END_PHASE + reset resources + cancel Drains = 1 batch
+  - sequenza: (1) acquire short request-scoped lease (2) obtain/validate fencing token (3) read expected state_version (4) apply mutations atomically (5) increment state_version once (6) persist event receipt (7) release/expire lease
+  - CAS obbligatorio DENTRO il lease
+  - CAS-only senza lease valido = FORBIDDEN
+  - retry max 3 · ogni retry rilettura stato + verifica lease/fencing validi
+  - nessun background lease renewer in RT2-B-2B-1
+
+**B2BQ10 · class-transition feature flag**
+- chosen_option: `A` (nuovo flag cdv_class_transitions_enabled default OFF)
+- pm_status: `PM_RATIFIED`
+- authority: PM_MESSAGE_149
+- rationale: Nuovo flag dedicato PM baseline; gate composito quadruple-check.
+- conditions:
+  - nuovo flag: cdv_class_transitions_enabled default OFF
+  - gate composito ELEGGIBILITA': cdv_transient_state_enabled=true AND cdv_class_transitions_enabled=true AND is_test_user=true AND environment=localhost isolated AND Mongo target=allowlisted
+  - valore mancante/invalido -> false
+  - flag OFF: 0 DB calls · 0 audit events · 0 state mutation
+
+**B2BQ11 · first transition code slice**
+- chosen_option: `A` (Mark + Fragment + Resource Segment (Drain rinviato a RT2-B-2B-2))
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Scope contained; Fragment gain testata via trusted fixture (Drain runtime deferred).
+- conditions:
+  - gate name: R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION
+  - scope: Mark apply/refresh/lazy expiration/opportunistic cleanup/ownership+cap validation · Fragment gain primitive/spend/reset/overflow discard · resource segment open/close · event ordering · event receipt generation · lease+fencing+CAS event batches · flag default-OFF · test-user fail-closed · FakeStore + real-Mongo local tests
+  - Fragment condition: GAIN_FRAGMENT implementata SENZA sorgente gameplay reale · test usa trusted fixture Drain completion receipt
+  - ESCLUSO: Drain runtime transitions · damage · healing · XP · loot · guild XP · item effects · proc · cooldown engine · public API · frontend · shared environment · human tester activation
+  - Drain rinviato a RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION · status PLANNED / HOLD
+
+**B2BQ12 · local integration-test strategy**
+- chosen_option: `C` (both FakeStore + MongoStore isolated)
+- pm_status: `PM_RATIFIED`
+- authority: PM_MESSAGE_149
+- rationale: Coverage duplicata FakeStore+MongoStore, pattern coerente con RT2-B-1B-1.
+- conditions:
+  - test layers: pure state-machine · FakeStore contract · mocked Mongo adapter · real Mongo localhost integration
+  - DB consentiti: orbus_r16_rt2b_test · orbus_r16_rt2b_it_<unique_run_id>
+  - DB vietati: orbus_r16 · orbus_r16_test · preview · staging · production
+  - ogni suite Mongo: unique run ID · cleanup · parallel isolation · zero DB residui
+
+**B2BQ13 · audit sampling**
+- chosen_option: `A` (INFO 100% + WARN 100% + ERROR 100% (all-log locale))
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: 100% locale non diventa automaticamente policy produzione; shared env richiede nuova adjudication.
+- conditions:
+  - localhost integration: INFO transition=100% · WARN rejection/conflict=100% · ERROR integrity/security=100%
+  - NON registrare: intero doc Mongo · full payload · credenziali · RNG seed · dati sensibili · reward payload non ratificati
+  - prima di shared env -> audit sampling+retention richiede NEW PM ADJUDICATION
+  - 100% locale NON diventa automaticamente policy produzione
+
+**B2BQ14 · state-document receipt bound**
+- chosen_option: `fixed bounded receipt set, NO rolling eviction` (hard cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite)
+- pm_status: `PM_RATIFIED_WITH_CONDITIONS`
+- authority: PM_MESSAGE_149
+- rationale: Cap statico deterministico; TTL su singole chiavi embedded escluso.
+- conditions:
+  - hard cap: total receipt capacity = 512
+  - ordinary class-event ceiling = 504
+  - reserved lifecycle/system = 8
+  - slot riservati per: phase end · expedition terminalization · cancellation · cleanup-critical lifecycle
+  - saturazione (504 ordinarie): new ordinary event -> RECEIPT_CAP_REACHED · fail closed · no mutation
+  - PRESERVARE: active receipt eviction=FORBIDDEN · old receipt overwrite=FORBIDDEN · duplicate receipt removal=FORBIDDEN
+  - receipt restano fino a scadenza stato
+  - size guard: 512 receipt + fixture stress -> state document < 256 KiB DIMOSTRATO
+  - se superato -> STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED · STOP · no automatic cap increase
+  - NON usare TTL per singole chiavi embedded
+
 
 ---
 
@@ -533,6 +765,8 @@ Scope candidato:
 **Esclusioni verbatim `RT2-B-2B-1`**: combat damage · healing · XP/loot rewards · guild XP · success-chance changes · item procs · affix effects · cooldown engine · Legendary effects · boss dispel · anti-summon · PvP · frontend · public API changes · shared-env writes.
 
 ---
+
+> **PM Decision (B2BQ11, Message 149)**: `A` · `PM_RATIFIED_WITH_CONDITIONS` · `Mark + Fragment + Resource Segment (Drain rinviato a RT2-B-2B-2)`
 
 ## Sezione 41 · Readiness
 
@@ -583,7 +817,7 @@ In attesa di:
 2. Adjudication dei 2 fail-stop triggered (`COMBAT_PHASE_BOUNDARY_UNDERDEFINED` · `CLASS_EVENT_ENTRYPOINT_UNDERDEFINED`).
 3. Dispatch orchestrator per formal closure `RT2-B-2B-P0` post-adjudication.
 
-**`STRICT STOP · Phase P0 documental only · fine`**.
+**`STRICT STOP · Phase P0 CLOSED post-PM adjudication (Msg 149) · documental only · fine`**.
 
 ---
 

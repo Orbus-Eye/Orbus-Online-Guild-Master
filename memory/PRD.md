@@ -4483,3 +4483,60 @@ Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2A · Local Shadow Wiring & State Lifecycl
 Governance evidence (forma normalizzata): `sealed integrity tests = 6 passed` · `sealed artifacts = 36/36 byte-identical` · baseline chain **13/13 byte-identical** (IS2-A · IS2-B P1 · P1-N1 · P2A · P2B-1 · RT1 · RT2-P0 · RT2-A · RT2-B-P0 · RT2-B-1A · RT2-B-1B-P0 · RT2-B-1B-1 · RT2-B-2-P0) · `lore_meta.py` SHA `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` invariante · effect_engine 320/320 PASS · Registry v3 changes = 0 · item generation runs = 0 · FF runtime activation = 0 · frontend changes = 0 · OpenAPI changes = 0 · persistent user schema unchanged · NEW SEAL = NO. SHA dei 10 nuovi file + 3 modificati + 4 artefatti closure (implementation report N/A questa fase · final_closure_report MD/JSON · closure_manifest §31) + PRD post-append dichiarati esclusivamente nel chat report finale (SHA Policy §31, manifest own SHA non embedded).
 
 Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION` · HOLD (attendere dispatch orchestrator).
+
+
+---
+
+## R18.6.RV3-IS2-B-P2B-RT2-B-2B-P0 · CLASS-STATE TRANSITION FOUNDATION READINESS · CLOSED
+
+**Closure date (UTC)**: 2026-02
+**PM adjudication authority**: PM Message 149
+**Status**: CLOSED · PM-LOCKED · READ-ONLY POST-CLOSURE
+**Regime**: DOCUMENTAL ONLY · Italian · NO CODE · SHA §31 · MANIFEST_OWN_SHA_NOT_EMBEDDED
+
+### PM Adjudication Summary (14/14 VERBATIM · Agent auto-ratifications=0)
+- B2BQ01 → Option **B** (expedition-as-single-phase) · PM_RATIFIED_WITH_CONDITIONS · risolve fail-stop `COMBAT_PHASE_BOUNDARY_UNDERDEFINED`
+- B2BQ02 → Option **B** (extend ExpeditionRuntimeCoordinator) · PM_RATIFIED · risolve fail-stop `CLASS_EVENT_ENTRYPOINT_UNDERDEFINED`
+- B2BQ03 → Option **C** (Mark expiration hybrid) · PM_RATIFIED
+- B2BQ04 → Option **A** (server-authoritative refresh) · PM_RATIFIED
+- B2BQ05 → Option **A + reason code** (Drain CANCELLED terminal) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ06 → Option **C** (Drain output audit-only, NO gameplay payload) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ07 → Option **A** (Fragment gain from accepted Drain only) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ08 → Option **C + auto** (resource segment close: phase_end + explicit + terminal + count→0) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ09 → Option **B** (short lease per event batch + CAS) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ10 → Option **A** (`cdv_class_transitions_enabled` default OFF) · PM_RATIFIED
+- B2BQ11 → Option **A** (Mark + Fragment + Segment first; Drain deferred a RT2-B-2B-2) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ12 → Option **C** (FakeStore + MongoStore) · PM_RATIFIED
+- B2BQ13 → Option **A** (audit 100% locale · prod policy = NEW PM ADJUDICATION) · PM_RATIFIED_WITH_CONDITIONS
+- B2BQ14 → **fixed bounded** 512 total / 504 ordinary / 8 reserved · no eviction · PM_RATIFIED_WITH_CONDITIONS
+
+### Ratified State-Machine Contract
+- **Phase model**: `SINGLE_EXPEDITION_PHASE_V1` (transitorio) · phase_id = `expedition:<expedition_id>:phase:1`
+- **Event entry point**: `ExpeditionRuntimeCoordinator.dispatch_class_state_event(event, trusted_context)` (server-side internal only)
+- **Mark**: caps ≤5/source · ≤1/pair · duration ≤10s · sixth = rejected · auto-eviction = false · expiration hybrid (lazy + opportunistic cleanup, no scheduled) · refresh server-authoritative
+- **Drain**: CANCELLED terminal + mandatory reason_code · output audit-only · one resolution per `drain_execution_id` · allied consume/refresh/transfer forbidden
+- **Fragment**: ≤5 · overflow discarded diagnostic-only · gain from accepted Drain completion only (trusted fixture in RT2-B-2B-1)
+- **Resource segment**: closes on phase_end + explicit + expedition_terminal + fragment_count→0 · focus_bonus_usage ≤ 2/segment
+- **Lease/CAS**: short lease per event batch · CAS obbligatorio dentro il lease · retry max 3 · no background renewer
+- **Feature flag**: nuovo `cdv_class_transitions_enabled` default OFF · gate composito quadruple (transient + class + test_user + localhost isolated + Mongo allowlisted)
+- **Receipt policy**: cap 512 total / 504 ordinary / 8 reserved · no eviction · no overwrite · saturazione = `RECEIPT_CAP_REACHED` fail closed
+- **Audit**: localhost 100% INFO/WARN/ERROR · prod = NEW PM ADJUDICATION
+- **Test strategy**: FakeStore + real Mongo localhost (`orbus_r16_rt2b_test`, `orbus_r16_rt2b_it_<unique_run_id>`) · zero DB residui
+
+### Next Code Gate Authorization
+- `R18.6.RV3-IS2-B-P2B-RT2-B-2B-1 · MARK & RESOURCE STATE TRANSITION FOUNDATION` → **CONDITIONAL_GO · READY-TO-DISPATCH** (attende orchestrator explicit dispatch)
+- Scope ratificato: Mark + Fragment (trusted-fixture) + Resource Segment + event ordering + receipts + lease/CAS + flag OFF + FakeStore+MongoStore
+- `R18.6.RV3-IS2-B-P2B-RT2-B-2B-2 · DRAIN TRANSITION FOUNDATION` → **HOLD · PLANNED**
+- Public API changes = **0** · Human tester activation = **NOT AUTHORIZED** · Shared environment = **NOT AUTHORIZED**
+
+### Governance Verification
+- lore_meta.py SHA canonical invariant: `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f`
+- Baseline chain length: **14/14 byte-identical** (post RT2-B-2B-P0 closure)
+- Sealed integrity tests: 6 passed · sealed artifacts 36/36 byte-identical
+- Effect-engine regression: 320/320 PASS
+- OpenAPI paths: 275 · new routes: 0
+- Backend code changes = 0 · Frontend touches = 0 · Mongo writes = 0 · Feature flag activation = 0 · Registry changes = 0
+- New seal: **NO** · Manifest own SHA embedded: **NO** (SHA §31 rispettato)
+- PRD delta P0: 1 (this append · idempotent occurrence = 1)
+
+**RT2-B-2B-P0 CLOSED · PM-LOCKED · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-1 code gate.**

@@ -1,0 +1,114 @@
+{
+  "manifest_type": "R18.6_CLOSURE_MANIFEST_SHA_POLICY_31",
+  "gate_id": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-P0",
+  "canonical_name": "CLASS-STATE TRANSITION FOUNDATION · READINESS & STATE-MACHINE CONTRACT",
+  "closure_date_utc": "2026-02",
+  "regime": "DOCUMENTAL_ONLY · Italian · NO CODE · SHA_POLICY_31",
+  "pm_adjudication_authority": "PM_MESSAGE_149",
+  "sha_policy": {
+    "id": "SHA_POLICY_31",
+    "manifest_own_sha_embedded": false,
+    "manifest_own_sha_communication_channel": "CHAT_REPORT_ONLY",
+    "reason": "Own SHA embedding would create self-referential hash contradiction; policy §31 forbids it."
+  },
+  "governance_anchors": {
+    "lore_meta_py_sha_canonical": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "upstream_manifest_sha_rt2b2a": "da6eb1216bbc86f01941372ea2faa1ab6a39f408880427f8a53e6ea367747d89",
+    "prd_sha_pre": "795d3b448c879d1db3b904e4c33bae6897e92071060cc310b50bc6656722c5eb",
+    "prd_sha_post": "e82cbb696166d55286ec6fd5dba46ce26e0cbbf9f74a44be9154c5ff27bbdbd0",
+    "baseline_chain_length_pre": 13,
+    "baseline_chain_length_post": 14,
+    "baseline_chain_status_post": "BYTE_IDENTICAL_14_OF_14_POST_RT2B2B_P0_CLOSURE",
+    "sealed_integrity_tests_expected": 6,
+    "sealed_artifacts_byte_identical_expected": "36/36",
+    "effect_engine_tests_expected": 320,
+    "openapi_paths_total_expected": 275,
+    "openapi_new_routes": 0
+  },
+  "closure_summary": {
+    "b2bq_ratified": 14,
+    "b2bq_total": 14,
+    "agent_auto_ratifications": 0,
+    "fail_stops_resolved": 2,
+    "fail_stops_still_triggered": 0,
+    "backend_code_changes": 0,
+    "frontend_touches": 0,
+    "mongo_writes": 0,
+    "feature_flag_activations": 0,
+    "registry_changes": 0,
+    "new_seal": false
+  },
+  "records": [
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_class_state_transition_readiness.md",
+      "role": "readiness_draft_patched",
+      "status": "existing_file_modified",
+      "new_file": false,
+      "existing_file_modified": true,
+      "full_file_sha256": "9b06d0e6bc26a3b703449c2c30f79a9025a6b29cabc506e5eefdcf76e976a321",
+      "size_bytes": 43577,
+      "line_count": 824,
+      "pre_change_sha256": "762323fe988b700c2bbb0a7f9bfa9321118ce4459ddecd3ae1d14e6d56e4201d",
+      "post_change_sha256": "9b06d0e6bc26a3b703449c2c30f79a9025a6b29cabc506e5eefdcf76e976a321",
+      "lines_added": 236,
+      "lines_removed": 2
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_class_state_transition_readiness.json",
+      "role": "readiness_draft_patched",
+      "status": "existing_file_modified",
+      "new_file": false,
+      "existing_file_modified": true,
+      "full_file_sha256": "67be3cadbbe93f668eff13bcb57991740995b0bc0d4ada8834c0dcd8fcae6f6d",
+      "size_bytes": 78381,
+      "line_count": 1846,
+      "pre_change_sha256": "95fa88a6cfd5d9775bbc780bdedcf71fd90293fc1b9aebae6f32934db652c406",
+      "post_change_sha256": "67be3cadbbe93f668eff13bcb57991740995b0bc0d4ada8834c0dcd8fcae6f6d",
+      "lines_added": 1526,
+      "lines_removed": 164
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_final_closure_report.md",
+      "role": "final_closure_report",
+      "status": "new_file",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "d0eb97cd503f62c7eefbc233fb39397c553ccdff3fcd23cbac18e2dc058f8cb2",
+      "size_bytes": 8556,
+      "line_count": 130
+    },
+    {
+      "path": "/app/memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_p0_final_closure_report.json",
+      "role": "final_closure_report_structured",
+      "status": "new_file",
+      "new_file": true,
+      "existing_file_modified": false,
+      "full_file_sha256": "cd9d3568e782eb5430a69bfc70b2eb95dad487f2541637d13c7f9f9ce0edcc24",
+      "size_bytes": 8456,
+      "line_count": 251
+    },
+    {
+      "path": "/app/memory/PRD.md",
+      "role": "prd_post_append",
+      "status": "existing_file_modified",
+      "new_file": false,
+      "existing_file_modified": true,
+      "full_file_sha256": "e82cbb696166d55286ec6fd5dba46ce26e0cbbf9f74a44be9154c5ff27bbdbd0",
+      "size_bytes": 296922,
+      "line_count": 4542,
+      "pre_change_sha256": "795d3b448c879d1db3b904e4c33bae6897e92071060cc310b50bc6656722c5eb",
+      "post_change_sha256": "e82cbb696166d55286ec6fd5dba46ce26e0cbbf9f74a44be9154c5ff27bbdbd0",
+      "lines_added": 61,
+      "lines_removed": 0
+    }
+  ],
+  "post_closure_state": {
+    "rt2b2b_p0": "CLOSED · PM-LOCKED",
+    "rt2b2b_1_code_gate": "CONDITIONAL_GO · READY-TO-DISPATCH",
+    "rt2b2b_2_code_gate": "HOLD · PLANNED · Drain deferred",
+    "shared_env_activation": "LOCK · NOT_AUTHORIZED",
+    "tester_gameplay_activation": "LOCK · NOT_AUTHORIZED",
+    "orchestrator_dispatch_required_to_open_code_gate": true
+  },
+  "explicit_stop": true
+}
