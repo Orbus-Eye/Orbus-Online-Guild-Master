@@ -513,7 +513,7 @@ Body: {"raid_slug":"broken-bastion-siege",
        ]}
 Auth: tester@orbus.test
 ```
-Risposta: `raid_id=9d51c842-ffc0-4d9a-91e1-1d8f74c33577`, `status=in_progress`, `team_power_combined=1851`, `recommended_power_combined=800`, `success_chance_combined=95%`.
+Risposta: `raid_id=drain-dispatch`, `status=in_progress`, `team_power_combined=1851`, `recommended_power_combined=800`, `success_chance_combined=95%`.
 
 - **Durata**: `broken-bastion-siege` = 1800s (30 min) — è il raid più corto nel catalog
 - **ends_at**: `2026-07-02T05:44:41Z`

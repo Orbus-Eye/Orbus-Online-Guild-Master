@@ -70,12 +70,54 @@ class DrainStatus(str, Enum):
 
 
 @dataclass(frozen=True)
+class DrainCompletionPayload:
+    """RT2-B-2B-2-1 · Completion result payload (B2B2Q07 verbatim · 15 campi).
+
+    Receipt storage rule (PM Message 170 B2B2Q07): il payload è EMBEDDED
+    nell'atomic batch della completion — persiste dentro il `DrainDoc`
+    completato (stesso CAS della processed event receipt, stessa slot
+    ORDINARY consumata: 1 sola receipt, MAI un secondo slot indipendente).
+    Linkage 1:1 con la receipt: `completion_event_id == receipt.event_id`.
+
+    Esclusioni verbatim: damage · healing · XP · loot · item proc · combat
+    result · RNG seed · reward payload.
+    """
+
+    drain_execution_id: str
+    completion_event_id: str
+    source_adventurer_id: str
+    target_id: str
+    mark_id: str
+    application_id: str
+    result_code: str  # SUCCESS | rejection code
+    mark_valid_at_completion: bool
+    fragment_gain_requested: int  # fissato = 1 (B2B2Q05)
+    fragment_gain_applied: int  # 0 o 1 (post cap check)
+    fragment_overflow_discarded: int  # 0 o 1
+    resource_segment_id: Optional[str]
+    assigned_event_sequence: int
+    state_version_after: int
+    processed_at: str  # ISO UTC
+
+
+@dataclass(frozen=True)
 class DrainDoc:
     """Drenaggio execution runtime state.
 
     Verbatim RT1:
     - own active Mark required at start · own active Mark required at completion
     - Drain does NOT consume Mark · one resolution per execution id
+
+    RT2-B-2B-2-1 (PM Message 170 §9 binding contract) — campi aggiunti:
+    - `mark_id`: binding al Mark letto a START_DRAIN (B2B2Q03 strict)
+    - `cancelled_at` + `cancellation_reason` (uno degli 8 canonici B2B2Q08)
+    - `drain_version`: monotonic per aggregato (initial=1)
+    - `start_event_id`: event_id dello START accettato (dedup replay → prior ID)
+    - `completion_payload`: B2B2Q07 embedded 15-field payload (solo su RESOLVED)
+
+    Hard-lock PM Message 170 §18:
+    - max active Drain per (source,target) pair = 1
+    - max active Drain per Mark application = 1
     """
 
     drain_execution_id: str
@@ -87,6 +129,12 @@ class DrainDoc:
     runtime_status: DrainStatus = DrainStatus.IN_PROGRESS
     resolution_version: int = 1
     reward_resolved: bool = False
+    mark_id: str = ""
+    cancelled_at: Optional[str] = None
+    cancellation_reason: Optional[str] = None
+    drain_version: int = 1
+    start_event_id: str = ""
+    completion_payload: Optional[DrainCompletionPayload] = None
 
 
 # ═══════════════════════ Fragment usage per segment ═══════════════════════

@@ -20,7 +20,7 @@ Alias: `GET /api/guilds/me` è equivalente a `GET /api/guilds/mine`.
 
 ## Flusso completo (curl)
 ```bash
-API=https://guild-master-5.preview.emergentagent.com
+API=https://drain-dispatch.preview.emergentagent.com
 
 # 1) Login
 TOKEN=$(curl -s -X POST $API/api/auth/login \

@@ -414,7 +414,7 @@ Questa asimmetria era latente da tempo (verosimilmente pre-R16.5.4c). R17.2 l'ha
 
 **Test 1 — visibilità bottone**:
 ```
-LOGIN OK, url= https://guild-master-5.preview.emergentagent.com/dashboard
+LOGIN OK, url= https://drain-dispatch.preview.emergentagent.com/dashboard
 Found equip link: /adventurers/aac9f4dd-1669-4381-a683-e2690469209a/equipment
 SUCCESS: auto-equip button FOUND on equipment page
   testid=auto-equip-btn-page-aac9f4dd-1669-4381-a683-e2690469209a  text='Auto-Equipaggia'

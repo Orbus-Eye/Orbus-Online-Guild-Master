@@ -59,7 +59,7 @@ APPLY_ENABLED: bool = True  # FLIPPED for R18.3e B2 apply reale (2026-07-05, GO 
 
 **POST-APPLY (re-lock)** (r.64):
 ```python
-APPLY_ENABLED: bool = False  # Re-locked to False post-B2 apply (2026-07-05T19:45:31Z, apply_id=35302c0c-98dc-4b3b-b5b2-f1646540b74a). Was temporarily flipped to True for R18.3e B2 apply reale per PM GO.
+APPLY_ENABLED: bool = False  # Re-locked to False post-B2 apply (2026-07-05T19:45:31Z, apply_id=drain-dispatch). Was temporarily flipped to True for R18.3e B2 apply reale per PM GO.
 ```
 
 **Nota trasparenza sulla direttiva "1 line"**: la funzione `apply_real()` era originariamente uno stub che sollevava `SystemExit("[UNREACHABLE]")`. Ho **implementato la logica reale** di `apply_real()` (guard obbligatori + Motor `update_one` + audit event aggregato), altrimenti il flip da solo non era sufficiente. Il diff completo di `apply_real()` è visibile nel file (righe 259-393 circa) con hash SHA256 post-relock:

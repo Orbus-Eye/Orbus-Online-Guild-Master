@@ -105,8 +105,8 @@
 [2026-07-05T13:42:31.464177+00:00] [INFO] [reset_guilds] modified 672/672 guilds
 [2026-07-05T13:42:31.672616+00:00] [INFO] [regen_roster] mode=APPLY guilds=672 total_adv_created=3360 stat_strategy=base_stats_exact_no_variance
 [2026-07-05T13:42:31.886577+00:00] [INFO] [regen_kit] APPLY: created=672 upsert_skipped=0 (quantity_per_doc=3)
-[2026-07-05T13:42:31.887007+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED emitted (apply_id=5815c73c-dae7-447c-ac3c-70455d3099a3)
-[2026-07-05T13:42:31.887277+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED_V1_2 emitted (apply_id=5815c73c-dae7-447c-ac3c-70455d3099a3)
+[2026-07-05T13:42:31.887007+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED emitted (apply_id=drain-dispatch)
+[2026-07-05T13:42:31.887277+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED_V1_2 emitted (apply_id=drain-dispatch)
 [2026-07-05T13:42:31.887286+00:00] [INFO] ====== SUMMARY ======
 [2026-07-05T13:42:31.887347+00:00] [INFO] {
   "backup": {

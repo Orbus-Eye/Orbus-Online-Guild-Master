@@ -60,6 +60,13 @@ RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
     # is_test_user=true AND environment=localhost isolated AND Mongo target
     # allowlisted. In produzione l'env var non è settata → resta OFF.
     "cdv_class_transitions_enabled",
+    # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: kill-switch DEDICATO
+    # Drain. Default OFF. 6-conditions gate composito (normalizzazione PM §13
+    # — "quintuple-gate" DEPRECATO): transient AND class AND drain AND
+    # is_test_user AND localhost isolated AND Mongo allowlisted.
+    # Kill-switch surgical: il flag Drain OFF NON disabilita Mark/Fragment
+    # già implementati. Drain OFF ⇒ 0 DB calls · 0 audit events · 0 mutations.
+    "cdv_drain_transitions_enabled",
 })
 
 RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
@@ -71,7 +78,7 @@ RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
 ALL_FLAGS: Final[frozenset[str]] = (
     RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
 )
-assert len(ALL_FLAGS) == 7, "RT2-A/B/future must expose exactly 7 flags total"
+assert len(ALL_FLAGS) == 8, "RT2-A/B/future must expose exactly 8 flags total"
 
 DEFAULT_VALUE: Final[bool] = False
 

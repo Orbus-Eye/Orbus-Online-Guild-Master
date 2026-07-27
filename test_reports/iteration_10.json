@@ -44,7 +44,7 @@
     "/app/tests/setup_frontend_test.py (NEW — helper to seed a fresh @orbus.test user + guild + gold + iron_shard + 1 bound and 1 unbound Legendary inventory item for frontend testing)"
   ],
   "success_rate": {"backend": "100% (28/28 phase17 + OpenAPI path count exact)", "frontend": "100% of testable flows PASS (12/12 critical assertions); 1 design polish item noted."},
-  "test_credentials": "Created fresh test user fe_p17_87ac84@orbus.test / Test12345! (guild_id=386cdb73-d8c9-47d3-b23f-5f0961220086) with 5100g, 20× iron_shard, 1× drake_slayer_helm +1 [BOUND] (row_id=0acf97ed-a5cb-4ec2-af0e-1c91be636551), 1× drake_slayer_cuirass [unbound] (row_id=1ebf58f3-84bf-45df-8642-fe6729c90206), and 1 recruited adventurer Gwyn Ashwood (id=2ebf22fe-6490-4c33-8502-5ca836c31cb1). Also: pre-seeded tester@orbus.test / password123 still works.",
+  "test_credentials": "Created fresh test user fe_p17_87ac84@orbus.test / Test12345! (guild_id=drain-dispatch) with 5100g, 20× iron_shard, 1× drake_slayer_helm +1 [BOUND] (row_id=drain-dispatch), 1× drake_slayer_cuirass [unbound] (row_id=drain-dispatch), and 1 recruited adventurer Gwyn Ashwood (id=drain-dispatch). Also: pre-seeded tester@orbus.test / password123 still works.",
   "seed_data_creation": "via /app/tests/setup_frontend_test.py — fresh @orbus.test user with bound + unbound Legendary items + materials for end-to-end Forge/Inventory/AdventurerEquipment UI verification.",
   "retest_needed": false,
   "main_agent_can_self_test": true,

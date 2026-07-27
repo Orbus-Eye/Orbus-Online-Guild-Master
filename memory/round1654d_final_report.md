@@ -260,7 +260,7 @@ Aggregazione `audit_log.guild_xp_gained` per source:
 | Source | Events | XP total | Note |
 | --- | --- | --- | --- |
 | `achievement_unlock` | 578 | +86020 | ✅ hook attivo, massiccio uso |
-| `expedition_completed` | 1 | +15 | ✅ hook attivo (verificato con `source_id=8a5f26c0-f050-4ed6-b0c2-6b383b1c7932` — spedizione tester Sewer Nest) |
+| `expedition_completed` | 1 | +15 | ✅ hook attivo (verificato con `source_id=drain-dispatch` — spedizione tester Sewer Nest) |
 | `raid_completed` | 1 | +80 | ✅ hook attivo (verificato con tester@orbus.test, primo raid della gilda) |
 | `resource_mission_completed` | 0 | 0 | ⚠️ nessun evento negli ultimi 30 giorni. Codice call-site collegato in `resources/__init__.py:386`. **Non è un bug**, semplicemente nessun player ha completato una resource mission nel periodo osservato. |
 

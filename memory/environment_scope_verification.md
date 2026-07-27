@@ -117,7 +117,7 @@ Nome host tipico di pod Emergent preview/dev. Nessun indicatore di production.
 ```
 APP_BASE_URL="https://orbusonline.net"
 ```
-Nota: **questo valore in .env dice orbusonline.net** che sembra un dominio production. Tuttavia il pod risponde su `REACT_APP_BACKEND_URL=https://guild-master-5.preview.emergentagent.com`. È probabile che `APP_BASE_URL` sia usato dal codice solo per generare link nelle email di sistema (welcome mail, password reset ecc.) e sia stato ereditato dal template `.env` di production. Non influenza a quale DB parla il backend.
+Nota: **questo valore in .env dice orbusonline.net** che sembra un dominio production. Tuttavia il pod risponde su `REACT_APP_BACKEND_URL=https://drain-dispatch.preview.emergentagent.com`. È probabile che `APP_BASE_URL` sia usato dal codice solo per generare link nelle email di sistema (welcome mail, password reset ecc.) e sia stato ereditato dal template `.env` di production. Non influenza a quale DB parla il backend.
 
 ---
 

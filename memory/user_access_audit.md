@@ -2,7 +2,7 @@
 
 **Data audit**: 2026-06-25
 **Pod**: `agent-env-cc39e638-4b77-4974-85e8-2c6d820bc691` (preview)
-**Preview URL**: https://guild-master-5.preview.emergentagent.com
+**Preview URL**: https://drain-dispatch.preview.emergentagent.com
 **Production**: https://orbusonline.net (separato, non auditato qui)
 
 Legenda:
@@ -190,7 +190,7 @@ du -sh /tmp/orbus_full.tgz
 Poi serverlo via:
 ```bash
 cd /tmp && python -m http.server 8080
-# Accedi a https://<pod>-8080.preview.emergentagent.com/orbus_full.tgz
+# Accedi a https://drain-dispatch.preview.emergentagent.com/orbus_full.tgz
 # (può richiedere config nginx/supervisor — NON garantito out-of-the-box)
 ```
 
@@ -209,7 +209,7 @@ cd /tmp && python -m http.server 8080
 | MongoDB | ✅ locale (`mongodb://localhost:27017`) | migrare → MongoDB Atlas / DigitalOcean Managed DB |
 | SMTP IONOS | ✅ esterno (`smtp.ionos.it`) | già esterno, non lega a Emergent |
 | Object storage / file upload | ❓ verifica | Phase 13 non usa storage esterno; futuro: S3/R2/Tigris |
-| Email reset link domain | `https://guild-master-5.preview.emergentagent.com` | da cambiare in `https://orbusonline.net` post-migrazione |
+| Email reset link domain | `https://drain-dispatch.preview.emergentagent.com` | da cambiare in `https://orbusonline.net` post-migrazione |
 | Frontend build | ✅ standard React CRA | `yarn build` produce static, deployabile ovunque (Netlify/Vercel/IONOS web hosting) |
 | Backend | ✅ FastAPI standard | deployabile su Render/Railway/Fly.io/VPS personale |
 
@@ -284,7 +284,7 @@ La password che hai incollato nel messaggio precedente è registrata nella chat 
 
 3. **Smoke test**:
    ```bash
-   curl -X POST https://guild-master-5.preview.emergentagent.com/api/auth/password-reset/request \
+   curl -X POST https://drain-dispatch.preview.emergentagent.com/api/auth/password-reset/request \
      -H "Content-Type: application/json" \
      -d '{"email":"mr.gualmini@gmail.com"}'
    sleep 3

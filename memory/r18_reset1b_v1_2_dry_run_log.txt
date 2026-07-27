@@ -69,7 +69,7 @@
 [2026-07-05T13:09:19.166559+00:00] [INFO] [wipe] DRY_RUN: would wipe tester_tool_snapshots (14 docs) via delete_many({})
 [2026-07-05T13:09:19.167036+00:00] [INFO] [reset_guilds] DRY_RUN: would update_many 672 guilds
 [2026-07-05T13:09:19.194091+00:00] [INFO] [regen_roster] mode=DRY_RUN guilds=672 total_adv_created=0 stat_strategy=base_stats_exact_no_variance
-[2026-07-05T13:09:19.195918+00:00] [INFO] [regen_kit] DRY_RUN: would create 672 inventory_items (1 doc × 672 guilds, quantity=3, item_id=fd5cbdef-3146-483c-b1fd-217b4da0a59d)
+[2026-07-05T13:09:19.195918+00:00] [INFO] [regen_kit] DRY_RUN: would create 672 inventory_items (1 doc × 672 guilds, quantity=3, item_id=drain-dispatch)
 [2026-07-05T13:09:19.195979+00:00] [INFO] [audit] DRY_RUN: would emit BOTH R18_FULL_GUILD_FRESH_START_APPLIED and R18_FULL_GUILD_FRESH_START_APPLIED_V1_2 with shared metadata
 [2026-07-05T13:09:19.195987+00:00] [INFO] ====== SUMMARY ======
 [2026-07-05T13:09:19.196066+00:00] [INFO] {

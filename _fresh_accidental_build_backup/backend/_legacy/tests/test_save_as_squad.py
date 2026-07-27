@@ -8,7 +8,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://guild-master-5.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://drain-dispatch.preview.emergentagent.com").rstrip("/")
 TESTER_EMAIL = "tester@orbus.test"
 TESTER_PASS = "password123"
 HISTORIC_EXP_ID = "301b6f17-7347-41aa-9536-ebf132c51934"  # Sewer Nest victory

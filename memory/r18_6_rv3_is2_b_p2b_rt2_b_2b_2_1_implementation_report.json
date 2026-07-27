@@ -1,0 +1,174 @@
+{
+  "gate": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1",
+  "canonical_name": "DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION",
+  "phase": "A",
+  "status": "IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED",
+  "executor": "Claude Fable (Emergent) - fresh session",
+  "executor_context_capacity": "SUFFICIENT FOR COMPLETE PHASE A",
+  "context_anchor": "PASS",
+  "source_of_truth": "GitHub Orbus-Eye/Orbus-Online-Guild-Master",
+  "preflight": {
+    "branch": "main",
+    "base_commit": "be9f62ff1419835a66af5291f2768db467361d11",
+    "head_equals_origin_main": true,
+    "rt2_b_2b_2_1_partial_files": 0,
+    "working_tree_unexpected_gate_changes": 0,
+    "rt2_b_2b_2_p0": "CLOSED / PM-LOCKED",
+    "rt2_b_2b_2_1_prd_closure_occurrence": 0,
+    "sealed_integrity_tests": "6 PASS",
+    "sealed_artifacts": "36/36 byte-identical",
+    "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+    "openapi_paths": 275,
+    "baseline_chain": "16/16 (INVARIATA)",
+    "platform_note": "Fork pod env-substitution su 42 file non-gate; 2 sealed scripts corrotti dalla piattaforma ripristinati byte-identical da origin/main; backend/tests/.env.test (gitignored) ricreato da policy"
+  },
+  "files": {
+    "new": [
+      {"path": "backend/app/stats/runtime/transitions/drain.py", "sha256_16": "30048e1ff0a12272", "lines": 661},
+      {"path": "backend/tests/effect_engine/transitions/test_drain_pure.py", "sha256_16": "cb2c80af92d6dee3", "lines": 450},
+      {"path": "backend/tests/effect_engine/transitions/test_drain_dispatcher.py", "sha256_16": "ad4ca1e81331dc6f", "lines": 610},
+      {"path": "backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py", "sha256_16": "1afb86bfd344cd10", "lines": 184},
+      {"path": "backend/tests/effect_engine/transitions/test_drain_perf_fakestore.py", "sha256_16": "26f24b4203e7d579", "lines": 161}
+    ],
+    "modified": [
+      {"path": "backend/app/stats/runtime/feature_flags.py", "pre_sha256_16": "ba27066a956d7e72", "post_sha256_16": "342fb6b857199f16"},
+      {"path": "backend/app/stats/runtime/state_store/models.py", "pre_sha256_16": "f849fa87148c9b1e", "post_sha256_16": "21013daf0fe15cab"},
+      {"path": "backend/app/stats/runtime/transitions/dispatcher.py", "pre_sha256_16": "3ffb62f550f635e0", "post_sha256_16": "3b742df59f27f634"},
+      {"path": "backend/app/stats/runtime/transitions/models.py", "pre_sha256_16": "2150f08c02bd22f1", "post_sha256_16": "61cf98fea5299bb5"},
+      {"path": "backend/app/stats/runtime/wiring/audit.py", "pre_sha256_16": "7c344c49ba25b948", "post_sha256_16": "5bc68c8640385714"},
+      {"path": "backend/app/stats/runtime/wiring/coordinator.py", "pre_sha256_16": "4ce05b28a4800630", "post_sha256_16": "757eaa89c4254b13"},
+      {"path": "backend/tests/effect_engine/foundation/test_feature_flags.py", "pre_sha256_16": "dae77e3d6068a389", "post_sha256_16": "4f33482195fe80c5"},
+      {"path": "backend/tests/effect_engine/transitions/conftest.py", "pre_sha256_16": "623cc693e6c298b9", "post_sha256_16": "1324f839485ce3b4"},
+      {"path": "backend/tests/effect_engine/wiring/test_response_invariance.py", "pre_sha256_16": "a530a7b602c08dd0", "post_sha256_16": "3a8fe6aa47cb6031"}
+    ],
+    "diff_stat_gate_files": "9 modified, +375/-68; 5 new files, 2066 lines",
+    "file_boundary_respected": true,
+    "reused_foundation": ["DrainDoc", "DrainStatus", "active_drain_executions"]
+  },
+  "design_notes": [
+    "B2B2Q07 EMBEDDED payload realizzato boundary-compliant: 15-field DrainCompletionPayload persistito in DrainDoc.completion_payload nello STESSO singolo CAS atomico della processed event receipt (store apply_event_once fuori file-boundary); 1 sola receipt ORDINARY consumata, MAI un secondo slot; linkage 1:1 completion_event_id == receipt.event_id",
+    "TrustedDrainReceipt fixture NON rimossa (P0 §43 removal fuori scope dispatch §3; rimozione altererebbe legacy GAIN_FRAGMENT => LEGACY_RESPONSE_OR_REWARD_DRIFT); deferita ad adjudication PM"
+  ],
+  "tests": {
+    "new_drain_tests": 63,
+    "pure": {"file": "test_drain_pure.py", "count": 31, "passed": 31},
+    "fakestore_dispatcher": {"file": "test_drain_dispatcher.py", "count": 26, "passed": 26},
+    "mocked_mongo": {"file": "test_drain_mocked_mongo.py", "count": 5, "passed": 5},
+    "perf": {"file": "test_drain_perf_fakestore.py", "count": 1, "passed": 1},
+    "effect_engine_baseline_non_mongo": {"count": 300, "passed": 300},
+    "effect_engine_real_mongo_heritage": {"count": 96, "passed_serial": 96, "note": "test_perf_mongo_p95 load-sensitive sotto xdist parallelo, PASS ripetuto in seriale; pre-esistente, non gate-related"},
+    "sealed_integrity": {"count": 6, "passed": 6},
+    "failed": 0,
+    "unexpected_skipped": 0,
+    "design_deviations": 0,
+    "fail_stops": 0
+  },
+  "result_code_coverage": {
+    "success": {"DRAIN_STARTED": ["p02", "d01"], "DRAIN_COMPLETED": ["p12", "d01", "mm01"], "DRAIN_CANCELLED": ["p26", "d05"]},
+    "start_rejection": {
+      "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR": ["p09", "p10", "d17"],
+      "MARK_NOT_FOUND": ["p04", "d17"],
+      "MARK_EXPIRED": ["p05", "p20", "d07", "mm03"],
+      "MARK_OWNERSHIP_MISMATCH": ["p08", "p22"],
+      "MARK_APPLICATION_CHANGED": ["p21"],
+      "TARGET_INVALID": ["p06", "d17"],
+      "SOURCE_INVALID": ["p07", "p27"],
+      "EXPEDITION_TERMINAL_REJECTED": ["d10"],
+      "PHASE_INACTIVE": ["d08", "d11"],
+      "RECEIPT_CAP_REACHED": ["d15"]
+    },
+    "state_rejection": {
+      "DRAIN_NOT_STARTED": ["p23", "d16"],
+      "DRAIN_ALREADY_COMPLETED": ["p24", "p28", "d04", "d06"],
+      "DRAIN_ALREADY_CANCELLED": ["p25", "p29", "d05"]
+    },
+    "integrity_concurrency": {
+      "EVENT_ID_PAYLOAD_MISMATCH": ["d03"],
+      "STATE_VERSION_CONFLICT": ["d14"],
+      "STALE_WRITER_REJECTED": ["d13"],
+      "LEASE_ACQUISITION_FAILED": ["d12", "d25"],
+      "RETRY_LIMIT_REACHED": ["d14"]
+    },
+    "gating": {
+      "FEATURE_DISABLED": ["d18", "d22", "d23"],
+      "TEST_USER_BOUNDARY_VIOLATION": ["d20"],
+      "DB_NOT_ALLOWLISTED": ["d21"]
+    },
+    "cancellation_reasons_canonical": 8,
+    "cancellation_reason_extensions": 0
+  },
+  "benchmarks_fakestore_p95_ms": {
+    "iterations": 120,
+    "start_drain": {"measured": 0.155, "target": 35.0, "pass": true},
+    "complete_drain_fragment": {"measured": 0.152, "target": 35.0, "pass": true},
+    "cancel_drain": {"measured": 0.117, "target": 35.0, "pass": true},
+    "deduplicated_retry": {"measured": 0.076, "target": 25.0, "pass": true},
+    "flags_off_overhead": {"measured": 0.042, "target": 1.0, "pass": true},
+    "note": "FakeStore only; NON sostituisce V1 real-Mongo"
+  },
+  "feature_gating": {
+    "flag": "cdv_drain_transitions_enabled",
+    "default": false,
+    "gate_conditions": 6,
+    "off_db_calls": 0,
+    "off_audit_events": 0,
+    "off_mutations": 0,
+    "surgical_mark_fragment_unaffected": true,
+    "runtime_activation_in_production": 0
+  },
+  "atomicity": {
+    "completion_without_fragment_decision": "IMPOSSIBLE",
+    "fragment_without_completion": "IMPOSSIBLE",
+    "double_fragment_on_retry": "IMPOSSIBLE",
+    "partial_mutation": "IMPOSSIBLE",
+    "state_version_increment": "exactly once per batch"
+  },
+  "receipt_behavior": {
+    "total": 512, "ordinary": 504, "reserved": 8,
+    "rolling_eviction": "forbidden", "overwrite": "forbidden",
+    "start_complete_explicit_cancel": "ORDINARY",
+    "completion_payload_slots": 1,
+    "lazy_fold": "single triggering ordinary receipt (B2B2Q14)",
+    "lifecycle": "1 reserved receipt per atomic lifecycle batch, count + bounded id list (<=32)",
+    "global_drain_hard_cap": "NOT INTRODUCED"
+  },
+  "audit": {
+    "event_ids_implemented": [
+      "cdv_drain_started", "cdv_drain_start_rejected", "cdv_drain_completed",
+      "cdv_drain_completion_rejected", "cdv_drain_cancelled",
+      "cdv_drain_cancellation_rejected", "cdv_drain_duplicate_completion",
+      "cdv_drain_fragment_batch_applied", "cdv_drain_fragment_overflow_discarded",
+      "cdv_drain_transition_conflict"
+    ],
+    "coverage": "10/10 (tests d24, d25)",
+    "forbidden_fields_policy": "invariata (fail-closed)"
+  },
+  "regressions": {
+    "effect_engine_baseline": "300/300 PASS invariati",
+    "real_mongo_heritage": "96/96 PASS serial",
+    "sealed_integrity": "6/6 PASS",
+    "lore_meta_sha_invariant": true,
+    "openapi_paths": 275,
+    "new_public_routes": 0,
+    "frontend_changes": 0,
+    "registry_changes": 0,
+    "reward_formula_changes": 0,
+    "persistent_user_schema_changes": 0,
+    "legacy_result_codes_unchanged": true
+  },
+  "fail_stops_activated": [],
+  "git": {
+    "branch": "main",
+    "base_commit": "be9f62ff1419835a66af5291f2768db467361d11",
+    "final_local_commit": null,
+    "push_merge_pr": "NOT PERFORMED (autorizzazione separata richiesta)",
+    "working_tree": "gate files attribuibili al gate + artefatti env-substitution piattaforma pre-esistenti non toccati + 2 sealed scripts ripristinati a HEAD"
+  },
+  "v1_handoff": {
+    "gate": "RT2-B-2B-2-1-V1 REAL-MONGO DRAIN VERIFICATION",
+    "status": "PRE-AUTHORIZED / REQUIRED",
+    "fixture": "provisioned_unique_db (orbus_r16_rt2b_it_<unique_run_id>)",
+    "scope": ["functional matrix", "winner-only concurrency multi-worker", "completion-to-Fragment atomicity", "duplicate completion", "cancellation races", "receipt capacity", "BSON size at cap (<210 KiB target)", "performance", "allowlist", "cleanup"],
+    "baseline_increment": "FORBIDDEN until V1 PASS (16/16 -> 17/17 vietato)"
+  }
+}

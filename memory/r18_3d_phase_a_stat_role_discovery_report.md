@@ -359,7 +359,7 @@ Esempio per 3 classi critical:
 Sample 1 (starter Rogue, post-v1.3):
 ```
 class_slug=rogue, class_name=Rogue, class_role=DPS,
-adventurer_class_id=48c8160d-c0e1-47b2-bb74-ac7bbf2b229d,
+adventurer_class_id=drain-dispatch,
 strength=5, agility=9, intellect=3, endurance=4, faith=2,
 level=1, status=idle, xp=0, experience=0, is_available=true,
 r18_reset1b_stat_source=adventurer_classes.base_*_catalog_lookup

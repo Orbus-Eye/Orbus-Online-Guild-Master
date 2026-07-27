@@ -11,8 +11,8 @@ from app.stats.runtime import feature_flags
 
 
 def test_all_flags_still_seven():
-    """T-2A-27 (updated RT2-B-2B-1): ALL_FLAGS conta esattamente 7 (RT2-A: 2, RT2-B: 2, future: 3)."""
-    assert len(feature_flags.ALL_FLAGS) == 7
+    """T-2A-27 (updated RT2-B-2B-2-1): ALL_FLAGS conta esattamente 8 (RT2-A: 2, RT2-B: 3, future: 3)."""
+    assert len(feature_flags.ALL_FLAGS) == 8
 
 
 def test_rt2b_runtime_attivabile_contains_cdv():

@@ -67,7 +67,7 @@
 [2026-07-05T11:40:06.434160+00:00] [INFO] [wipe] DRY_RUN: would wipe tester_tool_snapshots (14 docs) via delete_many({})
 [2026-07-05T11:40:06.434638+00:00] [INFO] [reset_guilds] DRY_RUN: would update_many 672 guilds with fields=['level', 'gold', 'reputation', 'current_roster_size', 'raids_completed_count', 'raids_victory_count', 'max_raid_score', 'last_raid_completed_at', 'max_team_power_ever', 'r18_beta_opt_in', 'migration_banner_r18_3c_dismissed', 'r18_reset1b_applied', 'r18_reset1b_banner_dismissed', 'updated_at', 'r18_reset1b_applied_at', 'max_roster_cap']
 [2026-07-05T11:40:06.459805+00:00] [INFO] [regen_roster] mode=DRY_RUN guilds=672 total_adv_created=0
-[2026-07-05T11:40:06.461512+00:00] [INFO] [regen_kit] DRY_RUN: would create 672 inventory_items (1 doc × 672 guilds, quantity=3, item_id=fd5cbdef-3146-483c-b1fd-217b4da0a59d)
+[2026-07-05T11:40:06.461512+00:00] [INFO] [regen_kit] DRY_RUN: would create 672 inventory_items (1 doc × 672 guilds, quantity=3, item_id=drain-dispatch)
 [2026-07-05T11:40:06.461562+00:00] [INFO] [audit] DRY_RUN: would emit BOTH R18_FULL_GUILD_FRESH_START_APPLIED and R18_FULL_GUILD_FRESH_START_APPLIED_V1_1 with shared metadata
 [2026-07-05T11:40:06.461570+00:00] [INFO] ====== SUMMARY ======
 [2026-07-05T11:40:06.461625+00:00] [INFO] {

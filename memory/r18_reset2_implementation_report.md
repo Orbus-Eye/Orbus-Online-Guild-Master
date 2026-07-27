@@ -61,11 +61,11 @@
 **Curl example (live post-implementation)**:
 ```
 $ curl -s -H "Authorization: Bearer <JWT>" \
-    https://guild-master-5.preview.emergentagent.com/api/guilds/me/r18-reset-banner
+    https://drain-dispatch.preview.emergentagent.com/api/guilds/me/r18-reset-banner
 {"show":true,"dismissed":false,"message_it":"Le gilde sono state riallineate…"}
 
 $ curl -s -X POST -H "Authorization: Bearer <JWT>" \
-    https://guild-master-5.preview.emergentagent.com/api/guilds/me/r18-reset-banner/dismiss
+    https://drain-dispatch.preview.emergentagent.com/api/guilds/me/r18-reset-banner/dismiss
 {"ok":true,"r18_reset1b_banner_dismissed":true}
 ```
 

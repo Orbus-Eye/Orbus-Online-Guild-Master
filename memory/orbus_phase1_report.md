@@ -184,7 +184,7 @@ tests/test_resolver.py::test_failure_rewards_are_reduced                  PASSED
 - ✅ `GET /api/openapi.json` → 200
 
 ## URL preview
-`https://guild-master-5.preview.emergentagent.com/`
+`https://drain-dispatch.preview.emergentagent.com/`
 
 ## Note operative
 - Il database MongoDB pre-esistente (dal progetto ereditato) è stato **droppato** all'inizio della Fase 1; nessun dato utile è andato perso perché era relativo a un progetto diverso e non pertinente al problem statement corrente.

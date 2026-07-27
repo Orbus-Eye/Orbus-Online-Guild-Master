@@ -37,6 +37,11 @@ class ClassEventType(str, Enum):
     RESET_FRAGMENTS = "RESET_FRAGMENTS"
     DISCARD_FRAGMENT_OVERFLOW = "DISCARD_FRAGMENT_OVERFLOW"
 
+    # Drain lifecycle (RT2-B-2B-2-1 · PM Message 170 B2B2Q16)
+    START_DRAIN = "START_DRAIN"
+    COMPLETE_DRAIN = "COMPLETE_DRAIN"
+    CANCEL_DRAIN = "CANCEL_DRAIN"
+
     # Resource segment lifecycle
     OPEN_RESOURCE_SEGMENT = "OPEN_RESOURCE_SEGMENT"
     CLOSE_RESOURCE_SEGMENT = "CLOSE_RESOURCE_SEGMENT"
@@ -129,6 +134,27 @@ class TransitionResultCode(str, Enum):
     # Retry ceiling
     RETRY_CEILING_EXCEEDED = "RETRY_CEILING_EXCEEDED"
 
+    # ── RT2-B-2B-2-1 · Drain canonical result codes (B2B2Q09 verbatim) ──
+    # Success
+    DRAIN_STARTED = "DRAIN_STARTED"
+    DRAIN_COMPLETED = "DRAIN_COMPLETED"
+    DRAIN_CANCELLED = "DRAIN_CANCELLED"
+    # Start rejection (MARK_NOT_FOUND · MARK_EXPIRED · TARGET_INVALID ·
+    # SOURCE_INVALID · RECEIPT_CAP_REACHED già presenti sopra)
+    DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR = "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR"
+    MARK_OWNERSHIP_MISMATCH = "MARK_OWNERSHIP_MISMATCH"
+    MARK_APPLICATION_CHANGED = "MARK_APPLICATION_CHANGED"
+    EXPEDITION_TERMINAL_REJECTED = "EXPEDITION_TERMINAL_REJECTED"
+    PHASE_INACTIVE = "PHASE_INACTIVE"
+    # State rejection
+    DRAIN_NOT_STARTED = "DRAIN_NOT_STARTED"
+    DRAIN_ALREADY_COMPLETED = "DRAIN_ALREADY_COMPLETED"
+    DRAIN_ALREADY_CANCELLED = "DRAIN_ALREADY_CANCELLED"
+    # Integrity/concurrency (EVENT_ID_PAYLOAD_MISMATCH ·
+    # STATE_VERSION_CONFLICT · STALE_WRITER_REJECTED già presenti sopra)
+    LEASE_ACQUISITION_FAILED = "LEASE_ACQUISITION_FAILED"
+    RETRY_LIMIT_REACHED = "RETRY_LIMIT_REACHED"
+
     # Infra / unexpected
     STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED = "STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED"
     NOT_FOUND = "NOT_FOUND"
@@ -203,6 +229,10 @@ class ClassStateEvent:
     reason_code: Optional[str] = None
     trusted_drain_receipt: Optional[TrustedDrainReceipt] = None
     phase_id: Optional[str] = None
+    # RT2-B-2B-2-1: targeting per COMPLETE_DRAIN / CANCEL_DRAIN.
+    # Il client NON genera mai questo ID (server-authoritative a START_DRAIN,
+    # B2B2Q01); qui referenzia soltanto un execution ID già assegnato.
+    drain_execution_id: Optional[str] = None
 
 
 # ═══════════════════════ Transition result ═══════════════════════
@@ -232,14 +262,32 @@ class TransitionResult:
     overflow_discarded: int = 0
     retry_attempts: int = 0
     dedup_reference: Optional[str] = None
+    # ── RT2-B-2B-2-1 · Drain result fields (B2B2Q07/Q08/Q11) ──
+    drain_execution_id: Optional[str] = None
+    cancellation_reason: Optional[str] = None
+    fragment_gain_requested: int = 0
+    fragment_gain_applied: int = 0
+    fragment_overflow_discarded: int = 0
+    mark_valid_at_completion: Optional[bool] = None
+    drains_cancelled_count: int = 0
+    cancelled_drain_execution_ids: Tuple[str, ...] = ()
 
     @property
     def success(self) -> bool:
-        return self.code is TransitionResultCode.SUCCESS
+        return self.code in _SUCCESS_CODES
 
     @property
     def is_dedup_noop(self) -> bool:
         return self.code is TransitionResultCode.DEDUPLICATED_NO_OP
+
+
+# Success family: SUCCESS legacy + Drain canonical success codes (B2B2Q09).
+_SUCCESS_CODES: frozenset = frozenset({
+    TransitionResultCode.SUCCESS,
+    TransitionResultCode.DRAIN_STARTED,
+    TransitionResultCode.DRAIN_COMPLETED,
+    TransitionResultCode.DRAIN_CANCELLED,
+})
 
 
 __all__ = [

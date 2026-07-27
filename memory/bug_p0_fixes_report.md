@@ -1,7 +1,7 @@
 # Bug P0 Fixes Report — Orbus Online: Guild Master (Round 16.x)
 
 **Data**: 2026-07-01
-**Ambiente**: preview `orbus_r16` DB @ `https://guild-master-5.preview.emergentagent.com`
+**Ambiente**: preview `orbus_r16` DB @ `https://drain-dispatch.preview.emergentagent.com`
 **Sessione**: post-recovery + freeze P0 (raid stuck + forgia 404)
 
 ---
@@ -150,7 +150,7 @@ Elenco pulito per il report roadmap dell'owner:
 3. **Dungeon UI 15/22 (filtro/paginazione)**: la lista dungeon frontend mostra solo 15 su 22 disponibili — probabile limit hardcoded o filter default.
 4. **Avventuriero `Elara Nightshade` — `class_slug=necromancer` deprecated**: referenza dangling nel roster starter, richiede migrazione a classe attiva o rimozione.
 5. **11ª classe base non seedata**: il contratto target menziona 11 base classes, DB ha 10. Candidato: `round160_1_seed_alchemist_class.py` (autorizzazione utente pendente).
-6. **`APP_BASE_URL=orbusonline.net` in preview `.env`**: valore prod nel `.env` preview → link email preview puntano a prod. Da correggere a `https://guild-master-5.preview.emergentagent.com`.
+6. **`APP_BASE_URL=orbusonline.net` in preview `.env`**: valore prod nel `.env` preview → link email preview puntano a prod. Da correggere a `https://drain-dispatch.preview.emergentagent.com`.
 7. **Bug P2 pytest DB isolation**: fix progettato in `/app/memory/bug_pytest_db_isolation.md` ma **NON applicato** — attende autorizzazione utente (vedi §8).
 8. **Warning ESLint `ClassHalls.jsx:244`**: `useEffect` missing dep `load`. Blocca `CI=true yarn build` ma non `yarn build` senza CI. Preesistente, fuori scope P0.
 9. **Test unitario raid on-visit fallback** (`test_raid_onvisit_recovery.py`): non creato perché nessun raid stuck su cui testare. Da implementare con fixture DB isolata dopo P2.
@@ -176,7 +176,7 @@ Conseguenza: **solo test targeted** su file specifici (come `test_forge_actions_
 
 ### Backend (curl)
 ```bash
-API_URL="https://guild-master-5.preview.emergentagent.com"
+API_URL="https://drain-dispatch.preview.emergentagent.com"
 TOKEN=$(curl -s -X POST "$API_URL/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"email":"tester@orbus.test","password":"password123"}' | jq -r .access_token)

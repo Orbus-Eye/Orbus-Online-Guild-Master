@@ -99,7 +99,7 @@ Dimensione totale: **5.7 MB**.
 - Flag file: `/tmp/orbus_maintenance.flag` — **PRESENTE**
   (dimensione 0B, mtime Jul 5 13:21)
 - Test funzionale via preview URL
-  (`https://guild-master-5.preview.emergentagent.com`):
+  (`https://drain-dispatch.preview.emergentagent.com`):
   - `GET  /api/health` → **HTTP 200** `{"status":"ok","env":"development"}`
   - `POST /api/auth/login` (payload valido) → **HTTP 503**
     `{"detail":"Orbus è temporaneamente in manutenzione. Riprova tra

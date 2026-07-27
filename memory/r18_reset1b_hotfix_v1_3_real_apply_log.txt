@@ -16,7 +16,7 @@
 [2026-07-05T14:57:33.607185+00:00] [INFO] [patch] slug=rogue matched=302 modified=302
 [2026-07-05T14:57:33.616551+00:00] [INFO] [patch] slug=warlock matched=305 modified=305
 [2026-07-05T14:57:33.626488+00:00] [INFO] [patch] slug=warrior matched=331 modified=331
-[2026-07-05T14:57:33.627114+00:00] [INFO] [audit] emitted BOTH events for apply_id=3e1e6462-694b-49d4-8e60-0045460c58d0
+[2026-07-05T14:57:33.627114+00:00] [INFO] [audit] emitted BOTH events for apply_id=drain-dispatch
 [2026-07-05T14:57:33.627125+00:00] [INFO] ====== SUMMARY ======
 [2026-07-05T14:57:33.627226+00:00] [INFO] {
   "mode": "APPLY",
