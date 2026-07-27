@@ -567,6 +567,13 @@
       "residual_dbs": 0,
       "lifecycle_bounded_sample": "PASS"
     },
-    "trusted_drain_receipt": "DEPRECATED_COMPATIBILITY_ONLY / NON-BLOCKING / REMOVAL DEFERRED (test d27+v09 preservati)"
+    "trusted_drain_receipt": "DEPRECATED_COMPATIBILITY_ONLY / NON-BLOCKING / REMOVAL DEFERRED (test d27+v09 preservati)",
+    "files_post_sha256_16": {
+      "backend/app/stats/runtime/state_store/mongo_adapter.py": "3c9297b274fb9e7e",
+      "backend/app/stats/runtime/transitions/drain.py": "efb6afb43f462fd3",
+      "backend/app/stats/runtime/transitions/dispatcher.py": "e0b31065f2717c0e",
+      "backend/tests/effect_engine/transitions/integration_real_mongo/test_drain_real_mongo.py": "1d0e24b2a372abca"
+    },
+    "testing_agent_verification": "365 passed non-mongo; 104 passed + 1 xfail real-mongo; sealed 6/6; OpenAPI 275; B2B2Q07 receipt payload confirmed"
   }
 }
