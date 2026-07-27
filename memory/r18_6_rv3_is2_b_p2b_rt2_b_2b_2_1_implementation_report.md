@@ -349,3 +349,45 @@ RT2-B-2B-2-1     = IMPLEMENTED / PM-CLOSURE-PENDING (V1 PASS · finding BSON not
 RT2-B-2B-2-1-V1  = VERIFIED (subordinato · nessuna closure autonoma · nessun baseline increment)
 baseline chain    = 16/16 INVARIATA · formal closure attende dispatch PM
 ```
+
+---
+
+# ADDENDUM 3 · V1S · FULL-CAP BSON CAPACITY HARDENING (PM adjudication)
+
+**Stima P0 210 KiB**: `P0_SIZE_ESTIMATE_SUPERSEDED_BY_MEASURED_DATA` (P0 non modificato · varianza registrata qui).
+
+## V1S.1 · Compaction applicata (solo rappresentazione interna · semantica invariata)
+1. **Alias BSON brevi** per `result_payload` persistito (mongo_adapter · layer interno non pubblico); rehydration rimappa ai 15 nomi canonici.
+2. **Omissione deterministica** dei 5 campi payload duplicati 1:1 dai campi base della STESSA receipt (`completion_event_id`·`source_adventurer_id`·`assigned_event_sequence`·`state_version_after`·`processed_at`): ricostruiti in rehydration per copia esatta dallo stesso documento (deterministica · nessun campo canonico rimosso al layer applicativo · verificata da v01/v09 su RAW BSON).
+3. **Lifecycle bounded payload** (§4 PM): `cancelled_count` reale · `sample_execution_ids ≤ 8` · `execution_ids_truncated` · reason — persistito nella reserved receipt (test v04 + d08); `LIFECYCLE_CANCELLED_IDS_BOUND 32→8`.
+
+File modificati V1S: `mongo_adapter.py` · `transitions/drain.py` · `transitions/dispatcher.py` · `test_drain_real_mongo.py` (v06 full-cap riscritto · v01/v04/v09 aggiornati).
+
+## V1S.2 · Misura full-cap (512 = 504 max-mix legale 252 START+252 COMPLETE + 8 reserved max · RAW BSON su Mongo reale · id a lunghezza massima · stato terminale + tombstones + segment data)
+```text
+pre-compaction  = 298.576 B
+post-compaction = 264.052 B   (−34.524 B)
+hard limit      = 262.144 B   → SUPERATO di 1.908 B
+closure target  = 245.760 B   → SUPERATO di 18.292 B
+misura precedente (504 senza reserved · id corti) = 261.545 B
+```
+
+## V1S.3 · FAIL-STOP dichiarato
+```text
+STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED (al full-cap sintetico max-length)
+SIZE_REMEDIATION_REQUIRES_DESIGN_CHANGE → STOP → PM REVIEW
+```
+**Causa del margine insufficiente**: gli id client-supplied (`event_id`·`source_adventurer_id`·`target_id`) NON hanno length validation contrattuale → il worst-case "legalmente accettato" non è bounded. Le compaction consentite residue sono insufficienti (~2 KB recuperabili). Il rientro nel target richiede uno tra: (a) **length validation contrattuale** sugli id client (design change); (b) **alias dei campi base receipt** (incl. `event_id` usato nei CAS filter/dedup: contract-adjacent). Entrambi richiedono verdict PM.
+Il test `test_v06_bson_size_at_full_cap_512` resta nel repo come misuratore, marcato `xfail` documentato (non conteggiato come unexpected failure).
+
+## V1S.4 · Revalidation (tutto il resto integralmente verde)
+```text
+non-Mongo 365/365 · real-Mongo seriale 103/103 + perf heritage PASS isolato
++ 1 xfail documentato (v06) · sealed 6/6 · OpenAPI 275 · lifecycle bounded PASS ·
+winner-only/saturation/dedup/replay PASS · legacy invariance PASS ·
+second receipt slot = 0 · state_version per batch = 1 · DB residui = 0
+TrustedDrainReceipt = DEPRECATED_COMPATIBILITY_ONLY (test d27/v09 preservati)
+```
+**Git hygiene (§8)**: inventario commit piattaforma `5a07ab4`/`46a91e7` registrato (Addendum 2/§A6); patch del diff in-scope ricavabile da base `be9f62f`; nessun reset distruttivo eseguito; push/merge/PR non eseguiti. Sanitation della history (branch pulita) eseguibile solo con autorizzazione git separata (vincolo piattaforma: azioni git write gestite da "Save to GitHub").
+
+**Esito**: `RT2-B-2B-2-1-V1S = EXECUTED / SIZE-TARGET-NOT-MET / PM-REVIEW-REQUIRED` · formal closure resta VIETATA · baseline 16/16 invariata.

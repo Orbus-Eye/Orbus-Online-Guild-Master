@@ -2,7 +2,7 @@
   "gate": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1",
   "canonical_name": "DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION",
   "phase": "A",
-  "status": "IMPLEMENTED / PM-CLOSURE-PENDING (V1 PASS, finding BSON notificato)",
+  "status": "IMPLEMENTED / PM-CLOSURE-PENDING / V1S-SIZE-PM-REVIEW-REQUIRED",
   "executor": "Claude Fable (Emergent) - fresh session",
   "executor_context_capacity": "SUFFICIENT FOR COMPLETE PHASE A",
   "context_anchor": "PASS",
@@ -539,5 +539,34 @@
       "sealed": "6/6",
       "openapi_paths": 275
     }
+  },
+  "v1s_full_cap_bson": {
+    "status": "EXECUTED / SIZE-TARGET-NOT-MET / PM-REVIEW-REQUIRED",
+    "p0_estimate": "P0_SIZE_ESTIMATE_SUPERSEDED_BY_MEASURED_DATA",
+    "compaction": [
+      "result_payload BSON short aliases (internal)",
+      "deterministic omission of 5 receipt-duplicated payload fields (rehydrated 1:1)",
+      "lifecycle bounded payload: cancelled_count + sample<=8 + execution_ids_truncated"
+    ],
+    "measures_bytes": {
+      "pre": 298576,
+      "post": 264052,
+      "hard_limit": 262144,
+      "closure_target": 245760,
+      "previous_504_short_ids": 261545
+    },
+    "fail_stop": "STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED at max-length full cap -> SIZE_REMEDIATION_REQUIRES_DESIGN_CHANGE -> STOP -> PM REVIEW",
+    "root_cause": "id client-supplied senza length validation contrattuale: worst-case legale non bounded; opzioni residue (length validation contrattuale o alias campi base receipt/CAS filter) richiedono verdict PM",
+    "revalidation": {
+      "non_mongo": "365/365",
+      "real_mongo_serial": "103/103 + heritage perf PASS isolato + 1 xfail documentato (v06)",
+      "sealed": "6/6",
+      "openapi_paths": 275,
+      "second_receipt_slot": 0,
+      "state_version_per_batch": 1,
+      "residual_dbs": 0,
+      "lifecycle_bounded_sample": "PASS"
+    },
+    "trusted_drain_receipt": "DEPRECATED_COMPATIBILITY_ONLY / NON-BLOCKING / REMOVAL DEFERRED (test d27+v09 preservati)"
   }
 }

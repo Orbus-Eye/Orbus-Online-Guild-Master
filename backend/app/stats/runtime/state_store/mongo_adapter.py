@@ -58,6 +58,57 @@ def _iso_add(clock: Callable[[], datetime], seconds: int) -> str:
     return (clock() + timedelta(seconds=seconds)).isoformat().replace("+00:00", "Z")
 
 
+
+# RT2-B-2B-2-1-V1S · PM: alias BSON brevi (rappresentazione interna non
+# pubblica). I 15 nomi canonici restano al layer applicativo: la rehydration
+# rimappa alias -> canonici. Nessun campo rimosso · nessun blob opaco.
+_RP_ALIASES = {
+    "drain_execution_id": "d", "completion_event_id": "c",
+    "source_adventurer_id": "s", "target_id": "t", "mark_id": "m",
+    "application_id": "a", "result_code": "r",
+    "mark_valid_at_completion": "v", "fragment_gain_requested": "q",
+    "fragment_gain_applied": "g", "fragment_overflow_discarded": "o",
+    "resource_segment_id": "seg", "assigned_event_sequence": "e",
+    "state_version_after": "w", "processed_at": "p",
+    "cancelled_count": "cc", "sample_execution_ids": "si",
+    "execution_ids_truncated": "tr", "reason": "rs",
+}
+_RP_ALIASES_REV = {v: k for k, v in _RP_ALIASES.items()}
+
+
+# Campi payload duplicati 1:1 dai campi base della STESSA receipt: omessi
+# nella rappresentazione persistita e ricostruiti DETERMINISTICAMENTE in
+# rehydration (copia esatta dallo stesso documento). I 15 campi canonici
+# restano integralmente presenti al layer applicativo.
+_RP_DERIVED_FROM_RECEIPT = {
+    "completion_event_id": "event_id",
+    "source_adventurer_id": "source_adventurer_id",
+    "assigned_event_sequence": "assigned_event_sequence",
+    "state_version_after": "state_version_after",
+    "processed_at": "processed_at",
+}
+
+
+def _rp_compact(payload):
+    if not isinstance(payload, dict):
+        return payload
+    return {
+        _RP_ALIASES.get(k, k): v for k, v in payload.items()
+        if k not in _RP_DERIVED_FROM_RECEIPT
+    }
+
+
+def _rp_expand(payload, receipt=None):
+    if not isinstance(payload, dict):
+        return payload
+    out = {_RP_ALIASES_REV.get(k, k): v for k, v in payload.items()}
+    if receipt is not None:
+        for canon, base in _RP_DERIVED_FROM_RECEIPT.items():
+            if canon not in out:
+                out[canon] = receipt.get(base)
+    return out
+
+
 def _default_clock() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -114,7 +165,7 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
             result_code=r.get("result_code", ""),
             state_version_after=int(r.get("state_version_after", 0)),
             processed_at=r.get("processed_at", ""),
-            result_payload=r.get("result_payload"),
+            result_payload=_rp_expand(r.get("result_payload"), r),
         )
         for r in receipts_raw
     )
@@ -409,7 +460,7 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         # EMBEDDED nella processed-event receipt · stesso CAS · stessa slot.
         # Omesso quando None per preservare byte-shape delle receipt legacy.
         if result_payload is not None:
-            new_receipt["result_payload"] = result_payload
+            new_receipt["result_payload"] = _rp_compact(result_payload)
         update = {
             "$inc": {"state_version": 1},
             "$set": set_fields,

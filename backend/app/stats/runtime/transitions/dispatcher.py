@@ -664,6 +664,15 @@ def _apply_event_pure(
             cancellation_reason=(
                 _lifecycle_reason_map[et] if cancelled_ids else None
             ),
+            # PM V1S: bounded diagnostic sample nella reserved receipt
+            result_payload=({
+                "cancelled_count": len(cancelled_ids),
+                "sample_execution_ids": list(
+                    cancelled_ids[:LIFECYCLE_CANCELLED_IDS_BOUND]),
+                "execution_ids_truncated":
+                    len(cancelled_ids) > LIFECYCLE_CANCELLED_IDS_BOUND,
+                "reason": _lifecycle_reason_map[et],
+            } if cancelled_ids else None),
         )
     if et == ClassEventType.OPEN_RESOURCE_SEGMENT.value:
         # Standalone open (rare — normally auto-opens on first gain).

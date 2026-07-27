@@ -93,7 +93,7 @@ CANONICAL_CANCELLATION_REASONS: frozenset[str] = frozenset({
 })
 
 # Bounded list cap per lifecycle receipt aggregation (§24 · lista bounded).
-LIFECYCLE_CANCELLED_IDS_BOUND: int = 32
+LIFECYCLE_CANCELLED_IDS_BOUND: int = 8  # PM V1S: max 8 sample ids
 
 # Fragment gain fisso per accepted completion (B2B2Q05 verbatim).
 FRAGMENT_GAIN_FIXED: int = 1
