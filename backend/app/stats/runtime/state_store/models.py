@@ -73,11 +73,12 @@ class DrainStatus(str, Enum):
 class DrainCompletionPayload:
     """RT2-B-2B-2-1 · Completion result payload (B2B2Q07 verbatim · 15 campi).
 
-    Receipt storage rule (PM Message 170 B2B2Q07): il payload è EMBEDDED
-    nell'atomic batch della completion — persiste dentro il `DrainDoc`
-    completato (stesso CAS della processed event receipt, stessa slot
-    ORDINARY consumata: 1 sola receipt, MAI un secondo slot indipendente).
-    Linkage 1:1 con la receipt: `completion_event_id == receipt.event_id`.
+    PM adjudication (correzione ratificata): il payload è EMBEDDED nella
+    **processed-event receipt** (`EventReceipt.result_payload`) — fonte
+    autoritativa del completion result. Questo dataclass è lo SCHEMA canonico
+    usato per costruire deterministicamente il dict pre-CAS.
+    Una sola receipt ORDINARY consumata · mai un secondo slot · una sola
+    mutation · un solo incremento di `state_version`.
 
     Esclusioni verbatim: damage · healing · XP · loot · item proc · combat
     result · RNG seed · reward payload.
@@ -113,7 +114,11 @@ class DrainDoc:
     - `cancelled_at` + `cancellation_reason` (uno degli 8 canonici B2B2Q08)
     - `drain_version`: monotonic per aggregato (initial=1)
     - `start_event_id`: event_id dello START accettato (dedup replay → prior ID)
-    - `completion_payload`: B2B2Q07 embedded 15-field payload (solo su RESOLVED)
+    - `completion_event_id`: event_id della completion accettata (linkage 1:1
+      con la processed-event receipt autoritativa · dedup/validazione)
+    - `completion_payload`: DEPRECATED-NON-AUTHORITATIVE (PM adjudication
+      B2B2Q07): la fonte autoritativa è `EventReceipt.result_payload`. Il
+      nuovo runtime Drain NON lo popola (resta None · nessuna duplicazione).
 
     Hard-lock PM Message 170 §18:
     - max active Drain per (source,target) pair = 1
@@ -134,6 +139,7 @@ class DrainDoc:
     cancellation_reason: Optional[str] = None
     drain_version: int = 1
     start_event_id: str = ""
+    completion_event_id: str = ""
     completion_payload: Optional[DrainCompletionPayload] = None
 
 
@@ -177,6 +183,14 @@ class EventReceipt:
     durante expedition attiva).
 
     Contenuto (B0Q06 verbatim minimum):
+
+    RT2-B-2B-2-1 · PM adjudication B2B2Q07 (correzione ratificata):
+    `result_payload` contiene il completion result payload a 15 campi per
+    COMPLETE_DRAIN (e per i fold-commit di completion). La processed-event
+    receipt è la FONTE AUTORITATIVA del completion result. Default None per
+    tutti gli eventi legacy (byte-shape invariata). Costruito
+    deterministicamente PRE-CAS · scritto nello stesso singolo CAS ·
+    nessuna persistenza post-CAS · nessuna seconda receipt.
     """
 
     event_id: str
@@ -187,6 +201,7 @@ class EventReceipt:
     result_code: str  # canonical CasResultCode string
     state_version_after: int
     processed_at: str  # ISO UTC
+    result_payload: Optional[Dict[str, object]] = None
 
 
 # ═══════════════════════ Writer Lease ═══════════════════════

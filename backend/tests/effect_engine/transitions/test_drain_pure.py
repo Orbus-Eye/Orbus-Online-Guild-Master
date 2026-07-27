@@ -204,24 +204,32 @@ def test_p13_completion_payload_embedded_15_fields():
     mark = _mark()
     cs1, tr1 = _start(_cs(marks=[mark]))
     cs2, tr2 = _complete(cs1, tr1.drain_execution_id, seq=7, ver=9)
-    p = cs2.active_drain_executions[0].completion_payload
+    # PM adjudication B2B2Q07: il payload autoritativo viaggia in
+    # TransitionResult.result_payload → persistito dal dispatcher DENTRO la
+    # processed-event receipt (stesso CAS · stessa slot).
+    p = tr2.result_payload
     assert p is not None
     # 15 campi verbatim B2B2Q07
-    assert p.drain_execution_id == tr1.drain_execution_id
-    assert p.completion_event_id == "evt-comp-1"
-    assert p.source_adventurer_id == ADV
-    assert p.target_id == TGT
-    assert p.mark_id == mark.mark_id
-    assert p.application_id == mark.application_id
-    assert p.result_code == "SUCCESS"
-    assert p.mark_valid_at_completion is True
-    assert p.fragment_gain_requested == 1
-    assert p.fragment_gain_applied == 1
-    assert p.fragment_overflow_discarded == 0
-    assert p.resource_segment_id == cs2.resource_segment_id
-    assert p.assigned_event_sequence == 7
-    assert p.state_version_after == 9
-    assert p.processed_at
+    assert p["drain_execution_id"] == tr1.drain_execution_id
+    assert p["completion_event_id"] == "evt-comp-1"
+    assert p["source_adventurer_id"] == ADV
+    assert p["target_id"] == TGT
+    assert p["mark_id"] == mark.mark_id
+    assert p["application_id"] == mark.application_id
+    assert p["result_code"] == "SUCCESS"
+    assert p["mark_valid_at_completion"] is True
+    assert p["fragment_gain_requested"] == 1
+    assert p["fragment_gain_applied"] == 1
+    assert p["fragment_overflow_discarded"] == 0
+    assert p["resource_segment_id"] == cs2.resource_segment_id
+    assert p["assigned_event_sequence"] == 7
+    assert p["state_version_after"] == 9
+    assert p["processed_at"]
+    assert len(p) == 15
+    # DrainDoc: SOLO campi minimi · nessuna duplicazione autoritativa
+    d = cs2.active_drain_executions[0]
+    assert d.completion_event_id == "evt-comp-1"
+    assert d.completion_payload is None
 
 
 def test_p14_complete_does_not_consume_mark():

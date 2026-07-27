@@ -182,3 +182,170 @@ files changed (gate)  = 14 codice/test + 2 report memory
 - V1 NON incrementa baseline · NON produce closure autonoma · formal closure e 16/16 → 17/17 vietati fino a V1 PASS
 
 **Esito**: `RT2-B-2B-2-1 = IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED` — **STRICT STOP**.
+
+---
+
+# ADDENDUM · PM ADJUDICATION & CORREZIONE B2B2Q07 (Phase A conditionally ratified)
+
+## A1 · Anomalia adjudicata
+
+**Classificazione PM**: `B2B2Q07_PROCESSED_RECEIPT_PAYLOAD_LOCATION_MISMATCH`
+La realizzazione iniziale persisteva il payload 15-campi in `DrainDoc.completion_payload`
+(stesso CAS, 1 slot, linkage 1:1) — **non ratificata** come semanticamente equivalente a
+"embedded in the processed-event receipt". Nessuna failure di atomicità · nessun secondo
+slot consumato. Correzione deterministica confinata autorizzata con estensione minima del
+file boundary (receipt/state-store models · FakeStore · Mongo adapter · test effect-engine).
+
+**La §4.1 del report sopra è SUPERATA da questo addendum.**
+
+## A2 · Correzione applicata
+
+- `EventReceipt.result_payload: Optional[Dict] = None` (state_store/models.py): la
+  processed-event receipt è ora la **FONTE AUTORITATIVA** del completion result.
+- `apply_event_once(..., result_payload=None)` esteso in `interface.py`, `fake_store.py`,
+  `mongo_adapter.py`: il payload è scritto **dentro la receipt, nello stesso singolo CAS**
+  (`$push` receipt con payload embedded lato Mongo · EventReceipt lato Fake). Omesso quando
+  `None` → receipt legacy byte-shape invariata.
+- `complete_drain` (drain.py): costruisce il dict 15-campi **deterministicamente PRE-CAS**
+  dallo schema canonico `DrainCompletionPayload` e lo consegna via
+  `TransitionResult.result_payload`; il dispatcher lo passa allo store nello stesso CAS.
+  Anche i **fold-commit** (B2B2Q14) embeddano il payload con `result_code = rejection` e
+  `mark_valid_at_completion = false`.
+- `DrainDoc` ridotto a **campi minimi**: status terminale · `completion_event_id`
+  (linkage 1:1 con la receipt) · timestamp. `DrainDoc.completion_payload` NON è più
+  popolato dal runtime (classificato **copia derivata non autoritativa · non usata**;
+  soluzione preferita PM: nessuna duplicazione integrale).
+- Vietati e verificati: seconda receipt = 0 · seconda mutation = 0 · secondo incremento
+  `state_version` = 0 · persistenza post-CAS = 0 · doppia fonte autoritativa = 0.
+
+## A3 · TrustedDrainReceipt — `DEPRECATED_COMPATIBILITY_ONLY`
+
+Tipo legacy conservato (rimozione deferita a gate separato). Vincoli verificati dal nuovo
+test `d27`: (a) `drain.py` non referenzia `TrustedDrainReceipt` (scan sorgente = 0);
+(b) COMPLETE_DRAIN funziona con `trusted_drain_receipt=None`; (c) una fixture allegata al
+nuovo percorso Drain è **ignorata** — non è fonte autoritativa del Fragment gain, nessun
+gain fuori dal completion batch atomico, nessun reward/proc/mutation autonoma.
+
+## A4 · File & SHA (correzione · pre = post Phase A iniziale, commit `5a07ab4`)
+
+| File | pre (16) | post (16) |
+|---|---|---|
+| `backend/app/stats/runtime/state_store/models.py` | `21013daf0fe15cab` | `166339cb7dfffcb5` |
+| `backend/app/stats/runtime/state_store/interface.py` | `3a26342fbc03bfc0` | `6b768441c9f393dd` |
+| `backend/app/stats/runtime/state_store/fake_store.py` | `b6c841438741698a` | `d089b6052ffb453b` |
+| `backend/app/stats/runtime/state_store/mongo_adapter.py` | `cafb968d41ce62b1` | `8c07fa9f19037880` |
+| `backend/app/stats/runtime/transitions/drain.py` | `30048e1ff0a12272` | `d188d0fe5666f5f5` |
+| `backend/app/stats/runtime/transitions/dispatcher.py` | `3b742df59f27f634` | `9896616d2dcac0d6` |
+| `backend/app/stats/runtime/transitions/models.py` | `61cf98fea5299bb5` | `71cd6070549f4654` |
+| `backend/tests/effect_engine/transitions/test_drain_pure.py` | `cb2c80af92d6dee3` | `8eb615c83486c0f8` |
+| `backend/tests/effect_engine/transitions/test_drain_dispatcher.py` | `ad4ca1e81331dc6f` | `36fd6c7bd2127d20` |
+| `backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py` | `1afb86bfd344cd10` | `4cc8d2bde3b1022a` |
+
+Diff correzione: 10 file · **+185 / −31**. Boundary esteso SOLO ai componenti autorizzati.
+Non toccati: provisioning Mongo · allowlist DB · API pubbliche · OpenAPI · frontend ·
+Registry · reward · item effect · `.env` · shared environment. `SCOPE_EXPANSION_REQUIRED`
+= non attivato.
+
+## A5 · Test aggiunti & revalidation Phase A (integralmente verde)
+
+Nuovi test: `d27` (zero dipendenza TrustedDrainReceipt nel nuovo runtime Drain) ·
+`d28` (fold-rejection payload embedded nella receipt del triggering event).
+Aggiornati: `p13` · `d01` · `mm01` (asserzione payload nella processed-event receipt +
+DrainDoc senza copia autoritativa + receipt legacy `result_payload=None`).
+
+```text
+failed = 0 · unexpected skipped = 0 · design deviations = 0 · fail-stops = 0
+second receipt slot = 0
+state_version increments per completion batch = 1
+processed-event receipt contains completion payload = PASS (d01 · mm01 · d28 · p13)
+TrustedDrainReceipt dependency in new Drain runtime = 0 (d27)
+
+Suite Drain                  = 65/65 PASS (63 + 2 nuovi)
+effect_engine non-Mongo      = 365/365 PASS (baseline legacy invariata)
+mocked-Mongo Drain           = 5/5 PASS (payload roundtrip reale su adapter)
+real-Mongo heritage seriale  = 96/96 PASS (57 state_store + 39 transitions ·
+                               test_perf_mongo_p95 load-sensitive solo sotto xdist,
+                               PASS ripetuto in seriale — pre-esistente)
+sealed integrity             = 6 PASS · sealed artifacts 36/36 byte-identical ✓
+lore_meta.py SHA             = a18f708b…965b8f ✓ · OpenAPI paths = 275 ✓
+result-code coverage         = 21/21 ✓ · legacy response/reward invariance ✓
+benchmark FakeStore p95 (rerun) = START 0.103ms · COMPLETE+Fragment 0.134ms ·
+                               CANCEL 0.111ms · dedup retry 0.411ms ·
+                               flags-OFF 0.042ms — tutti entro soglia
+```
+
+## A6 · Incidente piattaforma & working-tree attribution (conferma finale)
+
+- **42 file** riscritti dalla env-substitution del fork pod (URL/JOB_ID/UUID storici →
+  `drain-dispatch`): artefatti piattaforma, non gate. **2 file sealed ripristinati
+  byte-identical da `origin/main`** → sealed integrity 6/6 · **36/36 byte-identical
+  CONFERMATO** post-correzione.
+- **Auto-commit piattaforma** (meccanismo `emergent-agent-e1`, NESSUNA azione git
+  dell'executor): `5a07ab4` (Phase A iniziale + file env-substitution piattaforma +
+  report) e `46a91e7` (artefatti build/deploy piattaforma: `frontend/build/*`,
+  `.emergent/emergent.yml`). Base gate: `be9f62f`. Il remote `origin` risulta rimosso
+  dalla configurazione locale dalla piattaforma: push/merge/PR **non eseguiti
+  dall'executor** (gestione remota via piattaforma).
+- Working tree corrente: SOLO i 10 file della correzione B2B2Q07 + questi 2 report
+  aggiornati + `frontend/yarn.lock` untracked (artefatto ripristino ambiente dev,
+  non gate).
+
+**Esito post-correzione**: `RT2-B-2B-2-1 = IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED`
+— V1 real-Mongo AUTORIZZATA (nessun nuovo verdict richiesto) capacità permettendo.
+Nessun closure report creato.
+
+---
+
+# ADDENDUM 2 · V1 REAL-MONGO DRAIN VERIFICATION (RT2-B-2B-2-1-V1 · subordinato)
+
+**Autorizzazione**: PM §6 (post-correzione B2B2Q07 · revalidation integralmente verde ·
+capacità sessione sufficiente). **Nessun nuovo verdict richiesto.**
+**Ambiente**: Mongo reale localhost · fixture `provisioned_unique_db`
+(`orbus_r16_rt2b_it_<unique_run_id>` · teardown drop) · nessuna scrittura fuori allowlist.
+
+## V1.1 · File
+
+`backend/tests/effect_engine/transitions/integration_real_mongo/test_drain_real_mongo.py`
+(9 test · nuovo · SHA sotto). Nessun file production modificato dalla V1.
+
+## V1.2 · Matrice V1 (9/9 PASS · 3 run consecutivi stabili)
+
+| # | Verifica | Esito |
+|---|---|---|
+| v01 | Payload 15-campi **REALMENTE persistito nella processed-event receipt** (lettura RAW BSON) · 1 sola ordinary receipt · DrainDoc senza copia autoritativa (`completion_payload=None` · `completion_event_id` linkage) · atomic batch (fragment+status+segment+receipt+version nello stesso doc) · `state_version` +1 exactly once · rehydration/coercion | PASS |
+| v02 | Replay START → prior execution ID · duplicate completion (dedup + `DRAIN_ALREADY_COMPLETED`) · fragment = 1 | PASS |
+| v03 | Concurrency winner-only: 6 worker concorrenti stessa execution → **1 solo `DRAIN_COMPLETED`** · fragment = 1 · 1 sola receipt con payload | PASS |
+| v04 | Lifecycle aggregation: 3 Drain STARTED → PHASE_END → 1 reserved receipt · tutti CANCELLED `PHASE_ENDED` · later completion `PHASE_INACTIVE` | PASS |
+| v05 | Receipt saturation reale (504 ordinary) → `RECEIPT_CAP_REACHED` fail-closed · 0 mutation | PASS |
+| v06 | BSON size worst-case al cap (504 receipt · 1 payload ogni 2) | PASS (vedi finding) |
+| v07 | Performance reale p95 (40 cicli): START **3.458 ms** · COMPLETE+Fragment **6.001 ms** · CANCEL **3.127 ms** — tutti ≤ 35 ms | PASS |
+| v08 | Allowlist rejection (`orbus_r16` → `DB_NOT_ALLOWLISTED`) · non-test-user fail-closed · 0 writes (doc invariato `state_version=1`) | PASS |
+| v09 | Zero dipendenza `TrustedDrainReceipt` su store reale: fixture forgiata allegata → ignorata · payload autoritativo con execution ID reale | PASS |
+
+Cleanup: **zero database residui** (`rt2b_it_*` = [] post-run).
+Suite complessiva post-V1: **365/365 non-Mongo · 105/105 real-Mongo seriale
+(96 heritage + 9 V1) · sealed 6/6 · OpenAPI 275 · lore_meta invariante.**
+
+## V1.3 · FINDING BSON (da sottoporre al PM · non bloccante · invariante hard rispettata)
+
+Misura reale worst-case (504 receipt, 1 completion payload ogni 2 — mix massimo
+realistico dato che ogni completion richiede il proprio START ordinario):
+
+```text
+measured            = 261.545 B
+hard budget         = 262.144 B (STATE_DOC_MAX_BYTES · 256 KiB)  → RISPETTATO (margine 599 B)
+stima P0 §42        = 215.040 B (210 KiB)                        → SUPERATA
+```
+
+L'invariante hard è rispettata ma il margine al saturamento assoluto è minimo.
+Raccomandazione per il PM (decisione fuori scope executor): aggiornare la stima P0
+e/o valutare in un gate futuro una compaction del payload (es. ID abbreviati nel
+payload receipt) prima di qualunque aumento di capacità receipt.
+
+## V1.4 · Esito
+
+```text
+RT2-B-2B-2-1     = IMPLEMENTED / PM-CLOSURE-PENDING (V1 PASS · finding BSON notificato)
+RT2-B-2B-2-1-V1  = VERIFIED (subordinato · nessuna closure autonoma · nessun baseline increment)
+baseline chain    = 16/16 INVARIATA · formal closure attende dispatch PM
+```

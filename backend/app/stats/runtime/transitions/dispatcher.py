@@ -358,7 +358,12 @@ class ClassTransitionDispatcher:
                     "adventurer_class_states": tuple(updated_map),
                 }
 
-                # CAS write via apply_event_once (dedup guarantee)
+                # CAS write via apply_event_once (dedup guarantee).
+                # PM adjudication B2B2Q07: il completion result payload viene
+                # persistito DENTRO la processed-event receipt (fonte
+                # autoritativa) nello stesso singolo CAS — nessuna seconda
+                # receipt · nessuna mutation aggiuntiva · nessuna scrittura
+                # post-CAS. None per tutti gli eventi legacy (invariati).
                 cas = await self._store.apply_event_once(
                     expedition_id=event.expedition_id,
                     event_id=event.event_id,
@@ -368,6 +373,7 @@ class ClassTransitionDispatcher:
                     expected_state_version=state.state_version,
                     expected_fencing_token=fencing,
                     mutation=mutation,
+                    result_payload=tr.result_payload,
                 )
 
                 if cas.code is CasResultCode.SUCCESS:

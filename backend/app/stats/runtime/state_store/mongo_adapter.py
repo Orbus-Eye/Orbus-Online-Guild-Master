@@ -114,6 +114,7 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
             result_code=r.get("result_code", ""),
             state_version_after=int(r.get("state_version_after", 0)),
             processed_at=r.get("processed_at", ""),
+            result_payload=r.get("result_payload"),
         )
         for r in receipts_raw
     )
@@ -331,6 +332,7 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         expected_state_version: int,
         expected_fencing_token: int,
         mutation: Dict[str, Any],
+        result_payload: Dict[str, Any] | None = None,
     ) -> CasResult:
         # 1) dedup probe (best-effort): read receipts and check event_id
         try:
@@ -403,6 +405,11 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             "state_version_after": expected_state_version + 1,
             "processed_at": now_iso,
         }
+        # RT2-B-2B-2-1 · PM B2B2Q07 (adjudicated): completion result payload
+        # EMBEDDED nella processed-event receipt · stesso CAS · stessa slot.
+        # Omesso quando None per preservare byte-shape delle receipt legacy.
+        if result_payload is not None:
+            new_receipt["result_payload"] = result_payload
         update = {
             "$inc": {"state_version": 1},
             "$set": set_fields,

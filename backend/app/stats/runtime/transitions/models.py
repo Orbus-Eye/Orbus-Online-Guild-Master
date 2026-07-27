@@ -271,6 +271,10 @@ class TransitionResult:
     mark_valid_at_completion: Optional[bool] = None
     drains_cancelled_count: int = 0
     cancelled_drain_execution_ids: Tuple[str, ...] = ()
+    # PM adjudication B2B2Q07: completion result payload (15 campi) da
+    # embeddare nella processed-event receipt (fonte autoritativa) — passato
+    # dal pure handler al dispatcher che lo persiste nello stesso CAS.
+    result_payload: Optional[dict] = None
 
     @property
     def success(self) -> bool:

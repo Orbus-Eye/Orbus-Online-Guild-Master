@@ -35,7 +35,7 @@ import uuid
 from datetime import datetime
 from typing import Optional, Tuple
 
-from dataclasses import replace
+from dataclasses import asdict, replace
 
 from app.stats.runtime.state_store.models import (
     AdventurerClassState,
@@ -159,6 +159,7 @@ def _coerce_drain(obj) -> DrainDoc:
             cancellation_reason=obj.get("cancellation_reason"),
             drain_version=int(obj.get("drain_version", 1)),
             start_event_id=obj.get("start_event_id", ""),
+            completion_event_id=obj.get("completion_event_id", ""),
             completion_payload=cp,
         )
     raise TypeError(f"unsupported drain entry type: {type(obj)!r}")
@@ -384,7 +385,12 @@ def complete_drain(
     def _fold_cancel(
         code: TransitionResultCode, reason: str,
     ) -> Tuple[AdventurerClassState, TransitionResult]:
-        """B2B2Q14: auto-cancel FOLDED nella receipt del triggering event."""
+        """B2B2Q14: auto-cancel FOLDED nella receipt del triggering event.
+
+        PM adjudication B2B2Q07: anche il fold-commit embedda il result
+        payload (result_code = rejection · mark_valid_at_completion=False)
+        nella processed-event receipt autoritativa.
+        """
         cancelled = replace(
             drain,
             runtime_status=DrainStatus.CANCELLED,
@@ -397,6 +403,23 @@ def complete_drain(
             active_drain_executions=_replace_drain(drains, cancelled),
             class_state_version=cs.class_state_version + 1,
         )
+        fold_payload = asdict(DrainCompletionPayload(
+            drain_execution_id=drain.drain_execution_id,
+            completion_event_id=event_id,
+            source_adventurer_id=source_adventurer_id,
+            target_id=drain.target_id,
+            mark_id=drain.mark_id,
+            application_id=drain.required_mark_application_id,
+            result_code=code.value,
+            mark_valid_at_completion=False,
+            fragment_gain_requested=0,
+            fragment_gain_applied=0,
+            fragment_overflow_discarded=0,
+            resource_segment_id=cs.resource_segment_id,
+            assigned_event_sequence=next_event_sequence,
+            state_version_after=state_version_after,
+            processed_at=_iso(now),
+        ))
         return folded_cs, _result(
             code,
             reason_code=reason,
@@ -405,6 +428,7 @@ def complete_drain(
             mark_valid_at_completion=False,
             mark_id=drain.mark_id,
             mark_application_id=drain.required_mark_application_id,
+            result_payload=fold_payload,
             **ctx,
         )
 
@@ -484,12 +508,18 @@ def complete_drain(
         state_version_after=state_version_after,
         processed_at=_iso(now),
     )
+    # PM adjudication B2B2Q07: la processed-event receipt è la fonte
+    # autoritativa del completion result → il payload viaggia nel
+    # TransitionResult e viene persistito dal dispatcher DENTRO la receipt
+    # (stesso singolo CAS · stessa slot ORDINARY). Il DrainDoc conserva SOLO
+    # i campi minimi (status terminale · completion_event_id · timestamp):
+    # nessuna duplicazione integrale · nessuna doppia fonte autoritativa.
     resolved = replace(
         drain,
         runtime_status=DrainStatus.RESOLVED,
         completed_at=_iso(now),
         drain_version=drain.drain_version + 1,
-        completion_payload=payload,
+        completion_event_id=event_id,
     )
     new_cs = replace(
         cs,
@@ -510,6 +540,7 @@ def complete_drain(
         fragment_count_after=new_fragment_count,
         resource_segment_id=new_segment_id,
         overflow_discarded=discarded,
+        result_payload=asdict(payload),
         **ctx,
     )
 

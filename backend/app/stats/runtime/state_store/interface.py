@@ -131,6 +131,7 @@ class ExpeditionRuntimeStateStore(ABC):
         expected_state_version: int,
         expected_fencing_token: int,
         mutation: Dict[str, Any],
+        result_payload: Dict[str, Any] | None = None,
     ) -> CasResult:
         """Applica un event con dedup atomica.
 

@@ -86,10 +86,18 @@ def test_mm01_full_drain_flow_atomic_on_mongo_mock(mongo_env):
     assert cs.resource_segment_id and cs.resource_segment_id.startswith("sg-")
     drains = coerce_drains(cs)
     assert drains[0].runtime_status is DrainStatus.RESOLVED
-    p = drains[0].completion_payload
-    assert p is not None and p.result_code == "SUCCESS"
-    assert p.fragment_gain_applied == 1
-    assert p.state_version_after == st.state_version
+    # PM adjudication B2B2Q07: payload 15-campi REALMENTE persistito nella
+    # processed-event receipt (roundtrip serialize → rehydrate su Mongo mock)
+    comp_receipt = st.processed_event_keys[-1]
+    assert comp_receipt.event_type == "COMPLETE_DRAIN"
+    p = comp_receipt.result_payload
+    assert p is not None and len(p) == 15
+    assert p["result_code"] == "SUCCESS"
+    assert p["fragment_gain_applied"] == 1
+    assert p["state_version_after"] == st.state_version
+    # DrainDoc: nessuna copia autoritativa · linkage 1:1
+    assert drains[0].completion_payload is None
+    assert drains[0].completion_event_id == comp_receipt.event_id
     # 1 sola receipt per la completion (3 totali: mark+start+complete)
     assert len(st.processed_event_keys) == 3
     assert st.state_version == 4  # +1 exactly once per batch

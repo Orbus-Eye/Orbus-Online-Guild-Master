@@ -90,13 +90,28 @@ def test_d01_full_flow_start_complete(initialized_state):
     assert cs.fragment_count == 1
     drains = coerce_drains(cs)
     assert drains[0].runtime_status is DrainStatus.RESOLVED
-    assert drains[0].completion_payload is not None
     # state_version +1 exactly once per event batch (1 create + 3 events)
     st = _get_state(store, exp_id)
     assert st.state_version == 4
     # 3 receipt ORDINARY totali (mark + start + complete) · MAI un secondo
     # slot per il completion payload (B2B2Q07)
     assert len(st.processed_event_keys) == 3
+    # PM adjudication B2B2Q07: la processed-event receipt della completion
+    # CONTIENE direttamente il payload 15-campi (fonte autoritativa)
+    comp_receipt = st.processed_event_keys[-1]
+    assert comp_receipt.event_type == "COMPLETE_DRAIN"
+    p = comp_receipt.result_payload
+    assert p is not None and len(p) == 15
+    assert p["drain_execution_id"] == drain_id
+    assert p["result_code"] == "SUCCESS"
+    assert p["fragment_gain_applied"] == 1
+    assert p["assigned_event_sequence"] == comp_receipt.assigned_event_sequence
+    assert p["state_version_after"] == comp_receipt.state_version_after
+    # DrainDoc: copia autoritativa ASSENTE (solo campi minimi + linkage)
+    assert drains[0].completion_payload is None
+    assert drains[0].completion_event_id == comp_receipt.event_id
+    # receipt legacy (mark/start): result_payload assente/None
+    assert st.processed_event_keys[0].result_payload is None
 
 
 def test_d02_start_replay_returns_prior_execution_id(initialized_state):
@@ -608,3 +623,60 @@ def test_d26_legacy_mark_fragment_flow_unchanged(initialized_state):
     # segment legacy apre con prefisso legacy "seg-" (invariato)
     assert out.result.resource_segment_id.startswith("seg-")
     assert out.result.success is True
+
+
+# ═══════ TrustedDrainReceipt · DEPRECATED_COMPATIBILITY_ONLY (PM adjudication) ═══════
+def test_d27_new_drain_runtime_has_zero_trusted_receipt_dependency(
+    initialized_state,
+):
+    """Il nuovo percorso START/COMPLETE/CANCEL_DRAIN non dipende da
+    TrustedDrainReceipt: (a) il modulo drain.py non lo referenzia;
+    (b) COMPLETE funziona con trusted_drain_receipt=None; (c) un
+    TrustedDrainReceipt allegato all'evento è IGNORATO (non è fonte
+    autoritativa del Fragment gain · nessun gain fuori dal batch atomico)."""
+    import inspect
+    from app.stats.runtime.transitions import drain as drain_mod
+    src = inspect.getsource(drain_mod)
+    assert "TrustedDrainReceipt" not in src  # (a) zero dipendenza statica
+
+    from tests.effect_engine.transitions.conftest import make_trusted_receipt
+    store, exp_id = initialized_state
+    _apply_mark(store, exp_id)
+    out, _ = _start_drain(store, exp_id)
+    drain_id = out.result.drain_execution_id
+    # (c) receipt fixture allegata: ignorata · outcome identico (gain=1)
+    forged = make_trusted_receipt(source_adventurer_id=ADV, target_id=TGT,
+                                  expedition_id=exp_id)
+    ev = make_event(ClassEventType.COMPLETE_DRAIN.value, expedition_id=exp_id,
+                    source_adventurer_id=ADV, drain_execution_id=drain_id,
+                    trusted_drain_receipt=forged)
+    comp = _dispatch(store, ev)
+    assert comp.result.code is RC.DRAIN_COMPLETED  # (b) e (c)
+    assert comp.result.fragment_gain_applied == 1  # SOLO dal batch atomico
+    assert _cs(store, exp_id).fragment_count == 1
+    # la receipt autoritativa è la processed-event receipt del batch
+    st = _get_state(store, exp_id)
+    p = st.processed_event_keys[-1].result_payload
+    assert p is not None
+    assert p["drain_execution_id"] == drain_id  # non l'ID forgiato fixture
+
+
+def test_d28_fold_rejection_payload_embedded_in_triggering_receipt(
+    initialized_state, clock_fn,
+):
+    """PM B2B2Q07+Q14: anche il fold-commit embedda il result payload
+    (result_code=rejection) nella receipt ordinaria del triggering event."""
+    store, exp_id = initialized_state
+    _apply_mark(store, exp_id)
+    out, _ = _start_drain(store, exp_id)
+    clock_fn.advance(11)
+    comp, _ = _complete_drain(store, exp_id, out.result.drain_execution_id)
+    assert comp.result.code is RC.MARK_EXPIRED
+    st = _get_state(store, exp_id)
+    receipt = st.processed_event_keys[-1]
+    assert receipt.event_type == "COMPLETE_DRAIN"
+    p = receipt.result_payload
+    assert p is not None and len(p) == 15
+    assert p["result_code"] == "MARK_EXPIRED"
+    assert p["mark_valid_at_completion"] is False
+    assert p["fragment_gain_applied"] == 0
