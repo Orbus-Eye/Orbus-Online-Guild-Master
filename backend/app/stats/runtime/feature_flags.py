@@ -60,6 +60,18 @@ RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
     # is_test_user=true AND environment=localhost isolated AND Mongo target
     # allowlisted. In produzione l'env var non è settata → resta OFF.
     "cdv_class_transitions_enabled",
+    # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: dedicated Drain flag
+    # (surgical kill-switch). Default OFF. Attivabile solo con 6-conditions
+    # composite gate (see wiring/feature_flags.py::is_drain_gate_open):
+    #   1. cdv_transient_state_enabled
+    #   2. AND cdv_class_transitions_enabled
+    #   3. AND cdv_drain_transitions_enabled
+    #   4. AND authenticated user.is_test_user
+    #   5. AND environment = localhost isolated
+    #   6. AND Mongo target = allowlisted database
+    # Flag OFF: 0 DB calls · 0 audit events · 0 mutations (Drain path).
+    # Mark/Fragment paths NOT disabled by this flag alone (kill-switch surgical).
+    "cdv_drain_transitions_enabled",
 })
 
 RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
@@ -71,7 +83,8 @@ RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
 ALL_FLAGS: Final[frozenset[str]] = (
     RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
 )
-assert len(ALL_FLAGS) == 7, "RT2-A/B/future must expose exactly 7 flags total"
+# RT2-B-2B-2-1 adds `cdv_drain_transitions_enabled` → total = 8.
+assert len(ALL_FLAGS) == 8, "RT2-A/B/future must expose exactly 8 flags total post RT2-B-2B-2-1"
 
 DEFAULT_VALUE: Final[bool] = False
 

@@ -49,6 +49,11 @@ class ClassEventType(str, Enum):
     EXPEDITION_TERMINAL = "EXPEDITION_TERMINAL"
     CLEANUP_CRITICAL = "CLEANUP_CRITICAL"
 
+    # RT2-B-2B-2-1 Drain lifecycle (PM Message 170 §13, §17)
+    START_DRAIN = "START_DRAIN"
+    COMPLETE_DRAIN = "COMPLETE_DRAIN"
+    CANCEL_DRAIN = "CANCEL_DRAIN"
+
 
 # ═══════════════════════ Receipt category ═══════════════════════
 class ReceiptCategory(str, Enum):
@@ -133,6 +138,33 @@ class TransitionResultCode(str, Enum):
     STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED = "STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED"
     NOT_FOUND = "NOT_FOUND"
 
+    # ═══ RT2-B-2B-2-1 Drain result codes (PM Message 170 §19 verbatim) ═══
+    # Success
+    DRAIN_STARTED = "DRAIN_STARTED"
+    DRAIN_COMPLETED = "DRAIN_COMPLETED"
+    DRAIN_CANCELLED = "DRAIN_CANCELLED"
+
+    # Start rejection
+    DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR = "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR"
+    MARK_APPLICATION_CHANGED = "MARK_APPLICATION_CHANGED"
+    EXPEDITION_TERMINAL_REJECTED = "EXPEDITION_TERMINAL_REJECTED"
+    PHASE_INACTIVE = "PHASE_INACTIVE"
+
+    # Drain state
+    DRAIN_NOT_STARTED = "DRAIN_NOT_STARTED"
+    DRAIN_ALREADY_COMPLETED = "DRAIN_ALREADY_COMPLETED"
+    DRAIN_ALREADY_CANCELLED = "DRAIN_ALREADY_CANCELLED"
+
+    # Identifier bounds (PM §3 verbatim · zero mutation on invalid · no silent truncation)
+    EVENT_ID_INVALID = "EVENT_ID_INVALID"
+
+    # Lease/CAS
+    LEASE_ACQUISITION_FAILED = "LEASE_ACQUISITION_FAILED"
+    RETRY_LIMIT_REACHED = "RETRY_LIMIT_REACHED"
+
+    # Store infra bubbling
+    STORE_INFRA_ERROR = "STORE_INFRA_ERROR"
+
 
 # ═══════════════════════ Reason codes (B2BQ05 verbatim) ═══════════════════════
 class ReasonCode(str, Enum):
@@ -152,16 +184,20 @@ class ReasonCode(str, Enum):
     EXPLICIT_SERVER_CANCEL = "EXPLICIT_SERVER_CANCEL"
 
 
-# ═══════════════════════ Trusted Drain receipt (fixture-only in RT2-B-2B-1) ═══════════════════════
+# ═══════════════════════ Trusted Drain receipt (DEPRECATED_COMPATIBILITY_ONLY post RT2-B-2B-2-1) ═══════════════════════
 @dataclass(frozen=True)
 class TrustedDrainReceipt:
     """Ricevuta Drain completata usata SOLO come fixture di test in RT2-B-2B-1.
 
-    B2BQ07 verbatim: `GAIN_FRAGMENT` valido richiede accepted `drain_execution_id`
-    + accepted Drain completion receipt. In RT2-B-2B-1 (Drain runtime deferred),
-    questa receipt è generata SOLO da test fixture server-side. Nessun code path
-    gameplay/client/admin può crearla.
+    ⚠️ DEPRECATED_COMPATIBILITY_ONLY (RT2-B-2B-2-1 PM adjudication §3):
+    - Il nuovo runtime Drain (state machine `transitions/drain.py`) ha
+      **dipendenza zero** da questo modello.
+    - Preservato SOLO per backward compat con test/legacy fixture chain (RT1
+      `gain_fragment` gating path).
+    - Nessun nuovo codice runtime deve importare/utilizzare questo modello.
 
+    B2BQ07 (RT2-B-2B-1 legacy): `GAIN_FRAGMENT` valido richiedeva accepted
+    `drain_execution_id` + accepted Drain completion receipt come fixture.
     NON usare in produzione — marker esplicito.
     """
 
@@ -176,6 +212,102 @@ class TrustedDrainReceipt:
     fixture_only_marker: str = "RT2B2B1_TRUSTED_FIXTURE_ONLY"
 
 
+# ═══════════════════════ RT2-B-2B-2-1 · Drain models ═══════════════════════
+
+# Identifier bounds (PM §3 verbatim)
+EVENT_ID_MAX_BYTES: int = 96
+IDENTIFIER_MAX_BYTES: int = 64  # source_adventurer_id, target_id
+
+
+def validate_identifier_bounds(
+    event_id: str,
+    source_adventurer_id: str,
+    target_id: str,
+) -> Optional["TransitionResultCode"]:
+    """Enforce identifier byte-length bounds (PM §3 verbatim).
+
+    - `event_id` ≤ 96 byte UTF-8 → EVENT_ID_INVALID
+    - `source_adventurer_id` ≤ 64 byte UTF-8 → SOURCE_INVALID
+    - `target_id` ≤ 64 byte UTF-8 → TARGET_INVALID
+
+    Returns:
+        `None` if all bounds pass. Otherwise the appropriate rejection code.
+        **Never truncates silently** (§3, §7 forbidden).
+    """
+    if not event_id or len(event_id.encode("utf-8")) > EVENT_ID_MAX_BYTES:
+        return TransitionResultCode.EVENT_ID_INVALID
+    if not source_adventurer_id or len(source_adventurer_id.encode("utf-8")) > IDENTIFIER_MAX_BYTES:
+        return TransitionResultCode.SOURCE_INVALID
+    if not target_id or len(target_id.encode("utf-8")) > IDENTIFIER_MAX_BYTES:
+        return TransitionResultCode.TARGET_INVALID
+    return None
+
+
+# 8 cancellation reason codes (PM Message 170 §18 verbatim · NO extensions)
+DRAIN_CANCEL_REASONS: frozenset[str] = frozenset({
+    "MARK_EXPIRED",
+    "MARK_OWNERSHIP_MISMATCH",
+    "MARK_APPLICATION_CHANGED",
+    "TARGET_INVALID",
+    "SOURCE_INVALID",
+    "PHASE_ENDED",
+    "EXPEDITION_TERMINAL",
+    "EXPLICIT_SERVER_CANCEL",
+})
+
+
+@dataclass(frozen=True)
+class DrainCompletionReceipt:
+    """15-field completion payload EMBEDDED in processed event receipt (§25 verbatim).
+
+    PM Message 170 B2B2Q07: **completion receipt = result payload EMBEDDED in the
+    processed event receipt** · NON occupare un secondo slot indipendente nella
+    capacità 512.
+
+    Emitted from `transitions/drain.py::complete_drain` and folded into the
+    single ORDINARY receipt for the COMPLETE_DRAIN event.
+    """
+
+    drain_execution_id: str
+    completion_event_id: str
+    source_adventurer_id: str
+    target_id: str
+    mark_id: str
+    application_id: str
+    result_code: str  # SUCCESS or rejection code
+    mark_valid_at_completion: bool
+    fragment_gain_requested: int  # fissato = 1 (B2B2Q05)
+    fragment_gain_applied: int  # 0 or 1
+    fragment_overflow_discarded: int  # 0 or 1
+    resource_segment_id: Optional[str]
+    assigned_event_sequence: int
+    state_version_after: int
+    processed_at: str  # ISO UTC
+
+
+@dataclass(frozen=True)
+class DrainCommand:
+    """Structured Drain command (server-side, post-gating).
+
+    Server-authoritative: identità caller + phase + expedition già validati
+    upstream. Il puro state machine drain riceve questo record per applicare
+    la transizione senza toccare I/O.
+    """
+
+    command_type: str  # START_DRAIN | COMPLETE_DRAIN | CANCEL_DRAIN
+    event_id: str
+    expedition_id: str
+    source_adventurer_id: str
+    target_id: str
+    mark_id: str  # empty string for CANCEL_DRAIN cascade cases where drain lookup by id
+    application_id: str
+    drain_execution_id: str = ""  # empty at START_DRAIN (server-generated); required for COMPLETE/CANCEL
+    cancellation_reason: str = ""  # required for CANCEL_DRAIN, one of DRAIN_CANCEL_REASONS
+    payload_hash: str = ""
+    expected_state_version: int = 0
+    phase_id: Optional[str] = None
+
+
 # ═══════════════════════ Class state event ═══════════════════════
 @dataclass(frozen=True)
 class ClassStateEvent:
@@ -188,6 +320,10 @@ class ClassStateEvent:
         event_sequence · fencing_validation · processed_at · result_code
 
     Il client NON controlla event_sequence/fencing_token/owner/cap/result_code.
+
+    RT2-B-2B-2-1 additions (default None · backward compat):
+        drain_execution_id · drain_mark_id · drain_application_id ·
+        drain_cancellation_reason
     """
 
     event_id: str
@@ -203,6 +339,11 @@ class ClassStateEvent:
     reason_code: Optional[str] = None
     trusted_drain_receipt: Optional[TrustedDrainReceipt] = None
     phase_id: Optional[str] = None
+    # RT2-B-2B-2-1 Drain fields
+    drain_execution_id: Optional[str] = None
+    drain_mark_id: Optional[str] = None
+    drain_application_id: Optional[str] = None
+    drain_cancellation_reason: Optional[str] = None
 
 
 # ═══════════════════════ Transition result ═══════════════════════
@@ -252,4 +393,11 @@ __all__ = [
     "TransitionResultCode",
     "TrustedDrainReceipt",
     "categorize_event",
+    # RT2-B-2B-2-1 additions
+    "DrainCommand",
+    "DrainCompletionReceipt",
+    "DRAIN_CANCEL_REASONS",
+    "EVENT_ID_MAX_BYTES",
+    "IDENTIFIER_MAX_BYTES",
+    "validate_identifier_bounds",
 ]

@@ -64,6 +64,18 @@ _ALLOWED_FIELDS: frozenset[str] = frozenset({
     "retry_attempts",
     "dedup_reference",
     "phase_id",
+    # RT2-B-2B-2-1 Drain additions (PM Message 170 §38 verbatim)
+    "drain_execution_id",
+    "mark_valid_at_completion",
+    "fragment_gain_requested",
+    "fragment_gain_applied",
+    "fragment_overflow_discarded",
+    "cancellation_reason",
+    "cancellation_reasons",  # aggregate list for lifecycle receipts
+    "count_drains_cancelled",
+    "drain_execution_ids",  # bounded list in lifecycle aggregate receipt
+    "drain_version",
+    "gate_reason",  # 6-conditions gate reason code
 })
 
 # Blacklist esplicita — se rilevata, il record NON viene emesso (fail-closed).

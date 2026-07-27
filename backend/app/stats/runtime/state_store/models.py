@@ -76,6 +76,12 @@ class DrainDoc:
     Verbatim RT1:
     - own active Mark required at start · own active Mark required at completion
     - Drain does NOT consume Mark · one resolution per execution id
+
+    RT2-B-2B-2-1 (Drain gate PM Message 170 §9) extension:
+    - `mark_id` (introduced by code gate; enforces binding invariance)
+    - `cancelled_at`, `cancellation_reason` (per §17-§18 · 8 canonical reasons)
+    - `drain_version` (monotonic per aggregate · initial=1)
+    Backward compat: `resolution_version` (RT1) preserved.
     """
 
     drain_execution_id: str
@@ -87,6 +93,11 @@ class DrainDoc:
     runtime_status: DrainStatus = DrainStatus.IN_PROGRESS
     resolution_version: int = 1
     reward_resolved: bool = False
+    # ── RT2-B-2B-2-1 code gate additions (default-valued for backward compat) ──
+    mark_id: str = ""  # binding to MarkDoc.mark_id · empty for RT1 legacy fixtures
+    cancelled_at: Optional[str] = None
+    cancellation_reason: Optional[str] = None  # one of 8 canonical (see transitions.models.ReasonCode)
+    drain_version: int = 1
 
 
 # ═══════════════════════ Fragment usage per segment ═══════════════════════
