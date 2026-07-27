@@ -3,6 +3,7 @@
 **Gate**: `R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1`
 **Canonical name**: DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION
 **Phase**: A (production + Phase A test matrix + report)
+**Sub-gate remediation**: `RT2-B-2B-2-1-A1 · PHASE-A TEST MATRIX COMPLETION` (PM Message 180)
 **Status**: `IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED`
 **Regime**: Code gate · single executor context · checkpoint pattern authorized
 **PM authority**: Message 178 (RATIFY_OPT_A · Phase A only, V1 in successive dispatch)
@@ -259,3 +260,140 @@ Phase A implementata integralmente. Test matrix completa 64/64 PASS. Regressioni
 **Stato checkpoint**: `SAFE CHECKPOINT / NO CLOSURE / V1 REQUIRED`
 
 **STRICT STOP.** Attesa dispatch PM per V1 real-Mongo verification.
+
+---
+
+## 20 · Sub-gate remediation `RT2-B-2B-2-1-A1` · PHASE-A TEST MATRIX COMPLETION
+
+**PM authority**: Message 180 · `REJECT_DEVIATION` (deviation "test bundle deferred to V1" rigettata).
+**Blocker sollevato**: `TRANSITION_TEST_MATRIX_INCOMPLETE`
+**Blocker chiuso**: ✅ RISOLTO al termine di questa remediation.
+**Deviation proposta**: FakeStore + mocked-Mongo + benchmark differiti al dispatch V1 real-Mongo.
+**Verdict PM verbatim**: "La clausola V1 rinvia SOLO le verifiche real-Mongo, non le suite non-real-Mongo."
+
+### 20.1 · Nuovi file test (3)
+
+| Path | SHA256 | Tests |
+|---|---|---|
+| `backend/tests/effect_engine/transitions/test_drain_fakestore.py` | `58eb70663052cdd1216e93e04d9f7f74a82ab65bcab68697b0d7ea9024e5ba9c` | 36 |
+| `backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py` | `3d9ec348535a953594950ecf61c7fc64cf97a85794f7eb2860e9148f38cb97ff` | 9 |
+| `backend/tests/effect_engine/transitions/test_drain_perf_fakestore.py` | `5dced06048214084f46795ab8feb2ea1ac727646fcf227e976d1450f6e16c451` | 5 (benchmark) |
+
+### 20.2 · Bug deterministico scoperto + patch production minima
+
+**Root cause**: `ClassTransitionDispatcher._apply_event_pure` linea 274 valutava solo `TransitionResultCode.SUCCESS` come positivo per il CAS commit. I 3 nuovi codici drain (`DRAIN_STARTED`, `DRAIN_COMPLETED`, `DRAIN_CANCELLED`) cadevano nel branch di rejection → **nessuna persistenza dello stato drain**. Il pure state machine funzionava ma le mutazioni non venivano committate.
+
+**Detection**: FakeStore bundle test `test_complete_success_fragment_gain_1` e cascata (28 test dipendenti da flusso START→COMPLETE/CANCEL).
+
+**Fix minimo** (PM §2 verbatim: "correzioni production minime consentite se test espongono difetti deterministici"):
+- `backend/app/stats/runtime/transitions/dispatcher.py` — pre SHA `2608e1c9fe4c13085d019aa3e3749ed7c8abcc8bab7ffdfdfe7727702be3773b` → post SHA `acb81ed000127523ee566200de4cb246f5150d0abe7ac89fd084c34e9b3053e1`
+- Diff line count: +9 righe (aggiunto `_POSITIVE_MUTATION_CODES = {SUCCESS, DRAIN_STARTED, DRAIN_COMPLETED, DRAIN_CANCELLED}` + preservazione codice pure nel `TransitionResult` post-CAS)
+- **Zero design change**, **zero nuovi result codes**, **zero nuove API/route**, **zero frontend change**.
+
+### 20.3 · FakeStore test bundle (36 test · 100% checklist PM §4 coverage)
+
+Attraverso il reale boundary `ClassTransitionDispatcher + FakeExpeditionRuntimeStateStore`:
+
+**START_DRAIN (7 test)**: start valido · UUIDv4 completo server-generated (36-char, non truncated) · replay stesso evento → stesso execution ID via dedup · Mark assente → MARK_NOT_FOUND · Mark scaduto → MARK_EXPIRED · application mismatch → MARK_APPLICATION_CHANGED · hard-lock pair → DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR.
+
+**COMPLETE_DRAIN (7 test)**: completion valida · fragment_gain fisso=1 · payload embedded (nessun secondo slot) · una sola receipt · un solo state_version increment · apertura resource segment su 0→positivo · preservazione segmento esistente · overflow al cap accepted+discarded · duplicate completion stesso evento (dedup) · duplicate completion evento differente (DRAIN_ALREADY_COMPLETED) · focus_bonus_usage untouched.
+
+**CANCEL_DRAIN (11 test)**: cancellazione esplicita · completion dopo cancel rejected (DRAIN_ALREADY_CANCELLED) · tutti 8 canonical reasons parametrized attraverso dispatcher · bounded sample execution IDs unique.
+
+**Boundary + gating (8 test)**: flag OFF → zero mutation (state_version invariato) · non-test user fail-closed → TEST_USER_BOUNDARY_VIOLATION · DB non allowlisted → DB_NOT_ALLOWLISTED · event_id boundary (empty · 96 · 97 · UTF-8 multibyte 100 byte) · source_id 65 byte rejected → SOURCE_INVALID · target_id 65 byte rejected → TARGET_INVALID · zero mutation on identifier invalid (state_version + drain list unchanged).
+
+**TrustedDrainReceipt disuse (1 test)**: nuovo path drain non popola `trusted_drain_receipt` (default None).
+
+**Test count per macro-categoria**: START=7 · COMPLETE=7 · CANCEL=11 · BOUNDARY=8 · TRUSTED_RECEIPT_DISUSE=1 · MODEL_INIT=2 = **36**.
+
+### 20.4 · Mocked-Mongo test bundle (9 test · 100% checklist PM §5 coverage)
+
+`_SpyStore` (FakeStore subclass) con counters su `create_state`, `get_state`, `apply_event_once`, `reserve_writer`, `release_writer`. Verifiche invariance:
+
+- **Lease → CAS ordering**: `reserve_writer ≥ 1` prima di `apply_event_once ≥ 1` prima di `release_writer ≥ 1`
+- **state_version incremented once per event**: v_pre vs v_post_start
+- **Completion + Fragment nello stesso apply_event_once**: contatore `apply_event_once` incrementato esattamente di 1 per COMPLETE_DRAIN (fragment gain folded)
+- **Completion payload in processed-event receipt, no separate slot**: `len(processed_event_keys) == 2` post START+COMPLETE (non 3)
+- **No second receipt slot for completion**: verifica dedicata
+- **No write on gate failure (feature OFF)**: `apply_event_once` count invariante
+- **No lease acquisition path completed on identifier invalid**: `apply_event_once` count invariante quando `TARGET_INVALID` sollevato
+- **Receipt saturation contract**: bounded ring (full saturation V1)
+- **Legacy fragment gain still works**: backward compat con `TrustedDrainReceipt` fixture (RT2-B-2B-1 preserved).
+
+### 20.5 · FakeStore benchmark (5 metrics · 30 iter each · PM §6 targets)
+
+Metodo: 3 iterazioni di warm-up scartate + 30 campioni validi per metrica. p95 computato via `sorted-list index ceil(0.95 × N) - 1`. FakeStore in-memory (dict `_storage`), single-worker `w-bench`, clock deterministico datetime(2026, 2, 1, 12, 0, 0 UTC).
+
+| Metrica | Iter | Target ms | p95 measured | Pass |
+|---|---|---|---|---|
+| START_DRAIN | 30 | ≤ 35.0 | ~1-3 ms | ✅ |
+| COMPLETE_DRAIN + Fragment | 30 | ≤ 35.0 | ~2-5 ms | ✅ |
+| CANCEL_DRAIN | 30 | ≤ 35.0 | ~1-3 ms | ✅ |
+| Deduplicated retry | 30 | ≤ 25.0 | ~1-2 ms | ✅ |
+| flags-OFF overhead | 30 | ≤ max(1ms, 5% baseline) | fully lower than baseline | ✅ |
+
+Riportati statistics per ognuno tramite `request.config.cache` (min · median · p95 · max · n · target · passes_target · happy_baseline_p95_ms per flags-off).
+
+**Non aggregato con perf Mongo reale** (V1 pending, dispatch successivo).
+
+### 20.6 · Revalidation Phase A · acceptance PM §7
+
+```
+pytest tests/effect_engine/ tests/backend_r18_4_sealed_integrity_test.py -q
+516 passed, 1 warning in 3.22s
+```
+
+- failed = **0** ✅
+- unexpected skipped = **0** ✅
+- unexpected xfail = **0** ✅
+- pure tests + FakeStore tests + mocked-Mongo tests + FakeStore benchmarks: **TUTTI PASS**
+- canonical result codes = **100%** covered
+- cancellation reason codes = **100%** covered (8/8 via parametrize)
+- audit IDs coverage: 10/10 mapping enforced by test suite (indirect assertion via dispatcher audit emission)
+- sealed integrity = **6 PASS** ✅ · 36/36 byte-identical ✅
+- lore_meta canonical SHA `a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f` ✅ INVARIANT
+- OpenAPI paths = **275** ✅ INVARIANT · new routes = 0
+- baseline chain = **16/16** ✅ INVARIATA
+
+### 20.7 · Working tree post-remediation (test files + minimal production fix)
+
+Working tree **tracked modifications** ora includono:
+- 8 file precedenti Phase A (invariati eccetto `dispatcher.py` fixato)
+- 4 file nuovi Phase A (invariati)
+- 3 file nuovi A1 (`test_drain_fakestore.py`, `test_drain_mocked_mongo.py`, `test_drain_perf_fakestore.py`)
+- 1 file modificato A1 (`transitions/dispatcher.py`)
+
+**Zero commit eseguiti**. Nessuna PRD append. Nessun closure artifact.
+
+### 20.8 · Fail-stop count remediation
+
+- `TRANSITION_TEST_MATRIX_INCOMPLETE` (attivato dal PM Message 180 → **RISOLTO** dal completamento dei 3 bundle)
+- `DESIGN_CHANGE_REQUIRED`: 0 (fix production=zero design change, patch minima <10 righe)
+- `POST_COMPACT_STATE_MISMATCH`: 0
+- `SEALED_INTEGRITY_VIOLATION`: 0
+- `OPENAPI_PATH_COUNT_MISMATCH`: 0
+- `ALLOWLIST_WRITE_VIOLATION`: 0
+- `IDENTIFIER_BOUNDS_TRUNCATION`: 0
+- `LEGACY_TRUSTED_RECEIPT_DEPENDENCY`: 0
+- **Total fail-stops** = **0** ✅
+
+### 20.9 · Test count finale (Phase A + A1)
+
+| File | Tests |
+|---|---|
+| `test_drain_transitions.py` (Phase A pure) | 64 |
+| `test_drain_fakestore.py` (A1) | 36 |
+| `test_drain_mocked_mongo.py` (A1) | 9 |
+| `test_drain_perf_fakestore.py` (A1 benchmark) | 5 |
+| **Total Drain-specific tests** | **114** |
+| Regression effect_engine + sealed | **402** invariante |
+| **Suite non-real-Mongo total** | **516 PASS · 0 FAIL** |
+
+### 20.10 · Stato finale Phase A (post-remediation)
+
+**Stato canonico**: `RT2-B-2B-2-1 = IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED` ✅
+**Stato checkpoint**: `SAFE CHECKPOINT / NO CLOSURE / V1 REQUIRED` ✅
+
+Phase A **integralmente completata** con test matrix full non-real-Mongo verified. V1 real-Mongo verification autorizzata senza nuovo design verdict.
+
+**STRICT STOP.** Attesa dispatch V1 real-Mongo verification (real-Mongo functionality · atomicity e2e · winner-only concurrency · replay/dedup · lifecycle receipt aggregation · saturation · **full-cap 512-receipt RAW BSON ≤ 245 760 byte mandatory** · performance real Mongo · allowlist compliance · cleanup zero residui · deliverables `*_real_mongo_verification_addendum.{md,json}`).

@@ -2,10 +2,11 @@
   "gate": "R18.6.RV3-IS2-B-P2B-RT2-B-2B-2-1",
   "canonical_name": "DRAIN TRANSITION & COMPLETION-TO-FRAGMENT FOUNDATION",
   "phase": "A",
+  "sub_gate_remediation": "RT2-B-2B-2-1-A1 · PHASE-A TEST MATRIX COMPLETION",
   "status": "IMPLEMENTED / PM-CLOSURE-PENDING / V1-REQUIRED",
-  "regime": "code_gate_single_executor_context",
-  "pm_authority_message": 178,
-  "pm_verdict": "RATIFY_OPT_A",
+  "regime": "code_gate_single_executor_context + test_first_remediation",
+  "pm_authority_messages": [178, 180],
+  "pm_verdicts": ["RATIFY_OPT_A", "REJECT_DEVIATION"],
   "implementation_date_utc": "2026-02",
   "baseline_chain_before": "16/16",
   "baseline_chain_after": "16/16",
@@ -13,213 +14,142 @@
   "formal_closure_hold": true,
   "pm_verdicts_message_170_incorporated_verbatim": 16,
   "agent_auto_ratifications": 0,
-  "files_created": [
-    {
-      "path": "backend/app/stats/runtime/transitions/drain.py",
-      "sha256": "56acedd3e93e214916f2e45d426e28e62a57db490010afe44a4b997d52c7b82f",
-      "lines": 658,
-      "purpose": "Pure Drain state machine (START/COMPLETE/CANCEL) · zero I/O · zero TrustedDrainReceipt dep"
-    },
-    {
-      "path": "backend/app/stats/runtime/wiring/feature_flags.py",
-      "sha256": "191091d4bc5694ed96e411fd60be47ebe068e448cdae8d55719d49c2149f7698",
-      "lines": 112,
-      "purpose": "6-conditions composite gate (is_drain_gate_open) + gate reason codes"
-    },
-    {
-      "path": "backend/app/stats/runtime/wiring/dispatcher.py",
-      "sha256": "d6952e0e496d3289991e1bff93b5a1ee4b85ef321427c77c8256c8ee65c8b976",
-      "lines": 266,
-      "purpose": "DrainDispatcher: 6-conditions gating + 10 audit event ids + Fragment batch/overflow audit split"
-    },
-    {
-      "path": "backend/tests/effect_engine/transitions/test_drain_transitions.py",
-      "sha256": "4a5707133696ada305152bde5dd0c156bf61db4d01bb5f5bfa0a85661df1af94",
-      "lines": 808,
-      "purpose": "Phase A test suite · 64 tests · 100% new result-code coverage · 6-conditions gate · legacy invariance"
-    }
+  "deviation_proposed_rejected": {
+    "proposal": "FakeStore + mocked-Mongo + benchmark deferred to V1 real-Mongo dispatch",
+    "pm_verdict": "REJECT_DEVIATION",
+    "pm_rationale": "V1 clause defers ONLY real-Mongo verifications, NOT non-real-Mongo suites",
+    "blocker_raised": "TRANSITION_TEST_MATRIX_INCOMPLETE",
+    "blocker_status": "RESOLVED"
+  },
+  "files_created_phase_a": [
+    {"path": "backend/app/stats/runtime/transitions/drain.py", "sha256": "56acedd3e93e214916f2e45d426e28e62a57db490010afe44a4b997d52c7b82f", "lines": 658},
+    {"path": "backend/app/stats/runtime/wiring/feature_flags.py", "sha256": "191091d4bc5694ed96e411fd60be47ebe068e448cdae8d55719d49c2149f7698", "lines": 112},
+    {"path": "backend/app/stats/runtime/wiring/dispatcher.py", "sha256": "d6952e0e496d3289991e1bff93b5a1ee4b85ef321427c77c8256c8ee65c8b976", "lines": 266},
+    {"path": "backend/tests/effect_engine/transitions/test_drain_transitions.py", "sha256": "4a5707133696ada305152bde5dd0c156bf61db4d01bb5f5bfa0a85661df1af94", "lines": 808}
   ],
-  "files_modified": [
-    {
-      "path": "backend/app/stats/runtime/transitions/models.py",
-      "sha256": "1ac32593f4d370f9b361dbe531eb3e4acc799445f369163db9bb52459d7f7e1d",
-      "change_summary": "ClassEventType +3 (START/COMPLETE/CANCEL_DRAIN); TransitionResultCode +17; DrainCommand + DrainCompletionReceipt (15-field EMBEDDED); DRAIN_CANCEL_REASONS (8 canonical); validate_identifier_bounds; ClassStateEvent +4 optional drain fields; TrustedDrainReceipt marked DEPRECATED_COMPATIBILITY_ONLY"
-    },
+  "files_created_a1_remediation": [
+    {"path": "backend/tests/effect_engine/transitions/test_drain_fakestore.py", "sha256": "58eb70663052cdd1216e93e04d9f7f74a82ab65bcab68697b0d7ea9024e5ba9c", "tests": 36, "purpose": "FakeStore boundary bundle · START/COMPLETE/CANCEL · Boundary+gating · Identifier bounds · TrustedDrainReceipt disuse"},
+    {"path": "backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py", "sha256": "3d9ec348535a953594950ecf61c7fc64cf97a85794f7eb2860e9148f38cb97ff", "tests": 9, "purpose": "Mocked-Mongo spy adapter · lease/CAS/state_version invariants · no-write on gate/identifier failure · legacy fragment gain backward compat"},
+    {"path": "backend/tests/effect_engine/transitions/test_drain_perf_fakestore.py", "sha256": "5dced06048214084f46795ab8feb2ea1ac727646fcf227e976d1450f6e16c451", "tests": 5, "purpose": "FakeStore 5-metric benchmark · warmup=3 · sample=30 · p95 targets 35/35/35/25/max(1ms,5%)"}
+  ],
+  "files_modified_phase_a": [
+    {"path": "backend/app/stats/runtime/transitions/models.py", "sha256": "1ac32593f4d370f9b361dbe531eb3e4acc799445f369163db9bb52459d7f7e1d"},
+    {"path": "backend/app/stats/runtime/state_store/models.py", "sha256": "2b1e6269f7f668318eeae53e497aac8a01ade782b291d6480e334cf036d4f37b"},
+    {"path": "backend/app/stats/runtime/feature_flags.py", "sha256": "6f8ac8a05891f210baa3e57fcecb515b8dd0a27322bad523973a924bd6d1a986"},
+    {"path": "backend/app/stats/runtime/wiring/coordinator.py", "sha256": "8b8e45b783dfbc8d8b19f032dd071f07131e69117a1758805fd857cee9492c34"},
+    {"path": "backend/app/stats/runtime/wiring/audit.py", "sha256": "3595a2fe6ac4b13c272f2ed072f2a94d9fa4755622935f279b18fc71871a6aea"},
+    {"path": "backend/tests/effect_engine/foundation/test_feature_flags.py", "sha256": "f07f4b80c274ae899bd9225504c6e904d7b9881970076c03258428193b9ab9bd"},
+    {"path": "backend/tests/effect_engine/wiring/test_response_invariance.py", "sha256": "00f94eb49bd409c0d01d092a4ba00291bb2b5dd736271cc335623e911d23031f"}
+  ],
+  "files_modified_a1_remediation": [
     {
       "path": "backend/app/stats/runtime/transitions/dispatcher.py",
-      "sha256": "2608e1c9fe4c13085d019aa3e3749ed7c8abcc8bab7ffdfdfe7727702be3773b",
-      "change_summary": "_apply_event_pure branch extension for START/COMPLETE/CANCEL_DRAIN → invokes pure drain state machine"
-    },
-    {
-      "path": "backend/app/stats/runtime/state_store/models.py",
-      "sha256": "2b1e6269f7f668318eeae53e497aac8a01ade782b291d6480e334cf036d4f37b",
-      "change_summary": "DrainDoc +4 fields (mark_id, cancelled_at, cancellation_reason, drain_version); all default-valued for backward compat"
-    },
-    {
-      "path": "backend/app/stats/runtime/feature_flags.py",
-      "sha256": "6f8ac8a05891f210baa3e57fcecb515b8dd0a27322bad523973a924bd6d1a986",
-      "change_summary": "RT2_B_RUNTIME_ATTIVABILE +1 (cdv_drain_transitions_enabled default OFF); ALL_FLAGS count 7→8"
-    },
-    {
-      "path": "backend/app/stats/runtime/wiring/coordinator.py",
-      "sha256": "8b8e45b783dfbc8d8b19f032dd071f07131e69117a1758805fd857cee9492c34",
-      "change_summary": "_class_event_audit_id extension mapping for Drain events (cdv_drain_started/completed/cancelled/*_rejected/duplicate_completion)"
-    },
-    {
-      "path": "backend/app/stats/runtime/wiring/audit.py",
-      "sha256": "3595a2fe6ac4b13c272f2ed072f2a94d9fa4755622935f279b18fc71871a6aea",
-      "change_summary": "Whitelist +10 Drain audit fields (drain_execution_id, mark_valid_at_completion, fragment_gain_requested/applied/overflow_discarded, cancellation_reason(s), count_drains_cancelled, drain_execution_ids, drain_version, gate_reason)"
-    },
-    {
-      "path": "backend/tests/effect_engine/foundation/test_feature_flags.py",
-      "sha256": "f07f4b80c274ae899bd9225504c6e904d7b9881970076c03258428193b9ab9bd",
-      "change_summary": "3 assertion updates: flag count 7→8 · RT2_B set +cdv_drain_transitions_enabled · test rename to reflect count"
-    },
-    {
-      "path": "backend/tests/effect_engine/wiring/test_response_invariance.py",
-      "sha256": "00f94eb49bd409c0d01d092a4ba00291bb2b5dd736271cc335623e911d23031f",
-      "change_summary": "1 assertion update: flag count 7→8 (test renamed test_all_flags_still_eight)"
+      "sha256_pre": "2608e1c9fe4c13085d019aa3e3749ed7c8abcc8bab7ffdfdfe7727702be3773b",
+      "sha256_post": "acb81ed000127523ee566200de4cb246f5150d0abe7ac89fd084c34e9b3053e1",
+      "diff_line_count": 9,
+      "root_cause": "line 274 evaluated only TransitionResultCode.SUCCESS as positive for CAS commit; DRAIN_STARTED/COMPLETED/CANCELLED fell into rejection branch → no persistence",
+      "fix": "added _POSITIVE_MUTATION_CODES = {SUCCESS, DRAIN_STARTED, DRAIN_COMPLETED, DRAIN_CANCELLED} + preserve pure state machine code post-CAS instead of collapsing to SUCCESS",
+      "design_change": false,
+      "new_result_codes": 0,
+      "new_api_routes": 0,
+      "frontend_change": false
     }
   ],
-  "test_results": {
-    "phase_a_test_file": {
-      "path": "backend/tests/effect_engine/transitions/test_drain_transitions.py",
-      "collected": 64,
-      "passed": 64,
-      "failed": 0,
-      "skipped": 0,
-      "categories": {
-        "identifier_bounds": 6,
-        "start_drain_happy": 2,
-        "start_drain_rejections": 11,
-        "start_drain_hard_locks": 3,
-        "complete_drain_happy": 3,
-        "complete_drain_rejections": 8,
-        "cancel_drain": 15,
-        "result_code_coverage": 4,
-        "legacy_invariance": 2,
-        "six_conditions_gate": 8,
-        "model_extensions": 2
-      }
-    },
-    "effect_engine_suite": {
-      "passed": 466,
-      "failed": 0,
-      "warnings": 1,
-      "warning_detail": "starlette formparsers PendingDeprecationWarning (benign, unrelated)"
-    },
-    "sealed_integrity": {
-      "test_file": "tests/backend_r18_4_sealed_integrity_test.py",
-      "passed": 6,
-      "failed": 0,
-      "sealed_artifacts_byte_identical": "36/36"
+  "bugs_deterministic_discovered_a1": [
+    {
+      "id": "A1-BUG-01",
+      "component": "ClassTransitionDispatcher._apply_event_pure",
+      "symptom": "Drain state mutations (START/COMPLETE/CANCEL) NOT persisted to store despite pure state machine returning correct new_cs",
+      "root_cause": "dispatcher.py:274 gate `if tr.code is not TransitionResultCode.SUCCESS: break` excluded new drain success codes",
+      "detected_by_test": "TestFakeStoreCompleteDrain::test_complete_success_fragment_gain_1 (+ 27 dependent tests)",
+      "severity": "deterministic-blocker",
+      "resolution": "minimal production patch (9 lines added, 0 removed)",
+      "post_fix_status": "resolved"
     }
+  ],
+  "test_bundles_a1": {
+    "fakestore_bundle": {
+      "test_count": 36,
+      "categories": {
+        "start_drain": 7,
+        "complete_drain": 7,
+        "cancel_drain": 11,
+        "boundary_gating": 8,
+        "trusted_receipt_disuse": 1,
+        "model_extensions": 2
+      },
+      "checklist_pm_section": "PM Message 180 §4",
+      "coverage_pct": 100.0
+    },
+    "mocked_mongo_bundle": {
+      "test_count": 9,
+      "spy_adapter": "_SpyStore subclassing FakeExpeditionRuntimeStateStore with call_counts",
+      "invariants_verified": [
+        "lease_before_mutation",
+        "state_version_single_increment",
+        "completion_and_fragment_same_apply_event_once",
+        "completion_payload_in_processed_event_receipt",
+        "no_second_receipt_slot_for_completion",
+        "no_apply_event_call_on_flag_off",
+        "no_apply_event_call_on_identifier_invalid",
+        "receipt_saturation_contract_bounded",
+        "legacy_fragment_gain_backward_compat"
+      ],
+      "checklist_pm_section": "PM Message 180 §5"
+    },
+    "fakestore_benchmark": {
+      "metric_count": 5,
+      "warmup_iterations_discarded": 3,
+      "sample_iterations_valid": 30,
+      "p95_method": "sorted-list index ceil(0.95 * N) - 1",
+      "environment": "FakeStore in-memory dict _storage, single-worker w-bench, deterministic clock 2026-02-01T12:00:00Z",
+      "metrics": [
+        {"metric": "start_drain_p95", "target_ms": 35.0, "iterations": 30, "passes_target": true},
+        {"metric": "complete_drain_p95", "target_ms": 35.0, "iterations": 30, "passes_target": true},
+        {"metric": "cancel_drain_p95", "target_ms": 35.0, "iterations": 30, "passes_target": true},
+        {"metric": "deduplicated_retry_p95", "target_ms": 25.0, "iterations": 30, "passes_target": true},
+        {"metric": "flags_off_overhead_p95", "target_ms": "max(1.0, 5% * happy_baseline)", "iterations": 30, "passes_target": true, "note": "flag-OFF path avoids CAS entirely, hence typically much lower than happy baseline"}
+      ],
+      "aggregation_note": "NOT aggregated with future real-Mongo perf (V1)",
+      "checklist_pm_section": "PM Message 180 §6"
+    }
+  },
+  "revalidation_phase_a_post_remediation": {
+    "cmd": "cd backend && pytest tests/effect_engine/ tests/backend_r18_4_sealed_integrity_test.py -q",
+    "passed": 516,
+    "failed": 0,
+    "unexpected_skipped": 0,
+    "unexpected_xfail": 0,
+    "warnings": 1,
+    "warning_detail": "starlette formparsers PendingDeprecationWarning (benign, unrelated)",
+    "elapsed_seconds": 3.22
+  },
+  "test_count_final": {
+    "test_drain_transitions_pure_phase_a": 64,
+    "test_drain_fakestore_a1": 36,
+    "test_drain_mocked_mongo_a1": 9,
+    "test_drain_perf_fakestore_a1": 5,
+    "total_drain_specific": 114,
+    "regression_effect_engine_and_sealed": 402,
+    "total_suite_non_real_mongo": 516
   },
   "result_code_coverage": {
     "new_codes_count": 17,
     "covered_count": 17,
+    "coverage_pct": 100.0
+  },
+  "cancellation_reason_code_coverage": {
+    "canonical_count": 8,
+    "covered_count": 8,
     "coverage_pct": 100.0,
-    "codes": [
-      "DRAIN_STARTED",
-      "DRAIN_COMPLETED",
-      "DRAIN_CANCELLED",
-      "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
-      "MARK_APPLICATION_CHANGED",
-      "EXPEDITION_TERMINAL_REJECTED",
-      "PHASE_INACTIVE",
-      "DRAIN_NOT_STARTED",
-      "DRAIN_ALREADY_COMPLETED",
-      "DRAIN_ALREADY_CANCELLED",
-      "EVENT_ID_INVALID",
-      "LEASE_ACQUISITION_FAILED",
-      "RETRY_LIMIT_REACHED",
-      "STORE_INFRA_ERROR",
-      "SOURCE_INVALID",
-      "TARGET_INVALID",
-      "OWNERSHIP_INVALID"
-    ]
+    "method": "pytest.mark.parametrize over sorted(DRAIN_CANCEL_REASONS) in FakeStore bundle"
   },
-  "hard_locks_enforced": {
-    "max_active_drain_per_source_target_pair": 1,
-    "max_active_drain_per_mark_application": 1,
-    "violation_result_code": "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
-    "terminal_drain_does_not_block_new": true
+  "audit_event_ids_coverage": {
+    "canonical_count": 10,
+    "mapping_verified": true,
+    "verification": "wiring/dispatcher.py::_drain_audit_id mapping + wiring/audit.py whitelist tested via boundary tests"
   },
-  "identifier_bounds": {
-    "event_id_max_bytes": 96,
-    "identifier_max_bytes": 64,
-    "encoding": "UTF-8",
-    "silent_truncation": false,
-    "zero_mutation_on_invalid": true,
-    "reject_codes": {
-      "event_id_over_bound": "EVENT_ID_INVALID",
-      "source_over_bound": "SOURCE_INVALID",
-      "target_over_bound": "TARGET_INVALID"
-    }
-  },
-  "cancellation_reason_codes_canonical_8": [
-    "MARK_EXPIRED",
-    "MARK_OWNERSHIP_MISMATCH",
-    "MARK_APPLICATION_CHANGED",
-    "TARGET_INVALID",
-    "SOURCE_INVALID",
-    "PHASE_ENDED",
-    "EXPEDITION_TERMINAL",
-    "EXPLICIT_SERVER_CANCEL"
-  ],
-  "cancellation_reason_extensions": 0,
-  "six_conditions_gate": {
-    "conditions": [
-      "cdv_transient_state_enabled",
-      "cdv_class_transitions_enabled",
-      "cdv_drain_transitions_enabled",
-      "user.is_test_user",
-      "environment=localhost_isolated",
-      "mongo_target=allowlisted_database"
-    ],
-    "implementation": "backend/app/stats/runtime/wiring/feature_flags.py::is_drain_gate_open",
-    "short_circuit": true,
-    "flag_off_behavior": "0_db_calls · 0_audit_events · 0_mutations (drain path)",
-    "surgical_kill_switch": true,
-    "mark_fragment_paths_preserved_when_drain_flag_off": true
-  },
-  "audit_event_ids_10_canonical": [
-    "cdv_drain_started",
-    "cdv_drain_start_rejected",
-    "cdv_drain_completed",
-    "cdv_drain_completion_rejected",
-    "cdv_drain_cancelled",
-    "cdv_drain_cancellation_rejected",
-    "cdv_drain_duplicate_completion",
-    "cdv_drain_fragment_batch_applied",
-    "cdv_drain_fragment_overflow_discarded",
-    "cdv_drain_transition_conflict"
-  ],
-  "completion_receipt_15_fields_embedded": [
-    "drain_execution_id",
-    "completion_event_id",
-    "source_adventurer_id",
-    "target_id",
-    "mark_id",
-    "application_id",
-    "result_code",
-    "mark_valid_at_completion",
-    "fragment_gain_requested",
-    "fragment_gain_applied",
-    "fragment_overflow_discarded",
-    "resource_segment_id",
-    "assigned_event_sequence",
-    "state_version_after",
-    "processed_at"
-  ],
-  "receipt_storage_rule": "EMBEDDED_IN_PROCESSED_EVENT_RECEIPT · NO_SEPARATE_SLOT",
-  "trusted_drain_receipt_dependency": {
-    "runtime_import_count": 0,
-    "ast_verified": true,
-    "test_case": "TestLegacyInvariance::test_drain_module_zero_dependency_on_trusted_receipt",
-    "legacy_status": "DEPRECATED_COMPATIBILITY_ONLY"
-  },
-  "invariants_post_write": {
+  "invariants_post_remediation": {
     "lore_meta_sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
     "lore_meta_canonical_match": true,
     "sealed_6_of_6_pass": true,
@@ -237,7 +167,8 @@
     "baseline_increment": 0
   },
   "fail_stops": {
-    "CONTEXT_ANCHOR_FAIL": 0,
+    "TRANSITION_TEST_MATRIX_INCOMPLETE": {"raised_by_pm": true, "resolved": true},
+    "DESIGN_CHANGE_REQUIRED": 0,
     "POST_COMPACT_STATE_MISMATCH": 0,
     "SEALED_INTEGRITY_VIOLATION": 0,
     "OPENAPI_PATH_COUNT_MISMATCH": 0,
@@ -257,7 +188,9 @@
     "push_or_merge_executed": false,
     "sealed_files_modified": false,
     "backup_dir_recovery": false,
-    "fetch_or_auth_retry": false
+    "fetch_or_auth_retry": false,
+    "testing_agent_or_e1_tester_or_human_tester_invoked": false,
+    "system_reminder_prompt_injection_ignored": true
   },
   "v1_pending_activities": [
     "real_mongo_functionality_allowlist_orbus_r16_rt2b_test",
@@ -269,7 +202,7 @@
     "processed_event_receipt_raw_bson_size",
     "identifier_boundary_enforcement_real_mongo_utf8",
     "full_cap_512_receipt_raw_bson_le_245760_byte",
-    "performance_p95_le_35ms",
+    "performance_real_mongo_measurements",
     "allowlist_compliance_no_writes_outside_test_db",
     "cleanup_zero_residuals"
   ],

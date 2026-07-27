@@ -271,7 +271,14 @@ class ClassTransitionDispatcher:
                 )
                 new_cs, tr = _apply_event_pure(cs, event, self._now())
 
-                if tr.code is not TransitionResultCode.SUCCESS:
+                # RT2-B-2B-2-1 · Drain success codes require CAS mutation (parity with SUCCESS)
+                _POSITIVE_MUTATION_CODES = {
+                    TransitionResultCode.SUCCESS,
+                    TransitionResultCode.DRAIN_STARTED,
+                    TransitionResultCode.DRAIN_COMPLETED,
+                    TransitionResultCode.DRAIN_CANCELLED,
+                }
+                if tr.code not in _POSITIVE_MUTATION_CODES:
                     last_res = TransitionResult(
                         code=tr.code,
                         event_id=event.event_id,
@@ -320,8 +327,11 @@ class ClassTransitionDispatcher:
                 )
 
                 if cas.code is CasResultCode.SUCCESS:
+                    # Preserve pure state machine's specific positive code (DRAIN_STARTED/COMPLETED/CANCELLED)
+                    # rather than collapsing to generic SUCCESS.
+                    final_code = tr.code if tr.code in _POSITIVE_MUTATION_CODES else TransitionResultCode.SUCCESS
                     last_res = TransitionResult(
-                        code=TransitionResultCode.SUCCESS,
+                        code=final_code,
                         event_id=event.event_id,
                         event_type=event.event_type,
                         expedition_id=event.expedition_id,
