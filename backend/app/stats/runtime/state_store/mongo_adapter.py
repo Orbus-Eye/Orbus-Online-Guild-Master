@@ -35,6 +35,8 @@ from app.stats.runtime.state_store.fencing import (
 from app.stats.runtime.state_store.interface import ExpeditionRuntimeStateStore
 from app.stats.runtime.state_store.models import (
     AdventurerClassState,
+    DrainDoc,
+    DrainStatus,
     EventReceipt,
     ExpeditionRuntimeState,
     FragmentUsage as _FragmentUsage,
@@ -152,10 +154,32 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
                 if isinstance(u, dict)
             )
             drains_raw = cs_dict.get("active_drain_executions", []) or []
+            # RT2-B-2B-2-1-V1 · DrainDoc rehydration (previously stored as dict, not deserialized to typed DrainDoc)
+            active_drain_executions = tuple(
+                DrainDoc(
+                    drain_execution_id=d.get("drain_execution_id", ""),
+                    source_adventurer_id=d.get("source_adventurer_id", ""),
+                    target_id=d.get("target_id", ""),
+                    required_mark_application_id=d.get("required_mark_application_id", ""),
+                    started_at=d.get("started_at", ""),
+                    completed_at=d.get("completed_at"),
+                    runtime_status=DrainStatus(d.get("runtime_status", DrainStatus.IN_PROGRESS.value))
+                        if isinstance(d.get("runtime_status"), str)
+                        else d.get("runtime_status", DrainStatus.IN_PROGRESS),
+                    resolution_version=int(d.get("resolution_version", 1)),
+                    reward_resolved=bool(d.get("reward_resolved", False)),
+                    mark_id=d.get("mark_id", ""),
+                    cancelled_at=d.get("cancelled_at"),
+                    cancellation_reason=d.get("cancellation_reason"),
+                    drain_version=int(d.get("drain_version", 1)),
+                )
+                for d in drains_raw
+                if isinstance(d, dict)
+            )
             entries.append((aid, AdventurerClassState(
                 adventurer_id=cs_dict.get("adventurer_id", aid),
                 active_marks=active_marks,
-                active_drain_executions=tuple(drains_raw),
+                active_drain_executions=active_drain_executions,
                 fragment_count=int(cs_dict.get("fragment_count", 0)),
                 resource_segment_id=cs_dict.get("resource_segment_id"),
                 focus_bonus_usage=focus_usage,
