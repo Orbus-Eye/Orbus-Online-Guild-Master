@@ -4644,3 +4644,21 @@ Next gate: `R18.6.RV3-IS2-B-P2B-RT2-B-2B · CLASS-STATE TRANSITION FOUNDATION` �
 - PRD append (idempotent · occurrence count = 1)
 
 **RT2-B-2B-2-P0 CLOSED · PM-LOCKED · STRICT STOP · attende orchestrator dispatch per RT2-B-2B-2-1 code gate.**
+
+
+## RT2-B-2B-2-1 — Drain Transition & Completion-to-Fragment Foundation — CLOSED · PM-LOCKED
+
+**Closure timestamp:** `2026-07-27T21:03:25Z`
+**Closure commit:** `PENDING`
+**Canonical V1 anchor:** `73c25f5e3fbc80c91509512f0c731683e3944373`
+**Baseline:** `16/16 → 17/17`
+
+Phase A, remediation A1 and V1 real-Mongo verification completed. START_DRAIN, COMPLETE_DRAIN and CANCEL_DRAIN are implemented with Mark/application binding, atomic completion-to-Fragment mutation, authoritative processed-event receipt, lifecycle aggregation, lease/fencing/CAS, deduplication, identifier bounds, default-OFF feature gating, allowlist isolation and audit coverage.
+
+Verification evidence: complete Drain result-code inventory `22/22`; serial and xdist real-Mongo verification PASS; full-cap persisted state `504 ordinary + 8 reserved = 512 receipts`; RAW BSON `230593` bytes against closure target `245760` bytes; Mongo performance targets PASS; residual integration databases `0`; sealed integrity `6/6`; `36/36` sealed artifacts byte-identical; canonical lore SHA invariant; OpenAPI paths `275`; no new public routes.
+
+`TrustedDrainReceipt` remains `DEPRECATED_COMPATIBILITY_ONLY` with zero new runtime dependency. The Drain feature flag remains default OFF.
+
+**Gate status:** `RT2-B-2B-2-1 CLOSED · PM-LOCKED`
+**Deployment status:** `NOT AUTHORIZED`
+**Tester environment:** `UNCHANGED`

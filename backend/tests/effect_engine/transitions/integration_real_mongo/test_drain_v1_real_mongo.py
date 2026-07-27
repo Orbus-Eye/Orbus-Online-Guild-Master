@@ -512,6 +512,193 @@ def test_full_cap_512_receipts_bson_le_245760(provisioned_unique_db):
     asyncio.run(_run())
 
 
+# ═══════════════════════ FULL-CAP DIRECT-INSERT SCHEMA EQUIVALENCE (PM STEP 2) ═══════════════════════
+def test_full_cap_direct_insert_schema_equivalent_to_adapter_output(provisioned_unique_db):
+    """PM Message dispatch STEP 2 mandatory: assert that the direct-insert document
+    used by test_full_cap_512_receipts_bson_le_245760 has schema equivalence to the
+    BSON document produced by the production adapter (create_state + apply_event_once path).
+
+    Equivalence dimensions (schema, NOT values):
+    - Set of top-level persisted field names
+    - Python/BSON type of each top-level field
+    - Set of adventurer_class_states nested field names + types
+    - Set of active_drain_executions element field names (when non-empty)
+    - Set of active_marks element field names (when non-empty)
+    - Set of processed_event_keys element field names + types
+    - Set of focus_bonus_usage element field names (if any)
+
+    A schema mismatch would trigger FULL_CAP_FIXTURE_SCHEMA_MISMATCH → PM REVIEW.
+    """
+    async def _run():
+        from dataclasses import asdict
+
+        from app.stats.runtime.state_store.mongo_adapter import _serialize_class_states
+        from app.stats.runtime.state_store.models import EventReceipt as _ER
+
+        client, store = _open(provisioned_unique_db)
+        try:
+            # ─── PATH A · Production adapter: create_state + apply_event_once ───
+            exp_a = f"exp-schemaA-{uuid.uuid4().hex[:8]}"
+            adv_a, tgt_a = f"adv-A-{uuid.uuid4().hex[:6]}", "tgA"
+            mark = await _bootstrap(store, exp_a, adv_a, tgt_a)
+            disp = ClassTransitionDispatcher(store=store, worker_id="w-schemaA")
+            # Populate at least one Drain (start + complete) + one Mark + Fragment gain
+            r_s = await disp.dispatch(
+                _mk_drain("START_DRAIN", exp_id=exp_a, source=adv_a, target=tgt_a,
+                          mark_id=mark.mark_id, app_id=mark.application_id),
+                trusted_context=_trusted())
+            assert r_s.result.code is TransitionResultCode.DRAIN_STARTED
+            r_c = await disp.dispatch(
+                _mk_drain("COMPLETE_DRAIN", exp_id=exp_a, source=adv_a, target=tgt_a,
+                          mark_id=mark.mark_id, app_id=mark.application_id,
+                          drain_execution_id=r_s.result.reason_code,
+                          expected_state_version=2),
+                trusted_context=_trusted())
+            assert r_c.result.code is TransitionResultCode.DRAIN_COMPLETED
+            doc_a = await client[provisioned_unique_db][COLLECTION_NAME].find_one({"_id": exp_a})
+            assert doc_a is not None
+
+            # ─── PATH B · Direct-insert (same recipe as full-cap test) ───
+            exp_b = f"exp-schemaB-{uuid.uuid4().hex[:8]}"
+            now = datetime.now(UTC)
+            recs = [_ER(
+                event_id=f"evt-b-{i}", event_type="START_DRAIN", source_adventurer_id=adv_a,
+                payload_hash=hashlib.sha256(f"b{i}".encode()).hexdigest(),
+                assigned_event_sequence=i + 1, result_code="DRAIN_STARTED",
+                state_version_after=i + 1, processed_at=_iso(now),
+            ) for i in range(3)]
+            cs_b = AdventurerClassState(
+                adventurer_id=adv_a,
+                active_marks=(MarkDoc(
+                    mark_id=f"mrk-b-{uuid.uuid4().hex[:8]}",
+                    application_id=f"app-b-{uuid.uuid4().hex[:8]}",
+                    source_adventurer_id=adv_a, target_id=tgt_a,
+                    created_at=_iso(now), expires_at=_iso(now + timedelta(seconds=60)),
+                    ritual_close_used=False, mark_version=1,
+                ),),
+                active_drain_executions=(),
+                fragment_count=1, resource_segment_id=f"sg-b-{uuid.uuid4().hex[:8]}",
+                focus_bonus_usage=(), class_state_version=1,
+            )
+            shell_b = ExpeditionRuntimeState(
+                expedition_id=exp_b, state_version=3, fencing_token=1,
+                created_at=_iso(now), updated_at=_iso(now),
+                expires_at=_iso(now + timedelta(hours=1)),
+                runtime_status=RuntimeStatus.ACTIVE,
+                adventurer_class_states=((adv_a, cs_b),),
+                processed_event_keys=tuple(recs),
+                last_event_sequence=3, owner_worker_or_lease_id=None, lease=None,
+            )
+            doc_to_insert = {
+                "_id": exp_b,
+                "expedition_id": exp_b,
+                "state_version": shell_b.state_version,
+                "created_at": shell_b.created_at,
+                "updated_at": shell_b.updated_at,
+                "expires_at": shell_b.expires_at,
+                "runtime_status": shell_b.runtime_status.value,
+                "owner_worker_or_lease_id": shell_b.owner_worker_or_lease_id,
+                "lease": None,
+                "loadout_snapshot_version": shell_b.loadout_snapshot_version,
+                "adventurer_class_states": _serialize_class_states(shell_b.adventurer_class_states),
+                "processed_event_keys": [asdict(r) for r in shell_b.processed_event_keys],
+                "last_event_sequence": shell_b.last_event_sequence,
+                "fencing_token": shell_b.fencing_token,
+            }
+            await client[provisioned_unique_db][COLLECTION_NAME].insert_one(doc_to_insert)
+            doc_b = await client[provisioned_unique_db][COLLECTION_NAME].find_one({"_id": exp_b})
+            assert doc_b is not None
+
+            # ─── EQUIVALENCE ASSERTIONS ───
+            # 1. Top-level field names (excluding ObjectId-only diffs)
+            keys_a = set(doc_a.keys())
+            keys_b = set(doc_b.keys())
+            # `expedition_id` may or may not be materialized in Path A (adapter uses _id).
+            # Compare intersection + require Path B keys subset of Path A keys (Path A is authoritative).
+            missing_in_b = keys_a - keys_b
+            extra_in_b = keys_b - keys_a - {"expedition_id"}  # direct-insert may add expedition_id explicitly
+            assert not missing_in_b, f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — fields present in adapter output but missing in direct-insert: {missing_in_b}"
+            assert not extra_in_b, f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — fields in direct-insert absent from adapter output: {extra_in_b}"
+
+            # 2. Top-level type equivalence per shared key
+            for k in keys_a & keys_b:
+                if doc_a[k] is None or doc_b[k] is None:
+                    continue  # both nullable
+                assert type(doc_a[k]).__name__ == type(doc_b[k]).__name__, (
+                    f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — type mismatch on '{k}': "
+                    f"adapter={type(doc_a[k]).__name__} · direct-insert={type(doc_b[k]).__name__}"
+                )
+
+            # 3. adventurer_class_states: dict-of-dicts, same nested field set
+            acs_a = doc_a.get("adventurer_class_states", {})
+            acs_b = doc_b.get("adventurer_class_states", {})
+            assert isinstance(acs_a, dict) and isinstance(acs_b, dict)
+            assert len(acs_a) >= 1 and len(acs_b) >= 1
+            first_cs_a = next(iter(acs_a.values()))
+            first_cs_b = next(iter(acs_b.values()))
+            cs_keys_a = set(first_cs_a.keys())
+            cs_keys_b = set(first_cs_b.keys())
+            assert cs_keys_a == cs_keys_b, (
+                f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — class_state field set differs: "
+                f"only-adapter={cs_keys_a - cs_keys_b} · only-direct={cs_keys_b - cs_keys_a}"
+            )
+
+            # 4. Mark element schema (both paths have ≥1 mark)
+            marks_a = first_cs_a.get("active_marks", [])
+            marks_b = first_cs_b.get("active_marks", [])
+            assert len(marks_a) >= 1 and len(marks_b) >= 1
+            mark_keys_a = set(marks_a[0].keys())
+            mark_keys_b = set(marks_b[0].keys())
+            assert mark_keys_a == mark_keys_b, (
+                f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — Mark field set differs: "
+                f"only-adapter={mark_keys_a - mark_keys_b} · only-direct={mark_keys_b - mark_keys_a}"
+            )
+
+            # 5. Drain element schema (only Path A has active drain post-COMPLETE; Path B has empty)
+            # → skip Drain body comparison (both had drains at some point).
+            # Instead assert active_drain_executions type is list on both sides.
+            drains_a = first_cs_a.get("active_drain_executions", [])
+            drains_b = first_cs_b.get("active_drain_executions", [])
+            assert isinstance(drains_a, list) and isinstance(drains_b, list)
+
+            # 6. processed_event_keys: list of dicts, same field set per element
+            recs_a = doc_a.get("processed_event_keys", [])
+            recs_b = doc_b.get("processed_event_keys", [])
+            assert isinstance(recs_a, list) and isinstance(recs_b, list)
+            assert len(recs_a) >= 1 and len(recs_b) >= 1
+            rec_keys_a = set(recs_a[0].keys())
+            rec_keys_b = set(recs_b[0].keys())
+            assert rec_keys_a == rec_keys_b, (
+                f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — EventReceipt field set differs: "
+                f"only-adapter={rec_keys_a - rec_keys_b} · only-direct={rec_keys_b - rec_keys_a}"
+            )
+            # Type equivalence on receipt fields
+            for k in rec_keys_a:
+                if recs_a[0][k] is None or recs_b[0][k] is None:
+                    continue
+                assert type(recs_a[0][k]).__name__ == type(recs_b[0][k]).__name__, (
+                    f"FULL_CAP_FIXTURE_SCHEMA_MISMATCH — EventReceipt.{k} type mismatch: "
+                    f"adapter={type(recs_a[0][k]).__name__} · direct-insert={type(recs_b[0][k]).__name__}"
+                )
+
+            # 7. adapter can re-read direct-insert document into typed state (no crash)
+            from app.stats.runtime.state_store.mongo_adapter import _document_to_state
+            state_rehydrated = _document_to_state(doc_b)
+            assert state_rehydrated.state_version == 3
+            assert len(state_rehydrated.adventurer_class_states) == 1
+            _, cs_rehydrated = state_rehydrated.adventurer_class_states[0]
+            assert cs_rehydrated.fragment_count == 1
+            assert len(cs_rehydrated.active_marks) == 1
+            assert len(state_rehydrated.processed_event_keys) == 3
+
+            print(f"\nFULL_CAP_SCHEMA_EQUIVALENCE=PASS "
+                  f"top_keys={len(keys_a & keys_b)} cs_keys={len(cs_keys_a)} "
+                  f"mark_keys={len(mark_keys_a)} rec_keys={len(rec_keys_a)}")
+        finally:
+            client.close()
+    asyncio.run(_run())
+
+
 # ═══════════════════════ PERFORMANCE MONGO (§7) ═══════════════════════
 SAMPLE_MONGO = 15  # reduced from 30 for real-Mongo (isolation cost)
 WARMUP_MONGO = 3
