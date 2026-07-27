@@ -1,0 +1,307 @@
+{
+  "artifact": "r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_real_mongo_verification_addendum",
+  "kind": "V1_ADDENDUM",
+  "dispatch": {
+    "id": "RT2-B-2B-2-1-V1",
+    "name": "REAL-MONGO DRAIN VERIFICATION",
+    "pm_message": 182,
+    "verdict_source": "PM adjudication Q1=1c + Q2=2a + Q3=3a"
+  },
+  "verdict": {
+    "post_compact_state": "RECOVERED",
+    "gate_status": "IMPLEMENTED / REAL-MONGO VERIFIED / FULL-CAP BSON VERIFIED / READY FOR FORMAL CLOSURE",
+    "baseline": {"current": "16/16", "post_v1": "16/16", "note": "unchanged — closure separata"},
+    "fail_stop_count": 0
+  },
+  "anchor": {
+    "canonical_v1_working_anchor": "73c25f5e3fbc80c91509512f0c731683e3944373",
+    "pre_anchor_baseline": "be9f62ff1419835a66af5291f2768db467361d11",
+    "phase_a_commit": "764aa32f5385fe48f03639f0dad32f99fd2acb89",
+    "phase_a1_commit": "6e975e0e69e9710246d11abc4cc31b08ad7bc145",
+    "auto_commit_scope_analysis": {
+      "764aa32": {"scope": "Phase A implementation", "violations": []},
+      "6e975e0": {"scope": "Phase A1 remediation (dispatcher + fakestore/mocked/perf tests + report update)", "violations": []},
+      "73c25f5": {"scope": "V1 test file + mongo_adapter DrainDoc rehydration patch", "violations": []}
+    },
+    "auto_commit_scope_mismatch": false
+  },
+  "canonical_sha_verification": {
+    "expected_matches": 10,
+    "actual_matches": 10,
+    "files": {
+      "backend/app/content/lore_meta.py": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+      "backend/app/stats/runtime/transitions/drain.py": "56acedd3e93e214916f2e45d426e28e62a57db490010afe44a4b997d52c7b82f",
+      "backend/app/stats/runtime/transitions/dispatcher.py": "acb81ed000127523ee566200de4cb246f5150d0abe7ac89fd084c34e9b3053e1",
+      "backend/tests/effect_engine/transitions/test_drain_transitions.py": "4a5707133696ada305152bde5dd0c156bf61db4d01bb5f5bfa0a85661df1af94",
+      "backend/tests/effect_engine/transitions/test_drain_fakestore.py": "58eb70663052cdd1216e93e04d9f7f74a82ab65bcab68697b0d7ea9024e5ba9c",
+      "backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py": "3d9ec348535a953594950ecf61c7fc64cf97a85794f7eb2860e9148f38cb97ff",
+      "backend/tests/effect_engine/transitions/test_drain_perf_fakestore.py": "5dced06048214084f46795ab8feb2ea1ac727646fcf227e976d1450f6e16c451",
+      "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_implementation_report.md": "d71e7b5e3941e11241a0e2c7633e07cc3d06a39a53ab1923e18a2971dfe92275",
+      "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_implementation_report.json": "4b7aa8ef02c86d1806b0b59995181dad67ea6ec4d9df7be66699382f1321f97c"
+    }
+  },
+  "sealed_integrity": {"passed": 6, "total": 6, "runtime_s": 0.45},
+  "openapi_paths_count": 275,
+  "mongo_target": {
+    "uri_sanitized": "mongodb://localhost:27017",
+    "db_pattern": "orbus_r16_rt2b_it_<unique_run_id>",
+    "allowlist_verified": true,
+    "fixture": "backend/tests/effect_engine/transitions/integration_real_mongo/conftest.py::provisioned_unique_db",
+    "provisioning": "ProvisioningCommand.apply(dry_run=False)",
+    "cleanup": "teardown drop_database best-effort",
+    "residual_it_databases_post_suite": 0,
+    "residual_it_databases_list": [],
+    "non_system_dbs_post_suite": ["orbus_r16", "orbus_r16_test", "test_database"],
+    "non_system_dbs_note": "pre-existing, unrelated to V1 test scope"
+  },
+  "v1_test_matrix": {
+    "total_tests": 19,
+    "passed_serial": 19,
+    "passed_xdist": 19,
+    "skipped": 0,
+    "xfailed": 0,
+    "wall_time_serial_s": 1.15,
+    "wall_time_xdist_s": 2.54,
+    "categories": {
+      "persistence_identity": {"count": 3, "tests": ["test_start_drain_persisted", "test_replay_same_start_returns_same_drain", "test_hard_lock_pair_real_mongo"]},
+      "completion_atomicity": {"count": 2, "tests": ["test_complete_atomic_one_cas_one_version", "test_focus_bonus_untouched"]},
+      "race_concurrency": {"count": 2, "tests": ["test_6_workers_concurrent_complete_winner_only", "test_completion_vs_cancellation_race"]},
+      "identifier_bounds": {"count": 3, "tests": ["test_identifier_target_bounds_real_mongo[64b-boundary_pass]", "test_identifier_target_bounds_real_mongo[65b-TARGET_INVALID]", "test_identifier_target_bounds_real_mongo[UTF8-68b-TARGET_INVALID]"]},
+      "gate_rejection": {"count": 3, "tests": ["test_gate_rejection_zero_write_real_mongo[FEATURE_DISABLED]", "test_gate_rejection_zero_write_real_mongo[TEST_USER_BOUNDARY_VIOLATION]", "test_gate_rejection_zero_write_real_mongo[DB_NOT_ALLOWLISTED]"]},
+      "full_cap_bson_mandatory": {"count": 1, "tests": ["test_full_cap_512_receipts_bson_le_245760"]},
+      "performance_mongo": {"count": 4, "tests": ["test_perf_mongo_start_drain", "test_perf_mongo_complete_drain", "test_perf_mongo_cancel_drain", "test_perf_mongo_deduplicated_retry"]},
+      "cleanup": {"count": 1, "tests": ["test_cleanup_zero_residuals_verification"]}
+    }
+  },
+  "full_cap_bson": {
+    "receipts_total": 512,
+    "receipts_ordinary": 504,
+    "receipts_reserved_lifecycle": 8,
+    "event_id_max_bytes": 96,
+    "source_id_bytes": 64,
+    "target_id_bytes": 64,
+    "active_marks": 1,
+    "fragment_count": 5,
+    "resource_segment_populated": true,
+    "raw_bson_size_bytes_measured": 230593,
+    "target_bytes": 245760,
+    "headroom_bytes": 15167,
+    "headroom_percent": 6.2,
+    "state_doc_max_bytes_canonical": 262144,
+    "verdict": "PASS",
+    "size_margin_insufficient": false,
+    "state_document_size_budget_exceeded": false,
+    "measurement_path": "worst-case doc built via _serialize_class_states helper + asdict; direct collection.insert_one bypass CAS to inject state_version=512; find_one; bson.encode(raw_doc); len()"
+  },
+  "performance_mongo": {
+    "config": {"warmup_samples": 3, "measured_samples": 15, "uri": "mongodb://localhost:27017"},
+    "operations": {
+      "START_DRAIN": {"p95_ms": 2.32, "target_ms": 35, "verdict": "PASS"},
+      "COMPLETE_DRAIN": {"p95_ms": 3.62, "target_ms": 35, "verdict": "PASS"},
+      "CANCEL_DRAIN": {"p95_ms": 4.42, "target_ms": 35, "verdict": "PASS"},
+      "DEDUP_RETRY": {"p95_ms": 1.82, "target_ms": 25, "verdict": "PASS"}
+    }
+  },
+  "result_code_inventory": {
+    "total_canonical": 22,
+    "new_rt2_b_2b_2_1": {
+      "count": 17,
+      "codes": [
+        "DRAIN_STARTED",
+        "DRAIN_COMPLETED",
+        "DRAIN_CANCELLED",
+        "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
+        "DRAIN_NOT_STARTED",
+        "DRAIN_ALREADY_COMPLETED",
+        "DRAIN_ALREADY_CANCELLED",
+        "MARK_ALREADY_ACTIVE_FOR_PAIR",
+        "MARK_APPLICATION_CHANGED",
+        "MARK_EXPIRED",
+        "MARK_NOT_FOUND",
+        "MARK_OWNERSHIP_MISMATCH",
+        "SOURCE_INVALID",
+        "TARGET_INVALID",
+        "OWNERSHIP_INVALID",
+        "RECEIPT_CAP_REACHED",
+        "PHASE_ENDED"
+      ]
+    },
+    "shared_pre_gate": {
+      "count": 5,
+      "codes": [
+        "FEATURE_DISABLED",
+        "TEST_USER_BOUNDARY_VIOLATION",
+        "DB_NOT_ALLOWLISTED",
+        "STATE_VERSION_CONFLICT",
+        "EVENT_ID_INVALID"
+      ]
+    },
+    "result_code_inventory_mismatch": false
+  },
+  "mongo_adapter_patch": {
+    "classification": "V1_DETERMINISTIC_MONGO_ADAPTER_REHYDRATION_FIX",
+    "pm_ratification": "Q2=2a RATIFY_IN_PLACE (PM §11 REAL-MONGO ADAPTER INCOMPATIBILITY, no design change)",
+    "file": "backend/app/stats/runtime/state_store/mongo_adapter.py",
+    "blob_sha_pre_patch": "85763c328861aeb8226ad0fd58443f759649c180",
+    "blob_sha_post_patch": "44190b70ceaaa2163eae97eb0414147a42973646",
+    "lines_added": 25,
+    "lines_removed": 1,
+    "function_affected": "_document_to_state",
+    "symmetric_to": "active_marks rehydration",
+    "fields_rehydrated": [
+      "drain_execution_id",
+      "source_adventurer_id",
+      "target_id",
+      "required_mark_application_id",
+      "started_at",
+      "completed_at",
+      "runtime_status (DrainStatus enum coercion)",
+      "resolution_version",
+      "reward_resolved",
+      "mark_id",
+      "cancelled_at",
+      "cancellation_reason",
+      "drain_version"
+    ],
+    "non_changes": {
+      "bson_write_path": "unchanged",
+      "allowlist": "unchanged",
+      "receipt_capacity_512": "unchanged",
+      "mark_fragment_reward_xp_paths": "unchanged",
+      "public_api": "unchanged",
+      "new_result_codes": 0,
+      "field_renames": 0,
+      "implicit_migration": "none",
+      "silent_live_normalization": "none (pure-read default-based rehydration)"
+    },
+    "mongo_adapter_design_change_required": false,
+    "focused_adapter_tests": {
+      "file": "backend/tests/effect_engine/state_store/test_mongo_adapter_drain_rehydration.py",
+      "status": "untracked, inventoried in this addendum",
+      "count": 11,
+      "passed": 11,
+      "wall_time_s": 0.44,
+      "tests": [
+        "test_rehydration_full_drain_produces_typed_DrainDoc",
+        "test_rehydration_legacy_drain_applies_defaults_for_missing_rt2b2b21_fields",
+        "test_rehydration_empty_active_drains_produces_empty_tuple",
+        "test_rehydration_multiple_drains_preserves_order_and_types",
+        "test_rehydration_runtime_status_string_coerced_to_enum[in_progress]",
+        "test_rehydration_runtime_status_string_coerced_to_enum[resolved]",
+        "test_rehydration_runtime_status_string_coerced_to_enum[cancelled]",
+        "test_rehydration_runtime_status_string_coerced_to_enum[expired]",
+        "test_round_trip_symmetry_full_drain",
+        "test_round_trip_symmetry_legacy_drain_defaults_preserved",
+        "test_document_to_state_does_not_mutate_input_doc"
+      ]
+    }
+  },
+  "v1_test_artifact_recovery": {
+    "classification": "TEST_ARTIFACT_RECOVERY",
+    "pm_ratification": "Q3=3a AUTHORIZE_FIX (no production design change)",
+    "file": "backend/tests/effect_engine/transitions/integration_real_mongo/test_drain_v1_real_mongo.py",
+    "broken_state_lines": 664,
+    "broken_state_error": "IndentationError line 652 (orphan block 649-663 after test_cleanup_zero_residuals_verification)",
+    "fixed_state_lines": 649,
+    "py_compile_post_fix": "PASS",
+    "pytest_collect_only_post_fix": "PASS (19 tests, 0 skip, 0 xfail, 0 duplicates)",
+    "matrix_reduction": "ZERO — no test converted to skip/xfail, no test removed",
+    "production_files_touched_during_recovery": 0,
+    "fixes_applied": [
+      {"kind": "AST_recovery", "operation": "remove orphan duplicated block lines 649-663"},
+      {"kind": "full_cap_bypass", "operation": "replace store.create_state(shell) with direct collection.insert_one(doc) built via _serialize_class_states helper — bypasses adapter's initial_state_version=1 enforcement for size measurement only; write-path production untouched"}
+    ],
+    "v1_test_intent_unrecoverable": false
+  },
+  "invariant_repetition_post_v1": {
+    "canonical_sha_10_of_10": true,
+    "sealed_integrity_6_of_6": true,
+    "lore_meta_sha_canonical": true,
+    "openapi_paths_275": true,
+    "baseline_16_of_16": true,
+    "prd_append_zero": true,
+    "closure_artifacts_new_zero": true,
+    "frontend_env_registry_changes_zero": true,
+    "unexpected_tracked_file_changes_zero": true,
+    "residual_it_databases_zero": true
+  },
+  "fail_stops": {
+    "POST_COMPACT_STATE_MISMATCH": {"triggered": false, "note": "resolved via PM-pre-authorized re-anchor to 73c25f5"},
+    "AUTO_COMMIT_SCOPE_MISMATCH": {"triggered": false},
+    "MONGO_ADAPTER_DESIGN_CHANGE_REQUIRED": {"triggered": false},
+    "V1_TEST_INTENT_UNRECOVERABLE": {"triggered": false},
+    "RESULT_CODE_INVENTORY_MISMATCH": {"triggered": false},
+    "SIZE_MARGIN_INSUFFICIENT": {"triggered": false},
+    "STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED": {"triggered": false},
+    "SEALED_INTEGRITY_VIOLATION": {"triggered": false},
+    "OPENAPI_PATH_COUNT_MISMATCH": {"triggered": false},
+    "ALLOWLIST_WRITE_VIOLATION": {"triggered": false},
+    "IDENTIFIER_BOUNDS_TRUNCATION": {"triggered": false},
+    "LEGACY_TRUSTED_RECEIPT_DEPENDENCY": {"triggered": false},
+    "RESIDUAL_DATABASE_DETECTED": {"triggered": false},
+    "DESIGN_CHANGE_REQUIRED": {"triggered": false},
+    "total_triggered": 0
+  },
+  "final_working_tree_state": {
+    "HEAD": "73c25f5e3fbc80c91509512f0c731683e3944373",
+    "tracked_changes_working_tree_vs_head": [
+      {
+        "path": "backend/tests/effect_engine/transitions/integration_real_mongo/test_drain_v1_real_mongo.py",
+        "status": "M",
+        "authorization": "Q3=3a AUTHORIZE_FIX TEST_ARTIFACT_RECOVERY",
+        "lines_post_fix": 649,
+        "py_compile": "PASS"
+      }
+    ],
+    "untracked_in_scope_v1": [
+      {
+        "path": "backend/tests/effect_engine/state_store/test_mongo_adapter_drain_rehydration.py",
+        "authorization": "Q2=2a evidence file",
+        "purpose": "focused adapter round-trip + backward compat tests"
+      },
+      {
+        "path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_real_mongo_verification_addendum.md",
+        "purpose": "this addendum (MD)"
+      },
+      {
+        "path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_real_mongo_verification_addendum.json",
+        "purpose": "this addendum (JSON)"
+      }
+    ],
+    "untracked_unrelated_pre_existing": [
+      "frontend/yarn.lock (and parcheggio/backup copies)",
+      "mobile/yarn.lock",
+      "backend/tests/.env.test.example (and legacy backup copies)",
+      "memory/r18_reset1b_v1_2_schema_audit_stdout.log",
+      "memory/r18_reset1c_fake_backup_gen.log",
+      "memory/round164_audit_console.log"
+    ]
+  },
+  "reproducer_commands": [
+    "cd /app && sha256sum <10 canonical files>",
+    "cd /app/backend && python -m pytest tests/backend_r18_4_sealed_integrity_test.py -q",
+    "cd /app/backend && python -m pytest tests/effect_engine/state_store/test_mongo_adapter_drain_rehydration.py -v",
+    "cd /app/backend && python -m pytest tests/effect_engine/transitions/integration_real_mongo/test_drain_v1_real_mongo.py -n0 -v -s",
+    "cd /app/backend && python -m pytest tests/effect_engine/transitions/integration_real_mongo/test_drain_v1_real_mongo.py -v"
+  ],
+  "next_actions_reserved_for_pm": [
+    "PM formal closure dispatch of RT2-B-2B-2-1",
+    "Baseline increment 16/16 → 17/17 (PM only)",
+    "PRD append (PM only)",
+    "Closure manifest emission (PM only)"
+  ],
+  "prohibited_by_pm_and_not_executed": [
+    "hard reset",
+    "rebase",
+    "commit amend",
+    "cherry-pick",
+    "push / merge / PR",
+    "PRD append",
+    "closure emission",
+    "baseline increment",
+    "tester online deploy",
+    "tester DB modification",
+    "online feature flag activation",
+    "testing_agent / e1_tester / human tester invocation"
+  ]
+}

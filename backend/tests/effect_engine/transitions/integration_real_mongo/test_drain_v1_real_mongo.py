@@ -471,8 +471,28 @@ def test_full_cap_512_receipts_bson_le_245760(provisioned_unique_db):
                 processed_event_keys=tuple(receipts),
                 last_event_sequence=512, owner_worker_or_lease_id=None, lease=None,
             )
-            r = await store.create_state(exp_id, shell)
-            assert r.success, f"create_state failed: {r}"
+            # Bypass adapter's `create_state` (enforces initial_state_version=1).
+            # Build the exact BSON shape the adapter would produce and direct-insert
+            # so we can measure the *worst-case persisted document* size.
+            from app.stats.runtime.state_store.mongo_adapter import _serialize_class_states
+            from dataclasses import asdict
+            doc_to_insert = {
+                "_id": exp_id,
+                "expedition_id": exp_id,
+                "state_version": shell.state_version,
+                "created_at": shell.created_at,
+                "updated_at": shell.updated_at,
+                "expires_at": shell.expires_at,
+                "runtime_status": shell.runtime_status.value,
+                "owner_worker_or_lease_id": shell.owner_worker_or_lease_id,
+                "lease": None,
+                "loadout_snapshot_version": shell.loadout_snapshot_version,
+                "adventurer_class_states": _serialize_class_states(shell.adventurer_class_states),
+                "processed_event_keys": [asdict(r) for r in shell.processed_event_keys],
+                "last_event_sequence": shell.last_event_sequence,
+                "fencing_token": shell.fencing_token,
+            }
+            await client[provisioned_unique_db][COLLECTION_NAME].insert_one(doc_to_insert)
 
             # Read raw BSON directly from Mongo
             raw_doc = await client[provisioned_unique_db][COLLECTION_NAME].find_one({"expedition_id": exp_id})
@@ -632,21 +652,6 @@ def test_cleanup_zero_residuals_verification():
             it_dbs = [n for n in db_names if n.startswith("orbus_r16_rt2b_it_")]
             # Filter to abandoned DBs older than 1 minute (this test may run while other tests hold DBs)
             # For a strict check we count only after all other tests done, which is not deterministic.
-            # Instead assert that new DBs created by V1 tests get auto-dropped by fixture teardown.
-            # This test primarily asserts the allowlist prefix pattern is enforced.
-            for n in db_names:
-                if n in ("admin", "config", "local", "test_database"):
-                    continue
-                # Any non-system DB must be either allowlist stable or it_<runid>
-                assert (
-                    n == "orbus_r16_rt2b_test"
-                    or n.startswith("orbus_r16_rt2b_it_")
-                    or n.startswith("orbus_")  # other orbus databases (game data)
-                ), f"non-allowlisted database found: {n}"
-        finally:
-            client.close()
-    asyncio.run(_run())
- # For a strict check we count only after all other tests done, which is not deterministic.
             # Instead assert that new DBs created by V1 tests get auto-dropped by fixture teardown.
             # This test primarily asserts the allowlist prefix pattern is enforced.
             for n in db_names:
