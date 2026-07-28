@@ -1,0 +1,399 @@
+{
+  "gate_id": "RT2-C-P0",
+  "gate_title": "Generic Effect Engine — Readiness, Architecture and Contract Discovery",
+  "kind": "READINESS_DISCOVERY_REPORT",
+  "timestamp_utc": "2026-07-28T05:35:00Z",
+  "anchor": {
+    "local_head": "f4c8c638cba7f59bbfe8e878fe46c311df743a96",
+    "closure_commit": "c0d8150cf4aaab259ad0c7aefa5b0a86522ed340",
+    "canonical_v1_anchor": "73c25f5e3fbc80c91509512f0c731683e3944373",
+    "post_closure_metadata_commits": ["6d521ef", "f4c8c63"],
+    "context_anchor": "CONTEXT_ANCHOR_PASS"
+  },
+  "baseline": "17/17",
+  "existing_architecture": {
+    "runtime_layer": {
+      "path": "backend/app/stats/runtime",
+      "modules": [
+        {"name": "models.py", "lines": 55, "role": "EffectiveStatResult stat pipeline output", "effect_engine_relevance": "adjacent, not runtime engine"},
+        {"name": "modifier_order.py", "lines": 246, "role": "stat modifier ordering"},
+        {"name": "soft_caps.py", "lines": 105, "role": "stat soft caps"},
+        {"name": "stat_bridge.py", "lines": 96, "role": "stat aggregator"},
+        {"name": "loadout_snapshot.py", "lines": 118, "role": "loadout snapshot (reserved)"},
+        {"name": "equipment_aggregation.py", "lines": 77, "role": "equipment aggregate"},
+        {"name": "events.py", "lines": 143, "role": "event definitions"},
+        {"name": "feature_flags.py", "lines": 175, "role": "8 canonical flags + RT2_FUTURE_CONSTANTS"}
+      ]
+    },
+    "state_store": {
+      "path": "backend/app/stats/runtime/state_store",
+      "modules": [
+        {"name": "models.py", "lines": 229, "role": "MarkDoc/DrainDoc/AdventurerClassState/EventReceipt/WriterLease/ExpeditionRuntimeState"},
+        {"name": "interface.py", "lines": 355, "role": "store abstraction"},
+        {"name": "mongo_adapter.py", "lines": 697, "role": "Motor async adapter with DrainDoc rehydration"},
+        {"name": "fake_store.py", "lines": 695, "role": "in-memory store"},
+        {"name": "fencing.py", "lines": 79},
+        {"name": "errors.py", "lines": 78},
+        {"name": "results.py", "lines": 113}
+      ]
+    },
+    "transitions": {
+      "path": "backend/app/stats/runtime/transitions",
+      "modules": [
+        {"name": "models.py", "lines": 403, "role": "TransitionResultCode 44 codes"},
+        {"name": "state_machine.py", "lines": 795, "role": "Mark/Fragment state machine"},
+        {"name": "drain.py", "lines": 762, "role": "RT2-B-2B-2-1 Drain state machine (pure)"},
+        {"name": "dispatcher.py", "lines": 685, "role": "single-writer dispatcher"},
+        {"name": "phase.py", "lines": 90}
+      ]
+    },
+    "wiring": {
+      "path": "backend/app/stats/runtime/wiring",
+      "modules": [
+        {"name": "coordinator.py", "lines": 445, "role": "6-conditions gate + orchestration"},
+        {"name": "dispatcher.py", "lines": 266, "role": "audit + response invariance"},
+        {"name": "audit.py", "lines": 96, "role": "10 event IDs audit map"},
+        {"name": "feature_flags.py", "lines": 131, "role": "flag gate helpers"},
+        {"name": "shadow_hooks.py", "lines": 197, "role": "shadow comparison hooks"}
+      ]
+    },
+    "state_doc_top_level_fields": [
+      "expedition_id", "state_version", "created_at", "updated_at", "expires_at",
+      "runtime_status", "owner_worker_or_lease_id", "lease", "loadout_snapshot_version",
+      "adventurer_class_states", "processed_event_keys", "last_event_sequence", "fencing_token"
+    ],
+    "state_doc_constants": {"MAX_PROCESSED_EVENTS": 512, "ordinary_slots": 504, "reserved_slots": 8},
+    "adventurer_class_state_fields": [
+      "adventurer_id", "active_marks", "active_drain_executions",
+      "fragment_count", "resource_segment_id", "focus_bonus_usage", "class_state_version"
+    ],
+    "fragment_count_cap": 5,
+    "event_receipt_fields": [
+      "event_id", "event_type", "source_adventurer_id", "payload_hash",
+      "assigned_event_sequence", "result_code", "state_version_after", "processed_at"
+    ],
+    "transition_result_code_total": 44,
+    "flags_total": 8,
+    "flags_reserved_future": ["item_effect_engine_enabled", "cdv_item_hooks_enabled", "effect_observability_enabled"]
+  },
+  "effect_engine_verdict": {
+    "status": "NAME_ONLY / NOT GENERIC",
+    "production_files_found_under_effect_engine": 0,
+    "test_files_under_tests_effect_engine": 54,
+    "explanation": "The directory backend/tests/effect_engine/ is a test-organization namespace hosting tests for Mark/Drain/state-machine runtime. No generic effect engine exists in production code. Only EffectiveStatResult (stat pipeline) is effect-adjacent but not a runtime engine.",
+    "adjacent_signals": {
+      "reserved_flag_item_effect_engine_enabled": true,
+      "reserved_flag_cdv_item_hooks_enabled": true,
+      "reserved_flag_effect_observability_enabled": true,
+      "fragment_count_after_threaded_in_result_contract": true
+    }
+  },
+  "reusable_components": [
+    {"path": "state_store/interface.py", "reuse_kind": "reuse_full", "note": "store abstraction"},
+    {"path": "state_store/mongo_adapter.py", "reuse_kind": "extend_rehydration_symmetric", "note": "add typed rehydration block for effect instances mirror active_marks/DrainDoc"},
+    {"path": "transitions/dispatcher.py", "reuse_kind": "extend_positive_mutation_recognition", "note": "add effect result codes to positive-mutation set (A1 pattern)"},
+    {"path": "wiring/coordinator.py", "reuse_kind": "extend_gate", "note": "add effect gate condition"},
+    {"path": "wiring/audit.py", "reuse_kind": "extend_map", "note": "add effect event IDs"},
+    {"path": "feature_flags.py::RT2_FUTURE_CONSTANTS", "reuse_kind": "adopt", "note": "already-reserved flag identifiers"}
+  ],
+  "gaps": [
+    "no generic EffectDefinition/EffectRequest/EffectInstance models",
+    "no effect resolution engine (pure logic)",
+    "no effect lifecycle handlers (expiry, phase_end, expedition_end)",
+    "no effect definitions registry (static whitelist)",
+    "no stacking/duration/magnitude enforcement",
+    "no FeedbackEvent model (state-level or wire-level)",
+    "no effect-specific TransitionResultCode set",
+    "no state doc field for active_effect_instances",
+    "no wiring for effect apply/remove/query flows"
+  ],
+  "proposed_contract": {
+    "EffectDefinition": ["effect_id (≤64B)", "version int", "category enum", "trigger enum", "target_scope enum", "duration_model enum", "stacking policy enum", "magnitude_schema whitelist", "source_restrictions tags", "tags ≤8", "i18n_key", "feature_flag id", "audit_class id"],
+    "EffectRequest": ["event_id ≤96B", "source_adventurer_id ≤64B", "target_id ≤64B", "effect_id + effect_version", "triggering_context", "idempotency_key ≤96B", "timestamp iso UTC", "expected_state_version optional"],
+    "EffectInstance": ["effect_instance_id UUIDv4", "effect_id+version", "source_adventurer_id", "target_id", "triggering_application_id", "started_at", "expires_at optional", "remaining_uses optional", "stack_count ≥1", "resolved_magnitude mapping", "lifecycle_status enum", "state_version_at_apply"],
+    "EffectResolution": ["request", "accepted bool", "result_code", "created_instances", "updated_instances", "removed_instances by id", "resource_deltas mapping", "feedback_events tuple", "audit_data mapping", "receipt_payload EventReceipt"],
+    "FeedbackEvent": ["event_id", "effect_instance_id", "kind enum", "source", "target", "reason_code", "magnitude_key_values", "duration_or_uses", "stack_count_after", "i18n_key (KEY only)", "visibility enum", "ordering_hint int", "timestamp"]
+  },
+  "effect_primitives_whitelist": {
+    "phase_a_recommended": ["stat_modifier_temporary", "state_apply", "state_remove", "resource_generate", "resource_consume", "on_event_completion", "feedback_only"],
+    "phase_a_deferred": ["cost_modifier", "probability_intensity_modifier", "duration_modifier", "conditional_trigger", "on_phase_end", "on_expedition_end"],
+    "not_authorized_ever": ["eval_arbitrary_code", "python_scripts_in_db", "unvalidated_expressions", "plugin_runtime", "unrestricted_field_mutation", "uncapped_magnitude"]
+  },
+  "lifecycle": {
+    "durations": ["INSTANT", "UNTIL_PHASE", "UNTIL_EXPEDITION", "USES(n)", "TIME(sec)", "PERMANENT_UNTIL_REMOVED"],
+    "phase_a_recommended_durations": ["INSTANT", "UNTIL_PHASE", "USES(n)"],
+    "removal_triggers": ["expiry_time", "expiry_uses", "dispel", "consume", "phase_end", "expedition_end", "source_invalidated", "target_terminalized"],
+    "loop_protection": {"max_trigger_chain_depth": 3, "max_effects_per_event": 8, "no_self_triggering": true, "cycle_detection": true}
+  },
+  "stacking": {
+    "policies": ["NONE", "REFRESH", "REPLACE", "ADDITIVE_CAP(n)", "STRONGEST_WINS", "SOURCE_ISOLATED", "APPLICATION_ISOLATED"],
+    "default_recommended": "NONE",
+    "opt_in_per_definition": true
+  },
+  "determinism": {
+    "canonical_pipeline": [
+      "validate_request",
+      "load_definition_fail_closed_on_missing_or_version_mismatch",
+      "check_prerequisites_feature_gate_source_restrictions_state_pre",
+      "resolve_target_scope",
+      "resolve_stacking_against_existing",
+      "compute_mutation_magnitude_deltas_caps",
+      "generate_feedback_events_ordered",
+      "commit_atomically_cas_on_state_version",
+      "persist_receipt_and_audit_single_event"
+    ],
+    "tie_break": "(definition_priority ASC, timestamp ASC, effect_instance_id ASC)",
+    "dedup_key": "(expedition_id, event_id)",
+    "replay_idempotency_key": "(expedition_id, event_id, effect_id, effect_version, source, target, idempotency_key)",
+    "on_missing_definition": "EFFECT_DEFINITION_UNKNOWN result code, 0 mutation",
+    "on_version_mismatch": "EFFECT_VERSION_MISMATCH result code, 0 mutation"
+  },
+  "persistence_options": [
+    {"option": "A_embedded_in_state_doc", "atomicity": "reuse existing CAS", "concurrency": "single-writer", "bson_growth_risk": "medium (need per-effect cap ≤100 bytes)", "recommendation": "RECOMMENDED_PHASE_A", "rationale": "aligned with Mark/Drain precedent, atomic with existing state"},
+    {"option": "B_dedicated_collection", "atomicity": "cross-collection tx or 2-phase", "concurrency": "distributed lock/tx", "bson_growth_risk": "low", "recommendation": "NOT_RECOMMENDED", "rationale": "deviation from RT2-B precedent, migration risk"},
+    {"option": "C_hybrid_active_embedded_terminated_collection", "atomicity": "mixed", "concurrency": "mixed", "bson_growth_risk": "low", "recommendation": "DEFER_POST_PHASE_A"}
+  ],
+  "bson_impact_projection": {
+    "current_full_cap": 230593,
+    "target": 245760,
+    "hard_limit": 262144,
+    "current_headroom_bytes": 15167,
+    "current_headroom_percent": 6.2,
+    "assumed_effect_instances_active_at_full_cap": 10,
+    "assumed_bytes_per_instance": 500,
+    "projected_growth_bytes": 5000,
+    "projected_full_cap": 235593,
+    "projected_headroom_bytes": 10167,
+    "projected_headroom_percent": 4.1,
+    "verdict_within_target": true,
+    "verdict_within_hard_limit": true,
+    "per_effect_payload_cap_required_bytes": 100,
+    "receipt_capacity_MUST_remain": {"ordinary": 504, "reserved": 8, "total": 512}
+  },
+  "receipt_model": {
+    "authoritative_mutation_receipt": "reuse existing EventReceipt schema unchanged",
+    "audit_event_slot": "extend wiring/audit.py map with N new event IDs (additive)",
+    "no_new_receipt_type_needed": true
+  },
+  "feedback_model": {
+    "storage_options": ["inline_in_state_doc_capped", "out_of_band_wiring_stream"],
+    "recommendation": "inline_in_state_doc_capped",
+    "per_event_cap": 8,
+    "i18n_policy": "i18n_key only (no localized strings in state)",
+    "folding_in_expedition_report": true,
+    "visibility_levels": ["PUBLIC", "PARTY", "PRIVATE"],
+    "ordering_deterministic": true
+  },
+  "CdV_payoff_options": [
+    {
+      "id": "A_focus_burst",
+      "effect": "Spend N Fragments (N in [1,5]) to gain temporary Intelligence increase for current phase",
+      "trigger": "player-driven or auto on DRAIN_COMPLETED",
+      "cost": "N Fragments",
+      "target": "self",
+      "duration": "UNTIL_PHASE",
+      "stacking": "NONE",
+      "magnitude": "+5×N Intelligence (soft-cap enforced)",
+      "risk": "may over-emphasize Intelligence stat",
+      "components_touched": ["state fragment_count", "active_effect_instances", "stat pipeline Intelligence", "feedback", "audit", "wiring"]
+    },
+    {
+      "id": "B_chain_mark",
+      "effect": "Spend 3 Fragments to gain 3 uses of Enhanced Mark",
+      "trigger": "player-driven",
+      "cost": "3 Fragments",
+      "target": "self (applies to next Marks placed)",
+      "duration": "USES(3)",
+      "stacking": "REPLACE",
+      "magnitude": "+5s Mark duration OR +5% combined proc (mutually exclusive)",
+      "risk": "proc chain amplification interaction",
+      "components_touched": ["Mark state machine", "effect engine", "feedback", "audit"]
+    },
+    {
+      "id": "C_void_echo",
+      "effect": "Accumulate Fragments; on expedition end spend all N for cosmetic bonus in report (no XP/loot change)",
+      "trigger": "ON_EXPEDITION_END",
+      "cost": "ALL accumulated Fragments",
+      "target": "self",
+      "duration": "INSTANT at expedition end",
+      "stacking": "NONE",
+      "magnitude": "cosmetic feedback + audit trail",
+      "risk": "minimum (cosmetic-only, safest)",
+      "components_touched": ["effect engine", "expedition end hook", "audit", "feedback", "expedition report"]
+    }
+  ],
+  "recommended_first_payoff": "C_void_echo",
+  "feature_gates": {
+    "new_global_flag_proposed": "generic_effect_engine_enabled",
+    "adopt_reserved_flags": ["item_effect_engine_enabled", "cdv_item_hooks_enabled", "effect_observability_enabled"],
+    "new_consumer_sub_flag_proposed": "cdv_fragment_payoff_enabled",
+    "per_payoff_sub_flags": ["cdv_focus_burst_enabled", "cdv_chain_mark_enabled", "cdv_void_echo_enabled"],
+    "gate_minimum_conditions_7": [
+      "generic_effect_engine_enabled=true",
+      "cdv_class_transitions_enabled=true",
+      "cdv_drain_transitions_enabled=true",
+      "consumer_specific_flag=true",
+      "user.is_test_user=true",
+      "environment=localhost_isolated",
+      "mongo_target=allowlisted_database"
+    ],
+    "default_all_off": true,
+    "online_activation": "NOT AUTHORIZED"
+  },
+  "limits": {
+    "effect_id_max_bytes_utf8": 64,
+    "effect_instance_id_max_bytes": 40,
+    "source_adventurer_id_max_bytes_utf8": 64,
+    "target_id_max_bytes_utf8": 64,
+    "application_id_max_bytes_utf8": 32,
+    "tags_per_definition_max": 8,
+    "tag_length_max_bytes_utf8": 32,
+    "magnitude_keys_max": 12,
+    "stack_cap_per_definition_max": 5,
+    "stack_cap_default": 1,
+    "active_effect_instances_per_target_max": 16,
+    "active_effect_instances_per_expedition_max": 64,
+    "feedback_entries_per_event_max": 8,
+    "trigger_chain_depth_max": 3,
+    "effects_processed_per_event_max": 8,
+    "effect_definition_version_min": 1,
+    "receipt_payload_extra_bytes_per_event_max": 100,
+    "no_truncation_no_silent_normalization": true,
+    "error_code_on_violation": "IDENTIFIER_BOUNDS_TRUNCATION_mirror"
+  },
+  "test_matrix": {
+    "phase_a_estimates": {
+      "pure_resolution": [15, 20],
+      "stacking_behaviors": [8, 12],
+      "duration_model": [6, 8],
+      "refresh_replace": [6, 8],
+      "caps_overflow": [6, 8],
+      "invalid_definitions": [6, 8],
+      "replay_dedup": [4, 6],
+      "race_cas_conflict": [4, 6],
+      "lifecycle_cleanup": [4, 6],
+      "fakestore_benchmark": [4, 6],
+      "mocked_mongo": [4, 6],
+      "feature_gating_7cond": [6, 8],
+      "legacy_invariance": [4, 6],
+      "feedback_ordering": [3, 5],
+      "i18n_parameter_safety": [2, 3],
+      "property_based_optional": [3, 5]
+    },
+    "real_mongo_estimates": {
+      "persistence_identity": [3, 4],
+      "atomicity": [2, 3],
+      "race_concurrency": [2, 3],
+      "identifier_bounds_parametrized": [3, 4],
+      "gate_rejection_parametrized": [3, 4],
+      "full_cap_bson_mandatory": 1,
+      "performance_mongo": [4, 6],
+      "cleanup_allowlist": 1,
+      "replay_dedup_real": [2, 3],
+      "lifecycle_cleanup_real": [2, 3]
+    },
+    "phase_a_total_estimate": "95-125 tests",
+    "real_mongo_total_estimate": "30-40 tests",
+    "context_capacity_advisory": "comparable to RT2-B Phase A (36 tests) + A1 (51 tests) + V1 (20 tests) + adapter (11 tests) = 118 tests. RT2-C likely +25-35% context; feasible in split Phase A + separate V1."
+  },
+  "file_plan": {
+    "production_new": [
+      "backend/app/stats/runtime/effects/__init__.py",
+      "backend/app/stats/runtime/effects/models.py",
+      "backend/app/stats/runtime/effects/registry.py",
+      "backend/app/stats/runtime/effects/engine.py",
+      "backend/app/stats/runtime/effects/dispatcher.py",
+      "backend/app/stats/runtime/effects/lifecycle.py"
+    ],
+    "production_extend": [
+      "backend/app/stats/runtime/state_store/models.py",
+      "backend/app/stats/runtime/transitions/models.py",
+      "backend/app/stats/runtime/state_store/mongo_adapter.py",
+      "backend/app/stats/runtime/wiring/coordinator.py",
+      "backend/app/stats/runtime/wiring/audit.py",
+      "backend/app/stats/runtime/wiring/feature_flags.py",
+      "backend/app/stats/runtime/feature_flags.py"
+    ],
+    "tests_new": [
+      "backend/tests/effect_engine/effects/test_engine_pure.py",
+      "backend/tests/effect_engine/effects/test_stacking.py",
+      "backend/tests/effect_engine/effects/test_duration.py",
+      "backend/tests/effect_engine/effects/test_lifecycle_boundaries.py",
+      "backend/tests/effect_engine/effects/test_engine_fakestore.py",
+      "backend/tests/effect_engine/effects/test_engine_mocked_mongo.py",
+      "backend/tests/effect_engine/effects/test_engine_perf_fakestore.py",
+      "backend/tests/effect_engine/effects/integration_real_mongo/test_effects_v1_real_mongo.py",
+      "backend/tests/effect_engine/effects/test_feedback_ordering.py",
+      "backend/tests/effect_engine/effects/test_response_invariance_effects.py"
+    ],
+    "sealed_files_UNCHANGED": ["backend/app/content/lore_meta.py"]
+  },
+  "risk_register": [
+    {"risk": "BSON growth exceeds 245,760 target", "severity": "HIGH", "mitigation": "per-effect payload cap ≤100 bytes, active_instances cap ≤16/target, preserve reserved lifecycle slot"},
+    {"risk": "Trigger chain infinite loop", "severity": "HIGH", "mitigation": "chain depth ≤3, effect_id cycle detection"},
+    {"risk": "Balance impact on CdV payoff", "severity": "MEDIUM", "mitigation": "start with Option C cosmetic-only, defer XP/loot changes"},
+    {"risk": "Legacy doc migration destructive", "severity": "MEDIUM", "mitigation": "additive fields with defaults, rehydration mirror pattern"},
+    {"risk": "Feature flag proliferation", "severity": "LOW", "mitigation": "adopt already-reserved constants"},
+    {"risk": "Test volume overwhelming Phase A", "severity": "MEDIUM", "mitigation": "split Phase A + V1 like RT2-B-2B-2-1, use A1 remediation pattern if needed"},
+    {"risk": "Feedback ordering nondeterministic", "severity": "MEDIUM", "mitigation": "explicit ordering_hint + tie-break (definition_priority, timestamp)"},
+    {"risk": "Response invariance regression", "severity": "HIGH", "mitigation": "extend test_response_invariance.py before implementation"},
+    {"risk": "i18n leakage into state doc", "severity": "MEDIUM", "mitigation": "i18n_key only, tested by test_i18n_parameter_safety"},
+    {"risk": "CAS pressure on effect apply/remove", "severity": "LOW", "mitigation": "reuse existing single-writer dispatcher"}
+  ],
+  "open_pm_questions": [
+    {"id": "Q1", "title": "Primitive whitelist scope Phase A", "decision_required": "Which 3-5 primitives are authorized for Phase A?", "options": ["A: stat_mod + state_apply/remove + resource + feedback_only", "B: A + conditional_trigger", "C: A + on_phase/expedition_end"], "recommendation": "A (safest, most defer-friendly)", "impact": "test volume + scope of Phase A", "safe_default": "A"},
+    {"id": "Q2", "title": "Persistence model", "decision_required": "Embedded / Collection / Hybrid?", "options": ["A_embedded", "B_dedicated_collection", "C_hybrid"], "recommendation": "A_embedded (aligned with Mark/Drain precedent)", "impact": "atomicity + BSON budget + migration", "safe_default": "A_embedded"},
+    {"id": "Q3", "title": "Stacking default", "decision_required": "Global default stacking policy?", "options": ["NONE", "REFRESH", "STRONGEST_WINS"], "recommendation": "NONE (opt-in per definition)", "impact": "definition schema + engine complexity", "safe_default": "NONE"},
+    {"id": "Q4", "title": "Duration models in Phase A", "decision_required": "Which duration models in Phase A?", "options": ["A: INSTANT+UNTIL_PHASE only", "B: A+USES(n)", "C: B+UNTIL_EXPEDITION+TIME(sec)"], "recommendation": "B (defer TIME(sec) and PERMANENT)", "impact": "expiry mechanics + TTL check overhead", "safe_default": "A"},
+    {"id": "Q5", "title": "Trigger chaining", "decision_required": "Allow chain depth ≤3 or force depth=1 in Phase A?", "options": ["depth_max_1", "depth_max_3", "depth_max_5"], "recommendation": "depth_max_1 in Phase A, expand later", "impact": "recursion risk + resolver complexity", "safe_default": "depth_max_1"},
+    {"id": "Q6", "title": "Feedback model", "decision_required": "Feedback storage location?", "options": ["inline_state_doc_capped_8_per_event", "out_of_band_wiring_stream", "hybrid"], "recommendation": "inline_capped (folded in expedition report)", "impact": "BSON budget + client access + i18n boundary", "safe_default": "inline_capped"},
+    {"id": "Q7", "title": "First CdV payoff", "decision_required": "Which payoff option?", "options": ["A_focus_burst", "B_chain_mark", "C_void_echo"], "recommendation": "C_void_echo (cosmetic-only, safest, zero XP/loot risk)", "impact": "balance risk + integration scope", "safe_default": "C_void_echo"},
+    {"id": "Q8", "title": "BSON per-effect payload cap", "decision_required": "Max bytes per effect instance record?", "options": ["50", "100", "150"], "recommendation": "100 (preserves 4-6% headroom at 10-16 active instances)", "impact": "field density + effect richness", "safe_default": "100"},
+    {"id": "Q9", "title": "Feature flag topology", "decision_required": "Flag granularity?", "options": ["global_only", "global+per_consumer", "global+per_consumer+per_payoff"], "recommendation": "global+per_consumer", "impact": "flag count + gate complexity", "safe_default": "global+per_consumer"},
+    {"id": "Q10", "title": "Result-code inventory scope", "decision_required": "How many new codes in RT2-C?", "options": ["≤10", "10-20", "20-30"], "recommendation": "18-25 (canonicalize during Phase A dispatch)", "impact": "inventory canonicalization + test coverage", "safe_default": "18-25"},
+    {"id": "Q11", "title": "Response invariance strictness", "decision_required": "0 mutation with flag OFF?", "options": ["hard_enforce", "audit_only_no_mutation", "soft_warn"], "recommendation": "hard_enforce (mirror RT2-B)", "impact": "test coverage + safety", "safe_default": "hard_enforce"},
+    {"id": "Q12", "title": "Test volume + split", "decision_required": "Phase A + V1 split like RT2-B-2B-2-1?", "options": ["yes_split_a_v1", "single_dispatch", "a_a1_v1"], "recommendation": "yes_split (A: 95-125 pure/FakeStore/mocked, V1: 30-40 real-Mongo)", "impact": "context budget + delivery pace", "safe_default": "yes_split"}
+  ],
+  "recommended_next_gate": {
+    "gate_id": "RT2-C-P1",
+    "gate_title": "Generic Effect Engine · Phase A pure-resolution foundation",
+    "scope": [
+      "Definitions registry (static whitelist)",
+      "EffectDefinition/Request/Instance/Resolution models",
+      "Pure engine apply/remove/query (no store integration)",
+      "Stacking + duration + magnitude cap semantics",
+      "Feedback event ordering",
+      "95-125 pure tests + FakeStore adapter tests",
+      "Flags: generic_effect_engine_enabled + cdv_fragment_payoff_enabled (default OFF)"
+    ],
+    "explicitly_excluded_from_p1": [
+      "Mongo integration (deferred RT2-C-P2)",
+      "CdV payoff implementation (deferred RT2-C-P3)",
+      "Real-Mongo verification (deferred RT2-C-V1)"
+    ]
+  },
+  "fail_stops": {
+    "LOCAL_POST_CLOSURE_STATE_MISMATCH": "NOT_TRIGGERED",
+    "SEALED_INTEGRITY_VIOLATION": "NOT_TRIGGERED",
+    "OPENAPI_PATH_COUNT_MISMATCH": "NOT_TRIGGERED",
+    "EXISTING_EFFECT_ENGINE_CONTRACT_CONFLICT": "NOT_TRIGGERED",
+    "BSON_CAPACITY_REGRESSION_REQUIRED": "NOT_TRIGGERED",
+    "SEALED_BREAK_REQUIRED": "NOT_TRIGGERED",
+    "MIGRATION_DESTRUCTIVE_REQUIRED": "NOT_TRIGGERED",
+    "INSUFFICIENT_CONTEXT_FOR_COMPLETE_DISCOVERY": "NOT_TRIGGERED",
+    "total_triggered": 0
+  },
+  "discovery_verdict": "RT2-C-P0 DISCOVERY COMPLETE / PM DECISIONS REQUIRED",
+  "artifacts_created": [
+    "memory/r18_6_rv3_is2_b_p2b_rt2_c_p0_readiness_report.md",
+    "memory/r18_6_rv3_is2_b_p2b_rt2_c_p0_readiness_report.json"
+  ],
+  "artifacts_NOT_created": [
+    "production code",
+    "tests",
+    "closure report",
+    "closure manifest",
+    "PRD append",
+    "baseline increment"
+  ]
+}
