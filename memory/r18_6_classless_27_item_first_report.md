@@ -34,7 +34,7 @@ item, avventuriero, statistica, magnitudo, delta e fonte lore.
 9 spedizioni × 3 membri
 27 Hall / 135 item in Collection Book
 frontend build e browser QA verdi
-FastAPI/OpenAPI: 306 route / 284 path
+FastAPI/OpenAPI: 306 route / 283 path
 ```
 
 Nessun database condiviso o di produzione è stato modificato. Nessun commit,
