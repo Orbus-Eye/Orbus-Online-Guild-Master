@@ -184,6 +184,109 @@ export default function ExpeditionExplainer({ summary, steps, members }) {
                 </div>
             </section>
 
+            {(summary.item_effects || []).length > 0 && (
+                <section className="mb-6" data-testid="report-item-effects">
+                    <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
+                        :: {lang === "en" ? "ITEMS THAT CHANGED THE RUN" : "ITEM CHE HANNO CAMBIATO LA SPEDIZIONE"}
+                    </div>
+                    <div className="border border-amber/40 bg-amber/5 rounded-sm p-4">
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                            <span className="text-sm font-medium">
+                                {lang === "en" ? "Lore effects activated" : "Effetti di lore attivati"}
+                            </span>
+                            <span
+                                className="text-sm font-semibold text-amber"
+                                data-testid="report-item-effect-power"
+                            >
+                                +{summary.item_effect_power_bonus || 0} PWR
+                            </span>
+                        </div>
+                        <ul className="space-y-2">
+                            {summary.item_effects.map((effect, index) => (
+                                <li
+                                    key={`${effect.effect_id}-${effect.adventurer_id}-${index}`}
+                                    className="border-t border-border/50 pt-2 first:border-t-0 first:pt-0"
+                                    data-testid={`report-item-effect-${index}`}
+                                >
+                                    <div className="flex justify-between gap-3 text-xs">
+                                        <span className="font-medium text-foreground">
+                                            {effect.item_name}
+                                        </span>
+                                        <span className="text-amber whitespace-nowrap">
+                                            +{effect.magnitude} {String(effect.target_stat || "").toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div className="text-[11px] text-muted-foreground mt-1">
+                                        {effect.adventurer_name} · {effect.summary_it}
+                                    </div>
+                                    {effect.lore_source && (
+                                        <div className="text-[10px] text-muted-foreground/70 mt-0.5">
+                                            {lang === "en" ? "Lore source" : "Fonte lore"}: {effect.lore_source}
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+            )}
+
+            {(summary.class_mechanics || []).length > 0 && (
+                <section className="mb-6" data-testid="report-class-mechanics">
+                    <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
+                        :: {lang === "en" ? "ACTIVE CLASS PATHS" : "SENTIERI DI CLASSE ATTIVI"}
+                    </div>
+                    <div className="border border-sky-500/40 bg-sky-500/5 rounded-sm p-4">
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                            <span className="text-sm font-medium">
+                                {lang === "en"
+                                    ? "Equipment-shaped class mechanics"
+                                    : "Meccaniche di classe plasmate dagli item"}
+                            </span>
+                            <span
+                                className="text-sm font-semibold text-sky-400"
+                                data-testid="report-class-mechanic-power"
+                            >
+                                +{summary.class_mechanic_power_bonus || 0} PWR
+                            </span>
+                        </div>
+                        <ul className="space-y-2">
+                            {summary.class_mechanics.map((mechanic, index) => {
+                                const build = mechanic.active_build || {};
+                                return (
+                                    <li
+                                        key={`${mechanic.mechanic_id}-${mechanic.adventurer_id}-${index}`}
+                                        className="border-t border-border/50 pt-2 first:border-t-0 first:pt-0"
+                                        data-testid={`report-class-mechanic-${index}`}
+                                    >
+                                        <div className="flex justify-between gap-3 text-xs">
+                                            <span className="font-medium text-foreground">
+                                                {mechanic.adventurer_name} · {mechanic.name_it}
+                                            </span>
+                                            <span className="text-sky-400 whitespace-nowrap">
+                                                {build.name_it} · +{mechanic.power_bonus} PWR
+                                            </span>
+                                        </div>
+                                        <div className="text-[11px] text-muted-foreground mt-1">
+                                            {build.description_it || mechanic.summary_it}
+                                        </div>
+                                        <div className="text-[10px] text-muted-foreground/70 mt-0.5">
+                                            {build.resonance_active
+                                                ? (lang === "en"
+                                                    ? `Item resonance: ${build.matched_tags?.join(", ")}`
+                                                    : `Risonanza item: ${build.matched_tags?.join(", ")}`)
+                                                : (lang === "en"
+                                                    ? "Equip a matching item to activate resonance."
+                                                    : "Equipaggia un item coerente per attivare la risonanza.")}
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </section>
+            )}
+
             {/* What happened (steps) */}
             <section className="mb-6" data-testid="report-steps-section">
                 <div className="text-[10px] text-muted-foreground tracking-widest mb-3">

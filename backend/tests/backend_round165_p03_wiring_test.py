@@ -298,7 +298,7 @@ def _post_expedition(base: str, headers: dict, dungeon_id: str,
 def test_1_team_lv4_vs_worldtree_lv14_blocked(
     test_db, tester_auth, seeded_team,
 ):
-    """Un team lv4 tenta `world-tree-roots-5p` (required_level=14).
+    """Un team lv4 tenta `world-tree-roots-5p` (required_level=70).
     Deve rispondere 423 con code=adventurer.level_too_low."""
     base = _api_base()
     dungeon_id = _dungeon_id_from_slug(test_db, "world-tree-roots-5p")
@@ -310,7 +310,7 @@ def test_1_team_lv4_vs_worldtree_lv14_blocked(
     )
     detail = r.json().get("detail", {})
     assert detail.get("code") == "adventurer.level_too_low", detail
-    assert detail.get("min_required_level") == 14, detail
+    assert detail.get("min_required_level") == 70, detail
     assert detail.get("source") == "expedition.dispatch"
     assert detail.get("dungeon_slug") == "world-tree-roots-5p"
     below = detail.get("adventurers_below") or detail.get("offending_adventurers")
@@ -511,7 +511,7 @@ def test_A3_regression_team_lv4_still_blocked_on_worldtree_lv14(
     test_db, tester_auth, seeded_team,
 ):
     """Regression: dopo la rimozione del fallback difficulty, team lv4
-    deve continuare a essere bloccato su dungeon `required_level=14`.
+    deve continuare a essere bloccato su dungeon `required_level=70`.
     Il gate `required_level` è la prima priorità e rimane attivo."""
     base = _api_base()
     dungeon_id = _dungeon_id_from_slug(test_db, "world-tree-roots-5p")
@@ -521,4 +521,4 @@ def test_A3_regression_team_lv4_still_blocked_on_worldtree_lv14(
     assert r.status_code == 423
     detail = r.json()["detail"]
     assert detail["code"] == "adventurer.level_too_low"
-    assert detail["min_required_level"] == 14
+    assert detail["min_required_level"] == 70

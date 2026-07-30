@@ -116,9 +116,9 @@ export default function RaidReport() {
                             <div className="text-[11px]"><strong>{t("raids.report.raid_score")}:</strong> {raid.raid_score}</div>
                             <div className="text-[11px]"><strong>{t("raids.report.duration")}:</strong> {Math.round((raid.duration_seconds || 0) / 60)} min</div>
                             {/* ROUND 6B.2c — Save as squad after raid victory */}
-                            {raid.outcome === "victory" && participants.length === 20 && (
+                            {raid.outcome === "victory" && [10, 15, 20, 40].includes(participants.length) && (
                                 <Link
-                                    to={`/squads/new?type=raid_20&adventurer_ids=${participants.map(p => p.adventurer_id).join(",")}&suggested_name=${encodeURIComponent("Raid " + (raid.raid_name || ""))}`}
+                                    to={`/squads/new?type=raid_${participants.length}&adventurer_ids=${participants.map(p => p.adventurer_id).join(",")}&suggested_name=${encodeURIComponent("Raid " + (raid.raid_name || ""))}`}
                                     data-testid="raid-report-save-as-squad-btn"
                                     className="inline-flex items-center mt-2 text-[11px] tracking-widest font-bold border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 transition-colors"
                                 >
@@ -129,7 +129,7 @@ export default function RaidReport() {
                     )}
                 </section>
 
-                {/* 4 party outcome cards */}
+                {/* Contract-defined party outcome cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     {partiesOutcome.map((p) => {
                         const partyParts = participants.filter((x) => x.party_idx === p.party_idx);

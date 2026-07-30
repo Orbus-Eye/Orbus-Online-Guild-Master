@@ -1,0 +1,118 @@
+{
+  "gate_id": "RT2-C-P1",
+  "title": "Generic Effect Engine Pure Deterministic Foundation and BSON Feasibility",
+  "status": "IMPLEMENTED_PURE_VERIFIED_READY_FOR_RT2_C_P2",
+  "timestamp_utc": "2026-07-28T12:45:24Z",
+  "anchor": {
+    "branch": "main-260728",
+    "head": "780c05894f60c99745e0a94a3a7c337895a86c4a",
+    "closure_ancestor": "c0d8150cf4aaab259ad0c7aefa5b0a86522ed340",
+    "closure_ancestor_pass": true
+  },
+  "scope": {
+    "new_production_files": 5,
+    "existing_production_files_modified": 0,
+    "new_test_files": 6,
+    "database_writes": 0,
+    "network_calls": 0,
+    "feature_flag_activations": 0,
+    "public_route_changes": 0,
+    "default_registry_gameplay_definitions": 0
+  },
+  "contract": {
+    "immutable_models": true,
+    "result_codes": 10,
+    "primitives": [
+      "STAT_FLAT_TEMPORARY",
+      "STATE_TAG_APPLY",
+      "STATE_TAG_REMOVE",
+      "RESOURCE_GENERATE",
+      "RESOURCE_CONSUME",
+      "FEEDBACK_ONLY"
+    ],
+    "triggers": [
+      "ON_EVENT_COMPLETION",
+      "ON_PHASE_END",
+      "ON_EXPEDITION_END"
+    ],
+    "durations": [
+      "INSTANT",
+      "UNTIL_PHASE_END",
+      "UNTIL_EXPEDITION_END",
+      "USE_COUNT"
+    ],
+    "stacking": [
+      "NONE",
+      "REFRESH",
+      "REPLACE",
+      "ADDITIVE_CAPPED"
+    ],
+    "runtime_stats": [
+      "strength",
+      "agility",
+      "intellect",
+      "endurance",
+      "faith"
+    ],
+    "trigger_depth_max": 1,
+    "active_instances_max": 16,
+    "effects_per_root_event_max": 8,
+    "feedback_per_resolution_max": 8,
+    "stack_cap_max": 5,
+    "use_count_max": 10,
+    "deterministic_identity": true,
+    "void_echo_production_registry": false,
+    "void_echo_test_fixture_only": true
+  },
+  "bson": {
+    "baseline_full_cap_bytes": 230593,
+    "active_effect_budget_bytes": 6144,
+    "projected_full_cap_target_bytes": 245760,
+    "hard_limit_bytes": 262144,
+    "recommended_layout": "B",
+    "worst_case_unique_targets": {
+      "A": {
+        "active_effect_bytes": 5642,
+        "projected_full_cap_bytes": 236235,
+        "pass": true
+      },
+      "B": {
+        "active_effect_bytes": 6004,
+        "projected_full_cap_bytes": 236597,
+        "budget_margin_bytes": 140,
+        "pass": true
+      },
+      "C": {
+        "active_effect_bytes": 4506,
+        "projected_full_cap_bytes": 235099,
+        "pass": true
+      }
+    }
+  },
+  "verification": {
+    "pure_tests_serial": {
+      "passed": 57,
+      "failed": 0
+    },
+    "pure_tests_xdist": {
+      "passed": 57,
+      "failed": 0
+    },
+    "black": "PASS",
+    "flake8": "PASS",
+    "purity_ast_contract": "PASS",
+    "git_diff_check": "PASS",
+    "sealed_integrity_lf_normalized": {
+      "logical_tests": 6,
+      "artifacts_passed": 36,
+      "artifacts_total": 36
+    },
+    "closure_manifest_lf_normalized": {
+      "entries_passed": 24,
+      "entries_total": 24
+    },
+    "openapi_reimport": "NOT_RUN_PURE_GATE_NO_ROUTE_OR_BOOTSTRAP_CHANGE"
+  },
+  "fail_stops_triggered": [],
+  "next_gate": "RT2-C-P2"
+}

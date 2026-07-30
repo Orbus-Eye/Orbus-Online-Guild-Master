@@ -11,6 +11,8 @@ from typing import Optional
 
 from fastapi import HTTPException
 
+from app.shared.rarity import CANONICAL_RARITIES
+
 
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -18,8 +20,21 @@ def utc_now() -> datetime:
 
 VALID_ROLES = ("Tank", "DPS", "Healer")
 VALID_AFFECTED_STAT = ("strength", "agility", "intellect", "endurance", "faith", "xp_gain")
-VALID_ITEM_TYPES = ("weapon", "armor", "accessory", "consumable")
-VALID_RARITIES = ("Common", "Uncommon", "Rare", "Epic")
+VALID_ITEM_TYPES = (
+    "weapon", "armor", "legs", "helmet", "accessory",
+    "back", "ring", "trinket", "consumable",
+)
+ITEM_TYPE_TO_SLOT = {
+    "weapon": "weapon",
+    "armor": "chest",
+    "legs": "legs",
+    "helmet": "head",
+    "accessory": "accessory",
+    "back": "back",
+    "ring": "ring",
+    "trinket": "trinket",
+}
+VALID_RARITIES = CANONICAL_RARITIES
 
 
 def validate_item_monetization(item: dict) -> None:
@@ -63,6 +78,12 @@ def _build_item_doc(payload: dict, existing: Optional[dict] = None) -> dict:
     for k in ("name", "slug", "description", "item_type", "rarity"):
         if k in payload:
             base[k] = str(payload[k]).strip()
+    if "item_type" in payload:
+        slot_type = ITEM_TYPE_TO_SLOT.get(base["item_type"])
+        if slot_type:
+            base["slot_type"] = slot_type
+        else:
+            base.pop("slot_type", None)
     for k in ("level_required", "power_score", "strength_bonus", "agility_bonus",
               "intellect_bonus", "endurance_bonus", "faith_bonus"):
         if k in payload:

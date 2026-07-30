@@ -17,6 +17,7 @@ from typing import Optional
 from fastapi import HTTPException
 
 from app.audit.log import write_audit
+from app.adventurers.classless import require_class_hall_assignment
 from app.pvp.rating import apply_match
 from app.pvp.simulator import simulate
 from app.seasons.services import (
@@ -67,12 +68,24 @@ async def _validate_team(db, *, guild_id: str, adventurer_ids: list[str]) -> tup
         return False, warnings
     cursor = db.adventurers.find(
         {"id": {"$in": adventurer_ids}, "guild_id": guild_id},
-        {"_id": 0, "id": 1, "level": 1, "is_available": 1, "name": 1, "role": 1},
+        {"_id": 0, "id": 1, "level": 1, "is_available": 1, "name": 1,
+         "role": 1, "recruit_status": 1, "class_slug": 1,
+         "canonical_class_slug": 1, "class_proficiency": 1,
+         "class_hall_id": 1},
     )
     found = await cursor.to_list(TEAM_SIZE)
     if len(found) != TEAM_SIZE:
         warnings.append("some_adventurers_not_in_guild_or_missing")
         return False, warnings
+    try:
+        require_class_hall_assignment(found, source="pvp.team")
+    except HTTPException:
+        warnings.extend(
+            f"class_hall_required:{a['id']}"
+            for a in found
+            if a.get("recruit_status") == "recruit_unassigned"
+            and not a.get("class_slug")
+        )
     for a in found:
         if not a.get("is_available", True):
             warnings.append(f"adventurer_not_available:{a['id']}")
@@ -135,10 +148,10 @@ async def delete_defense_team(db, *, guild_id: str, actor_user_id: str) -> None:
 async def build_team_summary(db, *, guild_id: str, adventurer_ids: list[str]) -> dict:
     advs = await db.adventurers.find(
         {"id": {"$in": adventurer_ids}, "guild_id": guild_id},
-        {"_id": 0, "id": 1, "name": 1, "level": 1, "role": 1, "team_power": 1,
-         "specialization": 1, "stats": 1},
+        {"_id": 0},
     ).to_list(TEAM_SIZE)
-    total_power = sum(int(a.get("team_power") or 0) for a in advs)
+    from app.expeditions.formulas import adventurer_effective_power
+    total_power = sum(adventurer_effective_power(a) for a in advs)
     avg_level = round(sum(int(a.get("level") or 1) for a in advs) / max(len(advs), 1), 2)
     roles: dict[str, int] = {}
     for a in advs:
@@ -157,21 +170,30 @@ async def build_team_summary(db, *, guild_id: str, adventurer_ids: list[str]) ->
 async def _build_snapshot(db, *, guild: dict, adventurer_ids: list[str]) -> dict:
     advs = await db.adventurers.find(
         {"id": {"$in": adventurer_ids}, "guild_id": guild["id"]},
-        {"_id": 0, "id": 1, "name": 1, "level": 1, "role": 1,
-         "class": 1, "team_power": 1, "stats": 1, "traits": 1, "specialization": 1},
+        {"_id": 0},
     ).to_list(TEAM_SIZE)
     # Equip bonus aggregation (best-effort): use cached team_power as proxy when
     # no per-equip aggregate is available — keeps simulator stable.
     snap_advs = []
     for a in advs:
+        from app.adventurers.career import (
+            career_effective_stats,
+            career_stat_multiplier,
+        )
+        from app.expeditions.formulas import adventurer_effective_power
+        stats = career_effective_stats(a)
+        effective_power = adventurer_effective_power(a)
         snap_advs.append({
             "id": a["id"],
             "name": a.get("name"),
             "class": a.get("class"),
             "role": a.get("role"),
             "level": a.get("level"),
-            "stats": a.get("stats", {}),
-            "equip_bonus": int(a.get("team_power") or 0) // 10,
+            "stats": stats,
+            "rarity_stat_multiplier": career_stat_multiplier(a),
+            "equip_bonus": max(
+                0, int(a.get("team_power") or effective_power) - effective_power
+            ),
             "traits": a.get("traits") or [],
             "specialization": a.get("specialization"),
         })

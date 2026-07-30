@@ -83,7 +83,7 @@ async def _test_user_ids(db, owner_user_ids: list[str]) -> set[str]:
     accounts. We consider an owner a test account if EITHER:
       - `users.is_test_user=True`, OR
       - email matches the test-domain regex `@orbus.test$` /
-        `(^|.+)test@` / `@.+\.test$` (defensive: catches unflagged users
+        `(^|.+)test@` / `@.+\\.test$` (defensive: catches unflagged users
         from older imports).
     """
     if not owner_user_ids:

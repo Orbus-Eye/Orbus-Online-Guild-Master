@@ -131,6 +131,11 @@ async def _run(db, *, dry_run: bool) -> dict[str, int]:
     return {"inserted": inserted, "skipped": skipped, "total": len(RACES)}
 
 
+async def seed_races(db) -> dict[str, int]:
+    """Seed playable races during normal application startup."""
+    return await _run(db, dry_run=False)
+
+
 async def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")

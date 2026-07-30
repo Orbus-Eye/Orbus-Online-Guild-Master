@@ -22,6 +22,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
+from app.dungeons.encounters import COUNTER_THREAT_MAP
+
 
 SUCCESS_BONUS_CAP_PCT = 12  # +12% max
 INJURY_REDUCTION_CAP_PCT = 8  # -8% max
@@ -29,12 +31,17 @@ INJURY_REDUCTION_CAP_PCT = 8  # -8% max
 
 async def _load_counters_map(db) -> dict[str, set[str]]:
     """Resolve `counter_slug → set(threat_slugs it counters)`."""
-    out: dict[str, set[str]] = {}
+    out = {
+        slug: set(threats)
+        for slug, threats in COUNTER_THREAT_MAP.items()
+    }
     async for row in db.counter_tags.find(
         {"is_active": True},
         {"_id": 0, "slug": 1, "threats_countered": 1},
     ):
-        out[row["slug"]] = set(row.get("threats_countered") or [])
+        out.setdefault(row["slug"], set()).update(
+            row.get("threats_countered") or []
+        )
     return out
 
 
@@ -44,7 +51,9 @@ async def _gather_team_counter_slugs(
     """Collect every `counter_tag` slug provided by the team via spec or traits."""
     spec_slugs: set[str] = set()
     trait_slugs: set[str] = set()
+    counters: set[str] = set()
     for adv in team_members:
+        counters.update(adv.get("class_mechanic_counter_tags") or [])
         s = adv.get("specialization_slug")
         if s:
             spec_slugs.add(s)
@@ -53,7 +62,6 @@ async def _gather_team_counter_slugs(
                 trait_slugs.add(t)
             elif isinstance(t, dict) and t.get("slug"):
                 trait_slugs.add(t["slug"])
-    counters: set[str] = set()
     if spec_slugs:
         async for row in db.class_specializations.find(
             {"slug": {"$in": list(spec_slugs)}},

@@ -30,6 +30,7 @@ Cost model:
     recruit (no discount → no P2W). The bench is a convenience, not an
     economy lever. Documented explicitly.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -40,6 +41,7 @@ from fastapi import HTTPException
 from pymongo import ReturnDocument
 
 from app.shared.constants import RECRUITMENT_COST_GOLD
+from app.recruitment.services import MAX_CLASSLESS_RECRUITS_PER_GUILD
 
 
 MAX_FROZEN_SLOTS = 2
@@ -49,10 +51,29 @@ MAX_FROZEN_SLOTS = 2
 # Single source of truth for which fields are persisted in a frozen snapshot.
 # Adding a field here propagates to GET /frozen + the recruit-frozen flow.
 _SNAPSHOT_FIELDS = (
-    "name", "adventurer_class_id", "class_name", "class_role", "rarity",
-    "level", "experience",
-    "strength", "agility", "intellect", "endurance", "faith",
-    "stamina", "morale", "traits",
+    "name",
+    "adventurer_class_id",
+    "class_name",
+    "class_role",
+    "rarity",
+    "class_proficiency",
+    "class_slug",
+    "canonical_class_slug",
+    "class_hall_id",
+    "class_hall_assigned_at",
+    "hall_master_witness_npc",
+    "recruit_status",
+    "narrative_intro_shown",
+    "level",
+    "experience",
+    "strength",
+    "agility",
+    "intellect",
+    "endurance",
+    "faith",
+    "stamina",
+    "morale",
+    "traits",
 )
 
 
@@ -79,6 +100,7 @@ def build_snapshot_from_offer(offer: dict) -> dict:
 def frozen_public(snap: dict) -> dict:
     """Public projection — mirrors `candidate_public` shape for FE parity."""
     from app.expeditions.formulas import adventurer_base_power
+
     base_power = adventurer_base_power(snap)
     return {
         "frozen_id": snap["frozen_id"],
@@ -87,9 +109,23 @@ def frozen_public(snap: dict) -> dict:
         # prevents this on the server side).
         "original_candidate_id": snap.get("original_candidate_id"),
         "name": snap["name"],
-        "adventurer_class_id": snap["adventurer_class_id"],
-        "class_name": snap["class_name"],
-        "class_role": snap["class_role"],
+        "adventurer_class_id": snap.get("adventurer_class_id"),
+        "class_name": snap.get("class_name"),
+        "class_role": snap.get("class_role"),
+        "class_slug": snap.get("class_slug"),
+        "canonical_class_slug": snap.get("canonical_class_slug"),
+        "class_proficiency": snap.get("class_proficiency"),
+        "class_hall_id": snap.get("class_hall_id"),
+        "recruit_status": snap.get("recruit_status"),
+        "class_selection_required": (
+            snap.get("recruit_status") == "recruit_unassigned"
+            and not snap.get("class_slug")
+        ),
+        "class_display_name_it": (
+            "Senza Classe"
+            if snap.get("recruit_status") == "recruit_unassigned"
+            else snap.get("class_name")
+        ),
         "rarity": snap["rarity"],
         "level": snap["level"],
         "experience": snap["experience"],
@@ -121,7 +157,9 @@ def _bench(guild: dict) -> dict:
 
 async def get_frozen(db, guild_id: str) -> dict:
     """Return the bench payload for a guild (initializes lazily)."""
-    g = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "recruit_freeze_bench": 1})
+    g = await db.guilds.find_one(
+        {"id": guild_id}, {"_id": 0, "recruit_freeze_bench": 1}
+    )
     bench = _bench(g or {})
     return {
         "frozen": [frozen_public(s) for s in bench["frozen_candidates"]],
@@ -160,7 +198,10 @@ async def freeze_candidate(db, guild: dict, candidate_id: str) -> dict:
         )
     # Guard: cannot freeze the same offer twice (idempotency at the
     # original_candidate_id level — relevant if the FE double-submits).
-    if any(s.get("original_candidate_id") == candidate_id for s in bench["frozen_candidates"]):
+    if any(
+        s.get("original_candidate_id") == candidate_id
+        for s in bench["frozen_candidates"]
+    ):
         raise HTTPException(
             status_code=409,
             detail={
@@ -194,7 +235,11 @@ async def freeze_candidate(db, guild: dict, candidate_id: str) -> dict:
             # `$expr` lets us inspect the array length atomically.
             "$expr": {
                 "$lt": [
-                    {"$size": {"$ifNull": ["$recruit_freeze_bench.frozen_candidates", []]}},
+                    {
+                        "$size": {
+                            "$ifNull": ["$recruit_freeze_bench.frozen_candidates", []]
+                        }
+                    },
                     MAX_FROZEN_SLOTS,
                 ]
             },
@@ -212,7 +257,9 @@ async def freeze_candidate(db, guild: dict, candidate_id: str) -> dict:
     if not updated:
         # Compensating insert: restore the offer we just pulled.
         try:
-            await db.recruitment_offers.insert_one({k: v for k, v in offer.items() if k != "_id"})
+            await db.recruitment_offers.insert_one(
+                {k: v for k, v in offer.items() if k != "_id"}
+            )
         except Exception:
             pass
         raise HTTPException(
@@ -227,8 +274,10 @@ async def freeze_candidate(db, guild: dict, candidate_id: str) -> dict:
     # Best-effort audit (NEVER fail the response on audit error).
     try:
         from app.audit.log import write_audit
+
         await write_audit(
-            db, event_type="recruit_candidate_frozen",
+            db,
+            event_type="recruit_candidate_frozen",
             actor_guild_id=guild["id"],
             related_entity_id=snap["frozen_id"],
             source="recruitment.freeze",
@@ -260,7 +309,9 @@ async def unfreeze_candidate(db, guild: dict, frozen_id: str) -> dict:
             "recruit_freeze_bench.frozen_candidates.frozen_id": frozen_id,
         },
         {
-            "$pull": {"recruit_freeze_bench.frozen_candidates": {"frozen_id": frozen_id}},
+            "$pull": {
+                "recruit_freeze_bench.frozen_candidates": {"frozen_id": frozen_id}
+            },
             "$set": {"updated_at": _now_utc().isoformat()},
         },
         projection={"_id": 0, "recruit_freeze_bench": 1},
@@ -276,8 +327,10 @@ async def unfreeze_candidate(db, guild: dict, frozen_id: str) -> dict:
         )
     try:
         from app.audit.log import write_audit
+
         await write_audit(
-            db, event_type="recruit_candidate_unfrozen",
+            db,
+            event_type="recruit_candidate_unfrozen",
             actor_guild_id=guild["id"],
             related_entity_id=frozen_id,
             source="recruitment.unfreeze",
@@ -304,6 +357,43 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
          gold + push snapshot back to bench + raise 423.
       5. Audit `recruit_frozen_candidate_hired` on success.
     """
+    preview = next(
+        (
+            candidate
+            for candidate in _bench(guild)["frozen_candidates"]
+            if candidate.get("frozen_id") == frozen_id
+        ),
+        None,
+    )
+    preview_is_classless = bool(
+        preview
+        and (
+            preview.get("recruit_status") == "recruit_unassigned"
+            or (not preview.get("class_slug") and not preview.get("class_name"))
+        )
+    )
+    if preview_is_classless:
+        undecided = await db.adventurers.count_documents(
+            {
+                "guild_id": guild["id"],
+                "recruit_status": "recruit_unassigned",
+                "is_retired": {"$ne": True},
+            }
+        )
+        if undecided >= MAX_CLASSLESS_RECRUITS_PER_GUILD:
+            raise HTTPException(
+                status_code=423,
+                detail={
+                    "code": "recruit.classless_cap_reached",
+                    "current": undecided,
+                    "cap": MAX_CLASSLESS_RECRUITS_PER_GUILD,
+                    "user_message": (
+                        "Hai già tre reclute senza classe. La recluta resta "
+                        "al sicuro in panchina finché non scegli una Sala."
+                    ),
+                },
+            )
+
     # Step 1: atomic pull of the snapshot from the bench.
     before = await db.guilds.find_one_and_update(
         {
@@ -311,7 +401,9 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
             "recruit_freeze_bench.frozen_candidates.frozen_id": frozen_id,
         },
         {
-            "$pull": {"recruit_freeze_bench.frozen_candidates": {"frozen_id": frozen_id}},
+            "$pull": {
+                "recruit_freeze_bench.frozen_candidates": {"frozen_id": frozen_id}
+            },
         },
         projection={"_id": 0, "recruit_freeze_bench": 1},
         return_document=ReturnDocument.BEFORE,
@@ -325,15 +417,23 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
             },
         )
     snap = next(
-        (s for s in (before.get("recruit_freeze_bench") or {}).get("frozen_candidates", [])
-         if s.get("frozen_id") == frozen_id),
+        (
+            s
+            for s in (before.get("recruit_freeze_bench") or {}).get(
+                "frozen_candidates", []
+            )
+            if s.get("frozen_id") == frozen_id
+        ),
         None,
     )
     if not snap:
         # Defensive: shouldn't happen given the match clause above.
         raise HTTPException(
             status_code=404,
-            detail={"code": "freeze_bench.not_found", "user_message": "Slot non trovato."},
+            detail={
+                "code": "freeze_bench.not_found",
+                "user_message": "Slot non trovato.",
+            },
         )
 
     async def _restore_snapshot():
@@ -370,9 +470,29 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
         "id": str(uuid.uuid4()),
         "guild_id": guild["id"],
         "name": snap["name"],
-        "adventurer_class_id": snap["adventurer_class_id"],
-        "class_name": snap["class_name"],
-        "class_role": snap["class_role"],
+        "adventurer_class_id": snap.get("adventurer_class_id"),
+        "class_name": snap.get("class_name"),
+        "class_role": snap.get("class_role"),
+        "class_proficiency": snap.get("class_proficiency"),
+        "class_slug": snap.get("class_slug"),
+        "canonical_class_slug": snap.get("canonical_class_slug"),
+        "class_hall_id": snap.get("class_hall_id"),
+        "class_hall_assigned_at": snap.get("class_hall_assigned_at"),
+        "hall_master_witness_npc": snap.get("hall_master_witness_npc"),
+        "recruit_status": (
+            snap.get("recruit_status")
+            or (
+                "class_assigned"
+                if snap.get("adventurer_class_id") or snap.get("class_name")
+                else "recruit_unassigned"
+            )
+        ),
+        "narrative_intro_shown": bool(
+            snap.get(
+                "narrative_intro_shown",
+                bool(snap.get("adventurer_class_id") or snap.get("class_name")),
+            )
+        ),
         "rarity": snap["rarity"],
         "level": snap["level"],
         "experience": snap["experience"],
@@ -394,7 +514,38 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
 
     # Step 4: post-insert cap re-count.
     try:
+        if adv_doc["recruit_status"] == "recruit_unassigned":
+            undecided = await db.adventurers.count_documents(
+                {
+                    "guild_id": guild["id"],
+                    "recruit_status": "recruit_unassigned",
+                    "is_retired": {"$ne": True},
+                }
+            )
+            if undecided > MAX_CLASSLESS_RECRUITS_PER_GUILD:
+                await db.adventurers.delete_one({"id": adv_doc["id"]})
+                await db.guilds.update_one(
+                    {"id": guild["id"]},
+                    {
+                        "$inc": {"gold": cost},
+                        "$set": {"updated_at": now.isoformat()},
+                    },
+                )
+                await _restore_snapshot()
+                raise HTTPException(
+                    status_code=423,
+                    detail={
+                        "code": "recruit.classless_cap_reached",
+                        "current": undecided - 1,
+                        "cap": MAX_CLASSLESS_RECRUITS_PER_GUILD,
+                        "user_message": (
+                            "Limite di tre reclute senza classe raggiunto. "
+                            "La recluta è tornata in panchina."
+                        ),
+                    },
+                )
         from app.territory.guards import compute_adventurer_cap_state
+
         cap_state = await compute_adventurer_cap_state(db, guild["id"])
         if int(cap_state.get("current", 0)) > int(cap_state.get("cap", 0)):
             # Loser branch: rollback insert + refund gold + restore snapshot.
@@ -434,8 +585,10 @@ async def recruit_from_bench(db, guild: dict, frozen_id: str) -> tuple[dict, dic
     final_guild = await db.guilds.find_one({"id": guild["id"]}, {"_id": 0})
     try:
         from app.audit.log import write_audit
+
         await write_audit(
-            db, event_type="recruit_frozen_candidate_hired",
+            db,
+            event_type="recruit_frozen_candidate_hired",
             actor_guild_id=guild["id"],
             related_entity_id=adv_doc["id"],
             source="recruitment.recruit_frozen",

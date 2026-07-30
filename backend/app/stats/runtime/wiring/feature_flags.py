@@ -24,6 +24,7 @@ This module exposes:
 PM normalization Message 170 §13: use `6-conditions gate` label. The term
 "quintuple-gate" is DEPRECATED.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -42,13 +43,25 @@ class DrainGateContext:
 
     is_test_user: bool  # trusted authenticated user.is_test_user
     environment_is_localhost_isolated: bool  # server-side environment inspection
-    mongo_target_allowlisted: bool  # target DB verified vs allowlist (orbus_r16_rt2b_test / *_it_*)
+    mongo_target_allowlisted: (
+        bool  # target DB verified vs allowlist (orbus_r16_rt2b_test / *_it_*)
+    )
+
+
+@dataclass(frozen=True)
+class EffectGateContext:
+    """Server-authoritative inputs for the RT2-C-P2 five-condition gate."""
+
+    is_test_user: bool
+    environment_is_localhost_isolated: bool
+    mongo_target_allowlisted: bool
 
 
 # Reason codes emitted on gate rejection (audit correlation).
 GATE_REASON_TRANSIENT_OFF: str = "TRANSIENT_STATE_DISABLED"
 GATE_REASON_CLASS_OFF: str = "CLASS_TRANSITIONS_DISABLED"
 GATE_REASON_DRAIN_OFF: str = "DRAIN_TRANSITIONS_DISABLED"
+GATE_REASON_EFFECT_OFF: str = "ITEM_EFFECT_ENGINE_DISABLED"
 GATE_REASON_TEST_USER: str = "TEST_USER_BOUNDARY_VIOLATION"
 GATE_REASON_ENV: str = "ENVIRONMENT_NOT_LOCALHOST_ISOLATED"
 GATE_REASON_DB: str = "DB_NOT_ALLOWLISTED"
@@ -85,6 +98,27 @@ def is_drain_gate_open(context: DrainGateContext) -> Tuple[bool, str]:
     return True, GATE_REASON_OPEN
 
 
+def is_effect_gate_open(context: EffectGateContext) -> Tuple[bool, str]:
+    """Evaluate the RT2-C-P2 five-condition effect integration gate.
+
+    The generic engine is intentionally independent from CdV class/drain
+    switches. CdV consumer hooks have their own reserved kill-switch and are
+    not activated in P2.
+    """
+
+    if not _flags.is_enabled("cdv_transient_state_enabled"):
+        return False, GATE_REASON_TRANSIENT_OFF
+    if not _flags.is_enabled("item_effect_engine_enabled"):
+        return False, GATE_REASON_EFFECT_OFF
+    if context.is_test_user is not True:
+        return False, GATE_REASON_TEST_USER
+    if context.environment_is_localhost_isolated is not True:
+        return False, GATE_REASON_ENV
+    if context.mongo_target_allowlisted is not True:
+        return False, GATE_REASON_DB
+    return True, GATE_REASON_OPEN
+
+
 def gate_snapshot() -> dict:
     """Diagnostic snapshot of the 3 flag conditions (not the runtime context).
 
@@ -93,18 +127,35 @@ def gate_snapshot() -> dict:
     """
     return {
         "cdv_transient_state_enabled": _flags.is_enabled("cdv_transient_state_enabled"),
-        "cdv_class_transitions_enabled": _flags.is_enabled("cdv_class_transitions_enabled"),
-        "cdv_drain_transitions_enabled": _flags.is_enabled("cdv_drain_transitions_enabled"),
+        "cdv_class_transitions_enabled": _flags.is_enabled(
+            "cdv_class_transitions_enabled"
+        ),
+        "cdv_drain_transitions_enabled": _flags.is_enabled(
+            "cdv_drain_transitions_enabled"
+        ),
+    }
+
+
+def effect_gate_snapshot() -> dict:
+    """Read-only snapshot of the two flag conditions in the effect gate."""
+
+    return {
+        "cdv_transient_state_enabled": _flags.is_enabled("cdv_transient_state_enabled"),
+        "item_effect_engine_enabled": _flags.is_enabled("item_effect_engine_enabled"),
     }
 
 
 __all__ = [
     "DrainGateContext",
+    "EffectGateContext",
     "is_drain_gate_open",
+    "is_effect_gate_open",
     "gate_snapshot",
+    "effect_gate_snapshot",
     "GATE_REASON_TRANSIENT_OFF",
     "GATE_REASON_CLASS_OFF",
     "GATE_REASON_DRAIN_OFF",
+    "GATE_REASON_EFFECT_OFF",
     "GATE_REASON_TEST_USER",
     "GATE_REASON_ENV",
     "GATE_REASON_DB",

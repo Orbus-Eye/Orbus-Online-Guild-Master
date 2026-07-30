@@ -22,11 +22,14 @@ Cap invariants (RT1 verbatim):
 - Fragment count ≤ 5 · overflow discarded
 - focus_bonus_usage per resource_segment ≤ 2
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
+
+from app.stats.runtime.effects.models import EffectInstance
 
 
 # ═══════════════════════ Enum · runtime_status ═══════════════════════
@@ -96,7 +99,9 @@ class DrainDoc:
     # ── RT2-B-2B-2-1 code gate additions (default-valued for backward compat) ──
     mark_id: str = ""  # binding to MarkDoc.mark_id · empty for RT1 legacy fixtures
     cancelled_at: Optional[str] = None
-    cancellation_reason: Optional[str] = None  # one of 8 canonical (see transitions.models.ReasonCode)
+    cancellation_reason: Optional[str] = (
+        None  # one of 8 canonical (see transitions.models.ReasonCode)
+    )
     drain_version: int = 1
 
 
@@ -203,6 +208,7 @@ class ExpeditionRuntimeState:
     lease: Optional[WriterLease] = None  # None if no writer currently
     loadout_snapshot_version: int = 0  # reserved for future RT2-A wiring
     adventurer_class_states: Tuple[Tuple[str, AdventurerClassState], ...] = ()
+    active_effect_instances: Tuple[EffectInstance, ...] = ()
     processed_event_keys: Tuple[EventReceipt, ...] = ()
     last_event_sequence: int = 0
     fencing_token: int = 0  # writer's current fencing_token (0 if no writer)
@@ -226,4 +232,12 @@ class ExpeditionRuntimeState:
         for r in self.processed_event_keys:
             if r.event_id == event_id:
                 return r
+        return None
+
+    def effect_instance_for(self, effect_instance_id: str) -> Optional[EffectInstance]:
+        """Read helper for a top-level active generic-effect instance."""
+
+        for instance in self.active_effect_instances:
+            if instance.effect_instance_id == effect_instance_id:
+                return instance
         return None

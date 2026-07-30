@@ -5,9 +5,7 @@ Scope: Applica in modo CONSERVATIVO due fix P0 identificati dall'audit R16.4:
 1. Popolare `required_level` su tutti i 22 dungeon (attualmente = 0 / assente)
    in modo coerente con `recommended_power`, `difficulty`, dimensione team
    e content_family.
-2. Alzare `min_level` sui 5 item Legendary (attualmente = 1 / assente) a
-   valori appropriati (8 baseline; 9 per outlier equip_power ≥ 55, che è
-   il top-40% del range Legendary).
+2. Portare `min_level` degli item Legendary al cap avventuriero autorevole.
 
 ## Modes
 
@@ -277,25 +275,27 @@ _DUNGEON_MAPPING: dict[str, dict[str, Any]] = {
     },
 }
 
+# The historical rationale above is preserved for auditability, but the
+# executable values follow the current level-80 contract.
+from app.shared.content_curve import DUNGEON_CURVE  # noqa: E402
+from app.shared.constants import ADVENTURER_MAX_LEVEL  # noqa: E402
+
+for _slug, _curve in DUNGEON_CURVE.items():
+    if _slug in _DUNGEON_MAPPING:
+        _DUNGEON_MAPPING[_slug]["required_level"] = _curve.required_level
+        _DUNGEON_MAPPING[_slug]["bucket"] = _curve.bucket
+
 
 # ═════════════════════════════════════════════════════════════════════
 # 3. LEGENDARY — regole
 # ═════════════════════════════════════════════════════════════════════
 #
-# Regola:
-#   - Legendary standard              → min_level = 8
-#   - Legendary con equip_power ≥ 60  → min_level = 9
-#     (top-40% del range Legendary reale [43, 73]: soglia = 55, arrotondato
-#      conservativamente a 60 per non essere troppo aggressivi)
-#   - `drake_slayer_blade` (equip_power=73, il più alto): min_level = 9
-#
-# NB: 60 è > 55 (top-40%) per scelta CONSERVATIVA che allinea l'utente:
-#     applichiamo il boost min_lvl=9 solo agli outlier veri, non alla soglia
-#     matematica. Il report renderà esplicito questo compromesso.
+# Regola corrente: tutti i Legendary sono contenuto endgame e richiedono il
+# livello massimo. La soglia di potenza resta soltanto come dato di audit.
 
 _LEGENDARY_TIER_THRESHOLD = 60
-_LEGENDARY_MIN_STANDARD = 8
-_LEGENDARY_MIN_OUTLIER = 9
+_LEGENDARY_MIN_STANDARD = ADVENTURER_MAX_LEVEL
+_LEGENDARY_MIN_OUTLIER = ADVENTURER_MAX_LEVEL
 
 
 def _item_equip_power(item: dict) -> int:
@@ -310,11 +310,11 @@ def _propose_legendary_min_level(item: dict) -> tuple[int, str]:
     if eq >= _LEGENDARY_TIER_THRESHOLD:
         return _LEGENDARY_MIN_OUTLIER, (
             f"Legendary con equip_power={eq} ≥ {_LEGENDARY_TIER_THRESHOLD} "
-            f"(outlier top-tier del range Legendary): min_level 9."
+            f"(outlier top-tier): min_level {ADVENTURER_MAX_LEVEL}."
         )
     return _LEGENDARY_MIN_STANDARD, (
         f"Legendary con equip_power={eq} < {_LEGENDARY_TIER_THRESHOLD}: "
-        f"min_level baseline 8."
+        f"min_level {ADVENTURER_MAX_LEVEL}."
     )
 
 

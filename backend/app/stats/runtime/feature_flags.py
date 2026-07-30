@@ -4,17 +4,17 @@ Meccanismo:
 - Environment / centralized application settings
 - Letti a startup (memoizzati)
 - Server controlled (nessun canale client / query param / DB dinamico / API pubblica)
-- Default `false` per tutti i 6 flag
+- Default `false` per tutti gli 8 flag canonici
 - Fail-safe:
     * `missing flag → false`
     * `invalid flag → startup validation failure OR false with explicit ERROR log`
 - Nessun flag auto-abilitato in produzione
 
-I 6 flag richiesti (P0Q04 verbatim):
+Registry evolutivo (8 identificatori totali, nessun nono flag in P2):
     runtime_stat_soft_cap_enabled       (attivabile solo in ambiente autorizzato PM)
     runtime_stat_shadow_enabled         (attivabile per diagnostica shadow)
     cdv_transient_state_enabled         (costante-non-attivabile in RT2-A · RT2-B target)
-    item_effect_engine_enabled          (costante-non-attivabile in RT2-A · RT2-C target)
+    item_effect_engine_enabled          (attivabile local/test da RT2-C-P2)
     cdv_item_hooks_enabled              (costante-non-attivabile in RT2-A · RT2-E target)
     effect_observability_enabled        (costante-non-attivabile in RT2-A · RT2-D target)
 
@@ -23,14 +23,11 @@ Valid truthy values (case-insensitive): "1", "true", "yes", "on".
 Valid falsy values (case-insensitive): "0", "false", "no", "off", "" (empty).
 Any other value → `_invalid_flag_action` (default: log ERROR + return False).
 
-In RT2-A: solo le prime due flag sono runtime-attivabili. Le altre quattro,
-anche se settate a truthy via env, restano interpretate come "future constants"
-— il modulo `feature_flags` le esporrà come `False` **finché il PM non
-ratifichi il loro attivo runtime** in un dispatch successivo (RT2-B..E).
-Questo enforcement è dichiarativo qui: la funzione `is_enabled(flag_id)`
-restituisce il valore letto per i primi due, e **hard-forza False** per gli
-altri quattro. Nessun test PM-authorized override esiste in RT2-A.
+RT2-B ha promosso i tre flag transient/class/drain. RT2-C-P2 promuove
+`item_effect_engine_enabled` soltanto per il gate local/test isolato. I due
+identificatori consumer/observability restano hard-forced False.
 """
+
 from __future__ import annotations
 
 import logging
@@ -41,10 +38,12 @@ from typing import Final
 logger = logging.getLogger("orbus.rt2_a.feature_flags")
 
 # ─── Flag registry ─────────────────────────────────────────────────────
-RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
-    "runtime_stat_soft_cap_enabled",
-    "runtime_stat_shadow_enabled",
-})
+RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
+    {
+        "runtime_stat_soft_cap_enabled",
+        "runtime_stat_shadow_enabled",
+    }
+)
 
 # RT2-B-2A · PM verdict B2Q07 verbatim (2026-02):
 # `cdv_transient_state_enabled` è ora attivabile via env variable **solo in
@@ -52,39 +51,54 @@ RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
 # settata → il flag resta OFF (fail-safe by default). Nessuna auto-attivazione
 # in produzione: la ratifica del PM autorizza esclusivamente activation locale
 # isolata per shadow wiring RT2-B-2A.
-RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
-    "cdv_transient_state_enabled",
-    # RT2-B-2B-1 · PM Message 151 B2BQ10 verbatim: nuovo flag dedicato per
-    # class-state transitions (Mark, Fragment, Resource Segment). Default OFF.
-    # Attivabile solo con quadruple-gate: transient=true AND class=true AND
-    # is_test_user=true AND environment=localhost isolated AND Mongo target
-    # allowlisted. In produzione l'env var non è settata → resta OFF.
-    "cdv_class_transitions_enabled",
-    # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: dedicated Drain flag
-    # (surgical kill-switch). Default OFF. Attivabile solo con 6-conditions
-    # composite gate (see wiring/feature_flags.py::is_drain_gate_open):
-    #   1. cdv_transient_state_enabled
-    #   2. AND cdv_class_transitions_enabled
-    #   3. AND cdv_drain_transitions_enabled
-    #   4. AND authenticated user.is_test_user
-    #   5. AND environment = localhost isolated
-    #   6. AND Mongo target = allowlisted database
-    # Flag OFF: 0 DB calls · 0 audit events · 0 mutations (Drain path).
-    # Mark/Fragment paths NOT disabled by this flag alone (kill-switch surgical).
-    "cdv_drain_transitions_enabled",
-})
+RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
+    {
+        "cdv_transient_state_enabled",
+        # RT2-B-2B-1 · PM Message 151 B2BQ10 verbatim: nuovo flag dedicato per
+        # class-state transitions (Mark, Fragment, Resource Segment). Default OFF.
+        # Attivabile solo con quadruple-gate: transient=true AND class=true AND
+        # is_test_user=true AND environment=localhost isolated AND Mongo target
+        # allowlisted. In produzione l'env var non è settata → resta OFF.
+        "cdv_class_transitions_enabled",
+        # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: dedicated Drain flag
+        # (surgical kill-switch). Default OFF. Attivabile solo con 6-conditions
+        # composite gate (see wiring/feature_flags.py::is_drain_gate_open):
+        #   1. cdv_transient_state_enabled
+        #   2. AND cdv_class_transitions_enabled
+        #   3. AND cdv_drain_transitions_enabled
+        #   4. AND authenticated user.is_test_user
+        #   5. AND environment = localhost isolated
+        #   6. AND Mongo target = allowlisted database
+        # Flag OFF: 0 DB calls · 0 audit events · 0 mutations (Drain path).
+        # Mark/Fragment paths NOT disabled by this flag alone (kill-switch surgical).
+        "cdv_drain_transitions_enabled",
+    }
+)
 
-RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
-    "item_effect_engine_enabled",
-    "cdv_item_hooks_enabled",
-    "effect_observability_enabled",
-})
+RT2_C_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
+    {
+        # RT2-C-P2: generic effect persistence/dispatcher kill-switch.
+        # This flag alone is insufficient: the effect wiring additionally requires
+        # transient state, trusted test user, localhost isolation and allowlisted DB.
+        "item_effect_engine_enabled",
+    }
+)
+
+RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset(
+    {
+        "cdv_item_hooks_enabled",
+        "effect_observability_enabled",
+    }
+)
 
 ALL_FLAGS: Final[frozenset[str]] = (
-    RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE | RT2_FUTURE_CONSTANTS
+    RT2_A_RUNTIME_ATTIVABILE
+    | RT2_B_RUNTIME_ATTIVABILE
+    | RT2_C_RUNTIME_ATTIVABILE
+    | RT2_FUTURE_CONSTANTS
 )
-# RT2-B-2B-2-1 adds `cdv_drain_transitions_enabled` → total = 8.
-assert len(ALL_FLAGS) == 8, "RT2-A/B/future must expose exactly 8 flags total post RT2-B-2B-2-1"
+# P2 promotes one reserved identifier; it does not add a ninth flag.
+assert len(ALL_FLAGS) == 8, "RT2-A/B/C/future must expose exactly 8 flags total"
 
 DEFAULT_VALUE: Final[bool] = False
 
@@ -115,7 +129,7 @@ def _parse_value(raw: str | None, flag_id: str) -> bool:
 
 @lru_cache(maxsize=None)
 def _read_raw_env_snapshot() -> dict[str, bool]:
-    """Legge tutti i 6 flag da environment ONE SHOT (memoized).
+    """Legge tutti gli 8 flag da environment ONE SHOT (memoized).
 
     Chiamato lazy al primo `is_enabled`. Idempotente.
     """
@@ -132,7 +146,8 @@ def is_enabled(flag_id: str) -> bool:
     Enforcement:
     - flag ∉ ALL_FLAGS → log ERROR + return False
     - flag ∈ RT2_FUTURE_CONSTANTS → hard-force False (indipendente da env)
-    - flag ∈ RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE →
+    - flag ∈ RT2_A_RUNTIME_ATTIVABILE | RT2_B_RUNTIME_ATTIVABILE |
+      RT2_C_RUNTIME_ATTIVABILE →
       ritorna valore letto da env (default False)
 
     RT2-B-2A · PM verdict B2Q07 verbatim (2026-02):
@@ -167,6 +182,7 @@ __all__ = [
     "ALL_FLAGS",
     "RT2_A_RUNTIME_ATTIVABILE",
     "RT2_B_RUNTIME_ATTIVABILE",
+    "RT2_C_RUNTIME_ATTIVABILE",
     "RT2_FUTURE_CONSTANTS",
     "DEFAULT_VALUE",
     "is_enabled",

@@ -300,7 +300,10 @@ async def list_eligible_items(
         ).to_list(500)
         items_map = {it["id"]: it for it in items}
 
-    equipable_types = {"weapon", "armor", "accessory", "shield"}
+    equipable_types = {
+        "weapon", "armor", "chest", "legs", "helmet", "head",
+        "accessory", "back", "ring", "trinket", "shield",
+    }
     out: list[dict] = []
     seen: set[str] = set()
     for r in inv_rows:

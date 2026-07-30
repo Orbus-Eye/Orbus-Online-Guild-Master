@@ -32,6 +32,7 @@ const RarityBadge = ({ value }) => {
         Rare: "#3b82f6",
         Epic: "#a855f7",
         Legendary: "#f59e0b",
+        Unique: "#ef4444",
     }[value] || "#9ca3af";
     return (
         <span

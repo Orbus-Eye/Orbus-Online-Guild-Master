@@ -48,6 +48,29 @@ async def create_all_indexes(db) -> None:
     await db.adventurers.create_index(
         [("guild_id", ASCENDING)], name="adventurers_guild_idx"
     )
+    await db.adventurers.create_index(
+        [
+            ("guild_id", ASCENDING),
+            ("recruit_status", ASCENDING),
+            ("is_retired", ASCENDING),
+        ],
+        name="adventurers_guild_recruit_status_idx",
+    )
+    await db.adventurer_career_events.create_index(
+        [("id", ASCENDING)],
+        unique=True,
+        name="adventurer_career_event_id_unique",
+    )
+    await db.adventurer_career_events.create_index(
+        [("adventurer_id", ASCENDING), ("created_at", ASCENDING)],
+        name="adventurer_career_event_history",
+    )
+    await db.reward_secret_rolls.create_index(
+        [("id", ASCENDING)], unique=True, name="reward_secret_rolls_id_unique"
+    )
+    await db.reward_global_uniques.create_index(
+        [("id", ASCENDING)], unique=True, name="reward_global_uniques_id_unique"
+    )
     await db.recruitment_offers.create_index(
         [("id", ASCENDING)], unique=True, name="offers_id_unique"
     )
@@ -60,6 +83,12 @@ async def create_all_indexes(db) -> None:
     await db.dungeons.create_index([("id", ASCENDING)], unique=True, name="dungeons_id_unique")
     await db.items.create_index([("slug", ASCENDING)], unique=True, name="items_slug_unique")
     await db.items.create_index([("id", ASCENDING)], unique=True, name="items_id_unique")
+    await db.items.create_index(
+        [("blueprint_id", ASCENDING)],
+        unique=True,
+        partialFilterExpression={"blueprint_id": {"$type": "string"}},
+        name="items_blueprint_id_unique",
+    )
     await db.expeditions.create_index(
         [("id", ASCENDING)], unique=True, name="expeditions_id_unique"
     )
@@ -76,6 +105,42 @@ async def create_all_indexes(db) -> None:
     await db.expedition_members.create_index(
         [("expedition_id", ASCENDING)], name="members_exp_idx"
     )
+    await db.raid_reward_grants.create_index(
+        [("raid_id", ASCENDING)],
+        unique=True,
+        name="raid_reward_grant_raid_unique",
+    )
+    await db.raid_reward_grants.create_index(
+        [("guild_id", ASCENDING), ("created_at", ASCENDING)],
+        name="raid_reward_grant_guild_history",
+    )
+    await db.raid_item_reward_grants.create_index(
+        [("raid_id", ASCENDING)],
+        unique=True,
+        name="raid_item_reward_grant_raid_unique",
+    )
+    await db.raid_item_reward_grants.create_index(
+        [("guild_id", ASCENDING), ("created_at", ASCENDING)],
+        name="raid_item_reward_grant_guild_history",
+    )
+    await db.tester_release_checklists.create_index(
+        [("id", ASCENDING)],
+        unique=True,
+        name="tester_release_checklist_id_unique",
+    )
+    await db.tester_release_checklists.create_index(
+        [("target_user_id", ASCENDING), ("recorded_at", ASCENDING)],
+        name="tester_release_checklist_user_history",
+    )
+    await db.reward_source_grants.create_index(
+        [("grant_key", ASCENDING)],
+        unique=True,
+        name="reward_source_grant_key_unique",
+    )
+    await db.reward_source_grants.create_index(
+        [("guild_id", ASCENDING), ("source_policy_id", ASCENDING)],
+        name="reward_source_grant_guild_source",
+    )
     await db.inventory_items.create_index(
         [("id", ASCENDING)], unique=True, name="inv_id_unique"
     )
@@ -83,6 +148,58 @@ async def create_all_indexes(db) -> None:
         [("guild_id", ASCENDING), ("item_id", ASCENDING)],
         unique=True,
         name="inv_guild_item_unique",
+    )
+    await db.inventory_items.create_index(
+        [("source_grant_id", ASCENDING)],
+        unique=True,
+        partialFilterExpression={"source_grant_id": {"$type": "string"}},
+        name="inv_source_grant_unique",
+    )
+    # R18.6 — classless recruit journey and reconcile-forward starter reward.
+    await db.class_hall_trial_sessions.create_index(
+        [("id", ASCENDING)],
+        unique=True,
+        name="class_hall_trial_id_unique",
+    )
+    await db.class_hall_trial_sessions.create_index(
+        [
+            ("guild_id", ASCENDING),
+            ("adventurer_id", ASCENDING),
+            ("hall_id", ASCENDING),
+            ("status", ASCENDING),
+        ],
+        name="class_hall_trial_assignment_lookup",
+    )
+    await db.class_hall_trial_sessions.create_index(
+        [("expires_at", ASCENDING)],
+        expireAfterSeconds=0,
+        name="class_hall_trial_ttl",
+    )
+    await db.class_hall_reward_grants.create_index(
+        [
+            ("guild_id", ASCENDING),
+            ("adventurer_id", ASCENDING),
+            ("hall_id", ASCENDING),
+        ],
+        unique=True,
+        name="class_hall_reward_assignment_unique",
+    )
+    await db.class_hall_reward_grants.create_index(
+        [("status", ASCENDING)],
+        name="class_hall_reward_status_idx",
+    )
+    await db.class_hall_item_grants.create_index(
+        [
+            ("guild_id", ASCENDING),
+            ("adventurer_id", ASCENDING),
+            ("item_id", ASCENDING),
+        ],
+        unique=True,
+        name="class_hall_item_grant_unique",
+    )
+    await db.class_hall_item_grants.create_index(
+        [("status", ASCENDING)],
+        name="class_hall_item_grant_status_idx",
     )
 
     # ─── Phase 6: Equipped items ──────────────────────────────────────────────

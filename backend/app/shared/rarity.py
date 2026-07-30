@@ -5,7 +5,7 @@ Storicamente convivevano forme miste (es. `Legendary` e `legendary`
 sullo stesso schema), causando bug su filtri/sort case-sensitive.
 
 La forma canonica è **Capitalized**:
-  `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`.
+  `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`, `Unique`.
 
 Uso:
     from app.shared.rarity import canonicalize_rarity, CANONICAL_RARITIES
@@ -23,7 +23,7 @@ riconoscibile ritorna None; il chiamante decide se rifiutare l'input
 from __future__ import annotations
 
 CANONICAL_RARITIES: tuple[str, ...] = (
-    "Common", "Uncommon", "Rare", "Epic", "Legendary",
+    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique",
 )
 
 _LOWER_TO_CANONICAL: dict[str, str] = {r.lower(): r for r in CANONICAL_RARITIES}

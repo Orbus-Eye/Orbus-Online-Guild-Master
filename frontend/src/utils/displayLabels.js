@@ -17,13 +17,19 @@ const RARITY_IT = {
     rare: "Raro",
     epic: "Epico",
     legendary: "Leggendario",
+    unique: "Unico",
     relic: "Reliquia",
 };
 
 const ITEM_TYPE_IT = {
     weapon: "Arma",
-    armor: "Armatura",
+    armor: "Corazza",
+    legs: "Gambe",
+    helmet: "Elmo",
     accessory: "Accessorio",
+    back: "Schiena",
+    ring: "Anello",
+    trinket: "Monile",
     consumable: "Consumabile",
     material: "Materiale",
 };

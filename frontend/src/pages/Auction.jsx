@@ -25,6 +25,7 @@ const RARITY_COLOR = {
     Rare: "text-sky-300",
     Epic: "text-fuchsia-300",
     Legendary: "text-amber-300",
+    Unique: "text-red-300",
 };
 
 const Pill = ({ children, className = "" }) => (
@@ -132,7 +133,7 @@ function BuyTab({ token, lang, t, refreshGuild, myUserId: _myUserId, myGuildId: 
                     onChange={(e) => setFilters((f) => ({ ...f, rarity: e.target.value }))}
                 >
                     <option value="">{t("market.filter_rarity")}</option>
-                    {["Common", "Uncommon", "Rare", "Epic", "Legendary"].map((r) => (
+                    {["Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique"].map((r) => (
                         <option key={r} value={r}>{r}</option>
                     ))}
                 </select>

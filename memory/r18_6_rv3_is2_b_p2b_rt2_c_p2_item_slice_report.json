@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "status": "IMPLEMENTED_LOCAL_VERIFIED_REAL_MONGO_V1_PENDING",
+    "timestamp_utc": "2026-07-28T13:29:33Z",
+    "branch": "main-260728",
+    "anchor_head": "780c05894f60c99745e0a94a3a7c337895a86c4a",
+    "closure_ancestor": "c0d8150cf4aaab259ad0c7aefa5b0a86522ed340",
+    "closure_ancestor_pass": true
+  },
+  "effect_integration": {
+    "top_level_active_effect_tuple": true,
+    "layout": "B",
+    "receipt_capacity": 512,
+    "active_effect_cap": 16,
+    "full_cap_bson_bytes": 235622,
+    "projected_target_bytes": 245760,
+    "hard_limit_bytes": 262144,
+    "public_routes_added": 0,
+    "default_off": true
+  },
+  "starter_item_slice": {
+    "count": 5,
+    "singular_blueprint_ids": true,
+    "singular_display_names_it": true,
+    "lore_reviewed": 5,
+    "static_effect_definitions": 5,
+    "database_executable_rules": false,
+    "items": [
+      {
+        "slug": "iron_sword",
+        "display_name_it": "Lama del Primo Giuramento di Krastlov",
+        "canonical_class_slug": "guerriero",
+        "lore_key": "krastlov",
+        "effect_id": "item.krastlov.first_oath"
+      },
+      {
+        "slug": "balanced_dagger",
+        "display_name_it": "Pugnale dell'Ultimo Passo di Irthe",
+        "canonical_class_slug": "ladro",
+        "lore_key": "irthe",
+        "effect_id": "item.irthe.last_step"
+      },
+      {
+        "slug": "apprentice_staff",
+        "display_name_it": "Bastone della Prima Faglia di Ergolat",
+        "canonical_class_slug": "mago",
+        "lore_key": "ergolat",
+        "effect_id": "item.ergolat.first_fracture"
+      },
+      {
+        "slug": "initiate_robe",
+        "display_name_it": "Veste del Voto Infranto di Halodi",
+        "canonical_class_slug": "paladino",
+        "lore_key": "halodi",
+        "effect_id": "item.halodi.broken_vow"
+      },
+      {
+        "slug": "path_bow",
+        "display_name_it": "Arco del Sentiero Muto di Elfwood",
+        "canonical_class_slug": "cacciatore_di_mostri",
+        "lore_key": "elfwood",
+        "effect_id": "item.elfwood.silent_trail"
+      }
+    ]
+  },
+  "design_catalog_audit": {
+    "blueprints": 1500,
+    "unique_item_ids": 1500,
+    "unique_names_it": 1500,
+    "lore_source_populated": 1500,
+    "legacy_archetypes_represented": 5,
+    "effect_metadata_populated": 0,
+    "pending_or_placeholder": 7,
+    "live_apply_claimed": false
+  },
+  "verification": {
+    "p1_p2_effect_tests_passed": 97,
+    "flags_store_targeted_passed": 119,
+    "item_hook_snapshot_targeted_passed": 27,
+    "complete_local_effect_engine_passed": 543,
+    "real_mongo_run": false,
+    "git_diff_check": "PASS",
+    "critical_flake8": "PASS"
+  },
+  "real_mongo_blocker": {
+    "windows_service_found": false,
+    "localhost_27017_open": false,
+    "docker_found": false,
+    "podman_found": false
+  },
+  "next": [
+    "real_mongo_allowlisted_v1",
+    "classless_recruitment",
+    "class_hall_atomic_assignment",
+    "first_post_hall_item_reward_and_equip"
+  ]
+}
+

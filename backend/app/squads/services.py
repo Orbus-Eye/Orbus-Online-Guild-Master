@@ -68,7 +68,7 @@ def squad_public(doc: dict, adv_index: dict, retired_index: dict | None = None) 
         "updated_at": doc.get("updated_at"),
         "is_archived": doc.get("is_archived", False),
     }
-    if doc.get("squad_type") == "raid_20" and doc.get("raid_parties"):
+    if str(doc.get("squad_type", "")).startswith("raid_") and doc.get("raid_parties"):
         out["raid_parties"] = doc["raid_parties"]
     return out
 
@@ -121,15 +121,22 @@ def _validate_size_and_uniqueness(squad_type: str, adventurer_ids: list[str]):
         raise HTTPException(status_code=422, detail="adventurer_ids.duplicate")
 
 
-def _validate_raid_parties(parties: RaidPartiesIn, adventurer_ids: list[str]):
-    party_lists = [parties.party_1, parties.party_2, parties.party_3, parties.party_4]
-    # Each party size already enforced by Pydantic (5 exact). Intra/inter dedupe:
+def _validate_raid_parties(
+    parties: RaidPartiesIn,
+    adventurer_ids: list[str],
+    expected_roster_size: int,
+):
+    expected_party_count = expected_roster_size // 5
+    expected_keys = {f"party_{idx}" for idx in range(1, expected_party_count + 1)}
+    if set(parties) != expected_keys:
+        raise HTTPException(status_code=422, detail="raid_parties.keys_invalid")
+    party_lists = [parties[f"party_{idx}"] for idx in range(1, expected_party_count + 1)]
     union: list[str] = []
     for plist in party_lists:
-        if len(set(plist)) != 5:
+        if len(plist) != 5 or len(set(plist)) != 5:
             raise HTTPException(status_code=422, detail="raid_parties.party_size_invalid")
         union.extend(plist)
-    if len(set(union)) != 20:
+    if len(set(union)) != expected_roster_size:
         raise HTTPException(status_code=422, detail="raid_parties.cross_party_duplicate")
     if set(union) != set(adventurer_ids):
         raise HTTPException(status_code=422, detail="raid_parties.union_mismatch")
@@ -205,10 +212,14 @@ async def create_squad(
 ) -> dict:
     name_clean = _sanitize_name(payload.name)
     _validate_size_and_uniqueness(payload.squad_type, payload.adventurer_ids)
-    if payload.squad_type == "raid_20":
+    if payload.squad_type.startswith("raid_"):
         if payload.raid_parties is None:
             raise HTTPException(status_code=422, detail="raid_parties.required")
-        _validate_raid_parties(payload.raid_parties, payload.adventurer_ids)
+        _validate_raid_parties(
+            payload.raid_parties,
+            payload.adventurer_ids,
+            SQUAD_SIZE[payload.squad_type],
+        )
     elif payload.raid_parties is not None:
         raise HTTPException(status_code=422, detail="raid_parties.not_allowed_for_type")
 
@@ -226,9 +237,7 @@ async def create_squad(
         "name_lower": name_clean.lower(),
         "squad_type": payload.squad_type,
         "adventurer_ids": list(payload.adventurer_ids),
-        "raid_parties": (
-            payload.raid_parties.model_dump() if payload.raid_parties else None
-        ),
+        "raid_parties": dict(payload.raid_parties) if payload.raid_parties else None,
         "is_archived": False,
         "created_at": now,
         "updated_at": now,
@@ -285,10 +294,14 @@ async def update_squad(
         updates["adventurer_ids"] = list(payload.adventurer_ids)
         new_ids = updates["adventurer_ids"]
 
-    if existing["squad_type"] == "raid_20":
+    if existing["squad_type"].startswith("raid_"):
         if payload.raid_parties is not None:
-            _validate_raid_parties(payload.raid_parties, new_ids)
-            updates["raid_parties"] = payload.raid_parties.model_dump()
+            _validate_raid_parties(
+                payload.raid_parties,
+                new_ids,
+                SQUAD_SIZE[existing["squad_type"]],
+            )
+            updates["raid_parties"] = dict(payload.raid_parties)
         elif payload.adventurer_ids is not None:
             # If member list changed without resupplying parties → invalid.
             raise HTTPException(status_code=422, detail="raid_parties.required_after_member_change")

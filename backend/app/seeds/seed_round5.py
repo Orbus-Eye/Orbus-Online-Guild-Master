@@ -24,6 +24,8 @@ import logging
 import uuid
 from datetime import datetime, timezone
 
+from app.shared.content_curve import DUNGEON_CURVE, RAID_CURVE
+
 logger = logging.getLogger("orbus.seed_round5")
 
 
@@ -214,42 +216,91 @@ DUNGEON_5P_SEED = [
 
 
 # ────────────────────────────────────────────────────────────────────────
-# §M.1 — 3 raid_dungeons
+# Career revamp — four raid sizes: 10 / 15 / 20 / 40
 # ────────────────────────────────────────────────────────────────────────
 RAID_DUNGEON_SEED = [
     {
-        "slug": "broken-bastion-siege",
-        "name": "Siege of the Broken Bastion",
-        "name_it": "Assedio al Bastione Spezzato",
-        "description": "A ruined keep besieged by a horde. Hold the walls long enough to break the siege engines.",
-        "description_it": "Una fortezza in rovina sotto assedio. Tenete le mura abbastanza da spezzare le macchine d'assedio.",
+        "slug": "moonfall-vigil",
+        "name": "Vigil of the Broken Moon",
+        "name_it": "Veglia della Luna Infranta",
+        "description": (
+            "Ten chosen guild members guard the shard that fell beyond Onirade "
+            "and face the shape moving inside its reflected light."
+        ),
+        "description_it": (
+            "Dieci membri scelti vegliano il frammento caduto oltre Onirade e "
+            "affrontano la forma che si muove dentro la sua luce riflessa."
+        ),
+        "lore_source": "Onirade · Cronaca della Tredicesima Eclissi",
+        "boss_name": "Il Riflesso Senza Volto",
+        "narrative_hook": "La luna non si è spezzata nel cielo, ma nel suo riflesso.",
+        "lore_reviewed": True,
         "tier": 1,
-        "recommended_power_combined": 800,
-        "min_roster_size": 20,
-        "required_party_count": 4,
+        "min_roster_size": 10,
+        "required_party_count": 2,
         "required_party_size": 5,
         "party_focus_hints": [
-            {"party_idx": 1, "preferred_role": "Tank", "label_it": "Vanguardia", "label_en": "Vanguard"},
+            {"party_idx": 1, "preferred_role": "Tank",
+             "label_it": "Custodi del Frammento", "label_en": "Shard Wardens"},
+            {"party_idx": 2, "preferred_role": "DPS",
+             "label_it": "Cacciatori dell'Eclissi", "label_en": "Eclipse Hunters"},
+        ],
+        "base_duration_seconds": 1200,
+        "base_gold_reward": 450,
+        "loot_pool_slug": "raid_moonfall_10",
+        "guaranteed_dragon_essence_min": 0,
+        "guaranteed_dragon_essence_max": 1,
+        "gate": {"min_roster_size": 10},
+    },
+    {
+        "slug": "broken-bastion-siege",
+        "name": "Oath of the Broken Bastion",
+        "name_it": "Giuramento del Bastione Spezzato",
+        "description": (
+            "Krastlov's abandoned oath still binds the gate. Fifteen adventurers "
+            "must decide whether to renew it or finally let the fortress die."
+        ),
+        "description_it": (
+            "Il giuramento abbandonato di Krastlov vincola ancora il portale. "
+            "Quindici avventurieri devono rinnovarlo o lasciare finalmente morire la fortezza."
+        ),
+        "lore_source": "Krastlov · Tavole del Primo Giuramento",
+        "boss_name": "Il Castellano Incatenato",
+        "narrative_hook": "Ogni pietra ricorda il nome di chi non tornò.",
+        "lore_reviewed": True,
+        "tier": 2,
+        "min_roster_size": 15,
+        "required_party_count": 3,
+        "required_party_size": 5,
+        "party_focus_hints": [
+            {"party_idx": 1, "preferred_role": "Tank", "label_it": "Avanguardia", "label_en": "Vanguard"},
             {"party_idx": 2, "preferred_role": "Healer", "label_it": "Sostegno", "label_en": "Sustain"},
             {"party_idx": 3, "preferred_role": "DPS", "label_it": "Assalto", "label_en": "Assault"},
-            {"party_idx": 4, "preferred_role": None, "label_it": "Riserva", "label_en": "Reserve"},
         ],
         "base_duration_seconds": 1800,
-        "base_gold_reward": 600,
-        "base_xp_per_member": 100,
-        "loot_pool_slug": "raid_r1",
+        "base_gold_reward": 800,
+        "loot_pool_slug": "raid_bastion_15",
         "guaranteed_dragon_essence_min": 1,
         "guaranteed_dragon_essence_max": 3,
-        "gate": {"min_roster_size": 20},
+        "gate": {"min_roster_size": 15},
     },
     {
         "slug": "necropolis-bells",
-        "name": "Necropolis of a Thousand Bells",
-        "name_it": "Necropoli delle Mille Campane",
-        "description": "Each bell tolls a dead king. Every chime spawns wraiths. The bells will not stop ringing.",
-        "description_it": "Ogni campana rintocca per un re morto. Ogni rintocco evoca spettri. Le campane non smetteranno.",
-        "tier": 1,
-        "recommended_power_combined": 900,
+        "name": "The Bells of Irthe",
+        "name_it": "I Rintocchi di Irthe",
+        "description": (
+            "Twenty voices enter the necropolis where Irthe hid the names of "
+            "the dead inside bronze bells. One bell now speaks a living name."
+        ),
+        "description_it": (
+            "Venti voci entrano nella necropoli dove Irthe nascose i nomi dei "
+            "morti nelle campane di bronzo. Una campana pronuncia ora un nome vivente."
+        ),
+        "lore_source": "Irthe · Registro dei Nomi Taciuti",
+        "boss_name": "Il Campanaro Senza Volto",
+        "narrative_hook": "L'ultima campana conosce il nome del Capogilda.",
+        "lore_reviewed": True,
+        "tier": 3,
         "min_roster_size": 20,
         "required_party_count": 4,
         "required_party_size": 5,
@@ -260,37 +311,48 @@ RAID_DUNGEON_SEED = [
             {"party_idx": 4, "preferred_role": "DPS", "label_it": "Distruttori", "label_en": "Breakers"},
         ],
         "base_duration_seconds": 2400,
-        "base_gold_reward": 700,
-        "base_xp_per_member": 120,
-        "loot_pool_slug": "raid_r1",
-        "guaranteed_dragon_essence_min": 1,
-        "guaranteed_dragon_essence_max": 3,
-        "gate": {"min_roster_size": 20, "min_max_team_power_ever": 200},
+        "base_gold_reward": 1300,
+        "loot_pool_slug": "raid_irthe_bells_20",
+        "guaranteed_dragon_essence_min": 2,
+        "guaranteed_dragon_essence_max": 4,
+        "gate": {"min_roster_size": 20},
     },
     {
         "slug": "dragon-vault",
-        "name": "Vault of the Sleeping Dragon",
-        "name_it": "Volta del Drago Addormentato",
-        "description": "The dragon is asleep. The reward is in its hoard. Do not wake the dragon. You will wake the dragon.",
-        "description_it": "Il drago dorme. Il tesoro è nella sua tana. Non svegliate il drago. Lo sveglierete.",
-        "tier": 2,
-        "recommended_power_combined": 1400,
-        "min_roster_size": 20,
-        "required_party_count": 4,
+        "name": "Conclave of the First Flame",
+        "name_it": "Concilio della Fiamma Primordiale",
+        "description": (
+            "Forty veterans descend beneath the Ariale to judge the ancient "
+            "pact between the first dragons and the peoples of Orbus."
+        ),
+        "description_it": (
+            "Quaranta veterani scendono sotto l'Ariale per giudicare l'antico "
+            "patto fra i primi draghi e i popoli di Orbus."
+        ),
+        "lore_source": "Ariale · Patto delle Fiamme",
+        "boss_name": "Azhur, Memoria della Prima Fiamma",
+        "narrative_hook": "Il drago non custodisce un tesoro: custodisce la versione originale del patto.",
+        "lore_reviewed": True,
+        "tier": 4,
+        "min_roster_size": 40,
+        "required_party_count": 8,
         "required_party_size": 5,
         "party_focus_hints": [
             {"party_idx": 1, "preferred_role": "Tank", "label_it": "Esca", "label_en": "Decoy"},
             {"party_idx": 2, "preferred_role": "DPS", "label_it": "Cacciatori", "label_en": "Hunters"},
             {"party_idx": 3, "preferred_role": "Healer", "label_it": "Sostegno", "label_en": "Sustain"},
             {"party_idx": 4, "preferred_role": "DPS", "label_it": "Ladri", "label_en": "Thieves"},
+            {"party_idx": 5, "preferred_role": "DPS", "label_it": "Araldi della Cenere", "label_en": "Ash Heralds"},
+            {"party_idx": 6, "preferred_role": "Tank", "label_it": "Custodi delle Catene", "label_en": "Chain Wardens"},
+            {"party_idx": 7, "preferred_role": "Healer", "label_it": "Occhi del Vuoto", "label_en": "Void Eyes"},
+            {"party_idx": 8, "preferred_role": None, "label_it": "Ultima Riserva", "label_en": "Final Reserve"},
         ],
         "base_duration_seconds": 3600,
-        "base_gold_reward": 1200,
-        "base_xp_per_member": 200,
-        "loot_pool_slug": "raid_r2",
-        "guaranteed_dragon_essence_min": 2,
-        "guaranteed_dragon_essence_max": 5,
-        "gate": {"min_roster_size": 20, "min_max_team_power_ever": 280},
+        "base_gold_reward": 3000,
+        "loot_pool_slug": "raid_first_flame_40",
+        "guaranteed_dragon_essence_min": 5,
+        "guaranteed_dragon_essence_max": 10,
+        "gate": {"min_roster_size": 40},
     },
 ]
 
@@ -317,6 +379,7 @@ async def seed_5p_dungeons(db) -> int:
     now = _now_iso()
     n = 0
     for d in DUNGEON_5P_SEED:
+        curve = DUNGEON_CURVE[d["slug"]]
         await db.dungeons.update_one(
             {"slug": d["slug"]},
             {
@@ -331,9 +394,11 @@ async def seed_5p_dungeons(db) -> int:
                     "difficulty": d["difficulty"],
                     "required_team_size": d["required_team_size"],
                     "base_duration_seconds": d["base_duration_seconds"],
-                    "recommended_power": d["recommended_power"],
+                    "recommended_power": curve.recommended_power,
                     "base_gold_reward": d["base_gold_reward"],
-                    "base_xp_reward": d["base_xp_reward"],
+                    "base_xp_reward": curve.xp_reward,
+                    "required_level": curve.required_level,
+                    "bucket": curve.bucket,
                     "gate": d.get("gate") or {},
                     "tier_label": d.get("tier_label"),
                     "tags": d.get("tags") or [],
@@ -420,6 +485,31 @@ async def add_guild_raid_fields(db) -> int:
     return res.modified_count
 
 
+async def remove_legacy_recruitment_state(db) -> dict[str, int]:
+    """Erase obsolete random-board and freeze-bench state."""
+    guild_result = await db.guilds.update_many(
+        {
+            "$or": [
+                {"recruit_freeze_bench": {"$exists": True}},
+                {"frozen_candidates": {"$exists": True}},
+                {"recruitment_refreshes": {"$exists": True}},
+            ]
+        },
+        {
+            "$unset": {
+                "recruit_freeze_bench": "",
+                "frozen_candidates": "",
+                "recruitment_refreshes": "",
+            }
+        },
+    )
+    offers_result = await db.recruitment_offers.delete_many({})
+    return {
+        "guilds_cleaned": int(guild_result.modified_count),
+        "offers_removed": int(offers_result.deleted_count),
+    }
+
+
 async def backfill_round4_inventory_defaults(db) -> int:
     """Self-heal inventory_items rows that lost ROUND 4 default fields
     (test residue, partial inserts from older fixtures). Idempotent."""
@@ -475,10 +565,11 @@ async def backfill_round4_inventory_defaults(db) -> int:
 
 
 async def seed_raid_dungeons(db) -> int:
-    """Upsert the 3 raid_dungeons. Idempotent."""
+    """Upsert the four 10/15/20/40 raid dungeons. Idempotent."""
     now = _now_iso()
     n = 0
     for r in RAID_DUNGEON_SEED:
+        curve = RAID_CURVE[r["slug"]]
         await db.raid_dungeons.update_one(
             {"slug": r["slug"]},
             {
@@ -492,15 +583,20 @@ async def seed_raid_dungeons(db) -> int:
                     "name_it": r["name_it"],
                     "description": r["description"],
                     "description_it": r["description_it"],
+                    "lore_source": r["lore_source"],
+                    "boss_name": r["boss_name"],
+                    "narrative_hook": r["narrative_hook"],
+                    "lore_reviewed": bool(r["lore_reviewed"]),
                     "tier": r["tier"],
-                    "recommended_power_combined": r["recommended_power_combined"],
+                    "recommended_power_combined": curve.recommended_power,
+                    "min_adventurer_level": curve.required_level,
                     "min_roster_size": r["min_roster_size"],
                     "required_party_count": r["required_party_count"],
                     "required_party_size": r["required_party_size"],
                     "party_focus_hints": r["party_focus_hints"],
                     "base_duration_seconds": r["base_duration_seconds"],
                     "base_gold_reward": r["base_gold_reward"],
-                    "base_xp_per_member": r["base_xp_per_member"],
+                    "base_xp_per_member": curve.xp_reward,
                     "loot_pool_slug": r["loot_pool_slug"],
                     "guaranteed_dragon_essence_min": r["guaranteed_dragon_essence_min"],
                     "guaranteed_dragon_essence_max": r["guaranteed_dragon_essence_max"],
@@ -513,6 +609,53 @@ async def seed_raid_dungeons(db) -> int:
         )
         n += 1
     return n
+
+
+async def seed_company_ring(db) -> int:
+    """Seed the sole ultra-rare random-drop blueprint."""
+    from app.items.catalog_contract import ULTRA_RARE_RANDOM_DROP_SLUG
+    now = _now_iso()
+    await db.items.update_one(
+        {"slug": ULTRA_RARE_RANDOM_DROP_SLUG},
+        {
+            "$setOnInsert": {"id": str(uuid.uuid4()), "created_at": now},
+            "$set": {
+                "slug": ULTRA_RARE_RANDOM_DROP_SLUG,
+                "name": "L'Unico Anello della \"Compagnia\"",
+                "display_name_it": "L'Unico Anello della \"Compagnia\"",
+                "display_name_en": "The Company's One Ring",
+                "description_it": (
+                    "Nessun orafo ne rivendica la fattura. Sul bordo interno "
+                    "appaiono i nomi di una sola compagnia: quella che lo sottrae "
+                    "ad Alveora, la Burattinaia della Luna."
+                ),
+                "lore_source": "Tesoro impossibile di Alveora",
+                "item_type": "ring",
+                "slot_type": "ring",
+                "rarity": "Unique",
+                "required_adventurer_level": 80,
+                "level_required": 80,
+                "acquisition_mode": "ultra_rare_random_drop",
+                "source_policy_id": "company_ring_ultra_rare",
+                "source_type": "world_boss",
+                "source_slug": "alveora_moon_puppeteer",
+                "is_tradeable": False,
+                "is_active": True,
+                "is_test": False,
+                "is_lore_linked": True,
+                "is_global_unique": True,
+                "strength_bonus": 8,
+                "agility_bonus": 8,
+                "intellect_bonus": 8,
+                "endurance_bonus": 8,
+                "faith_bonus": 8,
+                "power_score": 20,
+                "updated_at": now,
+            },
+        },
+        upsert=True,
+    )
+    return 1
 
 
 async def ensure_raid_indexes(db) -> None:
@@ -554,7 +697,7 @@ async def seed_starter_training_yard(db) -> int:
             "Consigliato per la tua prima spedizione. Un'area protetta "
             "dove nuove reclute affrontano manichini e ombre di goblin."
         ),
-        "difficulty": "trivial",
+        "difficulty": 1,
         "required_team_size": 3,
         "base_duration_seconds": 60,
         "recommended_power": 15,
@@ -593,8 +736,10 @@ async def run_round5_seeds_and_migrations(db) -> dict:
     summary["legacy_marked"] = await mark_legacy_dungeons(db)
     summary["power_bumped"] = await bump_legacy_t2_t3_power(db)
     summary["guilds_extended"] = await add_guild_raid_fields(db)
+    summary["legacy_recruitment_removed"] = await remove_legacy_recruitment_state(db)
     summary["inventory_round4_backfilled"] = await backfill_round4_inventory_defaults(db)
     summary["raid_dungeons_upserted"] = await seed_raid_dungeons(db)
+    summary["company_ring_upserted"] = await seed_company_ring(db)
     await ensure_raid_indexes(db)
 
     # Backfill starter roster for all guilds (best-effort, may be no-op).
@@ -627,7 +772,9 @@ __all__ = [
     "mark_legacy_dungeons",
     "bump_legacy_t2_t3_power",
     "add_guild_raid_fields",
+    "remove_legacy_recruitment_state",
     "seed_raid_dungeons",
+    "seed_company_ring",
     "ensure_raid_indexes",
     "run_round5_seeds_and_migrations",
 ]

@@ -365,7 +365,22 @@ export default function Adventurers() {
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                                                 <div className="flex flex-col">
-                                                    <span>{classLabel(a.class_slug) || a.class_name}</span>
+                                                    {a.class_selection_required ? (
+                                                        <>
+                                                            <span className="text-amber">
+                                                                Recluta · Senza Classe
+                                                            </span>
+                                                            <Link
+                                                                to={`/class-halls?adventurer=${encodeURIComponent(a.id)}`}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="text-[10px] mt-1 underline underline-offset-2 hover:text-amber"
+                                                            >
+                                                                Scegli la Sala →
+                                                            </Link>
+                                                        </>
+                                                    ) : (
+                                                        <span>{classLabel(a.class_slug) || a.class_name}</span>
+                                                    )}
                                                     {a.specialization_slug ? (
                                                         <span
                                                             data-testid={`adventurer-spec-class-badge-${a.id}`}
@@ -491,8 +506,19 @@ export default function Adventurers() {
                                                 />
                                             </div>
                                             <div className="text-xs text-muted-foreground">
-                                                {classLabel(a.class_slug) || a.class_name} · {a.class_role}
+                                                {a.class_selection_required
+                                                    ? "Recluta · Senza Classe"
+                                                    : `${classLabel(a.class_slug) || a.class_name} · ${a.class_role}`}
                                             </div>
+                                            {a.class_selection_required && (
+                                                <Link
+                                                    to={`/class-halls?adventurer=${encodeURIComponent(a.id)}`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="inline-block text-[10px] text-amber mt-1 underline underline-offset-2"
+                                                >
+                                                    Scegli la Sala →
+                                                </Link>
+                                            )}
                                             {(a.race_slug || a.gender) && (
                                                 <div
                                                     data-testid={`adventurer-card-race-gender-${a.id}`}
@@ -560,8 +586,15 @@ export default function Adventurers() {
                                         </div>
                                         <div className="flex flex-wrap gap-1 mb-2">
                                             {statBonusBadge("weapon", a.equipment?.weapon?.item)}
-                                            {statBonusBadge("armor", a.equipment?.armor?.item)}
+                                            {statBonusBadge("chest", a.equipment?.chest?.item)}
+                                            {statBonusBadge("legs", a.equipment?.legs?.item)}
+                                            {statBonusBadge("head", a.equipment?.head?.item)}
                                             {statBonusBadge("accessory", a.equipment?.accessory?.item)}
+                                            {statBonusBadge("back", a.equipment?.back?.item)}
+                                            {statBonusBadge("ring I", a.equipment?.ring_1?.item)}
+                                            {statBonusBadge("ring II", a.equipment?.ring_2?.item)}
+                                            {statBonusBadge("trinket I", a.equipment?.trinket_1?.item)}
+                                            {statBonusBadge("trinket II", a.equipment?.trinket_2?.item)}
                                         </div>
                                         <Link
                                             to={`/adventurers/${a.id}/equipment`}

@@ -17,6 +17,12 @@ import bson
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from app.stats.runtime.effects.models import (
+    EffectDuration,
+    EffectInstance,
+    EffectPrimitive,
+)
+from app.stats.runtime.effects.resolver import MAX_ACTIVE_INSTANCES
 from app.stats.runtime.state_store import CasResultCode
 from app.stats.runtime.state_store.models import (
     AdventurerClassState,
@@ -449,6 +455,25 @@ def test_full_cap_512_receipts_bson_le_245760(provisioned_unique_db):
                 ))
             assert len(receipts) == RECEIPT_CAP_TOTAL  # 512
 
+            active_effect_instances = tuple(
+                EffectInstance(
+                    effect_instance_id=f"fx_{i:037d}",
+                    effect_id="e" * 64,
+                    effect_version=1,
+                    source_adventurer_id=source_id,
+                    target_id=f"{i:02d}" + ("t" * 62),
+                    application_id=f"{i:02d}" + ("a" * 30),
+                    root_event_sequence=i + 1,
+                    primitive=EffectPrimitive.STAT_FLAT_TEMPORARY,
+                    target_key="strength",
+                    resolved_magnitude=10_000,
+                    duration=EffectDuration.USE_COUNT,
+                    remaining_uses=10,
+                    stack_count=5,
+                    definition_priority=10_000,
+                )
+                for i in range(MAX_ACTIVE_INSTANCES)
+            )
             cs = AdventurerClassState(
                 adventurer_id=source_id,
                 active_marks=(MarkDoc(
@@ -468,13 +493,17 @@ def test_full_cap_512_receipts_bson_le_245760(provisioned_unique_db):
                 expires_at=_iso(now + timedelta(hours=1)),
                 runtime_status=RuntimeStatus.ACTIVE,
                 adventurer_class_states=((source_id, cs),),
+                active_effect_instances=active_effect_instances,
                 processed_event_keys=tuple(receipts),
                 last_event_sequence=512, owner_worker_or_lease_id=None, lease=None,
             )
             # Bypass adapter's `create_state` (enforces initial_state_version=1).
             # Build the exact BSON shape the adapter would produce and direct-insert
             # so we can measure the *worst-case persisted document* size.
-            from app.stats.runtime.state_store.mongo_adapter import _serialize_class_states
+            from app.stats.runtime.state_store.mongo_adapter import (
+                _serialize_class_states,
+                _serialize_effect_instances,
+            )
             from dataclasses import asdict
             doc_to_insert = {
                 "_id": exp_id,
@@ -488,6 +517,9 @@ def test_full_cap_512_receipts_bson_le_245760(provisioned_unique_db):
                 "lease": None,
                 "loadout_snapshot_version": shell.loadout_snapshot_version,
                 "adventurer_class_states": _serialize_class_states(shell.adventurer_class_states),
+                "active_effect_instances": _serialize_effect_instances(
+                    shell.active_effect_instances
+                ),
                 "processed_event_keys": [asdict(r) for r in shell.processed_event_keys],
                 "last_event_sequence": shell.last_event_sequence,
                 "fencing_token": shell.fencing_token,
@@ -532,7 +564,10 @@ def test_full_cap_direct_insert_schema_equivalent_to_adapter_output(provisioned_
     async def _run():
         from dataclasses import asdict
 
-        from app.stats.runtime.state_store.mongo_adapter import _serialize_class_states
+        from app.stats.runtime.state_store.mongo_adapter import (
+            _serialize_class_states,
+            _serialize_effect_instances,
+        )
         from app.stats.runtime.state_store.models import EventReceipt as _ER
 
         client, store = _open(provisioned_unique_db)
@@ -601,6 +636,9 @@ def test_full_cap_direct_insert_schema_equivalent_to_adapter_output(provisioned_
                 "lease": None,
                 "loadout_snapshot_version": shell_b.loadout_snapshot_version,
                 "adventurer_class_states": _serialize_class_states(shell_b.adventurer_class_states),
+                "active_effect_instances": _serialize_effect_instances(
+                    shell_b.active_effect_instances
+                ),
                 "processed_event_keys": [asdict(r) for r in shell_b.processed_event_keys],
                 "last_event_sequence": shell_b.last_event_sequence,
                 "fencing_token": shell_b.fencing_token,

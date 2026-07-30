@@ -29,6 +29,9 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
+from app.raids.contracts import raid_progression_rewards
+from app.expeditions.services import _resolve_levelup
+
 logger = logging.getLogger("orbus.raids.recovery")
 
 
@@ -67,8 +70,19 @@ async def _preview_recovery(db, raid: dict) -> dict:
     rd = await db.raid_dungeons.find_one(
         {"id": raid["raid_dungeon_id"]}, {"_id": 0}
     ) or {}
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    damage_bonus = await _arfus_bonus(
+        raid["guild_id"], "combat_damage"
+    )
+    leader_xp_bonus = await _arfus_bonus(
+        raid["guild_id"], "leader_experience"
+    )
     gold = int(rd.get("base_gold_reward", 0) * multiplier)
-    xp_per_member = int(rd.get("base_xp_per_member", 0) * multiplier)
+    xp_per_member = int(
+        rd.get("base_xp_per_member", 0)
+        * multiplier
+        * (1.0 + leader_xp_bonus / 100.0)
+    )
     de_min = rd.get("guaranteed_dragon_essence_min", 1)
     de_max = rd.get("guaranteed_dragon_essence_max", 3)
     if outcome == "victory":
@@ -77,6 +91,10 @@ async def _preview_recovery(db, raid: dict) -> dict:
         de_count = max(0, de_min // 2)
     else:
         de_count = 0
+    progression = raid_progression_rewards(
+        raid.get("raid_dungeon_slug", ""),
+        outcome,
+    )
     members = await db.raid_participants.count_documents({"raid_id": raid_id})
     return {
         "raid_id": raid_id,
@@ -88,8 +106,11 @@ async def _preview_recovery(db, raid: dict) -> dict:
         "proposed_gold": gold,
         "proposed_xp_per_member": xp_per_member,
         "proposed_dragon_essence": de_count,
+        "proposed_progression_rewards": progression,
         "proposed_raid_score": int(
-            int(raid.get("team_power_combined", 0)) * multiplier
+            int(raid.get("team_power_combined", 0))
+            * multiplier
+            * (1.0 + damage_bonus / 100.0)
         ),
     }
 
@@ -168,8 +189,19 @@ async def resolve_stuck_raid(
     rd = await db.raid_dungeons.find_one(
         {"id": claimed["raid_dungeon_id"]}, {"_id": 0}
     ) or {}
+    from app.arfus_forge import bonus_pct as _arfus_bonus
+    damage_bonus = await _arfus_bonus(
+        claimed["guild_id"], "combat_damage"
+    )
+    leader_xp_bonus = await _arfus_bonus(
+        claimed["guild_id"], "leader_experience"
+    )
     gold = int(rd.get("base_gold_reward", 0) * multiplier)
-    xp_per_member = int(rd.get("base_xp_per_member", 0) * multiplier)
+    xp_per_member = int(
+        rd.get("base_xp_per_member", 0)
+        * multiplier
+        * (1.0 + leader_xp_bonus / 100.0)
+    )
     de_min = rd.get("guaranteed_dragon_essence_min", 1)
     de_max = rd.get("guaranteed_dragon_essence_max", 3)
     if outcome == "victory":
@@ -178,13 +210,23 @@ async def resolve_stuck_raid(
         de_count = max(0, de_min // 2)
     else:
         de_count = 0
-    raid_score = int(int(claimed.get("team_power_combined", 0)) * multiplier)
+    progression = raid_progression_rewards(
+        claimed.get("raid_dungeon_slug", ""),
+        outcome,
+    )
+    raid_score = int(
+        int(claimed.get("team_power_combined", 0))
+        * multiplier
+        * (1.0 + damage_bonus / 100.0)
+    )
 
     # ── Apply guild rewards (gold + counters) ─────────────────────
     await db.guilds.update_one(
         {"id": claimed["guild_id"]},
         {"$inc": {
             "gold": gold,
+            "raid_tokens": progression["raid_tokens"],
+            "legendary_fragments": progression["legendary_fragments"],
             "raids_completed_count": 1,
             "raids_victory_count": 1 if outcome == "victory" else 0,
         }, "$max": {"max_raid_score": raid_score},
@@ -210,10 +252,25 @@ async def resolve_stuck_raid(
             }},
         )
         if gained:
-            await db.adventurers.update_one(
-                {"id": p_doc["adventurer_id"]},
-                {"$inc": {"experience": gained}},
+            adv = await db.adventurers.find_one(
+                {"id": p_doc["adventurer_id"], "guild_id": claimed["guild_id"]},
+                {"_id": 0},
             )
+            if adv:
+                adv["experience"] = int(adv.get("experience", 0)) + gained
+                _resolve_levelup(adv)
+                await db.adventurers.update_one(
+                    {"id": adv["id"], "guild_id": claimed["guild_id"]},
+                    {"$set": {
+                        "experience": adv["experience"],
+                        "level": adv["level"],
+                        "strength": adv["strength"],
+                        "agility": adv["agility"],
+                        "intellect": adv["intellect"],
+                        "endurance": adv["endurance"],
+                        "faith": adv["faith"],
+                    }},
+                )
 
     # ── Release adventurers (atomic, no double-release possible) ──
     all_adv_ids = [p["adventurer_id"] for p in participants]
@@ -256,6 +313,18 @@ async def resolve_stuck_raid(
                     "source": "raid_reward_recovered",
                 })
 
+    # T6 authored pool uses its own deterministic seed and grant ledger, so a
+    # recovery produces exactly the same item decision as normal completion.
+    from app.raids.loot import grant_raid_item_reward
+
+    raid_item_reward = await grant_raid_item_reward(
+        db,
+        guild_id=claimed["guild_id"],
+        raid_id=raid_id,
+        raid_slug=claimed.get("raid_dungeon_slug"),
+        outcome=outcome,
+    )
+
     # ── Mark raid as completed with `recovered` metadata ──────────
     parties_outcome = [
         {"party_idx": i + 1,
@@ -269,7 +338,24 @@ async def resolve_stuck_raid(
         "gold_total": gold,
         "xp_per_member": xp_per_member,
         "dragon_essence_count": de_count,
+        "item_reward": raid_item_reward,
+        **progression,
     }
+    await db.raid_reward_grants.update_one(
+        {"raid_id": raid_id},
+        {"$setOnInsert": {
+            "id": str(uuid.uuid4()),
+            "raid_id": raid_id,
+            "guild_id": claimed["guild_id"],
+            "raid_dungeon_slug": claimed.get("raid_dungeon_slug"),
+            "outcome": outcome,
+            "rewards": rewards,
+            "source": "raid.recovery",
+            "status": "applied",
+            "created_at": now_iso,
+        }},
+        upsert=True,
+    )
     await db.raids.update_one(
         {"id": raid_id},
         {"$set": {
@@ -285,7 +371,19 @@ async def resolve_stuck_raid(
             "updated_at": now_iso,
         }},
     )
+    from app.adventurers.career import record_career_activity_for_many
 
+    await record_career_activity_for_many(
+        db,
+        guild_id=claimed["guild_id"],
+        adventurer_ids=all_adv_ids,
+        activity_kind="raid",
+        activity_id=raid_id,
+    )
+    await db.raids.update_one(
+        {"id": raid_id},
+        {"$set": {"career_progress_recorded": True}},
+    )
     # ── Audit emit (best-effort, never raises) ────────────────────
     audit_emitted = False
     try:

@@ -7,6 +7,7 @@ imported eagerly at module level — no module-level cycle since
 """
 from typing import Optional
 
+from app.dungeons.encounters import apply_dungeon_encounter
 from app.expeditions.services import _evaluate_dungeon_gate
 from app.expeditions.level_gate import legacy_min_level_for_dungeon
 
@@ -14,6 +15,7 @@ from app.expeditions.level_gate import legacy_min_level_for_dungeon
 def dungeon_public(d: dict) -> dict:
     """Project a Mongo dungeon document to its public JSON shape."""
     from app.content.lore_meta import dungeon_lore_meta
+    d = apply_dungeon_encounter(d)
     meta = dungeon_lore_meta(d.get("slug", ""))
     return {
         "id": d["id"],
@@ -37,6 +39,13 @@ def dungeon_public(d: dict) -> dict:
         "tier": d.get("tier") or d.get("tier_label"),
         "tier_label": d.get("tier_label"),
         "tags": d.get("tags") or [],
+        "encounter_type": d.get("encounter_type"),
+        "encounter_phases": d.get("encounter_phases") or [],
+        "reward_profile": d.get("reward_profile"),
+        "threat_tags": d.get("threat_tags") or [],
+        "threat_count": int(d.get("threat_count", 0)),
+        "progression_bucket": d.get("bucket"),
+        "curve_version": d.get("curve_version"),
         "is_active": d.get("is_active", True),
         # ROUND 11.3 TASK A — adventurer-level gate exposed to FE so the
         # roster builder can grey-out under-level cards before dispatch.
@@ -64,7 +73,14 @@ async def list_dungeons_for_guild(db, guild: Optional[dict]) -> list[dict]:
     """
     rows = (
         await db.dungeons.find({"is_active": True}, {"_id": 0})
-        .sort("difficulty", 1)
+        .sort(
+            [
+                ("is_starter", -1),
+                ("difficulty", 1),
+                ("recommended_power", 1),
+                ("slug", 1),
+            ]
+        )
         .to_list(100)
     )
     out = []

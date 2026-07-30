@@ -13,6 +13,8 @@ const RARITY_COLOR = {
     Uncommon: "#22c55e",
     Rare: "#3b82f6",
     Epic: "#a855f7",
+    Legendary: "#f59e0b",
+    Unique: "#ef4444",
 };
 
 const RarityBadge = ({ rarity }) => (
@@ -549,7 +551,23 @@ export default function ExpeditionReport() {
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
                                 <span className="text-muted-foreground text-xs">{t("expedition_report_page.equipment_bonus")}</span>
-                                <span data-testid="analysis-eq-bonus" className="font-medium text-amber">+{e.equipment_power_bonus}</span>
+                                <span data-testid="analysis-eq-bonus" className="font-medium text-amber">+{e.equipment_base_power_bonus ?? e.equipment_power_bonus}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-border/40 py-1">
+                                <span className="text-muted-foreground text-xs">
+                                    {lang === "en" ? "Lore item effects" : "Effetti item di lore"}
+                                </span>
+                                <span data-testid="analysis-item-effect-bonus" className="font-medium text-amber">
+                                    +{e.item_effect_power_bonus || 0}
+                                </span>
+                            </div>
+                            <div className="flex justify-between border-b border-border/40 py-1">
+                                <span className="text-muted-foreground text-xs">
+                                    {lang === "en" ? "Item/path resonance" : "Risonanza item/sentiero"}
+                                </span>
+                                <span data-testid="analysis-class-mechanic-bonus" className="font-medium text-sky-400">
+                                    +{e.class_item_resonance_bonus || 0}
+                                </span>
                             </div>
                             <div className="flex justify-between border-b border-border/40 py-1">
                                 <span className="text-muted-foreground text-xs">{t("expedition_report_page.final_power")}</span>

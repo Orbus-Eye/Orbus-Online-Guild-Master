@@ -7,6 +7,7 @@ This module ONLY hosts the pure stat/trait/name primitives + the legacy
 `_generate_candidate` factory. It has NO async DB calls, NO HTTP layer,
 NO FastAPI imports — safe to import from anywhere in the codebase.
 """
+
 from __future__ import annotations
 
 import secrets
@@ -143,6 +144,111 @@ def _generate_candidate(
     }
 
 
+def _generate_classless_candidate(
+    guild_id: str,
+    now: datetime,
+    traits_pool: list | None = None,
+    *,
+    rng=None,
+    forced_rarity: str | None = None,
+    rarity_weights=None,
+    rarity_bonus=None,
+) -> dict:
+    """Generate a neutral recruit who has not chosen a Class Hall yet.
+
+    Class identity is intentionally absent.  The five core stats share the
+    same base so recruitment cannot silently bias the later Hall choice.
+    """
+    rng = rng or _rng
+    # Career rarity is never rolled. Legacy parameters remain accepted so old
+    # seed/test callers do not crash, but every new classless recruit starts
+    # Common and can only advance through completed dungeon/raid activity.
+    rarity = "Common"
+    bonus = 0
+    stats = {
+        stat: _roll_stat(5, bonus, rng=rng)
+        for stat in ("strength", "agility", "intellect", "endurance", "faith")
+    }
+    return {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild_id,
+        "name": _generate_name(rng=rng),
+        "adventurer_class_id": None,
+        "class_name": None,
+        "class_role": None,
+        "class_proficiency": None,
+        "class_slug": None,
+        "canonical_class_slug": None,
+        "class_hall_id": None,
+        "class_hall_assigned_at": None,
+        "hall_master_witness_npc": None,
+        "recruit_status": "recruit_unassigned",
+        "narrative_intro_shown": False,
+        "rarity": rarity,
+        "level": 1,
+        "experience": 0,
+        "career_dungeons_completed": 0,
+        "career_raids_completed": 0,
+        **stats,
+        "stamina": 100,
+        "morale": 100,
+        "traits": _pick_random_traits(traits_pool or [], rng=rng),
+        "created_at": now.isoformat(),
+        "expires_at": (now + timedelta(minutes=OFFER_TTL_MINUTES)).isoformat(),
+    }
+
+
+def build_base_adventurer(
+    guild_id: str,
+    *,
+    name: str,
+    now: datetime,
+    race_slug: str | None = None,
+    gender: str | None = None,
+    is_starter: bool = False,
+) -> dict:
+    """Build a deterministic player-authored adventurer model.
+
+    No rarity, stat, trait, class or identity field is rolled. Class identity
+    is deliberately deferred to the Class Hall journey.
+    """
+    return {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild_id,
+        "name": name.strip(),
+        "adventurer_class_id": None,
+        "class_name": None,
+        "class_role": None,
+        "class_proficiency": None,
+        "class_slug": None,
+        "canonical_class_slug": None,
+        "class_hall_id": None,
+        "class_hall_assigned_at": None,
+        "hall_master_witness_npc": None,
+        "recruit_status": "recruit_unassigned",
+        "narrative_intro_shown": False,
+        "rarity": "Common",
+        "level": 1,
+        "experience": 0,
+        "career_dungeons_completed": 0,
+        "career_raids_completed": 0,
+        "strength": 5,
+        "agility": 5,
+        "intellect": 5,
+        "endurance": 5,
+        "faith": 5,
+        "stamina": 100,
+        "morale": 100,
+        "traits": [],
+        "race_slug": race_slug,
+        "gender": gender,
+        "is_available": True,
+        "is_starter": bool(is_starter),
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+    }
+
+
 __all__ = [
     "_rng",
     "_weighted_choice",
@@ -151,4 +257,6 @@ __all__ = [
     "_pick_random_traits",
     "_apply_trait_effects",
     "_generate_candidate",
+    "_generate_classless_candidate",
+    "build_base_adventurer",
 ]

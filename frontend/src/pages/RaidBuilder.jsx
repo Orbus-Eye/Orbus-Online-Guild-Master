@@ -1,4 +1,4 @@
-// Phase 18.1 — Raid Builder (4 party × 5).
+// Raid Builder — contracts support 2/3/4/8 parties of five.
 // Phase 19.4a — added roster filter panel (search/role/class/rarity/level/PWR
 // /availability/sort). Filters don't break drag/select; assigned advs are
 // always excluded from the pool and the disable-once-full guard is preserved.
@@ -17,7 +17,6 @@ import {
 } from "../utils/levelGate";
 
 
-const PARTY_COUNT = 4;
 const PARTY_SIZE = 5;
 
 const EMPTY_FILTERS = {
@@ -46,22 +45,25 @@ export default function RaidBuilder() {
     const [raidDungeon, setRaidDungeon] = useState(null);
     const [advs, setAdvs] = useState([]);
     const [parties, setParties] = useState(
-        () => Array.from({ length: PARTY_COUNT }, () => Array(PARTY_SIZE).fill(null)),
+        () => Array.from({ length: 2 }, () => Array(PARTY_SIZE).fill(null)),
     );
     const [preview, setPreview] = useState(null);
     const [busy, setBusy] = useState(false);
     const [filters, setFilters] = useState(EMPTY_FILTERS);
     const [panelOpen, setPanelOpen] = useState(false);
-    // ROUND 6A.2b — saved raid_20 squads
+    const partyCount = raidDungeon?.required_party_count || 2;
+    const requiredRosterSize = raidDungeon?.min_roster_size || partyCount * PARTY_SIZE;
+    const squadType = `raid_${requiredRosterSize}`;
     const [squads, setSquads] = useState([]);
 
     useEffect(() => {
-        api.get("/squads?type=raid_20")
+        if (!raidDungeon) return;
+        api.get(`/squads?type=${squadType}`)
             .then(({ data }) => setSquads(data.squads || []))
             .catch(() => setSquads([]));
-    }, []);
+    }, [raidDungeon, squadType]);
 
-    // Apply a saved raid_20 squad to the 4×5 grid. Uses `raid_parties`
+    // Apply a saved formation to the contract-defined party grid.
     // if present, otherwise distributes adventurer_ids sequentially.
     // Skips ids not in current available roster (toasts a count).
     const loadSquadIntoParties = (squadId) => {
@@ -69,12 +71,11 @@ export default function RaidBuilder() {
         const sq = squads.find((s) => s.squad_id === squadId);
         if (!sq) return;
         const byId = new Map(advs.map((a) => [a.id, a]));
-        const next = Array.from({ length: PARTY_COUNT }, () => Array(PARTY_SIZE).fill(null));
+        const next = Array.from({ length: partyCount }, () => Array(PARTY_SIZE).fill(null));
         let missing = 0;
         if (sq.raid_parties) {
-            const partyKeys = ["party_1", "party_2", "party_3", "party_4"];
-            for (let pi = 0; pi < PARTY_COUNT; pi++) {
-                const ids = sq.raid_parties[partyKeys[pi]] || [];
+            for (let pi = 0; pi < partyCount; pi++) {
+                const ids = sq.raid_parties[`party_${pi + 1}`] || [];
                 for (let si = 0; si < PARTY_SIZE; si++) {
                     const aid = ids[si];
                     if (aid && byId.has(aid)) next[pi][si] = aid;
@@ -82,9 +83,8 @@ export default function RaidBuilder() {
                 }
             }
         } else {
-            // Fallback: flat distribution 5+5+5+5
             const flat = sq.adventurer_ids || [];
-            for (let i = 0; i < flat.length && i < 20; i++) {
+            for (let i = 0; i < flat.length && i < requiredRosterSize; i++) {
                 const aid = flat[i];
                 const pi = Math.floor(i / PARTY_SIZE);
                 const si = i % PARTY_SIZE;
@@ -134,6 +134,12 @@ export default function RaidBuilder() {
                 return;
             }
             setRaidDungeon(rd);
+            setParties(
+                Array.from(
+                    { length: rd.required_party_count || 2 },
+                    () => Array(PARTY_SIZE).fill(null),
+                ),
+            );
             setAdvs(advR.data.adventurers || []);
         } catch (err) {
             toast.error(formatApiError(err));
@@ -232,7 +238,7 @@ export default function RaidBuilder() {
             return;
         }
         const partyIdx = targetPartyIdx ?? parties.findIndex((p) => p.includes(null));
-        if (partyIdx < 0 || partyIdx >= PARTY_COUNT) return;
+        if (partyIdx < 0 || partyIdx >= parties.length) return;
         const slotIdx = nextEmptySlot(partyIdx);
         if (slotIdx < 0) return;
         const next = parties.map((p) => [...p]);
@@ -284,7 +290,7 @@ export default function RaidBuilder() {
     }
 
     async function doPreview() {
-        if (totalAssigned < PARTY_COUNT * PARTY_SIZE) {
+        if (totalAssigned < requiredRosterSize) {
             toast.error(t("raids.builder.not_enough", { have: totalAssigned }));
             return;
         }
@@ -366,18 +372,18 @@ export default function RaidBuilder() {
                     </div>
                 )}
 
-                {/* ROUND 6A.2b — Carica squadra raid_20 */}
+                {/* Optional saved formation matching this raid's exact size. */}
                 <div className="mb-4 border border-neutral-800 rounded-sm p-3 bg-secondary/30">
                     <div className="text-[10px] text-muted-foreground tracking-widest mb-2">
-                        :: CARICA SQUADRA RAID 20 ({squads.length})
+                        :: CARICA FORMAZIONE RAID {requiredRosterSize} ({squads.length})
                     </div>
                     {squads.length === 0 ? (
                         <div className="flex items-center justify-between gap-3 flex-wrap">
                             <p className="text-[11px] text-muted-foreground italic">
-                                Nessuna squadra raid_20 salvata.
+                                Nessuna formazione da {requiredRosterSize} salvata.
                             </p>
                             <Link
-                                to="/squads/new?type=raid_20"
+                                to={`/squads/new?type=${squadType}`}
                                 data-testid="raid-create-squad-link"
                                 className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1 hover:bg-amber hover:text-background transition-colors"
                             >
@@ -392,7 +398,7 @@ export default function RaidBuilder() {
                                 data-testid="raid-load-squad"
                                 className="bg-secondary border border-neutral-700 px-3 py-1.5 text-xs focus:border-amber outline-none flex-1 min-w-[200px]"
                             >
-                                <option value="">— Seleziona squadra raid 20 —</option>
+                                <option value="">— Seleziona formazione da {requiredRosterSize} —</option>
                                 {squads.map((s) => (
                                     <option key={s.squad_id} value={s.squad_id}>
                                         {s.name} (PWR {s.total_power}{s.missing_adventurer_ids?.length ? ` · ⚠ ${s.missing_adventurer_ids.length} mancanti` : ""})
@@ -409,7 +415,7 @@ export default function RaidBuilder() {
                     )}
                 </div>
 
-                {/* 4 party columns */}
+                {/* Contract-defined party columns */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     {parties.map((slots, idx) => {
                         const focus = focusHints[idx] || {};
@@ -628,7 +634,7 @@ export default function RaidBuilder() {
                     <div className="px-4 py-2 border-b border-border/60 bg-secondary/30 text-xs tracking-widest text-amber flex items-center justify-between flex-wrap">
                         <span data-testid="raid-roster-count">:: {t("raids.builder.available_advs")} ({available.length})</span>
                         <span className="text-[10px] text-muted-foreground">
-                            {totalAssigned}/{PARTY_COUNT * PARTY_SIZE}
+                            {totalAssigned}/{requiredRosterSize}
                         </span>
                     </div>
                     <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
@@ -711,7 +717,7 @@ export default function RaidBuilder() {
                 <div className="flex flex-wrap gap-2">
                     <button
                         onClick={doPreview}
-                        disabled={busy || totalAssigned < PARTY_COUNT * PARTY_SIZE || hasUnderLeveledAssigned}
+                        disabled={busy || totalAssigned < requiredRosterSize || hasUnderLeveledAssigned}
                         title={hasUnderLeveledAssigned ? advRaidTooltip(minAdvLevel) : ""}
                         data-testid="builder-preview-btn"
                         className="text-xs tracking-widest border border-border bg-secondary/50 hover:bg-secondary px-4 py-2 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed"
@@ -732,7 +738,7 @@ export default function RaidBuilder() {
                             <span data-testid="raid-launch-blocked-underleveled" className="text-destructive">
                                 {advRaidTooltip(minAdvLevel)}
                             </span>
-                        ) : totalAssigned < PARTY_COUNT * PARTY_SIZE
+                        ) : totalAssigned < requiredRosterSize
                             ? t("raids.builder.not_enough", { have: totalAssigned })
                             : ""}
                     </div>

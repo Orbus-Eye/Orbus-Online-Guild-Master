@@ -27,6 +27,7 @@ from app.core.database import db
 from app.core.security import get_current_user, get_admin_user
 from app.guilds.services import user_guild_or_404
 from app.world import has_world_access
+from app.adventurers.classless import require_class_hall_assignment
 
 logger = logging.getLogger("orbus.resources")
 
@@ -244,6 +245,7 @@ async def _validate_adventurers(guild_id: str, adventurer_ids: list[str]) -> lis
     ).to_list(TEAM_SIZE)
     if len(docs) != TEAM_SIZE:
         raise HTTPException(400, "adventurers_not_found_in_guild")
+    require_class_hall_assignment(docs, source="resource_mission.start")
     for d in docs:
         # Server-side double-book protection (Phase 4 post-verify):
         # respect both `is_available` and `status` and per-flow locks.
@@ -259,13 +261,8 @@ async def _validate_adventurers(guild_id: str, adventurer_ids: list[str]) -> lis
 
 
 def _compute_team_power(adventurers: list[dict]) -> int:
-    total = 0
-    for a in adventurers:
-        s = a.get("stats") or {}
-        total += int(s.get("strength", 0)) + int(s.get("agility", 0)) \
-            + int(s.get("intellect", 0)) + int(s.get("endurance", 0)) \
-            + int(s.get("faith", 0)) + int(a.get("level", 1)) * 2
-    return total
+    from app.expeditions.formulas import adventurer_effective_power
+    return sum(adventurer_effective_power(a) for a in adventurers)
 
 
 def _success_chance(team_power: int) -> int:

@@ -13,6 +13,8 @@ const RARITY_COLOR = {
     Uncommon: "#22c55e",
     Rare: "#3b82f6",
     Epic: "#a855f7",
+    Legendary: "#f59e0b",
+    Unique: "#ef4444",
 };
 
 const STATUS_COLOR = {

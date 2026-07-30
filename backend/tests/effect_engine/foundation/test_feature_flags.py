@@ -1,4 +1,5 @@
 """RT2-A · test_feature_flags.py"""
+
 from __future__ import annotations
 
 import os
@@ -23,7 +24,10 @@ def test_all_flags_count_is_8():
     (RT2_B_RUNTIME_ATTIVABILE cresce a 3 flag). Totale 8."""
     assert len(ff.ALL_FLAGS) == 8
     assert ff.ALL_FLAGS == (
-        ff.RT2_A_RUNTIME_ATTIVABILE | ff.RT2_B_RUNTIME_ATTIVABILE | ff.RT2_FUTURE_CONSTANTS
+        ff.RT2_A_RUNTIME_ATTIVABILE
+        | ff.RT2_B_RUNTIME_ATTIVABILE
+        | ff.RT2_C_RUNTIME_ATTIVABILE
+        | ff.RT2_FUTURE_CONSTANTS
     )
 
 
@@ -34,10 +38,12 @@ def test_default_all_off():
 
 
 def test_rt2a_active_flags_are_two():
-    assert ff.RT2_A_RUNTIME_ATTIVABILE == frozenset({
-        "runtime_stat_soft_cap_enabled",
-        "runtime_stat_shadow_enabled",
-    })
+    assert ff.RT2_A_RUNTIME_ATTIVABILE == frozenset(
+        {
+            "runtime_stat_soft_cap_enabled",
+            "runtime_stat_shadow_enabled",
+        }
+    )
 
 
 def test_rt2b_active_flags_are_three():
@@ -46,21 +52,31 @@ def test_rt2b_active_flags_are_three():
     - `cdv_class_transitions_enabled` (RT2-B-2B-1)
     - `cdv_drain_transitions_enabled` (RT2-B-2B-2-1, nuovo, default OFF, surgical kill-switch)
     """
-    assert ff.RT2_B_RUNTIME_ATTIVABILE == frozenset({
-        "cdv_transient_state_enabled",
-        "cdv_class_transitions_enabled",
-        "cdv_drain_transitions_enabled",
-    })
+    assert ff.RT2_B_RUNTIME_ATTIVABILE == frozenset(
+        {
+            "cdv_transient_state_enabled",
+            "cdv_class_transitions_enabled",
+            "cdv_drain_transitions_enabled",
+        }
+    )
 
 
-def test_rt2_future_constants_are_three():
-    """Post-RT2-B-2A: `cdv_transient_state_enabled` è stato spostato a
-    RT2_B_RUNTIME_ATTIVABILE. Future constants residui = 3."""
-    assert ff.RT2_FUTURE_CONSTANTS == frozenset({
-        "item_effect_engine_enabled",
-        "cdv_item_hooks_enabled",
-        "effect_observability_enabled",
-    })
+def test_rt2c_active_flag_is_promoted_without_changing_total():
+    assert ff.RT2_C_RUNTIME_ATTIVABILE == frozenset(
+        {
+            "item_effect_engine_enabled",
+        }
+    )
+
+
+def test_rt2_future_constants_are_two():
+    """P2 promotes item_effect_engine_enabled; two future constants remain."""
+    assert ff.RT2_FUTURE_CONSTANTS == frozenset(
+        {
+            "cdv_item_hooks_enabled",
+            "effect_observability_enabled",
+        }
+    )
 
 
 def test_soft_cap_enabled_via_env(monkeypatch):
@@ -75,18 +91,28 @@ def test_shadow_enabled_via_env(monkeypatch):
     assert ff.is_enabled("runtime_stat_shadow_enabled") is True
 
 
+def test_item_effect_engine_enabled_via_env(monkeypatch):
+    monkeypatch.setenv("ORBUS_FLAG_ITEM_EFFECT_ENGINE_ENABLED", "true")
+    ff.reset_cache()
+    assert ff.is_enabled("item_effect_engine_enabled") is True
+
+
 def test_truthy_values(monkeypatch):
     for val in ("1", "true", "True", "TRUE", "yes", "YES", "on", "ON"):
         monkeypatch.setenv("ORBUS_FLAG_RUNTIME_STAT_SHADOW_ENABLED", val)
         ff.reset_cache()
-        assert ff.is_enabled("runtime_stat_shadow_enabled") is True, f"failed for {val!r}"
+        assert (
+            ff.is_enabled("runtime_stat_shadow_enabled") is True
+        ), f"failed for {val!r}"
 
 
 def test_falsy_values(monkeypatch):
     for val in ("0", "false", "FALSE", "no", "off", ""):
         monkeypatch.setenv("ORBUS_FLAG_RUNTIME_STAT_SHADOW_ENABLED", val)
         ff.reset_cache()
-        assert ff.is_enabled("runtime_stat_shadow_enabled") is False, f"failed for {val!r}"
+        assert (
+            ff.is_enabled("runtime_stat_shadow_enabled") is False
+        ), f"failed for {val!r}"
 
 
 def test_invalid_value_falls_back_false(monkeypatch, caplog):
@@ -102,9 +128,9 @@ def test_future_constants_hard_forced_false(monkeypatch):
     for flag in ff.RT2_FUTURE_CONSTANTS:
         monkeypatch.setenv(f"ORBUS_FLAG_{flag.upper()}", "true")
         ff.reset_cache()
-        assert ff.is_enabled(flag) is False, (
-            f"{flag} must remain False in RT2-A even with env truthy"
-        )
+        assert (
+            ff.is_enabled(flag) is False
+        ), f"{flag} must remain False in RT2-A even with env truthy"
 
 
 def test_unknown_flag_returns_false(caplog):

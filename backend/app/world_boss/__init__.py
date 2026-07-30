@@ -23,6 +23,9 @@ from pydantic import BaseModel, Field
 from app.core.database import db
 from app.core.security import get_current_user, get_admin_user
 from app.guilds.services import user_guild_or_404
+from app.adventurers.classless import require_class_hall_assignment
+from app.equipment.services import _load_equipment_for_adventurer
+from app.expeditions.formulas import adventurer_effective_power
 
 logger = logging.getLogger("orbus.world_boss")
 
@@ -133,8 +136,25 @@ async def seed_world_boss_catalog() -> dict:
                 "affects_combat": False,
                 "affects_economy": False,
                 "can_be_sold_for_real_money": False,
-                "description_it": f"Currency evento World Boss.",
-                "description_en": f"World Boss event currency.",
+                "description_it": {
+                    "filo_lunare_spezzato": (
+                        "Un filo reciso dalla trama mentale di Alveora; vibra ancora "
+                        "quando la Luna Morta attraversa il cielo."
+                    ),
+                    "frammento_obelisco_vuoto": (
+                        "Scheggia di un obelisco che ancorava le marionette di Alveora "
+                        "al Vuoto. La superficie non riflette alcun volto."
+                    ),
+                    "eco_della_luna_morta": (
+                        "Una nota solidificata dell'ultima sinfonia di Alveora, custodita "
+                        "in una goccia d'argento freddo."
+                    ),
+                }[slug],
+                "description_en": {
+                    "filo_lunare_spezzato": "A thread severed from Alveora's mind-binding weave.",
+                    "frammento_obelisco_vuoto": "A shard from an obelisk that anchored Alveora's puppets.",
+                    "eco_della_luna_morta": "A solid echo of Alveora's final lunar symphony.",
+                }[slug],
                 "created_at": now_iso,
             }},
             upsert=True,
@@ -196,7 +216,7 @@ async def resolve_stuck_world_boss_event(
         return {"event_id": event_id, "action": "skipped",
                 "reason": "ends_at_invalid"}
     now = _utc_now()
-    if now < ends_at:
+    if now < ends_at and reason != "hp_zero_completion":
         return {"event_id": event_id, "action": "skipped",
                 "reason": "still_running"}
 
@@ -270,9 +290,13 @@ async def resolve_stuck_world_boss_event(
 async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
     """Distribute rewards to participants. Guarded by per-guild CAS flag."""
     now_iso = _utc_now().isoformat()
+    event = await db.world_boss_events.find_one(
+        {"id": event_id}, {"_id": 0, "boss_slug": 1}
+    )
+    if not event:
+        return {"granted": 0}
     catalog = await db.world_boss_catalog.find_one(
-        {"slug": (await db.world_boss_events.find_one(
-            {"id": event_id}, {"boss_slug": 1}))["boss_slug"]}, {"_id": 0},
+        {"slug": event["boss_slug"]}, {"_id": 0},
     )
     # Ranking = participants sorted by total contribution
     parts = await db.world_boss_participants.find(
@@ -281,6 +305,37 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
     parts.sort(key=lambda p: -p.get("total_contribution", 0))
     granted = 0
     for rank_idx, part in enumerate(parts):
+        # The secret ring roll belongs to the defeated World Boss, not to raid
+        # loot. It runs before the normal-reward CAS so a later reconciliation
+        # can retry delivery without ever rolling twice.
+        secret_drop = None
+        if int(part.get("total_contribution", 0) or 0) > 0:
+            try:
+                from app.rewards.company_ring import (
+                    try_grant_company_ring_from_world_boss,
+                )
+                ring_result = await try_grant_company_ring_from_world_boss(
+                    db,
+                    guild_id=part["guild_id"],
+                    event_id=event_id,
+                    boss_slug=event["boss_slug"],
+                    outcome="completed",
+                    contribution=int(part.get("total_contribution", 0) or 0),
+                )
+                if ring_result.get("granted"):
+                    secret_drop = {
+                        "item_slug": ring_result["item_slug"],
+                        "source": "world_boss_ultra_rare",
+                    }
+                    await db.world_boss_rewards.update_one(
+                        {"event_id": event_id, "guild_id": part["guild_id"]},
+                        {"$set": {"secret_drop": secret_drop}},
+                    )
+            except Exception as exc:
+                logger.warning(
+                    "world_boss.company_ring_roll_failed event=%s guild=%s err=%s",
+                    event_id, part["guild_id"], exc,
+                )
         # CAS: only grant if not already granted
         cas = await db.world_boss_participants.update_one(
             {"id": part["id"], "reward_granted": {"$ne": True}},
@@ -302,7 +357,7 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
         else:
             rewards = {"eco_della_luna_morta": 1, "gold": 50}
         # Persist reward row (audit-friendly)
-        await db.world_boss_rewards.insert_one({
+        reward_row = {
             "id": str(uuid.uuid4()),
             "event_id": event_id,
             "guild_id": part["guild_id"],
@@ -311,7 +366,10 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
             "rewards": rewards,
             "granted_at": now_iso,
             "reason": reason,
-        })
+        }
+        if secret_drop:
+            reward_row["secret_drop"] = secret_drop
+        await db.world_boss_rewards.insert_one(reward_row)
         # Apply gold to guild
         if rewards.get("gold", 0) > 0:
             await db.guilds.update_one(
@@ -350,7 +408,11 @@ async def _grant_rewards_idempotent(event_id: str, *, reason: str) -> dict:
         await _emit_audit(
             "WORLD_BOSS_REWARD_GRANTED", actor_guild_id=part["guild_id"],
             related_entity_id=event_id,
-            metadata={"rank": rank, "rewards": rewards},
+            metadata={
+                "rank": rank,
+                "rewards": rewards,
+                **({"secret_drop": secret_drop} if secret_drop else {}),
+            },
         )
         granted += 1
     return {"granted": granted}
@@ -408,7 +470,7 @@ class CreateEventBody(BaseModel):
 
 
 class SendTeamBody(BaseModel):
-    adventurer_ids: list[str] = Field(min_length=1, max_length=3)
+    adventurer_ids: list[str] = Field(min_length=3, max_length=3)
 
 
 # ── PUBLIC ROUTES ─────────────────────────────────────────────────────
@@ -500,6 +562,8 @@ async def send_team(event_id: str, body: SendTeamBody,
     )
     if not part:
         raise HTTPException(400, "not_joined")
+    if len(set(body.adventurer_ids)) != 3:
+        raise HTTPException(422, "world_boss.team_duplicate")
     # Verify adventurers ownership + availability
     advs = await db.adventurers.find(
         {"id": {"$in": body.adventurer_ids}, "guild_id": guild["id"]},
@@ -507,13 +571,21 @@ async def send_team(event_id: str, body: SendTeamBody,
     ).to_list(3)
     if len(advs) != len(body.adventurer_ids):
         raise HTTPException(400, "adventurers_ownership_or_unavailable")
+    require_class_hall_assignment(advs, source="world_boss.send_team")
     for a in advs:
         if not a.get("is_available", True) or a.get("expedition_in_progress"):
             raise HTTPException(409, f"adventurer_busy:{a['id']}")
 
     # Contribution formula
-    base_power = sum(int(a.get("power", 0) or a.get("total_power", 100))
-                     for a in advs)
+    member_power: dict[str, int] = {}
+    for adventurer in advs:
+        _, equipment_power, _ = await _load_equipment_for_adventurer(
+            db, adventurer["id"]
+        )
+        member_power[adventurer["id"]] = (
+            adventurer_effective_power(adventurer) + equipment_power
+        )
+    base_power = sum(member_power.values())
     counter_slugs: set[str] = set()
     for a in advs:
         for cslug in (a.get("counter_tags") or []):
@@ -539,8 +611,7 @@ async def send_team(event_id: str, body: SendTeamBody,
     # Snapshot members
     members_snap = [{"id": a["id"], "name": a.get("name"),
                      "class_slug": a.get("class_slug"),
-                     "power_at_send": int(a.get("power", 0)
-                                          or a.get("total_power", 100))}
+                     "power_at_send": member_power[a["id"]]}
                     for a in advs]
     await db.world_boss_contributions.insert_one({
         "id": contrib_id, "event_id": event_id, "guild_id": guild["id"],
@@ -578,14 +649,16 @@ async def send_team(event_id: str, body: SendTeamBody,
             await resolve_stuck_world_boss_event(
                 event_id, dry_run=False, reason="hp_zero_completion",
             )
-    # Mark adventurers as engaged
-    await db.adventurers.update_many(
-        {"id": {"$in": body.adventurer_ids}},
-        {"$set": {"is_available": False,
-                  "expedition_in_progress": True,
-                  "current_world_boss_event_id": event_id,
-                  "updated_at": now_iso}},
-    )
+    # Keep the team engaged only while the event remains alive. When this
+    # strike kills the boss, the resolver has already finalized the event.
+    if (new_ev or ev).get("current_hp", 1) > 0:
+        await db.adventurers.update_many(
+            {"id": {"$in": body.adventurer_ids}},
+            {"$set": {"is_available": False,
+                      "expedition_in_progress": True,
+                      "current_world_boss_event_id": event_id,
+                      "updated_at": now_iso}},
+        )
     await _emit_audit(
         "WORLD_BOSS_CONTRIBUTION_RECORDED", actor_guild_id=guild["id"],
         related_entity_id=event_id,
@@ -636,6 +709,11 @@ async def get_report(event_id: str,
     if ev["status"] not in ("completed", "failed"):
         raise HTTPException(409, "event_not_finalized")
     guild = await user_guild_or_404(db, current_user["id"])
+    if ev["status"] == "completed":
+        # Safe retry for normal rewards and the one-per-event secret roll.
+        await _grant_rewards_idempotent(
+            event_id, reason="report_reconciliation"
+        )
     reward = await db.world_boss_rewards.find_one(
         {"event_id": event_id, "guild_id": guild["id"]}, {"_id": 0},
     )

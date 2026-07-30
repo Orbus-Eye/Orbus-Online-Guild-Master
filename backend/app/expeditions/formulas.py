@@ -57,17 +57,14 @@ def sum_xp_percent(traits: list) -> float:
 
 
 def adventurer_base_power(adv: dict) -> int:
-    """Raw power of an adventurer (no traits, no equipment, no composition).
+    """Career-adjusted power (no traits, equipment or composition).
 
-    Phase 13: this remains the pre-trait power. Use
-    `adventurer_effective_power` for trait-aware power.
+    Stored stats stay unmodified; career rarity is applied at resolution time.
     """
+    from app.adventurers.career import career_effective_stats
+    stats = career_effective_stats(adv)
     return (
-        int(adv["strength"])
-        + int(adv["agility"])
-        + int(adv["intellect"])
-        + int(adv["endurance"])
-        + int(adv["faith"])
+        sum(stats.values())
         + int(adv.get("level", 1)) * 2
     )
 
@@ -76,12 +73,13 @@ def adventurer_effective_power(adv: dict) -> int:
     """Phase 13 + ROUND 6C: trait-aware + specialization-aware base power.
 
     Application order: base stats → trait modifiers → specialization modifiers
-    → sum + level*2. Equipment power is added separately in
+    → career-rarity multiplier → sum + level*2. Equipment power is separate in
     `adventurers/services.py`.
 
     Falls back to raw stats when adv has no traits AND no specialization.
     """
     from app.training.catalog import apply_specialization_modifiers
+    from app.adventurers.career import career_effective_stats
     traits = adv.get("traits") or []
     spec = adv.get("specialization")
     if not traits and not spec:
@@ -89,7 +87,8 @@ def adventurer_effective_power(adv: dict) -> int:
     base = {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS}
     after_traits = apply_trait_modifiers(base, traits) if traits else base
     after_spec = apply_specialization_modifiers(after_traits, spec)
-    return sum(after_spec.values()) + int(adv.get("level", 1)) * 2
+    after_rarity = career_effective_stats(adv, after_spec)
+    return sum(after_rarity.values()) + int(adv.get("level", 1)) * 2
 
 
 def item_equip_power(item: dict) -> int:
@@ -164,14 +163,28 @@ def build_equipment_delta(
     `total_power_snapshot` and `equipment_power_snapshot` (computed by the
     expedition starter).
     """
-    equipment_power_bonus = sum(
+    equipment_base_power_bonus = sum(
         int(m.get("equipment_power_snapshot", 0)) for m in members_for_power
+    )
+    item_effect_power_bonus = sum(
+        int(m.get("item_effect_power_bonus", 0)) for m in members_for_power
+    )
+    class_item_resonance_bonus = sum(
+        int(m.get("class_item_resonance_bonus", 0))
+        for m in members_for_power
+    )
+    equipment_power_bonus = (
+        equipment_base_power_bonus
+        + item_effect_power_bonus
+        + class_item_resonance_bonus
     )
     members_base_only = [
         {
             **m,
             "total_power_snapshot": int(m["total_power_snapshot"])
-            - int(m.get("equipment_power_snapshot", 0)),
+            - int(m.get("equipment_power_snapshot", 0))
+            - int(m.get("item_effect_power_bonus", 0))
+            - int(m.get("class_item_resonance_bonus", 0)),
         }
         for m in members_for_power
     ]
@@ -182,6 +195,25 @@ def build_equipment_delta(
 
     if equipment_power_bonus == 0:
         narrative = "Nessun equipaggiamento è stato consumato in questa spedizione."
+    elif item_effect_power_bonus or class_item_resonance_bonus:
+        breakdown = (
+            f"L'equipaggiamento base ha aggiunto +{equipment_base_power_bonus} "
+            f"e gli effetti degli item di lore +{item_effect_power_bonus} "
+            f"e la risonanza dei sentieri +{class_item_resonance_bonus} "
+            "al potere della squadra. "
+        )
+        if success_chance_without_eq == success_chance_with_eq:
+            narrative = (
+                breakdown
+                + "La probabilità di successo era già al massimo "
+                f"({success_chance_with_eq}%)."
+            )
+        else:
+            narrative = (
+                breakdown
+                + "La probabilità di successo è aumentata dal "
+                f"{success_chance_without_eq}% al {success_chance_with_eq}%."
+            )
     elif success_chance_without_eq == success_chance_with_eq:
         narrative = (
             f"L'equipaggiamento ha aggiunto +{equipment_power_bonus} al potere della squadra. "
@@ -195,6 +227,9 @@ def build_equipment_delta(
         )
     return {
         "base_team_power": base_team_power,
+        "equipment_base_power_bonus": equipment_base_power_bonus,
+        "item_effect_power_bonus": item_effect_power_bonus,
+        "class_item_resonance_bonus": class_item_resonance_bonus,
         "equipment_power_bonus": equipment_power_bonus,
         "final_team_power": final_team_power,
         "success_chance_without_equipment": success_chance_without_eq,

@@ -4,15 +4,15 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 
-VALID_SQUAD_TYPES = {"dungeon_3", "dungeon_5", "raid_20"}
-SQUAD_SIZE = {"dungeon_3": 3, "dungeon_5": 5, "raid_20": 20}
-
-
-class RaidPartiesIn(BaseModel):
-    party_1: list[str] = Field(..., min_length=5, max_length=5)
-    party_2: list[str] = Field(..., min_length=5, max_length=5)
-    party_3: list[str] = Field(..., min_length=5, max_length=5)
-    party_4: list[str] = Field(..., min_length=5, max_length=5)
+VALID_SQUAD_TYPES = {
+    "dungeon_3", "dungeon_5", "dungeon_7",
+    "raid_10", "raid_15", "raid_20", "raid_40",
+}
+SQUAD_SIZE = {
+    "dungeon_3": 3, "dungeon_5": 5, "dungeon_7": 7,
+    "raid_10": 10, "raid_15": 15, "raid_20": 20, "raid_40": 40,
+}
+RaidPartiesIn = dict[str, list[str]]
 
 
 class SquadCreateIn(BaseModel):

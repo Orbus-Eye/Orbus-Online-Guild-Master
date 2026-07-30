@@ -12,7 +12,10 @@ import { getTraitLabel } from "@/utils/trait";
 import { classLabel } from "../utils/displayLabels";
 import { api } from "../lib/api";
 
-const SLOTS = ["weapon", "armor", "accessory"];
+const SLOTS = [
+    "weapon", "chest", "legs", "head", "accessory", "back",
+    "ring_1", "ring_2", "trinket_1", "trinket_2",
+];
 
 // ROUND 16.5.4c REOPEN #5 Fix B — slot labels sempre in italiano nel
 // modal-scope (adiacente al bottone Auto-Equip). Prima si affidavano a
@@ -21,8 +24,15 @@ const SLOTS = ["weapon", "armor", "accessory"];
 // Auto-Equip. Scope stretto: solo questo componente.
 const SLOT_LABEL_IT = {
     weapon: "ARMA",
-    armor: "ARMATURA",
+    chest: "CORAZZA",
+    legs: "GAMBE",
+    head: "ELMO",
     accessory: "ACCESSORIO",
+    back: "SCHIENA",
+    ring_1: "ANELLO I",
+    ring_2: "ANELLO II",
+    trinket_1: "MONILE I",
+    trinket_2: "MONILE II",
 };
 
 const RARITY_COLOR = {
@@ -38,11 +48,6 @@ const RARITY_LABEL = {
     rare: "rare",
     epic: "epic",
 };
-
-// Linear XP curve mirroring the backend (50 * level). If the backend
-// later exposes per-level XP requirements, this should be replaced by
-// a server-driven field. Documented in the report.
-const xpForNextLevel = (level) => Math.max(1, 50 * Math.max(1, level));
 
 const formatItemBonuses = (it) => {
     if (!it) return "";
@@ -113,9 +118,11 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
 
     if (!adventurer) return null;
 
-    const xpNeeded = xpForNextLevel(adventurer.level);
-    const xpCurrent = Math.max(0, Math.min(xpNeeded, adventurer.experience || 0));
-    const xpPct = Math.round((xpCurrent / xpNeeded) * 100);
+    const xpNeeded = adventurer.experience_to_next_level;
+    const atLevelCap = xpNeeded === null;
+    const safeXpNeeded = Math.max(1, xpNeeded || 1);
+    const xpCurrent = Math.max(0, Math.min(safeXpNeeded, adventurer.experience || 0));
+    const xpPct = atLevelCap ? 100 : Math.round((xpCurrent / safeXpNeeded) * 100);
     const equipment = adventurer.equipment || {};
 
     return (
@@ -198,7 +205,7 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground tracking-widest mb-1.5">
                         <span>{t("adventurer_modal.experience")}</span>
                         <span data-testid="adventurer-modal-xp">
-                            {xpCurrent} / {xpNeeded}
+                            {atLevelCap ? "LIVELLO MASSIMO" : `${xpCurrent} / ${safeXpNeeded}`}
                         </span>
                     </div>
                     <div className="h-2 w-full bg-secondary rounded-sm overflow-hidden">
@@ -210,6 +217,31 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                     </div>
                 </div>
 
+                {adventurer.career && (
+                    <div
+                        className="mt-4 border border-amber/25 bg-amber/5 p-3 rounded-sm"
+                        data-testid="adventurer-career-progress"
+                    >
+                        <div className="flex justify-between gap-3 text-[10px] tracking-widest">
+                            <span className="text-amber">CARRIERA · {adventurer.career.rarity}</span>
+                            <span className="text-muted-foreground">
+                                STAT ×{adventurer.career.stat_multiplier} · {adventurer.career.dungeons_completed} dungeon · {adventurer.career.raids_completed} raid
+                            </span>
+                        </div>
+                        {adventurer.career.next_rarity ? (
+                            <p className="text-[11px] text-muted-foreground mt-2">
+                                Prossimo grado: <strong className="text-foreground">{adventurer.career.next_rarity}</strong>.
+                                Mancano {adventurer.career.remaining.dungeons} dungeon
+                                {adventurer.career.remaining.raids > 0
+                                    ? ` e ${adventurer.career.remaining.raids} raid`
+                                    : ""}.
+                            </p>
+                        ) : (
+                            <p className="text-[11px] text-amber mt-2">Grado Leggendario raggiunto.</p>
+                        )}
+                    </div>
+                )}
+
                 {/* Stats */}
                 <div className="grid grid-cols-5 gap-2 mt-5">
                     {[
@@ -218,7 +250,10 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                         ["INT", adventurer.intellect],
                         ["END", adventurer.endurance],
                         ["FAI", adventurer.faith],
-                    ].map(([k, v]) => (
+                    ].map(([k, v], index) => {
+                        const statKeys = ["strength", "agility", "intellect", "endurance", "faith"];
+                        const baseValue = adventurer.base_stats?.[statKeys[index]];
+                        return (
                         <div
                             key={k}
                             data-testid={`adventurer-modal-stat-${k.toLowerCase()}`}
@@ -228,8 +263,14 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                                 {k}
                             </div>
                             <div className="text-base font-semibold">{v}</div>
+                            {adventurer.rarity_stat_multiplier > 1 && baseValue != null && (
+                                <div className="text-[8px] text-muted-foreground">
+                                    {baseValue} × {adventurer.rarity_stat_multiplier}
+                                </div>
+                            )}
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Power / Condition */}

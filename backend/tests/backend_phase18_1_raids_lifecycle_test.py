@@ -1,9 +1,9 @@
 """Phase 18.1 — Raid full lifecycle + T4 loot curve.
 
 Coverage (10 tests):
-  L1. T4 dungeon loot table active: 1000 sim → Legendary ≤ 8%, Common ≤ 10%
-  L2. T4 dungeon loot covers all 5 rarities (Common→Legendary)
-  L3. Legacy dungeons (Tier 3) still cap at Epic (no Legendary leak)
+  L1. T4 ordinary dungeon loot stops at Epic.
+  L2. T4 dungeon loot covers Common→Epic and sums to 100.
+  L3. All ordinary dungeon tiers reject Legendary/Unique leakage.
   L4. Path count still 75 (no new endpoints added in Phase 18.1)
   R1. Raid catalog includes i18n-friendly keys (raid_dungeon_slug present)
   R2. Full lifecycle: preview → start → complete with rewards
@@ -71,30 +71,33 @@ def _setup_20_advs(db, guild_id):
 
 
 # ───────────────────────────────────── L: Loot tables T4
-def test_L1_t4_loot_rarities_distribution():
-    """1000 rolls on T4 dungeon: Legendary must be in [1, 12]%, Common ≤ 12%."""
+def test_L1_t4_ordinary_loot_stops_at_epic():
+    """Legendary/Unique use dedicated endgame sources, not the T4 sampler."""
     from app.expeditions.loot_tables import DUNGEON_LOOT_TABLES
     t4 = DUNGEON_LOOT_TABLES["infernal-pit-5p"]["success"]["weights"]
-    assert "Legendary" in t4
-    assert t4["Legendary"] == 5
+    assert "Legendary" not in t4
+    assert "Unique" not in t4
     assert t4["Common"] == 5
+    assert t4["Rare"] == 40
     # Sum == 100
     assert sum(t4.values()) == 100
 
 
-def test_L2_t4_loot_covers_5_rarities():
+def test_L2_t4_loot_covers_4_ordinary_rarities():
     from app.expeditions.loot_tables import DUNGEON_LOOT_TABLES
     for slug in ["infernal-pit-5p", "celestial-citadel-5p", "world-tree-roots-5p"]:
         w = DUNGEON_LOOT_TABLES[slug]["success"]["weights"]
-        assert set(w.keys()) == {"Common", "Uncommon", "Rare", "Epic", "Legendary"}
+        assert set(w.keys()) == {"Common", "Uncommon", "Rare", "Epic"}
+        assert sum(w.values()) == 100
 
 
-def test_L3_legacy_T3_no_legendary_leak():
-    """Phase 17.5 §I.3 — Legendary only on T4 5p, NOT on legacy T3."""
+def test_L3_no_endgame_rarity_in_ordinary_dungeon_tables():
+    """T0 — no ordinary dungeon table may contain Legendary or Unique."""
     from app.expeditions.loot_tables import DUNGEON_LOOT_TABLES
-    for slug in ["lich-sanctum", "storm-spire", "dragons-hoard"]:
-        w = DUNGEON_LOOT_TABLES[slug]["success"]["weights"]
+    for slug, table in DUNGEON_LOOT_TABLES.items():
+        w = table["success"]["weights"]
         assert "Legendary" not in w, f"{slug} should NOT drop Legendary"
+        assert "Unique" not in w, f"{slug} should NOT drop Unique"
 
 
 def test_L4_path_count_now_77():

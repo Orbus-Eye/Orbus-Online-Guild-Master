@@ -134,11 +134,12 @@ def test_a_04_raid_catalog_exposes_min_level():
         assert "min_adventurer_level" in rd, f"Raid `{rd.get('slug')}` lacks min_adventurer_level"
         # Tier-based mapping: tier 1→8, 2→12, 3→15.
         tier = int(rd.get("tier", 1))
-        expected_by_tier = {1: 8, 2: 12, 3: 15}.get(tier)
-        if expected_by_tier is not None:
-            assert rd["min_adventurer_level"] == expected_by_tier, (
-                f"Raid `{rd['slug']}` tier={tier} expected min_level={expected_by_tier}, "
-                f"got {rd['min_adventurer_level']}"
+        from app.shared.content_curve import RAID_CURVE
+        expected = RAID_CURVE.get(rd["slug"])
+        if expected is not None:
+            assert rd["min_adventurer_level"] == expected.required_level, (
+                f"Raid `{rd['slug']}` expected min_level="
+                f"{expected.required_level}, got {rd['min_adventurer_level']}"
             )
 
 

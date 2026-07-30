@@ -19,6 +19,11 @@ invariant.
 """
 import secrets
 
+from app.items.catalog_contract import (
+    ITEM_CATALOG_VERSION_T6,
+    ordinary_random_drop_allowed,
+)
+from app.rewards.source_engine import evaluate_reward_eligibility
 from app.shared.constants import LOOT_DROP_CHANCE_LEGACY, LOOT_RARITIES_LEGACY
 
 # Phase 5.6: use cryptographically-secure RNG for loot rolls. The numerical
@@ -26,8 +31,68 @@ from app.shared.constants import LOOT_DROP_CHANCE_LEGACY, LOOT_RARITIES_LEGACY
 _rng = secrets.SystemRandom()
 
 
+def _eligible_ordinary_pool(pool: list[dict], dungeon: dict) -> list[dict]:
+    content_level = int(
+        dungeon.get("required_level")
+        or dungeon.get("min_adventurer_level")
+        or 1
+    )
+    return [
+        item
+        for item in pool
+        if evaluate_reward_eligibility(
+            item=item,
+            source_policy_id="ordinary_dungeon",
+            adventurer_level=content_level,
+        )["eligible"]
+    ]
+
+
+async def _load_dungeon_source_pool(
+    db,
+    dungeon: dict,
+    rarity: str,
+    *,
+    limit: int = 200,
+) -> list[dict]:
+    """Prefer the authored T6 source pool, then preserve legacy compatibility."""
+    slug = str(dungeon.get("slug") or "")
+    if slug:
+        authored = await db.items.find(
+            {
+                "is_active": True,
+                "is_test": {"$ne": True},
+                "catalog_version": ITEM_CATALOG_VERSION_T6,
+                "rarity": rarity,
+                "acquisition_sources": {
+                    "$elemMatch": {
+                        "source_type": "dungeon",
+                        "source_slug": slug,
+                    }
+                },
+            },
+            {"_id": 0},
+        ).to_list(limit)
+        authored = _eligible_ordinary_pool(authored, dungeon)
+        if authored:
+            return authored
+    legacy = await db.items.find(
+        {
+            "is_active": True,
+            "is_test": {"$ne": True},
+            "rarity": rarity,
+        },
+        {"_id": 0},
+    ).to_list(limit)
+    return _eligible_ordinary_pool(legacy, dungeon)
+
+
 DUNGEON_LOOT_TABLES = {
     # ─── Tier 1 — Common / Uncommon only ─────────────────────────────────────
+    "training-yard": {
+        "success": {"chance": 1.00, "weights": {"Common": 100}},
+        "failure": {"chance": 0.00, "weights": {}},
+    },
     "goblin-warrens": {
         "success": {"chance": 0.50, "weights": {"Common": 85, "Uncommon": 15}},
         "failure": {"chance": 0.00, "weights": {}},
@@ -78,7 +143,8 @@ DUNGEON_LOOT_TABLES = {
     # T1-5p: Common / Uncommon only (kid-friendly curve)
     # T2-5p: Common / Uncommon / Rare
     # T3-5p: Uncommon / Rare / Epic
-    # T4-5p: Common 5% · Uncommon 25% · Rare 35% · Epic 30% · Legendary 5%  (LOCKED §I.3)
+    # T4-5p: Common 5% · Uncommon 25% · Rare 40% · Epic 30%.
+    # Legendary/Unique are endgame-source rewards, never ordinary random loot.
     # ═══════════════════════════════════════════════════════════════════════════
     "wolf-den-5p": {
         "success": {"chance": 0.55, "weights": {"Common": 80, "Uncommon": 20}},
@@ -116,17 +182,17 @@ DUNGEON_LOOT_TABLES = {
         "success": {"chance": 0.75, "weights": {"Uncommon": 40, "Rare": 42, "Epic": 18}},
         "failure": {"chance": 0.05, "weights": {"Uncommon": 100}},
     },
-    # T4-5p Elite (Legendary 5% locked by §I.3)
+    # T4-5p Elite — ordinary item drops stop at Epic.
     "infernal-pit-5p": {
-        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 40, "Epic": 30}},
         "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
     },
     "celestial-citadel-5p": {
-        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "success": {"chance": 0.78, "weights": {"Common": 5, "Uncommon": 25, "Rare": 40, "Epic": 30}},
         "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
     },
     "world-tree-roots-5p": {
-        "success": {"chance": 0.80, "weights": {"Common": 5, "Uncommon": 25, "Rare": 35, "Epic": 30, "Legendary": 5}},
+        "success": {"chance": 0.80, "weights": {"Common": 5, "Uncommon": 25, "Rare": 40, "Epic": 30}},
         "failure": {"chance": 0.05, "weights": {"Common": 50, "Uncommon": 50}},
     },
 }
@@ -148,13 +214,19 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
             {"is_active": True, "rarity": {"$in": LOOT_RARITIES_LEGACY}},
             {"_id": 0},
         ).to_list(100)
+        pool = _eligible_ordinary_pool(pool, dungeon)
         return [_rng.choice(pool)["id"]] if pool else []
 
     branch = table["success" if success else "failure"]
     if _rng.random() >= branch["chance"]:
         return []
     weights = branch.get("weights") or {}
-    rarities = [r for r, w in weights.items() if w > 0]
+    # T0 defence-in-depth: stale/future tables cannot leak an endgame rarity
+    # through the ordinary dungeon sampler.
+    rarities = [
+        r for r, w in weights.items()
+        if w > 0 and ordinary_random_drop_allowed(r)
+    ]
     if not rarities:
         return []
     # Failure branch is hard-capped to Common/Uncommon (defence-in-depth).
@@ -165,9 +237,7 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
     chosen_rarity = _rng.choices(
         rarities, weights=[weights[r] for r in rarities], k=1
     )[0]
-    pool = await db.items.find(
-        {"is_active": True, "is_test": {"$ne": True}, "rarity": chosen_rarity}, {"_id": 0}
-    ).to_list(200)
+    pool = await _load_dungeon_source_pool(db, dungeon, chosen_rarity)
     if not pool:
         # Degrade to next-lower rarity, still honouring the failure rule
         for r in ["Epic", "Rare", "Uncommon", "Common"]:
@@ -175,9 +245,7 @@ async def roll_loot_for_dungeon(db, dungeon: dict, success: bool) -> list[str]:
                 continue
             if not success and r not in ("Common", "Uncommon"):
                 continue
-            cand = await db.items.find(
-                {"is_active": True, "is_test": {"$ne": True}, "rarity": r}, {"_id": 0}
-            ).to_list(200)
+            cand = await _load_dungeon_source_pool(db, dungeon, r)
             if cand:
                 pool = cand
                 break

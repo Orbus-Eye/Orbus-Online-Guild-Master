@@ -112,7 +112,9 @@ def compute_xp_multiplier(
             "primary_stat_slug": "", "primary_stat_name_it": "",
         }
 
-    actual = int(adventurer.get(primary, 0) or 0)
+    # Use the same career-adjusted stat used by combat resolution.
+    from app.adventurers.career import career_effective_stats
+    actual = career_effective_stats(adventurer).get(primary, 0)
     level = int(adventurer.get("level", 1) or 1)
     threshold = expected_primary_stat(class_doc, level)
     if threshold <= 0:

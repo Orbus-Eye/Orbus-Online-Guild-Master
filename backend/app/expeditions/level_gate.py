@@ -33,6 +33,7 @@ from typing import Iterable
 
 from fastapi import HTTPException
 
+from app.shared.content_curve import DUNGEON_CURVE, RAID_CURVE
 
 # ─── Legacy mappings ──────────────────────────────────────────────────────────
 # Conservative defaults applied ONLY when the seed document lacks an explicit
@@ -40,17 +41,17 @@ from fastapi import HTTPException
 # expected to carry the field explicitly.
 _DUNGEON_DIFFICULTY_TO_MIN_LEVEL: dict[int, int] = {
     1: 1,   # facile  → Lv1
-    2: 3,   # medio   → Lv3
-    3: 7,   # difficile → Lv7
-    4: 12,  # elite   → Lv12
+    2: 20,  # medio   → Lv20
+    3: 40,  # difficile → Lv40
+    4: 60,  # elite   → Lv60
 }
 
 # Raids: derive from `tier` if present, otherwise fall back on
-# recommended_power_combined buckets. Endgame raids = Lv15.
+# recommended_power_combined buckets. The final raid is level-80 endgame.
 _RAID_TIER_TO_MIN_LEVEL: dict[int, int] = {
-    1: 8,
-    2: 12,
-    3: 15,
+    1: 60,
+    2: 70,
+    3: 80,
 }
 
 
@@ -73,6 +74,11 @@ def legacy_min_level_for_dungeon(dungeon: dict) -> int:
     reale = 0). La mappa resta esportata solo come riferimento
     documentale per audit/telemetria; non è più letta a runtime.
     """
+    # 0. Current canonical content always follows the level-80 curve, even
+    # while a legacy database is waiting for the idempotent seed backfill.
+    canonical = DUNGEON_CURVE.get(str(dungeon.get("slug") or ""))
+    if canonical is not None:
+        return canonical.required_level
     # 1. Nuovo canonical field (P0.2 apply).
     r165 = dungeon.get("required_level")
     if isinstance(r165, int) and r165 >= 1:
@@ -87,6 +93,9 @@ def legacy_min_level_for_dungeon(dungeon: dict) -> int:
 
 def legacy_min_level_for_raid(raid_dungeon: dict) -> int:
     """Resolve `min_adventurer_level` for a raid_dungeons document."""
+    canonical = RAID_CURVE.get(str(raid_dungeon.get("slug") or ""))
+    if canonical is not None:
+        return canonical.required_level
     explicit = raid_dungeon.get("min_adventurer_level")
     if isinstance(explicit, int) and explicit >= 1:
         return explicit
@@ -95,11 +104,11 @@ def legacy_min_level_for_raid(raid_dungeon: dict) -> int:
         return _RAID_TIER_TO_MIN_LEVEL[tier]
     # Power-bucket fallback for very old seeds without tier.
     rec = int(raid_dungeon.get("recommended_power_combined", 0))
-    if rec >= 6000:
-        return 15
+    if rec >= 4000:
+        return 80
     if rec >= 3500:
-        return 12
-    return 8
+        return 70
+    return 60
 
 
 def enforce_min_adventurer_level(

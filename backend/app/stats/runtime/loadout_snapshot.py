@@ -10,6 +10,7 @@ Regole (P0Q02 §20.3 verbatim):
 - Può esistere nel contesto runtime già usato dalla spedizione
 - Nuova persistenza cross-request → STOP `PERSISTENCE_BASELINE_CONFLICT`
 """
+
 from __future__ import annotations
 
 from typing import Any, Mapping
@@ -50,7 +51,9 @@ def build_loadout_snapshot(
 
     equipment_flat = aggregate_equipment_flat_stats(equipment_items)
     blueprint_list: tuple[str, ...] = tuple(
-        str(item.get("blueprint_id") or item.get("id") or "")
+        # Prefer the stable catalog slug over the legacy per-row UUID.  This
+        # keeps item-effect identity deterministic across databases/seeds.
+        str(item.get("blueprint_id") or item.get("slug") or item.get("id") or "")
         for item in (equipment_items or [])
         if isinstance(item, dict)
     )
@@ -82,6 +85,7 @@ def build_loadout_snapshot(
 
 def _dict_from(m: Mapping[str, Any] | None) -> dict[str, int]:
     from app.stats.runtime.stat_bridge import RUNTIME_STATS
+
     out = {s: 0 for s in RUNTIME_STATS}
     if not isinstance(m, Mapping):
         return out

@@ -1,4 +1,4 @@
-"""ROUND 6A.1 — Adventurer generator (server-authoritative).
+"""Legacy adventurer generator retained for seed compatibility.
 
 Centralised entry point for creating adventurer candidates. Wraps the
 legacy `recruitment._generate_candidate` and adds:
@@ -7,14 +7,16 @@ legacy `recruitment._generate_candidate` and adds:
   • Safe fallbacks: empty trait pool, no Test* traits, no Test* classes.
   • Deterministic seed support for tests (`new_rng_for_tests`).
 
-NEVER returns Legendary via paid boost or premium — all randomness is
-server-side and gated by `RARITY_WEIGHTS`.
+Player-facing creation no longer uses this generator. Career rarity always
+starts Common and is earned through completed dungeon and raid participation.
 """
+
 from __future__ import annotations
 
 import logging
 import random as _legacy_random  # Round 11.4d — kept for any module-level seed only
 import secrets
+
 random = secrets.SystemRandom()  # PvP-ready: crypto-grade RNG
 from datetime import datetime, timezone
 from typing import Optional
@@ -23,7 +25,6 @@ from app.audit.log import write_audit
 from app.shared.constants import (
     RARITY_POSITIVE_TRAIT_MIN,
     RARITY_STAT_MAX_FLOOR,
-    RARITY_WEIGHTS,
 )
 
 
@@ -68,9 +69,11 @@ async def filter_safe_trait_pool(db) -> list[dict]:
         logger.warning("trait pool fetch failed: %s", exc)
         return []
     safe = [
-        t for t in rows
-        if not (t.get("name", "").startswith("Test")
-                or t.get("slug", "").startswith("test"))
+        t
+        for t in rows
+        if not (
+            t.get("name", "").startswith("Test") or t.get("slug", "").startswith("test")
+        )
     ]
     return safe
 
@@ -102,25 +105,27 @@ async def filter_safe_class_pool(db) -> list[dict]:
                 # the explicit flag; treat *active* ones as base by
                 # default ONLY if they are NOT deprecated.
                 {"is_base_class": True},
-                {"$and": [
-                    {"is_base_class": {"$exists": False}},
-                    {"deprecated_at": None},
-                ]},
+                {
+                    "$and": [
+                        {"is_base_class": {"$exists": False}},
+                        {"deprecated_at": None},
+                    ]
+                },
             ],
         },
         {"_id": 0},
     ).to_list(100)
     safe = [
-        c for c in rows
-        if not (c.get("name", "").startswith("Test")
-                or c.get("slug", "").startswith("test"))
+        c
+        for c in rows
+        if not (
+            c.get("name", "").startswith("Test") or c.get("slug", "").startswith("test")
+        )
     ]
     return safe
 
 
-def _enforce_legendary_floor(
-    rng: random.Random, candidate: dict, rarity: str
-) -> dict:
+def _enforce_legendary_floor(rng: random.Random, candidate: dict, rarity: str) -> dict:
     """Post-roll guard: bump at least one stat to the rarity floor if not met.
 
     Idempotent and conservative: only bumps the *highest* stat to the floor
@@ -167,7 +172,10 @@ def _ensure_trait_floor(
         logger.info(
             "rarity=%s traits_pool=%d positives=%d < required=%d "
             "(fallback ok, no Test* injected)",
-            rarity, len(traits or []), len(positives), min_pos,
+            rarity,
+            len(traits or []),
+            len(positives),
+            min_pos,
         )
         return candidate
 
@@ -195,7 +203,7 @@ async def _emit_generated_audit(
     candidate: dict,
     guild_id: str,
     rarity: str,
-    klass: dict,
+    klass: dict | None,
     audit_source: str,
 ) -> None:
     """Best-effort audit log for a freshly-generated candidate. Failures
@@ -205,15 +213,18 @@ async def _emit_generated_audit(
         await write_audit(
             db,
             event_type="adventurer_generated",
-            actor_user_id=None,                  # system-generated
+            actor_user_id=None,  # system-generated
             actor_guild_id=guild_id,
             related_entity_id=candidate["id"],
             source=audit_source,
             metadata={
                 "rarity": rarity,
                 "traits_count": len(candidate.get("traits", [])),
-                "positive_traits_count": _count_positive_traits(candidate.get("traits", [])),
-                "class_slug": klass.get("slug"),
+                "positive_traits_count": _count_positive_traits(
+                    candidate.get("traits", [])
+                ),
+                "class_slug": (klass or {}).get("slug"),
+                "recruit_status": candidate.get("recruit_status"),
                 "stat_max": _stat_max_value(candidate),
             },
         )
@@ -259,9 +270,7 @@ async def generate_candidate(
 
     traits = trait_pool if trait_pool is not None else await filter_safe_trait_pool(db)
 
-    # Rarity is decided HERE so we can run post-roll guards before the
-    # base generator returns.
-    rarity = _weighted_choice(rng, RARITY_WEIGHTS)
+    rarity = "Common"
     klass = rng.choice(classes)
 
     # Build the candidate via the shared generator. `forced_rarity` injects
@@ -278,7 +287,10 @@ async def generate_candidate(
     # Post-roll guards (Legendary/Epic) — applied AFTER stats are rolled.
     candidate = _enforce_legendary_floor(rng, candidate, rarity)
     candidate = _ensure_trait_floor(
-        rng=rng, candidate=candidate, traits=traits, rarity=rarity,
+        rng=rng,
+        candidate=candidate,
+        traits=traits,
+        rarity=rarity,
     )
 
     if audit:
@@ -294,8 +306,50 @@ async def generate_candidate(
     return candidate
 
 
+async def generate_classless_candidate(
+    db,
+    *,
+    guild_id: str,
+    now: Optional[datetime] = None,
+    rng: Optional[random.Random] = None,
+    trait_pool: Optional[list[dict]] = None,
+    audit: bool = True,
+    audit_source: str = "recruitment",
+) -> dict:
+    """Generate one neutral recruit who must choose a Class Hall.
+
+    This is the authoritative recruitment path for new offers.  The legacy
+    class-bound generator remains available for seeds and old test fixtures.
+    """
+    from app.adventurers.common import _generate_classless_candidate
+    from app.adventurers.common import _rng as _module_rng
+
+    now = now or datetime.now(timezone.utc)
+    rng = rng or _module_rng
+    traits = trait_pool if trait_pool is not None else await filter_safe_trait_pool(db)
+    rarity = "Common"
+    candidate = _generate_classless_candidate(
+        guild_id,
+        now,
+        traits_pool=traits,
+        rng=rng,
+        forced_rarity=rarity,
+    )
+    if audit:
+        await _emit_generated_audit(
+            db,
+            candidate=candidate,
+            guild_id=guild_id,
+            rarity=rarity,
+            klass=None,
+            audit_source=audit_source,
+        )
+    return candidate
+
+
 __all__ = [
     "generate_candidate",
+    "generate_classless_candidate",
     "filter_safe_class_pool",
     "filter_safe_trait_pool",
     "new_rng_for_tests",
