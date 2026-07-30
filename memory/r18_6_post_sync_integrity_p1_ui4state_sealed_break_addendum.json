@@ -1,0 +1,136 @@
+{
+  "affected_slot_types": [
+    "back",
+    "helmet",
+    "legs",
+    "ring",
+    "trinket"
+  ],
+  "baseline_post": "17/17",
+  "baseline_pre": "17/17",
+  "baseline_unchanged": true,
+  "branch": "main-260728",
+  "callers_inventory": {
+    "production_caller_count": 1,
+    "production_callers": [
+      "backend/app/adventurers/routes.py:319"
+    ],
+    "test_caller_files": [
+      "backend/tests/backend_r18_4_followup_ui_4state_test.py"
+    ],
+    "ui_label_reference": "frontend/src/utils/compatibilityLabels.js:43"
+  },
+  "closure_manifest_created": false,
+  "database_writes": 0,
+  "deployment_touched": false,
+  "diff_hunk_summary": {
+    "file": "backend/app/equipment/ui_4state.py",
+    "hunk_from_canonical_closure_to_head": {
+      "canonical_closure_commit": "c0d8150cf4aaab259ad0c7aefa5b0a86522ed340",
+      "head_commit": "34546b40c3e2fae12bec739ce8bc7524639ff7cf",
+      "lines_changed": 4,
+      "lines_added": 4,
+      "lines_removed": 1,
+      "adjacent_untouched_line_ranges": [
+        [1, 82],
+        [87, 175]
+      ],
+      "changed_line_range": [83, 86],
+      "old_value_line_83": "    equipable_types = {\"weapon\", \"armor\", \"accessory\", \"shield\"}",
+      "new_value_lines_83_86": "    equipable_types = {\n        \"weapon\", \"armor\", \"legs\", \"helmet\", \"accessory\",\n        \"back\", \"ring\", \"trinket\", \"shield\",\n    }"
+    }
+  },
+  "documentation_status_openapi_p2_deferred": {
+    "measured_openapi_path_count": 283,
+    "documented_openapi_path_count": 284,
+    "documented_openapi_route_count": 306,
+    "measured_openapi_route_count": 306,
+    "measured_openapi_operation_count": 301,
+    "openapi_inventory_sha256": "b521973a6fa28d197f389e7db62f869bc703513ccb1a9e2428ca00d3ea1d845e",
+    "documentation_files_stale": [
+      "memory/HANDOFF_CURRENT.md:61",
+      "memory/r18_6_classless_27_item_first_report.md:37"
+    ],
+    "responsibility": "POST-SYNC-INTEGRITY-P2"
+  },
+  "env_file_touched": false,
+  "feature_flag_touched": false,
+  "files_created": [
+    "memory/r18_6_post_sync_integrity_p1_ui4state_sealed_break_addendum.md",
+    "memory/r18_6_post_sync_integrity_p1_ui4state_sealed_break_addendum.json"
+  ],
+  "files_modified": [
+    "backend/tests/backend_r18_4_sealed_integrity_test.py"
+  ],
+  "files_modified_line_scope": {
+    "backend/tests/backend_r18_4_sealed_integrity_test.py": {
+      "constant_updated": "R18_4_FOLLOWUP_NEW_6_SEALED_HASHES",
+      "entry_key": "/app/backend/app/equipment/ui_4state.py",
+      "line_touched": 85,
+      "lines_changed": 1,
+      "logic_touched": false,
+      "assert_touched": false,
+      "adjacent_hashes_touched": 0,
+      "sealed_count_touched": false
+    }
+  },
+  "functional_content_change": false,
+  "gate_id": "POST-SYNC-INTEGRITY-P1",
+  "gate_title": "UI4State Controlled Sealed-Break for 10-Slot Revamp",
+  "git_touched": false,
+  "hash_transition": {
+    "new_canonical_sha256": "0b19287a48e8506006285d4460d3ffdd0235a44062b1132379616fd1404570a9",
+    "original_sealed_sha256": "7054ec65d19066074f6cdb646f472f08213533ab0683e6dcfbeefa01a1e74aa7",
+    "sealed_file_path": "backend/app/equipment/ui_4state.py"
+  },
+  "impact_of_hypothetical_revert": [
+    "break slot_missing diagnostic for 5 canonical item categories",
+    "force DRY violation via duplicated set in external wrapper",
+    "fragment semantic meaning of equipable across sealed helper and unsealed caller",
+    "fail item-first tester journey for 11 category catalog",
+    "regression against ratified 10-slot revamp architecture"
+  ],
+  "lore_meta_sha256_invariant": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f",
+  "next_authorized_step": "POST-SYNC-INTEGRITY-P2 · OPENAPI_DOC_STALE_FIX_284_TO_283 (PM adjudication awaited)",
+  "openapi_paths_measured": 283,
+  "openapi_routes_measured": 306,
+  "openapi_operations_measured": 301,
+  "option_chosen": "A",
+  "option_chosen_label": "controlled sealed-break preserving current functional change with successor hash contract update",
+  "option_rejected": "B",
+  "option_rejected_label": "revert sealed file and reimplement 5-new-slot compatibility in non-sealed external extension",
+  "pm_authority": "PM dispatch POST-SYNC-INTEGRITY-P1 · UI4STATE CONTROLLED SEALED-BREAK FOR 10-SLOT REVAMP",
+  "prd_appended": false,
+  "pre_remediation_head": "34546b40c3e2fae12bec739ce8bc7524639ff7cf",
+  "reason": "10-slot equipment revamp for item-first roadmap · extends equipable_types set from 4 to 9 canonical item_type categories mapping to 10 physical equipment slots · required for slot_missing diagnostic semantics on new categories",
+  "regime": "controlled successor seal · targeted single-hash update · no PRD append · no closure manifest · baseline unchanged",
+  "repository": "Orbus-Eye/Orbus-Online-Guild-Master",
+  "scope_compliance": {
+    "adjacent_hashes_preserved": true,
+    "baseline_incremented": false,
+    "closure_manifest_created": false,
+    "commit_push_merge_pr": false,
+    "dependency_installed": false,
+    "env_file_touched": false,
+    "feature_flag_activated": false,
+    "files_created_count": 2,
+    "files_modified_count": 1,
+    "lore_meta_touched": false,
+    "prd_appended": false,
+    "sealed_artifact_count_touched": false,
+    "sealed_count_value": 36,
+    "testing_agent_invoked": false,
+    "ui_4state_content_touched": false,
+    "untracked_pregate_preserved": true,
+    "untracked_pregate_count": 11
+  },
+  "sealed_artifact_count_post": 36,
+  "sealed_artifact_count_pre": 36,
+  "sealed_test_pre_result": "1 failed / 5 passed",
+  "sealed_test_post_result_expected": "6 passed / 36 byte-identical",
+  "successor_seal_declaration": "This is a controlled successor seal. It does not rewrite or invalidate the historical R18.4 closure.",
+  "targeted_test_file": "backend/tests/backend_r18_4_followup_ui_4state_test.py",
+  "targeted_test_result_p0": "13 passed / 0 failed",
+  "ui_4state_content_changed_in_p1": false,
+  "ui_4state_current_sha256_pre_and_post_p1": "0b19287a48e8506006285d4460d3ffdd0235a44062b1132379616fd1404570a9"
+}

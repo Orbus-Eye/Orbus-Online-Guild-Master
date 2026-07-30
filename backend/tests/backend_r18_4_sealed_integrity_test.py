@@ -82,7 +82,7 @@ R18_4_NEW_11_SEALED_HASHES: dict[str, str] = {
 # Motivazione dettagliata nel report Phase C section 2.
 R18_4_FOLLOWUP_NEW_6_SEALED_HASHES: dict[str, str] = {
     "/app/backend/app/equipment/ui_4state.py":
-        "7054ec65d19066074f6cdb646f472f08213533ab0683e6dcfbeefa01a1e74aa7",
+        "0b19287a48e8506006285d4460d3ffdd0235a44062b1132379616fd1404570a9",
     "/app/frontend/src/components/ItemCompatibilityBadge.jsx":
         "3a2948220a75fce9f7eb8166f37cfa6efc6b5ad5fd2962857564da873fb4dd01",
     "/app/frontend/src/utils/compatibilityLabels.js":
