@@ -10,7 +10,6 @@ import { useAuth } from "../context/AuthContext";
 import {
     isAdventurerUnderLeveled,
     advMinLevelBadge,
-    advDungeonTooltip,
 } from "../utils/levelGate";
 import { rarityLabel } from "../utils/displayLabels";
 import DungeonPreviewModal from "../components/DungeonPreviewModal";
@@ -55,8 +54,24 @@ function previewTeamPower(team) {
     return total;
 }
 
+// FASE 2.1 — specchio client della curva logistica backend
+// (compute_success_chance in expeditions/formulas.py; il backend resta
+// autoritativo). Rating 100 = parità → 50%; ≥200 → 100% garantito.
+function previewPowerRating(teamPower, recommended) {
+    return Math.round((100 * Math.max(0, teamPower)) / Math.max(1, recommended));
+}
+
 function previewSuccessChance(teamPower, recommended) {
-    return Math.max(10, Math.min(95, 50 + (teamPower - recommended)));
+    const rating = previewPowerRating(teamPower, recommended);
+    if (rating >= 200) return 100;
+    const raw = 100 / (1 + Math.exp(-4.4 * (rating - 100) / 100));
+    return Math.max(5, Math.min(100, Math.round(raw)));
+}
+
+// FASE 2.1 — moltiplicatore drop da Overpower (specchio del backend).
+function previewOverpowerMultiplier(rating) {
+    const steps = Math.floor(Math.max(0, rating - 100) / 25);
+    return Math.min(3.0, 1 + 0.5 * steps);
 }
 
 export default function ExpeditionNew() {
@@ -207,10 +222,9 @@ export default function ExpeditionNew() {
         if (!dungeon || advs.length === 0) return;
         const size = dungeon?.required_team_size || 3;
 
-        // Filter available + level-compatible (shared by both modes).
-        const pool = advs
-            .filter((a) => a.is_available !== false)
-            .filter((a) => !isAdventurerUnderLeveled(a, minAdvLevel));
+        // FASE 2.2 — pool: solo disponibilità (il livello non blocca più;
+        // l'ordinamento per potere fa comunque emergere i più forti).
+        const pool = advs.filter((a) => a.is_available !== false);
 
         if (pool.length === 0) {
             autoLoadedRef.current = true;
@@ -296,11 +310,13 @@ export default function ExpeditionNew() {
     }, [searchParams, dungeon, advs, minAdvLevel]);
 
     const toggleSelect = (adv) => {
-        // Round 11.3 — UI gate: block under-leveled adventurers client-side.
-        // Backend remains authoritative; this is purely UX.
+        // FASE 2.2 — il livello NON blocca più (il gate è sul potere del
+        // gruppo, lato backend). Sotto la fascia consigliata mostriamo
+        // solo un avviso informativo.
         if (isAdventurerUnderLeveled(adv, minAdvLevel)) {
-            toast.error(advDungeonTooltip(minAdvLevel));
-            return;
+            toast.message(
+                `${adv.name} è sotto la fascia consigliata (Lv ${minAdvLevel}): conta il potere totale della squadra.`,
+            );
         }
         setSelected((prev) => {
             if (prev.find((p) => p.id === adv.id)) {
@@ -314,12 +330,6 @@ export default function ExpeditionNew() {
         });
     };
 
-    // Round 11.3 — at least one selected member is below the dungeon min level.
-    const hasUnderLeveledSelected = useMemo(
-        () => selected.some((a) => isAdventurerUnderLeveled(a, minAdvLevel)),
-        [selected, minAdvLevel],
-    );
-
     const teamPower = useMemo(() => previewTeamPower(selected), [selected]);
     const equipmentBonus = useMemo(
         () => selected.reduce((s, a) => s + (a.equipment_power || 0), 0),
@@ -328,6 +338,30 @@ export default function ExpeditionNew() {
     const successChance = useMemo(
         () => (dungeon ? previewSuccessChance(teamPower, dungeon.recommended_power) : 0),
         [teamPower, dungeon],
+    );
+    // FASE 2.1 — rating locale (specchio; il backend è autoritativo).
+    const powerRatingLocal = useMemo(
+        () => (dungeon ? previewPowerRating(teamPower, dungeon.recommended_power) : 0),
+        [teamPower, dungeon],
+    );
+    const overpowerMultiplier = useMemo(
+        () => previewOverpowerMultiplier(powerRatingLocal),
+        [powerRatingLocal],
+    );
+    // FASE 2.2 — gate a potere: soglia dal backend (required_team_power)
+    // con fallback al 60% del consigliato.
+    const requiredTeamPower = useMemo(() => {
+        if (!dungeon) return 0;
+        return dungeon.required_team_power
+            || Math.ceil(0.6 * (dungeon.recommended_power || 0));
+    }, [dungeon]);
+    const powerGateBlocked = useMemo(
+        () => Boolean(
+            dungeon
+            && selected.length === requiredSize
+            && teamPower < requiredTeamPower
+        ),
+        [dungeon, selected.length, requiredSize, teamPower, requiredTeamPower],
     );
     const underpowered = useMemo(
         () => Boolean(dungeon && selected.length === requiredSize && teamPower < dungeon.recommended_power),
@@ -492,21 +526,25 @@ export default function ExpeditionNew() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {advs.map((a) => {
                                 const isSelected = !!selected.find((s) => s.id === a.id);
+                                // FASE 2.2 — sotto-fascia = solo indicazione
+                                // visiva; la selezione resta permessa (conta
+                                // il potere totale della squadra).
                                 const underLeveled = isAdventurerUnderLeveled(a, minAdvLevel);
                                 return (
                                     <button
                                         type="button"
                                         key={a.id}
                                         onClick={() => toggleSelect(a)}
-                                        disabled={underLeveled}
-                                        title={underLeveled ? advDungeonTooltip(minAdvLevel) : ""}
+                                        title={underLeveled
+                                            ? `Sotto la fascia consigliata (Lv ${minAdvLevel}): conta il potere di squadra`
+                                            : ""}
                                         data-testid={`select-adventurer-${a.id}`}
                                         data-underleveled={underLeveled ? "1" : "0"}
                                         className={`text-left border rounded-sm p-4 transition-colors ${
                                             isSelected
                                                 ? "border-amber bg-amber/5"
                                                 : "border-border bg-card hover:bg-secondary/40"
-                                        } ${underLeveled ? "opacity-40 cursor-not-allowed hover:bg-card" : ""}`}
+                                        } ${underLeveled && !isSelected ? "opacity-70" : ""}`}
                                     >
                                         <div className="flex items-start justify-between mb-2 gap-2">
                                             <div className="min-w-0">
@@ -522,7 +560,8 @@ export default function ExpeditionNew() {
                                                 {underLeveled && (
                                                     <span
                                                         data-testid={`underleveled-badge-${a.id}`}
-                                                        className="text-[10px] tracking-wider border border-destructive/55 text-destructive px-1.5 py-0.5 rounded-sm"
+                                                        className="text-[10px] tracking-wider border border-amber/50 text-amber px-1.5 py-0.5 rounded-sm"
+                                                        title="Fascia consigliata, non bloccante"
                                                     >
                                                         {advMinLevelBadge(minAdvLevel)}
                                                     </span>
@@ -617,6 +656,34 @@ export default function ExpeditionNew() {
                                         {selected.length === requiredSize ? `${successChance}%` : "—"}
                                     </span>
                                 </div>
+                                {/* FASE 2.1 — Rating di Potenza + bonus Overpower */}
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">RATING POTENZA</span>
+                                    <span
+                                        data-testid="preview-power-rating"
+                                        className={
+                                            "font-semibold " +
+                                            (selected.length === requiredSize
+                                                ? powerRatingLocal >= 100
+                                                    ? "text-[#22c55e]"
+                                                    : "text-amber"
+                                                : "text-muted-foreground")
+                                        }
+                                    >
+                                        {selected.length === requiredSize ? `${powerRatingLocal}%` : "—"}
+                                    </span>
+                                </div>
+                                {selected.length === requiredSize && overpowerMultiplier > 1 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">⚡ BOTTINO OVERPOWER</span>
+                                        <span
+                                            data-testid="preview-overpower-multiplier"
+                                            className="text-amber font-semibold"
+                                        >
+                                            ×{overpowerMultiplier.toFixed(1)}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             {underpowered && (
@@ -725,7 +792,7 @@ export default function ExpeditionNew() {
                             <Button
                                 onClick={() => setShowNarratedPreview(true)}
                                 data-testid="btn-narrated-preview"
-                                disabled={selected.length !== requiredSize || submitting || hasUnderLeveledSelected}
+                                disabled={selected.length !== requiredSize || submitting || powerGateBlocked}
                                 variant="outline"
                                 className="w-full h-10 rounded-sm mt-5 border-amber/60 text-amber hover:bg-amber/10 disabled:opacity-50"
                             >
@@ -735,32 +802,36 @@ export default function ExpeditionNew() {
                             <Button
                                 onClick={submit}
                                 data-testid="btn-send-expedition"
-                                disabled={selected.length !== requiredSize || submitting || hasUnderLeveledSelected}
-                                title={hasUnderLeveledSelected ? advDungeonTooltip(minAdvLevel) : ""}
+                                disabled={selected.length !== requiredSize || submitting || powerGateBlocked}
+                                title={powerGateBlocked
+                                    ? `Potere squadra ${teamPower}: servono almeno ${requiredTeamPower}`
+                                    : ""}
                                 className="w-full h-10 rounded-sm mt-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {submitting
                                     ? t("expedition_new.dispatching_btn")
-                                    : `Send Expedition (${selected.length}/${requiredSize})`}
+                                    : `Invia spedizione (${selected.length}/${requiredSize})`}
                             </Button>
-                            {hasUnderLeveledSelected && (
+                            {/* FASE 2.2 — gate a potere del gruppo (il livello non blocca più) */}
+                            {powerGateBlocked && (
                                 <p
-                                    data-testid="dispatch-blocked-underleveled"
+                                    data-testid="dispatch-blocked-power"
                                     className="text-[11px] text-destructive mt-2 text-center"
                                 >
-                                    {advDungeonTooltip(minAdvLevel)}
+                                    ⚔ Potere squadra {teamPower}: per entrare servono
+                                    almeno {requiredTeamPower} (consigliato {dungeon?.recommended_power}).
                                 </p>
                             )}
-                            {!hasUnderLeveledSelected && minAdvLevel > 1 && (
+                            {!powerGateBlocked && minAdvLevel > 1 && (
                                 <p
                                     data-testid="dungeon-min-level-notice"
                                     className="text-[10px] text-muted-foreground mt-2 text-center"
                                 >
-                                    Liv. minimo dungeon: {minAdvLevel}
+                                    Fascia consigliata: Lv {minAdvLevel}+ · Potere minimo: {requiredTeamPower}
                                 </p>
                             )}
                             <p className="text-[10px] text-muted-foreground mt-2 text-center">
-                                Estimated values; backend recomputes on dispatch.
+                                Valori stimati; il server ricalcola all&apos;avvio.
                             </p>
                         </div>
                     </aside>

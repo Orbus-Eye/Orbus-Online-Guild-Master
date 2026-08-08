@@ -19,9 +19,25 @@ LOGIN_ATTEMPTS_TTL_SECONDS = 86400  # 24h cleanup of stale attempt rows
 # ─── Gameplay (Phase 2/3/6/7) ─────────────────────────────────────────────────
 RECRUITMENT_COST_GOLD = 20
 
-# Success-chance formula clamps
-SUCCESS_CHANCE_MIN = 10
-SUCCESS_CHANCE_MAX = 95
+# Success-chance formula clamps.
+# FASE 2 (2026-08-08) — il vecchio cap 95 è stato rimosso: la curva
+# logistica di `compute_success_chance` arriva al 100% reale quando il
+# Rating di Potenza raggiunge GUARANTEED_SUCCESS_RATING. Vedi
+# memory/fase2_design_bilanciamento.md per formula e razionale.
+SUCCESS_CHANCE_MIN = 5
+SUCCESS_CHANCE_MAX = 100
+
+# FASE 2 — Rating di Potenza & Overpower.
+# rating = round(100 * team_power / recommended_power); l'eccedenza oltre
+# 100 diventa bonus sui drop a gradini di OVERPOWER_STEP_PCT.
+SUCCESS_CURVE_K = 4.4                  # pendenza della logistica
+GUARANTEED_SUCCESS_RATING = 200        # potenza doppia → vittoria garantita
+OVERPOWER_STEP_PCT = 25                # ogni +25 rating oltre 100...
+OVERPOWER_BONUS_PER_STEP = 0.5         # ...+50% drop
+OVERPOWER_LOOT_MULTIPLIER_CAP = 3.0    # tetto economico (rating ≥ 200)
+# Gate d'ingresso dungeon: potere squadra ≥ 60% del consigliato
+# (equivale a ~14% di probabilità: run azzardata permessa, assurda no).
+POWER_GATE_RATIO = 0.60
 
 # Loot
 LOOT_DROP_CHANCE_LEGACY = 0.50      # Goblin Warrens default if loot table missing

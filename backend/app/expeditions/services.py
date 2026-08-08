@@ -33,6 +33,7 @@ from app.expeditions.formulas import (
     compute_team_power,
     sum_xp_percent,
 )
+from app.shared.constants import SUCCESS_CHANCE_MAX
 from app.expeditions.loot_tables import roll_loot_for_dungeon
 from app.expeditions.material_drop_tables import roll_materials_for_dungeon
 from app.expeditions.threats import compute_threat_resolution
@@ -114,6 +115,14 @@ def expedition_public(e: dict) -> dict:
         "completed_at": e.get("completed_at"),
         "team_power": e.get("team_power", 0),
         "success_chance": e.get("success_chance", 0),
+        # FASE 2.1 — Rating di Potenza + Overpower (legacy doc → parità/×1).
+        "power_rating": int(e.get("power_rating") or 0),
+        "overpower_loot_multiplier": float(
+            e.get("overpower_loot_multiplier") or 1.0
+        ),
+        "overpower_extra_loot_count": int(
+            e.get("overpower_extra_loot_count") or 0
+        ),
         # Phase 7: equipment delta snapshot (immutable after start)
         "base_team_power": e.get("base_team_power", e.get("team_power", 0)),
         "equipment_base_power_bonus": int(
@@ -406,6 +415,30 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     # ROUND 15 FASE 2 — material drop, INDEPENDENT roll from items.
     materials_found = await roll_materials_for_dungeon(db, dungeon, success)
 
+    # FASE 2.1 — Overpower: il moltiplicatore congelato al dispatch
+    # scala item e materiali (solo su successo; mai oro/XP). Gli item
+    # extra sono campionati tra quelli già usciti dal roll normale
+    # (stessa loot table, stessa distribuzione di rarità). Le frazioni
+    # sono risolte con arrotondamento probabilistico.
+    loot_multiplier = float(claimed.get("overpower_loot_multiplier") or 1.0)
+    overpower_extra_count = 0
+    if success and loot_multiplier > 1.0:
+        if loot_ids:
+            extra_exact = (loot_multiplier - 1.0) * len(loot_ids)
+            extra_count = int(extra_exact)
+            if _rng.random() < (extra_exact - extra_count):
+                extra_count += 1
+            if extra_count > 0:
+                extras = [_rng.choice(loot_ids) for _ in range(extra_count)]
+                loot_ids = list(loot_ids) + extras
+                overpower_extra_count = extra_count
+        for drop in materials_found or []:
+            exact = int(drop.get("qty", 0)) * loot_multiplier
+            scaled = int(exact)
+            if _rng.random() < (exact - scaled):
+                scaled += 1
+            drop["qty"] = max(int(drop.get("qty", 0)), scaled)
+
     if success:
         gold_reward = dungeon["base_gold_reward"]
         xp_per_member = dungeon["base_xp_reward"]
@@ -439,6 +472,10 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             {"name": {"$in": class_names}}, {"_id": 0},
         ):
             class_docs_by_name[c.get("name") or ""] = c
+    # FASE 2.4 — stato catch-up di gilda (una query per spedizione):
+    # se i top-5 sono tutti ≥ Lv10, i sotto-Lv10 prendono XP ×1.25.
+    from app.expeditions.catchup import catchup_multiplier, guild_top_levels
+    _top_levels = await guild_top_levels(db, claimed["guild_id"])
     for m in members:
         adv = await db.adventurers.find_one(
             {"id": m["adventurer_id"], "guild_id": claimed["guild_id"]}, {"_id": 0}
@@ -454,12 +491,21 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         # ROUND 15 FASE 2 — primary-stat policy multiplier.
         cls_doc = class_docs_by_name.get(m.get("class_name_snapshot") or "")
         xp_info = compute_xp_multiplier(adv, cls_doc)
-        final_member_xp = int(round(base_xp_with_traits * float(xp_info["multiplier"])))
+        # FASE 2.4 — moltiplicatore di recupero gilda (1.0 se non applicabile).
+        catchup_mult = catchup_multiplier(
+            _top_levels, int(adv.get("level", 1) or 1)
+        )
+        final_member_xp = int(round(
+            base_xp_with_traits
+            * float(xp_info["multiplier"])
+            * catchup_mult
+        ))
         xp_debuff_reports.append({
             "adventurer_id": m["adventurer_id"],
             "name_snapshot": m.get("name_snapshot"),
             "base_xp": int(base_xp_with_traits),
             "multiplier": float(xp_info["multiplier"]),
+            "catchup_multiplier": float(catchup_mult),
             "final_xp": int(final_member_xp),
             "reason_code": xp_info.get("reason_code"),
             "primary_stat_slug": xp_info.get("primary_stat_slug"),
@@ -599,6 +645,8 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 "gold_reward": gold_reward,
                 "xp_reward": xp_per_member,
                 "loot_item_ids": loot_ids,
+                # FASE 2.1 — quanti item extra ha prodotto l'Overpower.
+                "overpower_extra_loot_count": overpower_extra_count,
                 # ROUND 15 FASE 2 — material drops + per-member XP debuff report.
                 "materials_found": materials_found,
                 "xp_debuff_reports": xp_debuff_reports,
@@ -1054,20 +1102,11 @@ async def _dispatch_expedition(
             },
         )
 
-    # ROUND 11.3 TASK A — Adventurer-level gate.
-    # MUST run AFTER the live/retired filter (so we only complain about
-    # advs that would actually enter the dungeon) and BEFORE the heavier
-    # equipment snapshot. PWR alone does NOT bypass.
-    from app.expeditions.level_gate import (
-        enforce_min_adventurer_level,
-        legacy_min_level_for_dungeon,
-    )
-    enforce_min_adventurer_level(
-        members_live,
-        legacy_min_level_for_dungeon(dungeon),
-        source="expedition.dispatch",
-        dungeon_slug=dungeon.get("slug"),
-    )
+    # FASE 2.2 (2026-08-08) — il level-gate ROUND 11.3 è stato SOSTITUITO
+    # dal gate a potere del gruppo (`enforce_min_team_power`), applicato
+    # più sotto DOPO il calcolo del team_power con equipaggiamento.
+    # `min_adventurer_level` resta esposto nell'API solo come fascia
+    # consigliata informativa. Vedi memory/fase2_design_bilanciamento.md §5.
 
     # Phase 6: load equipment for each member; snapshot is frozen at departure.
     # Phase 13: also snapshot the active traits so completion can resolve
@@ -1154,7 +1193,20 @@ async def _dispatch_expedition(
         )
 
     team_power = compute_team_power(members_for_power)
+
+    # FASE 2.2 — gate d'ingresso a potere del gruppo (sostituisce il
+    # level-gate): richiede team_power ≥ 60% del potere consigliato.
+    from app.expeditions.power_gate import enforce_min_team_power
+    enforce_min_team_power(
+        team_power, dungeon, source="expedition.dispatch",
+    )
+
     success_chance = compute_success_chance(team_power, dungeon["recommended_power"])
+    # FASE 2.1 — Rating di Potenza + moltiplicatore Overpower, congelati
+    # al dispatch (il completamento li applica ai drop).
+    from app.expeditions.formulas import power_rating, overpower_loot_multiplier
+    rating = power_rating(team_power, dungeon["recommended_power"])
+    loot_multiplier = overpower_loot_multiplier(rating)
 
     # ROUND 16.0 Phase 4 — Threat & counter resolution (Void/Undead schema).
     # Additive: dungeons without `threat_tags` keep behaviour unchanged.
@@ -1164,7 +1216,8 @@ async def _dispatch_expedition(
     if threat_resolution.get("applies"):
         bonus = int(threat_resolution.get("success_bonus_pct", 0))
         if bonus:
-            success_chance = min(success_chance + bonus, 95)
+            # FASE 2.1 — satura al nuovo massimo (100, non più 95).
+            success_chance = min(success_chance + bonus, SUCCESS_CHANCE_MAX)
 
     # Phase 7: equipment delta (frozen at start)
     delta = _build_equipment_delta(
@@ -1184,6 +1237,9 @@ async def _dispatch_expedition(
         "completed_at": None,
         "team_power": team_power,
         "success_chance": success_chance,
+        # FASE 2.1 — Rating di Potenza e Overpower congelati al dispatch.
+        "power_rating": rating,
+        "overpower_loot_multiplier": loot_multiplier,
         # Phase 7 delta snapshot
         "base_team_power": delta["base_team_power"],
         "equipment_base_power_bonus": delta["equipment_base_power_bonus"],

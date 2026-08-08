@@ -19,6 +19,8 @@ from app.expeditions.formulas import (
     adventurer_effective_power as _eff_power,
     compute_team_power,
     compute_success_chance,
+    overpower_loot_multiplier,
+    power_rating,
 )
 
 
@@ -105,18 +107,9 @@ async def preview_expedition(
             detail="One or more adventurers do not belong to your guild",
         )
 
-    # ROUND 11.3 TASK A — level gate on preview so the FE shows the
-    # blocking error BEFORE the user fires "Avvia Spedizione".
-    from app.expeditions.level_gate import (
-        enforce_min_adventurer_level,
-        legacy_min_level_for_dungeon,
-    )
-    enforce_min_adventurer_level(
-        advs,
-        legacy_min_level_for_dungeon(dungeon),
-        source="expedition.preview",
-        dungeon_slug=dungeon.get("slug"),
-    )
+    # FASE 2.2 — il level-gate è stato sostituito dal gate a potere del
+    # gruppo, applicato più sotto DOPO il calcolo del team_power (serve
+    # l'equipaggiamento per un potere realistico).
 
     # Phase 6+ snapshot equivalent: equip power lookup
     from app.equipment.services import _load_equipment_for_guild
@@ -136,7 +129,15 @@ async def preview_expedition(
 
     team_power = compute_team_power(members_for_power)
     recommended = int(dungeon.get("recommended_power", 0))
+
+    # FASE 2.2 — gate a potere: blocca il preview con lo stesso 423 del
+    # dispatch, così il FE mostra l'errore PRIMA di "Avvia Spedizione".
+    from app.expeditions.power_gate import enforce_min_team_power
+    enforce_min_team_power(team_power, dungeon, source="expedition.preview")
+
     success_chance = compute_success_chance(team_power, recommended)
+    rating = power_rating(team_power, recommended)
+    loot_multiplier = overpower_loot_multiplier(rating)
     roles = {m["class_role"] for m in members_for_power if m.get("class_role")}
     injury_risk = _injury_risk(
         team_power, recommended,
@@ -168,6 +169,9 @@ async def preview_expedition(
         "expected_reward": expected_reward,
         "team_power": int(team_power),
         "recommended_power": int(recommended),
+        # FASE 2.1 — Rating di Potenza + bonus Overpower per la UI.
+        "power_rating": int(rating),
+        "overpower_loot_multiplier": float(loot_multiplier),
         "modifiers": modifiers,
     }
 

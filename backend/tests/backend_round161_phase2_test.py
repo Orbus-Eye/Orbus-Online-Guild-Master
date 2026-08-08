@@ -109,10 +109,12 @@ def test_t04_preview_void_dungeon_has_threats(auth_headers):
     # Threat resolution applies on this dungeon.
     assert p["threat_resolution"] is not None
     assert p["threat_resolution"].get("applies") is True
-    # Success chance must be an integer 0-95 (cap baked in).
+    # FASE 2 (2026-08-08) — il cap 95 è stato rimosso: la curva
+    # logistica arriva al 100% reale (min 5). Vedi
+    # memory/fase2_design_bilanciamento.md.
     sc = p["success_chance"]
     assert isinstance(sc, int)
-    assert 0 <= sc <= 95
+    assert 5 <= sc <= 100
     # Bilingual weakness suggestion: either both or neither.
     assert (p["weakness_suggestion_it"] is None) == (
         p["weakness_suggestion_en"] is None)

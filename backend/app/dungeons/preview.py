@@ -190,10 +190,12 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
         if team else 0
 
     # Threat resolution (cap +12% / -8% on Void/Undead only).
+    # FASE 2 — satura al nuovo massimo (100, non più 95).
+    from app.shared.constants import SUCCESS_CHANCE_MAX
     tr = await compute_threat_resolution(
         db, team_members=members_for_power, dungeon=d)
     bonus = int(tr.get("success_bonus_pct", 0)) if tr.get("applies") else 0
-    success_chance = min(base_success + bonus, 95) if team else 0
+    success_chance = min(base_success + bonus, SUCCESS_CHANCE_MAX) if team else 0
 
     # Threats matrix with sources.
     threats_payload = []
