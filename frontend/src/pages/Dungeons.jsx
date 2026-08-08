@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { dungeonImageSources } from "../utils/gameAssets";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 
@@ -444,7 +446,7 @@ export default function Dungeons() {
                                     data-testid={`dungeon-card-${d.slug}`}
                                     data-starter-highlight={isStarter ? "true" : undefined}
                                     className={
-                                        "border bg-card rounded-sm p-5 flex flex-col " +
+                                        "border bg-card rounded-sm p-5 flex flex-col card-fantasy " +
                                         (locked
                                             ? "border-border/40 opacity-60"
                                             : isStarter
@@ -452,6 +454,17 @@ export default function Dungeons() {
                                                 : "border-border")
                                     }
                                 >
+                                    {/* FASE 4 — immagine tematica del dungeon */}
+                                    <div className="-mx-5 -mt-5 mb-4 h-24 overflow-hidden">
+                                        <GameImage
+                                            sources={dungeonImageSources(d.slug)}
+                                            alt=""
+                                            className={
+                                                "w-full h-full object-cover " +
+                                                (locked ? "grayscale opacity-70" : "")
+                                            }
+                                        />
+                                    </div>
                                     {isStarter && (
                                         <div
                                             data-testid={`starter-recommended-badge-${d.slug}`}
@@ -461,7 +474,7 @@ export default function Dungeons() {
                                         </div>
                                     )}
                                     <div className="flex items-start justify-between gap-2 mb-2">
-                                        <div className="text-base font-medium">{itName}</div>
+                                        <div className="text-base font-medium font-fantasy">{itName}</div>
                                         <div className="flex flex-col items-end gap-1">
                                             <DifficultyBadge value={d.difficulty} />
                                             {locked && <LockedBadge />}
@@ -470,6 +483,16 @@ export default function Dungeons() {
                                     <div className="flex flex-wrap gap-1 mb-2">
                                         {d.is_new && <NewBadge slug={d.slug} />}
                                         {d.is_void_undead && <VoidUndeadBadge slug={d.slug} />}
+                                        {/* FASE 5 — pilota del sistema a stanze */}
+                                        {d.rooms_mode && (
+                                            <span
+                                                data-testid={`dungeon-rooms-badge-${d.slug}`}
+                                                className="inline-block text-[10px] tracking-widest border border-violet-400/60 text-violet-300 px-1.5 py-0.5 rounded-sm"
+                                                title="Dungeon a stanze: avanzi sala per sala, con riposo, scelte e fuga"
+                                            >
+                                                ⚑ A STANZE
+                                            </span>
+                                        )}
                                         {/* FASE 2.2 — gate reale = potere squadra; livello solo consigliato */}
                                         {d.required_team_power > 0 && (
                                             <PowerGateBadge slug={d.slug} power={d.required_team_power} />

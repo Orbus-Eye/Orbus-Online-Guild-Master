@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="tema marsh">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#232e26"/>
+      <stop offset="100%" stop-color="#121a14"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="42%">
+      <stop offset="0%" stop-color="#8fae6b" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#8fae6b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="320" fill="url(#sky)"/>
+  <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="#121a14" opacity="0.9"/>
+  <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
+  <rect width="800" height="320" fill="url(#glow)"/>
+  <circle cx="400" cy="150" r="104" fill="none" stroke="#8fae6b" stroke-width="2" opacity="0.35"/>
+  <circle cx="400" cy="150" r="120" fill="none" stroke="#8fae6b" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
+  <g stroke="#8fae6b" stroke-width="9" stroke-linecap="round" fill="none"><path d="M370 230 Q366 150 380 100"/><path d="M400 230 Q400 140 394 90"/><path d="M430 230 Q436 150 424 104"/></g><ellipse cx="380" cy="94" rx="9" ry="22" fill="#8fae6b"/><ellipse cx="394" cy="82" rx="9" ry="22" fill="#8fae6b"/><ellipse cx="424" cy="96" rx="9" ry="22" fill="#8fae6b"/>
+  <rect width="800" height="320" fill="url(#vig)"/>
+</svg>

@@ -249,6 +249,15 @@ def create_app() -> FastAPI:
     app.include_router(catalog_router)
     app.include_router(materials_router)
     app.include_router(races_router)
+    # FASE 6 (2026-08-08) — upload avatar personalizzati + serving statico.
+    from app.avatars import router as avatars_router, avatar_upload_dir
+    app.include_router(avatars_router)
+    from starlette.staticfiles import StaticFiles
+    app.mount(
+        "/api/uploads/avatars",
+        StaticFiles(directory=str(avatar_upload_dir())),
+        name="avatar-uploads",
+    )
     app.include_router(pvp_continental_router)
     app.include_router(pvp_continental_admin_router)
     app.include_router(seasons_router)

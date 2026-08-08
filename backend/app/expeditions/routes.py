@@ -5,6 +5,7 @@ BEFORE the `/{expedition_id}` catch-all so FastAPI doesn't capture the
 literal segments as a UUID parameter.
 """
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 
 from app.core.database import db
 from app.core.security import get_current_user
@@ -108,6 +109,25 @@ async def list_expeditions_route(current_user: dict = Depends(get_current_user))
     except Exception:  # noqa: BLE001
         pass
     return await list_expeditions(db, guild)
+
+
+class RoomsAdvanceIn(BaseModel):
+    action: str = Field(..., min_length=1, max_length=32)
+
+
+@router.post("/{expedition_id}/advance")
+async def advance_rooms_route(
+    expedition_id: str,
+    payload: RoomsAdvanceIn,
+    current_user: dict = Depends(get_current_user),
+):
+    """FASE 5 — scelta dopo una stanza superata:
+    continue | rest_and_continue | escape."""
+    from app.expeditions.rooms_engine import advance_rooms_action
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await advance_rooms_action(
+        db, guild, expedition_id, payload.action,
+    )
 
 
 @router.post("/reports/clear")

@@ -128,6 +128,27 @@ async def roll_materials_for_dungeon(
       - On *success*, full boosted rate per entry.
       - Each material is rolled INDEPENDENTLY (no exclusive slot).
     """
+    # FASE 3.1 (2026-08-08) — se il dungeon ha un reagente principale
+    # mappato, cade SOLO quello (identità di farm per contenuto). La
+    # tabella tier resta come fallback per slug non mappati (contenuti
+    # futuri/test). Design: memory/fase3_design_reagenti_crafting.md §1.
+    from app.expeditions.reagent_tables import (
+        primary_reagent_for_dungeon,
+        roll_primary_reagent,
+    )
+    slug = (dungeon.get("slug") or "").lower()
+    if primary_reagent_for_dungeon(slug):
+        drops = roll_primary_reagent(slug, success)
+        if not drops:
+            return []
+        # Il reagente deve esistere nel catalogo items (seed fase 3).
+        known_primary = await db.items.find_one(
+            {"slug": drops[0]["slug"], "is_active": True,
+             "item_type": "material"},
+            {"_id": 0, "slug": 1},
+        )
+        return drops if known_primary else []
+
     tier = _classify_dungeon_tier(dungeon)
     entries = TIER_MATERIAL_TABLE.get(tier, [])
     if not entries:

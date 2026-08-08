@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="tema nature">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1c2b1e"/>
+      <stop offset="100%" stop-color="#101a12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="42%">
+      <stop offset="0%" stop-color="#74c69d" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#74c69d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="320" fill="url(#sky)"/>
+  <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="#101a12" opacity="0.9"/>
+  <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
+  <rect width="800" height="320" fill="url(#glow)"/>
+  <circle cx="400" cy="150" r="104" fill="none" stroke="#74c69d" stroke-width="2" opacity="0.35"/>
+  <circle cx="400" cy="150" r="120" fill="none" stroke="#74c69d" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
+  <rect x="392" y="160" width="16" height="70" fill="#74c69d"/><path d="M400 60 L444 140 L416 134 L448 190 L352 190 L384 134 L356 140 Z" fill="#74c69d"/>
+  <rect width="800" height="320" fill="url(#vig)"/>
+</svg>

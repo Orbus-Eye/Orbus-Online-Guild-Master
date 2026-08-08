@@ -85,6 +85,9 @@ def member_public(m: dict) -> dict:
         "class_item_resonance_bonus": int(
             m.get("class_item_resonance_bonus", 0)
         ),
+        # FASE 3.3 — consumabile attivo alla partenza (per il report).
+        "consumable_snapshot": m.get("consumable_snapshot"),
+        "consumable_power_bonus": int(m.get("consumable_power_bonus", 0) or 0),
         # Phase 13 — traits at dispatch (immutable snapshot for determinism)
         "traits_snapshot": m.get("traits_snapshot", []),
         "total_power_snapshot": int(
@@ -103,6 +106,36 @@ def member_public(m: dict) -> dict:
     }
 
 
+def _rooms_public(e: dict) -> list[dict]:
+    """FASE 5 — proiezione stanze con anti-spoiler.
+
+    Visibili per nome: stanze risolte, corrente e la successiva; le
+    altre appaiono come «???» (coerente con la visibilità progressiva).
+    A run conclusa si svela tutto (il report racconta l'impresa).
+    """
+    rooms = e.get("rooms_snapshot") or []
+    if not rooms:
+        return []
+    cur = int(e.get("current_room_idx", 0) or 0)
+    finished = e.get("status") != "in_progress"
+    out = []
+    for r in rooms:
+        idx = int(r.get("idx", 0))
+        visible = finished or idx <= cur + 1
+        out.append({
+            "idx": idx,
+            "name_it": r.get("name_it") if visible else "???",
+            "kind": r.get("kind") if visible else "unknown",
+            "narrative_it": (
+                r.get("narrative_it") if (finished or idx <= cur) else ""
+            ),
+            "duration_seconds": int(r.get("duration_seconds", 0)),
+            "chance": int(r.get("chance", 0)) if visible else None,
+            "has_loot": bool(r.get("has_loot")) if visible else None,
+        })
+    return out
+
+
 def expedition_public(e: dict) -> dict:
     out = {
         "id": e["id"],
@@ -115,6 +148,17 @@ def expedition_public(e: dict) -> dict:
         "completed_at": e.get("completed_at"),
         "team_power": e.get("team_power", 0),
         "success_chance": e.get("success_chance", 0),
+        # FASE 5 — modalità a stanze (None/campi vuoti per il legacy).
+        "mode": e.get("mode") or "single",
+        "room_state": e.get("room_state"),
+        "current_room_idx": e.get("current_room_idx"),
+        "rooms": _rooms_public(e),
+        "room_results": e.get("room_results") or [],
+        "carried_gold": int(e.get("carried_gold", 0) or 0),
+        "carried_xp": int(e.get("carried_xp", 0) or 0),
+        "carried_loot_count": len(e.get("carried_loot_ids") or []),
+        "rest_bonus_next": int(e.get("rest_bonus_next", 0) or 0),
+        "rooms_outcome": e.get("rooms_outcome"),
         # FASE 2.1 — Rating di Potenza + Overpower (legacy doc → parità/×1).
         "power_rating": int(e.get("power_rating") or 0),
         "overpower_loot_multiplier": float(
@@ -373,7 +417,9 @@ def _translate_legacy_equipment_delta(text):
 async def _complete_one_expedition(db, exp_id: str) -> None:
     """Atomically claim and finalize a single due expedition. Idempotent."""
     claimed = await db.expeditions.find_one_and_update(
-        {"id": exp_id, "status": "in_progress"},
+        # FASE 5 — i doc a stanze NON passano mai di qui (guard sul mode):
+        # la loro unica via d'uscita è rooms_engine._finalize_rooms.
+        {"id": exp_id, "status": "in_progress", "mode": {"$ne": "rooms"}},
         {"$set": {"status": "completing"}},
         projection={"_id": 0},
         return_document=ReturnDocument.AFTER,
@@ -439,12 +485,65 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 scaled += 1
             drop["qty"] = max(int(drop.get("qty", 0)), scaled)
 
+    # FASE 3.4 — Pietra della Conoscenza: drop indipendente al 20% sui
+    # dungeon a SUCCESSO. Aggiunta DOPO il blocco Overpower così non
+    # viene mai moltiplicata (è già generosa al 20% — scelta economica).
+    if success:
+        try:
+            if _rng.random() < 0.20:
+                _stone = await db.items.find_one(
+                    {"slug": "pietra_della_conoscenza", "is_active": True},
+                    {"_id": 0, "id": 1},
+                )
+                if _stone:
+                    loot_ids = list(loot_ids) + [_stone["id"]]
+        except Exception:  # noqa: BLE001
+            pass  # seed fase 3 assente: nessun crash, solo niente pietra
+
     if success:
         gold_reward = dungeon["base_gold_reward"]
         xp_per_member = dungeon["base_xp_reward"]
     else:
         gold_reward = round(dungeon["base_gold_reward"] * 0.25)
         xp_per_member = round(dungeon["base_xp_reward"] * 0.4)
+
+    member_names = [m["name_snapshot"] for m in members]
+    result_summary = "Success" if success else "Failed"
+    result_log = _build_result_log(dungeon["name"], member_names, success)
+    await apply_expedition_completion(
+        db, claimed=claimed, dungeon=dungeon, members=members,
+        success=success, gold_reward=gold_reward,
+        xp_per_member=xp_per_member, loot_ids=loot_ids,
+        materials_found=materials_found,
+        result_summary=result_summary, result_log=result_log,
+        extra_set={
+            "final_score": final_score,
+            "overpower_extra_loot_count": overpower_extra_count,
+        },
+    )
+    return
+
+
+async def apply_expedition_completion(
+    db, *, claimed: dict, dungeon: dict, members: list[dict],
+    success: bool, gold_reward: int, xp_per_member: int,
+    loot_ids: list, materials_found: list,
+    result_summary: str, result_log: str,
+    extra_set: dict | None = None,
+) -> None:
+    """FASE 5.2 (2026-08-08) — motore di completamento CONDIVISO.
+
+    Estratto verbatim dalla coda di `_complete_one_expedition` così il
+    finalize della modalità a stanze (rooms_engine) usa ESATTAMENTE la
+    stessa economia del legacy: oro gilda, XP per membro (trait/Arfus/
+    debuff stat/catch-up/consumabile + level-up), accredito loot e
+    materiali, audit, aggiornamento doc (con `extra_set` per i campi
+    specifici del chiamante), career, achievement e tutti gli hook
+    best-effort post-completamento. Idempotenza garantita a monte dal
+    claim CAS `in_progress → completing` del chiamante.
+    """
+    exp_id = claimed["id"]
+    now = utc_now()
 
     # Apply rewards to guild gold
     await db.guilds.update_one(
@@ -495,10 +594,18 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         catchup_mult = catchup_multiplier(
             _top_levels, int(adv.get("level", 1) or 1)
         )
+        # FASE 3.3 — consumabile xp_boost dallo snapshot al dispatch
+        # (Pietra della Conoscenza, Tonico del Sapiente, ...).
+        from app.adventurers.consumables import consumable_xp_multiplier
+        consumable_snap = m.get("consumable_snapshot")
+        consumable_mult = consumable_xp_multiplier(
+            {"active_consumable": consumable_snap}
+        )
         final_member_xp = int(round(
             base_xp_with_traits
             * float(xp_info["multiplier"])
             * catchup_mult
+            * consumable_mult
         ))
         xp_debuff_reports.append({
             "adventurer_id": m["adventurer_id"],
@@ -506,6 +613,8 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             "base_xp": int(base_xp_with_traits),
             "multiplier": float(xp_info["multiplier"]),
             "catchup_multiplier": float(catchup_mult),
+            "consumable_multiplier": float(consumable_mult),
+            "consumable_name_it": (consumable_snap or {}).get("name_it"),
             "final_xp": int(final_member_xp),
             "reason_code": xp_info.get("reason_code"),
             "primary_stat_slug": xp_info.get("primary_stat_slug"),
@@ -518,6 +627,13 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         adv = _resolve_levelup(adv)
         adv["is_available"] = True
         adv["updated_at"] = now.isoformat()
+        # FASE 3.3 — una spedizione completata consuma 1 carica del
+        # consumabile che era attivo alla partenza (best-effort).
+        if consumable_snap:
+            from app.adventurers.consumables import (
+                decrement_consumable_charges,
+            )
+            await decrement_consumable_charges(db, m["adventurer_id"])
         await db.adventurers.update_one(
             {"id": m["adventurer_id"]},
             {
@@ -631,28 +747,24 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     except Exception as _exc:  # noqa: BLE001
         pass
 
-    member_names = [m["name_snapshot"] for m in members]
-    result_summary = "Success" if success else "Failed"
-    result_log = _build_result_log(dungeon["name"], member_names, success)
-
     await db.expeditions.update_one(
         {"id": exp_id},
         {
             "$set": {
                 "status": "completed",
                 "completed_at": now.isoformat(),
-                "final_score": final_score,
                 "gold_reward": gold_reward,
                 "xp_reward": xp_per_member,
                 "loot_item_ids": loot_ids,
-                # FASE 2.1 — quanti item extra ha prodotto l'Overpower.
-                "overpower_extra_loot_count": overpower_extra_count,
                 # ROUND 15 FASE 2 — material drops + per-member XP debuff report.
                 "materials_found": materials_found,
                 "xp_debuff_reports": xp_debuff_reports,
                 "result_summary": result_summary,
                 "result_log": result_log,
                 "updated_at": now.isoformat(),
+                # FASE 5.2 — campi specifici del chiamante (final_score,
+                # overpower, stato stanze, ...).
+                **(extra_set or {}),
             }
         },
     )
@@ -862,10 +974,18 @@ async def complete_due_expeditions(db, guild_id: str) -> int:
             "status": "in_progress",
             "completes_at": {"$lte": now_iso},
         },
-        {"_id": 0, "id": 1},
+        {"_id": 0, "id": 1, "mode": 1},
     ).to_list(100)
     for d in due:
-        await _complete_one_expedition(db, d["id"])
+        # FASE 5 — i doc a stanze avanzano di stanza in stanza (stesso
+        # timer, motore dedicato); il legacy resta single-block.
+        if d.get("mode") == "rooms":
+            from app.expeditions.rooms_engine import (
+                advance_due_rooms_expedition,
+            )
+            await advance_due_rooms_expedition(db, d["id"])
+        else:
+            await _complete_one_expedition(db, d["id"])
     # Reconcile terminal expeditions whose career hook was interrupted after
     # gameplay rewards committed. The per-adventurer event key makes retries
     # safe and prevents duplicated career credit.
@@ -1155,6 +1275,16 @@ async def _dispatch_expedition(
         class_item_resonance_bonus = int(
             class_mechanic.get("item_resonance_bonus", 0)
         )
+        # FASE 3.3 — consumabile attivo: snapshot congelato al dispatch
+        # (chi attiva DOPO la partenza non ottiene il bonus per questa
+        # run) + potere flat per i power_boost.
+        from app.adventurers.consumables import consumable_power_bonus
+        consumable_snapshot = adv.get("active_consumable") or None
+        if consumable_snapshot and int(
+            consumable_snapshot.get("charges_left", 0)
+        ) <= 0:
+            consumable_snapshot = None
+        consumable_power = consumable_power_bonus(adv)
         traits_snapshot = list(adv.get("traits") or [])
         traits_by_adv[adv["id"]] = traits_snapshot
         equipment_by_adv[adv["id"]] = {
@@ -1166,11 +1296,14 @@ async def _dispatch_expedition(
             "class_mechanic_snapshot": class_mechanic,
             "class_mechanic_power_bonus": class_mechanic_bonus,
             "class_item_resonance_bonus": class_item_resonance_bonus,
+            "consumable_snapshot": consumable_snapshot,
+            "consumable_power_bonus": consumable_power,
             "total_power_snapshot": (
                 base
                 + eq_power
                 + item_effect_projection["power_bonus"]
                 + class_mechanic_bonus
+                + consumable_power
             ),
         }
         members_for_power.append(
@@ -1181,6 +1314,7 @@ async def _dispatch_expedition(
                     + eq_power
                     + item_effect_projection["power_bonus"]
                     + class_mechanic_bonus
+                    + consumable_power
                 ),
                 "equipment_power_snapshot": eq_power,
                 "item_effect_power_bonus": item_effect_projection["power_bonus"],
@@ -1278,6 +1412,29 @@ async def _dispatch_expedition(
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }
+
+    # FASE 5 — modalità A STANZE (pilota, dietro flag). Il doc nasce con
+    # lo snapshot stanze congelato; il timer rappresenta la 1ª stanza.
+    from app.dungeons.rooms import build_rooms_snapshot, rooms_mode_for_dungeon
+    if rooms_mode_for_dungeon(dungeon):
+        rooms_snapshot = build_rooms_snapshot(dungeon, success_chance)
+        exp_doc.update({
+            "mode": "rooms",
+            "rooms_snapshot": rooms_snapshot,
+            "current_room_idx": 0,
+            "room_state": "in_room",
+            "rest_bonus_next": 0,
+            "carried_gold": 0,
+            "carried_xp": 0,
+            "carried_loot_ids": [],
+            "room_results": [],
+            "completes_at": (
+                now + timedelta(
+                    seconds=rooms_snapshot[0]["duration_seconds"]
+                )
+            ).isoformat(),
+        })
+
     await db.expeditions.insert_one(exp_doc)
 
     members_docs = []
@@ -1294,6 +1451,8 @@ async def _dispatch_expedition(
                 "class_mechanic_snapshot": None,
                 "class_mechanic_power_bonus": 0,
                 "class_item_resonance_bonus": 0,
+                "consumable_snapshot": None,
+                "consumable_power_bonus": 0,
                 "total_power_snapshot": _adventurer_effective_power(adv),
             },
         )
@@ -1324,6 +1483,9 @@ async def _dispatch_expedition(
                 eq["class_item_resonance_bonus"]
             ),
             "total_power_snapshot": int(eq["total_power_snapshot"]),
+            # FASE 3.3 — consumabile congelato al dispatch (per XP e cariche).
+            "consumable_snapshot": eq.get("consumable_snapshot"),
+            "consumable_power_bonus": int(eq.get("consumable_power_bonus", 0)),
             # Phase 13 — trait snapshot for deterministic resolution
             "traits_snapshot": traits_by_adv.get(adv["id"], []),
         }

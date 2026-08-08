@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { avatarSources } from "../utils/gameAssets";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { rarityLabel, classLabel, specLabel } from "../utils/displayLabels";
@@ -344,6 +346,12 @@ export default function Adventurers() {
                                         >
                                             <td className="px-3 py-2 whitespace-nowrap font-medium">
                                                 <div className="flex items-center gap-2 flex-wrap">
+                                                    {/* FASE 4 — ritratto razza/genere */}
+                                                    <GameImage
+                                                        sources={avatarSources(a)}
+                                                        alt=""
+                                                        className="w-8 h-8 rounded-full border border-amber/30 shrink-0"
+                                                    />
                                                     <button
                                                         type="button"
                                                         data-testid={`adventurer-name-${a.id}`}
@@ -496,6 +504,13 @@ export default function Adventurers() {
                                     className="border border-border bg-card rounded-sm p-4 cursor-pointer hover:border-amber/40 focus-visible:outline-none focus-visible:border-amber/60"
                                 >
                                     <div className="flex items-start justify-between gap-2 mb-2">
+                                        <div className="flex items-start gap-3 min-w-0">
+                                        {/* FASE 4 — ritratto razza/genere */}
+                                        <GameImage
+                                            sources={avatarSources(a)}
+                                            alt=""
+                                            className="w-12 h-12 rounded-full border border-amber/30 shrink-0"
+                                        />
                                         <div className="min-w-0">
                                             <div className="font-medium truncate flex items-center gap-2 flex-wrap">
                                                 <span>{a.name}</span>
@@ -529,6 +544,7 @@ export default function Adventurers() {
                                                     {a.gender ? (a.gender === 'female' ? ' · ♀' : ' · ♂') : ''}
                                                 </div>
                                             )}
+                                        </div>
                                         </div>
                                         <div className="flex flex-col items-end gap-1">
                                             <RarityBadge rarity={a.rarity} />

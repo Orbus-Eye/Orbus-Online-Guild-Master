@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { sectionBanner } from "../utils/gameAssets";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 
@@ -36,11 +38,20 @@ function RarityChip({ rarity }) {
     );
 }
 
+// FASE 3.2 — professioni di crafting (tab).
+const PROFESSIONS = [
+    { key: "all", label: "Tutte", icon: "✦" },
+    { key: "forge", label: "Fucina", icon: "⚒" },
+    { key: "cooking", label: "Cucina", icon: "🍲" },
+    { key: "alchemy", label: "Alchimia", icon: "⚗" },
+];
+
 export default function Crafting() {
     const { t, lang } = useT();
     const [recipes, setRecipes] = useState(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(null);
+    const [profTab, setProfTab] = useState("all");
 
     // ROUND 6B FASE B — useCallback so identity is stable and the effect
     // below can list `refresh` directly (no eslint-disable needed). Reloads
@@ -81,21 +92,48 @@ export default function Crafting() {
         <div className="min-h-screen bg-background text-foreground term-grid-bg">
             <AppHeader subtitleKey="nav.crafting" />
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-                <div className="mb-6">
-                    <div className="text-xs text-amber tracking-widest mb-2">
-                        :: GUILD WORKSHOP
+                {/* FASE 4 — banner di sezione */}
+                <div className="banner-fantasy h-28 mb-6" data-testid="crafting-banner">
+                    <GameImage
+                        sources={sectionBanner("crafting")}
+                        alt=""
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="banner-overlay">
+                        <div className="text-[10px] text-amber tracking-[0.3em]">
+                            {lang === "it" ? ":: LABORATORI DI GILDA" : ":: GUILD WORKSHOP"}
+                        </div>
+                        <h1 className="font-fantasy text-2xl font-semibold tracking-tight">
+                            {t("crafting.title")}
+                        </h1>
                     </div>
-                    <h1 className="text-3xl font-semibold tracking-tight">
-                        {t("crafting.title")}
-                    </h1>
-                    <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                        {t("crafting.subtitle")}
-                    </p>
+                </div>
+                <p className="text-sm text-muted-foreground -mt-3 mb-5 max-w-2xl">
+                    {t("crafting.subtitle")}
+                </p>
+
+                {/* FASE 3.2 — tab professioni: Fucina / Cucina / Alchimia */}
+                <div className="flex flex-wrap gap-1.5 mb-5" data-testid="crafting-profession-tabs">
+                    {PROFESSIONS.map((p) => (
+                        <button
+                            key={p.key}
+                            type="button"
+                            data-testid={`crafting-tab-${p.key}`}
+                            onClick={() => setProfTab(p.key)}
+                            className={`text-[11px] tracking-widest px-3 py-1.5 rounded-sm border ${
+                                profTab === p.key
+                                    ? "border-amber text-amber bg-amber/10"
+                                    : "border-border text-muted-foreground hover:border-amber/40"
+                            }`}
+                        >
+                            {p.icon} {p.label.toUpperCase()}
+                        </button>
+                    ))}
                 </div>
 
                 {loading && (
                     <div className="text-xs text-muted-foreground">
-                        loading<span className="caret-blink" />
+                        {t("common.loading", "Caricamento…")}<span className="caret-blink" />
                     </div>
                 )}
 
@@ -110,7 +148,10 @@ export default function Crafting() {
 
                 {!loading && recipes && recipes.length > 0 && (
                     <div className="space-y-3" data-testid="crafting-list">
-                        {recipes.map((r) => {
+                        {recipes
+                            .filter((r) => profTab === "all"
+                                || (r.profession || "forge") === profTab)
+                            .map((r) => {
                             const color = STATUS_COLOR[r.status] || "#9ca3af";
                             return (
                                 <div

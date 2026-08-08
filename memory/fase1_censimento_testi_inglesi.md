@@ -26,33 +26,23 @@ Le voci elencate sono la lista di lavoro traduzioni per la Fase 3.
 - `frontend/src/pages/Guide.jsx:999` — Controlla il max team power
 - `frontend/src/pages/Guide.jsx:1106` — : massimo team_power raggiunto.
 
-## Backend (messaggi player-facing) — 48 stringhe sospette
+## Backend (messaggi player-facing) — 38 stringhe sospette
 
-- `backend/app/adventurers/routes.py:280` — Adventurer not found
-- `backend/app/adventurers/services.py:365` — Adventurer not found
-- `backend/app/adventurers/services.py:448` — Adventurer not found
 - `backend/app/chat/services.py:111` — chat.guild_required
-- `backend/app/crafting/services.py:164` — Requires guild level {recipe.get('required_guild_level', 1)}
-- `backend/app/crafting/services.py:173` — Item '{slug}' is not available
-- `backend/app/crafting/services.py:178` — Not enough gold
-- `backend/app/equipment/services.py:145` — Adventurer not found
-- `backend/app/equipment/services.py:180` — Cannot modify equipment of adventurer currently in expedition
-- `backend/app/equipment/services.py:250` — Item not in your guild inventory
-- `backend/app/equipment/services.py:287` — Item not available (already equipped on another adventurer)
-- `backend/app/equipment/services.py:389` — Cannot modify equipment of adventurer currently in expedition
-- `backend/app/expeditions/preview.py:80` — dungeon_id is required
-- `backend/app/expeditions/preview.py:82` — adventurer_ids is required
-- `backend/app/expeditions/preview.py:86` — Dungeon not found
-- `backend/app/expeditions/preview.py:92` — This dungeon requires exactly {required} adventurers
-- `backend/app/expeditions/preview.py:105` — One or more adventurers do not belong to your guild
-- `backend/app/expeditions/services.py:944` — Dungeon not found
-- `backend/app/expeditions/services.py:956` — Duplicate adventurer in team
-- `backend/app/expeditions/services.py:960` — This dungeon requires exactly {dungeon['required_team_size']} adventurers
-- `backend/app/expeditions/services.py:972` — Adventurer {aid} not found in your guild
-- `backend/app/expeditions/services.py:980` — Adventurer {adv['name']} is not available
-- `backend/app/expeditions/services.py:1366` — No completed expedition yet
-- `backend/app/expeditions/services.py:1381` — No completed expedition yet
-- `backend/app/expeditions/services.py:1405` — Expedition not found
+- `backend/app/equipment/services.py:395` — Cannot modify equipment of adventurer currently in expedition
+- `backend/app/expeditions/preview.py:82` — dungeon_id is required
+- `backend/app/expeditions/preview.py:84` — adventurer_ids is required
+- `backend/app/expeditions/preview.py:88` — Dungeon not found
+- `backend/app/expeditions/preview.py:94` — This dungeon requires exactly {required} adventurers
+- `backend/app/expeditions/preview.py:107` — One or more adventurers do not belong to your guild
+- `backend/app/expeditions/services.py:1112` — Dungeon not found
+- `backend/app/expeditions/services.py:1124` — Duplicate adventurer in team
+- `backend/app/expeditions/services.py:1128` — This dungeon requires exactly {dungeon['required_team_size']} adventurers
+- `backend/app/expeditions/services.py:1140` — Adventurer {aid} not found in your guild
+- `backend/app/expeditions/services.py:1148` — Adventurer {adv['name']} is not available
+- `backend/app/expeditions/services.py:1584` — No completed expedition yet
+- `backend/app/expeditions/services.py:1599` — No completed expedition yet
+- `backend/app/expeditions/services.py:1623` — Expedition not found
 - `backend/app/guilds/services.py:57` — No guild found for this user
 - `backend/app/guilds/services.py:71` — You already own a guild
 - `backend/app/guilds/services.py:108` — You already own a guild
@@ -68,7 +58,7 @@ Le voci elencate sono la lista di lavoro traduzioni per la Fase 3.
 - `backend/app/quests/services.py:671` — Weekly quest not completed yet
 - `backend/app/raids/__init__.py:169` — raid_dungeon_not_found
 - `backend/app/raids/__init__.py:590` — raids.not_ended_yet
-- `backend/app/raids/__init__.py:999` — no_completed_raid
+- `backend/app/raids/__init__.py:1030` — no_completed_raid
 - `backend/app/recruitment/services.py:345` — Insufficient gold (need {cost}, have {gold})
 - `backend/app/recruitment/services.py:387` — Refresh state changed concurrently, please retry
 - `backend/app/resources/__init__.py:474` — Richiede Livello di Gilda {MIN_GUILD_LEVEL} per raccogliere risorse.

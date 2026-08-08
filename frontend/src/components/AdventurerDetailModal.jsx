@@ -10,7 +10,10 @@ import { TraitList } from "./TraitBadge";
 import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
 import { classLabel } from "../utils/displayLabels";
-import { api } from "../lib/api";
+import axios from "axios";
+import { api, API, getCsrfToken } from "../lib/api";
+import GameImage from "./GameImage";
+import { avatarSources } from "../utils/gameAssets";
 
 const SLOTS = [
     "weapon", "chest", "legs", "head", "accessory", "back",
@@ -66,6 +69,73 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
     const [autoEquipBusy, setAutoEquipBusy] = useState(false);
     // ROUND 16.1 Phase 3 — keep the response to render a bilingual report.
     const [autoEquipResult, setAutoEquipResult] = useState(null);
+    // FASE 3.3 — annulla consumabile attivo.
+    const [consumableBusy, setConsumableBusy] = useState(false);
+    // FASE 6 — upload/rimozione ritratto personalizzato.
+    const [avatarBusy, setAvatarBusy] = useState(false);
+    const avatarInputRef = useRef(null);
+
+    const handleAvatarFile = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";  // stesso file ricaricabile
+        if (!file || !adventurer?.id) return;
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("Immagine troppo grande: massimo 2 MB.");
+            return;
+        }
+        setAvatarBusy(true);
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            await axios.post(
+                `${API}/adventurers/${adventurer.id}/avatar`, fd,
+                {
+                    withCredentials: true,
+                    headers: { "X-CSRF-Token": getCsrfToken() || "" },
+                },
+            );
+            toast.success("Ritratto aggiornato!");
+            if (typeof onChanged === "function") onChanged(adventurer.id);
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Caricamento del ritratto fallito.";
+            toast.error(msg);
+        } finally {
+            setAvatarBusy(false);
+        }
+    };
+
+    const handleAvatarRemove = async () => {
+        if (!adventurer?.id || avatarBusy) return;
+        setAvatarBusy(true);
+        try {
+            await api.delete(`/adventurers/${adventurer.id}/avatar`);
+            toast.success("Ritratto rimosso: torna l'avatar della razza.");
+            if (typeof onChanged === "function") onChanged(adventurer.id);
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Rimozione fallita.";
+            toast.error(msg);
+        } finally {
+            setAvatarBusy(false);
+        }
+    };
+
+    const handleCancelConsumable = async () => {
+        if (!adventurer?.id || consumableBusy) return;
+        setConsumableBusy(true);
+        try {
+            await api.delete(`/adventurers/${adventurer.id}/consumable`);
+            toast.success("Consumabile annullato (cariche residue perse).");
+            if (typeof onChanged === "function") onChanged(adventurer.id);
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Impossibile annullare il consumabile.";
+            toast.error(msg);
+        } finally {
+            setConsumableBusy(false);
+        }
+    };
 
     const handleAutoEquip = async () => {
         if (!adventurer?.id || autoEquipBusy) return;
@@ -162,9 +232,15 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                 <h2
                     id="adv-modal-title"
                     data-testid="adventurer-modal-name"
-                    className="text-2xl font-semibold tracking-tight flex items-center gap-2 flex-wrap"
+                    className="text-2xl font-semibold tracking-tight flex items-center gap-3 flex-wrap"
                 >
-                    <span>{adventurer.name}</span>
+                    {/* FASE 4 — ritratto razza/genere */}
+                    <GameImage
+                        sources={avatarSources(adventurer)}
+                        alt=""
+                        className="w-14 h-14 rounded-full border-2 border-amber/40 shrink-0"
+                    />
+                    <span className="font-fantasy">{adventurer.name}</span>
                     <SpecChip
                         spec={adventurer.specialization}
                         lang={lang}
@@ -174,6 +250,38 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                 <div className="text-xs text-muted-foreground mt-1">
                     {classLabel(adventurer.class_slug) || adventurer.class_name} · {adventurer.class_role} ·{" "}
                     {t("adventurer_modal.level", { n: adventurer.level })}
+                </div>
+                {/* FASE 6 — gestione ritratto personalizzato */}
+                <div className="mt-2 flex items-center gap-2 flex-wrap">
+                    <input
+                        ref={avatarInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="hidden"
+                        data-testid={`avatar-file-input-${adventurer.id}`}
+                        onChange={handleAvatarFile}
+                    />
+                    <button
+                        type="button"
+                        data-testid={`avatar-upload-btn-${adventurer.id}`}
+                        disabled={avatarBusy}
+                        onClick={() => avatarInputRef.current?.click()}
+                        className="text-[10px] tracking-widest border border-border text-muted-foreground px-2 py-1 rounded-sm hover:bg-secondary disabled:opacity-50"
+                        title="PNG, JPEG o WEBP · massimo 2 MB"
+                    >
+                        {avatarBusy ? "…" : "🖼 CAMBIA RITRATTO"}
+                    </button>
+                    {adventurer.custom_avatar_url && (
+                        <button
+                            type="button"
+                            data-testid={`avatar-remove-btn-${adventurer.id}`}
+                            disabled={avatarBusy}
+                            onClick={handleAvatarRemove}
+                            className="text-[10px] tracking-widest border border-border text-muted-foreground px-2 py-1 rounded-sm hover:bg-secondary disabled:opacity-50"
+                        >
+                            ✖ RIMUOVI
+                        </button>
+                    )}
                 </div>
                 {/* ROUND 16.0 — Race + Gender row (prominent, IT). */}
                 {(adventurer.race_slug || adventurer.gender) && (
@@ -379,6 +487,36 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                             );
                         })}
                     </div>
+
+                    {/* FASE 3.3 — scomparto Consumabile */}
+                    {adventurer.active_consumable?.charges_left > 0 && (
+                        <div
+                            className="mt-4 border border-amber/40 bg-amber/5 rounded-sm p-3 flex items-center justify-between gap-3 flex-wrap"
+                            data-testid={`adv-consumable-${adventurer.id}`}
+                        >
+                            <div className="text-[11px]">
+                                <span className="text-amber font-semibold">
+                                    ✨ {adventurer.active_consumable.name_it}
+                                </span>{" "}
+                                <span className="text-muted-foreground">
+                                    {adventurer.active_consumable.type === "xp_boost"
+                                        ? `+${Math.round((adventurer.active_consumable.magnitude || 0) * 100)}% XP`
+                                        : `+${adventurer.active_consumable.magnitude} potere`}
+                                    {" · "}
+                                    {adventurer.active_consumable.charges_left} spedizioni rimaste
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                data-testid={`adv-consumable-cancel-${adventurer.id}`}
+                                onClick={handleCancelConsumable}
+                                disabled={consumableBusy}
+                                className="text-[10px] tracking-widest border border-border text-muted-foreground px-2 py-1 rounded-sm hover:bg-secondary disabled:opacity-50"
+                            >
+                                {consumableBusy ? "…" : "ANNULLA"}
+                            </button>
+                        </div>
+                    )}
 
                     <div className="mt-4 flex items-center justify-end gap-2">
                         <button

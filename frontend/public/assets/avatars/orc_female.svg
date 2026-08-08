@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="orc female">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#4f772d" stop-opacity="0.30"/>
+      <stop offset="55%" stop-color="#151827"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <g style="filter: hue-rotate(-3deg)">
+    <path d="M84 96 Q78 170 92 196 L104 176 Q92 140 96 100 Z" fill="#4f772d" opacity="0.65"/><path d="M172 96 Q178 170 164 196 L152 176 Q164 140 160 100 Z" fill="#4f772d" opacity="0.65"/>
+    <path d="M78 214 Q128 158 178 214 L178 256 L78 256 Z" fill="#8fae6b" opacity="0.92"/>
+    <circle cx="128" cy="104" r="42" fill="#8fae6b"/>
+    <path d="M112 136 L106 118 L120 130 Z" fill="#f1faee"/><path d="M144 136 L150 118 L136 130 Z" fill="#f1faee"/>
+  </g>
+  <circle cx="128" cy="128" r="121" fill="none" stroke="#4f772d" stroke-width="5" opacity="0.55"/>
+</svg>
