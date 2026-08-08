@@ -75,8 +75,10 @@ export default function GuildProgressCard() {
             className="border border-border bg-card rounded-sm p-4"
         >
             <div className="flex items-center justify-between mb-2">
+                {/* FASE 1.7 — "Prestigio di Gilda" → "Livello di Gilda" (rinomina
+                    player-facing; i field API guild_prestige_* restano invariati). */}
                 <div className="text-[10px] text-muted-foreground tracking-widest">
-                    :: PRESTIGIO DI GILDA
+                    :: LIVELLO DI GILDA
                 </div>
                 <Link
                     to="/achievements"
@@ -89,14 +91,14 @@ export default function GuildProgressCard() {
 
             <div className="flex items-baseline gap-4 mb-3">
                 <div>
-                    <div className="text-[10px] text-muted-foreground">LV PRESTIGIO</div>
+                    <div className="text-[10px] text-muted-foreground">LIVELLO GILDA</div>
                     <div className="text-2xl font-light text-amber" data-testid="card-guild-level">
                         Lv {summary.guild_level}
                     </div>
                 </div>
                 <div className="flex-1">
                     <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
-                        <span>{into} / {span} XP Prestigio</span>
+                        <span>{into} / {span} XP Gilda</span>
                         <span data-testid="card-points">{summary.achievement_points} pt</span>
                     </div>
                     <div className="h-2 bg-background border border-border rounded-sm overflow-hidden">
@@ -126,7 +128,7 @@ export default function GuildProgressCard() {
                 >
                     Ti mancano{" "}
                     <span className="text-amber font-mono">{xpToNext}</span>{" "}
-                    XP Prestigio per il prossimo livello (
+                    XP Gilda per il prossimo livello (
                     Lv {summary.guild_level + 1}). Completa attività per
                     avanzare:
                 </p>

@@ -297,6 +297,17 @@ export default function Raids() {
                         </article>
                         );
                     })}
+                    {/* FASE 1.9 — visibilità progressiva: accenno ai raid
+                        ancora nascosti, senza spoiler. */}
+                    {(catalog?.[0]?.hidden_upcoming_count > 0) && (
+                        <div
+                            data-testid="raids-hidden-hint"
+                            className="text-[11px] text-muted-foreground italic text-center"
+                        >
+                            🔮 Altri {catalog[0].hidden_upcoming_count} raid attendono
+                            oltre l&apos;orizzonte. Supera la prossima sfida per svelarli.
+                        </div>
+                    )}
                 </section>
 
                 {/* History */}

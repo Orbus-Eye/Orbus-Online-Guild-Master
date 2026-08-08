@@ -371,6 +371,12 @@ async def list_catalog(current_user: dict = Depends(get_current_user)):
         pub["guild_max_team_power_ever"] = peak
         out.append(pub)
 
+    # FASE 1.9 (2026-08-08) — visibilità progressiva (stessa regola dei
+    # dungeon): tutti i raid sbloccati + SOLO il primo bloccato come
+    # teaser "prossima sfida"; i tier successivi restano nascosti.
+    from app.shared.progressive_visibility import apply_progressive_visibility
+    out = apply_progressive_visibility(out)
+
     # Cooldown status
     last_completed = guild.get("last_raid_completed_at")
     cooldown_remaining = 0

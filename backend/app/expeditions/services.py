@@ -1608,9 +1608,40 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
                 related == expedition_id or meta_exp == expedition_id
             )
 
+    # FASE 1.6 (2026-08-08) — barra XP nel report squadra. Ogni membro
+    # porta anche lo stato di progressione ATTUALE dell'avventuriero
+    # (post-spedizione): livello, XP residua e soglia per il prossimo
+    # livello. Gli snapshot restano immutabili; `current_progress` è
+    # None se l'avventuriero non esiste più (congedato).
+    member_adv_ids = [m.get("adventurer_id") for m in members
+                      if m.get("adventurer_id")]
+    current_progress_by_id: dict[str, dict] = {}
+    if member_adv_ids:
+        from app.shared.progression import xp_required_for_next_level
+        adv_rows_now = await db.adventurers.find(
+            {"id": {"$in": member_adv_ids}},
+            {"_id": 0, "id": 1, "level": 1, "experience": 1},
+        ).to_list(len(member_adv_ids))
+        for a in adv_rows_now:
+            lvl_now = int(a.get("level", 1) or 1)
+            need = int(xp_required_for_next_level(lvl_now))
+            current_progress_by_id[a["id"]] = {
+                "level": lvl_now,
+                "experience": int(a.get("experience", 0) or 0),
+                "xp_for_next_level": need,  # 0 = livello massimo
+            }
+
     return {
         "expedition": expedition_public(exp),
-        "members": [member_public(m) for m in members],
+        "members": [
+            {
+                **member_public(m),
+                "current_progress": current_progress_by_id.get(
+                    m.get("adventurer_id")
+                ),
+            }
+            for m in members
+        ],
         "loot_items": loot_items,
         "report_summary": report["report_summary"],
         "report_steps": report["report_steps"],

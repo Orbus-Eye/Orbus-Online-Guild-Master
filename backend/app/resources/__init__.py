@@ -471,7 +471,7 @@ async def gather(body: GatherBody, current_user: dict = Depends(get_current_user
             403,
             {
                 "code": "prestige_level_gate",
-                "message": f"Richiede Prestigio di Gilda Lv {MIN_GUILD_LEVEL} per raccogliere risorse.",
+                "message": f"Richiede Livello di Gilda {MIN_GUILD_LEVEL} per raccogliere risorse.",
                 "current_level": prestige_level,
                 "required_level": MIN_GUILD_LEVEL,
             },
