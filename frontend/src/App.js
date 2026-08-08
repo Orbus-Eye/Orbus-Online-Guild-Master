@@ -85,6 +85,7 @@ import PvpSeasonCosmetics from "@/pages/PvpSeasonCosmetics";
 // ROUND 16.3 Phase 8 V1 — Stables & Mounts
 import Stables from "@/pages/Stables";
 import ReportErrorBoundary from "@/components/ReportErrorBoundary";
+import AppErrorBoundary from "@/components/AppErrorBoundary";
 
 function App() {
     return (
@@ -92,6 +93,7 @@ function App() {
             <BrowserRouter>
                 <I18nProvider>
                     <AuthProvider>
+                    <AppErrorBoundary>
                     <Routes>
                         <Route path="/" element={<Landing />} />
                         <Route
@@ -630,6 +632,7 @@ function App() {
                             <ProtectedRoute requireGuild><Stables /></ProtectedRoute>} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
+                    </AppErrorBoundary>
                     </AuthProvider>
                 </I18nProvider>
             </BrowserRouter>

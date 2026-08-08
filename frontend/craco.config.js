@@ -37,7 +37,21 @@ let webpackConfig = {
       jestConfig.moduleNameMapper = {
         ...(jestConfig.moduleNameMapper || {}),
         "^@/(.*)$": "<rootDir>/src/$1",
+        // Jest 27 non risolve gli export map ("exports") dei package:
+        // react-router-dom v7 importa "react-router/dom", che senza questa
+        // mappatura fa fallire ogni test che monta componenti col router.
+        "^react-router/dom$":
+          "react-router/dist/development/dom-export.js",
+        // Stesso problema per il subpath-export interno di Radix
+        // (usato da react-use-controllable-state / dialog).
+        "^@radix-ui/primitive/is-development$":
+          "@radix-ui/primitive/dist/internal/is-development.true.js",
       };
+      // react-router v7 richiede TextEncoder/TextDecoder (assenti in jsdom).
+      jestConfig.setupFiles = [
+        ...(jestConfig.setupFiles || []),
+        path.resolve(__dirname, "jest.polyfills.js"),
+      ];
       return jestConfig;
     },
   },
