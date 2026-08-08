@@ -142,7 +142,8 @@ async def _adventurer_owned_or_404(db, adventurer_id: str, guild_id: str) -> dic
         {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
     )
     if not adv:
-        raise HTTPException(status_code=404, detail="Adventurer not found")
+        # FASE 3.5 — messaggi player-facing in italiano.
+        raise HTTPException(status_code=404, detail="Avventuriero non trovato")
     return adv
 
 
@@ -177,19 +178,19 @@ async def equip_item_service(
     if not adv.get("is_available", True):
         raise HTTPException(
             status_code=400,
-            detail="Cannot modify equipment of adventurer currently in expedition",
+            detail="Non puoi modificare l'equipaggiamento di un avventuriero in spedizione",
         )
 
     slot = normalize_equipment_slot(slot)
     if slot not in EQUIPMENT_SLOTS:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid slot '{slot}'. Must be one of: {', '.join(EQUIPMENT_SLOTS)}",
+            detail=f"Slot '{slot}' non valido. Slot ammessi: {', '.join(EQUIPMENT_SLOTS)}",
         )
 
     item = await db.items.find_one({"id": item_id, "is_active": True}, {"_id": 0})
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Oggetto non trovato")
 
     expected_type = SLOT_TO_ITEM_TYPE[slot]
     if item.get("item_type") != expected_type:
@@ -247,7 +248,10 @@ async def equip_item_service(
         {"guild_id": guild["id"], "item_id": item_id}, {"_id": 0}
     )
     if not inv_row:
-        raise HTTPException(status_code=404, detail="Item not in your guild inventory")
+        raise HTTPException(
+            status_code=404,
+            detail="Oggetto non presente nel deposito della gilda",
+        )
 
     # ROUND 6B.4 Task 2 — adventurer-bound guard.
     # If the inventory row is bound to another adventurer, reject the equip
@@ -284,7 +288,7 @@ async def equip_item_service(
     if not reserved:
         raise HTTPException(
             status_code=409,
-            detail="Item not available (already equipped on another adventurer)",
+            detail="Oggetto non disponibile (già equipaggiato da un altro avventuriero)",
         )
 
     now = utc_now()
@@ -306,7 +310,8 @@ async def equip_item_service(
             {"$inc": {"reserved_qty": -1}},
         )
         raise HTTPException(
-            status_code=400, detail="Slot already occupied, unequip first"
+            status_code=400,
+            detail="Slot già occupato: rimuovi prima l'oggetto attuale",
         )
     new_row = {
         "id": str(uuid.uuid4()),
@@ -331,7 +336,8 @@ async def equip_item_service(
             {"$inc": {"reserved_qty": -1}},
         )
         raise HTTPException(
-            status_code=400, detail="Slot already occupied, unequip first"
+            status_code=400,
+            detail="Slot già occupato: rimuovi prima l'oggetto attuale",
         )
 
     slots, eq_power, _raw = await _load_equipment_for_adventurer(db, adv["id"])

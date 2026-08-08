@@ -85,6 +85,9 @@ def member_public(m: dict) -> dict:
         "class_item_resonance_bonus": int(
             m.get("class_item_resonance_bonus", 0)
         ),
+        # FASE 3.3 — consumabile attivo alla partenza (per il report).
+        "consumable_snapshot": m.get("consumable_snapshot"),
+        "consumable_power_bonus": int(m.get("consumable_power_bonus", 0) or 0),
         # Phase 13 — traits at dispatch (immutable snapshot for determinism)
         "traits_snapshot": m.get("traits_snapshot", []),
         "total_power_snapshot": int(
@@ -439,6 +442,21 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 scaled += 1
             drop["qty"] = max(int(drop.get("qty", 0)), scaled)
 
+    # FASE 3.4 — Pietra della Conoscenza: drop indipendente al 20% sui
+    # dungeon a SUCCESSO. Aggiunta DOPO il blocco Overpower così non
+    # viene mai moltiplicata (è già generosa al 20% — scelta economica).
+    if success:
+        try:
+            if _rng.random() < 0.20:
+                _stone = await db.items.find_one(
+                    {"slug": "pietra_della_conoscenza", "is_active": True},
+                    {"_id": 0, "id": 1},
+                )
+                if _stone:
+                    loot_ids = list(loot_ids) + [_stone["id"]]
+        except Exception:  # noqa: BLE001
+            pass  # seed fase 3 assente: nessun crash, solo niente pietra
+
     if success:
         gold_reward = dungeon["base_gold_reward"]
         xp_per_member = dungeon["base_xp_reward"]
@@ -495,10 +513,18 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         catchup_mult = catchup_multiplier(
             _top_levels, int(adv.get("level", 1) or 1)
         )
+        # FASE 3.3 — consumabile xp_boost dallo snapshot al dispatch
+        # (Pietra della Conoscenza, Tonico del Sapiente, ...).
+        from app.adventurers.consumables import consumable_xp_multiplier
+        consumable_snap = m.get("consumable_snapshot")
+        consumable_mult = consumable_xp_multiplier(
+            {"active_consumable": consumable_snap}
+        )
         final_member_xp = int(round(
             base_xp_with_traits
             * float(xp_info["multiplier"])
             * catchup_mult
+            * consumable_mult
         ))
         xp_debuff_reports.append({
             "adventurer_id": m["adventurer_id"],
@@ -506,6 +532,8 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             "base_xp": int(base_xp_with_traits),
             "multiplier": float(xp_info["multiplier"]),
             "catchup_multiplier": float(catchup_mult),
+            "consumable_multiplier": float(consumable_mult),
+            "consumable_name_it": (consumable_snap or {}).get("name_it"),
             "final_xp": int(final_member_xp),
             "reason_code": xp_info.get("reason_code"),
             "primary_stat_slug": xp_info.get("primary_stat_slug"),
@@ -518,6 +546,13 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
         adv = _resolve_levelup(adv)
         adv["is_available"] = True
         adv["updated_at"] = now.isoformat()
+        # FASE 3.3 — una spedizione completata consuma 1 carica del
+        # consumabile che era attivo alla partenza (best-effort).
+        if consumable_snap:
+            from app.adventurers.consumables import (
+                decrement_consumable_charges,
+            )
+            await decrement_consumable_charges(db, m["adventurer_id"])
         await db.adventurers.update_one(
             {"id": m["adventurer_id"]},
             {
@@ -1155,6 +1190,16 @@ async def _dispatch_expedition(
         class_item_resonance_bonus = int(
             class_mechanic.get("item_resonance_bonus", 0)
         )
+        # FASE 3.3 — consumabile attivo: snapshot congelato al dispatch
+        # (chi attiva DOPO la partenza non ottiene il bonus per questa
+        # run) + potere flat per i power_boost.
+        from app.adventurers.consumables import consumable_power_bonus
+        consumable_snapshot = adv.get("active_consumable") or None
+        if consumable_snapshot and int(
+            consumable_snapshot.get("charges_left", 0)
+        ) <= 0:
+            consumable_snapshot = None
+        consumable_power = consumable_power_bonus(adv)
         traits_snapshot = list(adv.get("traits") or [])
         traits_by_adv[adv["id"]] = traits_snapshot
         equipment_by_adv[adv["id"]] = {
@@ -1166,11 +1211,14 @@ async def _dispatch_expedition(
             "class_mechanic_snapshot": class_mechanic,
             "class_mechanic_power_bonus": class_mechanic_bonus,
             "class_item_resonance_bonus": class_item_resonance_bonus,
+            "consumable_snapshot": consumable_snapshot,
+            "consumable_power_bonus": consumable_power,
             "total_power_snapshot": (
                 base
                 + eq_power
                 + item_effect_projection["power_bonus"]
                 + class_mechanic_bonus
+                + consumable_power
             ),
         }
         members_for_power.append(
@@ -1181,6 +1229,7 @@ async def _dispatch_expedition(
                     + eq_power
                     + item_effect_projection["power_bonus"]
                     + class_mechanic_bonus
+                    + consumable_power
                 ),
                 "equipment_power_snapshot": eq_power,
                 "item_effect_power_bonus": item_effect_projection["power_bonus"],
@@ -1294,6 +1343,8 @@ async def _dispatch_expedition(
                 "class_mechanic_snapshot": None,
                 "class_mechanic_power_bonus": 0,
                 "class_item_resonance_bonus": 0,
+                "consumable_snapshot": None,
+                "consumable_power_bonus": 0,
                 "total_power_snapshot": _adventurer_effective_power(adv),
             },
         )
@@ -1324,6 +1375,9 @@ async def _dispatch_expedition(
                 eq["class_item_resonance_bonus"]
             ),
             "total_power_snapshot": int(eq["total_power_snapshot"]),
+            # FASE 3.3 — consumabile congelato al dispatch (per XP e cariche).
+            "consumable_snapshot": eq.get("consumable_snapshot"),
+            "consumable_power_bonus": int(eq.get("consumable_power_bonus", 0)),
             # Phase 13 — trait snapshot for deterministic resolution
             "traits_snapshot": traits_by_adv.get(adv["id"], []),
         }

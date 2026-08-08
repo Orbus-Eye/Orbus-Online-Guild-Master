@@ -36,11 +36,20 @@ function RarityChip({ rarity }) {
     );
 }
 
+// FASE 3.2 — professioni di crafting (tab).
+const PROFESSIONS = [
+    { key: "all", label: "Tutte", icon: "✦" },
+    { key: "forge", label: "Fucina", icon: "⚒" },
+    { key: "cooking", label: "Cucina", icon: "🍲" },
+    { key: "alchemy", label: "Alchimia", icon: "⚗" },
+];
+
 export default function Crafting() {
     const { t, lang } = useT();
     const [recipes, setRecipes] = useState(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(null);
+    const [profTab, setProfTab] = useState("all");
 
     // ROUND 6B FASE B — useCallback so identity is stable and the effect
     // below can list `refresh` directly (no eslint-disable needed). Reloads
@@ -83,7 +92,7 @@ export default function Crafting() {
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="mb-6">
                     <div className="text-xs text-amber tracking-widest mb-2">
-                        :: GUILD WORKSHOP
+                        {lang === "it" ? ":: LABORATORI DI GILDA" : ":: GUILD WORKSHOP"}
                     </div>
                     <h1 className="text-3xl font-semibold tracking-tight">
                         {t("crafting.title")}
@@ -93,9 +102,28 @@ export default function Crafting() {
                     </p>
                 </div>
 
+                {/* FASE 3.2 — tab professioni: Fucina / Cucina / Alchimia */}
+                <div className="flex flex-wrap gap-1.5 mb-5" data-testid="crafting-profession-tabs">
+                    {PROFESSIONS.map((p) => (
+                        <button
+                            key={p.key}
+                            type="button"
+                            data-testid={`crafting-tab-${p.key}`}
+                            onClick={() => setProfTab(p.key)}
+                            className={`text-[11px] tracking-widest px-3 py-1.5 rounded-sm border ${
+                                profTab === p.key
+                                    ? "border-amber text-amber bg-amber/10"
+                                    : "border-border text-muted-foreground hover:border-amber/40"
+                            }`}
+                        >
+                            {p.icon} {p.label.toUpperCase()}
+                        </button>
+                    ))}
+                </div>
+
                 {loading && (
                     <div className="text-xs text-muted-foreground">
-                        loading<span className="caret-blink" />
+                        {t("common.loading", "Caricamento…")}<span className="caret-blink" />
                     </div>
                 )}
 
@@ -110,7 +138,10 @@ export default function Crafting() {
 
                 {!loading && recipes && recipes.length > 0 && (
                     <div className="space-y-3" data-testid="crafting-list">
-                        {recipes.map((r) => {
+                        {recipes
+                            .filter((r) => profTab === "all"
+                                || (r.profession || "forge") === profTab)
+                            .map((r) => {
                             const color = STATUS_COLOR[r.status] || "#9ca3af";
                             return (
                                 <div

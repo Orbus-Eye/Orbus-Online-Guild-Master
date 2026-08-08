@@ -298,6 +298,8 @@ def adventurer_public(doc: dict) -> dict:
         "race_name_it": doc.get("race_name_it"),  # joined by services if needed
         "gender": doc.get("gender"),
         "equipment": eq_slots,
+        # FASE 3.3 — consumabile attivo (scomparto "Consumabile").
+        "active_consumable": doc.get("active_consumable") or None,
         "base_power": base_power,
         "equipment_power": eq_power,
         "total_power": base_power + eq_power,
@@ -362,7 +364,7 @@ async def trait_preview_for_adventurer(db, guild_id: str, adventurer_id: str) ->
         {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
     )
     if not adv:
-        raise HTTPException(status_code=404, detail="Adventurer not found")
+        raise HTTPException(status_code=404, detail="Avventuriero non trovato")
     traits = adv.get("traits") or []
     base_stats = {s: int(adv.get(s, 0)) for s in TRAIT_AFFECTABLE_STATS}
     trait_stats = (
@@ -445,7 +447,7 @@ async def rename_adventurer(
         {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
     )
     if not adv:
-        raise HTTPException(status_code=404, detail="Adventurer not found")
+        raise HTTPException(status_code=404, detail="Avventuriero non trovato")
     current_count = int(adv.get("rename_count", 0))
     if current_count >= RENAME_MAX_LIFETIME:
         raise HTTPException(

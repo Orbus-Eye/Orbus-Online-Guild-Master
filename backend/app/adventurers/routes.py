@@ -31,6 +31,40 @@ class AdventurerRenameIn(BaseModel):
     name: str = Field(..., min_length=2, max_length=30)
 
 
+# FASE 3.3 — attivazione consumabile (scomparto "Consumabile").
+class ConsumableActivateIn(BaseModel):
+    item_id: str = Field(..., min_length=1, max_length=64)
+
+
+@router.post("/api/adventurers/{adventurer_id}/consumable")
+async def post_adventurer_consumable(
+    adventurer_id: str,
+    payload: ConsumableActivateIn,
+    current_user: dict = Depends(get_current_user),
+):
+    """FASE 3.3 — assegna un consumabile all'avventuriero (1 attivo max)."""
+    from app.adventurers.consumables import activate_consumable
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await activate_consumable(
+        db, guild=guild, adventurer_id=adventurer_id,
+        item_id=payload.item_id, actor_user_id=current_user["id"],
+    )
+
+
+@router.delete("/api/adventurers/{adventurer_id}/consumable")
+async def delete_adventurer_consumable(
+    adventurer_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """FASE 3.3 — annulla il consumabile attivo (nessun rimborso)."""
+    from app.adventurers.consumables import cancel_consumable
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await cancel_consumable(
+        db, guild=guild, adventurer_id=adventurer_id,
+        actor_user_id=current_user["id"],
+    )
+
+
 class AdventurerRetireIn(BaseModel):
     reason: str | None = Field(default=None, max_length=200)
     force_unequip: bool = Field(default=False)
@@ -277,7 +311,7 @@ async def list_eligible_items(
         {"id": adventurer_id, "guild_id": guild["id"]}, {"_id": 0}
     )
     if not adv:
-        raise HTTPException(status_code=404, detail="Adventurer not found")
+        raise HTTPException(status_code=404, detail="Avventuriero non trovato")
 
     # class_slug fallback identico ad adventurer_public() per coerenza (SQ5+).
     cls_slug = (

@@ -67,6 +67,18 @@ const RarityBadge = ({ rarity }) => (
     </span>
 );
 
+// FASE 3.3 — descrizione leggibile dell'effetto consumabile.
+function consumableEffectLabel(fx) {
+    if (!fx) return "";
+    if (fx.type === "xp_boost") {
+        return `+${Math.round((fx.magnitude || 0) * 100)}% XP per ${fx.charges} spedizioni`;
+    }
+    if (fx.type === "power_boost") {
+        return `+${fx.magnitude} potere per ${fx.charges} spedizioni`;
+    }
+    return "";
+}
+
 function statBonusList(it) {
     if (!it) return "";
     const parts = [];
@@ -178,6 +190,25 @@ export default function Inventory() {
         if (next.has(r)) next.delete(r);
         else next.add(r);
         setRarityFilter(next);
+    };
+
+    // FASE 3.3 — assegna un consumabile a un avventuriero.
+    const doAssignConsumable = async (advId, itemId, key) => {
+        setBusyKey(key);
+        try {
+            const { data } = await api.post(
+                `/adventurers/${advId}/consumable`, { item_id: itemId },
+            );
+            const ac = data.active_consumable;
+            toast.success(
+                `${ac?.name_it || "Consumabile"} attivato (${ac?.charges_left} cariche)`,
+            );
+            await refresh();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setBusyKey(null);
+        }
     };
 
     const doEquip = async (advId, itemId, slot, key) => {
@@ -570,6 +601,41 @@ export default function Inventory() {
                                                 {usableCount === 0
                                                     ? t("inventory_extra.not_usable_reason_level", { n: levelReq })
                                                     : t("inventory_extra.no_compatible_adventurer")}
+                                            </div>
+                                        )}
+
+                                        {/* FASE 3.3 — consumabili: "Usa su…" (uno attivo per avventuriero) */}
+                                        {hasAvailable && it.item_type === "consumable" && it.consumable_effect && (
+                                            <div
+                                                className="mt-1"
+                                                data-testid={`inv-consumable-assign-${r.id}`}
+                                            >
+                                                <div className="text-[11px] text-amber mb-1.5">
+                                                    ✨ {consumableEffectLabel(it.consumable_effect)}
+                                                </div>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {adventurers
+                                                        .filter((a) => a.is_available)
+                                                        .slice(0, 8)
+                                                        .map((a) => {
+                                                            const key = `use-${r.id}-${a.id}`;
+                                                            const hasBuff = (a.active_consumable?.charges_left || 0) > 0;
+                                                            return (
+                                                                <Button
+                                                                    key={a.id}
+                                                                    data-testid={`inv-use-${r.id}-${a.id}-btn`}
+                                                                    disabled={busyKey === key || hasBuff}
+                                                                    title={hasBuff
+                                                                        ? `${a.name} ha già ${a.active_consumable?.name_it} attivo (${a.active_consumable?.charges_left} cariche)`
+                                                                        : `Usa su ${a.name}`}
+                                                                    onClick={() => doAssignConsumable(a.id, it.id, key)}
+                                                                    className="h-7 px-2 text-[11px] bg-secondary text-foreground hover:bg-secondary/70 rounded-sm disabled:opacity-40"
+                                                                >
+                                                                    ✨ {a.name.split(" ")[0]}
+                                                                </Button>
+                                                            );
+                                                        })}
+                                                </div>
                                             </div>
                                         )}
 

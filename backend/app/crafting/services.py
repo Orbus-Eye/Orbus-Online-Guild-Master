@@ -68,6 +68,8 @@ def _recipe_public(recipe: dict, items_by_slug: dict[str, dict], lang: str = "it
     out_item = items_by_slug.get(recipe["output_item_slug"], {})
     return {
         "slug": recipe["slug"],
+        # FASE 3.2 — professione (forge|cooking|alchemy); legacy → forge.
+        "profession": recipe.get("profession") or "forge",
         "display_name": _localized_name(recipe, lang),
         "description": recipe.get("description_it") if lang == "it" else recipe.get("description_en"),
         "inputs": [
@@ -154,14 +156,18 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
         {"slug": recipe_slug, "is_active": True, "is_test": {"$ne": True}},
         {"_id": 0},
     )
+    # FASE 3.5 — messaggi d'errore player-facing in italiano.
     if not recipe:
-        raise HTTPException(status_code=404, detail="Recipe not found")
+        raise HTTPException(status_code=404, detail="Ricetta non trovata")
 
     # 1) Guild level gate
     if int(guild.get("level", 1)) < int(recipe.get("required_guild_level", 1)):
         raise HTTPException(
             status_code=400,
-            detail=f"Requires guild level {recipe.get('required_guild_level', 1)}",
+            detail=(
+                f"Richiede Livello di Gilda "
+                f"{recipe.get('required_guild_level', 1)}"
+            ),
         )
 
     # 2) Resolve all input items + output item
@@ -170,12 +176,15 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
     items_by_slug = await _load_item_map_by_slug(db, needed_slugs)
     for slug in needed_slugs:
         if slug not in items_by_slug:
-            raise HTTPException(status_code=409, detail=f"Item '{slug}' is not available")
+            raise HTTPException(
+                status_code=409,
+                detail=f"L'oggetto '{slug}' non è disponibile",
+            )
 
     # 3) Pre-flight: gold + materials with equipped exclusion
     gold_cost = int(recipe.get("gold_cost", 0))
     if int(guild.get("gold", 0)) < gold_cost:
-        raise HTTPException(status_code=400, detail="Not enough gold")
+        raise HTTPException(status_code=400, detail="Oro insufficiente")
     inv_by_id = await _load_inventory_by_item_ids(
         db, guild["id"], [items_by_slug[s]["id"] for s in input_slugs]
     )
@@ -187,7 +196,10 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
         if have - eq < int(i["quantity"]):
             raise HTTPException(
                 status_code=400,
-                detail=f"Not enough materials: need {i['quantity']} of {it.get('name')}",
+                detail=(
+                    f"Materiali insufficienti: servono {i['quantity']} × "
+                    f"{it.get('display_name_it') or it.get('name')}"
+                ),
             )
 
     # 4) Atomic decrement loop with rollback on conflict
@@ -213,7 +225,7 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
                 )
             raise HTTPException(
                 status_code=409,
-                detail="Inventory changed during craft — try again",
+                detail="L'inventario è cambiato durante la lavorazione — riprova",
             )
         decremented.append((it["id"], int(i["quantity"])))
 
@@ -228,7 +240,10 @@ async def craft_recipe(db, guild: dict, recipe_slug: str, lang: str = "it") -> d
                 {"guild_id": guild["id"], "item_id": revert_id},
                 {"$inc": {"quantity": revert_qty}},
             )
-        raise HTTPException(status_code=409, detail="Gold changed during craft — try again")
+        raise HTTPException(
+            status_code=409,
+            detail="L'oro è cambiato durante la lavorazione — riprova",
+        )
 
     # 6) Upsert output (quantity += output_quantity)
     out_item = items_by_slug[recipe["output_item_slug"]]

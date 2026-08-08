@@ -625,15 +625,36 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     xp_per_member = int(rd["base_xp_per_member"] * multiplier
                         * (1.0 + _leader_xp_bonus / 100.0))
 
-    # dragon_essence: guaranteed range, scaled by outcome
-    de_min = rd.get("guaranteed_dragon_essence_min", 1)
-    de_max = rd.get("guaranteed_dragon_essence_max", 3)
-    if outcome == "victory":
-        de_count = rng.randint(de_min, de_max)
-    elif outcome == "partial":
-        de_count = max(0, de_min // 2)
-    else:
-        de_count = 0
+    # FASE 3.1 (2026-08-08) — reagente principale del raid: ogni raid
+    # ha il SUO reagente (dragon_essence resta esclusiva di dragon-vault).
+    # Garantito a vittoria, ridotto su parziale, nulla su sconfitta.
+    # Sostituisce il vecchio grant "dragon_essence per tutti i raid".
+    # Design: memory/fase3_design_reagenti_crafting.md §1.
+    from app.expeditions.reagent_tables import raid_reagent_grant
+    reagent_drops = raid_reagent_grant(
+        raid["raid_dungeon_slug"], outcome, rng=rng,
+    )
+    if not reagent_drops:
+        # Fallback legacy per raid non mappati (contenuti futuri/test).
+        de_min = rd.get("guaranteed_dragon_essence_min", 1)
+        de_max = rd.get("guaranteed_dragon_essence_max", 3)
+        if outcome == "victory":
+            _legacy_qty = rng.randint(de_min, de_max)
+        elif outcome == "partial":
+            _legacy_qty = max(0, de_min // 2)
+        else:
+            _legacy_qty = 0
+        if _legacy_qty > 0 and raid["raid_dungeon_slug"] not in (
+            "moonfall-vigil", "broken-bastion-siege",
+            "necropolis-bells", "dragon-vault",
+        ):
+            reagent_drops = [{"slug": "dragon_essence",
+                              "rarity": "legendary", "qty": _legacy_qty}]
+    # Compat: il campo storico dragon_essence_count resta nel payload
+    # rewards (0 se il reagente del raid non è dragon_essence).
+    de_count = sum(
+        d["qty"] for d in reagent_drops if d["slug"] == "dragon_essence"
+    )
     progression = raid_progression_rewards(
         raid["raid_dungeon_slug"],
         outcome,
@@ -705,33 +726,38 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     except Exception:
         pass
 
-    # dragon_essence to guild inventory (additive insert into inventory_items)
-    if de_count > 0:
-        de_item = await db.items.find_one({"slug": "dragon_essence"}, {"_id": 0})
-        if de_item:
-            existing = await db.inventory_items.find_one(
-                {"guild_id": guild["id"], "item_id": de_item["id"], "is_bound": {"$ne": True}}
+    # FASE 3.1 — accredito reagente/i del raid in inventario (additivo).
+    for drop in reagent_drops:
+        reagent_item = await db.items.find_one(
+            {"slug": drop["slug"], "item_type": "material"}, {"_id": 0},
+        )
+        if not reagent_item:
+            continue  # seed fase 3 non ancora applicato: nessun crash
+        existing = await db.inventory_items.find_one(
+            {"guild_id": guild["id"], "item_id": reagent_item["id"],
+             "is_bound": {"$ne": True}}
+        )
+        if existing:
+            await db.inventory_items.update_one(
+                {"id": existing["id"]},
+                {"$inc": {"quantity": int(drop["qty"])}},
             )
-            if existing:
-                await db.inventory_items.update_one(
-                    {"id": existing["id"]}, {"$inc": {"quantity": de_count}},
-                )
-            else:
-                await db.inventory_items.insert_one({
-                    "id": str(uuid.uuid4()),
-                    "instance_id": str(uuid.uuid4()),
-                    "guild_id": guild["id"],
-                    "item_id": de_item["id"],
-                    "quantity": de_count,
-                    "refinement_level": 0,
-                    "enchants": [],
-                    "affixes": [],
-                    "reroll_count": 0,
-                    "is_bound": False,
-                    "disenchanted_at": None,
-                    "acquired_at": now.isoformat(),
-                    "source": "raid_reward",
-                })
+        else:
+            await db.inventory_items.insert_one({
+                "id": str(uuid.uuid4()),
+                "instance_id": str(uuid.uuid4()),
+                "guild_id": guild["id"],
+                "item_id": reagent_item["id"],
+                "quantity": int(drop["qty"]),
+                "refinement_level": 0,
+                "enchants": [],
+                "affixes": [],
+                "reroll_count": 0,
+                "is_bound": False,
+                "disenchanted_at": None,
+                "acquired_at": now.isoformat(),
+                "source": "raid_reward",
+            })
 
     # T6 authored pool: one replay-safe item roll tied to this raid instance.
     from app.raids.loot import grant_raid_item_reward
@@ -754,6 +780,11 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
         "gold_total": gold,
         "xp_per_member": xp_per_member,
         "dragon_essence_count": de_count,
+        # FASE 3.1 — reagente principale del raid (slug/qty per il report).
+        "reagent_rewards": [
+            {"slug": d["slug"], "qty": int(d["qty"]), "rarity": d["rarity"]}
+            for d in reagent_drops
+        ],
         "item_reward": raid_item_reward,
         **progression,
     }

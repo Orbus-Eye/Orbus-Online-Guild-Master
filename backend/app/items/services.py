@@ -37,6 +37,8 @@ def item_public(it: dict) -> dict:
         # we keep the defensive default here so future seeds can't reintroduce
         # the regression silently.
         "power_score": it.get("power_score", 0),
+        # FASE 3.3 — contratto effetto consumabile (None per non-consumabili).
+        "consumable_effect": it.get("consumable_effect") or None,
         "strength_bonus": it.get("strength_bonus", 0),
         "agility_bonus": it.get("agility_bonus", 0),
         "intellect_bonus": it.get("intellect_bonus", 0),

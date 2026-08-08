@@ -750,6 +750,20 @@ export default function ExpeditionReport() {
                                         </div>
                                     );
                                 })()}
+                                {/* FASE 3.3 — consumabile attivo alla partenza */}
+                                {m.consumable_snapshot && (
+                                    <div
+                                        className="text-[10px] text-amber/90 mt-1.5"
+                                        data-testid={`report-member-consumable-${m.adventurer_id}`}
+                                    >
+                                        ✨ {m.consumable_snapshot.name_it}
+                                        {m.consumable_power_bonus > 0
+                                            ? ` (+${m.consumable_power_bonus} potere)`
+                                            : m.consumable_snapshot.type === "xp_boost"
+                                                ? ` (+${Math.round((m.consumable_snapshot.magnitude || 0) * 100)}% XP)`
+                                                : ""}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

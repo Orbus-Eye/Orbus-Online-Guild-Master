@@ -66,6 +66,24 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
     const [autoEquipBusy, setAutoEquipBusy] = useState(false);
     // ROUND 16.1 Phase 3 — keep the response to render a bilingual report.
     const [autoEquipResult, setAutoEquipResult] = useState(null);
+    // FASE 3.3 — annulla consumabile attivo.
+    const [consumableBusy, setConsumableBusy] = useState(false);
+
+    const handleCancelConsumable = async () => {
+        if (!adventurer?.id || consumableBusy) return;
+        setConsumableBusy(true);
+        try {
+            await api.delete(`/adventurers/${adventurer.id}/consumable`);
+            toast.success("Consumabile annullato (cariche residue perse).");
+            if (typeof onChanged === "function") onChanged(adventurer.id);
+        } catch (err) {
+            const msg = err?.response?.data?.detail?.user_message
+                || "Impossibile annullare il consumabile.";
+            toast.error(msg);
+        } finally {
+            setConsumableBusy(false);
+        }
+    };
 
     const handleAutoEquip = async () => {
         if (!adventurer?.id || autoEquipBusy) return;
@@ -379,6 +397,36 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                             );
                         })}
                     </div>
+
+                    {/* FASE 3.3 — scomparto Consumabile */}
+                    {adventurer.active_consumable?.charges_left > 0 && (
+                        <div
+                            className="mt-4 border border-amber/40 bg-amber/5 rounded-sm p-3 flex items-center justify-between gap-3 flex-wrap"
+                            data-testid={`adv-consumable-${adventurer.id}`}
+                        >
+                            <div className="text-[11px]">
+                                <span className="text-amber font-semibold">
+                                    ✨ {adventurer.active_consumable.name_it}
+                                </span>{" "}
+                                <span className="text-muted-foreground">
+                                    {adventurer.active_consumable.type === "xp_boost"
+                                        ? `+${Math.round((adventurer.active_consumable.magnitude || 0) * 100)}% XP`
+                                        : `+${adventurer.active_consumable.magnitude} potere`}
+                                    {" · "}
+                                    {adventurer.active_consumable.charges_left} spedizioni rimaste
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                data-testid={`adv-consumable-cancel-${adventurer.id}`}
+                                onClick={handleCancelConsumable}
+                                disabled={consumableBusy}
+                                className="text-[10px] tracking-widest border border-border text-muted-foreground px-2 py-1 rounded-sm hover:bg-secondary disabled:opacity-50"
+                            >
+                                {consumableBusy ? "…" : "ANNULLA"}
+                            </button>
+                        </div>
+                    )}
 
                     <div className="mt-4 flex items-center justify-end gap-2">
                         <button
