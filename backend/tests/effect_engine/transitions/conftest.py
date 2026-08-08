@@ -105,6 +105,7 @@ def make_event(
     expected_state_version: int = 1,
     event_id: str | None = None,
     payload_extra: dict | None = None,
+    drain_execution_id: str | None = None,
 ) -> ClassStateEvent:
     eid = event_id or f"evt-{uuid.uuid4().hex[:16]}"
     payload_seed = {
@@ -114,6 +115,7 @@ def make_event(
         "target_id": target_id,
         "amount": amount,
         "reason_code": reason_code,
+        "drain_execution_id": drain_execution_id,
         **(payload_extra or {}),
     }
     payload_hash = hashlib.sha256(str(sorted(payload_seed.items())).encode()).hexdigest()
@@ -130,6 +132,7 @@ def make_event(
         expected_state_version=expected_state_version,
         reason_code=reason_code,
         trusted_drain_receipt=trusted_drain_receipt,
+        drain_execution_id=drain_execution_id,
     )
 
 

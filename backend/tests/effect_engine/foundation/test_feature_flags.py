@@ -19,9 +19,9 @@ def _clean_env(monkeypatch):
     ff.reset_cache()
 
 
-def test_all_flags_count_is_8():
-    """RT2-B-2B-2-1 · 2026-02: aggiunto `cdv_drain_transitions_enabled`
-    (RT2_B_RUNTIME_ATTIVABILE cresce a 3 flag). Totale 8."""
+def test_all_flags_count_is_7():
+    """RT2-B-2B-2-1 · aggiunto `cdv_drain_transitions_enabled` (B2B2Q13):
+    RT2_B_RUNTIME_ATTIVABILE cresce a 3 flag. Totale 8."""
     assert len(ff.ALL_FLAGS) == 8
     assert ff.ALL_FLAGS == (
         ff.RT2_A_RUNTIME_ATTIVABILE
@@ -46,27 +46,17 @@ def test_rt2a_active_flags_are_two():
     )
 
 
-def test_rt2b_active_flags_are_three():
-    """RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim (2026-02):
+def test_rt2b_active_flags_are_two():
+    """RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim:
     - `cdv_transient_state_enabled` (RT2-B-2A)
-    - `cdv_class_transitions_enabled` (RT2-B-2B-1)
-    - `cdv_drain_transitions_enabled` (RT2-B-2B-2-1, nuovo, default OFF, surgical kill-switch)
+    - `cdv_class_transitions_enabled` (RT2-B-2B-1, default OFF)
+    - `cdv_drain_transitions_enabled` (RT2-B-2B-2-1, nuovo, default OFF)
     """
-    assert ff.RT2_B_RUNTIME_ATTIVABILE == frozenset(
-        {
-            "cdv_transient_state_enabled",
-            "cdv_class_transitions_enabled",
-            "cdv_drain_transitions_enabled",
-        }
-    )
-
-
-def test_rt2c_active_flag_is_promoted_without_changing_total():
-    assert ff.RT2_C_RUNTIME_ATTIVABILE == frozenset(
-        {
-            "item_effect_engine_enabled",
-        }
-    )
+    assert ff.RT2_B_RUNTIME_ATTIVABILE == frozenset({
+        "cdv_transient_state_enabled",
+        "cdv_class_transitions_enabled",
+        "cdv_drain_transitions_enabled",
+    })
 
 
 def test_rt2_future_constants_are_two():

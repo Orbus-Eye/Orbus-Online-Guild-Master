@@ -73,6 +73,38 @@ class DrainStatus(str, Enum):
 
 
 @dataclass(frozen=True)
+class DrainCompletionPayload:
+    """RT2-B-2B-2-1 · Completion result payload (B2B2Q07 verbatim · 15 campi).
+
+    PM adjudication (correzione ratificata): il payload è EMBEDDED nella
+    **processed-event receipt** (`EventReceipt.result_payload`) — fonte
+    autoritativa del completion result. Questo dataclass è lo SCHEMA canonico
+    usato per costruire deterministicamente il dict pre-CAS.
+    Una sola receipt ORDINARY consumata · mai un secondo slot · una sola
+    mutation · un solo incremento di `state_version`.
+
+    Esclusioni verbatim: damage · healing · XP · loot · item proc · combat
+    result · RNG seed · reward payload.
+    """
+
+    drain_execution_id: str
+    completion_event_id: str
+    source_adventurer_id: str
+    target_id: str
+    mark_id: str
+    application_id: str
+    result_code: str  # SUCCESS | rejection code
+    mark_valid_at_completion: bool
+    fragment_gain_requested: int  # fissato = 1 (B2B2Q05)
+    fragment_gain_applied: int  # 0 o 1 (post cap check)
+    fragment_overflow_discarded: int  # 0 o 1
+    resource_segment_id: Optional[str]
+    assigned_event_sequence: int
+    state_version_after: int
+    processed_at: str  # ISO UTC
+
+
+@dataclass(frozen=True)
 class DrainDoc:
     """Drenaggio execution runtime state.
 
@@ -80,11 +112,20 @@ class DrainDoc:
     - own active Mark required at start · own active Mark required at completion
     - Drain does NOT consume Mark · one resolution per execution id
 
-    RT2-B-2B-2-1 (Drain gate PM Message 170 §9) extension:
-    - `mark_id` (introduced by code gate; enforces binding invariance)
-    - `cancelled_at`, `cancellation_reason` (per §17-§18 · 8 canonical reasons)
-    - `drain_version` (monotonic per aggregate · initial=1)
-    Backward compat: `resolution_version` (RT1) preserved.
+    RT2-B-2B-2-1 (PM Message 170 §9 binding contract) — campi aggiunti:
+    - `mark_id`: binding al Mark letto a START_DRAIN (B2B2Q03 strict)
+    - `cancelled_at` + `cancellation_reason` (uno degli 8 canonici B2B2Q08)
+    - `drain_version`: monotonic per aggregato (initial=1)
+    - `start_event_id`: event_id dello START accettato (dedup replay → prior ID)
+    - `completion_event_id`: event_id della completion accettata (linkage 1:1
+      con la processed-event receipt autoritativa · dedup/validazione)
+    - `completion_payload`: DEPRECATED-NON-AUTHORITATIVE (PM adjudication
+      B2B2Q07): la fonte autoritativa è `EventReceipt.result_payload`. Il
+      nuovo runtime Drain NON lo popola (resta None · nessuna duplicazione).
+
+    Hard-lock PM Message 170 §18:
+    - max active Drain per (source,target) pair = 1
+    - max active Drain per Mark application = 1
     """
 
     drain_execution_id: str
@@ -96,13 +137,13 @@ class DrainDoc:
     runtime_status: DrainStatus = DrainStatus.IN_PROGRESS
     resolution_version: int = 1
     reward_resolved: bool = False
-    # ── RT2-B-2B-2-1 code gate additions (default-valued for backward compat) ──
-    mark_id: str = ""  # binding to MarkDoc.mark_id · empty for RT1 legacy fixtures
+    mark_id: str = ""
     cancelled_at: Optional[str] = None
-    cancellation_reason: Optional[str] = (
-        None  # one of 8 canonical (see transitions.models.ReasonCode)
-    )
+    cancellation_reason: Optional[str] = None
     drain_version: int = 1
+    start_event_id: str = ""
+    completion_event_id: str = ""
+    completion_payload: Optional[DrainCompletionPayload] = None
 
 
 # ═══════════════════════ Fragment usage per segment ═══════════════════════
@@ -145,6 +186,14 @@ class EventReceipt:
     durante expedition attiva).
 
     Contenuto (B0Q06 verbatim minimum):
+
+    RT2-B-2B-2-1 · PM adjudication B2B2Q07 (correzione ratificata):
+    `result_payload` contiene il completion result payload a 15 campi per
+    COMPLETE_DRAIN (e per i fold-commit di completion). La processed-event
+    receipt è la FONTE AUTORITATIVA del completion result. Default None per
+    tutti gli eventi legacy (byte-shape invariata). Costruito
+    deterministicamente PRE-CAS · scritto nello stesso singolo CAS ·
+    nessuna persistenza post-CAS · nessuna seconda receipt.
     """
 
     event_id: str
@@ -155,6 +204,7 @@ class EventReceipt:
     result_code: str  # canonical CasResultCode string
     state_version_after: int
     processed_at: str  # ISO UTC
+    result_payload: Optional[Dict[str, object]] = None
 
 
 # ═══════════════════════ Writer Lease ═══════════════════════

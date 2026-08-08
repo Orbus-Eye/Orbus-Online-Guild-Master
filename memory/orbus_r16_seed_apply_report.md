@@ -188,7 +188,7 @@ Livelli di attenzione da comunicare al tester:
 # Task tracciati per dopo lo smoke test
 
 ## P2 — env config
-- **`APP_BASE_URL="https://orbusonline.net"`** in `/app/backend/.env` è un valore di production. Impatta i link generati nelle email (welcome, password reset). In preview dovrebbe puntare al preview URL (`https://guild-master-5.preview.emergentagent.com`). Da correggere post-smoke.
+- **`APP_BASE_URL="https://orbusonline.net"`** in `/app/backend/.env` è un valore di production. Impatta i link generati nelle email (welcome, password reset). In preview dovrebbe puntare al preview URL (`https://drain-dispatch.preview.emergentagent.com`). Da correggere post-smoke.
 - Le email SMTP falliscono comunque in preview (log `SMTPRecipientsRefused` per domini `.test`), quindi il rischio pratico è nullo finché non c'è un tester con email reale.
 
 ## P2 — bug DB isolation pytest

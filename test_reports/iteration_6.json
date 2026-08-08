@@ -1,5 +1,5 @@
 {
-  "summary": "Phase 5.6b stabilization regression smoke completed. Live backend (REACT_APP_BACKEND_URL=https://guild-master-5.preview.emergentagent.com) is fully healthy. Full pytest suite 159/159 PASS in 243.88s (148 prior baseline + 11 new Phase 5.6b smoke tests). OpenAPI surface = 36 paths (matches spec). Health=200 {status:ok,env:development}. Tester seed is idempotent and is_admin=true on every startup (log: 'Tester account already exists with is_admin=True'). Backend reload-clean, no warnings beyond known starlette/pytest deprecation notes. Frontend smoke skipped per request (testing_type=backend only).",
+  "summary": "Phase 5.6b stabilization regression smoke completed. Live backend (REACT_APP_BACKEND_URL=https://drain-dispatch.preview.emergentagent.com) is fully healthy. Full pytest suite 159/159 PASS in 243.88s (148 prior baseline + 11 new Phase 5.6b smoke tests). OpenAPI surface = 36 paths (matches spec). Health=200 {status:ok,env:development}. Tester seed is idempotent and is_admin=true on every startup (log: 'Tester account already exists with is_admin=True'). Backend reload-clean, no warnings beyond known starlette/pytest deprecation notes. Frontend smoke skipped per request (testing_type=backend only).",
   "backend_issues": {
     "critical": [],
     "minor": []

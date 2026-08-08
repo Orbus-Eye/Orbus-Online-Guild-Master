@@ -301,7 +301,7 @@ Scope stretto: solo riordino dichiarazione. Nessuna modifica alla logica del hoo
 
 4. **Verifica audit backend** (evidenza definitiva emissione eventi):
    ```
-   Guild: Mile 1783167799 (id=7283a826-09dc-4918-9340-f210b53a6b12)
+   Guild: Mile 1783167799 (id=drain-dispatch)
      guild_xp: 685, guild_level: 4
      FIRST_EXPEDITION_STARTED: 1  ✅
      FIRST_EXPEDITION_COMPLETED: 1  ✅

@@ -1,6 +1,6 @@
 R18.Reset.1b.ops - Test Report
 Timestamp: 2026-07-05T08:23:16Z
-API_URL: https://guild-master-5.preview.emergentagent.com
+API_URL: https://drain-dispatch.preview.emergentagent.com
 
 ==== TEST 1: default OFF ====
   GET /api/health = 200 (expect 200)

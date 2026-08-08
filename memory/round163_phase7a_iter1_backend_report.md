@@ -1,7 +1,7 @@
 # ROUND 16.3 Phase 7A Iter1 — PvP Continentale Backend Report
 
 **Data**: 2026-07-01
-**Ambiente**: preview `orbus_r16` DB @ `https://guild-master-5.preview.emergentagent.com`
+**Ambiente**: preview `orbus_r16` DB @ `https://drain-dispatch.preview.emergentagent.com`
 **Fase**: 7A Iter1 (backend combat 1v1)
 
 ---

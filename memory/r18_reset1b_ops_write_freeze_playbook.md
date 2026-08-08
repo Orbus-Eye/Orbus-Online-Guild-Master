@@ -53,10 +53,10 @@ Priorità: env var → file flag. Se entrambi sono attivi, il middleware blocca.
 
 ## 2. Come verificare che POST/PUT/PATCH/DELETE rispondano 503 (curl examples)
 
-Sostituisci `$API_URL` con il preview URL (es. `https://guild-master-5.preview.emergentagent.com`).
+Sostituisci `$API_URL` con il preview URL (es. `https://drain-dispatch.preview.emergentagent.com`).
 
 ```bash
-API_URL="https://guild-master-5.preview.emergentagent.com"
+API_URL="https://drain-dispatch.preview.emergentagent.com"
 
 # POST bloccato
 curl -i -X POST "$API_URL/api/auth/login" \
@@ -180,7 +180,7 @@ python -m app.scripts.round18_reset1b_apply \
 Dopo apply reale (exit 0), esegui le seguenti verifiche **prima** di disattivare maintenance mode:
 
 ```bash
-API_URL="https://guild-master-5.preview.emergentagent.com"
+API_URL="https://drain-dispatch.preview.emergentagent.com"
 
 # 6a. audit event applied presente
 python3 -c "
@@ -250,7 +250,7 @@ sudo supervisorctl restart backend
 
 # 3) Verifica ritorno normale
 curl -s -o /dev/null -w "POST /api/auth/login -> %{http_code}\n" \
-    -X POST "https://guild-master-5.preview.emergentagent.com/api/auth/login" \
+    -X POST "https://drain-dispatch.preview.emergentagent.com/api/auth/login" \
     -H "Content-Type: application/json" -d '{"email":"x","password":"y"}'
 # Atteso: 401 (o 400), NON 503
 ```
@@ -453,7 +453,7 @@ del internal freeze:
 
 ```
 orbus.onboarding - INFO - starter roster seeded:
-  guild=907b4ae4-8301-4852-bd65-b4e3937824f7 inserted=2
+  guild=drain-dispatch inserted=2
 ```
 
 Dopo la patch B.2 del gate 7 hotfix (2026-07-05T10:56Z), lo stesso

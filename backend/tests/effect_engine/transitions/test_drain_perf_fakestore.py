@@ -1,258 +1,161 @@
-"""RT2-B-2B-2-1-A1 · FakeStore Drain performance benchmark.
+"""RT2-B-2B-2-1 · Drain FakeStore performance benchmarks (§17 dispatch).
 
-PM Message 178+180 §6 verbatim: 5 metriche · ≥ 30 iterazioni valide · p95 targets.
-
-Method:
-- Warm-up: 3 iterations discarded per metric
-- Sample: 30 valid iterations recorded per metric
-- p95 computed via sorted-list index (ceil(0.95 * N) - 1)
-- Reported: n_iterations · method · min · median · p95 · max · fake_store config · env
-
-Not aggregated with future real-Mongo perf. FakeStore in-memory only.
+Target (FakeStore · NON sostituisce la futura V1 real-Mongo):
+    START_DRAIN p95 <= 35 ms
+    COMPLETE_DRAIN + Fragment p95 <= 35 ms
+    CANCEL_DRAIN p95 <= 35 ms
+    deduplicated retry p95 <= 25 ms
+    flags-OFF overhead p95 <= max(5%, 1 ms)
 """
 from __future__ import annotations
 
-import math
+import json
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-
-import pytest
+from pathlib import Path
 
 from app.stats.runtime.state_store.fake_store import FakeExpeditionRuntimeStateStore
-from app.stats.runtime.state_store.models import (
-    AdventurerClassState,
-    ExpeditionRuntimeState,
-    MarkDoc,
-    RuntimeStatus,
-)
+from app.stats.runtime.state_store.models import ExpeditionRuntimeState, RuntimeStatus
 from app.stats.runtime.transitions.dispatcher import ClassTransitionDispatcher
 from app.stats.runtime.transitions.models import (
     ClassEventType,
-    TransitionResultCode,
+    TransitionResultCode as RC,
 )
-from tests.effect_engine.transitions.conftest import _iso, run, trusted_context
-from tests.effect_engine.transitions.test_drain_fakestore import make_drain_event
+from app.stats.runtime.wiring.coordinator import ExpeditionRuntimeCoordinator
+from tests.effect_engine.transitions.conftest import (
+    make_event,
+    run,
+    trusted_context,
+)
 
-UTC = timezone.utc
+ADV = "adv-cdv-01"
+TGT = "target-boss-01"
+N = 120
 
-WARMUP = 3
-SAMPLE = 30
-TARGETS_MS = {
-    "start_drain_p95": 35.0,
-    "complete_drain_p95": 35.0,
-    "cancel_drain_p95": 35.0,
-    "deduplicated_retry_p95": 25.0,
-    "flags_off_overhead_p95": 5.0,  # absolute cap (1 ms or 5% of baseline)
-}
+_RESULTS_PATH = Path("/tmp/rt2b2b21_drain_perf_fakestore.json")
 
 
-def _p95(samples_ms: list[float]) -> float:
-    xs = sorted(samples_ms)
-    idx = max(0, math.ceil(0.95 * len(xs)) - 1)
-    return xs[idx]
+def _p95(samples: list[float]) -> float:
+    ordered = sorted(samples)
+    idx = max(0, int(round(0.95 * len(ordered))) - 1)
+    return ordered[idx]
 
 
-def _summarize(samples_ms: list[float]) -> dict:
-    xs = sorted(samples_ms)
-    return {
-        "n": len(xs),
-        "min_ms": xs[0],
-        "median_ms": xs[len(xs) // 2],
-        "p95_ms": _p95(xs),
-        "max_ms": xs[-1],
-    }
-
-
-def _bootstrap_state(store, expedition_id: str, adventurer_id: str, target_id: str, now: datetime):
-    mark = MarkDoc(
-        mark_id=f"mrk-{uuid.uuid4().hex[:8]}",
-        application_id=f"app-{uuid.uuid4().hex[:8]}",
-        source_adventurer_id=adventurer_id, target_id=target_id,
-        created_at=_iso(now), expires_at=_iso(now + timedelta(seconds=60)),
-        ritual_close_used=False, mark_version=1,
-    )
-    cs = AdventurerClassState(
-        adventurer_id=adventurer_id, active_marks=(mark,), active_drain_executions=(),
-        fragment_count=0, resource_segment_id=None, focus_bonus_usage=(),
-        class_state_version=1,
-    )
+def _fresh_env():
+    clock = lambda: datetime.now(timezone.utc)  # noqa: E731
+    store = FakeExpeditionRuntimeStateStore(clock=clock)
+    exp_id = f"exp-perf-{uuid.uuid4().hex[:10]}"
+    now = clock()
     shell = ExpeditionRuntimeState(
-        expedition_id=expedition_id, state_version=1, fencing_token=0,
-        created_at=_iso(now), updated_at=_iso(now),
-        expires_at=_iso(now + timedelta(hours=6)),
+        expedition_id=exp_id, state_version=1, fencing_token=0,
+        created_at=now.isoformat(), updated_at=now.isoformat(),
+        expires_at=(now + timedelta(hours=6)).isoformat(),
         runtime_status=RuntimeStatus.ACTIVE,
-        adventurer_class_states=((adventurer_id, cs),), processed_event_keys=(),
-        last_event_sequence=0, owner_worker_or_lease_id=None, lease=None,
     )
-    r = run(store.create_state(expedition_id, shell))
-    assert r.success
-    return mark
+    assert run(store.create_state(exp_id, shell)).success
+    return store, exp_id
 
 
-class TestFakeStoreBenchmark:
-    @staticmethod
-    def _new_store(clock_fn):
-        return FakeExpeditionRuntimeStateStore(clock=clock_fn)
+def _dispatch(store, event):
+    disp = ClassTransitionDispatcher(store=store, worker_id="w-perf")
+    return run(disp.dispatch(event, trusted_context=trusted_context()))
 
-    def _dispatch(self, store, event, tctx=None):
-        disp = ClassTransitionDispatcher(store=store, worker_id="w-bench", now_fn=store._clock)
-        return run(disp.dispatch(event, trusted_context=tctx or trusted_context()))
 
-    def test_bench_start_drain_p95(self, clock_fn, request):
-        samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp = f"exp-{i}"
-            adv, tgt = f"adv-{i}", "tgt-bench"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            ev = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                  mark_id=mark.mark_id, application_id=mark.application_id)
-            t0 = time.perf_counter()
-            out = self._dispatch(store, ev)
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            assert out.result.code is TransitionResultCode.DRAIN_STARTED
-            if i >= WARMUP:
-                samples.append(elapsed_ms)
-        stats = _summarize(samples)
-        stats["metric"] = "start_drain_p95"
-        stats["target_ms"] = TARGETS_MS["start_drain_p95"]
-        stats["passes_target"] = stats["p95_ms"] <= TARGETS_MS["start_drain_p95"]
-        request.config.cache.set("drain_bench/start_drain", stats)
-        assert stats["passes_target"], f"START_DRAIN p95={stats['p95_ms']:.2f}ms > target 35ms"
+def _timed(fn) -> float:
+    t0 = time.monotonic()
+    fn()
+    return (time.monotonic() - t0) * 1000.0
 
-    def test_bench_complete_drain_p95(self, clock_fn, request):
-        samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp, adv, tgt = f"exp-c-{i}", f"adv-{i}", "tgt-bench-c"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            # start
-            ev_s = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                    mark_id=mark.mark_id, application_id=mark.application_id)
-            r_s = self._dispatch(store, ev_s)
-            drain_id = r_s.result.reason_code
-            ev_c = make_drain_event("COMPLETE_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                    mark_id=mark.mark_id, application_id=mark.application_id,
-                                    drain_execution_id=drain_id, expected_state_version=2)
-            t0 = time.perf_counter()
-            out = self._dispatch(store, ev_c)
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            assert out.result.code is TransitionResultCode.DRAIN_COMPLETED
-            if i >= WARMUP:
-                samples.append(elapsed_ms)
-        stats = _summarize(samples)
-        stats["metric"] = "complete_drain_p95"
-        stats["target_ms"] = TARGETS_MS["complete_drain_p95"]
-        stats["passes_target"] = stats["p95_ms"] <= TARGETS_MS["complete_drain_p95"]
-        request.config.cache.set("drain_bench/complete_drain", stats)
-        assert stats["passes_target"], f"COMPLETE_DRAIN p95={stats['p95_ms']:.2f}ms > target 35ms"
 
-    def test_bench_cancel_drain_p95(self, clock_fn, request):
-        samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp, adv, tgt = f"exp-x-{i}", f"adv-{i}", "tgt-bench-x"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            ev_s = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                    mark_id=mark.mark_id, application_id=mark.application_id)
-            r_s = self._dispatch(store, ev_s)
-            drain_id = r_s.result.reason_code
-            ev_x = make_drain_event("CANCEL_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                    mark_id=mark.mark_id, application_id=mark.application_id,
-                                    drain_execution_id=drain_id,
-                                    cancellation_reason="EXPLICIT_SERVER_CANCEL",
-                                    expected_state_version=2)
-            t0 = time.perf_counter()
-            out = self._dispatch(store, ev_x)
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            assert out.result.code is TransitionResultCode.DRAIN_CANCELLED
-            if i >= WARMUP:
-                samples.append(elapsed_ms)
-        stats = _summarize(samples)
-        stats["metric"] = "cancel_drain_p95"
-        stats["target_ms"] = TARGETS_MS["cancel_drain_p95"]
-        stats["passes_target"] = stats["p95_ms"] <= TARGETS_MS["cancel_drain_p95"]
-        request.config.cache.set("drain_bench/cancel_drain", stats)
-        assert stats["passes_target"], f"CANCEL_DRAIN p95={stats['p95_ms']:.2f}ms > target 35ms"
+def test_perf_drain_fakestore_p95():
+    start_ms, complete_ms, cancel_ms, dedup_ms, off_ms = [], [], [], [], []
 
-    def test_bench_deduplicated_retry_p95(self, clock_fn, request):
-        samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp, adv, tgt = f"exp-d-{i}", f"adv-{i}", "tgt-bench-d"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            eid = f"evt-dup-{i}"
-            ev = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                  mark_id=mark.mark_id, application_id=mark.application_id, event_id=eid)
-            _first = self._dispatch(store, ev)  # first apply
-            # duplicate: should be deduplicated fast
-            ev_dup = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                      mark_id=mark.mark_id, application_id=mark.application_id, event_id=eid)
-            t0 = time.perf_counter()
-            _second = self._dispatch(store, ev_dup)
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            if i >= WARMUP:
-                samples.append(elapsed_ms)
-        stats = _summarize(samples)
-        stats["metric"] = "deduplicated_retry_p95"
-        stats["target_ms"] = TARGETS_MS["deduplicated_retry_p95"]
-        stats["passes_target"] = stats["p95_ms"] <= TARGETS_MS["deduplicated_retry_p95"]
-        request.config.cache.set("drain_bench/dedup_retry", stats)
-        assert stats["passes_target"], f"dedup_retry p95={stats['p95_ms']:.2f}ms > target 25ms"
+    for _ in range(N):
+        store, exp_id = _fresh_env()
+        assert _dispatch(store, make_event(
+            ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+            source_adventurer_id=ADV, target_id=TGT)).result.code is RC.SUCCESS
 
-    def test_bench_flags_off_overhead_p95(self, clock_fn, request):
-        """Overhead of a gate-rejected START_DRAIN (feature disabled) vs happy-path."""
-        # First measure happy-path baseline
-        happy_samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp, adv, tgt = f"exp-h-{i}", f"adv-{i}", "tgt-bench-h"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            ev = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                  mark_id=mark.mark_id, application_id=mark.application_id)
-            t0 = time.perf_counter()
-            self._dispatch(store, ev)
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            if i >= WARMUP:
-                happy_samples.append(elapsed_ms)
-        happy_p95 = _p95(happy_samples)
+        # START_DRAIN
+        start_ev = make_event(ClassEventType.START_DRAIN.value,
+                              expedition_id=exp_id,
+                              source_adventurer_id=ADV, target_id=TGT)
+        holder = {}
 
-        # Flags OFF path — should be much faster (no mutation)
-        off_samples = []
-        for i in range(WARMUP + SAMPLE):
-            store = self._new_store(clock_fn)
-            exp, adv, tgt = f"exp-o-{i}", f"adv-{i}", "tgt-bench-o"
-            mark = _bootstrap_state(store, exp, adv, tgt, clock_fn())
-            ev = make_drain_event("START_DRAIN", expedition_id=exp, source=adv, target=tgt,
-                                  mark_id=mark.mark_id, application_id=mark.application_id)
-            t0 = time.perf_counter()
-            self._dispatch(store, ev, tctx={"feature_enabled": False, "test_user_verified": True,
-                                             "db_allowlisted": True, "phase_ended": False})
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            if i >= WARMUP:
-                off_samples.append(elapsed_ms)
-        off_p95 = _p95(off_samples)
-        stats = _summarize(off_samples)
-        stats["metric"] = "flags_off_overhead_p95"
-        stats["happy_baseline_p95_ms"] = happy_p95
-        # `run(...)` creates the same event-loop boundary for both paths,
-        # which dominates these 2-3 ms microbenchmarks on Windows. Comparing
-        # two independently sampled p95 values with zero tolerance therefore
-        # makes scheduler jitter look like a product regression. Keep the
-        # original hard 5 ms cap and a bounded 25% relative-noise allowance.
-        hard_target = TARGETS_MS["flags_off_overhead_p95"]
-        relative_target = max(1.0, 1.25 * happy_p95)
-        stats["target_ms"] = min(hard_target, relative_target)
-        stats["hard_target_ms"] = hard_target
-        stats["relative_target_ms"] = relative_target
-        stats["passes_target"] = (
-            off_p95 <= hard_target and off_p95 <= relative_target
-        )
-        request.config.cache.set("drain_bench/flags_off", stats)
-        # Cap: <=5 ms AND <=max(1 ms, happy-path p95 * 1.25).
-        assert stats["passes_target"], (
-            f"flags_off p95={off_p95:.2f}ms > hard_target={hard_target:.2f}ms "
-            f"or relative_target={relative_target:.2f}ms "
-            f"(happy_baseline={happy_p95:.2f}ms)"
-        )
+        def _do_start():
+            holder["out"] = _dispatch(store, start_ev)
+
+        start_ms.append(_timed(_do_start))
+        assert holder["out"].result.code is RC.DRAIN_STARTED
+        drain_id = holder["out"].result.drain_execution_id
+
+        # deduplicated retry (replay stesso START)
+        dedup_ms.append(_timed(lambda: _dispatch(store, start_ev)))
+
+        # COMPLETE_DRAIN + Fragment batch
+        comp_ev = make_event(ClassEventType.COMPLETE_DRAIN.value,
+                             expedition_id=exp_id, source_adventurer_id=ADV,
+                             drain_execution_id=drain_id)
+
+        def _do_complete():
+            holder["comp"] = _dispatch(store, comp_ev)
+
+        complete_ms.append(_timed(_do_complete))
+        assert holder["comp"].result.code is RC.DRAIN_COMPLETED
+
+        # CANCEL_DRAIN (nuovo drain su nuovo target)
+        assert _dispatch(store, make_event(
+            ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+            source_adventurer_id=ADV, target_id="t2")).result.code is RC.SUCCESS
+        out2 = _dispatch(store, make_event(
+            ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+            source_adventurer_id=ADV, target_id="t2"))
+        cancel_ev = make_event(ClassEventType.CANCEL_DRAIN.value,
+                               expedition_id=exp_id, source_adventurer_id=ADV,
+                               drain_execution_id=out2.result.drain_execution_id)
+
+        def _do_cancel():
+            holder["can"] = _dispatch(store, cancel_ev)
+
+        cancel_ms.append(_timed(_do_cancel))
+        assert holder["can"].result.code is RC.DRAIN_CANCELLED
+
+        # flags-OFF overhead (coordinator · drain kill-switch OFF · 0 DB)
+        coord = ExpeditionRuntimeCoordinator(store, "orbus_r16_rt2b_test")
+        ctx_off = trusted_context()
+        ctx_off["drain_feature_enabled"] = False
+        off_ev = make_event(ClassEventType.START_DRAIN.value,
+                            expedition_id=exp_id, source_adventurer_id=ADV,
+                            target_id="t3")
+
+        def _do_off():
+            holder["off"] = run(coord.dispatch_class_state_event(off_ev, ctx_off))
+
+        off_ms.append(_timed(_do_off))
+        assert holder["off"].result.code is RC.FEATURE_DISABLED
+
+    metrics = {
+        "iterations": N,
+        "start_drain_p95_ms": round(_p95(start_ms), 3),
+        "complete_drain_fragment_p95_ms": round(_p95(complete_ms), 3),
+        "cancel_drain_p95_ms": round(_p95(cancel_ms), 3),
+        "deduplicated_retry_p95_ms": round(_p95(dedup_ms), 3),
+        "flags_off_overhead_p95_ms": round(_p95(off_ms), 3),
+        "targets": {
+            "start_drain_p95_ms": 35.0,
+            "complete_drain_fragment_p95_ms": 35.0,
+            "cancel_drain_p95_ms": 35.0,
+            "deduplicated_retry_p95_ms": 25.0,
+            "flags_off_overhead_p95_ms": 1.0,
+        },
+    }
+    _RESULTS_PATH.write_text(json.dumps(metrics, indent=2))
+
+    assert metrics["start_drain_p95_ms"] <= 35.0, metrics
+    assert metrics["complete_drain_fragment_p95_ms"] <= 35.0, metrics
+    assert metrics["cancel_drain_p95_ms"] <= 35.0, metrics
+    assert metrics["deduplicated_retry_p95_ms"] <= 25.0, metrics
+    # flags-OFF overhead <= max(5% del budget 35ms, 1 ms) = max(1.75, 1) → 1.75;
+    # asserzione conservativa a 1.0 ms (il path OFF non tocca store né audit)
+    assert metrics["flags_off_overhead_p95_ms"] <= 1.0, metrics

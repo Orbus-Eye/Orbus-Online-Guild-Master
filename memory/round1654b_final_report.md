@@ -337,7 +337,7 @@ Nel log `/var/log/supervisor/backend.err.log` vediamo la stringa
 
 ### 18.2 — Seed items reali sul tester
 `admin@orbus.test` (username `Admin`) ha lanciato `POST /api/admin/guilds/{gid}/grant-item` × 9 verso la gilda `la lanterna di ferro`
-(`gid=30758454-2224-4d5a-9ee7-93c7fc64a593`) del tester. Item seedati:
+(`gid=drain-dispatch`) del tester. Item seedati:
 - Weapons Legendary: `drakefang-greatsword` (str+end), `voidcaster-staff` (int), `hoarfrost-scepter` (int+fai)
 - Armors Legendary: `stormforged-plate` (str+end), `ashwoven-robe` (int), `radiant-vestment` (fai+int)
 - Accessories Legendary: `hoardlords-seal` (multi), `flarebound-band` (int+fai), `stoutheart-locket` (end+str)
@@ -490,7 +490,7 @@ python -m pytest tests/backend_round1654b_test.py \
 
 Per test manuale via curl:
 ```bash
-API="https://guild-master-5.preview.emergentagent.com"
+API="https://drain-dispatch.preview.emergentagent.com"
 TOK=$(curl -s -X POST "$API/api/auth/login" \
    -H 'Content-Type: application/json' \
    -d '{"email":"tester@orbus.test","password":"password123"}' \

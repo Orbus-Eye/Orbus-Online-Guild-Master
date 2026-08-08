@@ -1,7 +1,7 @@
 # Playtest Checklist — Orbus Online: Guild Master
 
 **Account principale**: `mr.gualmini@gmail.com` · gilda **"Sentiero di Efreto"**
-**URL preview**: <https://guild-master-5.preview.emergentagent.com/>
+**URL preview**: <https://drain-dispatch.preview.emergentagent.com/>
 **URL produzione**: <https://orbusonline.net/>
 **Data ultimo update checklist**: 2026-06-25
 **Sessione email pipeline**: ✅ welcome ✅ password-reset (verificati live verso gmail.com)

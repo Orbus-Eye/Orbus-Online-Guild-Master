@@ -1,7 +1,7 @@
 # P1 Gap Fixes Report — Orbus Online: Guild Master (Round 16.x)
 
 **Data**: 2026-07-01
-**Ambiente**: preview `orbus_r16` DB @ `https://guild-master-5.preview.emergentagent.com`
+**Ambiente**: preview `orbus_r16` DB @ `https://drain-dispatch.preview.emergentagent.com`
 **Sessione**: post-recovery iterazione P1 (gap catalogo + APP_BASE_URL)
 
 ---
@@ -27,7 +27,7 @@ Tutti e 6 i gap tracciati in `bug_p0_fixes_report.md` sono chiusi o classificati
 
 **Fix**:
 - Backup: `/app/backend/.env.bak_pre_appbaseurl_fix`
-- Nuovo valore: `APP_BASE_URL=https://guild-master-5.preview.emergentagent.com`
+- Nuovo valore: `APP_BASE_URL=https://drain-dispatch.preview.emergentagent.com`
 - Backend restart: OK, `Orbus backend ready` a 2026-07-01T14:22:00
 
 **Vincolo rispettato**: nessuna modifica ad altre variabili `.env`.

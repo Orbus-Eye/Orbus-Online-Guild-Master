@@ -10,7 +10,7 @@ import pytest
 from app.stats.runtime import feature_flags
 
 
-def test_all_flags_still_eight():
+def test_all_flags_still_seven():
     """T-2A-27 (updated RT2-B-2B-2-1): ALL_FLAGS conta esattamente 8 (RT2-A: 2, RT2-B: 3, future: 3)."""
     assert len(feature_flags.ALL_FLAGS) == 8
 

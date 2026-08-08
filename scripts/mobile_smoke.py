@@ -51,7 +51,7 @@ async def run():
     from playwright.async_api import async_playwright  # type: ignore
 
     frontend_url = os.environ.get(
-        "FRONTEND_URL", "https://guild-master-5.preview.emergentagent.com",
+        "FRONTEND_URL", "https://drain-dispatch.preview.emergentagent.com",
     )
     email = os.environ.get("TESTER_EMAIL", "tester@orbus.test")
     password = os.environ.get("TESTER_PASSWORD", "password123")

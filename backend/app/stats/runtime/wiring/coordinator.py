@@ -42,6 +42,8 @@ from app.stats.runtime.transitions.models import (
     TransitionResult,
     TransitionResultCode,
 )
+from app.stats.runtime.transitions.drain import DRAIN_EVENT_TYPES
+from app.stats.runtime import feature_flags as _feature_flags
 from app.stats.runtime.wiring.audit import (
     compute_evaluation_hash,
     emit_audit_event,
@@ -269,11 +271,43 @@ class ExpeditionRuntimeCoordinator:
             ctx = dict(trusted_context)
             ctx["db_allowlisted"] = self._db_allowlisted
 
+            # ── RT2-B-2B-2-1 · B2B2Q13: 6-conditions gate DEDICATO Drain ──
+            # transient AND class (già rappresentati da `feature_enabled`)
+            # AND cdv_drain_transitions_enabled AND is_test_user AND
+            # localhost isolated AND Mongo allowlisted.
+            # Kill-switch surgical: Drain OFF ⇒ 0 DB calls · 0 audit events ·
+            # 0 mutations (return PRIMA del dispatcher e PRIMA di ogni emit).
+            # Mark/Fragment legacy NON sono toccati da questo gate.
+            if event.event_type in DRAIN_EVENT_TYPES:
+                drain_flag = ctx.get("drain_feature_enabled")
+                if drain_flag is None:
+                    drain_flag = _feature_flags.is_enabled(
+                        "cdv_drain_transitions_enabled"
+                    )
+                if not drain_flag:
+                    return DispatchOutcome(
+                        result=TransitionResult(
+                            code=TransitionResultCode.FEATURE_DISABLED,
+                            event_id=event.event_id,
+                            event_type=event.event_type,
+                            expedition_id=event.expedition_id,
+                            source_adventurer_id=event.source_adventurer_id,
+                            duration_ms=(time.monotonic() - t0) * 1000.0,
+                        ),
+                        lease_acquired=False,
+                        total_duration_ms=(time.monotonic() - t0) * 1000.0,
+                    )
+
             dispatcher = ClassTransitionDispatcher(store=self._store)
             outcome = await dispatcher.dispatch(event, trusted_context=ctx)
 
             # Audit emission — mapping event_type → audit event id
-            audit_id = _class_event_audit_id(event.event_type, outcome.result.code)
+            if event.event_type in DRAIN_EVENT_TYPES:
+                audit_id = _drain_event_audit_id(
+                    event.event_type, outcome.result.code,
+                )
+            else:
+                audit_id = _class_event_audit_id(event.event_type, outcome.result.code)
             emit_audit_event(
                 audit_id,
                 {
@@ -297,8 +331,38 @@ class ExpeditionRuntimeCoordinator:
                     "overflow_discarded": outcome.result.overflow_discarded,
                     "retry_attempts": outcome.result.retry_attempts,
                     "dedup_reference": outcome.result.dedup_reference,
+                    "drain_execution_id": outcome.result.drain_execution_id,
+                    "cancellation_reason": outcome.result.cancellation_reason,
+                    "fragment_gain_requested": outcome.result.fragment_gain_requested,
+                    "fragment_gain_applied": outcome.result.fragment_gain_applied,
+                    "fragment_overflow_discarded": outcome.result.fragment_overflow_discarded,
+                    "mark_valid_at_completion": outcome.result.mark_valid_at_completion,
+                    "drains_cancelled_count": outcome.result.drains_cancelled_count,
                 },
             )
+            # Supplementary Drain audit (B2B2Q15 · batch outcome events).
+            if (
+                event.event_type in DRAIN_EVENT_TYPES
+                and outcome.result.code is TransitionResultCode.DRAIN_COMPLETED
+            ):
+                _batch_payload = {
+                    "expedition_id": outcome.result.expedition_id,
+                    "source_adventurer_id": outcome.result.source_adventurer_id,
+                    "drain_execution_id": outcome.result.drain_execution_id,
+                    "event_id": outcome.result.event_id,
+                    "result_code": outcome.result.code.value,
+                    "fragment_gain_requested": outcome.result.fragment_gain_requested,
+                    "fragment_gain_applied": outcome.result.fragment_gain_applied,
+                    "fragment_overflow_discarded": outcome.result.fragment_overflow_discarded,
+                    "fragment_count_after": outcome.result.fragment_count_after,
+                    "state_version_after": outcome.result.state_version_after,
+                }
+                if outcome.result.fragment_gain_applied > 0:
+                    emit_audit_event("cdv_drain_fragment_batch_applied", _batch_payload)
+                if outcome.result.fragment_overflow_discarded > 0:
+                    emit_audit_event(
+                        "cdv_drain_fragment_overflow_discarded", _batch_payload,
+                    )
             return outcome
         except Exception as exc:  # noqa: BLE001
             duration = (time.monotonic() - t0) * 1000.0
@@ -327,6 +391,47 @@ class ExpeditionRuntimeCoordinator:
                 lease_acquired=False,
                 total_duration_ms=duration,
             )
+
+
+# ═══════════════════════ Drain audit event id mapping (10 ids · B2B2Q15) ═══════════════════════
+# 1 cdv_drain_started · 2 cdv_drain_start_rejected · 3 cdv_drain_completed ·
+# 4 cdv_drain_completion_rejected · 5 cdv_drain_cancelled ·
+# 6 cdv_drain_cancellation_rejected · 7 cdv_drain_duplicate_completion ·
+# 8 cdv_drain_fragment_batch_applied (supplementare · emesso dal coordinator) ·
+# 9 cdv_drain_fragment_overflow_discarded (supplementare) ·
+# 10 cdv_drain_transition_conflict
+_DRAIN_CONFLICT_CODES: frozenset[str] = frozenset({
+    "STATE_VERSION_CONFLICT",
+    "STALE_WRITER_REJECTED",
+    "EVENT_ID_PAYLOAD_MISMATCH",
+    "LEASE_ACQUISITION_FAILED",
+    "RETRY_LIMIT_REACHED",
+    "CAS_WITHOUT_VALID_LEASE",
+    "RECEIPT_CAP_REACHED",
+    "RESERVED_CAPACITY_EXHAUSTED",
+})
+
+
+def _drain_event_audit_id(event_type: str, result_code) -> str:
+    """Mappa (drain event_type, result_code) → audit event id (B2B2Q15)."""
+    code = getattr(result_code, "value", str(result_code))
+    if code in _DRAIN_CONFLICT_CODES:
+        return "cdv_drain_transition_conflict"
+    if event_type == "START_DRAIN":
+        if code in ("DRAIN_STARTED", "DEDUPLICATED_NO_OP"):
+            return "cdv_drain_started"
+        return "cdv_drain_start_rejected"
+    if event_type == "COMPLETE_DRAIN":
+        if code == "DRAIN_COMPLETED":
+            return "cdv_drain_completed"
+        if code in ("DRAIN_ALREADY_COMPLETED", "DEDUPLICATED_NO_OP"):
+            return "cdv_drain_duplicate_completion"
+        return "cdv_drain_completion_rejected"
+    if event_type == "CANCEL_DRAIN":
+        if code in ("DRAIN_CANCELLED", "DEDUPLICATED_NO_OP"):
+            return "cdv_drain_cancelled"
+        return "cdv_drain_cancellation_rejected"
+    return "cdv_drain_transition_conflict"
 
 
 # ═══════════════════════ Audit event id mapping (11 event ids, PM §13) ═══════════════════════

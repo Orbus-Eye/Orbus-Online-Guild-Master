@@ -199,6 +199,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         expected_state_version: int,
         expected_fencing_token: int,
         mutation: Dict[str, Any],
+        result_payload: Dict[str, Any] | None = None,
     ) -> CasResult:
         async with self._lock:
             st = self._storage.get(expedition_id)
@@ -253,6 +254,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 result_code=CasResultCode.SUCCESS.value,
                 state_version_after=new_version,
                 processed_at=_iso_now(self._clock),
+                result_payload=result_payload,
             )
             # Merge mutation (whitelist)
             fields: Dict[str, Any] = {}

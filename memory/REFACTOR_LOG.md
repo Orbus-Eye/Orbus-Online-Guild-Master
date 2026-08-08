@@ -497,8 +497,8 @@ cd /app/backend && radon cc -s app/admin/services.py app/adventurers/generator.p
 cd /app/frontend && yarn lint:strict
 
 # Live preview smoke
-curl -s https://guild-master-5.preview.emergentagent.com/api/health
-curl -s -X POST https://guild-master-5.preview.emergentagent.com/api/auth/login \
+curl -s https://drain-dispatch.preview.emergentagent.com/api/health
+curl -s -X POST https://drain-dispatch.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"tester@orbus.test","password":"password123"}'
 ```
@@ -911,7 +911,7 @@ consecutivi. Verifica via log grep / monitoring stack.
   in dev/preview. In prod `CORS_ORIGINS` deve essere lista esplicita.
 - **Browser localhost → preview cross-origin**: l'ingress preview ritorna
   ancora `Allow-Origin: *` (config infra Emergent). **In preview** il
-  tester accede via `https://guild-master-5.preview.emergentagent.com/`
+  tester accede via `https://drain-dispatch.preview.emergentagent.com/`
   (same-origin) → no CORS triggered → flow auth funziona. **In prod**
   stesso pattern same-origin (`orbusonline.net`).
 - Local dev (localhost:3000 → preview backend) richiede `CORS_ORIGINS=http://localhost:3000` per dev experience pura. Non blocking per deploy.

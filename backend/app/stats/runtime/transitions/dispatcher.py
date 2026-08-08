@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import time
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Optional, Tuple
 
@@ -64,6 +64,17 @@ from app.stats.runtime.transitions.state_machine import (
     reset_fragments,
     spend_fragment,
     would_receipt_be_accepted,
+)
+from app.stats.runtime.transitions.drain import (
+    DRAIN_EVENT_TYPES,
+    DRAIN_FOLD_COMMIT_CODES,
+    DRAIN_SUCCESS_CODES,
+    LIFECYCLE_CANCELLED_IDS_BOUND,
+    cancel_drain,
+    cancel_started_drains_for_lifecycle,
+    complete_drain,
+    find_drain_by_start_event,
+    start_drain,
 )
 
 # PM Message 151 §8: retry max 3.
@@ -148,9 +159,21 @@ class ClassTransitionDispatcher:
                 CasResultCode.STATE_VERSION_CONFLICT: TransitionResultCode.STATE_VERSION_CONFLICT,
                 CasResultCode.OWNERSHIP_INVALID: TransitionResultCode.OWNERSHIP_INVALID,
             }
+            # RT2-B-2B-2-1 · B2B2Q09: canonical code per Drain events —
+            # qualunque lease failure (tranne NOT_FOUND) → LEASE_ACQUISITION_FAILED.
+            if event.event_type in DRAIN_EVENT_TYPES:
+                _lease_code = (
+                    TransitionResultCode.NOT_FOUND
+                    if lease_res.code is CasResultCode.NOT_FOUND
+                    else TransitionResultCode.LEASE_ACQUISITION_FAILED
+                )
+            else:
+                _lease_code = code_map.get(
+                    lease_res.code, TransitionResultCode.CAS_WITHOUT_VALID_LEASE,
+                )
             return DispatchOutcome(
                 result=TransitionResult(
-                    code=code_map.get(lease_res.code, TransitionResultCode.CAS_WITHOUT_VALID_LEASE),
+                    code=_lease_code,
                     event_id=event.event_id,
                     event_type=event.event_type,
                     expedition_id=event.expedition_id,
@@ -197,6 +220,19 @@ class ClassTransitionDispatcher:
                         break
                 if dedup_hit is not None:
                     if dedup_hit.payload_hash == event.payload_hash:
+                        # RT2-B-2B-2-1 · B2B2Q01: replay dello stesso START
+                        # accettato → ritorna il prior drain_execution_id
+                        # (nessun nuovo Drain · nessuna mutation).
+                        prior_drain_id = None
+                        if event.event_type in DRAIN_EVENT_TYPES:
+                            cs_dedup = state.class_state_for(event.source_adventurer_id)
+                            if cs_dedup is not None:
+                                if event.event_type == ClassEventType.START_DRAIN.value:
+                                    prior = find_drain_by_start_event(cs_dedup, event.event_id)
+                                    if prior is not None:
+                                        prior_drain_id = prior.drain_execution_id
+                                else:
+                                    prior_drain_id = event.drain_execution_id
                         last_res = TransitionResult(
                             code=TransitionResultCode.DEDUPLICATED_NO_OP,
                             event_id=event.event_id,
@@ -208,6 +244,7 @@ class ClassTransitionDispatcher:
                             state_version_after=dedup_hit.state_version_after,
                             dedup_reference=str(dedup_hit.assigned_event_sequence),
                             retry_attempts=attempt,
+                            drain_execution_id=prior_drain_id,
                         )
                         break
                     else:
@@ -234,10 +271,21 @@ class ClassTransitionDispatcher:
                     event_type=event.event_type,
                 )
                 if not allowed:
+                    # RT2-B-2B-2-1 · B2B2Q09: canonical rejection codes per Drain.
+                    if event.event_type in DRAIN_EVENT_TYPES:
+                        _boundary_code = (
+                            TransitionResultCode.EXPEDITION_TERMINAL_REJECTED
+                            if expedition_terminal
+                            else TransitionResultCode.PHASE_INACTIVE
+                        )
+                    else:
+                        _boundary_code = (
+                            TransitionResultCode.EVENT_POST_TERMINAL_REJECTED
+                            if expedition_terminal
+                            else TransitionResultCode.PHASE_ENDED
+                        )
                     last_res = TransitionResult(
-                        code=(TransitionResultCode.EVENT_POST_TERMINAL_REJECTED
-                              if expedition_terminal
-                              else TransitionResultCode.PHASE_ENDED),
+                        code=_boundary_code,
                         event_id=event.event_id,
                         event_type=event.event_type,
                         expedition_id=event.expedition_id,
@@ -269,30 +317,31 @@ class ClassTransitionDispatcher:
                 cs = state.class_state_for(event.source_adventurer_id) or AdventurerClassState(
                     adventurer_id=event.source_adventurer_id,
                 )
-                new_cs, tr = _apply_event_pure(cs, event, self._now())
+                new_cs, tr = _apply_event_pure(
+                    cs, event, self._now(),
+                    next_event_sequence=state.last_event_sequence + 1,
+                    state_version_after=state.state_version + 1,
+                )
 
-                # RT2-B-2B-2-1 · Drain success codes require CAS mutation (parity with SUCCESS)
-                _POSITIVE_MUTATION_CODES = {
-                    TransitionResultCode.SUCCESS,
-                    TransitionResultCode.DRAIN_STARTED,
-                    TransitionResultCode.DRAIN_COMPLETED,
-                    TransitionResultCode.DRAIN_CANCELLED,
-                }
-                if tr.code not in _POSITIVE_MUTATION_CODES:
-                    last_res = TransitionResult(
-                        code=tr.code,
-                        event_id=event.event_id,
-                        event_type=event.event_type,
-                        expedition_id=event.expedition_id,
-                        source_adventurer_id=event.source_adventurer_id,
-                        reason_code=tr.reason_code,
-                        mark_id=tr.mark_id,
-                        mark_application_id=tr.mark_application_id,
-                        resource_segment_id=tr.resource_segment_id,
-                        fragment_count_after=tr.fragment_count_after,
-                        active_marks_count_after=tr.active_marks_count_after,
-                        focus_bonus_used_after=tr.focus_bonus_used_after,
-                        overflow_discarded=tr.overflow_discarded,
+                # Commit decision (RT2-B-2B-2-1):
+                # - SUCCESS legacy → commit
+                # - Drain success codes (DRAIN_STARTED/COMPLETED/CANCELLED) → commit
+                # - Drain fold-cancellation codes (B2B2Q14) → commit SOLO se la
+                #   mutation esiste (auto-cancel foldato nella receipt del
+                #   triggering event · MAI una seconda receipt)
+                _is_drain_event = event.event_type in DRAIN_EVENT_TYPES
+                _committable = (
+                    tr.code is TransitionResultCode.SUCCESS
+                    or (_is_drain_event and tr.code in DRAIN_SUCCESS_CODES)
+                    or (
+                        _is_drain_event
+                        and tr.code in DRAIN_FOLD_COMMIT_CODES
+                        and new_cs is not cs
+                    )
+                )
+                if not _committable:
+                    last_res = replace(
+                        tr,
                         state_version_before=state.state_version,
                         retry_attempts=attempt,
                     )
@@ -314,7 +363,12 @@ class ClassTransitionDispatcher:
                     "adventurer_class_states": tuple(updated_map),
                 }
 
-                # CAS write via apply_event_once (dedup guarantee)
+                # CAS write via apply_event_once (dedup guarantee).
+                # PM adjudication B2B2Q07: il completion result payload viene
+                # persistito DENTRO la processed-event receipt (fonte
+                # autoritativa) nello stesso singolo CAS — nessuna seconda
+                # receipt · nessuna mutation aggiuntiva · nessuna scrittura
+                # post-CAS. None per tutti gli eventi legacy (invariati).
                 cas = await self._store.apply_event_once(
                     expedition_id=event.expedition_id,
                     event_id=event.event_id,
@@ -324,29 +378,17 @@ class ClassTransitionDispatcher:
                     expected_state_version=state.state_version,
                     expected_fencing_token=fencing,
                     mutation=mutation,
+                    result_payload=tr.result_payload,
                 )
 
                 if cas.code is CasResultCode.SUCCESS:
-                    # Preserve pure state machine's specific positive code (DRAIN_STARTED/COMPLETED/CANCELLED)
-                    # rather than collapsing to generic SUCCESS.
-                    final_code = tr.code if tr.code in _POSITIVE_MUTATION_CODES else TransitionResultCode.SUCCESS
-                    last_res = TransitionResult(
-                        code=final_code,
-                        event_id=event.event_id,
-                        event_type=event.event_type,
-                        expedition_id=event.expedition_id,
-                        source_adventurer_id=event.source_adventurer_id,
+                    # Preserva tr.code: SUCCESS legacy · DRAIN_* success ·
+                    # fold-cancellation code (committato, B2B2Q14).
+                    last_res = replace(
+                        tr,
                         assigned_event_sequence=cas.assigned_event_sequence,
                         state_version_before=state.state_version,
                         state_version_after=cas.new_state_version,
-                        reason_code=tr.reason_code,
-                        mark_id=tr.mark_id,
-                        mark_application_id=tr.mark_application_id,
-                        resource_segment_id=tr.resource_segment_id,
-                        fragment_count_after=tr.fragment_count_after,
-                        active_marks_count_after=tr.active_marks_count_after,
-                        focus_bonus_used_after=tr.focus_bonus_used_after,
-                        overflow_discarded=tr.overflow_discarded,
                         retry_attempts=attempt,
                     )
                     break
@@ -423,7 +465,11 @@ class ClassTransitionDispatcher:
                 and attempt >= RETRY_MAX
             ):
                 last_res = TransitionResult(
-                    code=TransitionResultCode.RETRY_CEILING_EXCEEDED,
+                    code=(
+                        TransitionResultCode.RETRY_LIMIT_REACHED
+                        if event.event_type in DRAIN_EVENT_TYPES
+                        else TransitionResultCode.RETRY_CEILING_EXCEEDED
+                    ),
                     event_id=event.event_id,
                     event_type=event.event_type,
                     expedition_id=event.expedition_id,
@@ -433,27 +479,7 @@ class ClassTransitionDispatcher:
                 )
 
             total_ms = (time.monotonic() - t0) * 1000.0
-            enriched = TransitionResult(
-                code=last_res.code,
-                event_id=last_res.event_id,
-                event_type=last_res.event_type,
-                expedition_id=last_res.expedition_id,
-                source_adventurer_id=last_res.source_adventurer_id,
-                assigned_event_sequence=last_res.assigned_event_sequence,
-                state_version_before=last_res.state_version_before,
-                state_version_after=last_res.state_version_after,
-                duration_ms=total_ms,
-                reason_code=last_res.reason_code,
-                mark_id=last_res.mark_id,
-                mark_application_id=last_res.mark_application_id,
-                resource_segment_id=last_res.resource_segment_id,
-                fragment_count_after=last_res.fragment_count_after,
-                active_marks_count_after=last_res.active_marks_count_after,
-                focus_bonus_used_after=last_res.focus_bonus_used_after,
-                overflow_discarded=last_res.overflow_discarded,
-                retry_attempts=last_res.retry_attempts,
-                dedup_reference=last_res.dedup_reference,
-            )
+            enriched = replace(last_res, duration_ms=total_ms)
             return DispatchOutcome(
                 result=enriched,
                 lease_acquired=True,
@@ -479,13 +505,51 @@ def _apply_event_pure(
     cs: AdventurerClassState,
     event: ClassStateEvent,
     now: datetime,
+    *,
+    next_event_sequence: int = 0,
+    state_version_after: int = 0,
 ) -> Tuple[AdventurerClassState, TransitionResult]:
     """Applica un evento class-state a un `AdventurerClassState`, pure/deterministic.
 
     Non tocca lo store. Ritorna (new_cs, intermediate TransitionResult) senza
     campi di orchestrazione (verranno riempiti dal dispatcher).
+
+    `next_event_sequence` / `state_version_after` sono i valori deterministici
+    post-commit (garantiti dal CAS filter se il commit riesce) — usati per il
+    completion payload EMBEDDED del Drain (B2B2Q07).
     """
     et = event.event_type
+    # ── RT2-B-2B-2-1 · Drain lifecycle ──
+    if et == ClassEventType.START_DRAIN.value:
+        return start_drain(
+            cs,
+            target_id=event.target_id or "",
+            now=now,
+            event_id=event.event_id,
+            expedition_id=event.expedition_id,
+            source_adventurer_id=event.source_adventurer_id,
+        )
+    if et == ClassEventType.COMPLETE_DRAIN.value:
+        return complete_drain(
+            cs,
+            drain_execution_id=event.drain_execution_id,
+            now=now,
+            event_id=event.event_id,
+            expedition_id=event.expedition_id,
+            source_adventurer_id=event.source_adventurer_id,
+            next_event_sequence=next_event_sequence,
+            state_version_after=state_version_after,
+        )
+    if et == ClassEventType.CANCEL_DRAIN.value:
+        return cancel_drain(
+            cs,
+            drain_execution_id=event.drain_execution_id,
+            now=now,
+            reason_code=event.reason_code,
+            event_id=event.event_id,
+            expedition_id=event.expedition_id,
+            source_adventurer_id=event.source_adventurer_id,
+        )
     if et == ClassEventType.APPLY_MARK.value:
         return apply_mark(
             cs,
@@ -571,13 +635,25 @@ def _apply_event_pure(
         ClassEventType.EXPEDITION_TERMINAL.value,
         ClassEventType.CLEANUP_CRITICAL.value,
     ):
-        # Reserved lifecycle: reset fragments + close segment
+        # Reserved lifecycle: reset fragments + close segment + bulk Drain
+        # cancellation (B2B2Q11: ONE reserved lifecycle receipt per l'INTERO
+        # atomic batch — MAI una receipt per singolo Drain cancellato).
         new_cs, _ = reset_fragments(
             cs,
             reason=et,
             event_id=event.event_id,
             expedition_id=event.expedition_id,
             source_adventurer_id=event.source_adventurer_id,
+        )
+        _lifecycle_reason_map = {
+            ClassEventType.PHASE_END.value: "PHASE_ENDED",
+            ClassEventType.EXPEDITION_TERMINAL.value: "EXPEDITION_TERMINAL",
+            ClassEventType.CLEANUP_CRITICAL.value: "EXPLICIT_SERVER_CANCEL",
+        }
+        new_cs, cancelled_ids = cancel_started_drains_for_lifecycle(
+            new_cs,
+            reason=_lifecycle_reason_map[et],
+            now=now,
         )
         return new_cs, TransitionResult(
             code=TransitionResultCode.SUCCESS,
@@ -588,6 +664,20 @@ def _apply_event_pure(
             fragment_count_after=0,
             resource_segment_id=None,
             reason_code=et,
+            drains_cancelled_count=len(cancelled_ids),
+            cancelled_drain_execution_ids=cancelled_ids[:LIFECYCLE_CANCELLED_IDS_BOUND],
+            cancellation_reason=(
+                _lifecycle_reason_map[et] if cancelled_ids else None
+            ),
+            # PM V1S: bounded diagnostic sample nella reserved receipt
+            result_payload=({
+                "cancelled_count": len(cancelled_ids),
+                "sample_execution_ids": list(
+                    cancelled_ids[:LIFECYCLE_CANCELLED_IDS_BOUND]),
+                "execution_ids_truncated":
+                    len(cancelled_ids) > LIFECYCLE_CANCELLED_IDS_BOUND,
+                "reason": _lifecycle_reason_map[et],
+            } if cancelled_ids else None),
         )
     if et == ClassEventType.OPEN_RESOURCE_SEGMENT.value:
         # Standalone open (rare — normally auto-opens on first gain).

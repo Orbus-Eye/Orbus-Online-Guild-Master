@@ -51,45 +51,28 @@ RT2_A_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
 # settata → il flag resta OFF (fail-safe by default). Nessuna auto-attivazione
 # in produzione: la ratifica del PM autorizza esclusivamente activation locale
 # isolata per shadow wiring RT2-B-2A.
-RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
-    {
-        "cdv_transient_state_enabled",
-        # RT2-B-2B-1 · PM Message 151 B2BQ10 verbatim: nuovo flag dedicato per
-        # class-state transitions (Mark, Fragment, Resource Segment). Default OFF.
-        # Attivabile solo con quadruple-gate: transient=true AND class=true AND
-        # is_test_user=true AND environment=localhost isolated AND Mongo target
-        # allowlisted. In produzione l'env var non è settata → resta OFF.
-        "cdv_class_transitions_enabled",
-        # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: dedicated Drain flag
-        # (surgical kill-switch). Default OFF. Attivabile solo con 6-conditions
-        # composite gate (see wiring/feature_flags.py::is_drain_gate_open):
-        #   1. cdv_transient_state_enabled
-        #   2. AND cdv_class_transitions_enabled
-        #   3. AND cdv_drain_transitions_enabled
-        #   4. AND authenticated user.is_test_user
-        #   5. AND environment = localhost isolated
-        #   6. AND Mongo target = allowlisted database
-        # Flag OFF: 0 DB calls · 0 audit events · 0 mutations (Drain path).
-        # Mark/Fragment paths NOT disabled by this flag alone (kill-switch surgical).
-        "cdv_drain_transitions_enabled",
-    }
-)
+RT2_B_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset({
+    "cdv_transient_state_enabled",
+    # RT2-B-2B-1 · PM Message 151 B2BQ10 verbatim: nuovo flag dedicato per
+    # class-state transitions (Mark, Fragment, Resource Segment). Default OFF.
+    # Attivabile solo con quadruple-gate: transient=true AND class=true AND
+    # is_test_user=true AND environment=localhost isolated AND Mongo target
+    # allowlisted. In produzione l'env var non è settata → resta OFF.
+    "cdv_class_transitions_enabled",
+    # RT2-B-2B-2-1 · PM Message 170 B2B2Q13 verbatim: kill-switch DEDICATO
+    # Drain. Default OFF. 6-conditions gate composito (normalizzazione PM §13
+    # — "quintuple-gate" DEPRECATO): transient AND class AND drain AND
+    # is_test_user AND localhost isolated AND Mongo allowlisted.
+    # Kill-switch surgical: il flag Drain OFF NON disabilita Mark/Fragment
+    # già implementati. Drain OFF ⇒ 0 DB calls · 0 audit events · 0 mutations.
+    "cdv_drain_transitions_enabled",
+})
 
-RT2_C_RUNTIME_ATTIVABILE: Final[frozenset[str]] = frozenset(
-    {
-        # RT2-C-P2: generic effect persistence/dispatcher kill-switch.
-        # This flag alone is insufficient: the effect wiring additionally requires
-        # transient state, trusted test user, localhost isolation and allowlisted DB.
-        "item_effect_engine_enabled",
-    }
-)
-
-RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset(
-    {
-        "cdv_item_hooks_enabled",
-        "effect_observability_enabled",
-    }
-)
+RT2_FUTURE_CONSTANTS: Final[frozenset[str]] = frozenset({
+    "item_effect_engine_enabled",
+    "cdv_item_hooks_enabled",
+    "effect_observability_enabled",
+})
 
 ALL_FLAGS: Final[frozenset[str]] = (
     RT2_A_RUNTIME_ATTIVABILE
@@ -97,8 +80,7 @@ ALL_FLAGS: Final[frozenset[str]] = (
     | RT2_C_RUNTIME_ATTIVABILE
     | RT2_FUTURE_CONSTANTS
 )
-# P2 promotes one reserved identifier; it does not add a ninth flag.
-assert len(ALL_FLAGS) == 8, "RT2-A/B/C/future must expose exactly 8 flags total"
+assert len(ALL_FLAGS) == 8, "RT2-A/B/future must expose exactly 8 flags total"
 
 DEFAULT_VALUE: Final[bool] = False
 

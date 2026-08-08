@@ -100,9 +100,9 @@
 [2026-07-05T11:48:42.526907+00:00] [INFO] [wipe] tester_tool_snapshots: deleted 14 docs (pre=14)
 [2026-07-05T11:48:42.539995+00:00] [INFO] [reset_guilds] modified 672/672 guilds. Fields: ['level', 'gold', 'reputation', 'current_roster_size', 'raids_completed_count', 'raids_victory_count', 'max_raid_score', 'last_raid_completed_at', 'max_team_power_ever', 'r18_beta_opt_in', 'migration_banner_r18_3c_dismissed', 'r18_reset1b_applied', 'r18_reset1b_banner_dismissed', 'updated_at', 'r18_reset1b_applied_at', 'max_roster_cap']
 [2026-07-05T11:48:42.783764+00:00] [INFO] [regen_roster] mode=APPLY guilds=672 total_adv_created=3360
-[2026-07-05T11:48:42.979601+00:00] [INFO] [regen_kit] APPLY: created=672 upsert_skipped=0 (guilds=672, quantity_per_doc=3, item_id=fd5cbdef-3146-483c-b1fd-217b4da0a59d)
-[2026-07-05T11:48:42.980171+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED emitted (apply_id=f96a063d-0711-49e9-8b55-df0525eb681b)
-[2026-07-05T11:48:42.980496+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED_V1_1 emitted (apply_id=f96a063d-0711-49e9-8b55-df0525eb681b)
+[2026-07-05T11:48:42.979601+00:00] [INFO] [regen_kit] APPLY: created=672 upsert_skipped=0 (guilds=672, quantity_per_doc=3, item_id=drain-dispatch)
+[2026-07-05T11:48:42.980171+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED emitted (apply_id=drain-dispatch)
+[2026-07-05T11:48:42.980496+00:00] [INFO] [audit] R18_FULL_GUILD_FRESH_START_APPLIED_V1_1 emitted (apply_id=drain-dispatch)
 [2026-07-05T11:48:42.980512+00:00] [INFO] ====== SUMMARY ======
 [2026-07-05T11:48:42.980575+00:00] [INFO] {
   "backup": {

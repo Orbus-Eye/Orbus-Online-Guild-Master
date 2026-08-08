@@ -1,232 +1,192 @@
-"""RT2-B-2B-2-1-A1 · Mocked-Mongo Drain test bundle.
+"""RT2-B-2B-2-1 · Drain mocked-Mongo tests (adapter CAS semantics · no network).
 
-Uses a spy adapter conforming to `ExpeditionRuntimeStateStore` interface.
-Verifies lease→CAS→state_version invariants without connecting to real Mongo.
-PM Message 178+180 §5 verbatim.
+Verifica sul `MongoExpeditionRuntimeStateStore` con `_InMemoryMongoCollectionMock`:
+- serializzazione DrainDoc (+ completion payload) → BSON-friendly dict
+- rehydration raw-dict → coercion application-side
+- completion-to-Fragment atomic batch su CAS reale ($inc/$set/$push)
+- dedup guard su event_id (replay → prior execution ID)
+- single receipt slot per completion (B2B2Q07)
 """
 from __future__ import annotations
 
-import hashlib
 import uuid
 from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.stats.runtime.state_store.fake_store import FakeExpeditionRuntimeStateStore
-from app.stats.runtime.state_store.interface import (
-    ExpeditionRuntimeStateStore,
-    ReadResult,
-)
 from app.stats.runtime.state_store.models import (
-    AdventurerClassState,
+    DrainStatus,
     ExpeditionRuntimeState,
-    MarkDoc,
     RuntimeStatus,
 )
+from app.stats.runtime.state_store.mongo_adapter import MongoExpeditionRuntimeStateStore
 from app.stats.runtime.transitions.dispatcher import ClassTransitionDispatcher
+from app.stats.runtime.transitions.drain import coerce_drains
 from app.stats.runtime.transitions.models import (
     ClassEventType,
-    ClassStateEvent,
-    TransitionResultCode,
+    TransitionResultCode as RC,
 )
-from tests.effect_engine.transitions.conftest import _iso, run, trusted_context
-from tests.effect_engine.transitions.test_drain_fakestore import (
-    make_drain_event,
-    state_with_mark,  # noqa: F401 (pytest fixture)
+from tests.effect_engine.state_store.conftest import (
+    _FrozenClock,
+    _InMemoryMongoCollectionMock,
+)
+from tests.effect_engine.transitions.conftest import (
+    make_event,
+    run,
+    trusted_context,
 )
 
-UTC = timezone.utc
-
-
-class _SpyStore(FakeExpeditionRuntimeStateStore):
-    """FakeStore subclass that records call counts for boundary assertions.
-
-    We wrap FakeStore rather than a raw Mock to preserve business semantics
-    of dedup/lease/CAS while exposing counters.
-    """
-
-    def __init__(self, clock):
-        super().__init__(clock=clock)
-        self.call_counts: dict[str, int] = {
-            "create_state": 0, "get_state": 0, "apply_event_once": 0,
-            "reserve_writer": 0, "release_writer": 0,
-        }
-
-    async def create_state(self, expedition_id, initial_state):
-        self.call_counts["create_state"] += 1
-        return await super().create_state(expedition_id, initial_state)
-
-    async def get_state(self, expedition_id):
-        self.call_counts["get_state"] += 1
-        return await super().get_state(expedition_id)
-
-    async def apply_event_once(self, *a, **kw):
-        self.call_counts["apply_event_once"] += 1
-        return await super().apply_event_once(*a, **kw)
-
-    async def reserve_writer(self, *a, **kw):
-        self.call_counts["reserve_writer"] += 1
-        return await super().reserve_writer(*a, **kw)
-
-    async def release_writer(self, *a, **kw):
-        self.call_counts["release_writer"] += 1
-        return await super().release_writer(*a, **kw)
+ADV = "adv-cdv-01"
+TGT = "target-boss-01"
 
 
 @pytest.fixture
-def spy_store(clock_fn):
-    return _SpyStore(clock=clock_fn)
-
-
-@pytest.fixture
-def spy_with_mark(spy_store, expedition_id, adventurer_id, target_id, clock_fn):
-    now = clock_fn()
-    mark = MarkDoc(
-        mark_id=f"mrk-{uuid.uuid4().hex[:8]}",
-        application_id=f"app-{uuid.uuid4().hex[:8]}",
-        source_adventurer_id=adventurer_id, target_id=target_id,
-        created_at=_iso(now), expires_at=_iso(now + timedelta(seconds=8)),
-        ritual_close_used=False, mark_version=1,
-    )
-    cs = AdventurerClassState(
-        adventurer_id=adventurer_id, active_marks=(mark,), active_drain_executions=(),
-        fragment_count=0, resource_segment_id=None, focus_bonus_usage=(),
-        class_state_version=1,
-    )
+def mongo_env():
+    clock = _FrozenClock(datetime(2026, 2, 1, 12, 0, 0, tzinfo=timezone.utc))
+    collection = _InMemoryMongoCollectionMock()
+    store = MongoExpeditionRuntimeStateStore(collection, clock=clock)
+    exp_id = f"exp-mm-{uuid.uuid4().hex[:10]}"
+    now = clock()
     shell = ExpeditionRuntimeState(
-        expedition_id=expedition_id, state_version=1, fencing_token=0,
-        created_at=_iso(now), updated_at=_iso(now),
-        expires_at=_iso(now + timedelta(hours=6)),
+        expedition_id=exp_id, state_version=1, fencing_token=0,
+        created_at=now.isoformat(), updated_at=now.isoformat(),
+        expires_at=(now + timedelta(hours=6)).isoformat(),
         runtime_status=RuntimeStatus.ACTIVE,
-        adventurer_class_states=((adventurer_id, cs),), processed_event_keys=(),
-        last_event_sequence=0, owner_worker_or_lease_id=None, lease=None,
     )
-    r = run(spy_store.create_state(expedition_id, shell))
-    assert r.success
-    spy_store.call_counts["create_state"] = 0  # reset after bootstrap
-    return spy_store, expedition_id, mark
+    res = run(store.create_state(exp_id, shell))
+    assert res.success, res.code
+    return store, exp_id, clock
 
 
-def _dispatch(store, event, tctx=None):
-    disp = ClassTransitionDispatcher(store=store, worker_id="w-spy", now_fn=store._clock)
-    return run(disp.dispatch(event, trusted_context=tctx or trusted_context()))
+def _dispatch(store, event, clock):
+    disp = ClassTransitionDispatcher(store=store, worker_id="w-mm", now_fn=clock)
+    return run(disp.dispatch(event, trusted_context=trusted_context()))
 
 
-class TestLeaseFencingCasInvariants:
-    def test_lease_acquired_before_mutation(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        ev = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                              target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        _dispatch(store, ev)
-        # reserve_writer must be called at least once BEFORE apply_event_once
-        assert store.call_counts["reserve_writer"] >= 1
-        assert store.call_counts["apply_event_once"] >= 1
-        # release_writer called after
-        assert store.call_counts["release_writer"] >= 1
-
-    def test_state_version_incremented_once(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        rr_pre = run(store.get_state(exp_id))
-        v_pre = rr_pre.state.state_version
-        # START
-        ev_s = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        _dispatch(store, ev_s)
-        rr_after_start = run(store.get_state(exp_id))
-        assert rr_after_start.state.state_version == v_pre + 1
-
-    def test_completion_and_fragment_same_apply_event_once(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        # START then COMPLETE
-        ev_s = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        r_s = _dispatch(store, ev_s)
-        drain_id = r_s.result.reason_code
-        applies_pre = store.call_counts["apply_event_once"]
-        ev_c = make_drain_event("COMPLETE_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id,
-                                drain_execution_id=drain_id, expected_state_version=2)
-        r_c = _dispatch(store, ev_c)
-        assert r_c.result.code is TransitionResultCode.DRAIN_COMPLETED
-        # Exactly one apply_event_once call for the COMPLETE_DRAIN (fragment gain folded in)
-        assert store.call_counts["apply_event_once"] == applies_pre + 1
-
-    def test_completion_payload_in_processed_event_receipt(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        ev_s = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        r_s = _dispatch(store, ev_s)
-        drain_id = r_s.result.reason_code
-        ev_c = make_drain_event("COMPLETE_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id,
-                                drain_execution_id=drain_id, expected_state_version=2)
-        _dispatch(store, ev_c)
-        rr = run(store.get_state(exp_id))
-        # Verify only 2 receipts total (1 for START, 1 for COMPLETE — no separate slot for completion payload)
-        receipts = rr.state.processed_event_keys
-        assert len(receipts) == 2  # NO second receipt slot for completion payload
-
-    def test_no_second_receipt_slot_for_completion(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        ev_s = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        r_s = _dispatch(store, ev_s)
-        drain_id = r_s.result.reason_code
-        ev_c = make_drain_event("COMPLETE_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                                target=target_id, mark_id=mark.mark_id, application_id=mark.application_id,
-                                drain_execution_id=drain_id, expected_state_version=2)
-        _dispatch(store, ev_c)
-        rr = run(store.get_state(exp_id))
-        # Exactly 2 receipts (one per accepted event), NOT 3
-        assert len(rr.state.processed_event_keys) == 2
+def test_mm01_full_drain_flow_atomic_on_mongo_mock(mongo_env):
+    store, exp_id, clock = mongo_env
+    mark = _dispatch(store, make_event(
+        ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    assert mark.result.code is RC.SUCCESS
+    start = _dispatch(store, make_event(
+        ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    assert start.result.code is RC.DRAIN_STARTED
+    drain_id = start.result.drain_execution_id
+    comp = _dispatch(store, make_event(
+        ClassEventType.COMPLETE_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, drain_execution_id=drain_id), clock)
+    assert comp.result.code is RC.DRAIN_COMPLETED
+    assert comp.result.fragment_gain_applied == 1
+    # Rehydration raw-dict → coercion + verifica batch atomico persistito
+    st = run(store.get_state(exp_id)).state
+    cs = st.class_state_for(ADV)
+    assert cs.fragment_count == 1
+    assert cs.resource_segment_id and cs.resource_segment_id.startswith("sg-")
+    drains = coerce_drains(cs)
+    assert drains[0].runtime_status is DrainStatus.RESOLVED
+    # PM adjudication B2B2Q07: payload 15-campi REALMENTE persistito nella
+    # processed-event receipt (roundtrip serialize → rehydrate su Mongo mock)
+    comp_receipt = st.processed_event_keys[-1]
+    assert comp_receipt.event_type == "COMPLETE_DRAIN"
+    p = comp_receipt.result_payload
+    assert p is not None and len(p) == 15
+    assert p["result_code"] == "SUCCESS"
+    assert p["fragment_gain_applied"] == 1
+    assert p["state_version_after"] == st.state_version
+    # DrainDoc: nessuna copia autoritativa · linkage 1:1
+    assert drains[0].completion_payload is None
+    assert drains[0].completion_event_id == comp_receipt.event_id
+    # 1 sola receipt per la completion (3 totali: mark+start+complete)
+    assert len(st.processed_event_keys) == 3
+    assert st.state_version == 4  # +1 exactly once per batch
 
 
-class TestNoWriteOnGateRejection:
-    def test_flag_off_zero_apply_event_calls(self, spy_with_mark, adventurer_id, target_id):
-        store, exp_id, mark = spy_with_mark
-        applies_pre = store.call_counts["apply_event_once"]
-        ev = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                              target=target_id, mark_id=mark.mark_id, application_id=mark.application_id)
-        out = _dispatch(store, ev, tctx={"feature_enabled": False, "test_user_verified": True,
-                                          "db_allowlisted": True, "phase_ended": False})
-        assert out.result.code is TransitionResultCode.FEATURE_DISABLED
-        # Zero apply_event_once calls when feature disabled
-        assert store.call_counts["apply_event_once"] == applies_pre
-
-    def test_identifier_invalid_zero_lease(self, spy_with_mark, adventurer_id):
-        store, exp_id, mark = spy_with_mark
-        applies_pre = store.call_counts["apply_event_once"]
-        reserves_pre = store.call_counts["reserve_writer"]
-        big_target = "t" * 65
-        ev = make_drain_event("START_DRAIN", expedition_id=exp_id, source=adventurer_id,
-                              target=big_target, mark_id=mark.mark_id, application_id=mark.application_id)
-        out = _dispatch(store, ev)
-        assert out.result.code is TransitionResultCode.TARGET_INVALID
-        # No write, no lease acquired for invalid identifier
-        assert store.call_counts["apply_event_once"] == applies_pre
-        # (reserve_writer may still be called by dispatcher; but no apply)
+def test_mm02_replay_start_on_mongo_mock_returns_prior_id(mongo_env):
+    store, exp_id, clock = mongo_env
+    _dispatch(store, make_event(
+        ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    ev = make_event(ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+                    source_adventurer_id=ADV, target_id=TGT,
+                    event_id="evt-start-mm")
+    out = _dispatch(store, ev, clock)
+    assert out.result.code is RC.DRAIN_STARTED
+    replay = _dispatch(store, ev, clock)
+    assert replay.result.code is RC.DEDUPLICATED_NO_OP
+    assert replay.result.drain_execution_id == out.result.drain_execution_id
+    st = run(store.get_state(exp_id)).state
+    assert len(coerce_drains(st.class_state_for(ADV))) == 1
 
 
-class TestReceiptSaturation:
-    def test_receipt_saturation_fail_closed(self, spy_with_mark, adventurer_id, target_id):
-        """Saturate ordinary receipts via repeated events, verify subsequent fail-closed."""
-        store, exp_id, mark = spy_with_mark
-        # We don't drive to full 504 (too slow) — verify contract by inspecting receipt bounds
-        rr = run(store.get_state(exp_id))
-        # ORDINARY_RECEIPT_CAP is exposed via constants; verify the concept: adding a new receipt
-        # bumps count deterministically. Full saturation covered in V1 real-Mongo.
-        assert len(rr.state.processed_event_keys) == 0
+def test_mm03_fold_cancellation_persisted_on_mongo_mock(mongo_env):
+    store, exp_id, clock = mongo_env
+    _dispatch(store, make_event(
+        ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    start = _dispatch(store, make_event(
+        ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    clock.advance(seconds=11)  # Mark scade
+    receipts_before = len(run(store.get_state(exp_id)).state.processed_event_keys)
+    comp = _dispatch(store, make_event(
+        ClassEventType.COMPLETE_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV,
+        drain_execution_id=start.result.drain_execution_id), clock)
+    assert comp.result.code is RC.MARK_EXPIRED
+    st = run(store.get_state(exp_id)).state
+    cs = st.class_state_for(ADV)
+    d = coerce_drains(cs)[0]
+    assert d.runtime_status is DrainStatus.CANCELLED
+    assert d.cancellation_reason == "MARK_EXPIRED"
+    assert cs.fragment_count == 0
+    # folded: UNA sola receipt aggiuntiva (B2B2Q14)
+    assert len(st.processed_event_keys) == receipts_before + 1
 
-    def test_legacy_fragment_gain_still_works(self, spy_with_mark, adventurer_id, target_id):
-        """Legacy GAIN_FRAGMENT (with TrustedDrainReceipt fixture) still accepted (backward compat)."""
-        from tests.effect_engine.transitions.conftest import make_event, make_trusted_receipt
-        store, exp_id, mark = spy_with_mark
-        receipt = make_trusted_receipt(source_adventurer_id=adventurer_id, target_id=target_id,
-                                        expedition_id=exp_id, mark_application_id=mark.application_id)
-        ev = make_event(ClassEventType.GAIN_FRAGMENT.value, expedition_id=exp_id,
-                        source_adventurer_id=adventurer_id, amount=1, trusted_drain_receipt=receipt)
-        out = _dispatch(store, ev)
-        # Legacy fragment gain path still accepted with fixture receipt
-        assert out.result.code is TransitionResultCode.SUCCESS
-        assert out.result.fragment_count_after == 1
+
+def test_mm04_duplicate_completion_no_double_fragment_on_mongo_mock(mongo_env):
+    store, exp_id, clock = mongo_env
+    _dispatch(store, make_event(
+        ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    start = _dispatch(store, make_event(
+        ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, target_id=TGT), clock)
+    drain_id = start.result.drain_execution_id
+    c1 = _dispatch(store, make_event(
+        ClassEventType.COMPLETE_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, drain_execution_id=drain_id,
+        event_id="evt-c1"), clock)
+    assert c1.result.code is RC.DRAIN_COMPLETED
+    c2 = _dispatch(store, make_event(
+        ClassEventType.COMPLETE_DRAIN.value, expedition_id=exp_id,
+        source_adventurer_id=ADV, drain_execution_id=drain_id,
+        event_id="evt-c2"), clock)
+    assert c2.result.code is RC.DRAIN_ALREADY_COMPLETED
+    st = run(store.get_state(exp_id)).state
+    assert st.class_state_for(ADV).fragment_count == 1
+
+
+def test_mm05_lifecycle_aggregate_on_mongo_mock(mongo_env):
+    store, exp_id, clock = mongo_env
+    ids = []
+    for t in ("t1", "t2"):
+        _dispatch(store, make_event(
+            ClassEventType.APPLY_MARK.value, expedition_id=exp_id,
+            source_adventurer_id=ADV, target_id=t), clock)
+        out = _dispatch(store, make_event(
+            ClassEventType.START_DRAIN.value, expedition_id=exp_id,
+            source_adventurer_id=ADV, target_id=t), clock)
+        ids.append(out.result.drain_execution_id)
+    receipts_before = len(run(store.get_state(exp_id)).state.processed_event_keys)
+    pe = _dispatch(store, make_event(
+        ClassEventType.PHASE_END.value, expedition_id=exp_id,
+        source_adventurer_id=ADV), clock)
+    assert pe.result.code is RC.SUCCESS
+    assert pe.result.drains_cancelled_count == 2
+    st = run(store.get_state(exp_id)).state
+    assert len(st.processed_event_keys) == receipts_before + 1  # 1 reserved
+    for d in coerce_drains(st.class_state_for(ADV)):
+        assert d.runtime_status is DrainStatus.CANCELLED
+        assert d.cancellation_reason == "PHASE_ENDED"
