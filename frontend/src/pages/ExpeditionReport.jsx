@@ -552,7 +552,7 @@ export default function ExpeditionReport() {
         );
     }
 
-    const { expedition: e, members, loot_items, report_summary, report_steps, fallback_reward, guild_prestige_delta, milestones } = data;
+    const { expedition: e, members, loot_items, report_summary, report_steps, fallback_reward, guild_prestige_delta } = data;
     const isDone = e.status === "completed";
 
     return (

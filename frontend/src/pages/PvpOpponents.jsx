@@ -8,7 +8,7 @@ import PvpGuildLevelGate from "../components/PvpGuildLevelGate";
 
 export default function PvpOpponents() {
     const [loading, setLoading] = useState(true);
-    const [guild, setGuild] = useState(null);
+    const [_guild, setGuild] = useState(null);
     const [stats, setStats] = useState(null);
     const [opponents, setOpponents] = useState([]);
     const [locked, setLocked] = useState(null);
@@ -25,7 +25,7 @@ export default function PvpOpponents() {
                 setLoading(false);
                 return;
             }
-            const [oppRes, adminRes] = await Promise.all([
+            const [oppRes, _adminRes] = await Promise.all([
                 api.get("/pvp/opponents").catch((e) => {
                     if (e?.response?.status === 403) {
                         setLocked({ current_level: guildDoc?.level || 0 });

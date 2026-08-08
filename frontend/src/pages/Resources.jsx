@@ -1,7 +1,6 @@
 // ROUND 16.3 Phase 4 — Continent Resources overview.
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 

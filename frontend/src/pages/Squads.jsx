@@ -192,7 +192,7 @@ export default function Squads() {
             await api.delete(`/squads/${id}`);
             toast.success(lang === "it" ? "Squadra archiviata" : "Squad archived");
             load();
-        } catch (e) {
+        } catch {
             toast.error(lang === "it" ? "Errore archiviazione" : "Archive failed");
         }
     };

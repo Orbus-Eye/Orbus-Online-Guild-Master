@@ -12,7 +12,6 @@
  *         display name + sources list.
  * FE.05 — MaterialSourceModal handles 404 → "Materiale non documentato".
  */
-import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import CostBreakdown from "../components/territory/CostBreakdown";
