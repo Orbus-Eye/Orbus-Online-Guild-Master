@@ -34,17 +34,22 @@ ADVENTURER_LEVEL_BANDS: tuple[tuple[int, int, str], ...] = (
 
 DUNGEON_CURVE: dict[str, ContentCurve] = {
     "training-yard": ContentCurve(1, 15, 12, "tutorial"),
-    # Main line, three adventurers.
+    # FASE 2.3 (2026-08-08) — la linea principale non è più "tutta da 3":
+    # base 5, con i 3 come incursioni rapide e i 7 come grandi imprese.
+    # I recommended_power dei dungeon passati a size maggiore scalano
+    # ×(size_nuova/size_vecchia) così la difficoltà PER MEMBRO resta
+    # identica. Tabella e razionale: memory/fase2_design_bilanciamento.md §6.
+    # Team size autoritativa per slug: DUNGEON_TEAM_SIZE_TARGETS (sotto).
     "sewer-nest": ContentCurve(1, 35, 25, "tutorial"),
-    "goblin-warrens": ContentCurve(5, 70, 50, "tutorial"),
+    "goblin-warrens": ContentCurve(5, 117, 50, "tutorial"),
     "bandit-hideout": ContentCurve(5, 75, 55, "tutorial"),
-    "druid-grove": ContentCurve(10, 160, 150, "tutorial"),
-    "shadow-crypts": ContentCurve(10, 170, 160, "tutorial"),
-    "cursed-mines": ContentCurve(15, 200, 220, "early"),
+    "druid-grove": ContentCurve(10, 267, 150, "tutorial"),
+    "shadow-crypts": ContentCurve(10, 283, 160, "tutorial"),
+    "cursed-mines": ContentCurve(15, 333, 220, "early"),
     "sunken-library": ContentCurve(15, 215, 240, "early"),
-    "lich-sanctum": ContentCurve(20, 245, 320, "early"),
-    "dragons-hoard": ContentCurve(25, 275, 420, "early"),
-    "storm-spire": ContentCurve(25, 290, 450, "early"),
+    "lich-sanctum": ContentCurve(20, 408, 320, "early"),
+    "dragons-hoard": ContentCurve(25, 642, 420, "early"),
+    "storm-spire": ContentCurve(25, 483, 450, "early"),
     # Five-adventurer line.
     "wolf-den-5p": ContentCurve(10, 260, 150, "tutorial"),
     "frost-cave-5p": ContentCurve(15, 310, 225, "early"),
@@ -97,6 +102,26 @@ DUNGEON_RARITY_SOURCE_POOLS: dict[str, tuple[str, ...]] = {
 }
 
 
+# FASE 2.3 — distribuzione 3/5/7 autoritativa per la linea principale.
+# I dungeon con suffisso `-5p` restano a 5 (world-tree-roots-5p a 7) e
+# NON compaiono qui. Lo script
+# `app/scripts/fase2_redistribuzione_team_size.py` applica questa
+# tabella al DB (required_team_size + recommended_power dalla curve).
+DUNGEON_TEAM_SIZE_TARGETS: dict[str, int] = {
+    "training-yard": 3,     # tutorial: il reclutamento iniziale dà 3 eroi
+    "sewer-nest": 3,        # tutorial
+    "goblin-warrens": 5,
+    "bandit-hideout": 3,    # incursione rapida
+    "druid-grove": 5,
+    "shadow-crypts": 5,
+    "cursed-mines": 5,
+    "sunken-library": 3,    # incursione rapida
+    "lich-sanctum": 5,
+    "dragons-hoard": 7,     # grande impresa
+    "storm-spire": 5,
+}
+
+
 RAID_CURVE: dict[str, ContentCurve] = {
     "moonfall-vigil": ContentCurve(40, 1500, 900, "mid"),
     "broken-bastion-siege": ContentCurve(60, 2400, 1500, "high"),
@@ -119,6 +144,7 @@ __all__ = [
     "ContentCurve",
     "DUNGEON_CURVE",
     "DUNGEON_RARITY_SOURCE_POOLS",
+    "DUNGEON_TEAM_SIZE_TARGETS",
     "RAID_CURVE",
     "adventurer_level_band",
 ]

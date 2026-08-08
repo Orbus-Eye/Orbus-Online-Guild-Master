@@ -51,13 +51,25 @@ const VoidUndeadBadge = ({ slug }) => (
     </span>
 );
 
+// FASE 2.2 — il livello è una FASCIA CONSIGLIATA (non più bloccante);
+// il gate reale è il potere di squadra (PowerGateBadge).
 const MinLevelBadge = ({ slug, lvl }) => (
     <span
-        className="inline-block text-[10px] tracking-widest border border-amber-500/50 text-amber-400 px-1.5 py-0.5 rounded-sm"
+        className="inline-block text-[10px] tracking-widest border border-border/60 text-muted-foreground px-1.5 py-0.5 rounded-sm"
         data-testid={`dungeon-min-level-badge-${slug}`}
-        title={`Livello minimo richiesto per ogni membro della squadra: Lv ${lvl}`}
+        title={`Fascia di livello consigliata: Lv ${lvl}+ (non bloccante — conta il potere di squadra)`}
     >
-        Lv min: {lvl}
+        Lv {lvl}+ consigliato
+    </span>
+);
+
+const PowerGateBadge = ({ slug, power }) => (
+    <span
+        className="inline-block text-[10px] tracking-widest border border-amber-500/50 text-amber-400 px-1.5 py-0.5 rounded-sm"
+        data-testid={`dungeon-power-gate-badge-${slug}`}
+        title={`Potere di squadra minimo per entrare: ${power}`}
+    >
+        ⚔ Potere min: {power}
     </span>
 );
 
@@ -458,7 +470,10 @@ export default function Dungeons() {
                                     <div className="flex flex-wrap gap-1 mb-2">
                                         {d.is_new && <NewBadge slug={d.slug} />}
                                         {d.is_void_undead && <VoidUndeadBadge slug={d.slug} />}
-                                        {/* ROUND 13a Fix 1 — sempre visibile, anche Lv1 */}
+                                        {/* FASE 2.2 — gate reale = potere squadra; livello solo consigliato */}
+                                        {d.required_team_power > 0 && (
+                                            <PowerGateBadge slug={d.slug} power={d.required_team_power} />
+                                        )}
                                         <MinLevelBadge slug={d.slug} lvl={minLvl} />
                                         {d.lore_theme && <ThemeBadge slug={d.slug} theme={d.lore_theme} />}
                                     </div>

@@ -391,6 +391,29 @@ export default function ExpeditionReport() {
                     />
                 </section>
 
+                {/* FASE 2.1 — banner Overpower: eccedenza di potenza → più bottino */}
+                {e.power_rating > 100 && (
+                    <section
+                        className="mb-6 border border-amber/40 bg-amber/5 rounded-sm p-3 flex items-center justify-between gap-3 flex-wrap"
+                        data-testid="report-overpower-banner"
+                    >
+                        <div className="text-[11px]">
+                            <span className="text-amber font-semibold tracking-widest">⚡ OVERPOWER</span>{" "}
+                            <span className="text-muted-foreground">
+                                Rating di Potenza {e.power_rating}% — la squadra supera il contenuto.
+                            </span>
+                        </div>
+                        <div className="text-[11px] text-amber font-semibold" data-testid="report-overpower-mult">
+                            Bottino ×{Number(e.overpower_loot_multiplier || 1).toFixed(1)}
+                            {isDone && e.overpower_extra_loot_count > 0 && (
+                                <span className="text-muted-foreground font-normal">
+                                    {" "}(+{e.overpower_extra_loot_count} oggetti extra)
+                                </span>
+                            )}
+                        </div>
+                    </section>
+                )}
+
                 {/* ROUND 17.1 P0.5 — Fallback reward banner (first-fail su starter) */}
                 {fallback_reward && fallback_reward.granted === true && (
                     <section
@@ -654,6 +677,17 @@ export default function ExpeditionReport() {
                                     const debuff = (e.xp_debuff_reports || []).find(
                                         (r) => r.adventurer_id === m.adventurer_id,
                                     );
+                                    // FASE 2.4 — bonus recupero gilda (top-5 ≥ Lv10).
+                                    const hasCatchup = (debuff?.catchup_multiplier || 1) > 1;
+                                    const catchupLine = hasCatchup ? (
+                                        <div
+                                            data-testid={`report-member-catchup-${m.adventurer_id}`}
+                                            className="text-[10px] text-[#22c55e] mt-0.5"
+                                        >
+                                            ⬆ Recupero gilda: +{Math.round((debuff.catchup_multiplier - 1) * 100)}% XP
+                                            (i tuoi campioni aprono la strada)
+                                        </div>
+                                    ) : null;
                                     if (debuff && debuff.multiplier < 1.0) {
                                         const dropPct = Math.round((1 - debuff.multiplier) * 100);
                                         return (
@@ -668,12 +702,14 @@ export default function ExpeditionReport() {
                                                 <div className="text-[10px] text-rose-400/90 mt-0.5">
                                                     XP ridotta: {debuff.primary_stat_name_it} sotto soglia classe (−{dropPct}%)
                                                 </div>
+                                                {catchupLine}
                                             </div>
                                         );
                                     }
                                     return (
                                         <div className="text-[11px] text-amber mt-2">
-                                            +{e.xp_reward} XP
+                                            +{debuff ? debuff.final_xp : e.xp_reward} XP
+                                            {catchupLine}
                                         </div>
                                     );
                                 })()}

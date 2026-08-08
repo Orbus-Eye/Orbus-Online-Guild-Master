@@ -4,11 +4,17 @@ These functions are the single source of truth for the team-power /
 success-chance / equipment-delta calculations that the routes in
 `server.py` consume.
 """
+import math
 from typing import Iterable
 
 from app.shared.constants import (
+    GUARANTEED_SUCCESS_RATING,
+    OVERPOWER_BONUS_PER_STEP,
+    OVERPOWER_LOOT_MULTIPLIER_CAP,
+    OVERPOWER_STEP_PCT,
     SUCCESS_CHANCE_MIN,
     SUCCESS_CHANCE_MAX,
+    SUCCESS_CURVE_K,
 )
 
 
@@ -141,14 +147,53 @@ def compute_team_power(members: Iterable[dict]) -> int:
     return base
 
 
+def power_rating(team_power: int, recommended_power: int) -> int:
+    """FASE 2 — Rating di Potenza: percentuale squadra vs contenuto.
+
+    100 = parità col potere consigliato; può superare 100 senza limiti
+    (l'eccedenza alimenta l'Overpower). Vedi
+    memory/fase2_design_bilanciamento.md.
+    """
+    rec = max(1, int(recommended_power or 1))
+    return int(round(100.0 * max(0, int(team_power or 0)) / rec))
+
+
 def compute_success_chance(team_power: int, recommended_power: int) -> int:
-    """Success chance % clamped to [SUCCESS_CHANCE_MIN, SUCCESS_CHANCE_MAX]."""
-    raw = 50 + (team_power - recommended_power)
-    if raw < SUCCESS_CHANCE_MIN:
-        return SUCCESS_CHANCE_MIN
-    if raw > SUCCESS_CHANCE_MAX:
+    """FASE 2 — curva logistica centrata sulla parità (rating 100 → 50%).
+
+    chance(R) = 100 / (1 + e^(−k·(R−100)/100)), k = SUCCESS_CURVE_K.
+    Punti di riferimento: R50→10%, R75→25%, R100→50%, R125→75%,
+    R150→90%, R≥200→100% garantito. Clamp [MIN, MAX] = [5, 100].
+
+    Sostituisce la vecchia formula lineare in punti assoluti
+    (`50 + PT − PC`, cap 95) che saturava sempre al 95%: questa è
+    RELATIVA, quindi scala uguale dal tutorial all'endgame.
+    """
+    rating = power_rating(team_power, recommended_power)
+    if rating >= GUARANTEED_SUCCESS_RATING:
         return SUCCESS_CHANCE_MAX
-    return raw
+    raw = 100.0 / (1.0 + math.exp(-SUCCESS_CURVE_K * (rating - 100) / 100.0))
+    chance = int(round(raw))
+    if chance < SUCCESS_CHANCE_MIN:
+        return SUCCESS_CHANCE_MIN
+    if chance > SUCCESS_CHANCE_MAX:
+        return SUCCESS_CHANCE_MAX
+    return chance
+
+
+def overpower_loot_multiplier(rating: int) -> float:
+    """FASE 2 — moltiplicatore drop dall'eccedenza di rating oltre 100.
+
+    1 + 0.5 per ogni 25 punti pieni di Overpower, cap ×3.0:
+    R125→×1.5, R150→×2.0, R175→×2.5, R≥200→×3.0.
+    Si applica a item lootati e quantità materiali, NON a oro/XP.
+    """
+    overpower = max(0, int(rating or 0) - 100)
+    steps = overpower // OVERPOWER_STEP_PCT
+    return float(min(
+        OVERPOWER_LOOT_MULTIPLIER_CAP,
+        1.0 + OVERPOWER_BONUS_PER_STEP * steps,
+    ))
 
 
 def build_equipment_delta(

@@ -10,6 +10,7 @@ from typing import Optional
 from app.dungeons.encounters import apply_dungeon_encounter
 from app.expeditions.services import _evaluate_dungeon_gate
 from app.expeditions.level_gate import legacy_min_level_for_dungeon
+from app.expeditions.power_gate import required_team_power_for as _required_team_power
 
 
 def dungeon_public(d: dict) -> dict:
@@ -47,10 +48,11 @@ def dungeon_public(d: dict) -> dict:
         "progression_bucket": d.get("bucket"),
         "curve_version": d.get("curve_version"),
         "is_active": d.get("is_active", True),
-        # ROUND 11.3 TASK A — adventurer-level gate exposed to FE so the
-        # roster builder can grey-out under-level cards before dispatch.
-        # Falls back on a `difficulty`-derived default for legacy seeds.
+        # ROUND 11.3 TASK A — adventurer-level. FASE 2.2: NON è più un
+        # blocco, resta esposto come fascia consigliata informativa.
         "min_adventurer_level": legacy_min_level_for_dungeon(d),
+        # FASE 2.2 — soglia di potere squadra per entrare (gate reale).
+        "required_team_power": _required_team_power(d),
         # ROUND 13a — Lore meta (additive, PII-safe).
         "lore_theme": d.get("lore_theme") or meta.get("lore_theme"),
         "content_family": d.get("content_family") or meta.get("content_family") or "baseline",
