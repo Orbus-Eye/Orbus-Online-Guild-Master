@@ -13,7 +13,6 @@ import RoleMarker from "../components/RoleMarker";
 import {
     isAdventurerUnderLeveled,
     advMinLevelBadge,
-    advRaidTooltip,
 } from "../utils/levelGate";
 
 
@@ -231,11 +230,12 @@ export default function RaidBuilder() {
             toast.error("Avventuriero non disponibile");
             return;
         }
-        // Round 11.3 — UI gate: block under-leveled adventurer.
-        // Backend still enforces this authoritatively.
+        // FASE 8B — il livello NON blocca più (il gate raid è sul potere
+        // combinato, lato backend). Sotto fascia: solo avviso informativo.
         if (a && isAdventurerUnderLeveled(a, raidDungeon?.min_adventurer_level)) {
-            toast.error(advRaidTooltip(raidDungeon?.min_adventurer_level || 1));
-            return;
+            toast.message(
+                `${a.name} è sotto la fascia consigliata (Lv ${raidDungeon?.min_adventurer_level || 1}): conta il potere combinato delle squadre.`,
+            );
         }
         const partyIdx = targetPartyIdx ?? parties.findIndex((p) => p.includes(null));
         if (partyIdx < 0 || partyIdx >= parties.length) return;
@@ -662,10 +662,12 @@ export default function RaidBuilder() {
                         {available.map((a) => {
                             const fullPartyIdx = parties.findIndex((p) => p.includes(null));
                             const busyAdv = a.is_available === false;
+                            // FASE 8B — sotto-fascia = solo indicazione
+                            // visiva: il gate raid è sul potere combinato.
                             const underLeveled = isAdventurerUnderLeveled(a, minAdvLevel);
-                            const blocked = fullPartyIdx < 0 || busyAdv || underLeveled;
+                            const blocked = fullPartyIdx < 0 || busyAdv;
                             const tooltip = underLeveled
-                                ? advRaidTooltip(minAdvLevel)
+                                ? `Sotto la fascia consigliata (Lv ${minAdvLevel}): conta il potere combinato`
                                 : busyAdv
                                 ? "Avventuriero non disponibile (in spedizione/raid)"
                                 : "";
@@ -678,7 +680,7 @@ export default function RaidBuilder() {
                                     disabled={blocked}
                                     title={tooltip}
                                     className={`text-[11px] border border-border/60 rounded-sm px-2 py-1.5 text-left hover:bg-secondary/30 disabled:cursor-not-allowed ${
-                                        underLeveled ? "opacity-40" : "disabled:opacity-40"
+                                        underLeveled && !blocked ? "opacity-70" : "disabled:opacity-40"
                                     }`}
                                 >
                                     <div className="truncate flex items-center gap-1">
@@ -687,7 +689,8 @@ export default function RaidBuilder() {
                                         {underLeveled && (
                                             <span
                                                 data-testid={`raid-underleveled-badge-${a.id}`}
-                                                className="ml-1 text-[9px] tracking-wider border border-destructive/55 text-destructive px-1 py-0.5 rounded-sm"
+                                                className="ml-1 text-[9px] tracking-wider border border-amber/50 text-amber px-1 py-0.5 rounded-sm"
+                                                title="Fascia consigliata, non bloccante"
                                             >
                                                 {advMinLevelBadge(minAdvLevel)}
                                             </span>
@@ -715,10 +718,12 @@ export default function RaidBuilder() {
                 )}
 
                 <div className="flex flex-wrap gap-2">
+                    {/* FASE 8B — il livello non blocca più il lancio: il gate
+                        (potere combinato, 75% del consigliato) è del backend
+                        e risponde 423 con messaggio chiaro. */}
                     <button
                         onClick={doPreview}
-                        disabled={busy || totalAssigned < requiredRosterSize || hasUnderLeveledAssigned}
-                        title={hasUnderLeveledAssigned ? advRaidTooltip(minAdvLevel) : ""}
+                        disabled={busy || totalAssigned < requiredRosterSize}
                         data-testid="builder-preview-btn"
                         className="text-xs tracking-widest border border-border bg-secondary/50 hover:bg-secondary px-4 py-2 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     >
@@ -726,8 +731,7 @@ export default function RaidBuilder() {
                     </button>
                     <button
                         onClick={doLaunch}
-                        disabled={busy || !preview || hasUnderLeveledAssigned}
-                        title={hasUnderLeveledAssigned ? advRaidTooltip(minAdvLevel) : ""}
+                        disabled={busy || !preview}
                         data-testid="builder-launch-btn"
                         className="text-xs tracking-widest border border-amber/60 text-amber bg-amber/10 hover:bg-amber/20 px-4 py-2 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     >
@@ -735,8 +739,8 @@ export default function RaidBuilder() {
                     </button>
                     <div className="text-[10px] text-muted-foreground self-center">
                         {hasUnderLeveledAssigned ? (
-                            <span data-testid="raid-launch-blocked-underleveled" className="text-destructive">
-                                {advRaidTooltip(minAdvLevel)}
+                            <span data-testid="raid-underleveled-notice" className="text-amber">
+                                Alcuni assegnati sono sotto la fascia consigliata (Lv {minAdvLevel}): conta il potere combinato.
                             </span>
                         ) : totalAssigned < requiredRosterSize
                             ? t("raids.builder.not_enough", { have: totalAssigned })

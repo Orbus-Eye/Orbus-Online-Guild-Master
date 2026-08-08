@@ -369,6 +369,14 @@ async def list_catalog(current_user: dict = Depends(get_current_user)):
         pub["gate_reason"] = gate_reason
         pub["guild_roster_count"] = adv_count
         pub["guild_max_team_power_ever"] = peak
+        # FASE 8B — gate d'ingresso a potere combinato (informativo per
+        # la UI; il blocco vero avviene su preview/start).
+        from app.raids.power_gate import (
+            raid_recommended_power,
+            raid_required_team_power,
+        )
+        pub["recommended_power_combined"] = raid_recommended_power(rd)
+        pub["required_team_power_combined"] = raid_required_team_power(rd)
         out.append(pub)
 
     # FASE 1.9 (2026-08-08) — visibilità progressiva (stessa regola dei
@@ -401,21 +409,18 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
     rd = await _resolve_raid_dungeon(payload.raid_slug)
     advs_ordered = await _validate_parties_and_advs(guild, rd, payload.parties)
     advs_ordered = await _project_raid_items(advs_ordered)
-    # ROUND 11.3 TASK A — level gate (also on preview so FE blocks early).
-    from app.expeditions.level_gate import (
-        enforce_min_adventurer_level,
-        legacy_min_level_for_raid,
-    )
-    enforce_min_adventurer_level(
-        advs_ordered, legacy_min_level_for_raid(rd), source="raid.preview",
-        dungeon_slug=rd.get("slug"),
-    )
+    # FASE 8B — il level-gate R11.3 è SOSTITUITO dal gate a potere
+    # combinato (dopo il calcolo del preview, che lo fornisce).
     party_count = int(rd["required_party_count"])
     parties_docs = [
         advs_ordered[i * REQUIRED_PARTY_SIZE:(i + 1) * REQUIRED_PARTY_SIZE]
         for i in range(party_count)
     ]
     p = _compute_preview(rd, parties_docs)
+    from app.raids.power_gate import enforce_raid_min_power
+    enforce_raid_min_power(
+        p["team_power_combined"], rd, source="raid.preview",
+    )
     return {
         "raid_slug": payload.raid_slug,
         **p,
@@ -466,22 +471,19 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
     advs_ordered = await _validate_parties_and_advs(guild, rd, payload.parties)
     advs_ordered = await _project_raid_items(advs_ordered)
 
-    # ROUND 11.3 TASK A — level gate before commit. Mirrors expedition.dispatch.
-    from app.expeditions.level_gate import (
-        enforce_min_adventurer_level,
-        legacy_min_level_for_raid,
-    )
-    enforce_min_adventurer_level(
-        advs_ordered, legacy_min_level_for_raid(rd), source="raid.start",
-        dungeon_slug=rd.get("slug"),
-    )
-
     party_count = int(rd["required_party_count"])
     parties_docs = [
         advs_ordered[i * REQUIRED_PARTY_SIZE:(i + 1) * REQUIRED_PARTY_SIZE]
         for i in range(party_count)
     ]
     p = _compute_preview(rd, parties_docs)
+
+    # FASE 8B — gate a POTERE combinato (sostituisce il level-gate
+    # R11.3): stessa filosofia dei dungeon, soglia più severa (75%).
+    from app.raids.power_gate import enforce_raid_min_power
+    enforce_raid_min_power(
+        p["team_power_combined"], rd, source="raid.start",
+    )
 
     raid_id = str(uuid.uuid4())
     now = _utc_now()
