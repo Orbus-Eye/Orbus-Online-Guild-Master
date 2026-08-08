@@ -1,0 +1,76 @@
+// FASE 4 (2026-08-08) — Mapping centralizzato degli asset di gioco.
+//
+// Tutti gli asset vivono in /public/assets (placeholder SVG generati da
+// scripts/fase4_genera_assets.py). Quando arriva l'art definitiva basta
+// sostituire i FILE mantenendo i nomi: questo modulo non cambia.
+// Ogni helper ritorna una CATENA di fallback (usata da <GameImage/>):
+// [specifico, tema, default] — un file mancante non rompe mai la UI.
+
+// Dungeon slug → tema visivo (famiglie in /assets/themes/*.svg).
+const DUNGEON_THEME = {
+    "training-yard": "tutorial",
+    "sewer-nest": "caves",
+    "goblin-warrens": "caves",
+    "bandit-hideout": "beast",
+    "druid-grove": "nature",
+    "shadow-crypts": "crypt",
+    "cursed-mines": "mines",
+    "sunken-library": "library",
+    "lich-sanctum": "crypt",
+    "dragons-hoard": "dragon",
+    "storm-spire": "storm",
+    "wolf-den-5p": "beast",
+    "frost-cave-5p": "frost",
+    "salt-marsh-5p": "marsh",
+    "iron-foundry-5p": "forge",
+    "silent-monastery-5p": "celestial",
+    "pirate-fleet-5p": "sea",
+    "obsidian-arena-5p": "arena",
+    "clockwork-vault-5p": "clockwork",
+    "voidspire-5p": "void",
+    "infernal-pit-5p": "infernal",
+    "celestial-citadel-5p": "celestial",
+    "world-tree-roots-5p": "worldtree",
+};
+
+/** Catena immagini per una card dungeon. */
+export function dungeonImageSources(slugOrDungeon) {
+    const slug = typeof slugOrDungeon === "string"
+        ? slugOrDungeon
+        : slugOrDungeon?.slug || "";
+    const theme = DUNGEON_THEME[slug];
+    const chain = [`/assets/dungeons/${slug}.svg`];
+    if (theme) chain.push(`/assets/themes/${theme}.svg`);
+    chain.push("/assets/themes/default.svg");
+    return chain;
+}
+
+/** Catena immagini per una card raid. */
+export function raidImageSources(slug) {
+    return [
+        `/assets/raids/${slug}.svg`,
+        "/assets/themes/default.svg",
+    ];
+}
+
+/** Catena avatar per un avventuriero (razza × genere).
+ *  `custom_avatar_url` (upload Fase 6) ha la precedenza quando presente. */
+export function avatarSources(adv) {
+    const chain = [];
+    if (adv?.custom_avatar_url) chain.push(adv.custom_avatar_url);
+    const race = adv?.race_slug;
+    const gender = adv?.gender === "female" ? "female" : "male";
+    if (race) chain.push(`/assets/avatars/${race}_${gender}.svg`);
+    chain.push("/assets/avatars/default.svg");
+    return chain;
+}
+
+/** Banner di sezione (/assets/banners/*.svg). */
+export function sectionBanner(section) {
+    return [
+        `/assets/banners/${section}.svg`,
+        "/assets/banners/dashboard.svg",
+    ];
+}
+
+export { DUNGEON_THEME };

@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { raidImageSources } from "../utils/gameAssets";
 import OverCapBanner from "../components/OverCapBanner";
 import { useT } from "../i18n/I18nContext";
 
@@ -207,8 +209,19 @@ export default function Raids() {
                         <article
                             key={r.slug}
                             data-testid={`raid-card-${r.slug}`}
-                            className="border border-border bg-card rounded-sm p-4"
+                            className="border border-border bg-card rounded-sm p-4 card-fantasy"
                         >
+                            {/* FASE 4 — banner del raid */}
+                            <div className="-mx-4 -mt-4 mb-3 h-28 overflow-hidden">
+                                <GameImage
+                                    sources={raidImageSources(r.slug)}
+                                    alt=""
+                                    className={
+                                        "w-full h-full object-cover " +
+                                        (r.unlocked ? "" : "grayscale opacity-70")
+                                    }
+                                />
+                            </div>
                             <header className="flex items-start justify-between gap-2 mb-2 flex-wrap">
                                 <h2 className="text-sm font-semibold tracking-wider">
                                     {itName}

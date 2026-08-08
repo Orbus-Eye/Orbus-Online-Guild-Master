@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="warforged male">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#748cab" stop-opacity="0.30"/>
+      <stop offset="55%" stop-color="#151827"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <g style="filter: hue-rotate(-6deg)">
+    
+    <path d="M64 210 Q128 152 192 210 L192 256 L64 256 Z" fill="#adb5bd" opacity="0.92"/>
+    <circle cx="128" cy="104" r="42" fill="#adb5bd"/>
+    <circle cx="110" cy="90" r="4" fill="#748cab"/><circle cx="146" cy="90" r="4" fill="#748cab"/><rect x="124" y="52" width="8" height="16" fill="#748cab"/>
+  </g>
+  <circle cx="128" cy="128" r="121" fill="none" stroke="#adb5bd" stroke-width="5" opacity="0.55"/>
+</svg>

@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { sectionBanner } from "../utils/gameAssets";
 import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
 import MigrationBannerR183c from "../components/MigrationBannerR183c";
 import R18ResetBanner from "../components/R18ResetBanner";
@@ -197,6 +199,26 @@ export default function Dashboard() {
             <AppHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-w-0">
+                {/* FASE 4 — banner hero della gilda: la home apre come un
+                    gioco, non come un gestionale. */}
+                <div
+                    className="banner-fantasy h-36 sm:h-44 mb-6"
+                    data-testid="dashboard-hero-banner"
+                >
+                    <GameImage
+                        sources={sectionBanner("dashboard")}
+                        alt=""
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="banner-overlay">
+                        <div className="text-[10px] text-amber tracking-[0.3em]">
+                            :: SALA DEL TRONO
+                        </div>
+                        <h1 className="font-fantasy text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                            {guild.name}
+                        </h1>
+                    </div>
+                </div>
                 {/* ROUND 18.3c — Migration Banner IT (dismissible, guild-scoped) */}
                 <MigrationBannerR183c />
                 <R18ResetBanner />

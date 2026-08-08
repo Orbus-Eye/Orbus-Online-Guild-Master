@@ -32,6 +32,8 @@ import { Link } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
 import AppHeader from "../components/AppHeader";
+import GameImage from "../components/GameImage";
+import { sectionBanner } from "../utils/gameAssets";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import InventoryEquipModal from "../components/InventoryEquipModal";
@@ -229,12 +231,24 @@ export default function Inventory() {
             <AppHeader subtitleKey="nav.inventory" />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-                <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
-                    <div>
-                        <div className="text-xs text-amber tracking-widest mb-2">
+                {/* FASE 4 — banner di sezione */}
+                <div className="banner-fantasy h-28 mb-6" data-testid="inventory-banner">
+                    <GameImage
+                        sources={sectionBanner("inventory")}
+                        alt=""
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="banner-overlay">
+                        <div className="text-[10px] text-amber tracking-[0.3em]">
                             :: DEPOSITO GILDA
                         </div>
-                        <h1 className="text-3xl font-semibold tracking-tight">{t("inventory.title")}</h1>
+                        <h1 className="font-fantasy text-2xl font-semibold tracking-tight">
+                            {t("inventory.title")}
+                        </h1>
+                    </div>
+                </div>
+                <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
+                    <div>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                             {t("inventory.subtitle", "Oggetti raccolti dalle spedizioni. Equipaggiali ai tuoi avventurieri.")}
                         </p>

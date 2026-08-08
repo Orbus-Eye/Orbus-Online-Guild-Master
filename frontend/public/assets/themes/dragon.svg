@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="tema dragon">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#301f22"/>
+      <stop offset="100%" stop-color="#1c1012"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="42%">
+      <stop offset="0%" stop-color="#e63946" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#e63946" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="320" fill="url(#sky)"/>
+  <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="#1c1012" opacity="0.9"/>
+  <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
+  <rect width="800" height="320" fill="url(#glow)"/>
+  <circle cx="400" cy="150" r="104" fill="none" stroke="#e63946" stroke-width="2" opacity="0.35"/>
+  <circle cx="400" cy="150" r="120" fill="none" stroke="#e63946" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
+  <path d="M330 190 Q350 120 420 110 Q470 106 476 70 Q490 110 452 132 Q480 140 470 170 Q440 150 420 152 Q390 156 380 190 Z" fill="#e63946"/><circle cx="452" cy="98" r="6" fill="#0b0d16"/>
+  <rect width="800" height="320" fill="url(#vig)"/>
+</svg>

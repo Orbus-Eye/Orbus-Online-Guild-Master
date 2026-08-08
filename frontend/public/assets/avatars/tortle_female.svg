@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="tortle female">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#ffb703" stop-opacity="0.30"/>
+      <stop offset="55%" stop-color="#151827"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0d16" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d16"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <g style="filter: hue-rotate(6deg)">
+    <path d="M84 96 Q78 170 92 196 L104 176 Q92 140 96 100 Z" fill="#ffb703" opacity="0.65"/><path d="M172 96 Q178 170 164 196 L152 176 Q164 140 160 100 Z" fill="#ffb703" opacity="0.65"/>
+    <path d="M78 214 Q128 158 178 214 L178 256 L78 256 Z" fill="#d9a066" opacity="0.92"/>
+    <circle cx="128" cy="104" r="42" fill="#d9a066"/>
+    <path d="M92 76 L86 46 L114 62 Z" fill="#d9a066"/><path d="M164 76 L170 46 L142 62 Z" fill="#d9a066"/>
+  </g>
+  <circle cx="128" cy="128" r="121" fill="none" stroke="#ffb703" stroke-width="5" opacity="0.55"/>
+</svg>

@@ -11,6 +11,8 @@ import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
 import { classLabel } from "../utils/displayLabels";
 import { api } from "../lib/api";
+import GameImage from "./GameImage";
+import { avatarSources } from "../utils/gameAssets";
 
 const SLOTS = [
     "weapon", "chest", "legs", "head", "accessory", "back",
@@ -180,9 +182,15 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                 <h2
                     id="adv-modal-title"
                     data-testid="adventurer-modal-name"
-                    className="text-2xl font-semibold tracking-tight flex items-center gap-2 flex-wrap"
+                    className="text-2xl font-semibold tracking-tight flex items-center gap-3 flex-wrap"
                 >
-                    <span>{adventurer.name}</span>
+                    {/* FASE 4 — ritratto razza/genere */}
+                    <GameImage
+                        sources={avatarSources(adventurer)}
+                        alt=""
+                        className="w-14 h-14 rounded-full border-2 border-amber/40 shrink-0"
+                    />
+                    <span className="font-fantasy">{adventurer.name}</span>
                     <SpecChip
                         spec={adventurer.specialization}
                         lang={lang}
