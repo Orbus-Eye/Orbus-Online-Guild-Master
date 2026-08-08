@@ -113,6 +113,8 @@ async def list_expeditions_route(current_user: dict = Depends(get_current_user))
 
 class RoomsAdvanceIn(BaseModel):
     action: str = Field(..., min_length=1, max_length=32)
+    # FASE 8C — chiave dell'opzione quando la prossima entry è un bivio.
+    route: str | None = Field(default=None, max_length=64)
 
 
 @router.post("/{expedition_id}/advance")
@@ -121,12 +123,12 @@ async def advance_rooms_route(
     payload: RoomsAdvanceIn,
     current_user: dict = Depends(get_current_user),
 ):
-    """FASE 5 — scelta dopo una stanza superata:
-    continue | rest_and_continue | escape."""
+    """FASE 5/8C — scelta dopo una stanza superata:
+    continue | rest_and_continue | escape (+ route al bivio)."""
     from app.expeditions.rooms_engine import advance_rooms_action
     guild = await user_guild_or_404(db, current_user["id"])
     return await advance_rooms_action(
-        db, guild, expedition_id, payload.action,
+        db, guild, expedition_id, payload.action, route=payload.route,
     )
 
 

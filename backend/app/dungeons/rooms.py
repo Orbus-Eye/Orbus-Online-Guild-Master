@@ -1,21 +1,24 @@
-"""FASE 5 (2026-08-08) — Dungeon a stanze: blueprint e helper puri.
+"""FASE 5 + 8C (2026-08-08) — Dungeon a stanze: motore puro.
 
-Le stanze sono AUTORATE in codice (come DUNGEON_LORE): niente migrazioni
-DB. Il rollout è a pilota dietro flag: solo gli slug in
-`ROOMS_PILOT_SLUGS` partono in modalità stanze; `ROOMS_MODE_ENABLED`
-spegne tutto all'istante.
+Le stanze sono AUTORATE in codice (`rooms_blueprints.py`, come
+DUNGEON_LORE): niente migrazioni DB. FASE 8C: il sistema copre TUTTI i
+dungeon canonici (22; training-yard resta single-block: tutorial day-1
+con la logica starter-fallback) e introduce i BIVI (fork): scelte di
+percorso con conseguenze leggibili — via sicura (+5 chance) vs via
+ricca (−8/−10 chance, stanza tesoro/boss opzionale), scorciatoie.
 
+`ROOMS_MODE_ENABLED` spegne tutto all'istante.
 Tutte le funzioni qui sono PURE (nessun I/O) → unit-testabili.
-Design completo: memory/fase5_design_dungeon_stanze.md
+Design: memory/fase5_design_dungeon_stanze.md + fase8 report.
 """
 from __future__ import annotations
 
-# ── Feature flag & pilota ────────────────────────────────────────────────
+from app.dungeons.rooms_blueprints import ROOM_BLUEPRINTS
+
+# ── Feature flag ─────────────────────────────────────────────────────────
 ROOMS_MODE_ENABLED = True
-ROOMS_PILOT_SLUGS: frozenset[str] = frozenset({
-    "sewer-nest",       # tutorial 3p — onboarding al nuovo flusso
-    "goblin-warrens",   # 5p base — pilota della linea principale
-})
+# FASE 8C — "pilota" storico ora = tutti gli slug con blueprint autorato.
+ROOMS_PILOT_SLUGS: frozenset[str] = frozenset(ROOM_BLUEPRINTS.keys())
 
 # Modificatori di probabilità per tipo di stanza (vs chance base Fase 2).
 ROOM_CHANCE_MODIFIER: dict[str, int] = {
@@ -41,80 +44,7 @@ SALVAGE = {
 COMPLETION_XP_BONUS = 0.25  # +25% XP al completamento (premio vs fuga)
 
 
-# ── Blueprint autorati (piloti) ──────────────────────────────────────────
-# Campi: slug, name_it, kind, duration_share, gold_share, xp_share,
-#        has_loot, narrative_it. Le share sommano a 1.0.
-ROOM_BLUEPRINTS: dict[str, list[dict]] = {
-    "sewer-nest": [
-        {
-            "slug": "cunicoli", "name_it": "I Cunicoli Allagati",
-            "kind": "ambient", "duration_share": 0.3, "gold_share": 0.2,
-            "xp_share": 0.3, "has_loot": False,
-            "narrative_it": (
-                "L'acqua putrida arriva alle ginocchia. Tra i tubi "
-                "rotti qualcosa si muove nell'oscurità."
-            ),
-        },
-        {
-            "slug": "covo-ratti", "name_it": "Il Covo dei Ratti",
-            "kind": "guard", "duration_share": 0.3, "gold_share": 0.3,
-            "xp_share": 0.3, "has_loot": True,
-            "narrative_it": (
-                "Un tappeto di code e denti. I ratti giganti difendono "
-                "il loro tesoro di rifiuti… e di monete perdute."
-            ),
-        },
-        {
-            "slug": "madre-nido", "name_it": "La Madre del Nido",
-            "kind": "boss", "duration_share": 0.4, "gold_share": 0.5,
-            "xp_share": 0.4, "has_loot": True,
-            "narrative_it": (
-                "Grande quanto un cavallo, cieca e furiosa: la Madre "
-                "del Nido non lascerà passare nessuno."
-            ),
-        },
-    ],
-    "goblin-warrens": [
-        {
-            "slug": "posto-guardia", "name_it": "Il Posto di Guardia",
-            "kind": "guard", "duration_share": 0.25, "gold_share": 0.2,
-            "xp_share": 0.25, "has_loot": False,
-            "narrative_it": (
-                "Due sentinelle goblin sonnecchiano accanto a un gong "
-                "d'allarme. Meglio non farlo suonare."
-            ),
-        },
-        {
-            "slug": "trappole", "name_it": "Il Corridoio delle Trappole",
-            "kind": "ambient", "duration_share": 0.2, "gold_share": 0.15,
-            "xp_share": 0.2, "has_loot": False,
-            "narrative_it": (
-                "Fili tesi, buche puntellate, secchi di pece sospesi: "
-                "l'ingegneria goblin nel suo peggio."
-            ),
-        },
-        {
-            "slug": "sala-bottino", "name_it": "La Sala del Bottino",
-            "kind": "treasure", "duration_share": 0.25, "gold_share": 0.3,
-            "xp_share": 0.25, "has_loot": True,
-            "narrative_it": (
-                "Casse rubate alle carovane, ancora sigillate. I goblin "
-                "non hanno capito quanto valgono."
-            ),
-        },
-        {
-            "slug": "re-goblin", "name_it": "La Corte del Re Goblin",
-            "kind": "boss", "duration_share": 0.3, "gold_share": 0.35,
-            "xp_share": 0.3, "has_loot": True,
-            "narrative_it": (
-                "Su un trono di ossa e lamiere siede il Re Goblin, con "
-                "una corona rubata troppo grande per la sua testa."
-            ),
-        },
-    ],
-}
-
-# Generatore di fallback per slug pilota senza blueprint autorato
+# Generatore di fallback per slug senza blueprint autorato
 # (contenuti futuri): stanze per difficoltà, boss finale.
 _FALLBACK_ROOM_COUNT = {1: 3, 2: 4, 3: 5, 4: 5}
 
@@ -149,37 +79,121 @@ def rooms_mode_for_dungeon(dungeon: dict) -> bool:
     return (dungeon.get("slug") or "").lower() in ROOMS_PILOT_SLUGS
 
 
-def build_rooms_snapshot(dungeon: dict, base_chance: int) -> list[dict]:
-    """Costruisce lo snapshot stanze congelato al dispatch.
-
-    Ogni stanza riceve: durata assoluta, oro/XP assoluti (dalle share)
-    e la probabilità di successo (chance base ± modificatore tipo,
-    clamp [5, 100]).
-    """
-    slug = (dungeon.get("slug") or "").lower()
-    blueprint = ROOM_BLUEPRINTS.get(slug) or _fallback_blueprint(dungeon)
+def _materialize_room(room: dict, dungeon: dict, base_chance: int,
+                      extra_modifier: int = 0) -> dict:
+    """Room di blueprint → room di snapshot con valori assoluti."""
     total_duration = int(dungeon.get("base_duration_seconds", 60) or 60)
     total_gold = int(dungeon.get("base_gold_reward", 0) or 0)
     total_xp = int(dungeon.get("base_xp_reward", 0) or 0)
-    out = []
-    for idx, room in enumerate(blueprint):
-        modifier = ROOM_CHANCE_MODIFIER.get(room["kind"], 0)
-        chance = max(5, min(100, int(base_chance) + modifier))
-        out.append({
-            "idx": idx,
-            "slug": room["slug"],
-            "name_it": room["name_it"],
-            "kind": room["kind"],
-            "narrative_it": room["narrative_it"],
-            "has_loot": bool(room["has_loot"]),
-            "duration_seconds": max(
-                10, int(round(total_duration * room["duration_share"]))
-            ),
-            "gold": int(round(total_gold * room["gold_share"])),
-            "xp": int(round(total_xp * room["xp_share"])),
-            "chance": chance,
-        })
+    modifier = ROOM_CHANCE_MODIFIER.get(room["kind"], 0) + extra_modifier
+    chance = max(5, min(100, int(base_chance) + modifier))
+    return {
+        "type": "room",
+        "slug": room["slug"],
+        "name_it": room["name_it"],
+        "kind": room["kind"],
+        "narrative_it": room.get("narrative_it", ""),
+        "has_loot": bool(room.get("has_loot")),
+        "duration_seconds": max(
+            10, int(round(total_duration * room["duration_share"]))
+        ),
+        "gold": int(round(total_gold * room["gold_share"])),
+        "xp": int(round(total_xp * room["xp_share"])),
+        "chance": chance,
+    }
+
+
+def build_rooms_snapshot(dungeon: dict, base_chance: int) -> list[dict]:
+    """Costruisce lo snapshot congelato al dispatch (stanze + bivi).
+
+    FASE 8C — le entry possono essere stanze (`type: room`) o bivi
+    (`type: fork`): il bivio contiene le opzioni con le RISPETTIVE
+    stanze già materializzate (valori assoluti + chance con il
+    modificatore dell'opzione); alla scelta il bivio viene sostituito
+    dalle stanze dell'opzione (`resolve_fork`).
+    """
+    slug = (dungeon.get("slug") or "").lower()
+    blueprint = ROOM_BLUEPRINTS.get(slug) or _fallback_blueprint(dungeon)
+    out: list[dict] = []
+    for entry in blueprint:
+        if entry.get("type") == "fork":
+            out.append({
+                "type": "fork",
+                "idx": len(out),
+                "fork_id": entry["fork_id"],
+                "prompt_it": entry.get("prompt_it", ""),
+                "options": [
+                    {
+                        "key": opt["key"],
+                        "label_it": opt["label_it"],
+                        "description_it": opt.get("description_it", ""),
+                        "rooms": [
+                            _materialize_room(
+                                r, dungeon, base_chance,
+                                int(opt.get("chance_modifier", 0)),
+                            )
+                            for r in opt.get("rooms", [])
+                        ],
+                    }
+                    for opt in entry["options"]
+                ],
+            })
+        else:
+            room = _materialize_room(entry, dungeon, base_chance)
+            room["idx"] = len(out)
+            out.append(room)
     return out
+
+
+def resolve_fork(snapshot: list[dict], fork_pos: int,
+                 option_key: str) -> list[dict] | None:
+    """Sostituisce il bivio in `fork_pos` con le stanze dell'opzione.
+
+    Ritorna il NUOVO snapshot reindicizzato, o None se posizione/opzione
+    non validi. Le entry precedenti non cambiano posizione (i
+    room_results già registrati restano coerenti).
+    """
+    if fork_pos < 0 or fork_pos >= len(snapshot):
+        return None
+    fork = snapshot[fork_pos]
+    if fork.get("type") != "fork":
+        return None
+    option = next(
+        (o for o in fork.get("options", []) if o.get("key") == option_key),
+        None,
+    )
+    if option is None:
+        return None
+    new_snapshot = (
+        list(snapshot[:fork_pos])
+        + [dict(r) for r in option.get("rooms", [])]
+        + list(snapshot[fork_pos + 1:])
+    )
+    for i, entry in enumerate(new_snapshot):
+        entry["idx"] = i
+    return new_snapshot
+
+
+def iter_paths(slug: str) -> list[list[dict]]:
+    """Tutti i percorsi completi (una scelta per bivio) di un blueprint.
+
+    Per i test di coerenza economica (le share di ogni percorso devono
+    sommare ≈ 1.0) e di struttura (boss finale su ogni percorso).
+    """
+    blueprint = ROOM_BLUEPRINTS.get(slug)
+    if not blueprint:
+        return []
+    paths: list[list[dict]] = [[]]
+    for entry in blueprint:
+        if entry.get("type") == "fork":
+            new_paths = []
+            for path in paths:
+                for opt in entry["options"]:
+                    new_paths.append(path + list(opt.get("rooms", [])))
+            paths = new_paths
+        else:
+            paths = [path + [entry] for path in paths]
+    return paths
 
 
 def apply_salvage(carried_gold: int, carried_loot_ids: list[str],
@@ -215,5 +229,7 @@ __all__ = [
     "COMPLETION_XP_BONUS",
     "rooms_mode_for_dungeon",
     "build_rooms_snapshot",
+    "resolve_fork",
+    "iter_paths",
     "apply_salvage",
 ]

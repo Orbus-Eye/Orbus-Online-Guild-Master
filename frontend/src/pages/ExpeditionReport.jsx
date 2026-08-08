@@ -98,7 +98,14 @@ function RoomsSection({ e, onRefresh }) {
     const resultByIdx = {};
     for (const r of e.room_results || []) resultByIdx[r.idx] = r;
 
-    const doAction = async (action) => {
+    // FASE 8C — se la prossima entry è un bivio, le azioni portano la route.
+    const nextEntry = (e.rooms || []).find(
+        (r) => r.idx === (e.current_room_idx ?? 0) + 1,
+    );
+    const nextFork = nextEntry?.type === "fork" ? nextEntry : null;
+    const [restBeforeNext, setRestBeforeNext] = useState(false);
+
+    const doAction = async (action, route = null) => {
         if (action === "escape" && !confirmEscape) {
             setConfirmEscape(true);
             setTimeout(() => setConfirmEscape(false), 5000);
@@ -106,8 +113,9 @@ function RoomsSection({ e, onRefresh }) {
         }
         setBusy(true);
         try {
-            await api.post(`/expeditions/${e.id}/advance`, { action });
+            await api.post(`/expeditions/${e.id}/advance`, { action, route });
             setConfirmEscape(false);
+            setRestBeforeNext(false);
             await onRefresh();
         } catch (err) {
             toast.error(formatApiError(err));
@@ -122,7 +130,7 @@ function RoomsSection({ e, onRefresh }) {
         <section className="mb-6 border border-border bg-card rounded-sm p-4 card-fantasy" data-testid="rooms-section">
             <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
                 <div className="text-[10px] text-amber tracking-widest">
-                    :: AVANZATA NEL DUNGEON ({(e.room_results || []).filter((r) => r.success).length}/{(e.rooms || []).length} stanze)
+                    :: AVANZATA NEL DUNGEON ({(e.room_results || []).filter((r) => r.success).length}/{(e.rooms || []).filter((r) => r.type !== "fork").length} stanze)
                 </div>
                 {outcome && (
                     <span
@@ -137,6 +145,28 @@ function RoomsSection({ e, onRefresh }) {
             {/* Timeline stanze */}
             <ol className="space-y-2 mb-4" data-testid="rooms-timeline">
                 {(e.rooms || []).map((room) => {
+                    // FASE 8C — entry bivio nella timeline
+                    if (room.type === "fork") {
+                        return (
+                            <li
+                                key={`fork-${room.idx}`}
+                                data-testid={`room-fork-${room.idx}`}
+                                className="flex items-start gap-3 text-sm border-l-2 border-amber/40 pl-3"
+                            >
+                                <span className="font-mono text-amber">⑂</span>
+                                <div className="min-w-0 flex-1">
+                                    <span className="font-fantasy text-amber/90">
+                                        {room.prompt_it === "???" ? "???" : `Bivio: ${room.prompt_it}`}
+                                    </span>
+                                    {(room.options || []).length > 0 && (
+                                        <span className="text-[10px] text-muted-foreground ml-2">
+                                            {(room.options || []).map((o) => o.label_it).join(" / ")}
+                                        </span>
+                                    )}
+                                </div>
+                            </li>
+                        );
+                    }
                     const res = resultByIdx[room.idx];
                     const isCurrent = inProgress && room.idx === e.current_room_idx;
                     const icon = res
@@ -206,28 +236,67 @@ function RoomsSection({ e, onRefresh }) {
             {awaiting && (
                 <div className="border-t border-border/60 pt-3" data-testid="rooms-choice-panel">
                     <div className="text-[10px] text-amber tracking-widest mb-2">
-                        :: STANZA SUPERATA — COSA ORDINI?
+                        {nextFork
+                            ? `:: BIVIO — ${nextFork.prompt_it || "quale via?"}`
+                            : ":: STANZA SUPERATA — COSA ORDINI?"}
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            type="button"
-                            data-testid="rooms-action-continue"
-                            disabled={busy}
-                            onClick={() => doAction("continue")}
-                            className="text-[11px] tracking-widest bg-amber text-black px-3 py-1.5 rounded-sm hover:bg-amber/80 disabled:opacity-50"
-                        >
-                            ▶ PROSEGUI
-                        </button>
-                        <button
-                            type="button"
-                            data-testid="rooms-action-rest"
-                            disabled={busy}
-                            onClick={() => doAction("rest_and_continue")}
-                            title="+8% alla prossima stanza, ma il gruppo impiega il 25% di tempo in più"
-                            className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 disabled:opacity-50"
-                        >
-                            ⛺ RIPOSA E PROSEGUI (+8%)
-                        </button>
+                    {nextFork ? (
+                        /* FASE 8C — scelta del percorso al bivio */
+                        <div className="space-y-2" data-testid="rooms-fork-panel">
+                            {(nextFork.options || []).map((opt) => (
+                                <button
+                                    key={opt.key}
+                                    type="button"
+                                    data-testid={`rooms-route-${opt.key}`}
+                                    disabled={busy}
+                                    onClick={() => doAction(
+                                        restBeforeNext ? "rest_and_continue" : "continue",
+                                        opt.key,
+                                    )}
+                                    className="w-full text-left border border-amber/40 rounded-sm px-3 py-2 hover:bg-amber/10 disabled:opacity-50"
+                                >
+                                    <div className="text-[11px] tracking-widest text-amber">
+                                        ⑂ {opt.label_it}
+                                    </div>
+                                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                                        {opt.description_it}
+                                    </div>
+                                </button>
+                            ))}
+                            <label className="flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    data-testid="rooms-rest-toggle"
+                                    checked={restBeforeNext}
+                                    onChange={(ev) => setRestBeforeNext(ev.target.checked)}
+                                />
+                                ⛺ Riposa prima di proseguire (+8% chance, +25% tempo)
+                            </label>
+                        </div>
+                    ) : (
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                type="button"
+                                data-testid="rooms-action-continue"
+                                disabled={busy}
+                                onClick={() => doAction("continue")}
+                                className="text-[11px] tracking-widest bg-amber text-black px-3 py-1.5 rounded-sm hover:bg-amber/80 disabled:opacity-50"
+                            >
+                                ▶ PROSEGUI
+                            </button>
+                            <button
+                                type="button"
+                                data-testid="rooms-action-rest"
+                                disabled={busy}
+                                onClick={() => doAction("rest_and_continue")}
+                                title="+8% alla prossima stanza, ma il gruppo impiega il 25% di tempo in più"
+                                className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 disabled:opacity-50"
+                            >
+                                ⛺ RIPOSA E PROSEGUI (+8%)
+                            </button>
+                        </div>
+                    )}
+                    <div className="mt-2">
                         <button
                             type="button"
                             data-testid="rooms-action-escape"
@@ -244,7 +313,8 @@ function RoomsSection({ e, onRefresh }) {
                         </button>
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-2">
-                        Se non decidi entro 24 ore, il gruppo proseguirà da solo.
+                        Se non decidi entro 24 ore, il gruppo proseguirà da solo
+                        {nextFork ? " per la via più prudente" : ""}.
                     </p>
                 </div>
             )}

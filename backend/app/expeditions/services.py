@@ -122,7 +122,27 @@ def _rooms_public(e: dict) -> list[dict]:
     for r in rooms:
         idx = int(r.get("idx", 0))
         visible = finished or idx <= cur + 1
+        # FASE 8C — entry bivio: mostra il prompt e le opzioni quando è
+        # la prossima tappa; oltre resta un "???" come le stanze.
+        if r.get("type") == "fork":
+            out.append({
+                "type": "fork",
+                "idx": idx,
+                "fork_id": r.get("fork_id") if visible else None,
+                "prompt_it": r.get("prompt_it", "") if visible else "???",
+                "options": [
+                    {
+                        "key": o.get("key"),
+                        "label_it": o.get("label_it"),
+                        "description_it": o.get("description_it", ""),
+                        "rooms_count": len(o.get("rooms") or []),
+                    }
+                    for o in (r.get("options") or [])
+                ] if visible else [],
+            })
+            continue
         out.append({
+            "type": "room",
             "idx": idx,
             "name_it": r.get("name_it") if visible else "???",
             "kind": r.get("kind") if visible else "unknown",

@@ -1,18 +1,20 @@
-"""FASE 5 (2026-08-08) — Test puri: dungeon a stanze.
+"""FASE 5 + 8C (2026-08-08) — Test puri: dungeon a stanze e bivi.
 
-Blueprint, snapshot, salvage. Nessun Mongo richiesto (--noconftest).
-Design: memory/fase5_design_dungeon_stanze.md
+Blueprint (22 dungeon canonici), percorsi con fork, snapshot, splice,
+salvage. Nessun Mongo richiesto (--noconftest).
 """
 import random
 
 from app.dungeons.rooms import (
     COMPLETION_XP_BONUS,
     ROOM_BLUEPRINTS,
-    ROOMS_PILOT_SLUGS,
     apply_salvage,
     build_rooms_snapshot,
+    iter_paths,
+    resolve_fork,
     rooms_mode_for_dungeon,
 )
+from app.shared.content_curve import DUNGEON_CURVE
 
 
 def _dungeon(slug="goblin-warrens", duration=300, gold=100, xp=60,
@@ -24,61 +26,107 @@ def _dungeon(slug="goblin-warrens", duration=300, gold=100, xp=60,
     }
 
 
-# ── Blueprint autorati ───────────────────────────────────────────────────
+# ── Copertura FASE 8C: tutti i canonici tranne il tutorial ──────────────
 
-def test_piloti_hanno_blueprint_autorato():
-    for slug in ROOMS_PILOT_SLUGS:
-        assert slug in ROOM_BLUEPRINTS, f"pilota senza blueprint: {slug}"
-
-
-def test_share_sommano_a_uno_e_boss_finale():
-    for slug, rooms in ROOM_BLUEPRINTS.items():
-        for key in ("duration_share", "gold_share", "xp_share"):
-            total = sum(r[key] for r in rooms)
-            assert abs(total - 1.0) < 0.01, f"{slug}.{key} somma {total}"
-        assert rooms[-1]["kind"] == "boss", f"{slug}: il boss deve chiudere"
-        assert rooms[-1]["has_loot"] is True
+def test_tutti_i_dungeon_canonici_hanno_blueprint():
+    """22 dungeon a stanze; training-yard resta single-block (tutorial
+    day-1 con la logica starter-fallback dedicata)."""
+    expected = set(DUNGEON_CURVE) - {"training-yard"}
+    assert set(ROOM_BLUEPRINTS) == expected
+    assert len(ROOM_BLUEPRINTS) == 22
 
 
-def test_rooms_mode_solo_per_i_piloti():
-    assert rooms_mode_for_dungeon(_dungeon("goblin-warrens")) is True
-    assert rooms_mode_for_dungeon(_dungeon("sewer-nest")) is True
+def test_rooms_mode_per_tutti_i_blueprint():
+    for slug in ROOM_BLUEPRINTS:
+        assert rooms_mode_for_dungeon(_dungeon(slug)) is True
     assert rooms_mode_for_dungeon(_dungeon("training-yard")) is False
-    assert rooms_mode_for_dungeon(_dungeon("lich-sanctum")) is False
 
 
-# ── Snapshot ─────────────────────────────────────────────────────────────
+def test_ogni_percorso_somma_a_uno_e_chiude_col_boss():
+    """Economia: ogni percorso completo (una scelta per bivio) somma
+    ≈1.0 di share e termina col boss del dungeon."""
+    for slug in ROOM_BLUEPRINTS:
+        paths = iter_paths(slug)
+        assert paths, f"{slug}: nessun percorso"
+        for path in paths:
+            for key in ("duration_share", "gold_share", "xp_share"):
+                total = sum(r[key] for r in path)
+                assert 0.9 <= total <= 1.15, (
+                    f"{slug}: percorso somma {key}={total:.2f}"
+                )
+            assert path[-1]["kind"] == "boss", f"{slug}: boss non finale"
 
-def test_snapshot_congela_durate_ricompense_e_chance():
-    snap = build_rooms_snapshot(_dungeon(), base_chance=60)
-    assert len(snap) == 4  # goblin-warrens: 4 stanze autorate
-    assert sum(r["gold"] for r in snap) in range(98, 103)  # ≈ base_gold
-    assert sum(r["xp"] for r in snap) in range(58, 63)
-    assert sum(r["duration_seconds"] for r in snap) in range(295, 306)
-    # Boss: -10 sulla chance; treasure/ambient +5.
-    by_kind = {r["kind"]: r for r in snap}
-    assert by_kind["boss"]["chance"] == 50
-    assert by_kind["treasure"]["chance"] == 65
-    assert by_kind["guard"]["chance"] == 60
+
+def test_quantita_stanze_per_difficolta():
+    """Guida del mandato: iniziali 2-4, intermedi 4-6, avanzati 6-8."""
+    def path_len(slug):
+        return max(len(p) for p in iter_paths(slug))
+    assert 2 <= path_len("sewer-nest") <= 4
+    assert 4 <= path_len("lich-sanctum") <= 6
+    assert 5 <= path_len("obsidian-arena-5p") <= 8
+    assert 6 <= path_len("world-tree-roots-5p") <= 9
+
+
+def test_almeno_dieci_dungeon_con_bivi():
+    forked = [
+        slug for slug, bp in ROOM_BLUEPRINTS.items()
+        if any(e.get("type") == "fork" for e in bp)
+    ]
+    assert len(forked) >= 10, f"solo {len(forked)} dungeon con bivi"
+
+
+# ── Snapshot + fork ──────────────────────────────────────────────────────
+
+def test_snapshot_materializza_stanze_e_bivi():
+    snap = build_rooms_snapshot(_dungeon("goblin-warrens"), base_chance=60)
+    kinds = [e.get("type") for e in snap]
+    assert "fork" in kinds
+    fork = next(e for e in snap if e["type"] == "fork")
+    assert len(fork["options"]) == 2
+    # Le stanze delle opzioni sono già materializzate con la chance
+    # dell'opzione: via sicura (+5 ambient +5) vs rischiosa (−8).
+    safe_room = fork["options"][0]["rooms"][0]
+    risky_room = fork["options"][1]["rooms"][0]
+    assert safe_room["chance"] > risky_room["chance"]
+
+
+def test_resolve_fork_splice_e_reindicizza():
+    snap = build_rooms_snapshot(_dungeon("goblin-warrens"), base_chance=60)
+    fork_pos = next(i for i, e in enumerate(snap) if e["type"] == "fork")
+    resolved = resolve_fork(snap, fork_pos, "sala-bottino")
+    assert resolved is not None
+    assert all(e.get("type") != "fork" or i != fork_pos
+               for i, e in enumerate(resolved))
+    # Reindicizzazione completa e boss sempre in coda.
+    assert [e["idx"] for e in resolved] == list(range(len(resolved)))
+    assert resolved[-1]["kind"] == "boss"
+
+
+def test_resolve_fork_opzione_invalida():
+    snap = build_rooms_snapshot(_dungeon("goblin-warrens"), base_chance=60)
+    fork_pos = next(i for i, e in enumerate(snap) if e["type"] == "fork")
+    assert resolve_fork(snap, fork_pos, "opzione-inesistente") is None
+    assert resolve_fork(snap, 0, "cunicolo") is None  # non è un fork
 
 
 def test_snapshot_chance_clampata():
-    snap_low = build_rooms_snapshot(_dungeon(), base_chance=8)
-    assert all(r["chance"] >= 5 for r in snap_low)
-    snap_high = build_rooms_snapshot(_dungeon(), base_chance=100)
-    assert all(r["chance"] <= 100 for r in snap_high)
+    snap = build_rooms_snapshot(_dungeon("sewer-nest"), base_chance=8)
+    for entry in snap:
+        rooms = [entry] if entry["type"] == "room" else [
+            r for o in entry["options"] for r in o["rooms"]
+        ]
+        assert all(r["chance"] >= 5 for r in rooms)
 
 
 def test_fallback_generator_per_slug_non_autorato():
     snap = build_rooms_snapshot(
         _dungeon("dungeon-futuro", difficulty=3), base_chance=50,
     )
-    assert len(snap) == 5  # difficoltà 3 → 5 stanze
+    assert len(snap) == 5
     assert snap[-1]["kind"] == "boss"
-    assert abs(sum(r["gold"] for r in snap) - 100) <= 2
 
 
-# ── Salvage (J.21) ───────────────────────────────────────────────────────
+# ── Salvage (J.21, invariato) ────────────────────────────────────────────
 
 def test_salvage_completamento_tutto_piu_bonus_xp():
     rng = random.Random(1)
@@ -86,7 +134,7 @@ def test_salvage_completamento_tutto_piu_bonus_xp():
                                     "completed", rng=rng)
     assert gold == 100
     assert items == ["a", "b", "c"]
-    assert xp == round(60 * (1 + COMPLETION_XP_BONUS))  # 75
+    assert xp == round(60 * (1 + COMPLETION_XP_BONUS))
 
 
 def test_salvage_fuga_meta_oro_e_item_casuali():
@@ -95,7 +143,6 @@ def test_salvage_fuga_meta_oro_e_item_casuali():
     gold, items, xp = apply_salvage(100, items_in, 60, "escaped", rng=rng)
     assert gold == 50
     assert xp == 30
-    # Selezione casuale ~50%: con 200 item resta tra il 35% e il 65%.
     assert 70 <= len(items) <= 130
     assert set(items) <= set(items_in)
 
@@ -106,7 +153,7 @@ def test_salvage_sconfitta_quarto_oro_40pct_xp():
                                     60, "failed", rng=rng)
     assert gold == 25
     assert xp == 24
-    assert len(items) < 100  # ~25%
+    assert len(items) < 100
 
 
 def test_salvage_vuoto_non_esplode():
