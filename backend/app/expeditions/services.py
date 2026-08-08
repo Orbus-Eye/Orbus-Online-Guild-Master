@@ -1325,12 +1325,39 @@ async def start_expedition(db, guild: dict, payload) -> dict:
 
 async def list_expeditions(db, guild: dict) -> dict:
     await complete_due_expeditions(db, guild["id"])
+    # FASE 1.5 — i report "puliti" (soft-delete via PULISCI) spariscono
+    # dalla lista; il doc resta in DB (deep-link e statistiche invariati).
+    # `None` matcha sia il campo assente (legacy) sia il valore null.
     rows = (
-        await db.expeditions.find({"guild_id": guild["id"]}, {"_id": 0})
+        await db.expeditions.find(
+            {"guild_id": guild["id"], "report_dismissed_at": None},
+            {"_id": 0},
+        )
         .sort("created_at", -1)
         .to_list(200)
     )
     return {"expeditions": [expedition_public(e) for e in rows]}
+
+
+async def clear_expedition_reports(db, guild: dict) -> dict:
+    """FASE 1.5 (2026-08-08) — pulsante PULISCI.
+
+    Soft-delete di TUTTI i report spedizione conclusi della gilda:
+    imposta `report_dismissed_at` (le spedizioni in corso non vengono
+    mai toccate). Scelta deliberata: `get_last_completed` / replay NON
+    filtrano il flag, così "Ripeti ultima spedizione" continua a
+    funzionare anche dopo una pulizia.
+    """
+    now_iso = datetime.now(timezone.utc).isoformat()
+    res = await db.expeditions.update_many(
+        {
+            "guild_id": guild["id"],
+            "status": {"$ne": "in_progress"},
+            "report_dismissed_at": None,
+        },
+        {"$set": {"report_dismissed_at": now_iso}},
+    )
+    return {"cleared": int(res.modified_count)}
 
 
 async def get_last_completed(db, guild: dict) -> dict:

@@ -65,9 +65,41 @@ export default function Expeditions() {
     const { t, tContent, lang } = useT();
     const [exps, setExps] = useState(null);
     const [loading, setLoading] = useState(true);
+    // FASE 1.5 — PULISCI con conferma a due step (il secondo click
+    // entro 5s conferma; poi il bottone torna allo stato normale).
+    const [confirmClear, setConfirmClear] = useState(false);
+    const [clearBusy, setClearBusy] = useState(false);
     const { refreshGuild } = useAuth();
     const tickRef = useRef(null);
     const pollRef = useRef(null);
+    const confirmTimerRef = useRef(null);
+
+    const doClearReports = async () => {
+        if (!confirmClear) {
+            setConfirmClear(true);
+            clearTimeout(confirmTimerRef.current);
+            confirmTimerRef.current = setTimeout(
+                () => setConfirmClear(false), 5000,
+            );
+            return;
+        }
+        clearTimeout(confirmTimerRef.current);
+        setClearBusy(true);
+        try {
+            const { data } = await api.post("/expeditions/reports/clear");
+            toast.success(
+                lang === "it"
+                    ? `Rapporti puliti: ${data.cleared}`
+                    : `Reports cleared: ${data.cleared}`,
+            );
+            setConfirmClear(false);
+            await fetchAll();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setClearBusy(false);
+        }
+    };
 
     const fetchAll = useCallback(async () => {
         try {
@@ -125,11 +157,13 @@ export default function Expeditions() {
                 <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
                     <div>
                         <div className="text-xs text-amber tracking-widest mb-2">
-                            :: EXPEDITION LOG
+                            {lang === "it" ? ":: DIARIO SPEDIZIONI" : ":: EXPEDITION LOG"}
                         </div>
                         <h1 className="text-3xl font-semibold tracking-tight">{t("expeditions.title")}</h1>
                         <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                            Active runs and historical reports.
+                            {lang === "it"
+                                ? "Spedizioni in corso e rapporti delle imprese passate."
+                                : "Active runs and historical reports."}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -139,7 +173,7 @@ export default function Expeditions() {
                                 className="h-10 rounded-sm bg-transparent border-border hover:bg-secondary text-xs"
                                 data-testid="goto-dungeons-btn"
                             >
-                                + New Expedition
+                                {lang === "it" ? "+ Nuova spedizione" : "+ New Expedition"}
                             </Button>
                         </Link>
                         <Button
@@ -151,13 +185,15 @@ export default function Expeditions() {
                             variant="outline"
                             className="h-10 rounded-sm bg-transparent border-border hover:bg-secondary text-xs"
                         >
-                            ↻ Refresh
+                            {lang === "it" ? "↻ Aggiorna" : "↻ Refresh"}
                         </Button>
                     </div>
                 </div>
 
                 {loading && (
-                    <div className="text-xs text-muted-foreground">loading<span className="caret-blink" /></div>
+                    <div className="text-xs text-muted-foreground">
+                        {t("common.loading", "Caricamento…")}<span className="caret-blink" />
+                    </div>
                 )}
 
                 {!loading && exps && exps.length === 0 && (
@@ -181,7 +217,7 @@ export default function Expeditions() {
                 {!loading && active.length > 0 && (
                     <section className="mb-8">
                         <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
-                            :: ACTIVE ({active.length})
+                            {lang === "it" ? ":: IN CORSO" : ":: ACTIVE"} ({active.length})
                         </div>
                         <div className="space-y-2">
                             {active.map((e) => (
@@ -216,17 +252,37 @@ export default function Expeditions() {
 
                 {!loading && completed.length > 0 && (
                     <section>
-                        <div className="text-[10px] text-muted-foreground tracking-widest mb-3">
-                            :: COMPLETED ({completed.length})
+                        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                            <div className="text-[10px] text-muted-foreground tracking-widest">
+                                {lang === "it" ? ":: CONCLUSE" : ":: COMPLETED"} ({completed.length})
+                            </div>
+                            {/* FASE 1.5 — PULISCI: svuota i rapporti conclusi (soft-delete lato server) */}
+                            <Button
+                                data-testid="btn-clear-reports"
+                                onClick={doClearReports}
+                                disabled={clearBusy}
+                                variant="outline"
+                                className={`h-8 rounded-sm bg-transparent text-[11px] tracking-widest ${
+                                    confirmClear
+                                        ? "border-red-500/70 text-red-400 hover:bg-red-500/10"
+                                        : "border-border text-muted-foreground hover:bg-secondary"
+                                }`}
+                            >
+                                {clearBusy
+                                    ? "…"
+                                    : confirmClear
+                                        ? (lang === "it" ? "⚠ CONFERMI LA PULIZIA?" : "⚠ CONFIRM CLEAR?")
+                                        : (lang === "it" ? "🧹 PULISCI" : "🧹 CLEAR")}
+                            </Button>
                         </div>
                         <div className="border border-border rounded-sm overflow-x-auto">
                             <table data-testid="completed-table" className="w-full text-sm min-w-[600px]">
                                 <thead className="bg-secondary/40 text-[10px] text-muted-foreground tracking-widest">
                                     <tr>
                                         <th className="text-left px-3 py-2 font-normal border-b border-border">DUNGEON</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">RESULT</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">GOLD</th>
-                                        <th className="text-left px-3 py-2 font-normal border-b border-border">COMPLETED</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{lang === "it" ? "ESITO" : "RESULT"}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{lang === "it" ? "ORO" : "GOLD"}</th>
+                                        <th className="text-left px-3 py-2 font-normal border-b border-border">{lang === "it" ? "CONCLUSA" : "COMPLETED"}</th>
                                         <th className="text-right px-3 py-2 font-normal border-b border-border" />
                                     </tr>
                                 </thead>
@@ -255,7 +311,7 @@ export default function Expeditions() {
                                                     className="text-amber hover:underline text-xs"
                                                     data-testid={`view-report-${e.id}`}
                                                 >
-                                                    view report →
+                                                    {lang === "it" ? "vedi rapporto →" : "view report →"}
                                                 </Link>
                                             </td>
                                         </tr>
