@@ -139,6 +139,14 @@ def raid_public(r: dict) -> dict:
         "party_responsibility_results": r.get(
             "party_responsibility_results", []
         ),
+        # FASE 8D — raid a fasi (campi vuoti/neutri per i legacy).
+        "mode": r.get("mode") or "single",
+        "phase_state": r.get("phase_state"),
+        "current_phase_idx": r.get("current_phase_idx"),
+        "phases": r.get("phases_snapshot") or [],
+        "phase_results": r.get("phase_results") or [],
+        "checkpoint_choice": r.get("checkpoint_choice"),
+        "phase_bonus_modifier": int(r.get("phase_bonus_modifier", 0) or 0),
     }
 
 
@@ -521,6 +529,30 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }
+
+    # FASE 8D — raid a FASI (pilota dietro flag): il doc nasce con lo
+    # snapshot fasi; ends_at rappresenta la PRIMA fase.
+    from app.raids.phases import build_phases_snapshot, phases_mode_for_raid
+    if phases_mode_for_raid(rd):
+        phases_snapshot = build_phases_snapshot(
+            rd, p["success_chance_combined"],
+        )
+        if phases_snapshot:
+            raid_doc.update({
+                "mode": "phases",
+                "phases_snapshot": phases_snapshot,
+                "current_phase_idx": 0,
+                "phase_state": "in_phase",
+                "phase_results": [],
+                "phase_bonus_modifier": 0,
+                "phase_gold_factor": 1.0,
+                "ends_at": (
+                    now + timedelta(
+                        seconds=phases_snapshot[0]["duration_seconds"]
+                    )
+                ).isoformat(),
+            })
+
     await db.raids.insert_one(raid_doc)
 
     # Insert raid_participants & flag advs busy (best-effort atomic-ish)
@@ -574,6 +606,172 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
     return {"raid": raid_public(raid_doc)}
 
 
+# ── FASE 8D — motore raid a fasi ────────────────────────────────────────
+
+async def _apply_checkpoint_choice(db, raid: dict, option_key: str,
+                                   *, auto: bool) -> dict:
+    """awaiting_checkpoint → in_phase sulla fase successiva."""
+    from app.raids.phases import CHECKPOINT_OPTIONS, checkpoint_option
+    opt = checkpoint_option(option_key) or CHECKPOINT_OPTIONS[0]
+    phases = raid.get("phases_snapshot") or []
+    idx = int(raid.get("current_phase_idx", 0))
+    next_idx = idx + 1
+    if next_idx >= len(phases):
+        return {"finalize": True, "outcome": "victory"}
+    now = _utc_now()
+    next_phase = phases[next_idx]
+    await db.raids.update_one(
+        {"id": raid["id"], "phase_state": "awaiting_checkpoint"},
+        {"$set": {
+            "status": "in_progress",
+            "current_phase_idx": next_idx,
+            "phase_state": "in_phase",
+            "phase_bonus_modifier": int(opt["chance_modifier"]),
+            "phase_gold_factor": float(opt["gold_factor"]),
+            "checkpoint_choice": {"key": opt["key"], "auto": bool(auto)},
+            "ends_at": (
+                now + timedelta(seconds=next_phase["duration_seconds"])
+            ).isoformat(),
+            "updated_at": now.isoformat(),
+        }},
+    )
+    fresh = await db.raids.find_one({"id": raid["id"]}, {"_id": 0})
+    return {"finalize": False, "raid": fresh}
+
+
+async def _step_phases_raid(db, raid: dict) -> dict:
+    """Risolve la fase corrente di un raid a fasi (chiamato da
+    /complete a timer scaduto, con status già "resolving").
+
+    Ritorna {finalize: bool, outcome?, raid?}. Regole:
+      * fallimento PRIMA del checkpoint → defeat;
+      * fallimento DOPO il checkpoint → partial (il checkpoint conta);
+      * checkpoint superato → attesa scelta (deadline 24h → prudente);
+      * ultima fase superata → victory.
+    """
+    from app.raids.phases import (
+        CHECKPOINT_DECISION_DEADLINE_SECONDS,
+        checkpoint_index,
+        resolve_phase,
+    )
+    phases = raid.get("phases_snapshot") or []
+    idx = int(raid.get("current_phase_idx", 0))
+    state = raid.get("phase_state")
+    now = _utc_now()
+
+    if state == "awaiting_checkpoint":
+        # Deadline scaduta → via prudente in automatico.
+        return await _apply_checkpoint_choice(
+            db, raid, "rituale", auto=True,
+        )
+
+    if idx >= len(phases):
+        return {"finalize": True, "outcome": "victory"}
+
+    phase = phases[idx]
+    result = resolve_phase(
+        phase, raid["id"], int(raid.get("phase_bonus_modifier", 0) or 0),
+    )
+    results = list(raid.get("phase_results") or []) + [result]
+    cp_idx = checkpoint_index(phases)
+
+    if not result["success"]:
+        outcome = "partial" if (0 <= cp_idx < idx) else "defeat"
+        await db.raids.update_one(
+            {"id": raid["id"]},
+            {"$set": {"phase_results": results,
+                      "phase_state": "failed",
+                      "updated_at": now.isoformat()}},
+        )
+        return {"finalize": True, "outcome": outcome}
+
+    if idx >= len(phases) - 1:
+        await db.raids.update_one(
+            {"id": raid["id"]},
+            {"$set": {"phase_results": results,
+                      "phase_state": "completed",
+                      "updated_at": now.isoformat()}},
+        )
+        return {"finalize": True, "outcome": "victory"}
+
+    if phase.get("kind") == "checkpoint":
+        deadline = now + timedelta(
+            seconds=CHECKPOINT_DECISION_DEADLINE_SECONDS,
+        )
+        await db.raids.update_one(
+            {"id": raid["id"]},
+            {"$set": {
+                "status": "in_progress",
+                "phase_state": "awaiting_checkpoint",
+                "phase_results": results,
+                "ends_at": deadline.isoformat(),
+                "updated_at": now.isoformat(),
+            }},
+        )
+        fresh = await db.raids.find_one({"id": raid["id"]}, {"_id": 0})
+        return {"finalize": False, "raid": fresh}
+
+    next_phase = phases[idx + 1]
+    await db.raids.update_one(
+        {"id": raid["id"]},
+        {"$set": {
+            "status": "in_progress",
+            "current_phase_idx": idx + 1,
+            "phase_state": "in_phase",
+            "phase_results": results,
+            "ends_at": (
+                now + timedelta(seconds=next_phase["duration_seconds"])
+            ).isoformat(),
+            "updated_at": now.isoformat(),
+        }},
+    )
+    fresh = await db.raids.find_one({"id": raid["id"]}, {"_id": 0})
+    return {"finalize": False, "raid": fresh}
+
+
+class RaidAdvanceIn(BaseModel):
+    route: str = Field(..., min_length=1, max_length=32)
+
+
+@router.post("/{raid_id}/advance")
+async def advance_raid_checkpoint(
+    raid_id: str,
+    payload: RaidAdvanceIn,
+    current_user: dict = Depends(get_current_user),
+):
+    """FASE 8D — scelta al checkpoint del raid a fasi
+    (rituale = prudente | assalto = rischio/oro)."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    raid = await db.raids.find_one(
+        {"id": raid_id, "guild_id": guild["id"]}, {"_id": 0},
+    )
+    if not raid:
+        raise HTTPException(status_code=404, detail="Raid non trovato")
+    if raid.get("mode") != "phases" or raid.get("status") != "in_progress":
+        raise HTTPException(status_code=409, detail={
+            "code": "raid.not_phases_active",
+            "user_message": "Questo raid non è in corso a fasi.",
+        })
+    if raid.get("phase_state") != "awaiting_checkpoint":
+        raise HTTPException(status_code=409, detail={
+            "code": "raid.not_at_checkpoint",
+            "user_message": (
+                "Le squadre sono impegnate nella fase: aspetta che si "
+                "concluda."
+            ),
+        })
+    from app.raids.phases import checkpoint_option
+    if not checkpoint_option(payload.route):
+        raise HTTPException(status_code=422, detail={
+            "code": "raid.invalid_route",
+            "user_message": "Scelta non valida per questo checkpoint.",
+        })
+    step = await _apply_checkpoint_choice(
+        db, raid, payload.route, auto=False,
+    )
+    return {"raid": raid_public(step["raid"])}
+
+
 @router.post("/{raid_id}/complete")
 async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
@@ -615,15 +813,36 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     raid = claimed
 
     rng = _random.Random(raid_id)  # deterministic per raid for replay safety
-    outcome, party_rolls = _outcome_for_chances(rng, raid["success_chance_per_party"])
-    multiplier = _outcome_multiplier(outcome)
+
+    # FASE 8D — raid a FASI: la fase corrente viene risolta; se il raid
+    # non è concluso il doc torna in_progress (fase successiva o attesa
+    # checkpoint) e usciamo QUI. Solo l'esito finale prosegue nel flusso
+    # ricompense legacy (victory/partial/defeat invariati).
+    if raid.get("mode") == "phases":
+        step = await _step_phases_raid(db, raid)
+        if not step.get("finalize"):
+            return {"raid": raid_public(step["raid"])}
+        outcome = step["outcome"]
+        party_rolls = [outcome == "victory"] * len(
+            raid.get("success_chance_per_party") or []
+        )
+        multiplier = _outcome_multiplier(outcome)
+    else:
+        outcome, party_rolls = _outcome_for_chances(
+            rng, raid["success_chance_per_party"]
+        )
+        multiplier = _outcome_multiplier(outcome)
 
     rd = await db.raid_dungeons.find_one({"id": raid["raid_dungeon_id"]}, {"_id": 0})
     # ROUND 16.3 Phase 5B — Arfus passive bonuses (0 if none active).
     from app.arfus_forge import bonus_pct as _arfus_bonus
     _dmg_bonus = await _arfus_bonus(guild["id"], "combat_damage")
     _leader_xp_bonus = await _arfus_bonus(guild["id"], "leader_experience")
-    gold = int(rd["base_gold_reward"] * multiplier)
+    # FASE 8D — l'assalto diretto al checkpoint maggiora l'oro (+25%).
+    gold = int(
+        rd["base_gold_reward"] * multiplier
+        * float(raid.get("phase_gold_factor", 1.0) or 1.0)
+    )
     xp_per_member = int(rd["base_xp_per_member"] * multiplier
                         * (1.0 + _leader_xp_bonus / 100.0))
 

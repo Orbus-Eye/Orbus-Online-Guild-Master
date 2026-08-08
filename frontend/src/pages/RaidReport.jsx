@@ -11,6 +11,145 @@ import RaidCountdown from "../components/RaidCountdown";  // ROUND 16.5.1 B.4 UI
 import { useT } from "../i18n/I18nContext";
 
 
+// FASE 8D — timeline delle fasi + scelta al checkpoint (raid a fasi).
+const PHASE_KIND_IT = {
+    approach: "Avvicinamento",
+    miniboss: "Boss intermedio",
+    checkpoint: "Checkpoint",
+    event: "Evento",
+    boss: "Boss finale",
+};
+
+function RaidPhasesSection({ raid, onRefresh, onResolve, busy }) {
+    const [routeBusy, setRouteBusy] = useState(false);
+    const inProgress = raid.status === "in_progress";
+    const awaiting = inProgress && raid.phase_state === "awaiting_checkpoint";
+    const resultByIdx = {};
+    for (const r of raid.phase_results || []) resultByIdx[r.idx] = r;
+    const timerExpired = inProgress && (raid.remaining_seconds ?? 1) <= 0;
+
+    const chooseRoute = async (route) => {
+        setRouteBusy(true);
+        try {
+            await api.post(`/raids/${raid.id}/advance`, { route });
+            await onRefresh();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setRouteBusy(false);
+        }
+    };
+
+    return (
+        <section
+            className="border border-border bg-card rounded-sm p-4 mb-4 card-fantasy"
+            data-testid="raid-phases-section"
+        >
+            <div className="text-[10px] text-amber tracking-widest mb-3">
+                :: LE FASI DELLA VEGLIA ({(raid.phase_results || []).filter((r) => r.success).length}/{(raid.phases || []).length})
+            </div>
+            <ol className="space-y-2 mb-3" data-testid="raid-phases-timeline">
+                {(raid.phases || []).map((phase) => {
+                    const res = resultByIdx[phase.idx];
+                    const isCurrent = inProgress && phase.idx === raid.current_phase_idx;
+                    const icon = res
+                        ? (res.success ? "✓" : "✗")
+                        : isCurrent ? (awaiting ? "⏸" : "⚔") : "·";
+                    const iconCls = res
+                        ? (res.success ? "text-[#22c55e]" : "text-destructive")
+                        : isCurrent ? "text-amber" : "text-muted-foreground";
+                    return (
+                        <li
+                            key={phase.idx}
+                            data-testid={`raid-phase-row-${phase.idx}`}
+                            className={`flex items-start gap-3 text-sm border-l-2 pl-3 ${
+                                isCurrent ? "border-amber" : res ? "border-border" : "border-border/40"
+                            }`}
+                        >
+                            <span className={`font-mono ${iconCls}`}>{icon}</span>
+                            <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-fantasy">{phase.name_it}</span>
+                                    <span className="text-[10px] tracking-widest text-muted-foreground border border-border/60 px-1.5 py-0.5 rounded-sm">
+                                        {PHASE_KIND_IT[phase.kind] || phase.kind}
+                                    </span>
+                                    {res && res.kind !== "checkpoint" && (
+                                        <span className="text-[10px] text-muted-foreground">
+                                            tiro {res.roll}/{res.chance}
+                                        </span>
+                                    )}
+                                </div>
+                                {phase.narrative_it && (
+                                    <p className="text-[11px] text-muted-foreground italic mt-0.5">
+                                        {phase.narrative_it}
+                                    </p>
+                                )}
+                            </div>
+                        </li>
+                    );
+                })}
+            </ol>
+
+            {raid.checkpoint_choice && (
+                <div className="text-[11px] text-muted-foreground mb-2" data-testid="raid-checkpoint-choice-made">
+                    ⚑ Al checkpoint: {raid.checkpoint_choice.key === "assalto" ? "Assalto Diretto" : "Rituale di Purificazione"}
+                    {raid.checkpoint_choice.auto ? " (deciso dal tempo)" : ""}
+                </div>
+            )}
+
+            {awaiting && (
+                <div className="border-t border-border/60 pt-3" data-testid="raid-checkpoint-panel">
+                    <div className="text-[10px] text-amber tracking-widest mb-2">
+                        :: IL BIVACCO SOTTO LA LUNA — COME PROCEDERE?
+                    </div>
+                    <div className="space-y-2">
+                        <button
+                            type="button"
+                            data-testid="raid-route-rituale"
+                            disabled={routeBusy}
+                            onClick={() => chooseRoute("rituale")}
+                            className="w-full text-left border border-amber/40 rounded-sm px-3 py-2 hover:bg-amber/10 disabled:opacity-50"
+                        >
+                            <div className="text-[11px] tracking-widest text-amber">🌙 IL RITUALE DI PURIFICAZIONE</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">
+                                Consacrare le armi al chiarore lunare: +5 alla riuscita delle fasi restanti.
+                            </div>
+                        </button>
+                        <button
+                            type="button"
+                            data-testid="raid-route-assalto"
+                            disabled={routeBusy}
+                            onClick={() => chooseRoute("assalto")}
+                            className="w-full text-left border border-red-500/40 rounded-sm px-3 py-2 hover:bg-red-500/10 disabled:opacity-50"
+                        >
+                            <div className="text-[11px] tracking-widest text-red-400">⚔ L'ASSALTO DIRETTO</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">
+                                Più rischio (−8), ma il santuario non nasconderà i suoi tesori (+25% oro).
+                            </div>
+                        </button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                        Se non decidi entro 24 ore, le squadre sceglieranno il rituale.
+                    </p>
+                </div>
+            )}
+
+            {timerExpired && !awaiting && (
+                <button
+                    type="button"
+                    data-testid="raid-resolve-phase-btn"
+                    disabled={busy}
+                    onClick={onResolve}
+                    className="text-[11px] tracking-widest bg-amber text-black px-3 py-1.5 rounded-sm hover:bg-amber/80 disabled:opacity-50"
+                >
+                    ▶ RISOLVI LA FASE
+                </button>
+            )}
+        </section>
+    );
+}
+
+
 function outcomeLabel(t, outcome) {
     if (outcome === "victory") return t("raids.report.outcome_victory");
     if (outcome === "partial") return t("raids.report.outcome_partial");
@@ -45,6 +184,13 @@ export default function RaidReport() {
         }
     }, [raid_id]);
     useEffect(() => { load(); }, [load]);
+
+    // FASE 8D — polling leggero mentre un raid a fasi è in corso.
+    useEffect(() => {
+        if (raid?.mode !== "phases" || raid?.status !== "in_progress") return undefined;
+        const id = setInterval(load, 15000);
+        return () => clearInterval(id);
+    }, [raid?.mode, raid?.status, load]);
 
     async function forceComplete() {
         setBusy(true);
@@ -86,6 +232,16 @@ export default function RaidReport() {
                         ← /raids
                     </Link>
                 </div>
+
+                {/* FASE 8D — raid a fasi: timeline + checkpoint */}
+                {raid.mode === "phases" && (
+                    <RaidPhasesSection
+                        raid={raid}
+                        onRefresh={load}
+                        onResolve={forceComplete}
+                        busy={busy}
+                    />
+                )}
 
                 {/* Top status */}
                 <section className="border border-border bg-card rounded-sm p-4 mb-4" data-testid="raid-report-summary">
