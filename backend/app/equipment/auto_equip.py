@@ -37,6 +37,7 @@ from app.audit.log import write_audit
 from app.equipment.compatibility import check_equip_compatibility
 from app.equipment.level_gate import resolve_item_required_level
 from app.equipment.services import equip_item_service, unequip_item_service
+from app.equipment.ui_4state import derive_ui_4state
 from app.expeditions.formulas import item_equip_power
 from app.shared.constants import EQUIPMENT_SLOTS, SLOT_TO_ITEM_TYPE
 
@@ -72,6 +73,30 @@ def _extract_it_message(http_exc: HTTPException, slot_it: str,
     elif isinstance(detail, str) and detail.strip():
         return f"{slot_it}: {detail.strip()}"
     return fallback
+
+
+def candidate_gate(adv: dict, item: dict) -> tuple[bool, str]:
+    """FASE 1.3 (2026-08-08) — gate unico dei candidati Auto-Equip.
+
+    Combina i DUE validatori del progetto, che prima divergevano:
+      * `check_equip_compatibility` (R15/R16) — block E warning esclusi
+        (decisione PM R16.5.4b REOPEN #2: i warning non entrano nel pool).
+      * `derive_ui_4state` (R18.4, sealed) — è la fonte del badge
+        "Bloccato" che il giocatore vede in UI. Prima l'Auto-Equip NON
+        la consultava, quindi poteva equipaggiare item mostrati come
+        Bloccato (es. policy hard senza tag classe, o slot_type mancante).
+
+    Pure function (nessun I/O) → unit-testabile senza Mongo.
+    Ritorna (allowed, reason_code).
+    """
+    verdict = check_equip_compatibility(adv, item)
+    severity = verdict.get("severity") or "ok"
+    if severity in ("block", "warning"):
+        return False, f"compat_{severity}"
+    ui4 = derive_ui_4state(adv, item)
+    if not ui4.get("can_equip", True):
+        return False, f"ui4_{ui4.get('compatibility_state', 'blocked')}"
+    return True, "ok"
 
 
 def _stat_bonus(item: dict, stat_name: str) -> int:
@@ -267,14 +292,24 @@ async def auto_equip_adventurer(
             current_by_slot[e["slot"]] = item
 
     # Inventory pool (NOT bound to other adventurers). Deterministic sort.
+    # FASE 1.3 — il pool considera solo righe con copie DISPONIBILI
+    # (quantity > reserved_qty): prima un item con tutte le copie già
+    # equipaggiate da altri avventurieri entrava nel ranking, vinceva,
+    # e falliva solo a valle con un 409 — dopo che lo slot era già stato
+    # svuotato dall'unequip.
     inv_rows = await db.inventory_items.find(
         {"guild_id": guild["id"], "is_active": {"$ne": False}},
         {"_id": 0, "item_id": 1, "is_bound": 1,
-         "bound_to_adventurer_id": 1},
+         "bound_to_adventurer_id": 1, "quantity": 1, "reserved_qty": 1},
     ).sort([("item_id", 1)]).to_list(2000)
-    item_ids = sorted({r["item_id"] for r in inv_rows
-                       if not r.get("is_bound") or
-                       r.get("bound_to_adventurer_id") == adv["id"]})
+
+    def _row_in_pool(r: dict) -> bool:
+        if r.get("is_bound") and r.get("bound_to_adventurer_id") \
+                and r.get("bound_to_adventurer_id") != adv["id"]:
+            return False
+        return int(r.get("quantity", 0) or 0) > int(r.get("reserved_qty", 0) or 0)
+
+    item_ids = sorted({r["item_id"] for r in inv_rows if _row_in_pool(r)})
     if not item_ids:
         items_pool: list[dict] = []
     else:
@@ -329,9 +364,11 @@ async def auto_equip_adventurer(
             req_lv = resolve_item_required_level(it)
             if req_lv > adv_level:
                 continue
-            verdict = check_equip_compatibility(adv, it)
-            severity = verdict.get("severity") or "ok"
-            if severity in ("block", "warning"):
+            # FASE 1.3 — gate unico: compatibilità R15/16 (block+warning
+            # esclusi) E 4-state R18.4 (la fonte del badge "Bloccato" in
+            # UI). Vedi `candidate_gate` per il razionale.
+            allowed, _gate_reason = candidate_gate(adv, it)
+            if not allowed:
                 # Class-fit rejected. Track it so we can differentiate the
                 # empty state ("nothing at all" vs "only off-class here").
                 off_class_seen += 1
@@ -444,6 +481,29 @@ async def auto_equip_adventurer(
                     f"in questo momento."
                 )
                 continue
+        async def _restore_previous_item() -> None:
+            # FASE 1.3 — rete di sicurezza: se l'equip del nuovo item
+            # fallisce DOPO l'unequip, rimetti l'oggetto precedente.
+            # Prima lo slot restava vuoto (peggio dello stato iniziale).
+            if not current:
+                return
+            try:
+                await equip_item_service(
+                    db, guild, adv["id"], current["id"], slot,
+                )
+                warnings.append(
+                    f"{slot_it}: l'oggetto precedente è stato ripristinato."
+                )
+            except Exception:  # noqa: BLE001
+                logger.exception(
+                    "auto_equip: rollback failed adv=%s slot=%s item=%s",
+                    adv["id"], slot, current.get("id"),
+                )
+                warnings.append(
+                    f"{slot_it}: lo slot è rimasto vuoto — riequipaggia "
+                    f"manualmente l'oggetto precedente."
+                )
+
         try:
             await equip_item_service(
                 db, guild, adv["id"], best_item["id"], slot,
@@ -458,6 +518,7 @@ async def auto_equip_adventurer(
                 "auto_equip: equip failed adv=%s slot=%s item=%s http=%s",
                 adv["id"], slot, best_item.get("id"), http_exc.status_code,
             )
+            await _restore_previous_item()
             continue
         except Exception as exc:  # noqa: BLE001
             logger.exception(
@@ -468,6 +529,7 @@ async def auto_equip_adventurer(
                 f"{slot_it}: impossibile equipaggiare l'oggetto scelto "
                 f"in questo momento."
             )
+            await _restore_previous_item()
             continue
         # ROUND 16.5.4b — stat delta from canonical *_bonus fields.
         stat_delta = _stat_delta(current, best_item, primary)
@@ -605,4 +667,4 @@ async def auto_equip_adventurer(
     }
 
 
-__all__ = ["auto_equip_adventurer"]
+__all__ = ["auto_equip_adventurer", "candidate_gate"]

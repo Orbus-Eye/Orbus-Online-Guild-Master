@@ -36,7 +36,15 @@ import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import InventoryEquipModal from "../components/InventoryEquipModal";
 import ItemCompatibilityBadge from "../components/ItemCompatibilityBadge";
-import { rarityLabel } from "../utils/displayLabels";
+import { rarityLabel, itemTypeLabel } from "../utils/displayLabels";
+
+// The ten physical equipment positions (mirror of backend EQUIPMENT_SLOTS).
+// Items whose slot doesn't map here (materials, consumables) are not
+// equippable and must not expose equip actions.
+const PHYSICAL_SLOTS = [
+    "weapon", "chest", "legs", "head", "accessory",
+    "back", "ring_1", "ring_2", "trinket_1", "trinket_2",
+];
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -72,11 +80,12 @@ function statBonusList(it) {
 
 function buildEquippedByMap(adventurers) {
     // { item_id: [{ adventurer_id, adventurer_name, slot }] }
+    // Scans every physical slot (rings, trinkets, head, legs, back included),
+    // not just the legacy weapon/armor/accessory trio.
     const out = {};
     for (const a of adventurers || []) {
-        const eq = a.equipment || {};
-        for (const slot of ["weapon", "armor", "accessory"]) {
-            const it = eq[slot]?.item;
+        for (const [slot, entry] of Object.entries(a.equipment || {})) {
+            const it = entry?.item;
             if (!it) continue;
             const list = out[it.id] || (out[it.id] = []);
             list.push({
@@ -311,15 +320,22 @@ export default function Inventory() {
                                 : [rawSlot];
                             const levelReq = it.level_required || 1;
                             const equippedBy = equippedByMap[it.id] || [];
+                            // Italian display label for the slot family (Arma,
+                            // Anello, …) — the physical target slot is resolved
+                            // per-adventurer at equip time.
+                            const slotLabel = itemTypeLabel(rawSlot) || "—";
+                            const isEquippable = physicalSlots.every((s) =>
+                                PHYSICAL_SLOTS.includes(s)
+                            );
 
                             // Adventurers who could equip this item:
                             // - same slot is empty
                             // - level >= levelReq
                             // - is_available (not on expedition)
-                            const eligible = adventurers.filter((a) => {
+                            const eligible = !isEquippable ? [] : adventurers.filter((a) => {
                                 if (!a.is_available) return false;
                                 if ((a.level || 1) < levelReq) return false;
-                                return physicalSlots.some((slot) => !a.equipment?.[slot]?.item);
+                                return physicalSlots.some((s) => !a.equipment?.[s]?.item);
                             });
 
                             const usableCount = adventurers.filter(
@@ -390,7 +406,7 @@ export default function Inventory() {
                                                 )}
                                             </div>
                                             <div className="text-[11px] text-muted-foreground mt-1">
-                                                {slot} · {t("inventory_extra.power_label", "potere")} {it.power_score ?? 0}
+                                                {slotLabel} · {t("inventory_extra.power_label", "potere")} {it.power_score ?? 0}
                                                 {statBonusList(it) ? ` · ${statBonusList(it)}` : ""}
                                             </div>
                                         </div>
@@ -426,7 +442,7 @@ export default function Inventory() {
                                                 className="border border-border rounded-sm px-2 py-0.5"
                                                 data-testid={`inv-req-slot-${r.id}`}
                                             >
-                                                {t("inventory_extra.req_slot", { slot: slot?.toUpperCase() || "—" })}
+                                                {t("inventory_extra.req_slot", { slot: slotLabel.toUpperCase() })}
                                             </span>
                                             <span
                                                 className="text-muted-foreground italic"
@@ -482,7 +498,7 @@ export default function Inventory() {
                                         </div>
 
                                         {/* Phase 19.2 — P1.2: primary "Equipaggia" CTA opens modal with eligibility preview */}
-                                        {hasAvailable && (
+                                        {hasAvailable && isEquippable && (
                                             <div className="mb-2">
                                                 <Button
                                                     type="button"
@@ -517,16 +533,21 @@ export default function Inventory() {
                                             <div className="flex flex-wrap gap-2">
                                                 {eligible.slice(0, 6).map((a) => {
                                                     const key = `${r.id}-${a.id}`;
+                                                    // First free physical slot for THIS adventurer
+                                                    // (e.g. ring_2 when ring_1 is taken).
+                                                    const targetSlot = physicalSlots.find(
+                                                        (s) => !a.equipment?.[s]?.item
+                                                    );
                                                     return (
                                                         <Button
                                                             key={a.id}
                                                             data-testid={`inv-equip-${r.id}-${a.id}-btn`}
-                                                            disabled={busyKey === key}
+                                                            disabled={busyKey === key || !targetSlot}
                                                             onClick={() =>
-                                                                doEquip(a.id, it.id, slot, key)
+                                                                targetSlot && doEquip(a.id, it.id, targetSlot, key)
                                                             }
                                                             className="h-7 px-2 text-[11px] bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
-                                                            title={`${t("inventory_extra.status_available")} → ${a.name} (${slot})`}
+                                                            title={`${t("inventory_extra.status_available")} → ${a.name} (${slotLabel})`}
                                                         >
                                                             ▶ {a.name}
                                                         </Button>
@@ -541,7 +562,7 @@ export default function Inventory() {
                                         )}
 
                                         {/* No-action explanation */}
-                                        {hasAvailable && eligible.length === 0 && (
+                                        {hasAvailable && isEquippable && eligible.length === 0 && (
                                             <div
                                                 className="text-[11px] text-muted-foreground italic"
                                                 data-testid={`inv-no-eligible-${r.id}`}

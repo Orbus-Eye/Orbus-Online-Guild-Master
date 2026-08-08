@@ -256,7 +256,7 @@ export default function ExpeditionReport() {
                 const isSuccess = data.expedition?.result_summary === "Success";
                 toast.success(
                     isSuccess
-                        ? "Prima spedizione completata! La tua gilda ha guadagnato Prestigio."
+                        ? "Prima spedizione completata! La tua gilda ha guadagnato esperienza."
                         : "Prima spedizione completata! La tua gilda ha imparato dall'esperienza.",
                     { duration: 5000, id: `milestone-first-complete-${guildId}` }
                 );
@@ -267,7 +267,7 @@ export default function ExpeditionReport() {
             const key = `orbus.milestone.first_prestige_gained.${guildId}`;
             if (!localStorage.getItem(key)) {
                 toast.success(
-                    "Hai ottenuto il tuo primo Prestigio di Gilda!",
+                    "La tua Gilda ha guadagnato i primi XP di Livello!",
                     { duration: 5000, id: `milestone-first-prestige-${guildId}` }
                 );
                 try { localStorage.setItem(key, new Date().toISOString()); } catch { /* noop */ }
@@ -411,7 +411,7 @@ export default function ExpeditionReport() {
                                 <span className="text-amber font-semibold">+{fallback_reward.gold} oro</span>
                             </li>
                             <li data-testid="report-fallback-reward-prestige">
-                                <span className="text-amber font-semibold">+{fallback_reward.prestige_xp} Prestigio di Gilda</span>
+                                <span className="text-amber font-semibold">+{fallback_reward.prestige_xp} XP Gilda</span>
                             </li>
                         </ul>
                         {/* ROUND 17.1b P1.4 — CTA "Riprova con team più forte"
@@ -431,7 +431,9 @@ export default function ExpeditionReport() {
                     </section>
                 )}
 
-                {/* ROUND 17.1b P0.2 — PRESTIGIO DI GILDA (prominenza in-report) */}
+                {/* ROUND 17.1b P0.2 — LIVELLO DI GILDA (prominenza in-report).
+                    FASE 1.7 — rinomina player-facing "Prestigio" → "Livello di
+                    Gilda"; i field API guild_prestige_* restano invariati. */}
                 {guild_prestige_delta && guild_prestige_delta.xp_gained > 0 && (
                     <section
                         className="mb-6 border border-amber/40 bg-card rounded-sm p-4"
@@ -439,13 +441,13 @@ export default function ExpeditionReport() {
                     >
                         <div className="flex items-baseline justify-between mb-3">
                             <div className="text-[10px] text-amber tracking-widest">
-                                :: PRESTIGIO DI GILDA
+                                :: LIVELLO DI GILDA
                             </div>
                             <div
                                 className="text-xl font-semibold text-amber"
                                 data-testid="report-prestige-xp-gained"
                             >
-                                +{guild_prestige_delta.xp_gained} XP Prestigio
+                                +{guild_prestige_delta.xp_gained} XP Gilda
                             </div>
                         </div>
                         {guild_prestige_delta.level_up_this_expedition && (
@@ -453,7 +455,7 @@ export default function ExpeditionReport() {
                                 className="mb-3 text-sm text-amber font-semibold"
                                 data-testid="report-prestige-levelup"
                             >
-                                ⭐ Livello Prestigio salito a Lv {guild_prestige_delta.guild_level}!
+                                ⭐ Livello di Gilda salito a Lv {guild_prestige_delta.guild_level}!
                             </div>
                         )}
                         <div className="space-y-2">
@@ -494,7 +496,7 @@ export default function ExpeditionReport() {
                                     className="mt-2 pt-2 border-t border-border/40 text-[11px] text-muted-foreground italic"
                                     data-testid="report-prestige-next-unlock-generic"
                                 >
-                                    Continua a guadagnare Prestigio per sbloccare nuove funzioni della gilda.
+                                    Continua a far salire il Livello di Gilda per sbloccare nuove funzioni.
                                 </div>
                             )}
                         </div>
@@ -672,6 +674,43 @@ export default function ExpeditionReport() {
                                     return (
                                         <div className="text-[11px] text-amber mt-2">
                                             +{e.xp_reward} XP
+                                        </div>
+                                    );
+                                })()}
+                                {/* FASE 1.6 — barra esperienza ATTUALE dell'avventuriero
+                                    (post-spedizione). `current_progress` è null se
+                                    l'avventuriero è stato congedato. */}
+                                {isDone && m.current_progress && (() => {
+                                    const cp = m.current_progress;
+                                    const pct = cp.xp_for_next_level > 0
+                                        ? Math.min(100, Math.round((cp.experience / cp.xp_for_next_level) * 100))
+                                        : 100;
+                                    const leveledUp = cp.level > m.level_snapshot;
+                                    return (
+                                        <div
+                                            className="mt-2 pt-2 border-t border-border/60"
+                                            data-testid={`report-member-xpbar-${m.adventurer_id}`}
+                                        >
+                                            <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+                                                <span>
+                                                    LV {cp.level}
+                                                    {leveledUp && (
+                                                        <span className="text-[#22c55e]" title="Livello guadagnato!"> ▲</span>
+                                                    )}
+                                                </span>
+                                                <span>
+                                                    {cp.xp_for_next_level > 0
+                                                        ? `${cp.experience} / ${cp.xp_for_next_level} XP`
+                                                        : "LIVELLO MASSIMO"}
+                                                </span>
+                                            </div>
+                                            <div className="h-1.5 bg-secondary rounded-sm overflow-hidden">
+                                                <div
+                                                    className="h-full bg-amber"
+                                                    style={{ width: `${pct}%` }}
+                                                    data-testid={`report-member-xpbar-fill-${m.adventurer_id}`}
+                                                />
+                                            </div>
                                         </div>
                                     );
                                 })()}

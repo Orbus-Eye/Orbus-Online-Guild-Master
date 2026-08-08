@@ -64,6 +64,23 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
         });
     }, [row, adventurers]);
 
+    // FASE 1.4 (2026-08-08) — segnalazione PREVENTIVA: chi indossa già
+    // una copia di questo oggetto. Prima il giocatore lo scopriva solo
+    // dopo, a equip fallito o guardando ogni scheda avventuriero.
+    const alreadyEquippedBy = useMemo(() => {
+        if (!row?.item) return [];
+        const out = [];
+        for (const a of adventurers || []) {
+            for (const entry of Object.values(a.equipment || {})) {
+                if (entry?.item?.id === row.item.id) {
+                    out.push(a.name);
+                    break;
+                }
+            }
+        }
+        return out;
+    }, [row, adventurers]);
+
     if (!row?.item) return null;
     const it = row.item;
     const slot = it.slot_type ?? it.item_type;
@@ -163,6 +180,19 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
                                 +{v} {k}
                             </span>
                         ))}
+                    </div>
+                )}
+
+                {/* FASE 1.4 — chi ha già una copia equipaggiata + copie libere */}
+                {alreadyEquippedBy.length > 0 && (
+                    <div
+                        className="mt-3 text-[11px] border border-amber/40 text-amber rounded-sm px-2 py-1.5 inline-block"
+                        data-testid="equip-modal-already-equipped"
+                    >
+                        ⚔ {lang === "it" ? "Già equipaggiato da" : "Already equipped by"}:{" "}
+                        {alreadyEquippedBy.join(", ")}
+                        {" · "}
+                        {lang === "it" ? "copie libere" : "free copies"}: {row.available_quantity ?? 0}
                     </div>
                 )}
 

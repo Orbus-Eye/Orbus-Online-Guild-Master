@@ -12,6 +12,7 @@ from app.expeditions.preview import preview_expedition
 from app.expeditions.preview_schema import ExpeditionPreviewIn
 from app.expeditions.schemas import ExpeditionCreateIn
 from app.expeditions.services import (
+    clear_expedition_reports,
     get_expedition as svc_get_expedition,
     get_last_completed,
     list_expeditions,
@@ -107,6 +108,16 @@ async def list_expeditions_route(current_user: dict = Depends(get_current_user))
     except Exception:  # noqa: BLE001
         pass
     return await list_expeditions(db, guild)
+
+
+@router.post("/reports/clear")
+async def clear_expedition_reports_route(
+    current_user: dict = Depends(get_current_user),
+):
+    """FASE 1.5 — pulsante PULISCI: soft-delete di tutti i report
+    conclusi della gilda. Le spedizioni in corso non vengono toccate."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    return await clear_expedition_reports(db, guild)
 
 
 @router.get("/{expedition_id}")

@@ -86,8 +86,8 @@ export default function Resources() {
                     >
                         {!st.gate_passed ? (
                             <p data-testid="resources-gate-warning" className="text-amber">
-                                🔒 Richiede Prestigio di Gilda Lv {st.min_guild_level}. Sei attualmente Lv {st.current_guild_level}.
-                                Guadagna Prestigio completando spedizioni.
+                                🔒 Richiede Livello di Gilda {st.min_guild_level}. Sei attualmente Lv {st.current_guild_level}.
+                                Guadagna XP Gilda completando spedizioni.
                             </p>
                         ) : (
                             <div className="flex flex-wrap gap-x-6 gap-y-1 text-muted-foreground">
@@ -100,7 +100,7 @@ export default function Resources() {
                                 <span>Durata missione: <strong className="text-foreground">
                                     {Math.round((st.mission_duration_seconds || 780) / 60)} min
                                 </strong></span>
-                                <span>Prestigio: <strong className="text-amber">
+                                <span>XP Gilda: <strong className="text-amber">
                                     +{st.prestige_reward_rare}
                                 </strong>/<strong className="text-amber">+{st.prestige_reward_epic}
                                 </strong> (rara/epica)</span>

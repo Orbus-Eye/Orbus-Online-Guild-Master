@@ -93,6 +93,12 @@ async def list_dungeons_for_guild(db, guild: Optional[dict]) -> list[dict]:
         pub["unlocked"] = unlocked
         pub["unlock_reason"] = reason
         out.append(pub)
+    if guild:
+        # FASE 1.9 (2026-08-08) — visibilità progressiva: sbloccati + solo
+        # il primo bloccato ("prossima sfida"). Reader non autenticato:
+        # catalogo intero (comportamento pubblico/SEO invariato).
+        from app.shared.progressive_visibility import apply_progressive_visibility
+        return apply_progressive_visibility(out)
     return out
 
 

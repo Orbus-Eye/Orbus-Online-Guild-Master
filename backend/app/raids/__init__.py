@@ -371,6 +371,12 @@ async def list_catalog(current_user: dict = Depends(get_current_user)):
         pub["guild_max_team_power_ever"] = peak
         out.append(pub)
 
+    # FASE 1.9 (2026-08-08) — visibilità progressiva (stessa regola dei
+    # dungeon): tutti i raid sbloccati + SOLO il primo bloccato come
+    # teaser "prossima sfida"; i tier successivi restano nascosti.
+    from app.shared.progressive_visibility import apply_progressive_visibility
+    out = apply_progressive_visibility(out)
+
     # Cooldown status
     last_completed = guild.get("last_raid_completed_at")
     cooldown_remaining = 0
@@ -937,11 +943,33 @@ async def list_raids(current_user: dict = Depends(get_current_user)):
     except Exception:
         pass
     await _reconcile_historical_raid_career(guild["id"])
+    # FASE 1.5 — i report puliti (PULISCI) spariscono dalla lista;
+    # `None` matcha sia campo assente (legacy) sia null.
     cursor = db.raids.find(
-        {"guild_id": guild["id"]}, {"_id": 0},
+        {"guild_id": guild["id"], "report_dismissed_at": None}, {"_id": 0},
     ).sort("created_at", -1).limit(30)
     rows = await cursor.to_list(30)
     return {"raids": [raid_public(r) for r in rows]}
+
+
+@router.post("/reports/clear")
+async def clear_raid_reports_route(current_user: dict = Depends(get_current_user)):
+    """FASE 1.5 — pulsante PULISCI per i report raid.
+
+    Soft-delete: imposta `report_dismissed_at` sui raid conclusi della
+    gilda. I raid in corso non vengono toccati; `/raids/last` (replay
+    da Dashboard) ignora deliberatamente il flag."""
+    guild = await user_guild_or_404(db, current_user["id"])
+    now_iso = datetime.now(timezone.utc).isoformat()
+    res = await db.raids.update_many(
+        {
+            "guild_id": guild["id"],
+            "status": {"$ne": "in_progress"},
+            "report_dismissed_at": None,
+        },
+        {"$set": {"report_dismissed_at": now_iso}},
+    )
+    return {"cleared": int(res.modified_count)}
 
 
 # ══════════════════════════════════════════════════════════════════════

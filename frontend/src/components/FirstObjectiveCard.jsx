@@ -62,8 +62,8 @@ export default function FirstObjectiveCard({ guild, advCount }) {
                         ) : (
                             <>
                                 Scegli 3 avventurieri e completa il primo
-                                dungeon per ottenere Prestigio e i primi
-                                equipaggiamenti.
+                                dungeon per far salire la tua Gilda e
+                                ottenere i primi equipaggiamenti.
                             </>
                         )}
                     </p>
@@ -71,7 +71,7 @@ export default function FirstObjectiveCard({ guild, advCount }) {
                         className="text-[11px] text-muted-foreground mb-3"
                         data-testid="first-objective-reward-hint"
                     >
-                        Ricompensa: Prestigio di Gilda + oro + equip iniziale.
+                        Ricompensa: XP Gilda + oro + equip iniziale.
                     </p>
                 </div>
             </div>

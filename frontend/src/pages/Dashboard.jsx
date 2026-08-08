@@ -209,6 +209,13 @@ export default function Dashboard() {
                     che non hanno mai completato una spedizione.
                     Nasconde automaticamente dopo total_expeditions_completed >= 1. */}
                 <FirstObjectiveCard guild={guild} advCount={advCount} />
+                {/* FASE 1.8 — streak + quest giornaliere spostate IN ALTO:
+                    sono il loop quotidiano del giocatore e stavano in fondo
+                    alla pagina, quasi invisibili. */}
+                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
+                    <DailyQuestsCard />
+                    <StreakBadge />
+                </div>
                 {/* ROUND 16.1 Phase 1 — data-driven next actions (replaces hardcoded NextStepsCard) */}
                 <div className="mb-6">
                     <NextActionsCard />
@@ -245,10 +252,6 @@ export default function Dashboard() {
                 </div>
                 <div className="mb-4">
                     <StablesMiniCard />
-                </div>
-                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
-                    <DailyQuestsCard />
-                    <StreakBadge />
                 </div>
                 <div className="mb-6">
                     <WeeklyQuestsCard />

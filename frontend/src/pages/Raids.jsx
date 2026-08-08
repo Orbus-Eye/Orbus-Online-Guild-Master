@@ -1,6 +1,6 @@
 import RaidCountdown from "../components/RaidCountdown";  // ROUND 16.5.1 B.4 UI
 // Builder + report are deferred to Phase 18.1 (out of scope for ROUND 5 MVP).
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -40,6 +40,33 @@ export default function Raids() {
     const [history, setHistory] = useState([]);
     const [cooldown, setCooldown] = useState(0);
     const [loading, setLoading] = useState(true);
+    // FASE 1.5 — PULISCI report raid (conferma a due step, come Spedizioni).
+    const [confirmClear, setConfirmClear] = useState(false);
+    const [clearBusy, setClearBusy] = useState(false);
+    const confirmTimerRef = useRef(null);
+
+    const doClearReports = async () => {
+        if (!confirmClear) {
+            setConfirmClear(true);
+            clearTimeout(confirmTimerRef.current);
+            confirmTimerRef.current = setTimeout(
+                () => setConfirmClear(false), 5000,
+            );
+            return;
+        }
+        clearTimeout(confirmTimerRef.current);
+        setClearBusy(true);
+        try {
+            const { data } = await api.post("/raids/reports/clear");
+            toast.success(`Rapporti raid puliti: ${data.cleared}`);
+            setConfirmClear(false);
+            await load();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setClearBusy(false);
+        }
+    };
 
     async function load() {
         try {
@@ -270,12 +297,40 @@ export default function Raids() {
                         </article>
                         );
                     })}
+                    {/* FASE 1.9 — visibilità progressiva: accenno ai raid
+                        ancora nascosti, senza spoiler. */}
+                    {(catalog?.[0]?.hidden_upcoming_count > 0) && (
+                        <div
+                            data-testid="raids-hidden-hint"
+                            className="text-[11px] text-muted-foreground italic text-center"
+                        >
+                            🔮 Altri {catalog[0].hidden_upcoming_count} raid attendono
+                            oltre l&apos;orizzonte. Supera la prossima sfida per svelarli.
+                        </div>
+                    )}
                 </section>
 
                 {/* History */}
                 {history.length > 0 && (
                     <section className="border-t border-border pt-4" data-testid="raids-history-section">
-                        <h3 className="text-xs tracking-widest text-amber mb-2">:: {t("raids.history_title")}</h3>
+                        <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
+                            <h3 className="text-xs tracking-widest text-amber">:: {t("raids.history_title")}</h3>
+                            {history.some((r) => r.status !== "in_progress") && (
+                                <button
+                                    type="button"
+                                    data-testid="btn-clear-raid-reports"
+                                    onClick={doClearReports}
+                                    disabled={clearBusy}
+                                    className={`text-[10px] tracking-widest border rounded-sm px-2 py-1 ${
+                                        confirmClear
+                                            ? "border-red-500/70 text-red-400 hover:bg-red-500/10"
+                                            : "border-border text-muted-foreground hover:bg-secondary"
+                                    }`}
+                                >
+                                    {clearBusy ? "…" : confirmClear ? "⚠ CONFERMI LA PULIZIA?" : "🧹 PULISCI"}
+                                </button>
+                            )}
+                        </div>
                         <ul className="space-y-1.5">
                             {history.slice(0, 10).map((r) => (
                                 <li key={r.id} className="text-[11px] flex items-center gap-3 flex-wrap" data-testid={`raid-history-${r.id}`}>

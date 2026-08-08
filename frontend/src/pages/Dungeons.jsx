@@ -477,11 +477,11 @@ export default function Dungeons() {
                                         </p>
                                     )}
                                     <div className="mb-4">
-                                        <Stat label="Required team" value={`${d.required_team_size} heroes`} />
-                                        <Stat label="Duration" value={`${d.base_duration_seconds}s`} />
-                                        <Stat label="Recommended power" value={d.recommended_power} />
-                                        <Stat label="Base reward" value={`${d.base_gold_reward}g`} />
-                                        <Stat label="XP per hero" value={d.base_xp_reward} />
+                                        <Stat label="Squadra richiesta" value={`${d.required_team_size} eroi`} />
+                                        <Stat label="Durata" value={`${d.base_duration_seconds}s`} />
+                                        <Stat label="Potere consigliato" value={d.recommended_power} />
+                                        <Stat label="Ricompensa base" value={`${d.base_gold_reward}g`} />
+                                        <Stat label="XP per eroe" value={d.base_xp_reward} />
                                     </div>
                                     {locked ? (
                                         <div
@@ -489,7 +489,13 @@ export default function Dungeons() {
                                             className="text-[11px] text-muted-foreground border border-border/40 bg-secondary/20 px-3 py-2 rounded-sm"
                                             title={d.unlock_reason || ""}
                                         >
-                                            🔒 {d.unlock_reason || "Locked"}
+                                            {/* FASE 1.9 — il solo dungeon bloccato visibile è la "prossima sfida" */}
+                                            {d.is_next_challenge && (
+                                                <div className="text-[10px] text-amber tracking-widest mb-1">
+                                                    ⚔ PROSSIMA SFIDA
+                                                </div>
+                                            )}
+                                            🔒 {d.unlock_reason || "Bloccato"}
                                         </div>
                                     ) : (
                                         <Link to={`/dungeons/${d.slug}/start${squadStartQuery}`}>
@@ -497,13 +503,25 @@ export default function Dungeons() {
                                                 data-testid={`start-dungeon-${d.slug}`}
                                                 className="w-full h-10 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90"
                                             >
-                                                Start Expedition →
+                                                Avvia spedizione →
                                             </Button>
                                         </Link>
                                     )}
                                 </div>
                             );
                         })}
+                    </div>
+                )}
+
+                {/* FASE 1.9 — visibilità progressiva: accenno (senza spoiler)
+                    ai contenuti che si sveleranno con la progressione. */}
+                {!loading && dungeons && (dungeons[0]?.hidden_upcoming_count > 0) && (
+                    <div
+                        data-testid="dungeons-hidden-hint"
+                        className="mt-4 text-[11px] text-muted-foreground italic text-center"
+                    >
+                        🔮 Altri {dungeons[0].hidden_upcoming_count} dungeon attendono
+                        oltre l&apos;orizzonte. Supera la prossima sfida per svelarli.
                     </div>
                 )}
             </main>
