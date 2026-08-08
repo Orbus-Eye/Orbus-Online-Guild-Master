@@ -9,7 +9,7 @@ const TEAM_SIZE = 3;
 
 export default function ResourceGather() {
     const nav = useNavigate();
-    const [mine, setMine] = useState(null);
+    const [_mine, setMine] = useState(null);
     const [adventurers, setAdventurers] = useState([]);
     const [pickedResource, setPickedResource] = useState(null);
     const [team, setTeam] = useState([]);
@@ -55,7 +55,7 @@ export default function ResourceGather() {
         if (!canSubmit) return;
         setBusy(true);
         try {
-            const { data } = await api.post("/resources/gather", {
+            await api.post("/resources/gather", {
                 resource_slug: pickedResource.slug,
                 adventurer_ids: team,
             });

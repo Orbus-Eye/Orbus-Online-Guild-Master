@@ -8,7 +8,6 @@
 // Props derivano da payload endpoint /api/adventurers/{id}/eligible-items.
 // Governance: rendering only, zero policy logic (server-side).
 
-import React from "react";
 import {
     COMPATIBILITY_LABELS_IT,
     COMPATIBILITY_ICONS,

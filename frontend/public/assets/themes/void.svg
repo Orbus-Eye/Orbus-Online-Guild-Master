@@ -5,20 +5,31 @@
       <stop offset="100%" stop-color="#120e1e"/>
     </linearGradient>
     <radialGradient id="glow" cx="50%" cy="46%" r="42%">
-      <stop offset="0%" stop-color="#c77dff" stop-opacity="0.28"/>
+      <stop offset="0%" stop-color="#c77dff" stop-opacity="0.30"/>
       <stop offset="100%" stop-color="#c77dff" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
       <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
       <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
     </linearGradient>
+    <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
   <rect width="800" height="320" fill="url(#sky)"/>
+  <circle cx="358" cy="80" r="1.0" fill="#c77dff" opacity="0.20"/><circle cx="363" cy="102" r="1.0" fill="#dfe6f4" opacity="0.64"/><circle cx="389" cy="52" r="1.0" fill="#dfe6f4" opacity="0.38"/><circle cx="25" cy="122" r="1.9" fill="#c77dff" opacity="0.50"/><circle cx="33" cy="64" r="1.9" fill="#dfe6f4" opacity="0.53"/><circle cx="221" cy="127" r="1.4" fill="#dfe6f4" opacity="0.21"/><circle cx="124" cy="154" r="1.9" fill="#c77dff" opacity="0.61"/><circle cx="561" cy="17" r="1.0" fill="#dfe6f4" opacity="0.26"/><circle cx="632" cy="58" r="1.0" fill="#dfe6f4" opacity="0.43"/><circle cx="130" cy="58" r="1.4" fill="#c77dff" opacity="0.26"/><circle cx="669" cy="143" r="1.9" fill="#dfe6f4" opacity="0.46"/><circle cx="602" cy="14" r="1.4" fill="#dfe6f4" opacity="0.23"/><circle cx="343" cy="114" r="1.9" fill="#c77dff" opacity="0.56"/><circle cx="783" cy="40" r="1.4" fill="#dfe6f4" opacity="0.53"/><circle cx="32" cy="16" r="1.9" fill="#dfe6f4" opacity="0.43"/><circle cx="484" cy="80" r="1.0" fill="#c77dff" opacity="0.56"/><circle cx="441" cy="64" r="1.0" fill="#dfe6f4" opacity="0.25"/><circle cx="449" cy="83" r="1.4" fill="#dfe6f4" opacity="0.44"/><circle cx="409" cy="14" r="1.0" fill="#c77dff" opacity="0.20"/><circle cx="105" cy="19" r="1.0" fill="#dfe6f4" opacity="0.60"/><circle cx="302" cy="141" r="1.0" fill="#dfe6f4" opacity="0.32"/><circle cx="259" cy="75" r="1.0" fill="#c77dff" opacity="0.41"/><circle cx="540" cy="127" r="1.0" fill="#dfe6f4" opacity="0.50"/><circle cx="551" cy="26" r="1.0" fill="#dfe6f4" opacity="0.27"/>
+  <path d="M0 232 L90 176 L170 214 L280 158 L390 210 L500 160 L610 206 L710 168 L800 204 L800 320 L0 320 Z" fill="#94939a" opacity="0.5"/>
   <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="#120e1e" opacity="0.9"/>
   <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
   <rect width="800" height="320" fill="url(#glow)"/>
   <circle cx="400" cy="150" r="104" fill="none" stroke="#c77dff" stroke-width="2" opacity="0.35"/>
   <circle cx="400" cy="150" r="120" fill="none" stroke="#c77dff" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
-  <g fill="none" stroke="#c77dff" stroke-linecap="round"><path d="M400 150 m-60 0 a60 60 0 1 1 120 0" stroke-width="12" opacity="0.5"/><path d="M400 150 m-38 0 a38 38 0 1 0 76 0" stroke-width="10" opacity="0.75"/><path d="M400 150 m-16 0 a16 16 0 1 1 32 0" stroke-width="9"/></g>
+  <g filter="url(#softglow)"><g fill="none" stroke="#c77dff" stroke-linecap="round"><path d="M400 150 m-60 0 a60 60 0 1 1 120 0" stroke-width="12" opacity="0.5"/><path d="M400 150 m-38 0 a38 38 0 1 0 76 0" stroke-width="10" opacity="0.75"/><path d="M400 150 m-16 0 a16 16 0 1 1 32 0" stroke-width="9"/></g></g>
   <rect width="800" height="320" fill="url(#vig)"/>
+  <rect x="8" y="8" width="784" height="304" fill="none" stroke="#c77dff" stroke-width="1.5" opacity="0.35"/>
+  <g stroke="#c77dff" stroke-width="3" opacity="0.6" fill="none">
+    <path d="M8 34 L8 8 L34 8"/><path d="M766 8 L792 8 L792 34"/>
+    <path d="M792 286 L792 312 L766 312"/><path d="M34 312 L8 312 L8 286"/>
+  </g>
 </svg>

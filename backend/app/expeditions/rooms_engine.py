@@ -129,13 +129,57 @@ async def _resolve_current_room(db, exp: dict) -> None:
     )
 
 
-async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool) -> bool:
-    """awaiting_choice → in_room sulla stanza successiva. True se applicato."""
-    rooms = exp.get("rooms_snapshot") or []
+async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool,
+                           route: str | None = None) -> bool:
+    """awaiting_choice → in_room sulla prossima stanza. True se applicato.
+
+    FASE 8C — se la prossima entry è un BIVIO serve la scelta del
+    percorso (`route`); in auto-continue (deadline scaduta) si prende
+    la prima opzione (la via "sicura" per convenzione autoriale).
+    """
+    from app.dungeons.rooms import resolve_fork
+
+    rooms = list(exp.get("rooms_snapshot") or [])
     idx = int(exp.get("current_room_idx", 0))
     next_idx = idx + 1
     if next_idx >= len(rooms):
         return False
+
+    snapshot_update: dict | None = None
+    # Risolvi eventuali bivi consecutivi (le opzioni-scorciatoia possono
+    # teoricamente esporre un altro bivio; in auto si sceglie sempre la
+    # prima opzione).
+    while next_idx < len(rooms) and rooms[next_idx].get("type") == "fork":
+        fork = rooms[next_idx]
+        chosen = route if route else (
+            fork["options"][0]["key"] if auto or not route else None
+        )
+        if not chosen:
+            raise HTTPException(status_code=422, detail={
+                "code": "rooms.route_required",
+                "fork_id": fork.get("fork_id"),
+                "options": [
+                    {"key": o["key"], "label_it": o["label_it"],
+                     "description_it": o.get("description_it", "")}
+                    for o in fork.get("options", [])
+                ],
+                "user_message": (
+                    "Il percorso si biforca: scegli quale via prendere."
+                ),
+            })
+        resolved = resolve_fork(rooms, next_idx, chosen)
+        if resolved is None:
+            raise HTTPException(status_code=422, detail={
+                "code": "rooms.invalid_route",
+                "user_message": "Percorso non valido per questo bivio.",
+            })
+        rooms = resolved
+        snapshot_update = {"rooms_snapshot": rooms}
+        route = None  # la scelta vale per UN bivio
+
+    if next_idx >= len(rooms):
+        return False
+
     now = _now()
     duration = int(rooms[next_idx]["duration_seconds"])
     if rest:
@@ -146,6 +190,7 @@ async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool) -> bool:
             "room_state": "awaiting_choice", "current_room_idx": idx,
         },
         {"$set": {
+            **(snapshot_update or {}),
             "current_room_idx": next_idx,
             "room_state": "in_room",
             "completes_at": (now + timedelta(seconds=duration)).isoformat(),
@@ -163,8 +208,11 @@ VALID_ACTIONS = ("continue", "rest_and_continue", "escape")
 
 
 async def advance_rooms_action(db, guild: dict, expedition_id: str,
-                               action: str) -> dict:
-    """POST /api/expeditions/{id}/advance — scelta dopo una stanza."""
+                               action: str, route: str | None = None) -> dict:
+    """POST /api/expeditions/{id}/advance — scelta dopo una stanza.
+
+    FASE 8C — `route` seleziona l'opzione quando la prossima entry è
+    un bivio (obbligatoria in quel caso per continue/rest)."""
     if action not in VALID_ACTIONS:
         raise HTTPException(status_code=422, detail={
             "code": "rooms.invalid_action",
@@ -194,6 +242,7 @@ async def advance_rooms_action(db, guild: dict, expedition_id: str,
     else:
         applied = await _start_next_room(
             db, exp, rest=(action == "rest_and_continue"), auto=False,
+            route=route,
         )
         if not applied:
             raise HTTPException(status_code=409, detail={

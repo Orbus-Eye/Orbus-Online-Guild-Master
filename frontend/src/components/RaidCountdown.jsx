@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 /** ROUND 16.5.1 B.4 UI — Countdown live per raid in_progress.
  *

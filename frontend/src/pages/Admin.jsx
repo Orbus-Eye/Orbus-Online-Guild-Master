@@ -165,13 +165,13 @@ function DungeonEditor({ form, set }) {
                 <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
-            <NumField label="Difficulty" value={form.difficulty} onChange={(v) => set("difficulty", v)} testid="field-difficulty" min={1} />
-            <NumField label="Team size" value={form.required_team_size} onChange={(v) => set("required_team_size", v)} testid="field-team-size" min={1} />
-            <NumField label="Duration (s)" value={form.base_duration_seconds} onChange={(v) => set("base_duration_seconds", v)} testid="field-duration" min={10} />
-            <NumField label="Rec. power" value={form.recommended_power} onChange={(v) => set("recommended_power", v)} testid="field-recpower" min={0} />
-            <NumField label="Gold reward" value={form.base_gold_reward} onChange={(v) => set("base_gold_reward", v)} testid="field-gold" min={0} />
-            <NumField label="XP reward" value={form.base_xp_reward} onChange={(v) => set("base_xp_reward", v)} testid="field-xp" min={0} />
-            <CheckField label="Active" checked={form.is_active ?? true} onChange={(v) => set("is_active", v)} testid="field-active" />
+            <NumField label="Difficoltà" value={form.difficulty} onChange={(v) => set("difficulty", v)} testid="field-difficulty" min={1} />
+            <NumField label="Dimensione squadra" value={form.required_team_size} onChange={(v) => set("required_team_size", v)} testid="field-team-size" min={1} />
+            <NumField label="Durata (s)" value={form.base_duration_seconds} onChange={(v) => set("base_duration_seconds", v)} testid="field-duration" min={10} />
+            <NumField label="Potere consigliato" value={form.recommended_power} onChange={(v) => set("recommended_power", v)} testid="field-recpower" min={0} />
+            <NumField label="Ricompensa oro" value={form.base_gold_reward} onChange={(v) => set("base_gold_reward", v)} testid="field-gold" min={0} />
+            <NumField label="Ricompensa XP" value={form.base_xp_reward} onChange={(v) => set("base_xp_reward", v)} testid="field-xp" min={0} />
+            <CheckField label="Attivo" checked={form.is_active ?? true} onChange={(v) => set("is_active", v)} testid="field-active" />
         </div>
     );
 }
@@ -206,33 +206,33 @@ function ItemEditor({ form, set }) {
                 options={["Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique"]}
                 testid="field-rarity"
             />
-            <NumField label="Level required" value={form.level_required} onChange={(v) => set("level_required", v)} testid="field-level-req" min={1} />
-            <NumField label="Power score" value={form.power_score} onChange={(v) => set("power_score", v)} testid="field-power" min={0} />
+            <NumField label="Livello richiesto" value={form.level_required} onChange={(v) => set("level_required", v)} testid="field-level-req" min={1} />
+            <NumField label="Punteggio potere" value={form.power_score} onChange={(v) => set("power_score", v)} testid="field-power" min={0} />
             <NumField label="STR bonus" value={form.strength_bonus} onChange={(v) => set("strength_bonus", v)} testid="field-str-bonus" />
             <NumField label="AGI bonus" value={form.agility_bonus} onChange={(v) => set("agility_bonus", v)} testid="field-agi-bonus" />
             <NumField label="INT bonus" value={form.intellect_bonus} onChange={(v) => set("intellect_bonus", v)} testid="field-int-bonus" />
             <NumField label="END bonus" value={form.endurance_bonus} onChange={(v) => set("endurance_bonus", v)} testid="field-end-bonus" />
             <NumField label="FAITH bonus" value={form.faith_bonus} onChange={(v) => set("faith_bonus", v)} testid="field-faith-bonus" />
             <div className="sm:col-span-2 border-t border-border pt-3 mt-2 grid grid-cols-2 gap-2">
-                <CheckField label="Tradeable" checked={form.is_tradeable ?? true} onChange={(v) => set("is_tradeable", v)} testid="field-tradeable" />
-                <CheckField label="Cosmetic" checked={form.is_cosmetic ?? false} onChange={(v) => {
+                <CheckField label="Scambiabile" checked={form.is_tradeable ?? true} onChange={(v) => set("is_tradeable", v)} testid="field-tradeable" />
+                <CheckField label="Cosmetico" checked={form.is_cosmetic ?? false} onChange={(v) => {
                     set("is_cosmetic", v);
                     if (!v) set("can_be_sold_for_real_money", false);
                 }} testid="field-cosmetic" />
-                <CheckField label="Affects combat" checked={form.affects_combat ?? true} onChange={(v) => {
+                <CheckField label="Influenza il combattimento" checked={form.affects_combat ?? true} onChange={(v) => {
                     set("affects_combat", v);
                     if (v) set("can_be_sold_for_real_money", false);
                 }} testid="field-affects-combat" />
-                <CheckField label="Affects economy" checked={form.affects_economy ?? false} onChange={(v) => {
+                <CheckField label="Influenza l'economia" checked={form.affects_economy ?? false} onChange={(v) => {
                     set("affects_economy", v);
                     if (v) set("can_be_sold_for_real_money", false);
                 }} testid="field-affects-economy" />
-                <CheckField label="Affects ranking" checked={form.affects_ranking ?? false} onChange={(v) => {
+                <CheckField label="Influenza le classifiche" checked={form.affects_ranking ?? false} onChange={(v) => {
                     set("affects_ranking", v);
                     if (v) set("can_be_sold_for_real_money", false);
                 }} testid="field-affects-ranking" />
-                <CheckField label="Sellable for gold" checked={form.can_be_sold_for_gold ?? true} onChange={(v) => set("can_be_sold_for_gold", v)} testid="field-sell-gold" />
-                <CheckField label="Real-money sale" checked={realMoney} onChange={(v) => {
+                <CheckField label="Vendibile per oro" checked={form.can_be_sold_for_gold ?? true} onChange={(v) => set("can_be_sold_for_gold", v)} testid="field-sell-gold" />
+                <CheckField label="Vendita a soldi veri" checked={realMoney} onChange={(v) => {
                     set("can_be_sold_for_real_money", v);
                     if (v) {
                         set("is_cosmetic", true);

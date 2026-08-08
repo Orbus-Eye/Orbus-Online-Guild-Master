@@ -16,7 +16,7 @@ export default function R18ResetBanner() {
         try {
             const res = await api.get("/guilds/me/r18-reset-banner");
             setBanner(res.data);
-        } catch (e) {
+        } catch {
             // Silenzioso — best-effort UI
             setBanner(null);
         }
@@ -32,7 +32,7 @@ export default function R18ResetBanner() {
         try {
             await api.post("/guilds/me/r18-reset-banner/dismiss");
             setBanner((b) => (b ? { ...b, show: false, dismissed: true } : b));
-        } catch (e) {
+        } catch {
             // Non bloccare UI su errore dismiss
         } finally {
             setDismissing(false);

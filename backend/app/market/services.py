@@ -263,13 +263,16 @@ async def create_listing(
     if item.get("is_tradeable") is False:
         raise HTTPException(status_code=400, detail="Item is not tradeable")
     if item.get("can_be_sold_for_gold") is False:
-        raise HTTPException(status_code=400, detail="Item cannot be sold for gold")
+        raise HTTPException(
+            status_code=400,
+            detail="Questo oggetto non può essere venduto per oro",
+        )
 
     available, row = await _available_qty(db, guild["id"], item["id"])
     if available < quantity:
         raise HTTPException(
             status_code=400,
-            detail=f"Not enough available quantity (have {available}, want {quantity})",
+            detail=f"Quantità non disponibile (hai {available}, servono {quantity})",
         )
 
     # 🔒 ROUND 4 BoE GUARD (Q8 LOCKED): a refined / enchanted / rerolled
@@ -430,12 +433,16 @@ async def create_listing(
 async def cancel_listing(db, user: dict, guild: dict, listing_id: str) -> dict:
     listing = await db.market_listings.find_one({"id": listing_id}, {"_id": 0})
     if not listing:
-        raise HTTPException(status_code=404, detail="Listing not found")
+        raise HTTPException(status_code=404, detail="Annuncio non trovato")
     if listing["seller_user_id"] != user["id"]:
-        raise HTTPException(status_code=403, detail="Only the seller can cancel this listing")
+        raise HTTPException(
+            status_code=403,
+            detail="Solo il venditore può annullare questo annuncio",
+        )
     if listing["status"] != LISTING_STATUS_ACTIVE:
         raise HTTPException(
-            status_code=400, detail=f"Listing is not active (status={listing['status']})"
+            status_code=400,
+            detail="L'annuncio non è più attivo",
         )
 
     qty = int(listing.get("quantity", 0))
@@ -486,13 +493,17 @@ async def buy_listing(
 ) -> dict:
     listing = await db.market_listings.find_one({"id": listing_id}, {"_id": 0})
     if not listing:
-        raise HTTPException(status_code=404, detail="Listing not found")
+        raise HTTPException(status_code=404, detail="Annuncio non trovato")
     if listing["status"] != LISTING_STATUS_ACTIVE:
         raise HTTPException(
-            status_code=409, detail=f"Listing not available (status={listing['status']})"
+            status_code=409,
+            detail="Annuncio non più disponibile",
         )
     if listing["seller_user_id"] == buyer_user["id"]:
-        raise HTTPException(status_code=403, detail="Cannot buy your own listing")
+        raise HTTPException(
+            status_code=403,
+            detail="Non puoi comprare il tuo stesso annuncio",
+        )
 
     listing_qty = int(listing["quantity"])
     qty = listing_qty if quantity is None else int(quantity)
@@ -575,7 +586,7 @@ async def buy_listing(
     )
     if gold_res.modified_count != 1:
         await _revert_listing()
-        raise HTTPException(status_code=409, detail="Not enough gold")
+        raise HTTPException(status_code=409, detail="Oro insufficiente")
 
     # ─── Step 3: credit seller gold (unconditional) ───
     try:

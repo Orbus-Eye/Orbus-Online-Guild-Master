@@ -64,7 +64,8 @@ function previewPowerRating(teamPower, recommended) {
 function previewSuccessChance(teamPower, recommended) {
     const rating = previewPowerRating(teamPower, recommended);
     if (rating >= 200) return 100;
-    const raw = 100 / (1 + Math.exp(-4.4 * (rating - 100) / 100));
+    // FASE 8A — k allineata al backend (5.5, era 4.4).
+    const raw = 100 / (1 + Math.exp(-5.5 * (rating - 100) / 100));
     return Math.max(5, Math.min(100, Math.round(raw)));
 }
 
@@ -348,12 +349,12 @@ export default function ExpeditionNew() {
         () => previewOverpowerMultiplier(powerRatingLocal),
         [powerRatingLocal],
     );
-    // FASE 2.2 — gate a potere: soglia dal backend (required_team_power)
-    // con fallback al 60% del consigliato.
+    // FASE 2.2/8A — gate a potere: soglia dal backend (required_team_power)
+    // con fallback al 70% del consigliato (rebalance Fase 8A).
     const requiredTeamPower = useMemo(() => {
         if (!dungeon) return 0;
         return dungeon.required_team_power
-            || Math.ceil(0.6 * (dungeon.recommended_power || 0));
+            || Math.ceil(0.7 * (dungeon.recommended_power || 0));
     }, [dungeon]);
     const powerGateBlocked = useMemo(
         () => Boolean(

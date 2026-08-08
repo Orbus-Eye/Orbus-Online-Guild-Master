@@ -5,6 +5,16 @@
       <stop offset="55%" stop-color="#151827"/>
       <stop offset="100%" stop-color="#0b0d16"/>
     </radialGradient>
+    <radialGradient id="hd" cx="42%" cy="32%" r="85%">
+      <stop offset="0%" stop-color="#a8c08c"/>
+      <stop offset="62%" stop-color="#8fae6b"/>
+      <stop offset="100%" stop-color="#677d4d"/>
+    </radialGradient>
+    <linearGradient id="arm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#436526"/>
+      <stop offset="35%" stop-color="#243614"/>
+      <stop offset="100%" stop-color="#10121c"/>
+    </linearGradient>
     <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0b0d16" stop-opacity="0"/>
       <stop offset="100%" stop-color="#0b0d16"/>
@@ -12,10 +22,16 @@
   </defs>
   <rect width="256" height="256" fill="url(#bg)"/>
   <g style="filter: hue-rotate(3deg)">
-    
-    <path d="M64 210 Q128 152 192 210 L192 256 L64 256 Z" fill="#8fae6b" opacity="0.92"/>
-    <circle cx="128" cy="104" r="42" fill="#8fae6b"/>
+    <path d="M86 96 Q88 54 128 52 Q168 54 170 96 Q166 72 128 70 Q90 72 86 96 Z" fill="#2b4119"/>
+    <rect x="114" y="134" width="28" height="34" fill="#677d4d"/>
+    <path d="M64 208 Q128 154 192 208 L192 256 L64 256 Z" fill="url(#arm)"/>
+    <path d="M70 212 Q128 162 186 212" fill="none" stroke="#436526" stroke-width="4" opacity="0.9"/>
+    <path d="M120 226 L128 214 L136 226 L128 240 Z" fill="#436526" opacity="0.9"/>
+    <circle cx="128" cy="104" r="42" fill="url(#hd)"/>
+    <ellipse cx="112" cy="102" rx="6" ry="4.5" fill="#10121c"/><ellipse cx="144" cy="102" rx="6" ry="4.5" fill="#10121c"/><circle cx="114" cy="100" r="1.6" fill="#e8ecf4" opacity="0.85"/><circle cx="146" cy="100" r="1.6" fill="#e8ecf4" opacity="0.85"/><path d="M104 92 Q112 88 120 92" stroke="#677d4d" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M136 92 Q144 88 152 92" stroke="#677d4d" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M119 124 Q128 129 137 124" stroke="#677d4d" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
     <path d="M112 136 L106 118 L120 130 Z" fill="#f1faee"/><path d="M144 136 L150 118 L136 130 Z" fill="#f1faee"/>
   </g>
+  <rect x="0" y="212" width="256" height="44" fill="url(#veil)" opacity="0.35"/>
   <circle cx="128" cy="128" r="121" fill="none" stroke="#8fae6b" stroke-width="5" opacity="0.55"/>
+  <circle cx="128" cy="128" r="113" fill="none" stroke="#4f772d" stroke-width="1.5" stroke-dasharray="3 9" opacity="0.4"/>
 </svg>

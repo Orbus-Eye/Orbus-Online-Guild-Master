@@ -5,20 +5,31 @@
       <stop offset="100%" stop-color="#121c11"/>
     </linearGradient>
     <radialGradient id="glow" cx="50%" cy="46%" r="42%">
-      <stop offset="0%" stop-color="#95d5b2" stop-opacity="0.28"/>
+      <stop offset="0%" stop-color="#95d5b2" stop-opacity="0.30"/>
       <stop offset="100%" stop-color="#95d5b2" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
       <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
       <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
     </linearGradient>
+    <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
   <rect width="800" height="320" fill="url(#sky)"/>
+  <circle cx="349" cy="18" r="1.9" fill="#95d5b2" opacity="0.26"/><circle cx="657" cy="37" r="1.9" fill="#dfe6f4" opacity="0.50"/><circle cx="317" cy="148" r="1.4" fill="#dfe6f4" opacity="0.43"/><circle cx="163" cy="127" r="1.0" fill="#95d5b2" opacity="0.61"/><circle cx="465" cy="154" r="1.0" fill="#dfe6f4" opacity="0.46"/><circle cx="509" cy="48" r="1.0" fill="#dfe6f4" opacity="0.47"/><circle cx="655" cy="147" r="1.9" fill="#95d5b2" opacity="0.34"/><circle cx="615" cy="149" r="1.9" fill="#dfe6f4" opacity="0.30"/><circle cx="335" cy="63" r="1.9" fill="#dfe6f4" opacity="0.53"/><circle cx="46" cy="34" r="1.9" fill="#95d5b2" opacity="0.48"/><circle cx="474" cy="115" r="1.4" fill="#dfe6f4" opacity="0.57"/><circle cx="533" cy="45" r="1.4" fill="#dfe6f4" opacity="0.50"/><circle cx="622" cy="148" r="1.0" fill="#95d5b2" opacity="0.28"/><circle cx="762" cy="80" r="1.4" fill="#dfe6f4" opacity="0.37"/><circle cx="512" cy="112" r="1.9" fill="#dfe6f4" opacity="0.43"/><circle cx="88" cy="65" r="1.9" fill="#95d5b2" opacity="0.36"/><circle cx="534" cy="75" r="1.9" fill="#dfe6f4" opacity="0.62"/><circle cx="293" cy="99" r="1.0" fill="#dfe6f4" opacity="0.41"/><circle cx="421" cy="112" r="1.9" fill="#95d5b2" opacity="0.42"/><circle cx="138" cy="28" r="1.0" fill="#dfe6f4" opacity="0.44"/><circle cx="254" cy="157" r="1.0" fill="#dfe6f4" opacity="0.40"/><circle cx="505" cy="59" r="1.4" fill="#95d5b2" opacity="0.58"/><circle cx="492" cy="79" r="1.0" fill="#dfe6f4" opacity="0.26"/><circle cx="209" cy="62" r="1.9" fill="#dfe6f4" opacity="0.48"/>
+  <path d="M0 232 L90 176 L170 214 L280 158 L390 210 L500 160 L610 206 L710 168 L800 204 L800 320 L0 320 Z" fill="#949994" opacity="0.5"/>
   <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="#121c11" opacity="0.9"/>
   <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
   <rect width="800" height="320" fill="url(#glow)"/>
   <circle cx="400" cy="150" r="104" fill="none" stroke="#95d5b2" stroke-width="2" opacity="0.35"/>
   <circle cx="400" cy="150" r="120" fill="none" stroke="#95d5b2" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
-  <rect x="390" y="150" width="20" height="80" fill="#95d5b2"/><path d="M400 54 Q470 84 466 150 Q430 128 410 138 Q448 160 430 190 Q408 168 400 168 Q392 168 370 190 Q352 160 390 138 Q370 128 334 150 Q330 84 400 54 Z" fill="#95d5b2"/><path d="M380 230 Q360 244 340 240 M420 230 Q440 244 460 240" stroke="#95d5b2" stroke-width="8" fill="none"/>
+  <g filter="url(#softglow)"><rect x="390" y="150" width="20" height="80" fill="#95d5b2"/><path d="M400 54 Q470 84 466 150 Q430 128 410 138 Q448 160 430 190 Q408 168 400 168 Q392 168 370 190 Q352 160 390 138 Q370 128 334 150 Q330 84 400 54 Z" fill="#95d5b2"/><path d="M380 230 Q360 244 340 240 M420 230 Q440 244 460 240" stroke="#95d5b2" stroke-width="8" fill="none"/></g>
   <rect width="800" height="320" fill="url(#vig)"/>
+  <rect x="8" y="8" width="784" height="304" fill="none" stroke="#95d5b2" stroke-width="1.5" opacity="0.35"/>
+  <g stroke="#95d5b2" stroke-width="3" opacity="0.6" fill="none">
+    <path d="M8 34 L8 8 L34 8"/><path d="M766 8 L792 8 L792 34"/>
+    <path d="M792 286 L792 312 L766 312"/><path d="M34 312 L8 312 L8 286"/>
+  </g>
 </svg>

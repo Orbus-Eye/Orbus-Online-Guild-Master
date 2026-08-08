@@ -467,6 +467,10 @@ async def find_stuck_raids_for_guild(db, guild_id: str) -> list[dict]:
             "guild_id": guild_id,
             "status": "in_progress",
             "ends_at": {"$lte": now_iso},
+            # FASE 8D — i raid A FASI avanzano fase per fase tramite il
+            # motore dedicato (phases + /complete route): la recovery
+            # legacy li salta per non risolverli come single-block.
+            "mode": {"$ne": "phases"},
         },
         {"_id": 0, "id": 1},
     )

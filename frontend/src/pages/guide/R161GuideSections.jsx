@@ -50,7 +50,7 @@ export default function R161GuideSections() {
 
             <SectionBlock
                 id="team-composition"
-                title="COME SCEGLIERE UN TEAM DUNGEON · Building a dungeon team"
+                title="COME SCEGLIERE UNA SQUADRA DA DUNGEON"
             >
                 <p>
                     Quando lanci una spedizione, l&apos;<strong>Anteprima narrata</strong>

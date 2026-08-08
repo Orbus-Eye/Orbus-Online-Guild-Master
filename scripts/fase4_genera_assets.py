@@ -1,16 +1,20 @@
-"""FASE 4 (2026-08-08) — Generatore di asset placeholder fantasy (SVG).
+"""FASE 4 + 8F (2026-08-08) — Generatore di asset fantasy (SVG), v2.
 
 Genera in `frontend/public/assets/`:
   * avatars/{race_slug}_{male|female}.svg  (50 razze × 2) + default.svg
-    — busto stilizzato con tratti distintivi per gruppo lore (orecchie
-    elfiche, corna, zanne, barba, aureola, ...) e variante di genere.
-  * themes/{theme}.svg — banner per famiglia visiva dei dungeon.
+    — ritratto stilizzato: volto con occhi/sopracciglia/bocca, collo,
+    spallacci corazzati con finitura e emblema, capigliatura per
+    genere, luci/ombre, tratti distintivi per gruppo lore (orecchie
+    elfiche, corna, zanne, aureola, ...).
+  * themes/{theme}.svg — banner per famiglia visiva dei dungeon
+    (cielo stellato, tre quinte di paesaggio, glifo con bagliore,
+    cornice ornamentale).
   * raids/{slug}.svg — banner per i 4 raid.
   * banners/{section}.svg — banner delle sezioni principali.
 
-Sono PLACEHOLDER puliti e coerenti: quando arriverà l'art definitiva
-basterà sostituire i file mantenendo gli stessi nomi (nessun cambio di
-codice). Manifest: memory/fase4_asset_manifest.md
+v2 (FASE 8F): resta art procedurale — presentabile, ma quando arriverà
+l'art definitiva basterà sostituire i file mantenendo gli stessi nomi
+(nessun cambio di codice). Manifest: memory/fase4_asset_manifest.md
 
 Esecuzione (da root repo):  python scripts/fase4_genera_assets.py
 Idempotente: sovrascrive sempre gli stessi file.
@@ -118,18 +122,58 @@ def _hue_shift(slug: str) -> int:
     return (h % 25) - 12
 
 
+def _shade(hex_color: str, factor: float) -> str:
+    """Schiarisce (factor>1, verso il bianco) o scurisce (factor<1) un
+    colore #rrggbb. Usato per luci/ombre coerenti con la palette."""
+    r = int(hex_color[1:3], 16)
+    g = int(hex_color[3:5], 16)
+    b = int(hex_color[5:7], 16)
+    if factor >= 1.0:
+        t = factor - 1.0
+        r, g, b = (round(c + (255 - c) * t) for c in (r, g, b))
+    else:
+        r, g, b = (round(c * factor) for c in (r, g, b))
+    return f"#{min(r, 255):02x}{min(g, 255):02x}{min(b, 255):02x}"
+
+
 def avatar_svg(slug: str, gender: str) -> str:
     group = RACES[slug]
     base, accent = GROUP_COLORS[group]
     shift = _hue_shift(slug)
     mark = GROUP_MARKS.get(group, "").format(base=base, accent=accent)
+    skin_hi = _shade(base, 1.22)
+    skin_dark = _shade(base, 0.72)
+    armor = _shade(accent, 0.45)
+    armor_hi = _shade(accent, 0.85)
+    hair_col = _shade(accent, 0.55)
     if gender == "female":
-        hair = (f'<path d="M84 96 Q78 170 92 196 L104 176 Q92 140 96 100 Z" fill="{accent}" opacity="0.65"/>'
-                f'<path d="M172 96 Q178 170 164 196 L152 176 Q164 140 160 100 Z" fill="{accent}" opacity="0.65"/>')
-        shoulders = '<path d="M78 214 Q128 158 178 214 L178 256 L78 256 Z"'
+        # Chioma lunga: massa dietro le spalle + ciocche frontali.
+        hair = (
+            f'<path d="M80 92 Q70 170 88 204 L106 186 Q92 142 96 98 Z" fill="{hair_col}"/>'
+            f'<path d="M176 92 Q186 170 168 204 L150 186 Q164 142 160 98 Z" fill="{hair_col}"/>'
+            f'<path d="M84 98 Q84 52 128 50 Q172 52 172 98 Q168 66 128 64 Q88 66 84 98 Z" fill="{hair_col}"/>'
+        )
+        shoulders = '<path d="M78 212 Q128 160 178 212 L178 256 L78 256 Z"'
+        trim = (f'<path d="M82 216 Q128 168 174 216" fill="none" stroke="{armor_hi}" '
+                f'stroke-width="4" opacity="0.9"/>')
     else:
-        hair = ""
-        shoulders = '<path d="M64 210 Q128 152 192 210 L192 256 L64 256 Z"'
+        # Taglio corto: calotta aderente.
+        hair = (f'<path d="M86 96 Q88 54 128 52 Q168 54 170 96 Q166 72 128 70 '
+                f'Q90 72 86 96 Z" fill="{hair_col}"/>')
+        shoulders = '<path d="M64 208 Q128 154 192 208 L192 256 L64 256 Z"'
+        trim = (f'<path d="M70 212 Q128 162 186 212" fill="none" stroke="{armor_hi}" '
+                f'stroke-width="4" opacity="0.9"/>')
+    # Volto: occhi + sopracciglia + bocca (i marks di gruppo possono
+    # sovrapporsi: es. le occhiaie dei non-morti coprono gli occhi).
+    face = (
+        f'<ellipse cx="112" cy="102" rx="6" ry="4.5" fill="#10121c"/>'
+        f'<ellipse cx="144" cy="102" rx="6" ry="4.5" fill="#10121c"/>'
+        f'<circle cx="114" cy="100" r="1.6" fill="#e8ecf4" opacity="0.85"/>'
+        f'<circle cx="146" cy="100" r="1.6" fill="#e8ecf4" opacity="0.85"/>'
+        f'<path d="M104 92 Q112 88 120 92" stroke="{skin_dark}" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        f'<path d="M136 92 Q144 88 152 92" stroke="{skin_dark}" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        f'<path d="M119 124 Q128 129 137 124" stroke="{skin_dark}" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>'
+    )
     ring = accent if gender == "female" else base
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="{slug} {gender}">
   <defs>
@@ -138,6 +182,16 @@ def avatar_svg(slug: str, gender: str) -> str:
       <stop offset="55%" stop-color="#151827"/>
       <stop offset="100%" stop-color="#0b0d16"/>
     </radialGradient>
+    <radialGradient id="hd" cx="42%" cy="32%" r="85%">
+      <stop offset="0%" stop-color="{skin_hi}"/>
+      <stop offset="62%" stop-color="{base}"/>
+      <stop offset="100%" stop-color="{skin_dark}"/>
+    </radialGradient>
+    <linearGradient id="arm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="{armor_hi}"/>
+      <stop offset="35%" stop-color="{armor}"/>
+      <stop offset="100%" stop-color="#10121c"/>
+    </linearGradient>
     <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0b0d16" stop-opacity="0"/>
       <stop offset="100%" stop-color="#0b0d16"/>
@@ -146,11 +200,17 @@ def avatar_svg(slug: str, gender: str) -> str:
   <rect width="256" height="256" fill="url(#bg)"/>
   <g style="filter: hue-rotate({shift}deg)">
     {hair}
-    {shoulders} fill="{base}" opacity="0.92"/>
-    <circle cx="128" cy="104" r="42" fill="{base}"/>
+    <rect x="114" y="134" width="28" height="34" fill="{skin_dark}"/>
+    {shoulders} fill="url(#arm)"/>
+    {trim}
+    <path d="M120 226 L128 214 L136 226 L128 240 Z" fill="{armor_hi}" opacity="0.9"/>
+    <circle cx="128" cy="104" r="42" fill="url(#hd)"/>
+    {face}
     {mark}
   </g>
+  <rect x="0" y="212" width="256" height="44" fill="url(#veil)" opacity="0.35"/>
   <circle cx="128" cy="128" r="121" fill="none" stroke="{ring}" stroke-width="5" opacity="0.55"/>
+  <circle cx="128" cy="128" r="113" fill="none" stroke="{accent}" stroke-width="1.5" stroke-dasharray="3 9" opacity="0.4"/>
 </svg>
 '''
 
@@ -227,9 +287,24 @@ SECTION_THEMES: dict[str, tuple[str, str, str, str]] = {
 }
 
 
+def _stars(label: str, accent: str) -> str:
+    """Campo stellare deterministico (dal label) nella fascia alta."""
+    h = hashlib.sha256(label.encode()).digest()
+    out = []
+    for i in range(24):
+        x = 16 + (h[i % 32] * 3 + i * 41) % 768
+        y = 10 + (h[(i * 7 + 3) % 32] + i * 11) % 148
+        r = (1.0, 1.4, 1.9)[h[(i * 5 + 1) % 32] % 3]
+        op = 0.20 + (h[(i * 11 + 5) % 32] % 45) / 100
+        fill = accent if i % 3 == 0 else "#dfe6f4"
+        out.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{fill}" opacity="{op:.2f}"/>')
+    return "".join(out)
+
+
 def banner_svg(sky: str, ground: str, accent: str, glyph_key: str,
                label: str) -> str:
     glyph = GLYPHS[glyph_key].replace("{a}", accent)
+    far = _shade(ground, 1.55)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{label}">
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
@@ -237,22 +312,33 @@ def banner_svg(sky: str, ground: str, accent: str, glyph_key: str,
       <stop offset="100%" stop-color="{ground}"/>
     </linearGradient>
     <radialGradient id="glow" cx="50%" cy="46%" r="42%">
-      <stop offset="0%" stop-color="{accent}" stop-opacity="0.28"/>
+      <stop offset="0%" stop-color="{accent}" stop-opacity="0.30"/>
       <stop offset="100%" stop-color="{accent}" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
       <stop offset="55%" stop-color="#0b0d16" stop-opacity="0"/>
       <stop offset="100%" stop-color="#0b0d16" stop-opacity="0.9"/>
     </linearGradient>
+    <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
   <rect width="800" height="320" fill="url(#sky)"/>
+  {_stars(label, accent)}
+  <path d="M0 232 L90 176 L170 214 L280 158 L390 210 L500 160 L610 206 L710 168 L800 204 L800 320 L0 320 Z" fill="{far}" opacity="0.5"/>
   <path d="M0 250 L120 190 L210 240 L330 170 L470 240 L580 180 L690 236 L800 200 L800 320 L0 320 Z" fill="{ground}" opacity="0.9"/>
   <path d="M0 280 L160 236 L320 276 L520 230 L680 272 L800 244 L800 320 L0 320 Z" fill="#0b0d16" opacity="0.75"/>
   <rect width="800" height="320" fill="url(#glow)"/>
   <circle cx="400" cy="150" r="104" fill="none" stroke="{accent}" stroke-width="2" opacity="0.35"/>
   <circle cx="400" cy="150" r="120" fill="none" stroke="{accent}" stroke-width="1" stroke-dasharray="4 10" opacity="0.3"/>
-  {glyph}
+  <g filter="url(#softglow)">{glyph}</g>
   <rect width="800" height="320" fill="url(#vig)"/>
+  <rect x="8" y="8" width="784" height="304" fill="none" stroke="{accent}" stroke-width="1.5" opacity="0.35"/>
+  <g stroke="{accent}" stroke-width="3" opacity="0.6" fill="none">
+    <path d="M8 34 L8 8 L34 8"/><path d="M766 8 L792 8 L792 34"/>
+    <path d="M792 286 L792 312 L766 312"/><path d="M34 312 L8 312 L8 286"/>
+  </g>
 </svg>
 '''
 
