@@ -174,7 +174,10 @@ class RaidStartIn(BaseModel):
 async def _resolve_raid_dungeon(slug: str) -> dict:
     rd = await db.raid_dungeons.find_one({"slug": slug, "is_active": True}, {"_id": 0})
     if not rd:
-        raise HTTPException(status_code=404, detail="raid_dungeon_not_found")
+        raise HTTPException(status_code=404, detail={
+            "code": "raid_dungeon_not_found",
+            "user_message": "Raid non trovato nel catalogo",
+        })
     return apply_raid_contract(rd)
 
 
@@ -787,7 +790,10 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     except Exception:
         ends_at = _utc_now() - timedelta(seconds=1)
     if _utc_now() < ends_at:
-        raise HTTPException(status_code=422, detail="raids.not_ended_yet")
+        raise HTTPException(status_code=422, detail={
+            "code": "raids.not_ended_yet",
+            "user_message": "Il raid non è ancora concluso: aspetta il timer",
+        })
 
     claimed = await db.raids.find_one_and_update(
         {
@@ -1248,7 +1254,10 @@ async def get_last_raid(current_user: dict = Depends(get_current_user)):
         sort=[("completed_at", -1), ("created_at", -1)],
     )
     if not raid:
-        raise HTTPException(status_code=404, detail="no_completed_raid")
+        raise HTTPException(status_code=404, detail={
+            "code": "no_completed_raid",
+            "user_message": "Nessun raid completato finora",
+        })
     parts = await db.raid_participants.find(
         {"raid_id": raid["id"]}, {"_id": 0},
     ).to_list(40)

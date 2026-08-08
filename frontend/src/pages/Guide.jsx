@@ -11,6 +11,7 @@ import RoleMarker from "../components/RoleMarker";
 import { SECTIONS, SectionBlock } from "./guide/_shared";
 import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSections";
 import ClassesAndStatsSection from "./guide/ClassesAndStatsSection";
+import Fase8GuideSections from "./guide/Fase8GuideSections";
 import R15GuideSections from "./guide/R15GuideSections";
 import R16GuideSections from "./guide/R16GuideSections";
 import R161GuideSections from "./guide/R161GuideSections";
@@ -61,6 +62,11 @@ export default function Guide() {
                     </div>
                 </nav>
 
+                {/* FASE 8E — le meccaniche dell'era attuale, in cima:
+                    PWR/Rating, Overpower, stanze e bivi, raid a fasi,
+                    reagenti/professioni, consumabili, recupero XP. */}
+                <Fase8GuideSections />
+
                 <SectionBlock id="intro" title="Introduzione">
                     <p>
                         <strong>Orbus Online: Guild Master</strong> è un MMO testuale di gestione gilde.
@@ -69,7 +75,7 @@ export default function Guide() {
                         decisioni e conseguenze.
                     </p>
                     <p className="mt-2">
-                        L&apos;obiettivo è scalare la classifica pubblica raggiungendo il <strong>peak team power</strong>
+                        L&apos;obiettivo è scalare la classifica pubblica raggiungendo il <strong>potere di picco</strong>
                         più alto possibile e completando dungeon di tier crescente fino al raid.
                     </p>
                     <p className="mt-3 text-[12px] text-muted-foreground italic">
@@ -90,7 +96,7 @@ export default function Guide() {
                         <li><strong>Livello</strong>: aumenta completando spedizioni e raid.</li>
                         <li><strong>Reputazione</strong>: sblocca dungeon e contenuti di end-game.</li>
                         <li><strong>Oro</strong>: usato per reclutare, comprare al mercato, e forgiare.</li>
-                        <li><strong>Peak Team Power</strong>: il valore massimo di power mai raggiunto da una tua squadra (5p). È il criterio principale di ranking.</li>
+                        <li><strong>Potere di picco</strong>: il valore massimo di potere mai raggiunto da una tua squadra. È il criterio principale di ranking.</li>
                     </ul>
                 </SectionBlock>
 
@@ -310,9 +316,9 @@ export default function Guide() {
                         <li><strong>7 avventurieri</strong>: spedizioni avanzate fino al livello 70.</li>
                     </ul>
                     <p className="mt-2">
-                        Ogni dungeon ha un <strong>tier (T1→T4)</strong> e un <strong>recommended power</strong>.
-                        Più ti avvicini o superi il recommended, maggiore è la success chance. Il report finale
-                        ti dice esito, loot, XP e gold guadagnati.
+                        Ogni dungeon ha un <strong>tier (T1→T4)</strong> e un <strong>potere consigliato</strong>.
+                        Più ti avvicini o lo superi, maggiore è la probabilità di successo (vedi la sezione
+                        ★ Potere e probabilità in cima). Il rapporto finale ti dice esito, bottino, XP e oro.
                     </p>
                     <p className="mt-2">
                         <strong>Filtri (Phase 19.3)</strong>: sopra la lista dungeon trovi un pannello filtri.
@@ -329,13 +335,13 @@ export default function Guide() {
                         Su mobile, tocca <em>FILTRI ▾</em> per aprire il pannello.
                     </p>
                     <p className="mt-3">
-                        <strong>Livelli minimi (Round 11.3)</strong>: alcuni dungeon richiedono che
-                        <em> tutti gli avventurieri del team</em> abbiano almeno un livello minimo
-                        (es. Lv 3 per T2, Lv 5 per T3/T4, fino a Lv 8 per i contenuti Void/Undead).
-                        Nella schermata di lancio spedizione, gli avventurieri sotto-soglia appaiono
-                        <em> grigiati</em> con badge <code>Lv min: X</code> e non possono essere
-                        selezionati. Il backend riapplica il controllo al dispatch — non c&apos;è modo
-                        di aggirarlo lato client.
+                        <strong>Accesso ai dungeon (aggiornato)</strong>: il livello indicato
+                        sui dungeon è una <em>fascia consigliata</em>, non un blocco. Ciò che
+                        conta è il <strong>potere totale della squadra</strong>: per entrare
+                        serve almeno il 70% del potere consigliato del dungeon. Gli
+                        avventurieri sotto fascia restano selezionabili (badge ambra
+                        informativo) — un eroe di livello basso con equipaggiamento
+                        eccezionale può valere quanto uno di livello alto.
                     </p>
                     <p>
                         La classifica stagionale è organizzata in <strong>12 categorie</strong>
@@ -390,11 +396,12 @@ export default function Guide() {
                         non rompono mai i party in costruzione.
                     </p>
                     <p className="mt-3">
-                        <strong>Livelli minimi raid (Round 11.3)</strong>: ogni raid ha un
-                        <code> min_adventurer_level</code> (es. Lv 8-14 per i raid Void/Undead).
-                        Gli avventurieri sotto-soglia appaiono grigiati nel pool con badge
-                        <code> Lv min: X</code>; il bottone <em>Avvia raid</em> resta bloccato
-                        finché ogni assegnato rispetta la soglia.
+                        <strong>Accesso ai raid (aggiornato)</strong>: il livello degli
+                        avventurieri è solo una <em>fascia consigliata</em> — l&apos;accesso
+                        dipende dal <strong>potere combinato</strong> delle squadre, che deve
+                        raggiungere il 75% del potere consigliato del raid. Sotto soglia il
+                        server blocca l&apos;avvio con un messaggio chiaro; gli avventurieri
+                        sotto fascia mostrano un badge informativo ambra ma restano selezionabili.
                     </p>
                     <p className="mt-3">
                         <strong>Lore Void / Non-Morti (Round 11.3)</strong>: nel catalogo trovi
@@ -412,7 +419,7 @@ export default function Guide() {
                         criterio, più la tua posizione (<em>my_entry</em>) se rientri nella top 500.
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
-                        <li><strong>Peak Power</strong>: massimo team power mai raggiunto da una squadra della gilda.</li>
+                        <li><strong>Picco di Potenza</strong>: massimo potere mai raggiunto da una squadra della gilda.</li>
                         <li><strong>Raid Score</strong>: somma dei punteggi dei raid completati con successo.</li>
                         <li><strong>Dungeon Clears</strong>: numero totale di spedizioni dungeon vittoriose.</li>
                         <li><strong>Raid Clears</strong>: numero di raid completati con successo.</li>
@@ -887,9 +894,9 @@ export default function Guide() {
                     <h3 className="mt-4 mb-2 text-amber tracking-wider text-[12px]">Garanzie fairness</h3>
                     <ul className="list-disc pl-5 space-y-1">
                         <li>NO P2W: solo oro, materiali comuni/uncommon, reputazione.</li>
-                        <li>NO power gear nei reward: nessun oggetto con bonus combattimento.</li>
-                        <li>NO premium / NO XP gilda diretta: la progressione resta nelle spedizioni.</li>
-                        <li>Reward bilanciati: daily 30% / weekly 80% / milestone-T3 200% di un dungeon clear standard.</li>
+                        <li>Nessun oggetto da combattimento nelle ricompense: zero bonus di potere.</li>
+                        <li>Niente premium, niente XP di gilda diretta: la progressione resta nelle spedizioni.</li>
+                        <li>Ricompense bilanciate: giornaliere 30% / settimanali 80% / traguardi T3 200% di un dungeon standard.</li>
                     </ul>
                 </SectionBlock>
 
@@ -996,7 +1003,7 @@ export default function Guide() {
                             richiede 40 avventurieri di livello 80 ben equipaggiati.
                         </li>
                         <li>
-                            <strong>Controlla il max team power</strong> ogni volta che equipaggi nuovo gear:
+                            <strong>Controlla il potere di picco</strong> ogni volta che equipaggi nuovi oggetti:
                             è la metrica che ti porta in classifica.
                         </li>
                         <li>
@@ -1103,7 +1110,7 @@ export default function Guide() {
                         <li><strong>Arena — Vittorie</strong>: vittorie ranked totali.</li>
                         <li><strong>Arena — Difese vinte</strong>: respinte riuscite quando vieni attaccato.</li>
                         <li><strong>Arena — Win rate</strong>: percentuale W/(W+L+D) con almeno 10 ranked.</li>
-                        <li><strong>Picco di Potenza (stagionale)</strong>: massimo team_power raggiunto.</li>
+                        <li><strong>Picco di Potenza (stagionale)</strong>: massimo potere di squadra raggiunto.</li>
                         <li><strong>Reputazione (stagionale)</strong>: reputazione gilda snapshot.</li>
                     </ul>
                     <p className="mt-2 text-[11px] text-muted-foreground italic">

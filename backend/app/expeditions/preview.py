@@ -78,20 +78,21 @@ async def preview_expedition(
     Returns the canonical shape documented in the public spec
     (Phase 14.3-c Fase 2). Never writes to DB.
     """
+    # FASE 8E — messaggi player-facing in italiano.
     if not dungeon_id:
-        raise HTTPException(status_code=422, detail="dungeon_id is required")
+        raise HTTPException(status_code=422, detail="Indica il dungeon")
     if not adventurer_ids:
-        raise HTTPException(status_code=422, detail="adventurer_ids is required")
+        raise HTTPException(status_code=422, detail="Seleziona gli avventurieri")
 
     dungeon = await db.dungeons.find_one({"id": dungeon_id}, {"_id": 0})
     if not dungeon:
-        raise HTTPException(status_code=404, detail="Dungeon not found")
+        raise HTTPException(status_code=404, detail="Dungeon non trovato")
 
     required = int(dungeon.get("required_team_size", 3))
     if len(adventurer_ids) != required:
         raise HTTPException(
             status_code=422,
-            detail=f"This dungeon requires exactly {required} adventurers",
+            detail=f"Questo dungeon richiede esattamente {required} avventurieri",
         )
     if len(set(adventurer_ids)) != len(adventurer_ids):
         raise HTTPException(status_code=422, detail="Duplicate adventurer ids")
@@ -104,7 +105,7 @@ async def preview_expedition(
     if len(advs) != len(adventurer_ids):
         raise HTTPException(
             status_code=403,
-            detail="One or more adventurers do not belong to your guild",
+            detail="Uno o più avventurieri non appartengono alla tua gilda",
         )
 
     # FASE 2.2 — il level-gate è stato sostituito dal gate a potere del

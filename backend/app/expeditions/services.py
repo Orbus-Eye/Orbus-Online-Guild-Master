@@ -1070,19 +1070,19 @@ async def _check_replay_eligibility(
         )
     )
     if not dungeon or not dungeon.get("is_active", True):
-        return False, "Dungeon is no longer available", [], None
+        return False, "Il dungeon non è più disponibile", [], None
     unlocked, unlock_reason = await _evaluate_dungeon_gate(db, dungeon, guild)
     if not unlocked:
-        return False, f"Dungeon locked: {unlock_reason}", [], dungeon
+        return False, f"Dungeon bloccato: {unlock_reason}", [], dungeon
 
     members = await db.expedition_members.find(
         {"expedition_id": last_exp["id"]},
         {"_id": 0, "adventurer_id": 1, "name_snapshot": 1},
     ).to_list(50)
     if not members:
-        return False, "Original expedition has no member records", [], dungeon
+        return False, "La spedizione originale non ha membri registrati", [], dungeon
     if len(members) != int(dungeon.get("required_team_size", len(members))):
-        return False, "Team size mismatch with dungeon requirements", [], dungeon
+        return False, "La squadra non corrisponde più ai requisiti del dungeon", [], dungeon
 
     adv_ids = [m["adventurer_id"] for m in members]
 
@@ -1093,14 +1093,14 @@ async def _check_replay_eligibility(
         if not adv:
             return (
                 False,
-                f"Adventurer {m['name_snapshot']} is no longer in your guild",
+                f"L'avventuriero {m['name_snapshot']} non è più nella tua gilda",
                 adv_ids,
                 dungeon,
             )
         if not adv.get("is_available", True):
             return (
                 False,
-                f"Adventurer {adv['name']} is currently in another expedition",
+                f"L'avventuriero {adv['name']} è impegnato in un'altra spedizione",
                 adv_ids,
                 dungeon,
             )
@@ -1129,23 +1129,27 @@ async def _dispatch_expedition(
         )
     )
     if not dungeon:
-        raise HTTPException(status_code=404, detail="Dungeon not found")
+        # FASE 8E — messaggi player-facing in italiano.
+        raise HTTPException(status_code=404, detail="Dungeon non trovato")
 
     # Phase 7: enforce soft progression gate
     unlocked, unlock_reason = await _evaluate_dungeon_gate(db, dungeon, guild)
     if not unlocked:
         raise HTTPException(
-            status_code=403, detail=f"Dungeon locked: {unlock_reason}"
+            status_code=403, detail=f"Dungeon bloccato: {unlock_reason}"
         )
 
     # Validate team composition
     ids = adventurer_ids
     if len(set(ids)) != len(ids):
-        raise HTTPException(status_code=400, detail="Duplicate adventurer in team")
+        raise HTTPException(
+            status_code=400,
+            detail="Avventuriero duplicato nella squadra",
+        )
     if len(ids) != dungeon["required_team_size"]:
         raise HTTPException(
             status_code=400,
-            detail=f"This dungeon requires exactly {dungeon['required_team_size']} adventurers",
+            detail=f"Questo dungeon richiede esattamente {dungeon['required_team_size']} avventurieri",
         )
 
     members_live = []
@@ -1157,7 +1161,7 @@ async def _dispatch_expedition(
         if not adv:
             raise HTTPException(
                 status_code=404,
-                detail=f"Adventurer {aid} not found in your guild",
+                detail="Avventuriero non trovato nella tua gilda",
             )
         if adv.get("is_retired") is True:
             retired_ids.append(aid)
@@ -1165,7 +1169,7 @@ async def _dispatch_expedition(
         if not adv.get("is_available", True):
             raise HTTPException(
                 status_code=400,
-                detail=f"Adventurer {adv['name']} is not available",
+                detail=f"L'avventuriero {adv['name']} non è disponibile",
             )
         members_live.append(adv)
     # ROUND 6B.3 Wave 1.5 — explicit retired check (423 with structured detail)
@@ -1601,7 +1605,10 @@ async def clear_expedition_reports(db, guild: dict) -> dict:
 async def get_last_completed(db, guild: dict) -> dict:
     last_exp = await _find_last_completed_expedition(db, guild["id"])
     if not last_exp:
-        raise HTTPException(status_code=404, detail="No completed expedition yet")
+        raise HTTPException(
+            status_code=404,
+            detail="Nessuna spedizione completata finora",
+        )
     can_replay, reason, adv_ids, _dungeon = await _check_replay_eligibility(
         db, guild, last_exp
     )
@@ -1616,14 +1623,20 @@ async def get_last_completed(db, guild: dict) -> dict:
 async def replay_last(db, guild: dict) -> dict:
     last_exp = await _find_last_completed_expedition(db, guild["id"])
     if not last_exp:
-        raise HTTPException(status_code=404, detail="No completed expedition yet")
+        raise HTTPException(
+            status_code=404,
+            detail="Nessuna spedizione completata finora",
+        )
     can_replay, reason, adv_ids, _dungeon = await _check_replay_eligibility(
         db, guild, last_exp
     )
     if not can_replay:
         # Locked dungeon → 403; any other replay blocker → 400.
-        status = 403 if reason and reason.startswith("Dungeon locked") else 400
-        raise HTTPException(status_code=status, detail=reason or "Cannot replay")
+        status = 403 if reason and reason.startswith("Dungeon bloccato") else 400
+        raise HTTPException(
+            status_code=status,
+            detail=reason or "Impossibile ripetere la spedizione",
+        )
     return await _dispatch_expedition(
         db,
         guild=guild,
@@ -1640,7 +1653,7 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
     )
     if not exp:
         # Don't leak 403 vs 404
-        raise HTTPException(status_code=404, detail="Expedition not found")
+        raise HTTPException(status_code=404, detail="Spedizione non trovata")
 
     members = await db.expedition_members.find(
         {"expedition_id": expedition_id}, {"_id": 0}

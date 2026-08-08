@@ -54,7 +54,10 @@ async def user_guild_or_404(db, user_id: str) -> dict:
     """Return the guild owned by `user_id` or raise HTTP 404."""
     guild = await db.guilds.find_one({"owner_user_id": user_id}, {"_id": 0})
     if not guild:
-        raise HTTPException(status_code=404, detail="No guild found for this user")
+        raise HTTPException(
+            status_code=404,
+            detail="Nessuna gilda trovata per questo utente",
+        )
     return guild
 
 
@@ -68,7 +71,7 @@ async def create_guild_for_user(
     """
     existing = await db.guilds.find_one({"owner_user_id": user_id})
     if existing:
-        raise HTTPException(status_code=400, detail="You already own a guild")
+        raise HTTPException(status_code=400, detail="Possiedi già una gilda")
 
     now = utc_now()
     # ROUND 11.1 B6 — propagate `is_test_artifact` from the owner. Guilds
@@ -105,7 +108,7 @@ async def create_guild_for_user(
     try:
         await db.guilds.insert_one(guild_doc)
     except DuplicateKeyError:
-        raise HTTPException(status_code=400, detail="You already own a guild")
+        raise HTTPException(status_code=400, detail="Possiedi già una gilda")
     # ROUND 15 Phase 3 — trigger achievement progress (best-effort).
     try:
         from app.achievements.engine import evaluate_achievements

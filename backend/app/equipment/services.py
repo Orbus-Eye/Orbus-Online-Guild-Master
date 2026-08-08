@@ -392,7 +392,7 @@ async def unequip_item_service(
     if not adv.get("is_available", True):
         raise HTTPException(
             status_code=400,
-            detail="Cannot modify equipment of adventurer currently in expedition",
+            detail="Non puoi modificare l'equipaggiamento di un avventuriero in spedizione",
         )
 
     slot = normalize_equipment_slot(slot)

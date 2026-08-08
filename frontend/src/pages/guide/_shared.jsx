@@ -11,6 +11,14 @@
 // module without circular imports.
 
 export const SECTIONS = [
+    // FASE 8E — meccaniche dell'era attuale (in cima alla Guida).
+    { id: "pwr-e-probabilita", label: "★ Potere e probabilità" },
+    { id: "overpower", label: "★ Overpower" },
+    { id: "dungeon-a-stanze", label: "★ Dungeon a stanze" },
+    { id: "raid-a-fasi", label: "★ Raid a fasi" },
+    { id: "reagenti-e-professioni", label: "★ Reagenti e professioni" },
+    { id: "consumabili-e-pietra", label: "★ Consumabili" },
+    { id: "catchup-e-avatar", label: "★ Recupero XP e ritratti" },
     { id: "intro", label: "1. Introduzione" },
     { id: "gilda", label: "2. Gilda e progressione" },
     { id: "territorio", label: "3. Territorio di Gilda" },

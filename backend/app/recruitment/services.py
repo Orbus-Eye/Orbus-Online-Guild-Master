@@ -342,7 +342,7 @@ async def refresh_candidates_for_guild(db, guild: dict) -> dict:
     if cost > gold:
         raise HTTPException(
             status_code=402,
-            detail=f"Insufficient gold (need {cost}, have {gold})",
+            detail=f"Oro insufficiente (servono {cost}, ne hai {gold})",
         )
 
     # Build atomic CAS match — gate on expected current state so concurrent
@@ -384,7 +384,7 @@ async def refresh_candidates_for_guild(db, guild: dict) -> dict:
         # Concurrent refresh or gold race
         raise HTTPException(
             status_code=409,
-            detail="Refresh state changed concurrently, please retry",
+            detail="Le offerte sono cambiate nel frattempo: riprova",
         )
 
     candidates = await _roll_and_persist_offer(db, updated_guild)

@@ -281,8 +281,14 @@ async def claim_quest(db, guild_id: str, quest_id: str) -> dict:
         cur = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "daily_quest_state": 1})
         s = (cur or {}).get("daily_quest_state", {}).get("quests", {}).get(quest_id, {})
         if bool(s.get("claimed", False)):
-            raise HTTPException(status_code=409, detail="Quest already claimed today")
-        raise HTTPException(status_code=422, detail="Quest not completed yet")
+            raise HTTPException(
+                status_code=409,
+                detail="Missione già riscossa oggi",
+            )
+        raise HTTPException(
+            status_code=422,
+            detail="Missione non ancora completata",
+        )
 
     # Phase 15: update streak on FIRST claim of the day (idempotent).
     streak = await _bump_streak_on_first_claim_today(db, guild_id)
@@ -448,7 +454,7 @@ async def claim_streak_reward(db, guild_id: str, tier: int) -> dict:
             detail=f"Streak tier {tier} not currently unlocked",
         )
     if not streak["can_claim_reward"]:
-        raise HTTPException(status_code=409, detail="Reward already claimed for this cycle")
+        raise HTTPException(status_code=409, detail="Ricompensa già riscossa per questo ciclo")
 
     reward = STREAK_REWARDS[tier]
     # Atomic CAS: only flip if rewards_claimed[tier] is still < current (or absent).
@@ -469,7 +475,7 @@ async def claim_streak_reward(db, guild_id: str, tier: int) -> dict:
         return_document=ReturnDocument.AFTER,
     )
     if not upd:
-        raise HTTPException(status_code=409, detail="Reward already claimed for this cycle")
+        raise HTTPException(status_code=409, detail="Ricompensa già riscossa per questo ciclo")
 
     # Grant materials (best-effort, never reverts gold on inv failure since
     # materials are negligible and the operation is non-economic-critical)
@@ -667,8 +673,14 @@ async def claim_weekly_quest(db, guild_id: str, slug: str) -> dict:
         cur = await db.guilds.find_one({"id": guild_id}, {"_id": 0, "weekly_quest_state": 1})
         s = (cur or {}).get("weekly_quest_state", {}).get("quests", {}).get(slug, {})
         if bool(s.get("claimed", False)):
-            raise HTTPException(status_code=409, detail="Weekly quest already claimed")
-        raise HTTPException(status_code=422, detail="Weekly quest not completed yet")
+            raise HTTPException(
+                status_code=409,
+                detail="Missione settimanale già riscossa",
+            )
+        raise HTTPException(
+            status_code=422,
+            detail="Missione settimanale non ancora completata",
+        )
 
     # Grant materials
     for mat in defn["reward_materials"]:
