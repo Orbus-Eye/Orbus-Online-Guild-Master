@@ -36,12 +36,13 @@ def test_rating_recommended_zero_non_esplode():
 # ── Curva di successo ────────────────────────────────────────────────────
 
 def test_curva_punti_di_riferimento():
-    """I punti documentati in fase2_design_bilanciamento.md §3."""
+    """Punti FASE 8A (k=5.5): la curva punisce di più l'underpower.
+    Vedi memory/fase8_dungeon_difficulty_rebalance.md."""
     assert compute_success_chance(100, 100) == 50   # parità
-    assert compute_success_chance(125, 100) == 75
-    assert compute_success_chance(150, 100) == 90
-    assert compute_success_chance(75, 100) == 25
-    assert compute_success_chance(50, 100) == 10
+    assert compute_success_chance(125, 100) == 80
+    assert compute_success_chance(150, 100) == 94
+    assert compute_success_chance(75, 100) == 20
+    assert compute_success_chance(50, 100) == 6
 
 
 def test_niente_piu_cap_95():
@@ -97,26 +98,27 @@ def test_overpower_sotto_parita_neutro():
 
 # ── Gate a potere ────────────────────────────────────────────────────────
 
-def test_soglia_gate_60_percento():
-    assert required_team_power_for({"recommended_power": 100}) == 60
-    assert required_team_power_for({"recommended_power": 333}) == 200
-    assert required_team_power_for({"recommended_power": 15}) == 9
+def test_soglia_gate_70_percento():
+    """FASE 8A — gate alzato dal 60% al 70% del potere consigliato."""
+    assert required_team_power_for({"recommended_power": 100}) == 70
+    assert required_team_power_for({"recommended_power": 333}) == 234
+    assert required_team_power_for({"recommended_power": 15}) == 11
 
 
 def test_gate_blocca_sotto_soglia():
     dungeon = {"recommended_power": 100, "slug": "test-dungeon"}
     with pytest.raises(HTTPException) as exc:
-        enforce_min_team_power(59, dungeon, source="expedition.dispatch")
+        enforce_min_team_power(69, dungeon, source="expedition.dispatch")
     detail = exc.value.detail
     assert exc.value.status_code == 423
     assert detail["code"] == "team.power_too_low"
-    assert detail["required_team_power"] == 60
+    assert detail["required_team_power"] == 70
     assert "user_message" in detail
 
 
 def test_gate_passa_alla_soglia_esatta():
     dungeon = {"recommended_power": 100, "slug": "test-dungeon"}
-    enforce_min_team_power(60, dungeon, source="expedition.dispatch")
+    enforce_min_team_power(70, dungeon, source="expedition.dispatch")
     enforce_min_team_power(150, dungeon, source="expedition.preview")
 
 

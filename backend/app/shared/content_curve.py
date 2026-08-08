@@ -32,39 +32,44 @@ ADVENTURER_LEVEL_BANDS: tuple[tuple[int, int, str], ...] = (
 )
 
 
+# FASE 8A (2026-08-08) — REBALANCE DIFFICOLTÀ. I recommended_power sono
+# derivati dal modello formale `app/shared/power_model.py`: parità (=50%
+# di successo) con la squadra MEDIA di pari livello. La vecchia curva
+# cresceva molto più piano del potere reale (10 slot di equipaggiamento)
+# e permetteva a squadre Lv15 di farmare contenuto Lv40.
+# Eccezioni documentate:
+#   * training-yard / sewer-nest: valori tutorial autorati (il modello
+#     assume slot equip che una gilda day-1 non ha ancora);
+#   * druid-grove / shadow-crypts: alzati al vincolo minimo ≥1.5× la
+#     vecchia curva (il modello puro dava ×1.4).
+# Tabelle e simulazioni: memory/fase8_dungeon_difficulty_rebalance.md
 DUNGEON_CURVE: dict[str, ContentCurve] = {
-    "training-yard": ContentCurve(1, 15, 12, "tutorial"),
-    # FASE 2.3 (2026-08-08) — la linea principale non è più "tutta da 3":
-    # base 5, con i 3 come incursioni rapide e i 7 come grandi imprese.
-    # I recommended_power dei dungeon passati a size maggiore scalano
-    # ×(size_nuova/size_vecchia) così la difficoltà PER MEMBRO resta
-    # identica. Tabella e razionale: memory/fase2_design_bilanciamento.md §6.
+    "training-yard": ContentCurve(1, 90, 12, "tutorial"),
+    # FASE 2.3 — base 5, incursioni rapide da 3, grandi imprese da 7.
     # Team size autoritativa per slug: DUNGEON_TEAM_SIZE_TARGETS (sotto).
-    "sewer-nest": ContentCurve(1, 35, 25, "tutorial"),
-    "goblin-warrens": ContentCurve(5, 117, 50, "tutorial"),
-    "bandit-hideout": ContentCurve(5, 75, 55, "tutorial"),
-    "druid-grove": ContentCurve(10, 267, 150, "tutorial"),
-    "shadow-crypts": ContentCurve(10, 283, 160, "tutorial"),
-    "cursed-mines": ContentCurve(15, 333, 220, "early"),
-    "sunken-library": ContentCurve(15, 215, 240, "early"),
-    "lich-sanctum": ContentCurve(20, 408, 320, "early"),
-    "dragons-hoard": ContentCurve(25, 642, 420, "early"),
-    "storm-spire": ContentCurve(25, 483, 450, "early"),
+    "sewer-nest": ContentCurve(1, 110, 25, "tutorial"),
+    "goblin-warrens": ContentCurve(5, 315, 50, "tutorial"),
+    "bandit-hideout": ContentCurve(5, 200, 55, "tutorial"),
+    "druid-grove": ContentCurve(10, 400, 150, "tutorial"),
+    "shadow-crypts": ContentCurve(10, 425, 160, "tutorial"),
+    "cursed-mines": ContentCurve(15, 535, 220, "early"),
+    "sunken-library": ContentCurve(15, 330, 240, "early"),
+    "lich-sanctum": ContentCurve(20, 670, 320, "early"),
+    "dragons-hoard": ContentCurve(25, 1075, 420, "early"),
+    "storm-spire": ContentCurve(25, 775, 450, "early"),
     # Five-adventurer line.
-    "wolf-den-5p": ContentCurve(10, 260, 150, "tutorial"),
-    "frost-cave-5p": ContentCurve(15, 310, 225, "early"),
-    "salt-marsh-5p": ContentCurve(20, 360, 300, "early"),
-    "iron-foundry-5p": ContentCurve(25, 410, 400, "early"),
-    "silent-monastery-5p": ContentCurve(30, 460, 500, "early"),
-    "pirate-fleet-5p": ContentCurve(35, 510, 600, "mid"),
-    "obsidian-arena-5p": ContentCurve(40, 560, 700, "mid"),
-    "clockwork-vault-5p": ContentCurve(45, 610, 800, "mid"),
-    "voidspire-5p": ContentCurve(50, 660, 900, "mid"),
-    "infernal-pit-5p": ContentCurve(60, 760, 1100, "high"),
-    "celestial-citadel-5p": ContentCurve(65, 810, 1250, "high"),
-    # Seven-adventurer endgame dungeon. The former 860 target belonged to the
-    # legacy five-member composition and understated current team power.
-    "world-tree-roots-5p": ContentCurve(70, 1600, 1400, "high"),
+    "wolf-den-5p": ContentCurve(10, 390, 150, "tutorial"),
+    "frost-cave-5p": ContentCurve(15, 535, 225, "early"),
+    "salt-marsh-5p": ContentCurve(20, 670, 300, "early"),
+    "iron-foundry-5p": ContentCurve(25, 775, 400, "early"),
+    "silent-monastery-5p": ContentCurve(30, 850, 500, "early"),
+    "pirate-fleet-5p": ContentCurve(35, 1100, 600, "mid"),
+    "obsidian-arena-5p": ContentCurve(40, 1350, 700, "mid"),
+    "clockwork-vault-5p": ContentCurve(45, 1425, 800, "mid"),
+    "voidspire-5p": ContentCurve(50, 1570, 900, "mid"),
+    "infernal-pit-5p": ContentCurve(60, 2240, 1100, "high"),
+    "celestial-citadel-5p": ContentCurve(65, 2315, 1250, "high"),
+    "world-tree-roots-5p": ContentCurve(70, 3335, 1400, "high"),
 }
 
 # Every rarity/source pair declared by the runtime dungeon loot tables. The
@@ -122,11 +127,14 @@ DUNGEON_TEAM_SIZE_TARGETS: dict[str, int] = {
 }
 
 
+# FASE 8A/8B — curva raid dal modello (squadra media × severità raid
+# +15%): i raid sono più severi del contenuto pari livello e l'accesso
+# diventa PWR-driven (vedi raids power gate, FASE 8B).
 RAID_CURVE: dict[str, ContentCurve] = {
-    "moonfall-vigil": ContentCurve(40, 1500, 900, "mid"),
-    "broken-bastion-siege": ContentCurve(60, 2400, 1500, "high"),
-    "necropolis-bells": ContentCurve(70, 3500, 2200, "high"),
-    "dragon-vault": ContentCurve(80, 8000, 3200, "endgame"),
+    "moonfall-vigil": ContentCurve(40, 3100, 900, "mid"),
+    "broken-bastion-siege": ContentCurve(60, 7700, 1500, "high"),
+    "necropolis-bells": ContentCurve(70, 10925, 2200, "high"),
+    "dragon-vault": ContentCurve(80, 24100, 3200, "endgame"),
 }
 
 

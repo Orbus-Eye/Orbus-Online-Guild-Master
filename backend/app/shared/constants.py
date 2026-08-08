@@ -30,14 +30,19 @@ SUCCESS_CHANCE_MAX = 100
 # FASE 2 — Rating di Potenza & Overpower.
 # rating = round(100 * team_power / recommended_power); l'eccedenza oltre
 # 100 diventa bonus sui drop a gradini di OVERPOWER_STEP_PCT.
-SUCCESS_CURVE_K = 4.4                  # pendenza della logistica
+# FASE 8A (2026-08-08) — rebalance difficoltà: pendenza aumentata
+# (4.4 → 5.5) così l'underpower punisce di più e il sovra-potere serve
+# davvero. Punti nuovi: R75→20%, R100→50%, R125→80%, R150→94%.
+# Vedi memory/fase8_dungeon_difficulty_rebalance.md.
+SUCCESS_CURVE_K = 5.5                  # pendenza della logistica
 GUARANTEED_SUCCESS_RATING = 200        # potenza doppia → vittoria garantita
 OVERPOWER_STEP_PCT = 25                # ogni +25 rating oltre 100...
 OVERPOWER_BONUS_PER_STEP = 0.5         # ...+50% drop
 OVERPOWER_LOOT_MULTIPLIER_CAP = 3.0    # tetto economico (rating ≥ 200)
-# Gate d'ingresso dungeon: potere squadra ≥ 60% del consigliato
-# (equivale a ~14% di probabilità: run azzardata permessa, assurda no).
-POWER_GATE_RATIO = 0.60
+# FASE 8A — gate d'ingresso dungeon alzato al 70% del consigliato
+# (era 60%): con la curva k=5.5 il 70% equivale a ~16% di chance.
+# La run azzardata resta possibile, il farm assurdo no.
+POWER_GATE_RATIO = 0.70
 
 # Loot
 LOOT_DROP_CHANCE_LEGACY = 0.50      # Goblin Warrens default if loot table missing
