@@ -75,6 +75,183 @@ const Cell = ({ label, value, testid, accent = false }) => (
     </div>
 );
 
+// FASE 5 (2026-08-08) — Run a stanze: timeline + scelte del giocatore.
+const ROOM_KIND_IT = {
+    guard: "Guardie",
+    ambient: "Insidia",
+    treasure: "Tesoro",
+    boss: "Boss",
+    unknown: "Sconosciuta",
+};
+
+const ROOMS_OUTCOME_IT = {
+    completed: { label: "DUNGEON COMPLETATO", cls: "text-[#22c55e] border-[#22c55e]/50" },
+    escaped: { label: "FUGA — metà bottino in salvo", cls: "text-amber border-amber/50" },
+    failed: { label: "RITIRATA FORZATA", cls: "text-destructive border-destructive/50" },
+};
+
+function RoomsSection({ e, onRefresh }) {
+    const [busy, setBusy] = useState(false);
+    const [confirmEscape, setConfirmEscape] = useState(false);
+    const inProgress = e.status === "in_progress";
+    const awaiting = inProgress && e.room_state === "awaiting_choice";
+    const resultByIdx = {};
+    for (const r of e.room_results || []) resultByIdx[r.idx] = r;
+
+    const doAction = async (action) => {
+        if (action === "escape" && !confirmEscape) {
+            setConfirmEscape(true);
+            setTimeout(() => setConfirmEscape(false), 5000);
+            return;
+        }
+        setBusy(true);
+        try {
+            await api.post(`/expeditions/${e.id}/advance`, { action });
+            setConfirmEscape(false);
+            await onRefresh();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const outcome = !inProgress ? ROOMS_OUTCOME_IT[e.rooms_outcome] : null;
+
+    return (
+        <section className="mb-6 border border-border bg-card rounded-sm p-4 card-fantasy" data-testid="rooms-section">
+            <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                <div className="text-[10px] text-amber tracking-widest">
+                    :: AVANZATA NEL DUNGEON ({(e.room_results || []).filter((r) => r.success).length}/{(e.rooms || []).length} stanze)
+                </div>
+                {outcome && (
+                    <span
+                        data-testid="rooms-outcome-badge"
+                        className={`text-[10px] tracking-widest border px-2 py-0.5 rounded-sm ${outcome.cls}`}
+                    >
+                        {outcome.label}
+                    </span>
+                )}
+            </div>
+
+            {/* Timeline stanze */}
+            <ol className="space-y-2 mb-4" data-testid="rooms-timeline">
+                {(e.rooms || []).map((room) => {
+                    const res = resultByIdx[room.idx];
+                    const isCurrent = inProgress && room.idx === e.current_room_idx;
+                    const icon = res
+                        ? (res.success ? "✓" : "✗")
+                        : isCurrent
+                            ? (e.room_state === "in_room" ? "⚔" : "⏸")
+                            : room.name_it === "???" ? "▒" : "·";
+                    const iconCls = res
+                        ? (res.success ? "text-[#22c55e]" : "text-destructive")
+                        : isCurrent ? "text-amber" : "text-muted-foreground";
+                    return (
+                        <li
+                            key={room.idx}
+                            data-testid={`room-row-${room.idx}`}
+                            className={`flex items-start gap-3 text-sm border-l-2 pl-3 ${
+                                isCurrent ? "border-amber" : res ? "border-border" : "border-border/40"
+                            }`}
+                        >
+                            <span className={`font-mono ${iconCls}`}>{icon}</span>
+                            <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <span className={`font-fantasy ${room.name_it === "???" ? "text-muted-foreground" : ""}`}>
+                                        {room.name_it}
+                                    </span>
+                                    <span className="text-[10px] tracking-widest text-muted-foreground border border-border/60 px-1.5 py-0.5 rounded-sm">
+                                        {ROOM_KIND_IT[room.kind] || room.kind}
+                                    </span>
+                                    {room.chance != null && !res && (
+                                        <span className="text-[10px] text-muted-foreground">
+                                            {room.chance}%
+                                        </span>
+                                    )}
+                                    {res && (
+                                        <span className="text-[10px] text-muted-foreground">
+                                            tiro {res.roll}/{res.chance}
+                                            {res.success && res.gold > 0 ? ` · +${res.gold}g` : ""}
+                                            {res.success && res.loot_count > 0 ? ` · ${res.loot_count} oggetti` : ""}
+                                        </span>
+                                    )}
+                                </div>
+                                {room.narrative_it && (
+                                    <p className="text-[11px] text-muted-foreground italic mt-0.5">
+                                        {room.narrative_it}
+                                    </p>
+                                )}
+                                {isCurrent && e.room_state === "in_room" && (
+                                    <p className="text-[11px] text-amber mt-0.5" data-testid="room-countdown">
+                                        Il gruppo è nella stanza… (~{Math.max(0, Math.round((e.seconds_remaining || 0) / 60))} min)
+                                    </p>
+                                )}
+                            </div>
+                        </li>
+                    );
+                })}
+            </ol>
+
+            {/* Bottino in spalla (solo durante la run) */}
+            {inProgress && (
+                <div className="text-[11px] text-muted-foreground mb-3" data-testid="rooms-carried">
+                    🎒 In spalla: <span className="text-amber">{e.carried_gold}g</span>
+                    {" · "}<span className="text-amber">{e.carried_xp} XP</span> (maturata, si incassa all'uscita)
+                    {" · "}{e.carried_loot_count} oggetti
+                </div>
+            )}
+
+            {/* Pannello scelte */}
+            {awaiting && (
+                <div className="border-t border-border/60 pt-3" data-testid="rooms-choice-panel">
+                    <div className="text-[10px] text-amber tracking-widest mb-2">
+                        :: STANZA SUPERATA — COSA ORDINI?
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            data-testid="rooms-action-continue"
+                            disabled={busy}
+                            onClick={() => doAction("continue")}
+                            className="text-[11px] tracking-widest bg-amber text-black px-3 py-1.5 rounded-sm hover:bg-amber/80 disabled:opacity-50"
+                        >
+                            ▶ PROSEGUI
+                        </button>
+                        <button
+                            type="button"
+                            data-testid="rooms-action-rest"
+                            disabled={busy}
+                            onClick={() => doAction("rest_and_continue")}
+                            title="+8% alla prossima stanza, ma il gruppo impiega il 25% di tempo in più"
+                            className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 disabled:opacity-50"
+                        >
+                            ⛺ RIPOSA E PROSEGUI (+8%)
+                        </button>
+                        <button
+                            type="button"
+                            data-testid="rooms-action-escape"
+                            disabled={busy}
+                            onClick={() => doAction("escape")}
+                            title="Porti in salvo il 50% di oro e oggetti (scelti a caso); l'XP dell'impresa incompiuta va perduta"
+                            className={`text-[11px] tracking-widest border px-3 py-1.5 rounded-sm disabled:opacity-50 ${
+                                confirmEscape
+                                    ? "border-red-500/70 text-red-400 hover:bg-red-500/10"
+                                    : "border-border text-muted-foreground hover:bg-secondary"
+                            }`}
+                        >
+                            {confirmEscape ? "⚠ CONFERMI LA FUGA?" : "🏃 FUGGI"}
+                        </button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                        Se non decidi entro 24 ore, il gruppo proseguirà da solo.
+                    </p>
+                </div>
+            )}
+        </section>
+    );
+}
+
 // ROUND 16.0 Phase 4 — Threats & Counters (Void/Undead only, IT only)
 const THREAT_LABEL_IT = {
     boss: "Boss",
@@ -390,6 +567,11 @@ export default function ExpeditionReport() {
                         accent
                     />
                 </section>
+
+                {/* FASE 5 — run a stanze: timeline, bottino in spalla, scelte */}
+                {e.mode === "rooms" && (
+                    <RoomsSection e={e} onRefresh={fetchOne} />
+                )}
 
                 {/* FASE 2.1 — banner Overpower: eccedenza di potenza → più bottino */}
                 {e.power_rating > 100 && (

@@ -483,6 +483,16 @@ export default function Dungeons() {
                                     <div className="flex flex-wrap gap-1 mb-2">
                                         {d.is_new && <NewBadge slug={d.slug} />}
                                         {d.is_void_undead && <VoidUndeadBadge slug={d.slug} />}
+                                        {/* FASE 5 — pilota del sistema a stanze */}
+                                        {d.rooms_mode && (
+                                            <span
+                                                data-testid={`dungeon-rooms-badge-${d.slug}`}
+                                                className="inline-block text-[10px] tracking-widest border border-violet-400/60 text-violet-300 px-1.5 py-0.5 rounded-sm"
+                                                title="Dungeon a stanze: avanzi sala per sala, con riposo, scelte e fuga"
+                                            >
+                                                ⚑ A STANZE
+                                            </span>
+                                        )}
                                         {/* FASE 2.2 — gate reale = potere squadra; livello solo consigliato */}
                                         {d.required_team_power > 0 && (
                                             <PowerGateBadge slug={d.slug} power={d.required_team_power} />

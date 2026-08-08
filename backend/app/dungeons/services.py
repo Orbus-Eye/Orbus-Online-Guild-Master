@@ -11,6 +11,7 @@ from app.dungeons.encounters import apply_dungeon_encounter
 from app.expeditions.services import _evaluate_dungeon_gate
 from app.expeditions.level_gate import legacy_min_level_for_dungeon
 from app.expeditions.power_gate import required_team_power_for as _required_team_power
+from app.dungeons.rooms import rooms_mode_for_dungeon as _rooms_mode
 
 
 def dungeon_public(d: dict) -> dict:
@@ -53,6 +54,8 @@ def dungeon_public(d: dict) -> dict:
         "min_adventurer_level": legacy_min_level_for_dungeon(d),
         # FASE 2.2 — soglia di potere squadra per entrare (gate reale).
         "required_team_power": _required_team_power(d),
+        # FASE 5 — questo dungeon parte in modalità a stanze (pilota)?
+        "rooms_mode": _rooms_mode(d),
         # ROUND 13a — Lore meta (additive, PII-safe).
         "lore_theme": d.get("lore_theme") or meta.get("lore_theme"),
         "content_family": d.get("content_family") or meta.get("content_family") or "baseline",
