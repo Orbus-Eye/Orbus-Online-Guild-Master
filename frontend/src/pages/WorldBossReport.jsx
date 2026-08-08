@@ -88,6 +88,23 @@ export default function WorldBossReport() {
                                     </li>
                                 ))}
                             </ul>
+                            {reward.secret_drop?.item_slug && (
+                                <div
+                                    data-testid="worldboss-company-ring-drop"
+                                    className="mt-4 border border-amber bg-amber/10 p-4 text-center"
+                                >
+                                    <div className="text-[10px] tracking-[0.25em] text-amber">
+                                        RITROVAMENTO UNICO
+                                    </div>
+                                    <div className="mt-2 text-base text-amber font-bold">
+                                        L&apos;Unico Anello della &quot;Compagnia&quot;
+                                    </div>
+                                    <p className="mt-2 text-[10px] text-muted-foreground">
+                                        Alveora custodiva l&apos;unica copia esistente.
+                                        L&apos;Anello è stato vincolato alla tua gilda.
+                                    </p>
+                                </div>
+                            )}
                         </>
                     )}
                 </section>

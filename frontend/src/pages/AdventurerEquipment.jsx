@@ -19,6 +19,8 @@ const RARITY_COLOR = {
     Uncommon: "#22c55e",
     Rare: "#3b82f6",
     Epic: "#a855f7",
+    Legendary: "#f59e0b",
+    Unique: "#ef4444",
 };
 
 const RarityBadge = ({ rarity }) => (
@@ -45,8 +47,38 @@ function statBonusList(it) {
     return parts.join(" · ") || "no bonuses";
 }
 
-const SLOT_ORDER = ["weapon", "armor", "accessory"];
-const SLOT_LABEL = { weapon: "Arma", armor: "Armatura", accessory: "Accessorio" };
+const SLOT_ORDER = [
+    "weapon",
+    "chest",
+    "legs",
+    "head",
+    "accessory",
+    "back",
+    "ring_1",
+    "ring_2",
+    "trinket_1",
+    "trinket_2",
+];
+const SLOT_LABEL = {
+    weapon: "Arma",
+    chest: "Corazza",
+    legs: "Gambe",
+    head: "Elmo",
+    accessory: "Accessorio",
+    back: "Schiena",
+    ring_1: "Anello I",
+    ring_2: "Anello II",
+    trinket_1: "Monile I",
+    trinket_2: "Monile II",
+};
+
+function physicalSlotsForItem(item) {
+    const declared = item?.slot_type ?? item?.item_type;
+    const normalized = declared === "armor" ? "chest" : declared;
+    if (normalized === "ring") return ["ring_1", "ring_2"];
+    if (normalized === "trinket") return ["trinket_1", "trinket_2"];
+    return SLOT_ORDER.includes(normalized) ? [normalized] : [];
+}
 
 export default function AdventurerEquipment() {
     const { t } = useT();
@@ -106,15 +138,16 @@ export default function AdventurerEquipment() {
     }, [eligibleItems]);
 
     const inventoryBySlot = useMemo(() => {
-        const out = { weapon: [], armor: [], accessory: [] };
+        const out = Object.fromEntries(SLOT_ORDER.map((slot) => [slot, []]));
         for (const row of inventory) {
             const it = row.item;
             if (!it) continue;
             // R18.4.followup B.SQ5 — slot_type canonico post-R18.4 con fallback a item_type.
             // Risolve Risk 10.1 shield mapping (item_type=shield → slot_type=armor).
-            const slot = it.slot_type ?? it.item_type;
-            if (row.available_quantity > 0 && out[slot]) {
-                out[slot].push(row);
+            for (const slot of physicalSlotsForItem(it)) {
+                if (row.available_quantity > 0) {
+                    out[slot].push(row);
+                }
             }
         }
         return out;

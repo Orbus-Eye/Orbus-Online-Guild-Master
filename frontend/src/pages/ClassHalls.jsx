@@ -13,6 +13,10 @@ import { api } from "../lib/api";
 import { toast } from "sonner";
 import { Loader2, Lock, CheckCircle2, Users } from "lucide-react";
 import AppHeader from "../components/AppHeader";
+import ClassHallAssignmentJourney from "../components/ClassHallAssignmentJourney";
+import ClassHallItemTrack from "../components/ClassHallItemTrack";
+import ClassHallCollectionBook from "../components/ClassHallCollectionBook";
+import ClassHallBuildLab from "../components/ClassHallBuildLab";
 import { Button } from "../components/ui/button";
 import { useT } from "../i18n/I18nContext";
 
@@ -293,6 +297,11 @@ export default function ClassHalls() {
                         </div>
                     )}
                 </div>
+
+                <ClassHallAssignmentJourney />
+      <ClassHallItemTrack />
+      <ClassHallBuildLab />
+      <ClassHallCollectionBook />
 
                 <div className="text-xs mb-4">
                     <Link

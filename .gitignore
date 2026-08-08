@@ -3,6 +3,7 @@
 # IDE and editors
 .idea/
 .vscode/
+.vs/
 
 # Dependencies
 node_modules/
@@ -27,6 +28,7 @@ next-env.d.ts
 
 # Production builds
 /build
+/frontend/build/
 dist/
 dist
 

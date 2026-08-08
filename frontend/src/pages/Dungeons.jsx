@@ -133,16 +133,16 @@ export default function Dungeons() {
                     setSearchParams({}, { replace: true });
                     return;
                 }
-                if (found.squad_type === "raid_20") {
+                if (found.squad_type.startsWith("raid_")) {
                     toast.warning(
-                        "Questa squadra è per raid (20 avventurieri). Vai alla pagina Raid.",
+                        "Questa formazione è per raid. Vai alla pagina Raid.",
                     );
                     setActiveSquad(null);
                     setSearchParams({}, { replace: true });
                     return;
                 }
                 setActiveSquad(found);
-                const size = found.squad_type === "dungeon_3" ? "3" : "5";
+                const size = found.squad_type.replace("dungeon_", "");
                 setFilters((f) => ({ ...f, team_size: size }));
             })
             .catch(() => {

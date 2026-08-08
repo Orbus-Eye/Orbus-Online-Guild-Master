@@ -35,6 +35,10 @@ class TestCanonicalizeRarity:
     def test_legendary_variants(self, raw):
         assert canonicalize_rarity(raw) == "Legendary"
 
+    @pytest.mark.parametrize("raw", ["Unique", "unique", "UNIQUE", " Unique "])
+    def test_unique_variants(self, raw):
+        assert canonicalize_rarity(raw) == "Unique"
+
     def test_none_input(self):
         assert canonicalize_rarity(None) is None
 
@@ -55,7 +59,7 @@ class TestCanonicalizeRarity:
 
     def test_canonical_constants(self):
         assert CANONICAL_RARITIES == (
-            "Common", "Uncommon", "Rare", "Epic", "Legendary",
+            "Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique",
         )
         # Every canonical form must round-trip.
         for r in CANONICAL_RARITIES:

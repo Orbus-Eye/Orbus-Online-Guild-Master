@@ -75,6 +75,22 @@ def test_snapshot_captures_equipment():
     assert "helmet-x" in snap.source_item_blueprint_list
 
 
+def test_snapshot_prefers_stable_slug_over_legacy_uuid():
+    snap = build_loadout_snapshot(
+        adventurer_id="a1",
+        expedition_id="e1",
+        base_stats=_sample_base(),
+        equipment_items=[
+            {
+                "id": "random-mongo-uuid",
+                "slug": "lama-primo-giuramento",
+                "strength_bonus": 1,
+            }
+        ],
+    )
+    assert snap.source_item_blueprint_list == ("lama-primo-giuramento",)
+
+
 def test_snapshot_captures_modifiers():
     snap = build_loadout_snapshot(
         adventurer_id="a1",

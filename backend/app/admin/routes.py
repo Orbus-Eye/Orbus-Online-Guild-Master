@@ -27,6 +27,11 @@ from app.core.database import db
 from app.core.security import get_admin_user
 from app.dungeons.services import dungeon_public
 from app.items.services import item_public
+from app.items.catalog_contract import (
+    ENDGAME_RARITIES,
+    validate_catalog_write,
+)
+from app.shared.constants import ADVENTURER_MAX_LEVEL
 
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -291,7 +296,7 @@ async def admin_toggle_dungeon(dungeon_id: str, _: dict = Depends(get_admin_user
 # ─── Admin: Items ─────────────────────────────────────────────────────────────
 @router.get("/items")
 async def admin_list_items(_: dict = Depends(get_admin_user)):
-    rows = await db.items.find({}, {"_id": 0}).sort("name", 1).to_list(500)
+    rows = await db.items.find({}, {"_id": 0}).sort("name", 1).to_list(2000)
     return {"items": [item_public(r) for r in rows]}
 
 
@@ -308,10 +313,21 @@ async def admin_create_item(payload: dict, _: dict = Depends(get_admin_user)):
     if payload["rarity"] not in VALID_RARITIES:
         raise HTTPException(400, f"rarity must be one of {VALID_RARITIES}")
     doc = _build_item_doc(payload)
+    if doc["rarity"] in ENDGAME_RARITIES:
+        doc["level_required"] = ADVENTURER_MAX_LEVEL
     now = utc_now()
     doc["created_at"] = now.isoformat()
     doc["updated_at"] = now.isoformat()
     validate_item_monetization(doc)
+    contract_errors = await validate_catalog_write(db, doc)
+    if contract_errors:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "item.catalog_contract_rejected",
+                "errors": contract_errors,
+            },
+        )
     try:
         await db.items.insert_one(doc)
     except DuplicateKeyError:
@@ -329,8 +345,23 @@ async def admin_update_item(item_id: str, payload: dict, _: dict = Depends(get_a
     if "rarity" in payload and payload["rarity"] not in VALID_RARITIES:
         raise HTTPException(400, f"rarity must be one of {VALID_RARITIES}")
     merged = _build_item_doc(payload, existing=existing)
+    if merged["rarity"] in ENDGAME_RARITIES:
+        merged["level_required"] = ADVENTURER_MAX_LEVEL
     merged["updated_at"] = utc_now().isoformat()
     validate_item_monetization(merged)
+    contract_errors = await validate_catalog_write(
+        db,
+        merged,
+        exclude_item_id=item_id,
+    )
+    if contract_errors:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "item.catalog_contract_rejected",
+                "errors": contract_errors,
+            },
+        )
     await db.items.update_one({"id": item_id}, {"$set": _strip_db_fields(merged)})
     updated = await db.items.find_one({"id": item_id}, {"_id": 0})
     return {"item": item_public(updated)}
@@ -342,6 +373,21 @@ async def admin_toggle_item(item_id: str, _: dict = Depends(get_admin_user)):
     if not existing:
         raise HTTPException(404, "Item not found")
     new_active = not existing.get("is_active", True)
+    if new_active:
+        candidate = {**existing, "is_active": True}
+        contract_errors = await validate_catalog_write(
+            db,
+            candidate,
+            exclude_item_id=item_id,
+        )
+        if contract_errors:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "item.catalog_contract_rejected",
+                    "errors": contract_errors,
+                },
+            )
     await db.items.update_one(
         {"id": item_id},
         {"$set": {"is_active": new_active, "updated_at": utc_now().isoformat()}},

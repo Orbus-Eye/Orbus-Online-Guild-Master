@@ -244,7 +244,7 @@ export default function Guide() {
                 <SectionBlock id="avventurieri" title="Avventurieri">
                     <p>
                         Gli <strong>avventurieri</strong> sono il cuore della tua gilda. Ogni
-                        avventuriero ha: nome, livello (1-30), rarità (Common→Legendary),
+                        avventuriero ha: nome, livello (1-80), grado di carriera (Comune→Leggendario),
                         ruolo, classe, statistiche, fino a 3 tratti permanenti, equipaggiamento
                         e (a Lv5+) eventuale specializzazione.
                     </p>
@@ -258,17 +258,22 @@ export default function Guide() {
 
                 <SectionBlock id="rarita" title="Rarità">
                     <p>
-                        Ogni avventuriero ha una <strong>rarità</strong>, generata server-side
-                        al reclutamento secondo pesi pubblici. La rarità influenza stat iniziali
-                        e cap massimi a livello 30.
+                        La rarità dell&apos;avventuriero è un <strong>grado di carriera</strong>,
+                        non un tiro casuale. Tutti nascono Comuni e avanzano soltanto partecipando
+                        alle attività con il giocatore.
                     </p>
                     <ul className="list-disc list-inside text-[12px] mt-2 space-y-1">
-                        <li><strong>Comune</strong> — disponibile, stat base.</li>
-                        <li><strong>Non comune</strong> — leggermente sopra la media.</li>
-                        <li><strong>Raro</strong> — top tier per dungeon avanzati.</li>
-                        <li><strong>Epico</strong> — molto raro, cap stat elevati.</li>
-                        <li><strong>Leggendario</strong> — pochi per server, sbloccabili con condizioni speciali.</li>
+                        <li><strong>Comune ×1</strong> — grado iniziale.</li>
+                        <li><strong>Non comune ×2</strong> — 50 dungeon.</li>
+                        <li><strong>Raro ×4</strong> — 150 dungeon totali.</li>
+                        <li><strong>Epico ×8</strong> — 500 dungeon e 5 raid.</li>
+                        <li><strong>Leggendario ×16</strong> — 2000 dungeon e 150 raid.</li>
                     </ul>
+                    <p className="mt-2 text-muted-foreground text-[12px]">
+                        Il moltiplicatore si applica a Forza, Destrezza, Intelletto,
+                        Costituzione e Fede. Ogni promozione raddoppia il grado
+                        precedente; le statistiche base non vengono sovrascritte.
+                    </p>
                 </SectionBlock>
 
                 <ClassesAndStatsSection />
@@ -279,34 +284,30 @@ export default function Guide() {
 
                 <SectionBlock id="reclutamento" title="Reclutamento">
                     <p>
-                        Nella pagina <strong>Reclutamento</strong> trovi avventurieri-candidati
-                        generati casualmente dal server. Per ogni candidato vedi: nome, rarità,
-                        ruolo, classe, livello iniziale, stat preview e tratti.
+                        Nella pagina <strong>Reclutamento</strong> costruisci direttamente un
+                        modello base scegliendone nome, razza e genere. Non esistono candidati,
+                        refresh casuali o panchina reclute.
                     </p>
                     <p className="mt-2">
-                        Puoi fare <strong>refresh</strong> della lista (sostituisce i candidati,
-                        può avere un costo o cooldown) oppure <strong>reclutare</strong> uno dei
-                        candidati. Se il roster è pieno (Dormitori al massimo) ricevi un errore
-                        chiaro: aumenta capacità prima.
+                        I primi cinque fondatori sono gratuiti. I successivi hanno un costo
+                        progressivo e richiedono spazio nei Dormitori. Ogni nuovo avventuriero
+                        nasce Comune, al livello 1, con statistiche base e senza classe.
                     </p>
                     <p className="mt-3">
-                        <strong>Panchina Reclute (Round 11.3)</strong>: ogni candidato ha un&apos;icona
-                        <em> ❄ Congela</em>. Cliccala per spostarlo nella <strong>Panchina</strong>:
-                        resta lì anche dopo un refresh della lista. La panchina ha <strong>max 2 slot</strong>.
-                        Dalla panchina puoi <em>Reclutare</em> il candidato (costo gold standard,
-                        come da lista) oppure <em>Rilasciare</em> per liberare lo slot.
-                        Il livello iniziale e i tratti del candidato non cambiano mai mentre è
-                        congelato.
+                        La sua prima decisione identitaria è scegliere una <strong>Class Hall</strong>:
+                        finché non lo fa non può partecipare alle normali attività né usare
+                        equipaggiamento specializzato.
                     </p>
                 </SectionBlock>
 
                 <SectionBlock id="dungeon" title="Dungeon e Spedizioni">
                     <p>
-                        I dungeon sono di due famiglie:
+                        I dungeon usano tre dimensioni di formazione:
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1">
-                        <li><strong>Legacy (3p)</strong>: 10 dungeon storici da 3 avventurieri ciascuno.</li>
-                        <li><strong>5p (Round 5)</strong>: 12 dungeon nuovi da squadre di 5 avventurieri.</li>
+                        <li><strong>3 avventurieri</strong>: spedizioni compatte e primi sentieri.</li>
+                        <li><strong>5 avventurieri</strong>: contenuti intermedi.</li>
+                        <li><strong>7 avventurieri</strong>: spedizioni avanzate fino al livello 70.</li>
                     </ul>
                     <p className="mt-2">
                         Ogni dungeon ha un <strong>tier (T1→T4)</strong> e un <strong>recommended power</strong>.
@@ -344,7 +345,7 @@ export default function Guide() {
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
                         <li><strong>Dungeon completati</strong> — quanti dungeon hai chiuso con successo durante la stagione.</li>
-                        <li><strong>Raid completati</strong> — raid 20-uomini con outcome victory/partial.</li>
+                        <li><strong>Raid completati</strong> — imprese da 10/15/20/40 con outcome victory/partial.</li>
                         <li><strong>Punteggio Raid</strong> — somma dei <code>raid_score</code> guadagnati.</li>
                         <li><strong>Sviluppo Territoriale</strong> — crescita livelli strutture rispetto all&apos;inizio stagione (delta).</li>
                         <li><strong>Contratti completati</strong> — daily, weekly e milestone reclamati.</li>
@@ -358,13 +359,17 @@ export default function Guide() {
 
                 <SectionBlock id="raid" title="Raid">
                     <p>
-                        I raid sono contenuti end-game per squadre composte da <strong>4 party × 5 avventurieri</strong>
-                        (20 totali). Richiedono un roster minimo della gilda e un <em>max team power</em> sufficiente.
+                        I raid usano sempre party da cinque, ma crescono con il percorso:
+                        <strong> 10, 15, 20 e 40 avventurieri</strong>. Il primo è previsto al
+                        livello 40; l&apos;ultimo richiede livello 80.
                     </p>
                     <p className="mt-2">
-                        Ogni party affronta una fase indipendente; il <strong>raid score</strong> finale è la
-                        media pesata degli outcome di ogni party. Le ricompense includono gold, XP per avventuriero
-                        e <em>dragon essence</em> (drop solo da T4-5p e raid).
+                        Ogni party ha responsabilità e fasi leggibili. Le ricompense includono
+                        oro, XP, token e frammenti; i Leggendari richiedono il livello 80.
+                        Ogni gilda che contribuisce realmente alla sconfitta di
+                        <strong> Alveora, la Burattinaia della Luna</strong> riceve
+                        un solo tiro segreto per L&apos;Unico Anello della
+                        &quot;Compagnia&quot;. Il raid finale non può rilasciarlo.
                     </p>
                     <p className="mt-2">
                         I raid completati appaiono nella <strong>classifica raid pubblica</strong>
@@ -449,21 +454,19 @@ export default function Guide() {
                     </p>
                 </SectionBlock>
 
-                <SectionBlock id="nuovi-raid-void" title="Nuovi Raid: Vuoto / Non-Morti (Round 11.3)">
+                <SectionBlock id="nuovi-raid-void" title="Percorso Raid canonico">
                     <p>
-                        Insieme ai dungeon, il <strong>Round 11.3</strong> ha aggiunto <strong>5 nuovi raid</strong>
-                        (20 avventurieri, 4 parties × 5). Ognuno richiede un livello roster crescente:
+                        Il percorso raid contiene quattro imprese con roster e livello crescenti:
                     </p>
                     <ul className="list-disc list-inside mt-2 space-y-1 text-[12px]">
-                        <li><strong>Il Rituale del Vuoto</strong> — Lv min 10, boss: Officiante delle Orde.</li>
-                        <li><strong>Marcia dei Figli di Irthe</strong> — Lv min 14, boss: Primogenito di Irthe.</li>
-                        <li><strong>Il Gran Teatro di Alevora</strong> — Lv min 18, boss: Marionettista Lunare.</li>
-                        <li><strong>Tempio del Vuoto Eterno</strong> — Lv min 24, boss: Erede del Tempio.</li>
-                        <li><strong>L&apos;Ultimo Sussurro di Valys Mordivac</strong> — Lv min 30, boss: Valys Mordivac (endgame).</li>
+                        <li><strong>Veglia della Luna Infranta</strong> — livello 40, 10 avventurieri.</li>
+                        <li><strong>Giuramento del Bastione Spezzato</strong> — livello 60, 15 avventurieri.</li>
+                        <li><strong>I Rintocchi di Irthe</strong> — livello 70, 20 avventurieri.</li>
+                        <li><strong>Concilio della Fiamma Primordiale</strong> — livello 80, 40 avventurieri.</li>
                     </ul>
                     <p className="mt-2 text-[11px] text-muted-foreground italic">
-                        I 3 raid baseline (Bastione Spezzato, Necropoli delle Mille Campane, Volta del Drago
-                        Addormentato) sono stati anch&apos;essi riallineati alla lore.
+                        Nomi, boss, fasi e fonti narrative sono parte del contratto autorevole
+                        e non dipendono più dai vecchi placeholder del database.
                     </p>
                 </SectionBlock>
 
@@ -513,11 +516,12 @@ export default function Guide() {
                         effetto magico. Servono solo a evitare di riselezionare manualmente lo stesso team
                         ogni volta che lanci una spedizione o un raid.
                     </p>
-                    <p className="mt-2">Sono di 3 tipi, in base al contenuto:</p>
+                    <p className="mt-2">Coprono tutte le dimensioni canoniche:</p>
                     <ul className="mt-2 space-y-1 text-[12px]">
                         <li><strong>Dungeon 3</strong> — 3 avventurieri per dungeon a 3 slot</li>
                         <li><strong>Dungeon 5</strong> — 5 avventurieri per dungeon a 5 slot</li>
-                        <li><strong>Raid 20</strong> — 20 avventurieri organizzati in 4 party da 5</li>
+                        <li><strong>Dungeon 7</strong> — 7 avventurieri per dungeon avanzati</li>
+                        <li><strong>Raid 10/15/20/40</strong> — da 2 a 8 party da 5</li>
                     </ul>
                     <p className="mt-3">
                         <strong>Come crearle</strong>: vai su <code className="text-amber">/squads</code> →
@@ -527,9 +531,8 @@ export default function Guide() {
                         ricalcolati in tempo reale. Salva quando il counter è pieno (es. 5/5).
                     </p>
                     <p className="mt-2">
-                        <strong>Raid 20</strong>: il builder mostra 4 party slot (2×2 grid). Seleziona la party
-                        attiva con il dropdown, poi clicca dal pool. Nessun avventuriero può finire in due
-                        party diverse dello stesso raid.
+                        Nei <strong>Raid</strong> il builder genera automaticamente il numero
+                        corretto di party. Nessun avventuriero può comparire in due party dello stesso raid.
                     </p>
                     <p className="mt-2">
                         <strong>Modifica / Archivia</strong>: dalla lista, ogni card squadra ha
@@ -543,8 +546,8 @@ export default function Guide() {
                         libero, la squadra è di nuovo utilizzabile com&apos;è.
                     </p>
                     <p className="mt-2 text-muted-foreground text-[12px]">
-                        <strong>Integrazione con expedition/raid</strong>: in arrivo nel prossimo update
-                        — un selettore &quot;Carica squadra&quot; dentro
+                        <strong>Integrazione con expedition/raid</strong>: usa il selettore
+                        &quot;Carica squadra&quot; dentro
                         <code className="text-amber"> /expeditions/new</code> e
                         <code className="text-amber"> /raids/builder</code> per popolare il team con un click.
                     </p>
@@ -552,8 +555,9 @@ export default function Guide() {
 
                 <SectionBlock id="forge" title="Equipaggiamento e Fucina">
                     <p>
-                        Ogni avventuriero ha 3 slot: <strong>weapon</strong>, <strong>armor</strong>, <strong>accessory</strong>.
-                        Gli oggetti hanno rarità (Common → Uncommon → Rare → Epic), un livello richiesto e bonus statistici.
+                        Ogni avventuriero ha dieci slot: <strong>Arma, Corazza, Gambe,
+                        Elmo, Accessorio, Schiena, due Anelli e due Monili</strong>.
+                        Gli oggetti hanno rarità da Comune a Unico, un livello richiesto e bonus statistici.
                     </p>
                     <p className="mt-2">
                         Equipaggi dall&apos;<strong>Inventario</strong>: click su un oggetto equipaggiabile → si apre
@@ -584,7 +588,8 @@ export default function Guide() {
                         <li><strong>Non comune</strong> — Lv 3</li>
                         <li><strong>Raro</strong> — Lv 5</li>
                         <li><strong>Epico</strong> — Lv 8</li>
-                        <li><strong>Leggendario</strong> — Lv 12</li>
+                        <li><strong>Leggendario</strong> — Lv 80</li>
+                        <li><strong>Unico</strong> — Lv 80</li>
                     </ul>
                     <p className="mt-2">
                         Nel modal di equipaggiamento, gli oggetti che il tuo avventuriero non può ancora
@@ -976,7 +981,8 @@ export default function Guide() {
                 <SectionBlock id="tips" title="Suggerimenti base">
                     <ul className="list-disc list-inside space-y-2">
                         <li>
-                            <strong>Equipaggia sempre i 3 slot</strong> prima di spedire una squadra: ogni slot vuoto
+                            <strong>Costruisci un loadout completo</strong>: arma, corazza, gambe,
+                            elmo, accessorio, schiena, due anelli e due monili. Ogni slot vuoto
                             è power perso.
                         </li>
                         <li>
@@ -986,7 +992,8 @@ export default function Guide() {
                             <strong>Bilancia il team</strong>: <RoleMarker role="Tank" /> + <RoleMarker role="Healer" /> + 3<RoleMarker role="DPS" /> è la composizione 5p standard.
                         </li>
                         <li>
-                            <strong>Salva il gold</strong> per i raid: 20 avventurieri costano molto da equipaggiare.
+                            <strong>Prepara la crescita dei Dormitori</strong>: il raid finale
+                            richiede 40 avventurieri di livello 80 ben equipaggiati.
                         </li>
                         <li>
                             <strong>Controlla il max team power</strong> ogni volta che equipaggi nuovo gear:

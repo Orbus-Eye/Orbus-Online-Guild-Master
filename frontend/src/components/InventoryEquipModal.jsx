@@ -18,6 +18,8 @@ const RARITY_COLOR = {
     uncommon: "#22c55e",
     rare: "#3b82f6",
     epic: "#a855f7",
+    legendary: "#f59e0b",
+    unique: "#ef4444",
 };
 
 function bonusList(it) {
@@ -29,6 +31,15 @@ function bonusList(it) {
     if (it.endurance_bonus) o.push(["END", it.endurance_bonus]);
     if (it.faith_bonus) o.push(["FAI", it.faith_bonus]);
     return o;
+}
+
+function physicalSlotsForItem(item) {
+    const slot = item?.slot_type ?? item?.item_type;
+    if (slot === "armor") return ["chest"];
+    if (slot === "helmet") return ["head"];
+    if (slot === "ring") return ["ring_1", "ring_2"];
+    if (slot === "trinket") return ["trinket_1", "trinket_2"];
+    return [slot];
 }
 
 export default function InventoryEquipModal({ row, adventurers, onClose, onEquipped, lang = "it" }) {
@@ -44,13 +55,12 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
 
     const eligible = useMemo(() => {
         if (!row?.item) return [];
-        const slot = row.item.slot_type ?? row.item.item_type;
+        const physicalSlots = physicalSlotsForItem(row.item);
         const levelReq = row.item.level_required || 1;
         return (adventurers || []).filter((a) => {
             if (!a.is_available) return false;
             if ((a.level || 1) < levelReq) return false;
-            const slotItem = a.equipment?.[slot]?.item;
-            return !slotItem;
+            return physicalSlots.some((slot) => !a.equipment?.[slot]?.item);
         });
     }, [row, adventurers]);
 
@@ -64,8 +74,12 @@ export default function InventoryEquipModal({ row, adventurers, onClose, onEquip
     const equip = async (adv) => {
         setBusyId(adv.id);
         try {
-            await api.post(`/adventurers/${adv.id}/equip`, { item_id: it.id, slot });
-            toast.success(t("equipment_extra.toast_equipped", { slot }));
+            const targetSlot = physicalSlotsForItem(it).find(
+                (physicalSlot) => !adv.equipment?.[physicalSlot]?.item,
+            );
+            if (!targetSlot) return;
+            await api.post(`/adventurers/${adv.id}/equip`, { item_id: it.id, slot: targetSlot });
+            toast.success(t("equipment_extra.toast_equipped", { slot: targetSlot }));
             onEquipped?.();
             onClose();
         } catch (err) {

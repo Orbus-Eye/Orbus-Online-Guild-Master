@@ -10,10 +10,13 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import json
 import statistics
+import tempfile
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import bson
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -39,6 +42,7 @@ from app.stats.runtime.transitions.state_machine import (
 
 
 MONGO_URI = "mongodb://localhost:27017"
+REPORT_DIR = Path(tempfile.gettempdir())
 
 
 def _iso(dt): return dt.isoformat().replace("+00:00", "Z")
@@ -202,6 +206,7 @@ def test_bson_size_at_512_receipts(provisioned_unique_db):
                 "owner_worker_or_lease_id": None, "lease": None,
                 "loadout_snapshot_version": 0,
                 "adventurer_class_states": {},
+                "active_effect_instances": {"v": 1, "t": {}},
                 "processed_event_keys": [
                     {
                         "event_id": f"evt-{uuid.uuid4().hex[:20]}",
@@ -227,8 +232,10 @@ def test_bson_size_at_512_receipts(provisioned_unique_db):
                 f"BSON size {len(bson_bytes)} >= 256 KiB (STATE_DOCUMENT_SIZE_BUDGET_EXCEEDED)"
             )
             # Save size for report use
-            with open("/tmp/rt2b2b1_v1_bson_size.txt", "w") as f:
-                f.write(f"{len(bson_bytes)}\n")
+            (REPORT_DIR / "rt2b2b1_v1_bson_size.txt").write_text(
+                f"{len(bson_bytes)}\n",
+                encoding="utf-8",
+            )
         finally:
             c.close()
     asyncio.run(go())
@@ -301,9 +308,10 @@ def test_perf_mongo_p95(provisioned_unique_db):
             )
 
             # Persist for report
-            import json
-            with open("/tmp/rt2b2b1_v1_mongo_perf.json", "w") as f:
-                json.dump(results, f, indent=2)
+            (REPORT_DIR / "rt2b2b1_v1_mongo_perf.json").write_text(
+                json.dumps(results, indent=2),
+                encoding="utf-8",
+            )
             print(f"MongoStore p95 results: {results}")
         finally:
             c.close()

@@ -27,29 +27,29 @@ SUCCESS_CHANCE_MAX = 95
 LOOT_DROP_CHANCE_LEGACY = 0.50      # Goblin Warrens default if loot table missing
 LOOT_RARITIES_LEGACY = ["Common", "Uncommon"]
 
-# Adventurer progression
-XP_THRESHOLD_PER_LEVEL = 100
+# Adventurer progression. The old linear ``level * 100`` curve reached level
+# 80 too quickly. The career curve now totals roughly 2.8M XP from 1 to 80.
+XP_THRESHOLD_PER_LEVEL = 125  # legacy name; now used as curve multiplier
+ADVENTURER_XP_CURVE_EXPONENT = 1.5
+# T0 item-first contract — authoritative adventurer cap. Endgame equipment
+# imports this value instead of repeating historical literals.
+ADVENTURER_MAX_LEVEL = 80
 
 # Recruitment generation (Phase 2)
 RECRUITMENT_CANDIDATES_PER_OFFER = 4
 OFFER_TTL_MINUTES = 30
-# Phase 6A.1 — rarity distribution with Legendary as ultra-rare surprise.
-# Numeric weights MUST sum to ~1000 for fine-grained Legendary tail (0.1%).
-# Target distribution: Common 68% / Uncommon 24% / Rare 7% / Epic 0.9% / Legendary 0.1%
+# Deprecated compatibility constant. Player-facing generation never rolls
+# rarity: every adventurer starts Common and earns career rarity by use.
 RARITY_WEIGHTS = [
-    ("Common", 680),
-    ("Uncommon", 240),
-    ("Rare", 70),
-    ("Epic", 9),
-    ("Legendary", 1),
+    ("Common", 1),
 ]
-RARITY_BONUS = {"Common": 0, "Uncommon": 0, "Rare": 1, "Epic": 2, "Legendary": 3}
+RARITY_BONUS = {"Common": 0}
 # Stat max threshold used by the Legendary post-roll guard. A Legendary
 # adventurer MUST have at least 1 core stat at or above this floor.
-RARITY_STAT_MAX_FLOOR = {"Legendary": 15, "Epic": 12}
+RARITY_STAT_MAX_FLOOR = {}
 # Soft minimum positive-trait count required for high-rarity guard. Falls
 # back gracefully when the trait pool is empty (no `Test*` traits ever).
-RARITY_POSITIVE_TRAIT_MIN = {"Legendary": 3, "Epic": 2}
+RARITY_POSITIVE_TRAIT_MIN = {}
 FIRST_NAMES = [
     "Aldric", "Brenna", "Cassian", "Dorin", "Elara", "Faelan", "Gwyn",
     "Hadrian", "Iona", "Joren", "Kael", "Lyra", "Mira", "Nyx", "Oren",
@@ -61,9 +61,44 @@ LAST_NAMES = [
     "Nightshade", "Brightblade",
 ]
 
-# Equipment slots (Phase 6)
-EQUIPMENT_SLOTS = ("weapon", "armor", "accessory")
-SLOT_TO_ITEM_TYPE = {"weapon": "weapon", "armor": "armor", "accessory": "accessory"}
+# Equipment slots — ten physical positions. Paired rings and trinkets are
+# distinct slots but share the same item type.
+EQUIPMENT_SLOTS = (
+    "weapon",
+    "chest",
+    "legs",
+    "head",
+    "accessory",
+    "back",
+    "ring_1",
+    "ring_2",
+    "trinket_1",
+    "trinket_2",
+)
+SLOT_TO_ITEM_TYPE = {
+    "weapon": "weapon",
+    "chest": "armor",
+    "legs": "legs",
+    "head": "helmet",
+    "accessory": "accessory",
+    "back": "back",
+    "ring_1": "ring",
+    "ring_2": "ring",
+    "trinket_1": "trinket",
+    "trinket_2": "trinket",
+}
+EQUIPMENT_SLOT_LABELS_IT = {
+    "weapon": "Arma",
+    "chest": "Corazza",
+    "legs": "Gambe",
+    "head": "Elmo",
+    "accessory": "Accessorio",
+    "back": "Schiena",
+    "ring_1": "Anello I",
+    "ring_2": "Anello II",
+    "trinket_1": "Monile I",
+    "trinket_2": "Monile II",
+}
 
 # Tester / seed gating
 # Test-fixture credentials (NOT real secrets). Used by the idempotent

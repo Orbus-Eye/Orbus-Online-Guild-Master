@@ -501,6 +501,36 @@ def _class_event_audit_id(event_type: str, result_code) -> str:
         "AUTO_CLOSE_ON_EXPEDITION_TERMINAL",
     ):
         return "cdv_resource_segment_closed"
+    # ═══ RT2-B-2B-2-1 Drain audit mapping (PM Message 170 §38 · 10 event ids) ═══
+    # Drain-specific rejection codes → cdv_drain_*_rejected
+    drain_start_reject = {
+        "DRAIN_ALREADY_IN_PROGRESS_FOR_PAIR",
+        "MARK_APPLICATION_CHANGED",
+        "EXPEDITION_TERMINAL_REJECTED",
+        "PHASE_INACTIVE",
+        "EVENT_ID_INVALID",
+    }
+    drain_state_reject = {
+        "DRAIN_NOT_STARTED",
+        "DRAIN_ALREADY_COMPLETED",
+        "DRAIN_ALREADY_CANCELLED",
+    }
+    if event_type == "START_DRAIN":
+        if code == "DRAIN_STARTED":
+            return "cdv_drain_started"
+        if code in drain_start_reject or code in drain_state_reject:
+            return "cdv_drain_start_rejected"
+        return "cdv_drain_start_rejected"
+    if event_type == "COMPLETE_DRAIN":
+        if code == "DRAIN_COMPLETED":
+            return "cdv_drain_completed"
+        if code == "DRAIN_ALREADY_COMPLETED":
+            return "cdv_drain_duplicate_completion"
+        return "cdv_drain_completion_rejected"
+    if event_type == "CANCEL_DRAIN":
+        if code == "DRAIN_CANCELLED":
+            return "cdv_drain_cancelled"
+        return "cdv_drain_cancellation_rejected"
     return "cdv_state_transition_conflict"
 
 

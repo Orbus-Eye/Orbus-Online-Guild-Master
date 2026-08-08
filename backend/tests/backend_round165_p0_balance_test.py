@@ -90,11 +90,11 @@ def applied_test_db(test_db, r165_script):
 
     # Legendary sample fixtures (real seeded slugs).
     _LEG_FIXTURES = [
-        ("goblin_hunter_ring", 8, {"power_score": 20}),
-        ("drake_slayer_helm", 8, {"power_score": 30}),
-        ("drake_slayer_chest", 8, {"power_score": 40}),
-        ("drake_slayer_blade", 9, {"power_score": 73}),
-        ("arcane_adept_orb", 9, {"power_score": 60}),
+        ("goblin_hunter_ring", 80, {"power_score": 20}),
+        ("drake_slayer_helm", 80, {"power_score": 30}),
+        ("drake_slayer_chest", 80, {"power_score": 40}),
+        ("drake_slayer_blade", 80, {"power_score": 73}),
+        ("arcane_adept_orb", 80, {"power_score": 60}),
     ]
     for slug, expected_min_lvl, stats in _LEG_FIXTURES:
         test_db.items.update_one(
@@ -160,7 +160,7 @@ def test_story_catchup_only_on_5p_early(applied_test_db):
     )
 
 
-def test_all_legendary_items_have_min_level_gte_8(applied_test_db):
+def test_all_legendary_items_require_level_80(applied_test_db):
     docs = list(applied_test_db.items.find(
         {"rarity": "Legendary"},
         {"_id": 0, "slug": 1, "min_level": 1, "power_score": 1,
@@ -170,13 +170,15 @@ def test_all_legendary_items_have_min_level_gte_8(applied_test_db):
     assert len(docs) >= 1
     for it in docs:
         assert isinstance(it.get("min_level"), int), it
-        assert it["min_level"] >= 8, (
-            f"Legendary {it['slug']} min_level={it['min_level']} < 8"
+        assert it["min_level"] == 80, (
+            f"Legendary {it['slug']} min_level={it['min_level']} != 80"
         )
 
 
-def test_legendary_outliers_have_min_level_9(applied_test_db, r165_script):
-    """Item Legendary con equip_power >= soglia outlier devono avere min_level 9."""
+def test_legendary_outliers_still_require_level_80(
+    applied_test_db, r165_script
+):
+    """La potenza dell'item non può abbassare il gate endgame."""
     threshold = r165_script._LEGENDARY_TIER_THRESHOLD
     docs = list(applied_test_db.items.find(
         {"rarity": "Legendary"},
@@ -188,10 +190,10 @@ def test_legendary_outliers_have_min_level_9(applied_test_db, r165_script):
                 if r165_script._item_equip_power(it) >= threshold]
     assert outliers, "Ci si aspettano almeno 1-2 legendary outlier."
     for it in outliers:
-        assert it["min_level"] == 9, (
+        assert it["min_level"] == 80, (
             f"Legendary outlier {it['slug']} "
             f"(equip_power={r165_script._item_equip_power(it)}) "
-            f"deve avere min_level=9, trovato={it['min_level']}"
+            f"deve avere min_level=80, trovato={it['min_level']}"
         )
 
 
@@ -230,11 +232,11 @@ def test_dungeon_builder_adds_progression_tag_when_story_catchup(r165_script):
 def test_item_builder_returns_only_whitelisted_fields(r165_script):
     row = {
         "item_slug": "drake_slayer_blade",
-        "min_level_proposed": 9,
+        "min_level_proposed": 80,
     }
     out = r165_script._build_item_apply_set(row)
     assert set(out.keys()) <= r165_script._ITEM_WHITELIST
-    assert out["min_level"] == 9
+    assert out["min_level"] == 80
     assert "updated_at" in out
 
 
@@ -273,13 +275,13 @@ def test_dungeon_mapping_matches_applied_values(applied_test_db, r165_script):
             assert doc.get("progression_tag") == "story_catchup", slug
 
 
-def test_dungeon_level_gap_never_exceeds_two(r165_script):
+def test_dungeon_level_gap_never_exceeds_ten(r165_script):
     """La curva di gating deve essere continua: ordinando per required_level
-    non deve mai esserci un buco > 2 livelli tra dungeon adiacenti."""
+    non deve mai esserci un buco > 10 livelli tra dungeon adiacenti."""
     levels = sorted({r["required_level"]
                      for r in r165_script._DUNGEON_MAPPING.values()})
     for a, b in zip(levels, levels[1:]):
-        assert b - a <= 2, (
+        assert b - a <= 10, (
             f"Buco eccessivo nella curva: da lv{a} a lv{b} (gap={b-a}). "
             f"Servirebbe un dungeon intermedio."
         )

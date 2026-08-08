@@ -43,6 +43,8 @@ const RARITY_COLOR = {
     Uncommon: "#22c55e",
     Rare: "#3b82f6",
     Epic: "#a855f7",
+    Legendary: "#f59e0b",
+    Unique: "#ef4444",
 };
 
 const RarityBadge = ({ rarity }) => (
@@ -301,7 +303,12 @@ export default function Inventory() {
                             if (!it) return null;
                             // R18.4.followup B.SQ5 — slot_type è la fonte canonica post-R18.4;
                             // item_type resta il fallback per catalog seedato pre-backfill.
-                            const slot = it.slot_type ?? it.item_type; // weapon | armor | accessory
+                            const rawSlot = it.slot_type ?? it.item_type;
+                            const physicalSlots = rawSlot === "armor" ? ["chest"]
+                                : rawSlot === "helmet" ? ["head"]
+                                : rawSlot === "ring" ? ["ring_1", "ring_2"]
+                                : rawSlot === "trinket" ? ["trinket_1", "trinket_2"]
+                                : [rawSlot];
                             const levelReq = it.level_required || 1;
                             const equippedBy = equippedByMap[it.id] || [];
 
@@ -312,8 +319,7 @@ export default function Inventory() {
                             const eligible = adventurers.filter((a) => {
                                 if (!a.is_available) return false;
                                 if ((a.level || 1) < levelReq) return false;
-                                const slotItem = a.equipment?.[slot]?.item;
-                                return !slotItem;
+                                return physicalSlots.some((slot) => !a.equipment?.[slot]?.item);
                             });
 
                             const usableCount = adventurers.filter(
@@ -547,7 +553,7 @@ export default function Inventory() {
                                         )}
 
                                         {/* ROUND 4 — Forge link (refinable / enchantable items) */}
-                                        {(it.item_type === "weapon" || it.item_type === "armor" || it.item_type === "accessory") && (
+                                        {["weapon", "armor", "chest", "legs", "helmet", "head", "accessory", "back", "ring", "trinket"].includes(it.item_type) && (
                                             <div className="mt-2">
                                                 <Link
                                                     to="/forge"

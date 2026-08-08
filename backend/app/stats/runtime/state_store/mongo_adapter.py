@@ -21,11 +21,21 @@ L'adapter è **async** — usa `motor.motor_asyncio.AsyncIOMotorCollection`
 via duck-typing (non-imported). Compatibile con collection injectate
 di tipo mock (`AsyncMock`) per unit test.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, Optional, Tuple
 
+from app.stats.runtime.effects.models import EffectInstance
+from app.stats.runtime.effects.registry import (
+    DEFAULT_EFFECT_REGISTRY,
+    EffectRegistry,
+)
+from app.stats.runtime.effects.serialization import (
+    project_layout_b,
+    rehydrate_layout_b,
+)
 from app.stats.runtime.state_store.errors import StoreInfraError
 from app.stats.runtime.state_store.fencing import (
     next_fencing_token,
@@ -35,6 +45,8 @@ from app.stats.runtime.state_store.fencing import (
 from app.stats.runtime.state_store.interface import ExpeditionRuntimeStateStore
 from app.stats.runtime.state_store.models import (
     AdventurerClassState,
+    DrainDoc,
+    DrainStatus,
     EventReceipt,
     ExpeditionRuntimeState,
     FragmentUsage as _FragmentUsage,
@@ -113,13 +125,23 @@ def _default_clock() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def _serialize_class_states(items: Tuple[Tuple[str, AdventurerClassState], ...]) -> Dict[str, Any]:
+def _serialize_class_states(
+    items: Tuple[Tuple[str, AdventurerClassState], ...]
+) -> Dict[str, Any]:
     """Serialize adventurer_class_states tuple to Mongo-friendly dict-of-dicts.
 
     NON usato dalla mutation di questo gate (il caller passa il dict già
     pronto in `mutation`); esposta come helper per i test.
     """
     return {aid: _dc_to_dict(cs) for aid, cs in items}
+
+
+def _serialize_effect_instances(items: Tuple[EffectInstance, ...]) -> Dict[str, Any]:
+    """Serialize only typed active instances using canonical compact layout B."""
+
+    if not isinstance(items, tuple):
+        raise ValueError("ACTIVE_EFFECT_INSTANCES_NOT_IMMUTABLE_TUPLE")
+    return project_layout_b(items)
 
 
 def _dc_to_dict(obj: Any) -> Any:
@@ -135,7 +157,10 @@ def _dc_to_dict(obj: Any) -> Any:
     return obj
 
 
-def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
+def _document_to_state(
+    doc: Dict[str, Any],
+    effect_registry: EffectRegistry = DEFAULT_EFFECT_REGISTRY,
+) -> ExpeditionRuntimeState:
     """Reconstruct `ExpeditionRuntimeState` from Mongo doc (best-effort).
 
     In RT2-B-1A this function is exercised only in tests (Mongo adapter
@@ -204,16 +229,53 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
                 if isinstance(u, dict)
             )
             drains_raw = cs_dict.get("active_drain_executions", []) or []
-            entries.append((aid, AdventurerClassState(
-                adventurer_id=cs_dict.get("adventurer_id", aid),
-                active_marks=active_marks,
-                active_drain_executions=tuple(drains_raw),
-                fragment_count=int(cs_dict.get("fragment_count", 0)),
-                resource_segment_id=cs_dict.get("resource_segment_id"),
-                focus_bonus_usage=focus_usage,
-                class_state_version=int(cs_dict.get("class_state_version", 0)),
-            )))
+            # RT2-B-2B-2-1-V1 · DrainDoc rehydration (previously stored as dict, not deserialized to typed DrainDoc)
+            active_drain_executions = tuple(
+                DrainDoc(
+                    drain_execution_id=d.get("drain_execution_id", ""),
+                    source_adventurer_id=d.get("source_adventurer_id", ""),
+                    target_id=d.get("target_id", ""),
+                    required_mark_application_id=d.get(
+                        "required_mark_application_id", ""
+                    ),
+                    started_at=d.get("started_at", ""),
+                    completed_at=d.get("completed_at"),
+                    runtime_status=(
+                        DrainStatus(
+                            d.get("runtime_status", DrainStatus.IN_PROGRESS.value)
+                        )
+                        if isinstance(d.get("runtime_status"), str)
+                        else d.get("runtime_status", DrainStatus.IN_PROGRESS)
+                    ),
+                    resolution_version=int(d.get("resolution_version", 1)),
+                    reward_resolved=bool(d.get("reward_resolved", False)),
+                    mark_id=d.get("mark_id", ""),
+                    cancelled_at=d.get("cancelled_at"),
+                    cancellation_reason=d.get("cancellation_reason"),
+                    drain_version=int(d.get("drain_version", 1)),
+                )
+                for d in drains_raw
+                if isinstance(d, dict)
+            )
+            entries.append(
+                (
+                    aid,
+                    AdventurerClassState(
+                        adventurer_id=cs_dict.get("adventurer_id", aid),
+                        active_marks=active_marks,
+                        active_drain_executions=active_drain_executions,
+                        fragment_count=int(cs_dict.get("fragment_count", 0)),
+                        resource_segment_id=cs_dict.get("resource_segment_id"),
+                        focus_bonus_usage=focus_usage,
+                        class_state_version=int(cs_dict.get("class_state_version", 0)),
+                    ),
+                )
+            )
         adventurer_class_states = tuple(entries)
+    active_effect_instances = rehydrate_layout_b(
+        doc.get("active_effect_instances"),
+        effect_registry,
+    )
     status_raw = doc.get("runtime_status", RuntimeStatus.ACTIVE.value)
     try:
         status = RuntimeStatus(status_raw)
@@ -230,6 +292,7 @@ def _document_to_state(doc: Dict[str, Any]) -> ExpeditionRuntimeState:
         lease=lease,
         loadout_snapshot_version=int(doc.get("loadout_snapshot_version", 0)),
         adventurer_class_states=adventurer_class_states,
+        active_effect_instances=active_effect_instances,
         processed_event_keys=receipts,
         last_event_sequence=int(doc.get("last_event_sequence", 0)),
         fencing_token=int(doc.get("fencing_token", 0)),
@@ -248,6 +311,7 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         collection: Any,
         *,
         clock: Optional[Callable[[], datetime]] = None,
+        effect_registry: EffectRegistry = DEFAULT_EFFECT_REGISTRY,
     ) -> None:
         if collection is None:
             raise ValueError(
@@ -256,6 +320,7 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             )
         self._collection = collection
         self._clock: Callable[[], datetime] = clock or _default_clock
+        self._effect_registry = effect_registry
 
     # ═══════════════════════ 1. create_state ═══════════════════════
     async def create_state(
@@ -284,6 +349,9 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             "lease": None,
             "loadout_snapshot_version": initial_state.loadout_snapshot_version,
             "adventurer_class_states": {},
+            "active_effect_instances": _serialize_effect_instances(
+                initial_state.active_effect_instances
+            ),
             "processed_event_keys": [],
             "last_event_sequence": 0,
             "fencing_token": 0,
@@ -305,7 +373,11 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             raise StoreInfraError(str(exc)) from exc
         if doc is None:
             return ReadResult(code=CasResultCode.NOT_FOUND)
-        return ReadResult(code=CasResultCode.SUCCESS, state=_document_to_state(doc))
+        try:
+            state = _document_to_state(doc, self._effect_registry)
+        except ValueError as exc:
+            raise StoreInfraError(f"effect rehydration failed: {exc}") from exc
+        return ReadResult(code=CasResultCode.SUCCESS, state=state)
 
     # ═══════════════════════ 3. compare_and_update ═══════════════════════
     async def compare_and_update(
@@ -326,13 +398,18 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         }
         for k, v in mutation.items():
             if k in (
-                "adventurer_class_states", "runtime_status",
-                "loadout_snapshot_version", "expires_at",
+                "adventurer_class_states",
+                "active_effect_instances",
+                "runtime_status",
+                "loadout_snapshot_version",
+                "expires_at",
                 "last_event_sequence",
             ):
                 # RT2-B-2B-1-V1 · serialize dataclass tuple → BSON-friendly dict
                 if k == "adventurer_class_states" and isinstance(v, tuple):
                     set_fields[k] = _serialize_class_states(v)
+                elif k == "active_effect_instances":
+                    set_fields[k] = _serialize_effect_instances(v)
                 else:
                     set_fields[k] = v
         update = {
@@ -390,8 +467,10 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             probe = await self._collection.find_one(
                 {"_id": expedition_id},
                 {
-                    "state_version": 1, "fencing_token": 1,
-                    "last_event_sequence": 1, "processed_event_keys": 1,
+                    "state_version": 1,
+                    "fencing_token": 1,
+                    "last_event_sequence": 1,
+                    "processed_event_keys": 1,
                 },
             )
         except Exception as exc:
@@ -433,15 +512,23 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             # guard against concurrent same-event insertion
             "processed_event_keys.event_id": {"$ne": event_id},
         }
-        set_fields: Dict[str, Any] = {"updated_at": now_iso, "last_event_sequence": new_sequence}
+        set_fields: Dict[str, Any] = {
+            "updated_at": now_iso,
+            "last_event_sequence": new_sequence,
+        }
         for k, v in mutation.items():
             if k in (
-                "adventurer_class_states", "runtime_status",
-                "loadout_snapshot_version", "expires_at",
+                "adventurer_class_states",
+                "active_effect_instances",
+                "runtime_status",
+                "loadout_snapshot_version",
+                "expires_at",
             ):
                 # RT2-B-2B-1-V1 · serialize dataclass tuple → BSON-friendly dict
                 if k == "adventurer_class_states" and isinstance(v, tuple):
                     set_fields[k] = _serialize_class_states(v)
+                elif k == "active_effect_instances":
+                    set_fields[k] = _serialize_effect_instances(v)
                 else:
                     set_fields[k] = v
         # We use $inc for state_version and $push for the new receipt.
@@ -468,7 +555,9 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         }
         try:
             doc = await self._collection.find_one_and_update(
-                cas_filter, update, return_document=True,
+                cas_filter,
+                update,
+                return_document=True,
             )
         except Exception as exc:
             raise StoreInfraError(str(exc)) from exc
@@ -519,7 +608,8 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             )
         try:
             probe = await self._collection.find_one(
-                {"_id": expedition_id}, {"fencing_token": 1, "lease": 1},
+                {"_id": expedition_id},
+                {"fencing_token": 1, "lease": 1},
             )
         except Exception as exc:
             raise StoreInfraError(str(exc)) from exc
@@ -586,7 +676,9 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
     ) -> LeaseAcquireResult:
         now_iso = _iso_now(self._clock)
         # Grace: allow renewal within 5s past expires_at
-        grace_cutoff_iso = (self._clock() - timedelta(seconds=5)).isoformat().replace("+00:00", "Z")
+        grace_cutoff_iso = (
+            (self._clock() - timedelta(seconds=5)).isoformat().replace("+00:00", "Z")
+        )
         new_exp = _iso_add(self._clock, extend_seconds)
         cas_filter = {
             "_id": expedition_id,
@@ -613,7 +705,8 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             # Distinguish reason
             try:
                 probe = await self._collection.find_one(
-                    {"_id": expedition_id}, {"fencing_token": 1, "lease": 1},
+                    {"_id": expedition_id},
+                    {"fencing_token": 1, "lease": 1},
                 )
             except Exception as exc:
                 raise StoreInfraError(str(exc)) from exc
@@ -644,7 +737,13 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         try:
             doc = await self._collection.find_one_and_update(
                 cas_filter,
-                {"$set": {"lease": None, "owner_worker_or_lease_id": None, "updated_at": _iso_now(self._clock)}},
+                {
+                    "$set": {
+                        "lease": None,
+                        "owner_worker_or_lease_id": None,
+                        "updated_at": _iso_now(self._clock),
+                    }
+                },
                 return_document=True,
             )
         except Exception as exc:
@@ -653,7 +752,8 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             # Silent: either not-found or stale fencing.
             try:
                 probe = await self._collection.find_one(
-                    {"_id": expedition_id}, {"lease": 1},
+                    {"_id": expedition_id},
+                    {"lease": 1},
                 )
             except Exception as exc:
                 raise StoreInfraError(str(exc)) from exc
@@ -668,17 +768,22 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
     async def expire_state(self, expedition_id: str) -> CasResult:
         cas_filter = {
             "_id": expedition_id,
-            "runtime_status": {"$nin": [
-                RuntimeStatus.EXPIRED.value,
-                RuntimeStatus.COMPLETED.value,
-                RuntimeStatus.CANCELLED.value,
-            ]},
+            "runtime_status": {
+                "$nin": [
+                    RuntimeStatus.EXPIRED.value,
+                    RuntimeStatus.COMPLETED.value,
+                    RuntimeStatus.CANCELLED.value,
+                ]
+            },
         }
         try:
             doc = await self._collection.find_one_and_update(
                 cas_filter,
                 {
-                    "$set": {"runtime_status": RuntimeStatus.EXPIRED.value, "updated_at": _iso_now(self._clock)},
+                    "$set": {
+                        "runtime_status": RuntimeStatus.EXPIRED.value,
+                        "updated_at": _iso_now(self._clock),
+                    },
                     "$inc": {"state_version": 1},
                 },
                 return_document=True,
@@ -687,7 +792,9 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             raise StoreInfraError(str(exc)) from exc
         if doc is None:
             try:
-                probe = await self._collection.find_one({"_id": expedition_id}, {"runtime_status": 1})
+                probe = await self._collection.find_one(
+                    {"_id": expedition_id}, {"runtime_status": 1}
+                )
             except Exception as exc:
                 raise StoreInfraError(str(exc)) from exc
             if probe is None:
@@ -713,13 +820,16 @@ class MongoExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
     async def get_version(self, expedition_id: str) -> ReadResult:
         try:
             doc = await self._collection.find_one(
-                {"_id": expedition_id}, {"state_version": 1},
+                {"_id": expedition_id},
+                {"state_version": 1},
             )
         except Exception as exc:
             raise StoreInfraError(str(exc)) from exc
         if doc is None:
             return ReadResult(code=CasResultCode.NOT_FOUND)
-        return ReadResult(code=CasResultCode.SUCCESS, version_only=int(doc.get("state_version", 0)))
+        return ReadResult(
+            code=CasResultCode.SUCCESS, version_only=int(doc.get("state_version", 0))
+        )
 
     # ═══════════════════════ 11. health_check ═══════════════════════
     async def health_check(self) -> bool:

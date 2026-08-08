@@ -213,17 +213,16 @@ async def seed_classes_and_traits(db) -> None:
 
 async def seed_dungeons_and_items(db) -> None:
     """Idempotent Phase-3 content seed."""
+    from app.shared.content_curve import DUNGEON_CURVE
     now = _utc_now_iso()
     for d in DUNGEON_SEED:
+        curve = DUNGEON_CURVE.get(d["slug"])
         await db.dungeons.update_one(
             {"slug": d["slug"]},
             {
                 "$setOnInsert": {
                     "id": str(uuid.uuid4()),
                     "created_at": now,
-                    # ROUND 5: rec_power locked at insert; later bumps via
-                    # `seed_round5.bump_legacy_t2_t3_power()` persist (idempotent).
-                    "recommended_power": d["recommended_power"],
                 },
                 "$set": {
                     "slug": d["slug"],
@@ -232,8 +231,20 @@ async def seed_dungeons_and_items(db) -> None:
                     "difficulty": d["difficulty"],
                     "required_team_size": d["required_team_size"],
                     "base_duration_seconds": d["base_duration_seconds"],
+                    "recommended_power": (
+                        curve.recommended_power if curve else d["recommended_power"]
+                    ),
                     "base_gold_reward": d["base_gold_reward"],
-                    "base_xp_reward": d["base_xp_reward"],
+                    "base_xp_reward": (
+                        curve.xp_reward if curve else d["base_xp_reward"]
+                    ),
+                    **({
+                        "required_level": curve.required_level,
+                        "bucket": curve.bucket,
+                        # Prevent the obsolete Round-5 +25% migration from
+                        # modifying the authoritative level-80 power value.
+                        "power_bumped": True,
+                    } if curve else {}),
                     # Phase 11.2: data-driven gate dict (optional)
                     "gate": d.get("gate") or {},
                     "is_active": True,
@@ -433,6 +444,43 @@ async def run_all_seeds(db) -> None:
         logger.info(
             "Phase 14.6: seeded %d IT items + %d recipes (idempotent)",
             n_items, n_recipes,
+        )
+    # R18.6 runtime — 27 canonical classes, five singular lore items per Hall.
+    # Runs after the legacy Italian seed so canonical identity and item-first
+    # metadata win deterministically without replacing stable database IDs.
+    from app.seeds.seed_class_hall_content import (
+        seed_canonical_class_hall_content,
+    )
+
+    canonical = await seed_canonical_class_hall_content(db)
+    if canonical["classes"] or canonical["items"]:
+        logger.info(
+            "R18.6 runtime: seeded/updated %d canonical classes + %d Hall items",
+            canonical["classes"],
+            canonical["items"],
+        )
+    # T8 tester readiness — deterministic recruitment needs playable races
+    # after every isolated database reset, not only after a manual script.
+    from app.scripts.round160_seed_races import seed_races
+
+    races = await seed_races(db)
+    if races["inserted"]:
+        logger.info(
+            "T8 runtime: seeded %d playable races (%d already present)",
+            races["inserted"],
+            races["skipped"],
+        )
+    # T6 — complete singular catalog. Legacy item rows stay available during
+    # tester migration, while reward pools prefer this catalog version.
+    from app.seeds.seed_t6_final_catalog import seed_t6_final_catalog
+
+    t6_catalog = await seed_t6_final_catalog(db)
+    if t6_catalog["inserted"] or t6_catalog["modified"]:
+        logger.info(
+            "T6 runtime: activated %d item blueprints (%d inserted, %d updated)",
+            t6_catalog["total"],
+            t6_catalog["inserted"],
+            t6_catalog["modified"],
         )
     # Phase 14.7 ROUND 3.D — audit log indexes (no data seed).
     from app.audit.log import ensure_audit_indexes

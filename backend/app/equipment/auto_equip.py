@@ -182,8 +182,15 @@ def _resolve_class_slug(adv: dict) -> Optional[str]:
 # ── Italian noun agreement per slot for narrative messages ──────────────
 _SLOT_GRAMMAR_IT: dict[str, dict[str, str]] = {
     "weapon":    {"noun": "Arma",       "past_part": "equipaggiata",   "art": "un'"},
-    "armor":     {"noun": "Armatura",   "past_part": "equipaggiata",   "art": "un'"},
+    "chest":     {"noun": "Corazza",    "past_part": "equipaggiata",   "art": "una "},
+    "legs":      {"noun": "Gambe",      "past_part": "equipaggiate",   "art": "delle "},
+    "head":      {"noun": "Elmo",       "past_part": "equipaggiato",   "art": "un "},
     "accessory": {"noun": "Accessorio", "past_part": "equipaggiato",   "art": "un "},
+    "back":      {"noun": "Schiena",    "past_part": "equipaggiata",   "art": "la "},
+    "ring_1":    {"noun": "Anello I",   "past_part": "equipaggiato",   "art": "un "},
+    "ring_2":    {"noun": "Anello II",  "past_part": "equipaggiato",   "art": "un "},
+    "trinket_1": {"noun": "Monile I",   "past_part": "equipaggiato",   "art": "un "},
+    "trinket_2": {"noun": "Monile II",  "past_part": "equipaggiato",   "art": "un "},
 }
 
 
@@ -288,8 +295,15 @@ async def auto_equip_adventurer(
     def _slot_label(slot: str) -> tuple[str, str]:
         return {
             "weapon": ("Arma", "Weapon"),
-            "armor": ("Armatura", "Armor"),
+            "chest": ("Corazza", "Chest"),
+            "legs": ("Gambe", "Legs"),
+            "head": ("Elmo", "Head"),
             "accessory": ("Accessorio", "Accessory"),
+            "back": ("Schiena", "Back"),
+            "ring_1": ("Anello I", "Ring I"),
+            "ring_2": ("Anello II", "Ring II"),
+            "trinket_1": ("Monile I", "Trinket I"),
+            "trinket_2": ("Monile II", "Trinket II"),
         }.get(slot, (slot, slot))
 
     for slot in EQUIPMENT_SLOTS:

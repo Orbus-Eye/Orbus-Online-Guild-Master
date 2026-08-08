@@ -11,9 +11,12 @@ Guard-rail rinforzati:
 
 Endpoint (tutti sotto `/api/admin/tester-tools`):
 - GET  /status
+- GET  /smoke-matrix
+- GET  /vertical-slice
 - POST /grant-adventurers
 - POST /set-max
 - POST /set-min
+- POST /reset-class-hall-journey
 """
 from __future__ import annotations
 
@@ -26,13 +29,32 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.adventurers.classless import is_explicit_classless_recruit
+from app.shared.constants import ADVENTURER_MAX_LEVEL
+from app.admin.tester_journey import (
+    build_classless_tester_adventurer,
+    build_tester_smoke_matrix,
+    build_tester_vertical_slice,
+    release_tester_equipment,
+    reset_tester_class_hall_journey,
+)
+from app.admin.tester_release import (
+    T8_CHECKLIST_KEYS,
+    build_t8_release_readiness,
+)
 from app.core.database import db
 from app.core.security import get_admin_user
+from app.territory.structures import (
+    STRUCTURE_CATALOG,
+    default_structures_doc,
+)
 
 logger = logging.getLogger("orbus.tester_tools")
 
 router = APIRouter(prefix="/api/admin/tester-tools",
                    tags=["admin", "tester-tools"])
+TESTER_FULL_ROSTER_SIZE = 39
+TESTER_MIN_ROSTER_SIZE = 3
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -150,21 +172,60 @@ class TargetIn(BaseModel):
                           description="Richiesto se recent invocation")
 
 
+class GrantAdventurersIn(TargetIn):
+    target_count: int = Field(
+        default=20,
+        ge=5,
+        le=50,
+        description=(
+            "Rosa tester desiderata. Il valore 20 prepara un raid; "
+            "27 copre tutte le Class Hall; 33 aggiunge sei supporti "
+            "non risonanti; 39 prepara due squadre supporto indipendenti "
+            "per i dungeon da sette e il confronto controllato."
+        ),
+    )
+
+
+class TesterReleaseChecklistIn(TargetIn):
+    desktop_navigation: bool = False
+    mobile_navigation: bool = False
+    classless_hall_journey: bool = False
+    item_lore_and_sources: bool = False
+    dungeon_and_raid_reports: bool = False
+    reset_repeatability: bool = False
+    notes: str = Field(default="", max_length=2000)
+
+
 @router.get("/status")
 async def status(target_email: str,
                  admin: dict = Depends(get_admin_user)):
-    """Stato test-user: guild, oro, roster, unlocks."""
+    """Stato test-user: guild, oro, roster e stato della scelta di classe."""
     user = await _resolve_target_user(target_email, admin)
     guild = await db.guilds.find_one(
         {"owner_user_id": user["id"]}, {"_id": 0},
     )
-    adv_count = 0
+    active_adventurers = []
     if guild:
-        adv_count = await db.adventurers.count_documents(
-            {"guild_id": guild["id"],
-             "$and": [{"is_retired": {"$ne": True}},
-                      {"retired": {"$ne": True}}]},
+        active_adventurers = await db.adventurers.find(
+            {
+                "guild_id": guild["id"],
+                "is_retired": {"$ne": True},
+                "retired": {"$ne": True},
+                "archived": {"$ne": True},
+            },
+            {"_id": 0},
+        ).to_list(500)
+    classless_count = sum(
+        is_explicit_classless_recruit(adventurer)
+        for adventurer in active_adventurers
+    )
+    assigned_count = sum(
+        bool(
+            adventurer.get("class_hall_id")
+            and adventurer.get("canonical_class_slug")
         )
+        for adventurer in active_adventurers
+    )
     return {
         "target_user": {"id": user.get("id"),
                         "email": user.get("email"),
@@ -176,26 +237,131 @@ async def status(target_email: str,
                   "max_team_power_ever": (
                       guild.get("max_team_power_ever", 0) if guild else 0
                   )},
-        "roster": {"active_count": adv_count},
+        "roster": {
+            "active_count": len(active_adventurers),
+            "classless_count": classless_count,
+            "assigned_count": assigned_count,
+            "invalid_class_state_count": (
+                len(active_adventurers) - classless_count - assigned_count
+            ),
+        },
         "tools_enabled": _tools_enabled(),
         "env": os.environ.get("APP_ENV", "?"),
     }
 
 
-async def _resolve_class_map(db) -> dict[str, str]:
-    """Ritorna dict class_slug (lowercase) → adventurer_class_id.
-    Cache O(1) lookup per grant-adventurers."""
-    docs = await db.adventurer_classes.find(
-        {"is_active": {"$ne": False}}, {"_id": 0, "id": 1, "slug": 1},
-    ).to_list(50)
-    return {d["slug"].lower(): d["id"] for d in docs if d.get("id")}
+@router.get("/smoke-matrix")
+async def smoke_matrix(target_email: str,
+                       admin: dict = Depends(get_admin_user)):
+    """Matrice read-only della slice tester e della roadmap item-first."""
+    user = await _resolve_target_user(target_email, admin)
+    guild = await db.guilds.find_one(
+        {"owner_user_id": user["id"]}, {"_id": 0},
+    )
+    return await build_tester_smoke_matrix(db, user=user, guild=guild)
+
+
+@router.get("/vertical-slice")
+async def vertical_slice(target_email: str,
+                         admin: dict = Depends(get_admin_user)):
+    """Telemetria read-only Hall → item → dungeon → raid → nuova build."""
+    user = await _resolve_target_user(target_email, admin)
+    guild = await db.guilds.find_one(
+        {"owner_user_id": user["id"]}, {"_id": 0},
+    )
+    return await build_tester_vertical_slice(db, user=user, guild=guild)
+
+
+@router.get("/release-readiness")
+async def release_readiness(
+    target_email: str,
+    admin: dict = Depends(get_admin_user),
+):
+    """T8 gate: regressione automatica + checklist umana desktop/mobile."""
+    user = await _resolve_target_user(target_email, admin)
+    guild = await db.guilds.find_one(
+        {"owner_user_id": user["id"]},
+        {"_id": 0},
+    )
+    vertical = await build_tester_vertical_slice(
+        db,
+        user=user,
+        guild=guild,
+    )
+    return await build_t8_release_readiness(
+        db,
+        user=user,
+        guild=guild,
+        vertical_slice=vertical,
+    )
+
+
+@router.post("/release-checklist")
+async def save_release_checklist(
+    body: TesterReleaseChecklistIn,
+    admin: dict = Depends(get_admin_user),
+):
+    """Record an explicit human T8 check without authorizing deployment."""
+    user = await _resolve_target_user(body.target_email, admin)
+    now = _now_iso()
+    checks = {
+        key: bool(getattr(body, key))
+        for key in T8_CHECKLIST_KEYS
+    }
+    doc = {
+        "id": str(uuid.uuid4()),
+        "target_user_id": user["id"],
+        "target_email": user.get("email"),
+        **checks,
+        "notes": body.notes.strip(),
+        "recorded_at": now,
+        "recorded_by_user_id": admin.get("id"),
+        "class_sets_included": False,
+        "deployment_authorized": False,
+    }
+    await db.tester_release_checklists.insert_one(doc)
+    await _emit_audit(
+        "TESTER_RELEASE_CHECKLIST_RECORDED",
+        admin.get("id"),
+        user.get("id"),
+        {
+            "completed_count": sum(checks.values()),
+            "required_count": len(T8_CHECKLIST_KEYS),
+            "deployment_authorized": False,
+        },
+    )
+    return {
+        "recorded": True,
+        "completed": all(checks.values()),
+        "completed_count": sum(checks.values()),
+        "required_count": len(T8_CHECKLIST_KEYS),
+        "recorded_at": now,
+        "deployment_authorized": False,
+    }
+
+
+async def _tester_trait_pool() -> list[dict]:
+    traits = await db.adventurer_traits.find(
+        {"is_active": True, "is_test": {"$ne": True}},
+        {"_id": 0},
+    ).to_list(500)
+    if traits:
+        return traits
+    return await db.traits.find(
+        {"is_active": True, "is_test": {"$ne": True}},
+        {"_id": 0},
+    ).to_list(500)
 
 
 @router.post("/grant-adventurers")
-async def grant_adventurers(body: TargetIn,
+async def grant_adventurers(body: GrantAdventurersIn,
                             admin: dict = Depends(get_admin_user)):
-    """Idempotente: crea avv extra fino a raggiungere 20 attivi (roster
-    tipico per raid 5x4). NON duplica se ne ha già >= 20."""
+    """Crea una rosa tester fino al numero richiesto di avventurieri attivi.
+
+    Ogni nuova recluta resta senza classe finché il tester non sceglie
+    esplicitamente una Class Hall. Chiamate ripetute non duplicano reclute
+    oltre il target richiesto.
+    """
     user = await _resolve_target_user(body.target_email, admin)
     guild = await db.guilds.find_one(
         {"owner_user_id": user["id"]}, {"_id": 0},
@@ -203,55 +369,27 @@ async def grant_adventurers(body: TargetIn,
     if not guild:
         raise HTTPException(409, "target_has_no_guild")
     guild_id = guild["id"]
-    now = _now_iso()
     current = await db.adventurers.count_documents(
         {"guild_id": guild_id,
-         "is_retired": {"$ne": True}, "retired": {"$ne": True}},
+         "is_retired": {"$ne": True}, "retired": {"$ne": True},
+         "archived": {"$ne": True}},
     )
-    target_count = 20
+    target_count = body.target_count
     to_create = max(0, target_count - current)
     snap_id = await _snapshot_state(
         user["id"], guild_id, "grant-adventurers",
     )
-    # ROUND 16.5.1 BUG#3 fix — resolve class_id da adventurer_classes
-    # (era omesso in R16.5.1 iniziale → adventurer_public() esplodeva
-    # con KeyError su list_adventurers_for_guild).
-    class_map = await _resolve_class_map(db)
+    traits_pool = await _tester_trait_pool()
     created = []
-    _CLASSES = [("warrior", "Tank"), ("rogue", "DPS"),
-                ("priest", "Healer"), ("mage", "DPS"),
-                ("ranger", "DPS")]
-    for i in range(to_create):
-        cls_slug, cls_role = _CLASSES[i % len(_CLASSES)]
-        class_id = class_map.get(cls_slug)
-        if not class_id:  # fallback: prendi la prima classe attiva
-            class_id = next(iter(class_map.values()), None)
-        adv_id = str(uuid.uuid4())
-        doc = {
-            "id": adv_id, "guild_id": guild_id,
-            "name": f"TesterAdv-{current + i + 1}",
-            "level": 5, "experience": 0,
-            "is_available": True, "is_retired": False,
-            "retired": False, "archived": False, "frozen": False,
-            "is_test_artifact": True,
-            # Schema legittimo — deve superare adventurer_public()
-            "adventurer_class_id": class_id,
-            "class_name": cls_slug.capitalize(),
-            "class_role": cls_role,
-            "class": cls_slug.capitalize(),
-            "role": cls_role,
-            "rarity": "common",
-            "is_starter": False,
-            "morale": 100, "stamina": 100,
-            "strength": 15, "agility": 10, "intellect": 8,
-            "endurance": 12, "faith": 6,
-            "stats": {"strength": 15, "agility": 10, "intellect": 8,
-                      "endurance": 12, "faith": 6},
-            "team_power": 55, "traits": [],
-            "created_at": now, "updated_at": now,
-        }
+    for _ in range(to_create):
+        doc = build_classless_tester_adventurer(
+            guild_id,
+            traits_pool=traits_pool,
+            level=5,
+            extra={"tester_grant_source": "grant-adventurers"},
+        )
         await db.adventurers.insert_one(doc)
-        created.append(adv_id)
+        created.append(doc["id"])
     await _emit_audit(
         "TESTER_TOOL_INVOKED", admin.get("id"), user["id"],
         {"tool": "grant-adventurers", "created": len(created),
@@ -261,15 +399,67 @@ async def grant_adventurers(body: TargetIn,
         "created": len(created),
         "already_existed": current,
         "total_after": current + len(created),
+        "target_count": target_count,
         "snapshot_id": snap_id,
+        "class_selection_required": True,
     }
+
+
+@router.post("/reset-class-hall-journey")
+async def reset_class_hall_journey(
+    body: TargetIn,
+    admin: dict = Depends(get_admin_user),
+):
+    """Crea un viaggio pulito preservando account, gilda e storico."""
+    if body.confirm is not True:
+        raise HTTPException(
+            400,
+            {
+                "code": "tester_journey.explicit_confirmation_required",
+                "user_message": (
+                    "Conferma esplicitamente la creazione di un nuovo "
+                    "viaggio tester."
+                ),
+            },
+        )
+    user = await _resolve_target_user(body.target_email, admin)
+    guild = await db.guilds.find_one(
+        {"owner_user_id": user["id"]}, {"_id": 0},
+    )
+    if not guild:
+        raise HTTPException(409, "target_has_no_guild")
+    snap_id = await _snapshot_state(
+        user["id"],
+        guild["id"],
+        "reset-class-hall-journey",
+    )
+    result = await reset_tester_class_hall_journey(
+        db,
+        user=user,
+        guild=guild,
+        snapshot_id=snap_id,
+    )
+    await _emit_audit(
+        "TESTER_TOOL_INVOKED",
+        admin.get("id"),
+        user["id"],
+        {
+            "tool": "reset-class-hall-journey",
+            "snapshot_id": snap_id,
+            "reset_id": result["reset_id"],
+            "archived_adventurers": result["archived_adventurers"],
+            "created_classless_adventurers": (
+                result["created_classless_adventurers"]
+            ),
+        },
+    )
+    return result
 
 
 @router.post("/set-max")
 async def set_max(body: TargetIn,
-                  admin: dict = Depends(get_admin_user)):
-    """Porta l'account a stato MAX: guild lv 15, oro 100k, roster 20
-    lv 10, unlock avanzati (via max_team_power_ever alto)."""
+                   admin: dict = Depends(get_admin_user)):
+    """Porta l'account a stato MAX per la copertura T5 completa."""
     user = await _resolve_target_user(body.target_email, admin)
     guild = await db.guilds.find_one(
         {"owner_user_id": user["id"]}, {"_id": 0},
@@ -287,62 +477,72 @@ async def set_max(body: TargetIn,
     await db.guilds.update_one(
         {"id": guild_id},
         {"$set": {"level": 15, "gold": 100000,
-                  "max_team_power_ever": 999,
+                  "max_team_power_ever": 9999,
                   "reputation": 1000, "updated_at": now}},
     )
-    # ROUND 16.5.1 BUG#4 fix — Set MAX deve anche unlockare le strutture
-    # necessarie per i sistemi (raid richiede war_room lv 2+). Aggiungiamo
-    # bump per tutte le strutture ai valori "MAX" ragionevoli.
+    structure_updates = {
+        f"structures.{slug}.level": int(meta["max_level"])
+        for slug, meta in STRUCTURE_CATALOG.items()
+    }
+    structure_updates.update(
+        {
+            f"structures.{slug}.is_unlocked": True
+            for slug in STRUCTURE_CATALOG
+        }
+    )
+    structure_updates["updated_at"] = now
     await db.guild_structures.update_one(
         {"guild_id": guild_id},
-        {"$set": {
-            "structures.dormitories.level": 10,
-            "structures.dormitories.is_unlocked": True,
-            "structures.war_room.level": 5,
-            "structures.war_room.is_unlocked": True,
-            "structures.training_grounds.level": 5,
-            "structures.training_grounds.is_unlocked": True,
-            "structures.forge.level": 5,
-            "structures.forge.is_unlocked": True,
-            "structures.market.level": 5,
-            "structures.market.is_unlocked": True,
-            "structures.library.level": 5,
-            "structures.library.is_unlocked": True,
-            "updated_at": now,
-        }},
+        {
+            "$setOnInsert": {
+                "id": str(uuid.uuid4()),
+                "guild_id": guild_id,
+                "created_at": now,
+            },
+            "$set": structure_updates,
+        },
+        upsert=True,
     )
-    # Roster: garantisci 20 avv lv 10 attivi
+    # Roster: 27 classi + due squadre indipendenti di quattro supporti.
     await db.adventurers.update_many(
         {"guild_id": guild_id,
-         "is_retired": {"$ne": True}, "retired": {"$ne": True}},
-        {"$set": {"level": 10, "is_available": True,
+         "is_retired": {"$ne": True}, "retired": {"$ne": True},
+         "archived": {"$ne": True}},
+        {"$set": {"level": ADVENTURER_MAX_LEVEL, "experience": 0,
+                  "is_available": True,
                   "updated_at": now}},
     )
     active = await db.adventurers.count_documents(
         {"guild_id": guild_id,
-         "is_retired": {"$ne": True}, "retired": {"$ne": True}},
+         "is_retired": {"$ne": True}, "retired": {"$ne": True},
+         "archived": {"$ne": True}},
     )
-    # Se meno di 20 → chiamo grant idempotente
-    if active < 20:
-        for _ in range(20 - active):
-            await db.adventurers.insert_one({
-                "id": str(uuid.uuid4()), "guild_id": guild_id,
-                "name": f"MaxAdv-{uuid.uuid4().hex[:6]}",
-                "level": 10, "is_available": True,
-                "is_retired": False, "retired": False,
-                "archived": False, "frozen": False,
-                "is_test_artifact": True,
-                "class_name": "Warrior", "class_role": "Tank",
-                "class": "Warrior", "role": "Tank",
-                "strength": 25, "agility": 15, "intellect": 15,
-                "endurance": 20, "faith": 10, "team_power": 85,
-                "traits": [], "created_at": now, "updated_at": now,
-            })
+    # Se meno di 20, aggiunge reclute senza classe: anche nello stato MAX
+    # la scelta della Hall resta sempre un'azione esplicita del tester.
+    if active < TESTER_FULL_ROSTER_SIZE:
+        traits_pool = await _tester_trait_pool()
+        docs = [
+            build_classless_tester_adventurer(
+                guild_id,
+                traits_pool=traits_pool,
+                level=ADVENTURER_MAX_LEVEL,
+                extra={"tester_grant_source": "set-max"},
+            )
+            for _ in range(TESTER_FULL_ROSTER_SIZE - active)
+        ]
+        if docs:
+            await db.adventurers.insert_many(docs)
     await _emit_audit(
         "TESTER_TOOL_INVOKED", admin.get("id"), user["id"],
         {"tool": "set-max", "snapshot_id": snap_id},
     )
-    return {"applied": "MAX", "snapshot_id": snap_id, "guild_id": guild_id}
+    return {
+        "applied": "MAX",
+        "snapshot_id": snap_id,
+        "guild_id": guild_id,
+        "active_roster": max(active, TESTER_FULL_ROSTER_SIZE),
+        "class_selection_required": True,
+    }
 
 
 @router.post("/set-min")
@@ -371,37 +571,84 @@ async def set_min(body: TargetIn,
                   "max_team_power_ever": 0, "reputation": 0,
                   "updated_at": now}},
     )
-    # Archivia (soft-retire) tutti tranne i primi 3 attivi
+    # Ripristina anche le strutture: MIN non deve conservare sblocchi MAX.
+    await db.guild_structures.update_one(
+        {"guild_id": guild_id},
+        {
+            "$setOnInsert": {
+                "id": str(uuid.uuid4()),
+                "guild_id": guild_id,
+                "created_at": now,
+            },
+            "$set": {
+                "structures": default_structures_doc(),
+                "updated_at": now,
+            },
+        },
+        upsert=True,
+    )
+    # Archivia (soft-retire) tutti tranne i primi tre attivi.
     advs = await db.adventurers.find(
         {"guild_id": guild_id,
-         "is_retired": {"$ne": True}, "retired": {"$ne": True}},
+         "is_retired": {"$ne": True}, "retired": {"$ne": True},
+         "archived": {"$ne": True}},
         {"_id": 0, "id": 1},
     ).sort("created_at", 1).to_list(200)
-    keep = advs[:3]
-    archive = advs[3:]
+    keep = advs[:TESTER_MIN_ROSTER_SIZE]
+    archive = advs[TESTER_MIN_ROSTER_SIZE:]
     keep_ids = [a["id"] for a in keep]
     if keep_ids:
         await db.adventurers.update_many(
             {"id": {"$in": keep_ids}},
             {"$set": {"level": 1, "experience": 0,
-                      "is_available": True, "updated_at": now}},
+                      "is_available": True, "is_retired": False,
+                      "retired": False, "archived": False,
+                      "updated_at": now}},
         )
     archived_count = 0
+    equipment_released = 0
     if archive:
+        archive_ids = [a["id"] for a in archive]
+        equipment_released = await release_tester_equipment(
+            db,
+            guild_id=guild_id,
+            adventurer_ids=archive_ids,
+        )
         r = await db.adventurers.update_many(
-            {"id": {"$in": [a["id"] for a in archive]}},
+            {"guild_id": guild_id, "id": {"$in": archive_ids}},
             {"$set": {"is_retired": True, "retired": True,
+                      "archived": True, "is_available": False,
                       "archived_by_tester_tool": True,
                       "updated_at": now}},
         )
         archived_count = r.modified_count
+    created = 0
+    if len(keep_ids) < TESTER_MIN_ROSTER_SIZE:
+        traits_pool = await _tester_trait_pool()
+        docs = [
+            build_classless_tester_adventurer(
+                guild_id,
+                traits_pool=traits_pool,
+                level=1,
+                extra={"tester_grant_source": "set-min"},
+            )
+            for _ in range(TESTER_MIN_ROSTER_SIZE - len(keep_ids))
+        ]
+        if docs:
+            await db.adventurers.insert_many(docs)
+            created = len(docs)
     await _emit_audit(
         "TESTER_TOOL_INVOKED", admin.get("id"), user["id"],
         {"tool": "set-min", "archived": archived_count,
-         "kept_active": len(keep_ids), "snapshot_id": snap_id},
+         "kept_active": len(keep_ids), "created": created,
+         "equipment_released": equipment_released,
+         "snapshot_id": snap_id},
     )
     return {"applied": "MIN", "archived": archived_count,
-            "kept_active": len(keep_ids), "snapshot_id": snap_id}
+            "kept_active": len(keep_ids), "created": created,
+            "active_roster": len(keep_ids) + created,
+            "equipment_released": equipment_released,
+            "snapshot_id": snap_id}
 
 
 __all__ = ["router"]

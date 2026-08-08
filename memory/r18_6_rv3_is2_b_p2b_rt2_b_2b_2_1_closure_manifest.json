@@ -1,0 +1,167 @@
+{
+  "gate_id": "RT2-B-2B-2-1",
+  "gate_title": "Drain Transition & Completion-to-Fragment Foundation",
+  "status": "CLOSED_PM_LOCKED",
+  "closure_timestamp_utc": "2026-07-27T21:03:25Z",
+  "canonical_v1_anchor": "73c25f5e3fbc80c91509512f0c731683e3944373",
+  "canonical_head_at_closure_start": "787b5a3a2d953e2ec2d0e8235021f00efce045af",
+  "pre_closure_baseline": "16/16",
+  "post_closure_baseline": "17/17",
+  "full_cap_bson_size_bytes": 230593,
+  "full_cap_target_bytes": 245760,
+  "full_cap_hard_limit_bytes": 262144,
+  "full_cap_headroom_bytes": 15167,
+  "result_code_inventory": "22/22",
+  "fail_stop_count": 0,
+  "openapi_paths": 275,
+  "sealed_artifact_count": 36,
+  "new_seals_created": 0,
+  "prd_append_occurrences": 1,
+  "closure_commit": "PENDING",
+  "files": [
+    {
+      "relative_path": "backend/app/stats/runtime/transitions/drain.py",
+      "artifact_role": "production_drain_state_machine",
+      "size_bytes": 25334,
+      "sha256": "56acedd3e93e214916f2e45d426e28e62a57db490010afe44a4b997d52c7b82f"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/transitions/dispatcher.py",
+      "artifact_role": "production_dispatcher_a1_positive_mutation_fix",
+      "size_bytes": 29759,
+      "sha256": "acb81ed000127523ee566200de4cb246f5150d0abe7ac89fd084c34e9b3053e1"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/transitions/models.py",
+      "artifact_role": "production_transition_models_drain_extension",
+      "size_bytes": 14885,
+      "sha256": "1ac32593f4d370f9b361dbe531eb3e4acc799445f369163db9bb52459d7f7e1d"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/state_store/models.py",
+      "artifact_role": "production_state_models_drain_extension",
+      "size_bytes": 9231,
+      "sha256": "2b1e6269f7f668318eeae53e497aac8a01ade782b291d6480e334cf036d4f37b"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/state_store/mongo_adapter.py",
+      "artifact_role": "production_mongo_adapter_drain_rehydration_v1_fix",
+      "size_bytes": 29865,
+      "sha256": "3d160319d76b57d2d56aa5ebbf30e0680606ec9bf3521cee82be3e0f25ab29db"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/feature_flags.py",
+      "artifact_role": "production_feature_flags_drain_extension",
+      "size_bytes": 7121,
+      "sha256": "6f8ac8a05891f210baa3e57fcecb515b8dd0a27322bad523973a924bd6d1a986"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/wiring/dispatcher.py",
+      "artifact_role": "production_wiring_dispatcher",
+      "size_bytes": 11651,
+      "sha256": "d6952e0e496d3289991e1bff93b5a1ee4b85ef321427c77c8256c8ee65c8b976"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/wiring/feature_flags.py",
+      "artifact_role": "production_wiring_feature_flags_gate",
+      "size_bytes": 4386,
+      "sha256": "191091d4bc5694ed96e411fd60be47ebe068e448cdae8d55719d49c2149f7698"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/wiring/coordinator.py",
+      "artifact_role": "production_wiring_coordinator_drain_hook",
+      "size_bytes": 17992,
+      "sha256": "8b8e45b783dfbc8d8b19f032dd071f07131e69117a1758805fd857cee9492c34"
+    },
+    {
+      "relative_path": "backend/app/stats/runtime/wiring/audit.py",
+      "artifact_role": "production_wiring_audit_map",
+      "size_bytes": 4567,
+      "sha256": "3595a2fe6ac4b13c272f2ed072f2a94d9fa4755622935f279b18fc71871a6aea"
+    },
+    {
+      "relative_path": "backend/app/content/lore_meta.py",
+      "artifact_role": "sealed_lore_canonical_invariant",
+      "size_bytes": 17832,
+      "sha256": "a18f708b043e1dccf4910a3ab61b7520b16dba5db742c48b1f7ea67f60965b8f"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/transitions/test_drain_transitions.py",
+      "artifact_role": "test_phase_a_drain_state_machine",
+      "size_bytes": 34164,
+      "sha256": "4a5707133696ada305152bde5dd0c156bf61db4d01bb5f5bfa0a85661df1af94"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/transitions/test_drain_fakestore.py",
+      "artifact_role": "test_a1_fakestore_bundle",
+      "size_bytes": 29969,
+      "sha256": "58eb70663052cdd1216e93e04d9f7f74a82ab65bcab68697b0d7ea9024e5ba9c"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/transitions/test_drain_mocked_mongo.py",
+      "artifact_role": "test_a1_mocked_mongo_bundle",
+      "size_bytes": 11511,
+      "sha256": "3d9ec348535a953594950ecf61c7fc64cf97a85794f7eb2860e9148f38cb97ff"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/transitions/test_drain_perf_fakestore.py",
+      "artifact_role": "test_a1_perf_fakestore_bundle",
+      "size_bytes": 11679,
+      "sha256": "5dced06048214084f46795ab8feb2ea1ac727646fcf227e976d1450f6e16c451"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/state_store/test_mongo_adapter_drain_rehydration.py",
+      "artifact_role": "test_v1_focused_adapter_rehydration_q2_evidence",
+      "size_bytes": 12930,
+      "sha256": "22198a1ed50bd6667a4e72f441366036e0aa598f1065e832665be6b8539c960c"
+    },
+    {
+      "relative_path": "backend/tests/effect_engine/transitions/integration_real_mongo/test_drain_v1_real_mongo.py",
+      "artifact_role": "test_v1_real_mongo_matrix",
+      "size_bytes": 45172,
+      "sha256": "4de9538e43329d5d9c51e90ce2d7fff19627d00e20004d22ea62bf1a8bcfdf3e"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_implementation_report.md",
+      "artifact_role": "phase_a_implementation_report_md",
+      "size_bytes": 25666,
+      "sha256": "d71e7b5e3941e11241a0e2c7633e07cc3d06a39a53ab1923e18a2971dfe92275"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_implementation_report.json",
+      "artifact_role": "phase_a_implementation_report_json",
+      "size_bytes": 11388,
+      "sha256": "4b7aa8ef02c86d1806b0b59995181dad67ea6ec4d9df7be66699382f1321f97c"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_real_mongo_verification_addendum.md",
+      "artifact_role": "v1_real_mongo_addendum_md",
+      "size_bytes": 18617,
+      "sha256": "b03c4e8f2b9d268033e964ac4bc338b020df2f1bf456d3210fccd754562e3c15"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_real_mongo_verification_addendum.json",
+      "artifact_role": "v1_real_mongo_addendum_json",
+      "size_bytes": 14481,
+      "sha256": "55c74951939a3025be9e19bfc496608e777006a5869feb3d0c043726febda57f"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_closure_report.md",
+      "artifact_role": "closure_report_md",
+      "size_bytes": 14895,
+      "sha256": "ccd8d0a18a924be093d97d8e696a47b608045a241b0b411faa4e4357279d040d"
+    },
+    {
+      "relative_path": "memory/r18_6_rv3_is2_b_p2b_rt2_b_2b_2_1_closure_report.json",
+      "artifact_role": "closure_report_json",
+      "size_bytes": 10923,
+      "sha256": "c25b63ebddb381e456615ffbe0f2ac63c26f5d01dd5f9c9e50b6d035c9489bb9"
+    },
+    {
+      "relative_path": "memory/PRD.md",
+      "artifact_role": "prd_post_closure_append",
+      "size_bytes": 308763,
+      "sha256": "c3f8c94bf470a01c2410cebf010337acde01acea42f64baff32410b79d0c4f78"
+    }
+  ]
+}

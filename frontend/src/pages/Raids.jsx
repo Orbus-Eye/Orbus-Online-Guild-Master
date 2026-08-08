@@ -78,7 +78,7 @@ export default function Raids() {
                     setSearchParams({}, { replace: true });
                     return;
                 }
-                if (found.squad_type !== "raid_20") {
+                if (!found.squad_type.startsWith("raid_")) {
                     toast.warning(
                         "Questa squadra è per dungeon. Vai alla pagina Dungeon.",
                     );
@@ -98,8 +98,6 @@ export default function Raids() {
         next.delete("squad_id");
         setSearchParams(next, { replace: true });
     };
-
-    const squadQuery = activeSquad ? `?squad_id=${activeSquad.squad_id}` : "";
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -121,7 +119,9 @@ export default function Raids() {
                         <div className="text-xs text-amber">
                             <span className="tracking-widest">▶ Stai usando la squadra:</span>{" "}
                             <strong data-testid="raids-squad-banner-name">{activeSquad.name}</strong>{" "}
-                            <span className="text-muted-foreground">(raid 20 avventurieri)</span>
+                            <span className="text-muted-foreground">
+                                ({activeSquad.adventurer_ids.length} avventurieri)
+                            </span>
                         </div>
                         <button
                             type="button"
@@ -171,6 +171,11 @@ export default function Raids() {
                         const itName = r.name_it || t(`raids.catalog.${r.slug}.name`);
                         const itDesc = r.description_it || t(`raids.catalog.${r.slug}.description`);
                         const minLvl = r.min_adventurer_level || 1;
+                        const matchingSquad = activeSquad
+                            && activeSquad.squad_type === `raid_${r.min_roster_size}`;
+                        const cardSquadQuery = matchingSquad
+                            ? `?squad_id=${activeSquad.squad_id}`
+                            : "";
                         return (
                         <article
                             key={r.slug}
@@ -255,7 +260,7 @@ export default function Raids() {
                             {/* Phase 18.1 — Builder + last report links */}
                             <div className="mt-3 flex items-center gap-2 flex-wrap">
                                 <Link
-                                    to={`/raids/build/${r.slug}${squadQuery}`}
+                                    to={`/raids/build/${r.slug}${cardSquadQuery}`}
                                     data-testid={`raid-builder-link-${r.slug}`}
                                     className={`text-[11px] tracking-widest border px-3 py-1 rounded-sm ${r.unlocked ? "border-amber/60 text-amber hover:bg-amber/10" : "border-border/40 text-muted-foreground pointer-events-none opacity-50"}`}
                                 >
@@ -301,16 +306,16 @@ export default function Raids() {
                             :: NESSUN RAID COMPLETATO
                         </h3>
                         <p className="text-[12px] text-muted-foreground italic">
-                            🐉 Non hai ancora affrontato un raid. Servono almeno 12
-                            avventurieri organizzati in 4 party di squad. Avvia il primo
-                            raid dal catalogo qui sopra.
+                            Non hai ancora affrontato un raid. Il primo richiede 10
+                            avventurieri in due party da cinque; i raid successivi
+                            arrivano a 15, 20 e 40 membri.
                         </p>
                     </section>
                 )}
 
                 <div className="mt-6 text-[10px] text-muted-foreground italic">
-                    Phase 18 MVP — il builder party-by-party (4 × 5) sarà rilasciato in Phase 18.1.
-                    Gli endpoint backend sono già attivi (POST /api/raids/start) per smoke test API.
+                    Ogni raid usa party da cinque e una formazione coerente con il
+                    proprio contratto: 10, 15, 20 oppure 40 avventurieri.
                 </div>
             </main>
         </div>

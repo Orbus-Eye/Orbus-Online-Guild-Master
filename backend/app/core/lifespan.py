@@ -56,18 +56,12 @@ async def lifespan(app: FastAPI):
         from app.scripts.seed_round12_release_tester_roster import (
             run as _seed_release_tester,
         )
-        # ROUND 13a — Recovery + Lore pack seeds (idempotent, additive).
-        from app.scripts.seed_round13a_dungeon_raid_lore import run as _seed_r13a_dr
-        from app.scripts.seed_round13a_items_lore import run as _seed_r13a_items
         await _seed_preseason()
         await _seed_rewards()
         await _seed_demos()
         # ROUND 12.D.3 — preview-only: free tester's stuck adventurers
         # so they can build a PvP defense team. No-op in production.
         await _seed_release_tester()
-        # ROUND 13a — Apply lore patches to dungeons/raids + items.
-        await _seed_r13a_dr()
-        await _seed_r13a_items()
     except Exception as exc:  # noqa: BLE001
         import logging
         logging.getLogger("orbus").warning("ROUND 12 seed at startup failed: %s", exc)
@@ -75,6 +69,9 @@ async def lifespan(app: FastAPI):
     await run_forge_seeds(db)
     await run_all_seeds(db)
     await run_round5_seeds_and_migrations(db)
+    from app.dungeons.encounters import reconcile_dungeon_encounters
+    dungeon_contract = await reconcile_dungeon_encounters(db)
+    logger.info("T2 canonical dungeon encounters: %s", dungeon_contract)
     await seed_territory_materials(db)  # ROUND 6B.3 — idempotent material seed
     # ROUND 6B.4 — adventurer-bound schema migration + sparse index.
     # Both calls are idempotent: safe to run on every boot.
@@ -191,6 +188,25 @@ async def lifespan(app: FastAPI):
         )
     except Exception as exc:
         logger.warning("R16.3 Phase 8 V1 stables seed failed: %s", exc)
+    # ROUND 18.6 item-first bootstrap reconciliation.
+    # Lore enrichment must run after every catalog producer above.  The
+    # previous order executed it before the base/forge/Hall seeds, leaving a
+    # pristine database with most legacy items permanently unenriched.
+    try:
+        from app.scripts.seed_round13a_dungeon_raid_lore import (
+            run as _seed_r13a_dr,
+        )
+        from app.scripts.seed_round13a_items_lore import run as _seed_r13a_items
+
+        dungeon_raid_lore = await _seed_r13a_dr()
+        item_lore = await _seed_r13a_items()
+        logger.info(
+            "Final lore reconciliation: dungeons_raids=%s items=%s",
+            dungeon_raid_lore,
+            item_lore,
+        )
+    except Exception as exc:
+        logger.warning("Final lore reconciliation failed: %s", exc)
     yield
     mongo_client.close()
 

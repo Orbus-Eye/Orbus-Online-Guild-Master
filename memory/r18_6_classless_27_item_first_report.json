@@ -1,0 +1,61 @@
+{
+  "updated_at": "2026-07-29",
+  "status": "tester_baseline_local_complete_gameplay_depth_in_progress",
+  "classes": 27,
+  "class_halls": 27,
+  "hall_items": 135,
+  "hall_items_per_class": 5,
+  "active_non_test_items": 261,
+  "unique_active_item_ids": 261,
+  "unique_active_item_slugs": 261,
+  "unique_active_item_names_casefold": 261,
+  "active_items_with_lore_source": 261,
+  "active_items_lore_reviewed": 261,
+  "active_items_with_flavor_text": 261,
+  "flavor_text_coverage_percent": 100.0,
+  "signature_effect_definitions": 27,
+  "observable_signature_effects": 27,
+  "expedition_item_effect_report": true,
+  "collection_book": true,
+  "tester_reset": true,
+  "tester_smoke_matrix": true,
+  "verification": {
+    "unit_classless_class_hall_passed": 16,
+    "real_mongo_effect_engine_passed": 116,
+    "real_mongo_class_hall_passed": 6,
+    "http_black_box_passed": 2,
+    "item_effect_projection_tests_passed": 21,
+    "common_lore_coverage_tests_passed": 2,
+    "final_targeted_regression_passed": 39,
+    "fastapi_routes": 306,
+    "openapi_paths": 284,
+    "all_classes_assigned": 27,
+    "all_signatures_equipped": 27,
+    "expeditions_completed_for_class_coverage": 9,
+    "frontend_build": "passed",
+    "browser_qa": "passed",
+    "browser_errors": 0,
+    "browser_warnings": 0
+  },
+  "legacy_suite": {
+    "status": "not_portable_not_green",
+    "known_environment_debt": [
+      "hardcoded /app paths",
+      "SMTP credentials",
+      "pre-populated database assumptions",
+      "obsolete weak-password fixtures",
+      "undeclared httpx dependency"
+    ]
+  },
+  "registry_1500": {
+    "runtime": false,
+    "legacy_archetypes": 5,
+    "reserved_records": 4,
+    "progressive_markers": 10,
+    "action": "remap_and_audit_before_migration"
+  },
+  "legacy_null_conflicts_preserved": 268,
+  "next": "observable_item_effects_in_expeditions",
+  "shared_or_production_writes": 0,
+  "commit_push_deploy": "not_performed"
+}

@@ -20,22 +20,40 @@ This module is intentionally a *pure function* — no DB access. The
 caller (equip_item_service) loads the class document once and hands it
 to the checker. Pure helpers stay trivial to unit-test.
 """
+
 from __future__ import annotations
+
+from app.adventurers.classless import is_explicit_classless_recruit
 
 # Heavy-armour blacklist by class slug. These classes CAN NEVER equip
 # heavy armour even if the seed tag map drifts — defence in depth.
 # Round 16.0: includes the new `warlock` (caster) base class.
 # Legacy `necromancer` kept for back-compat reads only (post-migration
 # no adventurer carries that slug anymore).
-NO_HEAVY_ARMOR_CLASSES = frozenset({
-    "mage", "necromancer", "priest", "druid", "bard", "warlock",
-})
+NO_HEAVY_ARMOR_CLASSES = frozenset(
+    {
+        "mage",
+        "necromancer",
+        "priest",
+        "druid",
+        "bard",
+        "warlock",
+    }
+)
 
 # Arcane-weapon (staff/wand/grimoire) blacklist for non-caster classes.
 # Legacy `berserker` / `assassin` kept for back-compat reads only.
-NO_ARCANE_WEAPON_CLASSES = frozenset({
-    "warrior", "paladin", "berserker", "rogue", "ranger", "assassin", "monk",
-})
+NO_ARCANE_WEAPON_CLASSES = frozenset(
+    {
+        "warrior",
+        "paladin",
+        "berserker",
+        "rogue",
+        "ranger",
+        "assassin",
+        "monk",
+    }
+)
 
 ARCANE_WEAPON_TAGS = frozenset({"staff", "wand", "arcane", "grimoire", "tome"})
 
@@ -64,8 +82,11 @@ def check_equip_compatibility(adventurer: dict, item: dict) -> dict:
           "reason_code": str,
         }
     """
-    cls_slug = (adventurer.get("class_slug")
-                or (adventurer.get("class_name") or "").lower() or "")
+    cls_slug = (
+        adventurer.get("class_slug")
+        or (adventurer.get("class_name") or "").lower()
+        or ""
+    )
     cls_slug = cls_slug.strip().lower()
     spec_slug = (adventurer.get("specialization_slug") or "").strip().lower()
 
@@ -86,6 +107,29 @@ def check_equip_compatibility(adventurer: dict, item: dict) -> dict:
             "reason_it": (
                 f"Questo oggetto è esclusivo della classe '{required_class}'. "
                 f"Non può essere equipaggiato da un {cls_slug or 'altro'}."
+            ),
+        }
+
+    # A newly recruited adventurer has no combat discipline until the
+    # player explicitly chooses a Class Hall.  Only genuinely universal
+    # trinkets and non-specialised utility categories may pass this layer.
+    if is_explicit_classless_recruit(adventurer):
+        utility_types = {"consumable", "material", "cosmetic"}
+        item_type = (item.get("item_type") or "").strip().lower()
+        if is_universal or item_type in utility_types:
+            return {
+                "allowed": True,
+                "severity": "ok",
+                "reason_code": "universal_classless",
+                "reason_it": "Utilizzabile anche prima di scegliere una Sala di Classe.",
+            }
+        return {
+            "allowed": False,
+            "severity": "block",
+            "reason_code": "class_required",
+            "reason_it": (
+                "Scegli prima una Sala di Classe: questa recluta non ha ancora "
+                "la disciplina necessaria per equipaggiare l'oggetto."
             ),
         }
 

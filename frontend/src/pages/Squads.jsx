@@ -1,4 +1,4 @@
-// ROUND 6A.2a — Squads list page. 3 sections (dungeon_3 / dungeon_5 / raid_20).
+// Saved formations for every canonical dungeon and raid size.
 import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,8 +10,13 @@ import { api } from "@/lib/api";
 const TYPE_META = {
     dungeon_3: { titleIt: "Squadre Dungeon 3", titleEn: "Dungeon 3 Squads", size: 3 },
     dungeon_5: { titleIt: "Squadre Dungeon 5", titleEn: "Dungeon 5 Squads", size: 5 },
+    dungeon_7: { titleIt: "Squadre Dungeon 7", titleEn: "Dungeon 7 Squads", size: 7 },
+    raid_10: { titleIt: "Squadre Raid 10", titleEn: "Raid 10 Squads", size: 10 },
+    raid_15: { titleIt: "Squadre Raid 15", titleEn: "Raid 15 Squads", size: 15 },
     raid_20: { titleIt: "Squadre Raid 20", titleEn: "Raid 20 Squads", size: 20 },
+    raid_40: { titleIt: "Squadre Raid 40", titleEn: "Raid 40 Squads", size: 40 },
 };
+const TYPE_ORDER = Object.keys(TYPE_META);
 
 function SquadCard({ squad, lang, onArchive }) {
     const missing = (squad.missing_adventurer_ids || []).length;
@@ -20,7 +25,7 @@ function SquadCard({ squad, lang, onArchive }) {
     // legacy responses fall back to the union `missing_adventurer_ids`.
     const retiredCount = (squad.retired_adventurer_ids || []).length;
     const deletedCount = (squad.deleted_adventurer_ids || []).length;
-    const isRaid = squad.squad_type === "raid_20";
+    const isRaid = squad.squad_type.startsWith("raid_");
     // Round 6A.2c — raid deploy guard: disable if any required adventurer is missing.
     const deployDisabled = isRaid && missing > 0;
     const deployHref = isRaid
@@ -192,11 +197,9 @@ export default function Squads() {
         }
     };
 
-    const grouped = {
-        dungeon_3: squads.filter((s) => s.squad_type === "dungeon_3"),
-        dungeon_5: squads.filter((s) => s.squad_type === "dungeon_5"),
-        raid_20: squads.filter((s) => s.squad_type === "raid_20"),
-    };
+    const grouped = Object.fromEntries(
+        TYPE_ORDER.map((type) => [type, squads.filter((s) => s.squad_type === type)]),
+    );
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -219,9 +222,15 @@ export default function Squads() {
                     </p>
                 ) : (
                     <>
-                        <SquadSection type="dungeon_3" squads={grouped.dungeon_3} lang={lang} onArchive={handleArchive} />
-                        <SquadSection type="dungeon_5" squads={grouped.dungeon_5} lang={lang} onArchive={handleArchive} />
-                        <SquadSection type="raid_20" squads={grouped.raid_20} lang={lang} onArchive={handleArchive} />
+                        {TYPE_ORDER.map((type) => (
+                            <SquadSection
+                                key={type}
+                                type={type}
+                                squads={grouped[type]}
+                                lang={lang}
+                                onArchive={handleArchive}
+                            />
+                        ))}
                     </>
                 )}
             </main>

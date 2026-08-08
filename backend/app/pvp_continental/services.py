@@ -14,6 +14,8 @@ from typing import Any
 from fastapi import HTTPException
 
 from app.audit.log import write_audit
+from app.adventurers.classless import require_class_hall_assignment
+from app.adventurers.career import career_effective_stats, career_stat_multiplier
 from app.pvp_continental.resolver import (
     ELO_DEFAULT,
     _get_or_init_stats,
@@ -92,6 +94,7 @@ async def _adventurers_owned(
                     "user_message":
                     "Uno o più avventurieri non appartengono alla tua gilda."},
         )
+    require_class_hall_assignment(docs, source="pvp_continental.team")
     for a in docs:
         if a.get("is_available") is False:
             raise HTTPException(
@@ -105,6 +108,7 @@ async def _adventurers_owned(
 
 
 def _snapshot_adventurer(adv: dict, guild_id: str) -> dict:
+    effective_stats = career_effective_stats(adv)
     return {
         "id": adv["id"],
         "guild_id": guild_id,
@@ -112,11 +116,12 @@ def _snapshot_adventurer(adv: dict, guild_id: str) -> dict:
         "class_slug": adv.get("class_slug"),
         "specialization_slug": adv.get("specialization_slug"),
         "level_snapshot": int(adv.get("level") or 1),
-        "strength_snapshot": int(adv.get("strength") or 0),
-        "agility_snapshot": int(adv.get("agility") or 0),
-        "intellect_snapshot": int(adv.get("intellect") or 0),
-        "endurance_snapshot": int(adv.get("endurance") or 0),
-        "faith_snapshot": int(adv.get("faith") or 0),
+        "strength_snapshot": effective_stats["strength"],
+        "agility_snapshot": effective_stats["agility"],
+        "intellect_snapshot": effective_stats["intellect"],
+        "endurance_snapshot": effective_stats["endurance"],
+        "faith_snapshot": effective_stats["faith"],
+        "rarity_stat_multiplier_snapshot": career_stat_multiplier(adv),
         "role_snapshot": adv.get("role"),
     }
 

@@ -31,44 +31,23 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 
-
-# ─── Rarity → level mapping ───────────────────────────────────────────────────
-# Used ONLY when the seed lacks an explicit `level_required` > 1. Conservative
-# enough that legacy items don't suddenly become unequippable for active
-# tester accounts, strict enough that future Legendary/Signature drops are
-# properly gated. Brief umano: Common=1, Uncommon=3, Rare=5, Epic=8,
-# Legendary=12, Signature=spec_level default 5.
-_RARITY_TO_MIN_LEVEL: dict[str, int] = {
-    "Common": 1,
-    "Uncommon": 3,
-    "Rare": 5,
-    "Epic": 8,
-    "Legendary": 12,
-    "Signature": 5,
-}
+from app.items.catalog_contract import effective_catalog_required_level
 
 
 def resolve_item_required_level(item: dict) -> int:
     """Return the effective `required_adventurer_level` for an item.
 
     Resolution order (first non-None wins):
-      1. Explicit `required_adventurer_level` field (Round 11.3+ items).
-      2. Legacy `level_required` field if > 1.
-      3. Rarity-derived default (table above).
-      4. Final fallback: 1.
+      1. Legendary/Unique hard gate at the authoritative max level.
+      2. Explicit `required_adventurer_level` field (Round 11.3+ items).
+      3. Legacy `level_required` field if > 1.
+      4. Rarity-derived default from the canonical catalog contract.
+      5. Final fallback: 1.
 
-    Raid items typically carry an explicit `required_adventurer_level=12-15`
-    in their seed; the rarity-derived path is only the safety net for the
-    handful of Round-4 Legendaries that pre-date this gate.
+    Endgame rarity overrides intentionally win over legacy explicit values:
+    old Legendary rows at level 8/9/12 must not bypass the new max-level rule.
     """
-    explicit = item.get("required_adventurer_level")
-    if isinstance(explicit, int) and explicit >= 1:
-        return explicit
-    legacy = item.get("level_required")
-    if isinstance(legacy, int) and legacy > 1:
-        return legacy
-    rarity = item.get("rarity", "Common")
-    return _RARITY_TO_MIN_LEVEL.get(rarity, 1)
+    return effective_catalog_required_level(item)
 
 
 def enforce_item_level_requirement(

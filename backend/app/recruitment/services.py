@@ -7,6 +7,7 @@ Phase 11.2 adds a daily refresh limit:
 - GET /candidates returns persisted offer without consuming any refresh
 - POST /refresh forces a new roll, atomically applies limit + cost
 """
+
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -31,12 +32,14 @@ from app.adventurers.common import (  # noqa: F401  (re-exported)
     _pick_random_traits,
     _apply_trait_effects,
     _generate_candidate,
+    _generate_classless_candidate,
 )
 
 
 # Phase 11.2 refresh policy
 FREE_REFRESHES_PER_DAY = 3
 PAID_REFRESH_PRICES = [10, 20, 30]  # 1st paid, 2nd paid, 3rd+ paid (cap)
+MAX_CLASSLESS_RECRUITS_PER_GUILD = 3
 
 
 def utc_now() -> datetime:
@@ -105,13 +108,28 @@ def candidate_public(doc: dict) -> dict:
     # roster/raid/expedition UIs. Computed from the same `adventurer_base_power`
     # single-source-of-truth helper (no equipment at candidate stage).
     from app.expeditions.formulas import adventurer_base_power
+
     base_power = adventurer_base_power(doc)
     return {
         "candidate_id": doc["id"],
         "name": doc["name"],
-        "adventurer_class_id": doc["adventurer_class_id"],
-        "class_name": doc["class_name"],
-        "class_role": doc["class_role"],
+        "adventurer_class_id": doc.get("adventurer_class_id"),
+        "class_name": doc.get("class_name"),
+        "class_role": doc.get("class_role"),
+        "class_slug": doc.get("class_slug"),
+        "canonical_class_slug": doc.get("canonical_class_slug"),
+        "class_proficiency": doc.get("class_proficiency"),
+        "class_hall_id": doc.get("class_hall_id"),
+        "recruit_status": doc.get("recruit_status"),
+        "class_selection_required": (
+            doc.get("recruit_status") == "recruit_unassigned"
+            and not doc.get("class_slug")
+        ),
+        "class_display_name_it": (
+            "Senza Classe"
+            if doc.get("recruit_status") == "recruit_unassigned"
+            else doc.get("class_name")
+        ),
         "rarity": doc["rarity"],
         "level": doc["level"],
         "experience": doc["experience"],
@@ -124,8 +142,8 @@ def candidate_public(doc: dict) -> dict:
         "morale": doc["morale"],
         "traits": doc.get("traits", []),
         "base_power": base_power,
-        "equipment_power": 0,         # candidates have no equipment yet
-        "total_power": base_power,    # mirror roster shape for UI parity
+        "equipment_power": 0,  # candidates have no equipment yet
+        "total_power": base_power,  # mirror roster shape for UI parity
         "cost": RECRUITMENT_COST_GOLD,
         "cost_gold": RECRUITMENT_COST_GOLD,
     }
@@ -162,7 +180,11 @@ async def _hydrate_trait_subdocs(db, candidates: list[dict]) -> None:
         {
             "$or": [
                 {"id": {"$in": list(trait_ids)}} if trait_ids else {"id": None},
-                {"name": {"$in": list(trait_name_keys)}} if trait_name_keys else {"name": None},
+                (
+                    {"name": {"$in": list(trait_name_keys)}}
+                    if trait_name_keys
+                    else {"name": None}
+                ),
             ]
         },
         {"_id": 0, "id": 1, "name": 1, "display_name": 1, "display_name_it": 1},
@@ -177,14 +199,15 @@ async def _hydrate_trait_subdocs(db, candidates: list[dict]) -> None:
         for t in c.get("traits") or []:
             if not isinstance(t, dict):
                 continue
-            master = (
-                by_id.get(t.get("id") or t.get("trait_id"))
-                or by_name.get((t.get("name") or "").strip().lower())
+            master = by_id.get(t.get("id") or t.get("trait_id")) or by_name.get(
+                (t.get("name") or "").strip().lower()
             )
             if not master:
                 continue
             if not t.get("display_name"):
-                t["display_name"] = master.get("display_name") or master.get("name") or ""
+                t["display_name"] = (
+                    master.get("display_name") or master.get("name") or ""
+                )
             if not t.get("display_name_it"):
                 t["display_name_it"] = master.get("display_name_it") or ""
 
@@ -192,20 +215,16 @@ async def _hydrate_trait_subdocs(db, candidates: list[dict]) -> None:
 async def _roll_and_persist_offer(db, guild: dict) -> list[dict]:
     """Generate a fresh 4-candidate offer, replacing any prior persisted one.
 
-    ROUND 6A.1 — delegates to `app.adventurers.generator.generate_candidate`
+    Delegates to `app.adventurers.generator.generate_classless_candidate`
     which centralises rarity weighting (incl. Legendary), post-roll guards
     (≥3 positive traits + ≥1 stat at floor for Legendary), Test* filtering,
-    and audit log emit (`adventurer_generated`).
+    neutral stats and audit log emit (`adventurer_generated`).
     """
     from app.adventurers.generator import (
-        filter_safe_class_pool,
         filter_safe_trait_pool,
-        generate_candidate,
+        generate_classless_candidate,
     )
 
-    classes = await filter_safe_class_pool(db)
-    if not classes:
-        raise HTTPException(status_code=500, detail="No adventurer classes seeded")
     traits_pool = await filter_safe_trait_pool(db)
     # Backward-compat: the previous code also queried `adventurer_traits`
     # (legacy collection name). Merge both if present.
@@ -213,20 +232,21 @@ async def _roll_and_persist_offer(db, guild: dict) -> list[dict]:
         {"is_active": True, "is_test": {"$ne": True}}, {"_id": 0}
     ).to_list(100)
     traits_pool = (traits_pool or []) + [
-        t for t in (legacy_traits or [])
-        if not (t.get("name", "").startswith("Test")
-                or t.get("slug", "").startswith("test"))
+        t
+        for t in (legacy_traits or [])
+        if not (
+            t.get("name", "").startswith("Test") or t.get("slug", "").startswith("test")
+        )
     ]
 
     await db.recruitment_offers.delete_many({"guild_id": guild["id"]})
     now = utc_now()
     candidates = []
     for _ in range(RECRUITMENT_CANDIDATES_PER_OFFER):
-        c = await generate_candidate(
+        c = await generate_classless_candidate(
             db,
             guild_id=guild["id"],
             now=now,
-            class_pool=classes,
             trait_pool=traits_pool,
             audit_source="recruitment",
         )
@@ -256,9 +276,11 @@ async def get_or_init_candidates_for_guild(db, guild: dict) -> dict:
     ):
         deprecated_class_ids.add(dep["id"])
 
-    existing = await db.recruitment_offers.find(
-        {"guild_id": guild["id"]}, {"_id": 0}
-    ).sort("created_at", 1).to_list(50)
+    existing = (
+        await db.recruitment_offers.find({"guild_id": guild["id"]}, {"_id": 0})
+        .sort("created_at", 1)
+        .to_list(50)
+    )
 
     if existing:
         # Filter expired offers on read (defensive — TTL may lag)
@@ -353,7 +375,9 @@ async def refresh_candidates_for_guild(db, guild: dict) -> dict:
         update["$inc"] = {"gold": -cost}
 
     updated_guild = await db.guilds.find_one_and_update(
-        match, update, projection={"_id": 0},
+        match,
+        update,
+        projection={"_id": 0},
         return_document=ReturnDocument.AFTER,
     )
     if not updated_guild:
@@ -383,6 +407,44 @@ async def generate_candidates_for_guild(db, guild: dict) -> dict:
 
 
 async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
+    # The classless onboarding contract allows at most three undecided
+    # recruits in a guild.  Check before consuming the offer so a rejection
+    # never destroys the player's candidate.
+    offer_preview = await db.recruitment_offers.find_one(
+        {"id": candidate_id, "guild_id": guild["id"]},
+        {"_id": 0, "recruit_status": 1, "class_slug": 1, "class_name": 1},
+    )
+    preview_is_classless = bool(
+        offer_preview
+        and (
+            offer_preview.get("recruit_status") == "recruit_unassigned"
+            or (
+                not offer_preview.get("class_slug")
+                and not offer_preview.get("class_name")
+            )
+        )
+    )
+    if preview_is_classless:
+        undecided = await db.adventurers.count_documents(
+            {
+                "guild_id": guild["id"],
+                "recruit_status": "recruit_unassigned",
+                "is_retired": {"$ne": True},
+            }
+        )
+        if undecided >= MAX_CLASSLESS_RECRUITS_PER_GUILD:
+            raise HTTPException(
+                status_code=423,
+                detail={
+                    "code": "recruit.classless_cap_reached",
+                    "current": undecided,
+                    "cap": MAX_CLASSLESS_RECRUITS_PER_GUILD,
+                    "user_message": (
+                        "Hai già tre reclute senza classe. Assegna una Sala "
+                        "o congedane una prima di reclutarne altre."
+                    ),
+                },
+            )
     offer = await db.recruitment_offers.find_one_and_delete(
         {"id": candidate_id, "guild_id": guild["id"]},
         projection={"_id": 0},
@@ -429,9 +491,29 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
         "id": str(uuid.uuid4()),
         "guild_id": guild["id"],
         "name": offer["name"],
-        "adventurer_class_id": offer["adventurer_class_id"],
-        "class_name": offer["class_name"],
-        "class_role": offer["class_role"],
+        "adventurer_class_id": offer.get("adventurer_class_id"),
+        "class_name": offer.get("class_name"),
+        "class_role": offer.get("class_role"),
+        "class_proficiency": offer.get("class_proficiency"),
+        "class_slug": offer.get("class_slug"),
+        "canonical_class_slug": offer.get("canonical_class_slug"),
+        "class_hall_id": offer.get("class_hall_id"),
+        "class_hall_assigned_at": offer.get("class_hall_assigned_at"),
+        "hall_master_witness_npc": offer.get("hall_master_witness_npc"),
+        "recruit_status": (
+            offer.get("recruit_status")
+            or (
+                "class_assigned"
+                if offer.get("adventurer_class_id") or offer.get("class_name")
+                else "recruit_unassigned"
+            )
+        ),
+        "narrative_intro_shown": bool(
+            offer.get(
+                "narrative_intro_shown",
+                bool(offer.get("adventurer_class_id") or offer.get("class_name")),
+            )
+        ),
         "rarity": offer["rarity"],
         "level": offer["level"],
         "experience": offer["experience"],
@@ -455,6 +537,44 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
     }
     await db.adventurers.insert_one(adventurer_doc)
 
+    # Concurrency backstop for the per-guild classless cap.  If two hires
+    # race past the pre-check, the one observing count > 3 compensates fully.
+    if adventurer_doc["recruit_status"] == "recruit_unassigned":
+        undecided = await db.adventurers.count_documents(
+            {
+                "guild_id": guild["id"],
+                "recruit_status": "recruit_unassigned",
+                "is_retired": {"$ne": True},
+            }
+        )
+        if undecided > MAX_CLASSLESS_RECRUITS_PER_GUILD:
+            await db.adventurers.delete_one({"id": adventurer_doc["id"]})
+            await db.guilds.update_one(
+                {"id": guild["id"]},
+                {
+                    "$inc": {"gold": RECRUITMENT_COST_GOLD},
+                    "$set": {"updated_at": now.isoformat()},
+                },
+            )
+            try:
+                await db.recruitment_offers.insert_one(
+                    {k: v for k, v in offer.items() if k != "_id"}
+                )
+            except Exception:
+                pass
+            raise HTTPException(
+                status_code=423,
+                detail={
+                    "code": "recruit.classless_cap_reached",
+                    "current": undecided - 1,
+                    "cap": MAX_CLASSLESS_RECRUITS_PER_GUILD,
+                    "user_message": (
+                        "Limite di tre reclute senza classe raggiunto. "
+                        "L'offerta è stata ripristinata."
+                    ),
+                },
+            )
+
     # ROUND 11.2 TASK 1 — Post-insert cap verification (compensating).
     # If two concurrent recruits both pass the pre-debit assert_not_over_cap
     # check on a 1-slot-left roster, both will land their insert. The loser
@@ -462,14 +582,17 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
     # rolls back (delete this adv + refund gold + restore offer).
     try:
         from app.territory.guards import compute_adventurer_cap_state
+
         cap_state = await compute_adventurer_cap_state(db, guild["id"])
         if int(cap_state.get("current", 0)) > int(cap_state.get("cap", 0)):
             # We are over cap → we are the loser. Compensate.
             await db.adventurers.delete_one({"id": adventurer_doc["id"]})
             await db.guilds.update_one(
                 {"id": guild["id"]},
-                {"$inc": {"gold": RECRUITMENT_COST_GOLD},
-                 "$set": {"updated_at": now.isoformat()}},
+                {
+                    "$inc": {"gold": RECRUITMENT_COST_GOLD},
+                    "$set": {"updated_at": now.isoformat()},
+                },
             )
             offer_to_restore = {k: v for k, v in offer.items() if k != "_id"}
             try:
@@ -483,7 +606,7 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
                     "current": int(cap_state.get("current", 0)),
                     "cap": int(cap_state.get("cap", 0)),
                     "user_message": "Capienza avventurieri raggiunta. "
-                                    "Potenzia Dormitori o congeda.",
+                    "Potenzia Dormitori o congeda.",
                 },
             )
     except HTTPException:
@@ -493,12 +616,14 @@ async def recruit_from_offer(db, guild: dict, candidate_id: str) -> dict:
     # Phase 14 — daily quest progress (best-effort)
     try:
         from app.quests.services import increment_quest_progress
+
         await increment_quest_progress(db, guild["id"], "recruit")
     except Exception:
         pass
     # ROUND 6D — contract progress (best-effort)
     try:
         from app.contracts.services import increment_contract_progress
+
         await increment_contract_progress(db, guild["id"], "recruits_added", 1)
     except Exception:
         pass
@@ -520,4 +645,5 @@ __all__ = [
     "recruit_from_offer",
     "FREE_REFRESHES_PER_DAY",
     "PAID_REFRESH_PRICES",
+    "MAX_CLASSLESS_RECRUITS_PER_GUILD",
 ]

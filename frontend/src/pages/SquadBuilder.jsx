@@ -1,6 +1,5 @@
 // ROUND 6A.2a — Squad builder (new + edit, shared component).
-// Uniform UX across dungeon_3 / dungeon_5 / raid_20. For raid_20 the pool
-// stays at the top and the 4 party slots render in a 2×2 grid below.
+// Uniform UX across every supported dungeon/raid formation.
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -16,8 +15,16 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const TYPE_META = {
     dungeon_3: { size: 3, titleIt: "Dungeon 3", titleEn: "Dungeon 3", isRaid: false },
     dungeon_5: { size: 5, titleIt: "Dungeon 5", titleEn: "Dungeon 5", isRaid: false },
+    dungeon_7: { size: 7, titleIt: "Dungeon 7", titleEn: "Dungeon 7", isRaid: false },
+    raid_10: { size: 10, titleIt: "Raid 10", titleEn: "Raid 10", isRaid: true },
+    raid_15: { size: 15, titleIt: "Raid 15", titleEn: "Raid 15", isRaid: true },
     raid_20: { size: 20, titleIt: "Raid 20", titleEn: "Raid 20", isRaid: true },
+    raid_40: { size: 40, titleIt: "Raid 40", titleEn: "Raid 40", isRaid: true },
 };
+
+const emptyPartiesForSize = (size) => Object.fromEntries(
+    Array.from({ length: size / 5 }, (_, idx) => [`party_${idx + 1}`, []]),
+);
 
 const ROLE_MARKER = { Tank: "[T]", Healer: "[H]", DPS: "[D]", Support: "[S]" };
 
@@ -101,7 +108,10 @@ export default function SquadBuilder() {
     const [name, setName] = useState("");
     const [pool, setPool] = useState([]);  // all guild adventurers
     const [selected, setSelected] = useState([]);  // adventurer_ids in main list
-    const [parties, setParties] = useState({ party_1: [], party_2: [], party_3: [], party_4: [] });
+    const [parties, setParties] = useState(() => {
+        const initialType = searchParams.get("type") || "dungeon_3";
+        return emptyPartiesForSize(TYPE_META[initialType]?.size || 10);
+    });
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -136,7 +146,7 @@ export default function SquadBuilder() {
                 setSquadType(sBody.squad_type);
                 setName(sBody.name);
                 setSelected(sBody.adventurer_ids || []);
-                if (sBody.squad_type === "raid_20" && sBody.raid_parties) {
+                if (sBody.squad_type.startsWith("raid_") && sBody.raid_parties) {
                     setParties(sBody.raid_parties);
                 }
             } else {
@@ -144,17 +154,17 @@ export default function SquadBuilder() {
                 // Accepts ?adventurer_ids=id1,id2,... and optional ?suggested_name=Foo
                 const idsParam = searchParams.get("adventurer_ids");
                 if (idsParam) {
-                    const ids = idsParam.split(",").filter(Boolean).slice(0, 20);
+                    const requestedType = searchParams.get("type") || "dungeon_3";
+                    const requestedSize = TYPE_META[requestedType]?.size || 3;
+                    const ids = idsParam.split(",").filter(Boolean).slice(0, requestedSize);
                     setSelected(ids);
-                    // For raid_20, distribute flat 5+5+5+5 if exactly 20 ids
-                    const t = searchParams.get("type") || "dungeon_3";
-                    if (t === "raid_20" && ids.length === 20) {
-                        setParties({
-                            party_1: ids.slice(0, 5),
-                            party_2: ids.slice(5, 10),
-                            party_3: ids.slice(10, 15),
-                            party_4: ids.slice(15, 20),
-                        });
+                    if (requestedType.startsWith("raid_") && ids.length === requestedSize) {
+                        setParties(Object.fromEntries(
+                            Array.from(
+                                { length: requestedSize / 5 },
+                                (_, idx) => [`party_${idx + 1}`, ids.slice(idx * 5, idx * 5 + 5)],
+                            ),
+                        ));
                     }
                 }
                 const sugg = searchParams.get("suggested_name");
@@ -182,10 +192,24 @@ export default function SquadBuilder() {
     }, [pool, search]);
 
     const isRaid = meta.isRaid;
+    const partyKeys = useMemo(
+        () => Array.from({ length: meta.size / 5 }, (_, idx) => `party_${idx + 1}`),
+        [meta.size],
+    );
+
+    useEffect(() => {
+        if (!isEdit && meta.isRaid) {
+            setParties((current) => (
+                Object.keys(current).length === meta.size / 5
+                    ? current
+                    : emptyPartiesForSize(meta.size)
+            ));
+        }
+    }, [isEdit, meta.isRaid, meta.size]);
 
     // ─── helpers ──────────────────────────────────────────────────────────
     const allInParties = isRaid
-        ? [...parties.party_1, ...parties.party_2, ...parties.party_3, ...parties.party_4]
+        ? partyKeys.flatMap((key) => parties[key] || [])
         : [];
     const isAssigned = (advId) =>
         isRaid ? allInParties.includes(advId) : selected.includes(advId);
@@ -232,8 +256,8 @@ export default function SquadBuilder() {
     // flagged on partial raid_20 fills.
     const nameOk = name.trim().length >= 2;
     const sizeOk = filledCount === meta.size;
-    const partyOk = !isRaid || ["party_1", "party_2", "party_3", "party_4"].every(
-        (p) => parties[p].length === 5,
+    const partyOk = !isRaid || partyKeys.every(
+        (p) => (parties[p] || []).length === 5,
     );
     const canSave = nameOk && sizeOk && partyOk;
     // Reason hint shown as `title` tooltip on the disabled button.
@@ -248,8 +272,8 @@ export default function SquadBuilder() {
             ? `Mancano ${missing} avventurieri`
             : `Missing ${missing} adventurers`;
     } else if (!partyOk) {
-        const wrong = ["party_1", "party_2", "party_3", "party_4"]
-            .map((p, i) => ({ p, i, n: parties[p].length }))
+        const wrong = partyKeys
+            .map((p, i) => ({ p, i, n: (parties[p] || []).length }))
             .filter((x) => x.n !== 5);
         const detail = wrong.map((x) => `P${x.i + 1}: ${x.n}/5`).join(", ");
         saveDisabledReason = lang === "it"
@@ -404,9 +428,9 @@ export default function SquadBuilder() {
                                     data-testid="active-party-select"
                                     className="bg-secondary border border-neutral-700 px-2 py-0.5 text-xs ml-1"
                                 >
-                                    {["party_1", "party_2", "party_3", "party_4"].map((p) => (
+                                    {partyKeys.map((p) => (
                                         <option key={p} value={p}>
-                                            {p.replace("_", " ")} ({parties[p].length}/5)
+                                            {p.replace("_", " ")} ({(parties[p] || []).length}/5)
                                         </option>
                                     ))}
                                 </select>
@@ -425,8 +449,9 @@ export default function SquadBuilder() {
                             </div>
                         </div>
                         <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {["party_1", "party_2", "party_3", "party_4"].map((pk) => {
-                                const pAdvs = parties[pk].map((aid) => advById[aid]).filter(Boolean);
+                            {partyKeys.map((pk) => {
+                                const partyMembers = parties[pk] || [];
+                                const pAdvs = partyMembers.map((aid) => advById[aid]).filter(Boolean);
                                 const pPwr = pAdvs.reduce(
                                     (acc, a) => acc + (a.total_power ?? a.base_power ?? 0),
                                     0,
@@ -439,7 +464,7 @@ export default function SquadBuilder() {
                                     >
                                         <div className="flex justify-between items-baseline mb-2">
                                             <h4 className="text-xs font-bold tracking-widest text-foreground">
-                                                {pk.replace("_", " ").toUpperCase()} ({parties[pk].length}/5)
+                                                {pk.replace("_", " ").toUpperCase()} ({partyMembers.length}/5)
                                             </h4>
                                             <span className="text-[11px] text-amber font-bold">PWR {pPwr}</span>
                                         </div>

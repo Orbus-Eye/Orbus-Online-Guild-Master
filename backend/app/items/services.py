@@ -11,6 +11,7 @@ def item_public(it: dict) -> dict:
     # ROUND 11.3 TASK B — single source of truth for the required level.
     # Avoids drift between the FE display and the server-side gate.
     from app.equipment.level_gate import resolve_item_required_level
+
     return {
         "id": it["id"],
         "slug": it["slug"],
@@ -18,6 +19,8 @@ def item_public(it: dict) -> dict:
         "display_name_it": it.get("display_name_it") or it["name"],
         "display_name_en": it.get("display_name_en") or it["name"],
         "description": it.get("description", ""),
+        "description_it": it.get("description_it") or it.get("description", ""),
+        "description_en": it.get("description_en") or it.get("description", ""),
         "item_type": it["item_type"],
         "rarity": it["rarity"],
         "level_required": it.get("level_required", 1),
@@ -51,8 +54,41 @@ def item_public(it: dict) -> dict:
         "flavor_text_it": it.get("flavor_text_it"),
         "flavor_text_en": it.get("flavor_text_en"),
         "lore_tags": it.get("lore_tags") or [],
+        "lore_source": it.get("lore_source"),
         "spoiler_level": it.get("spoiler_level") or "public",
         "lore_reviewed": bool(it.get("lore_reviewed", False)),
+        "source": it.get("source"),
+        "acquisition_sources": it.get("acquisition_sources") or [],
+        "acquisition_hint_it": it.get("acquisition_hint_it"),
+        "acquisition_track_order": it.get("acquisition_track_order"),
+        "build_path_id": it.get("build_path_id"),
+        "build_path_name_it": it.get("build_path_name_it"),
+        "build_path_description_it": it.get(
+            "build_path_description_it"
+        ),
+        "build_path_item_tags": it.get("build_path_item_tags") or [],
+        # RT2-E starter vertical slice: player-facing projection only.
+        # Executable details (primitive/magnitude/target/stacking) remain in
+        # the static server registry and are never accepted from clients.
+        "has_runtime_effect": bool(
+            isinstance(it.get("effect_metadata"), dict)
+            and it["effect_metadata"].get("enabled", True) is True
+        ),
+        "effect_summary_it": (
+            it.get("effect_metadata", {}).get("effect_summary_it")
+            if isinstance(it.get("effect_metadata"), dict)
+            else None
+        ),
+        "effect_summary_en": (
+            it.get("effect_metadata", {}).get("effect_summary_en")
+            if isinstance(it.get("effect_metadata"), dict)
+            else None
+        ),
+        "effect_lore_key": (
+            it.get("effect_metadata", {}).get("lore_key")
+            if isinstance(it.get("effect_metadata"), dict)
+            else None
+        ),
         # R18.4 canonical slot_type (post-B3 real apply; null se non equipable/materials)
         "slot_type": it.get("slot_type"),
         # R18.4 item binding policy raw enum ("hard"|"soft"|"universal"); default None se legacy
@@ -77,9 +113,30 @@ async def list_active_items(db) -> list[dict]:
             {"_id": 0},
         )
         .sort("name", 1)
-        .to_list(500)
+        .to_list(2000)
     )
     return [item_public(r) for r in rows]
 
 
-__all__ = ["item_public", "list_active_items"]
+async def get_catalog_contract_status(db) -> dict:
+    """Return canonical targets plus a read-only audit of runtime items."""
+    from app.items.catalog_contract import (
+        audit_catalog_items,
+        public_catalog_contract,
+    )
+
+    rows = await db.items.find(
+        {"is_active": True, "is_test": {"$ne": True}},
+        {"_id": 0, "rarity": 1, "is_active": 1, "is_test": 1},
+    ).to_list(2000)
+    return {
+        "contract": public_catalog_contract(),
+        "audit": audit_catalog_items(rows),
+    }
+
+
+__all__ = [
+    "get_catalog_contract_status",
+    "item_public",
+    "list_active_items",
+]

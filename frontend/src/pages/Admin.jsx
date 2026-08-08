@@ -187,8 +187,25 @@ function ItemEditor({ form, set }) {
                 <Label className="text-[10px] text-muted-foreground tracking-widest">{t("admin_extra.label_description")}</Label>
                 <Textarea data-testid="field-description" value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="bg-background border-border rounded-sm font-mono text-base mt-1.5" />
             </div>
-            <SelectField label="Type" value={form.item_type} onChange={(v) => set("item_type", v)} options={["weapon", "armor", "accessory", "consumable"]} testid="field-type" />
-            <SelectField label="Rarity" value={form.rarity} onChange={(v) => set("rarity", v)} options={["Common", "Uncommon", "Rare", "Epic"]} testid="field-rarity" />
+            <SelectField
+                label="Type"
+                value={form.item_type}
+                onChange={(v) => set("item_type", v)}
+                options={["weapon", "armor", "legs", "helmet", "accessory", "back", "ring", "trinket", "consumable"]}
+                testid="field-type"
+            />
+            <SelectField
+                label="Rarity"
+                value={form.rarity}
+                onChange={(v) => {
+                    set("rarity", v);
+                    if (v === "Legendary" || v === "Unique") {
+                        set("level_required", 80);
+                    }
+                }}
+                options={["Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique"]}
+                testid="field-rarity"
+            />
             <NumField label="Level required" value={form.level_required} onChange={(v) => set("level_required", v)} testid="field-level-req" min={1} />
             <NumField label="Power score" value={form.power_score} onChange={(v) => set("power_score", v)} testid="field-power" min={0} />
             <NumField label="STR bonus" value={form.strength_bonus} onChange={(v) => set("strength_bonus", v)} testid="field-str-bonus" />

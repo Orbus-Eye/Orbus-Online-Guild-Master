@@ -1,8 +1,7 @@
-"""ROUND 5 Phase 18 — Solo Raid module.
+"""Solo-guild raids with variable rosters split into parties of five.
 
-A single-player raid is a 20-adventurer expedition split across 4 parties of 5.
-No PvP, no Consortium, no cooperative play. Locked decisions live in
-`/app/memory/ROUND_5_BRIEF.md` (§I + §M).
+Canonical raid sizes are 10, 15, 20 and 40 adventurers: respectively two,
+three, four or eight parties of five.
 
 Public surface (router mounted in `app_factory`):
   • GET    /api/raids/catalog            → list of 3 raid_dungeons with gate
@@ -17,9 +16,7 @@ self-contained and minimise cross-file coupling for the audit/code review.
 """
 from __future__ import annotations
 
-import random as _legacy_random  # Round 11.4d — kept for any module-level seed only
-import secrets
-random = secrets.SystemRandom()  # PvP-ready: crypto-grade RNG
+import random as _random
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List
@@ -34,6 +31,15 @@ from app.core.database import db
 from app.core.security import get_current_user
 from app.guilds.services import user_guild_or_404
 from app.audit.log import write_audit
+from app.adventurers.classless import require_class_hall_assignment
+from app.class_halls.mechanics import resolve_class_mechanic
+from app.equipment.services import _load_equipment_for_adventurer
+from app.raids.contracts import (
+    apply_raid_contract,
+    raid_progression_rewards,
+)
+from app.dungeons.encounters import COUNTER_THREAT_MAP
+from app.expeditions.services import _resolve_levelup
 
 
 router = APIRouter(prefix="/api/raids", tags=["raids"])
@@ -41,9 +47,9 @@ router = APIRouter(prefix="/api/raids", tags=["raids"])
 
 # Locked constants from brief
 RAID_COOLDOWN_SECONDS = 15 * 60       # §I.7
-REQUIRED_PARTY_COUNT = 4
 REQUIRED_PARTY_SIZE = 5
-REQUIRED_ROSTER = REQUIRED_PARTY_COUNT * REQUIRED_PARTY_SIZE  # 20
+ALLOWED_RAID_ROSTER_SIZES = (10, 15, 20, 40)
+MAX_PARTY_COUNT = max(ALLOWED_RAID_ROSTER_SIZES) // REQUIRED_PARTY_SIZE
 
 
 def _utc_now() -> datetime:
@@ -58,6 +64,7 @@ def raid_dungeon_public(d: dict) -> dict:
     # ROUND 11.3 TASK A — derive min_adventurer_level from explicit field
     # if present, else from `tier` (1→8, 2→12, 3→15). Avoids a circular
     # import via late binding.
+    d = apply_raid_contract(d)
     from app.expeditions.level_gate import legacy_min_level_for_raid
     from app.content.lore_meta import raid_lore_meta
     meta = raid_lore_meta(d.get("slug", ""))
@@ -70,10 +77,14 @@ def raid_dungeon_public(d: dict) -> dict:
         "description_it": d.get("description_it"),
         "tier": d.get("tier", 1),
         "recommended_power_combined": d["recommended_power_combined"],
-        "min_roster_size": d.get("min_roster_size", REQUIRED_ROSTER),
-        "required_party_count": d.get("required_party_count", REQUIRED_PARTY_COUNT),
+        "min_roster_size": d.get("min_roster_size", 20),
+        "required_party_count": d.get("required_party_count", 4),
         "required_party_size": d.get("required_party_size", REQUIRED_PARTY_SIZE),
         "party_focus_hints": d.get("party_focus_hints", []),
+        "party_responsibilities": d.get("party_responsibilities", []),
+        "phases": d.get("phases", []),
+        "reward_profile": d.get("reward_profile"),
+        "contract_version": d.get("contract_version"),
         "base_duration_seconds": d["base_duration_seconds"],
         "base_gold_reward": d["base_gold_reward"],
         "base_xp_per_member": d["base_xp_per_member"],
@@ -124,6 +135,10 @@ def raid_public(r: dict) -> dict:
         "remaining_seconds": remaining,
         "rewards": r.get("rewards"),
         "parties_outcome": r.get("parties_outcome", []),
+        "raid_contract_snapshot": r.get("raid_contract_snapshot"),
+        "party_responsibility_results": r.get(
+            "party_responsibility_results", []
+        ),
     }
 
 
@@ -131,18 +146,18 @@ def raid_public(r: dict) -> dict:
 # Schemas
 # ────────────────────────────────────────────────────────────────────────
 class PartyIn(BaseModel):
-    party_idx: int = Field(..., ge=1, le=4)
+    party_idx: int = Field(..., ge=1, le=MAX_PARTY_COUNT)
     adventurer_ids: List[str] = Field(..., min_length=5, max_length=5)
 
 
 class RaidPreviewIn(BaseModel):
     raid_slug: str
-    parties: List[PartyIn] = Field(..., min_length=4, max_length=4)
+    parties: List[PartyIn] = Field(..., min_length=2, max_length=MAX_PARTY_COUNT)
 
 
 class RaidStartIn(BaseModel):
     raid_slug: str
-    parties: List[PartyIn] = Field(..., min_length=4, max_length=4)
+    parties: List[PartyIn] = Field(..., min_length=2, max_length=MAX_PARTY_COUNT)
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -152,24 +167,26 @@ async def _resolve_raid_dungeon(slug: str) -> dict:
     rd = await db.raid_dungeons.find_one({"slug": slug, "is_active": True}, {"_id": 0})
     if not rd:
         raise HTTPException(status_code=404, detail="raid_dungeon_not_found")
-    return rd
+    return apply_raid_contract(rd)
 
 
-async def _validate_parties_and_advs(guild: dict, parties: List[PartyIn]) -> List[dict]:
-    """Returns the 20 adventurer docs (in order party1..party4)."""
-    # 1. Party indices must be {1,2,3,4} exactly
+async def _validate_parties_and_advs(
+    guild: dict, raid_dungeon: dict, parties: List[PartyIn]
+) -> List[dict]:
+    """Return the exact roster required by this raid, in party order."""
+    required_party_count = int(raid_dungeon["required_party_count"])
+    required_roster = int(raid_dungeon["min_roster_size"])
     idxs = sorted([p.party_idx for p in parties])
-    if idxs != [1, 2, 3, 4]:
+    if idxs != list(range(1, required_party_count + 1)):
         raise HTTPException(status_code=422, detail="raids.parties_invalid_indices")
-    # 2. No duplicate adv across all 4 parties
     all_ids = [aid for p in parties for aid in p.adventurer_ids]
-    if len(set(all_ids)) != REQUIRED_ROSTER:
+    if len(all_ids) != required_roster or len(set(all_ids)) != required_roster:
         raise HTTPException(status_code=422, detail="raids.duplicate_adventurer")
     # 3. All advs must belong to guild + be available
     adv_docs = await db.adventurers.find(
         {"id": {"$in": all_ids}, "guild_id": guild["id"]}, {"_id": 0}
     ).to_list(50)
-    if len(adv_docs) != REQUIRED_ROSTER:
+    if len(adv_docs) != required_roster:
         raise HTTPException(status_code=422, detail="raids.adventurers_not_owned_or_missing")
     # ROUND 6B.3 Wave 1.5 — explicit retired check (423 with structured detail).
     retired_ids = [a["id"] for a in adv_docs if a.get("is_retired") is True]
@@ -188,6 +205,7 @@ async def _validate_parties_and_advs(guild: dict, parties: List[PartyIn]) -> Lis
                 ),
             },
         )
+    require_class_hall_assignment(adv_docs, source="raid.start")
     busy = [a for a in adv_docs if a.get("is_available") is False or a.get("expedition_in_progress")]
     if busy:
         raise HTTPException(status_code=422, detail="raids.adventurer_busy")
@@ -201,12 +219,34 @@ async def _validate_parties_and_advs(guild: dict, parties: List[PartyIn]) -> Lis
 
 
 def _adv_power(a: dict) -> int:
-    base = (
-        int(a.get("strength", 0)) + int(a.get("agility", 0))
-        + int(a.get("intellect", 0)) + int(a.get("endurance", 0))
-        + int(a.get("faith", 0))
-    )
-    return base + int(a.get("level", 1)) * 2
+    if "_raid_power_snapshot" in a:
+        return int(a["_raid_power_snapshot"])
+    from app.expeditions.formulas import adventurer_effective_power
+    return adventurer_effective_power(a)
+
+
+async def _project_raid_items(adventurers: List[dict]) -> List[dict]:
+    projected = []
+    for adventurer in adventurers:
+        _slots, equipment_power, raw = await _load_equipment_for_adventurer(
+            db, adventurer["id"]
+        )
+        mechanic = resolve_class_mechanic(
+            adventurer=adventurer,
+            equipment_items=[row["item"] for row in raw],
+        )
+        projected.append({
+            **adventurer,
+            "_raid_power_snapshot": (
+                _adv_power(adventurer)
+                + equipment_power
+                + int(mechanic.get("power_bonus", 0))
+            ),
+            "_raid_equipment_power": equipment_power,
+            "_raid_class_mechanic": mechanic,
+            "_raid_counter_tags": mechanic.get("active_counter_tags", []),
+        })
+    return projected
 
 
 def _party_power(adv_docs: List[dict]) -> int:
@@ -236,9 +276,39 @@ def _combined_success_chance(total_power: int, total_rec: int) -> int:
 
 
 def _compute_preview(rd: dict, parties_docs: List[List[dict]]) -> dict:
-    party_rec = rd["recommended_power_combined"] // 4
+    party_count = max(1, len(parties_docs))
+    party_rec = rd["recommended_power_combined"] // party_count
     powers = [_party_power(party) for party in parties_docs]
-    chances = [_success_chance(p, party_rec) for p in powers]
+    responsibility_results = []
+    chances = []
+    responsibilities = rd.get("party_responsibilities") or []
+    for index, (power, party) in enumerate(zip(powers, parties_docs), start=1):
+        responsibility = next(
+            (
+                row for row in responsibilities
+                if int(row.get("party_idx", 0)) == index
+            ),
+            {"party_idx": index, "threat_tags": []},
+        )
+        counters = {
+            counter
+            for adventurer in party
+            for counter in adventurer.get("_raid_counter_tags", [])
+        }
+        countered = {
+            threat
+            for counter in counters
+            for threat in COUNTER_THREAT_MAP.get(counter, ())
+        }
+        assigned = set(responsibility.get("threat_tags") or [])
+        resolved = sorted(assigned.intersection(countered))
+        bonus = min(6, len(resolved) * 2)
+        chances.append(min(95, _success_chance(power, party_rec) + bonus))
+        responsibility_results.append({
+            **responsibility,
+            "countered_threats": resolved,
+            "item_counter_bonus_pct": bonus,
+        })
     total = sum(powers)
     return {
         "team_power_combined": total,
@@ -246,15 +316,20 @@ def _compute_preview(rd: dict, parties_docs: List[List[dict]]) -> dict:
         "success_chance_per_party": chances,
         "success_chance_combined": _combined_success_chance(total, rd["recommended_power_combined"]),
         "party_powers": powers,
+        "party_responsibility_results": responsibility_results,
     }
 
 
-def _outcome_for_chances(rng: random.Random, chances: List[int]) -> tuple[str, List[bool]]:
+def _outcome_for_chances(
+    rng: _random.Random,
+    chances: List[int],
+) -> tuple[str, List[bool]]:
     rolls = [rng.randint(1, 100) <= c for c in chances]
     succ = sum(rolls)
-    if succ == 4:
+    party_count = len(rolls)
+    if party_count and succ == party_count:
         return "victory", rolls
-    if succ in (2, 3):
+    if succ >= max(1, (party_count + 1) // 2):
         return "partial", rolls
     return "wipe", rolls
 
@@ -279,10 +354,11 @@ async def list_catalog(current_user: dict = Depends(get_current_user)):
 
     out = []
     for rd in raid_dungeons:
+        rd = apply_raid_contract(rd)
         gate = rd.get("gate") or {}
         unlocked = True
         gate_reason = None
-        if adv_count < gate.get("min_roster_size", REQUIRED_ROSTER):
+        if adv_count < gate.get("min_roster_size", rd.get("min_roster_size", 20)):
             unlocked = False
             gate_reason = "roster_too_small"
         elif gate.get("min_max_team_power_ever") and peak < gate["min_max_team_power_ever"]:
@@ -317,7 +393,8 @@ async def list_catalog(current_user: dict = Depends(get_current_user)):
 async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
     rd = await _resolve_raid_dungeon(payload.raid_slug)
-    advs_ordered = await _validate_parties_and_advs(guild, payload.parties)
+    advs_ordered = await _validate_parties_and_advs(guild, rd, payload.parties)
+    advs_ordered = await _project_raid_items(advs_ordered)
     # ROUND 11.3 TASK A — level gate (also on preview so FE blocks early).
     from app.expeditions.level_gate import (
         enforce_min_adventurer_level,
@@ -327,7 +404,11 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
         advs_ordered, legacy_min_level_for_raid(rd), source="raid.preview",
         dungeon_slug=rd.get("slug"),
     )
-    parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
+    party_count = int(rd["required_party_count"])
+    parties_docs = [
+        advs_ordered[i * REQUIRED_PARTY_SIZE:(i + 1) * REQUIRED_PARTY_SIZE]
+        for i in range(party_count)
+    ]
     p = _compute_preview(rd, parties_docs)
     return {
         "raid_slug": payload.raid_slug,
@@ -337,6 +418,9 @@ async def preview_raid(payload: RaidPreviewIn, current_user: dict = Depends(get_
         "base_xp_per_member": rd["base_xp_per_member"],
         "guaranteed_dragon_essence_min": rd.get("guaranteed_dragon_essence_min", 1),
         "guaranteed_dragon_essence_max": rd.get("guaranteed_dragon_essence_max", 3),
+        "party_responsibility_results": p["party_responsibility_results"],
+        "phases": rd.get("phases", []),
+        "reward_profile": rd.get("reward_profile"),
     }
 
 
@@ -373,7 +457,8 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
     if in_progress:
         raise HTTPException(status_code=422, detail="raids.already_in_progress")
 
-    advs_ordered = await _validate_parties_and_advs(guild, payload.parties)
+    advs_ordered = await _validate_parties_and_advs(guild, rd, payload.parties)
+    advs_ordered = await _project_raid_items(advs_ordered)
 
     # ROUND 11.3 TASK A — level gate before commit. Mirrors expedition.dispatch.
     from app.expeditions.level_gate import (
@@ -385,7 +470,11 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
         dungeon_slug=rd.get("slug"),
     )
 
-    parties_docs = [advs_ordered[i * 5:(i + 1) * 5] for i in range(4)]
+    party_count = int(rd["required_party_count"])
+    parties_docs = [
+        advs_ordered[i * REQUIRED_PARTY_SIZE:(i + 1) * REQUIRED_PARTY_SIZE]
+        for i in range(party_count)
+    ]
     p = _compute_preview(rd, parties_docs)
 
     raid_id = str(uuid.uuid4())
@@ -409,6 +498,18 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
         "duration_seconds": rd["base_duration_seconds"],
         "rewards": None,
         "parties_outcome": [],
+        "party_responsibility_results": p["party_responsibility_results"],
+        "raid_contract_snapshot": {
+            "contract_version": rd.get("contract_version"),
+            "phases": rd.get("phases", []),
+            "party_responsibilities": rd.get(
+                "party_responsibilities", []
+            ),
+            "reward_profile": rd.get("reward_profile"),
+            "required_party_count": party_count,
+            "required_party_size": REQUIRED_PARTY_SIZE,
+            "required_roster_size": int(rd["min_roster_size"]),
+        },
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }
@@ -428,6 +529,12 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
                 "class_snapshot": a.get("class_name"),
                 "level_snapshot": a.get("level", 1),
                 "total_power_snapshot": _adv_power(a),
+                "equipment_power_snapshot": int(
+                    a.get("_raid_equipment_power", 0)
+                ),
+                "class_mechanic_snapshot": a.get(
+                    "_raid_class_mechanic"
+                ),
                 "outcome": None,
                 "xp_gained": 0,
                 "created_at": now.isoformat(),
@@ -476,7 +583,30 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     if _utc_now() < ends_at:
         raise HTTPException(status_code=422, detail="raids.not_ended_yet")
 
-    rng = random.Random(raid_id)  # deterministic per raid for replay safety
+    claimed = await db.raids.find_one_and_update(
+        {
+            "id": raid_id,
+            "guild_id": guild["id"],
+            "status": "in_progress",
+        },
+        {"$set": {
+            "status": "resolving",
+            "resolution_started_at": _utc_now_iso(),
+            "updated_at": _utc_now_iso(),
+        }},
+        projection={"_id": 0},
+    )
+    if not claimed:
+        latest = await db.raids.find_one(
+            {"id": raid_id, "guild_id": guild["id"]},
+            {"_id": 0},
+        )
+        if latest and latest.get("status") == "completed":
+            return {"raid": raid_public(latest)}
+        raise HTTPException(status_code=409, detail="raids.resolution_in_progress")
+    raid = claimed
+
+    rng = _random.Random(raid_id)  # deterministic per raid for replay safety
     outcome, party_rolls = _outcome_for_chances(rng, raid["success_chance_per_party"])
     multiplier = _outcome_multiplier(outcome)
 
@@ -498,6 +628,10 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
         de_count = max(0, de_min // 2)
     else:
         de_count = 0
+    progression = raid_progression_rewards(
+        raid["raid_dungeon_slug"],
+        outcome,
+    )
 
     # Apply rewards
     now = _utc_now()
@@ -507,6 +641,8 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
         {"id": guild["id"]},
         {"$inc": {
             "gold": gold,
+            "raid_tokens": progression["raid_tokens"],
+            "legendary_fragments": progression["legendary_fragments"],
             "raids_completed_count": 1,
             "raids_victory_count": 1 if outcome == "victory" else 0,
         }, "$max": {"max_raid_score": raid_score},
@@ -527,10 +663,25 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
             {"$set": {"outcome": "survived" if survived else "fainted", "xp_gained": gained}},
         )
         if gained:
-            await db.adventurers.update_one(
-                {"id": p_doc["adventurer_id"]},
-                {"$inc": {"experience": gained}},
+            adv = await db.adventurers.find_one(
+                {"id": p_doc["adventurer_id"], "guild_id": guild["id"]},
+                {"_id": 0},
             )
+            if adv:
+                adv["experience"] = int(adv.get("experience", 0)) + gained
+                _resolve_levelup(adv)
+                await db.adventurers.update_one(
+                    {"id": adv["id"], "guild_id": guild["id"]},
+                    {"$set": {
+                        "experience": adv["experience"],
+                        "level": adv["level"],
+                        "strength": adv["strength"],
+                        "agility": adv["agility"],
+                        "intellect": adv["intellect"],
+                        "endurance": adv["endurance"],
+                        "faith": adv["faith"],
+                    }},
+                )
     # Release advs
     all_adv_ids = [p["adventurer_id"] for p in participants]
     await db.adventurers.update_many(
@@ -576,17 +727,45 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
                     "source": "raid_reward",
                 })
 
+    # T6 authored pool: one replay-safe item roll tied to this raid instance.
+    from app.raids.loot import grant_raid_item_reward
+
+    raid_item_reward = await grant_raid_item_reward(
+        db,
+        guild_id=guild["id"],
+        raid_id=raid_id,
+        raid_slug=raid["raid_dungeon_slug"],
+        outcome=outcome,
+    )
+
     # Persist raid completion
     parties_outcome = [
         {"party_idx": i + 1, "success": bool(party_rolls[i]),
          "success_chance": raid["success_chance_per_party"][i]}
-        for i in range(4)
+        for i in range(len(party_rolls))
     ]
     rewards = {
         "gold_total": gold,
         "xp_per_member": xp_per_member,
         "dragon_essence_count": de_count,
+        "item_reward": raid_item_reward,
+        **progression,
     }
+    await db.raid_reward_grants.update_one(
+        {"raid_id": raid_id},
+        {"$setOnInsert": {
+            "id": str(uuid.uuid4()),
+            "raid_id": raid_id,
+            "guild_id": guild["id"],
+            "raid_dungeon_slug": raid["raid_dungeon_slug"],
+            "outcome": outcome,
+            "rewards": rewards,
+            "source": "raid.complete",
+            "status": "applied",
+            "created_at": now.isoformat(),
+        }},
+        upsert=True,
+    )
     await db.raids.update_one(
         {"id": raid_id},
         {"$set": {
@@ -599,7 +778,21 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
             "updated_at": now.isoformat(),
         }},
     )
+    # Raid participation advances career rarity for every member, regardless
+    # of survival or outcome. The event ledger makes this retry-safe.
+    from app.adventurers.career import record_career_activity_for_many
 
+    await record_career_activity_for_many(
+        db,
+        guild_id=guild["id"],
+        adventurer_ids=all_adv_ids,
+        activity_kind="raid",
+        activity_id=raid_id,
+    )
+    await db.raids.update_one(
+        {"id": raid_id},
+        {"$set": {"career_progress_recorded": True}},
+    )
     raid["status"] = "completed"
     raid["outcome"] = outcome
     raid["completed_at"] = now.isoformat()
@@ -698,6 +891,40 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
     return {"raid": raid_public(raid)}
 
 
+async def _reconcile_historical_raid_career(guild_id: str) -> None:
+    """Backfill terminal raid participation exactly once for existing rosters."""
+    missing = await db.raids.find(
+        {
+            "guild_id": guild_id,
+            "status": "completed",
+            "career_progress_recorded": {"$ne": True},
+        },
+        {"_id": 0, "id": 1},
+    ).to_list(100)
+    if not missing:
+        return
+    from app.adventurers.career import record_career_activity_for_many
+    for raid_doc in missing:
+        participant_ids = [
+            row["adventurer_id"]
+            for row in await db.raid_participants.find(
+                {"raid_id": raid_doc["id"]},
+                {"_id": 0, "adventurer_id": 1},
+            ).to_list(40)
+        ]
+        await record_career_activity_for_many(
+            db,
+            guild_id=guild_id,
+            adventurer_ids=participant_ids,
+            activity_kind="raid",
+            activity_id=raid_doc["id"],
+        )
+        await db.raids.update_one(
+            {"id": raid_doc["id"]},
+            {"$set": {"career_progress_recorded": True}},
+        )
+
+
 @router.get("")
 async def list_raids(current_user: dict = Depends(get_current_user)):
     guild = await user_guild_or_404(db, current_user["id"])
@@ -709,6 +936,7 @@ async def list_raids(current_user: dict = Depends(get_current_user)):
         await auto_resolve_stuck_raids_for_guild(db, guild["id"])
     except Exception:
         pass
+    await _reconcile_historical_raid_career(guild["id"])
     cursor = db.raids.find(
         {"guild_id": guild["id"]}, {"_id": 0},
     ).sort("created_at", -1).limit(30)
@@ -757,7 +985,7 @@ async def get_last_raid(current_user: dict = Depends(get_current_user)):
 
 class RaidReplayPreviewIn(BaseModel):
     raid_slug: str
-    squad_ids: List[str] = Field(..., min_length=20, max_length=20)
+    squad_ids: List[str] = Field(..., min_length=10, max_length=40)
 
 
 @router.post("/replay-preview")
@@ -777,13 +1005,28 @@ async def raid_replay_preview(body: RaidReplayPreviewIn,
     rd = await db.raid_dungeons.find_one(
         {"slug": body.raid_slug, "is_active": True}, {"_id": 0},
     )
+    rd = apply_raid_contract(rd)
     raid_available = bool(rd)
+    if rd and len(body.squad_ids) != int(rd["min_roster_size"]):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "raid.roster_size_invalid",
+                "required": int(rd["min_roster_size"]),
+                "received": len(body.squad_ids),
+            },
+        )
+    if len(set(body.squad_ids)) != len(body.squad_ids):
+        raise HTTPException(status_code=422, detail="raid.roster_duplicate")
     # Adventurers lookup
     advs = await db.adventurers.find(
         {"id": {"$in": body.squad_ids},
          "guild_id": guild["id"]},
         {"_id": 0, "id": 1, "name": 1, "level": 1,
-         "is_available": 1, "is_retired": 1, "retired": 1},
+         "is_available": 1, "is_retired": 1, "retired": 1,
+         "recruit_status": 1, "class_slug": 1,
+         "canonical_class_slug": 1, "class_proficiency": 1,
+         "class_hall_id": 1},
     ).to_list(30)
     found_ids = {a["id"] for a in advs}
     missing = [aid for aid in body.squad_ids if aid not in found_ids]
@@ -794,6 +1037,11 @@ async def raid_replay_preview(body: RaidReplayPreviewIn,
             reasons.append("retired")
         if a.get("is_available") is False:
             reasons.append("busy")
+        if (
+            a.get("recruit_status") == "recruit_unassigned"
+            and not a.get("class_slug")
+        ):
+            reasons.append("class_hall_required")
         if reasons:
             unavailable.append({
                 "id": a["id"], "name": a.get("name", "?"),

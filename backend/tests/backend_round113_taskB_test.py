@@ -53,7 +53,15 @@ def test_b_01_resolve_item_required_level_priority():
         "level_required": 8, "rarity": "Common",
     }) == 8
     # Rarity-based fallback.
-    assert resolve_item_required_level({"rarity": "Legendary"}) == 12
+    from app.shared.constants import ADVENTURER_MAX_LEVEL
+    assert (
+        resolve_item_required_level({"rarity": "Legendary"})
+        == ADVENTURER_MAX_LEVEL
+    )
+    assert (
+        resolve_item_required_level({"rarity": "Unique"})
+        == ADVENTURER_MAX_LEVEL
+    )
     assert resolve_item_required_level({"rarity": "Epic"}) == 8
     assert resolve_item_required_level({"rarity": "Rare"}) == 5
     assert resolve_item_required_level({"rarity": "Uncommon"}) == 3

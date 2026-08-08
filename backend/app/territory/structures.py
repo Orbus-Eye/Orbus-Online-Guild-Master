@@ -145,13 +145,13 @@ def dormitory_cap_for_level(level: int) -> int:
 
 def required_dormitory_level_for_roster(roster_size: int) -> int:
     """Return the minimum dormitory level needed to fit `roster_size`.
-    Returns 7 only when 31..50 (legacy override). Above 50, returns 7 anyway
-    and the caller is expected to flag it as out-of-band.
+    Rosters beyond the current maximum return the maximum dormitory level;
+    callers still compare the actual cap and reject the overflow.
     """
     for lvl in sorted(DORMITORY_CAP_BY_LEVEL.keys()):
         if DORMITORY_CAP_BY_LEVEL[lvl] >= roster_size:
             return lvl
-    return 7  # cap at legacy
+    return max(DORMITORY_CAP_BY_LEVEL)
 
 
 def default_structures_doc() -> dict:

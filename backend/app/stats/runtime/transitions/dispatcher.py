@@ -50,6 +50,11 @@ from app.stats.runtime.transitions.phase import (
     build_phase_id,
     is_transition_allowed_in_phase,
 )
+from app.stats.runtime.transitions.drain import (
+    cancel_drain as _pure_cancel_drain,
+    complete_drain as _pure_complete_drain,
+    start_drain as _pure_start_drain,
+)
 from app.stats.runtime.transitions.state_machine import (
     apply_mark,
     close_resource_segment,
@@ -703,6 +708,34 @@ def _apply_event_pure(
             source_adventurer_id=event.source_adventurer_id,
             resource_segment_id=new_seg_id,
         )
+    # ═══ RT2-B-2B-2-1 Drain lifecycle branches (PM Message 170 §13-§17) ═══
+    if et in (
+        ClassEventType.START_DRAIN.value,
+        ClassEventType.COMPLETE_DRAIN.value,
+        ClassEventType.CANCEL_DRAIN.value,
+    ):
+        from app.stats.runtime.transitions.models import DrainCommand
+        command = DrainCommand(
+            command_type=et,
+            event_id=event.event_id,
+            expedition_id=event.expedition_id,
+            source_adventurer_id=event.source_adventurer_id,
+            target_id=event.target_id or "",
+            mark_id=event.drain_mark_id or "",
+            application_id=event.drain_application_id or "",
+            drain_execution_id=event.drain_execution_id or "",
+            cancellation_reason=event.drain_cancellation_reason or "",
+            payload_hash=event.payload_hash,
+            expected_state_version=event.expected_state_version,
+            phase_id=event.phase_id,
+        )
+        if et == ClassEventType.START_DRAIN.value:
+            return _pure_start_drain(cs, command=command, now=now)
+        if et == ClassEventType.COMPLETE_DRAIN.value:
+            new_cs, tr, _receipt = _pure_complete_drain(cs, command=command, now=now)
+            return new_cs, tr
+        if et == ClassEventType.CANCEL_DRAIN.value:
+            return _pure_cancel_drain(cs, command=command, now=now)
     # Unknown event type: no-op reject.
     return cs, TransitionResult(
         code=TransitionResultCode.SOURCE_INVALID,

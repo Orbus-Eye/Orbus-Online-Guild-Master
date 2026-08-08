@@ -12,7 +12,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.expeditions.formulas import compute_team_power, compute_success_chance
+from app.class_halls.mechanics import resolve_class_mechanic
+from app.dungeons.encounters import (
+    COUNTER_THREAT_MAP,
+    apply_dungeon_encounter,
+)
+from app.equipment.services import _load_equipment_for_adventurer
+from app.expeditions.formulas import (
+    adventurer_effective_power,
+    compute_team_power,
+    compute_success_chance,
+)
 from app.expeditions.threats import (
     SUCCESS_BONUS_CAP_PCT,
     INJURY_REDUCTION_CAP_PCT,
@@ -43,7 +53,11 @@ async def _resolve_counter_sources(db, threat_slug: str,
     """Return list of {adv_id, name, source} for each team member that
     counters the given threat (either via spec.counter_tags or
     trait.counter_tags). Empty list if no member counters this threat."""
-    counters_for_threat: set[str] = set()
+    counters_for_threat = {
+        counter_slug
+        for counter_slug, threats in COUNTER_THREAT_MAP.items()
+        if threat_slug in threats
+    }
     async for c in db.counter_tags.find(
         {"is_active": True, "threats_countered": threat_slug},
         {"_id": 0, "slug": 1},
@@ -54,6 +68,19 @@ async def _resolve_counter_sources(db, threat_slug: str,
     trait_counter_cache: dict[str, set[str]] = {}
     sources: list[dict] = []
     for m in team:
+        mechanic_counters = set(
+            m.get("class_mechanic_counter_tags") or []
+        )
+        if counters_for_threat & mechanic_counters:
+            sources.append({
+                "adv_id": m.get("id"),
+                "name": m.get("name"),
+                "source": (
+                    "class_mechanic:"
+                    f"{m.get('class_mechanic_id') or 'active'}"
+                ),
+            })
+            continue
         spec = m.get("specialization_slug")
         if spec and spec not in spec_counter_cache:
             doc = await db.class_specializations.find_one(
@@ -63,14 +90,37 @@ async def _resolve_counter_sources(db, threat_slug: str,
             sources.append({"adv_id": m.get("id"), "name": m.get("name"),
                             "source": f"spec:{spec}"})
             continue
-        for t in (m.get("traits_snapshot") or []):
-            if t not in trait_counter_cache:
+        for raw_trait in (m.get("traits_snapshot") or []):
+            if isinstance(raw_trait, str):
+                trait_slug = raw_trait
+            elif isinstance(raw_trait, dict):
+                trait_slug = (
+                    raw_trait.get("slug")
+                    or raw_trait.get("code")
+                    or raw_trait.get("name")
+                )
+            else:
+                trait_slug = None
+            if not trait_slug:
+                continue
+            if trait_slug not in trait_counter_cache:
                 tdoc = await db.adventurer_traits.find_one(
-                    {"slug": t}, {"_id": 0, "counter_tags": 1})
-                trait_counter_cache[t] = set(tdoc.get("counter_tags") or []) if tdoc else set()
-            if counters_for_threat & trait_counter_cache.get(t, set()):
+                    {"$or": [
+                        {"slug": trait_slug},
+                        {"code": trait_slug},
+                        {"name": trait_slug},
+                    ]},
+                    {"_id": 0, "counter_tags": 1},
+                )
+                trait_counter_cache[trait_slug] = (
+                    set(tdoc.get("counter_tags") or []) if tdoc else set()
+                )
+            if counters_for_threat & trait_counter_cache.get(
+                trait_slug,
+                set(),
+            ):
                 sources.append({"adv_id": m.get("id"), "name": m.get("name"),
-                                "source": f"trait:{t}"})
+                                "source": f"trait:{trait_slug}"})
                 break
     return sources
 
@@ -88,7 +138,9 @@ def _injury_risk_band(counter_ratio: float, has_threats: bool) -> str:
 
 async def build_dungeon_preview(db, *, guild: dict, slug: str,
                                  team_ids: list[str]) -> dict[str, Any]:
-    d = await db.dungeons.find_one({"slug": slug}, {"_id": 0})
+    d = apply_dungeon_encounter(
+        await db.dungeons.find_one({"slug": slug}, {"_id": 0})
+    )
     if not d:
         return {"error": "not_found"}
 
@@ -101,13 +153,38 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
         )]
 
     # Team power + success_chance baseline.
-    members_for_power = [{
-        "id": a.get("id"),
-        "level": a.get("level") or 1,
-        "stats": a.get("stats") or {},
-        "specialization_slug": a.get("specialization_slug"),
-        "traits_snapshot": a.get("traits_snapshot") or [],
-    } for a in team]
+    members_for_power: list[dict] = []
+    for adventurer in team:
+        _slots, equipment_power, raw_equipment = (
+            await _load_equipment_for_adventurer(db, adventurer["id"])
+        )
+        equipped_items = [row["item"] for row in raw_equipment]
+        mechanic = resolve_class_mechanic(
+            adventurer=adventurer,
+            equipment_items=equipped_items,
+        )
+        members_for_power.append({
+            **adventurer,
+            "traits_snapshot": (
+                adventurer.get("traits_snapshot")
+                or adventurer.get("traits")
+                or []
+            ),
+            "equipment_power_snapshot": equipment_power,
+            "class_mechanic_id": mechanic.get("mechanic_id"),
+            "class_mechanic_counter_tags": mechanic.get(
+                "active_counter_tags",
+                [],
+            ),
+            "class_mechanic_power_bonus": int(
+                mechanic.get("power_bonus", 0)
+            ),
+            "total_power_snapshot": (
+                adventurer_effective_power(adventurer)
+                + equipment_power
+                + int(mechanic.get("power_bonus", 0))
+            ),
+        })
     team_power = compute_team_power(members_for_power) if team else 0
     base_success = compute_success_chance(team_power, d.get("recommended_power") or 100) \
         if team else 0
@@ -122,7 +199,11 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
     threats_payload = []
     threat_tags = d.get("threat_tags") or []
     for t_slug in threat_tags:
-        sources = await _resolve_counter_sources(db, t_slug, team)
+        sources = await _resolve_counter_sources(
+            db,
+            t_slug,
+            members_for_power,
+        )
         threats_payload.append({
             "slug": t_slug,
             "name_it": THREAT_NAME_IT.get(t_slug, t_slug),
@@ -161,8 +242,12 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
             "name_it": d.get("name_it") or d.get("name"),
             "name_en": d.get("name_en") or d.get("name"),
             "difficulty": d.get("difficulty"),
-            "duration_seconds": d.get("duration_seconds"),
+            "duration_seconds": d.get("base_duration_seconds"),
             "recommended_power": d.get("recommended_power"),
+            "required_level": d.get("required_level"),
+            "encounter_type": d.get("encounter_type"),
+            "progression_bucket": d.get("bucket"),
+            "encounter_phases": d.get("encounter_phases") or [],
         },
         "team_power": int(team_power),
         "success_chance": int(success_chance),
@@ -174,6 +259,7 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
             "xp_range": [xp_min, xp_max],
             "items_sample": item_sample,
             "materials_sample": mat_sample,
+            "profile": d.get("reward_profile"),
         },
         "weakness_suggestion_it": weak_it,
         "weakness_suggestion_en": weak_en,

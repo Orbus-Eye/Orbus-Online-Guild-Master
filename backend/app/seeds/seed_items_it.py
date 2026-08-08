@@ -17,6 +17,25 @@ def _it(name_it: str, desc_it: str) -> dict:
     return {"display_name_it": name_it, "description_it": desc_it}
 
 
+def _starter_effect(
+    effect_id: str,
+    lore_key: str,
+    summary_it: str,
+    summary_en: str,
+) -> dict:
+    """Reference one immutable runtime definition from a lore-reviewed item."""
+
+    return {
+        "schema_version": 1,
+        "effect_id": effect_id,
+        "effect_version": 1,
+        "lore_key": lore_key,
+        "effect_summary_it": summary_it,
+        "effect_summary_en": summary_en,
+        "enabled": True,
+    }
+
+
 # (slug, item_type, rarity, level_required, power_score, stats, stackable, source, italian, english)
 ITALIAN_ITEM_SEED: list[dict] = [
     # ─ Materials (5, all stackable, source=dungeon) ─────────────────────────
@@ -92,12 +111,34 @@ ITALIAN_ITEM_SEED: list[dict] = [
         "power_score": 5, "strength_bonus": 3, "agility_bonus": 0,
         "intellect_bonus": 0, "endurance_bonus": 0, "faith_bonus": 0,
         "stackable": False, "source": "crafting", "craftable": True,
-        "name": "Iron Sword",
-        "description": "A reliable iron blade for a starting warrior.",
-        "display_name_it": "Spada di Ferro",
-        "description_it": "Una lama di ferro affidabile per un guerriero alle prime armi.",
-        "display_name_en": "Iron Sword",
-        "description_en": "A reliable iron blade for a starting warrior.",
+        "name": "Blade of Krastlov's First Oath",
+        "description": "The first blade carried by those who swear before Krastlov's iron gate.",
+        "display_name_it": "Lama del Primo Giuramento di Krastlov",
+        "description_it": (
+            "La prima lama affidata a chi giura davanti al cancello di ferro "
+            "di Krastlov."
+        ),
+        "display_name_en": "Blade of Krastlov's First Oath",
+        "description_en": (
+            "The first blade carried by those who swear before Krastlov's "
+            "iron gate."
+        ),
+        "flavor_text_it": "Il ferro ricorda la voce di chi promette di tornare.",
+        "flavor_text_en": "The iron remembers the voice of those who vow to return.",
+        "lore_tags": ["krastlov", "primo-giuramento"],
+        "lore_source": "orbus_lore_book_v1",
+        "lore_reviewed": True,
+        "spoiler_level": "public",
+        "slot_type": "weapon",
+        "item_binding_policy": "soft",
+        "recommended_classes": ["warrior", "guerriero"],
+        "class_tags": ["warrior", "guerriero"],
+        "effect_metadata": _starter_effect(
+            "item.krastlov.first_oath",
+            "krastlov",
+            "Dopo un evento completato: +2 Tempra fino alla fine della fase.",
+            "After a completed event: +2 Endurance until phase end.",
+        ),
     },
     {
         "slug": "balanced_dagger",
@@ -105,12 +146,34 @@ ITALIAN_ITEM_SEED: list[dict] = [
         "power_score": 8, "strength_bonus": 2, "agility_bonus": 2,
         "intellect_bonus": 0, "endurance_bonus": 0, "faith_bonus": 0,
         "stackable": False, "source": "dungeon", "craftable": False,
-        "name": "Balanced Dagger",
-        "description": "A finely-balanced blade favored by rogues.",
-        "display_name_it": "Pugnale Bilanciato",
-        "description_it": "Una lama ben bilanciata, preferita dai ladri.",
-        "display_name_en": "Balanced Dagger",
-        "description_en": "A finely-balanced blade favored by rogues.",
+        "name": "Dagger of Irthe's Last Step",
+        "description": "A silent blade recovered where Irthe's procession lost its final pilgrim.",
+        "display_name_it": "Pugnale dell'Ultimo Passo di Irthe",
+        "description_it": (
+            "Una lama silenziosa recuperata dove la processione di Irthe "
+            "perse il suo ultimo pellegrino."
+        ),
+        "display_name_en": "Dagger of Irthe's Last Step",
+        "description_en": (
+            "A silent blade recovered where Irthe's procession lost its "
+            "final pilgrim."
+        ),
+        "flavor_text_it": "Non lascia impronte. Solo una pausa nel corteo.",
+        "flavor_text_en": "It leaves no tracks, only a pause in the procession.",
+        "lore_tags": ["irthe", "ultimo-passo"],
+        "lore_source": "orbus_lore_book_v1",
+        "lore_reviewed": True,
+        "spoiler_level": "mystery",
+        "slot_type": "weapon",
+        "item_binding_policy": "soft",
+        "recommended_classes": ["rogue", "ladro"],
+        "class_tags": ["rogue", "ladro"],
+        "effect_metadata": _starter_effect(
+            "item.irthe.last_step",
+            "irthe",
+            "Dopo un evento completato: +2 Agilità fino alla fine della fase.",
+            "After a completed event: +2 Agility until phase end.",
+        ),
     },
     {
         "slug": "apprentice_staff",
@@ -118,12 +181,34 @@ ITALIAN_ITEM_SEED: list[dict] = [
         "power_score": 5, "strength_bonus": 0, "agility_bonus": 0,
         "intellect_bonus": 3, "endurance_bonus": 0, "faith_bonus": 0,
         "stackable": False, "source": "dungeon", "craftable": False,
-        "name": "Apprentice Staff",
-        "description": "A simple wooden staff for novice mages.",
-        "display_name_it": "Bastone dell'Apprendista",
-        "description_it": "Un semplice bastone in legno per maghi novizi.",
-        "display_name_en": "Apprentice Staff",
-        "description_en": "A simple wooden staff for novice mages.",
+        "name": "Staff of Ergolat's First Fracture",
+        "description": "Its grain follows the first hairline crack recorded beneath Ergolat.",
+        "display_name_it": "Bastone della Prima Faglia di Ergolat",
+        "description_it": (
+            "Le sue venature seguono la prima crepa sottile registrata sotto "
+            "Ergolat."
+        ),
+        "display_name_en": "Staff of Ergolat's First Fracture",
+        "description_en": (
+            "Its grain follows the first hairline crack recorded beneath "
+            "Ergolat."
+        ),
+        "flavor_text_it": "Vibra un istante prima che la realtà ceda.",
+        "flavor_text_en": "It hums one instant before reality gives way.",
+        "lore_tags": ["ergolat", "faglie-arcane"],
+        "lore_source": "orbus_lore_book_v1",
+        "lore_reviewed": True,
+        "spoiler_level": "mystery",
+        "slot_type": "weapon",
+        "item_binding_policy": "soft",
+        "recommended_classes": ["mage", "mago"],
+        "class_tags": ["mage", "mago"],
+        "effect_metadata": _starter_effect(
+            "item.ergolat.first_fracture",
+            "ergolat",
+            "Dopo un evento completato: +2 Intelletto fino alla fine della fase.",
+            "After a completed event: +2 Intellect until phase end.",
+        ),
     },
     {
         "slug": "path_bow",
@@ -131,12 +216,34 @@ ITALIAN_ITEM_SEED: list[dict] = [
         "power_score": 5, "strength_bonus": 2, "agility_bonus": 1,
         "intellect_bonus": 0, "endurance_bonus": 0, "faith_bonus": 0,
         "stackable": False, "source": "dungeon", "craftable": False,
-        "name": "Path Bow",
-        "description": "A traveler's bow, well-worn but accurate.",
-        "display_name_it": "Arco da Sentiero",
-        "description_it": "Un arco da viandante, consumato ma preciso.",
-        "display_name_en": "Path Bow",
-        "description_en": "A traveler's bow, well-worn but accurate.",
+        "name": "Bow of Elfwood's Silent Trail",
+        "description": "Carved from a fallen branch beside a trail no monster crosses twice.",
+        "display_name_it": "Arco del Sentiero Muto di Elfwood",
+        "description_it": (
+            "Intagliato da un ramo caduto accanto a un sentiero che nessun "
+            "mostro attraversa due volte."
+        ),
+        "display_name_en": "Bow of Elfwood's Silent Trail",
+        "description_en": (
+            "Carved from a fallen branch beside a trail no monster crosses "
+            "twice."
+        ),
+        "flavor_text_it": "Il bosco trattiene il fiato quando la corda si tende.",
+        "flavor_text_en": "The forest holds its breath when the string is drawn.",
+        "lore_tags": ["elfwood", "alberi-della-vita"],
+        "lore_source": "orbus_lore_book_v1",
+        "lore_reviewed": True,
+        "spoiler_level": "public",
+        "slot_type": "weapon",
+        "item_binding_policy": "soft",
+        "recommended_classes": ["ranger", "cacciatore_di_mostri"],
+        "class_tags": ["ranger", "cacciatore_di_mostri"],
+        "effect_metadata": _starter_effect(
+            "item.elfwood.silent_trail",
+            "elfwood",
+            "Dopo un evento completato: +2 Agilità fino alla fine della fase.",
+            "After a completed event: +2 Agility until phase end.",
+        ),
     },
     # ─ Armors (3) ───────────────────────────────────────────────────────────
     {
@@ -171,12 +278,34 @@ ITALIAN_ITEM_SEED: list[dict] = [
         "power_score": 4, "strength_bonus": 0, "agility_bonus": 0,
         "intellect_bonus": 2, "endurance_bonus": 0, "faith_bonus": 1,
         "stackable": False, "source": "dungeon", "craftable": False,
-        "name": "Initiate Robe",
-        "description": "Plain robe worn by the priest-initiates of the temple.",
-        "display_name_it": "Veste da Iniziato",
-        "description_it": "Veste semplice indossata dagli iniziati del tempio.",
-        "display_name_en": "Initiate Robe",
-        "description_en": "Plain robe worn by the priest-initiates of the temple.",
+        "name": "Vestment of Halodi's Broken Vow",
+        "description": "The vestment of an initiate who kept faith after the temple fell silent.",
+        "display_name_it": "Veste del Voto Infranto di Halodi",
+        "description_it": (
+            "La veste di un iniziato che conservò la fede dopo che il tempio "
+            "cadde nel silenzio."
+        ),
+        "display_name_en": "Vestment of Halodi's Broken Vow",
+        "description_en": (
+            "The vestment of an initiate who kept faith after the temple "
+            "fell silent."
+        ),
+        "flavor_text_it": "Il voto si spezzò. La fede no.",
+        "flavor_text_en": "The vow broke. The faith did not.",
+        "lore_tags": ["halodi", "voto-infranto"],
+        "lore_source": "orbus_lore_book_v1",
+        "lore_reviewed": True,
+        "spoiler_level": "mystery",
+        "slot_type": "armor",
+        "item_binding_policy": "soft",
+        "recommended_classes": ["priest", "paladin", "paladino"],
+        "class_tags": ["priest", "paladin", "paladino"],
+        "effect_metadata": _starter_effect(
+            "item.halodi.broken_vow",
+            "halodi",
+            "Dopo un evento completato: +2 Fede fino alla fine della fase.",
+            "After a completed event: +2 Faith until phase end.",
+        ),
     },
     # ─ Accessories (3) ──────────────────────────────────────────────────────
     {
@@ -297,6 +426,22 @@ async def seed_italian_items(db) -> int:
             "bind_state": "unbound",
             "updated_at": now,
         }
+        for field in (
+            "description_it",
+            "flavor_text_it",
+            "flavor_text_en",
+            "lore_tags",
+            "lore_source",
+            "lore_reviewed",
+            "spoiler_level",
+            "slot_type",
+            "item_binding_policy",
+            "recommended_classes",
+            "class_tags",
+            "effect_metadata",
+        ):
+            if field in src:
+                set_fields[field] = src[field]
         res = await db.items.update_one(
             {"slug": slug},
             {"$setOnInsert": set_on_insert, "$set": set_fields},

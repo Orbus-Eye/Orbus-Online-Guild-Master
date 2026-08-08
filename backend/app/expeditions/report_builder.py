@@ -475,6 +475,39 @@ def build_expedition_report(
             }
             for it in (loot_items or [])
         ],
+        "item_effect_power_bonus": sum(
+            int(member.get("item_effect_power_bonus", 0))
+            for member in (members or [])
+        ),
+        "item_effects": [
+            {
+                **effect,
+                "adventurer_id": member.get("adventurer_id"),
+                "adventurer_name": member.get("name_snapshot"),
+            }
+            for member in (members or [])
+            for effect in (member.get("item_effects_snapshot") or [])
+        ],
+        "class_mechanic_power_bonus": sum(
+            int(member.get("class_mechanic_power_bonus", 0))
+            for member in (members or [])
+        ),
+        "class_item_resonance_bonus": sum(
+            int(member.get("class_item_resonance_bonus", 0))
+            for member in (members or [])
+        ),
+        "class_mechanics": [
+            {
+                **mechanic,
+                "adventurer_id": member.get("adventurer_id"),
+                "adventurer_name": member.get("name_snapshot"),
+            }
+            for member in (members or [])
+            for mechanic in [member.get("class_mechanic_snapshot")]
+            if isinstance(mechanic, dict) and mechanic.get("active")
+        ],
+        "encounter_snapshot": exp.get("encounter_snapshot"),
+        "reward_profile_snapshot": exp.get("reward_profile_snapshot"),
         "injuries": 0,   # not modelled in current schema
         "fatigue": 0,    # not modelled in current schema
     }

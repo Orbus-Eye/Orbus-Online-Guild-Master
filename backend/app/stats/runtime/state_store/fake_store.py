@@ -19,6 +19,7 @@ può essere davvero simulato con storage process-local (§3 dispatch RT2-B-P0
 + §7 direttiva RT2-B-1A). Il fake serve a verificare che i contract siano
 rispettati identicamente da qualsiasi implementazione.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -74,7 +75,9 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
         health_ok: bool = True,
     ) -> None:
         # Sanity: fake explicit intent — no accidental production wiring.
-        assert PRODUCTION_USE == "FORBIDDEN", "FakeExpeditionRuntimeStateStore is TEST-ONLY"
+        assert (
+            PRODUCTION_USE == "FORBIDDEN"
+        ), "FakeExpeditionRuntimeStateStore is TEST-ONLY"
         self._storage: Dict[str, ExpeditionRuntimeState] = {}
         self._lock = asyncio.Lock()
         self._clock: Callable[[], datetime] = clock or _default_clock
@@ -128,7 +131,9 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             st = self._storage.get(expedition_id)
             if st is None:
                 return CasResult(code=CasResultCode.NOT_FOUND)
-            if not validate_state_version_match(expected_state_version, st.state_version):
+            if not validate_state_version_match(
+                expected_state_version, st.state_version
+            ):
                 return CasResult(
                     code=CasResultCode.STATE_VERSION_CONFLICT,
                     new_state_version=st.state_version,
@@ -143,8 +148,11 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             new_fields: Dict[str, Any] = {}
             for k, v in mutation.items():
                 if k in (
-                    "adventurer_class_states", "runtime_status",
-                    "loadout_snapshot_version", "expires_at",
+                    "adventurer_class_states",
+                    "active_effect_instances",
+                    "runtime_status",
+                    "loadout_snapshot_version",
+                    "expires_at",
                     "last_event_sequence",
                 ):
                     new_fields[k] = v
@@ -159,10 +167,19 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 runtime_status=new_fields.get("runtime_status", st.runtime_status),
                 owner_worker_or_lease_id=st.owner_worker_or_lease_id,
                 lease=st.lease,
-                loadout_snapshot_version=new_fields.get("loadout_snapshot_version", st.loadout_snapshot_version),
-                adventurer_class_states=new_fields.get("adventurer_class_states", st.adventurer_class_states),
+                loadout_snapshot_version=new_fields.get(
+                    "loadout_snapshot_version", st.loadout_snapshot_version
+                ),
+                adventurer_class_states=new_fields.get(
+                    "adventurer_class_states", st.adventurer_class_states
+                ),
+                active_effect_instances=new_fields.get(
+                    "active_effect_instances", st.active_effect_instances
+                ),
                 processed_event_keys=st.processed_event_keys,
-                last_event_sequence=new_fields.get("last_event_sequence", st.last_event_sequence),
+                last_event_sequence=new_fields.get(
+                    "last_event_sequence", st.last_event_sequence
+                ),
                 fencing_token=st.fencing_token,
             )
             self._storage[expedition_id] = new_st
@@ -204,7 +221,9 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                     prior_result_reference=event_id,
                 )
             # 2) CAS filters
-            if not validate_state_version_match(expected_state_version, st.state_version):
+            if not validate_state_version_match(
+                expected_state_version, st.state_version
+            ):
                 return CasResult(
                     code=CasResultCode.STATE_VERSION_CONFLICT,
                     new_state_version=st.state_version,
@@ -215,7 +234,10 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                     new_state_version=st.state_version,
                 )
             # 3) bounded receipts ring (fail-closed at limit)
-            if len(st.processed_event_keys) >= ExpeditionRuntimeState.MAX_PROCESSED_EVENTS:
+            if (
+                len(st.processed_event_keys)
+                >= ExpeditionRuntimeState.MAX_PROCESSED_EVENTS
+            ):
                 return CasResult(
                     code=CasResultCode.CAP_EXCEEDED,
                     reason=f"processed_event_keys ring at limit ({ExpeditionRuntimeState.MAX_PROCESSED_EVENTS}) · fail-closed",
@@ -238,8 +260,11 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             fields: Dict[str, Any] = {}
             for k, v in mutation.items():
                 if k in (
-                    "adventurer_class_states", "runtime_status",
-                    "loadout_snapshot_version", "expires_at",
+                    "adventurer_class_states",
+                    "active_effect_instances",
+                    "runtime_status",
+                    "loadout_snapshot_version",
+                    "expires_at",
                 ):
                     fields[k] = v
             new_st = ExpeditionRuntimeState(
@@ -251,8 +276,15 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 runtime_status=fields.get("runtime_status", st.runtime_status),
                 owner_worker_or_lease_id=st.owner_worker_or_lease_id,
                 lease=st.lease,
-                loadout_snapshot_version=fields.get("loadout_snapshot_version", st.loadout_snapshot_version),
-                adventurer_class_states=fields.get("adventurer_class_states", st.adventurer_class_states),
+                loadout_snapshot_version=fields.get(
+                    "loadout_snapshot_version", st.loadout_snapshot_version
+                ),
+                adventurer_class_states=fields.get(
+                    "adventurer_class_states", st.adventurer_class_states
+                ),
+                active_effect_instances=fields.get(
+                    "active_effect_instances", st.active_effect_instances
+                ),
                 processed_event_keys=st.processed_event_keys + (new_receipt,),
                 last_event_sequence=new_sequence,
                 fencing_token=st.fencing_token,
@@ -288,7 +320,9 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             now = self._clock()
             # If lease present and NOT expired → reject
             if st.lease is not None:
-                exp_at = datetime.fromisoformat(st.lease.expires_at.replace("Z", "+00:00"))
+                exp_at = datetime.fromisoformat(
+                    st.lease.expires_at.replace("Z", "+00:00")
+                )
                 if exp_at > now:
                     return LeaseAcquireResult(
                         code=CasResultCode.STATE_VERSION_CONFLICT,
@@ -314,6 +348,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 lease=new_lease,
                 loadout_snapshot_version=st.loadout_snapshot_version,
                 adventurer_class_states=st.adventurer_class_states,
+                active_effect_instances=st.active_effect_instances,
                 processed_event_keys=st.processed_event_keys,
                 last_event_sequence=st.last_event_sequence,
                 fencing_token=new_token,
@@ -369,6 +404,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 lease=new_lease,
                 loadout_snapshot_version=st.loadout_snapshot_version,
                 adventurer_class_states=st.adventurer_class_states,
+                active_effect_instances=st.active_effect_instances,
                 processed_event_keys=st.processed_event_keys,
                 last_event_sequence=st.last_event_sequence,
                 fencing_token=st.fencing_token,
@@ -408,6 +444,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 lease=None,
                 loadout_snapshot_version=st.loadout_snapshot_version,
                 adventurer_class_states=st.adventurer_class_states,
+                active_effect_instances=st.active_effect_instances,
                 processed_event_keys=st.processed_event_keys,
                 last_event_sequence=st.last_event_sequence,
                 fencing_token=st.fencing_token,
@@ -420,7 +457,11 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
             st = self._storage.get(expedition_id)
             if st is None:
                 return CasResult(code=CasResultCode.NOT_FOUND)
-            if st.runtime_status in (RuntimeStatus.EXPIRED, RuntimeStatus.COMPLETED, RuntimeStatus.CANCELLED):
+            if st.runtime_status in (
+                RuntimeStatus.EXPIRED,
+                RuntimeStatus.COMPLETED,
+                RuntimeStatus.CANCELLED,
+            ):
                 return CasResult(code=CasResultCode.DEDUPLICATED_NO_OP)
             self._storage[expedition_id] = ExpeditionRuntimeState(
                 expedition_id=st.expedition_id,
@@ -433,6 +474,7 @@ class FakeExpeditionRuntimeStateStore(ExpeditionRuntimeStateStore):
                 lease=st.lease,
                 loadout_snapshot_version=st.loadout_snapshot_version,
                 adventurer_class_states=st.adventurer_class_states,
+                active_effect_instances=st.active_effect_instances,
                 processed_event_keys=st.processed_event_keys,
                 last_event_sequence=st.last_event_sequence,
                 fencing_token=st.fencing_token,

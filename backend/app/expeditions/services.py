@@ -20,6 +20,11 @@ from typing import Optional
 from fastapi import HTTPException
 from pymongo import ReturnDocument
 
+from app.adventurers.classless import require_class_hall_assignment
+from app.adventurers.career import career_effective_stats, career_stat_multiplier
+from app.class_halls.catalog import CLASS_HALLS
+from app.class_halls.mechanics import resolve_class_mechanic
+from app.dungeons.encounters import apply_dungeon_encounter
 from app.expeditions.formulas import (
     adventurer_base_power as _adventurer_unit_power,
     adventurer_effective_power as _adventurer_effective_power,
@@ -39,7 +44,8 @@ from app.equipment.services import (
     _load_equipment_for_guild,
 )
 from app.items.services import item_public
-from app.shared.constants import XP_THRESHOLD_PER_LEVEL
+from app.shared.progression import xp_required_for_next_level
+from app.shared.progression import can_adventurer_level_up
 
 
 # Phase 5.6: cryptographically-secure RNG. Distributions unchanged vs `random.*`.
@@ -68,6 +74,16 @@ def member_public(m: dict) -> dict:
         # Phase 6 — equipment at the moment of departure (immutable snapshot)
         "equipment_snapshot": m.get("equipment_snapshot", []),
         "equipment_power_snapshot": int(m.get("equipment_power_snapshot", 0)),
+        "item_effects_snapshot": m.get("item_effects_snapshot", []),
+        "item_effect_stat_bonuses": m.get("item_effect_stat_bonuses", {}),
+        "item_effect_power_bonus": int(m.get("item_effect_power_bonus", 0)),
+        "class_mechanic_snapshot": m.get("class_mechanic_snapshot"),
+        "class_mechanic_power_bonus": int(
+            m.get("class_mechanic_power_bonus", 0)
+        ),
+        "class_item_resonance_bonus": int(
+            m.get("class_item_resonance_bonus", 0)
+        ),
         # Phase 13 — traits at dispatch (immutable snapshot for determinism)
         "traits_snapshot": m.get("traits_snapshot", []),
         "total_power_snapshot": int(
@@ -100,6 +116,20 @@ def expedition_public(e: dict) -> dict:
         "success_chance": e.get("success_chance", 0),
         # Phase 7: equipment delta snapshot (immutable after start)
         "base_team_power": e.get("base_team_power", e.get("team_power", 0)),
+        "equipment_base_power_bonus": int(
+            e.get(
+                "equipment_base_power_bonus",
+                int(e.get("equipment_power_bonus", 0))
+                - int(e.get("item_effect_power_bonus", 0)),
+            )
+        ),
+        "item_effect_power_bonus": int(e.get("item_effect_power_bonus", 0)),
+        "class_mechanic_power_bonus": int(
+            e.get("class_mechanic_power_bonus", 0)
+        ),
+        "class_item_resonance_bonus": int(
+            e.get("class_item_resonance_bonus", 0)
+        ),
         "equipment_power_bonus": int(e.get("equipment_power_bonus", 0)),
         "final_team_power": e.get("final_team_power", e.get("team_power", 0)),
         "success_chance_without_equipment": e.get(
@@ -126,6 +156,8 @@ def expedition_public(e: dict) -> dict:
         "is_replay": bool(e.get("is_replay", False)),
         # ROUND 16.0 Phase 4 — Threat resolution (Void/Undead only; None elsewhere).
         "threat_resolution": e.get("threat_resolution"),
+        "encounter_snapshot": e.get("encounter_snapshot"),
+        "reward_profile_snapshot": e.get("reward_profile_snapshot"),
         "created_at": e["created_at"],
         "updated_at": e.get("updated_at", e["created_at"]),
     }
@@ -197,15 +229,30 @@ CLASS_LEVELUP_STAT = {
     "Ranger": lambda: _rng.choice(["agility", "strength"]),
 }
 
+CANONICAL_CLASS_LEVELUP_STAT = {
+    profile.canonical_class_slug: profile.primary_stat
+    for profile in CLASS_HALLS.values()
+}
+
 
 def _resolve_levelup(adv: dict) -> dict:
     """Apply level-up loop in-place on a dict. Returns the updated dict."""
-    while adv["experience"] >= adv["level"] * XP_THRESHOLD_PER_LEVEL:
-        threshold = adv["level"] * XP_THRESHOLD_PER_LEVEL
+    # The authoritative cap is shared by the progression helper. XP may
+    # continue to accumulate for a future mastery/prestige system, but it
+    # cannot advance the adventurer past the cap or grant extra core stats.
+    # future prestige systems, but it can never advance the adventurer past
+    # the cap or grant additional core stats.
+    while can_adventurer_level_up(adv["level"], adv["experience"]):
+        threshold = xp_required_for_next_level(adv["level"])
         adv["experience"] -= threshold
         adv["level"] += 1
-        picker = CLASS_LEVELUP_STAT.get(adv.get("class_name", ""))
-        stat = picker() if picker else "strength"
+        canonical_slug = (
+            adv.get("canonical_class_slug") or adv.get("class_slug") or ""
+        )
+        stat = CANONICAL_CLASS_LEVELUP_STAT.get(canonical_slug)
+        if not stat:
+            picker = CLASS_LEVELUP_STAT.get(adv.get("class_name", ""))
+            stat = picker() if picker else "strength"
         adv[stat] = adv.get(stat, 0) + 1
     return adv
 
@@ -325,7 +372,12 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
     if not claimed:
         return  # already completed by a concurrent caller
 
-    dungeon = await db.dungeons.find_one({"id": claimed["dungeon_id"]}, {"_id": 0})
+    dungeon = apply_dungeon_encounter(
+        await db.dungeons.find_one(
+            {"id": claimed["dungeon_id"]},
+            {"_id": 0},
+        )
+    )
     if not dungeon:
         # Defensive fallback — should never happen
         await db.expeditions.update_one(
@@ -556,6 +608,21 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
             }
         },
     )
+    # Career rarity measures use, not luck: every participant receives one
+    # dungeon completion even when the expedition outcome is a failure.
+    from app.adventurers.career import record_career_activity_for_many
+
+    await record_career_activity_for_many(
+        db,
+        guild_id=claimed["guild_id"],
+        adventurer_ids=[m["adventurer_id"] for m in members],
+        activity_kind="dungeon",
+        activity_id=exp_id,
+    )
+    await db.expeditions.update_one(
+        {"id": exp_id},
+        {"$set": {"career_progress_recorded": True}},
+    )
     # ROUND 15 Phase 3 — achievement trigger only on success
     # (failed expeditions don't credit `dungeon_completed`).
     if success:
@@ -751,6 +818,39 @@ async def complete_due_expeditions(db, guild_id: str) -> int:
     ).to_list(100)
     for d in due:
         await _complete_one_expedition(db, d["id"])
+    # Reconcile terminal expeditions whose career hook was interrupted after
+    # gameplay rewards committed. The per-adventurer event key makes retries
+    # safe and prevents duplicated career credit.
+    missing_career = await db.expeditions.find(
+        {
+            "guild_id": guild_id,
+            "status": "completed",
+            "career_progress_recorded": {"$ne": True},
+        },
+        {"_id": 0, "id": 1},
+    ).to_list(100)
+    if missing_career:
+        from app.adventurers.career import record_career_activity_for_many
+
+        for expedition in missing_career:
+            member_ids = [
+                row["adventurer_id"]
+                for row in await db.expedition_members.find(
+                    {"expedition_id": expedition["id"]},
+                    {"_id": 0, "adventurer_id": 1},
+                ).to_list(50)
+            ]
+            await record_career_activity_for_many(
+                db,
+                guild_id=guild_id,
+                adventurer_ids=member_ids,
+                activity_kind="dungeon",
+                activity_id=expedition["id"],
+            )
+            await db.expeditions.update_one(
+                {"id": expedition["id"]},
+                {"$set": {"career_progress_recorded": True}},
+            )
     return len(due)
 
 
@@ -775,8 +875,11 @@ async def _check_replay_eligibility(
     db, guild: dict, last_exp: dict
 ) -> tuple[bool, Optional[str], list[str], Optional[dict]]:
     """Return (can_replay, reason, adventurer_ids, dungeon)."""
-    dungeon = await db.dungeons.find_one(
-        {"id": last_exp["dungeon_id"]}, {"_id": 0}
+    dungeon = apply_dungeon_encounter(
+        await db.dungeons.find_one(
+            {"id": last_exp["dungeon_id"]},
+            {"_id": 0},
+        )
     )
     if not dungeon or not dungeon.get("is_active", True):
         return False, "Dungeon is no longer available", [], None
@@ -831,8 +934,11 @@ async def _dispatch_expedition(
     Shared by `POST /api/expeditions` and `POST /api/expeditions/replay-last`.
     Bumps `guild.max_team_power_ever` via an atomic `$max` Mongo update.
     """
-    dungeon = await db.dungeons.find_one(
-        {"id": dungeon_id, "is_active": True}, {"_id": 0}
+    dungeon = apply_dungeon_encounter(
+        await db.dungeons.find_one(
+            {"id": dungeon_id, "is_active": True},
+            {"_id": 0},
+        )
     )
     if not dungeon:
         raise HTTPException(status_code=404, detail="Dungeon not found")
@@ -890,6 +996,7 @@ async def _dispatch_expedition(
                 ),
             },
         )
+    require_class_hall_assignment(members_live, source="expedition.dispatch")
 
     # ROUND 18.1.1 Hotfix 2 — Guard "recruit_unassigned" / non-playable class.
     # Safety-only backend guard: rifiuta gli avventurieri con class_slug
@@ -965,26 +1072,84 @@ async def _dispatch_expedition(
     # Phase 6: load equipment for each member; snapshot is frozen at departure.
     # Phase 13: also snapshot the active traits so completion can resolve
     # xp_gain modifiers deterministically even if the trait pool changes.
+    exp_id = str(uuid.uuid4())
     members_for_power: list[dict] = []
     equipment_by_adv: dict[str, dict] = {}
     traits_by_adv: dict[str, list] = {}
     for adv in members_live:
         slots, eq_power, raw = await _load_equipment_for_adventurer(db, adv["id"])
         snapshot = [_item_summary_for_snapshot(r["row"], r["item"]) for r in raw]
+        equipped_items = [r["item"] for r in raw]
+        try:
+            from app.stats.runtime.effects.expedition_projection import (
+                project_equipped_item_effects,
+            )
+            item_effect_projection = project_equipped_item_effects(
+                expedition_id=exp_id,
+                adventurer=adv,
+                equipment_items=equipped_items,
+            )
+        except Exception as exc:
+            from app.stats.runtime.effects.item_hooks import ItemEffectHookError
+            if not isinstance(exc, ItemEffectHookError):
+                raise
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "items.effect_projection_invalid",
+                    "source": "expedition.dispatch",
+                    "adventurer_id": adv.get("id"),
+                    "reason_code": str(exc),
+                    "user_message": (
+                        "Un oggetto equipaggiato ha un effetto non valido. "
+                        "Rimuovilo o segnala il problema ai tester."
+                    ),
+                },
+            ) from exc
         # Phase 13 — use effective (trait-modified) power as base
         base = _adventurer_effective_power(adv)
+        class_mechanic = resolve_class_mechanic(
+            adventurer=adv,
+            equipment_items=equipped_items,
+        )
+        class_mechanic_bonus = int(class_mechanic.get("power_bonus", 0))
+        class_item_resonance_bonus = int(
+            class_mechanic.get("item_resonance_bonus", 0)
+        )
         traits_snapshot = list(adv.get("traits") or [])
         traits_by_adv[adv["id"]] = traits_snapshot
         equipment_by_adv[adv["id"]] = {
             "equipment_snapshot": snapshot,
             "equipment_power_snapshot": eq_power,
-            "total_power_snapshot": base + eq_power,
+            "item_effects_snapshot": item_effect_projection["effects"],
+            "item_effect_stat_bonuses": item_effect_projection["stat_bonuses"],
+            "item_effect_power_bonus": item_effect_projection["power_bonus"],
+            "class_mechanic_snapshot": class_mechanic,
+            "class_mechanic_power_bonus": class_mechanic_bonus,
+            "class_item_resonance_bonus": class_item_resonance_bonus,
+            "total_power_snapshot": (
+                base
+                + eq_power
+                + item_effect_projection["power_bonus"]
+                + class_mechanic_bonus
+            ),
         }
         members_for_power.append(
             {
                 **adv,
-                "total_power_snapshot": base + eq_power,
+                "total_power_snapshot": (
+                    base
+                    + eq_power
+                    + item_effect_projection["power_bonus"]
+                    + class_mechanic_bonus
+                ),
                 "equipment_power_snapshot": eq_power,
+                "item_effect_power_bonus": item_effect_projection["power_bonus"],
+                "class_mechanic_power_bonus": class_mechanic_bonus,
+                "class_item_resonance_bonus": class_item_resonance_bonus,
+                "class_mechanic_counter_tags": class_mechanic.get(
+                    "active_counter_tags", []
+                ),
             }
         )
 
@@ -1008,7 +1173,6 @@ async def _dispatch_expedition(
 
     now = utc_now()
     completes_at = now + timedelta(seconds=dungeon["base_duration_seconds"])
-    exp_id = str(uuid.uuid4())
     exp_doc = {
         "id": exp_id,
         "guild_id": guild["id"],
@@ -1022,6 +1186,15 @@ async def _dispatch_expedition(
         "success_chance": success_chance,
         # Phase 7 delta snapshot
         "base_team_power": delta["base_team_power"],
+        "equipment_base_power_bonus": delta["equipment_base_power_bonus"],
+        "item_effect_power_bonus": delta["item_effect_power_bonus"],
+        "class_mechanic_power_bonus": sum(
+            int(row.get("class_mechanic_power_bonus", 0))
+            for row in equipment_by_adv.values()
+        ),
+        "class_item_resonance_bonus": delta[
+            "class_item_resonance_bonus"
+        ],
         "equipment_power_bonus": delta["equipment_power_bonus"],
         "final_team_power": delta["final_team_power"],
         "success_chance_without_equipment": delta["success_chance_without_equipment"],
@@ -1039,6 +1212,13 @@ async def _dispatch_expedition(
         "is_replay": bool(is_replay),
         # ROUND 16.0 Phase 4 — Threat resolution (only when dungeon has threat_tags).
         "threat_resolution": threat_resolution if threat_resolution.get("applies") else None,
+        "encounter_snapshot": {
+            "curve_version": dungeon.get("curve_version"),
+            "encounter_type": dungeon.get("encounter_type"),
+            "phases": dungeon.get("encounter_phases") or [],
+            "threat_tags": dungeon.get("threat_tags") or [],
+        },
+        "reward_profile_snapshot": dungeon.get("reward_profile"),
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
     }
@@ -1046,11 +1226,18 @@ async def _dispatch_expedition(
 
     members_docs = []
     for adv in members_live:
+        career_stats = career_effective_stats(adv)
         eq = equipment_by_adv.get(
             adv["id"],
             {
                 "equipment_snapshot": [],
                 "equipment_power_snapshot": 0,
+                "item_effects_snapshot": [],
+                "item_effect_stat_bonuses": {},
+                "item_effect_power_bonus": 0,
+                "class_mechanic_snapshot": None,
+                "class_mechanic_power_bonus": 0,
+                "class_item_resonance_bonus": 0,
                 "total_power_snapshot": _adventurer_effective_power(adv),
             },
         )
@@ -1062,13 +1249,24 @@ async def _dispatch_expedition(
             "class_name_snapshot": adv.get("class_name", ""),
             "role_snapshot": adv.get("class_role", ""),
             "level_snapshot": adv.get("level", 1),
-            "strength_snapshot": adv["strength"],
-            "agility_snapshot": adv["agility"],
-            "intellect_snapshot": adv["intellect"],
-            "endurance_snapshot": adv["endurance"],
-            "faith_snapshot": adv["faith"],
+            "strength_snapshot": career_stats["strength"],
+            "agility_snapshot": career_stats["agility"],
+            "intellect_snapshot": career_stats["intellect"],
+            "endurance_snapshot": career_stats["endurance"],
+            "faith_snapshot": career_stats["faith"],
+            "rarity_stat_multiplier_snapshot": career_stat_multiplier(adv),
             "equipment_snapshot": eq["equipment_snapshot"],
             "equipment_power_snapshot": int(eq["equipment_power_snapshot"]),
+            "item_effects_snapshot": eq["item_effects_snapshot"],
+            "item_effect_stat_bonuses": eq["item_effect_stat_bonuses"],
+            "item_effect_power_bonus": int(eq["item_effect_power_bonus"]),
+            "class_mechanic_snapshot": eq["class_mechanic_snapshot"],
+            "class_mechanic_power_bonus": int(
+                eq["class_mechanic_power_bonus"]
+            ),
+            "class_item_resonance_bonus": int(
+                eq["class_item_resonance_bonus"]
+            ),
             "total_power_snapshot": int(eq["total_power_snapshot"]),
             # Phase 13 — trait snapshot for deterministic resolution
             "traits_snapshot": traits_by_adv.get(adv["id"], []),
@@ -1206,8 +1404,11 @@ async def get_expedition(db, expedition_id: str, guild: dict) -> dict:
     # expeditions get {report_summary: None, report_steps: None} so the
     # UI can render its graceful fallback.
     from app.expeditions.report_builder import build_expedition_report
-    dungeon = await db.dungeons.find_one(
-        {"id": exp["dungeon_id"]}, {"_id": 0}
+    dungeon = apply_dungeon_encounter(
+        await db.dungeons.find_one(
+            {"id": exp["dungeon_id"]},
+            {"_id": 0},
+        )
     )
     report = build_expedition_report(exp, members, dungeon, loot_items)
 
@@ -1406,6 +1607,7 @@ __all__ = [
     "_resolve_levelup",
     "_build_result_log",
     "CLASS_LEVELUP_STAT",
+    "CANONICAL_CLASS_LEVELUP_STAT",
     # route-facing
     "start_expedition",
     "list_expeditions",

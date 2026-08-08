@@ -19,6 +19,19 @@ from app.expeditions.formulas import (
 from app.items.services import item_public
 from app.shared.constants import EQUIPMENT_SLOTS, SLOT_TO_ITEM_TYPE
 
+LEGACY_SLOT_ALIASES = {"armor": "chest"}
+
+
+def normalize_equipment_slot(slot: str) -> str:
+    value = (slot or "").strip().lower()
+    return LEGACY_SLOT_ALIASES.get(value, value)
+
+
+def _storage_slots_for(slot: str) -> list[str]:
+    canonical = normalize_equipment_slot(slot)
+    legacy = [old for old, new in LEGACY_SLOT_ALIASES.items() if new == canonical]
+    return [canonical, *legacy]
+
 
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -30,10 +43,11 @@ def _empty_slot_map() -> dict:
 
 def _equipped_slot_entry(equipped_row: dict, item: dict) -> dict:
     """Shape returned to clients for a single occupied slot."""
+    slot = normalize_equipment_slot(equipped_row["slot"])
     return {
         "equipped_item_id": equipped_row["id"],
         "item": item_public(item),
-        "slot": equipped_row["slot"],
+        "slot": slot,
     }
 
 
@@ -62,7 +76,7 @@ async def _load_equipment_for_adventurer(
     """
     rows = await db.equipped_items.find(
         {"adventurer_id": adventurer_id}, {"_id": 0}
-    ).to_list(10)
+    ).to_list(20)
     slots = _empty_slot_map()
     eq_power = 0
     raw: list[dict] = []
@@ -75,8 +89,9 @@ async def _load_equipment_for_adventurer(
         item = items_by_id.get(r["item_id"])
         if not item:
             continue
-        if r["slot"] in slots:
-            slots[r["slot"]] = _equipped_slot_entry(r, item)
+        canonical_slot = normalize_equipment_slot(r["slot"])
+        if canonical_slot in slots:
+            slots[canonical_slot] = _equipped_slot_entry(r, item)
         eq_power += _item_equip_power(item)
         raw.append({"row": r, "item": item})
     return slots, eq_power, raw
@@ -103,7 +118,10 @@ async def _load_equipment_for_guild(
         if not item:
             continue
         slots, power = by_adv.get(r["adventurer_id"], (_empty_slot_map(), 0))
-        slots[r["slot"]] = _equipped_slot_entry(r, item)
+        canonical_slot = normalize_equipment_slot(r["slot"])
+        if canonical_slot not in slots:
+            continue
+        slots[canonical_slot] = _equipped_slot_entry(r, item)
         by_adv[r["adventurer_id"]] = (slots, power + _item_equip_power(item))
     return by_adv
 
@@ -162,7 +180,7 @@ async def equip_item_service(
             detail="Cannot modify equipment of adventurer currently in expedition",
         )
 
-    slot = slot.strip().lower()
+    slot = normalize_equipment_slot(slot)
     if slot not in EQUIPMENT_SLOTS:
         raise HTTPException(
             status_code=400,
@@ -181,6 +199,22 @@ async def equip_item_service(
                 f"Item type '{item.get('item_type')}' cannot be equipped in slot '{slot}'"
             ),
         )
+    declared_slot = normalize_equipment_slot(item.get("slot_type") or "")
+    slot_family = slot.split("_", 1)[0] if slot.startswith(("ring_", "trinket_")) else slot
+    if declared_slot:
+        declared_family = (
+            declared_slot.split("_", 1)[0]
+            if declared_slot.startswith(("ring_", "trinket_"))
+            else declared_slot
+        )
+        if declared_family != slot_family:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Item slot '{item.get('slot_type')}' cannot be equipped "
+                    f"in physical slot '{slot}'"
+                ),
+            )
 
     # ROUND 11.3 TASK B — adventurer-level gate on equip. MUST run before
     # the atomic reservation so we don't have to refund a reserved_qty on
@@ -254,6 +288,26 @@ async def equip_item_service(
         )
 
     now = utc_now()
+    occupied = await db.equipped_items.find_one(
+        {
+            "guild_id": guild["id"],
+            "adventurer_id": adv["id"],
+            "slot": {"$in": _storage_slots_for(slot)},
+        },
+        {"_id": 0, "id": 1},
+    )
+    if occupied:
+        await db.inventory_items.update_one(
+            {
+                "guild_id": guild["id"],
+                "item_id": item_id,
+                "reserved_qty": {"$gt": 0},
+            },
+            {"$inc": {"reserved_qty": -1}},
+        )
+        raise HTTPException(
+            status_code=400, detail="Slot already occupied, unequip first"
+        )
     new_row = {
         "id": str(uuid.uuid4()),
         "guild_id": guild["id"],
@@ -335,7 +389,7 @@ async def unequip_item_service(
             detail="Cannot modify equipment of adventurer currently in expedition",
         )
 
-    slot = slot.strip().lower()
+    slot = normalize_equipment_slot(slot)
     if slot not in EQUIPMENT_SLOTS:
         raise HTTPException(
             status_code=400,
@@ -346,7 +400,11 @@ async def unequip_item_service(
     # can release the reservation. We use find_one_and_delete to capture the
     # row in one round-trip.
     freed = await db.equipped_items.find_one_and_delete(
-        {"adventurer_id": adv["id"], "slot": slot, "guild_id": guild["id"]},
+        {
+            "adventurer_id": adv["id"],
+            "slot": {"$in": _storage_slots_for(slot)},
+            "guild_id": guild["id"],
+        },
         projection={"_id": 0, "item_id": 1},
     )
     if not freed:
@@ -382,6 +440,7 @@ async def unequip_item_service(
 
 __all__ = [
     "_empty_slot_map",
+    "normalize_equipment_slot",
     "_equipped_slot_entry",
     "_item_summary_for_snapshot",
     "_load_equipment_for_adventurer",

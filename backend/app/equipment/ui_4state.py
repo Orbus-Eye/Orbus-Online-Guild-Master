@@ -80,7 +80,10 @@ def derive_ui_4state(adventurer: dict[str, Any], item: dict[str, Any]) -> dict[s
     policy = (item.get("item_binding_policy") or "").strip().lower()
     slot_type = item.get("slot_type")
     item_type = (item.get("item_type") or "").strip().lower()
-    equipable_types = {"weapon", "armor", "accessory", "shield"}
+    equipable_types = {
+        "weapon", "armor", "legs", "helmet", "accessory",
+        "back", "ring", "trinket", "shield",
+    }
 
     is_universal_derived = (policy == "universal")
 
