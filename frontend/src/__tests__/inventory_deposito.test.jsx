@@ -10,7 +10,7 @@
 //   2. il badge "equipaggiato da" copre anche gli slot ring_1/ring_2
 //      (buildEquippedByMap scansiona tutti i 10 slot, non solo 3);
 //   3. i materiali NON espongono azioni di equipaggiamento.
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Inventory from "../pages/Inventory";
 import { I18nProvider } from "../i18n/I18nContext";
@@ -158,4 +158,12 @@ test("i materiali non espongono azioni di equipaggiamento", async () => {
     expect(
         screen.queryByTestId("inv-no-eligible-row-mat")
     ).not.toBeInTheDocument();
+});
+
+test("il modal di equip segnala in anticipo chi indossa già l'oggetto", async () => {
+    renderPage();
+    await screen.findByTestId("inventory-cards");
+    fireEvent.click(screen.getByTestId("inv-open-equip-modal-row-ring"));
+    const notice = await screen.findByTestId("equip-modal-already-equipped");
+    expect(notice).toHaveTextContent("Lyra Stoneheart");
 });
