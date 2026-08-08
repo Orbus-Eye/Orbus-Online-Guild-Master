@@ -297,6 +297,8 @@ def adventurer_public(doc: dict) -> dict:
         "race_slug": doc.get("race_slug"),
         "race_name_it": doc.get("race_name_it"),  # joined by services if needed
         "gender": doc.get("gender"),
+        # FASE 6 — ritratto personalizzato (None → avatar razziale FE).
+        "custom_avatar_url": doc.get("custom_avatar_url") or None,
         "equipment": eq_slots,
         # FASE 3.3 — consumabile attivo (scomparto "Consumabile").
         "active_consumable": doc.get("active_consumable") or None,

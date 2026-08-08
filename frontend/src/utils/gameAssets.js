@@ -53,11 +53,22 @@ export function raidImageSources(slug) {
     ];
 }
 
+// FASE 6 — gli upload custom sono serviti dal BACKEND (/api/uploads/...):
+// il path relativo va risolto sull'origin del backend, non su quello FE.
+const BACKEND_ORIGIN = process.env.REACT_APP_BACKEND_URL || "";
+
+function resolveCustomAvatarUrl(url) {
+    if (!url) return null;
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${BACKEND_ORIGIN}${url}`;
+}
+
 /** Catena avatar per un avventuriero (razza × genere).
  *  `custom_avatar_url` (upload Fase 6) ha la precedenza quando presente. */
 export function avatarSources(adv) {
     const chain = [];
-    if (adv?.custom_avatar_url) chain.push(adv.custom_avatar_url);
+    const custom = resolveCustomAvatarUrl(adv?.custom_avatar_url);
+    if (custom) chain.push(custom);
     const race = adv?.race_slug;
     const gender = adv?.gender === "female" ? "female" : "male";
     if (race) chain.push(`/assets/avatars/${race}_${gender}.svg`);
