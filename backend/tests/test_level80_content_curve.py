@@ -10,6 +10,7 @@ from app.shared.constants import ADVENTURER_MAX_LEVEL
 from app.shared.content_curve import (
     ADVENTURER_LEVEL_BANDS,
     DUNGEON_CURVE,
+    DUNGEON_TEAM_SIZE_TARGETS,
     RAID_CURVE,
     adventurer_level_band,
 )
@@ -33,7 +34,15 @@ def test_current_dungeons_form_monotonic_party_curves_up_to_level_70():
     assert all(1 <= b - a <= 10 for a, b in zip(levels, levels[1:]))
     tracks = defaultdict(list)
     for slug, entry in DUNGEON_CURVE.items():
-        tracks[DUNGEON_ENCOUNTERS[slug].team_size].append(entry)
+        # FASE 8A: la curva dimensiona il potere sulla team size
+        # autoritativa post-redistribuzione 3/5/7 (Fase 2.3), non su
+        # quella storica di DUNGEON_ENCOUNTERS (es. sunken-library è
+        # un'incursione da 3: chiede meno potere di un 5-piazze pari
+        # livello, per design).
+        size = DUNGEON_TEAM_SIZE_TARGETS.get(
+            slug, DUNGEON_ENCOUNTERS[slug].team_size
+        )
+        tracks[size].append(entry)
     assert set(tracks) == {3, 5, 7}
     for entries in tracks.values():
         ordered = sorted(
