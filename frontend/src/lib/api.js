@@ -151,11 +151,8 @@ export function formatErrorDetail(detail) {
     return String(detail);
 }
 
-// Phase 13.1 — lazy trait preview for an adventurer
-export async function getTraitPreview(adventurerId) {
-    const { data } = await api.get(`/adventurers/${adventurerId}/trait-preview`);
-    return data;
-}
+// FASE 9H — getTraitPreview rimosso: i Tratti non sono più mostrati
+// al giocatore (endpoint backend conservato per gli strumenti admin).
 
 // ROUND 11.1 Slice 2 — fetch + cache the CSRF token. Exposed for AuthContext
 // to call after login and at app boot.

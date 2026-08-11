@@ -8,8 +8,6 @@ import { avatarSources } from "../utils/gameAssets";
 import { useT } from "../i18n/I18nContext";
 import { Button } from "../components/ui/button";
 import { rarityLabel, classLabel } from "../utils/displayLabels";
-import { TraitList } from "../components/TraitBadge";
-import TraitPreviewWidget from "../components/TraitPreviewWidget";
 import AdventurerDetailModal from "../components/AdventurerDetailModal";
 import AdventurerRenameModal from "../components/AdventurerRenameModal";
 import RoleMarker from "../components/RoleMarker";
@@ -67,7 +65,6 @@ const HEAD = [
     ["FAI", "fai"],
     ["Potere", "power"],
     ["Equip.", "equip"],
-    ["Tratti", "traits"],
     ["Stato", "status"],
 ];
 
@@ -454,15 +451,6 @@ export default function Adventurers() {
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td className="px-3 py-2 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
-                                                <TraitList traits={a.traits} />
-                                                {a.traits && a.traits.length > 0 && (
-                                                    <TraitPreviewWidget
-                                                        adventurerId={a.id}
-                                                        hasTraits={true}
-                                                    />
-                                                )}
-                                            </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 <StatusBadge available={a.is_available} />
                                             </td>
@@ -562,18 +550,9 @@ export default function Adventurers() {
                                             <span>{a.faith}</span>
                                         </div>
                                     </div>
-                                    {a.traits && a.traits.length > 0 && (
-                                        <div className="mt-3 pt-3 border-t border-border/60">
-                                            <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
-                                                TRATTI
-                                            </div>
-                                            <TraitList traits={a.traits} />
-                                            <TraitPreviewWidget
-                                                adventurerId={a.id}
-                                                hasTraits={true}
-                                            />
-                                        </div>
-                                    )}
+                                    {/* FASE 9H — i Tratti non sono più mostrati
+                                        al giocatore (restano attivi nel runtime,
+                                        vedi report TRAIT_RUNTIME_STILL_ACTIVE). */}
                                     <div className="mt-3 pt-3 border-t border-border/60" onClick={(e) => e.stopPropagation()}>
                                         <div className="text-[10px] text-muted-foreground tracking-widest mb-1.5">
                                             EQUIPMENT · POWER {a.total_power}

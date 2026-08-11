@@ -26,9 +26,8 @@ export const NAV_SECTIONS = [
             { to: "/adventurers", label: "Roster", testid: "menu-adventurers" },
             { to: "/recruitment", label: "Reclutamento", testid: "menu-recruitment" },
             { to: "/class-halls", label: "Sale di Classe", testid: "menu-class-halls" },
-            { to: "/training", label: "Addestramento e Specializzazioni", testid: "menu-training" },
+            { to: "/training", label: "Addestramento", testid: "menu-training" },
             { to: "/roster/manage", label: "Gestione Roster", testid: "menu-roster-manage" },
-            { to: "/guide#traits-catalog", label: "Tratti", testid: "menu-traits-link", external: false },
         ],
     },
     {
@@ -106,7 +105,6 @@ export const NAV_SECTIONS = [
             { to: "/guide#razze-sesso", label: "Razza e Sesso", testid: "menu-guide-races" },
             { to: "/guide#stat-colors", label: "Colori statistiche", testid: "menu-guide-stat-colors" },
             { to: "/guide#auto-equip", label: "Auto-Equipaggia", testid: "menu-guide-auto-equip" },
-            { to: "/guide#traits-catalog", label: "Catalogo tratti", testid: "menu-guide-traits" },
             { to: "/guide#equip-compat", label: "Equipaggiamento per classe", testid: "menu-guide-equip" },
             { to: "/guide#dungeon", label: "Dungeon e Spedizioni", testid: "menu-guide-dungeon" },
             { to: "/guide#minacce-contromisure", label: "Minacce e Contromisure", testid: "menu-guide-threats" },
