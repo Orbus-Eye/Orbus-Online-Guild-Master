@@ -505,20 +505,14 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 scaled += 1
             drop["qty"] = max(int(drop.get("qty", 0)), scaled)
 
-    # FASE 3.4 — Pietra della Conoscenza: drop indipendente al 20% sui
-    # dungeon a SUCCESSO. Aggiunta DOPO il blocco Overpower così non
-    # viene mai moltiplicata (è già generosa al 20% — scelta economica).
-    if success:
-        try:
-            if _rng.random() < 0.20:
-                _stone = await db.items.find_one(
-                    {"slug": "pietra_della_conoscenza", "is_active": True},
-                    {"_id": 0, "id": 1},
-                )
-                if _stone:
-                    loot_ids = list(loot_ids) + [_stone["id"]]
-        except Exception:  # noqa: BLE001
-            pass  # seed fase 3 assente: nessun crash, solo niente pietra
+    # FASE 3.4 + 9J — Pietra della Conoscenza: policy condivisa (20%,
+    # solo successo, DOPO l'Overpower così non viene mai moltiplicata).
+    from app.expeditions.knowledge_stone import maybe_roll_knowledge_stone
+    _stone_id = await maybe_roll_knowledge_stone(
+        db, success=success, rng=_rng,
+    )
+    if _stone_id:
+        loot_ids = list(loot_ids) + [_stone_id]
 
     if success:
         gold_reward = dungeon["base_gold_reward"]
