@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { api, formatApiError } from "../lib/api";
 import AppHeader from "../components/AppHeader";
 import GameImage from "../components/GameImage";
-import { sectionBanner } from "../utils/gameAssets";
+import { guildBannerSources } from "../utils/gameAssets";
 import OnboardingChecklistV2 from "../components/OnboardingChecklistV2";
 import MigrationBannerR183c from "../components/MigrationBannerR183c";
 import R18ResetBanner from "../components/R18ResetBanner";
@@ -172,6 +172,46 @@ export default function Dashboard() {
     const [lastRun, setLastRun] = useState(null); // {expedition, can_replay, cannot_replay_reason} | null
     const [lastRunStatus, setLastRunStatus] = useState("loading"); // loading | none | ready
     const [replayBusy, setReplayBusy] = useState(false);
+    // FASE 9K — upload/rimozione banner personalizzato della gilda.
+    const [bannerBusy, setBannerBusy] = useState(false);
+    const bannerInputRef = useRef(null);
+
+    const handleBannerFile = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";  // stesso file ricaricabile
+        if (!file) return;
+        if (file.size > 4 * 1024 * 1024) {
+            toast.error("Immagine troppo grande: massimo 4 MB.");
+            return;
+        }
+        setBannerBusy(true);
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            // Istanza `api`: CSRF + retry (lezione del bug avatar A1).
+            await api.post("/guilds/banner", fd);
+            toast.success("Banner della gilda aggiornato!");
+            await refreshGuild();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setBannerBusy(false);
+        }
+    };
+
+    const handleBannerRemove = async () => {
+        if (bannerBusy) return;
+        setBannerBusy(true);
+        try {
+            await api.delete("/guilds/banner");
+            toast.success("Banner rimosso: torna quello standard.");
+            await refreshGuild();
+        } catch (err) {
+            toast.error(formatApiError(err));
+        } finally {
+            setBannerBusy(false);
+        }
+    };
     // FASE 9 A2 — livello di gilda nell'hero (best-effort, stessa fonte
     // di GuildProgressCard: /achievements/summary).
     const [guildLevel, setGuildLevel] = useState(null);
@@ -240,14 +280,46 @@ export default function Dashboard() {
                 {/* 1 ─ HERO GILDA */}
                 <section data-testid="dashboard-hero" className="mb-6">
                     <div
-                        className="banner-fantasy h-40 sm:h-52"
+                        className="banner-fantasy h-40 sm:h-52 group/banner"
                         data-testid="dashboard-hero-banner"
                     >
                         <GameImage
-                            sources={sectionBanner("dashboard")}
+                            sources={guildBannerSources(guild)}
                             alt=""
                             className="w-full h-full object-cover"
                         />
+                        {/* FASE 9K — gestione banner personalizzato */}
+                        <div className="absolute top-2 right-2 z-10 flex gap-1.5">
+                            <input
+                                ref={bannerInputRef}
+                                type="file"
+                                accept="image/png,image/jpeg,image/webp"
+                                className="hidden"
+                                data-testid="guild-banner-file-input"
+                                onChange={handleBannerFile}
+                            />
+                            <button
+                                type="button"
+                                data-testid="guild-banner-upload-btn"
+                                disabled={bannerBusy}
+                                onClick={() => bannerInputRef.current?.click()}
+                                className="text-[9px] tracking-widest bg-black/55 border border-border text-foreground/85 px-2 py-1 rounded-sm hover:bg-black/75 disabled:opacity-50"
+                                title="PNG, JPEG o WEBP · massimo 4 MB"
+                            >
+                                {bannerBusy ? "…" : "🖼 CAMBIA BANNER"}
+                            </button>
+                            {guild.custom_banner_url && (
+                                <button
+                                    type="button"
+                                    data-testid="guild-banner-remove-btn"
+                                    disabled={bannerBusy}
+                                    onClick={handleBannerRemove}
+                                    className="text-[9px] tracking-widest bg-black/55 border border-border text-foreground/85 px-2 py-1 rounded-sm hover:bg-black/75 disabled:opacity-50"
+                                >
+                                    ✖ RIMUOVI BANNER
+                                </button>
+                            )}
+                        </div>
                         <div className="banner-overlay">
                             <div className="text-[10px] text-amber tracking-[0.3em]">
                                 :: SALA DEL TRONO

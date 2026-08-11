@@ -258,6 +258,14 @@ def create_app() -> FastAPI:
         StaticFiles(directory=str(avatar_upload_dir())),
         name="avatar-uploads",
     )
+    # FASE 9K — banner personalizzato della gilda (stessa sicurezza).
+    from app.banners import router as banners_router, banner_upload_dir
+    app.include_router(banners_router)
+    app.mount(
+        "/api/uploads/banners",
+        StaticFiles(directory=str(banner_upload_dir())),
+        name="banner-uploads",
+    )
     app.include_router(pvp_continental_router)
     app.include_router(pvp_continental_admin_router)
     app.include_router(seasons_router)

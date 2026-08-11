@@ -193,6 +193,8 @@ EVENT_TYPES = frozenset({
     # FASE 9 A1 — l'upload avatar era emesso ma NON registrato qui:
     # l'audit veniva scartato con "unknown event_type". Sanato.
     "avatar_uploaded",
+    # FASE 9K — banner personalizzato della gilda.
+    "guild_banner_uploaded",
     # ROUND 11.2 TASK 5a — Admin Ops MVP
     "admin_gold_granted",                    # admin granted gold to a guild (with reason)
     "admin_item_granted",                    # admin granted item(s) to a guild (with reason)
