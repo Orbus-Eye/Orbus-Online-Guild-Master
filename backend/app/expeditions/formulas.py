@@ -113,9 +113,17 @@ def compute_team_power(members: Iterable[dict]) -> int:
     """Team power = sum(per-member contribution) + role/composition bonuses.
 
     Per-member contribution is `total_power_snapshot` when present (Phase 6+),
-    otherwise the legacy base formula. Role bonuses: +5 for any Tank, +5 for
-    any Healer, +5 for any DPS, +10 if all three roles are present.
+    otherwise the legacy base formula. Role bonuses: +5 for any TANK, +5 for
+    any HEALER, +5 for any DPS, +10 if all three roles are present.
+
+    FASE 9B — il ruolo deriva SEMPRE dalla classe (registry canonico
+    DPS/TANK/HEALER via `member_role`); i campi storici
+    class_role/role_snapshot restano solo come fallback di lettura.
     """
+    from app.classes import (
+        CLASS_ROLE_DPS, CLASS_ROLE_HEALER, CLASS_ROLE_TANK, member_role,
+    )
+
     def get(a, key):
         return a.get(key, a.get(key + "_snapshot", 0))
 
@@ -133,16 +141,16 @@ def compute_team_power(members: Iterable[dict]) -> int:
                 + int(get(a, "faith"))
                 + int(get(a, "level") or 1) * 2
             )
-        role = a.get("class_role") or a.get("role_snapshot")
+        role = member_role(a)
         if role:
             roles.add(role)
-    if "Tank" in roles:
+    if CLASS_ROLE_TANK in roles:
         base += 5
-    if "Healer" in roles:
+    if CLASS_ROLE_HEALER in roles:
         base += 5
-    if "DPS" in roles:
+    if CLASS_ROLE_DPS in roles:
         base += 5
-    if {"Tank", "Healer", "DPS"}.issubset(roles):
+    if {CLASS_ROLE_TANK, CLASS_ROLE_HEALER, CLASS_ROLE_DPS}.issubset(roles):
         base += 10
     return base
 

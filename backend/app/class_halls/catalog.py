@@ -615,6 +615,7 @@ def get_class_hall_profile(hall_id: str) -> ClassHallProfile | None:
 
 def class_hall_choices_public() -> list[dict]:
     from app.class_halls.mechanics import class_mechanic_public
+    from app.classes import class_role_for, registry_entry
 
     choices: list[dict] = []
     for profile in _PROFILES:
@@ -623,6 +624,18 @@ def class_hall_choices_public() -> list[dict]:
         payload.pop("starter_item_slug", None)
         payload.pop("starter_effect_id", None)
         payload.pop("starter_lore_key", None)
+        # FASE 9B — il ruolo esposto è quello CANONICO del registry
+        # (DPS/TANK/HEALER), non la vecchia tassonomia del profilo.
+        payload["class_role"] = (
+            class_role_for(profile.canonical_class_slug)
+            or profile.class_role
+        )
+        entry = registry_entry(profile.canonical_class_slug)
+        if entry is not None:
+            payload["class_identity_it"] = entry.class_identity
+            payload["class_mechanics_it"] = entry.class_mechanics
+            payload["class_strengths_it"] = list(entry.strengths)
+            payload["class_emblem"] = entry.emblem
         payload["assignment_requires_trial"] = True
         payload["assignment_requires_confirmation"] = True
         payload["trial_reward_enabled"] = False

@@ -6,10 +6,7 @@ import uuid
 from datetime import datetime, timezone
 
 from app.class_halls.catalog import CLASS_HALLS, ClassHallProfile
-from app.class_halls.build_reachability import (
-    require_all_class_hall_builds_reachable,
-)
-from app.class_halls.mechanics import CLASS_MECHANICS, resolve_class_mechanic
+from app.class_halls.mechanics import resolve_class_mechanic
 from app.stats.runtime.effects.item_catalog import (
     STARTER_ITEM_EFFECT_REGISTRY,
 )
@@ -306,93 +303,23 @@ def _item_base(
     return item
 
 
-def _apply_build_path(
-    item: dict,
-    *,
-    profile: ClassHallProfile,
-    build,
-) -> None:
-    item["build_path_id"] = build.build_id
-    item["build_path_name_it"] = build.name_it
-    item["build_path_description_it"] = build.description_it
-    item["build_path_item_tags"] = list(build.item_tags)
-    item["tags"] = list(build.item_tags)
-    if item.get("item_type") == "weapon":
-        weapon_tags = [
-            tag for tag in build.item_tags
-            if tag in profile.weapon_tags
-        ]
-        if weapon_tags:
-            item["weapon_tags"] = weapon_tags
-    elif item.get("item_type") == "armor":
-        armor_tags = [
-            tag for tag in build.item_tags
-            if tag in profile.armor_tags
-        ]
-        if armor_tags:
-            item["armor_tags"] = armor_tags
-
-
-def _assign_build_paths(
+def _assign_class_resonance(
     profile: ClassHallProfile,
     kit: list[dict],
 ) -> None:
-    mechanic = CLASS_MECHANICS[profile.canonical_class_slug]
-    signature = kit[0]
-    resolved_signature = resolve_class_mechanic(
-        adventurer={
-            "canonical_class_slug": profile.canonical_class_slug,
-        },
-        equipment_items=[signature],
-    )
-    active_signature = resolved_signature.get("active_build") or {}
-    signature_build = next(
-        (
-            build for build in mechanic.builds
-            if build.build_id == active_signature.get("build_id")
-            and active_signature.get("resonance_active") is True
-        ),
-        mechanic.builds[0],
-    )
-    _apply_build_path(
-        signature,
-        profile=profile,
-        build=signature_build,
-    )
-
-    available = list(kit[1:4])
-    for build in (
-        candidate
-        for candidate in mechanic.builds
-        if candidate.build_id != signature_build.build_id
-    ):
-        weapon_match = bool(
-            set(build.item_tags).intersection(profile.weapon_tags)
-        )
-        armor_match = bool(
-            set(build.item_tags).intersection(profile.armor_tags)
-        )
-
-        def rank(item: dict) -> int:
-            item_type = item.get("item_type")
-            if item_type == "weapon" and weapon_match:
-                return 0
-            if item_type == "armor" and armor_match:
-                return 0
-            if item_type == "accessory":
-                return 1
-            return 2
-
-        chosen = min(
-            enumerate(available),
-            key=lambda row: (rank(row[1]), row[0]),
-        )[1]
-        available.remove(chosen)
-        _apply_build_path(
-            chosen,
-            profile=profile,
-            build=build,
-        )
+    """FASE 9C — nessuna build: ogni pezzo del kit porta un tag canonico
+    della PROPRIA classe, così la risonanza di classe (mechanics) si
+    attiva vestendo la classe, senza scelte nascoste."""
+    class_tags = (*profile.weapon_tags, *profile.armor_tags)
+    for index, item in enumerate(kit):
+        if item.get("item_type") == "weapon" and item.get("weapon_tags"):
+            item["tags"] = list(item["weapon_tags"])
+        elif item.get("item_type") == "armor" and item.get("armor_tags"):
+            item["tags"] = list(item["armor_tags"])
+        elif class_tags:
+            item["tags"] = [class_tags[index % len(class_tags)]]
+        else:
+            item["tags"] = []
 
 
 def _build_item_kit(profile: ClassHallProfile) -> tuple[dict, ...]:
@@ -511,7 +438,7 @@ def _build_item_kit(profile: ClassHallProfile) -> tuple[dict, ...]:
         ]
         extras.append(item)
     kit = [signature, *extras]
-    _assign_build_paths(profile, kit)
+    _assign_class_resonance(profile, kit)
     return tuple(kit)
 
 
@@ -526,6 +453,11 @@ CANONICAL_CLASS_HALL_ITEM_SEED: tuple[dict, ...] = tuple(
 
 
 def _class_seed(profile: ClassHallProfile) -> dict:
+    # FASE 9B — il ruolo seminato è quello CANONICO del registry.
+    from app.classes import class_role_for
+    canonical_role = (
+        class_role_for(profile.canonical_class_slug) or profile.class_role
+    )
     base = {
         "base_strength": 5,
         "base_agility": 5,
@@ -534,13 +466,13 @@ def _class_seed(profile: ClassHallProfile) -> dict:
         "base_faith": 5,
     }
     base[f"base_{profile.primary_stat}"] = 8
-    if profile.class_role in {"Tank", "Hybrid"}:
+    if canonical_role == "TANK":
         base["base_endurance"] = max(base["base_endurance"], 7)
     return {
         "slug": profile.canonical_class_slug,
         "name": profile.class_name_it,
         "display_name_it": profile.class_name_it,
-        "role": profile.class_role,
+        "role": canonical_role,
         "description": profile.gameplay_style_it,
         "guide_description_it": (
             f"{profile.gameplay_style_it} Sala: {profile.hall_name_it}. "
@@ -553,7 +485,7 @@ def _class_seed(profile: ClassHallProfile) -> dict:
             profile.starter_lore_key,
             profile.canonical_class_slug,
         ],
-        "role_tags": [profile.class_role.lower()],
+        "role_tags": [canonical_role.lower()],
         "class_proficiency": profile.class_proficiency,
         "class_hall_id": profile.hall_id,
         "assignment_ready": True,
@@ -610,9 +542,28 @@ def validate_canonical_class_hall_content() -> None:
         != 27
     ):
         raise RuntimeError("each canonical class must have one signature effect item")
-    require_all_class_hall_builds_reachable(
-        CANONICAL_CLASS_HALL_ITEM_SEED
-    )
+    # FASE 9C — le 81 build non esistono più: al loro posto verifichiamo
+    # che OGNI classe abbia una via di risonanza raggiungibile col
+    # proprio kit (almeno un item del kit attiva la risonanza di classe).
+    for profile in CLASS_HALLS.values():
+        kit = [
+            item for item in CANONICAL_CLASS_HALL_ITEM_SEED
+            if item.get("required_class_optional")
+            == profile.canonical_class_slug
+            or profile.canonical_class_slug
+            in (item.get("class_tags") or [])
+        ]
+        resolved = resolve_class_mechanic(
+            adventurer={
+                "canonical_class_slug": profile.canonical_class_slug,
+            },
+            equipment_items=kit,
+        )
+        if not resolved.get("resonance_active"):
+            raise RuntimeError(
+                "class kit cannot activate class resonance: "
+                f"{profile.canonical_class_slug}"
+            )
 
 
 async def seed_canonical_class_hall_content(db) -> dict[str, int]:

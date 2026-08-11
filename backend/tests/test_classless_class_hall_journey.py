@@ -43,6 +43,7 @@ from app.expeditions.services import (
     _resolve_levelup,
 )
 from app.onboarding.services import _build_starter_adventurer
+from app.shared.progression import xp_required_for_next_level
 from app.recruitment.freeze_bench import recruit_from_bench
 from app.recruitment.services import candidate_public, recruit_from_offer
 from app.shared.constants import ADVENTURER_MAX_LEVEL
@@ -140,7 +141,9 @@ def test_classless_candidate_has_no_implicit_class_and_public_cta() -> None:
 
 
 def test_starter_roster_adventurer_is_also_explicitly_classless() -> None:
-    starter = _build_starter_adventurer("guild-1", [])
+    # FASE 9 — firma attuale: (guild_id, starter_index); il fondatore 0
+    # nasce con identità (razza/genere) ma SENZA classe.
+    starter = _build_starter_adventurer("guild-1", 0)
 
     for field in (
         "adventurer_class_id",
@@ -189,7 +192,9 @@ def test_all_27_classes_level_their_canonical_primary_stat() -> None:
             class_slug=class_seed["slug"],
             canonical_class_slug=class_seed["slug"],
             recruit_status="class_assigned",
-            experience=100,
+            # Soglia XP reale del runtime (la curva è cambiata in Fase 2:
+            # il vecchio 100 fisso non bastava più).
+            experience=xp_required_for_next_level(1),
         )
         before = adventurer[primary]
         leveled = _resolve_levelup(adventurer)

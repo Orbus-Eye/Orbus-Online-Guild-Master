@@ -115,20 +115,27 @@ async def get_dashboard_suggestions(ctx=Depends(_ctx)):
             "icon": "🪪",
         })
 
-    # 4. Class Hall with locked specs (unlock progress visible)
-    halls_unlocked_with_locked_specs = 0
-    async for h in db.class_halls.find(
-        {"guild_id": gid, "is_unlocked": True},
-        {"_id": 0, "unlocked_specializations": 1},
-    ):
-        if len(h.get("unlocked_specializations") or []) < 3:
-            halls_unlocked_with_locked_specs += 1
-    if halls_unlocked_with_locked_specs > 0:
+    # 4. FASE 9C — reclute senza classe in attesa di una Sala (le
+    # specializzazioni sbloccabili non esistono più).
+    n_classless = await db.adventurers.count_documents({
+        "guild_id": gid, "is_retired": {"$ne": True},
+        "$or": [
+            {"class_slug": None}, {"class_slug": {"$exists": False}},
+            {"class_slug": ""},
+        ],
+    })
+    if n_classless > 0:
         out.append({
-            "id": "class_hall_unlock",
+            "id": "class_hall_assign",
             "priority": 5,
-            "title_it": f"{halls_unlocked_with_locked_specs} Sale di Classe con specializzazioni da sbloccare",
-            "title_en": f"{halls_unlocked_with_locked_specs} Class Hall(s) have unlockable specializations",
+            "title_it": (
+                f"{n_classless} reclute senza classe: scegli la loro "
+                "Sala di Classe"
+            ),
+            "title_en": (
+                f"{n_classless} classless recruit(s) waiting for a "
+                "Class Hall"
+            ),
             "cta_it": "Sale di Classe",
             "cta_en": "Class Halls",
             "link": "/class-halls",

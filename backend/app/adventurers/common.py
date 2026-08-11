@@ -28,6 +28,15 @@ from app.shared.constants import (
 _rng = secrets.SystemRandom()
 
 
+def _canonical_role(klass: dict) -> str | None:
+    """FASE 9B — ruolo canonico (DPS/TANK/HEALER) dal registry classi."""
+    from app.classes import class_role_for
+    return (
+        class_role_for(str(klass.get("slug") or ""))
+        or class_role_for(str(klass.get("name") or ""))
+    )
+
+
 def _weighted_choice(choices, rng=None):
     rng = rng or _rng
     total = sum(w for _, w in choices)
@@ -131,7 +140,9 @@ def _generate_candidate(
         # non debbano più cadere sul fallback runtime. Il valore proviene
         # dal catalog `adventurer_classes` (fonte di verità unica).
         "class_slug": (klass.get("slug") or "").strip().lower() or None,
-        "class_role": klass["role"],
+        # FASE 9B — ruolo canonico dal registry (fisso per classe);
+        # il campo `role` del doc adventurer_classes è solo fallback.
+        "class_role": _canonical_role(klass) or klass["role"],
         "rarity": rarity,
         "level": 1,
         "experience": 0,

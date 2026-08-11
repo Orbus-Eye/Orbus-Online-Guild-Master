@@ -7,7 +7,6 @@ import { X } from "lucide-react";
 import { toast } from "sonner";
 import { useT } from "../i18n/I18nContext";
 import { TraitList } from "./TraitBadge";
-import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
 import { classLabel } from "../utils/displayLabels";
 import { api } from "../lib/api";
@@ -240,11 +239,6 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                         className="w-14 h-14 rounded-full border-2 border-amber/40 shrink-0"
                     />
                     <span className="font-fantasy">{adventurer.name}</span>
-                    <SpecChip
-                        spec={adventurer.specialization}
-                        lang={lang}
-                        testid="adventurer-modal-spec-chip"
-                    />
                 </h2>
                 <div className="text-xs text-muted-foreground mt-1">
                     {classLabel(adventurer.class_slug) || adventurer.class_name} · {adventurer.class_role} ·{" "}
@@ -400,12 +394,8 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
                     </div>
                 </div>
 
-                {/* Specialization (ROUND 6C) — rendered only when present */}
-                <SpecializationPanel
-                    spec={adventurer.specialization}
-                    lang={lang}
-                    t={t}
-                />
+                {/* FASE 9C — pannello specializzazione rimosso: il ruolo
+                    è FISSO per classe (mostrato nell'intestazione). */}
 
                 {/* Traits */}
                 <div className="mt-5">

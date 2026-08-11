@@ -128,10 +128,12 @@ WEEKLY_CONTRACT_POOL: list[dict] = [
         "reward_materials": [{"slug": "lesser_arcane_dust", "qty": 1}],
         "reward_reputation": 3,
     },
+    # FASE 9C — le specializzazioni non esistono più: il weekly premia
+    # l'assegnazione di una classe a una recluta (Sala di Classe).
     {
-        "slug": "weekly_apply_specialization_1",
-        "display_key": "contracts.weekly.apply_specialization_1",
-        "objective_type": "specializations_applied",
+        "slug": "weekly_assign_class_1",
+        "display_key": "contracts.weekly.assign_class_1",
+        "objective_type": "class_halls_assigned",
         "objective_target": 1,
         "reward_gold": 200,
         "reward_materials": [{"slug": "lesser_arcane_dust", "qty": 1}],
@@ -285,10 +287,10 @@ MILESTONES_TIER_2: list[dict] = [
         "reward_reputation": 20,
     },
     {
-        "slug": "milestone_apply_3_specializations",
+        "slug": "milestone_assign_3_classes",
         "tier": 2,
-        "display_key": "contracts.milestone.apply_3_specializations",
-        "objective_type": "specializations_applied",
+        "display_key": "contracts.milestone.assign_3_classes",
+        "objective_type": "class_halls_assigned",
         "objective_target": 3,
         "reward_gold": 700,
         "reward_materials": [{"slug": "lesser_arcane_dust", "qty": 3}],
@@ -362,10 +364,10 @@ MILESTONES_TIER_3: list[dict] = [
         "reward_reputation": 50,
     },
     {
-        "slug": "milestone_apply_8_specializations",
+        "slug": "milestone_assign_8_classes",
         "tier": 3,
-        "display_key": "contracts.milestone.apply_8_specializations",
-        "objective_type": "specializations_applied",
+        "display_key": "contracts.milestone.assign_8_classes",
+        "objective_type": "class_halls_assigned",
         "objective_target": 8,
         "reward_gold": 2200,
         "reward_materials": [{"slug": "greater_arcane_dust", "qty": 4}],
@@ -395,7 +397,9 @@ VALID_OBJECTIVE_TYPES = frozenset({
     "market_listings_created",
     "market_sales_count",
     "structures_upgraded",
-    "specializations_applied",
+    # FASE 9C — sostituisce "specializations_applied": si assegnano
+    # classi (Sala di Classe), non specializzazioni.
+    "class_halls_assigned",
     "recruits_added",
     # ROUND 6E — new types (with matching hooks in raids + forge + auction).
     "raids_completed",

@@ -261,17 +261,23 @@ async def _project_raid_items(adventurers: List[dict]) -> List[dict]:
 
 
 def _party_power(adv_docs: List[dict]) -> int:
-    """Phase 6+ formula plus role-comp bonus identical to expeditions."""
+    """Phase 6+ formula plus role-comp bonus identical to expeditions.
+
+    FASE 9B — ruolo canonico dalla classe (registry), non dal campo doc.
+    """
+    from app.classes import (
+        CLASS_ROLE_DPS, CLASS_ROLE_HEALER, CLASS_ROLE_TANK, member_role,
+    )
     base = sum(_adv_power(a) for a in adv_docs)
-    roles = {a.get("class_role") for a in adv_docs}
+    roles = {member_role(a) for a in adv_docs}
     bonus = 0
-    if "Tank" in roles:
+    if CLASS_ROLE_TANK in roles:
         bonus += 5
-    if "Healer" in roles:
+    if CLASS_ROLE_HEALER in roles:
         bonus += 5
-    if "DPS" in roles:
+    if CLASS_ROLE_DPS in roles:
         bonus += 5
-    if {"Tank", "Healer", "DPS"}.issubset(roles):
+    if {CLASS_ROLE_TANK, CLASS_ROLE_HEALER, CLASS_ROLE_DPS}.issubset(roles):
         bonus += 10
     return base + bonus
 

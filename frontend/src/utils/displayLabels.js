@@ -109,11 +109,40 @@ export function tagListLabel(tags, sep = " · ") {
     return tags.map(tagLabel).join(sep);
 }
 
-// ROUND 16.0 — Class & specialization display labels (Italian).
-// The DB keeps internal slugs (`warrior`, `berserker_spec`, …); the UI
-// always shows the Italian display name via these helpers.
+// FASE 9B — etichette delle 27 classi canoniche (slug italiani del
+// registry) + slug legacy inglesi per il rendering sicuro di dati
+// storici. Le specializzazioni non esistono più (specLabel rimosso).
 
 const CLASS_IT = {
+    // 27 classi canoniche
+    guerriero: "Guerriero",
+    ladro: "Ladro",
+    mago: "Mago",
+    monaco: "Monaco",
+    negromante: "Negromante",
+    cacciatore_del_vuoto: "Cacciatore del Vuoto",
+    artificiere: "Artificiere",
+    cartografo: "Cartografo",
+    runista: "Runista",
+    burattinaio: "Burattinaio",
+    giocatore_d_azzardo: "Giocatore d'Azzardo",
+    pittore: "Pittore",
+    cacciatore_del_sangue: "Cacciatore del Sangue",
+    paladino: "Paladino",
+    cacciatore_di_mostri: "Cacciatore di Mostri",
+    fabbro_arcano: "Fabbro Arcano",
+    parassita: "Parassita",
+    cavaliere_della_morte: "Cavaliere della Morte",
+    cavaliere_di_draghi: "Cavaliere di Draghi",
+    alchimista: "Alchimista",
+    bardo: "Bardo",
+    druido: "Druido",
+    sciamano: "Sciamano",
+    cronista: "Cronista",
+    mercante: "Mercante",
+    astrologo: "Astrologo",
+    sognatore: "Sognatore",
+    // Slug legacy (pre-Round 16) per dati storici:
     warrior: "Guerriero",
     rogue: "Ladro",
     mage: "Mago",
@@ -124,59 +153,17 @@ const CLASS_IT = {
     monk: "Monaco",
     bard: "Bardo",
     warlock: "Occultista",
-    // ROUND 16.0.1 — 11th base class.
     alchemist: "Alchimista",
-    // Deprecated legacy slugs kept for safe rendering on old data:
     berserker: "Berserker",
     assassin: "Assassino",
     necromancer: "Negromante",
 };
 
-const SPEC_IT = {
-    // Warrior
-    berserker_spec: "Berserker",
-    guardian_spec: "Guardiano",
-    weapon_master_spec: "Maestro d'Armi",
-    // Rogue
-    assassin_spec: "Assassino",
-    duelist_spec: "Duellante",
-    shadow_spec: "Ombra",
-    // Mage
-    necromancer_spec: "Negromante",
-    elementalist_spec: "Elementalista",
-    arcanist_spec: "Arcanista",
-    // Priest
-    healer_spec: "Guaritore",
-    exorcist_spec: "Esorcista",
-    oracle_spec: "Oracolo",
-    // Ranger
-    marksman_spec: "Tiratore Scelto",
-    monster_hunter_spec: "Cacciatore di Mostri",
-    scout_spec: "Esploratore",
-    // Druid
-    leafwarden_spec: "Custode delle Foglie",
-    shapeshifter_spec: "Mutaforma",
-    shaman_spec: "Sciamano",
-    // Monk
-    inner_fist_spec: "Pugno Interiore",
-    spirit_guardian_spec: "Guardiano Spirituale",
-    ascetic_spec: "Asceta",
-    // Bard
-    warsinger_spec: "Canto di Guerra",
-    herald_spec: "Araldo",
-    inspiration_weaver_spec: "Tessitore d'Ispirazione",
-    // Paladin
-    oath_defender_spec: "Difensore del Giuramento",
-    rune_knight_spec: "Cavaliere Runico",
-    vindicator_spec: "Vendicatore",
-    // Warlock
-    demon_pact_spec: "Patto Infernale",
-    void_pact_spec: "Patto del Vuoto",
-    stellar_pact_spec: "Patto Stellare",
-    // ROUND 16.0.1 — Alchemist
-    bombardier_spec: "Bombardiere",
-    toxicologist_spec: "Tossicologo",
-    transmuter_spec: "Trasmutatore",
+// FASE 9B — etichette IT dei 3 ruoli fissi.
+const ROLE_IT = {
+    dps: "Danno",
+    tank: "Difensore",
+    healer: "Guaritore",
 };
 
 export function classLabel(slug) {
@@ -184,13 +171,13 @@ export function classLabel(slug) {
     return CLASS_IT[k] || slug || "";
 }
 
-export function specLabel(slug) {
-    const k = _norm(slug);
-    return SPEC_IT[k] || slug || "";
+export function roleLabel(role) {
+    const k = _norm(role);
+    return ROLE_IT[k] || role || "";
 }
 
 export const CLASS_IT_MAP = CLASS_IT;
-export const SPEC_IT_MAP = SPEC_IT;
+export const ROLE_IT_MAP = ROLE_IT;
 
 export const RARITY_IT_MAP = RARITY_IT;
 export const ITEM_TYPE_IT_MAP = ITEM_TYPE_IT;

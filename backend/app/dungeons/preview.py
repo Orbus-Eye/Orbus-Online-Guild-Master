@@ -51,8 +51,8 @@ THREAT_NAME_EN = {
 async def _resolve_counter_sources(db, threat_slug: str,
                                     team: list[dict]) -> list[dict]:
     """Return list of {adv_id, name, source} for each team member that
-    counters the given threat (either via spec.counter_tags or
-    trait.counter_tags). Empty list if no member counters this threat."""
+    counters the given threat (via i counter_tags della CLASSE o dei
+    trait). FASE 9C: le specializzazioni non esistono più."""
     counters_for_threat = {
         counter_slug
         for counter_slug, threats in COUNTER_THREAT_MAP.items()
@@ -64,10 +64,11 @@ async def _resolve_counter_sources(db, threat_slug: str,
     ):
         counters_for_threat.add(c["slug"])
 
-    spec_counter_cache: dict[str, set[str]] = {}
     trait_counter_cache: dict[str, set[str]] = {}
     sources: list[dict] = []
     for m in team:
+        # FASE 9C — i counter di meccanica sono attivi SOLO con
+        # risonanza di classe (equip allineato); il canale spec è morto.
         mechanic_counters = set(
             m.get("class_mechanic_counter_tags") or []
         )
@@ -80,15 +81,6 @@ async def _resolve_counter_sources(db, threat_slug: str,
                     f"{m.get('class_mechanic_id') or 'active'}"
                 ),
             })
-            continue
-        spec = m.get("specialization_slug")
-        if spec and spec not in spec_counter_cache:
-            doc = await db.class_specializations.find_one(
-                {"slug": spec}, {"_id": 0, "counter_tags": 1})
-            spec_counter_cache[spec] = set(doc.get("counter_tags") or []) if doc else set()
-        if spec and counters_for_threat & spec_counter_cache.get(spec, set()):
-            sources.append({"adv_id": m.get("id"), "name": m.get("name"),
-                            "source": f"spec:{spec}"})
             continue
         for raw_trait in (m.get("traits_snapshot") or []):
             if isinstance(raw_trait, str):
@@ -234,9 +226,9 @@ async def build_dungeon_preview(db, *, guild: dict, slug: str,
         names_it = ", ".join(t["name_it"] for t in uncovered)
         names_en = ", ".join(t["name_en"] for t in uncovered)
         weak_it = (f"Squadra debole contro {len(uncovered)} minacce: {names_it}. "
-                   "Aggiungi un avventuriero con la specializzazione adeguata.")
+                   "Aggiungi un avventuriero della classe adeguata.")
         weak_en = (f"Party weak against {len(uncovered)} threat(s): {names_en}. "
-                   "Add an adventurer with the matching specialization.")
+                   "Add an adventurer of the matching class.")
 
     return {
         "dungeon": {

@@ -12,11 +12,14 @@ Public API:
            "counter_ratio": float, "success_bonus_pct": int,
            "injury_reduction_pct": int}
 
-The function is read-only (loads `class_specializations`,
-`counter_tags`, and `adventurer_traits` from the DB) and is safe to
-call on every expedition; for dungeons without `threat_tags` it
-returns `applies=False` with no further DB reads beyond the dungeon
-lookup performed by the caller.
+The function is read-only (loads `counter_tags` and
+`adventurer_traits` from the DB) and is safe to call on every
+expedition; for dungeons without `threat_tags` it returns
+`applies=False` with no further DB reads beyond the dungeon lookup
+performed by the caller.
+
+FASE 9C — le specializzazioni non esistono più: i counter arrivano
+dalla CLASSE (meccanica fissa) e dai trait.
 """
 from __future__ import annotations
 
@@ -48,26 +51,20 @@ async def _load_counters_map(db) -> dict[str, set[str]]:
 async def _gather_team_counter_slugs(
     db, team_members: Iterable[dict],
 ) -> set[str]:
-    """Collect every `counter_tag` slug provided by the team via spec or traits."""
-    spec_slugs: set[str] = set()
+    """Collect every `counter_tag` slug provided by the team via class
+    mechanics (fissi per classe) or traits."""
     trait_slugs: set[str] = set()
     counters: set[str] = set()
     for adv in team_members:
+        # I counter di meccanica arrivano SOLO con risonanza attiva
+        # (equip allineato alla classe): stesso gate del vecchio sistema,
+        # senza più il canale specializzazione.
         counters.update(adv.get("class_mechanic_counter_tags") or [])
-        s = adv.get("specialization_slug")
-        if s:
-            spec_slugs.add(s)
         for t in (adv.get("traits") or adv.get("traits_snapshot") or []):
             if isinstance(t, str):
                 trait_slugs.add(t)
             elif isinstance(t, dict) and t.get("slug"):
                 trait_slugs.add(t["slug"])
-    if spec_slugs:
-        async for row in db.class_specializations.find(
-            {"slug": {"$in": list(spec_slugs)}},
-            {"_id": 0, "counter_tags": 1},
-        ):
-            counters.update(row.get("counter_tags") or [])
     if trait_slugs:
         async for row in db.adventurer_traits.find(
             {"slug": {"$in": list(trait_slugs)}},
