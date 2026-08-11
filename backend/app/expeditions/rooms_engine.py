@@ -193,6 +193,10 @@ async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool,
             **(snapshot_update or {}),
             "current_room_idx": next_idx,
             "room_state": "in_room",
+            # FASE 9P — timestamp autoritativi della stanza corrente
+            # (durata EFFETTIVA: il riposo la allunga del 25%).
+            "room_started_at": now.isoformat(),
+            "room_duration_seconds": int(duration),
             "completes_at": (now + timedelta(seconds=duration)).isoformat(),
             "rest_bonus_next": REST_CHANCE_BONUS if rest else 0,
             "auto_continued": bool(auto),
@@ -350,16 +354,15 @@ async def _finalize_rooms(db, exp: dict, *, outcome: str,
         materials_found = await roll_materials_for_dungeon(
             db, dungeon, True,
         )
-        try:
-            if _rng.random() < 0.20:
-                stone = await db.items.find_one(
-                    {"slug": "pietra_della_conoscenza", "is_active": True},
-                    {"_id": 0, "id": 1},
-                )
-                if stone:
-                    kept_loot = kept_loot + [stone["id"]]
-        except Exception:  # noqa: BLE001
-            pass
+        # FASE 9J — stessa policy del path legacy (helper condiviso).
+        from app.expeditions.knowledge_stone import (
+            maybe_roll_knowledge_stone,
+        )
+        stone_id = await maybe_roll_knowledge_stone(
+            db, success=True, rng=_rng,
+        )
+        if stone_id:
+            kept_loot = kept_loot + [stone_id]
 
     rooms_total = len(claimed.get("rooms_snapshot") or [])
     rooms_done = sum(1 for r in room_results if r.get("success"))

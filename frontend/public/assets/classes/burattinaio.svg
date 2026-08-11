@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Burattinaio">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#794452"/>
+      <stop offset="70%" stop-color="#4c0519"/>
+      <stop offset="100%" stop-color="#2a030e"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f87171" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#fda4af" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><g stroke="#8b5a60" stroke-width="3"><line x1="90" y1="52" x2="96" y2="108"/><line x1="120" y1="48" x2="120" y2="104"/><line x1="150" y1="52" x2="144" y2="108"/></g><rect x="78" y="42" width="84" height="10" rx="4" fill="#fda4af"/><path d="M88 118 q32 -22 64 0 q4 34 -32 50 q-36 -16 -32 -50 Z" fill="#fda4af"/><circle cx="106" cy="132" r="6" fill="#8b5a60"/><circle cx="134" cy="132" r="6" fill="#8b5a60"/><path d="M106 152 q14 10 28 0" stroke="#8b5a60" stroke-width="4" fill="none"/></g>
+</svg>

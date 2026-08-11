@@ -7,6 +7,15 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] FASE9.backlog — SLOT DI CLASSE (componente ibrida futura)
+- **Aperto**: 2026-08-11
+- **Origine**: mandato FASE 9 (direzione approvata, implementazione ESCLUSA dalla tranche)
+- **Descrizione**: un unico "slot di classe" per avventuriero che permetterà a una classe di acquisire una piccola componente ibrida controllata (es. un sigillo che presta un frammento di un secondo ruolo). L'architettura è già pronta: il registry canonico (`backend/app/classes/registry.py`) riserva il campo `hybrid_slot` (oggi sempre `None`) e i test ne verificano l'inattività. Per implementarlo serviranno: tipo item dedicato, validatore equip, cap di potenza per non erodere l'identità dei ruoli fissi, UI nella Sala di Classe.
+- **Priorità**: P2 (decisione di design owner)
+- **Blocker**: nessuno tecnico; richiede GO esplicito dell'owner
+- **Non fare**: NON introdurre ibridazioni tramite item/etichette prima che lo slot esista (i ruoli sono FISSI per contratto FASE 9).
+- **Status**: BACKLOG
+
 ### [BACKLOG] R18.4.backlog — Backfill Apply Idempotency Counter Pattern
 - **Aperto**: 2026-07-06
 - **Origine**: risk note #1 report B3 real apply

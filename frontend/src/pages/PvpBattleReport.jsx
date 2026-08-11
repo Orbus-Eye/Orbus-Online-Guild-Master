@@ -178,7 +178,7 @@ function TeamCard({ title, team }) {
                             <span className="truncate">
                                 {a.name}
                                 <span className="text-[11px] text-zinc-500 ml-2">
-                                    {a.class_slug}{a.specialization_slug && ` · ${a.specialization_slug}`}
+                                    {a.class_slug}
                                 </span>
                             </span>
                             <span className="text-[11px] text-zinc-500 font-mono">Lv {a.level_snapshot}</span>

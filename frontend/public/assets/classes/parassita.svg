@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parassita">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#536244"/>
+      <stop offset="70%" stop-color="#1a2e05"/>
+      <stop offset="100%" stop-color="#0e1903"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#38bdf8" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#a3e635" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><path d="M120 60 q-44 24 -36 68 q6 34 36 52 q30 -18 36 -52 q8 -44 -36 -68 Z" fill="none" stroke="#5a7f1d" stroke-width="6"/><path d="M120 84 q-20 14 -14 38 q4 20 14 30 q10 -10 14 -30 q6 -24 -14 -38 Z" fill="#a3e635"/><path d="M120 154 q-2 14 -12 22 M120 154 q2 14 12 22" stroke="#a3e635" stroke-width="5" fill="none"/></g>
+</svg>

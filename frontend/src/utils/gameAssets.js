@@ -84,4 +84,15 @@ export function sectionBanner(section) {
     ];
 }
 
-export { DUNGEON_THEME };
+/** FASE 9K — catena banner della gilda: il banner personalizzato
+ *  caricato dal PC ha PRIORITÀ sul banner standard; rimosso l'upload
+ *  si torna al banner di sezione (mai immagini rotte). */
+export function guildBannerSources(guild) {
+    const chain = [];
+    const custom = resolveCustomAvatarUrl(guild?.custom_banner_url);
+    if (custom) chain.push(custom);
+    chain.push(...sectionBanner("dashboard"));
+    return chain;
+}
+
+export { DUNGEON_THEME, resolveCustomAvatarUrl };

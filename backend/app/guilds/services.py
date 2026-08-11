@@ -45,6 +45,9 @@ def guild_public(doc: dict) -> dict:
         "r18_reset1b_banner_dismissed": bool(
             doc.get("r18_reset1b_banner_dismissed", False)
         ),
+        # FASE 9K — banner personalizzato della gilda (None → banner
+        # standard; il custom ha priorità nella catena FE).
+        "custom_banner_url": doc.get("custom_banner_url") or None,
         "created_at": doc["created_at"],
         "updated_at": doc["updated_at"],
     }

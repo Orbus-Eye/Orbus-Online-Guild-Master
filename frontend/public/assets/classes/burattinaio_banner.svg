@@ -1,0 +1,21 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Burattinaio">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22020b"/>
+      <stop offset="45%" stop-color="#4c0519"/>
+      <stop offset="100%" stop-color="#350412"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bb)"/>
+  <g transform="translate(60 -20) scale(1.0)" opacity="0.9"><g stroke="#8b5a60" stroke-width="3"><line x1="90" y1="52" x2="96" y2="108"/><line x1="120" y1="48" x2="120" y2="104"/><line x1="150" y1="52" x2="144" y2="108"/></g><rect x="78" y="42" width="84" height="10" rx="4" fill="#fda4af"/><path d="M88 118 q32 -22 64 0 q4 34 -32 50 q-36 -16 -32 -50 Z" fill="#fda4af"/><circle cx="106" cy="132" r="6" fill="#8b5a60"/><circle cx="134" cy="132" r="6" fill="#8b5a60"/><path d="M106 152 q14 10 28 0" stroke="#8b5a60" stroke-width="4" fill="none"/></g>
+  <text x="320" y="92" font-family="Georgia, serif" font-size="44"
+        fill="#febfc7" font-weight="bold">Burattinaio</text>
+  <text x="322" y="132" font-family="Georgia, serif" font-size="20"
+        fill="#fda4af" opacity="0.9">Il filo che tiene è il filo che libera.</text>
+  <rect x="320" y="148" width="150" height="26" rx="4" fill="none"
+        stroke="#f87171" stroke-width="2"/>
+  <text x="334" y="166" font-family="monospace" font-size="15"
+        fill="#f87171">DPS</text>
+  <rect x="6" y="6" width="788" height="188" fill="none"
+        stroke="#fda4af" stroke-width="2" opacity="0.5"/>
+</svg>

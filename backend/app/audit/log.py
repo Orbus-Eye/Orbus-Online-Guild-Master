@@ -186,6 +186,15 @@ EVENT_TYPES = frozenset({
     "training_specialization_committed",     # success: AFTER all writes complete
     "training_specialization_rolled_back",   # failure: gold refunded, no state change
     "training_specialization_refund",        # one-shot CLI refund (P0 historical recovery)
+    # FASE 9I — Addestramento solo-XP (le spec non esistono più; gli
+    # event type sopra restano per la lettura dei log storici).
+    "training_session_started",
+    "training_session_completed",
+    # FASE 9 A1 — l'upload avatar era emesso ma NON registrato qui:
+    # l'audit veniva scartato con "unknown event_type". Sanato.
+    "avatar_uploaded",
+    # FASE 9K — banner personalizzato della gilda.
+    "guild_banner_uploaded",
     # ROUND 11.2 TASK 5a — Admin Ops MVP
     "admin_gold_granted",                    # admin granted gold to a guild (with reason)
     "admin_item_granted",                    # admin granted item(s) to a guild (with reason)

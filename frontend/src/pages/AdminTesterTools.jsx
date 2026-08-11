@@ -174,7 +174,7 @@ export default function AdminTesterTools() {
       <h1 className="text-3xl font-bold">Admin — Tester Tools</h1>
       <p className="text-sm text-slate-400">
         Strumenti riservati agli account test. Il nuovo viaggio conserva
-        account, gilda e storico, ma riparte da cinque reclute senza classe:
+        account, gilda e storico, ma riparte da sei reclute senza classe:
         ciascuna dovrà scegliere una Class Hall.
       </p>
 
@@ -631,7 +631,7 @@ export default function AdminTesterTools() {
                          onConfirm={() => invoke("grant-adventurers")}
                          testId="grant-btn" />
           <ConfirmButton label="Nuovo viaggio Class Hall"
-                         confirmText="Archivia il roster attivo, libera l'equipaggiamento e crea cinque reclute senza classe. Account, gilda e storico restano intatti."
+                         confirmText="Archivia il roster attivo, libera l'equipaggiamento e crea sei reclute senza classe. Account, gilda e storico restano intatti."
                          onConfirm={() => invoke("reset-class-hall-journey", true)}
                          testId="reset-class-hall-journey-btn" />
           <ConfirmButton label="Set tester MAX"

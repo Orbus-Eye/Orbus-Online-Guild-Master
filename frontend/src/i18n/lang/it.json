@@ -1332,13 +1332,15 @@
       "complete_expeditions_5": "Completa 5 spedizioni",
       "market_volume_3": "Vendi 3 oggetti al mercato",
       "upgrade_structure_1": "Potenzia 1 struttura del Territorio",
-      "apply_specialization_1": "Applica 1 specializzazione",
+      "assign_class_1": "Assegna una classe a 1 recluta",
       "recruit_2": "Recluta 2 nuovi avventurieri"
     },
     "milestone": {
       "run_10_expeditions": "Spedizioni totali: 10",
       "craft_10_items": "Oggetti craftati totali: 10",
-      "recruit_5_adventurers": "Avventurieri reclutati totali: 5"
+      "recruit_5_adventurers": "Avventurieri reclutati totali: 5",
+      "assign_3_classes": "Assegna una classe a 3 reclute",
+      "assign_8_classes": "Assegna una classe a 8 reclute"
     }
   },
   "feature_locked": {

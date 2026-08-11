@@ -98,11 +98,10 @@ async def list_classes():
 async def list_adventurers(
     include_retired: bool = False,
     class_slug: str | None = None,
-    spec_slug: str | None = None,
     role: str | None = None,
     race_slug: str | None = None,
     improvable_equip: bool = False,
-    no_spec: bool = False,
+    no_class: bool = False,
     ready_for_dungeon: bool = False,
     sort: str | None = None,
     current_user: dict = Depends(get_current_user),
@@ -130,14 +129,15 @@ async def list_adventurers(
 
     if class_slug:
         rows = [r for r in rows if r.get("class_slug") == class_slug]
-    if spec_slug:
-        rows = [r for r in rows if r.get("specialization_slug") == spec_slug]
+    # FASE 9C — filtro `spec_slug`/`no_spec` rimossi (le specializzazioni
+    # non esistono più); `role` filtra sul ruolo canonico DPS/TANK/HEALER,
+    # `no_class` sulle reclute ancora senza Sala.
     if role:
         rows = [r for r in rows if (r.get("class_role") or "").lower() == role.lower()]
     if race_slug:
         rows = [r for r in rows if r.get("race_slug") == race_slug]
-    if no_spec:
-        rows = [r for r in rows if not r.get("specialization_slug")]
+    if no_class:
+        rows = [r for r in rows if not r.get("class_slug")]
     if improvable_equip:
         # Best-effort: count equipped slots; consider improvable if < 4.
         def _is_improvable(a: dict) -> bool:

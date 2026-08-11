@@ -9,7 +9,7 @@ import { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import RoleMarker from "../components/RoleMarker";
 import { SECTIONS, SectionBlock } from "./guide/_shared";
-import { StatsCatalogSection, TraitsCatalogSection } from "./guide/CatalogSections";
+import { StatsCatalogSection } from "./guide/CatalogSections";
 import ClassesAndStatsSection from "./guide/ClassesAndStatsSection";
 import Fase8GuideSections from "./guide/Fase8GuideSections";
 import R15GuideSections from "./guide/R15GuideSections";
@@ -286,7 +286,8 @@ export default function Guide() {
 
                 <StatsCatalogSection active={active} />
 
-                <TraitsCatalogSection active={active} />
+                {/* FASE 9H — la sezione Tratti è stata rimossa dalla
+                    Guida: i Tratti non sono più player-facing. */}
 
                 <SectionBlock id="reclutamento" title="Reclutamento">
                     <p>
@@ -295,7 +296,7 @@ export default function Guide() {
                         refresh casuali o panchina reclute.
                     </p>
                     <p className="mt-2">
-                        I primi cinque fondatori sono gratuiti. I successivi hanno un costo
+                        I primi sei fondatori sono gratuiti. I successivi hanno un costo
                         progressivo e richiedono spazio nei Dormitori. Ogni nuovo avventuriero
                         nasce Comune, al livello 1, con statistiche base e senza classe.
                     </p>

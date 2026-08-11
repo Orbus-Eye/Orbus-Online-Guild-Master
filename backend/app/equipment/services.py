@@ -94,6 +94,10 @@ async def _load_equipment_for_adventurer(
             slots[canonical_slot] = _equipped_slot_entry(r, item)
         eq_power += _item_equip_power(item)
         raw.append({"row": r, "item": item})
+    # FASE 9E — bonus set raid di classe (3/5 pezzi) nell'equipment
+    # power: unico punto di calcolo per equip endpoint e spedizioni.
+    from app.raids.class_sets import set_bonus_power
+    eq_power += set_bonus_power([r["item"] for r in raw])
     return slots, eq_power, raw
 
 
@@ -113,6 +117,7 @@ async def _load_equipment_for_guild(
     items = await db.items.find({"id": {"$in": item_ids}}, {"_id": 0}).to_list(500)
     items_by_id = {i["id"]: i for i in items}
     by_adv: dict[str, tuple[dict, int]] = {}
+    items_by_adv: dict[str, list[dict]] = {}
     for r in rows:
         item = items_by_id.get(r["item_id"])
         if not item:
@@ -123,7 +128,13 @@ async def _load_equipment_for_guild(
             continue
         slots[canonical_slot] = _equipped_slot_entry(r, item)
         by_adv[r["adventurer_id"]] = (slots, power + _item_equip_power(item))
-    return by_adv
+        items_by_adv.setdefault(r["adventurer_id"], []).append(item)
+    # FASE 9E — bonus set raid di classe (3/5 pezzi) nell'equipment power.
+    from app.raids.class_sets import set_bonus_power
+    return {
+        adv_id: (slots, power + set_bonus_power(items_by_adv.get(adv_id, [])))
+        for adv_id, (slots, power) in by_adv.items()
+    }
 
 
 def _build_equipment_response(adventurer: dict, slots: dict, eq_power: int) -> dict:

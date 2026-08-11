@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sognatore">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#4b515f"/>
+      <stop offset="70%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#080d17"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#34d399" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#93c5fd" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><path d="M148 64 a52 52 0 1 0 24 74 a44 44 0 1 1 -24 -74 Z" fill="#93c5fd"/><path d="M96 138 q22 -18 44 0 q-22 12 -44 0 Z" fill="#516c8b"/></g>
+</svg>

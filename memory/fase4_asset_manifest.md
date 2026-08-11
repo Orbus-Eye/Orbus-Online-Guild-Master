@@ -1,5 +1,31 @@
-# FASE 4 + 8F — Manifest asset (procedurali → art definitiva)
-Data: 2026-08-08 · Generatore: `scripts/fase4_genera_assets.py` (v2)
+# FASE 4 + 8F + 9G — Manifest asset (procedurali → art definitiva)
+Data: 2026-08-11 · Generatori: `scripts/fase4_genera_assets.py` (v2),
+`scripts/fase9_genera_emblemi_classi.py` (FASE 9G)
+
+## FASE 9G — Identità visiva delle 27 classi — `assets/classes/`
+- `{class_slug}.svg` — 27 EMBLEMI unici (240×240): ogni classe ha un
+  GLIFO disegnato ad hoc (identity map sotto), sfondo radiale con la
+  palette della classe, anello colorato per RUOLO (rosso DPS, azzurro
+  TANK, verde HEALER) e glow. NON sono 27 icone fotocopiate.
+- `{class_slug}_banner.svg` — 27 banner (800×200) con emblema, nome,
+  identità e badge ruolo (per header Sala di Classe / card).
+- Identity map (registry `backend/app/classes/registry.py`,
+  campo `emblem_symbol` — verificabile nel codice):
+  guerriero=spade incrociate · ladro=pugnale nell'ombra ·
+  mago=sigillo a 9 punte · monaco=pugno e corda · negromante=teschio
+  nel cerchio · cacciatore_del_vuoto=occhio-lanterna nel vuoto ·
+  artificiere=ingranaggio · cartografo=rosa dei venti · runista=runa ·
+  burattinaio=maschera coi fili · giocatore_d_azzardo=dadi ·
+  pittore=pennello · cacciatore_del_sangue=zanna e sangue ·
+  paladino=scudo con fiamma · cacciatore_di_mostri=bestia e lancia ·
+  fabbro_arcano=incudine runica · parassita=radice a spirale ·
+  cavaliere_della_morte=elmo e vessillo · cavaliere_di_draghi=drago
+  sulla lancia · alchimista=alambicco · bardo=lira · druido=salice ·
+  sciamano=tamburo · cronista=penna · mercante=bilancia ·
+  astrologo=costellazione · sognatore=mezzaluna sull'occhio.
+- Art definitiva: sostituire i file mantenendo i nomi (zero cambi FE).
+  Priorità pittorica: gli emblemi restano validi a lungo; i banner
+  di classe sono i primi candidati a un'illustrazione dipinta.
 
 **v2 — FASE 8F**: tutti i 132 SVG sono stati rigenerati con il
 generatore potenziato: i ritratti hanno ora volto (occhi, sopracciglia,

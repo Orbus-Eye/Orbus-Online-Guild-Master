@@ -31,7 +31,6 @@ import RaidBuilder from "@/pages/RaidBuilder";
 import RaidReport from "@/pages/RaidReport";
 import Guide from "@/pages/Guide";
 import Achievements from "@/pages/Achievements";
-import TraitsPublic from "@/pages/TraitsPublic";  // ROUND 11.2 TASK 8 — SEO
 import StatsPublic from "@/pages/StatsPublic";    // ROUND 11.2 TASK 8 — SEO
 import MaterialsPublic from "@/pages/MaterialsPublic";  // ROUND 11.2 EXT S3 — SEO
 import Chat from "@/pages/Chat";
@@ -462,8 +461,8 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
-                        {/* ROUND 11.2 TASK 8 — Public SEO routes (no auth, no redirect) */}
-                        <Route path="/traits" element={<TraitsPublic />} />
+                        {/* ROUND 11.2 TASK 8 — Public SEO routes (no auth, no redirect).
+                            FASE 9H: /traits rimossa (Tratti non più player-facing). */}
                         <Route path="/stats" element={<StatsPublic />} />
                         {/* ROUND 11.2 EXT S3 — Public SEO materials page */}
                         <Route path="/materials" element={<MaterialsPublic />} />

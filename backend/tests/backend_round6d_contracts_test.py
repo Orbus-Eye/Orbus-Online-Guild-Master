@@ -6,13 +6,13 @@ Covers:
   • lazy reset semantics (UTC midnight, ISO Monday)
   • atomic claim (CAS — no double claim, no premature claim)
   • progress fan-out hook on business writes (expeditions, market, crafting,
-    territory upgrade, recruitment, specialization)
+    territory upgrade, recruitment)
   • milestone progressive tier unlock
   • reward magnitudes within Round 6D Q5=a bounds
   • audit log emission
-  • signature item visibility (Round 6C WARN P2) — `/api/inventory` returns
-    the bound signature item with a populated `item.name` after the boot
-    seed runs.
+
+FASE 9C: i test su specializzazioni e signature item sono stati rimossi
+insieme alla feature.
 """
 from __future__ import annotations
 
@@ -128,59 +128,9 @@ def test_weekly_contracts_generated_on_first_get(db):
 # ─── 3. Producer hook increments progress on business write ─────────────
 
 
-def test_progress_increment_on_specialization_applied(db):
-    """ROUND 6C↔6D synergy — applying a spec ticks the weekly contract."""
-    from app.training.catalog import SPEC_BY_SLUG  # noqa: F401  (existence check)
-    h, gid, _ = _fresh_guild(db)
-    _unlock_contract_board(db, gid, h)
-    # Force training_grounds Lv1 too (needed by /api/training/specialize)
-    db.guild_structures.update_one(
-        {"guild_id": gid},
-        {"$set": {
-            "structures.training_grounds.is_unlocked": True,
-            "structures.training_grounds.level": 1,
-        }},
-    )
-    # Generate weekly state with the apply-spec contract active under the
-    # CURRENT ISO week (so `increment_contract_progress`'s CAS filter on
-    # `rotation_week == current` matches and the $inc actually applies).
-    iso_year, iso_week, _ = datetime.now(timezone.utc).isocalendar()
-    current_week_key = f"{iso_year}-W{iso_week:02d}"
-    db.guilds.update_one(
-        {"id": gid},
-        {"$set": {
-            "weekly_contract_state.rotation_week": current_week_key,
-            "weekly_contract_state.active_slugs": ["weekly_apply_specialization_1"],
-            "weekly_contract_state.contracts": {
-                "weekly_apply_specialization_1": {
-                    "progress": 0, "claimed": False, "claimed_at": None,
-                    "completed_at": None,
-                },
-            },
-        }},
-    )
-    # Seed an eligible adv.
-    cls = db.adventurer_classes.find_one({"slug": "warrior"}, {"_id": 0, "id": 1})
-    adv_id = str(uuid.uuid4())
-    db.adventurers.insert_one({
-        "id": adv_id, "guild_id": gid, "name": "WeeklyHookAdv",
-        "adventurer_class_id": cls["id"], "class_name": "Warrior",
-        "class_role": "Tank", "rarity": "Common", "level": 5,
-        "experience": 0, "strength": 10, "agility": 10, "intellect": 10,
-        "endurance": 10, "faith": 10, "stamina": 100, "morale": 100,
-        "is_available": True, "is_retired": False, "traits": [],
-        "is_starter": False, "is_test_seed": True,
-        "created_at": "2026-06-28T07:00:00+00:00",
-        "updated_at": "2026-06-28T07:00:00+00:00",
-    })
-    r = requests.post(
-        f"{BASE_URL}/api/training/specialize/{adv_id}",
-        json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
-    )
-    assert r.status_code == 200, r.text
-    state = db.guilds.find_one({"id": gid}, {"_id": 0, "weekly_contract_state": 1})
-    progress = state["weekly_contract_state"]["contracts"]["weekly_apply_specialization_1"]["progress"]
-    assert progress >= 1, "specialization apply must tick the weekly contract"
+# FASE 9C — il test della sinergia weekly/specializzazione e' stato
+# rimosso: le specializzazioni non esistono piu'. L'equivalente e'
+# weekly_assign_class_1 (objective_type=class_halls_assigned).
 
 
 # ─── 4+5. Atomic claim (CAS) ────────────────────────────────────────────
@@ -401,58 +351,7 @@ async def _async_increment(gid: str) -> None:
 
 # ─── 15. Weekly apply_specialization synergy already covered by test #3.
 
-# ─── EXTRA — Round 6C WARN P2: signature visibility ───────────────────
-
-
-def test_signature_template_seeded_in_items_catalog(db):
-    """Every signature catalog entry must be upserted into `db.items`
-    with a populated `name` (required by `item_public`)."""
-    from app.training.catalog import SPEC_SIGNATURE_ITEMS
-    for slug in SPEC_SIGNATURE_ITEMS:
-        row = db.items.find_one({"id": slug}, {"_id": 0, "name": 1, "is_signature": 1})
-        assert row is not None, f"missing template for {slug!r}"
-        assert row.get("name"), f"{slug!r} has no `name`"
-        assert row.get("is_signature") is True
-
-
-def test_specialized_adventurer_signature_visible_in_inventory(db):
-    """End-to-end: apply spec → signature item appears in /api/inventory
-    with a populated `item.name` and the correct `bound_to_adventurer_id`.
-    """
-    h, gid, _ = _fresh_guild(db)
-    _unlock_contract_board(db, gid, h)
-    db.guild_structures.update_one(
-        {"guild_id": gid},
-        {"$set": {
-            "structures.training_grounds.is_unlocked": True,
-            "structures.training_grounds.level": 1,
-        }},
-    )
-    cls = db.adventurer_classes.find_one({"slug": "warrior"}, {"_id": 0, "id": 1})
-    adv_id = str(uuid.uuid4())
-    db.adventurers.insert_one({
-        "id": adv_id, "guild_id": gid, "name": "SigVisAdv",
-        "adventurer_class_id": cls["id"], "class_name": "Warrior",
-        "class_role": "Tank", "rarity": "Common", "level": 5,
-        "experience": 0, "strength": 10, "agility": 10, "intellect": 10,
-        "endurance": 10, "faith": 10, "stamina": 100, "morale": 100,
-        "is_available": True, "is_retired": False, "traits": [],
-        "is_starter": False, "is_test_seed": True,
-        "created_at": "2026-06-28T07:00:00+00:00",
-        "updated_at": "2026-06-28T07:00:00+00:00",
-    })
-    rspec = requests.post(
-        f"{BASE_URL}/api/training/specialize/{adv_id}",
-        json={"spec_slug": "spec_difensore"}, headers=h, timeout=15,
-    )
-    assert rspec.status_code == 200
-    sig_id = rspec.json()["signature_item"]["id"]
-    inv = requests.get(f"{BASE_URL}/api/inventory", headers=h, timeout=15).json()
-    sig_rows = [r for r in inv["inventory"]
-                if r.get("bound_reason") == "specialization_signature"
-                and r.get("bound_to_adventurer_id") == adv_id]
-    assert len(sig_rows) == 1
-    row = sig_rows[0]
-    assert row["id"] == sig_id
-    assert (row.get("item") or {}).get("name"), "item.name must be populated"
-    assert (row.get("item") or {}).get("rarity") == "Rare"
+# FASE 9C — i test di visibilita' del signature item di specializzazione
+# sono stati rimossi: le specializzazioni (e i loro item firma) non
+# esistono piu'; gli item legacy residui vengono ripuliti dalla
+# migration fase9_old_item_cleanup.

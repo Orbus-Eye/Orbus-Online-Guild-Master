@@ -173,11 +173,6 @@ export default function ClassHallCollectionBook() {
                             Effetto: {entry.item.effect_summary_it}
                           </p>
                         )}
-                        {entry.item.build_path_name_it && (
-                          <p className="mt-1 text-xs text-cyan-300/80">
-                            Build: {entry.item.build_path_name_it} — {entry.item.build_path_description_it}
-                          </p>
-                        )}
                       </div>
                     ))}
                   </div>

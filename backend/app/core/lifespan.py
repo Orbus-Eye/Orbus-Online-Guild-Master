@@ -78,18 +78,9 @@ async def lifespan(app: FastAPI):
     bound_result = await backfill_bound_fields_if_missing(db)
     logger.info("ROUND 6B.4 bound fields backfill: %s", bound_result)
     await ensure_bound_indexes(db)
-    # ROUND 6C signature visibility — seed `db.items` templates for every
-    # signature catalog entry so `/api/inventory` joins resolve, and
-    # backfill missing inventory rows for advs whose signature_item_id was
-    # wiped by the pytest orphan cleanup (now fixed in conftest.py).
-    from app.training.seed_signature import (
-        backfill_missing_signature_inventory_rows,
-        seed_signature_templates,
-    )
-    sig_tpl = await seed_signature_templates(db)
-    logger.info("ROUND 6C signature templates: %s", sig_tpl)
-    sig_bf = await backfill_missing_signature_inventory_rows(db)
-    logger.info("ROUND 6C signature backfill: %s", sig_bf)
+    # FASE 9C/9I — il seed degli item firma di specializzazione (ROUND
+    # 6C) è stato rimosso con le specializzazioni; gli item legacy
+    # residui vengono ripuliti dalla migration fase9_old_item_cleanup.
     # ROUND 16.3 Phase 1 — seed World Boss catalog Alveora
     try:
         from app.world_boss import seed_world_boss_catalog

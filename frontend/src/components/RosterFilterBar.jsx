@@ -17,28 +17,45 @@ const SORT_OPTIONS = [
     { value: "class_asc", label_it: "Classe A-Z", label_en: "Class A-Z" },
 ];
 
+// FASE 9B — le 27 classi canoniche (slug italiani del registry) e i
+// 3 ruoli FISSI. Le vecchie 11 classi inglesi e i ruoli
+// Caster/Support non esistono più.
 const CLASS_OPTIONS = [
     ["", { it: "Tutte le classi", en: "All classes" }],
-    ["warrior", { it: "Guerriero", en: "Warrior" }],
-    ["paladin", { it: "Paladino", en: "Paladin" }],
-    ["rogue", { it: "Ladro", en: "Rogue" }],
-    ["ranger", { it: "Ranger", en: "Ranger" }],
-    ["monk", { it: "Monaco", en: "Monk" }],
-    ["mage", { it: "Mago", en: "Mage" }],
-    ["priest", { it: "Sacerdote", en: "Priest" }],
-    ["druid", { it: "Druido", en: "Druid" }],
-    ["bard", { it: "Bardo", en: "Bard" }],
-    ["warlock", { it: "Stregone", en: "Warlock" }],
-    ["alchemist", { it: "Alchimista", en: "Alchemist" }],
+    ["guerriero", { it: "Guerriero", en: "Guerriero" }],
+    ["ladro", { it: "Ladro", en: "Ladro" }],
+    ["mago", { it: "Mago", en: "Mago" }],
+    ["monaco", { it: "Monaco", en: "Monaco" }],
+    ["negromante", { it: "Negromante", en: "Negromante" }],
+    ["cacciatore_del_vuoto", { it: "Cacciatore del Vuoto", en: "Cacciatore del Vuoto" }],
+    ["artificiere", { it: "Artificiere", en: "Artificiere" }],
+    ["cartografo", { it: "Cartografo", en: "Cartografo" }],
+    ["runista", { it: "Runista", en: "Runista" }],
+    ["burattinaio", { it: "Burattinaio", en: "Burattinaio" }],
+    ["giocatore_d_azzardo", { it: "Giocatore d'Azzardo", en: "Giocatore d'Azzardo" }],
+    ["pittore", { it: "Pittore", en: "Pittore" }],
+    ["cacciatore_del_sangue", { it: "Cacciatore del Sangue", en: "Cacciatore del Sangue" }],
+    ["paladino", { it: "Paladino", en: "Paladino" }],
+    ["cacciatore_di_mostri", { it: "Cacciatore di Mostri", en: "Cacciatore di Mostri" }],
+    ["fabbro_arcano", { it: "Fabbro Arcano", en: "Fabbro Arcano" }],
+    ["parassita", { it: "Parassita", en: "Parassita" }],
+    ["cavaliere_della_morte", { it: "Cavaliere della Morte", en: "Cavaliere della Morte" }],
+    ["cavaliere_di_draghi", { it: "Cavaliere di Draghi", en: "Cavaliere di Draghi" }],
+    ["alchimista", { it: "Alchimista", en: "Alchimista" }],
+    ["bardo", { it: "Bardo", en: "Bardo" }],
+    ["druido", { it: "Druido", en: "Druido" }],
+    ["sciamano", { it: "Sciamano", en: "Sciamano" }],
+    ["cronista", { it: "Cronista", en: "Cronista" }],
+    ["mercante", { it: "Mercante", en: "Mercante" }],
+    ["astrologo", { it: "Astrologo", en: "Astrologo" }],
+    ["sognatore", { it: "Sognatore", en: "Sognatore" }],
 ];
 
 const ROLE_OPTIONS = [
     ["", { it: "Tutti i ruoli", en: "All roles" }],
-    ["Tank", { it: "Difensore", en: "Tank" }],
-    ["DPS", { it: "Attaccante", en: "DPS" }],
-    ["Healer", { it: "Guaritore", en: "Healer" }],
-    ["Caster", { it: "Incantatore", en: "Caster" }],
-    ["Support", { it: "Supporto", en: "Support" }],
+    ["DPS", { it: "Danno (DPS)", en: "DPS" }],
+    ["TANK", { it: "Difensore (Tank)", en: "Tank" }],
+    ["HEALER", { it: "Guaritore (Healer)", en: "Healer" }],
 ];
 
 export default function RosterFilterBar({ onChange, totalCount, filteredCount }) {
@@ -98,11 +115,11 @@ export default function RosterFilterBar({ onChange, totalCount, filteredCount })
             <label className="flex items-center gap-1 text-muted-foreground">
                 <input
                     type="checkbox"
-                    data-testid="roster-filter-nospec"
-                    checked={!!state.no_spec}
-                    onChange={(e) => set("no_spec", e.target.checked)}
+                    data-testid="roster-filter-noclass"
+                    checked={!!state.no_class}
+                    onChange={(e) => set("no_class", e.target.checked)}
                 />
-                {it ? "Senza spec" : "No spec"}
+                {it ? "Senza classe" : "No class"}
             </label>
             <label className="flex items-center gap-1 text-muted-foreground">
                 <input

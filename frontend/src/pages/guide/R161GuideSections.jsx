@@ -38,13 +38,14 @@ export default function R161GuideSections() {
                         massimizzare il loro power score.
                     </li>
                     <li>
-                        <strong>Sblocca specializzazioni</strong> nelle Sale di Classe se hai
-                        avventurieri senza spec — boost permanente di stats.
+                        <strong>Assegna una classe</strong> nelle Sale di Classe alle
+                        reclute che ancora non ne hanno una — sbloccano attività e
+                        ruolo fisso.
                     </li>
                 </ol>
                 <p className="text-[11px] text-muted-foreground italic mt-2">
                     EN: Open the dashboard → claim dailies → spend 1–2 expeditions →
-                    auto-equip survivors → unlock at least one specialization.
+                    auto-equip survivors → assign a class to new recruits.
                 </p>
             </SectionBlock>
 

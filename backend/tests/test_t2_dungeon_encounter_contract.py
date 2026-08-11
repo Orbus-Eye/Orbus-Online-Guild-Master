@@ -25,7 +25,9 @@ def test_encounter_contract_projects_level_80_curve_over_stale_rows():
     }
     canonical = apply_dungeon_encounter(stale)
     assert canonical["required_level"] == 70
-    assert canonical["recommended_power"] == 1600
+    # FASE 8A ha ricalibrato la curva (+50-200%): il canonico per il
+    # 7-piazze Lv70 è 3335 (il vecchio 1600 era pre-rebalance).
+    assert canonical["recommended_power"] == 3335
     assert canonical["required_team_size"] == 7
     assert canonical["difficulty"] == 4
     assert canonical["base_duration_seconds"] == 720
@@ -86,13 +88,15 @@ def test_every_class_counter_is_valid_and_useful_in_current_dungeons():
 
 
 def test_class_counterplay_requires_an_item_resonant_path():
+    # FASE 9C — la risonanza è di CLASSE (tag del registry), non di
+    # build: un Guerriero (DPS) risuona con le sue armi marziali.
     baseline = resolve_class_mechanic(
         adventurer={"canonical_class_slug": "guerriero"},
         equipment_items=[],
     )
     resonant = resolve_class_mechanic(
         adventurer={"canonical_class_slug": "guerriero"},
-        equipment_items=[{"tags": ["shield"]}],
+        equipment_items=[{"tags": ["sword"]}],
     )
     assert baseline["counter_tags"]
     assert baseline["active_counter_tags"] == []

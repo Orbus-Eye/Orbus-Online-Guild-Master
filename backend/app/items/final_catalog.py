@@ -379,12 +379,27 @@ def _normalize_hall_item(item: dict, profile) -> dict:
 
 
 def _class_added_item(profile, class_index: int, index: int) -> dict:
+    # FASE 9D — EQUIP GENERICO DI CLASSE: nessuna build richiesta.
+    # L'item appartiene alla CLASSE; le stat rafforzano il RUOLO fisso
+    # (registry: DPS→stat primaria, TANK→endurance, HEALER→faith).
+    from app.classes import registry_entry, role_focus_stats
+
     rarity = CLASS_ADDED_RARITIES[(index * 17) % len(CLASS_ADDED_RARITIES)]
     slot_type, item_type, default_noun = _slot_spec(index + class_index)
     noun = _weapon_noun(profile, default_noun)
     source = _source_for_rarity(rarity, class_index * 45 + index)
     mechanic = CLASS_MECHANICS[profile.canonical_class_slug]
-    build = mechanic.builds[index % len(mechanic.builds)]
+    entry = registry_entry(profile.canonical_class_slug)
+    focus_stat, _secondary = role_focus_stats(profile.canonical_class_slug)
+    role_label = {
+        "DPS": "il danno", "TANK": "la difesa", "HEALER": "il sostegno",
+    }.get(entry.class_role if entry else "", "il ruolo")
+    # Tag di risonanza di CLASSE: per armi/armature il tag concreto del
+    # pezzo; per gli accessori un tag canonico della classe a rotazione.
+    class_tags_pool = (
+        (*profile.weapon_tags, *profile.armor_tags) or ("universal",)
+    )
+    resonance_tag = class_tags_pool[index % len(class_tags_pool)]
     epithet = CLASS_EPITHETS[index]
     name = f"{noun} {epithet} — {profile.hall_name_it}"
     slug = (
@@ -396,7 +411,7 @@ def _class_added_item(profile, class_index: int, index: int) -> dict:
         if rarity == "Legendary"
         else source["required_level"]
     )
-    stats = _bonuses(profile.primary_stat, rarity, index, level)
+    stats = _bonuses(focus_stat, rarity, index, level)
     return {
         "id": _stable_id(slug),
         "blueprint_id": f"bp.{slug}",
@@ -410,7 +425,7 @@ def _class_added_item(profile, class_index: int, index: int) -> dict:
         ),
         "description_it": (
             f"Il {profile.hall_master_witness_npc} lo affida soltanto a chi "
-            f"ha compreso il sentiero {build.name_it}."
+            f"ha giurato alla classe {profile.class_name_it}."
         ),
         "description_en": (
             f"Singular {profile.class_name_it} item tied to {source['name_it']}."
@@ -426,7 +441,7 @@ def _class_added_item(profile, class_index: int, index: int) -> dict:
             profile.starter_lore_key,
             profile.canonical_class_slug,
             source["source_slug"],
-            build.build_id,
+            mechanic.mechanic_id,
         ],
         "lore_reviewed": True,
         "spoiler_level": "mystery" if rarity == "Legendary" else "public",
@@ -458,15 +473,14 @@ def _class_added_item(profile, class_index: int, index: int) -> dict:
             [profile.armor_tags[index % len(profile.armor_tags)]]
             if item_type == "armor" and profile.armor_tags else []
         ),
-        "build_path_id": build.build_id,
-        "build_path_name_it": build.name_it,
-        "build_path_description_it": build.description_it,
-        "build_path_item_tags": list(build.item_tags),
-        "tags": list(build.item_tags),
+        # FASE 9D — nessun campo build_*: l'item risuona con la CLASSE
+        # tramite un suo tag canonico.
+        "tags": [resonance_tag],
         "gameplay_effect_it": (
             f"Bonus permanente da equipaggiamento: "
-            f"+{stats[f'{profile.primary_stat}_bonus']} "
-            f"{profile.primary_stat}; sostiene la build {build.name_it}."
+            f"+{stats[f'{focus_stat}_bonus']} "
+            f"{focus_stat}; rafforza {role_label} della classe "
+            f"{profile.class_name_it}."
         ),
         "effect_kind": "equipment_stats",
         "is_tradeable": rarity not in {"Legendary"},

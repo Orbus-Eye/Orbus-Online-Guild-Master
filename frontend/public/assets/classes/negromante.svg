@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Negromante">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#4f7e62"/>
+      <stop offset="70%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#0b2e19"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f87171" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#86efac" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><circle cx="120" cy="120" r="56" fill="none" stroke="#4a835f" stroke-width="6"/><circle cx="120" cy="108" r="26" fill="#86efac"/><rect x="104" y="126" width="32" height="16" rx="6" fill="#86efac"/><circle cx="111" cy="104" r="7" fill="#4a835f"/><circle cx="129" cy="104" r="7" fill="#4a835f"/></g>
+</svg>

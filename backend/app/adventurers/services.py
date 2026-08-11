@@ -4,6 +4,7 @@ import logging
 import re
 from fastapi import HTTPException
 
+from app.classes import class_role_for
 from app.expeditions.formulas import (
     TRAIT_AFFECTABLE_STATS,
     TRAIT_XP_STAT,
@@ -243,7 +244,11 @@ def adventurer_public(doc: dict) -> dict:
         ),
         "narrative_intro_shown": bool(doc.get("narrative_intro_shown", False)),
         "starter_item_reward_status": doc.get("starter_item_reward_status"),
-        "class_role": doc.get("class_role"),
+        # FASE 9B — il ruolo deriva SEMPRE dalla classe (registry canonico
+        # DPS/TANK/HEALER); il campo doc resta solo come fallback legacy.
+        "class_role": (
+            class_role_for(class_slug) or doc.get("class_role")
+        ),
         "rarity": career["rarity"],
         "career": career,
         "level": doc.get("level", 1),
@@ -285,14 +290,9 @@ def adventurer_public(doc: dict) -> dict:
         "rename_max": 2,
         "renames_remaining": max(0, 2 - int(doc.get("rename_count", 0))),
         "traits": trait_public_filtered_list(doc.get("traits", [])),
-        # ROUND 6C — specialization snapshot (None when not yet specialized).
-        # The snapshot is set at apply-time so future catalog rebalancing
-        # never retroactively changes live adventurers' bonuses.
-        "specialization": doc.get("specialization"),
-        # ROUND 16.0 — Class-level specialization slug (separate from R6C
-        # training snapshot). Identifies the spec attached to the base
-        # class (e.g. "berserker_spec" for a Warrior).
-        "specialization_slug": doc.get("specialization_slug"),
+        # FASE 9C — le specializzazioni selezionabili NON esistono più:
+        # il payload non le espone (i campi legacy sul doc vengono
+        # rimossi dalla migration 9M). Il ruolo è fisso per classe.
         # ROUND 16.0 Phase 3 — flavour identity (race + gender).
         "race_slug": doc.get("race_slug"),
         "race_name_it": doc.get("race_name_it"),  # joined by services if needed

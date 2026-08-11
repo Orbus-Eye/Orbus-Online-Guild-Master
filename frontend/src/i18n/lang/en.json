@@ -1332,13 +1332,15 @@
       "complete_expeditions_5": "Complete 5 expeditions",
       "market_volume_3": "Sell 3 items on the market",
       "upgrade_structure_1": "Upgrade 1 Territory structure",
-      "apply_specialization_1": "Apply 1 specialization",
+      "assign_class_1": "Assign a class to 1 recruit",
       "recruit_2": "Recruit 2 new adventurers"
     },
     "milestone": {
       "run_10_expeditions": "Lifetime expeditions: 10",
       "craft_10_items": "Lifetime items crafted: 10",
-      "recruit_5_adventurers": "Lifetime adventurers recruited: 5"
+      "recruit_5_adventurers": "Lifetime adventurers recruited: 5",
+      "assign_3_classes": "Assign a class to 3 recruits",
+      "assign_8_classes": "Assign a class to 8 recruits"
     }
   },
   "feature_locked": {

@@ -77,5 +77,15 @@ async def sweep_activities_for_guild(db, guild_id: str) -> None:
             guild_id, exc,
         )
 
+    # 4. FASE 9I — Addestramento: chiude le sessioni scadute (solo XP).
+    try:
+        from app.training.services import complete_due_training_sessions
+        await complete_due_training_sessions(db, guild_id)
+    except Exception as exc:  # noqa: BLE001
+        _LOG.warning(
+            "activity_sweep.training_failed guild_id=%s err=%s",
+            guild_id, exc,
+        )
+
 
 __all__ = ["sweep_activities_for_guild"]

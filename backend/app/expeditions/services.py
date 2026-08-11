@@ -241,6 +241,38 @@ def expedition_public(e: dict) -> dict:
             out["seconds_remaining"] = max(0, remaining)
         except Exception:
             out["seconds_remaining"] = 0
+    # FASE 9P — timer autoritativo della STANZA corrente (solo quando il
+    # gruppo è davvero dentro una stanza: niente timer su scelte/bivi,
+    # stanze future o run concluse). Il FE anima localmente ogni secondo
+    # e si riallinea a questi campi a ogni refetch.
+    if (
+        out["mode"] == "rooms"
+        and out["status"] == "in_progress"
+        and out["room_state"] == "in_room"
+        and out["completes_at"]
+    ):
+        duration = int(e.get("room_duration_seconds") or 0)
+        if duration <= 0:
+            # Fallback doc legacy (pre-9P): durata base della stanza
+            # corrente dallo snapshot (senza fattore riposo).
+            cur = int(e.get("current_room_idx", 0) or 0)
+            for r in e.get("rooms_snapshot") or []:
+                if int(r.get("idx", -1)) == cur:
+                    duration = int(r.get("duration_seconds", 0) or 0)
+                    break
+        started = e.get("room_started_at")
+        if not started and duration > 0:
+            try:
+                started = (
+                    datetime.fromisoformat(out["completes_at"])
+                    - timedelta(seconds=duration)
+                ).isoformat()
+            except Exception:
+                started = None
+        if duration > 0:
+            out["room_started_at"] = started
+            out["room_completes_at"] = out["completes_at"]
+            out["room_duration_seconds"] = duration
     return out
 
 
@@ -505,20 +537,14 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
                 scaled += 1
             drop["qty"] = max(int(drop.get("qty", 0)), scaled)
 
-    # FASE 3.4 — Pietra della Conoscenza: drop indipendente al 20% sui
-    # dungeon a SUCCESSO. Aggiunta DOPO il blocco Overpower così non
-    # viene mai moltiplicata (è già generosa al 20% — scelta economica).
-    if success:
-        try:
-            if _rng.random() < 0.20:
-                _stone = await db.items.find_one(
-                    {"slug": "pietra_della_conoscenza", "is_active": True},
-                    {"_id": 0, "id": 1},
-                )
-                if _stone:
-                    loot_ids = list(loot_ids) + [_stone["id"]]
-        except Exception:  # noqa: BLE001
-            pass  # seed fase 3 assente: nessun crash, solo niente pietra
+    # FASE 3.4 + 9J — Pietra della Conoscenza: policy condivisa (20%,
+    # solo successo, DOPO l'Overpower così non viene mai moltiplicata).
+    from app.expeditions.knowledge_stone import maybe_roll_knowledge_stone
+    _stone_id = await maybe_roll_knowledge_stone(
+        db, success=success, rng=_rng,
+    )
+    if _stone_id:
+        loot_ids = list(loot_ids) + [_stone_id]
 
     if success:
         gold_reward = dungeon["base_gold_reward"]
@@ -1048,11 +1074,16 @@ async def _find_last_completed_expedition(db, guild_id: str) -> Optional[dict]:
     or None if none exist. Triggers a lazy completion sweep first.
     """
     await complete_due_expeditions(db, guild_id)
+    # FASE 9 A3 — un report pulito (PULISCI) non deve più risultare come
+    # "ultimo report" né alimentare la CTA di replay in Dashboard: dopo
+    # PULISCI la card sparisce finché una nuova run non si conclude.
+    # (Supera la scelta FASE 1.5 in cui il replay ignorava il flag.)
     return await db.expeditions.find_one(
         {
             "guild_id": guild_id,
             "status": "completed",
             "result_summary": {"$in": ["Success", "Failed"]},
+            "report_dismissed_at": None,
         },
         {"_id": 0},
         sort=[("completed_at", -1)],
@@ -1260,6 +1291,8 @@ async def _dispatch_expedition(
     equipment_by_adv: dict[str, dict] = {}
     traits_by_adv: dict[str, list] = {}
     for adv in members_live:
+        # FASE 9E — `eq_power` include già il bonus set raid di classe
+        # (calcolato in _load_equipment_for_adventurer, unico punto).
         slots, eq_power, raw = await _load_equipment_for_adventurer(db, adv["id"])
         snapshot = [_item_summary_for_snapshot(r["row"], r["item"]) for r in raw]
         equipped_items = [r["item"] for r in raw]
@@ -1442,6 +1475,7 @@ async def _dispatch_expedition(
     from app.dungeons.rooms import build_rooms_snapshot, rooms_mode_for_dungeon
     if rooms_mode_for_dungeon(dungeon):
         rooms_snapshot = build_rooms_snapshot(dungeon, success_chance)
+        first_room_duration = int(rooms_snapshot[0]["duration_seconds"])
         exp_doc.update({
             "mode": "rooms",
             "rooms_snapshot": rooms_snapshot,
@@ -1452,10 +1486,12 @@ async def _dispatch_expedition(
             "carried_xp": 0,
             "carried_loot_ids": [],
             "room_results": [],
+            # FASE 9P — timestamp autoritativi della stanza corrente per
+            # la progress bar FE (inizio + durata EFFETTIVA).
+            "room_started_at": now.isoformat(),
+            "room_duration_seconds": first_room_duration,
             "completes_at": (
-                now + timedelta(
-                    seconds=rooms_snapshot[0]["duration_seconds"]
-                )
+                now + timedelta(seconds=first_room_duration)
             ).isoformat(),
         })
 

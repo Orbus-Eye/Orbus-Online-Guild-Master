@@ -8,6 +8,8 @@
 //
 // Pure presentation. No click handlers, no filters. Safe to drop anywhere.
 
+// FASE 9B — ruoli canonici DPS/TANK/HEALER; i marker legacy restano
+// solo come fallback di lettura per snapshot storici.
 const MARKERS = {
     tank: "[T]",
     healer: "[+]",
@@ -15,6 +17,12 @@ const MARKERS = {
     ranger: "[R]",
     mage: "[M]",
     support: "[S]",
+};
+
+const LABELS_IT = {
+    tank: "Difensore",
+    healer: "Guaritore",
+    dps: "Danno",
 };
 
 function markerFor(role) {
@@ -33,7 +41,9 @@ export default function RoleMarker({ role, withLabel = false, className = "" }) 
         >
             <span className="text-amber">{m}</span>
             {withLabel && role && (
-                <span className="text-muted-foreground">{role}</span>
+                <span className="text-muted-foreground">
+                    {LABELS_IT[String(role).trim().toLowerCase()] || role}
+                </span>
             )}
         </span>
     );

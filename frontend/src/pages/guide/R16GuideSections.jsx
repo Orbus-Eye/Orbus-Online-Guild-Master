@@ -1,7 +1,8 @@
-// ROUND 16.0 — Phase 6 — Player-facing Guida sections covering R16.0 Phase 2-4.
-// Topics: Base class vs Specialization, Class Halls, Unlock Flow,
-//         Races & Gender, Stat Colors, Auto-Equip, Threats & Counters.
-// All copy is Italian and references R16.0 changes.
+// FASE 9 — Sezioni Guida riscritte sul nuovo modello CLASSE → RUOLO
+// FISSO. Le vecchie sezioni 32-34 (classe base vs specializzazione,
+// sblocco spec) sono state sostituite: le specializzazioni e le build
+// NON esistono più. Restano (aggiornate): Sale di Classe, Razza e
+// Sesso, Colori statistiche, Auto-Equip, Minacce e Contromisure.
 
 import { SectionBlock } from "./_shared";
 
@@ -9,79 +10,75 @@ const ListItem = ({ children }) => (
     <li className="ml-5 list-disc text-foreground/90">{children}</li>
 );
 
-// 32. Classe base vs Specializzazione
-function BaseVsSpecSection() {
+// 32. Classe e ruolo fisso
+function ClassRoleSection() {
     return (
-        <SectionBlock id="classe-vs-spec" title="32. Classe base vs Specializzazione">
+        <SectionBlock id="classe-ruolo-fisso" title="32. Classe e ruolo fisso">
             <p className="mb-3">
-                Dal <strong>Round 16.0</strong> ogni avventuriero appartiene a una <strong>classe base</strong>
-                (Guerriero, Paladino, Ladro, Ranger, Monaco, Mago, Sacerdote, Druido,
-                Bardo, <strong>Stregone</strong>) e può successivamente sbloccare una
-                <strong> specializzazione</strong> tramite la <em>Sala di Classe</em> dedicata.
+                Dalla <strong>Fase 9</strong> ogni avventuriero appartiene a una
+                delle <strong>27 classi canoniche</strong> e il suo{" "}
+                <strong>ruolo è fisso</strong>: deriva SEMPRE dalla classe.
             </p>
             <ul className="space-y-1 mb-3">
-                <ListItem><strong>Classe base</strong>: identità e statistiche primarie. Si assegna alla generazione dell&apos;avventuriero.</ListItem>
-                <ListItem><strong>Specializzazione</strong>: ramo avanzato (3 per classe base) che aggiunge counter tag, sinergie e item esclusivi.</ListItem>
+                <ListItem><strong>13 classi da Danno (DPS)</strong> — es. Guerriero, Ladro, Mago, Runista, Pittore.</ListItem>
+                <ListItem><strong>6 classi Difensore (Tank)</strong> — Paladino, Cacciatore di Mostri, Fabbro Arcano, Parassita, Cavaliere della Morte, Cavaliere di Draghi.</ListItem>
+                <ListItem><strong>8 classi Guaritore (Healer)</strong> — Alchimista, Bardo, Druido, Sciamano, Cronista, Mercante, Astrologo, Sognatore.</ListItem>
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
-                Esempio: un Ladro può specializzarsi in <em>Assassino</em> (burst stealth)
-                o <em>Duellante</em> (DPS frontale); un Mago può diventare <em>Negromante</em>
-                (servitori) o <em>Elementalista</em> (AoE arcano); un Guerriero può
-                diventare <em>Berserker</em> (frontline a 2 mani).
+                Non esistono più specializzazioni selezionabili né build da
+                attivare con gli oggetti: il Paladino è SEMPRE un Difensore,
+                il Bardo è SEMPRE un Guaritore, il Guerriero è SEMPRE Danno.
+                Se vuoi un ruolo diverso, scegli una classe diversa nella
+                Sala di Classe.
             </p>
         </SectionBlock>
     );
 }
 
-// 33. Sale di Classe (Class Halls)
+// 33. Sale di Classe
 function ClassHallsSection() {
     return (
         <SectionBlock id="sale-di-classe" title="33. Sale di Classe (Class Halls)">
             <p className="mb-3">
-                Ogni gilda dispone di <strong>10 Sale di Classe</strong> (una per ciascuna classe base).
-                Ogni Sala è un edificio testuale che racchiude:
+                Ogni gilda dispone di <strong>27 Sale di Classe</strong>, una per
+                classe canonica. Nella pagina <code>/class-halls</code> ogni Sala
+                mostra:
             </p>
             <ul className="space-y-1 mb-3">
-                <ListItem>Il <strong>livello</strong> della sala (sblocco progressivo via XP gilda e oro).</ListItem>
-                <ListItem>Le <strong>3 specializzazioni</strong> sbloccabili per quella classe base.</ListItem>
-                <ListItem>Gli <strong>avventurieri assegnati</strong> alla sala in addestramento.</ListItem>
+                <ListItem>L&apos;<strong>emblema</strong> e l&apos;identità della classe, col <strong>ruolo fisso</strong> ben visibile.</ListItem>
+                <ListItem>Lo <strong>stile di combattimento</strong> e i punti di forza.</ListItem>
+                <ListItem>L&apos;<strong>equipaggiamento di classe</strong> (i tag arma/armatura che attivano la risonanza).</ListItem>
+                <ListItem>La <strong>prova</strong> per ottenere la classe e il sentiero degli item della Sala.</ListItem>
+                <ListItem>I <strong>4 set raid di classe</strong>, in ordine di progressione.</ListItem>
             </ul>
             <p className="text-[12px] text-muted-foreground">
-                Le Sale sono accessibili dalla pagina <code>/training</code> ed espongono i requisiti
-                di sblocco per ogni ramo.
+                Una recluta nasce <strong>senza classe</strong>: supera la prova
+                della Sala scelta e giura davanti al Maestro. La scelta assegna la
+                classe (e quindi il ruolo), non una build.
             </p>
         </SectionBlock>
     );
 }
 
-// 34. Sbloccare una Sala e una Specializzazione
-function UnlockFlowSection() {
+// 34. Risonanza di classe
+function ResonanceSection() {
     return (
-        <SectionBlock id="sblocco-sala-spec" title="34. Sbloccare una Sala e una Specializzazione">
+        <SectionBlock id="risonanza-di-classe" title="34. Risonanza di classe">
             <p className="mb-3">
-                Per portare un avventuriero a una specializzazione devi seguire 3 passi:
+                Ogni classe ha una <strong>meccanica fissa</strong> (es. la{" "}
+                <em>Tempra della Linea</em> del Guerriero) che concede un piccolo
+                bonus di potere costante e un bonus di <strong>risonanza</strong>{" "}
+                quando l&apos;avventuriero veste equipaggiamento della{" "}
+                <strong>propria classe</strong>.
             </p>
-            <ol className="space-y-2 mb-3 list-decimal ml-5">
-                <li>
-                    <strong>Sblocca la Sala di Classe</strong> della classe base
-                    (richiede oro e XP gilda). La Sala diventa di livello 1.
-                </li>
-                <li>
-                    <strong>Sblocca la specializzazione</strong> all&apos;interno della Sala
-                    (richiede materiali specifici e oro aggiuntivo). Endpoint:
-                    <code className="ml-1">POST /api/class-halls/&lt;slug&gt;/unlock-specialization</code>.
-                </li>
-                <li>
-                    <strong>Promuovi un avventuriero</strong> dalla classe base a quella
-                    specializzazione tramite la pagina Addestramento.
-                </li>
-            </ol>
+            <ul className="space-y-1 mb-3">
+                <ListItem><strong>+1</strong> potere per il solo fatto di avere una classe.</ListItem>
+                <ListItem><strong>+2</strong> potere quando almeno un pezzo equipaggiato porta un tag canonico della classe (arma o armatura del suo arsenale).</ListItem>
+                <ListItem>Con la risonanza attiva si attivano anche i <strong>counter tag</strong> della classe contro le minacce dei dungeon.</ListItem>
+            </ul>
             <p className="text-[11px] text-muted-foreground italic">
-                Nota R16.0: prima del rework, <em>Assassino</em>, <em>Berserker</em> e
-                <em> Negromante</em> erano classi base reclutabili direttamente. Dal Round 16.0
-                sono specializzazioni delle rispettive Sale (Ladro, Guerriero, Mago).
-                Gli avventurieri esistenti sono stati migrati automaticamente alla
-                rispettiva specializzazione mantenendo statistiche e livello.
+                In breve: vesti la tua classe e la classe risponde. Nessuna build
+                da indovinare.
             </p>
         </SectionBlock>
     );
@@ -92,7 +89,7 @@ function RacesGenderSection() {
     return (
         <SectionBlock id="razze-sesso" title="35. Razza e Sesso">
             <p className="mb-3">
-                Ogni nuovo avventuriero generato dal Round 16.0 riceve una
+                Ogni nuovo avventuriero riceve una
                 <strong> razza</strong> (50 disponibili) e un <strong>sesso</strong>
                 (maschile / femminile, 50/50). Sono campi puramente <em>narrativi</em>:
                 non influenzano statistiche, danno o equipaggiamento.
@@ -101,11 +98,6 @@ function RacesGenderSection() {
                 <ListItem><strong>Razza</strong> (es. Umano del Nord, Elfo silvano, Nano delle profondità, Orchetto delle steppe, …). Distribuzione bilanciata per rarità.</ListItem>
                 <ListItem><strong>Sesso</strong>: solo flavor, mostrato nel profilo dell&apos;avventuriero.</ListItem>
             </ul>
-            <p className="text-[11px] text-muted-foreground italic">
-                Gli avventurieri pre-R16.0 sono stati <strong>retroattivamente</strong>
-                arricchiti con razza e sesso (oltre 92.000 record aggiornati in modo
-                atomico e idempotente).
-            </p>
         </SectionBlock>
     );
 }
@@ -138,8 +130,8 @@ function StatColorsSection() {
             </ul>
             <p className="text-[11px] text-muted-foreground italic">
                 Usa i colori per scremare il roster a colpo d&apos;occhio: un Ladro con
-                Destrezza <em>cyan</em> e Forza <em>rossa</em> è una build coerente;
-                un Guerriero con Forza <em>rossa</em> non è ottimale.
+                Destrezza <em>cyan</em> è in linea con la sua classe; un Guerriero
+                con Forza <em>rossa</em> non è ottimale.
             </p>
         </SectionBlock>
     );
@@ -158,9 +150,9 @@ function AutoEquipSection() {
                 :: COME SCEGLIE
             </div>
             <ul className="space-y-1 mb-3">
-                <ListItem>Filtra gli item per <strong>compatibilità di classe</strong> base e specializzazione.</ListItem>
+                <ListItem>Filtra gli item per <strong>compatibilità di classe</strong> (la classe È il criterio: niente build, niente spec).</ListItem>
                 <ListItem>Esclude item con <em>hard block</em> (es. armatura pesante su Mago).</ListItem>
-                <ListItem>Ordina per <strong>punteggio</strong> aggregato delle statistiche utili alla classe.</ListItem>
+                <ListItem>Ordina per <strong>punteggio</strong> aggregato delle statistiche utili al ruolo della classe.</ListItem>
                 <ListItem>Equipaggia uno per <strong>slot</strong> (testa, corpo, mani, armi, accessori).</ListItem>
                 <ListItem>Lascia liberi gli slot per cui non c&apos;è equip valido nel deposito.</ListItem>
             </ul>
@@ -173,14 +165,15 @@ function AutoEquipSection() {
     );
 }
 
-// 39. Minacce e Contromisure (already exists from Phase 4)
+// 39. Minacce e Contromisure
 function ThreatsCountersSection() {
     return (
         <SectionBlock id="minacce-contromisure" title="39. Minacce e Contromisure (Vuoto / Non-morti)">
             <p className="mb-3">
                 I dungeon del <strong>Vuoto</strong> e della <strong>Non-morte</strong> portano <em>minacce</em> specifiche
                 (es. <em>Corruzione del Vuoto</em>, <em>Maledizione</em>, <em>Non-morti</em>, <em>Barriera Magica</em>).
-                Gli avventurieri possono <em>contrastarle</em> grazie alla loro <strong>specializzazione</strong> o ai loro <strong>tratti</strong>.
+                Gli avventurieri possono <em>contrastarle</em> grazie ai <strong>counter tag della loro classe</strong>{" "}
+                (attivi con la risonanza di classe) o ai loro <strong>tratti</strong>.
             </p>
 
             <div className="text-[11px] text-amber tracking-widest mt-4 mb-2">
@@ -188,7 +181,7 @@ function ThreatsCountersSection() {
             </div>
             <ul className="space-y-1 mb-4">
                 <ListItem>Ogni dungeon Vuoto/Non-morti ha da 2 a 4 <strong>minacce</strong> assegnate.</ListItem>
-                <ListItem>Ogni specializzazione/tratto rilevante porta uno o più <strong>counter tag</strong> (es. <code>counter_undead</code>, <code>counter_void</code>, <code>counter_curse</code>).</ListItem>
+                <ListItem>Ogni classe porta due <strong>counter tag</strong> fissi (es. il Negromante <code>counter_undead</code> + <code>counter_void</code>); alcuni tratti ne aggiungono altri.</ListItem>
                 <ListItem>A inizio spedizione si calcola il <strong>ratio</strong> (minacce contrastate / minacce totali).</ListItem>
                 <ListItem>Il ratio fornisce un bonus al success_chance fino a <strong>+12%</strong> e una riduzione delle ferite gravi fino a <strong>-8%</strong> (cap).</ListItem>
                 <ListItem><strong>NESSUN bonus al bottino.</strong> Le drop table non vengono toccate.</ListItem>
@@ -202,27 +195,19 @@ function ThreatsCountersSection() {
                     Dungeon <em>Lich Sanctum</em> con minacce <code>[non-morti, maledizione, boss, barriera magica]</code>.
                 </ListItem>
                 <ListItem>
-                    Una squadra con <strong>Esorcista</strong> (counter_undead + counter_curse) e <strong>Cavaliere Runico</strong> (counter_spell + counter_magic_barrier) contrasta 4/4 minacce → ratio 100% → <strong>+12% successo, -8% ferite</strong>.
+                    Una squadra con <strong>Negromante</strong> (counter_undead + counter_void),{" "}
+                    <strong>Paladino</strong> (counter_undead + counter_curse) e{" "}
+                    <strong>Mago</strong> (counter_spell + counter_magic_barrier) in risonanza
+                    contrasta le minacce → bonus successo e riduzione ferite.
                 </ListItem>
                 <ListItem>
                     Una squadra senza counter tag rilevanti → ratio 0% → nessun bonus, nessuna riduzione.
                 </ListItem>
             </ul>
 
-            <div className="text-[11px] text-amber tracking-widest mt-4 mb-2">
-                :: NUOVI TRATTI DI MISSIONE (R16.0)
-            </div>
-            <p className="mb-2 text-[12px]">
-                Dieci nuovi tratti narrativi disponibili nel pool:
-            </p>
-            <ul className="space-y-1 mb-4 text-[12px]">
-                <ListItem><strong>Specialista Missioni Lunghe</strong>, <strong>Pianificatore Veloce</strong>, <strong>Intraprendente</strong>, <strong>Prudente</strong>.</ListItem>
-                <ListItem><strong>Stratega Anti-Boss</strong> (counter_boss), <strong>Sesto Senso per le Trappole</strong> (counter_trap), <strong>Disgregatore Arcano</strong> (counter_spell + counter_magic_barrier).</ListItem>
-                <ListItem><strong>Cacciatore di Non-morti</strong> (counter_undead), <strong>Tracciatore di Bestie</strong> (counter_beast), <strong>Resistente al Vuoto</strong> (counter_void).</ListItem>
-            </ul>
-
             <p className="text-[11px] text-muted-foreground italic">
-                Attivo solo sui dungeon del Vuoto e della Non-morte. Gli altri dungeon mantengono il comportamento Round 15 invariato.
+                Attivo solo sui dungeon del Vuoto e della Non-morte. Gli altri
+                dungeon mantengono il comportamento standard.
             </p>
         </SectionBlock>
     );
@@ -231,9 +216,9 @@ function ThreatsCountersSection() {
 export default function R16GuideSections() {
     return (
         <>
-            <BaseVsSpecSection />
+            <ClassRoleSection />
             <ClassHallsSection />
-            <UnlockFlowSection />
+            <ResonanceSection />
             <RacesGenderSection />
             <StatColorsSection />
             <AutoEquipSection />

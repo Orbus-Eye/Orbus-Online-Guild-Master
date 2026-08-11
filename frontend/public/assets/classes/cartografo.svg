@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cartografo">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#69707c"/>
+      <stop offset="70%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#1e242d"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f87171" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#fde68a" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><g stroke="#fde68a" stroke-width="5"><line x1="120" y1="58" x2="120" y2="182"/><line x1="58" y1="120" x2="182" y2="120"/></g><polygon points="120,70 130,110 120,120 110,110" fill="#fde68a"/><polygon points="120,170 130,130 120,120 110,130" fill="#8b7f4c"/><circle cx="120" cy="120" r="52" fill="none" stroke="#8b7f4c" stroke-width="4"/></g>
+</svg>

@@ -1,0 +1,21 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Artificiere">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#361807"/>
+      <stop offset="45%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#54250a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bb)"/>
+  <g transform="translate(60 -20) scale(1.0)" opacity="0.9"><rect x="158" y="110" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(0 164 120)"/><rect x="145" y="141" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(45 151 151)"/><rect x="114" y="154" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(90 120 164)"/><rect x="83" y="141" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(135 89 151)"/><rect x="70" y="110" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(180 76 120)"/><rect x="83" y="79" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(225 89 89)"/><rect x="114" y="66" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(270 120 76)"/><rect x="145" y="79" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(315 151 89)"/><circle cx="120" cy="120" r="34" fill="none" stroke="#fbbf24" stroke-width="10"/><circle cx="120" cy="120" r="10" fill="#8a6914"/></g>
+  <text x="320" y="92" font-family="Georgia, serif" font-size="44"
+        fill="#fcd266" font-weight="bold">Artificiere</text>
+  <text x="322" y="132" font-family="Georgia, serif" font-size="20"
+        fill="#fbbf24" opacity="0.9">Ciò che si rompe si rifà; ciò che si rifà migliora.</text>
+  <rect x="320" y="148" width="150" height="26" rx="4" fill="none"
+        stroke="#f87171" stroke-width="2"/>
+  <text x="334" y="166" font-family="monospace" font-size="15"
+        fill="#f87171">DPS</text>
+  <rect x="6" y="6" width="788" height="188" fill="none"
+        stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+</svg>

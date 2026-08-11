@@ -54,8 +54,12 @@ async def get_dashboard_suggestions(ctx=Depends(_ctx)):
     out: list[dict[str, Any]] = []
 
     # 1. Completed expeditions with unread report
+    # FASE 9 A3 — i report puliti (PULISCI → report_dismissed_at) non
+    # devono più alimentare "Prossime azioni": `None` matcha sia campo
+    # assente (legacy) sia null.
     n_completed = await db.expeditions.count_documents({
         "guild_id": gid, "status": "completed", "is_read": {"$ne": True},
+        "report_dismissed_at": None,
     })
     if n_completed > 0:
         out.append({
@@ -111,20 +115,27 @@ async def get_dashboard_suggestions(ctx=Depends(_ctx)):
             "icon": "🪪",
         })
 
-    # 4. Class Hall with locked specs (unlock progress visible)
-    halls_unlocked_with_locked_specs = 0
-    async for h in db.class_halls.find(
-        {"guild_id": gid, "is_unlocked": True},
-        {"_id": 0, "unlocked_specializations": 1},
-    ):
-        if len(h.get("unlocked_specializations") or []) < 3:
-            halls_unlocked_with_locked_specs += 1
-    if halls_unlocked_with_locked_specs > 0:
+    # 4. FASE 9C — reclute senza classe in attesa di una Sala (le
+    # specializzazioni sbloccabili non esistono più).
+    n_classless = await db.adventurers.count_documents({
+        "guild_id": gid, "is_retired": {"$ne": True},
+        "$or": [
+            {"class_slug": None}, {"class_slug": {"$exists": False}},
+            {"class_slug": ""},
+        ],
+    })
+    if n_classless > 0:
         out.append({
-            "id": "class_hall_unlock",
+            "id": "class_hall_assign",
             "priority": 5,
-            "title_it": f"{halls_unlocked_with_locked_specs} Sale di Classe con specializzazioni da sbloccare",
-            "title_en": f"{halls_unlocked_with_locked_specs} Class Hall(s) have unlockable specializations",
+            "title_it": (
+                f"{n_classless} reclute senza classe: scegli la loro "
+                "Sala di Classe"
+            ),
+            "title_en": (
+                f"{n_classless} classless recruit(s) waiting for a "
+                "Class Hall"
+            ),
             "cta_it": "Sale di Classe",
             "cta_en": "Class Halls",
             "link": "/class-halls",
@@ -219,7 +230,10 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
     adv_count = await db.adventurers.count_documents({"guild_id": gid})
     if adv_count > 0:
         completed.add("view_roster")
-    if adv_count > 3:  # > starter pack
+    # FASE 9 A4 — "recruit_one" è completo solo OLTRE i fondatori
+    # gratuiti (ora 6): il vecchio `> 3` lo marcava fatto a ogni gilda.
+    from app.onboarding.services import STARTER_TARGET
+    if adv_count > STARTER_TARGET:
         completed.add("recruit_one")
 
     n_equipped = await db.equipped_items.count_documents(

@@ -130,7 +130,6 @@ export default function PvpChallenge() {
                                     </div>
                                     <div className="text-[11px] text-zinc-500 mt-0.5">
                                         {a.class_name || a.class_slug || "?"}
-                                        {a.specialization_slug && ` · ${a.specialization_slug}`}
                                     </div>
                                 </button>
                             );

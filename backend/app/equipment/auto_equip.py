@@ -266,7 +266,7 @@ async def auto_equip_adventurer(
     adv = await db.adventurers.find_one(
         {"id": adventurer_id, "guild_id": guild["id"]},
         {"_id": 0, "id": 1, "name": 1, "level": 1, "class_slug": 1,
-         "class_name": 1, "specialization_slug": 1},
+         "class_name": 1},
     )
     if not adv:
         raise HTTPException(404, {

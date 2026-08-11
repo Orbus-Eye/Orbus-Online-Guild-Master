@@ -17,6 +17,7 @@ from app.class_halls.catalog import (
     get_class_hall_profile,
 )
 from app.class_halls.feature_flags import assignment_enabled_for_hall
+from app.classes import class_role_for as _registry_role
 
 
 def _now() -> datetime:
@@ -434,7 +435,12 @@ async def confirm_class_hall_assignment(
             "$set": {
                 "adventurer_class_id": class_doc["id"],
                 "class_name": profile.class_name_it,
-                "class_role": profile.class_role,
+                # FASE 9B — ruolo canonico dal registry (DPS/TANK/HEALER),
+                # non più la vecchia tassonomia del catalogo Hall.
+                "class_role": (
+                    _registry_role(profile.canonical_class_slug)
+                    or profile.class_role
+                ),
                 "class_proficiency": profile.class_proficiency,
                 "class_slug": profile.canonical_class_slug,
                 "canonical_class_slug": profile.canonical_class_slug,
@@ -491,6 +497,15 @@ async def confirm_class_hall_assignment(
             },
         )
     except Exception:
+        pass
+    # FASE 9C — progresso contratti: l'assegnazione di una classe
+    # sostituisce il vecchio obiettivo "specializations_applied".
+    try:
+        from app.contracts.services import increment_contract_progress
+        await increment_contract_progress(
+            db, guild_id, "class_halls_assigned", 1,
+        )
+    except Exception:  # noqa: BLE001
         pass
     fresh = await db.adventurers.find_one(
         {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
