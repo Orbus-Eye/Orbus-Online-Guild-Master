@@ -7,6 +7,7 @@ import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import ExpeditionExplainer from "../components/ExpeditionExplainer";
+import RoomProgressTimer, { shouldShowRoomTimer } from "../components/RoomProgressTimer";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -206,16 +207,29 @@ function RoomsSection({ e, onRefresh }) {
                                             {res.success && res.loot_count > 0 ? ` · ${res.loot_count} oggetti` : ""}
                                         </span>
                                     )}
+                                    {res?.success && (
+                                        <span
+                                            data-testid={`room-completed-${room.idx}`}
+                                            className="text-[9px] tracking-widest text-[#22c55e] border border-[#22c55e]/40 px-1.5 py-0.5 rounded-sm"
+                                        >
+                                            COMPLETATA
+                                        </span>
+                                    )}
                                 </div>
                                 {room.narrative_it && (
                                     <p className="text-[11px] text-muted-foreground italic mt-0.5">
                                         {room.narrative_it}
                                     </p>
                                 )}
-                                {isCurrent && e.room_state === "in_room" && (
-                                    <p className="text-[11px] text-amber mt-0.5" data-testid="room-countdown">
-                                        Il gruppo è nella stanza… (~{Math.max(0, Math.round((e.seconds_remaining || 0) / 60))} min)
-                                    </p>
+                                {/* FASE 9P — barra temporale SOLO sulla stanza
+                                    realmente attiva (mai su scelte, bivi,
+                                    stanze future o completate). */}
+                                {shouldShowRoomTimer(e, room.idx) && (
+                                    <RoomProgressTimer
+                                        durationSeconds={e.room_duration_seconds}
+                                        secondsRemaining={e.seconds_remaining}
+                                        onExpired={onRefresh}
+                                    />
                                 )}
                             </div>
                         </li>

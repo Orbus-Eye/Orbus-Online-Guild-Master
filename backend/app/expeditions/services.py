@@ -241,6 +241,38 @@ def expedition_public(e: dict) -> dict:
             out["seconds_remaining"] = max(0, remaining)
         except Exception:
             out["seconds_remaining"] = 0
+    # FASE 9P — timer autoritativo della STANZA corrente (solo quando il
+    # gruppo è davvero dentro una stanza: niente timer su scelte/bivi,
+    # stanze future o run concluse). Il FE anima localmente ogni secondo
+    # e si riallinea a questi campi a ogni refetch.
+    if (
+        out["mode"] == "rooms"
+        and out["status"] == "in_progress"
+        and out["room_state"] == "in_room"
+        and out["completes_at"]
+    ):
+        duration = int(e.get("room_duration_seconds") or 0)
+        if duration <= 0:
+            # Fallback doc legacy (pre-9P): durata base della stanza
+            # corrente dallo snapshot (senza fattore riposo).
+            cur = int(e.get("current_room_idx", 0) or 0)
+            for r in e.get("rooms_snapshot") or []:
+                if int(r.get("idx", -1)) == cur:
+                    duration = int(r.get("duration_seconds", 0) or 0)
+                    break
+        started = e.get("room_started_at")
+        if not started and duration > 0:
+            try:
+                started = (
+                    datetime.fromisoformat(out["completes_at"])
+                    - timedelta(seconds=duration)
+                ).isoformat()
+            except Exception:
+                started = None
+        if duration > 0:
+            out["room_started_at"] = started
+            out["room_completes_at"] = out["completes_at"]
+            out["room_duration_seconds"] = duration
     return out
 
 
@@ -1443,6 +1475,7 @@ async def _dispatch_expedition(
     from app.dungeons.rooms import build_rooms_snapshot, rooms_mode_for_dungeon
     if rooms_mode_for_dungeon(dungeon):
         rooms_snapshot = build_rooms_snapshot(dungeon, success_chance)
+        first_room_duration = int(rooms_snapshot[0]["duration_seconds"])
         exp_doc.update({
             "mode": "rooms",
             "rooms_snapshot": rooms_snapshot,
@@ -1453,10 +1486,12 @@ async def _dispatch_expedition(
             "carried_xp": 0,
             "carried_loot_ids": [],
             "room_results": [],
+            # FASE 9P — timestamp autoritativi della stanza corrente per
+            # la progress bar FE (inizio + durata EFFETTIVA).
+            "room_started_at": now.isoformat(),
+            "room_duration_seconds": first_room_duration,
             "completes_at": (
-                now + timedelta(
-                    seconds=rooms_snapshot[0]["duration_seconds"]
-                )
+                now + timedelta(seconds=first_room_duration)
             ).isoformat(),
         })
 

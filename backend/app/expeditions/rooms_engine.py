@@ -193,6 +193,10 @@ async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool,
             **(snapshot_update or {}),
             "current_room_idx": next_idx,
             "room_state": "in_room",
+            # FASE 9P — timestamp autoritativi della stanza corrente
+            # (durata EFFETTIVA: il riposo la allunga del 25%).
+            "room_started_at": now.isoformat(),
+            "room_duration_seconds": int(duration),
             "completes_at": (now + timedelta(seconds=duration)).isoformat(),
             "rest_bonus_next": REST_CHANCE_BONUS if rest else 0,
             "auto_continued": bool(auto),
