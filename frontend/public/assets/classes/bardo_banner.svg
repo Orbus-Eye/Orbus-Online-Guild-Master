@@ -1,0 +1,21 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bardo">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#280d3d"/>
+      <stop offset="45%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#3e145e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bb)"/>
+  <g transform="translate(60 -20) scale(1.0)" opacity="0.9"><path d="M92 66 q-20 56 28 108 q48 -52 28 -108 q-8 22 -28 22 q-20 0 -28 -22 Z" fill="none" stroke="#d8b4fe" stroke-width="7"/><g stroke="#d8b4fe" stroke-width="4"><line x1="108" y1="98" x2="108" y2="158"/><line x1="132" y1="98" x2="132" y2="158"/></g><line x1="120" y1="96" x2="120" y2="128" stroke="#77638c" stroke-width="4"/><path d="M120 128 q10 8 0 16" stroke="#77638c" stroke-width="4" fill="none"/></g>
+  <text x="320" y="92" font-family="Georgia, serif" font-size="44"
+        fill="#e4cafe" font-weight="bold">Bardo</text>
+  <text x="322" y="132" font-family="Georgia, serif" font-size="20"
+        fill="#d8b4fe" opacity="0.9">Una canzone rimasta a metà è un patto.</text>
+  <rect x="320" y="148" width="150" height="26" rx="4" fill="none"
+        stroke="#34d399" stroke-width="2"/>
+  <text x="334" y="166" font-family="monospace" font-size="15"
+        fill="#34d399">HEALER</text>
+  <rect x="6" y="6" width="788" height="188" fill="none"
+        stroke="#d8b4fe" stroke-width="2" opacity="0.5"/>
+</svg>

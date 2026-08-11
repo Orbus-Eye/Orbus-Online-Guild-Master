@@ -1,11 +1,11 @@
-// ROUND 15 — Fase 1 / Task 3 (rev. 15.1)
-// Sezione narrativa "Classi e statistiche".
-// Tutti i label statistica/ruolo sono in italiano. Il suffisso "(SLUG_EN)"
-// è stato rimosso. I role label vengono mappati via `ROLE_IT`.
+// FASE 9 — Sezione Guida "Classi e statistiche" riscritta sul nuovo
+// Source of Truth: 27 CLASSI, ognuna con un RUOLO FISSO
+// (13 Danno · 6 Difensori · 8 Guaritori). Niente specializzazioni,
+// niente build: la classe È l'identità. I dati rispecchiano il registry
+// canonico del server (backend/app/classes/registry.py).
 
 import { SectionBlock } from "./_shared";
 
-// Canonical IT stat labels (used per il rendering UI, gli slug interni restano EN).
 const STAT_IT = {
     strength: "Forza",
     agility: "Destrezza",
@@ -14,357 +14,215 @@ const STAT_IT = {
     faith: "Fede",
 };
 
-// Canonical IT role labels (covers role + secondary_role).
-const ROLE_IT = {
-    Tank: "Difensore",
-    DPS: "Attaccante",
-    Healer: "Guaritore",
-    Caster: "Incantatore",
-    Stealth: "Furtivo",
-    Support: "Supporto",
-    Frontline: "Prima linea",
-    "Off-Healer": "Guaritore di supporto",
-    "Dedicated single-target": "Cura singola dedicata",
-    "AoE Heal / Hybrid Caster": "Cura ad area / Incantatore ibrido",
-    "Self-Sustain": "Auto-cura",
-    "Caster / Control": "Incantatore / Controllo",
-    "Caster / Summoner": "Incantatore / Evocatore",
-    "Scout / Ranged": "Esploratore / Distanza",
-    "Burst Stealth": "Furtivo da burst",
-    "Buffer / Debuffer": "Buff e debuff",
+const ROLE_META = {
+    DPS: {
+        label: "Danno (DPS)",
+        color: "text-red-300",
+        border: "border-red-400/40",
+        blurb: (
+            "13 classi. Il loro compito è abbattere la minaccia: l'equip " +
+            "e i set raid rafforzano la statistica primaria della classe."
+        ),
+    },
+    TANK: {
+        label: "Difensore (Tank)",
+        color: "text-sky-300",
+        border: "border-sky-400/40",
+        blurb: (
+            "6 classi. Reggono il fronte e assorbono i colpi: l'equip e i " +
+            "set raid rafforzano prima di tutto la Costituzione."
+        ),
+    },
+    HEALER: {
+        label: "Guaritore (Healer)",
+        color: "text-emerald-300",
+        border: "border-emerald-400/40",
+        blurb: (
+            "8 classi. Tengono in piedi la compagnia: l'equip e i set " +
+            "raid rafforzano prima di tutto la Fede."
+        ),
+    },
 };
 
-function roleIT(label) {
-    if (!label) return "";
-    return ROLE_IT[label] || label;
-}
+// 27 classi canoniche — stessi contenuti del registry server.
+const CLASSES = [
+    { slug: "guerriero", name: "Guerriero", role: "DPS", stat: "strength",
+      identity: "L'acciaio non si spezza. Si tempra.",
+      style: "Maestro d'armi in prima linea: pressione costante e colpi pesanti." },
+    { slug: "ladro", name: "Ladro", role: "DPS", stat: "agility",
+      identity: "Un passo taciuto vale più di cento minacce.",
+      style: "Assalti dall'ombra: aperture rapide, critici ed elusione." },
+    { slug: "mago", name: "Mago", role: "DPS", stat: "intellect",
+      identity: "Ogni sigillo custodisce una domanda più pericolosa della risposta.",
+      style: "Incantatore puro: esplosioni arcane e controllo del campo." },
+    { slug: "monaco", name: "Monaco", role: "DPS", stat: "agility",
+      identity: "Il corpo è la prima disciplina.",
+      style: "Combo senz'armi, mobilità e recupero tramite disciplina." },
+    { slug: "negromante", name: "Negromante", role: "DPS", stat: "intellect",
+      identity: "Ciò che è finito continua se sa il proprio nome.",
+      style: "Necroenergia e servitori non morti che logorano il nemico." },
+    { slug: "cacciatore_del_vuoto", name: "Cacciatore del Vuoto", role: "DPS", stat: "intellect",
+      identity: "Si caccia ciò che non ha peso.",
+      style: "Tiro a lunga distanza: l'unica lama che morde gli incorporei." },
+    { slug: "artificiere", name: "Artificiere", role: "DPS", stat: "agility",
+      identity: "Ciò che si rompe si rifà; ciò che si rifà migliora.",
+      style: "Torrette e ordigni: danno meccanico che non conosce stanchezza." },
+    { slug: "cartografo", name: "Cartografo", role: "DPS", stat: "agility",
+      identity: "La mappa non descrive, la mappa ricorda.",
+      style: "Colpi di precisione dove la mappa dice che il nemico sarà." },
+    { slug: "runista", name: "Runista", role: "DPS", stat: "intellect",
+      identity: "La runa non descrive, la runa impone.",
+      style: "Rune incise che detonano ad area: il danno è già scritto." },
+    { slug: "burattinaio", name: "Burattinaio", role: "DPS", stat: "agility",
+      identity: "Il filo che tiene è il filo che libera.",
+      style: "Marionette da guerra manovrate a distanza da fili invisibili." },
+    { slug: "giocatore_d_azzardo", name: "Giocatore d'Azzardo", role: "DPS", stat: "agility",
+      identity: "La sorte è un patto scritto in nero.",
+      style: "Rischio calcolato: colpi che possono raddoppiare." },
+    { slug: "pittore", name: "Pittore", role: "DPS", stat: "intellect",
+      identity: "Il colore giusto costa.",
+      style: "Immagini viventi e ritratti debilitanti che feriscono davvero." },
+    { slug: "cacciatore_del_sangue", name: "Cacciatore del Sangue", role: "DPS", stat: "strength",
+      identity: "Il sangue sa dove torna.",
+      style: "Emorragia e inseguimento: più la preda è ferita, più affonda." },
+    { slug: "paladino", name: "Paladino", role: "TANK", stat: "faith",
+      identity: "La luce resta quando il voto costa più della vittoria.",
+      style: "Baluardo consacrato: attira i colpi e li restituisce come giudizio." },
+    { slug: "cacciatore_di_mostri", name: "Cacciatore di Mostri", role: "TANK", stat: "endurance",
+      identity: "La pista parla soltanto a chi smette di inseguire il rumore.",
+      style: "Aggancia la preda, la trattiene e ne assorbe la furia." },
+    { slug: "fabbro_arcano", name: "Fabbro Arcano", role: "TANK", stat: "strength",
+      identity: "Il metallo tace ma ricorda.",
+      style: "Corazza runica autoriparante: ogni colpo subito incide protezione." },
+    { slug: "parassita", name: "Parassita", role: "TANK", stat: "endurance",
+      identity: "Si vive di ciò che si trova.",
+      style: "Drena vigore dai nemici: più viene colpito, più radica e resiste." },
+    { slug: "cavaliere_della_morte", name: "Cavaliere della Morte", role: "TANK", stat: "endurance",
+      identity: "La morte è già passata, io la seguo.",
+      style: "Tenuta oltre la vita: vessillo nero e aura di paura." },
+    { slug: "cavaliere_di_draghi", name: "Cavaliere di Draghi", role: "TANK", stat: "strength",
+      identity: "Il drago non si comanda, si accompagna.",
+      style: "Avanguardia in scaglie di drago: carica e fiamma che tiene il fronte." },
+    { slug: "alchimista", name: "Alchimista", role: "HEALER", stat: "intellect",
+      identity: "Un grammo separa cura e veleno.",
+      style: "Pozioni e distillati: cura misurata al grammo, antidoti per tutto." },
+    { slug: "bardo", name: "Bardo", role: "HEALER", stat: "faith",
+      identity: "Una canzone rimasta a metà è un patto.",
+      style: "Armonie che ricuciono: il morale è la prima medicina." },
+    { slug: "druido", name: "Druido", role: "HEALER", stat: "faith",
+      identity: "La foresta chiede prima di dare.",
+      style: "Guarigione naturale: linfa, rigenerazione e pazienza millenaria." },
+    { slug: "sciamano", name: "Sciamano", role: "HEALER", stat: "faith",
+      identity: "Lo spirito non parla, lo spirito ricorda.",
+      style: "Cura elementale e totem: gli spiriti sostengono chi il tamburo chiama." },
+    { slug: "cronista", name: "Cronista", role: "HEALER", stat: "intellect",
+      identity: "Ciò che viene scritto oggi accade oggi per sempre.",
+      style: "Riscrive le ferite come refusi: ciò che la penna corregge, il corpo dimentica." },
+    { slug: "mercante", name: "Mercante", role: "HEALER", stat: "agility",
+      identity: "Il prezzo giusto è quello che entrambi accettano.",
+      style: "Rifornimenti e contratti di soccorso: nessuna ferita resta aperta." },
+    { slug: "astrologo", name: "Astrologo", role: "HEALER", stat: "intellect",
+      identity: "Ciò che è scritto in alto è già accaduto in basso.",
+      style: "Legge le ferite prima che accadano: destini raddrizzati." },
+    { slug: "sognatore", name: "Sognatore", role: "HEALER", stat: "intellect",
+      identity: "Il sogno è già accaduto, solo non lo sappiamo.",
+      style: "Ripara nel sogno ciò che il giorno ha rotto." },
+];
 
 const STATS = [
-    {
-        slug: "strength",
-        what: "La capacità grezza di colpire forte e portare carichi pesanti.",
-        used_by: ["Guerriero", "Paladino", "Berserker", "Ladro (secondaria)"],
-        influences: [
-            "Power totale dell'avventuriero",
-            "Danno con armi pesanti (spade a due mani, mazze)",
-            "Equipaggiamento di tipo corazza pesante",
-            "Probabilità di successo nei dungeon corpo a corpo",
-        ],
-        example:
-            "Un Berserker con Forza 10 colpisce più duro di tutti gli altri Attaccanti fisici, ma muore in 2 turni senza Costituzione.",
-    },
-    {
-        slug: "agility",
-        what: "Velocità, riflessi e precisione nei movimenti.",
-        used_by: ["Ladro", "Ranger", "Assassino", "Monaco", "Bardo (secondaria)"],
-        influences: [
-            "Power totale",
-            "Probabilità di schivare colpi (PvP e dungeon)",
-            "Iniziativa nei round combat",
-            "Equipaggiamento finesse (pugnali, archi)",
-        ],
-        example:
-            "Un Assassino con Destrezza 10 può uccidere un nemico Lv 5 senza essere colpito, ma una sola debolezza in copertura lo fa cadere.",
-    },
-    {
-        slug: "intellect",
-        what: "Acume mentale, comprensione arcana, controllo delle energie.",
-        used_by: ["Mago", "Negromante", "Bardo", "Druido (secondaria)"],
-        influences: [
-            "Power totale",
-            "Potenza degli incantesimi di danno e controllo",
-            "Equipaggiamento arcano (bastoni, grimoires, sigilli)",
-            "Capacità di leggere i traits più rari",
-        ],
-        example:
-            "Un Mago con Intelletto 10 polverizza un'ondata di nemici, ma con Intelletto 5 si ritrova a lanciare scintille innocue.",
-    },
-    {
-        slug: "endurance",
-        what: "Capacità di assorbire danno e mantenere lo sforzo nel tempo.",
-        used_by: ["Guerriero", "Paladino", "Berserker (secondaria)", "Ranger (secondaria)"],
-        influences: [
-            "Power totale",
-            "Hit point effettivi nei combattimenti lunghi",
-            "Equipaggiamento di tipo corazza pesante e scudi",
-            "Sostenibilità nelle spedizioni multi-stadio",
-        ],
-        example:
-            "Un Guerriero con Costituzione 9 può tenere il fronte di un raid per turni multipli; con Costituzione 3 sarebbe fuori al primo colpo.",
-    },
-    {
-        slug: "faith",
-        what: "Connessione con il sacro, fonte di guarigione e luce.",
-        used_by: ["Sacerdote", "Druido", "Paladino"],
-        influences: [
-            "Power totale",
-            "Potenza delle cure e degli incantesimi sacri",
-            "Equipaggiamento sacro (reliquie, sceptri, talismani)",
-            "Resistenza a effetti negativi di tipo \"oscuro/non-morto\"",
-        ],
-        example:
-            "Un Sacerdote con Fede 10 può salvare un avventuriero sull'orlo della morte in un raid; con Fede 3 può solo accelerare un riposo.",
-    },
+    { slug: "strength",
+      what: "La capacità grezza di colpire forte e portare carichi pesanti.",
+      note: "Stat primaria di Guerriero, Cacciatore del Sangue, Fabbro Arcano e Cavaliere di Draghi." },
+    { slug: "agility",
+      what: "Velocità, riflessi e precisione nei movimenti.",
+      note: "Stat primaria di Ladro, Monaco, Artificiere, Cartografo, Burattinaio, Giocatore d'Azzardo e Mercante." },
+    { slug: "intellect",
+      what: "Acume mentale, comprensione arcana, controllo delle energie.",
+      note: "Stat primaria di Mago, Negromante, Runista, Pittore, Alchimista, Cronista, Astrologo, Sognatore e Cacciatore del Vuoto." },
+    { slug: "endurance",
+      what: "Capacità di assorbire danno e mantenere lo sforzo nel tempo.",
+      note: "Stat primaria di Cacciatore di Mostri, Parassita e Cavaliere della Morte. È il focus dell'equip di TUTTI i Difensori." },
+    { slug: "faith",
+      what: "Connessione con il sacro, fonte di guarigione e luce.",
+      note: "Stat primaria di Paladino, Bardo, Druido e Sciamano. È il focus dell'equip di TUTTI i Guaritori." },
 ];
-
-// CLASSES uses canonical IT stat labels (Forza/Destrezza/Intelletto/Costituzione/Fede).
-const CLASSES = [
-    { slug: "warrior", name_it: "Guerriero", role: "Tank", secondary_role: "Frontline",
-        primary_stat: "Forza", secondary_stats: ["Costituzione"],
-        equip: "Spade e asce a una o due mani, mazze, scudi pesanti, corazze a piastre. Mai armatura di stoffa.",
-        playstyle: "Si piazza davanti al party, intercetta i colpi e li restituisce. Lento ma inossidabile.",
-        differs_from: "Diversamente dal Paladino, non sa curare. Diversamente dal Berserker, non scambia la difesa per più danno.",
-        strengths: ["Sopravvivenza altissima", "Aggro stabile", "Equipaggiamento abbondante"],
-        weaknesses: ["Lento", "Nessun danno magico", "Niente cure"],
-        good_in: ["Dungeon Tier 1-3 con boss melee", "Spedizioni lunghe con pochi guaritori"] },
-
-    { slug: "paladin", name_it: "Paladino", role: "Tank", secondary_role: "Off-Healer",
-        primary_stat: "Fede", secondary_stats: ["Forza", "Costituzione"],
-        equip: "Spade/mazze sacre, scudi, armatura pesante con simboli sacri. Reliquie e talismani.",
-        playstyle: "Difensore ibrido: meno duro del Guerriero puro, ma può curare l'alleato accanto e colpire più forte i nemici non-morti.",
-        differs_from: "Il Guerriero è più resistente; il Sacerdote cura di più. Il Paladino unisce le due cose a metà costo.",
-        strengths: ["Versatilità", "Auto-sostegno", "Bonus vs Vuoto/Non-morti"],
-        weaknesses: ["Né il miglior difensore né il miglior guaritore", "Statistiche spalmate"],
-        good_in: ["Raid lunghi", "Dungeon di tipo Vuoto/Non-morti", "Squadre con un solo guaritore"] },
-
-    { slug: "rogue", name_it: "Ladro", role: "DPS", secondary_role: "Stealth",
-        primary_stat: "Destrezza", secondary_stats: ["Forza"],
-        equip: "Pugnali, spade corte, armi finesse. Armatura leggera in cuoio. Niente piastre.",
-        playstyle: "Si infila tra le linee, colpisce il bersaglio più vulnerabile, sparisce. Critici frequenti.",
-        differs_from: "L'Assassino è più letale in singolo colpo ma meno sostenibile; il Ranger lavora a distanza.",
-        strengths: ["Danno alto su bersagli isolati", "Iniziativa", "Mobilità"],
-        weaknesses: ["Fragile", "Vulnerabile a controllo di gruppo"],
-        good_in: ["Dungeon con boss singolo", "PvP veloce"] },
-
-    { slug: "ranger", name_it: "Ranger", role: "DPS", secondary_role: "Scout / Ranged",
-        primary_stat: "Destrezza", secondary_stats: ["Costituzione"],
-        equip: "Archi, balestre, frecce stregate. Armatura leggera/media. Lavora a distanza.",
-        playstyle: "Mantiene la distanza, colpisce prima che il nemico si avvicini. Esploratore naturale.",
-        differs_from: "Il Ladro lavora a corto raggio; il Ranger usa la stessa stat ma per il tiro lungo. La Costituzione secondaria gli permette spedizioni più lunghe.",
-        strengths: ["Danno costante", "Sicurezza dalla distanza", "Buono nelle esplorazioni"],
-        weaknesses: ["Soffre in stanze strette", "Munizioni/consumabili da gestire"],
-        good_in: ["Dungeon all'aperto", "Spedizioni esplorative", "Raid contro boss volanti"] },
-
-    { slug: "assassin", name_it: "Assassino (specializzazione di Ladro)", is_specialization: true, parent_class_it: "Ladro", role: "DPS", secondary_role: "Burst Stealth",
-        primary_stat: "Destrezza", secondary_stats: ["Forza"],
-        equip: "Pugnali avvelenati, armi finesse. Armatura quasi nulla, abito d'ombra.",
-        playstyle: "Aspetta. Colpisce. Sparisce. Un solo colpo, idealmente decisivo.",
-        differs_from: "Il Ladro è più sostenibile e versatile; l'Assassino è chirurgico. Crolla appena viene visto.",
-        strengths: ["Burst damage estremo", "Furtività pura", "Critici alti"],
-        weaknesses: ["Estremamente fragile", "Pessimo se scoperto", "Niente sostegno"],
-        good_in: ["Boss con poco HP da chiudere rapidamente", "PvP one-shot"] },
-
-    { slug: "berserker", name_it: "Berserker (specializzazione di Guerriero)", is_specialization: true, parent_class_it: "Guerriero", role: "DPS", secondary_role: "Frontline",
-        primary_stat: "Forza", secondary_stats: ["Costituzione"],
-        equip: "Armi a due mani: asce, claymore, martelli. Armatura media — niente scudo per definizione.",
-        playstyle: "Carica frontalmente, colpisce a piena forza. Più la sua salute scende, più colpisce.",
-        differs_from: "Il Guerriero difende e regge i colpi; il Berserker assorbe e li restituisce molto più forte ma muore prima.",
-        strengths: ["Danno corpo a corpo top-tier", "Resilienza media", "Identità chiara"],
-        weaknesses: ["Niente cure", "Niente difesa attiva", "Squilibrato in raid lunghi"],
-        good_in: ["Dungeon fast clear", "Boss melee tankato da un alleato"] },
-
-    { slug: "monk", name_it: "Monaco", role: "DPS", secondary_role: "Self-Sustain",
-        primary_stat: "Destrezza", secondary_stats: ["Costituzione", "Fede"],
-        equip: "Armi nude o bastoni. Mai armatura pesante: la sua difesa è l'evasione.",
-        playstyle: "Schiva, colpisce a mani nude o con bastone, recupera piccole ferite tra una mossa e l'altra.",
-        differs_from: "Il Ladro è più burst, l'Assassino più letale; il Monaco si bilancia tra danno e autosostegno.",
-        strengths: ["Auto-cura leggera", "Mobilità", "Indipendente dall'equip"],
-        weaknesses: ["Equip limitato", "Picchi di danno minori degli Attaccanti puri"],
-        good_in: ["Spedizioni solo-friendly", "Dungeon con poche cure disponibili"] },
-
-    { slug: "mage", name_it: "Mago", role: "DPS", secondary_role: "Caster / Control",
-        primary_stat: "Intelletto", secondary_stats: ["Costituzione"],
-        equip: "Bastoni arcani, bacchette, grimoires. Armatura in stoffa, mai pesante.",
-        playstyle: "Sceglie l'incantesimo giusto, lo lancia, ripete. Versatile su danno e controllo.",
-        differs_from: "Il Negromante usa la stessa stat ma con flavor oscuro; il Druido cura più di quanto colpisce.",
-        strengths: ["Ventaglio di incantesimi", "AoE", "Controllo del campo"],
-        weaknesses: ["Fragile", "Dipende dal mana / cooldown", "Vulnerabile in melee"],
-        good_in: ["Dungeon con ondate", "Boss con meccaniche complesse", "AoE clear"] },
-
-    { slug: "necromancer", name_it: "Negromante (specializzazione di Mago)", is_specialization: true, parent_class_it: "Mago", role: "DPS", secondary_role: "Caster / Summoner",
-        primary_stat: "Intelletto", secondary_stats: ["Destrezza"],
-        equip: "Bastoni d'ossa, falci, simboli oscuri. Vesti rituali, mai armatura forte.",
-        playstyle: "Drena vita, evoca scheletri, decompone i bersagli. Lavora di logoramento.",
-        differs_from: "Il Mago crea fiamme; il Negromante crea servitori. Il Mago controlla l'arcano; il Negromante controlla la morte.",
-        strengths: ["Damage over time", "Servitori evocati", "Sinergie con loot non-morto"],
-        weaknesses: ["Setup lento", "Disprezzato in spedizioni \"sacre\""],
-        good_in: ["Dungeon non-morti (sinergie loot)", "Spedizioni lunghe dove i pet aiutano"] },
-
-    { slug: "priest", name_it: "Sacerdote", role: "Healer", secondary_role: "Dedicated single-target",
-        primary_stat: "Fede", secondary_stats: ["Intelletto"],
-        equip: "Mazze sacre, scettri, libri di preghiera. Vesti, talismani sacri.",
-        playstyle: "Tiene in piedi il bersaglio più importante. Cura singola enorme, cura di gruppo limitata.",
-        differs_from: "Il Druido cura più alleati insieme (AoE); il Sacerdote è il salvavita del singolo Difensore.",
-        strengths: ["Cura singola top-tier", "Buff anti-morte", "Identità chiara"],
-        weaknesses: ["Niente AoE heal", "Niente danno reale"],
-        good_in: ["Raid con un solo difensore da tenere su", "Dungeon hard mode con boss melee"] },
-
-    { slug: "druid", name_it: "Druido", role: "Healer", secondary_role: "AoE Heal / Hybrid Caster",
-        primary_stat: "Fede", secondary_stats: ["Intelletto"],
-        equip: "Bastoni naturali, clave rituali, vesti in cuoio o stoffa naturale.",
-        playstyle: "Cura più alleati insieme, lancia incantesimi naturali, si adatta. Meno specialista ma più flessibile.",
-        differs_from: "Il Sacerdote è migliore sul singolo target; il Druido brilla quando tre alleati sono feriti contemporaneamente.",
-        strengths: ["AoE heal", "Flessibilità", "Danno secondario reale"],
-        weaknesses: ["Cura singola inferiore al Sacerdote", "Identità ibrida non sempre apprezzata"],
-        good_in: ["Dungeon a 5 con molti danni AoE", "Spedizioni con squadra ferita diffusamente"] },
-
-    { slug: "bard", name_it: "Bardo", role: "Support", secondary_role: "Buffer / Debuffer",
-        primary_stat: "Intelletto", secondary_stats: ["Destrezza", "Fede"],
-        equip: "Pugnali e strumenti musicali. Armatura leggera per restare mobile.",
-        playstyle: "Non fa il danno più alto né cura più di tutti, ma migliora chi ha attorno. Nemici stonati, alleati ispirati.",
-        differs_from: "L'unica classe Supporto pura. Il suo valore non è nel suo colpo, ma nel moltiplicatore che dà agli altri.",
-        strengths: ["Buff costanti", "Debuff sui nemici", "Utility uniche"],
-        weaknesses: ["Danno solo basso", "Inutile in 1v1 PvP"],
-        good_in: ["Raid", "Squadre da 5+ a basso power"] },
-
-    // ROUND 16.0.1 — 11th base class.
-    { slug: "alchemist", name_it: "Alchimista", role: "DPS", secondary_role: "Support",
-        primary_stat: "Intelletto", secondary_stats: ["Destrezza", "Costituzione"],
-        equip: "Pugnali, tomi, fiale alchemiche. Armature leggere o vesti.",
-        playstyle: "Lancia bombe, distilla veleni, prepara elisir. Studioso pragmatico, sfrutta la chimica più che la magia pura.",
-        differs_from: "Mentre il Mago piega l'arcano e il Negromante (specializzazione del Mago) anima i morti, l'Alchimista è uno sperimentatore terreno: trasforma materia ed essenze in armi e cure.",
-        strengths: ["AoE esplosivo (Bombardiere)", "DoT veleni (Tossicologo)", "Counter maledizioni e barriere (Trasmutatore)"],
-        weaknesses: ["HP medi", "Difesa fisica scarsa", "Dipende dai materiali alchemici"],
-        good_in: ["Dungeon con boss avvelenabili", "Spedizioni assedio", "Squadre con ferite/maledizioni da curare"] },
-];
-
-const PRIMARY_STAT_WARNING = (
-    <p
-        data-testid="guide-class-warning-15-2"
-        className="text-[12px] text-amber/95 border-l-2 border-amber pl-3 italic mt-3"
-    >
-        <strong className="text-amber not-italic">Attivo (Round 15.2):</strong>{" "}
-        se la statistica primaria della classe scende sotto la soglia attesa
-        per il livello attuale, l&apos;XP guadagnato in spedizione si riduce:
-        −10% (soglia minore), −20% (soglia maggiore), fino a −30% (critica).
-        Mai sotto il 70%.
-    </p>
-);
-
-function StatEntry({ stat }) {
-    return (
-        <article
-            data-testid={`guide-stat-${stat.slug}`}
-            className="border-l-2 border-amber/40 pl-4 mb-5"
-        >
-            <h3 className="text-[15px] text-foreground font-semibold mb-1">
-                {STAT_IT[stat.slug] || stat.slug}
-            </h3>
-            <p className="text-[12px] text-muted-foreground mb-2">{stat.what}</p>
-            <p className="text-[12px]">
-                <strong className="text-amber/90">Chi la usa meglio:</strong>{" "}
-                {stat.used_by.join(", ")}.
-            </p>
-            <p className="text-[12px] mt-1.5"><strong className="text-amber/90">Cosa influenza:</strong></p>
-            <ul className="text-[12px] list-disc list-inside ml-1 mt-1 text-muted-foreground/95">
-                {stat.influences.map((line) => <li key={line}>{line}</li>)}
-            </ul>
-            <p className="text-[12px] mt-2 italic text-foreground/80">
-                <strong className="not-italic text-amber/80">Esempio.</strong> {stat.example}
-            </p>
-        </article>
-    );
-}
-
-function ClassEntry({ cls }) {
-    const rolesIT = [roleIT(cls.role), cls.secondary_role ? roleIT(cls.secondary_role) : null]
-        .filter(Boolean).join(" · ");
-    return (
-        <article
-            data-testid={`guide-class-${cls.slug}`}
-            className="border border-border bg-background/30 rounded-sm p-4 mb-4"
-        >
-            <header className="flex items-baseline justify-between gap-3 mb-2 flex-wrap">
-                <h3 className="text-[15px] text-foreground font-semibold">
-                    {cls.name_it}
-                    {cls.is_specialization && (
-                        <span className="ml-2 text-[10px] tracking-widest text-amber/90 border border-amber/50 rounded-sm px-2 py-0.5 align-middle">
-                            SPEC
-                        </span>
-                    )}
-                </h3>
-                <span
-                    data-testid={`guide-class-${cls.slug}-roles`}
-                    className="text-[10px] text-amber tracking-widest"
-                >
-                    {rolesIT}
-                </span>
-            </header>
-
-            <dl className="text-[12px] grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 mb-3">
-                <div>
-                    <dt className="inline text-muted-foreground">Statistica primaria: </dt>
-                    <dd className="inline text-amber">{cls.primary_stat}</dd>
-                </div>
-                <div>
-                    <dt className="inline text-muted-foreground">Secondarie utili: </dt>
-                    <dd className="inline">{cls.secondary_stats.join(", ")}</dd>
-                </div>
-            </dl>
-
-            <p className="text-[12px] mb-2">
-                <strong className="text-amber/90">Equipaggiamento consigliato.</strong>{" "}
-                {cls.equip}
-            </p>
-            <p className="text-[12px] mb-2">
-                <strong className="text-amber/90">Stile di gioco.</strong>{" "}
-                {cls.playstyle}
-            </p>
-            <p className="text-[12px] mb-2">
-                <strong className="text-amber/90">Differenze.</strong>{" "}
-                {cls.differs_from}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[12px] mb-2">
-                <div>
-                    <strong className="text-emerald-400/95">Punti forti.</strong>{" "}
-                    {cls.strengths.join(", ")}.
-                </div>
-                <div>
-                    <strong className="text-red-400/90">Punti deboli.</strong>{" "}
-                    {cls.weaknesses.join(", ")}.
-                </div>
-            </div>
-
-            <p className="text-[12px] text-muted-foreground/95">
-                <strong className="text-amber/80">Brilla in:</strong>{" "}
-                {cls.good_in.join("; ")}.
-            </p>
-
-            {PRIMARY_STAT_WARNING}
-        </article>
-    );
-}
 
 export default function ClassesAndStatsSection() {
     return (
-        <SectionBlock id="classi-e-stats" title="Classi e statistiche">
-            <p className="text-[13px] mb-4">
-                Ogni avventuriero ha cinque statistiche fondamentali — Forza,
-                Destrezza, Intelletto, Costituzione, Fede — e una classe che
-                gli dice quale di queste è la più importante. Capire questa
-                coppia è la differenza fra una squadra di mercenari assemblata
-                a caso e un party che vince un raid.
-            </p>
+        <SectionBlock
+            id="classi-e-statistiche"
+            title="Classi e statistiche — 27 classi, ruolo fisso"
+        >
+            <div className="space-y-4 text-sm leading-relaxed">
+                <p>
+                    Ogni avventuriero nasce <strong>senza classe</strong>; nella{" "}
+                    <strong>Sala di Classe</strong> supera la prova e giura a una
+                    delle <strong>27 classi canoniche</strong>. La classe determina
+                    TUTTO: il <strong>ruolo fisso</strong> (Danno, Difensore o
+                    Guaritore), l&apos;equipaggiamento che può indossare, la meccanica
+                    di combattimento e i <strong>4 set raid</strong> dedicati.
+                    Non esistono specializzazioni da scegliere né build da attivare:
+                    se vuoi un ruolo diverso, scegli una classe diversa.
+                </p>
 
-            <h3 className="text-[13px] text-amber tracking-widest mb-3 mt-6">
-                :: STATISTICHE
-            </h3>
-            {STATS.map((s) => <StatEntry key={s.slug} stat={s} />)}
+                <div className="border border-border rounded-sm p-3 bg-card/50">
+                    <div className="text-[10px] tracking-widest text-amber mb-1">
+                        :: LA CATENA CANONICA
+                    </div>
+                    <p className="font-mono text-xs">
+                        AVVENTURIERO → CLASSE → RUOLO FISSO → EQUIP DI CLASSE → SET RAID
+                    </p>
+                </div>
 
-            <h3 className="text-[13px] text-amber tracking-widest mb-3 mt-8">
-                :: CLASSI
-            </h3>
-            <p className="text-[12px] text-muted-foreground mb-4">
-                Undici classi base attive nel gioco (Guerriero, Paladino, Ladro,
-                Ranger, Monaco, Mago, Sacerdote, Druido, Bardo, Stregone, Alchimista)
-                più tre specializzazioni storiche iconiche (Assassino, Berserker,
-                Negromante), che dal Round 16.0 sono passate da classi base a
-                specializzazioni delle rispettive sale di classe.
-                Ognuna è progettata per fare bene una cosa specifica: il tuo
-                lavoro come Guild Master è scegliere chi mandare a fare cosa.
-            </p>
-            {CLASSES.map((c) => <ClassEntry key={c.slug} cls={c} />)}
+                {Object.entries(ROLE_META).map(([role, meta]) => (
+                    <section key={role}>
+                        <h4 className={`text-sm font-bold tracking-widest ${meta.color} mb-1`}>
+                            :: {meta.label.toUpperCase()} —{" "}
+                            {CLASSES.filter((c) => c.role === role).length} CLASSI
+                        </h4>
+                        <p className="text-xs text-muted-foreground mb-2">{meta.blurb}</p>
+                        <div className="space-y-2">
+                            {CLASSES.filter((c) => c.role === role).map((c) => (
+                                <div
+                                    key={c.slug}
+                                    className={`border ${meta.border} rounded-sm p-3 bg-card/40`}
+                                >
+                                    <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                                        <span className="font-semibold">{c.name}</span>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Stat primaria: {STAT_IT[c.stat]}
+                                        </span>
+                                    </div>
+                                    <p className="text-[11px] text-amber/80 italic mt-0.5">
+                                        “{c.identity}”
+                                    </p>
+                                    <p className="text-xs text-foreground/85 mt-1">{c.style}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                ))}
+
+                <section>
+                    <h4 className="text-sm font-bold tracking-widest text-amber mb-2">
+                        :: LE 5 STATISTICHE
+                    </h4>
+                    <div className="space-y-2">
+                        {STATS.map((s) => (
+                            <div key={s.slug} className="border border-border rounded-sm p-3 bg-card/40">
+                                <div className="font-semibold text-sm">{STAT_IT[s.slug]}</div>
+                                <p className="text-xs text-foreground/85 mt-0.5">{s.what}</p>
+                                <p className="text-[11px] text-muted-foreground mt-1">{s.note}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                        Tutte e cinque le statistiche sommano nel Potere (PWR)
+                        dell&apos;avventuriero, insieme a livello, rarità di carriera,
+                        equipaggiamento e bonus dei set raid.
+                    </p>
+                </section>
+            </div>
         </SectionBlock>
     );
 }

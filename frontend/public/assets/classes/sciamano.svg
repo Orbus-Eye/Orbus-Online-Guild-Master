@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sciamano">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#9d624d"/>
+      <stop offset="70%" stop-color="#7c2d12"/>
+      <stop offset="100%" stop-color="#44190a"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#34d399" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#5eead4" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><circle cx="120" cy="120" r="44" fill="none" stroke="#5eead4" stroke-width="8"/><g stroke="#348175" stroke-width="5"><line x1="88" y1="152" x2="152" y2="88"/><line x1="88" y1="88" x2="152" y2="152"/></g><path d="M164 64 q10 18 -4 30 q-2 -16 -8 -22 Z" fill="#5eead4"/></g>
+</svg>

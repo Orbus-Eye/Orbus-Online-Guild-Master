@@ -1,0 +1,21 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Runista">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#052132"/>
+      <stop offset="45%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#08344d"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bb)"/>
+  <g transform="translate(60 -20) scale(1.0)" opacity="0.9"><g stroke="#7dd3fc" stroke-width="9" stroke-linecap="round"><line x1="120" y1="60" x2="120" y2="180"/><line x1="120" y1="90" x2="160" y2="65"/><line x1="120" y1="90" x2="80" y2="65"/><line x1="120" y1="140" x2="162" y2="168"/></g><circle cx="120" cy="120" r="58" fill="none" stroke="#45748b" stroke-width="4" stroke-dasharray="6 8"/></g>
+  <text x="320" y="92" font-family="Georgia, serif" font-size="44"
+        fill="#a4e0fd" font-weight="bold">Runista</text>
+  <text x="322" y="132" font-family="Georgia, serif" font-size="20"
+        fill="#7dd3fc" opacity="0.9">La runa non descrive, la runa impone.</text>
+  <rect x="320" y="148" width="150" height="26" rx="4" fill="none"
+        stroke="#f87171" stroke-width="2"/>
+  <text x="334" y="166" font-family="monospace" font-size="15"
+        fill="#f87171">DPS</text>
+  <rect x="6" y="6" width="788" height="188" fill="none"
+        stroke="#7dd3fc" stroke-width="2" opacity="0.5"/>
+</svg>

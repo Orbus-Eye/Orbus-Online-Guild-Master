@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Runista">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#497792"/>
+      <stop offset="70%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#07293d"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f87171" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><g stroke="#7dd3fc" stroke-width="9" stroke-linecap="round"><line x1="120" y1="60" x2="120" y2="180"/><line x1="120" y1="90" x2="160" y2="65"/><line x1="120" y1="90" x2="80" y2="65"/><line x1="120" y1="140" x2="162" y2="168"/></g><circle cx="120" cy="120" r="58" fill="none" stroke="#45748b" stroke-width="4" stroke-dasharray="6 8"/></g>
+</svg>

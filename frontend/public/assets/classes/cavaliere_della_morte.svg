@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cavaliere della Morte">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#525254"/>
+      <stop offset="70%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#0d0d0f"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#38bdf8" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#a1a1aa" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><path d="M92 100 q0 -34 28 -34 q28 0 28 34 v34 q-14 12 -28 12 q-14 0 -28 -12 Z" fill="#a1a1aa"/><rect x="100" y="104" width="14" height="10" rx="4" fill="#59595e"/><rect x="126" y="104" width="14" height="10" rx="4" fill="#59595e"/><line x1="120" y1="46" x2="120" y2="70" stroke="#59595e" stroke-width="6"/><path d="M120 46 h44 l-10 12 h-34 Z" fill="#59595e"/></g>
+</svg>

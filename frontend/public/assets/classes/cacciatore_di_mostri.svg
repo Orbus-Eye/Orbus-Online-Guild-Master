@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cacciatore di Mostri">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#6f6258"/>
+      <stop offset="70%" stop-color="#3f2d20"/>
+      <stop offset="100%" stop-color="#231912"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#38bdf8" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#d6a463" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><path d="M84 96 q36 -26 72 0 l-12 34 q-24 18 -48 0 Z" fill="#d6a463"/><path d="M96 130 l8 18 l8 -14 Z" fill="#765a36"/><path d="M144 130 l-8 18 l-8 -14 Z" fill="#765a36"/><line x1="60" y1="180" x2="180" y2="60" stroke="#765a36" stroke-width="8" stroke-linecap="round"/><polygon points="180,60 168,64 176,72" fill="#765a36"/></g>
+</svg>

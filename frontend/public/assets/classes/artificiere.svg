@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Artificiere">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#9a684b"/>
+      <stop offset="70%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#421d08"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f87171" stroke-width="6"/>
+  <circle cx="120" cy="120" r="100" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4 7" opacity="0.7"/>
+  <g filter="url(#glow)"><rect x="158" y="110" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(0 164 120)"/><rect x="145" y="141" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(45 151 151)"/><rect x="114" y="154" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(90 120 164)"/><rect x="83" y="141" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(135 89 151)"/><rect x="70" y="110" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(180 76 120)"/><rect x="83" y="79" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(225 89 89)"/><rect x="114" y="66" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(270 120 76)"/><rect x="145" y="79" width="12" height="20" rx="3" fill="#fbbf24" transform="rotate(315 151 89)"/><circle cx="120" cy="120" r="34" fill="none" stroke="#fbbf24" stroke-width="10"/><circle cx="120" cy="120" r="10" fill="#8a6914"/></g>
+</svg>

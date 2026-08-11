@@ -1,0 +1,21 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fabbro Arcano">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#171d26"/>
+      <stop offset="45%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#242e3b"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bb)"/>
+  <g transform="translate(60 -20) scale(1.0)" opacity="0.9"><path d="M64 108 h112 v22 q-36 8 -56 30 h-16 q-8 -18 -40 -22 Z" fill="#fb923c"/><rect x="102" y="160" width="36" height="14" rx="4" fill="#8a5021"/><path d="M112 84 l8 -18 l8 18 l-8 14 Z" fill="#8a5021"/></g>
+  <text x="320" y="92" font-family="Georgia, serif" font-size="44"
+        fill="#fcb376" font-weight="bold">Fabbro Arcano</text>
+  <text x="322" y="132" font-family="Georgia, serif" font-size="20"
+        fill="#fb923c" opacity="0.9">Il metallo tace ma ricorda.</text>
+  <rect x="320" y="148" width="150" height="26" rx="4" fill="none"
+        stroke="#38bdf8" stroke-width="2"/>
+  <text x="334" y="166" font-family="monospace" font-size="15"
+        fill="#38bdf8">TANK</text>
+  <rect x="6" y="6" width="788" height="188" fill="none"
+        stroke="#fb923c" stroke-width="2" opacity="0.5"/>
+</svg>
