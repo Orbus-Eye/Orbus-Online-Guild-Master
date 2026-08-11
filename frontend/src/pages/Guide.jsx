@@ -295,7 +295,7 @@ export default function Guide() {
                         refresh casuali o panchina reclute.
                     </p>
                     <p className="mt-2">
-                        I primi cinque fondatori sono gratuiti. I successivi hanno un costo
+                        I primi sei fondatori sono gratuiti. I successivi hanno un costo
                         progressivo e richiedono spazio nei Dormitori. Ogni nuovo avventuriero
                         nasce Comune, al livello 1, con statistiche base e senza classe.
                     </p>

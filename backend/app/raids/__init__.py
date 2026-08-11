@@ -1215,8 +1215,9 @@ async def clear_raid_reports_route(current_user: dict = Depends(get_current_user
     """FASE 1.5 — pulsante PULISCI per i report raid.
 
     Soft-delete: imposta `report_dismissed_at` sui raid conclusi della
-    gilda. I raid in corso non vengono toccati; `/raids/last` (replay
-    da Dashboard) ignora deliberatamente il flag."""
+    gilda. I raid in corso non vengono toccati. FASE 9 A3: anche
+    `/raids/last` (card Dashboard) rispetta il flag — un report pulito
+    non genera più CTA."""
     guild = await user_guild_or_404(db, current_user["id"])
     now_iso = datetime.now(timezone.utc).isoformat()
     res = await db.raids.update_many(
@@ -1248,8 +1249,11 @@ async def get_last_raid(current_user: dict = Depends(get_current_user)):
         await auto_resolve_stuck_raids_for_guild(db, guild["id"])
     except Exception:
         pass
+    # FASE 9 A3 — i raid puliti (PULISCI) non alimentano più la card
+    # "Ultimo raid" della Dashboard.
     raid = await db.raids.find_one(
-        {"guild_id": guild["id"], "status": "completed"},
+        {"guild_id": guild["id"], "status": "completed",
+         "report_dismissed_at": None},
         {"_id": 0},
         sort=[("completed_at", -1), ("created_at", -1)],
     )

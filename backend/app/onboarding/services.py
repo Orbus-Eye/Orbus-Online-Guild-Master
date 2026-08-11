@@ -29,13 +29,16 @@ from app.core.job_freeze import frozen_when_active
 
 logger = logging.getLogger("orbus.onboarding")
 
-STARTER_TARGET = 5  # locked by §I.1
+# FASE 9 A4 — i fondatori gratuiti iniziali passano da 5 a 6
+# (supera il lock §I.1 ROUND 5 per decisione owner 2026-08-11).
+STARTER_TARGET = 6
 STARTER_NAMES = (
     "Prima Recluta",
     "Seconda Recluta",
     "Terza Recluta",
     "Quarta Recluta",
     "Quinta Recluta",
+    "Sesta Recluta",
 )
 STARTER_IDENTITIES = (
     ("human", "female"),
@@ -43,6 +46,7 @@ STARTER_IDENTITIES = (
     ("high_elf", "female"),
     ("half_orc", "male"),
     ("halfling_lightfoot", "female"),
+    ("dragonborn_red", "male"),
 )
 
 

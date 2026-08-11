@@ -1048,11 +1048,16 @@ async def _find_last_completed_expedition(db, guild_id: str) -> Optional[dict]:
     or None if none exist. Triggers a lazy completion sweep first.
     """
     await complete_due_expeditions(db, guild_id)
+    # FASE 9 A3 — un report pulito (PULISCI) non deve più risultare come
+    # "ultimo report" né alimentare la CTA di replay in Dashboard: dopo
+    # PULISCI la card sparisce finché una nuova run non si conclude.
+    # (Supera la scelta FASE 1.5 in cui il replay ignorava il flag.)
     return await db.expeditions.find_one(
         {
             "guild_id": guild_id,
             "status": "completed",
             "result_summary": {"$in": ["Success", "Failed"]},
+            "report_dismissed_at": None,
         },
         {"_id": 0},
         sort=[("completed_at", -1)],

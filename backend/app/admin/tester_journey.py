@@ -25,7 +25,8 @@ from app.class_halls.build_reachability import (
 from app.class_halls.mechanics import CLASS_MECHANICS
 
 
-STARTER_TESTER_ROSTER_SIZE = 5
+# FASE 9 A4 — allineato ai 6 fondatori gratuiti (STARTER_TARGET).
+STARTER_TESTER_ROSTER_SIZE = 6
 LONG_TERM_ITEM_TARGET = 1500
 MIN_TUNING_SAMPLES_PER_BUILD = 5
 MIN_REPLICATED_COHORTS_PER_BUILD = 2
@@ -2222,7 +2223,7 @@ async def reset_tester_class_hall_journey(
     guild: dict,
     snapshot_id: str,
 ) -> dict:
-    """Soft-retire the current roster and create five classless starters."""
+    """Soft-retire the current roster and create six classless starters."""
     guild_id = guild["id"]
     active = await db.adventurers.find(
         _active_roster_query(guild_id),

@@ -49,6 +49,23 @@ const Stat = ({ label, value, testid, accent = false }) => (
     </div>
 );
 
+// FASE 9 A2 — voce compatta della striscia info nell'hero. Mantiene i
+// data-testid storici (stat-gold, stat-reputation, …) che prima vivevano
+// nella griglia Stat a fondo pagina.
+const HeroStat = ({ label, value, testid, accent = false }) => (
+    <div className="flex flex-col min-w-0">
+        <span className="text-[9px] text-muted-foreground tracking-widest uppercase">
+            {label}
+        </span>
+        <span
+            data-testid={testid}
+            className={`text-sm font-semibold truncate ${accent ? "text-amber" : "text-foreground"}`}
+        >
+            {value}
+        </span>
+    </div>
+);
+
 function TerritoryWidget() {
     const [territory, setTerritory] = useState(null);
     const [advCount, setAdvCount] = useState(null);
@@ -155,6 +172,9 @@ export default function Dashboard() {
     const [lastRun, setLastRun] = useState(null); // {expedition, can_replay, cannot_replay_reason} | null
     const [lastRunStatus, setLastRunStatus] = useState("loading"); // loading | none | ready
     const [replayBusy, setReplayBusy] = useState(false);
+    // FASE 9 A2 — livello di gilda nell'hero (best-effort, stessa fonte
+    // di GuildProgressCard: /achievements/summary).
+    const [guildLevel, setGuildLevel] = useState(null);
 
     const fetchLast = useCallback(async () => {
         try {
@@ -173,6 +193,12 @@ export default function Dashboard() {
     useEffect(() => {
         fetchLast();
     }, [fetchLast]);
+
+    useEffect(() => {
+        api.get("/achievements/summary")
+            .then(({ data }) => setGuildLevel(data?.guild_level ?? null))
+            .catch(() => { /* best-effort: l'hero regge senza livello */ });
+    }, []);
 
     const handleReplay = async () => {
         if (replayBusy) return;
@@ -199,167 +225,176 @@ export default function Dashboard() {
             <AppHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-w-0">
-                {/* FASE 4 — banner hero della gilda: la home apre come un
-                    gioco, non come un gestionale. */}
-                <div
-                    className="banner-fantasy h-36 sm:h-44 mb-6"
-                    data-testid="dashboard-hero-banner"
-                >
-                    <GameImage
-                        sources={sectionBanner("dashboard")}
-                        alt=""
-                        className="w-full h-full object-cover"
-                    />
-                    <div className="banner-overlay">
-                        <div className="text-[10px] text-amber tracking-[0.3em]">
-                            :: SALA DEL TRONO
-                        </div>
-                        <h1 className="font-fantasy text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-                            {guild.name}
-                        </h1>
-                    </div>
-                </div>
-                {/* ROUND 18.3c — Migration Banner IT (dismissible, guild-scoped) */}
-                <MigrationBannerR183c />
-                <R18ResetBanner />
-                {/* ROUND 16.1 Phase 1 — bilingual data-driven onboarding */}
-                <div className="mb-6">
-                    <OnboardingChecklistV2 />
-                </div>
-                <TerritoryWidget />
-                {/* ROUND 17 STEP 0 — Nudge "Primo obiettivo" per gilde
-                    che non hanno mai completato una spedizione.
-                    Nasconde automaticamente dopo total_expeditions_completed >= 1. */}
-                <FirstObjectiveCard guild={guild} advCount={advCount} />
-                {/* FASE 1.8 — streak + quest giornaliere spostate IN ALTO:
-                    sono il loop quotidiano del giocatore e stavano in fondo
-                    alla pagina, quasi invisibili. */}
-                <div className="mb-6 grid gap-4 md:grid-cols-[1fr_minmax(220px,260px)] min-w-0">
-                    <DailyQuestsCard />
-                    <StreakBadge />
-                </div>
-                {/* ROUND 16.1 Phase 1 — data-driven next actions (replaces hardcoded NextStepsCard) */}
-                <div className="mb-6">
-                    <NextActionsCard />
-                </div>
-                {/* ROUND 16.1 Phase 1 — "Cosa fare oggi" rolling daily loop (no rewards) */}
-                <div className="mb-6">
-                    <DailyLoopCard />
-                </div>
-                <div className="mb-6">
-                    <GuildProgressCard />
-                </div>
-                <div className="mb-4">
-                    <ContinentEventBanner />
-                </div>
-                <div className="mb-4 grid gap-4 md:grid-cols-2">
-                    <SiteIncomeMiniCard />
-                    <WorldMiniCard />
-                </div>
-                <div className="mb-4">
-                    <LegendaryForgeMiniCard />
-                </div>
-                <div className="mb-4">
-                    <ArfusMiniCard />
-                </div>
-                <div className="mb-4 grid gap-4 md:grid-cols-2">
-                    <TradePactsMiniCard />
-                    <SpecializationMiniCard />
-                </div>
-                <div className="mb-4">
-                    <PvpMiniCard />
-                </div>
-                <div className="mb-4">
-                    <PvpSeasonMiniCard />
-                </div>
-                <div className="mb-4">
-                    <StablesMiniCard />
-                </div>
-                <div className="mb-6">
-                    <WeeklyQuestsCard />
-                </div>
-                <div className="mb-6">
-                    <ContractsCard />
-                </div>
-                {/* ROUND 16.5.1 B.3 UI — Ultimo raid card */}
-                <div className="mb-6">
-                    <LastRaidCard />
-                </div>
-                <div className="mb-6">
-                    <ChronicleCard limit={15} />
-                </div>
+                {/* ============================================================
+                    FASE 9 A2 — GERARCHIA VISIVA OBBLIGATORIA:
+                      1. HERO / IDENTITÀ DELLA GILDA
+                      2. STREAK
+                      3. PROSSIME AZIONI / AZIONI PRINCIPALI
+                      4. PROGRESSIONE / ATTIVITÀ
+                      5. RESTO
+                    La gilda è la prima cosa che il giocatore vede: nome,
+                    titolo/identità, livello e info essenziali vivono QUI,
+                    non più a fondo pagina.
+                   ============================================================ */}
 
-                <section className="mb-8">
-                    <div className="text-xs text-amber tracking-widest mb-2">
-                        {t("dashboard.guild_overview")}
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                        <div>
+                {/* 1 ─ HERO GILDA */}
+                <section data-testid="dashboard-hero" className="mb-6">
+                    <div
+                        className="banner-fantasy h-40 sm:h-52"
+                        data-testid="dashboard-hero-banner"
+                    >
+                        <GameImage
+                            sources={sectionBanner("dashboard")}
+                            alt=""
+                            className="w-full h-full object-cover"
+                        />
+                        <div className="banner-overlay">
+                            <div className="text-[10px] text-amber tracking-[0.3em]">
+                                :: SALA DEL TRONO
+                            </div>
                             <h1
                                 data-testid="guild-name"
-                                className="text-3xl sm:text-4xl font-semibold tracking-tight"
+                                className="font-fantasy text-2xl sm:text-4xl font-semibold tracking-tight text-foreground"
                             >
                                 {guild.name}
                             </h1>
                             {guild.description ? (
                                 <p
                                     data-testid="guild-description"
-                                    className="text-sm text-muted-foreground mt-2 max-w-2xl"
+                                    className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl line-clamp-2"
                                 >
                                     {guild.description}
                                 </p>
                             ) : (
-                                <p className="text-sm text-muted-foreground/60 italic mt-2">
+                                <p className="text-xs text-muted-foreground/60 italic mt-1">
                                     {t("dashboard.no_description")}
                                 </p>
                             )}
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                            {t("dashboard.founded")}:{" "}
+                    </div>
+                    {/* Striscia info essenziali agganciata al banner. */}
+                    <div
+                        data-testid="dashboard-hero-stats"
+                        className="border border-border border-t-0 bg-card rounded-b-sm px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2"
+                    >
+                        <div className="flex items-center gap-2 pr-4 border-r border-border/60">
+                            <span className="text-[9px] text-muted-foreground tracking-widest uppercase">
+                                Livello Gilda
+                            </span>
+                            <span
+                                data-testid="hero-guild-level"
+                                className="text-lg font-semibold text-amber"
+                            >
+                                {guildLevel != null ? `Lv ${guildLevel}` : "—"}
+                            </span>
+                        </div>
+                        <HeroStat
+                            label={t("dashboard.stats.gold")}
+                            value={guild.gold}
+                            testid="stat-gold"
+                            accent
+                        />
+                        <HeroStat
+                            label={t("dashboard.stats.reputation")}
+                            value={guild.reputation}
+                            testid="stat-reputation"
+                        />
+                        <HeroStat
+                            label={t("dashboard.stats.adventurers")}
+                            value={advCount}
+                            testid="stat-adventurer-count"
+                        />
+                        <HeroStat
+                            label={t("dashboard.stats.active_exp")}
+                            value={guild.active_expedition_count ?? 0}
+                            testid="stat-active-expeditions"
+                            accent
+                        />
+                        <div className="ml-auto flex flex-col items-end min-w-0">
+                            <span className="text-[9px] text-muted-foreground tracking-widest uppercase">
+                                {t("dashboard.founded")}
+                            </span>
                             <span
                                 data-testid="guild-created-at"
-                                className="text-foreground"
+                                className="text-[11px] text-foreground truncate"
                             >
                                 {formatDateTime(guild.created_at, lang)}
+                            </span>
+                            <span
+                                data-testid="stat-guild-id"
+                                className="text-[9px] font-mono text-muted-foreground/70"
+                            >
+                                #{guild.id.slice(0, 8)}
                             </span>
                         </div>
                     </div>
                 </section>
 
-                <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-                    {/* ROUND 16.5.4d — legacy `guild.level` stat card
-                        rimossa dalla Dashboard player-facing. Il campo
-                        resta in DB per compatibilità storica ma non è
-                        più esposto: la progressione della gilda è
-                        rappresentata solo dal `Prestigio di Gilda` in
-                        <GuildProgressCard /> sopra. */}
-                    <Stat
-                        label={t("dashboard.stats.reputation")}
-                        value={guild.reputation}
-                        testid="stat-reputation"
-                    />
-                    <Stat label={t("dashboard.stats.gold")} value={guild.gold} testid="stat-gold" accent />
-                    <Stat
-                        label={t("dashboard.stats.adventurers")}
-                        value={advCount}
-                        testid="stat-adventurer-count"
-                    />
-                    <Stat
-                        label={t("dashboard.stats.active_exp")}
-                        value={guild.active_expedition_count ?? 0}
-                        testid="stat-active-expeditions"
-                        accent
-                    />
-                    <Stat
-                        label={t("dashboard.stats.guild_id")}
-                        value={
-                            <span className="text-xs font-mono break-all">
-                                {guild.id.slice(0, 8)}…
-                            </span>
-                        }
-                        testid="stat-guild-id"
-                    />
+                {/* Banner di sistema (rari, dismissibili): sotto l'hero. */}
+                <MigrationBannerR183c />
+                <R18ResetBanner />
+
+                {/* 2 ─ STREAK — molto visibile, subito sotto l'identità. */}
+                <div className="mb-6" data-testid="dashboard-streak-slot">
+                    <StreakBadge />
+                </div>
+
+                {/* 3 ─ AZIONI PRINCIPALI */}
+                {/* ROUND 16.1 Phase 1 — bilingual data-driven onboarding */}
+                <div className="mb-6">
+                    <OnboardingChecklistV2 />
+                </div>
+                {/* ROUND 17 STEP 0 — Nudge "Primo obiettivo" per gilde
+                    che non hanno mai completato una spedizione. */}
+                <FirstObjectiveCard guild={guild} advCount={advCount} />
+                {/* ROUND 16.1 Phase 1 — data-driven next actions */}
+                <div className="mb-6">
+                    <NextActionsCard />
+                </div>
+                <div className="mb-6">
+                    <DailyQuestsCard />
+                </div>
+                {/* ROUND 16.1 Phase 1 — "Cosa fare oggi" rolling daily loop */}
+                <div className="mb-6">
+                    <DailyLoopCard />
+                </div>
+                <section className="mb-6">
+                    <div className="text-xs text-muted-foreground tracking-widest mb-3">
+                        {t("dashboard.quick_actions")}
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <ActiveAction
+                            to="/recruitment"
+                            label={t("dashboard.actions.recruit")}
+                            code="01"
+                            testid="quickaction-01"
+                        />
+                        <ActiveAction
+                            to="/adventurers"
+                            label={t("dashboard.actions.adventurers")}
+                            code="02"
+                            testid="quickaction-02"
+                        />
+                        <ActiveAction
+                            to="/dungeons"
+                            label={t("dashboard.actions.dungeons")}
+                            code="03"
+                            testid="quickaction-03"
+                        />
+                        <ActiveAction
+                            to="/inventory"
+                            label={t("dashboard.actions.inventory")}
+                            code="04"
+                            testid="quickaction-04"
+                        />
+                    </div>
                 </section>
+
+                {/* 4 ─ PROGRESSIONE / ATTIVITÀ */}
+                <div className="mb-6">
+                    <GuildProgressCard />
+                </div>
+                <TerritoryWidget />
 
                 {/* Phase 7: progression mini-cards */}
                 <section
@@ -549,37 +584,47 @@ export default function Dashboard() {
                     )}
                 </section>
 
-                <section>
-                    <div className="text-xs text-muted-foreground tracking-widest mb-3">
-                        {t("dashboard.quick_actions")}
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <ActiveAction
-                            to="/recruitment"
-                            label={t("dashboard.actions.recruit")}
-                            code="01"
-                            testid="quickaction-01"
-                        />
-                        <ActiveAction
-                            to="/adventurers"
-                            label={t("dashboard.actions.adventurers")}
-                            code="02"
-                            testid="quickaction-02"
-                        />
-                        <ActiveAction
-                            to="/dungeons"
-                            label={t("dashboard.actions.dungeons")}
-                            code="03"
-                            testid="quickaction-03"
-                        />
-                        <ActiveAction
-                            to="/inventory"
-                            label={t("dashboard.actions.inventory")}
-                            code="04"
-                            testid="quickaction-04"
-                        />
-                    </div>
-                </section>
+                <div className="mb-6">
+                    <WeeklyQuestsCard />
+                </div>
+                <div className="mb-6">
+                    <ContractsCard />
+                </div>
+                {/* ROUND 16.5.1 B.3 UI — Ultimo raid card */}
+                <div className="mb-6">
+                    <LastRaidCard />
+                </div>
+                <div className="mb-6">
+                    <ChronicleCard limit={15} />
+                </div>
+
+                {/* 5 ─ RESTO (mondo, forge, PvP, scuderie, log) */}
+                <div className="mb-4">
+                    <ContinentEventBanner />
+                </div>
+                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                    <SiteIncomeMiniCard />
+                    <WorldMiniCard />
+                </div>
+                <div className="mb-4">
+                    <LegendaryForgeMiniCard />
+                </div>
+                <div className="mb-4">
+                    <ArfusMiniCard />
+                </div>
+                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                    <TradePactsMiniCard />
+                    <SpecializationMiniCard />
+                </div>
+                <div className="mb-4">
+                    <PvpMiniCard />
+                </div>
+                <div className="mb-4">
+                    <PvpSeasonMiniCard />
+                </div>
+                <div className="mb-4">
+                    <StablesMiniCard />
+                </div>
 
                 <section className="mt-10">
                     <div className="text-xs text-muted-foreground tracking-widest mb-3">
@@ -592,8 +637,8 @@ export default function Dashboard() {
                         </div>
                         <div>
                             <span className="text-amber">$</span> guild{" "}
-                            <span className="text-foreground">{guild.name}</span> — level{" "}
-                            {guild.level}, gold {guild.gold}, adventurers {advCount}
+                            <span className="text-foreground">{guild.name}</span> — gold{" "}
+                            {guild.gold}, adventurers {advCount}
                         </div>
                         <div>
                             <span className="text-amber">$</span> phase-3 modules pending

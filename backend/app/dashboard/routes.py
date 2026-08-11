@@ -54,8 +54,12 @@ async def get_dashboard_suggestions(ctx=Depends(_ctx)):
     out: list[dict[str, Any]] = []
 
     # 1. Completed expeditions with unread report
+    # FASE 9 A3 — i report puliti (PULISCI → report_dismissed_at) non
+    # devono più alimentare "Prossime azioni": `None` matcha sia campo
+    # assente (legacy) sia null.
     n_completed = await db.expeditions.count_documents({
         "guild_id": gid, "status": "completed", "is_read": {"$ne": True},
+        "report_dismissed_at": None,
     })
     if n_completed > 0:
         out.append({
@@ -219,7 +223,10 @@ async def get_dashboard_onboarding(ctx=Depends(_ctx)):
     adv_count = await db.adventurers.count_documents({"guild_id": gid})
     if adv_count > 0:
         completed.add("view_roster")
-    if adv_count > 3:  # > starter pack
+    # FASE 9 A4 — "recruit_one" è completo solo OLTRE i fondatori
+    # gratuiti (ora 6): il vecchio `> 3` lo marcava fatto a ogni gilda.
+    from app.onboarding.services import STARTER_TARGET
+    if adv_count > STARTER_TARGET:
         completed.add("recruit_one")
 
     n_equipped = await db.equipped_items.count_documents(

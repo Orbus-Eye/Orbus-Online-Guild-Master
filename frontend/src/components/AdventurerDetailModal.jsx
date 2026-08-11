@@ -10,8 +10,7 @@ import { TraitList } from "./TraitBadge";
 import { SpecChip, SpecializationPanel } from "./SpecializationBadge";
 import { getTraitLabel } from "@/utils/trait";
 import { classLabel } from "../utils/displayLabels";
-import axios from "axios";
-import { api, API, getCsrfToken } from "../lib/api";
+import { api } from "../lib/api";
 import GameImage from "./GameImage";
 import { avatarSources } from "../utils/gameAssets";
 
@@ -87,13 +86,13 @@ export default function AdventurerDetailModal({ adventurer, onClose, onChanged }
         try {
             const fd = new FormData();
             fd.append("file", file);
-            await axios.post(
-                `${API}/adventurers/${adventurer.id}/avatar`, fd,
-                {
-                    withCredentials: true,
-                    headers: { "X-CSRF-Token": getCsrfToken() || "" },
-                },
-            );
+            // FASE 9 A1 — root cause del "CAMBIA RITRATTO non funziona":
+            // questo era l'unico POST player-facing su axios "nudo", quindi
+            // senza il retry dell'istanza `api` che rinfresca il token CSRF
+            // su 403 auth.csrf.invalid. Con token in-memory nullo o stantio
+            // l'upload falliva sempre. axios v1 rimuove da solo il
+            // Content-Type di default quando il body è FormData.
+            await api.post(`/adventurers/${adventurer.id}/avatar`, fd);
             toast.success("Ritratto aggiornato!");
             if (typeof onChanged === "function") onChanged(adventurer.id);
         } catch (err) {

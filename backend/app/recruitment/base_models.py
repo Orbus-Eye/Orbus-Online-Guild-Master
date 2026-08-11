@@ -19,13 +19,15 @@ from app.territory.guards import compute_adventurer_cap_state
 BASE_MODEL_STARTING_COST_GOLD = 100
 BASE_MODEL_COST_STEP_GOLD = 25
 BASE_MODEL_COST_CAP_GOLD = 2500
-FREE_FOUNDER_COUNT = 5
+# FASE 9 A4 — fondatori gratuiti 5 → 6 (decisione owner 2026-08-11).
+# Deve restare allineato a app.onboarding.services.STARTER_TARGET.
+FREE_FOUNDER_COUNT = 6
 
 _NAME_RE = re.compile(r"^[\w\s'\-]+$", re.UNICODE)
 
 
 def base_model_cost_for_created_total(created_total: int) -> int:
-    """Progressive gold cost after the five free founding adventurers."""
+    """Progressive gold cost after the six free founding adventurers."""
     total = max(0, int(created_total or 0))
     if total < FREE_FOUNDER_COUNT:
         return 0
