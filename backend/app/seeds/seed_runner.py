@@ -482,6 +482,16 @@ async def run_all_seeds(db) -> None:
             t6_catalog["inserted"],
             t6_catalog["modified"],
         )
+    # FASE 9E — 108 set raid di classe (27 classi × 4 raid, 540 pezzi).
+    from app.raids.class_sets import seed_raid_class_sets
+
+    class_sets = await seed_raid_class_sets(db)
+    if class_sets["class_set_items"]:
+        logger.info(
+            "FASE 9E: upserted %d/%d raid class-set items",
+            class_sets["class_set_items"],
+            class_sets["total"],
+        )
     # Phase 14.7 ROUND 3.D — audit log indexes (no data seed).
     from app.audit.log import ensure_audit_indexes
     await ensure_audit_indexes(db)

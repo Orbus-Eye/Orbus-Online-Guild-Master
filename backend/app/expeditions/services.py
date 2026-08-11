@@ -1265,6 +1265,8 @@ async def _dispatch_expedition(
     equipment_by_adv: dict[str, dict] = {}
     traits_by_adv: dict[str, list] = {}
     for adv in members_live:
+        # FASE 9E — `eq_power` include già il bonus set raid di classe
+        # (calcolato in _load_equipment_for_adventurer, unico punto).
         slots, eq_power, raw = await _load_equipment_for_adventurer(db, adv["id"])
         snapshot = [_item_summary_for_snapshot(r["row"], r["item"]) for r in raw]
         equipped_items = [r["item"] for r in raw]

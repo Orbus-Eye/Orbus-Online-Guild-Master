@@ -134,6 +134,9 @@ async def enrich_halls_for_ui(db, *, guild_id: str,
             })
         return items
 
+    # FASE 9E — i 4 set raid della classe (progressione T1→T4).
+    from app.raids.class_sets import class_sets_public
+
     enriched: list[dict] = []
     for h in halls:
         cs = h.get("class_slug")
@@ -153,6 +156,7 @@ async def enrich_halls_for_ui(db, *, guild_id: str,
             "primary_stat": entry.primary_stat if entry else None,
             "armor_tags": list(entry.armor_tags) if entry else [],
             "weapon_tags": list(entry.weapon_tags) if entry else [],
+            "class_raid_sets": class_sets_public(cs or ""),
             "unlock_hint_it": (
                 None if h.get("is_unlocked") else
                 "Assegna almeno un avventuriero a questa classe per "
