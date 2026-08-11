@@ -1,789 +1,370 @@
-"""ROUND 6C — Training services: atomic apply_specialization flow.
+"""FASE 9I — ADDESTRAMENTO: sessioni server-authoritative, solo XP.
 
-The orchestrator below is intentionally linear (one path per failure mode,
-no nested branches) so that the audit trail and Mongo writes are easy to
-reason about. Every failure is a single `HTTPException` raise; every
-success follows the exact same 5-step order:
-
-    1. Pre-validate (404 / 422 sequence — all reads, no writes)
-    2. Atomic gold debit ($inc … {gold: -cost} with `gold >= cost` filter)
-    3. Generate signature_item (inventory row with bound_to_adventurer_id)
-    4. Set adventurer.specialization (snapshot of modifiers locked in time)
-    5. Best-effort audit log (never blocks the write)
+Regole:
+  * capacità 2 sessioni attive per gilda;
+  * durata 1–24h, tempi decisi dal SERVER (mai dal timer del browser);
+  * l'avventuriero in addestramento è occupato (is_available=False,
+    status="training"): niente dungeon, raid o altre attività;
+  * al termine (sweep lazy o visita alla pagina) riceve SOLO XP —
+    niente oro, item o reagenti — con level-up via progressione
+    condivisa; l'XP è FLAT: nessun moltiplicatore trait/consumabile,
+    solo l'eventuale +50% recupero (sotto il benchmark di gilda),
+    congelato all'avvio della sessione;
+  * cancellazione: XP maturata per le ore INTERE trascorse, poi rilascio.
 """
 from __future__ import annotations
 
+import math
 import uuid
-from datetime import datetime, timezone
-from typing import Any
+from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
 
+from app.shared.constants import ADVENTURER_MAX_LEVEL
 from app.training.catalog import (
-    MIN_ADVENTURER_LEVEL,
-    RESPEC_COOLDOWN_HOURS,
-    SPEC_BY_SLUG,
-    SPEC_SIGNATURE_ITEMS,
-    apply_cost_for_training_level,
-    respec_cost_for_count,
-    tier_for_training_level,
+    TRAINING_CAPACITY,
+    TRAINING_CATCHUP_MULTIPLIER,
+    TRAINING_MAX_HOURS,
+    TRAINING_MIN_HOURS,
+    catchup_benchmark_level,
+    has_training_catchup,
+    training_xp_for_session,
+    training_xp_per_hour,
 )
 
 
-SIGNATURE_BOUND_REASON = "specialization_signature"
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
-async def _resolve_class_slug(db, adv: dict) -> str | None:
-    """Return the canonical lowercase class slug for an adventurer.
+def _iso(dt: datetime) -> str:
+    return dt.astimezone(timezone.utc).isoformat()
 
-    Real game-flow adventurers (recruitment + onboarding writes) only persist
-    ``adventurer_class_id`` + ``class_name`` (capitalized display) on the doc,
-    NOT ``class_slug``. The training catalog uses lowercase slugs as eligibility
-    keys (`"warrior"`, `"paladin"`, …), so we MUST resolve via a lookup on
-    `adventurer_classes` instead of trusting an embedded field.
 
-    Resolution order (fail-soft, never raises):
-      1. If `adv.class_slug` is already set (legacy data + test seeds + the
-         recruitment generator preview path), use it as-is.
-      2. Otherwise look up `adventurer_classes` by `adv.adventurer_class_id`
-         and read `slug`.
-      3. As a last resort lowercase `class_name` so we never block on a
-         stale/missing FK (no row in the catalog).
-    """
-    cached = adv.get("class_slug")
-    if isinstance(cached, str) and cached:
-        return cached
-    class_id = adv.get("adventurer_class_id")
-    if class_id:
-        row = await db.adventurer_classes.find_one(
-            {"id": class_id}, {"_id": 0, "slug": 1},
+def _parse(raw) -> datetime:
+    if isinstance(raw, datetime):
+        return raw if raw.tzinfo else raw.replace(tzinfo=timezone.utc)
+    return datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+
+
+def _error(status: int, code: str, message: str, **extra) -> HTTPException:
+    return HTTPException(status_code=status, detail={
+        "code": code, "user_message": message, **extra,
+    })
+
+
+async def guild_benchmark_level(db, guild_id: str) -> int:
+    levels = [
+        row.get("level", 1)
+        async for row in db.adventurers.find(
+            {"guild_id": guild_id, "is_retired": {"$ne": True},
+             "archived": {"$ne": True}},
+            {"_id": 0, "level": 1},
         )
-        if row and row.get("slug"):
-            return row["slug"]
-    name = adv.get("class_name")
-    if isinstance(name, str) and name:
-        return name.lower()
-    return None
+    ]
+    return catchup_benchmark_level(levels)
 
 
-async def _get_training_level(db, guild_id: str) -> int:
-    """Resolve the current `training_grounds` level for this guild."""
-    row = await db.guild_structures.find_one(
-        {"guild_id": guild_id},
-        {"_id": 0, "structures.training_grounds": 1},
+async def _award_training_xp(db, session: dict, *, hours: float,
+                             completed: bool) -> dict:
+    """CAS sulla sessione, poi accredito XP + level-up + rilascio."""
+    xp = training_xp_for_session(
+        int(session.get("level_at_start") or 1),
+        hours,
+        catchup=bool(session.get("catchup_bonus")),
     )
-    tg = (row or {}).get("structures", {}).get("training_grounds") or {}
-    if not tg.get("is_unlocked"):
-        return 0
-    return int(tg.get("level", 0))
-
-
-async def get_available_specs(db, *, guild_id: str) -> dict:
-    """Public list of specs unlocked for this guild's training level.
-
-    Returns the catalog filtered by tier + the apply cost so the UI doesn't
-    duplicate gating logic.
-    """
-    tg_level = await _get_training_level(db, guild_id)
-    tier = tier_for_training_level(tg_level)
-    if tier is None:
-        return {
-            "training_grounds_level": 0,
-            "tier": None,
-            "apply_cost_gold": 0,
-            "specs": [],
-            "min_adventurer_level": MIN_ADVENTURER_LEVEL,
-        }
-    allowed = {"starter"} if tier == "starter" else {"starter", "full"}
-    specs = [s for s in SPEC_BY_SLUG.values() if s["tier"] in allowed]
-    return {
-        "training_grounds_level": tg_level,
-        "tier": tier,
-        "apply_cost_gold": apply_cost_for_training_level(tg_level),
-        "specs": specs,
-        "min_adventurer_level": MIN_ADVENTURER_LEVEL,
-    }
-
-
-def _err(code: str, msg: str, *, status: int = 422, **extra: Any) -> HTTPException:
-    """Build the structured-detail HTTPException the FE interceptor expects."""
-    return HTTPException(
-        status_code=status,
-        detail={"code": code, "user_message": msg, **extra},
-    )
-
-
-async def apply_specialization(
-    db,
-    *,
-    guild_id: str,
-    actor_user_id: str,
-    adventurer_id: str,
-    spec_slug: str,
-) -> dict:
-    """ROUND 11.2 TASK 2 — Atomic apply orchestrator with compensating rollback.
-
-    Compensating-pattern flow (no Mongo transactions — works on standalone):
-      A. Pre-validate ALL (reads, no writes). Any failure → 4xx, no debit.
-      B. Resolve cost + signature template (must exist in catalog).
-      C. Write audit `training_specialization_attempt` (status=pending) so
-         every debit has a paper trail BEFORE money moves.
-      D. Atomic gold debit (CAS with `gold >= cost` filter).
-      E. Try { insert signature_item + update adventurer.specialization }
-         on exception → compensate: refund gold + audit rolled_back + raise
-         5xx `training.specialization.internal_error` (sanitized, idempotent).
-      F. Best-effort success audits + contract progress.
-      G. Serializer defensive: response is built outside the writes, with
-         `.get(default)` for every nested field, so a malformed catalog row
-         CANNOT trigger a post-commit 500 (state is already persisted).
-
-    Failure modes (all `HTTPException` with structured `detail.code`):
-      • 404  `adventurer.not_found`
-      • 422  `training.locked`                                  (TG locked)
-      • 422  `training.specialization.invalid_spec`             (slug not in catalog)
-      • 422  `training.spec_tier_locked`                        (full-tier spec, starter-tier TG)
-      • 422  `training.specialization.requirements_not_met`     (level/class/already-spec)
-      • 422  `training.specialization.adventurer_retired`
-      • 402  `training.specialization.insufficient_gold`
-      • 500  `training.specialization.internal_error`           (compensated; gold refunded)
-    """
-    from app.audit.log import write_audit  # local import: avoids cycle, lets test patch
-
-    # ─── A. PRE-VALIDATE (reads only — every error path is no-op) ───────────
-    spec = SPEC_BY_SLUG.get(spec_slug)
-    if not spec:
-        raise _err(
-            "training.specialization.invalid_spec",
-            f"Specializzazione '{spec_slug}' non riconosciuta.",
-            spec_slug=spec_slug,
-        )
-
-    adv = await db.adventurers.find_one(
-        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0}
-    )
-    if not adv:
-        raise _err(
-            "adventurer.not_found", "Avventuriero non trovato.", status=404,
-            adventurer_id=adventurer_id,
-        )
-    if adv.get("is_retired") is True:
-        raise _err(
-            "training.specialization.adventurer_retired",
-            "Non puoi specializzare un avventuriero congedato.",
-        )
-    if adv.get("specialization"):
-        raise _err(
-            "training.specialization.requirements_not_met",
-            "Avventuriero già specializzato. Usa il flusso di respec per cambiare.",
-            reason="already_specialized",
-            current_spec=adv["specialization"].get("slug"),
-        )
-    adv_level = int(adv.get("level", 1))
-    if adv_level < MIN_ADVENTURER_LEVEL:
-        raise _err(
-            "training.specialization.requirements_not_met",
-            f"Serve livello minimo {MIN_ADVENTURER_LEVEL} "
-            f"(questo avventuriero è Lv{adv_level}).",
-            reason="adventurer_level_too_low",
-            min_level=MIN_ADVENTURER_LEVEL, current_level=adv_level,
-        )
-    actual_class_slug = await _resolve_class_slug(db, adv)
-    if actual_class_slug not in spec["eligible_classes"]:
-        raise _err(
-            "training.specialization.requirements_not_met",
-            f"Classe '{adv.get('class_name')}' non compatibile "
-            f"con '{spec['name_it']}'.",
-            reason="class_not_eligible",
-            eligible_classes=spec["eligible_classes"],
-            actual_class=actual_class_slug,
-        )
-
-    tg_level = await _get_training_level(db, guild_id)
-    tier = tier_for_training_level(tg_level)
-    if tier is None:
-        raise _err(
-            "training.locked",
-            "Devi sbloccare il Campo di Addestramento per specializzare.",
-        )
-    if spec["tier"] == "full" and tier != "full":
-        raise _err(
-            "training.spec_tier_locked",
-            f"'{spec['name_it']}' richiede Training Grounds Lv3+.",
-            spec_tier=spec["tier"], training_level=tg_level,
-        )
-
-    # ─── B. RESOLVE COST + SIGNATURE TEMPLATE ───────────────────────────────
-    cost = apply_cost_for_training_level(tg_level)
-    sig_template = SPEC_SIGNATURE_ITEMS.get(spec.get("signature_item_slug") or "")
-    if not sig_template:
-        # Catalog desync (spec → signature mapping broken). Fail fast BEFORE
-        # debit — this is an invalid_spec from the player's perspective.
-        raise _err(
-            "training.specialization.invalid_spec",
-            "Configurazione specializzazione non valida (signature item assente).",
-            spec_slug=spec_slug,
-            signature_slug=spec.get("signature_item_slug"),
-        )
-
-    # ─── C. AUDIT: attempt pending (BEFORE any write) ───────────────────────
-    attempt_id = str(uuid.uuid4())
-    now_iso = datetime.now(timezone.utc).isoformat()
-    inv_id = str(uuid.uuid4())  # pre-allocated so audit can reference even on rollback
-    await write_audit(
-        db,
-        event_type="training_specialization_attempt",
-        actor_user_id=actor_user_id,
-        actor_guild_id=guild_id,
-        source="training.apply_specialization",
-        related_entity_id=adventurer_id,
-        gold_delta=-cost,
-        metadata={
-            "attempt_id": attempt_id,
-            "status": "pending",
-            "adventurer_id": adventurer_id,
-            "spec_slug": spec["slug"],
-            "spec_tier": spec["tier"],
-            "cost_gold": cost,
-            "training_grounds_level": tg_level,
-            "signature_item_id_planned": inv_id,
-        },
-    )
-
-    # ─── D. ATOMIC GOLD DEBIT (CAS) ─────────────────────────────────────────
-    debit_result = await db.guilds.update_one(
-        {"id": guild_id, "gold": {"$gte": cost}},
-        {"$inc": {"gold": -cost}, "$set": {"updated_at": now_iso}},
-    )
-    if debit_result.modified_count != 1:
-        # No money moved → record rollback (no compensation needed).
-        await write_audit(
-            db,
-            event_type="training_specialization_rolled_back",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.apply_specialization",
-            related_entity_id=adventurer_id,
-            metadata={
-                "attempt_id": attempt_id,
-                "reason": "insufficient_gold",
-                "cost_gold": cost,
-                "refunded": False,  # nothing debited
-            },
-        )
-        raise _err(
-            "training.specialization.insufficient_gold",
-            f"Servono {cost} oro per la specializzazione.",
-            status=402, cost=cost,
-        )
-
-    # ─── E. PROTECTED WRITES (insert signature + update adv) ────────────────
-    # If ANY of these fail, we must refund gold + record rollback.
-    signature_inv_row = {
-        "id": inv_id,
-        "instance_id": inv_id,
-        "guild_id": guild_id,
-        "item_id": sig_template["slug"],
-        "acquired_at": now_iso,
-        "quantity": 1,
-        "is_bound": True,
-        "refinement_level": 0,
-        "enchants": [],
-        "affixes": [],
-        "reroll_count": 0,
-        "disenchanted_at": None,
-        "discarded_at": None,
-        "bound_to_adventurer_id": adventurer_id,
-        "bound_reason": SIGNATURE_BOUND_REASON,
-        "bound_at": now_iso,
-        "signature": {
-            "spec_slug": spec["slug"],
-            "name_it": sig_template.get("name_it"),
-            "name_en": sig_template.get("name_en"),
-            "rarity": sig_template.get("rarity"),
-            "slot": sig_template.get("slot"),
-            "strength_bonus": sig_template.get("strength_bonus", 0),
-            "agility_bonus": sig_template.get("agility_bonus", 0),
-            "intellect_bonus": sig_template.get("intellect_bonus", 0),
-            "endurance_bonus": sig_template.get("endurance_bonus", 0),
-            "faith_bonus": sig_template.get("faith_bonus", 0),
-            "power_score": sig_template.get("power_score", 0),
-        },
-    }
-    spec_doc = {
-        "slug": spec["slug"],
-        "name_it": spec["name_it"],
-        "name_en": spec["name_en"],
-        "tier": spec["tier"],
-        "applied_at": now_iso,
-        "applied_at_level": adv_level,
-        "signature_item_id": inv_id,
-        "modifiers": dict(spec["modifiers"]),
-        "applied_by_user_id": actor_user_id,
-        "training_grounds_level_at_apply": tg_level,
-    }
-
-    try:
-        await db.inventory_items.insert_one(signature_inv_row)
-        update_res = await db.adventurers.update_one(
-            # Race-safe filter: adv exists, in our guild, and NOT yet
-            # specialized (null OR field missing). We pre-validated `adv`
-            # already had no spec, but a concurrent request might have
-            # specialized it between our read and this write — in that
-            # case match_count==0 → we fall into the compensate path.
-            {"id": adventurer_id, "guild_id": guild_id,
-             "$or": [{"specialization": None},
-                     {"specialization": {"$exists": False}}]},
-            {"$set": {"specialization": spec_doc, "updated_at": now_iso}},
-        )
-        if update_res.matched_count != 1:
-            raise RuntimeError("adventurer_specialization_race")
-    except Exception as exc:  # noqa: BLE001
-        # ── COMPENSATE: refund gold + best-effort orphan-cleanup of signature_item ──
-        await db.guilds.update_one(
-            {"id": guild_id},
-            {"$inc": {"gold": cost}, "$set": {"updated_at": now_iso}},
-        )
-        # Try to remove the orphan inventory row (if its insert succeeded).
-        try:
-            await db.inventory_items.delete_one(
-                {"id": inv_id, "guild_id": guild_id},
-            )
-        except Exception:  # noqa: BLE001
-            pass
-        await write_audit(
-            db,
-            event_type="training_specialization_rolled_back",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.apply_specialization",
-            related_entity_id=adventurer_id,
-            gold_delta=cost,  # the refund
-            metadata={
-                "attempt_id": attempt_id,
-                "reason": "internal_error",
-                "error_class": type(exc).__name__,
-                "error_message": str(exc)[:300],
-                "cost_gold": cost,
-                "refunded": True,
-                "signature_item_id_orphan_cleaned": inv_id,
-            },
-        )
-        raise _err(
-            "training.specialization.internal_error",
-            "Errore interno durante la specializzazione. "
-            "L'oro è stato rimborsato automaticamente. Riprova.",
-            status=500, attempt_id=attempt_id,
-        )
-
-    # ─── F. SUCCESS AUDITS (best-effort, never raises) ──────────────────────
-    # ROUND 13b — seasonal `training_score` increment. The CAS on
-    # adventurers.id with `specialization == None` guarantees this fires
-    # exactly once per adventurer per specialization. Source id is the
-    # signature_inv row, which is unique.
-    try:
-        from app.seasons.season_stats import increment_seasonal_stat
-        sig_power = int((sig_template or {}).get("power_score", 0) or 0)
-        await increment_seasonal_stat(
-            db, guild_id=guild_id, field="training_score",
-            delta=max(0, sig_power),
-            source="training_specialization", source_id=inv_id,
-        )
-    except Exception:
-        pass
-    try:
-        await write_audit(
-            db,
-            event_type="training_specialization_committed",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.apply_specialization",
-            related_entity_id=adventurer_id,
-            gold_delta=-cost,
-            metadata={
-                "attempt_id": attempt_id,
-                "adventurer_id": adventurer_id,
-                "spec_slug": spec["slug"],
-                "tier": spec["tier"],
-                "cost_gold": cost,
-                "signature_item_id": inv_id,
-                "training_grounds_level": tg_level,
-            },
-        )
-        # Legacy event_types kept for backward compat with the existing
-        # dashboards / reports / FE notifications.
-        await write_audit(
-            db,
-            event_type="specialization_applied",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.apply_specialization",
-            related_entity_id=adventurer_id,
-            metadata={
-                "attempt_id": attempt_id,
-                "adventurer_id": adventurer_id,
-                "spec_slug": spec["slug"],
-                "tier": spec["tier"],
-                "cost_gold": cost,
-                "signature_item_id": inv_id,
-                "training_grounds_level": tg_level,
-            },
-        )
-        await write_audit(
-            db,
-            event_type="specialization_signature_item_created",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.apply_specialization",
-            related_entity_id=inv_id,
-            metadata={
-                "attempt_id": attempt_id,
-                "adventurer_id": adventurer_id,
-                "spec_slug": spec["slug"],
-                "item_slug": sig_template.get("slug"),
-                "rarity": sig_template.get("rarity"),
-            },
-        )
-    except Exception:  # noqa: BLE001
-        pass
-
-    # ROUND 6D — contract progress (synergy 6C↔6D)
-    try:
-        from app.contracts.services import increment_contract_progress
-        await increment_contract_progress(
-            db, guild_id, "specializations_applied", 1,
-        )
-    except Exception:  # noqa: BLE001
-        pass
-
-    # ─── G. SERIALIZER (defensive — out of try, state already committed) ────
-    try:
-        signature_payload = {
-            "id": signature_inv_row.get("id"),
-            "instance_id": signature_inv_row.get("instance_id"),
-            "guild_id": signature_inv_row.get("guild_id"),
-            "item_id": signature_inv_row.get("item_id"),
-            "acquired_at": signature_inv_row.get("acquired_at"),
-            "quantity": signature_inv_row.get("quantity", 1),
-            "is_bound": signature_inv_row.get("is_bound", True),
-            "bound_to_adventurer_id": signature_inv_row.get("bound_to_adventurer_id"),
-            "bound_reason": signature_inv_row.get("bound_reason"),
-            "bound_at": signature_inv_row.get("bound_at"),
-            "signature": signature_inv_row.get("signature", {}),
-        }
-    except Exception:  # noqa: BLE001 — never blocks a committed result
-        signature_payload = {"id": inv_id, "item_id": sig_template.get("slug")}
-
-    return {
-        "attempt_id": attempt_id,
-        "adventurer_id": adventurer_id,
-        "specialization": spec_doc,
-        "signature_item": signature_payload,
-        "gold_spent": cost,
-    }
-
-
-__all__ = [
-    "SIGNATURE_BOUND_REASON",
-    "apply_specialization",
-    "get_available_specs",
-    "respec_adventurer",
-]
-
-
-# ──────────────────────────────────────────────────────────────────────
-# ROUND 6E — Respec orchestrator
-# ──────────────────────────────────────────────────────────────────────
-async def respec_adventurer(
-    db,
-    *,
-    guild_id: str,
-    actor_user_id: str,
-    adventurer_id: str,
-    new_spec_slug: str,
-    discard_signature_items: bool,
-) -> dict:
-    """Atomic respec orchestrator.
-
-    Order (mirrors apply_specialization for consistency):
-      1. Pre-validate adventurer + new spec + cooldown + class eligibility
-      2. Atomic gold debit (CAS guard on `gold >= cost`)
-      3. Atomic materials debit (with gold rollback on failure)
-      4. Soft-discard old signature item (if exists & opt-in)
-      5. Create new signature item bound to adventurer
-      6. Update adventurer doc (spec + respec_count + last_respec_at)
-      7. Audit log (best-effort: respec + discard + creation)
-
-    Failure modes (all `HTTPException` with structured detail):
-      • 404 adventurer.not_found
-      • 422 training.adventurer_retired
-      • 422 training.adventurer_not_specialized
-      • 422 training.spec_unknown
-      • 422 training.respec_same_slug
-      • 422 training.respec_cooldown (with `next_allowed_at`)
-      • 422 training.respec_signature_must_discard (Q3=c)
-      • 422 training.class_not_eligible
-      • 422 training.spec_tier_locked / training.locked
-      • 402 training.insufficient_gold
-      • 422 resources.material_insufficient
-    """
-    # Lazy import to avoid cycle with territory.services
-    from app.territory.services import (
-        _atomic_debit_materials, _resolve_material_template_ids,
-        _compensate_refund,
-    )
-
-    new_spec = SPEC_BY_SLUG.get(new_spec_slug)
-    if not new_spec:
-        raise _err("training.spec_unknown",
-                   f"Specializzazione '{new_spec_slug}' non riconosciuta.")
-
-    # 1) Pre-validate (reads only)
-    adv = await db.adventurers.find_one(
-        {"id": adventurer_id, "guild_id": guild_id}, {"_id": 0},
-    )
-    if not adv:
-        raise _err("adventurer.not_found", "Avventuriero non trovato.",
-                   status=404, adventurer_id=adventurer_id)
-    if adv.get("is_retired") is True:
-        raise _err("training.adventurer_retired",
-                   "Non puoi cambiare specializzazione a un avventuriero congedato.")
-    current_spec = adv.get("specialization") or {}
-    if not current_spec.get("slug"):
-        raise _err("training.adventurer_not_specialized",
-                   "L'avventuriero non ha ancora una specializzazione "
-                   "(usa il flusso di prima specializzazione).")
-    if current_spec["slug"] == new_spec_slug:
-        raise _err("training.respec_same_slug",
-                   "La nuova specializzazione coincide con quella attuale.",
-                   current_slug=current_spec["slug"])
-
-    # 1.b Cooldown 24h
-    now = datetime.now(timezone.utc)
-    last_iso = adv.get("last_respec_at")
-    if isinstance(last_iso, str) and last_iso:
-        try:
-            last_dt = datetime.fromisoformat(last_iso.replace("Z", "+00:00"))
-            elapsed_hours = (now - last_dt).total_seconds() / 3600
-            if elapsed_hours < RESPEC_COOLDOWN_HOURS:
-                from datetime import timedelta
-                next_allowed = last_dt + timedelta(hours=RESPEC_COOLDOWN_HOURS)
-                raise _err(
-                    "training.respec_cooldown",
-                    f"Respec disponibile fra "
-                    f"{int(RESPEC_COOLDOWN_HOURS - elapsed_hours)}h (cooldown 24h).",
-                    next_allowed_at=next_allowed.isoformat(),
-                    cooldown_hours=RESPEC_COOLDOWN_HOURS,
-                )
-        except (ValueError, TypeError):
-            pass  # corrupt timestamp → allow respec (defensive)
-
-    # 1.c Class eligibility
-    actual_class_slug = await _resolve_class_slug(db, adv)
-    if actual_class_slug not in new_spec["eligible_classes"]:
-        raise _err(
-            "training.class_not_eligible",
-            f"Classe '{adv.get('class_name')}' non compatibile "
-            f"con '{new_spec['name_it']}'.",
-            eligible_classes=new_spec["eligible_classes"],
-            actual_class=actual_class_slug,
-        )
-
-    # 1.d Training Grounds tier gating (same as apply)
-    tg_level = await _get_training_level(db, guild_id)
-    tier = tier_for_training_level(tg_level)
-    if tier is None:
-        raise _err("training.locked",
-                   "Devi sbloccare il Campo di Addestramento per fare respec.")
-    if new_spec["tier"] == "full" and tier != "full":
-        raise _err("training.spec_tier_locked",
-                   f"'{new_spec['name_it']}' richiede Training Grounds Lv3+.",
-                   spec_tier=new_spec["tier"], training_level=tg_level)
-
-    # 1.e Signature discard opt-in (Q3=c): block respec if adv has signature
-    # and the user didn't explicitly check the discard checkbox.
-    old_sig_id = current_spec.get("signature_item_id")
-    has_signature = False
-    if old_sig_id:
-        sig_row = await db.inventory_items.find_one(
-            {"id": old_sig_id, "guild_id": guild_id, "discarded_at": None},
-            {"_id": 0, "id": 1, "signature": 1},
-        )
-        has_signature = bool(sig_row)
-    if has_signature and not discard_signature_items:
-        raise _err(
-            "training.respec_signature_must_discard",
-            "Devi confermare la distruzione del signature item attuale "
-            "spuntando la checkbox prima di procedere col respec.",
-            current_signature_item_id=old_sig_id,
-        )
-
-    # 2) Cost (escalating by respec_count)
-    respec_count = int(adv.get("specialization_respec_count", 0))
-    cost = respec_cost_for_count(respec_count)
-    gold_cost = int(cost["gold"])
-    materials = dict(cost.get("materials") or {})
-
-    # 3) Atomic gold debit
-    now_iso = now.isoformat()
-    debit_res = await db.guilds.update_one(
-        {"id": guild_id, "gold": {"$gte": gold_cost}},
-        {"$inc": {"gold": -gold_cost}, "$set": {"updated_at": now_iso}},
-    )
-    if debit_res.modified_count != 1:
-        raise _err("training.insufficient_gold",
-                   f"Servono {gold_cost} oro per il respec.",
-                   status=402, cost=gold_cost)
-
-    # 4) Atomic materials debit (with gold rollback on failure)
-    debited_materials: list[tuple[str, str, int]] = []
-    if materials:
-        try:
-            template_by_slug = await _resolve_material_template_ids(db, materials)
-            debited_materials = await _atomic_debit_materials(
-                db, guild_id=guild_id, materials=materials,
-                template_by_slug=template_by_slug,
-            )
-        except HTTPException:
-            await _compensate_refund(
-                db, guild_id=guild_id,
-                gold_refund=gold_cost, materials_refund=[],
-            )
-            raise
-
-    # 5) Soft-discard old signature item (if present)
-    if has_signature:
-        try:
-            await db.inventory_items.update_one(
-                {"id": old_sig_id, "guild_id": guild_id},
-                {"$set": {
-                    "discarded_at": now_iso,
-                    "discard_reason": "specialization_respec",
-                    "bound_to_adventurer_id": None,
-                    "bound_reason": None,
-                    "bound_at": None,
-                }},
-            )
-        except Exception:  # noqa: BLE001
-            # Roll back gold + materials
-            await _compensate_refund(
-                db, guild_id=guild_id,
-                gold_refund=gold_cost,
-                materials_refund=debited_materials,
-            )
-            raise
-
-    # 6) Create new signature item bound to adv (mirrors apply step 3)
-    sig_template = SPEC_SIGNATURE_ITEMS.get(new_spec["signature_item_slug"])
-    inv_id = str(uuid.uuid4())
-    signature_inv_row = {
-        "id": inv_id,
-        "instance_id": inv_id,
-        "guild_id": guild_id,
-        "item_id": sig_template["slug"],
-        "acquired_at": now_iso,
-        "quantity": 1,
-        "is_bound": True,
-        "refinement_level": 0,
-        "enchants": [],
-        "affixes": [],
-        "reroll_count": 0,
-        "disenchanted_at": None,
-        "discarded_at": None,
-        "bound_to_adventurer_id": adventurer_id,
-        "bound_reason": SIGNATURE_BOUND_REASON,
-        "bound_at": now_iso,
-        "signature": {
-            "spec_slug": new_spec["slug"],
-            "name_it": sig_template["name_it"],
-            "name_en": sig_template["name_en"],
-            "rarity": sig_template["rarity"],
-            "slot": sig_template["slot"],
-            "strength_bonus": sig_template.get("strength_bonus", 0),
-            "agility_bonus": sig_template.get("agility_bonus", 0),
-            "intellect_bonus": sig_template.get("intellect_bonus", 0),
-            "endurance_bonus": sig_template.get("endurance_bonus", 0),
-            "faith_bonus": sig_template.get("faith_bonus", 0),
-            "power_score": sig_template["power_score"],
-        },
-    }
-    await db.inventory_items.insert_one(signature_inv_row)
-
-    # 7) Update adventurer: new spec + counter + last_respec_at
-    new_spec_doc = {
-        "slug": new_spec["slug"],
-        "name_it": new_spec["name_it"],
-        "name_en": new_spec["name_en"],
-        "tier": new_spec["tier"],
-        "applied_at": now_iso,
-        "applied_at_level": int(adv.get("level", 1)),
-        "signature_item_id": inv_id,
-        "modifiers": dict(new_spec["modifiers"]),
-        "applied_by_user_id": actor_user_id,
-        "training_grounds_level_at_apply": tg_level,
-    }
-    await db.adventurers.update_one(
-        {"id": adventurer_id, "guild_id": guild_id},
+    now_iso = _iso(_now())
+    claimed = await db.training_sessions.find_one_and_update(
+        {"id": session["id"], "status": "active"},
         {"$set": {
-            "specialization": new_spec_doc,
-            "last_respec_at": now_iso,
-            "updated_at": now_iso,
-        },
-         "$inc": {"specialization_respec_count": 1}},
+            "status": "completed" if completed else "cancelled",
+            "xp_awarded": xp,
+            "hours_effective": round(min(hours, session.get(
+                "duration_hours", TRAINING_MAX_HOURS)), 2),
+            "completed_at": now_iso,
+        }},
     )
+    if not claimed:
+        # Un altro worker l'ha già chiusa: idempotenza garantita.
+        return {"session_id": session["id"], "xp_awarded": 0,
+                "already_resolved": True}
 
-    # 8) Audit log (best-effort, never raises)
-    from datetime import timedelta
-    next_allowed_at = (now + timedelta(hours=RESPEC_COOLDOWN_HOURS)).isoformat()
+    adv = await db.adventurers.find_one(
+        {"id": session["adventurer_id"]}, {"_id": 0},
+    )
+    if adv:
+        # Level-up con la progressione condivisa (stessa curva runtime).
+        from app.expeditions.services import _resolve_levelup
+        adv["experience"] = int(adv.get("experience", 0)) + xp
+        adv = _resolve_levelup(adv)
+        await db.adventurers.update_one(
+            {"id": adv["id"]},
+            {"$set": {
+                "experience": adv["experience"],
+                "level": adv["level"],
+                "strength": adv.get("strength"),
+                "agility": adv.get("agility"),
+                "intellect": adv.get("intellect"),
+                "endurance": adv.get("endurance"),
+                "faith": adv.get("faith"),
+                "is_available": True,
+                "status": "idle",
+                "current_mission_id": None,
+                "current_mission_type": None,
+                "updated_at": now_iso,
+            }},
+        )
     try:
         from app.audit.log import write_audit
         await write_audit(
-            db, event_type="specialization_respec",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.respec_adventurer",
-            related_entity_id=adventurer_id,
-            gold_delta=-gold_cost,
+            db, event_type="training_session_completed",
+            actor_guild_id=session.get("guild_id"),
+            source="training.complete",
+            related_entity_id=session.get("adventurer_id"),
             metadata={
-                "adventurer_id": adventurer_id,
-                "from_slug": current_spec["slug"],
-                "to_slug": new_spec["slug"],
-                "respec_count_before": respec_count,
-                "respec_count_after": respec_count + 1,
-                "cost_gold": gold_cost,
-                "cost_materials": materials,
-                "signature_discarded": has_signature,
-                "training_grounds_level": tg_level,
-            },
-        )
-        if has_signature:
-            await write_audit(
-                db, event_type="specialization_signature_item_discarded_on_respec",
-                actor_user_id=actor_user_id, actor_guild_id=guild_id,
-                source="training.respec_adventurer",
-                related_entity_id=old_sig_id,
-                metadata={
-                    "adventurer_id": adventurer_id,
-                    "from_slug": current_spec["slug"],
-                    "to_slug": new_spec["slug"],
-                },
-            )
-        await write_audit(
-            db, event_type="specialization_signature_item_created",
-            actor_user_id=actor_user_id, actor_guild_id=guild_id,
-            source="training.respec_adventurer",
-            related_entity_id=inv_id,
-            metadata={
-                "adventurer_id": adventurer_id,
-                "spec_slug": new_spec["slug"],
-                "item_slug": sig_template["slug"],
-                "rarity": sig_template["rarity"],
-                "via_respec": True,
+                "session_id": session["id"],
+                "xp_awarded": xp,
+                "catchup_bonus": bool(session.get("catchup_bonus")),
+                "completed": completed,
             },
         )
     except Exception:  # noqa: BLE001
         pass
+    return {"session_id": session["id"], "xp_awarded": xp,
+            "adventurer": adv, "already_resolved": False}
 
+
+async def complete_due_training_sessions(db, guild_id: str) -> int:
+    """Sweep lazy: chiude le sessioni scadute (idempotente, CAS)."""
+    now = _now()
+    done = 0
+    async for session in db.training_sessions.find(
+        {"guild_id": guild_id, "status": "active",
+         "ends_at": {"$lte": _iso(now)}},
+        {"_id": 0},
+    ):
+        result = await _award_training_xp(
+            db, session,
+            hours=float(session.get("duration_hours") or 0),
+            completed=True,
+        )
+        if not result.get("already_resolved"):
+            done += 1
+    return done
+
+
+async def training_overview(db, *, guild: dict) -> dict:
+    """Stato della sala: sessioni attive, capacità, benchmark."""
+    guild_id = guild["id"]
+    await complete_due_training_sessions(db, guild_id)
+    now = _now()
+    active = await db.training_sessions.find(
+        {"guild_id": guild_id, "status": "active"},
+        {"_id": 0},
+    ).sort("ends_at", 1).to_list(TRAINING_CAPACITY + 2)
+    recent = await db.training_sessions.find(
+        {"guild_id": guild_id, "status": {"$in": ["completed", "cancelled"]}},
+        {"_id": 0},
+    ).sort("completed_at", -1).limit(5).to_list(5)
+    benchmark = await guild_benchmark_level(db, guild_id)
+    sessions = []
+    for row in active:
+        ends_at = _parse(row["ends_at"])
+        sessions.append({
+            **row,
+            "remaining_seconds": max(
+                0, int((ends_at - now).total_seconds())
+            ),
+        })
     return {
-        "adventurer_id": adventurer_id,
-        "specialization": new_spec_doc,
-        "signature_item": {**signature_inv_row, "_id": None},
-        "signature_discarded": has_signature,
-        "previous_signature_item_id": old_sig_id,
-        "cost_paid": {"gold": gold_cost, "materials": materials},
-        "respec_count_after": respec_count + 1,
-        "next_respec_allowed_at": next_allowed_at,
+        "capacity": {"used": len(active), "max": TRAINING_CAPACITY},
+        "max_hours": TRAINING_MAX_HOURS,
+        "min_hours": TRAINING_MIN_HOURS,
+        "benchmark_level": benchmark,
+        "catchup_multiplier": TRAINING_CATCHUP_MULTIPLIER,
+        "sessions": sessions,
+        "recent": recent,
     }
+
+
+async def training_preview(db, *, guild: dict, adventurer_id: str) -> dict:
+    """XP/h, bonus recupero e XP prevista per l'avventuriero scelto."""
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild["id"],
+         "is_retired": {"$ne": True}},
+        {"_id": 0, "id": 1, "name": 1, "level": 1, "is_available": 1,
+         "class_slug": 1},
+    )
+    if not adv:
+        raise _error(404, "training.adventurer_not_found",
+                     "Avventuriero non trovato.")
+    level = int(adv.get("level") or 1)
+    benchmark = await guild_benchmark_level(db, guild["id"])
+    catchup = has_training_catchup(level, benchmark)
+    rate = training_xp_per_hour(level)
+    effective = int(math.floor(
+        rate * (TRAINING_CATCHUP_MULTIPLIER if catchup else 1.0)
+    ))
+    return {
+        "adventurer_id": adv["id"],
+        "name": adv["name"],
+        "level": level,
+        "is_available": bool(adv.get("is_available", True)),
+        "at_max_level": level >= ADVENTURER_MAX_LEVEL,
+        "benchmark_level": benchmark,
+        "catchup_bonus": catchup,
+        "xp_per_hour_base": rate,
+        "xp_per_hour_effective": effective,
+        "xp_24h": training_xp_for_session(
+            level, TRAINING_MAX_HOURS, catchup=catchup),
+    }
+
+
+async def start_training_session(
+    db, *, guild: dict, actor_user_id: str,
+    adventurer_id: str, duration_hours: int,
+) -> dict:
+    guild_id = guild["id"]
+    await complete_due_training_sessions(db, guild_id)
+
+    hours = int(duration_hours)
+    if hours < TRAINING_MIN_HOURS or hours > TRAINING_MAX_HOURS:
+        raise _error(
+            422, "training.bad_duration",
+            f"Durata non valida: da {TRAINING_MIN_HOURS} a "
+            f"{TRAINING_MAX_HOURS} ore.",
+        )
+
+    active_count = await db.training_sessions.count_documents(
+        {"guild_id": guild_id, "status": "active"},
+    )
+    if active_count >= TRAINING_CAPACITY:
+        raise _error(
+            409, "training.capacity_full",
+            f"La sala di addestramento è piena "
+            f"({active_count}/{TRAINING_CAPACITY}).",
+        )
+
+    adv = await db.adventurers.find_one(
+        {"id": adventurer_id, "guild_id": guild_id,
+         "is_retired": {"$ne": True}},
+        {"_id": 0},
+    )
+    if not adv:
+        raise _error(404, "training.adventurer_not_found",
+                     "Avventuriero non trovato.")
+    if not adv.get("class_slug"):
+        raise _error(
+            409, "training.classless",
+            "Le reclute senza classe non possono addestrarsi: scegli "
+            "prima una Sala di Classe.",
+        )
+    level = int(adv.get("level") or 1)
+    if level >= ADVENTURER_MAX_LEVEL:
+        raise _error(
+            409, "training.max_level",
+            "Questo avventuriero è già al livello massimo.",
+        )
+
+    benchmark = await guild_benchmark_level(db, guild_id)
+    catchup = has_training_catchup(level, benchmark)
+    now = _now()
+    ends_at = now + timedelta(hours=hours)
+    session = {
+        "id": str(uuid.uuid4()),
+        "guild_id": guild_id,
+        "adventurer_id": adventurer_id,
+        "adventurer_name": adv.get("name"),
+        "level_at_start": level,
+        "duration_hours": hours,
+        "started_at": _iso(now),
+        "ends_at": _iso(ends_at),
+        "xp_per_hour": training_xp_per_hour(level),
+        "catchup_bonus": catchup,
+        "catchup_multiplier": (
+            TRAINING_CATCHUP_MULTIPLIER if catchup else 1.0
+        ),
+        "benchmark_level": benchmark,
+        "expected_xp": training_xp_for_session(level, hours, catchup=catchup),
+        "status": "active",
+        "xp_awarded": 0,
+        "created_at": _iso(now),
+    }
+
+    # Lock server-side dell'avventuriero: CAS su is_available.
+    locked = await db.adventurers.find_one_and_update(
+        {"id": adventurer_id, "guild_id": guild_id, "is_available": True},
+        {"$set": {
+            "is_available": False,
+            "status": "training",
+            "current_mission_id": session["id"],
+            "current_mission_type": "training",
+            "updated_at": _iso(now),
+        }},
+    )
+    if not locked:
+        raise _error(
+            409, "training.adventurer_busy",
+            "Questo avventuriero è già impegnato in un'altra attività.",
+        )
+    await db.training_sessions.insert_one(session)
+    session.pop("_id", None)
+    try:
+        from app.audit.log import write_audit
+        await write_audit(
+            db, event_type="training_session_started",
+            actor_user_id=actor_user_id, actor_guild_id=guild_id,
+            source="training.start", related_entity_id=adventurer_id,
+            metadata={
+                "session_id": session["id"],
+                "duration_hours": hours,
+                "catchup_bonus": catchup,
+                "expected_xp": session["expected_xp"],
+            },
+        )
+    except Exception:  # noqa: BLE001
+        pass
+    return {"session": session}
+
+
+async def cancel_training_session(
+    db, *, guild: dict, session_id: str,
+) -> dict:
+    session = await db.training_sessions.find_one(
+        {"id": session_id, "guild_id": guild["id"]},
+        {"_id": 0},
+    )
+    if not session:
+        raise _error(404, "training.session_not_found",
+                     "Sessione di addestramento non trovata.")
+    if session.get("status") != "active":
+        raise _error(409, "training.session_not_active",
+                     "Questa sessione è già conclusa.")
+    now = _now()
+    ends_at = _parse(session["ends_at"])
+    if ends_at <= now:
+        # Già scaduta: completa normalmente.
+        result = await _award_training_xp(
+            db, session,
+            hours=float(session.get("duration_hours") or 0),
+            completed=True,
+        )
+        return {"cancelled": False, "completed": True, **result}
+    elapsed_hours = math.floor(
+        (now - _parse(session["started_at"])).total_seconds() / 3600
+    )
+    result = await _award_training_xp(
+        db, session, hours=float(elapsed_hours), completed=False,
+    )
+    return {"cancelled": True, "completed": False,
+            "hours_credited": elapsed_hours, **result}
+
+
+__all__ = [
+    "cancel_training_session",
+    "complete_due_training_sessions",
+    "guild_benchmark_level",
+    "start_training_session",
+    "training_overview",
+    "training_preview",
+]
