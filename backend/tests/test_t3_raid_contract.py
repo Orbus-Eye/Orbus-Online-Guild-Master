@@ -12,11 +12,13 @@ def test_four_raids_bridge_levels_forty_sixty_seventy_eighty():
         for slug in RAID_CONTRACTS
     ]
     assert [raid["required_level"] for raid in projected] == [40, 60, 70, 80]
+    # FASE 8A — rebalance canonico dei poteri raid (era 1500/2400/3500/8000
+    # pre-curva; questi sono i valori del contract attuale).
     assert [raid["recommended_power_combined"] for raid in projected] == [
-        1500,
-        2400,
-        3500,
-        8000,
+        3100,
+        7700,
+        10925,
+        24100,
     ]
 
 

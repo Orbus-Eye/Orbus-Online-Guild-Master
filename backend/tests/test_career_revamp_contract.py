@@ -69,10 +69,12 @@ def test_each_career_rank_doubles_all_stats_without_mutating_base():
         assert {stat: adventurer[stat] for stat in base} == base
 
 
-def test_recruitment_cost_is_free_for_five_then_progressive():
-    assert [base_model_cost_for_active_roster(n) for n in range(5)] == [0] * 5
-    assert base_model_cost_for_active_roster(5) == 100
-    assert base_model_cost_for_active_roster(6) == 125
+def test_recruitment_cost_is_free_for_six_then_progressive():
+    # FASE 9A — i fondatori gratuiti sono SEI (era 5): il costo
+    # progressivo parte dal settimo avventuriero creato.
+    assert [base_model_cost_for_active_roster(n) for n in range(6)] == [0] * 6
+    assert base_model_cost_for_active_roster(6) == 100
+    assert base_model_cost_for_active_roster(7) == 125
     assert base_model_cost_for_active_roster(999) == 2500
 
 

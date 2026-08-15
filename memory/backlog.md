@@ -7,6 +7,15 @@ Origine di verità dei backlog aperti dei round R18.*.
 
 ## Backlog aperti
 
+### [BACKLOG] FASE10.backlog — RAID AUTOMATICO (futura possibilità, oggi VIETATO)
+- **Aperto**: 2026-08-15
+- **Origine**: mandato FASE 10L ("Registrare eventualmente come futura possibilità in backlog, ma niente codice runtime ora")
+- **Descrizione**: estendere la modalità AUTOMATICA (oggi solo dungeon a stanze con first clear manuale, 15 Beni di Gilda, durata ×1.20, route replay) anche ai raid. Oggi i raid sono SEMPRE manuali: nessun pulsante AUTO in UI, nessun campo/endpoint backend. Se un giorno si aprirà: servirebbero costo in Beni dedicato (>15), gate "raid già vinto", replay delle fasi/checkpoint (FASE 8D) e policy per i raid a fasi con scelte.
+- **Priorità**: P3 (decisione di design owner)
+- **Blocker**: GO esplicito dell'owner; filosofia attuale = "RAID sempre manuale, per ora"
+- **Non fare**: NON aggiungere runtime/flag AUTO ai raid prima del GO.
+- **Status**: BACKLOG
+
 ### [BACKLOG] FASE9.backlog — SLOT DI CLASSE (componente ibrida futura)
 - **Aperto**: 2026-08-11
 - **Origine**: mandato FASE 9 (direzione approvata, implementazione ESCLUSA dalla tranche)
