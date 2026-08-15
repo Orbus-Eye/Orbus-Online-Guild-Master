@@ -436,13 +436,13 @@ export default function ClassHallAssignmentJourney() {
                                             {hall.class_mechanic.summary_it}
                                         </p>
                                         <div className="flex flex-wrap gap-1">
-                                            {hall.class_mechanic.builds.map((build) => (
+                                            {(hall.class_mechanic.resonance_tags || []).map((tag) => (
                                                 <span
-                                                    key={build.build_id}
+                                                    key={tag}
                                                     className="text-[9px] border border-sky-500/25 px-1.5 py-0.5 rounded-sm"
-                                                    title={build.description_it}
+                                                    title="Tag di risonanza: equipaggia un item con questo tag per attivare il bonus di classe."
                                                 >
-                                                    {build.name_it}
+                                                    {tag}
                                                 </span>
                                             ))}
                                         </div>

@@ -252,7 +252,14 @@ export default function ExpeditionExplainer({ summary, steps, members }) {
                         </div>
                         <ul className="space-y-2">
                             {summary.class_mechanics.map((mechanic, index) => {
-                                const build = mechanic.active_build || {};
+                                // FASE 10A — formato canonico senza build; i vecchi
+                                // snapshot con active_build restano leggibili.
+                                const legacy = mechanic.active_build || {};
+                                const resonanceActive = mechanic.resonance_active
+                                    ?? legacy.resonance_active;
+                                const matchedTags = mechanic.matched_tags
+                                    || legacy.matched_tags
+                                    || [];
                                 return (
                                     <li
                                         key={`${mechanic.mechanic_id}-${mechanic.adventurer_id}-${index}`}
@@ -264,17 +271,17 @@ export default function ExpeditionExplainer({ summary, steps, members }) {
                                                 {mechanic.adventurer_name} · {mechanic.name_it}
                                             </span>
                                             <span className="text-sky-400 whitespace-nowrap">
-                                                {build.name_it} · +{mechanic.power_bonus} PWR
+                                                +{mechanic.power_bonus} PWR
                                             </span>
                                         </div>
                                         <div className="text-[11px] text-muted-foreground mt-1">
-                                            {build.description_it || mechanic.summary_it}
+                                            {mechanic.summary_it}
                                         </div>
                                         <div className="text-[10px] text-muted-foreground/70 mt-0.5">
-                                            {build.resonance_active
+                                            {resonanceActive
                                                 ? (lang === "en"
-                                                    ? `Item resonance: ${build.matched_tags?.join(", ")}`
-                                                    : `Risonanza item: ${build.matched_tags?.join(", ")}`)
+                                                    ? `Item resonance: ${matchedTags.join(", ")}`
+                                                    : `Risonanza item: ${matchedTags.join(", ")}`)
                                                 : (lang === "en"
                                                     ? "Equip a matching item to activate resonance."
                                                     : "Equipaggia un item coerente per attivare la risonanza.")}
