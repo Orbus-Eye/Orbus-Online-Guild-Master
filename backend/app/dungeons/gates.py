@@ -37,8 +37,11 @@ async def evaluate_data_driven_gate(
     # ── min_total_expeditions_completed (AND) ────────────────────────────────
     min_exp = int(gate.get("min_total_expeditions_completed", 0))
     if min_exp > 0:
+        # FASE 10G — le run AUTOMATICHE non sbloccano contenuti nuovi:
+        # contano solo le spedizioni giocate manualmente.
         completed = await db.expeditions.count_documents(
-            {"guild_id": guild["id"], "status": "completed"}
+            {"guild_id": guild["id"], "status": "completed",
+             "auto_mode": {"$ne": True}}
         )
         if completed < min_exp:
             return (

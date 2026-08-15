@@ -185,6 +185,8 @@ def expedition_public(e: dict) -> dict:
         "carried_xp": int(e.get("carried_xp", 0) or 0),
         "carried_loot_count": len(e.get("carried_loot_ids") or []),
         "rest_bonus_next": int(e.get("rest_bonus_next", 0) or 0),
+        # FASE 10M — riposo consumato? (i doc legacy senza campo: False)
+        "rest_used": bool(e.get("rest_used", False)),
         "rooms_outcome": e.get("rooms_outcome"),
         # FASE 2.1 — Rating di Potenza + Overpower (legacy doc → parità/×1).
         "power_rating": int(e.get("power_rating") or 0),
@@ -234,6 +236,11 @@ def expedition_public(e: dict) -> dict:
         "adventurer_ids": list(e.get("adventurer_ids", [])),
         # Phase 8: marks the run as a "Replay Last Run" dispatch (UI label).
         "is_replay": bool(e.get("is_replay", False)),
+        # FASE 10G — spedizione automatica (nessun click, durata ×1.20).
+        "auto_mode": bool(e.get("auto_mode", False)),
+        "auto_total_duration_seconds": int(
+            e.get("auto_total_duration_seconds") or 0
+        ) or None,
         # ROUND 16.0 Phase 4 — Threat resolution (Void/Undead only; None elsewhere).
         "threat_resolution": e.get("threat_resolution"),
         "encounter_snapshot": e.get("encounter_snapshot"),
@@ -1183,6 +1190,7 @@ async def _dispatch_expedition(
     dungeon_id: str,
     adventurer_ids: list[str],
     is_replay: bool = False,
+    auto_mode: bool = False,
 ) -> dict:
     """Validates + snapshots + persists a fresh expedition document.
 
@@ -1205,6 +1213,31 @@ async def _dispatch_expedition(
         raise HTTPException(
             status_code=403, detail=f"Dungeon bloccato: {unlock_reason}"
         )
+
+    # FASE 10G — la modalità AUTOMATICA richiede: (1) dungeon a stanze,
+    # (2) almeno un completamento MANUALE registrato (route replay 10J).
+    manual_clear: dict | None = None
+    if auto_mode:
+        from app.dungeons.rooms import rooms_mode_for_dungeon as _rm
+        if not _rm(dungeon):
+            raise HTTPException(status_code=409, detail={
+                "code": "auto.rooms_only",
+                "user_message": (
+                    "La modalità automatica è disponibile solo per i "
+                    "dungeon a stanze."
+                ),
+            })
+        clears = guild.get("manual_dungeon_clears") or {}
+        manual_clear = clears.get(dungeon.get("slug") or "")
+        if not manual_clear or not manual_clear.get("route_snapshot"):
+            raise HTTPException(status_code=409, detail={
+                "code": "auto.manual_first_clear_required",
+                "user_message": (
+                    "Completa prima questo dungeon manualmente: la "
+                    "modalità automatica ripete un percorso già "
+                    "esplorato."
+                ),
+            })
 
     # Validate team composition
     ids = adventurer_ids
@@ -1500,6 +1533,9 @@ async def _dispatch_expedition(
         "adventurer_ids": list(adventurer_ids),
         # Phase 8: mark replay expeditions so the FE can label them differently.
         "is_replay": bool(is_replay),
+        # FASE 10G — run automatica: nessun click, durata ×1.20, costo
+        # 15 Beni; NON conta come clear manuale e NON sblocca contenuti.
+        "auto_mode": bool(auto_mode),
         # ROUND 16.0 Phase 4 — Threat resolution (only when dungeon has threat_tags).
         "threat_resolution": threat_resolution if threat_resolution.get("applies") else None,
         "encounter_snapshot": {
@@ -1515,9 +1551,36 @@ async def _dispatch_expedition(
 
     # FASE 5 — modalità A STANZE (pilota, dietro flag). Il doc nasce con
     # lo snapshot stanze congelato; il timer rappresenta la 1ª stanza.
-    from app.dungeons.rooms import build_rooms_snapshot, rooms_mode_for_dungeon
+    from app.dungeons.rooms import (
+        build_auto_route_snapshot,
+        build_rooms_snapshot,
+        rooms_mode_for_dungeon,
+    )
     if rooms_mode_for_dungeon(dungeon):
-        rooms_snapshot = build_rooms_snapshot(dungeon, success_chance)
+        if auto_mode and manual_clear:
+            # FASE 10H/10J — replay del percorso dell'ultimo clear
+            # manuale (lineare, bivi già risolti): chance ricalcolate
+            # per la squadra attuale, durate ×1.20, MAI branch nuovi.
+            rooms_snapshot = build_auto_route_snapshot(
+                manual_clear["route_snapshot"],
+                stored_base_chance=int(
+                    manual_clear.get("base_chance") or success_chance
+                ),
+                base_chance=success_chance,
+            )
+            if not rooms_snapshot:
+                raise HTTPException(status_code=409, detail={
+                    "code": "auto.route_invalid",
+                    "user_message": (
+                        "Il percorso salvato non è più valido: completa "
+                        "di nuovo il dungeon manualmente."
+                    ),
+                })
+            exp_doc["auto_total_duration_seconds"] = sum(
+                int(r["duration_seconds"]) for r in rooms_snapshot
+            )
+        else:
+            rooms_snapshot = build_rooms_snapshot(dungeon, success_chance)
         first_room_duration = int(rooms_snapshot[0]["duration_seconds"])
         exp_doc.update({
             "mode": "rooms",
@@ -1525,6 +1588,8 @@ async def _dispatch_expedition(
             "current_room_idx": 0,
             "room_state": "in_room",
             "rest_bonus_next": 0,
+            # FASE 10M — riposo disponibile UNA volta per intero dungeon.
+            "rest_used": False,
             "carried_gold": 0,
             "carried_xp": 0,
             "carried_loot_ids": [],
@@ -1537,6 +1602,26 @@ async def _dispatch_expedition(
                 now + timedelta(seconds=first_room_duration)
             ).isoformat(),
         })
+
+    # FASE 10I — il costo dell'automazione (15 Beni) viene pagato AL
+    # DISPATCH, dopo TUTTE le validazioni: addebito atomico, mai saldo
+    # negativo, retry/double-click non addebita due volte (il secondo
+    # tentativo o fallisce il filtro $gte o è una nuova spedizione
+    # esplicitamente richiesta).
+    if auto_mode:
+        from app.guild_supplies import AUTO_DUNGEON_COST, spend_supplies
+        await spend_supplies(
+            db, guild["id"], AUTO_DUNGEON_COST,
+            reason="auto_dispatch",
+            event_type="auto_dungeon_dispatched",
+            metadata={
+                "expedition_id": exp_id,
+                "dungeon_slug": dungeon.get("slug"),
+                "auto_total_duration_seconds": exp_doc.get(
+                    "auto_total_duration_seconds"
+                ),
+            },
+        )
 
     await db.expeditions.insert_one(exp_doc)
 
@@ -1641,6 +1726,7 @@ async def start_expedition(db, guild: dict, payload) -> dict:
         dungeon_id=payload.dungeon_id,
         adventurer_ids=payload.adventurer_ids,
         is_replay=False,
+        auto_mode=bool(getattr(payload, "auto", False)),
     )
 
 

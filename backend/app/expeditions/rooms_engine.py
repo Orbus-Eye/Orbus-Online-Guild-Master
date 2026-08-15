@@ -38,20 +38,34 @@ def _now():
 # ── Risoluzione stanza dovuta (chiamata dalla lazy sweep) ────────────────
 
 async def advance_due_rooms_expedition(db, exp_id: str) -> None:
-    """Gestisce un doc a stanze con `completes_at` scaduto."""
-    exp = await db.expeditions.find_one(
-        {"id": exp_id, "status": "in_progress", "mode": "rooms"},
-        {"_id": 0},
-    )
-    if not exp:
-        return
-    state = exp.get("room_state")
-    if state == "awaiting_choice":
-        # Deadline scaduta → auto-continue (mai run bloccate).
-        await _start_next_room(db, exp, rest=False, auto=True)
-        return
-    if state == "in_room":
-        await _resolve_current_room(db, exp)
+    """Gestisce un doc a stanze con `completes_at` scaduto.
+
+    FASE 10H — loop di recupero limitato: se più stanze sono scadute
+    (tipico delle run AUTOMATICHE lasciate correre senza la pagina
+    aperta) le processa in cascata nella stessa chiamata, invece di una
+    per poll. Ogni passo resta un CAS: al primo passo non applicato o
+    non più dovuto si esce.
+    """
+    for _ in range(24):  # bound difensivo: nessun blueprint ha 24 passi
+        exp = await db.expeditions.find_one(
+            {"id": exp_id, "status": "in_progress", "mode": "rooms"},
+            {"_id": 0},
+        )
+        if not exp:
+            return
+        completes_at = exp.get("completes_at")
+        if not completes_at or completes_at > _now().isoformat():
+            return  # non (più) dovuta
+        state = exp.get("room_state")
+        if state == "awaiting_choice":
+            # Deadline scaduta → auto-continue (mai run bloccate).
+            applied = await _start_next_room(db, exp, rest=False, auto=True)
+            if not applied:
+                return
+        elif state == "in_room":
+            await _resolve_current_room(db, exp)
+        else:
+            return
 
 
 async def _resolve_current_room(db, exp: dict) -> None:
@@ -100,6 +114,44 @@ async def _resolve_current_room(db, exp: dict) -> None:
         await _finalize_rooms(db, exp, outcome="completed",
                               last_room_result=room_result,
                               last_room_loot=room_loot)
+        return
+
+    # FASE 10H — run AUTOMATICA: nessun PROCEDI, la stanza successiva
+    # parte subito (stesso CAS su idx; lo snapshot auto è lineare e già
+    # con durate ×1.20). Niente riposo, niente rest bonus (FASE 10N).
+    if exp.get("auto_mode") and idx + 1 < len(rooms) and (
+        rooms[idx + 1].get("type") == "room"
+    ):
+        next_room = rooms[idx + 1]
+        next_duration = int(next_room["duration_seconds"])
+        await db.expeditions.update_one(
+            {
+                "id": exp["id"], "status": "in_progress",
+                "room_state": "in_room", "current_room_idx": idx,
+            },
+            {
+                "$set": {
+                    "current_room_idx": idx + 1,
+                    "room_state": "in_room",
+                    "room_started_at": now.isoformat(),
+                    "room_duration_seconds": next_duration,
+                    "completes_at": (
+                        now + timedelta(seconds=next_duration)
+                    ).isoformat(),
+                    "rest_bonus_next": 0,
+                    "updated_at": now.isoformat(),
+                },
+                "$inc": {
+                    "carried_gold": room_result["gold"],
+                    "carried_xp": room_result["xp"],
+                },
+                "$push": {
+                    "room_results": room_result,
+                    **({"carried_loot_ids": {"$each": room_loot}}
+                       if room_loot else {}),
+                },
+            },
+        )
         return
 
     # Successo intermedio → attesa scelta (deadline 24h → auto-continue).
@@ -184,13 +236,20 @@ async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool,
     duration = int(rooms[next_idx]["duration_seconds"])
     if rest:
         duration = int(round(duration * REST_DURATION_FACTOR))
+    # FASE 10M — RIPOSA E PROCEDI una sola volta per INTERO dungeon:
+    # il CAS include rest_used≠True quando si riposa, così nemmeno un
+    # doppio click/retry può applicare due riposi.
+    cas_filter = {
+        "id": exp["id"], "status": "in_progress",
+        "room_state": "awaiting_choice", "current_room_idx": idx,
+    }
+    if rest:
+        cas_filter["rest_used"] = {"$ne": True}
     res = await db.expeditions.update_one(
-        {
-            "id": exp["id"], "status": "in_progress",
-            "room_state": "awaiting_choice", "current_room_idx": idx,
-        },
+        cas_filter,
         {"$set": {
             **(snapshot_update or {}),
+            **({"rest_used": True} if rest else {}),
             "current_room_idx": next_idx,
             "room_state": "in_room",
             # FASE 9P — timestamp autoritativi della stanza corrente
@@ -203,7 +262,23 @@ async def _start_next_room(db, exp: dict, *, rest: bool, auto: bool,
             "updated_at": now.isoformat(),
         }},
     )
-    return res.modified_count == 1
+    applied = res.modified_count == 1
+    if applied and rest:
+        # FASE 10Q — audit del riposo (best-effort).
+        try:
+            from app.audit.log import write_audit
+            await write_audit(
+                db,
+                event_type="dungeon_rest_used",
+                actor_user_id=None,
+                actor_guild_id=exp.get("guild_id"),
+                source="rooms.rest_and_continue",
+                related_entity_id=exp["id"],
+                metadata={"room_idx": next_idx},
+            )
+        except Exception:
+            pass
+    return applied
 
 
 # ── Azione del giocatore ─────────────────────────────────────────────────
@@ -232,12 +307,32 @@ async def advance_rooms_action(db, guild: dict, expedition_id: str,
             "code": "rooms.not_active",
             "user_message": "Questa spedizione non è in corso a stanze.",
         })
+    # FASE 10H — nella run AUTOMATICA il giocatore non interviene.
+    if exp.get("auto_mode"):
+        raise HTTPException(status_code=409, detail={
+            "code": "rooms.auto_mode",
+            "user_message": (
+                "La spedizione automatica procede da sola: nessuna "
+                "scelta richiesta."
+            ),
+        })
     if exp.get("room_state") != "awaiting_choice":
         raise HTTPException(status_code=409, detail={
             "code": "rooms.not_awaiting_choice",
             "user_message": (
                 "Il gruppo è ancora impegnato nella stanza: aspetta che "
                 "la stanza si concluda."
+            ),
+        })
+
+    # FASE 10M — riposo già consumato in questa spedizione → 409 chiaro
+    # (il CAS in _start_next_room resta il backstop contro le race).
+    if action == "rest_and_continue" and exp.get("rest_used"):
+        raise HTTPException(status_code=409, detail={
+            "code": "rooms.rest_already_used",
+            "user_message": (
+                "Riposo già utilizzato: in ogni dungeon il gruppo può "
+                "riposare una sola volta."
             ),
         })
 
@@ -397,6 +492,51 @@ async def _finalize_rooms(db, exp: dict, *, outcome: str,
             "final_score": None,
         },
     )
+
+    # FASE 10J — clear MANUALE completato: registra il percorso (lo
+    # snapshot finale è lineare, bivi già risolti) come route replay
+    # per la modalità automatica. L'AUTO non aggiorna MAI questo campo
+    # (non conta come first clear e non sblocca nuovi percorsi).
+    dungeon_slug = (dungeon or {}).get("slug")
+    if success and dungeon_slug and not claimed.get("auto_mode"):
+        try:
+            final_rooms = claimed.get("rooms_snapshot")
+            await db.guilds.update_one(
+                {"id": claimed["guild_id"]},
+                {"$set": {
+                    f"manual_dungeon_clears.{dungeon_slug}": {
+                        "route_snapshot": list(final_rooms or []),
+                        "base_chance": int(
+                            claimed.get("success_chance") or 0
+                        ),
+                        "cleared_at": _now().isoformat(),
+                        "expedition_id": claimed["id"],
+                    },
+                }},
+            )
+        except Exception:
+            pass
+
+    # FASE 10Q — audit del completamento automatico (best-effort).
+    if claimed.get("auto_mode"):
+        try:
+            from app.audit.log import write_audit
+            await write_audit(
+                db,
+                event_type="auto_dungeon_completed",
+                actor_user_id=None,
+                actor_guild_id=claimed["guild_id"],
+                source="rooms.auto_finalize",
+                related_entity_id=claimed["id"],
+                metadata={
+                    "outcome": outcome,
+                    "dungeon_slug": dungeon_slug,
+                    "rooms_done": rooms_done,
+                    "rooms_total": rooms_total,
+                },
+            )
+        except Exception:
+            pass
 
 
 __all__ = [

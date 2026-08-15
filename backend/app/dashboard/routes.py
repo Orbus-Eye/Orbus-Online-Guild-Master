@@ -73,6 +73,29 @@ async def get_dashboard_suggestions(ctx=Depends(_ctx)):
             "icon": "📜",
         })
 
+    # FASE 10P — spedizioni AUTOMATICHE concluse non ancora lette:
+    # notifica dedicata in italiano con il nome IT del dungeon.
+    auto_done = await db.expeditions.find({
+        "guild_id": gid, "status": "completed", "auto_mode": True,
+        "is_read": {"$ne": True}, "report_dismissed_at": None,
+    }, {"_id": 0, "id": 1, "dungeon_name": 1, "dungeon_name_it": 1,
+        "dungeon_slug": 1}).sort("completed_at", -1).to_list(3)
+    for row in auto_done:
+        from app.content.display_names import dungeon_display_name_it
+        name_it = row.get("dungeon_name_it") or dungeon_display_name_it(
+            slug=row.get("dungeon_slug"), name=row.get("dungeon_name"),
+        )
+        out.append({
+            "id": f"auto_expedition_completed_{row['id']}",
+            "priority": 9,
+            "title_it": f"Spedizione automatica completata: {name_it}",
+            "title_en": f"Automatic expedition completed: {name_it}",
+            "cta_it": "Apri il report",
+            "cta_en": "Open report",
+            "link": f"/expeditions/{row['id']}",
+            "icon": "⚙",
+        })
+
     # 2. Adventurers without equipped items (proxy for upgradeable gear)
     n_no_equip = await db.adventurers.count_documents({
         "guild_id": gid,

@@ -9,7 +9,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const SRC = path.resolve(__dirname, "..");
+// Jest gira con cwd = frontend/: i sorgenti sono in ./src.
+const SRC = path.resolve("src");
 
 function collectSourceFiles(dir) {
     const out = [];

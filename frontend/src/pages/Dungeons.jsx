@@ -504,6 +504,16 @@ export default function Dungeons() {
                                                 ⚑ A STANZE
                                             </span>
                                         )}
+                                        {/* FASE 10G — modalità automatica sbloccata dal clear manuale */}
+                                        {d.auto_available && (
+                                            <span
+                                                data-testid={`dungeon-auto-badge-${d.slug}`}
+                                                className="inline-block text-[10px] tracking-widest border border-sky-500/60 text-sky-300 px-1.5 py-0.5 rounded-sm"
+                                                title={`Già completato manualmente: puoi avviarlo in AUTOMATICO (${d.auto_cost_supplies} Beni di Gilda, +20% durata).`}
+                                            >
+                                                ⚙ AUTO
+                                            </span>
+                                        )}
                                         {/* FASE 2.2 — gate reale = potere squadra; livello solo consigliato */}
                                         {d.required_team_power > 0 && (
                                             <PowerGateBadge slug={d.slug} power={d.required_team_power} />

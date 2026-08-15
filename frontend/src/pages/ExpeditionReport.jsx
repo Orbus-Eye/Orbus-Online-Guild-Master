@@ -7,7 +7,7 @@ import AppHeader from "../components/AppHeader";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import ExpeditionExplainer from "../components/ExpeditionExplainer";
-import RoomProgressTimer, { shouldShowRoomTimer } from "../components/RoomProgressTimer";
+import RoomProgressTimer, { formatRemaining, shouldShowRoomTimer } from "../components/RoomProgressTimer";
 
 const RARITY_COLOR = {
     Common: "#9ca3af",
@@ -237,6 +237,21 @@ function RoomsSection({ e, onRefresh }) {
                 })}
             </ol>
 
+            {/* FASE 10H — run automatica: nessuna scelta richiesta */}
+            {inProgress && e.auto_mode && (
+                <div
+                    className="border border-sky-500/40 bg-sky-500/5 rounded-sm px-3 py-2 mb-3 text-[11px]"
+                    data-testid="rooms-auto-banner"
+                >
+                    ⚙ <span className="text-sky-400 font-medium">Spedizione automatica</span>{" "}
+                    — il gruppo ripete il percorso già esplorato senza bisogno
+                    di ordini. Nessun riposo, durata +20%.
+                    {e.auto_total_duration_seconds ? (
+                        <> Durata totale: {formatRemaining(e.auto_total_duration_seconds)}.</>
+                    ) : null}
+                </div>
+            )}
+
             {/* Bottino in spalla (solo durante la run) */}
             {inProgress && (
                 <div className="text-[11px] text-muted-foreground mb-3" data-testid="rooms-carried">
@@ -277,15 +292,24 @@ function RoomsSection({ e, onRefresh }) {
                                     </div>
                                 </button>
                             ))}
-                            <label className="flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    data-testid="rooms-rest-toggle"
-                                    checked={restBeforeNext}
-                                    onChange={(ev) => setRestBeforeNext(ev.target.checked)}
-                                />
-                                ⛺ Riposa prima di proseguire (+8% chance, +25% tempo)
-                            </label>
+                            {e.rest_used ? (
+                                <div
+                                    className="text-[11px] text-muted-foreground"
+                                    data-testid="rooms-rest-used-note"
+                                >
+                                    ⛺ Riposo già utilizzato (una volta per dungeon)
+                                </div>
+                            ) : (
+                                <label className="flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        data-testid="rooms-rest-toggle"
+                                        checked={restBeforeNext}
+                                        onChange={(ev) => setRestBeforeNext(ev.target.checked)}
+                                    />
+                                    ⛺ Riposa prima di proseguire (+8% chance, +25% tempo — una sola volta per dungeon)
+                                </label>
+                            )}
                         </div>
                     ) : (
                         <div className="flex flex-wrap gap-2">
@@ -298,16 +322,27 @@ function RoomsSection({ e, onRefresh }) {
                             >
                                 ▶ PROSEGUI
                             </button>
-                            <button
-                                type="button"
-                                data-testid="rooms-action-rest"
-                                disabled={busy}
-                                onClick={() => doAction("rest_and_continue")}
-                                title="+8% alla prossima stanza, ma il gruppo impiega il 25% di tempo in più"
-                                className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 disabled:opacity-50"
-                            >
-                                ⛺ RIPOSA E PROSEGUI (+8%)
-                            </button>
+                            {/* FASE 10M — riposo UNA volta per intero dungeon */}
+                            {e.rest_used ? (
+                                <span
+                                    data-testid="rooms-rest-used-badge"
+                                    className="text-[11px] tracking-widest border border-border text-muted-foreground px-3 py-1.5 rounded-sm cursor-not-allowed"
+                                    title="In ogni dungeon il gruppo può riposare una sola volta."
+                                >
+                                    ⛺ Riposo già utilizzato
+                                </span>
+                            ) : (
+                                <button
+                                    type="button"
+                                    data-testid="rooms-action-rest"
+                                    disabled={busy}
+                                    onClick={() => doAction("rest_and_continue")}
+                                    title="+8% alla prossima stanza, ma il gruppo impiega il 25% di tempo in più. Utilizzabile una sola volta per dungeon."
+                                    className="text-[11px] tracking-widest border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 disabled:opacity-50"
+                                >
+                                    ⛺ RIPOSA E PROSEGUI (+8% · 1 volta)
+                                </button>
+                            )}
                         </div>
                     )}
                     <div className="mt-2">

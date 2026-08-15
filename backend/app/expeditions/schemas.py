@@ -12,6 +12,9 @@ from pydantic import BaseModel, Field
 class ExpeditionCreateIn(BaseModel):
     dungeon_id: str = Field(min_length=8, max_length=64)
     adventurer_ids: list[str] = Field(min_length=1, max_length=10)
+    # FASE 10G — modalità AUTOMATICA (solo dungeon a stanze già
+    # completati manualmente; costa 15 Beni di Gilda, durata ×1.20).
+    auto: bool = False
 
 
 # Backward-compat alias for the original server.py symbol used by some tests

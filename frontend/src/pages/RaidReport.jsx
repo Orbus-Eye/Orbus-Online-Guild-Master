@@ -166,7 +166,7 @@ function outcomeColor(o) {
 
 
 export default function RaidReport() {
-    const { t, lang } = useT();
+    const { t } = useT();
     const { raid_id } = useParams();
     const [raid, setRaid] = useState(null);
     const [participants, setParticipants] = useState([]);

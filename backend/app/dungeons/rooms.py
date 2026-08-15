@@ -32,6 +32,9 @@ ROOM_CHANCE_MODIFIER: dict[str, int] = {
 REST_CHANCE_BONUS = 8
 REST_DURATION_FACTOR = 1.25
 
+# FASE 10H — spedizione AUTOMATICA: durata totale del percorso ×1.20.
+AUTO_DURATION_FACTOR = 1.20
+
 # Deadline della scelta: oltre → auto-continue (mai run bloccate).
 DECISION_DEADLINE_SECONDS = 24 * 3600
 
@@ -196,6 +199,52 @@ def iter_paths(slug: str) -> list[list[dict]]:
     return paths
 
 
+def build_auto_route_snapshot(
+    stored_route: list[dict],
+    *,
+    stored_base_chance: int,
+    base_chance: int,
+) -> list[dict]:
+    """FASE 10G-J — snapshot per la run AUTOMATICA: replay del percorso
+    completato manualmente (lineare, bivi già risolti), MAI branch nuovi.
+
+    - stessa sequenza di stanze del clear manuale;
+    - chance ricalcolata per la squadra ATTUALE preservando il
+      modificatore per-stanza congelato nel clear
+      (chance_manuale − base_chance_manuale);
+    - durata di OGNI stanza ×1.20 (totale = tempo normale ×1.20).
+    """
+    out: list[dict] = []
+    for room in stored_route:
+        if room.get("type") != "room":
+            continue  # difensivo: un fork non risolto non viene replayato
+        modifier = int(room.get("chance", stored_base_chance)) - int(
+            stored_base_chance
+        )
+        new_room = dict(room)
+        new_room["idx"] = len(out)
+        new_room["chance"] = max(5, min(100, int(base_chance) + modifier))
+        new_room["duration_seconds"] = max(
+            10,
+            int(round(
+                int(room.get("duration_seconds", 10))
+                * AUTO_DURATION_FACTOR
+            )),
+        )
+        out.append(new_room)
+    return out
+
+
+def auto_route_duration_seconds(stored_route: list[dict]) -> int:
+    """Durata totale della run automatica: somma stanze ×1.20."""
+    total = sum(
+        int(r.get("duration_seconds", 0))
+        for r in stored_route
+        if r.get("type") == "room"
+    )
+    return int(round(total * AUTO_DURATION_FACTOR))
+
+
 def apply_salvage(carried_gold: int, carried_loot_ids: list[str],
                   carried_xp: int, outcome: str, *, rng) -> tuple[int, list[str], int]:
     """Applica le frazioni di salvataggio dell'esito (J.21).
@@ -224,11 +273,14 @@ __all__ = [
     "ROOM_CHANCE_MODIFIER",
     "REST_CHANCE_BONUS",
     "REST_DURATION_FACTOR",
+    "AUTO_DURATION_FACTOR",
     "DECISION_DEADLINE_SECONDS",
     "SALVAGE",
     "COMPLETION_XP_BONUS",
     "rooms_mode_for_dungeon",
     "build_rooms_snapshot",
+    "build_auto_route_snapshot",
+    "auto_route_duration_seconds",
     "resolve_fork",
     "iter_paths",
     "apply_salvage",

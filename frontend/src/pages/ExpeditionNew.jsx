@@ -82,8 +82,10 @@ export default function ExpeditionNew() {
     const [searchParams] = useSearchParams();
     const squadIdParam = searchParams.get("squad_id") || "";
     const autoLoadedRef = useRef(false);
-    const { refreshGuild } = useAuth();
+    const { guild, refreshGuild } = useAuth();
     const [dungeon, setDungeon] = useState(null);
+    // FASE 10O — modalità spedizione: manual | auto.
+    const [mode, setMode] = useState("manual");
     const [advs, setAdvs] = useState([]);
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -405,13 +407,27 @@ export default function ExpeditionNew() {
 
     const submit = async () => {
         if (!dungeon || selected.length !== requiredSize) return;
+        const isAuto = mode === "auto";
         setSubmitting(true);
         try {
             const { data } = await api.post("/expeditions", {
                 dungeon_id: dungeon.id,
                 adventurer_ids: selected.map((a) => a.id),
+                auto: isAuto,
             });
-            toast.success(t("expedition_new.toast_dispatched", { seconds: dungeon.base_duration_seconds }));
+            if (isAuto) {
+                // FASE 10P — notifica AUTO in italiano, nome IT.
+                const total = data.expedition?.auto_total_duration_seconds
+                    || dungeon.auto_duration_seconds || 0;
+                const mins = Math.max(1, Math.round(total / 60));
+                toast.success(
+                    `Spedizione automatica iniziata — ${
+                        data.expedition?.dungeon_name_it || dungeon.name_it || dungeon.name
+                    } — durata ${mins}m`,
+                );
+            } else {
+                toast.success(t("expedition_new.toast_dispatched", { seconds: dungeon.base_duration_seconds }));
+            }
 
             // ROUND 17.1b P1.1 — milestone toast primo start (idempotente per guild).
             if (data?.milestones?.is_first_expedition_started) {
@@ -790,6 +806,87 @@ export default function ExpeditionNew() {
                                 </div>
                             )}
 
+                            {/* FASE 10O — scelta MANUALE / AUTOMATICA */}
+                            {dungeon.rooms_mode && (
+                                <div className="border-t border-border pt-3 mt-4" data-testid="mode-selector">
+                                    <div className="flex items-center justify-between gap-2 mb-2">
+                                        <span className="text-[10px] text-amber tracking-widest">MODALITÀ</span>
+                                        <span
+                                            className="text-[10px] text-muted-foreground tabular-nums"
+                                            data-testid="mode-supplies-balance"
+                                            title="Usati per automatizzare le spedizioni nei dungeon già completati. Si ripristinano ogni giorno."
+                                        >
+                                            Beni disponibili: {guild?.guild_supplies ?? "—"} / {guild?.guild_supplies_cap ?? 120}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        <button
+                                            type="button"
+                                            data-testid="mode-manual"
+                                            onClick={() => setMode("manual")}
+                                            className={`text-left border rounded-sm px-3 py-2 ${
+                                                mode === "manual"
+                                                    ? "border-amber bg-amber/10"
+                                                    : "border-border hover:border-amber/40"
+                                            }`}
+                                        >
+                                            <div className="text-[11px] tracking-widest font-semibold">MANUALE</div>
+                                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                                                Gioca stanza per stanza. Puoi usare Riposa e
+                                                Procedi una volta.
+                                            </div>
+                                        </button>
+                                        {(() => {
+                                            const supplies = guild?.guild_supplies ?? 0;
+                                            const cost = dungeon.auto_cost_supplies ?? 15;
+                                            const notCleared = !dungeon.auto_available;
+                                            const noSupplies = supplies < cost;
+                                            const blocked = notCleared || noSupplies;
+                                            const autoMins = dungeon.auto_duration_seconds
+                                                ? Math.max(1, Math.round(dungeon.auto_duration_seconds / 60))
+                                                : null;
+                                            return (
+                                                <button
+                                                    type="button"
+                                                    data-testid="mode-auto"
+                                                    disabled={blocked}
+                                                    onClick={() => setMode("auto")}
+                                                    title={notCleared
+                                                        ? "Completa prima il dungeon manualmente."
+                                                        : noSupplies
+                                                            ? `Beni di Gilda insufficienti. Servono ${cost} Beni di Gilda.`
+                                                            : ""}
+                                                    className={`text-left border rounded-sm px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                                                        mode === "auto"
+                                                            ? "border-sky-500 bg-sky-500/10"
+                                                            : "border-border hover:border-sky-500/40"
+                                                    }`}
+                                                >
+                                                    <div className="text-[11px] tracking-widest font-semibold flex items-center gap-2">
+                                                        AUTOMATICA
+                                                        {blocked && (
+                                                            <span
+                                                                className="text-[9px] text-muted-foreground border border-border px-1 py-0.5 rounded-sm"
+                                                                data-testid="mode-auto-blocked"
+                                                            >
+                                                                {notCleared
+                                                                    ? "Prima completa il dungeon manualmente"
+                                                                    : "Beni insufficienti"}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                                                        {cost} Beni di Gilda · +20% durata
+                                                        {autoMins ? ` (~${autoMins}m totali)` : ""} ·
+                                                        Nessuna scelta durante la spedizione.
+                                                    </div>
+                                                </button>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
+                            )}
+
                             <Button
                                 onClick={() => setShowNarratedPreview(true)}
                                 data-testid="btn-narrated-preview"
@@ -811,7 +908,9 @@ export default function ExpeditionNew() {
                             >
                                 {submitting
                                     ? t("expedition_new.dispatching_btn")
-                                    : `Invia spedizione (${selected.length}/${requiredSize})`}
+                                    : mode === "auto"
+                                        ? `⚙ Avvia spedizione automatica (${selected.length}/${requiredSize})`
+                                        : `Invia spedizione (${selected.length}/${requiredSize})`}
                             </Button>
                             {/* FASE 2.2 — gate a potere del gruppo (il livello non blocca più) */}
                             {powerGateBlocked && (

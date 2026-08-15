@@ -88,6 +88,12 @@ async def list_dungeons_for_guild(db, guild: Optional[dict]) -> list[dict]:
         )
         .to_list(100)
     )
+    # FASE 10G — disponibilità della modalità AUTOMATICA per gilda:
+    # dungeon a stanze + almeno un clear MANUALE registrato (10J).
+    from app.dungeons.rooms import auto_route_duration_seconds
+    from app.guild_supplies import AUTO_DUNGEON_COST
+    manual_clears = (guild or {}).get("manual_dungeon_clears") or {}
+
     out = []
     for d in rows:
         pub = dungeon_public(d)
@@ -97,6 +103,17 @@ async def list_dungeons_for_guild(db, guild: Optional[dict]) -> list[dict]:
             unlocked, reason = True, None
         pub["unlocked"] = unlocked
         pub["unlock_reason"] = reason
+        clear = manual_clears.get(d.get("slug") or "")
+        auto_ok = bool(
+            guild and pub["rooms_mode"] and clear
+            and clear.get("route_snapshot")
+        )
+        pub["auto_available"] = auto_ok
+        pub["auto_cost_supplies"] = AUTO_DUNGEON_COST
+        pub["auto_duration_seconds"] = (
+            auto_route_duration_seconds(clear["route_snapshot"])
+            if auto_ok else None
+        )
         out.append(pub)
     if guild:
         # FASE 1.9 (2026-08-08) — visibilità progressiva: sbloccati + solo
