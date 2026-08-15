@@ -261,6 +261,9 @@ def create_app() -> FastAPI:
     # FASE 9K — banner personalizzato della gilda (stessa sicurezza).
     from app.banners import router as banners_router, banner_upload_dir
     app.include_router(banners_router)
+    # FASE 10C — Beni di Gilda.
+    from app.guild_supplies.routes import router as guild_supplies_router
+    app.include_router(guild_supplies_router)
     app.mount(
         "/api/uploads/banners",
         StaticFiles(directory=str(banner_upload_dir())),

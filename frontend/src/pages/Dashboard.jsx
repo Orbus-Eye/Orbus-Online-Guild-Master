@@ -387,6 +387,21 @@ export default function Dashboard() {
                             testid="stat-active-expeditions"
                             accent
                         />
+                        {/* FASE 10F — Beni di Gilda sempre visibili in hero */}
+                        <div
+                            className="flex flex-col"
+                            title={"Usati per automatizzare le spedizioni nei dungeon già completati. Si ripristinano ogni giorno."}
+                        >
+                            <span className="text-[9px] text-muted-foreground tracking-widest uppercase">
+                                Beni di Gilda
+                            </span>
+                            <span
+                                data-testid="stat-guild-supplies"
+                                className="text-lg font-semibold text-amber tabular-nums"
+                            >
+                                {guild.guild_supplies ?? "—"} / {guild.guild_supplies_cap ?? 120}
+                            </span>
+                        </div>
                         <div className="ml-auto flex flex-col items-end min-w-0">
                             <span className="text-[9px] text-muted-foreground tracking-widest uppercase">
                                 {t("dashboard.founded")}

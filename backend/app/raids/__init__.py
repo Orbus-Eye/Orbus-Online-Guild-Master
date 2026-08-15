@@ -964,6 +964,22 @@ async def complete_raid(raid_id: str, current_user: dict = Depends(get_current_u
         {"$set": {"is_available": True, "expedition_in_progress": False, "updated_at": now.isoformat()}},
     )
 
+    # FASE 10E — +50 Beni di Gilda per raid VINTO (i raid sono sempre
+    # manuali: niente AUTO). Idempotente: il finalize gira una sola
+    # volta per raid (claim CAS in_progress → resolving).
+    if outcome == "victory":
+        try:
+            from app.guild_supplies import RAID_REWARD, grant_supplies
+            await grant_supplies(
+                db, guild["id"], RAID_REWARD,
+                reason="raid_reward",
+                event_type="guild_supplies_raid_reward",
+                metadata={"raid_id": raid_id,
+                          "raid_dungeon_slug": raid["raid_dungeon_slug"]},
+            )
+        except Exception:
+            pass
+
     # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
     # idempotente su raid_id, cap 1/giorno. Victory +80, partial +40, defeat +15.
     try:

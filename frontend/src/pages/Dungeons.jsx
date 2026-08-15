@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
 import AppHeader from "../components/AppHeader";
+import GuildSuppliesBadge from "../components/GuildSuppliesBadge";
 import GameImage from "../components/GameImage";
 import { dungeonImageSources } from "../utils/gameAssets";
 import { useT } from "../i18n/I18nContext";
@@ -114,6 +116,7 @@ const buildQuery = (f) => {
 
 export default function Dungeons() {
     const { t, tContent } = useT();
+    const { guild } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     // ROUND 17.1 P0.2 — starter dungeon highlight via `?starter=<slug>`.
     const starterSlug = searchParams.get("starter");
@@ -226,12 +229,20 @@ export default function Dungeons() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="text-xs text-amber tracking-widest mb-2">
-                    :: ACTIVE EXPEDITIONS CATALOG
+                    :: CATALOGO DELLE SPEDIZIONI
                 </div>
-                <h1 className="text-3xl font-semibold tracking-tight">{t("dungeons.title")}</h1>
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                    <h1 className="text-3xl font-semibold tracking-tight">{t("dungeons.title")}</h1>
+                    {/* FASE 10F — Beni di Gilda visibili dove si scelgono i dungeon */}
+                    <GuildSuppliesBadge
+                        supplies={guild?.guild_supplies}
+                        cap={guild?.guild_supplies_cap ?? 120}
+                    />
+                </div>
                 <p className="text-sm text-muted-foreground mt-2 max-w-2xl mb-6">
-                    Choose a dungeon and dispatch a party. Each run takes time and either
-                    rewards your guild or sends them back bruised.
+                    Scegli un dungeon e invia una squadra. Ogni spedizione richiede
+                    tempo e può premiare la gilda o rimandare indietro il gruppo
+                    ammaccato.
                 </p>
 
                 {/* ROUND 6A.2c — Squad context banner */}

@@ -613,6 +613,26 @@ async def apply_expedition_completion(
         {"$inc": {"gold": gold_reward}, "$set": {"updated_at": now.isoformat()}},
     )
 
+    # FASE 10E — +5 Beni di Gilda SOLO per dungeon completato con
+    # successo in modalità MANUALE (l'AUTO paga 15 e non rigenera Beni,
+    # altrimenti il costo reale dell'automazione crollerebbe).
+    # Idempotente: questo motore gira una sola volta per spedizione
+    # (claim CAS in_progress → completing del chiamante).
+    if success and not claimed.get("auto_mode"):
+        try:
+            from app.guild_supplies import (
+                DUNGEON_MANUAL_REWARD, grant_supplies,
+            )
+            await grant_supplies(
+                db, claimed["guild_id"], DUNGEON_MANUAL_REWARD,
+                reason="dungeon_reward",
+                event_type="guild_supplies_dungeon_reward",
+                metadata={"expedition_id": exp_id,
+                          "dungeon_id": claimed.get("dungeon_id")},
+            )
+        except Exception:
+            pass
+
     # Apply XP + free adventurers, with level-up loop.
     # Phase 13 — XP per member is scaled by the member's traits_snapshot
     # xp_gain percent modifiers (additive stacking, then applied once).

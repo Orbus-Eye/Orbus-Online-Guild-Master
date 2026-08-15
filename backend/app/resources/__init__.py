@@ -382,6 +382,31 @@ async def _resolve_mission(mission: dict, rng: Optional[_random.Random] = None) 
          "resource_slug": r["resource_slug"],
          "continent_slug": r["continent_slug"]},
     )
+    # FASE 10E — +10 Beni di Gilda per missione risorse completata con
+    # successo (le "missioni" canoniche del gioco con completion event
+    # sono le resource_gathering_missions). Idempotente per mission_id:
+    # marker CAS sul doc missione, un solo reward per completamento.
+    if success:
+        try:
+            claim = await db.resource_gathering_missions.update_one(
+                {"id": r["id"],
+                 "supplies_reward_granted": {"$ne": True}},
+                {"$set": {"supplies_reward_granted": True}},
+            )
+            if getattr(claim, "modified_count", 0):
+                from app.guild_supplies import (
+                    MISSION_REWARD, grant_supplies,
+                )
+                await grant_supplies(
+                    db, r["guild_id"], MISSION_REWARD,
+                    reason="mission_reward",
+                    event_type="guild_supplies_mission_reward",
+                    metadata={"mission_id": r["id"],
+                              "resource_slug": r.get("resource_slug")},
+                )
+        except Exception:
+            pass
+
     # ROUND 16.5.3 P1 — Guild XP drip (Prestigio di Gilda). Best-effort,
     # idempotente su mission_id, cap 6/giorno. Solo su success.
     # ROUND 17.2 P0.3 — XP tier per rarity (rare=+8, epic=+10).

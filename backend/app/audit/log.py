@@ -195,6 +195,15 @@ EVENT_TYPES = frozenset({
     "avatar_uploaded",
     # FASE 9K — banner personalizzato della gilda.
     "guild_banner_uploaded",
+    # FASE 10C-Q — Beni di Gilda + Dungeon automatici + Riposo.
+    "guild_supplies_market_purchase",
+    "guild_supplies_daily_refill",
+    "guild_supplies_dungeon_reward",
+    "guild_supplies_raid_reward",
+    "guild_supplies_mission_reward",
+    "auto_dungeon_dispatched",
+    "auto_dungeon_completed",
+    "dungeon_rest_used",
     # ROUND 11.2 TASK 5a — Admin Ops MVP
     "admin_gold_granted",                    # admin granted gold to a guild (with reason)
     "admin_item_granted",                    # admin granted item(s) to a guild (with reason)

@@ -11,6 +11,8 @@ from typing import Optional
 from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 
+from app.guild_supplies import GUILD_SUPPLIES_CAP, effective_supplies
+
 
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -48,6 +50,10 @@ def guild_public(doc: dict) -> dict:
         # FASE 9K — banner personalizzato della gilda (None → banner
         # standard; il custom ha priorità nella catena FE).
         "custom_banner_url": doc.get("custom_banner_url") or None,
+        # FASE 10C — Beni di Gilda (valore EFFETTIVO: considera il
+        # refill giornaliero e il fallback legacy 120 senza scrivere).
+        "guild_supplies": effective_supplies(doc),
+        "guild_supplies_cap": GUILD_SUPPLIES_CAP,
         "created_at": doc["created_at"],
         "updated_at": doc["updated_at"],
     }

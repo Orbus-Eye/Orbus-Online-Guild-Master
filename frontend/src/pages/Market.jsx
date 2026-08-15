@@ -89,6 +89,43 @@ export default function Market() {
         } catch { /* silent */ }
     }, []);
 
+    // FASE 10E — Beni di Gilda: stato + acquisto pacchetto 100/2000 MO.
+    const [suppliesInfo, setSuppliesInfo] = useState(null);
+    const [confirmSupplies, setConfirmSupplies] = useState(false);
+    const loadSupplies = useCallback(async () => {
+        try {
+            const { data } = await api.get("/guild-supplies");
+            setSuppliesInfo(data);
+        } catch { /* silent */ }
+    }, []);
+
+    async function buySuppliesPack() {
+        if (busy) return;
+        if (!confirmSupplies) {
+            setConfirmSupplies(true);
+            return;
+        }
+        setBusy(true);
+        try {
+            const { data } = await api.post("/guild-supplies/market/purchase");
+            toast.success(
+                `Acquistati ${suppliesInfo?.market?.pack_supplies ?? 100} Beni di Gilda `
+                + `(−${suppliesInfo?.market?.gold_cost ?? 2000} MO). `
+                + `Saldo: ${data.supplies}/${data.cap}.`,
+            );
+            setGuildGold(data.gold);
+            setConfirmSupplies(false);
+            await loadSupplies();
+        } catch (err) {
+            const detail = err?.response?.data?.detail;
+            toast.error(detail?.user_message || formatApiError(err));
+            setConfirmSupplies(false);
+            await loadSupplies();
+        } finally {
+            setBusy(false);
+        }
+    }
+
     const loadInventory = useCallback(async () => {
         try {
             const { data } = await api.get("/inventory");
@@ -109,7 +146,8 @@ export default function Market() {
     useEffect(() => {
         loadOffers();
         loadGuild();
-    }, [loadOffers, loadGuild]);
+        loadSupplies();
+    }, [loadOffers, loadGuild, loadSupplies]);
     useEffect(() => {
         if (tab === "sell") loadInventory();
     }, [tab, loadInventory]);
@@ -214,6 +252,58 @@ export default function Market() {
 
                 {tab === "buy" && (
                     <>
+                        {/* FASE 10E-F — Beni di Gilda: pacchetto fisso 100 / 2000 MO */}
+                        <div
+                            data-testid="supplies-pack-card"
+                            className="border border-amber/45 bg-amber/5 rounded-sm p-4 mb-5 flex items-center justify-between gap-4 flex-wrap"
+                        >
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-3 flex-wrap mb-1">
+                                    <span className="font-medium text-sm">
+                                        📦 Beni di Gilda ×{suppliesInfo?.market?.pack_supplies ?? 100}
+                                    </span>
+                                    <span
+                                        data-testid="supplies-pack-balance"
+                                        className="text-[11px] text-amber tabular-nums"
+                                        title="Usati per automatizzare le spedizioni nei dungeon già completati. Si ripristinano ogni giorno."
+                                    >
+                                        Saldo attuale: {suppliesInfo ? `${suppliesInfo.supplies} / ${suppliesInfo.cap}` : "…"}
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground max-w-xl">
+                                    Usati per automatizzare le spedizioni nei dungeon già
+                                    completati. Si ripristinano ogni giorno a {suppliesInfo?.cap ?? 120}.
+                                    Cap {suppliesInfo?.cap ?? 120}: il pacchetto è acquistabile solo
+                                    se nessun Bene andrebbe perso.
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-amber text-lg font-medium tabular-nums mb-1">
+                                    {suppliesInfo?.market?.gold_cost ?? 2000} MO
+                                </div>
+                                {suppliesInfo && !suppliesInfo.market.purchasable ? (
+                                    <div
+                                        data-testid="supplies-pack-blocked"
+                                        className="text-[10px] text-muted-foreground max-w-[220px]"
+                                    >
+                                        Non acquistabile ora: perderesti{" "}
+                                        {suppliesInfo.market.lost_if_purchased} Beni oltre il cap.
+                                    </div>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        data-testid="supplies-pack-buy-btn"
+                                        disabled={busy || !suppliesInfo}
+                                        onClick={buySuppliesPack}
+                                        className={confirmSupplies ? "border-amber" : ""}
+                                    >
+                                        {confirmSupplies
+                                            ? `Confermi? +${suppliesInfo?.market?.pack_supplies ?? 100} Beni per ${suppliesInfo?.market?.gold_cost ?? 2000} MO`
+                                            : "Acquista"}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                         <div className="text-[11px] text-muted-foreground mb-3 flex items-center justify-between">
                             <span data-testid="shop-daily-offers">Offerte attive ({offers.length}) · ogni 2h</span>
                             <span data-testid="shop-countdown">
