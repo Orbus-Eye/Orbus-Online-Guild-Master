@@ -38,6 +38,7 @@ from app.raids.contracts import (
     apply_raid_contract,
     raid_progression_rewards,
 )
+from app.content.display_names import raid_display_name_it
 from app.dungeons.encounters import COUNTER_THREAT_MAP
 from app.expeditions.services import _resolve_levelup
 
@@ -121,6 +122,13 @@ def raid_public(r: dict) -> dict:
         "id": r["id"],
         "guild_id": r["guild_id"],
         "raid_dungeon_slug": r["raid_dungeon_slug"],
+        # FASE 10B — nome IT server-authoritative (fallback via slug per
+        # i raid persistiti prima di questo campo).
+        "raid_name": r.get("raid_name"),
+        "raid_name_it": r.get("raid_name_it") or raid_display_name_it(
+            slug=r.get("raid_dungeon_slug"),
+            name=r.get("raid_name"),
+        ),
         "status": status,
         "outcome": r.get("outcome"),
         "team_power_combined": r["team_power_combined"],
@@ -510,6 +518,13 @@ async def start_raid(payload: RaidStartIn, current_user: dict = Depends(get_curr
         "guild_id": guild["id"],
         "raid_dungeon_id": rd["id"],
         "raid_dungeon_slug": rd["slug"],
+        # FASE 10B — snapshot nomi per notifiche/report player-facing IT.
+        "raid_name": rd.get("name"),
+        "raid_name_it": raid_display_name_it(
+            slug=rd.get("slug"),
+            name=rd.get("name"),
+            fallback=rd.get("name_it"),
+        ),
         "status": "in_progress",
         "outcome": None,
         "team_power_combined": p["team_power_combined"],

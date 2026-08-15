@@ -366,8 +366,15 @@ async def _finalize_rooms(db, exp: dict, *, outcome: str,
 
     rooms_total = len(claimed.get("rooms_snapshot") or [])
     rooms_done = sum(1 for r in room_results if r.get("success"))
+    # FASE 10B — il log IT usa il nome ITALIANO del dungeon.
+    from app.content.display_names import dungeon_display_name_it
     result_log = _result_log_it(
-        outcome, (dungeon or {}).get("name", "il dungeon"),
+        outcome,
+        dungeon_display_name_it(
+            slug=(dungeon or {}).get("slug"),
+            name=(dungeon or {}).get("name"),
+            fallback=(dungeon or {}).get("name_it") or "il dungeon",
+        ),
         rooms_done, rooms_total,
     )
 

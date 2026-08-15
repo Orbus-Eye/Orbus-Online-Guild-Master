@@ -1185,6 +1185,30 @@
       "dragon-vault": {
         "name": "Volta del Drago Addormentato",
         "description": "Il drago dorme. Il tesoro è nella sua tana. Non svegliate il drago. Lo sveglierete."
+      },
+      "moonfall-vigil": {
+        "name": "Veglia della Luna Infranta",
+        "description": "Una veglia sotto la luna spezzata: proteggete i fuochi rituali fino all'alba."
+      },
+      "rituale-del-vuoto-orde": {
+        "name": "Il Rituale del Vuoto",
+        "description": "Le orde marciano in cerchio attorno a un rituale che non deve compiersi."
+      },
+      "figli-di-irthe-rising": {
+        "name": "Marcia dei Figli di Irthe",
+        "description": "Una processione che non finisce: fermate il Primogenito prima che ricordi la meta."
+      },
+      "alevora-marionetta-grande": {
+        "name": "Il Gran Teatro di Alevora",
+        "description": "L'ultimo atto inizia quando il pubblico tace. Calate il sipario sul Marionettista."
+      },
+      "tempio-del-vuoto-eterno": {
+        "name": "Tempio del Vuoto Eterno",
+        "description": "Il tempio non venera nulla: insegnate ai suoi eredi ad avere ancora bisogno di qualcosa."
+      },
+      "valys-mordivac-final-whisper": {
+        "name": "L'Ultimo Sussurro di Valys Mordivac",
+        "description": "Valys non grida mai. Zittite il sussurro prima che diventi silenzio per tutti."
       }
     },
     "gate": {

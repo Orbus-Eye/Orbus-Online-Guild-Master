@@ -42,6 +42,17 @@ export function translateDungeonName(tContent, dungeonOrName, lang) {
     return dungeonOrName; // unknown — display untouched
 }
 
+/** FASE 10B — nome dungeon di una spedizione, IT-first.
+ * Il backend ora espone `dungeon_name_it` (server-authoritative, anche
+ * per i doc legacy); il reverse-map resta come ultima difesa. */
+export function expeditionDungeonName(tContent, expedition, lang) {
+    if (!expedition) return "";
+    if (lang !== "en" && expedition.dungeon_name_it) {
+        return expedition.dungeon_name_it;
+    }
+    return translateDungeonName(tContent, expedition.dungeon_name, lang);
+}
+
 /** Translate a dungeon description. Slug required for descriptions
  * because they don't appear in expedition payloads. */
 export function translateDungeonDescription(tContent, dungeon) {

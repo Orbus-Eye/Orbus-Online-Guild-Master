@@ -21,6 +21,7 @@ from fastapi import HTTPException
 from pymongo import ReturnDocument
 
 from app.adventurers.classless import require_class_hall_assignment
+from app.content.display_names import dungeon_display_name_it
 from app.adventurers.career import career_effective_stats, career_stat_multiplier
 from app.class_halls.catalog import CLASS_HALLS
 from app.class_halls.mechanics import resolve_class_mechanic
@@ -162,6 +163,12 @@ def expedition_public(e: dict) -> dict:
         "guild_id": e["guild_id"],
         "dungeon_id": e["dungeon_id"],
         "dungeon_name": e.get("dungeon_name", ""),
+        # FASE 10B — nome IT server-authoritative (anche per i doc legacy
+        # che hanno persistito solo il nome EN canonico).
+        "dungeon_name_it": e.get("dungeon_name_it") or dungeon_display_name_it(
+            slug=e.get("dungeon_slug"),
+            name=e.get("dungeon_name"),
+        ),
         "status": e["status"],
         "started_at": e.get("started_at"),
         "completes_at": e.get("completes_at"),
@@ -555,7 +562,16 @@ async def _complete_one_expedition(db, exp_id: str) -> None:
 
     member_names = [m["name_snapshot"] for m in members]
     result_summary = "Success" if success else "Failed"
-    result_log = _build_result_log(dungeon["name"], member_names, success)
+    # FASE 10B — la narrativa IT usa il nome ITALIANO del dungeon.
+    result_log = _build_result_log(
+        dungeon_display_name_it(
+            slug=dungeon.get("slug"),
+            name=dungeon.get("name"),
+            fallback=dungeon.get("name_it"),
+        ),
+        member_names,
+        success,
+    )
     await apply_expedition_completion(
         db, claimed=claimed, dungeon=dungeon, members=members,
         success=success, gold_reward=gold_reward,
@@ -1422,6 +1438,13 @@ async def _dispatch_expedition(
         "guild_id": guild["id"],
         "dungeon_id": dungeon["id"],
         "dungeon_name": dungeon["name"],
+        # FASE 10B — snapshot IT per notifiche/report player-facing.
+        "dungeon_slug": dungeon.get("slug"),
+        "dungeon_name_it": dungeon_display_name_it(
+            slug=dungeon.get("slug"),
+            name=dungeon.get("name"),
+            fallback=dungeon.get("name_it"),
+        ),
         "status": "in_progress",
         "started_at": now.isoformat(),
         "completes_at": completes_at.isoformat(),

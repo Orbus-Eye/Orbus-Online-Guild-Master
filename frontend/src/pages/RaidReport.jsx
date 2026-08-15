@@ -197,7 +197,7 @@ export default function RaidReport() {
         try {
             const r = await api.post(`/raids/${raid_id}/complete`);
             setRaid(r.data.raid);
-            toast.success("Raid completed");
+            toast.success("Raid completato");
             load();
         } catch (err) {
             toast.error(formatApiError(err));
@@ -216,7 +216,9 @@ export default function RaidReport() {
     }
 
     const slug = raid.raid_dungeon_slug;
-    const raidName = lang === "it" ? t(`raids.catalog.${slug}.name`) : t(`raids.catalog.${slug}.name`);
+    // FASE 10B — nome IT server-authoritative, i18n come fallback.
+    const raidName = raid.raid_name_it
+        || t(`raids.catalog.${slug}.name`, raid.raid_name || slug);
     const partiesOutcome = raid.parties_outcome || [];
     const rewards = raid.rewards || {};
 
@@ -274,7 +276,7 @@ export default function RaidReport() {
                             {/* ROUND 6B.2c — Save as squad after raid victory */}
                             {raid.outcome === "victory" && [10, 15, 20, 40].includes(participants.length) && (
                                 <Link
-                                    to={`/squads/new?type=raid_${participants.length}&adventurer_ids=${participants.map(p => p.adventurer_id).join(",")}&suggested_name=${encodeURIComponent("Raid " + (raid.raid_name || ""))}`}
+                                    to={`/squads/new?type=raid_${participants.length}&adventurer_ids=${participants.map(p => p.adventurer_id).join(",")}&suggested_name=${encodeURIComponent("Raid " + (raid.raid_name_it || raid.raid_name || ""))}`}
                                     data-testid="raid-report-save-as-squad-btn"
                                     className="inline-flex items-center mt-2 text-[11px] tracking-widest font-bold border border-amber/60 text-amber px-3 py-1.5 rounded-sm hover:bg-amber/10 transition-colors"
                                 >

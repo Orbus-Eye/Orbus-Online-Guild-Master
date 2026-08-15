@@ -22,6 +22,8 @@ import hashlib
 import re
 from typing import Optional
 
+from app.content.display_names import dungeon_display_name_it
+
 
 # ── Test-trait anti-leak (mirrors seed_runner._TEST_TRAIT_NAME_RE) ────────────
 _TEST_TRAIT_NAME_RE = re.compile(
@@ -437,6 +439,16 @@ def build_expedition_report(
     team_power = int(exp.get("final_team_power") or exp.get("team_power") or 0)
     rec_power = int((dungeon or {}).get("recommended_power") or 0)
     dungeon_name = exp.get("dungeon_name") or (dungeon or {}).get("name") or "il dungeon"
+    # FASE 10B — la narrativa italiana usa il nome ITALIANO del dungeon.
+    dungeon_name_it = (
+        exp.get("dungeon_name_it")
+        or dungeon_display_name_it(
+            slug=exp.get("dungeon_slug") or (dungeon or {}).get("slug"),
+            name=dungeon_name,
+            fallback=(dungeon or {}).get("name_it"),
+        )
+        or dungeon_name
+    )
     team_size = len(members or [])
     success_chance_used = int(
         exp.get("success_chance_with_equipment")
@@ -447,10 +459,12 @@ def build_expedition_report(
     summary = {
         "outcome": outcome,
         "title": _outcome_title(outcome),
-        "narrative_summary": _narrative_summary(outcome, dungeon_name, team_size),
+        "narrative_summary": _narrative_summary(
+            outcome, dungeon_name_it, team_size
+        ),
         # ROUND 16.1 Phase 2 — bilingual "why it went this way" narrative.
         "narrative_it": _build_why_narrative(
-            lang="it", outcome=outcome, dungeon_name=dungeon_name,
+            lang="it", outcome=outcome, dungeon_name=dungeon_name_it,
             team_power=team_power, rec_power=rec_power, exp=exp,
             members=members or [],
         ),

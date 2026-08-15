@@ -1185,6 +1185,30 @@
       "dragon-vault": {
         "name": "Vault of the Sleeping Dragon",
         "description": "The dragon is asleep. The reward is in its hoard. Do not wake the dragon. You will wake the dragon."
+      },
+      "moonfall-vigil": {
+        "name": "Vigil of the Broken Moon",
+        "description": "A vigil under the shattered moon: guard the ritual fires until dawn."
+      },
+      "rituale-del-vuoto-orde": {
+        "name": "Ritual of the Void",
+        "description": "The hordes march in circles around a ritual that must not be completed."
+      },
+      "figli-di-irthe-rising": {
+        "name": "March of Irthe's Children",
+        "description": "An endless procession: stop the Firstborn before it remembers its destination."
+      },
+      "alevora-marionetta-grande": {
+        "name": "Alevora's Grand Theatre",
+        "description": "The final act begins when the audience falls silent. Bring the curtain down on the Puppeteer."
+      },
+      "tempio-del-vuoto-eterno": {
+        "name": "Temple of the Eternal Void",
+        "description": "The temple worships nothing: teach its heirs to need something again."
+      },
+      "valys-mordivac-final-whisper": {
+        "name": "Valys Mordivac's Final Whisper",
+        "description": "Valys never shouts. Silence the whisper before it becomes silence for everyone."
       }
     },
     "gate": {

@@ -245,7 +245,12 @@ export default function Dashboard() {
         setReplayBusy(true);
         try {
             const { data } = await api.post("/expeditions/replay-last");
-            toast.success(`Replay started: ${data.expedition.dungeon_name}`);
+            toast.success(
+                `Spedizione ripetuta: ${
+                    data.expedition.dungeon_name_it
+                    || data.expedition.dungeon_name
+                }`,
+            );
             await refreshGuild();
             navigate(`/expeditions/${data.expedition.id}`);
         } catch (err) {
@@ -566,14 +571,14 @@ export default function Dashboard() {
                             data-testid="last-expedition-empty"
                         >
                             <span>
-                                No expeditions yet. Visit{" "}
+                                Nessuna spedizione ancora. Vai ai{" "}
                                 <Link
                                     to="/dungeons"
                                     className="text-amber hover:underline"
                                 >
-                                    Dungeons
+                                    Dungeon
                                 </Link>{" "}
-                                to start one.
+                                per avviarne una.
                             </span>
                         </div>
                     )}
@@ -588,7 +593,8 @@ export default function Dashboard() {
                                         className="text-sm font-semibold"
                                         data-testid="last-expedition-dungeon-name"
                                     >
-                                        {lastRun.expedition.dungeon_name}
+                                        {lastRun.expedition.dungeon_name_it
+                                            || lastRun.expedition.dungeon_name}
                                     </div>
                                     <div className="text-[10px] text-muted-foreground mt-1">
                                         {formatRelative(lastRun.expedition.completed_at, lang, t)}{" "}

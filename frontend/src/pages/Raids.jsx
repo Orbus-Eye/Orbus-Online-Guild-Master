@@ -178,7 +178,7 @@ export default function Raids() {
                                 <li key={r.id}
                                     className="text-[11px] flex items-center gap-3 flex-wrap"
                                     data-testid={`raid-active-${r.id}`}>
-                                    <span>{t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
+                                    <span>{r.raid_name_it || t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
                                     <RaidCountdown endsAt={r.ends_at}
                                                    remainingSeconds={r.remaining_seconds}
                                                    status={r.status}
@@ -348,7 +348,7 @@ export default function Raids() {
                             {history.slice(0, 10).map((r) => (
                                 <li key={r.id} className="text-[11px] flex items-center gap-3 flex-wrap" data-testid={`raid-history-${r.id}`}>
                                     <span className="text-muted-foreground">{r.started_at.slice(0, 10)}</span>
-                                    <span>{t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
+                                    <span>{r.raid_name_it || t(`raids.catalog.${r.raid_dungeon_slug}.name`)}</span>
                                     <span className={r.outcome === "victory" ? "text-[#22c55e]" : r.outcome === "partial" ? "text-amber" : "text-destructive"}>
                                         {r.outcome || r.status}
                                     </span>

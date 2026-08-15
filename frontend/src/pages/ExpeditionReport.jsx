@@ -30,7 +30,7 @@ const RarityBadge = ({ rarity }) => (
     </span>
 );
 
-import { translateDungeonName } from "../i18n/contentMap";
+import { expeditionDungeonName } from "../i18n/contentMap";
 import { formatDateTime as formatDate } from "../utils/dateFormat";
 import { rarityLabel } from "../utils/displayLabels";
 
@@ -475,7 +475,9 @@ export default function ExpeditionReport() {
         setReplayBusy(true);
         try {
             const { data } = await api.post("/expeditions/replay-last");
-            toast.success(t("expedition_report_page.replay_toast", { name: data.expedition.dungeon_name }));
+            toast.success(t("expedition_report_page.replay_toast", {
+                name: expeditionDungeonName(tContent, data.expedition, lang),
+            }));
             await refreshGuild();
             navigate(`/expeditions/${data.expedition.id}`);
         } catch (err) {
@@ -584,7 +586,7 @@ export default function ExpeditionReport() {
                             :: REPORT SPEDIZIONE
                         </div>
                         <h1 data-testid="report-dungeon-name" className="text-3xl font-semibold tracking-tight">
-                            {translateDungeonName(tContent, e.dungeon_name, lang)}
+                            {expeditionDungeonName(tContent, e, lang)}
                         </h1>
                         <div className="text-xs text-muted-foreground mt-1">
                             {isDone
@@ -625,7 +627,7 @@ export default function ExpeditionReport() {
                         {/* ROUND 6B.2c — Save as squad (only on victories with team intact) */}
                         {isDone && e.result_summary === "Success" && (e.adventurer_ids || []).length > 0 && (
                             <Link
-                                to={`/squads/new?type=${(e.adventurer_ids || []).length === 5 ? "dungeon_5" : "dungeon_3"}&adventurer_ids=${(e.adventurer_ids || []).join(",")}&suggested_name=${encodeURIComponent("Squadra " + (e.dungeon_name || "vincente"))}`}
+                                to={`/squads/new?type=${(e.adventurer_ids || []).length === 5 ? "dungeon_5" : "dungeon_3"}&adventurer_ids=${(e.adventurer_ids || []).join(",")}&suggested_name=${encodeURIComponent("Squadra " + (e.dungeon_name_it || e.dungeon_name || "vincente"))}`}
                                 data-testid="report-save-as-squad-btn"
                                 className="inline-flex items-center text-xs tracking-widest font-bold border border-amber/60 text-amber px-3 py-2 rounded-sm hover:bg-amber/10 transition-colors"
                                 title={lang === "it" ? "Salva il team come squadra riutilizzabile" : "Save this team as a reusable squad"}

@@ -142,7 +142,7 @@ def render_welcome(lang: str, app_url: str, username: str) -> Tuple[str, str, st
         steps_title = "I tuoi primi quattro passi:"
         steps = [
             "Recluta 3 avventurieri (3 refresh gratis ogni giorno).",
-            "Invia il tuo team a Goblin Warrens — il dungeon iniziale.",
+            "Invia il tuo team alle Tane dei Goblin — il dungeon iniziale.",
             "Leggi il report: XP, oro, bottino.",
             "Equipaggia il bottino e scala la classifica per Potenza Peak.",
         ]
